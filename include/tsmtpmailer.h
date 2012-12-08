@@ -1,0 +1,1 @@
+#include "../src/tsmtpmailer.h"

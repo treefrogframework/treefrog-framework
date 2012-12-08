@@ -1,0 +1,1032 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<!-- Sony Japan Design Template version 4.0 -->
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="Sony-Content-Type" content="N">
+<meta name="keywords" content="ソニー, Sony, ポータル, グループ, Entertainment, エンタテインメント, Computer, コンピュータ, 製品, エレクトロニクス, Electronics, 音楽, ミュージック, Music, 映画, ピクチャーズ, Pictures, Movie, ゲーム, Game, プレイステーション, PlayStation, ファイナンス, 金融, 保険, 銀行, インターネット, Internet, ソネット, So-net, ネットワーク, サービス, 法人, 業務用">
+<meta name="description" content="ソニーグループポータルサイト。製品情報、ゲーム、映画、音楽、金融、インターネット、法人向け製品・サービス事業等。">
+<!-- begin extra meta tag -->
+<meta name="copyright" content="Copyright 2010 Sony Corporation">
+<!-- end extra meta tag -->
+<title>Sony Japan | ソニーグループ ポータルサイト</title>
+<!-- begin contents scripts -->
+<link rel="stylesheet" type="text/css" href="top/2009mb/common/css/common.css" media="all">
+
+<link rel="stylesheet" type="text/css" href="top/2009mb/common/css/default.css" media="all">
+<link rel="stylesheet" type="text/css" href="top/2009mb/common/css/main.css" media="all">
+<link rel="alternate" type="application/rss+xml" href="http://www.sony.co.jp/SonyInfo/News/Press/data/pressrelease_group.xml" title="ソニーグループ　ニュースリリース">
+<script type="text/javascript" src="top/2009mb/common/js/common.js"></script> 
+<script type="text/javascript" src="top/2009mb/scripts/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" src="top/2009mb/scripts/jquery.easing.1.3.js"></script> 
+<script type="text/javascript" src="top/2009mb/scripts/sony2008_navigations.js"></script> 
+<script type="text/javascript" src="top/2009mb/scripts/swfobject.js"></script> 
+<script type="text/javascript" src="top/2009mb/scripts/AC_RunActiveContent.js"></script> 
+<!--[if IE]>
+<script type="text/javascript" src="top/2009mb/scripts/iepngfix.js" charset="utf-8"></script>
+<![endif]-->
+<!-- end contents scripts -->
+
+</head>
+<body>
+<div id="container">
+	<!-- begin header2 -->
+<!-- begin include header  -->
+<div id="includeHeader">
+	<div id="includeHeaderIn">
+	
+		<img id="page_top_hp" src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="ページの先頭"><a href="#page_body_hp"><img src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="ヘッダーをスキップし、本文へ"></a><br>
+
+<ul id="includeHLogo">
+			<li><a href="/"><img src="top/2009mb/common/images/ttl_h1_logo.gif" alt="SONY make.believe" width="104" height="36" border="0"></a></li>
+		</ul>
+
+		
+		<ul id="includeHNavi">
+			<li id="hnavi02"><a href="/sitemap/" title="サイトマップ">サイトマップ</a></li>
+			<li id="hnavi03"><a href="/grouplink/" title="グループリンク">グループリンク</a></li>
+		</ul>
+		
+		<form method="get" action="http://www.search.sony.co.jp/result/jp/search.x">
+			<ul id="includeSearch">
+				<li>
+					<label for="MF_form_phrase"><img src="template/2009mb/images/acc.gif" alt="検索" width="1" border="0" height="1"><input type="text" name="q" value="" id="MF_form_phrase"></label>
+
+				</li>
+				
+				<li>
+					<input type="image" src="top/2009mb/common/images/icon_search_off.gif" alt="検索" title="検索" class="searchBtn">
+					<input type="hidden" name="ie" value="SJIS">
+					<input type="hidden" name="page" value="1">
+				</li>
+				
+			<li id="includeSearchDetail"><a href="/Search/" title="詳細な検索">詳細な検索</a></li>
+			</ul>
+
+		</form>
+		
+		<p id="includeSpecialSite"><a href="/united/makedotbelieve/" title="make.believe Special site">make.believe Special site</a></p>
+		
+	<p id="includeJapan"><a href="/"><img src="top/2009mb/common/images/txt_japan.gif" alt="Japan" title="Sony Japan" width="32" height="11" border="0"></a></p>
+		
+<ul id="headerNavi2">
+			<li id="hnavi11"><a href="/SonyInfo/Support/" title="お問い合わせ・サポート">お問い合わせ・サポート</a></li>
+			<li id="hnavi12"><a href="/SonyInfo/technology/" title="技術情報">技術情報</a></li>
+			<li id="hnavi13"><a href="/SonyInfo/csr/" title="CSR・環境・社会貢献">CSR・環境・社会貢献</a></li>
+
+			<li id="hnavi14"><a href="/SonyInfo/Jobs/" title="採用情報">採用情報</a></li>
+			<li id="hnavi15"><a href="/SonyInfo/IR/" title="投資家情報">投資家情報</a></li>
+			<li id="hnavi16"><a href="/SonyInfo/News/Press/Group/" title="ニュースリリース">ニュースリリース</a></li>
+			<li id="hnavi17"><a href="/SonyInfo/CorporateInfo/" title="会社概要">会社概要</a></li>
+		</ul>
+		
+	<img id="page_body_hp" src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="本文の開始"><br>
+	</div>
+
+</div>
+
+<!-- end include header  -->
+<!-- end header2 -->
+<!-- begin contents -->
+	<div id="unitBlockAjax">
+		<div id="mainFailure">	
+			<div class="mainLinkArea">
+				<p><a href="/united/3D/static/"><img src="top/2009mb/img/link_spacer.gif" alt="3Dエンターテインメント特設サイトへ" width="1024" height="260" border="0"></a></p>
+			</div>
+		</div>
+		<noscript>
+		<div id="mainNoscript">
+			<div class="mainLinkArea">
+				<p><a href="/united/3D/static/"><img src="top/2009mb/img/link_spacer.gif" alt="3Dエンターテインメント特設サイトへ" width="1024" height="260" border="0"></a></p>
+			</div>
+		</div>
+		</noscript>
+
+		<div id="face">
+			<div id="visuals">
+				<div id="slides">
+					<div id="logoslide"> </div>
+				</div>
+			</div>
+	</div>
+	</div>
+
+<div id="unitBlockslide">
+		<div id="slidenavi"></div>
+		<ul id="businessmenu">
+			<li class="bmbtn" id="electronics"><a href="http://www.sony.jp/" id="bmbtnImg01"><img src="top/2009mb/img/btn/btn_01_off.png" alt="製品情報" width="135" height="51" border="0"></a></li>
+			<li class="bmbtn" id="game"><a href="http://www.jp.playstation.com/"><img src="top/2009mb/img/btn/btn_02_off.png" alt="ゲーム" width="136" height="51" border="0"></a></li>
+			<li class="bmbtn" id="movie"><a href="http://www.sonypictures.jp/"><img src="top/2009mb/img/btn/btn_03_off.png" alt="映画" width="136" height="51" border="0"></a></li>
+			<li class="bmbtn" id="music"><a href="http://www.sonymusic.co.jp/"><img src="top/2009mb/img/btn/btn_04_off.png" alt="音楽" width="136" height="51" border="0"></a></li>
+			<li class="bmbtn" id="internet"><a href="http://www.so-net.ne.jp/"><img src="top/2009mb/img/btn/btn_05_off.png" alt="インターネット" width="136" height="51" border="0"></a></li>
+			<li class="bmbtn" id="finance"><a href="/finance/"><img src="top/2009mb/img/btn/btn_06_off.png" alt="銀行・保険" width="136" height="51" border="0"></a></li>
+
+			<li class="bmbtn" id="b2b"><a href="http://www.sony.jp/professional/" id="bmbtnImg07"><img src="top/2009mb/img/btn/btn_07_off.png" alt="法人のお客様" width="133" height="51" border="0"></a></li>
+		</ul>
+		<ul id="businessmenuup">
+			<li class="upthumb" id="electronics2"><a href="http://www.sony.jp/"><img src="top/2009mb/img/btn/btn_up_01.png" alt="" width="135" height="133" border="0" id="btn_up01"></a></li>
+			<li class="upthumb" id="game2"><a href="http://www.jp.playstation.com/"><img src="top/2009mb/img/btn/btn_up_02.png" alt="" width="136" height="133" border="0" id="btn_up02"></a></li>
+			<li class="upthumb" id="movie2"><a href="http://www.sonypictures.jp/"><img src="top/2009mb/img/btn/btn_up_03.png" alt="" width="136" height="133" border="0" id="btn_up03"></a></li>
+			<li class="upthumb" id="music2"><a href="http://www.sonymusic.co.jp/"><img src="top/2009mb/img/btn/btn_up_04.png" alt="" width="136" height="133" border="0" id="btn_up04"></a></li>
+			<li class="upthumb" id="internet2"><a href="http://www.so-net.ne.jp/"><img src="top/2009mb/img/btn/btn_up_05.png" alt="" width="136" height="133" border="0" id="btn_up05"></a></li>
+			<li class="upthumb" id="finance2"><a href="/finance/"><img src="top/2009mb/img/btn/btn_up_06.png" alt="" width="136" height="133" border="0" id="btn_up06"></a></li>
+
+			<li class="upthumb" id="b2b2"><a href="http://www.sony.jp/professional/"><img src="top/2009mb/img/btn/btn_up_07.png" alt="" width="133" height="133" border="0" id="btn_up07"></a></li>
+		</ul>
+	</div>
+<div id="contents">
+		<div id="preloadedImages"></div>
+		<div id="unitBlockContents">
+			<p><img src="top/2009mb/common/images/background_top.gif" alt="" width="948" height="10"></p>
+			<div id="unitBlockInContents">
+				<dl id="unitListLeft">
+
+					<dt class="displayOff">ニュース情報</dt>
+					<dd>
+						<div id="unitBlockBoxLeft">
+							<div class="newsBlockCommon">
+								<h2><img src="top/2009mb/common/images/ttl_h2_news.gif" alt="ニュースリリース" width="171" height="28"></h2>
+								<p class="infoFirstBoxList"><a href="/SonyInfo/News/Press/Group/"><img src="top/2009mb/common/images/icon_ichiran02_off.gif" alt="一覧" width="65" height="28" border="0"></a></p>
+								<div class="unitBlockBoxTabBig">
+									<div class="topTab">
+
+										<div class="bottomTab">
+											<h3 id="tabLatest"><a href="javascript:void(0);" class="news"><img src="top/2009mb/common/images/tab_new_out.gif" alt="新着" width="67" height="25" border="0"></a></h3>
+											<div class="newsIn">
+												<div class="unitTabalpha" id="newsReleaseNew">
+													<!-- news_release -->
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="http://www.sonypcl.jp/press/press10/p_100624.html"><img src="/SonyInfo/News/Press/Group/8ido18000009ifqr.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月24日</span><span class="categoryFontSize">[ソニーピーシーエル]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sonypcl.jp/press/press10/p_100624.html">3Dコンテンツの制作体制を拡充 国内最大級の3D対応プロダクションへ</a></span></dd>
+															</dl>
+														</div>
+													</div>
+
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="http://www.sonypcl.jp/press/press10/p_100623.html"><img src="/SonyInfo/News/Press/Group/8ido18000009hvyt.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月23日</span><span class="categoryFontSize">[（株）ソニーDADCジャパン・ソニーピーシーエル（株）]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sonypcl.jp/press/press10/p_100623.html">国内向け“ブルーレイ3D”ソフトの制作・生産サービスを開始</a></span></dd>
+
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="http://www.sonyemcs.co.jp/ReleaseFiles/afieldfile/2010/06/22/20100701.pdf"><img src="/SonyInfo/News/Press/Group/8ido18000009gvl0.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+
+																<dt><span class="pubDataFontSize">2010年06月22日</span><span class="categoryFontSize">[ソニーイーエムシーエス]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sonyemcs.co.jp/ReleaseFiles/afieldfile/2010/06/22/20100701.pdf">ソニーイーエムシーエス（株）　人事　機構改革（PDF）</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+
+															<a href="/SonyInfo/News/Press/201006/10-080/"><img src="/SonyInfo/News/Press/Group/8ido18000009gutt.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月22日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-080/">オリビン型リン酸鉄リチウムを用いたリチウムイオン二次電池で1.2kWh級蓄電モジュール開発</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-079/"><img src="/SonyInfo/News/Press/Group/8ido18000009gagk.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月18日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-079/">取締役および執行役の選任について</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockDataNone">
+														<div class="unitDataInLeft">
+															<a href="http://www.scei.co.jp/corporate/release/pdf/100616a.pdf"><img src="/SonyInfo/News/Press/Group/8ido18000009emf4.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月16日</span><span class="categoryFontSize">[ソニー・コンピュータエンタテインメント]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.scei.co.jp/corporate/release/pdf/100616a.pdf">PlayStation&reg;Moveモーションコントローラ　2010年9月より世界各地域で順次発売</a></span></dd>
+															</dl>
+														</div>
+													</div>
+
+													<!-- / news_release -->
+												</div>
+											</div>
+											<h3 id="tabMovie"><a href="javascript:void(0);" class="news"><img src="top/2009mb/common/images/tab_movie_out.gif" alt="動画付きのみ" width="107" height="25" border="0"></a></h3>
+											<div class="newsIn displayOff" className="displayOff">
+												<div class="unitTabalpha" id="newsReleaseMovie">
+													<!-- news_release_movie -->
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+
+															<a href="/SonyInfo/News/Press/201006/10-0614/"><img src="/SonyInfo/News/Press/Group/8ido18000009dij4.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月14日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-0614/">ソニー、2010 FIFA ワールドカップ開幕に合わせ3D体感イベントを世界各国で展開</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201005/10-070/"><img src="/SonyInfo/News/Press/Group/8ido180000094vjc.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月26日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201005/10-070/">ペンほどの太さに巻き取れる有機TFT駆動有機ELディスプレイを開発</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="http://www.sony.jp/CorporateCruise/Press/201005/10-0512/"><img src="/SonyInfo/News/Press/Group/8ido18000008z7s6.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月12日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sony.jp/CorporateCruise/Press/201005/10-0512/">防水仕様でスポーツ中も軽快に音楽を楽しめる“ウォークマン”Wシリーズ</a></span></dd>
+															</dl>
+														</div>
+													</div>
+
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="http://www.sony.jp/CorporateCruise/Press/201005/10-0511/"><img src="/SonyInfo/News/Press/Group/8ido18000008y2je.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月11日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sony.jp/CorporateCruise/Press/201005/10-0511/">世界最小・最軽量ボディを実現　レンズ交換式デジタルカメラなど 2機種発売</a></span></dd>
+
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201005/10-059/"><img src="/SonyInfo/News/Press/Group/8ido18000008y2lh.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+
+																<dt><span class="pubDataFontSize">2010年05月11日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201005/10-059/">"Exmor" APS HD CMOSセンサー・レンズ交換式 高画質ハイビジョンビデオカメラ開発</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockDataNone">
+														<div class="unitDataInLeft">
+
+															<a href="http://www.sony.jp/CorporateCruise/Press/201004/10-0408/"><img src="/SonyInfo/News/Press/Group/8ido18000008p2iu.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年04月08日</span><span class="categoryFontSize">[ソニー(株)]</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sony.jp/CorporateCruise/Press/201004/10-0408/">“ウォークマン”の楽しみが広がるドックコンポなど計4機種を発売</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<!-- / news_release_movie -->
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="infoFirstBox">
+
+									<ul>
+										<li><img src="top/2009mb/common/images/icon_info.gif" alt="情報配信" width="57" height="18"></li>
+										<li><a href="http://www.sony.jp/mail/mysony/about/"><img src="top/2009mb/common/images/icon_mail_off.gif" alt="メールマガジン" width="91" height="18"></a></li>
+										<li><a href="/rss/"><img src="top/2009mb/common/images/icon_rss_off.gif" alt="RSS" width="44" height="18"></a></li>
+										<li><a href="http://blog.floq.jp/gallery/desktops/sonygroupnewsreader/"><img src="top/2009mb/common/images/icon_widit_off.gif" alt="ウィジェット" width="75" height="18"></a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="newsBlockCommon">
+
+								<h2><img src="top/2009mb/common/images/ttl_h2_important.gif" alt="重要なお知らせ" width="185" height="28"></h2>
+								<div class="infoBoxIchiran">
+									<p><a href="/SonyInfo/News/ServiceArea/"><img src="top/2009mb/common/images/icon_ichiran02_off.gif" alt="一覧" width="65" height="28" border="0"></a></p>
+								</div>
+								<div class="unitBlockBoxTabBig">
+									<div class="topTab2">
+										<div class="bottomTab">
+											<div class="unitTabalpha" id="viewImportantNews">
+												<!-- important_news -->
+
+												<div class="unitBlockData">
+													<dl class="dataList">
+														<dt><span class="pubDataFontSize">2010年06月10日</span></dt>
+														<dd><span class="mainFontSize"><a href="/SonyInfo/News/ServiceArea/100610/index.html">ブラウン管カラーテレビをお使いのお客様への「ご使用中止」のお知らせとお願い</a></span></dd>
+													</dl>
+												</div>
+												<div class="unitBlockData">
+													<dl class="dataList">
+
+														<dt><span class="pubDataFontSize">2010年04月01日</span></dt>
+														<dd><span class="mainFontSize"><a href="/SonyInfo/News/ServiceArea/100401/index.html">40V型および46V型液晶テレビ「KDL-40X1000 / KDL-46X1000」のテーブルトップスタンド無償交換のお願いとお詫び</a></span></dd>
+													</dl>
+												</div>
+												<div class="unitBlockData">
+													<dl class="dataList">
+														<dt><span class="pubDataFontSize">2010年02月18日</span></dt>
+
+														<dd><span class="mainFontSize"><a href="http://vcl.vaio.sony.co.jp/iforu/hotnews/2010/02/002/index.html">VAIOパーソナルコンピューター Sシリーズ（VPCS119FJ/B）原産国誤表示のお知らせとお詫び</a></span></dd>
+													</dl>
+												</div>
+												<div class="unitBlockData">
+													<dl class="dataList">
+														<dt><span class="pubDataFontSize">2009年12月01日</span></dt>
+														<dd><span class="mainFontSize"><a href="/SonyInfo/News/ServiceArea/051003/index.html">デジタルスチルカメラ、カムコーダー、ＰＤＡ“クリエ”、業務用カムコーダをご愛用のお客様へのお知らせ</a></span></dd>
+
+													</dl>
+												</div>
+												<div class="unitBlockData">
+													<dl class="dataList">
+														<dt><span class="pubDataFontSize">2009年10月27日</span></dt>
+														<dd><span class="mainFontSize"><a href="http://vcl.vaio.sony.co.jp/iforu/hotnews/2009/10/002/index.html">VAIOパーソナルコンピューター用ACアダプター VGP-AC19V17 使用中止ならびに無償交換のお願いとお詫び</a></span></dd>
+													</dl>
+												</div>
+
+												<div class="unitBlockData">
+													<dl class="dataList">
+														<dt><span class="pubDataFontSize">2009年10月15日</span></dt>
+														<dd><span class="mainFontSize"><a href="http://vcl.vaio.sony.co.jp/iforu/hotnews/2008/09/001/index.html">VAIOパーソナルコンピューターtype T TZシリーズ　無償点検・修理のお知らせとお詫び（2009年10月15日更新）</a></span></dd>
+													</dl>
+												</div>
+												<div class="unitBlockDataNone">
+													<dl class="dataList">
+
+														<dt><span class="pubDataFontSize">2009年09月11日</span></dt>
+														<dd><span class="mainFontSize"><a href="http://vcl.vaio.sony.co.jp/iforu/hotnews/2009/09/002/index.html">Bluetoothレーザーマウス「VGP-BMS10/S」ご愛用のお客様へのお知らせとお詫び</a></span></dd>
+													</dl>
+												</div>
+												<!-- / important_news -->
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<div class="newsBlockCommon">
+								<h2><img src="top/2009mb/common/images/ttl_h2_information.gif" alt="サイト内更新情報" width="176" height="28"></h2>
+								<div class="unitBlockBoxTabBig">
+									<div class="topTab">
+										<div class="bottomTab">
+											<h3 id="tabInfoLatest"><a href="javascript:void(0);" class="info"><img src="top/2009mb/common/images/tab_new_out.gif" alt="新着" width="67" height="25" border="0"></a></h3>
+											<div class="infoIn">
+
+												<div class="unitTabalpha" id="viewInformationLatest">
+													<!-- information_latest -->
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/press/index.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月22日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/press/index.html">【プレスリリース】オリビン型リン酸鉄リチウムを用いたリチウムイオン二次電池で1.2kWh級の蓄電モジュールを開発</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-079/"><img src="/SonyInfo/IR/news/thum0618J.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月18日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-079/">取締役および執行役の選任について</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/Jobs/newgrads/index.html"><img src="/top/2008/img/thumb/thumb_base_recruit.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月16日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/Jobs/newgrads/index.html">【新卒採用】2012年度新卒採用対象の学生の皆様へ</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-078/"><img src="/SonyInfo/IR/news/8ido18000003cua4.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月15日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-078/">執行役　ならびに　業務執行役員、グループ役員の選任について</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/technology/theme/bio_01.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月11日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/technology/theme/bio_01.html">【更新情報】 バイオ電池技術を公開</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockDataNone">
+
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-0609/"><img src="/SonyInfo/IR/news/8ido18000003c343.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月09日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-0609/">ソニー、Discovery Communications、IMAX Corporation3社共同で運営する<br>3D専用TVネットワークの合弁会社代表を指名</a></span></dd>
+
+															</dl>
+														</div>
+													</div>
+													<!-- / information_latest -->
+												</div>
+											</div>
+											<h3 id="tabTechnology"><a href="javascript:void(0);" class="info"><img src="top/2009mb/common/images/tab_technology_out.gif" alt="技術情報" width="81" height="25" border="0"></a></h3>
+											<div class="infoIn displayOff" className="displayOff">
+												<div class="unitTabalpha" id="viewInformationTech">
+
+													<!-- information_tech -->
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/press/index.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月22日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/press/index.html">【プレスリリース】オリビン型リン酸鉄リチウムを用いたリチウムイオン二次電池で1.2kWh級の蓄電モジュールを開発</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/technology/theme/bio_01.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月11日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/technology/theme/bio_01.html">【更新情報】 バイオ電池技術を公開</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/press/index.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月26日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/press/index.html">【プレスリリース】ペンほどの太さに巻き取れる有機TFT駆動有機ELディスプレイを開発</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/press/index.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月07日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/press/index.html">【プレスリリース】個別ID情報をホログラムで記録可能なホログラム量産技術を開発</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/press/index.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年03月08日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/press/index.html">【プレスリリース】大型プロジェクター用の高効率RGBレーザー光源モジュールを開発</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockDataNone">
+
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/technology/technology/theme/trublack_01.html"><img src="/top/2008/img/thumb/thumb_base_tech.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年02月26日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/technology/technology/theme/trublack_01.html">【更新情報】 TruBlackディスプレイ技術を公開</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<!-- / information_tech -->
+												</div>
+											</div>
+											<h3 id="tabCsr"><a href="javascript:void(0);" class="info"><img src="top/2009mb/common/images/tab_csr_out.gif" alt="CSR・環境・社会貢献" width="139" height="25" border="0"></a></h3>
+											<div class="infoIn displayOff" className="displayOff">
+												<div class="unitTabalpha" id="viewInformationCSR">
+													<!-- information_csr -->
+
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/csr/eco/site/resource/report20_1.html"><img src="/SonyInfo/csr/news/hitotoyo.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月03日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/csr/eco/site/resource/report20_1.html">ソニーの「ECO」：【特集】ハリウッドの映画スタジオでの環境配慮</a></span></dd>
+
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/csr/eco/topics/life/index.html"><img src="/SonyInfo/csr/news/8ido180000024h01.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+
+																<dt><span class="pubDataFontSize">2010年05月06日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/csr/eco/topics/life/index.html">ソニーの「ECO」：エコライフ入門（第9回） 通勤・出張におけるCO2削減術</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/csr/eco/topics/shain/index.html"><img src="/SonyInfo/csr/news/8ido180000024gtb.jpg" alt="" width="66" height="50"></a>
+
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月06日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/csr/eco/topics/shain/index.html">ソニーの「ECO」：発見！ソニーのエコ社員（第10回）</a></span></dd>
+															</dl>
+														</div>
+													</div>
+
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/csr/news/20100426.html"><img src="/top/2008/img/thumb/thumb_base_csr.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年04月26日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/csr/news/20100426.html">弊社でのリチウムイオン電池の再資源化実績について</a></span></dd>
+
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/csr/eco/RoadToZero/"><img src="/SonyInfo/csr/news/8ido180000024844.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+
+																<dt><span class="pubDataFontSize">2010年04月07日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/csr/eco/RoadToZero/">環境負荷ゼロを目指す環境計画「Road to Zero」を策定</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockDataNone">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/csr/eco/product/resource/report19.html"><img src="/SonyInfo/csr/news/ecolife8ifdsf0100318vdm.jpg" alt="" width="66" height="50"></a>
+
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年04月01日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/csr/eco/product/resource/report19.html">ソニーの「ECO」：【特集】VAIO Wのグリーンプロジェクト</a></span></dd>
+															</dl>
+														</div>
+													</div>
+
+													<!-- / information_csr -->
+												</div>
+											</div>
+											<h3 id="tabRecruit"><a href="javascript:void(0);" class="info"><img src="top/2009mb/common/images/tab_recruit_out.gif" alt="採用情報" width="81" height="25" border="0"></a></h3>
+											<div class="infoIn displayOff" className="displayOff">
+												<div class="unitTabalpha" id="viewInformationRecruit">
+													<!-- information_recruit -->
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+
+															<a href="/SonyInfo/Jobs/newgrads/index.html"><img src="/top/2008/img/thumb/thumb_base_recruit.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月16日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/Jobs/newgrads/index.html">【新卒採用】2012年度新卒採用対象の学生の皆様へ</a></span></dd>
+															</dl>
+														</div>
+
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/Jobs/newgrads/20100218.html"><img src="/top/2008/img/thumb/thumb_base_recruit.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月26日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/Jobs/newgrads/20100218.html">【新卒採用】＜第３期＞エントリー受付を開始いたしました。</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/Jobs/newgrads/index.html"><img src="/top/2008/img/thumb/thumb_base_recruit.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2009年10月01日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/Jobs/newgrads/index.html">【新卒採用】2011年3月までに大学、大学院を卒業見込みの方を対象とした<br>「ソニー株式会社 2011 新卒採用メンバーズサイト」をオープンしました。<br>ぜひメンバー登録してください。</a></span></dd>
+															</dl>
+														</div>
+													</div>
+
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/Jobs/indiv/index.html"><img src="/top/2008/img/thumb/thumb_base_recruit.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2009年10月01日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/Jobs/indiv/index.html">【障がいのある方へ】 障がいのある方へのメッセージ</a></span></dd>
+
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+													</div>
+													<div class="unitBlockDataNone">
+													</div>
+													<!-- / information_recruit -->
+												</div>
+
+											</div>
+											<h3 id="tabInvest"><a href="javascript:void(0);" class="info"><img src="top/2009mb/common/images/tab_invest_out.gif" alt="投資家情報" width="91" height="25" border="0"></a></h3>
+											<div class="infoIn displayOff" className="displayOff">
+												<div class="unitTabalpha" id="viewInformationInvest">
+													<!-- information_invest -->
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-079/"><img src="/SonyInfo/IR/news/thum0618J.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月18日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-079/">取締役および執行役の選任について</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-078/"><img src="/SonyInfo/IR/news/8ido18000003cua4.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月15日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-078/">執行役　ならびに　業務執行役員、グループ役員の選任について</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-0609/"><img src="/SonyInfo/IR/news/8ido18000003c343.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月09日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-0609/">ソニー、Discovery Communications、IMAX Corporation3社共同で運営する<br>3D専用TVネットワークの合弁会社代表を指名</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+														<div class="unitDataInLeft">
+															<a href="http://www.sony.net/SonyInfo/IR/investors/Consolidated_Financial_Statements.pdf"><img src="/top/2008/img/thumb/thumb_base_invest.jpg" alt="" width="66" height="50"></a>
+														</div>
+
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月03日</span></dt>
+																<dd><span class="mainFontSize"><a href="http://www.sony.net/SonyInfo/IR/investors/Consolidated_Financial_Statements.pdf">2009年度連結財務諸表（英文のみ）</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<div class="unitBlockData">
+
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201006/10-073/"><img src="/SonyInfo/IR/news/8ido180rjfapv1.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年06月02日</span></dt>
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201006/10-073/">ソニー、ブルーレイディスク・DVD機器事業の競争力強化に向けて生産体制を再編</a></span></dd>
+															</dl>
+
+														</div>
+													</div>
+													<div class="unitBlockDataNone">
+														<div class="unitDataInLeft">
+															<a href="/SonyInfo/News/Press/201005/10-0521/index.html"><img src="/SonyInfo/IR/news/20100521thum.jpg" alt="" width="66" height="50"></a>
+														</div>
+														<div class="unitDataInRight">
+															<dl class="dataList">
+																<dt><span class="pubDataFontSize">2010年05月21日</span></dt>
+
+																<dd><span class="mainFontSize"><a href="/SonyInfo/News/Press/201005/10-0521/index.html">ソニーとGoogle、アンドロイドプラットフォームを採用したクラウドベースの魅力的で新たな商品とサービスの実現を目指し、戦略的提携を構築</a></span></dd>
+															</dl>
+														</div>
+													</div>
+													<!-- / information_invest -->
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+								<div class="infoBoxbeta">
+									<ul>
+										<li><img src="top/2009mb/common/images/icon_info.gif" alt="情報配信" width="57" height="18"></li>
+										<li><a href="http://www.sony.jp/mail/mysony/about/"><img src="top/2009mb/common/images/icon_mail_off.gif" alt="メールマガジン" width="91" height="18"></a></li>
+										<li><a href="/rss/"><img src="top/2009mb/common/images/icon_rss_off.gif" alt="RSS" width="44" height="18"></a></li>
+										<li><a href="http://blog.floq.jp/gallery/desktops/sonygroupnewsreader/"><img src="top/2009mb/common/images/icon_widit_off.gif" alt="ウィジェット" width="75" height="18"></a></li>
+									</ul>
+
+								</div>
+							</div>
+						</div>
+					</dd>
+				</dl>
+				<dl id="unitListRight">
+					<dt class="displayOff">エンタテインメント情報</dt>
+					<dd>
+
+						<div id="unitBlockBoxRight">
+							<h2><a href="/SonyInfo/News/ServiceArea/"><img src="top/2009mb/common/images/i_btn_off.gif" alt="重要なお知らせ" width="252" height="32" border="0"></a></h2><br>
+							<h2><img src="top/2009mb/common/images/ttl_h2_movie.gif" alt="動画コンテンツ" width="161" height="28"></h2>
+							<div class="unitBlockBoxTabSmall tabNoMenu">
+								<div class="topTab">
+									<div class="bottomTab">
+										<div class="movieIn">
+											<div class="unitTabalpha" id="movieNews">
+												<!-- movie_news -->
+
+												<div class="unitBlockData">
+													<div class="unitMovieInOne">
+														<div id="movieYoutube"><div id="movieYoutubeOne">
+															<p><script type="text/javascript">
+																var VersionCheck = DetectFlashVer(8, 0, 0);
+																if(VersionCheck)
+																{
+																	AC_FL_RunContent( 'codebase','http://www.youtube.com/v/1CSjdobj0IQ&hd=1&h1=ja&fs=1','width', '232','height', '192','quality','high','pluginspage','http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash','movie','http://www.youtube.com/v/1CSjdobj0IQ&hd=1&h1=ja&fs=1' );
+																} else {
+																	document.write("古いバージョンの Adobe Flash Player を使用しているか Flash Player がインストールされていません。<br><a href='http://www.adobe.com/go/getflashplayer/'>最新の Flash Player を入手してください。</a>");
+																}
+															</script></p>
+															<noscript><p>JavaScript がオフになっています。JavaScript をオンにしてください。</p></noscript>
+														</div>
+														</div>
+														<dl class="movieList">
+
+															<dt><span class="pubDataFontSize">2010年05月11日</span></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://www.youtube.com/watch?v=1CSjdobj0IQ&hd=1">"&alpha;" NEX-5で撮影したイタリア世界遺産「オルチャ渓谷」の映像</a></span></dd>
+														</dl>
+													</div>
+												</div>
+												<div class="unitBlockData">
+													<div class="unitMovieInLeft">
+
+														<a href="http://www.youtube.com/watch?v=lnHQyLtbjok&hd=1"><img src="/video2/201005/10-0511_1/top.jpg" alt="" width="80" height="45"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><span class="pubDataFontSize">2010年05月11日</span></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://www.youtube.com/watch?v=lnHQyLtbjok&hd=1">レンズ交換式高画質ハイビジョンビデオカメラ開発中のお知らせ</a></span></dd>
+														</dl>
+													</div>
+
+												</div>
+												<div class="unitBlockData">
+													<div class="unitMovieInLeft">
+														<a href="http://www.youtube.com/watch?v=K0AzFfuzF6M&hd=1"><img src="/video2/201004/10-0416/top.jpg" alt="" width="80" height="45"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><span class="pubDataFontSize">2010年04月16日</span></dt>
+
+															<dd><span class="sideContentsFontSize"><a href="http://www.youtube.com/watch?v=K0AzFfuzF6M&hd=1">Japan ミラノサローネ 2010 "Contemplating Monolithic Design"</a></span></dd>
+														</dl>
+													</div>
+												</div>
+												<div class="unitBlockData">
+													<div class="unitMovieInLeft">
+														<a href="http://www.youtube.com/watch?v=Wn-YQrB3C7Q&hd=1"><img src="/video2/201004/10-0408_3/top.jpg" alt="" width="80" height="45"></a>
+													</div>
+
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><span class="pubDataFontSize">2010年04月08日</span></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://www.youtube.com/watch?v=Wn-YQrB3C7Q&hd=1">"ウォークマン"ドックスピーカー RDP-NWV500</a></span></dd>
+														</dl>
+													</div>
+												</div>
+												<div class="unitBlockDataNone">
+
+													<div class="unitMovieInLeft">
+														<a href="http://www.youtube.com/watch?v=kXI8cCxhOqc&hd=1"><img src="/video2/201004/10-0408_2/top.jpg" alt="" width="80" height="45"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><span class="pubDataFontSize">2010年04月08日</span></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://www.youtube.com/watch?v=kXI8cCxhOqc&hd=1">"ウォークマン"ドックコンポ NAS-V7M | NAS-V5</a></span></dd>
+														</dl>
+
+													</div>
+												</div>
+												<!-- / movie_news -->
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<h2><img src="top/2009mb/common/images/ttl_h2_ranking_02.gif" alt="楽曲ランキング mora" width="216" height="29"></h2>
+							<div class="unitBlockBoxTabSmall tabNoMenu">
+								<div class="topTab">
+									<div class="bottomTab">
+										<div class="rankIn">
+											<div class="unitTabalpha" id="rankMora">
+												<!-- rank_mora -->
+												<div class="unitBlockData">
+													<div class="unitRank1">
+
+														<a href="http://mora.jp/artist/80312087/WMG13055/?cpid=sony.co.jp"><img src="http://cnt01.labelgate.com/photo/0900/010/532/0900010532C.jpg" alt="" width="42" height="42"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><a href="http://mora.jp/artist/80312087/WMG13055/?cpid=sony.co.jp">タマシイレボリューション</a></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://mora.jp/artist/80312087/WMG13055/?cpid=sony.co.jp">Superfly</a></span></dd>
+														</dl>
+													</div>
+
+												</div>
+												<div class="unitBlockData">
+													<div class="unitRank2">
+														<a href="http://mora.jp/artist/80307744/83112185/?cpid=sony.co.jp"><img src="http://cnt01.labelgate.com/photo/0900/003/517/0900003517C.jpg" alt="" width="42" height="42"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><a href="http://mora.jp/artist/80307744/83112185/?cpid=sony.co.jp">LOVE RAIN 〜恋の雨〜</a></dt>
+
+															<dd><span class="sideContentsFontSize"><a href="http://mora.jp/artist/80307744/83112185/?cpid=sony.co.jp">久保田利伸</a></span></dd>
+														</dl>
+													</div>
+												</div>
+												<div class="unitBlockData">
+													<div class="unitRank3">
+														<a href="http://mora.jp/artist/80328011/PXCOL0000082489/?cpid=sony.co.jp"><img src="http://cnt01.labelgate.com/photo/0800/064/977/0800064977C.jpg" alt="" width="42" height="42"></a>
+													</div>
+
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><a href="http://mora.jp/artist/80328011/PXCOL0000082489/?cpid=sony.co.jp">Ring a Ding Dong</a></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://mora.jp/artist/80328011/PXCOL0000082489/?cpid=sony.co.jp">木村カエラ</a></span></dd>
+														</dl>
+													</div>
+												</div>
+												<div class="unitBlockData">
+
+													<div class="unitRank4">
+														<a href="http://mora.jp/artist/80307744/70005022/?cpid=sony.co.jp"><img src="http://cnt01.labelgate.com/photo/0900/017/018/0900017018C.jpg" alt="" width="42" height="42"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><a href="http://mora.jp/artist/80307744/70005022/?cpid=sony.co.jp">このままで</a></dt>
+															<dd><span class="sideContentsFontSize"><a href="http://mora.jp/artist/80307744/70005022/?cpid=sony.co.jp">西野　カナ</a></span></dd>
+														</dl>
+
+													</div>
+												</div>
+												<div class="unitBlockDataNone">
+													<div class="unitRank5">
+														<a href="http://mora.jp/artist/80311556/UM3013010/?cpid=sony.co.jp"><img src="http://cnt01.labelgate.com/photo/0900/010/100/0900010100C.jpg" alt="" width="42" height="42"></a>
+													</div>
+													<div class="unitMovieInRight">
+														<dl class="movieList">
+															<dt><a href="http://mora.jp/artist/80311556/UM3013010/?cpid=sony.co.jp">つぐみ</a></dt>
+
+															<dd><span class="sideContentsFontSize"><a href="http://mora.jp/artist/80311556/UM3013010/?cpid=sony.co.jp">スピッツ</a></span></dd>
+														</dl>
+													</div>
+												</div>
+												<!-- / rank_mora -->
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<!-- banner_advt -->
+							<ul class="unitBlockBnArea">
+								<li><a href="http://www.sony.jp/hitokoto/"><img src="top/2008/common/images/bn_hitokoto.gif" alt="ソニーのヒト・コト　ソニーをさらに知っていただける楽しい情報をお届けします！" width="251" height="73" border="0"></a></li>
+								<li><a href="http://www.sony.co.jp/SonyInfo/csr/eco/RoadToZero"><img src="top/2008/common/images/bn_RoadToZero.jpg" alt="ソニーの環境計画 Road ro Zero" width="251" height="73" border="0"></a></li>
+								<li><a href="http://www.jp.sonystyle.com/"><img src="top/2008/common/images/bn_sonystyle.gif" alt="ソニーのオフィシャル通販サイト　Sony Style" width="251" height="73" border="0"></a></li>
+								<li><a href="http://www.sony.co.jp/Fun/design/"><img src="top/2008/common/images/bn_sonydesign.jpg" alt="ソニーデザイン" width="251" height="73" border="0"></a></li>
+								<li><a href="http://tv.so-net.ne.jp/s/sony"><img src="top/2008/common/images/bn_tvguide.gif" alt="ソニー提供/ソニー所属選手出場予定試合の番組表　Gガイド.テレビ王国" width="251" height="73" border="0"></a></li>
+
+							</ul>
+							<!-- / banner_advt -->
+
+						</div>
+					</dd>
+				</dl>
+				<p class="pageTop"><a href="#container"><img src="top/2009mb/common/images/btn_pagetop_off.gif" alt="このページの先頭へ" width="135" height="16" border="0"></a></p>
+			<div class="clear"><img src="top/2009mb/common/images/background_bottom.gif" alt="" width="948" height="10"></div>
+			</div>
+
+		</div>
+		<script type="text/javascript">
+		<!--
+			setTabEvent();
+		-->
+		</script>
+<!-- end contents -->
+		<!-- begin include footer  -->
+<div id="includeFooter">
+	<div id="includeFooterIn">
+		<img src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="本文の終了"><a href="#page_end_hp"><img src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="フッターをスキップし、ページの終了へ"></a><br>
+		<ul>
+			<li id="fnavi01"><a href="http://www.sony.net/" title="GlobalHome">GlobalHome</a></li>
+
+			<li id="fnavi02"><a href="/copyright/" title="ご利用条件">ご利用条件</a></li>
+			<li id="fnavi03"><a href="/privacy/" title="プライバシーポリシー">プライバシーポリシー</a></li>
+			<li id="fnavi04"><a href="/about/" title="このサイトについて">このサイトについて</a></li>
+		</ul>
+		<address>
+		<img src="top/2009mb/common/images/copyright.gif" alt="Copyright 2010 Sony Corporation" title="Copyright 2010 Sony Corporation" width="163" height="10">
+	</address>
+
+	<img id="page_end_hp" src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="ページの終了"><a href="#page_top_hp"><img src="template/2009mb/images/acc.gif" width="1" height="1" border="0" alt="ページの先頭に戻る"></a>	</div>
+</div>
+<!-- end include footer  -->
+	</div>
+</div>
+<script type="text/javascript" language="JavaScript" src="ct/s_code.js"></script>
+<script type="text/javascript" language="JavaScript" src="ct/sc.js"></script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,1 @@
+#include "../src/tloggerplugin.h"

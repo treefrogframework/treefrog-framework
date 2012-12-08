@@ -1,0 +1,48 @@
+/* Copyright (c) 2010-2012, AOYAMA Kazuharu
+ * All rights reserved.
+ *
+ * This software may be used and distributed according to the terms of
+ * the New BSD License, which is incorporated herein by reference.
+ */
+
+#include <TCookieJar>
+
+/*!
+  \class TCookieJar
+  \brief The TCookieJar class holds network cookies.
+*/
+
+/*!
+  Adds the cookie \a cookie to the cookie jar.
+*/
+void TCookieJar::addCookie(const TCookie &cookie)
+{
+    for (QMutableListIterator<TCookie> it(*this); it.hasNext(); ) {
+        if (it.next().name() == cookie.name()) {
+            it.remove();
+            break;
+        }
+    }
+    append(cookie);
+}
+
+
+/*!
+  \fn TCookieJar::TCookieJar()
+  Constructor.
+*/
+
+/*!
+  \fn TCookieJar::TCookieJar(const TCookieJar &jar)
+  Copy constructor.
+*/
+
+/*!
+  \fn TCookieJar &TCookieJar::operator=(const TCookieJar &jar)
+  Assigns other to this cookie jar and returns a reference to this cookie jar.
+*/
+
+/*!
+  \fn QList<TCookie> TCookieJar::allCookies() const
+  Returns a list of all cookies in the cookie jar.
+*/

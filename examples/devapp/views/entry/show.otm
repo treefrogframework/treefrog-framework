@@ -1,0 +1,25 @@
+#include "entry.h"
+
+#head_title ~= controller()->name() + ": " + controller()->activeAction()
+
+#init : tfetch(Entry, entry);
+
+#error_msg ~ tehvar(error)
+
+#notice_msg ~ tehvar(notice)
+
+#id := entry.id()
+
+#name := entry.name()
+
+#address := entry.address()
+
+#createdAt := entry.createdAt()
+
+#updatedAt := entry.updatedAt()
+
+#revision := entry.revision()
+
+#linkToEdit :== linkTo("Edit", urla("edit", entry.id()))
+
+#linkToIndex :== linkTo("Back", urla("index"))

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title data-tf="#head_title"></title>
+</head>
+<body>
+<p style="color: red" data-tf="#error_msg"></p>
+<p style="color: green" data-tf="#notice_msg"></p>
+
+<h1>New Entry</h1>
+
+<form method="post" data-tf="#entry_form">
+  <p>
+    <label for="entry_id">ID</label><br />
+    <input id="entry_id" name="entry[id]" />
+  </p>
+  <p>
+    <label for="entry_name">Name</label><br />
+    <input id="entry_name" name="entry[name]" />
+  </p>
+  <p>
+    <label for="entry_address">Address</label><br />
+    <input id="entry_address" name="entry[address]" />
+  </p>
+  <p>
+    <label for="entry_revision">Revision</label><br />
+    <input id="entry_revision" name="entry[revision]" />
+  </p>
+  <p>
+    <input type="submit" value="Create" />
+  </p>
+</form>
+
+<a data-tf="#linkToIndex">Back</a>
+
+</body>
+</html>

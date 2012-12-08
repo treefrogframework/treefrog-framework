@@ -1,0 +1,8 @@
+
+#val1 ~ eh(tVal(hoge));
+
+#val2 : eh(tVal(hoge));
+
+#cond1 : if (true) { %% }
+
+#cond2 ~ if (false) { %% }

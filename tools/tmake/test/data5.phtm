@@ -1,0 +1,3499 @@
+<!DOCTYPE html>
+<html lang="" dir="ltr">
+<!-- machid: sd1dXU2oteFNMSkhFd1VFQ0tUVUVjODZ0S0VkdUNDRUl0b19lN2djUnFJTDZ6X3F4T2t4QUFR -->
+<head>
+				<script>
+			var yt = yt || {};
+			yt.timing = yt.timing || {};
+			yt.timing.cookieName = 'VISITOR_INFO1_LIVE';
+			yt.timing.tick = function(label) {
+				var timer = yt.timing.timer || {};
+				timer[label] = new Date().getTime();
+				yt.timing.timer = timer;
+			};
+				yt.timing.experiment = '902308,901013';
+			
+				yt.timing.tick('start');
+			
+			try {
+				yt.timing.pt = window.gtbExternal && window.gtbExternal.pageT() ||
+							window.external && window.external.pageT;
+			} catch(e) {}
+			if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
+				yt.timing.pt = window.chrome && window.chrome.csi && Math.floor(window.chrome.csi().pageT);
+			}
+		</script>
+
+
+		<title>
+		YouTube
+			- Broadcast Yourself
+	</title>
+
+				<link id="www-core-css" rel="stylesheet" href="http://s.ytimg.com/yt/cssbin/www-core-vfl173155.css">
+
+
+	<style type="text/css">
+</style>
+
+
+			<link rel="alternate" type="application/rss+xml" title="YouTube - ブログ" href="/rss/global/our_blog.rss">
+	<link rel="alternate" type="application/rss+xml" title="YouTube - 今日のお気に入り登録の多い動画" href="http://gdata.youtube.com/feeds/base/standardfeeds/top_favorites?client=ytapi-youtube-index&amp;time=today&amp;v=2">
+	<link rel="alternate" type="application/rss+xml" title="YouTube - 今日の評価の高い動画" href="http://gdata.youtube.com/feeds/base/standardfeeds/top_rated?client=ytapi-youtube-index&amp;time=today&amp;v=2">
+	<link rel="alternate" type="application/rss+xml" title="YouTube - 今日の人気の動画" href="http://gdata.youtube.com/feeds/base/standardfeeds/most_viewed?client=ytapi-youtube-index&amp;time=today&amp;v=2">
+	<link rel="alternate" type="application/rss+xml" title="YouTube - 今日の話題の動画" href="http://gdata.youtube.com/feeds/base/standardfeeds/most_discussed?client=ytapi-youtube-index&amp;time=today&amp;v=2">
+	<link rel="alternate" type="application/rss+xml" title="YouTube - 最近追加された動画" href="http://gdata.youtube.com/feeds/base/standardfeeds/most_recent?client=ytapi-youtube-index&amp;v=2">
+
+	<link rel="alternate" type="application/rss+xml" title="YouTube - 最近のおすすめ" href="http://gdata.youtube.com/feeds/base/standardfeeds/recently_featured?client=ytapi-youtube-index&amp;v=2">
+
+
+	<link rel="search" type="application/opensearchdescription+xml" href="http://www.youtube.com/opensearch?locale=ja_JP" title="YouTube 動画検索">
+	<link rel="icon" href="http://s.ytimg.com/yt/favicon-vfl147246.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="http://s.ytimg.com/yt/favicon-vfl147246.ico" type="image/x-icon">
+		<link rel="canonical" href="/?gl=JP&amp;hl=ja">
+		<link rel="alternate" media="handheld" href="http://m.youtube.com/index?desktop_uri=%2F&amp;gl=JP">
+	
+		<meta name="description" content="YouTube では、動画を発見、再生、アップロード、共有することができます。">
+
+		<meta name="keywords" content="動画, ビデオ, 無料, フリー, 簡単, 検索, 見つける, 発見, 再生, 視聴, 見る, 参加, 共有, 公開, アップロード, 娯楽, エンターテイメント, video, free, simple, search, find, discover, watch, engage, share, sharing, upload, entertainment">
+
+	
+
+					<script id="www-core-js" src="http://s.ytimg.com/yt/jsbin/www-core-vfl173142.js"></script>
+
+
+	<!-- begin postpage section -->
+	<script>
+		
+		yt.setConfig({
+			'XSRF_TOKEN': 'CyRqQ_mk1WMrkSnQuHNpx2S_N5l8MTI3NzUzODM3NQ==',
+			'XSRF_FIELD_NAME': 'session_token'
+		});
+		yt.pubsub.subscribe('init', yt.www.xsrf.populateSessionToken);
+
+
+		yt.setConfig('XSRF_QL_PAIR', 'session_token=eRyAEp8Wvh79lR7YSuUKEHcqFc58MA==');
+
+
+
+		yt.setConfig('LOGGED_IN', false);
+	</script>
+
+		
+
+<script type="text/javascript">
+	var masthead = new yt.www.home.ads.mastheadAd('1', false, '2', 'Aq4tzCpMxuE', true, true, false)
+	yt.pubsub.subscribe('init', function() {
+		_showdiv('masthead-utility-menulink-short');
+		_hidediv('masthead-utility-menulink-long');
+	});
+
+</script>
+
+<script type="text/javascript">
+
+	var moduleHelper = new yt.www.home.ModuleHelper('',
+			false, true);
+		moduleHelper.addModule('SPV');
+		moduleHelper.addModule('FEA');
+		moduleHelper.addModule('REC');
+		moduleHelper.addModule('POP');
+		moduleHelper.addModule('PRO');
+		moduleHelper.addModule('TOP');
+
+	function checkChromePromoAlert() {
+		var hideChromePromos = yt.UserPrefs.getFlag3(yt.UserPrefs.Flags.FLAG3_HIDE_CHROME_PROMOS);
+
+		if (!hideChromePromos) {
+			_showdiv('homepage-chrome-side-promo');
+		}
+	};
+
+	yt.pubsub.subscribe('init', checkChromePromoAlert);
+
+	function dismissChromePromoAlert() {
+		yt.UserPrefs.setFlag3(yt.UserPrefs.Flags.FLAG3_HIDE_CHROME_PROMOS, true);
+		yt.UserPrefs.save();
+		_hidediv('homepage-chrome-side-promo');
+	};
+
+
+	yt.pubsub.subscribe('init', function() {
+		(function() {
+			var sessionToken = '';
+			var rootUrl = 'http://www.youtube.com/';
+			var locale = 'ja_JP';
+			var serviceInfo = null;
+			var isGaiaUser = false;
+			var facebookAppKey = '7ff82e59b6b2fbd316cca35309e95df3';
+			var tpDomain = 's.youtube-3rd-party.com';
+
+			var autoshare = new yt.sharing.AutoShare(sessionToken, rootUrl, locale, serviceInfo,
+					isGaiaUser, facebookAppKey, tpDomain);
+			if (_gel('fb-login-btn')) {
+				autoshare.registerConnectDialogLauncher(_gel('fb-login-btn'), 'facebook');
+			}
+
+			var gaiaChangedCallback = function(autoshare) {
+				var isGaiaUser = autoshare.isGaiaUser();
+				yt.style.setDisplayed('fb-promo-google-nag', !isGaiaUser);
+				yt.style.setDisplayed('fb-promo-google-linked', isGaiaUser);
+
+				if (isGaiaUser) {
+					var link = _gel('fb-promo-google-linked-continue-to-fb');
+					var fn = function() {
+						autoshare.handleConnectService({currentTarget: _gel('fb-login-btn')});
+					}
+					link.onclick = fn;
+				}
+			}
+			autoshare.addGaiaChangedCallback(gaiaChangedCallback);
+
+			var canConnectCallback = function(autoshare) {
+				var isGaiaUser = autoshare.isGaiaUser();
+				yt.style.setDisplayed('fb-promo-google-nag', !isGaiaUser);
+				yt.style.setDisplayed('fb-promo-google-linked', false);
+				yt.style.setDisplayed('fb-promo-fb-linked', false);
+				return isGaiaUser;
+			}
+			autoshare.addCanConnectCallback(canConnectCallback);
+
+			var serviceChangedCallback = function(autoshare) {
+				var serviceInfo = autoshare.getServiceInfo();
+				for (var service in serviceInfo) {
+					var info = serviceInfo[service];
+					if (service == 'facebook' && info['is_connected']) {
+						yt.style.setDisplayed('fb-promo-fb-linked', true);
+						hideFbPromoAlert();
+					}
+				}
+			};
+			autoshare.addServiceChangedCallback(serviceChangedCallback);
+
+
+			window['autoshare'] = autoshare;
+
+			var prefs = yt.UserPrefs;
+			var optOut = prefs.getFlag3(prefs.Flags.FLAG3_FBPROMO_OPT_OUT);
+			if (!optOut) {
+				_showdiv('fb-promo1');
+			}
+
+			// The user has "dismissed" the promo, i.e., clicked on the [x].
+			// This is distinct from simply hiding the promo as a side effect.
+			window.dismissFbPromoAlert = function() {
+				prefs.setFlag3(prefs.Flags.FLAG3_FBPROMO_OPT_OUT, true);
+				prefs.save();
+				hideFbPromoAlert();
+			};
+
+			function hideFbPromoAlert() {
+				_hidediv('fb-promo1');
+			}
+})();
+
+	});
+</script>
+
+
+
+	<script>
+		// Initialize the inline "edit subscription" link featurette in the
+		// Recent Activity module.
+		window['subui_'] = new yt.www.home.Subscriptions();
+		yt.pubsub.subscribe('init', function() {
+			window['subui_'].setCurrentLink(_gel('_firsteditsublink'));
+		});
+	</script>
+
+
+				<script>
+			if (window.yt.timing) {
+				yt.timing.tick('ct');
+			}
+		</script>
+
+
+</head>
+
+<body class="date-20100625 ja_JP not-english watch5-active">
+	<!--[if IE]><div id="ie"><![endif]-->
+	<!-- begin prepage section -->
+	<form name="logoutForm" method="post" action="/">
+		<input type="hidden" name="action_logout" value="1">
+	</form>
+	<!-- end prepage section -->
+	<div id="page" class="">
+			<div id="masthead-container">
+
+			<div id="masthead" class="">
+					<a href="/" title="YouTube ホーム">
+			<img id="logo" class="master-sprite" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt="YouTube ホーム">
+		</a>
+
+		<div id="masthead-search">
+			
+	<form autocomplete="off" class="search-form" action="/results" method="get" name="searchForm" onsubmit="">
+		<input id="masthead-search-term" class="search-term" name="search_query" value="" type="text" tabindex="1" onkeyup="goog.i18n.bidi.setDirAttribute(event,this)" maxlength="128">
+
+
+			<button type="button" class="search-button yt-uix-button" onclick="if (_gel('masthead-search-term').value != '') { document['searchForm'].submit(); }; return false;;return false;" tabindex="2"><span class="yt-uix-button-content">検索</span></button>
+
+			<script>document.getElementById('masthead-search-term').focus();</script>
+
+	</form>
+
+		</div>
+		<div id="masthead-nav">
+			<a href="/videos">ランキング</a><a href="http://upload.youtube.com/my_videos_upload">アップロード</a>
+
+		</div>
+			<div id="masthead-utility">
+				<a class="start" href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3D%252F&amp;ltmpl=sso&amp;hl=ja_JP&amp;service=youtube">アカウントを作成</a><a class="end" href="https://www.google.com/accounts/ServiceLogin?uilel=3&amp;service=youtube&amp;passive=true&amp;continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Dja_JP%26next%3D%252F&amp;hl=ja_JP&amp;ltmpl=sso">ログイン</a>
+			</div>
+	</div>
+
+	</div>
+	</div> 
+	<div id="baseDiv" class="date-20100625 video-info ">
+
+			
+
+		
+
+	<div id="masthead_child_div"></div>
+	<script type="text/javascript">
+		var masthead_child_fo = new SWFObject("http://s.ytimg.com/yt/swf/masthead_child-vfl89464.swf", "masthead_child", 1, 1, 7, "#FFFFFF");
+		masthead_child_fo.addParam("allowFullscreen", "false");
+		masthead_child_fo.addParam("allowScriptAccess", "always");
+		masthead_child_fo.write("masthead_child_div");
+	</script>
+		
+
+	
+
+	<div id="ad_creative_expand_btn_1" class="homepage-masthead-ad hid" onclick="">
+		<a class="homepage-masthead-btn" href="#" onclick="return masthead.expand_ad();">
+				<span>広告を表示する</span>
+				<img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" class="master-sprite">
+		</a>
+	</div>
+
+
+
+	
+		
+
+
+
+
+
+
+		<div id="ad_creative_1" class="ad-div mastad" style="z-index: 1;">
+			<iframe id="ad_creative_iframe_1" src="http://n4061ad.jp.doubleclick.net/adi/com.ythome/_default;sz=960x250;klg=ja;kt=K;kga=-1;kgg=-1;kcr=jp;dc_dedup=1;kmyd=ad_creative_1;tile=1;dcopt=ist;ord=6738845126548675?" height="250" width="960" scrolling="no" frameborder="0" style="z-index: 1" id="homepagetop" onload="yt.www.home.ads.workaroundLoad()" onmouseover="yt.www.home.ads.workaroundIE(this)" onfocus="yt.www.home.ads.workaroundIE(this)"></iframe>			
+		</div>
+
+
+
+<div id="homepage-main-content" class="homepage-non-interactive">
+
+
+
+
+
+	<div id="dragdrop" style="overflow: hidden; clear: both;">
+
+
+
+					<div id="feedmodule-SPV" class="feedmodule-anchor">
+				<div class="feedmodule-modheader" id="SPV-titlebar">
+				<div id="feed_newsweather">
+		<div class="fm-title-underlined-gray">
+			<div class="fm2-title">
+
+				<span class="fm2-titleText" id="feed_newsweather-titleText">今日の動画</span>
+			</div>
+
+
+					<div class="feedmodule-updown">
+
+
+<span id="mup-SPV" class="up-button"><img class="master-sprite img-php-up-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mdown-SPV" class="down-button"><img class="master-sprite img-php-down-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mclose-SPV"><img class="master-sprite img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span></div>
+
+
+		</div>
+	</div>
+
+	</div>
+
+	<div class="clear" id="feed_newsweather-content">
+
+			<div id="SPV-options" class="opt-pane" style="display: none;">
+		<div class="opt-box-top">
+			<img class="homepage-sprite img-php-opt-box-caret" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" />
+		</div>
+		<div class="opt-banner">
+
+			<div class="opt-links">
+				<div class="opt-edit">編集: 今日の動画</div>
+				<div class="opt-close opt-close-button" onclick="moduleHelper.closeOptionsPane('SPV')"><img class="img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></div>
+				<div class="opt-close opt-close-text" onclick="moduleHelper.closeOptionsPane('SPV')">閉じる</div>
+				<div id="SPV-loading-msg" class="opt-loading-msg" style="display: none;">
+保存しています...
+				</div>
+				<div id="SPV-loading-icn" class="opt-loading-icn" style="display: none;">
+					<img width="16" id="SPV-loading-icn-image" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" image="http://s.ytimg.com/yt/img/icn_loading_animated-vfl24663.gif">
+
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div class="opt-main">
+			<div class="opt-simple-msg">
+				このホームページをカスタマイズしますか？
+
+				今すぐ<a href="https://www.google.com/accounts/ServiceLogin?uilel=3&service=youtube&passive=true&continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Den_US%26next%3D%252F&hl=en_US&ltmpl=sso" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignIn/EditModuleBox');">ログイン</a>または<a href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3DNone&ltmpl=sso&hl=ja_JP&service=youtube" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignUp/EditModuleBox');">アカウントを作成</a>してください。
+
+			</div>
+
+		</div>
+	</div>
+
+
+		<div id="SPV-data" class="feedmodule-data">
+
+
+
+						<div class="feedmodule-body grid-view">
+		<div class="clearL">
+	
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=s9XjXvEUAOI&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-s9XjXvEUAOI-3783059"><img onload="" title="「老齢加算」廃止訴訟、北九州市が上告" alt="「老齢加算」廃止訴訟、北九州市が上告" src="http://i4.ytimg.com/vi/s9XjXvEUAOI/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>0:51</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-s9XjXvEUAOI-3783059', null, 's9XjXvEUAOI', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-s9XjXvEUAOI">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=s9XjXvEUAOI&amp;feature=newsweather" rel="nofollow" title="「老齢加算」廃止訴訟、北九州市が上告" class="" id="video-short-title-s9XjXvEUAOI" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">「老齢加算」廃止訴訟、北九州市<wbr>が上告</a>
+
+				</div>
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=s9XjXvEUAOI&amp;feature=newsweather" rel="nofollow" title="「老齢加算」廃止訴訟、北九州市が上告" class="" id="video-long-title-s9XjXvEUAOI" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">「老齢加算」廃止訴訟、北九州市<wbr>が上告</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-s9XjXvEUAOI" class="video-description">
+					生活保護の「老齢加算」廃止をめぐる裁判で、「廃止は違法」とした福岡高裁の判決を不服として、北九州市は２５日、最高裁に上告しました。
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-s9XjXvEUAOI" class="video-date-added">2 時間前</span>
+
+					<span id="video-num-views-s9XjXvEUAOI" class="video-view-count">再生回数 348 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-s9XjXvEUAOI" class="hLink" href="/user/tbsnewsi">tbsnewsi</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=fh1jMatjfsY&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-fh1jMatjfsY-2979143"><img onload="" title="ファン歓喜、サムライブルーが決勝トーナメント進出" alt="ファン歓喜、サムライブルーが決勝トーナメント進出" src="http://i3.ytimg.com/vi/fh1jMatjfsY/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>3:53</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-fh1jMatjfsY-2979143', null, 'fh1jMatjfsY', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-fh1jMatjfsY">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=fh1jMatjfsY&amp;feature=newsweather" rel="nofollow" title="ファン歓喜、サムライブルーが決勝トーナメント進出" class="" id="video-short-title-fh1jMatjfsY" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">ファン歓喜、サムライブルーが決<wbr>勝トーナメント進出</a>
+
+				</div>
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=fh1jMatjfsY&amp;feature=newsweather" rel="nofollow" title="ファン歓喜、サムライブルーが決勝トーナメント進出" class="" id="video-long-title-fh1jMatjfsY" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">ファン歓喜、サムライブルーが決<wbr>勝トーナメント進出</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-fh1jMatjfsY" class="video-description">
+					南アフリカ・ルステンブルク（Rustenberg）で24日、2010年サッカーW杯南アフリカ大会（2010 World Cup）1次リーグE組、デンマーク対日本の試...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-fh1jMatjfsY" class="video-date-added">1時間前</span>
+
+					<span id="video-num-views-fh1jMatjfsY" class="video-view-count">再生回数 319 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-fh1jMatjfsY" class="hLink" href="/user/afpbbnews">afpbbnews</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=A0-VynZFiqo&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-A0-VynZFiqo-440341"><img onload="" title="ケーブルテレビショー　地デジ視聴アピール" alt="ケーブルテレビショー　地デジ視聴アピール" src="http://i2.ytimg.com/vi/A0-VynZFiqo/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>0:53</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-A0-VynZFiqo-440341', null, 'A0-VynZFiqo', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-A0-VynZFiqo">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=A0-VynZFiqo&amp;feature=newsweather" rel="nofollow" title="ケーブルテレビショー　地デジ視聴アピール" class="" id="video-short-title-A0-VynZFiqo" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">ケーブルテレビショー　地デジ視聴アピール</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=A0-VynZFiqo&amp;feature=newsweather" rel="nofollow" title="ケーブルテレビショー　地デジ視聴アピール" class="" id="video-long-title-A0-VynZFiqo" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">ケーブルテレビショー　地デジ視聴アピール</a>
+
+						<div class="video-logos">
+		<a href="/watch?v=A0-VynZFiqo&feature=newsweather&cc=1"><img src="http://s.ytimg.com/yt/img/badge_cc_results-vfl146060.gif" class="video-logo " /></a>
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-A0-VynZFiqo" class="video-description">
+					池袋サンシャインシティでケーブルテレビショーが始まりました。
+　ケーブルテレビショーは全国のケーブルテレビ局でつくる日本ケーブルテレビ連盟などの主催で毎年開催されて...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-A0-VynZFiqo" class="video-date-added">21 時間前</span>
+
+					<span id="video-num-views-A0-VynZFiqo" class="video-view-count">再生回数 1,745 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-A0-VynZFiqo" class="hLink" href="/user/tokyomx">tokyomx</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=7DPpwoxlr1g&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-7DPpwoxlr1g-6744555"><img onload="" title="天気下り坂のサイン　明日は梅雨らしい空に Update2010-06-25 夕" alt="天気下り坂のサイン　明日は梅雨らしい空に Update2010-06-25 夕" src="http://i4.ytimg.com/vi/7DPpwoxlr1g/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>1:24</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-7DPpwoxlr1g-6744555', null, '7DPpwoxlr1g', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-7DPpwoxlr1g">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=7DPpwoxlr1g&amp;feature=newsweather" rel="nofollow" title="天気下り坂のサイン　明日は梅雨らしい空に Update2010-06-25 夕" class="" id="video-short-title-7DPpwoxlr1g" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">天気下り坂のサイン　明日は梅雨らしい空に Update2010-...</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=7DPpwoxlr1g&amp;feature=newsweather" rel="nofollow" title="天気下り坂のサイン　明日は梅雨らしい空に Update2010-06-25 夕" class="" id="video-long-title-7DPpwoxlr1g" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">天気下り坂のサイン　明日は梅雨らしい空に Update2010-06-2<wbr>5 夕</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-7DPpwoxlr1g" class="video-description">
+					【関東エリア: 今日は洗濯日和】 今日は絶好の洗濯日和！昼間の日差しの有効活用をオススメします。安心して外干し出来るのは今日まで。
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-7DPpwoxlr1g" class="video-date-added">50 分前</span>
+
+					<span id="video-num-views-7DPpwoxlr1g" class="video-view-count">再生回数 73 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-7DPpwoxlr1g" class="hLink" href="/user/weathernews">weathernews</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=2FDvsYr70Wk&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-2FDvsYr70Wk-9954661"><img onload="" title="お客さんはロッテリアへ走る!?金泰均17号ソロ  6月24日 ロッテ-オリックス" alt="お客さんはロッテリアへ走る!?金泰均17号ソロ  6月24日 ロッテ-オリックス" src="http://i3.ytimg.com/vi/2FDvsYr70Wk/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>1:13</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-2FDvsYr70Wk-9954661', null, '2FDvsYr70Wk', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-2FDvsYr70Wk">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=2FDvsYr70Wk&amp;feature=newsweather" rel="nofollow" title="お客さんはロッテリアへ走る!?金泰均17号ソロ  6月24日 ロッテ-オリックス" class="" id="video-short-title-2FDvsYr70Wk" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">お客さんはロッテリアへ走る!?<wbr>金泰均17号ソロ  6月...</a>
+
+				</div>
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=2FDvsYr70Wk&amp;feature=newsweather" rel="nofollow" title="お客さんはロッテリアへ走る!?金泰均17号ソロ  6月24日 ロッテ-オリックス" class="" id="video-long-title-2FDvsYr70Wk" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">お客さんはロッテリアへ走る!?<wbr>金泰均17号ソロ  6月24日 ロッテ-オリックス</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-2FDvsYr70Wk" class="video-description">
+					7回、井口に続きキムもソロHRを放った。井口とキムのダブルHRは今季これで2度目。 （6月24日 ロッテ-オリックス戦）
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-2FDvsYr70Wk" class="video-date-added">18 時間前</span>
+
+					<span id="video-num-views-2FDvsYr70Wk" class="video-view-count">再生回数 3,309 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-2FDvsYr70Wk" class="hLink" href="/user/PacificLeagueMovie">PacificLeagueMovie</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=Y2GyLf2Sfkc&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-Y2GyLf2Sfkc-1480306"><img onload="" title="水野美紀、ソニン、村上が過激エンゲキロック" alt="水野美紀、ソニン、村上が過激エンゲキロック" src="http://i2.ytimg.com/vi/Y2GyLf2Sfkc/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>2:42</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-Y2GyLf2Sfkc-1480306', null, 'Y2GyLf2Sfkc', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-Y2GyLf2Sfkc">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=Y2GyLf2Sfkc&amp;feature=newsweather" rel="nofollow" title="水野美紀、ソニン、村上が過激エンゲキロック" class="" id="video-short-title-Y2GyLf2Sfkc" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">水野美紀、ソニン、村上が過激エ<wbr>ンゲキロック</a>
+
+				</div>
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=Y2GyLf2Sfkc&amp;feature=newsweather" rel="nofollow" title="水野美紀、ソニン、村上が過激エンゲキロック" class="" id="video-long-title-Y2GyLf2Sfkc" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">水野美紀、ソニン、村上が過激エ<wbr>ンゲキロック</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-Y2GyLf2Sfkc" class="video-description">
+					女優の水野美紀、歌手のソニン、「森三中」の村上知子らがロックバンドに扮する「歌ありお色気ありお笑いあり」のエンゲキロック「プロペラ犬×筋肉少女帯『アウェーインザライ...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-Y2GyLf2Sfkc" class="video-date-added">2 日前</span>
+
+					<span id="video-num-views-Y2GyLf2Sfkc" class="video-view-count">再生回数 47,001 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-Y2GyLf2Sfkc" class="hLink" href="/user/SankeiUp">SankeiUp</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=uk8vEmzInJM&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-uk8vEmzInJM-3558473"><img onload="" title="今日の産経新聞　6月25日 号外 日本決勝T進出" alt="今日の産経新聞　6月25日 号外 日本決勝T進出" src="http://i2.ytimg.com/vi/uk8vEmzInJM/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>2:12</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-uk8vEmzInJM-3558473', null, 'uk8vEmzInJM', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content" id="video-main-content-uk8vEmzInJM">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=uk8vEmzInJM&amp;feature=newsweather" rel="nofollow" title="今日の産経新聞　6月25日 号外 日本決勝T進出" class="" id="video-short-title-uk8vEmzInJM" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">今日の産経新聞　6月25日 号外 日本決勝T進出</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=uk8vEmzInJM&amp;feature=newsweather" rel="nofollow" title="今日の産経新聞　6月25日 号外 日本決勝T進出" class="" id="video-long-title-uk8vEmzInJM" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">今日の産経新聞　6月25日 号外 日本決勝T進出</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-uk8vEmzInJM" class="video-description">
+
+					今日の産経新聞とサンケイスポーツの号外。W杯日本代表がデンマークを破り決勝トーナメント進出が決まる
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-uk8vEmzInJM" class="video-date-added">4 時間前</span>
+
+					<span id="video-num-views-uk8vEmzInJM" class="video-view-count">再生回数 310 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-uk8vEmzInJM" class="hLink" href="/user/SankeiNews">SankeiNews</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch?v=EskKqp4gdO8&amp;feature=newsweather" class="video-thumb ux-thumb-128" id="video-thumb-EskKqp4gdO8-5214820"><img onload="" title="オカメインコ　ケンカになる距離.AVI" alt="オカメインコ　ケンカになる距離.AVI" src="http://i2.ytimg.com/vi/EskKqp4gdO8/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');"><span class="video-time"><span>0:41</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-EskKqp4gdO8-5214820', null, 'EskKqp4gdO8', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-EskKqp4gdO8">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=EskKqp4gdO8&amp;feature=newsweather" rel="nofollow" title="オカメインコ　ケンカになる距離.AVI" class="" id="video-short-title-EskKqp4gdO8" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">オカメインコ　ケンカになる距離.AVI</a>
+
+				</div>
+				<div class="video-long-title">
+
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=EskKqp4gdO8&amp;feature=newsweather" rel="nofollow" title="オカメインコ　ケンカになる距離.AVI" class="" id="video-long-title-EskKqp4gdO8" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/SPV/Logged_Out');">オカメインコ　ケンカになる距離.AVI</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-EskKqp4gdO8" class="video-description">
+					 
+				</div>
+
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-EskKqp4gdO8" class="video-date-added">1週間前</span>
+
+					<span id="video-num-views-EskKqp4gdO8" class="video-view-count">再生回数 942 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-EskKqp4gdO8" class="hLink" href="/user/gotarichan">gotarichan</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+		</div>
+	</div>
+
+
+		</div>
+
+	</div>
+	<div class="clear"></div>
+	
+
+		</div>
+
+		
+
+					<div id="feedmodule-FEA" class="feedmodule-anchor">
+				<div class="feedmodule-modheader" id="FEA-titlebar">
+				<div id="feed_featured">
+		<div class="fm-title-underlined-gray">
+			<div class="fm2-title">
+
+				<span class="fm2-titleText" id="feed_featured-titleText"><a href="/videos?s=rf" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/View_Featured/Logged_Out');">HIFANA</a></span>
+			</div>
+
+
+					<div class="feedmodule-updown">
+
+
+<span id="mup-FEA" class="up-button"><img class="master-sprite img-php-up-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mdown-FEA" class="down-button"><img class="master-sprite img-php-down-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mclose-FEA"><img class="master-sprite img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span></div>
+
+
+		</div>
+	</div>
+
+	</div>
+
+	<div class="clear" id="feed_featured-content">
+
+			<div id="FEA-options" class="opt-pane" style="display: none;">
+		<div class="opt-box-top">
+			<img class="homepage-sprite img-php-opt-box-caret" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" />
+		</div>
+		<div class="opt-banner">
+
+			<div class="opt-links">
+				<div class="opt-edit">編集: HIFANA</div>
+				<div class="opt-close opt-close-button" onclick="moduleHelper.closeOptionsPane('FEA')"><img class="img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></div>
+				<div class="opt-close opt-close-text" onclick="moduleHelper.closeOptionsPane('FEA')">閉じる</div>
+				<div id="FEA-loading-msg" class="opt-loading-msg" style="display: none;">
+保存しています...
+				</div>
+				<div id="FEA-loading-icn" class="opt-loading-icn" style="display: none;">
+					<img width="16" id="FEA-loading-icn-image" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" image="http://s.ytimg.com/yt/img/icn_loading_animated-vfl24663.gif">
+
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div class="opt-main">
+			<div class="opt-simple-msg">
+				このホームページをカスタマイズしますか？
+
+				今すぐ<a href="https://www.google.com/accounts/ServiceLogin?uilel=3&service=youtube&passive=true&continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Den_US%26next%3D%252F&hl=en_US&ltmpl=sso" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignIn/EditModuleBox');">ログイン</a>または<a href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3DNone&ltmpl=sso&hl=ja_JP&service=youtube" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignUp/EditModuleBox');">アカウントを作成</a>してください。
+
+			</div>
+
+		</div>
+	</div>
+
+
+		<div id="FEA-data" class="feedmodule-data">
+
+					
+
+		<div class="feedmodule-feditor">
+				<div class="feedmodule-feditor-img user-thumb-large" style="margin-right: 10px"><div>
+					<a href="/HifanaTube"><img src="http://i2.ytimg.com/i/mI0wdh8qaqc8bkSZM0vYJw/1.jpg" alt="editor image"></a>
+				</div></div>
+
+			<div class="guest-editor-with-comment">
+				<div class="guest-editor-profile-link"><a href="/HifanaTube">HifanaTube</a></div>
+				<div class="guest-editor-comment">国内外で活躍するブレイクビーツユニットHIFANAがYouTubeのパートナーになりました。新曲のPV、文化庁芸術祭入賞作品、YouTubeの人気ユーザーDaito
+Manabeさんとの共同プロジェクトのメイキング、そしてメンバーによる演奏方法の解説動画をご紹介します。サンプラーを使った即興演奏という独自スタイルの音楽をお楽しみください。</div>
+			</div>
+			<div class="spacer">&nbsp;</div>
+		</div>
+
+
+
+						<div class="feedmodule-body grid-view">
+		<div class="clearL">
+	
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch_videos?more_url=%2F&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11&amp;feature=featured&amp;no_autoplay=1" class="video-thumb ux-thumb-128" id="video-thumb-0z8ca0uo5-8-2926647"><img onload="" title="HIFANA Tutorial + &quot;24H&quot; - teaser -" alt="HIFANA Tutorial + &quot;24H&quot; - teaser -" src="http://i1.ytimg.com/vi/0z8ca0uo5-8/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');"><span class="video-time"><span>3:39</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-0z8ca0uo5-8-2926647', null, '0z8ca0uo5-8', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-0z8ca0uo5-8">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?more_url=%2F&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11&amp;feature=featured&amp;no_autoplay=1" rel="nofollow" title="HIFANA Tutorial + &quot;24H&quot; - teaser -" class="" id="video-short-title-0z8ca0uo5-8" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA Tutorial + "24H" - teaser -</a>
+
+				</div>
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?more_url=%2F&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11&amp;feature=featured&amp;no_autoplay=1" rel="nofollow" title="HIFANA Tutorial + &quot;24H&quot; - teaser -" class="" id="video-long-title-0z8ca0uo5-8" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA Tutorial + "24H" - teaser -</a>
+
+						<div class="video-logos">
+		<a href="/watch_videos?more_url=%2F&video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&type=11&feature=featured&no_autoplay=1&hd=1"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" class="master-sprite hd-video-logo video-logo" /></a>
+	</div>
+
+				</div>
+
+			</div>
+
+				<div id="video-description-0z8ca0uo5-8" class="video-description">
+					HIFANA "24H"
+
+2010.7.28 IN STORES
+
+http://www.hifana.com/24h/
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-0z8ca0uo5-8" class="video-date-added">1週間前</span>
+
+					<span id="video-num-views-0z8ca0uo5-8" class="video-view-count">再生回数 65 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-0z8ca0uo5-8" class="hLink" href="/user/HifanaTube">HifanaTube</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch_videos?index=1&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" class="video-thumb ux-thumb-128" id="video-thumb-LlDBrVohXGE-5049228"><img onload="" title="HIFANA : NIKE MUSIC SHOE - MAKING OF" alt="HIFANA : NIKE MUSIC SHOE - MAKING OF" src="http://i1.ytimg.com/vi/LlDBrVohXGE/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');"><span class="video-time"><span>3:38</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-LlDBrVohXGE-5049228', null, 'LlDBrVohXGE', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-LlDBrVohXGE">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?index=1&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" rel="nofollow" title="HIFANA : NIKE MUSIC SHOE - MAKING OF" class="" id="video-short-title-LlDBrVohXGE" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA : NIKE MUSIC SHOE - MAKIN...</a>
+
+				</div>
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?index=1&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" rel="nofollow" title="HIFANA : NIKE MUSIC SHOE - MAKING OF" class="" id="video-long-title-LlDBrVohXGE" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA : NIKE MUSIC SHOE - MAKING OF</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-LlDBrVohXGE" class="video-description">
+					NIKE MUSIC SHOEが実際にどのようにできているのかを、詳しく解説しています。まだ本編を観ていない方は、こちらからどうぞ！ http://www.nike...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-LlDBrVohXGE" class="video-date-added">1 か月前</span>
+
+					<span id="video-num-views-LlDBrVohXGE" class="video-view-count">再生回数 37,716 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-LlDBrVohXGE" class="hLink" href="/user/WKtokyo">WKtokyo</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch_videos?index=2&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" class="video-thumb ux-thumb-128" id="video-thumb-bY6iyZzpamg-8396165"><img onload="" title="HIFANA &quot;WAMONO&quot;" alt="HIFANA &quot;WAMONO&quot;" src="http://i3.ytimg.com/vi/bY6iyZzpamg/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');"><span class="video-time"><span>4:08</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-bY6iyZzpamg-8396165', null, 'bY6iyZzpamg', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-bY6iyZzpamg">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?index=2&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" rel="nofollow" title="HIFANA &quot;WAMONO&quot;" class="" id="video-short-title-bY6iyZzpamg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA "WAMONO"</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?index=2&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" rel="nofollow" title="HIFANA &quot;WAMONO&quot;" class="" id="video-long-title-bY6iyZzpamg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA "WAMONO"</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-bY6iyZzpamg" class="video-description">
+
+					from an album "CHANNEL H"
+
+http://www.hifana.com/24h/
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-bY6iyZzpamg" class="video-date-added">1週間前</span>
+
+					<span id="video-num-views-bY6iyZzpamg" class="video-view-count">再生回数 77 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-bY6iyZzpamg" class="hLink" href="/user/HifanaTube">HifanaTube</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	<a href="/watch_videos?index=3&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" class="video-thumb ux-thumb-128" id="video-thumb-TmE_lNEVl7k-8595549"><img onload="" title="HIFANA &quot;Hanabeam&quot;" alt="HIFANA &quot;Hanabeam&quot;" src="http://i1.ytimg.com/vi/TmE_lNEVl7k/default.jpg" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');"><span class="video-time"><span>3:57</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-TmE_lNEVl7k-8595549', null, 'TmE_lNEVl7k', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-TmE_lNEVl7k">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?index=3&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" rel="nofollow" title="HIFANA &quot;Hanabeam&quot;" class="" id="video-short-title-TmE_lNEVl7k" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA "Hanabeam"</a>
+
+				</div>
+				<div class="video-long-title">
+
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch_videos?index=3&amp;more_url=%2F&amp;no_autoplay=1&amp;feature=featured&amp;video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&amp;type=11" rel="nofollow" title="HIFANA &quot;Hanabeam&quot;" class="" id="video-long-title-TmE_lNEVl7k" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/FEA/Logged_Out');">HIFANA "Hanabeam"</a>
+
+						<div class="video-logos">
+		<a href="/watch_videos?index=3&more_url=%2F&no_autoplay=1&feature=featured&video_ids=0z8ca0uo5-8%2CLlDBrVohXGE%2CbY6iyZzpamg%2CTmE_lNEVl7k&type=11&hd=1"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" class="master-sprite hd-video-logo video-logo" /></a>
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-TmE_lNEVl7k" class="video-description">
+
+					from an album "24 H"
+
+http://www.hifana.com/24h/
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-TmE_lNEVl7k" class="video-date-added">1週間前</span>
+
+					<span id="video-num-views-TmE_lNEVl7k" class="video-view-count">再生回数 71 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-TmE_lNEVl7k" class="hLink" href="/user/HifanaTube">HifanaTube</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+		</div>
+	</div>
+
+		</div>
+	</div>
+	<div class="clear"></div>
+	
+
+		</div>
+
+		
+
+			
+
+
+					<div id="feedmodule-POP" class="feedmodule-anchor">
+				<div class="feedmodule-modheader" id="POP-titlebar">
+				<div id="feed_popular">
+		<div class="fm-title-underlined-gray">
+
+			<div class="fm2-title">
+				<span class="fm2-titleText" id="feed_popular-titleText"><a href="/videos?s=pop" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/View_Popular/Logged_Out');">ただいま再生中</a></span>
+			</div>
+
+
+					<div class="feedmodule-updown">
+
+			<span id="medit-POP" class="iyt-edit-link iyt-edit-link-gray">編集</span>
+
+<span id="mup-POP" class="up-button"><img class="master-sprite img-php-up-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mdown-POP" class="down-button"><img class="master-sprite img-php-down-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mclose-POP"><img class="master-sprite img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span></div>
+
+
+		</div>
+	</div>
+
+	</div>
+
+	<div class="clear" id="feed_popular-content">
+
+			<div id="POP-options" class="opt-pane" style="display: none;">
+		<div class="opt-box-top">
+
+			<img class="homepage-sprite img-php-opt-box-caret" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" />
+		</div>
+		<div class="opt-banner">
+			<div class="opt-links">
+				<div class="opt-edit">編集: ただいま再生中</div>
+				<div class="opt-close opt-close-button" onclick="moduleHelper.closeOptionsPane('POP')"><img class="img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></div>
+				<div class="opt-close opt-close-text" onclick="moduleHelper.closeOptionsPane('POP')">閉じる</div>
+				<div id="POP-loading-msg" class="opt-loading-msg" style="display: none;">
+
+保存しています...
+				</div>
+				<div id="POP-loading-icn" class="opt-loading-icn" style="display: none;">
+					<img width="16" id="POP-loading-icn-image" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" image="http://s.ytimg.com/yt/img/icn_loading_animated-vfl24663.gif">
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div class="opt-main">
+			<div class="opt-simple-msg">
+
+				このホームページをカスタマイズしますか？
+
+				今すぐ<a href="https://www.google.com/accounts/ServiceLogin?uilel=3&service=youtube&passive=true&continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Den_US%26next%3D%252F&hl=en_US&ltmpl=sso" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignIn/EditModuleBox');">ログイン</a>または<a href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3DNone&ltmpl=sso&hl=ja_JP&service=youtube" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignUp/EditModuleBox');">アカウントを作成</a>してください。
+
+			</div>
+		</div>
+	</div>
+
+
+		<div id="POP-data" class="feedmodule-data">
+
+
+						<div class="feedmodule-body bigthumb-view">
+
+
+
+
+
+			<div class="feeditem-bigthumb super-large-video ">
+				<div style="font-size: 12px;" class="floatL">
+					<div class="feedmodule-thumbnail">
+							
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=SOI4OF7iIr4&amp;feature=popular" class="video-thumb ux-thumb-224" id="video-thumb-SOI4OF7iIr4-1349297"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="Justin Bieber - Somebody To Love (Remix) ft. Usher" thumb="http://i4.ytimg.com/vi/SOI4OF7iIr4/hqdefault.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');"><span class="video-time"><span>3:39</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-SOI4OF7iIr4-1349297', null, 'SOI4OF7iIr4', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+					</div>
+				</div>
+				
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=SOI4OF7iIr4&feature=popular" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');" title="Justin Bieber - Somebody To Love (Remix) ft. Usher">Justin Bieber - Somebody To Love (Remix) ft. Usher</a>
+		</div>
+
+		<div>
+					再生回数 9,045,787 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/JustinBieberVEVO">JustinBieberVEVO</a>
+			</nobr>
+		</div>
+	</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+
+
+
+
+			<div class="feeditem-bigthumb normal-size-video ">
+				<div style="font-size: 12px;" class="floatL">
+					<div class="feedmodule-thumbnail">
+							
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=hMO9LAqHkEM&amp;feature=popular" class="video-thumb ux-thumb-128" id="video-thumb-hMO9LAqHkEM-2129636"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="マラドーナ監督、1次リーグ最終戦を前に会見 「神の手ではない」" thumb="http://i1.ytimg.com/vi/hMO9LAqHkEM/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');"><span class="video-time"><span>4:53</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-hMO9LAqHkEM-2129636', null, 'hMO9LAqHkEM', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+					</div>
+				</div>
+				
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=hMO9LAqHkEM&feature=popular" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');" title="マラドーナ監督、1次リーグ最終戦を前に会見 「神の手ではない」">マラドーナ監督、1次リー<wbr />グ最終戦を前に会見 「神の手ではない」</a>
+		</div>
+
+		<div>
+					再生回数 53,706 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/afpbbnews">afpbbnews</a>
+			</nobr>
+		</div>
+	</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+
+
+
+
+			<div class="feeditem-bigthumb normal-size-video ">
+				<div style="font-size: 12px;" class="floatL">
+					<div class="feedmodule-thumbnail">
+							
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=eYM6-RkHTCs&amp;feature=popular" class="video-thumb ux-thumb-128" id="video-thumb-eYM6-RkHTCs-6572583"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="MINI vs Porsche" thumb="http://i2.ytimg.com/vi/eYM6-RkHTCs/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');"><span class="video-time"><span>1:48</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-eYM6-RkHTCs-6572583', null, 'eYM6-RkHTCs', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+					</div>
+				</div>
+				
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=eYM6-RkHTCs&feature=popular" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');" title="MINI vs Porsche">MINI vs Porsche</a>
+		</div>
+
+		<div>
+					再生回数 68,689 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/MINIUSA">MINIUSA</a>
+			</nobr>
+		</div>
+	</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+
+
+
+
+			<div class="feeditem-bigthumb normal-size-video ">
+				<div style="font-size: 12px;" class="floatL">
+					<div class="feedmodule-thumbnail">
+							
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=UU-kY0QhFQ4&amp;feature=popular" class="video-thumb ux-thumb-128" id="video-thumb-UU-kY0QhFQ4-2545011"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="オランダ 1x0 日本 2010 ﾊｲﾗｲﾄ" thumb="http://i2.ytimg.com/vi/UU-kY0QhFQ4/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');"><span class="video-time"><span>3:44</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-UU-kY0QhFQ4-2545011', null, 'UU-kY0QhFQ4', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+					</div>
+				</div>
+				
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=UU-kY0QhFQ4&feature=popular" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/POP/Logged_Out');" title="オランダ 1x0 日本 2010 ﾊｲﾗｲﾄ">オランダ 1x0 日本 2010 ﾊｲﾗｲﾄ</a>
+		</div>
+
+		<div>
+					再生回数 43,341 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/fffkumimi">fffkumimi</a>
+			</nobr>
+		</div>
+	</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+
+		<div class="spacer">&nbsp;</div>
+	</div>
+
+	
+		</div>
+	</div>
+	<div class="clear"></div>
+
+	
+
+		</div>
+
+		
+
+					<div id="feedmodule-PRO" class="feedmodule-anchor">
+				<div class="feedmodule-modheader" id="PRO-titlebar">
+				<div id="feed_promoted">
+		<div class="fm-title-underlined-blue">
+			<div class="fm2-title">
+				<span class="fm2-titleText" id="feed_promoted-titleText">おすすめ動画</span>
+			</div>
+
+
+					<div class="feedmodule-updown">
+
+
+<span id="mup-PRO" class="up-button"><img class="master-sprite img-php-up-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mdown-PRO" class="down-button"><img class="master-sprite img-php-down-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span></div>
+
+
+		</div>
+	</div>
+
+	</div>
+
+	<div class="clear" id="feed_promoted-content">
+
+			<div id="PRO-options" class="opt-pane" style="display: none;">
+		<div class="opt-box-top">
+			<img class="homepage-sprite img-php-opt-box-caret" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" />
+		</div>
+		<div class="opt-banner">
+			<div class="opt-links">
+				<div class="opt-edit">編集: おすすめ動画</div>
+
+				<div class="opt-close opt-close-button" onclick="moduleHelper.closeOptionsPane('PRO')"><img class="img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></div>
+				<div class="opt-close opt-close-text" onclick="moduleHelper.closeOptionsPane('PRO')">閉じる</div>
+				<div id="PRO-loading-msg" class="opt-loading-msg" style="display: none;">
+保存しています...
+				</div>
+				<div id="PRO-loading-icn" class="opt-loading-icn" style="display: none;">
+					<img width="16" id="PRO-loading-icn-image" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" image="http://s.ytimg.com/yt/img/icn_loading_animated-vfl24663.gif">
+				</div>
+				<div class="clear"></div>
+
+			</div>
+		</div>
+		<div class="opt-main">
+			<div class="opt-simple-msg">
+				このホームページをカスタマイズしますか？
+
+				今すぐ<a href="https://www.google.com/accounts/ServiceLogin?uilel=3&service=youtube&passive=true&continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Den_US%26next%3D%252F&hl=en_US&ltmpl=sso" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignIn/EditModuleBox');">ログイン</a>または<a href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3DNone&ltmpl=sso&hl=ja_JP&service=youtube" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignUp/EditModuleBox');">アカウントを作成</a>してください。
+
+			</div>
+		</div>
+
+	</div>
+
+
+		<div id="PRO-data" class="feedmodule-data">
+
+
+
+						<div class="feedmodule-body grid-view">
+		<div class="clearL">
+	
+				<div class="video-cell" style="width:24.5%">
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=yTo4jKRv4iE&amp;feature=fvhl" class="video-thumb ux-thumb-128" id="video-thumb-yTo4jKRv4iE-4428947"><img onload="" thumb="http://i2.ytimg.com/vi/yTo4jKRv4iE/default.jpg" title="【Jチャン】偉人の子孫が作る激ウマ餃子（10/6/18放送）" alt="【Jチャン】偉人の子孫が作る激ウマ餃子（10/6/18放送）" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');"><span class="video-time"><span>15:19</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-yTo4jKRv4iE-4428947', null, 'yTo4jKRv4iE', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+		<div class="video-main-content" id="video-main-content-yTo4jKRv4iE">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=yTo4jKRv4iE&amp;feature=fvhl" rel="nofollow" title="【Jチャン】偉人の子孫が作る激ウマ餃子（10/6/18放送）" class="" id="video-short-title-yTo4jKRv4iE" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">【Jチャン】偉人の子孫が作る激<wbr>ウマ餃子（10/6/18放送）</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=yTo4jKRv4iE&amp;feature=fvhl" rel="nofollow" title="【Jチャン】偉人の子孫が作る激ウマ餃子（10/6/18放送）" class="" id="video-long-title-yTo4jKRv4iE" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">【Jチャン】偉人の子孫が作る激<wbr>ウマ餃子（10/6/18放送）</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-yTo4jKRv4iE" class="video-description">
+					偉人の子孫が作るありがたい餃子を発見！価格破壊餃子や謎の餃子アイドルも！
+1.『驚きの0円餃子!?』の「餃子処たちばな」（高円寺）
+2.『餃子アイドル美女軍団』...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-yTo4jKRv4iE" class="video-date-added">6 日前</span>
+
+					<span id="video-num-views-yTo4jKRv4iE" class="video-view-count">再生回数 457 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-yTo4jKRv4iE" class="hLink" href="/user/tvasahi">tvasahi</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=IC0Vd_sWewY&amp;feature=fvhl" class="video-thumb ux-thumb-128" id="video-thumb-IC0Vd_sWewY-9794409"><img onload="" thumb="http://i2.ytimg.com/vi/IC0Vd_sWewY/default.jpg" title="Yoshihiro Sato vs Yuya Yamamoto PV - Jul.5 MAX" alt="Yoshihiro Sato vs Yuya Yamamoto PV - Jul.5 MAX" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');"><span class="video-time"><span>4:08</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-IC0Vd_sWewY-9794409', null, 'IC0Vd_sWewY', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-IC0Vd_sWewY">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=IC0Vd_sWewY&amp;feature=fvhl" rel="nofollow" title="Yoshihiro Sato vs Yuya Yamamoto PV - Jul.5 MAX" class="" id="video-short-title-IC0Vd_sWewY" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">Yoshihiro Sato vs Yuya Yamamoto ...</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=IC0Vd_sWewY&amp;feature=fvhl" rel="nofollow" title="Yoshihiro Sato vs Yuya Yamamoto PV - Jul.5 MAX" class="" id="video-long-title-IC0Vd_sWewY" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">Yoshihiro Sato vs Yuya Yamamoto PV - Jul.5 MAX</a>
+
+						<div class="video-logos">
+		<a href="/watch?v=IC0Vd_sWewY&feature=fvhl&hd=1"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" class="master-sprite hd-video-logo video-logo" /></a>
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-IC0Vd_sWewY" class="video-description">
+					Yoshihiro Sato vs Yuya Yamamoto's Promotion Video for  FieLDS K-1 WORLD MAX 2010 -...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-IC0Vd_sWewY" class="video-date-added">2 日前</span>
+
+					<span id="video-num-views-IC0Vd_sWewY" class="video-view-count">再生回数 5,182 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-IC0Vd_sWewY" class="hLink" href="/user/K1">K1</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=8F9G5_6P_8o&amp;feature=fvhl" class="video-thumb ux-thumb-128" id="video-thumb-8F9G5_6P_8o-1778489"><img onload="" thumb="http://i1.ytimg.com/vi/8F9G5_6P_8o/default.jpg" title="WHITE LINE BOY IN SPRING　春の白線BOY" alt="WHITE LINE BOY IN SPRING　春の白線BOY" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');"><span class="video-time"><span>0:30</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-8F9G5_6P_8o-1778489', null, '8F9G5_6P_8o', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-8F9G5_6P_8o">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=8F9G5_6P_8o&amp;feature=fvhl" rel="nofollow" title="WHITE LINE BOY IN SPRING　春の白線BOY" class="" id="video-short-title-8F9G5_6P_8o" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">WHITE LINE BOY IN SPRING　春の白線BOY</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=8F9G5_6P_8o&amp;feature=fvhl" rel="nofollow" title="WHITE LINE BOY IN SPRING　春の白線BOY" class="" id="video-long-title-8F9G5_6P_8o" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">WHITE LINE BOY IN SPRING　春の白線BOY</a>
+
+						<div class="video-logos">
+		<a href="/watch?v=8F9G5_6P_8o&feature=fvhl&hd=1"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" class="master-sprite hd-video-logo video-logo" /></a>
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-8F9G5_6P_8o" class="video-description">
+					ブログURL↓
+http://binosusume.blog116.fc2.com/
+今日のピエールカテゴリーURL↓
+http://binosusume.b...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-8F9G5_6P_8o" class="video-date-added">1 か月前</span>
+
+					<span id="video-num-views-8F9G5_6P_8o" class="video-view-count">再生回数 37,755 回
+</span>
+
+
+					<span class="video-username"><a id="video-from-username-8F9G5_6P_8o" class="hLink" href="/user/binosusume">binosusume</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+				<div class="video-cell" style="width:24.5%">
+
+
+
+	
+
+
+	<div class="video-entry">
+
+
+
+				
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=Gj6iUHnTAgU&amp;feature=fvhl" class="video-thumb ux-thumb-128" id="video-thumb-Gj6iUHnTAgU-7922635"><img onload="" thumb="http://i4.ytimg.com/vi/Gj6iUHnTAgU/default.jpg" title="ツアーオフィシャルグッズCM Vol.2" alt="ツアーオフィシャルグッズCM Vol.2" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" click="" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');"><span class="video-time"><span>0:39</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-Gj6iUHnTAgU-7922635', null, 'Gj6iUHnTAgU', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+
+
+		<div class="video-main-content video-title-one-line" id="video-main-content-Gj6iUHnTAgU">
+
+
+
+			<div class="video-title ">
+				<div class="video-short-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=Gj6iUHnTAgU&amp;feature=fvhl" rel="nofollow" title="ツアーオフィシャルグッズCM Vol.2" class="" id="video-short-title-Gj6iUHnTAgU" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">ツアーオフィシャルグッズCM Vol.2</a>
+
+				</div>
+
+				<div class="video-long-title">
+						
+	
+	
+
+		
+	
+		
+	
+		
+
+	
+	
+	<a href="/watch?v=Gj6iUHnTAgU&amp;feature=fvhl" rel="nofollow" title="ツアーオフィシャルグッズCM Vol.2" class="" id="video-long-title-Gj6iUHnTAgU" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/PRO/Logged_Out');">ツアーオフィシャルグッズCM Vol.2</a>
+
+						<div class="video-logos">
+	</div>
+
+				</div>
+			</div>
+
+				<div id="video-description-Gj6iUHnTAgU" class="video-description">
+
+					GLAY LIVE TOUR 2010-2011 "ROCK AROUND THE WORLD"オフィシャルグッズ6月17日12時より　通信販売スタート！
+htt...
+				</div>
+			
+
+      
+
+			<div class="video-facets">
+						<span id="video-added-time-Gj6iUHnTAgU" class="video-date-added">1週間前</span>
+
+					<span id="video-num-views-Gj6iUHnTAgU" class="video-view-count">再生回数 13,506 回
+</span>
+
+
+
+					<span class="video-username"><a id="video-from-username-Gj6iUHnTAgU" class="hLink" href="/user/GLAY">GLAY</a></span>
+
+
+				
+			</div>	
+			
+		</div>	
+
+
+		<div class="video-clear-list-left"></div>
+
+
+
+
+	</div>	
+</div>	
+
+		</div>
+	</div>
+
+		</div>
+	</div>
+	<div class="clear"></div>
+	
+
+		</div>
+
+		
+
+					<div id="feedmodule-TOP" class="feedmodule-anchor">
+				<div class="feedmodule-modheader" id="TOP-titlebar">
+				<div id="feed_top_videos">
+		<div class="fm-title-underlined-gray">
+
+			<div class="fm2-title">
+				<span class="fm2-titleText" id="feed_top_videos-titleText"><a href="/videos?s=pop" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/View_TopVideos/Logged_Out');">人気の動画</a></span>
+			</div>
+
+
+					<div class="feedmodule-updown">
+
+
+<span id="mup-TOP" class="up-button"><img class="master-sprite img-php-up-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mdown-TOP" class="down-button"><img class="master-sprite img-php-down-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span><span id="mclose-TOP"><img class="master-sprite img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></span></div>
+
+
+		</div>
+
+	</div>
+
+	</div>
+
+	<div class="clear" id="feed_top_videos-content">
+
+			<div id="TOP-options" class="opt-pane" style="display: none;">
+		<div class="opt-box-top">
+			<img class="homepage-sprite img-php-opt-box-caret" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" />
+		</div>
+
+		<div class="opt-banner">
+			<div class="opt-links">
+				<div class="opt-edit">編集: 人気の動画</div>
+				<div class="opt-close opt-close-button" onclick="moduleHelper.closeOptionsPane('TOP')"><img class="img-php-close-button" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" /></div>
+				<div class="opt-close opt-close-text" onclick="moduleHelper.closeOptionsPane('TOP')">閉じる</div>
+				<div id="TOP-loading-msg" class="opt-loading-msg" style="display: none;">
+保存しています...
+				</div>
+				<div id="TOP-loading-icn" class="opt-loading-icn" style="display: none;">
+
+					<img width="16" id="TOP-loading-icn-image" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" image="http://s.ytimg.com/yt/img/icn_loading_animated-vfl24663.gif">
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div class="opt-main">
+			<div class="opt-simple-msg">
+				このホームページをカスタマイズしますか？
+
+				今すぐ<a href="https://www.google.com/accounts/ServiceLogin?uilel=3&service=youtube&passive=true&continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Den_US%26next%3D%252F&hl=en_US&ltmpl=sso" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignIn/EditModuleBox');">ログイン</a>または<a href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3DNone&ltmpl=sso&hl=ja_JP&service=youtube" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/LoginSuggest/SignUp/EditModuleBox');">アカウントを作成</a>してください。
+
+			</div>
+
+		</div>
+	</div>
+
+
+		<div id="TOP-data" class="feedmodule-data">
+
+
+
+						<div class="feedmodule-body compressed-view">
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+					<div>
+						<a class="hLink" href="/videos?c=24" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/24');">エンターテイメント</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=dKzPD0AEB8I&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-dKzPD0AEB8I-7161504"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="2010 Lexus LFA breaks champagne glass (behind scenes)" thumb="http://i1.ytimg.com/vi/dKzPD0AEB8I/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/24');"><span class="video-time"><span>3:37</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-dKzPD0AEB8I-7161504', null, 'dKzPD0AEB8I', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+
+			<a href="/watch?v=dKzPD0AEB8I&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/24');" title="2010 Lexus LFA breaks champagne glass (behind scenes)">2010 Lexus LFA breaks champagne glass...</a>
+		</div>
+		<div>
+					再生回数 7,664 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/Autofanatic28">Autofanatic28</a>
+
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+					<div>
+						<a class="hLink" href="/music" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/10');">音楽</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=GByXsfAWI0s&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-GByXsfAWI0s-5304100"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="Superfly　NHKサッカーテーマ曲　新曲『タマシイレボリューション』" thumb="http://i4.ytimg.com/vi/GByXsfAWI0s/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/10');"><span class="video-time"><span>2:10</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-GByXsfAWI0s-5304100', null, 'GByXsfAWI0s', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=GByXsfAWI0s&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/10');" title="Superfly　NHKサッカーテーマ曲　新曲『タマシイレボリューション』">Superfly　NHKサッカーテーマ曲　新曲『タマシイレボリュー<wbr />ション』</a>
+		</div>
+		<div>
+					再生回数 233,862 回
+
+
+		</div>
+		<div>
+			<nobr>
+
+			<a href="/user/Superflychannel">Superflychannel</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+					<div>
+						<a class="hLink" href="/news" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/25');">ニュースと政治</a>
+					</div>
+
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=KBohDT5OHy8&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-KBohDT5OHy8-9028975"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="20100623-2" thumb="http://i4.ytimg.com/vi/KBohDT5OHy8/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/25');"><span class="video-time"><span>8:19</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-KBohDT5OHy8-9028975', null, 'KBohDT5OHy8', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=KBohDT5OHy8&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/25');" title="20100623-2">20100623-2</a>
+		</div>
+		<div>
+					再生回数 14,588 回
+
+
+		</div>
+
+		<div>
+			<nobr>
+			<a href="/user/touousan">touousan</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+					<div>
+						<a class="hLink" href="/videos?c=1" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/1');">映画とアニメ</a>
+
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=5GE43LOt6-E&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-5GE43LOt6-E-5925944"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="イナズマイレブン　第８７話　１／３" thumb="http://i2.ytimg.com/vi/5GE43LOt6-E/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/1');"><span class="video-time"><span>7:56</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-5GE43LOt6-E-5925944', null, '5GE43LOt6-E', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=5GE43LOt6-E&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/1');" title="イナズマイレブン　第８７話　１／３">イナズマイレブン　第８７話　１／３</a>
+		</div>
+		<div>
+
+					再生回数 53,821 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/usobasa633">usobasa633</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+
+					<div>
+						<a class="hLink" href="/sports" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/17');">スポーツ</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=ZajHAMrQ0Wg&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-ZajHAMrQ0Wg-1217492"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="中村俊輔のプレーが話題に・・ 　／日本 VS オランダ戦　(サッカー)" thumb="http://i3.ytimg.com/vi/ZajHAMrQ0Wg/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/17');"><span class="video-time"><span>1:23</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-ZajHAMrQ0Wg-1217492', null, 'ZajHAMrQ0Wg', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=ZajHAMrQ0Wg&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/17');" title="中村俊輔のプレーが話題に・・ 　／日本 VS オランダ戦　(サッカー)">中村俊輔のプレーが話題に<wbr />・・ 　／日本 VS オランダ戦　(サッカー)</a>
+		</div>
+		<div>
+
+					再生回数 503,422 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/syumi773">syumi773</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+
+					<div>
+						<a class="hLink" href="/videos?c=26" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/26');">ハウツーとスタイル</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=MxMgEKFoSYg&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-MxMgEKFoSYg-7340530"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="ポニーテールとシュシュ (Ponytail to Shushu) AKB48 dance cover" thumb="http://i2.ytimg.com/vi/MxMgEKFoSYg/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/26');"><span class="video-time"><span>4:32</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-MxMgEKFoSYg-7340530', null, 'MxMgEKFoSYg', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=MxMgEKFoSYg&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/26');" title="ポニーテールとシュシュ (Ponytail to Shushu) AKB48 dance cover">ポニーテールとシュシュ (Ponytail to Shushu) AKB4...</a>
+		</div>
+		<div>
+
+					再生回数 17,915 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/HelloPeachS">HelloPeachS</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+
+					<div>
+						<a class="hLink" href="/videos?c=22" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/22');">ブログと人</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=0nfore7F0h4&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-0nfore7F0h4-7254299"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="Eminem Feat. Rihanna - Love The Way You Lie" thumb="http://i1.ytimg.com/vi/0nfore7F0h4/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/22');"><span class="video-time"><span>4:25</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-0nfore7F0h4-7254299', null, '0nfore7F0h4', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=0nfore7F0h4&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/22');" title="Eminem Feat. Rihanna - Love The Way You Lie">Eminem Feat. Rihanna - Love The Way Y...</a>
+		</div>
+		<div>
+
+					再生回数 4,121,497 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/ThislsEminem">ThislsEminem</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+
+					<div>
+						<a class="hLink" href="/videos?c=15" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/15');">ペットと動物</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=u_I9ld-oDTs&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-u_I9ld-oDTs-2114116"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="Excited dog plays with baby" thumb="http://i2.ytimg.com/vi/u_I9ld-oDTs/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/15');"><span class="video-time"><span>2:11</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-u_I9ld-oDTs-2114116', null, 'u_I9ld-oDTs', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=u_I9ld-oDTs&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/15');" title="Excited dog plays with baby">Excited dog plays with baby</a>
+		</div>
+		<div>
+
+					再生回数 187,821 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/noobdaily">noobdaily</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+
+					<div>
+						<a class="hLink" href="/videos?s=mp" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/0%26s%3Dmp');">再生回数</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=5GE43LOt6-E&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-5GE43LOt6-E-2807465"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="イナズマイレブン　第８７話　１／３" thumb="http://i2.ytimg.com/vi/5GE43LOt6-E/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/0%26s%3Dmp');"><span class="video-time"><span>7:56</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-5GE43LOt6-E-2807465', null, '5GE43LOt6-E', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=5GE43LOt6-E&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/0%26s%3Dmp');" title="イナズマイレブン　第８７話　１／３">イナズマイレブン　第８７話　１／３</a>
+		</div>
+		<div>
+
+					再生回数 53,821 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/usobasa633">usobasa633</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+			<div class="feeditem-compressed">
+
+
+				<div class="feeditem-compressed-category-title">
+
+					<div>
+						<a class="hLink" href="/videos?s=mf" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/CategoryTitle/Logged_Out/0%26s%3Dmf');">お気に入り登録数の多い動画</a>
+					</div>
+				</div>
+
+				<div class="TOP-data compressed-form-content">
+					<div class="clear">
+						<div class="feedmodule-thumbnail">
+								
+	
+	
+	
+		
+	
+		
+	
+	
+	
+	
+		
+		
+	
+			
+	
+		
+	
+	<a href="/watch?v=YEsJpRpn4Pg&amp;feature=topvideos" class="video-thumb ux-thumb-128" id="video-thumb-YEsJpRpn4Pg-5054288"><img src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" title="PS3 二ノ国 白き聖灰の女王 PV" thumb="http://i2.ytimg.com/vi/YEsJpRpn4Pg/default.jpg" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/0%26s%3Dmf');"><span class="video-time"><span>2:54</span></span><span class="video-actions"><button type="button" class=" yt-uix-button yt-uix-button-short yt-uix-button-arrowbutton" onclick=";return false;"> <img class="yt-uix-button-arrow" src="http://s.ytimg.com/yt/img/pixel-vfl73.gif" alt=""><ul style="display:none;" class="yt-uix-button-menu yt-uix-button-menu-short"><li><span class=" yt-uix-button-menu-item" onclick="yt.www.watch.quicklist.clickedAddIcon_w5('video-thumb-YEsJpRpn4Pg-5054288', null, 'YEsJpRpn4Pg', '', '');return false;">キューに追加</span></li></ul></button></span><span class="video-in-quicklist">キューに<br />追加済み</span>
+
+	</a>
+
+						</div>
+						
+						
+	<div class="feedmodule-singleform-info">
+
+		<div class="video-title">
+			<a href="/watch?v=YEsJpRpn4Pg&feature=topvideos" onmousedown="yt.analytics.urchinTracker('/Events/Home/PersonalizedHome/TOP/Logged_Out/0%26s%3Dmf');" title="PS3 二ノ国 白き聖灰の女王 PV">PS3 二ノ国 白き聖灰の女王 PV</a>
+		</div>
+		<div>
+
+					再生回数 119,642 回
+
+
+		</div>
+		<div>
+			<nobr>
+			<a href="/user/geisen12">geisen12</a>
+			</nobr>
+		</div>
+	</div>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+
+				<div class="spacer">&nbsp;</div>
+			</div>
+		<div class="spacer">&nbsp;</div>
+	</div>
+
+	
+		</div>
+
+	</div>
+	<div class="clear"></div>
+	
+
+		</div>
+
+			</div>
+
+	<div class="main-spacer-bottom"></div>
+</div> <!-- end homepage-main-content -->
+
+<div id="homepage-side-content">
+
+		<div id="iyt-login-suggest-side-box" class="homepage-side-block">
+					<div style="border: 1px solid rgb(153, 153, 153); padding: 5px;">
+	<div style="border: 1px solid rgb(204, 204, 204); padding: 4px; background: #eee; text-align: center;">
+			<strong>このホームページをカスタマイズしますか？
+</strong><br />
+
+			今すぐ<a href="https://www.google.com/accounts/ServiceLogin?uilel=3&service=youtube&passive=true&continue=http%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26nomobiletemp%3D1%26hl%3Den_US%26next%3D%252F&hl=en_US&ltmpl=sso">ログイン</a>または<a href="https://www.google.com/accounts/LogoutWarning?continue=http%3A%2F%2Fwww.youtube.com%2Fcreate_account%3Fnext%3D&ltmpl=sso&hl=ja_JP&service=youtube">アカウントを作成</a>してください。
+
+	</div>  		</div>  
+		</div>
+
+
+
+			<div class="homepage-side-block hid" id="homepage-chrome-side-promo">
+			<div id="side-announcement-box">
+				
+	
+	
+	
+	<div class="yt-alert yt-alert-info yt-rounded">
+		
+		<div id="chrome-promo-hp" class="yt-alert-content">
+						
+
+
+
+
+	<div id="chrome-promo-hp">
+		<a href="http://www.google.com/chrome/intl/ja/p/youtube.html?brand=CHFH&amp;utm_source=en-et-yt-ftr-lx&amp;utm_medium=et&amp;utm_campaign=en&amp;hl=ja-JP" id="chrome-link-hp" style="padding: 0;">
+			<button class="master-sprite chrome-icon"></button>
+
+			<div class="textblock">
+				<div class="tagline">YouTube を新世代ブラウザで</div>
+				<div class="link">Google Chrome をダウンロード</div>
+			</div>
+			<div class="clear"></div>
+		</a>
+	</div>
+
+		</div>
+		
+			<button onclick="_hidediv(this.parentNode);dismissChromePromoAlert();" class="close master-sprite">
+				閉じる
+			</button>
+	</div>
+
+			</div>
+		</div>
+
+
+
+
+			
+
+
+
+
+
+	
+
+	<div id="ad_creative_3" class="ad-div " style="z-index: 1">
+
+	<iframe id="ad_creative_iframe_3" height="100" width="300" scrolling="no" frameborder="0" style="z-index: 1" id="promo1"></iframe>
+
+	<script type="text/javascript">
+		var add_timestamp = (Math.floor(Math.random() * 1000) == 0);
+		if (add_timestamp) {
+			var kts = new Date().getTime();
+			var iframe_src = "http://n4061ad.jp.doubleclick.net/adi/com.ythome/promo1;sz=300x100;klg=ja;kt=K;kga=-1;kgg=-1;kcr=jp;dc_dedup=1;kmyd=ad_creative_3;tile=3;kts=" + kts + ";ord=1417873373814993?";
+		} else {
+			var iframe_src = "http://n4061ad.jp.doubleclick.net/adi/com.ythome/promo1;sz=300x100;klg=ja;kt=K;kga=-1;kgg=-1;kcr=jp;dc_dedup=1;kmyd=ad_creative_3;tile=3;ord=1417873373814993?";
+		}
+		ad_iframe = _gel("ad_creative_iframe_3");
+		ad_iframe.src = iframe_src;
+	</script>
+
+
+	</div>
+
+	<div class="clear"></div>
+
+	<div class="homepage-side-block">
+	<div id="homepage-whats-new">
+			<h2>New!</h2>
+	
+
+
+		<h3><a href="/fiveyear">YouTube が 5 周年を迎えました</a></h3>
+		<div class="entry">
+YouTube 記念チャンネルに皆さんの声をお寄せください
+		</div>
+
+		
+		<h3><a href="http://youtube-global.blogspot.com/2010/03/future-will-be-captioned-improving.html">アクセシビリティの向上</a></h3>
+		<div class="homepage-whatsnew-text">
+すべてのユーザーにキャプションを表示できるようになりました
+		</div>
+			<h3>
+				<a href="http://youtubejpblog.blogspot.com/">動画の公開設定に新しいオプションを追加: 「限定公開」機能</a>
+			</h3>
+			<div class="entry">
+				<a href="http://www.youtube.com/blog"><img src="http://lh3.ggpht.com/_fEO7bsTyFqY/TBs3MotpOVI/AAAAAAAABuQ/I0LXgmxc9N4/s800/limitedview.jpg"></a><br /><br />
+
+YouTube の動画の共有オプションに便利な設定が追加されました。<br />
+新しい共有設定は「限定公開」。<br />
+「限定公開」を使うと、動画のリンクを知っている人のみが動画を再生できます。<br />
+今回は限定公開機能も含めて動画の編集ページから設定できる 3 種類の共有設定についてご紹介します。<br /><br />
+
+1. 公開<br />
+公開対象：全てのユーザー<br />
+動画掲載時デフォルトではこちらの設定になっています。YouTube で動...
+			</div>
+			
+			<p class="alignR">
+
+				<a href="http://youtubejpblog.blogspot.com/">YouTube スタッフ ブログを読む</a>
+			</p>
+
+	</div>
+</div>
+
+
+</div> <!-- end homepage-side-content -->
+
+<div class="clear"></div>
+
+
+
+
+		<div id="footer-container">
+				<div id="footer">
+		<ul class="footer-links">
+			<li><a href="http://www.google.com/support/youtube/bin/static.py?p=homepage&amp;page=start.cs&amp;hl=ja_JP">ヘルプ</a>
+</li>
+			<li><a href="/t/about">情報</a></li>
+			<li><a href="http://www.google.com/support/youtube/bin/request.py?contact_type=abuse&hl=ja_JP">安全性</a></li>
+
+			<li><a href="/t/privacy_at_youtube">プライバシー</a></li>
+			<li><a href="/t/terms">規約</a></li>
+			<li><a href="/t/dmca_policy">著作権</a></li>
+				<li><a href="/t/uploaders_partners">動画所有者、パートナー</a></li>
+				<li><a href="http://code.google.com/intl/ja-JP/apis/youtube/overview.html">開発者</a></li>
+			<li><a href="/t/advertising" onmousedown="yt.analytics.trackEvent('Footer', 'link', 'Advertising');">広告</a></li>
+
+		</ul>
+			<p id="copyright">	&copy; 2010 YouTube, LLC
+</p>
+			<ul class="pickers">
+			<li>言語:
+	<a href="#" onclick="yt.www.masthead.loadPicker('language-picker', ''); return false;">日本語</a>
+</li>
+			<li>国や地域:
+	<a href="#" onclick="yt.www.masthead.loadPicker('region-picker', ''); return false;">日本</a>
+
+</li>
+			<li>セーフモード:
+	<a href="#" onclick="yt.www.masthead.loadPicker('safetymode-picker', ''); return false;">
+
+オフ
+
+	</a>
+</li>
+	</ul>
+		<div id="picker-container"></div>
+	<div id="picker-loading" style="display: none">読み込んでいます…</div>
+
+
+	</div>
+
+		</div>
+		
+	</div>
+	<div> 
+
+	</div>
+					<script>
+			yt.setConfig('TIMING_ACTION', 'index');
+		</script>
+
+	
+	
+	<script>
+		
+
+		
+		yt.www.thumbnailDelayLoad.setFudgeFactor(0);
+	
+	if (document.documentElement["getBoundingClientRect"]) {
+		yt.events.listen(window, 'scroll', yt.www.thumbnailDelayLoad.loadImages);
+		yt.events.listen(window, 'resize', yt.www.thumbnailDelayLoad.loadImages);
+	}
+	yt.www.thumbnailDelayLoad.loadImages();
+
+		yt.www.thumbnailDelayLoad.setLoadAllAtOnce(true);
+
+
+		
+			yt.events.listen(_gel('masthead-search-term'), 'focus', yt.www.home.ads.workaroundReset);
+		
+			yt.setTimeout(function() {
+				window.yt.www.suggest.install(document.searchForm,
+						document.searchForm.search_query,
+						'ja','閉じる',
+						'候補',
+						'ウェブ検索',
+						-1,
+						null);
+					}, 100);
+
+	</script>
+
+	
+	<script id="legacy-user-datastore" style="behavior:url('#default#userdata')"></script>
+	
+	
+
+
+	<!-- end postpage section -->
+	<!--[if IE]></div><![endif]-->
+</body>
+
+</html>

@@ -1,0 +1,1800 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja" dir="ltr" id="R1">
+<head>
+<meta http-equiv="Content-Language" content="ja" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
+<meta name="description" content="日本経済新聞の電子版。日経や日経ＢＰの提供する経済、企業、国際、政治、マーケット、情報・通信、社会など各分野のニュース。ビジネス、マネー、IT、スポーツ、住宅、キャリアなどの専門情報も満載。" />
+<meta name="keywords" content="日経,日経平均,ニュース,経済,株,新聞" />
+<meta name="info003" content="false" />
+<title>日本経済新聞</title>
+<link rel="stylesheet" type="text/css" href="http://cdn.nikkei.co.jp/parts/ds/css/home.css" media="screen,tv,projection,print" /><!--[if IE]><link rel="stylesheet" type="text/css" href="http://cdn.nikkei.co.jp/parts/ds/css/home.ifie.css" media="screen,tv,projection,print" /><![endif]-->
+
+<script type="text/javascript" src="http://cdn.nikkei.co.jp/parts/ds/script/jq.top.20100519_1.min.js"></script><script type="text/javascript" src="http://parts.nikkei.com/parts/js/nk_ds_adtop_header.js"></script><!--[if IE]><script type="text/javascript" src="http://cdn.nikkei.co.jp/parts/ds/script/excanvas.compiled.js"></script><![endif]--></head>
+
+<body>
+    <div id="PAGE_TOP">
+	<div id="PAGE_TOP_BODY" class="cmn-clearfix">
+		<h1 class="bs-title"><a href="/"><img src="http://cdn.nikkei.co.jp/parts/ds/images/common/st_nikkei_r1.gif" height="56" width="362" title="日本経済新聞" alt="日本経済新聞" /></a></h1>
+		<div class="bs-date"><!--
+            --><img height="17" width="84" alt="6月25日" src="http://cdn.nikkei.co.jp/parts/ds/images/home/txt_date_0625_r1.gif"/><!--
+            --><img height="17" width="56" alt="（金曜日）" src="http://cdn.nikkei.co.jp/parts/ds/images/common/txt_date_week_fri_r1.gif"/><!--
+        --></div>
+		<div class="bs-english">
+			<a href="http://nikkei.com/" target="_blank" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_GE'; s.tl(this,'o','DS-globalnavi');">English</a></div>
+	</div>
+</div>
+
+<div id="UNIVERSAL_BAR">
+	<div id="UNIVERSAL_BAR_BODY" class="cmn-clearfix">
+		<h2 class="cmn-hide">日本経済新聞 関連サイト</h2>
+		<div id="UNIVERSAL_BAR_SERVICE">
+			<ul class="bs-service">
+				<li><a href="http://www.nikkei.com/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_U1'; s.tl(this,'o','DS-globalnavi');"><strong>日経電子版</strong></a></li>
+				<li><a href="http://sumai.nikkei.co.jp/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_U2'; s.tl(this,'o','DS-globalnavi');">住宅サーチ</a></li>
+
+				<li><a href="http://www.nikkei.co.jp/category/career/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_U3'; s.tl(this,'o','DS-globalnavi');">キャリア・教育</a></li>
+				<li><a href="http://www.nikkei.co.jp/category/offtime/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_U4'; s.tl(this,'o','DS-globalnavi');">オフタイム</a></li>
+				<li><a href="http://nikkei.gnavi.co.jp/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_U5'; s.tl(this,'o','DS-globalnavi');">大人のレストランガイド</a></li>
+			</ul>
+		</div>
+		<div id="UNIVERSAL_BAR_NIKKEI_ID">
+    <h2 class="bs-title">
+
+        <a href="https://id.nikkei.com/lounge/">NIKKEI ID</a></h2>
+    <div class="bs-username">
+            ようこそ ゲスト様</div>
+        <ul class="bs-menu">
+            <li class="bsc-login">
+                <a href="http://www.nikkei.com/etc/accounts/login?dps=3&amp;pageflag=top&amp;url=http%3A%2F%2Fwww.nikkei.com%2F">ログイン</a></li>
+            <li class="bsc-help"><a href="http://www.nikkei.com/help/" target="_blank">ヘルプ</a></li>
+
+        </ul>
+    </div>
+</div>
+</div>
+
+<div id="GLOBAL_MENU">
+	<div id="GLOBAL_MENU_BODY" class="cmn-clearfix">
+		<h2 class="cmn-hide">日本経済新聞 コンテンツ一覧</h2>
+		<div id="GLOBAL_MENU_LIST" class="cmn-clearfix">
+			<ul>
+
+				<li class="bs-news">
+					<a href="/" class="bsc-here" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G1'; s.tl(this,'o','DS-globalnavi');">Web刊</a></li>
+				<li class="bs-biz">
+					<a href="/biz/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G2'; s.tl(this,'o','DS-globalnavi');">ビジネスリーダー</a></li>
+				<li class="bs-money">
+					<a href="http://markets.nikkei.co.jp/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G3'; s.tl(this,'o','DS-globalnavi');">マネー</a></li>
+				<li class="bs-tech">
+
+					<a href="/tech/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G4'; s.tl(this,'o','DS-globalnavi');">テクノロジー</a></li>
+				<li class="bs-life">
+					<a href="/life/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G5'; s.tl(this,'o','DS-globalnavi');">ライフ</a></li>
+				<li class="bs-sports">
+					<a href="/sports/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G6'; s.tl(this,'o','DS-globalnavi');">スポーツ</a></li>
+				<li class="bs-special">
+					<a href="/guide/" onclick="s_objectID='DS-globalnavi'; var s=s_gi('nikkeicojpdsmstallprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi_G7'; s.tl(this,'o','DS-globalnavi');">利用ガイド</a></li>
+
+			</ul>
+			</div>
+		<div id="GLOBAL_MENU_FOCUS" class="cmn-clearfix">
+			<div class="bs-advertise">
+	<div id="ADVERTISE_BANNER" class="JSID_adbase">
+		<div class="JSID_adscript">
+			<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_rbnr&tile=' + nkad_tile_ds_1 + '&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+		
+//-->
+			</script>
+		</div>
+
+	</div>
+</div>
+<div id="ADVERTISE_KOUBAI" class="JSID_adbase">
+	<div class="JSID_adscript">
+		<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_all_all_kodoku&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+		
+//-->
+		</script>
+	</div>
+</div>
+</div>
+	</div>
+</div>
+
+<div id="LOCAL_MENU">
+	<div id="LOCAL_MENU_BODY" class="cmn-clearfix">
+	<h2 class="cmn-hide">コンテンツ一覧</h2>
+	<ul class="bs-local_menu">
+		<li class="bsc-category">
+			<a href="javascript:void(0)" onclick="return false">ジャンル</a><span class="JSID_urlData" style="display:none;">#LOCAL_MENU_GENRE</span></li>
+		<li class="bsc-category">
+			<a href="javascript:void(0)" onclick="return false">産業別</a><span class="JSID_urlData" style="display:none;">#LOCAL_MENU_INDUSTRY</span></li>
+
+		<li class="bsc-category">
+			<a href="javascript:void(0)" onclick="return false">地域別</a><span class="JSID_urlData" style="display:none;">#LOCAL_MENU_AREA</span></li>
+		<li class="bsc-normal">
+			<a href="/news/special/" class="" onclick="s_objectID='DS-globalnavi-NX-special'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-special_1'; s.tl(this,'o','DS-globalnavi-NX-special');">特集</a></li>
+		<li class="bsc-normal">
+			<a href="/news/topic/" class="" onclick="s_objectID='DS-globalnavi-NX-topic'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-topic_1'; s.tl(this,'o','DS-globalnavi-NX-topic');">連載・コラム</a></li>
+		<li class="bsc-normal">
+
+			<a href="/news/ranking/" class="" onclick="s_objectID='DS-globalnavi-NX-ranking'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-ranking_1'; s.tl(this,'o','DS-globalnavi-NX-ranking');">ランキング</a></li>
+		<li class="bsc-normal">
+			<a href="/news/editorial/" class="" onclick="s_objectID='DS-globalnavi-NX-editorial'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-editorial_1'; s.tl(this,'o','DS-globalnavi-NX-editorial');">社説・春秋</a></li>
+	</ul>
+</div><div id="LOCAL_MENU_PULLDOWN">
+	<div class="bs-pulldown cmn-clearfix" id="LOCAL_MENU_GENRE">
+		<ul class="bsc-main_menu cmn-clearfix">
+			<li class="bsc-all">
+
+				<a href="/news/category/at=ALL" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_0'; s.tl(this,'o','DS-globalnavi-NX-genre');">すべて</a></li>
+			<li>
+							<a href="/news/category/at=DGXZZO0195164008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_1'; s.tl(this,'o','DS-globalnavi-NX-genre');">経済</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195165008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_2'; s.tl(this,'o','DS-globalnavi-NX-genre');">企業</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195570008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_3'; s.tl(this,'o','DS-globalnavi-NX-genre');">国際</a></li>
+
+						<li>
+							<a href="/news/category/at=DGXZZO0195166008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_4'; s.tl(this,'o','DS-globalnavi-NX-genre');">政治</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195576008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_5'; s.tl(this,'o','DS-globalnavi-NX-genre');">マーケット</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195577008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_6'; s.tl(this,'o','DS-globalnavi-NX-genre');">財務</a></li>
+						<li>
+
+							<a href="/news/category/at=DGXZZO0195579008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_7'; s.tl(this,'o','DS-globalnavi-NX-genre');">科学</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195581008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_8'; s.tl(this,'o','DS-globalnavi-NX-genre');">くらし</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195582008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_9'; s.tl(this,'o','DS-globalnavi-NX-genre');">スポーツ</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195583008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_10'; s.tl(this,'o','DS-globalnavi-NX-genre');">社会</a></li>
+
+						<li>
+							<a href="/news/category/at=DGXZZO0195584008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_11'; s.tl(this,'o','DS-globalnavi-NX-genre');">エコ</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195591008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_12'; s.tl(this,'o','DS-globalnavi-NX-genre');">健康</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195590008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_13'; s.tl(this,'o','DS-globalnavi-NX-genre');">インターネット</a></li>
+						<li>
+
+							<a href="/news/category/at=DGXZZO0195588008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_14'; s.tl(this,'o','DS-globalnavi-NX-genre');">雇用</a></li>
+						<li>
+							<a href="/news/category/at=DGXZZO0195592008122009000000" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_15'; s.tl(this,'o','DS-globalnavi-NX-genre');">教育</a></li>
+						</ul><ul class="bsc-sub_menu cmn-clearfix">
+			<li>
+				<a href="/news/product/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CA'; s.tl(this,'o','DS-globalnavi-NX-genre');">新製品</a></li>
+			<li>
+
+				<a href="/news/jinji/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CB'; s.tl(this,'o','DS-globalnavi-NX-genre');">人事</a></li>
+			<li>
+				<a href="/news/okuyami/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CC'; s.tl(this,'o','DS-globalnavi-NX-genre');">おくやみ</a></li>
+			<li>
+				<a href="/news/local/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CD'; s.tl(this,'o','DS-globalnavi-NX-genre');">地域ニュース</a></li>
+			<li>
+				<a href="/news/interview/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CE'; s.tl(this,'o','DS-globalnavi-NX-genre');">会見</a></li>
+
+			<li>
+				<a href="/news/research/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CF'; s.tl(this,'o','DS-globalnavi-NX-genre');">調査・アンケート</a></li>
+			<li>
+				<a href="/news/report/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CG'; s.tl(this,'o','DS-globalnavi-NX-genre');">統計・白書・裁判</a></li>
+			<li><a href="http://release.nikkei.co.jp/" target="_blank" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CH'; s.tl(this,'o','DS-globalnavi-NX-genre');">リリース</a></li>
+			<li>
+				<a href="/news/info/" onclick="s_objectID='DS-globalnavi-NX-genre'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-genre_CI'; s.tl(this,'o','DS-globalnavi-NX-genre');">訂正・おわび</a></li>
+
+		</ul>
+		<div class="bsc-close">
+			<img src="http://cdn.nikkei.co.jp/parts/ds/images/common/btn_localmenu_pulldown_close_r1_off.gif" height="10" width="10" class="JSSTL_mousePointer" title="閉じる" alt="閉じる" /></div>
+	</div><div class="bs-pulldown cmn-clearfix" id="LOCAL_MENU_INDUSTRY">
+		<ul class="cmn-clearfix">
+			<li class="bsc-all">
+				<a href="/news/category/au=ALL" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_0'; s.tl(this,'o','DS-globalnavi-NX-business');">すべて</a></li>
+
+			<li>
+
+							<a href="/news/category/au=DGXZZO0195575008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_1'; s.tl(this,'o','DS-globalnavi-NX-business');">情報・通信</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195686008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_2'; s.tl(this,'o','DS-globalnavi-NX-business');">メディア</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195685008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_3'; s.tl(this,'o','DS-globalnavi-NX-business');">電機</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195684008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_4'; s.tl(this,'o','DS-globalnavi-NX-business');">金融・保険</a></li>
+
+						<li>
+							<a href="/news/category/au=DGXZZO0195683008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_5'; s.tl(this,'o','DS-globalnavi-NX-business');">自動車</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195606008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_6'; s.tl(this,'o','DS-globalnavi-NX-business');">輸送・レジャー</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195605008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_7'; s.tl(this,'o','DS-globalnavi-NX-business');">食品</a></li>
+						<li>
+
+							<a href="/news/category/au=DGXZZO0195604008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_8'; s.tl(this,'o','DS-globalnavi-NX-business');">流通・外食</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195603008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_9'; s.tl(this,'o','DS-globalnavi-NX-business');">日用品</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195602008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_10'; s.tl(this,'o','DS-globalnavi-NX-business');">医薬・医療</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195601008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_11'; s.tl(this,'o','DS-globalnavi-NX-business');">建設・不動産</a></li>
+
+						<li>
+							<a href="/news/category/au=DGXZZO0195600008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_12'; s.tl(this,'o','DS-globalnavi-NX-business');">機械</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195599008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_13'; s.tl(this,'o','DS-globalnavi-NX-business');">素材・エネルギー</a></li>
+						<li>
+							<a href="/news/category/au=DGXZZO0195598008122009000000" onclick="s_objectID='DS-globalnavi-NX-business'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-business_14'; s.tl(this,'o','DS-globalnavi-NX-business');">商社・サービス</a></li>
+						</ul><div class="bsc-close">
+
+			<img src="http://cdn.nikkei.co.jp/parts/ds/images/common/btn_localmenu_pulldown_close_r1_off.gif" height="10" width="10" class="JSSTL_mousePointer" title="閉じる" alt="閉じる" /></div>
+	</div><div class="bs-pulldown cmn-clearfix" id="LOCAL_MENU_AREA">
+		<ul class="cmn-clearfix">
+			<li class="bsc-all">
+				<a href="/news/category/av=ALL" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_0'; s.tl(this,'o','DS-globalnavi-NX-global');">すべて</a></li>
+
+			<li>
+							<a href="/news/category/av=001" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I1'; s.tl(this,'o','DS-globalnavi-NX-global');">北海道</a></li>
+
+						<li>
+							<a href="/news/category/av=002" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I2'; s.tl(this,'o','DS-globalnavi-NX-global');">東北</a></li>
+						<li>
+							<a href="/news/category/av=003" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I3'; s.tl(this,'o','DS-globalnavi-NX-global');">北関東</a></li>
+						<li>
+							<a href="/news/category/av=004" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I4'; s.tl(this,'o','DS-globalnavi-NX-global');">南関東</a></li>
+						<li>
+
+							<a href="/news/category/av=005" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I5'; s.tl(this,'o','DS-globalnavi-NX-global');">中部</a></li>
+						<li>
+							<a href="/news/category/av=006" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I6'; s.tl(this,'o','DS-globalnavi-NX-global');">東海</a></li>
+						<li>
+							<a href="/news/category/av=007" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I7'; s.tl(this,'o','DS-globalnavi-NX-global');">北陸</a></li>
+						<li>
+							<a href="/news/category/av=008" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I8'; s.tl(this,'o','DS-globalnavi-NX-global');">近畿</a></li>
+
+						<li>
+							<a href="/news/category/av=009" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I9'; s.tl(this,'o','DS-globalnavi-NX-global');">中国</a></li>
+						<li>
+							<a href="/news/category/av=010" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I10'; s.tl(this,'o','DS-globalnavi-NX-global');">四国</a></li>
+						<li>
+							<a href="/news/category/av=011" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I11'; s.tl(this,'o','DS-globalnavi-NX-global');">九州・沖縄</a></li>
+						<li>
+
+							<a href="/news/category/av=012" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I12'; s.tl(this,'o','DS-globalnavi-NX-global');">アジア</a></li>
+						<li>
+							<a href="/news/category/av=013" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I13'; s.tl(this,'o','DS-globalnavi-NX-global');">欧州</a></li>
+						<li>
+							<a href="/news/category/av=014" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I14'; s.tl(this,'o','DS-globalnavi-NX-global');">中東</a></li>
+						<li>
+							<a href="/news/category/av=015" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I15'; s.tl(this,'o','DS-globalnavi-NX-global');">アフリカ</a></li>
+
+						<li>
+							<a href="/news/category/av=016" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I16'; s.tl(this,'o','DS-globalnavi-NX-global');">北米</a></li>
+						<li>
+							<a href="/news/category/av=017" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I17'; s.tl(this,'o','DS-globalnavi-NX-global');">中南米</a></li>
+						<li>
+							<a href="/news/category/av=018" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_I18'; s.tl(this,'o','DS-globalnavi-NX-global');">オセアニア</a></li>
+						</ul>
+
+		<ul class="nx-local cmn-clearfix">
+			<li>
+				<ul class="cmn-flat_list">
+					<li>
+						<a href="/news/category/cn=01" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED1'; s.tl(this,'o','DS-globalnavi-NX-global');">中国</a></li>
+					<li>
+						<a href="/news/category/cn=02" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED2'; s.tl(this,'o','DS-globalnavi-NX-global');">韓国</a></li>
+					<li>
+
+						<a href="/news/category/cn=03" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED3'; s.tl(this,'o','DS-globalnavi-NX-global');">北朝鮮</a></li>
+					<li>
+						<a href="/news/category/cn=04" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED4'; s.tl(this,'o','DS-globalnavi-NX-global');">台湾</a></li>
+					<li>
+						<a href="/news/category/cn=05" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED5'; s.tl(this,'o','DS-globalnavi-NX-global');">インド</a></li>
+					<li>
+						<a href="/news/category/cn=06" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED6'; s.tl(this,'o','DS-globalnavi-NX-global');">ベトナム</a></li>
+
+					<li>
+						<a href="/news/category/cn=07" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED7'; s.tl(this,'o','DS-globalnavi-NX-global');">英国</a></li>
+					<li>
+						<a href="/news/category/cn=08" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED8'; s.tl(this,'o','DS-globalnavi-NX-global');">フランス</a></li>
+					<li>
+						<a href="/news/category/cn=09" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED9'; s.tl(this,'o','DS-globalnavi-NX-global');">ドイツ</a></li>
+					<li>
+
+						<a href="/news/category/cn=10" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED10'; s.tl(this,'o','DS-globalnavi-NX-global');">イタリア</a></li>
+					<li>
+						<a href="/news/category/cn=11" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED11'; s.tl(this,'o','DS-globalnavi-NX-global');">ロシア</a></li>
+					<li>
+						<a href="/news/category/cn=12" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED12'; s.tl(this,'o','DS-globalnavi-NX-global');">イラン</a></li>
+					<li>
+						<a href="/news/category/cn=13" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED13'; s.tl(this,'o','DS-globalnavi-NX-global');">イスラエル</a></li>
+
+					<li>
+						<a href="/news/category/cn=14" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED14'; s.tl(this,'o','DS-globalnavi-NX-global');">サウジアラビア</a></li>
+					<li>
+						<a href="/news/category/cn=15" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED15'; s.tl(this,'o','DS-globalnavi-NX-global');">ＵＡＥ</a></li>
+					<li>
+						<a href="/news/category/cn=16" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED16'; s.tl(this,'o','DS-globalnavi-NX-global');">南アフリカ</a></li>
+					<li>
+
+						<a href="/news/category/cn=17" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED17'; s.tl(this,'o','DS-globalnavi-NX-global');">米国</a></li>
+					<li>
+						<a href="/news/category/cn=18" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED18'; s.tl(this,'o','DS-globalnavi-NX-global');">カナダ</a></li>
+					<li>
+						<a href="/news/category/cn=19" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED19'; s.tl(this,'o','DS-globalnavi-NX-global');">ブラジル</a></li>
+					<li>
+						<a href="/news/category/cn=20" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED20'; s.tl(this,'o','DS-globalnavi-NX-global');">豪州</a></li>
+
+					<li>
+						<a href="/news/category/cn=21" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED21'; s.tl(this,'o','DS-globalnavi-NX-global');">ニュージーランド</a></li>
+					<li>
+						<a href="/news/category/cn=22" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED22'; s.tl(this,'o','DS-globalnavi-NX-global');">東京</a></li>
+					<li>
+						<a href="/news/category/cn=23" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED23'; s.tl(this,'o','DS-globalnavi-NX-global');">大阪</a></li>
+					<li>
+
+						<a href="/news/category/cn=24" onclick="s_objectID='DS-globalnavi-NX-global'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-globalnavi-NX-global_ED24'; s.tl(this,'o','DS-globalnavi-NX-global');">名古屋</a></li>
+					</ul>
+			</li>
+		</ul>
+		<div class="bsc-close">
+			<img src="http://cdn.nikkei.co.jp/parts/ds/images/common/btn_localmenu_pulldown_close_r1_off.gif" height="10" width="10" class="JSSTL_mousePointer" title="閉じる" alt="閉じる" /></div>
+	</div></div></div>
+<div id="CONTENTS">
+        <div id="CONTENTS_BODY">
+
+            <div id="CONTENTS_OUTER">
+                <div id="CONTENTS_INNER" class="cmn-clearfix">
+        <div class="JSID_baseBreaking">
+    <div class=" cmn-clearfix JSID_blockBreaking JSID_tagBreakingHeaderAll" style="display: none;">
+        <div class="cmnc-title  ">
+            <h2>
+                <span class="cmnc-hotnews JSID_title">-</span>
+                <span class="cmnc-time JSID_time">1日 0:00更新</span>
+
+                <span class="cmnc-headline JSID_body"></span>
+            </h2>
+        </div>
+        <div class="cmnc-open" style="display: none;">
+            <a href="#" class="JSID_actBreaking_Open JSSTL_mousePointer">再表示</a>
+            </div>
+        <div class="cmnc-close" style="display: none;">
+            <a href="#" class="JSID_actBreaking_Close JSSTL_mousePointer">閉じる</a>
+
+            </div>
+    </div>
+
+    <a href="/async/async.do/sv=NX;ae=JO_CM_BREAKINGNEWS" class="cmn-simple-hide JSID_urlBreaking" onclick="return false;"></a><div class="cmn-simple-hide JSID_dataBreaking_Type_photo"></div>
+    <div class="cmn-simple-hide JSID_dataBreaking_Motion">false</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_textbody"></div>
+    <div class="cmn-simple-hide JSID_dataBreaking_htmlbody"></div>
+    <div class="cmn-simple-hide JSID_dataBreaking_KijiKey">c</div>
+
+    <div class="cmn-simple-hide JSID_dataBreaking_KijiValue">,20000101000000</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_CloseKey">d</div>
+</div>
+<div class="JSID_baseBreaking">
+    <div class=" cmn-clearfix JSID_blockBreaking JSID_tagBreakingHeaderAll" style="display: none;">
+        <div class="cmnc-title  ">
+            <h2>
+                <span class="cmnc-hotnews JSID_title">-</span>
+
+                <span class="cmnc-time JSID_time">1日 0:00更新</span>
+                <span class="cmnc-headline JSID_body">-</span>
+            </h2>
+        </div>
+        <div class="cmnc-open" style="display: none;">
+            <a href="#" class="JSID_actBreaking_Open JSSTL_mousePointer">再表示</a>
+            </div>
+
+        <div class="cmnc-close" style="display: none;">
+            <a href="#" class="JSID_actBreaking_Close JSSTL_mousePointer">閉じる</a>
+            </div>
+    </div>
+
+    <div class="cmn-simple-hide JSID_dataBreaking_Type_normal"></div>
+    <div class="cmn-simple-hide JSID_dataBreaking_Motion">false</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_textbody">-</div>
+
+    <div class="cmn-simple-hide JSID_dataBreaking_htmlbody">-</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_KijiKey">e</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_KijiValue">,20000101000000</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_CloseKey">f</div>
+</div>
+<div class="cmn-expand_banner">
+		<script type="text/javascript">
+<!--
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_rich&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+		
+//-->
+		</script>
+
+	</div>
+<div id="CONTENTS_SUB_TOP">
+
+            <span class="cmn-simple-hide JSID_flwScrollUse_CONTENTS_SUB">0</span>
+<div class="cmn-sub_market">
+		<h2 class="cmnc-title">主な市場指標</h2>
+		<div class="cmnc-profile"><a href="http://www.nikkei.co.jp/nkave/" target="_blank">日経平均プロフィル</a>（<a href="http://markets.nikkei.co.jp/kokunai/nidxprice.aspx?INDEX=NAVE">銘柄一覧</a>）</div>
+
+		<table cellspacing="0" summary="市場指標一覧">
+			<tbody>
+			<tr class="cmnc-odd">
+						<th>
+							<a href="http://markets.nikkei.co.jp/kokunai/">日経平均(円)</a></th>
+						<td class="cmnc-rate">9,737.48</td>
+						<td class="cmnc-before">-190.86</td>
+
+						<td class="cmnc-date">
+							25日
+							大引</td>
+					</tr>
+
+				<tr class="cmnc-even">
+						<th>
+							NYダウ(ドル)</th>
+						<td class="cmnc-rate">10,152.80</td>
+
+						<td class="cmnc-before">-145.64</td>
+						<td class="cmnc-date">
+							24日
+							16:30</td>
+					</tr>
+
+				<tr class="cmnc-odd">
+						<th>
+							英FTSE100</th>
+
+						<td class="cmnc-rate">5,127.35</td>
+						<td class="cmnc-before">+27.12</td>
+						<td class="cmnc-date">
+							25日
+							8:46</td>
+					</tr>
+
+				<tr class="cmnc-even">
+						<th>
+
+							<a href="http://markets.nikkei.co.jp/kawase/">ドル/円</a></th>
+						<td class="cmnc-rate">89.72 - .74</td>
+						<td class="cmnc-before">+0.05<span class="cmnc-word">円安</span></td>
+						<td class="cmnc-date">
+							25日
+							16:40</td>
+					</tr>
+
+				<tr class="cmnc-odd">
+						<th>
+							ユーロ/円</th>
+						<td class="cmnc-rate">110.69 - .72</td>
+						<td class="cmnc-before">+0.53<span class="cmnc-word">円安</span></td>
+						<td class="cmnc-date">
+
+							25日
+							16:40</td>
+					</tr>
+
+				<tr class="cmnc-even">
+						<th>
+							長期金利(%)</th>
+						<td class="cmnc-rate">1.140</td>
+						<td class="cmnc-before">±0.000</td>
+
+						<td class="cmnc-date">
+							25日
+							16:57</td>
+					</tr>
+
+				<tr class="cmnc-odd">
+						<th>
+							NY原油(ドル)</th>
+						<td class="cmnc-rate">76.51</td>
+
+						<td class="cmnc-before">+0.16</td>
+						<td class="cmnc-date">
+							24日
+							終値</td>
+					</tr>
+
+				</tbody>
+		</table>
+	</div>
+
+	<div class="cmn-sub_search_form">
+      <form method="get" action="/search/stock/" accept-charset="UTF-8" class="JSID_baseCustomSearch JSID_baseFormHint" onsubmit="return false;"><div class="cmn-simple-hide JSID_dataCustomSearch_inputdata"></div>
+        <div class="cmn-simple-hide JSID_targetCustomSearch_inputtext">input.JSID_key_input</div>
+        <div class="cmn-simple-hide JSID_dataCustomSearch_name_default">searchKeyword</div>
+        <div class="cmn-simple-hide JSID_dataCustomSearch_name_num4">scode</div>
+        <div class="cmn-simple-hide JSID_targetCustomSearch_form_default">../form.JSID_key_default</div>
+
+        <div class="cmn-simple-hide JSID_targetCustomSearch_form_num4">../form.JSID_key_formnum4</div>
+        <a class="JSID_urlCustomSearch_default" href="/search/stock/"></a>
+        <a class="JSID_urlCustomSearch_num4" href="http://company.nikkei.co.jp/index.aspx"></a>
+        <span class="cmn-simple-hide JSID_dataFormHint_msg">企業名または証券コードを入力</span>
+        <span class="cmn-simple-hide JSID_dataFormHint_class">cmn-default</span>
+        <input type="text" maxlength="50" value="" id="SEARCH_QUERY" class="cmn-input_text cmnc-company JSID_key_input JSID_actFormHint" /><input type="submit" value="株価検索" class="cmnc-stock_search JSID_actFormSubmit JSSTL_mousePointer" />
+        <input type="hidden" name="t" value="0" /><input type="hidden" name="ag" value="201006251701" /></form><form method="get" action="#" class="cmn-simple-hide JSID_key_default" onsubmit="return false;"></form><form method="get" action="#" class="cmn-simple-hide JSID_key_formnum4" onsubmit="return false;"></form></div>
+
+  <div class="cmn-sub_square_banner">
+	<div id="ADVERTISE_RECTANGLE1" class="JSID_adbase">
+		<div class="JSID_adscript">
+			<script type="text/javascript">
+<!--
+
+
+var nkad_SNO = "";
+var nkad_OCC = "";
+var nkad_BUS = "";
+var nkad_JNO = "";
+var nkad_POS = "";
+var nkad_EMP = "";
+var nkad_INC = "";
+var nkad_DSR = "1";
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_lrct&tile=' + nkad_tile_ds_1 + '&rattr=' + nkad_DSR + '&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+		
+//-->
+			</script>
+		</div>
+	</div>
+</div>
+<div class="cmn-sub_recommend">
+    <h2 class="cmnc-title">おすすめ情報</h2>
+
+    <ul class="cmnc-site">
+        <li class="cmn-clearfix">
+                <span class="cmnc-category">
+                        <img src="/content/pic/20100614/96958A88889DE2EBE3EAE6E1EBE2E3E6E2E4E0E2E3E2E2E2E2E2E2E2-DSXZZO0418729016032010000016-NONE-2.png" height="16" width="68" title="" alt="" /></span><a href="http://sumai.nikkei.co.jp/" target="_blank">オアフ島、眼下に広がる海と波の音</a></li>
+        <li class="cmn-clearfix">
+                <span class="cmnc-category">
+                        <img src="/content/pic/20100504/96958A88889DE2E4E5E7E6E6E2E2E2E1E2E7E0E2E3E2E2E2E2E2E2E2-DSXZZO0675364003052010000001-NONE-1.png" height="16" width="68" title="" alt="" /></span><a href="http://marisol.nikkei.co.jp/life/20100621/money1.html" target="_blank">アラフォーのリアル家計簿チェック</a></li>
+        <li class="cmn-clearfix">
+
+                <span class="cmnc-category">
+                        <img src="/content/pic/20100614/96958A88889DE2EBE3E5E4EBE7E2E3E6E2E4E0E2E3E2E2E2E2E2E2E2-DSXZZO0737113014052010000001-NONE-1.png" height="16" width="68" title="" alt="" /></span><a href="http://www.nikkei.co.jp/category/offtime/eiga/" target="_blank">大人気ホラー『ソウ7』まさかの3Dで</a></li>
+        <li class="cmn-clearfix">
+                <span class="cmnc-category">
+                        <img src="/content/pic/20100417/96958A88889DE2E6E1E0E0EAE6E2E3EBE2E1E0E2E3E2E2E2E2E2E2E1-DSXZZO0418728016032010000005-NONE-2.png" height="16" width="68" title="" alt="" /></span><a href="http://www.nikkei.co.jp/category/offtime/tabeb/" target="_blank">千葉県、給食にも落花生</a></li>
+        <li class="cmn-clearfix">
+                <span class="cmnc-category">
+                        <img src="/content/pic/20100506/96958A88889DE2E4E5E7E6E6E3E2E2E1E2E7E0E2E3E2E2E2E2E2E2E2-DSXZZO0675442003052010000000-NONE-2.png" height="16" width="68" title="" alt="" /></span><a href="http://college.nikkei.co.jp/career/obadvice/article.aspx?id=MMCCd3000017062010" target="_blank">将来、人気企業に転職できるもの？</a></li>
+
+        <li class="cmn-clearfix">
+                <span class="cmnc-category">
+                        <img src="/content/pic/20100618/96958A88889DE2EBE6E6EAE6E1E2E3EAE2E4E0E2E3E2E2E2E2E2E2E2-DSXZZO0675446003052010000003-NONE-1.png" height="16" width="68" title="" alt="" /></span><a href="http://health.nikkei.co.jp/hsn/" target="_blank">糖尿病患者は「がんリスク」も高い</a></li>
+        </ul>
+    <ul class="cmnc-service cmn-clearfix">
+        <li class="cmnc-weather"><a href="http://weather.nikkei.com" target="_blank">天気</a></li>
+        <li class="cmnc-shopping"><a href="http://www.nikkei.co.jp/ad/shopnavi/" target="_blank">ショッピング</a></li>
+
+        <li class="cmnc-travel">出張&nbsp;&nbsp;<a href="http://biz.travel.rakuten.co.jp/" target="_blank">国内</a>｜<a href="http://apps.rctours.co.jp/nikkei/" target="_blank">海外</a></li>
+        <li class="cmnc-book"><a href="http://www.nikkeibook.com/" target="_blank">日経の本</a></li>
+    </ul>
+
+</div>
+<script type="text/javascript">
+<!--
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_all_all_denshiba&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+-->
+</script>
+</div><div id="CONTENTS_MAIN">
+
+            <div class="JSID_baseBreaking">
+    <div class=" cmn-clearfix JSID_blockBreaking JSID_tagBreakingHeaderMain" style="display: none;">
+        <div class="cmnc-title  ">
+            <h2>
+                <span class="cmnc-hotnews JSID_title">-</span>
+                <span class="cmnc-time JSID_time">1日 0:00更新</span>
+                <span class="cmnc-headline JSID_body">-</span>
+
+            </h2>
+        </div>
+        <div class="cmnc-open" style="display: none;">
+            <a href="#" class="JSID_actBreaking_Open JSSTL_mousePointer">再表示</a>
+            </div>
+        <div class="cmnc-close" style="display: none;">
+            <a href="#" class="JSID_actBreaking_Close JSSTL_mousePointer">閉じる</a>
+            </div>
+
+    </div>
+
+    <div class="cmn-simple-hide JSID_dataBreaking_Type_small"></div>
+    <div class="cmn-simple-hide JSID_dataBreaking_Motion">false</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_textbody">-</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_htmlbody">-</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_KijiKey">g</div>
+
+    <div class="cmn-simple-hide JSID_dataBreaking_KijiValue">,20000101000000</div>
+    <div class="cmn-simple-hide JSID_dataBreaking_CloseKey">h</div>
+</div>
+<div class="nx-news_update">
+		<h2>
+			<span class="nxc-time">16:53更新</span>
+		</h2>
+	</div>
+
+<div class="nx-top_news_first cmn-clearfix ">
+		<div class="cmn-article_title">
+		<h3>
+			<a href="/news/headline/article/g=96958A9C938181E29B8181E3E48DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_1'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-large">日経平均反落、終値190円安　欧米景気の不透明感で</span></a></h3>
+	</div><div class="cmn-article_summary">
+		<p>　25日の東京株式市場で日経平均株価は反落した。終値は前日比190円86銭（1.92％）安の9737円48銭だった。後場には9700円を割り込む場面があった。景気の先行き不透明感か<a href="/news/headline/article/g=96958A9C938181E29B8181E3E48DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_1'; s.tl(this,'o','DS-NX-konshin-midashi');">…続き</a> <span class="cmnc-time">（15:28）</span>
+
+		</p>
+	</div><div class="cmn-related_article cmn-clearfix">
+	<h4 class="cmn-hide">関連記事</h4>
+<ul class="cmnc-link_list cmnc-half cmn-clearfix">
+
+<li>
+			<a href="/news/headline/related-article/g=96958A9C9381949EE0E7E2E5E18DE0E7E2E4E0E2E3E2E2E2E2E2E2E2;bm=96958A9C938181E29B8181E3E48DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" target="_self" onclick="s_objectID='DS-NX-konshin-top-kanren-H'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-top-kanren-H_1'; s.tl(this,'o','DS-NX-konshin-top-kanren-H');">みずほＦＧ、公募増資などで最大8575億円調達</a> </li>
+	<li>
+			<a href="http://nvmol.nikkei.co.jp/features/32.aspx?id=ASFL25055%2025062010" target="_self" onclick="s_objectID='DS-NX-konshin-top-kanren-H'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-top-kanren-H_2'; s.tl(this,'o','DS-NX-konshin-top-kanren-H');">株、弱気の虫が頭もたげる</a> </li>
+
+	<li>
+			<a href="http://nvmol.nikkei.co.jp/features/40.aspx?id=MSFZ2500U%2025062010" target="_self" onclick="s_objectID='DS-NX-konshin-top-kanren-H'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-top-kanren-H_3'; s.tl(this,'o','DS-NX-konshin-top-kanren-H');">株価見通し　市場関係者に聞く（マーケットonline）</a> </li>
+	<li>
+			<a href="http://markets.nikkei.co.jp/ranking/stock/pricedown.aspx" target="_self" onclick="s_objectID='DS-NX-konshin-top-kanren-H'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-top-kanren-H_4'; s.tl(this,'o','DS-NX-konshin-top-kanren-H');">株式値下がり率ランキング</a> </li>
+	</ul>
+</div>
+</div>
+
+	<div class="nx-top_news_second_alone cmn-clearfix ">
+			<div class="cmn-article_title">
+	<h3>
+		<a href="/news/headline/article/g=96958A9C9381949EE0E7E2E4888DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_2'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-middle">
+			ＮＴＴデータ、社内調査委を設置　贈賄容疑で部長逮捕</span></a>  <span class="cmnc-time">（16:24）</span>
+		</h3>
+</div>
+<div class="cmn-related_article cmn-clearfix">
+
+	<h4 class="cmn-hide">関連記事</h4>
+<ul class="cmnc-link_list cmnc-half cmn-clearfix">
+
+<li>
+			<a href="/news/headline/related-article/g=96958A9C93819695E0E0E2E1E28DE0E0E2E4E0E2E3E2E2E2E2E2E2E2;bm=96958A9C9381949EE0E7E2E4888DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" target="_self" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_1'; s.tl(this,'o','DS-NX-konshin-midashi');">特許庁審判官を逮捕　ＮＴＴデータから収賄容疑</a> </li>
+	</ul>
+</div>
+<div class="cmn-pr_list">
+	<h3 class="cmn-hide">【PR】</h3>
+
+		<ul>
+			<div id="ADVERTISE_PREMIUM_TEXT" class="JSID_adbase">
+				<div class="JSID_adscript">
+					<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_pretxt&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+		
+//-->
+				</script>
+			</div>
+		</div>
+	</ul>
+</div>
+</div>
+
+		<div class="nx-top_news_layout2 cmn-clearfix ">
+
+		<div class="nx-top_news_second cmn-clearfix">
+				<div class="cmn-photo_style1" style="width:200px">
+			<a href="javascript:void(0)" onclick="return false" class="JSID_actWinPopupOpen" rel="winpopup[926,629]"><img src="/content/pic/20100625/96958A88889DE2EBEAE5E3EBE5E2E0E7E2E4E0E2E3E2E2E2E2E2E2E2-DSXBZO0987198025062010I00000-KB2-3.jpg" height="141" width="200" class="cmnc-photo" title="落語協会会長に選ばれ、あいさつする柳家小三治さん（25日午後、東京都内）＝共同" alt="落語協会会長に選ばれ、あいさつする柳家小三治さん（25日午後、東京都内）＝共同" /></a><span class="JSID_urlData" style="display:none;">/news/viewer/photo/g=96958A88889DE2EBEAE5E3EBE5E2E0E7E2E4E0E2E3E2E2E2E2E2E2E2</span><p class="cmnc-caption">落語協会会長に選ばれ、あいさつする柳家小三治さん（25日午後、東京都内）＝共同</p>
+			<div class="cmnc-property cmn-clearfix">
+				<div class="cmnc-index">
+					<a href="javascript:void(0)" onclick="return false" class="JSID_actWinPopupOpen" rel="winpopup[926,629]">写真一覧</a><span class="JSID_urlData" style="display:none;">/news/viewer/photo/list/</span></div>
+
+			</div>
+		</div>
+	</div>
+		<div class="nx-top_news_third cmn-clearfix">
+		<div class="nxc-topics  cmn-clearfix">
+				<div class="cmn-article_title">
+					<h3>
+						<a href="/news/headline/article/g=96958A9C93819696E3E3E2E6818DE0E7E2E4E0E2E3E29F9FE2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_3'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">三菱重、アジア大手と提携　プラント機器受注拡大狙う</span></a> <span class="cmnc-time">（14:01）</span>
+
+						<span class="cmn-icon_member">［有料会員限定］</span></h3>
+				</div>
+				<div class="cmn-related_article cmn-clearfix">
+	<h4 class="cmn-hide">関連記事</h4>
+<ul class="cmnc-link_list">
+
+<li>
+			<a href="/news/headline/related-article/tc/g=96958A9C93819696E0E3E296958DE0E3E2E4E0E2E3E28698E3E2E2E2;bm=96958A9C93819696E3E3E2E6818DE0E7E2E4E0E2E3E29F9FE2E2E2E2;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A90808681B4E0FDA6B38A82B3A0E188B59AE7FD98AAB8E0B4BF9EB181E39582ABE3E29583E6B5EB8A859BABBC88A4E7B596E5829090A4819CE0E4B483BD9EA89899B09187A2F9B39C9E83B3BD859C838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF" target="_self" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_1'; s.tl(this,'o','DS-NX-konshin-midashi');">東電、ベトナムで石炭火力　国営大手と提携</a> <span class="cmn-icon_photo">［画像あり］</span><span class="cmn-icon_member">［有料会員限定］</span></li>
+
+	<li>
+			<a href="/news/headline/related-article/tc/g=9695999693819691E3EAE2E2E38DE3EAE2E4E0E2E3E29C9CEAE2E2E2;bm=96958A9C93819696E3E3E2E6818DE0E7E2E4E0E2E3E29F9FE2E2E2E2;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A908086B0A8859D84BF94AAEAA68893A386B088A0FDBC9DA6BB9B859F99BCA0E4F9A89C82F998B380B4BBA2B884BEF9B0E0838696BAE08194E2969987BABF9D80AB8AA397A2F9B39C9E83B3BD859C838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF" target="_self" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_2'; s.tl(this,'o','DS-NX-konshin-midashi');">インフラ受注、韓国が猛追</a> <span class="cmn-icon_photo">［画像あり］</span><span class="cmn-icon_member">［有料会員限定］</span></li>
+	</ul>
+</div>
+</div>
+		<div class="nxc-topics  cmn-clearfix">
+				<div class="cmn-article_title">
+					<h3>
+
+						<a href="/news/headline/article/g=96958A9C93819499E0E0E2E0968DE0E1E2E4E0E2E3E2E2E2E2E2E2E3" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_4'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">貸金業法改正、中小・零細に余波（ビジネスリーダー）</span></a> <span class="cmnc-time">（4:00）</span>
+						</h3>
+				</div>
+				<div class="cmn-related_article cmn-clearfix">
+	<h4 class="cmn-hide">関連記事</h4>
+</div>
+</div>
+		<div class="nxc-topics nxc-last cmn-clearfix">
+
+				<div class="cmn-article_title">
+					<h3>
+						<a href="/news/headline/article/g=96958A9C889DE2EBEAE4E6E6E7E2E0E7E2E4E0E2E3E2878793E2E2E0" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_5'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">Ｗ杯１次リーグ　指針は得た、攻撃にプラスαの型を</span></a> <span class="cmnc-time">（16:18）</span>
+						<span class="cmn-icon_photo">［画像あり］</span><span class="cmn-icon_member">［有料会員限定］</span></h3>
+				</div>
+				<div class="cmn-related_article cmn-clearfix">
+
+	<h4 class="cmn-hide">関連記事</h4>
+<ul class="cmnc-link_list">
+
+<li>
+			<a href="/news/headline/related-article/g=96958A9C81818A9994E2E3E5E58DE0E7E2E4E0E2E3E2E2E2E2E2E2E2;bm=96958A9C889DE2EBEAE4E6E6E7E2E0E7E2E4E0E2E3E2878793E2E2E0" target="_self" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_1'; s.tl(this,'o','DS-NX-konshin-midashi');">Ｗ杯日本代表「魅力的」「感動的」　各国メディアが絶賛</a> </li>
+	<li>
+			<a href="http://www.nikkei.com/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE0E5;p=9694E3E6E2E1E0E2E3E2E7EAE0E0;o=9694E3E6E2E1E0E2E3E2E7EAE0E3" target="_self" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_2'; s.tl(this,'o','DS-NX-konshin-midashi');">特集「南アＷ杯」</a> </li>
+	</ul>
+
+</div>
+</div>
+		</div>
+	</div>
+
+	<div class="nx-top_news_fourth_layout cmn-clearfix ">
+
+<div class="cmn-position_right">
+<div class="cmn-photo_style2" style="width:208px"><div style="cmnc-figure"><a href="http://www.nikkei.com/video/?bclid=67379774001&bctid=102160081001" onClick="window.open(this.href,'moviepop','width=790,height=624,menubar=no,toolbar=no,location=no,status=no,scrollbars=no');return false;"><img src="http://parts.nikkei.jp/parts/ds/video_images/thumbnail_67379774001_102160081001.jpg?110525154538" alt="マイケルさんの死から25日で１年。米ハリウッドでは24日、多くのファンが献花した。"/></a></div><p>マイケルさんの死から25日で１年。米ハリウッドでは24日、多くのファンが献花した。</p>
+<div class="cmnc-property cmn-clearfix"> <div class="cmnc-index"> <a href="http://www.nikkei.com/video/"
+onClick="window.open(this.href,'moviepop','width=790,height=624,menubar=no,toolbar=no,location=no,status=no,scrollbars=no');return false;">映像一覧</a>
+
+</div>
+</div></div></div>
+<div class="nx-top_news_fourth_article cmn-clearfix">
+
+			<div class="nx-top_news_fourth cmn-clearfix">
+					<div class="cmn-article_title">
+						<h3>
+							<a href="/news/headline/article/g=96958A9C93819481E0E7E2E2958DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_6'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">「物価が最も高い街」横浜に　初めて東京抜く</span></a> <span class="cmnc-time">（10:47）</span>
+							</h3>
+
+					</div>
+				</div>
+			<div class="nx-top_news_fourth cmn-clearfix">
+					<div class="cmn-article_title">
+						<h3>
+							<a href="/news/headline/article/g=96958A9C93819596E0E7E2E2948DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_7'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">トヨタ、役員４人が報酬１億円超</span></a> <span class="cmnc-time">（13:07）</span>
+							</h3>
+
+					</div>
+				</div>
+			<div class="nx-top_news_fourth cmn-clearfix">
+					<div class="cmn-article_title">
+						<h3>
+							<a href="/news/headline/article/g=96958A96889DE2EBEAE7EBE6E4E2E0E7E2E4E0E2E3E29F9FE2E2E2E0" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_8'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">Ｇ20、「保護貿易排除」延長へ（夕刊から）</span></a> <span class="cmnc-time">（16:07）</span>
+							</h3>
+
+					</div>
+				</div>
+			<div class="nx-top_news_fourth cmn-clearfix">
+					<div class="cmn-article_title">
+						<h3>
+							<a href="/news/headline/article/g=96958A9C93819481E0E6E2E08B8DE0E6E2E4E0E2E3E2E2E2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_9'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">首相官邸に「２つのライン」（永田町アンプラグド）</span></a> <span class="cmnc-time">（12:00）</span>
+							<span class="cmn-icon_photo">［画像あり］</span><span class="cmn-icon_member">［有料会員限定］</span></h3>
+
+					</div>
+				</div>
+			<div class="nx-top_news_fourth cmn-clearfix">
+					<div class="cmn-article_title">
+						<h3>
+							<a href="/news/headline/article/g=96958A90889DE2EBEAE2E4E0E7E2E0E6E2E4E0E2E3E29BE2E2E2E2E2" class="" onclick="s_objectID='DS-NX-konshin-midashi'; var s=s_gi('nikkeicojpdsnewsxprod'); s.linkTrackVars='prop7'; s.prop7='DS-NX-konshin-midashi_10'; s.tl(this,'o','DS-NX-konshin-midashi');"><span class="cmnc-xsmall">世界覆う「シュミットの憂うつ」（大緊縮時代）</span></a> <span class="cmnc-time">（12:00）</span>
+							<span class="cmn-icon_photo">［画像あり］</span><span class="cmn-icon_member">［有料会員限定］</span></h3>
+
+					</div>
+				</div>
+			<div class="cmn-continue">
+				<a href="/news/headline/archive/">最新ニュースをもっと見る</a></div>
+		</div>
+	</div>
+<hr class="cmn-hide" />
+
+<div class="nx-pickup">
+<h3 class="cmn-headline"><span>ピックアップ</span></h3>
+
+<div class="nxc-link_list cmn-clearfix">
+
+<div class="nxc-left">
+	<ul>
+	<li class="cmn-clearfix">
+			<a href="/biz/focus/page/p=9694E3E6E2E7E0E2E3E2E0E7E3E5" target="_self">貸金業法改正、中小・零細に余波[ビジネス]</a></li>
+	<li class="cmn-clearfix">
+			<a href="http://nvmol.nikkei.co.jp/features/37.aspx?id=ASGN25017%2025062010" target="_self">薄れ始めた米企業収益への期待［マネー］</a></li>
+	<li class="cmn-clearfix">
+
+			<a href="/tech/trend/page/p=9694E3E7E3E0E0E2E2EBE0E2E2EA" target="_self">ｉＰａｄは出版界に落ちた「いん石」か［テック］</a></li>
+	<li class="cmn-clearfix">
+			<a href="/life/gourmet/page/p=9694E3E6E2E4E0E2E3E2E4EAE6E4" target="_self">ビール、ラベルに謎の“仕掛け”［ライフ］</a></li>
+	<li class="cmn-clearfix">
+			<a href="/sports/" target="_self">怖かった新人戦の胴上げ・李知姫［スポーツ］</a></li>
+	<li class="cmn-clearfix">
+			<a href="http://www.nikkei.com/news/headline/archive/article/g=96958A9C93819481E0E1E2E08B8DE0E1E2E4E0E2E3E2E2E2E2E2E2E2" target="_self">鳩山前首相「政権最後の７日間」を語る</a></li>
+
+	<li class="cmn-clearfix">
+			<a href="http://www.nikkei.com/news/topic/archive/n=9694E0E0E2E4E0E2E3E2E5EAE2E1;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" target="_self">「日本の教訓」世界は生かせるか［大緊縮時代］</a></li>
+	</ul>
+</div>
+
+<div class="nxc-right">
+	<ul>
+	<li class="cmn-clearfix">
+			<a href="/biz/blog/" target="_self">「インドの空を青くする」鈴木修氏[ビジネス]</a></li>
+
+	<li class="cmn-clearfix">
+			<a href="http://nvmol.nikkei.co.jp/features/40.aspx?id=MSFZ2500U%2025062010" target="_self">株一時200円超す下げ、関係者に聞く［マネー］</a></li>
+	<li class="cmn-clearfix">
+			<a href="/tech/personal/page/p=9694E3EAE2E7E0E2E3E2E1E3E3E3" target="_self">ソニー、ＮＥＣの2010年夏パソコン［テック］</a></li>
+	<li class="cmn-clearfix">
+			<a href="/life/living/page/p=9694E3E6E2E4E0E2E3E2E4EAE6E2" target="_self">雨の日でも汚れにくい歩き方［ライフ］</a></li>
+	<li class="cmn-clearfix">
+
+			<a href="http://www.nikkei.com/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE0E5;p=9694E3E6E2E1E0E2E3E2E7EAE0E0;o=9694E3E6E2E1E0E2E3E2E7EAE0E3" target="_self">本田、ブレ球ＦＫでゴール射抜く［南アＷ杯］</a></li>
+	<li class="cmn-clearfix">
+			<a href="/life/novel/" target="_self">会社倒産の時、彼は……野中柊［リレー小説］</a></li>
+	<li class="cmn-clearfix">
+			<a href="http://www.nikkei.com/news/article/g=96958A9C93819594E0E1E2E2EA8DE0E6E2E4E0E2E3E2E2E2E2E2E2E2" target="_self">伊勢丹復活の道筋　大西社長に聞く</a>&nbsp;<span class="cmn-icon_member">［有料会員限定］</span></li>
+	</ul>
+</div>
+
+</div>
+
+<hr class="cmn-hide" />
+
+<div class="nx-special_report JSID_baseInsideScroll">
+		<div class="cmn-simple-hide JSID_dataInsideScroll_btn_prev">div.nxc-control&gt;ul&gt;li.nxc-prev</div>
+		<div class="cmn-simple-hide JSID_dataInsideScroll_btn_next">div.nxc-control&gt;ul&gt;li.nxc-next</div>
+		<div class="cmn-simple-hide JSID_targetInsideScroll_body">div.JSID_key_body</div>
+
+		<div class="cmn-simple-hide JSID_dataInsideScroll_loop">3</div>
+		<div class="cmn-simple-hide JSID_dataInsideScroll_autoscroll">5000</div>
+        <div class="JSID_key_body">
+                <ul class="nxc-report">
+<li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E2E5E2E6E0E2E3E2EAE1E0E5;p=9694E2E5E2E6E0E2E3E2EAE1E0E0;o=9694E2E5E2E6E0E2E3E2EAE1E0E3">参院選2010</a></h4>
+                        <div class="nxc-photo">
+
+                            <a href="/news/special/top/q=9694E2E5E2E6E0E2E3E2EAE1E0E5;p=9694E2E5E2E6E0E2E3E2EAE1E0E0;o=9694E2E5E2E6E0E2E3E2EAE1E0E3"><img src="/content/pic/20100625/96958A9693819481E0E6E2E0868DE0E6E2E4E0E2E3E29C9CEAE2E2E2-DSXDZO0983514025062010NN8000-PS1-2.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E2E5E2E6E0E2E3E2EAE1E0E5;p=9694E2E5E2E6E0E2E3E2EAE1E0E0;o=9694E2E5E2E6E0E2E3E2EAE1E0E3">民主改選議席数、「菅・小沢」で目標さや当て</a> <span class="cmn-icon_member">［有料会員限定］</span></p>
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE0E5;p=9694E3E6E2E1E0E2E3E2E7EAE0E0;o=9694E3E6E2E1E0E2E3E2E7EAE0E3">南アＷ杯</a></h4>
+
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE0E5;p=9694E3E6E2E1E0E2E3E2E7EAE0E0;o=9694E3E6E2E1E0E2E3E2E7EAE0E3"><img src="/content/pic/20100625/96958A9C889DE2EBEAE4E3EBEBE2E0E7E2E4E0E2E3E2878790E2E2E2-DSXBZO0986901025062010000001-PS1-2.jpg" height="63" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE0E5;p=9694E3E6E2E1E0E2E3E2E7EAE0E0;o=9694E3E6E2E1E0E2E3E2E7EAE0E3">本田、ぶれ球ＦＫでゴール射抜く</a> <span class="cmn-icon_member">［有料会員限定］</span></p>
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+
+                            <a href="/news/special/top/q=9694E0E4E2E1E0E2E3E2E4EBE1E4;p=9694E0E4E2E1E0E2E3E2E4EBE1E3;o=9694E0E4E2E1E0E2E3E2E4EBE1E2">「iPad」　攻防　新端末</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E0E4E2E1E0E2E3E2E4EBE1E4;p=9694E0E4E2E1E0E2E3E2E4EBE1E3;o=9694E0E4E2E1E0E2E3E2E4EBE1E2"><img src="/content/pic/20100625/96958A9693819696E0E6E2EB848DE0E6E2E4E0E2E3E28698E3E2E2E2-DSXDZO0983873025062010TJ1000-PS1-2.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E0E4E2E1E0E2E3E2E4EBE1E4;p=9694E0E4E2E1E0E2E3E2E4EBE1E3;o=9694E0E4E2E1E0E2E3E2E4EBE1E2">スマートフォン２強競う　動画充実の「ｉＰｈｏｎｅ４」発売</a> </p>
+                    </li>
+                <li class="nxc-photo ">
+
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E2E1E2E4E0E2E3E2E6EAEBE7;p=9694E2E1E2E4E0E2E3E2E6EAEBE2;o=9694E2E1E2E4E0E2E3E2E6EAEAEB">菅政権　始動</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E2E1E2E4E0E2E3E2E6EAEBE7;p=9694E2E1E2E4E0E2E3E2E6EAEBE2;o=9694E2E1E2E4E0E2E3E2E6EAEAEB"><img src="/content/pic/20100625/96958A9693819481E0E6E2E0888DE0E6E2E4E0E2E3E28297EAE2E2E2-DSXBZO0985481025062010000001-PS1-1.jpg" height="71" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E2E1E2E4E0E2E3E2E6EAEBE7;p=9694E2E1E2E4E0E2E3E2E6EAEBE2;o=9694E2E1E2E4E0E2E3E2E6EAEAEB">「サミットで成長・財政再建の両立伝える」</a> </p>
+                    </li>
+
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE7E7;p=9694E3E6E2E1E0E2E3E2E7EAE7E2;o=9694E3E6E2E1E0E2E3E2E7EAE6EB">中国　膨張</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE7E7;p=9694E3E6E2E1E0E2E3E2E7EAE7E2;o=9694E3E6E2E1E0E2E3E2E7EAE6EB"><img src="/content/pic/20100625/96958A96889DE2EBEAE7EBE1EAE2E0E7E2E4E0E2E3E29F9FE2E2E2E2-DSXBZO0787041021052010I00002-PS1-3.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE7E7;p=9694E3E6E2E1E0E2E3E2E7EAE7E2;o=9694E3E6E2E1E0E2E3E2E7EAE6EB">人民元が最高値　基準値0.3％高</a> <span class="cmn-icon_member">［有料会員限定］</span></p>
+
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E3E6E2E4E0E2E3E2E4E5E4E6;p=9694E3E6E2E4E0E2E3E2E4E5E7EB;o=9694E3E6E2E4E0E2E3E2E4E5E7EA">はやぶさ帰還</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E3E6E2E4E0E2E3E2E4E5E4E6;p=9694E3E6E2E4E0E2E3E2E4E5E7EB;o=9694E3E6E2E4E0E2E3E2E4E5E7EA"><img src="/content/pic/20100624/96958A9C93819695E0E6E2E69B8DE0E6E2E4E0E2E3E29180EAE2E2E3-DSXBZO0982029024062010000003-PS1-4.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E3E6E2E4E0E2E3E2E4E5E4E6;p=9694E3E6E2E4E0E2E3E2E4E5E7EB;o=9694E3E6E2E4E0E2E3E2E4E5E7EA">カプセルからガス成分回収</a> </p>
+
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E1E3E2E7E0E2E3E2E6E6EBE5;p=9694E1E3E2E7E0E2E3E2E6E6EBE0;o=9694E1E3E2E7E0E2E3E2E6E6EBE3">鳩山首相　退陣</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E1E3E2E7E0E2E3E2E6E6EBE5;p=9694E1E3E2E7E0E2E3E2E6E6EBE0;o=9694E1E3E2E7E0E2E3E2E6E6EBE3"><img src="/content/pic/20100624/96958A9C93819481E0E1E2E08B8DE0E1E2E4E0E2E3E2E2E2E2E2E2E6-DSXBZO0974477023062010I00005-PS1-4.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E1E3E2E7E0E2E3E2E6E6EBE5;p=9694E1E3E2E7E0E2E3E2E6E6EBE0;o=9694E1E3E2E7E0E2E3E2E6E6EBE3">鳩山前首相「政権最後の７日間」を語る</a> <span class="cmn-icon_member">［有料会員限定］</span></p>
+
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE1E6;p=9694E3E6E2E1E0E2E3E2E7EAE0EB;o=9694E3E6E2E1E0E2E3E2E7EAE0EA">揺れるユーロ</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE1E6;p=9694E3E6E2E1E0E2E3E2E7EAE0EB;o=9694E3E6E2E1E0E2E3E2E7EAE0EA"><img src="/content/pic/20100625/96958A9693819481E0E6E2E2E48DE0E6E2E4E0E2E3E29797E3E2E2E2-DSXBZO0985659025062010000001-PS1-2.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E3E6E2E1E0E2E3E2E7EAE1E6;p=9694E3E6E2E1E0E2E3E2E7EAE0EB;o=9694E3E6E2E1E0E2E3E2E7EAE0EA">欧州の金融安定化を協議へ</a> </p>
+
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E3EBE2E7E0E2E3E2E1E0E1E3;p=9694E3EBE2E7E0E2E3E2E1E0E0E4;o=9694E3EBE2E7E0E2E3E2E1E0E0E7">広がる口蹄疫</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E3EBE2E7E0E2E3E2E1E0E1E3;p=9694E3EBE2E7E0E2E3E2E1E0E0E4;o=9694E3EBE2E7E0E2E3E2E1E0E0E7"><img src="/content/pic/20100625/96958A96889DE2EBEAE1E4E6E7E2E0E7E2E4E0E2E3E29191E3E2E2E2-DSXDZO0983646025062010CC1000-PS1-3.jpg" height="54" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E3EBE2E7E0E2E3E2E1E0E1E3;p=9694E3EBE2E7E0E2E3E2E1E0E0E4;o=9694E3EBE2E7E0E2E3E2E1E0E0E7">宮崎、発生地域で選挙活動自粛</a> </p>
+
+                    </li>
+                <li class="nxc-photo ">
+                        <h4 class="nxc-title">
+                            <a href="/news/special/top/q=9694E2E0E2E4E0E2E3E2E6E5E4E3;p=9694E2E0E2E4E0E2E3E2E6E5E7E4;o=9694E2E0E2E4E0E2E3E2E6E5E7E7">世界ＩＣＴサミット2010</a></h4>
+                        <div class="nxc-photo">
+                            <a href="/news/special/top/q=9694E2E0E2E4E0E2E3E2E6E5E4E3;p=9694E2E0E2E4E0E2E3E2E6E5E7E4;o=9694E2E0E2E4E0E2E3E2E6E5E7E7"><img src="/content/pic/20100625/96958A9C93819696E0E3E291878DE0E6E2E4E0E2E3E2E2E2E2E2E2E2-DSXBZO0980295024062010000001-PS1-2.jpg" height="75" width="53" title="" alt="" /></a></div>
+                        <p class="nxc-summary">
+                            <a href="/news/special/top/q=9694E2E0E2E4E0E2E3E2E6E5E4E3;p=9694E2E0E2E4E0E2E3E2E6E5E7E4;o=9694E2E0E2E4E0E2E3E2E6E5E7E7">アイルランド・通信エネルギー天然資源相「成長へ重点投資維持」</a> </p>
+
+                    </li>
+                </ul>
+        </div>
+
+        <div class="nxc-control">
+            <ul>
+                <li class="nxc-prev">
+                    <a href="#">前1件のリポートを表示</a>
+                </li>
+
+                <li class="nxc-next">
+                    <a href="#">次1件のリポートを表示</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<div class="cmn-pr_list">
+	<h3 class="cmn-hide">【PR】</h3>
+
+		<ul>
+			<div id="ADVERTISE_TEXT1" class="JSID_adbase">
+				<div class="JSID_adscript">
+					<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt1&tile=' + nkad_tile_ds_3 + '&ord=' + nkad_rand1 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt1&tile=' + nkad_tile_ds_3 + '&ord=' + nkad_rand2 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt1&tile=' + nkad_tile_ds_3 + '&ord=' + nkad_rand3 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt1&tile=' + nkad_tile_ds_3 + '&ord=' + nkad_rand4 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt1&tile=' + nkad_tile_ds_3 + '&ord=' + nkad_rand5 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+		
+//-->
+				</script>
+			</div>
+		</div>
+	</ul>
+</div>
+<hr class="cmn-hide" />
+
+</div>
+
+<hr class="cmn-hide" />
+
+<div class="cmn-news_flash cmn-clearfix">
+	<h3 class="cmn-headline"><span>主要ジャンル速報</span></h3>
+			<div class="cmn-category_list cmn-clearfix">
+	<ul class="cmn-clearfix">
+
+		<li class="cmnc-first">
+					<a href="/news/category/at=DGXZZO0195164008122009000000">経済</a></li>
+
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195165008122009000000">企業</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195570008122009000000">国際</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195166008122009000000">政治</a></li>
+				<li class="">
+
+					<a href="/news/category/at=DGXZZO0195576008122009000000">マーケット</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195577008122009000000">財務</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195579008122009000000">科学</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195581008122009000000">くらし</a></li>
+
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195582008122009000000">スポーツ</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195583008122009000000">社会</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195584008122009000000">エコ</a></li>
+				<li class="">
+
+					<a href="/news/category/at=DGXZZO0195591008122009000000">健康</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195590008122009000000">インターネット</a></li>
+				</ul><ul class="cmn-clearfix">
+					<li class="cmnc-first">
+					<a href="/news/category/at=DGXZZO0195588008122009000000">雇用</a></li>
+				<li class="">
+
+					<a href="/news/category/at=DGXZZO0195592008122009000000">教育</a></li>
+				<li>
+			<a href="/news/product/">新製品</a></li>
+		<li>
+			<a href="/news/jinji/">人事</a></li>
+		<li>
+			<a href="/news/okuyami/">おくやみ</a></li>
+
+		<li>
+			<a href="/news/local/">地域ニュース</a></li>
+		<li>
+			<a href="/news/interview/">会見・インタビュー</a></li>
+		<li>
+			<a href="/news/research/">調査・アンケート</a></li>
+		<li>
+
+			<a href="/news/report/">統計・白書・裁判</a></li>
+	</ul>
+</div>
+<div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+		<a href="/news/category/at=DGXZZO0195164008122009000000">経済</a></h4>
+	<ul>
+	<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E5E68DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">証券監視委、インサイダー取引で課徴金勧告　合計119万円</a>&nbsp;<span class="cmnc-time">（16:50）</span>
+
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E5E78DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">東海東京、子会社社員が顧客資産約６億円を不正に出金</a>&nbsp;<span class="cmnc-time">（16:42）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E4E58DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">夏のボーナス使い道、預貯金が69％　住信ＳＢＩネット銀調べ</a>&nbsp;<span class="cmnc-time">（14:33）</span>
+				</li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819591E0E7E2E2E48DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">みずほ増資、７月に60億株で8000億円規模　午後にも発表</a>&nbsp;<span class="cmnc-time">（13:30）</span>
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E7978DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">５月末の信金貸出残高、前年同月比1.6％減　６カ月連続の減少</a>&nbsp;<span class="cmnc-time">（12:59）</span>
+				</li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819481E0E7E2E2998DE0E7E2E4E0E2E3E29C9CE2E2E2E2" class="cmnc-title">政府、「子育て」財源一元化を発表</a>&nbsp;<span class="cmnc-time">（12:30）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819481E0E7E2E2958DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">「物価が最も高い街」横浜に　初めて東京抜く</a>&nbsp;<span class="cmnc-time">（10:47）</span>
+				</li>
+		</ul>
+
+	</div><div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+		<a href="/news/category/at=DGXZZO0195165008122009000000">企業</a></h4>
+	<ul>
+	<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E5EA8DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">資生堂、製品開発時の動物実験を全面廃止へ</a>&nbsp;<span class="cmnc-time">（16:49）</span>
+				</li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E5E78DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">東海東京、子会社社員が顧客資産約６億円を不正に出金</a>&nbsp;<span class="cmnc-time">（16:42）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E5E18DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">みずほＦＧ、公募増資などで最大8575億円調達　新株は60億株</a>&nbsp;<span class="cmnc-time">（16:27）</span>
+				</li>
+		<li>
+
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E48B8DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">資生堂社長「個別報酬の事前開示、透明性を高められる」</a>&nbsp;<span class="cmnc-time">（16:15）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819594E0E7E2E3828DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">外食売上高、５月1.7％減　客単価の下落響く</a>&nbsp;<span class="cmnc-time">（15:10）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E4958DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">文化施設「Ｂｕｎｋａｍｕｒａ」改修へ、来年７月から休館</a>&nbsp;<span class="cmnc-time">（15:01）</span>
+
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E7848DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">ソフトバンク社長「30年後の時価総額200兆円に」　30年ビジョン</a>&nbsp;<span class="cmnc-time">（13:40）</span>
+				</li>
+		</ul>
+	</div><div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+		<a href="/news/category/at=DGXZZO0195570008122009000000">国際</a></h4>
+
+	<ul>
+	<li>
+				<a href="/news/latest/article/g=96958A9C93819584E0E7E2E2E18DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">[FT]ドバイ、「金融センター」構想に原点回帰</a>&nbsp;<span class="cmnc-time">（14:00）</span>
+				<span class="cmn-icon_photo">［画像あり］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819584E0E7E2E2E08DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">[FT]財政抑制策が渦巻くＧ20サミット（社説）</a>&nbsp;<span class="cmnc-time">（14:00）</span>
+
+				<span class="cmn-icon_photo">［画像あり］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9C8197E09B9C99E2E08DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">人民元が最高値　基準値0.3％高</a>&nbsp;<span class="cmnc-time">（13:24）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381959FE0E7E2E3858DE0E7E2E4E0E2E3E29C9CE2E2E2E2" class="cmnc-title">哨戒艦事件「北朝鮮は謝罪を」　韓国大統領</a>&nbsp;<span class="cmnc-time">（12:41）</span>
+
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381959FE0E7E2E3828DE0E7E2E4E0E2E3E29C9CE2E2E2E2" class="cmnc-title">人民元最高値、中国切り上げ「演出」　Ｇ20控え</a>&nbsp;<span class="cmnc-time">（12:38）</span>
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381959FE3EBE2E3968DE0E7E2E4E0E2E3E29C9C91E2E2E2" class="cmnc-title">タイ資源大手２社、国外で石炭開発強化</a>&nbsp;<span class="cmnc-time">（12:05）</span>
+
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381959FE0E7E2E3998DE0E7E2E4E0E2E3E29C9CE2E2E2E2" class="cmnc-title">ギラード豪首相、米大統領と電話協議</a>&nbsp;<span class="cmnc-time">（12:01）</span>
+				</li>
+		</ul>
+	</div><div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+
+		<a href="/news/category/at=DGXZZO0195166008122009000000">政治</a></h4>
+	<ul>
+	<li>
+				<a href="/news/latest/article/g=96958A9C9C8197E09B9C99E2E38DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">与野党幹部、全国で支持訴え　参院選公示から一夜</a>&nbsp;<span class="cmnc-time">（13:34）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819481E0E7E2E29F8DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">口蹄疫「封じ込めできつつある」　仙谷官房長官</a>&nbsp;<span class="cmnc-time">（12:48）</span>
+
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E7918DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">野田財務相とルース米大使が会談　消費税やG20が話題に</a>&nbsp;<span class="cmnc-time">（12:44）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819481E0E7E2E2998DE0E7E2E4E0E2E3E29C9CE2E2E2E2" class="cmnc-title">政府、「子育て」財源一元化を発表</a>&nbsp;<span class="cmnc-time">（12:30）</span>
+				</li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E7E38DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">仙谷官房長官、口蹄疫「封じ込めできつつある」</a>&nbsp;<span class="cmnc-time">（12:20）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E6818DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">仙谷官房長官、参院選54議席未満でも首相続投</a>&nbsp;<span class="cmnc-time">（11:55）</span>
+				</li>
+		<li>
+
+				<a href="/news/latest/article/g=96958A9C93819695E0E6E2E6888DE0E7E2E4E0E2E3E29191E2E2E2E2" class="cmnc-title">新党、手探りの選挙戦　ポスター張り人手なく</a>&nbsp;<span class="cmnc-time">（11:55）</span>
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+		</ul>
+	</div><div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+		<a href="/news/category/at=DGXZZO0195576008122009000000">マーケット</a></h4>
+	<ul>
+
+	<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E5E08DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">上海株25日、３日続落　不動産株に売り、深センＢは５日ぶり反落</a>&nbsp;<span class="cmnc-time">（16:40）</span>
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E3EA8DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">日経ＪＡＰＡＮ1000大引け、続落</a>&nbsp;<span class="cmnc-time">（15:45）</span>
+				</li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C938181E29B818186E08DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">新興市場25日、３指数がそろって下落　パピレス売買代金がジャスダックの</a>&nbsp;<span class="cmnc-time">（15:44）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C938181E29B8181E3E48DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">日経平均反落、終値190円安　欧米景気の不透明感で</a>&nbsp;<span class="cmnc-time">（15:28）</span>
+				</li>
+		<li>
+
+				<a href="/news/latest/article/g=96958A9C9381E19E86819791E38DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">日経平均反落、終値190円安　欧米景気への警戒で</a>&nbsp;<span class="cmnc-time">（15:03）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C938181E29B8181E3E78DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">日経平均、一時9700円割る　みずほ増資報道で需給懸念</a>&nbsp;<span class="cmnc-time">（14:20）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C938181E29B9F94E2E78DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">外為14時　円、89円台半ばで一段高　アジア株安で買われる</a>&nbsp;<span class="cmnc-time">（14:17）</span>
+
+				</li>
+		</ul>
+	</div><div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+		<a href="/news/category/at=DGXZZO0195582008122009000000">スポーツ</a></h4>
+	<ul>
+	<li>
+				<a href="/news/latest/article/g=96958A9C81818A9994E2E6E3E48DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">松坂、復帰戦で白星ならず　イチロー、今季100安打</a>&nbsp;<span class="cmnc-time">（15:42）</span>
+
+				<span class="cmn-icon_photo">［画像あり］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C81818A9994E2E6E3E28DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">松井秀、１安打１打点　エンゼルスは敗れる</a>&nbsp;<span class="cmnc-time">（15:34）</span>
+				<span class="cmn-icon_photo">［画像あり］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C81818A9994E2E6E2E78DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">石川遼、スコア伸ばせず　ミズノゴルフ第２日</a>&nbsp;<span class="cmnc-time">（15:16）</span>
+
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C81818A9994E2E1EBE68DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">松坂、５回２失点　岡島、2/3回３失点</a>&nbsp;<span class="cmnc-time">（14:50）</span>
+				<span class="cmn-icon_photo">［画像あり］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C81818A9994E2E1E4E18DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">松坂は５回２失点　イチロー今季100安打</a>&nbsp;<span class="cmnc-time">（13:27）</span>
+
+				<span class="cmn-icon_photo">［画像あり］</span></li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E3848DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">野球独立リーグで野球賭博　選手８人の契約解除</a>&nbsp;<span class="cmnc-time">（12:59）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E2998DE0E7E2E4E0E2E3E29191E2E2E2E2" class="cmnc-title">埼玉スタジアム、5000人総立ち　Ｗ杯１次リーグ突破</a>&nbsp;<span class="cmnc-time">（12:36）</span>
+
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+		</ul>
+	</div><div class="cmnc-genre">
+	<h4 class="cmnc-genre_title">
+		<a href="/news/category/at=DGXZZO0195583008122009000000">社会</a></h4>
+	<ul>
+	<li>
+				<a href="/news/latest/article/g=96958A9C9381949EE0E7E2E4888DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">ＮＴＴデータ、社内調査委を設置　贈賄容疑で部長逮捕</a>&nbsp;<span class="cmnc-time">（16:24）</span>
+
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E29E8DE0E7E2E4E0E2E3E29191E2E2E2E2" class="cmnc-title">東京・渋谷、響くブブゼラ　Ｗ杯１次リーグ突破</a>&nbsp;<span class="cmnc-time">（12:36）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E3998DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">シー・シェパード代表を国際手配　妨害指示の疑いで</a>&nbsp;<span class="cmnc-time">（12:13）</span>
+				</li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E3968DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">Ｊ＆Ｊ日本法人元代表、脱税で有罪判決　東京地裁</a>&nbsp;<span class="cmnc-time">（12:10）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E2818DE0E7E2E4E0E2E3E29191E2E2E2E2" class="cmnc-title">琴光喜を恐喝容疑、１億円未遂も立件へ　元力士</a>&nbsp;<span class="cmnc-time">（12:00）</span>
+				<span class="cmn-icon_member">［有料会員限定］</span></li>
+
+		<li>
+				<a href="/news/latest/article/g=96958A9C93819695E0E7E2E3E08DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">老齢加算訴訟、北九州市が上告　最高裁が判断へ</a>&nbsp;<span class="cmnc-time">（11:06）</span>
+				</li>
+		<li>
+				<a href="/news/latest/article/g=96958A9C81818A9994E2E3EAE58DE0E7E2E4E0E2E3E2E2E2E2E2E2E2" class="cmnc-title">Ｇ20会場付近に不審車　運転者を逮捕</a>&nbsp;<span class="cmnc-time">（10:47）</span>
+				</li>
+		</ul>
+
+	</div><div class="cmnc-genre">
+			<h4 class="cmnc-genre_title">
+				<a href="/news/local/">地域</a></h4>
+			<ul>
+			<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E2E3E0;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">北海道</a><a href="/news/local/article/g=96958A9C93819491E0E6E2E2908DE0E6E2E4E0E2E3E29EE6E3E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E2E3E0;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">ＨＡＣ新体制、資本金５億円未満に　高橋知事が方針</a><span class="cmnc-time">
+							（6:02）
+						</span>
+
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4E1;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">東北</a><a href="/news/local/article/g=96958A9C93819490E0E6E2E6968DE0E6E2E4E0E2E3E29EE3E3E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4E1;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">東北の地銀、営業部門の増員相次ぐ　競争激化に備え再配置</a><span class="cmnc-time">
+							（6:01）
+						</span>
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4E6;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">関東・甲信越</a><a href="/news/local/article/g=96958A9C93819490E0E6E2E59C8DE0E6E2E4E0E2E3E29EE5E3E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4E6;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">房総の観光資源、国際会議誘致に活用　財団法人、体験ツアーも</a><span class="cmnc-time">
+
+							（6:04）
+						</span>
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4E7;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">東京</a><a href="/news/local/article/g=96958A9C889DE2EBEAE0E6E5E5E2E0E6E2E4E0E2E3E29EE7E0E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4E7;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">首都圏マンション「即日完売」相次ぐ　立地不利な物件は苦戦</a><span class="cmnc-time">
+							（6:03）
+						</span>
+						</li>
+					<li class="cmn-clearfix">
+
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4E4;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">東海・北陸</a><a href="/news/local/article/g=96958A9C93819890E0E6E2E1918DE0E6E2E4E0E2E3E29E90E2E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4E4;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">夏物セール、先手競う　北陸のファッションビル・百貨店</a><span class="cmnc-time">
+							（6:04）
+						</span>
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4E5;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">近畿</a><a href="/news/local/article/g=96958A9C93819890E0E1E2E08B8DE0E6E2E4E0E2E3E29E9693E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4E5;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">京都市、第３子以降の出産前後に割安ヘルパー　派遣制度創設</a><span class="cmnc-time">
+							（6:04）
+						</span>
+
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4EA;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">中国</a><a href="/news/local/article/g=96958A9C93819890E0E6E2E2EA8DE0E6E2E4E0E2E3E29E9193E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4EA;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">三菱自水島、期間従業員の募集再開　８月までにまず100人</a><span class="cmnc-time">
+							（6:00）
+						</span>
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E4EB;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">四国</a><a href="/news/local/article/g=96958A9C93819890E0E6E2E1E58DE0E6E2E4E0E2E3E29E93E2E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E4EB;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">「食」のアジア輸出、４県共同支援　ジェトロと組み酒やめん類</a><span class="cmnc-time">
+
+							（5:57）
+						</span>
+						</li>
+					<li class="cmn-clearfix">
+						<a href="/news/local/page/n=9694E3E4E3E0E0E2E2EBE0E0E5E2;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="cmnc-genre_local">九州・沖縄</a><a href="/news/local/article/g=96958A9C93819891E0E6E2E39B8DE0E6E2E4E0E2E3E29E8A93E2E2E2;p=F2F2F2F2F2F2F2F2F2F2F2F2F2F2;n=9694E3E4E3E0E0E2E2EBE0E0E5E2;o=F2F2F2F2F2F2F2F2F2F2F2F2F2F2" class="">九州・沖縄でご当地カレー　ハウス食品、特産野菜使い販促</a><span class="cmnc-time">
+							（6:00）
+						</span>
+						</li>
+					</ul>
+
+		</div>	
+<div class="cmn-category_list cmn-clearfix">
+	<ul class="cmn-clearfix">
+
+		<li class="cmnc-first">
+					<a href="/news/category/at=DGXZZO0195164008122009000000">経済</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195165008122009000000">企業</a></li>
+				<li class="">
+
+					<a href="/news/category/at=DGXZZO0195570008122009000000">国際</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195166008122009000000">政治</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195576008122009000000">マーケット</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195577008122009000000">財務</a></li>
+
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195579008122009000000">科学</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195581008122009000000">くらし</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195582008122009000000">スポーツ</a></li>
+				<li class="">
+
+					<a href="/news/category/at=DGXZZO0195583008122009000000">社会</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195584008122009000000">エコ</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195591008122009000000">健康</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195590008122009000000">インターネット</a></li>
+
+				</ul><ul class="cmn-clearfix">
+					<li class="cmnc-first">
+					<a href="/news/category/at=DGXZZO0195588008122009000000">雇用</a></li>
+				<li class="">
+					<a href="/news/category/at=DGXZZO0195592008122009000000">教育</a></li>
+				<li>
+			<a href="/news/product/">新製品</a></li>
+
+		<li>
+			<a href="/news/jinji/">人事</a></li>
+		<li>
+			<a href="/news/okuyami/">おくやみ</a></li>
+		<li>
+			<a href="/news/local/">地域ニュース</a></li>
+		<li>
+
+			<a href="/news/interview/">会見・インタビュー</a></li>
+		<li>
+			<a href="/news/research/">調査・アンケート</a></li>
+		<li>
+			<a href="/news/report/">統計・白書・裁判</a></li>
+	</ul>
+</div>
+</div><hr class="cmn-hide" />
+
+<div class="cmn-pr_list">
+	<h3 class="cmn-hide">【PR】</h3>
+	<ul>
+		<div id="ADVERTISE_TEXT2" class="JSID_adbase">
+			<div class="JSID_adscript">
+				<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt2&tile=' + nkad_tile_ds_4 + '&ord=' + nkad_rand1 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt2&tile=' + nkad_tile_ds_4 + '&ord=' + nkad_rand2 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_txt2&tile=' + nkad_tile_ds_4 + '&ord=' + nkad_rand3 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+		
+//-->
+				</script>
+			</div>
+		</div>
+
+	</ul>
+</div>
+<hr class="cmn-hide" />
+
+<hr class="cmn-hide" />
+<hr class="cmn-hide" />
+
+        </div><div id="CONTENTS_SUB_BOTTOM">
+
+                <div class="cmn-sub_access_ranking">
+				<h2 class="cmnc-title">
+					<span class="cmnc-ranking_title">アクセスランキング</span>
+
+					<span class="cmnc-update">（6/25 16:00 更新）</span>
+				</h2>
+				<dl class="cmn-clearfix">
+					<dt class="cmnc-rank01">1位</dt>
+							<dd>
+								<a href="/access/article/g=96958A9C81818A9994E2E3E5E58DE0E7E2E4E0E2E3E2E2E2E2E2E2E2;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A908086B18BE1AA8485E29CB48486A6BFF9F9B6839EBC8299E3B48785A897A1E1EAE0AAB09C9FE2BD9694B7819A9797E48499BD9CE6B784BA979F80A4ABE6A485E4E284A6A180B6858384E0A2B894838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF">Ｗ杯日本代表「魅力的」「感動的」　各国メディアが絶賛</a> </dd>
+							<dt class="cmnc-rank02">2位</dt>
+
+							<dd>
+								<a href="/access/article/g=96958A9C93819481E0E7E2E2958DE0E7E2E4E0E2E3E2E2E2E2E2E2E2;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A90808681B4E0FDA6B38A82B3A0E18AA282E49C9FE78383FDBAB48785A897A1E1EAE0AAB09C9FE2BD9694B7819A97B3B5FDBEEAB8BCAB98B6E29880A29B9F9A94E5BD97EBA180B6858384E0A2B894838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF">「物価が最も高い街」横浜に　初めて東京抜く</a> </dd>
+							<dt class="cmnc-rank03">3位</dt>
+							<dd>
+								<a href="/access/article/g=96958A9C9381969AE0E6E2E6988DE0E7E2E4E0E2E3E2E2E2E2E2E2E3;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A90808681B4E0FDA6B38A82B3A0E1809D82B0B4A498A89087E7B48785A897A1E1EAE0AAB7E5BA839782A5EA969B9DF9BAE5BCFDB7A5938BF99094959E81A78286B9B9BE9CA180B6858384E0A2B894838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF">日本、Ｗ杯決勝Ｔへ　３－１でデンマーク破る</a> </dd>
+							<dt class="cmnc-rank04">4位</dt>
+
+							<dd>
+								<a href="/access/article/g=96958A9C93819596E0E7E2E2948DE0E7E2E4E0E2E3E2E2E2E2E2E2E2;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A90808681B4E0FDA6B38A82B3A0E197E3F98481B68BB99990B6B48785A897A1E1EAE0AAB09C9FE2BD9694B7819A97BEA6AAB9BEBFE69088B6909B9FEBBDB1FDA2E09EE1A6A180B6858384E0A2B894838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF">トヨタ、役員４人が報酬１億円超</a> </dd>
+							<dt class="cmnc-rank05">5位</dt>
+							<dd>
+								<a href="/access/article/g=96958A9C93819481E0E6E2E08B8DE0E6E2E4E0E2E3E2E2E2E2E2E2E2;bu=BFBD9496EABAB5E6B39EBA9DB9EBB19AE58A90808681B4E0FDA6B38A82B3A0E19C84E397E2A690BCE19FA7E593B598ABAA85A695E4A09C9FE2BD9694B7819A979A99AB9A9A8AA6BDE39CBDA5ABE1BCA8AA8AB1BAB9B9A2F9B39C9E83B3BD859C838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3838295E5AB84A0E284828493EAB0A49885A48087EB8796AAA7EABEB3EB9486E3919A9886FDB7A4ABB59697EF">首相官邸に「２つのライン」（永田町アンプラグド）</a> <span class="cmn-icon_member">［有料会員限定］</span></dd>
+							</dl><div class="cmnc-morelink">
+
+						<a href="/access/">もっと見る</a></div>
+				</div><div class="cmn-sub_pr">
+                    <h2 class="cmnc-title">[PR]</h2>
+	<div id="ADVERTISE_PREMIUM_PR_PR" class="JSID_adbase">
+	<div class="JSID_adscript">
+		<ul class="cmnc-adv">
+			<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_all_preprtxt&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_all_prtxt&tile=' + nkad_tile_ds_2 + '&ord=' + nkad_rand1 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_all_prtxt&tile=' + nkad_tile_ds_2 + '&ord=' + nkad_rand2 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_all_prtxt&tile=' + nkad_tile_ds_2 + '&ord=' + nkad_rand3 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_all_prtxt&tile=' + nkad_tile_ds_2 + '&ord=' + nkad_rand4 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_all_prtxt&tile=' + nkad_tile_ds_2 + '&ord=' + nkad_rand5 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+		
+//-->
+			</script>
+
+		</ul>
+	</div>
+</div>
+
+<ul class="cmnc-site">
+
+    <li class="cmn-clearfix">
+            <span class="cmnc-category">
+                <img src="/content/pic/20091209/96958A88889DE2E3EBEAE0E3E0E2E2EBE3E0E0E2E2EBE2E2E2E2E2E2-DSXZZO0412469015032010000000-NONE-2.png" height="17" width="118" title="" alt="" /></span><a href="http://www.nikkei.co.jp/biod/" target="_blank">温暖化と並ぶ地球環境問題</a></li>
+
+    <li class="cmn-clearfix">
+
+            <span class="cmnc-category">
+                <img src="/content/pic/20091209/96958A88889DE2E3EBEAE0EBE0E2E2EBE3E0E0E2E2EBE2E2E2E2E2E2-DSXZZO0412473015032010000000-NONE-3.png" height="17" width="118" title="" alt="" /></span><a href="http://www.nikkei.co.jp/ps/ecobiz/" target="_blank">日本の環境技術を世界へ</a></li>
+
+    <li class="cmn-clearfix">
+            <span class="cmnc-category">
+                <img src="/content/pic/20091209/96958A88889DE2E3EBEAE1E2E4E2E2EBE3E0E0E2E2EBE2E2E2E2E2E2-DSXZZO0412496015032010000000-NONE-2.png" height="17" width="118" title="" alt="" /></span><a href="http://www.nikkei.co.jp/gsr/" target="_blank">持続可能な発展のために</a></li>
+
+    <li class="cmn-clearfix">
+            <span class="cmnc-category">
+
+                <img src="/content/pic/20091209/96958A88889DE2E3EBEAE1E2EAE2E2EBE3E0E0E2E2EBE2E2E2E2E2E2-DSXZZO0412501015032010000000-NONE-2.png" height="17" width="118" title="" alt="" /></span><a href="http://www.nikkei.co.jp/ps/soumu/" target="_blank">戦略的総務部門を目指せ</a></li>
+
+    </ul>
+
+</div>
+
+                <div class="cmn-sub_banner">
+                    <h2 class="cmn-hide">関連媒体サイト</h2>
+                    <dl class="cmn-clearfix">
+
+                        <dt>
+		<img src="http://cdn.nikkei.co.jp/parts/ds/images/home/bnr_media_4set.png" height="100" width="300" usemap="#MEDIA_4SET" title="関連媒体" alt="関連媒体" /><map name="MEDIA_4SET" id="MEDIA_4SET">
+			<area shape="rect" coords="0,0,299,30" alt="日経ヴェリタス［購読者限定サイト］" href="http://veritas.nikkei.co.jp/" />
+			<area shape="rect" coords="0,35,299,65" alt="日経産業新聞" href="http://www.nikkei.com/tech/ssbiz/page/p=9694E3EAE3E0E0E2E2EBE0E4E3E2" />
+			<area shape="rect" coords="0,70,299,100" alt="日経流通新聞" href="http://www.nikkei.co.jp/mj/" />
+		</map>
+	</dt>
+<dt>
+		<img src="http://cdn.nikkei.co.jp/parts/ds/images/common/bnr_media_aratanis.gif" height="40" width="300" usemap="#MEDIA_ARATANIS" title="あらたにす - 日経・朝日・読売よみくらべ" alt="あらたにす - 日経・朝日・読売よみくらべ" /><map name="MEDIA_ARATANIS" id="MEDIA_ARATANIS">
+
+			<area shape="rect" coords="4,9,125,31" alt="ロゴ" href="http://allatanys.jp/iclk?page=A000&amp;pos=1&amp;pid=N0000" />
+			<area shape="rect" coords="129,15,159,36" alt="一面" href="http://allatanys.jp/iclk?page=A001&amp;pos=1&amp;pid=N0000" />
+			<area shape="rect" coords="161,15,191,36" alt="社説" href="http://allatanys.jp/iclk?page=A003&amp;pos=1&amp;pid=N0000" />
+			<area shape="rect" coords="193,15,223,36" alt="注目" href="http://allatanys.jp/iclk?page=B002&amp;pos=1&amp;pid=N0000" />
+			<area shape="rect" coords="225,15,265,36" alt="案内人" href="http://allatanys.jp/iclk?page=B001&amp;pos=1&amp;pid=N0000" />
+			<area shape="rect" coords="267,15,297,36" alt="最新" href="http://allatanys.jp/iclk?page=N001&amp;pos=1&amp;pid=N0000" />
+		</map>
+	</dt>
+</dl>
+
+                </div>
+
+				<div class="cmn-sub_square_banner">
+	<div id="ADVERTISE_RECTANGLE2" class="JSID_adbase">
+		<div class="JSID_adscript">
+			<script type="text/javascript">
+<!--
+
+
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_nwsx_top_lrct2&ord=' + nkad_rand1 + nkad_tag + '?"></scr' + 'ipt>');
+		
+//-->
+			</script>
+		</div>
+	</div>
+</div>
+
+<div class="cmn-sub_information">
+	<h2 class="cmnc-title">
+		<a href="http://www.nikkei.co.jp/nikkeiinfo/" target="_blank">日経からのお知らせ</a></h2>
+<ul>
+    <li class="cmn-clearfix cmnc-first">
+            <a href="http://orsay.exhn.jp/" target="_blank"><img src="/content/pic/20100510/96958A88889DE2E5E2E5E6E4E6E2E3E2E2E7E0E2E3E2E2E2E2E2E2E2-DSXZZO0807198025052010000000-PS1-1.jpg" height="46" width="53" title="オルセー" alt="オルセー" /><span class="cmnc-headline">
+                    「オルセー美術館展2010」</span>
+                国立新美術館で開催中</a></li>
+
+        <li class="cmn-clearfix">
+            <a href="http://www.man-ray.com/" target="_blank"><img src="/content/pic/20100601/96958A88889DE2EAE6E1EAE2EBE2E1E3E2E7E0E2E3E2E2E2E2E2E2E2-DSXZZO0956213020062010000000-PS1-1.jpg" height="63" width="53" title="" alt="" /><span class="cmnc-headline">
+                    モダンアートの先駆者</span>
+                マン・レイ展７月14日から東京で</a></li>
+
+        <li class="cmn-clearfix">
+            <a href="http://shop.picturei.jp/nikkei/" target="_blank"><img src="/content/pic/20091209/96958A88889DE2E3EBEAE0E3E3E2E2EBE3E0E0E2E2EBE2E2E2E2E2E2-DSXZZO0956217020062010000000-PS1-1.jpg" height="53" width="53" title="" alt="" /><span class="cmnc-headline">
+                    写真を昇進や退職の贈り物に</span>
+
+                日経ストアでキャンペーン中</a></li>
+
+        <li class="cmn-clearfix">
+            <a href="http://ntest.nikkei.jp/corporate/teste" target="_blank"><img src="/content/pic/20091209/96958A88889DE2E3EBEAE0E3E2E2E2EBE3E0E0E2E2EBE2E2E2E2E2E2-DSXZZO0722659012052010000000-PS1-1.jpg" height="37" width="53" title="" alt="" /><span class="cmnc-headline">
+                    日経ＴＥＳＴ　企業向け随時実施</span>
+                団体特別受験／日経ＴＥＳＴ50</a></li>
+
+        </ul>
+
+</div><div class="cmn-sub_mobile">
+		<h2 class="cmnc-title">
+			<span class="cmnc-mobile_title">携帯サービス</span>
+			</h2>
+		<p>
+			
+			経済や企業の最新ニュースのほか、大リーグやサッカーなどのスポーツニュースも満載 
+			<a href="http://www.nikkei.co.jp/keitai/" target="_blank" class="cmnc-continue_link">詳細ページへ</a></p>
+	</div>
+	<div class="cmn-sub_mail">
+
+		<h2 class="cmnc-title"><span class="cmnc-mail_title">メールサービス</span></h2>
+		<p>
+			日経ニュースメール（無料）など、電子版ではさまざまなメールサービスを用意しています。<br />
+			（<a href="http://pr.nikkei.com/feature/mailservice.html">詳細はこちら</a>）<br />
+		</p>
+	</div>
+
+</div><div class="cmn-submarine_pr">
+	<h3>【PR】</h3>
+	<ul class="cmn-clearfix">
+		<li class="cmn-clearfix" style="width:200px;"> 
+			<div id="ADVERTISE_SUBMARINE1" class="JSID_adbase">
+				<div class="JSID_adscript">
+<script type="text/javascript">
+<!--
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_all_all_submrn&tile=' + nkad_tile_ds_5 + '&ord=' + nkad_rand1 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+//-->
+					</script>
+				</div>
+			</div>
+
+		</li>
+		<li class="cmn-clearfix" style="width:200px;">
+			<div id="ADVERTISE_SUBMARINE2" class="JSID_adbase">
+				<div class="JSID_adscript">
+					<script type="text/javascript">
+<!--
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_all_all_submrn&tile=' + nkad_tile_ds_5 + '&ord=' + nkad_rand2 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+//-->
+					</script>
+				</div>
+			</div>
+		</li>
+
+               <li class="cmn-clearfix" style="width:200px;">
+                       <div id="ADVERTISE_SUBMARINE3" class="JSID_adbase">
+                               <div class="JSID_adscript">
+                                       <script type="text/javascript">
+<!--
+document.write('<scr' + 'ipt type="text/javascr' + 'ipt" charset="Shift_JIS" src="http://gavit.nikkei.co.jp/js.ng/cat=ds_all_all_submrn&tile=' + nkad_tile_ds_5 + '&ord=' + nkad_rand3 + nkad_tag + '&page.allowcompete=no?"></scr' + 'ipt>');
+ //-->
+                                       </script>
+                               </div>
+                       </div>
+               </li>
+	</ul>
+
+</div>
+</div>
+            </div>
+        </div>
+    </div><div id="RETURN_TO_PAGETOP">
+    <div id="RETURN_TO_PAGETOP_BODY" class="cmn-clearfix JSID_tagFooter">
+    	<a href="javascript:void(0)" onclick="return false" class="JSID_actTagIndex"><img src="http://cdn.nikkei.co.jp/parts/ds/images/common/btn_return2pagetop_off.gif" height="24" width="119" title="ページの先頭へ" alt="ページの先頭へ" /></a><span class="JSID_urlData" style="display:none;">#PAGE_TOP</span></div>
+</div>
+
+
+<div id="RELATED_INFORMATION">
+
+  <div id="RELATED_INFORMATION_BODY" class="cmn-clearfix">
+    <h2 class="cmn-hide">日本経済新聞 関連情報</h2>
+    <div id="RELATED_INFORMATION_NIKKEI">
+      <h3 class="bs-title">▼日本経済新聞社からのご案内</h3>
+      <ul>
+        <li><a href="http://www.nikkei.co.jp/nikkeiinfo/" target="_top">会社案内</a></li>
+        <li><a href="http://www.nikkei-hall.com/" target="_top">日経ホールと貸会議室</a></li>
+
+        <li><a href="http://www.nikkei.co.jp/konwakai/" target="_top">日経懇話会</a></li>
+        <li><a href="http://www.nikkeibook.com/" target="_top">日本経済新聞の本</a></li>
+      </ul>
+    </div><!-- id="RELATED_INFORMATION_SUBSCRIBE" -->
+    <div id="RELATED_INFORMATION_EVENT">
+      <h3 class="bs-title">▼イベント</h3>
+      <ul>
+
+        <li><a href="http://www.nikkei.co.jp/events/" target="_top">日経イベンツガイド</a></li>
+        <li><a href="http://future-of-asia.nikkei.jp/" target="_top">アジアの未来</a></li>
+        <li><a href="http://www.nikkei.co.jp/hensei/ngmf2009/" target="_top">世界経営者会議</a></li>
+        <li><a href="http://www.nikkei.co.jp/hensei/noushoku/" target="_top">日本の農と食</a></li>
+      </ul>
+    </div><!-- id="RELATED_INFORMATION_EVENT" -->
+    <div id="RELATED_INFORMATION_KNOWLEDGE">
+
+      <h3 class="bs-title">▼研修・セミナー</h3>
+      <ul>
+        <li><a href="http://manavi.nikkei.co.jp/" target="_top">日経まナビ！</a></li>
+        <li><a href="http://ntest.nikkei.jp/" target="_top">日経TEST</a></li>
+        <li><a href="http://www.nikkei-nbs.com/" target="_top">日経ビジネススクール</a></li>
+        <li><a href="http://www.nikkei-nbs.com/kouen/" target="_top">講演会向け講師紹介サービス</a></li>
+
+      </ul>
+    </div><!-- id="RELATED_INFORMATION_KNOWLEDGE" -->
+    <div id="RELATED_INFORMATION_SERVICE">
+      <h3 class="bs-title">▼各種サービス</h3>
+      <ul>
+        <li><a href="http://t21.nikkei.co.jp/" target="_top">日経テレコン２１</a></li>
+        <li><a href="http://www.nikkei.co.jp/needs/" target="_top">ＮＥＥＤＳ</a></li>
+
+        <li><a href="http://www.nikkei.co.jp/japanreport/ja/" target="_top">Nikkei Japan Report</a></li>
+        <li><a href="http://shop.picturei.jp/nikkei/" target="_top">日経ストア（写真のお店）</a></li>
+      </ul>
+      <ul>
+        <li><a href="http://www.nikkei.co.jp/rim/glweb/" target="_top">日経グローカル</a></li>
+        <li><a href="http://www.nikkei-rim.net/watcher/" target="_top">日経消費ウォッチャー</a></li>
+        <li><a href="http://www.nikkei-rim.net/watcher/forum/" target="_top">日経消費経済フォーラム</a></li>
+
+        <li><a href="http://www.nikkei.co.jp/podcast/" target="_top">PODCAST</a></li>
+      </ul>
+    </div><!-- id="RELATED_INFORMATION_SERVICE" -->
+  </div><!-- id="RELATED_INFORMATION_BODY" -->
+</div>
+<div id="ABOUT_NIKKEI">
+    <div id="ABOUT_NIKKEI_BODY" class="cmn-clearfix">
+        <h2 class="bs-title">日本経済新聞 電子版について</h2>
+        <ul class="cmn-clearfix">
+
+            <li class="bs-first"><a href="http://www.nikkei.com/info/policy.html" target="_blank">サイトポリシー</a></li>
+            <li><a href="http://www.nikkei.com/info/sitemap.html" target="_blank">サイトマップ</a></li>
+            <li><a href="http://www.nikkei.com/info/exemption.html" target="_blank">免責</a></li>
+            <li><a href="http://www.nikkei.com/info/privacy.html" target="_blank">個人情報</a></li>
+            <li><a href="http://www.nikkei.com/info/copyright.html" target="_blank">著作権</a></li>
+            <li><a href="http://www.nikkei.com/info/link.html" target="_blank">リンクポリシー</a></li>
+
+            <li><a href="http://www.nikkei.com/help/contact/" target="_blank">お問い合わせ</a></li>
+            <li><a href="http://www.nikkei-ad.com/web/index.php">Web広告ガイド</a></li>
+            <li><a href="http://www.nikkei.com/info/tos.html" target="_blank">利用規約</a></li>
+            <li><a href="http://www.nikkei.com/help/" target="_blank">ヘルプセンター</a></li>
+        </ul>
+        <h2 class="bs-title">日本経済新聞社について</h2>
+
+        <ul class="cmn-clearfix">
+            <li class="bs-first"><a href="http://www.nikkei.co.jp/privacy/kijiriyou.html">記事利用</a></li>
+            <li><a href="http://www.nikkei.co.jp/privacy/">個人情報の取り扱い</a></li>
+            <li><a href="http://www.nikkei.co.jp/saiyo/">本社採用案内</a></li>
+            <li><a href="http://www.nikkei.co.jp/nikkeiinfo/company/group.html">日経グループ情報</a></li>
+            <li><a href="http://www.nikkei.co.jp/nikkeiinfo/">会社情報・お知らせ</a></li>
+
+            <li><a href="http://www.nikkei-ad.com/">新聞広告お申し込みガイド</a></li>
+            <li><a href="http://www.nikkei4946.com/">NIKKEI4946.com（紙面紹介と購読案内）</a></li>
+        </ul>
+        <p class="bs-copyright">Copyright &copy; 2010 Nikkei Inc. All rights reserved.</p>
+    </div>
+</div>
+<script type="text/javascript" src="http://parts.nikkei.com/parts/js/RSI_NIKKEICOM_P.js"></script><script type="text/javascript" src="http://parts.nikkei.com/parts/js/nk_ds_adtop_footer.js"></script><script type="text/javascript" src="http://cdn.nikkei.co.jp/parts/ds/script/swfobject.js"></script><script type="text/javascript">
+_nkconf = new Object();
+_nkconf.POPUP_DELAY                    = 300;
+_nkconf.BREAKING_LOAD                  = 70000;
+_nkconf.BREAKING_CLOSE                 = "1";
+_nkconf.BREAKING_EXPIRE                = "day";
+_nkconf.SCROLL_SPEED                   = 300;
+_nkconf.OPENCLOSE_SPEED                = 200;
+_nkconf.PICSCHANGE_SPEED               = 400;
+_nkconf.INSIDESCROLL_SPEED             = 600;
+_nkconf.ASYNC_TIMEOUT                  = 150000;
+_nkconf.JSONP_TIMEOUT                  = 10000;
+_nkconf.INPUTCHECK_INTERVAL            = 100;
+_nkconf.PATH_FIXIMG                    = "/images/";
+_nkconf.FAST_SECTION                   = "fs";
+_nkconf.DATA_MAP_EXPIRE                = {day:86400,month:2678400,memory:0,session:undefined};
+_nkconf.DATA_MAP_NAME                  = {day:"NK_DS_DISP_D",month:"NK_DS_DISP_M",memory:"NK_DS_DISP_T"};
+_nkconf.DATA_MAXLEN                    = 3072;
+_nkconf.DATA_EXPIRE_SESSION            = "session";
+_nkconf.DATA_EXPIRE_MEMORY             = "memory";
+_nkconf.DATA_EXPIRE_DAY                = "day";
+_nkconf.DATA_EXPIRE_MONTH              = "month";
+_nkconf.DATA_UPDATE_URL                = "";
+_nkconf.DATA_UPDATE_NAME               = "c_un";
+_nkconf.DATA_UPDATE_VALUE              = "c_uv";
+_nkconf.DATA_TOKEN_NAME                = "utoken";
+_nkconf.DATA_TOKEN_VALUE               = "";
+_nkconf.DATA_SESSION                   = {};
+_nkconf.DATA_SESSION_CHECK_URL         = "/async/async.do/sv=NX;ae=P_CM_WHITE";
+_nkconf.DATA_NAME_FONTSIZE             = "a";
+_nkconf.DATA_NAME_FONTSIZE_P           = "b";
+_nkconf.DATA_NAME_TOOLBOX_SELECT       = "i";
+_nkconf.DATA_NAME_KN_SECTION           = "n";
+_nkconf.DATA_NAME_GADGET_SELECT        = "o";
+_nkconf.SCRIPT_DOMAIN_DEFAULT          = "http://cdn.nikkei.co.jp/parts/ds";
+_nkconf.SCRIPT_DOMAIN_QPARTS           = "http://qparts.nikkei.com/";
+_nkconf.SCRIPT_DOMAIN_PARTS            = "http://cdn.nikkei.co.jp/";
+_nkconf.SCRIPT_DYNAMICLOAD             = {canvas:["/script/circle.js","/script/vbar.js"]};
+_nkconf.FLASH_VERSION                  = "9.0.17";
+
+</script>
+<script type="text/javascript" src="http://cdn.nikkei.co.jp/parts/ds/script/nikkei.top.20100616_1.min.js"></script><!--SiteCatalyst code-->
+<script type="text/javascript">
+var prop1 = "DS-トップ";
+var prop2 = "DS-トップ";
+
+
+var now = new Date();
+var pageName = location.href;
+var channel = "DS";
+var server = location.host;
+var pageType = "";
+var prop3 = "";
+var prop4 = "";
+var prop6 = now.getHours();
+var prop12 = "";
+var prop20 = "";
+var prop21 = "";
+var prop22 = "";
+var prop23 = "";
+var prop24 = "";
+var prop25 = "";
+var prop26 = "";
+var prop27 = "";
+var prop28 = "";
+var prop29 = "";
+var prop30 = "";
+var prop39 = "1";
+var sKeyword = "";
+</script><!-- SiteCatalyst code version: H.9.
+Copyright 1997-2007 Omniture, Inc. More info available at
+http://www.omniture.com -->
+<script type="text/javascript" src="http://parts.nikkei.com/parts/SC/newsx/s_codeDSnewsx.js"></script>
+<script type="text/javascript" src="http://parts.nikkei.com/parts/SC/s_cDS.js"></script>
+<script type="text/javascript">
+if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+</script>
+<noscript>
+<a href="http://www.omniture.com" title="Web Analytics"><img src="http://nikkei.112.2o7.net/b/ss/nikkeicojpdsmstallprod,nikkeicojpdsmstdsprod,nikkeicojpdsnewsxprod/1/H.9--NS/0" height="1" width="1" border="0" alt="" />
+</a>
+</noscript>
+<!--/DO NOT REMOVE/-->
+<!-- End SiteCatalyst code version: H.9. -->
+<!--/SiteCatalyst code-->
+<div class="JSID_baseTail"></div>
+
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+#include "entry.h"
+
+#head_title ~= controller()->name() + ": " + controller()->activeAction()
+
+#for :
+tfetch(QList<Entry>, entryList);
+for (QListIterator<Entry> it(entryList); it.hasNext(); ) {
+    const Entry &i = it.next();
+    %%
+}
+
+#id ~= i.id()
+
+#name ~= i.name()
+
+#address ~= i.address()
+
+#revision ~= i.revision()
+
+#linkToShow :== linkTo("Show", urla("show", i.id()))
+
+#linkToEdit :== linkTo("Edit", urla("edit", i.id()))
+
+#linkToRemove :== linkTo("Remove", urla("remove", i.id()), Tf::Post, "confirm('Are you sure?')")
+
+#linkToEntry :== linkTo("New entry", urla("entry"))

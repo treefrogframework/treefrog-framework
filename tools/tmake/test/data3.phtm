@@ -1,0 +1,332 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" />
+    <link rel="shortcut icon" href="http://www.watch.impress.co.jp/favicon.ico" />
+    <title>Twitterウェブクライアント「HootSuite」が日本語化、HTML5対応の新機能も -INTERNET Watch</title>
+    <link rel="stylesheet" type="text/css" href="/css/auto/iw/leftpane.css" charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/css/common/backnumber.css" charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/css/iw/backnumber.css" charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/css/iw/contents.css" charset="UTF-8" />
+
+    <script type="text/javascript" src="/include/js/impress_watch.js"></script>
+          <meta name="keywords" content="サービス,トップページ赤丸,HootSuite" />
+        <link rel="canonical" href="http://internet.watch.impress.co.jp/docs/news/20100625_376723.html" />
+  </head>
+  <body>
+<div class="ad_contents_header">
+
+
+</div>
+    <table border="0" cellspacing="0" cellpadding="0" style="margin: 0; padding: 0; width: 100%; backgroud-color: #ffffff">
+
+      <colgroup>
+        <col span="1" class="ipw_left" />
+        <col span="1" class="ipw_main" />
+        <col span="1" class="ipw_right" />
+      </colgroup>
+      <tbody>
+        <tr>
+          <td colspan="3">
+            <table cellspacing="8" cellpadding="0" border="0">
+
+<tbody>
+<tr>
+<td> </td>
+</tr>
+</tbody>
+</table>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" class="ipw_left">
+            <div class="logo">
+
+  <a href="/">
+    <img src="/img/iw/siteinfo/000/008/iwlogo.gif" border="0" />
+  </a>
+</div>
+
+<!-- 検索窓開始 -->
+<TABLE width="127" border="0" cellspacing="0" cellpadding="2" bgcolor="#F5DA11">
+<TR> 
+<TD bgcolor="#FF8000"><div align="center"><font color="#FFFFFF"><b>記事検索</b></font></div></TD>
+</TR>
+</TABLE>
+<TABLE width="127" border="0" cellspacing="4" cellpadding="0" bgcolor="#F5DA11">
+<form method="post" action="http://search.watch.impress.co.jp/search.php">
+
+<tr>
+<td align="center" valign="middle">
+<input type="text" name="query" size="20" value="" class="query">
+</td>
+</tr>
+<tr>
+<td align="left">
+<input name="imageField" type="image" src="http://internet.watch.impress.co.jp/img/search1.gif" width=34 height="15" border="0">
+<input type="hidden" name="action" value="exec">
+<input type="hidden" name="sort" value="date_desc">
+<input type="hidden" name="page" value="1">
+<input type="hidden" name="max" value="20">
+<input type="hidden" name="searchtype" value="flg">
+<input type="hidden" name="media[]" value="aW50ZXJuZXQud2F0Y2guaW1wcmVzcy5jby5qcA==">
+</td>
+</tr>
+</form>
+
+</TABLE>
+<!-- 検索窓終了 -->
+<div class="leftpaneTitle">
+最新ニュース
+</div>
+<div class="leftpane_latest_subcornerinfo"><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100625_376738.html"><div class="leftpane_item_title">Flashを統合した「Google Chrome」最新安定版、脆弱性の修正も</div><div class="leftpane_date">[2010/06/25]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100625_376732.html"><div class="leftpane_item_title">Adobe Reader/Acrobat“ゼロデイ”修正のパッチを6月29日公開</div><div class="leftpane_date">[2010/06/25]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100625_376727.html"><div class="leftpane_item_title">米Twitterがプライバシー保護怠慢の責任を認め、米FTCと和解</div><div class="leftpane_date">[2010/06/25]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100625_376723.html"><div class="leftpane_item_title">Twitterウェブクライアント「HootSuite」が日本語化、HTML5対応の新機能も</div><div class="leftpane_date">[2010/06/25]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100625_376506.html"><div class="leftpane_item_title">ソースネクスト、データ消去ソフト「スグレモ シュレッダー」</div><div class="leftpane_date">[2010/06/25]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100625_376518.html"><div class="leftpane_item_title">「Japan Linux Conference 2010」が11月開催、発表論文を募集</div><div class="leftpane_date">[2010/06/25]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376507.html"><div class="leftpane_item_title">ネットジャパン、デフラグソフト「PowerX PerfectDisk 11 Pro」</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376502.html"><div class="leftpane_item_title">「iPhone 4」ホワイトモデルの出荷は7月後半にずれ込み、米Appleが発表</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376498.html"><div class="leftpane_item_title">首都大学東京、「ドブス写真集」動画投稿の学生2人を退学処分</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376495.html"><div class="leftpane_item_title">地域型JPドメイン名の今後のあり方を検討、JPRSがアンケートで意見募集</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376491.html"><div class="leftpane_item_title">米MSが「Bing」をアップデート、エンタメ関連の強化や新iPhoneアプリ</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376480.html"><div class="leftpane_item_title">はてな、DSi連携の「うごメモシアター」を機能強化</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376465.html"><div class="leftpane_item_title">Windows Liveプロフィールに意味不明な文字列、じつはボットへの指令暗号</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376445.html"><div class="leftpane_item_title">JPCERT/CC、国内初のCVE採番機関に認定</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376443.html"><div class="leftpane_item_title">リアルネットワークス、「RealPlayer SP」の動画検索をリニューアル</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376426.html"><div class="leftpane_item_title">朝日新聞が言論・解説サイト「WEBRONZA」、佐々木俊尚氏ら執筆の有料記事も</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376422.html"><div class="leftpane_item_title">YouTube、対Viacom著作権侵害訴訟に勝訴〜セーフハーバールールに該当</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376420.html"><div class="leftpane_item_title">Adobe Readerのゼロデイ脆弱性を悪用、日本国内を狙った攻撃を確認</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376408.html"><div class="leftpane_item_title">米Microsoft、「Internet Explorer9 Platform Preview 3」公開</div><div class="leftpane_date">[2010/06/24]</div></a></div></div><div class="leftpane_item_all"><div class="leftpaneIcon">■</div><div class="title"><a href="http://internet.watch.impress.co.jp/docs/news/20100624_376407.html"><div class="leftpane_item_title">米Microsoft、「Windows Live Essentials」ベータ版を明日公開と発表</div><div class="leftpane_date">[2010/06/24]</div></a></div></div></div>
+
+          </td>
+          <td valign="top" class="ipw_main">
+            
+            
+            
+            
+            
+<div class="ad_contents_start">
+<!-- google_ad_section_start -->
+
+</div>
+            
+<div class="contents news"><!-- 見出し -->
+  <div class="titleHeader">
+    <div class="titleHeaderInner"><!-- title -->
+      <div class="title">
+
+        <h1>Twitterウェブクライアント「HootSuite」が日本語化、HTML5対応の新機能も
+        </h1>
+      </div><!-- /title --><!-- subTitle -->
+      <div class="subTitle">
+        <h2>
+        </h2>
+      </div><!-- /subTitle -->
+    </div>
+  </div><!-- /見出し --><div class="social_bookmark">
+
+<div class="social_bookmark_inner">
+<div class="bm_delicious">
+<a href="javascript:bookmarkAddDelicious()">
+<img src="/img/icon/bm_delicious.gif" alt="del.icio.usに追加" title="del.icio.usに追加" />
+</a>
+</div>
+<div class="bm_twitter">
+<a href="javascript:bookmarkAddTwitter()">
+<img src="/img/icon/bm_twitter.gif" alt="Twitterに投稿" title="Twitterに投稿" />
+</a>
+</div>
+<div class="bm_livedoor">
+<a href="javascript:bookmarkAddLivedoor()">
+<img src="/img/icon/bm_livedoor.gif" alt="livedoorクリップに追加" title="livedoorクリップに追加" />
+</a>
+</div>
+<div class="bm_google">
+
+<a href="javascript:bookmarkAddGoogle()">
+<img src="/img/icon/bm_google.gif" alt="Google Bookmarks に追加" title="Google Bookmarks に追加" />
+</a>
+</div>
+<div class="bm_yahoo">
+<a href="javascript:bookmarkAddYahoo()">
+<img src="/img/icon/bm_yahoo.gif" alt="Yahoo!ブックマークに追加" title="Yahoo!ブックマークに追加" />
+</a>
+</div>
+<div class="bm_hatena">
+<a href="javascript:bookmarkAddHatena()">
+<img src="/img/icon/bm_hatena.gif" alt="はてなブックマークに追加" title="はてなブックマークに追加" />
+</a>
+</div>
+</div>
+</div>
+  <br><!--本文開始-->
+
+  <div class="mainContents">
+    <table class="imgtbl" cellspacing="3" rules="groups" align="right" border="0"> <tbody>
+      <tr class="thumbnail">
+        <td class="thumbnail" valign="baseline" align="middle"><a href="/img/iw/docs/376/723/html/hoot1.jpg.html" target="_self"><img class="resource" height="165" src="/img/iw/docs/376/723/hoot1_s.jpg" width="220" /></a></td>
+      </tr>
+      <tr class="caption">
+        <td class="caption" style="COLOR: navy; BACKGROUND-COLOR: #ffffff" valign="top" width="220"><small>HootSuite</small></td>
+      </tr></tbody>
+
+    </table>
+    <p>　カナダのHootSuite Media社が開発・運用する、ウェブブラウザーで動作するTwitterクライアント「HootSuite」は24日、HTML5技術を使用した新バージョンを公開した。
+    </p>
+    <p>　なお、このバージョンではユーザーインターフェイスなどが日本語に対応した。英語以外で対応する言語としては初めてとなる。
+    </p>
+    <p>　HootSuiteは、ブラウザーを使用するため使用環境をあまり選ばず、非常に高機能なことから、多くのユーザーに使用されている。日本でも英語のユーザーインターフェイスのままで使用しているユーザーも多かった。
+    </p>
+    <p>　HootSuiteが対応しているブラウザーは、現時点ではInternet Explorer 8/7、Firefox 3.6/3.5/3.0/2.0、Safari 5/4、Google Chrome 5/4としている。ただしHTML5バージョンを使用するには、ブラウザーがHTML5の各種機能に対応している必要がある。また、Operaには正式対応していない。
+    </p>
+    <p>　HTML5に対応したことにより、位置情報に基づく検索が可能になった。これにより、地元情報の検索が優先的に行える。また、画像などのファイルをデスクトップからドラッグ＆ドロップでアップロードできるようになった。この機能はGoogle Chrome 5、Firefox 3.6、Safari 5でのみ対応する。さらに、タブ切り替え時などにHTML5の機能を使用することで、反応を高速化するなどパフォーマンスも向上している。
+    </p>
+
+    <br clear="all" />
+    <table class="imgtbl" cellspacing="3" rules="groups" align="center" border="0"> <tbody>
+      <tr class="thumbnail">
+        <td class="thumbnail" valign="baseline" align="middle"><a href="/img/iw/docs/376/723/html/hoot2.jpg.html" target="_self"><img class="resource" height="141" src="/img/iw/docs/376/723/hoot2_s.jpg" width="220" /></a></td>
+        <td class="thumbnail" valign="baseline" align="middle"><a href="/img/iw/docs/376/723/html/hoot3.jpg.html" target="_self"><img class="resource" height="141" src="/img/iw/docs/376/723/hoot3_s.jpg" width="220" /></a></td>
+      </tr>
+      <tr class="caption">
+        <td class="caption" style="COLOR: navy; BACKGROUND-COLOR: #ffffff" valign="top" width="220"><small>初期設定画面</small></td>
+
+        <td class="caption" style="COLOR: navy; BACKGROUND-COLOR: #ffffff" valign="top" width="220"><small>テーマ選択画面</small></td>
+      </tr></tbody>
+    </table>
+    <p>　また、ダッシュボードのデザインにテーマが採用され、「クラシック」「ブルースチール」「マグナム」の3種類のデザインを選択できるようになった。
+    </p>
+    <p>　Twitter関連機能として、RT（リツイート）方法を手動RT形式か、Twitterネイティブ形式の双方から選択できるようになった。
+    </p>
+    <p>　また、Facebook機能としては、Facebookにリンクを投稿する際、写真のサムネイル、タイトル、説明文を追加できるようになった。これはユーザーから要望の多かった機能だという。
+    </p>
+    <p>　さらに、キーボードショートカットも用意された。ツイートなどアップデートを送信する際、Shift＋Enterで可能になった。この場合マウス操作が必要なく、時間を節約できるとしている。今後、キーボードショートカットの数も増やす予定だとしている。
+    </p>
+
+    <p>　このほかソーシャルダッシュボード機能の1つとして、Google Analyticsが組み込まれ、HootSuite画面のソーシャルダッシュボードの中から直接データを閲覧できるようになっている。
+      <br>
+    </p>
+  </div><!--本文終了-->
+  <hr size="1" /> <strong><font size="+1">関連情報</font></strong><!-- 外部リンク -->
+  <div class="outerLinks" align="left"><font color="#ff8000">■</font><strong>URL</strong>
+    <br>　HootSuite
+    <br>　<a href="http://hootsuite.com/">http://hootsuite.com/</a>
+
+    <br>　プレスリリース（英文）
+    <br>　<a href="http://blog.hootsuite.com/hootsuite-html-5-release/">http://blog.hootsuite.com/hootsuite-html-5-release/</a>
+    <br>　HootSuite公式ブログの該当記事（英文）
+    <br>　<a href="http://blog.hootsuite.com/hootsuite-html-5/">http://blog.hootsuite.com/hootsuite-html-5/</a>
+  </div><!-- /外部リンク -->
+  <div class="stuffInfo">
+    <p>(青木 大我 taiga@scientist.com)
+      <br>
+
+    </p>
+  </div>
+  <div class="publishDate">
+    <p align="left">2010/6/25 11:41
+    </p>
+  </div>
+  <div class="page_to_TOP">
+    <p align="right"><font size="2">
+      <br>- <a href="#top">ページの先頭へ</a>-</font>
+
+    </p>
+  </div>
+</div>
+<div class="ad_contents_end">
+<!-- google_ad_section_end -->
+
+</div>
+
+            
+            
+            
+            
+
+<div class="ad_contents_under">
+<div align="left" style="padding-top:5px;">
+<!-- impress watch ad - r-premium -->
+<script>
+bust = Math.floor(1000000*Math.random());
+document.write('<scr'+'ipt language="JavaScript1.1" src="http://ngs.impress.co.jp/js.ng/site=IW&size=468x150&sp=r-premium?ord='+bust+'">\n');
+document.write('</scr'+'ipt>');</script>
+<!-- /impress watch ad - r-premium -->
+
+</div>
+<div align="left" style="padding-top:15px;">
+<iframe width="540" height="360" src="http://ad.watch.impress.co.jp/external/google/internet/adsense.htm" frameborder="0" border="0" scrolling="no">
+</iframe>
+</div>
+
+</div>
+<div class="ad_contents_footer_copyright">
+<div class="page_footer">
+ <div class="page_footer_inner">
+ <a href="/">INTERNET Watch ホームページ</a>
+ </div>
+</div>
+
+<div class="page_copyright">
+Copyright (c) 2010 Impress Watch Corporation, an Impress Group company. All rights reserved.
+</div>
+
+</div>
+          </td>
+          <td valign="top" class="ipw_right">
+<div class="ad_contents_rsky">
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<!-- impress watch ad - r-rect1 -->
+<div style="padding-bottom:10px;">
+<script>bust = Math.floor(1000000*Math.random());
+document.write('<scr'+'ipt language="JavaScript1.1" src="http://ngs.impress.co.jp/js.ng/site=IW&size=300x300&sp=r-rect1?ord='+bust+'">\n');
+document.write('</scr'+'ipt>');</script>
+
+</div>
+<!-- /impress watch ad - r-rect1 -->
+
+</td></tr>
+<tr><td>
+
+<!-- impress watch ad - r-topics -->
+<div style="padding-bottom:10px;">
+<script>bust = Math.floor(1000000*Math.random());
+document.write('<scr'+'ipt language="JavaScript1.1" src="http://ngs.impress.co.jp/js.ng/site=IW&size=300x250&sp=r-topics?ord='+bust+'">\n');
+document.write('</scr'+'ipt>');</script>
+</div>
+<!-- /impress watch ad - r-topics -->
+
+</td></tr>
+<tr><td>
+
+<!-- impress watch ad - r-rect2 -->
+
+<div style="padding-bottom:10px;">
+<script>bust = Math.floor(1000000*Math.random());
+document.write('<scr'+'ipt language="JavaScript1.1" src="http://ngs.impress.co.jp/js.ng/site=IW&size=300x300&sp=r-rect2?ord='+bust+'">\n');
+document.write('</scr'+'ipt>');</script>
+</div>
+<!-- /impress watch ad - r-rect2 -->
+
+</td></tr>
+<tr><td>
+
+<!-- impress watch ad - r-sky -->
+<script>bust = Math.floor(1000000*Math.random());
+document.write('<scr'+'ipt language="JavaScript1.1" src="http://ngs.impress.co.jp/js.ng/site=IW&size=148x800&sp=sky2?ord='+bust+'">\n');
+document.write('</scr'+'ipt>');</script>
+<!-- /impress watch ad - r-sky -->
+
+</td></tr>
+</table>
+
+</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+<div class="ad_contents_footer">
+<!-- DAC -->
+<script src="http://img.ij.impact-ad.jp/bta/p/IT.IMPRESS.js"></script>
+<!-- /DAC -->
+<!-- Google Analytics & Urchin-->
+<script src="http://www.google-analytics.com/urchin.js"
+type="text/javascript">
+</script>
+
+<script type="text/javascript">
+try {
+_uacct = "UA-245639-3";
+_userv=2;
+urchinTracker();
+} catch(err) {}
+</script>
+<!-- /Google Analytics & Urchin-->
+
+</div>
+  </body>
+</html>

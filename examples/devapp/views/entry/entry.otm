@@ -1,0 +1,11 @@
+#include "entry.h"
+
+#head_title ~= controller()->name() + ": " + controller()->activeAction()
+
+#error_msg ~ tehvar(error)
+
+#notice_msg ~ tehvar(notice)
+
+#entry_form |== formTag(urla("create"))
+
+#linkToIndex :== linkTo("Back", urla("index"))

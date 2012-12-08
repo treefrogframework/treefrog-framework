@@ -1,0 +1,169 @@
+#!/bin/sh
+#
+# Guess values for system-dependent variables and create Makefiles.
+#
+
+# usage message
+usage_unix()
+{
+  cat <<_EOF
+Usage: $0 [OPTION]... [VAR=VALUE]...
+
+Configuration:
+  -h, --help          display this help and exit
+  --enable-debug      compile with debugging information
+  --enable-gui-mod    compile and link with QtGui module
+
+Installation directories:
+  --prefix=PREFIX     install files in PREFIX [$PREFIX]
+
+Fine tuning of the installation directories:
+  --bindir=DIR        user executables [$BINDIR]
+  --libdir=DIR        object code libraries [$LIBDIR]
+  --includedir=DIR    C++ header files [$INCLUDEDIR]
+  --datadir=DIR       read-only architecture-independent data [$DATADIR]
+_EOF
+}
+
+usage_macx()
+{
+  cat <<_EOF
+Usage: $0 [OPTION]... [VAR=VALUE]...
+
+Configuration:
+  -h, --help          display this help and exit
+  --enable-debug      compile with debugging information
+  --enable-gui-mod    compile and link with QtGui module
+
+Fine tuning of the installation directories:
+  --framework=PREFIX  install framework files in PREFIX [$FRAMEWORK]
+  --bindir=DIR        user executables [$BINDIR]
+  --datadir=DIR       read-only architecture-independent data [$DATADIR]
+_EOF
+}
+
+usage()
+{
+  if [ "$KERNEL" = "Darwin" ]; then
+    usage_macx
+  else
+    usage_unix
+  fi
+}
+
+
+# check the platform
+if which uname >/dev/null 2>&1; then
+  KERNEL=`uname -s`
+  MACHINE=`uname -m`
+  RELEASE=`uname -r`
+
+  if [ "$KERNEL" = "Darwin" ]; then
+    OPT="-spec macx-g++"
+    REL=`echo $RELEASE | tr -d '.'`
+    if [ "$REL" -ge  1050 ]; then
+      OPT="$OPT CONFIG+=x86_64"
+    fi
+
+    if [ "$MACHINE" = "ppc" ]; then
+      OPT="$OPT CONFIG+=ppc"
+    fi
+  else
+    if [ "$KERNEL" = "Linux" ]; then
+      OPT="-spec linux-g++"
+    elif [ "$KERNEL" = "FreeBSD" ]; then
+      OPT="-spec freebsd-g++"
+    fi
+
+    if [ "$MACHINE" = "x86_64" ]; then
+      OPT="$OPT CONFIG+=x86_64"
+    fi
+  fi
+else
+  echo "uname: command not found"
+  exit
+fi
+
+# default values
+PREFIX=/usr
+FRAMEWORK=/Library/Frameworks
+if [ "$KERNEL" = "Darwin" ]; then
+  LIBDIR=$FRAMEWORK
+  INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
+else
+  LIBDIR=$PREFIX/lib
+  INCLUDEDIR=$PREFIX/include/treefrog
+fi
+BINDIR=$PREFIX/bin
+DATADIR=$PREFIX/share/treefrog
+
+# parse options
+while [ -n "`echo $1 | grep '-'`" ]; do
+  case $1 in
+  *=?*) optarg=`expr "X$1" : '[^=]*=\(.*\)'` ;;
+  *=)   optarg= ;;
+  *)    optarg=yes ;;
+  esac
+
+  case $1 in
+    --prefix=*)
+      PREFIX=$optarg
+      BINDIR=$PREFIX/bin
+      LIBDIR=$PREFIX/lib
+      INCLUDEDIR=$PREFIX/include/treefrog
+      DATADIR=$PREFIX/share/treefrog
+      ;;
+    --bindir=*)
+      BINDIR=$optarg
+      ;;
+    --libdir=*)
+      LIBDIR=$optarg
+      ;;
+    --includedir=*)
+      INCLUDEDIR=$optarg
+      ;;
+    --datadir=*)
+      DATADIR=$optarg
+      ;;
+    --framework=*)
+      FRAMEWORK=$optarg
+      LIBDIR=$FRAMEWORK
+      INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
+      ;;
+    --enable-debug | --enable-debug=*)
+      ENABLE_DEBUG=yes
+      ;;
+    --enable-gui-mod | --enable-gui-mod=*)
+      ENABLE_GUI="use_gui=1"
+      ;;
+    --help | -help | -h | *)
+      usage
+      exit
+      ;;
+  esac
+  shift
+done
+
+if [ -n "$ENABLE_DEBUG" ]; then
+  OPT="$OPT CONFIG+=debug"
+else
+  OPT="$OPT CONFIG+=release"
+fi
+
+if ! which qmake >/dev/null 2>&1; then
+  echo qmake: command not found
+  echo 
+  exit
+fi
+
+cd src
+[ -f Makefile ] && make -k distclean >/dev/null 2>&1
+qmake $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
+cd ../tools
+[ -f Makefile ] && make -k distclean >/dev/null 2>&1
+qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" 
+make qmake
+
+echo
+echo "First, run \"make\" and \"sudo make install\" in src directory."
+echo "Next, run \"make\" and \"sudo make install\" in tools directory."

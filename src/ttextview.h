@@ -1,0 +1,38 @@
+#ifndef TTEXTVIEW_H
+#define TTEXTVIEW_H
+
+#include <TActionView>
+
+
+class T_CORE_EXPORT TTextView : public TActionView
+{
+    Q_OBJECT
+public:
+    TTextView(const QString &text = QString());
+    virtual ~TTextView() { }
+
+    void setText(const QString &text);
+    QString toString();
+
+private:
+    Q_DISABLE_COPY(TTextView)
+
+    QString viewText;
+};
+
+
+inline TTextView::TTextView(const QString &text)
+    : TActionView(), viewText(text)
+{ }
+
+inline void TTextView::setText(const QString &text)
+{
+    viewText = text;
+}
+
+inline QString TTextView::toString()
+{
+    return viewText;
+}
+
+#endif // TTEXTVIEW_H

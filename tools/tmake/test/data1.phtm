@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+<meta name="keywords" content="タグ,たぐ,HTML,スタイルシート,stylesheet,CSS,リファレンス,クイックリファレンス,WEBデザイン">
+<meta name="description" content="HTMLタグ・スタイルシート・特殊文字等の早見表">
+<meta name="robots" content="all">
+<title>&lt;INPUT&gt;−HTMLタグリファレンス</title>
+<link rel="stylesheet" href="../style_new.css">
+</head>
+<body>
+<div id="bigbox"><a name="top"></a>
+<table class="bigtable_menu">
+<tr>
+<td valign="top"><a href="http://www.htmq.com/index.htm"><h1 class="header1"><img border="0" src="http://www.htmq.com/images/logo.gif" width="135" height="45" alt="HTMLクイックリファレンス"></h1><br />トップページへ</a></td>
+<td valign="top" align="right">
+
+	<table class="h_menu">
+	<tr>
+	<td><a href="http://www.htmq.com/html/indexm.shtml">HTMLタグ（目的別）</a></td>
+	<td><a href="http://www.htmq.com/style/index.shtml">CSSプロパティ（目的別）</a></td>
+	<td><a href="http://www.htmq.com/color/index.shtml">WEBカラー</a></td>
+	<td><a href="http://www.htmq.com/gazo/index.shtml">WEB画像</a></td>
+	</tr>
+
+	<tr>
+	<td><a href="http://www.htmq.com/html/index.shtml">HTMLタグ（ABC順）</a></td>
+	<td><a href="http://www.htmq.com/style/indexa.shtml">CSSプロパティ（ABC順）</a></td>
+	<td><a href="http://www.htmq.com/design/index.shtml">優良デザイン</a></td>
+	<td><a href="http://www.htmq.com/text/index.shtml">特殊文字</a></td>
+	</tr>
+	<tr>
+
+	<td><a href="http://www.htmq.com/html5/index.shtml">HTML5</a></td>
+	<td><a href="http://www.htmq.com/css3/index.shtml">CSS3</a></td>
+	<td><a href="http://www.htmq.com/js/index.shtml">JavaScript</a></td>
+	<td><a href="http://www.htmq.com/book/index.shtml">執筆書籍の紹介</a></td>
+	</tr>
+	<tr>
+	<td><a href="http://www.htmq.com/htmlkihon/index.shtml">HTMLの基本</a></td>
+
+	<td><a href="http://www.htmq.com/csskihon/index.shtml">CSSの基本</a></td>
+	<td><a href="http://www.htmq.com/about/index.shtml">About</a></td>
+	<td><a href="http://www.htmq.com/sitemap/index.shtml">サイトマップ</a></td>
+	</tr>
+	</table></td>
+</tr>
+</table>
+<form action="http://www.htmq.com/search/" id="cse-search-box">
+  <div>
+
+    <input type="hidden" name="cx" value="partner-pub-1165233953818792:xuor2kioa5b" />
+    <input type="hidden" name="cof" value="FORID:10" />
+    <input type="hidden" name="ie" value="Shift_JIS" />
+    <input type="text" name="q" size="31" />
+    <input type="submit" name="sa" value="&#x691c;&#x7d22;" />
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=ja"></script>
+<br>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1165233953818792";
+/* 728x90, 作成済み 08/02/20 */
+google_ad_slot = "8968745236";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<!--現在場所ここから-->
+<div id="nowpage"><a href="../index.htm">トップページ</a>&nbsp;&gt;&nbsp;<a href="index.shtml">HTMLタグリファレンス</a>&nbsp;&gt;&nbsp;<strong>&lt;INPUT&gt;</strong></div>
+<!--現在場所ここまで-->
+
+<h2 class="header2">★HTMLタグリファレンス</h2>
+
+<table id="bigtable">
+<tr>
+<td valign="top" class="content">
+
+	<div id="gaiyou">
+	<strong>&lt;INPUT&gt;・・・・・フォームの構成部品（入力欄・ボタン等）を作成する</strong><br/>
+	<img border="0" src="../images/b_i4.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer4"><img border="0" src="../images/b_i5.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer5"><img border="0" src="../images/b_i5mac.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer5-mac"><img border="0" src="../images/b_i55.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer5.5"><img border="0" src="../images/b_i6.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer6"><img border="0" src="../images/b_i7.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer7"><img border="0" src="../images/b_i8.gif" hspace="1" vspace="1" width="30" height="15" alt="Internet Explorer8">
+	<img border="0" src="../images/b_n4.gif" hspace="1" vspace="1" width="30" height="15" alt="Netscape4"><img border="0" src="../images/b_n6.gif" hspace="1" vspace="1" width="30" height="15" alt="Netscape6"><img border="0" src="../images/b_n7.gif" hspace="1" vspace="1" width="30" height="15" alt="Netscape7">
+	<img border="0" src="../images/b_o6.gif" hspace="1" vspace="1" width="30" height="15" alt="Opera6"><img border="0" src="../images/b_o7.gif" hspace="1" vspace="1" width="30" height="15" alt="Opera7"><img border="0" src="../images/b_o8.gif" hspace="1" vspace="1" width="30" height="15" alt="Opera8"><img border="0" src="../images/b_o9.gif" hspace="1" vspace="1" width="30" height="15" alt="Opera9">
+	<img border="0" src="../images/b_f1.gif" hspace="1" vspace="1" width="30" height="15" alt="Firefox1"><img border="0" src="../images/b_f2.gif" hspace="1" vspace="1" width="30" height="15" alt="Firefox2"><img border="0" src="../images/b_f3.gif" hspace="1" vspace="1" width="30" height="15" alt="Firefox3">
+	</div>
+
+	<p class="honbun">
+	&lt;INPUT&gt;タグはテキスト入力欄や実行ボタン等、
+	フォーム（<a href="form.shtml">&lt;FORM&gt;〜&lt;/FORM&gt;</a>）を構成する部品を作成するタグです。
+	type属性の値により、一行テキストボックス・チェックボックス・ラジオボタン・実行ボタン・リセットボタン等の部品となります。 
+	</p>
+	<p class="honbun">
+	各入力フィールドにデータが入力され、
+	<a href="form.shtml">&lt;FORM&gt;</a>でデータが送信される際には、
+	&lt;INPUT&gt;タグのname属性で付けたデータ名とその値を一組にして、
+	<a href="form.shtml">&lt;FORM&gt;</a>タグのaction属性で指定したサーバー上のファイルに、
+	<a href="form.shtml">&lt;FORM&gt;</a>タグのmethod属性で指定した転送方法で送られます。
+	</p>
+
+	<h3 class="header3">■属性</h3>
+	<div id="atai">
+	<dl>
+	<dt>type=&quot;text&quot;</dt>
+	<dd>1行テキストボックスをつくります。通常のテキストを入力するフィールドです。2行以上にわたる長い文章を入力させたい場合には、<a href="textarea.shtml">&lt;TEXTAREA&gt;〜&lt;/TEXTAREA&gt;</a>を使用します。</dd>
+
+	<dt>type=&quot;password&quot;</dt>
+	<dd>パスワード入力ボックスをつくります。入力したテキストがアスタリスク（*）などに置き換えて表示されます。ただし、データが暗号化されるわけではないので、送信されたデータを受け取ることができれば内容を見ることができます。利用の際には注意してください。</dd>
+	<dt>type=&quot;checkbox&quot;</dt>
+	<dd>チェックボックスをつくります。チェックボックスは複数選択が可能です。checked属性を指定すると、その項目についてはあらかじめチェックの付いた状態となります。</dd>
+	<dt>type=&quot;radio&quot;</dt>
+
+	<dd>ラジオボタンをつくります。複数の中から一つしか選択できない点がチェックボックスと異なります。複数を一つのグループとして認識させるには、name属性で同じ名前を付けてください。checked属性を指定すると、その項目についてはあらかじめチェックの付いた状態となります。</dd>
+	<dt>type=&quot;file&quot;</dt>
+	<dd>サーバーへファイルを送信する際に、送信するファイルを選択します。ファイル名の入力フィールドと[参照]ボタンが表示されます。サーバー側にはファイルを受け取るための特別なCGI等が必要です。</dd>
+	<dt>type=&quot;hidden&quot;</dt>
+	<dd>隠しデータをサーバーに送信する際に使用します。このタイプのデータは、画面上には表示されませんが、value属性で指定した値がサーバーへ送信されます。</dd>
+
+	<dt>type=&quot;submit&quot;</dt>
+	<dd>送信ボタンをつくります。</dd>
+	<dt>type=&quot;reset&quot;</dt>
+	<dd>リセットボタンをつくります。このボタンを押すと、それまでに入力した情報をキャンセルして初期状態に戻します。</dd>
+	<dt>type=&quot;button&quot;</dt>
+
+	<dd>汎用ボタンをつくります。</dd>
+	<dt>type=&quot;image&quot;</dt>
+	<dd>画像のボタンをつくります。使用する画像ファイルはsrc属性で指定してください。またalt属性が必須となります。</dd>
+	</dl>
+	</div>
+
+	<h3 class="header3">■使用例</h3>
+
+	<div id="siyorei_source">
+	<h4 class="header4">HTMLソース</h4>
+	&lt;form action=&quot;cgi-bin/aaa.cgi&quot; method="post"><br>
+	&lt;table border="0"><br>
+	&nbsp; &lt;tr><br>
+
+	&nbsp;&nbsp;&nbsp; &lt;td align="right">&lt;b&gt;
+	名前：&lt;/b&gt;&lt;/td><br>
+	&nbsp;&nbsp;&nbsp; &lt;td>&lt;input type="text" name=&quot;name&quot; size=&quot;30&quot; maxlength=&quot;20&quot;&gt;&lt;/td><br>
+
+	&nbsp; &lt;/tr><br>
+	&nbsp; &lt;tr><br>
+	&nbsp;&nbsp;&nbsp; &lt;td align="right">&lt;b&gt; 
+	パスワード：&lt;/b&gt;&lt;/td><br>
+
+	&nbsp;&nbsp;&nbsp; &lt;td>&lt;input type=&quot;password&quot; name=&quot;pass&quot; size=&quot;6&quot; 
+	maxlength=&quot;4&quot;&gt;&lt;/td><br>
+	&nbsp; &lt;/tr><br>
+
+	&nbsp; &lt;tr><br>
+	&nbsp;&nbsp;&nbsp; &lt;td align="right">&lt;b&gt;学年：&lt;/b&gt;&lt;/td><br>
+	&nbsp;&nbsp;&nbsp; &lt;td><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="radio" name=&quot;gakunen&quot; value=&quot;１年生&quot;&gt;１年生<br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="radio" name=&quot;gakunen&quot; value=&quot;２年生&quot;&gt;２年生<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="radio" name=&quot;gakunen&quot; value=&quot;３年生&quot;&gt;３年生<br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="radio" name=&quot;gakunen&quot; value=&quot;４年生&quot;&gt;４年生<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="radio" name=&quot;gakunen&quot; value=&quot;５年生&quot;&gt;５年生<br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="radio" name=&quot;gakunen&quot; value=&quot;６年生&quot;&gt;６年生<br>
+	&nbsp;&nbsp;&nbsp; &lt;/td><br>
+	&nbsp; &lt;/tr><br>
+
+	&nbsp; &lt;tr><br>
+	&nbsp;&nbsp;&nbsp; &lt;td align="right">&lt;b&gt;好きな課目：&lt;/b&gt;&lt;/td><br>
+	&nbsp;&nbsp;&nbsp; &lt;td><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type=&quot;checkbox&quot; name=&quot;kamoku&quot; value=&quot;国語&quot;&gt;国語<br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type=&quot;checkbox&quot; name=&quot;kamoku&quot; value=&quot;英語&quot;&gt;英語<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type=&quot;checkbox&quot; name=&quot;kamoku&quot; value=&quot;算数&quot;&gt;算数<br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type=&quot;checkbox&quot; name=&quot;kamoku&quot; value=&quot;理科&quot;&gt;理科<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type=&quot;checkbox&quot; name=&quot;kamoku&quot; value=&quot;社会&quot;&gt;社会<br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type=&quot;checkbox&quot; name=&quot;kamoku&quot; value=&quot;体育&quot;&gt;体育<br>
+	&nbsp;&nbsp;&nbsp; &lt;/td><br>
+	&nbsp; &lt;/tr&gt;<br>
+
+	&nbsp; &lt;tr><br>
+	&nbsp;&nbsp;&nbsp; &lt;td align="right">&lt;b&gt;宿題ファイル：&lt;/b&gt;&lt;/td><br>
+	&nbsp;&nbsp;&nbsp; &lt;td>&lt;input type=&quot;file&quot; name=&quot;syukudai&quot;&gt;&lt;/td><br>
+
+	&nbsp; &lt;/tr><br>
+	&nbsp; &lt;tr><br>
+	&nbsp;&nbsp;&nbsp; &lt;td&gt;&lt;/td><br>
+	&nbsp;&nbsp;&nbsp; &lt;td><br>
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="submit" value="送信"><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input type="reset" value="リセット"><br>
+	&nbsp;&nbsp;&nbsp; &lt;/td><br>
+	&nbsp; &lt;/tr><br>
+	&lt;/table><br>
+
+	&lt;/form>
+	</div><div id="siyorei_arrow">↓↓↓</div><div id="siyorei_browse">
+	<h4 class="header4">ブラウザ上の表示</h4>
+<form action="cgi-bin/formmail.cgi" method="post">
+<table border="0">
+<tr>
+<td align="right"><b>名前：</b></td>
+<td><input type="text" name="name" size="30" maxlength="20"></td>
+</tr>
+<tr>
+<td align="right"><b>パスワード：</b></td>
+
+<td><input type="password" name="pass" size="6" maxlength="4"></td>
+</tr>
+<tr>
+<td align="right"><b>学年：</b></td>
+<td>
+<input type="radio" name="gakunen" value="１年生">１年生 
+<input type="radio" name="gakunen" value="２年生">２年生 
+<input type="radio" name="gakunen" value="３年生">３年生 
+<input type="radio" name="gakunen" value="４年生">４年生 
+<input type="radio" name="gakunen" value="５年生">５年生 
+<input type="radio" name="gakunen" value="６年生">６年生 
+</td>
+</tr>
+<tr>
+<td align="right"><b>好きな課目：</b></td>
+
+<td>
+<input type="checkbox" name="kamoku" value="国語">国語 
+<input type="checkbox" name="kamoku" value="英語">英語 
+<input type="checkbox" name="kamoku" value="算数">算数 
+<input type="checkbox" name="kamoku" value="理科">理科 
+<input type="checkbox" name="kamoku" value="社会">社会 
+<input type="checkbox" name="kamoku" value="体育">体育 
+</td>
+</tr>
+<tr>
+<td align="right"><b>宿題ファイル：</b></td>
+<td><input type="file" name="syukudai"></td>
+</tr>
+<tr>
+<td></td>
+<td>
+
+<input type="submit" value="送信">
+<input type="reset" value="リセット">
+</td>
+</tr>
+</table>
+</form>
+	</div>
+
+	<br>
+<div style="margin:0px 0px 0px 10px;">
+<script type="text/javascript"><!--
+google_ad_client = "pub-1165233953818792";
+/* 336x280, 作成済み 08/02/20 */
+google_ad_slot = "0148402115";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+	<!--<h3 class="header3">■関連項目</h3>
+	<div id="kanren">
+		
+	</div>-->
+
+</td>
+<td valign="top" class="ad_right">
+<!--
+<a href="http://px.a8.net/svt/ejp?a8mat=1HNOJD+9N3QGI+1RZW+5ZEMP" target="_blank">
+<img border="0" width="120" height="60" alt="" src="http://www25.a8.net/svt/bgt?aid=090124537583&wid=001&eno=01&mid=s00000008294001005000&mc=1"></a>
+<img border="0" width="1" height="1" src="http://www16.a8.net/0.gif?a8mat=1HNOJD+9N3QGI+1RZW+5ZEMP" alt="">
+-->
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-1165233953818792";
+/* 160x600, 作成済み 08/09/01 */
+google_ad_slot = "6421100783";
+google_ad_width = 160;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</td>
+</tr></table><br>
+
+<div id="gopagetop"><a href="#top">▲ページ先頭へ</a></div>
+
+<!--現在場所ここから-->
+<div id="nowpage"><a href="../index.htm">トップページ</a>&nbsp;&gt;&nbsp;<a href="index.shtml">HTMLタグリファレンス</a>&nbsp;&gt;&nbsp;<strong>&lt;INPUT&gt;</strong></div>
+<!--現在場所ここまで-->
+
+<table class="bigtable_menu">
+<tr>
+<td valign="top"><a href="http://www.htmq.com/index.htm"><h1 class="header1"><img border="0" src="http://www.htmq.com/images/logo.gif" width="135" height="45" alt="HTMLクイックリファレンス"></h1><br>トップページへ</a></td>
+<td valign="top" align="right">
+	<table class="h_menu">
+	<tr>
+	<td><a href="http://www.htmq.com/html/indexm.shtml">HTMLタグ（目的別）</a></td>
+
+	<td><a href="http://www.htmq.com/style/index.shtml">CSSプロパティ（目的別）</a></td>
+	<td><a href="http://www.htmq.com/color/index.shtml">WEBカラー</a></td>
+	<td><a href="http://www.htmq.com/gazo/index.shtml">WEB画像</a></td>
+	</tr>
+	<tr>
+	<td><a href="http://www.htmq.com/html/index.shtml">HTMLタグ（ABC順）</a></td>
+	<td><a href="http://www.htmq.com/style/indexa.shtml">CSSプロパティ（ABC順）</a></td>
+
+	<td><a href="http://www.htmq.com/design/index.shtml">優良デザイン</a></td>
+	<td><a href="http://www.htmq.com/text/index.shtml">特殊文字</a></td>
+	</tr>
+	<tr>
+	<td><a href="http://www.htmq.com/html5/index.shtml">HTML5</a></td>
+	<td><a href="http://www.htmq.com/css3/index.shtml">CSS3</a></td>
+	<td><a href="http://www.htmq.com/js/index.shtml">JavaScript</a></td>
+
+	<td><a href="http://www.htmq.com/book/index.shtml">執筆書籍の紹介</a></td>
+	</tr>
+	<tr>
+	<td><a href="http://www.htmq.com/htmlkihon/index.shtml">HTMLの基本</a></td>
+	<td><a href="http://www.htmq.com/csskihon/index.shtml">CSSの基本</a></td>
+	<td><a href="http://www.htmq.com/about/index.shtml">About</a></td>
+	<td><a href="http://www.htmq.com/sitemap/index.shtml">サイトマップ</a></td>
+
+	</tr>
+	</table></td>
+</tr>
+</table>
+<form action="http://www.htmq.com/search/" id="cse-search-box">
+  <div>
+    <input type="hidden" name="cx" value="partner-pub-1165233953818792:xuor2kioa5b" />
+    <input type="hidden" name="cof" value="FORID:10" />
+    <input type="hidden" name="ie" value="Shift_JIS" />
+    <input type="text" name="q" size="31" />
+
+    <input type="submit" name="sa" value="&#x691c;&#x7d22;" />
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=ja"></script>
+<div class="smls">
+あなたのWEBサイトをレベルアップさせるには【ドメイン】！<br>
+<a href="http://px.a8.net/svt/ejp?a8mat=1C4H6U+N7Y56+50+2HE8HE" target="_blank">■ドメイン取るならお名前.com■</a>
+<img border="0" width="1" height="1" src="http://www19.a8.net/0.gif?a8mat=1C4H6U+N7Y56+50+2HE8HE" alt="">
+</div>
+<div id="abouthtmq"><a href="http://www.htmq.com/about/">HTMLクイックリファレンスについて</a></div>
+<div id="copy">&copy;2010&nbsp;HTMQ</div>
+
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3657299-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+</body>
+</html>
+

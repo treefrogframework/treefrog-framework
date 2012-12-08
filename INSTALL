@@ -1,0 +1,53 @@
+
+Requirements
+ - Windows XP/Vista/7, Linux, Mac OS X,
+   or POSIX compliant Unix-like OS
+ - Qt SDK version 4.6 or later
+
+
+Installation
+1. Extract the downloaded file.
+
+2. Run build commands.
+    Windows:
+      Build binaries of two modes, release and debug.
+      Run the following commands in Qt Command Prompt.
+       > cd treefrog-x.x.x
+       > configure --enable-debug
+       > cd src
+       > mingw32-make install
+       > cd ..\tools
+       > mingw32-make instal
+       > cd ..
+       > configure
+       > cd src
+       > mingw32-make install
+       > cd ..\tools
+       > mingw32-make instal
+    
+    Linux, Mac OS X, or Unix-like OS:
+      Run the following commands.
+       $ cd treefrog-x.x.x
+       $ ./configure
+       $ cd src
+       $ make
+       $ sudo make install
+       $ cd ../tools
+       $ make
+       $ sudo make install
+
+3. Create a shortcut to TreeFrog Command Prompt (on Windows only).
+   Locate the program:
+     C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
+     ("x.x.x" is version)
+
+   * In the TreeFrog Command Prompt, build Web applications and run
+     TreeFrog commands such as tspawn or treefrog.
+
+4. Install SQL Database Drivers (if necessary)
+   If you want to use MySQL or PostgreSQL, the database driver is needed.
+   Download SQL database drivers from here.
+     http://www.treefrogframework.org/download
+   
+   Please refer README file in the package to install the drivers.
+

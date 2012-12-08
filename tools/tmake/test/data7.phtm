@@ -1,0 +1,2036 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+
+<head>
+<!--// title_start //-->
+<title>ニュース　速報　YOMIURI ONLINE（読売新聞）</title>
+<!--// title_end //-->
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<link rel="stylesheet" type="text/css" href="/styles/Y3home.css" />
+<script type="text/javascript" src="/scripts/Y3.js"></script>
+<link rel="stylesheet" type="text/css" href="/styles/common_print.css" media="print" />
+<meta name="description" content="読売新聞のニュースサイトです。速報記事は社会、スポーツ、政治、経済、国際、環境などジャンル別に読めます。特集やエンタメ、教育、医療などの読み物、発言小町も大人気。映像ニュースなどの動画コンテンツが豊富で、天気・交通、地図などの生活情報も便利です。" />
+
+<meta name="keywords" content=",読売新聞,読売,ニュース,速報,新聞,購読案内" />
+
+<link rel="alternate" type="application/atom+xml" title="ＹＯＬトップと主要ニュース" href="http://rss.yomiuri.co.jp/f/yol_topstories" />
+<link rel="alternate" type="application/atom+xml" title="ＹＯＬニュースランキング" href="http://rss.yomiuri.co.jp/f/yolranking30" />
+<link rel="alternate" type="application/atom+xml" title="発言小町新着トピックス" href="http://komachi-rss.yomiuri.co.jp/f/komachi_rss" />
+
+<script type="text/javascript">Y3.config('news','home')</script>
+
+</head>
+<body id="d1-news">
+<!--▼ヘッダー▼-->
+<div id="d2-home"><div id="d2-top">
+
+<div id="contHeader">
+<div class="hPtn1 showUpbr">
+<div id="upcn">
+
+<div id="prLogo"><img src="/g3/_yollogo.gif" width="212" height="18" border="0" alt="YOMIURI ONLINE"></div>
+<h1 id="yolLogo"><span>ニュース　速報　YOMIURI ONLINE（読売新聞）</span></h1>
+
+<ul class="skip2" id="top" name="top" accesskey="q">
+<li><a accesskey="q">読売新聞のニュースサイト、ヨミウリ・オンラインのページです。</a></li>
+<li><a href="#main">メニューをとばして、このページの見出し・本文へ移動します。</a></li>
+</ul>
+
+<div class="hr"><hr /></div>
+
+<ul>
+<!--script type="text/javascript">Y1.hp('y3');</script-->
+<li><a href="/twitter/" id="twitterBtn2"><span>ツイッター</span></a></li>
+
+<li><a href="/sitemap/" id="smapBtn2"><span>サイト案内</span></a></li>
+<li><a href="http://434381.jp/26/" id="sbscBtn2"><span>読売新聞 ご購読</span></a></li>
+<li><a href="http://jijimon.jp/" id="sapixBtn"><span>時事問題学習 SAPIX</span></a></li>
+</ul>
+<div class="hr"><hr /></div>
+
+</div>
+
+<div id="headerAd"><div class="inr">
+<div id="home-banner">
+<!-- begin ad tag -->
+<script type="text/javascript">
+AD2.init({
+	site:	'TOP',
+	area:	'BANNER',
+	width:	728,
+	height: 90,
+	admax:	1
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+AD2.dBanner();
+
+</script>
+<noscript>
+<iframe src="http://as.yl.impact-ad.jp/hserver/SITE=TOP/AREA=BANNER/AAMSZ=728X90/OENCJP=SJIS" noresize scrolling=no hspace=0 vspace=0 frameborder=0 marginheight=0 marginwidth=0 width=728 height=90 allowTransparency="true">
+</iframe>
+</noscript>
+<!-- End ad tag -->
+</div>
+</div></div>
+<div class="mWhd"></div>
+</div>
+
+<div class="hr"><hr /></div>
+
+
+<div id="upbr">
+
+<div class="utab">
+	<ul>
+
+	<li><a href="http://info.yomiuri.co.jp/" class="u-yomiuri"><span>読売新聞</span></a></li>
+	<li><a href="http://www.yomiuri.co.jp/" class="u-yol"><span>YOMIURI ONLINE</span></a></li>
+	<li><a href="https://yorimo.yomiuri.co.jp/?cidy=0221999000000" class="u-yorimo"><span>yorimo</span></a></li>
+	<li><a href="http://www.yomidr.yomiuri.co.jp/?from=ytab" class="u-yomidr"><span>yomiDr.</span></a></li>
+	<li><a href="http://hochi.yomiuri.co.jp/" class="u-hochi"><span>スポーツ報知</span></a></li>
+	<li><a href="http://www.giants.jp/" class="u-giants" target="_blank"><span>ジャイアンツ</span></a></li>
+
+	<li><a href="/database/" class="u-database"><span>データベース</span></a></li>
+	</ul>
+</div>
+
+<div class="hr"><hr /></div>
+
+<div class="srch" style="width:338">
+<form action="http://www.yahoo-search.jp/" method="get" name="yolsearch" id="yolsearch" target="_top">
+<label for="queryword"><img alt="検索" src="/g/d.gif" class="s" /></label>
+<input id="queryword" type="text" tabindex="1" maxlength="80" name="kw" class="kw" />
+<input type="hidden" name="ord" value="t" />
+<input type="hidden" name="cs" value="sjis" />
+<input type="hidden" name="id" value="300069" />
+<input type="submit" id="srch_b1" value="サイト内" />
+
+<input type="button" id="srch_b2" value="ウェブ" class="translucent" />
+<input type="button" id="srch_b4" value="買物" class="translucent" />
+<input type="button" id="srch_b5" value="小町" class="translucent" />
+</form>
+</div>
+<div class="mWhd"></div>
+
+<form action="http://www.yahoo-search.jp/" name="websearch" id="websearch" style="margin:0;padding:0;" target="_top"><input type="hidden" value="web" name="rt" /><input type="hidden" value="t" name="ord" /><input type="hidden" value="sjis" name="cs" /><input type="hidden" value="300069" name="id" /><input type="hidden" name="kw" class="kw" /></form>
+<form action="http://eshop.yomiuri.co.jp/refresh/search.php" name="shoppingsearch" id="shoppingsearch" style="margin:0;padding:0;" method="get" target="_top"><input type="hidden" value="2" name="sv" /><input type="hidden" name="sitem" class="kw" /><input type="hidden" value="1" name="mode" /></form>
+<form action="http://www.yahoo-search.jp/" name="komachisearch" id="komachisearch" style="margin:0;padding:0;" target="_top"><input type="hidden" value="" name="rt" /><input type="hidden" value="s" name="ord" /><input type="hidden" value="sjis" name="cs" /><input type="hidden" value="300070" name="id" /><input type="hidden" name="kw" class="kw" /></form>
+</div>
+
+<div class="hr"><hr /></div>
+
+
+
+<div id="gNav">
+
+<ul class="d1">
+<li class="d1-news"><a href="/" class="tab"><span>ニュース</span></a>	<ul>
+	<li class="d2-home"><a href="/"><span>総合トップ</span></a></li>
+	<li class="d2-latestnews"><a href="/latestnews/"><span>新着順</span></a></li>
+	<li class="d2-politics"><a href="/politics/"><span>政治</span></a></li>
+	<li class="d2-national"><a href="/national/"><span>社会</span></a></li>
+	<li class="d2-world"><a href="/world/"><span>国際</span></a></li>
+
+	<li class="d2-e-japan"><a href="/e-japan/"><span>地域</span></a></li>
+	<li class="d2-science"><a href="/science/"><span>科学</span></a></li>
+	<li class="d2-eco"><a href="/eco/"><span>環境</span></a></li>
+	<li class="d2-editorial"><a href="/editorial/"><span>社説</span></a></li>
+	<li class="d2-column"><a href="/column/"><span>コラム</span></a></li>
+	<li class="d2-feature"><a href="/feature/"><span>特集</span></a></li>
+
+	<li class="d2-photonews"><a href="/photonews/"><span>写真</span></a></li>
+	<li class="d2-stream"><a href="/stream/"><span>動画</span></a></li>
+	<li class="d2-weather"><a href="/weather/"><span>天気</span></a></li>
+	<li class="d2-traffic"><a href="http://traffic.yomiuri.co.jp/"><span>交通</span></a></li>
+	<li class="d2-trafic"><a href="http://map.yomiuri.co.jp/"><span>地図</span></a></li>
+	<li class="d2-dy"><a href="/dy/"><span>English</span></a></li>
+
+	<li class="d2-rss"><a href="/tools/rss/"><span>RSS</span></a></li>
+	<li class="mWhd cl"></li>
+	</ul></li>
+<li class="d1-atmoney"><a href="/atmoney/" class="tab"><span>マネー・経済</span></a></li>
+<li class="d1-sports"><a href="/sports/" class="tab"><span>スポーツ</span></a></li>
+<li class="d1-kyoiku"><a href="/kyoiku/" class="tab"><span>教育</span></a></li>
+<li class="d1-iryou"><a href="http://www.yomidr.yomiuri.co.jp/?from=ygnav" class="tab"><span>医療と介護</span></a></li>
+<li class="d1-entertainment"><a href="/entertainment/" class="tab"><span>エンタメ</span></a></li>
+
+<li class="d1-komachi"><a href="/komachi/" class="tab"><span>大手小町</span></a></li>
+<li class="d1-otona"><a href="http://otona.yomiuri.co.jp/" class="tab"><span>新おとな</span></a></li>
+<li class="d1-gourmet"><a href="/gourmet/" class="txt"><span>グルメ</span></a></li>
+<li class="d1-atcars"><a href="/atcars/" class="txt"><span>クルマ</span></a></li>
+<li class="d1-net"><a href="/net/" class="txt"><span>ネット</span></a></li>
+<li class="d1-homeguide"><a href="/homeguide/" class="txt"><span>住まい</span></a></li>
+<li class="d1-shopping"><a href="http://eshop.yomiuri.co.jp/" class="txt"><span>買い物</span></a></li>
+<li class="d1-job"><a href="http://job.yomiuri.co.jp/" class="txt"><span>求人</span></a></li>
+<li class="d1-book"><a href="/book/" class="txt"><span>読書</span></a></li>
+
+<li class="d1-magabon"><a href="http://magabon.yomiuri.co.jp/" class="txt"><span>雑誌</span></a></li>
+<li class="d1-election"><a href="/election/" class="txt"><span>選挙</span></a></li>
+<li class="d1-wcup"><a href="/wcup/" class="txt"><span>W杯</span></a></li>
+</ul>
+<div class="hr"><hr /></div>
+
+<div id="fSize"><div class="txt">文字</div><a class="s1" href="javascript:void(0);"><span>[小]</span></a><a class="s2act" href="javascript:void(0);"><span>[中]</span></a><a class="s3" href="javascript:void(0);"><span>[大]</span></a></div>
+</div>
+<noscript><div class="nsMsg">JavascriptをONにすると、より快適にYOMIURI ONLINEをご利用頂くことができます。</div></noscript>
+
+</div>
+<!--▲ヘッダー▲-->
+<div id="contContainer"><div id="mainContents"><div id="mainContentsInr">
+<!--▼速報▼-->
+
+<!--▲速報▲-->
+<!--▼メインカラム▼-->
+<div id="mainColumn">
+<div class="mainColumnInr">
+<div class="hr"><hr /></div>
+<a id="main" name="main" class="hiddenElm" accesskey="z">本文です</a>
+<div class="hslice" id="1"><div class="entry-title" style="display:none;">YOMIURI ONLINE 主要ニュース</div><a rel="entry-content" href="/webslice/slice.html" style="display:none;"></a><div class="entry-content">
+<!--▼トップ＆主要▼-->
+<div class="headline-def">
+
+<h2><a href="/wcup/2010/news/japan/news/20100625-OYT1T00751.htm?from=top">五輪銅・釜本さん、２失点にしのいだ堅守称賛</a></h2>&nbsp;&nbsp;（16<img src="/g/d.gif" width="1" height="1" alt="じ" />:27<img src="/g/d.gif" width="1" height="1" alt="分" />）
+</div>
+<ul class="list-mainnews">
+<li><a href="/wcup/2010/news/japan/news/20100625-OYT1T00388.htm?from=main1" class="h">走るサッカー、涼しさがプラスに…岡田監督</a>&nbsp;（10<img src="/g/d.gif" width="1" height="1" alt="じ" />:59<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/election/sangiin/2010/news2/national/20100625-OYT1T00628.htm?from=main2" class="h">消毒車にキャッチフレーズシール、選管指導で撤去</a>&nbsp;（16<img src="/g/d.gif" width="1" height="1" alt="じ" />:24<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20100518-296281/index.htm">口蹄疫</a></li>
+
+<li><a href="/election/sangiin/2010/news2/20100625-OYT1T00626.htm?from=main3" class="h">地方版マニフェストがトレンド…参院選</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:03<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/politics/news/20100625-OYT1T00616.htm?from=main4" class="h">子育て施策、「子ども家庭省」に一元化検討</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:18<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/wcup/2010/news/e/news/20100625-OYT1T00797.htm?from=main5" class="h">デンマーク「名誉なき敗退」…ＧＫなすすべなし</a>&nbsp;（17<img src="/g/d.gif" width="1" height="1" alt="じ" />:47<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/wcup/2010/news/f/news/20100625-OYT1T00762.htm?from=main6" class="h">イタリア「国民的惨禍」…選手の給料までやり玉に</a>&nbsp;（17<img src="/g/d.gif" width="1" height="1" alt="じ" />:19<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/sports/yakyu/news/20100625-OYT1T00757.htm?from=main7" class="h">吉田えり初黒星、５回３安打３失点</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（17<img src="/g/d.gif" width="1" height="1" alt="じ" />:04<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+</ul>
+<!--▲トップ＆主要▲-->
+</div></div>
+<div class="hr"><hr /></div>
+
+<!--▼テキスト広告（主要下）▼-->
+<div class="wrapper100h">
+<!-- /adv/top_txt_top=start -->
+<!-- begin ad tag -->
+<script type="text/javascript">
+AD2.init({
+	site:	'TOP',
+	area:	'TOP.TEXT1,TOP.TEXT2,TOP.TEXT3',
+	banid:	'top-toptxt'
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+
+</script>
+<!-- End ad tag -->
+<div class="txtad4" style="display:none" id="top-toptxt">
+<div class="title"><div class="inr">PR情報</div></div>
+<script type="text/javascript">AD2.dTextDiv({});</script>
+</div>
+
+<!-- /adv/top_txt_top=end -->
+</div>
+<!--▲テキスト広告（主要下）▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼お知らせ帯▼-->
+<style type="text/css">
+.announcement { border:solid 2px #ccaabb; background:#ffe5ee; font-size:90%; text-align:center; padding:5px 5px; margin-bottom:8px }
+
+</style>
+
+<!--▲お知らせ帯▲-->
+
+<!--▼トップ帯▼-->
+
+
+
+
+<!--▼Do選挙▼-->
+<style type="text/css">
+.dosenkyo {height:36px;margin:10px 0 10px 0;text-align:center;vertical-align:middle;background:url(/g3/yoltop_saninsen2010_buttons.png) no-repeat center 0}
+.dosenkyo_inr {width:480px;height:36px;overflow:hidden;margin:0 auto;text-align:center;padding-left:5px}
+.dosenkyo_logo a {float:left;display:block;background:url(/g3/yoltop_saninsen2010_buttons.png) no-repeat 0 -60px;width:120px;height:22px;margin:8px 12px 0 0} 
+.dosenkyo_logo a span {position:absolute;overflow:hidden;width:0;height:0}
+.dosenkyo ul {list-style:none;margin:4px 0 0 12px;padding:0;}
+.dosenkyo li {display:inline;margin:0;padding:0;font-size:12px;line-height:14px}
+.dosenkyo .bold {font-weight: bold}
+.dosenkyo .fontLarge {font-size:13px}
+.dosenkyo li .sp {float:left;display:block; height:14px;margin:5px 5px 0 12px;padding:2px 0;color:#ffff00;font-weight: bold}
+.dosenkyo li a {float:left;display:block; background:url(/g3/yoltop_saninsen2010_buttons.png) no-repeat -300px -60px;height:14px;margin:6px 0 0 8px; padding:2px 2px 0 12px}
+.dosenkyo li a:link, .dosenkyo li a:visited {color:#fff}
+.dosenkyo li a.fontLarge:link, .dosenkyo li a.fontLarge:visited {color: #FFFF33}
+.dosenkyo .icNew {background:url(/g3/yoltop_saninsen2010_buttons.png) no-repeat scroll -500px -60px transparent;height:14px;width:33px;margin-top:-2px;margin-right:0}
+.dosenkyo li a.nomal {background:none;padding-left:0;font-size:12px;}
+</style>
+<div class="dosenkyo">
+<div class="dosenkyo_inr">
+<div class="dosenkyo_logo"><a href="/election/?from=ytop"><span>Do選挙</span></a></div>
+<ul>
+
+<li><a href="http://vote.yomiuri.co.jp/?from=ytop">日本版ボートマッチ</a></li>
+<li><a href="/election/sangiin/2010/yesno/?from=ytop">みんなのYES/NO</a></li>
+<li><a href="/election/sangiin/2010/quiz/?from=ytop">参院選クイズ</a></li>
+</ul>
+</div>
+</div>
+<!--▲Do選挙▲-->
+
+
+<!--▲トップ帯▲-->
+
+<!--▼参院選2010 開票▼-->
+<!-- ▼選挙区　日本地図▼ -->
+<div id="top-skk" class="cfix">
+
+<table class="map">
+<tr>
+<td colspan="9"><h3>選挙区</h3></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye01.htm" class="bk-right"><span class="bk-left">北海道<span class="candidate">2</span></span></a></td>
+</tr>
+<tr>
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye41.htm" class="bk-right"><span class="bk-left">佐賀&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye40.htm" class="bk-right"><span class="bk-left">福岡&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye32.htm" class="bk-right"><span class="bk-left">島根&nbsp;<span class="candidate">1</span></span></a></td>
+
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye31.htm" class="bk-right"><span class="bk-left">鳥取&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kinki"><a href="/election/sangiin/2010/kouji/ye25.htm" class="bk-right"><span class="bk-left">滋賀&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chubu"><a href="/election/sangiin/2010/kouji/ye17.htm" class="bk-right"><span class="bk-left">石川<span class="candidate">1</span></span></a></td>
+<td>&nbsp;</td>
+<td class="chubu"><a href="/election/sangiin/2010/kouji/ye15.htm" class="bk-right"><span class="bk-left">新潟&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye05.htm" class="bk-right"><span class="bk-left">秋田&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye02.htm" class="bk-right"><span class="bk-left">青森&nbsp;<span class="candidate">1</span></span></a></td>
+
+</tr>
+<tr>
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye42.htm" class="bk-right"><span class="bk-left">長崎&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye44.htm" class="bk-right"><span class="bk-left">大分&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye33.htm" class="bk-right"><span class="bk-left">岡山&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kinki"><a href="/election/sangiin/2010/kouji/ye28.htm" class="bk-right"><span class="bk-left">兵庫&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="kinki"><a href="/election/sangiin/2010/kouji/ye29.htm" class="bk-right"><span class="bk-left">奈良&nbsp;<span class="candidate">1</span></span></a></td>
+
+<td class="chubu"><a href="/election/sangiin/2010/kouji/ye18.htm" class="bk-right"><span class="bk-left">福井&nbsp;<span class="candidate">1</span></span></a></a></td>
+<td class="chubu"><a href="/election/sangiin/2010/kouji/ye16.htm" class="bk-right"><span class="bk-left">富山&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chubu"><a href="/election/sangiin/2010/kouji/ye19.htm" class="bk-right"><span class="bk-left">山梨&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye06.htm" class="bk-right"><span class="bk-left">山形&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye03.htm" class="bk-right"><span class="bk-left">岩手&nbsp;<span class="candidate">1</span></span></a></td>
+</tr>
+<tr>
+
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye43.htm" class="bk-right"><span class="bk-left">熊本&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye45.htm" class="bk-right"><span class="bk-left">宮崎&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye35.htm" class="bk-right"><span class="bk-left">山口&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye34.htm" class="bk-right"><span class="bk-left">広島&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="kinki"><a href="/election/sangiin/2010/kouji/ye26.htm" class="bk-right"><span class="bk-left">京都&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="tokai"><a href="/election/sangiin/2010/kouji/ye21.htm" class="bk-right"><span class="bk-left">岐阜&nbsp;<span class="candidate">2</span></span></a></td>
+
+<td class="chubu"><a href="/election/sangiin/2010/kouji/ye20.htm" class="bk-right"><span class="bk-left">長野&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye09.htm" class="bk-right"><span class="bk-left">栃木&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye04.htm" class="bk-right"><span class="bk-left">宮城&nbsp;<span class="candidate">2</span></span></a></td>
+<td class="hokkaido"><a href="/election/sangiin/2010/kouji/ye07.htm" class="bk-right"><span class="bk-left">福島&nbsp;<span class="candidate">2</span></span></a></td>
+</tr>
+<tr>
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye47.htm" class="bk-right"><span class="bk-left">沖縄&nbsp;<span class="candidate">1</span></span></a></td>
+
+<td class="kyusyu"><a href="/election/sangiin/2010/kouji/ye46.htm" class="bk-right"><span class="bk-left">鹿児島<span class="candidate">1</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye38.htm" class="bk-right"><span class="bk-left">愛媛&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye37.htm" class="bk-right"><span class="bk-left">香川&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kinki"><a href="/election/sangiin/2010/kouji/ye27.htm" class="bk-right"><span class="bk-left">大阪&nbsp;<span class="candidate">3</span></span></a></td>
+<td class="tokai"><a href="/election/sangiin/2010/kouji/ye24.htm" class="bk-right"><span class="bk-left">三重&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="tokai"><a href="/election/sangiin/2010/kouji/ye22.htm" class="bk-right"><span class="bk-left">静岡&nbsp;<span class="candidate">2</span></span></a></td>
+
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye10.htm" class="bk-right"><span class="bk-left">群馬&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye11.htm" class="bk-right"><span class="bk-left">埼玉&nbsp;<span class="candidate">3</span></span></a></td>
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye08.htm" class="bk-right"><span class="bk-left">茨城&nbsp;<span class="candidate">2</span></span></a></td>
+</tr>
+<tr>
+<td class="shikoku">&nbsp;</td>
+<td>&nbsp;</td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye39.htm" class="bk-right"><span class="bk-left">高知&nbsp;<span class="candidate">1</span></span></a></td>
+<td class="chugoku"><a href="/election/sangiin/2010/kouji/ye36.htm" class="bk-right"><span class="bk-left">徳島&nbsp;<span class="candidate">1</span></span></a></td>
+
+<td>&nbsp;</td>
+<td class="kinki"><a href="/election/sangiin/2010/kouji/ye30.htm" class="bk-right"><span class="bk-left">和歌山<span class="candidate">1</span></span></a></td>
+<td class="tokai"><a href="/election/sangiin/2010/kouji/ye23.htm" class="bk-right"><span class="bk-left">愛知&nbsp;<span class="candidate">3</span></span></a></td>
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye14.htm" class="bk-right"><span class="bk-left">神奈川<span class="candidate">3</span></span></a></td>
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye13.htm" class="bk-right"><span class="bk-left">東京&nbsp;<span class="candidate">5</span></span></a></td>
+<td class="kanto"><a href="/election/sangiin/2010/kouji/ye12.htm" class="bk-right"><span class="bk-left">千葉&nbsp;<span class="candidate">3</span></span></a></td>
+</tr>
+
+</table>
+<!-- ▲選挙区　日本地図▲ -->
+
+<div class="line-dot">&nbsp;</div>
+
+<!-- ▼比例代表▼ -->
+<table class="hirei">
+<tr>
+<th rowspan="2">
+<h3>比例代表</h3></th>
+<td><a href="/election/sangiin/2010/kouji/yb068.htm" class="bk-right"><span class="bk-left">幸福</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb069.htm" class="bk-right"><span class="bk-left">みんな</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb018.htm" class="bk-right"><span class="bk-left">民主</span></a></td>
+
+<td><a href="/election/sangiin/2010/kouji/yb852.htm" class="bk-right"><span class="bk-left">女性</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb001.htm" class="bk-right"><span class="bk-left">自民</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb032.htm" class="bk-right"><span class="bk-left">改革</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb002.htm" class="bk-right"><span class="bk-left">社民</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb071.htm" class="bk-right"><span class="bk-left">たち日本</span></a></td>
+</tr>
+<tr>
+<td><a href="/election/sangiin/2010/kouji/yb072.htm" class="bk-right"><span class="bk-left">創新</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb063.htm" class="bk-right"><span class="bk-left">国民</span></a></td>
+<td><a href="/election/sangiin/2010/kouji/yb003.htm" class="bk-right"><span class="bk-left">公明</span></a></td>
+
+<td><a href="/election/sangiin/2010/kouji/yb005.htm" class="bk-right"><span class="bk-left">共産</span></a></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</table>
+
+<!-- ▲比例代表▲ -->
+</div>
+<!--▲参院選2010 開票▲-->
+
+<!--▼テキスト広告（謹告等）▼-->
+<!--// text announcement_start //-->
+<!-- /adv/m_txt_announcement=start -->
+<!-- begin ad tag -->
+
+<script type="text/javascript">
+AD2.init({
+	site:	'TOP',
+	area:	'EXTRA.TEXT1,EXTRA.TEXT2,EXTRA.TEXT3',
+	ramdom:	true,
+	banid:	'top-extratxt'
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+</script>
+<!-- End ad tag -->
+<div class="txtad3" style="display:none;" id="top-extratxt"><script type="text/javascript">AD2.dTextDiv({"e":true});</script></div>
+
+<!-- /adv/m_txt_announcement=end -->
+<!--// text announcement_end //-->
+<!--▲テキスト広告（謹告等）▲-->
+
+<div class="hr"><hr /></div>
+
+
+
+<!--▼編集長のおすすめ▼-->
+
+<div class="defHds">
+<div class="hd"><a href="/topics/">編集長のおすすめ</a></div>
+<div class="cl"></div>
+</div>
+<div class="wrapper100h">
+<!--// ▼写真パーツここから //-->
+<div class="wrapper100h">
+<div class="sCnt" id="spacePhoto" style="display:none;">
+<div class="c_l"><img src="/g/d.gif" width="15" height="80" alt="" class="off" /></div>
+<div class="c_m">
+<ul style="margin-bottom:0">
+<!--// ▼リストここから //-->
+<li><a href="http://www.yomiuri.co.jp/wcup/2010/photograph/glist.htm?ge=755&amp;gr=2427&from=yolsp"><span><img src="/g2/_topimg/ic_00001.jpg?1277441648" alt="" class="ph" /></span>サポーター<br />涙・歓喜・爆発</a></li>
+<li><a href="http://otona.yomiuri.co.jp/mystyle/busho/100624.htm?from=otonatop&from=yolsp"><span><img src="/g2/_topimg/ic_00002.jpg?1277441648" alt="" class="ph" /></span>北条早雲<br />武将の実力</a></li>
+
+<li><a href="http://www.yomiuri.co.jp/komachi/fashion/column/20100624-OYT8T00665.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00003.jpg?1277441648" alt="" class="ph" /></span>P・カルダン<br />設立６０周年</a></li>
+<li><a href="http://www.yomiuri.co.jp/net/news/20100623-OYT8T00402.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00004.jpg?1277441648" alt="" class="ph" /></span>王貞治<br />地デジ応援隊</a></li>
+<li><a href="http://www.yomiuri.co.jp/gourmet/news/business/20100625-OYT8T00287.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00005.jpg?1277441648" alt="" class="ph" /></span>美浜産ミカン<br />味濃ゆい</a></li>
+<li><a href="http://otona.yomiuri.co.jp/pleasure/fashion/100622_02.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00006.jpg?1277441648" alt="" class="ph" /></span>マラドーナ<br />モテの秘密</a></li>
+<li><a href="http://www.yomiuri.co.jp/entertainment/music/mreview/20100624-OYT8T00564.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00007.jpg?1277441648" alt="" class="ph" /></span>ＪＵＪＵ公演<br />クールな高音</a></li>
+<li><a href="http://www.yomiuri.co.jp/wcup/2010/photograph/glist.htm?ge=755&amp;gr=2358&from=yolsp" class="pos0"><span><img src="/g2/_topimg/ic_00008.jpg?1277441648" alt="" class="ph" /></span>３ゴールの感動<br />反すう写真特集</a></li>
+
+<li><a href="http://www.yomidr.yomiuri.co.jp/page.jsp?id=27170&from=yolsp"><span><img src="/g2/_topimg/ic_00009.jpg?1277441648" alt="" class="ph" /></span>荒俣宏さんも<br />ドライアイだった</a></li>
+<li><a href="http://www.yomiuri.co.jp/atcars/impression/20100624-OYT8T00804.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00010.jpg?1277441648" alt="" class="ph" /></span>BMW 5<br />燃費改善</a></li>
+<li><a href="http://www.yomiuri.co.jp/komachi/interview/people/20100624-OYT8T00534.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00011.jpg?1277441648" alt="" class="ph" /></span>ベッソン監督<br />女性への映画</a></li>
+<li><a href="http://www.yomiuri.co.jp/gourmet/news/business/20100624-OYT8T00809.htm?from=yolsp"><span><img src="/g2/_topimg/ic_00012.jpg?1277441648" alt="" class="ph" /></span>もりあげそば<br />その正体は？</a></li>
+<!--// ▲リストここまで //-->
+</ul>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div class="c_r"><img src="/g/d.gif" width="15" height="80" alt="" class="off" /></div>
+
+</div>
+<div class="cl"><img src="/g/d.gif" width="1" height="15" alt="" /></div>
+<script type="text/javascript">if (typeof(Y1.Container2) == 'undefined') d.write ('<scr'+'ipt type="text/javascript" src="/scripts/Y1Container2.js"></scr'+'ipt>');</script><script type="text/javascript">
+var spacePhoto= new Y1.Container2({
+		id: 'spacePhoto', //コンテナid
+		itemW: 110 //個々のアイテムの幅
+	});
+</script>
+</div>
+<!--// ▲写真パーツここまで //--><div class="listOsusume">
+<div title="編集長のおすすめ" class="list-cols cols2">
+<dl class="col">
+<dt><a href="http://komachi.yomiuri.co.jp/?from=yoltop">発言小町</a></dt><dd><a href="http://komachi.yomiuri.co.jp/t/2010/0625/326139.htm?g=01&from=yoltop" target="_top">日本代表ゴメンナサイ<img height="16" width="20" border="0" src="/g2/ic_soccer.gif" alt="" /></a><br class="cl" /></dd>
+<dt><a href="http://www.yomiuri.co.jp/wcup/index.htm?from=yoltop"><img height="16" width="20" border="0" src="/g2/ic_soccer.gif" alt="" />あのブラジル以来</a></dt><dd><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00418.htm?from=yoltop" target="_top">日本ＦＫ２本</a><br class="cl" /></dd>
+<dt><a href="http://www.yomiuri.co.jp/wcup/index.htm?from=yoltop"><img height="16" width="20" border="0" src="/g2/ic_soccer.gif" alt="" />３ゴール完勝</a></dt><dd><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00128.htm?from=yoltop" target="_top">詳報デンマーク戦</a><br class="cl" /></dd>
+
+<dt><a href="http://www.yomiuri.co.jp/wcup/index.htm?from=yoltop"><img height="16" width="20" border="0" src="/g2/ic_soccer.gif" alt="" />デンマーク戦</a></dt><dd><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00245.htm?from=yoltop" target="_top">読売記者の採点</a><br class="cl" /></dd>
+<dt><a href="http://www.yomiuri.co.jp/wcup/index.htm?from=yoltop"><img height="16" width="20" border="0" src="/g2/ic_soccer.gif" alt="" />応援メッセージ</a></dt><dd><a href="http://www.yomiuri.co.jp/wcup/2010/ouen/sp1.html?from=yoltop" target="_top">得点のたびに涙</a><br class="cl" /></dd>
+<dt><a href="http://osaka.yomiuri.co.jp/index.htm?from=yoltop">世界遺産</a></dt><dd><a href="http://osaka.yomiuri.co.jp/movie/onsen/mv100625a.htm?from=yoltop" target="_top">湯の峰温泉「つぼ湯」<img height="16" alt="動画あり" src="/g2/ic_mov.gif" width="20" border="0" /></a><br class="cl" /></dd>
+</dl>
+<dl class="col">
+<dt><a href="http://www.yomiuri.co.jp/election/index.htm?from=yoltop">最大５・０１倍</a></dt><dd><a href="http://www.yomiuri.co.jp/election/sangiin/2010/news2/20100624-OYT1T01170.htm?from=yoltop" target="_top">「１票の格差」拡大</a><br class="cl" /></dd>
+<dt><a href="http://vote.yomiuri.co.jp/?from=yoltop"><img height="13" width="28" border="0" alt="NEW" src="/g2/top_li_new2.gif"/>ボートマッチ</a></dt><dd><a href="http://vote.yomiuri.co.jp/?from=yoltop" target="_top">近い政党は？</a><br class="cl" /></dd>
+
+<dt><a href="http://www.yomiuri.co.jp/election/index.htm?from=yoltop">Yes/No？</a></dt><dd><a href="http://www.yomiuri.co.jp/election/sangiin/2010/yesno/?from=yoltop" target="_top">選挙演説 聞きますか<img height="13" width="28" border="0" alt="NEW" src="/g2/top_li_new2.gif"/></a><br class="cl" /></dd>
+<dt><a href="http://www.yomiuri.co.jp/net/index.htm?from=yoltop">消費者注意！</a></dt><dd><a href="http://www.yomiuri.co.jp/net/security/goshinjyutsu/20100625-OYT8T00695.htm?from=yoltop" target="_top">怪しいネット広告</a><br class="cl" /></dd>
+<dt><a href="http://www.yomiuri.co.jp/kyoiku/index.htm?from=yoltop">教育ルネサンス</a></dt><dd><a href="http://www.yomiuri.co.jp/kyoiku/renai/20100625-OYT8T00255.htm?from=yoltop" target="_top">「エキナカ図書館」</a><br class="cl" /></dd>
+<dt><a href="http://www.yomidr.yomiuri.co.jp/?from=yoltop">石井苗子</a></dt><dd><a href="http://www.yomidr.yomiuri.co.jp/page.jsp?id=27168&from=yoltop" target="_top">音とストレスの深い関係</a><br class="cl" /></dd>
+</dl>
+</div>
+<div class="cl"></div><ul class="list-horizon">
+<li><a href="http://www.yomiuri.co.jp/komachi/twitter/?from=yoltop" target="_top"><img height="16" width="20" border="0" src="/g2/ic_kuraget.gif" alt="" />アフターファイ部プレゼントキャンペーン</a></li>
+
+<li><a href="http://www.yomiuri.co.jp/keitai/release/wcup_sokuho.htm?from=yoltop" target="_top">Ｗ杯試合結果 携帯に無料配信</a></li>
+<li><a href="http://www.yomiuri-netshop.jp/products/detail.php?product_id=8&from=yoltop" target="_top">読売KODOMO新聞</a></li>
+<li><a href="http://www.bouhan-nippon.jp/?from=yoltop" target="_blank">ぼうはん日本（川柳コンテスト）</a></li>
+<li><a href="http://kyushu.yomiuri.co.jp/yamaguchi/?from=yoltop" target="_top">ウイークリー山口発</a></li>
+</ul></div>
+
+</div>
+<!--▲編集長のおすすめ▲-->
+
+<!--▼ワールドカップ2010▼-->
+<style type="text/css">
+.topphoto { width:156px }
+.topphoto img { border:none }
+.wcup2010b { margin-top:8px; }
+</style>
+<!--▼ワールドカップ2010▼-->
+
+<style type="text/css">
+.wcup2010b {border-top:2px solid #ef9920; border-bottom:2px solid #ef9920; background:url(/g3/yoltop_wcup2010_bk_btm.gif) repeat-x 0 bottom; text-align:center; }
+.wcup2010b_inr {overflow:hidden; margin:0 auto 2px auto; }
+.wcup2010b_logo { text-align:left; }
+.wcup2010b_logo a { background:url(/g3/yoltop_wcup2010_bk.gif) repeat-x 0 0;font-size:12px;line-height:14px; text-decoration:none; display:inline-block; height:34px; }
+.wcup2010b_logo a span { display:block; float:left; margin-right:5px; height:34px; } 
+.wcup2010b_logo a span.logo { background:url(/g3/yoltop_wcup2010_hd.gif) no-repeat 0 0; width:157px; text-indent:-9999px;} 
+.wcup2010b_logo a span.link_body {overflow:hidden; background:url(/g3/yoltop_wcup2010_ft.gif) no-repeat 100% 0; display:block; height:34px; padding-right:10px; margin:0;}
+.wcup2010b_logo a span.flag_jan .r { padding-top:5px; } 
+.wcup2010b_logo a span.flag_jan .l { padding-top:5px; }
+.wcup2010b_logo a span.game { color:#CC0000; padding-top:5px; }
+.wcup2010b ul { clear:both;list-style:none; margin:0;padding:0}
+.wcup2010b li { display:inline; margin:0;padding:0 0 5px 0;font-size:12px;line-height:14px}
+.wcup2010b .bold {font-weight: bold}
+.wcup2010b li a {float:left; display:block;background:url(/g3/yoltop_wcup2010_buttons.gif) no-repeat 0 -671px;height:14px;margin:5px 0 0 4px;padding:2px 2px 5px 20px}
+.wcup2010b li a#ouenmessage{background:url(/g3/yoltop_wcup2010_buttons.gif) no-repeat 0px -720px;padding-left:32px}
+.wcup2010b li a:link, .wcup2010b li a:visited {color:#00c}
+.flag_r{ display:block; background: url(/wcup/2010/g1/flag.gif) no-repeat; padding-right:25px; text-align:right; padding-top:5px; height:auto; }
+.flag_l{ display:block; background: url(/wcup/2010/g1/flag.gif) no-repeat; padding-left:25px; text-align:left; padding-top:5px; height:auto; }
+
+.flag_l.ned_l { background-position:0 -1036px;}
+.flag_l.den_l { background-position:0 -1101px;}
+.flag_l.jpn_l { background-position:0 -1166px;}
+.flag_l.cmr_l { background-position:0 -1231px;}
+.flag_l.civ_l { background-position:0 -1686px;}
+
+.flag_r.ned_r { background-position:100% -1036px;}
+.flag_r.den_r { background-position:100% -1101px;}
+.flag_r.jpn_r { background-position:100% -1166px;}
+.flag_r.cmr_r { background-position:100% -1231px;}
+.flag_r.civ_r { background-position:100% -1686px;}
+</style>
+<div class="wcup2010b"><table border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr><td><div class="wcup2010b_inr"><div class="wcup2010b_logo">
+<a href="/wcup/2010/?from=yoltop"><span class="link_body"><span class="logo">サッカーW杯</span>
+<!--▲リンク先を更新する?from=yoltopをつけること▲-->
+<!--▼国名とclass、得点、試合状況を更新する▼-->
+<span class="flag_r jpn_r">日本</span><span class="game">3<!--←★日本の得点-->【試合終了】1<!--←★相手チームの得点--></span><span class="flag_l den_l">デンマーク</span></span></a>
+</div>
+<!--▲国名とclass、得点、試合状況を更新する▲-->
+
+<ul>
+<li><a href="http://blogs.yomiuri.co.jp/wcup2010/?from=ytop"><span class="bold">特派員ブログ</span></a></li>
+<li><a href="/wcup/2010/photograph/glist.htm?ge=755&gr=2358&from=ytop"><span class="bold">熱戦グラフ</span></a></li>
+<li><a href="/wcup/2010/ouen/?from=ytop" id="ouenmessage"><span class="bold">メッセージ募集</span></a></li>
+<li><a href="/wcup/2010/member/?from=ytop"><span class="bold">選手名鑑</span></a></li>
+
+</ul></div></td></tr></table></div>
+<!--▲ワールドカップ2010▲-->
+<ul class="list-def"><!--// photo_start //-->
+<div class="topphoto">
+<a href="/wcup/2010/news/japan/news/20100625-OYT1T00118.htm?from=ytwcup">
+<img src="/photo/20100625-027290-1-T.jpg" width="135" height="135" alt="" /><br class="cl" /></a>
+<div class="photo-cap"><a href="/wcup/2010/news/japan/news/20100625-OYT1T00118.htm?from=ytwcup">３０分、遠藤が直接ＦＫを決め２点目のゴール＝野本裕人撮影[記事へ]</a></div>
+
+</div>
+<!--// photo_end //-->
+<!--// list_start //-->
+<ul class="list-def">
+<li><a href="/wcup/2010/news/e/news/20100625-OYT1T00797.htm" class="h">デンマーク「名誉なき敗退」…ＧＫなすすべなし</a>&nbsp;（6月25日 17:47）</li>
+<li><a href="/wcup/2010/news/f/news/20100625-OYT1T00762.htm" class="h">イタリア「国民的惨禍」…選手の給料までやり玉に</a>&nbsp;（6月25日 17:19）</li>
+<li><a href="/wcup/2010/news/japan/news/20100625-OYT1T00751.htm" class="h">五輪銅・釜本さん、２失点にしのいだ堅守称賛</a>&nbsp;（6月25日 16:27）</li>
+<li><a href="/wcup/2010/news/japan/news/20100625-OYT1T00667.htm" class="h">日本３得点、恩師が絶賛・兄たちも感激<img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" /></a>&nbsp;（6月25日 14:36）</li>
+<li><a href="/wcup/2010/news/japan/news/20100625-OYT1T00409.htm" class="h">日の丸、バンザイ…勝利に酔うスタンド<img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" /></a>&nbsp;（6月25日 14:14）</li>
+
+<li><a href="/wcup/2010/news/etc/news/20100625-OYT1T00609.htm" class="h">イタリア消える、前回大会優勝者の敗退は４例目</a>&nbsp;（6月25日 13:29）</li>
+<li><a href="/wcup/2010/news/japan/news/20100625-OYT1T00553.htm" class="h">激戦に感動、眠い目こすり「元気をもらった」<img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" /></a>&nbsp;（6月25日 12:37）</li>
+<li><a href="/wcup/2010/news/japan/news/20100625-OYT1T00514.htm" class="h">ＰＶの埼玉スタジアム、歓喜にわく<img src="/g/d.gif" width="1" height="1" border="0" alt="動画あり" class="icMov" /></a>&nbsp;（6月25日 12:02）</li>
+</ul>
+<!--// list_end //-->
+</ul>
+<a href="/wcup/" class="nav-more" style="margin-left:6px;">もっと見る</a>
+<!--▲ワールドカップ2010▲-->
+
+<!--▼社会▼-->
+
+<div class="hr"><hr /></div>
+<div class="defHd">
+
+<div class="hd"><a href="/national/"><span class="ls1">社会</span></a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/national/culture/" class="d3-culture">文化</a></li><li><a href="/national/obit/" class="d3-obit">おくやみ</a></li></ul></div></div>
+<div class="cl"></div>
+</div>
+<ul class="list-def"><li><a href="/election/sangiin/2010/news2/national/20100625-OYT1T00628.htm" class="h">消毒車にキャッチフレーズシール、選管指導で撤去</a>&nbsp;（16<img src="/g/d.gif" width="1" height="1" alt="じ" />:24<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20100518-296281/index.htm">口蹄疫</a></li>
+<li><a href="/national/news/20100625-OYT1T00715.htm" class="h">いとこ２人、おじを包丁で殺害容疑…再逮捕へ</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:06<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/national/news/20100625-OYT1T00621.htm" class="h">床山が３５０万円手渡し役…阿武松部屋の前で</a>&nbsp;（14<img src="/g/d.gif" width="1" height="1" alt="じ" />:32<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20100617-861507/index.htm">角界汚染</a></li>
+<li><a href="/national/news/20100625-OYT1T00389.htm" class="h">「コーヴ」上映館付近での街宣禁止…仮処分決定</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:59<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/national/news/20100625-OYT1T00289.htm" class="h">プロ野球独立リーグ選手８人が野球賭博、解雇</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:44<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/national/news/20100625-OYT1T00615.htm" class="h">自社株購入権で脱税、元代表に有罪判決</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:40<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/national/news/20100625-OYT1T00599.htm" class="h">警官が不審車に拳銃１発、逃走した男逮捕</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:18<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/national/news/20100625-OYT1T00579.htm" class="h">老齢加算金廃止めぐる訴訟、北九州市が上告</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:03<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+<a href="/national/" class="nav-more">もっと見る</a>
+<!--▲社会▲-->
+
+
+<!--▼政治▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+<div class="hd"><a href="/politics/"><span class="ls1">政治</span></a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/election/">Do選挙</a></li><li><a href="/election/sangiin/2010/">参院選2010</a></li></ul></div></div>
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+<li><a href="/election/sangiin/2010/news2/20100625-OYT1T00077.htm" class="h">対決の構図様変わり、民主２人区独占戦略は…</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:53<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/politics/news/20100625-OYT1T00201.htm" class="h">１００戸以上の開発、子育て施設義務化…千葉・流山</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:42<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20100402-465846/index.htm">地方行政</a></li>
+
+<li><a href="/politics/news/20100625-OYT1T00616.htm" class="h">子育て施策、「子ども家庭省」に一元化検討</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:18<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/election/sangiin/2010/news2/20100625-OYT1T00626.htm" class="h">地方版マニフェストがトレンド…参院選</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:03<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/election/sangiin/2010/news2/20100625-OYT1T00622.htm" class="h">参院選各党ＣＭ、主張シンプルに「直球勝負」</a>&nbsp;（14<img src="/g/d.gif" width="1" height="1" alt="じ" />:38<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/politics/news/20100625-OYT1T00306.htm" class="h">菅首相、カナダに到着…米中露首脳らと会談へ</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（12<img src="/g/d.gif" width="1" height="1" alt="じ" />:52<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20100604-612891/index.htm">菅新政権</a></li>
+
+<li><a href="/politics/news/20100625-OYT1T00302.htm" class="h">米下院、米軍駐留で沖縄県民への感謝決議採択</a>&nbsp;（10<img src="/g/d.gif" width="1" height="1" alt="じ" />:11<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/election/sangiin/2010/news2/20100625-OYT1T00205.htm" class="h">民・自、１人区決戦…第３極は３、５人区狙い</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（09<img src="/g/d.gif" width="1" height="1" alt="じ" />:00<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+<a href="/politics/" class="nav-more">もっと見る</a>
+<!--▲政治▲-->
+
+
+<!--▼スポーツ▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+<style type="text/css">
+#wcupList0426 .hd { width:90px; }
+.defHd #wcupList0426 .nav { margin-left:-110px; }
+.defHd #wcupList0426 .inr { margin-left:110px; }
+.defHd #wcupList0426 .inr { overflow:hidden; }
+</style>
+<div id="wcupList0426">
+<div class="hd"><a href="/sports/"><span>スポーツ</span></a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/wcup/2010/"><img src="/g3/yoltop_wcup2010_list.gif" width="100" height="15" border="0" alt="サッカーW杯" /></a></li><li><a href="/sports/npb/">プロ野球</a></li><li><a href="/sports/mlb/">大リーグ</a></li><!--<li><a href="/sports/soccer/">サッカー</a></li>--><li><a href="/sports/sumo/">大相撲</a></li><li><a href="/sports/etc/">エトセトラ</a></li></ul></div></div>
+</div>
+<div class="cl">
+</div>
+</div>
+
+<ul class="list-def">
+<li><a href="/sports/yakyu/news/20100625-OYT1T00757.htm" class="h">吉田えり初黒星、５回３安打３失点</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（17<img src="/g/d.gif" width="1" height="1" alt="じ" />:04<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/sports/mlb/news/20100625-OYT1T00737.htm" class="h">エンゼルス・松井秀、指名打者で４の１</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:31<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20091217-520114/index.htm">松井秀喜</a></li>
+<li><a href="/sports/mlb/news/20100625-OYT1T00692.htm" class="h">松坂が復帰登板、５回２失点・メジャー初打点も</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（14<img src="/g/d.gif" width="1" height="1" alt="じ" />:57<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/sports/golf/news/20100625-OYT1T00618.htm" class="h">遼２アンダー、スコア伸ばせず…男子ゴルフ</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:36<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20091221-590000/index.htm">石川遼</a></li>
+<li><a href="/sports/news/20100625-OYT1T00595.htm" class="h">英遠征の三浦皇成騎手、５着が最高</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:11<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/sports/mlb/news/20100625-OYT1T00532.htm" class="h">イチロー、７２試合目で今季１００安打</a>&nbsp;（12<img src="/g/d.gif" width="1" height="1" alt="じ" />:17<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/sports/news/20100625-OYT1T00523.htm" class="h">日本、台湾に５—０…ソフトボール世界選手権</a>&nbsp;（12<img src="/g/d.gif" width="1" height="1" alt="じ" />:16<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/sports/news/20100625-OYT1T00506.htm" class="h">バスケットボールの五十嵐、三菱電機に移籍</a>&nbsp;（11<img src="/g/d.gif" width="1" height="1" alt="じ" />:58<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+<a href="/sports/" class="nav-more">もっと見る</a>
+<!--▲スポーツ▲-->
+
+<!--▼マネー・経済▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+<div class="hd"><a href="/atmoney/">マネー・経済</a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/atmoney/kabu/">株価</a></li><li><a href="/atmoney/rate/">為替</a></li></ul></div></div>
+
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+<li><a href="/atmoney/news/20100625-OYT1T00611.htm" class="h">消費者物価指数、１５か月連続のマイナス</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:42<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20091120-054987/index.htm">経済再生</a></li>
+<li><a href="/atmoney/news/20100625-OYT1T00727.htm" class="h">日経平均大幅反落、終値１９０円安の９７３７円</a>&nbsp;（15<img src="/g/d.gif" width="1" height="1" alt="じ" />:15<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/atmoney/news/20100625-OYT1T00520.htm" class="h">人民元相場基準値１ドル＝６・７８９６元に</a>&nbsp;（12<img src="/g/d.gif" width="1" height="1" alt="じ" />:09<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/atmoney/news/20100625-OYT1T00357.htm" class="h">米大統領、人民元改革は市場の動向見守る考え</a>&nbsp;（10<img src="/g/d.gif" width="1" height="1" alt="じ" />:40<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/atmoney/news/20100625-OYT1T00194.htm" class="h">ＮＹダウ終値、１４５ドル安の１万１５２ドル</a>&nbsp;（06<img src="/g/d.gif" width="1" height="1" alt="じ" />:02<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+<a href="/atmoney/" class="nav-more">もっと見る</a>
+<!--▲マネー・経済▲-->
+
+
+<!--▼国際▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+
+<div class="hd"><a href="/world/"><span class="ls1">国際</span></a></div>
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+<li><a href="/world/news/20100625-OYT1T00564.htm" class="h">新核軍縮の早期発効を確認…米露首脳会談</a>&nbsp;（13<img src="/g/d.gif" width="1" height="1" alt="じ" />:01<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/world/news/20100625-OYT1T00490.htm" class="h">イラン制裁、米が独自の法案可決</a>&nbsp;（11<img src="/g/d.gif" width="1" height="1" alt="じ" />:48<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20081229-507405/index.htm">中東</a></li>
+
+<li><a href="/world/news/20100625-OYT1T00098.htm" class="h">女性首相選挙の顔に、豪労働党支持急落で危機感</a>&nbsp;（02<img src="/g/d.gif" width="1" height="1" alt="じ" />:01<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/world/news/20100624-OYT1T00952.htm" class="h">露大統領もツイッター…シリコンバレー視察</a>&nbsp;（01<img src="/g/d.gif" width="1" height="1" alt="じ" />:46<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/world/news/20100625-OYT1T00011.htm" class="h">豪州初の女性首相ギラード氏はどんな人？</a>&nbsp;（00<img src="/g/d.gif" width="1" height="1" alt="じ" />:11<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+
+<a href="/world/" class="nav-more">もっと見る</a>
+<!--▲国際▲-->
+
+
+<!--▼エンタメ▼-->
+<div class="hr"><hr /></div>
+<div class="skin_entertainment">
+<div class="defHd">
+<div class="hd"><a href="/entertainment/?from=genre">エンタメ</a></div>
+
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/entertainment/cinema/?from=genre">映画</a></li><li><a href="/entertainment/music/?from=genre">音楽</a></li><li><a href="/entertainment/stage/?from=genre">舞台</a></li><li><a href="/entertainment/tv/?from=genre">TV</a></li><li><a href="/entertainment/ghibli/?from=genre">ジブリ</a></li></ul></div></div>
+
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+<li><a href="/entertainment/news/20100625-OYT1T00013.htm" class="h">横浜にぎわい座２代目館長、桂歌丸さん</a>&nbsp;（6/25 15<img src="/g/d.gif" width="1" height="1" alt="じ" />:40<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/entertainment/news/20100625-OYT1T00546.htm" class="h">韓流スター、クォン・サンウさん当て逃げ</a>&nbsp;（6/25 12<img src="/g/d.gif" width="1" height="1" alt="じ" />:26<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/entertainment/news/20100625-OYT1T00526.htm" class="h">柳家小三治さん、落語協会会長に就任</a>&nbsp;（6/25 12<img src="/g/d.gif" width="1" height="1" alt="じ" />:16<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+<a href="/entertainment/" class="nav-more">もっと見る</a>
+</div>
+<!--▲エンタメ▲-->
+
+<!--▼報知▼-->
+
+<div class="hr"><hr /></div>
+<div class="skin_hochi">
+<div class="hd"><a href="http://hochi.yomiuri.co.jp/entertainment/?from=yol"><img src="/g/d.gif" width="1" height="1" border="0" alt="報知芸能ニュース" /></a></div>
+<ul class="list-def">
+<li><a href="http://hochi.yomiuri.co.jp/entertainment/news/20100625-OHT1T00177.htm?from=yol" class="h" target="_blank">デンマーク戦瞬間最高視聴率４１・３％</a>&nbsp;（6/25 11:16）</li>
+<li><a href="http://hochi.yomiuri.co.jp/entertainment/news/20100624-OHT1T00224.htm?from=yol" class="h" target="_blank">真野恵里菜「川島選手が好きです」とサッカー日本代表にエール…映画「怪談新耳袋　怪奇」</a><img src="/g/d.gif" width="1" height="1" alt="写真あり" class="icPhoto"/>&nbsp;（6/25 03:23）</li>
+
+<li><a href="http://hochi.yomiuri.co.jp/entertainment/news/20100625-OHT1T00039.htm?from=yol" class="h" target="_blank">佐々木希、しこ踏んじゃった…ＴＢＳ系「土俵ガール！」</a>&nbsp;（6/25 06:02）</li>
+
+</ul>
+</div>
+<!--▲報知▲-->
+
+<!--▼環境▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+<div class="hd"><a href="/eco/"><span class="ls1">環境</span></a></div>
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+
+<li><a href="/eco/news/20100621-OYT1T01078.htm" class="h">エコにすごす夏至の夜、７万か所で一斉消灯</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（6/21 22<img src="/g/d.gif" width="1" height="1" alt="じ" />:55<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/eco/news/20100619-OYT1T00052.htm" class="h">片足ないカエル４６匹も、北九州の板櫃川で</a><img src="/g/d.gif" width="1" height="1" border="0" alt="写真あり" class="icPhoto" />&nbsp;（6/19 14<img src="/g/d.gif" width="1" height="1" alt="じ" />:59<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+<li><a href="/eco/news/20100618-OYT1T00930.htm" class="h">０８年度温室効果ガス、排出トップ３は鉄鋼大手</a>&nbsp;（6/18 19<img src="/g/d.gif" width="1" height="1" alt="じ" />:29<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+</ul>
+
+<a href="/eco/" class="nav-more">もっと見る</a>
+<!--▲環境▲-->
+
+<!--▼科学▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+<div class="hd"><a href="/science/">科学</a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"></ul></div></div>
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+<li><a href="/science/news/20100624-OYT1T00949.htm" class="h">「はやぶさ」カプセルから微量ガス採取</a>&nbsp;（6/24 21<img src="/g/d.gif" width="1" height="1" alt="じ" />:26<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+<li><a href="/science/news/20100624-OYT1T00916.htm" class="h">凍結精液で豚の人工授精…広島大など実用化</a>&nbsp;（6/24 20<img src="/g/d.gif" width="1" height="1" alt="じ" />:37<img src="/g/d.gif" width="1" height="1" alt="分" />）<img src="/g/d.gif" width="1" height="1" alt="特集" class="icFeature" />&nbsp;<a href="/feature/20100518-296281/index.htm">口蹄疫</a></li>
+<li><a href="/science/news/20100624-OYT1T00851.htm" class="h">地震で停止中の浜岡５号機「安全に問題なし」</a>&nbsp;（6/24 19<img src="/g/d.gif" width="1" height="1" alt="じ" />:21<img src="/g/d.gif" width="1" height="1" alt="分" />）</li>
+
+
+</ul>
+<a href="/science/" class="nav-more">もっと見る</a>
+<!--▲科学▲-->
+
+<!--▼社説▼-->
+<div class="hr"><hr /></div>
+<div class="defHd">
+<div class="hd"><a href="/editorial/">社説</a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/editorial/#column1">編集手帳</a></li><li><a href="/editorial/#column2">よみうり寸評</a></li></ul></div></div>
+<div class="cl"></div>
+</div>
+<ul class="list-def">
+<li><a href="/editorial/news/20100624-OYT1T01180.htm" class="h">社説　参院選公示　政治と経済立て直しの契機に</a>&nbsp;</li>
+<li><a href="/editorial/column1/news/20100624-OYT1T01176.htm" class="h">６月２５日付　編集手帳</a>&nbsp;</li>
+<li><a href="/editorial/column2/news/20100625-OYT1T00630.htm" class="h">６月２５日付　よみうり寸評</a>&nbsp;</li>
+
+
+</ul>
+<a href="/editorial/" class="nav-more">もっと見る</a>
+<!--▲社説▲-->
+
+</div></div>
+<!--▲▲▲メインカラム▲▲▲-->
+<!--▼左カラム▼-->
+<div id="subColumn2">
+<!--▼更新時間▼-->
+<div class="update"><span class="ymd"><span class="y">2010</span>年<span class="m">6</span>月<span class="d">25</span>日</span><span class="dayweek dw5"><span></span></span><span class="ms">17:48</span></div>
+
+<!--▲更新時間▲-->
+<div class="hr"><hr /></div>
+<!--▼oneday▼-->
+<div class="oneday">
+<!-- begin ad tag -->
+<script type="text/javascript">
+AD2.init({
+    site:    'TOP',
+    area:    'SQUARE2',
+    width:    150,
+    height: 300,
+    admax:    1,
+    banid:    'top-oneday'
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+</script>
+<div id="top-oneday" style="text-align:center;display:none;">
+<script type="text/javascript">AD2.dBanner();</script>
+</div>
+<noscript>
+<iframe src="http://as.yl.impact-ad.jp/hserver/SITE=TOP/AREA=BANNER/AAMSZ=150X300/OENCJP=SJIS" noresize scrolling=no hspace=0 vspace=0 frameborder=0 marginheight=0 marginwidth=0 width=150 height=300 allowTransparency="true">
+</iframe>
+</noscript>
+<!-- End ad tag -->
+</div>
+
+<!--▲oneday▲-->
+<!--▼写真枠▼-->
+<div class="defBox" style="margin-top:5px">
+<div class="hd"><a href="/photonews/">写真</a></div>
+
+<div style="margin:0 2px;">
+<div id="topPhoto" class="tPhoto">
+<div><a href="/zoom/20100625-OYT9I00560.htm" target="photoWin" onclick="Y1.po(500,343,31)"><img src="/photo/20100625-031216-1-Y.jpg" width="150" height="150" alt="" border="0" /></a></div>
+<div class="photo-cap"><a href="/wcup/2010/news/japan/news/20100625-OYT1T00553.htm?from=navlp">日本代表の勝利に若者らは歓喜（東京・渋谷駅前で）＝永尾泰史撮影[記事へ]</a></div>
+</div>
+<div class="sCnt" id="topPhotos" style="display:none;">
+<div class="c_l"><img src="/g/d.gif" width="15" height="80" alt="" class="off" /></div>
+<div class="c_m">
+<ul style="margin-bottom:0">
+<li><a href="/zoom/20100625-OYT9I00320.htm" target="photoWin" onclick="Y1.po(369,500,31)"><span><img src="/photo/20100625-028527-1-Y.jpg" alt="" class="ph" /></span></a><a href="/wcup/2010/news/japan/news/20100625-OYT1T00334.htm?from=navlp"><span class="cap">日本の勝利を報じる号外は、渋谷の若い女性にも人気＝永尾泰史撮影</span></a></li>
+
+<li><a href="/zoom/20100625-OYT9I00195.htm" target="photoWin" onclick="Y1.po(500,391,44)"><span><img src="/photo/20100625-027731-1-Y.jpg" alt="" class="ph" /></span></a><a href="/wcup/2010/news/japan/news/20100625-OYT1T00152.htm?from=navlp"><span class="cap">決勝トーナメント進出を決めて喜ぶ日本代表（２４日、南ア・ルステンブルクで）＝川口正峰撮影</span></a></li>
+<li><a href="/zoom/20100625-OYT9I00133.htm" target="photoWin" onclick="Y1.po(500,448,28)"><span><img src="/photo/20100625-027292-1-Y.jpg" alt="" class="ph" /></span></a><a href="/wcup/2010/news/japan/news/20100625-OYT1T00118.htm?from=navlp"><span class="cap">３０分、遠藤が直接ＦＫを決め２点目のゴール＝野本裕人撮影</span></a></li>
+<li><a href="/zoom/20100625-OYT9I00132.htm" target="photoWin" onclick="Y1.po(500,327,34)"><span><img src="/photo/20100625-027273-1-Y.jpg" alt="" class="ph" /></span></a><a href="/wcup/2010/news/japan/news/20100625-OYT1T00118.htm?from=navlp"><span class="cap">１７分、本田のＦＫがダイレクトにゴールを揺らし日本先制＝野本裕人撮影</span></a></li>
+<li><a href="/zoom/20100625-OYT9I00759.htm" target="photoWin" onclick="Y1.po(430,500,34)"><span><img src="/photo/20100625-034345-1-Y.jpg" alt="" class="ph" /></span></a><a href="/sports/yakyu/news/20100625-OYT1T00757.htm?from=navlp"><span class="cap">野球殿堂入りする、吉田えりの初安打のバットとユニホームの贈呈式＝ＡＰ</span></a></li>
+</ul>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div class="c_r"><img src="/g/d.gif" width="15" height="80" alt="" class="off" /></div>
+</div>
+</div>
+<script type="text/javascript">if (typeof(Y1.Container2) == 'undefined') d.write ('<scr'+'ipt type="text/javascript" src="/scripts/Y1Container2.js"></scr'+'ipt>');</script><script type="text/javascript">
+var topPhotos= new Y1.Container2({ 
+		id: 'topPhotos', //コンテナid
+		targetId: 'topPhoto', //拡大サムネールid
+		itemW: 65, //個々のアイテムの幅
+		offsetW: 0,
+		suffix: ' [記事へ]'
+	});
+</script>
+
+<div class="cl"><img src="/g/d.gif" width="1" height="5" alt="" /></div>
+</div>
+<!--▲写真枠▲-->
+<div class="hr"><hr /></div>
+
+<!--▼左カラム広告（125×125）▼-->
+<div class="adbox">
+<div class="hd">PR情報</div>
+
+<!-- begin ad tag -->
+<script type="text/javascript">
+AD2.init({
+	site:	'TOP',
+	area:	'SQUARE',
+	width:	'TE',
+	height: 'T',
+	admax:	1
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+AD2.dBanner();
+</script>
+<!-- End ad tag -->
+</div>
+
+<!--▲左カラム広告（125×125）▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼Job▼-->
+<div style="margin-top:7px"><a href="http://job.yomiuri.co.jp/"><img src="/g/d.gif" width="82" height="80" alt="読売の求職情報" border="0" style="background:url(/g3/_h2.png) no-repeat 0 -761px" /></a><img src="/g/d.gif" width="1" height="1" alt="" border="0"/><a href="http://job.yomidr.jp/"><img src="/g/d.gif" width="82" height="80" alt="読売の医療と介護の求人" border="0" style="background:url(/g3/_h2.png) no-repeat -82px -761px" /></a></div>
+<!--▲Job▲-->
+
+<!--▼yomiDr▼-->
+<div class="defBox" style="margin:8px 0; border:solid 1px #55c4c2; border-top:solid 3px #55c4c2">
+<div class="hd"><a href="http://www.yomidr.yomiuri.co.jp/?from=navlc" style="background:none!important; padding-left:2px"><img src="/g/d.gif" width="153" height="24" alt="読売の医療情報サイトyomiDr.（ヨミドクター）" border="0" style="background:url(/g3/_h2.png) no-repeat -73px -730px" /></a></div>
+<ul class="list-def">
+<li><a href="http://www.yomidr.yomiuri.co.jp/page.jsp?id=27154&from=navlc" target="_top">子供に薬飲ませるコツ</a></li>
+<li><a href="http://www.yomidr.yomiuri.co.jp/page.jsp?id=27021&from=navlc" target="_top">豚肉と野菜のレシピ</a></li>
+<li><a href="http://www.yomidr.yomiuri.co.jp/page.jsp?id=25147&from=navlc" target="_top">手足口病 重症化懸念も</a></li>
+
+</ul>
+</div>
+<!--▲yomiDr▲-->
+
+<!--▼編集手帳▼-->
+<div class="defBox" style="margin-top:6px"><div class="hd"><a href="/editorial/?from=navlc">編集手帳</a></div>
+<p>　よく見聞きする「目からウロコが落ちる」という表現は新約聖書に由来する。<a href="/editorial/column1/news/20100624-OYT1T01176.htm?from=navlc">[全文へ]</a></p>
+<div class="hds"><a href="/column/?from=navlc">コラム</a></div>
+<ul class="list-def">
+<li><a href="/column/kenkyu/20100623-OYT8T00686.htm?from=navlc">＜おやじ＞たちのマグマ</a></li>
+</ul>
+
+</div>
+<!--▲編集手帳▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼動画枠（実際はIFRAME）▼-->
+<div class="defBox">
+<div class="hd"><a href="/stream/">動画</a></div>
+<!--// stream_start //-->
+<div id="topMovie" class="tPhoto">
+<div><a href="http://www.yomiuri.co.jp/stream/top/100624_1.htm?from=navlv"><img src="http://www.yomiuri.co.jp/stream/photo/100624_1_yol.jpg" width="150" height="113" alt="" class="photo-ph" border="0" /></a></div><div class="photo-cap"><a href="http://www.yomiuri.co.jp/stream/top/100624_1.htm?from=navlv">ＡＫＢ48河西智美<br>私服を披露チユウ<img src="/g2/ic_mov.gif" width="25" height="15" border="0" alt="" class="v-middle" /></a></div>
+
+</div>
+<div class="sCnt" id="topMovies" style="display:none;">
+
+<div class="c_l"><img src="/g/d.gif" width="15" height="80" alt="" class="off" /></div>
+<div class="c_m">
+<ul style="margin-bottom:0">
+
+
+<li><a><span><img src="http://www.yomiuri.co.jp/stream/photo/100611_3.jpg" alt="" class="ph" /></span></a><a href="http://www.yomiuri.co.jp/stream/m_news/vn100611_3.htm?from=navlv"><span class="cap">動きや表情がリアルなロボット発表</span></a></li>
+
+
+<li><a><span><img src="http://www.yomiuri.co.jp/stream/photo/pop100622_yol.jpg" alt="" class="ph" /></span></a><a href="http://www.yomiuri.co.jp/stream/m_popstyle/pop100622.htm?from=navlv"><span class="cap">動画popstyle<br>iPadマジシャン現る</span></a></li>
+
+
+<li><a><span><img src="http://www.yomiuri.co.jp/stream/photo/100617_gweb_yol.jpg" alt="" class="ph" /></span></a><a href="http://www.yomiuri.co.jp/stream/gweb/100617_gweb.htm?from=navlv"><span class="cap">「夢のユニホーム」<br>グランプリを発表</span></a></li>
+
+<li><a><span><img src="http://www.yomiuri.co.jp/stream/photo/100618doredore_yol.jpg" alt="" class="ph" /></span></a><a href="http://www.yomiuri.co.jp/stream/m_doredore/20100618.htm?from=navlv"><span class="cap">SKE48<br>名古屋発のアイドルです</span></a></li>
+
+
+<li><a><span><img src="http://www.yomiuri.co.jp/stream/photo/train003_yol.jpg" alt="" class="ph" /></span></a><a href="http://www.yomiuri.co.jp/stream/m_train/train003.htm?from=navlv"><span class="cap">む〜ぶ鉄道<br>門司港レトロ観光列車</span></a></li>
+
+
+
+
+</ul>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div class="c_r"><img src="/g/d.gif" width="15" height="80" alt="" class="off" /></div>
+
+</div>
+<script type="text/javascript">
+var topMovies= new Y1.Container2({ 
+		id: 'topMovies', //コンテナid
+		targetId: 'topMovie', //拡大サムネールid
+		itemW: 65, //個々のアイテムの幅
+		offsetW: 0,
+		suffix: ' <img src="/g/d.gif" width="1" height="1" alt="動画" class="icMov" />'
+	});
+</script>
+<div class="cl"><img src="/g/d.gif" width="1" height="5" alt="" /></div>
+</div>
+<!--▲動画枠▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼データベース枠▼-->
+<div class="defBox">
+<div class="hd"><a href="/database/?from=navld">データベース</a></div>
+<ul class="pipelist"><li class="first"><a href="/rekishikan/?from=navld">歴史館</a></li><li><a href="/bunshokan/?from=navld">文書館</a></li><li class="end"><a href="https://database.yomiuri.co.jp/shashinkan/top.htm">写真館</a></li></ul>
+
+</div>
+<!--▲データベース枠▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼マーケット枠▼-->
+<div class="skin_atmoney">
+<div class="defBox">
+<div class="hd"><a href="/atmoney/?from=navlm">マーケット</a></div>
+
+
+<dl><dt><a href="/atmoney/rate/?from=navlm" class="hds">円・ドル</a><span class="date">(17:29)</span><a href="/atmoney/rate/chart_jpy.htm?from=navlm" class="chart"><span>チャート</span></a></dt><dd><a href="/atmoney/rate/?from=navlm">89.72 - 89.76</a></dd></dl>
+
+<dl><dt><a href="/atmoney/rate/?from=navlm" class="hds">円・ユーロ</a><span class="date">(17:39)</span><a href="/atmoney/rate/chart_eur.htm?from=navlm" class="chart"><span>チャート</span></a></dt><dd><a href="/atmoney/rate/?from=navlm">110.33 - 110.41</a></dd></dl>
+<dl><dt><a href="/atmoney/kabu/?from=navlm" class="hds">日経平均</a><span class="date">(15:29)</span><a href="/atmoney/kabu/chart_nikkei.htm?from=navlm" class="chart"><span>チャート</span></a></dt><dd><a href="/atmoney/kabu/?from=navlm">9737.48<span class="delta">(-190.86)</span> <span class="up">▼</span></a></dd></dl>
+
+</div>
+</div>
+<!--▲マーケット枠▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼キーワードランキング▼-->
+<div class="skin_ranking">
+<div class="defBox">
+<div class="hd"><a href="/keyword/">キーワードランキング</a></div>
+<ol class="list-def">
+<li class="no1"><a href="/keyword/#1">ゴール中央20メートル</a></li>
+<li class="no2"><a href="/keyword/#2">日本決勝トーナメント進出</a></li>
+<li class="no3"><a href="/keyword/#3">フリーキック2本</a></li>
+<li class="no4"><a href="/keyword/#4">強豪パラグアイ</a></li>
+
+<li class="no5"><a href="/keyword/#5">日本2大会ぶり</a></li>
+<li class="no6"><a href="/keyword/#6">W杯デンマーク戦</a></li>
+<li class="no7"><a href="/keyword/#7">チーフテストドライバー</a></li>
+<li class="no8"><a href="/keyword/#8">日本2点</a></li>
+<li class="no9"><a href="/keyword/#9">T出場</a></li>
+<li class="no10"><a href="/keyword/#10">参院選公示</a></li>
+
+</ol>
+</div>
+</div>
+<!--▲キーワードランキング▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼暮らし▼-->
+<div class="defBox">
+<div class="hd"><span>暮らし</span></div>
+<dl><dt><a href="/atmoney/index.htm" class="hds">マネー・経済</a></dt><dd><a href="http://www.yomiuri.co.jp/atmoney/kouza/kabuka2/03/20100623-OYT8T00565.htm?from=navlk" target="_top">相場テーマ／ＬＥＤ製造装置メーカー<img height="13" width="28" border="0" alt="NEW" src="/g2/top_li_new2.gif"/></a></dd></dl>
+<dl><dt><a href="/entertainment/index.htm" class="hds">エンタメ</a></dt><dd><a href="http://www.yomiuri.co.jp/entertainment/music/mreview/20100624-OYT8T00564.htm?from=navlk" target="_top">ＪＵＪＵ公演　心地よい高音</a></dd></dl>
+<dl><dt><a href="/kyoiku/index.htm" class="hds">教育</a></dt><dd><a href="http://www.yomiuri.co.jp/kyoiku/children/weekly/20100612-OYT8T00552.htm?from=navlk" target="_top">関与の親方　協会が処分</a></dd></dl>
+<dl><dt><a href="http://www.yomidr.yomiuri.co.jp/" class="hds">医療と介護</a></dt><dd><a href="http://www.yomidr.yomiuri.co.jp/page.jsp?id=24566&from=navlk" target="_top">がん治療実績上位10病院</a></dd></dl>
+
+<dl><dt><a href="http://www.yomiuri.co.jp/homeguide/" class="hds">読売ホームガイド</a></dt><dd><a href="http://www.yomiuri.co.jp/homeguide/soudan/20100107-OYT8T00553.htm?from=navlk" target="_top">太陽光発電の優遇制度</a></dd></dl>
+<dl><dt><a href="/komachi/index.htm" class="hds">大手小町</a></dt><dd><a href="http://www.yomiuri.co.jp/komachi/life/pop/20100623-OYT8T00872.htm?from=navlk" target="_top">パスタははしで食べていい？<img height="16" width="20" border="0" src="/g2/ic_kuraget.gif" alt="" /></a></dd></dl>
+<dl><dt><a href="/gourmet/index.htm" class="hds">グルメ</a></dt><dd><a href="/gourmet/news/index.htm?from=navlk" target="_top">グルメニュース<img height="13" width="28" border="0" alt="NEW" src="/g2/top_li_new2.gif"/></a></dd></dl>
+<dl><dt><a href="/atcars/index.htm" class="hds">@CARS</a></dt><dd><a href="http://www.yomiuri.co.jp/atcars/impression/20100624-OYT8T00804.htm?from=navlk" target="_top">試乗記　BMW 5シリーズ</a></dd></dl>
+<dl><dt><a href="/net/index.htm" class="hds">ネット＆デジタル</a></dt><dd><a href="http://www.yomiuri.co.jp/net/security/goshinjyutsu/20100625-OYT8T00695.htm?from=navlk" target="_top">怪しいネット広告に注意</a></dd></dl>
+<dl><dt><a href="/book/index.htm" class="hds">本よみうり堂</a></dt><dd><a href="http://www.yomiuri.co.jp/book/review/20100621bk04.htm?from=navlk" target="_top">選挙演説の言語学</a></dd></dl>
+
+<dl><dt><a href="http://job.yomiuri.co.jp/" class="hds">ジョブサーチ</a></dt><dd><a href="http://job.yomiuri.co.jp/?from=navlk" target="_top">読売Workin</a></dd></dl>
+<dl><dt><a href="http://otona.yomiuri.co.jp/" class="hds">新おとな総研</a></dt><dd><a href="http://otona.yomiuri.co.jp/mystyle/igo/igo_100430.htm?from=navlk" target="_top">10分でわかる囲碁入門</a></dd></dl>
+
+</div>
+<!--▲暮らし▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼yorimo▼-->
+<div class="defBox">
+<div class="hd"><a href="https://yorimo.yomiuri.co.jp/?cid=0201999000000">yorimo</a></div>
+<ul class="list-def">
+
+<li><a href="http://yorimo.jp/csa/Yrm0701_P/1221752268798?cidy=0251999090427" target="_top">ヨリモ４周年キャンペーン「第二弾」はギフト券！</a></li>
+<li><a href="http://yorimo.jp/csa/Yrm0507_C/1221735546757?cidy=0251999090401" target="_top">太陽充電池が当たる「ヨリモバ」入会キャンペーン実施中！</a></li>
+<li><a href="http://yorimo.jp/csa/Yrm0507_C/1221749107289?cidy=0251999090401" target="_top">野に放たれた広告クリエイター、「ノラクリ」大暴れ</a></li>
+</ul>
+</div>
+<!--▲yorimo▲-->
+</div>
+<!--▲左カラム▲-->
+<div class="cl hr"><hr /></div>
+<!--▼メイン下カラム▼-->
+<div id="mainBottomColumn">
+<!--▼▼地域▼▼-->
+<div class="defHd">
+<div class="hd"><a href="/e-japan/">地域</a></div>
+
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="/e-japan/graph/">地域の写真</a></li><li><a href="/e-japan/">地域のニュース</a></li></ul></div></div>
+<div class="cl"></div>
+</div>
+
+<!--▼地図▼-->
+<div class="wp100">
+<table class="lmap" style="margin-top:10px">
+<tr>
+<td class="emp horizontal-list" colspan="9">&nbsp;</td>
+<td class="hokkaido" colspan="2" style="background:#d0d0f5;border:solid 1px #99d"><a href="http://hokkaido.yomiuri.co.jp/?from=dmst1"><strong>北海道発</strong></a></td>
+</tr>
+<tr>
+<td class="kyushu"><a href="/e-japan/saga/?from=dmst1">佐賀</a></td>
+
+<td class="kyushu"><a href="/e-japan/fukuoka/?from=dmst1">福岡</a></td>
+<td class="chugoku"><a href="/e-japan/yamaguchi/?from=dmst1">山口</a></td>
+<td class="chugoku"><a href="/e-japan/shimane/?from=dmst1">島根</a></td>
+<td class="chugoku"><a href="/e-japan/tottori/?from=dmst1">鳥取</a></td>
+<td class="kinki"><a href="/e-japan/kyoto/?from=dmst1">京都</a></td>
+<td class="hokuriku"><a href="/e-japan/fukui/?from=dmst1">福井</a></td>
+<td class="hokuriku"><a href="/e-japan/ishikawa/?from=dmst1">石川</a></td>
+<td class="hokuriku"><a href="/e-japan/niigata/?from=dmst1">新潟</a></td>
+<td class="tohoku"><a href="/e-japan/akita/?from=dmst1">秋田</a></td>
+
+<td class="tohoku"><a href="/e-japan/aomori/?from=dmst1">青森</a></td>
+</tr>
+<tr>
+<td class="kyushu" colspan="2" style="background:#f5bbbb; border:solid 1px #e77"><a href="http://kyushu.yomiuri.co.jp/?from=dmst1"><strong>九州発</strong></a></td>
+<td class="chugoku"><a href="/e-japan/hiroshima/?from=dmst1">広島</a></td>
+<td class="kinki"><a href="/e-japan/hyogo/?from=dmst1">兵庫</a></td>
+<td class="kinki"><a href="/e-japan/osaka/?from=dmst1">大阪</a></td>
+<td class="kinki"><a href="/e-japan/shiga/?from=dmst1">滋賀</a></td>
+<td class="hokuriku"><a href="/e-japan/toyama/?from=dmst1">富山</a></td>
+<td class="hokuriku" colspan="2" style="background:#eeeebb; border: solid 1px #bb6"><a href="http://hokuriku.yomiuri.co.jp/?from=dmst1"><strong>北陸発</strong></a></td>
+
+<td class="tohoku"><a href="/e-japan/yamagata/?from=dmst1">山形</a></td>
+<td class="tohoku"><a href="/e-japan/iwate/?from=dmst1">岩手</a></td>
+</tr>
+<tr>
+<td class="kyushu"><a href="/e-japan/nagasaki/?from=dmst1">長崎</a></td>
+<td class="kyushu"><a href="/e-japan/oita/?from=dmst1">大分</a></td>
+<td class="chugoku"><a href="/e-japan/okayama/?from=dmst1">岡山</a></td>
+<td class="kinki" colspan="2" style="background:#aaeeee; border:solid 1px #5cc"><a href="http://osaka.yomiuri.co.jp/?from=dmst1"><strong>関西発</strong></a></td>
+<td class="kinki"><a href="/e-japan/nara/?from=dmst1">奈良</a></td>
+<td class="hokuriku"><a href="/e-japan/nagano/?from=dmst1">長野</a></td>
+
+<td class="kanto"><a href="/e-japan/yamanashi/?from=dmst1">山梨</a></td>
+<td class="kanto"><a href="/e-japan/gunma/?from=dmst1">群馬</a></td>
+<td class="tohoku"><a href="/e-japan/fukushima/?from=dmst1">福島</a></td>
+<td class="tohoku"><a href="/e-japan/miyagi/?from=dmst1">宮城</a></td>
+</tr>
+<tr>
+<td class="kyushu"><a href="/e-japan/kumamoto/?from=dmst1">熊本</a></td>
+<td class="kyushu"><a href="/e-japan/miyazaki/?from=dmst1">宮崎</a></td>
+<td class="shikoku"><a href="/e-japan/ehime/?from=dmst1">愛媛</a></td>
+<td class="shikoku"><a href="/e-japan/kagawa/?from=dmst1">香川</a></td>
+
+<td class="kinki"><a href="/e-japan/wakayama/?from=dmst1">和歌山</a></td>
+<td class="tokai"><a href="/e-japan/gifu/?from=dmst1">岐阜</a></td>
+<td class="tokai" colspan="2" style="background:#bbeebb; border:solid 1px #6c6"><a href="http://chubu.yomiuri.co.jp/?from=dmst1"><strong>中部発</strong></a></td>
+<td class="kanto"><a href="/e-japan/saitama/?from=dmst1">埼玉</a></td>
+<td class="kanto"><a href="/e-japan/tochigi/?from=dmst1">栃木</a></td>
+<td class="kanto"><a href="/e-japan/ibaraki/?from=dmst1">茨城</a></td>
+</tr>
+<tr>
+  <td class="kyushu"><a href="/e-japan/okinawa/?from=dmst1">沖縄</a></td>
+
+<td class="kyushu"><a href="/e-japan/kagoshima/?from=dmst1">鹿児島</a></td>
+<td class="shikoku"><a href="/e-japan/kochi/?from=dmst1">高知</a></td>
+<td class="shikoku"><a href="/e-japan/tokushima/?from=dmst1">徳島</a></td>
+<td class="tokai"><a href="/e-japan/mie/?from=dmst1">三重</a></td>
+<td class="tokai"><a href="/e-japan/aichi/?from=dmst1">愛知</a></td>
+<td class="tokai"><a href="/e-japan/shizuoka/?from=dmst1">静岡</a></td>
+<td class="kanto"><a href="/e-japan/kanagawa/?from=dmst1">神奈川</a></td>
+<td class="kanto"><a href="/e-japan/tokyotama/?from=dmst1" style="white-space:nowrap;">東京多摩</a></td>
+<td class="kanto"><a href="/e-japan/tokyo23/?from=dmst1" style="white-space:nowrap;">東京23区</a></td>
+
+<td class="kanto"><a href="/e-japan/chiba/?from=dmst1">千葉</a></td>
+</tr>
+</table>
+</div>
+<!--▲地図▲-->
+
+
+
+<!--▼地域の情報▼-->
+<div class="hr"><hr /></div>
+<div class="defHdss">
+<div class="hd"><span class="h">地域の情報</span></div>
+</div>
+<div class="cl"></div>
+<div class="listTopArea">
+
+<div title="地域の情報" class="list-cols cols2">
+<dl class="col">
+<dt><a href="http://hokkaido.yomiuri.co.jp/index.htm?from=dmst2">北海道</a></dt><dd><a href="http://www.yomiuri.co.jp/e-japan/hokkaido/feature/hokkaido1263447647981_02/index.htm?from=dmst2" target="_top">検証　北海道の教育</a></dd>
+<dt><a href="http://hokuriku.yomiuri.co.jp/index.htm?from=dmst2">北陸</a></dt><dd><a href="http://hokuriku.yomiuri.co.jp/hoksub4/hito/?from=dmst2">ひと紀行</a></dd>
+<dt><a href="http://chubu.yomiuri.co.jp/index.htm?from=dmst2">中部</a></dt><dd><a href="http://chubu.yomiuri.co.jp/shiawase/?from=dmst2">幸せの新聞</a></dd>
+</dl>
+<dl class="col">
+<dt><a href="http://osaka.yomiuri.co.jp/index.htm?from=dmst2">関西</a></dt><dd><a href="http://osaka.yomiuri.co.jp/nara/index.htm?from=dmst2">なら満彩</a></dd>
+<dt><a href="http://kyushu.yomiuri.co.jp/index.htm?from=trmk&from=dmst2">九州</a></dt><dd><a href="http://yuamibito.yomiuri.co.jp/?from=dmst2" target="_top">温泉宿検索「ゆあみびと」</a></dd>
+
+</dl>
+</div>
+</div>
+<!--▲地域の情報▲-->
+
+
+<!--▲▲地域▲▲-->
+
+
+
+
+<!--▼YOLツール▼-->
+<div class="hr"><hr /></div>
+<div class="defHd" style="margin-top:20px">
+<div class="hd"><a href="/tools/">YOLツール</a></div>
+<div class="cl"></div>
+
+</div>
+
+
+<div class="box-cols cols2" style="margin:15px 0 0 6px;">
+
+<div class="col tB">
+
+<dl class="t01 cfix">
+<dt><a href="/tools/komachi/"><span>発言小町ガジェット</span></a></dt>
+<dd><a href="/tools/komachi/">発言小町が便利に楽しく使えるツール。速報ニュースも。</a></dd>
+</dl>
+</div>
+<div class="col tB">
+<dl class="t02 cfix">
+<dt><a href="/tools/yolkizasi/"><span>YOL×kizashi.jpブログパーツ</span></a></dt>
+
+<dd><a href="/tools/yolkizasi/">速報ニュースと話題のキーワードがわかるブログパーツ！</a></dd>
+</dl>
+</div>
+
+<br />
+
+<div class="col tB cl">
+<dl class="t03 cfix">
+<dt><a href="/tools/rss/"><span>RSS配信</span></a></dt>
+<dd><a href="/tools/rss/">YOLの主要ニュースとアクセスランキングなどを配信中！</a></dd>
+</dl>
+</div>
+<div class="col tB">
+<dl class="t04 cfix">
+
+<dt><a href="/tools/yol-mail/"><span>YOLメール</span></a></dt>
+<dd><a href="/tools/yol-mail/">新着の時事用語やおすすめの記事を毎朝お届けします。</a></dd>
+</dl>
+</div>
+
+<br />
+
+<div class="col tB cl">
+<dl class="t05 cfix">
+<dt><a href="/tools/google-toolbar/"><span>Googleツールバー　YOL専用ボタン</span></a></dt>
+<dd><a href="/tools/google-toolbar/">YOLニュースと発言小町の最新情報を表示します！</a></dd>
+</dl>
+</div>
+
+<div class="col tB">
+<dl class="t06 cfix">
+<dt><a href="http://s-gadget.yomiuri.co.jp/"><span>ガジェットギャラリー</span></a></dt>
+<dd><a href="http://s-gadget.yomiuri.co.jp/">ガジェット、ブログパーツのダウンロードはこちら。</a></dd>
+</dl>
+</div>
+
+<br />
+
+<div class="col tB cl">
+<dl class="t08 cfix" style="left:0">
+<dt><a href="/tools/shun/"><span>旬ネタウィジェット</span></a></dt>
+<dd><a href="/tools/shun/">ソニーのウィジェットサービスに読売新聞ニュースを提供!!</a></dd>
+
+</dl>
+</div>
+<div class="col tB">&nbsp;
+</div>
+
+</div>
+<div class="cl"></div>
+<!--▲YOLツール▲-->
+
+<div class="box-cols cols2" style="margin:5px 0 0 6px;">
+<div class="col dbB">
+<dl class="dbBL cfix">
+<dt><a href="/rekishikan/"><span>ヨミダス歴史館</span></a></dt>
+<dd><a href="/rekishikan/">明治の創刊から現在までの記事が検索・閲覧できます</a></dd>
+</dl>
+
+</div>
+<div class="col dbB">
+<dl class="dbBR cfix">
+<dt><a href="https://database.yomiuri.co.jp/shashinkan/top.htm"><span>よみうり写真館</span></a></dt>
+<dd><a href="https://database.yomiuri.co.jp/shashinkan/top.htm">読売新聞の写真データベース。検索・閲覧無料！</a></dd>
+</dl>
+</div>
+</div>
+<div class="cl"></div>
+
+<div class="box-cols">
+<div class="csvc">
+<dl class="cfix">
+<dt><a href="/copy/"><span>記事コピーサービス</span></a></dt>
+
+<dd><p><a href="/copy/">1000万件を超える読売新聞記事からご希望の記事をコピーしてお届けします。</a>誕生日や結婚記念日などの紙面を１ページ単位で御希望の場合は<a href="http://www.yomiuri-tys.co.jp/jigyou/kibou.html" target="_blank">東京読売サービス</a>にお申し込みください。</p></dd>
+</dl>
+</div>
+</div>
+
+
+
+
+
+<div><img src="/g/d.gif" width="1" height="10" alt="" /></div>
+
+<div class="hr"><hr /></div>
+
+<!--▼ブログ▼-->
+<div class="hr"><hr /></div>
+<div class="defHds">
+<div class="hd"><a href="/blog/">ブログ</a></div>
+<div class="cl"></div>
+</div>
+<ul class="list-horizon" style="margin-left:8px">
+<li><a href="http://blogs.yomiuri.co.jp/book/">読書日記</a></li>
+<li><a href="http://blogs.yomiuri.co.jp/shashun/">写旬こぼれ話</a></li>
+<li><a href="http://blog.yomiuri.co.jp/popstyle/">ポップスタイル</a></li>
+<li><a href="http://www.yomiuri.co.jp/donna/">donna</a></li>
+<li><a href="http://blogs.yomiuri.co.jp/gogo/">動画でGO!GO!</a></li>
+
+<li><a href="http://blog.yomiuri.co.jp/utatane/">長井好弘のうたた寝帳</a></li>
+</ul>
+<!--▲ブログ▲-->
+
+<div class="hr"><hr /></div>
+
+<!--▼お知らせ▼-->
+<div class="hr"><hr /></div>
+<div class="defHds">
+<div class="hd"><a href="/info/">お知らせ</a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li><a href="http://info.yomiuri.co.jp/">読売新聞から</a></li><li><a href="http://saiyou.yomiuri.co.jp/">採用情報</a></li><li><a href="http://info.yomiuri.co.jp/event/">展覧会・イベント</a></li><li><a href="/cm/">読売新聞のCM</a></li><li><a href="/info/" style="border-right:none">YOLから</a></li></ul></div></div>
+
+<div class="cl"></div>
+</div>
+<ul class="list-horizon" style="margin-left:8px">
+<li><a href="/toolbar/">YOLツールバー終了のお知らせ</a></li>
+<li><a href="http://www.yomiuri-netshop.jp/" target="_blank">よみうりネットショップ「よみ・もの得選」</a></li>
+<li><a href="http://www.readme-press.com/46/" target="_blank">ＩＴ社長は新聞を読んでいる！（日本新聞協会）</a></li>
+<li><a href="http://info.yomiuri.co.jp/mag/book/10nenkan.htm">「読売年鑑2010」好評発売中</a></li>
+<li><a href="http://info.yomiuri.co.jp/event/cal/">イベントカレンダー</a></li>
+
+</ul>
+<!--▲お知らせ▲-->
+
+</div>
+<!--▲メイン下カラム▲-->
+</div>
+</div>
+<!--▼右カラム▼-->
+<div id="subColumn1">
+
+<!--▼右カラムテキスト広告▼-->
+<!-- /adv/m_txt_news=start -->
+<!-- begin ad tag -->
+<script type="text/javascript">
+AD2.init({
+	site:	'TOP',
+	area:	'TEXT1,TEXT2,TEXT3',
+	banid:	'top-tntxt'
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+</script>
+<!-- End ad tag -->
+<div id="top-tntxt" style="display:none;">
+<div class="m-txttab">
+
+<div class="m-tab">
+<h2><span>PR情報</span></h2>
+<br class="cl" />
+</div>
+</div>
+<div class="m-txtad2">
+<ul><script type="text/javascript">AD2.dTextLi({});</script></ul>
+
+</div>
+</div>
+<!-- /adv/m_txt_news=end -->
+<!--▲右カラムテキスト広告▲-->
+
+<!--▼右カラムバナー広告▼-->
+<!-- begin ad tag -->
+
+<script type="text/javascript">
+AD2.init({
+	site:	'TOP',
+	area:	'RECTANGLE',
+	width:	300,
+	height:	250,
+	admax:	1,
+	banid:	'top-tnrect'
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+</script>
+<div class="adbl2" id="top-tnrect" style="display:none;">
+<div style="margin:0px"><script type="text/javascript">AD2.dBanner();</script></div>
+</div>
+<noscript>
+<div class="adbl2"><div style="margin:0px"><iframe src="http://as.yl.impact-ad.jp/hserver/SITE=TOP/AREA=RECTANGLE/AAMSZ=300X250/OENCJP=SJIS" noresize scrolling=no hspace=0 vspace=0 frameborder=0 marginheight=0 marginwidth=0 width=300 height=250 allowTransparency="true"></iframe></div></div>
+</noscript>
+<!-- End ad tag -->
+<!--▲右カラムバナー広告▲-->
+
+<!--▼-->
+<div class="hr"><hr /></div>
+<div><img src="/g/d.gif" width="1" height="6" alt="" border="0" /></div>
+<div class="m-tab">
+
+<h2>今週のPICK UP</h2>
+<div style="float:right;color:#aaa; padding-right:5px; font-size:90%; letter-spacing:1px">PR</div>
+<br class="cl" />
+</div>
+
+<!-- begin ad tag -->
+<script type="text/javascript">
+AD2.init({
+	site:	'PR',
+	area:	'TEXT1,TEXT2,TEXT3',
+	random:	true,
+	banid:	'weeklypu-txt'
+});
+</script>
+<script type="text/javascript">
+AD2.cAds();
+</script>
+<!-- End ad tag -->
+
+<div id="weeklypu-txt">
+<div class="m-body" style="margin-bottom:0; padding-bottom:5px">
+<!-- ▼▼▼ -->
+
+<table class="t-txtad-weekly" style="margin-bottom:0">
+<script type="text/javascript">AD2.dPrWeekly({})</script>
+</table>
+<!-- ▲▲▲ -->
+
+</div>
+</div>
+
+
+<!-- /adv/ad2_m_weekly_pr=start -->
+
+<div class="m-txtad-weekly" style="border-top:dotted 2px #eee">
+<script type="text/javascript">
+adtxt[0] = new Array();
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/wol/",	"なぜ首相は参院選前に代わるのか？"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/fujisan/",	"富士登山グッズをゲットしていざ富士山へ！"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/tsushin/",	"働きながら転職の準備をしたい方必見！"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/calwine/",	"ついに発表！カリフォルニアワイン優秀店"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/agu2010/",	"日本のメディアは表現の自由を守れるか？"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/kango/",	"暮らしと「看護」を考えよう！"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/chuo/",	"米戸別所得補償制度は切り札になるか"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/fx/",	"◆自宅のＰＣで◆ＦＸはサラリーマンの味方"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/daigakuin/",	"仕事と両立できる！【社会人大学院特集】"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/mercedes/",	"ディーゼルエンジンってどんなイメージ？"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/lawschool/",	"【無料】法科大学院進学相談会を開催します"));
+adtxt[0].push(new Array("http://hakadas.yomiuri.co.jp/?from-pickup",	"プロポーズの言葉…一生一緒　ハカダス"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/yakugaku/",	"薬学部志願者注目！大学情報をチェック→"));
+adtxt[0].push(new Array("http://otona.yomiuri.co.jp/pleasure/mjguide/",	"「鳴き」ってなに？麻雀入門講座はこちら⇒"));
+adtxt[0].push(new Array("http://www.yomiuri.co.jp/adv/ana-navi/?from=pickup",	"なんと最大約74％割引！ANA国内航空券"));
+adT(0,"yes");
+</script>
+<noscript>
+<ul>
+<li><a href="http://www.yomiuri.co.jp/adv/wol/" target="_top">なぜ首相は参院選前に代わるのか？</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/fujisan/" target="_top">富士登山グッズをゲットしていざ富士山へ！</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/tsushin/" target="_top">働きながら転職の準備をしたい方必見！</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/calwine/" target="_top">ついに発表！カリフォルニアワイン優秀店</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/agu2010/" target="_top">日本のメディアは表現の自由を守れるか？</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/kango/" target="_top">暮らしと「看護」を考えよう！</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/chuo/" target="_top">米戸別所得補償制度は切り札になるか</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/fx/" target="_top">◆自宅のＰＣで◆ＦＸはサラリーマンの味方</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/daigakuin/" target="_top">仕事と両立できる！【社会人大学院特集】</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/mercedes/" target="_top">ディーゼルエンジンってどんなイメージ？</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/lawschool/" target="_top">【無料】法科大学院進学相談会を開催します</a></li>
+<li><a href="http://hakadas.yomiuri.co.jp/?from-pickup" target="_top">プロポーズの言葉…一生一緒　ハカダス</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/yakugaku/" target="_top">薬学部志願者注目！大学情報をチェック→</a></li>
+<li><a href="http://otona.yomiuri.co.jp/pleasure/mjguide/" target="_top">「鳴き」ってなに？麻雀入門講座はこちら⇒</a></li>
+<li><a href="http://www.yomiuri.co.jp/adv/ana-navi/?from=pickup" target="_top">なんと最大約74％割引！ANA国内航空券</a></li>
+</ul>
+</noscript>
+
+</div>
+<!-- /adv/ad2_m_weekly_pr=end -->
+
+<!-- ▼▼▼ -->
+<div style="margin:8px 0 8px;"><a href="http://www.yomiuri.co.jp/adv/wol/" target="_top"><img src="http://www.yomiuri.co.jp/g2/m_pr_waseda.gif" alt="" border="0" height="55" width="300" alt="" /></a></div>
+<!-- ▲▲▲ -->
+
+
+
+<!--▲-->
+
+<!--▼マイメニュー▼-->
+
+
+
+
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<div id="mKeyword">
+<div class="m-tab2">
+<div class="h"><a href="javascript:void(0)" class="kw f" id="mKeywordT">ニュースランキング</a></div>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+<div id="keywordTab" style="border-bottom:solid 1px #fff; padding-top:3px;"></div>
+</div>
+
+<div id="mKeywordBody0" class="m-body2" style="padding:3px 0 0;font-size:90%">
+<ol class="list-def" style="padding-right:5px">
+<li class="no1"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00751.htm?from=y10" target="_top">五輪銅・釜本さん、２失点にしのいだ堅守称賛</a></li>
+<li class="no2"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00388.htm?from=y10" target="_top">走るサッカー、涼しさがプラスに…岡田監督</a></li>
+
+<li class="no3"><a href="http://www.yomiuri.co.jp/election/sangiin/2010/news2/national/20100625-OYT1T00628.htm?from=y10" target="_top">消毒車にキャッチフレーズシール、選管指導で撤去</a></li>
+<li class="no4"><a href="http://www.yomiuri.co.jp/wcup/2010/news/f/news/20100625-OYT1T00762.htm?from=y10" target="_top">イタリア「国民的惨禍」…選手の給料までやり玉に</a></li>
+<li class="no5"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00667.htm?from=y10" target="_top">日本３得点、恩師が絶賛・兄たちも感激</a></li>
+<li class="no6"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00409.htm?from=y10" target="_top">日の丸、バンザイ…勝利に酔うスタンド</a></li>
+<li class="no7"><a href="http://www.yomiuri.co.jp/politics/news/20100625-OYT1T00616.htm?from=y10" target="_top">子育て施策、「子ども家庭省」に一元化検討</a></li>
+<li class="no8"><a href="http://www.yomiuri.co.jp/election/sangiin/2010/news2/20100625-OYT1T00077.htm?from=y10" target="_top">対決の構図様変わり、民主２人区独占戦略は…</a></li>
+<li class="no9"><a href="http://www.yomiuri.co.jp/national/news/20100625-OYT1T00621.htm?from=y10" target="_top">床山が３５０万円手渡し役…阿武松部屋の前で</a></li>
+<li class="no10"><a href="http://www.yomiuri.co.jp/sports/yakyu/news/20100625-OYT1T00757.htm?from=y10" target="_top">吉田えり初黒星、５回３安打３失点</a></li>
+<!-- 2010-06-25 17:30:07 更新 -->
+
+</ol>
+</div>
+
+<div id="mKeywordBody1" class="m-body2" style="display:none;padding:3px 0 0;font-size:90%">
+<ol class="list-def" style="padding-right:5px">
+<li class="no1"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00209.htm?from=y24h" target="_top">みんなが驚いた、「忍者戦法」勝利…李国秀の目</a></li>
+<li class="no2"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00388.htm?from=y24h" target="_top">走るサッカー、涼しさがプラスに…岡田監督</a></li>
+<li class="no3"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00118.htm?from=y24h" target="_top">日本、決勝Ｔ進出…３─１でデンマークに快勝</a></li>
+<li class="no4"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00128.htm?from=y24h" target="_top">【経過詳報】デンマーク戦３得点完勝の足跡</a></li>
+<li class="no5"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00152.htm?from=y24h" target="_top">日本、パラグアイと対戦へ…決勝Ｔ１回戦</a></li>
+<li class="no6"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00390.htm?from=y24h" target="_top">２本のＦＫ、ジャパンの脅威伝える「挑戦状」</a></li>
+
+<li class="no7"><a href="http://www.yomiuri.co.jp/election/sangiin/2010/news2/20100624-OYT1T00945.htm?from=y24h" target="_top">石原知事「うるせーよ！」、民主候補とバトル</a></li>
+<li class="no8"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00262.htm?from=y24h" target="_top">「あの２発がすべて」デンマーク完敗認める</a></li>
+<li class="no9"><a href="http://www.yomiuri.co.jp/wcup/2010/news/japan/news/20100625-OYT1T00418.htm?from=y24h" target="_top">１試合ＦＫ２本決める、ペレとガリンシャ以来</a></li>
+<li class="no10"><a href="http://www.yomiuri.co.jp/national/news/20100625-OYT1T00403.htm?from=y24h" target="_top">新聞見て「うわっ！」…マツダ殺傷容疑者</a></li>
+<!-- 2010-06-25 17:30:43 更新 -->
+
+</ol>
+</div>
+
+<div class="m-tab2-b"><img src="/g/d.gif" width="300" height="10" alt="" /></div></div>
+<!-- ▲ -->
+
+
+<div id="Tfi3"></div>
+
+
+
+
+<!--▼あらたにす▼-->
+<div class="hr"><hr /></div>
+<img src="/g/d.gif" alt="あらたにす" width="300" height="40" border="0" style="background:url(/g3/_p1_2.png) no-repeat 0 -700px; margin-bottom:8px" usemap="#allatanys_m" />
+<map name="allatanys_m" id="allatanys_m">
+<area shape="rect" coords="4,9,125,31" alt="ロゴ" href="http://allatanys.jp/iclk?page=A000&pos=1&pid=Y0000">
+<area shape="rect" coords="129,15,159,36" alt="一面" href="http://allatanys.jp/iclk?page=A001&pos=1&pid=Y0000">
+<area shape="rect" coords="161,15,191,36" alt="社説" href="http://allatanys.jp/iclk?page=A003&pos=1&pid=Y0000">
+<area shape="rect" coords="193,15,223,36" alt="注目" href="http://allatanys.jp/iclk?page=B002&pos=1&pid=Y0000">
+<area shape="rect" coords="225,15,265,36" alt="案内人" href="http://allatanys.jp/iclk?page=B001&pos=1&pid=Y0000">
+<area shape="rect" coords="267,15,297,36" alt="最新" href="http://allatanys.jp/iclk?page=N001&pos=1&pid=Y0000">
+</map>
+<!--▲あらたにす▲-->
+
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<script type="text/javascript">
+Y2.d1 = 'home';
+Y2.pref='pref13a';
+</script>
+
+<div class="m-pref" id="mLocalInfoNews">
+<script type="text/javascript">Y2.printPrefs('pref13a','',true);</script>
+<div id="bodyPref">
+
+
+<div class="m-body-pref">
+<div id="mmWeather">
+<table class="weather-pref"><tr>
+
+<th><a href="http://www.yomiuri.co.jp/weather/japan/pref13/">きょう</a></th>
+<td><a href="http://www.yomiuri.co.jp/weather/japan/pref13/"><img src="/weather/g2/w_s/kum.gif" width="33" height="20" border="0" alt="曇" /><span class="highest"><strong>--</strong>℃</span>/<span class="lowest"><strong>--</strong>℃</span></a></td>
+<th><a href="http://www.yomiuri.co.jp/weather/japan/pref13/">あす</a></th>
+<td><a href="http://www.yomiuri.co.jp/weather/japan/pref13/"><img src="/weather/g2/w_s/kum.gif" width="33" height="20" border="0" alt="曇" /><span class="highest"><strong>29</strong>℃</span>/<span class="lowest"><strong>23</strong>℃</span></a></td>
+</tr></table>
+
+</div>
+<div class="border"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+<div id="mmTraffic">
+<div class="links2">
+<table class="t-tra">
+<tr><th class="hd flight" colspan="2"><a href="http://traffic.yomiuri.co.jp/planes/"><strong>フライト情報</strong>　全2件</a></th></tr>
+<tr><th>羽田発着</th><td><a href="http://traffic.yomiuri.co.jp/planes/">欠航（2）/遅延その他（0）</a></td></tr>
+</table>
+</div>
+<div style="margin:0 0 3px 10px"><a href="http://www.yomiuri.co.jp/adv/ana-navi/"><img src="/g/d.gif" width="278" height="28" border="0" alt="国内航空券予約　Powered by ANA" style="background:url(/g3/_mm.png) no-repeat 0 -229px" /></a></div>
+</div>
+
+<div class="border"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+
+<div class="links">
+<a href="http://www.yomiuri.co.jp/e-japan/tokyo23/event/" class="bl" id="mmPEvent">イベント</a><span class="pipe">&#124;</span><a href="http://map.yomiuri.co.jp/c/f?grp=yomiuri&uc=6&fn=/html/admi/13/index.html" class="bl" id="mmPMap">地図</a><span class="pipe">&#124;</span><a href="http://yomiuri-k.walkerplus.com/schedule/2010/mo-schedule.htm" class="bl" id="mmPMovie">映画館</a><span class="pipe">&#124;</span><a href="http://job.yomiuri.co.jp/search/index.cfm?prefecture=13" class="bl" id="mmPJob">しごと</a></div>
+
+<div class="border"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+
+<div class="m-tab3">
+<div id="mPrefListBtnClose" style="display:none;">
+<h2><a href="http://www.yomiuri.co.jp/e-japan/tokyo23/" class="blue" id="mmPNewsTC">東京23区のニュース</a></h2>
+<div class="r"><a href="javascript:void(0)" class="tglBtnOpenS li2" onclick="Y2.tgl.open('mPrefList', 'mPrefListBtn');Y1.wc('pnewsTglStat','o',14)">開く<img src="/g/d.gif" width="13" height="13" border="0" alt="" /></a></div>
+
+</div>
+
+<div id="mPrefListBtn">
+<h2><a href="http://www.yomiuri.co.jp/e-japan/tokyo23/" class="blue" id="mmPNewsT">東京23区のニュース</a></h2>
+<div class="r"><a href="javascript:void(0)" class="tglBtnCloseS li2" onclick="Y2.tgl.close('mPrefList', 'mPrefListBtn');Y1.wc('pnewsTglStat','c',14)">閉じる<img src="/g/d.gif" width="13" height="13" border="0" alt="" /></a></div>
+</div>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+
+<div id="mPrefList">
+
+<div class="sh"><a href="/e-japan/tokyo23/" class="h"><span>▼</span>東京23区のニュース</a></div>
+<ul class="list-def">
+
+<li><a href="/e-japan/tokyo23/news/20100625-OYT8T00075.htm?from=navr" class="h">三鷹駅メロ「めだかの学校」</a></li>
+<li><a href="/e-japan/tokyo23/news/20100625-OYT8T00076.htm?from=navr" class="h">事件現場に「未逮捕おめでとう」</a></li>
+<li><a href="/e-japan/tokyo23/news/20100625-OYT8T00079.htm?from=navr" class="h">ＩＣＵ和太鼓部２０年来月記念公演</a></li>
+</ul>
+<div class="border"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+<div class="sh"><a href="/e-japan/tokyo23/feature/" class="h"><span>▼</span>東京23区の特集</a></div>
+<ul class="list-feature"> 
+<li><a href="/e-japan/tokyo23/feature/tokyo231276704402102_02/index.htm?from=navr" class="h">首都乱戦　参院選２０１０</a></li>
+<li><a href="/e-japan/tokyo23/feature/tokyo231267978517282_02/index.htm?from=navr" class="h">東京の記憶　戦後６５年</a></li>
+</ul>
+
+<div class="border"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+<div class="sh"><a href="/e-japan/tokyo23/graph/" class="h"><span>▼</span>東京23区の写真</a></div>
+<table class="list-photo">
+<tr>
+<td><a href="/e-japan/tokyo23/news/20100625-OYT8T00079.htm"><img src="/photo/20100625-025664-1-S.jpg" width="65" height="27" alt="写真" border="0" /></a></td>
+<td><a href="/e-japan/tokyo23/news/20100624-OYT8T00052.htm"><img src="/photo/20100624-000631-1-S.jpg" width="65" height="58" alt="写真" border="0" /></a></td>
+<td><a href="/e-japan/tokyo23/news/20100624-OYT8T00054.htm"><img src="/photo/20100624-000692-1-S.jpg" width="43" height="65" alt="写真" border="0" /></a></td>
+<td><a href="/e-japan/tokyo23/news/20100623-OYT8T00094.htm"><img src="/photo/20100623-977960-1-S.jpg" width="65" height="43" alt="写真" border="0" /></a></td>
+</tr>
+</table>
+
+
+</div>
+
+</div>
+
+</div>
+<div class="m-tab2-b"><img src="/g/d.gif" width="300" height="10" alt="" /></div>
+</div>
+<!-- ▲ -->
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<div id="mArea">
+<div class="m-tab2">
+<div class="h"><a href="/e-japan/" class="area f" id="mAreaT">地域の情報</a></div>
+<div class="r"><a href="javascript:void(0)" class="tglBtnClose li2">閉じる<img src="/g/d.gif" width="15" height="15" border="0" alt="" /></a></div>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div class="m-body2" style="padding:5px 0 0;" id="mAreaH">
+
+<ul class="m-area">
+<li><a href="http://hokkaido.yomiuri.co.jp/index.htm" class="n">北海道</a>&nbsp;<a href="http://www.yomiuri.co.jp/e-japan/hokkaido/feature/hokkaido1263447647981_02/index.htm" class="l" target="_top">検証　北海道の教育</a><br class="cl" /></li>
+<li><a href="http://hokuriku.yomiuri.co.jp/index.htm" class="n">北陸</a>&nbsp;<a href="http://hokuriku.yomiuri.co.jp/hoksub4/hito/" class="l">ひと紀行</a><br class="cl" /></li>
+<li><a href="http://chubu.yomiuri.co.jp/index.htm" class="n">中部</a>&nbsp;<a href="http://chubu.yomiuri.co.jp/shiawase/" class="l">幸せの新聞</a><br class="cl" /></li>
+<li><a href="http://osaka.yomiuri.co.jp/index.htm" class="n">関西</a>&nbsp;<a href="http://osaka.yomiuri.co.jp/nara/index.htm" class="l">なら満彩</a><br class="cl" /></li>
+<li><a href="http://kyushu.yomiuri.co.jp/index.htm?from=trmk" class="n">九州</a>&nbsp;<a href="http://yuamibito.yomiuri.co.jp/" class="l" target="_top">温泉宿検索「ゆあみびと」</a><br class="cl" /></li>
+</ul>
+
+<div class="cl"><img src="/g/d.gif" width="1" height="3" alt="" /></div>
+</div>
+<!-- ▲ -->
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<div class="m-pref ">
+<div class="m-body-pref">
+<div class="border"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+<div class="" id="mAreaPref">
+<div class="m-tab3">
+
+<div id="mPrefLinksBtnClose">
+<div class="h"><a href="/e-japan/" class="blue" id="mAreaPTC">各都道府県の情報</a></div>
+<div class="r"><a href="javascript:void(0)" class="tglBtnOpenS li2">開く<img src="/g/d.gif" width="13" height="13" border="0" alt="" /></a></div>
+
+</div>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div id="mPrefLinks" style=" display:none;">
+<script type="text/javascript">
+Y2.printPrefsLinks('m-prefecture')
+</script>
+</div></div></div>
+ </div><div class="m-tab2-b"><img src="/g/d.gif" width="300" height="10" alt="" /></div></div>
+<!-- ▲ -->
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<div id="mKomachi">
+<div class="m-tab2">
+<div class="h"><a href="http://komachi.yomiuri.co.jp/ranking/" class="komachi f" id="mKomachiT">発言小町ランキング</a></div>
+
+<div class="r"><a href="javascript:void(0)" class="tglBtnClose li2">閉じる<img src="/g/d.gif" width="15" height="15" border="0" alt="" /></a></div>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div class="m-body2" style="padding:3px 0 0;">
+<iframe src="http://komachi.yomiuri.co.jp/i1/i_komachi_ranking.htm" frameborder="0" width="100%" height="120" marginwidth="0" marginheight="0" scrolling="no" title="発言小町のリスト"></iframe>
+</div><div class="m-tab2-b"><img src="/g/d.gif" width="300" height="10" alt="" /></div></div>
+<!-- ▲ -->
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<div id="mJinsei">
+<div class="m-tab2">
+<div class="h"><a href="/jinsei/" class="jinsei f" id="mJinseiT">人生案内</a></div>
+
+<div class="r"><a href="javascript:void(0)" class="tglBtnClose li2">閉じる<img src="/g/d.gif" width="15" height="15" border="0" alt="" /></a></div>
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+<div class="m-body2" style="padding:3px 0 0 0;">
+<iframe src="http://www.yomiuri.co.jp/i1/i_list_jinsei_index3.htm" frameborder="0" width="280" height="80" marginwidth="0" marginheight="0" scrolling="no" title="人生案内のリスト" style="margin-left:5px;"></iframe>
+</div><div class="m-tab2-b"><img src="/g/d.gif" width="300" height="10" alt="" /></div></div>
+<!-- ▲ -->
+
+<!-- ▼ -->
+<div class="hr"><hr /></div>
+
+<div id="mKeitai">
+<div class="m-tab2">
+<div class="h"><a href="/keitai/" class="keitai f" id="mKeitaiT">ケータイ</a></div>
+
+<div class="cl"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+<div id="keitaiTab" style="border-bottom:solid 1px #fff"></div>
+</div>
+<div id="mKeitaiBody0" class="m-body2" style="display:none">
+<table class="kt">
+<tr>
+<td>
+<div><a href="/keitai/mgiants.htm?from=navr"><img src="/g/d.gif" width="131" height="26" border="0" alt="モバイルGIANTS" style="background:url(/g3/_mm.png) no-repeat 0 -1746px" /></a></div>
+<p>唯一の公式携帯サイト！ファン必見のG情報・画像満載。ニュースも充実。月額210円。</p>
+</td>
+<td><a href="/keitai/mgiants.htm?from=navr"><img src="/g/d.gif" width="55" height="54" border="0" alt="QRコード" style="background:url(/g3/_mm.png) no-repeat -146px -1746px" /></a></td>
+</tr>
+</table>
+</div>
+
+<div id="mKeitaiBody1" class="m-body2" style="display:none">
+
+<table class="kt">
+<tr>
+<td>
+<div><a href="/keitai/yhg.htm?from=navr"><img src="/g/d.gif" width="110" height="33" border="0" alt="NEWS読売・報知" style="background:url(/g3/_mm.png) no-repeat 0 -1770px" /></a></div>
+<p>月額84円の充実ニュースサイト。地震情報、号外、朝夕刊メールもお届け。</p>
+</td>
+<td><a href="/keitai/yhg.htm?from=navr"><img src="/g/d.gif" width="55" height="54" border="0" alt="QRコード" style="background:url(/g3/_mm.png) no-repeat -200px -1746px" /></a></td>
+</tr>
+</table>
+</div>
+
+<div id="mKeitaiBody2" class="m-body2">
+<table class="kt">
+<tr>
+<td>
+<div><a href="/keitai/komachi.htm?from=navr"><img src="/g/d.gif" width="145" height="30" border="0" alt="ケータイ大手小町" style="background:url(/g3/_mm.png) no-repeat 0 -1802px" /></a></div>
+
+<p>YOL人気コンテンツの携帯版。発言小町、ニュース、占いなど。月額105円。</p>
+</td>
+<td><a href="/keitai/komachi.htm?from=navr"><img src="/g/d.gif" width="55" height="54" border="0" alt="QRコード" style="background:url(/g3/_mm.png) no-repeat -254px -1746px" /></a></td>
+</tr>
+</table>
+</div>
+<div class="m-tab2-b"><img src="/g/d.gif" width="300" height="10" alt="" /></div></div>
+<!-- ▲ -->
+
+<div class="hr"><hr /></div>
+
+<script type="text/javascript">
+j$(function(){
+var boxes=j$('#mLatestNews,#mLocalInfoNews,#mArea,#mAreaPref,#mJinsei,#mKomachi');
+	j$.each( boxes, function(){
+		var div=j$(this).find('> div:first');
+		div.click(function(){
+			var body =j$('#'+this.parentNode.id + ' > div:eq(1)');
+			var btn=j$(this).find(' .r')[0];
+			var s=btn.innerHTML;
+			if (body[0].style.display=='none') {
+				body.slideDown();
+				j$(btn).html(s.replace('Open','Close').replace('開く','閉じる'));
+			} else {
+				body.slideUp();
+				j$(btn).html(s.replace('Close','Open').replace('閉じる','開く'));
+			}
+		});
+	});	
+});
+</script>
+<!--▲マイメニュー▲-->
+
+<!--▼-->
+
+<div><img src="/g/d.gif" width="1" height="3" alt="" border="0" /></div>
+<table class="m-yorimo" style="border:solid 1px #ccc">
+<tr>
+<td class="l"><a href="http://www.flipclip.net/tokudane/" target="_top"><img src="/g/d.gif" width="93" height="21" alt="みんなで特ダネ！" border="0" style="background:url(/g3/_h2.png) no-repeat 0 -303px" /></a></td>
+<td class="r"><ul class="list-def"><li><a href="http://www.flipclip.net/tokudane/" target="_top" class="bl">スクープ映像・写真 大募集！</a></li></ul></td>
+</tr>
+</table>
+<!--▲-->
+
+<!--▼-->
+<div class="m-tab" style="margin-top:8px">
+<h2><a target="_top" href="http://eshop.yomiuri.co.jp/">ショッピング</a></h2>
+<a target="_top" href="http://eshop.yomiuri.co.jp/" class="r">トップ<img src="/g/d.gif" width="16" height="20" alt="" border="0" /></a>
+<br class="cl" />
+
+</div>
+<div class="m-body">
+
+<!-- ▼▼▼ -->
+<form class="f-shopping" method="get" action="http://eshop.yomiuri.co.jp/refresh/search.php" target="_top">
+<table id="menu_search_tb">
+<tr><td class="menu_search_op">
+<select name="sv">
+<option value="2" selected="selected">商品別</option>
+
+<option value="1">ショップ別</option>
+<option value="3">共同購入</option>
+<option value="4">スーパーオークション</option>
+
+</select>
+</td>
+<td class="menu_search_text"><input type="text" name="sitem" size="25" maxlength="50" />&nbsp;<input type="submit" value="検索" /></td>
+</tr>
+</table>
+<input type="hidden" name="mode" value="1" />
+</form>
+<!-- ▲▲▲ -->
+
+<!-- ▼▼▼ -->
+<table class="t-shopping">
+<tr>
+
+<td><a href="http://eshop.yomiuri.co.jp/refresh/yol_esi/direct_100622.htm" target="_top"><img src="/adv/esi/img/100622.jpg" alt="" class="photo-ph" border="0" height="45" width="60" /></a></td>
+<td class="tx">
+<h2><a href="http://eshop.yomiuri.co.jp/refresh/yol_esi/direct_100622.htm" target="_top">「リョウマー」で行こう！</a></h2>
+
+<a href="http://eshop.yomiuri.co.jp/refresh/yol_esi/direct_100622.htm" target="_top">坂本龍馬ファンを応援！CDから器、フィギュアまで色々取り揃えてます。</a></td>
+</tr>
+</table>
+<!-- ▲▲▲ -->
+
+</div>
+
+
+
+<div><img src="/g/d.gif" width="1" height="6" alt="" border="0" /></div>
+<!--▲-->
+
+<!--▼よみうりネットショップ▼-->
+<div class="m-tab">
+<h2><a target="_top" href="http://www.yomiuri-netshop.jp/">よみうりネットショップ</a></h2>
+
+<a target="_top" href="http://www.yomiuri-netshop.jp/" class="r">トップ<img src="/g/d.gif" width="16" height="20" alt="" border="0" /></a><br class="cl" />
+</div>
+<div class="m-body" style="padding-top:0">
+<table class="t-shopping" style="border:none; width:290px">
+<tr>
+<td><a href="http://www.yomiuri-netshop.jp/products/detail.php?product_id=32" target="_top"><img src="/g/d.gif" alt="" class="photo-ph" border="0" height="54" width="60" style="background:url(/g3/_h2.png) no-repeat -165px -251px" /></a></td>
+<td class="tx">
+<h2><a href="http://www.yomiuri-netshop.jp/products/detail.php?product_id=32" target="_top">医療ルネサンス4500回 CD-ROM</a></h2>
+<a href="http://www.yomiuri-netshop.jp/products/detail.php?product_id=32" target="_top">読売新聞の人気連載企画「医療ルネサンス」が1枚のCD-ROMになりました。</a></td>
+</tr>
+</table>
+</div>
+<!--▲よみうりネットショップ▲-->
+
+<!--▼教育関連▼-->
+<div class="hr"><hr /></div>
+<div class="defBox">
+<div class="hd"><a href="http://info.yomiuri.co.jp/edu/">教育関連</a></div>
+<ul class="pipelist"><li class="first"><a href="/kyoiku/" style="font-weight:bold">教育</a></li><li><a href="/kyoiku/news2/bosyu.htm">教育メール</a></li><li><a href="/kyoiku/terakoya/">てらこや</a></li><li><a href="http://katsuji.yomiuri.co.jp/">活字文化</a></li></ul>
+<ul class="pipelist"><li class="first"><a href="/dacchi/" class="bl"><img src="/g/d.gif" width="24" height="19" alt="" border="0" class="v-middle" style="background:url(/g3/_h2.png) no-repeat -236px -304px;margin-right:3px" />だっち君とよみかきの森</a></li><li><a href="/education/" class="bl">教育ワンダーランド</a></li></ul>
+</div>
+<!--▲教育関連▲-->
+
+<!--▼趣味・生活枠▼-->
+
+<div class="hr"><hr /></div>
+<div class="defBox">
+<div class="hd"><span>趣味・生活</span></div>
+<ul class="pipelist"><li class="first"><a href="/atmoney/lottery/" class="bl">宝くじ</a></li><li><a href="/igoshougi/" class="bl">囲碁・将棋</a></li><li><a href="/komachi/fortune/" class="bl">占い</a></li></ul>
+</div>
+<!--▲趣味・生活枠▲-->
+
+<!--▼出版枠▼-->
+<div class="hr"><hr /></div>
+<div class="defBox">
+<div class="hd"><a href="http://info.yomiuri.co.jp/mag/">出版</a></div>
+<ul class="list-def">
+
+<li><a href="http://info.yomiuri.co.jp/mag/book/10hospital.htm">病院の実力 2010</a></li>
+<li><a href="http://info.yomiuri.co.jp/mag/book/10giants.htm">GIANTS 2010</a></li>
+</ul>
+</div>
+<!--▲出版枠▲-->
+
+<!--▼広告ガイド枠▼-->
+<div class="hr"><hr /></div>
+<div class="defBox">
+<div class="hd"><a href="http://adv.yomiuri.co.jp/">広告ガイド</a></div>
+<ul class="pipelist"><li class="first"><a href="/adv/ad/index.htm" class="bl">YOMIURI ONLINE</a></li><li><a href="http://adv.yomiuri.co.jp/" class="bl">読売新聞</a></li><li><a href="/adv/tdy/home_e.htm" class="bl">THE DAILY YOMIURI</a></li></ul>
+
+</div>
+<!--▲広告ガイド枠▲-->
+
+<!-- ▼小冊子プレゼント▼ -->
+<div class="hr"><hr /></div>
+<div style="border:solid 1px #bbb; font-size:84%; padding:0; margin:8px 0; width:300px">
+<table class="t-shopping" style="border-top:none; margin:0">
+<tr>
+<td style="padding-top:0; "><a href="https://qooker.jp/Q/ja/pr/moraitai/" target="_top"><img src="/g/d.gif" alt="" class="photo-ph" border="0" height="45" width="32" style="background:url(/g3/_h2.png) no-repeat -225px -251px;margin-left:5px" /></a></td>
+<td class="tx" style="padding-top:0">
+<div class="h"><a href="https://qooker.jp/Q/ja/pr/moraitai/" target="_top">小冊子プレゼント</a></div>
+<a href="https://qooker.jp/Q/ja/pr/moraitai/" target="_top">反響の大きかった本紙記事を採録</a></td>
+</tr>
+</table>
+</div>
+
+<!-- ▲小冊子プレゼント▲ -->
+
+
+<!-- ▼購読▼ -->
+<div class="hr"><hr /></div>
+<div><img src="/g/d.gif" alt="読売新聞ご購読" width="300" height="360" border="0" usemap="#subscribeMap" style="background:url(/g3/_h2.png) no-repeat 0 -340px" /></div>
+<map name="subscribeMap" id="subscribeMap">
+<area shape="rect" coords="2,3,296,48" href="http://434381.jp/26/" alt="ご購読案内" />
+<area shape="rect" coords="2,47,296,127" href="http://434381.jp/26/" alt="読売新聞" />
+<area shape="rect" coords="2,126,296,197" href="http://434381.jp/21/" alt="THE DAILY YOMIURI" />
+<area shape="rect" coords="67,216,224,243" href="http://434381.jp/26/" alt="ご購読のお申し込み" />
+<area shape="rect" coords="2,256,297,357" href="http://www.yomiuri-heart.co.jp/" alt="読売ハートサービス" />
+</map>
+<!-- ▲購読▲ -->
+
+<img src="/g/d.gif" width="1" height="10" alt="" border="0" />
+<!-- -------------- Advertising.com ------ YOMIURI ONLINE - YOMIURI ONLINE BTF 300x250 - 778342 - (300x250) ------------ -->
+
+<script type='text/javascript'>
+var ACE_AR = {site: '778342', size: '300250', Region: '3', DontOpenWindow: 'true'};
+</script>
+<script type='text/javascript' src='http://uac.advertising.com/wrapper/aceUAC.js'></script>
+<noscript>
+<iframe src="http://ace.advertising.com/site=778342/size=300250/bnum=58505680/tags=1/rich=0/optn=1/ns=1"
+scrolling="no" width="300" height="250" frameborder="0" marginheight="0" marginwidth="0" title="Advertisement">
+</iframe>
+</noscript>
+<!-- ---------- Copyright 2009, Advertising.com ---------- -->
+
+</div>
+
+
+<!--▲右カラム▲-->
+<div class="cl"><img src="/g/d.gif" width="960" height="1" alt="" /></div>
+<div class="mWhd"></div>
+</div>
+<!--▼フッター▼-->
+<div class="hr"><hr /></div>
+
+<div id="contFooter">
+
+
+
+
+<div class="defHdss">
+<div class="hd"><a href="http://info.yomiuri.co.jp/">会社案内</a></div>
+<div class="nav"><div class="inr"><ul class="pipelist"><li class="first"><a href="http://info.yomiuri.co.jp/release/">お知らせ</a></li><li><a href="http://info.yomiuri.co.jp/company/">会社案内</a></li><li><a href="http://saiyou.yomiuri.co.jp/">採用情報</a></li><li><a href="http://info.yomiuri.co.jp/event/">イベント</a></li><li><a href="http://info.yomiuri.co.jp/community/">社会貢献</a></li><li><a href="http://info.yomiuri.co.jp/contact/">問い合わせ</a></li><li><a href="/education/kengaku.htm">会社見学</a></li></ul><br class="cl"></div></div>
+</div>
+
+<div class="cl"></div>
+
+<div class="hr"><hr /></div>
+
+<div class="defHdss">
+<div class="hd"><a href="http://info.yomiuri.co.jp/group/">読売グループ</a></div>
+<div class="nav"><div class="inr">
+<ul class="pipelist"><li class="first"><a href="http://www.ntv.co.jp/"><img src="/g/d.gif" width="61" height="15" alt="" border="0" style="background:url(/g3/_h2.png) no-repeat -91px -305px; vertical-align:middle;" /></a>&nbsp;<a href="http://www.bs4.jp/"><img src="/g/d.gif" width="70" height="15" alt="" border="0" style="background:url(/g3/_h2.png) no-repeat -159px -305px; vertical-align:middle;" /></a>&nbsp;<a href="http://www.ntv.co.jp/info/outline/domestic.html" class="arw-blue" style="font-size:84%;">ネットワーク局</a></li><li><a href="http://www.y-eizou.co.jp/">読売映像</a></li><li><a href="http://www.yomiuri-johkai.co.jp/">読売情報開発</a></li><li><a href="http://www.chuko.co.jp/">中央公論新社</a></li><li><a href="http://www.printemps-ginza.co.jp/">プランタン銀座</a></li><li><a href="http://www.yomiuri-johkai.co.jp/yfc/">読売ファミリーサークル</a></li><li><a href="http://www.yomiuriland.co.jp/">よみうりランド</a></li><li><a href="http://www.yomiuri-ryokou.co.jp/">読売旅行</a></li></ul>
+
+<ul class="pipelist"><li class="first"><a href="http://yomikyo.or.jp/"><img src="/g/d.gif" width="73" height="15" alt="" border="0" style="background:url(/g3/_h2.png) no-repeat -0px -730px; vertical-align:middle;" /></a></li>
+<li><a href="http://www.ync.ne.jp/">よみうりカルチャー</a></li><li><a href="http://www.yomiuri.edu/">読売理工学院</a></li><li><a href="http://www.yomiuri-tys.co.jp/index.html">東京読売サービス</a></li><li><a href="http://www.yomiuri-is.co.jp/">読売ｉＳ（折込広告）</a></li><li><a href="http://www.ymkenpo.or.jp/sinryoujo/">読売診療所</a></li><li><a href="http://www.yomiuri-systec.co.jp/">読売システック</a></li></ul>
+<br class="cl"></div></div>
+</div>
+<div class="cl"></div>
+
+
+
+<div class="hr"><hr /></div>
+
+<table class="nav-footer" cellspacing="0" summary="フッター">
+
+<tr>
+<td class="l"><a href="http://www.yomiuri.co.jp/index.htm"><img src="/g/d.gif" width="227" height="16" alt="YOMIURI ONLINE | 読売新聞" border="0" style="background:url(/g3/_p1_2.png) no-repeat 0 -624px;" /></a></td>
+<td class="r"><a href="#top">▲この画面の上へ</a></td>
+</tr>
+</table>
+
+<div class="hr"><hr /></div>
+
+<div class="align-c">
+<ul class="pipelist">
+<li class="first"><a href="http://info.yomiuri.co.jp/">会社案内</a></li><li><a href="http://www.yomiuri.co.jp/policy/">サイトポリシー</a></li><li><a href="http://www.yomiuri.co.jp/policy/privacy/">個人情報</a></li><li><a href="http://www.yomiuri.co.jp/policy/copyright/">著作権</a></li><li><a href="http://www.yomiuri.co.jp/policy/link/">リンクポリシー</a></li><li><a href="http://info.yomiuri.co.jp/contact/">お問い合わせ</a></li>
+
+</ul>
+<ul class="pipelist">
+<li class="first"><a href="http://www.yomiuri.co.jp/adv/ad/index.htm">YOMIURI ONLINE広告ガイド</a></li><li><a href="http://adv.yomiuri.co.jp/">新聞広告ガイド</a></li><li><a href="http://info.yomiuri.co.jp/contact/faq/faq04.htm">気流・時事川柳（東京本社版）への投稿</a></li>
+</ul>
+<div class="c">見出し、記事、写真の無断転載を禁じます　Copyright &copy; The Yomiuri Shimbun.</div>
+</div>
+<div id="yClickCount"><img src="/g/d.gif" width="1" height="1" alt="" /></div>
+</div>
+
+</div>
+
+<script type="text/javascript" src="/scripts/ad_yoltop_iphone.js"></script>
+
+
+</div>
+<!--▲フッター▲-->
+</body>
+</html>
+

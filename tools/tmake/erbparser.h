@@ -1,0 +1,37 @@
+#ifndef ERBPARSER_H
+#define ERBPARSER_H
+
+#include <QString>
+#include <QPair>
+
+
+class ErbParser
+{
+public:
+    enum TrimMode {
+        TrimOff = 0,
+        NormalTrim,  // Removes whitespaces if the start is "<%" and the end is "%>"
+        StrongTrim,  // Removes whitespaces if the end is "%>"
+    };
+
+    ErbParser(TrimMode mode) : trimMode(mode), pos(0) { }
+    void parse(const QString &text);
+    QString sourceCode() const { return srcCode; }
+    QString includeCode() const { return incCode; }
+
+private:
+    bool posMatchWith(const QString &str, int offset = 0) const;
+    void parsePercentTag();
+    QPair<QString, QString> parseEndPercentTag();
+    void skipWhiteSpacesAndNewLineCode();
+    QString parseQuote();
+
+    TrimMode trimMode;
+    QString erbData;
+    QString srcCode;
+    QString incCode;
+    int pos;
+    QString startTag;
+};
+
+#endif // ERBPARSER_H

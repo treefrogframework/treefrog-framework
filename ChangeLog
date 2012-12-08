@@ -1,0 +1,71 @@
+
+Changes with version 1.1
+    * Bugfix of parsing a boundary of HTTP request.
+    * Implemented releaseDatabases() function.
+    * Implemented tehex2() macro.
+    * Implemented htmlEscape(int n, Tf::EscapeFlag f) function.
+    * Implemented '%|%' tag for echo a default value on ERB system
+    * Implemented setContentType() function into TActionController class.
+    * Added a escape-flag parameter to the htmlEscape() function.
+    * Bugfix of calling staticInitialize().
+    * Multi-database access supported.
+    * Modified the URL validation to be strict.
+    * Added various setRule() functions.
+    * Implemented a query parameter of src of image-tag.
+    * Modified ApplicationController template class.
+    * Added TStaticInitializer class for prefork module.
+    * Implemented logic of calling staticInitialize() of ApplicationController.
+    * Added typeName() function to TDispatcher.
+    * Added a restart command into tfmanager.
+    * Added resetSignalNumber() function into TWebApplication.
+    * Added a logics of checking idle time of socket recieving.
+    * Modifiied that tfmanager opens a socket in case of Prefork only.
+    * Added a OpenFlag parameter to nativeListen() function.
+    * Modified the way of call nativeListen() function.
+    * Move nativeListen() function into TApplicationServer class, and
+      added --ctrlc-enable option to tadpole command.
+    * Changed enum valus, UserDefined -> Pattern, and etc.
+    * Renamed class name, THashValidator -> TFormValidator.
+    * Added to output SQL query log.
+    * Modified a function name to be called.
+    * Update a parameter, QHash<QString,QString> -> QVariantHash.
+    * Add setValidationError() function for custom validation.
+    * Writes stderr output of tfserver to a debug file.
+    * Modified parameters of imageLinkTo() function.
+    * Imports new setting file, development.ini.
+    * Modified thattmake and tspawn commands refer to the
+      'TemplateSystem' setting of the development.ini file.
+    * Added a defaultValue parameter to queryItemValue() and
+      formItemValue() method each.
+    * Added a parameter of a query string to the url() fucntion.
+    * Added renderErrorResponse() method into the TActionController class.
+    * Modified access log output.
+    * Implemented UNIX domain socket.
+    * Modified to check the socket's timeout.
+    * The default prefix of Otama marking was changed, '#' -> '@'.
+    * Add to set a default value into TAccessAuthenticator::clear() function.
+    * Added a method, redirectToPage().
+    * Added to install defaults/403.html.
+    * Added new class, TAccessAuthenticator.
+    * Add a method, currentController(), to TActionContext class.
+    * Modified to update only DB-fields whose values were changed.
+    * Fix a bug of generating a user-model.
+    * Added logic of initializing member variables of model class to
+      the model-generater.
+    * Added to create a Makefile by qmake command.
+    * Added validate function.
+    * Fix a bug of TSqlORMapperIterator and TSqlQueryORMapperIterator.
+    * Added new files, tsqlqueryormapperiterator.h and
+      TSqlQueryORMapperIterator.
+    * Modified the posision of 'new entry' on entry.erb and entry.html.
+    * Modified generator logics; controller, model and view.
+    * Added url and urla() functons with a QVariant parameter.
+    * Added an auto-update logic of 'modified_at'.
+    * Changed a form type, QHash<QString,QString> -> QVariantHash.
+    * Added typedef QHash<QString, QString>.
+    * Modified the creating logic of URL of urala() function.
+    * Modified the method name, setActionView() -> setSubActionView().
+    * Modified static files for error, 500.html, 404.html and 413.html
+    * Fix a bug of order of 'ORDER BY' phrase.
+    * Modified -d option's message.
+    * Modified a method name, allExportVariants -> allVariants.
