@@ -1,10 +1,10 @@
 TARGET = helper
 TEMPLATE = lib
-CONFIG += shared debug
+CONFIG += shared x86_64
 QT  -= gui
 QT  += 
 DEFINES += TF_DLL
-DESTDIR = ../../lib
+DESTDIR = ../lib
 DEPENDPATH +=
 
 include(../appbase.pri)

@@ -72,7 +72,7 @@ EntryName EntryName::create(int idIndex, const QString &fullName, const QString 
     obj.full_name = fullName;
     obj.address = address;
     obj.entry_number = entryNumber;
-    if (!obj.store())
+    if (!obj.create())
         obj.clear();
     return EntryName(obj);
 }

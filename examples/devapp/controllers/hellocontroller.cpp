@@ -2,7 +2,7 @@
 #include <TreeFrogController>
 #include <TSqlORMapper>
 #include "hellocontroller.h"
-#include "entry2.h"
+//#include "entry2.h"
 #include "hellohelper.h"
 #include "entryname.h"
 
