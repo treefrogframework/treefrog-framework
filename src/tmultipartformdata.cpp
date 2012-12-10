@@ -208,7 +208,14 @@ bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite)
             return false;
         }
     }
+
+#ifdef Q_OS_WIN
+    bool ret = file.copy(newpath);
+    file.remove(); // maybe fail here, but will be removed after.
+    return ret;
+#else
     return file.rename(newpath);
+#endif
 }
 
 
