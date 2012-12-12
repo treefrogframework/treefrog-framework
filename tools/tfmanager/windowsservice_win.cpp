@@ -32,8 +32,8 @@ static void WINAPI serviceHandler(DWORD ctrl)
     case SERVICE_CONTROL_STOP:
     case SERVICE_CONTROL_SHUTDOWN:
         tSystemInfo("Windows service: Received a stop-service request.");
-	serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
-	serviceStatus.dwWaitHint     = 30000;
+        serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+        serviceStatus.dwWaitHint     = 30000;
         SetServiceStatus(statusHandle, &serviceStatus);
         Tf::app()->exit(0);
         break;
