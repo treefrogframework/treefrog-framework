@@ -14,8 +14,6 @@
 
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
-#elsif Q_OS_WIN
-# include <stdlib.h>
 #endif
 
 namespace TreeFrog {
