@@ -13,10 +13,16 @@
 #include "processinfo.h"
 
 #ifdef Q_OS_UNIX
-#include <sys/utsname.h>
+# include <sys/utsname.h>
+#elsif Q_OS_WIN
+# include <stdlib.h>
 #endif
-using namespace TreeFrog;
 
+namespace TreeFrog {
+
+#ifdef Q_OS_WIN
+extern void WINAPI winServiceMain(DWORD argc, LPTSTR *argv);
+#endif
 
 enum CommandOption {
     Invalid = 0,
@@ -25,6 +31,7 @@ enum CommandOption {
     PrintVersion,
     PrintUsage,
     DaemonMode,
+    WindowsServiceMode,
     SendSignal,
 };
 
@@ -61,6 +68,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(OptionHash, options,
     x->insert("-v", PrintVersion);
     x->insert("-h", PrintUsage);
     x->insert("-d", DaemonMode);
+    x->insert("-w", WindowsServiceMode);
     x->insert("-k", SendSignal);
 })
 
@@ -219,7 +227,7 @@ static int killTreeFrogProcess(const QString &cmd)
 }
 
 
-int main(int argc, char *argv[])
+int managerMain(int argc, char *argv[])
 {
     TWebApplication app(argc, argv);
 
@@ -264,6 +272,10 @@ int main(int argc, char *argv[])
 
         case DaemonMode:
             daemonMode = true;
+            break;
+
+        case WindowsServiceMode:
+            // ignore
             break;
 
         case SendSignal:
@@ -395,4 +407,22 @@ int main(int argc, char *argv[])
     }
     pidfile.remove();  // Removes the PID file
     return 0;
+}
+
+} // namespace TreeFrog
+
+
+int main(int argc, char *argv[])
+{
+#ifdef Q_OS_WIN
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "-w") == 0) {
+            // Windows service mode
+            SERVICE_TABLE_ENTRY entry[] = { { (LPTSTR)TEXT(""), TreeFrog::winServiceMain }, { 0, 0 } };
+            StartServiceCtrlDispatcher(entry);
+            return 0;
+        }
+    }
+#endif
+    return TreeFrog::managerMain(argc, argv);
 }

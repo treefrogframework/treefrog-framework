@@ -51,6 +51,7 @@ HEADERS += servermanager.h \
 win32 {
   LIBS += -lws2_32
   SOURCES += processinfo_win.cpp
+  SOURCES += windowsservice_win.cpp
 }
 linux-* {
   SOURCES += processinfo_linux.cpp
