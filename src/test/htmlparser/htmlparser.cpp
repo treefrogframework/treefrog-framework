@@ -13,6 +13,8 @@ private slots:
     void append();
     void prepend_data();
     void prepend();
+    void tagcheck_data();
+    void tagcheck();
 };
 
 
@@ -163,6 +165,53 @@ void HtmlParser::prepend()
     QString actual = basep.toString();
     QCOMPARE(actual, expect);
 }
+
+
+void HtmlParser::tagcheck_data()
+{
+    QTest::addColumn<QString>("tag");
+    QTest::addColumn<bool>("ok");
+    // OK
+    QTest::newRow("1")  << "<html>" << true;
+    QTest::newRow("2")  << "<html >" << true;
+    QTest::newRow("3")  << "<html />" << true;
+    QTest::newRow("4")  << "<HTML/>" << true;
+    QTest::newRow("5")  << "<html name=\"hoge\">" << true;
+    QTest::newRow("6")  << "<Html name='hoge'>" << true;
+    QTest::newRow("7")  << "<html \"default\" >" << true;
+    QTest::newRow("8")  << "<a name=\"hoge; return;\" >" << true;
+    QTest::newRow("9")  << "</html>" << true;
+    QTest::newRow("10") << "<hoge value=\"hoge\"/>" << true;
+    QTest::newRow("11") << "<hoge value=\"hoge\" />" << true;
+    // NG
+    QTest::newRow("50") << "<!doctype html>" << false; // sepecial tag, not tag here
+    QTest::newRow("51") << "<html '>" << false;
+    QTest::newRow("52") << "<html \">" << false;
+    QTest::newRow("53") << "<i; ++i){for (j = 0; j>" << false;
+    QTest::newRow("54") << "<i; ++i)\nfor(j=0;j>" << false;
+    QTest::newRow("55") << "<i; ++i) if(j>" << false;
+    QTest::newRow("56") << "<!-->" << false;
+    QTest::newRow("57") << "<!-- >" << false;
+    QTest::newRow("58") << "<!>" << false;
+    QTest::newRow("58") << "<? hoge ?>" << false;
+    QTest::newRow("58") << "<% hoge %>" << false;
+    QTest::newRow("59") << "<!--\n>" << false;
+    QTest::newRow("60") << "<i) echo'>'" << false;
+    QTest::newRow("61") << "<i) echo \">\"" << false;
+}
+
+
+void HtmlParser::tagcheck()
+{
+    QFETCH(QString, tag);
+    QFETCH(bool, ok);
+
+    // start-tag?
+    QRegExp reg("<(\\w+|/\\w+)\\s*(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*>");
+    bool result = tag.contains(reg);
+    QCOMPARE(result, ok);
+}
+
 
 QTEST_MAIN(HtmlParser)
 #include "htmlparser.moc"
