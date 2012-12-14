@@ -172,11 +172,21 @@ void THtmlParser::parse(const QString &text)
 }
 
 
+bool THtmlParser::isTag(int position) const
+{
+    const QRegExp tagreg("<(\\w+|/\\w+)\\s*(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*>.*");
+    if (position >= 0 && position < txt.length()) {
+        return tagreg.exactMatch(txt.mid(position));
+    }
+    return false;
+}
+
+
 void THtmlParser::parse()
 {
     while (pos < txt.length()) {
         QChar c = txt.at(pos++);
-        if (c == QLatin1Char('<')) {
+        if (c == QLatin1Char('<') && isTag(pos - 1)) {
             parseTag();
         } else {
             last().text += c;
@@ -217,20 +227,6 @@ void THtmlParser::skipUpTo(const QString &str)
 
 void THtmlParser::parseTag()
 {
-    skipWhiteSpace();
-
-    // Exclamation mark declarations
-    if (txt.at(pos) == QLatin1Char('!')) {
-        parseExclamationTag();
-        return;
-    }
-
-    // Question mark declarations
-    if (txt.at(pos) == QLatin1Char('?')) {
-        parseQuestionTag();
-        return;
-    }
-
     // Close-tag
     if (txt.at(pos) == QLatin1Char('/')) {
         parseCloseTag();
@@ -353,27 +349,6 @@ void THtmlParser::appendTextToLastElement(const QString &upto)
         last().text += txt.midRef(pos);
         pos = txt.length();
     }
-}
-
-
-void THtmlParser::parseExclamationTag()
-{
-    last().text += QLatin1String("<!");
-    ++pos;
-    
-    if (hasPrefix("--")) {
-        appendTextToLastElement("-->");
-    } else {
-        appendTextToLastElement(">");
-    }
-}
-
-
-void THtmlParser::parseQuestionTag()
-{
-    last().text += QLatin1String("<?");
-    ++pos;
-    appendTextToLastElement("?>");
 }
 
 

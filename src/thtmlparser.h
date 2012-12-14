@@ -62,9 +62,8 @@ public:
 protected:
     void parse();
     void parseTag();
+    bool isTag(int position) const;
     QList<QPair<QString, QString> > parseAttributes();
-    void parseExclamationTag();
-    void parseQuestionTag();
     void parseCloseTag();
     QString parseWord();
     void skipWhiteSpace(int *crCount = 0, int *lfCount = 0);
