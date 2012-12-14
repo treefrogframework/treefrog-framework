@@ -76,7 +76,7 @@ static void usage()
 {
     char text[] =
         "Usage: %1 [-d] [-e environment] [application-directory]\n"     \
-        "Usage: %1 [-k stop|abort] [application-directory]\n"           \
+        "Usage: %1 [-k stop|abort|restart] [application-directory]\n"   \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
