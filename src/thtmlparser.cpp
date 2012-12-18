@@ -8,6 +8,9 @@
 #include <THtmlParser>
 #include <THttpUtility>
 
+// Regular expression of an HTML tag
+const QRegExp htmlTagReg("<([a-zA-Z]+|/[a-zA-Z]+)\\s*(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*>", Qt::CaseSensitive);
+
 
 THtmlElement::THtmlElement()
     :  tagClosed(false), parent(0)
@@ -174,11 +177,16 @@ void THtmlParser::parse(const QString &text)
 
 bool THtmlParser::isTag(int position) const
 {
-    const QRegExp tagreg("<(\\w+|/\\w+)\\s*(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*>.*");
     if (position >= 0 && position < txt.length()) {
-        return tagreg.exactMatch(txt.mid(position));
+        return (txt.indexOf(htmlTagReg, position) == position);
     }
     return false;
+}
+
+
+bool THtmlParser::isTag(const QString &tag)
+{
+    return (tag.indexOf(htmlTagReg, 0) == 0);
 }
 
 
@@ -252,15 +260,20 @@ void THtmlParser::parseTag()
     }
 
     // Tag closed?
-    for ( ; pos < txt.length(); ++pos) {
-        if (txt.at(pos) == QLatin1Char('/')) {
-            he.selfCloseMark = (hasPrefix(" /", -1)) ? QLatin1String(" /") : QLatin1String("/");
+    if (txt.at(pos) == QLatin1Char('/')) {
+        const QRegExp rx("(\\s*/.*)>");  // "/>" or "//-->"
+        int idx = rx.indexIn(txt, pos - 1);
+        if (idx == pos || idx == pos - 1) {
+            he.selfCloseMark = rx.cap(1);
+            pos = idx + rx.cap(1).length();
         }
+    }
         
-        if (txt.at(pos) == QLatin1Char('>')) {
-            ++pos;
-            break;
-        }
+    if (txt.at(pos) == QLatin1Char('>')) {
+        ++pos;
+    } else {
+        // coding error
+        Q_ASSERT(0);
     }
 
     if (isElementClosed(lastIndex())) {

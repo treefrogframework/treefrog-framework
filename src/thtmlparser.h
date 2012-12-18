@@ -58,6 +58,7 @@ public:
     QString elementsToString(int index) const;
     QString childElementsToString(int index) const;
     static THtmlParser mergeElements(const QString &s1, const QString &s2);
+    static bool isTag(const QString &tag);
 
 protected:
     void parse();
