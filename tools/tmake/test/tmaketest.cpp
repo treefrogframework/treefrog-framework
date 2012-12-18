@@ -46,6 +46,7 @@ void TestTfpconverter::parse_data()
     QTest::newRow("4") << "data4.phtm";
     QTest::newRow("5") << "data5.phtm";
     QTest::newRow("6") << "data6.phtm";
+    QTest::newRow("6-1") << "data6-1.phtm";
     QTest::newRow("7") << "data7.phtm";
     QTest::newRow("8") << "data8.phtm";
 }
