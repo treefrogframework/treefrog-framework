@@ -1,8 +1,18 @@
 
-#val1 ~ eh(tVal(hoge));
+@val1 ~ eh(tVal(hoge));
 
-#val2 : eh(tVal(hoge));
+@val2 : eh(tVal(hoge));
 
-#cond1 : if (true) { %% }
+@cond1 : if (true) { %% }
 
-#cond2 ~ if (false) { %% }
+@cond2 ~ if (false) { %% }
+
+@cond3 :
+for (;;) {
+  %%
+}
+
+@cond4 ~
+for (;true;) {
+  %%
+}

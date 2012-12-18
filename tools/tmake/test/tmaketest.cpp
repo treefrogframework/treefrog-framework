@@ -119,6 +119,7 @@ void TestTfpconverter::otamaconvert_data()
     QTest::newRow("3") << "index3.html" << "logic1.olg" << "res3.html";
     QTest::newRow("4") << "index4.html" << "logic1.olg" << "res4.html";
     QTest::newRow("5") << "index5.html" << "logic1.olg" << "res5.html";
+    QTest::newRow("6") << "index6.html" << "logic1.olg" << "res6.html";
 }
 
 
