@@ -198,17 +198,18 @@ void HtmlParser::tagcheck_data()
     QTest::newRow("59") << "<!--\n>" << false;
     QTest::newRow("60") << "<i) echo'>'" << false;
     QTest::newRow("61") << "<i) echo \">\"" << false;
+    QTest::newRow("62") << "<'<scr' + 'i=tr' + '></s' //-->" << false;
+    QTest::newRow("63") << "</s' //-->" << false;
+    QTest::newRow("64") << "<'<scr' + 'i=tr' + '>"  << false;
+    QTest::newRow("65") << "<4html>" << false;
 }
-
 
 void HtmlParser::tagcheck()
 {
     QFETCH(QString, tag);
     QFETCH(bool, ok);
 
-    // start-tag?
-    QRegExp reg("<(\\w+|/\\w+)\\s*(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*>");
-    bool result = tag.contains(reg);
+    bool result = THtmlParser::isTag(tag);
     QCOMPARE(result, ok);
 }
 
