@@ -225,7 +225,7 @@ QStringList THttpRequest::formItemList(const QString &key) const
 QHash<QString, QString> THttpRequest::formItemHash(const QString &key) const
 {
     QHash<QString, QString> hash;
-    QRegExp rx(QLatin1Char('^') + key + "\\[(.+)\\]$");
+    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
     for (QHashIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
         i.next();
         if (rx.exactMatch(i.key())) {
@@ -242,7 +242,7 @@ QHash<QString, QString> THttpRequest::formItemHash(const QString &key) const
 QVariantHash THttpRequest::formItems(const QString &key) const
 {
     QVariantHash hash;
-    QRegExp rx(QLatin1Char('^') + key + "\\[(.+)\\]$");
+    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
     for (QHashIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
         i.next();
         if (rx.exactMatch(i.key())) {
