@@ -505,6 +505,24 @@ QString THtmlParser::childElementsToString(int index) const
 }
 
 
+bool THtmlParser::parentExists(int i, const QString &tag) const
+{
+    int pidx = i;
+    for (;;) {
+        const THtmlElement &e = at(pidx);
+        if (e.tag.toLower() == tag.toLower()) {
+            return true;
+        }
+        
+        if (pidx <= 0)
+            break;
+        
+        pidx = e.parent;
+    }
+    return false;
+}
+
+
 // void THtmlParser::dumpHtml() const
 // {
 //     for (int i = 0; i < elements.count(); ++i) {
