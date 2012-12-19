@@ -54,6 +54,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(VersionHash, macVersion,
     x->insert(QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard");
 #if QT_VERSION >= 0x040800
     x->insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
+    x->insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
 #endif
 })
 #endif
@@ -75,7 +76,7 @@ static void usage()
 {
     char text[] =
         "Usage: %1 [-d] [-e environment] [application-directory]\n"     \
-        "Usage: %1 [-k stop|abort] [application-directory]\n"           \
+        "Usage: %1 [-k stop|abort|restart] [application-directory]\n"   \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
