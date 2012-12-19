@@ -177,14 +177,17 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
     while (pos < erbData.length()) {
         if (posMatchWith("%>")) {
             pos += 2;
-            if (erbData[pos - 3] == QLatin1Char('-')) {  // -%>
+            QChar c = erbData[pos - 3];
+            if (c == QLatin1Char('-') || c == QLatin1Char('+')) {  // -%> or +%>
                 if (defaultFlag) {
                     defaultVal.chop(1);
                 } else {
                     string.chop(1);
                 }
-                skipWhiteSpacesAndNewLineCode();
-
+                
+                if (c == QLatin1Char('-'))
+                    skipWhiteSpacesAndNewLineCode();
+                
             } else if (trimMode == StrongTrim) { // StrongTrim:2
                 skipWhiteSpacesAndNewLineCode();
 

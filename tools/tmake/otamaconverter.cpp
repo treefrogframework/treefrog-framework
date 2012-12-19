@@ -20,6 +20,7 @@
 #define TF_ATTRIBUTE_NAME  QLatin1String("data-tf")
 #define LEFT_DELIM   QString("<% ")
 #define RIGHT_DELIM  QString(" %>")
+#define RIGHT_DELIM_NO_TRIM QString(" +%>")
 #define DUMMY_LABEL1  QLatin1String("#dummy")
 #define DUMMY_LABEL2  QLatin1String("@dummy")
 
@@ -30,26 +31,28 @@ QString generateErbPhrase(const QString &str, int echoOption)
 {
     QString s = str;
     s.remove(QRegExp(";+$"));
-    QString res = LEFT_DELIM;
+    QString res = "<%";
     
     if (echoOption == OtmParser::None) {
+        res += ' ';
         res += s;
     } else {
+        res += '=';
         switch (echoOption) {
         case OtmParser::NormalEcho:
-            res += QLatin1String("echo(");
+            res += QLatin1String("= ");
             break;
             
         case OtmParser::EscapeEcho:
-            res += QLatin1String("eh(");
+            res += ' ';
             break;
             
         case OtmParser::ExportVarEcho:
-            res += QLatin1String("techoex(");
+            res += QLatin1String("=$ ");
             break;
             
         case OtmParser::ExportVarEscapeEcho:
-            res += QLatin1String("tehex(");
+            res += QLatin1String("$ ");
             break;
             
         default:
@@ -57,9 +60,7 @@ QString generateErbPhrase(const QString &str, int echoOption)
             return QString();
             break;
         }
-
         res += s;
-        res += QLatin1String(");");
     }
 
     res += RIGHT_DELIM;
@@ -161,6 +162,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
 
         QString val;
         OtmParser::EchoOption ech;
+        bool scriptArea = htmlParser.parentExists(i, "script");
         
         // Content assignment
         val = otmParser.getSrcCode(label, OtmParser::ContentAssignment, &ech); // ~ operator
@@ -174,14 +176,14 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
                 QString bak = e.text;
                 e.text  = LEFT_DELIM;
                 e.text += vals[0].trimmed();
-                e.text += RIGHT_DELIM;
+                e.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
                 e.text += bak;
                 QString s = vals.value(1).trimmed();
                 if (!s.isEmpty()) {
                     THtmlElement &child = htmlParser.appendNewElement(i);
                     child.text  = LEFT_DELIM;
                     child.text += s;
-                    child.text += RIGHT_DELIM;
+                    child.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
                 }
             }
         }
@@ -206,13 +208,13 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
             }
             attr += QLatin1String(")); ");
             attr += QLatin1String("echo(___pr.at(1).attributesString()); ");
-            attr += RIGHT_DELIM;
+            attr += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
             e.attributes.clear();
             e.attributes << qMakePair(attr, QString());
             e.text  = LEFT_DELIM;
             e.text += QLatin1String("eh(___pr.at(1).text); ");
             e.text += QLatin1String("echo(___pr.childElementsToString(1)); } while (0);");
-            e.text += RIGHT_DELIM;
+            e.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
         }
 
         // Sets attributes
@@ -236,14 +238,14 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
                 THtmlElement &he1 = htmlParser.insertNewElement(e.parent, idx);
                 he1.text  = LEFT_DELIM;
                 he1.text += vals[0].trimmed();
-                he1.text += RIGHT_DELIM;
+                he1.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
 
                 QString s = vals.value(1).trimmed();
                 if (!s.isEmpty()) {
                     THtmlElement &he2 = htmlParser.insertNewElement(e.parent, idx + 2);
                     he2.text  = LEFT_DELIM;
                     he2.text += s;
-                    he2.text += RIGHT_DELIM;
+                    he2.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
                 }
             }
         }
