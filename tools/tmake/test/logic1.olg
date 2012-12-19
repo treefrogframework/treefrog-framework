@@ -1,7 +1,41 @@
 
-@val1 ~ eh(tVal(hoge));
+@val1 ~ eh(tVal(hoge1));
 
-@val2 : eh(tVal(hoge));
+@val2 : eh(tVal(hoge2))
+
+@val3 + echo("hoge3");
+
+@val4 ~= hoge4
+
+@val5 := hoge5;
+
+@val6 += "id='hoge6'"
+
+@val7 ~== hoge7;
+
+@val8 :== hoge8
+
+@val9 +== "id='hoge9'"
+
+@val10 ~=$ hoge10
+
+@val11 :=$ hoge11
+
+@val12 +=$ hoge12
+
+@val13 ~==$ hoge13;
+
+@val14 :==$ hoge14
+
+@val15 +==$ hoge15;
+
+@val16 |== "<a class='hoge16'>"
+
+@val17 |==$ hoge17
+
+@val18 :=$hoge18
+
+@val19 ~==$hoge19
 
 @cond1 : if (true) { %% }
 

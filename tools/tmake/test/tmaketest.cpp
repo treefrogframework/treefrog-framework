@@ -9,7 +9,6 @@
 #include "erbconverter.h"
 #include "erbparser.h"
 
-//static QString configPath;
 extern int defaultTrimMode;
 
 
@@ -32,7 +31,6 @@ private slots:
 void TestTfpconverter::initTestCase()
 {
     defaultTrimMode = 1;
-//     configPath = QFileInfo(QCoreApplication::applicationFilePath()).absoluteDir().absolutePath() + QDir::separator() + ".." + QDir::separator() + ".." + QDir::separator() + "config" +  QDir::separator() + "treefrog.ini";
 }
 
 
@@ -77,49 +75,38 @@ void TestTfpconverter::parse()
 }
 
 
-// void TestTfpconverter::olgparser_data()
-// {
-//     QTest::addColumn<QString>("fileName");
-//     QTest::addColumn<QString>("label");
-//     QTest::addColumn<int>("count");
-
-//     QTest::newRow("1") << "logic1.olg" << "#hoge" << 2;
-// }
-
-
-// void TestTfpconverter::olgparser()
-// {
-//     QFETCH(QString, fileName);
-//     QFETCH(QString, label);
-//     QFETCH(int, count);
-
-//     QFile file(fileName);
-//     QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
-//     QTextStream ts(&file);
-//     ts.setCodec("UTF-8");
-//     QString olg = ts.readAll();
-
-
-//     OlgParser parser("%%");
-//     parser.parse(olg);
-//     QStringList vals = parser.value(label);
-//     qDebug() << vals.join(":");
-//     QCOMPARE(vals.count(), count);
-// }
-
-
 void TestTfpconverter::otamaconvert_data()
 {
     QTest::addColumn<QString>("htmlFileName");
     QTest::addColumn<QString>("olgFileName");
     QTest::addColumn<QString>("resultFileName");
 
-    QTest::newRow("1") << "index1.html" << "logic1.olg" << "res1.html";
-    QTest::newRow("2") << "index2.html" << "logic1.olg" << "res2.html";
-    QTest::newRow("3") << "index3.html" << "logic1.olg" << "res3.html";
-    QTest::newRow("4") << "index4.html" << "logic1.olg" << "res4.html";
-    QTest::newRow("5") << "index5.html" << "logic1.olg" << "res5.html";
-    QTest::newRow("6") << "index6.html" << "logic1.olg" << "res6.html";
+    QTest::newRow("1")  << "index1.html"  << "logic1.olg" << "res1.html";
+    QTest::newRow("2")  << "index2.html"  << "logic1.olg" << "res2.html";
+    QTest::newRow("3")  << "index3.html"  << "logic1.olg" << "res3.html";
+    QTest::newRow("4")  << "index4.html"  << "logic1.olg" << "res4.html";
+    QTest::newRow("5")  << "index5.html"  << "logic1.olg" << "res5.html";
+    QTest::newRow("6")  << "index6.html"  << "logic1.olg" << "res6.html";
+    QTest::newRow("7")  << "index7.html"  << "logic1.olg" << "res7.html";
+    QTest::newRow("8")  << "index8.html"  << "logic1.olg" << "res8.html";
+    QTest::newRow("9")  << "index9.html"  << "logic1.olg" << "res9.html";
+    QTest::newRow("10") << "index10.html" << "logic1.olg" << "res10.html";
+    QTest::newRow("11") << "index11.html" << "logic1.olg" << "res11.html";
+    QTest::newRow("12") << "index12.html" << "logic1.olg" << "res12.html";
+    QTest::newRow("13") << "index13.html" << "logic1.olg" << "res13.html";
+    QTest::newRow("14") << "index14.html" << "logic1.olg" << "res14.html";
+    QTest::newRow("15") << "index15.html" << "logic1.olg" << "res15.html";
+    QTest::newRow("16") << "index16.html" << "logic1.olg" << "res16.html";
+    QTest::newRow("17") << "index17.html" << "logic1.olg" << "res17.html";
+    QTest::newRow("18") << "index18.html" << "logic1.olg" << "res18.html";
+    QTest::newRow("19") << "index19.html" << "logic1.olg" << "res19.html";
+
+    QTest::newRow("c1") << "indexc1.html" << "logic1.olg" << "resc1.html";
+    QTest::newRow("c2") << "indexc2.html" << "logic1.olg" << "resc2.html";
+    QTest::newRow("c3") << "indexc3.html" << "logic1.olg" << "resc3.html";
+    QTest::newRow("c4") << "indexc4.html" << "logic1.olg" << "resc4.html";
+        
+    QTest::newRow("dm") << "dummy.html"  << "logic1.olg" << "resdm.html";
 }
 
 
@@ -183,11 +170,17 @@ void TestTfpconverter::erbparse_data()
                         << "  responsebody += tr(\"<body>Hello \");\n  int i;\n  responsebody += tr(\"</body>\");\n";
     QTest::newRow("13") << "<body>Hello ... \r\n</body>"
                         << "  responsebody += tr(\"<body>Hello ... \\r\\n</body>\");\n";
+    QTest::newRow("14") << "<body>Hello <%= vvv; +%> \n</body>"
+                        << "  responsebody += tr(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\" \\n</body>\");\n";
+    QTest::newRow("15") << "<body>Hello <%= vvv; +%></body>\r\n"
+                        << "  responsebody += tr(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\"</body>\\r\\n\");\n";
+    QTest::newRow("16") << "<body>Hello <% int i; +%> \r\n </body>"
+                        << "  responsebody += tr(\"<body>Hello \");\n  int i;\n  responsebody += tr(\" \\r\\n </body>\");\n";
 
     /** echo export object **/
-    QTest::newRow("14") << "<body>Hello <%=$ hoge -%> \r\n </body>"
+    QTest::newRow("20") << "<body>Hello <%=$ hoge -%> \r\n </body>"
                         << "  responsebody += tr(\"<body>Hello \");\n  tehex(hoge);\n  responsebody += tr(\" </body>\");\n";
-    QTest::newRow("15") << "<body>Hello <%==$ hoge %> \r\n </body>"
+    QTest::newRow("21") << "<body>Hello <%==$ hoge %> \r\n </body>"
                         << "  responsebody += tr(\"<body>Hello \");\n  techoex(hoge);\n  responsebody += tr(\" \\r\\n </body>\");\n";
 
     /** Echo a default value on ERB **/
