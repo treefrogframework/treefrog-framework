@@ -113,6 +113,8 @@ public:
                      const QSize &size = QSize(), const QString &alt = QString(),
                      const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString imageTag(const QString &src, const THtmlAttribute &attributes) const;
+
     QString imageLinkTo(const QString &src, const QUrl &url, const QSize &size = QSize(),
                         const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
     
@@ -212,6 +214,11 @@ inline QString TViewHelper::inputHiddenTag(const QString &name, const QVariant &
                                            const THtmlAttribute &attributes) const
 {
     return inputTag("hidden", name, value, attributes);
+}
+
+inline QString TViewHelper::imageTag(const QString &src, const THtmlAttribute &attributes) const
+{
+    return imageTag(src, QSize(), QString(), attributes);
 }
 
 inline QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url,
