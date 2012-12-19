@@ -12,16 +12,37 @@
   \brief The THttpHeader class is the abstract base class of request or response header information for HTTP.
 */
 
+/*!
+  Constructor an HTTP header by parsing \a str.
+*/
 THttpHeader::THttpHeader(const QByteArray &str)
 {
     parse(str);
 }
 
-
+/*!
+  Returns a byte array representation of the HTTP header.
+*/
 QByteArray THttpHeader::toByteArray() const
 {
     return TInternetMessageHeader::toByteArray();
 }
+
+/*!
+  \fn THttpHeader::THttpHeader()
+  Constructor.
+*/
+
+/*!
+  \fn int THttpHeader::majorVersion() const
+  Returns the major protocol-version of the HTTP header.
+*/
+
+/*!
+  \fn int THttpHeader::minorVersion() const
+  Returns the minor protocol-version of the HTTP header.
+*/
+
 
 /*!
   \class THttpRequestHeader
@@ -29,11 +50,16 @@ QByteArray THttpHeader::toByteArray() const
          for HTTP.
 */
 
+/*!
+  Constructor.
+*/
 THttpRequestHeader::THttpRequestHeader()
     : majVer(0), minVer(0)
 { }
 
-
+/*!
+  Constructor an HTTP request header by parsing \a str.
+*/
 THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
 {
     int i = str.indexOf('\n');
@@ -58,7 +84,10 @@ THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
     }
 }
 
-
+/*!
+  Sets the request method to \a method, the request-URI to \a path and
+  the protocol-version to \a majorVer and \a minorVer.
+*/
 void THttpRequestHeader::setRequest(const QByteArray &method, const QByteArray &path, int majorVer, int minorVer)
 {
     reqMethod = method;
@@ -67,7 +96,9 @@ void THttpRequestHeader::setRequest(const QByteArray &method, const QByteArray &
     minVer = minorVer;
 }
 
-
+/*!
+  Returns a byte array representation of the HTTP request header.
+*/
 QByteArray THttpRequestHeader::toByteArray() const
 {
     QByteArray ba;
@@ -80,6 +111,16 @@ QByteArray THttpRequestHeader::toByteArray() const
     return ba;
 }
 
+/*!
+  \fn const QByteArray &THttpRequestHeader::method() const
+  Returns the method of the HTTP request header.
+*/
+
+/*!
+  \fn const QByteArray &THttpRequestHeader::path() const
+  Returns the request-URI of the HTTP request header.
+*/
+
 
 /*!
   \class THttpResponseHeader
@@ -87,11 +128,16 @@ QByteArray THttpRequestHeader::toByteArray() const
          for HTTP.
 */
 
+/*!
+  Constructor.
+*/
 THttpResponseHeader::THttpResponseHeader()
     : statCode(0), majVer(1), minVer(1)
 { }
 
-
+/*!
+  Constructor an HTTP response header by parsing \a str.
+*/
 THttpResponseHeader::THttpResponseHeader(const QByteArray &str)
     : statCode(0), majVer(1), minVer(1)
 {
@@ -115,7 +161,10 @@ THttpResponseHeader::THttpResponseHeader(const QByteArray &str)
     }
 }
 
-
+/*!
+  Sets the status code to \a code, the reason phrase to \a text and
+  the protocol-version to \a majorVer and \a minorVer.
+*/
 void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int majorVer, int minorVer)
 {
     statCode = code;
@@ -124,7 +173,9 @@ void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int ma
     minVer = minorVer;
 }
 
-
+/*!
+  Returns a byte array representation of the HTTP response header.
+*/
 QByteArray THttpResponseHeader::toByteArray() const
 {
     QByteArray ba;
@@ -140,3 +191,8 @@ QByteArray THttpResponseHeader::toByteArray() const
     ba += THttpHeader::toByteArray();
     return ba;
 }
+
+/*!
+  \fn int THttpResponseHeader::statusCode() const
+  Returns the status code of the HTTP response header.
+*/
