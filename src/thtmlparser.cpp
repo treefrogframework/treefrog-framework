@@ -9,7 +9,8 @@
 #include <THttpUtility>
 
 // Regular expression of an HTML tag
-const QRegExp htmlTagReg("<([a-zA-Z]+|/[a-zA-Z]+)\\s*(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*>", Qt::CaseSensitive);
+const QRegExp htmlTagReg("<([a-zA-Z0-9]+\\s+(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*|/?[a-zA-Z0-9]+/?\\s*)>", Qt::CaseSensitive, QRegExp::RegExp2);
+const QRegExp wordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>(){};/=\\s]*)", Qt::CaseSensitive, QRegExp::RegExp2);
 
 
 THtmlElement::THtmlElement()
@@ -252,23 +253,22 @@ void THtmlParser::parseTag()
 
     THtmlElement &he = appendNewElement(p);
     he.tag = parseWord();
-
     // Parses the attributes
     he.attributes.clear();
-    if (pos < txt.length() && txt.at(pos).isSpace()) {
+    if (pos < txt.length()) {
         he.attributes = parseAttributes();
     }
 
     // Tag closed?
     if (txt.at(pos) == QLatin1Char('/')) {
-        const QRegExp rx("(\\s*/.*)>");  // "/>" or "//-->"
+        const QRegExp rx("(\\s*/[^>]*)>");  // "/>" or "//-->"
         int idx = rx.indexIn(txt, pos - 1);
         if (idx == pos || idx == pos - 1) {
             he.selfCloseMark = rx.cap(1);
             pos = idx + rx.cap(1).length();
         }
     }
-        
+
     if (txt.at(pos) == QLatin1Char('>')) {
         ++pos;
     } else {
@@ -424,39 +424,11 @@ void THtmlParser::changeParent(int index, int newParent, int newIndex)
 // Parses one word
 QString THtmlParser::parseWord()
 {
-    QString word;
-    QChar c = txt.at(pos);
-    if (c == QLatin1Char('\"')) { // double quotes
-        word += c;
-        ++pos;
-        for ( ; pos < txt.length(); ++pos) {
-            word += txt.at(pos);
-            if (txt.at(pos) == QLatin1Char('\"') && txt.at(pos - 1) != QLatin1Char('\\')) {
-                ++pos;
-                break;
-            }
-        }
-    } else if (c == QLatin1Char('\'')) { // single quotes
-        word += c;
-        ++pos;
-        for ( ; pos < txt.length(); ++pos) {
-            word += txt.at(pos);
-            if (txt.at(pos) == QLatin1Char('\'') && txt.at(pos - 1) != QLatin1Char('\\')) {
-                ++pos;
-                break;
-            }
-        }
-    } else {
-        for ( ; pos < txt.length(); ++pos) {
-            c = txt.at(pos);
-            if (hasPrefix("/>") || c == QLatin1Char('>') || c == QLatin1Char('<')
-                || c == QLatin1Char('=') || c.isSpace()) {
-                break;
-            }
-            word += c;
-        }
+    int idx = wordReg.indexIn(txt, pos);
+    if (idx == pos) {
+        pos += wordReg.matchedLength();
     }
-    return word;
+    return  wordReg.cap(0);
 }
 
 
@@ -501,7 +473,7 @@ QString THtmlParser::childElementsToString(int index) const
     for (int i = 0; i < e.children.count(); ++i) {
         string += elementsToString(e.children[i]);
     }
-    return string;    
+    return string;
 }
 
 
