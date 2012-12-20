@@ -183,6 +183,12 @@ void HtmlParser::tagcheck_data()
     QTest::newRow("9")  << "</html>" << true;
     QTest::newRow("10") << "<hoge value=\"hoge\"/>" << true;
     QTest::newRow("11") << "<hoge value=\"hoge\" />" << true;
+    QTest::newRow("12") << "<h1>" << true;
+    QTest::newRow("13") << "</h1 >" << true;
+    QTest::newRow("14") << "<h3/>" << true;
+    QTest::newRow("15") << "<h4 value=\"hoge\" />" << true;
+    QTest::newRow("16") << "<scr ' + 'i=tr' + '>" << true;
+
     // NG
     QTest::newRow("50") << "<!doctype html>" << false; // sepecial tag, not tag here
     QTest::newRow("51") << "<html '>" << false;
@@ -201,7 +207,8 @@ void HtmlParser::tagcheck_data()
     QTest::newRow("62") << "<'<scr' + 'i=tr' + '></s' //-->" << false;
     QTest::newRow("63") << "</s' //-->" << false;
     QTest::newRow("64") << "<'<scr' + 'i=tr' + '>"  << false;
-    QTest::newRow("65") << "<4html>" << false;
+    QTest::newRow("65") << "<scr' + 'i=tr' + '>"  << false;
+    QTest::newRow("66") << "<scr ' + 'i=tr' >"  << false;
 }
 
 void HtmlParser::tagcheck()
