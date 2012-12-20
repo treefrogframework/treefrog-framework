@@ -31,28 +31,27 @@ QString generateErbPhrase(const QString &str, int echoOption)
 {
     QString s = str;
     s.remove(QRegExp(";+$"));
-    QString res = "<%";
+    QString res = LEFT_DELIM;
     
     if (echoOption == OtmParser::None) {
-        res += ' ';
         res += s;
+        res += RIGHT_DELIM;
     } else {
-        res += '=';
         switch (echoOption) {
         case OtmParser::NormalEcho:
-            res += QLatin1String("= ");
+            res += QLatin1String("echo(");
             break;
             
         case OtmParser::EscapeEcho:
-            res += ' ';
+            res += QLatin1String("eh(");
             break;
             
         case OtmParser::ExportVarEcho:
-            res += QLatin1String("=$ ");
+            res += QLatin1String("techoex(");
             break;
             
         case OtmParser::ExportVarEscapeEcho:
-            res += QLatin1String("$ ");
+            res += QLatin1String("tehex(");
             break;
             
         default:
@@ -60,10 +59,12 @@ QString generateErbPhrase(const QString &str, int echoOption)
             return QString();
             break;
         }
+
         res += s;
+        res += ')';
+        res += RIGHT_DELIM_NO_TRIM;
     }
 
-    res += RIGHT_DELIM;
     return res;
 }
 
