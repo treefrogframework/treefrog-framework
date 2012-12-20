@@ -2,16 +2,17 @@
 ::
 :: TreeFrog Application Startup Batch
 ::
+
 setlocal
 title TreeFrog Application Startup
-set PATH=C:\TreeFrog\0.85.0\bin;C:\Qt\4.8.1\bin;%PATH%
+call C:\TreeFrog\1.1.1\bin\tfenv.bat >nul 2>&1
 
 ::
 :: Run command: treefrog or treefrogd
-::   treefrog   : Run in release mode
-::   treefrogd  : Run in debug mode
+::   treefrog.exe   : Run in release mode
+::   treefrogd.exe  : Run in debug mode
 ::
-set CMD=treefrogd
+set CMD=treefrogd.exe
 
 ::
 :: Database environment: product, test, dev, etc.
