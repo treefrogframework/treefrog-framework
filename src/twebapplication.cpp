@@ -46,6 +46,10 @@ TWebApplication::TWebApplication(int &argc, char **argv)
       codecHttp(0),
       mpm(Invalid)
 {
+#if defined(Q_OS_WIN) && QT_VERSION >= 0x050000
+    installNativeEventFilter(new TNativeEventFilter);
+#endif
+
     // parse command-line args
     webRootAbsolutePath = ".";
     QStringList args = arguments();

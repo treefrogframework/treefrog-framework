@@ -5,6 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QByteArray>
+#include <QDataStream>
 #include <QCryptographicHash>
 #include <TWebApplication>
 #include <TSystemGlobal>

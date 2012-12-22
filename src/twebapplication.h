@@ -65,7 +65,9 @@ public:
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
 
 #if defined(Q_OS_WIN)
+#if QT_VERSION < 0x050000
     virtual bool winEventFilter(MSG *msg, long *result);
+#endif
     void watchConsoleSignal();
     void ignoreConsoleSignal();
 #else
@@ -100,5 +102,16 @@ inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 {
     dbEnvironment = environment;
 }
+
+
+#if QT_VERSION >= 0x050000
+#include <QAbstractNativeEventFilter>
+
+class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter
+{
+public:
+    virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *);
+};
+#endif // QT_VERSION >= 0x050000
 
 #endif // TWEBAPPLICATION_H
