@@ -17,7 +17,14 @@
   \brief The THttpResponse class contains response information for HTTP.
 */
 
+/*!
+  \fn THttpResponse::THttpResponse()
+  Constructor.
+*/
 
+/*!
+  Constructor with the header \a header and the body \a body. 
+*/
 THttpResponse::THttpResponse(const THttpResponseHeader &header, const QByteArray &body)
     : resHeader(header), tmpByteArray(body), bodyDevice(0)
 {
@@ -26,20 +33,26 @@ THttpResponse::THttpResponse(const THttpResponseHeader &header, const QByteArray
     }
 }
 
-
+/*!
+  Destructor.
+*/
 THttpResponse::~THttpResponse()
 {
     if (bodyDevice)
         delete bodyDevice;
 }
 
-
+/*!
+  Returns true if the body is null; otherwise returns false. 
+*/
 bool THttpResponse::isBodyNull() const
 {
     return !bodyDevice;
 }
 
-
+/*!
+  Sets the body to \a body.
+ */
 void THttpResponse::setBody(const QByteArray &body)
 {
     if (bodyDevice)
@@ -49,7 +62,9 @@ void THttpResponse::setBody(const QByteArray &body)
     bodyDevice = (tmpByteArray.isNull()) ? 0 : new QBuffer(&tmpByteArray);
 }
 
-
+/*!
+  Sets the file to read the content from the given \a filePath.
+*/
 void THttpResponse::setBodyFile(const QString &filePath)
 {
     if (bodyDevice) {
@@ -73,3 +88,24 @@ void THttpResponse::setBodyFile(const QString &filePath)
     // Error
     delete fp;
 }
+
+
+/*!
+  \fn THttpResponseHeader &THttpResponse::header()
+  Return the HTTP header.
+*/
+
+/*!
+  \fn const THttpResponseHeader &THttpResponse::header() const
+  Return the HTTP header.
+*/
+
+/*!
+  \fn QIODevice *THttpResponse::bodyIODevice()
+  Returns the IO device of the body currently set.
+*/
+
+/*!
+  \fn qint64 THttpResponse::bodyLength() const
+  Returns the number of bytes of the body.
+*/
