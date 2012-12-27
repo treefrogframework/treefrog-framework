@@ -74,22 +74,40 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, reasonPhrase,
   \brief The THttpUtility class contains utility functions.
 */
 
-
-QString THttpUtility::fromUrlEncoding(const QByteArray &input)
+/*!
+  Returns a decoded copy of \a enc. \a enc is first decoded from URL
+  encoding, then converted from UTF-8 to unicode.
+  @sa toUrlEncoding(const QString &, const QByteArray &)
+*/
+QString THttpUtility::fromUrlEncoding(const QByteArray &enc)
 {
-    QByteArray d = input;
+    QByteArray d = enc;
     d = QByteArray::fromPercentEncoding(d.replace("+", "%20"));
     return QString::fromUtf8(d.constData(), d.length());
 }
 
-
-QByteArray THttpUtility::toUrlEncoding(const QString &string, const QByteArray &exclude)
+/*!
+  Returns an encoded copy of \a input. \a input is first converted to UTF-8,
+  and all ASCII-characters that are not in the unreserved group are URL
+  encoded.
+  @sa fromUrlEncoding(const QByteArray &)
+*/
+QByteArray THttpUtility::toUrlEncoding(const QString &input, const QByteArray &exclude)
 {
-    return string.toUtf8().toPercentEncoding(exclude, "~").replace("%20", "+");
+    return input.toUtf8().toPercentEncoding(exclude, "~").replace("%20", "+");
 }
 
-
-QString THttpUtility::htmlEscape(const QString &str, Tf::EscapeFlag flag)
+/*!
+  Returns a converted copy of \a input. All applicable characters in \a input
+  are converted to HTML entities. The conversions performed are:
+  - & (ampersand) becomes &amp;amp;.
+  - " (double quote) becomes &amp;quot; when Tf::Compatible or Tf::Quotes
+    is set.
+  - ' (single quote) becomes &amp;#039; only when Tf::Quotes is set.
+  - < (less than) becomes &amp;lt;.
+  - > (greater than) becomes &amp;gt;.
+*/
+QString THttpUtility::htmlEscape(const QString &input, Tf::EscapeFlag flag)
 {
     const QLatin1Char amp('&');
     const QLatin1Char lt('<');
@@ -103,99 +121,126 @@ QString THttpUtility::htmlEscape(const QString &str, Tf::EscapeFlag flag)
     const QString esquot("&#039;");
 
     QString escaped;
-    escaped.reserve(int(str.length() * 1.1));
-    for (int i = 0; i < str.length(); ++i) {
-        if (str.at(i) == amp) {
+    escaped.reserve(int(input.length() * 1.1));
+    for (int i = 0; i < input.length(); ++i) {
+        if (input.at(i) == amp) {
             escaped += eamp;
-        } else if (str.at(i) == lt) {
+        } else if (input.at(i) == lt) {
             escaped += elt;
-        } else if (str.at(i) == gt) {
+        } else if (input.at(i) == gt) {
             escaped += egt;
-        } else if (str.at(i) == dquot) {
-            escaped += (flag == Tf::Compatible || flag == Tf::Quotes) ? edquot : str.at(i);
-        } else if (str.at(i) == squot) {
-            escaped += (flag == Tf::Quotes) ? esquot : str.at(i);
+        } else if (input.at(i) == dquot) {
+            escaped += (flag == Tf::Compatible || flag == Tf::Quotes) ? edquot : input.at(i);
+        } else if (input.at(i) == squot) {
+            escaped += (flag == Tf::Quotes) ? esquot : input.at(i);
         } else {
-            escaped += str.at(i);
+            escaped += input.at(i);
         }
     }
     return escaped;
 }
 
-
+/*!
+  This function overloads htmlEscape(const QString &, Tf::EscapeFlag).
+*/
 QString THttpUtility::htmlEscape(int n, Tf::EscapeFlag)
 {
     return htmlEscape(QString::number(n));
 }
 
-
-QString THttpUtility::htmlEscape(const char *str, Tf::EscapeFlag flag)
+/*!
+  This function overloads htmlEscape(const QString &, Tf::EscapeFlag).
+*/
+QString THttpUtility::htmlEscape(const char *input, Tf::EscapeFlag flag)
 {
-    return htmlEscape(QString(str), flag);
+    return htmlEscape(QString(input), flag);
 }
 
-
-QString THttpUtility::htmlEscape(const QByteArray &str, Tf::EscapeFlag flag)
+/*!
+  This function overloads htmlEscape(const QString &, Tf::EscapeFlag).
+*/
+QString THttpUtility::htmlEscape(const QByteArray &input, Tf::EscapeFlag flag)
 {
-    return htmlEscape(QString(str), flag);
+    return htmlEscape(QString(input), flag);
 }
 
-
-QString THttpUtility::htmlEscape(const QVariant &var, Tf::EscapeFlag flag)
+/*!
+  This function overloads htmlEscape(const QString &, Tf::EscapeFlag).
+*/
+QString THttpUtility::htmlEscape(const QVariant &input, Tf::EscapeFlag flag)
 {
-    return htmlEscape(var.toString(), flag);
+    return htmlEscape(input.toString(), flag);
 }
 
-
-QString THttpUtility::jsonEscape(const QString &str)
+/*!
+  Returns a converted copy of \a input. All applicable characters in \a input
+  are converted to JSON representation. The conversions
+  performed are:
+  - & (ampersand) becomes \\u0026.
+  - < (less than) becomes \\u003C.
+  - > (greater than) becomes \\u003E.
+*/
+QString THttpUtility::jsonEscape(const QString &input)
 {
     const QLatin1Char amp('&');
     const QLatin1Char lt('<');
     const QLatin1Char gt('>');
 
     QString escaped;
-    escaped.reserve(int(str.length() * 1.1));
-    for (int i = 0; i < str.length(); ++i) {
-        if (str.at(i) == amp) {
+    escaped.reserve(int(input.length() * 1.1));
+    for (int i = 0; i < input.length(); ++i) {
+        if (input.at(i) == amp) {
             escaped += QLatin1String("\\u0026");
-        } else if (str.at(i) == lt) {
+        } else if (input.at(i) == lt) {
             escaped += QLatin1String("\\u003C");
-        } else if (str.at(i) == gt) {
+        } else if (input.at(i) == gt) {
             escaped += QLatin1String("\\u003E");
         } else {
-            escaped += str.at(i);
+            escaped += input.at(i);
         }
     }
     return escaped;
 }
 
-
-QString THttpUtility::jsonEscape(const char *str)
+/*!
+  This function overloads jsonEscape(const QString &).
+*/
+QString THttpUtility::jsonEscape(const char *input)
 {
-    return jsonEscape(QString(str));
+    return jsonEscape(QString(input));
 }
 
-
-QString THttpUtility::jsonEscape(const QByteArray &str)
+/*!
+  This function overloads jsonEscape(const QString &).
+*/
+QString THttpUtility::jsonEscape(const QByteArray &input)
 {
-    return jsonEscape(QString(str));
+    return jsonEscape(QString(input));
 }
 
-
-QString THttpUtility::jsonEscape(const QVariant &var)
+/*!
+  This function overloads jsonEscape(const QString &).
+*/
+QString THttpUtility::jsonEscape(const QVariant &input)
 {
-    return jsonEscape(var.toString());
+    return jsonEscape(input.toString());
 }
 
-
-QByteArray THttpUtility::toMimeEncoded(const QString &text, const QByteArray &encoding)
+/*!
+  This function overloads toMimeEncoded(const QString &, QTextCodec *).
+  @sa fromMimeEncoded(const QByteArray &)
+*/
+QByteArray THttpUtility::toMimeEncoded(const QString &input, const QByteArray &encoding)
 {
     QTextCodec *codec = QTextCodec::codecForName(encoding);
-    return toMimeEncoded(text, codec);
+    return toMimeEncoded(input, codec);
 }
 
-
-QByteArray THttpUtility::toMimeEncoded(const QString &text, QTextCodec *codec)
+/*!
+  Returns a byte array copy of \a input, encoded as MIME-Base64.
+  @sa fromMimeEncoded(const QByteArray &)
+*/
+QByteArray THttpUtility::toMimeEncoded(const QString &input, QTextCodec *codec)
 {
     QByteArray encoded;
     if (!codec)
@@ -204,36 +249,39 @@ QByteArray THttpUtility::toMimeEncoded(const QString &text, QTextCodec *codec)
     encoded += "=?";
     encoded += codec->name();
     encoded += "?B?";
-    encoded += codec->fromUnicode(text).toBase64();
+    encoded += codec->fromUnicode(input).toBase64();
     encoded += "?=";
     return encoded;
 }
 
-
-QString THttpUtility::fromMimeEncoded(const QByteArray &in)
+/*!
+  Returns a decoded copy of the MIME-Base64 array \a mime.
+  @sa toMimeEncoded(const QString &, QTextCodec *)
+*/
+QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
 {
     QString text;
     
-    if (!in.startsWith("=?"))
+    if (!mime.startsWith("=?"))
         return text;
 
     int i = 2;
-    int j = in.indexOf('?', i);
+    int j = mime.indexOf('?', i);
     if (j > i) {
-        QByteArray encoding = in.mid(i, j - i);
+        QByteArray encoding = mime.mid(i, j - i);
         QTextCodec *codec = QTextCodec::codecForName(encoding);
         if (!codec)
             return text;
         
         i = ++j;
-        int j = in.indexOf('?', i);
+        int j = mime.indexOf('?', i);
         if (j > i) {
-            QByteArray enc = in.mid(i, j - i);
+            QByteArray enc = mime.mid(i, j - i);
             i = ++j;
-            j = in.indexOf("?=", i);
+            j = mime.indexOf("?=", i);
             if (j > i) {
                 if (enc == "B" || enc == "b") {
-                    QByteArray base = in.mid(i, i - j);
+                    QByteArray base = mime.mid(i, i - j);
                     text = codec->toUnicode(QByteArray::fromBase64(base));
                 } else if (enc == "Q" || enc == "q") {
                     // no implement..
@@ -246,13 +294,18 @@ QString THttpUtility::fromMimeEncoded(const QByteArray &in)
     return text;
 }
 
-
+/*!
+  Returns a reason phrase of the HTTP status code \a statusCode.
+*/
 QByteArray THttpUtility::getResponseReasonPhrase(int statusCode)
 {
     return reasonPhrase()->value(statusCode);
 }
 
-
+/*!
+  Returns the numeric timezone "[+|-]hhmm" of the current computer
+  as a bytes array.
+*/
 QByteArray THttpUtility::timeZone()
 {
     long offset = 0;  // minutes
@@ -284,7 +337,10 @@ QByteArray THttpUtility::timeZone()
     return tz;
 }
 
-
+/*!
+  Returns a byte array for Date field of an HTTP header, containing
+  the datetime equivalent of \a localTime.
+*/
 QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &localTime)
 {
     QByteArray d = QLocale(QLocale::C).toString(localTime, HTTP_DATE_TIME_FORMAT).toLatin1();
@@ -293,7 +349,10 @@ QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &localTime)
     return d;
 }
 
-
+/*!
+  Parses the HTTP datetime array given in \a localTime and returns
+  the datetime.
+*/
 QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
 {
     QByteArray tz = localTime.mid(localTime.length() - 5).trimmed();
@@ -303,7 +362,10 @@ QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
     return QLocale(QLocale::C).toDateTime(localTime.left(localTime.lastIndexOf(' ')), HTTP_DATE_TIME_FORMAT);
 }
 
-
+/*!
+  Returns a byte array for Date field of an HTTP header, containing
+  the UTC datetime equivalent of \a utc.
+*/
 QByteArray THttpUtility::toHttpDateTimeUTCString(const QDateTime &utc)
 {
     QByteArray d = QLocale(QLocale::C).toString(utc, HTTP_DATE_TIME_FORMAT).toLatin1();
@@ -311,7 +373,10 @@ QByteArray THttpUtility::toHttpDateTimeUTCString(const QDateTime &utc)
     return d;
 }
 
-
+/*!
+  Parses the UTC datetime array given in \a utc and returns
+  the datetime.
+*/
 QDateTime THttpUtility::fromHttpDateTimeUTCString(const QByteArray &utc)
 {
     if (!utc.endsWith(" +0000") && !utc.endsWith(" GMT")) {

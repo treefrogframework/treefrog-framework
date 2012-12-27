@@ -13,20 +13,20 @@ class QTextCodec;
 class T_CORE_EXPORT THttpUtility
 {
 public:
-    static QString fromUrlEncoding(const QByteArray &input);
-    static QByteArray toUrlEncoding(const QString &string, const QByteArray &exclude = "-._");
-    static QString htmlEscape(const QString &str, Tf::EscapeFlag flag = Tf::Quotes);
+    static QString fromUrlEncoding(const QByteArray &enc);
+    static QByteArray toUrlEncoding(const QString &input, const QByteArray &exclude = "-._");
+    static QString htmlEscape(const QString &input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(int n, Tf::EscapeFlag flag = Tf::Quotes);
-    static QString htmlEscape(const char *str, Tf::EscapeFlag flag = Tf::Quotes);
-    static QString htmlEscape(const QByteArray &str, Tf::EscapeFlag flag = Tf::Quotes);
-    static QString htmlEscape(const QVariant &var, Tf::EscapeFlag flag = Tf::Quotes);
-    static QString jsonEscape(const QString &str);
-    static QString jsonEscape(const char *str);
-    static QString jsonEscape(const QByteArray &str);
-    static QString jsonEscape(const QVariant &var);
-    static QByteArray toMimeEncoded(const QString &text, const QByteArray &encoding = "UTF-8");
-    static QByteArray toMimeEncoded(const QString &text, QTextCodec *codec);
-    static QString fromMimeEncoded(const QByteArray &in);
+    static QString htmlEscape(const char *input, Tf::EscapeFlag flag = Tf::Quotes);
+    static QString htmlEscape(const QByteArray &input, Tf::EscapeFlag flag = Tf::Quotes);
+    static QString htmlEscape(const QVariant &input, Tf::EscapeFlag flag = Tf::Quotes);
+    static QString jsonEscape(const QString &input);
+    static QString jsonEscape(const char *input);
+    static QString jsonEscape(const QByteArray &input);
+    static QString jsonEscape(const QVariant &input);
+    static QByteArray toMimeEncoded(const QString &input, const QByteArray &encoding = "UTF-8");
+    static QByteArray toMimeEncoded(const QString &input, QTextCodec *codec);
+    static QString fromMimeEncoded(const QByteArray &mime);
     static QByteArray getResponseReasonPhrase(int statusCode);
     static QString trimmedQuotes(const QString &string);
     static QByteArray timeZone();
