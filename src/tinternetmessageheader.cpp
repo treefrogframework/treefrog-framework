@@ -20,24 +20,32 @@
   \brief The TInternetMessageHeader class contains internet message headers.
 */
 
+/*!
+  \fn TInternetMessageHeader::TInternetMessageHeader()
+  Constructs an empty Internet message header.
+*/
+
+/*!
+  Constructs an Internet message header by parsing \a str.
+*/
 TInternetMessageHeader::TInternetMessageHeader(const QByteArray &str)
 {
     parse(str);
 }
 
-
+/*!
+  Returns true if the Internet message header has an entry with the given
+  \a key; otherwise returns false.
+*/
 bool TInternetMessageHeader::hasRawHeader(const QByteArray &key) const
 {
-    for (QListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        const RawHeaderPair &p = i.next();
-        if (qstricmp(p.first.constData(), key.constData()) == 0) {
-            return true;
-        }
-    }
-    return false;
+    return !rawHeader(key).isNull();
 }
 
-
+/*!
+  Returns the raw value for the entry with the given \a key. If no entry
+  has this key, an empty byte array is returned.
+*/
 QByteArray TInternetMessageHeader::rawHeader(const QByteArray &key) const
 {
     for (QListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
@@ -49,7 +57,9 @@ QByteArray TInternetMessageHeader::rawHeader(const QByteArray &key) const
     return QByteArray();
 }
 
-
+/*!
+  Returns a list of all raw headers.
+*/
 QList<QByteArray> TInternetMessageHeader::rawHeaderList() const
 {
     QList<QByteArray> list;
@@ -59,7 +69,10 @@ QList<QByteArray> TInternetMessageHeader::rawHeaderList() const
     return list;
 }
 
-
+/*!
+  Sets the raw header \a key to be of value \a value.
+  If \a key was previously set, it is overridden.
+*/
 void TInternetMessageHeader::setRawHeader(const QByteArray &key, const QByteArray &value)
 {
     if (!hasRawHeader(key)) {
@@ -81,7 +94,10 @@ void TInternetMessageHeader::setRawHeader(const QByteArray &key, const QByteArra
     }
 }
 
-
+/*!
+  Sets the raw header \a key to be of value \a value.
+  If \a key was previously set, it is added multiply.
+*/
 void TInternetMessageHeader::addRawHeader(const QByteArray &key, const QByteArray &value)
 {
     if (key.isEmpty() || value.isNull())
@@ -90,55 +106,75 @@ void TInternetMessageHeader::addRawHeader(const QByteArray &key, const QByteArra
     headerPairList << RawHeaderPair(key, value);
 }
 
-
+/*!
+  Returns the value of the header field content-type.
+*/
 QByteArray TInternetMessageHeader::contentType() const
 {
     return rawHeader("Content-Type");
 }
 
-
+/*!
+  Sets the value of the header field content-type to \a type.
+*/
 void TInternetMessageHeader::setContentType(const QByteArray &type)
 {
     setRawHeader("Content-Type", type);
 }
 
-
+/*!
+  Returns the value of the header field content-length.
+*/
 uint TInternetMessageHeader::contentLength() const
 {
     return rawHeader("Content-Length").toUInt();
 }
 
-
+/*!
+  Sets the value of the header field content-length to \a len.
+*/
 void TInternetMessageHeader::setContentLength(int len)
 {
     setRawHeader("Content-Length", QByteArray::number(len));
 }
 
-
+/*!
+  Returns the value of the header field date.
+*/
 QByteArray TInternetMessageHeader::date() const
 {
     return rawHeader("Date");
 }
 
-
+/*!
+  Sets the value of the header field date to \a date.
+*/
 void TInternetMessageHeader::setDate(const QByteArray &date)
 {
-    setRawHeader("Date", date); 
+    setRawHeader("Date", date);
 }
 
-
+/*!
+  Sets the value of the header field date to \a localTime
+  as the local time on the computer.
+*/
 void TInternetMessageHeader::setDate(const QDateTime &localTime)
 {
     setRawHeader("Date", THttpUtility::toHttpDateTimeString(localTime));
 }
 
-
+/*!
+  Sets the value of the header field date to \a utc as Coordinated
+  Universal Time.
+*/
 void TInternetMessageHeader::setDateUTC(const QDateTime &utc)
 {
     setRawHeader("Date", THttpUtility::toHttpDateTimeUTCString(utc));
 }
 
-
+/*!
+  Returns a byte array representation of the Internet message header.
+*/
 QByteArray TInternetMessageHeader::toByteArray() const
 {
     QByteArray res;
@@ -154,7 +190,9 @@ QByteArray TInternetMessageHeader::toByteArray() const
     return res;
 }
 
-
+/*!
+  Parses the \a header. This function is for internal use only.
+*/
 void TInternetMessageHeader::parse(const QByteArray &header)
 {
     int i = 0;
@@ -185,7 +223,9 @@ void TInternetMessageHeader::parse(const QByteArray &header)
     }
 }
 
-
+/*!
+  Removes all the entries with the key \a key from the HTTP header.
+*/
 void TInternetMessageHeader::removeAllRawHeaders(const QByteArray &key)
 {
     for (QMutableListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
@@ -196,13 +236,32 @@ void TInternetMessageHeader::removeAllRawHeaders(const QByteArray &key)
     }
 }
 
+/*!
+  Removes the entries with the key \a key from the HTTP header.
+*/
+void TInternetMessageHeader::removeRawHeader(const QByteArray &key)
+{
+    for (QMutableListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
+        RawHeaderPair &p = i.next();
+        if (qstricmp(p.first.constData(), key.constData()) == 0) {
+            i.remove();
+            break;
+        }
+    }
+}
 
+/*!
+  Returns true if the Internet message header is empty; otherwise
+  returns false.
+ */
 bool TInternetMessageHeader::isEmpty() const
 {
     return headerPairList.isEmpty();
 }
 
-
+/*!
+  Removes all the entries from the Internet message header.
+*/
 void TInternetMessageHeader::clear()
 {
     headerPairList.clear();

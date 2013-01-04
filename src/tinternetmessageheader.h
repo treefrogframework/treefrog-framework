@@ -21,6 +21,7 @@ public:
     void setRawHeader(const QByteArray &key, const QByteArray &value);
     void addRawHeader(const QByteArray &key, const QByteArray &value);
     void removeAllRawHeaders(const QByteArray &key);
+    void removeRawHeader(const QByteArray &key);
     bool isEmpty() const;
     void clear();
 
