@@ -13,7 +13,7 @@
 */
 
 /*!
-  Constructor an HTTP header by parsing \a str.
+  Constructs an HTTP header by parsing \a str.
 */
 THttpHeader::THttpHeader(const QByteArray &str)
 {
@@ -58,7 +58,7 @@ THttpRequestHeader::THttpRequestHeader()
 { }
 
 /*!
-  Constructor an HTTP request header by parsing \a str.
+  Constructs an HTTP request header by parsing \a str.
 */
 THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
 {
@@ -136,7 +136,7 @@ THttpResponseHeader::THttpResponseHeader()
 { }
 
 /*!
-  Constructor an HTTP response header by parsing \a str.
+  Constructs an HTTP response header by parsing \a str.
 */
 THttpResponseHeader::THttpResponseHeader(const QByteArray &str)
     : statCode(0), majVer(1), minVer(1)
