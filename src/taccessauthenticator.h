@@ -15,8 +15,10 @@ public:
     TAccessAuthenticator();
     virtual ~TAccessAuthenticator() { }
 
-    void setAllowAll(bool allow) { allowAll = allow; }
-    void setDenyAll(bool deny) { allowAll = !deny; }
+    void setAllowAll(bool allow) { allowDefault = allow; } // Obsolete
+    void setDenyAll(bool deny) { allowDefault = !deny; } // Obsolete
+    void setAllowDefault(bool allow = true) { allowDefault = allow; }
+    void setDenyDefault(bool deny = true) { allowDefault = !deny; }
     void setAllowGroup(const QString &groupKey, const QString &action);
     void setAllowGroup(const QString &groupKey, const QStringList &actions);
     void setDenyGroup(const QString &groupKey, const QString &action);
@@ -48,7 +50,7 @@ protected:
         bool allow;
     };
 
-    bool allowAll;
+    bool allowDefault;
     QList<AccessRule> accessRules;
 };
 

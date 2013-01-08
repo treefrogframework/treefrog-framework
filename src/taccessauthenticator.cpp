@@ -22,7 +22,7 @@
   Constructor.
 */
 TAccessAuthenticator::TAccessAuthenticator()
-    : allowAll(true)
+    : allowDefault(true)
 { }
 
 /*!
@@ -109,7 +109,7 @@ void TAccessAuthenticator::addRules(int type, const QString &key, const QStringL
 */
 bool TAccessAuthenticator::authenticate(const TAbstractUser *user) const
 {
-    bool ret = allowAll;
+    bool ret = allowDefault;
     
     if (user) {
         const TActionController *controller = TActionContext::current()->currentController();
@@ -135,19 +135,19 @@ bool TAccessAuthenticator::authenticate(const TAbstractUser *user) const
 void TAccessAuthenticator::clear()
 {
     accessRules.clear();
-    allowAll = true;
+    allowDefault = true;
 }
 
 
 /*!
-  \fn void TAccessAuthenticator::setAllowAll(bool allow)
+  \fn void TAccessAuthenticator::setAllowDefault(bool allow)
   Sets the default rule to allow all users to access to all actions
   if \a allow is true; otherwise sets to deny any user to access
   to any action. The default rule is true.
 */
 
 /*!
-  \fn void TAccessAuthenticator::setDenyAll(bool deny)
+  \fn void TAccessAuthenticator::setDenyDefault(bool deny)
   Sets the default rule to deny any user to access to any action
   if \a deny is true; otherwise sets to allow all users to access
   to all actions.
