@@ -17,11 +17,11 @@ public:
     friend QDataStream &operator<<(QDataStream &out, const TLog &log);
     friend QDataStream &operator>>(QDataStream &in, TLog &log);
     
-    QDateTime timestamp;
-    int priority;
-    qint64 pid;
-    qulonglong threadId;
-    QByteArray message;
+    QDateTime timestamp;  //!< Timestamp.
+    int priority;         //!< Priority. @sa enum TLogger::Priority
+    qint64 pid;           //!< PID.
+    qulonglong threadId;  //!< Thread ID.
+    QByteArray message;   //!< Message.
 };
 
 #endif // TLOG_H
