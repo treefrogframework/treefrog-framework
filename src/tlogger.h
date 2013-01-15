@@ -13,12 +13,12 @@ class T_CORE_EXPORT TLogger
 {
 public:
     enum Priority {
-        Fatal = 0,
-        Error,
-        Warn,
-        Info,
-        Debug,
-        Trace,
+        Fatal = 0, //!< Severe error events that will presumably lead the app to abort.
+        Error,  //!< Error events that might still allow the app to continue running.
+        Warn,   //!< Potentially harmful situations.
+        Info,   //!< Informational messages that highlight the progress of the app. 
+        Debug,  //!< Informational events that are most useful to debug the app.
+        Trace,  //!< Finer-grained informational events than the DEBUG.
     };
 
     TLogger();
