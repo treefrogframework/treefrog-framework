@@ -592,6 +592,19 @@ void TActionController::exportAllFlashVariants()
 }
 
 /*!
+  Authenticates the access of the user \a user. Returns true if the user
+  access is allowed by rule; otherwise returns false. 
+  @sa setAccessRules(), TAccessAuthenticator::authenticate()
+*/
+bool TActionController::authenticateAccess(const TAbstractUser *user)
+{
+    if (TAccessAuthenticator::accessRules.isEmpty()) {
+        setAccessRules();
+    }
+    return TAccessAuthenticator::authenticate(user);
+}
+
+/*!
   \~english
   Logs the user \a user in to the system.
   
@@ -867,4 +880,11 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
   \fn void TActionController::setContentType(const QByteArray &type)
   
   Sets the content type specified by \a type for a response message.
+*/
+
+/*!
+ \fn virtual void TActionController::setAccessRules()
+ 
+ Sets rules of access to this controller.
+ @sa authenticateAccess(), TAccessAuthenticator
 */
