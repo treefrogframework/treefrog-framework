@@ -617,16 +617,16 @@ void TActionController::exportAllFlashVariants()
 }
 
 /*!
-  Authenticates the access of the user \a user. Returns true if the user
+  Validates the access of the user \a user. Returns true if the user
   access is allowed by rule; otherwise returns false. 
-  @sa setAccessRules(), TAccessAuthenticator::authenticate()
+  @sa setAccessRules(), TAccessValidator::validate()
 */
-bool TActionController::authenticateAccess(const TAbstractUser *user)
+bool TActionController::validateAccess(const TAbstractUser *user)
 {
-    if (TAccessAuthenticator::accessRules.isEmpty()) {
+    if (TAccessValidator::accessRules.isEmpty()) {
         setAccessRules();
     }
-    return TAccessAuthenticator::authenticate(user);
+    return TAccessValidator::validate(user);
 }
 
 /*!
@@ -911,5 +911,5 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
  \fn virtual void TActionController::setAccessRules()
  
  Sets rules of access to this controller.
- @sa authenticateAccess(), TAccessAuthenticator
+ @sa validateAccess(), TAccessValidator
 */

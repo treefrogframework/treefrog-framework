@@ -195,8 +195,8 @@ HEADERS += tabstractuser.h
 SOURCES += tabstractuser.cpp
 HEADERS += tformvalidator.h
 SOURCES += tformvalidator.cpp
-HEADERS += taccessauthenticator.h
-SOURCES += taccessauthenticator.cpp
+HEADERS += taccessvalidator.h
+SOURCES += taccessvalidator.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -218,7 +218,7 @@ HEADERS += TSessionStore \
            TJavaScriptObject \
            TWebApplication \
            TApplicationServer \
-           TAccessAuthenticator \
+           TAccessValidator \
            TActionContext \
            TActionThread \
            TActionForkProcess \

@@ -1,5 +1,5 @@
-#ifndef TACCESSAUTHENTICATOR_H
-#define TACCESSAUTHENTICATOR_H
+#ifndef TACCESSVALIDATOR_H
+#define TACCESSVALIDATOR_H
 
 #include <QString>
 #include <QStringList>
@@ -9,11 +9,11 @@
 class TAbstractUser;
 
 
-class T_CORE_EXPORT TAccessAuthenticator
+class T_CORE_EXPORT TAccessValidator
 {
 public:
-    TAccessAuthenticator();
-    virtual ~TAccessAuthenticator() { }
+    TAccessValidator();
+    virtual ~TAccessValidator() { }
 
     void setAllowAll(bool allow) { allowDefault = allow; } // Obsolete
     void setDenyAll(bool deny) { allowDefault = !deny; } // Obsolete
@@ -27,7 +27,7 @@ public:
     void setAllowUser(const QString &identityKey, const QStringList &actions);
     void setDenyUser(const QString &identityKey, const QString &action);
     void setDenyUser(const QString &identityKey, const QStringList &actions);
-    virtual bool authenticate(const TAbstractUser *user) const;
+    virtual bool validate(const TAbstractUser *user) const;
     void clear();
     
 protected:
@@ -54,4 +54,4 @@ protected:
     QList<AccessRule> accessRules;
 };
 
-#endif // TACCESSAUTHENTICATOR
+#endif // TACCESSVALIDATOR_H

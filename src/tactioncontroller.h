@@ -11,14 +11,14 @@
 #include <THttpResponse>
 #include <TSession>
 #include <TCookieJar>
-#include <TAccessAuthenticator>
+#include <TAccessValidator>
 
 class TActionView;
 class TAbstractUser;
 class TFormValidator;
 
 
-class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessAuthenticator
+class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator
 {
     Q_OBJECT
 public:
@@ -71,7 +71,7 @@ protected:
     bool sendData(const QByteArray &data, const QByteArray &contentType, const QString &name = QString());
     void rollbackTransaction() { rollback = true; }
     void setAutoRemove(const QString &filePath);
-    bool authenticateAccess(const TAbstractUser *user);
+    bool validateAccess(const TAbstractUser *user);
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
