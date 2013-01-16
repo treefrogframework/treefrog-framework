@@ -9,8 +9,10 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMetaMethod>
+#include <QMetaType>
 #include <QTextCodec>
 #include <QCryptographicHash>
+#include <QMutexLocker>
 #include <TActionController>
 #include <TWebApplication>
 #include <TDispatcher>
@@ -241,6 +243,29 @@ void TActionController::setCsrfProtectionInto(TSession &session)
         QString key = Tf::app()->appSettings().value(CSRF_PROTECTION_KEY).toString();
         session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
     }
+}
+
+/*!
+  Returns the list of all available controllers.
+*/
+QStringList TActionController::availableControllers()
+{
+    static QStringList controllers;
+    static QMutex mutex;
+    QMutexLocker lock(&mutex);
+
+    if (controllers.isEmpty()) {
+        for (int i = QMetaType::User; ; ++i) {
+            const char *name = QMetaType::typeName(i);
+            if (!name)
+                break;
+            
+            QString c(name);
+            if (c.endsWith("controller"))
+                controllers << c;
+        }
+    }
+    return controllers;
 }
 
 /*!

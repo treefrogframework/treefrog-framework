@@ -144,7 +144,7 @@ namespace Tf
 }
 
 /*!
-  The TCheckChange class is is for internal use only.
+  The TCheckChange class is for internal use only.
 */
 template <class T>
 class T_CORE_EXPORT TCheckChange

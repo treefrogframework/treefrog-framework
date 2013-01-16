@@ -42,6 +42,7 @@ public:
     virtual bool isUserLoggedIn() const;
 
     static void setCsrfProtectionInto(TSession &session);
+    static QStringList availableControllers();
 
 protected:
     virtual bool preFilter() { return true; }
