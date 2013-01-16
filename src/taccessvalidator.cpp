@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TAccessAuthenticator>
+#include <TAccessValidator>
 #include <TAbstractUser>
 #include <TActionContext>
 #include <TActionController>
@@ -13,22 +13,22 @@
 
 
 /*!
-  \class TAccessAuthenticator
-  The TAccessAuthenticator class provides authentication of user access.
+  \class TAccessValidator
+  The TAccessValidator class provides validation of user access.
   \sa TAbstractUser class
 */
 
 /*!
   Constructor.
 */
-TAccessAuthenticator::TAccessAuthenticator()
+TAccessValidator::TAccessValidator()
     : allowDefault(true)
 { }
 
 /*!
   Sets to allow a group with \a groupKey to access to the action \a action.
 */
-void TAccessAuthenticator::setAllowGroup(const QString &groupKey, const QString &action)
+void TAccessValidator::setAllowGroup(const QString &groupKey, const QString &action)
 {
     accessRules << AccessRule(AccessRule::Group, groupKey, action, true);
 }
@@ -36,7 +36,7 @@ void TAccessAuthenticator::setAllowGroup(const QString &groupKey, const QString 
 /*!
   Sets to allow a group with \a groupKey to access to the actions \a actions.
 */
-void TAccessAuthenticator::setAllowGroup(const QString &groupKey, const QStringList &actions)
+void TAccessValidator::setAllowGroup(const QString &groupKey, const QStringList &actions)
 {
     addRules(AccessRule::Group, groupKey, actions, true);
 }
@@ -44,7 +44,7 @@ void TAccessAuthenticator::setAllowGroup(const QString &groupKey, const QStringL
 /*!
   Sets to deny a group with \a groupKey to access to the action \a action.
 */
-void TAccessAuthenticator::setDenyGroup(const QString &groupKey, const QString &action)
+void TAccessValidator::setDenyGroup(const QString &groupKey, const QString &action)
 {
     accessRules << AccessRule(AccessRule::Group, groupKey, action, false);
 }
@@ -52,7 +52,7 @@ void TAccessAuthenticator::setDenyGroup(const QString &groupKey, const QString &
 /*!
   Sets to deny a group with \a groupKey to access to the actions \a actions.
 */
-void TAccessAuthenticator::setDenyGroup(const QString &groupKey, const QStringList &actions)
+void TAccessValidator::setDenyGroup(const QString &groupKey, const QStringList &actions)
 {
     addRules(AccessRule::Group, groupKey, actions, false);
 }
@@ -61,7 +61,7 @@ void TAccessAuthenticator::setDenyGroup(const QString &groupKey, const QStringLi
   Sets to allow a user with the identity \a identityKey to access to
   the action \a action.
 */
-void TAccessAuthenticator::setAllowUser(const QString &identityKey, const QString &action)
+void TAccessValidator::setAllowUser(const QString &identityKey, const QString &action)
 {
     accessRules << AccessRule(AccessRule::User, identityKey, action, true);
 }
@@ -70,7 +70,7 @@ void TAccessAuthenticator::setAllowUser(const QString &identityKey, const QStrin
   Sets to allow a user with the identity \a identityKey to access to
   the actions \a actions.
 */
-void TAccessAuthenticator::setAllowUser(const QString &identityKey, const QStringList &actions)
+void TAccessValidator::setAllowUser(const QString &identityKey, const QStringList &actions)
 {
     addRules(AccessRule::User, identityKey, actions, true);
 }
@@ -79,7 +79,7 @@ void TAccessAuthenticator::setAllowUser(const QString &identityKey, const QStrin
   Sets to deny a user with the identity \a identityKey to access to
   the action \a action.
 */
-void TAccessAuthenticator::setDenyUser(const QString &identityKey, const QString &action)
+void TAccessValidator::setDenyUser(const QString &identityKey, const QString &action)
 {
     accessRules << AccessRule(AccessRule::User, identityKey, action, false);
 }
@@ -88,7 +88,7 @@ void TAccessAuthenticator::setDenyUser(const QString &identityKey, const QString
   Sets to deny a user with the identity \a identityKey to access to
   the actions \a actions.
 */
-void TAccessAuthenticator::setDenyUser(const QString &identityKey, const QStringList &actions)
+void TAccessValidator::setDenyUser(const QString &identityKey, const QStringList &actions)
 {
     addRules(AccessRule::User, identityKey, actions, false);
 }
@@ -96,7 +96,7 @@ void TAccessAuthenticator::setDenyUser(const QString &identityKey, const QString
 /*!
   Added a access rule to the list.
 */
-void TAccessAuthenticator::addRules(int type, const QString &key, const QStringList &actions, bool allow)
+void TAccessValidator::addRules(int type, const QString &key, const QStringList &actions, bool allow)
 {
     for (QListIterator<QString> it(actions); it.hasNext(); ) {
         accessRules << AccessRule(type, key, it.next(), allow);
@@ -107,7 +107,7 @@ void TAccessAuthenticator::addRules(int type, const QString &key, const QStringL
   Returns true if the user \a user is allowed to access to the requested
   action; otherwise returns false.
 */
-bool TAccessAuthenticator::authenticate(const TAbstractUser *user) const
+bool TAccessValidator::validate(const TAbstractUser *user) const
 {
     bool ret = allowDefault;
     
@@ -132,7 +132,7 @@ bool TAccessAuthenticator::authenticate(const TAbstractUser *user) const
 /*!
   Removes all access rules from the list.
 */
-void TAccessAuthenticator::clear()
+void TAccessValidator::clear()
 {
     accessRules.clear();
     allowDefault = true;
@@ -140,20 +140,20 @@ void TAccessAuthenticator::clear()
 
 
 /*!
-  \fn void TAccessAuthenticator::setAllowDefault(bool allow)
+  \fn void TAccessValidator::setAllowDefault(bool allow)
   Sets the default rule to allow all users to access to all actions
   if \a allow is true; otherwise sets to deny any user to access
   to any action. The default rule is true.
 */
 
 /*!
-  \fn void TAccessAuthenticator::setDenyDefault(bool deny)
+  \fn void TAccessValidator::setDenyDefault(bool deny)
   Sets the default rule to deny any user to access to any action
   if \a deny is true; otherwise sets to allow all users to access
   to all actions.
 */
 
 /*!
-  \class TAccessAuthenticator::AccessRule
+  \class TAccessValidator::AccessRule
   The AccessRule class is for internal use only.
 */

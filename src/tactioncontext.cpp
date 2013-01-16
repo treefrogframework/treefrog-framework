@@ -168,6 +168,11 @@ void TActionContext::execute()
             } else {
                 if (!rt.params.value(0).isEmpty()) {
                     rt.controller = rt.params.takeFirst().toLower().toLatin1() + "controller";
+
+                    if (rt.controller == "applicationcontroller") {
+                        rt.controller.clear();  // Can not call 'ApplicationController'
+                    }
+
                     // Default action: index
                     rt.action = rt.params.value(0, QLatin1String("index")).toLatin1();
                     if (!rt.params.isEmpty()) {

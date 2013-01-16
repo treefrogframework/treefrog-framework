@@ -9,8 +9,10 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMetaMethod>
+#include <QMetaType>
 #include <QTextCodec>
 #include <QCryptographicHash>
+#include <QMutexLocker>
 #include <TActionController>
 #include <TWebApplication>
 #include <TDispatcher>
@@ -241,6 +243,29 @@ void TActionController::setCsrfProtectionInto(TSession &session)
         QString key = Tf::app()->appSettings().value(CSRF_PROTECTION_KEY).toString();
         session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
     }
+}
+
+/*!
+  Returns the list of all available controllers.
+*/
+QStringList TActionController::availableControllers()
+{
+    static QStringList controllers;
+    static QMutex mutex;
+    QMutexLocker lock(&mutex);
+
+    if (controllers.isEmpty()) {
+        for (int i = QMetaType::User; ; ++i) {
+            const char *name = QMetaType::typeName(i);
+            if (!name)
+                break;
+            
+            QString c(name);
+            if (c.endsWith("controller"))
+                controllers << c;
+        }
+    }
+    return controllers;
 }
 
 /*!
@@ -592,6 +617,19 @@ void TActionController::exportAllFlashVariants()
 }
 
 /*!
+  Validates the access of the user \a user. Returns true if the user
+  access is allowed by rule; otherwise returns false. 
+  @sa setAccessRules(), TAccessValidator::validate()
+*/
+bool TActionController::validateAccess(const TAbstractUser *user)
+{
+    if (TAccessValidator::accessRules.isEmpty()) {
+        setAccessRules();
+    }
+    return TAccessValidator::validate(user);
+}
+
+/*!
   \~english
   Logs the user \a user in to the system.
   
@@ -867,4 +905,11 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
   \fn void TActionController::setContentType(const QByteArray &type)
   
   Sets the content type specified by \a type for a response message.
+*/
+
+/*!
+ \fn virtual void TActionController::setAccessRules()
+ 
+ Sets rules of access to this controller.
+ @sa validateAccess(), TAccessValidator
 */

@@ -13,6 +13,14 @@
   \brief The TLog class contains log messages for web application.
 */
 
+/*!
+  \fn TLog::TLog()
+  Constructor.
+*/
+
+/*!
+  Constructor.
+*/
 TLog::TLog(int pri, const QByteArray &msg)
     : timestamp(QDateTime::currentDateTime()),
       priority(pri),

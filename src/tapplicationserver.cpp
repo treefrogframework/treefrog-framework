@@ -131,6 +131,9 @@ bool TApplicationServer::open()
                 tSystemError("%s", qPrintable(lib.errorString()));
             }
         }
+
+        QStringList controllers = TActionController::availableControllers();
+        tSystemDebug("Available controllers: %s", qPrintable(controllers.join(" ")));
     }
     QDir::setCurrent(Tf::app()->webRootPath());
 

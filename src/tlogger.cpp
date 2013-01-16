@@ -30,24 +30,36 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(PriorityHash, priorityHash,
   \brief The TLogger class provides an abstract base of logging functionality.
 */
 
+/*!
+  Constructor.
+*/
 TLogger::TLogger() : threshold_(Trace), codec_(0)
 { }
 
-
+/*!
+  Returns the value for logger setting \a key. If the setting doesn't exist,
+  returns \a defaultValue.
+*/
 QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) const
 {
-    QSettings &settings = Tf::app()->loggerSettings();
+    const QSettings &settings = Tf::app()->loggerSettings();
     //tSystemDebug("settingsValue: %s", qPrintable(key() + "." + k));
     return settings.value(key() + "." + k, defaultValue);
 }
 
-
+/*!
+  Converts the log \a log to its textual representation and returns
+  a QByteArray containing the data.
+*/
 QByteArray TLogger::logToByteArray(const TLog &log) const
 {
     return logToByteArray(log, layout(), dateTimeFormat(), codec_);
 }
 
-
+/*!
+  Converts the log \a log to its textual representation and returns
+  a QByteArray containing the data.
+*/
 QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec)
 {
     QByteArray message;
@@ -119,13 +131,17 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
     return (codec) ? codec->fromUnicode(QString::fromLocal8Bit(message.data(), message.length())) : message;
 }
 
-
+/*!
+  Returns a QByteArray containing the priority \a priority.
+*/
 QByteArray TLogger::priorityToString(Priority priority)
 {
     return priorityHash()->value(priority);
 }
 
-
+/*!
+  Reads the settings stored in the file \a logger.ini.
+*/
 void TLogger::readSettings()
 {
     // Sets the codec
@@ -158,3 +174,66 @@ void TLogger::readSettings()
         dir.mkpath(".");
     }
 }
+
+
+/*!
+  \fn virtual QString TLogger::key() const
+  Returns a key that this logger plugin supports.
+*/
+
+/*!
+  \fn virtual bool TLogger::isMultiProcessSafe() const
+  Returns true if the implementation is guaranteed to be free of race
+  conditions when accessed by multiple processes simultaneously; otherwise
+  returns false.
+*/
+
+/*!
+  \fn virtual bool TLogger::open()
+  Opens the device for logging. Returns true if successful; otherwise returns
+  false. This function should be called from any reimplementations of open().
+*/
+
+/*!
+  \fn virtual void TLogger::close()
+  Closes the device. This function should be called from any reimplementations
+  of close().
+*/
+
+/*!
+  \fn virtual bool TLogger::isOpen() const
+  Returns true if the device is open; otherwise returns false.
+  This function should be called from any reimplementations of isOpen().
+*/
+
+/*!
+  \fn virtual void TLogger::log(const TLog &log)
+  Writes the log \a log to the device. 
+  This function should be called from any reimplementations of log().
+*/
+
+/*!
+  \fn virtual void TLogger::flush()
+  Flushes any buffered data to the device.
+  This function should be called from any reimplementations of flush().
+*/
+
+/*!
+  \fn const QByteArray &TLogger::layout() const
+  Returns a reference to the value for the setting layout.
+*/
+
+/*!
+  \fn const QByteArray &TLogger::dateTimeFormat() const
+  Returns a reference to the value for the setting datetime format.
+*/
+
+/*!
+  \fn Priority TLogger::threshold() const
+  Returns the value for the setting priority threshold.
+*/
+
+/*!
+  \fn const QString &TLogger::target() const
+  Returns a reference to the value for the setting target device.
+*/
