@@ -10,8 +10,6 @@
 #include <QThread>
 #include <TWebApplication>
 #include <TSessionStore>
-#include <unistd.h>
-#include <sys/time.h>
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
 #include "tsessionstorefactory.h"
@@ -26,14 +24,12 @@ static QByteArray randomString()
 {
     QByteArray data;
     data.reserve(128);
-    
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
 
-    data.append(QByteArray::number((uint)tv.tv_sec));
-    data.append(QByteArray::number((uint)tv.tv_usec));
+    QDateTime now = QDateTime::currentDateTime();
+    data.append(QByteArray::number(now.toTime_t()));
+    data.append(QByteArray::number(now.time().msec()));
     data.append(QHostInfo::localHostName());
-    data.append(QByteArray::number(getpid()));
+    data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
     data.append(QByteArray::number(Tf::randXor128()));
@@ -51,7 +47,7 @@ TSessionManager::~TSessionManager()
 
 TSession TSessionManager::findSession(const QByteArray &id)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     QDateTime now = QDateTime::currentDateTime();
     QDateTime validCreated = (sessionLifeTime() > 0) ? now.addSecs(-sessionLifeTime()) : now.addYears(-20);
@@ -70,7 +66,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
 
 bool TSessionManager::store(TSession &session)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (session.id().isEmpty()) {
         tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__); 

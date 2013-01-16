@@ -7,11 +7,10 @@
 
 #include <QDir>
 #include <QTextCodec>
+#include <QDateTime>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/time.h>
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
 #define DEFAULT_DATABASE_ENVIRONMENT  "product"
@@ -105,9 +104,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
     
     // sets a seed for random numbers
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    Tf::srandXor128(((uint)tv.tv_sec << 14) | (getpid() & 0x3fff));
+    Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
 }
 
 
