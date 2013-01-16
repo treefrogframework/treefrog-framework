@@ -28,20 +28,20 @@ const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 THttpSocket::THttpSocket(QObject *parent)
     : QTcpSocket(parent), lengthToRead(-1), lastProcessed(QDateTime::currentDateTime())
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
 }
 
 
 THttpSocket::~THttpSocket()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 }
 
 
 THttpRequest THttpSocket::read()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     THttpRequest req;
     if (canReadRequest()) {
         int idx = readBuffer.indexOf("\r\n\r\n");
@@ -61,7 +61,7 @@ THttpRequest THttpSocket::read()
 
 qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (body && !body->isOpen()) {
         if (!body->open(QIODevice::ReadOnly)) {
@@ -126,14 +126,14 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 */
 bool THttpSocket::canReadRequest() const
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     return (lengthToRead == 0);
 }
 
 
 void THttpSocket::readRequest()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     uint limitBodyBytes = Tf::app()->appSettings().value("LimitRequestBody", "0").toUInt();
     qint64 bytes = 0;
     QByteArray buf;

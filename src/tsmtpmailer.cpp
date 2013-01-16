@@ -39,7 +39,7 @@ TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
 
 TSmtpMailer::~TSmtpMailer()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     if (!mailMessage.isEmpty()) {
         tSystemWarn("Mail not sent. Deleted it.");
     }
@@ -61,7 +61,7 @@ void TSmtpMailer::setPort(quint16 port)
 
 bool TSmtpMailer::send(const TMailMessage &message)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     mailMessage = message;
     bool res = send();
@@ -72,7 +72,7 @@ bool TSmtpMailer::send(const TMailMessage &message)
 
 void TSmtpMailer::sendLater(const TMailMessage &message)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     mailMessage = message;
     QTimer::singleShot(0, this, SLOT(sendAndDeleteLater()));
@@ -81,7 +81,7 @@ void TSmtpMailer::sendLater(const TMailMessage &message)
 
 void TSmtpMailer::sendAndDeleteLater()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     send();
     mailMessage.clear();

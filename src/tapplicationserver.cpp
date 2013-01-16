@@ -81,7 +81,7 @@ TApplicationServer::~TApplicationServer()
 
 bool TApplicationServer::open()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (!isListening()) {
         quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
@@ -167,7 +167,7 @@ bool TApplicationServer::isOpen() const
 
 void TApplicationServer::close()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     QTcpServer::close();
 }
 
@@ -229,7 +229,7 @@ void TApplicationServer::incomingConnection(int socketDescriptor)
 
 void TApplicationServer::deleteActionContext()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     QMutexLocker locker(&setMutex);
     actionContexts.remove(reinterpret_cast<TActionThread *>(sender()));
     sender()->deleteLater();

@@ -84,7 +84,7 @@ void TSqlDatabasePool::init()
 
 QSqlDatabase TSqlDatabasePool::pop(int databaseId)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
 
     QSqlDatabase db;
@@ -187,7 +187,7 @@ bool TSqlDatabasePool::openDatabase(QSqlDatabase &database, const QString &env, 
 
 void TSqlDatabasePool::push(QSqlDatabase &database)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
 
     if (database.isValid()) {
@@ -207,7 +207,7 @@ void TSqlDatabasePool::push(QSqlDatabase &database)
 
 void TSqlDatabasePool::timerEvent(QTimerEvent *event)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (event->timerId() == timer.timerId()) {
         // Closes extra-connection

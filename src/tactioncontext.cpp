@@ -94,7 +94,7 @@ void TActionContext::releaseDatabases()
 
 void TActionContext::execute()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     TAccessLog accessLog;
     THttpResponseHeader responseHeader;
 

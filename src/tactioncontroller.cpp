@@ -224,7 +224,7 @@ QByteArray TActionController::authenticityToken() const
  */
 void TActionController::setSession(const TSession &session)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
     sessionStore = session;
 }
 
@@ -280,7 +280,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
  */
 bool TActionController::render(const QString &action, const QString &layout)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
@@ -305,7 +305,7 @@ bool TActionController::render(const QString &action, const QString &layout)
 */
 bool TActionController::renderTemplate(const QString &templateName, const QString &layout)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
@@ -334,7 +334,7 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 */
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));

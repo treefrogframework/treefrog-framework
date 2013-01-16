@@ -47,7 +47,7 @@ inline TDispatcher<T>::~TDispatcher()
 template <class T>
 inline bool TDispatcher<T>::invoke(const QString &method, const QStringList &args)
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     object();
     if (!ptr) {
@@ -143,7 +143,7 @@ inline bool TDispatcher<T>::invoke(const QString &method, const QStringList &arg
 template <class T>
 inline T *TDispatcher<T>::object()
 {
-    T_TRACEFUNC();
+    T_TRACEFUNC("");
 
     if (!ptr) {
         if (typeId <= 0 && !metaType.isEmpty()) {
