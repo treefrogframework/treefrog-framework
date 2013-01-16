@@ -387,7 +387,7 @@ Tf::ValidationRule TFormValidator::errorRule(const QString &key) const
     for (QListIterator<QPair<QString, int> > it(errors); it.hasNext(); ) {
         const QPair<QString, int> &p = it.next();
         if (p.first == key) {
-            return (Tf::ValidationRule)p.second; 
+            return (Tf::ValidationRule)p.second;
         }
     }
     return Tf::Required;
