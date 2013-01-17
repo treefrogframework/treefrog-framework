@@ -110,11 +110,15 @@ void TAccessValidator::addRules(int type, const QString &key, const QStringList 
 bool TAccessValidator::validate(const TAbstractUser *user) const
 {
     bool ret = allowDefault;
+    const TActionController *controller = TActionContext::current()->currentController();
+    Q_ASSERT(controller);
     
+    if (accessRules.isEmpty()) {
+        tWarn("No rule for access validation: %s", qPrintable(controller->className()));
+        return ret;
+    }
+
     if (user) {
-        const TActionController *controller = TActionContext::current()->currentController();
-        Q_ASSERT(controller);
-        
         for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
             const AccessRule &rule = it.next();
             if (((rule.type == AccessRule::User && rule.key == user->identityKey())
