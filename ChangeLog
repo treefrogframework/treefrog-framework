@@ -1,3 +1,14 @@
+Changes with version 1.1.1
+    * TreeFrog app-server for Windows service supported.
+    * Modified the logic of parsing HTML text.
+    * Added parentExists() function of tmake command.
+    * Modified parseWord() function.
+    * Modified help message of tfmanager command.
+    * Modified it not to use gettimeofday() function.
+    * Changed a class name, TAccessAuthenticator -> TAccessValidator.
+    * Added the method TActionController::availableControllers().
+    * Implements access auth of users into TActionController.
+    * Added removeRawHeader() into TInternetMessageHeader class.
 
 Changes with version 1.1
     * Bugfix of parsing a boundary of HTTP request.
