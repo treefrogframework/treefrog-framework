@@ -28,7 +28,9 @@ TMimeHeader::TMimeHeader(const TMimeHeader &other)
     : headers(other.headers)
 { }
 
-
+/*!
+  Returns the value of the header \a headerName.
+*/
 QByteArray TMimeHeader::header(const QByteArray &headerName) const
 {
     QByteArray name = headerName.toLower();
@@ -41,13 +43,18 @@ QByteArray TMimeHeader::header(const QByteArray &headerName) const
     return QByteArray();
 }
 
-
+/*!
+  Sets the header \a headerName to be of value \a value.
+*/
 void TMimeHeader::setHeader(const QByteArray &headerName, const QByteArray &value)
 {
     headers << qMakePair(headerName, value);
 }
 
-
+/*!
+  Returns the value of the parameter \a name in the header field
+  content-disposition.
+*/
 QByteArray TMimeHeader::contentDispositionParameter(const QByteArray &name) const
 {
     QByteArray disp = header("content-disposition");
@@ -55,16 +62,23 @@ QByteArray TMimeHeader::contentDispositionParameter(const QByteArray &name) cons
     return params[name];
 }
 
-
+/*!
+  Returns the value of the 'name' parameter in the header field
+  content-disposition.
+*/
 QByteArray TMimeHeader::dataName() const
 {
     return contentDispositionParameter("name");
 }
 
-
-QByteArray TMimeHeader::originalFileName() const
+/*!
+  Returns the value of the 'filename' parameter in the header field
+  content-disposition, indicating the original name of the file before
+  uploading.
+*/
+QString TMimeHeader::originalFileName() const
 {
-    return contentDispositionParameter("filename");
+    return QString::fromUtf8(contentDispositionParameter("filename").data());
 }
 
 
@@ -81,7 +95,10 @@ int TMimeHeader::skipWhitespace(const QByteArray &text, int from)
     return from;
 }
 
-
+/*!
+  Parses the MIME header \a header and returns the hash of those headers.
+  This function is for internal use only.
+*/
 QHash<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray &header)
 {
     QHash<QByteArray, QByteArray> result;
@@ -156,18 +173,25 @@ QHash<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray
   \brief The TMimeEntity represents a MIME entity.
 */
 
+/*!
+  Copy constructor.
+*/
 TMimeEntity::TMimeEntity(const TMimeEntity &other)
     : QPair<TMimeHeader, QString>(other.first, other.second)
 { }
 
-
+/*!
+  Constructor with the header \a header and the body \a body. 
+*/
 TMimeEntity::TMimeEntity(const TMimeHeader &header, const QString &body)
 {   
     first = header;
     second = body;
 }
 
-
+/*!
+  Returns the value of the MIME header field content-type.
+*/
 QString TMimeEntity::contentType() const
 {
     return header("content-type");
@@ -186,7 +210,12 @@ qint64 TMimeEntity::fileSize() const
     return fi.size();
 }
 
-
+/*!
+  Renames the file contained in this entity to \a newName.
+  Returns true if successful; otherwise returns false.
+  This function will overwrite it if the \a overwrite is true.
+  The \a newName can have a relative path or an absolute path.
+*/
 bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite)
 {
     QString path = uploadedFilePath();
@@ -218,7 +247,10 @@ bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite)
 #endif
 }
 
-
+/*!
+  Returns the name of the temporary file contained in this entity,
+  including the absolute path.
+*/
 QString TMimeEntity::uploadedFilePath() const
 {
     // check original filename
@@ -231,11 +263,18 @@ QString TMimeEntity::uploadedFilePath() const
   \brief The TMultipartFormData represents a media-type multipart/form-data.
 */
 
+/*!
+  Constructs a empty multipart/form-data object with the boundary
+  \a boundary.
+*/
 TMultipartFormData::TMultipartFormData(const QByteArray &boundary)
     : dataBoundary(boundary)
 { }
 
-
+/*!
+  Constructs a multipart/form-data object by parsing \a formData with
+  the boundary \a boundary.
+*/
 TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteArray &boundary)
     : dataBoundary(boundary)
 {
@@ -244,7 +283,10 @@ TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteAr
     parse(&buffer);
 }
 
-
+/*!
+  Constructs a multipart/form-data object by parsing the content of
+  the file with the given \a bodyFilePath.
+*/
 TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary)
     : dataBoundary(boundary)
 {
@@ -252,13 +294,19 @@ TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteA
     parse(&file);
 }
 
-
+/*!
+  Returns true if the multipart/form-data object has no data;
+  otherwise returns false.
+*/
 bool TMultipartFormData::isEmpty() const
 {
     return postParameters.isEmpty() && uploadedFiles.isEmpty();
 }
 
-
+/*!
+  Returns a list of form string values whose name is equal to \a name
+  from the multipart/form-data.
+*/
 QStringList TMultipartFormData::allFormItemValues(const QString &name) const
 {
     QStringList ret;
@@ -269,59 +317,71 @@ QStringList TMultipartFormData::allFormItemValues(const QString &name) const
     return ret;
 }
 
-
+/*!
+  Returns the value of the header field content-type in the MIME entity
+  associated with the name \a dataName.
+*/
 QString TMultipartFormData::contentType(const QByteArray &dataName) const
 {
     return entity(dataName).contentType();
 }
 
-
+/*!
+  Returns the original name of the file contained in the MIME entity
+  associated with the name \a dataName.
+*/
 QString TMultipartFormData::originalFileName(const QByteArray &dataName) const
 {
     return entity(dataName).originalFileName();
 }
 
-
 /*!
-    \warning Note that this method must be called before renameUploadedFile() method calls.
+  Returns the size of the file contained in the MIME entity
+  associated with the name \a dataName.
+  \warning Note that this method must be called before
+  renameUploadedFile() method calls.
  */
 qint64 TMultipartFormData::size(const QByteArray &dataName) const
 {
     return entity(dataName).fileSize();
 }
 
-
 /*!
-    \warning Note that this method must not be called more than once.
+  Renames the file contained in the MIME entity associated with the
+  name \a dataName. 
+  \warning Note that this method must not be called more than once.
+  \sa TMimeEntity::renameUploadedFile()
  */
 bool TMultipartFormData::renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite)
 {
     return entity(dataName).renameUploadedFile(newName, overwrite);
 }
 
-
-void TMultipartFormData::parse(QIODevice *data)
+/*!
+  Reads from the I/O device \a dev and parses it.
+*/
+void TMultipartFormData::parse(QIODevice *dev)
 {
-    if (!data->isOpen()) {
-        if (!data->open(QIODevice::ReadOnly)) {
+    if (!dev->isOpen()) {
+        if (!dev->open(QIODevice::ReadOnly)) {
             return;
         }
     }
 
-    while (!data->atEnd()) {  // up to EOF
-        TMimeHeader header = parseMimeHeader(data);
+    while (!dev->atEnd()) {  // up to EOF
+        TMimeHeader header = parseMimeHeader(dev);
         if (!header.isEmpty()) {
             QByteArray type = header.header("content-type");
             if (!type.isEmpty()) {
                 if (!header.originalFileName().isEmpty()) {
-                    QString contFile = writeContent(data);
+                    QString contFile = writeContent(dev);
                     if (!contFile.isEmpty()) {
                         uploadedFiles << TMimeEntity(header, contFile);
                     }
                 }
             } else {
                 QByteArray name = header.dataName();
-                QByteArray cont = parseContent(data);
+                QByteArray cont = parseContent(dev);
 
                 QTextCodec *codec = Tf::app()->codecForHttpOutput();
                 postParameters.insertMulti(codec->toUnicode(name), codec->toUnicode(cont));
@@ -330,16 +390,18 @@ void TMultipartFormData::parse(QIODevice *data)
     }
 }
 
-
-TMimeHeader TMultipartFormData::parseMimeHeader(QIODevice *data) const
+/*!
+  Reads MIME headers from the I/O device \a dev and parses it.
+*/
+TMimeHeader TMultipartFormData::parseMimeHeader(QIODevice *dev) const
 {
-    if (!data->isOpen()) {
+    if (!dev->isOpen()) {
         return TMimeHeader();
     }
 
     TMimeHeader header;
-    while (!data->atEnd()) {
-        QByteArray line = data->readLine();
+    while (!dev->atEnd()) {
+        QByteArray line = dev->readLine();
         if (line == "\r\n" || line.startsWith(dataBoundary)) {
             break;
         }
@@ -352,16 +414,18 @@ TMimeHeader TMultipartFormData::parseMimeHeader(QIODevice *data) const
     return header;
 }
 
-
-QByteArray TMultipartFormData::parseContent(QIODevice *data) const
+/*!
+  Reads MIME contents from the I/O device \a dev and parses it.
+*/
+QByteArray TMultipartFormData::parseContent(QIODevice *dev) const
 {
-    if (!data->isOpen()) {
+    if (!dev->isOpen()) {
         return QByteArray();
     }
 
     QByteArray content;
-    while (!data->atEnd()) {
-        QByteArray line = data->readLine();
+    while (!dev->atEnd()) {
+        QByteArray line = dev->readLine();
         if (line.startsWith(dataBoundary)) {
             break;
         }
@@ -370,14 +434,13 @@ QByteArray TMultipartFormData::parseContent(QIODevice *data) const
     return content.trimmed();
 }
 
-
 /*!
   Parses the multipart data and writes the one content to a file.
   Returns the file name.
  */
-QString TMultipartFormData::writeContent(QIODevice *data) const
+QString TMultipartFormData::writeContent(QIODevice *dev) const
 {
-    if (!data->isOpen()) {
+    if (!dev->isOpen()) {
         return QString();
     }
 
@@ -386,8 +449,8 @@ QString TMultipartFormData::writeContent(QIODevice *data) const
         return QString();
     }
 
-    while (!data->atEnd()) {
-        QByteArray line = data->readLine();
+    while (!dev->atEnd()) {
+        QByteArray line = dev->readLine();
         if (line.startsWith(dataBoundary)) {
             qint64 size = qMax(out.size() - 2, Q_INT64_C(0));
             out.resize(size);  // Truncates the CR+LF
@@ -402,7 +465,9 @@ QString TMultipartFormData::writeContent(QIODevice *data) const
     return out.absoluteFilePath();
 }
 
-
+/*!
+  Returns the MIME entity object associated with the name \a dataName.
+*/
 TMimeEntity TMultipartFormData::entity(const QByteArray &dataName) const
 {
     for (QListIterator<TMimeEntity> i(uploadedFiles); i.hasNext(); ) {
@@ -414,7 +479,10 @@ TMimeEntity TMultipartFormData::entity(const QByteArray &dataName) const
     return TMimeEntity();
 }
 
-
+/*!
+  Returns a list of the MIME entity objects associated with the name
+  \a dataName.
+*/
 QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) const
 {
     QList<TMimeEntity> list;
@@ -432,3 +500,53 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
     }
     return list;
 }
+
+
+/*!
+  \fn const TMimeHeader &TMimeEntity::header() const
+  Returns a reference to the MIME header contained in this entity.
+*/
+
+/*!
+  \fn TMimeHeader &TMimeEntity::header()
+  Returns a reference to the MIME header contained in this entity.
+*/
+
+/*!
+  \fn QByteArray TMimeEntity::header(const QByteArray &headerName) const
+  Returns the value of the header \a headerName contained in this entity.
+*/
+
+/*!
+ \fn QByteArray TMimeEntity::dataName() const
+ Returns the parameter 'name' of the header field content-disposition
+ in this entity.
+*/
+
+/*!
+  \fn QString TMimeEntity::originalFileName() const
+  Returns the original name of the file contained in this entity.
+*/
+
+/*!
+  \fn bool TMimeHeader::isEmpty() const
+  Returns true if the MIME header is empty; otherwise returns false.
+*/
+
+/*!
+  \fn bool TMultipartFormData::hasFormItem(const QString &name) const
+  Returns true if there is a string pair whose name is equal to
+  \a name from the multipart/form-data; otherwise returns false.
+*/
+
+/*!
+  \fn QString TMultipartFormData::formItemValue(const QString &name) const
+  Returns the first form string value whose name is equal to \a name
+  from the multipart/form-data.
+*/
+
+/*!
+  \fn const QVariantHash &TMultipartFormData::formItems() const
+  Returns a QVariantHash object with the form items of this
+  multipart/form-data. 
+*/
