@@ -37,7 +37,9 @@ static void cleanup()
     ssifs = 0;
 }
 
-
+/*!
+  Returns the list of valid keys, i.e.\ the available session stores.
+*/
 QStringList TSessionStoreFactory::keys()
 {
     QMutexLocker locker(&mutex);
@@ -54,7 +56,10 @@ QStringList TSessionStoreFactory::keys()
     return ret;
 }
 
-
+/*!
+  Creates and returns a TSessionStore object that matches the given key,
+  or returns 0 if no matching session store is found.
+*/
 TSessionStore *TSessionStoreFactory::create(const QString &key)
 {
     T_TRACEFUNC("key: %s", qPrintable(key));

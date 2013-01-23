@@ -19,13 +19,13 @@ public:
     void setHeader(const QByteArray &headerName, const QByteArray &value);
     QByteArray contentDispositionParameter(const QByteArray &name) const;
     QByteArray dataName() const;
-    QByteArray originalFileName() const;
+    QString originalFileName() const;
 
 protected:
-    static int skipWhitespace(const QByteArray &text, int pos);
     static QHash<QByteArray, QByteArray> parseHeaderParameter(const QByteArray &header);
 
 private:
+    static int skipWhitespace(const QByteArray &text, int pos);
     QList<QPair<QByteArray, QByteArray> >  headers;
 };
 
@@ -42,7 +42,7 @@ public:
     QByteArray dataName() const { return first.dataName(); }
     QString contentType() const;
     qint64 fileSize() const;
-    QByteArray originalFileName() const { return first.originalFileName(); }
+    QString originalFileName() const { return first.originalFileName(); }
     bool renameUploadedFile(const QString &newName, bool overwrite = false);
     QString uploadedFilePath() const;
 
@@ -76,12 +76,13 @@ public:
     QList<TMimeEntity> entityList(const QByteArray &dataName) const;
 
 protected:
-    void parse(QIODevice *data);
-    TMimeHeader parseMimeHeader(QIODevice *data) const;
-    QByteArray parseContent(QIODevice *data) const;
-    QString writeContent(QIODevice *data) const;
+    void parse(QIODevice *dev);
 
 private:
+    TMimeHeader parseMimeHeader(QIODevice *dev) const;
+    QByteArray parseContent(QIODevice *dev) const;
+    QString writeContent(QIODevice *dev) const;
+
     QByteArray dataBoundary;
     QVariantHash postParameters;
     QList<TMimeEntity> uploadedFiles;
