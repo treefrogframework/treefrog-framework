@@ -28,6 +28,7 @@ enum CommandOption {
     SocketSpecified,
     PrintVersion,
     PrintUsage,
+    ShowRunningAppList,
     DaemonMode,
     WindowsServiceMode,
     SendSignal,
@@ -66,6 +67,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(OptionHash, options,
     x->insert("-s", SocketSpecified);
     x->insert("-v", PrintVersion);
     x->insert("-h", PrintUsage);
+    x->insert("-l", ShowRunningAppList);
     x->insert("-d", DaemonMode);
     x->insert("-w", WindowsServiceMode);
     x->insert("-k", SendSignal);
@@ -81,6 +83,7 @@ static void usage()
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
         "  -k              : send signal to a manager process\n\n"      \
+        "Type '%1 -l' to show your running applications.\n"             \
         "Type '%1 -h' to show this information.\n"                      \
         "Type '%1 -v' to show the program version.";
     
@@ -150,16 +153,17 @@ static void writeStartupLog()
 }
 
 
-static QString pidFilePath()
+static QString pidFilePath(const QString &appRoot = QString())
 {
     QString base = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
-    return Tf::app()->tmpPath() + base + ".pid";
+    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + base + ".pid"
+        : appRoot + QDir::separator() + "tmp" + QDir::separator() +  base + ".pid";
 }
 
 
-static qint64 readPidFileOfApplication()
+static qint64 readPidFileOfApplication(const QString &appRoot = QString())
 {
-    QFile pidf(pidFilePath());
+    QFile pidf(pidFilePath(appRoot));
     if (pidf.open(QIODevice::ReadOnly)) {
         qint64 pid = pidf.readLine(100).toLongLong();
         if (pid > 0) {
@@ -170,15 +174,110 @@ static qint64 readPidFileOfApplication()
 }
 
 
-static qint64 runningApplicationPid()
+static qint64 runningApplicationPid(const QString &appRoot = QString())
 {
-    qint64 pid = readPidFileOfApplication();
+    qint64 pid = readPidFileOfApplication(appRoot);
     if (pid > 0) {
         QString name = ProcessInfo(pid).processName().toLower();
         if (name == "treefrog" || name == "treefrogd")
             return pid;
     }
     return -1;
+}
+
+
+static QString runningApplicationsFilePath()
+{
+    return QDir::homePath() + QDir::separator() + ".treefrog" + QDir::separator() + "runnings";
+}
+
+
+static bool addRunningApplication(const QString &rootPath)
+{
+    QFile file(runningApplicationsFilePath());
+    QDir dir = QFileInfo(file).dir();
+
+    if (!dir.exists()) {
+        dir.mkpath(".");
+        // set permissions of the dir
+        QFile(dir.absolutePath()).setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser);
+    }
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        return false;
+    }
+
+    file.write(rootPath.toLatin1());
+    file.write("\n");
+    file.close();
+    return true;
+}
+
+
+static QStringList runningApplicationPathList()
+{
+    QStringList paths;
+    QFile file(runningApplicationsFilePath());
+
+    if (file.open(QIODevice::ReadOnly)) {
+        QList<QByteArray> lst = file.readAll().split('\n');
+        file.close();
+
+        for (QListIterator<QByteArray> it(lst); it.hasNext(); ) {
+            // Checks the running
+            const QByteArray &approot = it.next().trimmed();
+            if (!approot.isEmpty()) {
+                if (runningApplicationPid(approot) > 0) {
+                    paths << approot;
+                }
+            }
+        }
+    }
+    return paths;
+}
+
+
+static void cleanupRunningApplicationList()
+{
+    QStringList runapps = runningApplicationPathList();
+    QFile file(runningApplicationsFilePath());
+
+    if (runapps.isEmpty()) {
+        file.remove();
+        return;
+    }
+    
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        file.write(runapps.join("\n").toLatin1());
+        file.write("\n");
+    }
+}
+
+
+static QVariant applicationSettingValue(const QString &appRoot, const QString &key)
+{
+    QString appIni = appRoot + QDir::separator() + QLatin1String("config") + QDir::separator() + "application.ini";
+    return QSettings(appIni, QSettings::IniFormat).value(key);
+}
+
+
+static void showRunningAppList()
+{
+    QStringList apps = runningApplicationPathList();
+    if (apps.isEmpty()) {
+        printf("no running application\n");
+    } else {
+        int cnt = apps.count();
+        printf(" %d application%s running:\n", cnt, (cnt > 1 ? "s" : ""));
+
+        foreach (const QString &s, apps) {
+            QString url = applicationSettingValue(s, "ListenPort").toString().trimmed();
+            if (!url.startsWith("unix:", Qt::CaseInsensitive)) {
+                url = QString("url: http://localhost:%1/..").arg(url.toInt());
+            }
+            printf(" * %s\n   %s\n\n", qPrintable(s), qPrintable(url));
+        }
+    }
 }
 
 
@@ -266,6 +365,11 @@ int managerMain(int argc, char *argv[])
 
         case PrintUsage:
             usage();
+            return 0;
+            break;
+
+        case ShowRunningAppList:
+            showRunningAppList();
             return 0;
             break;
 
@@ -378,6 +482,9 @@ int managerMain(int argc, char *argv[])
         if (!tmpDir.exists()) {
             tmpDir.mkpath(".");
         }
+
+        // Adds this running app
+        addRunningApplication(app.webRootPath());
         
         // Writes the PID
         pidfile.setFileName(pidFilePath());
@@ -404,7 +511,9 @@ int managerMain(int argc, char *argv[])
     if (!svrname.isEmpty()) {  // UNIX domain file
         QFile(svrname).remove();
     }
+
     pidfile.remove();  // Removes the PID file
+    cleanupRunningApplicationList();  // Cleanup running apps
     return 0;
 }
 
