@@ -15,6 +15,9 @@ public:
 
     QByteArray id() const { return sessionId; }
     void reset();
+    iterator insert(const QString &key, const QVariant &value);
+    const QVariant value(const QString &key) const;
+    const QVariant value(const QString &key, const QVariant &defaultValue) const;
 
     static QByteArray sessionName();
 
@@ -40,6 +43,21 @@ inline TSession &TSession::operator=(const TSession &session)
     QVariantHash::operator=(*static_cast<const QVariantHash *>(&session));
     sessionId = session.sessionId;
     return *this;
+}
+
+inline TSession::iterator TSession::insert(const QString &key, const QVariant &value)
+{
+    return QVariantHash::insert(key, value);
+}
+
+inline const QVariant TSession::value(const QString &key) const
+{
+    return QVariantHash::value(key);
+}
+
+inline const QVariant TSession::value(const QString &key, const QVariant &defaultValue) const
+{
+    return QVariantHash::value(key, defaultValue);
 }
 
 #endif // TSESSION_H
