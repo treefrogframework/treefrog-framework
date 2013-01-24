@@ -14,7 +14,7 @@ public:
     virtual QString key() const = 0;
     virtual TSession find(const QByteArray &id, const QDateTime &expiration) = 0;
     virtual bool store(TSession &sesion) = 0;
-    virtual bool remove(const QDateTime &garbageExpiration) = 0;
+    virtual bool remove(const QDateTime &expiration) = 0;
     virtual bool remove(const QByteArray &id) = 0;
 };
 
