@@ -22,6 +22,8 @@ namespace TreeFrog {
 extern void WINAPI winServiceMain(DWORD argc, LPTSTR *argv);
 #endif
 
+#define PID_FILENAME  "treefrog.pid"
+
 enum CommandOption {
     Invalid = 0,
     EnvironmentSpecified,
@@ -155,9 +157,8 @@ static void writeStartupLog()
 
 static QString pidFilePath(const QString &appRoot = QString())
 {
-    QString base = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
-    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + base + ".pid"
-        : appRoot + QDir::separator() + "tmp" + QDir::separator() +  base + ".pid";
+    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
+        : appRoot + QDir::separator() + "tmp" + QDir::separator() +  PID_FILENAME;
 }
 
 
