@@ -10,9 +10,21 @@
 /*!
   \class TSessionStorePlugin
   \brief The TSessionStorePlugin class provides an abstract base for
-         custom TSessionStore plugins.
+  custom TSessionStore plugins. Refer to 'How to Create Qt Plugins'
+  in the Qt documentation.  
 */
 
+/*!
+  \fn virtual QStringList TSessionStorePlugin::keys() const
+  Implement this function to return the list of valid keys,
+  i.e.\ the session stores supported by this plugin.
+*/
+
+/*!
+  \fn virtual TLogger *TSessionStorePlugin::create(const QString &key)
+  Implement this function to create a session store matching the name specified
+  by the given key.
+*/
 
 
 

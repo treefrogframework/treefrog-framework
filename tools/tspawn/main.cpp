@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
                 if (!QFile("Makefile").exists()) {
                     QProcess qmake;
                     QStringList args;
-                    args << "-Wall" << "-recursive";
+                    args << "-recursive";
 #if defined(Q_OS_WIN32)
                     args << "-spec" << "win32-g++";
 #elif defined(Q_OS_MAC)

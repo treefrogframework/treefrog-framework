@@ -33,7 +33,9 @@ static void cleanup()
     ssifs = 0;
 }
 
-
+/*!
+  Returns the list of valid keys, i.e.\ the available loggers.
+*/
 QStringList TLoggerFactory::keys()
 {
     QMutexLocker locker(&mutex);
@@ -48,7 +50,10 @@ QStringList TLoggerFactory::keys()
     return ret;
 }
 
-
+/*!
+  Creates and returns a TLogger object that matches the given key,
+  or returns 0 if no matching logger is found.
+*/
 TLogger *TLoggerFactory::create(const QString &key)
 {
     QMutexLocker locker(&mutex);
@@ -97,9 +102,26 @@ void TLoggerFactory::loadPlugins()
   TLogger plugins.
 */
 
-
 /*!
   \class TLoggerPlugin
   \brief The TLoggerPlugin class provides an abstract base for custom
-  TLogger plugins.
+  TLogger plugins. Refer to 'How to Create Qt Plugins' in the Qt
+  documentation.  
+*/
+
+/*!
+  \fn TLoggerPlugin::TLoggerPlugin()
+  Constructor.
+*/
+
+/*!
+  \fn virtual QStringList TLoggerPlugin::keys() const
+  Implement this function to return the list of valid keys,
+  i.e.\ the loggers supported by this plugin.
+*/
+
+/*!
+  \fn virtual TLogger *TLoggerPlugin::create(const QString &key)
+  Implement this function to create a logger matching the name specified
+  by the given key.
 */
