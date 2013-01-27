@@ -85,7 +85,7 @@ bool ServerManager::start(const QString &fileDomain)
         listeningSocket = sd;
     } else {
         // Just tried to open a socket.
-        close(sd);
+        TF_CLOSE(sd);
         // tfserver process will open a socket of that.
     }
     
