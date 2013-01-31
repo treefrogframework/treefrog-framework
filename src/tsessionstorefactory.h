@@ -13,7 +13,7 @@ public:
     static QStringList keys();
     static TSessionStore *create(const QString &key);
 
-protected:
+private:
     enum StoreType {
         Invalid = 0,
         SqlObject,

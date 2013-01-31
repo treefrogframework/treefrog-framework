@@ -36,7 +36,9 @@ TSqlObject::TSqlObject(const TSqlObject &other)
       tblName(other.tblName), sqlError(other.sqlError)
 { }
 
-
+/*!
+  Assignment operator.
+*/
 TSqlObject &TSqlObject::operator=(const TSqlObject &other)
 {
     QSqlRecord::operator=(*static_cast<const QSqlRecord *>(&other));
@@ -47,7 +49,7 @@ TSqlObject &TSqlObject::operator=(const TSqlObject &other)
 
 /*!
   Returns the table name, which is generated from the class name.
- */
+*/
 QString TSqlObject::tableName() const
 {
     if (tblName.isEmpty()) {
@@ -65,24 +67,31 @@ QString TSqlObject::tableName() const
 
 /*!
   \fn virtual int TSqlObject::primaryKeyIndex() const
-  Returns the position of the primary key field for the table.
+  Returns the position of the primary key field on the table.
   This is a virtual function.
 */
 
 /*!
   \fn virtual int TSqlObject::autoValueIndex() const
-  Returns the position of the auto-generated value field for
+  Returns the position of the auto-generated value field on
   the table. This is a virtual function.
 */
 
 /*!
+  \fn virtual int TSqlObject::databaseId() const
+  Returns the database ID.
+*/
+
+/*!
   \fn bool TSqlObject::isNull() const
-  Returns true if it is a null object, otherwise returns false.
+  Returns true if there is no database record associated with the
+  object; otherwise returns false.
 */
 
 /*!
   \fn bool TSqlObject::isNew() const
   Returns true if it is a new object, otherwise returns false.
+  Equivalent to isNull().
 */
 
 /*!
@@ -92,8 +101,8 @@ QString TSqlObject::tableName() const
 */
 
 /*!
-  Sets the \a record. Internal use. 
- */
+  Sets the \a record. This function is for internal use only.
+*/
 void TSqlObject::setRecord(const QSqlRecord &record, const QSqlError &error)
 {
     QSqlRecord::operator=(record);
@@ -102,8 +111,9 @@ void TSqlObject::setRecord(const QSqlRecord &record, const QSqlError &error)
 }
 
 /*!
-  Inserts this properties into the database.
- */
+  Inserts new record into the database, based on the current properties
+  of the object.
+*/
 bool TSqlObject::create()
 {
     // Sets the default value of 'revision' property
@@ -158,8 +168,8 @@ bool TSqlObject::create()
 }
 
 /*!
-  Updates the record on the database with the primary key.
- */
+  Updates the corresponding record with the properties of the object.
+*/
 bool TSqlObject::update()
 {
     if (isNew()) {
@@ -253,7 +263,7 @@ bool TSqlObject::update()
 
 /*!
   Deletes the record with this primary key from the database.
- */
+*/
 bool TSqlObject::remove()
 {
     syncToSqlRecord();
@@ -349,7 +359,10 @@ bool TSqlObject::isModified() const
     return false;
 }
 
-
+/*!
+  Synchronizes the internal record data to the properties of the object.
+  This function is for internal use only.
+*/
 void TSqlObject::syncToObject()
 {
     int offset = metaObject()->propertyOffset();
@@ -362,7 +375,10 @@ void TSqlObject::syncToObject()
     }
 }
 
-
+/*!
+  Synchronizes the properties to the internal record data.
+  This function is for internal use only.
+*/
 void TSqlObject::syncToSqlRecord()
 {
     QSqlRecord::operator=(TActionContext::current()->getDatabase(databaseId()).record(tableName()));
@@ -380,7 +396,7 @@ void TSqlObject::syncToSqlRecord()
 
 /*!
   Returns a Hash object of the properties.
- */
+*/
 QVariantHash TSqlObject::properties() const
 {
     QVariantHash ret;
@@ -396,8 +412,8 @@ QVariantHash TSqlObject::properties() const
 }
 
 /*!
-  Set the \a values to the properties.
- */
+  Set the \a values to the properties of the object.
+*/
 void TSqlObject::setProperties(const QVariantHash &values)
 {
     const QMetaObject *metaObj = metaObject();

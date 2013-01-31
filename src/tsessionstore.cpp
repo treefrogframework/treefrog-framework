@@ -14,7 +14,7 @@
 
 /*!
   \fn virtual QString TSessionStore::key() const
-  Returns a key that the plugin supports.
+  Returns the key i.e.\ the name of the sesseion store.
   This function should be called from any reimplementations of key().
 */
 
