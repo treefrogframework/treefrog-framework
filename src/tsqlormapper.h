@@ -160,7 +160,7 @@ inline T TSqlORMapper<T>::last() const
 /*!
   Returns the ORM object in the results retrieved by the last query.
   If \a i is the index of a valid row on the results, the ORM object
-  will be populated with values from that \a i.
+  will be populated with values from that row.
 */
 template <class T>
 inline T TSqlORMapper<T>::value(int i) const
