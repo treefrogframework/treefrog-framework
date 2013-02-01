@@ -136,8 +136,7 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
 }
 
 /*!
-  Returns the first ORM object in the results retrieved by the last
-  query.
+  Returns the first ORM object in the results retrieved by find() function.
   \sa find(const TCriteria &)
 */
 template <class T>
@@ -147,8 +146,7 @@ inline T TSqlORMapper<T>::first() const
 }
 
 /*!
-  Returns the last ORM object in the results retrieved by the last
-  query.
+  Returns the last ORM object in the results retrieved by find() function.
   \sa find(const TCriteria &)
 */
 template <class T>
@@ -158,7 +156,7 @@ inline T TSqlORMapper<T>::last() const
 }
 
 /*!
-  Returns the ORM object in the results retrieved by the last query.
+  Returns the ORM object in the results retrieved by find() function.
   If \a i is the index of a valid row on the results, the ORM object
   will be populated with values from that row.
 */
