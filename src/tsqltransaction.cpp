@@ -14,6 +14,7 @@
   \brief The TSqlTransaction class provides a transaction of database.
 */
 
+
 TSqlTransaction::TSqlTransaction()
     : enabled(true), databases(Tf::app()->databaseSettingsCount())
 { }
