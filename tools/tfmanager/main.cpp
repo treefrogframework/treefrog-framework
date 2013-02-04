@@ -14,6 +14,9 @@
 
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
+# include <tfcore_unix.h>
+#else
+# define TF_FLOCK(fd,op)
 #endif
 
 namespace TreeFrog {
@@ -207,8 +210,10 @@ static bool addRunningApplication(const QString &rootPath)
         return false;
     }
 
+    TF_FLOCK(file.handle(), LOCK_EX); // lock
     file.write(rootPath.toLatin1());
     file.write("\n");
+    TF_FLOCK(file.handle(), LOCK_UN); // unlock
     file.close();
     return true;
 }
@@ -220,14 +225,16 @@ static QStringList runningApplicationPathList()
     QFile file(runningApplicationsFilePath());
 
     if (file.open(QIODevice::ReadOnly)) {
+        TF_FLOCK(file.handle(), LOCK_SH); // lock
         QList<QByteArray> lst = file.readAll().split('\n');
+        TF_FLOCK(file.handle(), LOCK_UN); // unlock
         file.close();
 
         for (QListIterator<QByteArray> it(lst); it.hasNext(); ) {
             // Checks the running
             const QByteArray &approot = it.next().trimmed();
             if (!approot.isEmpty()) {
-                if (runningApplicationPid(approot) > 0) {
+                if (!paths.contains(approot) && runningApplicationPid(approot) > 0) {
                     paths << approot;
                 }
             }
@@ -248,8 +255,11 @@ static void cleanupRunningApplicationList()
     }
     
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        TF_FLOCK(file.handle(), LOCK_EX); // lock
         file.write(runapps.join("\n").toLatin1());
         file.write("\n");
+        TF_FLOCK(file.handle(), LOCK_UN); // unlock
+        file.close();
     }
 }
 

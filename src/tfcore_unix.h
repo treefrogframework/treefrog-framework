@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/file.h>
 #include <errno.h>
 #include <fcntl.h>
 
@@ -24,7 +25,18 @@ static inline int tf_close(int fd)
     return ret;
 }
 
+
+static inline int tf_flock(int fd, int op)
+{
+    register int ret;
+    EINTR_LOOP(ret, ::flock(fd, op));
+    return ret;
+}
+
 #undef TF_CLOSE
 #define TF_CLOSE tf_close
+
+#undef TF_FLOCK
+#define TF_FLOCK tf_flock
 
 #endif // TFCORE_UNIX_H
