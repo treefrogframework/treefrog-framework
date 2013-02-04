@@ -100,13 +100,15 @@ void TLoggerFactory::loadPlugins()
   \class TLoggerInterface
   \brief The TLoggerInterface class provides an interface to implement
   TLogger plugins.
+  \sa http://qt-project.org/doc/qt-4.8/plugins-howto.html
 */
 
 /*!
   \class TLoggerPlugin
   \brief The TLoggerPlugin class provides an abstract base for custom
   TLogger plugins. Refer to 'How to Create Qt Plugins' in the Qt
-  documentation.  
+  documentation.
+  \sa http://qt-project.org/doc/qt-4.8/plugins-howto.html
 */
 
 /*!

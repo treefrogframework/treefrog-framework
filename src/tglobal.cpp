@@ -16,7 +16,9 @@
 #include "tsharedmemorylogstream.h"
 #include "tbasiclogstream.h"
 #include "tsystemglobal.h"
-
+#ifdef Q_OS_WIN
+# include <Windows.h>
+#endif
 #undef tDebug
 #undef tTrace
 #define APPLICATION_ABORT  "ApplicationAbortOnFatal"

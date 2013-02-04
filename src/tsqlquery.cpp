@@ -23,20 +23,23 @@ static QMutex cacheMutex;
 */
 
 /*!
-  Constructor.
+  Constructs a TSqlQuery object using the SQL \a query and the database
+  \a databaseId.
  */
 TSqlQuery::TSqlQuery(const QString &query, int databaseId)
     : QSqlQuery(query, TActionContext::current()->getDatabase(databaseId))
 { }
 
 /*!
-  Constructor.
- */
+  Constructs a TSqlQuery object using the database \a databaseId.
+*/
 TSqlQuery::TSqlQuery(int databaseId)
     : QSqlQuery(QString(), TActionContext::current()->getDatabase(databaseId))
 { }
 
-
+/*!
+  Loads a query from the given file \a filename.
+*/
 bool TSqlQuery::load(const QString &filename)
 {
     QMutexLocker locker(&cacheMutex);
@@ -64,7 +67,10 @@ bool TSqlQuery::load(const QString &filename)
     return res;
 }
 
-
+/*!
+  Returns the directory path for SQL query files, which is indicated by
+  the value for application setting \a SqlQueriesStoredDirectory.
+*/
 QString TSqlQuery::queryDirPath() const
 {
     QString dir = Tf::app()->webRootPath() + QDir::separator() + Tf::app()->appSettings().value("SqlQueriesStoredDirectory").toString();
@@ -73,20 +79,30 @@ QString TSqlQuery::queryDirPath() const
     return dir;
 }
 
-
+/*!
+  Clears currently cached SQL queries that are loaded by the load() function.
+*/
 void TSqlQuery::clearCachedQueries()
 {
     QMutexLocker locker(&cacheMutex);
     queryCache.clear();
 }
 
-
+/*!
+  Returns the \a identifier escaped according to the rules of the database
+  \a databaseId. The \a identifier can either be a table name or field name,
+  dependent on \a type.
+*/
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, int databaseId)
 {
     return escapeIdentifier(identifier, type, TActionContext::current()->getDatabase(databaseId));
 }
 
-
+/*!
+  Returns the \a identifier escaped according to the rules of the
+  database \a database. The \a identifier can either be a table name
+  or field name, dependent on \a type.
+*/
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, const QSqlDatabase &database)
 {
     QString ret = identifier;
@@ -97,13 +113,19 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
     return ret;
 }
 
-
+/*!
+  Returns a string representation of the value \a val for the database
+  \a databaseId.
+*/
 QString TSqlQuery::formatValue(const QVariant &val, int databaseId)
 {
     return formatValue(val, TActionContext::current()->getDatabase(databaseId));
 }
 
-
+/*!
+  Returns a string representation of the value \a val for the database
+  \a database.
+*/
 QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database)
 {
     QSqlField field("dummy", val.type());
@@ -111,7 +133,10 @@ QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database
     return database.driver()->formatValue(field);
 }
 
-
+/*!
+  Executes the SQL in \a query. Returns true and sets the query state to
+  active if the query was successful; otherwise returns false.
+*/
 bool TSqlQuery::exec(const QString &query)
 {
     bool ret = QSqlQuery::exec(query);
@@ -120,7 +145,10 @@ bool TSqlQuery::exec(const QString &query)
     return ret;
 }
 
-
+/*!
+  Executes a previously prepared SQL query. Returns true if the query
+  executed successfully; otherwise returns false.
+*/
 bool TSqlQuery::exec()
 {
     bool ret = QSqlQuery::exec();

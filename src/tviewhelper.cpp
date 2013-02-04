@@ -21,16 +21,23 @@
 */
 
 /*!
-  Creates a link tag of the given \a text using a given \a url.
- */
+  Creates a \<a\> link tag of the given \a text using the given URL
+  \a url and HTML attributes \a attributes. If \a method is Tf::Post,
+  the link submits a POST request instead of GET.
+*/
 QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method, const THtmlAttribute &attributes) const
 {
     return linkTo(text, url, method, QString(), attributes);
 }
 
 /*!
-  Creates a link tag of the given \a text using a given \a url.
- */
+  Creates a \<a\> link tag of the given \a text using the given \a url.
+  This is an overloaded function.
+  The \a jsCondition argument serves for for creating Javascript confirm
+  alerts where if you pass 'confirm' => 'Are you sure?', the link will be
+  guarded with a Javascript popup asking that question. If the user accepts,
+  the link is processed, otherwise not.
+*/
 QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method, const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     QString string("<a href=\"");
@@ -68,8 +75,9 @@ QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod
 }
 
 /*!
-  Creates a link tag of the given \a text using a given \a url in a popup window.
- */
+  Creates a \<a\> link tag of the given \a text using a given URL
+  \a url in a popup window  with the name \a windowName.
+*/
 QString TViewHelper::linkToPopup(const QString &text, const QUrl &url, const QString &windowName,
                                  const QSize &size, const QPoint &topLeft, const QString &windowStyle,
                                  const QString &jsCondition, const THtmlAttribute &attributes) const
@@ -115,8 +123,8 @@ QString TViewHelper::linkToPopup(const QString &text, const QUrl &url, const QSt
 }
 
 /*!
-  Creates a link tag whose onclick handler triggers the passed JavaScript.
- */
+  Creates a \<a\> link tag whose onclick handler triggers the passed JavaScript.
+*/
 QString TViewHelper::linkToFunction(const QString &text, const QString &function,
                                     const THtmlAttribute &attributes) const
 {
@@ -135,8 +143,9 @@ QString TViewHelper::linkToFunction(const QString &text, const QString &function
 }
 
 /*!
-  Creates a input tag (type="button") whose onclick handler triggers the passed JavaScript.
- */
+  Creates a input tag (type="button") whose onclick handler triggers
+  the passed JavaScript.
+*/
 QString TViewHelper::buttonToFunction(const QString &text, const QString &function,
                                       const THtmlAttribute &attributes) const
 {
@@ -154,9 +163,9 @@ QString TViewHelper::buttonToFunction(const QString &text, const QString &functi
 }
 
 /*!
-  Creates a form tag that points to an \a url. If \a multipart is true, this function
-  creates a form tag of multipart/form-data.
- */
+  Creates a form tag that points to an \a url. If \a multipart is true,
+  this function creates a form tag of multipart/form-data.
+*/
 QString TViewHelper::formTag(const QUrl &url, Tf::HttpMethod method, bool multipart,
                              const THtmlAttribute &attributes)
 {
@@ -176,7 +185,7 @@ QString TViewHelper::formTag(const QUrl &url, Tf::HttpMethod method, bool multip
 }
 
 /*!
-  Creates an end tag such as form tag.
+  Returns an end tag if there is a buffered tags.
 */
 QString TViewHelper::endTag()
 {
@@ -184,7 +193,7 @@ QString TViewHelper::endTag()
 }
 
 /*!
-  Creates an end tags such as form tags.
+  Returns all end tags if there are buffered tags.
 */
 QString TViewHelper::allEndTags()
 {
@@ -194,8 +203,9 @@ QString TViewHelper::allEndTags()
 }
 
 /*!
-  Creates a input tag with name=\a "name" and value=\a "value".
- */
+  Creates a \<input\> input tag with type=\a "type", name=\a "name" and
+  value=\a "value".
+*/
 QString TViewHelper::inputTag(const QString &type, const QString &name, const QVariant &value,
                               const THtmlAttribute &attributes) const
 {
@@ -208,7 +218,7 @@ QString TViewHelper::inputTag(const QString &type, const QString &name, const QV
 
 /*!
   Creates a input tag with type="checkbox", name=\a "name" and value=\a "value".
- */
+*/
 QString TViewHelper::checkBoxTag(const QString &name, const QString &value, bool checked, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
@@ -219,7 +229,7 @@ QString TViewHelper::checkBoxTag(const QString &name, const QString &value, bool
 
 /*!
   Creates a input tag with type="radio", name=\a "name" and value=\a "value".
- */
+*/
 QString TViewHelper::radioButtonTag(const QString &name, const QString &value, bool checked, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
@@ -230,7 +240,7 @@ QString TViewHelper::radioButtonTag(const QString &name, const QString &value, b
 
 /*!
   Creates a input tag with a authenticity token for CSRF protection.
- */
+*/
 QString TViewHelper::inputAuthenticityTag() const
 {
     QString tag;
@@ -243,8 +253,9 @@ QString TViewHelper::inputAuthenticityTag() const
 }
 
 /*!
-  Creates a textarea tag with rows=\a "rows" and cols=\a "cols".
- */
+  Creates a \<textarea\> text area tag with name=\a "name", rows=\a "rows"
+  and cols=\a "cols".
+*/
 QString TViewHelper::textAreaTag(const QString &name, int rows, int cols, const QString &content, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
@@ -255,8 +266,8 @@ QString TViewHelper::textAreaTag(const QString &name, int rows, int cols, const 
 }
 
 /*!
-  Creates a input tag with type=\a "submit" and value=\a "value".
- */
+  Creates a input tag with type="submit" and value=\a "value".
+*/
 QString TViewHelper::submitTag(const QString &value, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
@@ -266,10 +277,10 @@ QString TViewHelper::submitTag(const QString &value, const THtmlAttribute &attri
 }
 
 /*!
-  Creates a input tag with type=\a "image" and src=\a "src". The \a src must
+  Creates a input tag with type="image" and src=\a "src". The \a src must
   be one of URL, a absolute path or a relative path. If \a src is a relative
   path, it must exist in the public/images directory.
- */
+*/
 QString TViewHelper::submitImageTag(const QString &src, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
@@ -279,8 +290,8 @@ QString TViewHelper::submitImageTag(const QString &src, const THtmlAttribute &at
 }
 
 /*!
-  Creates a input tag with type=\a "reset" and value=\a "value".
- */
+  Creates a input tag with type="reset" and value=\a "value".
+*/
 QString TViewHelper::resetTag(const QString &value, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
@@ -290,10 +301,10 @@ QString TViewHelper::resetTag(const QString &value, const THtmlAttribute &attrib
 }
 
 /*!
-  Creates a img tag with src=\a "src". The \a src must be one of URL, a
-  absolute path or a relative path. If \a src is a relative path, it
-  must exist in the public/images directory.
- */
+  Creates a \<img\> image tag with src=\a "src". The \a src must be one
+  of URL, a absolute path or a relative path. If \a src is a relative path,
+  it must exist in the public/images directory.
+*/
 QString TViewHelper::imageTag(const QString &src, const QSize &size,
                               const QString &alt,
                               const THtmlAttribute &attributes) const
@@ -302,12 +313,12 @@ QString TViewHelper::imageTag(const QString &src, const QSize &size,
 }
 
 /*!
-  Creates a img tag with src=\a "src". The \a src must be one of URL, a
-  absolute path or a relative path. If \a src is a relative path, it
-  must exist in the public/images directory. If the \a withTimestamp is
+  Creates a \<img\> image tag with src=\a "src". The \a src must be one
+  of URL, a absolute path or a relative path. If \a src is a relative path,
+  it must exist in the public/images directory. If \a withTimestamp is
   true, the timestamp of the image file is append to \a src as a query
   parameter.
- */
+*/
 QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
                               const QSize &size, const QString &alt,
                               const THtmlAttribute &attributes) const
@@ -327,11 +338,11 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
 }
 
 /*!
-  Creates a stylesheet link tag with href=\a "src". The \a src must
-  be one of URL, a absolute path or a relative path. If \a src is a
-  relative path, it must exist in the public/css directory.
- */
-QString TViewHelper::stylesheetTag(const QString &src, const THtmlAttribute &attributes) const
+  Creates a \<link\> link tag for a style sheet with href=\a "src". The
+  \a src must be one of URL, a absolute path or a relative path. If \a src
+  is a relative path, it must exist in the public/css directory.
+*/
+QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (!attr.contains("type"))
@@ -346,7 +357,7 @@ QString TViewHelper::stylesheetTag(const QString &src, const THtmlAttribute &att
 
 /*!
   Creates and returns a THtmlAttribute object with \a key =\a "value".
- */
+*/
 THtmlAttribute TViewHelper::a(const QString &key, const QString &value) const
 {
     THtmlAttribute attr;
@@ -355,7 +366,7 @@ THtmlAttribute TViewHelper::a(const QString &key, const QString &value) const
 }
 
 /*!
-  Creates a tag of \a name with attributes \a attributes.
+  Creates a tag of \a name with the given HTML attributes \a attributes.
  */
 QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, bool selfClosing) const
 {
@@ -368,7 +379,7 @@ QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, 
 
 /*!
   Creates an HTML element composed of a start-tag of \a name with
-  \a attributes, a content \a content and a end-tag.
+  HTML attributes \a attributes, a content \a content and a end-tag.
  */
 QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, const QString &content) const
 {
@@ -384,7 +395,7 @@ QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, 
   Returns a image path to \a src. The \a src must be one of URL, a absolute
   path or a relative path. If \a src is a relative path, it must exist
   in the public/images directory.
- */
+*/
 QString TViewHelper::imagePath(const QString &src, bool withTimestamp) const
 {
     return srcPath(src, "/images/", withTimestamp);
@@ -394,7 +405,7 @@ QString TViewHelper::imagePath(const QString &src, bool withTimestamp) const
   Returns a css path to \a src. The \a src must be one of URL, a absolute
   path or a relative path. If \a src is a relative path, it must exist
   in the public/css directory.
- */
+*/
 QString TViewHelper::cssPath(const QString &src) const
 {
     return srcPath(src, "/css/");
@@ -414,7 +425,7 @@ QString TViewHelper::jsPath(const QString &src) const
   Returns a path to \a src. The \a src must be one of URL, a absolute
   path or a relative path. If \a src is a relative path, it must exist
   in the public directory.
- */
+*/
 QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTimestamp) const
 {
     if (src.contains(QRegExp("^[a-z]+://"))) {
@@ -435,7 +446,11 @@ QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTi
 
 
 /*!
-  \fn QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url, const QSize &size, const QString &alt, const THtmlAttribute &attributes) const
+  \fn THtmlAttribute TViewHelper::a() const
+  Returns a null THtmlAttribute object.
+*/
 
-  Creates a link tag of a given \a url with img tag with src=\a "src".
+/*!
+  \fn const TActionView *TViewHelper::actionView() const
+  Must be overridden by subclasses to return the current action view.
 */

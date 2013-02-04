@@ -118,7 +118,7 @@ public:
     QString imageLinkTo(const QString &src, const QUrl &url, const QSize &size = QSize(),
                         const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
     
-    QString stylesheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
+    QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     THtmlAttribute a(const QString &key, const QString &value) const;
     THtmlAttribute a() const { return THtmlAttribute(); }
@@ -137,25 +137,40 @@ private:
 };
 
 
+/*!
+  Creates a \<a\> link tag of the given text using the given \a url.
+  This is an overloaded function. Returns a link tag if \a condition is true;
+  otherwise returns a null string. 
+*/
 inline QString TViewHelper::linkToIf(bool condition, const QString &text, const QUrl &url, Tf::HttpMethod method,
                                      const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return condition ? linkTo(text, url, method, jsCondition, attributes) : QString();
 }
 
-
+/*!
+  Creates a \<a\> link tag of the given text using the given \a url.
+  This is an overloaded function. Returns a link tag if \a condition is false;
+  otherwise returns a null string. 
+*/
 inline QString TViewHelper::linkToUnless(bool condition, const QString &text, const QUrl &url, Tf::HttpMethod method,
                                          const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return linkToIf(!condition, text, url, method, jsCondition, attributes);
 }
 
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkTo().
+*/
 inline QString TViewHelper::anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
                                    const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return linkTo(text, url, method, jsCondition, attributes);
 }
 
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkToPopup().
+*/
 inline QString TViewHelper::anchorPopup(const QString &text, const QUrl &url,
                                         const QString &windowTitle,
                                         const QSize &size, const QPoint &topLeft,
@@ -166,6 +181,9 @@ inline QString TViewHelper::anchorPopup(const QString &text, const QUrl &url,
     return linkToPopup(text, url, windowTitle, size, topLeft, windowStyle, jsCondition, attributes);
 }
 
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkToIf().
+*/
 inline QString TViewHelper::anchorIf(bool condition, const QString &text,
                                      const QUrl &url, Tf::HttpMethod method,
                                      const QString &jsCondition,
@@ -174,6 +192,10 @@ inline QString TViewHelper::anchorIf(bool condition, const QString &text,
     return linkToIf(condition, text, url, method, jsCondition, attributes);
 }
 
+
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkToUnless().
+*/
 inline QString TViewHelper::anchorUnless(bool condition, const QString &text,
                                          const QUrl &url, Tf::HttpMethod method,
                                          const QString &jsCondition,
@@ -181,7 +203,10 @@ inline QString TViewHelper::anchorUnless(bool condition, const QString &text,
 {
     return linkToUnless(condition, text, url, method, jsCondition, attributes);
 }
-    
+
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkToFunction().
+*/
 inline QString TViewHelper::anchorFunction(const QString &text,
                                            const QString &function,
                                            const THtmlAttribute &attributes) const
@@ -189,38 +214,59 @@ inline QString TViewHelper::anchorFunction(const QString &text,
     return linkToFunction(text, function, attributes);
 }
 
+/*!
+  Creates a input tag with type="text", name=\a "name" and value=\a "value".
+  This function overloads inputTag().
+*/
 inline QString TViewHelper::inputTextTag(const QString &name, const QVariant &value,
                                          const THtmlAttribute &attributes) const
 {
     return inputTag("text", name, value, attributes);
 }
 
-
+/*!
+  Creates a input tag with type="file", name=\a "name" and value=\a "value".
+  This function overloads inputTag().
+*/
 inline QString TViewHelper::inputFileTag(const QString &name, const QVariant &value,
                                          const THtmlAttribute &attributes) const
 {
     return inputTag("file", name, value, attributes);
 }
 
-    
+/*!
+  Creates a input tag with type="password", name=\a "name" and value=\a "value".
+  This function overloads inputTag().
+*/
 inline QString TViewHelper::inputPasswordTag(const QString &name, const QVariant &value,
                                              const THtmlAttribute &attributes) const
 {
     return inputTag("password", name, value, attributes);
 }
 
-    
+/*!
+  Creates a input tag with type="hidden", name=\a "name" and value=\a "value".
+  This function overloads inputTag().
+*/ 
 inline QString TViewHelper::inputHiddenTag(const QString &name, const QVariant &value,
                                            const THtmlAttribute &attributes) const
 {
     return inputTag("hidden", name, value, attributes);
 }
 
+/*!
+  Creates a \<img\> image tag with src=\a "src". 
+*/
 inline QString TViewHelper::imageTag(const QString &src, const THtmlAttribute &attributes) const
 {
     return imageTag(src, QSize(), QString(), attributes);
 }
 
+/*!
+  \fn QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url, const QSize &size, const QString &alt, const THtmlAttribute &attributes) const
+  Creates a \<a\> link tag of a given \a url with a \<img\> tag of
+  src=\a "src".
+*/
 inline QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url,
                                         const QSize &size, const QString &alt,
                                         const THtmlAttribute &attributes) const

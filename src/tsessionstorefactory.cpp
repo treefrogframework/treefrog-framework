@@ -101,7 +101,9 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     return ret;
 }
 
-
+/*!
+  Loads session store plugins in the plugin directory.
+*/
 void TSessionStoreFactory::loadPlugins()
 {
     if (!ssifs) {

@@ -773,7 +773,7 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 /*!
   \fn virtual bool TActionController::sessionEnabled() const
 
-  Must be overridden by subclasses to disable a HTTP session. The
+  Must be overridden by subclasses to enable a HTTP session. The
   function must return \a false to disable a session. This function
   returns \a true.
   \sa session()

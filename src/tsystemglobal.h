@@ -48,7 +48,7 @@ T_CORE_EXPORT void tQueryLog(const char *, ...) // SQL query log
 #endif
 ;
 
-#if !defined(TF_NO_DEBUG) && ENABLE_TO_TRACE_FUNCTION
+#if !defined(TF_NO_DEBUG) && ENABLE_TO_TRACE_FUNCTION && !defined(Q_OS_WIN)
 
 class T_CORE_EXPORT TTraceFunc
 {

@@ -12,8 +12,10 @@
 /*!
   \class TSqlORMapper
   \brief The TSqlORMapper class is a template class that provides
-  functionality to object-relational mapping.
-  \sa TSqlObject
+  concise functionality to object-relational mapping.
+  It can be used to retrieve TSqlObject objects with a TCriteria
+  from a table.
+  \sa TSqlObject, TCriteria
 */
 
 
@@ -39,7 +41,7 @@ public:
 
 protected:
     void setFilter(const QString &filter);
-    QString orderByPhrase() const;
+    QString orderByClause() const;
     virtual void clear();
     virtual QString selectStatement() const;
 
@@ -54,6 +56,9 @@ private:
 };
 
 
+/*!
+  Constructor.
+*/
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
     : QSqlTableModel(0, TActionContext::current()->getDatabase(T().databaseId())),
@@ -68,7 +73,10 @@ template <class T>
 inline TSqlORMapper<T>::~TSqlORMapper()
 { }
 
-
+/*!
+  Returns the first ORM object retrieved with the criteria \a cri from
+  the table.
+*/
 template <class T>
 inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
 {
@@ -86,7 +94,10 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
     return first();
 }
 
-
+/*!
+  Returns the ORM object retrieved with the primary key \a pk from
+  the table.
+*/
 template <class T>
 inline T TSqlORMapper<T>::findByPrimaryKey(QVariant pk)
 {
@@ -104,7 +115,12 @@ inline T TSqlORMapper<T>::findByPrimaryKey(QVariant pk)
     return first();
 }
 
-
+/*!
+  Retrieves with the criteria \a cri from the table and returns 
+  the number of the ORM objects. TSqlORMapperIterator is used to get
+  the retrieved ORM objects.
+  \sa TSqlORMapperIterator
+*/
 template <class T>
 inline int TSqlORMapper<T>::find(const TCriteria &cri)
 {
@@ -119,21 +135,31 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
     return rowCount();
 }
 
-
+/*!
+  Returns the first ORM object in the results retrieved by find() function.
+  \sa find(const TCriteria &)
+*/
 template <class T>
 inline T TSqlORMapper<T>::first() const
 {
     return value(0);
 }
 
-
+/*!
+  Returns the last ORM object in the results retrieved by find() function.
+  \sa find(const TCriteria &)
+*/
 template <class T>
 inline T TSqlORMapper<T>::last() const
 {
     return value(rowCount() - 1);
 }
 
-
+/*!
+  Returns the ORM object in the results retrieved by find() function.
+  If \a i is the index of a valid row on the results, the ORM object
+  will be populated with values from that row.
+*/
 template <class T>
 inline T TSqlORMapper<T>::value(int i) const
 {
@@ -146,21 +172,27 @@ inline T TSqlORMapper<T>::value(int i) const
     return rec;
 }
 
-
+/*!
+  Sets the limit to \a limit, which is the limited number of rows.
+*/
 template <class T>
 inline void TSqlORMapper<T>::setLimit(int limit)
 {
     queryLimit = limit;
 }
 
-
+/*!
+  Sets the offset to \a offset, which is the number of rows to skip.
+*/
 template <class T>
 inline void TSqlORMapper<T>::setOffset(int offset)
 {
     queryOffset = offset;
 }
 
-
+/*!
+  Sets the sort order for \a column to \a order.
+*/
 template <class T>
 inline void TSqlORMapper<T>::setSort(int column, TSql::SortOrder order)
 {
@@ -168,19 +200,22 @@ inline void TSqlORMapper<T>::setSort(int column, TSql::SortOrder order)
     sortOrder = order;
 }
 
-
 /*!
- * Sets the current filter to 'filter'.
- * The mapper doesn't re-selects it with the new filter,
- * the filter will be applied the next time select() is called.
- */
+  Sets the current filter to \a filter.
+  The filter is a SQL WHERE clause without the keyword WHERE (for example,
+  name='Hanako'). The filter will be applied the next time a query is
+  executed.
+*/
 template <class T>
 inline void TSqlORMapper<T>::setFilter(const QString &filter)
 {
     queryFilter = filter;
 }
 
-
+/*!
+  Returns a SELECT statement generated from the specified parameters.
+  This function is for internal use only.
+*/
 template <class T>
 inline QString TSqlORMapper<T>::selectStatement() const
 {
@@ -188,7 +223,7 @@ inline QString TSqlORMapper<T>::selectStatement() const
     if (!queryFilter.isEmpty())
         query.append(QLatin1String(" WHERE ")).append(queryFilter);
 
-    QString orderby = orderByPhrase();
+    QString orderby = orderByClause();
     if (!orderby.isEmpty()) {
         query.append(orderby);
     }
@@ -229,14 +264,18 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
     return sqlQuery.numRowsAffected();
 }
 
-
+/*!
+  Reset the internal state of the mapper object.
+*/
 template <class T>
 inline void TSqlORMapper<T>::reset()
 {
     setTable(tableName());
 }
 
-
+/*!
+  Clears and releases any acquired resource.
+*/
 template <class T>
 inline void TSqlORMapper<T>::clear()
 {
@@ -251,9 +290,11 @@ inline void TSqlORMapper<T>::clear()
     // or it causes a segmentation fault.
 }
 
-
+/*!
+  Returns a SQL WHERE clause generated from a criteria.
+*/
 template <class T>
-inline QString TSqlORMapper<T>::orderByPhrase() const
+inline QString TSqlORMapper<T>::orderByClause() const
 {
     QString str;
     if (sortColumn >= 0) {

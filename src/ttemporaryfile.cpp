@@ -11,10 +11,16 @@
 
 /*!
   \class TTemporaryFile
-  \brief The TTemporaryFile class is a temporary file device on an
-  action context of web application.
+  \brief The TTemporaryFile class is a temporary file device on an action
+  context of web application. After an action of a controller returns,
+  temporary files created in the action will be deleted. Because this
+  class inherits QTemporaryFile, you can use same functions as that.
+  \sa http://qt-project.org/doc/qt-4.8/qtemporaryfile.html
 */
 
+/*!
+  Constructor.
+*/
 TTemporaryFile::TTemporaryFile()
 {
     QString tmppath;
@@ -39,7 +45,9 @@ TTemporaryFile::TTemporaryFile()
     setFileTemplate(tmppath + "tf_temp.XXXXXXXXXXXXXXXX");
 }
 
-
+/*!
+  Returns an absolute path including the file name.
+*/
 QString TTemporaryFile::absoluteFilePath() const
 {
     QFileInfo info(*this);

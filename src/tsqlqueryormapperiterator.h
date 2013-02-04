@@ -27,6 +27,9 @@ private:
 };
 
 
+/*!
+  Returns the next object and advances the iterator by one position.
+*/
 template <class T>
 inline T TSqlQueryORMapperIterator<T>::next()
 {
@@ -36,7 +39,10 @@ inline T TSqlQueryORMapperIterator<T>::next()
     return m->value();
 }
 
-
+/*!
+  Returns the previous object and moves the iterator back by one
+  position.
+*/
 template <class T>
 inline T TSqlQueryORMapperIterator<T>::previous()
 {

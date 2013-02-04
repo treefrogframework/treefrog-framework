@@ -130,6 +130,7 @@ EXCLUDE                = src/test \
                          src/tcryptmac.h \
                          src/tjavascriptobject.h \
                          src/tcriteriaconverter.h \
+                         src/tsqltransaction.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp
