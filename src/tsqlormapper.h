@@ -238,7 +238,10 @@ inline QString TSqlORMapper<T>::selectStatement() const
     return query;
 }
 
-
+/*!
+  Removes all rows based on the criteria \a cri from the table and
+  returns the number of the rows affected by the query executed.
+*/
 template <class T>
 inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
 {
