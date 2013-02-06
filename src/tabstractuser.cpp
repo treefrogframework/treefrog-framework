@@ -16,7 +16,15 @@
     
 /*!
    \fn virtual QString TAbstractUser::identityKey() const = 0
-   Returns the identity key, such as username.
+   Returns the identity key, such as a user name.
   
    This is a pure virtual function.
+*/
+
+
+/*!
+   \fn virtual QString TAbstractUser::groupKey() const 
+   Returns the group key, such as a group name.
+  
+   This is a virtual function.
 */

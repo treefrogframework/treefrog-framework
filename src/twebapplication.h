@@ -98,6 +98,10 @@ private:
 };
 
 
+/*!
+  Sets the database environment to \a environment.
+  \sa databaseEnvironment()
+*/
 inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 {
     dbEnvironment = environment;

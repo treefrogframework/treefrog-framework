@@ -29,6 +29,9 @@ static QTextCodec *searchCodec(const char *name)
   TreeFrog applications.
 */
 
+/*!
+  Constructor.
+*/
 TWebApplication::TWebApplication(int &argc, char **argv)
 #ifdef TF_USE_GUI_MODULE
     : QApplication(argc, argv),
@@ -111,7 +114,10 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 TWebApplication::~TWebApplication()
 { }
 
-
+/*!
+  Enters the main event loop and waits until exit() is called. Returns the
+  value that was set to exit() (which is 0 if exit() is called via quit()).
+*/
 int TWebApplication::exec()
 {
     resetSignalNumber();
@@ -122,73 +128,101 @@ int TWebApplication::exec()
 #endif
 }
 
-
+/*!
+  Returns true if the web root directory exists; otherwise returns false.
+*/
 bool TWebApplication::webRootExists() const
 {
     return !webRootAbsolutePath.isEmpty() && QDir(webRootAbsolutePath).exists();
 }
 
-
+/*!
+  Returns the absolute path of the public directory.
+*/
 QString TWebApplication::publicPath() const
 {
     return webRootPath() + "public" + QDir::separator();
 }
 
-
+/*!
+  Returns the absolute path of the config directory.
+*/
 QString TWebApplication::configPath() const
 {
     return webRootPath() + "config" + QDir::separator();
 }
 
-
+/*!
+  Returns the absolute path of the library directory.
+*/
 QString TWebApplication::libPath() const
 {
     return webRootPath()+ "lib" + QDir::separator();
 }
 
-
+/*!
+  Returns the absolute path of the log directory.
+*/
 QString TWebApplication::logPath() const
 {
     return webRootPath() + "log" + QDir::separator();
 }
 
-
+/*!
+  Returns the absolute path of the plugin directory.
+*/
 QString TWebApplication::pluginPath() const
 {
     return webRootPath() + "plugin" + QDir::separator();
 }
 
-
+/*!
+  Returns the absolute path of the tmp directory.
+*/
 QString TWebApplication::tmpPath() const
 {
     return webRootPath() + "tmp" + QDir::separator();
 }
 
-
+/*!
+  Returns true if the file of the application settings exists;
+  otherwise returns false.
+*/
 bool TWebApplication::appSettingsFileExists() const
 {
     return !appSetting->allKeys().isEmpty();
 }
 
-
+/*!
+  Returns the absolute file path of the application settings.
+*/
 QString TWebApplication::appSettingsFilePath() const
 {
     return configPath() + "application.ini";
 }
 
-
+/*!
+  Returns a reference to the QSettings object for settings of the
+  database \a databaseId.
+*/
 QSettings &TWebApplication::databaseSettings(int databaseId) const
 {
     return *dbSettings[databaseId];
 }
 
-
+/*!
+  Returns the number of database settings files set by the setting
+  \a DatabaseSettingsFiles in the application.ini. 
+*/
 int TWebApplication::databaseSettingsCount() const
 {
     return dbSettings.count();
 }
 
-
+/*!
+  Returns true if all the database settings are valid; otherwise
+  returns false.
+*/
 bool TWebApplication::isValidDatabaseSettings() const
 {
     bool valid = false;
@@ -204,7 +238,10 @@ bool TWebApplication::isValidDatabaseSettings() const
     return valid;
 }
 
-
+/*!
+  Returns the internet media type associated with the file extension
+  \a ext.
+*/
 QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCharset)
 {
     if (ext.isEmpty())
@@ -217,7 +254,10 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
     return type.toLatin1();
 }
 
-
+/*!
+  Returns the error message for validation of the given \a rule. These messages
+  are defined in the validation.ini. 
+*/
 QString TWebApplication::validationErrorMessage(int rule) const
 {
     validationSetting->beginGroup("ErrorMessage");
@@ -226,7 +266,10 @@ QString TWebApplication::validationErrorMessage(int rule) const
     return msg;
 }
 
-
+/*!
+  Returns the module name for multi-processing that is set by the setting
+  \a MultiProcessingModule in the application.ini.
+*/
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
     if (mpm == Invalid) {
@@ -240,7 +283,10 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
     return mpm;
 }
 
-
+/*!
+  Returns the maximum number of runnable servers, which is set in the
+  application.ini.
+*/
 int TWebApplication::maxNumberOfServers() const
 {
     QString mpm = appSettings().value("MultiProcessingModule").toString().toLower();
@@ -249,27 +295,38 @@ int TWebApplication::maxNumberOfServers() const
     return num;
 }
 
-
+/*!
+  Returns the absolute file path of the routes config.
+*/
 QString TWebApplication::routesConfigFilePath() const
 {
     return configPath() + "routes.cfg";
 }
 
-
+/*!
+  Returns the absolute file path of the system log, which is set by the
+  setting \a SystemLog.FilePath in the application.ini.
+*/
 QString TWebApplication::systemLogFilePath() const
 {
     QFileInfo fi(appSettings().value("SystemLog.FilePath", "log/treefrog.log").toString());
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
 }
 
-
+/*!
+  Returns the absolute file path of the access log, which is set by the
+  setting \a AccessLog.FilePath in the application.ini.
+*/
 QString TWebApplication::accessLogFilePath() const
 {
     QFileInfo fi(appSettings().value("AccessLog.FilePath", "log/access.log").toString());
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
 }
 
-
+/*!
+  Returns the absolute file path of the SQL query log, which is set by the
+  setting \a SqlQueryLogFile in the application.ini.
+*/
 QString TWebApplication::sqlQueryLogFilePath() const
 {
     QString path = appSettings().value("SqlQueryLogFile").toString();
@@ -296,3 +353,84 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 #endif
     }
 }
+
+
+/*!
+  \fn QString TWebApplication::webRootPath() const
+  Returns the absolute path of the web root directory.
+*/
+
+/*!
+  \fn QSettings &TWebApplication::appSettings() const
+  Returns a reference to the QSettings object for settings of the
+  web application, which file is the application.ini.
+*/
+
+/*!
+  \fn QSettings &TWebApplication::loggerSettings () const
+  Returns a reference to the QSettings object for settings of the
+  logger, which file is logger.ini.
+*/
+
+/*!
+  \fn QSettings &TWebApplication::validationSettings () const 
+  Returns a reference to the QSettings object for settings of the
+  validation, which file is validation.ini.
+*/
+
+/*!
+  \fn QTextCodec *TWebApplication::codecForInternal() const
+  Returns a pointer to the codec used internally, which is set by the
+  setting \a InternalEncoding in the application.ini. This codec is used
+  by QObject::tr() and toLocal8Bit() functions.
+*/
+
+/*!
+  \fn QTextCodec *TWebApplication::codecForHttpOutput() const
+  Returns a pointer to the codec of the HTTP output stream used by an
+  action view, which is set by the setting \a HttpOutputEncoding in
+  the application.ini. 
+*/
+
+/*!
+  \fn QString TWebApplication::databaseEnvironment() const
+  Returns the database environment, which string is used to load
+  the settings in database.ini. 
+  \sa setDatabaseEnvironment(const QString &environment)
+*/
+
+/*!
+  \fn void TWebApplication::watchConsoleSignal();
+  Starts watching console signals i.e.\ registers a routine to handle the
+  console signals.
+*/
+
+/*!
+  \fn void TWebApplication::ignoreConsoleSignal();
+  Ignores console signals, i.e.\ delivery of console signals will have no effect
+  on the process. 
+*/
+
+/*!
+  \fn void TWebApplication::watchUnixSignal(int sig, bool watch);
+  Starts watching the UNIX signal, i.e.\ registers a routine to handle the
+  signal \a sig.
+  \sa ignoreUnixSignal()
+*/
+
+/*!
+  \fn void TWebApplication::ignoreUnixSignal(int sig, bool ignore)
+  Ignores UNIX signals, i.e.\ delivery of the signal will have no effect on
+  the process. 
+  \sa watchUnixSignal()
+*/
+
+/*!
+  \fn void TWebApplication::timerEvent(QTimerEvent *)
+  Reimplemented from QObject::timerEvent().
+*/
+
+/*!
+  \fn int TWebApplication::signalNumber()
+  Returns the integral number of the received signal.
+*/
