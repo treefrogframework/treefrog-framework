@@ -32,7 +32,25 @@ static BOOL WINAPI signalHandler(DWORD ctrlType)
     return TRUE;
 }
 
-#if QT_VERSION < 0x050000
+
+#if QT_VERSION >= 0x050000
+
+bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
+{
+    if (eventType == "windows_generic_MSG") {
+        MSG *msg = static_cast<MSG *>(message);
+        if (msg->message == WM_CLOSE) {
+            Tf::app()->quit();
+        } else if (msg->message == WM_APP) {
+            Tf::app()->exit(1);
+        }
+        return true;
+    }
+    return false;
+}
+
+#else
+
 bool TWebApplication::winEventFilter(MSG *msg, long *result)
 {
     if (msg->message == WM_CLOSE) {
@@ -42,7 +60,8 @@ bool TWebApplication::winEventFilter(MSG *msg, long *result)
     }
     return QCoreApplication::winEventFilter(msg, result);
 }
-#endif
+#endif // QT_VERSION >= 0x050000
+
 
 void TWebApplication::watchConsoleSignal()
 {
@@ -68,20 +87,3 @@ void TWebApplication::resetSignalNumber()
 {
     ::ctrlSignal = -1;
 }
-
-
-#if QT_VERSION >= 0x050000
-bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
-{
-    if (eventType == "windows_generic_MSG") {
-        MSG *msg = static_cast<MSG *>(message);
-        if (msg->message == WM_CLOSE) {
-            Tf::app()->quit();
-        } else if (msg->message == WM_APP) {
-            Tf::app()->exit(1);
-        }
-        return true;
-    }
-    return false;
-}
-#endif
