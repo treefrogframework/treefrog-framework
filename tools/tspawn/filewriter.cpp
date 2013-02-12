@@ -44,8 +44,8 @@ static QString diff(const QString &data1, const QString &data2)
 }
 
 
-FileWriter::FileWriter(const QString &fileName)
-    : filename(fileName)
+FileWriter::FileWriter(const QString &filePath)
+    : filepath(filePath)
 { }
 
 
@@ -66,23 +66,23 @@ static QString readFile(const QString &fileName)
 
 bool FileWriter::write(const QString &data, bool overwrite) const
 {
-    if (filename.isEmpty()) {
+    if (filepath.isEmpty()) {
         return false;
     }
 
     bool res = false;
     QByteArray act;
-    QFileInfo fi(filename);
+    QFileInfo fi(filepath);
 
     if (fi.exists()) {
-        QString orig = readFile(filename);
+        QString orig = readFile(filepath);
         if (orig == data) {
             printf("  unchanged %s\n", qPrintable(fi.filePath()));
             return true;
         }
 
         if (gOverwrite || overwrite) {
-            QFile::remove(filename);
+            QFile::remove(filepath);
             res = write(data);
             act = (res) ? "updated " : "error   ";
 
@@ -100,7 +100,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
 
                 QCharRef c = line[0];
                 if (c == 'Y' || c == 'y') {
-                    QFile::remove(filename);
+                    QFile::remove(filepath);
                     res = write(data);
                     act = (res) ? "updated " : "error   ";
                     break;
@@ -110,7 +110,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
 
                 } else if (c == 'A' || c == 'a') {
                     gOverwrite = true;
-                    QFile::remove(filename);
+                    QFile::remove(filepath);
                     res = write(data);
                     act = (res) ? "updated " : "error   ";
                     break;
@@ -121,7 +121,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
 
                 } else if (c == 'D' || c == 'd') {
                     printf("-----------------------------------------------------------\n");
-                    orig = readFile(filename);  // Re-read
+                    orig = readFile(filepath);  // Re-read
                     QString df = diff(orig, data);
                     if (df.isEmpty()) {
                         qCritical("Error: diff command not found");
@@ -155,17 +155,23 @@ bool FileWriter::write(const QString &data, bool overwrite) const
 
 bool FileWriter::write(const QString &data) const
 {
-    if (filename.isEmpty()) {
+    if (filepath.isEmpty()) {
         return false;
     }
 
-    QFile file(filename);
+    QFile file(filepath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCritical("failed to create file: %s", qPrintable(filename));
+        qCritical("failed to create file: %s", qPrintable(filepath));
         return false;
     }
 
     QTextStream ts(&file);
     ts << data;
     return (ts.status() == QTextStream::Ok);
+}
+
+
+QString FileWriter::fileName() const
+{
+    return QFileInfo(filepath).fileName();
 }

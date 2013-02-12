@@ -281,7 +281,7 @@ QStringList OtamaGenerator::generateViews() const
     }
     
     output = QString(INDEX_HTML_TEMPLATE).arg(caption, th, td);
-    fw.setFileName(dstDir.filePath("index.html"));
+    fw.setFilePath(dstDir.filePath("index.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
@@ -289,49 +289,49 @@ QStringList OtamaGenerator::generateViews() const
     // Generates index.otm
     QString pkVarName = fieldNameToVariableName(pkFld.first);
     output = QString(INDEX_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, indexOtm, pkVarName);
-    fw.setFileName(dstDir.filePath("index.otm"));
+    fw.setFilePath(dstDir.filePath("index.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates show.html
     output = QString(SHOW_HTML_TEMPLATE).arg(caption, showColumn);
-    fw.setFileName(dstDir.filePath("show.html"));
+    fw.setFilePath(dstDir.filePath("show.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates show.otm
     output = QString(SHOW_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, showOtm, pkVarName);
-    fw.setFileName(dstDir.filePath("show.otm"));
+    fw.setFilePath(dstDir.filePath("show.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates entry.html
     output = QString(ENTRY_HTML_TEMPLATE).arg(caption, entryColumn);
-    fw.setFileName(dstDir.filePath("entry.html"));
+    fw.setFilePath(dstDir.filePath("entry.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates entry.otm
     output = QString(ENTRY_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
-    fw.setFileName(dstDir.filePath("entry.otm"));
+    fw.setFilePath(dstDir.filePath("entry.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.html
     output = QString(EDIT_HTML_TEMPLATE).arg(caption, editColumn);
-    fw.setFileName(dstDir.filePath("edit.html"));
+    fw.setFilePath(dstDir.filePath("edit.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.otm
     output = QString(EDIT_OTM_TEMPLATE).arg(varName.toLower(), varName, pkVarName, editOtm);
-    fw.setFileName(dstDir.filePath("edit.otm"));
+    fw.setFilePath(dstDir.filePath("edit.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }

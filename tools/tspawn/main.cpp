@@ -444,10 +444,12 @@ int main(int argc, char *argv[])
         // Sets codec
         QTextCodec *codec = QTextCodec::codecForName(appSettings.value("InternalEncoding").toByteArray().trimmed());
         codec = (codec) ? codec : QTextCodec::codecForLocale();
-        QTextCodec::setCodecForTr(codec);
         QTextCodec::setCodecForLocale(codec);
+#if QT_VERSION < 0x050000
+        QTextCodec::setCodecForTr(codec);
         QTextCodec::setCodecForCStrings(codec);
-        
+#endif
+
         // ERB or Otama
         templateSystem = devSettings.value("TemplateSystem").toString().toLower();
         if (templateSystem.isEmpty()) {
