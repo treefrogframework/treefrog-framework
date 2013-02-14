@@ -65,15 +65,15 @@ public:
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
 
 #if defined(Q_OS_WIN)
-#if QT_VERSION < 0x050000
+# if QT_VERSION < 0x050000
     virtual bool winEventFilter(MSG *msg, long *result);
-#endif
+# endif // QT_VERSION < 0x050000
     void watchConsoleSignal();
     void ignoreConsoleSignal();
 #else
     void watchUnixSignal(int sig, bool watch = true);
     void ignoreUnixSignal(int sig, bool ignore = true);
-#endif
+#endif // Q_OS_WIN
 
 protected:
     void timerEvent(QTimerEvent *event);

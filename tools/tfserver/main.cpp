@@ -19,6 +19,26 @@ using namespace TreeFrog;
 #define SOCKET_OPTION  "-s"
 
 
+#if QT_VERSION >= 0x050000
+static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
+{
+    QByteArray msg = message.toLocal8Bit();
+    switch (type) {
+    case QtFatalMsg:
+    case QtCriticalMsg:
+        tSystemError("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:
+        tSystemWarn("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        break;
+    case QtDebugMsg:
+        tSystemDebug("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        break;
+    default:
+        break;
+    }
+}
+#else
 static void messageOutput(QtMsgType type, const char *msg)
 {
     switch (type) {
@@ -36,6 +56,7 @@ static void messageOutput(QtMsgType type, const char *msg)
         break;
     }
 }
+#endif // QT_VERSION >= 0x050000
 
 #if defined(Q_OS_UNIX)
 static void writeFailure(const void *data, int size)
@@ -71,8 +92,11 @@ int main(int argc, char *argv[])
     // Setup loggers
     tSetupSystemLoggers();
     tSetupLoggers();
+#if QT_VERSION >= 0x050000
+    qInstallMessageHandler(messageOutput);
+#else
     qInstallMsgHandler(messageOutput);
-
+#endif
     QHash<QString, QString> args = convertArgs(QCoreApplication::arguments());
 
 #if defined(Q_OS_UNIX)
@@ -101,11 +125,14 @@ int main(int argc, char *argv[])
     
     // Sets codec
     QTextCodec *codec = webapp.codecForInternal();
-    QTextCodec::setCodecForTr(codec);
     QTextCodec::setCodecForLocale(codec);
+
+#if QT_VERSION < 0x050000
+    QTextCodec::setCodecForTr(codec);
     QTextCodec::setCodecForCStrings(codec);
     tSystemDebug("setCodecForTr: %s", codec->name().data());
     tSystemDebug("setCodecForCStrings: %s", codec->name().data());
+#endif
 
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");

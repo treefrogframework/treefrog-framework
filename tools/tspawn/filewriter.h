@@ -1,4 +1,4 @@
-/* Copyright (c) 2010, AOYAMA Kazuharu
+/* Copyright (c) 2010-2013, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -14,14 +14,15 @@
 class FileWriter
 {
 public:
-    FileWriter(const QString &fileName = QString());
+    FileWriter(const QString &filePath = QString());
     bool write(const QString &data, bool overwrite) const;
-    QString fileName() const { return filename; }
-    void setFileName(const QString &name) { filename = name; }
+    QString fileName() const;
+    void setFilePath(const QString &path) { filepath = path; }
+    QString filePath() const { return filepath; }
 
 private:
     bool write(const QString &data) const;
-    QString filename;
+    QString filepath;
 };
 
 #endif // FILEWRITER_H

@@ -217,25 +217,25 @@ bool ErbGenerator::generate() const
     }
 
     output = QString(INDEX_TEMPLATE).arg(varName.toLower(), caption, th, viewName, varName,td, pkVarName);
-    fw.setFileName(dstDir.filePath("index.erb"));
+    fw.setFilePath(dstDir.filePath("index.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
     output = QString(SHOW_TEMPLATE).arg(varName.toLower(), viewName, varName, caption, showitems, pkVarName);
-    fw.setFileName(dstDir.filePath("show.erb"));
+    fw.setFilePath(dstDir.filePath("show.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
     output = QString(ENTRY_TEMPLATE).arg(varName.toLower(), varName, caption, entryitems);
-    fw.setFileName(dstDir.filePath("entry.erb"));
+    fw.setFilePath(dstDir.filePath("entry.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
     output = QString(EDIT_TEMPLATE).arg(varName.toLower(), varName, caption, pkVarName, edititems);
-    fw.setFileName(dstDir.filePath("edit.erb"));
+    fw.setFilePath(dstDir.filePath("edit.erb"));
     if (!fw.write(output, false)) {
         return false;
     }

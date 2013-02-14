@@ -387,7 +387,7 @@ QString ModelGenerator::generateSqlObject() const
     QDir dst(dstDir.filePath("sqlobjects"));
     FileWriter fw(dst.filePath(modelName.toLower() + "object.h"));
     fw.write(output, false);
-    return fw.fileName();
+    return QLatin1String("sqlobjects/") + fw.fileName();
 }
 
 
@@ -398,11 +398,11 @@ QStringList ModelGenerator::genModel() const
     QPair<QStringList, QStringList> p = createModelParams();
     QString fileName = dstDir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
-    ret << fileName;
+    ret << QFileInfo(fileName).fileName();
 
     fileName = dstDir.filePath(modelName.toLower() + ".cpp");
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
-    ret << fileName;
+    ret << QFileInfo(fileName).fileName();
     return ret;
 }
 
