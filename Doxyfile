@@ -127,7 +127,6 @@ EXCLUDE                = src/test \
                          src/tlazyloader.h \
                          src/tdispatcher.h \
                          src/tactioncontext.h \
-                         src/tcryptmac.h \
                          src/tjavascriptobject.h \
                          src/tcriteriaconverter.h \
                          src/tsqltransaction.h \
