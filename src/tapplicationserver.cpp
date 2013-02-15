@@ -107,25 +107,18 @@ bool TApplicationServer::open()
             tSystemError("lib directory not found");
             return false;
         }
-        
-        QStringList filter;
+
+        QStringList libs;
 #if defined(Q_OS_WIN)
-        filter << "controller.dll" << "view.dll";
-#elif defined(Q_OS_DARWIN)
-        filter << "libcontroller.dylib" << "libview.dylib";
-#elif defined(Q_OS_UNIX)
-        filter << "libcontroller.so" << "libview.so";
+        libs << "controller" << "view";
 #else
-        filter << "libcontroller.*" << "libview.*";
+        libs << "libcontroller" << "libview";
 #endif
 
-        QDir controllerDir(".");
-        QStringList list = controllerDir.entryList(filter, QDir::Files);
-        for (QStringListIterator i(list); i.hasNext(); ) {
-            QString path = controllerDir.absoluteFilePath(i.next());
-            QLibrary lib(path);
+        for (QStringListIterator it(libs); it.hasNext(); ) {
+            QLibrary lib(it.next());
             if (lib.load()) {
-                tSystemDebug("Library loaded: %s", qPrintable(path));
+                tSystemDebug("Library loaded: %s", qPrintable(lib.fileName()));
                 libLoaded = true;
             } else {
                 tSystemError("%s", qPrintable(lib.errorString()));
@@ -197,7 +190,12 @@ void TApplicationServer::terminate()
 }
 
 
-void TApplicationServer::incomingConnection(int socketDescriptor)
+void TApplicationServer::incomingConnection(
+#if QT_VERSION >= 0x05000
+    qintptr socketDescriptor)
+#else
+    int socketDescriptor)
+#endif
 {
     T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
  

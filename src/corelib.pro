@@ -213,53 +213,52 @@ HEADERS += \
            thttpresponseheader.h
 #           tlazyloader.h
 
-HEADERS += TSessionStore \
-           TSessionStorePlugin \
-           TJavaScriptObject \
-           TWebApplication \
-           TApplicationServer \
-           TAccessValidator \
-           TActionContext \
-           TActionThread \
-           TActionForkProcess \
-           TAbstractController \
-           TActionController \
-           TActionView \
-           TActionMailer \
-           TSqlDatabasePool \
-           TSqlObject \
-           TCriteria \
-           TCriteriaConverter \
-           TDispatcher \
-           TFormValidator \
-           THttpRequest \
-           THttpResponse \
-           TMultipartFormData \
-           TContentHeader \
-           THttpUtility \
-           TDirectView \
-           TActionHelper \
-           TViewHelper \
-           TPrototypeAjaxHelper \
-           TSqlORMapper \
-           TLog \
-           TLogger \
-           TLoggerPlugin \
-           TMailMessage \
-#           TLazyLoader \
-           TSqlQuery \
-           TSqlQueryORMapper \
-           TSqlQueryORMapperIterator \
-           TSqlTransaction \
-           TCookieJar \
-           TSession \
-           THtmlParser \
-           TAbstractModel \
-           TModelUtil \
-           TGlobal \
-           TreeFrogController \
-           TreeFrogModel \
-           TreeFrogView
+#HEADERS += TSessionStore \
+#           TSessionStorePlugin \
+#           TJavaScriptObject \
+#           TWebApplication \
+#           TApplicationServer \
+#           TAccessValidator \
+#           TActionContext \
+#           TActionThread \
+#           TActionForkProcess \
+#           TAbstractController \
+#           TActionController \
+#           TActionView \
+#           TActionMailer \
+#           TSqlDatabasePool \
+#           TSqlObject \
+#           TCriteria \
+#           TCriteriaConverter \
+#           TDispatcher \
+#           TFormValidator \
+#           THttpRequest \
+#           THttpResponse \
+#           TMultipartFormData \
+#           TContentHeader \
+#           THttpUtility \
+#           TDirectView \
+#           TActionHelper \
+#           TViewHelper \
+#           TPrototypeAjaxHelper \
+#           TSqlORMapper \
+#           TLog \
+#           TLogger \
+#           TLoggerPlugin \
+#           TMailMessage \
+#           TSqlQuery \
+#           TSqlQueryORMapper \
+#           TSqlQueryORMapperIterator \
+#           TSqlTransaction \
+#           TCookieJar \
+#           TSession \
+#           THtmlParser \
+#           TAbstractModel \
+#           TModelUtil \
+#           TGlobal \
+#           TreeFrogController \
+#           TreeFrogModel \
+#           TreeFrogView
 
 win32 {
   SOURCES += twebapplication_win.cpp

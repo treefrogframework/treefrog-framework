@@ -14,7 +14,10 @@
   "Message Authentication Code" (MAC) algorithm. 
 */
 
-
+/*!
+  Returns a cryptographic hash value generated from the given binary or
+  text data \a data with \a key using \a method.
+*/
 QByteArray TCryptMac::mac(const QByteArray &data, const QByteArray &key, Algorithm method)
 {
     QByteArray tk = (key.length() > 64) ? QCryptographicHash::hash(key, (QCryptographicHash::Algorithm)method) : key;

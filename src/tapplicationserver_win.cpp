@@ -66,7 +66,11 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
             goto error_socket;
         }
         
-    } else if (address.protocol() == QAbstractSocket::IPv4Protocol || address.protocol() == QAbstractSocket::UnknownNetworkLayerProtocol) {
+    } else if (address.protocol() == QAbstractSocket::IPv4Protocol
+#if QT_VERSION >= 0x050000
+               || address.protocol() == QAbstractSocket::QAbstractSocket::AnyIPProtocol
+#endif
+        ) {
         struct sockaddr_in sa;
         memset(&sa, 0, sizeof(sa));
         sa.sin_family = AF_INET;
@@ -76,7 +80,7 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
             tSystemError("bind error: %d", WSAGetLastError());
             goto error_socket;
         }
-    } else {
+    } else {  // UnknownNetworkLayerProtocol
         goto error_socket;
     }
     

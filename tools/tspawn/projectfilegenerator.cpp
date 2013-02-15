@@ -36,7 +36,7 @@ bool ProjectFileGenerator::add(const QStringList &files)
     pro.close();
 
     for (QStringListIterator i(files); i.hasNext(); ) {
-        QString f = QFileInfo(i.next()).fileName();
+        const QString &f = i.next();
         QString str;
         QRegExp rx("*.h");
         rx.setPatternSyntax(QRegExp::Wildcard);
@@ -87,7 +87,7 @@ bool ProjectFileGenerator::remove(const QStringList &files)
         return true;
 
     for (QStringListIterator i(files); i.hasNext(); ) {
-        QString f = QFileInfo(i.next()).fileName();
+        const QString &f = i.next();
         QString str;
         QRegExp rx("*.h");
         rx.setPatternSyntax(QRegExp::Wildcard);
