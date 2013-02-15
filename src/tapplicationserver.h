@@ -35,7 +35,11 @@ public slots:
     void terminate();
 
 protected:
-    virtual void incomingConnection(int socketDescriptor);
+#if QT_VERSION >= 0x05000
+    void incomingConnection(qintptr socketDescriptor);
+#else
+    void incomingConnection(int socketDescriptor);
+#endif
     void insertPointer(TActionContext *p);
     int actionContextCount() const;
 

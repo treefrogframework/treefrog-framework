@@ -37,14 +37,13 @@ static BOOL WINAPI signalHandler(DWORD ctrlType)
 
 bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
 {
-    if (eventType == "windows_generic_MSG") {
+    if (eventType == "windows_generic_MSG" || eventType == "windows_dispatcher_MSG") {
         MSG *msg = static_cast<MSG *>(message);
         if (msg->message == WM_CLOSE) {
             Tf::app()->quit();
         } else if (msg->message == WM_APP) {
             Tf::app()->exit(1);
         }
-        return true;
     }
     return false;
 }
