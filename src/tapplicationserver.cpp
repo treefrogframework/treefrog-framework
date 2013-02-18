@@ -191,7 +191,7 @@ void TApplicationServer::terminate()
 
 
 void TApplicationServer::incomingConnection(
-#if QT_VERSION >= 0x05000
+#if QT_VERSION >= 0x050000
     qintptr socketDescriptor)
 #else
     int socketDescriptor)

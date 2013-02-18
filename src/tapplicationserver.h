@@ -35,7 +35,7 @@ public slots:
     void terminate();
 
 protected:
-#if QT_VERSION >= 0x05000
+#if QT_VERSION >= 0x050000
     void incomingConnection(qintptr socketDescriptor);
 #else
     void incomingConnection(int socketDescriptor);
