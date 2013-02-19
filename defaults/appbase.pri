@@ -7,7 +7,10 @@ win32 {
     LIBS += -ltreefrog1
   }
 } else {
+  macx {
+    LIBS += -framework treefrog
+  } else {
+    LIBS += -ltreefrog
+  }
   unix:INCLUDEPATH += /usr/include/treefrog
-  unix:LIBS += -ltreefrog
-  macx:LIBS += -framework treefrog
 }
