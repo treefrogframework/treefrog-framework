@@ -161,8 +161,12 @@ cd src
 qmake $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
 cd ../tools
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" 
+qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
 make qmake
+
+cd ..
+INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
+sed -i -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
