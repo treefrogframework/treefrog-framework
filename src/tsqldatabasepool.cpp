@@ -71,7 +71,7 @@ void TSqlDatabasePool::init()
         for (int i = 0; i < maxConnections; ++i) {
             QSqlDatabase db = QSqlDatabase::addDatabase(type, QString().sprintf("%02d_%d", j, i));
             if (!db.isValid()) {
-                tWarn("Parameter 'driverType' is invalid");
+                tWarn("Parameter 'DriverType' is invalid");
                 break;
             }
             tSystemDebug("Add Database successfully. name:%s", qPrintable(db.connectionName())); 
