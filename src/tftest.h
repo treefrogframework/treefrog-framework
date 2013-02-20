@@ -11,6 +11,12 @@
 # include <TSqlDatabasePool>
 #endif
 
+#if QT_VERSION < 0x050000
+# define SET_CODEC_FOR_TR(codec)  do { QTextCodec::setCodecForTr(codec); QTextCodec::setCodecForCStrings(codec); } while (0)
+#else
+# define SET_CODEC_FOR_TR(codec)
+#endif
+
 
 #define TF_TEST_MAIN(TestObject) \
 int main(int argc, char *argv[]) \
@@ -29,9 +35,8 @@ int main(int argc, char *argv[]) \
     TWebApplication app(argc, argv); \
     QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
-    QTextCodec::setCodecForTr(codec); \
     QTextCodec::setCodecForLocale(codec); \
-    QTextCodec::setCodecForCStrings(codec); \
+    SET_CODEC_FOR_TR(codec); \
     app.setDatabaseEnvironment("test"); \
     TSqlDatabasePool::instantiate(); \
     Thread thread; \
@@ -47,9 +52,8 @@ int main(int argc, char *argv[]) \
     TWebApplication app(argc, argv); \
     QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
-    QTextCodec::setCodecForTr(codec); \
     QTextCodec::setCodecForLocale(codec); \
-    QTextCodec::setCodecForCStrings(codec); \
+    SET_CODEC_FOR_TR(codec); \
     TestObject tc; \
     return QTest::qExec(&tc, argc, argv); \
 }
