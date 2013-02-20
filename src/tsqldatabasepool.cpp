@@ -261,11 +261,11 @@ QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
 {
     QSettings &settings = Tf::app()->databaseSettings(databaseId);
     settings.beginGroup(env);
-    QString type = settings.value("driverType").toString().trimmed();
+    QString type = settings.value("DriverType").toString().trimmed();
     settings.endGroup();
     
     if (type.isEmpty()) {
-        tDebug("Parameter 'driverType' is empty");
+        tDebug("Parameter 'DriverType' is empty");
     }
     return type;
 }
