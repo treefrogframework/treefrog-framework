@@ -28,7 +28,7 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    void setSort(int column, TSql::SortOrder order);
+    void setSortOrder(int column, TSql::SortOrder order);
     void reset();
 
     T findFirst(const TCriteria &cri = TCriteria());
@@ -194,7 +194,7 @@ inline void TSqlORMapper<T>::setOffset(int offset)
   Sets the sort order for \a column to \a order.
 */
 template <class T>
-inline void TSqlORMapper<T>::setSort(int column, TSql::SortOrder order)
+inline void TSqlORMapper<T>::setSortOrder(int column, TSql::SortOrder order)
 {
     sortColumn = column;
     sortOrder = order;

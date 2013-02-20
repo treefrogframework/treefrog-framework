@@ -12,7 +12,7 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, T
 {
     TSqlORMapper<S> mapper;
     if (sortColumn >= 0)
-        mapper.setSort(sortColumn, order);
+        mapper.setSortOrder(sortColumn, order);
 
     if (limit > 0)
         mapper.setLimit(limit);
