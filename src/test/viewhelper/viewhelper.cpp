@@ -151,7 +151,7 @@ void TestViewHelper::stylesheetTag()
     THtmlAttribute attr;
     attr.append("onclick", "return 0;");
     attr.append("style", "none");
-    QString actual = view.stylesheetTag("hoge.png", attr);
+    QString actual = view.styleSheetTag("hoge.png", attr);
     QString result = "<link href=\"/css/hoge.png\" rel=\"stylesheet\" type=\"text/css\" onclick=\"return 0;\" style=\"none\" />";
     QCOMPARE(actual, result);
 }
