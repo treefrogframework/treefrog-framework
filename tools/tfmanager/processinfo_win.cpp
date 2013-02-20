@@ -7,6 +7,7 @@
 
 #include <QtCore>
 #include <windows.h>
+#include <tlhelp32.h>
 #include <psapi.h>
 #include "processinfo.h"
 
@@ -92,19 +93,16 @@ void ProcessInfo::restart()
 
 QList<qint64> ProcessInfo::allConcurrentPids()
 {
-    const int MAX_COUNT = 1024;
     QList<qint64> ret;
-    DWORD *pids = new DWORD[MAX_COUNT];
-    DWORD size;
+    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    PROCESSENTRY32 entry;
 
-    BOOL res = ::EnumProcesses(pids, sizeof(DWORD) * MAX_COUNT, &size);
-    if (res) {
-        DWORD count = size / sizeof(DWORD);
-        for (DWORD i = 0; i < count; ++i) {
-            ret << (qint64)pids[i];
-        }
+    entry.dwSize = sizeof(PROCESSENTRY32);
+    if (Process32First(hSnapshot, &entry)) {
+        do {
+            ret << (qint64)entry.th32ProcessID;
+        } while(Process32Next(hSnapshot, &entry));
     }
-    delete[] pids;
 
     qSort(ret.begin(), ret.end());  // Sorts the items
     return ret;
