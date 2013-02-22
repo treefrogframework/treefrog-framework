@@ -48,6 +48,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(VersionHash, winVersion,
     x->insert(QSysInfo::WV_2003,     "Windows Server 2003");
     x->insert(QSysInfo::WV_VISTA,    "Windows Vista or Windows Server 2008");
     x->insert(QSysInfo::WV_WINDOWS7, "Windows 7 or Windows Server 2008 R2");
+#if QT_VERSION >= 0x050000
+    x->insert(QSysInfo::WV_WINDOWS8, "Windows 8");
+#endif
 })
 #endif
 
@@ -348,8 +351,12 @@ int managerMain(int argc, char *argv[])
     app.watchUnixSignal(SIGTERM);
     app.watchUnixSignal(SIGINT);
     app.watchUnixSignal(SIGHUP);
+
 #elif defined(Q_OS_WIN)
     app.watchConsoleSignal();
+# if QT_VERSION >= 0x050000
+    app.watchLocalSocket();
+# endif
 #endif
 
     // Sets codec
