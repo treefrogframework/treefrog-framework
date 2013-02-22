@@ -8,8 +8,14 @@
 class TPaginator
 {
 public:
-    TPaginator(int itemsCount = 0, int currentPage = 1, int limit = 10, int midRange = 3);
+    TPaginator(int itemsCount = 0, int limit = 10, int midRange = 3);
     virtual ~TPaginator() { }
+
+    // Setter
+    void setItemsCount(int itemsCount = 0);
+    void setLimit(int limit = 10);
+    void setMidRange(int midRange = 3);
+    void setCurrentPage(int page = 1);
 
     // Getter
     int getItemsCount() const;
@@ -20,11 +26,16 @@ public:
     QList<int> getRange() const;
     int getCurrentPage() const;
     int getFirstPage() const;
-    bool hasPreviousPage() const;
     int getPreviousPage() const;
-    bool hasNextPage() const;
     int getNextPage() const;
     int getLastPage() const;
+
+    bool haveToPaginate() const;
+    bool isFirstPageEnabled() const;
+    bool hasPreviousPage() const;
+    bool hasNextPage() const;
+    bool isLastPageEnabled() const;
+    bool isValidPage(int page) const;
 
 private:
     void setDefaults();
@@ -85,11 +96,6 @@ inline int TPaginator::getFirstPage() const
     return 1;
 }
 
-inline bool TPaginator::hasPreviousPage() const
-{
-    return (currentPage != 1);
-}
-
 inline int TPaginator::getPreviousPage() const
 {
     if (hasPreviousPage())
@@ -98,15 +104,10 @@ inline int TPaginator::getPreviousPage() const
         return 1;
 }
 
-inline bool TPaginator::hasNextPage() const
-{
-    return (currentPage != numPages);
-}
-
 inline int TPaginator::getNextPage() const
 {
     if (hasNextPage())
-        return currentPage - 1;
+        return currentPage + 1;
     else
         return numPages;
 }
@@ -114,6 +115,43 @@ inline int TPaginator::getNextPage() const
 inline int TPaginator::getLastPage() const
 {
     return numPages;
+}
+
+inline bool TPaginator::haveToPaginate() const
+{
+    return (numPages > 1);
+}
+
+inline bool TPaginator::isFirstPageEnabled() const
+{
+    return (currentPage != 1);
+}
+
+inline bool TPaginator::hasPreviousPage() const
+{
+    return (currentPage - 1 >= 1);
+}
+
+inline bool TPaginator::hasNextPage() const
+{
+    return (currentPage + 1 <= numPages);
+}
+
+inline bool TPaginator::isLastPageEnabled() const
+{
+    return (currentPage != numPages);
+}
+
+inline bool TPaginator::isValidPage(int page) const
+{
+    if (1 <= page && page <= numPages)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 #endif // TPAGINATOR_H

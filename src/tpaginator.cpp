@@ -6,6 +6,7 @@
  */
 
 #include <TPaginator>
+#include <QtCore>
 
 /*!
   \class TPaginator
@@ -15,12 +16,17 @@
 /*!
   Constructor.
 */
-TPaginator::TPaginator(int itemsCount, int currentPage, int limit, int midRange)
+TPaginator::TPaginator(int itemsCount, int limit, int midRange)
 { 
     this->itemsCount = itemsCount;
-    this->currentPage = currentPage;
     this->limit = limit;
     this->midRange = midRange;
+    this->currentPage = 1;
+
+    this->setDefaults();
+    this->calculateNumPages();
+    this->calculateOffset();
+    this->calculateRange();
 }
 
 /*!
@@ -29,19 +35,18 @@ TPaginator::TPaginator(int itemsCount, int currentPage, int limit, int midRange)
 */
 void TPaginator::setDefaults()
 {
-    if (itemsCount < 0) {
+    if (itemsCount < 0)
+    {
         itemsCount = 0;
     }
     
-    if (currentPage < 1) {
-        currentPage = 1;
-    }
-    
-    if (limit < 1) {
+    if (limit < 1)
+    {
         limit = 10;
     }
     
-    if (midRange < 1) {
+    if (midRange < 1)
+    {
         midRange = 3;
     }
 }
@@ -54,15 +59,18 @@ void TPaginator::calculateNumPages()
 {
     //If limit is larger than or equal to total items count
     //display all in one page
-    if (limit >= itemsCount) {
+    if (limit >= itemsCount)
+    {
         numPages = 1;
-    } else {
+    }
+    else
+    {
         //Calculate rest numbers from dividing operation so we can add one 
         //more page for this items
         int restItemsNum = itemsCount % limit;
         //if rest items > 0 then add one more page else just divide items 
         //by limit
-	numPages = restItemsNum > 0 ? int(itemsCount / limit) + 1 : int(itemsCount / limit);
+        numPages = restItemsNum > 0 ? int(itemsCount / limit) + 1 : int(itemsCount / limit);
     }
 }
 
@@ -77,20 +85,77 @@ void TPaginator::calculateOffset()
 
 void TPaginator::calculateRange()
 {
-    int startRange = currentPage - int(midRange / 2);
-    int endRange = currentPage + int(midRange / 2);
+    range = QList<int>();
 
-    if (startRange <= 0) {
-        endRange += abs(startRange) + 1;
+    int startRange = currentPage - qFloor(midRange / 2);
+    int endRange = currentPage + qFloor(midRange / 2);
+
+    if (startRange < 1)
+    {
         startRange = 1;
     }
 
-    if (endRange > numPages) {
-        startRange -= endRange - numPages;
+    if (endRange > numPages)
+    {
         endRange = numPages;
     }
 
-    for (int i = startRange; i <= endRange; i++) {
+    for (int i = startRange; i <= endRange; i++)
+    {
         range << i;
     }
+}
+
+void TPaginator::setItemsCount(int itemsCount)
+{
+    if (itemsCount < 0)
+    {
+        itemsCount = 0;
+    }
+
+    this->itemsCount = itemsCount;
+
+    this->calculateNumPages();
+    this->calculateRange();
+}
+
+void TPaginator::setLimit(int limit)
+{
+    if (limit < 1)
+    {
+        limit = 10;
+    }
+
+    this->limit = limit;
+
+    this->calculateNumPages();
+    this->calculateOffset();
+    this->calculateRange();
+}
+
+void TPaginator::setMidRange(int midRange)
+{
+    if (midRange < 1)
+    {
+        midRange = 3;
+    }
+
+    this->midRange = midRange;
+
+    this->calculateRange();
+}
+
+void TPaginator::setCurrentPage(int page)
+{
+    if (isValidPage(page))
+    {
+        this->currentPage = page;
+    }
+    else
+    {
+        this->currentPage = 1;
+    }
+
+    this->calculateOffset();
+    this->calculateRange();
 }
