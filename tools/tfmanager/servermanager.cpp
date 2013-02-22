@@ -60,6 +60,8 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
         close(sd);
         // tfserver process will open a socket of that.
     }
+#else
+    Q_UNUSED(address);
 #endif
     
     running = true;
