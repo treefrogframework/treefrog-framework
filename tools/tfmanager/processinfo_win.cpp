@@ -6,6 +6,7 @@
  */
 
 #include <QtCore>
+#include <TWebApplication>
 #include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
@@ -52,7 +53,14 @@ static BOOL CALLBACK terminateProc(HWND hwnd, LPARAM procId)
 void ProcessInfo::terminate()
 {
     if (processId > 0) {
+#if QT_VERSION < 0x050000
         EnumWindows(terminateProc, processId);
+#else
+        // Sends to the local socket of tfmanager
+        TWebApplication::sendLocalCtrlMessage(QByteArray::number(WM_CLOSE), processId);
+
+        Q_UNUSED(terminateProc);
+#endif
     }
 }
 
@@ -86,7 +94,14 @@ static BOOL CALLBACK restartProc(HWND hwnd, LPARAM procId)
 void ProcessInfo::restart()
 {
     if (processId > 0) {
+#if QT_VERSION < 0x050000
         EnumWindows(restartProc, processId);
+#else
+        // Sends to the local socket of tfmanager
+        TWebApplication::sendLocalCtrlMessage(QByteArray::number(WM_APP), processId);
+
+        Q_UNUSED(restartProc);
+#endif
     }
 }
 
