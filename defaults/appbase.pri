@@ -6,10 +6,11 @@ win32 {
   } else {
     LIBS += -ltreefrog1
   }
-} else:macx {
-  INCLUDEPATH += /Library/Frameworks/treefrog.framework/Versions/Current/Headers
-  LIBS += -framework treefrog
-} else:unix {
-  INCLUDEPATH += ../../include /usr/include/treefrog
-  LIBS += -ltreefrog
+} else {
+  macx {
+    LIBS += -framework treefrog
+  } else {
+    LIBS += -ltreefrog
+  }
+  unix:INCLUDEPATH += /usr/include/treefrog
 }

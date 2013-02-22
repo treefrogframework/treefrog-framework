@@ -117,7 +117,7 @@ void TActionContext::execute()
 
             // Check idle timeout
             if (httpSocket->idleTime() >= 10) {
-                tSystemWarn("Reading a socket timed out after 10 seconds. Descriptor:%d", httpSocket->socketDescriptor());
+                tSystemWarn("Reading a socket timed out after 10 seconds. Descriptor:%d", (int)httpSocket->socketDescriptor());
                 break;
             }
             httpSocket->waitForReadyRead(100);
