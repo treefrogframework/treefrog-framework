@@ -23,6 +23,7 @@ class T_CORE_EXPORT TWebApplication
     : public QCoreApplication
 #endif
 {
+    Q_OBJECT
 public:
     enum MultiProcessingModule {
         Invalid = 0,
@@ -64,15 +65,24 @@ public:
     QTextCodec *codecForInternal() const { return codecInternal; }
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
 
-#if defined(Q_OS_WIN)
-# if QT_VERSION < 0x050000
-    virtual bool winEventFilter(MSG *msg, long *result);
-# endif // QT_VERSION < 0x050000
-    void watchConsoleSignal();
-    void ignoreConsoleSignal();
-#else
+#if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
     void ignoreUnixSignal(int sig, bool ignore = true);
+#endif
+
+#if defined(Q_OS_WIN)
+    void watchConsoleSignal();
+    void ignoreConsoleSignal();
+
+# if QT_VERSION < 0x050000
+    virtual bool winEventFilter(MSG *msg, long *result);
+# else
+    void watchLocalSocket();
+    static bool sendLocalCtrlMessage(const QByteArray &msg,  int targetProcess);
+
+private slots:
+    void recvLocalSocket();
+# endif
 #endif // Q_OS_WIN
 
 protected:
@@ -108,7 +118,7 @@ inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 }
 
 
-#if QT_VERSION >= 0x050000
+#if defined(Q_OS_WIN) && QT_VERSION >= 0x050000
 #include <QAbstractNativeEventFilter>
 
 class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter
@@ -116,6 +126,7 @@ class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter
 public:
     virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *);
 };
+
 #endif // QT_VERSION >= 0x050000
 
 #endif // TWEBAPPLICATION_H

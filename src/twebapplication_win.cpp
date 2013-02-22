@@ -6,9 +6,12 @@
  */
 
 #include <TWebApplication>
+#include <QLocalServer>
+#include <QLocalSocket>
 #include <windows.h>
 #include <winuser.h>
 
+const QString LOCAL_SERVER_PREFIX = "treefrog_tfmanager_";
 static volatile int ctrlSignal = -1;
 
 
@@ -33,33 +36,17 @@ static BOOL WINAPI signalHandler(DWORD ctrlType)
 }
 
 
-#if QT_VERSION >= 0x050000
 
-bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
+int TWebApplication::signalNumber()
 {
-    if (eventType == "windows_generic_MSG" || eventType == "windows_dispatcher_MSG") {
-        MSG *msg = static_cast<MSG *>(message);
-        if (msg->message == WM_CLOSE) {
-            Tf::app()->quit();
-        } else if (msg->message == WM_APP) {
-            Tf::app()->exit(1);
-        }
-    }
-    return false;
+    return ctrlSignal;
 }
 
-#else
 
-bool TWebApplication::winEventFilter(MSG *msg, long *result)
+void TWebApplication::resetSignalNumber()
 {
-    if (msg->message == WM_CLOSE) {
-        quit();
-    } else if (msg->message == WM_APP) {
-        exit(1);
-    }
-    return QCoreApplication::winEventFilter(msg, result);
+    ctrlSignal = -1;
 }
-#endif // QT_VERSION >= 0x050000
 
 
 void TWebApplication::watchConsoleSignal()
@@ -75,14 +62,88 @@ void TWebApplication::ignoreConsoleSignal()
     timer.stop();
 }
 
+#if QT_VERSION < 0x050000
 
-int TWebApplication::signalNumber()
+bool TWebApplication::winEventFilter(MSG *msg, long *result)
 {
-    return ::ctrlSignal;
+    if (msg->message == WM_CLOSE) {
+        quit();
+    } else if (msg->message == WM_APP) {
+        exit(1);
+    }
+    return QCoreApplication::winEventFilter(msg, result);
+}
+
+#else
+
+bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
+{
+    if (eventType == "windows_generic_MSG" || eventType == "windows_dispatcher_MSG") {
+        MSG *msg = static_cast<MSG *>(message);
+        if (msg->message == WM_CLOSE) {
+            Tf::app()->quit();
+        } else if (msg->message == WM_APP) {
+            Tf::app()->exit(1);
+        }
+    }
+    return false;
 }
 
 
-void TWebApplication::resetSignalNumber()
+void TWebApplication::watchLocalSocket()
 {
-    ::ctrlSignal = -1;
+    QLocalServer *server = new QLocalServer(this);
+    server->setSocketOptions(QLocalServer::UserAccessOption);
+    connect(server, SIGNAL(newConnection()), this, SLOT(recvLocalSocket()));
+    server->listen(LOCAL_SERVER_PREFIX + QString::number(QCoreApplication::applicationPid()));
 }
+
+
+void TWebApplication::recvLocalSocket()
+{
+    QLocalServer *server = qobject_cast<QLocalServer *>(QObject::sender());
+    if (server) {
+        QLocalSocket *socket = server->nextPendingConnection();
+        if (socket->waitForReadyRead(50)) {
+            QByteArray data = socket->readAll();
+            bool ok;
+            int num = data.toInt(&ok);
+
+            if (ok) {
+                switch (num) {
+                case WM_CLOSE:
+                    quit();
+                    break;
+                    
+                case  WM_APP:
+                    exit(1);
+                    break;
+                    
+                default:
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg,  int targetProcess)
+{
+    // Sends to the local socket
+    bool ret = false;
+    QLocalSocket *socket = new QLocalSocket();
+
+    socket->connectToServer(LOCAL_SERVER_PREFIX + QString::number(targetProcess));
+    if (socket->waitForConnected(1000)) {
+        socket->write(msg);
+        socket->flush();
+        socket->close();
+        ret = true;
+    }
+
+    delete socket;
+    return ret;
+}
+
+#endif // QT_VERSION < 0x050000
