@@ -5,6 +5,15 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+/**
+ * Class to paginate a list of items in a old digg style
+ *
+ * @author Vo Xuan Tien <tien.xuan.vo@gmail.com>
+ * @author Darko Goleš
+ * @author Carlos Mafla <gigo6000@hotmail.com>
+ * @www.inchoo.net
+ */
+
 #include <TPaginator>
 #include <QtCore>
 
