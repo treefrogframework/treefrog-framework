@@ -17,13 +17,14 @@
   Constructor.
 */
 TPaginator::TPaginator(int itemsCount, int limit, int midRange)
-{ 
+{
     this->itemsCount = itemsCount;
     this->limit = limit;
     this->midRange = midRange;
     this->currentPage = 1;
 
     this->setDefaults();
+
     this->calculateNumPages();
     this->calculateOffset();
     this->calculateRange();
@@ -37,18 +38,24 @@ void TPaginator::setDefaults()
 {
     if (itemsCount < 0)
     {
+        // Default value
         itemsCount = 0;
     }
     
     if (limit < 1)
     {
-        limit = 10;
+        // Default value
+        limit = 1;
     }
     
     if (midRange < 1)
     {
-        midRange = 3;
+        // Default value
+        midRange = 1;
     }
+
+    // Change even number to larger odd number
+    midRange = midRange + (((midRange % 2) == 0) ? 1 : 0);
 }
 
 /*!
@@ -72,6 +79,13 @@ void TPaginator::calculateNumPages()
         //by limit
         numPages = restItemsNum > 0 ? int(itemsCount / limit) + 1 : int(itemsCount / limit);
     }
+    
+    // If currentPage invalid after numPages changes
+    if (currentPage > numPages)
+    {
+        // Restore currentPage to default value
+        currentPage = 1;
+    }
 }
 
 /*!
@@ -90,13 +104,17 @@ void TPaginator::calculateRange()
     int startRange = currentPage - qFloor(midRange / 2);
     int endRange = currentPage + qFloor(midRange / 2);
 
+    // If invalid start range
     if (startRange < 1)
     {
+        // Set start range = lowest value
         startRange = 1;
     }
 
+    // If invalid end range
     if (endRange > numPages)
     {
+        // Set start range = largest value
         endRange = numPages;
     }
 
@@ -110,11 +128,13 @@ void TPaginator::setItemsCount(int itemsCount)
 {
     if (itemsCount < 0)
     {
+        // Default value
         itemsCount = 0;
     }
 
     this->itemsCount = itemsCount;
 
+    // ItemsCount changes cause NumPages and Range change
     this->calculateNumPages();
     this->calculateRange();
 }
@@ -123,11 +143,13 @@ void TPaginator::setLimit(int limit)
 {
     if (limit < 1)
     {
-        limit = 10;
+        // Default value
+        limit = 1;
     }
 
     this->limit = limit;
 
+    // Limit changes cause NumPages, Offset and Range change
     this->calculateNumPages();
     this->calculateOffset();
     this->calculateRange();
@@ -137,11 +159,14 @@ void TPaginator::setMidRange(int midRange)
 {
     if (midRange < 1)
     {
-        midRange = 3;
+        // Default value
+        midRange = 1;
     }
 
-    this->midRange = midRange;
+    // Change even number to larger odd number
+    this->midRange = midRange + (((midRange % 2) == 0) ? 1 : 0);
 
+    // MidRange changes cause Range changes
     this->calculateRange();
 }
 
@@ -153,9 +178,11 @@ void TPaginator::setCurrentPage(int page)
     }
     else
     {
+        // Default value
         this->currentPage = 1;
     }
 
+    // CurrentPage changes cause Offset and Range change
     this->calculateOffset();
     this->calculateRange();
 }

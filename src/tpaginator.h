@@ -8,7 +8,7 @@
 class TPaginator
 {
 public:
-    TPaginator(int itemsCount = 0, int limit = 10, int midRange = 3);
+    TPaginator(int itemsCount = 0, int limit = 1, int midRange = 1);
     virtual ~TPaginator() { }
 
     // Setter
