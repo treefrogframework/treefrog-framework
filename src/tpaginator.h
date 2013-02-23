@@ -12,10 +12,10 @@ public:
     virtual ~TPaginator() { }
 
     // Setter
-    void setItemsCount(int itemsCount = 0);
-    void setLimit(int limit = 10);
-    void setMidRange(int midRange = 3);
-    void setCurrentPage(int page = 1);
+    void setItemsCount(int itemsCount);
+    void setLimit(int limit);
+    void setMidRange(int midRange);
+    void setCurrentPage(int page);
 
     // Getter
     int getItemsCount() const;
