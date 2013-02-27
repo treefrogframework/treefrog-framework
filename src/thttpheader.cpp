@@ -13,11 +13,40 @@
 */
 
 /*!
+  Constructor.
+*/
+THttpHeader::THttpHeader()
+    : TInternetMessageHeader(), majVersion(1), minVersion(1)
+{ }
+
+/*!
+  Copy constructor.
+*/
+THttpHeader::THttpHeader(const THttpHeader &other)
+    : TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
+      majVersion(other.majVersion),
+      minVersion(other.minVersion)
+{ }
+
+/*!
   Constructs an HTTP header by parsing \a str.
 */
 THttpHeader::THttpHeader(const QByteArray &str)
+    : TInternetMessageHeader(), majVersion(1), minVersion(1)  
 {
     parse(str);
+}
+
+/*!
+  Assigns \a other to this HTTP header and returns a reference
+  to this HTTP header.
+*/
+THttpHeader &THttpHeader::operator=(const THttpHeader &other)
+{
+    TInternetMessageHeader::operator=(*static_cast<const TInternetMessageHeader *>(&other));
+    majVersion = other.majVersion;
+    minVersion = other.minVersion;
+    return *this;
 }
 
 /*!
@@ -54,7 +83,16 @@ QByteArray THttpHeader::toByteArray() const
   Constructor.
 */
 THttpRequestHeader::THttpRequestHeader()
-    : majVer(0), minVer(0)
+    : THttpHeader()
+{ }
+
+/*!
+  Copy constructor.
+*/
+THttpRequestHeader::THttpRequestHeader(const THttpRequestHeader &other)
+    : THttpHeader(*static_cast<const THttpHeader *>(&other)),
+      reqMethod(other.reqMethod),
+      reqUri(other.reqUri)
 { }
 
 /*!
@@ -64,7 +102,9 @@ THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
 {
     int i = str.indexOf('\n');
     if (i > 0) {
+        // Parses the string
         parse(str.mid(i + 1));
+
         QByteArray line = str.left(i).trimmed();
         i = line.indexOf(' ');
         if (i > 0) {
@@ -76,8 +116,8 @@ THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
                 i = j;
                 j = line.indexOf("HTTP/", i);
                 if (j > 0 && j + 7 < line.length()) {
-                    majVer = line.mid(j + 5, 1).toInt();
-                    minVer = line.mid(j + 7, 1).toInt();
+                    THttpHeader::majVersion = line.mid(j + 5, 1).toInt();
+                    THttpHeader::minVersion = line.mid(j + 7, 1).toInt();
                 }
             }
         }
@@ -92,8 +132,8 @@ void THttpRequestHeader::setRequest(const QByteArray &method, const QByteArray &
 {
     reqMethod = method;
     reqUri = path;
-    majVer = majorVer;
-    minVer = minorVer;
+    THttpHeader::majVersion = majorVer;
+    THttpHeader::minVersion = minorVer;
 }
 
 /*!
@@ -103,12 +143,24 @@ QByteArray THttpRequestHeader::toByteArray() const
 {
     QByteArray ba;
     ba += reqMethod + ' ' + reqUri + " HTTP/";
-    ba += QByteArray::number(majVer);
+    ba += QByteArray::number(majorVersion());
     ba += '.';
-    ba += QByteArray::number(minVer);
+    ba += QByteArray::number(minorVersion());
     ba += "\r\n";
     ba += THttpHeader::toByteArray();
     return ba;
+}
+
+/*!
+  Assigns \a other to this HTTP request header and returns a reference
+  to this header.
+*/
+THttpRequestHeader &THttpRequestHeader::operator=(const THttpRequestHeader &other)
+{
+    THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
+    reqMethod = other.reqMethod;
+    reqUri = other.reqUri;
+    return *this;
 }
 
 /*!
@@ -132,23 +184,25 @@ QByteArray THttpRequestHeader::toByteArray() const
   Constructor.
 */
 THttpResponseHeader::THttpResponseHeader()
-    : statCode(0), majVer(1), minVer(1)
+    : THttpHeader(), statCode(0)
 { }
 
 /*!
   Constructs an HTTP response header by parsing \a str.
 */
 THttpResponseHeader::THttpResponseHeader(const QByteArray &str)
-    : statCode(0), majVer(1), minVer(1)
+    : THttpHeader(), statCode(0)
 {
     int i = str.indexOf('\n');
     if (i > 0) {
+        // Parses the string
         parse(str.mid(i + 1));
+
         QByteArray line = str.left(i).trimmed();
         i = line.indexOf("HTTP/");
         if (i == 0 && line.length() >= 12) {
-            majVer = line.mid(5, 1).toInt();
-            minVer = line.mid(7, 1).toInt();
+            THttpHeader::majVersion = line.mid(5, 1).toInt();
+            THttpHeader::minVersion = line.mid(7, 1).toInt();
             if (line[8] == ' ' || line[8] == '\t') {
                 statCode = line.mid(9, 3).toInt();
             }
@@ -169,8 +223,8 @@ void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int ma
 {
     statCode = code;
     reasonPhr = text;
-    majVer = majorVer;
-    minVer = minorVer;
+    THttpHeader::majVersion = majorVer;
+    THttpHeader::minVersion = minorVer;
 }
 
 /*!
@@ -180,9 +234,9 @@ QByteArray THttpResponseHeader::toByteArray() const
 {
     QByteArray ba;
     ba += "HTTP/";
-    ba += QByteArray::number(majVer);
+    ba += QByteArray::number(majorVersion());
     ba += '.';
-    ba += QByteArray::number(minVer);
+    ba += QByteArray::number(minorVersion());
     ba += ' ';
     ba += QByteArray::number(statCode);
     ba += ' ';
@@ -190,6 +244,19 @@ QByteArray THttpResponseHeader::toByteArray() const
     ba += "\r\n";
     ba += THttpHeader::toByteArray();
     return ba;
+}
+
+
+/*!
+  Assigns \a other to this HTTP response header and returns a reference
+  to this header.
+*/
+THttpResponseHeader &THttpResponseHeader::operator=(const THttpResponseHeader &other)
+{
+    THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
+    statCode = other.statCode;
+    reasonPhr = other.reasonPhr;
+    return *this;
 }
 
 /*!

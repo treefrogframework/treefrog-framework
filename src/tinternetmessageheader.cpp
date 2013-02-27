@@ -26,6 +26,13 @@
 */
 
 /*!
+  Copy constructor.
+*/
+TInternetMessageHeader::TInternetMessageHeader(const TInternetMessageHeader &other)
+    : headerPairList(other.headerPairList)
+{ }
+
+/*!
   Constructs an Internet message header by parsing \a str.
 */
 TInternetMessageHeader::TInternetMessageHeader(const QByteArray &str)
@@ -265,4 +272,14 @@ bool TInternetMessageHeader::isEmpty() const
 void TInternetMessageHeader::clear()
 {
     headerPairList.clear();
+}
+
+/*!
+  Assigns \a other to this internet message header and returns a reference
+  to this header.
+*/
+TInternetMessageHeader &TInternetMessageHeader::operator=(const TInternetMessageHeader &other)
+{
+    headerPairList = other.headerPairList;
+    return *this;
 }

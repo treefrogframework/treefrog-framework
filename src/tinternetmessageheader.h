@@ -12,6 +12,7 @@ class T_CORE_EXPORT TInternetMessageHeader
 {
 public:
     TInternetMessageHeader() { }
+    TInternetMessageHeader(const TInternetMessageHeader &other);
     TInternetMessageHeader(const QByteArray &str);
     virtual ~TInternetMessageHeader() { }
 
@@ -34,6 +35,7 @@ public:
     void setDate(const QDateTime &localTime);
     void setDateUTC(const QDateTime &utc);
     virtual QByteArray toByteArray() const;
+    TInternetMessageHeader &operator=(const TInternetMessageHeader &other);
 
 protected:
     void parse(const QByteArray &header);

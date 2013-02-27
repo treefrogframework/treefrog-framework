@@ -1,24 +1,19 @@
 #ifndef TCONTENTHEADER_H
 #define TCONTENTHEADER_H
 
-#include <THttpHeader>
+#include <TInternetMessageHeader>
 
 
-class T_CORE_EXPORT TContentHeader : public THttpHeader
+class T_CORE_EXPORT TContentHeader : public TInternetMessageHeader
 {
 public:
     TContentHeader();
-    TContentHeader(const TContentHeader &header);
+    TContentHeader(const TContentHeader &other);
     TContentHeader(const QByteArray &str);
     virtual ~TContentHeader() { }
     
-    TContentHeader &operator=(const TContentHeader &h);
-    
-private:
-    int majorVersion() const { return 0; }
-    int minorVersion() const { return 0; }
+    TContentHeader &operator=(const TContentHeader &other);
 };
-
 
 Q_DECLARE_METATYPE(TContentHeader)
 
