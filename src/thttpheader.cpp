@@ -184,14 +184,23 @@ THttpRequestHeader &THttpRequestHeader::operator=(const THttpRequestHeader &othe
   Constructor.
 */
 THttpResponseHeader::THttpResponseHeader()
-    : THttpHeader(), statCode(0)
+    : THttpHeader(), statCode(0), reasonPhr()
+{ }
+
+/*!
+  Copy constructor.
+*/
+THttpResponseHeader::THttpResponseHeader(const THttpResponseHeader &other)
+    : THttpHeader(*static_cast<const THttpHeader *>(&other)),
+      statCode(other.statCode),
+      reasonPhr(other.reasonPhr)
 { }
 
 /*!
   Constructs an HTTP response header by parsing \a str.
 */
 THttpResponseHeader::THttpResponseHeader(const QByteArray &str)
-    : THttpHeader(), statCode(0)
+    : THttpHeader(), statCode(0), reasonPhr()
 {
     int i = str.indexOf('\n');
     if (i > 0) {
