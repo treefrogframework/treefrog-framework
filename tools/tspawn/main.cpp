@@ -520,7 +520,11 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_WIN32)
                     args << "-spec" << "win32-g++";
 #elif defined(Q_OS_MAC)
+# if QT_VERSION >= 0x050000
+                    args << "-spec" << "macx-clang";
+# else
                     args << "-spec" << "macx-g++";
+# endif
 #elif defined(Q_OS_LINUX)
                     args << "-spec" << "linux-g++";
 #endif

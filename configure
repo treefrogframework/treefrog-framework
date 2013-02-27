@@ -59,7 +59,14 @@ if which uname >/dev/null 2>&1; then
   RELEASE=`uname -r`
 
   if [ "$KERNEL" = "Darwin" ]; then
-    OPT="-spec macx-g++"
+    QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
+    QT_MAJOR=${QT_VERSION:0:1}
+    if [ "$QT_MAJOR" -ge 5 ]; then
+      OPT="-spec macx-clang"
+    else
+      OPT="-spec macx-g++"
+    fi
+
     REL=`echo $RELEASE | tr -d '.'`
     if [ "$REL" -ge  1050 ]; then
       OPT="$OPT CONFIG+=x86_64"
