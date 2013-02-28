@@ -77,7 +77,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
     if (fi.exists()) {
         QString orig = readFile(filepath);
         if (orig == data) {
-            printf("  unchanged %s\n", qPrintable(fi.filePath()));
+            printf("  unchanged %s\n", qPrintable(QDir::cleanPath(fi.filePath())));
             return true;
         }
 
@@ -89,7 +89,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
         } else {
             QTextStream stream(stdin);
             for (;;) {
-                printf("  overwrite %s? [ynaqdh] ", qPrintable(fi.filePath()));
+                printf("  overwrite %s? [ynaqdh] ", qPrintable(QDir::cleanPath(fi.filePath())));
                 
                 QString line = stream.readLine();
                 if (line.isNull())
@@ -148,7 +148,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
         act = (res) ? "created " : "error   ";
     }
 
-    printf("  %s  %s\n", act.data(), qPrintable(fi.filePath()));
+    printf("  %s  %s\n", act.data(), qPrintable(QDir::cleanPath(fi.filePath())));
     return res;
 }
 
@@ -161,7 +161,7 @@ bool FileWriter::write(const QString &data) const
 
     QFile file(filepath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCritical("failed to create file: %s", qPrintable(filepath));
+        qCritical("failed to create file: %s", qPrintable(QDir::cleanPath(filepath)));
         return false;
     }
 

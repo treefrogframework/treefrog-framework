@@ -21,10 +21,10 @@
 
 #define L(str)  QLatin1String(str)
 #define SEP   QDir::separator()
-#define P_CTRLS   (QLatin1String("controllers") + SEP)
-#define P_MODELS  (QLatin1String("models") + SEP)
-#define P_VIEWS   (QLatin1String("views") + SEP)
-#define P_HELPERS (QLatin1String("helpers") + SEP)
+#define D_CTRLS   (QLatin1String("controllers") + SEP)
+#define D_MODELS  (QLatin1String("models") + SEP)
+#define D_VIEWS   (QLatin1String("views") + SEP)
+#define D_HELPERS (QLatin1String("helpers") + SEP)
 
 enum SubCommand {
     Invalid = 0,
@@ -148,7 +148,7 @@ static void usage()
 }
 
 
-static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit, const QString &proj = QString())
+static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit, const QString &baseDir, const QString &proj = QString())
 {
     QStringList rmd;
     
@@ -157,18 +157,20 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
         if (quit)
             break;
 
-        QFile file(i.next());
+        const QString &fname = i.next();
+        QFile file(baseDir + SEP + fname);
         if (!file.exists())
             continue;
         
         if (allRemove) {
-            rmd << remove(file);
+            remove(file);
+            rmd << fname;
             continue;
         }
         
         QTextStream stream(stdin);
         for (;;) {
-            printf("  remove  %s? [ynaqh] ", qPrintable(file.fileName()));
+            printf("  remove  %s? [ynaqh] ", qPrintable(QDir::cleanPath(file.fileName())));
             
             QString line = stream.readLine();
             if (line.isNull())
@@ -179,7 +181,8 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
             
             QCharRef c = line[0];
             if (c == 'Y' || c == 'y') {
-                rmd << remove(file);
+                remove(file);
+                rmd << fname;
                 break;
                 
             } else if (c == 'N' || c == 'n') {
@@ -187,7 +190,8 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
                 
             } else if (c == 'A' || c == 'a') {
                 allRemove = true;
-                rmd << remove(file);
+                remove(file);
+                rmd << fname;
                 break;
 
             } else if (c == 'Q' || c == 'q') {
@@ -209,18 +213,18 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
 
     if (!proj.isEmpty()) {
         // Updates the project file
-        ProjectFileGenerator(proj).remove(rmd);    
+        ProjectFileGenerator(baseDir + SEP + proj).remove(rmd);
     }
 
     return rmd;
 }
 
 
-static QStringList rmfiles(const QStringList &files, const QString &proj)
+static QStringList rmfiles(const QStringList &files, const QString &baseDir, const QString &proj)
 {
     bool allRemove = false;
     bool quit = false;
-    return rmfiles(files, allRemove, quit, proj);
+    return rmfiles(files, allRemove, quit, baseDir, proj);
 }
 
 
@@ -296,35 +300,35 @@ static int deleteScaffold(const QString &name)
     str = str.remove('_').toLower().trimmed();
     if (str.endsWith("validator", Qt::CaseInsensitive)) {
         QStringList helpers;
-        helpers << P_HELPERS + str + ".h"
-                << P_HELPERS + str + ".cpp";
+        helpers << str + ".h"
+                << str + ".cpp";
         
-        rmfiles(helpers, P_HELPERS + "helpers.pro");
+        rmfiles(helpers, D_HELPERS, "helpers.pro");
         
     } else {
         QStringList ctrls, models, views;
-        ctrls << P_CTRLS + str + "controller.h"
-              << P_CTRLS + str + "controller.cpp";
+        ctrls << str + "controller.h"
+              << str + "controller.cpp";
         
-        models << P_MODELS + "sqlobjects" + SEP + str + "object.h"
-               << P_MODELS + str + ".h"
-               << P_MODELS + str + ".cpp";
+        models << QLatin1String("sqlobjects") + SEP + str + "object.h"
+               << str + ".h"
+               << str + ".cpp";
         
         // Template system
         if (templateSystem == "otama") {
-            views << P_VIEWS + str + SEP + "index.html"
-                  << P_VIEWS + str + SEP + "index.otm"
-                  << P_VIEWS + str + SEP + "show.html"
-                  << P_VIEWS + str + SEP + "show.otm"
-                  << P_VIEWS + str + SEP + "entry.html"
-                  << P_VIEWS + str + SEP + "entry.otm"
-                  << P_VIEWS + str + SEP + "edit.html"
-                  << P_VIEWS + str + SEP + "edit.otm";
+            views << str + SEP + "index.html"
+                  << str + SEP + "index.otm"
+                  << str + SEP + "show.html"
+                  << str + SEP + "show.otm"
+                  << str + SEP + "entry.html"
+                  << str + SEP + "entry.otm"
+                  << str + SEP + "edit.html"
+                  << str + SEP + "edit.otm";
         } else if (templateSystem == "erb") {
-            views << P_VIEWS + str + SEP + "index.erb"
-                  << P_VIEWS + str + SEP + "show.erb"
-                  << P_VIEWS + str + SEP + "entry.erb"
-                  << P_VIEWS + str + SEP + "edit.erb";
+            views << str + SEP + "index.erb"
+                  << str + SEP + "show.erb"
+                  << str + SEP + "entry.erb"
+                  << str + SEP + "edit.erb";
         } else {
             qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
             return 2;
@@ -334,23 +338,23 @@ static int deleteScaffold(const QString &name)
         bool quit = false;
         
         // Removes controllers
-        rmfiles(ctrls, allRemove, quit, P_CTRLS + "controllers.pro");
+        rmfiles(ctrls, allRemove, quit, D_CTRLS, "controllers.pro");
         if (quit) {
             ::_exit(1);
             return 1;
         }
         
         // Removes models
-        rmfiles(models, allRemove, quit, P_MODELS + "models.pro");
+        rmfiles(models, allRemove, quit, D_MODELS, "models.pro");
         if (quit) {
             ::_exit(1);
             return 1;
         }
         
         // Removes views
-        QStringList rmd = rmfiles(views, allRemove, quit);
+        QStringList rmd = rmfiles(views, allRemove, quit, D_VIEWS);
         if (!rmd.isEmpty()) {
-            QString path = P_VIEWS + "_src" + SEP + str;
+            QString path = D_VIEWS + "_src" + SEP + str;
             QFile::remove(path + "_indexView.cpp");
             QFile::remove(path + "_showView.cpp");
             QFile::remove(path + "_entryView.cpp");
@@ -358,7 +362,7 @@ static int deleteScaffold(const QString &name)
         }
         
         // Removes the sub-directory
-        rmpath(P_VIEWS + str);
+        rmpath(D_VIEWS + str);
     }
     return 0;
 }
@@ -459,53 +463,53 @@ int main(int argc, char *argv[])
         switch (subcmd) {
         case Controller: {
             QString ctrl = args.value(2);
-            ControllerGenerator crtlgen(QString(), ctrl, args.mid(3), P_CTRLS);
+            ControllerGenerator crtlgen(QString(), ctrl, args.mid(3), D_CTRLS);
             crtlgen.generate();
             
             // Create view directory
-            QDir dir(P_VIEWS + ((ctrl.contains('_')) ? ctrl.toLower() : fieldNameToVariableName(ctrl).toLower()));
+            QDir dir(D_VIEWS + ((ctrl.contains('_')) ? ctrl.toLower() : fieldNameToVariableName(ctrl).toLower()));
             mkpath(dir, ".");
             break; }
         
         case Model: {
-            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), P_MODELS);
+            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), D_MODELS);
             modelgen.generate();
             break; }
 
         case UserModel: {
-            ModelGenerator modelgen(args.value(5), args.value(2), args.mid(3, 2), P_MODELS);
+            ModelGenerator modelgen(args.value(5), args.value(2), args.mid(3, 2), D_MODELS);
             modelgen.generate(true);
             break; }
         
         case SqlObject: {
-            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), P_MODELS);
+            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), D_MODELS);
             modelgen.generateSqlObject();
             break; }
        
         case Validator: {
-            ValidatorGenerator validgen(args.value(2), P_HELPERS);
+            ValidatorGenerator validgen(args.value(2), D_HELPERS);
             validgen.generate();
             break; }
 
         case Mailer: {
-            MailerGenerator mailgen(args.value(2), args.mid(3), P_CTRLS);
+            MailerGenerator mailgen(args.value(2), args.mid(3), D_CTRLS);
             mailgen.generate();
-            copy(dataDirPath + "mail.erb", P_VIEWS + "mailer" + SEP +"mail.erb");
+            copy(dataDirPath + "mail.erb", D_VIEWS + "mailer" + SEP +"mail.erb");
             break; }
 
         case Scaffold: {
-            ControllerGenerator crtlgen(args.value(3), args.value(2), QStringList(), P_CTRLS);
+            ControllerGenerator crtlgen(args.value(3), args.value(2), QStringList(), D_CTRLS);
             bool success = crtlgen.generate();
             
-            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), P_MODELS);
+            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), D_MODELS);
             success &= modelgen.generate();
             
             // Generates view files of the specified template system
             if (templateSystem == "otama") {
-                OtamaGenerator viewgen(args.value(3), args.value(2), P_VIEWS);
+                OtamaGenerator viewgen(args.value(3), args.value(2), D_VIEWS);
                 viewgen.generate();
             } else if (templateSystem == "erb") {
-                ErbGenerator viewgen(args.value(3), args.value(2), P_VIEWS);
+                ErbGenerator viewgen(args.value(3), args.value(2), D_VIEWS);
                 viewgen.generate();
             } else {
                 qCritical("Invalid template system specified: %s", qPrintable(templateSystem));

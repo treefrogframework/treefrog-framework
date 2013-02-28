@@ -19,9 +19,9 @@ void copy(const QString &src, const QString &dst)
     QFileInfo dfile(dst);
     if (sfile.exists() && !dfile.exists()) {
         if (sfile.copy(dst)) {
-            printf("  created   %s\n", qPrintable(dst));
+            printf("  created   %s\n", qPrintable(QDir::cleanPath(dst)));
         } else {
-            qCritical("failed to create a file %s", qPrintable(dst));
+            qCritical("failed to create a file %s", qPrintable(QDir::cleanPath(dst)));
         }
     }
 }
@@ -38,18 +38,19 @@ bool rmpath(const QString &path)
 {
     bool res = QDir(path).rmpath(".");
     if (res) {
-        printf("  removed   %s\n", qPrintable(path));
+        printf("  removed   %s\n", qPrintable(QDir::cleanPath(path)));
     }
     return res;
 }
 
 
-QString remove(QFile &file)
+bool remove(QFile &file)
 {
-    if (file.remove()) {
-        printf("  removed   %s\n", qPrintable(file.fileName()));
+    bool ret = file.remove();
+    if (ret) {
+        printf("  removed   %s\n", qPrintable(QDir::cleanPath(file.fileName())));
     }
-    return file.fileName();
+    return ret;
 }
 
 
