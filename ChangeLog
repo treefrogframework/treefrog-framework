@@ -1,3 +1,11 @@
+
+Changes with version 1.3
+    * Qt version 5 supported.
+    * Added a version string of Windows8.
+    * Added a local socket mechanism for killing tfmanager.
+    * Implemented '-l' option for treefrog command.
+    * Fix error in writing.
+
 Changes with version 1.2
     * TreeFrog app-server for Windows service supported.
     * Modified the logic of parsing HTML text.
