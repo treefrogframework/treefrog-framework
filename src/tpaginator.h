@@ -18,24 +18,24 @@ public:
     void setCurrentPage(int page);
 
     // Getter
-    int getItemsCount() const;
-    int getNumPages() const;
-    int getLimit() const;
-    int getOffset() const;
-    int getMidRange() const;
-    QList<int> getRange() const;
-    int getCurrentPage() const;
-    int getFirstPage() const;
-    int getPreviousPage() const;
-    int getNextPage() const;
-    int getLastPage() const;
+    const int &itemsCount() const { return itemsCount_; }
+    const int &numPages() const { return numPages_; }
+    const int &limit() const { return limit_; }
+    const int &offset() const { return offset_; }
+    const int &midRange() const { return midRange_; }
+    const QList<int> &range() const { return range_; }
+    const int &currentPage() const { return currentPage_; }
+    int firstPage() const { return 1; }
+    int previousPage() const { return hasPreviousPage() ? currentPage_ - 1 : 1; }
+    int nextPage() const { return hasNextPage() ? currentPage_ + 1 : numPages_; }
+    int lastPage() const { return numPages_; }
 
-    bool haveToPaginate() const;
-    bool isFirstPageEnabled() const;
-    bool hasPreviousPage() const;
-    bool hasNextPage() const;
-    bool isLastPageEnabled() const;
-    bool isValidPage(int page) const;
+    bool haveToPaginate() const { return (numPages_ > 1); }
+    bool isFirstPageEnabled() const { return (currentPage_ != 1); }
+    bool hasPreviousPage() const { return (currentPage_ - 1 >= 1); }
+    bool hasNextPage() const { return (currentPage_ + 1 <= numPages_); }
+    bool isLastPageEnabled() const { return (currentPage_ != numPages_); }
+    bool isValidPage(int page) const { return (1 <= page && page <= numPages_) ? true : false; }
 
 private:
     void setDefaults();
@@ -45,113 +45,15 @@ private:
     void calculateOffset();
     void calculateRange();
 
-    int itemsCount;
-    int numPages;
-    int currentPage;
-    int limit;
-    int offset;
-    int midRange;
-    QList<int> range;
+    int itemsCount_;
+    int numPages_;
+    int limit_;
+    int offset_;
+    int midRange_;
+    QList<int> range_;
+    int currentPage_;
 };
 
 Q_DECLARE_METATYPE(TPaginator)
-
-inline int TPaginator::getItemsCount() const
-{
-    return itemsCount;
-}
-
-inline int TPaginator::getNumPages() const
-{
-    return numPages;
-}
-
-inline int TPaginator::getLimit() const
-{
-    return limit;
-}
-
-inline int TPaginator::getOffset() const
-{
-    return offset;
-}
-
-inline int TPaginator::getMidRange() const
-{
-    return midRange;
-}
-
-inline QList<int> TPaginator::getRange() const
-{
-    return range;
-}
-
-inline int TPaginator::getCurrentPage() const
-{
-    return currentPage;
-}
-
-inline int TPaginator::getFirstPage() const
-{
-    return 1;
-}
-
-inline int TPaginator::getPreviousPage() const
-{
-    if (hasPreviousPage())
-        return currentPage - 1;
-    else
-        return 1;
-}
-
-inline int TPaginator::getNextPage() const
-{
-    if (hasNextPage())
-        return currentPage + 1;
-    else
-        return numPages;
-}
-
-inline int TPaginator::getLastPage() const
-{
-    return numPages;
-}
-
-inline bool TPaginator::haveToPaginate() const
-{
-    return (numPages > 1);
-}
-
-inline bool TPaginator::isFirstPageEnabled() const
-{
-    return (currentPage != 1);
-}
-
-inline bool TPaginator::hasPreviousPage() const
-{
-    return (currentPage - 1 >= 1);
-}
-
-inline bool TPaginator::hasNextPage() const
-{
-    return (currentPage + 1 <= numPages);
-}
-
-inline bool TPaginator::isLastPageEnabled() const
-{
-    return (currentPage != numPages);
-}
-
-inline bool TPaginator::isValidPage(int page) const
-{
-    if (1 <= page && page <= numPages)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 #endif // TPAGINATOR_H

@@ -1,445 +1,422 @@
 #include <TfTest/TfTest>
 #include "../../tpaginator.h"
 
+Q_DECLARE_METATYPE(QList<int>)
 
 class TestPaginator : public QObject
 {
     Q_OBJECT
 private slots:
-    void testConstructor();
-    void testSetItemsCount();
-    void testSetLimit();
-    void testSetMidRange();
-    void testSetCurrentPage();
-    void testIsValidPage();
-    void testItemsCountChangesMakeCurrentPageInvalid();
-    void testLimitChangesMakeCurrentPageInvalid();
+    void constructor_data();
+    void constructor();
+    void setItemsCount_data();
+    void setItemsCount();
+    void setLimit_data();
+    void setLimit();
+    void setMidRange_data();
+    void setMidRange();
+    void setCurrentPage_data();
+    void setCurrentPage();
+    void isValidPage_data();
+    void isValidPage();
+    void itemsCountChangesMakeCurrentPageInvalid_data();
+    void itemsCountChangesMakeCurrentPageInvalid();
+    void limitChangesMakeCurrentPageInvalid_data();
+    void limitChangesMakeCurrentPageInvalid();
 };
 
-
-void TestPaginator::testConstructor()
+void TestPaginator::constructor_data()
 {
-    QList<int> range;
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("expectedItemsCount");
+    QTest::addColumn<int>("expectedNumPages");
+    QTest::addColumn<int>("expectedLimit");
+    QTest::addColumn<int>("expectedOffset");
+    QTest::addColumn<int>("expectedMidRange");
+    QTest::addColumn<QList<int> >("expectedRange");
 
-    // No args
     TPaginator pager;
-    QCOMPARE(pager.getItemsCount(), 0);
-    QCOMPARE(pager.getNumPages(), 1);
-    QCOMPARE(pager.getLimit(), 1);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 1);
-    range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
+    QList<int> range;
+    range << 1;
+    QTest::newRow("No args") << pager << 0 << 1 << 1 << 0 << 1 << range;
 
-    // ItemsCount < 0
     pager = TPaginator(-9, 4, 5);
-    QCOMPARE(pager.getItemsCount(), 0);
-    QCOMPARE(pager.getNumPages(), 1);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
     range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
+    range << 1;
+    QTest::newRow("ItemsCount < 0") << pager << 0 << 1 << 4 << 0 << 5 << range;
 
-    // ItemsCount = 0
     pager = TPaginator(0, 4, 5);
-    QCOMPARE(pager.getItemsCount(), 0);
-    QCOMPARE(pager.getNumPages(), 1);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
     range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
+    range << 1;
+    QTest::newRow("ItemsCount = 0") << pager << 0 << 1 << 4 << 0 << 5 << range;
 
-    // Limit < 1
     pager = TPaginator(158, -3, 5);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 158);
-    QCOMPARE(pager.getLimit(), 1);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
     range = QList<int>();
-    range.append(1);
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3;
+    QTest::newRow("Limit < 1") << pager << 158 << 158 << 1 << 0 << 5 << range;
 
-    // Limit = 1
     pager = TPaginator(158, 1, 5);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 158);
-    QCOMPARE(pager.getLimit(), 1);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
     range = QList<int>();
-    range.append(1);
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3;
+    QTest::newRow("Limit = 1") << pager << 158 << 158 << 1 << 0 << 5 << range;
 
-    // MidRange < 1
     pager = TPaginator(158, 4, -98);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 1);
     range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
+    range << 1;
+    QTest::newRow("MidRange < 1") << pager << 158 << 40 << 4 << 0 << 1 << range;
 
-    // MidRange = 1
     pager = TPaginator(158, 4, 1);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 1);
     range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
+    range << 1;
+    QTest::newRow("MidRange = 1") << pager << 158 << 40 << 4 << 0 << 1 << range;
 
-    // MidRange = even number
     pager = TPaginator(158, 4, 6);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 7);
     range = QList<int>();
-    range.append(1);
-    range.append(2);
-    range.append(3);
-    range.append(4);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3 << 4;
+    QTest::newRow("MidRange = 1") << pager << 158 << 40 << 4 << 0 << 7 << range;
 }
 
-void TestPaginator::testSetItemsCount()
+void TestPaginator::constructor()
 {
-    QList<int> range;
+    QFETCH(TPaginator, pager);
+    QFETCH(int, expectedItemsCount);
+    QFETCH(int, expectedNumPages);
+    QFETCH(int, expectedLimit);
+    QFETCH(int, expectedOffset);
+    QFETCH(int, expectedMidRange);
+    QFETCH(QList<int>, expectedRange);
+
+    QCOMPARE(pager.itemsCount(), expectedItemsCount);
+    QCOMPARE(pager.numPages(), expectedNumPages);
+    QCOMPARE(pager.limit(), expectedLimit);
+    QCOMPARE(pager.offset(), expectedOffset);
+    QCOMPARE(pager.midRange(), expectedMidRange);
+    QCOMPARE(pager.range(), expectedRange);
+}
+
+void TestPaginator::setItemsCount_data()
+{
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("itemsCount");
+    QTest::addColumn<int>("expectedItemsCount");
+    QTest::addColumn<int>("expectedNumPages");
+    QTest::addColumn<int>("expectedLimit");
+    QTest::addColumn<int>("expectedOffset");
+    QTest::addColumn<int>("expectedMidRange");
+    QTest::addColumn<QList<int> >("expectedRange");
+
     TPaginator pager(158, 4, 5);
+    QList<int> range;
+    range << 1;
+    QTest::newRow("ItemsCount < 0") << pager << -4 << 0 << 1 << 4 << 0 << 5 << range;
 
-    // ItemsCount < 0
-    pager.setItemsCount(-4);
-    QCOMPARE(pager.getItemsCount(), 0);
-    QCOMPARE(pager.getNumPages(), 1);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
-
-    // ItemsCount = 0
-    pager.setItemsCount(0);
-    QCOMPARE(pager.getItemsCount(), 0);
-    QCOMPARE(pager.getNumPages(), 1);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
-    range = QList<int>();
-    range.append(1);
-    QCOMPARE(pager.getRange(), range);
+    range << 1;
+    QTest::newRow("ItemsCount = 0") << pager << 0 << 0 << 1 << 4 << 0 << 5 << range;
 }
 
-void TestPaginator::testSetLimit()
+void TestPaginator::setItemsCount()
 {
-    QList<int> range;
+    QFETCH(TPaginator, pager);
+    QFETCH(int, itemsCount);
+    QFETCH(int, expectedItemsCount);
+    QFETCH(int, expectedNumPages);
+    QFETCH(int, expectedLimit);
+    QFETCH(int, expectedOffset);
+    QFETCH(int, expectedMidRange);
+    QFETCH(QList<int>, expectedRange);
+
+    pager.setItemsCount(itemsCount);
+
+    QCOMPARE(pager.itemsCount(), expectedItemsCount);
+    QCOMPARE(pager.numPages(), expectedNumPages);
+    QCOMPARE(pager.limit(), expectedLimit);
+    QCOMPARE(pager.offset(), expectedOffset);
+    QCOMPARE(pager.midRange(), expectedMidRange);
+    QCOMPARE(pager.range(), expectedRange);
+}
+
+void TestPaginator::setLimit_data()
+{
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("limit");
+    QTest::addColumn<int>("expectedItemsCount");
+    QTest::addColumn<int>("expectedNumPages");
+    QTest::addColumn<int>("expectedLimit");
+    QTest::addColumn<int>("expectedOffset");
+    QTest::addColumn<int>("expectedMidRange");
+    QTest::addColumn<QList<int> >("expectedRange");
+
     TPaginator pager(158, 4, 5);
+    QList<int> range;
+    range << 1 << 2 << 3;
+    QTest::newRow("Limit < 1") << pager << 0 << 158 << 158 << 1 << 0 << 5 << range;
 
-    // Limit < 1
-    pager.setLimit(0);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 158);
-    QCOMPARE(pager.getLimit(), 1);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(1);
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
-
-    // Limit = 1
-    pager.setLimit(1);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 158);
-    QCOMPARE(pager.getLimit(), 1);
-    QCOMPARE(pager.getOffset(), 0);
-    QCOMPARE(pager.getMidRange(), 5);
-    range = QList<int>();
-    range.append(1);
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3;
+    QTest::newRow("Limit = 1") << pager << 1 << 158 << 158 << 1 << 0 << 5 << range;
 }
 
-void TestPaginator::testSetMidRange()
+void TestPaginator::setLimit()
 {
-    QList<int> range;
+    QFETCH(TPaginator, pager);
+    QFETCH(int, limit);
+    QFETCH(int, expectedItemsCount);
+    QFETCH(int, expectedNumPages);
+    QFETCH(int, expectedLimit);
+    QFETCH(int, expectedOffset);
+    QFETCH(int, expectedMidRange);
+    QFETCH(QList<int>, expectedRange);
+
+    pager.setLimit(limit);
+
+    QCOMPARE(pager.itemsCount(), expectedItemsCount);
+    QCOMPARE(pager.numPages(), expectedNumPages);
+    QCOMPARE(pager.limit(), expectedLimit);
+    QCOMPARE(pager.offset(), expectedOffset);
+    QCOMPARE(pager.midRange(), expectedMidRange);
+    QCOMPARE(pager.range(), expectedRange);
+}
+
+void TestPaginator::setMidRange_data()
+{
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("midRange");
+    QTest::addColumn<int>("expectedItemsCount");
+    QTest::addColumn<int>("expectedNumPages");
+    QTest::addColumn<int>("expectedLimit");
+    QTest::addColumn<int>("expectedOffset");
+    QTest::addColumn<int>("expectedMidRange");
+    QTest::addColumn<QList<int> >("expectedRange");
+    QTest::addColumn<int>("expectedCurrentPage");
+
     TPaginator pager(158, 4, 5);
     pager.setCurrentPage(20);
+    QList<int> range;
+    range << 20;
+    QTest::newRow("MidRange < 1") << pager << -16 << 158 << 40 << 4 << 76 << 1 << range << 20;
 
-    // MidRange < 1
-    pager.setMidRange(-16);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 76);
-    QCOMPARE(pager.getMidRange(), 1);
+    pager = TPaginator(158, 4, 5);
+    pager.setCurrentPage(20);
     range = QList<int>();
-    range.append(20);// Current page
-    QCOMPARE(pager.getRange(), range);
+    range << 20;
+    QTest::newRow("MidRange = 1") << pager << 1 << 158 << 40 << 4 << 76 << 1 << range << 20;
 
-    // MidRange = 1
-    pager.setMidRange(1);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 76);
-    QCOMPARE(pager.getMidRange(), 1);
+    pager = TPaginator(158, 4, 5);
+    pager.setCurrentPage(20);
     range = QList<int>();
-    range.append(20);// Current page
-    QCOMPARE(pager.getRange(), range);
+    range << 16 << 17 << 18 << 19;
+    range << 20;
+    range << 21 << 22 << 23 << 24;
+    QTest::newRow("MidRange = even number") << pager << 8 << 158 << 40 << 4 << 76 << 9 << range << 20;
 
-    // MidRange = even number
-    pager.setMidRange(8);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 76);
-    QCOMPARE(pager.getMidRange(), 9);
-    range = QList<int>();
-    range.append(16);
-    range.append(17);
-    range.append(18);
-    range.append(19);
-    range.append(20);// Current page
-    range.append(21);
-    range.append(22);
-    range.append(23);
-    range.append(24);
-    QCOMPARE(pager.getRange(), range);
-
-    // MidRange = Nb.Pages - 1
-    pager.setMidRange(39);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 76);
-    QCOMPARE(pager.getMidRange(), 39);
+    pager = TPaginator(158, 4, 5);
+    pager.setCurrentPage(20);
     range = QList<int>();
     range << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13 << 14 << 15 << 16 << 17 << 18 << 19;
-    range << 20; // Current page
+    range << 20;
     range << 21 << 22 << 23 << 24 << 25 << 26 << 27 << 28 << 29 << 30 << 31 << 32 << 33 << 34 << 35 << 36 << 37 << 38 << 39;
-    QCOMPARE(pager.getRange(), range);
+    QTest::newRow("MidRange = Nb.Pages - 1") << pager << 39 << 158 << 40 << 4 << 76 << 39 << range << 20;
 
-    // MidRange = Nb.Pages && Nb.Pages = even number
-    pager.setMidRange(40);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 76);
-    QCOMPARE(pager.getMidRange(), 41);
+    pager = TPaginator(158, 4, 5);
+    pager.setCurrentPage(20);
     range = QList<int>();
     range << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13 << 14 << 15 << 16 << 17 << 18 << 19;
-    range << 20; // Current page
+    range << 20;
     range << 21 << 22 << 23 << 24 << 25 << 26 << 27 << 28 << 29 << 30 << 31 << 32 << 33 << 34 << 35 << 36 << 37 << 38 << 39 << 40;
-    QCOMPARE(pager.getRange(), range);
+    QTest::newRow("MidRange = Nb.Pages && Nb.Pages = even number") << pager << 40 << 158 << 40 << 4 << 76 << 41 << range << 20;
 
-    // MidRange > Nb.Pages
-    pager.setMidRange(53);
-    QCOMPARE(pager.getItemsCount(), 158);
-    QCOMPARE(pager.getNumPages(), 40);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 76);
-    QCOMPARE(pager.getMidRange(), 53);
+    pager = TPaginator(158, 4, 5);
+    pager.setCurrentPage(20);
     range = QList<int>();
     range << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13 << 14 << 15 << 16 << 17 << 18 << 19;
-    range << 20; // Current page
+    range << 20;
     range << 21 << 22 << 23 << 24 << 25 << 26 << 27 << 28 << 29 << 30 << 31 << 32 << 33 << 34 << 35 << 36 << 37 << 38 << 39 << 40;
-    QCOMPARE(pager.getRange(), range);
+    QTest::newRow("MidRange > Nb.Pages") << pager << 53 << 158 << 40 << 4 << 76 << 53 << range << 20;
 
     pager = TPaginator(161, 4, 5);
     pager.setCurrentPage(21);
-
-    // MidRange = Nb.Pages && Nb.Pages = odd number
-    pager.setMidRange(41);
-    QCOMPARE(pager.getItemsCount(), 161);
-    QCOMPARE(pager.getNumPages(), 41);
-    QCOMPARE(pager.getLimit(), 4);
-    QCOMPARE(pager.getOffset(), 80);
-    QCOMPARE(pager.getMidRange(), 41);
     range = QList<int>();
     range << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13 << 14 << 15 << 16 << 17 << 18 << 19 << 20;
-    range << 21; // Current page
+    range << 21;
     range << 22 << 23 << 24 << 25 << 26 << 27 << 28 << 29 << 30 << 31 << 32 << 33 << 34 << 35 << 36 << 37 << 38 << 39 << 40 << 41;
-    QCOMPARE(pager.getRange(), range);
+    QTest::newRow("MidRange = Nb.Pages && Nb.Pages = odd number") << pager << 41 << 161 << 41 << 4 << 80 << 41 << range << 21;
 }
 
-void TestPaginator::testSetCurrentPage()
+void TestPaginator::setMidRange()
 {
+    QFETCH(TPaginator, pager);
+    QFETCH(int, midRange);
+    QFETCH(int, expectedItemsCount);
+    QFETCH(int, expectedNumPages);
+    QFETCH(int, expectedLimit);
+    QFETCH(int, expectedOffset);
+    QFETCH(int, expectedMidRange);
+    QFETCH(QList<int>, expectedRange);
+    QFETCH(int, expectedCurrentPage);
+
+    pager.setMidRange(midRange);
+
+    QCOMPARE(pager.itemsCount(), expectedItemsCount);
+    QCOMPARE(pager.numPages(), expectedNumPages);
+    QCOMPARE(pager.limit(), expectedLimit);
+    QCOMPARE(pager.offset(), expectedOffset);
+    QCOMPARE(pager.midRange(), expectedMidRange);
+    QCOMPARE(pager.range(), expectedRange);
+    QCOMPARE(pager.currentPage(), expectedCurrentPage);
+}
+
+void TestPaginator::setCurrentPage_data()
+{
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("currentPage");
+    QTest::addColumn<int>("expectedCurrentPage");
+    QTest::addColumn<int>("expectedFirstPage");
+    QTest::addColumn<int>("expectedPreviousPage");
+    QTest::addColumn<int>("expectedNextPage");
+    QTest::addColumn<int>("expectedLastPage");
+    QTest::addColumn<bool>("expectedHaveToPaginate");
+    QTest::addColumn<bool>("expectedIsFirstPageEnabled");
+    QTest::addColumn<bool>("expectedHasPreviousPage");
+    QTest::addColumn<bool>("expectedHasNextPage");
+    QTest::addColumn<bool>("expectedIsLastPageEnabled");
+    QTest::addColumn<QList<int> >("expectedRange");
+
+    TPaginator pager(158, 4, 5);
     QList<int> range;
-    TPaginator pager(158, 4, 5);
+    range << 1 << 2 << 3;
+    QTest::newRow("Page < 1") << pager << -53 << 1 << 1 << 1 << 2 << 40 << true << false << false << true << true << range;
 
-    // Page < 1
-    pager.setCurrentPage(-53);
-    QCOMPARE(pager.getCurrentPage(), 1);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 1);
-    QCOMPARE(pager.getNextPage(), 2);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), false);
-    QCOMPARE(pager.hasPreviousPage(), false);
-    QCOMPARE(pager.hasNextPage(), true);
-    QCOMPARE(pager.isLastPageEnabled(), true);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(1);// Current Page
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3;
+    QTest::newRow("Page = 1") << pager << 1 << 1 << 1 << 1 << 2 << 40 << true << false << false << true << true << range;
 
-    // Page = 1
-    pager.setCurrentPage(1);
-    QCOMPARE(pager.getCurrentPage(), 1);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 1);
-    QCOMPARE(pager.getNextPage(), 2);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), false);
-    QCOMPARE(pager.hasPreviousPage(), false);
-    QCOMPARE(pager.hasNextPage(), true);
-    QCOMPARE(pager.isLastPageEnabled(), true);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(1);// Current Page
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3 << 4;
+    QTest::newRow("Page <= floor(MidRange / 2)") << pager << 2 << 2 << 1 << 1 << 3 << 40 << true << true << true << true << true << range;
 
-    // Page <= floor(MidRange / 2)
-    pager.setCurrentPage(2);
-    QCOMPARE(pager.getCurrentPage(), 2);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 1);
-    QCOMPARE(pager.getNextPage(), 3);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), true);
-    QCOMPARE(pager.hasPreviousPage(), true);
-    QCOMPARE(pager.hasNextPage(), true);
-    QCOMPARE(pager.isLastPageEnabled(), true);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(1);
-    range.append(2);// Current Page
-    range.append(3);
-    range.append(4);
-    QCOMPARE(pager.getRange(), range);
+    range << 23 << 24 << 25 << 26 << 27;
+    QTest::newRow("Page > floor(MidRange / 2) && Page <= Nb.Pages - floor(MidRange / 2)") << pager << 25 << 25 << 1 << 24 << 26 << 40 << true << true << true << true << true << range;
 
-    // Page > floor(MidRange / 2) && Page <= Nb.Pages - floor(MidRange / 2)
-    pager.setCurrentPage(25);
-    QCOMPARE(pager.getCurrentPage(), 25);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 24);
-    QCOMPARE(pager.getNextPage(), 26);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), true);
-    QCOMPARE(pager.hasPreviousPage(), true);
-    QCOMPARE(pager.hasNextPage(), true);
-    QCOMPARE(pager.isLastPageEnabled(), true);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(23);
-    range.append(24);
-    range.append(25);// Current Page
-    range.append(26);
-    range.append(27);
-    QCOMPARE(pager.getRange(), range);
+    range << 37 << 38 << 39 << 40;
+    QTest::newRow("Page > Nb.Pages - floor(MidRange / 2)") << pager << 39 << 39 << 1 << 38 << 40 << 40 << true << true << true << true << true << range;
 
-    // Page > Nb.Pages - floor(MidRange / 2)
-    pager.setCurrentPage(39);
-    QCOMPARE(pager.getCurrentPage(), 39);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 38);
-    QCOMPARE(pager.getNextPage(), 40);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), true);
-    QCOMPARE(pager.hasPreviousPage(), true);
-    QCOMPARE(pager.hasNextPage(), true);
-    QCOMPARE(pager.isLastPageEnabled(), true);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(37);
-    range.append(38);
-    range.append(39);// Current Page
-    range.append(40);
-    QCOMPARE(pager.getRange(), range);
+    range << 38 << 39 << 40;
+    QTest::newRow("Page = Nb.Pages") << pager << 40 << 40 << 1 << 39 << 40 << 40 << true << true << true << false << false << range;
 
-    // Page = Nb.Pages
-    pager.setCurrentPage(40);
-    QCOMPARE(pager.getCurrentPage(), 40);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 39);
-    QCOMPARE(pager.getNextPage(), 40);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), true);
-    QCOMPARE(pager.hasPreviousPage(), true);
-    QCOMPARE(pager.hasNextPage(), false);
-    QCOMPARE(pager.isLastPageEnabled(), false);
+    pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range.append(38);
-    range.append(39);
-    range.append(40);// Current Page
-    QCOMPARE(pager.getRange(), range);
-
-    // Page > Nb.Pages
-    pager.setCurrentPage(59);
-    QCOMPARE(pager.getCurrentPage(), 1);
-    QCOMPARE(pager.getFirstPage(), 1);
-    QCOMPARE(pager.getPreviousPage(), 1);
-    QCOMPARE(pager.getNextPage(), 2);
-    QCOMPARE(pager.getLastPage(), 40);
-    QCOMPARE(pager.haveToPaginate(), true);
-    QCOMPARE(pager.isFirstPageEnabled(), false);
-    QCOMPARE(pager.hasPreviousPage(), false);
-    QCOMPARE(pager.hasNextPage(), true);
-    QCOMPARE(pager.isLastPageEnabled(), true);
-    range = QList<int>();
-    range.append(1);// Current Page
-    range.append(2);
-    range.append(3);
-    QCOMPARE(pager.getRange(), range);
+    range << 1 << 2 << 3;
+    QTest::newRow("Page > Nb.Pages") << pager << 59 << 1 << 1 << 1 << 2 << 40 << true << false << false << true << true << range;
 }
 
-void TestPaginator::testIsValidPage()
+void TestPaginator::setCurrentPage()
 {
-    TPaginator pager(158, 4, 5);
-    QCOMPARE(pager.isValidPage(-2), false);
-    QCOMPARE(pager.isValidPage(1), true);
-    QCOMPARE(pager.isValidPage(36), true);
-    QCOMPARE(pager.isValidPage(40), true);
-    QCOMPARE(pager.isValidPage(68), false);
+    QFETCH(TPaginator, pager);
+    QFETCH(int, currentPage);
+    QFETCH(int, expectedCurrentPage);
+    QFETCH(int, expectedFirstPage);
+    QFETCH(int, expectedPreviousPage);
+    QFETCH(int, expectedNextPage);
+    QFETCH(int, expectedLastPage);
+    QFETCH(bool, expectedHaveToPaginate);
+    QFETCH(bool, expectedIsFirstPageEnabled);
+    QFETCH(bool, expectedHasPreviousPage);
+    QFETCH(bool, expectedHasNextPage);
+    QFETCH(bool, expectedIsLastPageEnabled);
+    QFETCH(QList<int>, expectedRange);
+
+    pager.setCurrentPage(currentPage);
+
+    QCOMPARE(pager.currentPage(), expectedCurrentPage);
+    QCOMPARE(pager.firstPage(), expectedFirstPage);
+    QCOMPARE(pager.previousPage(), expectedPreviousPage);
+    QCOMPARE(pager.nextPage(), expectedNextPage);
+    QCOMPARE(pager.lastPage(), expectedLastPage);
+    QCOMPARE(pager.haveToPaginate(), expectedHaveToPaginate);
+    QCOMPARE(pager.isFirstPageEnabled(), expectedIsFirstPageEnabled);
+    QCOMPARE(pager.hasPreviousPage(), expectedHasPreviousPage);
+    QCOMPARE(pager.hasNextPage(), expectedHasNextPage);
+    QCOMPARE(pager.isLastPageEnabled(), expectedIsLastPageEnabled);
+    QCOMPARE(pager.range(), expectedRange);
 }
 
-void TestPaginator::testItemsCountChangesMakeCurrentPageInvalid()
+void TestPaginator::isValidPage_data()
 {
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("page");
+    QTest::addColumn<bool>("expectedIsValidPage");
+
+    TPaginator pager(158, 4, 5);
+    QTest::newRow("Page < 1") << pager << -2 << false;
+    QTest::newRow("Page = 1") << pager << 1 << true;
+    QTest::newRow("Page = Valid page") << pager << 36 << true;
+    QTest::newRow("Page = Last page") << pager << 40 << true;
+    QTest::newRow("Page > Last page") << pager << 68 << false;
+}
+
+void TestPaginator::isValidPage()
+{
+    QFETCH(TPaginator, pager);
+    QFETCH(int, page);
+    QFETCH(bool, expectedIsValidPage);
+
+    QCOMPARE(pager.isValidPage(page), expectedIsValidPage);
+}
+
+void TestPaginator::itemsCountChangesMakeCurrentPageInvalid_data()
+{
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("itemsCount");
+    QTest::addColumn<int>("expectedCurrentPage");
+
     TPaginator pager(158, 4, 5);
     pager.setCurrentPage(21);
-    pager.setItemsCount(16);
-    QCOMPARE(pager.getCurrentPage(), 1);
+    QTest::newRow("ItemsCount = Limit + 1") << pager << 5 << 1;
 }
 
-void TestPaginator::testLimitChangesMakeCurrentPageInvalid()
+void TestPaginator::itemsCountChangesMakeCurrentPageInvalid()
 {
+    QFETCH(TPaginator, pager);
+    QFETCH(int, itemsCount);
+    QFETCH(int, expectedCurrentPage);
+
+    pager.setItemsCount(itemsCount);
+
+    QCOMPARE(pager.currentPage(), expectedCurrentPage);
+}
+
+void TestPaginator::limitChangesMakeCurrentPageInvalid_data()
+{
+    QTest::addColumn<TPaginator>("pager");
+    QTest::addColumn<int>("limit");
+    QTest::addColumn<int>("expectedCurrentPage");
+
     TPaginator pager(158, 4, 5);
     pager.setCurrentPage(21);
-    pager.setLimit(50);
-    QCOMPARE(pager.getCurrentPage(), 1);
+    QTest::newRow("Limit = ItemsCount - 1") << pager << 157 << 1;
+    QTest::newRow("Limit > ItemsCount") << pager << 200 << 1;
+}
+
+void TestPaginator::limitChangesMakeCurrentPageInvalid()
+{
+    QFETCH(TPaginator, pager);
+    QFETCH(int, limit);
+    QFETCH(int, expectedCurrentPage);
+
+    pager.setLimit(limit);
+
+    QCOMPARE(pager.currentPage(), expectedCurrentPage);
 }
 
 //TF_TEST_SQLLESS_MAIN(TestPaginator)
