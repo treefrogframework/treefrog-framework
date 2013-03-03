@@ -45,7 +45,6 @@ private:
     void calculateOffset();
     void calculateRange();
 
-<<<<<<< HEAD
     int itemsCount_;
     int numPages_;
     int limit_;
