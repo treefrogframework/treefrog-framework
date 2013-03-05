@@ -41,7 +41,8 @@ public:
 
 protected:
     void setFilter(const QString &filter);
-    QString orderByClause() const;
+    QString orderBy() const;
+    virtual QString orderByClause() const { return QString(); }
     virtual void clear();
     virtual QString selectStatement() const;
 
@@ -223,7 +224,7 @@ inline QString TSqlORMapper<T>::selectStatement() const
     if (!queryFilter.isEmpty())
         query.append(QLatin1String(" WHERE ")).append(queryFilter);
 
-    QString orderby = orderByClause();
+    QString orderby = orderBy();
     if (!orderby.isEmpty()) {
         query.append(orderby);
     }
@@ -297,7 +298,7 @@ inline void TSqlORMapper<T>::clear()
   Returns a SQL WHERE clause generated from a criteria.
 */
 template <class T>
-inline QString TSqlORMapper<T>::orderByClause() const
+inline QString TSqlORMapper<T>::orderBy() const
 {
     QString str;
     if (sortColumn >= 0) {
