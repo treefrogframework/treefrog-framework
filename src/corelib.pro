@@ -65,8 +65,10 @@ isEmpty( use_gui ) {
   DEFINES += TF_USE_GUI_MODULE
 }
 
-HEADERS += twebapplication.h
-SOURCES += twebapplication.cpp
+HEADERS += twebapplication.h \
+    tpaginator.h
+SOURCES += twebapplication.cpp \
+    tpaginator.cpp
 HEADERS += tapplicationserver.h
 SOURCES += tapplicationserver.cpp
 HEADERS += tactioncontext.h
