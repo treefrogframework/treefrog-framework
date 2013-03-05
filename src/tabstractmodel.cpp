@@ -131,18 +131,6 @@ void TAbstractModel::setProperties(const QVariantHash &properties)
     data()->setProperties(prop);
 }
 
-/*!
-  Sets the \a properties. Obsolete function.
- */
-void TAbstractModel::setProperties(const QHash<QString, QString> &properties)
-{
-    QVariantHash prop;
-    for (QHashIterator<QString, QString> i(properties); i.hasNext(); ) {
-        i.next();
-        prop.insert(propertyNameToFieldName(i.key()), i.value());
-    }
-    data()->setProperties(prop);
-}
 
 /*!
   \fn virtual TSqlObject *TAbstractModel::data()

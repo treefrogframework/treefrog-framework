@@ -37,7 +37,6 @@ public:
     QString formItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allFormItemValues(const QString &name) const;
     QStringList formItemList(const QString &key) const;
-    QHash<QString, QString> formItemHash(const QString &key) const;
     QVariantHash formItems(const QString &key) const;
     const QVariantHash &formItems() const { return formParams; }
     TMultipartFormData &multipartFormData() { return multiFormData; }

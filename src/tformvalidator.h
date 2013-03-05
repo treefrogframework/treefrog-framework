@@ -32,7 +32,6 @@ public:
     void setDateTimeFormat(const QString &format);
     QString dateTimeFormat() const;
 
-    virtual bool validate(const QHash<QString, QString> &hash);
     virtual bool validate(const QVariantHash &hash);
     QStringList validationErrorKeys() const;
     Tf::ValidationRule errorRule(const QString &key) const;

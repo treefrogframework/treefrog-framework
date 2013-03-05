@@ -234,23 +234,6 @@ QStringList THttpRequest::formItemList(const QString &key) const
 }
 
 /*!
-  Returns the hash of string value whose key is equal to \a key from
-  the form data. Obsolete function.
- */
-QHash<QString, QString> THttpRequest::formItemHash(const QString &key) const
-{
-    QHash<QString, QString> hash;
-    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    for (QHashIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
-        i.next();
-        if (rx.exactMatch(i.key())) {
-            hash.insert(rx.cap(1), i.value().toString());
-        }
-    }
-    return hash;
-}
-
-/*!
   Returns the hash of variant value whose key is equal to \a key from
   the form data.
  */

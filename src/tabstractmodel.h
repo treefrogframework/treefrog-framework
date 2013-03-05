@@ -20,7 +20,6 @@ public:
     virtual bool isSaved() const;
     virtual QVariantHash properties() const;
     virtual void setProperties(const QVariantHash &properties);
-    virtual void setProperties(const QHash<QString, QString> &properties);
 
 protected:
     virtual TSqlObject *data() = 0;
