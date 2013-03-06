@@ -65,10 +65,8 @@ isEmpty( use_gui ) {
   DEFINES += TF_USE_GUI_MODULE
 }
 
-HEADERS += twebapplication.h \
-    tpaginator.h
-SOURCES += twebapplication.cpp \
-    tpaginator.cpp
+HEADERS += twebapplication.h
+SOURCES += twebapplication.cpp
 HEADERS += tapplicationserver.h
 SOURCES += tapplicationserver.cpp
 HEADERS += tactioncontext.h
@@ -199,6 +197,8 @@ HEADERS += tformvalidator.h
 SOURCES += tformvalidator.cpp
 HEADERS += taccessvalidator.h
 SOURCES += taccessvalidator.cpp
+HEADERS += tpaginator.h
+SOURCES += tpaginator.cpp
 
 HEADERS += \
            tfnamespace.h \
