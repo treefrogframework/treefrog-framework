@@ -11,7 +11,7 @@ for e in `ls -d *`; do
       echo "Test passed."
     else
       echo "Test failed.\n"
-      #exit 1
+      exit 1
     fi
   fi
 done
