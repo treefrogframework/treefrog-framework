@@ -5,7 +5,7 @@
 #include <QList>
 #include <TGlobal>
 
-class TPaginator
+class T_CORE_EXPORT TPaginator
 {
 public:
     TPaginator(int itemsCount = 0, int limit = 1, int midRange = 1);
@@ -18,13 +18,13 @@ public:
     void setCurrentPage(int page);
 
     // Getter
-    const int &itemsCount() const { return itemsCount_; }
-    const int &numPages() const { return numPages_; }
-    const int &limit() const { return limit_; }
-    const int &offset() const { return offset_; }
-    const int &midRange() const { return midRange_; }
+    int itemsCount() const { return itemsCount_; }
+    int numPages() const { return numPages_; }
+    int limit() const { return limit_; }
+    int offset() const { return offset_; }
+    int midRange() const { return midRange_; }
     const QList<int> &range() const { return range_; }
-    const int &currentPage() const { return currentPage_; }
+    int currentPage() const { return currentPage_; }
     int firstPage() const { return 1; }
     int previousPage() const { return hasPreviousPage() ? currentPage_ - 1 : 1; }
     int nextPage() const { return hasNextPage() ? currentPage_ + 1 : numPages_; }
