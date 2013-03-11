@@ -7,6 +7,7 @@
 
 #include <QTextCodec>
 #include <QStringList>
+#include <QMap>
 #include <TWebApplication>
 #include <TApplicationServer>
 #include <TSystemGlobal>
@@ -65,20 +66,20 @@ static void writeFailure(const void *data, int size)
 }
 #endif
 
-static QHash<QString, QString> convertArgs(const QStringList &args)
+static QMap<QString, QString> convertArgs(const QStringList &args)
 {
-    QHash<QString, QString> hash;
+    QMap<QString, QString> map;
     for (int i = 1; i < args.count(); ++i) {
         if (args.value(i).startsWith('-')) {
             if (args.value(i + 1).startsWith('-')) {
-                hash.insert(args.value(i), QString());
+                map.insert(args.value(i), QString());
             } else {
-                hash.insert(args.value(i), args.value(i + 1));
+                map.insert(args.value(i), args.value(i + 1));
                 ++i;
             }
         }
     }
-    return hash;
+    return map;
 }
 
 
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
 #else
     qInstallMsgHandler(messageOutput);
 #endif
-    QHash<QString, QString> args = convertArgs(QCoreApplication::arguments());
+    QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);

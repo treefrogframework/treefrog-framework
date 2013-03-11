@@ -29,7 +29,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(OperatorHash, opHash,
 
 
 OtmParser::OtmParser(const QString &replaceMarker)
-    : marker(replaceMarker)
+    : repMarker(replaceMarker)
 { }
 
 
@@ -47,7 +47,14 @@ void OtmParser::parse(const QString &text)
         if (line.trimmed().isEmpty()) {
             lineCont = false;
             if (!label.isEmpty()) {
-                entries.insertMulti(label, value.trimmed());
+                QString str = value.trimmed();
+                QRegExp rx("[^:~\\+\\|].*"); // anything but ':', '~', '+', '|'
+                if (rx.indexIn(str) == 0) {
+                    // Regard empty Otama operator as the ':' operator
+                    str = QLatin1Char(':') + str;
+                }
+
+                entries.insertMulti(label, str);
                 label.clear();
                 value.clear();
             }
@@ -59,7 +66,8 @@ void OtmParser::parse(const QString &text)
 
         } else if ((line.startsWith('#') || line.startsWith('@')) && line.length() > 1
                    && !line.at(1).isSpace()) {
-            int i = line.indexOf(QRegExp("\\s"));
+            // search the end of label
+            int i = line.indexOf(QRegExp("[^a-zA-Z0-9_]"), 1);
 
             if (line.startsWith(INCLUDE_LABEL + QLatin1Char(' '))) {
                 entries.insertMulti(line.left(i), line.mid(i).trimmed());
@@ -96,7 +104,7 @@ QString OtmParser::getSrcCode(const QString &label, OperatorType op, EchoOption 
         const QString &s = i.next();
         QString opstr = opHash()->value(op); // Gets operator string
 
-        if (!opstr.isEmpty() && s.startsWith(opstr) && !s.contains(marker)) {
+        if (!opstr.isEmpty() && s.startsWith(opstr) && !s.contains(repMarker)) {
             code = s.mid(opstr.length());
 
             if (op != TagMerging) {
@@ -143,8 +151,8 @@ QStringList OtmParser::getWrapSrcCode(const QString &label, OperatorType op) con
             const QString &s = i.next();
             QString opstr = opHash()->value(op);
             
-            if (!opstr.isEmpty() && s.startsWith(opstr) && s.contains(marker)) {
-                return s.mid(opstr.length()).trimmed().split(marker, QString::SkipEmptyParts, Qt::CaseSensitive);
+            if (!opstr.isEmpty() && s.startsWith(opstr) && s.contains(repMarker)) {
+                return s.mid(opstr.length()).trimmed().split(repMarker, QString::SkipEmptyParts, Qt::CaseSensitive);
             }
         }
     }

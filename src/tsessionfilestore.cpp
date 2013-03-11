@@ -29,7 +29,7 @@ bool TSessionFileStore::store(TSession &session)
     QFile file(sessionDirPath() + session.id());
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         QDataStream ds(&file);
-        ds << *static_cast<const QVariantHash *>(&session);
+        ds << *static_cast<const QVariantMap *>(&session);
         res = (ds.status() == QDataStream::Ok);
     }
     return res;
@@ -46,7 +46,7 @@ TSession TSessionFileStore::find(const QByteArray &id, const QDateTime &modified
         if (file.open(QIODevice::ReadOnly)) {
             QDataStream ds(&file);
             TSession result(id);
-            ds >> *static_cast<QVariantHash *>(&result);
+            ds >> *static_cast<QVariantMap *>(&result);
             if (ds.status() == QDataStream::Ok)
                 return result; 
         }

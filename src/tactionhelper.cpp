@@ -25,7 +25,7 @@
  */
 QUrl TActionHelper::url(const QString &controller, const QString &action,
                         const QStringList &args,
-                        const QVariantHash &query) const
+                        const QVariantMap &query) const
 {
     T_TRACEFUNC("%s : %s", qPrintable(controller), qPrintable(action));
     Q_ASSERT(this->controller());
@@ -40,7 +40,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
 
     // appends query items
     QString querystr;
-    for (QHashIterator<QString, QVariant> it(query); it.hasNext(); ) {
+    for (QMapIterator<QString, QVariant> it(query); it.hasNext(); ) {
         it.next();
         if (!it.key().isEmpty()) {
             querystr += it.key();
@@ -59,7 +59,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
 }
 
 /*!
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 QUrl TActionHelper::url(const QString &controller, const QString &action, const QVariant &arg) const
 {
@@ -71,7 +71,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action, const 
 }
 
 /*!
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 QUrl TActionHelper::urla(const QString &action, const QVariant &arg) const
 {
@@ -84,36 +84,36 @@ QUrl TActionHelper::urla(const QString &action, const QVariant &arg) const
 
 /*!
   \fn QUrl TActionHelper::url(const QString &controller, const QString &action, int arg) const
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::url(const QString &controller, const QString &action, uint arg) const
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::url(const QString &controller, const QString &action, qint64 arg) const
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::url(const QString &controller, const QString &action, quint64 arg) const
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::url(const QString &controller, const QString &action, const QString &arg) const
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
-  \fn TActionHelper::url(const QString &controller, const QString &action, const QString &arg, const QVariantHash &) const
-  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantHash &) const.
+  \fn TActionHelper::url(const QString &controller, const QString &action, const QString &arg, const QVariantMap &) const
+  This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
-  \fn TActionHelper::urla(const QString &action=QString(), const QStringList &args=QStringList(), const QVariantHash &query = QVariantHash()) const
+  \fn TActionHelper::urla(const QString &action=QString(), const QStringList &args=QStringList(), const QVariantMap &query = QVariantMap()) const
   Returns a QUrl to \a action of the current controller with arguments \a args.
   The current action name is used, if the \a action is a empty string.
   If \a query is not empty, sets the query string to an encoded version
@@ -122,30 +122,30 @@ QUrl TActionHelper::urla(const QString &action, const QVariant &arg) const
 
 /*!
   \fn TActionHelper::urla(const QString &action, const QString &arg) const
-  This function overloads urla(const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::urla(const QString &action, int arg) const
-  This function overloads urla(const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::urla(const QString &action, uint arg) const
-  This function overloads urla(const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::urla(const QString &action, qint64 arg) const
-  This function overloads urla(const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
   \fn TActionHelper::urla(const QString &action, quint64 arg) const
-  This function overloads urla(const QString &, const QStringList &, const QVariantHash &) const.
+  This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
-  \fn TActionHelper::urla(const QString &action, const QVariantHash &query) const
-  This function overloads urla(const QString &, const QStringList &, const QVariantHash &) const.
+  \fn TActionHelper::urla(const QString &action, const QVariantMap &query) const
+  This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */

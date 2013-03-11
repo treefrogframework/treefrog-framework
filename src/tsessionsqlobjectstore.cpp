@@ -26,7 +26,7 @@ bool TSessionSqlObjectStore::store(TSession &session)
     TSessionObject so = mapper.findFirst(cri);
 
     QDataStream ds(&so.data, QIODevice::WriteOnly);
-    ds << *static_cast<const QVariantHash *>(&session);
+    ds << *static_cast<const QVariantMap *>(&session);
 
     if (so.isEmpty()) {
         so.id = session.id();
@@ -49,7 +49,7 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id, const QDateTime &mod
     
     TSession result(id);
     QDataStream ds(&sess.data, QIODevice::ReadOnly);
-    ds >> *static_cast<QVariantHash *>(&result);
+    ds >> *static_cast<QVariantMap *>(&result);
     return result;  
 }
 

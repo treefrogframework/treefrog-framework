@@ -129,7 +129,7 @@
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
-    " tfetch(QVariantHash, %2);\n"                                      \
+    " tfetch(QVariantMap, %2);\n"                                       \
     "\n"                                                                \
     "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
     "\n"                                                                \
@@ -172,7 +172,7 @@
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
-    " tfetch(QVariantHash, %2);\n"                                      \
+    " tfetch(QVariantMap, %2);\n"                                       \
     "\n"                                                                \
     "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
     "\n"                                                                \

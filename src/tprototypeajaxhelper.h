@@ -60,8 +60,8 @@ public:
     
     TOption o(int key, const QVariant &value) const;
     TOption o() const { return TOption(); }
-    QVariantHash o(const QString &key, const TJavaScriptObject &value) const;
-    QVariantHash o(const QString &key, const QVariant &value) const;
+    QVariantMap o(const QString &key, const TJavaScriptObject &value) const;
+    QVariantMap o(const QString &key, const QVariant &value) const;
     
 protected:
     virtual const TActionView *actionView() const = 0;
@@ -76,20 +76,20 @@ inline TOption TPrototypeAjaxHelper::o(int key, const QVariant &value) const
     return option;
 }
 
-inline QVariantHash TPrototypeAjaxHelper::o(const QString &key, const TJavaScriptObject &value) const
+inline QVariantMap TPrototypeAjaxHelper::o(const QString &key, const TJavaScriptObject &value) const
 {
-    QVariantHash hash;
+    QVariantMap map;
     QVariant v;
     v.setValue(value);
-    hash.insert(key, v);
-    return hash;
+    map.insert(key, v);
+    return map;
 }
 
-inline QVariantHash TPrototypeAjaxHelper::o(const QString &key, const QVariant &value) const
+inline QVariantMap TPrototypeAjaxHelper::o(const QString &key, const QVariant &value) const
 {
-    QVariantHash hash;
-    hash.insert(key, value);
-    return hash;
+    QVariantMap map;
+    map.insert(key, value);
+    return map;
 }
 
 #endif // TAJAXHELPER_H

@@ -2,7 +2,7 @@
 #define TMULTIPARTFORMDATA_H
 
 #include <QStringList>
-#include <QHash>
+#include <QMap>
 #include <QPair>
 #include <TGlobal>
 
@@ -22,7 +22,7 @@ public:
     QString originalFileName() const;
 
 protected:
-    static QHash<QByteArray, QByteArray> parseHeaderParameter(const QByteArray &header);
+    static QMap<QByteArray, QByteArray> parseHeaderParameter(const QByteArray &header);
 
 private:
     static int skipWhitespace(const QByteArray &text, int pos);
@@ -65,7 +65,7 @@ public:
     bool hasFormItem(const QString &name) const { return postParameters.contains(name); }
     QString formItemValue(const QString &name) const { return postParameters.value(name).toString(); }
     QStringList allFormItemValues(const QString &name) const;
-    const QVariantHash &formItems() const { return postParameters; }
+    const QVariantMap &formItems() const { return postParameters; }
 
     QString contentType(const QByteArray &dataName) const;
     QString originalFileName(const QByteArray &dataName) const;
@@ -84,7 +84,7 @@ private:
     QString writeContent(QIODevice *dev) const;
 
     QByteArray dataBoundary;
-    QVariantHash postParameters;
+    QVariantMap postParameters;
     QList<TMimeEntity> uploadedFiles;
 };
 

@@ -58,7 +58,7 @@ void TMimeHeader::setHeader(const QByteArray &headerName, const QByteArray &valu
 QByteArray TMimeHeader::contentDispositionParameter(const QByteArray &name) const
 {
     QByteArray disp = header("content-disposition");
-    QHash<QByteArray, QByteArray> params = parseHeaderParameter(disp);
+    QMap<QByteArray, QByteArray> params = parseHeaderParameter(disp);
     return params[name];
 }
 
@@ -96,12 +96,12 @@ int TMimeHeader::skipWhitespace(const QByteArray &text, int from)
 }
 
 /*!
-  Parses the MIME header \a header and returns the hash of those headers.
+  Parses the MIME header \a header and returns the map of those headers.
   This function is for internal use only.
 */
-QHash<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray &header)
+QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray &header)
 {
-    QHash<QByteArray, QByteArray> result;
+    QMap<QByteArray, QByteArray> result;
     int pos = 0;
     
     for (;;) {
@@ -546,7 +546,7 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
 */
 
 /*!
-  \fn const QVariantHash &TMultipartFormData::formItems() const
-  Returns a QVariantHash object with the form items of this
+  \fn const QVariantMap &TMultipartFormData::formItems() const
+  Returns a QVariantMap object with the form items of this
   multipart/form-data. 
 */

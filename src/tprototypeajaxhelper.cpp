@@ -209,15 +209,15 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
 
     // Adds authenticity_token
     TOption opt(options);
-    QVariantHash hash;
+    QVariantMap map;
     QVariant v = opt[Tf::Parameters];
-    if (v.isValid() && v.canConvert(QVariant::Hash)) {
-        hash = v.toHash();
+    if (v.isValid() && v.canConvert(QVariant::Map)) {
+        map = v.toMap();
     }
-    hash.insert("authenticity_token", actionView()->authenticityToken());
-    opt.insert(Tf::Parameters, hash);
+    map.insert("authenticity_token", actionView()->authenticityToken());
+    opt.insert(Tf::Parameters, map);
 
-    for (QHashIterator<int, QVariant> i(opt); i.hasNext(); ) {
+    for (QMapIterator<int, QVariant> i(opt); i.hasNext(); ) {
         i.next();
 
         // Appends ajax option
@@ -247,9 +247,9 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
         // Appends 'parameters' option
         if (i.key() == Tf::Parameters) {
             QString val;
-            if (i.value().canConvert(QVariant::Hash)) {
-                QVariantHash hash = i.value().toHash();
-                for (QHashIterator<QString, QVariant> it(hash); it.hasNext(); ) {
+            if (i.value().canConvert(QVariant::Map)) {
+                QVariantMap m = i.value().toMap();
+                for (QMapIterator<QString, QVariant> it(m); it.hasNext(); ) {
                     it.next();
                     if (it.value().canConvert<TJavaScriptObject>()) {
                         val += it.key();

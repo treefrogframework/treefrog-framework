@@ -74,7 +74,7 @@
 #define ENTRY_TEMPLATE                                                  \
     "<!DOCTYPE HTML>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
-    "<% tfetch(QVariantHash, %2); %>\n"                                 \
+    "<% tfetch(QVariantMap, %2); %>\n"                                  \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
     "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
@@ -101,7 +101,7 @@
 #define EDIT_TEMPLATE                                                   \
     "<!DOCTYPE HTML>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
-    "<% tfetch(QVariantHash, %2); %>\n"                                 \
+    "<% tfetch(QVariantMap, %2); %>\n"                                  \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
     "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \

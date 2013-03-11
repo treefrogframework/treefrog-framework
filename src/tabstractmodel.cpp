@@ -106,43 +106,42 @@ bool TAbstractModel::remove()
 }
 
 /*!
-  Returns a hash with all properties of this text format.
- */
-QVariantHash TAbstractModel::properties() const
+  Returns a map with all properties of this text format.
+  Obsolete function.
+*/
+QVariantMap TAbstractModel::properties() const
 {
-    QVariantHash res;
-    for (QHashIterator<QString, QVariant> i(data()->properties()); i.hasNext(); ) {
+    return toVariantMap();
+}
+
+/*!
+  Returns a map with all properties of this text format.
+ */
+QVariantMap TAbstractModel::toVariantMap() const
+{
+    QVariantMap ret;
+
+    QVariantMap map = data()->toVariantMap();
+    for (QMapIterator<QString, QVariant> i(map); i.hasNext(); ) {
         i.next();
-        res.insert(fieldNameToVariableName(i.key()), i.value());
+        ret.insert(fieldNameToVariableName(i.key()), i.value());
     }
-    return res;
+    return ret;
 }
 
 /*!
   Sets the \a properties.
  */
-void TAbstractModel::setProperties(const QVariantHash &properties)
+void TAbstractModel::setProperties(const QVariantMap &properties)
 {
-    QVariantHash prop;
-    for (QHashIterator<QString, QVariant> i(properties); i.hasNext(); ) {
+    QVariantMap prop;
+    for (QMapIterator<QString, QVariant> i(properties); i.hasNext(); ) {
         i.next();
         prop.insert(propertyNameToFieldName(i.key()), i.value());
     }
     data()->setProperties(prop);
 }
 
-/*!
-  Sets the \a properties. Obsolete function.
- */
-void TAbstractModel::setProperties(const QHash<QString, QString> &properties)
-{
-    QVariantHash prop;
-    for (QHashIterator<QString, QString> i(properties); i.hasNext(); ) {
-        i.next();
-        prop.insert(propertyNameToFieldName(i.key()), i.value());
-    }
-    data()->setProperties(prop);
-}
 
 /*!
   \fn virtual TSqlObject *TAbstractModel::data()

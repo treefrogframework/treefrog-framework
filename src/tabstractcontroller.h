@@ -20,13 +20,13 @@ protected:
     void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
     void exportValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
     bool hasVariant(const QString &name) const;
-    void exportVariants(const QVariantHash &hash);
-    const QVariantHash &allVariants() const { return exportVars; }
+    void exportVariants(const QVariantMap &map);
+    const QVariantMap &allVariants() const { return exportVars; }
     QString viewClassName(const QString &action = QString()) const;
     QString viewClassName(const QString &contoller, const QString &action) const;
 
 private:
-    QVariantHash exportVars;
+    QVariantMap exportVars;
     Q_DISABLE_COPY(TAbstractController)
 };
 

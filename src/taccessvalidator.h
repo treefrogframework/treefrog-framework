@@ -15,8 +15,6 @@ public:
     TAccessValidator();
     virtual ~TAccessValidator() { }
 
-    void setAllowAll(bool allow) { allowDefault = allow; } // Obsolete
-    void setDenyAll(bool deny) { allowDefault = !deny; } // Obsolete
     void setAllowDefault(bool allow = true) { allowDefault = allow; }
     void setDenyDefault(bool deny = true) { allowDefault = !deny; }
     void setAllowGroup(const QString &groupKey, const QString &action);

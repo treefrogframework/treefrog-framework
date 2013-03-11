@@ -166,8 +166,8 @@ QStringList THttpRequest::allQueryItemValues(const QString &name) const
 }
 
 /*!
-  \fn QVariantHash THttpRequest::queryItems() const
-  Returns the query string of the URL, as a hash of keys and values.
+  \fn QVariantMap THttpRequest::queryItems() const
+  Returns the query string of the URL, as a map of keys and values.
  */
 
 
@@ -234,43 +234,26 @@ QStringList THttpRequest::formItemList(const QString &key) const
 }
 
 /*!
-  Returns the hash of string value whose key is equal to \a key from
-  the form data. Obsolete function.
- */
-QHash<QString, QString> THttpRequest::formItemHash(const QString &key) const
-{
-    QHash<QString, QString> hash;
-    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    for (QHashIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
-        i.next();
-        if (rx.exactMatch(i.key())) {
-            hash.insert(rx.cap(1), i.value().toString());
-        }
-    }
-    return hash;
-}
-
-/*!
-  Returns the hash of variant value whose key is equal to \a key from
+  Returns the map of variant value whose key is equal to \a key from
   the form data.
  */
-QVariantHash THttpRequest::formItems(const QString &key) const
+QVariantMap THttpRequest::formItems(const QString &key) const
 {
-    QVariantHash hash;
+    QVariantMap map;
     QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    for (QHashIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
+    for (QMapIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
         i.next();
         if (rx.exactMatch(i.key())) {
-            hash.insert(rx.cap(1), i.value());
+            map.insert(rx.cap(1), i.value());
         }
     }
-    return hash;
+    return map;
 }
 
 /*!
-  \fn QVariantHash THttpRequest::formItems() const
+  \fn QVariantMap THttpRequest::formItems() const
   
-  Returns the hash of all form data.
+  Returns the map of all form data.
  */
 
 /*!
@@ -372,13 +355,13 @@ QList<TCookie> THttpRequest::cookies() const
 
 
 /*!
-  \fn QVariantHash THttpRequest::allParameters() const
+  \fn QVariantMap THttpRequest::allParameters() const
   
-  Returns a hash of all form data.
+  Returns a map of all form data.
  */
-QVariantHash THttpRequest::allParameters() const
+QVariantMap THttpRequest::allParameters() const
 {
-    QVariantHash params = queryParams;
+    QVariantMap params = queryParams;
     return params.unite(formParams);
 }
 

@@ -36,7 +36,7 @@
     "Q_DECLARE_METATYPE(%1)\n"                                  \
     "T_REGISTER_VIEW(%1)\n"                                     \
     "\n"                                                        \
-    "#include \"%1.moc\""
+    "#include \"%1.moc\"\n"
 
 int defaultTrimMode;
 

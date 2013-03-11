@@ -46,7 +46,7 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx,
 /*!
   \class TFormValidator
   \brief The TFormValidator class provides form validation for
-  a hash-table-based dictionary. 
+  a map-table-based dictionary. 
 */
 
 /*!
@@ -205,33 +205,19 @@ void TFormValidator::setPatternRule(const QString &key, const QRegExp &rx, const
 }
 
 /*!
-  Use the validate(const QVariantHash &) function instead.
-  Obsolete function. 
- */
-bool TFormValidator::validate(const QHash<QString, QString> &hash)
-{
-    QVariantHash vhash;
-    for (QHashIterator<QString, QString> it(hash); it.hasNext(); ) {
-        it.next();
-        vhash.insert(it.key(), it.value());
-    }
-    return validate(vhash);
-}
-
-/*!
-  Validates the specified parameter \a hash by the set rules.
+  Validates the specified parameter \a map by the set rules.
   
   As default, TF::Required is set for all parameters. If not required, 
   set the rule to \a false like this:
     setRule("xxx", Tf::Required, false);
  */
-bool TFormValidator::validate(const QVariantHash &hash)
+bool TFormValidator::validate(const QVariantMap &map)
 {
     errors.clear();
 
     // Add default rules, Tf::Required.
     QString msg = Tf::app()->validationErrorMessage(Tf::Required);
-    for (QStringListIterator i(hash.keys()); i.hasNext(); ) {
+    for (QStringListIterator i(map.keys()); i.hasNext(); ) {
         const QString &k = i.next();
         if (!containsRule(k, Tf::Required)) {
             rules.append(RuleEntry(k, (int)Tf::Required, true, msg));
@@ -240,7 +226,7 @@ bool TFormValidator::validate(const QVariantHash &hash)
 
     for (QListIterator<RuleEntry> i(rules); i.hasNext(); ) {
         const RuleEntry &r = i.next();
-        QString str = hash.value(r.key).toString();  // value string
+        QString str = map.value(r.key).toString();  // value string
 
         if (str.isEmpty()) {
             bool req = r.value.toBool();

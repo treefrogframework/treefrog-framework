@@ -24,7 +24,7 @@ bool TSessionCookieStore::store(TSession &session)
 
     QByteArray ba;
     QDataStream ds(&ba, QIODevice::WriteOnly);
-    ds << *static_cast<const QVariantHash *>(&session);
+    ds << *static_cast<const QVariantMap *>(&session);
     QByteArray digest = QCryptographicHash::hash(ba + Tf::app()->appSettings().value("Session.Secret").toByteArray(),
                                                  QCryptographicHash::Sha1);
     session.sessionId = ba.toHex() + "_" + digest.toHex();
@@ -51,7 +51,7 @@ TSession TSessionCookieStore::find(const QByteArray &id, const QDateTime &)
         }
 
         QDataStream ds(&ba, QIODevice::ReadOnly);
-        ds >> *static_cast<QVariantHash *>(&session);
+        ds >> *static_cast<QVariantMap *>(&session);
         
         if (ds.status() != QDataStream::Ok) {
             tSystemError("Unable to load a session from the cookie store.");

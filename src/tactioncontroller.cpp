@@ -384,7 +384,7 @@ bool TActionController::renderText(const QString &text, bool layoutEnable, const
   \~japanese
   部分テンプレート \a templateName に変数 \a vars を設定した描画データを返す
 */
-QString TActionController::getRenderingData(const QString &templateName, const QVariantHash &vars)
+QString TActionController::getRenderingData(const QString &templateName, const QVariantMap &vars)
 {
     T_TRACEFUNC("templateName: %s", qPrintable(templateName));
 
@@ -401,14 +401,14 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
         return QString();
     }
 
-    QVariantHash hash = allVariants();
-    for (QHashIterator<QString, QVariant> i(vars); i.hasNext(); ) {
+    QVariantMap map = allVariants();
+    for (QMapIterator<QString, QVariant> i(vars); i.hasNext(); ) {
         i.next();
-        hash.insert(i.key(), i.value()); // item's value of same key is replaced
+        map.insert(i.key(), i.value()); // item's value of same key is replaced
     }
 
     view->setController(this);
-    view->setVariantHash(hash);
+    view->setVariantMap(map);
     return view->toString();  
 }
 
@@ -429,7 +429,7 @@ QByteArray TActionController::renderView(TActionView *view)
         return QByteArray();
     }
     view->setController(this);
-    view->setVariantHash(allVariants());
+    view->setVariantMap(allVariants());
 
     if (!layoutEnabled()) {
         // Renders without layout
@@ -458,7 +458,7 @@ QByteArray TActionController::renderView(TActionView *view)
     }
 
     // Renders layout
-    layoutView->setVariantHash(allVariants());
+    layoutView->setVariantMap(allVariants());
     layoutView->setController(this);
     layoutView->setSubActionView(view);
     return Tf::app()->codecForHttpOutput()->fromUnicode(layoutView->toString());
@@ -612,7 +612,7 @@ void TActionController::exportAllFlashVariants()
 {
     QVariant var = sessionStore.take(FLASH_VARS_SESSION_KEY);
     if (!var.isNull()) {
-        exportVariants(var.toHash());
+        exportVariants(var.toMap());
     }
 }
 

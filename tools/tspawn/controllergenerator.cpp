@@ -35,8 +35,8 @@
     "    void remove(const QString &pk);\n"                                   \
     "\n"                                                                      \
     "private:\n"                                                              \
-    "    void renderEntry(const QVariantHash &%3 = QVariantHash());\n"        \
-    "    void renderEdit(const QVariantHash &%3 = QVariantHash());\n"         \
+    "    void renderEntry(const QVariantMap &%3 = QVariantMap());\n"          \
+    "    void renderEdit(const QVariantMap &%3 = QVariantMap());\n"           \
     "};\n"                                                                    \
     "\n"                                                                      \
     "T_DECLARE_CONTROLLER(%2Controller, %4controller)\n"                      \
@@ -77,7 +77,7 @@
     "        return;\n"                                        \
     "    }\n"                                                  \
     "    \n"                                                   \
-    "    QVariantHash form = httpRequest().formItems(\"%3\");\n"    \
+    "    QVariantMap form = httpRequest().formItems(\"%3\");\n"     \
     "    %2 %3 = %2::create(form);\n"                               \
     "    if (!%3.isNull()) {\n"                                     \
     "        QString notice = \"Created successfully.\";\n"         \
@@ -90,7 +90,7 @@
     "    }\n"                                                       \
     "}\n"                                                           \
     "\n"                                                            \
-    "void %2Controller::renderEntry(const QVariantHash &%3)\n"      \
+    "void %2Controller::renderEntry(const QVariantMap &%3)\n"       \
     "{\n"                                                           \
     "    texport(%3);\n"                                            \
     "    render(\"entry\");\n"                                      \
@@ -101,7 +101,7 @@
     "    %2 %3 = %2::get(%4);\n"                                    \
     "    if (!%3.isNull()) {\n"                                     \
     "%5"                                                                \
-    "        renderEdit(%3.properties());\n"                            \
+    "        renderEdit(%3.toVariantMap());\n"                          \
     "    } else {\n"                                                    \
     "        redirect(urla(\"entry\"));\n"                              \
     "    }\n"                                                           \
@@ -123,7 +123,7 @@
     "        return;\n"                                                 \
     "    } \n"                                                          \
     "    \n"                                                            \
-    "    QVariantHash form = httpRequest().formItems(\"%3\");\n"        \
+    "    QVariantMap form = httpRequest().formItems(\"%3\");\n"         \
     "    %3.setProperties(form);\n"                                     \
     "    if (%3.save()) {\n"                                            \
     "        QString notice = \"Updated successfully.\";\n"             \
@@ -136,7 +136,7 @@
     "    }\n"                                                           \
     "}\n"                                                               \
     "\n"                                                                \
-    "void %2Controller::renderEdit(const QVariantHash &%3)\n"           \
+    "void %2Controller::renderEdit(const QVariantMap &%3)\n"            \
     "{\n"                                                               \
     "    texport(%3);\n"                                                \
     "    render(\"edit\");\n"                                           \

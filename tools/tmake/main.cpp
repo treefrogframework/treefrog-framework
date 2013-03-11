@@ -6,7 +6,7 @@
  */
 
 #include <QString>
-#include <QHash>
+#include <QMap>
 #include <QCoreApplication>
 #include <QTextCodec>
 #include <QSettings>
@@ -26,9 +26,9 @@ static int usage()
 }
 
 
-static QHash<QString, QString> convertArgs(const QStringList &args)
+static QMap<QString, QString> convertArgs(const QStringList &args)
 {
-    QHash<QString, QString> hash;
+    QMap<QString, QString> hash;
     for (int i = 1; i < args.count(); ++i) {
         if (args.value(i).startsWith('-')) {
             if (args.value(i + 1).startsWith('-')) {
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     int res = 0;
     QString appIni;
-    QHash<QString, QString> args = convertArgs(QCoreApplication::arguments());
+    QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
 
     if (!args.value("-f").isEmpty()) {
         appIni = args.value("-f");

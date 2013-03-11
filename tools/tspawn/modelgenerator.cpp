@@ -40,7 +40,7 @@
     "\n"                                                 \
     "#include <QStringList>\n"                           \
     "#include <QDateTime>\n"                             \
-    "#include <QHash>\n"                                 \
+    "#include <QVariant>\n"                              \
     "#include <QSharedDataPointer>\n"                    \
     "#include <TGlobal>\n"                               \
     "#include <TAbstractModel>\n"                        \
@@ -60,7 +60,7 @@
     "    %2 &operator=(const %2 &other);\n"              \
     "\n"                                                 \
     "    static %2 create(%4);\n"                        \
-    "    static %2 create(const QVariantHash &values);\n" \
+    "    static %2 create(const QVariantMap &values);\n" \
     "    static %2 get(%5);\n"                           \
     "%6"                                                 \
     "    static QList<%2> getAll();\n"                   \
@@ -111,7 +111,7 @@
     "%6"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::create(const QVariantHash &values)\n"             \
+    "%2 %2::create(const QVariantMap &values)\n"              \
     "{\n"                                                     \
     "    %2 model;\n"                                         \
     "    model.setProperties(values);\n"                      \
@@ -148,7 +148,7 @@
     "\n"                                                 \
     "#include <QStringList>\n"                           \
     "#include <QDateTime>\n"                             \
-    "#include <QHash>\n"                                 \
+    "#include <QVariant>\n"                              \
     "#include <QSharedDataPointer>\n"                    \
     "#include <TGlobal>\n"                               \
     "#include <TAbstractUser>\n"                         \
@@ -171,7 +171,7 @@
     "\n"                                                 \
     "    static %2 authenticate(const QString &%7, const QString &%8);\n" \
     "    static %2 create(%4);\n"                        \
-    "    static %2 create(const QVariantHash &values);\n" \
+    "    static %2 create(const QVariantMap &values);\n" \
     "    static %2 get(%5);\n"                           \
     "%6"                                                 \
     "    static QList<%2> getAll();\n"                   \
@@ -237,7 +237,7 @@
     "%6"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::create(const QVariantHash &values)\n"             \
+    "%2 %2::create(const QVariantMap &values)\n"              \
     "{\n"                                                     \
     "    %2 model;\n"                                         \
     "    model.setProperties(values);\n"                      \

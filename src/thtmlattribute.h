@@ -2,7 +2,6 @@
 #define THTMLATTRIBUTE_H
 
 #include <QStringList>
-#include <QHash>
 #include <QPair>
 #include <TGlobal>
 

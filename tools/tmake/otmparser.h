@@ -36,7 +36,7 @@ protected:
 
 private:
     QMap<QString, QString> entries;
-    QString marker;
+    QString repMarker;
 };
 
 #endif // OTMPARSER_H
