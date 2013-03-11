@@ -209,11 +209,8 @@ HEADERS += \
            tsessionstoreplugin.h \
            tjavascriptobject.h \
            tsqlormapper.h \
-#           tmailer.h \
-#           tmailerplugin.h \
            thttprequestheader.h \
            thttpresponseheader.h
-#           tlazyloader.h
 
 win32 {
   SOURCES += twebapplication_win.cpp
@@ -223,4 +220,9 @@ unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserver_unix.cpp
+}
+
+# Qt5
+contains(QT_MAJOR_VERSION, 5) {
+  SOURCES += tactioncontroller_qt5.cpp
 }

@@ -6,6 +6,8 @@
  */
 
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <TActionController>
 
 
@@ -31,4 +33,28 @@ bool TActionController::sendJson(const QJsonObject &object)
 bool TActionController::sendJson(const QJsonArray &array)
 {
     return sendJson(QJsonDocument(array));
+}
+
+/*!
+  Sends the \a map as a JSON object.
+*/
+bool TActionController::sendJson(const QVariantMap &map)
+{
+    return sendJson(QJsonObject::fromVariantMap(map));
+}
+
+/*!
+  Sends the \a list as a JSON array.
+*/
+bool TActionController::sendJson(const QVariantList &list)
+{
+    return sendJson(QJsonArray::fromVariantList(list));
+}
+
+/*!
+  Sends the \a list as a JSON array.
+*/
+bool TActionController::sendJson(const QStringList &list)
+{
+    return sendJson(QJsonArray::fromStringList(list));
 }

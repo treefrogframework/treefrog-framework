@@ -12,6 +12,11 @@
 #include <TSession>
 #include <TCookieJar>
 #include <TAccessValidator>
+#if QT_VERSION >= 0x050000
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#endif
 
 class TActionView;
 class TAbstractUser;
@@ -72,6 +77,14 @@ protected:
     void rollbackTransaction() { rollback = true; }
     void setAutoRemove(const QString &filePath);
     bool validateAccess(const TAbstractUser *user);
+#if QT_VERSION >= 0x050000
+    bool sendJson(const QJsonDocument &document);
+    bool sendJson(const QJsonObject &object);
+    bool sendJson(const QJsonArray &array);
+    bool sendJson(const QVariantMap &map);
+    bool sendJson(const QVariantList &list);
+    bool sendJson(const QStringList &list);
+#endif
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
