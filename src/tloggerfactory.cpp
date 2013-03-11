@@ -7,7 +7,6 @@
 
 #include <QDir>
 #include <QList>
-#include <QHash>
 #include <QPluginLoader>
 #include <QMutex>
 #include <QMutexLocker>

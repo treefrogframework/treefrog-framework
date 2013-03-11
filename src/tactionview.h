@@ -2,7 +2,6 @@
 #define TACTIONVIEW_H
 
 #include <QObject>
-#include <QHash>
 #include <QTextStream>
 #include <QVariant>
 #include <TGlobal>
@@ -21,7 +20,7 @@ public:
 
     virtual QString toString() = 0;
     QString yield() const;
-    QString renderPartial(const QString &templateName, const QVariantHash &vars = QVariantHash()) const;
+    QString renderPartial(const QString &templateName, const QVariantMap &vars = QVariantMap()) const;
     QString authenticityToken() const;
     QVariant variant(const QString &name) const;
     bool hasVariant(const QString &name) const;
@@ -48,14 +47,14 @@ protected:
 private:
     Q_DISABLE_COPY(TActionView)
 
-    void setVariantHash(const QVariantHash &vars);
+    void setVariantMap(const QVariantMap &vars);
     void setController(TActionController *controller);
     void setSubActionView(TActionView *actionView);
     virtual const TActionView *actionView() const { return this; }
 
     TActionController *actionController;
     TActionView *subView;
-    QVariantHash variantHash;
+    QVariantMap variantMap;
 
     friend class TActionController;
     friend class TActionMailer;
@@ -78,19 +77,19 @@ inline const THttpRequest &TActionView::httpRequest() const
     return controller()->httpRequest();
 }
 
-inline void TActionView::setVariantHash(const QVariantHash &vars)
+inline void TActionView::setVariantMap(const QVariantMap &vars)
 {
-    variantHash = vars;
+    variantMap = vars;
 }
 
 inline QVariant TActionView::variant(const QString &name) const
 {
-    return variantHash.value(name);
+    return variantMap.value(name);
 }
 
 inline bool TActionView::hasVariant(const QString &name) const
 {
-    return variantHash.contains(name);
+    return variantMap.contains(name);
 }
 
 inline QString TActionView::echo(const QString &str)

@@ -34,7 +34,7 @@ QString TActionView::yield() const
 /*!
   Render the partial template given by \a templateName without layout.
 */
-QString TActionView::renderPartial(const QString &templateName, const QVariantHash &vars) const
+QString TActionView::renderPartial(const QString &templateName, const QVariantMap &vars) const
 {
     QString temp = templateName;
     if (!temp.contains('/')) {
@@ -134,7 +134,7 @@ QString TActionView::eh(const THtmlAttribute &attr)
 
 /*!
   \fn bool TActionView::hasVariant(const QString &name) const
-  Returns true if the QVariantHash variable for a view contains 
+  Returns true if the QVariantMap variable for a view contains 
   an item with the \a name; otherwise returns false.
 */
 
@@ -151,6 +151,6 @@ QString TActionView::eh(const THtmlAttribute &attr)
 
 /*!
   \fn QVariant TActionView::variant(const QString &name) const
-  Returns the value associated with the \a name in the QVariantHash
+  Returns the value associated with the \a name in the QVariantMap
   variable for a view.
 */

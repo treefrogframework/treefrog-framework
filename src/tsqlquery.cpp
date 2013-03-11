@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QHash>
+#include <QMap>
 #include <QMutex>
 #include <QMutexLocker>
 #include <TSqlQuery>
@@ -13,7 +13,7 @@
 #include <TActionContext>
 #include "tsystemglobal.h"
 
-static QHash<QString, QString> queryCache;
+static QMap<QString, QString> queryCache;
 static QMutex cacheMutex;
 
 /*!

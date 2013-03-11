@@ -13,8 +13,8 @@
   \class TSession
   \brief The TSession class holds information associated with individual
          visitors.
-         This class inherits QHash<QString, QVariant> class.
-  \sa http://qt-project.org/doc/qt-4.8/qvariant.html#QVariantHash-typedef
+         This class inherits QVariantMap class.
+  \sa http://qt-project.org/doc/qt-4.8/qvariant.html#QVariantMap-typedef
 */
 
 
@@ -23,7 +23,7 @@
  */
 void TSession::reset()
 {
-    QVariantHash::clear();
+    QVariantMap::clear();
     // Agsinst CSRF
     TActionController::setCsrfProtectionInto(*this);
 }

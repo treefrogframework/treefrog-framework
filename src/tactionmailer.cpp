@@ -54,7 +54,7 @@ bool TActionMailer::deliver(const QString &templateName)
     if (!view)
         return false;
     
-    view->setVariantHash(allVariants());
+    view->setVariantMap(allVariants());
     QString msg = view->toString();
     if (msg.isEmpty()) {
         tSystemError("Mail Message Empty: template name:%s", qPrintable(templateName));

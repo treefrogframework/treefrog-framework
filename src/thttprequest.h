@@ -2,7 +2,7 @@
 #define THTTPREQUEST_H
 
 #include <QByteArray>
-#include <QVariantHash>
+#include <QVariant>
 #include <QList>
 #include <TGlobal>
 #include <TMultipartFormData>
@@ -23,22 +23,22 @@ public:
     const THttpRequestHeader &header() const { return reqHeader; }
     Tf::HttpMethod method() const;
     QString parameter(const QString &name) const;
-    QVariantHash allParameters() const;
+    QVariantMap allParameters() const;
 
     bool hasQuery() const { return !queryParams.isEmpty(); }
     bool hasQueryItem(const QString &name) const;
     QString queryItemValue(const QString &name) const;
     QString queryItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allQueryItemValues(const QString &name) const;
-    const QVariantHash &queryItems() const { return queryParams; }
+    const QVariantMap &queryItems() const { return queryParams; }
     bool hasForm() const { return !formParams.isEmpty(); }
     bool hasFormItem(const QString &name) const;
     QString formItemValue(const QString &name) const;
     QString formItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allFormItemValues(const QString &name) const;
     QStringList formItemList(const QString &key) const;
-    QVariantHash formItems(const QString &key) const;
-    const QVariantHash &formItems() const { return formParams; }
+    QVariantMap formItems(const QString &key) const;
+    const QVariantMap &formItems() const { return formParams; }
     TMultipartFormData &multipartFormData() { return multiFormData; }
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
@@ -53,8 +53,8 @@ private:
     void parseBody(const QByteArray &body);
 
     THttpRequestHeader reqHeader;
-    QVariantHash queryParams;
-    QVariantHash formParams;
+    QVariantMap queryParams;
+    QVariantMap formParams;
     TMultipartFormData multiFormData;
 
     friend class THttpSocket;

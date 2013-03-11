@@ -395,11 +395,11 @@ void TSqlObject::syncToSqlRecord()
 }
 
 /*!
-  Returns a Hash object of the properties.
+  Returns a map object of the properties.
 */
-QVariantHash TSqlObject::properties() const
+QVariantMap TSqlObject::toVariantMap() const
 {
-    QVariantHash ret;
+    QVariantMap ret;
     const QMetaObject *metaObj = metaObject();
     for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
         const char *propName = metaObj->property(i).name();
@@ -414,7 +414,7 @@ QVariantHash TSqlObject::properties() const
 /*!
   Set the \a values to the properties of the object.
 */
-void TSqlObject::setProperties(const QVariantHash &values)
+void TSqlObject::setProperties(const QVariantMap &values)
 {
     const QMetaObject *metaObj = metaObject();
     for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
@@ -425,3 +425,4 @@ void TSqlObject::setProperties(const QVariantHash &values)
         }
     }
 }
+

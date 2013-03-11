@@ -5,7 +5,7 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QDateTime>
-#include <QVariantHash>
+#include <QVariantMap>
 #include <TGlobal>
 
 
@@ -32,8 +32,8 @@ public:
     bool isModified() const;
     QSqlError error() const { return sqlError; }
 
-    virtual QVariantHash properties() const;
-    virtual void setProperties(const QVariantHash &values);
+    QVariantMap toVariantMap() const;
+    void setProperties(const QVariantMap &values);
 
 protected:
     void syncToSqlRecord();

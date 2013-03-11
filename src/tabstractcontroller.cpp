@@ -32,15 +32,15 @@ void TAbstractController::exportVariant(const QString &name, const QVariant &val
 }
 
 /*!
-  Exports the \a hash.
+  Exports the \a map.
   Internal use only.
 */
-void TAbstractController::exportVariants(const QVariantHash &hash)
+void TAbstractController::exportVariants(const QVariantMap &map)
 {
     if (exportVars.isEmpty()) {
-        exportVars = hash;
+        exportVars = map;
     } else {
-        exportVars.unite(hash);
+        exportVars.unite(map);
     }
 }
 
@@ -77,7 +77,7 @@ QString TAbstractController::viewClassName(const QString &contoller, const QStri
 }
 
 /*!
-  \fn const QVariantHash &TAbstractController::allVariants() const
+  \fn const QVariantMap &TAbstractController::allVariants() const
   
   Returns all the exported variables. Internal use only.
 */

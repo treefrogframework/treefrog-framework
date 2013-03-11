@@ -1,7 +1,7 @@
 #ifndef TABSTRACTMODEL_H
 #define TABSTRACTMODEL_H
 
-#include <QVariantHash>
+#include <QVariant>
 #include <TGlobal>
 
 class TSqlObject;
@@ -18,8 +18,9 @@ public:
     virtual bool isNull() const;
     virtual bool isNew() const;
     virtual bool isSaved() const;
-    virtual QVariantHash properties() const;
-    virtual void setProperties(const QVariantHash &properties);
+    virtual QVariantMap properties() const;  // obsolete function
+    virtual void setProperties(const QVariantMap &properties);
+    virtual QVariantMap toVariantMap() const;
 
 protected:
     virtual TSqlObject *data() = 0;

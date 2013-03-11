@@ -30,7 +30,7 @@ public:
     QString activeAction() const;
     const THttpRequest &httpRequest() const { return request; }
     const THttpResponse &httpResponse() const { return response; }
-    QString getRenderingData(const QString &templateName, const QVariantHash &vars = QVariantHash());
+    QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
     const TSession &session() const { return sessionStore; }
     virtual bool sessionEnabled() const { return true; }
     virtual bool csrfProtectionEnabled() const { return true; }
@@ -100,7 +100,7 @@ private:
     QString layoutName;
     THttpRequest request;
     THttpResponse response;
-    QVariantHash flashVars;
+    QVariantMap flashVars;
     TSession sessionStore;
     TCookieJar cookieJar;
     bool rollback;

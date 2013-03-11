@@ -3,7 +3,6 @@
 
 #include <QStringList>
 #include <QRegExp>
-#include <QHash>
 #include <QPair>
 #include <QVariant>
 #include <TGlobal>
@@ -32,7 +31,7 @@ public:
     void setDateTimeFormat(const QString &format);
     QString dateTimeFormat() const;
 
-    virtual bool validate(const QVariantHash &hash);
+    virtual bool validate(const QVariantMap &map);
     QStringList validationErrorKeys() const;
     Tf::ValidationRule errorRule(const QString &key) const;
     QString errorMessage(const QString &key) const;

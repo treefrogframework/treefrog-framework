@@ -6,7 +6,7 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TSession : public QVariantHash
+class T_CORE_EXPORT TSession : public QVariantMap
 {
 public:
     TSession(const QByteArray &id = QByteArray());
@@ -35,29 +35,29 @@ inline TSession::TSession(const QByteArray &id)
 { }
 
 inline TSession::TSession(const TSession &session)
-    : QVariantHash(*static_cast<const QVariantHash *>(&session)), sessionId(session.sessionId)
+    : QVariantMap(*static_cast<const QVariantMap *>(&session)), sessionId(session.sessionId)
 { }
 
 inline TSession &TSession::operator=(const TSession &session)
 {
-    QVariantHash::operator=(*static_cast<const QVariantHash *>(&session));
+    QVariantMap::operator=(*static_cast<const QVariantMap *>(&session));
     sessionId = session.sessionId;
     return *this;
 }
 
 inline TSession::iterator TSession::insert(const QString &key, const QVariant &value)
 {
-    return QVariantHash::insert(key, value);
+    return QVariantMap::insert(key, value);
 }
 
 inline const QVariant TSession::value(const QString &key) const
 {
-    return QVariantHash::value(key);
+    return QVariantMap::value(key);
 }
 
 inline const QVariant TSession::value(const QString &key, const QVariant &defaultValue) const
 {
-    return QVariantHash::value(key, defaultValue);
+    return QVariantMap::value(key, defaultValue);
 }
 
 #endif // TSESSION_H
