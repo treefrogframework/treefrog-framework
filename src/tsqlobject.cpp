@@ -368,9 +368,10 @@ void TSqlObject::syncToObject()
     int offset = metaObject()->propertyOffset();
     for (int i = 0; i < QSqlRecord::count(); ++i) {
         QString propertyName = field(i).name();
-        int index = metaObject()->indexOfProperty(propertyName.toLower().toLatin1().constData());
+        QByteArray name = propertyName.toLower().toLatin1();
+        int index = metaObject()->indexOfProperty(name.constData());
         if (index >= offset) {
-            QObject::setProperty(propertyName.toLower().toLatin1().constData(), value(propertyName));
+            QObject::setProperty(name.constData(), value(propertyName));
         }
     }
 }
