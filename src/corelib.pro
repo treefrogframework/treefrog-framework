@@ -197,6 +197,8 @@ HEADERS += tformvalidator.h
 SOURCES += tformvalidator.cpp
 HEADERS += taccessvalidator.h
 SOURCES += taccessvalidator.cpp
+HEADERS += tpaginator.h
+SOURCES += tpaginator.cpp
 
 HEADERS += \
            tfnamespace.h \
