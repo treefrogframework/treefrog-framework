@@ -12,7 +12,7 @@
 
 
 /*!
-  Sends the JSON document \a document as HTTP response.
+  Renders the JSON document \a document as HTTP response.
   This is available on Qt 5.
 */
 bool TActionController::renderJson(const QJsonDocument &document)
@@ -21,7 +21,7 @@ bool TActionController::renderJson(const QJsonDocument &document)
 }
 
 /*!
-  Sends the JSON object \a object as HTTP response.
+  Renders the JSON object \a object as HTTP response.
   This is available on Qt 5.
 */
 bool TActionController::renderJson(const QJsonObject &object)
@@ -30,7 +30,7 @@ bool TActionController::renderJson(const QJsonObject &object)
 }
 
 /*!
-  Sends the JSON array \a array as HTTP response.
+  Renders the JSON array \a array as HTTP response.
   This is available on Qt 5.
 */
 bool TActionController::renderJson(const QJsonArray &array)
@@ -39,7 +39,7 @@ bool TActionController::renderJson(const QJsonArray &array)
 }
 
 /*!
-  Sends the \a map as a JSON object.
+  Renders the \a map as a JSON object.
   This is available on Qt 5.
 */
 bool TActionController::renderJson(const QVariantMap &map)
@@ -48,7 +48,7 @@ bool TActionController::renderJson(const QVariantMap &map)
 }
 
 /*!
-  Sends the \a list as a JSON array.
+  Renders the \a list as a JSON array.
   This is available on Qt 5.
 */
 bool TActionController::renderJson(const QVariantList &list)
@@ -57,7 +57,7 @@ bool TActionController::renderJson(const QVariantList &list)
 }
 
 /*!
-  Sends the \a list as a JSON array.
+  Renders the \a list as a JSON array.
   This is available on Qt 5.
 */
 bool TActionController::renderJson(const QStringList &list)
