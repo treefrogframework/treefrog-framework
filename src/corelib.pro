@@ -1,7 +1,7 @@
 TARGET = treefrog
 TEMPLATE = lib
 CONFIG  += shared
-QT      += sql network
+QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include

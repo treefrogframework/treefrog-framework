@@ -12,15 +12,14 @@
 #include <TSession>
 #include <TCookieJar>
 #include <TAccessValidator>
-#if QT_VERSION >= 0x050000
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#endif
 
 class TActionView;
 class TAbstractUser;
 class TFormValidator;
+class QDomDocument;
+class QJsonDocument;
+class QJsonObject;
+class QJsonArray;
 
 
 class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator
@@ -70,6 +69,18 @@ protected:
     bool render(const QString &action = QString(), const QString &layout = QString());
     bool renderTemplate(const QString &templateName, const QString &layout = QString());
     bool renderText(const QString &text, bool layoutEnable = false, const QString &layout = QString());
+    bool renderXml(const QDomDocument &document);
+    bool renderXml(const QVariantMap &map);
+    bool renderXml(const QVariantList &list);
+    bool renderXml(const QStringList &list);
+#if QT_VERSION >= 0x050000
+    bool renderJson(const QJsonDocument &document);
+    bool renderJson(const QJsonObject &object);
+    bool renderJson(const QJsonArray &array);
+    bool renderJson(const QVariantMap &map);
+    bool renderJson(const QVariantList &list);
+    bool renderJson(const QStringList &list);
+#endif
     bool renderErrorResponse(int statusCode);
     void redirect(const QUrl &url, int statusCode = Tf::Found);
     bool sendFile(const QString &filePath, const QByteArray &contentType, const QString &name = QString(), bool autoRemove = false);
@@ -77,14 +88,6 @@ protected:
     void rollbackTransaction() { rollback = true; }
     void setAutoRemove(const QString &filePath);
     bool validateAccess(const TAbstractUser *user);
-#if QT_VERSION >= 0x050000
-    bool sendJson(const QJsonDocument &document);
-    bool sendJson(const QJsonObject &object);
-    bool sendJson(const QJsonArray &array);
-    bool sendJson(const QVariantMap &map);
-    bool sendJson(const QVariantList &list);
-    bool sendJson(const QStringList &list);
-#endif
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
