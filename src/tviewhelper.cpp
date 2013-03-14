@@ -159,7 +159,7 @@ QString TViewHelper::buttonToFunction(const QString &text, const QString &functi
     attr.prepend("onclick", onclick);
     attr.prepend("value", text);
     attr.prepend("type", "button");
-    return tag("input", attr);
+    return selfClosingTag("input", attr);
 }
 
 /*!
@@ -180,7 +180,18 @@ QString TViewHelper::formTag(const QUrl &url, Tf::HttpMethod method, bool multip
     string += (method == Tf::Post) ? "\"post\"" : "\"get\"";
 
     string.append(attributes.toString()).append(">").append(inputAuthenticityTag());
-    endTags << QLatin1String("</form>");
+    endTags << endTag("form");
+    return string;
+}
+
+/*!
+  Creates a end-tag of \a name.
+*/
+QString TViewHelper::endTag(const QString &name) const
+{
+    QString string = "</";
+    string += name;
+    string += QLatin1Char('>');
     return string;
 }
 
@@ -213,7 +224,7 @@ QString TViewHelper::inputTag(const QString &type, const QString &name, const QV
     attr.prepend("value", value.toString());
     attr.prepend("name", name);
     attr.prepend("type", type);
-    return tag("input", attr);
+    return selfClosingTag("input", attr);
 }
 
 /*!
@@ -273,7 +284,7 @@ QString TViewHelper::submitTag(const QString &value, const THtmlAttribute &attri
     THtmlAttribute attr = attributes;
     attr.prepend("value", value);
     attr.prepend("type", "submit");
-    return tag("input", attr);
+    return selfClosingTag("input", attr);
 }
 
 /*!
@@ -286,7 +297,7 @@ QString TViewHelper::submitImageTag(const QString &src, const THtmlAttribute &at
     THtmlAttribute attr = attributes;
     attr.prepend("src", imagePath(src));
     attr.prepend("type", "image");
-    return tag("input", attr);
+    return selfClosingTag("input", attr);
 }
 
 /*!
@@ -297,7 +308,7 @@ QString TViewHelper::resetTag(const QString &value, const THtmlAttribute &attrib
     THtmlAttribute attr = attributes;
     attr.prepend("value", value);
     attr.prepend("type", "reset");
-    return tag("input", attr);
+    return selfClosingTag("input", attr);
 }
 
 /*!
@@ -334,7 +345,7 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
     }
 
     attr.prepend("src", imagePath(src, withTimestamp));
-    return tag("img", attr);
+    return selfClosingTag("img", attr);
 }
 
 /*!
@@ -352,7 +363,7 @@ QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &att
         attr.prepend("rel", "stylesheet");
     
     attr.prepend("href", cssPath(src));
-    return tag("link", attr);
+    return selfClosingTag("link", attr);
 }
 
 /*!
@@ -366,28 +377,51 @@ THtmlAttribute TViewHelper::a(const QString &key, const QString &value) const
 }
 
 /*!
-  Creates a tag of \a name with the given HTML attributes \a attributes.
- */
-QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, bool selfClosing) const
+  Creates a start-tag of \a name with the given HTML attributes \a attributes.
+*/
+QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes)
 {
     QString string = "<";
     string += name;
     string += attributes.toString();
-    string += (selfClosing) ? QLatin1String(" />") : QLatin1String(">");
+    string += QLatin1Char('>');
+    endTags << endTag(name);
     return string;
 }
 
 /*!
+  Creates a start-tag of \a name with the given HTML attributes \a attributes.
+*/
+QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, bool selfClose)
+{
+    return (selfClose) ? selfClosingTag(name, attributes) : tag(name, attributes);
+}
+
+/*!
   Creates an HTML element composed of a start-tag of \a name with
-  HTML attributes \a attributes, a content \a content and a end-tag.
+  HTML attributes \a attributes, a content \a content and an end-tag.
  */
 QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, const QString &content) const
 {
-    QString string = tag(name, attributes, false);
-    string += content;
-    string += QLatin1String("</");
+    QString string = "<";
     string += name;
+    string += attributes.toString();
     string += QLatin1Char('>');
+    string += content;
+    string += endTag(name);
+    return string;
+}
+
+/*!
+  Creates a self closing tag of \a name with the given HTML attributes
+  \a attributes.
+*/
+QString TViewHelper::selfClosingTag(const QString &name, const THtmlAttribute &attributes) const
+{
+    QString string = "<";
+    string += name;
+    string += attributes.toString();
+    string += QLatin1String("/>");
     return string;
 }
 
