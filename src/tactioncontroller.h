@@ -12,14 +12,17 @@
 #include <TSession>
 #include <TCookieJar>
 #include <TAccessValidator>
+#if QT_VERSION >= 0x050000
+#include <QDomDocument>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#endif
 
 class TActionView;
 class TAbstractUser;
 class TFormValidator;
-class QDomDocument;
-class QJsonDocument;
-class QJsonObject;
-class QJsonArray;
 
 
 class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator
