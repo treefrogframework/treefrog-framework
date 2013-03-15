@@ -47,6 +47,7 @@
     "\n"                                                 \
     "class TSqlObject;\n"                                \
     "class %2Object;\n"                                  \
+    "%7"                                                 \
     "\n\n"                                               \
     "class T_MODEL_EXPORT %2 : public TAbstractModel\n"  \
     "{\n"                                                \
@@ -64,6 +65,7 @@
     "    static %2 get(%5);\n"                           \
     "%6"                                                 \
     "    static QList<%2> getAll();\n"                   \
+    "%8"                                                 \
     "\n"                                                 \
     "private:\n"                                         \
     "    QSharedDataPointer<%2Object> d;\n"              \
@@ -132,6 +134,7 @@
     "    return tfGetModelListByCriteria<%2, %2Object>(TCriteria());\n" \
     "}\n"                                                     \
     "\n"                                                      \
+    "%10"                                                     \
     "TSqlObject *%2::data()\n"                                \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
@@ -268,6 +271,20 @@
     "    return d.data();\n"                                  \
     "}\n"
 
+#define MODEL_IMPL_GETALLJSON                                 \
+    "QJsonArray %1::getAllJson()\n"                           \
+    "{\n"                                                     \
+    "    QJsonArray array;\n"                                 \
+    "    TSqlORMapper<%1Object> mapper;\n"                    \
+    "\n"                                                      \
+    "    if (mapper.find() > 0) {\n"                          \
+    "        for (TSqlORMapperIterator<%1Object> i(mapper); i.hasNext(); ) {\n" \
+    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(i.next()).toVariantMap())));\n" \
+    "        }\n"                                             \
+    "    }\n"                                                 \
+    "    return array;\n"                                     \
+    "}\n"                                                     \
+    "\n"
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedSetter,
 {
@@ -501,6 +518,11 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
 
     QStringList headerArgs;
     headerArgs << modelName.toUpper() << modelName << setgetDecl << crtparams << getparams << getOptDecl;
+#if QT_VERSION >= 0x050000
+    headerArgs << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+#else
+    headerArgs << "" << "";
+#endif
 
     // Creates a model implementation
     QString createImpl;
@@ -540,6 +562,11 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
 
     QStringList implArgs;
     implArgs << modelName.toLower() << modelName << initParams << setgetImpl << crtparams << createImpl << getparams << getImpl << getOptImpl;
+#if QT_VERSION >= 0x050000
+    implArgs << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
+#else
+    implArgs << "";
+#endif
 
     return QPair<QStringList, QStringList>(headerArgs, implArgs);
 }
