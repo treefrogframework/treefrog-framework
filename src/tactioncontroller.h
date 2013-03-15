@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QHostAddress>
+#include <QDomDocument>
 #include <TGlobal>
 #include <TAbstractController>
 #include <TActionHelper>
@@ -13,7 +14,6 @@
 #include <TCookieJar>
 #include <TAccessValidator>
 #if QT_VERSION >= 0x050000
-#include <QDomDocument>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
