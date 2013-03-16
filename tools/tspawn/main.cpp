@@ -230,7 +230,7 @@ static QStringList rmfiles(const QStringList &files, const QString &baseDir, con
 
 static int random(int max)
 {
-    return (double)qrand() * (1.0 + max) / (1.0 + RAND_MAX);
+    return (int)((double)qrand() * (1.0 + max) / (1.0 + RAND_MAX));
 }
 
 
