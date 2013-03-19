@@ -7,6 +7,7 @@
 
 #include <QtCore>
 #include <QSysInfo>
+#include <QHostInfo>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include "servermanager.h"
@@ -287,7 +288,8 @@ static void showRunningAppList()
         foreach (const QString &s, apps) {
             QString url = applicationSettingValue(s, "ListenPort").toString().trimmed();
             if (!url.startsWith("unix:", Qt::CaseInsensitive)) {
-                url = QString("url: http://localhost:%1/..").arg(url.toInt());
+                QString port = (url == "80") ? QString("") : (QString(":") + url);
+                url = QString("url: http://%1%2/").arg(QHostInfo::localHostName()).arg(port);
             }
             printf(" * %s\n   %s\n\n", qPrintable(s), qPrintable(url));
         }
