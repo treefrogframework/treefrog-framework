@@ -11,3 +11,10 @@
 #include "tsqlqueryormapper.h"
 #include "tsqlqueryormapperiterator.h"
 #include "twebapplication.h"
+
+#if QT_VERSION >= 0x050000
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#endif

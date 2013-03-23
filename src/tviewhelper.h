@@ -69,10 +69,6 @@ public:
     QString formTag(const QUrl &url, Tf::HttpMethod method = Tf::Post, bool multipart = false,
                     const THtmlAttribute &attributes = THtmlAttribute());
     
-    QString endTag();
-
-    QString allEndTags();
-    
     QString inputTag(const QString &type, const QString &name, const QVariant &value,
                      const THtmlAttribute &attributes = THtmlAttribute()) const;
 
@@ -120,17 +116,33 @@ public:
     
     QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString tag(const QString &name, const THtmlAttribute &attributes);
+
+    QString tag(const QString &name, const THtmlAttribute &attributes, bool selfClose);
+
+    QString tag(const QString &name, const THtmlAttribute &attributes, const QString &content) const;
+
+    QString selfClosingTag(const QString &name, const THtmlAttribute &attributes) const;
+
+    QString endTag(const QString &name) const;
+
+    QString endTag();
+
+    QString allEndTags();
+
+    QString imagePath(const QString &src, bool withTimestamp = false) const;
+
+    QString cssPath(const QString &src) const;
+
+    QString jsPath(const QString &src) const;
+
+    QString srcPath(const QString &src, const QString &dir, bool withTimestamp = false) const;
+
     THtmlAttribute a(const QString &key, const QString &value) const;
     THtmlAttribute a() const { return THtmlAttribute(); }
-    
+
 protected:
     virtual const TActionView *actionView() const = 0;
-    QString tag(const QString &name, const THtmlAttribute &attributes, bool selfClosing = true) const;
-    QString tag(const QString &name, const THtmlAttribute &attributes, const QString &content) const;
-    QString imagePath(const QString &src, bool withTimestamp = false) const;
-    QString cssPath(const QString &src) const;
-    QString jsPath(const QString &src) const;
-    QString srcPath(const QString &src, const QString &dir, bool withTimestamp = false) const;
 
 private:
     QStringList endTags;

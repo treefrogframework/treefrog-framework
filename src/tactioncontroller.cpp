@@ -13,6 +13,7 @@
 #include <QTextCodec>
 #include <QCryptographicHash>
 #include <QMutexLocker>
+#include <QDomDocument>
 #include <TActionController>
 #include <TWebApplication>
 #include <TDispatcher>
@@ -320,7 +321,6 @@ bool TActionController::render(const QString &action, const QString &layout)
     return !response.isBodyNull();
 }
 
-
 /*!
   \~english
   Renders the template given by \a templateName with the layout \a layout.
@@ -377,6 +377,83 @@ bool TActionController::renderText(const QString &text, bool layoutEnable, const
 }
 
 
+static QDomElement createDomElement(const QString &name, const QVariantMap &map, QDomDocument &document)
+{
+    QDomElement element = document.createElement(name);
+
+    for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
+        it.next();
+        QDomElement tag = document.createElement(it.key());
+        element.appendChild(tag);
+
+        QDomText text = document.createTextNode(it.value().toString());
+        tag.appendChild(text);
+    }
+    return element;
+}
+
+/*!
+  Renders the XML document \a document.
+*/
+bool TActionController::renderXml(const QDomDocument &document)
+{
+    QByteArray xml;
+    QTextStream ts(&xml);
+
+    ts.setCodec("UTF-8");
+    document.save(ts, 1, QDomNode::EncodingFromTextStream);
+    return sendData(xml, "text/xml");
+}
+
+/*!
+  Renders the \a map as XML document.
+*/
+bool TActionController::renderXml(const QVariantMap &map)
+{
+    QDomDocument doc;
+    QDomElement root = doc.createElement("map");
+
+    doc.appendChild(root);
+    root.appendChild(createDomElement("map", map, doc));
+    return renderXml(doc);
+}
+
+/*!
+  Renders the list of variants \a list as XML document.
+*/
+bool TActionController::renderXml(const QVariantList &list)
+{
+    QDomDocument doc;
+    QDomElement root = doc.createElement("list");
+    doc.appendChild(root);
+
+    for (QListIterator<QVariant> it(list); it.hasNext(); ) {
+        QVariantMap map = it.next().toMap();
+        root.appendChild(createDomElement("map", map, doc));
+    }
+    return renderXml(doc);
+}
+
+/*!
+  Renders the list of strings \a list as XML document.
+*/
+bool TActionController::renderXml(const QStringList &list)
+{
+    QDomDocument doc;
+    QDomElement root = doc.createElement("list");
+    doc.appendChild(root);
+
+    for (QStringListIterator it(list); it.hasNext(); ) {
+        const QString &str = it.next();
+        QDomElement tag = doc.createElement("string");
+        root.appendChild(tag);
+        QDomText text = doc.createTextNode(str);
+        tag.appendChild(text);
+    }
+
+    return renderXml(doc);
+}
+
 /*!
   \~english
   Returns the rendering data of the partial template given by \a templateName.
@@ -411,7 +488,6 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
     view->setVariantMap(map);
     return view->toString();  
 }
-
 
 /*!
   \~english

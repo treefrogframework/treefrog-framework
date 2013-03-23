@@ -5,21 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-/**
- * Class to paginate a list of items in a old digg style
- *
- * @author Vo Xuan Tien <tien.xuan.vo@gmail.com>
- * @author Darko Goleš
- * @author Carlos Mafla <gigo6000@hotmail.com>
- * @www.inchoo.net
- */
-
 #include <TPaginator>
 #include <QtCore>
 
 /*!
   \class TPaginator
-  \brief The TPaginator class provide simple solution to show paging toolbar.
+  \brief The TPaginator class provides simple solution to show paging toolbar.
+  This class can't be used to page data, but you can use offset and
+  limit in a query statement to page data.
+  \author Darko Goleš
+  \author Carlos Mafla <gigo6000@hotmail.com>
+  \author Vo Xuan Tien <tien.xuan.vo@gmail.com>
 */
 
 /*!
@@ -31,7 +27,8 @@ TPaginator::TPaginator(int itemsCount, int limit, int midRange)
     itemsCount_ = qMax(itemsCount, 0);
     limit_ = qMax(limit, 1);
 
-    // Change even number to larger odd number
+    // Change even number to larger odd number.
+    // midRange must be odd number.
     midRange = qMax(midRange, 1);
     midRange_ = midRange + (((midRange % 2) == 0) ? 1 : 0);
 
@@ -41,7 +38,7 @@ TPaginator::TPaginator(int itemsCount, int limit, int midRange)
 }
 
 /*!
-  Calculate number of pages.
+  Calculates number of pages.
   Internal use only.
 */
 void TPaginator::calculateNumPages()
@@ -67,13 +64,18 @@ void TPaginator::calculateNumPages()
 }
 
 /*!
-  Calculates offset for items based on current page number.
- */
+  Calculates offset (start index of items to get from database).
+  Internal use only.
+*/
 void TPaginator::calculateOffset()
 {
     offset_ = (currentPage_ - 1) * limit_;
 }
 
+/*!
+  Calculates range (pages will be show in paging toolbar).
+  Internal use only.
+*/
 void TPaginator::calculateRange()
 {
     int startRange = currentPage_ - qFloor(midRange_ / 2);
@@ -91,6 +93,11 @@ void TPaginator::calculateRange()
     }
 }
 
+/*!
+  Sets number of items.
+  Notice: changing \a itemsCount maybe make number of pages and range
+  change also.
+*/
 void TPaginator::setItemsCount(int itemsCount)
 {
     itemsCount_ = qMax(itemsCount, 0);
@@ -100,6 +107,11 @@ void TPaginator::setItemsCount(int itemsCount)
     calculateRange();
 }
 
+/*!
+  Sets limit.
+  Notice: changing \a limit maybe make number of pages, offset and range
+  change also.
+*/
 void TPaginator::setLimit(int limit)
 {
     limit_ = qMax(limit, 1);
@@ -110,6 +122,10 @@ void TPaginator::setLimit(int limit)
     calculateRange();
 }
 
+/*!
+  Sets mid range (number of pages will be show in paging toolbar).
+  Notice: changing \a midRange maybe make range change also.
+*/
 void TPaginator::setMidRange(int midRange)
 {
     // Change even number to larger odd number
@@ -120,6 +136,10 @@ void TPaginator::setMidRange(int midRange)
     calculateRange();
 }
 
+/*!
+  Sets current page.
+  Notice: changing \a currentPage maybe make offset range change also.
+*/
 void TPaginator::setCurrentPage(int page)
 {
     currentPage_ = isValidPage(page) ? page : 1;
@@ -128,3 +148,93 @@ void TPaginator::setCurrentPage(int page)
     calculateOffset();
     calculateRange();
 }
+
+/*!
+  \fn int TPaginator::itemsCount() const
+  Gets number of items.
+*/
+
+/*!
+  \fn int TPaginator::numPages() const
+  Gets number of pages.
+*/
+
+/*!
+  \fn int TPaginator::limit() const
+  Gets limit (number items per page).
+*/
+
+/*!
+  \fn int TPaginator::offset() const
+  Gets offset (start index of items to get from database).
+*/
+
+/*!
+  \fn int TPaginator::midRange() const
+  Gets mid range (number of pages will be show in paging toolbar).
+*/
+
+/*!
+  \fn int TPaginator::midRange() const
+  Gets mid range (number of pages will be show in paging toolbar).
+*/
+
+/*!
+  \fn const QList<int> &range() const
+  Gets range (pages will be show in paging toolbar).
+*/
+
+/*!
+  \fn int TPaginator::currentPage() const
+  Gets current page that items will be show.
+*/
+
+/*!
+  \fn int TPaginator::firstPage() const
+  Gets first page.
+*/
+
+/*!
+  \fn int TPaginator::previousPage() const
+  Gets the page before current page.
+*/
+
+/*!
+  \fn int TPaginator::nextPage() const
+  Gets the page after current page.
+*/
+
+/*!
+  \fn int TPaginator::lastPage() const
+  Gets last page.
+*/
+
+/*!
+  \fn bool TPaginator::haveToPaginate() const
+  Whether paging toolbar will be display or not.
+*/
+
+/*!
+  \fn bool TPaginator::isFirstPageEnabled() const
+  Whether first page available or not.
+*/
+
+/*!
+  \fn bool TPaginator::hasPreviousPage() const
+  Whether previous page available or not.
+*/
+
+/*!
+  \fn bool TPaginator::hasNextPage() const
+  Whether next page available or not.
+*/
+
+/*!
+  \fn bool TPaginator::isLastPageEnabled() const
+  Whether last page available or not.
+*/
+
+/*!
+  \fn bool TPaginator::isValidPage(int page) const
+  Checks if \a page is a valid page or not.
+*/

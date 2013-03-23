@@ -12,55 +12,55 @@
 
 
 /*!
-  Sends the JSON document \a document as HTTP response.
+  Renders the JSON document \a document as HTTP response.
   This is available on Qt 5.
 */
-bool TActionController::sendJson(const QJsonDocument &document)
+bool TActionController::renderJson(const QJsonDocument &document)
 {
     return sendData(document.toJson(), "application/json");
 }
 
 /*!
-  Sends the JSON object \a object as HTTP response.
+  Renders the JSON object \a object as HTTP response.
   This is available on Qt 5.
 */
-bool TActionController::sendJson(const QJsonObject &object)
+bool TActionController::renderJson(const QJsonObject &object)
 {
-    return sendJson(QJsonDocument(object));
+    return renderJson(QJsonDocument(object));
 }
 
 /*!
-  Sends the JSON array \a array as HTTP response.
+  Renders the JSON array \a array as HTTP response.
   This is available on Qt 5.
 */
-bool TActionController::sendJson(const QJsonArray &array)
+bool TActionController::renderJson(const QJsonArray &array)
 {
-    return sendJson(QJsonDocument(array));
+    return renderJson(QJsonDocument(array));
 }
 
 /*!
-  Sends the \a map as a JSON object.
+  Renders the \a map as a JSON object.
   This is available on Qt 5.
 */
-bool TActionController::sendJson(const QVariantMap &map)
+bool TActionController::renderJson(const QVariantMap &map)
 {
-    return sendJson(QJsonObject::fromVariantMap(map));
+    return renderJson(QJsonObject::fromVariantMap(map));
 }
 
 /*!
-  Sends the \a list as a JSON array.
+  Renders the \a list as a JSON array.
   This is available on Qt 5.
 */
-bool TActionController::sendJson(const QVariantList &list)
+bool TActionController::renderJson(const QVariantList &list)
 {
-    return sendJson(QJsonArray::fromVariantList(list));
+    return renderJson(QJsonArray::fromVariantList(list));
 }
 
 /*!
-  Sends the \a list as a JSON array.
+  Renders the \a list as a JSON array.
   This is available on Qt 5.
 */
-bool TActionController::sendJson(const QStringList &list)
+bool TActionController::renderJson(const QStringList &list)
 {
-    return sendJson(QJsonArray::fromStringList(list));
+    return renderJson(QJsonArray::fromStringList(list));
 }
