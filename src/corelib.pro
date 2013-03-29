@@ -200,6 +200,21 @@ SOURCES += taccessvalidator.cpp
 HEADERS += tpaginator.h
 SOURCES += tpaginator.cpp
 
+!isEmpty( use_mongo ) {
+  DEFINES += MONGO_HAVE_STDINT
+
+  HEADERS += tmongodriver.h
+  SOURCES += tmongodriver.cpp
+  HEADERS += tmongodatabase.h
+  SOURCES += tmongodatabase.cpp
+  HEADERS += tmongoquery.h
+  SOURCES += tmongoquery.cpp
+  HEADERS += tmongocursor.h
+  SOURCES += tmongocursor.cpp
+  HEADERS += tbson.h
+  SOURCES += tbson.cpp
+}
+
 HEADERS += \
            tfnamespace.h \
            tfexception.h \

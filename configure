@@ -143,6 +143,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
     --enable-gui-mod | --enable-gui-mod=*)
       ENABLE_GUI="use_gui=1"
       ;;
+    --enable-mongo | --enable-mongo=*)
+      ENABLE_MONGO="use_mongo=1"
+      ;;
     --help | -help | -h | *)
       usage
       exit
@@ -165,10 +168,10 @@ fi
 
 cd src
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-qmake $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
+qmake $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_MONGO
 cd ../tools
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
+qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" $ENABLE_MONGO
 make qmake
 
 cd ..

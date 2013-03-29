@@ -26,6 +26,10 @@ win32 {
   LIBS += -L$$lib.path -ltreefrog
 }
 
+!isEmpty( use_mongo ) {
+  LIBS += -lmongoc
+}
+
 isEmpty( target.path ) {
   win32 {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
