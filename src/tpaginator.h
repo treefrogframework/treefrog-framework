@@ -5,6 +5,7 @@
 #include <QList>
 #include <TGlobal>
 
+
 class T_CORE_EXPORT TPaginator
 {
 public:
@@ -35,11 +36,9 @@ public:
     bool hasPreviousPage() const { return (currentPage_ - 1 >= 1); }
     bool hasNextPage() const { return (currentPage_ + 1 <= numPages_); }
     bool isLastPageEnabled() const { return (currentPage_ != numPages_); }
-    bool isValidPage(int page) const { return (1 <= page && page <= numPages_) ? true : false; }
+    bool isValidPage(int page) const { return (1 <= page && page <= numPages_); }
 
 private:
-    void setDefaults();
-    
     // Internal process
     void calculateNumPages();
     void calculateOffset();
