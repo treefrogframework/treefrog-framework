@@ -201,6 +201,7 @@ HEADERS += tpaginator.h
 SOURCES += tpaginator.cpp
 
 !isEmpty( use_mongo ) {
+  INCLUDEPATH += /usr/local/include
   DEFINES += MONGO_HAVE_STDINT
 
   HEADERS += tmongodriver.h

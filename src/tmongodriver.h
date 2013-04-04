@@ -18,7 +18,7 @@ public:
     bool open(const QString &host);
     void close();
     bool isOpen() const;
-    
+
     bool find(const QString &ns, const QVariantMap &query,
               const QStringList &fields, int limit, int skip, int options);
     QVariantMap findFirst(const QString &ns, const QVariantMap &query,

@@ -14,9 +14,8 @@
 
 
 TMongoDriver::TMongoDriver()
-    : mongoConnection(0), mongoCursor(new TMongoCursor())
+    : mongoConnection(new mongo), mongoCursor(new TMongoCursor())
 {
-    mongoConnection = mongo_create();
     mongo_init(mongoConnection);
 }
 
@@ -26,7 +25,7 @@ TMongoDriver::~TMongoDriver()
     close();
     delete mongoCursor;
     mongo_destroy(mongoConnection);
-    mongo_dispose(mongoConnection);
+    delete mongoConnection;
 }
 
 

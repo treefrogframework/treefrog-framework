@@ -11,16 +11,14 @@
 
 
 TMongoCursor::TMongoCursor()
-    : initiated(false)
-{
-    mongoCursor = mongo_cursor_create();
-}
+    : mongoCursor(new mongo_cursor), initiated(false)
+{ }
 
 
 TMongoCursor::~TMongoCursor()
 {
     release();
-    mongo_cursor_dispose((mongo_cursor *)mongoCursor);
+    delete (mongo_cursor *)mongoCursor;
 }
 
 

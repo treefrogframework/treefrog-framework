@@ -13,7 +13,7 @@
 
 
 TBson::TBson()
-    : bsonData(bson_create())
+    : bsonData(new bson)
 {
     bson_init((bson *)bsonData);
 }
@@ -22,7 +22,7 @@ TBson::TBson()
 TBson::~TBson()
 {
     bson_destroy((bson *)bsonData);
-    bson_dispose((bson *)bsonData); 
+    delete (bson *)bsonData;
 }
 
 
