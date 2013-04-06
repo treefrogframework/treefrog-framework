@@ -110,7 +110,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             ret[key] = bson_iterator_int(it);
             break;
         case BSON_LONG:
-            ret[key] = bson_iterator_long(it);
+            ret[key] = (qint64)bson_iterator_long(it);
             break;
 
         case BSON_CODEWSCOPE: // FALL THROUGH
