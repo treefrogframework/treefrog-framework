@@ -201,7 +201,8 @@ HEADERS += tpaginator.h
 SOURCES += tpaginator.cpp
 
 !isEmpty( use_mongo ) {
-  INCLUDEPATH += /usr/local/include
+  INCLUDEPATH += ../3rdparty/mongo-c-driver/src
+  LIBS  += ../3rdparty/mongo-c-driver/libmongoc.a
   DEFINES += MONGO_HAVE_STDINT
 
   HEADERS += tmongodriver.h
