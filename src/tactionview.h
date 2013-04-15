@@ -5,11 +5,13 @@
 #include <QTextStream>
 #include <QVariant>
 #include <TGlobal>
-#include <TActionController>
 #include <TActionHelper>
 #include <TViewHelper>
+#include <THttpRequest>
 #include <TPrototypeAjaxHelper>
 #include <THttpUtility>
+
+class TActionController;
 
 
 class T_CORE_EXPORT TActionView : public QObject, public TActionHelper, public TViewHelper, public TPrototypeAjaxHelper
@@ -72,11 +74,6 @@ inline const TActionController *TActionView::controller() const
     return actionController;
 }
 
-inline const THttpRequest &TActionView::httpRequest() const
-{
-    return controller()->httpRequest();
-}
-
 inline void TActionView::setVariantMap(const QVariantMap &vars)
 {
     variantMap = vars;
@@ -113,13 +110,13 @@ inline QString TActionView::echo(const QByteArray &str)
 inline QString TActionView::echo(int n, int base)
 {
     responsebody += QString::number(n, base);
-    return QString();  
+    return QString();
 }
 
 inline QString TActionView::echo(double d, char format, int precision)
 {
     responsebody += QString::number(d, format, precision);
-    return QString(); 
+    return QString();
 }
 
 inline QString TActionView::echo(const QVariant &var)

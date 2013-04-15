@@ -6,6 +6,7 @@
  */
 
 #include <TDirectView>
+#include <TActionController>
 
 
 const TSession &TDirectView::session() const

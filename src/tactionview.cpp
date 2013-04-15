@@ -6,13 +6,14 @@
  */
 
 #include <TActionView>
+#include <TActionController>
 #include <THttpUtility>
 #include <THtmlAttribute>
 
 /*!
   \class TActionView
   \brief The TActionView class is the abstract base class of views,
-  providing functionality common to view. 
+  providing functionality common to view.
 */
 
 
@@ -40,7 +41,7 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
     if (!temp.contains('/')) {
         temp = QLatin1String("partial/") + temp;
     }
-    return (actionController) ? actionController->getRenderingData(temp, vars) : QString(); 
+    return (actionController) ? actionController->getRenderingData(temp, vars) : QString();
 }
 
 /*!
@@ -68,6 +69,14 @@ QString TActionView::echo(const THtmlAttribute &attr)
 QString TActionView::eh(const THtmlAttribute &attr)
 {
     return echo(THttpUtility::htmlEscape(attr.toString().trimmed()));
+}
+
+/*!
+  Returns the requested HTTP message.
+*/
+const THttpRequest &TActionView::httpRequest() const
+{
+    return controller()->httpRequest();
 }
 
 
@@ -134,13 +143,8 @@ QString TActionView::eh(const THtmlAttribute &attr)
 
 /*!
   \fn bool TActionView::hasVariant(const QString &name) const
-  Returns true if the QVariantMap variable for a view contains 
+  Returns true if the QVariantMap variable for a view contains
   an item with the \a name; otherwise returns false.
-*/
-
-/*!
-  \fn const THttpRequest &TActionView::httpRequest() const
-  Returns the requested HTTP message.
 */
 
 /*!
