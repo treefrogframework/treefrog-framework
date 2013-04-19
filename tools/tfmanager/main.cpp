@@ -427,7 +427,7 @@ int managerMain(int argc, char *argv[])
         return 1;
     }
 
-    if (!app.isValidDatabaseSettings()) {
+    if (!app.isValidSqlDatabaseSettings()) {
         tSystemError("Database settings not found  [environment: %s]", qPrintable(app.databaseEnvironment()));
         fprintf(stderr, "database settings not found  [environment: %s]\n\n", qPrintable(app.databaseEnvironment()));
         usage();

@@ -76,7 +76,7 @@
     "    if (httpRequest().method() != Tf::Post) {\n"          \
     "        return;\n"                                        \
     "    }\n"                                                  \
-    "    \n"                                                   \
+    "\n"                                                       \
     "    QVariantMap form = httpRequest().formItems(\"%3\");\n"     \
     "    %2 %3 = %2::create(form);\n"                               \
     "    if (!%3.isNull()) {\n"                                     \
@@ -121,8 +121,8 @@
     "        tflash(error);\n"                                          \
     "        redirect(urla(\"edit\", pk));\n"                           \
     "        return;\n"                                                 \
-    "    } \n"                                                          \
-    "    \n"                                                            \
+    "    }\n"                                                           \
+    "\n"                                                                \
     "    QVariantMap form = httpRequest().formItems(\"%3\");\n"         \
     "    %3.setProperties(form);\n"                                     \
     "    if (%3.save()) {\n"                                            \
@@ -147,7 +147,7 @@
     "    if (httpRequest().method() != Tf::Post) {\n"                   \
     "        return;\n"                                                 \
     "    }\n"                                                           \
-    "    \n"                                                            \
+    "\n"                                                                \
     "    %2 %3 = %2::get(%4);\n"                                        \
     "    %3.remove();\n"                                                \
     "    redirect(urla(\"index\"));\n"                                  \
