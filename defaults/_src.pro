@@ -1,8 +1,8 @@
 TARGET = view
 TEMPLATE = lib
 CONFIG += shared
+QT += network xml
 QT -= gui
-QT += network
 DEFINES += TF_DLL
 INCLUDEPATH += ../../helpers ../../models
 DEPENDPATH  += ../../helpers ../../models
