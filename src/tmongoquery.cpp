@@ -6,16 +6,16 @@
  */
 
 #include <TMongoQuery>
+#include <TKvsDatabasePool>
 #include <TMongoDriver>
 #include <TMongoCursor>
 
 
-TMongoQuery::TMongoQuery(const QString &ns, TMongoDatabase db)
-    : database(db), nameSpace(ns), queryLimit(0), queryOffset(0)
+TMongoQuery::TMongoQuery(const QString &collection)
+    : database(), nameSpace(), queryLimit(0), queryOffset(0)
 {
-    if (!database.isValid()) {
-        database = TMongoDatabase::database();
-    }
+    database = TKvsDatabasePool::instance()->pop(TKvsDatabasePool::MongoDB);
+    nameSpace = database.databaseName() + '.' + collection;
 }
 
 
@@ -37,48 +37,99 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
 
 bool TMongoQuery::find(const QVariantMap &query, const QStringList &fields)
 {
-    database.driver()->find(nameSpace, query, fields, queryLimit, queryOffset, 0);
-    return true;
+    if (!database.isValid())
+        return false;
+
+    return driver()->find(nameSpace, query, fields, queryLimit, queryOffset, 0);
 }
 
 
 bool TMongoQuery::next()
 {
-    return database.driver()->cursor().next();
+    if (!database.isValid())
+        return false;
+
+    return driver()->cursor().next();
 }
 
 
 QVariantMap TMongoQuery::value() const
 {
-    return database.driver()->cursor().value();
+    if (!database.isValid())
+        return QVariantMap();
+
+    return driver()->cursor().value();
 }
 
 
-QVariantMap TMongoQuery::findFirst(const QVariantMap &query, const QStringList &fields)
+QVariantMap TMongoQuery::findOne(const QVariantMap &query, const QStringList &fields)
 {
-    return database.driver()->findFirst(nameSpace, query, fields);
+    if (!database.isValid())
+        return QVariantMap();
+
+    return driver()->findFirst(nameSpace, query, fields);
 }
 
 
 bool TMongoQuery::insert(const QVariantMap &object)
 {
-    return database.driver()->insert(nameSpace, object);
+    if (!database.isValid())
+        return false;
+
+    return driver()->insert(nameSpace, object);
 }
 
 
 bool TMongoQuery::remove(const QVariantMap &object)
 {
-    return database.driver()->remove(nameSpace, object);
+    if (!database.isValid())
+        return false;
+
+    return driver()->remove(nameSpace, object);
 }
 
 
 bool TMongoQuery::update(const QVariantMap &query, const QVariantMap &object, bool upsert)
 {
-    return database.driver()->update(nameSpace, query, object, upsert);
+    if (!database.isValid())
+        return false;
+
+    return driver()->update(nameSpace, query, object, upsert);
 }
 
 
 bool TMongoQuery::updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert)
 {
-    return database.driver()->updateMulti(nameSpace, query, object, upsert);
+    if (!database.isValid())
+        return false;
+
+    return driver()->updateMulti(nameSpace, query, object, upsert);
+}
+
+
+TMongoDriver *TMongoQuery::driver()
+{
+#ifdef TF_NO_DEBUG
+    return (TMongoDriver *)database.driver();
+#else
+    const TMongoDriver *driver = dynamic_cast<TMongoDriver *>(database.driver());
+    if (!driver) {
+        throw RuntimeException("cast error", __FILE__, __LINE__);
+    }
+    return driver;
+#endif
+}
+
+
+const TMongoDriver *TMongoQuery::driver() const
+{
+#ifdef TF_NO_DEBUG
+    return (const TMongoDriver *)database.driver();
+#else
+    const TMongoDriver *driver = dynamic_cast<const TMongoDriver *>(database.driver());
+    if (!driver) {
+        throw RuntimeException("cast error", __FILE__, __LINE__);
+    }
+    return driver;
+#endif
 }

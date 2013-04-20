@@ -37,7 +37,7 @@ TSqlDatabasePool::~TSqlDatabasePool()
             it = map.erase(it);
         }
         
-        for (int i = 0; i < maxConnections; ++i) {
+        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
             QString name = QString::number(j) + '_' + QString::number(i);
             if (QSqlDatabase::contains(name)) {
                 QSqlDatabase::removeDatabase(name);
@@ -50,25 +50,25 @@ TSqlDatabasePool::~TSqlDatabasePool()
 
 
 TSqlDatabasePool::TSqlDatabasePool(const QString &environment)
-    : QObject(), maxConnections(0), dbEnvironment(environment)
+    : QObject(), dbEnvironment(environment)
 {
     // Starts the timer to close extra-connection
-    timer.start(10000, this); 
+    timer.start(10000, this);
 }
 
 
 void TSqlDatabasePool::init()
 {
     // Adds databases previously
-    maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Thread) ? Tf::app()->maxNumberOfServers() : 1;
+    //maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Thread) ? Tf::app()->maxNumberOfServers() : 1;
 
-    for (int j = 0; j < Tf::app()->databaseSettingsCount(); ++j) {
+    for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
         QString type = driverType(dbEnvironment, j);
         if (type.isEmpty()) {
             continue;
         }
         
-        for (int i = 0; i < maxConnections; ++i) {
+        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
             QSqlDatabase db = QSqlDatabase::addDatabase(type, QString().sprintf("%02d_%d", j, i));
             if (!db.isValid()) {
                 tWarn("Parameter 'DriverType' is invalid");
@@ -91,7 +91,7 @@ QSqlDatabase TSqlDatabasePool::pop(int databaseId)
     if (databaseId < 0 || databaseId >= pooledConnections.count())
         return db;
 
-    if (maxConnections > 0) {
+    if (maxConnectionsPerProcess() > 0) {
         QMap<QString, QDateTime> &map = pooledConnections[databaseId];
         QMap<QString, QDateTime>::iterator it = map.begin();
         while (it != map.end()) {
@@ -105,7 +105,7 @@ QSqlDatabase TSqlDatabasePool::pop(int databaseId)
             }
         }
         
-        for (int i = 0; i < maxConnections; ++i) {
+        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
             db = QSqlDatabase::database(QString().sprintf("%02d_%d", databaseId, i), false);
             if (!db.isOpen()) {
                 break;
@@ -126,7 +126,7 @@ QSqlDatabase TSqlDatabasePool::pop(int databaseId)
 bool TSqlDatabasePool::openDatabase(QSqlDatabase &database, const QString &env, int databaseId)
 {
     // Initiates database
-    QSettings &settings = Tf::app()->databaseSettings(databaseId);
+    QSettings &settings = Tf::app()->sqlDatabaseSettings(databaseId);
     settings.beginGroup(env);
     
     QString databaseName = settings.value("DatabaseName").toString().trimmed();
@@ -244,7 +244,7 @@ void TSqlDatabasePool::instantiate()
         databasePool = new TSqlDatabasePool(Tf::app()->databaseEnvironment());
         databasePool->init();
         qAddPostRoutine(cleanup);
-    } 
+    }
 }
 
 
@@ -259,7 +259,7 @@ TSqlDatabasePool *TSqlDatabasePool::instance()
 
 QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
 {
-    QSettings &settings = Tf::app()->databaseSettings(databaseId);
+    QSettings &settings = Tf::app()->sqlDatabaseSettings(databaseId);
     settings.beginGroup(env);
     QString type = settings.value("DriverType").toString().trimmed();
     settings.endGroup();
@@ -268,4 +268,15 @@ QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
         tDebug("Parameter 'DriverType' is empty");
     }
     return type;
+}
+
+
+int TSqlDatabasePool::maxConnectionsPerProcess()
+{
+    static int maxConnections = 0;
+
+    if (!maxConnections) {
+        maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Thread) ? Tf::app()->maxNumberOfServers() : 1;
+    }
+    return maxConnections;
 }

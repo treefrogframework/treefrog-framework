@@ -41,7 +41,7 @@
 
 
 TActionContext::TActionContext(int socket)
-    : sqlDatabases(Tf::app()->databaseSettingsCount() + 1), stopped(false), socketDesc(socket), httpSocket(0), currController(0)
+    : sqlDatabases(Tf::app()->sqlDatabaseSettingsCount() + 1), stopped(false), socketDesc(socket), httpSocket(0), currController(0)
 { }
 
 
@@ -70,8 +70,8 @@ QSqlDatabase &TActionContext::getDatabase(int id)
 {
     T_TRACEFUNC("id:%d", id);
 
-    if (id < 0 || id >= Tf::app()->databaseSettingsCount())
-        return sqlDatabases[Tf::app()->databaseSettingsCount()];  // invalid db
+    if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount())
+        return sqlDatabases[Tf::app()->sqlDatabaseSettingsCount()];  // invalid db
     
     QSqlDatabase &db = sqlDatabases[id];
     if (!db.isValid()) {

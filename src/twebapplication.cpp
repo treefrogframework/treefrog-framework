@@ -40,7 +40,8 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 #endif
       dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT),
       appSetting(0),
-      dbSettings(0),
+      sqlSettings(0),
+      mongoSetting(0),
       loggerSetting(0),
       validationSetting(0),
       mediaTypes(0),
@@ -70,7 +71,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
             }
         }
     }
-    
+
     QDir webRoot(webRootAbsolutePath);
     if (webRoot.exists()) {
         webRootAbsolutePath = webRoot.absolutePath() + QDir::separator();
@@ -81,7 +82,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     if (!appName.isEmpty()) {
         setApplicationName(appName);
     }
-    
+
     // Creates settings objects
     appSetting = new QSettings(appSettingsFilePath(), QSettings::IniFormat, this);
     loggerSetting = new QSettings(configPath() + "logger.ini", QSettings::IniFormat, this);
@@ -97,15 +98,22 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     validationSetting->setIniCodec(codecInternal);
     mediaTypes->setIniCodec(codecInternal);
 
-    // DB settings
-    QStringList files = appSetting->value("DatabaseSettingsFiles", "database.ini").toString().trimmed().split(QLatin1Char(' '), QString::SkipEmptyParts);
+    // SQL DB settings
+    QString dbsets = appSetting->value("SqlDatabaseSettingsFiles").toString().trimmed();
+    if (dbsets.isEmpty()) {
+        dbsets = appSetting->value("DatabaseSettingsFiles", "database.ini").toString().trimmed();
+    }
+    QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
     for (QListIterator<QString> it(files); it.hasNext(); ) {
         const QString &f = it.next();
         QSettings *set = new QSettings(configPath() + f, QSettings::IniFormat, this);
         set->setIniCodec(codecInternal);
-        dbSettings.append(set);
+        sqlSettings.append(set);
     }
-    
+
+    // MongoDB settings
+    mongoSetting = new QSettings(configPath() + "mongodb.ini", QSettings::IniFormat, this);
+
     // sets a seed for random numbers
     Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
 }
@@ -203,31 +211,31 @@ QString TWebApplication::appSettingsFilePath() const
 
 /*!
   Returns a reference to the QSettings object for settings of the
-  database \a databaseId.
+  SQL database \a databaseId.
 */
-QSettings &TWebApplication::databaseSettings(int databaseId) const
+QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    return *dbSettings[databaseId];
+    return *sqlSettings[databaseId];
 }
 
 /*!
-  Returns the number of database settings files set by the setting
-  \a DatabaseSettingsFiles in the application.ini. 
+  Returns the number of SQL database settings files set by the setting
+  \a DatabaseSettingsFiles in the application.ini.
 */
-int TWebApplication::databaseSettingsCount() const
+int TWebApplication::sqlDatabaseSettingsCount() const
 {
-    return dbSettings.count();
+    return sqlSettings.count();
 }
 
 /*!
-  Returns true if all the database settings are valid; otherwise
+  Returns true if all the SQL database settings are valid; otherwise
   returns false.
 */
-bool TWebApplication::isValidDatabaseSettings() const
+bool TWebApplication::isValidSqlDatabaseSettings() const
 {
     bool valid = false;
-    for (int i = 0; i < dbSettings.count(); ++i) {
-        QSettings *settings = dbSettings[i];
+    for (int i = 0; i < sqlSettings.count(); ++i) {
+        QSettings *settings = sqlSettings[i];
         settings->beginGroup(dbEnvironment);
         valid = !settings->childKeys().isEmpty();
         settings->endGroup();
@@ -235,6 +243,27 @@ bool TWebApplication::isValidDatabaseSettings() const
         if (!valid)
             break;
     }
+    return valid;
+}
+
+/*!
+  Returns a reference to the QSettings object for settings of the
+  MongoDB system.
+*/
+QSettings &TWebApplication::mongoDbSettings() const
+{
+    return *mongoSetting;
+}
+
+/*!
+  Returns true if all the KVS database settings are valid; otherwise
+  returns false.
+*/
+bool TWebApplication::isValidMongoDbSettings() const
+{
+    mongoSetting->beginGroup(dbEnvironment);
+    bool valid = !mongoSetting->childKeys().isEmpty();
+    mongoSetting->endGroup();
     return valid;
 }
 

@@ -30,7 +30,7 @@ public:
         Thread,
         Prefork,
     };
-    
+
     TWebApplication(int &argc, char **argv);
     ~TWebApplication();
 
@@ -45,13 +45,15 @@ public:
     QString tmpPath() const;
     QString databaseEnvironment() const { return dbEnvironment; }
     void setDatabaseEnvironment(const QString &environment);
-    
+
     bool appSettingsFileExists() const;
     QString appSettingsFilePath() const;
     QSettings &appSettings() const { return *appSetting; }
-    QSettings &databaseSettings(int databaseId) const;
-    int databaseSettingsCount() const;
-    bool isValidDatabaseSettings() const;
+    QSettings &sqlDatabaseSettings(int databaseId) const;
+    int sqlDatabaseSettingsCount() const;
+    bool isValidSqlDatabaseSettings() const;
+    QSettings &mongoDbSettings() const;
+    bool isValidMongoDbSettings() const;
     QSettings &loggerSettings() const { return *loggerSetting; }
     QSettings &validationSettings() const { return *validationSetting; }
     QString validationErrorMessage(int rule) const;
@@ -95,7 +97,8 @@ private:
     QString webRootAbsolutePath;
     QString dbEnvironment;
     QSettings *appSetting;
-    QVector<QSettings *> dbSettings;
+    QVector<QSettings *> sqlSettings;
+    QSettings *mongoSetting;
     QSettings *loggerSetting;
     QSettings *validationSetting;
     QSettings *mediaTypes;

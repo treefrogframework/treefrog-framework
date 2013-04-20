@@ -12,19 +12,19 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TSqlDatabasePool : QObject
+class T_CORE_EXPORT TSqlDatabasePool : public QObject
 {
     Q_OBJECT
 public:
     ~TSqlDatabasePool();
     QSqlDatabase pop(int databaseId = 0);
     void push(QSqlDatabase &database);
-    const QString &environment() const { return dbEnvironment; }
 
     static void instantiate();
     static TSqlDatabasePool *instance();
 
     static QString driverType(const QString &env, int databaseId);
+    static int maxConnectionsPerProcess();
     static bool openDatabase(QSqlDatabase &database, const QString &env, int databaseId);
 
 protected:
@@ -33,10 +33,8 @@ protected:
 
 private:
     Q_DISABLE_COPY(TSqlDatabasePool)
-    
     TSqlDatabasePool(const QString &environment);
 
-    int maxConnections;
     QVector<QMap<QString, QDateTime> > pooledConnections;
     QMutex mutex;
     QString dbEnvironment;

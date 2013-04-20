@@ -4,18 +4,23 @@
 #include <QStringList>
 #include <QVariant>
 #include <TGlobal>
+#include <TKvsDriver>
 
 struct mongo;
 class TMongoCursor;
 
 
-class T_CORE_EXPORT TMongoDriver
+class T_CORE_EXPORT TMongoDriver : public TKvsDriver
 {
 public:
+    enum {
+        MongoDefaultPort,
+    };
+
     TMongoDriver();
     ~TMongoDriver();
 
-    bool open(const QString &host);
+    bool open(const QString &host, quint16 port = MongoDefaultPort);
     void close();
     bool isOpen() const;
 
@@ -36,7 +41,7 @@ public:
 private:
     struct mongo *mongoConnection;
     TMongoCursor *mongoCursor;
-    
+
     Q_DISABLE_COPY(TMongoDriver)
 };
 

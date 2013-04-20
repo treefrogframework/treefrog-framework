@@ -29,14 +29,17 @@ TMongoDriver::~TMongoDriver()
 }
 
 
-bool TMongoDriver::open(const QString &host)
+bool TMongoDriver::open(const QString &host, quint16 port)
 {
     if (host.isEmpty()) {
         return false;
     }
 
+    if (port == MongoDefaultPort)
+        port = MONGO_DEFAULT_PORT;
+
     mongo_set_op_timeout(mongoConnection, 1000);
-    int status = mongo_client(mongoConnection, qPrintable(host), MONGO_DEFAULT_PORT);
+    int status = mongo_client(mongoConnection, qPrintable(host), port);
 
     if (status != MONGO_OK) {
         switch (mongoConnection->err) {
@@ -47,7 +50,7 @@ bool TMongoDriver::open(const QString &host)
         case MONGO_CONN_FAIL:
             tSystemError("connection failed");
             break;
-            
+
         case MONGO_CONN_NOT_MASTER:
             tSystemError("not master");
             break;
@@ -84,13 +87,13 @@ bool TMongoDriver::find(const QString &ns, const QVariantMap &query, const QStri
     mongo_cursor_set_query(cur, (const bson *)TBson::toBson(query).data());
     if (!fields.isEmpty())
         mongo_cursor_set_fields(cur, (const bson *)TBson::toBson(fields).data());
-    
+
     if (limit > 0)
         mongo_cursor_set_limit(cur, limit);
-    
+
     if (skip > 0)
         mongo_cursor_set_skip(cur, skip);
-    
+
     mongo_cursor_set_options(cur, options);
     return true;
 }

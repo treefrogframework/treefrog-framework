@@ -4,13 +4,15 @@
 #include <QVariant>
 #include <QStringList>
 #include <TGlobal>
-#include <TMongoDatabase>
+#include <TKvsDatabase>
+
+class TMongoDriver;
 
 
-class T_CORE_EXPORT TMongoQuery 
+class T_CORE_EXPORT TMongoQuery
 {
 public:
-    TMongoQuery(const QString &ns, TMongoDatabase db = TMongoDatabase());
+    TMongoQuery(const QString &collection);
     TMongoQuery(const TMongoQuery &other);
 
     void setLimit(int limit);
@@ -19,16 +21,20 @@ public:
     bool next();
     QVariantMap value() const;
 
-    QVariantMap findFirst(const QVariantMap &query, const QStringList &fields = QStringList());
+    QVariantMap findOne(const QVariantMap &query, const QStringList &fields = QStringList());
     bool insert(const QVariantMap &object);
     bool remove(const QVariantMap &object);
     bool update(const QVariantMap &query, const QVariantMap &object, bool upsert = false);
-    bool updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert = false);    
+    bool updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert = false);
 
     TMongoQuery &operator=(const TMongoQuery &other);
 
 private:
-    TMongoDatabase database;
+    TMongoDriver *driver();
+    const TMongoDriver *driver() const;
+
+private:
+    TKvsDatabase database;
     QString nameSpace;
     int queryLimit;
     int queryOffset;

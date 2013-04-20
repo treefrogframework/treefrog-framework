@@ -12,6 +12,7 @@
 #include <TActionThread>
 #include <TActionForkProcess>
 #include <TSqlDatabasePool>
+#include <TKvsDatabasePool>
 #include <TDispatcher>
 #include <TActionController>
 #include "turlroute.h"
@@ -67,7 +68,7 @@ TApplicationServer::TApplicationServer(QObject *parent)
     : QTcpServer(parent)
 {
     nativeSocketInit();
-    
+
     maxServers = Tf::app()->maxNumberOfServers();
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
 }
@@ -94,7 +95,7 @@ bool TApplicationServer::open()
             return false;
         }
     }
-    
+
     // Loads libraries
     if (!libLoaded) {
 
@@ -132,7 +133,8 @@ bool TApplicationServer::open()
 
     TUrlRoute::instantiate();
     TSqlDatabasePool::instantiate();
-    
+    TKvsDatabasePool::instantiate();
+
     switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread: {
         TStaticInitializeThread *initializer = new TStaticInitializeThread();
@@ -140,7 +142,7 @@ bool TApplicationServer::open()
         initializer->wait();
         delete initializer;
         break; }
-    
+
     case TWebApplication::Prefork: {
         TStaticInitializer *initializer = new TStaticInitializer();
         initializer->start();
@@ -171,14 +173,14 @@ void TApplicationServer::close()
 void TApplicationServer::terminate()
 {
     close();
-  
+
     if (actionContextCount() > 0) {
         setMutex.lock();
         for (QSetIterator<TActionContext *> i(actionContexts); i.hasNext(); ) {
             i.next()->stop();  // Stops application server
         }
         setMutex.unlock();
-        
+
         for (;;) {
             qApp->processEvents();
             QMutexLocker locker(&setMutex);
@@ -198,7 +200,7 @@ void TApplicationServer::incomingConnection(
 #endif
 {
     T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
- 
+
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Thread:
         for (;;) {

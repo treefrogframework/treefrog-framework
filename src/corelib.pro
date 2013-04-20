@@ -199,6 +199,12 @@ HEADERS += taccessvalidator.h
 SOURCES += taccessvalidator.cpp
 HEADERS += tpaginator.h
 SOURCES += tpaginator.cpp
+HEADERS += tkvsdatabase.h
+SOURCES += tkvsdatabase.cpp
+HEADERS += tkvsdatabasepool.h
+SOURCES += tkvsdatabasepool.cpp
+HEADERS += tkvsdriver.h
+SOURCES += tkvsdriver.cpp
 
 !isEmpty( use_mongo ) {
   INCLUDEPATH += ../3rdparty/mongo-c-driver/src
@@ -207,8 +213,8 @@ SOURCES += tpaginator.cpp
 
   HEADERS += tmongodriver.h
   SOURCES += tmongodriver.cpp
-  HEADERS += tmongodatabase.h
-  SOURCES += tmongodatabase.cpp
+#  HEADERS += tmongodatabase.h
+#  SOURCES += tmongodatabase.cpp
   HEADERS += tmongoquery.h
   SOURCES += tmongoquery.cpp
   HEADERS += tmongocursor.h

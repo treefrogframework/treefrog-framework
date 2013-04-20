@@ -16,7 +16,7 @@
 
 
 TSqlTransaction::TSqlTransaction()
-    : enabled(true), databases(Tf::app()->databaseSettingsCount())
+    : enabled(true), databases(Tf::app()->sqlDatabaseSettingsCount())
 { }
 
 
