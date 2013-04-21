@@ -27,14 +27,14 @@ static QMutex cacheMutex;
   \a databaseId.
  */
 TSqlQuery::TSqlQuery(const QString &query, int databaseId)
-    : QSqlQuery(query, TActionContext::current()->getDatabase(databaseId))
+    : QSqlQuery(query, TActionContext::current()->getSqlDatabase(databaseId))
 { }
 
 /*!
   Constructs a TSqlQuery object using the database \a databaseId.
 */
 TSqlQuery::TSqlQuery(int databaseId)
-    : QSqlQuery(QString(), TActionContext::current()->getDatabase(databaseId))
+    : QSqlQuery(QString(), TActionContext::current()->getSqlDatabase(databaseId))
 { }
 
 /*!
@@ -74,7 +74,7 @@ bool TSqlQuery::load(const QString &filename)
 QString TSqlQuery::queryDirPath() const
 {
     QString dir = Tf::app()->webRootPath() + QDir::separator() + Tf::app()->appSettings().value("SqlQueriesStoredDirectory").toString();
-    
+
     dir.replace(QChar('/'), QDir::separator());
     return dir;
 }
@@ -95,7 +95,7 @@ void TSqlQuery::clearCachedQueries()
 */
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, int databaseId)
 {
-    return escapeIdentifier(identifier, type, TActionContext::current()->getDatabase(databaseId));
+    return escapeIdentifier(identifier, type, TActionContext::current()->getSqlDatabase(databaseId));
 }
 
 /*!
@@ -119,7 +119,7 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
 */
 QString TSqlQuery::formatValue(const QVariant &val, int databaseId)
 {
-    return formatValue(val, TActionContext::current()->getDatabase(databaseId));
+    return formatValue(val, TActionContext::current()->getSqlDatabase(databaseId));
 }
 
 /*!
@@ -155,5 +155,5 @@ bool TSqlQuery::exec()
     QString q = executedQuery();
     QString str = (ret) ? q : (QLatin1String("(Query failed) ") + (q.isEmpty() ? lastQuery() : q));
     tQueryLog("%s", qPrintable(str));
-    return ret;   
+    return ret;
 }

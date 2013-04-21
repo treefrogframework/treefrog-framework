@@ -140,7 +140,7 @@ bool TSqlObject::create()
         record.remove(autoValueIndex()); // not insert the value of auto-value field
     }
 
-    QSqlDatabase &database = TActionContext::current()->getDatabase(databaseId());
+    QSqlDatabase &database = TActionContext::current()->getSqlDatabase(databaseId());
     QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
     if (ins.isEmpty()) {
         sqlError = QSqlError(QLatin1String("No fields to insert"),
@@ -179,7 +179,7 @@ bool TSqlObject::update()
         return false;
     }
 
-    QSqlDatabase &database = TActionContext::current()->getDatabase(databaseId());
+    QSqlDatabase &database = TActionContext::current()->getSqlDatabase(databaseId());
     QString where(" WHERE ");
     int revIndex = metaObject()->indexOfProperty(REVISION_PROPERTY_NAME);
     if (revIndex >= 0) {
@@ -268,7 +268,7 @@ bool TSqlObject::remove()
 {
     syncToSqlRecord();
 
-    QSqlDatabase &database = TActionContext::current()->getDatabase(databaseId());
+    QSqlDatabase &database = TActionContext::current()->getSqlDatabase(databaseId());
     QString del = database.driver()->sqlStatement(QSqlDriver::DeleteStatement, tableName(), *static_cast<QSqlRecord *>(this), false);
     if (del.isEmpty()) {
         sqlError = QSqlError(QLatin1String("Unable to delete row"),
@@ -382,7 +382,7 @@ void TSqlObject::syncToObject()
 */
 void TSqlObject::syncToSqlRecord()
 {
-    QSqlRecord::operator=(TActionContext::current()->getDatabase(databaseId()).record(tableName()));
+    QSqlRecord::operator=(TActionContext::current()->getSqlDatabase(databaseId()).record(tableName()));
     const QMetaObject *metaObj = metaObject();
     for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
         const char *propName = metaObj->property(i).name();

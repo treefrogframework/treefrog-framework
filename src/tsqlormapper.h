@@ -62,7 +62,7 @@ private:
 */
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
-    : QSqlTableModel(0, TActionContext::current()->getDatabase(T().databaseId())),
+    : QSqlTableModel(0, TActionContext::current()->getSqlDatabase(T().databaseId())),
       sortColumn(-1), sortOrder(TSql::AscendingOrder), queryLimit(0),
       queryOffset(0)
 {
