@@ -17,24 +17,20 @@ class T_CORE_EXPORT TKvsDatabasePool : public QObject
 {
     Q_OBJECT
 public:
-    enum KvsType {
-        MongoDB = 0,
-    };
-
     ~TKvsDatabasePool();
-    TKvsDatabase pop(KvsType type = MongoDB);
-    void push(TKvsDatabase &database);
+    TKvsDatabase database(TKvsDatabase::Type type);
+    void pool(TKvsDatabase &database);
 
     static void instantiate();
     static TKvsDatabasePool *instance();
 
 protected:
     void init();
-    QSettings &kvsSettings(KvsType type) const;
-    bool openDatabase(TKvsDatabase &database, KvsType type, const QString &env) const;
+    QSettings &kvsSettings(TKvsDatabase::Type type) const;
+    bool openDatabase(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const;
     void timerEvent(QTimerEvent *event);
 
-    static QString driverName(KvsType type);
+    static QString driverName(TKvsDatabase::Type type);
     static int maxConnectionsPerProcess();
 
 private:

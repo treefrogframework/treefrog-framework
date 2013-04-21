@@ -99,8 +99,8 @@ bool TMongoDriver::find(const QString &ns, const QVariantMap &query, const QStri
 }
 
 
-QVariantMap TMongoDriver::findFirst(const QString &ns, const QVariantMap &query,
-                                    const QStringList &fields)
+QVariantMap TMongoDriver::findOne(const QString &ns, const QVariantMap &query,
+                                  const QStringList &fields)
 {
     TBson bs;
     int status = mongo_find_one(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(query).data(),

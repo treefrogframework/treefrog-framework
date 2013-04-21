@@ -17,6 +17,7 @@
 #include <TDispatcher>
 #include <TActionController>
 #include <TSqlDatabasePool>
+#include <TKvsDatabasePool>
 #include <TSessionStore>
 #include "tsystemglobal.h"
 #include "thttpsocket.h"
@@ -41,7 +42,7 @@
 
 
 TActionContext::TActionContext(int socket)
-    : sqlDatabases(Tf::app()->sqlDatabaseSettingsCount() + 1), stopped(false), socketDesc(socket), httpSocket(0), currController(0)
+    : sqlDatabases(), kvsDatabases(), stopped(false), socketDesc(socket), httpSocket(0), currController(0)
 { }
 
 
@@ -52,10 +53,13 @@ TActionContext::~TActionContext()
 
     if (socketDesc > 0)
         TF_CLOSE(socketDesc);
-    
-    // Releases all database sessions
-    TActionContext::releaseDatabases();
-    
+
+    // Releases all SQL database sessions
+    TActionContext::releaseSqlDatabases();
+
+    // Releases all KVS database sessions
+    TActionContext::releaseKvsDatabases();
+
     for (QListIterator<TTemporaryFile *> i(tempFiles); i.hasNext(); ) {
         delete i.next();
     }
@@ -66,29 +70,52 @@ TActionContext::~TActionContext()
 }
 
 
-QSqlDatabase &TActionContext::getDatabase(int id)
+QSqlDatabase &TActionContext::getSqlDatabase(int id)
 {
     T_TRACEFUNC("id:%d", id);
 
-    if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount())
-        return sqlDatabases[Tf::app()->sqlDatabaseSettingsCount()];  // invalid db
-    
+    if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
+        throw RuntimeException("error database id", __FILE__, __LINE__);
+    }
+
     QSqlDatabase &db = sqlDatabases[id];
     if (!db.isValid()) {
-        db = TSqlDatabasePool::instance()->pop(id);
+        db = TSqlDatabasePool::instance()->database(id);
         beginTransaction(db);
     }
     return db;
 }
 
 
-void TActionContext::releaseDatabases()
+void TActionContext::releaseSqlDatabases()
 {
     rollbackTransactions();
 
-    for (int i = 0; i < sqlDatabases.count(); ++i) {
-        TSqlDatabasePool::instance()->push(sqlDatabases[i]);
+    for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        TSqlDatabasePool::instance()->pool(it.value());
     }
+    sqlDatabases.clear();
+}
+
+
+TKvsDatabase &TActionContext::getKvsDatabase(TKvsDatabase::Type type)
+{
+    T_TRACEFUNC("type:%d", (int)type);
+
+    TKvsDatabase &db = kvsDatabases[(int)type];
+    if (!db.isValid()) {
+        db = TKvsDatabasePool::instance()->database(type);
+    }
+    return db;
+}
+
+
+void TActionContext::releaseKvsDatabases()
+{
+    for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
+        TKvsDatabasePool::instance()->pool(it.value());
+    }
+    kvsDatabases.clear();
 }
 
 
@@ -122,7 +149,7 @@ void TActionContext::execute()
             }
             httpSocket->waitForReadyRead(100);
         }
-        
+
         if (!httpSocket->canReadRequest()) {
             httpSocket->abort();
             delete httpSocket;
@@ -221,7 +248,7 @@ void TActionContext::execute()
                     // Re-generate session ID
                     currController->session().sessionId = TSessionManager::instance().generateId();
                     tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
-                }                
+                }
                 // Sets CSRF protection informaion
                 TActionController::setCsrfProtectionInto(currController->session());
             }
@@ -318,7 +345,7 @@ void TActionContext::execute()
 
     } catch (ClientErrorException &e) {
         tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
-        accessLog.responseBytes = writeResponse(e.statusCode(), responseHeader);   
+        accessLog.responseBytes = writeResponse(e.statusCode(), responseHeader);
         accessLog.statusCode = e.statusCode();
     } catch (SqlException &e) {
         tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
@@ -334,7 +361,8 @@ void TActionContext::execute()
     writeAccessLog(accessLog);  // Writes access log
 
     // Push to the pool
-    TActionContext::releaseDatabases();
+    TActionContext::releaseSqlDatabases();
+    TActionContext::releaseKvsDatabases();
 
     httpSocket->disconnectFromHost();
     // Destorys the object in the thread which created it

@@ -2,10 +2,11 @@
 #define TACTIONCONTEXT_H
 
 #include <QStringList>
-#include <QVector>
+#include <QMap>
 #include <QSqlDatabase>
 #include <TGlobal>
 #include <TSqlTransaction>
+#include <TKvsDatabase>
 
 class QHostAddress;
 class THttpResponseHeader;
@@ -22,8 +23,10 @@ public:
     TActionContext(int socket);
     virtual ~TActionContext();
 
-    QSqlDatabase &getDatabase(int id);
-    void releaseDatabases();
+    QSqlDatabase &getSqlDatabase(int id);
+    void releaseSqlDatabases();
+    TKvsDatabase &getKvsDatabase(TKvsDatabase::Type type);
+    void releaseKvsDatabases();
     TTemporaryFile &createTemporaryFile();
     void stop() { stopped = true; }
     QHostAddress clientAddress() const;
@@ -42,8 +45,9 @@ protected:
     qint64 writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length);
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length);
 
-    QVector<QSqlDatabase> sqlDatabases;
+    QMap<int, QSqlDatabase> sqlDatabases;
     TSqlTransaction transactions;
+    QMap<int, TKvsDatabase> kvsDatabases;
     volatile bool stopped;
 
 private:

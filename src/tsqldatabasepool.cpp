@@ -82,7 +82,7 @@ void TSqlDatabasePool::init()
 }
 
 
-QSqlDatabase TSqlDatabasePool::pop(int databaseId)
+QSqlDatabase TSqlDatabasePool::database(int databaseId)
 {
     T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
@@ -98,7 +98,7 @@ QSqlDatabase TSqlDatabasePool::pop(int databaseId)
             db = QSqlDatabase::database(it.key(), false);
             it = map.erase(it);
             if (db.isOpen()) {
-                tSystemDebug("pop database: %s", qPrintable(db.connectionName()));
+                tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
                 return db;
             } else {
                 tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
@@ -117,7 +117,7 @@ QSqlDatabase TSqlDatabasePool::pop(int databaseId)
         }
         
         openDatabase(db, dbEnvironment, databaseId);
-        tSystemDebug("pop database: %s", qPrintable(db.connectionName()));
+        tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
     }
     return db;
 }
@@ -185,7 +185,7 @@ bool TSqlDatabasePool::openDatabase(QSqlDatabase &database, const QString &env, 
 }
 
 
-void TSqlDatabasePool::push(QSqlDatabase &database)
+void TSqlDatabasePool::pool(QSqlDatabase &database)
 {
     T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
@@ -196,7 +196,7 @@ void TSqlDatabasePool::push(QSqlDatabase &database)
 
         if (ok && databaseId >= 0 && databaseId < pooledConnections.count()) {
             pooledConnections[databaseId].insert(database.connectionName(), QDateTime::currentDateTime());
-            tSystemDebug("push database: %s", qPrintable(database.connectionName()));
+            tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
         } else {
             tSystemError("Invalid connection name: %s  [%s:%d]", qPrintable(database.connectionName()), __FILE__, __LINE__);
         }

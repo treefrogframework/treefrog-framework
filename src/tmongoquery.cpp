@@ -6,15 +6,15 @@
  */
 
 #include <TMongoQuery>
-#include <TKvsDatabasePool>
 #include <TMongoDriver>
 #include <TMongoCursor>
+#include <TActionContext>
 
 
 TMongoQuery::TMongoQuery(const QString &collection)
-    : database(), nameSpace(), queryLimit(0), queryOffset(0)
+    : database(TActionContext::current()->getKvsDatabase(TKvsDatabase::MongoDB)),
+      nameSpace(), queryLimit(0), queryOffset(0)
 {
-    database = TKvsDatabasePool::instance()->pop(TKvsDatabasePool::MongoDB);
     nameSpace = database.databaseName() + '.' + collection;
 }
 
@@ -67,7 +67,7 @@ QVariantMap TMongoQuery::findOne(const QVariantMap &query, const QStringList &fi
     if (!database.isValid())
         return QVariantMap();
 
-    return driver()->findFirst(nameSpace, query, fields);
+    return driver()->findOne(nameSpace, query, fields);
 }
 
 
@@ -112,7 +112,7 @@ TMongoDriver *TMongoQuery::driver()
 #ifdef TF_NO_DEBUG
     return (TMongoDriver *)database.driver();
 #else
-    const TMongoDriver *driver = dynamic_cast<TMongoDriver *>(database.driver());
+    TMongoDriver *driver = dynamic_cast<TMongoDriver *>(database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

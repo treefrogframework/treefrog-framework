@@ -26,8 +26,8 @@ public:
 
     bool find(const QString &ns, const QVariantMap &query,
               const QStringList &fields, int limit, int skip, int options);
-    QVariantMap findFirst(const QString &ns, const QVariantMap &query,
-                          const QStringList &fields = QStringList());
+    QVariantMap findOne(const QString &ns, const QVariantMap &query,
+                        const QStringList &fields = QStringList());
     bool insert(const QString &ns, const QVariantMap &object);
     bool remove(const QString &ns, const QVariantMap &object);
     bool update(const QString &ns, const QVariantMap &query,

@@ -17,8 +17,8 @@ class T_CORE_EXPORT TSqlDatabasePool : public QObject
     Q_OBJECT
 public:
     ~TSqlDatabasePool();
-    QSqlDatabase pop(int databaseId = 0);
-    void push(QSqlDatabase &database);
+    QSqlDatabase database(int databaseId = 0);
+    void pool(QSqlDatabase &database);
 
     static void instantiate();
     static TSqlDatabasePool *instance();

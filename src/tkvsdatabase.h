@@ -10,6 +10,10 @@ class TKvsDriver;
 class T_CORE_EXPORT TKvsDatabase
 {
 public:
+    enum Type {
+        MongoDB = 0,
+    };
+
     TKvsDatabase();
     TKvsDatabase(const TKvsDatabase &other);
     ~TKvsDatabase() { }

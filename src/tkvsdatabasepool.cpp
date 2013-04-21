@@ -18,7 +18,7 @@ static TKvsDatabasePool *databasePool = 0;
 typedef QHash<QString, int> KvsTypeHash;
 Q_GLOBAL_STATIC_WITH_INITIALIZER(KvsTypeHash, kvsTypeHash,
 {
-    x->insert("MONGODB", TKvsDatabasePool::MongoDB);
+    x->insert("MONGODB", TKvsDatabase::MongoDB);
 });
 
 
@@ -77,10 +77,10 @@ void TKvsDatabasePool::init()
 }
 
 
-QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabasePool::KvsType type) const
+QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
 {
     switch (type) {
-    case MongoDB:
+    case TKvsDatabase::MongoDB:
         return Tf::app()->mongoDbSettings();
         break;
     default:
@@ -90,7 +90,7 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabasePool::KvsType type) const
 }
 
 
-TKvsDatabase TKvsDatabasePool::pop(KvsType type)
+TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
 {
     T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
@@ -104,7 +104,7 @@ TKvsDatabase TKvsDatabasePool::pop(KvsType type)
             db = TKvsDatabase::database(it.key());
             it = map.erase(it);
             if (db.isOpen()) {
-                tSystemDebug("pop KVS database: %s", qPrintable(db.connectionName()));
+                tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
                 return db;
             } else {
                 tSystemError("Pooled KVS database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
@@ -123,13 +123,13 @@ TKvsDatabase TKvsDatabasePool::pop(KvsType type)
         }
 
         openDatabase(db, type, dbEnvironment);
-        tSystemDebug("pop KVS database: %s", qPrintable(db.connectionName()));
+        tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
     }
     return db;
 }
 
 
-bool TKvsDatabasePool::openDatabase(TKvsDatabase &database, KvsType type, const QString &env) const
+bool TKvsDatabasePool::openDatabase(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const
 {
     // Initiates database
     QSettings &settings = kvsSettings(type);
@@ -183,7 +183,7 @@ bool TKvsDatabasePool::openDatabase(TKvsDatabase &database, KvsType type, const 
 }
 
 
-void TKvsDatabasePool::push(TKvsDatabase &database)
+void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
     T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
@@ -195,7 +195,9 @@ void TKvsDatabasePool::push(TKvsDatabase &database)
         }
 
         pooledConnections[type].insert(database.connectionName(), QDateTime::currentDateTime());
-        tSystemDebug("push KVS database: %s", qPrintable(database.connectionName()));
+        tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
+    } else {
+        tSystemWarn("Invaild KVS database: %s", qPrintable(database.connectionName()));
     }
     database = TKvsDatabase();  // Sets an invalid object
 }
@@ -254,7 +256,7 @@ TKvsDatabasePool *TKvsDatabasePool::instance()
 }
 
 
-QString TKvsDatabasePool::driverName(TKvsDatabasePool::KvsType type)
+QString TKvsDatabasePool::driverName(TKvsDatabase::Type type)
 {
     return kvsTypeHash()->key((int)type);
 }
