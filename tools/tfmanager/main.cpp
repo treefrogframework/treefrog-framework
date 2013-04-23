@@ -95,7 +95,7 @@ static void usage()
         "Type '%1 -l' to show your running applications.\n"             \
         "Type '%1 -h' to show this information.\n"                      \
         "Type '%1 -v' to show the program version.";
-    
+
     QString cmd = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
     puts(qPrintable(QString(text).arg(cmd)));
 }
@@ -158,7 +158,7 @@ static void writeStartupLog()
         qtversion += QString(" / %1 %2").arg(uts.sysname).arg(uts.release);
     }
 #endif
-    tSystemInfo("%s", qtversion.toLatin1().data()); 
+    tSystemInfo("%s", qtversion.toLatin1().data());
 }
 
 
@@ -258,7 +258,7 @@ static void cleanupRunningApplicationList()
         file.remove();
         return;
     }
-    
+
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         TF_FLOCK(file.handle(), LOCK_EX); // lock
         file.write(runapps.join("\n").toLatin1());
@@ -345,26 +345,10 @@ int managerMain(int argc, char *argv[])
 {
     TWebApplication app(argc, argv);
 
-    // Creates the semaphore for system log
-    QSystemSemaphore semaphore("TreeFrogSystemLog", 1, QSystemSemaphore::Create);
-    tSetupSystemLoggers();
-
-#if defined(Q_OS_UNIX)
-    app.watchUnixSignal(SIGTERM);
-    app.watchUnixSignal(SIGINT);
-    app.watchUnixSignal(SIGHUP);
-
-#elif defined(Q_OS_WIN)
-    app.watchConsoleSignal();
-# if QT_VERSION >= 0x050000
-    app.watchLocalSocket();
-# endif
-#endif
-
     // Sets codec
     QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     QTextCodec::setCodecForLocale(codec);
-    
+
     if (!checkArguments()) {
         return 1;
     }
@@ -415,6 +399,22 @@ int managerMain(int argc, char *argv[])
         fprintf(stderr, "INI file not found [%s]\n\n", qPrintable(app.appSettingsFilePath()));
         return 1;
     }
+
+    // Creates the semaphore for system log
+    QSystemSemaphore semaphore("TreeFrogSystemLog", 1, QSystemSemaphore::Create);
+    tSetupSystemLoggers();
+
+#if defined(Q_OS_UNIX)
+    app.watchUnixSignal(SIGTERM);
+    app.watchUnixSignal(SIGINT);
+    app.watchUnixSignal(SIGHUP);
+
+#elif defined(Q_OS_WIN)
+    app.watchConsoleSignal();
+# if QT_VERSION >= 0x050000
+    app.watchLocalSocket();
+# endif
+#endif
 
     if (!signalCmd.isEmpty()) {
         return killTreeFrogProcess(signalCmd);
