@@ -12,20 +12,35 @@
 #include <QMutex>
 #include <QMutexLocker>
 
+
+class TKvsDatabaseData
+{
+public:
+    QString connectName;
+    QString dbName;
+    QString host;
+    quint16 portNumber;
+    QString user;
+    QString pass;
+    QString opts;
+    QString drvName;
+    TKvsDriver *drv;  // pointer to a singleton object
+};
+
 const char *const defaultConnection = "tf_default_connection";
 
 static QMap<QString, TKvsDatabase> databaseMap;
 static QMutex mutex(QMutex::Recursive);
 
 
-TKvsDatabase TKvsDatabase::database(const QString &connectionName)
+TKvsDatabase &TKvsDatabase::database(const QString &connectionName)
 {
     QMutexLocker lock(&mutex);
     return databaseMap[connectionName];
 }
 
 
-TKvsDatabase TKvsDatabase::addDatabase(TKvsDatabase &db, const QString &connectionName)
+TKvsDatabase &TKvsDatabase::addDatabase(const TKvsDatabase &db, const QString &connectionName)
 {
     QMutexLocker lock(&mutex);
 
@@ -33,13 +48,14 @@ TKvsDatabase TKvsDatabase::addDatabase(TKvsDatabase &db, const QString &connecti
     if (databaseMap.contains(connectionName))
         removeDatabase(connectionName);
 
-    db.connectName = connectionName;
     databaseMap.insert(connectionName, db);
-    return db;
+    TKvsDatabase &ret = databaseMap[connectionName];
+    ret.connectName = connectionName;
+    return ret;
 }
 
 
-TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &connectionName)
+TKvsDatabase &TKvsDatabase::addDatabase(const QString &driver, const QString &connectionName)
 {
     TKvsDatabase db;
     db.createDriver(driver);  // creates the driver

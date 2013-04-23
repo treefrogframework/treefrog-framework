@@ -42,15 +42,15 @@ public:
     const TKvsDriver *driver() const { return drv; }
 
     static const char *const defaultConnection;
-    static TKvsDatabase database(const QString &connectionName = QLatin1String(defaultConnection));
-    static TKvsDatabase addDatabase(const QString &driver, const QString &connectionName = QLatin1String(defaultConnection));
+    static TKvsDatabase &database(const QString &connectionName = QLatin1String(defaultConnection));
+    static TKvsDatabase &addDatabase(const QString &driver, const QString &connectionName = QLatin1String(defaultConnection));
     static void removeDatabase(const QString &connectionName = QLatin1String(defaultConnection));
     static void removeAllDatabases();
     static bool contains(const QString &connectionName = QLatin1String(defaultConnection));
 
 protected:
     void createDriver(const QString &driverName);
-    static TKvsDatabase addDatabase(TKvsDatabase &db, const QString &connectionName);
+    static TKvsDatabase &addDatabase(const TKvsDatabase &db, const QString &connectionName);
 
 private:
     QString connectName;
