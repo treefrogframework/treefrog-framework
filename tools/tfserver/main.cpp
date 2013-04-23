@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
         tSystemError("Settings file not found");
         goto finish;
     }
-  
+
     server = new TApplicationServer(&webapp);
     arg = args.value(SOCKET_OPTION);
     if (!arg.isEmpty()) {

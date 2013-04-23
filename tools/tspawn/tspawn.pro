@@ -46,6 +46,7 @@ defaults.files += defaults/internet_media_types.ini
 defaults.files += defaults/logger.ini
 defaults.files += defaults/mail.erb
 defaults.files += defaults/models.pro
+defaults.files += defaults/mongodb.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
 defaults.files += defaults/views.pro
