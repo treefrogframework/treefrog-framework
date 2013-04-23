@@ -131,41 +131,41 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
 {
     bool ok = true;
     int type = value.type();
-    
+
     switch (type) {
     case QVariant::Int:
         bson_append_int(b, qPrintable(key), value.toInt(&ok));
         break;
-        
+
     case QVariant::String:
         bson_append_string(b, qPrintable(key), qPrintable(value.toString()));
         break;
-        
+
     case QVariant::LongLong:
         bson_append_long(b, qPrintable(key), value.toLongLong(&ok));
         break;
-        
+
     case QVariant::Map:
         bson_append_bson(b, qPrintable(key), (const bson *)TBson::toBson(value.toMap()).constData());
         break;
-        
+
     case QVariant::Double:
         bson_append_double(b, qPrintable(key), value.toDouble(&ok));
         break;
-        
+
     case QVariant::Bool:
         bson_append_bool(b, qPrintable(key), value.toBool());
         break;
-        
+
     case QVariant::DateTime:
         bson_append_date(b, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
         break;
-        
+
     case QVariant::ByteArray: {
         QByteArray ba = value.toByteArray();
         bson_append_binary(b, qPrintable(key), BSON_BIN_BINARY, ba.constData(), ba.length());
         break; }
-        
+
     case QVariant::List: {
         bson_append_start_array(b, qPrintable(key));
         QVariantList lst = value.toList();
@@ -177,11 +177,11 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
 
         bson_append_finish_array(b);
         break; }
-        
+
     case QVariant::Invalid:
         bson_append_undefined(b,  qPrintable(key));
         break;
-        
+
     default:
         tError("toBson() failed to convert  name:%s  type:%d", qPrintable(key), type);
         ok = false;
@@ -197,7 +197,7 @@ TBson TBson::toBson(const QVariantMap &map)
 
     for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
         const QVariant &val = it.next().value();
-        
+
         bool res = appendBsonValue((bson *)ret.data(), qPrintable(it.key()), val);
         if (!res)
             break;
@@ -214,7 +214,7 @@ TBson TBson::toBson(const QStringList &lst)
 
     for (QStringListIterator it(lst); it.hasNext(); ) {
         const QString &str = it.next();
-        
+
         bool res = appendBsonValue((bson *)ret.data(), qPrintable(str), 1);
         if (!res)
             break;
