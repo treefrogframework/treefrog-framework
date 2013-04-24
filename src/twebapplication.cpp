@@ -101,7 +101,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     // SQL DB settings
     QString dbsets = appSetting->value("SqlDatabaseSettingsFiles").toString().trimmed();
     if (dbsets.isEmpty()) {
-        dbsets = appSetting->value("DatabaseSettingsFiles", "database.ini").toString().trimmed();
+        dbsets = appSetting->value("DatabaseSettingsFiles").toString().trimmed();
     }
     QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
     for (QListIterator<QString> it(files); it.hasNext(); ) {
@@ -112,7 +112,12 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
 
     // MongoDB settings
-    mongoSetting = new QSettings(configPath() + "mongodb.ini", QSettings::IniFormat, this);
+    QString mongoini = appSetting->value("MongoDbSettingsFile").toString().trimmed();
+    if (!mongoini.isEmpty()) {
+        mongoSetting = new QSettings(configPath() + mongoini, QSettings::IniFormat, this);
+    } else {
+        mongoSetting = new QSettings(this);
+    }
 
     // sets a seed for random numbers
     Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
@@ -231,19 +236,13 @@ int TWebApplication::sqlDatabaseSettingsCount() const
   Returns true if all the SQL database settings are valid; otherwise
   returns false.
 */
-bool TWebApplication::isValidSqlDatabaseSettings() const
+bool TWebApplication::isValidSqlDatabaseSettings(int databaseId) const
 {
-    bool valid = false;
-    for (int i = 0; i < sqlSettings.count(); ++i) {
-        QSettings *settings = sqlSettings[i];
-        settings->beginGroup(dbEnvironment);
-        valid = !settings->childKeys().isEmpty();
-        settings->endGroup();
-
-        if (!valid)
-            break;
+    if (databaseId >= 0 && databaseId < sqlSettings.count()) {
+        QSettings *settings = sqlSettings[databaseId];
+        return !settings->childGroups().isEmpty();
     }
-    return valid;
+    return false;
 }
 
 /*!
@@ -285,7 +284,7 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
 
 /*!
   Returns the error message for validation of the given \a rule. These messages
-  are defined in the validation.ini. 
+  are defined in the validation.ini.
 */
 QString TWebApplication::validationErrorMessage(int rule) const
 {

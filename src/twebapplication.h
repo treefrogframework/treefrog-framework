@@ -51,7 +51,7 @@ public:
     QSettings &appSettings() const { return *appSetting; }
     QSettings &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
-    bool isValidSqlDatabaseSettings() const;
+    bool isValidSqlDatabaseSettings(int databaseId) const;
     QSettings &mongoDbSettings() const;
     bool isValidMongoDbSettings() const;
     QSettings &loggerSettings() const { return *loggerSetting; }
