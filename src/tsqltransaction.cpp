@@ -7,6 +7,7 @@
 
 #include <TSqlTransaction>
 #include <TWebApplication>
+#include <TSqlDatabasePool>
 #include <TSystemGlobal>
 
 /*!
@@ -35,15 +36,14 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
 
     if (!enabled)
         return true;
-    
-    bool ok;
-    int id = database.connectionName().left(2).toInt(&ok);
-    
-    if (!ok || id < 0 || id >= databases.count()) {
+
+    int id = TSqlDatabasePool::getDatabaseId(database);
+
+    if (id < 0 || id >= databases.count()) {
         tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
-    
+
     if (databases[id].isValid()) {
         tSystemWarn("Has begun transaction already. database:%s", qPrintable(database.connectionName()));
         return true;
@@ -79,7 +79,7 @@ void TSqlTransaction::rollback()
         if (db.isValid()) {
             if (db.rollback()) {
                 tQueryLog("[ROLLBACK] [databaseId:%d]", i);
-            }            
+            }
         }
         db = QSqlDatabase();
     }

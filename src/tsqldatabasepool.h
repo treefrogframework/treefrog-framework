@@ -24,8 +24,9 @@ public:
     static TSqlDatabasePool *instance();
 
     static QString driverType(const QString &env, int databaseId);
-    static int maxConnectionsPerProcess();
-    static bool openDatabase(QSqlDatabase &database, const QString &env, int databaseId);
+    static int maxDbConnectionsPerProcess();
+    static bool setDatabaseSettings(QSqlDatabase &database, const QString &env, int databaseId);
+    static int getDatabaseId(const QSqlDatabase &database);
 
 protected:
     void init();
@@ -35,7 +36,7 @@ private:
     Q_DISABLE_COPY(TSqlDatabasePool)
     TSqlDatabasePool(const QString &environment);
 
-    QVector<QMap<QString, QDateTime> > pooledConnections;
+    QVector<QMap<QString, uint> > pooledConnections;
     QMutex mutex;
     QString dbEnvironment;
     QBasicTimer timer;

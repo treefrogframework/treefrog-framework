@@ -12,6 +12,8 @@
 #include <TWebApplication>
 #include "tsystemglobal.h"
 
+#define CONN_NAME_FORMAT  "rdb%02d_%d"
+
 static TSqlDatabasePool *databasePool = 0;
 
 
@@ -30,14 +32,14 @@ TSqlDatabasePool::~TSqlDatabasePool()
 
     QMutexLocker locker(&mutex);
     for (int j = 0; j < pooledConnections.count(); ++j) {
-        QMap<QString, QDateTime> &map = pooledConnections[j];
-        QMap<QString, QDateTime>::iterator it = map.begin();
+        QMap<QString, uint> &map = pooledConnections[j];
+        QMap<QString, uint>::iterator it = map.begin();
         while (it != map.end()) {
             QSqlDatabase::database(it.key(), false).close();
             it = map.erase(it);
         }
-        
-        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
+
+        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
             QString name = QString::number(j) + '_' + QString::number(i);
             if (QSqlDatabase::contains(name)) {
                 QSqlDatabase::removeDatabase(name);
@@ -60,24 +62,30 @@ TSqlDatabasePool::TSqlDatabasePool(const QString &environment)
 void TSqlDatabasePool::init()
 {
     // Adds databases previously
-    //maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Thread) ? Tf::app()->maxNumberOfServers() : 1;
 
     for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
+        if (!Tf::app()->isValidSqlDatabaseSettings(j)) {
+            tSystemWarn("no settings of SQL database. ID:%d", j);
+            continue;
+        }
+
         QString type = driverType(dbEnvironment, j);
         if (type.isEmpty()) {
             continue;
         }
-        
-        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
-            QSqlDatabase db = QSqlDatabase::addDatabase(type, QString().sprintf("%02d_%d", j, i));
+
+        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+            QSqlDatabase db = QSqlDatabase::addDatabase(type, QString().sprintf(CONN_NAME_FORMAT, j, i));
             if (!db.isValid()) {
                 tWarn("Parameter 'DriverType' is invalid");
                 break;
             }
-            tSystemDebug("Add Database successfully. name:%s", qPrintable(db.connectionName())); 
+
+            setDatabaseSettings(db, dbEnvironment, j);
+            tSystemDebug("Add Database successfully. name:%s", qPrintable(db.connectionName()));
         }
 
-        pooledConnections.append(QMap<QString, QDateTime>());
+        pooledConnections.append(QMap<QString, uint>());
     }
 }
 
@@ -86,14 +94,15 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
 {
     T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
-
     QSqlDatabase db;
-    if (databaseId < 0 || databaseId >= pooledConnections.count())
-        return db;
 
-    if (maxConnectionsPerProcess() > 0) {
-        QMap<QString, QDateTime> &map = pooledConnections[databaseId];
-        QMap<QString, QDateTime>::iterator it = map.begin();
+    if (!Tf::app()->isValidSqlDatabaseSettings(databaseId)) {
+        return db;
+    }
+
+    if (databaseId >= 0 && databaseId < pooledConnections.count()) {
+        QMap<QString, uint> &map = pooledConnections[databaseId];
+        QMap<QString, uint>::iterator it = map.begin();
         while (it != map.end()) {
             db = QSqlDatabase::database(it.key(), false);
             it = map.erase(it);
@@ -104,31 +113,32 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
                 tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
             }
         }
-        
-        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
-            db = QSqlDatabase::database(QString().sprintf("%02d_%d", databaseId, i), false);
+
+        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+            db = QSqlDatabase::database(QString().sprintf(CONN_NAME_FORMAT, databaseId, i), false);
             if (!db.isOpen()) {
-                break;
+                if (!db.open()) {
+                    tError("Database open error");
+                    return QSqlDatabase();
+                }
+
+                tSystemDebug("Database opened successfully (env:%s)", qPrintable(dbEnvironment));
+                tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
+                return db;
             }
         }
-        
-        if (db.isOpen()) {
-            throw RuntimeException("No pooled connection", __FILE__, __LINE__);
-        }
-        
-        openDatabase(db, dbEnvironment, databaseId);
-        tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
     }
-    return db;
+
+    throw RuntimeException("No pooled connection", __FILE__, __LINE__);
 }
 
 
-bool TSqlDatabasePool::openDatabase(QSqlDatabase &database, const QString &env, int databaseId)
+bool TSqlDatabasePool::setDatabaseSettings(QSqlDatabase &database, const QString &env, int databaseId)
 {
     // Initiates database
     QSettings &settings = Tf::app()->sqlDatabaseSettings(databaseId);
     settings.beginGroup(env);
-    
+
     QString databaseName = settings.value("DatabaseName").toString().trimmed();
     if (databaseName.isEmpty()) {
         tError("Database name empty string");
@@ -137,7 +147,7 @@ bool TSqlDatabasePool::openDatabase(QSqlDatabase &database, const QString &env, 
     }
     tSystemDebug("SQL driver name: %s", qPrintable(database.driverName()));
     tSystemDebug("DatabaseName: %s", qPrintable(databaseName));
-    
+
     if (database.driverName().toUpper().startsWith("QSQLITE")) {
         QFileInfo fi(databaseName);
         if (fi.isRelative()) {
@@ -146,41 +156,33 @@ bool TSqlDatabasePool::openDatabase(QSqlDatabase &database, const QString &env, 
         }
     }
     database.setDatabaseName(databaseName);
-    
+
     QString hostName = settings.value("HostName").toString().trimmed();
     tSystemDebug("Database HostName: %s", qPrintable(hostName));
     if (!hostName.isEmpty())
         database.setHostName(hostName);
-    
+
     int port = settings.value("Port").toInt();
     tSystemDebug("Database Port: %d", port);
     if (port > 0)
         database.setPort(port);
-    
+
     QString userName = settings.value("UserName").toString().trimmed();
     tSystemDebug("Database UserName: %s", qPrintable(userName));
     if (!userName.isEmpty())
         database.setUserName(userName);
-    
+
     QString password = settings.value("Password").toString().trimmed();
     tSystemDebug("Database Password: %s", qPrintable(password));
     if (!password.isEmpty())
         database.setPassword(password);
-    
+
     QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
     tSystemDebug("Database ConnectOptions: %s", qPrintable(connectOptions));
     if (!connectOptions.isEmpty())
         database.setConnectOptions(connectOptions);
 
     settings.endGroup();
-
-    if (!database.open()) {
-        tError("Database open error");
-        database = QSqlDatabase();
-        return false;
-    }
-    
-    tSystemDebug("Database opened successfully (env:%s)", qPrintable(env));
     return true;
 }
 
@@ -191,14 +193,13 @@ void TSqlDatabasePool::pool(QSqlDatabase &database)
     QMutexLocker locker(&mutex);
 
     if (database.isValid()) {
-        bool ok;
-        int databaseId = database.connectionName().left(2).toInt(&ok);
+        int databaseId = getDatabaseId(database);
 
-        if (ok && databaseId >= 0 && databaseId < pooledConnections.count()) {
-            pooledConnections[databaseId].insert(database.connectionName(), QDateTime::currentDateTime());
+        if (databaseId >= 0 && databaseId < pooledConnections.count()) {
+            pooledConnections[databaseId].insert(database.connectionName(), QDateTime::currentDateTime().toTime_t());
             tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
         } else {
-            tSystemError("Invalid connection name: %s  [%s:%d]", qPrintable(database.connectionName()), __FILE__, __LINE__);
+            tSystemError("Pooled invalid database  [%s:%d]", __FILE__, __LINE__);
         }
     }
     database = QSqlDatabase();  // Sets an invalid object
@@ -213,11 +214,11 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
         // Closes extra-connection
         if (mutex.tryLock()) {
             for (int i = 0; i < pooledConnections.count(); ++i) {
-                QMap<QString, QDateTime> &map = pooledConnections[i];
-                QMap<QString, QDateTime>::iterator it = map.begin();
+                QMap<QString, uint> &map = pooledConnections[i];
+                QMap<QString, uint>::iterator it = map.begin();
                 while (it != map.end()) {
-                    QDateTime dt = it.value();
-                    if (dt.addSecs(30) < QDateTime::currentDateTime()) {
+                    uint tm = it.value();
+                    if (tm < QDateTime::currentDateTime().toTime_t() - 30) { // 30sec
                         QSqlDatabase::database(it.key(), false).close();
                         tSystemDebug("Closed database connection, name: %s", qPrintable(it.key()));
                         it = map.erase(it);
@@ -263,7 +264,7 @@ QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
     settings.beginGroup(env);
     QString type = settings.value("DriverType").toString().trimmed();
     settings.endGroup();
-    
+
     if (type.isEmpty()) {
         tDebug("Parameter 'DriverType' is empty");
     }
@@ -271,7 +272,7 @@ QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
 }
 
 
-int TSqlDatabasePool::maxConnectionsPerProcess()
+int TSqlDatabasePool::maxDbConnectionsPerProcess()
 {
     static int maxConnections = 0;
 
@@ -279,4 +280,16 @@ int TSqlDatabasePool::maxConnectionsPerProcess()
         maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Thread) ? Tf::app()->maxNumberOfServers() : 1;
     }
     return maxConnections;
+}
+
+
+int TSqlDatabasePool::getDatabaseId(const QSqlDatabase &database)
+{
+    bool ok;
+    int id = database.connectionName().mid(3,2).toInt(&ok);
+
+    if (ok && id >= 0) {
+        return id;
+    }
+    return -1;
 }
