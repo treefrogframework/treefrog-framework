@@ -92,6 +92,7 @@ else
 fi
 
 # default values
+BASEDIR=`pwd`/`dirname $0`
 PREFIX=/usr
 FRAMEWORK=/Library/Frameworks
 if [ "$KERNEL" = "Darwin" ]; then
@@ -166,15 +167,30 @@ if ! which qmake >/dev/null 2>&1; then
   exit
 fi
 
-cd src
+cd $BASEDIR/src
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 qmake $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_MONGO
-cd ../tools
+cd $BASEDIR/tools
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" $ENABLE_MONGO
 make qmake
 
-cd ..
+if [ -n "$ENABLE_MONGO" ]; then
+  cd $BASEDIR/3rdparty/mongo-c-driver
+  echo -n "\nCompiling MongoDB driver library ... "
+  qmake mongo-c-driver.pro
+  make clean >/dev/null 2>&1
+  make >/dev/null 2>&1
+  RET=$?
+  if [ $RET != 0 ]; then
+    echo "failed"
+    echo "MongoDB module not available, reconfigure without MongoDB."
+    exit $RET
+  fi
+  echo "OK"
+fi
+
+cd $BASEDIR
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
 sed -i -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR\\r/" defaults/appbase.pri
 
