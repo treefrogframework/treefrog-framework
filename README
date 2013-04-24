@@ -17,9 +17,16 @@ Features:
  * Routing system  - No need to write the routing rules one by one into a
                       configuration file
  * Generator - Automatically generates scaffolds and Makefiles
- * Ajax support
+ * Ajax support - JSON, XML and Plain text available
+ * NoSQL database support - MongoDB driver included  [Experimental]
  * OSS  - New BSD License
 
 
 Web Site:
  http://www.treefrogframework.org/
+
+
+MongoDB communication:
+TreeFrog Framework uses MongoDB C driver to communicate with the MongoDB.
+The MongoDB C driver is a 10gen-supported driver for MongoDB. See the
+README also.
