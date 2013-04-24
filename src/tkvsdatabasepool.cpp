@@ -5,6 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QStringList>
 #include <QMutexLocker>
 #include <QDateTime>
 #include <QHash>
@@ -12,6 +13,8 @@
 #include <TWebApplication>
 #include <TSqlDatabasePool>
 #include "tsystemglobal.h"
+
+#define CONN_NAME_FORMAT  "kvs%02d_%d"
 
 static TKvsDatabasePool *databasePool = 0;
 
@@ -37,8 +40,8 @@ TKvsDatabasePool::~TKvsDatabasePool()
 
     QMutexLocker locker(&mutex);
     for (int j = 0; j < pooledConnections.count(); ++j) {
-        QMap<QString, QDateTime> &map = pooledConnections[j];
-        QMap<QString, QDateTime>::iterator it = map.begin();
+        QMap<QString, uint> &map = pooledConnections[j];
+        QMap<QString, uint>::iterator it = map.begin();
         while (it != map.end()) {
             TKvsDatabase::database(it.key()).close();
             it = map.erase(it);
@@ -63,17 +66,33 @@ void TKvsDatabasePool::init()
 
     for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
         const QString &drv = it.next().key();
-        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
-            TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString().sprintf("%s_%d", qPrintable(drv), i));
+        int type = it.value();
+
+        if (!isKvsAvailable((TKvsDatabase::Type)type)) {
+            tSystemDebug("no settings of KVS database. type:%d", (int)type);
+            continue;
+        }
+
+        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+            TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString().sprintf(CONN_NAME_FORMAT, type, i));
             if (!db.isValid()) {
                 tWarn("KVS init parameter is invalid");
                 break;
             }
+
+            setDatabaseSettings(db, (TKvsDatabase::Type)type, dbEnvironment);
             tSystemDebug("Add KVS successfully. name:%s", qPrintable(db.connectionName()));
         }
 
-        pooledConnections.append(QMap<QString, QDateTime>());
+        pooledConnections.append(QMap<QString, uint>());
     }
+}
+
+
+bool TKvsDatabasePool::isKvsAvailable(TKvsDatabase::Type type) const
+{
+    QSettings &settings = kvsSettings(type);
+    return !settings.childGroups().isEmpty();
 }
 
 
@@ -84,9 +103,9 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
         return Tf::app()->mongoDbSettings();
         break;
     default:
+        throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         break;
     }
-    throw RuntimeException("No such KVS type", __FILE__, __LINE__);
 }
 
 
@@ -96,40 +115,40 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
     QMutexLocker locker(&mutex);
     TKvsDatabase db;
 
-    if (maxConnectionsPerProcess() > 0) {
-        QMap<QString, QDateTime> &map = pooledConnections[(int)type];
-        QMap<QString, QDateTime>::iterator it = map.begin();
+    if (!isKvsAvailable(type))
+        return db;
 
-        while (it != map.end()) {
-            db = TKvsDatabase::database(it.key());
-            it = map.erase(it);
-            if (db.isOpen()) {
-                tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
-                return db;
-            } else {
-                tSystemError("Pooled KVS database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
-            }
-        }
-
-        for (int i = 0; i < maxConnectionsPerProcess(); ++i) {
-            db = TKvsDatabase::database(QString().sprintf("%s_%d", qPrintable(driverName(type)), i));
-            if (!db.isOpen()) {
-                break;
-            }
-        }
-
+    QMap<QString, uint> &map = pooledConnections[(int)type];
+    QMap<QString, uint>::iterator it = map.begin();
+    while (it != map.end()) {
+        db = TKvsDatabase::database(it.key());
+        it = map.erase(it);
         if (db.isOpen()) {
-            throw RuntimeException("No pooled connection", __FILE__, __LINE__);
+            tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
+            return db;
+        } else {
+            tSystemError("Pooled KVS database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
         }
-
-        openDatabase(db, type, dbEnvironment);
-        tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
     }
-    return db;
+
+    for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        db = TKvsDatabase::database(QString().sprintf(CONN_NAME_FORMAT, (int)type, i));
+        if (!db.isOpen()) {
+            if (!db.open()) {
+                tError("KVS database open error");
+                return TKvsDatabase();
+            }
+            tSystemDebug("KVS opened successfully (env:%s)", qPrintable(dbEnvironment));
+            tSystemDebug("Gets KVS database: %s  dbname:%s", qPrintable(db.connectionName()), qPrintable(db.databaseName()));
+            return db;
+        }
+    }
+
+    throw RuntimeException("No pooled connection", __FILE__, __LINE__);
 }
 
 
-bool TKvsDatabasePool::openDatabase(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const
+bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const
 {
     // Initiates database
     QSettings &settings = kvsSettings(type);
@@ -171,14 +190,6 @@ bool TKvsDatabasePool::openDatabase(TKvsDatabase &database, TKvsDatabase::Type t
         database.setConnectOptions(connectOptions);
 
     settings.endGroup();
-
-    if (!database.open()) {
-        tError("KVS database open error");
-        database = TKvsDatabase();
-        return false;
-    }
-
-    tSystemDebug("KVS opened successfully (env:%s)", qPrintable(env));
     return true;
 }
 
@@ -194,10 +205,10 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
             throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         }
 
-        pooledConnections[type].insert(database.connectionName(), QDateTime::currentDateTime());
+        pooledConnections[type].insert(database.connectionName(), QDateTime::currentDateTime().toTime_t());
         tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
     } else {
-        tSystemWarn("Invaild KVS database: %s", qPrintable(database.connectionName()));
+        tSystemWarn("Pooled invaild KVS database  [%s:%d]", __FILE__, __LINE__);
     }
     database = TKvsDatabase();  // Sets an invalid object
 }
@@ -211,12 +222,12 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
         // Closes extra-connection
         if (mutex.tryLock()) {
             for (int i = 0; i < pooledConnections.count(); ++i) {
-                QMap<QString, QDateTime> &map = pooledConnections[i];
-                QMap<QString, QDateTime>::iterator it = map.begin();
+                QMap<QString, uint> &map = pooledConnections[i];
+                QMap<QString, uint>::iterator it = map.begin();
 
                 while (it != map.end()) {
-                    QDateTime dt = it.value();
-                    if (dt.addSecs(30) < QDateTime::currentDateTime()) {
+                    uint tm = it.value();
+                    if (tm < QDateTime::currentDateTime().toTime_t() - 30) {  // 30sec
                         TKvsDatabase::database(it.key()).close();
                         tSystemDebug("Closed KVS database connection, name: %s", qPrintable(it.key()));
                         it = map.erase(it);
@@ -262,7 +273,7 @@ QString TKvsDatabasePool::driverName(TKvsDatabase::Type type)
 }
 
 
-int TKvsDatabasePool::maxConnectionsPerProcess()
+int TKvsDatabasePool::maxDbConnectionsPerProcess()
 {
-    return TSqlDatabasePool::maxConnectionsPerProcess();
+    return TSqlDatabasePool::maxDbConnectionsPerProcess();
 }

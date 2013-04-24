@@ -9,6 +9,7 @@
 #include <TMongoDriver>
 #include <TMongoCursor>
 #include <TActionContext>
+#include <TSystemGlobal>
 
 
 TMongoQuery::TMongoQuery(const QString &collection)
@@ -37,8 +38,10 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
 
 bool TMongoQuery::find(const QVariantMap &query, const QStringList &fields)
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::find : driver not loaded");
         return false;
+    }
 
     return driver()->find(nameSpace, query, fields, queryLimit, queryOffset, 0);
 }
@@ -46,8 +49,9 @@ bool TMongoQuery::find(const QVariantMap &query, const QStringList &fields)
 
 bool TMongoQuery::next()
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
         return false;
+    }
 
     return driver()->cursor().next();
 }
@@ -64,8 +68,10 @@ QVariantMap TMongoQuery::value() const
 
 QVariantMap TMongoQuery::findOne(const QVariantMap &query, const QStringList &fields)
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::findOne : driver not loaded");
         return QVariantMap();
+    }
 
     return driver()->findOne(nameSpace, query, fields);
 }
@@ -73,8 +79,10 @@ QVariantMap TMongoQuery::findOne(const QVariantMap &query, const QStringList &fi
 
 bool TMongoQuery::insert(const QVariantMap &object)
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::insert : driver not loaded");
         return false;
+    }
 
     return driver()->insert(nameSpace, object);
 }
@@ -82,8 +90,10 @@ bool TMongoQuery::insert(const QVariantMap &object)
 
 bool TMongoQuery::remove(const QVariantMap &object)
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::remove : driver not loaded");
         return false;
+    }
 
     return driver()->remove(nameSpace, object);
 }
@@ -91,8 +101,10 @@ bool TMongoQuery::remove(const QVariantMap &object)
 
 bool TMongoQuery::update(const QVariantMap &query, const QVariantMap &object, bool upsert)
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::update : driver not loaded");
         return false;
+    }
 
     return driver()->update(nameSpace, query, object, upsert);
 }
@@ -100,8 +112,10 @@ bool TMongoQuery::update(const QVariantMap &query, const QVariantMap &object, bo
 
 bool TMongoQuery::updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert)
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::updateMulti : driver not loaded");
         return false;
+    }
 
     return driver()->updateMulti(nameSpace, query, object, upsert);
 }

@@ -26,18 +26,19 @@ public:
 
 protected:
     void init();
+    bool isKvsAvailable(TKvsDatabase::Type type) const;
     QSettings &kvsSettings(TKvsDatabase::Type type) const;
-    bool openDatabase(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const;
+    bool setDatabaseSettings(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const;
     void timerEvent(QTimerEvent *event);
 
     static QString driverName(TKvsDatabase::Type type);
-    static int maxConnectionsPerProcess();
+    static int maxDbConnectionsPerProcess();
 
 private:
     Q_DISABLE_COPY(TKvsDatabasePool)
     TKvsDatabasePool(const QString &environment);
 
-    QVector<QMap<QString, QDateTime> > pooledConnections;
+    QVector<QMap<QString, uint> > pooledConnections;
     QMutex mutex;
     QString dbEnvironment;
     QBasicTimer timer;

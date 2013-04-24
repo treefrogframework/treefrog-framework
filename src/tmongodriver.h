@@ -13,14 +13,11 @@ class TMongoCursor;
 class T_CORE_EXPORT TMongoDriver : public TKvsDriver
 {
 public:
-    enum {
-        MongoDefaultPort,
-    };
-
     TMongoDriver();
     ~TMongoDriver();
 
-    bool open(const QString &host, quint16 port = MongoDefaultPort);
+    QString key() const { return "MONGODB"; }
+    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString & options = QString());
     void close();
     bool isOpen() const;
 

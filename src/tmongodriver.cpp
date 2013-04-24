@@ -29,34 +29,45 @@ TMongoDriver::~TMongoDriver()
 }
 
 
-bool TMongoDriver::open(const QString &host, quint16 port)
+bool TMongoDriver::open(const QString &db, const QString &user, const QString &password, const QString &host, quint16 port, const QString &)
 {
     if (host.isEmpty()) {
         return false;
     }
 
-    if (port == MongoDefaultPort)
+    if (!port)
         port = MONGO_DEFAULT_PORT;
 
+    mongo_clear_errors(mongoConnection);
     mongo_set_op_timeout(mongoConnection, 1000);
     int status = mongo_client(mongoConnection, qPrintable(host), port);
 
     if (status != MONGO_OK) {
         switch (mongoConnection->err) {
         case MONGO_CONN_NO_SOCKET:
-            tSystemError("no socket");
+            tSystemError("MongoDB socket error: %s", mongoConnection->lasterrstr);
             break;
 
         case MONGO_CONN_FAIL:
-            tSystemError("connection failed");
+            tSystemError("MongoDB connection failed: %s", mongoConnection->lasterrstr);
             break;
 
         case MONGO_CONN_NOT_MASTER:
-            tSystemError("not master");
+            tSystemDebug("MongoDB not master: %s", mongoConnection->lasterrstr);
             break;
 
         default:
+            tSystemDebug("MongoDB error: %s", mongoConnection->lasterrstr);
             break;
+        }
+        return false;
+    }
+
+    if (!user.isEmpty()) {
+        status = mongo_cmd_authenticate(mongoConnection, qPrintable(db), qPrintable(user), qPrintable(password));
+        if (status != MONGO_OK) {
+            tSystemDebug("MongoDB authentication error: %s", mongoConnection->lasterrstr);
+            return false;
         }
     }
 
@@ -80,22 +91,15 @@ bool TMongoDriver::isOpen() const
 bool TMongoDriver::find(const QString &ns, const QVariantMap &query, const QStringList &fields,
                         int limit, int skip, int options)
 {
-    mongoCursor->release();
-    mongoCursor->init(mongoConnection, ns);
+    mongo_clear_errors(mongoConnection);
+    mongo_cursor *cursor = mongo_find(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(query).data(),
+                                      (bson *)TBson::toBson(fields).data(), limit, skip, options);
+    mongoCursor->setCursor(cursor);
+    if (!cursor) {
+        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+    }
 
-    mongo_cursor *cur = (mongo_cursor *)mongoCursor->cursor();
-    mongo_cursor_set_query(cur, (const bson *)TBson::toBson(query).data());
-    if (!fields.isEmpty())
-        mongo_cursor_set_fields(cur, (const bson *)TBson::toBson(fields).data());
-
-    if (limit > 0)
-        mongo_cursor_set_limit(cur, limit);
-
-    if (skip > 0)
-        mongo_cursor_set_skip(cur, skip);
-
-    mongo_cursor_set_options(cur, options);
-    return true;
+    return (bool)cursor;
 }
 
 
@@ -103,43 +107,69 @@ QVariantMap TMongoDriver::findOne(const QString &ns, const QVariantMap &query,
                                   const QStringList &fields)
 {
     TBson bs;
+
+    mongo_clear_errors(mongoConnection);
     int status = mongo_find_one(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(query).data(),
                                 (bson *)TBson::toBson(fields).data(), (bson *)bs.data());
-    return (status == MONGO_OK) ? TBson::fromBson(bs) : QVariantMap();
+    if (status != MONGO_OK) {
+        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        return QVariantMap();
+    }
+    return TBson::fromBson(bs);
 }
 
 
 bool TMongoDriver::insert(const QString &ns, const QVariantMap &object)
 {
+    mongo_clear_errors(mongoConnection);
     int status = mongo_insert(mongoConnection, qPrintable(ns),
                               (const bson *)TBson::toBson(object).constData(), 0);
-    return (status == MONGO_OK);
+    if (status != MONGO_OK) {
+        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        return false;
+    }
+    return true;
 }
 
 
 bool TMongoDriver::remove(const QString &ns, const QVariantMap &object)
 {
+    mongo_clear_errors(mongoConnection);
     int status = mongo_remove(mongoConnection, qPrintable(ns),
                               (const bson *)TBson::toBson(object).data(), 0);
-    return (status == MONGO_OK);
+    if (status != MONGO_OK) {
+        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        return false;
+    }
+    return true;
 }
 
 
 bool TMongoDriver::update(const QString &ns, const QVariantMap &query, const QVariantMap &object,
                           bool upsert)
 {
+    mongo_clear_errors(mongoConnection);
     int flag = (upsert) ? MONGO_UPDATE_UPSERT : MONGO_UPDATE_BASIC;
     int status = mongo_update(mongoConnection, qPrintable(ns), (const bson *)TBson::toBson(query).data(),
                               (const bson *)TBson::toBson(object).data(), flag, 0);
-    return (status == MONGO_OK);
+    if (status != MONGO_OK) {
+        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        return false;
+    }
+    return true;
 }
 
 
 bool TMongoDriver::updateMulti(const QString &ns, const QVariantMap &query, const QVariantMap &object,
                                bool upsert)
 {
+    mongo_clear_errors(mongoConnection);
     int flag = (upsert) ? (MONGO_UPDATE_UPSERT | MONGO_UPDATE_MULTI) : MONGO_UPDATE_MULTI;
     int status = mongo_update(mongoConnection, qPrintable(ns), (const bson *)TBson::toBson(query).data(),
                               (const bson *)TBson::toBson(object).data(), flag, 0);
-    return (status == MONGO_OK);
+   if (status != MONGO_OK) {
+        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        return false;
+    }
+   return true;
 }

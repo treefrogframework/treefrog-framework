@@ -21,10 +21,10 @@ protected:
     void init(mongo *connection, const QString &ns);
     void release();
     TMongoCursorObject *cursor() { return mongoCursor; }
+    void setCursor(TMongoCursorObject *cursor);
 
 private:
     TMongoCursorObject *mongoCursor;  // pointer to object of struct mongo_cursor
-    bool initiated;
 
     TMongoCursor();
     friend class TMongoDriver;

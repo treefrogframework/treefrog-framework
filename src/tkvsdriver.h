@@ -9,7 +9,8 @@ class T_CORE_EXPORT TKvsDriver
 {
 public:
     virtual ~TKvsDriver() { }
-    virtual bool open(const QString &host, quint16 port) = 0;
+    virtual QString key() const = 0;
+    virtual bool open(const QString &db, const QString &user, const QString &password, const QString &host, quint16 port, const QString &options) = 0;
     virtual void close() = 0;
     virtual bool isOpen() const = 0;
 };

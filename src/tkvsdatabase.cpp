@@ -16,58 +16,68 @@
 class TKvsDatabaseData
 {
 public:
-    QString connectName;
-    QString dbName;
-    QString host;
-    quint16 portNumber;
-    QString user;
-    QString pass;
-    QString opts;
-    QString drvName;
-    TKvsDriver *drv;  // pointer to a singleton object
+    QString connectionName;
+    QString databaseName;
+    QString hostName;
+    quint16 port;
+    QString userName;
+    QString password;
+    QString connectOptions;
+    TKvsDriver *driver;  // pointer to a singleton object
+
+    TKvsDatabaseData() : port(0), driver(0) { }
 };
 
 const char *const defaultConnection = "tf_default_connection";
 
-static QMap<QString, TKvsDatabase> databaseMap;
+static QMap<QString, TKvsDatabaseData> databaseMap;
 static QMutex mutex(QMutex::Recursive);
 
 
-TKvsDatabase &TKvsDatabase::database(const QString &connectionName)
+static TKvsDriver *createDriver(const QString &driverName)
 {
-    QMutexLocker lock(&mutex);
-    return databaseMap[connectionName];
-}
+    TKvsDriver *ret = 0;
 
+    if (driverName == QLatin1String("MONGODB")) {
+        ret = new TMongoDriver();
+    }
 
-TKvsDatabase &TKvsDatabase::addDatabase(const TKvsDatabase &db, const QString &connectionName)
-{
-    QMutexLocker lock(&mutex);
-
-    // If it exists..
-    if (databaseMap.contains(connectionName))
-        removeDatabase(connectionName);
-
-    databaseMap.insert(connectionName, db);
-    TKvsDatabase &ret = databaseMap[connectionName];
-    ret.connectName = connectionName;
+    if (!ret) {
+        tWarn("TKvsDatabase: %s driver not loaded", qPrintable(driverName));
+    }
     return ret;
 }
 
 
-TKvsDatabase &TKvsDatabase::addDatabase(const QString &driver, const QString &connectionName)
+TKvsDatabase TKvsDatabase::database(const QString &connectionName)
 {
-    TKvsDatabase db;
-    db.createDriver(driver);  // creates the driver
-    return addDatabase(db, connectionName);
+    QMutexLocker lock(&mutex);
+    TKvsDatabaseData &d = databaseMap[connectionName];
+    return TKvsDatabase(d.connectionName, d.driver);
+}
+
+
+TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &connectionName)
+{
+    QMutexLocker lock(&mutex);
+
+    // Removes it if exists
+    if (databaseMap.contains(connectionName))
+        removeDatabase(connectionName);
+
+    TKvsDatabaseData data;
+    data.connectionName = connectionName;
+    data.driver = createDriver(driver);  // creates a driver
+    databaseMap.insert(connectionName, data);
+    return database(connectionName);
 }
 
 
 void TKvsDatabase::removeDatabase(const QString &connectionName)
 {
     QMutexLocker lock(&mutex);
-
     TKvsDatabase db = database(connectionName);
+
     db.close();
     if (db.drv)
         delete db.drv;
@@ -79,59 +89,40 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 void TKvsDatabase::removeAllDatabases()
 {
     QMutexLocker lock(&mutex);
+    QStringList keys = databaseMap.keys();
 
-    for (QMap<QString, TKvsDatabase>::iterator it = databaseMap.begin(); it != databaseMap.end(); ++it) {
-        TKvsDatabase &db = it.value();
-        db.close();
-        if (db.drv)
-            delete db.drv;
+    for (QStringListIterator it(keys); it.hasNext(); ) {
+        removeDatabase(it.next());
     }
+
     databaseMap.clear();
 }
 
 
 TKvsDatabase::TKvsDatabase()
-    : connectName(), dbName(), host(), portNumber(0), user(), pass(), opts(), drvName(), drv(0)
+    : connectName(), drv(0)
 { }
 
 
 TKvsDatabase::TKvsDatabase(const TKvsDatabase &other)
-    : connectName(other.connectName), dbName(other.dbName), host(other.host),
-      portNumber(other.portNumber), user(other.user), pass(other.pass), opts(other.opts),
-      drvName(other.drvName), drv(other.drv)
+    : connectName(other.connectName), drv(other.drv)
+{ }
+
+
+TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver)
+    : connectName(connectionName), drv(driver)
 { }
 
 
 TKvsDatabase &TKvsDatabase::operator=(const TKvsDatabase &other)
 {
     connectName = other.connectName;
-    dbName = other.dbName;
-    host = other.host;
-    portNumber = other.portNumber;
-    user = other.user;
-    pass = other.pass;
-    opts = other.opts;
-    drvName = other.drvName;
     drv = other.drv;
     return *this;
 }
 
 
-void TKvsDatabase::createDriver(const QString &driverName)
-{
-    if (driverName == QLatin1String("MONGODB")) {
-        drv = new TMongoDriver();
-    }
-
-    if (!drv) {
-        tWarn("QSqlDatabase: %s driver not loaded", qPrintable(driverName));
-        return;
-    }
-    drvName = driverName;
-}
-
-
-bool TKvsDatabase::isValid () const
+bool TKvsDatabase::isValid() const
 {
     return (bool)driver();
 }
@@ -139,7 +130,7 @@ bool TKvsDatabase::isValid () const
 
 bool TKvsDatabase::open()
 {
-    return (driver()) ? driver()->open(host, portNumber) : false;
+    return (driver()) ? driver()->open(databaseName(), userName(), password(), hostName(), port(), connectOptions()) : false;
 }
 
 
@@ -153,4 +144,93 @@ void TKvsDatabase::close()
 bool TKvsDatabase::isOpen() const
 {
     return (driver()) ? driver()->isOpen() : false;
+}
+
+
+QString TKvsDatabase::driverName() const
+{
+    return (driver()) ? driver()->key() : QString();
+}
+
+QString TKvsDatabase::databaseName() const
+{
+    return databaseMap[connectName].databaseName;
+}
+
+
+void TKvsDatabase::setDatabaseName(const QString &name)
+{
+    if (!connectName.isEmpty()) {
+        databaseMap[connectName].databaseName = name;
+    }
+}
+
+
+QString TKvsDatabase::hostName() const
+{
+    return databaseMap[connectName].hostName;
+}
+
+
+void TKvsDatabase::setHostName(const QString &hostName)
+{
+    if (!connectName.isEmpty()) {
+        databaseMap[connectName].hostName = hostName;
+    }
+}
+
+
+int TKvsDatabase::port() const
+{
+    return databaseMap[connectName].port;
+}
+
+
+void TKvsDatabase::setPort(int port)
+{
+    if (!connectName.isEmpty()) {
+        databaseMap[connectName].port = port;
+    }
+}
+
+
+QString TKvsDatabase::userName() const
+{
+    return databaseMap[connectName].userName;
+}
+
+
+void TKvsDatabase::setUserName(const QString &userName)
+{
+    if (!connectName.isEmpty()) {
+        databaseMap[connectName].userName = userName;
+    }
+}
+
+
+QString TKvsDatabase::password() const
+{
+    return databaseMap[connectName].password;
+}
+
+
+void TKvsDatabase::setPassword(const QString &password)
+{
+    if (!connectName.isEmpty()) {
+        databaseMap[connectName].password = password;
+    }
+}
+
+
+QString TKvsDatabase::connectOptions() const
+{
+    return databaseMap[connectName].connectOptions;
+}
+
+
+void TKvsDatabase::setConnectOptions(const QString &options)
+{
+    if (!connectName.isEmpty()) {
+        databaseMap[connectName].connectOptions = options;
+    }
 }
