@@ -427,13 +427,6 @@ int managerMain(int argc, char *argv[])
         return 1;
     }
 
-    if (!app.isValidSqlDatabaseSettings()) {
-        tSystemError("Database settings not found  [environment: %s]", qPrintable(app.databaseEnvironment()));
-        fprintf(stderr, "database settings not found  [environment: %s]\n\n", qPrintable(app.databaseEnvironment()));
-        usage();
-        return 1;
-    }
-
     // Check a port number
     quint16 listenPort = 0;
     QString svrname = app.appSettings().value("ListenPort").toString();
@@ -460,26 +453,26 @@ int managerMain(int argc, char *argv[])
 
     int ret = 0;
     QFile pidfile;
-    
+
     for (;;) {
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
         case TWebApplication::Thread: {
             manager = new ServerManager(1, 1, 0, &app);
             break; }
-            
+
         case TWebApplication::Prefork: {
             int max = app.appSettings().value("MPM.prefork.MaxServers").toInt();
             int min = app.appSettings().value("MPM.prefork.MinServers").toInt();
             int spare = app.appSettings().value("MPM.prefork.SpareServers").toInt();
             manager = new ServerManager(max, min, spare, &app);
             break; }
-            
+
         default:
             tSystemError("Invalid MPM specified");
             return 1;
         }
-        
+
         // Startup
         writeStartupLog();
         bool started;
@@ -490,13 +483,13 @@ int managerMain(int argc, char *argv[])
             // UNIX domain
             started = manager->start(svrname);
         }
-        
+
         if (!started) {
             tSystemError("TreeFrog application server startup failed");
             fprintf(stderr, "TreeFrog application server startup failed\n\n");
             return 1;
         }
-        
+
         // tmp directory
         QDir tmpDir(app.tmpPath());
         if (!tmpDir.exists()) {
@@ -505,7 +498,7 @@ int managerMain(int argc, char *argv[])
 
         // Adds this running app
         addRunningApplication(app.webRootPath());
-        
+
         // Writes the PID
         pidfile.setFileName(pidFilePath());
         if (pidfile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -515,11 +508,11 @@ int managerMain(int argc, char *argv[])
         } else {
             tSystemError("File open failed: %s", qPrintable(pidfile.fileName()));
         }
-        
+
         ret = app.exec();
         tSystemDebug("tfmanager returnCode:%d", ret);
         manager->stop();
-        
+
         if (ret == 1) {  // means SIGHUP
             tSystemDebug("Restarts TreeFrog application servers");
             //continue;
@@ -527,7 +520,7 @@ int managerMain(int argc, char *argv[])
             break;
         }
     }
-    
+
     if (!svrname.isEmpty()) {  // UNIX domain file
         QFile(svrname).remove();
     }
