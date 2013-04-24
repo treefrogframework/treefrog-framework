@@ -116,7 +116,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     if (!mongoini.isEmpty()) {
         mongoSetting = new QSettings(configPath() + mongoini, QSettings::IniFormat, this);
     } else {
-        mongoSetting = new QSettings(this);
+        mongoSetting = new QSettings(QSettings::IniFormat, QSettings::UserScope, QString(), QString(), this);
     }
 
     // sets a seed for random numbers
@@ -401,7 +401,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 */
 
 /*!
-  \fn QSettings &TWebApplication::validationSettings () const 
+  \fn QSettings &TWebApplication::validationSettings () const
   Returns a reference to the QSettings object for settings of the
   validation, which file is validation.ini.
 */
@@ -417,13 +417,13 @@ void TWebApplication::timerEvent(QTimerEvent *event)
   \fn QTextCodec *TWebApplication::codecForHttpOutput() const
   Returns a pointer to the codec of the HTTP output stream used by an
   action view, which is set by the setting \a HttpOutputEncoding in
-  the application.ini. 
+  the application.ini.
 */
 
 /*!
   \fn QString TWebApplication::databaseEnvironment() const
   Returns the database environment, which string is used to load
-  the settings in database.ini. 
+  the settings in database.ini.
   \sa setDatabaseEnvironment(const QString &environment)
 */
 
@@ -436,7 +436,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 /*!
   \fn void TWebApplication::ignoreConsoleSignal();
   Ignores console signals, i.e.\ delivery of console signals will have no effect
-  on the process. 
+  on the process.
 */
 
 /*!
@@ -449,7 +449,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 /*!
   \fn void TWebApplication::ignoreUnixSignal(int sig, bool ignore)
   Ignores UNIX signals, i.e.\ delivery of the signal will have no effect on
-  the process. 
+  the process.
   \sa watchUnixSignal()
 */
 
