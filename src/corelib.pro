@@ -39,6 +39,9 @@ win32 {
   CONFIG += lib_bundle
   FRAMEWORK_HEADERS.version = Versions
   FRAMEWORK_HEADERS.files = $$HEADER_FILES $$HEADER_CLASSES
+  !isEmpty( use_mongo ) {
+    FRAMEWORK_HEADERS.files += $$MONGODB_FILES $$MONGODB_CLASSES
+  }
   FRAMEWORK_HEADERS.path = Headers
   FRAMEWORK_TEST.version = Versions
   FRAMEWORK_TEST.files = $$TEST_FILES $$TEST_CLASSES
@@ -46,6 +49,9 @@ win32 {
   QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS FRAMEWORK_TEST
 } else:unix {
   header.files = $$HEADER_FILES $$HEADER_CLASSES
+  !isEmpty( use_mongo ) {
+    header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+  }
   isEmpty(header.path) {
     header.path = /usr/include/treefrog
   }
@@ -209,7 +215,7 @@ SOURCES += tkvsdriver.cpp
 !isEmpty( use_mongo ) {
   INCLUDEPATH += ../3rdparty/mongo-c-driver/src
   LIBS  += ../3rdparty/mongo-c-driver/libmongoc.a
-  DEFINES += MONGO_HAVE_STDINT
+  DEFINES += MONGO_HAVE_STDINT TF_BUILD_MONGODB
 
   HEADERS += tmongodriver.h
   SOURCES += tmongodriver.cpp

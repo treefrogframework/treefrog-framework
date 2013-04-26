@@ -69,8 +69,10 @@ void TKvsDatabasePool::init()
         int type = it.value();
 
         if (!isKvsAvailable((TKvsDatabase::Type)type)) {
-            tSystemDebug("no settings of KVS database. type:%d", (int)type);
+            tSystemDebug("KVS database not available. type:%d", (int)type);
             continue;
+        } else {
+            tSystemInfo("KVS database available. type:%d", (int)type);
         }
 
         for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
@@ -91,8 +93,14 @@ void TKvsDatabasePool::init()
 
 bool TKvsDatabasePool::isKvsAvailable(TKvsDatabase::Type type) const
 {
-    QSettings &settings = kvsSettings(type);
-    return !settings.childGroups().isEmpty();
+    switch (type) {
+    case TKvsDatabase::MongoDB:
+        return Tf::app()->isMongoDbAvailable();
+        break;
+    default:
+        throw RuntimeException("No such KVS type", __FILE__, __LINE__);
+        break;
+    }
 }
 
 
@@ -100,12 +108,16 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
 {
     switch (type) {
     case TKvsDatabase::MongoDB:
-        return Tf::app()->mongoDbSettings();
+        if (Tf::app()->isMongoDbAvailable()) {
+            return Tf::app()->mongoDbSettings();
+        }
         break;
     default:
         throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         break;
     }
+
+    throw RuntimeException("Logic error", __FILE__, __LINE__);
 }
 
 
@@ -138,8 +150,7 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
                 tError("KVS database open error");
                 return TKvsDatabase();
             }
-            tSystemDebug("KVS opened successfully (env:%s)", qPrintable(dbEnvironment));
-            tSystemDebug("Gets KVS database: %s  dbname:%s", qPrintable(db.connectionName()), qPrintable(db.databaseName()));
+            tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(dbEnvironment), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
             return db;
         }
     }
@@ -160,8 +171,7 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
         settings.endGroup();
         return false;
     }
-    tSystemDebug("KVS driver name: %s", qPrintable(database.driverName()));
-    tSystemDebug("KVS DatabaseName: %s", qPrintable(databaseName));
+    tSystemDebug("KVS db name:%s  driver name:%s", qPrintable(databaseName), qPrintable(database.driverName()));
     database.setDatabaseName(databaseName);
 
     QString hostName = settings.value("HostName").toString().trimmed();

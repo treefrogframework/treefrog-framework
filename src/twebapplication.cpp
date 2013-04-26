@@ -115,8 +115,6 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     QString mongoini = appSetting->value("MongoDbSettingsFile").toString().trimmed();
     if (!mongoini.isEmpty()) {
         mongoSetting = new QSettings(configPath() + mongoini, QSettings::IniFormat, this);
-    } else {
-        mongoSetting = new QSettings(QSettings::IniFormat, QSettings::UserScope, QString(), QString(), this);
     }
 
     // sets a seed for random numbers
@@ -233,16 +231,11 @@ int TWebApplication::sqlDatabaseSettingsCount() const
 }
 
 /*!
-  Returns true if all the SQL database settings are valid; otherwise
-  returns false.
+  Returns true if SQL database is available; otherwise returns false.
 */
-bool TWebApplication::isValidSqlDatabaseSettings(int databaseId) const
+bool TWebApplication::isSqlDatabaseAvailable() const
 {
-    if (databaseId >= 0 && databaseId < sqlSettings.count()) {
-        QSettings *settings = sqlSettings[databaseId];
-        return !settings->childGroups().isEmpty();
-    }
-    return false;
+    return sqlSettings.count() > 0;
 }
 
 /*!
@@ -255,15 +248,15 @@ QSettings &TWebApplication::mongoDbSettings() const
 }
 
 /*!
-  Returns true if all the KVS database settings are valid; otherwise
-  returns false.
+  Returns true if MongoDB is available; otherwise returns false.
 */
-bool TWebApplication::isValidMongoDbSettings() const
+bool TWebApplication::isMongoDbAvailable() const
 {
-    mongoSetting->beginGroup(dbEnvironment);
-    bool valid = !mongoSetting->childKeys().isEmpty();
-    mongoSetting->endGroup();
-    return valid;
+#ifdef TF_BUILD_MONGODB
+    return (bool)mongoSetting;
+#else
+    return false;
+#endif
 }
 
 /*!

@@ -61,14 +61,15 @@ TSqlDatabasePool::TSqlDatabasePool(const QString &environment)
 
 void TSqlDatabasePool::init()
 {
+    if (!Tf::app()->isSqlDatabaseAvailable()) {
+        tSystemWarn("SQL database not available");
+        return;
+    } else {
+        tSystemInfo("SQL database available");
+    }
+
     // Adds databases previously
-
     for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
-        if (!Tf::app()->isValidSqlDatabaseSettings(j)) {
-            tSystemWarn("no settings of SQL database. ID:%d", j);
-            continue;
-        }
-
         QString type = driverType(dbEnvironment, j);
         if (type.isEmpty()) {
             continue;
@@ -96,7 +97,7 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
     QMutexLocker locker(&mutex);
     QSqlDatabase db;
 
-    if (!Tf::app()->isValidSqlDatabaseSettings(databaseId)) {
+    if (!Tf::app()->isSqlDatabaseAvailable()) {
         return db;
     }
 
@@ -145,8 +146,7 @@ bool TSqlDatabasePool::setDatabaseSettings(QSqlDatabase &database, const QString
         settings.endGroup();
         return false;
     }
-    tSystemDebug("SQL driver name: %s", qPrintable(database.driverName()));
-    tSystemDebug("DatabaseName: %s", qPrintable(databaseName));
+    tSystemDebug("SQL driver name:%s  dbname:%s", qPrintable(database.driverName()), qPrintable(databaseName));
 
     if (database.driverName().toUpper().startsWith("QSQLITE")) {
         QFileInfo fi(databaseName);

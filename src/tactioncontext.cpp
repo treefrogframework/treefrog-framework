@@ -74,6 +74,10 @@ QSqlDatabase &TActionContext::getSqlDatabase(int id)
 {
     T_TRACEFUNC("id:%d", id);
 
+    if (!Tf::app()->isSqlDatabaseAvailable()) {
+        return sqlDatabases[0];  // invalid database
+    }
+
     if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
         throw RuntimeException("error database id", __FILE__, __LINE__);
     }
