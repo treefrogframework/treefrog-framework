@@ -35,6 +35,7 @@ Configuration:
   -h, --help          display this help and exit
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
+  --enable-mongo      compile with MongoDB driver library
 
 Fine tuning of the installation directories:
   --framework=PREFIX  install framework files in PREFIX [$FRAMEWORK]
