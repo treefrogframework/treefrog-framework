@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Guess values for system-dependent variables and create Makefiles.
 #
@@ -13,6 +13,7 @@ Configuration:
   -h, --help          display this help and exit
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
+  --enable-mongo      compile with MongoDB driver library
 
 Installation directories:
   --prefix=PREFIX     install files in PREFIX [$PREFIX]
