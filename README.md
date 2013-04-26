@@ -1,4 +1,4 @@
-TreeFrog Framework - High-speed C++ MVC Framework for Web Application
+TreeFrog Framework
 ==================
 
 TreeFrog Framework is a high-speed and full-stack web application framework
@@ -7,8 +7,9 @@ programming language. In application development, it provides an O/R mapping
 system and template system on an MVC architecture, aims to achieve high
 productivity through the policy of  convention over configuration.
 
- Features
- --------
+
+Features
+--------
 
  * High performance  - High-speed web application is much better for users!
  * Framework written in C++  - Web application can be developed in C++ lang
@@ -26,13 +27,13 @@ productivity through the policy of  convention over configuration.
  * OSS  - New BSD License
 
 
- Web Site
- --------
+Web Site
+--------
  http://www.treefrogframework.org/
 
 
- MongoDB communication
- ---------------------
+MongoDB communication
+---------------------
 
  TreeFrog Framework uses MongoDB C driver to communicate with the MongoDB.
  The MongoDB C driver is a 10gen-supported driver for MongoDB. See the
