@@ -16,7 +16,7 @@ TMongoQuery::TMongoQuery(const QString &collection)
     : database(TActionContext::current()->getKvsDatabase(TKvsDatabase::MongoDB)),
       nameSpace(), queryLimit(0), queryOffset(0)
 {
-    nameSpace = database.databaseName() + '.' + collection;
+    nameSpace = database.databaseName() + '.' + collection.trimmed();
 }
 
 
