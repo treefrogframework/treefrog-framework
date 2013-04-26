@@ -217,8 +217,6 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 
         pooledConnections[type].insert(database.connectionName(), QDateTime::currentDateTime().toTime_t());
         tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
-    } else {
-        tSystemWarn("Pooled invaild KVS database  [%s:%d]", __FILE__, __LINE__);
     }
     database = TKvsDatabase();  // Sets an invalid object
 }
