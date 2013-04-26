@@ -178,14 +178,15 @@ make qmake
 
 if [ -n "$ENABLE_MONGO" ]; then
   cd $BASEDIR/3rdparty/mongo-c-driver
-  echo -n "\nCompiling MongoDB driver library ... "
+  echo
+  echo -n "Compiling MongoDB driver library ... "
   qmake mongo-c-driver.pro
   make clean >/dev/null 2>&1
   make >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
     echo "failed"
-    echo "MongoDB module not available, reconfigure without MongoDB."
+    echo "MongoDB driver not available, reconfigure without '--enable-mongo'."
     exit $RET
   fi
   echo "OK"
