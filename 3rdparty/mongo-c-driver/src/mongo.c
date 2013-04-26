@@ -1710,16 +1710,22 @@ static void digest2hex( mongo_md5_byte_t digest[16], char hex_digest[33] ) {
     hex_digest[32] = '\0';
 }
 
-static void mongo_pass_digest( const char *user, const char *pass, char hex_digest[33] ) {
+static int mongo_pass_digest( mongo *conn, const char *user, const char *pass, char hex_digest[33] ) {
     mongo_md5_state_t st;
     mongo_md5_byte_t digest[16];
 
+    if( strlen( user ) >= INT32_MAX || strlen( pass ) >= INT32_MAX ) {
+        conn->err = MONGO_BSON_TOO_LARGE;
+        return MONGO_ERROR;
+    }
     mongo_md5_init( &st );
     mongo_md5_append( &st, ( const mongo_md5_byte_t * )user, ( int )strlen( user ) );
     mongo_md5_append( &st, ( const mongo_md5_byte_t * )":mongo:", 7 );
     mongo_md5_append( &st, ( const mongo_md5_byte_t * )pass, ( int )strlen( pass ) );
     mongo_md5_finish( &st, digest );
     digest2hex( digest, hex_digest );
+    
+    return MONGO_OK;
 }
 
 MONGO_EXPORT int mongo_cmd_add_user( mongo *conn, const char *db, const char *user, const char *pass ) {
@@ -1732,7 +1738,11 @@ MONGO_EXPORT int mongo_cmd_add_user( mongo *conn, const char *db, const char *us
     strcpy( ns, db );
     strcpy( ns+strlen( db ), ".system.users" );
 
-    mongo_pass_digest( user, pass, hex_digest );
+    res = mongo_pass_digest( conn, user, pass, hex_digest );
+    if (res != MONGO_OK) {
+        free(ns);
+        return res;
+    }
 
     bson_init( &user_obj );
     bson_append_string( &user_obj, "user", user );
@@ -1770,7 +1780,15 @@ MONGO_EXPORT bson_bool_t mongo_cmd_authenticate( mongo *conn, const char *db, co
     bson_find( &it, &from_db, "nonce" );
     nonce = bson_iterator_string( &it );
 
-    mongo_pass_digest( user, pass, hex_digest );
+    result = mongo_pass_digest( conn, user, pass, hex_digest );
+    if( result != MONGO_OK ) {
+        return result;
+    }
+
+    if( strlen( nonce ) >= INT32_MAX || strlen( user ) >= INT32_MAX ) {
+        conn->err = MONGO_BSON_TOO_LARGE;
+        return MONGO_ERROR;
+    }
 
     mongo_md5_init( &st );
     mongo_md5_append( &st, ( const mongo_md5_byte_t * )nonce, ( int )strlen( nonce ) );
