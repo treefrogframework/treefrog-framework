@@ -194,7 +194,7 @@ fi
 
 cd $BASEDIR
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
-sed -i -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR\\r/" defaults/appbase.pri
+sed -i -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
