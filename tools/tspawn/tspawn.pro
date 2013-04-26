@@ -17,6 +17,10 @@ isEmpty( datadir ) {
 }
 DEFINES += TREEFROG_DATA_DIR=\\\"$$datadir\\\"
 
+!isEmpty( use_mongo ) {
+  DEFINES += TF_BUILD_MONGODB
+}
+
 isEmpty( target.path ) {
   win32 {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin

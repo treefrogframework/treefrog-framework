@@ -112,6 +112,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, filePaths,
        << L("config") + SEP + "database.ini"
        << L("config") + SEP + "development.ini"
        << L("config") + SEP + "logger.ini"
+#ifdef TF_BUILD_MONGODB
+       << L("config") + SEP + "mongodb.ini"
+#endif
        << L("config") + SEP + "routes.cfg"
        << L("config") + SEP + "validation.ini"
        << L("config") + SEP + "initializers" + SEP + "internet_media_types.ini"
