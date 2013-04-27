@@ -129,6 +129,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
 
 static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
 {
+    const QLatin1String oidkey("_id");
     bool ok = true;
     int type = value.type();
 
@@ -138,7 +139,14 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
         break;
 
     case QVariant::String:
-        bson_append_string(b, qPrintable(key), qPrintable(value.toString()));
+        if (key == oidkey) {
+            // OID
+            bson_oid_t oid;
+            bson_oid_from_string(&oid, qPrintable(value.toString()));
+            bson_append_oid(b, oidkey.latin1(), &oid);
+        } else {
+            bson_append_string(b, qPrintable(key), qPrintable(value.toString()));
+        }
         break;
 
     case QVariant::LongLong:

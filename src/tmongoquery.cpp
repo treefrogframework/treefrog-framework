@@ -88,14 +88,14 @@ bool TMongoQuery::insert(const QVariantMap &object)
 }
 
 
-bool TMongoQuery::remove(const QVariantMap &object)
+bool TMongoQuery::remove(const QVariantMap &query)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::remove : driver not loaded");
         return false;
     }
 
-    return driver()->remove(nameSpace, object);
+    return driver()->remove(nameSpace, query);
 }
 
 

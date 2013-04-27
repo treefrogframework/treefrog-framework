@@ -23,7 +23,7 @@ public:
 
     QVariantMap findOne(const QVariantMap &query, const QStringList &fields = QStringList());
     bool insert(const QVariantMap &object);
-    bool remove(const QVariantMap &object);
+    bool remove(const QVariantMap &query);
     bool update(const QVariantMap &query, const QVariantMap &object, bool upsert = false);
     bool updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert = false);
 
