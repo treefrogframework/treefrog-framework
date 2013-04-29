@@ -200,9 +200,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedDirName,
 
 
 OtamaGenerator::OtamaGenerator(const QString &view, const QString &table, const QString &dst)
+    : viewName(), tableName(table)
 {
-    tableName = (table.contains('_')) ? table.toLower() : variableNameToFieldName(table);
-    viewName = (!view.isEmpty()) ? view : fieldNameToEnumName(tableName);
+    viewName = (!view.isEmpty()) ? view : fieldNameToEnumName(table);
     dstDir.setPath(dst + viewName.toLower());
 }
 
@@ -236,14 +236,14 @@ QStringList OtamaGenerator::generateViews() const
         qWarning("Primary key not found. [table name: %s]", qPrintable(ts.tableName()));
         return files;
     }
-    
+
     FileWriter fw;
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
     QPair<QString, QString> pkFld = ts.getPrimaryKeyField();
     int autoidx = ts.autoValueIndex();
-    
+
     // Generates index.html
     QString th ,td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
     QList<QPair<QString, QString> > fields = ts.getFieldList();
@@ -279,7 +279,7 @@ QStringList OtamaGenerator::generateViews() const
         showColumn += QString("<dt>%1</dt><dd data-tf=\"@%2\">(%3)</dd><br />\n").arg(cap, mrk, var);
         showOtm += QString("@%1 ~= %2.%3()\n\n").arg(mrk, varName, var);
     }
-    
+
     output = QString(INDEX_HTML_TEMPLATE).arg(caption, th, td);
     fw.setFilePath(dstDir.filePath("index.html"));
     if (fw.write(output, false)) {

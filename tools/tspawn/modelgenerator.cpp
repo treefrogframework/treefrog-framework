@@ -293,10 +293,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedSetter,
 
 
 ModelGenerator::ModelGenerator(const QString &model, const QString &table, const QStringList &fields, const QString &dst)
-    : dstDir(dst), fieldList(fields)
+    : modelName(), tableName(table), dstDir(dst), fieldList(fields)
 {
-    tableName = (table.contains('_')) ? table.toLower() : variableNameToFieldName(table);
-    modelName = (!model.isEmpty()) ? model : fieldNameToEnumName(tableName);
+    modelName = (!model.isEmpty()) ? model : fieldNameToEnumName(table);
 }
 
 
@@ -359,7 +358,7 @@ QString ModelGenerator::generateSqlObject() const
         output += QString("        %1,\n").arg(fieldNameToEnumName(p.first));
     }
     output += QLatin1String("    };\n\n");
-    
+
     // primaryKeyIndex() method
     output += QLatin1String("    int primaryKeyIndex() const { return ");
     QString pkName = ts.primaryKeyFieldName();
@@ -377,7 +376,7 @@ QString ModelGenerator::generateSqlObject() const
         output += QLatin1String("-1; }\n");
     } else {
         output += fieldNameToEnumName(autoValue);
-        output += QLatin1String("; }\n"); 
+        output += QLatin1String("; }\n");
     }
 
     // tableName() method
@@ -388,7 +387,7 @@ QString ModelGenerator::generateSqlObject() const
     } else {
         output += "\n";
     }
-    
+
     // Property macros part
     output += QLatin1String("private:    /*** Don't modify below this line ***/\n    Q_OBJECT\n");
     it.toFront();

@@ -202,8 +202,8 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, convMethod,
     x->insert(QVariant::ByteArray, "pk.toByteArray()");
     x->insert(QVariant::String,    "pk");
     x->insert(QVariant::Date,      "QDate::fromString(pk)");
-    x->insert(QVariant::Time,      "QTime::fromString(pk)"); 
-    x->insert(QVariant::DateTime,  "QDateTime::fromString(pk)"); 
+    x->insert(QVariant::Time,      "QTime::fromString(pk)");
+    x->insert(QVariant::DateTime,  "QDateTime::fromString(pk)");
 });
 
 
@@ -214,10 +214,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, ngCtlrName,
 
 
 ControllerGenerator::ControllerGenerator(const QString &controller, const QString &table, const QStringList &actions, const QString &dst)
-    : actionList(actions), dstDir(dst)
+    : controllerName(), tableName(table), actionList(actions), dstDir(dst)
 {
-    tableName = (table.contains('_')) ? table.toLower() : variableNameToFieldName(table);
-    controllerName = (!controller.isEmpty()) ? controller: fieldNameToEnumName(tableName);
+    controllerName = (!controller.isEmpty()) ? controller: fieldNameToEnumName(table);
 }
 
 
@@ -239,7 +238,7 @@ bool ControllerGenerator::generate() const
             qWarning("Primary key not found. [table name: %s]", qPrintable(ts.tableName()));
             return false;
         }
-                
+
         // Generates a controller source code
         QString sessInsertStr;
         QString sessGetStr;
@@ -257,7 +256,7 @@ bool ControllerGenerator::generate() const
             revStr = QLatin1String(", rev");
         }
         QPair<QString, int> pair = ts.getPrimaryKeyFieldType();
-        
+
         code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
         fws.write(code, false);
         files << fws.fileName();
@@ -268,7 +267,7 @@ bool ControllerGenerator::generate() const
         for (QStringListIterator i(actionList); i.hasNext(); ) {
             actions.append("    void ").append(i.next()).append("();\n");
         }
-        
+
         QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, actions, controllerName.toLower());
         fwh.write(code, false);
         files << fwh.fileName();

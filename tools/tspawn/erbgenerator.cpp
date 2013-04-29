@@ -138,9 +138,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedDirName,
 
 
 ErbGenerator::ErbGenerator(const QString &view, const QString &table, const QString &dst)
+    : viewName(), tableName(table)
 {
-    tableName = (table.contains('_')) ? table.toLower() : variableNameToFieldName(table);
-    viewName = (!view.isEmpty()) ? view : fieldNameToEnumName(tableName);
+    viewName = (!view.isEmpty()) ? view : fieldNameToEnumName(table);
     dstDir.setPath(dst + viewName.toLower());
 }
 
