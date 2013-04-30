@@ -7,7 +7,6 @@
 
 #include <QFile>
 #include <QBuffer>
-#include <QLocale>
 #include <THttpResponse>
 #include <THttpUtility>
 #include <TSystemGlobal>
@@ -23,7 +22,7 @@
 */
 
 /*!
-  Constructor with the header \a header and the body \a body. 
+  Constructor with the header \a header and the body \a body.
 */
 THttpResponse::THttpResponse(const THttpResponseHeader &header, const QByteArray &body)
     : resHeader(header), tmpByteArray(body), bodyDevice(0)
@@ -43,7 +42,7 @@ THttpResponse::~THttpResponse()
 }
 
 /*!
-  Returns true if the body is null; otherwise returns false. 
+  Returns true if the body is null; otherwise returns false.
 */
 bool THttpResponse::isBodyNull() const
 {
@@ -57,7 +56,7 @@ void THttpResponse::setBody(const QByteArray &body)
 {
     if (bodyDevice)
         delete bodyDevice;
-    
+
     tmpByteArray = body;
     bodyDevice = (tmpByteArray.isNull()) ? 0 : new QBuffer(&tmpByteArray);
 }
@@ -79,12 +78,12 @@ void THttpResponse::setBodyFile(const QString &filePath)
             bodyDevice = fp;
             return;
         } else {
-            tSystemError("faild to open file: %s", qPrintable(filePath)); 
+            tSystemError("faild to open file: %s", qPrintable(filePath));
         }
     } else {
         tSystemError("file not found: %s", qPrintable(filePath));
     }
-    
+
     // Error
     delete fp;
 }
