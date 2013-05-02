@@ -151,7 +151,13 @@ void TActionContext::execute()
                 tSystemWarn("Reading a socket timed out after 10 seconds. Descriptor:%d", (int)httpSocket->socketDescriptor());
                 break;
             }
-            httpSocket->waitForReadyRead(100);
+
+            if (httpSocket->socketDescriptor() <= 0) {
+                tSystemWarn("Invalid descriptor (disconnected) : %d", (int)httpSocket->socketDescriptor());
+                break;
+            }
+
+            httpSocket->waitForReadyRead(10);
         }
 
         if (!httpSocket->canReadRequest()) {
@@ -180,7 +186,7 @@ void TActionContext::execute()
         TRouting rt = TUrlRoute::instance().findRouting(method, path);
         tSystemDebug("Routing: controller:%s  action:%s", rt.controller.data(),
                      rt.action.data());
-        
+
         if (rt.isEmpty()) {
             // Default URL routing
             rt.params = path.split('/');
@@ -220,7 +226,7 @@ void TActionContext::execute()
         if (currController) {
             currController->setActionName(rt.action);
             currController->setHttpRequest(httpRequest);
-            
+
             // Session
             if (currController->sessionEnabled()) {
                 TSession session;
@@ -230,11 +236,11 @@ void TActionContext::execute()
                     session = TSessionManager::instance().findSession(sessionId);
                 }
                 currController->setSession(session);
-                
+
                 // Exports flash-variant
                 currController->exportAllFlashVariants();
             }
-            
+
             // Verify authenticity token
             if (Tf::app()->appSettings().value(ENABLE_CSRF_PROTECTION_MODULE, true).toBool()
                 && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(rt.action)) {
@@ -259,25 +265,25 @@ void TActionContext::execute()
 
             // Database Transaction
             transactions.setEnabled(currController->transactionEnabled());
-            
+
             // Do filters
             if (currController->preFilter()) {
-                
+
                 // Dispathes
                 bool dispatched = ctlrDispatcher.invoke(rt.action, rt.params);
                 if (dispatched) {
                     autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
-                    
+
                     // Post fileter
                     currController->postFilter();
-                    
+
                     if (currController->rollbackRequested()) {
                         rollbackTransactions();
                     } else {
                         // Commits a transaction to the database
                         commitTransactions();
                     }
-                    
+
                     // Session store
                     if (currController->sessionEnabled()) {
                         bool stored = TSessionManager::instance().store(currController->session());
@@ -286,7 +292,7 @@ void TActionContext::execute()
                             if (TSessionManager::sessionLifeTime() > 0) {
                                 expire = QDateTime::currentDateTime().addSecs(TSessionManager::sessionLifeTime());
                             }
-                            
+
                             // Sets the path in the session cookie
                             QString cookiePath = Tf::app()->appSettings().value(SESSION_COOKIE_PATH).toString();
                             currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath);
@@ -294,7 +300,7 @@ void TActionContext::execute()
                     }
                 }
             }
-            
+
             // Sets the default status code of HTTP response
             accessLog.statusCode = (!currController->response.isBodyNull()) ? currController->statusCode() : Tf::InternalServerError;
             currController->response.header().setStatusLine(accessLog.statusCode, THttpUtility::getResponseReasonPhrase(accessLog.statusCode));
@@ -302,12 +308,10 @@ void TActionContext::execute()
             // Writes a response and access log
             accessLog.responseBytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
                                                     currController->response.bodyLength());
-            
-            httpSocket->disconnectFromHost();
 
             // Session GC
             TSessionManager::instance().collectGarbage();
-        
+
         } else {
             accessLog.statusCode = Tf::BadRequest;
 
@@ -368,7 +372,9 @@ void TActionContext::execute()
     TActionContext::releaseSqlDatabases();
     TActionContext::releaseKvsDatabases();
 
-    httpSocket->disconnectFromHost();
+    httpSocket->waitForBytesWritten();  // Flush socket
+    httpSocket->close();  // disconnect
+
     // Destorys the object in the thread which created it
     delete httpSocket;
     httpSocket = 0;
@@ -393,7 +399,7 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
         body += QByteArray::number(statusCode);
         body += ")</body></html>";
     }
-    
+
     QBuffer buf(&body);
     return writeResponse(statusCode, header, "text/html", &buf, body.length());
 }
@@ -406,7 +412,7 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
     if (!contentType.isEmpty())
         header.setContentType(contentType);
-    
+
     return writeResponse(header, body, length);
 }
 
@@ -418,11 +424,14 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
     if (httpSocket) {
         header.setContentLength(length);
         header.setRawHeader("Server", "TreeFrog server");
-        header.setRawHeader("Date", QLocale::c().toString(QDateTime::currentDateTime().toUTC(),
-                                                          QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+# if QT_VERSION >= 0x040700
+        QDateTime utc = QDateTime::currentDateTimeUtc();
+#else
+        QDateTime utc = QDateTime::currentDateTime().toUTC();
+#endif
+        header.setRawHeader("Date", QLocale(QLocale::C).toString(utc, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
         header.setRawHeader("Connection", "close");
         res = httpSocket->write(static_cast<THttpHeader*>(&header), body);
-        httpSocket->waitForBytesWritten();  // socket flush
     }
     return res;
 }
