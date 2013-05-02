@@ -17,15 +17,15 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    bool find(const QVariantMap &query, const QStringList &fields = QStringList());
+    bool find(const QVariantMap &criteria, const QStringList &fields = QStringList());
     bool next();
     QVariantMap value() const;
 
-    QVariantMap findOne(const QVariantMap &query, const QStringList &fields = QStringList());
-    bool insert(const QVariantMap &object);
-    bool remove(const QVariantMap &query);
-    bool update(const QVariantMap &query, const QVariantMap &object, bool upsert = false);
-    bool updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert = false);
+    QVariantMap findOne(const QVariantMap &criteria, const QStringList &fields = QStringList());
+    bool insert(const QVariantMap &document);
+    bool remove(const QVariantMap &criteria);
+    bool update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
+    bool updateMulti(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
 
     TMongoQuery &operator=(const TMongoQuery &other);
 

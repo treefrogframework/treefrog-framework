@@ -28,6 +28,13 @@ public:
     TKvsDatabaseData() : port(0), driver(0) { }
 };
 
+
+/*!
+  \class TKvsDatabase
+  \brief The TKvsDatabase class represents a connection to a key-value
+  store database.
+*/
+
 const char *const defaultConnection = "tf_default_connection";
 
 static QMap<QString, TKvsDatabaseData> databaseMap;

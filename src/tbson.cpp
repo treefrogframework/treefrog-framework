@@ -11,6 +11,10 @@
 #include <QStringList>
 #include "mongo.h"
 
+/*!
+  \class TBson
+  \brief The TBson class represents a Binary JSON for MongoDB.
+*/
 
 TBson::TBson()
     : bsonData(new bson)

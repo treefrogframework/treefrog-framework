@@ -21,15 +21,15 @@ public:
     void close();
     bool isOpen() const;
 
-    bool find(const QString &ns, const QVariantMap &query,
+    bool find(const QString &ns, const QVariantMap &criteria,
               const QStringList &fields, int limit, int skip, int options);
-    QVariantMap findOne(const QString &ns, const QVariantMap &query,
+    QVariantMap findOne(const QString &ns, const QVariantMap &criteria,
                         const QStringList &fields = QStringList());
     bool insert(const QString &ns, const QVariantMap &object);
     bool remove(const QString &ns, const QVariantMap &object);
-    bool update(const QString &ns, const QVariantMap &query,
+    bool update(const QString &ns, const QVariantMap &criteria,
                 const QVariantMap &object, bool upsert = false);
-    bool updateMulti(const QString &ns, const QVariantMap &query,
+    bool updateMulti(const QString &ns, const QVariantMap &criteria,
                      const QVariantMap &object, bool upsert = false);
 
     TMongoCursor &cursor() { return *mongoCursor; }

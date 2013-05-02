@@ -11,7 +11,15 @@
 #include <TActionContext>
 #include <TSystemGlobal>
 
+/*!
+  \class TMongoQuery
+  \brief The TMongoQuery class provides a means of operating a MongoDB
+  system.
+*/
 
+/*!
+  Constructs a TMongoQuery object using the collection \a collection.
+*/
 TMongoQuery::TMongoQuery(const QString &collection)
     : database(TActionContext::current()->getKvsDatabase(TKvsDatabase::MongoDB)),
       nameSpace(), queryLimit(0), queryOffset(0)
@@ -19,13 +27,17 @@ TMongoQuery::TMongoQuery(const QString &collection)
     nameSpace = database.databaseName() + '.' + collection.trimmed();
 }
 
-
+/*!
+  Copy constructor.
+*/
 TMongoQuery::TMongoQuery(const TMongoQuery &other)
     : database(other.database), nameSpace(other.nameSpace),
       queryLimit(other.queryLimit), queryOffset(other.queryOffset)
 { }
 
-
+/*!
+  Assignment operator.
+*/
 TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
 {
     database = other.database;
@@ -35,18 +47,26 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
     return *this;
 }
 
-
-bool TMongoQuery::find(const QVariantMap &query, const QStringList &fields)
+/*!
+  Finds documents by the criteria \a criteria in the collection.
+  Use the \a fields parameter to control the fields to return.
+  \sa TMongoQuery::next()
+*/
+bool TMongoQuery::find(const QVariantMap &criteria, const QStringList &fields)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::find : driver not loaded");
         return false;
     }
 
-    return driver()->find(nameSpace, query, fields, queryLimit, queryOffset, 0);
+    return driver()->find(nameSpace, criteria, fields, queryLimit, queryOffset, 0);
 }
 
-
+/*!
+  Retrieves the next document in the result set, if available, and positions
+  on the retrieved document. Returns true if the record is successfully
+  retrieved; otherwise returns false.
+*/
 bool TMongoQuery::next()
 {
     if (!database.isValid()) {
@@ -56,71 +76,94 @@ bool TMongoQuery::next()
     return driver()->cursor().next();
 }
 
-
+/*!
+  Returns the current document as a QVariantMap object.
+*/
 QVariantMap TMongoQuery::value() const
 {
-    if (!database.isValid())
+    if (!database.isValid()) {
         return QVariantMap();
+    }
 
     return driver()->cursor().value();
 }
 
-
-QVariantMap TMongoQuery::findOne(const QVariantMap &query, const QStringList &fields)
+/*!
+  Finds documents by the criteria \a criteria in the collection
+  and returns a retrieved document as a QVariantMap object.
+  Use the \a fields parameter to control the fields to return.
+*/
+QVariantMap TMongoQuery::findOne(const QVariantMap &criteria, const QStringList &fields)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::findOne : driver not loaded");
         return QVariantMap();
     }
 
-    return driver()->findOne(nameSpace, query, fields);
+    return driver()->findOne(nameSpace, criteria, fields);
 }
 
-
-bool TMongoQuery::insert(const QVariantMap &object)
+/*!
+  Inserts the document \a document into the collection.
+*/
+bool TMongoQuery::insert(const QVariantMap &document)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::insert : driver not loaded");
         return false;
     }
 
-    return driver()->insert(nameSpace, object);
+    return driver()->insert(nameSpace, document);
 }
 
-
-bool TMongoQuery::remove(const QVariantMap &query)
+/*!
+  Removes documents that matches the \a criteria from the collection.
+*/
+bool TMongoQuery::remove(const QVariantMap &criteria)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::remove : driver not loaded");
         return false;
     }
 
-    return driver()->remove(nameSpace, query);
+    return driver()->remove(nameSpace, criteria);
 }
 
-
-bool TMongoQuery::update(const QVariantMap &query, const QVariantMap &object, bool upsert)
+/*!
+  Updates an existing document of the selection criteria \a criteria in
+  the collection with new document \a document.
+  When the \a upsert is true, inserts the document in the collection
+  if no document matches the \a criteria.
+*/
+bool TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &document, bool upsert)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::update : driver not loaded");
         return false;
     }
 
-    return driver()->update(nameSpace, query, object, upsert);
+    return driver()->update(nameSpace, criteria, document, upsert);
 }
 
-
-bool TMongoQuery::updateMulti(const QVariantMap &query, const QVariantMap &object, bool upsert)
+/*!
+  Updates existing documents of the selection criteria \a criteria in
+  the collection with new document \a document.
+  When the \a upsert is true, inserts the document in the collection
+  if no document matches the \a criteria.
+*/
+bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &document, bool upsert)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::updateMulti : driver not loaded");
         return false;
     }
 
-    return driver()->updateMulti(nameSpace, query, object, upsert);
+    return driver()->updateMulti(nameSpace, criteria, document, upsert);
 }
 
-
+/*!
+  Returns the MongoDB driver associated with the TMongoQuery object.
+*/
 TMongoDriver *TMongoQuery::driver()
 {
 #ifdef TF_NO_DEBUG
@@ -134,7 +177,9 @@ TMongoDriver *TMongoQuery::driver()
 #endif
 }
 
-
+/*!
+  Returns the MongoDB driver associated with the TMongoQuery object.
+*/
 const TMongoDriver *TMongoQuery::driver() const
 {
 #ifdef TF_NO_DEBUG
@@ -147,3 +192,18 @@ const TMongoDriver *TMongoQuery::driver() const
     return driver;
 #endif
 }
+
+
+/*!
+  \fn void TMongoQuery::setLimit(int limit)
+  Sets the limit to limit, which is the limited number of documents
+  for finding documents.
+  \sa TMongoQuery::find()
+*/
+
+/*!
+  \fn void TMongoQuery::setOffset(int offset)
+  Sets the offset to offset, which is the number of documents to skip
+  for finding documents.
+  \sa TMongoQuery::find()
+*/

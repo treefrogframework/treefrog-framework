@@ -174,7 +174,8 @@ inline T TSqlORMapper<T>::value(int i) const
 }
 
 /*!
-  Sets the limit to \a limit, which is the limited number of rows.
+  Sets the limit to \a limit, which is the limited number of rows for
+  execution of SELECT statement.
 */
 template <class T>
 inline void TSqlORMapper<T>::setLimit(int limit)
@@ -183,7 +184,8 @@ inline void TSqlORMapper<T>::setLimit(int limit)
 }
 
 /*!
-  Sets the offset to \a offset, which is the number of rows to skip.
+  Sets the offset to \a offset, which is the number of rows to skip
+  for execution of SELECT statement.
 */
 template <class T>
 inline void TSqlORMapper<T>::setOffset(int offset)
@@ -289,7 +291,7 @@ inline void TSqlORMapper<T>::clear()
     sortOrder = TSql::AscendingOrder;
     queryLimit = 0;
     queryOffset = 0;
-    
+
     // Don't call the setTable() here,
     // or it causes a segmentation fault.
 }
