@@ -219,8 +219,6 @@ SOURCES += tkvsdriver.cpp
 
   HEADERS += tmongodriver.h
   SOURCES += tmongodriver.cpp
-#  HEADERS += tmongodatabase.h
-#  SOURCES += tmongodatabase.cpp
   HEADERS += tmongoquery.h
   SOURCES += tmongoquery.cpp
   HEADERS += tmongocursor.h
