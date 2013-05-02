@@ -165,11 +165,11 @@ void THttpSocket::readRequest()
             if (idx > 0) {
                 THttpRequestHeader header(readBuffer.left(idx + 4));
                 tSystemDebug("content-length: %d", header.contentLength());
-                
+
                 if (limitBodyBytes > 0 && header.contentLength() > limitBodyBytes) {
                     throw ClientErrorException(413);  // Request Entity Too Large
                 }
-                
+
                 lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - readBuffer.length(), 0LL);
 
                 if (header.contentType().trimmed().startsWith("multipart/form-data")

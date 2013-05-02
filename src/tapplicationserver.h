@@ -20,7 +20,7 @@ public:
 
     TApplicationServer(QObject *parent = 0);
     ~TApplicationServer();
-    
+
     bool open();
     bool isOpen() const;
 

@@ -79,7 +79,7 @@ inline bool TDispatcher<T>::invoke(const QString &method, const QStringList &arg
         tSystemDebug("No such method: %s", qPrintable(method));
         return false;
     } else {
-        QMetaMethod mm = ptr->metaObject()->method(idx);    
+        QMetaMethod mm = ptr->metaObject()->method(idx);
         tSystemDebug("Invoke method: %s", qPrintable(metaType + "#" + method));
         switch (argcnt) {
         case 0:

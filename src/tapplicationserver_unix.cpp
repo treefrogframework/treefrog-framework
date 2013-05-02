@@ -45,8 +45,8 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
         ::fcntl(sd, F_SETFD, 0);  // clear
     }
     ::fcntl(sd, F_SETFL, ::fcntl(sd, F_GETFL) | O_NONBLOCK);  // non-block
-    
-    server.close();    
+
+    server.close();
     return sd;
 }
 
@@ -57,7 +57,7 @@ int TApplicationServer::nativeListen(const QString &fileDomain, OpenFlag flag)
 {
     int sd = -1;
     struct sockaddr_un addr;
-    
+
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = PF_UNIX;
     if (sizeof(addr.sun_path) < (uint)fileDomain.toLatin1().size() + 1) {
@@ -77,13 +77,13 @@ int TApplicationServer::nativeListen(const QString &fileDomain, OpenFlag flag)
         ::fcntl(sd, F_SETFD, FD_CLOEXEC); // set close-on-exec flag
     }
     ::fcntl(sd, F_SETFL, ::fcntl(sd, F_GETFL) | O_NONBLOCK);  // non-block
-    
+
     QFile file(fileDomain);
     if (file.exists()) {
         file.remove();
         tSystemWarn("File for UNIX domain socket removed: %s", qPrintable(fileDomain));
     }
-    
+
     // Bind
     if (::bind(sd, (sockaddr *)&addr, sizeof(sockaddr_un)) < 0) {
         tSystemError("Bind failed  [%s:%d]", __FILE__, __LINE__);

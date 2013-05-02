@@ -103,7 +103,6 @@ bool TUrlRoute::parseConfigFile()
                 tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
                              rt.method, qPrintable(rt.path), rt.controller.data(),
                              rt.action.data(), rt.params);
-                             
 
                 if (!rt.params) {
                     if (rt.path.endsWith('/')) {
@@ -148,7 +147,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
                 && (rt.method == TRoute::Post && method != Tf::Post)) {
                 return TRouting("", "");  // reject routing
             }
-            
+
             QStringList params = path.mid(rt.path.length()).split('/');
             if (path.endsWith(QLatin1Char('/')) && !params.isEmpty()) {
                 params.removeLast();  // unuse last item
