@@ -3,6 +3,11 @@
  *
  * This software may be used and distributed according to the terms of
  * the New BSD License, which is incorporated herein by reference.
+ *
+ * Author: Darko Goleš
+ * Author: Carlos Mafla <gigo6000@hotmail.com>
+ * Author: Vo Xuan Tien <tien.xuan.vo@gmail.com>
+ * Modified by AOYAMA Kazuharu
  */
 
 #include <TPaginator>
@@ -10,16 +15,15 @@
 
 /*!
   \class TPaginator
-  \brief The TPaginator class provides simple solution to show paging toolbar.
-  This class can't be used to page data, but you can use offset and
-  limit in a query statement to page data.
-  \author Darko Goleš
-  \author Carlos Mafla <gigo6000@hotmail.com>
-  \author Vo Xuan Tien <tien.xuan.vo@gmail.com>
+  \brief The TPaginator class provides simple solution to show a paging bar.
 */
 
 /*!
-  Constructor.
+  Constructs a TPaginator object using the parameters.
+  \a itemsCount specifies the number of items.
+  \a limit specifies the maximum number of items to be shown per page.
+  \a midRange specifies the number of page numbers to be shown on a paging
+  bar, and should be an odd number.
 */
 TPaginator::TPaginator(int itemsCount, int limit, int midRange)
     : currentPage_(1)
@@ -64,7 +68,8 @@ void TPaginator::calculateNumPages()
 }
 
 /*!
-  Calculates offset (start index of items to get from database).
+  Calculates the offset that means the number of items before the first
+  item of the current page.
   Internal use only.
 */
 void TPaginator::calculateOffset()
@@ -73,7 +78,7 @@ void TPaginator::calculateOffset()
 }
 
 /*!
-  Calculates range (pages will be show in paging toolbar).
+  Calculates the range of the paging bar.
   Internal use only.
 */
 void TPaginator::calculateRange()
@@ -94,13 +99,11 @@ void TPaginator::calculateRange()
 }
 
 /*!
-  Sets number of items.
-  Notice: changing \a itemsCount maybe make number of pages and range
-  change also.
+  Sets the number of items to \a count and recalculates other parameters.
 */
-void TPaginator::setItemsCount(int itemsCount)
+void TPaginator::setItemsCount(int count)
 {
-    itemsCount_ = qMax(itemsCount, 0);
+    itemsCount_ = qMax(count, 0);
 
     // ItemsCount changes cause NumPages and Range change
     calculateNumPages();
@@ -108,9 +111,8 @@ void TPaginator::setItemsCount(int itemsCount)
 }
 
 /*!
-  Sets limit.
-  Notice: changing \a limit maybe make number of pages, offset and range
-  change also.
+  Sets the maximum number of items to be shown per page to \a limit,
+  and recalculates other parameters.
 */
 void TPaginator::setLimit(int limit)
 {
@@ -123,22 +125,21 @@ void TPaginator::setLimit(int limit)
 }
 
 /*!
-  Sets mid range (number of pages will be show in paging toolbar).
-  Notice: changing \a midRange maybe make range change also.
+  Sets the number of page numbers to \a range and recalculates other
+  parameters.
 */
-void TPaginator::setMidRange(int midRange)
+void TPaginator::setMidRange(int range)
 {
     // Change even number to larger odd number
-    midRange = qMax(midRange, 1);
-    midRange_ = midRange + (((midRange % 2) == 0) ? 1 : 0);
+    range = qMax(range, 1);
+    midRange_ = range + (((range % 2) == 0) ? 1 : 0);
 
     // MidRange changes cause Range changes
     calculateRange();
 }
 
 /*!
-  Sets current page.
-  Notice: changing \a currentPage maybe make offset range change also.
+  Sets the current page to \a page and recalculates other parameters.
 */
 void TPaginator::setCurrentPage(int page)
 {
@@ -151,90 +152,90 @@ void TPaginator::setCurrentPage(int page)
 
 /*!
   \fn int TPaginator::itemsCount() const
-  Gets number of items.
+  Returns the number of items.
 */
 
 /*!
   \fn int TPaginator::numPages() const
-  Gets number of pages.
+  Returns the total number of pages.
 */
 
 /*!
   \fn int TPaginator::limit() const
-  Gets limit (number items per page).
+  Returns the maximum number of items to be shown per page.
 */
 
 /*!
   \fn int TPaginator::offset() const
-  Gets offset (start index of items to get from database).
+  Returns the number of items before the first item of the current
+  page.
 */
 
 /*!
   \fn int TPaginator::midRange() const
-  Gets mid range (number of pages will be show in paging toolbar).
+  Returns the number of page numbers to be shown on a paging bar.
 */
 
 /*!
-  \fn int TPaginator::midRange() const
-  Gets mid range (number of pages will be show in paging toolbar).
-*/
-
-/*!
-  \fn const QList<int> &range() const
-  Gets range (pages will be show in paging toolbar).
+  \fn const QList<int> &TPaginator::range() const
+  Returns a list of page numbers to be shown on a paging bar.
 */
 
 /*!
   \fn int TPaginator::currentPage() const
-  Gets current page that items will be show.
+  Returns the current page.
 */
 
 /*!
   \fn int TPaginator::firstPage() const
-  Gets first page.
+  Returns the first page.
 */
 
 /*!
   \fn int TPaginator::previousPage() const
-  Gets the page before current page.
+  Returns the page before the current page.
 */
 
 /*!
   \fn int TPaginator::nextPage() const
-  Gets the page after current page.
+  Returns the page after current page.
 */
 
 /*!
   \fn int TPaginator::lastPage() const
-  Gets last page.
+  Returns the last page.
 */
 
 /*!
   \fn bool TPaginator::haveToPaginate() const
-  Whether paging toolbar will be display or not.
+  Returns true if the number of items is greater than the maximum
+  number of items to be shown per page; otherwise returns false.
 */
 
 /*!
-  \fn bool TPaginator::isFirstPageEnabled() const
-  Whether first page available or not.
+  \fn bool TPaginator::isFirstPage() const
+  Returns true if the current is the first page; otherwise
+  returns false.
 */
 
 /*!
   \fn bool TPaginator::hasPreviousPage() const
-  Whether previous page available or not.
+  Returns true if there is at least one page before the current page;
+  otherwise returns false.
 */
 
 /*!
   \fn bool TPaginator::hasNextPage() const
-  Whether next page available or not.
+  Returns true if there is at least one page after the current page;
+  otherwise returns false.
 */
 
 /*!
-  \fn bool TPaginator::isLastPageEnabled() const
-  Whether last page available or not.
+  \fn bool TPaginator::isLastPage() const
+  Returns true if the current is the last page; otherwise returns false.
 */
 
 /*!
   \fn bool TPaginator::isValidPage(int page) const
-  Checks if \a page is a valid page or not.
+  Returns true if \a page is a valid page; otherwise returns false.
 */

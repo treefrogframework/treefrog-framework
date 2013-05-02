@@ -13,9 +13,9 @@ public:
     virtual ~TPaginator() { }
 
     // Setter
-    void setItemsCount(int itemsCount);
+    void setItemsCount(int count);
     void setLimit(int limit);
-    void setMidRange(int midRange);
+    void setMidRange(int range);
     void setCurrentPage(int page);
 
     // Getter
@@ -32,10 +32,10 @@ public:
     int lastPage() const { return numPages_; }
 
     bool haveToPaginate() const { return (numPages_ > 1); }
-    bool isFirstPageEnabled() const { return (currentPage_ != 1); }
-    bool hasPreviousPage() const { return (currentPage_ - 1 >= 1); }
+    bool isFirstPage() const { return (currentPage_ != 1); }
+    bool hasPreviousPage() const { return (currentPage_ >= 2); }
     bool hasNextPage() const { return (currentPage_ + 1 <= numPages_); }
-    bool isLastPageEnabled() const { return (currentPage_ != numPages_); }
+    bool isLastPage() const { return (currentPage_ != numPages_); }
     bool isValidPage(int page) const { return (1 <= page && page <= numPages_); }
 
 private:
