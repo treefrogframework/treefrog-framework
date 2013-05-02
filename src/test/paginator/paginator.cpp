@@ -344,10 +344,10 @@ void TestPaginator::setCurrentPage()
     QCOMPARE(pager.nextPage(), expectedNextPage);
     QCOMPARE(pager.lastPage(), expectedLastPage);
     QCOMPARE(pager.haveToPaginate(), expectedHaveToPaginate);
-    QCOMPARE(pager.isFirstPageEnabled(), expectedIsFirstPageEnabled);
+    QCOMPARE(pager.isFirstPage(), expectedIsFirstPageEnabled);
     QCOMPARE(pager.hasPreviousPage(), expectedHasPreviousPage);
     QCOMPARE(pager.hasNextPage(), expectedHasNextPage);
-    QCOMPARE(pager.isLastPageEnabled(), expectedIsLastPageEnabled);
+    QCOMPARE(pager.isLastPage(), expectedIsLastPageEnabled);
     QCOMPARE(pager.range(), expectedRange);
 }
 
