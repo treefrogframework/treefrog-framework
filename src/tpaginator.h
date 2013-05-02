@@ -24,7 +24,7 @@ public:
     int limit() const { return limit_; }
     int offset() const { return offset_; }
     int midRange() const { return midRange_; }
-    const QList<int> &range() const { return range_; }
+    QList<int> range() const;
     int currentPage() const { return currentPage_; }
     int firstPage() const { return 1; }
     int previousPage() const { return hasPreviousPage() ? currentPage_ - 1 : 1; }
@@ -42,14 +42,12 @@ private:
     // Internal process
     void calculateNumPages();
     void calculateOffset();
-    void calculateRange();
 
     int itemsCount_;
     int numPages_;
     int limit_;
     int offset_;
     int midRange_;
-    QList<int> range_;
     int currentPage_;
 };
 

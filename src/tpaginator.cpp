@@ -38,7 +38,6 @@ TPaginator::TPaginator(int itemsCount, int limit, int midRange)
 
     calculateNumPages();
     calculateOffset();
-    calculateRange();
 }
 
 /*!
@@ -78,27 +77,6 @@ void TPaginator::calculateOffset()
 }
 
 /*!
-  Calculates the range of the paging bar.
-  Internal use only.
-*/
-void TPaginator::calculateRange()
-{
-    int startRange = currentPage_ - qFloor(midRange_ / 2);
-    int endRange = currentPage_ + qFloor(midRange_ / 2);
-
-    // If invalid start range
-    startRange = qMax(startRange, 1);
-
-    // If invalid end range
-    endRange = qMin(endRange, numPages_);
-
-    range_.clear();
-    for (int i = startRange; i <= endRange; i++) {
-        range_ << i;
-    }
-}
-
-/*!
   Sets the number of items to \a count and recalculates other parameters.
 */
 void TPaginator::setItemsCount(int count)
@@ -107,7 +85,6 @@ void TPaginator::setItemsCount(int count)
 
     // ItemsCount changes cause NumPages and Range change
     calculateNumPages();
-    calculateRange();
 }
 
 /*!
@@ -121,7 +98,6 @@ void TPaginator::setLimit(int limit)
     // Limit changes cause NumPages, Offset and Range change
     calculateNumPages();
     calculateOffset();
-    calculateRange();
 }
 
 /*!
@@ -133,9 +109,6 @@ void TPaginator::setMidRange(int range)
     // Change even number to larger odd number
     range = qMax(range, 1);
     midRange_ = range + (((range % 2) == 0) ? 1 : 0);
-
-    // MidRange changes cause Range changes
-    calculateRange();
 }
 
 /*!
@@ -147,8 +120,23 @@ void TPaginator::setCurrentPage(int page)
 
     // CurrentPage changes cause Offset and Range change
     calculateOffset();
-    calculateRange();
 }
+
+/*!
+  Returns a list of page numbers to be shown on a paging bar.
+*/
+QList<int> TPaginator::range() const
+{
+    QList<int> ret;
+    int startRange = qMax(currentPage_ - qFloor(midRange_ / 2), 1);
+    int endRange = qMin(currentPage_ + qFloor(midRange_ / 2), numPages_);
+
+    for (int i = startRange; i <= endRange; ++i) {
+        ret << i;
+    }
+    return ret;
+}
+
 
 /*!
   \fn int TPaginator::itemsCount() const
@@ -174,11 +162,6 @@ void TPaginator::setCurrentPage(int page)
 /*!
   \fn int TPaginator::midRange() const
   Returns the number of page numbers to be shown on a paging bar.
-*/
-
-/*!
-  \fn const QList<int> &TPaginator::range() const
-  Returns a list of page numbers to be shown on a paging bar.
 */
 
 /*!
