@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrog Framework
-PROJECT_NUMBER         = 1.3
+PROJECT_NUMBER         = 1.6
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -130,6 +130,13 @@ EXCLUDE                = src/test \
                          src/tjavascriptobject.h \
                          src/tcriteriaconverter.h \
                          src/tsqltransaction.h \
+                         src/tbson.h \
+                         src/tmultiplexingreceiver.h \
+                         src/tkvsdriver.h \
+                         src/tkvsdatabase.h \
+                         src/tkvsdatabasepool.h \
+                         src/tmongodriver.h \
+                         src/tmongocursor.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp
