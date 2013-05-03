@@ -277,47 +277,44 @@ void TestPaginator::setCurrentPage_data()
     QTest::addColumn<int>("expectedPreviousPage");
     QTest::addColumn<int>("expectedNextPage");
     QTest::addColumn<int>("expectedLastPage");
-    QTest::addColumn<bool>("expectedHaveToPaginate");
-    QTest::addColumn<bool>("expectedIsFirstPageEnabled");
     QTest::addColumn<bool>("expectedHasPreviousPage");
     QTest::addColumn<bool>("expectedHasNextPage");
-    QTest::addColumn<bool>("expectedIsLastPageEnabled");
     QTest::addColumn<QList<int> >("expectedRange");
 
     TPaginator pager(158, 4, 5);
     QList<int> range;
     range << 1 << 2 << 3;
-    QTest::newRow("Page < 1") << pager << -53 << 1 << 1 << 1 << 2 << 40 << true << false << false << true << true << range;
+    QTest::newRow("Page < 1") << pager << -53 << 1 << 1 << 1 << 2 << 40 << false << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
     range << 1 << 2 << 3;
-    QTest::newRow("Page = 1") << pager << 1 << 1 << 1 << 1 << 2 << 40 << true << false << false << true << true << range;
+    QTest::newRow("Page = 1") << pager << 1 << 1 << 1 << 1 << 2 << 40 << false << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
     range << 1 << 2 << 3 << 4;
-    QTest::newRow("Page <= floor(MidRange / 2)") << pager << 2 << 2 << 1 << 1 << 3 << 40 << true << true << true << true << true << range;
+    QTest::newRow("Page <= floor(MidRange / 2)") << pager << 2 << 2 << 1 << 1 << 3 << 40 << true << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
     range << 23 << 24 << 25 << 26 << 27;
-    QTest::newRow("Page > floor(MidRange / 2) && Page <= Nb.Pages - floor(MidRange / 2)") << pager << 25 << 25 << 1 << 24 << 26 << 40 << true << true << true << true << true << range;
+    QTest::newRow("Page > floor(MidRange / 2) && Page <= Nb.Pages - floor(MidRange / 2)") << pager << 25 << 25 << 1 << 24 << 26 << 40 << true << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
     range << 37 << 38 << 39 << 40;
-    QTest::newRow("Page > Nb.Pages - floor(MidRange / 2)") << pager << 39 << 39 << 1 << 38 << 40 << 40 << true << true << true << true << true << range;
+    QTest::newRow("Page > Nb.Pages - floor(MidRange / 2)") << pager << 39 << 39 << 1 << 38 << 40 << 40 << true << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
     range << 38 << 39 << 40;
-    QTest::newRow("Page = Nb.Pages") << pager << 40 << 40 << 1 << 39 << 40 << 40 << true << true << true << false << false << range;
+    QTest::newRow("Page = Nb.Pages") << pager << 40 << 40 << 1 << 39 << 40 << 40 << true << false << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
     range << 1 << 2 << 3;
-    QTest::newRow("Page > Nb.Pages") << pager << 59 << 1 << 1 << 1 << 2 << 40 << true << false << false << true << true << range;
+    QTest::newRow("Page > Nb.Pages") << pager << 59 << 1 << 1 << 1 << 2 << 40 << false << true << range;
 }
 
 void TestPaginator::setCurrentPage()
@@ -329,11 +326,8 @@ void TestPaginator::setCurrentPage()
     QFETCH(int, expectedPreviousPage);
     QFETCH(int, expectedNextPage);
     QFETCH(int, expectedLastPage);
-    QFETCH(bool, expectedHaveToPaginate);
-    QFETCH(bool, expectedIsFirstPageEnabled);
     QFETCH(bool, expectedHasPreviousPage);
     QFETCH(bool, expectedHasNextPage);
-    QFETCH(bool, expectedIsLastPageEnabled);
     QFETCH(QList<int>, expectedRange);
 
     pager.setCurrentPage(currentPage);
@@ -343,11 +337,8 @@ void TestPaginator::setCurrentPage()
     QCOMPARE(pager.previousPage(), expectedPreviousPage);
     QCOMPARE(pager.nextPage(), expectedNextPage);
     QCOMPARE(pager.lastPage(), expectedLastPage);
-    QCOMPARE(pager.haveToPaginate(), expectedHaveToPaginate);
-    QCOMPARE(pager.isFirstPage(), expectedIsFirstPageEnabled);
     QCOMPARE(pager.hasPreviousPage(), expectedHasPreviousPage);
     QCOMPARE(pager.hasNextPage(), expectedHasNextPage);
-    QCOMPARE(pager.isLastPage(), expectedIsLastPageEnabled);
     QCOMPARE(pager.range(), expectedRange);
 }
 
