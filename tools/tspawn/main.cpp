@@ -84,7 +84,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, subDirs,
        << L("views") + SEP + "partial"
        << L("views") + SEP + "_src"
        << L("helpers")
-       << L("config") 
+       << L("config")
        << L("config") + SEP + "environments"
        << L("config") + SEP + "initializers"
        << L("public")
@@ -520,33 +520,37 @@ int main(int argc, char *argv[])
             }
 
             if (success) {
+                QString msg;
                 if (!QFile("Makefile").exists()) {
-                    QProcess qmake;
+                    QProcess cmd;
                     QStringList args;
-                    args << "-recursive";
-#if defined(Q_OS_WIN32)
-                    args << "-spec" << "win32-g++";
-#elif defined(Q_OS_MAC)
-# if QT_VERSION >= 0x050000
-                    args << "-spec" << "macx-clang";
-# else
-                    args << "-spec" << "macx-g++";
-# endif
-#elif defined(Q_OS_LINUX)
-                    args << "-spec" << "linux-g++";
+                    args << "-r";
+                    args << "CONFIG+=debug";
+                    // `qmake -r CONFIG+=debug`
+                    cmd.start("qmake", args);
+                    cmd.waitForStarted();
+                    cmd.waitForFinished();
+
+                    // `make qmake`
+#ifdef Q_OS_WIN32
+                    cmd.start("mingw32-make", QStringList("qmake"));
+#else
+                    cmd.start("make", QStringList("qmake"));
 #endif
-                    args << "\"CONFIG+=debug\"";
-                    qmake.start("qmake", args);
-                    if (qmake.waitForStarted() && qmake.waitForFinished()) {
-                        if (qmake.exitStatus() == QProcess::NormalExit)
-                            printf("  created   Makefile\n");
-                    }
+                    cmd.waitForStarted();
+                    cmd.waitForFinished();
+
+                    msg = "Run 'qmake -r CONFIG+=debug' to generate a Makefile for debug mode.\nRun 'qmake -r CONFIG+=release' to generate a Makefile for release mode.";
                 }
 
                 putchar('\n');
                 int port = appSettings.value("ListenPort").toInt();
                 if (port > 0 && port <= USHRT_MAX)
                     printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(modelgen.model()));
+
+                if (!msg.isEmpty()) {
+                    puts(qPrintable(msg));
+                }
             }
             break; }
 
