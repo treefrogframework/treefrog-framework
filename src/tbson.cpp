@@ -86,8 +86,17 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             break;
 
         case BSON_DATE: {
+#if QT_VERSION >= 0x040700
             QDateTime date;
             date.setMSecsSinceEpoch(bson_iterator_date(it));
+#else
+            qint64 val = bson_iterator_date(it);
+            qint64 days = val / 86400000;  // 24*60*60*1000
+            int msecs = val % 86400000;
+            QDate dt = QDate(1970, 1, 1).addDays(days);
+            QTime tm = QTime(0, 0, 0).addMSecs(msecs);
+            QDateTime date(dt, tm, Qt::UTC);        
+#endif
             ret[key] = date;
             break; }
 
@@ -169,9 +178,19 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
         bson_append_bool(b, qPrintable(key), value.toBool());
         break;
 
-    case QVariant::DateTime:
+    case QVariant::DateTime: {
+#if QT_VERSION >= 0x040700
         bson_append_date(b, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
-        break;
+#else
+        QDateTime utcDate = value.toDateTime().toUTC();
+        qint64 ms = utcDate.time().msec();
+        qint64 tm = utcDate.toTime_t() * 1000LL;
+        if (ms > 0) {
+          tm += ms;
+        }
+        bson_append_date(b, qPrintable(key), tm);
+#endif
+        break; }
 
     case QVariant::ByteArray: {
         QByteArray ba = value.toByteArray();
