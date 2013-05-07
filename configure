@@ -183,7 +183,7 @@ if [ -n "$ENABLE_MONGO" ]; then
   cd $BASEDIR/3rdparty/mongo-c-driver
   echo
   echo -n "Compiling MongoDB driver library ... "
-  $QMAKE mongo-c-driver.pro
+  $QMAKE $OPT mongo-c-driver.pro
   make clean >/dev/null 2>&1
   make >/dev/null 2>&1
   RET=$?
