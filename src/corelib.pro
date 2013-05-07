@@ -27,6 +27,9 @@ INSTALLS += target
 win32 {
   LIBS += -lws2_32
   header.files = $$HEADER_FILES $$HEADER_CLASSES
+  !isEmpty( use_mongo ) {
+    header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+  }
   isEmpty(header.path) {
     header.path = C:/TreeFrog/$${VERSION}/include
   }
@@ -214,7 +217,15 @@ SOURCES += tkvsdriver.cpp
 
 !isEmpty( use_mongo ) {
   INCLUDEPATH += ../3rdparty/mongo-c-driver/src
-  LIBS  += ../3rdparty/mongo-c-driver/libmongoc.a
+  win32 {
+    CONFIG(debug, debug|release) {
+      LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a -lws2_32
+    } else {
+      LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a -lws2_32
+    }
+  } else {
+    LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
+  }
   DEFINES += MONGO_HAVE_STDINT TF_BUILD_MONGODB
 
   HEADERS += tmongodriver.h
