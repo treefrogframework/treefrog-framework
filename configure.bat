@@ -81,12 +81,8 @@ set TFDIR=%TFDIR:\=/%
 if not "%USE_MONGO%" == "" (
   echo Compiling MongoDB driver library ...
   cd 3rdparty\mongo-c-driver
-  if "%DEBUG%" == "yes" (
-    qmake -r "CONFIG+=debug"
-  ) else (
-    qmake -r "CONFIG+=release"
-  )
-
+  qmake -r %OPT%
+  mingw32-make clean >nul 2>&1
   mingw32-make >nul 2>&1
   if ERRORLEVEL 1 (
     echo Compile failed.
