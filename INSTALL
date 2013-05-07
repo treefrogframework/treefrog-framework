@@ -1,6 +1,6 @@
 
 Requirements
- - Windows XP/Vista/7, Linux, Mac OS X,
+ - Windows XP/Vista/7/8, Linux, Mac OS X,
    or POSIX compliant Unix-like OS
  - Qt version 4.6 or later, 5.0 or later
 
@@ -36,6 +36,10 @@ Installation
        $ make
        $ sudo make install
 
+   [Optional]
+   Run the configure script by using the '--enable-mongo' option to
+   enable the MongoDB driver of TreeFrog Framework.
+
 3. Create a shortcut to TreeFrog Command Prompt (on Windows only).
    Locate the program:
      C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
@@ -45,9 +49,14 @@ Installation
      TreeFrog commands such as tspawn or treefrog.
 
 4. Install SQL Database Drivers (if necessary)
-   If you want to use MySQL or PostgreSQL, the database driver is needed.
-   Download SQL database drivers from here.
+   If you want to use MySQL or PostgreSQL on Windows / Mac OS X, the
+   database driver is needed. Download SQL database drivers from here.
      http://www.treefrogframework.org/download
-   
    Please refer README file in the package to install the drivers.
 
+   On Linux, you can install it by 'apt-get' or 'yum'.   
+   Example:
+    $ sudo apt-get install libqt4-sql-mysql libqt4-sql-psql
+
+ 
+ Enjoy.
