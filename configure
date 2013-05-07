@@ -97,6 +97,8 @@ fi
 BASEDIR=`pwd`/`dirname $0`
 PREFIX=/usr
 FRAMEWORK=/Library/Frameworks
+[ -n "$QMAKE" ] || QMAKE=qmake
+
 if [ "$KERNEL" = "Darwin" ]; then
   LIBDIR=$FRAMEWORK
   INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
@@ -163,25 +165,25 @@ else
   OPT="$OPT CONFIG+=release"
 fi
 
-if ! which qmake >/dev/null 2>&1; then
-  echo qmake: command not found
+if ! which $QMAKE >/dev/null 2>&1; then
+  echo $QMAKE: command not found
   echo 
   exit
 fi
 
 cd $BASEDIR/src
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-qmake $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_MONGO
+$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_MONGO
 cd $BASEDIR/tools
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-qmake -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" $ENABLE_MONGO
+$QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" $ENABLE_MONGO
 make qmake
 
 if [ -n "$ENABLE_MONGO" ]; then
   cd $BASEDIR/3rdparty/mongo-c-driver
   echo
   echo -n "Compiling MongoDB driver library ... "
-  qmake mongo-c-driver.pro
+  $QMAKE mongo-c-driver.pro
   make clean >/dev/null 2>&1
   make >/dev/null 2>&1
   RET=$?
