@@ -25,6 +25,9 @@ Installation
        > cd ..\tools
        > mingw32-make instal
     
+      Or, double-click to run the build.bat after editing it for your Qt
+      environment.
+
     Linux, Mac OS X, or Unix-like OS:
       Run the following commands.
        $ cd treefrog-x.x.x
