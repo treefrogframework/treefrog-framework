@@ -29,6 +29,12 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 
 Webサイト
 ---------
+ http://www.treefrogframework.org/ja/
 
-http://www.treefrogframework.org/ja/
 
+MongoDBとの連携
+-------------
+
+TreeFrog Framework は、10gen社の支援によるMongoDBのC言語ドライバを使って、
+MongoDB とデータの受け渡しをします。そのドライバのソースコードは本パッケージに
+含まれています。詳細は README をご覧ください。

@@ -35,6 +35,6 @@ Web Site
 MongoDB communication
 ---------------------
 
- TreeFrog Framework uses MongoDB C driver to communicate with the MongoDB.
- The MongoDB C driver is a 10gen-supported driver for MongoDB. See the
- README also.
+TreeFrog Framework uses the 10gen-supported C driver to communicate with the
+MongoDB server. The source code of the driver is included in this package.
+See the README also.
