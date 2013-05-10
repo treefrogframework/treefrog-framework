@@ -148,9 +148,14 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
                 return TRouting("", "");  // reject routing
             }
 
-            QStringList params = path.mid(rt.path.length()).split('/');
-            if (path.endsWith(QLatin1Char('/')) && !params.isEmpty()) {
-                params.removeLast();  // unuse last item
+            QStringList params;
+            int len = rt.path.endsWith('/') ? rt.path.length() : rt.path.length() + 1;
+            QString paramstr = path.mid(len);
+            if (!paramstr.isEmpty()) {
+                params = paramstr.split('/');
+                if (path.endsWith(QLatin1Char('/')) && !params.isEmpty()) {
+                    params.removeLast();  // unuse last item
+                }
             }
             return TRouting(rt.controller, rt.action, params);
         }
