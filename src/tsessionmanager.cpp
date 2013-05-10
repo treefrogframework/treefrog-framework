@@ -25,9 +25,13 @@ static QByteArray randomString()
     QByteArray data;
     data.reserve(128);
 
+#if QT_VERSION >= 0x040700
+    data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));
+#else
     QDateTime now = QDateTime::currentDateTime();
     data.append(QByteArray::number(now.toTime_t()));
     data.append(QByteArray::number(now.time().msec()));
+#endif
     data.append(QHostInfo::localHostName());
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
