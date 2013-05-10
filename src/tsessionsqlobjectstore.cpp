@@ -46,11 +46,11 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id, const QDateTime &mod
     TSessionObject sess = mapper.findFirst(cri);
     if (sess.isEmpty())
         return TSession();
-    
+
     TSession result(id);
     QDataStream ds(&sess.data, QIODevice::ReadOnly);
     ds >> *static_cast<QVariantMap *>(&result);
-    return result;  
+    return result;
 }
 
 
