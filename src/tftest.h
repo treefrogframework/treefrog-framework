@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QTextCodec>
 #include <QByteArray>
+#include <QEventLoop>
 #include <TWebApplication>
 #include <TKvsDatabasePool>
 #ifdef QT_SQL_LIB
@@ -25,12 +26,21 @@ int main(int argc, char *argv[]) \
     class Thread : public TActionThread { \
     public: \
         Thread() : TActionThread(0), returnCode(0) { } \
-        int returnCode; \
+        volatile int returnCode; \
     protected: \
         virtual void run() \
         { \
             TestObject obj; \
             returnCode = QTest::qExec(&obj, QCoreApplication::arguments()); \
+            commitTransactions(); \
+            for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) { \
+                it.value().close(); /* close SQL database */ \
+            } \
+            for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) { \
+                it.value().close(); /* close KVS database */ \
+            } \
+            QEventLoop eventLoop; \
+            while (eventLoop.processEvents()) {} \
         } \
     }; \
     TWebApplication app(argc, argv); \
