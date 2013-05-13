@@ -421,7 +421,7 @@ QString TViewHelper::selfClosingTag(const QString &name, const THtmlAttribute &a
     QString string = "<";
     string += name;
     string += attributes.toString();
-    string += QLatin1String("/>");
+    string += QLatin1String(" />");
     return string;
 }
 
