@@ -23,9 +23,11 @@ public:
 
     QVariantMap findOne(const QVariantMap &criteria, const QStringList &fields = QStringList());
     bool insert(const QVariantMap &document);
-    bool remove(const QVariantMap &criteria);
     bool update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
+    bool updateById(const QVariantMap &document);
     bool updateMulti(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
+    bool remove(const QVariantMap &criteria);
+    bool removeById(const QVariantMap &document);
 
     TMongoQuery &operator=(const TMongoQuery &other);
 

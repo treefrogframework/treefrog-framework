@@ -130,6 +130,22 @@ bool TMongoQuery::remove(const QVariantMap &criteria)
 }
 
 /*!
+  Removes an existing document that matches the ObjectID of the
+  \a document from the collection.
+*/
+bool TMongoQuery::removeById(const QVariantMap &document)
+{
+    QString id = document["_id"].toString();
+    if (id.isEmpty()) {
+        return false;
+    }
+
+    QVariantMap criteria;
+    criteria["_id"] = id;
+    return remove(criteria);
+}
+
+/*!
   Updates an existing document of the selection criteria \a criteria in
   the collection with new document \a document.
   When the \a upsert is true, inserts the document in the collection
@@ -159,6 +175,22 @@ bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &do
     }
 
     return driver()->updateMulti(nameSpace, criteria, document, upsert);
+}
+
+/*!
+  Updates an existing document that matches the ObjectID with the
+  \a document.
+*/
+bool TMongoQuery::updateById(const QVariantMap &document)
+{
+    QString id = document["_id"].toString();
+    if (id.isEmpty()) {
+        return false;
+    }
+
+    QVariantMap criteria;
+    criteria["_id"] = id;
+    return update(criteria, document, false);
 }
 
 /*!
