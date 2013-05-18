@@ -1,4 +1,3 @@
-TARGET = test
 TEMPLATE = app
 CONFIG += console debug qtestlib
 CONFIG -= app_bundle
