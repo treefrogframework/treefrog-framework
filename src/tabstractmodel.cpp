@@ -14,38 +14,6 @@
   providing functionality common to models.
 */
 
-static QString propertyNameToFieldName(const QString &name)
-{
-    QString field;
-    for (int i = 0; i < name.length(); ++i) {
-        if (name[i].isUpper()) {
-            if (i > 0) {
-                field += '_';
-            }
-            field += name[i].toLower();
-        } else {
-            field += name[i];
-        }
-    }
-    return field;
-}
-
-
-static QString fieldNameToVariableName(const QString &name)
-{
-    QString var;
-    for (int i = 0; i < name.length(); ++i) {
-        if (name[i] != '_') {
-            if (i > 0 && name[i - 1] == '_') {
-                var += name[i].toUpper();
-            } else {
-                var += name[i].toLower();
-            }
-        }
-    }
-    return var;
-}
-
 /*!
   Returns true if this model is null; otherwise returns false.
  */
@@ -134,12 +102,24 @@ QVariantMap TAbstractModel::toVariantMap() const
  */
 void TAbstractModel::setProperties(const QVariantMap &properties)
 {
-    QVariantMap prop;
-    for (QMapIterator<QString, QVariant> i(properties); i.hasNext(); ) {
-        i.next();
-        prop.insert(propertyNameToFieldName(i.key()), i.value());
+    // Creates a map of the original property name and the converted name
+    QStringList soprops = data()->propertyNames();
+    QMap<QString, QString> sopropMap;
+    for (QStringListIterator it(soprops); it.hasNext(); ) {
+        const QString &orig = it.next();
+        sopropMap.insert(fieldNameToVariableName(orig), orig);
     }
-    data()->setProperties(prop);
+
+    QVariantMap props;
+    for (QMapIterator<QString, QVariant> it(properties); it.hasNext(); ) {
+        it.next();
+        const QString &p = sopropMap[it.key()];
+        if (!p.isEmpty()) {
+            props.insert(p, it.value());
+        }
+    }
+
+    data()->setProperties(props);
 }
 
 
@@ -153,7 +133,7 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
 
 /*!
   \fn virtual const TSqlObject *TAbstractModel::data() const
-  
+
   This function is reimplemented in subclasses to return a pointer
   to the data stored in the model object.
 */
