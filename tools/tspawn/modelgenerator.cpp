@@ -380,13 +380,9 @@ QString ModelGenerator::generateSqlObject() const
     }
 
     // tableName() method
-    if (fieldNameToEnumName(tableName) != modelName) {
-        output += QLatin1String("    QString tableName() const { return QLatin1String(\"");
-        output += tableName;
-        output += QLatin1String("\"); }\n\n");
-    } else {
-        output += "\n";
-    }
+    output += QLatin1String("    QString tableName() const { return QLatin1String(\"");
+    output += tableName;
+    output += QLatin1String("\"); }\n\n");
 
     // Property macros part
     output += QLatin1String("private:    /*** Don't modify below this line ***/\n    Q_OBJECT\n");
@@ -468,7 +464,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
 
         if (!excludedSetter()->contains(p.first, Qt::CaseInsensitive) && p.first != autoFieldName) {
             // Setter method
-            QString str = fieldNameToEnumName(p.first);         
+            QString str = fieldNameToEnumName(p.first);
             setgetDecl += QString("    void set%1(%2);\n").arg(str, createParam(p.second, p.first));
             setgetImpl += QString("void %1::set%2(%3)\n{\n    d->%4 = %5;\n}\n\n").arg(modelName, str, createParam(p.second, p.first), p.first, var);
 
@@ -482,8 +478,8 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
                 initParams += QString("\n    d->") + p.first + " = 0;";
             }
         }
-        
-        if (p.first == LOCK_REVISION_FIELD) 
+
+        if (p.first == LOCK_REVISION_FIELD)
             optlockMethod = true;
     }
     crtparams.chop(2);
@@ -548,7 +544,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
             getImpl += QString("    cri.add(%1Object::%2, %3);\n").arg(modelName, fieldNameToEnumName(p.first), fieldNameToVariableName(p.first));
         }
     }
-    
+
     getImpl += QString("    TSqlORMapper<%1Object> mapper;\n").arg(modelName);
     getImpl += QString("    return %1(mapper.").arg(modelName);
 
