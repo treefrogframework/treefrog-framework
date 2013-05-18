@@ -6,6 +6,7 @@
 #include <QSqlError>
 #include <QDateTime>
 #include <QVariantMap>
+#include <QStringList>
 #include <TGlobal>
 
 
@@ -27,20 +28,18 @@ public:
     bool update();
     bool remove();
     bool reload();
-    bool isNull() const { return isEmpty(); }
-    bool isNew() const { return isEmpty(); }
+    bool isNull() const { return QSqlRecord::isEmpty(); }
+    bool isNew() const { return QSqlRecord::isEmpty(); }
     bool isModified() const;
     QSqlError error() const { return sqlError; }
 
     QVariantMap toVariantMap() const;
     void setProperties(const QVariantMap &values);
+    QStringList propertyNames() const;
 
 protected:
     void syncToSqlRecord();
     void syncToObject();
-
-private:
-    mutable QString tblName;
     QSqlError sqlError;
 };
 

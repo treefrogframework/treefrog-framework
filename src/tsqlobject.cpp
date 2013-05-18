@@ -25,7 +25,7 @@
   Constructor.
  */
 TSqlObject::TSqlObject()
-    : QObject(), QSqlRecord(), tblName(), sqlError()
+    : QObject(), QSqlRecord(), sqlError()
 { }
 
 /*!
@@ -33,7 +33,7 @@ TSqlObject::TSqlObject()
  */
 TSqlObject::TSqlObject(const TSqlObject &other)
     : QObject(), QSqlRecord(*static_cast<const QSqlRecord *>(&other)),
-      tblName(other.tblName), sqlError(other.sqlError)
+      sqlError(other.sqlError)
 { }
 
 /*!
@@ -42,7 +42,6 @@ TSqlObject::TSqlObject(const TSqlObject &other)
 TSqlObject &TSqlObject::operator=(const TSqlObject &other)
 {
     QSqlRecord::operator=(*static_cast<const QSqlRecord *>(&other));
-    tblName = other.tblName;
     sqlError = other.sqlError;
     return *this;
 }
@@ -52,16 +51,16 @@ TSqlObject &TSqlObject::operator=(const TSqlObject &other)
 */
 QString TSqlObject::tableName() const
 {
-    if (tblName.isEmpty()) {
-        QString clsname(metaObject()->className());
-        for (int i = 0; i < clsname.length(); ++i) {
-            if (i > 0 && clsname[i].isUpper()) {
-                tblName += '_';
-            }
-            tblName += clsname[i].toLower();
+    QString tblName;
+    QString clsname(metaObject()->className());
+
+    for (int i = 0; i < clsname.length(); ++i) {
+        if (i > 0 && clsname[i].isUpper()) {
+            tblName += '_';
         }
-        tblName.remove(QRegExp("_object$"));
+        tblName += clsname[i].toLower();
     }
+    tblName.remove(QRegExp("_object$"));
     return tblName;
 }
 
@@ -132,7 +131,7 @@ bool TSqlObject::create()
     }
 
     syncToSqlRecord();
-    
+
     QString autoValName;
     QSqlRecord record = *this;
     if (autoValueIndex() >= 0) {
@@ -160,7 +159,7 @@ bool TSqlObject::create()
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
             if (lastid.isValid()) {
-                QObject::setProperty(autoValName.toLower().toLatin1().constData(), lastid);
+                QObject::setProperty(autoValName.toLatin1().constData(), lastid);
             }
         }
     }
@@ -193,7 +192,7 @@ bool TSqlObject::update()
         }
 
         setProperty(REVISION_PROPERTY_NAME, oldRevision + 1);
-        
+
         where.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
         where.append("=").append(TSqlQuery::formatValue(oldRevision, database));
         where.append(" AND ");
@@ -231,7 +230,7 @@ bool TSqlObject::update()
 
     upd.chop(2);
     syncToSqlRecord();
-    
+
     const char *pkName = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex()).name();
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Not found the primary key for table ") + tableName();
@@ -245,13 +244,13 @@ bool TSqlObject::update()
 
     QSqlQuery query(database);
     bool res = query.exec(upd);
-    tQueryLog("%s", qPrintable(upd));    
+    tQueryLog("%s", qPrintable(upd));
     sqlError = query.lastError();
     if (!res) {
         tSystemError("SQL update error: %s", qPrintable(sqlError.text()));
         return false;
     }
-    
+
     // Optimistic lock check
     if (revIndex >= 0 && query.numRowsAffected() != 1) {
         QString msg = QString("Row was updated or deleted from table ") + tableName() + QLatin1String(" by another transaction");
@@ -311,7 +310,7 @@ bool TSqlObject::remove()
         tSystemError("SQL delete error: %s", qPrintable(sqlError.text()));
         return false;
     }
-    
+
     // Optimistic lock check
     if (query.numRowsAffected() != 1) {
         if (revIndex >= 0) {
@@ -348,7 +347,7 @@ bool TSqlObject::isModified() const
         return false;
 
     for (int i = 0; i < QSqlRecord::count(); ++i) {
-        QString name = field(i).name().toLower();
+        QString name = field(i).name();
         int index = metaObject()->indexOfProperty(name.toLatin1().constData());
         if (index >= 0) {
             if (value(name) != property(name.toLatin1().constData())) {
@@ -368,7 +367,7 @@ void TSqlObject::syncToObject()
     int offset = metaObject()->propertyOffset();
     for (int i = 0; i < QSqlRecord::count(); ++i) {
         QString propertyName = field(i).name();
-        QByteArray name = propertyName.toLower().toLatin1();
+        QByteArray name = propertyName.toLatin1();
         int index = metaObject()->indexOfProperty(name.constData());
         if (index >= offset) {
             QObject::setProperty(name.constData(), value(propertyName));
@@ -427,3 +426,16 @@ void TSqlObject::setProperties(const QVariantMap &values)
     }
 }
 
+/*!
+  Returns a list of the property names.
+*/
+QStringList TSqlObject::propertyNames() const
+{
+    QStringList ret;
+    const QMetaObject *metaObj = metaObject();
+    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
+        const char *propName = metaObj->property(i).name();
+        ret << QLatin1String(propName);
+    }
+    return ret;
+}
