@@ -7,6 +7,7 @@ QT += sql
 QT -= gui
 
 include(../../tfbase.pri)
+INCLUDEPATH += $$header.path
 
 isEmpty( datadir ) {
   win32 {

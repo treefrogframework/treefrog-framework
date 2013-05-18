@@ -8,6 +8,7 @@
 #include <QSet>
 #include <QRegExp>
 #include <QStringList>
+#include <tabstractmodel.h>
 #include "global.h"
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QSet<QString>, upperWords,
@@ -28,16 +29,16 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QSet<QString>, lowerWords,
     x->insert("as");
     x->insert("at");
     x->insert("before");
-    x->insert("behind");	
+    x->insert("behind");
     x->insert("below");
     x->insert("beside");
     x->insert("besides");
     x->insert("between");
     x->insert("beyond");
-    x->insert("by");	
+    x->insert("by");
     x->insert("down");
     x->insert("during");
-    x->insert("except");	
+    x->insert("except");
     x->insert("for");
     x->insert("from");
     x->insert("in");
@@ -48,7 +49,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QSet<QString>, lowerWords,
     x->insert("onto");
     x->insert("or");
     x->insert("out");
-    x->insert("over");	
+    x->insert("over");
     x->insert("since");
     x->insert("than");
     x->insert("through");
@@ -68,17 +69,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QSet<QString>, lowerWords,
 
 QString fieldNameToVariableName(const QString &name)
 {
-    QString var;
-    for (int i = 0; i < name.length(); ++i) {
-        if (name[i] != '_') {
-            if (i > 0 && name[i - 1] == '_') {
-                var += name[i].toUpper();
-            } else {
-                var += name[i].toLower();
-            }
-        }
-    }
-    return var;
+    return TAbstractModel::fieldNameToVariableName(name);
 }
 
 
@@ -92,13 +83,7 @@ QString fieldNameToEnumName(const QString &name)
 }
 
 
-QString variableNameToFieldName(const QString &name)
-{
-    return enumNameToFieldName(name);
-}
-
-
-QString enumNameToFieldName(const QString &name)
+static QString enumNameToFieldName(const QString &name)
 {
     QString str;
     for (int i = 0; i < name.length(); ++i) {
@@ -125,16 +110,6 @@ QString enumNameToVariableName(const QString &name)
 }
 
 
-QString variableNameToEnumName(const QString &name)
-{
-    QString var = name;
-    if (!var.isEmpty()) {
-        var[0] = var[0].toUpper();
-    }
-    return var; 
-}
-
-
 QString fieldNameToCaption(const QString &name)
 {
     QString cap;
@@ -145,7 +120,7 @@ QString fieldNameToCaption(const QString &name)
             if (i > 0 && name[i - 1] == '_') {
                 cap += name[i].toUpper();
             } else {
-                cap += name[i].toLower();
+                cap += name[i];
             }
         }
     }
