@@ -408,6 +408,18 @@ QStringList ModelGenerator::genModel() const
     QStringList ret;
 
     QPair<QStringList, QStringList> p = createModelParams();
+#if QT_VERSION >= 0x050000
+    p.first  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+#else
+    p.first << "" << "";
+#endif
+
+#if QT_VERSION >= 0x050000
+    p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
+#else
+    p.second << "";
+#endif
+
     QString fileName = dstDir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
     ret << QFileInfo(fileName).fileName();
@@ -429,13 +441,13 @@ QStringList ModelGenerator::genUserModel(const QString &usernameField, const QSt
     p.first << QLatin1String("    QString ") + USER_VIRTUAL_METHOD + "() const { return " + userVar + "(); }\n";
 
     gen(fileName, USER_MODEL_HEADER_FILE_TEMPLATE, p.first);
-    ret << fileName;
+    ret << QFileInfo(fileName).fileName();
 
     fileName = dstDir.filePath(modelName.toLower() + ".cpp");
     p.second << fieldNameToVariableName(usernameField) << fieldNameToVariableName(passwordField)
              << fieldNameToEnumName(usernameField);
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
-    ret << fileName;
+    ret << QFileInfo(fileName).fileName();
     return ret;
 }
 
@@ -513,11 +525,6 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
 
     QStringList headerArgs;
     headerArgs << modelName.toUpper() << modelName << setgetDecl << crtparams << getparams << getOptDecl;
-#if QT_VERSION >= 0x050000
-    headerArgs << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
-#else
-    headerArgs << "" << "";
-#endif
 
     // Creates a model implementation
     QString createImpl;
@@ -529,7 +536,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
         createImpl += QString("    obj.%1 = %2;\n").arg(p.first, fieldNameToVariableName(p.first));
     }
     createImpl += "    if (!obj.create()) {\n";
-    createImpl += "        obj.clear();\n";
+    createImpl += QString("        return %1();\n").arg(modelName);
     createImpl += "    }\n";
     createImpl += QString("    return %1(obj);\n").arg(modelName);
 
@@ -557,11 +564,6 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
 
     QStringList implArgs;
     implArgs << modelName.toLower() << modelName << initParams << setgetImpl << crtparams << createImpl << getparams << getImpl << getOptImpl;
-#if QT_VERSION >= 0x050000
-    implArgs << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
-#else
-    implArgs << "";
-#endif
 
     return QPair<QStringList, QStringList>(headerArgs, implArgs);
 }
