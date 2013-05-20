@@ -89,7 +89,7 @@ void THtmlElement::clear()
 
 QString THtmlElement::attributesString() const
 {
-    QString string;   
+    QString string;
     if (!tag.isEmpty()) {
         for (int i = 0; i < attributes.count(); ++i) {
             const QPair<QString, QString> &attr = attributes.at(i);
@@ -115,12 +115,12 @@ QString THtmlElement::toString() const
     if (!tag.isEmpty()) {
         string += QLatin1Char('<');
         string += tag;
-        
+
         if (!attributes.isEmpty()) {
             string += QLatin1Char(' ');
             string += attributesString();
         }
-    
+
         // tag self-closing
         string += selfCloseMark;
         string += QLatin1Char('>');
@@ -170,7 +170,7 @@ void THtmlParser::parse(const QString &text)
     elements.resize(1);
     txt = text;
     pos = 0;
-    
+
     parse();
     //dumpHtml();
 }
@@ -288,7 +288,7 @@ void THtmlParser::parseCloseTag()
     skipWhiteSpace();
     QString tag = parseWord();
     skipUpTo(">");
-    
+
     // Finds corresponding open element
     int i = lastIndex();
     while (i > 0) {
@@ -330,7 +330,7 @@ QList<QPair<QString, QString> > THtmlParser::parseAttributes()
             QString newline = (lf == cr) ? QLatin1String("\r\n") : QLatin1String("\n");
             attrs << qMakePair(newline, QString());  // Appends the newline as a attribute
         }
-        
+
         // Appends the key-value
         QString key = parseWord();
         if (key.isEmpty()) {
@@ -445,7 +445,7 @@ int THtmlParser::depth(int i) const
 
 QString THtmlParser::toString() const
 {
-    return elementsToString(0); 
+    return elementsToString(0);
 }
 
 
@@ -462,7 +462,7 @@ QString THtmlParser::elementsToString(int index) const
         string += QLatin1Char('>');
     }
 
-    return string; 
+    return string;
 }
 
 
@@ -485,10 +485,10 @@ bool THtmlParser::parentExists(int i, const QString &tag) const
         if (e.tag.toLower() == tag.toLower()) {
             return true;
         }
-        
+
         if (pidx <= 0)
             break;
-        
+
         pidx = e.parent;
     }
     return false;
@@ -566,7 +566,7 @@ void THtmlParser::merge(const THtmlParser &other)
     if (elementCount() <= 1 || other.elementCount() <= 1 || at(1).tag != other.at(1).tag) {
         return;
     }
-    
+
     // Adds attributes
     for (int i = 0; i < other.at(1).attributes.count(); ++i) {
         const QPair<QString, QString> &p = other.at(1).attributes[i];
