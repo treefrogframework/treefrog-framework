@@ -301,6 +301,14 @@ void TActionContext::execute()
                 }
             }
 
+            // Sets charset to the content-type
+            QByteArray ctype = currController->response.header().contentType().toLower();
+            if (ctype.startsWith("text") && !ctype.contains("charset")) {
+                ctype += "; charset=";
+                ctype += Tf::app()->codecForHttpOutput()->name();
+                currController->response.header().setContentType(ctype);
+            }
+
             // Sets the default status code of HTTP response
             accessLog.statusCode = (!currController->response.isBodyNull()) ? currController->statusCode() : Tf::InternalServerError;
             currController->response.header().setStatusLine(accessLog.statusCode, THttpUtility::getResponseReasonPhrase(accessLog.statusCode));

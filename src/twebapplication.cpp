@@ -270,7 +270,7 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
 
     QString type = mediaTypes->value(ext, DEFAULT_INTERNET_MEDIA_TYPE).toString();
     if (appendCharset && type.startsWith("text", Qt::CaseInsensitive)) {
-        type += "; charset=" + appSetting->value("HtmlContentCharset").toString();
+        type += "; charset=" + Tf::app()->codecForHttpOutput()->name();
     }
     return type.toLatin1();
 }
