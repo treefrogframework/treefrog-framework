@@ -15,6 +15,11 @@
 
 #define REVISION_PROPERTY_NAME  "lock_revision"
 
+const QByteArray LockRevision(REVISION_PROPERTY_NAME);
+const QByteArray CreatedAt("created_at");
+const QByteArray UpdatedAt("updated_at");
+const QByteArray ModifiedAt("modified_at");
+
 /*!
   \class TSqlObject
   \brief The TSqlObject class is the base class of ORM objects.
@@ -115,18 +120,18 @@ void TSqlObject::setRecord(const QSqlRecord &record, const QSqlError &error)
 */
 bool TSqlObject::create()
 {
-    // Sets the default value of 'revision' property
-    int index = metaObject()->indexOfProperty(REVISION_PROPERTY_NAME);
-    if (index >= 0) {
-        setProperty(REVISION_PROPERTY_NAME, 1);  // 1 : default value
-    }
-
     // Sets the values of 'created_at', 'updated_at' or 'modified_at' properties
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
-        if (QLatin1String("created_at") == propName || QLatin1String("updated_at") == propName
-            || QLatin1String("modified_at") == propName) {
+        QByteArray prop = QByteArray(propName).toLower();
+
+        if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
             setProperty(propName, QDateTime::currentDateTime());
+        } else if (prop == LockRevision) {
+            // Sets the default value of 'revision' property
+            setProperty(REVISION_PROPERTY_NAME, 1);  // 1 : default value
+        } else {
+            // do nothing
         }
     }
 
@@ -180,30 +185,38 @@ bool TSqlObject::update()
 
     QSqlDatabase &database = TActionContext::current()->getSqlDatabase(databaseId());
     QString where(" WHERE ");
-    int revIndex = metaObject()->indexOfProperty(REVISION_PROPERTY_NAME);
-    if (revIndex >= 0) {
-        bool ok;
-        int oldRevision = property(REVISION_PROPERTY_NAME).toInt(&ok);
-        if (!ok || oldRevision <= 0) {
-            sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
-                                 QString(), QSqlError::UnknownError);
-            tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
-            return false;
-        }
-
-        setProperty(REVISION_PROPERTY_NAME, oldRevision + 1);
-
-        where.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
-        where.append("=").append(TSqlQuery::formatValue(oldRevision, database));
-        where.append(" AND ");
-    }
 
     // Updates the value of 'updated_at' or 'modified_at'property
+    bool updflag = false;
+    int revIndex = -1;
+
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
-        if (QLatin1String("updated_at") == propName || QLatin1String("modified_at") == propName) {
+        QByteArray prop = QByteArray(propName).toLower();
+
+        if (!updflag && (prop == UpdatedAt || prop == ModifiedAt)) {
             setProperty(propName, QDateTime::currentDateTime());
-            break;
+            updflag = true;
+
+        } else if (revIndex < 0 && prop == LockRevision) {
+            bool ok;
+            int oldRevision = property(REVISION_PROPERTY_NAME).toInt(&ok);
+
+            if (!ok || oldRevision <= 0) {
+                sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
+                                     QString(), QSqlError::UnknownError);
+                tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
+                return false;
+            }
+
+            setProperty(REVISION_PROPERTY_NAME, oldRevision + 1);
+            revIndex = i;
+
+            where.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
+            where.append("=").append(TSqlQuery::formatValue(oldRevision, database));
+            where.append(" AND ");
+        } else {
+            // continue
         }
     }
 
@@ -276,20 +289,30 @@ bool TSqlObject::remove()
     }
 
     del.append(" WHERE ");
-    int revIndex = metaObject()->indexOfProperty(REVISION_PROPERTY_NAME);
-    if (revIndex >= 0) {
-        bool ok;
-        int revsion = property(REVISION_PROPERTY_NAME).toInt(&ok);
-        if (!ok || revsion <= 0) {
-            sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
-                                 QString(), QSqlError::UnknownError);
-            tError("Unable to convert the 'revsion' property to an int, %s", qPrintable(objectName()));
-            return false;
-        }
+    int revIndex = -1;
 
-        del.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
-        del.append("=").append(TSqlQuery::formatValue(revsion, database));
-        del.append(" AND ");
+    for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        const char *propName = metaObject()->property(i).name();
+        QByteArray prop = QByteArray(propName).toLower();
+
+        if (prop == LockRevision) {
+            bool ok;
+            int revsion = property(REVISION_PROPERTY_NAME).toInt(&ok);
+
+            if (!ok || revsion <= 0) {
+                sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
+                                     QString(), QSqlError::UnknownError);
+                tError("Unable to convert the 'revsion' property to an int, %s", qPrintable(objectName()));
+                return false;
+            }
+
+            del.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
+            del.append("=").append(TSqlQuery::formatValue(revsion, database));
+            del.append(" AND ");
+
+            revIndex = i;
+            break;
+        }
     }
 
     const char *pkName = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex()).name();
