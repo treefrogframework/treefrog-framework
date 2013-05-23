@@ -254,7 +254,7 @@ QStringList OtamaGenerator::generateViews() const
         QString mrk = p.first.toLower();
         QString readonly;
 
-        if (!excludedColumn()->contains(p.first)) {
+        if (!excludedColumn()->contains(p.first, Qt::CaseInsensitive)) {
             th += "    <th>";
             th += cap;
             th += "</th>\n";

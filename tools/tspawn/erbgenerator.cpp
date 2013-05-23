@@ -183,16 +183,16 @@ bool ErbGenerator::generate() const
         showitems += "</dt><dd><%= ";
         showitems += varName + "." + ivar;
         showitems += "() %></dd><br />\n";
-        
-        if (!excludedColumn()->contains(p.first)) {
+
+        if (!excludedColumn()->contains(p.first, Qt::CaseInsensitive)) {
             th += "    <th>";
             th += icap;
             th += "</th>\n";
-            
+
             td += "    <td><%= i.";
             td += ivar;
             td += "() %></td>\n";
-            
+
             if (i != autoidx) {  // case of not auto-value field
                 entryitems += "  <p>\n    <label>";
                 entryitems += icap;
