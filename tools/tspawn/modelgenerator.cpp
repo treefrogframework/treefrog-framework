@@ -491,7 +491,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
             }
         }
 
-        if (p.first == LOCK_REVISION_FIELD)
+        if (p.first.toLower() == LOCK_REVISION_FIELD)
             optlockMethod = true;
     }
     crtparams.chop(2);
@@ -509,7 +509,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
     }
 
     // Creates a declaration and a implementation of 'get' method for optimistic lock
-    if (idx >= 0 &&optlockMethod) {
+    if (idx >= 0 && optlockMethod) {
         const QPair<QString, QString> &pair = fieldList[idx];
         getOptDecl = QString("    static %1 get(%2, int lockRevision);\n").arg(modelName, createParam(pair.second, pair.first));
 
