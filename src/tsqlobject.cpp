@@ -13,9 +13,7 @@
 #include <TSqlQuery>
 #include <TSystemGlobal>
 
-#define REVISION_PROPERTY_NAME  "lock_revision"
-
-const QByteArray LockRevision(REVISION_PROPERTY_NAME);
+const QByteArray LockRevision("lock_revision");
 const QByteArray CreatedAt("created_at");
 const QByteArray UpdatedAt("updated_at");
 const QByteArray ModifiedAt("modified_at");
@@ -129,7 +127,7 @@ bool TSqlObject::create()
             setProperty(propName, QDateTime::currentDateTime());
         } else if (prop == LockRevision) {
             // Sets the default value of 'revision' property
-            setProperty(REVISION_PROPERTY_NAME, 1);  // 1 : default value
+            setProperty(propName, 1);  // 1 : default value
         } else {
             // do nothing
         }
@@ -200,7 +198,7 @@ bool TSqlObject::update()
 
         } else if (revIndex < 0 && prop == LockRevision) {
             bool ok;
-            int oldRevision = property(REVISION_PROPERTY_NAME).toInt(&ok);
+            int oldRevision = property(propName).toInt(&ok);
 
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
@@ -209,10 +207,10 @@ bool TSqlObject::update()
                 return false;
             }
 
-            setProperty(REVISION_PROPERTY_NAME, oldRevision + 1);
+            setProperty(propName, oldRevision + 1);
             revIndex = i;
 
-            where.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
+            where.append(TSqlQuery::escapeIdentifier(propName, QSqlDriver::FieldName, database));
             where.append("=").append(TSqlQuery::formatValue(oldRevision, database));
             where.append(" AND ");
         } else {
@@ -297,7 +295,7 @@ bool TSqlObject::remove()
 
         if (prop == LockRevision) {
             bool ok;
-            int revsion = property(REVISION_PROPERTY_NAME).toInt(&ok);
+            int revsion = property(propName).toInt(&ok);
 
             if (!ok || revsion <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
@@ -306,7 +304,7 @@ bool TSqlObject::remove()
                 return false;
             }
 
-            del.append(TSqlQuery::escapeIdentifier(REVISION_PROPERTY_NAME, QSqlDriver::FieldName, database));
+            del.append(TSqlQuery::escapeIdentifier(propName, QSqlDriver::FieldName, database));
             del.append("=").append(TSqlQuery::formatValue(revsion, database));
             del.append(" AND ");
 
