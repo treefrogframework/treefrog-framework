@@ -330,12 +330,28 @@ int test_bson_deep_nesting( void ) {
     return 0;
 }
 
+int test_bson_oid_generated_time( void ) {
+    time_t cur_time;
+    bson_oid_t oid;
+
+    printf("\nsizeof(time_t) is %lu\n\n", (long unsigned) sizeof(time_t));
+
+    cur_time = time ( NULL );
+    bson_oid_gen(&oid);
+
+    ASSERT( bson_oid_generated_time(&oid) >= cur_time );
+    ASSERT( bson_oid_generated_time(&oid) < cur_time + 1 );
+
+    return 0;
+}
+
 int main() {
 
   test_bson_generic();
   test_bson_iterator();
   test_bson_size();
   test_bson_deep_nesting();
+  test_bson_oid_generated_time();
 
   return 0;
 }

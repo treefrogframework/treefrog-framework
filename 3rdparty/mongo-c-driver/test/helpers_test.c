@@ -43,6 +43,22 @@ void test_index_helper( mongo *conn ) {
     bson_destroy( &out );
 }
 
+void test_index_helper_invalid( mongo *conn ) {
+    int ret;
+
+    bson b, out;
+    bson_iterator it;
+
+    bson_init( &b );
+    bson_append_int( &b, "foo", -1 );
+    bson_finish( &b );
+
+    ASSERT( MONGO_ERROR == mongo_create_index( conn, "testbar", &b, NULL, MONGO_INDEX_SPARSE | MONGO_INDEX_UNIQUE, &out ));
+
+    bson_destroy( &b );
+    bson_destroy( &out );
+}
+
 int main() {
 
     mongo conn[1];
@@ -51,6 +67,7 @@ int main() {
     CONN_CLIENT_TEST;
 
     test_index_helper( conn );
+    test_index_helper_invalid( conn );
 
     mongo_destroy( conn );
 

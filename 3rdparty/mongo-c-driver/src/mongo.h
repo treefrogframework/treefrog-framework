@@ -45,6 +45,10 @@ MONGO_EXTERN_C_START
 
 #define MONGO_ERR_LEN 128
 
+#ifndef MAXHOSTNAMELEN
+    #define MAXHOSTNAMELEN 256
+#endif
+
 typedef enum mongo_error_t {
     MONGO_CONN_SUCCESS = 0,  /**< Connection success! */
     MONGO_CONN_NO_SOCKET,    /**< Could not create a socket. */
@@ -145,7 +149,7 @@ typedef struct {
 #pragma pack()
 
 typedef struct mongo_host_port {
-    char host[255];
+    char host[MAXHOSTNAMELEN];
     int port;
     struct mongo_host_port *next;
 } mongo_host_port;

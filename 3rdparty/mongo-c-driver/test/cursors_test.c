@@ -153,7 +153,7 @@ int test_bad_query( mongo *conn ) {
 
     ASSERT( mongo_cursor_next( cursor ) == MONGO_ERROR );
     ASSERT( cursor->err == MONGO_CURSOR_QUERY_FAIL );
-    ASSERT( cursor->conn->lasterrcode == 10068 );
+    ASSERT( cursor->conn->lasterrcode == 10068 || cursor->conn->lasterrcode == 16810 );
     ASSERT( strlen( cursor->conn->lasterrstr ) > 0 );
 
     mongo_cursor_destroy( cursor );

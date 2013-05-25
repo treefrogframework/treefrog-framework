@@ -628,8 +628,13 @@ MONGO_EXPORT int gridfile_get_chunksize( const gridfile *gfile ) {
     return gfile->chunkSize;
   } else {
     if( bson_find(&it, gfile->meta, "chunkSize") != BSON_EOO ) {
-      return bson_iterator_int(&it);
-  } else {  
+      int size = bson_iterator_int(&it);
+      if(size) {
+        return size;
+      } else {
+        return DEFAULT_CHUNK_SIZE;
+      }
+    } else {
       return DEFAULT_CHUNK_SIZE;
     }
   }
