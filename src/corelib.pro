@@ -68,9 +68,9 @@ win32 {
 }
 
 isEmpty( use_gui ) {
-  QT    -= gui
+  QT    -= gui widgets
 } else {
-  QT    += gui
+  QT    += gui widgets
   DEFINES += TF_USE_GUI_MODULE
 }
 
