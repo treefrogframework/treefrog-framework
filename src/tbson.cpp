@@ -95,7 +95,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             int msecs = val % 86400000;
             QDate dt = QDate(1970, 1, 1).addDays(days);
             QTime tm = QTime(0, 0, 0).addMSecs(msecs);
-            QDateTime date(dt, tm, Qt::UTC);        
+            QDateTime date(dt, tm, Qt::UTC);
 #endif
             ret[key] = date;
             break; }

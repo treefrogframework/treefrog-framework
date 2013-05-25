@@ -57,7 +57,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
             break;
 
         default:
-            tSystemDebug("MongoDB error: %s", mongoConnection->lasterrstr);
+            tSystemError("MongoDB error: %s", mongoConnection->lasterrstr);
             break;
         }
         return false;
@@ -96,7 +96,7 @@ bool TMongoDriver::find(const QString &ns, const QVariantMap &criteria, const QS
                                       (bson *)TBson::toBson(fields).data(), limit, skip, options);
     mongoCursor->setCursor(cursor);
     if (!cursor) {
-        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
     }
 
     return (bool)cursor;
@@ -112,7 +112,7 @@ QVariantMap TMongoDriver::findOne(const QString &ns, const QVariantMap &criteria
     int status = mongo_find_one(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(criteria).data(),
                                 (bson *)TBson::toBson(fields).data(), (bson *)bs.data());
     if (status != MONGO_OK) {
-        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
         return QVariantMap();
     }
     return TBson::fromBson(bs);
@@ -125,7 +125,7 @@ bool TMongoDriver::insert(const QString &ns, const QVariantMap &object)
     int status = mongo_insert(mongoConnection, qPrintable(ns),
                               (const bson *)TBson::toBson(object).constData(), 0);
     if (status != MONGO_OK) {
-        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
         return false;
     }
     return true;
@@ -138,7 +138,7 @@ bool TMongoDriver::remove(const QString &ns, const QVariantMap &object)
     int status = mongo_remove(mongoConnection, qPrintable(ns),
                               (const bson *)TBson::toBson(object).data(), 0);
     if (status != MONGO_OK) {
-        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
         return false;
     }
     return true;
@@ -153,22 +153,20 @@ bool TMongoDriver::update(const QString &ns, const QVariantMap &criteria, const 
     int status = mongo_update(mongoConnection, qPrintable(ns), (const bson *)TBson::toBson(criteria).data(),
                               (const bson *)TBson::toBson(object).data(), flag, 0);
     if (status != MONGO_OK) {
-        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
         return false;
     }
     return true;
 }
 
 
-bool TMongoDriver::updateMulti(const QString &ns, const QVariantMap &criteria, const QVariantMap &object,
-                               bool upsert)
+bool TMongoDriver::updateMulti(const QString &ns, const QVariantMap &criteria, const QVariantMap &object)
 {
     mongo_clear_errors(mongoConnection);
-    int flag = (upsert) ? (MONGO_UPDATE_UPSERT | MONGO_UPDATE_MULTI) : MONGO_UPDATE_MULTI;
     int status = mongo_update(mongoConnection, qPrintable(ns), (const bson *)TBson::toBson(criteria).data(),
-                              (const bson *)TBson::toBson(object).data(), flag, 0);
+                              (const bson *)TBson::toBson(object).data(), MONGO_UPDATE_MULTI, 0);
    if (status != MONGO_OK) {
-        tSystemDebug("MongoDB Error: %s", mongoConnection->lasterrstr);
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
         return false;
     }
    return true;

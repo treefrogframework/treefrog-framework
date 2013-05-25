@@ -30,7 +30,7 @@ public:
     bool update(const QString &ns, const QVariantMap &criteria,
                 const QVariantMap &object, bool upsert = false);
     bool updateMulti(const QString &ns, const QVariantMap &criteria,
-                     const QVariantMap &object, bool upsert = false);
+                     const QVariantMap &object);
 
     TMongoCursor &cursor() { return *mongoCursor; }
     const TMongoCursor &cursor() const { return *mongoCursor; }

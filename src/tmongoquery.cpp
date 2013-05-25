@@ -164,17 +164,23 @@ bool TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &documen
 /*!
   Updates existing documents of the selection criteria \a criteria in
   the collection with new document \a document.
-  When the \a upsert is true, inserts the document in the collection
-  if no document matches the \a criteria.
 */
-bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &document, bool upsert)
+bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &document)
 {
+    QVariantMap doc;
+
     if (!database.isValid()) {
         tSystemError("TMongoQuery::updateMulti : driver not loaded");
         return false;
     }
 
-    return driver()->updateMulti(nameSpace, criteria, document, upsert);
+    if (!document.contains(QLatin1String("$set"))) {
+        doc.insert("$set", document);
+    } else {
+        doc = document;
+    }
+
+    return driver()->updateMulti(nameSpace, criteria, doc);
 }
 
 /*!
