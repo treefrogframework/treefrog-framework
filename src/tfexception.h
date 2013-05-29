@@ -69,6 +69,27 @@ private:
 };
 
 
+class T_CORE_EXPORT KvsException : public std::exception
+{
+public:
+    KvsException(const KvsException &e)
+        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
+    KvsException(const QString &message, const char *fileName = "", int lineNumber = 0)
+        : msg(message), file(fileName), line(lineNumber) { }
+    virtual ~KvsException() throw() { }
+    QString message() const { return msg; }
+    QString fileName() const { return file; }
+    int lineNumber() const { return line; }
+    virtual void raise() const { throw *this; }
+    virtual std::exception *clone() const { return new KvsException(*this); }
+
+private:
+    QString msg;
+    QString file;
+    int line;
+};
+
+
 class T_CORE_EXPORT ClientErrorException : public std::exception
 {
 public:
