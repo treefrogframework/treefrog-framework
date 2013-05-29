@@ -184,7 +184,7 @@ bool TSqlObject::update()
     QSqlDatabase &database = TActionContext::current()->getSqlDatabase(databaseId());
     QString where(" WHERE ");
 
-    // Updates the value of 'updated_at' or 'modified_at'property
+    // Updates the value of 'updated_at' or 'modified_at' property
     bool updflag = false;
     int revIndex = -1;
 
@@ -295,17 +295,17 @@ bool TSqlObject::remove()
 
         if (prop == LockRevision) {
             bool ok;
-            int revsion = property(propName).toInt(&ok);
+            int revision = property(propName).toInt(&ok);
 
-            if (!ok || revsion <= 0) {
+            if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                                      QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revsion' property to an int, %s", qPrintable(objectName()));
+                tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
                 return false;
             }
 
             del.append(TSqlQuery::escapeIdentifier(propName, QSqlDriver::FieldName, database));
-            del.append("=").append(TSqlQuery::formatValue(revsion, database));
+            del.append("=").append(TSqlQuery::formatValue(revision, database));
             del.append(" AND ");
 
             revIndex = i;

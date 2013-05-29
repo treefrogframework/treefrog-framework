@@ -40,7 +40,7 @@ inline TSqlQuery &TSqlQuery::prepare(const QString &query)
 
 /*!
   Set the placeholder \a placeholder to be bound to value \a val in the
-  prepared statement. 
+  prepared statement.
 */
 inline TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
 {
@@ -62,7 +62,7 @@ inline TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
   Adds the value \a val to the list of values when using positional value
   binding and returns the query object. The order of the addBind() calls
   determines which placeholder a value will be bound to in the prepared
-  query. 
+  query.
 */
 inline TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 {
