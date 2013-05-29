@@ -84,22 +84,27 @@ void TMongoDriver::close()
 
 bool TMongoDriver::isOpen() const
 {
-    return (bool)mongoConnection->connected;
+    return (bool)mongo_is_connected(mongoConnection);
 }
 
 
-bool TMongoDriver::find(const QString &ns, const QVariantMap &criteria, const QStringList &fields,
-                        int limit, int skip, int options)
+int TMongoDriver::find(const QString &ns, const QVariantMap &criteria, const QStringList &fields,
+                       int limit, int skip, int options)
 {
+    int num = -1;
     mongo_clear_errors(mongoConnection);
     mongo_cursor *cursor = mongo_find(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(criteria).data(),
                                       (bson *)TBson::toBson(fields).data(), limit, skip, options);
     mongoCursor->setCursor(cursor);
+
     if (!cursor) {
         tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
+    } else {
+        if (cursor->reply) {
+            num = cursor->reply->fields.num;
+        }
     }
-
-    return (bool)cursor;
+    return num;
 }
 
 
@@ -170,4 +175,30 @@ bool TMongoDriver::updateMulti(const QString &ns, const QVariantMap &criteria, c
         return false;
     }
    return true;
+}
+
+
+int TMongoDriver::lastErrorCode() const
+{
+    return mongo_get_server_err(mongoConnection);
+}
+
+
+QString TMongoDriver::lastErrorString() const
+{
+    return QLatin1String(mongo_get_server_err_string(mongoConnection));
+}
+
+
+QVariantMap TMongoDriver::getLastCommandStatus(const QString &db)
+{
+    QVariantMap ret;
+    bson bs;
+
+    memset(&bs, 0, sizeof(bs));
+    if (mongo_cmd_get_last_error(mongoConnection, qPrintable(db), &bs) == MONGO_OK) {
+        ret = TBson::fromBson((TBsonObject *)&bs);
+    }
+    bson_destroy(&bs);
+    return ret;
 }

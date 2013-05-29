@@ -17,17 +17,20 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    bool find(const QVariantMap &criteria, const QStringList &fields = QStringList());
+    int find(const QVariantMap &criteria = QVariantMap(), const QStringList &fields = QStringList());
     bool next();
     QVariantMap value() const;
 
-    QVariantMap findOne(const QVariantMap &criteria, const QStringList &fields = QStringList());
-    bool insert(const QVariantMap &document);
+    QVariantMap findOne(const QVariantMap &criteria = QVariantMap(), const QStringList &fields = QStringList());
+    bool insert(QVariantMap &document);
     bool update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
     bool updateById(const QVariantMap &document);
     bool updateMulti(const QVariantMap &criteria, const QVariantMap &document);
-    bool remove(const QVariantMap &criteria);
+    bool remove(const QVariantMap &criteria = QVariantMap());
     bool removeById(const QVariantMap &document);
+    int numDocsAffected() const;
+    int lastErrorCode() const;
+    QString lastErrorString() const;
 
     TMongoQuery &operator=(const TMongoQuery &other);
 
@@ -40,6 +43,7 @@ private:
     QString nameSpace;
     int queryLimit;
     int queryOffset;
+    QVariantMap lastWriteStatus;
 };
 
 

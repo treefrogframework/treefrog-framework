@@ -21,8 +21,8 @@ public:
     void close();
     bool isOpen() const;
 
-    bool find(const QString &ns, const QVariantMap &criteria,
-              const QStringList &fields, int limit, int skip, int options);
+    int find(const QString &ns, const QVariantMap &criteria,
+             const QStringList &fields, int limit, int skip, int options);
     QVariantMap findOne(const QString &ns, const QVariantMap &criteria,
                         const QStringList &fields = QStringList());
     bool insert(const QString &ns, const QVariantMap &object);
@@ -31,6 +31,9 @@ public:
                 const QVariantMap &object, bool upsert = false);
     bool updateMulti(const QString &ns, const QVariantMap &criteria,
                      const QVariantMap &object);
+    int lastErrorCode() const;
+    QString lastErrorString() const;
+    QVariantMap getLastCommandStatus(const QString &db);
 
     TMongoCursor &cursor() { return *mongoCursor; }
     const TMongoCursor &cursor() const { return *mongoCursor; }

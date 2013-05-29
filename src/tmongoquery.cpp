@@ -8,8 +8,11 @@
 #include <TMongoQuery>
 #include <TMongoDriver>
 #include <TMongoCursor>
+#include <TBson>
 #include <TActionContext>
 #include <TSystemGlobal>
+
+const QLatin1String ObjectIdKey("_id");
 
 /*!
   \class TMongoQuery
@@ -48,17 +51,19 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
 }
 
 /*!
-  Finds documents by the criteria \a criteria in the collection.
-  Use the \a fields parameter to control the fields to return.
+  Finds documents by the criteria \a criteria in the collection and
+  returns the number of the documents. Use the \a fields parameter to
+  control the fields to return.
   \sa TMongoQuery::next()
 */
-bool TMongoQuery::find(const QVariantMap &criteria, const QStringList &fields)
+int TMongoQuery::find(const QVariantMap &criteria, const QStringList &fields)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::find : driver not loaded");
         return false;
     }
 
+    lastWriteStatus.clear();
     return driver()->find(nameSpace, criteria, fields, queryLimit, queryOffset, 0);
 }
 
@@ -100,20 +105,28 @@ QVariantMap TMongoQuery::findOne(const QVariantMap &criteria, const QStringList 
         return QVariantMap();
     }
 
+    lastWriteStatus.clear();
     return driver()->findOne(nameSpace, criteria, fields);
 }
 
 /*!
   Inserts the document \a document into the collection.
 */
-bool TMongoQuery::insert(const QVariantMap &document)
+bool TMongoQuery::insert(QVariantMap &document)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::insert : driver not loaded");
         return false;
     }
 
-    return driver()->insert(nameSpace, document);
+    if (!document.contains(ObjectIdKey)) {
+        // Sets Object ID
+        document.insert(ObjectIdKey, TBson::generateObjectId());
+    }
+
+    bool ret = driver()->insert(nameSpace, document);
+    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    return ret;
 }
 
 /*!
@@ -126,7 +139,9 @@ bool TMongoQuery::remove(const QVariantMap &criteria)
         return false;
     }
 
-    return driver()->remove(nameSpace, criteria);
+    bool ret = driver()->remove(nameSpace, criteria);
+    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    return ret;
 }
 
 /*!
@@ -135,13 +150,14 @@ bool TMongoQuery::remove(const QVariantMap &criteria)
 */
 bool TMongoQuery::removeById(const QVariantMap &document)
 {
-    QString id = document["_id"].toString();
+    QString id = document[ObjectIdKey].toString();
     if (id.isEmpty()) {
+        tSystemError("TMongoQuery::removeById : ObjectId not found");
         return false;
     }
 
     QVariantMap criteria;
-    criteria["_id"] = id;
+    criteria[ObjectIdKey] = id;
     return remove(criteria);
 }
 
@@ -158,7 +174,9 @@ bool TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &documen
         return false;
     }
 
-    return driver()->update(nameSpace, criteria, document, upsert);
+    bool ret = driver()->update(nameSpace, criteria, document, upsert);
+    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    return ret;
 }
 
 /*!
@@ -180,7 +198,9 @@ bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &do
         doc = document;
     }
 
-    return driver()->updateMulti(nameSpace, criteria, doc);
+    bool ret = driver()->updateMulti(nameSpace, criteria, doc);
+    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    return ret;
 }
 
 /*!
@@ -189,15 +209,42 @@ bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &do
 */
 bool TMongoQuery::updateById(const QVariantMap &document)
 {
-    QString id = document["_id"].toString();
+    QString id = document[ObjectIdKey].toString();
     if (id.isEmpty()) {
+        tSystemError("TMongoQuery::updateById : ObjectId not found");
         return false;
     }
 
     QVariantMap criteria;
-    criteria["_id"] = id;
+    criteria[ObjectIdKey] = id;
     return update(criteria, document, false);
 }
+
+/*!
+  Returns the number of documents affected by the result's Mongo statement,
+  or -1 if it cannot be determined.
+*/
+int TMongoQuery::numDocsAffected() const
+{
+    return lastWriteStatus.contains("n") ? lastWriteStatus["n"].toInt() : -1;
+}
+
+/*!
+  Returns the code of the most recent error with the current connection.
+*/
+int TMongoQuery::lastErrorCode() const
+{
+    return driver()->lastErrorCode();
+}
+
+/*!
+  Returns the string of the most recent error with the current connection.
+*/
+QString TMongoQuery::lastErrorString() const
+{
+    return driver()->lastErrorString();
+}
+
 
 /*!
   Returns the MongoDB driver associated with the TMongoQuery object.
@@ -244,4 +291,10 @@ const TMongoDriver *TMongoQuery::driver() const
   Sets the offset to offset, which is the number of documents to skip
   for finding documents.
   \sa TMongoQuery::find()
+*/
+
+
+/*!
+  \fn void TMongoQuery::lastError() const
+  Returns the VariantMap object of the error status of the last operation.
 */
