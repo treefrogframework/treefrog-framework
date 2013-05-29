@@ -236,6 +236,8 @@ SOURCES += tkvsdriver.cpp
   SOURCES += tmongocursor.cpp
   HEADERS += tbson.h
   SOURCES += tbson.cpp
+  HEADERS += tmongoobject.h
+  SOURCES += tmongoobject.cpp
 }
 
 HEADERS += \
