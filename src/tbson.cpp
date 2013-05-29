@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QRegExp>
 #include <QStringList>
+#include <QAtomicInt>
 #include "mongo.h"
 
 /*!
@@ -122,6 +123,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
         case BSON_INT:
             ret[key] = bson_iterator_int(it);
             break;
+
         case BSON_LONG:
             ret[key] = (qint64)bson_iterator_long(it);
             break;
@@ -135,6 +137,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             tError("fromBson() unknown type: %d", t);
             break;
         }
+        //tSystemDebug("fromBson : t:%d key:%s = %s", t, qPrintable(key), qPrintable(ret[key].toString()));
     }
     return ret;
 }
@@ -253,4 +256,35 @@ TBson TBson::toBson(const QStringList &lst)
 
     bson_finish((bson *)ret.data());
     return ret;
+}
+
+
+static inline int oidFuzz()
+{
+    return Tf::randXor128();
+}
+
+
+static inline int oidInc()
+{
+    static QAtomicInt incr = 1;
+    return incr.fetchAndAddRelaxed(1);
+}
+
+
+QString TBson::generateObjectId()
+{
+    static bool once = false;
+
+    if (!once) {
+        once = true;
+        bson_set_oid_fuzz(oidFuzz);
+        bson_set_oid_inc(oidInc);
+    }
+
+    bson_oid_t oid;
+    bson_oid_gen(&oid);
+
+    QByteArray oidhex = QByteArray((char *)&oid, sizeof(oid)).toHex();
+    return QLatin1String(oidhex.data());
 }

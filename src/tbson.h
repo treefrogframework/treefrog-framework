@@ -18,6 +18,7 @@ public:
     static QVariantMap fromBson(const TBson &bson);
     static TBson toBson(const QVariantMap &map);
     static TBson toBson(const QStringList &lst);
+    static QString generateObjectId();
 
 protected:
     static QVariantMap fromBson(const TBsonObject *obj);
@@ -25,6 +26,7 @@ protected:
 private:
     TBsonObject *bsonData;   // pointer to object of struct bson
 
+    friend class TMongoDriver;
     friend class TMongoCursor;
     Q_DISABLE_COPY(TBson)
 };
