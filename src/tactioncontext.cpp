@@ -365,6 +365,8 @@ void TActionContext::execute()
         accessLog.statusCode = e.statusCode();
     } catch (SqlException &e) {
         tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (KvsException &e) {
+        tError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
     } catch (SecurityException &e) {
         tError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
     } catch (RuntimeException &e) {
