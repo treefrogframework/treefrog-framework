@@ -4,9 +4,9 @@
 #include <QMetaType>
 #include <TfNamespace>
 
-#define TF_VERSION_STR "1.6.0"
-#define TF_VERSION_NUMBER 0x010600
-#define TF_SRC_REVISION 235
+#define TF_VERSION_STR "1.6.1"
+#define TF_VERSION_NUMBER 0x010601
+#define TF_SRC_REVISION 275
 
 
 #define T_DECLARE_CONTROLLER(TYPE, NAME)  \
