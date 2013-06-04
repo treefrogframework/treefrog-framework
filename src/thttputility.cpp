@@ -261,7 +261,7 @@ QByteArray THttpUtility::toMimeEncoded(const QString &input, QTextCodec *codec)
 QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
 {
     QString text;
-    
+
     if (!mime.startsWith("=?"))
         return text;
 
@@ -272,7 +272,7 @@ QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
         QTextCodec *codec = QTextCodec::codecForName(encoding);
         if (!codec)
             return text;
-        
+
         i = ++j;
         int j = mime.indexOf('?', i);
         if (j > i) {
@@ -309,7 +309,7 @@ QByteArray THttpUtility::getResponseReasonPhrase(int statusCode)
 QByteArray THttpUtility::timeZone()
 {
     long offset = 0;  // minutes
-    
+
 #if defined(Q_OS_WIN)
     TIME_ZONE_INFORMATION tzi;
     memset(&tzi, 0, sizeof(tzi));
@@ -356,7 +356,7 @@ QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &localTime)
 QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
 {
     QByteArray tz = localTime.mid(localTime.length() - 5).trimmed();
-    if (tz != timeZone()) {
+    if (!tz.contains("GMT") && tz != timeZone()) {
         tWarn("Time zone not match: %s", tz.data());
     }
     return QLocale(QLocale::C).toDateTime(localTime.left(localTime.lastIndexOf(' ')), HTTP_DATE_TIME_FORMAT);
