@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QCoreApplication>
 #include <TCryptMac>
+#include <TPopMailer>
 #include "tsmtpmailer.h"
 #include "tsystemglobal.h"
 
@@ -28,12 +29,13 @@
 */
 
 TSmtpMailer::TSmtpMailer(QObject *parent)
-    : QObject(parent), socket(new QTcpSocket), smtpPort(0), authEnable(false)
+    : QObject(parent), socket(new QTcpSocket), smtpPort(0), authEnable(false), pop(0)
 { }
 
 
 TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QTcpSocket), smtpHostName(hostName), smtpPort(port), authEnable(false)
+    : QObject(parent), socket(new QTcpSocket), smtpHostName(hostName), smtpPort(port),
+      authEnable(false), pop(0)
 { }
 
 
@@ -43,6 +45,10 @@ TSmtpMailer::~TSmtpMailer()
     if (!mailMessage.isEmpty()) {
         tSystemWarn("Mail not sent. Deleted it.");
     }
+
+    if (pop)
+        delete pop;
+
     delete socket;
 }
 
@@ -56,6 +62,26 @@ void TSmtpMailer::setHostName(const QString &hostName)
 void TSmtpMailer::setPort(quint16 port)
 {
     smtpPort = port;
+}
+
+
+void TSmtpMailer::setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable)
+{
+    if (enable) {
+        if (!pop) {
+            pop = new TPopMailer();
+        }
+
+        pop->setHostName(popServer);
+        pop->setPort(port);
+        pop->setApopEnabled(apop);
+
+    } else {
+        if (pop) {
+            delete pop;
+        }
+        pop = NULL;
+    }
 }
 
 
@@ -91,6 +117,16 @@ void TSmtpMailer::sendAndDeleteLater()
 
 bool TSmtpMailer::send()
 {
+    if (pop) {
+        // POP before SMTP
+        pop->setUserName(userName);
+        pop->setPassword(password);
+        pop->connectToHost();
+        pop->quit();
+
+        Tf::msleep(100); // sleep
+    }
+
     if (smtpHostName.isEmpty() || smtpPort <= 0) {
         tSystemError("SMTP: Bad Argument: hostname:%s port:%d", qPrintable(smtpHostName), smtpPort);
         return false;
@@ -120,7 +156,7 @@ bool TSmtpMailer::send()
         cmdQuit();
         return false;
     }
-    
+
     if (authEnable) {
         if (!cmdAuth()) {
             tSystemError("SMTP: User Authentication Failed: username:%s", userName.data());
@@ -170,7 +206,7 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 bool TSmtpMailer::connectToHost(const QString &hostName, quint16 port)
 {
     socket->connectToHost(hostName, port);
-    if (!socket->waitForConnected()) {
+    if (!socket->waitForConnected(5000)) {
         tSystemError("SMTP server connect error: %s", qPrintable(socket->errorString()));
         return false;
     }
@@ -214,7 +250,7 @@ bool TSmtpMailer::cmdAuth()
     }
 
     QList<QByteArray> reply;
-    QByteArray auth;    
+    QByteArray auth;
     bool res = false;
 
     // Try CRAM-MD5

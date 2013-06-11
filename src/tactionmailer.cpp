@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2012, AOYAMA Kazuharu
+/* Copyright (c) 2011-2013, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -14,6 +14,7 @@
 
 #define CONTROLLER_NAME "mailer"
 #define ACTIONE_NAME    "mail"
+#define PREFIX_SMTP     "ActionMailer.smtp."
 
 /*!
   \class TActionMailer
@@ -53,7 +54,7 @@ bool TActionMailer::deliver(const QString &templateName)
     TActionView *view = viewDispatcher.object();
     if (!view)
         return false;
-    
+
     view->setVariantMap(allVariants());
     QString msg = view->toString();
     if (msg.isEmpty()) {
@@ -63,26 +64,37 @@ bool TActionMailer::deliver(const QString &templateName)
 
     const QSettings &sets = Tf::app()->appSettings();
     TMailMessage mail(msg, sets.value("ActionMailer.CharacterSet", "UTF-8").toByteArray());
-    
+
     // Sets SMTP settings
     QByteArray dm = sets.value("ActionMailer.DeliveryMethod").toByteArray().toLower();
     if (dm == "smtp") {
+        // SMTP
         TSmtpMailer *mailer = new TSmtpMailer;
-        mailer->setHostName(sets.value("ActionMailer.smtp.HostName").toByteArray());
-        mailer->setPort(sets.value("ActionMailer.smtp.Port").toUInt());
-        mailer->setAuthenticationEnabled(sets.value("ActionMailer.smtp.Authentication").toBool());
-        mailer->setUserName(sets.value("ActionMailer.smtp.UserName").toByteArray());
-        mailer->setPassword(sets.value("ActionMailer.smtp.Password").toByteArray());
+        mailer->setHostName(sets.value(PREFIX_SMTP "HostName").toByteArray());
+        mailer->setPort(sets.value(PREFIX_SMTP "Port").toUInt());
+        mailer->setAuthenticationEnabled(sets.value(PREFIX_SMTP "Authentication").toBool());
+        mailer->setUserName(sets.value(PREFIX_SMTP "UserName").toByteArray());
+        mailer->setPassword(sets.value(PREFIX_SMTP "Password").toByteArray());
         tSystemDebug("%s", mail.toByteArray().data());
 
+        // POP before SMTP
+        if ( sets.value(PREFIX_SMTP "EnablePopBeforeSmtp", false).toBool() ) {
+            QByteArray popSvr = sets.value(PREFIX_SMTP "PopServer.HostName").toByteArray();
+            quint16 popPort = sets.value(PREFIX_SMTP "PopServer.Port").toInt();
+            bool apop = sets.value(PREFIX_SMTP "PopServer.EnableApop", false).toBool();
+
+            mailer->setPopBeforeSmtpAuthEnabled(popSvr, popPort, apop, true);
+        }
+
         // Sends email
-        bool delay = sets.value("ActionMailer.smtp.DelayedDelivery", false).toBool();
+        bool delay = sets.value(PREFIX_SMTP "DelayedDelivery", false).toBool();
         if (delay) {
             mailer->sendLater(mail);
         } else {
             mailer->send(mail);
             mailer->deleteLater();
         }
+
     } else if (dm == "sendmail") {
         // TODO
 

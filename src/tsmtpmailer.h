@@ -7,7 +7,7 @@
 #include <TMailMessage>
 
 class QTcpSocket;
-
+class TPopMailer;
 
 class T_CORE_EXPORT TSmtpMailer : public QObject
 {
@@ -30,6 +30,7 @@ public:
     quint16 port() const { return smtpPort; }
     void setPort(quint16 port);
     void setAuthenticationEnabled(bool enable);
+    void setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
 
@@ -57,6 +58,8 @@ protected:
     bool write(const QByteArray &command);
 
 private:
+    Q_DISABLE_COPY(TSmtpMailer)
+
     QTcpSocket *socket;
     QString smtpHostName;
     quint16 smtpPort;
@@ -65,6 +68,7 @@ private:
     bool authEnable;
     QByteArray userName;
     QByteArray password;
+    TPopMailer *pop;
 };
 
 
