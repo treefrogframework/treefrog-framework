@@ -28,14 +28,14 @@ const QByteArray ModifiedAt("modified_at");
   Constructor.
  */
 TSqlObject::TSqlObject()
-    : QObject(), QSqlRecord(), sqlError()
+    : TModelObject(), QSqlRecord(), sqlError()
 { }
 
 /*!
   Copy constructor.
  */
 TSqlObject::TSqlObject(const TSqlObject &other)
-    : QObject(), QSqlRecord(*static_cast<const QSqlRecord *>(&other)),
+    : TModelObject(), QSqlRecord(*static_cast<const QSqlRecord *>(&other)),
       sqlError(other.sqlError)
 { }
 
@@ -413,50 +413,4 @@ void TSqlObject::syncToSqlRecord()
             tWarn("invalid name: %s", propName);
         }
     }
-}
-
-/*!
-  Returns a map object of the properties.
-*/
-QVariantMap TSqlObject::toVariantMap() const
-{
-    QVariantMap ret;
-    const QMetaObject *metaObj = metaObject();
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const char *propName = metaObj->property(i).name();
-        QString n(propName);
-        if (!n.isEmpty()) {
-            ret.insert(n, QObject::property(propName));
-        }
-    }
-    return ret;
-}
-
-/*!
-  Set the \a values to the properties of the object.
-*/
-void TSqlObject::setProperties(const QVariantMap &values)
-{
-    const QMetaObject *metaObj = metaObject();
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const char *n = metaObj->property(i).name();
-        QLatin1String key(n);
-        if (values.contains(key)) {
-            QObject::setProperty(n, values[key]);
-        }
-    }
-}
-
-/*!
-  Returns a list of the property names.
-*/
-QStringList TSqlObject::propertyNames() const
-{
-    QStringList ret;
-    const QMetaObject *metaObj = metaObject();
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const char *propName = metaObj->property(i).name();
-        ret << QLatin1String(propName);
-    }
-    return ret;
 }

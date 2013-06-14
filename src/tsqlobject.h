@@ -8,9 +8,10 @@
 #include <QVariantMap>
 #include <QStringList>
 #include <TGlobal>
+#include <TModelObject>
 
 
-class T_CORE_EXPORT TSqlObject : public QObject, public QSqlRecord
+class T_CORE_EXPORT TSqlObject : public TModelObject, public QSqlRecord
 {
     Q_OBJECT
 public:
@@ -32,10 +33,6 @@ public:
     bool isNew() const { return QSqlRecord::isEmpty(); }
     bool isModified() const;
     QSqlError error() const { return sqlError; }
-
-    QVariantMap toVariantMap() const;
-    void setProperties(const QVariantMap &values);
-    QStringList propertyNames() const;
 
 protected:
     void syncToSqlRecord();
