@@ -269,7 +269,7 @@ bool TSmtpMailer::cmdAuth()
             res = true;
         }
     }
-    
+
     // Try PLAIN
     if (!res && svrAuthMethods.contains("PLAIN", Qt::CaseInsensitive)) {
         auth = "AUTH PLAIN ";
@@ -292,7 +292,7 @@ bool TSmtpMailer::cmdMail(const QByteArray &from)
 {
     if (from.isEmpty())
         return false;
-    
+
     QByteArray mail("MAIL FROM:<" + from + '>');
     return (cmd(mail) == 250);
 }
@@ -357,7 +357,7 @@ int TSmtpMailer::read(QList<QByteArray> *reply)
 {
     if (reply)
         reply->clear();
-    
+
     int code = 0;
     for (;;) {
         QByteArray rcv = socket->readLine().trimmed();
@@ -369,10 +369,10 @@ int TSmtpMailer::read(QList<QByteArray> *reply)
             }
         }
         tSystemDebug("S: %s", rcv.data());
-        
+
         if (code == 0)
             code = rcv.left(3).toInt();
-        
+
         if (rcv.length() < 4)
             break;
 
