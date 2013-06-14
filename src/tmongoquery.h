@@ -14,6 +14,7 @@ class T_CORE_EXPORT TMongoQuery
 public:
     TMongoQuery(const QString &collection);
     TMongoQuery(const TMongoQuery &other);
+    virtual ~TMongoQuery() { }
 
     void setLimit(int limit);
     void setOffset(int offset);
@@ -22,6 +23,7 @@ public:
     QVariantMap value() const;
 
     QVariantMap findOne(const QVariantMap &criteria = QVariantMap(), const QStringList &fields = QStringList());
+    QVariantMap findById(const QString &id, const QStringList &fields = QStringList());
     bool insert(QVariantMap &document);
     bool update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
     bool updateById(const QVariantMap &document);

@@ -25,7 +25,7 @@ const QLatin1String ObjectIdKey("_id");
 */
 TMongoQuery::TMongoQuery(const QString &collection)
     : database(TActionContext::current()->getKvsDatabase(TKvsDatabase::MongoDB)),
-      nameSpace(), queryLimit(0), queryOffset(0)
+      nameSpace(), queryLimit(0), queryOffset(0), lastWriteStatus()
 {
     nameSpace = database.databaseName() + '.' + collection.trimmed();
 }
@@ -35,7 +35,8 @@ TMongoQuery::TMongoQuery(const QString &collection)
 */
 TMongoQuery::TMongoQuery(const TMongoQuery &other)
     : database(other.database), nameSpace(other.nameSpace),
-      queryLimit(other.queryLimit), queryOffset(other.queryOffset)
+      queryLimit(other.queryLimit), queryOffset(other.queryOffset),
+      lastWriteStatus(other.lastWriteStatus)
 { }
 
 /*!
@@ -47,6 +48,7 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
     nameSpace = other.nameSpace;
     queryLimit = other.queryLimit;
     queryOffset = other.queryOffset;
+    lastWriteStatus = other.lastWriteStatus;
     return *this;
 }
 
@@ -107,6 +109,20 @@ QVariantMap TMongoQuery::findOne(const QVariantMap &criteria, const QStringList 
 
     lastWriteStatus.clear();
     return driver()->findOne(nameSpace, criteria, fields);
+}
+
+
+QVariantMap TMongoQuery::findById(const QString &id, const QStringList &fields)
+{
+    QVariantMap criteria;
+
+    if (id.isEmpty()) {
+        tSystemError("TMongoQuery::findById : ObjectId not found");
+        return QVariantMap();
+    }
+
+    criteria[ObjectIdKey] = id;
+    return findOne(criteria, fields);
 }
 
 /*!
@@ -226,7 +242,7 @@ bool TMongoQuery::updateById(const QVariantMap &document)
 */
 int TMongoQuery::numDocsAffected() const
 {
-    return lastWriteStatus.contains("n") ? lastWriteStatus["n"].toInt() : -1;
+    return lastWriteStatus.value(QLatin1String("n"), -1).toInt();
 }
 
 /*!
