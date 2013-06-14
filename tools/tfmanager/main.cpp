@@ -363,7 +363,7 @@ int managerMain(int argc, char *argv[])
         int cmd = options()->value(arg, Invalid);
         switch (cmd) {
         case PrintVersion:
-            printf("%s version " TF_VERSION_STR " (r%d) (built on %s)\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_SRC_REVISION, __DATE__);
+            printf("%s version " TF_VERSION_STR " (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_SRC_REVISION, __DATE__, QT_VERSION_STR);
             return 0;
             break;
 
