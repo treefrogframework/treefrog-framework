@@ -36,7 +36,7 @@ public:
     const TCriteria operator&&(const TCriteria &criteria) const;
     const TCriteria operator||(const TCriteria &criteria) const;
     TCriteria &operator=(const TCriteria &other);
-    
+
 protected:
     enum LogicalOperator {
         None = 0,
