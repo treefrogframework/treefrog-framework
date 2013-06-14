@@ -21,14 +21,14 @@ const QByteArray ModifiedAt("modified_at");
   Constructor.
 */
 TMongoObject::TMongoObject()
-    : QObject(), QVariantMap()
+    : TModelObject(), QVariantMap()
 { }
 
 /*!
   Copy constructor.
 */
 TMongoObject::TMongoObject(const TMongoObject &other)
-    : QObject(), QVariantMap(other)
+    : TModelObject(), QVariantMap(other)
 { }
 
 /*!
@@ -84,6 +84,7 @@ bool TMongoObject::create()
     }
 
     syncToVariantMap();
+    QVariantMap::remove("_id"); // remove _id to generate internally
 
     TMongoQuery mongo(collectionName());
     bool ret = mongo.insert(*this);
@@ -257,42 +258,8 @@ void TMongoObject::syncToVariantMap()
 }
 
 
-QVariantMap TMongoObject::toVariantMap() const
+void TMongoObject::clear()
 {
-    QVariantMap ret;
-    const QMetaObject *metaObj = metaObject();
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const char *propName = metaObj->property(i).name();
-        QString s(propName);
-        if (!s.isEmpty()) {
-            ret.insert(s, QObject::property(propName));
-        }
-    }
-    return ret;
-
-}
-
-
-void TMongoObject::setProperties(const QVariantMap &values)
-{
-    const QMetaObject *metaObj = metaObject();
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const char *s = metaObj->property(i).name();
-        QLatin1String key(s);
-        if (values.contains(key)) {
-            QObject::setProperty(s, values[key]);
-        }
-    }
-}
-
-
-QStringList TMongoObject::propertyNames() const
-{
-   QStringList ret;
-    const QMetaObject *metaObj = metaObject();
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const char *propName = metaObj->property(i).name();
-        ret << QLatin1String(propName);
-    }
-    return ret;
+    QVariantMap::clear();
+    objectId().clear();
 }

@@ -5,6 +5,7 @@
 #include <TGlobal>
 
 class TSqlObject;
+class TModelObject;
 
 
 class T_CORE_EXPORT TAbstractModel
@@ -18,15 +19,19 @@ public:
     virtual bool isNull() const;
     virtual bool isNew() const;
     virtual bool isSaved() const;
-    virtual QVariantMap properties() const;  // obsolete function
     virtual void setProperties(const QVariantMap &properties);
     virtual QVariantMap toVariantMap() const;
 
     static QString fieldNameToVariableName(const QString &name);
 
 protected:
-    virtual TSqlObject *data() = 0;
-    virtual const TSqlObject *data() const = 0;
+    virtual TSqlObject *data() { return NULL; }  // obsolete
+    virtual const TSqlObject *data() const { return NULL; }  // obsolete
+    virtual TModelObject *modelData() { return NULL; }
+    virtual const TModelObject *modelData() const { return NULL; }
+
+    virtual TModelObject *mdata();
+    virtual const TModelObject *mdata() const;
 };
 
 

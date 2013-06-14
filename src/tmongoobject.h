@@ -5,9 +5,10 @@
 #include <QString>
 #include <QVariant>
 #include <TGlobal>
+#include <TModelObject>
 
 
-class T_CORE_EXPORT TMongoObject : public QObject, protected QVariantMap
+class T_CORE_EXPORT TMongoObject : public TModelObject, protected QVariantMap
 {
 public:
     TMongoObject();
@@ -25,15 +26,13 @@ public:
     bool isNull() const { return objectId().isEmpty(); }
     bool isNew() const { return objectId().isEmpty(); }
     bool isModified() const;
-
-    QVariantMap toVariantMap() const;
-    void setProperties(const QVariantMap &values);
-    QStringList propertyNames() const;
+    void clear();
 
 protected:
     void setBsonData(const QVariantMap &bson);
     void syncToVariantMap();
     void syncToObject();
+    virtual QString &objectId() = 0;
 };
 
 #endif // TMONGOOBJECT_H
