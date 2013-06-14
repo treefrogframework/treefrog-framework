@@ -70,8 +70,8 @@
     "private:\n"                                         \
     "    QSharedDataPointer<%2Object> d;\n"              \
     "\n"                                                 \
-    "    TSqlObject *data();\n"                          \
-    "    const TSqlObject *data() const;\n"              \
+    "    TModelObject *modelData();\n"                   \
+    "    const TModelObject *modelData() const;\n"       \
     "};\n"                                               \
     "\n"                                                 \
     "Q_DECLARE_METATYPE(%2)\n"                           \
@@ -135,12 +135,12 @@
     "}\n"                                                     \
     "\n"                                                      \
     "%10"                                                     \
-    "TSqlObject *%2::data()\n"                                \
+    "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"                                                     \
     "\n"                                                      \
-    "const TSqlObject *%2::data() const\n"                    \
+    "const TModelObject *%2::modelData() const\n"             \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"
@@ -182,8 +182,8 @@
     "private:\n"                                         \
     "    QSharedDataPointer<%2Object> d;\n"              \
     "\n"                                                 \
-    "    TSqlObject *data();\n"                          \
-    "    const TSqlObject *data() const;\n"              \
+    "    TModelObject *modelData();\n"                   \
+    "    const TModelObject *modelData() const;\n"       \
     "};\n"                                               \
     "\n"                                                 \
     "Q_DECLARE_METATYPE(%2)\n"                           \
@@ -261,12 +261,12 @@
     "    return tfGetModelListByCriteria<%2, %2Object>();\n"  \
     "}\n"                                                     \
     "\n"                                                      \
-    "TSqlObject *%2::data()\n"                                \
+    "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"                                                     \
     "\n"                                                      \
-    "const TSqlObject *%2::data() const\n"                    \
+    "const TModelObject *%2::modelData() const\n"             \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"
