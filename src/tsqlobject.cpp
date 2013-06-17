@@ -210,7 +210,7 @@ bool TSqlObject::update()
             setProperty(propName, oldRevision + 1);
             revIndex = i;
 
-            where.append(TSqlQuery::escapeIdentifier(propName, QSqlDriver::FieldName, database));
+            where.append(QLatin1String(propName));
             where.append("=").append(TSqlQuery::formatValue(oldRevision, database));
             where.append(" AND ");
         } else {
@@ -227,7 +227,7 @@ bool TSqlObject::update()
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
         if (recval.isValid() && recval != newval) {
-            upd.append(TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database));
+            upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
             upd.append(TSqlQuery::formatValue(newval, database));
             upd.append(QLatin1String(", "));
@@ -249,7 +249,7 @@ bool TSqlObject::update()
         tError("%s", qPrintable(msg));
         return false;
     }
-    where.append(TSqlQuery::escapeIdentifier(pkName, QSqlDriver::FieldName, database));
+    where.append(QLatin1String(pkName));
     where.append("=").append(TSqlQuery::formatValue(property(pkName), database));
     upd.append(where);
 
@@ -304,7 +304,7 @@ bool TSqlObject::remove()
                 return false;
             }
 
-            del.append(TSqlQuery::escapeIdentifier(propName, QSqlDriver::FieldName, database));
+            del.append(QLatin1String(propName));
             del.append("=").append(TSqlQuery::formatValue(revision, database));
             del.append(" AND ");
 
@@ -320,7 +320,7 @@ bool TSqlObject::remove()
         tError("%s", qPrintable(msg));
         return false;
     }
-    del.append(TSqlQuery::escapeIdentifier(pkName, QSqlDriver::FieldName, database));
+    del.append(QLatin1String(pkName));
     del.append("=").append(TSqlQuery::formatValue(property(pkName), database));
 
     QSqlQuery query(database);

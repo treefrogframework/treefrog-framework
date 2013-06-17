@@ -125,7 +125,6 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
         if (name.isEmpty()) {
             return QString();
         }
-        name = TSqlQuery::escapeIdentifier(name, QSqlDriver::FieldName, database);
         
         if (cri.op1 != TSql::Invalid && cri.op2 != TSql::Invalid && !cri.val1.isNull()) {
             sqlString += criteriaToString(name, (TSql::ComparisonOperator)cri.op1, (TSql::ComparisonOperator)cri.op2, cri.val1, database);
@@ -151,8 +150,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
             case TSql::In:
             case TSql::NotIn: {
                 QString str;
-                QList<QVariant> list;
-                QListIterator<QVariant> i(list);
+                QList<QVariant> lst = cri.val1.toList();
+                QListIterator<QVariant> i(lst);
                 while (i.hasNext()) {
                     QString s = TSqlQuery::formatValue(i.next(), database);
                     if (!s.isEmpty()) {
@@ -173,9 +172,9 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
             case TSql::NotILikeEscape:
             case TSql::Between:
             case TSql::NotBetween: {
-                QList<QVariant> list = cri.val1.toList();
-                if (list.count() == 2) {
-                    sqlString += criteriaToString(name, (TSql::ComparisonOperator)cri.op1, list[0], list[1], database);
+                QList<QVariant> lst = cri.val1.toList();
+                if (lst.count() == 2) {
+                    sqlString += criteriaToString(name, (TSql::ComparisonOperator)cri.op1, lst[0], lst[1], database);
                 }
                 break; }
                 
