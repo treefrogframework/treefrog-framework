@@ -3,9 +3,11 @@
 
 #include <QtSql>
 #include <QList>
+#include <QPair>
 #include <TSqlObject>
 #include <TCriteria>
 #include <TCriteriaConverter>
+#include <TSqlQuery>
 #include <TActionContext>
 #include "tsystemglobal.h"
 
@@ -32,11 +34,22 @@ public:
     void reset();
 
     T findFirst(const TCriteria &cri = TCriteria());
+    T findFirstBy(int column, QVariant value);
     T findByPrimaryKey(QVariant pk);
     int find(const TCriteria &cri = TCriteria());
+    int findBy(int column, QVariant value);
+    int findIn(int column, const QVariantList &values);
     T first() const;
     T last() const;
     T value(int i) const;
+
+    int findCount(const TCriteria &cri = TCriteria());
+    int findCountBy(int column, QVariant value);
+    QList<T> findAll(const TCriteria &cri = TCriteria());
+    QList<T> findAllBy(int column, QVariant value);
+    QList<T> findAllIn(int column, const QVariantList &values);
+    int updateAll(const TCriteria &cri, int column, QVariant value);
+    int updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values);
     int removeAll(const TCriteria &cri = TCriteria());
 
 protected:
@@ -69,7 +82,9 @@ inline TSqlORMapper<T>::TSqlORMapper()
     setTable(T().tableName());
 }
 
-
+/*!
+  Destructor.
+*/
 template <class T>
 inline TSqlORMapper<T>::~TSqlORMapper()
 { }
@@ -84,6 +99,8 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
     if (!cri.isEmpty()) {
         TCriteriaConverter<T> conv(cri, database());
         setFilter(conv.toString());
+    } else {
+        setFilter(QString());
     }
 
     int oldLimit = queryLimit;
@@ -93,6 +110,16 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
 
     tSystemDebug("rowCount: %d", rowCount());
     return first();
+}
+
+/*!
+  Returns the first ORM object retrieved with the criteria for the
+  \a column as the \a value in the table.
+*/
+template <class T>
+inline T TSqlORMapper<T>::findFirstBy(int column, QVariant value)
+{
+    return findFirst(TCriteria(column, value));
 }
 
 /*!
@@ -108,16 +135,11 @@ inline T TSqlORMapper<T>::findByPrimaryKey(QVariant pk)
         return T();
     }
 
-    TCriteria cri(idx, pk);
-    TCriteriaConverter<T> conv(cri, database());
-    setFilter(conv.toString());
-    select();
-    tSystemDebug("findByPrimaryKey() rowCount: %d", rowCount());
-    return first();
+    return findFirst(TCriteria(idx, pk));
 }
 
 /*!
-  Retrieves with the criteria \a cri from the table and returns 
+  Retrieves with the criteria \a cri from the table and returns
   the number of the ORM objects. TSqlORMapperIterator is used to get
   the retrieved ORM objects.
   \sa TSqlORMapperIterator
@@ -128,12 +150,39 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
     if (!cri.isEmpty()) {
         TCriteriaConverter<T> conv(cri, database());
         setFilter(conv.toString());
+    } else {
+        setFilter(QString());
     }
+
     if (!select()) {
         return -1;
     }
     tSystemDebug("rowCount: %d", rowCount());
     return rowCount();
+}
+
+/*!
+  Retrieves with the criteria for the \a column as the \a value in the
+  table and returns the number of the ORM objects. TSqlORMapperIterator
+  is used to get the retrieved ORM objects.
+  \sa TSqlORMapperIterator
+*/
+template <class T>
+inline int TSqlORMapper<T>::findBy(int column, QVariant value)
+{
+    return find(TCriteria(column, value));
+}
+
+/*!
+  Retrieves with the criteria that the \a column is within the list of values
+  \a values returns the number of the ORM objects. TSqlORMapperIterator is
+  used to get the retrieved ORM objects.
+  \sa TSqlORMapperIterator
+*/
+template <class T>
+inline int TSqlORMapper<T>::findIn(int column, const QVariantList &values)
+{
+    return find(TCriteria(column, TSql::In, values));
 }
 
 /*!
@@ -242,6 +291,146 @@ inline QString TSqlORMapper<T>::selectStatement() const
 }
 
 /*!
+  Returns the number of records retrieved with the criteria \a cri
+  from the table.
+*/
+template <class T>
+inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
+{
+    int cnt = -1;
+    QString query = "SELECT COUNT(1) FROM ";
+    query += tableName();
+
+    if (!cri.isEmpty()) {
+        TCriteriaConverter<T> conv(cri, database());
+        query.append(QLatin1String(" WHERE ")).append(conv.toString());
+    }
+
+    QSqlQuery q(query, database());
+    q.exec();
+    tQueryLog("%s", qPrintable(query));
+
+    if (q.next()) {
+        cnt = q.value(0).toInt();
+    }
+    return cnt;
+}
+
+/*!
+  Returns the number of records retrieved with the criteria for the
+  \a column as the \a value from the table.
+*/
+template <class T>
+inline int TSqlORMapper<T>::findCountBy(int column, QVariant value)
+{
+    return findCount(TCriteria(column, value));
+}
+
+/*!
+  Returns a list of all ORM objects in the results retrieved with the
+  criteria \a cri from the table.
+*/
+template <class T>
+inline QList<T> TSqlORMapper<T>::findAll(const TCriteria &cri)
+{
+    if (!cri.isEmpty()) {
+        TCriteriaConverter<T> conv(cri);
+        setFilter(conv.toString());
+    } else {
+        setFilter(QString());
+    }
+
+    QList<T> list;
+    if (select()) {
+        tSystemDebug("rowCount: %d", rowCount());
+        for (int i = 0; i < rowCount(); ++i) {
+            T rec;
+            rec.setRecord(record(i), QSqlError());
+            list << rec;
+        }
+    }
+    return list;
+}
+
+/*!
+  Returns a list of all ORM objects in the results retrieved with the criteria
+  for the \a column as the \a value.
+*/
+template <class T>
+inline QList<T> TSqlORMapper<T>::findAllBy(int column, QVariant value)
+{
+    return findAll(TCriteria(column, value));
+}
+
+/*!
+  Returns a list of all ORM objects in the results retrieved with the criteria
+  that the \a column is within the list of values \a values.
+*/
+template <class T>
+inline QList<T> TSqlORMapper<T>::findAllIn(int column, const QVariantList &values)
+{
+    return findAll(TCriteria(column, TSql::In, values));
+}
+
+/*!
+  Updates the values of the columns specified in the first elements in the each pairs of \a values in
+  all rows that satisfy the criteria \a cri and returns the number of the rows
+  affected by the query executed.
+*/
+template <class T>
+int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values)
+{
+    QString upd;   // UPDATE Statement
+    upd.reserve(256);
+    upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
+
+    TCriteriaConverter<T> conv(cri, database());
+    QString where = conv.toString();
+
+    if (values.isEmpty()) {
+        tSystemError("Update Parameter Error");
+        return -1;
+    }
+
+    QListIterator<QPair<int, QVariant> > it(values);
+    for (;;) {
+        const QPair<int, QVariant> &p = it.next();
+        upd += TCriteriaConverter<T>::propertyName(p.first);
+        upd += '=';
+        upd += TSqlQuery::formatValue(p.second, database());
+
+        if (!it.hasNext())
+            break;
+
+        upd += QLatin1String(", ");
+    }
+
+    if (!where.isEmpty()) {
+        upd.append(QLatin1String(" WHERE ")).append(where);
+    }
+
+    tQueryLog("%s", qPrintable(upd));
+
+    QSqlQuery sqlQuery(database());
+    if ( !sqlQuery.exec(upd) ) {
+        return -1;
+    }
+    return sqlQuery.numRowsAffected();
+}
+
+/*!
+  Updates the value of the specified \a column in all rows that satisfy the criteria
+  \a cri and returns the number of the rows affected by the query executed.
+*/
+template <class T>
+inline int TSqlORMapper<T>::updateAll(const TCriteria &cri, int column, QVariant value)
+{
+    QList<QPair<int, QVariant> > lst;
+    lst << qMakePair(column, value);
+    return updateAll(cri, lst);;
+}
+
+/*!
   Removes all rows based on the criteria \a cri from the table and
   returns the number of the rows affected by the query executed.
 */
@@ -262,7 +451,7 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
     }
 
     tQueryLog("%s", qPrintable(del));
-  
+
     QSqlQuery sqlQuery(database());
     if ( !sqlQuery.exec(del) ) {
         return -1;
@@ -304,9 +493,8 @@ inline QString TSqlORMapper<T>::orderBy() const
 {
     QString str;
     if (sortColumn >= 0) {
-        QString f = TCriteriaConverter<T>::propertyName(sortColumn);
-        if (!f.isEmpty()) {
-            QString field = TSqlQuery::escapeIdentifier(f, QSqlDriver::FieldName, database());
+        QString field = TCriteriaConverter<T>::propertyName(sortColumn);
+        if (!field.isEmpty()) {
             str.append(QLatin1String(" ORDER BY ")).append(field);
             str.append((sortOrder == TSql::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
         }
