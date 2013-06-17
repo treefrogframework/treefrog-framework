@@ -47,7 +47,7 @@ namespace Tf
         PartialContent              = 206,
         // Redirection 3xx
         MultipleChoices     = 300,
-        MovedPermanently    = 301, 
+        MovedPermanently    = 301,
         Found               = 302,
         SeeOther            = 303,
         NotModified         = 304,
@@ -164,6 +164,34 @@ namespace TSql
         Between,       // BETWEEN val1 AND val2
         NotBetween,    // NOT BETWEEN val1 AND val2
         Any,           // ANY (val1, ...)
+        All,           // ALL (val1, ...)
+    };
+
+    enum SortOrder {
+        AscendingOrder = Qt::AscendingOrder,
+        DescendingOrder = Qt::DescendingOrder,
+    };
+}
+
+/*!
+  \namespace TMongo
+  \brief The TMongo namespace contains miscellaneous identifiers used
+  throughout the MongoDB library.
+*/
+namespace TMongo
+{
+    enum ComparisonOperator {
+        Invalid = 1000,
+        Equal,        // == val
+        NotEqual,     // != val
+        LessThan,     // < val
+        GreaterThan,  // > val
+        LessEqual,    // <= val
+        GreaterEqual, // >= val
+        IsNull,       // IS NULL
+        IsNotNull,    // IS NOT NULL
+        In,            // IN (val1, ...)
+        NotIn,         // NOT IN (val1, ...)
         All,           // ALL (val1, ...)
     };
 
