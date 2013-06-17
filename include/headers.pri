@@ -2,9 +2,9 @@ HEADER_CLASSES = ../include/TAbstractModel ../include/TAbstractUser ../include/T
 
 HEADER_FILES = tabstractmodel.h tabstractuser.h tactioncontext.h tactioncontroller.h tactionforkprocess.h tactionhelper.h tactionthread.h tactionview.h tprototypeajaxhelper.h tapplicationserver.h tcontentheader.h tcookie.h tcookiejar.h tcriteria.h tcriteriaconverter.h tcryptmac.h tdirectview.h tdispatcher.h tfcore_unix.h tfexception.h tfnamespace.h tglobal.h thtmlattribute.h thtmlparser.h thttpheader.h thttprequest.h thttprequestheader.h thttpresponse.h thttpresponseheader.h thttputility.h tinternetmessageheader.h tjavascriptobject.h tlog.h tlogger.h tloggerplugin.h tmailmessage.h tmodelutil.h tmultipartformdata.h toption.h tsession.h tsessionstore.h tsessionstoreplugin.h tsharedmemorylogstream.h tsmtpmailer.h tsqldatabasepool.h tsqlobject.h tsqlormapper.h tsqlormapperiterator.h tsqlquery.h tsqlqueryormapper.h tsystemglobal.h ttemporaryfile.h tviewhelper.h twebapplication.h tabstractcontroller.h tactionmailer.h tformvalidator.h tsqlqueryormapperiterator.h taccessvalidator.h tsqltransaction.h tpaginator.h tkvsdatabase.h tkvsdatabasepool.h tkvsdriver.h tmodelobject.h tpopmailer.h
 
-MONGODB_CLASSES = ../include/TMongoCursor ../include/TBson ../include/TMongoDriver ../include/TMongoQuery ../include/TMongoObject ../include/TMongoMapper ../include/TCriteriaMongoConverter
+MONGODB_CLASSES = ../include/TMongoCursor ../include/TBson ../include/TMongoDriver ../include/TMongoQuery ../include/TMongoObject
 
-MONGODB_FILES = tmongocursor.h tbson.h tmongodriver.h tmongoquery.h tmongoobject.h tmongomapper.h tcriteriamongoconverter.h
+MONGODB_FILES = tmongocursor.h tbson.h tmongodriver.h tmongoquery.h tmongoobject.h
 
 TEST_CLASSES = ../include/TfTest/TfTest
 
