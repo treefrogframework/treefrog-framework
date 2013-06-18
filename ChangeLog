@@ -1,3 +1,20 @@
+Changes with version 1.6.1
+    * Performance improvement.
+    * Added functions for MongoDB access, findById(), removeById() and
+      updateById().
+    * Fix a bug of generating user models.
+    * Fix a bug of case-sensitivity of lock_revision field name.
+    * Fix a bug of updateMulti() method in TMongoQuery class.
+    * Fix compile error when the 'gui_mod' flag is on.
+    * Modified to generate a ObjectId on client.
+    * Added numDocsAffected() function into the TMongoQuery class.
+    * Added a class for KVS exception, KvsException.
+    * Added a function for 'POP brefore SMTP' auth.
+    * Added methods for TSqlORMapper, findFirstBy(), findCount(), findBy() and
+      findIn().
+    * Fix a bug of the 'TSql::In' statement used.
+    * Mac: Fix a bug of including path of appbase.pri.
+
 Changes with version 1.6
     * Performance improvement.
     * JSON supported for AJAX, added sendJson() method into TActionController.
