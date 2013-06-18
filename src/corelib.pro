@@ -242,8 +242,8 @@ SOURCES += tkvsdriver.cpp
   SOURCES += tbson.cpp
   HEADERS += tmongoobject.h
   SOURCES += tmongoobject.cpp
-  HEADERS += tmongomapper.h
-  SOURCES += tmongomapper.cpp
+#  HEADERS += tmongomapper.h
+#  SOURCES += tmongomapper.cpp
 #  HEADERS += tcriteriamongoconverter.h
 #  SOURCES += tcriteriamongoconverter.cpp
 }
