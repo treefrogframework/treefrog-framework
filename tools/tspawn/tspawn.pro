@@ -68,12 +68,13 @@ for(F, defaults.files) {
   unix : system( tr -d "\\\\r" < ../../$${F} > $${F} )
 }
 
-contains(CONFIG, 'x86_64') {
-  unix {
-    system( sed -i -e \'/CONFIG/s/$/ x86_64/\' defaults/controllers.pro )
-    system( sed -i -e \'/CONFIG/s/$/ x86_64/\' defaults/models.pro )
-    system( sed -i -e \'/CONFIG/s/$/ x86_64/\' defaults/_src.pro )
-    system( sed -i -e \'/CONFIG/s/$/ x86_64/\' defaults/helpers.pro )
+unix {
+  contains(CONFIG, 'x86_64') {
+    mac : EXT=\'\'
+    system( sed -i $$EXT -e \'/CONFIG/s/$/ x86_64/\' defaults/controllers.pro )
+    system( sed -i $$EXT -e \'/CONFIG/s/$/ x86_64/\' defaults/models.pro )
+    system( sed -i $$EXT -e \'/CONFIG/s/$/ x86_64/\' defaults/_src.pro )
+    system( sed -i $$EXT -e \'/CONFIG/s/$/ x86_64/\' defaults/helpers.pro )
   }
 }
 
