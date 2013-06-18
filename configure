@@ -159,6 +159,12 @@ while [ -n "`echo $1 | grep '-'`" ]; do
   shift
 done
 
+PID=$$
+cd $BASEDIR
+INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
+sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
+
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
 else
@@ -194,12 +200,6 @@ if [ -n "$ENABLE_MONGO" ]; then
   fi
   echo "OK"
 fi
-
-PID=$$
-cd $BASEDIR
-INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
-sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
-command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
