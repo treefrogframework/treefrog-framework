@@ -9,6 +9,11 @@
 #include <QMetaProperty>
 
 /*!
+  \class TModelObject
+  \brief The TModelObject class provides an abstract base for model objects
+*/
+
+/*!
   Returns a map object of the properties.
 */
 QVariantMap TModelObject::toVariantMap() const

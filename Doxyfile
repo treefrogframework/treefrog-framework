@@ -137,6 +137,9 @@ EXCLUDE                = src/test \
                          src/tkvsdatabasepool.h \
                          src/tmongodriver.h \
                          src/tmongocursor.h \
+                         src/tmongomapper.h \
+                         src/tmongoobject.h \
+                         src/tcriteriamongoconverter.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp

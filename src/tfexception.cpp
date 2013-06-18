@@ -43,7 +43,7 @@
 
 /*!
   \fn virtual Exception *RuntimeException::clone() const
-  \brief Creates and returns a deep copy of the current data. 
+  \brief Creates and returns a deep copy of the current data.
 */
 
 
@@ -91,7 +91,7 @@
 
 /*!
   \fn virtual Exception *SecurityException::clone() const
-  \brief Creates and returns a deep copy of the current data. 
+  \brief Creates and returns a deep copy of the current data.
 */
 
 
@@ -139,7 +139,7 @@
 
 /*!
   \fn virtual Exception *SqlException::clone() const
-  \brief Creates and returns a deep copy of the current data. 
+  \brief Creates and returns a deep copy of the current data.
 */
 
 
@@ -178,5 +178,53 @@
 
 /*!
   \fn virtual Exception *ClientErrorException::clone() const
-  \brief Creates and returns a deep copy of the current data. 
+  \brief Creates and returns a deep copy of the current data.
 */
+
+
+/*!
+  \class KvsException
+  \brief The KvsException class represents an exception that
+  can be thrown when KVS database error occurs.
+*/
+
+/*!
+  \fn KvsException::KvsException(const KvsException &e)
+  \brief Copy constructor.
+*/
+
+/*!
+  \fn KvsException::KvsException(const QString &message, const char *fileName, int lineNumber)
+  \brief Constructor.
+*/
+
+/*!
+  \fn virtual KvsException::~KvsException() throw()
+  \brief Destructor.
+*/
+
+/*!
+  \fn QString KvsException::message() const
+  \brief Returns the message.
+*/
+
+/*!
+  \fn QString KvsException::fileName() const
+  \brief Returns the file name.
+*/
+
+/*!
+  \fn int KvsException::lineNumber() const
+  \brief Return the line number.
+*/
+
+/*!
+  \fn virtual void KvsException::raise() const
+  \brief Raises the exception.
+*/
+
+/*!
+  \fn virtual Exception *KvsException::clone() const
+  \brief Creates and returns a deep copy of the current data.
+*/
+
