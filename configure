@@ -195,9 +195,11 @@ if [ -n "$ENABLE_MONGO" ]; then
   echo "OK"
 fi
 
+PID=$$
 cd $BASEDIR
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
-sed -i -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri
+sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
