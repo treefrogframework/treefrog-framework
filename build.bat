@@ -10,23 +10,23 @@ call "C:\Qt\Qt5.0.2\5.0.2\mingw47_32\bin\qtenv2.bat"
 ::
 :: Compile and Install
 ::
-%~d1 
+%~d0
 cd  %~dp0
 
-call configure --enable-mongo --enable-debug
+call configure.bat --enable-mongo --enable-debug
 cd src
-mingw32-make.exe -j3 install
+mingw32-make.exe -j4 install
 
 cd ..\tools
-mingw32-make.exe -j3 install
+mingw32-make.exe -j4 install
 
 cd ..
-call configure --enable-mongo
+call configure.bat --enable-mongo
 cd src
-mingw32-make.exe -j3 install
+mingw32-make.exe -j4 install
 
 cd ..\tools
-mingw32-make.exe -j3 install
+mingw32-make.exe -j4 install
 
 echo.
 pause
