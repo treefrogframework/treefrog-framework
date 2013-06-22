@@ -25,13 +25,8 @@ public:
     static QString fieldNameToVariableName(const QString &name);
 
 protected:
-    virtual TSqlObject *data() { return NULL; }  // obsolete
-    virtual const TSqlObject *data() const { return NULL; }  // obsolete
-    virtual TModelObject *modelData() { return NULL; }
-    virtual const TModelObject *modelData() const { return NULL; }
-
-    virtual TModelObject *mdata();
-    virtual const TModelObject *mdata() const;
+    virtual TModelObject *modelData() { return 0; }
+    virtual const TModelObject *modelData() const { return 0; }
 };
 
 
