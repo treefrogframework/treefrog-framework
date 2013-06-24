@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <!-- プロダクト情報 -->
+  <Product Name='TreeFrog Framework SDK 1.6.1'
+           Id='9FB4BBC8-FFFF-4207-B078-256E4A3F6CB1'
+           UpgradeCode='F396150C-4777-4575-A7D7-E78E5178E39A'
+           Language='1041' Codepage='932'
+           Version='1.6.1' Manufacturer='TreeFrog Framework Project'>
+
+    <!-- パッケージ情報 -->
+    <Package Id='*' Keywords='Installer'
+             Description="TreeFrog Framework SDK Installer"
+             Comments='TreeFrog Framework is open source software.'
+             Manufacturer='TreeFrog Framework Project' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <!-- メディア情報（変更しなくてよい） -->
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='First media' />
+    <Property Id='DiskPrompt' Value="TreeFrog Framework Installer [1]" />
+
+    <!-- インストールファイル -->
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='WindowsVolume'>
+        <Directory Id='INSTALLDIR' Name='TreeFrog'>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <!-- フィーチャー -->
+    <Feature Id='Complete' Title='TreeFrog Fromework SDK'
+             Description='Complete Package' Display='expand'
+             Level='1' ConfigurableDirectory='INSTALLDIR'>
+
+      <Feature Id='TreeFrogSDK' Title='SDK'
+               Description='TreeFrog Fromework SDK' Level='1'>
+        <ComponentGroupRef Id='TreeFrogFiles' />
+      </Feature>
+
+    </Feature>
+
+    <!-- アイコン -->
+<!--
+    <Icon Id="Hoge10.exe" SourceFile="HogeAppl10.exe" />
+-->
+
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    <UIRef Id="WixUI_Minimal" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+  </Product>
+</Wix>
