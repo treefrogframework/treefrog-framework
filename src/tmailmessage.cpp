@@ -73,18 +73,12 @@ inline int indexOfUsAscii(const QString &str, int from)
 
 void TMailMessage::parse(const QString &str)
 {
-    int idx = 0;
-    int bdidx = 0;
-    
-    if (str.contains("\r\n")) {
-        idx = str.indexOf(QLatin1String("\r\n\r\n"));
-        bdidx = idx + 4;
-    } else {
-        idx = str.indexOf(QLatin1String("\n\n"));
-        bdidx = idx + 2;
-    }
+    QRegExp rx("(\\n\\n|\\r\\n\\r\\n)", Qt::CaseSensitive, QRegExp::RegExp2);
+    int idx = rx.indexIn(str, 0);
+    int bdidx = idx + rx.matchedLength();
 
     if (idx < 0) {
+        tError("Not found mail headers");
         setBody(str);
     } else {
         QString header = str.left(idx);
@@ -101,7 +95,7 @@ void TMailMessage::parse(const QString &str)
                 if (j < 0) {
                     j = header.length();
                 }
-                
+
                 ba += THttpUtility::toMimeEncoded(header.mid(i, j - i), textCodec);
                 i = j;
             }
@@ -138,7 +132,7 @@ void TMailMessage::addAddress(const QByteArray &field, const QByteArray &address
     if (!addr.isEmpty()) {
         addr += ", ";
     }
-    
+
     if (!friendlyName.isEmpty()) {
         QByteArray uname = friendlyName.toUtf8();
         if (uname.length() == friendlyName.length()) {
@@ -153,7 +147,7 @@ void TMailMessage::addAddress(const QByteArray &field, const QByteArray &address
     addr += '<';
     addr += address.trimmed();
     addr += '>';
-    setRawHeader(field, addr); 
+    setRawHeader(field, addr);
 }
 
 
@@ -203,7 +197,7 @@ void TMailMessage::setFrom(const QByteArray &address, const QString &friendlyNam
 
 QByteArray TMailMessage::to() const
 {
-    return rawHeader("To"); 
+    return rawHeader("To");
 }
 
 
@@ -216,7 +210,7 @@ void TMailMessage::addTo(const QByteArray &address, const QString &friendlyName)
 
 QByteArray TMailMessage::cc() const
 {
-    return rawHeader("Cc"); 
+    return rawHeader("Cc");
 }
 
 
@@ -229,7 +223,7 @@ void TMailMessage::addCc(const QByteArray &address, const QString &friendlyName)
 
 QByteArray TMailMessage::bcc() const
 {
-    return rawHeader("Bcc"); 
+    return rawHeader("Bcc");
 }
 
 
@@ -245,7 +239,7 @@ QString TMailMessage::body() const
     QByteArray ba = mailBody;
     if (ba.contains("\r\n"))
         ba.replace("\r\n", "\n");
-    
+
     return textCodec->toUnicode(ba);
 }
 
@@ -255,7 +249,7 @@ void TMailMessage::setBody(const QString &body)
     QByteArray ba = textCodec->fromUnicode(body);
     mailBody.clear();
     mailBody.reserve(ba.length() + ba.count('\n'));
-    
+
     for (int i = 0; i < ba.length(); ++i) {
         if (ba[i] == '\n' && i > 0 && ba[i - 1] != '\r') {
             mailBody += "\r\n";
