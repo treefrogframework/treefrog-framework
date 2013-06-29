@@ -1,0 +1,578 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="INSTALLDIR">
+            <Directory Id="dir2D1633A856476C66C9D40ED3EB1C279C" Name="1.6.1" />
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="TreeFrogFiles">
+            <Component Id="cmp26B92E5C0B1646814C5333B61E0CDB25" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{AE6F370D-224B-4222-9CFD-357F4EC33D74}">
+                <File Id="fil696FCBDD1AA62EA73F3EE90BFEC54012" KeyPath="yes" Source="SourceDir\bin\libtreefrog1.a" />
+            </Component>
+            <Component Id="cmp81817A0C0958F484F4B215DF9DA2B5FB" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{9975CBE8-F476-4399-87E0-33E5AFFB8643}">
+                <File Id="fil09E305F8D17867AF0126F3F67C94CDBA" KeyPath="yes" Source="SourceDir\bin\libtreefrogd1.a" />
+            </Component>
+            <Component Id="cmp99BFE67B3432C4A71CEB9C6EED1973C6" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{00C58C7A-1D7C-4DCA-8C6A-24E8D8CE92D8}">
+                <File Id="fil53EB8EFF8758333BA8A63C1F22DAFCD6" KeyPath="yes" Source="SourceDir\bin\tadpole.exe" />
+            </Component>
+            <Component Id="cmpAFDAFFBFA47AEA41BE11B1BC03583B3D" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{A00F0D07-1E85-4864-B08C-626AD522620F}">
+                <File Id="fil4447B1AE0A00A9E97F03620D37DB134B" KeyPath="yes" Source="SourceDir\bin\tadpoled.exe" />
+            </Component>
+            <Component Id="cmpA357B4165C2587AAF51569C4664C5C3A" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{F02553AB-2123-44AB-9948-53CD4DA1DFDB}">
+                <File Id="fil82FFFDB485AFFC96A99D68C80ACA849B" KeyPath="yes" Source="SourceDir\bin\tfenv.bat" />
+            </Component>
+            <Component Id="cmp2F7D48A703FE071F5CAEAB918A8C611A" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{48AFE972-DDA6-48C6-82A3-2B39E5081A90}">
+                <File Id="filB61892B749D33D6CD43631FCDDB1DB1B" KeyPath="yes" Source="SourceDir\bin\tmake.exe" />
+            </Component>
+            <Component Id="cmp06AB2DC34C75EF1AC1AAA11FE683E135" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{45377B65-9568-4C68-ABDA-A1B7B61E340D}">
+                <File Id="fil611B6CB93B9236791731245B94455615" KeyPath="yes" Source="SourceDir\bin\treefrog.exe" />
+            </Component>
+            <Component Id="cmpE265012F3160DFFD266A6CB24A959016" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{FEABC695-79C0-408D-A496-E808DAE1FC5F}">
+                <File Id="filD5FF548C60397A10456416E8801DC813" KeyPath="yes" Source="SourceDir\bin\treefrog1.dll" />
+            </Component>
+            <Component Id="cmp8A50AFC44B446AF37D48377E5BB53905" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{BD0A0E74-48CC-42E5-8C8B-A95E62162842}">
+                <File Id="fil9E664951FCA71AFAB42A7B28E157D622" KeyPath="yes" Source="SourceDir\bin\treefrogd.exe" />
+            </Component>
+            <Component Id="cmp536E6D5F76E3A4D38085FBA9153862E4" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{DB3554DC-F63F-4F63-ACA4-51B03E667EC5}">
+                <File Id="filAC90BED5E8C982509061FD30ED6387CC" KeyPath="yes" Source="SourceDir\bin\treefrogd1.dll" />
+            </Component>
+            <Component Id="cmp05A6404B712C992DD1495AAF8515802A" Directory="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Guid="{E4D2D298-8F98-4315-A619-5698EC4AC459}">
+                <File Id="filD13DE0A655F40C96E76C839D66BF1871" KeyPath="yes" Source="SourceDir\bin\tspawn.exe" />
+            </Component>
+            <Component Id="cmp6C903B0EF46D92120B439D76C2C4BC56" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{07980853-E920-4CDF-B5E6-75478421A206}">
+                <File Id="fil40497D0D3E2E5448AEC4DE6CB9C0F62F" KeyPath="yes" Source="SourceDir\defaults\.trim_mode" />
+            </Component>
+            <Component Id="cmpA1F3B1B7597A3AE2EFC361221AAB480A" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{963179B4-B8FB-40B7-95D8-0129DB2156B9}">
+                <File Id="fil2EC89AE5F6C782615EB00AC83923D95E" KeyPath="yes" Source="SourceDir\defaults\403.html" />
+            </Component>
+            <Component Id="cmpBAC15D453AD6CD743A34FAAA1D94E822" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{3CDAD248-092A-45BB-B63F-12F66737DD04}">
+                <File Id="filED7DF4038834E81C2868872E7DADBFEC" KeyPath="yes" Source="SourceDir\defaults\404.html" />
+            </Component>
+            <Component Id="cmp017AED2FDDF3F289A151E15CB3D37BCA" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{FA3AD114-D0A8-4E11-8871-2AB77563EF23}">
+                <File Id="filB4F41BC1BC6EF9355FB3663F3212299F" KeyPath="yes" Source="SourceDir\defaults\413.html" />
+            </Component>
+            <Component Id="cmp88B47CCD7351EC8390D248062677468A" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{10EB0730-9298-4977-9BC5-2F1DBEE97F9D}">
+                <File Id="filED38011B4F7EBC698A98D173DC1F9BC5" KeyPath="yes" Source="SourceDir\defaults\500.html" />
+            </Component>
+            <Component Id="cmpD9C2DAC0E3776D76FD020BC905CE6B50" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{C017B8A2-EBDD-48B0-B88C-876E18F37F67}">
+                <File Id="fil0104A81D10F2E69F3C220986DD8F274B" KeyPath="yes" Source="SourceDir\defaults\app.pro" />
+            </Component>
+            <Component Id="cmpB12B9274E3F4E552C2E2E60C78AA9FF5" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{A3534B55-6F54-41F0-B5F6-0BD6BE7F9856}">
+                <File Id="filA5004C25F93469F5278F6FE1366695E5" KeyPath="yes" Source="SourceDir\defaults\appbase.pri" />
+            </Component>
+            <Component Id="cmp3F7EAF203E6D8F479A7422B6CB60A021" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{BE10B766-06AB-4C01-82A9-732824C6713F}">
+                <File Id="fil538DE1B200C155F8D0243128F113F672" KeyPath="yes" Source="SourceDir\defaults\application.ini" />
+            </Component>
+            <Component Id="cmp92AD148CDDFA93A79D80B7FEF2AF45A1" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{FE9F9753-5C68-45A8-B16E-A4BC564A7A8D}">
+                <File Id="fil360661E9B420B60287EA66BE819513F2" KeyPath="yes" Source="SourceDir\defaults\applicationcontroller.cpp" />
+            </Component>
+            <Component Id="cmp216F360FBA1031DFD3CD8516E7E6C512" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{B1899A16-126A-460A-9B8C-9DDB963599DD}">
+                <File Id="fil265F34906F80C7C6B26E8D88CB60C6DE" KeyPath="yes" Source="SourceDir\defaults\applicationcontroller.h" />
+            </Component>
+            <Component Id="cmpC49BB57DEB397F3B48FB15374697747D" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{ACFF67FA-0243-4B79-88C6-BA95BBC594DB}">
+                <File Id="filCB8026CA1D9C0E4238A105C564235736" KeyPath="yes" Source="SourceDir\defaults\applicationhelper.cpp" />
+            </Component>
+            <Component Id="cmp2A4B33A5E250DF85297617E38AD3303D" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{D1AB9ED9-0FA4-42F3-B435-67C63EDD3B6B}">
+                <File Id="fil44D1D56722D48C5EA50242CD931AF63A" KeyPath="yes" Source="SourceDir\defaults\applicationhelper.h" />
+            </Component>
+            <Component Id="cmp030E109F119CE1A07BA506BD0DD74502" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{EAD56C91-D72A-4C63-9A44-FF4C7F6523DB}">
+                <File Id="filA52DE7E35D7D04CA1177A8E9AA4B2B37" KeyPath="yes" Source="SourceDir\defaults\controllers.pro" />
+            </Component>
+            <Component Id="cmp39D4337AA4F200D1B952A9FDE46079F4" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{D6934587-2152-4D31-BCC9-BD3A104BD277}">
+                <File Id="fil24B67B4BBC639D373E8DEF3CD0F04389" KeyPath="yes" Source="SourceDir\defaults\database.ini" />
+            </Component>
+            <Component Id="cmp3EDD8C03F9CE0A66DB19EA9EFE5E62BA" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{80FFDB86-2480-4D92-AFC4-CEF9084D90C0}">
+                <File Id="fil4B7F378ACD7DA2B296AFC1FA7EFA0731" KeyPath="yes" Source="SourceDir\defaults\development.ini" />
+            </Component>
+            <Component Id="cmp2FE416A0C2276DB736EB92209A259DD7" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{8E999A2F-2117-4D01-AA84-947FF7D6D005}">
+                <File Id="fil1AC5C744DCE24E3B471AB8E064088EB8" KeyPath="yes" Source="SourceDir\defaults\helpers.pro" />
+            </Component>
+            <Component Id="cmp49AC2EE34F008C9C0085B5F93EC8CE30" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{282A6396-9112-435E-9644-33466FEB9141}">
+                <File Id="filFEBF95041AE1BC605C81A78F8BD0FE63" KeyPath="yes" Source="SourceDir\defaults\internet_media_types.ini" />
+            </Component>
+            <Component Id="cmpAD7A76695F46BBBE1080EE5EE1E624F2" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{0CE58BCB-860C-4F52-B183-E4B350797593}">
+                <File Id="fil1BBD9E1FF0DD6A21EBDC643B96CC58FF" KeyPath="yes" Source="SourceDir\defaults\logger.ini" />
+            </Component>
+            <Component Id="cmp387861200F6DD8BA9DE227987AAC68A9" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{6FAA384E-2656-40D0-8053-31667771BFA4}">
+                <File Id="fil8D4C0C8D053D8D8E5D31371B7BCC300D" KeyPath="yes" Source="SourceDir\defaults\mail.erb" />
+            </Component>
+            <Component Id="cmp1D7554772ECC25924157DB551A616F19" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{D85A1352-B5AB-4262-AE4D-54EEF1B4B2EC}">
+                <File Id="filCF447F29A6A3C435F5FEDD787B984759" KeyPath="yes" Source="SourceDir\defaults\models.pro" />
+            </Component>
+            <Component Id="cmpBA016C4261D7A16EEEAD68773A6923B4" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{06DB8BA6-0300-4539-B848-F49F0336E21A}">
+                <File Id="fil5098980D75E73E096DF1BAC028151A7F" KeyPath="yes" Source="SourceDir\defaults\mongodb.ini" />
+            </Component>
+            <Component Id="cmpAB63CF7C703DC965EB7218CC1709CE68" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{446F7640-79F1-4718-9791-A6CC85C0B017}">
+                <File Id="filA73FBA3D59E3EFD10144FA82E7FC9F15" KeyPath="yes" Source="SourceDir\defaults\routes.cfg" />
+            </Component>
+            <Component Id="cmp53E6A0DC543E582ADDECC0E58E6989E0" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{894FAD41-290F-44B1-871E-3D4F2D902CE0}">
+                <File Id="fil16C6F76E659000E7FD1801E73577B413" KeyPath="yes" Source="SourceDir\defaults\validation.ini" />
+            </Component>
+            <Component Id="cmp8F904795D9566E6386E731B3C05C8952" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{0F1C6422-9CE8-43F3-8DFB-0FBCE978167C}">
+                <File Id="fil5F267449AAD4C81A5934C57B35CDB904" KeyPath="yes" Source="SourceDir\defaults\views.pro" />
+            </Component>
+            <Component Id="cmpD5760CF91401A138580BDABF6128A65A" Directory="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Guid="{EFED8780-9AC0-4CE5-9CC3-0A874D0620C7}">
+                <File Id="fil80C99465AC68DF46482606A6ED71F3B4" KeyPath="yes" Source="SourceDir\defaults\_src.pro" />
+            </Component>
+            <Component Id="cmp25E9DB9DC496D61CFD6755160955C03A" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{A38B8B38-EB71-459D-9CD9-4414A61D8D14}">
+                <File Id="fil798A618AB679459AE4BFA71BF982EE4D" KeyPath="yes" Source="SourceDir\include\TAbstractController" />
+            </Component>
+            <Component Id="cmp57E496D7C2FEB05CFED065CAFDAB475B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{BEF668D1-2ACD-4CA2-92CE-A9ADDFDBC935}">
+                <File Id="fil50DA17DC39E432AF61424AF2F3F394A0" KeyPath="yes" Source="SourceDir\include\tabstractcontroller.h" />
+            </Component>
+            <Component Id="cmpE357E361FE34983620EC578BE0DF8B9D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C12FD1D2-32D4-48F1-B979-7A4B61A38EC4}">
+                <File Id="filA77173271C403FCDEECC62423D181BF8" KeyPath="yes" Source="SourceDir\include\TAbstractModel" />
+            </Component>
+            <Component Id="cmpDEAC3237C7923A16256DAD01CC2FC037" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4B84D33A-0BC8-4D5C-9F00-3E45E3046538}">
+                <File Id="fil40B961B83F957F793CC4535D008AF1C2" KeyPath="yes" Source="SourceDir\include\tabstractmodel.h" />
+            </Component>
+            <Component Id="cmp1A3E8F16ED13EEDD45D3F6FE13067C81" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{A8CCE3E9-4A38-4DCB-800A-F024D78D5AE7}">
+                <File Id="fil27196B82830E603EF3BFF33EED1E4FC3" KeyPath="yes" Source="SourceDir\include\TAbstractUser" />
+            </Component>
+            <Component Id="cmpE19CBC536A5329812171ED400A232E1A" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5B4CC986-9AAF-4C6E-833A-7E1B612E5847}">
+                <File Id="filB869CF9F149B002B93D2FE108B29DB05" KeyPath="yes" Source="SourceDir\include\tabstractuser.h" />
+            </Component>
+            <Component Id="cmp64CAF3539DF74E6B92F24A8E376C7E52" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{FA2B8452-7185-4364-B753-CA593744A572}">
+                <File Id="filEAADE0606A22DDE31B5BB2C91D1336E2" KeyPath="yes" Source="SourceDir\include\TAccessValidator" />
+            </Component>
+            <Component Id="cmp243137010216AF05999EBBEE36EB338E" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{1BC92937-D98D-4A7F-A3C8-00BD33CAD97A}">
+                <File Id="fil8C6EE350AAF0D77B9F65907F111F417D" KeyPath="yes" Source="SourceDir\include\taccessvalidator.h" />
+            </Component>
+            <Component Id="cmp82C62DEEDE2F01E99714565517AF04D9" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5E68C88C-165E-4396-BD56-0AFD4ACF49F6}">
+                <File Id="fil488C32FD7E5978BDDE83DC89016D72A5" KeyPath="yes" Source="SourceDir\include\TActionContext" />
+            </Component>
+            <Component Id="cmp36736E413C599D2CB56DD24A46B496E5" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{F95AE0A1-B504-4421-82BB-B4245E409F2D}">
+                <File Id="fil85BE4B94161113CEADB7A39C57E6EE6F" KeyPath="yes" Source="SourceDir\include\tactioncontext.h" />
+            </Component>
+            <Component Id="cmpF15C40127652259EC57CC7B4B7EBECC6" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{466C38CA-C918-4348-BBBA-C20619FC4DC3}">
+                <File Id="fil0DE7F1C423C24F9A0F4E9C763BBBDA75" KeyPath="yes" Source="SourceDir\include\TActionController" />
+            </Component>
+            <Component Id="cmpE088C71A3914A582FB5BF4B99648C1C3" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{A2BDAE7E-05B6-45AE-8B22-2C98BD99EB8B}">
+                <File Id="fil571712892DA58534E5F18C0DB8152121" KeyPath="yes" Source="SourceDir\include\tactioncontroller.h" />
+            </Component>
+            <Component Id="cmp44ABFE12BC6440F3E4074F5DBAA41AA6" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{57798417-1915-4BB5-B767-13D89B727C8F}">
+                <File Id="filEB6EA8476C5E9FCDACF3D615988F2A34" KeyPath="yes" Source="SourceDir\include\TActionForkProcess" />
+            </Component>
+            <Component Id="cmp0D4932D33A57858FD3C872BDA5F07A9B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8EEEA8C3-9738-4504-A456-7795CF11E496}">
+                <File Id="fil973165BC35E613FD6D96AADBDC26A68F" KeyPath="yes" Source="SourceDir\include\tactionforkprocess.h" />
+            </Component>
+            <Component Id="cmp031A205436738C2234C0142ADE84473A" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{44FD4A1D-A52D-4FB3-B562-E11B3351C877}">
+                <File Id="fil4ADDA1F3F9F407E8A58C6E5B6F69595E" KeyPath="yes" Source="SourceDir\include\TActionHelper" />
+            </Component>
+            <Component Id="cmp6226A43161E3ADF8754EF3A3BDDC2C6B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{9B6467AF-9A98-4BC4-B21E-98E220A43C16}">
+                <File Id="fil1F739C3A0F9E07437F5D043D58F321D1" KeyPath="yes" Source="SourceDir\include\tactionhelper.h" />
+            </Component>
+            <Component Id="cmpB0BC3A49477F67799D58FC90EF8D9ED5" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{E3B7CC14-98C9-4914-8DFF-7588F33F605B}">
+                <File Id="filEBBC0E3017CED7721DCAFB6D7651DCE1" KeyPath="yes" Source="SourceDir\include\TActionMailer" />
+            </Component>
+            <Component Id="cmp126C6D011B8264EA1730702827CBFD47" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D0EAECB5-703F-4F3D-B892-1C1848694F8D}">
+                <File Id="fil815DA77916381E1465412DE25B977E9F" KeyPath="yes" Source="SourceDir\include\tactionmailer.h" />
+            </Component>
+            <Component Id="cmp3EB6472D5FE824797B1C57E8D6AF3DF2" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{9350F942-2374-49EB-827D-60AD7C360889}">
+                <File Id="filF2C419A4B2585D343AB1097E109BDD40" KeyPath="yes" Source="SourceDir\include\TActionThread" />
+            </Component>
+            <Component Id="cmp04DF1C6029703ABDDBACD951DA877220" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4865FDCF-76EC-434E-BC3D-3C62D40FC25C}">
+                <File Id="fil150EE3A608A1491E49F5177B694FD627" KeyPath="yes" Source="SourceDir\include\tactionthread.h" />
+            </Component>
+            <Component Id="cmp2996138A4BAF766F15E38483DB270BFF" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{94AC372B-C21E-474C-9CB2-3EB5888E66D6}">
+                <File Id="filB994B9497FFC02F2C0A97A9724DA3727" KeyPath="yes" Source="SourceDir\include\TActionView" />
+            </Component>
+            <Component Id="cmpF094234A6EEA23FC922D46D28E19633D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{018914FE-6105-4613-9EFE-2A506F7BFCE2}">
+                <File Id="fil79D85F0409AE8F9386CB6EA6F768F0CB" KeyPath="yes" Source="SourceDir\include\tactionview.h" />
+            </Component>
+            <Component Id="cmpC269F72295CB6B12C93B93B3E390ED35" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{F894CCF0-E25A-42CF-8489-6FF7BC002ADF}">
+                <File Id="filB69387BA76A6C7817DCFA575DCC92102" KeyPath="yes" Source="SourceDir\include\TApplicationServer" />
+            </Component>
+            <Component Id="cmp798459D88E15222B3B367E6317022015" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{F3C35620-693D-4A79-A646-0FE4E91EA052}">
+                <File Id="fil3131B2AC78F903643C2803119E2873B3" KeyPath="yes" Source="SourceDir\include\tapplicationserver.h" />
+            </Component>
+            <Component Id="cmpC1EBF86CB07AD61727C88204C0A9D0DA" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C00C7BE4-12D4-435A-A617-9D8D58883F67}">
+                <File Id="filBEAAA84EF524BCDC7B5B31E9F0825847" KeyPath="yes" Source="SourceDir\include\TBson" />
+            </Component>
+            <Component Id="cmpFF594B2923BF4C90E6826149E72E9F37" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{9A73ADE9-09CD-42A4-A53A-5D345F503D2C}">
+                <File Id="fil5FD66A9506F56C8192F1BA7B4F4B3023" KeyPath="yes" Source="SourceDir\include\tbson.h" />
+            </Component>
+            <Component Id="cmp8C8252198208D01CB6F82923B2913EDF" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{78A24F46-F49B-4F22-9D8B-BCC26A483B1E}">
+                <File Id="fil671226E3E225355E8D264F189D778BF6" KeyPath="yes" Source="SourceDir\include\TContentHeader" />
+            </Component>
+            <Component Id="cmp4F70A767C3BD9A861234EFAD32493A15" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{31FA5FE1-EB20-4A26-9A85-743F9558E19A}">
+                <File Id="fil9940B7420D5F5CE3DAD5036371E402D3" KeyPath="yes" Source="SourceDir\include\tcontentheader.h" />
+            </Component>
+            <Component Id="cmp73216D3E2F2C49F48890E255A8044EBB" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{7A5D5CF4-05FE-4ABC-A4CE-A516624B9252}">
+                <File Id="fil2A1362224CC6CB166DB3442C2050A607" KeyPath="yes" Source="SourceDir\include\TCookie" />
+            </Component>
+            <Component Id="cmpEE4E750CACB92C4F35A6293C1FADCE86" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{0E66AFD1-8B3A-4577-A83D-F6C546457643}">
+                <File Id="fil183555513E7545CCE5C3581778559345" KeyPath="yes" Source="SourceDir\include\tcookie.h" />
+            </Component>
+            <Component Id="cmp3935F2418669C10E9CDD84987CE5AD19" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{0C04D65A-3DE6-49B3-B395-8ED704A76953}">
+                <File Id="fil897769E1456FE19C4DD9CC61C7DD8AA0" KeyPath="yes" Source="SourceDir\include\TCookieJar" />
+            </Component>
+            <Component Id="cmpABCEB0AFD236A285DF5EF28D2F516A92" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{797A1963-136B-4223-9E4C-E22D3DF48315}">
+                <File Id="fil9551E0522126016826DBEAAA4CA26DF1" KeyPath="yes" Source="SourceDir\include\tcookiejar.h" />
+            </Component>
+            <Component Id="cmp34AC868C375745FD2A5C2AA5CFFF29BC" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{E927E88D-EB4A-4B82-8168-9E7DDA43ED4F}">
+                <File Id="fil805B3F33937074B6E0D340CD9D27C5FC" KeyPath="yes" Source="SourceDir\include\TCriteria" />
+            </Component>
+            <Component Id="cmp8230F01E14CAE4BED300C4A2568238A6" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{DABDFFBD-6687-4BEC-826E-51FAD2F3A473}">
+                <File Id="filD04CA175CFD26490E02E528F6F307D35" KeyPath="yes" Source="SourceDir\include\tcriteria.h" />
+            </Component>
+            <Component Id="cmp9AD6AA700B7BAAA7D31A0273FFA1ABB4" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8452DD12-812A-4F0B-89FC-7B4BD898C419}">
+                <File Id="fil11C34FCBB20AE6E58D82E27656E2636B" KeyPath="yes" Source="SourceDir\include\TCriteriaConverter" />
+            </Component>
+            <Component Id="cmpCD03CF9A2CCABF4FFDF525B47F4A055D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{A05BD279-6749-412B-8935-701B15238152}">
+                <File Id="filA9D2A5053A85277378A8A99C7427E0AB" KeyPath="yes" Source="SourceDir\include\tcriteriaconverter.h" />
+            </Component>
+            <Component Id="cmp0C852A228ECC706E66942FC947B0106C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C70D3DD9-194A-409B-A502-F07F69D78FEC}">
+                <File Id="fil0C1AAF6FAA14C78CF6B8CD37AC5C4122" KeyPath="yes" Source="SourceDir\include\TCryptMac" />
+            </Component>
+            <Component Id="cmp7ECE3636810AA9B60331F69B3E404386" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{E058400A-00F8-4DE9-8D80-4605E4FB6D70}">
+                <File Id="filD9607701D5EB7CBEC9581A5465C3BEFE" KeyPath="yes" Source="SourceDir\include\tcryptmac.h" />
+            </Component>
+            <Component Id="cmp459B5C3DBC2BD78639D868818C1BA88C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{820D7C84-2529-411C-A886-B49F053FFC49}">
+                <File Id="fil641C8D163E77ADB3674531B1B30ACFA8" KeyPath="yes" Source="SourceDir\include\TDirectView" />
+            </Component>
+            <Component Id="cmp11F2C375CBC3E368A9201BF615B3E268" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{01ACE5C1-6984-4429-9281-BB0A506B8D43}">
+                <File Id="fil4B62A672006BF48F6463FABD20A7FC2D" KeyPath="yes" Source="SourceDir\include\tdirectview.h" />
+            </Component>
+            <Component Id="cmp0D65659E7D738C0F258D54043347932C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4783B98D-E29C-4627-A1B2-4EB546D0F421}">
+                <File Id="fil82B7DD6D88EE1BA55A6526D9B1849BDB" KeyPath="yes" Source="SourceDir\include\TDispatcher" />
+            </Component>
+            <Component Id="cmpCC46491EE52F532ED2F2EBAF96A5F507" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{FD3F8D5B-7C6D-439F-B78C-9FAA2DF7110A}">
+                <File Id="fil53E5709EAD42762E20EA9B5678533A5A" KeyPath="yes" Source="SourceDir\include\tdispatcher.h" />
+            </Component>
+            <Component Id="cmp9DA7D6C4B504799A1094EE37CE8DC6C7" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5986B3F2-FA3C-48CE-8C5B-6D912558E490}">
+                <File Id="fil72E4328997A9BEC675260B702E0DBAD8" KeyPath="yes" Source="SourceDir\include\tfcore_unix.h" />
+            </Component>
+            <Component Id="cmp8B03878CEDF433C75D644770ABEA6681" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{03FAED77-6DA4-4114-B0C8-9DDF69B327F9}">
+                <File Id="fil7929E823610DBEFB481E8F833218C425" KeyPath="yes" Source="SourceDir\include\TfException" />
+            </Component>
+            <Component Id="cmpEEE409A36235D8A3D3CB37B67E2FF7C0" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5E559E45-110A-46C9-9A79-8F531D62E8FF}">
+                <File Id="filEF4C6C5C0B6D99F092C1DB20D8C15030" KeyPath="yes" Source="SourceDir\include\tfexception.h" />
+            </Component>
+            <Component Id="cmp398D47B3A0B81D5B41802DCCAC70A64E" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{2CC39E37-00F6-4A14-8192-39325DDF20C4}">
+                <File Id="filC81BA163F909484182920419F5572101" KeyPath="yes" Source="SourceDir\include\TfNamespace" />
+            </Component>
+            <Component Id="cmp1AC33C959AF7EFD37C84F78C3B85FFB6" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{362AA41F-586F-4FBE-97FA-E00C11B854D7}">
+                <File Id="fil9A800B43BAB08A8750C890B2B1B583AF" KeyPath="yes" Source="SourceDir\include\tfnamespace.h" />
+            </Component>
+            <Component Id="cmpC075E7E6E6EDC2E1C32A42C6AA59B5E1" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{711FD77D-0B02-473D-B3DE-A4FABA2CC912}">
+                <File Id="fil98E329658703B77651CAFEBC190CBE72" KeyPath="yes" Source="SourceDir\include\TFormValidator" />
+            </Component>
+            <Component Id="cmpA260C5A23CC0B08D7320E5191BEAF444" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{E923A682-0D29-4248-9EB0-8ECB1FEC8D4F}">
+                <File Id="fil51DDA5B5A80059421D8423E019320321" KeyPath="yes" Source="SourceDir\include\tformvalidator.h" />
+            </Component>
+            <Component Id="cmp63E72E1B1FC9A071C15D7ADAC7EEF6B4" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{0F508FF4-81A3-4F03-8A6A-02818F3C11C7}">
+                <File Id="fil336AD909D2A1F88133A407530AA0DCCC" KeyPath="yes" Source="SourceDir\include\TGlobal" />
+            </Component>
+            <Component Id="cmpE1EC89F7600FFC6AF5FA2B88D39B7D91" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{75895AB5-AA0B-42BC-A87F-EF849EFA975F}">
+                <File Id="filB2953E7B13851EF49959D496C93EE81C" KeyPath="yes" Source="SourceDir\include\tglobal.h" />
+            </Component>
+            <Component Id="cmp6A49F8C056509C20E6D5230E6318D9CB" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{82F9881D-2754-453E-804D-A85737B1E201}">
+                <File Id="fil4B4F88464F280A578FB850088E61AF7A" KeyPath="yes" Source="SourceDir\include\THtmlAttribute" />
+            </Component>
+            <Component Id="cmpA2A64DF6660471D32B72568A343F6D16" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{A29B17F8-0AAC-4F5B-8AEE-5179FDEF6859}">
+                <File Id="fil88385AF7E7F9DE9250ADA17678D11C0F" KeyPath="yes" Source="SourceDir\include\thtmlattribute.h" />
+            </Component>
+            <Component Id="cmpBEB5EA8C94D21C11BD6B7C0025A9B98F" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{203124E3-B55F-403B-899E-DB0EFB3FD604}">
+                <File Id="filCED955328A4F38E2A0F482470DE7DD7F" KeyPath="yes" Source="SourceDir\include\THtmlParser" />
+            </Component>
+            <Component Id="cmpB75B92227E3418D961AEE8987F75E067" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8C0D7ED7-B2F6-4AAF-9A9E-D40B45D79479}">
+                <File Id="filCA3968725B2FE5FF5C00D18A298D8456" KeyPath="yes" Source="SourceDir\include\thtmlparser.h" />
+            </Component>
+            <Component Id="cmp260BD3BE498E73EBFA563580E7779D62" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{0ABF19E5-5FA3-4687-9E78-88D997CB150B}">
+                <File Id="fil04FA7221EF2100C93811FFF6941A110A" KeyPath="yes" Source="SourceDir\include\THttpHeader" />
+            </Component>
+            <Component Id="cmp1878D3C68ED58B5543991DE0C21B0725" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{59BA2CC0-D4C4-4ED5-BC8E-0DF70009B51B}">
+                <File Id="filF635CA392F32651F2DA3F0BCF254B7A1" KeyPath="yes" Source="SourceDir\include\thttpheader.h" />
+            </Component>
+            <Component Id="cmpC609254D177549F37B84D0D2C59FD425" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{B03D716C-415A-47BD-95AD-C956182F9589}">
+                <File Id="filBB5188EE600C1E95BC612D314ED27E48" KeyPath="yes" Source="SourceDir\include\THttpRequest" />
+            </Component>
+            <Component Id="cmp6347353846A8893C025233440D4FF263" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{882F8FFD-FC52-4C4B-B395-E66970B5E717}">
+                <File Id="fil33B7F1F2C8577EFF5EE3F328F6EEAD4B" KeyPath="yes" Source="SourceDir\include\thttprequest.h" />
+            </Component>
+            <Component Id="cmp4659FBDA165F09F518C71EECAD72D10C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{7E4D38EC-0D32-4F1C-863D-D420731EF24E}">
+                <File Id="filDA5C49EFEDD8F4D76D79DE5F98379E58" KeyPath="yes" Source="SourceDir\include\THttpRequestHeader" />
+            </Component>
+            <Component Id="cmp2AEDED37FF78145E39318D5640680626" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D8E7A00F-6ECC-4CCD-95A1-129912B716F1}">
+                <File Id="fil866AB94D88021CDB3D10FCC1BAD4A731" KeyPath="yes" Source="SourceDir\include\thttprequestheader.h" />
+            </Component>
+            <Component Id="cmpBF282C0746250495EDB1FBBF27C51614" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{6B1DA042-AC17-4D16-976B-B991424A804C}">
+                <File Id="fil9803A7083880D330B3305B9FA1E32D50" KeyPath="yes" Source="SourceDir\include\THttpResponse" />
+            </Component>
+            <Component Id="cmpE7F75D0299F56ED914C58C23401716E6" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{702ADCEC-9FD1-4617-A144-5FF0FE6C54D1}">
+                <File Id="fil4F9EB9764436CB51435B4049248E9A93" KeyPath="yes" Source="SourceDir\include\thttpresponse.h" />
+            </Component>
+            <Component Id="cmpDE09DD5E78501A101EE1A234A57DE239" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5C14E537-8620-4BED-95DF-05AA673C70FA}">
+                <File Id="filCCA191290EC301B9324B45784E8BB8CF" KeyPath="yes" Source="SourceDir\include\THttpResponseHeader" />
+            </Component>
+            <Component Id="cmp321EE172A42EF0D84065C1F86DC6A43B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C27168F9-DC87-4094-90F1-A505D7638074}">
+                <File Id="filB5763A4A87D6B06233E15C91E700355E" KeyPath="yes" Source="SourceDir\include\thttpresponseheader.h" />
+            </Component>
+            <Component Id="cmp5E33EC2A9689A0A78A7C9108E565409B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{86A0A39A-22D0-4D25-9751-10D90BD7CF3C}">
+                <File Id="fil47C14A63F278ED4B7ACEE1D5DFF1349D" KeyPath="yes" Source="SourceDir\include\THttpUtility" />
+            </Component>
+            <Component Id="cmpE89F932DBCCAD630AA745B415A05BCF0" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{283A74D6-B3D0-45B0-A021-E14D06A319E4}">
+                <File Id="filFF8C94C10B7FDBBCDF71D8655384ABFE" KeyPath="yes" Source="SourceDir\include\thttputility.h" />
+            </Component>
+            <Component Id="cmp1B866751B2DC0496D5F7BB5BF41E9210" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{719A2018-0317-4E09-AFDA-9D15BDE5C723}">
+                <File Id="fil0CB4250149ECAFE9361935B778043D0E" KeyPath="yes" Source="SourceDir\include\TInternetMessageHeader" />
+            </Component>
+            <Component Id="cmp1710A4DA80BD11982CD1FB90E8938717" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{1D95ACE0-1D27-4B08-813C-8F066B1D57B8}">
+                <File Id="fil5D2A3324356046A4A8870C518DE02D27" KeyPath="yes" Source="SourceDir\include\tinternetmessageheader.h" />
+            </Component>
+            <Component Id="cmp53CEB12FEA96060E83E8B041D0FACE8D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{1131E670-96FA-422A-B0ED-E047906CFFD0}">
+                <File Id="fil1E241E4F9331427B8D894603CBB24569" KeyPath="yes" Source="SourceDir\include\TJavaScriptObject" />
+            </Component>
+            <Component Id="cmp073C76771B043386772F4C4A3E24C29E" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{2FC42BED-4AF2-4C1E-82FD-DCECE0B99B75}">
+                <File Id="filB8D94B34F96E0C7A3E95C1C1690E1EF3" KeyPath="yes" Source="SourceDir\include\tjavascriptobject.h" />
+            </Component>
+            <Component Id="cmp84133B11B787F3E17F6144CDB76771F0" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{1F65B14B-DBCD-413A-8899-7A73AA22A39B}">
+                <File Id="filC8D21576DEECB19813588B914E3F8F4A" KeyPath="yes" Source="SourceDir\include\TKvsDatabase" />
+            </Component>
+            <Component Id="cmp5F76FB9A84A7F880609F73C1F71B1CCE" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{2EA3830F-EAB2-44AB-AA1F-B1582766BA2C}">
+                <File Id="fil4627049974C3C4BBB1C60EB04B4C99DD" KeyPath="yes" Source="SourceDir\include\tkvsdatabase.h" />
+            </Component>
+            <Component Id="cmp0B515ED0AB02839CB848793B14783551" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{40BA738A-7FF0-4946-A222-E69A9FD772C1}">
+                <File Id="filCD5115C8697F24F5EC34392C9921FC21" KeyPath="yes" Source="SourceDir\include\TKvsDatabasePool" />
+            </Component>
+            <Component Id="cmp349EFC91791E95584C55D9931F1F7B32" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{85807D2B-960A-450A-8528-94A18E7EBC23}">
+                <File Id="filF7B110407CAB66862D186775A68A7DA9" KeyPath="yes" Source="SourceDir\include\tkvsdatabasepool.h" />
+            </Component>
+            <Component Id="cmp42216FC781D7BAAA0335E1530FB02D20" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D1D983D4-50C9-4C8E-A425-45783CABD954}">
+                <File Id="fil2443076F72DDB6DD9A155841628C13B8" KeyPath="yes" Source="SourceDir\include\TKvsDriver" />
+            </Component>
+            <Component Id="cmpA5AA17ABFF6DE4220C8A87BA88CCE33C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{AAB026C1-89CE-4665-BB58-079AA18C8F89}">
+                <File Id="filE41396A2AFF4017F89100369406CBD0B" KeyPath="yes" Source="SourceDir\include\tkvsdriver.h" />
+            </Component>
+            <Component Id="cmp8422AAE7CB87B2D1FA7575D74E662C2B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5C4C248F-5A79-4F41-BEF7-4BBE805E060E}">
+                <File Id="fil5FB01AA6BE4D9D8DB58AE023F2894D43" KeyPath="yes" Source="SourceDir\include\TLog" />
+            </Component>
+            <Component Id="cmp2CC55FA1FE127B809698ECB39D551BBC" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{675DB237-3097-445D-A329-D1F0E07AA28C}">
+                <File Id="fil8B4DEAD69E2BD9AF81BBB25F1BB713E0" KeyPath="yes" Source="SourceDir\include\tlog.h" />
+            </Component>
+            <Component Id="cmp7B230EED296993B8A7E208B87E5ACF83" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4F493F48-7EFB-4B8C-9625-12B9800CAE12}">
+                <File Id="fil68A772A9836449103C421096172BA671" KeyPath="yes" Source="SourceDir\include\TLogger" />
+            </Component>
+            <Component Id="cmp0E82FA478989120FE096B68DBC292B0F" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{399EC9C8-71BF-45C1-9352-B5FA889ABD85}">
+                <File Id="fil776A0808FBAD5766CD55AC653143016B" KeyPath="yes" Source="SourceDir\include\tlogger.h" />
+            </Component>
+            <Component Id="cmp46AEBFF4DE8D8405529E7BD1753DB56A" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{CAA8CF6B-941C-4A1A-9F07-23A248043BAD}">
+                <File Id="filBF6DE9D1741CB3C6494AEB347AFEEAD3" KeyPath="yes" Source="SourceDir\include\TLoggerPlugin" />
+            </Component>
+            <Component Id="cmpE4FD32F5529CF441FD65AFF4D2C707C4" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{CF45FEAE-1AA5-49D1-B291-CD624BB3EC34}">
+                <File Id="filD5FC20D1D31B8B01875682ECF1F5A49E" KeyPath="yes" Source="SourceDir\include\tloggerplugin.h" />
+            </Component>
+            <Component Id="cmp3149D0C3CE922B2D8D0C1A945CDAFDDB" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{351F77F5-503D-4990-A070-6B1BC9250AF3}">
+                <File Id="fil08BB075165B3B0BC39AC02675608E914" KeyPath="yes" Source="SourceDir\include\TMailMessage" />
+            </Component>
+            <Component Id="cmp302289E75D89B131932AD458F010AA2C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8FCFE2CD-1ED4-4808-A027-37B351227E90}">
+                <File Id="filA83AB63BF99178BAD27FD57FC99D256A" KeyPath="yes" Source="SourceDir\include\tmailmessage.h" />
+            </Component>
+            <Component Id="cmpCD30DE168CB3312E8A804DE35C548652" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{97F7392D-7035-46A1-B809-C4C9E4832017}">
+                <File Id="fil789C8A4666EFD1CE1D135D86CC2FA860" KeyPath="yes" Source="SourceDir\include\TModelObject" />
+            </Component>
+            <Component Id="cmp9AFA6AD8294D190F463A115D03223891" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{F5B834A7-8C87-47E5-9403-28AECA90DD69}">
+                <File Id="fil7B268164D47D4ECBCF1DD43554EAB675" KeyPath="yes" Source="SourceDir\include\tmodelobject.h" />
+            </Component>
+            <Component Id="cmp227EBB04A7931B26E68ECA0D5AC04290" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{75EF810A-58A0-48B1-B65A-4D7F4EB2769D}">
+                <File Id="fil73F9BEB3E666C922E76A93D66946190E" KeyPath="yes" Source="SourceDir\include\TModelUtil" />
+            </Component>
+            <Component Id="cmp591D57A46375FF0E892C5E712238CB69" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{328244D1-E872-4600-96D6-9B47AEB40802}">
+                <File Id="fil6A9C7359094DEDC0AB3EF779CDF16CE5" KeyPath="yes" Source="SourceDir\include\tmodelutil.h" />
+            </Component>
+            <Component Id="cmp06C7F81BBAFC1AA5B2CB680FBE37B437" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{F007C7A9-C5D9-4350-8C9B-92EBDEF5930D}">
+                <File Id="filD33505DF2BB5512AEE646E6DA94DDDC5" KeyPath="yes" Source="SourceDir\include\TMongoCursor" />
+            </Component>
+            <Component Id="cmpDBB0F91C8C6CC2A5641880A56A398357" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{656648BD-C9CA-496A-B775-387548BF3E30}">
+                <File Id="filF17E5F878B8439B1ACE03BE20203A73E" KeyPath="yes" Source="SourceDir\include\tmongocursor.h" />
+            </Component>
+            <Component Id="cmpDB314FE4560F6E61D253B6316FA8538D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C289520E-5C41-4589-8A52-DD09BF6F2F67}">
+                <File Id="filC2306977DF902D73D1878FB72607436B" KeyPath="yes" Source="SourceDir\include\TMongoDriver" />
+            </Component>
+            <Component Id="cmp7100109607D55D1A84EF5326184A77CA" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{ABF3F343-16E2-48AD-9831-C8741096FCEB}">
+                <File Id="fil2C4293373A93594661BCC673670730FD" KeyPath="yes" Source="SourceDir\include\tmongodriver.h" />
+            </Component>
+            <Component Id="cmp4E49CF0FD95C932ADDBFA39482EF9AC0" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{133536F8-A59F-47A0-B333-E2B9222485C6}">
+                <File Id="fil1C66256B191F7140184304461197D0A8" KeyPath="yes" Source="SourceDir\include\TMongoObject" />
+            </Component>
+            <Component Id="cmp512A49B216DC8C715A2C1265459E3B07" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{CE38A02F-86A3-4D21-A3E6-48078838879E}">
+                <File Id="fil47C52B2BD22FF5FD8D4FFC60B65182C1" KeyPath="yes" Source="SourceDir\include\tmongoobject.h" />
+            </Component>
+            <Component Id="cmpDF7C8B447E17C87F39CE4AA0030C1F55" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{74B4DB53-9118-4730-A8B5-EB3916618AC4}">
+                <File Id="filAFB1E25164CCF4B14BC866420AD11B45" KeyPath="yes" Source="SourceDir\include\TMongoQuery" />
+            </Component>
+            <Component Id="cmp92AA94100040DE879AD9F6C82DD08D92" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D659D82E-16DB-484B-89A6-BD17609A84F7}">
+                <File Id="filC1DE11937AD8913FF5EC36C6D7F815DC" KeyPath="yes" Source="SourceDir\include\tmongoquery.h" />
+            </Component>
+            <Component Id="cmp41D394A107565EA386C044823A2BE169" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{89133944-1704-4E2D-99FF-C5DE0B582A44}">
+                <File Id="fil9AE4D571CBBA404F3F0EEF8C69640F15" KeyPath="yes" Source="SourceDir\include\TMultipartFormData" />
+            </Component>
+            <Component Id="cmp7574CB404AEB0DEDAE87873155073277" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{3DA5F9C1-BD5C-413C-BC0C-D99DF792DAC9}">
+                <File Id="fil4B1E4D5A13E90C550174F05F8BE4D551" KeyPath="yes" Source="SourceDir\include\tmultipartformdata.h" />
+            </Component>
+            <Component Id="cmpCCBB0C8D998C1E7C9AF53BCCAB62F978" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{17B14E08-8E40-4FE1-A5E7-8BE1AED4B46F}">
+                <File Id="filB014C4EC94B62603649EBFB221552D54" KeyPath="yes" Source="SourceDir\include\TOption" />
+            </Component>
+            <Component Id="cmp8DA57FB9627CA4FCBDFDA63027D4725D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{E21C734D-F0DB-409D-9C00-F5AE35CDC367}">
+                <File Id="filB68D08F732D97A62EB2A85AE7A33FFB3" KeyPath="yes" Source="SourceDir\include\toption.h" />
+            </Component>
+            <Component Id="cmp35D1610F1AB5E4580BD3F9AC23672129" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C465B6CF-3006-4185-80A5-C2FF6D8E207F}">
+                <File Id="fil37953F341DFFFF04538FFB3B2F14E65C" KeyPath="yes" Source="SourceDir\include\TPaginator" />
+            </Component>
+            <Component Id="cmp16310F5A816E11BB50D0EA857E9E1D26" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D3CB64DB-41CC-458D-9CC9-152104189C30}">
+                <File Id="fil4E41940F88FD1C0822982961AF55CC43" KeyPath="yes" Source="SourceDir\include\tpaginator.h" />
+            </Component>
+            <Component Id="cmp379F6D7AF58E3ADC3AAEF6591CEF9F4C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8B5F43B0-021E-4657-A409-2DB5B6DC0767}">
+                <File Id="fil16632EB35EACDB0E859BE8DB3844DB5D" KeyPath="yes" Source="SourceDir\include\TPopMailer" />
+            </Component>
+            <Component Id="cmpEB5B35AB4AA0577ED919872E4D0A748F" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{11FB5AF6-E4E0-4006-AAA7-C5B5174322DB}">
+                <File Id="filB208CCC2A34411CECA61B5CDFDA78E9C" KeyPath="yes" Source="SourceDir\include\tpopmailer.h" />
+            </Component>
+            <Component Id="cmp5E82062BCBFC08A169E580283893063E" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5619AD33-4F44-4DDF-8FE6-27FCE010FC04}">
+                <File Id="filF7AC230DEDE59B262FD8D8B64FD4F36D" KeyPath="yes" Source="SourceDir\include\TPrototypeAjaxHelper" />
+            </Component>
+            <Component Id="cmpB86B1FAF394E44CD0FDA2F874BA89A1D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{EC8F447B-F3A8-486E-89B1-5B22D9A98618}">
+                <File Id="filADA48892AE45D8FB6717E40A8C878933" KeyPath="yes" Source="SourceDir\include\tprototypeajaxhelper.h" />
+            </Component>
+            <Component Id="cmpC129D55B82917873C911C0B23AA93E15" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{517D9A81-79D5-43D5-BDA2-B91D137A6A5B}">
+                <File Id="filA99B50EA9E9CBE8C846F647E68CF1983" KeyPath="yes" Source="SourceDir\include\TreeFrogController" />
+            </Component>
+            <Component Id="cmpD6B137A3503FC1CC18A8B8C170A011ED" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4CD3A930-9AA6-475A-9E95-E0DD4FBE8DDD}">
+                <File Id="filE90C2B2017FCD5073F8EB75CF50F574A" KeyPath="yes" Source="SourceDir\include\TreeFrogModel" />
+            </Component>
+            <Component Id="cmp659BD413C45413BB7BE1D2E5B3923FC4" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{99AA0FB5-76CC-4899-96ED-D99DD434EE59}">
+                <File Id="fil566D3B52CEEFE5C65584B88515DE83D2" KeyPath="yes" Source="SourceDir\include\TreeFrogView" />
+            </Component>
+            <Component Id="cmp720CC50399A8AA0D57A7DC19047F49F3" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{7DCA5B3D-0F3A-424F-B2B0-31F3C429FDCA}">
+                <File Id="fil590E3BAE4B99E35E1ACF92BC617F06CC" KeyPath="yes" Source="SourceDir\include\TSession" />
+            </Component>
+            <Component Id="cmp019B5DC3D2C90971BE441B1C5CFBE20A" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{1C207F9F-F732-4C7A-BF21-6AB735521D23}">
+                <File Id="filF6D87D5766C93A8824D502B039405913" KeyPath="yes" Source="SourceDir\include\tsession.h" />
+            </Component>
+            <Component Id="cmpFF29F77395C2E51B21EBF13E05BDE883" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{DBE91754-325E-43E9-AF5E-4223011827F4}">
+                <File Id="fil2FDA75D0ECFED8E2B36BB0FDB347437C" KeyPath="yes" Source="SourceDir\include\TSessionStore" />
+            </Component>
+            <Component Id="cmp3653DA5AA1C493C53A5D139CA05C2157" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{1A467669-E217-4746-B704-D4E02F9691D1}">
+                <File Id="filCF51FCFC883BDD2F7B91FF7F5F79B9EB" KeyPath="yes" Source="SourceDir\include\tsessionstore.h" />
+            </Component>
+            <Component Id="cmp4E5662F7CCA5D68B289101D25182AB6E" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{65DE5227-DF82-49A3-A966-2EB1385A9549}">
+                <File Id="fil89A8096A0C87C44AB336DA8EC968B80F" KeyPath="yes" Source="SourceDir\include\TSessionStorePlugin" />
+            </Component>
+            <Component Id="cmp5AC5DAC8CD47CFB24E2E8B21584399F6" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{87F02D8E-84F4-4E0E-A21C-E2C120365E64}">
+                <File Id="fil1B70E82DAC309BA098F1FA6B2EC88C99" KeyPath="yes" Source="SourceDir\include\tsessionstoreplugin.h" />
+            </Component>
+            <Component Id="cmpBD735A4250DDC3403142AEF312C2F217" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{934F499E-95F4-4F34-8B96-1DB9C4E5FED9}">
+                <File Id="filAFBCA2523A595ED3D044FA6FD5BEC51A" KeyPath="yes" Source="SourceDir\include\TSharedMemoryLogStream" />
+            </Component>
+            <Component Id="cmp95CF98D3773559A4A2C2478D73A0C23B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{234C98B9-CF83-44BA-913F-636B27306D79}">
+                <File Id="filB4B0B41454876E5916F5DEBEFDA2449E" KeyPath="yes" Source="SourceDir\include\tsharedmemorylogstream.h" />
+            </Component>
+            <Component Id="cmpD2695B35245D3496DBC32D7211AC901D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{EA526255-AE70-4B37-B27A-9EEF772F0EEC}">
+                <File Id="fil0CFBFEB80956CDB0835E00314FA09BD5" KeyPath="yes" Source="SourceDir\include\TSmtpMailer" />
+            </Component>
+            <Component Id="cmp1A7ECA10EEDE88C346364659EE77A19C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4CFB6644-79D2-4980-B3B0-ADB3F2272C99}">
+                <File Id="fil40F7D21524F6EB0641866FDF4E7B47A8" KeyPath="yes" Source="SourceDir\include\tsmtpmailer.h" />
+            </Component>
+            <Component Id="cmp2D9491D235590B75D3ABA7925AC46313" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C5A0F55D-AE4B-44A9-9774-66DD5227CD51}">
+                <File Id="fil2B8BAEA4D928AB947A1A80BF81EE1DB9" KeyPath="yes" Source="SourceDir\include\TSqlDatabasePool" />
+            </Component>
+            <Component Id="cmpDB8BCF393FA97A72C65FEBFB879607C1" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{DD45F674-F3BF-4FF9-A879-AFFEA46F6849}">
+                <File Id="filC7A016D24D85BFAB32F8E1D3FBA203EB" KeyPath="yes" Source="SourceDir\include\tsqldatabasepool.h" />
+            </Component>
+            <Component Id="cmp81F3442FB7C171F3D75AF2FF661B7CC0" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{0CCE35F5-1C7F-47C1-835A-0F0EE77ABDFD}">
+                <File Id="fil8F9484F7E2F0B88BD82179F448EBA233" KeyPath="yes" Source="SourceDir\include\TSqlObject" />
+            </Component>
+            <Component Id="cmpD8DB61463D43DFB52BEC88F0BEB87931" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C7C3545F-F417-446D-91D6-BF6A86187C85}">
+                <File Id="fil735E6AAF27E399582C3A1F805F8FAAFB" KeyPath="yes" Source="SourceDir\include\tsqlobject.h" />
+            </Component>
+            <Component Id="cmpA3E7AA1A3A4B137EB9A7CD914762EDC3" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8C333C5F-C4B9-499A-97A7-2039E6F1FBF9}">
+                <File Id="filDBB779A83DA36B47686468F53C153913" KeyPath="yes" Source="SourceDir\include\TSqlORMapper" />
+            </Component>
+            <Component Id="cmp202F2460E5C307A04D9729DEDCA53B3C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5335BD6E-272C-46B7-A386-20CFEE4E9582}">
+                <File Id="fil8ECA44F3B220A76384130247BCF59E4F" KeyPath="yes" Source="SourceDir\include\tsqlormapper.h" />
+            </Component>
+            <Component Id="cmp938122FA4071B66B7C70D7C9D1C8C7B1" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{8539C250-9C33-49D7-89C9-4E6B97CFCC1E}">
+                <File Id="fil62A1C3CD9573CB2F0364E7043C84F36E" KeyPath="yes" Source="SourceDir\include\TSqlORMapperIterator" />
+            </Component>
+            <Component Id="cmp20289581153AABC3D8840207023A0C8B" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{9719B0E4-9EE5-4E80-BB71-321DE0E59B5F}">
+                <File Id="fil91ED1CF7B0661EADB27C086B53EA646B" KeyPath="yes" Source="SourceDir\include\tsqlormapperiterator.h" />
+            </Component>
+            <Component Id="cmp4EEC5524D4B4D702255E5A84F055475E" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{08807BD1-A3E8-47D3-A874-BA3D324E1366}">
+                <File Id="fil00825B29593DA22A18F1BD0A0B308963" KeyPath="yes" Source="SourceDir\include\TSqlQuery" />
+            </Component>
+            <Component Id="cmpE39FF6077FE80EEB6A75B31DBF91FE27" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{4A6AA50E-2402-461E-9A28-BEB741A5BA9D}">
+                <File Id="filE00314DDBB074EDEDD0F74702B6A768F" KeyPath="yes" Source="SourceDir\include\tsqlquery.h" />
+            </Component>
+            <Component Id="cmpFBBED06EBA7C03232554EFFBCA1E927D" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{5B024DAE-7604-4C5E-88C0-AB8E81CE55DF}">
+                <File Id="fil214D6E3634795DFEE0D03219A70C4DF6" KeyPath="yes" Source="SourceDir\include\TSqlQueryORMapper" />
+            </Component>
+            <Component Id="cmpD9F85FBF144D8DCBAFD606ADACE0444C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D35FB8DD-6D53-4576-A167-0A82672DAD4F}">
+                <File Id="fil450DBC356C03BB2B97B6B0129F4BCFFE" KeyPath="yes" Source="SourceDir\include\tsqlqueryormapper.h" />
+            </Component>
+            <Component Id="cmp0670303E75F5F9D096733B253031F30C" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{120FA2D1-61AF-4EE8-AFB8-1867EF884B8A}">
+                <File Id="filB8E47899F4C6201D5B62A1D8BE1040F1" KeyPath="yes" Source="SourceDir\include\TSqlQueryORMapperIterator" />
+            </Component>
+            <Component Id="cmp78D22F3A8AB2BC33885DDE0DDA8028E3" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{E234E1F5-4470-4756-911E-F1CB9F13ECBA}">
+                <File Id="filDFECAA4D607D31AA7FE9F4EEE8E02B20" KeyPath="yes" Source="SourceDir\include\tsqlqueryormapperiterator.h" />
+            </Component>
+            <Component Id="cmp2ECA9F4D559205B1544C0CA8B2062CFB" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{9E569E7E-C39F-4B37-81D5-7BD6AB7CE38D}">
+                <File Id="fil636C509C3A840E007740424CFC144B17" KeyPath="yes" Source="SourceDir\include\TSqlTransaction" />
+            </Component>
+            <Component Id="cmp4C75F767E318EAE7C175571B9DD216D4" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{D0F688CE-140A-4B37-8A65-412A94EBD9AC}">
+                <File Id="filFD48531BC78A67F017C69AC12F7EEB5D" KeyPath="yes" Source="SourceDir\include\tsqltransaction.h" />
+            </Component>
+            <Component Id="cmpE160C05AE5B0310C431878BAD05B2819" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{87D27B83-B140-4B8C-A0E2-0E6D3B5A008F}">
+                <File Id="fil01F982CA1EA7F8690EED20BE8FA5C018" KeyPath="yes" Source="SourceDir\include\TSystemGlobal" />
+            </Component>
+            <Component Id="cmp84ADFB30EC6AB4583D2FA37D44E002C7" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{6F1A5886-3323-40C5-9665-8A0929874358}">
+                <File Id="filC5282E80EF3737185B6D3F5D8E303BAF" KeyPath="yes" Source="SourceDir\include\tsystemglobal.h" />
+            </Component>
+            <Component Id="cmpDF7DC4A8FB58513EE6D863E158ADCDAA" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{ADD1FE32-AD14-4301-A57A-9AEF88532C48}">
+                <File Id="fil14C475DF4EE9393FB87231B662241E2A" KeyPath="yes" Source="SourceDir\include\TTemporaryFile" />
+            </Component>
+            <Component Id="cmp8AF8492EA388AA643410B1BB91FCE70F" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{86846EAE-AA56-4C09-BB3D-7EFC1C06DA04}">
+                <File Id="fil73273D6749B5BFA39F81C16212ED59D8" KeyPath="yes" Source="SourceDir\include\ttemporaryfile.h" />
+            </Component>
+            <Component Id="cmpBDF2E313F0736511F49898D7120559B5" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{01C3F22A-D692-4B6D-A9AD-107E21E89B14}">
+                <File Id="fil7DFD40351D62D1B896D972CC867E705B" KeyPath="yes" Source="SourceDir\include\TViewHelper" />
+            </Component>
+            <Component Id="cmpD28725CEBDB27C278928E9441CAA72E3" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{C543DB0E-F225-4CE1-AECE-DCF1632E4BB3}">
+                <File Id="fil9B2781EC31BD6132CC962E5C6F9AB74C" KeyPath="yes" Source="SourceDir\include\tviewhelper.h" />
+            </Component>
+            <Component Id="cmp74C6E32D45AA336615AFF8CCB9B54404" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{83CA02F8-B6F2-4EB2-BACA-55941B7847A4}">
+                <File Id="fil61930986D42797F7167090F20EBDDE76" KeyPath="yes" Source="SourceDir\include\TWebApplication" />
+            </Component>
+            <Component Id="cmp58BCF2B09E3A9E786F7EA0FF14D81495" Directory="dir8B9FE40A56E5D9B8702810D0F90F179E" Guid="{6C3CE2DC-752A-4498-B13E-95FAAF852B7F}">
+                <File Id="fil2D7EE21DCDD306281707CCAED73EE81E" KeyPath="yes" Source="SourceDir\include\twebapplication.h" />
+            </Component>
+            <Component Id="cmpF6D69EEA99673F88B530E1B8862DB199" Directory="dir41B797F93D79FC80FAAA18DD1B1FDDA4" Guid="{61503380-0053-4B80-8F21-E067727AE7C0}">
+                <File Id="fil8CD5FE4323BD81BF63AC9F49B56D7CFE" KeyPath="yes" Source="SourceDir\include\TfTest\TfTest" />
+            </Component>
+            <Component Id="cmp2D58FA2784FDBA8B644C050C34158819" Directory="dir41B797F93D79FC80FAAA18DD1B1FDDA4" Guid="{6A0775B9-90EF-468B-A785-7B10F6CE22BD}">
+                <File Id="fil2644511D55D1AF1971A58E219BABF1A2" KeyPath="yes" Source="SourceDir\include\TfTest\tftest.h" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+    <Fragment>
+        <DirectoryRef Id="dir8B9FE40A56E5D9B8702810D0F90F179E">
+            <Directory Id="dir41B797F93D79FC80FAAA18DD1B1FDDA4" Name="TfTest" />
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <DirectoryRef Id="dir2D1633A856476C66C9D40ED3EB1C279C">
+            <Directory Id="dir8B9FE40A56E5D9B8702810D0F90F179E" Name="include" />
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <DirectoryRef Id="dir2D1633A856476C66C9D40ED3EB1C279C">
+            <Directory Id="dirD628EA0C15A8EAEB54ACEE7FAEB78F2B" Name="bin" />
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <DirectoryRef Id="dir2D1633A856476C66C9D40ED3EB1C279C">
+            <Directory Id="dirE4FBBEFAE9E81D950D6BA47DBE8DD3BB" Name="defaults" />
+        </DirectoryRef>
+    </Fragment>
+</Wix>
