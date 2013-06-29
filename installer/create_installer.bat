@@ -6,7 +6,8 @@
 ::  - Requires WiX Toolset
 ::
 
-set TFDIR=C:\TreeFrog\1.6.1
+set VERSION=1.6.1
+set TFDIR=C:\TreeFrog\%VERSION%
 set PATH="C:\Program Files (x86)\WiX Toolset v3.7\bin";%PATH%
 
 %~d0
@@ -19,7 +20,7 @@ heat.exe dir %TFDIR% -dr INSTALLDIR -cg TreeFrogFiles -gg -out TreeFrogFiles.wxs
 
 :: Creates installer
 candle.exe TreeFrog.wxs TreeFrogFiles.wxs 
-light.exe  -ext WixUIExtension -out TreeFrog-1.x.x.msi TreeFrog.wixobj TreeFrogFiles.wixobj
+light.exe  -ext WixUIExtension -out TreeFrog-SDK-%VERSION%.msi TreeFrog.wixobj TreeFrogFiles.wixobj
 
 rd SourceDir 
 echo.
