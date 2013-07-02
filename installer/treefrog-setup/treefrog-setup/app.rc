@@ -11,7 +11,7 @@
 // User resources
 //
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
-IDR_TREEFROG_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK-1.6.1.msi"
+IDR_TREEFROG_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK.msi"
 
 
 //

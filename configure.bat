@@ -70,7 +70,6 @@ echo set TFDIR=%TFDIR%>> %TFENV%
 echo set PATH=%%TFDIR^%%\bin;%PATH%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
-echo echo -- QTDIR set to %%QTDIR%%>> %TFENV%
 echo echo -- QMAKESPEC set to %%QMAKESPEC%%>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
 
