@@ -61,6 +61,7 @@ namespace treefrogsetup {
     private: System::Windows::Forms::Button^  okButton;
     private: System::Windows::Forms::Button^  cancelButton;
     private: System::Windows::Forms::TextBox^  forderTextBox;
+    private: System::Windows::Forms::Label^  labeltop;
     private: System::Windows::Forms::Label^  label;
     private: System::Windows::Forms::Label^  label1;
 
@@ -85,11 +86,12 @@ namespace treefrogsetup {
             this->forderTextBox = (gcnew System::Windows::Forms::TextBox());
             this->label = (gcnew System::Windows::Forms::Label());
             this->label1 = (gcnew System::Windows::Forms::Label());
+            this->labeltop = (gcnew System::Windows::Forms::Label());
             this->SuspendLayout();
             // 
             // browseButton
             // 
-            this->browseButton->Location = System::Drawing::Point(398, 83);
+            this->browseButton->Location = System::Drawing::Point(398, 102);
             this->browseButton->Name = L"browseButton";
             this->browseButton->Size = System::Drawing::Size(109, 27);
             this->browseButton->TabIndex = 0;
@@ -99,7 +101,7 @@ namespace treefrogsetup {
             // 
             // okButton
             // 
-            this->okButton->Location = System::Drawing::Point(254, 137);
+            this->okButton->Location = System::Drawing::Point(255, 162);
             this->okButton->Name = L"okButton";
             this->okButton->Size = System::Drawing::Size(115, 30);
             this->okButton->TabIndex = 1;
@@ -109,7 +111,7 @@ namespace treefrogsetup {
             // 
             // cancelButton
             // 
-            this->cancelButton->Location = System::Drawing::Point(398, 137);
+            this->cancelButton->Location = System::Drawing::Point(398, 162);
             this->cancelButton->Name = L"cancelButton";
             this->cancelButton->Size = System::Drawing::Size(109, 30);
             this->cancelButton->TabIndex = 2;
@@ -119,7 +121,7 @@ namespace treefrogsetup {
             // 
             // forderTextBox
             // 
-            this->forderTextBox->Location = System::Drawing::Point(34, 87);
+            this->forderTextBox->Location = System::Drawing::Point(35, 106);
             this->forderTextBox->Name = L"forderTextBox";
             this->forderTextBox->Size = System::Drawing::Size(335, 19);
             this->forderTextBox->TabIndex = 3;
@@ -130,28 +132,40 @@ namespace treefrogsetup {
             this->label->AutoSize = true;
             this->label->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(128)));
-            this->label->Location = System::Drawing::Point(32, 23);
+            this->label->Location = System::Drawing::Point(32, 46);
             this->label->Name = L"label";
-            this->label->Size = System::Drawing::Size(261, 15);
+            this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify the base folder of Qt version 5.";
+            this->label->Text = L"Specify a base folder of Qt version 5.0 or later.";
             // 
             // label1
             // 
             this->label1->AutoSize = true;
             this->label1->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
                 static_cast<System::Byte>(128)));
-            this->label1->Location = System::Drawing::Point(41, 50);
+            this->label1->Location = System::Drawing::Point(43, 75);
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
             this->label1->Text = L"Example:  C:\\Qt\\Qt5.0.2";
             // 
+            // labeltop
+            // 
+            this->labeltop->AutoSize = true;
+            this->labeltop->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+                static_cast<System::Byte>(128)));
+            this->labeltop->Location = System::Drawing::Point(32, 18);
+            this->labeltop->Name = L"labeltop";
+            this->labeltop->Size = System::Drawing::Size(277, 15);
+            this->labeltop->TabIndex = 6;
+            this->labeltop->Text = L"TreeFrog Framework requires Qt (MinGW).";
+            // 
             // MainForm
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-            this->ClientSize = System::Drawing::Size(526, 192);
+            this->ClientSize = System::Drawing::Size(526, 204);
+            this->Controls->Add(this->labeltop);
             this->Controls->Add(this->label1);
             this->Controls->Add(this->label);
             this->Controls->Add(this->forderTextBox);
@@ -161,6 +175,8 @@ namespace treefrogsetup {
             this->MaximizeBox = false;
             this->MinimizeBox = false;
             this->Name = L"MainForm";
+            this->ShowIcon = false;
+            this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
             this->Text = L"TreeFrog Framework SDK Setup";
             this->ResumeLayout(false);
             this->PerformLayout();
@@ -262,7 +278,7 @@ namespace treefrogsetup {
 
                 // Edits tfenv.bat
                 IO::FileInfo^ fibat = gcnew IO::FileInfo(TF_ENV_BAT);
-                if (fibat->Exists) {
+                if (proc->ExitCode == 0 && fibat->Exists) {
                     String^ qtbin;
 
                     for (int i = 0; i < bins->Count; ++i) {
