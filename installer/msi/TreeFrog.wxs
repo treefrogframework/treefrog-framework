@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
+  <!-- *** 7行目,28行目,32行目を修正 *** -->
+
   <!-- プロダクト情報 -->
   <Product Name='TreeFrog Framework SDK 1.6.1'
            Id='9FB4BBC8-FFFF-4207-B078-256E4A3F6CB1'
@@ -21,11 +23,32 @@
 
     <!-- インストールファイル -->
     <Directory Id='TARGETDIR' Name='SourceDir'>
-      <Directory Id='WindowsVolume'>
+      <Directory Id='WinVolume'>
         <Directory Id='INSTALLDIR' Name='TreeFrog'>
+          <Directory Id='VERSIONDIR' Name='1.6.1'>
+          </Directory>
         </Directory>
       </Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.6.1"/>
+      </Directory>
     </Directory>
+    
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="483115D8-9B72-49D4-BDCC-7EF0AABCB50C">
+        <CreateFolder Directory="ApplicationProgramsFolder"/>
+
+        <!-- Shortcut to TF prompt-->
+        <Shortcut Id="TreeFrogFrameworkPrompt"
+                  Name="TreeFrog Framework Prompt"
+                  Description="TreeFrog Framework Prompt"
+                  Target="[SystemFolder]cmd.exe" Arguments="/K [VERSIONDIR]bin\\tfenv.bat"
+                  WorkingDirectory="PersonalFolder"/>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\TreeFrog" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
 
     <!-- フィーチャー -->
     <Feature Id='Complete' Title='TreeFrog Fromework SDK'
@@ -35,13 +58,14 @@
       <Feature Id='TreeFrogSDK' Title='SDK'
                Description='TreeFrog Fromework SDK' Level='1'>
         <ComponentGroupRef Id='TreeFrogFiles' />
+        <ComponentRef Id='ApplicationShortcut' />
       </Feature>
 
     </Feature>
 
     <!-- アイコン -->
 <!--
-    <Icon Id="Hoge10.exe" SourceFile="HogeAppl10.exe" />
+    <Icon Id="HogeIcon" SourceFile="Hoge.exe" />
 -->
 
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
