@@ -26,6 +26,7 @@ namespace treefrogsetup {
          */
         static initonly String^ TF_VERSION = "1.6.1";
         static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + TF_VERSION + " \\bin\\tfenv.bat";
+        static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + TF_VERSION + " \\sqldrivers\\install_sqldrivers.bat";
 
         MainForm(void)
         {
@@ -302,8 +303,19 @@ namespace treefrogsetup {
                     dout->Close();
                 }
 
+                // Install SQL drivers
+                IO::FileInfo^ fiins = gcnew IO::FileInfo(INSTALL_SQLDRIVERS_BAT);
+                if (fiins->Exists) {
+                    Process^ procins = gcnew Diagnostics::Process;
+                    procins->StartInfo->FileName = INSTALL_SQLDRIVERS_BAT;
+                    procins->StartInfo->CreateNoWindow = true;
+                    procins->StartInfo->WindowStyle = ProcessWindowStyle::Minimized;
+                    procins->Start();
+                    procins->WaitForExit();
+                }
+
             } catch (Exception^ e) {
-                abort("File write error: " + e->Message, "Error");
+                abort("Error Exception: " + e->Message, "Error");
             }
 
             fs->Close();
