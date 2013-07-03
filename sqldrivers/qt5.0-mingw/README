@@ -16,13 +16,13 @@ REQUIREMENTS
 
 INSTALLING
 
-1. Execute install.bat on TreeFrog Command Prompt to copy database
-   drivers (DLLs) to plugins directory.
+1. Execute install_sqldrivers.bat on TreeFrog Command Prompt to copy
+   database drivers (DLLs) to plugins directory.
 
 2. Edit the "%TFDIR%\bin\tfenv.bat" file to add those locations of client
    shared libraries provided by RDB vendors to the search path, the %PATH%
    variable.
-   
+
    Locations:
     MySQL:      Directory of libmysql.dll
     PostgreSQL: Directory of libpq.dll
@@ -30,7 +30,7 @@ INSTALLING
     DB2:        Directory of db2cli.dll
 
 3. Check if Qt can load the drivers on TreeFrog Command Prompt.
- 
+
     > tspawn --show-drivers
 
     Available database drivers for Qt:

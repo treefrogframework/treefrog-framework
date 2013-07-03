@@ -8,9 +8,18 @@ cd /D %BASEDIR%drivers
 for %%I in (tspawn.exe) do if exist %%~$path:I (
   goto :COPY
 )
+
+if exist ..\..\bin\tfenv.bat (
+  call ..\..\bin\tfenv.bat
+) else (
+  if exist ..\..\..\tfenv.bat call ..\..\..\tfenv.bat
+)
+for %%I in (tspawn.exe) do if exist %%~$path:I (
+  goto :COPY
+)
+
 echo command: tspawn not found.
 echo Execute this batch file in TreeFrog command prompt.
-pause
 exit /B
 
 
