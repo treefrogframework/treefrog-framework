@@ -22,8 +22,9 @@
     <Property Id='DiskPrompt' Value="TreeFrog Framework Installer [1]" />
 
     <!-- インストールファイル -->
+    <SetDirectory Id="WINDOWSVOLUME" Value="[WindowsVolume]"/>
     <Directory Id='TARGETDIR' Name='SourceDir'>
-      <Directory Id='WinVolume'>
+      <Directory Id='WINDOWSVOLUME'>
         <Directory Id='INSTALLDIR' Name='TreeFrog'>
           <Directory Id='VERSIONDIR' Name='1.6.1'>
           </Directory>
