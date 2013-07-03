@@ -8,17 +8,17 @@
 #include "resource.h"
 
 //
-// User resources
-//
-LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
-IDR_TREEFROG_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK.msi"
-
-
-//
 // Icon resources
 //
 LANGUAGE 17, SUBLANG_DEFAULT
 1                  ICON           "app.ico"
+
+
+//
+// User resources
+//
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+IDR_TREEFROG_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK.msi"
 
 
 //
