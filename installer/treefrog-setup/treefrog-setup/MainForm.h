@@ -38,8 +38,11 @@ namespace treefrogsetup {
 
             if (dir->Length > 0) {
                 folder = dir[0];
-                for (int i = 1; i < dir->Length; ++i)
-                    folder = (String::Compare(folder, dir[i]) >= 0) ? folder : dir[i];
+                for (int i = 1; i < dir->Length; ++i) {
+                    if (dir[i]->IndexOf("creator", StringComparison::OrdinalIgnoreCase) < 0) {
+                        folder = (String::Compare(folder, dir[i]) >= 0) ? folder : dir[i];
+                    }
+                }
             } else {
                 folder = L"C:\\";
             }
