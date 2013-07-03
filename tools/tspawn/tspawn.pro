@@ -58,6 +58,29 @@ defaults.files += defaults/views.pro
 defaults.path = $${datadir}/defaults
 INSTALLS += target defaults
 
+win32 {
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/install_sqldrivers.bat
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LGPL_EXCEPTION.txt
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.FDL
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.GPL
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.LGPL
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.PREVIEW.COMMERCIAL
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/README
+  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/README.ja
+  sqldrivers.path = $${datadir}/sqldrivers
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqldb2.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqldb2d.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlmysql.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlmysqld.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqloci.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlocid.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlpsql.dll
+  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlpsqld.dll
+  drivers.path = $${datadir}/sqldrivers/drivers
+  INSTALLS += sqldrivers drivers
+}
+
+
 # Erases CR codes on UNIX
 !exists(defaults) : system( mkdir defaults )
 for(F, defaults.files) {
