@@ -38,20 +38,24 @@ namespace treefrogsetup {
             InitializeComponent();
 
             this->Text = L"TreeFrog Framework " + VersionString() + " Setup";
+            String^ folder = "C:\\";
 
-            // Check Qt5 Folder
-            String^ folder = L"C:\\Qt";
-            array<String^>^ dir = Directory::GetDirectories(folder);
+            try {
+                // Check Qt5 Folder
+                String^ fol = L"C:\\Qt";
+                array<String^>^ dir = Directory::GetDirectories(fol);
 
-            if (dir->Length > 0) {
-                folder = dir[0];
-                for (int i = 1; i < dir->Length; ++i) {
-                    if (dir[i]->IndexOf("creator", StringComparison::OrdinalIgnoreCase) < 0) {
-                        folder = (String::Compare(folder, dir[i]) >= 0) ? folder : dir[i];
+                if (dir->Length > 0) {
+                    fol = dir[0];
+                    for (int i = 1; i < dir->Length; ++i) {
+                        if (dir[i]->IndexOf("creator", StringComparison::OrdinalIgnoreCase) < 0) {
+                            fol = (String::Compare(fol, dir[i]) >= 0) ? fol : dir[i];
+                        }
                     }
+                    folder = fol;
                 }
-            } else {
-                folder = L"C:\\";
+            } catch (...) {
+                //
             }
 
             forderTextBox->Text = folder;
