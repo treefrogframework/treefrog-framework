@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QRegExp>
 #include <QHash>
+#include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 #include "otmparser.h"
 
 #define INCLUDE_LABEL     QLatin1String("#include")

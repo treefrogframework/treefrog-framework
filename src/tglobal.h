@@ -161,6 +161,27 @@ private:
 };
 
 
+#ifndef Q_GLOBAL_STATIC_WITH_INITIALIZER
+#define Q_GLOBAL_STATIC_WITH_INITIALIZER(TYPE, NAME, INITIALIZER)  \
+    static TYPE *NAME()                                            \
+    {                                                              \
+        static TYPE *pointer;                                      \
+        static QBasicMutex mutex;                                  \
+        if (!pointer) {                                            \
+            QMutexLocker locker(&mutex);                           \
+            if (!pointer) {                                        \
+                TYPE *x = pointer = new TYPE;                      \
+                INITIALIZER                                        \
+            }                                                      \
+        }                                                          \
+        return pointer;                                            \
+    }
+
+#include <QBasicMutex>
+#include <QMutexLocker>
+#endif
+
+
 #ifndef TF_NO_DEBUG
 #  define T_CHECK_NO_CHANGE(val, type)  TCheckChange<type> ___Check ## val ## type (val, __FILE__, __LINE__)
 #else

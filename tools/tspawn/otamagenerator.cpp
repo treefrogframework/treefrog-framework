@@ -10,6 +10,7 @@
 #include "projectfilegenerator.h"
 #include "filewriter.h"
 #include "tableschema.h"
+#include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define INDEX_HTML_TEMPLATE                                             \
     "<!DOCTYPE HTML>\n"                                                 \
