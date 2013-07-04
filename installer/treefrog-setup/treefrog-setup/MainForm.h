@@ -15,6 +15,12 @@ namespace treefrogsetup {
     using namespace System::Collections::Generic;
     using namespace System::Diagnostics;
 
+    // Gets Version String
+    String^ VersionString()
+    {
+        return Reflection::Assembly::GetEntryAssembly()->GetName()->Version->ToString(3);
+    }
+
     /// <summary>
     /// MainForm class
     /// </summary>
@@ -24,13 +30,14 @@ namespace treefrogsetup {
         /*
          * TreeFrog Framework Base Directory
          */
-        static initonly String^ TF_VERSION = "1.6.1";
-        static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + TF_VERSION + " \\bin\\tfenv.bat";
-        static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + TF_VERSION + " \\sqldrivers\\install_sqldrivers.bat";
+        static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + " \\bin\\tfenv.bat";
+        static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + VersionString() + " \\sqldrivers\\install_sqldrivers.bat";
 
         MainForm(void)
         {
             InitializeComponent();
+
+            this->Text = L"TreeFrog Framework " + VersionString() + " Setup";
 
             // Check Qt5 Folder
             String^ folder = L"C:\\Qt";
@@ -201,7 +208,7 @@ namespace treefrogsetup {
             }
         }
 
-        static List<String ^>^ searchSubDirectories(const String^ name, array<String^> ^excludes, String^ folderPath)
+        static List<String ^>^ searchSubDirectories(String^ name, array<String^> ^excludes, String^ folderPath)
         {
             List<String ^>^ ret = gcnew List<String^>();
             try {
@@ -234,6 +241,17 @@ namespace treefrogsetup {
             return ret;
         }
 
+        static String^ searchFile(List<String ^>^ directories, String ^fileName)
+        {
+            for (int i = 0; i < directories->Count; ++i) {
+                array<String^>^ files = Directory::GetFiles(directories[i], fileName);
+                if (files->Length > 0) {
+                    return files[0];
+                }
+            }
+            return "";
+        }
+
         private: static void abort(String^ text, String^ caption)
         {
             MessageBox::Show(text, caption, MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -243,6 +261,10 @@ namespace treefrogsetup {
 
         private: System::Void okButton_Click(System::Object^ sender, System::EventArgs^ e)
         {
+            this->okButton->Enabled = false;
+            this->cancelButton->Enabled = false;
+            this->browseButton->Enabled = false;
+
             array<String^>^ excludes = { "Src", "QtCreator" };  // Folder to exclude
             List<String ^>^ bins = gcnew List<String ^>();
 
@@ -255,10 +277,32 @@ namespace treefrogsetup {
                 return;
             }
 
+            // Get Qt version
+            String^ version;
+            String^ file = searchFile(bins, "qmake.exe");
+            if (file->Length > 0) {
+                Process^ qmake = gcnew Diagnostics::Process;
+                qmake->StartInfo->FileName = file;
+                qmake->StartInfo->Arguments = "-v";
+                qmake->StartInfo->CreateNoWindow = true;
+                qmake->StartInfo->WindowStyle = ProcessWindowStyle::Minimized;
+                qmake->StartInfo->RedirectStandardOutput = true;
+                qmake->StartInfo->UseShellExecute = false;
+                qmake->Start();
+                version = qmake->StandardOutput->ReadToEnd();
+                qmake->WaitForExit();
+
+            }
+
             // Get msi file from resource
+            int rcid = IDR_TREEFROG_QT50_MSI;
+            if (version->IndexOf("Qt version 5.1", StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT51_MSI;
+            }
+
             System::Reflection::Module^ mod = System::Reflection::Assembly::GetExecutingAssembly()->GetModules()[0];
             HINSTANCE hInst = static_cast<HINSTANCE>(System::Runtime::InteropServices::Marshal::GetHINSTANCE(mod).ToPointer());
-            HRSRC hRsrc = FindResource(hInst, MAKEINTRESOURCE(IDR_TREEFROG_MSI), L"TREEFROG_MSI");
+            HRSRC hRsrc = FindResource(hInst, MAKEINTRESOURCE(rcid), L"TREEFROG_MSI");
             DWORD lenRes = SizeofResource(hInst, hRsrc);
             HGLOBAL hGlobal = LoadResource(hInst, hRsrc);
             byte *pRes = (byte *)LockResource(hGlobal);
