@@ -30,8 +30,8 @@ namespace treefrogsetup {
         /*
          * TreeFrog Framework Base Directory
          */
-        static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + " \\bin\\tfenv.bat";
-        static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + VersionString() + " \\sqldrivers\\install_sqldrivers.bat";
+        static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";
+        static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + VersionString() + "\\sqldrivers\\install_sqldrivers.bat";
 
         MainForm(void)
         {
