@@ -4,7 +4,7 @@
   <!-- *** 7行目,28行目,32行目を修正 *** -->
 
   <!-- プロダクト情報 -->
-  <Product Name='TreeFrog Framework SDK 1.6.1'
+  <Product Name='TreeFrog Framework 1.6.1'
            Id='9FB4BBC8-FFFF-4207-B078-256E4A3F6CB1'
            UpgradeCode='F396150C-4777-4575-A7D7-E78E5178E39A'
            Language='1041' Codepage='932'
@@ -12,7 +12,7 @@
 
     <!-- パッケージ情報 -->
     <Package Id='*' Keywords='Installer'
-             Description="TreeFrog Framework SDK Installer"
+             Description="TreeFrog Framework Installer"
              Comments='TreeFrog Framework is open source software.'
              Manufacturer='TreeFrog Framework Project' InstallerVersion='100'
              Languages='1041' Compressed='yes' SummaryCodepage='932' />
@@ -52,22 +52,16 @@
     </DirectoryRef>
 
     <!-- フィーチャー -->
-    <Feature Id='Complete' Title='TreeFrog Fromework SDK'
+    <Feature Id='Complete' Title='TreeFrog Fromework'
              Description='Complete Package' Display='expand'
              Level='1' ConfigurableDirectory='INSTALLDIR'>
 
-      <Feature Id='TreeFrogSDK' Title='SDK'
-               Description='TreeFrog Fromework SDK' Level='1'>
+      <Feature Id='TreeFrogSDK' Title='SDK' Description='TreeFrog Fromework' Level='1'>
         <ComponentGroupRef Id='TreeFrogFiles' />
         <ComponentRef Id='ApplicationShortcut' />
       </Feature>
 
     </Feature>
-
-    <!-- アイコン -->
-<!--
-    <Icon Id="HogeIcon" SourceFile="Hoge.exe" />
--->
 
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
     <UIRef Id="WixUI_Minimal" />
