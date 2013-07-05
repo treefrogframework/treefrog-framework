@@ -247,11 +247,15 @@ namespace treefrogsetup {
 
         static String^ searchFile(List<String ^>^ directories, String ^fileName)
         {
-            for (int i = 0; i < directories->Count; ++i) {
-                array<String^>^ files = Directory::GetFiles(directories[i], fileName);
-                if (files->Length > 0) {
-                    return files[0];
+            try {
+                for (int i = 0; i < directories->Count; ++i) {
+                    array<String^>^ files = Directory::GetFiles(directories[i], fileName);
+                    if (files->Length > 0) {
+                        return files[0];
+                    }
                 }
+            } catch (...) {
+                //
             }
             return "";
         }
