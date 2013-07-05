@@ -171,7 +171,7 @@ bool TableSchema::openDatabase(const QString &env) const
 
     QSqlDatabase db = QSqlDatabase::addDatabase(driverType);
     if (!db.isValid()) {
-        qWarning("Parameter 'DriverType' is invalid");
+        qWarning("Parameter 'DriverType' is invalid or RDB client library not available.");
         return false;
     }
 
