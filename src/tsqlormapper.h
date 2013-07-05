@@ -105,7 +105,9 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
 
     int oldLimit = queryLimit;
     queryLimit = 1;
-    select();
+    if (!select()) {
+        tQueryLog("%s", qPrintable(lastError().text()));
+    }
     queryLimit = oldLimit;
 
     tSystemDebug("rowCount: %d", rowCount());
@@ -155,6 +157,7 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
     }
 
     if (!select()) {
+        tQueryLog("%s", qPrintable(lastError().text()));
         return -1;
     }
     tSystemDebug("rowCount: %d", rowCount());
@@ -307,10 +310,13 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
     }
 
     QSqlQuery q(query, database());
-    q.exec();
+    bool res = q.exec();
     tQueryLog("%s", qPrintable(query));
 
-    if (q.next()) {
+    if (!res) {
+        tQueryLog("%s", qPrintable(q.lastError().text()));
+    } else {
+        q.next();
         cnt = q.value(0).toInt();
     }
     return cnt;
@@ -348,6 +354,8 @@ inline QList<T> TSqlORMapper<T>::findAll(const TCriteria &cri)
             rec.setRecord(record(i), QSqlError());
             list << rec;
         }
+    } else {
+        tQueryLog("%s", qPrintable(lastError().text()));
     }
     return list;
 }
