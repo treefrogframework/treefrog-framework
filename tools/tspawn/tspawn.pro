@@ -59,25 +59,50 @@ defaults.path = $${datadir}/defaults
 INSTALLS += target defaults
 
 win32 {
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/install_sqldrivers.bat
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LGPL_EXCEPTION.txt
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.FDL
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.GPL
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.LGPL
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.PREVIEW.COMMERCIAL
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/README
-  sqldrivers.files += ../../sqldrivers/qt5.0-mingw/README.ja
+  contains(QT_VERSION, ^5\\.0\\..*) {
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/install_sqldrivers.bat
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LGPL_EXCEPTION.txt
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.FDL
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.GPL
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.LGPL
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/LICENSE.PREVIEW.COMMERCIAL
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/README
+    sqldrivers.files += ../../sqldrivers/qt5.0-mingw/README.ja
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqldb2.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqldb2d.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlmysql.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlmysqld.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqloci.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlocid.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlpsql.dll
+    drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlpsqld.dll
+  } else {
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/install_sqldrivers.bat
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/LGPL_EXCEPTION.txt
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/LICENSE.FDL
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/LICENSE.GPL
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/LICENSE.LGPL
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/LICENSE.PREVIEW.COMMERCIAL
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/README
+    sqldrivers.files += ../../sqldrivers/qt5.1-mingw/README.ja
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqldb2.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqldb2d.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqlmysql.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqlmysqld.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqloci.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqlocid.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqlpsql.dll
+    drivers.files += ../../sqldrivers/qt5.1-mingw/drivers/qsqlpsqld.dll
+  }
   sqldrivers.path = $${datadir}/sqldrivers
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqldb2.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqldb2d.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlmysql.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlmysqld.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqloci.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlocid.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlpsql.dll
-  drivers.files += ../../sqldrivers/qt5.0-mingw/drivers/qsqlpsqld.dll
   drivers.path = $${datadir}/sqldrivers/drivers
   INSTALLS += sqldrivers drivers
+
+  clientlib.files += ../../sqldrivers/clientlib/libintl.dll
+  clientlib.files += ../../sqldrivers/clientlib/libmariadb.dll
+  clientlib.files += ../../sqldrivers/clientlib/libpq.dll
+  clientlib.path = $${datadir}/bin
+  INSTALLS += clientlib
 }
 
 
