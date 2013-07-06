@@ -14,6 +14,7 @@ namespace treefrogsetup {
     using namespace System::Windows::Forms;
     using namespace System::Collections::Generic;
     using namespace System::Diagnostics;
+    using namespace System::ComponentModel;
 
     // Gets Version String
     String^ VersionString()
@@ -26,18 +27,32 @@ namespace treefrogsetup {
     /// </summary>
     public ref class MainForm : public System::Windows::Forms::Form
     {
-    public:
-        /*
-         * TreeFrog Framework Base Directory
-         */
-        static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";
+    private: String^ msiName;
+    private: System::Windows::Forms::Button^  browseButton;
+    private: System::Windows::Forms::Button^  okButton;
+    private: System::Windows::Forms::Button^  cancelButton;
+    private: System::Windows::Forms::TextBox^  forderTextBox;
+    private: System::Windows::Forms::Label^  labeltop;
+    private: System::Windows::Forms::Label^  label;
+    private: System::Windows::Forms::Label^  label1;
+    private: System::Windows::Forms::PictureBox^  loadingImg;
+    private: System::ComponentModel::BackgroundWorker^  bgWorker;
+
+    private: 
+        static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";  // Base Directory
         static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + VersionString() + "\\sqldrivers\\install_sqldrivers.bat";
 
+    public:
         MainForm(void)
         {
             InitializeComponent();
+            this->loadingImg->Hide();
 
-            this->Text = L"TreeFrog Framework " + VersionString() + " Setup";
+            // Background Worker
+            bgWorker->DoWork += gcnew DoWorkEventHandler(this, &MainForm::bgWorker_DoWork);
+            bgWorker->RunWorkerCompleted += gcnew RunWorkerCompletedEventHandler(this, &MainForm::bgWorker_RunWorkerCompleted);
+
+            this->Text = "TreeFrog Framework " + VersionString() + " Setup";
             String^ folder = "C:\\";
 
             try {
@@ -72,16 +87,6 @@ namespace treefrogsetup {
             }
         }
 
-    private: System::Windows::Forms::Button^  browseButton;
-    private: System::Windows::Forms::Button^  okButton;
-    private: System::Windows::Forms::Button^  cancelButton;
-    private: System::Windows::Forms::TextBox^  forderTextBox;
-    private: System::Windows::Forms::Label^  labeltop;
-    private: System::Windows::Forms::Label^  label;
-    private: System::Windows::Forms::Label^  label1;
-
-    protected: 
-
     private:
         /// <summary>
         /// Variables for Designer
@@ -95,6 +100,7 @@ namespace treefrogsetup {
         /// </summary>
         void InitializeComponent(void)
         {
+            System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
             this->browseButton = (gcnew System::Windows::Forms::Button());
             this->okButton = (gcnew System::Windows::Forms::Button());
             this->cancelButton = (gcnew System::Windows::Forms::Button());
@@ -102,13 +108,16 @@ namespace treefrogsetup {
             this->label = (gcnew System::Windows::Forms::Label());
             this->label1 = (gcnew System::Windows::Forms::Label());
             this->labeltop = (gcnew System::Windows::Forms::Label());
+            this->loadingImg = (gcnew System::Windows::Forms::PictureBox());
+            this->bgWorker = (gcnew System::ComponentModel::BackgroundWorker());
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->loadingImg))->BeginInit();
             this->SuspendLayout();
             // 
             // browseButton
             // 
-            this->browseButton->Location = System::Drawing::Point(398, 102);
+            this->browseButton->Location = System::Drawing::Point(318, 103);
             this->browseButton->Name = L"browseButton";
-            this->browseButton->Size = System::Drawing::Size(109, 27);
+            this->browseButton->Size = System::Drawing::Size(82, 24);
             this->browseButton->TabIndex = 0;
             this->browseButton->Text = L"Browse...";
             this->browseButton->UseVisualStyleBackColor = true;
@@ -116,19 +125,19 @@ namespace treefrogsetup {
             // 
             // okButton
             // 
-            this->okButton->Location = System::Drawing::Point(255, 162);
+            this->okButton->Location = System::Drawing::Point(227, 162);
             this->okButton->Name = L"okButton";
-            this->okButton->Size = System::Drawing::Size(115, 30);
+            this->okButton->Size = System::Drawing::Size(82, 24);
             this->okButton->TabIndex = 1;
-            this->okButton->Text = L"Continue";
+            this->okButton->Text = L"Next";
             this->okButton->UseVisualStyleBackColor = true;
             this->okButton->Click += gcnew System::EventHandler(this, &MainForm::okButton_Click);
             // 
             // cancelButton
             // 
-            this->cancelButton->Location = System::Drawing::Point(398, 162);
+            this->cancelButton->Location = System::Drawing::Point(318, 162);
             this->cancelButton->Name = L"cancelButton";
-            this->cancelButton->Size = System::Drawing::Size(109, 30);
+            this->cancelButton->Size = System::Drawing::Size(82, 24);
             this->cancelButton->TabIndex = 2;
             this->cancelButton->Text = L"Cancel";
             this->cancelButton->UseVisualStyleBackColor = true;
@@ -138,8 +147,9 @@ namespace treefrogsetup {
             // 
             this->forderTextBox->Location = System::Drawing::Point(35, 106);
             this->forderTextBox->Name = L"forderTextBox";
-            this->forderTextBox->Size = System::Drawing::Size(335, 19);
+            this->forderTextBox->Size = System::Drawing::Size(274, 19);
             this->forderTextBox->TabIndex = 3;
+            this->forderTextBox->TabStop = false;
             this->forderTextBox->Click += gcnew System::EventHandler(this, &MainForm::browseFolder);
             // 
             // label
@@ -162,7 +172,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.0.2";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.1.0";
             // 
             // labeltop
             // 
@@ -175,11 +185,27 @@ namespace treefrogsetup {
             this->labeltop->TabIndex = 6;
             this->labeltop->Text = L"TreeFrog Framework requires Qt (MinGW).";
             // 
+            // loadingImg
+            // 
+            this->loadingImg->BackColor = System::Drawing::SystemColors::Control;
+            this->loadingImg->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+            this->loadingImg->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"loadingImg.Image")));
+            this->loadingImg->Location = System::Drawing::Point(185, 156);
+            this->loadingImg->Name = L"loadingImg";
+            this->loadingImg->Size = System::Drawing::Size(31, 34);
+            this->loadingImg->TabIndex = 7;
+            this->loadingImg->TabStop = false;
+            // 
+            // bgWorker
+            // 
+            this->bgWorker->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &MainForm::bgWorker_DoWork);
+            // 
             // MainForm
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-            this->ClientSize = System::Drawing::Size(526, 204);
+            this->ClientSize = System::Drawing::Size(417, 206);
+            this->Controls->Add(this->loadingImg);
             this->Controls->Add(this->labeltop);
             this->Controls->Add(this->label1);
             this->Controls->Add(this->label);
@@ -193,6 +219,7 @@ namespace treefrogsetup {
             this->ShowIcon = false;
             this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
             this->Text = L"TreeFrog Framework SDK Setup";
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->loadingImg))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 
@@ -212,6 +239,9 @@ namespace treefrogsetup {
             }
         }
 
+        //
+        //
+        //
         static List<String ^>^ searchSubDirectories(String^ name, array<String^> ^excludes, String^ folderPath)
         {
             List<String ^>^ ret = gcnew List<String^>();
@@ -245,6 +275,9 @@ namespace treefrogsetup {
             return ret;
         }
 
+        //
+        //
+        //
         static String^ searchFile(List<String ^>^ directories, String ^fileName)
         {
             try {
@@ -260,6 +293,8 @@ namespace treefrogsetup {
             return "";
         }
 
+
+        // Abort
         private: static void abort(String^ text, String^ caption)
         {
             MessageBox::Show(text, caption, MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -272,7 +307,18 @@ namespace treefrogsetup {
             this->okButton->Enabled = false;
             this->cancelButton->Enabled = false;
             this->browseButton->Enabled = false;
+            this->forderTextBox->Enabled = false;
+            this->loadingImg->Show();
 
+            msiName = Path::GetTempPath() + Path::GetRandomFileName() + ".msi";
+            bgWorker->RunWorkerAsync(msiName);
+        }
+
+        //
+        //
+        //
+        private: System::Void bgWorker_DoWork(Object^ sender, DoWorkEventArgs^ e)
+        {
             array<String^>^ excludes = { "Src", "QtCreator" };  // Folder to exclude
             List<String ^>^ bins = gcnew List<String ^>();
 
@@ -299,7 +345,6 @@ namespace treefrogsetup {
                 qmake->Start();
                 version = qmake->StandardOutput->ReadToEnd();
                 qmake->WaitForExit();
-
             }
 
             // Get msi file from resource
@@ -315,7 +360,6 @@ namespace treefrogsetup {
             HGLOBAL hGlobal = LoadResource(hInst, hRsrc);
             byte *pRes = (byte *)LockResource(hGlobal);
 
-            String^ msiName = Path::GetTempPath() + Path::GetRandomFileName() + ".msi";
             FileStream^ fs = gcnew FileStream(msiName, FileMode::Create);
             BinaryWriter^ writer = gcnew BinaryWriter(fs);
 
@@ -325,22 +369,41 @@ namespace treefrogsetup {
                 while (pRes < pEnd) {
                     writer->Write(*pRes++);
                 }
-                fs->Close();
+
+                // Result string
+                String^ qtbin;
+                for (int i = 0; i < bins->Count; ++i) {
+                    qtbin += bins[i] + ";";
+                }
+                e->Result = qtbin;
+
+            } catch (Exception^ e) {
+                abort("Error Exception: " + e->Message, "Error");
+            }
+
+            fs->Close();
+        }
+
+        //
+        //
+        //
+        private: System::Void bgWorker_RunWorkerCompleted(Object^ sender, RunWorkerCompletedEventArgs^ e)
+        {
+            try {
                 this->Hide();
 
-                // Starts msi
+                String^ qtbin = e->Result->ToString();
+                if (qtbin->Length == 0) {
+                    abort("Not found Qt base folder.\n\nSetup aborts.", "Abort");
+                    return;
+                }
+
                 Process^ proc = (gcnew Diagnostics::Process())->Start(msiName);
                 proc->WaitForExit();
 
                 // Edits tfenv.bat
                 IO::FileInfo^ fibat = gcnew IO::FileInfo(TF_ENV_BAT);
                 if (proc->ExitCode == 0 && fibat->Exists) {
-                    String^ qtbin;
-
-                    for (int i = 0; i < bins->Count; ++i) {
-                        qtbin += bins[i] + ";";
-                    }
-
                     String^ out;
 
                     StreamReader^ din = File::OpenText(TF_ENV_BAT);
@@ -373,11 +436,17 @@ namespace treefrogsetup {
                 abort("Error Exception: " + e->Message, "Error");
             }
 
-            fs->Close();
-            IO::FileInfo^ fi = gcnew IO::FileInfo(msiName);
-            fi->Delete();
+            try {
+                // Cleanup
+                IO::FileInfo^ fi = gcnew IO::FileInfo(msiName);
+                if (fi->Exists) {
+                    fi->Delete();
+                }
+            } catch (...) {
+            }
             Application::Exit();
         }
+
 
         private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e)
         {
