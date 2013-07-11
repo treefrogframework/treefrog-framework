@@ -24,11 +24,16 @@ static QMutex cacheMutex;
 
 /*!
   Constructs a TSqlQuery object using the SQL \a query and the database
-  \a databaseId.
+  \a databaseId. If \a query is not an empty string, it will be executed.
  */
 TSqlQuery::TSqlQuery(const QString &query, int databaseId)
     : QSqlQuery(query, TActionContext::current()->getSqlDatabase(databaseId))
-{ }
+{
+    if (!query.isEmpty()) {  // will be executed immediately
+        QString q = (!lastError().isValid()) ? query : QLatin1String("(Query failed) ") + query;
+        tQueryLog("%s", qPrintable(q));
+    }
+}
 
 /*!
   Constructs a TSqlQuery object using the database \a databaseId.

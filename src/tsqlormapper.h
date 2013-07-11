@@ -309,9 +309,11 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
         query.append(QLatin1String(" WHERE ")).append(conv.toString());
     }
 
-    QSqlQuery q(query, database());
-    bool res = q.exec();
-    tQueryLog("%s", qPrintable(query));
+    QSqlQuery q(database());
+    bool res = q.exec(query);
+
+    QString s = (res) ? query : (QLatin1String("(Query failed) ") + query);
+    tQueryLog("%s", qPrintable(s));
 
     if (!res) {
         tQueryLog("%s", qPrintable(q.lastError().text()));
@@ -417,13 +419,12 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QList<QPair<int, QVar
         upd.append(QLatin1String(" WHERE ")).append(where);
     }
 
-    tQueryLog("%s", qPrintable(upd));
-
     QSqlQuery sqlQuery(database());
-    if ( !sqlQuery.exec(upd) ) {
-        return -1;
-    }
-    return sqlQuery.numRowsAffected();
+    bool res = sqlQuery.exec(upd);
+
+    QString s = (res) ? upd : (QLatin1String("(Query failed) ") + upd);
+    tQueryLog("%s", qPrintable(s));
+    return res ? sqlQuery.numRowsAffected() : -1;
 }
 
 /*!
@@ -458,13 +459,12 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
         del.append(QLatin1String(" WHERE ")).append(where);
     }
 
-    tQueryLog("%s", qPrintable(del));
-
     QSqlQuery sqlQuery(database());
-    if ( !sqlQuery.exec(del) ) {
-        return -1;
-    }
-    return sqlQuery.numRowsAffected();
+    bool res = sqlQuery.exec(del);
+
+    QString s = (res) ? del : (QLatin1String("(Query failed) ") + del);
+    tQueryLog("%s", qPrintable(s));
+    return res ? sqlQuery.numRowsAffected() : -1;
 }
 
 /*!
