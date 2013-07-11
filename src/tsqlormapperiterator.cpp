@@ -31,7 +31,7 @@
 */
 
 /*!
-  \fn T TSqlORMapperIterator<T>::next() 
+  \fn T TSqlORMapperIterator<T>::next()
   Returns the next object and advances the iterator by one position.
 */
 
