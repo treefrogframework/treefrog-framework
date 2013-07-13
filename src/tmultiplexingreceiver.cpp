@@ -14,10 +14,48 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>   // For BUFSIZ
+#include <errno.h>
 #include <QMap>
-#include <QByteArray>
+#include <QHostAddress>
+#include <QBuffer>
+#include <TWebApplication>
+#include <TApplicationServer>
 #include <TSystemGlobal>
+#include <TActionThread>
 #include "tmultiplexingreceiver.h"
+#include "thttpbuffer.h"
+#include "tfcore_unix.h"
+
+const int MAX_EVENTS = 1024;
+static TMultiplexingReceiver *multiplexingReceiver = 0;
+
+static void cleanup()
+{
+    if (multiplexingReceiver) {
+        delete multiplexingReceiver;
+        multiplexingReceiver = 0;
+    }
+}
+
+
+void TMultiplexingReceiver::instantiate()
+{
+    if (!multiplexingReceiver) {
+        multiplexingReceiver = new TMultiplexingReceiver();
+        qAddPostRoutine(::cleanup);
+    }
+
+}
+
+
+TMultiplexingReceiver *TMultiplexingReceiver::instance()
+{
+    if (!multiplexingReceiver) {
+        tFatal("Call TMultiplexingReceiver::instantiate() function first");
+    }
+    return multiplexingReceiver;
+}
 
 
 static void setNonBlocking(int sock)
@@ -27,8 +65,8 @@ static void setNonBlocking(int sock)
 }
 
 
-TMultiplexingReceiver::TMultiplexingReceiver(QObject *parent)
-    : QThread(parent), listenSocket(0)
+TMultiplexingReceiver::TMultiplexingReceiver()
+    : QThread(Tf::app()), stopped(false), listenSocket(0), epollFd(0), sendRequest()
 { }
 
 
@@ -36,52 +74,78 @@ TMultiplexingReceiver::~TMultiplexingReceiver()
 {
     if (listenSocket > 0)
         TF_CLOSE(listenSocket);
+
+    if (epollFd > 0)
+        TF_CLOSE(epollFd);
 }
 
 
-bool TMultiplexingReceiver::setSocketDescriptor(int socket)
+void TMultiplexingReceiver::epollClose(int fd)
 {
-    if (socket <= 0 || listenSocket > 0)
-        return false;
-
-    listenSocket = socket;
-
-    start(); // starts this thread
-    return true;
+    tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL);
+    TF_CLOSE(fd);
+    bufferings.remove(fd);
 }
 
+
+int TMultiplexingReceiver::epollAdd(int fd, int events)
+{
+    struct epoll_event ev;
+
+    memset(&ev, 0, sizeof(ev));
+    ev.events = events;
+    ev.data.fd = fd;
+    return tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &ev);
+}
+
+
+int TMultiplexingReceiver::epollModify(int fd, int events)
+{
+    struct epoll_event ev;
+
+    memset(&ev, 0, sizeof(ev));
+    ev.events = events;
+    ev.data.fd = fd;
+    return tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
+}
 
 void TMultiplexingReceiver::run()
 {
-    const int MAX_EVENTS = 1024;
-    const int BUFFER_SIZE = 2048;
-    QMap<int, QByteArray> bufferings;
-
-    int epfd = epoll_create(MAX_EVENTS);
-    if (epfd < 0) {
-        tSystemError("Failed epoll_create()");
+    // Listen socket
+    quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
+    int sock = TApplicationServer::nativeListen(QHostAddress::Any, port);
+    if (sock > 0) {
+        tSystemDebug("listen successfully.  port:%d", port);
+    } else {
+        tSystemError("Failed to set socket descriptor: %d", sock);
+        TApplicationServer::nativeClose(sock);
         return;
     }
+    listenSocket = sock;
 
-    struct epoll_event ev;
-    memset(&ev, 0, sizeof(ev));
-    ev.events = EPOLLIN;
-    ev.data.fd = listenSocket;
+    // Loads libs
+    TApplicationServer::loadLibraries();
 
-    if (epoll_ctl(epfd, EPOLL_CTL_ADD, listenSocket, &ev) < 0) {
+    // Create epoll
+    epollFd = epoll_create(MAX_EVENTS);
+    if (epollFd < 0) {
+        tSystemError("Failed epoll_create()");
+        goto socket_error;
+    }
+
+    if (epollAdd(listenSocket, EPOLLIN) < 0) {
         tSystemError("Failed epoll_ctl()");
-        TF_CLOSE(epfd);
-        return;
+        goto epoll_error;
     }
 
     struct epoll_event events[MAX_EVENTS];
-    char buffer[BUFFER_SIZE];
+    char buffer[BUFSIZ];
 
     for (;;) {
-        // Receiving/Incoming
-        int nfd = epoll_wait(epfd, events, MAX_EVENTS, 20); // 20ms
+        // Poll Sending/Receiving/Incoming
+        int nfd = tf_epoll_wait(epollFd, events, MAX_EVENTS, 10); // 10ms
         if (nfd < 0) {
-            tSystemError("Failed epoll_wait()");
+            tSystemError("Failed epoll_wait() : errno:%d", errno);
             break;
         }
 
@@ -90,49 +154,166 @@ void TMultiplexingReceiver::run()
                 // Incoming connection
                 struct sockaddr_in addr;
                 socklen_t addrlen = sizeof(addr);
-                int clt = ::accept(events[i].data.fd, (struct sockaddr *)&addr, &addrlen);
+                int clt = ::accept(events[i].data.fd, (sockaddr *)&addr, &addrlen);
                 if (clt < 0) {
                     tSystemWarn("Failed accept");
                     continue;
                 }
 
                 setNonBlocking(clt);
-                memset(&ev, 0, sizeof ev);
-                ev.events = EPOLLIN | EPOLLET;
-                ev.data.fd = clt;
-                epoll_ctl(epfd, EPOLL_CTL_ADD, clt, &ev);
+                if (epollAdd(clt, EPOLLIN) < 0) {
+                    epollClose(clt);
+                } else {
+                    THttpBuffer &httpBuf = bufferings[clt];
+                    httpBuf.clear();
+                    httpBuf.setClientAddress(QHostAddress((sockaddr *)&addr));
+                }
 
             } else {
-                int clt = events[i].data.fd;
-                int len = ::recv(clt, buffer, BUFFER_SIZE, 0);
+                int cltfd = events[i].data.fd;
 
-                if (len <= 0) {
-                    tSystemError("Failed read : %d", len);
-                    epoll_ctl(epfd, EPOLL_CTL_DEL, clt, &ev);
-                    bufferings.remove(clt);
-                    TF_CLOSE(clt);
-                } else {
-                    // Read successfully
-                    QByteArray &buf = bufferings[clt];
-                    buf.append(buffer, len);
-                    int idx = buf.indexOf("\r\n\r\n");
+                if ( (events[i].events & EPOLLIN) ) {
+                    // Receive data
+                    int len = ::recv(cltfd, buffer, BUFSIZ, 0);
 
-                    if (idx > 0) {
-                        incomingRequest(clt, buf);
-                        epoll_ctl(epfd, EPOLL_CTL_DEL, clt, &ev);
-                        bufferings.remove(clt);
+                    if (len > 0) {
+                        // Read successfully
+                        THttpBuffer &httpbuf = bufferings[cltfd];
+                        httpbuf.write(buffer, len);
+
+                        if (httpbuf.canReadHttpRequest()) {
+                            incomingRequest(cltfd, httpbuf.read());
+                            httpbuf.clear();
+
+                            // Stop polling
+                            if (tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, cltfd, NULL)) {
+                                epollClose(cltfd);
+                            }
+                        }
+
+                    } else if (len == 0) {
+                        // Disconnected
+                        epollClose(cltfd);
+
+                    } else {
+                        tSystemError("Failed read : errno:%d", errno);
+                        epollClose(cltfd);
                     }
+
+                } else if ( (events[i].events & EPOLLOUT) ) {
+                    // Send data
+                    QByteArray &httpbuf = bufferings[cltfd].buffer();
+                    int len = qMin(httpbuf.length(), BUFSIZ);
+                    int sentlen = ::send(cltfd, httpbuf.constData(), len, 0);
+
+                    if (sentlen <= 0) {
+                        tSystemError("Failed send : errno:%d", errno);
+                        epollClose(cltfd);
+
+                    } else {
+                        httpbuf.remove(0, sentlen);
+
+                        if (httpbuf.length() == 0) {
+                            // Prepare recv
+                            if (epollModify(cltfd, EPOLLIN) < 0) {
+                                epollClose(cltfd);
+                            }
+                        }
+                    }
+                } else {
+                    // do nothing
                 }
             }
         }
 
+        // Check send-request
+        QPair<int, QByteArray> *req = sendRequest.fetchAndStoreRelaxed(0);
+        if (req) {
+            int fd = req->first;
+            bufferings[req->first].write(req->second);
+            delete req;
+
+            // Set epoll for sending
+            if (epollAdd(fd, EPOLLOUT) < 0) {
+                epollClose(fd);
+            }
+        }
+
         // Check stop flag
-        // if (..) ...
+        if (stopped)
+            break;
     }
 
-    TF_CLOSE(epfd);
+epoll_error:
+    TF_CLOSE(epollFd);
+    epollFd = 0;
+socket_error:
     TF_CLOSE(listenSocket);
     listenSocket = 0;
+}
+
+
+void TMultiplexingReceiver::incomingRequest(int fd, const THttpRequest &request)
+{
+    for (;;) {
+//        if (actionContextCount() < maxServers) {
+          TActionThread *thread = new TActionThread(fd, request);
+//            connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
+//            insertPointer(thread);
+            thread->start();
+            break;
+//        }
+//        Tf::msleep(1);
+//        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
+    }
+}
+
+
+qint64 TMultiplexingReceiver::setSendRequest(int fd, const QByteArray &buffer)
+{
+    if (fd <= 0)
+        return -1;
+
+    QPair<int, QByteArray> *pair = new QPair<int, QByteArray>(fd, buffer);
+    bool ret = sendRequest.testAndSetRelaxed(0, pair);
+    if (!ret) {
+        delete pair;
+        return 0;
+    }
+    return buffer.length();
+}
+
+
+qint64 TMultiplexingReceiver::setSendRequest(int fd, const THttpHeader *header, QIODevice *body)
+{
+    QByteArray sendbuf;
+
+    if (body && !body->isOpen()) {
+        if (!body->open(QIODevice::ReadOnly)) {
+            tWarn("open failed");
+            return -1;
+        }
+    }
+
+    // Writes HTTP header
+    QByteArray hdata = header->toByteArray();
+    sendbuf += hdata;
+
+    if (body) {
+        QBuffer *buffer = qobject_cast<QBuffer *>(body);
+        if (buffer) {
+            sendbuf += buffer->data();
+        } else {
+            sendbuf += body->readAll();
+        }
+    }
+
+    qint64 ret;
+    while ((ret = setSendRequest(fd, sendbuf)) == 0) {
+        Tf::msleep(1);
+    }
+
+    return ret;
 }
 
 #endif // Q_OS_LINUX
