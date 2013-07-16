@@ -4,11 +4,11 @@
 #include <QtSql>
 #include <QList>
 #include <QPair>
+#include <TGlobal>
 #include <TSqlObject>
 #include <TCriteria>
 #include <TCriteriaConverter>
 #include <TSqlQuery>
-#include <TActionContext>
 #include "tsystemglobal.h"
 
 /*!
@@ -75,7 +75,7 @@ private:
 */
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
-    : QSqlTableModel(0, TActionContext::current()->getSqlDatabase(T().databaseId())),
+    : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId())),
       sortColumn(-1), sortOrder(TSql::AscendingOrder), queryLimit(0),
       queryOffset(0)
 {

@@ -10,7 +10,6 @@
 #include <QMutexLocker>
 #include <TSqlQuery>
 #include <TWebApplication>
-#include <TActionContext>
 #include "tsystemglobal.h"
 
 static QMap<QString, QString> queryCache;
@@ -27,7 +26,7 @@ static QMutex cacheMutex;
   \a databaseId. If \a query is not an empty string, it will be executed.
  */
 TSqlQuery::TSqlQuery(const QString &query, int databaseId)
-    : QSqlQuery(query, TActionContext::current()->getSqlDatabase(databaseId))
+    : QSqlQuery(query, Tf::currentSqlDatabase(databaseId))
 {
     if (!query.isEmpty()) {  // will be executed immediately
         QString q = (!lastError().isValid()) ? query : QLatin1String("(Query failed) ") + query;
@@ -39,7 +38,7 @@ TSqlQuery::TSqlQuery(const QString &query, int databaseId)
   Constructs a TSqlQuery object using the database \a databaseId.
 */
 TSqlQuery::TSqlQuery(int databaseId)
-    : QSqlQuery(QString(), TActionContext::current()->getSqlDatabase(databaseId))
+    : QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
 { }
 
 /*!
@@ -100,7 +99,7 @@ void TSqlQuery::clearCachedQueries()
 */
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, int databaseId)
 {
-    return escapeIdentifier(identifier, type, TActionContext::current()->getSqlDatabase(databaseId));
+    return escapeIdentifier(identifier, type, Tf::currentSqlDatabase(databaseId));
 }
 
 /*!
@@ -124,7 +123,7 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
 */
 QString TSqlQuery::formatValue(const QVariant &val, int databaseId)
 {
-    return formatValue(val, TActionContext::current()->getSqlDatabase(databaseId));
+    return formatValue(val, Tf::currentSqlDatabase(databaseId));
 }
 
 /*!
