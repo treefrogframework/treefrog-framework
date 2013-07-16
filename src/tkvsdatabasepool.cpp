@@ -266,7 +266,7 @@ void TKvsDatabasePool::instantiate()
     if (!databasePool) {
         databasePool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
         databasePool->init();
-        qAddPostRoutine(cleanup);
+        qAddPostRoutine(::cleanup);
     }
 }
 
