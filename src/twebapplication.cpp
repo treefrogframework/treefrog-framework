@@ -132,11 +132,16 @@ TWebApplication::~TWebApplication()
 int TWebApplication::exec()
 {
     resetSignalNumber();
+
 #ifdef TF_USE_GUI_MODULE
-    return QApplication::exec();
+    int ret = QApplication::exec();
 #else
-    return QCoreApplication::exec();
+    int ret = QCoreApplication::exec();
 #endif
+
+    QEventLoop eventLoop;
+    while (eventLoop.processEvents()) { }
+    return ret;
 }
 
 /*!
