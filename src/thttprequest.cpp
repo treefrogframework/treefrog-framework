@@ -41,7 +41,8 @@ THttpRequest::THttpRequest(const THttpRequest &other)
     : reqHeader(other.reqHeader),
       queryParams(other.queryParams),
       formParams(other.formParams),
-      multiFormData(other.multiFormData)
+      multiFormData(other.multiFormData),
+      clientAddr(other.clientAddr)
 { }
 
 /*!
@@ -73,6 +74,17 @@ THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath)
 
 THttpRequest::~THttpRequest()
 { }
+
+
+THttpRequest &THttpRequest::operator=(const THttpRequest &other)
+{
+    reqHeader = other.reqHeader;
+    queryParams = other.queryParams;
+    formParams = other.formParams;
+    multiFormData = other.multiFormData;
+    clientAddr = other.clientAddr;
+    return *this;
+}
 
 
 void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray &body)
@@ -252,7 +264,7 @@ QVariantMap THttpRequest::formItems(const QString &key) const
 
 /*!
   \fn QVariantMap THttpRequest::formItems() const
-  
+
   Returns the map of all form data.
  */
 

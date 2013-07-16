@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QVariant>
 #include <QList>
+#include <QHostAddress>
 #include <TGlobal>
 #include <TMultipartFormData>
 #include <TCookieJar>
@@ -19,6 +20,7 @@ public:
     THttpRequest(const QByteArray &header, const QByteArray &body);
     THttpRequest(const QByteArray &header, const QString &filePath);
     virtual ~THttpRequest();
+    THttpRequest &operator=(const THttpRequest &other);
 
     const THttpRequestHeader &header() const { return reqHeader; }
     Tf::HttpMethod method() const;
@@ -42,6 +44,7 @@ public:
     TMultipartFormData &multipartFormData() { return multiFormData; }
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
+    QHostAddress clientAddress() const { return clientAddr; }
 
 protected:
     void setRequest(const THttpRequestHeader &header, const QByteArray &body);
@@ -51,13 +54,16 @@ protected:
 
 private:
     void parseBody(const QByteArray &body);
+    void setClientAddress(const QHostAddress &address) { clientAddr = address; }
 
     THttpRequestHeader reqHeader;
     QVariantMap queryParams;
     QVariantMap formParams;
     TMultipartFormData multiFormData;
+    QHostAddress clientAddr;
 
     friend class THttpSocket;
+    friend class THttpBuffer;
 };
 
 Q_DECLARE_METATYPE(THttpRequest)
