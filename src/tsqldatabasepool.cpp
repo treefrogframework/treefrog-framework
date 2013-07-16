@@ -244,7 +244,7 @@ void TSqlDatabasePool::instantiate()
     if (!databasePool) {
         databasePool = new TSqlDatabasePool(Tf::app()->databaseEnvironment());
         databasePool->init();
-        qAddPostRoutine(cleanup);
+        qAddPostRoutine(::cleanup);
     }
 }
 

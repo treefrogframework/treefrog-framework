@@ -79,7 +79,7 @@ void TLoggerFactory::loadPlugins()
 {
     if (!ssifs) {
         ssifs = new QList<TLoggerInterface *>();
-        qAddPostRoutine(cleanup);
+        qAddPostRoutine(::cleanup);
         
         QDir dir(Tf::app()->pluginPath());
         QStringList list = dir.entryList(QDir::Files);

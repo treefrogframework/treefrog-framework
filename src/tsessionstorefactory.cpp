@@ -108,7 +108,7 @@ void TSessionStoreFactory::loadPlugins()
 {
     if (!ssifs) {
         ssifs = new QList<TSessionStoreInterface *>();
-        qAddPostRoutine(cleanup);
+        qAddPostRoutine(::cleanup);
         
         // Init hash
         hash.insert(TSessionSqlObjectStore().key().toLower(), SqlObject);

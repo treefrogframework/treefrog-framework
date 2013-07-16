@@ -33,7 +33,7 @@ void TUrlRoute::instantiate()
     if (!urlRoute) {
         urlRoute = new TUrlRoute;
         urlRoute->parseConfigFile();
-        qAddPostRoutine(cleanup);
+        qAddPostRoutine(::cleanup);
     }
 }
 
