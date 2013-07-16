@@ -1,12 +1,9 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2013, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
  * the New BSD License, which is incorporated herein by reference.
  */
-
-#include <QtGlobal>
-#ifdef Q_OS_LINUX
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -20,41 +17,41 @@
 #include <QHostAddress>
 #include <QBuffer>
 #include <TWebApplication>
-#include <TApplicationServer>
+#include <TApplicationServerBase>
+#include <TMultiplexingServer>
 #include <TSystemGlobal>
 #include <TActionThread>
-#include "tmultiplexingreceiver.h"
 #include "thttpbuffer.h"
 #include "tfcore_unix.h"
 
 const int MAX_EVENTS = 1024;
-static TMultiplexingReceiver *multiplexingReceiver = 0;
+static TMultiplexingServer *multiplexingServer = 0;
+
 
 static void cleanup()
 {
-    if (multiplexingReceiver) {
-        delete multiplexingReceiver;
-        multiplexingReceiver = 0;
+    if (multiplexingServer) {
+        delete multiplexingServer;
+        multiplexingServer = 0;
     }
 }
 
 
-void TMultiplexingReceiver::instantiate()
+void TMultiplexingServer::instantiate()
 {
-    if (!multiplexingReceiver) {
-        multiplexingReceiver = new TMultiplexingReceiver();
+    if (!multiplexingServer) {
+        multiplexingServer = new TMultiplexingServer();
         qAddPostRoutine(::cleanup);
     }
-
 }
 
 
-TMultiplexingReceiver *TMultiplexingReceiver::instance()
+TMultiplexingServer *TMultiplexingServer::instance()
 {
-    if (!multiplexingReceiver) {
-        tFatal("Call TMultiplexingReceiver::instantiate() function first");
+    if (!multiplexingServer) {
+        tFatal("Call TMultiplexingServer::instantiate() function first");
     }
-    return multiplexingReceiver;
+    return multiplexingServer;
 }
 
 
@@ -65,12 +62,17 @@ static void setNonBlocking(int sock)
 }
 
 
-TMultiplexingReceiver::TMultiplexingReceiver()
-    : QThread(Tf::app()), stopped(false), listenSocket(0), epollFd(0), sendRequest()
-{ }
+TMultiplexingServer::TMultiplexingServer()
+    : QThread(), stopped(false), listenSocket(0), epollFd(0), sendRequest()
+{
+    nativeSocketInit();
+    maxServers = Tf::app()->maxNumberOfServers();
+
+    Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
+}
 
 
-TMultiplexingReceiver::~TMultiplexingReceiver()
+TMultiplexingServer::~TMultiplexingServer()
 {
     if (listenSocket > 0)
         TF_CLOSE(listenSocket);
@@ -80,7 +82,16 @@ TMultiplexingReceiver::~TMultiplexingReceiver()
 }
 
 
-void TMultiplexingReceiver::epollClose(int fd)
+bool TMultiplexingServer::start()
+{
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
+    connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+    QThread::start();
+    return true;
+}
+
+
+void TMultiplexingServer::epollClose(int fd)
 {
     tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL);
     TF_CLOSE(fd);
@@ -88,7 +99,7 @@ void TMultiplexingReceiver::epollClose(int fd)
 }
 
 
-int TMultiplexingReceiver::epollAdd(int fd, int events)
+int TMultiplexingServer::epollAdd(int fd, int events)
 {
     struct epoll_event ev;
 
@@ -99,7 +110,7 @@ int TMultiplexingReceiver::epollAdd(int fd, int events)
 }
 
 
-int TMultiplexingReceiver::epollModify(int fd, int events)
+int TMultiplexingServer::epollModify(int fd, int events)
 {
     struct epoll_event ev;
 
@@ -109,22 +120,23 @@ int TMultiplexingReceiver::epollModify(int fd, int events)
     return tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
 }
 
-void TMultiplexingReceiver::run()
+
+void TMultiplexingServer::run()
 {
     // Listen socket
     quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
-    int sock = TApplicationServer::nativeListen(QHostAddress::Any, port);
+    int sock = TApplicationServerBase::nativeListen(QHostAddress::Any, port);
     if (sock > 0) {
         tSystemDebug("listen successfully.  port:%d", port);
     } else {
         tSystemError("Failed to set socket descriptor: %d", sock);
-        TApplicationServer::nativeClose(sock);
+        TApplicationServerBase::nativeClose(sock);
         return;
     }
     listenSocket = sock;
 
     // Loads libs
-    TApplicationServer::loadLibraries();
+    TApplicationServerBase::loadLibraries();
 
     // Create epoll
     epollFd = epoll_create(MAX_EVENTS);
@@ -240,8 +252,9 @@ void TMultiplexingReceiver::run()
         }
 
         // Check stop flag
-        if (stopped)
+        if (stopped) {
             break;
+        }
     }
 
 epoll_error:
@@ -253,23 +266,23 @@ socket_error:
 }
 
 
-void TMultiplexingReceiver::incomingRequest(int fd, const THttpRequest &request)
+void TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
 {
     for (;;) {
-//        if (actionContextCount() < maxServers) {
-          TActionThread *thread = new TActionThread(fd, request);
-//            connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
-//            insertPointer(thread);
+        if (actionContextCount() < maxServers) {
+            TActionThread *thread = new TActionThread(fd, request);
+            connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
+            insertPointer(thread);
             thread->start();
             break;
-//        }
-//        Tf::msleep(1);
-//        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
+        }
+        Tf::msleep(1);
+        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
     }
 }
 
 
-qint64 TMultiplexingReceiver::setSendRequest(int fd, const QByteArray &buffer)
+qint64 TMultiplexingServer::setSendRequest(int fd, const QByteArray &buffer)
 {
     if (fd <= 0)
         return -1;
@@ -284,7 +297,7 @@ qint64 TMultiplexingReceiver::setSendRequest(int fd, const QByteArray &buffer)
 }
 
 
-qint64 TMultiplexingReceiver::setSendRequest(int fd, const THttpHeader *header, QIODevice *body)
+qint64 TMultiplexingServer::setSendRequest(int fd, const THttpHeader *header, QIODevice *body)
 {
     QByteArray sendbuf;
 
@@ -316,4 +329,16 @@ qint64 TMultiplexingReceiver::setSendRequest(int fd, const THttpHeader *header, 
     return ret;
 }
 
-#endif // Q_OS_LINUX
+
+void TMultiplexingServer::terminate()
+{
+    stopped = true;
+    wait(5000);
+}
+
+
+void TMultiplexingServer::deleteActionContext()
+{
+    deletePointer(reinterpret_cast<TActionThread *>(sender()));
+    sender()->deleteLater();
+}
