@@ -10,6 +10,8 @@
 #include <TWebApplication>
 #include <TLogger>
 #include <TLog>
+#include <TActionThread>
+#include <TActionForkProcess>
 #include <stdlib.h>
 #include <limits.h>
 #include "tloggerfactory.h"
@@ -30,10 +32,10 @@ static TAbstractLogStream *stream = 0;
   This function is for internal use only.
 */
 void tSetupLoggers()
-{    
+{
     QList<TLogger *> loggers;
     QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
-    
+
     for (QStringListIterator i(loggerList); i.hasNext(); ) {
         TLogger *lgr = TLoggerFactory::create(i.next());
         if (lgr) {
@@ -41,7 +43,7 @@ void tSetupLoggers()
             tSystemDebug("Logger added: %s", qPrintable(lgr->key()));
         }
     }
-    
+
     if (!stream) {
         if (Tf::app()->multiProcessingModule() == TWebApplication::Thread) {
             stream = new TBasicLogStream(loggers, qApp);
@@ -144,7 +146,7 @@ void tTrace(const char *msg, ...)
 }
 
 /*!
-  Returns a global pointer referring to the unique application object. 
+  Returns a global pointer referring to the unique application object.
 */
 TWebApplication *Tf::app()
 {
@@ -226,4 +228,35 @@ quint32 Tf::randXor128()
     z = w;
     w = w ^ (w >> 19) ^ (t ^ (t >> 8));
     return w;
+}
+
+
+TActionContext *Tf::currentContext()
+{
+    TActionContext *context = 0;
+
+    switch ( Tf::app()->multiProcessingModule() ) {
+    case TWebApplication::Prefork:
+        context = TActionForkProcess::currentContext();
+        if (!context) {
+            throw RuntimeException("The current process is not TActionProcess", __FILE__, __LINE__);
+        }
+        break;
+
+    case TWebApplication::Thread:
+        /* FALLTHROUGH */
+    default:
+        context = qobject_cast<TActionThread *>(QThread::currentThread());
+        if (!context) {
+            throw RuntimeException("The current thread is not TActionThread", __FILE__, __LINE__);
+        }
+        break;
+    }
+    return context;
+}
+
+
+QSqlDatabase &Tf::currentSqlDatabase(int id)
+{
+    return currentContext()->getSqlDatabase(id);
 }

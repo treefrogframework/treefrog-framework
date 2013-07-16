@@ -444,7 +444,7 @@ QString TMultipartFormData::writeContent(QIODevice *dev) const
         return QString();
     }
 
-    TTemporaryFile &out = TActionContext::current()->createTemporaryFile();
+    TTemporaryFile &out = Tf::currentContext()->createTemporaryFile();
     if (!out.open()) {
         return QString();
     }

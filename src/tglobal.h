@@ -28,7 +28,7 @@
 
 #define T_DEFINE_PROPERTY(TYPE, PROPERTY)                          \
     inline void set##PROPERTY(const TYPE &v__) { PROPERTY = v__; } \
-    inline TYPE get##PROPERTY() const { return PROPERTY; } 
+    inline TYPE get##PROPERTY() const { return PROPERTY; }
 
 
 //
@@ -132,6 +132,9 @@ T_CORE_EXPORT void tTrace(const char *, ...) // output trace message
 #endif
 ;
 
+class TActionContext;
+class QSqlDatabase;
+
 namespace Tf
 {
     T_CORE_EXPORT TWebApplication *app();
@@ -141,6 +144,9 @@ namespace Tf
     T_CORE_EXPORT void srandXor128(quint32 seed);
     T_CORE_EXPORT quint32 randXor128();
     T_CORE_EXPORT quint32 random(quint32 max);
+
+    T_CORE_EXPORT TActionContext *currentContext();
+    T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
 }
 
 /*!
@@ -152,7 +158,7 @@ class T_CORE_EXPORT TCheckChange
 public:
     TCheckChange(const T &t, const char *f, int l) : ref(t), param(t), file(f), line(l) { }
     ~TCheckChange() { if (ref != param) tFatal("Changed parameter! (%s:%d)", file, line); }
-  
+
 private:
     const T &ref;
     T param;

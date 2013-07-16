@@ -810,7 +810,7 @@ void TActionController::setAutoRemove(const QString &filePath)
 */
 QHostAddress TActionController::clientAddress() const
 {
-    return TActionContext::current()->clientAddress();
+    return Tf::currentContext()->clientAddress();
 }
 
 /*!

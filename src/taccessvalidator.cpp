@@ -110,9 +110,9 @@ void TAccessValidator::addRules(int type, const QString &key, const QStringList 
 bool TAccessValidator::validate(const TAbstractUser *user) const
 {
     bool ret = allowDefault;
-    const TActionController *controller = TActionContext::current()->currentController();
+    const TActionController *controller = Tf::currentContext()->currentController();
     Q_ASSERT(controller);
-    
+
     if (accessRules.isEmpty()) {
         tWarn("No rule for access validation: %s", qPrintable(controller->className()));
         return ret;
