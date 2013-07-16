@@ -80,21 +80,9 @@ TApplicationServer::~TApplicationServer()
 }
 
 
-bool TApplicationServer::open()
+bool TApplicationServer::loadLibraries()
 {
     T_TRACEFUNC("");
-
-    if (!isListening()) {
-        quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
-        int sock = nativeListen(QHostAddress::Any, port);
-        if (sock > 0 && setSocketDescriptor(sock)) {
-            tSystemDebug("listen successfully.  port:%d", port);
-        } else {
-            tSystemError("Failed to set socket descriptor: %d", sock);
-            nativeClose(sock);
-            return false;
-        }
-    }
 
     // Loads libraries
     if (!libLoaded) {
@@ -131,9 +119,29 @@ bool TApplicationServer::open()
     }
     QDir::setCurrent(Tf::app()->webRootPath());
 
+    // Instantiates
     TUrlRoute::instantiate();
     TSqlDatabasePool::instantiate();
     TKvsDatabasePool::instantiate();
+    return true;
+}
+
+
+bool TApplicationServer::open()
+{
+    loadLibraries();
+
+    if (!isListening()) {
+        quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
+        int sock = nativeListen(QHostAddress::Any, port);
+        if (sock > 0 && setSocketDescriptor(sock)) {
+            tSystemDebug("listen successfully.  port:%d", port);
+        } else {
+            tSystemError("Failed to set socket descriptor: %d", sock);
+            nativeClose(sock);
+            return false;
+        }
+    }
 
     switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread: {

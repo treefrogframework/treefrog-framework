@@ -24,6 +24,7 @@ public:
     bool open();
     bool isOpen() const;
 
+    static bool loadLibraries();
     static void nativeSocketInit();
     static void nativeSocketCleanup();
     static int nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag = CloseOnExec);
