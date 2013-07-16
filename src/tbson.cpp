@@ -277,9 +277,9 @@ QString TBson::generateObjectId()
     static bool once = false;
 
     if (!once) {
-        once = true;
         bson_set_oid_fuzz(oidFuzz);
         bson_set_oid_inc(oidInc);
+        once = true;
     }
 
     bson_oid_t oid;
