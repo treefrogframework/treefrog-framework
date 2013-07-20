@@ -4,6 +4,8 @@
 #include <QObject>
 #include <TActionContext>
 
+class THttpSocket;
+
 
 class T_CORE_EXPORT TActionForkProcess : public QObject, public TActionContext
 {
@@ -18,6 +20,11 @@ public:
 protected:
     virtual void emitError(int socketError);
 
+    virtual bool readRequest();
+    virtual qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
+    virtual void closeHttpSocket();
+    virtual void releaseHttpSocket();
+
     static TActionForkProcess *currentActionContext;
 
 signals:
@@ -25,6 +32,8 @@ signals:
     void error(int socketError);
 
 private:
+    THttpSocket *httpSocket;
+
     Q_DISABLE_COPY(TActionForkProcess)
 };
 

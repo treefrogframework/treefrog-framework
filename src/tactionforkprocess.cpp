@@ -9,6 +9,9 @@
 #include <TActionForkProcess>
 #include <TWebApplication>
 #include <TSqlDatabasePool>
+#include <TActionThread>
+#include "thttpsocket.h"
+#include "tsystemglobal.h"
 
 /*!
   \class TActionForkProcess
@@ -20,12 +23,15 @@ TActionForkProcess *TActionForkProcess::currentActionContext = 0;
 
 
 TActionForkProcess::TActionForkProcess(int socket)
-    : QObject(), TActionContext(socket)
+    : QObject(), TActionContext(socket), httpSocket(0)
 { }
 
 
 TActionForkProcess::~TActionForkProcess()
 {
+    if (httpSocket)
+        delete httpSocket;
+
     currentActionContext = 0;
 }
 
@@ -57,4 +63,56 @@ void TActionForkProcess::start()
 
     emit finished();
     QCoreApplication::exit(1);
+}
+
+
+bool TActionForkProcess::readRequest()
+{
+    httpSocket = new THttpSocket;
+    THttpRequest req;
+
+    if (!httpSocket->setSocketDescriptor(TActionContext::socketDesc)) {
+        emitError(httpSocket->error());
+        goto socket_error;
+    }
+    TActionContext::socketDesc = 0;
+
+    if (!TActionThread::readRequest(httpSocket, req)) {
+        goto socket_error;
+    }
+
+    setHttpRequest(req);
+    return true;
+
+socket_error:
+    delete httpSocket;
+    httpSocket = 0;
+    return false;
+}
+
+
+qint64 TActionForkProcess::writeResponse(THttpResponseHeader &header, QIODevice *body)
+{
+    header.setRawHeader("Connection", "close");
+    return httpSocket->write(static_cast<THttpHeader*>(&header), body);
+}
+
+
+void TActionForkProcess::closeHttpSocket()
+{
+    httpSocket->close();
+}
+
+
+void TActionForkProcess::releaseHttpSocket()
+{
+    TActionContext::accessLog.timestamp = QDateTime::currentDateTime();
+    writeAccessLog(TActionContext::accessLog);  // Writes access log
+
+    httpSocket->waitForBytesWritten();  // Flush socket
+    httpSocket->close();  // disconnect
+
+    // Destorys the object in the thread which created it
+    delete httpSocket;
+    httpSocket = 0;
 }
