@@ -22,7 +22,7 @@ TAccessLogStream::TAccessLogStream(const QString &fileName)
     : logger(new TFileLogger), semaphore(0)
 {
     logger->setFileName(fileName);
-    
+
     if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
         semaphore = new QSystemSemaphore(QLatin1String("TreeFrog_") + QFileInfo(fileName).fileName(), 1, QSystemSemaphore::Open);
     } else {
@@ -45,10 +45,10 @@ void TAccessLogStream::writeLog(const QByteArray &log)
         semaphore->acquire();
         logger->open();
     }
-    
+
     logger->log(log);
     logger->flush();
-    
+
     if (semaphore) {
         logger->close();
         semaphore->release();

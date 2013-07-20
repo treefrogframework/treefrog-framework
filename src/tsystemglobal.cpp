@@ -15,9 +15,9 @@
 #include <TWebApplication>
 #include <TLogger>
 #include <TLog>
+#include <TAccessLog>
 #include "tsystemglobal.h"
 #include "taccesslogstream.h"
-#include "taccesslog.h"
 
 static TAccessLogStream *accesslogstrm = 0;
 static TAccessLogStream *sqllogstrm = 0;

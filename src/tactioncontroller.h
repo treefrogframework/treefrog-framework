@@ -31,11 +31,11 @@ class T_CORE_EXPORT TActionController : public QObject, public TAbstractControll
 public:
     TActionController();
     virtual ~TActionController() { }
-  
+
     QString className() const;
     QString name() const;
     QString activeAction() const;
-    const THttpRequest &httpRequest() const { return request; }
+    const THttpRequest &httpRequest() const;
     const THttpResponse &httpResponse() const { return response; }
     QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
     const TSession &session() const { return sessionStore; }
@@ -97,12 +97,11 @@ protected:
     virtual QString identityKeyOfLoginUser() const;
     virtual void setAccessRules() { }
 
-    THttpRequest &httpRequest() { return request; }
+    THttpRequest &httpRequest();
     THttpResponse &httpResponse() { return response; }
 
 private:
     void setActionName(const QString &name);
-    void setHttpRequest(const THttpRequest &httpRequest);
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
     void exportAllFlashVariants();
@@ -117,7 +116,6 @@ private:
     bool rendered;
     bool layoutEnable;
     QString layoutName;
-    THttpRequest request;
     THttpResponse response;
     QVariantMap flashVars;
     TSession sessionStore;
@@ -140,11 +138,6 @@ inline QString TActionController::className() const
 inline QString TActionController::activeAction() const
 {
     return actName;
-}
-
-inline void TActionController::setHttpRequest(const THttpRequest &httpRequest)
-{
-    request = httpRequest;
 }
 
 inline void TActionController::setActionName(const QString &name)

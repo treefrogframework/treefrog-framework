@@ -277,7 +277,7 @@ int TSqlDatabasePool::maxDbConnectionsPerProcess()
     static int maxConnections = 0;
 
     if (!maxConnections) {
-        maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Thread) ? Tf::app()->maxNumberOfServers() : 1;
+        maxConnections = (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) ?  1 : Tf::app()->maxNumberOfServers();
     }
     return maxConnections;
 }

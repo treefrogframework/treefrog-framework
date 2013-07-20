@@ -110,6 +110,10 @@ QString TActionController::name() const
   \~japanese
   HTTPリクエストへの参照を返す
 */
+const THttpRequest &TActionController::httpRequest() const
+{
+    return Tf::currentContext()->httpRequest();
+}
 
 /*!
   \fn THttpRequest &TActionController::httpRequest();
@@ -119,6 +123,10 @@ QString TActionController::name() const
   \~japanese
   HTTPリクエストへの参照を返す
 */
+THttpRequest &TActionController::httpRequest()
+{
+    return Tf::currentContext()->httpRequest();
+}
 
 /*!
   \fn const THttpResponse &TActionController::httpResponse() const;

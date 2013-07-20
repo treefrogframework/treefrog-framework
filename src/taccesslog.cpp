@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "taccesslog.h"
+#include <TAccessLog>
 
 /*!
   \class TAccessLog
@@ -14,7 +14,7 @@
 */
 
 TAccessLog::TAccessLog()
-    : statusCode(0), responseBytes(0)
+    : timestamp(), remoteHost(), request(), statusCode(0), responseBytes(0)
 { }
 
 
@@ -33,14 +33,14 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
             message.append(c);
             continue;
         }
-        
+
         QByteArray dig;
         for (;;) {
             if (pos >= layout.length()) {
                 message.append('%').append(dig);
                 break;
             }
-            
+
             c = layout.at(pos++);
             if (c >= '0' && c <= '9') {
                 dig += c;

@@ -304,6 +304,8 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
             mpm = Thread;
         } else if (str == "prefork") {
             mpm = Prefork;
+        } else if (str == "hybrid") {
+            mpm = Hybrid;
         }
     }
     return mpm;
