@@ -26,7 +26,6 @@
 #include "thttpsendbuffer.h"
 #include "tfcore_unix.h"
 
-const int MAX_EVENTS = 1024;
 static TMultiplexingServer *multiplexingServer = 0;
 
 
@@ -65,11 +64,9 @@ static void setNonBlocking(int sock)
 
 
 TMultiplexingServer::TMultiplexingServer()
-    : QThread(), TApplicationServerBase(), stopped(false), listenSocket(0), epollFd(0), sendRequest()
+    : QThread(), TApplicationServerBase(), maxWorkers(0), stopped(false), listenSocket(0), epollFd(0), sendRequest()
 {
-    maxServers = Tf::app()->maxNumberOfServers();
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
-
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
 }
 
@@ -172,10 +169,20 @@ void TMultiplexingServer::run()
     }
     listenSocket = sock;
 
+    maxWorkers = Tf::app()->maxNumberOfServers(10);
+    tSystemDebug("MaxWorkers: %d", maxWorkers);
+
+    QString mpm = Tf::app()->appSettings().value("MultiProcessingModule").toString().toLower();
+    int num = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxPollingSockets").toInt();
+    const int MaxEvents = (num > 0) ? num : 16;
+    tSystemDebug("MaxPollingSockets: %d", MaxEvents);
+
+    epoll_event *events = new epoll_event[MaxEvents];
+    char buffer[BUFSIZ];
     int actionCount = 0;
 
     // Create epoll
-    epollFd = epoll_create(MAX_EVENTS);
+    epollFd = epoll_create(MaxEvents);
     if (epollFd < 0) {
         tSystemError("Failed epoll_create()");
         goto socket_error;
@@ -186,12 +193,9 @@ void TMultiplexingServer::run()
         goto epoll_error;
     }
 
-    struct epoll_event events[MAX_EVENTS];
-    char buffer[BUFSIZ];
-
     for (;;) {
         // Poll Sending/Receiving/Incoming
-        int nfd = tf_epoll_wait(epollFd, events, MAX_EVENTS, (actionCount > 0 ? 1 : 100));
+        int nfd = tf_epoll_wait(epollFd, events, MaxEvents, (actionCount > 0 ? 1 : 100));
         if (nfd < 0) {
             tSystemError("Failed epoll_wait() : errno:%d", errno);
             break;
@@ -338,13 +342,14 @@ socket_error:
     if (listenSocket > 0)
         TF_CLOSE(listenSocket);
     listenSocket = 0;
+    delete events;
 }
 
 
 void TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
 {
     for (;;) {
-        if (actionContextCount() < maxServers) {
+        if (actionContextCount() < maxWorkers) {
             TActionWorker *thread = new TActionWorker(fd, request);
             connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
             insertPointer(thread);

@@ -47,7 +47,7 @@ protected slots:
     void deleteActionContext();
 
 private:
-    int maxServers;
+    int maxWorkers;
     volatile bool stopped;
     int listenSocket;
     int epollFd;
