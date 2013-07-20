@@ -23,7 +23,6 @@
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
 #include "turlroute.h"
-#include "taccesslog.h"
 #ifdef Q_OS_UNIX
 # include "tfcore_unix.h"
 #endif
@@ -42,17 +41,23 @@
 
 
 TActionContext::TActionContext(int socket)
-    : sqlDatabases(), kvsDatabases(), stopped(false), socketDesc(socket), httpSocket(0), currController(0)
+    : sqlDatabases(),
+      transactions(),
+      kvsDatabases(),
+      stopped(false),
+      socketDesc(socket),
+      currController(0),
+      httpReq(0)
 { }
 
 
 TActionContext::~TActionContext()
 {
-    if (httpSocket)
-        delete httpSocket;
-
     if (socketDesc > 0)
         TF_CLOSE(socketDesc);
+
+    if (httpReq)
+        delete httpReq;
 
     // Releases all SQL database sessions
     TActionContext::releaseSqlDatabases();
@@ -126,60 +131,24 @@ void TActionContext::releaseKvsDatabases()
 void TActionContext::execute()
 {
     T_TRACEFUNC("");
-    TAccessLog accessLog;
     THttpResponseHeader responseHeader;
 
     try {
-        httpSocket = new THttpSocket;
-        if (!httpSocket->setSocketDescriptor(socketDesc)) {
-            emitError(httpSocket->error());
-            delete httpSocket;
-            httpSocket = 0;
-            return;
-        } else {
-            socketDesc = 0;
-        }
-
-        while (!httpSocket->canReadRequest()) {
-            if (stopped) {
-                tSystemDebug("Detected stop request");
-                break;
-            }
-
-            // Check idle timeout
-            if (httpSocket->idleTime() >= 10) {
-                tSystemWarn("Reading a socket timed out after 10 seconds. Descriptor:%d", (int)httpSocket->socketDescriptor());
-                break;
-            }
-
-            if (httpSocket->socketDescriptor() <= 0) {
-                tSystemWarn("Invalid descriptor (disconnected) : %d", (int)httpSocket->socketDescriptor());
-                break;
-            }
-
-            httpSocket->waitForReadyRead(10);
-        }
-
-        if (!httpSocket->canReadRequest()) {
-            httpSocket->abort();
-            delete httpSocket;
-            httpSocket = 0;
+        if (!readRequest()) {
             return;
         }
-
-        THttpRequest httpRequest = httpSocket->read();
-        const THttpRequestHeader &hdr = httpRequest.header();
+        const THttpRequestHeader &hdr = httpReq->header();
 
         // Access log
         QByteArray firstLine = hdr.method() + ' ' + hdr.path();
         firstLine += QString(" HTTP/%1.%2").arg(hdr.majorVersion()).arg(hdr.minorVersion()).toLatin1();
         accessLog.request = firstLine;
-        accessLog.remoteHost = (Tf::app()->appSettings().value(LISTEN_PORT).toUInt() > 0) ? httpSocket->peerAddress().toString().toLatin1() : QByteArray("(unix)");
+        accessLog.remoteHost = (Tf::app()->appSettings().value(LISTEN_PORT).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)");
 
         tSystemDebug("method : %s", hdr.method().data());
         tSystemDebug("path : %s", hdr.path().data());
 
-        Tf::HttpMethod method = httpRequest.method();
+        Tf::HttpMethod method = httpReq->method();
         QString path = THttpUtility::fromUrlEncoding(hdr.path().split('?').value(0));
 
         // Routing info exists?
@@ -225,12 +194,11 @@ void TActionContext::execute()
         currController = ctlrDispatcher.object();
         if (currController) {
             currController->setActionName(rt.action);
-            currController->setHttpRequest(httpRequest);
 
             // Session
             if (currController->sessionEnabled()) {
                 TSession session;
-                QByteArray sessionId = httpRequest.cookie(TSession::sessionName());
+                QByteArray sessionId = httpReq->cookie(TSession::sessionName());
                 if (!sessionId.isEmpty()) {
                     // Finds a session
                     session = TSessionManager::instance().findSession(sessionId);
@@ -246,7 +214,7 @@ void TActionContext::execute()
                 && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(rt.action)) {
 
                 if (method == Tf::Post || method == Tf::Put || method == Tf::Delete) {
-                    if (!currController->verifyRequest(httpRequest)) {
+                    if (!currController->verifyRequest(*httpReq)) {
                         throw SecurityException("Invalid authenticity token", __FILE__, __LINE__);
                     }
                 }
@@ -316,7 +284,6 @@ void TActionContext::execute()
             // Writes a response and access log
             accessLog.responseBytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
                                                     currController->response.bodyLength());
-
             // Session GC
             TSessionManager::instance().collectGarbage();
 
@@ -365,29 +332,26 @@ void TActionContext::execute()
         accessLog.statusCode = e.statusCode();
     } catch (SqlException &e) {
         tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        closeHttpSocket();
     } catch (KvsException &e) {
         tError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        closeHttpSocket();
     } catch (SecurityException &e) {
         tError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        closeHttpSocket();
     } catch (RuntimeException &e) {
         tError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        closeHttpSocket();
     } catch (...) {
         tError("Caught Exception");
+        closeHttpSocket();
     }
-
-    accessLog.timestamp = QDateTime::currentDateTime();
-    writeAccessLog(accessLog);  // Writes access log
 
     // Push to the pool
     TActionContext::releaseSqlDatabases();
     TActionContext::releaseKvsDatabases();
 
-    httpSocket->waitForBytesWritten();  // Flush socket
-    httpSocket->close();  // disconnect
-
-    // Destorys the object in the thread which created it
-    delete httpSocket;
-    httpSocket = 0;
+    releaseHttpSocket();
 }
 
 
@@ -430,20 +394,27 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length)
 {
     T_TRACEFUNC("length:%s", qPrintable(QString::number(length)));
-    qint64 res = -1;
-    if (httpSocket) {
-        header.setContentLength(length);
-        header.setRawHeader("Server", "TreeFrog server");
+
+    header.setContentLength(length);
+    header.setRawHeader("Server", "TreeFrog server");
 # if QT_VERSION >= 0x040700
-        QDateTime utc = QDateTime::currentDateTimeUtc();
+    QDateTime utc = QDateTime::currentDateTimeUtc();
 #else
-        QDateTime utc = QDateTime::currentDateTime().toUTC();
+    QDateTime utc = QDateTime::currentDateTime().toUTC();
 #endif
-        header.setRawHeader("Date", QLocale(QLocale::C).toString(utc, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
-        header.setRawHeader("Connection", "close");
-        res = httpSocket->write(static_cast<THttpHeader*>(&header), body);
-    }
-    return res;
+    header.setRawHeader("Date", QLocale(QLocale::C).toString(utc, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+
+    // Write data
+    return writeResponse(header, body);
+}
+
+
+void TActionContext::setHttpRequest(const THttpRequest &request)
+{
+    if (httpReq)
+        delete httpReq;
+
+    httpReq = new THttpRequest(request);
 }
 
 
@@ -483,34 +454,5 @@ TTemporaryFile &TActionContext::createTemporaryFile()
 
 QHostAddress TActionContext::clientAddress() const
 {
-    return httpSocket->peerAddress();
-}
-
-
-// want to move to other file..
-#include <TActionThread>
-#include <TActionForkProcess>
-
-TActionContext *TActionContext::current()
-{
-    TActionContext *context = 0;
-
-    switch ( Tf::app()->multiProcessingModule() ) {
-    case TWebApplication::Prefork:
-        context = TActionForkProcess::currentContext();
-        if (!context) {
-            throw RuntimeException("The current process is not TActionProcess", __FILE__, __LINE__);
-        }
-        break;
-
-    case TWebApplication::Thread:
-        /* FALLTHROUGH */
-    default:
-        context = qobject_cast<TActionThread *>(QThread::currentThread());
-        if (!context) {
-            throw RuntimeException("The current thread is not TActionThread", __FILE__, __LINE__);
-        }
-        break;
-    }
-    return context;
+    return httpReq->clientAddress();
 }
