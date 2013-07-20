@@ -1,38 +1,24 @@
-#ifndef TAPPLICATIONSERVER_H
-#define TAPPLICATIONSERVER_H
+#ifndef TTHREADAPPLICATIONSERVER_H
+#define TTHREADAPPLICATIONSERVER_H
 
 #include <QTcpServer>
-#include <QSet>
-#include <QMutex>
 #include <TGlobal>
+#include <TApplicationServerBase>
+#include <TActionThread>
 
-class TActionContext;
 
-
-class T_CORE_EXPORT TApplicationServer : public QTcpServer
+class T_CORE_EXPORT TThreadApplicationServer : public QTcpServer, public TApplicationServerBase
 {
     Q_OBJECT
 public:
-    enum OpenFlag {
-        CloseOnExec = 0,
-        NonCloseOnExec,
-    };
+    TThreadApplicationServer(QObject *parent = 0);
+    ~TThreadApplicationServer();
 
-    TApplicationServer(QObject *parent = 0);
-    ~TApplicationServer();
-
-    bool open();
-    bool isOpen() const;
-
-    static bool loadLibraries();
-    static void nativeSocketInit();
-    static void nativeSocketCleanup();
-    static int nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag = CloseOnExec);
-    static int nativeListen(const QString &fileDomain, OpenFlag flag = CloseOnExec);
-    static void nativeClose(int socket);
+    bool start();
+    void stop();
+    bool isSocketOpen() const;
 
 public slots:
-    void close();
     void terminate();
 
 protected:
@@ -41,18 +27,26 @@ protected:
 #else
     void incomingConnection(int socketDescriptor);
 #endif
-    void insertPointer(TActionContext *p);
-    int actionContextCount() const;
 
 protected slots:
     void deleteActionContext();
 
 private:
     int maxServers;
-    QSet<TActionContext *> actionContexts;
-    mutable QMutex setMutex;
 
-    Q_DISABLE_COPY(TApplicationServer)
+    Q_DISABLE_COPY(TThreadApplicationServer)
 };
 
-#endif // TAPPLICATIONSERVER_H
+
+class TStaticInitializeThread : public TActionThread
+{
+public:
+    TStaticInitializeThread() : TActionThread(0) { }
+protected:
+    void run()
+    {
+        TApplicationServerBase::invokeStaticInitialize();
+    }
+};
+
+#endif // TTHREADAPPLICATIONSERVER_H
