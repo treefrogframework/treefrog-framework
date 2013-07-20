@@ -457,7 +457,8 @@ int managerMain(int argc, char *argv[])
     for (;;) {
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
-        case TWebApplication::Thread: {
+        case TWebApplication::Thread: // FALL THROUGH
+        case TWebApplication::Hybrid: {
             manager = new ServerManager(1, 1, 0, &app);
             break; }
 

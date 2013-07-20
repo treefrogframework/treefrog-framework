@@ -9,7 +9,7 @@
 #include <TGlobal>
 #include <TWebApplication>
 #include <TSystemGlobal>
-#include <TApplicationServer>
+#include <TApplicationServerBase>
 #include <TLog>
 #include "qplatformdefs.h"
 #include "servermanager.h"
@@ -44,9 +44,9 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
 {
     if (isRunning())
         return true;
-    
+
 #ifdef Q_OS_UNIX
-    int sd = TApplicationServer::nativeListen(address, port, TApplicationServer::NonCloseOnExec);
+    int sd = TApplicationServerBase::nativeListen(address, port, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("Failed to create listening socket");
         fprintf(stderr, "Failed to create listening socket\n");
@@ -63,7 +63,7 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
 #else
     Q_UNUSED(address);
 #endif
-    
+
     running = true;
     ajustServers();
     tSystemInfo("TreeFrog application servers start up.  port:%d", port);
@@ -75,14 +75,14 @@ bool ServerManager::start(const QString &fileDomain)
 {
     if (isRunning())
         return true;
-    
-    int sd = TApplicationServer::nativeListen(fileDomain, TApplicationServer::NonCloseOnExec);
+
+    int sd = TApplicationServerBase::nativeListen(fileDomain, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("listening socket create failed  [%s:%d]", __FILE__, __LINE__);
         fprintf(stderr, "Failed to create listening socket of UNIX domain\n");
         return false;
     }
-    
+
     if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
         listeningSocket = sd;
     } else {
@@ -90,7 +90,7 @@ bool ServerManager::start(const QString &fileDomain)
         TF_CLOSE(sd);
         // tfserver process will open a socket of that.
     }
-    
+
     running = true;
     ajustServers();
     tSystemInfo("TreeFrog application servers start up.  Domain file name:%s", qPrintable(fileDomain));
@@ -102,9 +102,9 @@ void ServerManager::stop()
 {
     if (!isRunning())
         return;
-    
+
     running = false;
-    
+
     if (listeningSocket > 0) {
         TF_CLOSE(listeningSocket);
     }
@@ -117,10 +117,10 @@ void ServerManager::stop()
             QProcess *tfserver = i.next().key();
             disconnect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), 0, 0);
             disconnect(tfserver, SIGNAL(readyReadStandardError()), 0, 0);
-            
+
             tfserver->terminate();
         }
-        
+
         for (QMapIterator<QProcess *, int> i(serversStatus); i.hasNext(); ) {
             QProcess *tfserver = i.next().key();
             tfserver->waitForFinished(-1);
@@ -180,7 +180,7 @@ void ServerManager::startServer() const
 
     QProcess *tfserver = new QProcess;
     serversStatus.insert(tfserver, NotRunning);
-    
+
     connect(tfserver, SIGNAL(started()), this, SLOT(updateServerStatus()));
     connect(tfserver, SIGNAL(error(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
     connect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(serverFinish(int, QProcess::ExitStatus)));
@@ -195,7 +195,7 @@ void ServerManager::startServer() const
         ldpath += ":";
         ldpath += sysldpath;
     }
-    
+
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_LIBRARY_PATH", ldpath);
     tfserver->setProcessEnvironment(env);
