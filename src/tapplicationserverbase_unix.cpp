@@ -10,24 +10,25 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <QTcpServer>
 #include <QFile>
-#include <TApplicationServer>
 #include <TSystemGlobal>
+#include "tapplicationserverbase.h"
 #include "tfcore_unix.h"
 
 
-void TApplicationServer::nativeSocketInit()
+void TApplicationServerBase::nativeSocketInit()
 { }
 
 
-void TApplicationServer::nativeSocketCleanup()
+void TApplicationServerBase::nativeSocketCleanup()
 { }
 
 /*!
   Listen a port for connections on a socket.
   This function must be called in a tfmanager process.
  */
-int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag)
+int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag)
 {
     int sd = 0;
     QTcpServer server;
@@ -53,7 +54,7 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
 /*!
   Listen for connections on UNIX domain.
  */
-int TApplicationServer::nativeListen(const QString &fileDomain, OpenFlag flag)
+int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag flag)
 {
     int sd = -1;
     struct sockaddr_un addr;
@@ -105,7 +106,7 @@ socket_error:
 }
 
 
-void TApplicationServer::nativeClose(int socket)
+void TApplicationServerBase::nativeClose(int socket)
 {
     if (socket > 0)
         TF_CLOSE(socket);

@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TApplicationServer>
 #include <TSystemGlobal>
+#include "tapplicationserverbase.h"
 #include <winsock2.h>
 
 
-void TApplicationServer::nativeSocketInit()
+void TApplicationServerBase::nativeSocketInit()
 {
     WSAData wsadata;
     if (WSAStartup(MAKEWORD(2,0), &wsadata) != 0) {
@@ -19,7 +19,7 @@ void TApplicationServer::nativeSocketInit()
 }
 
 
-void TApplicationServer::nativeSocketCleanup()
+void TApplicationServerBase::nativeSocketCleanup()
 {
     WSACleanup();
 }
@@ -28,7 +28,7 @@ void TApplicationServer::nativeSocketCleanup()
   Listen a port with SO_REUSEADDR option.
   This function must be called in a tfserver process.
  */
-int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, OpenFlag)
+int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 port, OpenFlag)
 {
     int protocol = (address.protocol() == QAbstractSocket::IPv6Protocol) ? AF_INET6 : AF_INET;
     SOCKET sock = ::WSASocket(protocol, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -36,14 +36,14 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
         tSystemError("WSASocket Error: %d", WSAGetLastError());
         return -1;
     }
-    
+
     // ReuseAddr
     bool on = true;
     if (::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0) {
         tSystemError("setsockopt error: %d", WSAGetLastError());
         goto error_socket;
     }
-    
+
     if (address.protocol() == QAbstractSocket::IPv6Protocol) {
         struct tf_in6_addr {
             quint8 tf_s6_addr[16];
@@ -55,7 +55,7 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
             struct  tf_in6_addr sin6_addr;  /* IPv6 address */
             quint32 sin6_scope_id;          /* set of interfaces for a scope */
         } sa6;
-        
+
         memset(&sa6, 0, sizeof(sa6));
         sa6.sin6_family = AF_INET6;
         WSAHtons(sock, port, &(sa6.sin6_port));
@@ -65,7 +65,7 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
             tSystemError("bind(v6) error: %d", WSAGetLastError());
             goto error_socket;
         }
-        
+
     } else if (address.protocol() == QAbstractSocket::IPv4Protocol
 #if QT_VERSION >= 0x050000
                || address.protocol() == QAbstractSocket::QAbstractSocket::AnyIPProtocol
@@ -83,7 +83,7 @@ int TApplicationServer::nativeListen(const QHostAddress &address, quint16 port, 
     } else {  // UnknownNetworkLayerProtocol
         goto error_socket;
     }
-    
+
     if (::listen(sock, 50) != 0) {
         tSystemError("listen error: %d", WSAGetLastError());
         goto error_socket;
@@ -96,7 +96,7 @@ error_socket:
 }
 
 
-int TApplicationServer::nativeListen(const QString &, OpenFlag)
+int TApplicationServerBase::nativeListen(const QString &, OpenFlag)
 {
     // must not reach here
     Q_ASSERT(0);
@@ -104,7 +104,7 @@ int TApplicationServer::nativeListen(const QString &, OpenFlag)
 }
 
 
-void TApplicationServer::nativeClose(int socket)
+void TApplicationServerBase::nativeClose(int socket)
 {
     if (socket != (int)INVALID_SOCKET)
         closesocket(socket);
