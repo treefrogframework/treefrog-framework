@@ -9,7 +9,9 @@
 #include <QStringList>
 #include <QMap>
 #include <TWebApplication>
-#include <TApplicationServer>
+#include <TThreadApplicationServer>
+#include <TPreforkApplicationServer>
+#include <TMultiplexingServer>
 #include <TSystemGlobal>
 #include <stdlib.h>
 #include "tsystemglobal.h"
@@ -87,8 +89,8 @@ int main(int argc, char *argv[])
 {
     TWebApplication webapp(argc, argv);
     int ret = -1;
-    QString arg;
-    TApplicationServer *server = 0;
+    TApplicationServerBase *server = 0;
+    int sd = 0;
 
     // Setup loggers
     tSetupSystemLoggers();
@@ -99,6 +101,7 @@ int main(int argc, char *argv[])
     qInstallMsgHandler(messageOutput);
 #endif
     QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
+    QString sopt = args.value(SOCKET_OPTION);
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
@@ -123,7 +126,7 @@ int main(int argc, char *argv[])
         QLocale::setDefault(locale);
         tSystemInfo("Application's default locale: %s", qPrintable(locale.name()));
     }
-    
+
     // Sets codec
     QTextCodec *codec = webapp.codecForInternal();
     QTextCodec::setCodecForLocale(codec);
@@ -146,25 +149,45 @@ int main(int argc, char *argv[])
         goto finish;
     }
 
-    server = new TApplicationServer(&webapp);
-    arg = args.value(SOCKET_OPTION);
-    if (!arg.isEmpty()) {
-        // Sets a listening socket descriptor
-        int sd = arg.toInt();
-        if (sd > 0) {
-            if (server->setSocketDescriptor(sd)) {
-                tSystemDebug("Set socket descriptor: %d", sd);
+    switch (webapp.multiProcessingModule()) {
+    case TWebApplication::Thread:
+        server = new TThreadApplicationServer(&webapp);
+        break;
+
+    case TWebApplication::Prefork: {
+        TPreforkApplicationServer *svr = new TPreforkApplicationServer(&webapp);
+        if (!sopt.isEmpty()) {
+            sd = sopt.toInt();
+            if (sd > 0) {
+                // Sets a listening socket descriptor
+                if (svr->setSocketDescriptor(sd)) {
+                    tSystemDebug("Set socket descriptor: %d", sd);
+                } else {
+                    tSystemError("Failed to set socket descriptor: %d", sd);
+                    goto finish;
+                }
             } else {
-                tSystemError("Failed to set socket descriptor: %d", sd);
+                tSystemError("Invalid socket descriptor: %d", sd);
                 goto finish;
             }
-        } else {
-            tSystemError("Invalid socket descriptor: %d", sd);
-            goto finish;
         }
+        server = svr;
+        break; }
+
+    case TWebApplication::Hybrid:
+#ifdef Q_OS_LINUX
+        TMultiplexingServer::instantiate();
+        server = TMultiplexingServer::instance();
+#else
+        tFatal("Unsupported MPM: hybrid");
+#endif
+        break;
+
+    default:
+        break;
     }
-    
-    if (!server->open()) {
+
+    if (!server->start()) {
         tSystemError("Server open failed");
         goto finish;
     }
