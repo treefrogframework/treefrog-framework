@@ -88,8 +88,6 @@ HEADERS += tactionthread.h
 SOURCES += tactionthread.cpp
 HEADERS += tactionforkprocess.h
 SOURCES += tactionforkprocess.cpp
-HEADERS += tactionworker.h
-SOURCES += tactionworker.cpp
 HEADERS += thttpsocket.h
 SOURCES += thttpsocket.cpp
 HEADERS += thttpbuffer.h
@@ -283,6 +281,8 @@ unix:!macx {
 # for linux
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
+  HEADERS += tactionworker.h
+  SOURCES += tactionworker.cpp
 }
 
 # Qt5
