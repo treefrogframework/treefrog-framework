@@ -315,12 +315,11 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
   Returns the maximum number of runnable servers, which is set in the
   application.ini.
 */
-int TWebApplication::maxNumberOfServers() const
+int TWebApplication::maxNumberOfServers(int defaultValue) const
 {
     QString mpm = appSettings().value("MultiProcessingModule").toString().toLower();
     int num = appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers").toInt();
-    Q_ASSERT(num > 0);
-    return num;
+    return (num > 0) ? num : defaultValue;
 }
 
 /*!
