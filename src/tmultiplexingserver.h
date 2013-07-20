@@ -4,15 +4,17 @@
 #include <QThread>
 #include <QMap>
 #include <QByteArray>
-#include <QPair>
+#include <QFileInfo>
 #include <QAtomicPointer>
 #include <TGlobal>
 #include <TApplicationServerBase>
+#include <TAccessLog>
 
 class QIODevice;
 class THttpRequest;
 class THttpHeader;
 class THttpBuffer;
+class THttpSendBuffer;
 
 
 class T_CORE_EXPORT TMultiplexingServer : public QThread, public TApplicationServerBase
@@ -24,8 +26,9 @@ public:
     bool isListening() const { return listenSocket > 0; }
     bool start();
     void stop() { stopped = true; }
-    qint64 setSendRequest(int fd, const QByteArray &buffer);
-    qint64 setSendRequest(int fd, const THttpHeader *header, QIODevice *body);
+
+    void setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLog &accessLog);
+    void setDisconnectRequest(int fd);
 
     static void instantiate();
     static TMultiplexingServer *instance();
@@ -34,8 +37,10 @@ protected:
     void run();
     int epollAdd(int fd, int events);
     int epollModify(int fd, int events);
+    int epollDel(int fd);
     void epollClose(int fd);
     void incomingRequest(int fd, const THttpRequest &request);
+    qint64 setSendRequest(int fd, const QByteArray &buffer);
 
 protected slots:
     void terminate();
@@ -46,8 +51,23 @@ private:
     volatile bool stopped;
     int listenSocket;
     int epollFd;
-    QMap<int, THttpBuffer> bufferings;
-    QAtomicPointer<QPair<int, QByteArray> > sendRequest;
+    QMap<int, THttpBuffer> recvBuffers;
+    QMap<int, THttpSendBuffer *> sendBuffers;
+
+    struct SendData
+    {
+        enum Method {
+            Disconnect,
+            Send,
+        };
+        int method;
+        int fd;
+        QByteArray data;
+        QFileInfo file;
+        bool fileRemove;
+        TAccessLog accessLog;
+    };
+    QAtomicPointer<SendData> sendRequest;
 
     TMultiplexingServer();
     Q_DISABLE_COPY(TMultiplexingServer)

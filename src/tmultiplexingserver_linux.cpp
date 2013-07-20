@@ -19,9 +19,11 @@
 #include <TWebApplication>
 #include <TApplicationServerBase>
 #include <TMultiplexingServer>
+#include <TThreadApplicationServer>
 #include <TSystemGlobal>
-#include <TActionThread>
+#include <TActionWorker>
 #include "thttpbuffer.h"
+#include "thttpsendbuffer.h"
 #include "tfcore_unix.h"
 
 const int MAX_EVENTS = 1024;
@@ -63,10 +65,10 @@ static void setNonBlocking(int sock)
 
 
 TMultiplexingServer::TMultiplexingServer()
-    : QThread(), stopped(false), listenSocket(0), epollFd(0), sendRequest()
+    : QThread(), TApplicationServerBase(), stopped(false), listenSocket(0), epollFd(0), sendRequest()
 {
-    nativeSocketInit();
     maxServers = Tf::app()->maxNumberOfServers();
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
 
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
 }
@@ -84,7 +86,17 @@ TMultiplexingServer::~TMultiplexingServer()
 
 bool TMultiplexingServer::start()
 {
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
+    if (isRunning())
+        return true;
+
+    // Loads libs
+    TApplicationServerBase::loadLibraries();
+
+    TStaticInitializeThread *initializer = new TStaticInitializeThread();
+    initializer->start();
+    initializer->wait();
+    delete initializer;
+
     connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
     QThread::start();
     return true;
@@ -95,7 +107,11 @@ void TMultiplexingServer::epollClose(int fd)
 {
     tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL);
     TF_CLOSE(fd);
-    bufferings.remove(fd);
+    recvBuffers.remove(fd);
+    THttpSendBuffer *p = sendBuffers.take(fd);
+    if (p) {
+        delete p;
+    }
 }
 
 
@@ -106,7 +122,12 @@ int TMultiplexingServer::epollAdd(int fd, int events)
     memset(&ev, 0, sizeof(ev));
     ev.events = events;
     ev.data.fd = fd;
-    return tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &ev);
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &ev);
+    if (ret < 0) {
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  fd:%d errno:%d", fd, errno);
+        epollClose(fd);
+    }
+    return ret;
 }
 
 
@@ -117,7 +138,23 @@ int TMultiplexingServer::epollModify(int fd, int events)
     memset(&ev, 0, sizeof(ev));
     ev.events = events;
     ev.data.fd = fd;
-    return tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
+    if (ret < 0) {
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  fd:%d errno:%d", fd, errno);
+        epollClose(fd);
+    }
+    return ret;
+}
+
+
+int TMultiplexingServer::epollDel(int fd)
+{
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL);
+    if (ret < 0) {
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  fd:%d errno:%d", fd, errno);
+        epollClose(fd);
+    }
+    return ret;
 }
 
 
@@ -135,8 +172,7 @@ void TMultiplexingServer::run()
     }
     listenSocket = sock;
 
-    // Loads libs
-    TApplicationServerBase::loadLibraries();
+    int actionCount = 0;
 
     // Create epoll
     epollFd = epoll_create(MAX_EVENTS);
@@ -155,7 +191,7 @@ void TMultiplexingServer::run()
 
     for (;;) {
         // Poll Sending/Receiving/Incoming
-        int nfd = tf_epoll_wait(epollFd, events, MAX_EVENTS, 10); // 10ms
+        int nfd = tf_epoll_wait(epollFd, events, MAX_EVENTS, (actionCount > 0 ? 1 : 100));
         if (nfd < 0) {
             tSystemError("Failed epoll_wait() : errno:%d", errno);
             break;
@@ -173,12 +209,10 @@ void TMultiplexingServer::run()
                 }
 
                 setNonBlocking(clt);
-                if (epollAdd(clt, EPOLLIN) < 0) {
-                    epollClose(clt);
-                } else {
-                    THttpBuffer &httpBuf = bufferings[clt];
-                    httpBuf.clear();
-                    httpBuf.setClientAddress(QHostAddress((sockaddr *)&addr));
+                if (epollAdd(clt, EPOLLIN) == 0) {
+                    THttpBuffer &recvbuf = recvBuffers[clt];
+                    recvbuf.clear();
+                    recvbuf.setClientAddress(QHostAddress((sockaddr *)&addr));
                 }
 
             } else {
@@ -190,46 +224,64 @@ void TMultiplexingServer::run()
 
                     if (len > 0) {
                         // Read successfully
-                        THttpBuffer &httpbuf = bufferings[cltfd];
-                        httpbuf.write(buffer, len);
+                        THttpBuffer &recvbuf = recvBuffers[cltfd];
+                        recvbuf.write(buffer, len);
 
-                        if (httpbuf.canReadHttpRequest()) {
-                            incomingRequest(cltfd, httpbuf.read());
-                            httpbuf.clear();
+                        if (recvbuf.canReadHttpRequest()) {
+                            incomingRequest(cltfd, recvbuf.read());
+                            recvbuf.clear();
+                            ++actionCount;
 
                             // Stop polling
-                            if (tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, cltfd, NULL)) {
-                                epollClose(cltfd);
-                            }
+                            epollDel(cltfd);
                         }
 
-                    } else if (len == 0) {
-                        // Disconnected
+                    } else {
+                        if (len < 0) {
+                            tSystemError("Failed read : errno:%d", errno);
+                        }
+
+                        // Disconnect
                         epollClose(cltfd);
 
-                    } else {
-                        tSystemError("Failed read : errno:%d", errno);
-                        epollClose(cltfd);
+                        if (recvBuffers.isEmpty() && sendBuffers.isEmpty()) {
+                            actionCount = 0;
+                        }
                     }
 
                 } else if ( (events[i].events & EPOLLOUT) ) {
                     // Send data
-                    QByteArray &httpbuf = bufferings[cltfd].buffer();
-                    int len = qMin(httpbuf.length(), BUFSIZ);
-                    int sentlen = ::send(cltfd, httpbuf.constData(), len, 0);
+                    THttpSendBuffer *sendbuf = sendBuffers[cltfd];
+                    if (!sendbuf) {
+                        tSystemError("Not found send-buffer");
+                        epollClose(cltfd);
+                        continue;
+                    }
+
+                    int len = sendbuf->read(buffer, BUFSIZ);
+                    int sentlen = ::send(cltfd, buffer, len, 0);
 
                     if (sentlen <= 0) {
                         tSystemError("Failed send : errno:%d", errno);
+                        // Access log
+                        sendbuf->accessLog().responseBytes = -1;
+                        sendbuf->accessLog().timestamp = QDateTime::currentDateTime();
+                        writeAccessLog(sendbuf->accessLog());  // Writes access log
+
                         epollClose(cltfd);
-
                     } else {
-                        httpbuf.remove(0, sentlen);
+                        sendbuf->accessLog().responseBytes += sentlen;
 
-                        if (httpbuf.length() == 0) {
+                        if (sendbuf->atEnd()) {
+                            // Access log
+                            sendbuf->accessLog().timestamp = QDateTime::currentDateTime();
+                            writeAccessLog(sendbuf->accessLog());  // Writes access log
+
+                            sendbuf->release();
+                            delete sendBuffers.take(cltfd); // delete send-buffer obj
+
                             // Prepare recv
-                            if (epollModify(cltfd, EPOLLIN) < 0) {
-                                epollClose(cltfd);
-                            }
+                            epollModify(cltfd, EPOLLIN);
                         }
                     }
                 } else {
@@ -239,29 +291,52 @@ void TMultiplexingServer::run()
         }
 
         // Check send-request
-        QPair<int, QByteArray> *req = sendRequest.fetchAndStoreRelaxed(0);
+        SendData *req = sendRequest.fetchAndStoreRelaxed(0);
         if (req) {
-            int fd = req->first;
-            bufferings[req->first].write(req->second);
-            delete req;
-
-            // Set epoll for sending
-            if (epollAdd(fd, EPOLLOUT) < 0) {
+            int fd = req->fd;
+            if (req->method == SendData::Disconnect) {
                 epollClose(fd);
+            } else {
+                Q_ASSERT(sendBuffers[fd] == NULL);
+                // Add to a send-buffer
+                sendBuffers[fd] = new THttpSendBuffer(req->data, req->file, req->fileRemove, req->accessLog);
+
+                // Set epoll for sending
+                epollAdd(fd, EPOLLOUT);
             }
+
+            delete req;
+            --actionCount;
         }
 
         // Check stop flag
         if (stopped) {
-            break;
+            if (listenSocket > 0) {
+                // Close the listen-socket
+                epollClose(listenSocket);
+                listenSocket = 0;
+            }
+
+            if (!recvBuffers.isEmpty()) {
+                for (QMapIterator<int, THttpBuffer> it(recvBuffers); it.hasNext(); ) {
+                    it.next();
+                    epollClose(it.key());
+                }
+            }
+
+            if (recvBuffers.isEmpty() && sendBuffers.isEmpty()) {
+                break;
+            }
         }
     }
 
 epoll_error:
     TF_CLOSE(epollFd);
     epollFd = 0;
+
 socket_error:
-    TF_CLOSE(listenSocket);
+    if (listenSocket > 0)
+        TF_CLOSE(listenSocket);
     listenSocket = 0;
 }
 
@@ -270,7 +345,7 @@ void TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
 {
     for (;;) {
         if (actionContextCount() < maxServers) {
-            TActionThread *thread = new TActionThread(fd, request);
+            TActionWorker *thread = new TActionWorker(fd, request);
             connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
             insertPointer(thread);
             thread->start();
@@ -287,53 +362,73 @@ qint64 TMultiplexingServer::setSendRequest(int fd, const QByteArray &buffer)
     if (fd <= 0)
         return -1;
 
-    QPair<int, QByteArray> *pair = new QPair<int, QByteArray>(fd, buffer);
-    bool ret = sendRequest.testAndSetRelaxed(0, pair);
+    SendData *sd = new SendData;
+    sd->method = SendData::Send;
+    sd->fd = fd;
+    sd->data = buffer;
+    sd->fileRemove = false;
+
+    bool ret = sendRequest.testAndSetRelaxed(0, sd);
     if (!ret) {
-        delete pair;
+        delete sd;
         return 0;
     }
     return buffer.length();
 }
 
 
-qint64 TMultiplexingServer::setSendRequest(int fd, const THttpHeader *header, QIODevice *body)
+void TMultiplexingServer::setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLog &accessLog)
 {
-    QByteArray sendbuf;
-
-    if (body && !body->isOpen()) {
-        if (!body->open(QIODevice::ReadOnly)) {
-            tWarn("open failed");
-            return -1;
-        }
-    }
-
-    // Writes HTTP header
-    QByteArray hdata = header->toByteArray();
-    sendbuf += hdata;
+    SendData *sd = new SendData;
+    sd->method = SendData::Send;
+    sd->fd = fd;
+    sd->data = header->toByteArray();
+    sd->fileRemove = autoRemove;
+    sd->accessLog = accessLog;
 
     if (body) {
         QBuffer *buffer = qobject_cast<QBuffer *>(body);
         if (buffer) {
-            sendbuf += buffer->data();
+            sd->data += buffer->data();
         } else {
-            sendbuf += body->readAll();
+            sd->file.setFile(*qobject_cast<QFile *>(body));
         }
     }
 
-    qint64 ret;
-    while ((ret = setSendRequest(fd, sendbuf)) == 0) {
+    while (!sendRequest.testAndSetRelaxed(0, sd)) {
+        if (stopped) {
+            delete sd;
+            break;
+        }
         Tf::msleep(1);
     }
+}
 
-    return ret;
+
+void TMultiplexingServer::setDisconnectRequest(int fd)
+{
+    if (fd <= 0)
+        return;
+
+    SendData *sd = new SendData;
+    sd->method = SendData::Disconnect;
+    sd->fd = fd;
+    sd->fileRemove = false;
+
+    while (!sendRequest.testAndSetRelaxed(0, sd)) {
+        if (stopped) {
+            delete sd;
+            break;
+        }
+        Tf::msleep(1);
+    }
 }
 
 
 void TMultiplexingServer::terminate()
 {
     stopped = true;
-    wait(5000);
+    wait(10000);
 }
 
 
