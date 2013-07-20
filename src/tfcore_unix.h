@@ -33,6 +33,27 @@ static inline int tf_flock(int fd, int op)
     return ret;
 }
 
+#ifdef Q_OS_LINUX
+#include <sys/epoll.h>
+
+static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
+                                int maxevents, int timeout)
+{
+    register int ret;
+    EINTR_LOOP(ret, ::epoll_wait(epfd, events, maxevents, timeout));
+    return ret;
+}
+
+
+static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
+{
+    register int ret;
+    EINTR_LOOP(ret, ::epoll_ctl(epfd, op, fd, event));
+    return ret;
+}
+
+#endif // Q_OS_LINUX
+
 #undef TF_CLOSE
 #define TF_CLOSE tf_close
 
