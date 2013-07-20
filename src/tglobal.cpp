@@ -11,6 +11,7 @@
 #include <TLogger>
 #include <TLog>
 #include <TActionThread>
+#include <TActionWorker>
 #include <TActionForkProcess>
 #include <stdlib.h>
 #include <limits.h>
@@ -45,10 +46,10 @@ void tSetupLoggers()
     }
 
     if (!stream) {
-        if (Tf::app()->multiProcessingModule() == TWebApplication::Thread) {
-            stream = new TBasicLogStream(loggers, qApp);
-        } else {
+        if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
             stream = new TSharedMemoryLogStream(loggers, 4096, qApp);
+        } else {
+            stream = new TBasicLogStream(loggers, qApp);
         }
     }
 }
@@ -244,12 +245,20 @@ TActionContext *Tf::currentContext()
         break;
 
     case TWebApplication::Thread:
-        /* FALLTHROUGH */
-    default:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
         if (!context) {
             throw RuntimeException("The current thread is not TActionThread", __FILE__, __LINE__);
         }
+        break;
+
+    case TWebApplication::Hybrid:
+        context = qobject_cast<TActionWorker *>(QThread::currentThread());
+        if (!context) {
+            throw RuntimeException("The current thread is not TActionWorker", __FILE__, __LINE__);
+        }
+        break;
+
+    default:
         break;
     }
     return context;
