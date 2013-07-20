@@ -76,16 +76,26 @@ isEmpty( use_gui ) {
 
 HEADERS += twebapplication.h
 SOURCES += twebapplication.cpp
-HEADERS += tapplicationserver.h
-SOURCES += tapplicationserver.cpp
+HEADERS += tapplicationserverbase.h
+SOURCES += tapplicationserverbase.cpp
+HEADERS += tthreadapplicationserver.h
+SOURCES += tthreadapplicationserver.cpp
+HEADERS += tpreforkapplicationserver.h
+SOURCES += tpreforkapplicationserver.cpp
 HEADERS += tactioncontext.h
 SOURCES += tactioncontext.cpp
 HEADERS += tactionthread.h
 SOURCES += tactionthread.cpp
 HEADERS += tactionforkprocess.h
 SOURCES += tactionforkprocess.cpp
+HEADERS += tactionworker.h
+SOURCES += tactionworker.cpp
 HEADERS += thttpsocket.h
 SOURCES += thttpsocket.cpp
+HEADERS += thttpbuffer.h
+SOURCES += thttpbuffer.cpp
+HEADERS += thttpsendbuffer.h
+SOURCES += thttpsendbuffer.cpp
 HEADERS += tabstractcontroller.h
 SOURCES += tabstractcontroller.cpp
 HEADERS += tactioncontroller.h
@@ -262,12 +272,17 @@ HEADERS += \
 
 win32 {
   SOURCES += twebapplication_win.cpp
-  SOURCES += tapplicationserver_win.cpp
+  SOURCES += tapplicationserverbase_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
-  SOURCES += tapplicationserver_unix.cpp
+  SOURCES += tapplicationserverbase_unix.cpp
+}
+unix:!macx {
+# for linux
+  HEADERS += tmultiplexingserver.h
+  SOURCES += tmultiplexingserver_linux.cpp
 }
 
 # Qt5
