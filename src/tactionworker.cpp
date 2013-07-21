@@ -29,7 +29,7 @@ TActionWorker::~TActionWorker()
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
-    accessLog.statusCode = header.statusCode();
+    accessLogger.setStatusCode(header.statusCode());
 
     // Check auto-remove
     bool autoRemove = false;
@@ -42,7 +42,8 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
         }
     }
 
-    TMultiplexingServer::instance()->setSendRequest(socketDesc, static_cast<THttpHeader*>(&header), body, autoRemove, accessLog);
+    TMultiplexingServer::instance()->setSendRequest(socketDesc, static_cast<THttpHeader*>(&header), body, autoRemove, accessLogger);
+    accessLogger.close();  // not write in this thread
     return 0;
 }
 

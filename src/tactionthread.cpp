@@ -112,9 +112,6 @@ void TActionThread::closeHttpSocket()
 
 void TActionThread::releaseHttpSocket()
 {
-    TActionContext::accessLog.timestamp = QDateTime::currentDateTime();
-    writeAccessLog(TActionContext::accessLog);  // Writes access log
-
     httpSocket->waitForBytesWritten();  // Flush socket
     httpSocket->close();  // disconnect
 

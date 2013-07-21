@@ -132,6 +132,7 @@ void TActionContext::execute()
 {
     T_TRACEFUNC("");
     THttpResponseHeader responseHeader;
+    accessLogger.open();
 
     try {
         if (!readRequest()) {
@@ -140,10 +141,11 @@ void TActionContext::execute()
         const THttpRequestHeader &hdr = httpReq->header();
 
         // Access log
+        accessLogger.setTimestamp(QDateTime::currentDateTime());
         QByteArray firstLine = hdr.method() + ' ' + hdr.path();
         firstLine += QString(" HTTP/%1.%2").arg(hdr.majorVersion()).arg(hdr.minorVersion()).toLatin1();
-        accessLog.request = firstLine;
-        accessLog.remoteHost = (Tf::app()->appSettings().value(LISTEN_PORT).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)");
+        accessLogger.setRequest(firstLine);
+        accessLogger.setRemoteHost( (Tf::app()->appSettings().value(LISTEN_PORT).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)") );
 
         tSystemDebug("method : %s", hdr.method().data());
         tSystemDebug("path : %s", hdr.path().data());
@@ -278,17 +280,19 @@ void TActionContext::execute()
             }
 
             // Sets the default status code of HTTP response
-            accessLog.statusCode = (!currController->response.isBodyNull()) ? currController->statusCode() : Tf::InternalServerError;
-            currController->response.header().setStatusLine(accessLog.statusCode, THttpUtility::getResponseReasonPhrase(accessLog.statusCode));
+            accessLogger.setStatusCode( (!currController->response.isBodyNull()) ? currController->statusCode() : Tf::InternalServerError );
+            currController->response.header().setStatusLine(accessLogger.statusCode(), THttpUtility::getResponseReasonPhrase(accessLogger.statusCode()));
 
             // Writes a response and access log
-            accessLog.responseBytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
-                                                    currController->response.bodyLength());
+            int bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
+                                      currController->response.bodyLength());
+            accessLogger.setResponseBytes(bytes);
+
             // Session GC
             TSessionManager::instance().collectGarbage();
 
         } else {
-            accessLog.statusCode = Tf::BadRequest;
+            accessLogger.setStatusCode( Tf::BadRequest );
 
             if (method == Tf::Get) {  // GET Method
                 path.remove(0, 1);
@@ -309,15 +313,18 @@ void TActionContext::execute()
                         // Sends a request file
                         responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
                         QByteArray type = Tf::app()->internetMediaType(fi.suffix());
-                        accessLog.responseBytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
+                        int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
+                        accessLogger.setResponseBytes( bytes );
                     } else {
                         // Not send the data
-                        accessLog.responseBytes = writeResponse(Tf::NotModified, responseHeader);
+                        int bytes = writeResponse(Tf::NotModified, responseHeader);
+                        accessLogger.setResponseBytes( bytes );
                     }
                 } else {
-                    accessLog.responseBytes = writeResponse(Tf::NotFound, responseHeader);
+                    int bytes = writeResponse(Tf::NotFound, responseHeader);
+                    accessLogger.setResponseBytes( bytes );
                 }
-                accessLog.statusCode = responseHeader.statusCode();
+                accessLogger.setStatusCode( responseHeader.statusCode() );
 
             } else if (method == Tf::Post) {
                 // file upload?
@@ -328,8 +335,9 @@ void TActionContext::execute()
 
     } catch (ClientErrorException &e) {
         tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
-        accessLog.responseBytes = writeResponse(e.statusCode(), responseHeader);
-        accessLog.statusCode = e.statusCode();
+        int bytes = writeResponse(e.statusCode(), responseHeader);
+        accessLogger.setResponseBytes( bytes );
+        accessLogger.setStatusCode( e.statusCode() );
     } catch (SqlException &e) {
         tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
@@ -351,6 +359,7 @@ void TActionContext::execute()
     TActionContext::releaseSqlDatabases();
     TActionContext::releaseKvsDatabases();
 
+    TActionContext::accessLogger.write();  // Writes access log
     releaseHttpSocket();
 }
 

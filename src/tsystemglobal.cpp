@@ -46,7 +46,7 @@ void tSetupSystemLoggers()
 
     // system log
     systemLog.setFileName(Tf::app()->systemLogFilePath());
-    
+
     // access log
     if (!accesslogstrm) {
         accesslogstrm = new TAccessLogStream(Tf::app()->accessLogFilePath());

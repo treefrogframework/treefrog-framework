@@ -53,6 +53,7 @@ THttpRequest THttpSocket::read()
                 req.setRequest(readBuffer.left(idx + 4), readBuffer.mid(idx + 4));
             }
             readBuffer.clear();
+            req.setClientAddress(peerAddress());
         }
     }
     return req;

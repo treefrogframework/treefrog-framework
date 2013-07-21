@@ -27,7 +27,7 @@ public:
     bool start();
     void stop() { stopped = true; }
 
-    void setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLog &accessLog);
+    void setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void setDisconnectRequest(int fd);
 
     static void instantiate();
@@ -40,7 +40,6 @@ protected:
     int epollDel(int fd);
     void epollClose(int fd);
     void incomingRequest(int fd, const THttpRequest &request);
-    qint64 setSendRequest(int fd, const QByteArray &buffer);
 
 protected slots:
     void terminate();
@@ -62,10 +61,7 @@ private:
         };
         int method;
         int fd;
-        QByteArray data;
-        QFileInfo file;
-        bool fileRemove;
-        TAccessLog accessLog;
+        THttpSendBuffer *buffer;
     };
     QAtomicPointer<SendData> sendRequest;
 

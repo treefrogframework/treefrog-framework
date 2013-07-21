@@ -204,8 +204,9 @@ void TMultiplexingServer::run()
         for (int i = 0; i < nfd; ++i) {
             if (events[i].data.fd == listenSocket) {
                 // Incoming connection
-                struct sockaddr_in addr;
+                struct sockaddr_storage addr;
                 socklen_t addrlen = sizeof(addr);
+
                 int clt = ::accept(events[i].data.fd, (sockaddr *)&addr, &addrlen);
                 if (clt < 0) {
                     tSystemWarn("Failed accept");
@@ -233,7 +234,10 @@ void TMultiplexingServer::run()
 
                         if (recvbuf.canReadHttpRequest()) {
                             incomingRequest(cltfd, recvbuf.read());
+                            QHostAddress host = recvbuf.clientAddress();
                             recvbuf.clear();
+
+                            recvbuf.setClientAddress(host);
                             ++actionCount;
 
                             // Stop polling
@@ -264,23 +268,20 @@ void TMultiplexingServer::run()
 
                     int len = sendbuf->read(buffer, BUFSIZ);
                     int sentlen = ::send(cltfd, buffer, len, 0);
+                    TAccessLogger &logger = sendbuf->accessLogger();
 
                     if (sentlen <= 0) {
                         tSystemError("Failed send : errno:%d", errno);
                         // Access log
-                        sendbuf->accessLog().responseBytes = -1;
-                        sendbuf->accessLog().timestamp = QDateTime::currentDateTime();
-                        writeAccessLog(sendbuf->accessLog());  // Writes access log
+                        logger.setResponseBytes(-1);
+                        logger.write();
 
                         epollClose(cltfd);
                     } else {
-                        sendbuf->accessLog().responseBytes += sentlen;
+                        logger.setResponseBytes(logger.responseBytes() + sentlen);
 
                         if (sendbuf->atEnd()) {
-                            // Access log
-                            sendbuf->accessLog().timestamp = QDateTime::currentDateTime();
-                            writeAccessLog(sendbuf->accessLog());  // Writes access log
-
+                            logger.write();  // Writes access log
                             sendbuf->release();
                             delete sendBuffers.take(cltfd); // delete send-buffer obj
 
@@ -298,15 +299,16 @@ void TMultiplexingServer::run()
         SendData *req = sendRequest.fetchAndStoreRelaxed(0);
         if (req) {
             int fd = req->fd;
-            if (req->method == SendData::Disconnect) {
-                epollClose(fd);
-            } else {
+            if (req->method == SendData::Send) {
                 Q_ASSERT(sendBuffers[fd] == NULL);
                 // Add to a send-buffer
-                sendBuffers[fd] = new THttpSendBuffer(req->data, req->file, req->fileRemove, req->accessLog);
-
+                sendBuffers[fd] = req->buffer;
                 // Set epoll for sending
                 epollAdd(fd, EPOLLOUT);
+            } else if (req->method == SendData::Disconnect) {
+                epollClose(fd);
+            } else {
+                Q_ASSERT(0);
             }
 
             delete req;
@@ -362,46 +364,29 @@ void TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
 }
 
 
-qint64 TMultiplexingServer::setSendRequest(int fd, const QByteArray &buffer)
-{
-    if (fd <= 0)
-        return -1;
-
-    SendData *sd = new SendData;
-    sd->method = SendData::Send;
-    sd->fd = fd;
-    sd->data = buffer;
-    sd->fileRemove = false;
-
-    bool ret = sendRequest.testAndSetRelaxed(0, sd);
-    if (!ret) {
-        delete sd;
-        return 0;
-    }
-    return buffer.length();
-}
-
-
-void TMultiplexingServer::setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLog &accessLog)
+void TMultiplexingServer::setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
     SendData *sd = new SendData;
     sd->method = SendData::Send;
     sd->fd = fd;
-    sd->data = header->toByteArray();
-    sd->fileRemove = autoRemove;
-    sd->accessLog = accessLog;
+    sd->buffer = 0;
+
+    QByteArray response = header->toByteArray();
+    QFileInfo fi;
 
     if (body) {
         QBuffer *buffer = qobject_cast<QBuffer *>(body);
         if (buffer) {
-            sd->data += buffer->data();
+            response += buffer->data();
         } else {
-            sd->file.setFile(*qobject_cast<QFile *>(body));
+            fi.setFile(*qobject_cast<QFile *>(body));
         }
     }
+    sd->buffer = new THttpSendBuffer(response, fi, autoRemove, accessLogger);
 
     while (!sendRequest.testAndSetRelaxed(0, sd)) {
         if (stopped) {
+            delete sd->buffer;
             delete sd;
             break;
         }
@@ -418,7 +403,7 @@ void TMultiplexingServer::setDisconnectRequest(int fd)
     SendData *sd = new SendData;
     sd->method = SendData::Disconnect;
     sd->fd = fd;
-    sd->fileRemove = false;
+    sd->buffer = 0;
 
     while (!sendRequest.testAndSetRelaxed(0, sd)) {
         if (stopped) {

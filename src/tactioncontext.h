@@ -60,7 +60,7 @@ protected:
     volatile bool stopped;
     QStringList autoRemoveFiles;
     int socketDesc;
-    TAccessLog accessLog;
+    TAccessLogger accessLogger;
 
 private:
     TActionController *currController;

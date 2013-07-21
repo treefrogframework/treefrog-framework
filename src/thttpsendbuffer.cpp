@@ -12,8 +12,8 @@
 #include "tsystemglobal.h"
 
 
-THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLog &log)
-    : arrayBuffer(header), bodyFile(0), fileRemove(autoRemove), accesslog(log), arraySentSize(0)
+THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
+    : arrayBuffer(header), bodyFile(0), fileRemove(autoRemove), accesslogger(logger), arraySentSize(0)
 {
     if (file.exists() && file.isFile()) {
         bodyFile = new QFile(file.absoluteFilePath());
