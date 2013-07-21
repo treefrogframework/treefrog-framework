@@ -20,4 +20,28 @@ public:
     int responseBytes;
 };
 
+
+class T_CORE_EXPORT TAccessLogger
+{
+public:
+    TAccessLogger();
+    TAccessLogger(const TAccessLogger &other);
+    ~TAccessLogger();
+    TAccessLogger &operator=(const TAccessLogger &other);
+
+    void open();
+    void write();
+    void close();
+    void setTimestamp(const QDateTime &timestamp) { if (accessLog) accessLog->timestamp = timestamp; }
+    void setRemoteHost(const QByteArray &host) { if (accessLog) accessLog->remoteHost = host; }
+    void setRequest(const QByteArray &request) { if (accessLog) accessLog->request = request; }
+    int statusCode() const { return (accessLog) ? accessLog->statusCode : -1; }
+    void setStatusCode(int statusCode) { if (accessLog) accessLog->statusCode = statusCode; }
+    int responseBytes() const { return (accessLog) ? accessLog->responseBytes : -1; }
+    void setResponseBytes(int bytes) { if (accessLog) accessLog->responseBytes = bytes; }
+
+private:
+    TAccessLog *accessLog;
+};
+
 #endif // TACCESSLOG_H

@@ -6,6 +6,7 @@
  */
 
 #include <TAccessLog>
+#include "tsystemglobal.h"
 
 /*!
   \class TAccessLog
@@ -80,4 +81,61 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
         }
     }
     return message;
+}
+
+
+
+TAccessLogger::TAccessLogger()
+    : accessLog(0)
+{ }
+
+
+TAccessLogger::TAccessLogger(const TAccessLogger &other)
+    : accessLog(0)
+{
+    if (other.accessLog) {
+        open();
+        *accessLog = *(other.accessLog);
+    }
+}
+
+
+TAccessLogger::~TAccessLogger()
+{
+    close();
+}
+
+
+TAccessLogger &TAccessLogger::operator=(const TAccessLogger &other)
+{
+    if (other.accessLog) {
+        open();
+        *accessLog = *(other.accessLog);
+    }
+    return *this;
+}
+
+
+void TAccessLogger::open()
+{
+    if (!accessLog)
+        accessLog = new TAccessLog;
+}
+
+
+void TAccessLogger::write()
+{
+    if (accessLog) {
+        writeAccessLog(*accessLog);
+    }
+    close();
+}
+
+
+void TAccessLogger::close()
+{
+    if (accessLog) {
+        delete accessLog;
+        accessLog = 0;
+    }
 }
