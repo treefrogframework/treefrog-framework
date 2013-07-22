@@ -155,6 +155,30 @@ int TMultiplexingServer::epollDel(int fd)
 }
 
 
+void TMultiplexingServer::checkSendRequest(int &actionCount)
+{
+    // Check send-request
+    SendData *req = sendRequest.fetchAndStoreRelaxed(0);
+    if (req) {
+        int fd = req->fd;
+        if (req->method == SendData::Send) {
+            Q_ASSERT(sendBuffers[fd] == NULL);
+            // Add to a send-buffer
+            sendBuffers[fd] = req->buffer;
+            // Set epoll for sending
+            epollAdd(fd, EPOLLOUT);
+        } else if (req->method == SendData::Disconnect) {
+            epollClose(fd);
+        } else {
+            Q_ASSERT(0);
+        }
+
+        delete req;
+        --actionCount;
+    }
+}
+
+
 void TMultiplexingServer::run()
 {
     // Listen socket
@@ -293,26 +317,9 @@ void TMultiplexingServer::run()
                     // do nothing
                 }
             }
-        }
 
-        // Check send-request
-        SendData *req = sendRequest.fetchAndStoreRelaxed(0);
-        if (req) {
-            int fd = req->fd;
-            if (req->method == SendData::Send) {
-                Q_ASSERT(sendBuffers[fd] == NULL);
-                // Add to a send-buffer
-                sendBuffers[fd] = req->buffer;
-                // Set epoll for sending
-                epollAdd(fd, EPOLLOUT);
-            } else if (req->method == SendData::Disconnect) {
-                epollClose(fd);
-            } else {
-                Q_ASSERT(0);
-            }
-
-            delete req;
-            --actionCount;
+            // Check send-request
+            checkSendRequest(actionCount);
         }
 
         // Check stop flag
@@ -334,6 +341,9 @@ void TMultiplexingServer::run()
                 break;
             }
         }
+
+        // Check send-request
+        checkSendRequest(actionCount);
     }
 
 epoll_error:
