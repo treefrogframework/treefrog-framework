@@ -123,7 +123,9 @@ typedef enum {
     BSON_CODEWSCOPE = 15,
     BSON_INT = 16,
     BSON_TIMESTAMP = 17,
-    BSON_LONG = 18
+    BSON_LONG = 18,
+    BSON_MAXKEY = 127,
+    BSON_MINKEY = 255
 } bson_type;
 
 typedef int bson_bool_t;
@@ -133,22 +135,19 @@ typedef struct {
     bson_bool_t first;
 } bson_iterator;
 
-#define INIT_ITERATOR {NULL, 0}
-
 typedef struct {
-    char *data;    /**< Pointer to a block of data in this BSON object. */
-    char *cur;     /**< Pointer to the current position. */
-    int dataSize;  /**< The number of bytes allocated to char *data. */
+    char *data;           /**< Pointer to a block of data in this BSON object. */
+    char *cur;            /**< Pointer to the current position. */
+    int dataSize;         /**< The number of bytes allocated to char *data. */
     bson_bool_t finished; /**< When finished, the BSON object can no longer be modified. */
     bson_bool_t ownsData; /**< Whether destroying this object will deallocate its data block */
-    size_t stack[32];     /**< A stack used to keep track of nested BSON elements.*/
-    int stackPos;         /**< Index of current stack position. */
-    int err; /**< Bitfield representing errors or warnings on this buffer */
-    size_t * stackPtr;    /**< Pointer to the current stack */
+    int err;              /**< Bitfield representing errors or warnings on this buffer */
     int stackSize;        /**< Number of elements in the current stack */
+    int stackPos;         /**< Index of current stack position. */
+    size_t* stackPtr;     /**< Pointer to the current stack */
+    size_t stack[32];     /**< A stack used to keep track of nested BSON elements.
+                               Must be at end of bson struct so _bson_zero does not clear. */
 } bson;
-
-#define INIT_BSON {NULL, NULL}
 
 #pragma pack(1)
 typedef union {
@@ -167,6 +166,18 @@ typedef struct {
 /* ----------------------------
    READING
    ------------------------------ */
+
+/**
+ * Zero a bson struct.  All fields are set to zero except the stack.
+ *
+ * @note Mainly used internally, but can be called for safety
+ *       purposes so that a later call to bson_destroy() doesn't flip out.
+ *       It is safe to call this function on a NULL pointer in which case
+ *       there is no effect.
+ * @param b the BSON object to zero.
+ *
+ */
+MONGO_EXPORT void bson_init_zero( bson *b );
 
 /**
  * Allocate memory for a new BSON object.
@@ -199,7 +210,7 @@ MONGO_EXPORT void bson_dealloc( bson* b );
  *
  * @return BSON_OK or BSON_ERROR.
  */
-int bson_init_finished_data( bson *b, char *data, bson_bool_t ownsData );
+MONGO_EXPORT int bson_init_finished_data( bson *b, char *data, bson_bool_t ownsData );
 
 /**
  * Initialize a BSON object for reading and copy finalized
@@ -213,7 +224,7 @@ int bson_init_finished_data( bson *b, char *data, bson_bool_t ownsData );
  *
  * @return BSON_OK or BSON_ERROR.
  */
-int bson_init_finished_data_with_copy( bson *b, const char *data );
+MONGO_EXPORT int bson_init_finished_data_with_copy( bson *b, const char *data );
 
 /**
  * Size of a BSON object.
@@ -225,7 +236,7 @@ int bson_init_finished_data_with_copy( bson *b, const char *data );
 MONGO_EXPORT int bson_size( const bson *b );
 
 /**
- * Minimum finished size of an unfinished BSON object.
+ * Minimum finished size of an unfinished BSON object given current contents.
  *
  * @param b the BSON object.
  *
@@ -246,6 +257,17 @@ MONGO_EXPORT void bson_print( const bson *b );
  * @param b a BSON object
  */
 MONGO_EXPORT const char *bson_data( const bson *b );
+
+/**
+ * Returns true if bson_data(b) {b->data} is not null; else, false.
+ *
+ * @note Convenience function for determining if bson data was returned by a function.
+ *       Check required after calls to mongo_create_index(), mongo_create_simple_index(),
+ *       mongo_cmd_get_last_error() and mongo_cmd_get_prev_error().
+ * @param b the bson struct to inspect.
+ */
+
+MONGO_EXPORT int bson_has_data( const bson *b );
 
 /**
  * Print a string representation of a BSON object.
@@ -934,6 +956,26 @@ MONGO_EXPORT int bson_append_null( bson *b, const char *name );
  * @return BSON_OK or BSON_ERROR.
  */
 MONGO_EXPORT int bson_append_undefined( bson *b, const char *name );
+
+/**
+ * Append a maxkey value to a bson.
+ *
+ * @param b the bson to append to.
+ * @param name the key for the maxkey value.
+ *
+ * @return BSON_OK or BSON_ERROR.
+ */
+MONGO_EXPORT int bson_append_maxkey( bson *b, const char *name );
+
+/**
+ * Append a minkey value to a bson.
+ *
+ * @param b the bson to append to.
+ * @param name the key for the minkey value.
+ *
+ * @return BSON_OK or BSON_ERROR.
+ */
+MONGO_EXPORT int bson_append_minkey( bson *b, const char *name );
 
 /**
  * Append a regex value to a bson.

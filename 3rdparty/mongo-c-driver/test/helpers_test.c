@@ -44,10 +44,7 @@ void test_index_helper( mongo *conn ) {
 }
 
 void test_index_helper_invalid( mongo *conn ) {
-    int ret;
-
     bson b, out;
-    bson_iterator it;
 
     bson_init( &b );
     bson_append_int( &b, "foo", -1 );

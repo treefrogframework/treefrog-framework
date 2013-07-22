@@ -696,9 +696,29 @@ MONGO_EXPORT double mongo_count( mongo *conn, const char *db, const char *coll,
  * @param out a bson document containing errors, if any.
  *
  * @return MONGO_OK if index is created successfully; otherwise, MONGO_ERROR.
+ *
+ * @note May not return bson data when returning MONGO_ERROR,
+ *       Use bson_has_data() on the returned 'out' for determining this.
  */
 MONGO_EXPORT int mongo_create_index( mongo *conn, const char *ns, const bson *key,
                                      const char *name, int options, bson *out );
+
+/**
+ * Create an index with a single key.
+ *
+ * @param conn a mongo object.
+ * @param ns the namespace.
+ * @param field the index key.
+ * @param options index options.
+ * @param out a BSON document containing errors, if any.
+ *
+ * @return true if the index was created.
+ *
+ * @note May not return bson data when returning MONGO_ERROR,
+ *       Use bson_has_data() on the returned 'out' for determining this.
+ */
+MONGO_EXPORT bson_bool_t mongo_create_simple_index( mongo *conn, const char *ns,
+        const char *field, int options, bson *out );
 
 /**
  * Create a capped collection.
@@ -714,20 +734,6 @@ MONGO_EXPORT int mongo_create_index( mongo *conn, const char *ns, const bson *ke
  */
 MONGO_EXPORT int mongo_create_capped_collection( mongo *conn, const char *db,
         const char *collection, int size, int max, bson *out );
-
-/**
- * Create an index with a single key.
- *
- * @param conn a mongo object.
- * @param ns the namespace.
- * @param field the index key.
- * @param options index options.
- * @param out a BSON document containing errors, if any.
- *
- * @return true if the index was created.
- */
-MONGO_EXPORT bson_bool_t mongo_create_simple_index( mongo *conn, const char *ns,
-        const char *field, int options, bson *out );
 
 /**
  * Run a command on a MongoDB server.
@@ -841,6 +847,9 @@ MONGO_EXPORT bson_bool_t mongo_cmd_ismaster( mongo *conn, bson *out );
  *
  * @return MONGO_OK if no error and MONGO_ERROR on error. On error, check the values
  *     of conn->lasterrcode and conn->lasterrstr for the error status.
+ *
+ * @note May not return bson data when returning MONGO_ERROR,
+ *       Use bson_has_data() on the returned 'out' for determining this.
  */
 MONGO_EXPORT int mongo_cmd_get_last_error( mongo *conn, const char *db, bson *out );
 
@@ -853,6 +862,9 @@ MONGO_EXPORT int mongo_cmd_get_last_error( mongo *conn, const char *db, bson *ou
  *
  * @return MONGO_OK if no error and MONGO_ERROR on error. On error, check the values
  *     of conn->lasterrcode and conn->lasterrstr for the error status.
+ *
+ * @note May not return bson data when returning MONGO_ERROR,
+ *       Use bson_has_data() on the returned 'out' for determining this.
  */
 MONGO_EXPORT int mongo_cmd_get_prev_error( mongo *conn, const char *db, bson *out );
 

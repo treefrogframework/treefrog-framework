@@ -64,6 +64,5 @@ using [JIRA](http://jira.mongodb.org/browse/CDRIVER).
 
 Unless otherwise specified in a source file, sources in this
 repository are published under the terms of the Apache License version
-2.0, a copy of which is in this repository as APACHE-2.0.txt.
-
+2.0, a copy of which is in this repository in the file named LICENSE.
 

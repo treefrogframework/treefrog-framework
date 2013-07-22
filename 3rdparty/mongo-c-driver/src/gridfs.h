@@ -59,8 +59,6 @@ enum gridfile_storage_type {
     GRIDFILE_NOMD5 = ( 1<<0 )
 };
 
-#define INIT_GRIDFILE  {NULL}
-
 #ifndef _MSC_VER
 char *_strupr(char *str);
 char *_strlwr(char *str);
