@@ -151,7 +151,7 @@ void TActionContext::execute()
         tSystemDebug("path : %s", hdr.path().data());
 
         Tf::HttpMethod method = httpReq->method();
-        QString path = THttpUtility::fromUrlEncoding(hdr.path().split('?').value(0));
+        QString path = THttpUtility::fromUrlEncoding(hdr.path().mid(0, hdr.path().indexOf('?')));
 
         // Routing info exists?
         TRouting rt = TUrlRoute::instance().findRouting(method, path);
