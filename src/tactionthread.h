@@ -3,9 +3,9 @@
 
 #include <QThread>
 #include <TActionContext>
-#include <THttpRequest>
 
 class THttpSocket;
+class THttpRequest;
 class THttpResponseHeader;
 class QIODevice;
 
