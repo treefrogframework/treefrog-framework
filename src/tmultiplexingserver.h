@@ -39,7 +39,7 @@ protected:
     int epollModify(int fd, int events);
     int epollDel(int fd);
     void epollClose(int fd);
-    void incomingRequest(int fd, const THttpRequest &request);
+    bool incomingRequest(int fd, const THttpRequest &request);
     void checkSendRequest(int &actionCount);
 
 protected slots:

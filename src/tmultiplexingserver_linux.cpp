@@ -257,15 +257,15 @@ void TMultiplexingServer::run()
                         recvbuf.write(buffer, len);
 
                         if (recvbuf.canReadHttpRequest()) {
-                            incomingRequest(cltfd, recvbuf.read());
-                            QHostAddress host = recvbuf.clientAddress();
-                            recvbuf.clear();
-
-                            recvbuf.setClientAddress(host);
-                            ++actionCount;
-
-                            // Stop polling
-                            epollDel(cltfd);
+                            if (incomingRequest(cltfd, recvbuf.read())) {
+                                QHostAddress host = recvbuf.clientAddress();
+                                recvbuf.clear();
+                                recvbuf.setClientAddress(host); // inherits the host adress
+                                ++actionCount;
+                                epollDel(cltfd);  // Stop polling
+                            } else {
+                                epollClose(cltfd);
+                            }
                         }
 
                     } else {
@@ -358,17 +358,19 @@ socket_error:
 }
 
 
-void TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
+bool TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
 {
-    if (actionContextCount() < maxWorkers) {
-        TActionWorker *thread = new TActionWorker(fd, request);
-        connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
-        insertPointer(thread);
-        thread->start();
-    } else {
-        tSystemWarn("No more action thread to start. Adjust the value of the MPM.hybrid.MaxServers parameter.");
-        epollClose(fd);
+    int cnt = actionContextCount();
+    if (cnt >= maxWorkers) {
+        tSystemWarn("No more action thread to start [count:%d]. Adjust the value of the MPM.hybrid.MaxServers parameter.", cnt);
+        return false;
     }
+
+    TActionWorker *thread = new TActionWorker(fd, request);
+    connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
+    insertPointer(thread);
+    thread->start();
+    return true;
 }
 
 
