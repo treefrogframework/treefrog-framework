@@ -119,7 +119,8 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
             db = QSqlDatabase::database(QString().sprintf(CONN_NAME_FORMAT, databaseId, i), false);
             if (!db.isOpen()) {
                 if (!db.open()) {
-                    tError("Database open error");
+                    tError("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
+                    tSystemError("Database open error: %s", qPrintable(db.connectionName()));
                     return QSqlDatabase();
                 }
 
