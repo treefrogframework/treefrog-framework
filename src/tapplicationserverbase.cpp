@@ -132,6 +132,6 @@ void TApplicationServerBase::releaseAllContexts()
 
 int TApplicationServerBase::actionContextCount() const
 {
-    QMutexLocker locker(&setMutex);
+    //QMutexLocker locker(&setMutex);  /* no need to lock */
     return actionContexts.count();
 }
