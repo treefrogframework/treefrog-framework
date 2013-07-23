@@ -360,16 +360,14 @@ socket_error:
 
 void TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
 {
-    for (;;) {
-        if (actionContextCount() < maxWorkers) {
-            TActionWorker *thread = new TActionWorker(fd, request);
-            connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
-            insertPointer(thread);
-            thread->start();
-            break;
-        }
-        Tf::msleep(1);
-        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
+    if (actionContextCount() < maxWorkers) {
+        TActionWorker *thread = new TActionWorker(fd, request);
+        connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
+        insertPointer(thread);
+        thread->start();
+    } else {
+        tSystemWarn("No more action thread to start. Adjust the value of the MPM.hybrid.MaxServers parameter.");
+        epollClose(fd);
     }
 }
 
