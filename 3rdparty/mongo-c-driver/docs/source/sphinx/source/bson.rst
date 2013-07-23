@@ -194,7 +194,7 @@ If you want to work with a sub-object by itself, there's
 a function, ``bson_iterator_subobject``, for initializing
 a new ``bson`` object with the value of the sub-object. Note
 that this does not copy the object. If you want a copy of the
-object, use ``bsop_copy()``.
+object, use ``bson_copy()``.
 
 .. code-block:: c
 

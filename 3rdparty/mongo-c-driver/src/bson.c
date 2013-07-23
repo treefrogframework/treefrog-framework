@@ -62,6 +62,10 @@ static int ( *oid_inc_func )( void )  = NULL;
    READING
    ------------------------------ */
 
+MONGO_EXPORT void bson_init_zero(bson* b) {
+    memset(b, 0, sizeof(bson) - sizeof(b->stack));
+}
+
 MONGO_EXPORT bson* bson_alloc( void ) {
     return ( bson* )bson_malloc( sizeof( bson ) );
 }
@@ -100,7 +104,7 @@ MONGO_EXPORT bson_bool_t bson_init_empty( bson *obj ) {
 }
 
 MONGO_EXPORT const bson *bson_shared_empty( void ) {
-    static const bson shared_empty = { bson_shared_empty_data, bson_shared_empty_data, 128, 1, 0, {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, 0, 0, 0, 0 };
+    static const bson shared_empty = { bson_shared_empty_data, bson_shared_empty_data, 128, 1, 0 };
     return &shared_empty;
 }
 
@@ -333,6 +337,8 @@ MONGO_EXPORT bson_type bson_iterator_next( bson_iterator *i ) {
         return BSON_EOO; /* don't advance */
     case BSON_UNDEFINED:
     case BSON_NULL:
+    case BSON_MINKEY:
+    case BSON_MAXKEY:
         ds = 0;
         break;
     case BSON_BOOL:
@@ -389,7 +395,8 @@ MONGO_EXPORT bson_type bson_iterator_next( bson_iterator *i ) {
 }
 
 MONGO_EXPORT bson_type bson_iterator_type( const bson_iterator *i ) {
-    return ( bson_type )i->cur[0];
+    // problem to convert 0xFF to 255
+    return ( bson_type )( unsigned char )i->cur[0];
 }
 
 MONGO_EXPORT const char *bson_iterator_key( const bson_iterator *i ) {
@@ -824,6 +831,18 @@ MONGO_EXPORT int bson_append_null( bson *b, const char *name ) {
 
 MONGO_EXPORT int bson_append_undefined( bson *b, const char *name ) {
     if ( bson_append_estart( b, BSON_UNDEFINED, name, 0 ) == BSON_ERROR )
+        return BSON_ERROR;
+    return BSON_OK;
+}
+
+MONGO_EXPORT int bson_append_maxkey( bson *b, const char *name ) {
+    if ( bson_append_estart( b, BSON_MAXKEY, name, 0 ) == BSON_ERROR )
+        return BSON_ERROR;
+    return BSON_OK;
+}
+
+MONGO_EXPORT int bson_append_minkey( bson *b, const char *name ) {
+    if ( bson_append_estart( b, BSON_MINKEY, name, 0 ) == BSON_ERROR )
         return BSON_ERROR;
     return BSON_OK;
 }
