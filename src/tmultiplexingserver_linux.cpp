@@ -119,6 +119,7 @@ int TMultiplexingServer::epollAdd(int fd, int events)
     memset(&ev, 0, sizeof(ev));
     ev.events = events;
     ev.data.fd = fd;
+
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &ev);
     if (ret < 0) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  fd:%d errno:%d", fd, errno);
@@ -135,6 +136,7 @@ int TMultiplexingServer::epollModify(int fd, int events)
     memset(&ev, 0, sizeof(ev));
     ev.events = events;
     ev.data.fd = fd;
+
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
     if (ret < 0) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  fd:%d errno:%d", fd, errno);
@@ -196,17 +198,13 @@ void TMultiplexingServer::run()
     maxWorkers = Tf::app()->maxNumberOfServers(10);
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 
-    QString mpm = Tf::app()->appSettings().value("MultiProcessingModule").toString().toLower();
-    int num = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxPollingSockets").toInt();
-    const int MaxEvents = (num > 0) ? num : 16;
-    tSystemDebug("MaxPollingSockets: %d", MaxEvents);
-
-    epoll_event *events = new epoll_event[MaxEvents];
+    const int MaxEvents = 16;
+    struct epoll_event events[MaxEvents];
     char buffer[BUFSIZ];
     int actionCount = 0;
 
     // Create epoll
-    epollFd = epoll_create(MaxEvents);
+    epollFd = epoll_create(1);
     if (epollFd < 0) {
         tSystemError("Failed epoll_create()");
         goto socket_error;
@@ -354,7 +352,6 @@ socket_error:
     if (listenSocket > 0)
         TF_CLOSE(listenSocket);
     listenSocket = 0;
-    delete events;
 }
 
 
