@@ -7,11 +7,16 @@
 
 #include <TKvsDatabase>
 #include <TKvsDriver>
-#include <TMongoDriver>
 #include <TSystemGlobal>
+#include <QMap>
+#include <QString>
+#include <QStringListIterator>
 #include <QMutex>
 #include <QMutexLocker>
 
+#ifdef TF_BUILD_MONGODB
+# include <TMongoDriver>
+#endif
 
 class TKvsDatabaseData
 {
