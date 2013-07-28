@@ -22,7 +22,7 @@ class THttpRequest;
 class T_CORE_EXPORT TActionContext
 {
 public:
-    TActionContext(int socket);
+    TActionContext();
     virtual ~TActionContext();
 
     QSqlDatabase &getSqlDatabase(int id);

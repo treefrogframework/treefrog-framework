@@ -8,6 +8,7 @@
 #include <QEventLoop>
 #include <TActionThread>
 #include <THttpRequest>
+#include <unistd.h>
 #include "thttpsocket.h"
 #include "tsystemglobal.h"
 
@@ -18,14 +19,19 @@
 
 
 TActionThread::TActionThread(int socket)
-    : QThread(), TActionContext(socket), httpSocket(0)
-{ }
+    : QThread(), TActionContext(), httpSocket(0)
+{
+    TActionContext::socketDesc = socket;
+}
 
 
 TActionThread::~TActionThread()
 {
     if (httpSocket)
         delete httpSocket;
+
+    if (TActionContext::socketDesc > 0)
+        TF_CLOSE(TActionContext::socketDesc);
  }
 
 
