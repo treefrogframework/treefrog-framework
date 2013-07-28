@@ -71,6 +71,18 @@ THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath)
     : reqHeader(header), multiFormData(filePath, boundary())
 { }
 
+/*!
+  Constructor with the byte array \a byteArray and the client address
+  \a clientAddress.
+*/
+THttpRequest::THttpRequest(const QByteArray &byteArray, const QHostAddress &clientAddress)
+    : reqHeader(), clientAddr(clientAddress)
+{
+    int idx = byteArray.indexOf("\r\n\r\n");
+    if (idx > 0)
+        setRequest(byteArray.left(idx + 4), byteArray.mid(idx + 4));
+}
+
 
 THttpRequest::~THttpRequest()
 { }

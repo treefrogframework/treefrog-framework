@@ -22,6 +22,8 @@
 #include <TThreadApplicationServer>
 #include <TSystemGlobal>
 #include <TActionWorker>
+#include <THttpHeader>
+#include <THttpRequest>
 #include "thttpbuffer.h"
 #include "thttpsendbuffer.h"
 #include "tfcore_unix.h"
@@ -42,6 +44,8 @@ void TMultiplexingServer::instantiate()
 {
     if (!multiplexingServer) {
         multiplexingServer = new TMultiplexingServer();
+        TWorkerStarter *starter = new TWorkerStarter(multiplexingServer);
+        connect(multiplexingServer, SIGNAL(incomingHttpRequest(int, const QByteArray &, const QString &)), starter, SLOT(startWorker(int, const QByteArray &, const QString &)));
         qAddPostRoutine(::cleanup);
     }
 }
@@ -63,8 +67,8 @@ static void setNonBlocking(int sock)
 }
 
 
-TMultiplexingServer::TMultiplexingServer()
-    : QThread(), TApplicationServerBase(), maxWorkers(0), stopped(false), listenSocket(0), epollFd(0), sendRequest()
+TMultiplexingServer::TMultiplexingServer(QObject *parent)
+    : QThread(parent), TApplicationServerBase(), maxWorkers(0), stopped(false), listenSocket(0), epollFd(0), sendRequest()
 {
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
@@ -124,6 +128,8 @@ int TMultiplexingServer::epollAdd(int fd, int events)
     if (ret < 0) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  fd:%d errno:%d", fd, errno);
         epollClose(fd);
+    } else {
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%d)  fd:%d", events, fd);
     }
     return ret;
 }
@@ -141,6 +147,8 @@ int TMultiplexingServer::epollModify(int fd, int events)
     if (ret < 0) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  fd:%d errno:%d", fd, errno);
         epollClose(fd);
+    } else {
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_MOD)  fd:%d", fd);
     }
     return ret;
 }
@@ -152,15 +160,17 @@ int TMultiplexingServer::epollDel(int fd)
     if (ret < 0) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  fd:%d errno:%d", fd, errno);
         epollClose(fd);
+    } else {
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  fd:%d", fd);
     }
     return ret;
 }
 
 
-void TMultiplexingServer::checkSendRequest(int &actionCount)
+void TMultiplexingServer::checkSendRequest()
 {
     // Check send-request
-    SendData *req = sendRequest.fetchAndStoreRelaxed(0);
+    SendData *req = sendRequest.fetchAndStoreOrdered(0);
     if (req) {
         int fd = req->fd;
         if (req->method == SendData::Send) {
@@ -170,13 +180,14 @@ void TMultiplexingServer::checkSendRequest(int &actionCount)
             // Set epoll for sending
             epollAdd(fd, EPOLLOUT);
         } else if (req->method == SendData::Disconnect) {
-            epollClose(fd);
+            if (recvBuffers.contains(fd) || sendBuffers.contains(fd)) {
+                epollClose(fd);
+            }
         } else {
             Q_ASSERT(0);
         }
 
         delete req;
-        --actionCount;
     }
 }
 
@@ -201,7 +212,6 @@ void TMultiplexingServer::run()
     const int MaxEvents = 16;
     struct epoll_event events[MaxEvents];
     char buffer[BUFSIZ];
-    int actionCount = 0;
 
     // Create epoll
     epollFd = epoll_create(1);
@@ -217,7 +227,7 @@ void TMultiplexingServer::run()
 
     for (;;) {
         // Poll Sending/Receiving/Incoming
-        int nfd = tf_epoll_wait(epollFd, events, MaxEvents, (actionCount > 0 ? 1 : 100));
+        int nfd = tf_epoll_wait(epollFd, events, MaxEvents, (actionContextCount() > 0 ? 1 : 100));
         if (nfd < 0) {
             tSystemError("Failed epoll_wait() : errno:%d", errno);
             break;
@@ -255,14 +265,17 @@ void TMultiplexingServer::run()
                         recvbuf.write(buffer, len);
 
                         if (recvbuf.canReadHttpRequest()) {
-                            if (incomingRequest(cltfd, recvbuf.read())) {
+                            // Incoming a request
+                            if (actionContextCount() >= maxWorkers) {
+                                tSystemWarn("No more action thread to start [count:%d]. Adjust the value of the MPM.hybrid.MaxServers parameter.", actionContextCount());
+                                epollClose(cltfd);
+
+                            } else {
+                                epollDel(cltfd);  // Stop polling
                                 QHostAddress host = recvbuf.clientAddress();
+                                emit incomingHttpRequest(cltfd, recvbuf.read(INT_MAX), host.toString());
                                 recvbuf.clear();
                                 recvbuf.setClientAddress(host); // inherits the host adress
-                                ++actionCount;
-                                epollDel(cltfd);  // Stop polling
-                            } else {
-                                epollClose(cltfd);
                             }
                         }
 
@@ -273,10 +286,6 @@ void TMultiplexingServer::run()
 
                         // Disconnect
                         epollClose(cltfd);
-
-                        if (recvBuffers.isEmpty() && sendBuffers.isEmpty()) {
-                            actionCount = 0;
-                        }
                     }
 
                 } else if ( (events[i].events & EPOLLOUT) ) {
@@ -305,7 +314,8 @@ void TMultiplexingServer::run()
                         if (sendbuf->atEnd()) {
                             logger.write();  // Writes access log
                             sendbuf->release();
-                            delete sendBuffers.take(cltfd); // delete send-buffer obj
+                            sendBuffers.remove(cltfd); // delete send-buffer obj
+                            delete sendbuf;
 
                             // Prepare recv
                             epollModify(cltfd, EPOLLIN);
@@ -317,7 +327,7 @@ void TMultiplexingServer::run()
             }
 
             // Check send-request
-            checkSendRequest(actionCount);
+            checkSendRequest();
         }
 
         // Check stop flag
@@ -341,7 +351,7 @@ void TMultiplexingServer::run()
         }
 
         // Check send-request
-        checkSendRequest(actionCount);
+        checkSendRequest();
     }
 
 epoll_error:
@@ -352,22 +362,6 @@ socket_error:
     if (listenSocket > 0)
         TF_CLOSE(listenSocket);
     listenSocket = 0;
-}
-
-
-bool TMultiplexingServer::incomingRequest(int fd, const THttpRequest &request)
-{
-    int cnt = actionContextCount();
-    if (cnt >= maxWorkers) {
-        tSystemWarn("No more action thread to start [count:%d]. Adjust the value of the MPM.hybrid.MaxServers parameter.", cnt);
-        return false;
-    }
-
-    TActionWorker *thread = new TActionWorker(fd, request);
-    connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
-    insertPointer(thread);
-    thread->start();
-    return true;
 }
 
 
@@ -391,13 +385,13 @@ void TMultiplexingServer::setSendRequest(int fd, const THttpHeader *header, QIOD
     }
     sd->buffer = new THttpSendBuffer(response, fi, autoRemove, accessLogger);
 
-    while (!sendRequest.testAndSetRelaxed(0, sd)) {
+    while (!sendRequest.testAndSetOrdered(0, sd)) {
         if (stopped) {
             delete sd->buffer;
             delete sd;
             break;
         }
-        Tf::msleep(1);
+        QThread::yieldCurrentThread();
     }
 }
 
@@ -412,12 +406,12 @@ void TMultiplexingServer::setDisconnectRequest(int fd)
     sd->fd = fd;
     sd->buffer = 0;
 
-    while (!sendRequest.testAndSetRelaxed(0, sd)) {
+    while (!sendRequest.testAndSetOrdered(0, sd)) {
         if (stopped) {
             delete sd;
             break;
         }
-        Tf::msleep(1);
+        QThread::yieldCurrentThread();
     }
 }
 
@@ -431,6 +425,28 @@ void TMultiplexingServer::terminate()
 
 void TMultiplexingServer::deleteActionContext()
 {
-    deletePointer(reinterpret_cast<TActionThread *>(sender()));
-    sender()->deleteLater();
+    TActionWorker *worker = qobject_cast<TActionWorker *>(sender());
+    Q_CHECK_PTR(worker);
+    deletePointer(worker);
+    worker->deleteLater();
+}
+
+
+/*
+ * TWorkerStarter class
+ */
+
+TWorkerStarter::~TWorkerStarter()
+{ }
+
+
+void TWorkerStarter::startWorker(int fd, const QByteArray &request, const QString &address)
+{
+    //
+    // Create worker threads in main thread for signal/slot mechanism!
+    //
+    TActionWorker *worker = new TActionWorker(fd, THttpRequest(request, QHostAddress(address)));
+    connect(worker, SIGNAL(finished()), multiplexingServer, SLOT(deleteActionContext()));
+    multiplexingServer->insertPointer(worker);
+    worker->start();
 }

@@ -39,8 +39,10 @@ protected:
     int epollModify(int fd, int events);
     int epollDel(int fd);
     void epollClose(int fd);
-    bool incomingRequest(int fd, const THttpRequest &request);
-    void checkSendRequest(int &actionCount);
+    void checkSendRequest();
+
+signals:
+    bool incomingHttpRequest(int fd, const QByteArray &request, const QString &address);
 
 protected slots:
     void terminate();
@@ -66,8 +68,25 @@ private:
     };
     QAtomicPointer<SendData> sendRequest;
 
-    TMultiplexingServer();
+    TMultiplexingServer(QObject *parent = 0);  // Constructor
+    friend class TWorkerStarter;
     Q_DISABLE_COPY(TMultiplexingServer)
+};
+
+
+/*
+ * WorkerStarter class declaration
+ * This object creates worker threads in the main event loop.
+ */
+class TWorkerStarter : public QObject
+{
+    Q_OBJECT
+public:
+    TWorkerStarter(QObject *parent = 0) : QObject(parent) { }
+    virtual ~TWorkerStarter();
+
+public slots:
+    void startWorker(int fd, const QByteArray &request, const QString &address);
 };
 
 #endif // TMULTIPLEXINGSERVER_H

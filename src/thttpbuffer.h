@@ -4,7 +4,6 @@
 #include <QByteArray>
 #include <QHostAddress>
 #include <TGlobal>
-#include <THttpRequest>
 
 
 class T_CORE_EXPORT THttpBuffer
@@ -20,7 +19,6 @@ public:
     int write(const char *data, int maxSize);
     int write(const QByteArray &byteArray);
     bool canReadHttpRequest() const;
-    THttpRequest read();
     void clear();
     QByteArray &buffer() { return httpBuffer; }
     const QByteArray &buffer() const { return httpBuffer; }

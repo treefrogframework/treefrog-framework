@@ -19,6 +19,7 @@ public:
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body);
     THttpRequest(const QByteArray &header, const QByteArray &body);
     THttpRequest(const QByteArray &header, const QString &filePath);
+    THttpRequest(const QByteArray &byteArray, const QHostAddress &clientAddress);
     virtual ~THttpRequest();
     THttpRequest &operator=(const THttpRequest &other);
 
@@ -63,7 +64,7 @@ private:
     QHostAddress clientAddr;
 
     friend class THttpSocket;
-    friend class THttpBuffer;
+    friend class TWorkerStarter;
 };
 
 Q_DECLARE_METATYPE(THttpRequest)

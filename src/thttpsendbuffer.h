@@ -29,6 +29,7 @@ private:
     TAccessLogger accesslogger;
     int arraySentSize;
 
+    THttpSendBuffer();
     Q_DISABLE_COPY(THttpSendBuffer)
 };
 

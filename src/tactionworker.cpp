@@ -16,15 +16,18 @@
   \brief The TActionWorker class provides a thread context.
 */
 
-TActionWorker::TActionWorker(int socket, const THttpRequest &request)
-    : QThread(), TActionContext(socket)
+TActionWorker::TActionWorker(int socket, const THttpRequest &request, QObject *parent)
+    : QThread(parent), TActionContext()
 {
+    TActionContext::socketDesc = socket;
     setHttpRequest(request);
 }
 
 
 TActionWorker::~TActionWorker()
-{ }
+{
+    tSystemDebug("TActionWorker::~TActionWorker  fd:%d", socketDesc);
+}
 
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
