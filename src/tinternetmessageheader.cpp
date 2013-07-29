@@ -86,7 +86,7 @@ void TInternetMessageHeader::setRawHeader(const QByteArray &key, const QByteArra
         headerPairList << RawHeaderPair(key, value);
         return;
     }
-    
+
     QByteArray val = value;
     for (QMutableListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
         RawHeaderPair &p = i.next();
@@ -202,17 +202,20 @@ QByteArray TInternetMessageHeader::toByteArray() const
 */
 void TInternetMessageHeader::parse(const QByteArray &header)
 {
+    QByteArray field, value;
     int i = 0;
+    value.reserve(512);
+
     while (i < header.count()) {
         int j = header.indexOf(':', i); // field-name
         if (j < 0)
             break;
 
-        const QByteArray field = header.mid(i, j - i).trimmed();
+        field = header.mid(i, j - i).trimmed();
 
         // any number of LWS is allowed before and after the value
         ++j;
-        QByteArray value;
+        value.resize(0);
         do {
             i = header.indexOf('\n', j);
             if (i < 0) {
@@ -225,7 +228,7 @@ void TInternetMessageHeader::parse(const QByteArray &header)
             value += header.mid(j, i - j).trimmed();
             j = ++i;
         } while (i < header.count() && (header.at(i) == ' ' || header.at(i) == '\t'));
-        
+
         headerPairList << qMakePair(field, value);
     }
 }

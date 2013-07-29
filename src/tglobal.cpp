@@ -10,6 +10,7 @@
 #include <TWebApplication>
 #include <TLogger>
 #include <TLog>
+#include <TActionContext>
 #include <TActionThread>
 #include <TActionWorker>
 #include <TActionForkProcess>

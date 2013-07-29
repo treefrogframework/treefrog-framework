@@ -193,8 +193,9 @@ bool THtmlParser::isTag(const QString &tag)
 
 void THtmlParser::parse()
 {
+    QChar c;
     while (pos < txt.length()) {
-        QChar c = txt.at(pos++);
+        c = txt.at(pos++);
         if (c == QLatin1Char('<') && isTag(pos - 1)) {
             parseTag();
         } else {
@@ -212,8 +213,9 @@ void THtmlParser::skipWhiteSpace(int *crCount, int *lfCount)
     if (lfCount)
         *lfCount = 0;
 
+    QChar c;
     for ( ; pos < txt.length(); ++pos) {
-        QChar c = txt.at(pos);
+        c = txt.at(pos);
         if (!c.isSpace()) {
             break;
         }
@@ -317,6 +319,7 @@ void THtmlParser::parseCloseTag()
 QList<QPair<QString, QString> > THtmlParser::parseAttributes()
 {
     QList<QPair<QString, QString> > attrs;
+    QString newline, key, value;
 
     while (pos < txt.length()) {
         int cr = 0, lf = 0;
@@ -327,22 +330,24 @@ QList<QPair<QString, QString> > THtmlParser::parseAttributes()
 
         // Newline
         if (lf > 0) {
-            QString newline = (lf == cr) ? QLatin1String("\r\n") : QLatin1String("\n");
+            newline = (lf == cr) ? QLatin1String("\r\n") : QLatin1String("\n");
             attrs << qMakePair(newline, QString());  // Appends the newline as a attribute
         }
 
         // Appends the key-value
-        QString key = parseWord();
+        key = parseWord();
         if (key.isEmpty()) {
             break;
         }
 
         skipWhiteSpace();
-        QString value;
+
         if (pos < txt.length() && txt.at(pos) == QLatin1Char('=')) {
             pos++;
             skipWhiteSpace();
             value = parseWord();
+        } else {
+            value.clear();
         }
 
         attrs << qMakePair(key, value);
