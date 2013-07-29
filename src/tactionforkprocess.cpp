@@ -23,14 +23,19 @@ TActionForkProcess *TActionForkProcess::currentActionContext = 0;
 
 
 TActionForkProcess::TActionForkProcess(int socket)
-    : QObject(), TActionContext(socket), httpSocket(0)
-{ }
+    : QObject(), TActionContext(), httpSocket(0)
+{
+    TActionContext::socketDesc = socket;
+}
 
 
 TActionForkProcess::~TActionForkProcess()
 {
     if (httpSocket)
         delete httpSocket;
+
+    if (TActionContext::socketDesc > 0)
+        TF_CLOSE(TActionContext::socketDesc);
 
     currentActionContext = 0;
 }

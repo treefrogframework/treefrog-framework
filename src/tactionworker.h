@@ -13,7 +13,7 @@ class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
 {
     Q_OBJECT
 public:
-    TActionWorker(int socket, const THttpRequest &request);
+    TActionWorker(int socket, const THttpRequest &request, QObject *parent = 0);
     virtual ~TActionWorker();
 
 protected:

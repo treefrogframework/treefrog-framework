@@ -6,6 +6,7 @@
  */
 
 #include <TWebApplication>
+#include <THttpRequestHeader>
 #include "thttpbuffer.h"
 #include "tsystemglobal.h"
 
@@ -102,22 +103,6 @@ void THttpBuffer::parse()
 bool THttpBuffer::canReadHttpRequest() const
 {
     return (lengthToRead == 0);
-}
-
-
-THttpRequest THttpBuffer::read()
-{
-    THttpRequest req;
-
-    if (canReadHttpRequest()) {
-        int idx = httpBuffer.indexOf("\r\n\r\n");
-        if (idx > 0) {
-            req.setRequest(httpBuffer.left(idx + 4), httpBuffer.mid(idx + 4));
-            req.setClientAddress(clientAddr);
-            httpBuffer.clear();
-        }
-    }
-    return req;
 }
 
 

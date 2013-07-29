@@ -40,12 +40,12 @@
 */
 
 
-TActionContext::TActionContext(int socket)
+TActionContext::TActionContext()
     : sqlDatabases(),
       transactions(),
       kvsDatabases(),
       stopped(false),
-      socketDesc(socket),
+      socketDesc(0),
       currController(0),
       httpReq(0)
 { }
@@ -53,9 +53,6 @@ TActionContext::TActionContext(int socket)
 
 TActionContext::~TActionContext()
 {
-    if (socketDesc > 0)
-        TF_CLOSE(socketDesc);
-
     if (httpReq)
         delete httpReq;
 
