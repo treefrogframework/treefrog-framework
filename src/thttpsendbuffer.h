@@ -7,6 +7,7 @@
 
 class QFile;
 class QFileInfo;
+class QHostAddress;
 class THttpHeader;
 
 
@@ -14,6 +15,7 @@ class T_CORE_EXPORT THttpSendBuffer
 {
 public:
     THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
     ~THttpSendBuffer();
 
     bool atEnd() const;

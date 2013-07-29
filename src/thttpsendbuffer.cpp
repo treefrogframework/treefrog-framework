@@ -7,7 +7,11 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QLocale>
+#include <QHostAddress>
 #include <TWebApplication>
+#include <THttpResponseHeader>
+#include <THttpUtility>
 #include "thttpsendbuffer.h"
 #include "tsystemglobal.h"
 
@@ -22,6 +26,28 @@ THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file
             release();
         }
     }
+}
+
+
+THttpSendBuffer::THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
+    : arrayBuffer(), bodyFile(0), fileRemove(false), accesslogger(), arraySentSize(0)
+{
+    accesslogger.open();
+    accesslogger.setStatusCode(statusCode);
+    accesslogger.setTimestamp(QDateTime::currentDateTime());
+    accesslogger.setRemoteHost(address.toString().toLatin1());
+    accesslogger.setRequest(method);
+
+    THttpResponseHeader header;
+    header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
+    header.setRawHeader("Server", "TreeFrog server");
+# if QT_VERSION >= 0x040700
+    QDateTime utc = QDateTime::currentDateTimeUtc();
+#else
+    QDateTime utc = QDateTime::currentDateTime().toUTC();
+#endif
+    header.setRawHeader("Date", QLocale(QLocale::C).toString(utc, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+    arrayBuffer += header.toByteArray();
 }
 
 
