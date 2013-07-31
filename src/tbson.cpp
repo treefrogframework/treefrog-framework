@@ -268,7 +268,7 @@ static inline int oidFuzz()
 static inline int oidInc()
 {
     static QAtomicInt incr = 1;
-    return incr.fetchAndAddRelaxed(1);
+    return incr.fetchAndAddOrdered(1);
 }
 
 

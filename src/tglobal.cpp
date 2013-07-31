@@ -240,7 +240,7 @@ quint32 Tf::randXor128()
     quint32 t;
 
     for (;;) {
-        Rand *oldr = (Rand*)randNumber;
+        Rand *oldr = randNumber.fetchAndAddOrdered(0);
         memcpy(&tmp, oldr, sizeof(tmp));
         t = tmp.x ^ (tmp.x << 11);
         newr->x = tmp.y;
