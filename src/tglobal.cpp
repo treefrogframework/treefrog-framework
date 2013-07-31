@@ -6,6 +6,7 @@
  */
 
 #include <QStringList>
+#include <QAtomicPointer>
 #include <TGlobal>
 #include <TWebApplication>
 #include <TLogger>
@@ -197,11 +198,16 @@ quint32 Tf::random(quint32 max)
 /*
   Xorshift random number generator implement
 */
-static QMutex randMutex;
-static quint32 x = 123456789;
-static quint32 y = 362436169;
-static quint32 z = 987654321;
-static quint32 w = 1;
+struct Rand
+{
+    quint32 x;
+    quint32 y;
+    quint32 z;
+    quint32 w;
+};
+
+static QAtomicPointer<Rand> randNumber;
+
 
 /*!
   Sets the argument \a seed to be used to generate a new random number sequence
@@ -210,9 +216,16 @@ static quint32 w = 1;
 */
 void Tf::srandXor128(quint32 seed)
 {
-    QMutexLocker lock(&randMutex);
-    w = seed;
-    z = w ^ (w >> 8) ^ (w << 5);
+    // initial numbers
+    Rand *r = new Rand;
+    r->x = 123456789;
+    r->y = 362436169;
+    r->z = 777777777;
+    r->w = seed;
+
+    Rand *oldr = randNumber.fetchAndStoreOrdered(r);
+    if (oldr)
+        delete oldr;
 }
 
 /*!
@@ -222,14 +235,25 @@ void Tf::srandXor128(quint32 seed)
 */
 quint32 Tf::randXor128()
 {
-    QMutexLocker lock(&randMutex);
+    Rand *newr = new Rand;
+    Rand tmp;
     quint32 t;
-    t = x ^ (x << 11);
-    x = y;
-    y = z;
-    z = w;
-    w = w ^ (w >> 19) ^ (t ^ (t >> 8));
-    return w;
+
+    for (;;) {
+        Rand *oldr = (Rand*)randNumber;
+        memcpy(&tmp, oldr, sizeof(tmp));
+        t = tmp.x ^ (tmp.x << 11);
+        newr->x = tmp.y;
+        newr->y = tmp.z;
+        newr->z = tmp.w;
+        newr->w = tmp.w ^ (tmp.w >> 19) ^ (t ^ (t >> 8));
+
+        if (randNumber.testAndSetOrdered(oldr, newr)) {
+            delete oldr;
+            break;
+        }
+    }
+    return newr->w;
 }
 
 
