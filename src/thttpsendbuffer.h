@@ -20,6 +20,7 @@ public:
 
     bool atEnd() const;
     int read(char *data, int maxSize);
+    int prepend(const char *data, int maxSize);
     TAccessLogger &accessLogger() { return accesslogger; }
     const TAccessLogger &accessLogger() const { return accesslogger; }
     void release();

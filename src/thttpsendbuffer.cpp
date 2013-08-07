@@ -98,7 +98,18 @@ int THttpSendBuffer::read(char *data, int maxSize)
 }
 
 
+int THttpSendBuffer::prepend(const char *data, int maxSize)
+{
+    if (arraySentSize > 0) {
+        arrayBuffer.remove(0, arraySentSize);
+    }
+    arrayBuffer.prepend(data, maxSize);
+    arraySentSize = 0;
+    return maxSize;
+}
+
+
 bool THttpSendBuffer::atEnd() const
 {
-    return arraySentSize >= arrayBuffer.length()  && (!bodyFile || bodyFile->atEnd());
+    return arraySentSize >= arrayBuffer.length() && (!bodyFile || bodyFile->atEnd());
 }
