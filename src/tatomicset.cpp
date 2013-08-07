@@ -50,7 +50,7 @@ void *TAtomicSet::pop()
 {
     void *ret = 0;
 
-    while ((int)itemCount > 0) {
+    while (count() > 0) {
         for (int i = 0; i < num; ++i) {
             ret = stack[i].fetchAndStoreOrdered(0);
             if (ret) {
@@ -69,7 +69,7 @@ bool TAtomicSet::push(void *item)
     Q_CHECK_PTR(item);
     bool ret = false;
 
-    while ((int)itemCount < num) {
+    while (count() < num) {
         for (int i = 0; i < num; ++i) {
             ret = stack[i].testAndSetOrdered(0, item);
             if (ret) {
@@ -81,6 +81,7 @@ bool TAtomicSet::push(void *item)
     }
     return ret;
 }
+
 
 // pop item without counter decrement
 void *TAtomicSet::peekPop(int i)

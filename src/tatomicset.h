@@ -19,7 +19,7 @@ public:
     void setMaxCount(int count);
     void *pop();
     bool push(void *item);
-    int count() const { return (int)itemCount; }
+    int count() const;
 
     // Peek methods. Call peekPop() and peekPush() by combined use.
     void *peekPop(int i);
@@ -31,7 +31,16 @@ private:
     QAtomicInt itemCount;
 
     Q_DISABLE_COPY(TAtomicSet)
-
 };
+
+
+inline int TAtomicSet::count() const
+{
+#if QT_VERSION >= 0x050000
+    return itemCount.load();
+#else
+    return (int)itemCount;
+#endif
+}
 
 #endif // TATOMICSET_H
