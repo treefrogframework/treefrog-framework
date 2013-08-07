@@ -7,8 +7,8 @@
 
 #include <TSqlTransaction>
 #include <TWebApplication>
-#include <TSqlDatabasePool>
 #include <TSystemGlobal>
+#include "tsqldatabasepool2.h"
 
 /*!
   \class TSqlTransaction
@@ -37,7 +37,7 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
     if (!enabled)
         return true;
 
-    int id = TSqlDatabasePool::getDatabaseId(database);
+    int id = TSqlDatabasePool2::getDatabaseId(database);
 
     if (id < 0 || id >= databases.count()) {
         tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);

@@ -16,9 +16,9 @@
 #include <THttpUtility>
 #include <TDispatcher>
 #include <TActionController>
-#include <TSqlDatabasePool>
-#include <TKvsDatabasePool>
 #include <TSessionStore>
+#include "tsqldatabasepool2.h"
+#include "tkvsdatabasepool2.h"
 #include "tsystemglobal.h"
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
@@ -86,7 +86,7 @@ QSqlDatabase &TActionContext::getSqlDatabase(int id)
 
     QSqlDatabase &db = sqlDatabases[id];
     if (!db.isValid()) {
-        db = TSqlDatabasePool::instance()->database(id);
+        db = TSqlDatabasePool2::instance()->database(id);
         beginTransaction(db);
     }
     return db;
@@ -98,7 +98,7 @@ void TActionContext::releaseSqlDatabases()
     rollbackTransactions();
 
     for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlDatabasePool::instance()->pool(it.value());
+        TSqlDatabasePool2::instance()->pool(it.value());
     }
     sqlDatabases.clear();
 }
@@ -110,7 +110,7 @@ TKvsDatabase &TActionContext::getKvsDatabase(TKvsDatabase::Type type)
 
     TKvsDatabase &db = kvsDatabases[(int)type];
     if (!db.isValid()) {
-        db = TKvsDatabasePool::instance()->database(type);
+        db = TKvsDatabasePool2::instance()->database(type);
     }
     return db;
 }
@@ -119,7 +119,7 @@ TKvsDatabase &TActionContext::getKvsDatabase(TKvsDatabase::Type type)
 void TActionContext::releaseKvsDatabases()
 {
     for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
-        TKvsDatabasePool::instance()->pool(it.value());
+        TKvsDatabasePool2::instance()->pool(it.value());
     }
     kvsDatabases.clear();
 }
@@ -337,18 +337,23 @@ void TActionContext::execute()
         accessLogger.setStatusCode( e.statusCode() );
     } catch (SqlException &e) {
         tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
     } catch (KvsException &e) {
         tError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
     } catch (SecurityException &e) {
         tError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
     } catch (RuntimeException &e) {
         tError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
     } catch (...) {
         tError("Caught Exception");
+        tSystemError("Caught Exception");
         closeHttpSocket();
     }
 

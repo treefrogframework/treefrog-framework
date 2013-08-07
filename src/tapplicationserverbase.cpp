@@ -9,11 +9,11 @@
 #include <QDir>
 #include <TWebApplication>
 #include <TActionContext>
-#include <TSqlDatabasePool>
-#include <TKvsDatabasePool>
 #include <TDispatcher>
 #include <TActionController>
 #include "tapplicationserverbase.h"
+#include "tsqldatabasepool2.h"
+#include "tkvsdatabasepool2.h"
 #include "turlroute.h"
 #include "tsystemglobal.h"
 
@@ -65,8 +65,8 @@ bool TApplicationServerBase::loadLibraries()
     QDir::setCurrent(Tf::app()->webRootPath());
 
     TUrlRoute::instantiate();
-    TSqlDatabasePool::instantiate();
-    TKvsDatabasePool::instantiate();
+    TSqlDatabasePool2::instantiate();
+    TKvsDatabasePool2::instantiate();
     return true;
 }
 
