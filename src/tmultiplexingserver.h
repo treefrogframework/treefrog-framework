@@ -3,12 +3,15 @@
 
 #include <QThread>
 #include <QMap>
+#include <QQueue>
+#include <QList>
 #include <QByteArray>
 #include <QFileInfo>
 #include <QAtomicPointer>
 #include <TGlobal>
 #include <TApplicationServerBase>
 #include <TAccessLog>
+#include "tatomicqueue.h"
 
 class QIODevice;
 class THttpRequest;
@@ -39,7 +42,8 @@ protected:
     int epollModify(int fd, int events);
     int epollDel(int fd);
     void epollClose(int fd);
-    void checkSendRequest();
+    int getSendRequest();
+    void emitIncomingRequest(int fd, THttpBuffer &buffer);
 
 signals:
     bool incomingHttpRequest(int fd, const QByteArray &request, const QString &address);
@@ -49,13 +53,6 @@ protected slots:
     void deleteActionContext();
 
 private:
-    int maxWorkers;
-    volatile bool stopped;
-    int listenSocket;
-    int epollFd;
-    QMap<int, THttpBuffer> recvBuffers;
-    QMap<int, THttpSendBuffer *> sendBuffers;
-
     struct SendData
     {
         enum Method {
@@ -66,7 +63,16 @@ private:
         int fd;
         THttpSendBuffer *buffer;
     };
-    QAtomicPointer<SendData> sendRequest;
+
+    int maxWorkers;
+    volatile bool stopped;
+    int listenSocket;
+    int epollFd;
+    QMap<int, THttpBuffer> recvBuffers;
+    QMap<int, QQueue<THttpSendBuffer*> > sendBuffers;
+    TAtomicQueue<SendData*> sendRequests;
+    QList<int> pendingRequests;
+    QAtomicInt threadCounter;
 
     TMultiplexingServer(QObject *parent = 0);  // Constructor
     friend class TWorkerStarter;
