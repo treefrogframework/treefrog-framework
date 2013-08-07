@@ -346,7 +346,11 @@ QString TWebApplication::systemLogFilePath() const
 */
 QString TWebApplication::accessLogFilePath() const
 {
-    QFileInfo fi(appSettings().value("AccessLog.FilePath", "log/access.log").toString());
+    QString name = appSettings().value("AccessLog.FilePath").toString().trimmed();
+    if (name.isEmpty())
+        return name;
+
+    QFileInfo fi(name);
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
 }
 

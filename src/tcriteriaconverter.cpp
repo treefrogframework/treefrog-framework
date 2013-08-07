@@ -6,7 +6,7 @@
  */
 
 #include <TCriteriaConverter>
-#include <QMutexLocker>
+#include <QAtomicPointer>
 
 /*!
  * \class TCriteriaConverter<>
@@ -16,37 +16,42 @@
  * \sa TCriteria
  */
 
-static QHash<int, QString> formatVector;
-static QMutex mutex;
+static QAtomicPointer<QHash<int, QString> > formatVector = 0;
 
 
 const QHash<int, QString> &TCriteriaData::formats()
 {
-    if (formatVector.isEmpty()) {
-        QMutexLocker lock(&mutex);
-        formatVector.clear();
-        formatVector.insert(TSql::Equal, "=%1");
-        formatVector.insert(TSql::NotEqual, "<>%1");
-        formatVector.insert(TSql::LessThan, "<%1");
-        formatVector.insert(TSql::GreaterThan, ">%1");
-        formatVector.insert(TSql::LessEqual, "<=%1");
-        formatVector.insert(TSql::GreaterEqual, ">=%1");
-        formatVector.insert(TSql::IsNull, " IS NULL");
-        formatVector.insert(TSql::IsNotNull, " IS NOT NULL");
-        formatVector.insert(TSql::Like, " LIKE %1");
-        formatVector.insert(TSql::NotLike, " NOT LIKE %1");
-        formatVector.insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
-        formatVector.insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
-        formatVector.insert(TSql::ILike, " ILIKE %1");
-        formatVector.insert(TSql::NotILike, " NOT ILIKE %1");
-        formatVector.insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
-        formatVector.insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
-        formatVector.insert(TSql::In, " IN (%1)");
-        formatVector.insert(TSql::NotIn, " NOT IN (%1)");
-        formatVector.insert(TSql::Between, " BETWEEN %1 AND %2");
-        formatVector.insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
-        formatVector.insert(TSql::Any, "ANY (%1)");
-        formatVector.insert(TSql::All, "ALL (%1)");
+    QHash<int, QString> *ret = formatVector.fetchAndAddOrdered(0);
+
+    if (!ret) {
+        ret = new QHash<int, QString>();
+        ret->insert(TSql::Equal, "=%1");
+        ret->insert(TSql::NotEqual, "<>%1");
+        ret->insert(TSql::LessThan, "<%1");
+        ret->insert(TSql::GreaterThan, ">%1");
+        ret->insert(TSql::LessEqual, "<=%1");
+        ret->insert(TSql::GreaterEqual, ">=%1");
+        ret->insert(TSql::IsNull, " IS NULL");
+        ret->insert(TSql::IsNotNull, " IS NOT NULL");
+        ret->insert(TSql::Like, " LIKE %1");
+        ret->insert(TSql::NotLike, " NOT LIKE %1");
+        ret->insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
+        ret->insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
+        ret->insert(TSql::ILike, " ILIKE %1");
+        ret->insert(TSql::NotILike, " NOT ILIKE %1");
+        ret->insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
+        ret->insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
+        ret->insert(TSql::In, " IN (%1)");
+        ret->insert(TSql::NotIn, " NOT IN (%1)");
+        ret->insert(TSql::Between, " BETWEEN %1 AND %2");
+        ret->insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
+        ret->insert(TSql::Any, "ANY (%1)");
+        ret->insert(TSql::All, "ALL (%1)");
+
+        if (!formatVector.testAndSetOrdered(0, ret)) {
+            delete ret;
+            ret = formatVector.fetchAndAddOrdered(0);
+        }
     }
-    return formatVector;
-} 
+    return *ret;
+}

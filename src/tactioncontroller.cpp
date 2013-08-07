@@ -63,7 +63,7 @@ TActionController::TActionController()
   \fn TActionController::~TActionController();
   \~english
   \brief Destructor.
-  
+
   \~japanese
   \brief デストラクタ
 */
@@ -71,7 +71,7 @@ TActionController::TActionController()
 /*!
   \~english
   Returns the controller name.
-  
+
   \~japanese
   コントローラ名を返す
 */
@@ -97,7 +97,7 @@ QString TActionController::name() const
   \fn QString TActionController::activeAction() const
   \~english
   Returns the active action name.
-  
+
   \~japanese
   アクティブなアクション名を返す
 */
@@ -151,7 +151,7 @@ THttpRequest &TActionController::httpRequest()
   Sets the layout template to \a layout.
 
   \~japanese
-  レイアウトテンプレート\a layout を設定する 
+  レイアウトテンプレート\a layout を設定する
   \~
   \sa layout()
  */
@@ -173,7 +173,7 @@ bool TActionController::addCookie(const TCookie &cookie)
 {
     QByteArray name = cookie.name();
     if (name.isEmpty() || name.contains(';') || name.contains(',') || name.contains(' ') || name.contains('\"')) {
-        tError("Invalid cookie name: %s", name.data());     
+        tError("Invalid cookie name: %s", name.data());
         return false;
     }
 
@@ -261,14 +261,14 @@ QStringList TActionController::availableControllers()
 {
     static QStringList controllers;
     static QMutex mutex;
-    QMutexLocker lock(&mutex);
 
     if (controllers.isEmpty()) {
+        QMutexLocker lock(&mutex);
         for (int i = QMetaType::User; ; ++i) {
             const char *name = QMetaType::typeName(i);
             if (!name)
                 break;
-            
+
             QString c(name);
             if (c.endsWith("controller"))
                 controllers << c;
@@ -280,7 +280,7 @@ QStringList TActionController::availableControllers()
 /*!
   \~english
   Verifies the HTTP request \a request.
-  
+
   \~japanese
   HTTPリクエストを検証する
 */
@@ -494,7 +494,7 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
 
     view->setController(this);
     view->setVariantMap(map);
-    return view->toString();  
+    return view->toString();
 }
 
 /*!
@@ -520,7 +520,7 @@ QByteArray TActionController::renderView(TActionView *view)
         tSystemDebug("Renders without layout");
         return Tf::app()->codecForHttpOutput()->fromUnicode(view->toString());
     }
-  
+
     // Displays with layout
     QString lay = (layout().isNull()) ? name().toLower() : layout().toLower();
     TDispatcher<TActionView> layoutDispatcher(layoutClassName(lay));
@@ -560,11 +560,11 @@ bool TActionController::renderErrorResponse(int statusCode)
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
         return ret;
     }
-    
+
     QString file = Tf::app()->publicPath() + QString::number(statusCode) + QLatin1String(".html");
     if (QFileInfo(file).exists())  {
         ret = sendFile(file, "text/html", "", false);
-    } else {        
+    } else {
         response.setBody("");
     }
     setStatusCode(statusCode);
@@ -610,12 +610,12 @@ void TActionController::redirect(const QUrl &url, int statusCode)
         return;
     }
     rendered = true;
-    
+
     setStatusCode(statusCode);
     response.header().setRawHeader("Location", url.toEncoded());
     response.setBody(QByteArray("<html><body>redirected.</body></html>"));
     response.header().setContentType("text/html");
-    
+
     // Enable flash-variants
     QVariant var;
     var.setValue(flashVars);
@@ -688,7 +688,7 @@ bool TActionController::sendData(const QByteArray &data, const QByteArray &conte
 /*!
   \~english
   Exports the all flash variants.
-  
+
   \~japanese
   すべてのフラッシュオブジェクトをエクスポートする
 */
@@ -702,7 +702,7 @@ void TActionController::exportAllFlashVariants()
 
 /*!
   Validates the access of the user \a user. Returns true if the user
-  access is allowed by rule; otherwise returns false. 
+  access is allowed by rule; otherwise returns false.
   @sa setAccessRules(), TAccessValidator::validate()
 */
 bool TActionController::validateAccess(const TAbstractUser *user)
@@ -716,11 +716,11 @@ bool TActionController::validateAccess(const TAbstractUser *user)
 /*!
   \~english
   Logs the user \a user in to the system.
-  
+
   This is a virtual function.
   \~japanese
   ユーザ \a user をシステムへログインさせる
-  
+
   \~
   \sa userLogout()
 */
@@ -730,16 +730,16 @@ bool TActionController::userLogin(const TAbstractUser *user)
         tSystemError("userLogin: null specified");
         return false;
     }
-    
+
     if (user->identityKey().isEmpty()) {
         tSystemError("userLogin: identityKey empty");
         return false;
     }
-    
+
     if (isUserLoggedIn()) {
         tSystemWarn("userLogin: Duplicate login detected. Force logout [user:%s]", qPrintable(identityKeyOfLoginUser()));
     }
-    
+
     session().insert(LOGIN_USER_NAME_KEY, user->identityKey());
     return true;
 }
@@ -747,7 +747,7 @@ bool TActionController::userLogin(const TAbstractUser *user)
 /*!
   \~english
   Logs out of the system.
-  
+
   This is a virtual function.
   \~japanese
   ユーザをログアウトさせる
@@ -762,7 +762,7 @@ void TActionController::userLogout()
 /*!
   \~english
   Returns true if a user is logged in to the system; otherwise returns false.
-  
+
   This is a virtual function.
   \~japanese
   ユーザがログインしている場合は true を返し、そうでない場合は false を返す
@@ -778,7 +778,7 @@ bool TActionController::isUserLoggedIn() const
   \~english
   Returns the identity key of the user, i.e., TAbstractUser object,
   logged in.
-  
+
   This is a virtual function.
   \~japanese
   ログインユーザのアイデンティティキーを返す
@@ -793,7 +793,7 @@ QString TActionController::identityKeyOfLoginUser() const
 /*!
   \~english
   Sets the automatically removing file.
-  
+
   The file \a filePath is removed when the context is extinguished,
   after replied the HTTP response.
 
@@ -899,7 +899,7 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 
 /*!
   \fn void TActionController::setLayoutDisabled(bool disable);
-  
+
   Disables the layout mechanism if \a disable is true, otherwise enables it.
   By default the layout mechanism is enabled, and a HTML response is
   generated with using the current layout.
@@ -923,7 +923,7 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 
 /*!
   \fn QString TActionController::flash(const QString &name) const
-  
+
   Returns the flash message for \a name.
   \sa setFlash()
 */
@@ -961,7 +961,7 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 
 /*!
   \fn void TActionController::postFilter()
-  
+
   This function is called after actions on the controller are performed.
   Can be overridden by subclasses (controllers) in order to post-processing
   of actions on the controller.
@@ -981,19 +981,19 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 
 /*!
   \fn QByteArray TActionController::contentType() const
-  
+
   Returns the content type for a response message.
 */
 
 /*!
   \fn void TActionController::setContentType(const QByteArray &type)
-  
+
   Sets the content type specified by \a type for a response message.
 */
 
 /*!
  \fn virtual void TActionController::setAccessRules()
- 
+
  Sets rules of access to this controller.
  @sa validateAccess(), TAccessValidator
 */

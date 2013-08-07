@@ -2,7 +2,6 @@
 #define TSESSIONMANAGER_H
 
 #include <QDateTime>
-#include <QMutex>
 #include <TGlobal>
 #include <TSession>
 

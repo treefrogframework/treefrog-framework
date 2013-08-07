@@ -8,7 +8,6 @@
 #include <iostream>
 #include <TActionForkProcess>
 #include <TWebApplication>
-#include <TSqlDatabasePool>
 #include <TActionThread>
 #include "thttpsocket.h"
 #include "tsystemglobal.h"
