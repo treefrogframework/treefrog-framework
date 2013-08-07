@@ -46,8 +46,10 @@ void TAccessLogStream::writeLog(const QByteArray &log)
         logger->open();
     }
 
-    logger->log(log);
-    logger->flush();
+    if (logger->isOpen()) {
+        logger->log(log);
+        logger->flush();
+    }
 
     if (semaphore) {
         logger->close();

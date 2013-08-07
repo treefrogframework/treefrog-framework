@@ -48,8 +48,9 @@ void tSetupSystemLoggers()
     systemLog.setFileName(Tf::app()->systemLogFilePath());
 
     // access log
-    if (!accesslogstrm) {
-        accesslogstrm = new TAccessLogStream(Tf::app()->accessLogFilePath());
+    QString accesslog = Tf::app()->accessLogFilePath();
+    if (!accesslog.isEmpty() && !accesslogstrm) {
+        accesslogstrm = new TAccessLogStream(accesslog);
     }
 
     // sql query log

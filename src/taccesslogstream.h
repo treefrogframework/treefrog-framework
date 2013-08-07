@@ -15,7 +15,9 @@ public:
 private:
     TFileLogger *logger;
     QSystemSemaphore *semaphore;
-    
+
+    // Disabled
+    TAccessLogStream();
     TAccessLogStream(const TAccessLogStream &);
     TAccessLogStream &operator=(const TAccessLogStream &);
 };
