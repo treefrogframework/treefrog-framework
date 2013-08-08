@@ -44,6 +44,7 @@ protected:
     void epollClose(int fd);
     int getSendRequest();
     void emitIncomingRequest(int fd, THttpBuffer &buffer);
+    int countWorkers() const;
 
 signals:
     bool incomingHttpRequest(int fd, const QByteArray &request, const QString &address);
@@ -78,6 +79,16 @@ private:
     friend class TWorkerStarter;
     Q_DISABLE_COPY(TMultiplexingServer)
 };
+
+
+inline int TMultiplexingServer::countWorkers() const
+{
+#if QT_VERSION >= 0x050000
+    return threadCounter.load();
+#else
+    return (int)threadCounter;
+#endif
+}
 
 
 /*

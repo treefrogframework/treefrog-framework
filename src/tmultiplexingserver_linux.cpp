@@ -61,11 +61,11 @@ TMultiplexingServer *TMultiplexingServer::instance()
 }
 
 
-static void setNonBlocking(int sock)
-{
-    int flag = fcntl(sock, F_GETFL);
-    fcntl(sock, F_SETFL, flag | O_NONBLOCK);
-}
+// static void setNonBlocking(int sock)
+// {
+//     int flag = fcntl(sock, F_GETFL);
+//     fcntl(sock, F_SETFL, flag | O_NONBLOCK);
+// }
 
 
 static void setSocketOption(int fd)
@@ -274,6 +274,7 @@ void TMultiplexingServer::run()
     sendBufSize *= 0.8;
     char *sndbuffer = new char[sendBufSize];
     char *rcvbuffer = new char[recvBufSize];
+    int nfd = 0;
 
     // Create epoll
     epollFd = epoll_create(1);
@@ -288,19 +289,23 @@ void TMultiplexingServer::run()
     }
 
     for (;;) {
-        // Get send-request
-        getSendRequest();
-
         // Check pending requests
-        while (!pendingRequests.isEmpty() && (int)threadCounter < maxWorkers) {
+        while (!pendingRequests.isEmpty() && countWorkers() < maxWorkers) {
             int fd = pendingRequests.takeFirst();
             THttpBuffer &recvbuf = recvBuffers[fd];
             emitIncomingRequest(fd, recvbuf);
         }
 
+        if (!nfd && countWorkers() > 0) {
+            sendRequests.wait(5);  // mitigation of busy loop
+        }
+
+        // Get send-request
+        getSendRequest();
+
         // Poll Sending/Receiving/Incoming
-        int timeout = ((int)threadCounter > 0) ? 1 : 100;
-        int nfd = tf_epoll_wait(epollFd, events, MaxEvents, timeout);
+        int timeout = (countWorkers() > 0) ? 0 : 100;
+        nfd = tf_epoll_wait(epollFd, events, MaxEvents, timeout);
         int err = errno;
         if (nfd < 0) {
             tSystemError("Failed epoll_wait() : errno:%d", err);
@@ -316,13 +321,13 @@ void TMultiplexingServer::run()
                 struct sockaddr_storage addr;
                 socklen_t addrlen = sizeof(addr);
 
-                int clt = ::accept(events[i].data.fd, (sockaddr *)&addr, &addrlen);
+                int clt = ::accept4(events[i].data.fd, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
                 if (clt < 0) {
                     tSystemWarn("Failed accept");
                     continue;
                 }
+                setSocketOption(clt);
 
-                setNonBlocking(clt);
                 if (epollAdd(clt, EPOLLIN) == 0) {
                     THttpBuffer &recvbuf = recvBuffers[clt];
                     recvbuf.clear();
@@ -343,7 +348,7 @@ void TMultiplexingServer::run()
 
                         if (recvbuf.canReadHttpRequest()) {
                             // Incoming a request
-                            if ((int)threadCounter >= maxWorkers) {
+                            if (countWorkers() >= maxWorkers) {
                                 pendingRequests << cltfd;
                             } else {
                                 emitIncomingRequest(cltfd, recvbuf);
