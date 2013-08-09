@@ -8,6 +8,7 @@ win32 {
   }
 } else {
   macx {
+    LIBS += -F/Library/Frameworks
     LIBS += -framework treefrog
   } else {
     LIBS += -ltreefrog
