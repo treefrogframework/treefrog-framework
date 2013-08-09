@@ -96,10 +96,10 @@ fi
 # default values
 BASEDIR=`pwd`/`dirname $0`
 PREFIX=/usr
-FRAMEWORK=/Library/Frameworks
 [ -n "$QMAKE" ] || QMAKE=qmake
 
 if [ "$KERNEL" = "Darwin" ]; then
+  FRAMEWORK=/Library/Frameworks
   LIBDIR=$FRAMEWORK
   INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
 else
@@ -164,6 +164,12 @@ cd $BASEDIR
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
 sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
 command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
+
+if [ -n "$FRAMEWORK" ]; then
+  FRM=`echo $FRAMEWORK | sed -e 's/\\//\\\\\\//g'`
+  sed -e "s/LIBS += -F.*/LIBS += -F$FRM/" defaults/appbase.pri > defaults/appbase.pri.$PID
+  command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
+fi
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
