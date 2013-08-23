@@ -185,6 +185,7 @@ void test_delete( void ) {
     CONN_CLIENT_TEST;
     GFS_INIT;
 
+    memset( data, '\0', 1024 );
     ASSERT( gridfs_store_buffer( gfs, data, 1024, testFile, "text/html", GRIDFILE_DEFAULT ) == MONGO_OK );
     ASSERT( gridfs_find_filename( gfs, testFile, gfile ) == MONGO_OK );
     gridfile_destroy( gfile );
@@ -249,6 +250,7 @@ void test_streaming( void ) {
     test_gridfile( gfs, buf, LARGE, "large", "text/html" );
 
     gridfs_destroy( gfs );
+    gridfile_destroy( gfile );
     mongo_destroy( conn );
     free( buf );
     free( small );
@@ -303,6 +305,7 @@ void test_random_write() {
 
         gridfile_writer_done(gfile);
         ASSERT(gfile->pos == j + n);
+        gridfile_destroy(gfile);
         gridfile_dealloc(gfile);
         test_gridfile( gfs, data_before, j + n > i ? j + n : i, "input-buffer", "text/html" );
 
@@ -361,6 +364,7 @@ void test_random_write2( void ) {
     test_gridfile( gfs, zeroedbuf, LARGE, "random_access", "text/html" ); // Test zero filled file
 
     /* This portion of the test we will write zeroes by using new API gridfile_set_size then we will truncate the file */
+    gridfile_destroy( gfile );
     gridfile_init( gfs, &meta, gfile );
     gridfile_writer_init( gfile, gfs, "random_access", "text/html", 0 );
     gridfile_set_size( gfile, LARGE ); // New API, this zero fills the file with LARGE bytes
@@ -369,6 +373,7 @@ void test_random_write2( void ) {
     test_gridfile( gfs, zeroedbuf, LARGE / 2, "random_access", "text/html" ); // Test zero filled file truncated by half
 
     /* Let's re-create the file, now let's randomly write real data */
+    gridfile_destroy( gfile );
     gridfile_init( gfs, &meta, gfile );
     gridfile_writer_init( gfile, gfs, "random_access", "text/html", 0 );   
     gridfile_set_size( gfile, LARGE ); // We need to reserve LARGE bytes on file before writing backwards
@@ -383,6 +388,7 @@ void test_random_write2( void ) {
     test_gridfile( gfs, buf, LARGE, "random_access", "text/html" );
 
     gridfs_destroy( gfs );
+    gridfile_destroy( gfile );
     mongo_destroy( conn );
 
     free( buf );

@@ -45,8 +45,8 @@ http://api.mongodb.org/c/current/
 
 
 
-http://www.mongodb.org/display/DOCS/C+Language+Center
+http://docs.mongodb.org/ecosystem/drivers/c/
 
-    You can download the latest stable version: ...
+    You can download the latest stable version ...
 
 

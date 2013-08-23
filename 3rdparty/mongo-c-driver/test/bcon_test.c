@@ -217,10 +217,12 @@ void test_reference_interpolation_example( void ) {
     bcon bc[] = { "name", BRS(name), "value", BRF(&value), BEND };
     bson_from_bcon( b, bc ); /* generates { name: "pi", "value", 3.14159 } */
     if (verbose) bson_print( b );
+    bson_destroy( b );
     strcpy(name, "e");
     value = 2.71828;
     bson_from_bcon( b, bc ); /* generates { name: "pi", "value", 3.14159 } */
     if (verbose) bson_print( b );
+    bson_destroy( b );
 }
 
 void test_pointer_interpolation_example( void ) {
@@ -232,10 +234,12 @@ void test_pointer_interpolation_example( void ) {
     double *pvalue = &value;
     bcon bc[] = { "name", BPS(&pname), "value", BPF(&pvalue), BEND };
     bson_from_bcon( b, bc ); /* generates { name: "pi", "value", 3.14159 } */
+    bson_destroy( b );
     test_bson_from_bcon( bc, BCON_OK, BSON_VALID );
     pname = (char**)&new_name;
     pvalue = 0;
     bson_from_bcon( b, bc ); /* generates { name: "log(0)" } */
+    bson_destroy( b );
     test_bson_from_bcon( bc, BCON_OK, BSON_VALID );
 }
 
@@ -243,6 +247,7 @@ void test_additional_notes_example( void ) {
     bson b[1];
     bcon bc[] = { "spec", BS(":_s:"), BEND };
     bson_from_bcon( b, bc ); /* generates { spec: ":_s:" } */
+    bson_destroy( b );
     test_bson_from_bcon( bc, BCON_OK, BSON_VALID );
 }
 

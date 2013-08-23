@@ -13,6 +13,7 @@ development. Support for replica sets was just added in v0.3.1.
 The API was completely revamped in v0.4.
 Another backward-breaking change (support for `write_concern`) was added in v0.6.
 Default write acknowledgement with mongo_client and BCON (BSON C Object Notation) were added in v0.7.
+Uniform init/destroy pairing, improved support for 64-bit architectures and Windows, enhanced GridFS are in v0.8.
 
 :doc:`tutorial`
     An overview of the driver's API.
@@ -47,4 +48,8 @@ Default write acknowledgement with mongo_client and BCON (BSON C Object Notation
    tutorial
    building
    bson
+   bcon
    connections
+   write_concern
+   errors
+

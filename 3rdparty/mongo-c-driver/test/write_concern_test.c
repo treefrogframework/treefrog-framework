@@ -46,7 +46,7 @@ void bson_dump( bson * b ) {
 }
 
 /* WC1 is completely static */
-static char WC1_data[] = {23,0,0,0,16,103,101,116,108,97,115,116,101,114,114,111,114,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static char WC1_data[] = {23,0,0,0,16,103,101,116,108,97,115,116,101,114,114,111,114,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static bson WC1_cmd = { WC1_data, WC1_data, 128, 1, 0 };
 static mongo_write_concern DWC1 = { 1, 0, 0, 0, 0, 0 }; /* w = 1 */ /* do not reference &WC1_cmd for this test */
 
@@ -57,7 +57,7 @@ void test_write_concern_finish( void ) {
     /* bson_print( DWC1.cmd ); */
     /* bson_dump( DWC1.cmd ); */
     ASSERT( DWC1.cmd->dataSize == WC1_cmd.dataSize );
-    ASSERT( memcmp( DWC1.cmd->data, WC1_cmd.data, DWC1.cmd->dataSize ) );
+    ASSERT( memcmp( DWC1.cmd->data, WC1_cmd.data, DWC1.cmd->dataSize ) == 0 );
     ASSERT( DWC1.cmd->finished == WC1_cmd.finished );
     ASSERT( DWC1.cmd->err == WC1_cmd.err );
 }

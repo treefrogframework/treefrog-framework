@@ -60,7 +60,7 @@ int mongo_get_server_version( char *version ) {
     }
     bson_destroy( cmd );
     mongo_destroy( conn );
-    return 0;
+    return ret;
 }
 
 MONGO_EXTERN_C_END

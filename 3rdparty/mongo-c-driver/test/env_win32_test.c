@@ -22,7 +22,7 @@ typedef int socklen_t;
  */
 int test_read_timeout( void ) {
     mongo conn[1];
-    bson b, obj, out, fields;
+    bson b, obj, out;
     int res;
 
     CONN_CLIENT_TEST;
@@ -44,7 +44,7 @@ int test_read_timeout( void ) {
 	exit(1);
     }
 
-    res = mongo_find_one( conn, "test.foo", &b, bson_empty(&fields), &out );
+    res = mongo_find_one( conn, "test.foo", &b, bson_shared_empty( ), &out );
     ASSERT( res == MONGO_ERROR );
 
     ASSERT( conn->err == MONGO_IO_ERROR );

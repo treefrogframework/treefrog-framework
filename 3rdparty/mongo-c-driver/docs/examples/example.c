@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 int main() {
-    bson b, sub, out, empty;
+    bson b, sub, out;
     bson_iterator it;
     mongo conn;
     mongo_cursor cursor;
@@ -67,20 +67,26 @@ int main() {
     bson_find( &it, &b, "items" );
 
     /* Get the subobject representing items */
-    bson_iterator_subobject( &it, &sub );
+    bson_iterator_subobject_init( &it, &sub, 0 );
 
     /* Now iterate that object */
     printf("And here's the inner sub-object by itself.\n");
     bson_print( &sub );
+    bson_destroy( &sub );
 
     /* Now make a connection to MongoDB. */
     if( mongo_client( &conn, "127.0.0.1", 27017 ) != MONGO_OK ) {
       switch( conn.err ) {
+        case MONGO_CONN_SUCCESS:
+          break;
         case MONGO_CONN_NO_SOCKET:
           printf( "FAIL: Could not create a socket!\n" );
           break;
         case MONGO_CONN_FAIL:
           printf( "FAIL: Could not connect to mongod. Make sure it's listening at 127.0.0.1:27017.\n" );
+          break;
+        default:
+          printf( "MongoDB connection error number %d.\n", conn.err );
           break;
       }
 
@@ -95,7 +101,7 @@ int main() {
 
     /* Query for the sample document. */
     mongo_cursor_init( &cursor, &conn, "test.records" );
-    mongo_cursor_set_query( &cursor, bson_empty( &empty ) );
+    mongo_cursor_set_query( &cursor, bson_shared_empty() );
     if( mongo_cursor_next( &cursor ) != MONGO_OK ) {
       printf( "FAIL: Failed to find inserted document." );
       exit( 1 );

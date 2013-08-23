@@ -134,7 +134,7 @@ To create BSON objects
   bson_append_int( b, "age", 33 );
   bson_finish( b );
 
-  mongo_insert( conn, b );
+  mongo_insert( conn, "tutorial.persons", b, 0 );
 
   bson_destroy( b );
 
@@ -167,7 +167,7 @@ Here's how we save our person object to the database's "people" collection:
 
 .. code-block:: c
 
-    mongo_insert( conn, "tutorial.people", b );
+    mongo_insert( conn, "tutorial.persons", b, 0 );
 
 The first parameter to ``mongo_insert`` is the pointer to the ``mongo``
 object. The second parameter is the namespace, which include the database name, followed
@@ -201,7 +201,7 @@ We can do batch inserts as well:
         ps[i] = p;
       }
 
-      mongo_insert_batch( conn, "tutorial.persons", ps, n );
+      mongo_insert_batch( conn, "tutorial.persons", ps, n, 0, 0 );
 
       for ( i = 0; i < n; i++ ) {
         bson_destroy( ps[i] );
@@ -344,7 +344,7 @@ is equivalent to the following C function:
         bson_append_finish_object( op );
       bson_finish( op );
 
-      mongo_update( conn, "tutorial.persons", cond, op, MONGO_UPDATE_BASIC );
+      mongo_update( conn, "tutorial.persons", cond, op, MONGO_UPDATE_BASIC, 0 );
 
       bson_destroy( cond );
       bson_destroy( op );
@@ -356,7 +356,7 @@ For upserts, use ``MONGO_UPDATE_UPSERT``. Here's an example:
 
 .. code-block:: c
 
-      mongo_update( conn, "tutorial.persons", cond, op, MONGO_UPDATE_MULTI );
+      mongo_update( conn, "tutorial.persons", cond, op, MONGO_UPDATE_MULTI, 0 );
 
 Indexing
 --------

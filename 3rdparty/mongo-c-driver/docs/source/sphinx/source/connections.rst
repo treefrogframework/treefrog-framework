@@ -144,7 +144,7 @@ you'll want to reconnect when you see this. Here's a very basic example:
    bson_append_string( b, "hello", "world" );
    bson_finish( b );
 
-   if( mongo_insert( conn, b ) == MONGO_ERROR && conn->err == MONGO_IO_ERROR )
+   if( mongo_insert( conn, "test.test", b, 0 ) == MONGO_ERROR && conn->err == MONGO_IO_ERROR )
        mongo_reconnect( conn );
 
 When reconnecting, you'll want to check the return value to ensure that the connection

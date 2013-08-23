@@ -1,8 +1,8 @@
 # -*- mode: python; -*-
 
 MAJOR_VERSION = "0"
-MINOR_VERSION = "7"
-PATCH_VERSION = "1"
+MINOR_VERSION = "8"
+PATCH_VERSION = "0"
 VERSION = MAJOR_VERSION + "." + MINOR_VERSION + "." + PATCH_VERSION
 
 # --- options ----

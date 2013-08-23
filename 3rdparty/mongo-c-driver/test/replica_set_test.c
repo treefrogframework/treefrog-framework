@@ -76,7 +76,6 @@ int test_reconnect( const char *set_name ) {
     mongo conn[1];
     int res = 0;
     int e = 0;
-    bson b;
 
     INIT_SOCKETS_FOR_WINDOWS;
 
@@ -93,7 +92,7 @@ int test_reconnect( const char *set_name ) {
         sleep( 10 );
         e = 1;
         do {
-            res = mongo_find_one( conn, "foo.bar", bson_empty( &b ), bson_empty( &b ), NULL );
+            res = mongo_find_one( conn, "foo.bar", bson_shared_empty( ), bson_shared_empty( ), NULL );
             if( res == MONGO_ERROR && conn->err == MONGO_IO_ERROR ) {
                 sleep( 2 );
                 if( e++ < 30 ) {
