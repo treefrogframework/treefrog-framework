@@ -13,7 +13,6 @@ Configuration:
   -h, --help          display this help and exit
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
-  --enable-mongo      compile with MongoDB driver library
 
 Installation directories:
   --prefix=PREFIX     install files in PREFIX [$PREFIX]
@@ -35,7 +34,6 @@ Configuration:
   -h, --help          display this help and exit
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
-  --enable-mongo      compile with MongoDB driver library
 
 Fine tuning of the installation directories:
   --framework=PREFIX  install framework files in PREFIX [$FRAMEWORK]
@@ -108,6 +106,7 @@ else
 fi
 BINDIR=$PREFIX/bin
 DATADIR=$PREFIX/share/treefrog
+ENABLE_MONGO="use_mongo=1"
 
 # parse options
 while [ -n "`echo $1 | grep '-'`" ]; do
@@ -147,9 +146,6 @@ while [ -n "`echo $1 | grep '-'`" ]; do
       ;;
     --enable-gui-mod | --enable-gui-mod=*)
       ENABLE_GUI="use_gui=1"
-      ;;
-    --enable-mongo | --enable-mongo=*)
-      ENABLE_MONGO="use_mongo=1"
       ;;
     --help | -help | -h | *)
       usage
@@ -201,7 +197,7 @@ if [ -n "$ENABLE_MONGO" ]; then
   RET=$?
   if [ $RET != 0 ]; then
     echo "failed"
-    echo "MongoDB driver not available, reconfigure without '--enable-mongo'."
+    echo "MongoDB driver not available."
     exit $RET
   fi
   echo "OK"
