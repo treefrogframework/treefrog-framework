@@ -181,18 +181,21 @@ namespace TSql
 namespace TMongo
 {
     enum ComparisonOperator {
-        Invalid = 1000,
-        Equal,        // == val
-        NotEqual,     // != val
-        LessThan,     // < val
-        GreaterThan,  // > val
-        LessEqual,    // <= val
-        GreaterEqual, // >= val
-        IsNull,       // IS NULL
-        IsNotNull,    // IS NOT NULL
-        In,            // IN (val1, ...)
-        NotIn,         // NOT IN (val1, ...)
-        All,           // ALL (val1, ...)
+        Invalid = 0,
+        Equal    = TSql::Equal,            // == val
+        NotEqual = TSql::NotEqual,         // != val
+        LessThan = TSql::LessThan,         // < val
+        GreaterThan = TSql::GreaterThan,   // > val
+        LessEqual = TSql::LessEqual,       // <= val
+        GreaterEqual = TSql::GreaterEqual, // >= val
+        Exists       = 100, // $exists : true
+        NotExists,          // $exists : false
+        All,                // $all : [ val1, ... ]
+        In,                 // $in : [ val1, ... ]
+        NotIn,              // $nin : [ val1, ... ]
+        Mod,                // $mod : [ val1, val2 ]
+        Size,               // $size : val
+        Type,               // $type : val
     };
 
     enum SortOrder {

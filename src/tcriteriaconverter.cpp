@@ -16,42 +16,36 @@
  * \sa TCriteria
  */
 
-static QAtomicPointer<QHash<int, QString> > formatVector = 0;
 
-
-const QHash<int, QString> &TCriteriaData::formats()
+typedef QHash<int, QString> IntHash;
+Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, formatHash,
 {
-    QHash<int, QString> *ret = formatVector.fetchAndAddOrdered(0);
+    x->insert(TSql::Equal, "=%1");
+    x->insert(TSql::NotEqual, "<>%1");
+    x->insert(TSql::LessThan, "<%1");
+    x->insert(TSql::GreaterThan, ">%1");
+    x->insert(TSql::LessEqual, "<=%1");
+    x->insert(TSql::GreaterEqual, ">=%1");
+    x->insert(TSql::IsNull, " IS NULL");
+    x->insert(TSql::IsNotNull, " IS NOT NULL");
+    x->insert(TSql::Like, " LIKE %1");
+    x->insert(TSql::NotLike, " NOT LIKE %1");
+    x->insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
+    x->insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
+    x->insert(TSql::ILike, " ILIKE %1");
+    x->insert(TSql::NotILike, " NOT ILIKE %1");
+    x->insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
+    x->insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
+    x->insert(TSql::In, " IN (%1)");
+    x->insert(TSql::NotIn, " NOT IN (%1)");
+    x->insert(TSql::Between, " BETWEEN %1 AND %2");
+    x->insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
+    x->insert(TSql::Any, "ANY (%1)");
+    x->insert(TSql::All, "ALL (%1)");
+})
 
-    if (!ret) {
-        ret = new QHash<int, QString>();
-        ret->insert(TSql::Equal, "=%1");
-        ret->insert(TSql::NotEqual, "<>%1");
-        ret->insert(TSql::LessThan, "<%1");
-        ret->insert(TSql::GreaterThan, ">%1");
-        ret->insert(TSql::LessEqual, "<=%1");
-        ret->insert(TSql::GreaterEqual, ">=%1");
-        ret->insert(TSql::IsNull, " IS NULL");
-        ret->insert(TSql::IsNotNull, " IS NOT NULL");
-        ret->insert(TSql::Like, " LIKE %1");
-        ret->insert(TSql::NotLike, " NOT LIKE %1");
-        ret->insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
-        ret->insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
-        ret->insert(TSql::ILike, " ILIKE %1");
-        ret->insert(TSql::NotILike, " NOT ILIKE %1");
-        ret->insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
-        ret->insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
-        ret->insert(TSql::In, " IN (%1)");
-        ret->insert(TSql::NotIn, " NOT IN (%1)");
-        ret->insert(TSql::Between, " BETWEEN %1 AND %2");
-        ret->insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
-        ret->insert(TSql::Any, "ANY (%1)");
-        ret->insert(TSql::All, "ALL (%1)");
 
-        if (!formatVector.testAndSetOrdered(0, ret)) {
-            delete ret;
-            ret = formatVector.fetchAndAddOrdered(0);
-        }
-    }
-    return *ret;
+const QHash<int, QString> &TSql::formats()
+{
+    return *formatHash();
 }

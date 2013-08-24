@@ -114,7 +114,9 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     // MongoDB settings
     QString mongoini = appSetting->value("MongoDbSettingsFile").toString().trimmed();
     if (!mongoini.isEmpty()) {
-        mongoSetting = new QSettings(configPath() + mongoini, QSettings::IniFormat, this);
+        QString mnginipath = configPath() + mongoini;
+        if (QFile(mnginipath).exists())
+            mongoSetting = new QSettings(mnginipath, QSettings::IniFormat, this);
     }
 
     // sets a seed for random numbers

@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QString>
-#include <QVariant>
+#include <QDateTime>
+#include <QVariantMap>
+#include <QStringList>
 #include <TGlobal>
 #include <TModelObject>
 
@@ -18,7 +20,7 @@ public:
 
     virtual QString collectionName() const;
     virtual QString objectId() const { return QString(); }
-
+    void setBsonData(const QVariantMap &bson);
     bool create();
     bool update();
     bool remove();
@@ -29,7 +31,6 @@ public:
     void clear();
 
 protected:
-    void setBsonData(const QVariantMap &bson);
     void syncToVariantMap();
     void syncToObject();
     virtual QString &objectId() = 0;

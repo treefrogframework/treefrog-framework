@@ -11,25 +11,34 @@ public:
     TCriteria();
     TCriteria(const TCriteria &other);
 
-    TCriteria(int property, TSql::ComparisonOperator op);
     TCriteria(int property, const QVariant &val);
+    TCriteria(int property, TSql::ComparisonOperator op);
     TCriteria(int property, TSql::ComparisonOperator op, const QVariant &val);
     TCriteria(int property, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2);
     TCriteria(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val);
+    TCriteria(int property, TMongo::ComparisonOperator op);
+    TCriteria(int property, TMongo::ComparisonOperator op, const QVariant &val);
     ~TCriteria() { }
 
-    TCriteria &add(int property, TSql::ComparisonOperator op);
     TCriteria &add(int property, const QVariant &val);
+    TCriteria &add(int property, TSql::ComparisonOperator op);
     TCriteria &add(int property, TSql::ComparisonOperator op, const QVariant &val);
     TCriteria &add(int property, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2);
     TCriteria &add(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val);
     TCriteria &add(const TCriteria &criteria);
-    TCriteria &addOr(int property, TSql::ComparisonOperator op);
     TCriteria &addOr(int property, const QVariant &val);
+    TCriteria &addOr(int property, TSql::ComparisonOperator op);
     TCriteria &addOr(int property, TSql::ComparisonOperator op, const QVariant &val);
     TCriteria &addOr(int property, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2);
     TCriteria &addOr(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val);
     TCriteria &addOr(const TCriteria &criteria);
+
+    // For MongoDB
+    TCriteria &add(int property, TMongo::ComparisonOperator op);
+    TCriteria &add(int property, TMongo::ComparisonOperator op, const QVariant &val);
+    TCriteria &addOr(int property, TMongo::ComparisonOperator op);
+    TCriteria &addOr(int property, TMongo::ComparisonOperator op, const QVariant &val);
+
     bool isEmpty() const;
     void clear();
 
@@ -55,6 +64,7 @@ private:
     int logiOp;
 
     template<class T> friend class TCriteriaConverter;
+    template<class T> friend class TCriteriaMongoConverter;
 };
 
 Q_DECLARE_METATYPE(TCriteria)

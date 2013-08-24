@@ -10,11 +10,12 @@
 #include <QMetaProperty>
 #include <TMongoObject>
 #include <TMongoQuery>
+#include <TAbstractModel>
 
-const QByteArray LockRevision("lock_revision");
-const QByteArray CreatedAt("created_at");
-const QByteArray UpdatedAt("updated_at");
-const QByteArray ModifiedAt("modified_at");
+const QByteArray LockRevision("lockRevision");
+const QByteArray CreatedAt("createdAt");
+const QByteArray UpdatedAt("updatedAt");
+const QByteArray ModifiedAt("modifiedAt");
 
 
 /*!
@@ -71,7 +72,7 @@ bool TMongoObject::create()
     // Sets the values of 'created_at', 'updated_at' or 'modified_at' properties
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
-        QByteArray prop = QByteArray(propName).toLower();
+        QString prop = TAbstractModel::fieldNameToVariableName(QString::fromLatin1(propName));
 
         if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
             setProperty(propName, QDateTime::currentDateTime());
@@ -109,8 +110,8 @@ bool TMongoObject::update()
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
-        QByteArray prop = QByteArray(propName).toLower();
-
+        QString prop = TAbstractModel::fieldNameToVariableName(QString::fromLatin1(propName));
+QVariant V = property(propName);
         if (!updflag && (prop == UpdatedAt || prop == ModifiedAt)) {
             setProperty(propName, QDateTime::currentDateTime());
             updflag = true;
@@ -128,7 +129,7 @@ bool TMongoObject::update()
             revIndex = i;
 
             // add criteria
-            cri[QLatin1String(propName)] = oldRevision;
+            cri[propName] = oldRevision;
         } else {
             // continue
         }
@@ -161,7 +162,7 @@ bool TMongoObject::remove()
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
-        QByteArray prop = QByteArray(propName).toLower();
+        QString prop = TAbstractModel::fieldNameToVariableName(QString::fromLatin1(propName));
 
         if (prop == LockRevision) {
             bool ok;
@@ -175,7 +176,7 @@ bool TMongoObject::remove()
             revIndex = i;
 
             // add criteria
-            cri[QLatin1String(propName)] = revision;
+            cri[propName] = revision;
             break;
         }
     }

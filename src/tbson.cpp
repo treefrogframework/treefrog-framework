@@ -60,7 +60,12 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             ret[key] = QString(bson_iterator_string(it));
             break;
 
-        case BSON_ARRAY:  // FALL THROUGH
+        case BSON_ARRAY: {
+            bson sub[1];
+            bson_iterator_subobject_init(it, sub, (bson_bool_t)true);
+            ret[key] = fromBson(sub).values();
+            break; }
+
         case BSON_OBJECT: {
             bson sub[1];
             bson_iterator_subobject_init(it, sub, (bson_bool_t)true);
@@ -200,13 +205,15 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
         bson_append_binary(b, qPrintable(key), BSON_BIN_BINARY, ba.constData(), ba.length());
         break; }
 
-    case QVariant::List: {
+    case QVariant::List:  // FALL THROUGH
+    case QVariant::StringList: {
         bson_append_start_array(b, qPrintable(key));
         QVariantList lst = value.toList();
 
+        int i = 0;
         for (QListIterator<QVariant> it(lst); it.hasNext(); ) {
             const QVariant &var = it.next();
-            appendBsonValue(b, qPrintable(key), var);
+            appendBsonValue(b, QString::number(i++), var);
         }
 
         bson_append_finish_array(b);

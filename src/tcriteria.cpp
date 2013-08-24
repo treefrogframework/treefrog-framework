@@ -35,7 +35,7 @@ TCriteria::TCriteria(const TCriteria &other)
   Constructs a criteria initialized with a WHERE clause to
   which a property of ORM object with the index \a property is
   NULL value or NOT NULL value.
-  
+
   @sa TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op)
 */
 TCriteria::TCriteria(int property, TSql::ComparisonOperator op)
@@ -98,6 +98,20 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op1, TSql::Compariso
     cri1 = QVariant::fromValue(TCriteriaData(property, op1, op2, val));
 }
 
+
+TCriteria::TCriteria(int property, TMongo::ComparisonOperator op)
+    : logiOp(None)
+{
+    cri1 = QVariant::fromValue(TCriteriaData(property, op));
+}
+
+
+TCriteria::TCriteria(int property, TMongo::ComparisonOperator op, const QVariant &val)
+    : logiOp(None)
+{
+    cri1 = QVariant::fromValue(TCriteriaData(property, op, val));
+}
+
 /*!
   Adds a WHERE clause to which a property of ORM object with
   the index \a property is NULL value or NOT NULL value.
@@ -155,6 +169,17 @@ TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op, const QVari
 TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val)
 {
     return add(And, TCriteria(property, op1, op2, val));
+}
+
+
+TCriteria &TCriteria::add(int property, TMongo::ComparisonOperator op)
+{
+    return add(And, TCriteria(property, op));
+}
+
+TCriteria &TCriteria::add(int property, TMongo::ComparisonOperator op, const QVariant &val)
+{
+    return add(And, TCriteria(property, op, val));
 }
 
 /*!
@@ -223,6 +248,17 @@ TCriteria &TCriteria::addOr(int property, TSql::ComparisonOperator op, const QVa
 TCriteria &TCriteria::addOr(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val)
 {
     return add(Or, TCriteria(property, op1, op2, val));
+}
+
+
+TCriteria &TCriteria::addOr(int property, TMongo::ComparisonOperator op)
+{
+    return add(Or, TCriteria(property, op));
+}
+
+TCriteria &TCriteria::addOr(int property, TMongo::ComparisonOperator op, const QVariant &val)
+{
+    return add(Or, TCriteria(property, op, val));
 }
 
 /*!

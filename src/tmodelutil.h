@@ -5,6 +5,7 @@
 #include <TCriteria>
 #include <TSqlORMapper>
 #include <TSqlORMapperIterator>
+#include <TMongoODMapper>
 
 
 template <class T, class S>
@@ -30,11 +31,31 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, T
 }
 
 
-
 template <class T, class S>
 inline QList<T> tfGetModelListByCriteria(const TCriteria &cri = TCriteria(), int limit = 0, int offset = 0)
 {
     return tfGetModelListByCriteria<T, S>(cri, -1, (TSql::SortOrder)0, limit, offset);
+}
+
+
+template <class T, class S>
+inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri, int limit = 0, int offset = 0)
+{
+    TMongoODMapper<S> mapper;
+
+    if (limit > 0)
+        mapper.setLimit(limit);
+
+    if (offset > 0)
+        mapper.setOffset(offset);
+
+    QList<T> list;
+    if (mapper.find(cri) > 0) {
+        while (mapper.next()) {
+            list << T(mapper.value());
+        }
+    }
+    return list;
 }
 
 #endif // MODELUTIL_H
