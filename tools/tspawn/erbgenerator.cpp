@@ -10,7 +10,6 @@
 #include "erbgenerator.h"
 #include "global.h"
 #include "filewriter.h"
-#include "tableschema.h"
 #include "util.h"
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
@@ -128,7 +127,8 @@
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedColumn,
 {
-    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision";
+    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision"
+       << "createdAt" << "updatedAt" << "modifiedAt" << "lockRevision";
 })
 
 
@@ -138,43 +138,38 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedDirName,
 })
 
 
-ErbGenerator::ErbGenerator(const QString &view, const QString &table, const QString &dst)
-    : viewName(), tableName(table)
-{
-    viewName = (!view.isEmpty()) ? view : fieldNameToEnumName(table);
-    dstDir.setPath(dst + viewName.toLower());
-}
+ErbGenerator::ErbGenerator(const QString &view, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int autoValIdx)
+    : viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
+{ }
 
 
-bool ErbGenerator::generate() const
+bool ErbGenerator::generate(const QString &dstDir) const
 {
+    QDir dir(dstDir + viewName.toLower());
+
     // Reserved word check
-    if (excludedDirName()->contains(dstDir.dirName())) {
-        qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dstDir.dirName()));
+    if (excludedDirName()->contains(dir.dirName())) {
+        qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dir.dirName()));
         return false;
     }
-    mkpath(dstDir);
+    mkpath(dir);
+
+    if (primaryKeyIndex < 0) {
+        qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));
+        return false;
+    }
 
     FileWriter fw;
     QString output;
-    TableSchema ts(tableName);
-    if (ts.primaryKeyIndex() < 0) {
-        qWarning("Primary key not found. [table name: %s]", qPrintable(ts.tableName()));
-        qWarning("Unable to create template files");
-        return false;
-    }
-
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    QPair<QString, QString> pkFld = ts.getPrimaryKeyField();
+    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
     QString pkVarName = fieldNameToVariableName(pkFld.first);
-    int autoidx = ts.autoValueIndex();
 
     // Generates index.html.erb
     QString th, td, showitems, entryitems, edititems;
-    QList<QPair<QString, QString> > fields = ts.getFieldList();
-    for (int i = 0; i < fields.count(); ++i) {
-        const QPair<QString, QString> &p = fields[i];
+    for (int i = 0; i < fieldList.count(); ++i) {
+        const QPair<QString, QVariant::Type> &p = fieldList[i];
 
         QString icap = fieldNameToCaption(p.first);
         QString ivar = fieldNameToVariableName(p.first);
@@ -185,7 +180,7 @@ bool ErbGenerator::generate() const
         showitems += varName + "." + ivar;
         showitems += "() %></dd><br />\n";
 
-        if (!excludedColumn()->contains(p.first, Qt::CaseInsensitive)) {
+        if (!excludedColumn()->contains(ivar, Qt::CaseInsensitive)) {
             th += "    <th>";
             th += icap;
             th += "</th>\n";
@@ -194,7 +189,7 @@ bool ErbGenerator::generate() const
             td += ivar;
             td += "() %></td>\n";
 
-            if (i != autoidx) {  // case of not auto-value field
+            if (i != autoValueIndex) {  // case of not auto-value field
                 entryitems += "  <p>\n    <label>";
                 entryitems += icap;
                 entryitems += "<br /><input name=\"";
@@ -218,25 +213,25 @@ bool ErbGenerator::generate() const
     }
 
     output = QString(INDEX_TEMPLATE).arg(varName.toLower(), caption, th, viewName, varName,td, pkVarName);
-    fw.setFilePath(dstDir.filePath("index.erb"));
+    fw.setFilePath(dir.filePath("index.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
     output = QString(SHOW_TEMPLATE).arg(varName.toLower(), viewName, varName, caption, showitems, pkVarName);
-    fw.setFilePath(dstDir.filePath("show.erb"));
+    fw.setFilePath(dir.filePath("show.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
     output = QString(ENTRY_TEMPLATE).arg(varName.toLower(), varName, caption, entryitems);
-    fw.setFilePath(dstDir.filePath("entry.erb"));
+    fw.setFilePath(dir.filePath("entry.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
     output = QString(EDIT_TEMPLATE).arg(varName.toLower(), varName, caption, pkVarName, edititems);
-    fw.setFilePath(dstDir.filePath("edit.erb"));
+    fw.setFilePath(dir.filePath("edit.erb"));
     if (!fw.write(output, false)) {
         return false;
     }

@@ -4,28 +4,44 @@
 #include <QStringList>
 #include <QDir>
 #include <QPair>
+#include <QVariant>
+
+class AbstractObjGenerator;
 
 
 class ModelGenerator
 {
 public:
-    ModelGenerator(const QString &model, const QString &table, const QStringList &fields, const QString &dst);
-    bool generate(bool userModel = false) const;
-    QString generateSqlObject() const;
+    typedef QList<QPair<QString, QVariant::Type> >  FieldList;
+
+    enum ObjectType {
+        Sql,
+        Mongo,
+    };
+
+    ModelGenerator(ObjectType type, const QString &model, const QString &table = QString(), const QStringList &userModelFields = QStringList());
+    ~ModelGenerator();
+    bool generate(const QString &dst, bool userModel = false);
+    FieldList fieldList() const;
+    int primaryKeyIndex() const;
+    int autoValueIndex() const;
+    int lockRevisionIndex() const;
     QString model() const { return modelName; }
 
 protected:
-    QStringList genModel() const;
-    QStringList genUserModel(const QString &usernameField = "username", const QString &passwordField = "password") const;
-    QPair<QStringList, QStringList> createModelParams() const;
+    QStringList genModel(const QString &dstDir);
+    QStringList genUserModel(const QString &dstDir, const QString &usernameField = "username", const QString &passwordField = "password");
+    QPair<QStringList, QStringList> createModelParams();
+
     static bool gen(const QString &fileName, const QString &format, const QStringList &args);
-    static QString createParam(const QString &type, const QString &name);
+    static QString createParam(QVariant::Type type, const QString &name);
 
 private:
+    ObjectType objectType;
     QString modelName;
     QString tableName;
-    QDir dstDir;
-    QStringList fieldList;
+    AbstractObjGenerator *objGen;
+    QStringList userFields;
 };
 
 #endif // MODELGENERATOR_H

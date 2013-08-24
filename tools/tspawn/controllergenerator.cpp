@@ -214,14 +214,17 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, ngCtlrName,
 })
 
 
-ControllerGenerator::ControllerGenerator(const QString &controller, const QString &table, const QStringList &actions, const QString &dst)
-    : controllerName(), tableName(table), actionList(actions), dstDir(dst)
-{
-    controllerName = (!controller.isEmpty()) ? controller: fieldNameToEnumName(table);
-}
+ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int lockRevIdx)
+    : controllerName(controller), fieldList(fields), primaryKeyIndex(pkIdx), lockRevIndex(lockRevIdx)
+{ }
 
 
-bool ControllerGenerator::generate() const
+ControllerGenerator::ControllerGenerator(const QString &controller, const QStringList &actions)
+    : controllerName(fieldNameToEnumName(controller)), actionList(actions)
+{ }
+
+
+bool ControllerGenerator::generate(const QString &dstDir) const
 {
     // Reserved word check
     if (ngCtlrName()->contains(tableName.toLower())) {
@@ -229,16 +232,20 @@ bool ControllerGenerator::generate() const
         return false;
     }
 
+    QDir dir(dstDir);
     QStringList files;
-    FileWriter fwh(dstDir.filePath(controllerName.toLower() + "controller.h"));
-    FileWriter fws(dstDir.filePath(controllerName.toLower() + "controller.cpp"));
+    FileWriter fwh(dir.filePath(controllerName.toLower() + "controller.h"));
+    FileWriter fws(dir.filePath(controllerName.toLower() + "controller.cpp"));
 
     if (actionList.isEmpty()) {
-        TableSchema ts(tableName);
-        if (ts.primaryKeyIndex() < 0) {
-            qWarning("Primary key not found. [table name: %s]", qPrintable(ts.tableName()));
+        if (fieldList.isEmpty()) {
+            qCritical("Incorrect parameters.");
             return false;
         }
+
+        QPair<QString, QVariant::Type> pair;
+        if (primaryKeyIndex >= 0)
+            pair = fieldList[primaryKeyIndex];
 
         // Generates a controller source code
         QString sessInsertStr;
@@ -251,12 +258,11 @@ bool ControllerGenerator::generate() const
         fwh.write(code, false);
         files << fwh.fileName();
 
-        if (ts.hasLockRevisionField()) {
+        if (lockRevIndex >= 0) {
             sessInsertStr = QString("        session().insert(\"%1_lockRevision\", %1.lockRevision());\n").arg(varName);
             sessGetStr = QString("    int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
             revStr = QLatin1String(", rev");
         }
-        QPair<QString, int> pair = ts.getPrimaryKeyFieldType();
 
         code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
         fws.write(code, false);
@@ -284,6 +290,6 @@ bool ControllerGenerator::generate() const
     }
 
     // Generates a project file
-    ProjectFileGenerator progen(dstDir.filePath("controllers.pro"));
+    ProjectFileGenerator progen(dir.filePath("controllers.pro"));
     return progen.add(files);
 }

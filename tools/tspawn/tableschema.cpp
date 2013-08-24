@@ -8,6 +8,7 @@
 #include <QtCore>
 #include <QtSql>
 #include "tableschema.h"
+#include "global.h"
 
 QSettings *dbSettings = 0;
 
@@ -52,12 +53,12 @@ QList<QPair<QString, QString> > TableSchema::getFieldList() const
 }
 
 
-QList<QPair<QString, int> > TableSchema::getFieldTypeList() const
+QList<QPair<QString, QVariant::Type> > TableSchema::getFieldTypeList() const
 {
-    QList<QPair<QString, int> > fieldList;
+    QList<QPair<QString, QVariant::Type> > fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
-        fieldList << QPair<QString, int>(f.name(), f.type());
+        fieldList << QPair<QString, QVariant::Type>(f.name(), f.type());
     }
     return fieldList;
 }
@@ -93,7 +94,6 @@ QString TableSchema::primaryKeyFieldName() const
 
 int TableSchema::autoValueIndex() const
 {
-    QList<QPair<QString, int> > fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
         if (f.isAutoValue())
@@ -105,7 +105,6 @@ int TableSchema::autoValueIndex() const
 
 QString TableSchema::autoValueFieldName() const
 {
-    QList<QPair<QString, int> > fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
         if (f.isAutoValue())
@@ -127,27 +126,33 @@ QPair<QString, QString> TableSchema::getPrimaryKeyField() const
 }
 
 
-QPair<QString, int> TableSchema::getPrimaryKeyFieldType() const
+QPair<QString, QVariant::Type> TableSchema::getPrimaryKeyFieldType() const
 {
-    QPair<QString, int> pair;
+    QPair<QString, QVariant::Type> pair;
     int index = primaryKeyIndex();
     if (index >= 0) {
         QSqlField f = tableFields.field(index);
-        pair = QPair<QString, int>(f.name(), f.type());
+        pair = QPair<QString, QVariant::Type>(f.name(), f.type());
     }
     return pair;
 }
 
 
-bool TableSchema::hasLockRevisionField() const
+int TableSchema::lockRevisionIndex() const
 {
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
-        if (f.name().toLower() == "lock_revision") {
-            return true;
+        if (fieldNameToVariableName(f.name()) == "lockRevision") {
+            return i;
         }
     }
-    return false;
+    return -1;
+}
+
+
+bool TableSchema::hasLockRevisionField() const
+{
+    return lockRevisionIndex() >= 0;
 }
 
 

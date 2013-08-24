@@ -132,6 +132,9 @@ HEADERS = global.h \
           projectfilegenerator.h \
           controllergenerator.h \
           modelgenerator.h \
+          abstractobjgenerator.h \
+          sqlobjgenerator.h \
+          mongoobjgenerator.h \
           validatorgenerator.h \
           otamagenerator.h \
           erbgenerator.h \
@@ -145,6 +148,9 @@ SOURCES = main.cpp \
           projectfilegenerator.cpp \
           controllergenerator.cpp \
           modelgenerator.cpp \
+          abstractobjgenerator.cpp \
+          sqlobjgenerator.cpp \
+          mongoobjgenerator.cpp \
           validatorgenerator.cpp \
           otamagenerator.cpp \
           erbgenerator.cpp \

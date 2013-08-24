@@ -11,6 +11,8 @@
 #include "global.h"
 #include "controllergenerator.h"
 #include "modelgenerator.h"
+#include "sqlobjgenerator.h"
+#include "mongoobjgenerator.h"
 #include "otamagenerator.h"
 #include "erbgenerator.h"
 #include "validatorgenerator.h"
@@ -35,6 +37,8 @@ enum SubCommand {
     Model,
     UserModel,
     SqlObject,
+    MongoScaffold,
+    MongoModel,
     Validator,
     Mailer,
     Scaffold,
@@ -59,6 +63,10 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(StringHash, subCommands,
     x->insert("u", UserModel);
     x->insert("sqlobject", SqlObject);
     x->insert("o", SqlObject);
+    x->insert("mongoscaffold", MongoScaffold);
+    x->insert("ms", MongoScaffold);
+    x->insert("mongomodel", MongoModel);
+    x->insert("mm", MongoModel);
     x->insert("validator", Validator);
     x->insert("v", Validator);
     x->insert("mailer", Mailer);
@@ -79,6 +87,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, subDirs,
     *x << L("controllers")
        << L("models")
        << L("models") + SEP + "sqlobjects"
+       << L("models") + SEP + "mongoobjects"
        << L("views")
        << L("views") + SEP + "layouts"
        << L("views") + SEP + "mailer"
@@ -140,22 +149,24 @@ static void usage()
            "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n" \
            "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n\n" \
            "Available subcommands:\n" \
-           "  new (n)        <application-name>\n" \
-           "  scaffold (s)   <table-name> [model-name]\n" \
-           "  controller (c) <controller-name> [action ...]\n" \
-           "  model (m)      <table-name> [model-name]\n" \
-           "  usermodel (u)  <table-name> [username password [model-name]]\n" \
-           "  sqlobject (o)  <table-name> [model-name]\n" \
-           "  validator (v)  <name>\n" \
-           "  mailer (l)     <mailer-name> action [action ...]\n" \
-           "  delete (d)     <table-name or validator-name>\n");
+           "  new (n)         <application-name>\n" \
+           "  scaffold (s)    <table-name> [model-name]\n" \
+           "  controller (c)  <controller-name> action [action ...]\n" \
+           "  model (m)       <table-name> [model-name]\n" \
+           "  usermodel (u)   <table-name> [username password [model-name]]\n" \
+           "  sqlobject (o)   <table-name> [model-name]\n"         \
+           "  mongoscaffold (ms) <model-name>\n"                   \
+           "  mongomodel (mm) <model-name>\n"                      \
+           "  validator (v)   <name>\n"                            \
+           "  mailer (l)      <mailer-name> action [action ...]\n" \
+           "  delete (d)      <table-name or validator-name>\n");
 }
 
 
 static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit, const QString &baseDir, const QString &proj = QString())
 {
     QStringList rmd;
-    
+
     // Removes files
     for (QStringListIterator i(files); i.hasNext(); ) {
         if (quit)
@@ -165,33 +176,33 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
         QFile file(baseDir + SEP + fname);
         if (!file.exists())
             continue;
-        
+
         if (allRemove) {
             remove(file);
             rmd << fname;
             continue;
         }
-        
+
         QTextStream stream(stdin);
         for (;;) {
             printf("  remove  %s? [ynaqh] ", qPrintable(QDir::cleanPath(file.fileName())));
-            
+
             QString line = stream.readLine();
             if (line.isNull())
                 break;
-            
+
             if (line.isEmpty())
                 continue;
-            
+
             QCharRef c = line[0];
             if (c == 'Y' || c == 'y') {
                 remove(file);
                 rmd << fname;
                 break;
-                
+
             } else if (c == 'N' || c == 'n') {
                 break;
-                
+
             } else if (c == 'A' || c == 'a') {
                 allRemove = true;
                 remove(file);
@@ -201,14 +212,14 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
             } else if (c == 'Q' || c == 'q') {
                 quit = true;
                 break;
-           
+
             } else if (c == 'H' || c == 'h') {
                 printf("   y - yes, remove\n");
                 printf("   n - no, do not remove\n");
                 printf("   a - all, remove this and all others\n");
                 printf("   q - quit, abort\n");
                 printf("   h - help, show this help\n\n");
-                
+
             } else {
                 // one more
             }
@@ -306,18 +317,19 @@ static int deleteScaffold(const QString &name)
         QStringList helpers;
         helpers << str + ".h"
                 << str + ".cpp";
-        
+
         rmfiles(helpers, D_HELPERS, "helpers.pro");
-        
+
     } else {
         QStringList ctrls, models, views;
         ctrls << str + "controller.h"
               << str + "controller.cpp";
-        
+
         models << QLatin1String("sqlobjects") + SEP + str + "object.h"
+               << QLatin1String("mongoobjects") + SEP + str + "object.h"
                << str + ".h"
                << str + ".cpp";
-        
+
         // Template system
         if (templateSystem == "otama") {
             views << str + SEP + "index.html"
@@ -337,24 +349,24 @@ static int deleteScaffold(const QString &name)
             qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
             return 2;
         }
-        
+
         bool allRemove = false;
         bool quit = false;
-        
+
         // Removes controllers
         rmfiles(ctrls, allRemove, quit, D_CTRLS, "controllers.pro");
         if (quit) {
             ::_exit(1);
             return 1;
         }
-        
+
         // Removes models
         rmfiles(models, allRemove, quit, D_MODELS, "models.pro");
         if (quit) {
             ::_exit(1);
             return 1;
         }
-        
+
         // Removes views
         QStringList rmd = rmfiles(views, allRemove, quit, D_VIEWS);
         if (!rmd.isEmpty()) {
@@ -364,7 +376,7 @@ static int deleteScaffold(const QString &name)
             QFile::remove(path + "_entryView.cpp");
             QFile::remove(path + "_editView.cpp");
         }
-        
+
         // Removes the sub-directory
         rmpath(D_VIEWS + str);
     }
@@ -381,6 +393,51 @@ static bool checkIniFile()
         return false;
     }
     return true;
+}
+
+
+static void printSuccessMessage(const QString &model)
+{
+    QString msg;
+    if (!QFile("Makefile").exists()) {
+        QProcess cmd;
+        QStringList args;
+        args << "-r";
+        args << "CONFIG+=debug";
+        // `qmake -r CONFIG+=debug`
+        cmd.start("qmake", args);
+        cmd.waitForStarted();
+        cmd.waitForFinished();
+
+        // `make qmake`
+#ifdef Q_OS_WIN32
+        cmd.start("mingw32-make", QStringList("qmake"));
+#else
+        cmd.start("make", QStringList("qmake"));
+#endif
+        cmd.waitForStarted();
+        cmd.waitForFinished();
+
+        msg = "Run `qmake -r%0 CONFIG+=debug` to generate a Makefile for debug mode.\nRun `qmake -r%0 CONFIG+=release` to generate a Makefile for release mode.";
+#ifdef Q_OS_MAC
+# if QT_VERSION >= 0x050000
+        msg = msg.arg(" -spec macx-clang");
+# else
+        msg = msg.arg(" -spec macx-g++");
+# endif
+#else
+        msg = msg.arg("");
+#endif
+    }
+
+    putchar('\n');
+    int port = appSettings.value("ListenPort").toInt();
+    if (port > 0 && port <= USHRT_MAX)
+        printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(model));
+
+    if (!msg.isEmpty()) {
+        puts(qPrintable(msg));
+    }
 }
 
 
@@ -438,7 +495,7 @@ int main(int argc, char *argv[])
             return 2;
         }
         break;
-        
+
     default: {
         if (argc < 3) {
             qCritical("invalid argument");
@@ -467,29 +524,62 @@ int main(int argc, char *argv[])
         switch (subcmd) {
         case Controller: {
             QString ctrl = args.value(2);
-            ControllerGenerator crtlgen(QString(), ctrl, args.mid(3), D_CTRLS);
-            crtlgen.generate();
-            
+            ControllerGenerator crtlgen(ctrl, args.mid(3));
+            crtlgen.generate(D_CTRLS);
+
             // Create view directory
             QDir dir(D_VIEWS + ((ctrl.contains('_')) ? ctrl.toLower() : fieldNameToVariableName(ctrl).toLower()));
             mkpath(dir, ".");
             break; }
-        
+
         case Model: {
-            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), D_MODELS);
-            modelgen.generate();
+            ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
+            modelgen.generate(D_MODELS);
             break; }
 
         case UserModel: {
-            ModelGenerator modelgen(args.value(5), args.value(2), args.mid(3, 2), D_MODELS);
-            modelgen.generate(true);
+            ModelGenerator modelgen(ModelGenerator::Sql, args.value(5), args.value(2), args.mid(3, 2));
+            modelgen.generate(D_MODELS, true);
             break; }
-        
+
         case SqlObject: {
-            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), D_MODELS);
-            modelgen.generateSqlObject();
+            SqlObjGenerator sqlgen(args.value(3), args.value(2));
+            QString path = sqlgen.generate(D_MODELS);
+
+            // Generates a project file
+            ProjectFileGenerator progen(D_MODELS + "models.pro");
+            progen.add(QStringList(path));
             break; }
-       
+
+        case MongoScaffold: {
+            ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
+            bool success = modelgen.generate(D_MODELS);
+
+            ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.lockRevisionIndex());
+            success &= crtlgen.generate(D_CTRLS);
+
+            // Generates view files of the specified template system
+            if (templateSystem == "otama") {
+                OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.autoValueIndex());
+                viewgen.generate(D_VIEWS);
+            } else if (templateSystem == "erb") {
+                ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.autoValueIndex());
+                viewgen.generate(D_VIEWS);
+            } else {
+                qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
+                return 2;
+            }
+
+            if (success) {
+                printSuccessMessage(modelgen.model());
+            }
+            break; }
+
+        case MongoModel: {
+            ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
+            modelgen.generate(D_MODELS);
+            break; }
+
         case Validator: {
             ValidatorGenerator validgen(args.value(2), D_HELPERS);
             validgen.generate();
@@ -502,65 +592,32 @@ int main(int argc, char *argv[])
             break; }
 
         case Scaffold: {
-            ControllerGenerator crtlgen(args.value(3), args.value(2), QStringList(), D_CTRLS);
-            bool success = crtlgen.generate();
-            
-            ModelGenerator modelgen(args.value(3), args.value(2), QStringList(), D_MODELS);
-            success &= modelgen.generate();
-            
+            ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
+            bool success = modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qPrintable(args.value(2)));
+                return 2;
+            }
+
+            ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+            success &= crtlgen.generate(D_CTRLS);
+
             // Generates view files of the specified template system
             if (templateSystem == "otama") {
-                OtamaGenerator viewgen(args.value(3), args.value(2), D_VIEWS);
-                viewgen.generate();
+                OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                viewgen.generate(D_VIEWS);
             } else if (templateSystem == "erb") {
-                ErbGenerator viewgen(args.value(3), args.value(2), D_VIEWS);
-                viewgen.generate();
+                ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                viewgen.generate(D_VIEWS);
             } else {
                 qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
                 return 2;
             }
 
             if (success) {
-                QString msg;
-                if (!QFile("Makefile").exists()) {
-                    QProcess cmd;
-                    QStringList args;
-                    args << "-r";
-                    args << "CONFIG+=debug";
-                    // `qmake -r CONFIG+=debug`
-                    cmd.start("qmake", args);
-                    cmd.waitForStarted();
-                    cmd.waitForFinished();
-
-                    // `make qmake`
-#ifdef Q_OS_WIN32
-                    cmd.start("mingw32-make", QStringList("qmake"));
-#else
-                    cmd.start("make", QStringList("qmake"));
-#endif
-                    cmd.waitForStarted();
-                    cmd.waitForFinished();
-
-                    msg = "Run `qmake -r%0 CONFIG+=debug` to generate a Makefile for debug mode.\nRun `qmake -r%0 CONFIG+=release` to generate a Makefile for release mode.";
-#ifdef Q_OS_MAC
-# if QT_VERSION >= 0x050000
-                    msg = msg.arg(" -spec macx-clang");
-# else
-                    msg = msg.arg(" -spec macx-g++");
-# endif
-#else
-                    msg = msg.arg("");
-#endif
-                }
-
-                putchar('\n');
-                int port = appSettings.value("ListenPort").toInt();
-                if (port > 0 && port <= USHRT_MAX)
-                    printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(modelgen.model()));
-
-                if (!msg.isEmpty()) {
-                    puts(qPrintable(msg));
-                }
+                printSuccessMessage(modelgen.model());
             }
             break; }
 
@@ -570,7 +627,7 @@ int main(int argc, char *argv[])
             if (ret)
                 return ret;
             break; }
-            
+
         default:
             qCritical("internal error");
             return 1;

@@ -6,34 +6,15 @@
  */
 
 #include "modelgenerator.h"
+#include "sqlobjgenerator.h"
+#include "mongoobjgenerator.h"
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "filewriter.h"
-#include "tableschema.h"
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define USER_VIRTUAL_METHOD  "identityKey"
-#define LOCK_REVISION_FIELD  "lock_revision"
-
-#define SQLOBJECT_HEADER_TEMPLATE                            \
-    "#ifndef %1OBJECT_H\n"                                   \
-    "#define %1OBJECT_H\n"                                   \
-    "\n"                                                     \
-    "#include <TSqlObject>\n"                                \
-    "#include <QSharedData>\n"                               \
-    "\n\n"                                                   \
-    "class T_MODEL_EXPORT %2Object : public TSqlObject, public QSharedData\n" \
-    "{\n"                                                    \
-    "public:\n"
-
-#define SQLOBJECT_PROPERTY_TEMPLATE                  \
-    "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n" \
-    "    T_DEFINE_PROPERTY(%1, %2)\n"
-
-#define SQLOBJECT_FOOTER_TEMPLATE  \
-    "};\n"                         \
-    "\n"                           \
-    "#endif // %1OBJECT_H\n"
+#define LOCK_REVISION_FIELD "lockRevision"
 
 #define MODEL_HEADER_FILE_TEMPLATE                       \
     "#ifndef %1_H\n"                                     \
@@ -46,7 +27,7 @@
     "#include <TGlobal>\n"                               \
     "#include <TAbstractModel>\n"                        \
     "\n"                                                 \
-    "class TSqlObject;\n"                                \
+    "class TModelObject;\n"                              \
     "class %2Object;\n"                                  \
     "%7"                                                 \
     "\n\n"                                               \
@@ -129,13 +110,13 @@
     "%8"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%9"                                                      \
+    "%10"                                                     \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
-    "    return tfGetModelListByCriteria<%2, %2Object>(TCriteria());\n" \
+    "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria());\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%10"                                                     \
+    "%12"                                                     \
     "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
@@ -158,7 +139,7 @@
     "#include <TAbstractUser>\n"                         \
     "#include <TAbstractModel>\n"                        \
     "\n"                                                 \
-    "class TSqlObject;\n"                                \
+    "class TModelObject;\n"                              \
     "class %2Object;\n"                                  \
     "\n\n"                                               \
     "class T_MODEL_EXPORT %2 : public TAbstractUser, public TAbstractModel\n" \
@@ -259,7 +240,7 @@
     "%9"                                                      \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
-    "    return tfGetModelListByCriteria<%2, %2Object>();\n"  \
+    "    return tfGetModelListBy%10Criteria<%2, %2Object>();\n" \
     "}\n"                                                     \
     "\n"                                                      \
     "TModelObject *%2::modelData()\n"                         \
@@ -276,7 +257,7 @@
     "QJsonArray %1::getAllJson()\n"                           \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
-    "    TSqlORMapper<%1Object> mapper;\n"                    \
+    "    %2<%1Object> mapper;\n"                              \
     "\n"                                                      \
     "    if (mapper.find() > 0) {\n"                          \
     "        for (TSqlORMapperIterator<%1Object> i(mapper); i.hasNext(); ) {\n" \
@@ -289,154 +270,96 @@
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedSetter,
 {
-    *x << "created_at" << "updated_at" << "modified_at" << LOCK_REVISION_FIELD;
+    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision"
+       << "createdAt" << "updatedAt" << "modifiedAt" << LOCK_REVISION_FIELD;
 })
 
 
-ModelGenerator::ModelGenerator(const QString &model, const QString &table, const QStringList &fields, const QString &dst)
-    : modelName(), tableName(table), dstDir(dst), fieldList(fields)
+ModelGenerator::ModelGenerator(ModelGenerator::ObjectType type, const QString &model, const QString &table, const QStringList &userModelFields)
+    : objectType(type), modelName(), tableName(table), userFields(userModelFields)
 {
-    modelName = (!model.isEmpty()) ? model : fieldNameToEnumName(table);
+    modelName = (!model.isEmpty()) ? fieldNameToEnumName(model) : fieldNameToEnumName(table);
+    switch (type) {
+    case Sql:
+        objGen = new SqlObjGenerator(model, table);
+        break;
+    case Mongo:
+        objGen = new MongoObjGenerator(model);
+        break;
+    }
 }
 
 
-bool ModelGenerator::generate(bool userModel) const
+ModelGenerator::~ModelGenerator()
+{
+    delete objGen;
+}
+
+
+bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 {
     QStringList files;
 
-    if (!TableSchema(tableName).exists()) {
-        qCritical("table not found, %s", qPrintable(tableName));
+    // Generates model object class
+    QString obj = objGen->generate(dstDir);
+    if (obj.isEmpty()) {
         return false;
     }
+    files << obj;
 
-    // Generates models
-    files << generateSqlObject();
+    // Generates user-model
     if (userModel) {
-        if (fieldList.count() == 2) {
-            files << genUserModel(fieldList.value(0), fieldList.value(1));
-        } else if (fieldList.isEmpty()) {
-            files << genUserModel();
+        if (userFields.count() == 2) {
+            files << genUserModel(userFields.value(0), userFields.value(1));
+        } else if (userFields.isEmpty()) {
+            files << genUserModel(dstDir);
         } else {
             qCritical("invalid parameters");
             return false;
         }
     } else {
-        files << genModel();
+        //   FieldList fields = mongen.fieldList();
+        files << genModel(dstDir); //, fields);
     }
 
     // Generates a project file
-    ProjectFileGenerator progen(dstDir.filePath("models.pro"));
+    ProjectFileGenerator progen(QDir(dstDir).filePath("models.pro"));
     return progen.add(files);
 }
 
 
-QString ModelGenerator::generateSqlObject() const
-{
-    TableSchema ts(tableName);
-    QList<QPair<QString, QString> > fieldList = ts.getFieldList();
-    if (fieldList.isEmpty()) {
-        qCritical("table not found, %s", qPrintable(tableName));
-        return QString();
-    }
-
-    QString output;
-
-    // Header part
-    output += QString(SQLOBJECT_HEADER_TEMPLATE).arg(modelName.toUpper(), modelName);
-    QListIterator<QPair<QString, QString> > it(fieldList);
-    while (it.hasNext()) {
-        const QPair<QString, QString> &p = it.next();
-        output += QString("    %1 %2;\n").arg(p.second, p.first);
-    }
-
-    // enum part
-    output += QLatin1String("\n    enum PropertyIndex {\n");
-    it.toFront();
-    const QPair<QString, QString> &p = it.next();
-    output += QString("        %1 = 0,\n").arg(fieldNameToEnumName(p.first));
-    while (it.hasNext()) {
-        const QPair<QString, QString> &p = it.next();
-        output += QString("        %1,\n").arg(fieldNameToEnumName(p.first));
-    }
-    output += QLatin1String("    };\n\n");
-
-    // primaryKeyIndex() method
-    output += QLatin1String("    int primaryKeyIndex() const { return ");
-    QString pkName = ts.primaryKeyFieldName();
-    if (pkName.isEmpty()) {
-        output += QLatin1String("-1; }\n");
-    } else {
-        output += fieldNameToEnumName(pkName);
-        output += QLatin1String("; }\n");
-    }
-
-    // auto-value field, for example auto-increment value
-    output += QLatin1String("    int autoValueIndex() const { return ");
-    QString autoValue = ts.autoValueFieldName();
-    if (autoValue.isEmpty()) {
-        output += QLatin1String("-1; }\n");
-    } else {
-        output += fieldNameToEnumName(autoValue);
-        output += QLatin1String("; }\n");
-    }
-
-    // tableName() method
-    output += QLatin1String("    QString tableName() const { return QLatin1String(\"");
-    output += tableName;
-    output += QLatin1String("\"); }\n\n");
-
-    // Property macros part
-    output += QLatin1String("private:    /*** Don't modify below this line ***/\n    Q_OBJECT\n");
-    it.toFront();
-    while (it.hasNext()) {
-        const QPair<QString, QString> &p = it.next();
-        output += QString(SQLOBJECT_PROPERTY_TEMPLATE).arg(p.second, p.first);
-    }
-
-    // Footer part
-    output += QString(SQLOBJECT_FOOTER_TEMPLATE).arg(modelName.toUpper());
-
-    // Writes to a file
-    QDir dst(dstDir.filePath("sqlobjects"));
-    FileWriter fw(dst.filePath(modelName.toLower() + "object.h"));
-    fw.write(output, false);
-    return QLatin1String("sqlobjects/") + fw.fileName();
-}
-
-
-QStringList ModelGenerator::genModel() const
+QStringList ModelGenerator::genModel(const QString &dstDir) //, const FieldList &fields)
 {
     QStringList ret;
-
+    QDir dir(dstDir);
     QPair<QStringList, QStringList> p = createModelParams();
+
 #if QT_VERSION >= 0x050000
     p.first  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+    QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
+    p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName, mapperstr);
 #else
     p.first << "" << "";
-#endif
-
-#if QT_VERSION >= 0x050000
-    p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
-#else
     p.second << "";
 #endif
 
-    QString fileName = dstDir.filePath(modelName.toLower() + ".h");
+    QString fileName = dir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
     ret << QFileInfo(fileName).fileName();
 
-    fileName = dstDir.filePath(modelName.toLower() + ".cpp");
+    fileName = dir.filePath(modelName.toLower() + ".cpp");
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
     ret << QFileInfo(fileName).fileName();
     return ret;
 }
 
 
-QStringList ModelGenerator::genUserModel(const QString &usernameField, const QString &passwordField) const
+QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &usernameField, const QString &passwordField)
 {
     QStringList ret;
+    QDir dir(dstDir);
     QPair<QStringList, QStringList> p = createModelParams();
-    QString fileName = dstDir.filePath(modelName.toLower() + ".h");
+    QString fileName = dir.filePath(modelName.toLower() + ".h");
     QString userVar = fieldNameToVariableName(usernameField);
     p.first << userVar << fieldNameToVariableName(passwordField);
     p.first << QLatin1String("    QString ") + USER_VIRTUAL_METHOD + "() const { return " + userVar + "(); }\n";
@@ -444,7 +367,7 @@ QStringList ModelGenerator::genUserModel(const QString &usernameField, const QSt
     gen(fileName, USER_MODEL_HEADER_FILE_TEMPLATE, p.first);
     ret << QFileInfo(fileName).fileName();
 
-    fileName = dstDir.filePath(modelName.toLower() + ".cpp");
+    fileName = dir.filePath(modelName.toLower() + ".cpp");
     p.second << fieldNameToVariableName(usernameField) << fieldNameToVariableName(passwordField)
              << fieldNameToEnumName(usernameField);
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
@@ -453,27 +376,27 @@ QStringList ModelGenerator::genUserModel(const QString &usernameField, const QSt
 }
 
 
-QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
+QPair<QStringList, QStringList> ModelGenerator::createModelParams()
 {
-    QString setgetDecl;
-    QString setgetImpl;
-    QString crtparams;
-    QString getOptDecl;
-    QString getOptImpl;
-    QString initParams;
+    QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl, initParams;
     QList<QPair<QString, QString> > writableFields;
     bool optlockMethod = false;
-    TableSchema ts(tableName);
-    QList<QPair<QString, QString> > fieldList = ts.getFieldList();
-    QString autoFieldName = ts.autoValueFieldName();
+    FieldList fields = objGen->fieldList();
+    int pkidx = objGen->primaryKeyIndex();
+    int autoIndex = objGen->autoValueIndex();
+    QString autoFieldName = (autoIndex >= 0) ? fields[autoIndex].first : QString();
+    QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
 
-    for (QListIterator<QPair<QString, QString> > it(fieldList); it.hasNext(); ) {
-        const QPair<QString, QString> &p = it.next();
+    for (QListIterator<QPair<QString, QVariant::Type> > it(fields); it.hasNext(); ) {
+        const QPair<QString, QVariant::Type> &p = it.next();
         QString var = fieldNameToVariableName(p.first);
+        QString type = QVariant::typeToName(p.second);
+        if (type.isEmpty())
+            continue;
 
         // Getter method
-        setgetDecl += QString("    %1 %2() const;\n").arg(p.second, var);
-        setgetImpl += QString("%1 %2::%3() const\n{\n    return d->%4;\n}\n\n").arg(p.second, modelName, var, p.first);
+        setgetDecl += QString("    %1 %2() const;\n").arg(type, var);
+        setgetImpl += QString("%1 %2::%3() const\n{\n    return d->%4;\n}\n\n").arg(type, modelName, var, p.first);
 
         if (!excludedSetter()->contains(p.first, Qt::CaseInsensitive) && p.first != autoFieldName) {
             // Setter method
@@ -485,14 +408,14 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
             crtparams += createParam(p.second, p.first);
             crtparams += ", ";
 
-            writableFields << QPair<QString, QString>(p.first, p.second);
+            writableFields << QPair<QString, QString>(p.first, type);
 
-            if (p.second == "int" || p.second == "float" || p.second == "double") {
+            if (p.second == QVariant::Int || p.second == QVariant::UInt || p.second == QVariant::LongLong || p.second == QVariant::Double) {
                 initParams += QString("\n    d->") + p.first + " = 0;";
             }
         }
 
-        if (p.first.toLower() == LOCK_REVISION_FIELD)
+        if (var == LOCK_REVISION_FIELD)
             optlockMethod = true;
     }
     crtparams.chop(2);
@@ -500,28 +423,27 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
     initParams += (initParams.isEmpty()) ? ' ' : '\n';
 
     // Creates parameters of get() method
-    int idx = ts.primaryKeyIndex();
     QString getparams;
-    if (idx < 0) {
+    if (pkidx < 0) {
         getparams = crtparams;
     } else {
-        const QPair<QString, QString> &pair = fieldList[idx];
+        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
         getparams = createParam(pair.second, pair.first);
     }
 
     // Creates a declaration and a implementation of 'get' method for optimistic lock
-    if (idx >= 0 && optlockMethod) {
-        const QPair<QString, QString> &pair = fieldList[idx];
+    if (pkidx >= 0 && optlockMethod) {
+        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
         getOptDecl = QString("    static %1 get(%2, int lockRevision);\n").arg(modelName, createParam(pair.second, pair.first));
 
         getOptImpl = QString("%1 %1::get(%2, int lockRevision)\n"       \
                              "{\n"                                      \
-                             "    TSqlORMapper<%1Object> mapper;\n"     \
+                             "    %5<%1Object> mapper;\n"               \
                              "    TCriteria cri;\n"                     \
                              "    cri.add(%1Object::%3, %4);\n"         \
                              "    cri.add(%1Object::LockRevision, lockRevision);\n" \
                              "    return %1(mapper.findFirst(cri));\n"  \
-                             "}\n\n").arg(modelName, createParam(pair.second, pair.first), fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first));
+                             "}\n\n").arg(modelName, createParam(pair.second, pair.first), fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first), mapperstr);
     }
 
     QStringList headerArgs;
@@ -543,7 +465,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
 
     // Creates a implementation of get() method
     QString getImpl;
-    if (idx < 0) {
+    if (pkidx < 0) {
         // If no primary index exists
         getImpl += QString("    TCriteria cri;\n");
         fi.toFront();
@@ -553,19 +475,21 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams() const
         }
     }
 
-    getImpl += QString("    TSqlORMapper<%1Object> mapper;\n").arg(modelName);
+    getImpl += QString("    %1<%2Object> mapper;\n").arg(mapperstr, modelName);
     getImpl += QString("    return %1(mapper.").arg(modelName);
 
-    if (idx < 0) {
+    if (pkidx < 0) {
         getImpl += "findFirst(cri));\n";
     } else {
-        const QPair<QString, QString> &pair = fieldList[idx];
-        getImpl += QString("findByPrimaryKey(%1));\n").arg(fieldNameToVariableName(pair.first));
+        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        getImpl += (objectType == Sql) ? "findByPrimaryKey(" : "findByObjectId(";
+        getImpl += fieldNameToVariableName(pair.first);
+        getImpl += QString("));\n");
     }
 
     QStringList implArgs;
     implArgs << modelName.toLower() << modelName << initParams << setgetImpl << crtparams << createImpl << getparams << getImpl << getOptImpl;
-
+    implArgs << ((objectType == Mongo) ? "Mongo" : "");
     return QPair<QStringList, QStringList>(headerArgs, implArgs);
 }
 
@@ -583,14 +507,40 @@ bool ModelGenerator::gen(const QString &fileName, const QString &format, const Q
 }
 
 
-QString ModelGenerator::createParam(const QString &type, const QString &name)
+QString ModelGenerator::createParam(QVariant::Type type, const QString &name)
 {
     QString string;
     QString var = fieldNameToVariableName(name);
-    if (type == "int" || type == "float" || type == "double") {
-        string.append(type).append(' ').append(var);
+    if (type == QVariant::Int || type == QVariant::UInt || type == QVariant::ULongLong || type == QVariant::Double) {
+        string += QVariant::typeToName(type);
+        string += ' ';
+        string += var;
     } else {
-        string += QString("const %1 &%2").arg(type, var);
+        string += QString("const %1 &%2").arg(QVariant::typeToName(type), var);
     }
     return string;
+}
+
+
+ModelGenerator::FieldList ModelGenerator::fieldList() const
+{
+    return objGen->fieldList();
+}
+
+
+int ModelGenerator::primaryKeyIndex() const
+{
+    return objGen->primaryKeyIndex();
+}
+
+
+int ModelGenerator::autoValueIndex() const
+{
+    return objGen->autoValueIndex();
+}
+
+
+int ModelGenerator::lockRevisionIndex() const
+{
+    return objGen->lockRevisionIndex();
 }

@@ -9,7 +9,6 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "filewriter.h"
-#include "tableschema.h"
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define INDEX_HTML_TEMPLATE                                             \
@@ -190,7 +189,8 @@
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedColumn,
 {
-    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision";
+    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision"
+       << "createdAt" << "updatedAt" << "modifiedAt" << "lockRevision";
 })
 
 
@@ -200,62 +200,55 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedDirName,
 })
 
 
-OtamaGenerator::OtamaGenerator(const QString &view, const QString &table, const QString &dst)
-    : viewName(), tableName(table)
-{
-    viewName = (!view.isEmpty()) ? view : fieldNameToEnumName(table);
-    dstDir.setPath(dst + viewName.toLower());
-}
+OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int autoValIdx)
+    : viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
+{ }
 
 
-bool OtamaGenerator::generate() const
+bool OtamaGenerator::generate(const QString &dstDir) const
 {
+    QDir dir(dstDir + viewName.toLower());
+
     // Reserved word check
-    if (excludedDirName()->contains(dstDir.dirName())) {
-        qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dstDir.dirName()));
+    if (excludedDirName()->contains(dir.dirName())) {
+        qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dir.dirName()));
         return false;
     }
 
-    mkpath(dstDir);
-
-    if (!TableSchema(tableName).exists()) {
-        qCritical("table not found, %s", qPrintable(tableName));
-        return false;
-    }
+    mkpath(dir);
 
     // Generates view files
-    generateViews();
+    generateViews(dir.path());
     return true;
 }
 
 
-QStringList OtamaGenerator::generateViews() const
+QStringList OtamaGenerator::generateViews(const QString &dstDir) const
 {
     QStringList files;
-    TableSchema ts(tableName);
-    if (ts.primaryKeyIndex() < 0) {
-        qWarning("Primary key not found. [table name: %s]", qPrintable(ts.tableName()));
+
+    if (primaryKeyIndex < 0) {
+        qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));
         return files;
     }
 
+    QDir dir(dstDir);
     FileWriter fw;
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    QPair<QString, QString> pkFld = ts.getPrimaryKeyField();
-    int autoidx = ts.autoValueIndex();
+    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
 
     // Generates index.html
     QString th ,td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
-    QList<QPair<QString, QString> > fields = ts.getFieldList();
-    for (int i = 0; i < fields.count(); ++i) {
-        const QPair<QString, QString> &p = fields[i];
+    for (int i = 0; i < fieldList.count(); ++i) {
+        const QPair<QString, QVariant::Type> &p = fieldList[i];
         QString cap = fieldNameToCaption(p.first);
         QString var = fieldNameToVariableName(p.first);
         QString mrk = p.first.toLower();
         QString readonly;
 
-        if (!excludedColumn()->contains(p.first, Qt::CaseInsensitive)) {
+        if (!excludedColumn()->contains(var, Qt::CaseInsensitive)) {
             th += "    <th>";
             th += cap;
             th += "</th>\n";
@@ -266,7 +259,7 @@ QStringList OtamaGenerator::generateViews() const
 
             indexOtm += QString("@%1 ~= i.%2()\n\n").arg(mrk, var);
 
-            if (i != autoidx) {  // case of not auto-value field
+            if (i != autoValueIndex) {  // case of not auto-value field
                 entryColumn += QString("  <p>\n    <label>%1<br /><input data-tf=\"@%2\" /></label>\n  </p>\n").arg(cap, mrk);
                 entryOtm += QString("@%1 |== inputTextTag(\"%2[%3]\", %2[\"%3\"].toString())\n\n").arg(mrk, varName, var);
             }
@@ -282,7 +275,7 @@ QStringList OtamaGenerator::generateViews() const
     }
 
     output = QString(INDEX_HTML_TEMPLATE).arg(caption, th, td);
-    fw.setFilePath(dstDir.filePath("index.html"));
+    fw.setFilePath(dir.filePath("index.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
@@ -290,49 +283,49 @@ QStringList OtamaGenerator::generateViews() const
     // Generates index.otm
     QString pkVarName = fieldNameToVariableName(pkFld.first);
     output = QString(INDEX_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, indexOtm, pkVarName);
-    fw.setFilePath(dstDir.filePath("index.otm"));
+    fw.setFilePath(dir.filePath("index.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates show.html
     output = QString(SHOW_HTML_TEMPLATE).arg(caption, showColumn);
-    fw.setFilePath(dstDir.filePath("show.html"));
+    fw.setFilePath(dir.filePath("show.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates show.otm
     output = QString(SHOW_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, showOtm, pkVarName);
-    fw.setFilePath(dstDir.filePath("show.otm"));
+    fw.setFilePath(dir.filePath("show.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates entry.html
     output = QString(ENTRY_HTML_TEMPLATE).arg(caption, entryColumn);
-    fw.setFilePath(dstDir.filePath("entry.html"));
+    fw.setFilePath(dir.filePath("entry.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates entry.otm
     output = QString(ENTRY_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
-    fw.setFilePath(dstDir.filePath("entry.otm"));
+    fw.setFilePath(dir.filePath("entry.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.html
     output = QString(EDIT_HTML_TEMPLATE).arg(caption, editColumn);
-    fw.setFilePath(dstDir.filePath("edit.html"));
+    fw.setFilePath(dir.filePath("edit.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.otm
     output = QString(EDIT_OTM_TEMPLATE).arg(varName.toLower(), varName, pkVarName, editOtm);
-    fw.setFilePath(dstDir.filePath("edit.otm"));
+    fw.setFilePath(dir.filePath("edit.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
