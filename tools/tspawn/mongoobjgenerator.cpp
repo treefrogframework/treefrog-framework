@@ -63,6 +63,8 @@
     "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n" \
     "    T_DEFINE_PROPERTY(%1, %2)\n"
 
+const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2);
+
 
 MongoObjGenerator::MongoObjGenerator(const QString &model)
     : modelName(model), fields()
@@ -123,9 +125,8 @@ bool MongoObjGenerator::createMongoObject(const QString &path)
 static QList<QPair<QString, QVariant::Type> > getFieldList(const QString &filePath)
 {
     QList<QPair<QString, QVariant::Type> > ret;
-    QRegExp rxfst("\\s*QString\\s+_id\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
     QRegExp rxend("(\\n[\\t\\r ]*\\n|\\senum\\s)", Qt::CaseSensitive, QRegExp::RegExp2);
-    QRegExp rx("\\s*([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx("\\s([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -134,11 +135,12 @@ static QList<QPair<QString, QVariant::Type> > getFieldList(const QString &filePa
     }
 
     QString src = QString::fromUtf8(file.readAll().data());
-    int pos = rxfst.indexIn(src, 0);
+    int pos = rxstart.indexIn(src, 0);
     if (pos < 0) {
         qCritical("parse error");
         _exit(1);
     }
+    pos += rxstart.matchedLength();
 
     int end = rxend.indexIn(src, pos);
     while ((pos = rx.indexIn(src, pos)) > 0 && pos < end) {
@@ -154,7 +156,6 @@ static QList<QPair<QString, QVariant::Type> > getFieldList(const QString &filePa
 
 bool MongoObjGenerator::updateMongoObject(const QString &path)
 {
-    QRegExp rxfst("\\s*QString\\s+_id\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
     QFile file(path);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -165,9 +166,11 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
     QString src = QString::fromUtf8(file.readAll().data());
     QString headerpart;
 
-    int pos = rxfst.indexIn(src, 0);
-    if (pos > 0)
+    int pos = rxstart.indexIn(src, 0);
+    if (pos > 0) {
+        pos += rxstart.matchedLength();
         headerpart = src.mid(0, pos);
+    }
 
     fields = getFieldList(path);
     QStringList prop = generateCode(fields);
