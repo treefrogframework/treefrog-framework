@@ -58,7 +58,7 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
   control the fields to return.
   \sa TMongoQuery::next()
 */
-int TMongoQuery::find(const QVariantMap &criteria, const QStringList &fields)
+int TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, const QStringList &fields)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::find : driver not loaded");
@@ -66,7 +66,7 @@ int TMongoQuery::find(const QVariantMap &criteria, const QStringList &fields)
     }
 
     lastWriteStatus.clear();
-    return driver()->find(nameSpace, criteria, fields, queryLimit, queryOffset, 0);
+    return driver()->find(nameSpace, criteria, orderBy, fields, queryLimit, queryOffset, 0);
 }
 
 /*!

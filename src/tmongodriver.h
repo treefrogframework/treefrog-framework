@@ -21,7 +21,7 @@ public:
     void close();
     bool isOpen() const;
 
-    int find(const QString &ns, const QVariantMap &criteria,
+    int find(const QString &ns, const QVariantMap &criteria, const QVariantMap &orderBy,
              const QStringList &fields, int limit, int skip, int options);
     QVariantMap findOne(const QString &ns, const QVariantMap &criteria,
                         const QStringList &fields = QStringList());

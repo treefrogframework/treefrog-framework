@@ -17,6 +17,7 @@ public:
 
     static QVariantMap fromBson(const TBson &bson);
     static TBson toBson(const QVariantMap &map);
+    static TBson toBson(const QVariantMap &query, const QVariantMap &orderBy);
     static TBson toBson(const QStringList &lst);
     static QString generateObjectId();
 

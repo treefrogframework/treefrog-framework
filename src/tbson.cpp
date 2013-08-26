@@ -232,16 +232,40 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
 }
 
 
+static void appendBson(TBsonObject *bs, const QVariantMap &map)
+{
+    for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
+        const QVariant &val = it.next().value();
+        bool res = appendBsonValue((bson *)bs, qPrintable(it.key()), val);
+        if (!res)
+            break;
+    }
+}
+
+
 TBson TBson::toBson(const QVariantMap &map)
 {
     TBson ret;
+    appendBson(ret.data(), map);
+    bson_finish((bson *)ret.data());
+    return ret;
+}
 
-    for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
-        const QVariant &val = it.next().value();
 
-        bool res = appendBsonValue((bson *)ret.data(), qPrintable(it.key()), val);
-        if (!res)
-            break;
+TBson TBson::toBson(const QVariantMap &query, const QVariantMap &orderBy)
+{
+    TBson ret;
+
+    // query clause
+    bson_append_start_object((bson *)ret.data(), "$query");
+    appendBson(ret.data(), query);
+    bson_append_finish_object((bson *)ret.data());
+
+    // orderBy clause
+    if (!orderBy.isEmpty()) {
+        bson_append_start_object((bson *)ret.data(), "$orderby");
+        appendBson(ret.data(), orderBy);
+        bson_append_finish_object((bson *)ret.data());
     }
 
     bson_finish((bson *)ret.data());

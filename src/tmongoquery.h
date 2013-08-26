@@ -18,7 +18,7 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    int find(const QVariantMap &criteria = QVariantMap(), const QStringList &fields = QStringList());
+    int find(const QVariantMap &criteria = QVariantMap(), const QVariantMap &orderBy = QVariantMap(), const QStringList &fields = QStringList());
     bool next();
     QVariantMap value() const;
 

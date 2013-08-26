@@ -30,7 +30,8 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    void setSortOrder(int column, TSql::SortOrder order);
+    void setSortOrder(int column, TSql::SortOrder order);  // obsoleted
+    void setSortOrder(int column, Tf::SortOrder order);
     void reset();
 
     T findFirst(const TCriteria &cri = TCriteria());
@@ -64,7 +65,7 @@ private:
 
     QString queryFilter;
     int sortColumn;
-    TSql::SortOrder sortOrder;
+    Tf::SortOrder sortOrder;
     int queryLimit;
     int queryOffset;
 };
@@ -76,7 +77,7 @@ private:
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
     : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId())),
-      sortColumn(-1), sortOrder(TSql::AscendingOrder), queryLimit(0),
+      sortColumn(-1), sortOrder(Tf::AscendingOrder), queryLimit(0),
       queryOffset(0)
 {
     setTable(T().tableName());
@@ -250,6 +251,16 @@ inline void TSqlORMapper<T>::setOffset(int offset)
 */
 template <class T>
 inline void TSqlORMapper<T>::setSortOrder(int column, TSql::SortOrder order)
+{
+    sortColumn = column;
+    sortOrder = (Tf::SortOrder)order;
+}
+
+/*!
+  Sets the sort order for \a column to \a order.
+*/
+template <class T>
+inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
 {
     sortColumn = column;
     sortOrder = order;
@@ -485,7 +496,7 @@ inline void TSqlORMapper<T>::clear()
     QSqlTableModel::clear();
     queryFilter.clear();
     sortColumn = -1;
-    sortOrder = TSql::AscendingOrder;
+    sortOrder = Tf::AscendingOrder;
     queryLimit = 0;
     queryOffset = 0;
 
@@ -504,7 +515,7 @@ inline QString TSqlORMapper<T>::orderBy() const
         QString field = TCriteriaConverter<T>::propertyName(sortColumn);
         if (!field.isEmpty()) {
             str.append(QLatin1String(" ORDER BY ")).append(field);
-            str.append((sortOrder == TSql::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
+            str.append((sortOrder == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
         }
     }
     return str;

@@ -131,6 +131,11 @@ namespace Tf
         Quotes,          // Converts both double and single quotes.
         NoQuotes,        // Leaves both double and single quotes unconverted.
     };
+
+    enum SortOrder {
+        AscendingOrder = Qt::AscendingOrder,
+        DescendingOrder = Qt::DescendingOrder,
+    };
 }
 
 
@@ -167,7 +172,7 @@ namespace TSql
         All,           // ALL (val1, ...)
     };
 
-    enum SortOrder {
+    enum SortOrder {   // obsoleted. use Tf::SortOrder instead.
         AscendingOrder = Qt::AscendingOrder,
         DescendingOrder = Qt::DescendingOrder,
     };

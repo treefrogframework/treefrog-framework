@@ -88,12 +88,12 @@ bool TMongoDriver::isOpen() const
 }
 
 
-int TMongoDriver::find(const QString &ns, const QVariantMap &criteria, const QStringList &fields,
-                       int limit, int skip, int options)
+int TMongoDriver::find(const QString &ns, const QVariantMap &criteria, const QVariantMap &orderBy,
+                       const QStringList &fields, int limit, int skip, int options)
 {
     int num = -1;
     mongo_clear_errors(mongoConnection);
-    mongo_cursor *cursor = mongo_find(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(criteria).data(),
+    mongo_cursor *cursor = mongo_find(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(criteria, orderBy).data(),
                                       (bson *)TBson::toBson(fields).data(), limit, skip, options);
     mongoCursor->setCursor(cursor);
 

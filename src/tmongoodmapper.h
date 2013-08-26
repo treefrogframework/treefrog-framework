@@ -17,7 +17,7 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    //void setSortOrder(int column, TSql::SortOrder order);
+    void setSortOrder(int column, Tf::SortOrder order);
 
     T findOne(const TCriteria &cri = TCriteria());
     T findFirst(const TCriteria &cri = TCriteria()) { return findOne(cri); }
@@ -28,6 +28,8 @@ public:
     int removeAll(const TCriteria &cri = TCriteria());
 
 private:
+    int sortColumn;
+    Tf::SortOrder sortOrder;
     Q_DISABLE_COPY(TMongoODMapper)
 };
 
@@ -37,7 +39,7 @@ private:
 */
 template <class T>
 inline TMongoODMapper<T>::TMongoODMapper()
-    : TMongoQuery(T().collectionName())
+    : TMongoQuery(T().collectionName()), sortColumn(-1), sortOrder(Tf::AscendingOrder)
 { }
 
 /*!
@@ -58,6 +60,14 @@ template <class T>
 inline void TMongoODMapper<T>::setOffset(int offset)
 {
     TMongoQuery::setOffset(offset);
+}
+
+
+template <class T>
+void TMongoODMapper<T>::setSortOrder(int column, Tf::SortOrder order)
+{
+    sortColumn = column;
+    sortOrder = order;
 }
 
 
@@ -88,7 +98,15 @@ inline T TMongoODMapper<T>::findByObjectId(const QString &id)
 template <class T>
 inline int TMongoODMapper<T>::find(const TCriteria &criteria)
 {
-    return TMongoQuery::find( TCriteriaMongoConverter<T>(criteria).toVariantMap() );
+    QVariantMap order;
+    if (sortColumn >= 0) {
+        QString name = TCriteriaConverter<T>::propertyName(sortColumn);
+        if (!name.isEmpty()) {
+            order.insert(name, (sortOrder == Tf::AscendingOrder) ? 1 : -1);
+        }
+    }
+
+    return TMongoQuery::find(TCriteriaMongoConverter<T>(criteria).toVariantMap(), order);
 }
 
 
