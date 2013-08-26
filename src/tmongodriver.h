@@ -31,6 +31,7 @@ public:
                 const QVariantMap &object, bool upsert = false);
     bool updateMulti(const QString &ns, const QVariantMap &criteria,
                      const QVariantMap &object);
+    int count(const QString &ns, const QVariantMap &criteria);
     int lastErrorCode() const;
     QString lastErrorString() const;
     QVariantMap getLastCommandStatus(const QString &db);

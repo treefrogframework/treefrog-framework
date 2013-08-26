@@ -26,6 +26,7 @@ public:
     bool next();
     T value() const;
     int removeAll(const TCriteria &cri = TCriteria());
+    int count(const TCriteria &cri = TCriteria());
 
 private:
     int sortColumn;
@@ -132,7 +133,14 @@ inline T TMongoODMapper<T>::value() const
 template <class T>
 inline int TMongoODMapper<T>::removeAll(const TCriteria &criteria)
 {
-    return TMongoQuery::remove( TCriteriaMongoConverter<T>(criteria).toVariantMap() );
+    return TMongoQuery::remove(TCriteriaMongoConverter<T>(criteria).toVariantMap());
+}
+
+
+template <class T>
+inline int TMongoODMapper<T>::count(const TCriteria &criteria)
+{
+    return TMongoQuery::count(TCriteriaMongoConverter<T>(criteria).toVariantMap());
 }
 
 #endif // TMONGOODMAPPER_H

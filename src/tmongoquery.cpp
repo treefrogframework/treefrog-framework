@@ -236,6 +236,18 @@ bool TMongoQuery::updateById(const QVariantMap &document)
     return update(criteria, document, false);
 }
 
+
+int TMongoQuery::count(const QVariantMap &criteria)
+{
+    if (!database.isValid()) {
+        tSystemError("TMongoQuery::count : driver not loaded");
+        return -1;
+    }
+
+    lastWriteStatus.clear();
+    return driver()->count(nameSpace, criteria);
+}
+
 /*!
   Returns the number of documents affected by the result's Mongo statement,
   or -1 if it cannot be determined.

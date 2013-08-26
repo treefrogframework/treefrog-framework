@@ -178,6 +178,25 @@ bool TMongoDriver::updateMulti(const QString &ns, const QVariantMap &criteria, c
 }
 
 
+int TMongoDriver::count(const QString &ns, const QVariantMap &criteria)
+{
+    mongo_clear_errors(mongoConnection);
+    int cnt = -1;
+    int index = ns.indexOf('.');
+    if (index < 0)
+        return cnt;
+
+    QString db = ns.mid(0, index);
+    QString coll = ns.mid(index + 1);
+    cnt = mongo_count(mongoConnection, qPrintable(db), qPrintable(coll), (const bson *)TBson::toBson(criteria).data());
+    if (cnt == MONGO_ERROR) {
+        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
+        return -1;
+    }
+    return cnt;
+}
+
+
 int TMongoDriver::lastErrorCode() const
 {
     return mongo_get_server_err(mongoConnection);

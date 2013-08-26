@@ -30,6 +30,7 @@ public:
     bool updateMulti(const QVariantMap &criteria, const QVariantMap &document);
     bool remove(const QVariantMap &criteria = QVariantMap());
     bool removeById(const QVariantMap &document);
+    int count(const QVariantMap &criteria = QVariantMap());
     int numDocsAffected() const;
     int lastErrorCode() const;
     QString lastErrorString() const;
