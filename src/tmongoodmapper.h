@@ -21,12 +21,23 @@ public:
 
     T findOne(const TCriteria &cri = TCriteria());
     T findFirst(const TCriteria &cri = TCriteria()) { return findOne(cri); }
+    T findFirstBy(int column, QVariant value);
     T findByObjectId(const QString &id);
     int find(const TCriteria &cri = TCriteria());
+    int findBy(int column, QVariant value);
+    int findIn(int column, const QVariantList &values);
     bool next();
     T value() const;
+
+    int findCount(const TCriteria &cri = TCriteria());
+    int findCountBy(int column, QVariant value);
+    QList<T> findAll(const TCriteria &cri = TCriteria());
+    QList<T> findAllBy(int column, QVariant value);
+    QList<T> findAllIn(int column, const QVariantList &values);
+    int updateAll(const TCriteria &cri, int column, QVariant value);
+    int updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values);
     int removeAll(const TCriteria &cri = TCriteria());
-    int count(const TCriteria &cri = TCriteria());
+
 
 private:
     int sortColumn;
@@ -76,7 +87,20 @@ template <class T>
 inline T TMongoODMapper<T>::findOne(const TCriteria &criteria)
 {
     T t;
-    QVariantMap doc = TMongoQuery::findOne( TCriteriaMongoConverter<T>(criteria).toVariantMap() );
+    QVariantMap doc = TMongoQuery::findOne(TCriteriaMongoConverter<T>(criteria).toVariantMap());
+    if (!doc.isEmpty()) {
+        t.setBsonData(doc);
+    }
+    return t;
+}
+
+
+template <class T>
+inline T TMongoODMapper<T>::findFirstBy(int column, QVariant value)
+{
+    T t;
+    TCriteria cri(column, value);
+    QVariantMap doc = TMongoQuery::findOne(TCriteriaMongoConverter<T>(cri).toVariantMap());
     if (!doc.isEmpty()) {
         t.setBsonData(doc);
     }
@@ -112,6 +136,20 @@ inline int TMongoODMapper<T>::find(const TCriteria &criteria)
 
 
 template <class T>
+inline int TMongoODMapper<T>::findBy(int column, QVariant value)
+{
+    return find(TCriteria(column, value));
+}
+
+
+template <class T>
+inline int TMongoODMapper<T>::findIn(int column, const QVariantList &values)
+{
+    return find(TCriteria(column, TMongo::In, values));
+}
+
+
+template <class T>
 inline bool TMongoODMapper<T>::next()
 {
     return TMongoQuery::next();
@@ -138,9 +176,78 @@ inline int TMongoODMapper<T>::removeAll(const TCriteria &criteria)
 
 
 template <class T>
-inline int TMongoODMapper<T>::count(const TCriteria &criteria)
+inline int TMongoODMapper<T>::findCount(const TCriteria &criteria)
 {
     return TMongoQuery::count(TCriteriaMongoConverter<T>(criteria).toVariantMap());
+}
+
+
+template <class T>
+inline int TMongoODMapper<T>::findCountBy(int column, QVariant value)
+{
+    return findCount(TCriteria(column, value));
+}
+
+
+template <class T>
+inline QList<T> TMongoODMapper<T>::findAll(const TCriteria &cri)
+{
+    QList<T> lst;
+    int cnt = find(cri);
+    tSystemDebug("Doc count: %d", cnt);
+
+    if (cnt > 0) {
+        while (next()) {
+            lst << value();
+        }
+    }
+    return lst;
+}
+
+
+template <class T>
+inline QList<T> TMongoODMapper<T>::findAllBy(int column, QVariant value)
+{
+    return findAll(TCriteria(column, value));
+}
+
+
+template <class T>
+inline QList<T> TMongoODMapper<T>::findAllIn(int column, const QVariantList &values)
+{
+    return findAll(TCriteria(column, TMongo::In, values));
+}
+
+
+template <class T>
+inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, int column, QVariant value)
+{
+    QString s = TCriteriaConverter<T>::propertyName(column);
+    if (s.isEmpty())
+        return -1;
+
+    QVariantMap doc;
+    doc.insert(s, value);
+    bool res = TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
+    return (res) ? numDocsAffected() : -1;
+}
+
+
+template <class T>
+inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values)
+{
+    QVariantMap doc;
+
+    for (QListIterator<QPair<int, QVariant> > it(values); it.hasNext(); ) {
+        const QPair<int, QVariant> &p = it.next();
+        QString s = TCriteriaConverter<T>::propertyName(p.first);
+        if (!s.isEmpty()) {
+            doc.insert(s, p.second);
+        }
+    }
+
+    bool res = TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
+    return (res) ? numDocsAffected() : -1;
 }
 
 #endif // TMONGOODMAPPER_H
