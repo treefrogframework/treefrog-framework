@@ -147,6 +147,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
     --enable-gui-mod | --enable-gui-mod=*)
       ENABLE_GUI="use_gui=1"
       ;;
+    --enable-mongo | --enable-mongo=*)
+      ENABLE_MONGO="use_mongo=1"
+      ;;
     --help | -help | -h | *)
       usage
       exit
