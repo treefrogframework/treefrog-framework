@@ -12,7 +12,7 @@ call "C:\Qt\Qt5.1.0\5.1.0\mingw48_32\bin\qtenv2.bat"
 ::
 cd /D %~dp0
 
-call configure.bat --enable-mongo --enable-debug
+call configure.bat --enable-debug
 if ERRORLEVEL 1 goto :error
 
 cd src
