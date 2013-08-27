@@ -46,6 +46,12 @@ void TModelObject::setProperties(const QVariantMap &values)
 }
 
 /*!
+  Clears the contents of the object.
+*/
+void TModelObject::clear()
+{ }
+
+/*!
   Returns a list of the property names.
 */
 QStringList TModelObject::propertyNames() const

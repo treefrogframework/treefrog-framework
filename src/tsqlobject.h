@@ -32,6 +32,7 @@ public:
     bool isNull() const { return QSqlRecord::isEmpty(); }
     bool isNew() const { return QSqlRecord::isEmpty(); }
     bool isModified() const;
+    void clear() { QSqlRecord::clear(); }
     QSqlError error() const { return sqlError; }
 
 protected:

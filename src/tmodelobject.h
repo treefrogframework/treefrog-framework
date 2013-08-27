@@ -18,6 +18,7 @@ public:
     virtual bool update() = 0;
     virtual bool remove() = 0;
     virtual void setProperties(const QVariantMap &value);
+    virtual void clear();
     virtual QVariantMap toVariantMap() const;
     virtual QStringList propertyNames() const;
 
