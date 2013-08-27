@@ -11,7 +11,7 @@
 
 namespace TSql
 {
-    extern const QHash<int, QString> &formats();
+    T_CORE_EXPORT const QHash<int, QString> &formats();
 }
 
 /*!

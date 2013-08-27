@@ -104,8 +104,6 @@ HEADERS += tactionview.h
 SOURCES += tactionview.cpp
 HEADERS += tactionmailer.h
 SOURCES += tactionmailer.cpp
-#HEADERS += tsqldatabasepool.h
-#SOURCES += tsqldatabasepool.cpp
 HEADERS += tsqldatabasepool2.h
 SOURCES += tsqldatabasepool2.cpp
 HEADERS += tsqlobject.h
@@ -124,8 +122,6 @@ HEADERS += tcriteria.h
 SOURCES += tcriteria.cpp
 HEADERS += tcriteriaconverter.h
 SOURCES += tcriteriaconverter.cpp
-HEADERS += tdispatcher.h
-#SOURCES += tdispatcher.cpp
 HEADERS += thttprequest.h
 SOURCES += thttprequest.cpp
 HEADERS += thttpresponse.h
@@ -188,8 +184,6 @@ HEADERS += tlogger.h
 SOURCES += tlogger.cpp
 HEADERS += tloggerfactory.h
 SOURCES += tloggerfactory.cpp
-HEADERS += tloggerplugin.h
-#SOURCES += tloggerplugin.cpp
 HEADERS += tfilelogger.h
 SOURCES += tfilelogger.cpp
 HEADERS += tabstractlogstream.h
@@ -224,8 +218,6 @@ HEADERS += tpaginator.h
 SOURCES += tpaginator.cpp
 HEADERS += tkvsdatabase.h
 SOURCES += tkvsdatabase.cpp
-#HEADERS += tkvsdatabasepool.h
-#SOURCES += tkvsdatabasepool.cpp
 HEADERS += tkvsdatabasepool2.h
 SOURCES += tkvsdatabasepool2.cpp
 HEADERS += tkvsdriver.h
@@ -268,6 +260,8 @@ HEADERS += \
            tfnamespace.h \
            tfexception.h \
            tcookie.h \
+           tdispatcher.h \
+           tloggerplugin.h \
            tsessionobject.h \
            tsessionstore.h \
            tsessionstoreplugin.h \
