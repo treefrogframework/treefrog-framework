@@ -3,7 +3,7 @@
 
 #include <QtSql>
 #include <QList>
-#include <QPair>
+#include <QMap>
 #include <TGlobal>
 #include <TSqlObject>
 #include <TCriteria>
@@ -50,7 +50,7 @@ public:
     QList<T> findAllBy(int column, QVariant value);
     QList<T> findAllIn(int column, const QVariantList &values);
     int updateAll(const TCriteria &cri, int column, QVariant value);
-    int updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values);
+    int updateAll(const TCriteria &cri, const QMap<int, QVariant> &values);
     int removeAll(const TCriteria &cri = TCriteria());
 
 protected:
@@ -399,7 +399,7 @@ inline QList<T> TSqlORMapper<T>::findAllIn(int column, const QVariantList &value
   affected by the query executed.
 */
 template <class T>
-int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values)
+int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &values)
 {
     QString upd;   // UPDATE Statement
     upd.reserve(256);
@@ -413,12 +413,12 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QList<QPair<int, QVar
         return -1;
     }
 
-    QListIterator<QPair<int, QVariant> > it(values);
+    QMapIterator<int, QVariant> it(values);
     for (;;) {
-        const QPair<int, QVariant> &p = it.next();
-        upd += TCriteriaConverter<T>::propertyName(p.first);
+        it.next();
+        upd += TCriteriaConverter<T>::propertyName(it.key());
         upd += '=';
-        upd += TSqlQuery::formatValue(p.second, database());
+        upd += TSqlQuery::formatValue(it.value(), database());
 
         if (!it.hasNext())
             break;

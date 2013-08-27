@@ -35,9 +35,8 @@ public:
     QList<T> findAllBy(int column, QVariant value);
     QList<T> findAllIn(int column, const QVariantList &values);
     int updateAll(const TCriteria &cri, int column, QVariant value);
-    int updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values);
+    int updateAll(const TCriteria &cri, const QMap<int, QVariant> &values);
     int removeAll(const TCriteria &cri = TCriteria());
-
 
 private:
     int sortColumn;
@@ -169,13 +168,6 @@ inline T TMongoODMapper<T>::value() const
 
 
 template <class T>
-inline int TMongoODMapper<T>::removeAll(const TCriteria &criteria)
-{
-    return TMongoQuery::remove(TCriteriaMongoConverter<T>(criteria).toVariantMap());
-}
-
-
-template <class T>
 inline int TMongoODMapper<T>::findCount(const TCriteria &criteria)
 {
     return TMongoQuery::count(TCriteriaMongoConverter<T>(criteria).toVariantMap());
@@ -194,7 +186,7 @@ inline QList<T> TMongoODMapper<T>::findAll(const TCriteria &cri)
 {
     QList<T> lst;
     int cnt = find(cri);
-    tSystemDebug("Doc count: %d", cnt);
+    tSystemDebug("Mongo documents count: %d", cnt);
 
     if (cnt > 0) {
         while (next()) {
@@ -234,20 +226,27 @@ inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, int column, QVaria
 
 
 template <class T>
-inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, const QList<QPair<int, QVariant> > &values)
+inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &values)
 {
     QVariantMap doc;
 
-    for (QListIterator<QPair<int, QVariant> > it(values); it.hasNext(); ) {
-        const QPair<int, QVariant> &p = it.next();
-        QString s = TCriteriaConverter<T>::propertyName(p.first);
+    for (QMapIterator<int, QVariant> it(values); it.hasNext(); ) {
+        it.next();
+        QString s = TCriteriaConverter<T>::propertyName(it.key());
         if (!s.isEmpty()) {
-            doc.insert(s, p.second);
+            doc.insert(s, it.value());
         }
     }
 
     bool res = TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
     return (res) ? numDocsAffected() : -1;
+}
+
+
+template <class T>
+inline int TMongoODMapper<T>::removeAll(const TCriteria &criteria)
+{
+    return TMongoQuery::remove(TCriteriaMongoConverter<T>(criteria).toVariantMap());
 }
 
 #endif // TMONGOODMAPPER_H

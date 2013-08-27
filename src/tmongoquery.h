@@ -16,7 +16,9 @@ public:
     TMongoQuery(const TMongoQuery &other);
     virtual ~TMongoQuery() { }
 
+    int limit() const;
     void setLimit(int limit);
+    int offset() const;
     void setOffset(int offset);
     int find(const QVariantMap &criteria = QVariantMap(), const QVariantMap &orderBy = QVariantMap(), const QStringList &fields = QStringList());
     bool next();
@@ -50,10 +52,23 @@ private:
 };
 
 
+inline int TMongoQuery::limit() const
+{
+    return queryLimit;
+}
+
+
 inline void TMongoQuery::setLimit(int limit)
 {
     queryLimit = limit;
 }
+
+
+inline int TMongoQuery::offset() const
+{
+    return queryOffset;
+}
+
 
 inline void TMongoQuery::setOffset(int offset)
 {
