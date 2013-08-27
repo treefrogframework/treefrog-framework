@@ -257,11 +257,26 @@
     "QJsonArray %1::getAllJson()\n"                           \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
-    "    %2<%1Object> mapper;\n"                              \
+    "    TSqlORMapper<%1Object> mapper;\n"                    \
     "\n"                                                      \
     "    if (mapper.find() > 0) {\n"                          \
     "        for (TSqlORMapperIterator<%1Object> i(mapper); i.hasNext(); ) {\n" \
     "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(i.next()).toVariantMap())));\n" \
+    "        }\n"                                             \
+    "    }\n"                                                 \
+    "    return array;\n"                                     \
+    "}\n"                                                     \
+    "\n"
+
+#define MODEL_IMPL_GETALLJSON_MONGO                           \
+    "QJsonArray %1::getAllJson()\n"                           \
+    "{\n"                                                     \
+    "    QJsonArray array;\n"                                 \
+    "    TMongoODMapper<%1Object> mapper;\n"                  \
+    "\n"                                                      \
+    "    if (mapper.find() > 0) {\n"                          \
+    "        while (mapper.next()) {\n"                       \
+    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(mapper.value()).toVariantMap())));\n" \
     "        }\n"                                             \
     "    }\n"                                                 \
     "    return array;\n"                                     \
@@ -336,8 +351,19 @@ QStringList ModelGenerator::genModel(const QString &dstDir) //, const FieldList 
 
 #if QT_VERSION >= 0x050000
     p.first  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
-    QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
-    p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName, mapperstr);
+    switch (objectType) {
+    case Sql:
+        p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
+        break;
+
+    case Mongo:
+        p.second << QString(MODEL_IMPL_GETALLJSON_MONGO).arg(modelName);
+        break;
+
+    default:
+        p.second << "";
+        break;
+    }
 #else
     p.first << "" << "";
     p.second << "";

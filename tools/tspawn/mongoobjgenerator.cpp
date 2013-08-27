@@ -129,7 +129,7 @@ static QList<QPair<QString, QVariant::Type> > getFieldList(const QString &filePa
     QRegExp rx("\\s([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
 
     QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("file open error: %s", qPrintable(filePath));
         _exit(1);
     }
@@ -158,7 +158,7 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
 {
     QFile file(path);
 
-    if (!file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("file open error: %s", qPrintable(path));
         _exit(1);
     }
