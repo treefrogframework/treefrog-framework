@@ -1,3 +1,20 @@
+Changes with version 1.7.0
+    * Added a multiplexing socket receiver using epoll system call (Linux only)
+    * Update Mongo C driver to v0.8.
+    * Modified to use atomic functions instead of mutex locking.
+    * Improving Performance of multiplexing receiver.
+    * Added 'hybrid' as multi-processing module (MPM)
+    * Added the THttpSendBuffer class for send buffering.
+    * Fix compile error in Qt v5.1.
+    * Added a atomic queue module, TAtomicQueue class.
+    * Added a object-document mapper module for MongoDB, MongoODMapper class.
+    * Supported MongoDB object as model objects.
+    * Added a criteria converter for MongoDB, TCriteriaMongoConverter class.
+    * Added new functions to TMongoQuery class.
+    * Changed a patameter type of updateAll() to QMap<int,QVariant> class.
+    * Fix a bug of execution of SQL query in a constuctor.
+    * Added the option of Mongo object creation to 'tspawn' generator.
+
 Changes with version 1.6.1
     * Fix a bug of generating user models.
     * Fix a bug of case-sensitivity of field names in DB tables.
