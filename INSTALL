@@ -6,9 +6,20 @@ Requirements
 
 
 Installation
-1. Extract the downloaded file.
+1. Extract the downloaded tar.gz file.
 
 2. Run build commands.
+    Linux, Mac OS X, or Unix-like OS:
+      Run the following commands.
+       $ cd treefrog-x.x.x
+       $ ./configure
+       $ cd src
+       $ make
+       $ sudo make install
+       $ cd ../tools
+       $ make
+       $ sudo make install
+
     Windows:
       Build binaries of two modes, release and debug.
       Run the following commands in Qt Command Prompt.
@@ -27,21 +38,6 @@ Installation
     
       Or, double-click to run the build.bat after editing it for your Qt
       environment.
-
-    Linux, Mac OS X, or Unix-like OS:
-      Run the following commands.
-       $ cd treefrog-x.x.x
-       $ ./configure
-       $ cd src
-       $ make
-       $ sudo make install
-       $ cd ../tools
-       $ make
-       $ sudo make install
-
-   [Optional]
-   Run the configure script by using the '--enable-mongo' option to
-   enable the MongoDB driver of TreeFrog Framework.
 
 3. Create a shortcut to TreeFrog Command Prompt (on Windows only).
    Locate the program:
@@ -62,4 +58,4 @@ Installation
     $ sudo apt-get install libqt4-sql-mysql libqt4-sql-psql
 
  
- Enjoy.
+ Enjoy!

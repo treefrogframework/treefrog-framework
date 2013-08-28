@@ -23,7 +23,7 @@ Features
                       configuration file
  * Generator - Automatically generates scaffolds and Makefiles
  * Ajax support - JSON, XML and Plain text available
- * NoSQL database support - MongoDB driver included  [Experimental]
+ * NoSQL database support - MongoDB support
  * OSS  - New BSD License
 
 
