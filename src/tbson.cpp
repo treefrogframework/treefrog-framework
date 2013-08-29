@@ -298,7 +298,7 @@ static inline int oidFuzz()
 
 static inline int oidInc()
 {
-    static QAtomicInt incr = 1;
+    static QAtomicInt incr = Tf::randXor128();
     return incr.fetchAndAddOrdered(1);
 }
 
