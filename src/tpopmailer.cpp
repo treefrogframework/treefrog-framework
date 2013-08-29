@@ -81,7 +81,7 @@ bool TPopMailer::connectToHost()
     int j = response.indexOf('>');
     if (i >= 0 && j > i) {
         apopToken = response.mid(i, j - i + 1);
-        tSystemDebug("APOP token: %s", qPrintable(apopToken));
+        tSystemDebug("APOP token: %s", apopToken.data());
     }
 
     if (apopEnabled) {
