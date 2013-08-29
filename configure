@@ -94,7 +94,6 @@ fi
 # default values
 BASEDIR=`pwd`/`dirname $0`
 PREFIX=/usr
-[ -n "$QMAKE" ] || QMAKE=qmake
 
 if [ "$KERNEL" = "Darwin" ]; then
   FRAMEWORK=/Library/Frameworks
@@ -176,10 +175,16 @@ else
   OPT="$OPT CONFIG+=release"
 fi
 
-if ! which $QMAKE >/dev/null 2>&1; then
-  echo $QMAKE: command not found
-  echo 
-  exit
+# search qmake command
+if [ -z "$QMAKE" ]; then
+  which qmake-qt4 >/dev/null 2>&1 && QMAKE=qmake-qt4
+  which qmake     >/dev/null 2>&1 && QMAKE=qmake
+
+  if [ -z "$QMAKE" ]; then
+    echo qmake: command not found
+    echo 
+    exit
+  fi
 fi
 
 cd $BASEDIR/src
