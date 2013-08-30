@@ -76,7 +76,7 @@ mingw32-make clean >nul 2>&1
 mingw32-make >nul 2>&1
 if ERRORLEVEL 1 (
   echo Compile failed.
-  echo MongoDB driver not available, reconfigure without '--enable-mongo'.
+  echo MongoDB driver not available.
   exit /b
 )
 cd ..\..

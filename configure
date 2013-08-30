@@ -105,7 +105,6 @@ else
 fi
 BINDIR=$PREFIX/bin
 DATADIR=$PREFIX/share/treefrog
-ENABLE_MONGO="use_mongo=1"
 
 # parse options
 while [ -n "`echo $1 | grep '-'`" ]; do
@@ -145,9 +144,6 @@ while [ -n "`echo $1 | grep '-'`" ]; do
       ;;
     --enable-gui-mod | --enable-gui-mod=*)
       ENABLE_GUI="use_gui=1"
-      ;;
-    --enable-mongo | --enable-mongo=*)
-      ENABLE_MONGO="use_mongo=1"
       ;;
     --help | -help | -h | *)
       usage
@@ -189,27 +185,26 @@ fi
 
 cd $BASEDIR/src
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_MONGO
+$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
 cd $BASEDIR/tools
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-$QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\" $ENABLE_MONGO
+$QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
 make qmake
 
-if [ -n "$ENABLE_MONGO" ]; then
-  cd $BASEDIR/3rdparty/mongo-c-driver
-  echo
-  echo -n "Compiling MongoDB driver library ... "
-  $QMAKE $OPT mongo-c-driver.pro
-  make clean >/dev/null 2>&1
-  make >/dev/null 2>&1
-  RET=$?
-  if [ $RET != 0 ]; then
-    echo "failed"
-    echo "MongoDB driver not available."
-    exit $RET
-  fi
-  echo "OK"
+# compile MongoDB files
+cd $BASEDIR/3rdparty/mongo-c-driver
+echo
+echo -n "Compiling MongoDB driver library ... "
+$QMAKE $OPT mongo-c-driver.pro
+make clean >/dev/null 2>&1
+make >/dev/null 2>&1
+RET=$?
+if [ $RET != 0 ]; then
+  echo "failed"
+  echo "MongoDB driver not available."
+  exit $RET
 fi
+echo "OK"
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
