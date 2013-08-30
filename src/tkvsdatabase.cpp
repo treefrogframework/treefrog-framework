@@ -13,10 +13,7 @@
 #include <QStringListIterator>
 #include <QMutex>
 #include <QMutexLocker>
-
-#ifdef TF_BUILD_MONGODB
-# include <TMongoDriver>
-#endif
+#include <TMongoDriver>
 
 class TKvsDatabaseData
 {
@@ -50,11 +47,9 @@ static TKvsDriver *createDriver(const QString &driverName)
 {
     TKvsDriver *ret = 0;
 
-#ifdef TF_BUILD_MONGODB
     if (driverName == QLatin1String("MONGODB")) {
         ret = new TMongoDriver();
     }
-#endif
 
     if (!ret) {
         tWarn("TKvsDatabase: %s driver not loaded", qPrintable(driverName));

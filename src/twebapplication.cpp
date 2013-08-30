@@ -259,11 +259,7 @@ QSettings &TWebApplication::mongoDbSettings() const
 */
 bool TWebApplication::isMongoDbAvailable() const
 {
-#ifdef TF_BUILD_MONGODB
     return (bool)mongoSetting;
-#else
-    return false;
-#endif
 }
 
 /*!

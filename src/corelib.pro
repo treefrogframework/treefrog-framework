@@ -238,7 +238,7 @@ SOURCES += tatomicqueue.cpp
   } else {
     LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
   }
-  DEFINES += MONGO_HAVE_STDINT TF_BUILD_MONGODB
+  DEFINES += MONGO_HAVE_STDINT
 
   HEADERS += tmongodriver.h
   SOURCES += tmongodriver.cpp
