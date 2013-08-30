@@ -1,13 +1,14 @@
-TARGET = tspawn
+TARGET   = tspawn
 TEMPLATE = app
-VERSION = 1.0.0
-CONFIG += console
-CONFIG -= app_bundle
-QT += sql
-QT -= gui
+VERSION  = 1.0.0
+CONFIG  += console
+CONFIG  -= app_bundle
+QT      += sql
+QT      -= gui
+DEFINES += TF_DLL
+INCLUDEPATH += $$header.path
 
 include(../../tfbase.pri)
-INCLUDEPATH += $$header.path
 
 isEmpty( datadir ) {
   win32 {
@@ -18,8 +19,18 @@ isEmpty( datadir ) {
 }
 DEFINES += TREEFROG_DATA_DIR=\\\"$$datadir\\\"
 
-!isEmpty( use_mongo ) {
-  DEFINES += TF_BUILD_MONGODB
+win32 {
+  CONFIG(debug, debug|release) {
+    TARGET = $$join(TARGET,,,d)
+    LIBS += -ltreefrogd$${TF_VER_MAJ}
+  } else {
+    LIBS += -ltreefrog$${TF_VER_MAJ}
+  }
+  LIBS += -L "$$target.path"
+} else:macx {
+  LIBS += -F$$lib.path -framework treefrog
+} else:unix {
+  LIBS += -L$$lib.path -ltreefrog
 }
 
 isEmpty( target.path ) {
@@ -126,33 +137,35 @@ unix {
   }
 }
 
-HEADERS = global.h \
-          filewriter.h \
-          tableschema.h \
-          projectfilegenerator.h \
-          controllergenerator.h \
-          modelgenerator.h \
-          abstractobjgenerator.h \
-          sqlobjgenerator.h \
-          mongoobjgenerator.h \
-          validatorgenerator.h \
-          otamagenerator.h \
-          erbgenerator.h \
-          mailergenerator.h \
-          util.h
-
-SOURCES = main.cpp \
-          global.cpp \
-          filewriter.cpp \
-          tableschema.cpp \
-          projectfilegenerator.cpp \
-          controllergenerator.cpp \
-          modelgenerator.cpp \
-          abstractobjgenerator.cpp \
-          sqlobjgenerator.cpp \
-          mongoobjgenerator.cpp \
-          validatorgenerator.cpp \
-          otamagenerator.cpp \
-          erbgenerator.cpp \
-          mailergenerator.cpp \
-          util.cpp
+# Source files
+SOURCES += main.cpp
+HEADERS += global.h
+SOURCES += global.cpp
+HEADERS += filewriter.h
+SOURCES += filewriter.cpp
+HEADERS += tableschema.h
+SOURCES += tableschema.cpp
+HEADERS += projectfilegenerator.h
+SOURCES += projectfilegenerator.cpp
+HEADERS += controllergenerator.h
+SOURCES += controllergenerator.cpp
+HEADERS += modelgenerator.h
+SOURCES += modelgenerator.cpp
+HEADERS += abstractobjgenerator.h
+SOURCES += abstractobjgenerator.cpp
+HEADERS += sqlobjgenerator.h
+SOURCES += sqlobjgenerator.cpp
+HEADERS += mongoobjgenerator.h
+SOURCES += mongoobjgenerator.cpp
+HEADERS += validatorgenerator.h
+SOURCES += validatorgenerator.cpp
+HEADERS += otamagenerator.h
+SOURCES += otamagenerator.cpp
+HEADERS += erbgenerator.h
+SOURCES += erbgenerator.cpp
+HEADERS += mailergenerator.h
+SOURCES += mailergenerator.cpp
+HEADERS += mongocommand.h
+SOURCES += mongocommand.cpp
+HEADERS += util.h
+SOURCES += util.cpp

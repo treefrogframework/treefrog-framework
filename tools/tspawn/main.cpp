@@ -19,6 +19,7 @@
 #include "mailergenerator.h"
 #include "projectfilegenerator.h"
 #include "tableschema.h"
+#include "mongocommand.h"
 #include "util.h"
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
@@ -46,6 +47,7 @@ enum SubCommand {
     ShowDrivers,
     ShowDriverPath,
     ShowTables,
+    ShowCollections,
 };
 
 typedef QHash<QString, int> StringHash;
@@ -80,6 +82,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(StringHash, subCommands,
     x->insert("--show-drivers", ShowDrivers);
     x->insert("--show-driver-path", ShowDriverPath);
     x->insert("--show-tables", ShowTables);
+    x->insert("--show-collections", ShowCollections);
 })
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, subDirs,
@@ -122,9 +125,7 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, filePaths,
        << L("config") + SEP + "database.ini"
        << L("config") + SEP + "development.ini"
        << L("config") + SEP + "logger.ini"
-#ifdef TF_BUILD_MONGODB
        << L("config") + SEP + "mongodb.ini"
-#endif
        << L("config") + SEP + "routes.cfg"
        << L("config") + SEP + "validation.ini"
        << L("config") + SEP + "initializers" + SEP + "internet_media_types.ini"
@@ -147,7 +148,8 @@ static void usage()
     qDebug("usage: tspawn <subcommand> [args]\n\n" \
            "Type 'tspawn --show-drivers' to show all the available database drivers for Qt.\n" \
            "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n" \
-           "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n\n" \
+           "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n" \
+           "Type 'tspawn --show-collections' to show all collections in the MongoDB.\n\n" \
            "Available subcommands:\n" \
            "  new (n)         <application-name>\n" \
            "  scaffold (s)    <table-name> [model-name]\n" \
@@ -490,9 +492,35 @@ int main(int argc, char *argv[])
                 for (QStringListIterator i(tables); i.hasNext(); ) {
                     printf("  %s\n", qPrintable(i.next()));
                 }
+                putchar('\n');
             }
         } else {
             return 2;
+        }
+        break;
+
+    case ShowCollections:
+        if (checkIniFile()) {
+            // MongoDB settings
+            QString mongoini = appSettings.value("MongoDbSettingsFile").toString().trimmed();
+            QString mnginipath = QLatin1String("config") + QDir::separator() + mongoini;
+
+            if (mongoini.isEmpty() || !QFile(mnginipath).exists()) {
+                qCritical("MongoDB settings file not found");
+                return 2;
+            }
+
+            MongoCommand mongo(mnginipath);
+            if (!mongo.open("dev")) {
+                return 2;
+            }
+
+            QStringList colls = mongo.getCollectionNames();
+            printf("-----------------\nExisting collections:\n");
+            for (QStringListIterator i(colls); i.hasNext(); ) {
+                printf("  %s\n", qPrintable(i.next()));
+            }
+            putchar('\n');
         }
         break;
 
