@@ -1,14 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
-  <!-- *** 7行目,28行目,32行目を修正 *** -->
+  <!-- *** 8行目,12行目,30行目,36行目を修正せよ *** -->
+  <!-- *** 基本的に 9行目,10行目,41行目も修正する *** -->
 
   <!-- プロダクト情報 -->
-  <Product Name='TreeFrog Framework 1.6.1'
-           Id='9FB4BBC8-FFFF-4207-B078-256E4A3F6CB1'
-           UpgradeCode='F396150C-4777-4575-A7D7-E78E5178E39A'
+  <Product Name='TreeFrog Framework 1.7.0'
+           Id='071E0937-2974-4994-9F3D-084BFB6836AD'
+           UpgradeCode='E317471F-3494-4D57-88E6-C54722C1244B'
            Language='1041' Codepage='932'
-           Version='1.6.1' Manufacturer='TreeFrog Framework Project'>
+           Version='1.7.0' Manufacturer='TreeFrog Framework Project'>
 
     <!-- パッケージ情報 -->
     <Package Id='*' Keywords='Installer'
@@ -26,18 +27,18 @@
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='WINDOWSVOLUME'>
         <Directory Id='INSTALLDIR' Name='TreeFrog'>
-          <Directory Id='VERSIONDIR' Name='1.6.1'>
+          <Directory Id='VERSIONDIR' Name='1.7.0'>
           </Directory>
         </Directory>
       </Directory>
       
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.6.1"/>
+        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.7.0"/>
       </Directory>
     </Directory>
     
     <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcut" Guid="483115D8-9B72-49D4-BDCC-7EF0AABCB50C">
+      <Component Id="ApplicationShortcut" Guid="620CEDE4-D711-4345-85BE-C4B7E9EEF9AE">
         <CreateFolder Directory="ApplicationProgramsFolder"/>
 
         <!-- Shortcut to TF prompt-->
