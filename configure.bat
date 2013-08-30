@@ -9,7 +9,6 @@ if "%1" == "" goto :start
 if /i "%1" == "--prefix" goto :prefix
 if /i "%1" == "--enable-debug" goto :enable_debug
 if /i "%1" == "--enable-gui-mod" goto :enable_gui_mod
-if /i "%1" == "--enable-mongo" goto :enable_mongo
 if /i "%1" == "--help" goto :help
 if /i "%1" == "-h" goto :help
 goto :help
@@ -25,7 +24,6 @@ goto :parse_loop
   echo   -h, --help          display this help and exit
   echo   --enable-debug      compile with debugging information
   echo   --enable-gui-mod    compile and link with QtGui module
-  echo   --enable-mongo      compile with MongoDB driver library
   echo;
   echo Installation directories:
   echo   --prefix=PREFIX     install files in PREFIX [%TFDIR%]
@@ -44,11 +42,6 @@ goto :parse_loop
 :enable_gui_mod
   set USE_GUI=use_gui=1
   goto :continue
-
-:enable_mongo
-  set USE_MONGO=use_mongo=1
-  goto :continue
-
 
 :start
 if "%DEBUG%" == "yes" (
@@ -76,26 +69,25 @@ echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 :: Builds MongoDB driver
-if not "%USE_MONGO%" == "" (
-  echo Compiling MongoDB driver library ...
-  cd 3rdparty\mongo-c-driver
-  qmake -r %OPT%
-  mingw32-make clean >nul 2>&1
-  mingw32-make >nul 2>&1
-  if ERRORLEVEL 1 (
-    echo Compile failed.
-    echo MongoDB driver not available, reconfigure without '--enable-mongo'.
-    exit /b
-  )
-  cd ..\..
+echo Compiling MongoDB driver library ...
+cd 3rdparty\mongo-c-driver
+qmake -r %OPT%
+mingw32-make clean >nul 2>&1
+mingw32-make >nul 2>&1
+if ERRORLEVEL 1 (
+  echo Compile failed.
+  echo MongoDB driver not available, reconfigure without '--enable-mongo'.
+  exit /b
 )
+cd ..\..
+
 cd src
 if exist Makefile ( mingw32-make -k distclean >nul 2>&1 )
-qmake -spec win32-g++ %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI% %USE_MONGO%
+qmake -spec win32-g++ %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 cd ..
 cd tools
 if exist Makefile ( mingw32-make -k distclean >nul 2>&1 )
-qmake -recursive -spec win32-g++ %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%' %USE_MONGO%
+qmake -recursive -spec win32-g++ %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
 mingw32-make qmake
 cd ..
 

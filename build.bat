@@ -4,7 +4,7 @@
 ::
 :: Edit this line to run the batch file for Qt environment.
 ::
-call "C:\Qt\Qt5.1.0\5.1.0\mingw48_32\bin\qtenv2.bat"
+call "C:\Qt\Qt5.1.1\5.1.1\mingw48_32\bin\qtenv2.bat"
 ::call "C:\Qt\Qt5.0.2\5.0.2\mingw47_32\bin\qtenv2.bat"
 
 ::
@@ -24,7 +24,7 @@ mingw32-make.exe -j4 install
 if ERRORLEVEL 1 goto :error
 
 cd ..
-call configure.bat --enable-mongo
+call configure.bat
 if ERRORLEVEL 1 goto :error
 
 cd src

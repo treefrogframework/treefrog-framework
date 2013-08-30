@@ -21,7 +21,6 @@ DEFINES += TREEFROG_DATA_DIR=\\\"$$datadir\\\"
 
 win32 {
   CONFIG(debug, debug|release) {
-    TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ}
   } else {
     LIBS += -ltreefrog$${TF_VER_MAJ}

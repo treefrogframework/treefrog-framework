@@ -1,4 +1,4 @@
-TARGET = treefrog
+TARGET   = treefrog
 TEMPLATE = lib
 CONFIG  += shared
 QT      += sql network xml
@@ -27,9 +27,8 @@ INSTALLS += target
 win32 {
   LIBS += -lws2_32
   header.files = $$HEADER_FILES $$HEADER_CLASSES
-  !isEmpty( use_mongo ) {
-    header.files += $$MONGODB_FILES $$MONGODB_CLASSES
-  }
+  header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+
   isEmpty(header.path) {
     header.path = C:/TreeFrog/$${VERSION}/include
   }
@@ -42,9 +41,8 @@ win32 {
   CONFIG += lib_bundle
   FRAMEWORK_HEADERS.version = Versions
   FRAMEWORK_HEADERS.files = $$HEADER_FILES $$HEADER_CLASSES
-  !isEmpty( use_mongo ) {
-    FRAMEWORK_HEADERS.files += $$MONGODB_FILES $$MONGODB_CLASSES
-  }
+  FRAMEWORK_HEADERS.files += $$MONGODB_FILES $$MONGODB_CLASSES
+
   FRAMEWORK_HEADERS.path = Headers
   FRAMEWORK_TEST.version = Versions
   FRAMEWORK_TEST.files = $$TEST_FILES $$TEST_CLASSES
@@ -52,9 +50,8 @@ win32 {
   QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS FRAMEWORK_TEST
 } else:unix {
   header.files = $$HEADER_FILES $$HEADER_CLASSES
-  !isEmpty( use_mongo ) {
-    header.files += $$MONGODB_FILES $$MONGODB_CLASSES
-  }
+  header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+
   isEmpty(header.path) {
     header.path = /usr/include/treefrog
   }
@@ -227,34 +224,34 @@ SOURCES += tatomicset.cpp
 HEADERS += tatomicqueue.h
 SOURCES += tatomicqueue.cpp
 
-!isEmpty( use_mongo ) {
-  INCLUDEPATH += ../3rdparty/mongo-c-driver/src
-  win32 {
-    CONFIG(debug, debug|release) {
-      LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a -lws2_32
-    } else {
-      LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a -lws2_32
-    }
+# Files for MongoDB
+INCLUDEPATH += ../3rdparty/mongo-c-driver/src
+win32 {
+  CONFIG(debug, debug|release) {
+    LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a -lws2_32
   } else {
-    LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
+    LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a -lws2_32
   }
-  DEFINES += MONGO_HAVE_STDINT
-
-  HEADERS += tmongodriver.h
-  SOURCES += tmongodriver.cpp
-  HEADERS += tmongoquery.h
-  SOURCES += tmongoquery.cpp
-  HEADERS += tmongocursor.h
-  SOURCES += tmongocursor.cpp
-  HEADERS += tbson.h
-  SOURCES += tbson.cpp
-  HEADERS += tmongoobject.h
-  SOURCES += tmongoobject.cpp
-  HEADERS += tmongoodmapper.h
-  SOURCES += tmongoodmapper.cpp
-  HEADERS += tcriteriamongoconverter.h
-  SOURCES += tcriteriamongoconverter.cpp
+} else {
+  LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
 }
+DEFINES += MONGO_HAVE_STDINT
+
+HEADERS += tmongodriver.h
+SOURCES += tmongodriver.cpp
+HEADERS += tmongoquery.h
+SOURCES += tmongoquery.cpp
+HEADERS += tmongocursor.h
+SOURCES += tmongocursor.cpp
+HEADERS += tbson.h
+SOURCES += tbson.cpp
+HEADERS += tmongoobject.h
+SOURCES += tmongoobject.cpp
+HEADERS += tmongoodmapper.h
+SOURCES += tmongoodmapper.cpp
+HEADERS += tcriteriamongoconverter.h
+SOURCES += tcriteriamongoconverter.cpp
+
 
 HEADERS += \
            tfnamespace.h \
