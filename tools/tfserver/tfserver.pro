@@ -1,16 +1,16 @@
-TARGET = tadpole
+TARGET   = tadpole
 TEMPLATE = app
-VERSION = 1.0.0
-CONFIG += console
-CONFIG -= app_bundle
-QT     += network sql
-QT     -= gui
+VERSION  = 1.0.0
+CONFIG  += console
+CONFIG  -= app_bundle
+QT      += network sql
+QT      -= gui
 DEFINES += TF_DLL
+INCLUDEPATH += $$header.path
 
 include(../../tfbase.pri)
 
 win32 {
-  INCLUDEPATH += $$header.path
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ}
@@ -19,10 +19,8 @@ win32 {
   }
   LIBS += -L "$$target.path"
 } else:macx {
-  INCLUDEPATH += $$header.path
   LIBS += -F$$lib.path -framework treefrog
 } else:unix {
-  INCLUDEPATH += $$header.path
   LIBS += -L$$lib.path -ltreefrog
 }
 

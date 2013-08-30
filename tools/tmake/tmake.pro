@@ -1,9 +1,9 @@
-TARGET = tmake
+TARGET   = tmake
 TEMPLATE = app
-VERSION = 1.0.0
-CONFIG += console
-CONFIG -= app_bundle
-QT -= gui
+VERSION  = 1.0.0
+CONFIG  += console
+CONFIG  -= app_bundle
+QT      -= gui
 INCLUDEPATH += ../../include
 
 include(../../tfbase.pri)
