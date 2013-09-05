@@ -7,6 +7,13 @@
 #include <TCriteriaMongoConverter>
 #include <TCriteria>
 
+/*!
+  \class TMongoODMapper
+  \brief The TMongoODMapper class is a template class that provides
+  concise functionality to object-document mapping for MongoDB.
+  \sa TCriteria, TMongoQuery
+*/
+
 
 template <class T>
 class TMongoODMapper : protected TMongoQuery

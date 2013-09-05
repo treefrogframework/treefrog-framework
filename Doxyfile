@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrog Framework
-PROJECT_NUMBER         = 1.6
+PROJECT_NUMBER         = 1.7
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -107,9 +107,12 @@ EXCLUDE                = src/test \
                          src/taccesslog.h \
                          src/tactionforkprocess.h \
                          src/taccesslogstream.h \
-                         src/tapplicationserver.h \
+                         src/tthreadapplicationserver.h \
+                         src/tatomicqueue.h \
+                         src/tatomicset.h \
                          src/tsharedmemorylogstream.h \
                          src/tsqldatabasepool.h \
+                         src/tsqldatabasepool2.h \
                          src/turlroute.h \
                          src/tbasiclogstream.h \
                          src/tactionthread.h \
@@ -135,11 +138,15 @@ EXCLUDE                = src/test \
                          src/tkvsdriver.h \
                          src/tkvsdatabase.h \
                          src/tkvsdatabasepool.h \
+                         src/tkvsdatabasepool2.h \
                          src/tmongodriver.h \
                          src/tmongocursor.h \
                          src/tmongomapper.h \
                          src/tmongoobject.h \
                          src/tcriteriamongoconverter.h \
+                         src/thttpbuffer.h \
+                         src/thttpsendbuffer.h \
+                         src/tmultiplexingserver.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp
