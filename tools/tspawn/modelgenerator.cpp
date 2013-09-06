@@ -213,7 +213,7 @@
     "\n"                                                      \
     "    TSqlORMapper<%2Object> mapper;\n"                    \
     "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%15, %13));\n" \
-    "    if (obj.isNull() || obj.%14 != %14) {\n"             \
+    "    if (obj.isNull() || obj.%16 != %14) {\n"             \
     "        obj.clear();\n"                                  \
     "    }\n"                                                 \
     "    return %2(obj);\n"                                   \
@@ -397,7 +397,7 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     p.second << fieldNameToVariableName(usernameField) << fieldNameToVariableName(passwordField)
-             << fieldNameToEnumName(usernameField);
+             << fieldNameToEnumName(usernameField) << passwordField;
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
     ret << QFileInfo(fileName).fileName();
     return ret;
