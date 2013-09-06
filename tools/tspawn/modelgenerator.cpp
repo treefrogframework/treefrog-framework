@@ -141,6 +141,7 @@
     "\n"                                                 \
     "class TModelObject;\n"                              \
     "class %2Object;\n"                                  \
+    "%7"                                                 \
     "\n\n"                                               \
     "class T_MODEL_EXPORT %2 : public TAbstractUser, public TAbstractModel\n" \
     "{\n"                                                \
@@ -151,15 +152,16 @@
     "    ~%2();\n"                                       \
     "\n"                                                 \
     "%3"                                                 \
-    "%9"                                                 \
+    "%11"                                                \
     "    %2 &operator=(const %2 &other);\n"              \
     "\n"                                                 \
-    "    static %2 authenticate(const QString &%7, const QString &%8);\n" \
+    "    static %2 authenticate(const QString &%9, const QString &%10);\n" \
     "    static %2 create(%4);\n"                        \
     "    static %2 create(const QVariantMap &values);\n" \
     "    static %2 get(%5);\n"                           \
     "%6"                                                 \
     "    static QList<%2> getAll();\n"                   \
+    "%8"                                                 \
     "\n"                                                 \
     "private:\n"                                         \
     "    QSharedDataPointer<%2Object> d;\n"              \
@@ -204,14 +206,14 @@
     "    return *this;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::authenticate(const QString &%10, const QString &%11)\n" \
+    "%2 %2::authenticate(const QString &%13, const QString &%14)\n" \
     "{\n"                                                     \
-    "    if (%10.isEmpty() || %11.isEmpty())\n"               \
+    "    if (%13.isEmpty() || %14.isEmpty())\n"               \
     "        return %2();\n"                                  \
     "\n"                                                      \
     "    TSqlORMapper<%2Object> mapper;\n"                    \
-    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%12, %10));\n" \
-    "    if (obj.isNull() || obj.%11 != %11) {\n"             \
+    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%15, %13));\n" \
+    "    if (obj.isNull() || obj.%14 != %14) {\n"             \
     "        obj.clear();\n"                                  \
     "    }\n"                                                 \
     "    return %2(obj);\n"                                   \
@@ -237,12 +239,13 @@
     "%8"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%9"                                                      \
+    "%10"                                                     \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
-    "    return tfGetModelListBy%10Criteria<%2, %2Object>();\n" \
+    "    return tfGetModelListBy%11Criteria<%2, %2Object>();\n" \
     "}\n"                                                     \
     "\n"                                                      \
+    "%12"                                                     \
     "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
@@ -325,7 +328,7 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
     // Generates user-model
     if (userModel) {
         if (userFields.count() == 2) {
-            files << genUserModel(userFields.value(0), userFields.value(1));
+            files << genUserModel(dstDir, userFields.value(0), userFields.value(1));
         } else if (userFields.isEmpty()) {
             files << genUserModel(dstDir);
         } else {
@@ -333,8 +336,7 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
             return false;
         }
     } else {
-        //   FieldList fields = mongen.fieldList();
-        files << genModel(dstDir); //, fields);
+        files << genModel(dstDir);
     }
 
     // Generates a project file
@@ -343,31 +345,31 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 }
 
 
-QStringList ModelGenerator::genModel(const QString &dstDir) //, const FieldList &fields)
+QStringList ModelGenerator::genModel(const QString &dstDir)
 {
     QStringList ret;
     QDir dir(dstDir);
     QPair<QStringList, QStringList> p = createModelParams();
 
-#if QT_VERSION >= 0x050000
-    p.first  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
-    switch (objectType) {
-    case Sql:
-        p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
-        break;
+// #if QT_VERSION >= 0x050000
+//     p.first  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+//     switch (objectType) {
+//     case Sql:
+//         p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
+//         break;
 
-    case Mongo:
-        p.second << QString(MODEL_IMPL_GETALLJSON_MONGO).arg(modelName);
-        break;
+//     case Mongo:
+//         p.second << QString(MODEL_IMPL_GETALLJSON_MONGO).arg(modelName);
+//         break;
 
-    default:
-        p.second << "";
-        break;
-    }
-#else
-    p.first << "" << "";
-    p.second << "";
-#endif
+//     default:
+//         p.second << "";
+//         break;
+//     }
+// #else
+//     p.first << "" << "";
+//     p.second << "";
+// #endif
 
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
@@ -516,6 +518,27 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     QStringList implArgs;
     implArgs << modelName.toLower() << modelName << initParams << setgetImpl << crtparams << createImpl << getparams << getImpl << getOptImpl;
     implArgs << ((objectType == Mongo) ? "Mongo" : "");
+
+#if QT_VERSION >= 0x050000
+    headerArgs  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+    switch (objectType) {
+    case Sql:
+        implArgs << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
+        break;
+
+    case Mongo:
+        implArgs << QString(MODEL_IMPL_GETALLJSON_MONGO).arg(modelName);
+        break;
+
+    default:
+        implArgs << "";
+        break;
+    }
+#else
+    headerArgs << "" << "";
+    implArgs << "";
+#endif
+
     return QPair<QStringList, QStringList>(headerArgs, implArgs);
 }
 
