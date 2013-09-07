@@ -224,6 +224,46 @@ SOURCES += tatomicset.cpp
 HEADERS += tatomicqueue.h
 SOURCES += tatomicqueue.cpp
 
+HEADERS += \
+           tfnamespace.h \
+           tfexception.h \
+           tcookie.h \
+           tdispatcher.h \
+           tloggerplugin.h \
+           tsessionobject.h \
+           tsessionstore.h \
+           tsessionstoreplugin.h \
+           tjavascriptobject.h \
+           tsqlormapper.h \
+           thttprequestheader.h \
+           thttpresponseheader.h
+
+win32 {
+  SOURCES += twebapplication_win.cpp
+  SOURCES += tapplicationserverbase_win.cpp
+}
+unix {
+  HEADERS += tfcore_unix.h
+  SOURCES += twebapplication_unix.cpp
+  SOURCES += tapplicationserverbase_unix.cpp
+}
+unix:!macx {
+# for Linux
+  HEADERS += tmultiplexingserver.h
+  SOURCES += tmultiplexingserver_linux.cpp
+  HEADERS += tactionworker.h
+  SOURCES += tactionworker.cpp
+}
+
+# Qt5
+contains(QT_MAJOR_VERSION, 5) {
+  HEADERS += tjsonutil.h
+  SOURCES += tjsonutil.cpp
+
+  SOURCES += tactioncontroller_qt5.cpp
+}
+
+
 # Files for MongoDB
 INCLUDEPATH += ../3rdparty/mongo-c-driver/src
 win32 {
@@ -251,40 +291,3 @@ HEADERS += tmongoodmapper.h
 SOURCES += tmongoodmapper.cpp
 HEADERS += tcriteriamongoconverter.h
 SOURCES += tcriteriamongoconverter.cpp
-
-
-HEADERS += \
-           tfnamespace.h \
-           tfexception.h \
-           tcookie.h \
-           tdispatcher.h \
-           tloggerplugin.h \
-           tsessionobject.h \
-           tsessionstore.h \
-           tsessionstoreplugin.h \
-           tjavascriptobject.h \
-           tsqlormapper.h \
-           thttprequestheader.h \
-           thttpresponseheader.h
-
-win32 {
-  SOURCES += twebapplication_win.cpp
-  SOURCES += tapplicationserverbase_win.cpp
-}
-unix {
-  HEADERS += tfcore_unix.h
-  SOURCES += twebapplication_unix.cpp
-  SOURCES += tapplicationserverbase_unix.cpp
-}
-unix:!macx {
-# for linux
-  HEADERS += tmultiplexingserver.h
-  SOURCES += tmultiplexingserver_linux.cpp
-  HEADERS += tactionworker.h
-  SOURCES += tactionworker.cpp
-}
-
-# Qt5
-contains(QT_MAJOR_VERSION, 5) {
-  SOURCES += tactioncontroller_qt5.cpp
-}

@@ -1,5 +1,5 @@
-#ifndef MODELUTIL_H
-#define MODELUTIL_H
+#ifndef TMODELUTIL_H
+#define TMODELUTIL_H
 
 #include <QList>
 #include <TCriteria>
@@ -58,21 +58,4 @@ inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri, int limit = 
     return list;
 }
 
-
-#if QT_VERSION >= 0x050000
-
-template <class T>
-inline QJsonArray tfModelListToJsonArray(const QList<T> &models)
-{
-    QJsonArray ret;
-
-    for (QListIterator<T> it(models); it.hasNext(); ) {
-        const T &mdl = it.next();
-        ret.append(QJsonValue(QJsonObject::fromVariantMap(mdl.toVariantMap())));
-    }
-    return ret;
-}
-
-#endif // QT_VERSION >= 0x050000
-
-#endif // MODELUTIL_H
+#endif // TMODELUTIL_H
