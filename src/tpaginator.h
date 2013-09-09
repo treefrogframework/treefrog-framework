@@ -1,7 +1,6 @@
 #ifndef TPAGINATOR_H
 #define TPAGINATOR_H
 
-#include <QString>
 #include <QList>
 #include <TGlobal>
 
@@ -9,19 +8,23 @@
 class T_CORE_EXPORT TPaginator
 {
 public:
-    TPaginator(int itemsCount = 0, int limit = 1, int midRange = 1);
+    TPaginator(int itemsTotal = 0, int itemsPerPage = 1, int midRange = 1);
     virtual ~TPaginator() { }
 
     // Setter
-    void setItemsCount(int count);
-    void setLimit(int limit);
+    void setItemsCount(int count);  // obsolete function
+    void setItemTotalCount(int total);
+    void setLimit(int limit);   // obsolete function
+    void setItemCountPerPage(int count);
     void setMidRange(int range);
     void setCurrentPage(int page);
 
     // Getter
-    int itemsCount() const { return itemsCount_; }
+    int itemsCount() const { return itemsTotal_; } // obsolete function
+    int itemTotalCount() const { return itemsTotal_; }
     int numPages() const { return numPages_; }
-    int limit() const { return limit_; }
+    int limit() const { return itemsPerPage_; }  // obsolete function
+    int itemCountPerPage() { return itemsPerPage_; }
     int offset() const;
     int midRange() const { return midRange_; }
     QList<int> range() const;
@@ -38,8 +41,8 @@ private:
     // Internal use
     void calculateNumPages();
 
-    int itemsCount_;
-    int limit_;
+    int itemsTotal_;
+    int itemsPerPage_;
     int midRange_;
     int numPages_;
     int currentPage_;

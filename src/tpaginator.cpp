@@ -21,16 +21,16 @@
 
 /*!
   Constructs a TPaginator object using the parameters.
-  \a itemsCount specifies the number of items.
-  \a limit specifies the maximum number of items to be shown per page.
-  \a midRange specifies the number of page numbers to be shown on a pagination
-  bar, and should be an odd number.
+  \a itemsTotal specifies the total number of items.
+  \a itemsPerPage specifies the maximum number of items to be shown per page.
+  \a midRange specifies the number of pages to show ‘around’ the
+  current page on a pagination bar, and should be an odd number.
 */
-TPaginator::TPaginator(int itemsCount, int limit, int midRange)
+TPaginator::TPaginator(int itemsTotal, int itemsPerPage , int midRange)
     : currentPage_(1)
 {
-    itemsCount_ = qMax(itemsCount, 0);
-    limit_ = qMax(limit, 1);
+    itemsTotal_ = qMax(itemsTotal, 0);
+    itemsPerPage_ = qMax(itemsPerPage, 1);
 
     // midRange must be odd number
     midRange = qMax(midRange, 1);
@@ -45,7 +45,7 @@ TPaginator::TPaginator(int itemsCount, int limit, int midRange)
 */
 void TPaginator::calculateNumPages()
 {
-    numPages_ = (itemsCount_ / limit_) + ((itemsCount_ % limit_) ? 1 : 0);
+    numPages_ = (itemsTotal_ / itemsPerPage_) + ((itemsTotal_ % itemsPerPage_) ? 1 : 0);
     numPages_ = qMax(numPages_, 1);
 
     // validation of currentPage
@@ -60,25 +60,38 @@ void TPaginator::calculateNumPages()
 */
 int TPaginator::offset() const
 {
-    return (currentPage_ - 1) * limit_;
+    return (currentPage_ - 1) * itemsPerPage_;
 }
 
-/*!
-  Sets the number of items to \a count and recalculates other parameters.
-*/
 void TPaginator::setItemsCount(int count)
 {
-    itemsCount_ = qMax(count, 0);
+    itemsTotal_ = qMax(count, 0);
     calculateNumPages();
 }
 
 /*!
-  Sets the maximum number of items to be shown per page to \a limit,
-  and recalculates other parameters.
+  Sets the total number of items to \a total and recalculates other
+  parameters.
 */
+void TPaginator::setItemTotalCount(int total)
+{
+    itemsTotal_ = qMax(total, 0);
+    calculateNumPages();
+}
+
 void TPaginator::setLimit(int limit)
 {
-    limit_ = qMax(limit, 1);
+    itemsPerPage_ = qMax(limit, 1);
+    calculateNumPages();
+}
+
+/*!
+  Sets the maximum number of items to be shown per page to \a count,
+  and recalculates other parameters.
+*/
+void TPaginator::setItemCountPerPage(int count)
+{
+    itemsPerPage_ = qMax(count, 1);
     calculateNumPages();
 }
 
@@ -107,10 +120,16 @@ void TPaginator::setCurrentPage(int page)
 QList<int> TPaginator::range() const
 {
     QList<int> ret;
-    int startRange = qMax(currentPage_ - qFloor(midRange_ / 2), 1);
-    int endRange = qMin(currentPage_ + qFloor(midRange_ / 2), numPages_);
+    int start = qMax(currentPage_ - qFloor(midRange_ / 2), 1);
+    int end = qMin(currentPage_ + qFloor(midRange_ / 2), numPages_);
 
-    for (int i = startRange; i <= endRange; ++i) {
+    if (start == 1) {
+        end = qMin(start + midRange_ - 1, numPages_);
+    } else if (end == numPages_) {
+        start = qMax(end - midRange_ + 1, 1);
+    }
+
+    for (int i = start; i <= end; ++i) {
         ret << i;
     }
     return ret;
