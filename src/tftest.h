@@ -7,10 +7,10 @@
 #include <QByteArray>
 #include <QEventLoop>
 #include <TWebApplication>
-#include <TKvsDatabasePool>
+#include <TKvsDatabasePool2>
 #ifdef QT_SQL_LIB
 # include <TActionThread>
-# include <TSqlDatabasePool>
+# include <TSqlDatabasePool2>
 #endif
 
 #if QT_VERSION < 0x050000
@@ -49,8 +49,8 @@ int main(int argc, char *argv[]) \
     QTextCodec::setCodecForLocale(codec); \
     SET_CODEC_FOR_TR(codec); \
     app.setDatabaseEnvironment("test"); \
-    TSqlDatabasePool::instantiate(); \
-    TKvsDatabasePool::instantiate(); \
+    TSqlDatabasePool2::instantiate(); \
+    TKvsDatabasePool2::instantiate(); \
     Thread thread; \
     thread.start(); \
     thread.wait(); \
