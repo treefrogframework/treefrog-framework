@@ -52,12 +52,12 @@ void TestPaginator::constructor_data()
 
     pager = TPaginator(158, -3, 5);
     range = QList<int>();
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Limit < 1") << pager << 158 << 158 << 1 << 0 << 5 << range;
 
     pager = TPaginator(158, 1, 5);
     range = QList<int>();
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Limit = 1") << pager << 158 << 158 << 1 << 0 << 5 << range;
 
     pager = TPaginator(158, 4, -98);
@@ -72,7 +72,7 @@ void TestPaginator::constructor_data()
 
     pager = TPaginator(158, 4, 6);
     range = QList<int>();
-    range << 1 << 2 << 3 << 4;
+    range << 1 << 2 << 3 << 4 << 5 << 6 << 7;
     QTest::newRow("MidRange = 1") << pager << 158 << 40 << 4 << 0 << 7 << range;
 }
 
@@ -150,12 +150,12 @@ void TestPaginator::setLimit_data()
 
     TPaginator pager(158, 4, 5);
     QList<int> range;
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Limit < 1") << pager << 0 << 158 << 158 << 1 << 0 << 5 << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Limit = 1") << pager << 1 << 158 << 158 << 1 << 0 << 5 << range;
 }
 
@@ -283,17 +283,17 @@ void TestPaginator::setCurrentPage_data()
 
     TPaginator pager(158, 4, 5);
     QList<int> range;
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Page < 1") << pager << -53 << 1 << 1 << 1 << 2 << 40 << false << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Page = 1") << pager << 1 << 1 << 1 << 1 << 2 << 40 << false << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range << 1 << 2 << 3 << 4;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Page <= floor(MidRange / 2)") << pager << 2 << 2 << 1 << 1 << 3 << 40 << true << true << range;
 
     pager = TPaginator(158, 4, 5);
@@ -303,17 +303,17 @@ void TestPaginator::setCurrentPage_data()
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range << 37 << 38 << 39 << 40;
+    range << 36 << 37 << 38 << 39 << 40;
     QTest::newRow("Page > Nb.Pages - floor(MidRange / 2)") << pager << 39 << 39 << 1 << 38 << 40 << 40 << true << true << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range << 38 << 39 << 40;
+    range << 36 << 37 << 38 << 39 << 40;
     QTest::newRow("Page = Nb.Pages") << pager << 40 << 40 << 1 << 39 << 40 << 40 << true << false << range;
 
     pager = TPaginator(158, 4, 5);
     range = QList<int>();
-    range << 1 << 2 << 3;
+    range << 1 << 2 << 3 << 4 << 5;
     QTest::newRow("Page > Nb.Pages") << pager << 59 << 1 << 1 << 1 << 2 << 40 << false << true << range;
 }
 
