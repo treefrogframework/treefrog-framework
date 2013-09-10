@@ -48,7 +48,7 @@ QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod
         if (!jsCondition.isEmpty()) {
             string.append("if (").append(jsCondition).append(") { ");
         }
-        
+
         string += "var f = document.createElement('form'); document.body.appendChild(f); f.method = 'post'; f.action = this.href;";
 
         // Authenticity token
@@ -69,7 +69,7 @@ QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod
             string.append(" onclick=\"return ").append(jsCondition).append(";\"");
         }
     }
-    
+
     string.append(attributes.toString()).append(">").append(text).append("</a>");
     return string;
 }
@@ -94,12 +94,12 @@ QString TViewHelper::linkToPopup(const QString &text, const QUrl &url, const QSt
     if (!windowName.isEmpty()) {
         string.append(", '").append(windowName).append("'");
     }
-    
+
     string += ", '";
     if (size.isValid()) {
         string.append("width=").append(QString::number(size.width())).append(",height=").append(QString::number(size.height()));
     }
-    
+
     if (!topLeft.isNull()) {
         if (string.right(1) != "'")
             string += ",";
@@ -171,7 +171,7 @@ QString TViewHelper::formTag(const QUrl &url, Tf::HttpMethod method, bool multip
 {
     QString string;
     string.append("<form action=\"").append(url.toString()).append("\"");
-    
+
     if (multipart) {
         string += " enctype=\"multipart/form-data\"";
     }
@@ -358,10 +358,10 @@ QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &att
     THtmlAttribute attr = attributes;
     if (!attr.contains("type"))
         attr.prepend("type", "text/css");
-  
+
     if (!attr.contains("rel"))
         attr.prepend("rel", "stylesheet");
-    
+
     attr.prepend("href", cssPath(src));
     return selfClosingTag("link", attr);
 }
