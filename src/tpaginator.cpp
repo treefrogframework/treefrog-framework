@@ -12,6 +12,7 @@
 
 #include <TPaginator>
 #include <QtCore>
+#include <math.h>
 
 /*!
   \class TPaginator
@@ -26,7 +27,7 @@
   \a midRange specifies the number of pages to show ‘around’ the
   current page on a pagination bar, and should be an odd number.
 */
-TPaginator::TPaginator(int itemsTotal, int itemsPerPage , int midRange)
+TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange)
     : currentPage_(1)
 {
     itemsTotal_ = qMax(itemsTotal, 0);
@@ -34,7 +35,7 @@ TPaginator::TPaginator(int itemsTotal, int itemsPerPage , int midRange)
 
     // midRange must be odd number
     midRange = qMax(midRange, 1);
-    midRange_ = midRange + (((midRange % 2) == 0) ? 1 : 0);
+    midRange_ = (midRange % 2) ? midRange : midRange + 1;
 
     calculateNumPages();
 }
@@ -45,13 +46,11 @@ TPaginator::TPaginator(int itemsTotal, int itemsPerPage , int midRange)
 */
 void TPaginator::calculateNumPages()
 {
-    numPages_ = (itemsTotal_ / itemsPerPage_) + ((itemsTotal_ % itemsPerPage_) ? 1 : 0);
+    numPages_ = ceil(itemsTotal_ / (double)itemsPerPage_);
     numPages_ = qMax(numPages_, 1);
 
     // validation of currentPage
-    if (currentPage_ > numPages_) {
-        currentPage_ = 1;  // default value
-    }
+    currentPage_ = isValidPage(currentPage_) ? currentPage_ : 1;
 }
 
 /*!
@@ -103,7 +102,7 @@ void TPaginator::setMidRange(int range)
 {
     // Change even number to larger odd number
     range = qMax(range, 1);
-    midRange_ = range + ((range % 2) ? 0 : 1);
+    midRange_ = (range % 2) ? range : range + 1;
 }
 
 /*!
@@ -120,8 +119,8 @@ void TPaginator::setCurrentPage(int page)
 QList<int> TPaginator::range() const
 {
     QList<int> ret;
-    int start = qMax(currentPage_ - qFloor(midRange_ / 2), 1);
-    int end = qMin(currentPage_ + qFloor(midRange_ / 2), numPages_);
+    int start = qMax(currentPage_ - midRange_ / 2, 1);
+    int end = qMin(currentPage_ + midRange_ / 2, numPages_);
 
     if (start == 1) {
         end = qMin(start + midRange_ - 1, numPages_);

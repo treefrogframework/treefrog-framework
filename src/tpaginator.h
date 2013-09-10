@@ -20,7 +20,7 @@ public:
     void setCurrentPage(int page);
 
     // Getter
-    int itemsCount() const { return itemsTotal_; } // obsolete function
+    int itemsCount() const { return itemsTotal_; }  // obsolete function
     int itemTotalCount() const { return itemsTotal_; }
     int numPages() const { return numPages_; }
     int limit() const { return itemsPerPage_; }  // obsolete function
@@ -35,7 +35,7 @@ public:
     int lastPage() const { return numPages_; }
     bool hasPreviousPage() const { return (currentPage_ >= 2); }
     bool hasNextPage() const { return (currentPage_ < numPages_); }
-    bool isValidPage(int page) const { return (page >= 1 && page <= numPages_); }
+    bool isValidPage(int page) const { return (page > 0 && page <= numPages_); }
 
 private:
     // Internal use
