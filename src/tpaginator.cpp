@@ -50,7 +50,7 @@ void TPaginator::calculateNumPages()
     numPages_ = qMax(numPages_, 1);
 
     // validation of currentPage
-    currentPage_ = isValidPage(currentPage_) ? currentPage_ : 1;
+    currentPage_ = hasPage(currentPage_) ? currentPage_ : 1;
 }
 
 /*!
@@ -110,7 +110,7 @@ void TPaginator::setMidRange(int range)
 */
 void TPaginator::setCurrentPage(int page)
 {
-    currentPage_ = isValidPage(page) ? page : 1;
+    currentPage_ = hasPage(page) ? page : 1;
 }
 
 /*!
@@ -136,8 +136,8 @@ QList<int> TPaginator::range() const
 
 
 /*!
-  \fn int TPaginator::itemsCount() const
-  Returns the number of items.
+  \fn int TPaginator::itemTotalCount() const
+  Returns the total number of items.
 */
 
 /*!
@@ -146,7 +146,7 @@ QList<int> TPaginator::range() const
 */
 
 /*!
-  \fn int TPaginator::limit() const
+  \fn int TPaginator::itemCountPerPage() const
   Returns the maximum number of items to be shown per page.
 */
 
@@ -181,18 +181,18 @@ QList<int> TPaginator::range() const
 */
 
 /*!
-  \fn bool TPaginator::hasPreviousPage() const
+  \fn bool TPaginator::hasPrevious() const
   Returns true if there is at least one page before the current page;
   otherwise returns false.
 */
 
 /*!
-  \fn bool TPaginator::hasNextPage() const
+  \fn bool TPaginator::hasNext() const
   Returns true if there is at least one page after the current page;
   otherwise returns false.
 */
 
 /*!
-  \fn bool TPaginator::isValidPage(int page) const
+  \fn bool TPaginator::hasPage(int page) const
   Returns true if \a page is a valid page; otherwise returns false.
 */

@@ -8,22 +8,18 @@
 class T_CORE_EXPORT TPaginator
 {
 public:
-    TPaginator(int itemsTotal = 0, int itemsPerPage = 1, int midRange = 1);
+    TPaginator(int itemsTotal = 0, int itemsPerPage = 10, int midRange = 5);
     virtual ~TPaginator() { }
 
     // Setter
-    void setItemsCount(int count);  // obsolete function
     void setItemTotalCount(int total);
-    void setLimit(int limit);   // obsolete function
     void setItemCountPerPage(int count);
     void setMidRange(int range);
     void setCurrentPage(int page);
 
     // Getter
-    int itemsCount() const { return itemsTotal_; }  // obsolete function
     int itemTotalCount() const { return itemsTotal_; }
     int numPages() const { return numPages_; }
-    int limit() const { return itemsPerPage_; }  // obsolete function
     int itemCountPerPage() { return itemsPerPage_; }
     int offset() const;
     int midRange() const { return midRange_; }
@@ -33,9 +29,19 @@ public:
     int previousPage() const { return qMax(currentPage_ - 1, 1); }
     int nextPage() const { return qMin(currentPage_ + 1, numPages_); }
     int lastPage() const { return numPages_; }
-    bool hasPreviousPage() const { return (currentPage_ >= 2); }
-    bool hasNextPage() const { return (currentPage_ < numPages_); }
-    bool isValidPage(int page) const { return (page > 0 && page <= numPages_); }
+    bool hasPrevious() const { return (currentPage_ >= 2); }
+    bool hasNext() const { return (currentPage_ < numPages_); }
+    bool hasPage(int page) const { return (page > 0 && page <= numPages_); }
+
+    /// @cond
+    int itemsCount() const { return itemsTotal_; }  // obsolete function
+    void setItemsCount(int count);  // obsolete function
+    int limit() const { return itemsPerPage_; }  // obsolete function
+    void setLimit(int limit);   // obsolete function
+    bool hasPreviousPage() const { return (currentPage_ >= 2); }  // obsolete function
+    bool hasNextPage() const { return (currentPage_ < numPages_); }  // obsolete function
+    bool isValidPage(int page) const { return (page > 0 && page <= numPages_); }  // obsolete function
+    /// @endcond
 
 private:
     // Internal use
