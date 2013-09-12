@@ -59,7 +59,7 @@ TPaginator &TPaginator::operator=(const TPaginator &other)
 }
 
 /*!
-  Calculates the number of total pages.
+  Calculates the total number of pages.
   Internal use only.
 */
 void TPaginator::calculateNumPages()
@@ -71,6 +71,7 @@ void TPaginator::calculateNumPages()
     midRange_ = qMax(midRange_, 1);
     midRange_ = (midRange_ % 2) ? midRange_ : midRange_ + 1;
 
+    // total number of pages
     numPages_ = qMax((int)ceil(itemsTotal_ / (double)itemsPerPage_), 1);
 
     // validation of currentPage
