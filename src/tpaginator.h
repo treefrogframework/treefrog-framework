@@ -9,7 +9,10 @@ class T_CORE_EXPORT TPaginator
 {
 public:
     TPaginator(int itemsTotal = 0, int itemsPerPage = 10, int midRange = 5);
+    TPaginator(const TPaginator &other);
     virtual ~TPaginator() { }
+
+    TPaginator &operator=(const TPaginator &other);
 
     // Setter
     void setItemTotalCount(int total);
@@ -23,7 +26,7 @@ public:
     int itemCountPerPage() { return itemsPerPage_; }
     int offset() const;
     int midRange() const { return midRange_; }
-    QList<int> range() const;
+    virtual QList<int> range() const;
     int currentPage() const { return currentPage_; }
     int firstPage() const { return 1; }
     int previousPage() const { return qMax(currentPage_ - 1, 1); }
@@ -43,9 +46,10 @@ public:
     bool isValidPage(int page) const { return (page > 0 && page <= numPages_); }  // obsolete function
     /// @endcond
 
-private:
+protected:
     void calculateNumPages();  // Internal use
 
+private:
     int itemsTotal_;
     int itemsPerPage_;
     int midRange_;

@@ -28,16 +28,34 @@
   current page on a pagination bar, and should be an odd number.
 */
 TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange)
-    : currentPage_(1)
+    : itemsTotal_(itemsTotal), itemsPerPage_(itemsPerPage), midRange_(midRange),
+      numPages_(1), currentPage_(1)
 {
-    itemsTotal_ = qMax(itemsTotal, 0);
-    itemsPerPage_ = qMax(itemsPerPage, 1);
-
-    // midRange must be odd number
-    midRange = qMax(midRange, 1);
-    midRange_ = (midRange % 2) ? midRange : midRange + 1;
-
     calculateNumPages();
+}
+
+/*!
+  Copy constructor.
+*/
+TPaginator::TPaginator(const TPaginator &other)
+    : itemsTotal_(other.itemsTotal_),
+      itemsPerPage_(other.itemsPerPage_),
+      midRange_(other.midRange_),
+      numPages_(other.numPages_),
+      currentPage_(other.currentPage_)
+{ }
+
+/*!
+  Assignment operator
+*/
+TPaginator &TPaginator::operator=(const TPaginator &other)
+{
+    itemsTotal_ = other.itemsTotal_;
+    itemsPerPage_ = other.itemsPerPage_;
+    midRange_ = other.midRange_;
+    numPages_ = other.numPages_;
+    currentPage_ = other.currentPage_;
+    return *this;
 }
 
 /*!
@@ -46,8 +64,14 @@ TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange)
 */
 void TPaginator::calculateNumPages()
 {
-    numPages_ = ceil(itemsTotal_ / (double)itemsPerPage_);
-    numPages_ = qMax(numPages_, 1);
+    itemsTotal_ = qMax(itemsTotal_, 0);
+    itemsPerPage_ = qMax(itemsPerPage_, 1);
+
+    // midRange must be odd number
+    midRange_ = qMax(midRange_, 1);
+    midRange_ = (midRange_ % 2) ? midRange_ : midRange_ + 1;
+
+    numPages_ = qMax((int)ceil(itemsTotal_ / (double)itemsPerPage_), 1);
 
     // validation of currentPage
     currentPage_ = hasPage(currentPage_) ? currentPage_ : 1;
@@ -64,7 +88,7 @@ int TPaginator::offset() const
 
 void TPaginator::setItemsCount(int count)
 {
-    itemsTotal_ = qMax(count, 0);
+    itemsTotal_ = count;
     calculateNumPages();
 }
 
@@ -74,13 +98,13 @@ void TPaginator::setItemsCount(int count)
 */
 void TPaginator::setItemTotalCount(int total)
 {
-    itemsTotal_ = qMax(total, 0);
+    itemsTotal_ = total;
     calculateNumPages();
 }
 
 void TPaginator::setLimit(int limit)
 {
-    itemsPerPage_ = qMax(limit, 1);
+    itemsPerPage_ = limit;
     calculateNumPages();
 }
 
@@ -90,7 +114,7 @@ void TPaginator::setLimit(int limit)
 */
 void TPaginator::setItemCountPerPage(int count)
 {
-    itemsPerPage_ = qMax(count, 1);
+    itemsPerPage_ = count;
     calculateNumPages();
 }
 
@@ -100,9 +124,8 @@ void TPaginator::setItemCountPerPage(int count)
 */
 void TPaginator::setMidRange(int range)
 {
-    // Change even number to larger odd number
-    range = qMax(range, 1);
-    midRange_ = (range % 2) ? range : range + 1;
+    midRange_ = range;
+    calculateNumPages();
 }
 
 /*!
@@ -119,13 +142,18 @@ void TPaginator::setCurrentPage(int page)
 QList<int> TPaginator::range() const
 {
     QList<int> ret;
+
     int start = qMax(currentPage_ - midRange_ / 2, 1);
-    int end = qMin(currentPage_ + midRange_ / 2, numPages_);
+    int end;
 
     if (start == 1) {
-        end = qMin(start + midRange_ - 1, numPages_);
-    } else if (end == numPages_) {
-        start = qMax(end - midRange_ + 1, 1);
+        end = qMin(midRange_, numPages_);
+    } else {
+        end = qMin(currentPage_ + midRange_ / 2, numPages_);
+
+        if (end == numPages_) {
+            start = qMax(end - midRange_ + 1, 1);
+        }
     }
 
     for (int i = start; i <= end; ++i) {
