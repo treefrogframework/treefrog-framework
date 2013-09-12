@@ -232,15 +232,18 @@ QStringList TableSchema::databaseDrivers()
 
 QStringList TableSchema::tables(const QString &env)
 {
-    QSet<QString> ret;
+    QSet<QString> set;
     TableSchema dummy("dummy", env);  // to open database
 
     if (QSqlDatabase::database().isOpen()) {
         for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Tables)); i.hasNext(); ) {
             TableSchema t(i.next());
             if (t.exists())
-                ret << t.tableName(); // If value already exists, the set is left unchanged
+                set << t.tableName(); // If value already exists, the set is left unchanged
         }
     }
-    return ret.toList();
+
+    QStringList ret = set.toList();
+    qSort(ret);
+    return ret;
 }
