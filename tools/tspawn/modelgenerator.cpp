@@ -46,6 +46,7 @@
     "    static %2 create(const QVariantMap &values);\n" \
     "    static %2 get(%5);\n"                           \
     "%6"                                                 \
+    "    static int count();\n"                          \
     "    static QList<%2> getAll();\n"                   \
     "%8"                                                 \
     "\n"                                                 \
@@ -111,6 +112,12 @@
     "}\n"                                                     \
     "\n"                                                      \
     "%10"                                                     \
+    "int %2::count()\n"                                       \
+    "{\n"                                                     \
+    "    TSqlORMapper<%2Object> mapper;\n"                    \
+    "    return mapper.findCount();\n"                        \
+    "}\n"                                                     \
+    "\n"                                                      \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
     "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria());\n" \
@@ -160,6 +167,7 @@
     "    static %2 create(const QVariantMap &values);\n" \
     "    static %2 get(%5);\n"                           \
     "%6"                                                 \
+    "    static int count();\n"                          \
     "    static QList<%2> getAll();\n"                   \
     "%8"                                                 \
     "\n"                                                 \
@@ -240,6 +248,12 @@
     "}\n"                                                     \
     "\n"                                                      \
     "%10"                                                     \
+    "int %2::count()\n"                                       \
+    "{\n"                                                     \
+    "    TSqlORMapper<%2Object> mapper;\n"                    \
+    "    return mapper.findCount();\n"                        \
+    "}\n"                                                     \
+    "\n"                                                      \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
     "    return tfGetModelListBy%11Criteria<%2, %2Object>();\n" \
