@@ -44,8 +44,7 @@ public:
     /// @endcond
 
 private:
-    // Internal use
-    void calculateNumPages();
+    void calculateNumPages();  // Internal use
 
     int itemsTotal_;
     int itemsPerPage_;
