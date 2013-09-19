@@ -80,10 +80,15 @@ QString MongoObjGenerator::mongoObjectFilePath(const QString &dstDir) const
 QString MongoObjGenerator::generate(const QString &dstDir)
 {
     QString mobjpath = mongoObjectFilePath(dstDir);
+    QFileInfo fi(mobjpath);
 
-    if (QFile(mobjpath).exists()) {
+    if (fi.exists()) {
         updateMongoObject(mobjpath);
     } else {
+        QDir dir = fi.dir();
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
         createMongoObject(mobjpath);
     }
 
