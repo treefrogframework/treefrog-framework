@@ -86,7 +86,7 @@ bool TAtomicSet::push(void *item)
 // pop item without counter decrement
 void *TAtomicSet::peekPop(int i)
 {
-    return stack[i].fetchAndStoreOrdered(0);
+    return (stack) ? stack[i].fetchAndStoreOrdered(0) : 0;
 }
 
 // push item without counter increment
@@ -94,6 +94,9 @@ bool TAtomicSet::peekPush(void *item)
 {
     Q_CHECK_PTR(item);
     bool ret = false;
+
+    if (!stack)
+        return ret;
 
     for (int i = 0; i < num; ++i) {
         ret = stack[i].testAndSetOrdered(0, item);
