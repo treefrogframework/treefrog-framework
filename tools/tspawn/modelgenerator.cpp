@@ -42,6 +42,11 @@
     "%3"                                                 \
     "    %2 &operator=(const %2 &other);\n"              \
     "\n"                                                 \
+    "    bool create() { return TAbstractModel::create(); }\n" \
+    "    bool update() { return TAbstractModel::update(); }\n" \
+    "    bool save()   { return TAbstractModel::save(); }\n"   \
+    "    bool remove() { return TAbstractModel::remove(); }\n" \
+    "\n"                                                 \
     "    static %2 create(%4);\n"                        \
     "    static %2 create(const QVariantMap &values);\n" \
     "    static %2 get(%5);\n"                           \
@@ -161,6 +166,11 @@
     "%3"                                                 \
     "%11"                                                \
     "    %2 &operator=(const %2 &other);\n"              \
+    "\n"                                                 \
+    "    bool create() { return TAbstractModel::create(); }\n" \
+    "    bool update() { return TAbstractModel::update(); }\n" \
+    "    bool save()   { return TAbstractModel::save(); }\n"   \
+    "    bool remove() { return TAbstractModel::remove(); }\n" \
     "\n"                                                 \
     "    static %2 authenticate(const QString &%9, const QString &%10);\n" \
     "    static %2 create(%4);\n"                        \
