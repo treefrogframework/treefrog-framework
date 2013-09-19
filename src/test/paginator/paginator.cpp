@@ -409,5 +409,7 @@ void TestPaginator::limitChangesMakeCurrentPageInvalid()
     QCOMPARE(pager.currentPage(), expectedCurrentPage);
 }
 
+Q_DECLARE_METATYPE(QList<int>)
+
 TF_TEST_MAIN(TestPaginator)
 #include "paginator.moc"
