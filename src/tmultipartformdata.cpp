@@ -304,6 +304,16 @@ bool TMultipartFormData::isEmpty() const
 }
 
 /*!
+
+ */
+void TMultipartFormData::clear()
+{
+    dataBoundary.clear();
+    postParameters.clear();
+    uploadedFiles.clear();
+}
+
+/*!
   Returns a list of form string values whose name is equal to \a name
   from the multipart/form-data.
 */

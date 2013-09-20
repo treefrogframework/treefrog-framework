@@ -51,7 +51,7 @@ THttpRequest::THttpRequest(const THttpRequest &other)
 THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &body)
     : reqHeader(header)
 {
-    parseBody(body);
+    parseBody(body, header);
 }
 
 /*!
@@ -60,7 +60,7 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
 THttpRequest::THttpRequest(const QByteArray &header, const QByteArray &body)
     : reqHeader(header)
 {
-    parseBody(body);
+    parseBody(body, header);
 }
 
 /*!
@@ -102,14 +102,20 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray &body)
 {
     reqHeader = header;
-    parseBody(body);
+    queryParams.clear();
+    formParams.clear();
+    multiFormData.clear();
+    parseBody(body, header);
 }
 
 
 void THttpRequest::setRequest(const QByteArray &header, const QByteArray &body)
 {
     reqHeader = THttpRequestHeader(header);
-    parseBody(body);
+    queryParams.clear();
+    formParams.clear();
+    multiFormData.clear();
+    parseBody(body, header);
 }
 
 
@@ -274,30 +280,27 @@ QVariantMap THttpRequest::formItems(const QString &key) const
     return map;
 }
 
-/*!
-  \fn QVariantMap THttpRequest::formItems() const
-
-  Returns the map of all form data.
- */
-
-/*!
-
- */
-void THttpRequest::parseBody(const QByteArray &body)
+void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &header)
 {
     switch (method()) {
     case Tf::Post:
-        // form parameter
-        if (!body.isEmpty()) {
-            QList<QByteArray> formdata = body.split('&');
-            for (QListIterator<QByteArray> i(formdata); i.hasNext(); ) {
-                QList<QByteArray> nameval = i.next().split('=');
-                if (!nameval.value(0).isEmpty()) {
-                    // URL decode
-                    QString key = THttpUtility::fromUrlEncoding(nameval.value(0));
-                    QString val = THttpUtility::fromUrlEncoding(nameval.value(1));
-		    formParams.insertMulti(key, val);
-                    tSystemDebug("POST Hash << %s : %s", qPrintable(key), qPrintable(val));
+        if (header.contentType().trimmed().startsWith("multipart/form-data")) {
+            // multipart/form-data
+            multiFormData = TMultipartFormData(body, boundary());
+            formParams = multiFormData.formItems();
+        } else {
+            // form parameter
+            if (!body.isEmpty()) {
+                QList<QByteArray> formdata = body.split('&');
+                for (QListIterator<QByteArray> i(formdata); i.hasNext(); ) {
+                    QList<QByteArray> nameval = i.next().split('=');
+                    if (!nameval.value(0).isEmpty()) {
+                        // URL decode
+                        QString key = THttpUtility::fromUrlEncoding(nameval.value(0));
+                        QString val = THttpUtility::fromUrlEncoding(nameval.value(1));
+                        formParams.insertMulti(key, val);
+                        tSystemDebug("POST Hash << %s : %s", qPrintable(key), qPrintable(val));
+                    }
                 }
             }
         }
@@ -314,13 +317,13 @@ void THttpRequest::parseBody(const QByteArray &body)
                 if (!s.value(0).isEmpty()) {
                     QString key = THttpUtility::fromUrlEncoding(s.value(0).toLatin1());
                     QString val = THttpUtility::fromUrlEncoding(s.value(1).toLatin1());
-		    queryParams.insertMulti(key, val);
+                    queryParams.insertMulti(key, val);
                     tSystemDebug("GET Hash << %s : %s", qPrintable(key), qPrintable(val));
                 }
             }
         }
         break; }
-                
+
     default:
         // do nothing
         break;
@@ -380,7 +383,7 @@ QList<TCookie> THttpRequest::cookies() const
 
 /*!
   \fn QVariantMap THttpRequest::allParameters() const
-  
+
   Returns a map of all form data.
  */
 QVariantMap THttpRequest::allParameters() const
@@ -392,6 +395,12 @@ QVariantMap THttpRequest::allParameters() const
 
 /*!
   \fn TMultipartFormData &THttpRequest::multipartFormData()
-  
+
   Returns a object of multipart/form-data.
  */
+
+/*!
+  \fn QVariantMap THttpRequest::formItems() const
+
+  Returns the map of all form data.
+*/

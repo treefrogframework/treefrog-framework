@@ -54,7 +54,7 @@ protected:
     QByteArray boundary() const;
 
 private:
-    void parseBody(const QByteArray &body);
+    void parseBody(const QByteArray &body, const THttpRequestHeader &header);
     void setClientAddress(const QHostAddress &address) { clientAddr = address; }
 
     THttpRequestHeader reqHeader;

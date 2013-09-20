@@ -37,7 +37,7 @@ public:
     TMimeEntity(const TMimeEntity &other);
 
     const TMimeHeader &header() const { return first; }
-    TMimeHeader &header() { return first; }    
+    TMimeHeader &header() { return first; }
     QByteArray header(const QByteArray &headerName) const { return first.header(headerName); }
     QByteArray dataName() const { return first.dataName(); }
     QString contentType() const;
@@ -71,6 +71,7 @@ public:
     QString originalFileName(const QByteArray &dataName) const;
     qint64 size(const QByteArray &dataName) const;
     bool renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite = false);
+    void clear();
 
     TMimeEntity entity(const QByteArray &dataName) const;
     QList<TMimeEntity> entityList(const QByteArray &dataName) const;
