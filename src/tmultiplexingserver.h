@@ -14,7 +14,6 @@
 #include "tatomicqueue.h"
 
 class QIODevice;
-class THttpRequest;
 class THttpHeader;
 class THttpBuffer;
 class THttpSendBuffer;

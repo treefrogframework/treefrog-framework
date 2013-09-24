@@ -10,6 +10,8 @@
 #include "thttpbuffer.h"
 #include "tsystemglobal.h"
 
+static int limitBodyBytes = -1;
+
 
 THttpBuffer::THttpBuffer()
     : lengthToRead(-1)
@@ -41,8 +43,8 @@ THttpBuffer &THttpBuffer::operator=(const THttpBuffer &other)
 QByteArray THttpBuffer::read(int maxSize)
 {
     int size = qMin(httpBuffer.length(), maxSize);
-    QByteArray res = httpBuffer.left(size);
-    httpBuffer.remove(0, size);
+    QByteArray res(size, 0);
+    read(res.data(), size);
     return res;
 }
 
@@ -59,43 +61,47 @@ int THttpBuffer::read(char *data, int maxSize)
 int THttpBuffer::write(const char *data, int maxSize)
 {
     httpBuffer.append(data, maxSize);
-    parse();
+
+    if (lengthToRead < 0) {
+        parse();
+    } else {
+        if (limitBodyBytes > 0 && httpBuffer.length() > limitBodyBytes) {
+            throw ClientErrorException(413);  // Request Entity Too Large
+        }
+
+        lengthToRead -= qMin((qint64)maxSize, lengthToRead);
+    }
     return maxSize;
 }
 
 
 int THttpBuffer::write(const QByteArray &byteArray)
 {
-    int len = byteArray.length();
-    httpBuffer += byteArray;
-    parse();
-    return len;
+    return write(byteArray.data(), byteArray.length());
 }
 
 
 void THttpBuffer::parse()
 {
-    uint limitBodyBytes = Tf::app()->appSettings().value("LimitRequestBody", "0").toUInt();
+    if (limitBodyBytes < 0) {
+        limitBodyBytes = Tf::app()->appSettings().value("LimitRequestBody", "0").toInt();
+    }
 
-    if (lengthToRead > 0) {
-        int idx = httpBuffer.indexOf("\r\n\r\n") + 4;
-        int len = qMin(httpBuffer.length() - idx, (int)lengthToRead);
-        lengthToRead -= len;
-
-    } else if (lengthToRead < 0) {
+    if (lengthToRead < 0) {
         int idx = httpBuffer.indexOf("\r\n\r\n");
         if (idx > 0) {
             THttpRequestHeader header(httpBuffer.left(idx + 4));
             tSystemDebug("content-length: %d", header.contentLength());
 
-            if (limitBodyBytes > 0 && header.contentLength() > limitBodyBytes) {
+            if (limitBodyBytes > 0 && header.contentLength() > (uint)limitBodyBytes) {
                 throw ClientErrorException(413);  // Request Entity Too Large
             }
 
             lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);
+            tSystemDebug("lengthToRead: %lld", lengthToRead);
         }
     } else {
-        tSystemWarn("Not reachable");
+        tSystemWarn("Unreachable code in normal communication");
     }
 }
 

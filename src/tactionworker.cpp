@@ -16,13 +16,13 @@
   \brief The TActionWorker class provides a thread context.
 */
 
-TActionWorker::TActionWorker(int socket, const THttpRequest &request, QObject *parent)
-    : QThread(parent), TActionContext()
+
+TActionWorker::TActionWorker(int socket, const QByteArray &request, const QString &address, QObject *parent)
+    : QThread(parent), TActionContext(), httpRequest(request), clientAddr(address)
 {
     TActionContext::socketDesc = socket;
-    setHttpRequest(request);
-}
 
+}
 
 TActionWorker::~TActionWorker()
 {
@@ -54,4 +54,13 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 void TActionWorker::closeHttpSocket()
 {
     TMultiplexingServer::instance()->setDisconnectRequest(socketDesc);
+}
+
+
+void TActionWorker::run()
+{
+    setHttpRequest( THttpRequest(httpRequest, QHostAddress(clientAddr)) );
+    httpRequest.clear();
+    clientAddr.clear();
+    TActionContext::execute();
 }

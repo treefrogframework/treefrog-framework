@@ -22,7 +22,6 @@
 #include <TSystemGlobal>
 #include <TActionWorker>
 #include <THttpHeader>
-#include <THttpRequest>
 #include "thttpbuffer.h"
 #include "thttpsendbuffer.h"
 #include "tfcore_unix.h"
@@ -516,7 +515,7 @@ void TWorkerStarter::startWorker(int fd, const QByteArray &request, const QStrin
     //
     // Create worker threads in main thread for signal/slot mechanism!
     //
-    TActionWorker *worker = new TActionWorker(fd, THttpRequest(request, QHostAddress(address)));
+    TActionWorker *worker = new TActionWorker(fd, request, address);
     connect(worker, SIGNAL(finished()), multiplexingServer, SLOT(deleteActionContext()));
     multiplexingServer->insertPointer(worker);
     worker->start();

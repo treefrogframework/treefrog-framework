@@ -13,17 +13,20 @@ class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
 {
     Q_OBJECT
 public:
-    TActionWorker(int socket, const THttpRequest &request, QObject *parent = 0);
+    TActionWorker(int socket, const QByteArray &request, const QString &address, QObject *parent = 0);
     virtual ~TActionWorker();
 
 protected:
-    void run() { TActionContext::execute(); }
+    void run();
     bool readRequest() { return true; }
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
     void closeHttpSocket();
     void releaseHttpSocket() { }
 
 private:
+    QByteArray httpRequest;
+    QString clientAddr;
+
     Q_DISABLE_COPY(TActionWorker)
 };
 
