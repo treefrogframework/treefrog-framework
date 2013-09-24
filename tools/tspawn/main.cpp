@@ -623,6 +623,9 @@ int main(int argc, char *argv[])
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             bool success = modelgen.generate(D_MODELS);
 
+            if (!success)
+                return 2;
+
             int pkidx = modelgen.primaryKeyIndex();
             if (pkidx < 0) {
                 qWarning("Primary key not found. [table name: %s]", qPrintable(args.value(2)));
