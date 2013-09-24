@@ -375,26 +375,6 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
     QDir dir(dstDir);
     QPair<QStringList, QStringList> p = createModelParams();
 
-// #if QT_VERSION >= 0x050000
-//     p.first  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
-//     switch (objectType) {
-//     case Sql:
-//         p.second << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
-//         break;
-
-//     case Mongo:
-//         p.second << QString(MODEL_IMPL_GETALLJSON_MONGO).arg(modelName);
-//         break;
-
-//     default:
-//         p.second << "";
-//         break;
-//     }
-// #else
-//     p.first << "" << "";
-//     p.second << "";
-// #endif
-
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
     ret << QFileInfo(fileName).fileName();
