@@ -76,7 +76,6 @@ static void tSystemMessage(int priority, const char *msg, va_list ap)
     semaphore.acquire();  // Acquires the semaphore for system log
     if (!systemLog.fileName().isEmpty() && systemLog.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
         systemLog.write(buf.data());
-        systemLog.flush();
         systemLog.close();
     }
     semaphore.release();  // Releases the semaphore

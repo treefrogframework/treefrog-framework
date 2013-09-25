@@ -113,20 +113,23 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
     const TActionController *controller = Tf::currentContext()->currentController();
     Q_ASSERT(controller);
 
+    if (!user || user->identityKey().isEmpty()) {
+        tWarn("Access validate: identityKey is empty");
+        return false;
+    }
+
     if (accessRules.isEmpty()) {
         tWarn("No rule for access validation: %s", qPrintable(controller->className()));
         return ret;
     }
 
-    if (user) {
-        for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
-            const AccessRule &rule = it.next();
-            if (((rule.type == AccessRule::User && rule.key == user->identityKey())
-                 || (!user->groupKey().isEmpty() && rule.key == user->groupKey()))
-                && controller->activeAction() == rule.action) {
-                ret = rule.allow;
-                break;
-            }
+    for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
+        const AccessRule &rule = it.next();
+        if (((rule.type == AccessRule::User && rule.key == user->identityKey())
+             || (!user->groupKey().isEmpty() && rule.key == user->groupKey()))
+            && controller->activeAction() == rule.action) {
+            ret = rule.allow;
+            break;
         }
     }
     tSystemDebug("Access: %s  (user:%s)", (ret ? "Allow" : "Deny"), qPrintable(user->identityKey()));
