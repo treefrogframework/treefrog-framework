@@ -314,13 +314,13 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 {
     switch (method()) {
     case Tf::Post: {
-        QByteArray ctype = header.contentType().trimmed();
-        if (ctype.startsWith("multipart/form-data")) {
+        QString ctype = QString::fromLatin1(header.contentType().trimmed());
+        if (ctype.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
             // multipart/form-data
             multiFormData = TMultipartFormData(body, boundary());
             formParams = multiFormData.formItems();
 
-        } else if (ctype.startsWith("application/json")) {
+        } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
 #if QT_VERSION >= 0x050000
             jsondata = QJsonDocument::fromJson(body);
 #else
