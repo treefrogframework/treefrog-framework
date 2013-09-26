@@ -14,7 +14,7 @@
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define INDEX_TEMPLATE                                                  \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -49,7 +49,7 @@
     "</html>\n"
 
 #define SHOW_TEMPLATE                                                   \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(%2, %3); %>\n"                                           \
     "<html>\n"                                                          \
@@ -72,7 +72,7 @@
 
 
 #define ENTRY_TEMPLATE                                                  \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
     "<html>\n"                                                          \
@@ -99,7 +99,7 @@
     "</html>\n"
 
 #define EDIT_TEMPLATE                                                   \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
     "<html>\n"                                                          \

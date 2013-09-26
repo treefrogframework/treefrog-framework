@@ -12,7 +12,7 @@
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define INDEX_HTML_TEMPLATE                                             \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
     "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
@@ -64,7 +64,7 @@
     "@link_to_entry :== linkTo(\"New entry\", urla(\"entry\"))\n"
 
 #define SHOW_HTML_TEMPLATE                                              \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
     "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
@@ -101,7 +101,7 @@
     "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n"
 
 #define ENTRY_HTML_TEMPLATE                                             \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
     "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
@@ -143,7 +143,7 @@
     "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
 
 #define EDIT_HTML_TEMPLATE                                              \
-    "<!DOCTYPE HTML>\n"                                                 \
+    "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
     "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
