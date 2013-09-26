@@ -9,6 +9,9 @@
 #include <TMultipartFormData>
 #include <THttpUtility>
 #include "tsystemglobal.h"
+#if QT_VERSION >= 0x050000
+#include <QJsonDocument>
+#endif
 
 typedef QHash<QString, Tf::HttpMethod> MethodHash;
 
@@ -42,6 +45,9 @@ THttpRequest::THttpRequest(const THttpRequest &other)
       queryParams(other.queryParams),
       formParams(other.formParams),
       multiFormData(other.multiFormData),
+#if QT_VERSION >= 0x050000
+      jsondata(other.jsondata),
+#endif
       clientAddr(other.clientAddr)
 { }
 
@@ -83,47 +89,71 @@ THttpRequest::THttpRequest(const QByteArray &byteArray, const QHostAddress &clie
         setRequest(byteArray.left(idx + 4), byteArray.mid(idx + 4));
 }
 
-
+/*!
+  Destructor.
+*/
 THttpRequest::~THttpRequest()
 { }
 
-
+/*!
+  Assignment operator.
+*/
 THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 {
     reqHeader = other.reqHeader;
     queryParams = other.queryParams;
     formParams = other.formParams;
     multiFormData = other.multiFormData;
+#if QT_VERSION >= 0x050000
+    jsondata = other.jsondata;
+#endif
     clientAddr = other.clientAddr;
     return *this;
 }
 
-
+/*!
+  Sets the request to \a header and \a body. This function is for internal use only.
+*/
 void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray &body)
 {
     reqHeader = header;
     queryParams.clear();
     formParams.clear();
     multiFormData.clear();
+#if QT_VERSION >= 0x050000
+    jsondata = QJsonDocument();
+#endif
     parseBody(body, header);
 }
 
-
+/*!
+  Sets the request to \a header and \a body. This function is for internal use only.
+*/
 void THttpRequest::setRequest(const QByteArray &header, const QByteArray &body)
 {
     reqHeader = THttpRequestHeader(header);
     queryParams.clear();
     formParams.clear();
     multiFormData.clear();
+#if QT_VERSION >= 0x050000
+    jsondata = QJsonDocument();
+#endif
     parseBody(body, header);
 }
 
-
+/*!
+  Sets the request to \a header and \a filePath. This function is for internal use only.
+*/
 void THttpRequest::setRequest(const QByteArray &header, const QString &filePath)
 {
     reqHeader = THttpRequestHeader(header);
+    queryParams.clear();
+    formParams.clear();
     multiFormData = TMultipartFormData(filePath, boundary());
     formParams.unite(multiFormData.formItems());
+#if QT_VERSION >= 0x050000
+    jsondata = QJsonDocument();
+#endif
 }
 
 /*!
@@ -252,7 +282,7 @@ QStringList THttpRequest::allFormItemValues(const QString &name) const
 
 /*!
   Returns the list of string value whose key is equal to \a key, such as
-  "hoge[]", from the form data.
+  "foo[]", from the form data.
  */
 QStringList THttpRequest::formItemList(const QString &key) const
 {
@@ -283,13 +313,21 @@ QVariantMap THttpRequest::formItems(const QString &key) const
 void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &header)
 {
     switch (method()) {
-    case Tf::Post:
-        if (header.contentType().trimmed().startsWith("multipart/form-data")) {
+    case Tf::Post: {
+        QByteArray ctype = header.contentType().trimmed();
+        if (ctype.startsWith("multipart/form-data")) {
             // multipart/form-data
             multiFormData = TMultipartFormData(body, boundary());
             formParams = multiFormData.formItems();
+
+        } else if (ctype.startsWith("application/json")) {
+#if QT_VERSION >= 0x050000
+            jsondata = QJsonDocument::fromJson(body);
+#else
+            tSystemWarn("unsupported content-type: %s", ctype.data());
+#endif
         } else {
-            // form parameter
+            // 'application/x-www-form-urlencoded'
             if (!body.isEmpty()) {
                 QList<QByteArray> formdata = body.split('&');
                 for (QListIterator<QByteArray> i(formdata); i.hasNext(); ) {
@@ -304,7 +342,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                 }
             }
         }
-        // fallthrough
+        /* FALL THROUGH */ }
 
     case Tf::Get: {
         // query parameter
@@ -330,7 +368,9 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
     }
 }
 
-
+/*!
+  Returns the boundary of multipart/form-data.
+*/
 QByteArray THttpRequest::boundary() const
 {
     QByteArray boundary;
@@ -382,10 +422,8 @@ QList<TCookie> THttpRequest::cookies() const
 
 
 /*!
-  \fn QVariantMap THttpRequest::allParameters() const
-
   Returns a map of all form data.
- */
+*/
 QVariantMap THttpRequest::allParameters() const
 {
     QVariantMap params = queryParams;
@@ -394,13 +432,31 @@ QVariantMap THttpRequest::allParameters() const
 
 
 /*!
-  \fn TMultipartFormData &THttpRequest::multipartFormData()
+  \fn const THttpRequestHeader &THttpRequest::header() const
+  Returns the HTTP header of the request.
+*/
 
+/*!
+  \fn TMultipartFormData &THttpRequest::multipartFormData()
   Returns a object of multipart/form-data.
- */
+*/
 
 /*!
   \fn QVariantMap THttpRequest::formItems() const
-
   Returns the map of all form data.
+*/
+
+/*!
+  \fn QHostAddress THttpRequest::clientAddress() const
+  Returns the address of the client host.
+*/
+
+/*!
+  \fn bool THttpRequest::hasJson() const
+  Returns true if the request contains JSON data.
+*/
+
+/*!
+  \fn const QJsonDocument &THttpRequest::jsonData() const
+  Return the JSON data contained in the request.
 */

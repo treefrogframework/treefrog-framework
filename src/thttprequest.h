@@ -10,6 +10,10 @@
 #include <TCookieJar>
 #include <THttpRequestHeader>
 
+#if QT_VERSION >= 0x050000
+#include <QJsonDocument>
+#endif
+
 
 class T_CORE_EXPORT THttpRequest
 {
@@ -47,6 +51,11 @@ public:
     QList<TCookie> cookies() const;
     QHostAddress clientAddress() const { return clientAddr; }
 
+#if QT_VERSION >= 0x050000
+    bool hasJson() const { return !jsondata.isNull(); }
+    const QJsonDocument &jsonData() const { return jsondata; }
+#endif
+
 protected:
     void setRequest(const THttpRequestHeader &header, const QByteArray &body);
     void setRequest(const QByteArray &header, const QByteArray &body);
@@ -61,6 +70,9 @@ private:
     QVariantMap queryParams;
     QVariantMap formParams;
     TMultipartFormData multiFormData;
+#if QT_VERSION >= 0x050000
+    QJsonDocument jsondata;
+#endif
     QHostAddress clientAddr;
 
     friend class THttpSocket;
