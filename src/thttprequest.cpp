@@ -324,7 +324,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 #if QT_VERSION >= 0x050000
             jsondata = QJsonDocument::fromJson(body);
 #else
-            tSystemWarn("unsupported content-type: %s", ctype.data());
+            tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
 #endif
         } else {
             // 'application/x-www-form-urlencoded'
