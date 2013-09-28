@@ -17,7 +17,11 @@
 */
 bool TActionController::renderJson(const QJsonDocument &document)
 {
-    return sendData(document.toJson(QJsonDocument::Compact), "application/json; charset=utf-8");
+    return sendData(document.toJson(
+#if QT_VERSION >= 0x050100
+                        QJsonDocument::Compact
+#endif
+                        ), "application/json; charset=utf-8");
 }
 
 /*!
