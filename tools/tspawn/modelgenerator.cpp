@@ -119,7 +119,7 @@
     "%10"                                                     \
     "int %2::count()\n"                                       \
     "{\n"                                                     \
-    "    TSqlORMapper<%2Object> mapper;\n"                    \
+    "    %13<%2Object> mapper;\n"                             \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
@@ -224,14 +224,14 @@
     "    return *this;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::authenticate(const QString &%13, const QString &%14)\n" \
+    "%2 %2::authenticate(const QString &%14, const QString &%15)\n" \
     "{\n"                                                     \
-    "    if (%13.isEmpty() || %14.isEmpty())\n"               \
+    "    if (%14.isEmpty() || %15.isEmpty())\n"               \
     "        return %2();\n"                                  \
     "\n"                                                      \
-    "    TSqlORMapper<%2Object> mapper;\n"                    \
-    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%15, %13));\n" \
-    "    if (obj.isNull() || obj.%16 != %14) {\n"             \
+    "    %13<%2Object> mapper;\n"                             \
+    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%16, %14));\n" \
+    "    if (obj.isNull() || obj.%17 != %15) {\n"             \
     "        obj.clear();\n"                                  \
     "    }\n"                                                 \
     "    return %2(obj);\n"                                   \
@@ -260,7 +260,7 @@
     "%10"                                                     \
     "int %2::count()\n"                                       \
     "{\n"                                                     \
-    "    TSqlORMapper<%2Object> mapper;\n"                    \
+    "    %13<%2Object> mapper;\n"                             \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
@@ -543,6 +543,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     implArgs << "";
 #endif
 
+    implArgs << mapperstr;
     return QPair<QStringList, QStringList>(headerArgs, implArgs);
 }
 
