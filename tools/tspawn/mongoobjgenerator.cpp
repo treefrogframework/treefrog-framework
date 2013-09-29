@@ -67,8 +67,10 @@ const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2)
 
 
 MongoObjGenerator::MongoObjGenerator(const QString &model)
-    : modelName(model), fields()
-{ }
+    : modelName(), fields()
+{
+    modelName = fieldNameToEnumName(model);
+}
 
 
 QString MongoObjGenerator::mongoObjectFilePath(const QString &dstDir) const
