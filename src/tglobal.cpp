@@ -280,7 +280,10 @@ TActionContext *Tf::currentContext()
 #ifdef Q_OS_LINUX
         context = qobject_cast<TActionWorker *>(QThread::currentThread());
         if (!context) {
-            throw RuntimeException("The current thread is not TActionWorker", __FILE__, __LINE__);
+            context = qobject_cast<TActionThread *>(QThread::currentThread());
+            if (!context) {
+                throw RuntimeException("The current thread is not TActionContext", __FILE__, __LINE__);
+            }
         }
 #else
         tFatal("Unsupported MPM: hybrid");
