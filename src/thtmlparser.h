@@ -74,6 +74,7 @@ protected:
     bool hasPrefix(const QString &str, int offset = 0) const;
     void changeParent(int index, int newParent, int newIndex = -1);
     void appendTextToLastElement(const QString &upto);
+    int nextElementInSameParent(int index) const;
     //void dumpHtml() const;
 
 private:

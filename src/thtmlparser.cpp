@@ -394,10 +394,31 @@ THtmlElement &THtmlParser::insertNewElement(int parent, int index)
 }
 
 
+int THtmlParser::nextElementInSameParent(int index) const
+{
+    const THtmlElement &e = at(index);
+    const THtmlElement &p = at(e.parent);
+
+    int i = p.children.indexOf(index);
+    if (i >= 0 && i + 1 < p.children.count()) {
+        return p.children[i + 1];
+    }
+    return -1;
+}
+
+
 void THtmlParser::removeElementTree(int index)
 {
     removeChildElements(index);
     at(index).clear();
+
+    int idx = nextElementInSameParent(index);
+    if (idx > 0) {
+        THtmlElement &n = at(idx);
+        if (n.tag.isEmpty() && n.text.startsWith("\n")) {
+            n.text.remove(0, 1);  // delete a newline code after the close tag
+        }
+    }
 }
 
 
@@ -413,6 +434,17 @@ void THtmlParser::removeTag(int index)
 {
     THtmlElement &e = at(index);
     e.tag.clear();
+
+    if (e.text.startsWith("\n"))
+        e.text.remove(0, 1);  // delete a newline code
+
+    int idx = nextElementInSameParent(index);
+    if (idx > 0) {
+        THtmlElement &n = at(idx);
+        if (n.tag.isEmpty() && n.text.startsWith("\n")) {
+            n.text.remove(0, 1);  // delete a newline code after the close tag
+        }
+    }
 }
 
 
