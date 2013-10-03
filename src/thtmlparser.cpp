@@ -409,6 +409,13 @@ void THtmlParser::removeChildElements(int index)
 }
 
 
+void THtmlParser::removeTag(int index)
+{
+    THtmlElement &e = at(index);
+    e.tag.clear();
+}
+
+
 void THtmlParser::changeParent(int index, int newParent, int newIndex)
 {
     THtmlElement &e = at(index);

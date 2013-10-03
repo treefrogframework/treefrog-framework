@@ -21,8 +21,8 @@
 #define LEFT_DELIM   QString("<% ")
 #define RIGHT_DELIM  QString(" %>")
 #define RIGHT_DELIM_NO_TRIM QString(" +%>")
-#define DUMMY_LABEL1  QLatin1String("#dummy")
-#define DUMMY_LABEL2  QLatin1String("@dummy")
+#define DUMMY_LABEL  QLatin1String("@dummy")
+#define DUMMYTAG_LABEL  QLatin1String("@dummytag")
 
 QString devIni;
 static QString replaceMarker;
@@ -32,7 +32,7 @@ QString generateErbPhrase(const QString &str, int echoOption)
     QString s = str;
     s.remove(QRegExp(";+$"));
     QString res = LEFT_DELIM;
-    
+
     if (echoOption == OtmParser::None) {
         res += s;
         res += RIGHT_DELIM;
@@ -41,19 +41,19 @@ QString generateErbPhrase(const QString &str, int echoOption)
         case OtmParser::NormalEcho:
             res += QLatin1String("echo(");
             break;
-            
+
         case OtmParser::EscapeEcho:
             res += QLatin1String("eh(");
             break;
-            
+
         case OtmParser::ExportVarEcho:
             res += QLatin1String("techoex(");
             break;
-            
+
         case OtmParser::ExportVarEscapeEcho:
             res += QLatin1String("tehex(");
             break;
-            
+
         default:
             qCritical("Internal error, bad option: %d", echoOption);
             return QString();
@@ -90,7 +90,7 @@ bool OtamaConverter::convert(const QString &filePath) const
     QFileInfo otmFileInfo(otmFile);
     QFileInfo outFileInfo(outFile);
     if (htmlFileInfo.exists() && outFileInfo.exists()) {
-        if (outFileInfo.lastModified() > htmlFileInfo.lastModified() 
+        if (outFileInfo.lastModified() > htmlFileInfo.lastModified()
              && (!otmFileInfo.exists() || outFileInfo.lastModified() > otmFileInfo.lastModified())) {
             //printf("done    %s\n", qPrintable(outFile.fileName()));
             return true;
@@ -111,7 +111,7 @@ bool OtamaConverter::convert(const QString &filePath) const
     if (otmFile.open(QIODevice::ReadOnly)) {
         otm = QTextStream(&otmFile).readAll();
     }
-    
+
     QString erb = OtamaConverter::convertToErb(QTextStream(&htmlFile).readAll(), otm);
     return erbConverter.convert(className, erb);
 }
@@ -124,7 +124,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
         QSettings devSetting(devIni, QSettings::IniFormat);
         replaceMarker = devSetting.value("Otama.ReplaceMarker", "%%").toString();
     }
-    
+
     // Parses HTML and Otama files
     THtmlParser htmlParser;
     htmlParser.parse(html);
@@ -156,15 +156,20 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
             e.removeAttribute(TF_ATTRIBUTE_NAME);
         }
 
-        if (label == DUMMY_LABEL1 || label == DUMMY_LABEL2) {
+        if (label == DUMMY_LABEL) {
             htmlParser.removeElementTree(i);
+            continue;
+        }
+
+        if (label == DUMMYTAG_LABEL) {
+            htmlParser.removeTag(i);
             continue;
         }
 
         QString val;
         OtmParser::EchoOption ech;
         bool scriptArea = htmlParser.parentExists(i, "script");
-        
+
         // Content assignment
         val = otmParser.getSrcCode(label, OtmParser::ContentAssignment, &ech); // ~ operator
         if (!val.isEmpty()) {
@@ -251,7 +256,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
             }
         }
     }
- 
+
     return htmlParser.toString();
 }
 

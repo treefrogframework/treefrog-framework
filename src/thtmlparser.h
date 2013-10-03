@@ -49,6 +49,7 @@ public:
     THtmlElement &appendElementTree(int parent, const THtmlElement &element);
     void removeElementTree(int index);
     void removeChildElements(int index);
+    void removeTag(int index);
     THtmlParser mid(int index) const;
     void append(int parent, const THtmlParser &parser);
     void prepend(int parent, const THtmlParser &parser);
