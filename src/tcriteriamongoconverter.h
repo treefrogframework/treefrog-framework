@@ -82,13 +82,13 @@ inline QVariantMap TCriteriaMongoConverter<T>::criteriaToVariantMap(const QVaria
 
         case TMongo::LessEqual: {
             QVariantMap le;
-            le.insert("$le", cri.val1);
+            le.insert("$lte", cri.val1);
             ret.insert(name, QVariant(le));
             break; }
 
         case TMongo::GreaterEqual: {
             QVariantMap ge;
-            ge.insert("$ge", cri.val1);
+            ge.insert("$gte", cri.val1);
             ret.insert(name, QVariant(ge));
             break; }
 
