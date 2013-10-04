@@ -27,7 +27,7 @@
 
 #define ARRAY_INDEX_BUFFER_SIZE 9
 
-char *bcon_errstr[] = {
+const char *bcon_errstr[] = {
     "OK",
     "ERROR",
     "bcon document or nesting incomplete",
@@ -292,7 +292,7 @@ bcon_error_t bson_from_bcon(bson *b, const bcon *bc) {
 
 void bcon_print(const bcon *bc) { /* prints internal representation, not JSON */
     char *typespec = 0;
-    char *delim = "";
+    const char *delim = "";
     int end_of_data;
     bcon *bcp;
     putchar('{');

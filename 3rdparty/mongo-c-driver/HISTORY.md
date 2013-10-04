@@ -1,5 +1,23 @@
 # MongoDB C Driver History
 
+## 0.8.1
+2013-9-26
+
+This point relese includes the following.
+
+** API CHANGE **
+
+1. mongo_create_index now has a ttl parameter
+
+    int mongo_create_index( mongo *conn, const char *ns, const bson *key, const char *name, int options, int ttl, bson *out );
+
+- bson_has_data that was missing from release 0.8
+- mongo_create_index returns a bson object in case of errors
+- mongo_cursor_next returns MONGO_CURSOR_EXHAUSTED if there is no result rather than MONGO_CURSOR_INVALID
+- _get_host_port allocates memory for thread safety
+- dylib name fix for Mac OSX
+- various compiler warning fixes
+
 ## 0.8
 2013-8-12
 

@@ -162,7 +162,7 @@ named "address", we use ``bson_find()`` like so:
 
 .. code-block:: c
 
-   bson_iterator i[1], sub[i];
+   bson_iterator i[1], sub[1];
    bson_type type;
 
    type = bson_find( i, b, "address" );

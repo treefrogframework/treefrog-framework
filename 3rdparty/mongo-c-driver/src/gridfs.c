@@ -164,7 +164,7 @@ MONGO_EXPORT int gridfs_init(mongo *client, const char *dbname, const char *pref
   bson_init(&b);
   bson_append_int(&b, "filename", 1);
   bson_finish(&b);
-  if( mongo_create_index(gfs->client, gfs->files_ns, &b, NULL, 0, NULL) != MONGO_OK) {
+  if( mongo_create_index(gfs->client, gfs->files_ns, &b, NULL, 0, -1, NULL) != MONGO_OK) {
     bson_destroy( &b );
     gridfs_destroy( gfs );
     return MONGO_ERROR;
@@ -175,7 +175,7 @@ MONGO_EXPORT int gridfs_init(mongo *client, const char *dbname, const char *pref
   bson_append_int(&b, "files_id", 1);
   bson_append_int(&b, "n", 1);
   bson_finish(&b);
-  if( mongo_create_index(gfs->client, gfs->chunks_ns, &b, NULL, MONGO_INDEX_UNIQUE, NULL) != MONGO_OK ) {
+  if( mongo_create_index(gfs->client, gfs->chunks_ns, &b, NULL, MONGO_INDEX_UNIQUE, -1, NULL) != MONGO_OK ) {
     bson_destroy(&b);
     gridfs_destroy( gfs );    
     return MONGO_ERROR;

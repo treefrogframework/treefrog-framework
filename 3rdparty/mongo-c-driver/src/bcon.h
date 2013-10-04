@@ -222,7 +222,7 @@ typedef enum bcon_error_t {
     BCON_BSON_ERROR /**< bson finish error */
 } bcon_error_t;
 
-extern char *bcon_errstr[]; /**< bcon_error_t text messages */
+extern const char *bcon_errstr[]; /**< bcon_error_t text messages */
 
 /**
  * Append a BCON object to a BSON object.

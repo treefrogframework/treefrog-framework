@@ -135,6 +135,10 @@ MONGO_EXPORT const char *bson_data( const bson *b ) {
     return (const char *)b->data;
 }
 
+MONGO_EXPORT int bson_has_data( const bson *b ) {
+    return b->data != NULL;
+}
+
 static char hexbyte( char hex ) {
     if (hex >= '0' && hex <= '9')
         return (hex - '0');
@@ -561,7 +565,7 @@ MONGO_EXPORT bson_date_t bson_iterator_date( const bson_iterator *i ) {
 }
 
 MONGO_EXPORT time_t bson_iterator_time_t( const bson_iterator *i ) {
-    return bson_iterator_date( i ) / 1000;
+    return (time_t) bson_iterator_date( i ) / 1000;
 }
 
 MONGO_EXPORT int bson_iterator_bin_len( const bson_iterator *i ) {

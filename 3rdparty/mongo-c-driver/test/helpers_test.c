@@ -17,7 +17,7 @@ void test_index_helper( mongo *conn ) {
     bson_append_int( &b, "foo", -1 );
     bson_finish( &b );
 
-    mongo_create_index( conn, "test.bar", &b, NULL, MONGO_INDEX_SPARSE | MONGO_INDEX_UNIQUE, &out );
+    mongo_create_index( conn, "test.bar", &b, NULL, MONGO_INDEX_SPARSE | MONGO_INDEX_UNIQUE, -1, &out );
 
     bson_destroy( &b );
     bson_destroy( &out );
@@ -50,7 +50,7 @@ void test_index_helper_invalid( mongo *conn ) {
     bson_append_int( &b, "foo", -1 );
     bson_finish( &b );
 
-    ASSERT( MONGO_ERROR == mongo_create_index( conn, "testbar", &b, NULL, MONGO_INDEX_SPARSE | MONGO_INDEX_UNIQUE, &out ));
+    ASSERT( MONGO_ERROR == mongo_create_index( conn, "testbar", &b, NULL, MONGO_INDEX_SPARSE | MONGO_INDEX_UNIQUE, -1, &out ));
 
     bson_destroy( &b );
     bson_destroy( &out );

@@ -206,6 +206,7 @@ int test_get_last_error_commands( void ) {
     bson_destroy( &obj );
 
     ASSERT( mongo_cmd_get_last_error( conn, db, &obj ) == MONGO_OK );
+    ASSERT( bson_has_data( &obj) );
     bson_destroy( &obj );
 
     /*********************/
@@ -250,6 +251,10 @@ int test_get_last_error_commands( void ) {
 
     mongo_cmd_drop_db( conn, db );
     mongo_destroy( conn );
+
+    /* for bson_has_data */
+    ASSERT( MONGO_ERROR == mongo_create_index( conn, "testbar", bson_shared_empty(), NULL, MONGO_INDEX_SPARSE | MONGO_INDEX_UNIQUE, -1, &obj ));
+    ASSERT( !bson_has_data( &obj) );
 
     return 0;
 }

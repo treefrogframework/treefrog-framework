@@ -701,7 +701,7 @@ MONGO_EXPORT double mongo_count( mongo *conn, const char *db, const char *coll,
  *       Use bson_has_data() on the returned 'out' for determining this.
  */
 MONGO_EXPORT int mongo_create_index( mongo *conn, const char *ns, const bson *key,
-                                     const char *name, int options, bson *out );
+                                     const char *name, int options, int ttl, bson *out );
 
 /**
  * Create an index with a single key.
