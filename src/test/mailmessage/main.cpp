@@ -8,7 +8,7 @@ class TestMailMessage : public QObject
     Q_OBJECT
 private slots:
     void mimeEncode_data();
-    void mimeEncode();  
+    void mimeEncode();
     void mimeDecode_data();
     void mimeDecode();
     void subject_data();
@@ -24,7 +24,12 @@ void TestMailMessage::mimeEncode_data()
 {
     QTest::addColumn<QString>("data");
     QTest::addColumn<QByteArray>("result");
+
+    // `echo 無事？ | nkf -jM`
     QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?=");
+    QTest::newRow("2") << QString::fromUtf8("田") << QByteArray("=?ISO-2022-JP?B?GyRCRUQbKEI=?=");
+    QTest::newRow("3") << QString::fromUtf8("あ1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?GyRCJCIbKEIxGyRCIzEbKEJhQRskQiNBJCQbKEIyGyRCIzI0QTt6GyhCMw==?=");
+    QTest::newRow("4") << QString::fromUtf8("1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?MRskQiMxGyhCYUEbJEIjQSQkGyhCMhskQiMyNEE7ehsoQjM=?=");
 }
 
 
@@ -33,8 +38,8 @@ void TestMailMessage::mimeEncode()
     QFETCH(QString, data);
     QFETCH(QByteArray, result);
     QByteArray actl = THttpUtility::toMimeEncoded(data, "ISO-2022-JP");
-//     qDebug("%s", result.data());
-//     qDebug("%s", actl.data());
+    // qDebug("%s", result.data());
+    // qDebug("%s", actl.data());
     QCOMPARE(result, actl);
 }
 
@@ -51,8 +56,9 @@ void TestMailMessage::mimeDecode_data()
     QTest::newRow("5") << QString::fromUtf8("あaaa") << QByteArray("iso-2022-jp");
     QTest::newRow("6") << QString::fromUtf8("無事？") << QByteArray("UTF-8");
     QTest::newRow("7") << QString::fromUtf8("無事？") << QByteArray("shift-jis");
- 
-}
+    QTest::newRow("8") << QString::fromUtf8("無a事？z") << QByteArray("iso-2022-jp");
+    QTest::newRow("9") << QString::fromUtf8("無a事？z") << QByteArray("UTF-8");
+    QTest::newRow("10") << QString::fromUtf8("無a事？z") << QByteArray("shift-jis");}
 
 
 void TestMailMessage::mimeDecode()
@@ -61,7 +67,6 @@ void TestMailMessage::mimeDecode()
     QFETCH(QByteArray, encoding);
 
     QString result = THttpUtility::fromMimeEncoded(THttpUtility::toMimeEncoded(data, encoding).data());
-    
     //qDebug("%s", THttpUtility::toMimeEncoded(data, encoding).data());
     QCOMPARE(data, result);
 }
@@ -80,7 +85,7 @@ void TestMailMessage::subject()
 {
     QFETCH(QString, subject);
     QFETCH(QByteArray, encoding);
-    
+
     TMailMessage msg(encoding);
     msg.setSubject(subject);
     //qDebug("%s", msg.toByteArray().data());
@@ -97,7 +102,7 @@ void TestMailMessage::addAddress_data()
     QTest::addColumn<QByteArray>("bcc");
     QTest::addColumn<QString>("name");
     QTest::addColumn<QByteArray>("result");
-    
+
     QTest::newRow("1") << QByteArray("iso-2022-jp")
                        << QByteArray("aol1@aol.com")
                        << QByteArray("aol2@aol.com")
@@ -127,7 +132,8 @@ void TestMailMessage::addAddress()
 
     TMailMessage msg(encoding);
     msg.setFrom(from, name);
-    qDebug("%s", msg.from().data());
+    // qDebug("from: %s", msg.from().data());
+    // qDebug("expt: %s", result.data());
     QCOMPARE(msg.from(), result);
     QCOMPARE(msg.fromAddress(), from);
 
@@ -137,7 +143,7 @@ void TestMailMessage::addAddress()
     QList<QByteArray> lst;
     lst << "aol2@aol.com" << "aol3@aol.com" << "aol4@aol.com";
     QCOMPARE(msg.recipients(), lst);
-    qDebug("%s", msg.toByteArray().data());
+    //qDebug("%s", msg.toByteArray().data());
 }
 
 
@@ -145,7 +151,7 @@ void TestMailMessage::date()
 {
     TMailMessage msg;
     msg.setDate(QDateTime(QDate(2011,3,28), QTime(12,11,04)));
-    qDebug("%s", msg.date().data());
+    //qDebug("%s", msg.date().data());
     QCOMPARE(msg.date(), QByteArray("Mon, 28 Mar 2011 12:11:04 +0900"));
 }
 
@@ -162,11 +168,11 @@ void TestMailMessage::parse()
         "こんにちは");
 
     TMailMessage mail(msg);
-    qDebug("%s", mail.toByteArray().data());
-    qDebug("%d", mail.recipients().count());
-    foreach(QByteArray ba, mail.recipients()) {
-        qDebug("recpt: %s", ba.data());
-    }
+    //qDebug("%s", mail.toByteArray().data());
+    //qDebug("%d", mail.recipients().count());
+    // foreach(QByteArray ba, mail.recipients()) {
+    //     qDebug("recpt: %s", ba.data());
+    // }
     QCOMPARE(mail.recipients().count(), 3);
 }
 

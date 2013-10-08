@@ -246,10 +246,22 @@ QByteArray THttpUtility::toMimeEncoded(const QString &input, QTextCodec *codec)
     if (!codec)
         return encoded;
 
+#if QT_VERSION < 0x050000
+    QByteArray array = codec->fromUnicode(input);
+#else
+    QByteArray array;
+    if (codec->name().toLower() == "iso-2022-jp") {
+        array = codec->fromUnicode(input + ' ');  // append dummy ascii char
+        array.chop(1);
+    } else {
+        array = codec->fromUnicode(input);
+    }
+#endif
+
     encoded += "=?";
     encoded += codec->name();
     encoded += "?B?";
-    encoded += codec->fromUnicode(input).toBase64();
+    encoded += array.toBase64();
     encoded += "?=";
     return encoded;
 }
