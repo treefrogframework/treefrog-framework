@@ -16,7 +16,7 @@ public:
         Fatal = 0, //!< Severe error events that will presumably lead the app to abort.
         Error,  //!< Error events that might still allow the app to continue running.
         Warn,   //!< Potentially harmful situations.
-        Info,   //!< Informational messages that highlight the progress of the app. 
+        Info,   //!< Informational messages that highlight the progress of the app.
         Debug,  //!< Informational events that are most useful to debug the app.
         Trace,  //!< Finer-grained informational events than the DEBUG.
     };
@@ -36,7 +36,7 @@ public:
     const QByteArray &layout() const { return layout_; }
     const QByteArray &dateTimeFormat() const { return dateTimeFormat_; }
     Priority threshold() const { return threshold_; }
-    const QString &target() const { return target_; }    
+    const QString &target() const { return target_; }
     QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
     static QByteArray logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec = 0);

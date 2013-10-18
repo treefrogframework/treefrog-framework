@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <TGlobal>
 
+#define TSessionStoreInterface_iid "org.treefrogframework.TreeFrog.TSessionStoreInterface/1.0"
+
 class TSessionStore;
 
 
@@ -12,11 +14,13 @@ class T_CORE_EXPORT TSessionStoreInterface
 {
 public:
     virtual ~TSessionStoreInterface() { }
-    virtual QStringList keys() const = 0;
     virtual TSessionStore *create(const QString &key) = 0;
+#if QT_VERSION < 0x050000
+    virtual QStringList keys() const = 0;
+#endif
 };
 
-Q_DECLARE_INTERFACE(TSessionStoreInterface, "TSessionStoreInterface/1.0")
+Q_DECLARE_INTERFACE(TSessionStoreInterface, TSessionStoreInterface_iid)
 
 
 class T_CORE_EXPORT TSessionStorePlugin : public QObject, public TSessionStoreInterface
@@ -28,8 +32,10 @@ public:
     explicit TSessionStorePlugin(QObject *parent = 0) : QObject(parent) { }
     ~TSessionStorePlugin() { }
 
-    virtual QStringList keys() const = 0;
     virtual TSessionStore *create(const QString &key) = 0;
+#if QT_VERSION < 0x050000
+    virtual QStringList keys() const = 0;
+#endif
 };
 
 #endif // TSESSIONSTOREPLUGIN_H

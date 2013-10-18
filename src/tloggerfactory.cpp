@@ -14,9 +14,14 @@
 #include <TLoggerPlugin>
 #include "tloggerfactory.h"
 #include "tfilelogger.h"
+#include "tsystemglobal.h"
+#if QT_VERSION >= 0x050000
+# include <QJsonArray>
+# include <QJsonObject>
+#endif
 
-static QList<TLoggerInterface *> *ssifs = 0;
 static QMutex mutex;
+static QMap<QString, TLoggerInterface *> *lggIfMap = 0;
 
 /*!
   \class TLoggerFactory
@@ -27,9 +32,14 @@ static void cleanup()
 {
     QMutexLocker locker(&mutex);
 
-    if (ssifs)
-        delete ssifs;
-    ssifs = 0;
+    if (lggIfMap) {
+        for (QMapIterator<QString, TLoggerInterface*> it(*lggIfMap); it.hasNext(); )  {
+            it.next();
+            delete it.value();
+        }
+        delete lggIfMap;
+        lggIfMap = 0;
+    }
 }
 
 /*!
@@ -41,11 +51,9 @@ QStringList TLoggerFactory::keys()
 
     loadPlugins();
     QStringList ret;
-    ret << TFileLogger().key();
+    ret << TFileLogger().key()
+        << lggIfMap->keys();
 
-    for (QListIterator<TLoggerInterface *> i(*ssifs); i.hasNext(); ) {
-        ret << i.next()->keys();
-    }
     return ret;
 }
 
@@ -55,44 +63,56 @@ QStringList TLoggerFactory::keys()
 */
 TLogger *TLoggerFactory::create(const QString &key)
 {
+    static const QString FILE_KEY = TFileLogger().key().toLower();
+
     QMutexLocker locker(&mutex);
- 
+
     loadPlugins();
     TLogger *logger = 0;
+
     QString k = key.toLower();
-    if (k == TFileLogger().key().toLower()) {
+    if (k == FILE_KEY) {
         logger = new TFileLogger;
     } else {
-        for (QListIterator<TLoggerInterface *> i(*ssifs); i.hasNext(); ) {
-            TLoggerInterface *lif = i.next();
-            if (lif->keys().contains(k)) {
-                logger = lif->create(k);
-                break;
-            }
+        TLoggerInterface *lggif = lggIfMap->value(k);
+        if (lggif) {
+            logger = lggif->create(key);
         }
     }
+
     return logger;
 }
 
 
 void TLoggerFactory::loadPlugins()
 {
-    if (!ssifs) {
-        ssifs = new QList<TLoggerInterface *>();
+    if (!lggIfMap) {
+        lggIfMap = new QMap<QString, TLoggerInterface *>();
         qAddPostRoutine(::cleanup);
-        
+
         QDir dir(Tf::app()->pluginPath());
         QStringList list = dir.entryList(QDir::Files);
         for (QStringListIterator i(list); i.hasNext(); ) {
             QPluginLoader loader(dir.absoluteFilePath(i.next()));
             TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
             if ( iface ) {
-                ssifs->append(iface);
+#if QT_VERSION >= 0x050000
+                QVariantList array = loader.metaData().value("Keys").toArray().toVariantList();
+                for (QListIterator<QVariant> it(array); it.hasNext(); ) {
+                    QString key = it.next().toString().toLower();
+                    tSystemDebug("load session store plugin: %s", qPrintable(key));
+                    lggIfMap->insert(key, iface);
+                }
+#else
+                QStringList keys = iface->keys();
+                for (QStringListIterator j(keys); j.hasNext(); ) {
+                    lggIfMap->insert(j.next(), iface);
+                }
+#endif
             }
         }
     }
 }
-
 
 
 /*!

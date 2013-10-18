@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QList>
 #include <QHash>
+#include <QMapIterator>
 #include <QPluginLoader>
 #include <QMutex>
 #include <QMutexLocker>
@@ -18,10 +19,14 @@
 #include "tsessioncookiestore.h"
 #include "tsessionfilestore.h"
 #include "tsystemglobal.h"
+#if QT_VERSION >= 0x050000
+# include <QJsonArray>
+# include <QJsonObject>
+#endif
 
 static QMutex mutex;
-static QHash<QString, int> hash;
-static QList<TSessionStoreInterface *> *ssifs = 0;
+static QMap<QString, TSessionStoreInterface*> *sessIfMap = 0;
+
 
 /*!
   \class TSessionStoreFactory
@@ -32,9 +37,14 @@ static void cleanup()
 {
     QMutexLocker locker(&mutex);
 
-    if (ssifs)
-        delete ssifs;
-    ssifs = 0;
+    if (sessIfMap) {
+        for (QMapIterator<QString, TSessionStoreInterface*> it(*sessIfMap); it.hasNext(); )  {
+            it.next();
+            delete it.value();
+        }
+        delete sessIfMap;
+        sessIfMap = 0;
+    }
 }
 
 /*!
@@ -48,11 +58,9 @@ QStringList TSessionStoreFactory::keys()
     QStringList ret;
     ret << TSessionSqlObjectStore().key()
         << TSessionCookieStore().key()
-        << TSessionFileStore().key();
+        << TSessionFileStore().key()
+        << sessIfMap->keys();
 
-    for (QListIterator<TSessionStoreInterface *> i(*ssifs); i.hasNext(); ) {
-        ret << i.next()->keys();
-    }
     return ret;
 }
 
@@ -64,38 +72,27 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
 {
     T_TRACEFUNC("key: %s", qPrintable(key));
 
+    static const QString COOKIE_KEY = TSessionCookieStore().key().toLower();
+    static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
+    static const QString FILE_KEY = TSessionFileStore().key().toLower();
+
     QMutexLocker locker(&mutex);
- 
+
     loadPlugins();
     TSessionStore *ret = 0;
+
     QString k = key.toLower();
-    int type = hash.value(k, Invalid);
-    switch (type) {
-    case SqlObject:
-        ret = new TSessionSqlObjectStore;
-        break;
-
-    case Cookie:
+    if (k == COOKIE_KEY) {
         ret = new TSessionCookieStore;
-        break;
-
-    case File:
+    } else if (k == SQLOBJECT_KEY) {
+        ret = new TSessionSqlObjectStore;
+    } else if (k == FILE_KEY) {
         ret = new TSessionFileStore;
-        break;
-
-    case Plugin: {
-        for (QListIterator<TSessionStoreInterface *> i(*ssifs); i.hasNext(); ) {
-             TSessionStoreInterface *p = i.next();
-             if (p->keys().contains(k)) {
-                 ret = p->create(k);
-                 break;
-             }
-         }
-         break; }
-
-    default:
-        // do nothing
-        break;
+    } else {
+        TSessionStoreInterface *ssif = sessIfMap->value(k);
+        if (ssif) {
+            ret = ssif->create(key);
+        }
     }
 
     return ret;
@@ -106,14 +103,9 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
 */
 void TSessionStoreFactory::loadPlugins()
 {
-    if (!ssifs) {
-        ssifs = new QList<TSessionStoreInterface *>();
-        qAddPostRoutine(::cleanup);
-        
-        // Init hash
-        hash.insert(TSessionSqlObjectStore().key().toLower(), SqlObject);
-        hash.insert(TSessionCookieStore().key().toLower(), Cookie);
-        hash.insert(TSessionFileStore().key().toLower(), File);
+    if (!sessIfMap) {
+        sessIfMap = new QMap<QString, TSessionStoreInterface*>();
+        qAddPostRoutine(cleanup);
 
         QDir dir(Tf::app()->pluginPath());
         QStringList list = dir.entryList(QDir::Files);
@@ -121,12 +113,20 @@ void TSessionStoreFactory::loadPlugins()
             QPluginLoader loader(dir.absoluteFilePath(i.next()));
             TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
             if ( iface ) {
-                ssifs->append(iface);
+#if QT_VERSION >= 0x050000
+                QVariantList array = loader.metaData().value("Keys").toArray().toVariantList();
+                for (QListIterator<QVariant> it(array); it.hasNext(); ) {
+                    QString key = it.next().toString().toLower();
+                    tSystemDebug("load session store plugin: %s", qPrintable(key));
+                    sessIfMap->insert(key, iface);
+                }
+#else
                 QStringList keys = iface->keys();
                 for (QStringListIterator j(keys); j.hasNext(); ) {
-                    hash.insert(j.next(), Plugin);
+                    sessIfMap->insert(j.next(), iface);
                 }
-            }   
+#endif
+            }
         }
     }
 }
