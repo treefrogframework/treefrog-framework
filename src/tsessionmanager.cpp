@@ -20,8 +20,9 @@
 #define SESSION_LIFETIME    "Session.LifeTime"
 
 
-static QByteArray randomString()
+static QByteArray createHash()
 {
+    static quint32 seq = 0;
     QByteArray data;
     data.reserve(128);
 
@@ -33,6 +34,7 @@ static QByteArray randomString()
     data.append(QByteArray::number(now.time().msec()));
 #endif
     data.append(QHostInfo::localHostName());
+    data.append(QByteArray::number(++seq));
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
@@ -55,7 +57,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
 
     QDateTime now = QDateTime::currentDateTime();
     QDateTime validCreated = (sessionLifeTime() > 0) ? now.addSecs(-sessionLifeTime()) : now.addYears(-20);
-    
+
     TSession session;
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
@@ -73,10 +75,10 @@ bool TSessionManager::store(TSession &session)
     T_TRACEFUNC("");
 
     if (session.id().isEmpty()) {
-        tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__); 
+        tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
-    
+
     bool res = false;
     TSessionStore *store = TSessionStoreFactory::create(storeType());
     if (store) {
@@ -103,7 +105,8 @@ bool TSessionManager::remove(const QByteArray &id)
 
 QString TSessionManager::storeType() const
 {
-    return Tf::app()->appSettings().value(STORE_TYPE).toString().toLower();
+    static QString type = Tf::app()->appSettings().value(STORE_TYPE).toString().toLower();
+    return type;
 }
 
 
@@ -112,14 +115,14 @@ QByteArray TSessionManager::generateId()
     QByteArray id;
     int i;
     for (i = 0; i < 3; ++i) {
-        id = randomString();
+        id = createHash();   // Hash algorithm is important!
         if (findSession(id).isEmpty())
             break;
     }
 
     if (i == 3)
         throw RuntimeException("Unable to generate a unique session ID", __FILE__, __LINE__);
-    
+
     return id;
 }
 
@@ -138,7 +141,7 @@ void TSessionManager::collectGarbage()
 
         if (r == 0) {
             tSystemDebug("Session garbage collector started");
-            
+
             TSessionStore *store = TSessionStoreFactory::create(Tf::app()->appSettings().value(STORE_TYPE).toString());
             if (store) {
                 int lifetime = Tf::app()->appSettings().value(GC_MAX_LIFE_TIME).toInt();
