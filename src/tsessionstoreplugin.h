@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QtPlugin>
 #include <TGlobal>
 
 #define TSessionStoreInterface_iid "org.treefrogframework.TreeFrog.TSessionStoreInterface/1.0"

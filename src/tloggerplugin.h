@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QtPlugin>
 #include <TGlobal>
 
 #define TLoggerInterface_iid "org.treefrogframework.TreeFrog.TLoggerInterface/1.0"

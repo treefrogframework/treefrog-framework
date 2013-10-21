@@ -121,17 +121,17 @@ void TSessionStoreFactory::loadPlugins()
             TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
             if ( iface ) {
 #if QT_VERSION >= 0x050000
-                QVariantList array = loader.metaData().value("Keys").toArray().toVariantList();
+                QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (QListIterator<QVariant> it(array); it.hasNext(); ) {
                     QString key = it.next().toString().toLower();
-                    tSystemDebug("load session store plugin: %s", qPrintable(key));
+                    tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
                     sessIfMap->insert(key, iface);
                 }
 #else
                 QStringList keys = iface->keys();
                 for (QStringListIterator j(keys); j.hasNext(); ) {
                     QString key = j.next().toLower();
-                    tSystemDebug("load session store plugin: %s", qPrintable(key));
+                    tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
                     sessIfMap->insert(key, iface);
                 }
 #endif
