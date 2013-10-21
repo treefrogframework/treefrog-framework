@@ -48,10 +48,10 @@ static void cleanup()
 QStringList TLoggerFactory::keys()
 {
     QMutexLocker locker(&mutex);
+    QStringList ret;
 
     loadPlugins();
-    QStringList ret;
-    ret << TFileLogger().key()
+    ret << TFileLogger().key().toLower()
         << lggIfMap->keys();
 
     return ret;
@@ -63,7 +63,7 @@ QStringList TLoggerFactory::keys()
 */
 TLogger *TLoggerFactory::create(const QString &key)
 {
-    static const QString FILE_KEY = TFileLogger().key().toLower();
+    const QString FILE_KEY = TFileLogger().key().toLower();
 
     QMutexLocker locker(&mutex);
 
@@ -94,19 +94,28 @@ void TLoggerFactory::loadPlugins()
         QStringList list = dir.entryList(QDir::Files);
         for (QStringListIterator i(list); i.hasNext(); ) {
             QPluginLoader loader(dir.absoluteFilePath(i.next()));
+
+            tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
+            if (!loader.load()) {
+                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
+                continue;
+            }
+
             TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
             if ( iface ) {
 #if QT_VERSION >= 0x050000
                 QVariantList array = loader.metaData().value("Keys").toArray().toVariantList();
                 for (QListIterator<QVariant> it(array); it.hasNext(); ) {
                     QString key = it.next().toString().toLower();
-                    tSystemDebug("load session store plugin: %s", qPrintable(key));
+                    tSystemDebug("load logger plugin: %s", qPrintable(key));
                     lggIfMap->insert(key, iface);
                 }
 #else
                 QStringList keys = iface->keys();
                 for (QStringListIterator j(keys); j.hasNext(); ) {
-                    lggIfMap->insert(j.next(), iface);
+                    QString key = j.next().toLower();
+                    tSystemDebug("load logger plugin: %s", qPrintable(key));
+                    lggIfMap->insert(key, iface);
                 }
 #endif
             }

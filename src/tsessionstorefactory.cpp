@@ -53,12 +53,12 @@ static void cleanup()
 QStringList TSessionStoreFactory::keys()
 {
     QMutexLocker locker(&mutex);
+    QStringList ret;
 
     loadPlugins();
-    QStringList ret;
-    ret << TSessionSqlObjectStore().key()
-        << TSessionCookieStore().key()
-        << TSessionFileStore().key()
+    ret << TSessionSqlObjectStore().key().toLower()
+        << TSessionCookieStore().key().toLower()
+        << TSessionFileStore().key().toLower()
         << sessIfMap->keys();
 
     return ret;
@@ -111,6 +111,13 @@ void TSessionStoreFactory::loadPlugins()
         QStringList list = dir.entryList(QDir::Files);
         for (QStringListIterator i(list); i.hasNext(); ) {
             QPluginLoader loader(dir.absoluteFilePath(i.next()));
+
+            tSystemDebug("plugin library for session store: %s", qPrintable(loader.fileName()));
+            if (!loader.load()) {
+                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
+                continue;
+            }
+
             TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
             if ( iface ) {
 #if QT_VERSION >= 0x050000
@@ -123,7 +130,9 @@ void TSessionStoreFactory::loadPlugins()
 #else
                 QStringList keys = iface->keys();
                 for (QStringListIterator j(keys); j.hasNext(); ) {
-                    sessIfMap->insert(j.next(), iface);
+                    QString key = j.next().toLower();
+                    tSystemDebug("load session store plugin: %s", qPrintable(key));
+                    sessIfMap->insert(key, iface);
                 }
 #endif
             }
