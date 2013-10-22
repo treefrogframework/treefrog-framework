@@ -154,7 +154,7 @@ while [ -n "`echo $1 | grep '-'`" ]; do
 done
 
 PID=$$
-cd $BASEDIR
+cd "$BASEDIR"
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
 sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
 command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
@@ -183,16 +183,16 @@ if [ -z "$QMAKE" ]; then
   fi
 fi
 
-cd $BASEDIR/src
+cd "$BASEDIR/src"
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
-cd $BASEDIR/tools
+cd "$BASEDIR/tools"
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
 make qmake
 
 # compile MongoDB files
-cd $BASEDIR/3rdparty/mongo-c-driver
+cd "$BASEDIR/3rdparty/mongo-c-driver"
 echo
 echo -n "Compiling MongoDB driver library ... "
 $QMAKE $OPT mongo-c-driver.pro
