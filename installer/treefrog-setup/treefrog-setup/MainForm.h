@@ -172,7 +172,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.1.0";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.1.1";
             // 
             // labeltop
             // 
@@ -242,7 +242,7 @@ namespace treefrogsetup {
         //
         //
         //
-        static List<String ^>^ searchSubDirectories(String^ name, array<String^> ^excludes, String^ folderPath)
+        static List<String ^>^ searchSubDirectories(String^ name, String^ folderPath, array<String^> ^excludes)
         {
             List<String ^>^ ret = gcnew List<String^>();
             try {
@@ -265,7 +265,7 @@ namespace treefrogsetup {
                     if (dir[i]->EndsWith(L"\\" + name)) {
                         ret->Add(dir[i]);
                     } else {
-                        ret->AddRange(searchSubDirectories(name, excludes, dir[i]));
+                        ret->AddRange(searchSubDirectories(name, dir[i], excludes));
                     }
                 }
 
@@ -274,6 +274,16 @@ namespace treefrogsetup {
             }
             return ret;
         }
+
+        static List<String ^>^ searchSubDirectories(String^ name, List<String ^>^ folderPaths, array<String^> ^excludes)
+        {
+            List<String ^>^ ret = gcnew List<String^>();
+            for (int i = 0; i < folderPaths->Count; ++i) {
+                ret->AddRange(searchSubDirectories(name, folderPaths[i], excludes));
+            }
+            return ret;
+        }
+
 
         //
         //
@@ -319,11 +329,13 @@ namespace treefrogsetup {
         //
         private: System::Void bgWorker_DoWork(Object^ sender, DoWorkEventArgs^ e)
         {
-            array<String^>^ excludes = { "Src", "QtCreator" };  // Folder to exclude
+            array<String^>^ excludes = { "Src", "QtCreator", "examples" };  // Folder to exclude
             List<String ^>^ bins = gcnew List<String ^>();
 
             if (forderTextBox->Text != L"C:\\") {
-                bins->AddRange(searchSubDirectories(L"bin", excludes, forderTextBox->Text));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw47_32", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"Tools", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw48_32", forderTextBox->Text, excludes), excludes));
             }
 
             if (bins->Count == 0) {
