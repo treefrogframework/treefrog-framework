@@ -1,3 +1,14 @@
+
+Changes with version 1.7.2
+    * Fix a bug of plugin loading in Qt5.
+    * Fix a bug of specifying Mongo operators.
+    * Fix a bug of access validation.
+    * Fix a bug of request receiving of multipart/form-data.
+    * Fix a bug of configure execution in a spaced path.
+    * Modified program logic for scaffolding.
+    * Added implement receiving JSON data of post method.
+    * Updated to MongoDB C Driver v0.8.1.
+
 Changes with version 1.7.1
     * Fix a bug of linkToIf() and linkToUnless().
     * Fix a bug of user-model generation.
