@@ -29,7 +29,7 @@ private:
 
     friend class TMongoDriver;
     friend class TMongoCursor;
-    Q_DISABLE_COPY(TBson)
+    //Q_DISABLE_COPY(TBson) /* You copy TBson objects several times in the code, then why forbid the copy?? Produces compile errors for me. */
 };
 
 #endif // TBSON_H
