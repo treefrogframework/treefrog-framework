@@ -65,6 +65,9 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(VersionHash, macVersion,
 #if QT_VERSION >= 0x040800
     x->insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
     x->insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
+#if QT_VERSION >= 0x050100
+    x->insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
+#endif
 #endif
 })
 #endif
