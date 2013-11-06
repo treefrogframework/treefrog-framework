@@ -34,6 +34,7 @@ public:
     static QDateTime fromHttpDateTimeString(const QByteArray &localTime);
     static QByteArray toHttpDateTimeUTCString(const QDateTime &utc);
     static QDateTime fromHttpDateTimeUTCString(const QByteArray &utc);
+    static QByteArray getUTCTimeString();
 
 private:
     THttpUtility();

@@ -52,7 +52,7 @@ void TMailMessage::init(const QByteArray &encoding)
     QTextCodec *codec = QTextCodec::codecForName(encoding);
     textCodec = (codec) ? codec : QTextCodec::codecForName("UTF-8");
     // Sets default values
-    setDate(QDateTime::currentDateTime());
+    setCurrentDate();
     QByteArray type = DEFAULT_CONTENT_TYPE;
     type += "; charset=\"";
     type += codec->name();

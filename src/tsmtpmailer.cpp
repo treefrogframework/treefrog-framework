@@ -148,7 +148,7 @@ bool TSmtpMailer::send()
     }
 
     if (mailMessage.date().isEmpty()) {
-        mailMessage.setDate(QDateTime::currentDateTime());
+        mailMessage.setCurrentDate();
     }
 
     if (!cmdEhlo()) {

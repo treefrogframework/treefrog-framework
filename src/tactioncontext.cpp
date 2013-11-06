@@ -138,7 +138,7 @@ void TActionContext::execute()
         const THttpRequestHeader &hdr = httpReq->header();
 
         // Access log
-        accessLogger.setTimestamp(QDateTime::currentDateTime());
+        accessLogger.setTimestamp(Tf::currentDateTimeSec());
         QByteArray firstLine = hdr.method() + ' ' + hdr.path();
         firstLine += QString(" HTTP/%1.%2").arg(hdr.majorVersion()).arg(hdr.minorVersion()).toLatin1();
         accessLogger.setRequest(firstLine);
@@ -257,7 +257,7 @@ void TActionContext::execute()
                         if (stored) {
                             QDateTime expire;
                             if (TSessionManager::sessionLifeTime() > 0) {
-                                expire = QDateTime::currentDateTime().addSecs(TSessionManager::sessionLifeTime());
+                                expire = Tf::currentDateTimeSec().addSecs(TSessionManager::sessionLifeTime());
                             }
 
                             // Sets the path in the session cookie
@@ -408,12 +408,7 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 
     header.setContentLength(length);
     header.setRawHeader("Server", "TreeFrog server");
-# if QT_VERSION >= 0x040700
-    QDateTime utc = QDateTime::currentDateTimeUtc();
-#else
-    QDateTime utc = QDateTime::currentDateTime().toUTC();
-#endif
-    header.setRawHeader("Date", QLocale(QLocale::C).toString(utc, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+    header.setCurrentDate();
 
     // Write data
     return writeResponse(header, body);

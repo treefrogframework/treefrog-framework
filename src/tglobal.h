@@ -139,6 +139,7 @@ namespace Tf
 {
     T_CORE_EXPORT TWebApplication *app();
     T_CORE_EXPORT void msleep(unsigned long msecs);
+    T_CORE_EXPORT QDateTime currentDateTimeSec();
 
     // Xorshift random number generator
     T_CORE_EXPORT void srandXor128(quint32 seed);

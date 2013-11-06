@@ -20,7 +20,7 @@ TAccessLog::TAccessLog()
 
 
 TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req)
-    : timestamp(QDateTime::currentDateTime()), remoteHost(host), request(req), statusCode(0), responseBytes(0)
+    : timestamp(), remoteHost(host), request(req), statusCode(0), responseBytes(0)
 { }
 
 

@@ -26,7 +26,7 @@ const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 */
 
 THttpSocket::THttpSocket(QObject *parent)
-    : QTcpSocket(parent), lengthToRead(-1), lastProcessed(QDateTime::currentDateTime())
+    : QTcpSocket(parent), lengthToRead(-1), lastProcessed(Tf::currentDateTimeSec())
 {
     T_TRACEFUNC("");
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
@@ -146,7 +146,7 @@ void THttpSocket::readRequest()
             tSystemError("socket read error");
             break;
         }
-        lastProcessed = QDateTime::currentDateTime();
+        lastProcessed = Tf::currentDateTimeSec();
 
         if (lengthToRead > 0) {
             // Writes to buffer
@@ -203,5 +203,5 @@ void THttpSocket::readRequest()
 */
 int THttpSocket::idleTime() const
 {
-    return lastProcessed.secsTo(QDateTime::currentDateTime());
+    return lastProcessed.secsTo(Tf::currentDateTimeSec());
 }

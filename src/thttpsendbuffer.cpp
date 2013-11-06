@@ -34,19 +34,15 @@ THttpSendBuffer::THttpSendBuffer(int statusCode, const QHostAddress &address, co
 {
     accesslogger.open();
     accesslogger.setStatusCode(statusCode);
-    accesslogger.setTimestamp(QDateTime::currentDateTime());
+    accesslogger.setTimestamp(Tf::currentDateTimeSec());
     accesslogger.setRemoteHost(address.toString().toLatin1());
     accesslogger.setRequest(method);
 
     THttpResponseHeader header;
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
     header.setRawHeader("Server", "TreeFrog server");
-# if QT_VERSION >= 0x040700
-    QDateTime utc = QDateTime::currentDateTimeUtc();
-#else
-    QDateTime utc = QDateTime::currentDateTime().toUTC();
-#endif
-    header.setRawHeader("Date", QLocale(QLocale::C).toString(utc, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+    header.setCurrentDate();
+
     arrayBuffer += header.toByteArray();
 }
 

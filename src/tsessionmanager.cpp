@@ -55,7 +55,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
 {
     T_TRACEFUNC("");
 
-    QDateTime now = QDateTime::currentDateTime();
+    QDateTime now = Tf::currentDateTimeSec();
     QDateTime validCreated = (sessionLifeTime() > 0) ? now.addSecs(-sessionLifeTime()) : now.addYears(-20);
 
     TSession session;
@@ -145,7 +145,7 @@ void TSessionManager::collectGarbage()
             TSessionStore *store = TSessionStoreFactory::create(Tf::app()->appSettings().value(STORE_TYPE).toString());
             if (store) {
                 int lifetime = Tf::app()->appSettings().value(GC_MAX_LIFE_TIME).toInt();
-                store->remove(QDateTime::currentDateTime().addSecs(-lifetime));
+                store->remove(Tf::currentDateTimeSec().addSecs(-lifetime));
                 delete store;
             }
         }

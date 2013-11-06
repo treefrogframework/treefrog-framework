@@ -22,7 +22,7 @@
   Constructor.
 */
 TLog::TLog(int pri, const QByteArray &msg)
-    : timestamp(QDateTime::currentDateTime()),
+    : timestamp(Tf::currentDateTimeSec()),
       priority(pri),
       pid(QCoreApplication::applicationPid()),
       threadId((qulonglong)QThread::currentThreadId()),

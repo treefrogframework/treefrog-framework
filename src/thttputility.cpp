@@ -396,3 +396,42 @@ QDateTime THttpUtility::fromHttpDateTimeUTCString(const QByteArray &utc)
     }
     return QLocale(QLocale::C).toDateTime(utc.left(utc.lastIndexOf(' ')), HTTP_DATE_TIME_FORMAT);
 }
+
+
+QByteArray THttpUtility::getUTCTimeString()
+{
+    static const char *DAY[] = { "Sun, ", "Mon, ", "Tue, ", "Wed, ", "Thu, ", "Fri, ", "Sat, " };
+    static const char *MONTH[] = { "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec " };
+
+    QByteArray utcTime;
+
+#if defined(Q_OS_WIN)
+    ???
+#elif defined(Q_OS_UNIX)
+    time_t gtime = 0;
+    tm *t = 0;
+    time(&gtime);
+# if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
+    tzset();
+    tm res;
+    t = gmtime_r(&gtime, &res);
+# else
+    t = gmtime(&gtime);
+# endif // _POSIX_THREAD_SAFE_FUNCTIONS
+    utcTime += DAY[t->tm_wday];
+    utcTime += QByteArray::number(t->tm_mday).rightJustified(2, '0');
+    utcTime += ' ';
+    utcTime += MONTH[t->tm_mon];
+    utcTime += QByteArray::number(t->tm_year + 1900);
+    utcTime += ' ';
+    utcTime += QByteArray::number(t->tm_hour).rightJustified(2, '0');
+    utcTime += ':';
+    utcTime += QByteArray::number(t->tm_min).rightJustified(2, '0');
+    utcTime += ':';
+    utcTime += QByteArray::number(t->tm_sec).rightJustified(2, '0');
+    utcTime += " GMT";
+#endif // Q_OS_UNIX
+
+    return utcTime;
+}
+
