@@ -406,7 +406,21 @@ QByteArray THttpUtility::getUTCTimeString()
     QByteArray utcTime;
 
 #if defined(Q_OS_WIN)
-    ???
+    SYSTEMTIME st;
+    memset(&st, 0, sizeof(SYSTEMTIME));
+    GetSystemTime(&st);
+    utcTime += DAY[st.wDayOfWeek];
+    utcTime += QByteArray::number(st.wDay).rightJustified(2, '0');
+    utcTime += ' ';
+    utcTime += MONTH[st.wMonth];
+    utcTime += QByteArray::number(st.wYear);
+    utcTime += ' ';
+    utcTime += QByteArray::number(st.wHour).rightJustified(2, '0');
+    utcTime += ':';
+    utcTime += QByteArray::number(st.wMinute).rightJustified(2, '0');
+    utcTime += ':';
+    utcTime += QByteArray::number(st.wSecond).rightJustified(2, '0');
+    utcTime += " GMT";
 #elif defined(Q_OS_UNIX)
     time_t gtime = 0;
     tm *t = 0;

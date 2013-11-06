@@ -314,7 +314,11 @@ QDateTime Tf::currentDateTimeSec()
     QDateTime current;
 
 #if defined(Q_OS_WIN)
-    ???
+    SYSTEMTIME st;
+    memset(&st, 0, sizeof(SYSTEMTIME));
+    GetLocalTime(&st);
+    current.setDate(QDate(st.wYear, st.wMonth, st.wDay));
+    current.setTime(QTime(st.wHour, st.wMinute, st.wSecond));
 #elif defined(Q_OS_UNIX)
     time_t ltime = 0;
     tm *t = 0;
