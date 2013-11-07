@@ -3,6 +3,8 @@
 
 #include <QMetaType>
 #include <TfNamespace>
+#include <random>
+
 
 #define TF_VERSION_STR "1.7.2"
 #define TF_VERSION_NUMBER 0x010702
@@ -145,9 +147,12 @@ namespace Tf
     T_CORE_EXPORT void srandXor128(quint32 seed);
     T_CORE_EXPORT quint32 randXor128();
     T_CORE_EXPORT quint32 random(quint32 max);
+    T_CORE_EXPORT void randomize(void);
+    T_CORE_EXPORT quint32 random_mt(bool doSeed = false);
 
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
+    static std::mt19937 mt_gen; // We need only one random-generator
 }
 
 /*!

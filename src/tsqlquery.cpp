@@ -139,25 +139,31 @@ QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database
 
 /*!
   Executes the SQL in \a query. Returns true and sets the query state to
-  active if the query was successful; otherwise returns false.
+  active if the query was successful; otherwise returns false. Logs error texts from db if available.
 */
 bool TSqlQuery::exec(const QString &query)
 {
     bool ret = QSqlQuery::exec(query);
-    QString q = (ret) ? query : QLatin1String("(Query failed) ") + query;
-    tQueryLog("%s", qPrintable(q));
+    QString qs = "";
+    qs = this->lastError().databaseText() + query;
+    if (qs.isEmpty())
+        qs = ((ret) ? query : QLatin1String("(Query failed) ") + query);
+    tQueryLog("%s", qPrintable(qs));
     return ret;
 }
 
 /*!
   Executes a previously prepared SQL query. Returns true if the query
-  executed successfully; otherwise returns false.
+  executed successfully; otherwise returns false. Logs error texts from db if available.
 */
 bool TSqlQuery::exec()
 {
     bool ret = QSqlQuery::exec();
-    QString q = executedQuery();
-    QString str = (ret) ? q : (QLatin1String("(Query failed) ") + (q.isEmpty() ? lastQuery() : q));
+    QString qs = executedQuery();
+    QString str = "";
+    str = this->lastError().databaseText() + lastQuery();
+    if (qs.isEmpty())
+        str = (ret) ? qs : (QLatin1String("(Query failed) ") + (qs.isEmpty() ? lastQuery() : qs));
     tQueryLog("%s", qPrintable(str));
     return ret;
 }

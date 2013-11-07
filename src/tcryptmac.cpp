@@ -6,6 +6,7 @@
  */
 
 #include <QCryptographicHash>
+#include <QMessageAuthenticationCode>
 #include <TCryptMac>
 
 /*!
@@ -16,7 +17,7 @@
 
 /*!
   Returns a cryptographic hash value generated from the given binary or
-  text data \a data with \a key using \a method.
+  text data \a data with \a key using \a method. Can only be used with MD5 and SHA-1.
 */
 QByteArray TCryptMac::mac(const QByteArray &data, const QByteArray &key, Algorithm method)
 {
@@ -36,3 +37,20 @@ QByteArray TCryptMac::mac(const QByteArray &data, const QByteArray &key, Algorit
     k_opad.append(hash);
     return QCryptographicHash::hash(k_opad, (QCryptographicHash::Algorithm)method);
 }
+
+/*!
+  Returns a cryptographic hash value generated from the given binary or
+  text data \a data with \a key using \a method. Can be used with all hashes including SHA-3.
+*/
+QByteArray TCryptMac::macEx(const QByteArray &data, const QByteArray &key, Algorithm method)
+{
+#if QT_VERSION >= 0x050100
+    QMessageAuthenticationCode code((QCryptographicHash::Algorithm)method);
+    code.setKey(key);
+    code.addData(data);
+    return (code.result().toHex());
+#else
+    this->mac(data, key, method);
+#endif
+}
+

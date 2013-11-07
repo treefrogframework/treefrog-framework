@@ -195,6 +195,37 @@ quint32 Tf::random(quint32 max)
     return (quint32)((double)randXor128() * (1.0 + max) / (1.0 + UINT_MAX));
 }
 
+
+/*!
+ * Randomizes the random function anew by applying a new seed. Should be called occasionally to receive
+ * less predictable numbers, but not for every call. Only usable with C++11 or newer.
+ */
+void Tf::randomize()
+{
+//#if __cplusplus >= 201103L
+    static std::random_device randdev{};
+    mt_gen.seed(randdev());
+//#endif
+}
+
+/*!
+ * Generates a 32bit random number with the PRNG algorithm Mersenne Twister. At first use you should set
+ * doSeed so a seed is set. Don't use this method without a seed. Only usable with C++11 or newer.
+ * \param doSeed Will set a new seed via randomize() if true. Default is false.
+ * \return Returns a PRN as an unsigned int32
+ */
+quint32 Tf::random_mt(bool doSeed)
+{
+//#if __cplusplus >= 201103L
+    if (doSeed)
+        randomize();
+
+    return((quint32) mt_gen());
+//#endif
+//    return(0);
+}
+
+
 /*
   Xorshift random number generator implement
 */
