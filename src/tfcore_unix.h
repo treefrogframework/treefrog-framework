@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/syscall.h>
 #include <sys/wait.h>
 #include <sys/file.h>
 #include <errno.h>
@@ -25,6 +26,12 @@ static inline int tf_close(int fd)
     return ret;
 }
 
+static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
+{
+    register int ret;
+    EINTR_LOOP(ret, ::accept4(sockfd, addr, addrlen, flags));
+    return ret;
+}
 
 static inline int tf_flock(int fd, int op)
 {
@@ -50,6 +57,12 @@ static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *eve
     register int ret;
     EINTR_LOOP(ret, ::epoll_ctl(epfd, op, fd, event));
     return ret;
+}
+
+
+static inline pid_t gettid()
+{
+    return syscall(SYS_gettid);
 }
 
 #endif // Q_OS_LINUX
