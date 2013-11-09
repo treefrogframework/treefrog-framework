@@ -26,22 +26,10 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(MethodHash, methodHash,
     x->insert("trace",   Tf::Trace);
 })
 
-/*!
-  \class THttpRequest
-  \brief The THttpRequest class contains request information for HTTP.
-*/
 
-/*!
-  \fn THttpRequest::THttpRequest()
-  Constructor.
-*/
-
-/*!
-  \fn THttpRequest::THttpRequest(const THttpRequest &other)
-  Copy constructor.
-*/
-THttpRequest::THttpRequest(const THttpRequest &other)
-    : reqHeader(other.reqHeader),
+THttpRequestData::THttpRequestData(const THttpRequestData &other)
+    : QSharedData(other),
+      reqHeader(other.reqHeader),
       queryParams(other.queryParams),
       formParams(other.formParams),
       multiFormData(other.multiFormData),
@@ -52,11 +40,33 @@ THttpRequest::THttpRequest(const THttpRequest &other)
 { }
 
 /*!
+  \class THttpRequest
+  \brief The THttpRequest class contains request information for HTTP.
+*/
+
+/*!
+  \fn THttpRequest::THttpRequest()
+  Constructor.
+*/
+THttpRequest::THttpRequest()
+    : d(new THttpRequestData)
+{ }
+
+/*!
+  \fn THttpRequest::THttpRequest(const THttpRequest &other)
+  Copy constructor.
+*/
+THttpRequest::THttpRequest(const THttpRequest &other)
+    : d(other.d)
+{ }
+
+/*!
   Constructor with the header \a header and the body \a body.
 */
 THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &body)
-    : reqHeader(header)
+    : d(new THttpRequestData)
 {
+    d->reqHeader = header;
     parseBody(body, header);
 }
 
@@ -64,8 +74,9 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
   Constructor with the header \a header and the body \a body.
 */
 THttpRequest::THttpRequest(const QByteArray &header, const QByteArray &body)
-    : reqHeader(header)
+    : d(new THttpRequestData)
 {
+    d->reqHeader = THttpRequestHeader(header);
     parseBody(body, header);
 }
 
@@ -74,16 +85,20 @@ THttpRequest::THttpRequest(const QByteArray &header, const QByteArray &body)
   reading the file \a filePath.
 */
 THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath)
-    : reqHeader(header), multiFormData(filePath, boundary())
-{ }
+    : d(new THttpRequestData)
+{
+    d->reqHeader = THttpRequestHeader(header);
+    d->multiFormData = TMultipartFormData(filePath, boundary());
+}
 
 /*!
   Constructor with the byte array \a byteArray and the client address
   \a clientAddress.
 */
 THttpRequest::THttpRequest(const QByteArray &byteArray, const QHostAddress &clientAddress)
-    : reqHeader(), clientAddr(clientAddress)
+    : d(new THttpRequestData)
 {
+    d->clientAddr = clientAddress;
     int idx = byteArray.indexOf("\r\n\r\n");
     if (idx > 0)
         setRequest(byteArray.left(idx + 4), byteArray.mid(idx + 4));
@@ -100,14 +115,7 @@ THttpRequest::~THttpRequest()
 */
 THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 {
-    reqHeader = other.reqHeader;
-    queryParams = other.queryParams;
-    formParams = other.formParams;
-    multiFormData = other.multiFormData;
-#if QT_VERSION >= 0x050000
-    jsondata = other.jsondata;
-#endif
-    clientAddr = other.clientAddr;
+    d = other.d;
     return *this;
 }
 
@@ -116,12 +124,12 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 */
 void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray &body)
 {
-    reqHeader = header;
-    queryParams.clear();
-    formParams.clear();
-    multiFormData.clear();
+    d->reqHeader = THttpRequestHeader(header);
+    d->queryParams.clear();
+    d->formParams.clear();
+    d->multiFormData.clear();
 #if QT_VERSION >= 0x050000
-    jsondata = QJsonDocument();
+    d->jsondata = QJsonDocument();
 #endif
     parseBody(body, header);
 }
@@ -131,12 +139,12 @@ void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray
 */
 void THttpRequest::setRequest(const QByteArray &header, const QByteArray &body)
 {
-    reqHeader = THttpRequestHeader(header);
-    queryParams.clear();
-    formParams.clear();
-    multiFormData.clear();
+    d->reqHeader = THttpRequestHeader(header);
+    d->queryParams.clear();
+    d->formParams.clear();
+    d->multiFormData.clear();
 #if QT_VERSION >= 0x050000
-    jsondata = QJsonDocument();
+    d->jsondata = QJsonDocument();
 #endif
     parseBody(body, header);
 }
@@ -146,13 +154,13 @@ void THttpRequest::setRequest(const QByteArray &header, const QByteArray &body)
 */
 void THttpRequest::setRequest(const QByteArray &header, const QString &filePath)
 {
-    reqHeader = THttpRequestHeader(header);
-    queryParams.clear();
-    formParams.clear();
-    multiFormData = TMultipartFormData(filePath, boundary());
-    formParams.unite(multiFormData.formItems());
+    d->reqHeader = THttpRequestHeader(header);
+    d->queryParams.clear();
+    d->formParams.clear();
+    d->multiFormData = TMultipartFormData(filePath, boundary());
+    d->formParams.unite(d->multiFormData.formItems());
 #if QT_VERSION >= 0x050000
-    jsondata = QJsonDocument();
+    d->jsondata = QJsonDocument();
 #endif
 }
 
@@ -161,7 +169,7 @@ void THttpRequest::setRequest(const QByteArray &header, const QString &filePath)
  */
 Tf::HttpMethod THttpRequest::method() const
 {
-    QString s = reqHeader.method().toLower();
+    QString s = d->reqHeader.method().toLower();
     if (!methodHash()->contains(s)) {
         return Tf::Invalid;
     }
@@ -189,7 +197,7 @@ QString THttpRequest::parameter(const QString &name) const
  */
 bool THttpRequest::hasQueryItem(const QString &name) const
 {
-    return queryParams.contains(name);
+    return d->queryParams.contains(name);
 }
 
 /*!
@@ -197,7 +205,7 @@ bool THttpRequest::hasQueryItem(const QString &name) const
  */
 QString THttpRequest::queryItemValue(const QString &name) const
 {
-    return queryParams.value(name).toString();
+    return d->queryParams.value(name).toString();
 }
 
 /*!
@@ -208,7 +216,7 @@ QString THttpRequest::queryItemValue(const QString &name) const
  */
 QString THttpRequest::queryItemValue(const QString &name, const QString &defaultValue) const
 {
-    return queryParams.value(name, QVariant(defaultValue)).toString();
+    return d->queryParams.value(name, QVariant(defaultValue)).toString();
 }
 
 /*!
@@ -218,7 +226,7 @@ QString THttpRequest::queryItemValue(const QString &name, const QString &default
 QStringList THttpRequest::allQueryItemValues(const QString &name) const
 {
     QStringList ret;
-    QVariantList values = queryParams.values(name);
+    QVariantList values = d->queryParams.values(name);
     for (QListIterator<QVariant> it(values); it.hasNext(); ) {
         ret << it.next().toString();
     }
@@ -244,7 +252,7 @@ QStringList THttpRequest::allQueryItemValues(const QString &name) const
  */
 bool THttpRequest::hasFormItem(const QString &name) const
 {
-    return formParams.contains(name);
+    return d->formParams.contains(name);
 }
 
 /*!
@@ -252,7 +260,7 @@ bool THttpRequest::hasFormItem(const QString &name) const
  */
 QString THttpRequest::formItemValue(const QString &name) const
 {
-    return formParams.value(name).toString();
+    return d->formParams.value(name).toString();
 }
 
 /*!
@@ -263,7 +271,7 @@ QString THttpRequest::formItemValue(const QString &name) const
  */
 QString THttpRequest::formItemValue(const QString &name, const QString &defaultValue) const
 {
-    return formParams.value(name, QVariant(defaultValue)).toString();
+    return d->formParams.value(name, QVariant(defaultValue)).toString();
 }
 
 /*!
@@ -273,7 +281,7 @@ QString THttpRequest::formItemValue(const QString &name, const QString &defaultV
 QStringList THttpRequest::allFormItemValues(const QString &name) const
 {
     QStringList ret;
-    QVariantList values = formParams.values(name);
+    QVariantList values = d->formParams.values(name);
     for (QListIterator<QVariant> it(values); it.hasNext(); ) {
         ret << it.next().toString();
     }
@@ -301,7 +309,7 @@ QVariantMap THttpRequest::formItems(const QString &key) const
 {
     QVariantMap map;
     QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    for (QMapIterator<QString, QVariant> i(formParams); i.hasNext(); ) {
+    for (QMapIterator<QString, QVariant> i(d->formParams); i.hasNext(); ) {
         i.next();
         if (rx.exactMatch(i.key())) {
             map.insert(rx.cap(1), i.value());
@@ -317,8 +325,8 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         QString ctype = QString::fromLatin1(header.contentType().trimmed());
         if (ctype.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
             // multipart/form-data
-            multiFormData = TMultipartFormData(body, boundary());
-            formParams = multiFormData.formItems();
+            d->multiFormData = TMultipartFormData(body, boundary());
+            d->formParams = d->multiFormData.formItems();
 
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
 #if QT_VERSION >= 0x050000
@@ -336,7 +344,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                         // URL decode
                         QString key = THttpUtility::fromUrlEncoding(nameval.value(0));
                         QString val = THttpUtility::fromUrlEncoding(nameval.value(1));
-                        formParams.insertMulti(key, val);
+                        d->formParams.insertMulti(key, val);
                         tSystemDebug("POST Hash << %s : %s", qPrintable(key), qPrintable(val));
                     }
                 }
@@ -346,7 +354,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 
     case Tf::Get: {
         // query parameter
-        QList<QByteArray> data = reqHeader.path().split('?');
+        QList<QByteArray> data = d->reqHeader.path().split('?');
         QString getdata = data.value(1);
         if (!getdata.isEmpty()) {
             QStringList pairs = getdata.split('&', QString::SkipEmptyParts);
@@ -355,7 +363,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                 if (!s.value(0).isEmpty()) {
                     QString key = THttpUtility::fromUrlEncoding(s.value(0).toLatin1());
                     QString val = THttpUtility::fromUrlEncoding(s.value(1).toLatin1());
-                    queryParams.insertMulti(key, val);
+                    d->queryParams.insertMulti(key, val);
                     tSystemDebug("GET Hash << %s : %s", qPrintable(key), qPrintable(val));
                 }
             }
@@ -374,7 +382,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 QByteArray THttpRequest::boundary() const
 {
     QByteArray boundary;
-    QString contentType = reqHeader.rawHeader("content-type").trimmed();
+    QString contentType = d->reqHeader.rawHeader("content-type").trimmed();
 
     if (contentType.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
         QStringList lst = contentType.split(QChar(';'), QString::SkipEmptyParts, Qt::CaseSensitive);
@@ -411,7 +419,7 @@ QByteArray THttpRequest::cookie(const QString &name) const
 QList<TCookie> THttpRequest::cookies() const
 {
     QList<TCookie> result;
-    QList<QByteArray> cookieStrings = reqHeader.rawHeader("Cookie").split(';');
+    QList<QByteArray> cookieStrings = d->reqHeader.rawHeader("Cookie").split(';');
     for (QListIterator<QByteArray> i(cookieStrings); i.hasNext(); ) {
         QByteArray ba = i.next().trimmed();
         if (!ba.isEmpty())
@@ -426,8 +434,8 @@ QList<TCookie> THttpRequest::cookies() const
 */
 QVariantMap THttpRequest::allParameters() const
 {
-    QVariantMap params = queryParams;
-    return params.unite(formParams);
+    QVariantMap params = d->queryParams;
+    return params.unite(d->formParams);
 }
 
 
