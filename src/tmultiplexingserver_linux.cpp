@@ -40,10 +40,10 @@ static void cleanup()
 }
 
 
-void TMultiplexingServer::instantiate()
+void TMultiplexingServer::instantiate(int listeningSocket)
 {
     if (!multiplexingServer) {
-        multiplexingServer = new TMultiplexingServer();
+        multiplexingServer = new TMultiplexingServer(listeningSocket);
         TWorkerStarter *starter = new TWorkerStarter(multiplexingServer);
         connect(multiplexingServer, SIGNAL(incomingHttpRequest(int, const QByteArray &, const QString &)), starter, SLOT(startWorker(int, const QByteArray &, const QString &)));
         qAddPostRoutine(::cleanup);
@@ -92,9 +92,9 @@ static void setSocketOption(int fd)
 }
 
 
-TMultiplexingServer::TMultiplexingServer(QObject *parent)
+TMultiplexingServer::TMultiplexingServer(int listeningSocket, QObject *parent)
     : QThread(parent), TApplicationServerBase(), maxWorkers(0), stopped(false),
-      listenSocket(0), epollFd(0), sendRequests(), threadCounter(0)
+      listenSocket(listeningSocket), epollFd(0), sendRequests(), threadCounter(0)
 {
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
@@ -103,8 +103,8 @@ TMultiplexingServer::TMultiplexingServer(QObject *parent)
 
 TMultiplexingServer::~TMultiplexingServer()
 {
-    if (listenSocket > 0)
-        TF_CLOSE(listenSocket);
+    // if (listenSocket > 0)
+    //     TF_CLOSE(listenSocket);
 
     if (epollFd > 0)
         TF_CLOSE(epollFd);
@@ -241,17 +241,6 @@ void TMultiplexingServer::emitIncomingRequest(int fd, THttpBuffer &buffer)
 void TMultiplexingServer::run()
 {
     // Listen socket
-    quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
-    int sock = TApplicationServerBase::nativeListen(QHostAddress::Any, port);
-    if (sock > 0) {
-        tSystemDebug("listen successfully.  port:%d", port);
-    } else {
-        tSystemError("Failed to set socket descriptor: %d", sock);
-        TApplicationServerBase::nativeClose(sock);
-        return;
-    }
-
-    listenSocket = sock;
     setSocketOption(listenSocket);
 
     maxWorkers = Tf::app()->maxNumberOfServers(10);
@@ -268,12 +257,14 @@ void TMultiplexingServer::run()
     if (res < 0)
         tSystemDebug("SO_RCVBUF: %d", recvBufSize);
 
-    const int MaxEvents = 128;
+    const int MaxEvents = 64;
     struct epoll_event events[MaxEvents];
     sendBufSize *= 0.8;
     char *sndbuffer = new char[sendBufSize];
     char *rcvbuffer = new char[recvBufSize];
+    struct sockaddr_storage addr;
     int nfd = 0;
+    int err;
 
     // Create epoll
     epollFd = epoll_create(1);
@@ -303,9 +294,9 @@ void TMultiplexingServer::run()
         getSendRequest();
 
         // Poll Sending/Receiving/Incoming
-        int timeout = (countWorkers() > 0) ? 0 : 100;
+        int timeout = (countWorkers() > 0) ? 1 : 100;
         nfd = tf_epoll_wait(epollFd, events, MaxEvents, timeout);
-        int err = errno;
+        err = errno;
         if (nfd < 0) {
             tSystemError("Failed epoll_wait() : errno:%d", err);
             break;
@@ -317,12 +308,11 @@ void TMultiplexingServer::run()
                     continue;
 
                 // Incoming connection
-                struct sockaddr_storage addr;
                 socklen_t addrlen = sizeof(addr);
 
-                int clt = ::accept4(events[i].data.fd, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
+                int clt = tf_accept4(events[i].data.fd, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
                 if (clt < 0) {
-                    tSystemWarn("Failed accept");
+                    tSystemDebug("Failed accept");
                     continue;
                 }
                 setSocketOption(clt);

@@ -53,12 +53,17 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
         return false;
     }
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::Prefork:  // FALL THROUGH
+    case TWebApplication::Hybrid:
         listeningSocket = sd;
-    } else {
+        break;
+
+    default:
         // Just tried to open a socket.
         close(sd);
         // tfserver process will open a socket of that.
+        break;
     }
 #else
     Q_UNUSED(address);
@@ -83,12 +88,17 @@ bool ServerManager::start(const QString &fileDomain)
         return false;
     }
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::Prefork:  // FALL THROUGH
+    case TWebApplication::Hybrid:
         listeningSocket = sd;
-    } else {
+        break;
+
+    default:
         // Just tried to open a socket.
         TF_CLOSE(sd);
         // tfserver process will open a socket of that.
+        break;
     }
 
     running = true;

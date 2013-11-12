@@ -6,6 +6,7 @@
 #include <sys/syscall.h>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include <sys/socket.h>
 #include <errno.h>
 #include <fcntl.h>
 

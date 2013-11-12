@@ -59,8 +59,24 @@ void TActionWorker::closeHttpSocket()
 
 void TActionWorker::run()
 {
-    setHttpRequest( THttpRequest(httpRequest, QHostAddress(clientAddr)) );
+    int length;
+    THttpRequest req;
+
+    // Loop for HTTP-pipeline requests
+    while (!httpRequest.isEmpty()) {
+        req = THttpRequest::generate(httpRequest, length);
+        if (length <= 0) {
+            break;
+        }
+
+        httpRequest.remove(0, length);
+        req.setClientAddress(QHostAddress(clientAddr));
+        setHttpRequest(req);
+
+        // Executes a action context
+        TActionContext::execute();
+    }
+
     httpRequest.clear();
     clientAddr.clear();
-    TActionContext::execute();
 }

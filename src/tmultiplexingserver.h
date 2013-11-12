@@ -32,7 +32,7 @@ public:
     void setSendRequest(int fd, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void setDisconnectRequest(int fd);
 
-    static void instantiate();
+    static void instantiate(int listeningSocket);
     static TMultiplexingServer *instance();
 
 protected:
@@ -74,7 +74,7 @@ private:
     QList<int> pendingRequests;
     QAtomicInt threadCounter;
 
-    TMultiplexingServer(QObject *parent = 0);  // Constructor
+    TMultiplexingServer(int listeningSocket, QObject *parent = 0);  // Constructor
     friend class TWorkerStarter;
     Q_DISABLE_COPY(TMultiplexingServer)
 };

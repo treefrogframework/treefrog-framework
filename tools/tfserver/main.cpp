@@ -176,7 +176,20 @@ int main(int argc, char *argv[])
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
-        TMultiplexingServer::instantiate();
+        if (sopt.isEmpty()) {
+            tSystemError("Socket descriptor not found");
+            goto finish;
+        }
+
+        sd = sopt.toInt();
+        if (sd <= 0) {
+            tSystemError("Invalid socket descriptor: %d", sd);
+            goto finish;
+        }
+
+        // Sets a listening socket descriptor
+        TMultiplexingServer::instantiate(sd);
+        tSystemDebug("Set socket descriptor: %d", sd);
         server = TMultiplexingServer::instance();
 #else
         tFatal("Unsupported MPM: hybrid");
