@@ -7,6 +7,9 @@
 
 #include <QThread>
 #include "TLog"
+#ifdef Q_OS_UNIX
+# include "tfcore_unix.h"
+#endif
 
 /*!
   \class TLog
@@ -25,7 +28,11 @@ TLog::TLog(int pri, const QByteArray &msg)
     : timestamp(Tf::currentDateTimeSec()),
       priority(pri),
       pid(QCoreApplication::applicationPid()),
+#ifdef Q_OS_UNIX
+      threadId(gettid()),
+#else
       threadId((qulonglong)QThread::currentThreadId()),
+#endif
       message(msg)
 { }
 
