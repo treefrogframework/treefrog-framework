@@ -330,7 +330,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
 #if QT_VERSION >= 0x050000
-            jsondata = QJsonDocument::fromJson(body);
+            d->jsonData = QJsonDocument::fromJson(body);
 #else
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
 #endif

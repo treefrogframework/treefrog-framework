@@ -27,18 +27,18 @@ static inline int tf_close(int fd)
     return ret;
 }
 
-static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
-{
-    register int ret;
-    EINTR_LOOP(ret, ::accept4(sockfd, addr, addrlen, flags));
-    return ret;
-}
 
 static inline int tf_flock(int fd, int op)
 {
     register int ret;
     EINTR_LOOP(ret, ::flock(fd, op));
     return ret;
+}
+
+
+static inline pid_t gettid()
+{
+    return syscall(SYS_gettid);
 }
 
 #ifdef Q_OS_LINUX
@@ -61,9 +61,11 @@ static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *eve
 }
 
 
-static inline pid_t gettid()
+static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
 {
-    return syscall(SYS_gettid);
+    register int ret;
+    EINTR_LOOP(ret, ::accept4(sockfd, addr, addrlen, flags));
+    return ret;
 }
 
 #endif // Q_OS_LINUX
