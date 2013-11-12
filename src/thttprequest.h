@@ -23,14 +23,14 @@ public:
     THttpRequestData(const THttpRequestData &other);
     ~THttpRequestData() { }
 
-    THttpRequestHeader reqHeader;
-    QVariantMap queryParams;
-    QVariantMap formParams;
-    TMultipartFormData multiFormData;
+    THttpRequestHeader header;
+    QVariantMap queryItems;
+    QVariantMap formItems;
+    TMultipartFormData multipartFormData;
 #if QT_VERSION >= 0x050000
-    QJsonDocument jsondata;
+    QJsonDocument jsonData;
 #endif
-    QHostAddress clientAddr;
+    QHostAddress clientAddress;
 };
 
 
@@ -42,38 +42,40 @@ public:
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body);
     THttpRequest(const QByteArray &header, const QByteArray &body);
     THttpRequest(const QByteArray &header, const QString &filePath);
-    THttpRequest(const QByteArray &byteArray, const QHostAddress &clientAddress);
+//    THttpRequest(const QByteArray &byteArray, const QHostAddress &clientAddress);
     virtual ~THttpRequest();
     THttpRequest &operator=(const THttpRequest &other);
 
-    const THttpRequestHeader &header() const { return d->reqHeader; }
+    const THttpRequestHeader &header() const { return d->header; }
     Tf::HttpMethod method() const;
     QString parameter(const QString &name) const;
     QVariantMap allParameters() const;
 
-    bool hasQuery() const { return !d->queryParams.isEmpty(); }
+    bool hasQuery() const { return !d->queryItems.isEmpty(); }
     bool hasQueryItem(const QString &name) const;
     QString queryItemValue(const QString &name) const;
     QString queryItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allQueryItemValues(const QString &name) const;
-    const QVariantMap &queryItems() const { return d->queryParams; }
-    bool hasForm() const { return !d->formParams.isEmpty(); }
+    const QVariantMap &queryItems() const { return d->queryItems; }
+    bool hasForm() const { return !d->formItems.isEmpty(); }
     bool hasFormItem(const QString &name) const;
     QString formItemValue(const QString &name) const;
     QString formItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allFormItemValues(const QString &name) const;
     QStringList formItemList(const QString &key) const;
     QVariantMap formItems(const QString &key) const;
-    const QVariantMap &formItems() const { return d->formParams; }
-    TMultipartFormData &multipartFormData() { return d->multiFormData; }
+    const QVariantMap &formItems() const { return d->formItems; }
+    TMultipartFormData &multipartFormData() { return d->multipartFormData; }
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
-    QHostAddress clientAddress() const { return d->clientAddr; }
+    QHostAddress clientAddress() const { return d->clientAddress; }
 
 #if QT_VERSION >= 0x050000
-    bool hasJson() const { return !d->jsondata.isNull(); }
-    const QJsonDocument &jsonData() const { return d->jsondata; }
+    bool hasJson() const { return !d->jsonData.isNull(); }
+    const QJsonDocument &jsonData() const { return d->jsonData; }
 #endif
+
+    static THttpRequest generate(const QByteArray &byteArray, int &availableLength);
 
 protected:
     void setRequest(const THttpRequestHeader &header, const QByteArray &body);
@@ -83,12 +85,12 @@ protected:
 
 private:
     void parseBody(const QByteArray &body, const THttpRequestHeader &header);
-    void setClientAddress(const QHostAddress &address) { d->clientAddr = address; }
+    void setClientAddress(const QHostAddress &address) { d->clientAddress = address; }
 
     QSharedDataPointer<THttpRequestData> d;
 
     friend class THttpSocket;
-    friend class TWorkerStarter;
+    friend class TActionWorker;
 };
 
 Q_DECLARE_METATYPE(THttpRequest)
