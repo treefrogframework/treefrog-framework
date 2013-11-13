@@ -1,6 +1,6 @@
 TARGET = hmac
 TEMPLATE = app
-CONFIG += console debug qtestlib
+CONFIG += console qtestlib
 CONFIG -= app_bundle
 QT += network
 QT -= gui

@@ -12,6 +12,12 @@ private slots:
     void hmacmd5();
     void hmacsha1_data();
     void hmacsha1();
+    void hmacsha256_data();
+    void hmacsha256();
+    void hmacsha384_data();
+    void hmacsha384();
+    void hmacsha512_data();
+    void hmacsha512();
     void crammd5();
 };
 
@@ -106,6 +112,102 @@ void TestHMAC::hmacsha1()
     QFETCH(QByteArray, result);
 
     QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha1);
+    QCOMPARE(actual, result);
+}
+
+
+void TestHMAC::hmacsha256_data()
+{
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("text");
+    QTest::addColumn<QByteArray>("result");
+
+    QTest::newRow("1") << QByteArray("key")
+                       << QByteArray("The quick brown fox jumps over the lazy dog")
+                       << QByteArray::fromHex("f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8");
+    QTest::newRow("2") << QByteArray("Jefe")
+                       << QByteArray("what do ya want for nothing?")
+                       << QByteArray::fromHex("5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843");
+    QTest::newRow("3") << QByteArray::fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                       << QByteArray("Test Using Larger Than Block-Size Key - Hash Key First")
+                       << QByteArray::fromHex("60e431591ee0b67f0d8a26aacbf5b77f8e0bc6213728c5140546040f0ee37f54");
+    QTest::newRow("4") << QByteArray::fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                       << QByteArray("This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm.")
+                       << QByteArray::fromHex("9b09ffa71b942fcb27635fbcd5b0e944bfdc63644f0713938a7f51535c3a35e2");
+}
+
+
+void TestHMAC::hmacsha256()
+{
+    QFETCH(QByteArray, key);
+    QFETCH(QByteArray, text);
+    QFETCH(QByteArray, result);
+
+    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha256);
+    QCOMPARE(actual, result);
+}
+
+
+void TestHMAC::hmacsha384_data()
+{
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("text");
+    QTest::addColumn<QByteArray>("result");
+
+    QTest::newRow("1") << QByteArray("Jefe")
+                       << QByteArray("what do ya want for nothing?")
+                       << QByteArray::fromHex("af45d2e376484031617f78d2b58a6b1b9c7ef464f5a01b47e42ec3736322445e8e2240ca5e69e2c78b3239ecfab21649");
+    QTest::newRow("2") << QByteArray::fromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")
+                       << QByteArray("Hi There")
+                       << QByteArray::fromHex("afd03944d84895626b0825f4ab46907f15f9dadbe4101ec682aa034c7cebc59cfaea9ea9076ede7f4af152e8b2fa9cb6");
+    QTest::newRow("3") << QByteArray::fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                       << QByteArray("Test Using Larger Than Block-Size Key - Hash Key First")
+                       << QByteArray::fromHex("4ece084485813e9088d2c63a041bc5b44f9ef1012a2b588f3cd11f05033ac4c60c2ef6ab4030fe8296248df163f44952");
+    QTest::newRow("4") << QByteArray::fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                       << QByteArray("This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm.")
+                       << QByteArray::fromHex("6617178e941f020d351e2f254e8fd32c602420feb0b8fb9adccebb82461e99c5a678cc31e799176d3860e6110c46523e");
+}
+
+
+void TestHMAC::hmacsha384()
+{
+    QFETCH(QByteArray, key);
+    QFETCH(QByteArray, text);
+    QFETCH(QByteArray, result);
+
+    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha384);
+    QCOMPARE(actual, result);
+}
+
+
+void TestHMAC::hmacsha512_data()
+{
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("text");
+    QTest::addColumn<QByteArray>("result");
+
+    QTest::newRow("1") << QByteArray("Jefe")
+                       << QByteArray("what do ya want for nothing?")
+                       << QByteArray::fromHex("164b7a7bfcf819e2e395fbe73b56e0a387bd64222e831fd610270cd7ea2505549758bf75c05a994a6d034f65f8f0e6fdcaeab1a34d4a6b4b636e070a38bce737");
+    QTest::newRow("2") << QByteArray::fromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")
+                       << QByteArray("Hi There")
+                       << QByteArray::fromHex("87aa7cdea5ef619d4ff0b4241a1d6cb02379f4e2ce4ec2787ad0b30545e17cdedaa833b7d6b8a702038b274eaea3f4e4be9d914eeb61f1702e696c203a126854");
+    QTest::newRow("3") << QByteArray::fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                       << QByteArray("Test Using Larger Than Block-Size Key - Hash Key First")
+                       << QByteArray::fromHex("80b24263c7c1a3ebb71493c1dd7be8b49b46d1f41b4aeec1121b013783f8f3526b56d037e05f2598bd0fd2215d6a1e5295e64f73f63f0aec8b915a985d786598");
+    QTest::newRow("4") << QByteArray::fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                       << QByteArray("This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm.")
+                       << QByteArray::fromHex("e37b6a775dc87dbaa4dfa9f96e5e3ffddebd71f8867289865df5a32d20cdc944b6022cac3c4982b10d5eeb55c3e4de15134676fb6de0446065c97440fa8c6a58");
+}
+
+
+void TestHMAC::hmacsha512()
+{
+    QFETCH(QByteArray, key);
+    QFETCH(QByteArray, text);
+    QFETCH(QByteArray, result);
+
+    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha512);
     QCOMPARE(actual, result);
 }
 
