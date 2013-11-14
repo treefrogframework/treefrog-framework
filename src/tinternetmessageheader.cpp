@@ -173,10 +173,10 @@ void TInternetMessageHeader::setCurrentDate()
   Sets the value of the header field date to \a localTime
   as the local time on the computer.
 */
-// void TInternetMessageHeader::setDate(const QDateTime &localTime)
-// {
-//     setRawHeader("Date", THttpUtility::toHttpDateTimeString(localTime));
-// }
+void TInternetMessageHeader::setDate(const QDateTime &localTime)
+{
+    setRawHeader("Date", THttpUtility::toHttpDateTimeString(localTime));
+}
 
 /*!
   Sets the value of the header field date to \a utc as Coordinated
