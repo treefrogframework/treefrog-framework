@@ -12,12 +12,14 @@ private slots:
     void hmacmd5();
     void hmacsha1_data();
     void hmacsha1();
+#if QT_VERSION >= 0x050000
     void hmacsha256_data();
     void hmacsha256();
     void hmacsha384_data();
     void hmacsha384();
     void hmacsha512_data();
     void hmacsha512();
+#endif
     void crammd5();
 };
 
@@ -115,6 +117,7 @@ void TestHMAC::hmacsha1()
     QCOMPARE(actual, result);
 }
 
+#if QT_VERSION >= 0x050000
 
 void TestHMAC::hmacsha256_data()
 {
@@ -211,6 +214,7 @@ void TestHMAC::hmacsha512()
     QCOMPARE(actual, result);
 }
 
+#endif
 
 void TestHMAC::crammd5()
 {
@@ -356,14 +360,14 @@ digest =        0xe8e99d0f45237d786d6bbaa7965c7808bbff1a91
 
 
 /*
-CRAM-MD5
+CRAM-MD5 ex.
  S: 334 PDI3MTIwMDQ1MjcuOTEyMDI2MUBzbXRwMTAuZHRpLm5lLmpwPg==
  C: a2F6em5Ab3BzLmR0aS5uZS5qcCA4YTQwY2FmZmVlODRkZjMwZWI2ZWMxMjMyNmYzYWRiOA==
 
 
 #!/bin/sh
 CH=`echo -n 'PDI3MTIwMDQ1MjcuOTEyMDI2MUBzbXRwMTAuZHRpLm5lLmpwPg==' | base64 -d`
-MD5=`echo -n "$CH" |  openssl md5 -hmac kazu27`
-echo -n "kazzn@ops.dti.ne.jp $MD5" | base64
+MD5=`echo -n "$CH" | openssl md5 -hmac (password)`
+echo -n "account@example.co.jp $MD5" | base64
 
  */

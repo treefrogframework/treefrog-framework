@@ -1,8 +1,13 @@
 TARGET = htmlparser
 TEMPLATE = app
-CONFIG += console debug qtestlib
+CONFIG += console
 CONFIG -= app_bundle
 QT -= gui
+greaterThan(QT_MAJOR_VERSION, 4) {
+  QT += testlib
+} else {
+  CONFIG += qtestlib
+}
 INCLUDEPATH += ../../../include
 SOURCES = htmlparser.cpp
 

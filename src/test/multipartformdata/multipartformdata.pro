@@ -1,9 +1,14 @@
 TARGET = multipartformdata
 TEMPLATE = app
-CONFIG += console debug qtestlib
+CONFIG += console
 CONFIG -= app_bundle
 QT += network sql
 QT -= gui
+greaterThan(QT_MAJOR_VERSION, 4) {
+  QT += testlib
+} else {
+  CONFIG += qtestlib
+}
 DEFINES += TF_DLL
 INCLUDEPATH += ../../../include
 SOURCES = multipartformdata.cpp
