@@ -29,8 +29,7 @@ TSqlQuery::TSqlQuery(const QString &query, int databaseId)
     : QSqlQuery(query, Tf::currentSqlDatabase(databaseId))
 {
     if (!query.isEmpty()) {  // will be executed immediately
-        QString q = (!lastError().isValid()) ? query : QLatin1String("(Query failed) ") + query;
-        tQueryLog("%s", qPrintable(q));
+        tWriteQueryLog(query, !lastError().isValid(), lastError());
     }
 }
 
@@ -40,6 +39,12 @@ TSqlQuery::TSqlQuery(const QString &query, int databaseId)
 TSqlQuery::TSqlQuery(int databaseId)
     : QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
 { }
+
+
+TSqlQuery::TSqlQuery(QSqlDatabase db)
+    : QSqlQuery(db)
+{ }
+
 
 /*!
   Loads a query from the given file \a filename.
@@ -144,8 +149,7 @@ QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database
 bool TSqlQuery::exec(const QString &query)
 {
     bool ret = QSqlQuery::exec(query);
-    QString q = (ret) ? query : QLatin1String("(Query failed) ") + query;
-    tQueryLog("%s", qPrintable(q));
+    tWriteQueryLog(query, ret, lastError());
     return ret;
 }
 
@@ -156,8 +160,6 @@ bool TSqlQuery::exec(const QString &query)
 bool TSqlQuery::exec()
 {
     bool ret = QSqlQuery::exec();
-    QString q = executedQuery();
-    QString str = (ret) ? q : (QLatin1String("(Query failed) ") + (q.isEmpty() ? lastQuery() : q));
-    tQueryLog("%s", qPrintable(str));
+    tWriteQueryLog(executedQuery(), ret, lastError());
     return ret;
 }

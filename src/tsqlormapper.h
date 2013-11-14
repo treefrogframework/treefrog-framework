@@ -106,9 +106,8 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
 
     int oldLimit = queryLimit;
     queryLimit = 1;
-    if (!select()) {
-        tQueryLog("%s", qPrintable(lastError().text()));
-    }
+    bool ret = select();
+    tWriteQueryLog(query().lastQuery(), ret, lastError());
     queryLimit = oldLimit;
 
     tSystemDebug("rowCount: %d", rowCount());
@@ -157,12 +156,10 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
         setFilter(QString());
     }
 
-    if (!select()) {
-        tQueryLog("%s", qPrintable(lastError().text()));
-        return -1;
-    }
+    bool ret = select();
+    tWriteQueryLog(query().lastQuery(), ret, lastError());
     tSystemDebug("rowCount: %d", rowCount());
-    return rowCount();
+    return ret ? rowCount() : -1;
 }
 
 /*!
@@ -286,6 +283,7 @@ template <class T>
 inline QString TSqlORMapper<T>::selectStatement() const
 {
     QString query = QSqlTableModel::selectStatement();
+
     if (!queryFilter.isEmpty())
         query.append(QLatin1String(" WHERE ")).append(queryFilter);
 
@@ -300,7 +298,7 @@ inline QString TSqlORMapper<T>::selectStatement() const
     if (queryOffset > 0) {
         query.append(QLatin1String(" OFFSET ")).append(QString::number(queryOffset));
     }
-    tQueryLog("%s", qPrintable(query));
+
     return query;
 }
 
@@ -320,15 +318,9 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
         query.append(QLatin1String(" WHERE ")).append(conv.toString());
     }
 
-    QSqlQuery q(database());
+    TSqlQuery q(database());
     bool res = q.exec(query);
-
-    QString s = (res) ? query : (QLatin1String("(Query failed) ") + query);
-    tQueryLog("%s", qPrintable(s));
-
-    if (!res) {
-        tQueryLog("%s", qPrintable(q.lastError().text()));
-    } else {
+    if (res) {
         q.next();
         cnt = q.value(0).toInt();
     }
@@ -360,16 +352,18 @@ inline QList<T> TSqlORMapper<T>::findAll(const TCriteria &cri)
     }
 
     QList<T> list;
-    if (select()) {
+    bool ret = select();
+    tWriteQueryLog(query().lastQuery(), ret, lastError());
+
+    if (ret) {
         tSystemDebug("rowCount: %d", rowCount());
         for (int i = 0; i < rowCount(); ++i) {
             T rec;
             rec.setRecord(record(i), QSqlError());
             list << rec;
         }
-    } else {
-        tQueryLog("%s", qPrintable(lastError().text()));
     }
+
     return list;
 }
 
@@ -430,11 +424,8 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         upd.append(QLatin1String(" WHERE ")).append(where);
     }
 
-    QSqlQuery sqlQuery(database());
+    TSqlQuery sqlQuery(database());
     bool res = sqlQuery.exec(upd);
-
-    QString s = (res) ? upd : (QLatin1String("(Query failed) ") + upd);
-    tQueryLog("%s", qPrintable(s));
     return res ? sqlQuery.numRowsAffected() : -1;
 }
 
@@ -470,11 +461,8 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
         del.append(QLatin1String(" WHERE ")).append(where);
     }
 
-    QSqlQuery sqlQuery(database());
+    TSqlQuery sqlQuery(database());
     bool res = sqlQuery.exec(del);
-
-    QString s = (res) ? del : (QLatin1String("(Query failed) ") + del);
-    tQueryLog("%s", qPrintable(s));
     return res ? sqlQuery.numRowsAffected() : -1;
 }
 

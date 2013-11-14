@@ -6,6 +6,7 @@
 #define ENABLE_TO_TRACE_FUNCTION  0
 
 class TAccessLog;
+class QSqlError;
 
 
 T_CORE_EXPORT void writeAccessLog(const TAccessLog &log); // write access log
@@ -47,6 +48,9 @@ T_CORE_EXPORT void tQueryLog(const char *, ...) // SQL query log
     __attribute__ ((format (printf, 1, 2)))
 #endif
 ;
+
+T_CORE_EXPORT void tWriteQueryLog(const QString &query, bool success, const QSqlError &error);
+
 
 #if !defined(TF_NO_DEBUG) && ENABLE_TO_TRACE_FUNCTION && !defined(Q_OS_WIN)
 

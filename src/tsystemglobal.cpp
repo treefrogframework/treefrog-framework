@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
+#include <QSqlError>
 #include <TWebApplication>
 #include <TLogger>
 #include <TLog>
@@ -145,4 +146,19 @@ void tQueryLog(const char *msg, ...)
         sqllogstrm->writeLog(buf);
         va_end(ap);
     }
+}
+
+
+void tWriteQueryLog(const QString &query, bool success, const QSqlError &error)
+{
+    QString q = query;
+
+    if (!success) {
+        QString err = (!error.databaseText().isEmpty()) ? error.databaseText() : error.text().trimmed();
+        if (!err.isEmpty()) {
+            err = QLatin1Char('[') + err + QLatin1String("] ");
+        }
+        q = QLatin1String("(Query failed) ") + err + query;
+    }
+    tQueryLog("%s", qPrintable(q));
 }

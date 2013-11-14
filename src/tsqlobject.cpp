@@ -150,13 +150,10 @@ bool TSqlObject::create()
         return false;
     }
 
-    QSqlQuery query(database);
+    TSqlQuery query(database);
     bool ret = query.exec(ins);
-    tQueryLog("%s", qPrintable(ins));
     sqlError = query.lastError();
-    if (!ret) {
-        tSystemError("SQL insert error: %s", qPrintable(sqlError.text()));
-    } else {
+    if (ret) {
         // Gets the last inserted value of auto-value field
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
@@ -252,22 +249,18 @@ bool TSqlObject::update()
     where.append("=").append(TSqlQuery::formatValue(property(pkName), database));
     upd.append(where);
 
-    QSqlQuery query(database);
-    bool res = query.exec(upd);
-    tQueryLog("%s", qPrintable(upd));
+    TSqlQuery query(database);
+    bool ret = query.exec(upd);
     sqlError = query.lastError();
-    if (!res) {
-        tSystemError("SQL update error: %s", qPrintable(sqlError.text()));
-        return false;
+    if (ret) {
+        // Optimistic lock check
+        if (revIndex >= 0 && query.numRowsAffected() != 1) {
+            QString msg = QString("Row was updated or deleted from table ") + tableName() + QLatin1String(" by another transaction");
+            sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
+            throw SqlException(msg, __FILE__, __LINE__);
+        }
     }
-
-    // Optimistic lock check
-    if (revIndex >= 0 && query.numRowsAffected() != 1) {
-        QString msg = QString("Row was updated or deleted from table ") + tableName() + QLatin1String(" by another transaction");
-        sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
-        throw SqlException(msg, __FILE__, __LINE__);
-    }
-    return true;
+    return ret;
 }
 
 /*!
@@ -322,27 +315,22 @@ bool TSqlObject::remove()
     del.append(QLatin1String(pkName));
     del.append("=").append(TSqlQuery::formatValue(property(pkName), database));
 
-    QSqlQuery query(database);
-    bool res = query.exec(del);
-    tQueryLog("%s", qPrintable(del));
+    TSqlQuery query(database);
+    bool ret = query.exec(del);
     sqlError = query.lastError();
-    if (!res) {
-        tSystemError("SQL delete error: %s", qPrintable(sqlError.text()));
-        return false;
-    }
-
-    // Optimistic lock check
-    if (query.numRowsAffected() != 1) {
-        if (revIndex >= 0) {
-            QString msg = QString("Row was updated or deleted from table ") + tableName() + QLatin1String(" by another transaction");
-            sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
-            throw SqlException(msg, __FILE__, __LINE__);
+    if (ret) {
+        // Optimistic lock check
+        if (query.numRowsAffected() != 1) {
+            if (revIndex >= 0) {
+                QString msg = QString("Row was updated or deleted from table ") + tableName() + QLatin1String(" by another transaction");
+                sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
+                throw SqlException(msg, __FILE__, __LINE__);
+            }
+            tWarn("Row was deleted by another transaction, %s", qPrintable(tableName()));
         }
-        tWarn("Row was deleted by another transaction, %s", qPrintable(tableName()));
+        clear();
     }
-
-    clear();
-    return true;
+    return ret;
 }
 
 /*!
