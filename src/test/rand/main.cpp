@@ -46,8 +46,10 @@ class Thread : public QThread
     void run()
     {
         for (;;) {
-            Tf::randXor128();
-            yieldCurrentThread();
+            for (int i = 0; i < 20; ++i) {
+                Tf::randXor128();
+            }
+            QThread::yieldCurrentThread();
         }
     }
 };
@@ -88,7 +90,7 @@ void TestRand::bench_data()
 {
     Tf::srandXor128(1222);
 
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < 400; ++i) {
         (new Thread)->start();
     }
     Tf::msleep(100);
