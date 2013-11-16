@@ -243,7 +243,8 @@ void TMultiplexingServer::run()
     // Listen socket
     setSocketOption(listenSocket);
 
-    maxWorkers = Tf::app()->maxNumberOfServers(10);
+    QString mpm = Tf::app()->appSettings().value("MultiProcessingModule").toString().toLower();
+    maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "16").toInt();
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 
     // Get send buffer size and recv buffer size

@@ -372,6 +372,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
     if (event->timerId() == timer.timerId()) {
         if (signalNumber() >= 0) {
             tSystemDebug("TWebApplication trapped signal  number:%d", signalNumber());
+            timer.stop();
             exit(signalNumber());
         }
     } else {

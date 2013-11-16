@@ -472,7 +472,7 @@ int managerMain(int argc, char *argv[])
             break; }
 
         case TWebApplication::Hybrid: {
-            int num = QThread::idealThreadCount();
+            int num = qMax(qMin(app.maxNumberOfServers(), QThread::idealThreadCount()), 1);
             manager = new ServerManager(num, num, 0, &app);
             break; }
 
