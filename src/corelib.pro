@@ -253,6 +253,8 @@ unix:!macx {
   SOURCES += tmultiplexingserver_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
+  HEADERS += tfileaiologger.h
+  SOURCES += tfileaiologger.cpp
 }
 
 # Qt5

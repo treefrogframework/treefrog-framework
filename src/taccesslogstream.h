@@ -2,7 +2,7 @@
 #define TACCESSLOGSTREAM_H
 
 class QSystemSemaphore;
-class TFileLogger;
+class TLogger;
 
 
 class TAccessLogStream
@@ -13,7 +13,7 @@ public:
     void writeLog(const QByteArray &log);
 
 private:
-    TFileLogger *logger;
+    TLogger *logger;
     QSystemSemaphore *semaphore;
 
     // Disabled

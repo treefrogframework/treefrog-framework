@@ -9,8 +9,11 @@
 #include <QFileInfo>
 #include <TWebApplication>
 #include <TSystemGlobal>
-#include "tfilelogger.h"
 #include "taccesslogstream.h"
+#include "tfilelogger.h"
+#ifdef Q_OS_LINUX
+# include "tfileaiologger.h"
+#endif
 
 /*!
   \class TAccessLogStream
@@ -19,9 +22,15 @@
 
 
 TAccessLogStream::TAccessLogStream(const QString &fileName)
-    : logger(new TFileLogger), semaphore(0)
+    : logger(0), semaphore(0)
 {
-    logger->setFileName(fileName);
+#ifdef Q_OS_LINUX
+    TFileAioLogger *filelogger = new TFileAioLogger;
+#else
+    TFileLogger *filelogger = new TFileLogger;
+#endif
+    filelogger->setFileName(fileName);
+    logger = filelogger;
 
     if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
         semaphore = new QSystemSemaphore(QLatin1String("TreeFrog_") + QFileInfo(fileName).fileName(), 1, QSystemSemaphore::Open);

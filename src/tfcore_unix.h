@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <aio.h>
 
 #ifndef Q_OS_UNIX
 # error "tfcore_unix.h included on a non-Unix system"
@@ -36,12 +37,22 @@ static inline int tf_flock(int fd, int op)
 }
 
 
+static inline int tf_aio_write(struct aiocb *aiocbp)
+{
+    register int ret;
+    EINTR_LOOP(ret, ::aio_write(aiocbp));
+    return ret;
+}
+
+
 static inline pid_t gettid()
 {
     return syscall(SYS_gettid);
 }
 
+
 #ifdef Q_OS_LINUX
+
 #include <sys/epoll.h>
 
 static inline int tf_epoll_wait(int epfd, struct epoll_event *events,

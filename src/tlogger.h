@@ -29,6 +29,7 @@ public:
     virtual void close() = 0;
     virtual bool isOpen() const = 0;
     virtual void log(const TLog &log) = 0; // thread safe log output
+    virtual void log(const QByteArray &) { } // thread safe log output
     virtual void flush() { }
     virtual QByteArray logToByteArray(const TLog &log) const;
 
