@@ -212,9 +212,15 @@ void TInternetMessageHeader::parse(const QByteArray &header)
 {
     QByteArray field, value;
     int i = 0;
-    value.reserve(512);
+    int headerlen;
 
-    while (i < header.count()) {
+    value.reserve(255);
+
+    headerlen = header.indexOf("\r\n\r\n");
+    if (headerlen < 0)
+        headerlen = header.length();
+
+    while (i < headerlen) {
         int j = header.indexOf(':', i); // field-name
         if (j < 0)
             break;
@@ -235,7 +241,7 @@ void TInternetMessageHeader::parse(const QByteArray &header)
 
             value += header.mid(j, i - j).trimmed();
             j = ++i;
-        } while (i < header.count() && (header.at(i) == ' ' || header.at(i) == '\t'));
+        } while (i < headerlen && (header.at(i) == ' ' || header.at(i) == '\t'));
 
         headerPairList << qMakePair(field, value);
     }

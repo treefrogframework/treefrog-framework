@@ -32,7 +32,7 @@ THttpHeader::THttpHeader(const THttpHeader &other)
   Constructs an HTTP header by parsing \a str.
 */
 THttpHeader::THttpHeader(const QByteArray &str)
-    : TInternetMessageHeader(), majVersion(1), minVersion(1)  
+    : TInternetMessageHeader(), majVersion(1), minVersion(1)
 {
     parse(str);
 }
@@ -219,7 +219,7 @@ THttpResponseHeader::THttpResponseHeader(const QByteArray &str)
             if (line.length() > 13 &&
                 (line[12] == ' ' || line[12] == '\t')) {
                 reasonPhr = line.mid(13).trimmed();
-            } 
+            }
         }
     }
 }
