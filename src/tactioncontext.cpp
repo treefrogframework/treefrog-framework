@@ -53,22 +53,7 @@ TActionContext::TActionContext()
 
 TActionContext::~TActionContext()
 {
-    if (httpReq)
-        delete httpReq;
-
-    // Releases all SQL database sessions
-    TActionContext::releaseSqlDatabases();
-
-    // Releases all KVS database sessions
-    TActionContext::releaseKvsDatabases();
-
-    for (QListIterator<TTemporaryFile *> i(tempFiles); i.hasNext(); ) {
-        delete i.next();
-    }
-
-    for (QStringListIterator i(autoRemoveFiles); i.hasNext(); ) {
-        QFile(i.next()).remove();
-    }
+    release();
 }
 
 
@@ -125,16 +110,15 @@ void TActionContext::releaseKvsDatabases()
 }
 
 
-void TActionContext::execute()
+void TActionContext::execute(THttpRequest &request)
 {
     T_TRACEFUNC("");
+
     THttpResponseHeader responseHeader;
     accessLogger.open();
 
     try {
-        if (!readRequest()) {
-            return;
-        }
+        httpReq = &request;
         const THttpRequestHeader &hdr = httpReq->header();
 
         // Access log
@@ -357,12 +341,27 @@ void TActionContext::execute()
         closeHttpSocket();
     }
 
-    // Push to the pool
+    TActionContext::accessLogger.write();  // Writes access log
+}
+
+
+void TActionContext::release()
+{
+    // Releases all SQL database sessions
     TActionContext::releaseSqlDatabases();
+
+    // Releases all KVS database sessions
     TActionContext::releaseKvsDatabases();
 
-    TActionContext::accessLogger.write();  // Writes access log
-    releaseHttpSocket();
+    for (QListIterator<TTemporaryFile *> i(tempFiles); i.hasNext(); ) {
+        delete i.next();
+    }
+    tempFiles.clear();
+
+    for (QStringListIterator i(autoRemoveFiles); i.hasNext(); ) {
+        QFile(i.next()).remove();
+    }
+    autoRemoveFiles.clear();
 }
 
 
@@ -412,15 +411,6 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 
     // Write data
     return writeResponse(header, body);
-}
-
-
-void TActionContext::setHttpRequest(const THttpRequest &request)
-{
-    if (httpReq)
-        delete httpReq;
-
-    httpReq = new THttpRequest(request);
 }
 
 

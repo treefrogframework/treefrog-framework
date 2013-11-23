@@ -59,21 +59,10 @@ void TActionForkProcess::start()
 
     currentActionContext = this;
     std::cerr << "_accepted" << std::flush;  // send to tfmanager
-    execute();
 
-    // For cleanup
+    QList<THttpRequest> reqs;
     QEventLoop eventLoop;
-    while (eventLoop.processEvents()) {}
-
-    emit finished();
-    QCoreApplication::exit(1);
-}
-
-
-bool TActionForkProcess::readRequest()
-{
     httpSocket = new THttpSocket;
-    THttpRequest req;
 
     if (!httpSocket->setSocketDescriptor(TActionContext::socketDesc)) {
         emitError(httpSocket->error());
@@ -81,23 +70,43 @@ bool TActionForkProcess::readRequest()
     }
     TActionContext::socketDesc = 0;
 
-    if (!TActionThread::readRequest(httpSocket, req)) {
-        goto socket_error;
+    for (;;) {
+        reqs = TActionThread::readRequest(httpSocket);
+        tSystemDebug("HTTP request count: %d", reqs.count());
+
+        if (reqs.isEmpty()) {
+            break;
+        }
+
+        for (QMutableListIterator<THttpRequest> it(reqs); it.hasNext(); ) {
+            THttpRequest &req = it.next();
+            TActionContext::execute(req);
+
+            httpSocket->flush();  // Flush socket
+        }
+
+        if (!httpSocket->waitForReadyRead(5000))
+            break;
     }
 
-    setHttpRequest(req);
-    return true;
+    TActionContext::release();
+    closeHttpSocket();  // disconnect
+
+    // For cleanup
+    while (eventLoop.processEvents()) {}
+
+    emit finished();
+    QCoreApplication::exit(1);
 
 socket_error:
     delete httpSocket;
     httpSocket = 0;
-    return false;
 }
 
 
 qint64 TActionForkProcess::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
-    header.setRawHeader("Connection", "close");
+    header.setRawHeader("Connection", "Keep-Alive");
     return httpSocket->write(static_cast<THttpHeader*>(&header), body);
 }
 
@@ -107,13 +116,3 @@ void TActionForkProcess::closeHttpSocket()
     httpSocket->close();
 }
 
-
-void TActionForkProcess::releaseHttpSocket()
-{
-    httpSocket->waitForBytesWritten();  // Flush socket
-    httpSocket->close();  // disconnect
-
-    // Destorys the object in the thread which created it
-    delete httpSocket;
-    httpSocket = 0;
-}

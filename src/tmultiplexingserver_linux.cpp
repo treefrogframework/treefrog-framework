@@ -154,7 +154,7 @@ int TMultiplexingServer::epollAdd(int fd, int events)
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &ev);
     int err = errno;
     if (ret < 0 && err != EEXIST) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  fd:%d errno:%d", fd, errno);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  fd:%d errno:%d", fd, err);
         epollClose(fd);
     } else {
         //tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%d)  fd:%d", events, fd);
@@ -172,8 +172,9 @@ int TMultiplexingServer::epollModify(int fd, int events)
     ev.data.fd = fd;
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
+    int err = errno;
     if (ret < 0) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  fd:%d errno:%d", fd, errno);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  fd:%d errno:%d", fd, err);
         epollClose(fd);
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_MOD)  fd:%d", fd);
@@ -187,7 +188,7 @@ int TMultiplexingServer::epollDel(int fd)
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL);
     int err = errno;
     if (ret < 0 && err != ENOENT) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  fd:%d errno:%d", fd, errno);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  fd:%d errno:%d", fd, err);
         epollClose(fd);
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  fd:%d", fd);
@@ -209,7 +210,11 @@ int TMultiplexingServer::getSendRequest()
                 // Add to a send-buffer
                 sendBuffers[fd].enqueue(req->buffer);
                 // Set epoll for sending and recieving
+#if 1 //TODO: HTTP 2.0 support
+                epollAdd(fd, EPOLLIN | EPOLLOUT);
+#else
                 epollModify(fd, EPOLLIN | EPOLLOUT);
+#endif
             } else {
                 delete req->buffer;
             }
@@ -327,35 +332,6 @@ void TMultiplexingServer::run()
             } else {
                 int cltfd = events[i].data.fd;
 
-                if ( (events[i].events & EPOLLIN) ) {
-                    // Receive data
-                    int len = ::recv(cltfd, rcvbuffer, recvBufSize, 0);
-                    err = errno;
-                    if (len > 0) {
-                        // Read successfully
-                        THttpBuffer &recvbuf = recvBuffers[cltfd];
-                        recvbuf.write(rcvbuffer, len);
-
-                        if (recvbuf.canReadHttpRequest()) {
-                            // Incoming a request
-                            if (countWorkers() >= maxWorkers) {
-                                pendingRequests << cltfd;
-                            } else {
-                                emitIncomingRequest(cltfd, recvbuf);
-                            }
-                        }
-
-                    } else {
-                        if (len < 0 && err != ECONNRESET) {
-                            tSystemError("Failed recv : errno:%d", err);
-                        }
-
-                        // Disconnect
-                        epollClose(cltfd);
-                        continue;
-                    }
-                }
-
                 if ( (events[i].events & EPOLLOUT) ) {
                     // Send data
                     THttpSendBuffer *sendbuf = sendBuffers[cltfd].first();
@@ -396,9 +372,44 @@ void TMultiplexingServer::run()
                             delete que.dequeue(); // delete send-buffer obj
 
                             // Prepare recv
-                            if (que.isEmpty())
+                            if (que.isEmpty()) {
                                 epollModify(cltfd, EPOLLIN);
+                            }
                         }
+                    }
+                }
+
+                if ( (events[i].events & EPOLLIN) ) {
+                    // Receive data
+                    int len = ::recv(cltfd, rcvbuffer, recvBufSize, 0);
+                    err = errno;
+                    if (len > 0) {
+                        // Read successfully
+                        THttpBuffer &recvbuf = recvBuffers[cltfd];
+                        recvbuf.write(rcvbuffer, len);
+
+                        if (recvbuf.canReadHttpRequest()) {
+                            // Incoming a request
+                            if (countWorkers() >= maxWorkers) {
+                                pendingRequests << cltfd;
+                            } else {
+                                emitIncomingRequest(cltfd, recvbuf);
+
+#if 1 //TODO: HTTP 2.0 support
+                                // Stop receiving, otherwise the responses is sometimes
+                                // placed in the wrong order in case of HTTP-pipeline.
+                                epollDel(cltfd);
+#endif
+                            }
+                        }
+                    } else {
+                        if (len < 0 && err != ECONNRESET) {
+                            tSystemError("Failed recv : errno:%d", err);
+                        }
+
+                        // Disconnect
+                        epollClose(cltfd);
+                        continue;
                     }
                 }
             }

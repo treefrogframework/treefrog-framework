@@ -17,16 +17,14 @@ public:
     TActionThread(int socket);
     virtual ~TActionThread();
 
-    static bool readRequest(THttpSocket *socket, THttpRequest &request);
+    static QList<THttpRequest> readRequest(THttpSocket *socket);
 
 protected:
     void run();
     void emitError(int socketError);
 
-    bool readRequest();
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
     void closeHttpSocket();
-    void releaseHttpSocket();
 
 signals:
     void error(int socketError);

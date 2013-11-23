@@ -8,6 +8,7 @@
 #include <TSqlTransaction>
 #include <TKvsDatabase>
 #include <TAccessLog>
+#include <THttpRequest>
 
 class QHostAddress;
 class THttpResponseHeader;
@@ -16,7 +17,6 @@ class THttpResponse;
 class TApplicationServer;
 class TTemporaryFile;
 class TActionController;
-class THttpRequest;
 
 
 class T_CORE_EXPORT TActionContext
@@ -37,7 +37,9 @@ public:
     const THttpRequest &httpRequest() const { return *httpReq; }
 
 protected:
-    void execute();
+    void execute(THttpRequest &request);
+    void release();
+
     virtual void emitError(int socketError);
     bool beginTransaction(QSqlDatabase &database);
     void commitTransactions();
@@ -47,12 +49,9 @@ protected:
     qint64 writeResponse(int statusCode, THttpResponseHeader &header);
     qint64 writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length);
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length);
-    void setHttpRequest(const THttpRequest &request);
 
-    virtual bool readRequest() { return true; }
     virtual qint64 writeResponse(THttpResponseHeader &, QIODevice *) { return 0; }
     virtual void closeHttpSocket() { }
-    virtual void releaseHttpSocket() { }
 
     QMap<int, QSqlDatabase> sqlDatabases;
     TSqlTransaction transactions;

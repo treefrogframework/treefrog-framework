@@ -19,11 +19,8 @@ public:
 
 protected:
     virtual void emitError(int socketError);
-
-    virtual bool readRequest();
     virtual qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
     virtual void closeHttpSocket();
-    virtual void releaseHttpSocket();
 
     static TActionForkProcess *currentActionContext;
 

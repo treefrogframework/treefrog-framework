@@ -24,6 +24,7 @@ TActionWorker::TActionWorker(int socket, const QByteArray &request, const QStrin
 
 }
 
+
 TActionWorker::~TActionWorker()
 {
     tSystemDebug("TActionWorker::~TActionWorker  fd:%d", socketDesc);
@@ -32,6 +33,7 @@ TActionWorker::~TActionWorker()
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
+    header.setRawHeader("Connection", "Keep-Alive");
     accessLogger.setStatusCode(header.statusCode());
 
     // Check auto-remove
@@ -59,23 +61,16 @@ void TActionWorker::closeHttpSocket()
 
 void TActionWorker::run()
 {
-    int length;
-    THttpRequest req;
+    QList<THttpRequest> reqs = THttpRequest::generate(httpRequest, QHostAddress(clientAddr));
 
     // Loop for HTTP-pipeline requests
-    while (!httpRequest.isEmpty()) {
-        req = THttpRequest::generate(httpRequest, length);
-        if (length <= 0) {
-            break;
-        }
-
-        httpRequest.remove(0, length);
-        req.setClientAddress(QHostAddress(clientAddr));
-        setHttpRequest(req);
+    for (QMutableListIterator<THttpRequest> it(reqs); it.hasNext(); ) {
+        THttpRequest &req = it.next();
 
         // Executes a action context
-        TActionContext::execute();
+        TActionContext::execute(req);
     }
+    TActionContext::release();
 
     httpRequest.clear();
     clientAddr.clear();

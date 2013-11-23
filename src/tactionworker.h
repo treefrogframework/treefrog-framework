@@ -18,10 +18,8 @@ public:
 
 protected:
     void run();
-    bool readRequest() { return true; }
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
     void closeHttpSocket();
-    void releaseHttpSocket() { }
 
 private:
     QByteArray httpRequest;
