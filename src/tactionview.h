@@ -34,6 +34,10 @@ protected:
     QString echo(const char *str);
     QString echo(const QByteArray &str);
     QString echo(int n, int base = 10);
+    QString echo(long n, int base = 10);
+    QString echo(ulong n, int base = 10);
+    QString echo(qlonglong n, int base = 10);
+    QString echo(qulonglong n, int base = 10);
     QString echo(double d, char format = 'g', int precision = 6);
     QString echo(const THtmlAttribute &attr);
     QString echo(const QVariant &var);
@@ -41,6 +45,10 @@ protected:
     QString eh(const char *str);
     QString eh(const QByteArray &str);
     QString eh(int n, int base = 10);
+    QString eh(long n, int base = 10);
+    QString eh(ulong n, int base = 10);
+    QString eh(qlonglong n, int base = 10);
+    QString eh(qulonglong n, int base = 10);
     QString eh(double d, char format = 'g', int precision = 6);
     QString eh(const THtmlAttribute &attr);
     QString eh(const QVariant &var);
@@ -113,6 +121,30 @@ inline QString TActionView::echo(int n, int base)
     return QString();
 }
 
+inline QString TActionView::echo(long n, int base)
+{
+    responsebody += QString::number(n, base);
+    return QString();
+}
+
+inline QString TActionView::echo(ulong n, int base)
+{
+    responsebody += QString::number(n, base);
+    return QString();
+}
+
+inline QString TActionView::echo(qlonglong n, int base)
+{
+    responsebody += QString::number(n, base);
+    return QString();
+}
+
+inline QString TActionView::echo(qulonglong n, int base)
+{
+    responsebody += QString::number(n, base);
+    return QString();
+}
+
 inline QString TActionView::echo(double d, char format, int precision)
 {
     responsebody += QString::number(d, format, precision);
@@ -141,6 +173,26 @@ inline QString TActionView::eh(const QByteArray &str)
 }
 
 inline QString TActionView::eh(int n, int base)
+{
+    return echo(THttpUtility::htmlEscape(QString::number(n, base)));
+}
+
+inline QString TActionView::eh(long n, int base)
+{
+    return echo(THttpUtility::htmlEscape(QString::number(n, base)));
+}
+
+inline QString TActionView::eh(ulong n, int base)
+{
+    return echo(THttpUtility::htmlEscape(QString::number(n, base)));
+}
+
+inline QString TActionView::eh(qlonglong n, int base)
+{
+    return echo(THttpUtility::htmlEscape(QString::number(n, base)));
+}
+
+inline QString TActionView::eh(qulonglong n, int base)
 {
     return echo(THttpUtility::htmlEscape(QString::number(n, base)));
 }

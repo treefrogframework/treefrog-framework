@@ -441,10 +441,17 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
             crtparams += ", ";
 
             writableFields << QPair<QString, QString>(p.first, type);
+        }
 
-            if (p.second == QVariant::Int || p.second == QVariant::UInt || p.second == QVariant::LongLong || p.second == QVariant::Double) {
-                initParams += QString("\n    d->") + p.first + " = 0;";
-            }
+        // Initial value in the default constructor
+        switch ((int)p.second) {
+        case QVariant::Int:
+        case QVariant::UInt:
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+        case QVariant::Double:
+            initParams += QString("\n    d->") + p.first + " = 0;";
+            break;
         }
 
         if (var == LOCK_REVISION_FIELD)
