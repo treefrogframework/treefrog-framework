@@ -15,8 +15,8 @@ class T_CORE_EXPORT THttpSocket : public QTcpSocket
 public:
     THttpSocket(QObject *parent = 0);
     ~THttpSocket();
-  
-    THttpRequest read();
+
+    QList<THttpRequest> read();
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
     int idleTime() const;

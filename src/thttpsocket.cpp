@@ -39,24 +39,24 @@ THttpSocket::~THttpSocket()
 }
 
 
-THttpRequest THttpSocket::read()
+QList<THttpRequest> THttpSocket::read()
 {
     T_TRACEFUNC("");
-    THttpRequest req;
+
+    QList<THttpRequest> reqList;
+
     if (canReadRequest()) {
-        int idx = readBuffer.indexOf("\r\n\r\n");
-        if (idx > 0) {
-            if (fileBuffer.isOpen()) {
-                fileBuffer.close();
-                req.setRequest(readBuffer.left(idx + 4), fileBuffer.fileName());
-            } else {
-                req.setRequest(readBuffer.left(idx + 4), readBuffer.mid(idx + 4));
-            }
-            readBuffer.clear();
-            req.setClientAddress(peerAddress());
+        if (fileBuffer.isOpen()) {
+            fileBuffer.close();
+            THttpRequest req(readBuffer, fileBuffer.fileName(), peerAddress());
+            reqList << req;
+        } else {
+            reqList = THttpRequest::generate(readBuffer, peerAddress());
         }
+        readBuffer.clear();
+        lengthToRead = -1;
     }
-    return req;
+    return reqList;
 }
 
 
@@ -150,21 +150,20 @@ void THttpSocket::readRequest()
 
         if (lengthToRead > 0) {
             // Writes to buffer
-            qint64 len = qMin(lengthToRead, (qint64)buf.length());
             if (fileBuffer.isOpen()) {
-                if (fileBuffer.write(buf.data(), len) < 0) {
+                if (fileBuffer.write(buf.data(), bytes) < 0) {
                     throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
                 }
             } else {
-                readBuffer.append(buf.data(), len);
+                readBuffer.append(buf.data(), bytes);
             }
-            lengthToRead -= len;
+            lengthToRead = qMax(lengthToRead - bytes, 0LL);
 
         } else if (lengthToRead < 0) {
             readBuffer.append(buf);
             int idx = readBuffer.indexOf("\r\n\r\n");
             if (idx > 0) {
-                THttpRequestHeader header(readBuffer.left(idx + 4));
+                THttpRequestHeader header(readBuffer);
                 tSystemDebug("content-length: %d", header.contentLength());
 
                 if (limitBodyBytes > 0 && header.contentLength() > limitBodyBytes) {

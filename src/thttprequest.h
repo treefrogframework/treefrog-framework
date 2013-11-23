@@ -39,10 +39,9 @@ class T_CORE_EXPORT THttpRequest
 public:
     THttpRequest();
     THttpRequest(const THttpRequest &other);
-    THttpRequest(const THttpRequestHeader &header, const QByteArray &body);
-    THttpRequest(const QByteArray &header, const QByteArray &body);
-    THttpRequest(const QByteArray &header, const QString &filePath);
-//    THttpRequest(const QByteArray &byteArray, const QHostAddress &clientAddress);
+    THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress);
+    THttpRequest(const QByteArray &header, const QByteArray &body, const QHostAddress &clientAddress);
+    THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress);
     virtual ~THttpRequest();
     THttpRequest &operator=(const THttpRequest &other);
 
@@ -75,7 +74,7 @@ public:
     const QJsonDocument &jsonData() const { return d->jsonData; }
 #endif
 
-    static THttpRequest generate(const QByteArray &byteArray, int &availableLength);
+    static QList<THttpRequest> generate(const QByteArray &byteArray, const QHostAddress &address);
 
 protected:
     void setRequest(const THttpRequestHeader &header, const QByteArray &body);
@@ -85,12 +84,8 @@ protected:
 
 private:
     void parseBody(const QByteArray &body, const THttpRequestHeader &header);
-    void setClientAddress(const QHostAddress &address) { d->clientAddress = address; }
 
     QSharedDataPointer<THttpRequestData> d;
-
-    friend class THttpSocket;
-    friend class TActionWorker;
 };
 
 Q_DECLARE_METATYPE(THttpRequest)
