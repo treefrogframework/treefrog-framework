@@ -257,7 +257,7 @@ void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus) 
         if (exitStatus == QProcess::CrashExit) {
             ajustServers();
         } else {
-            tSystemInfo("Detected normal exit of server. exitCode:%d", exitCode);
+            tSystemDebug("Detected normal exit of server. exitCode:%d", exitCode);
             if (serversStatus.count() == 0) {
                 Tf::app()->exit(-1);
             }
