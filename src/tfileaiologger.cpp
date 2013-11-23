@@ -49,9 +49,14 @@ void TFileAioLogger::close()
 {
     QMutexLocker locker(&mutex);
 
+    if (syncBuffer.count() > 0) {
+        struct aiocb *lastcb = syncBuffer.last();
+        while (aio_error(lastcb) == EINPROGRESS) { }
+        clearSyncBuffer();
+    }
+
     if (fileDescriptor > 0) {
         tf_close(fileDescriptor);
-        clearSyncBuffer();
     }
     fileDescriptor = 0;
 }

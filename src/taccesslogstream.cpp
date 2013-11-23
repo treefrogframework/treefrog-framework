@@ -26,9 +26,11 @@ TAccessLogStream::TAccessLogStream(const QString &fileName)
 {
 #ifdef Q_OS_LINUX
     TFileAioLogger *filelogger = new TFileAioLogger;
+    filelogger->setFileName(fileName);
+    logger = filelogger;
+    logger->open();
 #else
     TFileLogger *filelogger = new TFileLogger;
-#endif
     filelogger->setFileName(fileName);
     logger = filelogger;
 
@@ -37,6 +39,7 @@ TAccessLogStream::TAccessLogStream(const QString &fileName)
     } else {
         logger->open();
     }
+#endif
 }
 
 
