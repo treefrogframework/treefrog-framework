@@ -70,7 +70,7 @@ void TSqlDatabasePool2::init()
         tSystemWarn("SQL database not available");
         return;
     } else {
-        tSystemInfo("SQL database available");
+        tSystemDebug("SQL database available");
     }
 
     int setCount = Tf::app()->sqlDatabaseSettingsCount();

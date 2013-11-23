@@ -65,7 +65,7 @@ void TSqlDatabasePool::init()
         tSystemWarn("SQL database not available");
         return;
     } else {
-        tSystemInfo("SQL database available");
+        tSystemDebug("SQL database available");
     }
 
     // Adds databases previously
