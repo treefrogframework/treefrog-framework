@@ -24,7 +24,7 @@ static QByteArray createHash()
 {
     static quint32 seq = 0;
     QByteArray data;
-    data.reserve(128);
+    data.reserve(127);
 
 #if QT_VERSION >= 0x040700
     data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));

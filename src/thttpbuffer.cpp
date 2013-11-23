@@ -16,7 +16,7 @@ static int limitBodyBytes = -1;
 THttpBuffer::THttpBuffer()
     : lengthToRead(-1)
 {
-    httpBuffer.reserve(1024);
+    httpBuffer.reserve(1023);
 }
 
 
@@ -69,7 +69,7 @@ int THttpBuffer::write(const char *data, int maxSize)
             throw ClientErrorException(413);  // Request Entity Too Large
         }
 
-        lengthToRead -= qMin((qint64)maxSize, lengthToRead);
+        lengthToRead = qMax(lengthToRead - maxSize, 0LL);
     }
     return maxSize;
 }
@@ -90,7 +90,7 @@ void THttpBuffer::parse()
     if (lengthToRead < 0) {
         int idx = httpBuffer.indexOf("\r\n\r\n");
         if (idx > 0) {
-            THttpRequestHeader header(httpBuffer.left(idx + 4));
+            THttpRequestHeader header(httpBuffer);
             tSystemDebug("content-length: %d", header.contentLength());
 
             if (limitBodyBytes > 0 && header.contentLength() > (uint)limitBodyBytes) {
@@ -116,6 +116,6 @@ void THttpBuffer::clear()
 {
     lengthToRead = -1;
     httpBuffer.truncate(0);
-    httpBuffer.reserve(1024);
+    httpBuffer.reserve(1023);
     clientAddr.clear();
 }

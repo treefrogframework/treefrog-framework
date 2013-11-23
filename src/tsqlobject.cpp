@@ -215,7 +215,7 @@ bool TSqlObject::update()
     }
 
     QString upd;   // UPDATE Statement
-    upd.reserve(256);
+    upd.reserve(255);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
