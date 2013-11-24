@@ -1,3 +1,12 @@
+Changes with version 1.7.3
+    * Implemented asynchronous log outputting.
+    * Support HTTP-pipeline mechanism (HTTP 1.1).
+    * Updated a parser of HTTP header.
+    * Modified output logics of query log.
+    * Added HMAC_SHA256, HMAC_SHA384 and HMAC_SHA512 algorithm.
+    * Fix a bug of specifing thread ID on logging.
+    * Modified to use accept4() in multiplexing app server.
+    * Implemented getUTCTimeString() and Tf::currentDateTimeSec() functions.
 
 Changes with version 1.7.2
     * Fix a bug of plugin loading in Qt5.
