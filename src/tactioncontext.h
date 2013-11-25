@@ -8,11 +8,11 @@
 #include <TSqlTransaction>
 #include <TKvsDatabase>
 #include <TAccessLog>
-#include <THttpRequest>
 
 class QHostAddress;
 class THttpResponseHeader;
 class THttpSocket;
+class THttpRequest;
 class THttpResponse;
 class TApplicationServer;
 class TTemporaryFile;
