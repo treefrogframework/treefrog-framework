@@ -7,6 +7,7 @@
 
 #include <QCryptographicHash>
 #include <QHash>
+#include <QScopedPointer>  // fix compilation error in Qt5.0
 #include <TCryptMac>
 
 typedef QHash<int, int> BlockSizeHash;
