@@ -294,6 +294,8 @@ int TSqlDatabasePool2::maxDbConnectionsPerProcess()
     static int maxConnections = 0;
 
     if (!maxConnections) {
+        QString mpm = Tf::app()->appSettings().value("MultiProcessingModule").toString().toLower();
+
         switch (Tf::app()->multiProcessingModule()) {
         case TWebApplication::Thread:
             maxConnections = Tf::app()->maxNumberOfServers();
@@ -304,7 +306,7 @@ int TSqlDatabasePool2::maxDbConnectionsPerProcess()
             break;
 
         case TWebApplication::Hybrid:
-            maxConnections = Tf::app()->maxNumberOfServers(10);
+            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "20").toInt();
             break;
 
         default:
