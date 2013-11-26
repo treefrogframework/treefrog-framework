@@ -1,3 +1,6 @@
+Changes with version 1.7.4
+    * Fix a bug of connection error under high load.
+
 Changes with version 1.7.3
     * Implemented asynchronous log outputting.
     * Support HTTP-pipeline mechanism (HTTP 1.1).

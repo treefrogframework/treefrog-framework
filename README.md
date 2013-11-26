@@ -5,7 +5,7 @@ TreeFrog Framework is a high-speed and full-stack web application framework
 based on C++ and Qt. Web applications can run faster than that of lightweight
 programming language. In application development, it provides an O/R mapping
 system and template system on an MVC architecture, aims to achieve high
-productivity through the policy of  convention over configuration.
+productivity through the policy of convention over configuration.
 
 
 Features
