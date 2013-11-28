@@ -240,7 +240,7 @@ bool TSqlObject::update()
 
     const char *pkName = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex()).name();
     if (primaryKeyIndex() < 0 || !pkName) {
-        QString msg = QString("Not found the primary key for table ") + tableName();
+        QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
         tError("%s", qPrintable(msg));
         return false;
@@ -307,7 +307,7 @@ bool TSqlObject::remove()
 
     const char *pkName = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex()).name();
     if (primaryKeyIndex() < 0 || !pkName) {
-        QString msg = QString("Not found the primary key for table ") + tableName();
+        QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
         tError("%s", qPrintable(msg));
         return false;
