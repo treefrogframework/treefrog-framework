@@ -1,7 +1,7 @@
 @echo OFF
 @setlocal
 
-set VERSION=1.7.4
+set VERSION=1.7.5
 set TFDIR=C:\TreeFrog\%VERSION%
 
 :parse_loop
