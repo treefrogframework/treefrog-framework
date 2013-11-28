@@ -28,6 +28,7 @@ protected:
 
 private:
     QString modelName;
+    QString collectionName;
     QList<QPair<QString, QVariant::Type> > fields;
 };
 

@@ -67,7 +67,7 @@ const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2)
 
 
 MongoObjGenerator::MongoObjGenerator(const QString &model)
-    : modelName(), fields()
+    : modelName(), collectionName(model), fields()
 {
     modelName = fieldNameToEnumName(model);
 }
@@ -123,7 +123,7 @@ bool MongoObjGenerator::createMongoObject(const QString &path)
            << qMakePair(QString("lockRevision"), QVariant::Int);
 
     QStringList code = generateCode(fields);
-    QString output = QString(MONGOOBJECT_HEADER_TEMPLATE).arg(modelName.toUpper(), fieldNameToEnumName(modelName), code[0], code[1], modelName, code[2]);
+    QString output = QString(MONGOOBJECT_HEADER_TEMPLATE).arg(modelName.toUpper(), modelName, code[0], code[1], collectionName, code[2]);
     // Writes to a file
     return FileWriter(path).write(output, false);
 }
@@ -181,7 +181,7 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
 
     fields = getFieldList(path);
     QStringList prop = generateCode(fields);
-    QString output = QString(MONGOOBJECT_HEADER_UPDATE_TEMPLATE).arg(modelName.toUpper(), modelName, headerpart, prop[0], prop[1], prop[2]);
+    QString output = QString(MONGOOBJECT_HEADER_UPDATE_TEMPLATE).arg(modelName.toUpper(), collectionName, headerpart, prop[0], prop[1], prop[2]);
     // Writes to a file
     return FileWriter(path).write(output, true);
 }
