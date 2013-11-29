@@ -51,6 +51,15 @@ static inline pid_t gettid()
 }
 
 
+// static inline int tf_setaffinity(int cpu)
+// {
+//     cpu_set_t cs;
+//     CPU_ZERO(&cs);
+//     CPU_SET(cpu, &cs);
+//     return sched_setaffinity(0, sizeof(cs), &cs);
+// }
+
+
 #ifdef Q_OS_LINUX
 
 #include <sys/epoll.h>

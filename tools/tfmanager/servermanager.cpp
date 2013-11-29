@@ -23,6 +23,7 @@ namespace TreeFrog {
 #endif
 
 static QMap<QProcess *, int> serversStatus;
+static uint startCounter = 0;  // start-counter of treefrog servers
 
 
 ServerManager::ServerManager(int max, int min, int spare, QObject *parent)
@@ -183,6 +184,13 @@ void ServerManager::startServer() const
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
 
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Hybrid) {
+        if (startCounter < (uint)maxServers) {
+            args.prepend(QString::number(startCounter));
+            args.prepend("-i");  // give ID for app server
+        }
+    }
+
     if (listeningSocket > 0) {
         args.prepend(QString::number(listeningSocket));
         args.prepend("-s");
@@ -216,6 +224,7 @@ void ServerManager::startServer() const
     tfserver->start(TFSERVER_CMD, args, QIODevice::ReadOnly);
     tfserver->closeWriteChannel();
     tSystemDebug("tfserver started");
+    ++startCounter;
 }
 
 
