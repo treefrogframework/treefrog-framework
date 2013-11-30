@@ -210,10 +210,10 @@ int TMultiplexingServer::getSendRequest()
                 // Add to a send-buffer
                 sendBuffers[fd].enqueue(req->buffer);
                 // Set epoll for sending and recieving
-#if 1 //TODO: HTTP 2.0 support
-                epollAdd(fd, EPOLLIN | EPOLLOUT);
+#if 1  //TODO: delete here for HTTP 2.0 support
+                epollAdd(fd, EPOLLIN | EPOLLOUT | EPOLLET);
 #else
-                epollModify(fd, EPOLLIN | EPOLLOUT);
+                epollModify(fd, EPOLLIN | EPOLLOUT | EPOLLET); // reset 'EPOLLOUT' event
 #endif
             } else {
                 delete req->buffer;
@@ -263,7 +263,7 @@ void TMultiplexingServer::run()
     if (res < 0)
         tSystemDebug("SO_RCVBUF: %d", recvBufSize);
 
-    const int MaxEvents = 64;
+    const int MaxEvents = 128;
     struct epoll_event events[MaxEvents];
     sendBufSize *= 0.8;
     char *sndbuffer = new char[sendBufSize];
@@ -300,7 +300,7 @@ void TMultiplexingServer::run()
         getSendRequest();
 
         // Poll Sending/Receiving/Incoming
-        int timeout = (countWorkers() > 0) ? 1 : 100;
+        int timeout = (countWorkers() > 0) ? 0 : 100;
         nfd = tf_epoll_wait(epollFd, events, MaxEvents, timeout);
         err = errno;
         if (nfd < 0) {
@@ -313,67 +313,74 @@ void TMultiplexingServer::run()
                 if (!pendingRequests.isEmpty())
                     continue;
 
-                // Incoming connection
-                socklen_t addrlen = sizeof(addr);
+                for (;;) {
+                    // Incoming connection
+                    socklen_t addrlen = sizeof(addr);
 
-                int clt = tf_accept4(events[i].data.fd, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
-                if (clt < 0) {
-                    tSystemDebug("Failed accept");
-                    continue;
-                }
-                setSocketOption(clt);
+                    int clt = tf_accept4(events[i].data.fd, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
+                    err = errno;
+                    if (clt < 0) {
+                        if (err != EAGAIN) {
+                            tSystemWarn("Failed accept.  errno:%d", err);
+                        }
+                        break;
+                    }
+                    setSocketOption(clt);
 
-                if (epollAdd(clt, EPOLLIN) == 0) {
-                    THttpBuffer &recvbuf = recvBuffers[clt];
-                    recvbuf.clear();
-                    recvbuf.setClientAddress(QHostAddress((sockaddr *)&addr));
+                    if (epollAdd(clt, EPOLLIN | EPOLLOUT | EPOLLET) == 0) {
+                        THttpBuffer &recvbuf = recvBuffers[clt];
+                        recvbuf.clear();
+                        recvbuf.setClientAddress(QHostAddress((sockaddr *)&addr));
+                    }
                 }
+                continue;
 
             } else {
                 int cltfd = events[i].data.fd;
 
                 if ( (events[i].events & EPOLLOUT) ) {
                     // Send data
-                    THttpSendBuffer *sendbuf = sendBuffers[cltfd].first();
-                    if (!sendbuf) {
-                        tSystemError("Not found send-buffer");
-                        epollClose(cltfd);
-                        continue;
-                    }
+                    QQueue<THttpSendBuffer*> &que = sendBuffers[cltfd];
 
-                    int len = sendbuf->read(sndbuffer, sendBufSize);
-                    int sentlen = ::send(cltfd, sndbuffer, len, 0);
-                    err = errno;
-                    TAccessLogger &logger = sendbuf->accessLogger();
-
-                    if (sentlen <= 0) {
-                        if (err != ECONNRESET) {
-                            tSystemError("Failed send : errno:%d", err);
-                        }
-                        // Access log
-                        logger.setResponseBytes(-1);
-                        logger.write();
-
-                        epollClose(cltfd);
-                        continue;
-                    } else {
-                        logger.setResponseBytes(logger.responseBytes() + sentlen);
-
-                        if (len > sentlen) {
-                            tSystemDebug("sendbuf prepend: len:%d", len - sentlen);
-                            sendbuf->prepend(sndbuffer + sentlen, len - sentlen);
+                    if (!que.isEmpty()) {
+                        // Send data
+                        THttpSendBuffer *sendbuf = que.first();
+                        if (!sendbuf) {
+                            tSystemError("Not found send-buffer");
+                            epollClose(cltfd);
+                            continue;
                         }
 
-                        if (sendbuf->atEnd()) {
-                            logger.write();  // Writes access log
-                            sendbuf->release();
+                        int len = sendbuf->read(sndbuffer, sendBufSize);
+                        errno = 0;
+                        int sentlen = ::send(cltfd, sndbuffer, len, 0);
+                        err = errno;
+                        TAccessLogger &logger = sendbuf->accessLogger();
 
-                            QQueue<THttpSendBuffer*> &que = sendBuffers[cltfd];
-                            delete que.dequeue(); // delete send-buffer obj
+                        if (sentlen <= 0) {
+                            if (err != ECONNRESET) {
+                                tSystemError("Failed send : errno:%d", err);
+                            }
+                            // Access log
+                            logger.setResponseBytes(-1);
+                            logger.write();
 
-                            // Prepare recv
-                            if (que.isEmpty()) {
-                                epollModify(cltfd, EPOLLIN);
+                            epollClose(cltfd);
+                            continue;
+                        } else {
+                            // Sent successfully
+                            logger.setResponseBytes(logger.responseBytes() + sentlen);
+
+                            if (len > sentlen) {
+                                tSystemDebug("sendbuf prepend: len:%d", len - sentlen);
+                                sendbuf->prepend(sndbuffer + sentlen, len - sentlen);
+                            }
+
+                            if (sendbuf->atEnd()) {
+                                logger.write();  // Writes access log
+                                sendbuf->release();
+
+                                delete que.dequeue(); // delete send-buffer obj
                             }
                         }
                     }
@@ -381,35 +388,49 @@ void TMultiplexingServer::run()
 
                 if ( (events[i].events & EPOLLIN) ) {
                     // Receive data
-                    int len = ::recv(cltfd, rcvbuffer, recvBufSize, 0);
-                    err = errno;
-                    if (len > 0) {
-                        // Read successfully
-                        THttpBuffer &recvbuf = recvBuffers[cltfd];
-                        recvbuf.write(rcvbuffer, len);
+                    THttpBuffer &recvbuf = recvBuffers[cltfd];
 
+                    for (;;) {
+                        errno = 0;
+                        int len = ::recv(cltfd, rcvbuffer, recvBufSize, 0);
+                        err = errno;
+
+                        if (len <= 0) {
+                            break;
+                        }
+
+                        // Read successfully
+                        recvbuf.write(rcvbuffer, len);
+                    }
+
+                    switch (err) {
+                    case 0:  // FALL THROUGH
+                    case EAGAIN:
+                        // all received
                         if (recvbuf.canReadHttpRequest()) {
                             // Incoming a request
                             if (countWorkers() >= maxWorkers) {
                                 pendingRequests << cltfd;
                             } else {
                                 emitIncomingRequest(cltfd, recvbuf);
-
-#if 1 //TODO: HTTP 2.0 support
+#if 1  //TODO: delete here for HTTP 2.0 support
                                 // Stop receiving, otherwise the responses is sometimes
                                 // placed in the wrong order in case of HTTP-pipeline.
                                 epollDel(cltfd);
 #endif
                             }
                         }
-                    } else {
-                        if (len < 0 && err != ECONNRESET) {
-                            tSystemError("Failed recv : errno:%d", err);
-                        }
+                        break;
 
-                        // Disconnect
+                    case ECONNRESET:
+                        // Disconnected
                         epollClose(cltfd);
-                        continue;
+                        break;
+
+                    default:
+                        tSystemError("Failed recv : errno:%d", err);
+                        epollClose(cltfd);  // Disconnect
+                        break;
                     }
                 }
             }
@@ -436,11 +457,11 @@ void TMultiplexingServer::run()
         }
     }
 
-epoll_error:
+  epoll_error:
     TF_CLOSE(epollFd);
     epollFd = 0;
 
-socket_error:
+  socket_error:
     if (listenSocket > 0)
         TF_CLOSE(listenSocket);
     listenSocket = 0;
