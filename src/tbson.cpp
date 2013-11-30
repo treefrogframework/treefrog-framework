@@ -10,6 +10,8 @@
 #include <QRegExp>
 #include <QStringList>
 #include <QAtomicInt>
+#include <QCoreApplication>
+#include <QtEndian>
 #include "mongo.h"
 
 /*!
@@ -292,14 +294,17 @@ TBson TBson::toBson(const QStringList &lst)
 
 static inline int oidFuzz()
 {
-    return Tf::randXor128();
+    static int machineId = Tf::randXor128();
+    int pid = QCoreApplication::applicationPid();
+    return qToBigEndian((machineId << 8) | ((pid & 0xFF00) >> 8));
 }
 
 
 static inline int oidInc()
 {
     static QAtomicInt incr = Tf::randXor128();
-    return incr.fetchAndAddOrdered(1);
+    int pid = QCoreApplication::applicationPid();
+    return ((pid & 0xFF) << 24) | ((int)incr.fetchAndAddOrdered(1) & 0xFFFFFF);
 }
 
 
@@ -319,3 +324,11 @@ QString TBson::generateObjectId()
     QByteArray oidhex = QByteArray((char *)&oid, sizeof(oid)).toHex();
     return QLatin1String(oidhex.data());
 }
+
+/*
+  ObjectId is a 12-byte BSON type, constructed using:
+    a 4-byte value representing the seconds since the Unix epoch,
+    a 3-byte machine identifier,
+    a 2-byte process id, and
+    a 3-byte counter, starting with a random value.
+*/
