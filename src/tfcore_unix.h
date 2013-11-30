@@ -24,6 +24,7 @@
 static inline int tf_close(int fd)
 {
     register int ret;
+    errno = 0;
     EINTR_LOOP(ret, ::close(fd));
     return ret;
 }
@@ -32,6 +33,7 @@ static inline int tf_close(int fd)
 static inline int tf_flock(int fd, int op)
 {
     register int ret;
+    errno = 0;
     EINTR_LOOP(ret, ::flock(fd, op));
     return ret;
 }
@@ -40,6 +42,7 @@ static inline int tf_flock(int fd, int op)
 static inline int tf_aio_write(struct aiocb *aiocbp)
 {
     register int ret;
+    errno = 0;
     EINTR_LOOP(ret, ::aio_write(aiocbp));
     return ret;
 }
@@ -68,6 +71,7 @@ static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
                                 int maxevents, int timeout)
 {
     register int ret;
+    errno = 0;
     EINTR_LOOP(ret, ::epoll_wait(epfd, events, maxevents, timeout));
     return ret;
 }
@@ -76,6 +80,7 @@ static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
 static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
     register int ret;
+    errno = 0;
     EINTR_LOOP(ret, ::epoll_ctl(epfd, op, fd, event));
     return ret;
 }
@@ -84,6 +89,7 @@ static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *eve
 static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
 {
     register int ret;
+    errno = 0;
     EINTR_LOOP(ret, ::accept4(sockfd, addr, addrlen, flags));
     return ret;
 }
