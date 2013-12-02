@@ -24,25 +24,20 @@ private:
 template <class T>
 inline void TAtomicQueue<T>::enqueue(const T &t)
 {
-    QList<T> *newQue = 0;
+    QList<T> *newQue = new QList<T>();
+    newQue->append(t);
+
     for (;;) {
-        QList<T> *oldQue = queue.fetchAndStoreOrdered(0);
-
-        if (!newQue) {
-            newQue = (oldQue) ? new QList<T>(*oldQue) : new QList<T>();
-            newQue->append(t);
-        } else {
-            if (oldQue) {
-                *newQue << *oldQue;
-            }
-        }
-
-        if (oldQue)
-            delete oldQue;
-
-        if (queue.testAndSetOrdered(0, newQue)) {
+        if (queue.testAndSetOrdered(NULL, newQue)) {
             counter.release(1);
             break;
+        }
+
+        QList<T> *oldQue = queue.fetchAndStoreOrdered(NULL);
+        if (oldQue) {
+            *oldQue << *newQue;
+            delete newQue;
+            newQue = oldQue;
         }
     }
 }
