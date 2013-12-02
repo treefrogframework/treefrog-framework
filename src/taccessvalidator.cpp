@@ -115,7 +115,7 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
 
     if (!user || user->identityKey().isEmpty()) {
         tWarn("Access validate: identityKey is empty");
-        return false;
+        return ret;
     }
 
     if (accessRules.isEmpty()) {
