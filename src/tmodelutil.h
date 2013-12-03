@@ -9,7 +9,7 @@
 
 
 template <class T, class S>
-inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, TSql::SortOrder order, int limit = 0, int offset = 0)
+inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, Tf::SortOrder order, int limit = 0, int offset = 0)
 {
     TSqlORMapper<S> mapper;
     if (sortColumn >= 0)
@@ -28,6 +28,13 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, T
         }
     }
     return list;
+}
+
+
+template <class T, class S>
+inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, TSql::SortOrder order, int limit = 0, int offset = 0)
+{
+    return tfGetModelListByCriteria<T, S>(cri, sortColumn, (Tf::SortOrder)order, limit, offset);
 }
 
 
