@@ -59,13 +59,13 @@ void TActionThread::run()
             TActionContext::execute(req);
 
             httpSocket->flush();  // Flush socket
+            TActionContext::release();
         }
 
         if (!httpSocket->waitForReadyRead(5000))
             break;
     }
 
-    TActionContext::release();
     closeHttpSocket();  // disconnect
 
     // For cleanup

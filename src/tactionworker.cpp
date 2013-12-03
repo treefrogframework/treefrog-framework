@@ -69,8 +69,8 @@ void TActionWorker::run()
 
         // Executes a action context
         TActionContext::execute(req);
+        TActionContext::release();
     }
-    TActionContext::release();
 
     httpRequest.clear();
     clientAddr.clear();
