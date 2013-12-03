@@ -436,9 +436,9 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
 template <class T>
 inline int TSqlORMapper<T>::updateAll(const TCriteria &cri, int column, QVariant value)
 {
-    QList<QPair<int, QVariant> > lst;
-    lst << qMakePair(column, value);
-    return updateAll(cri, lst);;
+    QMap<int, QVariant> map;
+    map.insert(column, value);
+    return updateAll(cri, map);
 }
 
 /*!
