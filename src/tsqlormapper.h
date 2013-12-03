@@ -345,7 +345,7 @@ template <class T>
 inline QList<T> TSqlORMapper<T>::findAll(const TCriteria &cri)
 {
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri);
+        TCriteriaConverter<T> conv(cri, database());
         setFilter(conv.toString());
     } else {
         setFilter(QString());
