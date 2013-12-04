@@ -8,8 +8,8 @@
 class T_CORE_EXPORT TSqlQuery : public QSqlQuery
 {
 public:
-    TSqlQuery(const QString &query = QString(), int databaseId = 0);
-    TSqlQuery(int databaseId);
+    TSqlQuery(const QString &query, int databaseId = 0);  // obsolete functions
+    TSqlQuery(int databaseId = 0);
     TSqlQuery(QSqlDatabase db);
 
     TSqlQuery &prepare(const QString &query);
