@@ -7,6 +7,14 @@
 #include <TCriteriaConverter>
 #include <TSystemGlobal>
 
+/*!
+  \class TSqlQueryORMapper
+  \brief The TSqlQueryORMapper class is a template class that provides
+  concise functionality to object-relational mapping by executing SQL
+  statements. It can be used to retrieve TSqlObject objects with SQL query
+  from a table.
+  \sa TSqlQuery, TSqlObject
+*/
 
 template <class T>
 class TSqlQueryORMapper : public TSqlQuery
@@ -23,6 +31,7 @@ public:
     bool exec();
     T execFirst(const QString &query);
     T execFirst();
+    QList<T> execAll();
     int numRowsAffected() const;
     int size() const;
     bool next();
@@ -93,28 +102,30 @@ inline bool TSqlQueryORMapper<T>::exec()
 template <class T>
 inline T TSqlQueryORMapper<T>::execFirst(const QString &query)
 {
-    exec(query);
-    return (next()) ? value() : T();
+    return (exec(query) && next()) ? value() : T();
 }
 
 
 template <class T>
 inline T TSqlQueryORMapper<T>::execFirst()
 {
-    exec();
-    return (next()) ? value() : T();
+    return (exec() && next()) ? value() : T();
 }
 
-// template <class T>
-// inline QList<T> TSqlQueryORMapper<T>::findAll()
-// {
-//     exec();
-//     QList<T> list;
-//     while (next()) {
-//         list.append(value());
-//     }
-//     return list;
-// }
+
+template <class T>
+inline QList<T> TSqlQueryORMapper<T>::execAll()
+{
+    QList<T> ret;
+
+    if (exec()) {
+        while (next()) {
+            ret << value();
+        }
+    }
+    return ret;
+}
+
 
 template <class T>
 inline int TSqlQueryORMapper<T>::numRowsAffected() const
