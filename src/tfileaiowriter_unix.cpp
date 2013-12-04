@@ -7,12 +7,11 @@
 
 #include <QList>
 #include <QMutexLocker>
-#include <QSharedData>
 #include "tfileaiowriter.h"
 #include "tfcore_unix.h"
 
 
-class TFileAioWriterData : public QSharedData
+class TFileAioWriterData
 {
 public:
     mutable QMutex mutex;
