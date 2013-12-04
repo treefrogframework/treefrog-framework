@@ -4,6 +4,7 @@ qmake -r
 make clean
 make -j8
 if [ "$?" != 0 ]; then
+  echo
   echo "build error!"
   exit 1
 fi
