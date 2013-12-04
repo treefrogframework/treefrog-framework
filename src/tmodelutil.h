@@ -41,7 +41,7 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, T
 template <class T, class S>
 inline QList<T> tfGetModelListByCriteria(const TCriteria &cri = TCriteria(), int limit = 0, int offset = 0)
 {
-    return tfGetModelListByCriteria<T, S>(cri, -1, (TSql::SortOrder)0, limit, offset);
+    return tfGetModelListByCriteria<T, S>(cri, -1, Tf::AscendingOrder, limit, offset);
 }
 
 

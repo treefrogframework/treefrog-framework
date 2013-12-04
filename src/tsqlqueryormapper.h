@@ -12,25 +12,23 @@ template <class T>
 class TSqlQueryORMapper : public TSqlQuery
 {
 public:
-    TSqlQueryORMapper(const QString &query = QString(), int databaseId = 0);
-    TSqlQueryORMapper(int databaseId);
+    TSqlQueryORMapper(int databaseId = 0);
 
     TSqlQueryORMapper<T> &prepare(const QString &query);
     bool load(const QString &filename);
     TSqlQueryORMapper<T> &bind(const QString &placeholder, const QVariant &val);
     TSqlQueryORMapper<T> &bind(int pos, const QVariant &val);
     TSqlQueryORMapper<T> &addBind(const QVariant &val);
-    int find();
-    T findFirst();
+    bool exec(const QString &query);
+    bool exec();
+    T execFirst(const QString &query);
+    T execFirst();
+    int numRowsAffected() const;
+    int size() const;
+    bool next();
     T value() const;
     QString fieldName(int index) const;
 };
-
-
-template <class T>
-inline TSqlQueryORMapper<T>::TSqlQueryORMapper(const QString &query, int databaseId)
-    : TSqlQuery(query, databaseId)
-{ }
 
 
 template <class T>
@@ -73,18 +71,39 @@ inline TSqlQueryORMapper<T> &TSqlQueryORMapper<T>::bind(int pos, const QVariant 
 template <class T>
 inline TSqlQueryORMapper<T> &TSqlQueryORMapper<T>::addBind(const QVariant &val)
 {
-    TSqlQuery::bind(val);
+    TSqlQuery::addBind(val);
     return *this;
 }
 
 
 template <class T>
-inline T TSqlQueryORMapper<T>::findFirst()
+inline bool TSqlQueryORMapper<T>::exec(const QString &query)
+{
+    return TSqlQuery::exec(query);
+}
+
+
+template <class T>
+inline bool TSqlQueryORMapper<T>::exec()
+{
+    return TSqlQuery::exec();
+}
+
+
+template <class T>
+inline T TSqlQueryORMapper<T>::execFirst(const QString &query)
+{
+    exec(query);
+    return (next()) ? value() : T();
+}
+
+
+template <class T>
+inline T TSqlQueryORMapper<T>::execFirst()
 {
     exec();
     return (next()) ? value() : T();
 }
-
 
 // template <class T>
 // inline QList<T> TSqlQueryORMapper<T>::findAll()
@@ -97,11 +116,31 @@ inline T TSqlQueryORMapper<T>::findFirst()
 //     return list;
 // }
 
+template <class T>
+inline int TSqlQueryORMapper<T>::numRowsAffected() const
+{
+    return TSqlQuery::numRowsAffected();
+}
+
+
+template <class T>
+inline int TSqlQueryORMapper<T>::size() const
+{
+    return TSqlQuery::size();
+}
+
+
+template <class T>
+inline bool TSqlQueryORMapper<T>::next()
+{
+    return TSqlQuery::next();
+}
+
 
 template <class T>
 inline T TSqlQueryORMapper<T>::value() const
 {
-    T rec;  
+    T rec;
     QSqlRecord r = record();
     rec.setRecord(r, lastError());
     return rec;

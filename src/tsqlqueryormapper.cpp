@@ -38,7 +38,7 @@
 /*!
   \fn int TSqlQueryORMapper<T>::find()
   Executes the prepared SQL query and returns the number of the ORM objects.
-  TSqlQueryORMapperIterator is used to get the retrieved ORM objects. 
+  TSqlQueryORMapperIterator is used to get the retrieved ORM objects.
 */
 
 

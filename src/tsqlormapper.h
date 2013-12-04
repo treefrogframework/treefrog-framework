@@ -40,6 +40,7 @@ public:
     int find(const TCriteria &cri = TCriteria());
     int findBy(int column, QVariant value);
     int findIn(int column, const QVariantList &values);
+    int rowCount() const;
     T first() const;
     T last() const;
     T value(int i) const;
@@ -184,6 +185,15 @@ template <class T>
 inline int TSqlORMapper<T>::findIn(int column, const QVariantList &values)
 {
     return find(TCriteria(column, TSql::In, values));
+}
+
+/*!
+  Returns the number of rows of the current query.
+ */
+template <class T>
+inline int TSqlORMapper<T>::rowCount() const
+{
+    return QSqlTableModel::rowCount();
 }
 
 /*!
