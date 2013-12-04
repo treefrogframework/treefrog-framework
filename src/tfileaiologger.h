@@ -4,7 +4,7 @@
 #include <QString>
 #include <TLogger>
 
-class TFileAioLoggerData;
+class TFileAioWriter;
 
 
 class T_CORE_EXPORT TFileAioLogger : public TLogger
@@ -24,7 +24,7 @@ public:
     void setFileName(const QString &name);
 
 private:
-    TFileAioLoggerData *d;
+    TFileAioWriter *writer;
 
     Q_DISABLE_COPY(TFileAioLogger)
 };

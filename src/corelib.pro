@@ -225,6 +225,8 @@ HEADERS += tatomicqueue.h
 SOURCES += tatomicqueue.cpp
 HEADERS += tfileaiologger.h
 SOURCES += tfileaiologger.cpp
+HEADERS += tfileaiowriter.h
+SOURCES += tfileaiowriter.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -243,13 +245,13 @@ HEADERS += \
 win32 {
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
-  SOURCES += tfileaiologger_win.cpp
+  SOURCES += tfileaiowriter_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
-  SOURCES += tfileaiologger_unix.cpp
+  SOURCES += tfileaiowriter_unix.cpp
 }
 unix:!macx {
   # For Linux

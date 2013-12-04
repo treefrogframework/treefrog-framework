@@ -5,13 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "tfileaiologger.h"
+#include "tfileaiowriter.h"
 
 /*!
-  \class TFileAioLogger
-  \brief The TFileAioLogger class provides asynchronous logging functionality
-  to a log file.
+  \class TFileAioWriter
+  \brief The TFileAioWriter class provides asynchronous writing functionality
+  to a file.
 */
-
-void TFileAioLogger::flush()
-{ }

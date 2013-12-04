@@ -5,13 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QList>
 #include <QMutexLocker>
-#include <TSystemGlobal>
-#include "tfileaiologger.h"
+#include <QSharedData>
+#include "tfileaiowriter.h"
 #include "tfcore_unix.h"
 
 
-class TFileAioLoggerData : public QSharedData
+class TFileAioWriterData : public QSharedData
 {
 public:
     mutable QMutex mutex;
@@ -19,12 +20,12 @@ public:
     int fileDescriptor;
     QList<struct aiocb *> syncBuffer;
 
-    TFileAioLoggerData() : mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
+    TFileAioWriterData() : mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
     void clearSyncBuffer();
 };
 
 
-void TFileAioLoggerData::clearSyncBuffer()
+void TFileAioWriterData::clearSyncBuffer()
 {
     for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
         struct aiocb *cb = it.next();
@@ -37,29 +38,31 @@ void TFileAioLoggerData::clearSyncBuffer()
 /*!
   Constructor.
  */
-TFileAioLogger::TFileAioLogger()
-    : TLogger(), d(new TFileAioLoggerData)
+TFileAioWriter::TFileAioWriter(const QString &name)
+    : d(new TFileAioWriterData)
 {
-    readSettings();
-    d->fileName = target_;
+    d->fileName = name;
 }
 
 
-TFileAioLogger::~TFileAioLogger()
+TFileAioWriter::~TFileAioWriter()
 {
     close();
     delete d;
 }
 
 
-bool TFileAioLogger::open()
+bool TFileAioWriter::open()
 {
     QMutexLocker locker(&d->mutex);
 
     if (d->fileDescriptor <= 0) {
+        if (d->fileName.isEmpty())
+            return false;
+
         d->fileDescriptor = ::open(qPrintable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
         if (d->fileDescriptor < 0) {
-            tSystemError("file open failed: %s", qPrintable(d->fileName));
+            //tSystemError("file open failed: %s", qPrintable(d->fileName));
         }
     }
 
@@ -67,40 +70,32 @@ bool TFileAioLogger::open()
 }
 
 
-void TFileAioLogger::close()
+void TFileAioWriter::close()
 {
     QMutexLocker locker(&d->mutex);
 
-    if (d->syncBuffer.count() > 0) {
-        struct aiocb *lastcb = d->syncBuffer.last();
-        while (aio_error(lastcb) == EINPROGRESS) { }
-        d->clearSyncBuffer();
-    }
+    flush();
 
     if (d->fileDescriptor > 0) {
-        tf_close(d->fileDescriptor);
+        TF_CLOSE(d->fileDescriptor);
     }
     d->fileDescriptor = 0;
 }
 
 
-bool TFileAioLogger::isOpen() const
+bool TFileAioWriter::isOpen() const
 {
     return (d->fileDescriptor > 0);
 }
 
 
-void TFileAioLogger::log(const TLog &tlog)
-{
-    log(logToByteArray(tlog));
-}
-
-
-void TFileAioLogger::log(const QByteArray &msg)
+int TFileAioWriter::write(const char *data, int length)
 {
     QMutexLocker locker(&d->mutex);
 
-    Q_ASSERT(isOpen());
+    if (!isOpen()) {
+        return -1;
+    }
 
     // check whether last writing is finished
     if (d->syncBuffer.count() > 0) {
@@ -114,29 +109,48 @@ void TFileAioLogger::log(const QByteArray &msg)
     memset(cb, 0, sizeof(struct aiocb));
 
     cb->aio_fildes = d->fileDescriptor;
-    cb->aio_nbytes = msg.length();
-    cb->aio_buf = new char[msg.length()];
-    memcpy((void *)cb->aio_buf, msg.data(), msg.length());
+    cb->aio_nbytes = length;
+    cb->aio_buf = new char[length];
+    memcpy((void *)cb->aio_buf, data, length);
 
-    if (tf_aio_write(cb) < 0) {
-        tSystemError("log write failed");
+    int ret = tf_aio_write(cb);
+    if (ret < 0) {
         delete (char *)cb->aio_buf;
         delete cb;
 
         close();
-        return;
+        return -1;
     }
+
     d->syncBuffer << cb;
+    return ret;
 }
 
 
-void TFileAioLogger::setFileName(const QString &name)
+void TFileAioWriter::flush()
+{
+    QMutexLocker locker(&d->mutex);
+
+    if (d->syncBuffer.count() > 0) {
+        struct aiocb *lastcb = d->syncBuffer.last();
+        while (aio_error(lastcb) == EINPROGRESS) { }
+        d->clearSyncBuffer();
+    }
+}
+
+void TFileAioWriter::setFileName(const QString &name)
 {
     QMutexLocker locker(&d->mutex);
 
     if (isOpen()) {
         close();
     }
-
     d->fileName = name;
+}
+
+
+QString TFileAioWriter::fileName() const
+{
+    QMutexLocker locker(&d->mutex);
+    return d->fileName;
 }

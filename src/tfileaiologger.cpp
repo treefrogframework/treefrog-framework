@@ -6,6 +6,7 @@
  */
 
 #include "tfileaiologger.h"
+#include "tfileaiowriter.h"
 
 /*!
   \class TFileAioLogger
@@ -13,5 +14,59 @@
   to a log file.
 */
 
+/*!
+  Constructor.
+ */
+TFileAioLogger::TFileAioLogger()
+    : TLogger(), writer(new TFileAioWriter)
+{
+    readSettings();
+    writer->setFileName(target_);
+}
+
+
+TFileAioLogger::~TFileAioLogger()
+{
+    delete writer;
+}
+
+
+bool TFileAioLogger::open()
+{
+    return writer->open();
+}
+
+
+void TFileAioLogger::close()
+{
+    writer->close();
+}
+
+
+void TFileAioLogger::log(const TLog &tlog)
+{
+    log(logToByteArray(tlog));
+}
+
+
+void TFileAioLogger::log(const QByteArray &msg)
+{
+    writer->write(msg.data(), msg.length());
+}
+
+
+bool TFileAioLogger::isOpen() const
+{
+    return writer->isOpen();
+}
+
 void TFileAioLogger::flush()
-{ }
+{
+    // do nothing
+}
+
+
+void TFileAioLogger::setFileName(const QString &name)
+{
+    writer->setFileName(name);
+}

@@ -1,32 +1,30 @@
-#ifndef TFILEAIOLOGGER_H
-#define TFILEAIOLOGGER_H
+#ifndef TFILEAIOWRITER_H
+#define TFILEAIOWRITER_H
 
 #include <QString>
-#include <TLogger>
+#include <TGlobal>
 
-class TFileAioLoggerData;
+class TFileAioWriterData;
 
 
-class T_CORE_EXPORT TFileAioLogger : public TLogger
+class T_CORE_EXPORT TFileAioWriter
 {
 public:
-    TFileAioLogger();
-    ~TFileAioLogger();
+    TFileAioWriter(const QString &name = QString());
+    ~TFileAioWriter();
 
-    QString key() const { return "FileAioLogger"; }
-    bool isMultiProcessSafe() const { return true; }
     bool open();
     void close();
     bool isOpen() const;
-    void log(const TLog &log);
-    void log(const QByteArray &msg);
+    int write(const char *data, int length);
     void flush();
     void setFileName(const QString &name);
+    QString fileName() const;
 
 private:
-    TFileAioLoggerData *d;
+    TFileAioWriterData *d;
 
-    Q_DISABLE_COPY(TFileAioLogger)
+    Q_DISABLE_COPY(TFileAioWriter)
 };
 
-#endif // TFILEAIOLOGGER_H
+#endif // TFILEAIOWRITER_H
