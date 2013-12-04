@@ -1,11 +1,14 @@
 #ifndef TACCESSLOGSTREAM_H
 #define TACCESSLOGSTREAM_H
 
-class QSystemSemaphore;
+#include <QString>
+#include <QByteArray>
+#include <TGlobal>
+
 class TLogger;
 
 
-class TAccessLogStream
+class T_CORE_EXPORT TAccessLogStream
 {
 public:
     TAccessLogStream(const QString &fileName);
@@ -14,12 +17,10 @@ public:
 
 private:
     TLogger *logger;
-    QSystemSemaphore *semaphore;
 
-    // Disabled
+    // Disable
     TAccessLogStream();
-    TAccessLogStream(const TAccessLogStream &);
-    TAccessLogStream &operator=(const TAccessLogStream &);
+    Q_DISABLE_COPY(TAccessLogStream)
 };
 
 #endif // TACCESSLOGSTREAM_H
