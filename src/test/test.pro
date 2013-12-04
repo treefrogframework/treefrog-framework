@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS=htmlescape httpheader hmac sharedmemorylogstream htmlparser mailmessage  multipartformdata  smtpmailer viewhelper paginator fieldnametovariablename rand
+SUBDIRS=htmlescape httpheader hmac sharedmemorylogstream htmlparser mailmessage  multipartformdata  smtpmailer viewhelper paginator fieldnametovariablename rand buildtest
