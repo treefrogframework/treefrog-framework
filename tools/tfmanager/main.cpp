@@ -403,8 +403,7 @@ int managerMain(int argc, char *argv[])
         return 1;
     }
 
-    // Creates the semaphore for system log
-    QSystemSemaphore semaphore("TreeFrogSystemLog", 1, QSystemSemaphore::Create);
+    // Setup system loggers
     tSetupSystemLoggers();
 
 #if defined(Q_OS_UNIX)

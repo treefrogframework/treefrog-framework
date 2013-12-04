@@ -8,7 +8,6 @@
 #include <QString>
 #include <QByteArray>
 #include <QDateTime>
-#include <QSystemSemaphore>
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
@@ -19,10 +18,11 @@
 #include <TAccessLog>
 #include "tsystemglobal.h"
 #include "taccesslogstream.h"
+#include "tfileaiowriter.h"
 
 static TAccessLogStream *accesslogstrm = 0;
 static TAccessLogStream *sqllogstrm = 0;
-static QFile systemLog;
+static TFileAioWriter systemLog;
 static QByteArray syslogLayout;
 static QByteArray syslogDateTimeFormat;
 static QByteArray accessLogLayout;
@@ -47,6 +47,7 @@ void tSetupSystemLoggers()
 
     // system log
     systemLog.setFileName(Tf::app()->systemLogFilePath());
+    systemLog.open();
 
     // access log
     QString accesslog = Tf::app()->accessLogFilePath();
@@ -70,16 +71,9 @@ void tSetupSystemLoggers()
 
 static void tSystemMessage(int priority, const char *msg, va_list ap)
 {
-    static QSystemSemaphore semaphore("TreeFrogSystemLog", 1, QSystemSemaphore::Open);
     TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
-
-    semaphore.acquire();  // Acquires the semaphore for system log
-    if (!systemLog.fileName().isEmpty() && systemLog.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
-        systemLog.write(buf.data());
-        systemLog.close();
-    }
-    semaphore.release();  // Releases the semaphore
+    systemLog.write(buf.data(), buf.length());
 }
 
 
