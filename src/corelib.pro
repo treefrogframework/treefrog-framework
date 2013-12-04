@@ -223,6 +223,8 @@ HEADERS += tatomicset.h
 SOURCES += tatomicset.cpp
 HEADERS += tatomicqueue.h
 SOURCES += tatomicqueue.cpp
+HEADERS += tfileaiologger.h
+SOURCES += tfileaiologger.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -241,20 +243,20 @@ HEADERS += \
 win32 {
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
+  SOURCES += tfileaiologger_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
+  SOURCES += tfileaiologger_unix.cpp
 }
 unix:!macx {
-# for Linux
+  # For Linux
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
-  HEADERS += tfileaiologger.h
-  SOURCES += tfileaiologger.cpp
 }
 
 # Qt5

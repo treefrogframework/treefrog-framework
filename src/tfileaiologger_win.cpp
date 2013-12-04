@@ -6,12 +6,3 @@
  */
 
 #include "tfileaiologger.h"
-
-/*!
-  \class TFileAioLogger
-  \brief The TFileAioLogger class provides asynchronous logging functionality
-  to a log file.
-*/
-
-void TFileAioLogger::flush()
-{ }

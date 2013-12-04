@@ -1,12 +1,10 @@
 #ifndef TFILEAIOLOGGER_H
 #define TFILEAIOLOGGER_H
 
-#include <QMutex>
 #include <QString>
-#include <QList>
 #include <TLogger>
 
-struct aiocb;
+class TFileAioLoggerData;
 
 
 class T_CORE_EXPORT TFileAioLogger : public TLogger
@@ -26,12 +24,9 @@ public:
     void setFileName(const QString &name);
 
 private:
-    void clearSyncBuffer();
+    TFileAioLoggerData *d;
 
-    mutable QMutex mutex;
-    QString fileName;
-    int fileDescriptor;
-    QList<struct aiocb *> syncBuffer;
+    Q_DISABLE_COPY(TFileAioLogger)
 };
 
 #endif // TFILEAIOLOGGER_H
