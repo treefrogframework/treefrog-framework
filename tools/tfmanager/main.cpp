@@ -290,9 +290,9 @@ static void showRunningAppList()
             QString url = applicationSettingValue(s, "ListenPort").toString().trimmed();
             if (!url.startsWith("unix:", Qt::CaseInsensitive)) {
                 QString port = (url == "80") ? QString("") : (QString(":") + url);
-                url = QString("url: http://%1%2/").arg(QHostInfo::localHostName()).arg(port);
+                url = QString("http://%1%2/").arg(QHostInfo::localHostName()).arg(port);
             }
-            printf(" * %s\n   %s\n\n", qPrintable(s), qPrintable(url));
+            printf(" * %s\n    %s\n\n", qPrintable(s), qPrintable(url));
         }
     }
 }
