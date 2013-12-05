@@ -26,12 +26,14 @@ public:
 
 void TFileAioWriterData::clearSyncBuffer()
 {
-    for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
-        struct aiocb *cb = it.next();
-        delete (char *)cb->aio_buf;
-        delete cb;
+    if (!syncBuffer.isEmpty()) {
+        for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
+            struct aiocb *cb = it.next();
+            delete (char *)cb->aio_buf;
+            delete cb;
+        }
+        syncBuffer.clear();
     }
-    syncBuffer.clear();
 }
 
 /*!
@@ -61,7 +63,7 @@ bool TFileAioWriter::open()
 
         d->fileDescriptor = ::open(qPrintable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
         if (d->fileDescriptor < 0) {
-            //tSystemError("file open failed: %s", qPrintable(d->fileName));
+            //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
         }
     }
 
@@ -113,12 +115,23 @@ int TFileAioWriter::write(const char *data, int length)
     memcpy((void *)cb->aio_buf, data, length);
 
     int ret = tf_aio_write(cb);
+    int err = errno;
+
     if (ret < 0) {
+        //fprintf(stderr, "aio_write error fd:%d (pid:%d tid:%d) ret:%d errno:%d\n", d->fileDescriptor, getpid(), gettid(), ret, err);
+        //fprintf(stderr, "aio_write str: %s\n", data);
         delete (char *)cb->aio_buf;
         delete cb;
 
-        close();
-        return -1;
+        if (err != EAGAIN) {
+            close();
+        } else {
+#ifdef Q_OS_MAC
+            // try sync-write
+            ret = ::write(d->fileDescriptor, data, length);
+#endif
+        }
+        return ret;
     }
 
     d->syncBuffer << cb;
