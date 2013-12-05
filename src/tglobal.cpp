@@ -33,7 +33,7 @@ static TAbstractLogStream *stream = 0;
   Sets up all the loggers set in the logger.ini.
   This function is for internal use only.
 */
-void tSetupLoggers()
+void tSetupAppLoggers()
 {
     QList<TLogger *> loggers;
     QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);

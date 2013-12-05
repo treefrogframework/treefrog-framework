@@ -101,7 +101,7 @@
 class TLogger;
 class TLog;
 
-T_CORE_EXPORT void tSetupLoggers();  // internal use
+T_CORE_EXPORT void tSetupAppLoggers();  // internal use
 
 T_CORE_EXPORT void tFatal(const char *, ...) // output fatal message
 #if defined(Q_CC_GNU) && !defined(__INSURE__)

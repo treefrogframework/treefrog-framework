@@ -402,7 +402,7 @@ int managerMain(int argc, char *argv[])
     }
 
     // Setup system loggers
-    tSetupSystemLoggers();
+    tSetupSystemLogger();
 
 #if defined(Q_OS_UNIX)
     app.watchUnixSignal(SIGTERM);

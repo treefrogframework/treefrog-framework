@@ -37,7 +37,7 @@ void writeAccessLog(const TAccessLog &log)
 }
 
 
-void tSetupSystemLoggers()
+void tSetupSystemLogger()
 {
     // Log directory
     QDir logdir(Tf::app()->logPath());
@@ -49,23 +49,31 @@ void tSetupSystemLoggers()
     systemLog.setFileName(Tf::app()->systemLogFilePath());
     systemLog.open();
 
-    // access log
-    QString accesslog = Tf::app()->accessLogFilePath();
-    if (!accesslog.isEmpty() && !accesslogstrm) {
-        accesslogstrm = new TAccessLogStream(accesslog);
-    }
-
-    // sql query log
-    if (!sqllogstrm) {
-        QString path = Tf::app()->sqlQueryLogFilePath();
-        if (!path.isEmpty())
-            sqllogstrm = new TAccessLogStream(path);
-    }
-
     syslogLayout = Tf::app()->appSettings().value("SystemLog.Layout", "%d %5P %m%n").toByteArray();
     syslogDateTimeFormat = Tf::app()->appSettings().value("SystemLog.DateTimeFormat", "yyyy-MM-ddThh:mm:ss").toByteArray();
+}
+
+
+void tSetupAccessLogger()
+{
+    // access log
+    QString accesslogpath = Tf::app()->accessLogFilePath();
+    if (!accesslogstrm && !accesslogpath.isEmpty()) {
+        accesslogstrm = new TAccessLogStream(accesslogpath);
+    }
+
     accessLogLayout = Tf::app()->appSettings().value("AccessLog.Layout", "%h %d \"%r\" %s %O%n").toByteArray();
     accessLogDateTimeFormat = Tf::app()->appSettings().value("AccessLog.DateTimeFormat", "yyyy-MM-ddThh:mm:ss").toByteArray();
+}
+
+
+void tSetupQueryLogger()
+{
+    // sql query log
+    QString querylogpath = Tf::app()->sqlQueryLogFilePath();
+    if (!sqllogstrm && !querylogpath.isEmpty()) {
+        sqllogstrm = new TAccessLogStream(querylogpath);
+    }
 }
 
 

@@ -93,8 +93,11 @@ int main(int argc, char *argv[])
     int sd = 0;
 
     // Setup loggers
-    tSetupSystemLoggers();
-    tSetupLoggers();
+    tSetupSystemLogger();
+    tSetupAccessLogger();
+    tSetupQueryLogger();
+    tSetupAppLoggers();
+
 #if QT_VERSION >= 0x050000
     qInstallMessageHandler(messageOutput);
 #else
