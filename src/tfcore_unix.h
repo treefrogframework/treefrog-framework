@@ -48,7 +48,13 @@ static inline int tf_aio_write(struct aiocb *aiocbp)
 
 static inline pid_t gettid()
 {
+#if defined(Q_OS_LINUX)
     return syscall(SYS_gettid);
+#elif defined(Q_OS_MAC)
+    return syscall(SYS_thread_selfid);
+#else
+    return 0;
+#endif
 }
 
 
