@@ -7,6 +7,9 @@
 #include <THttpRequest>
 #include <TTemporaryFile>
 #include <TGlobal>
+#ifdef Q_OS_UNIX
+# include "tfcore_unix.h"
+#endif
 
 
 class T_CORE_EXPORT THttpSocket : public QTcpSocket

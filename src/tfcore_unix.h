@@ -15,16 +15,16 @@
 # error "tfcore_unix.h included on a non-Unix system"
 #endif
 
-#define EINTR_LOOP(var, cmd)                    \
+#define EINTR_LOOP(ret, cmd)                    \
     do {                                        \
-        var = cmd;                              \
-    } while (var == -1 && errno == EINTR)
+        errno = 0;                              \
+        ret = (cmd);                            \
+    } while (ret == -1 && errno == EINTR)
 
 
 static inline int tf_close(int fd)
 {
-    register int ret;
-    errno = 0;
+    int ret;
     EINTR_LOOP(ret, ::close(fd));
     return ret;
 }
@@ -32,8 +32,7 @@ static inline int tf_close(int fd)
 
 static inline int tf_flock(int fd, int op)
 {
-    register int ret;
-    errno = 0;
+    int ret;
     EINTR_LOOP(ret, ::flock(fd, op));
     return ret;
 }
@@ -41,8 +40,7 @@ static inline int tf_flock(int fd, int op)
 
 static inline int tf_aio_write(struct aiocb *aiocbp)
 {
-    register int ret;
-    errno = 0;
+    int ret;
     EINTR_LOOP(ret, ::aio_write(aiocbp));
     return ret;
 }
@@ -70,8 +68,7 @@ static inline pid_t gettid()
 static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
                                 int maxevents, int timeout)
 {
-    register int ret;
-    errno = 0;
+    int ret;
     EINTR_LOOP(ret, ::epoll_wait(epfd, events, maxevents, timeout));
     return ret;
 }
@@ -79,8 +76,7 @@ static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
 
 static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
-    register int ret;
-    errno = 0;
+    int ret;
     EINTR_LOOP(ret, ::epoll_ctl(epfd, op, fd, event));
     return ret;
 }
@@ -88,18 +84,11 @@ static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *eve
 
 static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
 {
-    register int ret;
-    errno = 0;
+    int ret;
     EINTR_LOOP(ret, ::accept4(sockfd, addr, addrlen, flags));
     return ret;
 }
 
 #endif // Q_OS_LINUX
-
-#undef TF_CLOSE
-#define TF_CLOSE tf_close
-
-#undef TF_FLOCK
-#define TF_FLOCK tf_flock
 
 #endif // TFCORE_UNIX_H

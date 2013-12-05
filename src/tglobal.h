@@ -89,7 +89,11 @@
 
 #define T_VARIANT(VAR)  (variant(QLatin1String(#VAR)).toString())
 
-#define TF_CLOSE  ::close
+#ifdef Q_OS_UNIX
+# define TF_CLOSE  tf_close
+#else
+# define TF_CLOSE  ::close
+#endif
 
 class TLogger;
 class TLog;
