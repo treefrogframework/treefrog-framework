@@ -16,8 +16,6 @@
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
 # include <tfcore_unix.h>
-#else
-# define TF_FLOCK(fd,op)
 #endif
 
 namespace TreeFrog {

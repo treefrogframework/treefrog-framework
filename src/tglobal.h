@@ -91,9 +91,12 @@
 
 #ifdef Q_OS_UNIX
 # define TF_CLOSE  tf_close
+# define TF_FLOCK  tf_flock
 #else
 # define TF_CLOSE  ::close
+# define TF_FLOCK(fd,op)
 #endif
+
 
 class TLogger;
 class TLog;
