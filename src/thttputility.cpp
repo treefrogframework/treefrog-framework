@@ -412,7 +412,7 @@ QByteArray THttpUtility::getUTCTimeString()
     utcTime += DAY[st.wDayOfWeek];
     utcTime += QByteArray::number(st.wDay).rightJustified(2, '0');
     utcTime += ' ';
-    utcTime += MONTH[st.wMonth];
+    utcTime += MONTH[st.wMonth - 1];
     utcTime += QByteArray::number(st.wYear);
     utcTime += ' ';
     utcTime += QByteArray::number(st.wHour).rightJustified(2, '0');
