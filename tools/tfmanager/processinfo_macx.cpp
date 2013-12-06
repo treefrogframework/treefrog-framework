@@ -20,13 +20,27 @@ bool ProcessInfo::exists() const
 }
 
 
+qint64 ProcessInfo::ppid() const
+{
+    qint64 ppid = 0;
+    struct kinfo_proc kp;
+    size_t bufSize = sizeof(struct kinfo_proc);
+    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processId };
+
+    if (sysctl(mib, 4, &kp, &bufSize, NULL, 0) == 0) {
+        ppid = kp.kp_eproc.e_ppid;
+    }
+    return ppid;
+}
+
+
 QString ProcessInfo::processName() const
 {
     QString ret;
     struct kinfo_proc kp;
     size_t bufSize = sizeof(struct kinfo_proc);
     int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processId };
-    
+
     if (sysctl(mib, 4, &kp, &bufSize, NULL, 0) == 0) {
         ret.append(kp.kp_proc.p_comm);
     }
@@ -40,7 +54,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
     struct kinfo_proc *kp;
     size_t bufSize = 0;
     int mib[3] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL };
-    
+
     if (sysctl(mib, 3, NULL, &bufSize, NULL, 0) == 0) {
         kp = (struct kinfo_proc *) new char[bufSize];
         if (sysctl(mib, 3, kp, &bufSize, NULL, 0) == 0) {    
@@ -52,7 +66,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
         }
         delete[] kp;
     }
-    
+
     qSort(ret.begin(), ret.end());  // Sorts the items
     return ret;
 }
