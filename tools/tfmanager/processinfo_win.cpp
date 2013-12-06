@@ -10,6 +10,8 @@
 #include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
+#include <winternl.h>
+#include <ntstatus.h>
 #include "processinfo.h"
 
 namespace TreeFrog {
@@ -18,6 +20,20 @@ namespace TreeFrog {
 bool ProcessInfo::exists() const
 {
     return ProcessInfo::allConcurrentPids().contains(processId);
+}
+
+
+qint64 ProcessInfo::ppid() const
+{
+    qint64 ppid = 0;
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+    if (hProcess) {
+        PROCESS_BASIC_INFORMATION basicInfo;
+        if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
+            ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
+        }
+    }
+    return ppid;
 }
 
 

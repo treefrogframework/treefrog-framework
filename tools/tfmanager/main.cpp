@@ -321,8 +321,13 @@ static int killTreeFrogProcess(const QString &cmd)
         tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
         ::unlink(pidFilePath().toLatin1().data());
 
+#ifdef Q_OS_WIN
+        qint64 ppid = pid; // Windows
+#else
+        qint64 ppid = 1;  // UNIX: treefrog killed, ppid of tadpole = 1
+#endif
+
         // kill all 'tadpole' processes
-        qint64 ppid = 1;  // treefrog killed, ppid of tadpole = 1
 #if defined(Q_OS_WIN) && !defined(TF_NO_DEBUG)
         ProcessInfo::killProcesses("tadpoled", ppid);
 #else
