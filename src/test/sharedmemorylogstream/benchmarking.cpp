@@ -3,6 +3,8 @@
 #include "tsharedmemorylogstream.h"
 #include "tbasiclogstream.h"
 #include "tfilelogger.h"
+#include "tfileaiologger.h"
+#include "tfileaiowriter.h"
 
 
 class BenchMark : public QObject
@@ -15,12 +17,15 @@ private slots:
     void basicNonBufferingWriteLog();
     void basicWriteLog();
     void rawWriteLog();
+    void aioWriteLog();
+    void aioWriter();
+    void cleanupTestCase();
 };
 
 
 void BenchMark::systemDebug()
 {
-    tSetupSystemLoggers();
+    tSetupSystemLogger();
 
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
@@ -46,7 +51,7 @@ void BenchMark::smemNonBufferingWriteLog()
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
             stream.writeLog(log);
-            
+
             if ((i + 1) % 5 == 0)
                 stream.flush();
         }
@@ -69,7 +74,7 @@ void BenchMark::smemWriteLog()
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
             stream.writeLog(log);
-            
+
             if ((i + 1) % 5 == 0)
                 stream.flush();
         }
@@ -94,7 +99,7 @@ void BenchMark::basicNonBufferingWriteLog()
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
             stream.writeLog(log);
-            
+
             if ((i + 1) % 5 == 0)
                 stream.flush();
         }
@@ -118,7 +123,7 @@ void BenchMark::basicWriteLog()
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
             stream.writeLog(log);
-            
+
             if ((i + 1) % 5 == 0)
                 stream.flush();
         }
@@ -138,12 +143,61 @@ void BenchMark::rawWriteLog()
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
             logger.log(log);
-            
+
             if ((i + 1) % 5 == 0)
                 logger.flush();
         }
     }
 }
+
+
+void BenchMark::aioWriteLog()
+{
+    TFileAioLogger logger;
+    logger.open();
+
+    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
+    TLog log(1, ba);
+
+    QBENCHMARK {
+        for (int i = 0; i < 10; ++i) {
+            logger.log(log);
+
+            if ((i + 1) % 5 == 0)
+                logger.flush();
+        }
+    }
+}
+
+void BenchMark::aioWriter()
+{
+    TFileAioWriter writer;
+    writer.setFileName("log/app.log");
+    writer.open();
+
+    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
+
+    QBENCHMARK {
+        for (int i = 0; i < 10; ++i) {
+            writer.write(ba.data(), ba.length());
+
+            if ((i + 1) % 5 == 0)
+                writer.flush();
+        }
+    }
+}
+
+
+void BenchMark::cleanupTestCase()
+{
+    QDir logDir("log");
+    QStringList flist = logDir.entryList(QDir::Files);
+    for (QListIterator<QString> it(flist); it.hasNext(); ) {
+        logDir.remove(it.next());
+    }
+    logDir.rmpath(".");
+}
+
 
 
 TF_TEST_MAIN(BenchMark)
