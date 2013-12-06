@@ -68,7 +68,7 @@ bool TFileAioWriter::open()
 
         d->fileHandle = CreateFile((const wchar_t*)d->fileName.utf16(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_OVERLAPPED, NULL);
         if (d->fileHandle == INVALID_HANDLE_VALUE) {
-            //tSystemError("file open failed: %s", qPrintable(d->fileName));
+            //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
         }
     }
 
@@ -111,19 +111,32 @@ int TFileAioWriter::write(const char *data, int length)
         }
     }
 
+    if (length <= 0)
+        return -1;
+
+    int len = length;
+    if (data[length - 1] == '\n') {
+        ++len;
+    }
+
     aiobuf_t *ab = new aiobuf_t;
     memset(ab, 0, sizeof(aiobuf_t));
 
-    ab->aio_nbytes = length;
-    ab->aio_buf = new char[length];
+    ab->aio_nbytes = len;
+    ab->aio_buf = new char[len];
     ab->aio_overlap.Offset = 0xFFFFFFFF;
     ab->aio_overlap.OffsetHigh = 0xFFFFFFFF;
-    memcpy((void *)ab->aio_buf, data, length);
+    memcpy((void *)ab->aio_buf, data, len);
 
-    DWORD dwWritten;
-    BOOL res = WriteFile(d->fileHandle, ab->aio_buf, (DWORD)length, &dwWritten, &ab->aio_overlap);
+    // the last char only LF -> CRLF
+    if (len != length) {
+        ab->aio_buf[len - 2] = '\r';
+        ab->aio_buf[len - 1] = '\n';
+    }
 
-    if (!res) {
+    WriteFile(d->fileHandle, ab->aio_buf, (DWORD)len, NULL, &ab->aio_overlap);
+    if (GetLastError() != ERROR_IO_PENDING) {
+        //fprintf(stderr, "WriteFile error str: %s\n", data);
         delete (char *)ab->aio_buf;
         delete ab;
 
@@ -132,7 +145,7 @@ int TFileAioWriter::write(const char *data, int length)
     }
 
     d->syncBuffer << ab;
-    return (int)dwWritten;
+    return 0;
 }
 
 

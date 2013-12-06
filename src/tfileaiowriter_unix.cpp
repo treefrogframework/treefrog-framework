@@ -106,6 +106,9 @@ int TFileAioWriter::write(const char *data, int length)
         }
     }
 
+    if (length <= 0)
+        return -1;
+
     struct aiocb *cb = new struct aiocb;
     memset(cb, 0, sizeof(struct aiocb));
 
@@ -128,14 +131,14 @@ int TFileAioWriter::write(const char *data, int length)
         } else {
 #ifdef Q_OS_MAC
             // try sync-write
-            ret = ::write(d->fileDescriptor, data, length);
+            return (::write(d->fileDescriptor, data, length) > 0) ? 0 : -1;
 #endif
         }
         return ret;
     }
 
     d->syncBuffer << cb;
-    return ret;
+    return 0;
 }
 
 
