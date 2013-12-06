@@ -126,7 +126,7 @@ int TFileAioWriter::write(const char *data, int length)
     ab->aio_buf = new char[len];
     ab->aio_overlap.Offset = 0xFFFFFFFF;
     ab->aio_overlap.OffsetHigh = 0xFFFFFFFF;
-    memcpy((void *)ab->aio_buf, data, len);
+    memcpy((void *)ab->aio_buf, data, length);
 
     // the last char only LF -> CRLF
     if (len != length) {
