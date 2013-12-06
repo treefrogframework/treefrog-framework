@@ -56,13 +56,15 @@ QList<qint64> ProcessInfo::pidsOf(const QString &processName)
 }
 
 
-QList<qint64> ProcessInfo::killProcesses(const QString &name)
+QList<qint64> ProcessInfo::killProcesses(const QString &name, qint64 ppid)
 {
     QList<qint64> pids = pidsOf(name);
     for (QListIterator<qint64> it(pids); it.hasNext(); ) {
         const qint64 &pid = it.next();
         ProcessInfo pi(pid);
-        pi.kill();
+        if (pi.ppid() == ppid) {
+            pi.kill();
+        }
     }
     return pids;
 }

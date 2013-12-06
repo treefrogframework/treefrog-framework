@@ -19,11 +19,27 @@ bool ProcessInfo::exists() const
 }
 
 
+qint64 ProcessInfo::ppid() const
+{
+    const char DIRECTIVE[] = "PPid:";
+    QString ppid;
+
+    if (processId > 0) {
+        // Read proc
+        QFile procfile(QLatin1String("/proc/") + QString::number(processId) + "/status");
+        if (procfile.open(QIODevice::ReadOnly)) {
+            ppid = QString(procfile.readAll()).split("\n").filter(DIRECTIVE, Qt::CaseInsensitive).value(0).mid(sizeof(DIRECTIVE)).trimmed();
+        }
+    }
+    return ppid.toLongLong();
+}
+
+
 QString ProcessInfo::processName() const
 {
     const char DIRECTIVE[] = "Name:";
     QString ret;
-    
+
     if (processId > 0) {
         // Read proc
         QFile procfile(QLatin1String("/proc/") + QString::number(processId) + "/status");
