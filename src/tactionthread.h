@@ -17,6 +17,7 @@ public:
     TActionThread(int socket);
     virtual ~TActionThread();
 
+    static int threadCount();
     static QList<THttpRequest> readRequest(THttpSocket *socket);
 
 protected:

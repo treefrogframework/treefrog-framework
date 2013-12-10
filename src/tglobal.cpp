@@ -14,6 +14,8 @@
 #include <TActionThread>
 #include <TActionWorker>
 #include <TActionForkProcess>
+#include <TApplicationScheduler>
+#include <TScheduler>
 #include <stdlib.h>
 #include <limits.h>
 #include "tloggerfactory.h"
@@ -240,27 +242,22 @@ TActionContext *Tf::currentContext()
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Prefork:
         context = TActionForkProcess::currentContext();
-        if (!context) {
-            throw RuntimeException("The current process is not TActionProcess", __FILE__, __LINE__);
-        }
+        if (context)
+            return context;
         break;
 
     case TWebApplication::Thread:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
-        if (!context) {
-            throw RuntimeException("The current thread is not TActionThread", __FILE__, __LINE__);
-        }
+        if (context)
+            return context;
         break;
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
         context = qobject_cast<TActionWorker *>(QThread::currentThread());
-        if (!context) {
-            context = qobject_cast<TActionThread *>(QThread::currentThread());
-            if (!context) {
-                throw RuntimeException("The current thread is not TActionContext", __FILE__, __LINE__);
-            }
-        }
+        if (context)
+            return context;
+        break;
 #else
         tFatal("Unsupported MPM: hybrid");
 #endif
@@ -269,7 +266,19 @@ TActionContext *Tf::currentContext()
     default:
         break;
     }
-    return context;
+
+    // TApplicationScheduler
+    context = qobject_cast<TApplicationScheduler *>(QThread::currentThread());
+    if (context)
+        return context;
+
+    // TScheduler
+    context = qobject_cast<TScheduler *>(QThread::currentThread());
+    if (context)
+        return context;
+
+    throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
+    return NULL;
 }
 
 

@@ -405,6 +405,9 @@ inline QList<T> TSqlORMapper<T>::findAllIn(int column, const QVariantList &value
 template <class T>
 int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &values)
 {
+    const QByteArray UpdatedAt("updated_at");
+    const QByteArray ModifiedAt("modified_at");
+
     QString upd;   // UPDATE Statement
     upd.reserve(256);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
@@ -415,6 +418,19 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     if (values.isEmpty()) {
         tSystemError("Update Parameter Error");
         return -1;
+    }
+
+    T obj;
+    for (int i = obj.metaObject()->propertyOffset(); i < obj.metaObject()->propertyCount(); ++i) {
+        const char *propName = obj.metaObject()->property(i).name();
+        QByteArray prop = QByteArray(propName).toLower();
+        if (prop == UpdatedAt || prop == ModifiedAt) {
+            upd += propName;
+            upd += '=';
+            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), database());
+            upd += QLatin1String(", ");
+            break;
+        }
     }
 
     QMapIterator<int, QVariant> it(values);

@@ -79,7 +79,7 @@ void TThreadApplicationServer::incomingConnection(
     T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
 
     for (;;) {
-        if (TActionContext::contextCount() < maxServers) {
+        if (TActionThread::threadCount() < maxServers) {
             TActionThread *thread = new TActionThread(socketDescriptor);
             connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
             thread->start();

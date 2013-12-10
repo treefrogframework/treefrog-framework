@@ -6,21 +6,33 @@
  */
 
 #include <QEventLoop>
+#include <QAtomicInt>
 #include <TActionThread>
 #include <THttpRequest>
 #include <unistd.h>
 #include "thttpsocket.h"
 #include "tsystemglobal.h"
 
+static QAtomicInt threadCounter;
+
+int TActionThread::threadCount()
+{
+#if QT_VERSION >= 0x050000
+    return threadCounter.load();
+#else
+    return (int)threadCounter;
+#endif
+}
+
 /*!
   \class TActionThread
   \brief The TActionThread class provides a thread context.
 */
 
-
 TActionThread::TActionThread(int socket)
     : QThread(), TActionContext(), httpSocket(0)
 {
+    threadCounter.fetchAndAddOrdered(1);
     TActionContext::socketDesc = socket;
 }
 
@@ -32,6 +44,8 @@ TActionThread::~TActionThread()
 
     if (TActionContext::socketDesc > 0)
         TF_CLOSE(TActionContext::socketDesc);
+
+    threadCounter.fetchAndAddOrdered(-1);
 }
 
 
