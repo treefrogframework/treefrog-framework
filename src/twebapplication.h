@@ -67,6 +67,7 @@ public:
     QString sqlQueryLogFilePath() const;
     QTextCodec *codecForInternal() const { return codecInternal; }
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
+    int applicationServerId() const { return appServerId; }
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
@@ -105,6 +106,7 @@ private:
     QSettings *mediaTypes;
     QTextCodec *codecInternal;
     QTextCodec *codecHttp;
+    int appServerId;
     QBasicTimer timer;
     mutable MultiProcessingModule mpm;
 

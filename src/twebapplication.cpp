@@ -47,6 +47,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
       mediaTypes(0),
       codecInternal(0),
       codecHttp(0),
+      appServerId(-1),
       mpm(Invalid)
 {
 #if defined(Q_OS_WIN) && QT_VERSION >= 0x050000
@@ -62,6 +63,9 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         if (arg.startsWith('-')) {
             if (arg == "-e" && i.hasNext()) {
                 dbEnvironment = i.next();
+            }
+            if (arg == "-i" && i.hasNext()) {
+                appServerId = i.next().toInt();
             }
         } else {
             if (QDir(arg).exists()) {
