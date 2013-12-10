@@ -65,7 +65,7 @@ void TThreadApplicationServer::stop()
 void TThreadApplicationServer::terminate()
 {
     stop();
-    releaseAllContexts();
+    TActionContext::releaseAll();
 }
 
 
@@ -79,10 +79,9 @@ void TThreadApplicationServer::incomingConnection(
     T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
 
     for (;;) {
-        if (actionContextCount() < maxServers) {
+        if (TActionContext::contextCount() < maxServers) {
             TActionThread *thread = new TActionThread(socketDescriptor);
-            connect(thread, SIGNAL(finished()), this, SLOT(deleteActionContext()));
-            insertPointer(thread);
+            connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
             thread->start();
             break;
         }
@@ -90,11 +89,3 @@ void TThreadApplicationServer::incomingConnection(
         qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
     }
 }
-
-
-void TThreadApplicationServer::deleteActionContext()
-{
-    deletePointer(reinterpret_cast<TActionThread *>(sender()));
-    sender()->deleteLater();
-}
-
