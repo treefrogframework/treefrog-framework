@@ -227,6 +227,10 @@ HEADERS += tfileaiologger.h
 SOURCES += tfileaiologger.cpp
 HEADERS += tfileaiowriter.h
 SOURCES += tfileaiowriter.cpp
+HEADERS += tscheduler.h
+SOURCES += tscheduler.cpp
+HEADERS += tapplicationscheduler.h
+SOURCES += tapplicationscheduler.cpp
 
 HEADERS += \
            tfnamespace.h \
