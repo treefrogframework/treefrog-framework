@@ -10,8 +10,8 @@
 #include "tsystemglobal.h"
 
 
-TScheduler::TScheduler()
-    : QThread(), timer(new QTimer()), rollback(false)
+TScheduler::TScheduler(QObject *parent)
+    : QThread(parent), timer(new QTimer()), rollback(false)
 {
     moveToThread(Tf::app()->thread());
     timer->moveToThread(Tf::app()->thread());

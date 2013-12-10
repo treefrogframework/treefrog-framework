@@ -11,7 +11,7 @@ class T_CORE_EXPORT TScheduler : public QThread, public TActionContext
 {
     Q_OBJECT
 public:
-    TScheduler();
+    TScheduler(QObject *parent = 0);
     virtual ~TScheduler();
 
     void start(int msec);

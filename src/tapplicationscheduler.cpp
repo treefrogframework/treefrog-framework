@@ -10,8 +10,8 @@
 #include "tsystemglobal.h"
 
 
-TApplicationScheduler::TApplicationScheduler()
-    : TScheduler()
+TApplicationScheduler::TApplicationScheduler(QObject *parent)
+    : TScheduler(parent)
 { }
 
 
