@@ -42,7 +42,7 @@
 #include <string.h>
 #include <algorithm>
 #include <QtGlobal>
-
+#include <tfcore_unix.h>
 
 #if defined(Q_OS_LINUX)
 #  include <ucontext.h>
@@ -244,13 +244,8 @@ static int DumpSignalInfo(int signal_number, siginfo_t *siginfo, char *buf, size
   formatter.AppendString(")");
   formatter.AppendString(" received by PID ");
   formatter.AppendUint64(getpid(), 10);
-  formatter.AppendString(" (TID 0x");
-  // We assume pthread_t is an integral number or a pointer, rather
-  // than a complex struct.  In some environments, pthread_self()
-  // returns an uint64 but in some other environments pthread_self()
-  // returns a pointer.  Hence we use C-style cast here, rather than
-  // reinterpret/static_cast, to support both types of environments.
-  formatter.AppendUint64((uintptr_t)pthread_self(), 16);
+  formatter.AppendString(" (TID ");
+  formatter.AppendUint64(gettid(), 10);
   formatter.AppendString(") ");
   // Only linux has the PID of the signal sender in si_pid.
 #ifdef Q_OS_LINUX
