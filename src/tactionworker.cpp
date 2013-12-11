@@ -8,26 +8,42 @@
 #include <TActionWorker>
 #include <THttpRequest>
 #include <TMultiplexingServer>
+#include <QAtomicInt>
 #include "thttpsocket.h"
+#include "tepollsocket.h"
 #include "tsystemglobal.h"
+
+// Counter of action workers  (Note: workerCount != contextCount)
+QAtomicInt workerCounter;
+
+
+int TActionWorker::workerCount()
+{
+#if QT_VERSION >= 0x050000
+    return workerCounter.load();
+#else
+    return (int)workerCounter;
+#endif
+}
 
 /*!
   \class TActionWorker
   \brief The TActionWorker class provides a thread context.
 */
 
-
-TActionWorker::TActionWorker(int socket, const QByteArray &request, const QString &address, QObject *parent)
-    : QThread(parent), TActionContext(), httpRequest(request), clientAddr(address)
+TActionWorker::TActionWorker(TEpollSocket *socket, QObject *parent)
+    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socketId(socket->id())
 {
-    TActionContext::socketDesc = socket;
-
+    workerCounter.fetchAndAddOrdered(1);
+    httpRequest = socket->recvBuffer().read(INT_MAX);
+    clientAddr = socket->recvBuffer().clientAddress().toString();
 }
 
 
 TActionWorker::~TActionWorker()
 {
-    tSystemDebug("TActionWorker::~TActionWorker  fd:%d", socketDesc);
+    tSystemDebug("TActionWorker::~TActionWorker");
+    workerCounter.fetchAndAddOrdered(-1);
 }
 
 
@@ -47,7 +63,9 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
         }
     }
 
-    TMultiplexingServer::instance()->setSendRequest(socketDesc, static_cast<THttpHeader*>(&header), body, autoRemove, accessLogger);
+    if (!TActionContext::stopped) {
+        TEpollSocket::setSendData(socketId, static_cast<THttpHeader*>(&header), body, autoRemove, accessLogger);
+    }
     accessLogger.close();  // not write in this thread
     return 0;
 }
@@ -55,7 +73,9 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 
 void TActionWorker::closeHttpSocket()
 {
-    TMultiplexingServer::instance()->setDisconnectRequest(socketDesc);
+    if (!TActionContext::stopped) {
+        TEpollSocket::setDisconnect(socketId);
+    }
 }
 
 
@@ -70,6 +90,10 @@ void TActionWorker::run()
         // Executes a action context
         TActionContext::execute(req);
         TActionContext::release();
+
+        if (TActionContext::stopped) {
+            break;
+        }
     }
 
     httpRequest.clear();

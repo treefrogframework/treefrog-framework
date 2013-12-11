@@ -6,6 +6,7 @@
 
 class THttpRequest;
 class THttpResponseHeader;
+class TEpollSocket;
 class QIODevice;
 
 
@@ -13,8 +14,8 @@ class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
 {
     Q_OBJECT
 public:
-    TActionWorker(int socket, const QByteArray &request, const QString &address, QObject *parent = 0);
-    virtual ~TActionWorker();
+    ~TActionWorker();
+    static int workerCount();
 
 protected:
     void run();
@@ -24,8 +25,12 @@ protected:
 private:
     QByteArray httpRequest;
     QString clientAddr;
+    int socketId;  // not socket descriptor
+
+    TActionWorker(TEpollSocket *socket, QObject *parent = 0);
 
     Q_DISABLE_COPY(TActionWorker)
+    friend class TEpollSocket;
 };
 
 #endif // TACTIONWORKER_H

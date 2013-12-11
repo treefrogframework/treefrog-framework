@@ -9,6 +9,7 @@
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QHostAddress>
+#include <QSet>
 #include <TActionContext>
 #include <TWebApplication>
 #include <THttpRequest>
@@ -33,27 +34,64 @@
 #define SESSION_COOKIE_PATH  "Session.CookiePath"
 #define LISTEN_PORT  "ListenPort"
 
+static QSet<TActionContext *> actionContexts;
+static QMutex setMutex;
+
+
+int TActionContext::contextCount()
+{
+    //QMutexLocker locker(&setMutex);  /* no need to lock */
+    return actionContexts.count();
+}
+
+
+void TActionContext::releaseAll()
+{
+    if (contextCount() > 0) {
+        setMutex.lock();
+        for (QSetIterator<TActionContext *> i(actionContexts); i.hasNext(); ) {
+            i.next()->stop();  // Stops application server
+        }
+        setMutex.unlock();
+
+        for (;;) {
+            Tf::msleep(1);
+            qApp->processEvents();
+
+            QMutexLocker locker(&setMutex);
+            if (actionContexts.isEmpty()) {
+                break;
+            }
+        }
+    }
+}
+
 /*!
   \class TActionContext
   \brief The TActionContext class is the base class of contexts for
   action controllers.
 */
 
-
 TActionContext::TActionContext()
-    : sqlDatabases(),
-      transactions(),
+    : transactions(),
+      sqlDatabases(),
       kvsDatabases(),
       stopped(false),
       socketDesc(0),
       currController(0),
       httpReq(0)
-{ }
+{
+    QMutexLocker locker(&setMutex);
+    actionContexts.insert(this);
+}
 
 
 TActionContext::~TActionContext()
 {
     release();
+
+    QMutexLocker locker(&setMutex);
+    actionContexts.remove(this);
 }
 
 

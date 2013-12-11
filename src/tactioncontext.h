@@ -36,6 +36,9 @@ public:
     THttpRequest &httpRequest() { return *httpReq; }
     const THttpRequest &httpRequest() const { return *httpReq; }
 
+    static int contextCount();
+    static void releaseAll();
+
 protected:
     void execute(THttpRequest &request);
     void release();
@@ -53,8 +56,8 @@ protected:
     virtual qint64 writeResponse(THttpResponseHeader &, QIODevice *) { return 0; }
     virtual void closeHttpSocket() { }
 
-    QMap<int, QSqlDatabase> sqlDatabases;
     TSqlTransaction transactions;
+    QMap<int, QSqlDatabase> sqlDatabases;
     QMap<int, TKvsDatabase> kvsDatabases;
     volatile bool stopped;
     QStringList autoRemoveFiles;
