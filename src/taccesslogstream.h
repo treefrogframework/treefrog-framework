@@ -14,6 +14,7 @@ public:
     TAccessLogStream(const QString &fileName);
     ~TAccessLogStream();
     void writeLog(const QByteArray &log);
+    void flush();
 
 private:
     TLogger *logger;

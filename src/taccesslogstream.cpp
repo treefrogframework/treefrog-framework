@@ -37,3 +37,9 @@ void TAccessLogStream::writeLog(const QByteArray &log)
         logger->log(log);
     }
 }
+
+
+void TAccessLogStream::flush()
+{
+    logger->flush();
+}
