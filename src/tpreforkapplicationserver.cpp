@@ -64,7 +64,7 @@ void TPreforkApplicationServer::stop()
 void TPreforkApplicationServer::terminate()
 {
     close();
-    releaseAllContexts();
+    TActionContext::releaseAll();
 }
 
 
@@ -79,16 +79,6 @@ void TPreforkApplicationServer::incomingConnection(
 
     close();  // Closes the listening port
     TActionForkProcess *process = new TActionForkProcess(socketDescriptor);
-    connect(process, SIGNAL(finished()), this, SLOT(deleteActionContext()));
-    insertPointer(process);
+    connect(process, SIGNAL(finished()), process, SLOT(deleteLater()));
     process->start();
 }
-
-
-void TPreforkApplicationServer::deleteActionContext()
-{
-    T_TRACEFUNC("");
-    deletePointer(reinterpret_cast<TActionForkProcess *>(sender()));
-    sender()->deleteLater();
-}
-

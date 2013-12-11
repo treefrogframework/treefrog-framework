@@ -263,6 +263,10 @@ unix:!macx {
   SOURCES += tmultiplexingserver_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
+  HEADERS += tepoll.h
+  SOURCES += tepoll.cpp
+  HEADERS += tepollsocket.h
+  SOURCES += tepollsocket.cpp
 }
 
 # Qt5

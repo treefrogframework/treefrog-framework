@@ -29,17 +29,9 @@ public:
     static void nativeClose(int socket);
     static void invokeStaticInitialize();
 
-protected:
-    void insertPointer(TActionContext *p);
-    void deletePointer(TActionContext *p);
-    void releaseAllContexts();
-    int actionContextCount() const;
-
 private:
-    QSet<TActionContext *> actionContexts;
-    mutable QMutex setMutex;
-
     TApplicationServerBase();
+
     friend class TThreadApplicationServer;
     friend class TPreforkApplicationServer;
     friend class TMultiplexingServer;

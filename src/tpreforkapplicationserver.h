@@ -26,9 +26,6 @@ protected:
     void incomingConnection(int socketDescriptor);
 #endif
 
-protected slots:
-    void deleteActionContext();
-
 private:
     Q_DISABLE_COPY(TPreforkApplicationServer)
 };

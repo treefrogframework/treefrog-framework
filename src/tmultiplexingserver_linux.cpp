@@ -217,6 +217,7 @@ void TMultiplexingServer::run()
     }
 
     TEpollSocket::releaseAllSockets();
+    TActionContext::releaseAll();
 }
 
 
