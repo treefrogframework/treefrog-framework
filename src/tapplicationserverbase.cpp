@@ -45,6 +45,10 @@ bool TApplicationServerBase::loadLibraries()
         QStringList libs;
 #if defined(Q_OS_WIN)
         libs << "controller" << "view";
+#elif defined(Q_OS_LINUX)
+        libs << "libcontroller.so" << "libview.so";
+#elif defined(Q_OS_DARWIN)
+        libs << "libcontroller.dylib" << "libview.dylib";
 #else
         libs << "libcontroller" << "libview";
 #endif

@@ -129,7 +129,7 @@ int TFileAioWriter::write(const char *data, int length)
         if (err != EAGAIN) {
             close();
         } else {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_DARWIN
             // try sync-write
             return (::write(d->fileDescriptor, data, length) > 0) ? 0 : -1;
 #endif

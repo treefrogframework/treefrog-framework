@@ -55,7 +55,7 @@
 #  elif defined(__ppc__)
 #    define PC_FROM_UCONTEXT uc_mcontext.uc_regs->gregs[PT_NIP]
 #  endif
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_DARWIN)
 #  include <sys/ucontext.h>
 #  if defined(__i386__)
 #    if (__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1050)

@@ -53,7 +53,7 @@
 // defined by gcc
 #if defined(__ELF__) && defined(Q_OS_LINUX)
 # define HAVE_SYMBOLIZE
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_DARWIN)
 // Use dladdr to symbolize.
 # define HAVE_SYMBOLIZE
 #endif
@@ -644,7 +644,7 @@ static ATTRIBUTE_NOINLINE bool SymbolizeAndDemangle(void *pc, char *out,
 
 _END_GOOGLE_NAMESPACE_
 
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_DARWIN)
 
 #include <dlfcn.h>
 #include <string.h>

@@ -50,7 +50,7 @@ static inline pid_t gettid()
 {
 #if defined(Q_OS_LINUX)
     return syscall(SYS_gettid);
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_DARWIN)
     return syscall(SYS_thread_selfid);
 #else
     return 0;
