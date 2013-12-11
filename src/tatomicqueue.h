@@ -3,21 +3,23 @@
 
 #include <QAtomicPointer>
 #include <QList>
-#include <QSemaphore>
+#include <QMutex>
+#include <QWaitCondition>
 
 
 template<class T>
 class TAtomicQueue
 {
 public:
-    TAtomicQueue() : queue(), counter(0) { }
+    TAtomicQueue() : queue(), mutex(), enqued() { }
     void enqueue(const T &t);
     QList<T> dequeue();
     bool wait(int timeout);
 
 private:
     QAtomicPointer<QList<T> > queue;
-    QSemaphore counter;
+    QMutex mutex;
+    QWaitCondition enqued;
 };
 
 
@@ -29,7 +31,7 @@ inline void TAtomicQueue<T>::enqueue(const T &t)
 
     for (;;) {
         if (queue.testAndSetOrdered(NULL, newQue)) {
-            counter.release(1);
+            enqued.wakeOne();
             break;
         }
 
@@ -50,7 +52,6 @@ inline QList<T> TAtomicQueue<T>::dequeue()
     QList<T> *ptr = queue.fetchAndStoreOrdered(0);
 
     if (ptr) {
-        counter.acquire(ptr->count());
         ret = *ptr;
         delete ptr;
     }
@@ -58,40 +59,13 @@ inline QList<T> TAtomicQueue<T>::dequeue()
 }
 
 
-// template <class T>
-// inline QList<T> TAtomicQueue<T>::dequeue(int timeout)
-// {
-//     QList<T> ret;
-//     int sem = counter.available();
-//     if (sem > 0) {
-//         if (counter.tryAcquire(sem, timeout)) {
-//             QList<T> *ptr = queue.fetchAndStoreOrdered(0);
-//             if (ptr) {
-//                 ret = *ptr;
-//                 delete ptr;
-//                 int cnt = ret.count();
-//                 if (cnt > sem) {
-//                     counter.acquire(cnt - sem);
-//                 } else if (sem > cnt) {
-//                     counter.release(sem - cnt);
-//                 }
-//             } else {
-//                 counter.release(sem);
-//             }
-//         }
-//     }
-//     return ret;
-// }
-
-
 template <class T>
 inline bool TAtomicQueue<T>::wait(int timeout)
 {
-    if (counter.tryAcquire(1, timeout)) {
-        counter.release(1);
-        return true;
-    }
-    return false;
+    mutex.lock();
+    bool ret = enqued.wait(&mutex, timeout);
+    mutex.unlock();
+    return ret;
 }
 
 #endif // TATOMICQUEUE_H
