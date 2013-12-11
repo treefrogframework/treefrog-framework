@@ -26,7 +26,7 @@ class SendData;
 static char *tmpbuf = 0;
 static int tmpbuflen = 0;
 static QAtomicInt socketCounter;
-static QMutex mutexSocketSet(QMutex::Recursive);
+static QMutex mutexEpollSockets(QMutex::Recursive);
 static QMap<int, TEpollSocket *> epollSockets;
 static TAtomicQueue<SendData *> sendRequests;
 
@@ -55,7 +55,7 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
         sock  = new TEpollSocket(socketDescriptor, id, address);
         sock->moveToThread(QCoreApplication::instance()->thread());
 
-        QMutexLocker locker(&mutexSocketSet);
+        QMutexLocker locker(&mutexEpollSockets);
         epollSockets.insert(id, sock);
 
         initBuffer(socketDescriptor);
@@ -92,7 +92,7 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 void TEpollSocket::releaseAllSockets()
 {
-    QMutexLocker locker(&mutexSocketSet);
+    QMutexLocker locker(&mutexEpollSockets);
 
     for (QMapIterator<int, TEpollSocket *> it(epollSockets); it.hasNext(); ) {
         it.next();
@@ -111,15 +111,16 @@ TEpollSocket::TEpollSocket(int socketDescriptor, int id, const QHostAddress &add
 
 TEpollSocket::~TEpollSocket()
 {
+    mutexEpollSockets.lock();
+    epollSockets.remove(identifier);
+    mutexEpollSockets.unlock();
+
     close();
 
     for (QListIterator<THttpSendBuffer*> it(sendBuf); it.hasNext(); ) {
         delete it.next();
     }
     sendBuf.clear();
-
-    QMutexLocker locker(&mutexSocketSet);
-    epollSockets.remove(identifier);
 }
 
 
@@ -227,7 +228,10 @@ void TEpollSocket::dispatchSendData()
 
     for (QListIterator<SendData *> it(dataList); it.hasNext(); ) {
         SendData *sd = it.next();
+
+        mutexEpollSockets.lock();
         TEpollSocket *sock = epollSockets[sd->id];
+        mutexEpollSockets.unlock();
 
         if (sock && sock->socketDescriptor() > 0) {
             switch (sd->method) {
