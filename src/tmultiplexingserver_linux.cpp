@@ -5,9 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <errno.h>
 #include <netinet/tcp.h>
-#include <QHostAddress>
 #include <TWebApplication>
 #include <TApplicationServerBase>
 #include <TMultiplexingServer>
@@ -121,7 +119,6 @@ void TMultiplexingServer::run()
     maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "16").toInt();
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 
-    struct sockaddr_storage addr;
     int appsvrnum = qMax(qMin(Tf::app()->maxNumberOfServers(), QThread::idealThreadCount()), 1);
 
     setNoDeleyOption(listenSocket);
@@ -149,19 +146,10 @@ void TMultiplexingServer::run()
             int cltfd = epSock->socketDescriptor();
             if (cltfd == listenSocket) {
                 for (;;) {
-                    // Incoming connection
-                    socklen_t addrlen = sizeof(addr);
-
-                    int actfd = tf_accept4(cltfd, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
-                    int err = errno;
-                    if (actfd < 0) {
-                        if (err != EAGAIN) {
-                            tSystemWarn("Failed accept.  errno:%d", err);
-                        }
+                    TEpollSocket *sock = TEpollSocket::accept(listenSocket);
+                    if (!sock)
                         break;
-                    }
 
-                    TEpollSocket *sock = TEpollSocket::create(actfd, QHostAddress((sockaddr *)&addr));
                     TEpoll::instance()->addPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));
 
                     if (appsvrnum > 1) {

@@ -17,7 +17,7 @@
 #include <TAtomicQueue>
 #include "tepollsocket.h"
 #include "tepoll.h"
-#include "tactionworker2.h"
+#include "tactionworker.h"
 #include "thttpsendbuffer.h"
 #include "tfcore_unix.h"
 
@@ -44,6 +44,24 @@ public:
 
     SendData(Method m, int i, THttpSendBuffer *buf = 0) : method(m), id(i), buffer(buf) { }
 };
+
+
+TEpollSocket *TEpollSocket::accept(int listeningSocket)
+{
+    struct sockaddr_storage addr;
+    socklen_t addrlen = sizeof(addr);
+
+    int actfd = tf_accept4(listeningSocket, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
+    int err = errno;
+    if (actfd < 0) {
+        if (err != EAGAIN) {
+            tSystemWarn("Failed accept.  errno:%d", err);
+        }
+        return NULL;
+    }
+
+    return create(actfd, QHostAddress((sockaddr *)&addr));
+}
 
 
 TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &address)

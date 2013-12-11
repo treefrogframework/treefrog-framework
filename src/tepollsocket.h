@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQueue>
 #include <QMutex>
+#include <QHostAddress>
 #include <TGlobal>
 #include "thttpbuffer.h"
 
@@ -29,6 +30,7 @@ public:
     THttpBuffer &recvBuffer() { return recvBuf; }
     void startWorker();
 
+    static TEpollSocket *accept(int listeningSocket);
     static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
     static void releaseAllSockets();
     static bool waitSendData(int msec);
