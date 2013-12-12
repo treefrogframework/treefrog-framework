@@ -317,7 +317,7 @@ static int killTreeFrogProcess(const QString &cmd)
         }
 
     } else if (cmd == "abort") {  // abort command
-        pi.kill();
+        pi.kill();  // kill the manager process
         tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
         ::unlink(pidFilePath().toLatin1().data());
 
@@ -325,6 +325,7 @@ static int killTreeFrogProcess(const QString &cmd)
         qint64 ppid = pid; // Windows
 #else
         qint64 ppid = 1;  // UNIX: treefrog killed, ppid of tadpole = 1
+        Tf::msleep(300);
 #endif
 
         // kill all 'tadpole' processes
