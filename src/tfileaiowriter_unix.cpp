@@ -10,6 +10,8 @@
 #include "tfileaiowriter.h"
 #include "tfcore_unix.h"
 
+const int MAX_NUM_BUFFERING_DATA = 10000;
+
 
 class TFileAioWriterData
 {
@@ -98,16 +100,20 @@ int TFileAioWriter::write(const char *data, int length)
         return -1;
     }
 
+    if (length <= 0)
+        return -1;
+
     // check whether last writing is finished
     if (d->syncBuffer.count() > 0) {
         struct aiocb *lastcb = d->syncBuffer.last();
         if (aio_error(lastcb) != EINPROGRESS) {
             d->clearSyncBuffer();
+        } else {
+            if (d->syncBuffer.count() > MAX_NUM_BUFFERING_DATA) {
+                flush();
+            }
         }
     }
-
-    if (length <= 0)
-        return -1;
 
     struct aiocb *cb = new struct aiocb;
     memset(cb, 0, sizeof(struct aiocb));
