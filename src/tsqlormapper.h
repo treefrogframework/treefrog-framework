@@ -60,6 +60,7 @@ protected:
     virtual QString orderByClause() const { return QString(); }
     virtual void clear();
     virtual QString selectStatement() const;
+    virtual int rowCount(const QModelIndex &parent) const;
 
 private:
     Q_DISABLE_COPY(TSqlORMapper)
@@ -194,6 +195,15 @@ template <class T>
 inline int TSqlORMapper<T>::rowCount() const
 {
     return QSqlTableModel::rowCount();
+}
+
+/*!
+  Returns the number of rows of the current query.
+ */
+template <class T>
+inline int TSqlORMapper<T>::rowCount(const QModelIndex &parent) const
+{
+    return QSqlTableModel::rowCount(parent);
 }
 
 /*!
