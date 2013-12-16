@@ -464,19 +464,24 @@ int managerMain(int argc, char *argv[])
     for (;;) {
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
-        case TWebApplication::Thread:
-            manager = new ServerManager(1, 1, 0, &app);
-            break;
-
         case TWebApplication::Prefork: {
-            int max = app.appSettings().value("MPM.prefork.MaxServers").toInt();
-            int min = app.appSettings().value("MPM.prefork.MinServers").toInt();
-            int spare = app.appSettings().value("MPM.prefork.SpareServers").toInt();
+            int max = app.appSettings().value("MPM.prefork.MaxServers", "20").toInt();
+            int min = app.appSettings().value("MPM.prefork.MinServers", "5").toInt();
+            int spare = app.appSettings().value("MPM.prefork.SpareServers", "5").toInt();
+            // new parameters
+            max = app.appSettings().value("MPM.prefork.MaxAppServers", max).toInt();
+            min = app.appSettings().value("MPM.prefork.MinAppServers", min).toInt();
+            spare = app.appSettings().value("MPM.prefork.SpareAppServers", spare).toInt();
+            tSystemDebug("Max number of app servers: %d", max);
+            tSystemDebug("Min number of app servers: %d", min);
+            tSystemDebug("Spare number of app servers: %d", spare);
             manager = new ServerManager(max, min, spare, &app);
             break; }
 
+        case TWebApplication::Thread:  // FALL THROUGH
         case TWebApplication::Hybrid: {
-            int num = qMax(qMin(app.maxNumberOfServers(), QThread::idealThreadCount()), 1);
+            int num = qMax(app.maxNumberOfAppServers(), 1);
+            tSystemDebug("Max number of app servers: %d", num);
             manager = new ServerManager(num, num, 0, &app);
             break; }
 

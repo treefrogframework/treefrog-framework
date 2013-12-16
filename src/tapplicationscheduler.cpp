@@ -26,11 +26,7 @@ void TApplicationScheduler::start(int msec)
         tError("Unsupported TApplicationScheduler in prefork MPM");
         break;
 
-    case TWebApplication::Thread:
-        TScheduler::start(msec);
-        tSystemDebug("TApplicationScheduler::start msec:%d", msec);
-        break;
-
+    case TWebApplication::Thread:  // FALL THROUGH
     case TWebApplication::Hybrid:
         if (Tf::app()->applicationServerId() == 0) {
             // Starts where applicaraion server ID is 0

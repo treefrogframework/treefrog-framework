@@ -88,9 +88,8 @@ static QMap<QString, QString> convertArgs(const QStringList &args)
 int main(int argc, char *argv[])
 {
     TWebApplication webapp(argc, argv);
-    int ret = -1;
     TApplicationServerBase *server = 0;
-    int sd = 0;
+    int ret = -1;
 
     // Setup loggers
     tSetupSystemLogger();
@@ -104,7 +103,7 @@ int main(int argc, char *argv[])
     qInstallMsgHandler(messageOutput);
 #endif
     QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
-    QString sopt = args.value(SOCKET_OPTION);
+    int sock = args.value(SOCKET_OPTION).toInt();
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
@@ -152,47 +151,32 @@ int main(int argc, char *argv[])
         goto finish;
     }
 
+    if (sock <= 0) {
+        tSystemError("Invalid socket descriptor: %d", sock);
+        goto finish;
+    }
+
     switch (webapp.multiProcessingModule()) {
     case TWebApplication::Thread:
-        server = new TThreadApplicationServer(&webapp);
+        server = new TThreadApplicationServer(sock, &webapp);
         break;
 
     case TWebApplication::Prefork: {
         TPreforkApplicationServer *svr = new TPreforkApplicationServer(&webapp);
-        if (!sopt.isEmpty()) {
-            sd = sopt.toInt();
-            if (sd > 0) {
-                // Sets a listening socket descriptor
-                if (svr->setSocketDescriptor(sd)) {
-                    tSystemDebug("Set socket descriptor: %d", sd);
-                } else {
-                    tSystemError("Failed to set socket descriptor: %d", sd);
-                    goto finish;
-                }
-            } else {
-                tSystemError("Invalid socket descriptor: %d", sd);
-                goto finish;
-            }
+        if (svr->setSocketDescriptor(sock)) {
+            tSystemDebug("Set socket descriptor: %d", sock);
+        } else {
+            tSystemError("Failed to set socket descriptor: %d", sock);
+            goto finish;
         }
         server = svr;
         break; }
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
-        if (sopt.isEmpty()) {
-            tSystemError("Socket descriptor not found");
-            goto finish;
-        }
-
-        sd = sopt.toInt();
-        if (sd <= 0) {
-            tSystemError("Invalid socket descriptor: %d", sd);
-            goto finish;
-        }
-
         // Sets a listening socket descriptor
-        TMultiplexingServer::instantiate(sd);
-        tSystemDebug("Set socket descriptor: %d", sd);
+        TMultiplexingServer::instantiate(sock);
+        tSystemDebug("Set socket descriptor: %d", sock);
         server = TMultiplexingServer::instance();
 #else
         tFatal("Unsupported MPM: hybrid");

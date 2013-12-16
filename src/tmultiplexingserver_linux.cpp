@@ -115,11 +115,14 @@ bool TMultiplexingServer::start()
 
 void TMultiplexingServer::run()
 {
-    QString mpm = Tf::app()->appSettings().value("MultiProcessingModule").toString().toLower();
-    maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "16").toInt();
+    QString mpm = Tf::app()->multiProcessingModuleString();
+    maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+    if (maxWorkers <= 0) {
+        maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+    }
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 
-    int appsvrnum = qMax(qMin(Tf::app()->maxNumberOfServers(), QThread::idealThreadCount()), 1);
+    int appsvrnum = qMax(Tf::app()->maxNumberOfAppServers(), 1);
 
     setNoDeleyOption(listenSocket);
 

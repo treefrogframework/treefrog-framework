@@ -11,7 +11,7 @@ class T_CORE_EXPORT TThreadApplicationServer : public QTcpServer, public TApplic
 {
     Q_OBJECT
 public:
-    TThreadApplicationServer(QObject *parent = 0);
+    TThreadApplicationServer(int listeningSocket, QObject *parent = 0);
     ~TThreadApplicationServer();
 
     bool start();
@@ -29,7 +29,8 @@ protected:
 #endif
 
 private:
-    int maxServers;
+    int listenSocket;
+    int maxThreads;
 
     Q_DISABLE_COPY(TThreadApplicationServer)
 };

@@ -54,18 +54,7 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
         return false;
     }
 
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Prefork:  // FALL THROUGH
-    case TWebApplication::Hybrid:
-        listeningSocket = sd;
-        break;
-
-    default:
-        // Just tried to open a socket.
-        close(sd);
-        // tfserver process will open a socket of that.
-        break;
-    }
+    listeningSocket = sd;
 #else
     Q_UNUSED(address);
 #endif
@@ -89,19 +78,7 @@ bool ServerManager::start(const QString &fileDomain)
         return false;
     }
 
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Prefork:  // FALL THROUGH
-    case TWebApplication::Hybrid:
-        listeningSocket = sd;
-        break;
-
-    default:
-        // Just tried to open a socket.
-        TF_CLOSE(sd);
-        // tfserver process will open a socket of that.
-        break;
-    }
-
+    listeningSocket = sd;
     running = true;
     ajustServers();
     tSystemInfo("TreeFrog application servers start up.  Domain file name:%s", qPrintable(fileDomain));
@@ -184,7 +161,8 @@ void ServerManager::startServer() const
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Hybrid) {
+    TWebApplication::MultiProcessingModule mpm = Tf::app()->multiProcessingModule();
+    if (mpm == TWebApplication::Hybrid || mpm == TWebApplication::Thread) {
         if (startCounter < (uint)maxServers) {
             args.prepend(QString::number(startCounter));
             args.prepend("-i");  // give ID for app server

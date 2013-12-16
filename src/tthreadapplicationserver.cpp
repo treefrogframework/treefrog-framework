@@ -16,10 +16,15 @@
   an web application server for thread.
 */
 
-TThreadApplicationServer::TThreadApplicationServer(QObject *parent)
-    : QTcpServer(parent), TApplicationServerBase()
+TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject *parent)
+    : QTcpServer(parent), TApplicationServerBase(), listenSocket(listeningSocket), maxThreads(0)
 {
-    maxServers = Tf::app()->maxNumberOfServers();
+    QString mpm = Tf::app()->multiProcessingModuleString();
+    maxThreads = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+    if (maxThreads == 0) {
+        maxThreads = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+    }
+    tSystemDebug("MaxThreads: %d", maxThreads);
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
 
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Thread);
@@ -36,14 +41,10 @@ bool TThreadApplicationServer::start()
         return true;
     }
 
-    quint16 port = Tf::app()->appSettings().value("ListenPort").toUInt();
-    int sock = nativeListen(QHostAddress::Any, port);
-    if (sock <= 0 || !setSocketDescriptor(sock)) {
-        tSystemError("Failed to set socket descriptor: %d", sock);
-        nativeClose(sock);
+    if (listenSocket <= 0 || !setSocketDescriptor(listenSocket)) {
+        tSystemError("Failed to set socket descriptor: %d", listenSocket);
         return false;
     }
-    tSystemDebug("listen successfully.  port:%d", port);
 
     loadLibraries();
 
@@ -59,6 +60,7 @@ void TThreadApplicationServer::stop()
 {
     T_TRACEFUNC("");
     QTcpServer::close();
+    listenSocket = 0;
 }
 
 
@@ -79,7 +81,7 @@ void TThreadApplicationServer::incomingConnection(
     T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
 
     for (;;) {
-        if (TActionThread::threadCount() < maxServers) {
+        if (TActionThread::threadCount() < maxThreads) {
             TActionThread *thread = new TActionThread(socketDescriptor);
             connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
             thread->start();

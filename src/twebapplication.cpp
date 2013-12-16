@@ -295,13 +295,22 @@ QString TWebApplication::validationErrorMessage(int rule) const
 }
 
 /*!
+  Returns a string of the module name for multi-processing that is set by the setting
+  \a MultiProcessingModule in the application.ini.
+*/
+QString TWebApplication::multiProcessingModuleString() const
+{
+    return appSettings().value("MultiProcessingModule").toString().toLower();
+}
+
+/*!
   Returns the module name for multi-processing that is set by the setting
   \a MultiProcessingModule in the application.ini.
 */
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
     if (mpm == Invalid) {
-        QString str = appSettings().value("MultiProcessingModule").toString().toLower();
+        QString str = multiProcessingModuleString();
         if (str == "thread") {
             mpm = Thread;
         } else if (str == "prefork") {
@@ -314,13 +323,34 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
 }
 
 /*!
-  Returns the maximum number of runnable servers, which is set in the
+  Returns the maximum number of application servers, which is set in the
   application.ini.
 */
-int TWebApplication::maxNumberOfServers(int defaultValue) const
+int TWebApplication::maxNumberOfAppServers(int defaultValue) const
 {
-    QString mpm = appSettings().value("MultiProcessingModule").toString().toLower();
-    int num = appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers").toInt();
+    QString mpmstr = multiProcessingModuleString();
+    int num = appSettings().value(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
+
+    if (num > 0) {
+        return num;
+    }
+
+    // For compatibility
+    int mpm = multiProcessingModule();
+    switch (mpm) {
+    case Thread:
+        num = 1;
+        break;
+
+    case Prefork: // FALL THROUGH
+    case Hybrid:
+        num = appSettings().value(QLatin1String("MPM.") + mpmstr + ".MaxServers").toInt();
+        break;
+
+    default:
+        break;
+    }
+
     return (num > 0) ? num : defaultValue;
 }
 
