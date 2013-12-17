@@ -527,11 +527,11 @@ int managerMain(int argc, char *argv[])
         }
 
         ret = app.exec();
-        tSystemDebug("tfmanager returnCode:%d", ret);
+        tSystemDebug("TreeFrog manager process caught a signal [code:%d]", ret);
         manager->stop();
 
         if (ret == 1) {  // means SIGHUP
-            tSystemDebug("Restarts TreeFrog application servers");
+            tSystemInfo("Restarts TreeFrog application servers");
             //continue;
         } else {
             break;

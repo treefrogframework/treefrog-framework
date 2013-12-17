@@ -32,7 +32,7 @@ protected:
 
     void ajustServers() const;
     void startServer() const;
-    
+
 protected slots:
     void updateServerStatus();
     void errorDetect(QProcess::ProcessError error);
@@ -46,7 +46,7 @@ private:
     int minServers;
     int spareServers;
     volatile bool running;
-    
+
     Q_DISABLE_COPY(ServerManager)
 };
 

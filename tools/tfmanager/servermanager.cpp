@@ -117,6 +117,8 @@ void ServerManager::stop()
         serversStatus.clear();
         tSystemInfo("TreeFrog application servers shutdown completed");
     }
+
+    startCounter = 0;
 }
 
 

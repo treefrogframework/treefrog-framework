@@ -27,7 +27,7 @@ void TWebApplication::watchUnixSignal(int sig, bool watch)
         sa.sa_flags = SA_RESTART;
         if (watch) {
             sa.sa_handler = signalHandler;
-            timer.start(100, this);
+            timer.start(500, this);
         } else {
             sa.sa_handler = SIG_DFL;
         }

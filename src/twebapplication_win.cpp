@@ -31,7 +31,7 @@ static BOOL WINAPI signalHandler(DWORD ctrlType)
 
     while (true)
         Sleep(1);
-    
+
     return TRUE;
 }
 
@@ -52,7 +52,7 @@ void TWebApplication::resetSignalNumber()
 void TWebApplication::watchConsoleSignal()
 {
     SetConsoleCtrlHandler(signalHandler, TRUE);
-    timer.start(100, this);
+    timer.start(500, this);
 }
 
 
@@ -114,11 +114,11 @@ void TWebApplication::recvLocalSocket()
                 case WM_CLOSE:
                     quit();
                     break;
-                    
+
                 case  WM_APP:
                     exit(1);
                     break;
-                    
+
                 default:
                     break;
                 }
