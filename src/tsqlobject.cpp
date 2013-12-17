@@ -218,11 +218,26 @@ bool TSqlObject::update()
     upd.reserve(255);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
+    int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
+    const char *pkName = metaObject()->property(pkidx).name();
+    if (primaryKeyIndex() < 0 || !pkName) {
+        QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
+        sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
+        tError("%s", qPrintable(msg));
+        return false;
+    }
+
+    QVariant origpkval = value(pkName);
+    where.append(QLatin1String(pkName));
+    where.append("=").append(TSqlQuery::formatValue(origpkval, database));
+    // Restore the value of primary key
+    QObject::setProperty(pkName, origpkval);
+
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
-        if (recval.isValid() && recval != newval) {
+        if (i != pkidx && recval.isValid() && recval != newval) {
             upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
             upd.append(TSqlQuery::formatValue(newval, database));
@@ -237,16 +252,6 @@ bool TSqlObject::update()
 
     upd.chop(2);
     syncToSqlRecord();
-
-    const char *pkName = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex()).name();
-    if (primaryKeyIndex() < 0 || !pkName) {
-        QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
-        sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qPrintable(msg));
-        return false;
-    }
-    where.append(QLatin1String(pkName));
-    where.append("=").append(TSqlQuery::formatValue(property(pkName), database));
     upd.append(where);
 
     TSqlQuery query(database);
@@ -268,7 +273,12 @@ bool TSqlObject::update()
 */
 bool TSqlObject::remove()
 {
-    syncToSqlRecord();
+    if (isNew()) {
+        sqlError = QSqlError(QLatin1String("No record to remove"),
+                             QString(), QSqlError::UnknownError);
+        tWarn("Unable to remove the '%s' object. Create it before!", metaObject()->className());
+        return false;
+    }
 
     QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
     QString del = database.driver()->sqlStatement(QSqlDriver::DeleteStatement, tableName(), *static_cast<QSqlRecord *>(this), false);
@@ -313,7 +323,7 @@ bool TSqlObject::remove()
         return false;
     }
     del.append(QLatin1String(pkName));
-    del.append("=").append(TSqlQuery::formatValue(property(pkName), database));
+    del.append("=").append(TSqlQuery::formatValue(value(pkName), database));
 
     TSqlQuery query(database);
     bool ret = query.exec(del);
@@ -398,6 +408,24 @@ void TSqlObject::syncToSqlRecord()
             QSqlRecord::setValue(idx, QObject::property(propName));
         } else {
             tWarn("invalid name: %s", propName);
+        }
+    }
+}
+
+
+void TSqlObject::setProperties(const QVariantMap &values)
+{
+    const QMetaObject *metaObj = metaObject();
+    int pkidx = metaObj->propertyOffset() + primaryKeyIndex();
+
+    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
+        if (i == pkidx)
+            continue;
+
+        const char *n = metaObj->property(i).name();
+        QLatin1String key(n);
+        if (values.contains(key)) {
+            QObject::setProperty(n, values[key]);
         }
     }
 }
