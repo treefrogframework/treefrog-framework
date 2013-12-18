@@ -62,6 +62,12 @@ void TScheduler::rollbackTransaction()
 }
 
 
+void TScheduler::start(Priority priority)
+{
+    QThread::start(priority);
+}
+
+
 void TScheduler::run()
 {
     rollback = false;

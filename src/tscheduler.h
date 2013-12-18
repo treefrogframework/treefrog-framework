@@ -23,6 +23,9 @@ protected:
     virtual void job() = 0;
     void rollbackTransaction();
 
+private slots:
+    void start(Priority priority = InheritPriority);
+
 private:
     void run();
 
