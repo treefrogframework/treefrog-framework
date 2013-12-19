@@ -84,10 +84,16 @@ public:
     QString inputHiddenTag(const QString &name, const QVariant &value,
                            const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString checkBoxTag(const QString &name, const QString &value, bool checked = false,
+    QString checkBoxTag(const QString &name, const QVariant &value, bool checked = false,
                         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString radioButtonTag(const QString &name, const QString &value, bool checked = false,
+    QString checkBoxTag(const QString &name, const QVariant &value, const QVariant &valueChecked,
+                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString radioButtonTag(const QString &name, const QVariant &value, bool checked = false,
+                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString radioButtonTag(const QString &name, const QVariant &value, const QVariant &valueChecked,
                            const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputAuthenticityTag() const;

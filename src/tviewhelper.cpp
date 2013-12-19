@@ -230,7 +230,7 @@ QString TViewHelper::inputTag(const QString &type, const QString &name, const QV
 /*!
   Creates a input tag with type="checkbox", name=\a "name" and value=\a "value".
 */
-QString TViewHelper::checkBoxTag(const QString &name, const QString &value, bool checked, const THtmlAttribute &attributes) const
+QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, bool checked, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (checked)
@@ -239,14 +239,33 @@ QString TViewHelper::checkBoxTag(const QString &name, const QString &value, bool
 }
 
 /*!
+  Creates a input tag with type="checkbox", name=\a "name" and value=\a "value".
+  If the \a valueChecked parameter is equal to the \a value parameter, this checkbox is checked.
+*/
+QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, const QVariant &valueChecked, const THtmlAttribute &attributes) const
+{
+    return checkBoxTag(name, value, (!value.toString().isEmpty() && value == valueChecked), attributes);
+}
+
+/*!
   Creates a input tag with type="radio", name=\a "name" and value=\a "value".
 */
-QString TViewHelper::radioButtonTag(const QString &name, const QString &value, bool checked, const THtmlAttribute &attributes) const
+QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, bool checked, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (checked)
         attr.append("checked", "checked");
     return inputTag("radio", name, value, attr);
+}
+
+/*!
+  Creates a input tag with type="radio", name=\a "name" and value=\a "value".
+  If the \a valueChecked parameter is equal to the \a value parameter, this radio button is checked.
+*/
+QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, const QVariant &valueChecked,
+                                    const THtmlAttribute &attributes) const
+{
+    return radioButtonTag(name, value, (!value.toString().isEmpty() && value == valueChecked), attributes);
 }
 
 /*!
