@@ -40,7 +40,6 @@ public:
     THttpRequest();
     THttpRequest(const THttpRequest &other);
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress);
-    THttpRequest(const QByteArray &header, const QByteArray &body, const QHostAddress &clientAddress);
     THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress);
     virtual ~THttpRequest();
     THttpRequest &operator=(const THttpRequest &other);
@@ -77,9 +76,6 @@ public:
     static QList<THttpRequest> generate(const QByteArray &byteArray, const QHostAddress &address);
 
 protected:
-    void setRequest(const THttpRequestHeader &header, const QByteArray &body);
-    void setRequest(const QByteArray &header, const QByteArray &body);
-    void setRequest(const QByteArray &header, const QString &filePath);
     QByteArray boundary() const;
 
 private:
