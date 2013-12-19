@@ -24,7 +24,6 @@ public:
     virtual int primaryKeyIndex() const { return -1; }
     virtual int autoValueIndex() const { return -1; }
     virtual int databaseId() const { return 0; }
-    virtual void setProperties(const QVariantMap &values);
     void setRecord(const QSqlRecord &record, const QSqlError &error);
     bool create();
     bool update();

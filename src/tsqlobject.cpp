@@ -159,6 +159,7 @@ bool TSqlObject::create()
             QVariant lastid = query.lastInsertId();
             if (lastid.isValid()) {
                 QObject::setProperty(autoValName.toLatin1().constData(), lastid);
+                QSqlRecord::setValue(autoValueIndex(), lastid);
             }
         }
     }
@@ -408,24 +409,6 @@ void TSqlObject::syncToSqlRecord()
             QSqlRecord::setValue(idx, QObject::property(propName));
         } else {
             tWarn("invalid name: %s", propName);
-        }
-    }
-}
-
-
-void TSqlObject::setProperties(const QVariantMap &values)
-{
-    const QMetaObject *metaObj = metaObject();
-    int pkidx = metaObj->propertyOffset() + primaryKeyIndex();
-
-    for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        if (i == pkidx)
-            continue;
-
-        const char *n = metaObj->property(i).name();
-        QLatin1String key(n);
-        if (values.contains(key)) {
-            QObject::setProperty(n, values[key]);
         }
     }
 }
