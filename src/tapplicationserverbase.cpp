@@ -87,9 +87,7 @@ void TApplicationServerBase::invokeStaticInitialize()
 
 
 TApplicationServerBase::TApplicationServerBase()
-{
-    nativeSocketInit();
-}
+{ }
 
 
 TApplicationServerBase::~TApplicationServerBase()
