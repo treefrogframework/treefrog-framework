@@ -32,12 +32,16 @@ ServerManager::ServerManager(int max, int min, int spare, QObject *parent)
     spareServers = qMax(spareServers, 0);
     minServers = qMax(minServers, 1);
     maxServers = qMax(maxServers, minServers);
+
+    TApplicationServerBase::nativeSocketInit();
 }
 
 
 ServerManager::~ServerManager()
 {
     stop();
+
+    TApplicationServerBase::nativeSocketCleanup();
 }
 
 
@@ -46,7 +50,6 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
     if (isRunning())
         return true;
 
-#ifdef Q_OS_UNIX
     int sd = TApplicationServerBase::nativeListen(address, port, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("Failed to create listening socket");
@@ -55,10 +58,6 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
     }
 
     listeningSocket = sd;
-#else
-    Q_UNUSED(address);
-#endif
-
     running = true;
     ajustServers();
     tSystemInfo("TreeFrog application servers start up.  port:%d", port);
