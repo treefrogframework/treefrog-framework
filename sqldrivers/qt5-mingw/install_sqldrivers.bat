@@ -36,5 +36,3 @@ if not "%VERSION%" == "" if exist "%VERSION%" (
     exit /B
   )
 )
-
-echo error: plugins directory not found.
