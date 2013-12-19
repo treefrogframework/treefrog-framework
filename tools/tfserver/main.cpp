@@ -151,6 +151,18 @@ int main(int argc, char *argv[])
         goto finish;
     }
 
+#ifdef Q_OS_WIN
+    if (sock <= 0) {
+        int port = webapp.appSettings().value("ListenPort").toInt();
+        if (port <= 0 || port > USHRT_MAX) {
+            tSystemError("Invalid port number: %d", port);
+            goto finish;
+        }
+        TApplicationServerBase::nativeSocketInit();
+        sock = TApplicationServerBase::nativeListen(QHostAddress::Any, port);
+    }
+#endif
+
     if (sock <= 0) {
         tSystemError("Invalid socket descriptor: %d", sock);
         goto finish;

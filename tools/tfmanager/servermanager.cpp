@@ -50,14 +50,16 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
     if (isRunning())
         return true;
 
+#ifdef Q_OS_UNIX
     int sd = TApplicationServerBase::nativeListen(address, port, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("Failed to create listening socket");
         fprintf(stderr, "Failed to create listening socket\n");
         return false;
     }
-
     listeningSocket = sd;
+#endif
+
     running = true;
     ajustServers();
     tSystemInfo("TreeFrog application servers start up.  port:%d", port);
