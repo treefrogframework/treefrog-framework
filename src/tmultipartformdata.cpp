@@ -103,14 +103,14 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
 {
     QMap<QByteArray, QByteArray> result;
     int pos = 0;
-    
+
     for (;;) {
         pos = skipWhitespace(header, pos);
         if (pos >= header.length())
             return result;
 
         int semicol = header.indexOf(';', pos);
-        if (semicol < 0) 
+        if (semicol < 0)
             semicol = header.length();
 
         QByteArray key;
@@ -125,8 +125,8 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
         }
 
         key = header.mid(pos,  equal - pos).trimmed();
-        pos = equal + 1;        
-        
+        pos = equal + 1;
+
         pos = skipWhitespace(header, pos);
         if (pos >= header.length())
             return result;
@@ -147,7 +147,7 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
                     }
                     c = header[pos];
                 }
-                
+
                 value += c;
                 ++pos;
             }
@@ -181,10 +181,10 @@ TMimeEntity::TMimeEntity(const TMimeEntity &other)
 { }
 
 /*!
-  Constructor with the header \a header and the body \a body. 
+  Constructor with the header \a header and the body \a body.
 */
 TMimeEntity::TMimeEntity(const TMimeHeader &header, const QString &body)
-{   
+{
     first = header;
     second = body;
 }
@@ -328,6 +328,23 @@ QStringList TMultipartFormData::allFormItemValues(const QString &name) const
 }
 
 /*!
+  Returns the map of variant value whose key is equal to \a key from
+  the multipart/form-data.
+ */
+QVariantMap TMultipartFormData::formItems(const QString &key) const
+{
+    QVariantMap map;
+    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
+    for (QMapIterator<QString, QVariant> i(postParameters); i.hasNext(); ) {
+        i.next();
+        if (rx.exactMatch(i.key())) {
+            map.insert(rx.cap(1), i.value());
+        }
+    }
+    return map;
+}
+
+/*!
   Returns the value of the header field content-type in the MIME entity
   associated with the name \a dataName.
 */
@@ -358,7 +375,7 @@ qint64 TMultipartFormData::size(const QByteArray &dataName) const
 
 /*!
   Renames the file contained in the MIME entity associated with the
-  name \a dataName. 
+  name \a dataName.
   \warning Note that this method must not be called more than once.
   \sa TMimeEntity::renameUploadedFile()
  */
@@ -415,7 +432,7 @@ TMimeHeader TMultipartFormData::parseMimeHeader(QIODevice *dev) const
         if (line == "\r\n" || line.startsWith(dataBoundary)) {
             break;
         }
-    
+
         int i = line.indexOf(':');
         if (i > 0) {
             header.setHeader(line.left(i).trimmed(), line.mid(i + 1).trimmed());
@@ -501,7 +518,7 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
     if (!k.endsWith("[]")) {
         k += QLatin1String("[]");
     }
-    
+
     for (QListIterator<TMimeEntity> i(uploadedFiles); i.hasNext(); ) {
         const TMimeEntity &p = i.next();
         if (p.header().dataName() == k) {
@@ -558,5 +575,5 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
 /*!
   \fn const QVariantMap &TMultipartFormData::formItems() const
   Returns a QVariantMap object with the form items of this
-  multipart/form-data. 
+  multipart/form-data.
 */

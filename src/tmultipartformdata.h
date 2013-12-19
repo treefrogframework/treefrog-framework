@@ -65,6 +65,7 @@ public:
     bool hasFormItem(const QString &name) const { return postParameters.contains(name); }
     QString formItemValue(const QString &name) const { return postParameters.value(name).toString(); }
     QStringList allFormItemValues(const QString &name) const;
+    QVariantMap formItems(const QString &key) const;
     const QVariantMap &formItems() const { return postParameters; }
 
     QString contentType(const QByteArray &dataName) const;
