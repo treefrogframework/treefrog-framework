@@ -12,7 +12,7 @@ RANDOMTXT="1234567890123456asdfghjklLKJHGFDSA_____"
 # Function
 row_count()
 {
-  echo `echo "SELECT COUNT(1) FROM blog;" | sqlite3 $DBFILE`
+  echo "SELECT COUNT(1) FROM blog;" | sqlite3 $DBFILE
 }
 
 ## Main ##
