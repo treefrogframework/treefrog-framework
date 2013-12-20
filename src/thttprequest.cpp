@@ -26,6 +26,10 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(MethodHash, methodHash,
     x->insert("trace",   Tf::Trace);
 })
 
+/*!
+  \class THttpRequestData
+  \brief The THttpRequestData class is for shared THttpRequest data objects.
+*/
 
 THttpRequestData::THttpRequestData(const THttpRequestData &other)
     : QSharedData(other),
