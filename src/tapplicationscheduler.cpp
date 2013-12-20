@@ -9,7 +9,16 @@
 #include <TWebApplication>
 #include "tsystemglobal.h"
 
+/*!
+  \class TApplicationScheduler
+  \brief The TApplicationScheduler class provides functionality for job
+  scheduler. Jobs scheduled by this class will be executed in only one
+  application server process.
+*/
 
+/*!
+  Constructor.
+*/
 TApplicationScheduler::TApplicationScheduler(QObject *parent)
     : TScheduler(parent)
 { }

@@ -147,6 +147,8 @@ EXCLUDE                = src/test \
                          src/thttpbuffer.h \
                          src/thttpsendbuffer.h \
                          src/tmultiplexingserver.h \
+                         src/tepoll.h \
+                         src/tepollsocket.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp

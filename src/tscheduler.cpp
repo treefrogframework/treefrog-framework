@@ -9,6 +9,12 @@
 #include <TWebApplication>
 #include "tsystemglobal.h"
 
+/*!
+  \class TScheduler
+  \brief The TScheduler class provides functionality for job scheduler.
+  Jobs scheduled by this class will be executed in each application server
+  process.
+*/
 
 TScheduler::TScheduler(QObject *parent)
     : QThread(parent), timer(new QTimer()), rollback(false)
