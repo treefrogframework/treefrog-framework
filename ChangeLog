@@ -3,6 +3,7 @@ Changes with version 1.7.5
   * Modified to start multiple application servers under 'thread' MPM.
   * Added checkBoxTag(4) and radioButtonTag(4) functions into TViewHelper
     class.
+  * Added selectTag() and optionTags() functions into TViewHelper class.
   * Fix a bug of inserting a record that has a primary key.
   * Fix bugs of 'restart' option of treefrog command.
   * Changed parameter names in ini file.
