@@ -193,10 +193,12 @@ bool THtmlParser::isTag(const QString &tag)
 
 void THtmlParser::parse()
 {
+    const QLatin1Char sgn('<');
     QChar c;
+
     while (pos < txt.length()) {
         c = txt.at(pos++);
-        if (c == QLatin1Char('<') && isTag(pos - 1)) {
+        if (c == sgn && isTag(pos - 1)) {
             parseTag();
         } else {
             last().text += c;

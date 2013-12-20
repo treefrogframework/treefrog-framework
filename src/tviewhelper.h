@@ -6,6 +6,7 @@
 #include <QUrl>
 #include <QPoint>
 #include <QSize>
+#include <QPair>
 #include <TGlobal>
 #include <THtmlAttribute>
 
@@ -87,14 +88,26 @@ public:
     QString checkBoxTag(const QString &name, const QVariant &value, bool checked = false,
                         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString checkBoxTag(const QString &name, const QVariant &value, const QVariant &valueChecked,
+    QString checkBoxTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
                         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString radioButtonTag(const QString &name, const QVariant &value, bool checked = false,
                            const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString radioButtonTag(const QString &name, const QVariant &value, const QVariant &valueChecked,
+    QString radioButtonTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
                            const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString selectTag(const QString &name, int size = 1, bool multiple = false,
+                      const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString optionTag(const QString &text, const QVariant &value, bool selected = false,
+                      const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString optionTags(const QVariantList &valueList, const QVariant &selectedValue = QVariant(),
+                       const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString optionTags(const QList<QPair<QString, QVariant> > &valueList, const QVariant &selectedValue = QVariant(),
+                       const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputAuthenticityTag() const;
 

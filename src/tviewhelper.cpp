@@ -240,11 +240,11 @@ QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, boo
 
 /*!
   Creates a input tag with type="checkbox", name=\a "name" and value=\a "value".
-  If the \a valueChecked parameter is equal to the \a value parameter, this checkbox is checked.
+  If the \a checkedValue parameter is equal to the \a value parameter, this checkbox is checked.
 */
-QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, const QVariant &valueChecked, const THtmlAttribute &attributes) const
+QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, const QVariant &checkedValue, const THtmlAttribute &attributes) const
 {
-    return checkBoxTag(name, value, (!value.toString().isEmpty() && value == valueChecked), attributes);
+    return checkBoxTag(name, value, (!value.toString().isEmpty() && value == checkedValue), attributes);
 }
 
 /*!
@@ -260,12 +260,86 @@ QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, 
 
 /*!
   Creates a input tag with type="radio", name=\a "name" and value=\a "value".
-  If the \a valueChecked parameter is equal to the \a value parameter, this radio button is checked.
+  If the \a checkedValue parameter is equal to the \a value parameter, this radio button is checked.
 */
-QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, const QVariant &valueChecked,
+QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
                                     const THtmlAttribute &attributes) const
 {
-    return radioButtonTag(name, value, (!value.toString().isEmpty() && value == valueChecked), attributes);
+    return radioButtonTag(name, value, (!value.toString().isEmpty() && value == checkedValue), attributes);
+}
+
+/*!
+  Creates a select tag with name=\a "name".
+ */
+QString TViewHelper::selectTag(const QString &name, int size, bool multiple, const THtmlAttribute &attributes) const
+{
+    THtmlAttribute attr = attributes;
+    attr.prepend("size", QString::number(size));
+    attr.prepend("name", name);
+
+    if (multiple)
+        attr.prepend("multiple", QString());
+
+    return tag("select", attr, QString());
+}
+
+/*!
+  Creates a option tag for a select tag;
+ */
+QString TViewHelper::optionTag(const QString &text, const QVariant &value, bool selected,
+                               const THtmlAttribute &attributes) const
+{
+    QString ret;
+    THtmlAttribute attr = attributes;
+
+    if (selected)
+        attr.prepend("selected", QString());
+
+    attr.prepend("value", value.toString());
+    return tag("option", attr, text);
+}
+
+/*!
+  Creates option tags for a select tag;
+  The option tag which value is equal to \a selectedValue parameter is selected.
+ */
+QString TViewHelper::optionTags(const QVariantList &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
+{
+    QString ret;
+    THtmlAttribute attr = attributes;
+
+    for (QListIterator<QVariant> it(valueList); it.hasNext(); ) {
+        const QVariant &val = it.next();
+
+        if (!val.isNull() && val == selectedValue)
+            attr.prepend("selected", QString());
+
+        attr.prepend("value", val.toString());
+        ret += tag("option", attr, val.toString());
+        attr = attributes;
+    }
+    return ret;
+}
+
+/*!
+  Creates option tags for a select tag;
+ */
+QString TViewHelper::optionTags(const QList<QPair<QString, QVariant> > &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
+{
+    QString ret;
+    THtmlAttribute attr = attributes;
+
+    for (QListIterator<QPair<QString, QVariant> > it(valueList); it.hasNext(); ) {
+        const QPair<QString, QVariant> &val = it.next();
+
+        if (!val.second.isNull() && val.second == selectedValue)
+            attr.prepend("selected", QString());
+
+        attr.prepend("value", val.second.toString());
+        ret += tag("option", attr, val.first);
+        attr = attributes;
+    }
+    return ret;
 }
 
 /*!
