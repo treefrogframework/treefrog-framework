@@ -108,8 +108,10 @@ win32 {
 
   INSTALLS += sqldrivers drivers502 drivers510 drivers511
 
+  clientlib.files += ../../sqldrivers/clientlib/COPYING_3RD_PARTY_DLL
   clientlib.files += ../../sqldrivers/clientlib/libintl.dll
   clientlib.files += ../../sqldrivers/clientlib/libmariadb.dll
+  clientlib.files += ../../sqldrivers/clientlib/libmysql.dll
   clientlib.files += ../../sqldrivers/clientlib/libpq.dll
   clientlib.path = $${datadir}/bin
   INSTALLS += clientlib
