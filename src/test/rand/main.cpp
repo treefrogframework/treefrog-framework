@@ -59,13 +59,41 @@ class TestRand : public QObject
 {
     Q_OBJECT
 private slots:
+    void initTestCase();
+    void cleanupTestCase();
     void random_data();
     void random();
     void bench_data();
     void bench();
     void randomstring1();
     void randomstring2();
+
+private:
+    enum {
+        THREADS_NUM = 256,
+    };
+
+    Thread *thread[THREADS_NUM];
 };
+
+
+void TestRand::initTestCase()
+{
+    // put load for benchmarks
+    for (int i = 0; i < THREADS_NUM; ++i) {
+        thread[i] = new Thread;
+        thread[i]->start();
+    }
+    Tf::msleep(100);
+}
+
+
+void TestRand::cleanupTestCase()
+{
+    for (int i = 0; i < THREADS_NUM; ++i) {
+        thread[i]->terminate();
+    }
+}
 
 
 void TestRand::random_data()
@@ -89,11 +117,6 @@ void TestRand::random()
 void TestRand::bench_data()
 {
     Tf::srandXor128(1222);
-
-    for (int i = 0; i < 400; ++i) {
-        (new Thread)->start();
-    }
-    Tf::msleep(100);
 }
 
 
