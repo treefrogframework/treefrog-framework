@@ -1,10 +1,12 @@
 
 LICENSE
 
-MySQL Client Library
- Oracle provides its MySQL Client Libraries under a dual license model designed
- to meet the development and distribution needs of both commercial distributors
- (such as OEMs, ISVs and VARs) and open source projects. 
+MySQL Connector/C 6.1
+ This is a release of MySQL Connector/C, Oracle's dual-
+ license C Driver for MySQL. For the avoidance of
+ doubt, this particular copy of the software is released
+ under the version 2 of the GNU General Public License.
+ MySQL Connector/C is brought to you by Oracle.
   http://www.mysql.com/about/legal/licensing/oem/
 
 MariaDB Client Library
