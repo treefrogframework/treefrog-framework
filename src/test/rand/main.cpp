@@ -46,10 +46,10 @@ class Thread : public QThread
     void run()
     {
         for (;;) {
-            for (int i = 0; i < 20; ++i) {
+            for (int i = 0; i < 1000; ++i) {
                 Tf::randXor128();
             }
-            QThread::yieldCurrentThread();
+            usleep(1);
         }
     }
 };
@@ -92,6 +92,11 @@ void TestRand::cleanupTestCase()
 {
     for (int i = 0; i < THREADS_NUM; ++i) {
         thread[i]->terminate();
+    }
+
+    for (int i = 0; i < THREADS_NUM; ++i) {
+        thread[i]->wait();
+        delete thread[i];
     }
 }
 
