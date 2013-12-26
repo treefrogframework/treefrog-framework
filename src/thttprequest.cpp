@@ -13,18 +13,23 @@
 #include <QJsonDocument>
 #endif
 
-typedef QHash<QString, Tf::HttpMethod> MethodHash;
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(MethodHash, methodHash,
+class MethodHash : public QHash<QString, Tf::HttpMethod>
 {
-    x->insert("get",     Tf::Get);
-    x->insert("head",    Tf::Head);
-    x->insert("post",    Tf::Post);
-    x->insert("options", Tf::Options);
-    x->insert("put",     Tf::Put);
-    x->insert("delete",  Tf::Delete);
-    x->insert("trace",   Tf::Trace);
-})
+public:
+    MethodHash() : QHash<QString, Tf::HttpMethod>()
+    {
+        insert("get",     Tf::Get);
+        insert("head",    Tf::Head);
+        insert("post",    Tf::Post);
+        insert("options", Tf::Options);
+        insert("put",     Tf::Put);
+        insert("delete",  Tf::Delete);
+        insert("trace",   Tf::Trace);
+    }
+};
+Q_GLOBAL_STATIC(MethodHash, methodHash)
+
 
 /*!
   \class THttpRequestData

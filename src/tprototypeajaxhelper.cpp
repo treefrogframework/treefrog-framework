@@ -9,8 +9,6 @@
 #include <TPrototypeAjaxHelper>
 #include <TActionView>
 
-typedef QHash<int, QString> IntHash;
-
 /*!
   \class TPrototypeAjaxHelper
   \brief The TPrototypeAjaxHelper provides some functionality for
@@ -18,56 +16,81 @@ typedef QHash<int, QString> IntHash;
 */
 
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, behaviorHash,
+class BehaviorHash : public QHash<int, QString>
 {
-    x->insert(TPrototypeAjaxHelper::InsertBefore,            QLatin1String("insertion:'before', "));
-    x->insert(TPrototypeAjaxHelper::InsertAfter,             QLatin1String("insertion:'after', "));
-    x->insert(TPrototypeAjaxHelper::InsertAtTopOfContent,    QLatin1String("insertion:'top', "));
-    x->insert(TPrototypeAjaxHelper::InsertAtBottomOfContent, QLatin1String("insertion:'bottom', ")); 
-})
+public:
+    BehaviorHash() : QHash<int, QString>()
+    {
+        insert(TPrototypeAjaxHelper::InsertBefore,            QLatin1String("insertion:'before', "));
+        insert(TPrototypeAjaxHelper::InsertAfter,             QLatin1String("insertion:'after', "));
+        insert(TPrototypeAjaxHelper::InsertAtTopOfContent,    QLatin1String("insertion:'top', "));
+        insert(TPrototypeAjaxHelper::InsertAtBottomOfContent, QLatin1String("insertion:'bottom', "));
+    }
+};
+Q_GLOBAL_STATIC(BehaviorHash, behaviorHash)
 
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, eventStringHash,
+class EventStringHash : public QHash<int, QString>
 {
-    x->insert(Tf::Create,        QLatin1String("onCreate:"));
-    x->insert(Tf::Uninitialized, QLatin1String("onUninitialized:"));
-    x->insert(Tf::Loading,       QLatin1String("onLoading:"));
-    x->insert(Tf::Loaded,        QLatin1String("onLoaded:"));
-    x->insert(Tf::Interactive,   QLatin1String("onInteractive:"));
-    x->insert(Tf::Success,       QLatin1String("onSuccess:"));
-    x->insert(Tf::Failure,       QLatin1String("onFailure:"));
-    x->insert(Tf::Complete,      QLatin1String("onComplete:"));
-})
+public:
+    EventStringHash() : QHash<int, QString>()
+    {
+        insert(Tf::Create,        QLatin1String("onCreate:"));
+        insert(Tf::Uninitialized, QLatin1String("onUninitialized:"));
+        insert(Tf::Loading,       QLatin1String("onLoading:"));
+        insert(Tf::Loaded,        QLatin1String("onLoaded:"));
+        insert(Tf::Interactive,   QLatin1String("onInteractive:"));
+        insert(Tf::Success,       QLatin1String("onSuccess:"));
+        insert(Tf::Failure,       QLatin1String("onFailure:"));
+        insert(Tf::Complete,      QLatin1String("onComplete:"));
+    }
+};
+Q_GLOBAL_STATIC(EventStringHash, eventStringHash)
 
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, stringOptionHash,
+class StringOptionHash : public QHash<int, QString>
 {
-    x->insert(Tf::ContentType,    QLatin1String("contentType:"));
-    x->insert(Tf::Encoding,       QLatin1String("encoding:"));
-    x->insert(Tf::PostBody,       QLatin1String("postBody:"));
-    x->insert(Tf::RequestHeaders, QLatin1String("requestHeaders:"));
-})
+public:
+    StringOptionHash() : QHash<int, QString>()
+    {
+        insert(Tf::ContentType,    QLatin1String("contentType:"));
+        insert(Tf::Encoding,       QLatin1String("encoding:"));
+        insert(Tf::PostBody,       QLatin1String("postBody:"));
+        insert(Tf::RequestHeaders, QLatin1String("requestHeaders:"));
+    }
+};
+Q_GLOBAL_STATIC(StringOptionHash, stringOptionHash)
 
-                                 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, boolOptionHash,
+
+class BoolOptionHash : public QHash<int, QString>
 {
-    x->insert(Tf::Asynchronous, QLatin1String("asynchronous:"));
-    x->insert(Tf::EvalJS,       QLatin1String("evalJS:"));
-    x->insert(Tf::EvalJSON,     QLatin1String("evalJSON:"));
-    x->insert(Tf::SanitizeJSON, QLatin1String("sanitizeJSON:"));
-})
+public:
+    BoolOptionHash() : QHash<int, QString>()
+    {
+        insert(Tf::Asynchronous, QLatin1String("asynchronous:"));
+        insert(Tf::EvalJS,       QLatin1String("evalJS:"));
+        insert(Tf::EvalJSON,     QLatin1String("evalJSON:"));
+        insert(Tf::SanitizeJSON, QLatin1String("sanitizeJSON:"));
+    }
+};
+Q_GLOBAL_STATIC(BoolOptionHash, boolOptionHash)
 
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, methodHash,
+class MethodHash : public QHash<int, QString>
 {
-    x->insert(Tf::Get,     QLatin1String("get"));
-    x->insert(Tf::Head,    QLatin1String("head"));
-    x->insert(Tf::Post,    QLatin1String("post"));
-    x->insert(Tf::Options, QLatin1String("options"));
-    x->insert(Tf::Put,     QLatin1String("put"));
-    x->insert(Tf::Delete,  QLatin1String("delete"));
-    x->insert(Tf::Trace,   QLatin1String("trace"));
-})
+public:
+    MethodHash() : QHash<int, QString>()
+    {
+        insert(Tf::Get,     QLatin1String("get"));
+        insert(Tf::Head,    QLatin1String("head"));
+        insert(Tf::Post,    QLatin1String("post"));
+        insert(Tf::Options, QLatin1String("options"));
+        insert(Tf::Put,     QLatin1String("put"));
+        insert(Tf::Delete,  QLatin1String("delete"));
+        insert(Tf::Trace,   QLatin1String("trace"));
+    }
+};
+Q_GLOBAL_STATIC(MethodHash, methodHash)
 
 
 QString TPrototypeAjaxHelper::requestFunction(const QUrl &url, const TOption &options, const QString &jsCondition) const
@@ -120,7 +143,7 @@ QString TPrototypeAjaxHelper::updateFunction(const QUrl &url, const QString &id,
     if (!jsCondition.isEmpty()) {
         string += QLatin1String(" }");
     }
-    return string; 
+    return string;
 }
 
 
@@ -137,7 +160,7 @@ QString TPrototypeAjaxHelper::periodicalUpdateFunction(const QUrl &url, const QS
     string += QLatin1String("', '");
     string += url.toString();
     string += QLatin1String("', { ");
-   
+
     // Appends 'insertion' parameter
     if (behavior != Replace) {
         string += behaviorHash()->value(behavior);

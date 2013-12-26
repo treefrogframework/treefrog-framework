@@ -23,11 +23,16 @@
 
 static TKvsDatabasePool *databasePool = 0;
 
-typedef QHash<QString, int> KvsTypeHash;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(KvsTypeHash, kvsTypeHash,
+
+class KvsTypeHash : public QHash<QString, int>
 {
-    x->insert("MONGODB", TKvsDatabase::MongoDB);
-});
+public:
+    KvsTypeHash() : QHash<QString, int>()
+    {
+        insert("MONGODB", TKvsDatabase::MongoDB);
+    }
+};
+Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 
 static void cleanup()

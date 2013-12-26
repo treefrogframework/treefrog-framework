@@ -18,56 +18,61 @@
 
 #define HTTP_DATE_TIME_FORMAT "ddd, d MMM yyyy hh:mm:ss"
 
-typedef QHash<int, QByteArray> IntHash;
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, reasonPhrase,
+class ReasonPhrase : public QHash<int, QByteArray>
 {
-    // Informational 1xx
-    x->insert(Tf::Continue, "Continue");
-    x->insert(Tf::SwitchingProtocols, "Switching Protocols");
-    // Successful 2xx
-    x->insert(Tf::OK, "OK");
-    x->insert(Tf::Created, "Created");
-    x->insert(Tf::Accepted, "Accepted");
-    x->insert(Tf::NonAuthoritativeInformation, "Non-Authoritative Information");
-    x->insert(Tf::NoContent, "No Content");
-    x->insert(Tf::ResetContent, "Reset Content");
-    x->insert(Tf::PartialContent, "Partial Content");
-    // Redirection 3xx
-    x->insert(Tf::MultipleChoices, "Multiple Choices");
-    x->insert(Tf::MovedPermanently, "Moved Permanently");
-    x->insert(Tf::Found, "Found");
-    x->insert(Tf::SeeOther, "See Other");
-    x->insert(Tf::NotModified, "Not Modified");
-    x->insert(Tf::UseProxy, "Use Proxy");
-    x->insert(Tf::TemporaryRedirect, "Temporary Redirect");
-    // Client Error 4xx
-    x->insert(Tf::BadRequest, "Bad Request");
-    x->insert(Tf::Unauthorized, "Unauthorized");
-    x->insert(Tf::PaymentRequired, "Payment Required");
-    x->insert(Tf::Forbidden, "Forbidden");
-    x->insert(Tf::NotFound, "Not Found");
-    x->insert(Tf::MethodNotAllowed, "Method Not Allowed");
-    x->insert(Tf::NotAcceptable, "Not Acceptable");
-    x->insert(Tf::ProxyAuthenticationRequired, "Proxy Authentication Required");
-    x->insert(Tf::RequestTimeout, "Request Timeout");
-    x->insert(Tf::Conflict, "Conflict");
-    x->insert(Tf::Gone, "Gone");
-    x->insert(Tf::LengthRequired, "Length Required");
-    x->insert(Tf::PreconditionFailed, "Precondition Failed");
-    x->insert(Tf::RequestEntityTooLarge, "Request Entity Too Large");
-    x->insert(Tf::RequestURITooLong, "Request-URI Too Long");
-    x->insert(Tf::UnsupportedMediaType, "Unsupported Media Type");
-    x->insert(Tf::RequestedRangeNotSatisfiable, "Requested Range Not Satisfiable");
-    x->insert(Tf::ExpectationFailed, "Expectation Failed");
-    // Server Error 5xx
-    x->insert(Tf::InternalServerError, "Internal Server Error");
-    x->insert(Tf::NotImplemented, "Not Implemented");
-    x->insert(Tf::BadGateway, "Bad Gateway");
-    x->insert(Tf::ServiceUnavailable, "Service Unavailable");
-    x->insert(Tf::GatewayTimeout, "Gateway Timeout");
-    x->insert(Tf::HTTPVersionNotSupported, "HTTP Version Not Supported");
-});
+public:
+    ReasonPhrase() : QHash<int, QByteArray>()
+    {
+        // Informational 1xx
+        insert(Tf::Continue, "Continue");
+        insert(Tf::SwitchingProtocols, "Switching Protocols");
+        // Successful 2xx
+        insert(Tf::OK, "OK");
+        insert(Tf::Created, "Created");
+        insert(Tf::Accepted, "Accepted");
+        insert(Tf::NonAuthoritativeInformation, "Non-Authoritative Information");
+        insert(Tf::NoContent, "No Content");
+        insert(Tf::ResetContent, "Reset Content");
+        insert(Tf::PartialContent, "Partial Content");
+        // Redirection 3xx
+        insert(Tf::MultipleChoices, "Multiple Choices");
+        insert(Tf::MovedPermanently, "Moved Permanently");
+        insert(Tf::Found, "Found");
+        insert(Tf::SeeOther, "See Other");
+        insert(Tf::NotModified, "Not Modified");
+        insert(Tf::UseProxy, "Use Proxy");
+        insert(Tf::TemporaryRedirect, "Temporary Redirect");
+        // Client Error 4xx
+        insert(Tf::BadRequest, "Bad Request");
+        insert(Tf::Unauthorized, "Unauthorized");
+        insert(Tf::PaymentRequired, "Payment Required");
+        insert(Tf::Forbidden, "Forbidden");
+        insert(Tf::NotFound, "Not Found");
+        insert(Tf::MethodNotAllowed, "Method Not Allowed");
+        insert(Tf::NotAcceptable, "Not Acceptable");
+        insert(Tf::ProxyAuthenticationRequired, "Proxy Authentication Required");
+        insert(Tf::RequestTimeout, "Request Timeout");
+        insert(Tf::Conflict, "Conflict");
+        insert(Tf::Gone, "Gone");
+        insert(Tf::LengthRequired, "Length Required");
+        insert(Tf::PreconditionFailed, "Precondition Failed");
+        insert(Tf::RequestEntityTooLarge, "Request Entity Too Large");
+        insert(Tf::RequestURITooLong, "Request-URI Too Long");
+        insert(Tf::UnsupportedMediaType, "Unsupported Media Type");
+        insert(Tf::RequestedRangeNotSatisfiable, "Requested Range Not Satisfiable");
+        insert(Tf::ExpectationFailed, "Expectation Failed");
+        // Server Error 5xx
+        insert(Tf::InternalServerError, "Internal Server Error");
+        insert(Tf::NotImplemented, "Not Implemented");
+        insert(Tf::BadGateway, "Bad Gateway");
+        insert(Tf::ServiceUnavailable, "Service Unavailable");
+        insert(Tf::GatewayTimeout, "Gateway Timeout");
+        insert(Tf::HTTPVersionNotSupported, "HTTP Version Not Supported");
+    }
+};
+Q_GLOBAL_STATIC(ReasonPhrase, reasonPhrase);
+
 
 /*!
   \class THttpUtility

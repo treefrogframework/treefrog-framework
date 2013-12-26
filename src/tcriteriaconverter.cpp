@@ -16,33 +16,36 @@
  * \sa TCriteria
  */
 
-
-typedef QHash<int, QString> IntHash;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, formatHash,
+class FormatHash : public QHash<int, QString>
 {
-    x->insert(TSql::Equal, "=%1");
-    x->insert(TSql::NotEqual, "<>%1");
-    x->insert(TSql::LessThan, "<%1");
-    x->insert(TSql::GreaterThan, ">%1");
-    x->insert(TSql::LessEqual, "<=%1");
-    x->insert(TSql::GreaterEqual, ">=%1");
-    x->insert(TSql::IsNull, " IS NULL");
-    x->insert(TSql::IsNotNull, " IS NOT NULL");
-    x->insert(TSql::Like, " LIKE %1");
-    x->insert(TSql::NotLike, " NOT LIKE %1");
-    x->insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
-    x->insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
-    x->insert(TSql::ILike, " ILIKE %1");
-    x->insert(TSql::NotILike, " NOT ILIKE %1");
-    x->insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
-    x->insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
-    x->insert(TSql::In, " IN (%1)");
-    x->insert(TSql::NotIn, " NOT IN (%1)");
-    x->insert(TSql::Between, " BETWEEN %1 AND %2");
-    x->insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
-    x->insert(TSql::Any, "ANY (%1)");
-    x->insert(TSql::All, "ALL (%1)");
-})
+public:
+    FormatHash() : QHash<int, QString>()
+    {
+        insert(TSql::Equal, "=%1");
+        insert(TSql::NotEqual, "<>%1");
+        insert(TSql::LessThan, "<%1");
+        insert(TSql::GreaterThan, ">%1");
+        insert(TSql::LessEqual, "<=%1");
+        insert(TSql::GreaterEqual, ">=%1");
+        insert(TSql::IsNull, " IS NULL");
+        insert(TSql::IsNotNull, " IS NOT NULL");
+        insert(TSql::Like, " LIKE %1");
+        insert(TSql::NotLike, " NOT LIKE %1");
+        insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
+        insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
+        insert(TSql::ILike, " ILIKE %1");
+        insert(TSql::NotILike, " NOT ILIKE %1");
+        insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
+        insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
+        insert(TSql::In, " IN (%1)");
+        insert(TSql::NotIn, " NOT IN (%1)");
+        insert(TSql::Between, " BETWEEN %1 AND %2");
+        insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
+        insert(TSql::Any, "ANY (%1)");
+        insert(TSql::All, "ALL (%1)");
+    }
+};
+Q_GLOBAL_STATIC(FormatHash, formatHash)
 
 
 const QHash<int, QString> &TSql::formats()

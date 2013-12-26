@@ -14,16 +14,22 @@
 
 #define DEFAULT_TEXT_ENCODING "DefaultTextEncoding"
 
-typedef QHash<TLogger::Priority, QByteArray> PriorityHash;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(PriorityHash, priorityHash,
+
+class PriorityHash : public QHash<TLogger::Priority, QByteArray>
 {
-    x->insert(TLogger::Fatal, "FATAL");
-    x->insert(TLogger::Error, "ERROR");
-    x->insert(TLogger::Warn,  "WARN");
-    x->insert(TLogger::Info,  "INFO");
-    x->insert(TLogger::Debug, "DEBUG");
-    x->insert(TLogger::Trace, "TRACE");
-});
+public:
+    PriorityHash() : QHash<TLogger::Priority, QByteArray>()
+    {
+        insert(TLogger::Fatal, "FATAL");
+        insert(TLogger::Error, "ERROR");
+        insert(TLogger::Warn,  "WARN");
+        insert(TLogger::Info,  "INFO");
+        insert(TLogger::Debug, "DEBUG");
+        insert(TLogger::Trace, "TRACE");
+    }
+};
+Q_GLOBAL_STATIC(PriorityHash, priorityHash)
+
 
 /*!
   \class TLogger
@@ -64,7 +70,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 {
     QByteArray message;
     message.reserve(layout.length() + log.message.length() + 100);
-    
+
     int pos = 0;
     while (pos < layout.length()) {
         char c = layout.at(pos++);
@@ -72,20 +78,20 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
             message.append(c);
             continue;
         }
-        
+
         QByteArray dig;
         for (;;) {
             if (pos >= layout.length()) {
                 message.append('%').append(dig);
                 break;
             }
-            
+
             c = layout.at(pos++);
             if (c >= '0' && c <= '9') {
                 dig += c;
                 continue;
             }
-            
+
             if (c == 'd') {  // %d : timestamp
                 if (!dateTimeFormat.isEmpty()) {
                     message.append(log.timestamp.toString(dateTimeFormat).toLatin1());
@@ -104,15 +110,15 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
                         message.append(QByteArray(d, ' '));
                     }
                 }
-                
+
             } else if (c == 't' || c == 'T') {  // %t or %T : thread ID (dec or hex)
                 QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                 message.append(QString("%1").arg((qulonglong)log.threadId, dig.toInt(), ((c == 't') ? 10 : 16), fillChar).toLatin1());
-                
+
             } else if (c == 'i' || c == 'I') {  // %i or %I : PID (dec or hex)
                 QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                 message.append(QString("%1").arg(log.pid, dig.toInt(), ((c == 'i') ? 10 : 16), fillChar).toLatin1());
-                
+
             } else if (c == 'n') {  // %n : newline
                 message.append('\n');
             } else if (c == 'm') {  // %m : message
@@ -161,7 +167,7 @@ void TLogger::readSettings()
 
     layout_ = settingsValue("Layout", "%m%n").toByteArray();
     dateTimeFormat_ = settingsValue("DateTimeFormat").toByteArray();
-    
+
     QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
     threshold_ = priorityHash()->key(pri, TLogger::Trace);
 
@@ -208,7 +214,7 @@ void TLogger::readSettings()
 
 /*!
   \fn virtual void TLogger::log(const TLog &log)
-  Writes the log \a log to the device. 
+  Writes the log \a log to the device.
   This function should be called from any reimplementations of log().
 */
 
