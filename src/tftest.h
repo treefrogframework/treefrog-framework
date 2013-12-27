@@ -13,12 +13,6 @@
 # include <TSqlDatabasePool2>
 #endif
 
-#if QT_VERSION < 0x050000
-# define SET_CODEC_FOR_TR(codec)  do { QTextCodec::setCodecForTr(codec); QTextCodec::setCodecForCStrings(codec); } while (0)
-#else
-# define SET_CODEC_FOR_TR(codec)
-#endif
-
 
 #define TF_TEST_MAIN(TestObject) \
 int main(int argc, char *argv[]) \
@@ -47,7 +41,7 @@ int main(int argc, char *argv[]) \
     QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
-    SET_CODEC_FOR_TR(codec); \
+    TF_SET_CODEC_FOR_TR(codec); \
     app.setDatabaseEnvironment("test"); \
     TSqlDatabasePool2::instantiate(); \
     TKvsDatabasePool2::instantiate(); \
@@ -65,7 +59,7 @@ int main(int argc, char *argv[]) \
     QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
-    SET_CODEC_FOR_TR(codec); \
+    TF_SET_CODEC_FOR_TR(codec); \
     TestObject tc; \
     return QTest::qExec(&tc, argc, argv); \
 }

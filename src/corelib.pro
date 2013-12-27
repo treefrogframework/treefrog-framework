@@ -244,7 +244,8 @@ HEADERS += \
            tjavascriptobject.h \
            tsqlormapper.h \
            thttprequestheader.h \
-           thttpresponseheader.h
+           thttpresponseheader.h \
+           tcommandlineinterface.h
 
 win32 {
   SOURCES += twebapplication_win.cpp
