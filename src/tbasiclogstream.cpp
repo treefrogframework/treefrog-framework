@@ -68,7 +68,7 @@ void TBasicLogStream::timerEvent(QTimerEvent *event)
         QObject::timerEvent(event);
         return;
     }
-    
+
     timer.stop();
     loggerFlush();  // Flush logger
 }

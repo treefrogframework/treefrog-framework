@@ -58,6 +58,12 @@ void tSetupSystemLogger()
 }
 
 
+void tReleaseSystemLogger()
+{
+    systemLog.close();
+}
+
+
 void tSetupAccessLogger()
 {
     // access log
@@ -71,12 +77,30 @@ void tSetupAccessLogger()
 }
 
 
+void tReleaseAccessLogger()
+{
+    if (accesslogstrm) {
+        delete accesslogstrm;
+        accesslogstrm = 0;
+    }
+}
+
+
 void tSetupQueryLogger()
 {
     // sql query log
     QString querylogpath = Tf::app()->sqlQueryLogFilePath();
     if (!sqllogstrm && !querylogpath.isEmpty()) {
         sqllogstrm = new TAccessLogStream(querylogpath);
+    }
+}
+
+
+void tReleaseQueryLogger()
+{
+    if (sqllogstrm) {
+        delete sqllogstrm;
+        sqllogstrm = 0;
     }
 }
 

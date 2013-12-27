@@ -30,6 +30,7 @@
 #define APPLICATION_ABORT  "ApplicationAbortOnFatal"
 
 static TAbstractLogStream *stream = 0;
+static QList<TLogger *> loggers;
 
 /*!
   Sets up all the loggers set in the logger.ini.
@@ -37,7 +38,6 @@ static TAbstractLogStream *stream = 0;
 */
 void tSetupAppLoggers()
 {
-    QList<TLogger *> loggers;
     QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
 
     for (QStringListIterator i(loggerList); i.hasNext(); ) {
@@ -55,6 +55,23 @@ void tSetupAppLoggers()
             stream = new TBasicLogStream(loggers, qApp);
         }
     }
+}
+
+/*!
+  Releases all the loggers.
+  This function is for internal use only.
+*/
+void tReleaseAppLoggers()
+{
+    if (stream) {
+        delete stream;
+        stream = 0;
+    }
+
+    for (QListIterator<TLogger *> it(loggers); it.hasNext(); ) {
+        delete it.next();
+    }
+    loggers.clear();
 }
 
 

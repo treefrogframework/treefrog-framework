@@ -9,9 +9,12 @@ class TAccessLog;
 class QSqlError;
 
 
-T_CORE_EXPORT void tSetupSystemLogger();  // internal use
-T_CORE_EXPORT void tSetupAccessLogger();  // internal use
-T_CORE_EXPORT void tSetupQueryLogger();   // internal use
+T_CORE_EXPORT void tSetupSystemLogger();   // internal use
+T_CORE_EXPORT void tReleaseSystemLogger(); // internal use
+T_CORE_EXPORT void tSetupAccessLogger();   // internal use
+T_CORE_EXPORT void tReleaseAccessLogger(); // internal use
+T_CORE_EXPORT void tSetupQueryLogger();    // internal use
+T_CORE_EXPORT void tReleaseQueryLogger();  // internal use
 T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log
 
 T_CORE_EXPORT void tSystemError(const char *, ...) // system error message

@@ -101,7 +101,8 @@
 class TLogger;
 class TLog;
 
-T_CORE_EXPORT void tSetupAppLoggers();  // internal use
+T_CORE_EXPORT void tSetupAppLoggers();   // internal use
+T_CORE_EXPORT void tReleaseAppLoggers(); // internal use
 
 T_CORE_EXPORT void tFatal(const char *, ...) // output fatal message
 #if defined(Q_CC_GNU) && !defined(__INSURE__)
@@ -175,26 +176,11 @@ private:
 };
 
 
-#ifndef Q_GLOBAL_STATIC_WITH_INITIALIZER
-#define Q_GLOBAL_STATIC_WITH_INITIALIZER(TYPE, NAME, INITIALIZER)  \
-    static TYPE *NAME()                                            \
-    {                                                              \
-        static TYPE *pointer;                                      \
-        static QBasicMutex mutex;                                  \
-        if (!pointer) {                                            \
-            QMutexLocker locker(&mutex);                           \
-            if (!pointer) {                                        \
-                TYPE *x = pointer = new TYPE;                      \
-                INITIALIZER                                        \
-            }                                                      \
-        }                                                          \
-        return pointer;                                            \
-    }
-
-#include <QBasicMutex>
-#include <QMutexLocker>
+#if QT_VERSION < 0x050000
+# define TF_SET_CODEC_FOR_TR(codec)  do { QTextCodec::setCodecForTr(codec); QTextCodec::setCodecForCStrings(codec); } while (0)
+#else
+# define TF_SET_CODEC_FOR_TR(codec)
 #endif
-
 
 #ifndef TF_NO_DEBUG
 #  define T_CHECK_NO_CHANGE(val, type)  TCheckChange<type> ___Check ## val ## type (val, __FILE__, __LINE__)
