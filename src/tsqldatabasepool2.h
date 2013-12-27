@@ -18,7 +18,7 @@ public:
     QSqlDatabase database(int databaseId = 0);
     void pool(QSqlDatabase &database);
 
-    static void instantiate();
+    static void instantiate(int maxConnections = 0);
     static TSqlDatabasePool2 *instance();
 
     static QString driverType(const QString &env, int databaseId);
@@ -40,6 +40,7 @@ private:
     };
 
     TAtomicSet *dbSet;
+    int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;
 

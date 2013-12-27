@@ -19,7 +19,7 @@ public:
     TKvsDatabase database(TKvsDatabase::Type type);
     void pool(TKvsDatabase &database);
 
-    static void instantiate();
+    static void instantiate(int maxConnections = 0);
     static TKvsDatabasePool2 *instance();
 
 protected:
@@ -42,6 +42,7 @@ private:
     };
 
     TAtomicSet *dbSet;
+    int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;
 

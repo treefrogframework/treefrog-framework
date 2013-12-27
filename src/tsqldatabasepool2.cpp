@@ -28,7 +28,7 @@ static void cleanup()
 
 
 TSqlDatabasePool2::TSqlDatabasePool2(const QString &environment)
-    : QObject(), dbSet(0), dbEnvironment(environment)
+    : QObject(), dbSet(0), maxConnects(0), dbEnvironment(environment)
 {
     // Starts the timer to close extra-connection
     timer.start(10000, this);
@@ -42,7 +42,7 @@ TSqlDatabasePool2::~TSqlDatabasePool2()
     int setCount = Tf::app()->sqlDatabaseSettingsCount();
 
     for (int j = 0; j < setCount; ++j) {
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             QString dbName = QString().sprintf(CONN_NAME_FORMAT, j, i);
 
             QSqlDatabase::database(dbName, false).close();
@@ -79,14 +79,14 @@ void TSqlDatabasePool2::init()
 
     // Adds databases previously
     for (int j = 0; j < setCount; ++j) {
-        dbSet[j].setMaxCount(maxDbConnectionsPerProcess());
+        dbSet[j].setMaxCount(maxConnects);
 
         QString type = driverType(dbEnvironment, j);
         if (type.isEmpty()) {
             continue;
         }
 
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             QString dbName = QString().sprintf(CONN_NAME_FORMAT, j, i);
             QSqlDatabase db = QSqlDatabase::addDatabase(type, dbName);
             if (!db.isValid()) {
@@ -256,10 +256,11 @@ void TSqlDatabasePool2::timerEvent(QTimerEvent *event)
  * Initializes.
  * Call this in main thread.
  */
-void TSqlDatabasePool2::instantiate()
+void TSqlDatabasePool2::instantiate(int maxConnections)
 {
     if (!databasePool) {
         databasePool = new TSqlDatabasePool2(Tf::app()->databaseEnvironment());
+        databasePool->maxConnects = (maxConnections > 0) ? maxConnections : maxDbConnectionsPerProcess();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }
@@ -291,34 +292,32 @@ QString TSqlDatabasePool2::driverType(const QString &env, int databaseId)
 
 int TSqlDatabasePool2::maxDbConnectionsPerProcess()
 {
-    static int maxConnections = 0;
+    int maxConnections = 0;
+    QString mpm = Tf::app()->multiProcessingModuleString();
 
-    if (!maxConnections) {
-        QString mpm = Tf::app()->multiProcessingModuleString();
-
-        switch (Tf::app()->multiProcessingModule()) {
-        case TWebApplication::Thread:
-            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-            if (maxConnections <= 0) {
-                maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
-            }
-            break;
-
-        case TWebApplication::Prefork:
-            maxConnections = 1;
-            break;
-
-        case TWebApplication::Hybrid:
-            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
-            if (maxConnections <= 0) {
-                maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
-            }
-            break;
-
-        default:
-            break;
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::Thread:
+        maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+        if (maxConnections <= 0) {
+            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
         }
+        break;
+
+    case TWebApplication::Prefork:
+        maxConnections = 1;
+        break;
+
+    case TWebApplication::Hybrid:
+        maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+        if (maxConnections <= 0) {
+            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+        }
+        break;
+
+    default:
+        break;
     }
+
     return maxConnections;
 }
 

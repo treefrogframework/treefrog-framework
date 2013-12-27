@@ -45,7 +45,7 @@ static void cleanup()
 
 
 TKvsDatabasePool2::TKvsDatabasePool2(const QString &environment)
-    : QObject(), dbSet(0), dbEnvironment(environment)
+    : QObject(), dbSet(0), maxConnects(0), dbEnvironment(environment)
 {
     // Starts the timer to close extra-connection
     timer.start(10000, this);
@@ -56,13 +56,19 @@ TKvsDatabasePool2::~TKvsDatabasePool2()
 {
     timer.stop();
 
-    int typeCnt = kvsTypeHash()->count();
+    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+        it.next();
+        int type = it.value();
 
-    for (int j = 0; j < typeCnt; ++j) {
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
-            QString dbName = QString().sprintf(CONN_NAME_FORMAT, j, i);
+        if (!isKvsAvailable((TKvsDatabase::Type)type)) {
+            tSystemDebug("KVS database not available. type:%d", (int)type);
+            continue;
+        }
 
-            DatabaseUse *du = (DatabaseUse *)dbSet[j].peekPop(i);
+        for (int i = 0; i < maxConnects; ++i) {
+            QString dbName = QString().sprintf(CONN_NAME_FORMAT, type, i);
+
+            DatabaseUse *du = (DatabaseUse *)dbSet[type].peekPop(i);
             if (du) {
                 delete du;
             } else {
@@ -101,9 +107,9 @@ void TKvsDatabasePool2::init()
             tSystemInfo("KVS database available. type:%d", (int)type);
         }
 
-        dbSet[typeidx].setMaxCount(maxDbConnectionsPerProcess());
+        dbSet[typeidx].setMaxCount(maxConnects);
 
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             // Adds databases previously
             QString dbName = QString().sprintf(CONN_NAME_FORMAT, type, i);
             TKvsDatabase db = TKvsDatabase::addDatabase(drv, dbName);
@@ -285,10 +291,11 @@ void TKvsDatabasePool2::timerEvent(QTimerEvent *event)
  * Initializes.
  * Call this in main thread.
  */
-void TKvsDatabasePool2::instantiate()
+void TKvsDatabasePool2::instantiate(int maxConnections)
 {
     if (!databasePool) {
         databasePool = new TKvsDatabasePool2(Tf::app()->databaseEnvironment());
+        databasePool->maxConnects = (maxConnections > 0) ? maxConnections : maxDbConnectionsPerProcess();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }
