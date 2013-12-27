@@ -18,15 +18,19 @@
 #define EXVAR_ECHO        QString("==$")
 #define EXVAR_ESCAPE_ECHO QString("=$")
 
-typedef QHash<int, QString> OperatorHash;
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(OperatorHash, opHash,
+class OperatorHash : public QHash<int, QString>
 {
-    x->insert(OtmParser::TagReplacement,    ":");
-    x->insert(OtmParser::ContentAssignment, "~");
-    x->insert(OtmParser::AttributeSet,      "+");
-    x->insert(OtmParser::TagMerging,        "|==");
-})
+public:
+    OperatorHash() : QHash<int, QString>()
+    {
+        insert(OtmParser::TagReplacement,    ":");
+        insert(OtmParser::ContentAssignment, "~");
+        insert(OtmParser::AttributeSet,      "+");
+        insert(OtmParser::TagMerging,        "|==");
+    }
+};
+Q_GLOBAL_STATIC(OperatorHash, opHash)
 
 
 OtmParser::OtmParser(const QString &replaceMarker)
@@ -40,7 +44,7 @@ void OtmParser::parse(const QString &text)
 
     QString txt = text;
     QTextStream ts(&txt, QIODevice::ReadOnly);
-    
+
     bool lineCont = false;
     QString line, label, value;
     for (;;) {
@@ -59,7 +63,7 @@ void OtmParser::parse(const QString &text)
                 label.clear();
                 value.clear();
             }
-            
+
         } else if (lineCont) {
             // line continue
             value += QLatin1Char('\n');
@@ -72,7 +76,7 @@ void OtmParser::parse(const QString &text)
 
             if (line.startsWith(INCLUDE_LABEL + QLatin1Char(' '))) {
                 entries.insertMulti(line.left(i), line.mid(i).trimmed());
-            } else { 
+            } else {
                 // New label
                 lineCont = true;
                 if (i > 0) {
@@ -82,7 +86,7 @@ void OtmParser::parse(const QString &text)
                     label = line;
                 }
             }
-            
+
         } else {
             // Ignore the line
         }
@@ -111,7 +115,7 @@ QString OtmParser::getSrcCode(const QString &label, OperatorType op, EchoOption 
             if (op != TagMerging) {
                 Q_ASSERT(EXVAR_ECHO.length() >= EXVAR_ESCAPE_ECHO.length());
                 Q_ASSERT(NORMAL_ECHO.length() >= ESCAPE_ECHO.length());
-                
+
                 if (code.startsWith(EXVAR_ECHO)) {
                     opt = ExportVarEcho;
                     code.remove(0, EXVAR_ECHO.length());
@@ -135,7 +139,7 @@ QString OtmParser::getSrcCode(const QString &label, OperatorType op, EchoOption 
             break;
         }
     }
-    
+
     if (option)
         *option = opt;
 
@@ -151,7 +155,7 @@ QStringList OtmParser::getWrapSrcCode(const QString &label, OperatorType op) con
         while (i.hasNext()) {
             const QString &s = i.next();
             QString opstr = opHash()->value(op);
-            
+
             if (!opstr.isEmpty() && s.startsWith(opstr) && s.contains(repMarker)) {
                 return s.mid(opstr.length()).trimmed().split(repMarker, QString::SkipEmptyParts, Qt::CaseSensitive);
             }
