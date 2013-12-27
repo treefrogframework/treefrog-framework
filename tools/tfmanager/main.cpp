@@ -70,18 +70,22 @@ Q_GLOBAL_STATIC_WITH_INITIALIZER(VersionHash, macVersion,
 })
 #endif
 
-typedef QHash<QString, int> OptionHash;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(OptionHash, options,
+class OptionHash : public QHash<QString, int>
 {
-    x->insert("-e", EnvironmentSpecified);
-    x->insert("-s", SocketSpecified);
-    x->insert("-v", PrintVersion);
-    x->insert("-h", PrintUsage);
-    x->insert("-l", ShowRunningAppList);
-    x->insert("-d", DaemonMode);
-    x->insert("-w", WindowsServiceMode);
-    x->insert("-k", SendSignal);
-})
+public:
+    OptionHash() : QHash<QString, int>()
+    {
+        insert("-e", EnvironmentSpecified);
+        insert("-s", SocketSpecified);
+        insert("-v", PrintVersion);
+        insert("-h", PrintUsage);
+        insert("-l", ShowRunningAppList);
+        insert("-d", DaemonMode);
+        insert("-w", WindowsServiceMode);
+        insert("-k", SendSignal);
+    }
+};
+Q_GLOBAL_STATIC(OptionHash, options)
 
 
 static void usage()
@@ -562,5 +566,7 @@ int main(int argc, char *argv[])
         }
     }
 #endif
-    return TreeFrog::managerMain(argc, argv);
+    int ret = TreeFrog::managerMain(argc, argv);
+    tReleaseSystemLogger();
+    return ret;
 }
