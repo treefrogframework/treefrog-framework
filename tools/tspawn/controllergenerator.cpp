@@ -192,26 +192,38 @@
     "T_REGISTER_CONTROLLER(%1controller)\n"
 
 
-typedef QHash<int, QString> IntHash;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IntHash, convMethod,
+class ConvMethod : public QHash<int, QString>
 {
-    x->insert(QVariant::Int,       "pk.toInt()");
-    x->insert(QVariant::UInt,      "pk.toUInt()");
-    x->insert(QVariant::LongLong,  "pk.toLongLong()");
-    x->insert(QVariant::ULongLong, "pk.toULongLong()");
-    x->insert(QVariant::Double,    "pk.toDouble()");
-    x->insert(QVariant::ByteArray, "pk.toByteArray()");
-    x->insert(QVariant::String,    "pk");
-    x->insert(QVariant::Date,      "QDate::fromString(pk)");
-    x->insert(QVariant::Time,      "QTime::fromString(pk)");
-    x->insert(QVariant::DateTime,  "QDateTime::fromString(pk)");
-});
+public:
+    ConvMethod() : QHash<int, QString>()
+    {
+        insert(QVariant::Int,       "pk.toInt()");
+        insert(QVariant::UInt,      "pk.toUInt()");
+        insert(QVariant::LongLong,  "pk.toLongLong()");
+        insert(QVariant::ULongLong, "pk.toULongLong()");
+        insert(QVariant::Double,    "pk.toDouble()");
+        insert(QVariant::ByteArray, "pk.toByteArray()");
+        insert(QVariant::String,    "pk");
+        insert(QVariant::Date,      "QDate::fromString(pk)");
+        insert(QVariant::Time,      "QTime::fromString(pk)");
+        insert(QVariant::DateTime,  "QDateTime::fromString(pk)");
+    }
+};
+Q_GLOBAL_STATIC(ConvMethod, convMethod)
 
-
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, ngCtlrName,
+class NGCtlrName : public QStringList
 {
-    *x << "layouts" << "partial" << "direct" << "_src" << "mailer";
-})
+public:
+    NGCtlrName() : QStringList()
+    {
+        append("layouts");
+        append("partial");
+        append("direct");
+        append("_src");
+        append("mailer");
+    }
+};
+Q_GLOBAL_STATIC(NGCtlrName, ngCtlrName)
 
 
 ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int lockRevIdx)

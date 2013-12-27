@@ -50,91 +50,114 @@ enum SubCommand {
     ShowCollections,
 };
 
-typedef QHash<QString, int> StringHash;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(StringHash, subCommands,
+class SubCommands : public QHash<QString, int>
 {
-    x->insert("-h", Help);
-    x->insert("--help", Help);
-    x->insert("new", New);
-    x->insert("n", New);
-    x->insert("controller", Controller);
-    x->insert("c", Controller);
-    x->insert("model", Model);
-    x->insert("m", Model);
-    x->insert("usermodel", UserModel);
-    x->insert("u", UserModel);
-    x->insert("sqlobject", SqlObject);
-    x->insert("o", SqlObject);
-    x->insert("mongoscaffold", MongoScaffold);
-    x->insert("ms", MongoScaffold);
-    x->insert("mongomodel", MongoModel);
-    x->insert("mm", MongoModel);
-    x->insert("validator", Validator);
-    x->insert("v", Validator);
-    x->insert("mailer", Mailer);
-    x->insert("l", Mailer);
-    x->insert("scaffold", Scaffold);
-    x->insert("s", Scaffold);
-    x->insert("delete", Delete);
-    x->insert("d", Delete);
-    x->insert("remove", Delete);
-    x->insert("r", Delete);
-    x->insert("--show-drivers", ShowDrivers);
-    x->insert("--show-driver-path", ShowDriverPath);
-    x->insert("--show-tables", ShowTables);
-    x->insert("--show-collections", ShowCollections);
-})
+public:
+    SubCommands() : QHash<QString, int>()
+    {
+        insert("-h", Help);
+        insert("--help", Help);
+        insert("new", New);
+        insert("n", New);
+        insert("controller", Controller);
+        insert("c", Controller);
+        insert("model", Model);
+        insert("m", Model);
+        insert("usermodel", UserModel);
+        insert("u", UserModel);
+        insert("sqlobject", SqlObject);
+        insert("o", SqlObject);
+        insert("mongoscaffold", MongoScaffold);
+        insert("ms", MongoScaffold);
+        insert("mongomodel", MongoModel);
+        insert("mm", MongoModel);
+        insert("validator", Validator);
+        insert("v", Validator);
+        insert("mailer", Mailer);
+        insert("l", Mailer);
+        insert("scaffold", Scaffold);
+        insert("s", Scaffold);
+        insert("delete", Delete);
+        insert("d", Delete);
+        insert("remove", Delete);
+        insert("r", Delete);
+        insert("--show-drivers", ShowDrivers);
+        insert("--show-driver-path", ShowDriverPath);
+        insert("--show-tables", ShowTables);
+        insert("--show-collections", ShowCollections);
+    }
+};
+Q_GLOBAL_STATIC(SubCommands, subCommands)
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, subDirs,
-{
-    *x << L("controllers")
-       << L("models")
-       << L("models") + SEP + "sqlobjects"
-       << L("models") + SEP + "mongoobjects"
-       << L("views")
-       << L("views") + SEP + "layouts"
-       << L("views") + SEP + "mailer"
-       << L("views") + SEP + "partial"
-       << L("views") + SEP + "_src"
-       << L("helpers")
-       << L("config")
-       << L("config") + SEP + "environments"
-       << L("config") + SEP + "initializers"
-       << L("public")
-       << L("public") + SEP + "images"
-       << L("public") + SEP + "js"
-       << L("public") + SEP + "css"
-       << L("db") << L("lib") << L("log") << L("plugin")
-       << L("script") << L("sql") << L("test") << L("tmp");
-})
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, filePaths,
+class SubDirs : public QStringList
 {
-    *x << L("appbase.pri")
-       << L("controllers") + SEP + "applicationcontroller.h"
-       << L("controllers") + SEP + "applicationcontroller.cpp"
-       << L("controllers") + SEP + "controllers.pro"
-       << L("models") + SEP + "models.pro"
-       << L("views") + SEP + "views.pro"
-       << L("views") + SEP + "_src" + SEP + "_src.pro"
-       << L("views") + SEP + "mailer" + SEP + ".trim_mode"
-       << L("helpers") + SEP + "helpers.pro"
-       << L("helpers") + SEP + "applicationhelper.h"
-       << L("helpers") + SEP + "applicationhelper.cpp"
-       << L("config") + SEP + "application.ini"
-       << L("config") + SEP + "database.ini"
-       << L("config") + SEP + "development.ini"
-       << L("config") + SEP + "logger.ini"
-       << L("config") + SEP + "mongodb.ini"
-       << L("config") + SEP + "routes.cfg"
-       << L("config") + SEP + "validation.ini"
-       << L("config") + SEP + "initializers" + SEP + "internet_media_types.ini"
-       << L("public") + SEP + "403.html"
-       << L("public") + SEP + "404.html"
-       << L("public") + SEP + "413.html"
-       << L("public") + SEP + "500.html"
-       << L("script") + SEP + "starttreefrog.bat";
-})
+public:
+    SubDirs() : QStringList()
+    {
+        append(L("controllers"));
+        append(L("models"));
+        append(L("models") + SEP + "sqlobjects");
+        append(L("models") + SEP + "mongoobjects");
+        append(L("views"));
+        append(L("views") + SEP + "layouts");
+        append(L("views") + SEP + "mailer");
+        append(L("views") + SEP + "partial");
+        append(L("views") + SEP + "_src");
+        append(L("helpers"));
+        append(L("config"));
+        append(L("config") + SEP + "environments");
+        append(L("config") + SEP + "initializers");
+        append(L("public"));
+        append(L("public") + SEP + "images");
+        append(L("public") + SEP + "js");
+        append(L("public") + SEP + "css");
+        append(L("db"));
+        append(L("lib"));
+        append(L("log"));
+        append(L("plugin"));
+        append(L("script"));
+        append(L("sql"));
+        append(L("test"));
+        append(L("tmp"));
+    }
+};
+Q_GLOBAL_STATIC(SubDirs, subDirs)
+
+
+class FilePaths : public QStringList
+{
+public:
+    FilePaths() : QStringList()
+    {
+        append(L("appbase.pri"));
+        append(L("controllers") + SEP + "applicationcontroller.h");
+        append(L("controllers") + SEP + "applicationcontroller.cpp");
+        append(L("controllers") + SEP + "controllers.pro");
+        append(L("models") + SEP + "models.pro");
+        append(L("views") + SEP + "views.pro");
+        append(L("views") + SEP + "_src" + SEP + "_src.pro");
+        append(L("views") + SEP + "mailer" + SEP + ".trim_mode");
+        append(L("helpers") + SEP + "helpers.pro");
+        append(L("helpers") + SEP + "applicationhelper.h");
+        append(L("helpers") + SEP + "applicationhelper.cpp");
+        append(L("config") + SEP + "application.ini");
+        append(L("config") + SEP + "database.ini");
+        append(L("config") + SEP + "development.ini");
+        append(L("config") + SEP + "logger.ini");
+        append(L("config") + SEP + "mongodb.ini");
+        append(L("config") + SEP + "routes.cfg");
+        append(L("config") + SEP + "validation.ini");
+        append(L("config") + SEP + "initializers" + SEP + "internet_media_types.ini");
+        append(L("public") + SEP + "403.html");
+        append(L("public") + SEP + "404.html");
+        append(L("public") + SEP + "413.html");
+        append(L("public") + SEP + "500.html");
+        append(L("script") + SEP + "starttreefrog.bat");
+    }
+};
+Q_GLOBAL_STATIC(QStringList, filePaths)
+
 
 const QString appIni = QLatin1String("config") + QDir::separator() + "application.ini";
 const QString devIni = QLatin1String("config") + QDir::separator() + "development.ini";

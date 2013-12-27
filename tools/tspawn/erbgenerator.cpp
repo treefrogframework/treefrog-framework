@@ -125,17 +125,37 @@
     "</body>\n"                                                         \
     "</html>\n"
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedColumn,
+class ExcludedColumn : public QStringList
 {
-    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision"
-       << "createdAt" << "updatedAt" << "modifiedAt" << "lockRevision";
-})
+public:
+    ExcludedColumn() : QStringList()
+    {
+        append("created_at");
+        append("updated_at");
+        append("modified_at");
+        append("lock_revision");
+        append("createdAt");
+        append("updatedAt");
+        append("modifiedAt");
+        append("lockRevision");
+    }
+};
+Q_GLOBAL_STATIC(ExcludedColumn, excludedColumn)
 
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedDirName,
+class ExcludedDirName : public QStringList
 {
-    *x << "layouts" << "partial" << "direct" << "_src" << "mailer";
-})
+public:
+    ExcludedDirName() : QStringList()
+    {
+        append("layouts");
+        append("partial");
+        append("direct");
+        append("_src");
+        append("mailer");
+    }
+};
+Q_GLOBAL_STATIC(ExcludedDirName, excludedDirName)
 
 
 ErbGenerator::ErbGenerator(const QString &view, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int autoValIdx)

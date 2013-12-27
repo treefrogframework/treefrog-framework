@@ -11,60 +11,71 @@
 #include <tabstractmodel.h>
 #include "global.h"
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QSet<QString>, upperWords,
+class UpperWords : public QSet<QString>
 {
-    x->insert("id");
-})
+public:
+    UpperWords() : QSet<QString>()
+    {
+        insert("id");
+    }
+};
+Q_GLOBAL_STATIC(UpperWords, upperWords)
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QSet<QString>, lowerWords,
+
+class LowerWords : public QSet<QString>
 {
-    x->insert("about");
-    x->insert("above");
-    x->insert("across");
-    x->insert("after");
-    x->insert("against");
-    x->insert("along");
-    x->insert("among");
-    x->insert("and");
-    x->insert("as");
-    x->insert("at");
-    x->insert("before");
-    x->insert("behind");
-    x->insert("below");
-    x->insert("beside");
-    x->insert("besides");
-    x->insert("between");
-    x->insert("beyond");
-    x->insert("by");
-    x->insert("down");
-    x->insert("during");
-    x->insert("except");
-    x->insert("for");
-    x->insert("from");
-    x->insert("in");
-    x->insert("into");
-    x->insert("of");
-    x->insert("off");
-    x->insert("on");
-    x->insert("onto");
-    x->insert("or");
-    x->insert("out");
-    x->insert("over");
-    x->insert("since");
-    x->insert("than");
-    x->insert("through");
-    x->insert("till");
-    x->insert("to");
-    x->insert("toward");
-    x->insert("under");
-    x->insert("until");
-    x->insert("up");
-    x->insert("upon");
-    x->insert("via");
-    x->insert("with");
-    x->insert("within");
-    x->insert("without");
-})
+public:
+    LowerWords() : QSet<QString>()
+    {
+        insert("about");
+        insert("above");
+        insert("across");
+        insert("after");
+        insert("against");
+        insert("along");
+        insert("among");
+        insert("and");
+        insert("as");
+        insert("at");
+        insert("before");
+        insert("behind");
+        insert("below");
+        insert("beside");
+        insert("besides");
+        insert("between");
+        insert("beyond");
+        insert("by");
+        insert("down");
+        insert("during");
+        insert("except");
+        insert("for");
+        insert("from");
+        insert("in");
+        insert("into");
+        insert("of");
+        insert("off");
+        insert("on");
+        insert("onto");
+        insert("or");
+        insert("out");
+        insert("over");
+        insert("since");
+        insert("than");
+        insert("through");
+        insert("till");
+        insert("to");
+        insert("toward");
+        insert("under");
+        insert("until");
+        insert("up");
+        insert("upon");
+        insert("via");
+        insert("with");
+        insert("within");
+        insert("without");
+    }
+};
+Q_GLOBAL_STATIC(LowerWords, lowerWords)
 
 
 QString fieldNameToVariableName(const QString &name)

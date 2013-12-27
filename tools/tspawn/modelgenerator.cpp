@@ -310,12 +310,22 @@
     "}\n"                                                     \
     "\n"
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QStringList, excludedSetter,
+class ExcludedSetter : public QStringList
 {
-    *x << "created_at" << "updated_at" << "modified_at" << "lock_revision"
-       << "createdAt" << "updatedAt" << "modifiedAt" << LOCK_REVISION_FIELD;
-})
-
+public:
+    ExcludedSetter() : QStringList()
+    {
+        append("created_at");
+        append("updated_at");
+        append("modified_at");
+        append("lock_revision");
+        append("createdAt");
+        append("updatedAt");
+        append("modifiedAt");
+        append(LOCK_REVISION_FIELD);
+    }
+};
+Q_GLOBAL_STATIC(ExcludedSetter, excludedSetter)
 
 ModelGenerator::ModelGenerator(ModelGenerator::ObjectType type, const QString &model, const QString &table, const QStringList &userModelFields)
     : objectType(type), modelName(), tableName(table), userFields(userModelFields)
