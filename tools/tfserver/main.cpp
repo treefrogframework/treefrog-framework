@@ -207,6 +207,12 @@ int main(int argc, char *argv[])
     ret = webapp.exec();
 
 finish:
+    // Release loggers
+    tReleaseAppLoggers();
+    tReleaseQueryLogger();
+    tReleaseAccessLogger();
+    tReleaseSystemLogger();
+
     _exit(ret);
     return ret;
 }
