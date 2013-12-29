@@ -21,7 +21,6 @@
 #include "tableschema.h"
 #include "mongocommand.h"
 #include "util.h"
-#include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define L(str)  QLatin1String(str)
 #define SEP   QDir::separator()

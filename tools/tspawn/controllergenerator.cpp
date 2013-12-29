@@ -11,7 +11,6 @@
 #include "filewriter.h"
 #include "global.h"
 #include "tableschema.h"
-#include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define CONTROLLER_HEADER_FILE_TEMPLATE                                       \
     "#ifndef %1CONTROLLER_H\n"                                                \

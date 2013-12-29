@@ -11,7 +11,6 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "filewriter.h"
-#include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
 #define USER_VIRTUAL_METHOD  "identityKey"
 #define LOCK_REVISION_FIELD "lockRevision"
