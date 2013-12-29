@@ -58,6 +58,8 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
         return false;
     }
     listeningSocket = sd;
+#else
+    Q_UNUSED(address);
 #endif
 
     running = true;

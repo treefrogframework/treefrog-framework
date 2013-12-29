@@ -7,6 +7,8 @@
 
 #include "tfileaiowriter.h"
 #include <QList>
+#include <QMutex>
+#include <QMutexLocker>
 #include <windows.h>
 
 
