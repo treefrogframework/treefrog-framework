@@ -40,7 +40,7 @@ Q_GLOBAL_STATIC(BlockSizeHash, blockSizeHash)
 */
 QByteArray TCryptMac::mac(const QByteArray &data, const QByteArray &key, Algorithm method)
 {
-    int blockSize = blockSizeHash->value(method);
+    int blockSize = blockSizeHash()->value(method);
     QByteArray tk = (key.length() > blockSize) ? QCryptographicHash::hash(key, (QCryptographicHash::Algorithm)method) : key;
     QByteArray k_ipad(blockSize, '\0');
     k_ipad.replace(0, tk.length(), tk);
