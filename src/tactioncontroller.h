@@ -47,6 +47,7 @@ public:
     QString flash(const QString &name) const;
     QHostAddress clientAddress() const;
     virtual bool isUserLoggedIn() const;
+    virtual QString identityKeyOfLoginUser() const;
 
     static void setCsrfProtectionInto(TSession &session);
     static QStringList availableControllers();
@@ -94,7 +95,6 @@ protected:
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
-    virtual QString identityKeyOfLoginUser() const;
     virtual void setAccessRules() { }
 
     THttpRequest &httpRequest();
