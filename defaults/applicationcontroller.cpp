@@ -15,6 +15,9 @@ ApplicationController::~ApplicationController()
 void ApplicationController::staticInitialize()
 { }
 
+void ApplicationController::staticRelease()
+{ }
+
 bool ApplicationController::preFilter()
 {
     return true;

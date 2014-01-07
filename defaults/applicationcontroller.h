@@ -15,9 +15,10 @@ public:
 
 public slots:
     void staticInitialize();
+    void staticRelease();
 
 protected:
-    virtual bool preFilter();    
+    virtual bool preFilter();
 };
 
 T_DECLARE_CONTROLLER(ApplicationController, applicationcontroller)
