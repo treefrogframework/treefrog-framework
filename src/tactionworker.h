@@ -16,6 +16,7 @@ class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
 public:
     ~TActionWorker();
     static int workerCount();
+    static bool waitForAllDone(int msec);
 
 protected:
     void run();

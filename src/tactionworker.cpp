@@ -8,6 +8,7 @@
 #include <TActionWorker>
 #include <THttpRequest>
 #include <TMultiplexingServer>
+#include <QCoreApplication>
 #include <QAtomicInt>
 #include "thttpsocket.h"
 #include "tepollsocket.h"
@@ -24,6 +25,24 @@ int TActionWorker::workerCount()
 #else
     return (int)workerCounter;
 #endif
+}
+
+
+bool TActionWorker::waitForAllDone(int msec)
+{
+    int cnt;
+    QTime time;
+    time.start();
+
+    while ((cnt = workerCount()) > 0) {
+        if (time.elapsed() > msec) {
+            break;
+        }
+
+        Tf::msleep(10);
+        qApp->processEvents();
+    }
+    return cnt == 0;
 }
 
 /*!

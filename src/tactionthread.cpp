@@ -5,6 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QCoreApplication>
 #include <QEventLoop>
 #include <QAtomicInt>
 #include <TActionThread>
@@ -22,6 +23,23 @@ int TActionThread::threadCount()
 #else
     return (int)threadCounter;
 #endif
+}
+
+bool TActionThread::waitForAllDone(int msec)
+{
+    int cnt;
+    QTime time;
+    time.start();
+
+    while ((cnt = threadCount()) > 0) {
+        if (time.elapsed() > msec) {
+            break;
+        }
+
+        Tf::msleep(10);
+        qApp->processEvents();
+    }
+    return cnt == 0;
 }
 
 /*!
