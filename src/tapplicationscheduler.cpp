@@ -50,6 +50,26 @@ void TApplicationScheduler::start(int msec)
 }
 
 
+void TApplicationScheduler::stop()
+{
+    switch ( Tf::app()->multiProcessingModule() ) {
+    case TWebApplication::Prefork:
+        tError("Unsupported TApplicationScheduler in prefork MPM");
+        break;
+
+    case TWebApplication::Thread:  // FALL THROUGH
+    case TWebApplication::Hybrid:
+        if (Tf::app()->applicationServerId() == 0) {
+            TScheduler::stop();
+        }
+        break;
+
+    default:
+        break;
+    }
+}
+
+
 int TApplicationScheduler::interval() const
 {
     return TScheduler::interval();

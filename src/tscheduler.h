@@ -15,6 +15,7 @@ public:
     virtual ~TScheduler();
 
     void start(int msec);
+    void stop();
     int	interval() const;
     bool isSingleShot() const;
     void setSingleShot(bool singleShot);
