@@ -205,6 +205,7 @@ int main(int argc, char *argv[])
     }
 
     ret = webapp.exec();
+    server->stop();
 
 finish:
     // Release loggers
