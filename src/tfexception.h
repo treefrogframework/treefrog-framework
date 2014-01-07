@@ -106,4 +106,25 @@ private:
     int code;
 };
 
+
+class T_CORE_EXPORT StandardException : public std::exception
+{
+public:
+    StandardException(const StandardException &e)
+        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
+    StandardException(const QString &message, const char *fileName = "", int lineNumber = 0)
+        : msg(message), file(fileName), line(lineNumber) { }
+    virtual ~StandardException() throw() { }
+    QString message() const { return msg; }
+    QString fileName() const { return file; }
+    int lineNumber() const { return line; }
+    virtual void raise() const { throw *this; }
+    virtual std::exception *clone() const { return new StandardException(*this); }
+
+private:
+    QString msg;
+    QString file;
+    int line;
+};
+
 #endif // TFEXCEPTION_H

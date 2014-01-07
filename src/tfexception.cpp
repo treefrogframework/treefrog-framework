@@ -228,3 +228,50 @@
   \brief Creates and returns a deep copy of the current data.
 */
 
+
+/*!
+  \class StandardException
+  \brief The StandardException class represents an exception that
+  can be thrown when standard error occurs in source code of your
+  web application.
+*/
+
+/*!
+  \fn StandardException::StandardException(const StandardException &e)
+  \brief Copy constructor.
+*/
+
+/*!
+  \fn StandardException::StandardException(const QString &message, const char *fileName, int lineNumber)
+  \brief Constructor.
+*/
+
+/*!
+  \fn virtual StandardException::~StandardException() throw()
+  \brief Destructor.
+*/
+
+/*!
+  \fn QString StandardException::message() const
+  \brief Returns the message.
+*/
+
+/*!
+  \fn QString StandardException::fileName() const
+  \brief Returns the file name.
+*/
+
+/*!
+  \fn int StandardException::lineNumber() const
+  \brief Return the line number.
+*/
+
+/*!
+  \fn virtual void StandardException::raise() const
+  \brief Raises the exception.
+*/
+
+/*!
+  \fn virtual Exception *StandardException::clone() const
+  \brief Creates and returns a deep copy of the current data.
+*/
