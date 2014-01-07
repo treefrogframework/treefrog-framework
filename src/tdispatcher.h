@@ -16,16 +16,16 @@ public:
     TDispatcher(const QString &metaTypeName);
     ~TDispatcher();
 
-    bool invoke(const QString &method, const QStringList &args = QStringList());
+    bool invoke(const QByteArray &method, const QStringList &args = QStringList(), Qt::ConnectionType connectionType = Qt::AutoConnection);
     T *object();
     QString typeName() const { return metaType; }
 
 private:
-    Q_DISABLE_COPY(TDispatcher)
-
     QString metaType;
     int typeId;
     T *ptr;
+
+    Q_DISABLE_COPY(TDispatcher)
 };
 
 
@@ -45,9 +45,19 @@ inline TDispatcher<T>::~TDispatcher()
 }
 
 template <class T>
-inline bool TDispatcher<T>::invoke(const QString &method, const QStringList &args)
+inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &args, Qt::ConnectionType connectionType)
 {
     T_TRACEFUNC("");
+    static const char *const params[] = { "()", "(QString)",
+                                          "(QString,QString)",
+                                          "(QString,QString,QString)",
+                                          "(QString,QString,QString,QString)",
+                                          "(QString,QString,QString,QString,QString)",
+                                          "(QString,QString,QString,QString,QString,QString)",
+                                          "(QString,QString,QString,QString,QString,QString,QString)",
+                                          "(QString,QString,QString,QString,QString,QString,QString,QString)",
+                                          "(QString,QString,QString,QString,QString,QString,QString,QString,QString)",
+                                          "(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)" };
 
     object();
     if (!ptr) {
@@ -59,13 +69,8 @@ inline bool TDispatcher<T>::invoke(const QString &method, const QStringList &arg
     int idx = -1;
     for (int i = args.count(); i >= 0; --i) {
         // Find method
-        QByteArray mtd = method.toLatin1() + '(';
-        for (int j = 0; j < i; ++j) {
-            if (j > 0) mtd += ',';
-            mtd += "QString";
-        }
-        mtd += ')';
-        mtd = QMetaObject::normalizedSignature(mtd);
+        QByteArray mtd = method + params[i];
+        //mtd = QMetaObject::normalizedSignature(mtd);
         idx = ptr->metaObject()->indexOfSlot(mtd.constData());
         if (idx >= 0) {
             argcnt = i;
@@ -83,53 +88,53 @@ inline bool TDispatcher<T>::invoke(const QString &method, const QStringList &arg
         tSystemDebug("Invoke method: %s", qPrintable(metaType + "#" + method));
         switch (argcnt) {
         case 0:
-            res = mm.invoke(ptr, Qt::AutoConnection);
+            res = mm.invoke(ptr, connectionType);
             break;
         case 1:
-            res = mm.invoke(ptr, Qt::AutoConnection, Q_ARG(QString, args[0]));
+            res = mm.invoke(ptr, connectionType, Q_ARG(QString, args[0]));
             break;
         case 2:
-            res = mm.invoke(ptr, Qt::AutoConnection, Q_ARG(QString, args[0]), Q_ARG(QString, args[1]));
+            res = mm.invoke(ptr, connectionType, Q_ARG(QString, args[0]), Q_ARG(QString, args[1]));
             break;
         case 3:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]));
             break;
         case 4:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]));
             break;
         case 5:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]), Q_ARG(QString, args[4]));
             break;
         case 6:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]), Q_ARG(QString, args[4]), Q_ARG(QString, args[5]));
             break;
         case 7:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]), Q_ARG(QString, args[4]), Q_ARG(QString, args[5]),
                             Q_ARG(QString, args[6]));
             break;
         case 8:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]), Q_ARG(QString, args[4]), Q_ARG(QString, args[5]),
                             Q_ARG(QString, args[6]), Q_ARG(QString, args[7]));
             break;
         case 9:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]), Q_ARG(QString, args[4]), Q_ARG(QString, args[5]),
                             Q_ARG(QString, args[6]), Q_ARG(QString, args[7]), Q_ARG(QString, args[8]));
             break;
         default:
-            res = mm.invoke(ptr, Qt::AutoConnection,
+            res = mm.invoke(ptr, connectionType,
                             Q_ARG(QString, args[0]), Q_ARG(QString, args[1]), Q_ARG(QString, args[2]),
                             Q_ARG(QString, args[3]), Q_ARG(QString, args[4]), Q_ARG(QString, args[5]),
                             Q_ARG(QString, args[6]), Q_ARG(QString, args[7]), Q_ARG(QString, args[8]),
