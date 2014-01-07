@@ -25,6 +25,20 @@ public:
     }
 };
 
+
+class TStaticReleaser : public TActionForkProcess
+{
+public:
+    TStaticReleaser() : TActionForkProcess(0) { }
+
+    void start()
+    {
+        currentActionContext = this;
+        TApplicationServerBase::invokeStaticRelease();
+        currentActionContext = 0;
+    }
+};
+
 /*!
   \class TPreforkApplicationServer
   \brief The TPreforkApplicationServer class provides functionality common to
@@ -34,7 +48,6 @@ public:
 TPreforkApplicationServer::TPreforkApplicationServer(QObject *parent)
     : QTcpServer(parent), TApplicationServerBase()
 {
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Prefork);
 }
 
@@ -58,13 +71,10 @@ void TPreforkApplicationServer::stop()
 {
     T_TRACEFUNC("");
     QTcpServer::close();
-}
 
-
-void TPreforkApplicationServer::terminate()
-{
-    close();
-    TActionContext::releaseAll();
+    TStaticReleaser *releaser = new TStaticReleaser();
+    releaser->start();
+    delete releaser;
 }
 
 

@@ -16,9 +16,6 @@ public:
     bool start();
     void stop();
 
-public slots:
-    void terminate();
-
 protected:
 #if QT_VERSION >= 0x050000
     void incomingConnection(qintptr socketDescriptor);

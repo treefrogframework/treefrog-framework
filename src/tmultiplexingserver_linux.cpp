@@ -85,7 +85,6 @@ TMultiplexingServer::TMultiplexingServer(int listeningSocket, QObject *parent)
     : QThread(parent), TApplicationServerBase(), maxWorkers(0), stopped(false),
       listenSocket(listeningSocket)
 {
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
 }
 
@@ -102,12 +101,7 @@ bool TMultiplexingServer::start()
     // Loads libs
     TApplicationServerBase::loadLibraries();
 
-    TStaticInitializeThread *initializer = new TStaticInitializeThread();
-    initializer->start();
-    initializer->wait();
-    delete initializer;
-
-    connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+    TStaticInitializeThread::exec();
     QThread::start();
     return true;
 }
@@ -208,14 +202,20 @@ void TMultiplexingServer::run()
     }
 
     TEpollSocket::releaseAllSockets();
-    TActionContext::releaseAll();
+    TActionWorker::waitForAllDone(10000);
 }
 
 
-void TMultiplexingServer::terminate()
+void TMultiplexingServer::stop()
 {
-    stopped = true;
-    wait(10000);
+    if (!stopped) {
+        stopped = true;
+
+        if (isRunning()) {
+            QThread::wait(10000);
+        }
+        TStaticReleaseThread::exec();
+    }
 }
 
 

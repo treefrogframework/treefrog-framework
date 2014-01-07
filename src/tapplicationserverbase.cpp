@@ -79,9 +79,20 @@ void TApplicationServerBase::invokeStaticInitialize()
 {
     // Calls staticInitialize()
     TDispatcher<TActionController> dispatcher("applicationcontroller");
-    bool dispatched = dispatcher.invoke("staticInitialize");
+    bool dispatched = dispatcher.invoke("staticInitialize", QStringList(), Qt::DirectConnection);
     if (!dispatched) {
         tSystemWarn("No such method: staticInitialize() of ApplicationController");
+    }
+}
+
+
+void TApplicationServerBase::invokeStaticRelease()
+{
+    // Calls staticRelease()
+    TDispatcher<TActionController> dispatcher("applicationcontroller");
+    bool dispatched = dispatcher.invoke("staticRelease", QStringList(), Qt::DirectConnection);
+    if (!dispatched) {
+        tSystemDebug("No such method: staticRelease() of ApplicationController");
     }
 }
 

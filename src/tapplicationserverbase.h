@@ -21,6 +21,7 @@ public:
 
     virtual ~TApplicationServerBase();
     virtual bool start() { return false; }
+    virtual void stop() { }
     static bool loadLibraries();
     static void nativeSocketInit();
     static void nativeSocketCleanup();
@@ -28,6 +29,7 @@ public:
     static int nativeListen(const QString &fileDomain, OpenFlag flag = CloseOnExec);
     static void nativeClose(int socket);
     static void invokeStaticInitialize();
+    static void invokeStaticRelease();
 
 private:
     TApplicationServerBase();

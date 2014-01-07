@@ -18,9 +18,6 @@ public:
     void stop();
     bool isSocketOpen() const;
 
-public slots:
-    void terminate();
-
 protected:
 #if QT_VERSION >= 0x050000
     void incomingConnection(qintptr socketDescriptor);
@@ -39,11 +36,42 @@ private:
 class TStaticInitializeThread : public TActionThread
 {
 public:
-    TStaticInitializeThread() : TActionThread(0) { }
+    static void exec()
+    {
+        TStaticInitializeThread *initializer = new TStaticInitializeThread();
+        initializer->start();
+        initializer->wait();
+        delete initializer;
+
+    }
+
 protected:
+    TStaticInitializeThread() : TActionThread(0) { }
+
     void run()
     {
         TApplicationServerBase::invokeStaticInitialize();
+    }
+};
+
+
+class TStaticReleaseThread : public TActionThread
+{
+public:
+    static void exec()
+    {
+        TStaticReleaseThread *releaser = new TStaticReleaseThread();
+        releaser->start();
+        releaser->wait();
+        delete releaser;
+    }
+
+protected:
+    TStaticReleaseThread() : TActionThread(0) { }
+
+    void run()
+    {
+        TApplicationServerBase::invokeStaticRelease();
     }
 };
 

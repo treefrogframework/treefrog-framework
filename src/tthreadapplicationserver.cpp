@@ -25,7 +25,6 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
         maxThreads = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
     }
     tSystemDebug("MaxThreads: %d", maxThreads);
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(terminate()));
 
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Thread);
 }
@@ -47,27 +46,22 @@ bool TThreadApplicationServer::start()
     }
 
     loadLibraries();
-
-    TStaticInitializeThread *initializer = new TStaticInitializeThread();
-    initializer->start();
-    initializer->wait();
-    delete initializer;
+    TStaticInitializeThread::exec();
     return true;
 }
 
 
 void TThreadApplicationServer::stop()
 {
-    T_TRACEFUNC("");
+    if (!isListening()) {
+        return;
+    }
+
     QTcpServer::close();
     listenSocket = 0;
-}
 
-
-void TThreadApplicationServer::terminate()
-{
-    stop();
-    TActionContext::releaseAll();
+    TActionThread::waitForAllDone(10000);
+    TStaticReleaseThread::exec();
 }
 
 

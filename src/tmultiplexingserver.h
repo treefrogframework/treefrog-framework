@@ -27,7 +27,7 @@ public:
 
     bool isListening() const { return listenSocket > 0; }
     bool start();
-    void stop() { stopped = true; }
+    void stop();
 
     static void instantiate(int listeningSocket);
     static TMultiplexingServer *instance();
@@ -37,9 +37,6 @@ protected:
 
 signals:
     bool incomingHttpRequest(TEpollSocket *socket);
-
-protected slots:
-    void terminate();
 
 private:
     int maxWorkers;
