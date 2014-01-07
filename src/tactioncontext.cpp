@@ -34,38 +34,6 @@
 #define SESSION_COOKIE_PATH  "Session.CookiePath"
 #define LISTEN_PORT  "ListenPort"
 
-static QSet<TActionContext *> actionContexts;
-static QMutex setMutex;
-
-
-int TActionContext::contextCount()
-{
-    //QMutexLocker locker(&setMutex);  /* no need to lock */
-    return actionContexts.count();
-}
-
-
-void TActionContext::releaseAll()
-{
-    if (contextCount() > 0) {
-        setMutex.lock();
-        for (QSetIterator<TActionContext *> i(actionContexts); i.hasNext(); ) {
-            i.next()->stop();  // Stops application server
-        }
-        setMutex.unlock();
-
-        for (;;) {
-            Tf::msleep(1);
-            qApp->processEvents();
-
-            QMutexLocker locker(&setMutex);
-            if (actionContexts.isEmpty()) {
-                break;
-            }
-        }
-    }
-}
-
 /*!
   \class TActionContext
   \brief The TActionContext class is the base class of contexts for
@@ -80,18 +48,12 @@ TActionContext::TActionContext()
       socketDesc(0),
       currController(0),
       httpReq(0)
-{
-    QMutexLocker locker(&setMutex);
-    actionContexts.insert(this);
-}
+{ }
 
 
 TActionContext::~TActionContext()
 {
     release();
-
-    QMutexLocker locker(&setMutex);
-    actionContexts.remove(this);
 }
 
 
@@ -372,6 +334,10 @@ void TActionContext::execute(THttpRequest &request)
     } catch (RuntimeException &e) {
         tError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         tSystemError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        closeHttpSocket();
+    } catch (StandardException &e) {
+        tError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
     } catch (...) {
         tError("Caught Exception");

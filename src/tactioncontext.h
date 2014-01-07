@@ -36,9 +36,6 @@ public:
     THttpRequest &httpRequest() { return *httpReq; }
     const THttpRequest &httpRequest() const { return *httpReq; }
 
-    static int contextCount();
-    static void releaseAll();
-
 protected:
     void execute(THttpRequest &request);
     void release();
