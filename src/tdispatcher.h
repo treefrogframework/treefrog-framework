@@ -67,7 +67,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
 
     int argcnt = 0;
     int idx = -1;
-    for (int i = args.count(); i >= 0; --i) {
+    for (int i = qMin(args.count(), 10); i >= 0; --i) {
         // Find method
         QByteArray mtd = method + params[i];
         //mtd = QMetaObject::normalizedSignature(mtd);
@@ -82,7 +82,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     bool res = false;
     if (idx < 0) {
         tSystemDebug("No such method: %s", qPrintable(method));
-        return false;
+        return res;
     } else {
         QMetaMethod mm = ptr->metaObject()->method(idx);
         tSystemDebug("Invoke method: %s", qPrintable(metaType + "#" + method));
