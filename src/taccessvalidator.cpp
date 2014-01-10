@@ -94,6 +94,42 @@ void TAccessValidator::setDenyUser(const QString &identityKey, const QStringList
 }
 
 /*!
+  Sets to allow an unauthenticated user with the identity \a identityKey
+  to access to the action \a action.
+*/
+void TAccessValidator::setAllowUnauthenticatedUser(const QString &action)
+{
+    accessRules << AccessRule(AccessRule::UnauthenticatedUser, QString(), action, true);
+}
+
+/*!
+  Sets to allow an unauthenticated with the identity \a identityKey to
+  access to the actions \a actions.
+*/
+void TAccessValidator::setAllowUnauthenticatedUser(const QStringList &actions)
+{
+    addRules(AccessRule::UnauthenticatedUser, QString(), actions, true);
+}
+
+/*!
+  Sets to deny an unauthenticated with the identity \a identityKey to
+  access to the action \a action.
+*/
+void TAccessValidator::setDenyUnauthenticatedUser(const QString &action)
+{
+    accessRules << AccessRule(AccessRule::UnauthenticatedUser, QString(), action, false);
+}
+
+/*!
+  Sets to deny an unauthenticated with the identity \a identityKey to
+  access to the actions \a actions.
+*/
+void TAccessValidator::setDenyUnauthenticatedUser(const QStringList &actions)
+{
+    addRules(AccessRule::UnauthenticatedUser, QString(), actions, false);
+}
+
+/*!
   Added a access rule to the list.
 */
 void TAccessValidator::addRules(int type, const QString &key, const QStringList &actions, bool allow)
@@ -113,26 +149,36 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
     const TActionController *controller = Tf::currentContext()->currentController();
     Q_ASSERT(controller);
 
-    if (!user || user->identityKey().isEmpty()) {
-        tWarn("Access validate: identityKey is empty");
-        return ret;
-    }
-
     if (accessRules.isEmpty()) {
         tWarn("No rule for access validation: %s", qPrintable(controller->className()));
         return ret;
     }
 
-    for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
-        const AccessRule &rule = it.next();
-        if (((rule.type == AccessRule::User && rule.key == user->identityKey())
-             || (!user->groupKey().isEmpty() && rule.key == user->groupKey()))
-            && controller->activeAction() == rule.action) {
-            ret = rule.allow;
-            break;
+    if (!user || user->identityKey().isEmpty()) {
+        // Searches a access rule for an unauthenticated user
+        for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
+            const AccessRule &rule = it.next();
+            if (rule.type == AccessRule::UnauthenticatedUser
+                && rule.action == controller->activeAction()) {
+                ret = rule.allow;
+                break;
+            }
         }
+        tSystemDebug("Access '%s' action by an unauthenticated user : %s", qPrintable(controller->activeAction()), (ret ? "Allow" : "Deny"));
+
+    } else {
+        for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
+            const AccessRule &rule = it.next();
+            if (rule.action == controller->activeAction()
+                && ((rule.type == AccessRule::User && rule.key == user->identityKey())
+                    || (!user->groupKey().isEmpty() && rule.key == user->groupKey()))) {
+                ret = rule.allow;
+                break;
+            }
+        }
+        tSystemDebug("Access '%s' action by '%s' user : %s", qPrintable(controller->activeAction()), qPrintable(user->identityKey()), (ret ? "Allow" : "Deny"));
     }
-    tSystemDebug("Access: %s  (user:%s)", (ret ? "Allow" : "Deny"), qPrintable(user->identityKey()));
+
     return ret;
 }
 
