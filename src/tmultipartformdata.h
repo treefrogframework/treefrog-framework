@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QMap>
 #include <QPair>
+#include <QFile>
 #include <TGlobal>
 
 class QIODevice;
@@ -33,6 +34,8 @@ private:
 class T_CORE_EXPORT TMimeEntity : protected QPair<TMimeHeader, QString>
 {
 public:
+    static const QFile::Permissions DefaultPermissions;
+
     TMimeEntity() { }
     TMimeEntity(const TMimeEntity &other);
 
@@ -43,7 +46,7 @@ public:
     QString contentType() const;
     qint64 fileSize() const;
     QString originalFileName() const { return first.originalFileName(); }
-    bool renameUploadedFile(const QString &newName, bool overwrite = false);
+    bool renameUploadedFile(const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     QString uploadedFilePath() const;
 
 private:

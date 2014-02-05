@@ -16,6 +16,8 @@
 #include <TActionContext>
 #include <TTemporaryFile>
 
+const QFile::Permissions TMimeEntity::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
+
 /*!
   \class TMimeHeader
   \brief The TMimeHeader class contains MIME header information for internet.
@@ -216,7 +218,7 @@ qint64 TMimeEntity::fileSize() const
   This function will overwrite it if the \a overwrite is true.
   The \a newName can have a relative path or an absolute path.
 */
-bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite)
+bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite, QFile::Permissions permissions)
 {
     QString path = uploadedFilePath();
     if (path.isEmpty()) {
@@ -238,6 +240,7 @@ bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite)
         }
     }
 
+    file.setPermissions(permissions);
 #ifdef Q_OS_WIN
     bool ret = file.copy(newpath);
     file.remove(); // maybe fail here, but will be removed after.
