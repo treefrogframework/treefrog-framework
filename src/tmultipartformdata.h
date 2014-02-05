@@ -59,6 +59,8 @@ private:
 class T_CORE_EXPORT TMultipartFormData
 {
 public:
+    static const QFile::Permissions DefaultPermissions;
+
     TMultipartFormData(const QByteArray &boundary = QByteArray());
     TMultipartFormData(const QByteArray &formData, const QByteArray &boundary);
     TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary);
@@ -74,7 +76,7 @@ public:
     QString contentType(const QByteArray &dataName) const;
     QString originalFileName(const QByteArray &dataName) const;
     qint64 size(const QByteArray &dataName) const;
-    bool renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite = false);
+    bool renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     void clear();
 
     TMimeEntity entity(const QByteArray &dataName) const;

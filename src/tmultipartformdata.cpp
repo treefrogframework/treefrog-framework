@@ -16,7 +16,8 @@
 #include <TActionContext>
 #include <TTemporaryFile>
 
-const QFile::Permissions TMimeEntity::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
+const QFile::Permissions TMultipartFormData::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
+const QFile::Permissions TMimeEntity::DefaultPermissions = TMultipartFormData::DefaultPermissions;
 
 /*!
   \class TMimeHeader
@@ -382,9 +383,9 @@ qint64 TMultipartFormData::size(const QByteArray &dataName) const
   \warning Note that this method must not be called more than once.
   \sa TMimeEntity::renameUploadedFile()
  */
-bool TMultipartFormData::renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite)
+bool TMultipartFormData::renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite, QFile::Permissions permissions)
 {
-    return entity(dataName).renameUploadedFile(newName, overwrite);
+    return entity(dataName).renameUploadedFile(newName, overwrite, permissions);
 }
 
 /*!
