@@ -50,7 +50,7 @@
 TActionController::TActionController()
     : QObject(),
       TAbstractController(),
-      statCode(200),
+      statCode(Tf::OK),  // 200 OK
       rendered(false),
       layoutEnable(true),
       rollback(false)
@@ -637,7 +637,6 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
     }
     rendered = true;
 
-    setStatusCode(200);
     if (!name.isEmpty()) {
         QByteArray filename;
         filename += "attachment; filename=\"";
@@ -669,8 +668,6 @@ bool TActionController::sendData(const QByteArray &data, const QByteArray &conte
         return false;
     }
     rendered = true;
-
-    setStatusCode(200);
 
     if (!name.isEmpty()) {
         QByteArray filename;
