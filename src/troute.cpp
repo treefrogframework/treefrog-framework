@@ -2,29 +2,39 @@
 #include "QHash"
 #include <TGlobal>  // For Q_GLOBAL_STATIC_WITH_INITIALIZER
 
-typedef QHash<QString, int> String2MethodHash;
-typedef QHash<int, QString> Method2StringHash;
-
-
-Q_GLOBAL_STATIC_WITH_INITIALIZER(String2MethodHash, String2Method,
+class String2MethodHash : public QHash<QString, int>
 {
-    x->insert("MATCH",    TRoute::Match);
-    x->insert("GET",      TRoute::Get);
-    x->insert("POST",     TRoute::Post);
-    x->insert("PUT",      TRoute::Put);
-    x->insert("PATCH",    TRoute::Patch);
-    x->insert("DELETE",   TRoute::Delete);
-});
+public:
+    String2MethodHash() : QHash<QString, int>()
+    {
+        insert("MATCH",    TRoute::Match);
+        insert("GET",      TRoute::Get);
+        insert("POST",     TRoute::Post);
+        insert("PUT",      TRoute::Put);
+        insert("PATCH",    TRoute::Patch);
+        insert("DELETE",   TRoute::Delete);
+    }
+};
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(Method2StringHash, Method2String,
+Q_GLOBAL_STATIC(String2MethodHash, String2Method);
+
+
+class Method2StringHash : public QHash<int, QString>
 {
-    x->insert(TRoute::Match,  "MATCH");
-    x->insert(TRoute::Get,    "GET");
-    x->insert(TRoute::Post,   "POST");
-    x->insert(TRoute::Put,    "PUT");
-    x->insert(TRoute::Patch,  "PATCH");
-    x->insert(TRoute::Delete, "DELETE");
-});
+public:
+    Method2StringHash() : QHash<int, QString>()
+    {
+        insert(TRoute::Match,  "MATCH");
+        insert(TRoute::Get,    "GET");
+        insert(TRoute::Post,   "POST");
+        insert(TRoute::Put,    "PUT");
+        insert(TRoute::Patch,  "PATCH");
+        insert(TRoute::Delete, "DELETE");
+    }
+};
+
+Q_GLOBAL_STATIC(Method2StringHash, Method2String);
+
 
 
 int TRoute::methodFromString(QString name)
