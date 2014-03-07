@@ -73,7 +73,7 @@ bool TUrlRoute::parseConfigFile()
 
                 if (rt.method == TRoute::Invalid)
                 {
-                    tError("Invalid directive, '%s'  [line : %d]", qPrintable(items[0]), cnt);
+                    tError("Invalid method, '%s'  [line : %d]", qPrintable(items[0]), cnt);
                     continue;
                 }
 
