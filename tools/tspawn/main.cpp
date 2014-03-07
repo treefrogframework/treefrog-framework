@@ -155,7 +155,7 @@ public:
         append(L("script") + SEP + "starttreefrog.bat");
     }
 };
-Q_GLOBAL_STATIC(QStringList, filePaths)
+Q_GLOBAL_STATIC(FilePaths, filePaths)
 
 
 const QString appIni = QLatin1String("config") + QDir::separator() + "application.ini";
