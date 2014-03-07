@@ -132,185 +132,196 @@ void TActionContext::execute(THttpRequest &request)
         tSystemDebug("path : %s", hdr.path().data());
 
         Tf::HttpMethod method = httpReq->method();
-        QString path = THttpUtility::fromUrlEncoding(hdr.path().mid(0, hdr.path().indexOf('?')));
 
-        // Routing info exists?
-        TRouting rt = TUrlRoute::instance().findRouting(method, path);
-        tSystemDebug("Routing: controller:%s  action:%s", rt.controller.data(),
-                     rt.action.data());
-
-        if (rt.isEmpty()) {
-            // Default URL routing
-            rt.params = path.split('/');
-            if (path.startsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
-                rt.params.removeFirst();  // unuse first item
-            }
-            if (path.endsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
-                rt.params.removeLast();  // unuse last item
-            }
-
-            // Direct view render mode?
-            if (Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool()) {
-                // Direct view setting
-                rt.controller = "directcontroller";
-                rt.action = "show";
-            } else {
-                if (!rt.params.value(0).isEmpty()) {
-                    rt.controller = rt.params.takeFirst().toLower().toLatin1() + "controller";
-
-                    if (rt.controller == "applicationcontroller") {
-                        rt.controller.clear();  // Can not call 'ApplicationController'
-                    }
-
-                    // Default action: index
-                    rt.action = rt.params.value(0, QLatin1String("index")).toLatin1();
-                    if (!rt.params.isEmpty()) {
-                        rt.params.takeFirst();
-                    }
-                }
-                tSystemDebug("Active Controller : %s", rt.controller.data());
-            }
+        //Make sure we have a valid HTTP method.
+        if (method == Tf::Invalid)
+        {
+            int bytes = writeResponse(Tf::MethodNotAllowed, responseHeader);
+            accessLogger.setResponseBytes( bytes );
+            accessLogger.setStatusCode( responseHeader.statusCode() );
         }
+        else
+        {
+            QString path = THttpUtility::fromUrlEncoding(hdr.path().mid(0, hdr.path().indexOf('?')));
 
-        // Call controller method
-        TDispatcher<TActionController> ctlrDispatcher(rt.controller);
-        currController = ctlrDispatcher.object();
-        if (currController) {
-            currController->setActionName(rt.action);
+            // Routing info exists?
+            TRouting rt = TUrlRoute::instance().findRouting(method, path);
+            tSystemDebug("Routing: controller:%s  action:%s", rt.controller.data(),
+                         rt.action.data());
 
-            // Session
-            if (currController->sessionEnabled()) {
-                TSession session;
-                QByteArray sessionId = httpReq->cookie(TSession::sessionName());
-                if (!sessionId.isEmpty()) {
-                    // Finds a session
-                    session = TSessionManager::instance().findSession(sessionId);
+            if (rt.isEmpty()) {
+                // Default URL routing
+                rt.params = path.split('/');
+                if (path.startsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
+                    rt.params.removeFirst();  // unuse first item
                 }
-                currController->setSession(session);
+                if (path.endsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
+                    rt.params.removeLast();  // unuse last item
+                }
 
-                // Exports flash-variant
-                currController->exportAllFlashVariants();
-            }
+                // Direct view render mode?
+                if (Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool()) {
+                    // Direct view setting
+                    rt.controller = "directcontroller";
+                    rt.action = "show";
+                } else {
+                    if (!rt.params.value(0).isEmpty()) {
+                        rt.controller = rt.params.takeFirst().toLower().toLatin1() + "controller";
 
-            // Verify authenticity token
-            if (Tf::app()->appSettings().value(ENABLE_CSRF_PROTECTION_MODULE, true).toBool()
-                && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(rt.action)) {
+                        if (rt.controller == "applicationcontroller") {
+                            rt.controller.clear();  // Can not call 'ApplicationController'
+                        }
 
-                if (method == Tf::Post || method == Tf::Put || method == Tf::Delete) {
-                    if (!currController->verifyRequest(*httpReq)) {
-                        throw SecurityException("Invalid authenticity token", __FILE__, __LINE__);
+                        // Default action: index
+                        rt.action = rt.params.value(0, QLatin1String("index")).toLatin1();
+                        if (!rt.params.isEmpty()) {
+                            rt.params.takeFirst();
+                        }
                     }
+                    tSystemDebug("Active Controller : %s", rt.controller.data());
                 }
             }
 
-            if (currController->sessionEnabled()) {
-                if (currController->session().id().isEmpty() || Tf::app()->appSettings().value(AUTO_ID_REGENERATION).toBool()) {
-                    TSessionManager::instance().remove(currController->session().sessionId); // Removes the old session
-                    // Re-generate session ID
-                    currController->session().sessionId = TSessionManager::instance().generateId();
-                    tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
-                }
-                // Sets CSRF protection informaion
-                TActionController::setCsrfProtectionInto(currController->session());
-            }
+            // Call controller method
+            TDispatcher<TActionController> ctlrDispatcher(rt.controller);
+            currController = ctlrDispatcher.object();
+            if (currController) {
+                currController->setActionName(rt.action);
 
-            // Database Transaction
-            transactions.setEnabled(currController->transactionEnabled());
-
-            // Do filters
-            if (currController->preFilter()) {
-
-                // Dispathes
-                bool dispatched = ctlrDispatcher.invoke(rt.action, rt.params);
-                if (dispatched) {
-                    autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
-
-                    // Post fileter
-                    currController->postFilter();
-
-                    if (currController->rollbackRequested()) {
-                        rollbackTransactions();
-                    } else {
-                        // Commits a transaction to the database
-                        commitTransactions();
+                // Session
+                if (currController->sessionEnabled()) {
+                    TSession session;
+                    QByteArray sessionId = httpReq->cookie(TSession::sessionName());
+                    if (!sessionId.isEmpty()) {
+                        // Finds a session
+                        session = TSessionManager::instance().findSession(sessionId);
                     }
+                    currController->setSession(session);
 
-                    // Session store
-                    if (currController->sessionEnabled()) {
-                        bool stored = TSessionManager::instance().store(currController->session());
-                        if (stored) {
-                            QDateTime expire;
-                            if (TSessionManager::sessionLifeTime() > 0) {
-                                expire = Tf::currentDateTimeSec().addSecs(TSessionManager::sessionLifeTime());
-                            }
+                    // Exports flash-variant
+                    currController->exportAllFlashVariants();
+                }
 
-                            // Sets the path in the session cookie
-                            QString cookiePath = Tf::app()->appSettings().value(SESSION_COOKIE_PATH).toString();
-                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath);
+                // Verify authenticity token
+                if (Tf::app()->appSettings().value(ENABLE_CSRF_PROTECTION_MODULE, true).toBool()
+                    && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(rt.action)) {
+
+                    if (method == Tf::Post || method == Tf::Put || method == Tf::Delete) {
+                        if (!currController->verifyRequest(*httpReq)) {
+                            throw SecurityException("Invalid authenticity token", __FILE__, __LINE__);
                         }
                     }
                 }
-            }
 
-            // Sets charset to the content-type
-            QByteArray ctype = currController->response.header().contentType().toLower();
-            if (ctype.startsWith("text") && !ctype.contains("charset")) {
-                ctype += "; charset=";
-                ctype += Tf::app()->codecForHttpOutput()->name();
-                currController->response.header().setContentType(ctype);
-            }
-
-            // Sets the default status code of HTTP response
-            accessLogger.setStatusCode( (!currController->response.isBodyNull()) ? currController->statusCode() : Tf::InternalServerError );
-            currController->response.header().setStatusLine(accessLogger.statusCode(), THttpUtility::getResponseReasonPhrase(accessLogger.statusCode()));
-
-            // Writes a response and access log
-            int bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
-                                      currController->response.bodyLength());
-            accessLogger.setResponseBytes(bytes);
-
-            // Session GC
-            TSessionManager::instance().collectGarbage();
-
-        } else {
-            accessLogger.setStatusCode( Tf::BadRequest );
-
-            if (method == Tf::Get) {  // GET Method
-                path.remove(0, 1);
-                QFile reqPath(Tf::app()->publicPath() + path);
-                QFileInfo fi(reqPath);
-
-                if (fi.isFile() && fi.isReadable()) {
-                    // Check "If-Modified-Since" header for caching
-                    bool sendfile = true;
-                    QByteArray ifModifiedSince = hdr.rawHeader("If-Modified-Since");
-
-                    if (!ifModifiedSince.isEmpty()) {
-                        QDateTime dt = THttpUtility::fromHttpDateTimeString(ifModifiedSince);
-                        sendfile = (!dt.isValid() || dt != fi.lastModified());
+                if (currController->sessionEnabled()) {
+                    if (currController->session().id().isEmpty() || Tf::app()->appSettings().value(AUTO_ID_REGENERATION).toBool()) {
+                        TSessionManager::instance().remove(currController->session().sessionId); // Removes the old session
+                        // Re-generate session ID
+                        currController->session().sessionId = TSessionManager::instance().generateId();
+                        tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
                     }
-
-                    if (sendfile) {
-                        // Sends a request file
-                        responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
-                        QByteArray type = Tf::app()->internetMediaType(fi.suffix());
-                        int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
-                        accessLogger.setResponseBytes( bytes );
-                    } else {
-                        // Not send the data
-                        int bytes = writeResponse(Tf::NotModified, responseHeader);
-                        accessLogger.setResponseBytes( bytes );
-                    }
-                } else {
-                    int bytes = writeResponse(Tf::NotFound, responseHeader);
-                    accessLogger.setResponseBytes( bytes );
+                    // Sets CSRF protection informaion
+                    TActionController::setCsrfProtectionInto(currController->session());
                 }
-                accessLogger.setStatusCode( responseHeader.statusCode() );
 
-            } else if (method == Tf::Post) {
-                // file upload?
+                // Database Transaction
+                transactions.setEnabled(currController->transactionEnabled());
+
+                // Do filters
+                if (currController->preFilter()) {
+
+                    // Dispathes
+                    bool dispatched = ctlrDispatcher.invoke(rt.action, rt.params);
+                    if (dispatched) {
+                        autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
+
+                        // Post fileter
+                        currController->postFilter();
+
+                        if (currController->rollbackRequested()) {
+                            rollbackTransactions();
+                        } else {
+                            // Commits a transaction to the database
+                            commitTransactions();
+                        }
+
+                        // Session store
+                        if (currController->sessionEnabled()) {
+                            bool stored = TSessionManager::instance().store(currController->session());
+                            if (stored) {
+                                QDateTime expire;
+                                if (TSessionManager::sessionLifeTime() > 0) {
+                                    expire = Tf::currentDateTimeSec().addSecs(TSessionManager::sessionLifeTime());
+                                }
+
+                                // Sets the path in the session cookie
+                                QString cookiePath = Tf::app()->appSettings().value(SESSION_COOKIE_PATH).toString();
+                                currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath);
+                            }
+                        }
+                    }
+                }
+
+                // Sets charset to the content-type
+                QByteArray ctype = currController->response.header().contentType().toLower();
+                if (ctype.startsWith("text") && !ctype.contains("charset")) {
+                    ctype += "; charset=";
+                    ctype += Tf::app()->codecForHttpOutput()->name();
+                    currController->response.header().setContentType(ctype);
+                }
+
+                // Sets the default status code of HTTP response
+                accessLogger.setStatusCode( (!currController->response.isBodyNull()) ? currController->statusCode() : Tf::InternalServerError );
+                currController->response.header().setStatusLine(accessLogger.statusCode(), THttpUtility::getResponseReasonPhrase(accessLogger.statusCode()));
+
+                // Writes a response and access log
+                int bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
+                                          currController->response.bodyLength());
+                accessLogger.setResponseBytes(bytes);
+
+                // Session GC
+                TSessionManager::instance().collectGarbage();
+
             } else {
-                // HEAD, DELETE, ...
+                accessLogger.setStatusCode( Tf::BadRequest );
+
+                if (method == Tf::Get) {  // GET Method
+                    path.remove(0, 1);
+                    QFile reqPath(Tf::app()->publicPath() + path);
+                    QFileInfo fi(reqPath);
+
+                    if (fi.isFile() && fi.isReadable()) {
+                        // Check "If-Modified-Since" header for caching
+                        bool sendfile = true;
+                        QByteArray ifModifiedSince = hdr.rawHeader("If-Modified-Since");
+
+                        if (!ifModifiedSince.isEmpty()) {
+                            QDateTime dt = THttpUtility::fromHttpDateTimeString(ifModifiedSince);
+                            sendfile = (!dt.isValid() || dt != fi.lastModified());
+                        }
+
+                        if (sendfile) {
+                            // Sends a request file
+                            responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
+                            QByteArray type = Tf::app()->internetMediaType(fi.suffix());
+                            int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
+                            accessLogger.setResponseBytes( bytes );
+                        } else {
+                            // Not send the data
+                            int bytes = writeResponse(Tf::NotModified, responseHeader);
+                            accessLogger.setResponseBytes( bytes );
+                        }
+                    } else {
+                        int bytes = writeResponse(Tf::NotFound, responseHeader);
+                        accessLogger.setResponseBytes( bytes );
+                    }
+                    accessLogger.setStatusCode( responseHeader.statusCode() );
+
+                } else if (method == Tf::Post) {
+                    // file upload?
+                } else {
+                    // HEAD, DELETE, ...
+                }
             }
         }
 
