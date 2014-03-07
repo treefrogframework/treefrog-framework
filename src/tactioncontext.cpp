@@ -151,13 +151,7 @@ void TActionContext::execute(THttpRequest &request)
 
             if (rt.isEmpty()) {
                 // Default URL routing
-                rt.params = path.split('/');
-                if (path.startsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
-                    rt.params.removeFirst();  // unuse first item
-                }
-                if (path.endsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
-                    rt.params.removeLast();  // unuse last item
-                }
+                rt.params = path.split('/', QString::SkipEmptyParts);
 
                 // Direct view render mode?
                 if (Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool()) {
