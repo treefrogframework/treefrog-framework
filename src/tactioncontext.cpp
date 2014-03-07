@@ -143,6 +143,7 @@ void TActionContext::execute(THttpRequest &request)
         else
         {
             QString path = THttpUtility::fromUrlEncoding(hdr.path().mid(0, hdr.path().indexOf('?')));
+            if (!path.endsWith('/')) path+= QLatin1Char('/');
 
             // Routing info exists?
             TRouting rt = TUrlRoute::instance().findRouting(method, path);

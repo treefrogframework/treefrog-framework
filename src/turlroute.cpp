@@ -96,26 +96,13 @@ bool TUrlRoute::parseConfigFile()
                     continue;
                 }
 
+                if ((!rt.params) && (!rt.path.endsWith('/')))
+                    rt.path += QLatin1Char('/');
+
                 routes << rt;
                 tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
                              rt.method, qPrintable(rt.path), rt.controller.data(),
                              rt.action.data(), rt.params);
-
-                if (!rt.params) {
-                    if (rt.path.endsWith('/')) {
-                        rt.path.chop(1);
-                    } else {
-                        rt.path += QLatin1Char('/');
-                    }
-
-                    if (!rt.path.isEmpty()) {
-                        routes << rt;
-                        tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
-                                     rt.method, qPrintable(rt.path), rt.controller.data(),
-                                     rt.action.data(), rt.params);
-                    }
-                }
-
             } else {
                 tError("Invalid directive, '%s'  [line : %d]", qPrintable(line), cnt);
             }
