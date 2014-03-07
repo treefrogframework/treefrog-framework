@@ -277,45 +277,54 @@ void TActionContext::execute(THttpRequest &request)
                 TSessionManager::instance().collectGarbage();
 
             } else {
-                accessLogger.setStatusCode( Tf::BadRequest );
+                //Controller not found.
+                //Check it's a static file
 
-                if (method == Tf::Get) {  // GET Method
-                    path.remove(0, 1);
-                    QFile reqPath(Tf::app()->publicPath() + path);
-                    QFileInfo fi(reqPath);
+                switch(method)
+                {
+                    case Tf::Get:
+                    {
+                        path.remove(0, 1);
+                        QFile reqPath(Tf::app()->publicPath() + path);
+                        QFileInfo fi(reqPath);
 
-                    if (fi.isFile() && fi.isReadable()) {
-                        // Check "If-Modified-Since" header for caching
-                        bool sendfile = true;
-                        QByteArray ifModifiedSince = hdr.rawHeader("If-Modified-Since");
+                        if (fi.isFile() && fi.isReadable()) {
+                            // Check "If-Modified-Since" header for caching
+                            bool sendfile = true;
+                            QByteArray ifModifiedSince = hdr.rawHeader("If-Modified-Since");
 
-                        if (!ifModifiedSince.isEmpty()) {
-                            QDateTime dt = THttpUtility::fromHttpDateTimeString(ifModifiedSince);
-                            sendfile = (!dt.isValid() || dt != fi.lastModified());
-                        }
+                            if (!ifModifiedSince.isEmpty()) {
+                                QDateTime dt = THttpUtility::fromHttpDateTimeString(ifModifiedSince);
+                                sendfile = (!dt.isValid() || dt != fi.lastModified());
+                            }
 
-                        if (sendfile) {
-                            // Sends a request file
-                            responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
-                            QByteArray type = Tf::app()->internetMediaType(fi.suffix());
-                            int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
-                            accessLogger.setResponseBytes( bytes );
+                            if (sendfile) {
+                                // Sends a request file
+                                responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
+                                QByteArray type = Tf::app()->internetMediaType(fi.suffix());
+                                int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
+                                accessLogger.setResponseBytes( bytes );
+                            } else {
+                                // Not send the data
+                                int bytes = writeResponse(Tf::NotModified, responseHeader);
+                                accessLogger.setResponseBytes( bytes );
+                            }
                         } else {
-                            // Not send the data
-                            int bytes = writeResponse(Tf::NotModified, responseHeader);
+                            int bytes = writeResponse(Tf::NotFound, responseHeader);
                             accessLogger.setResponseBytes( bytes );
                         }
-                    } else {
+                    }
+                    break;
+
+                    case Tf::Post: //Handle upload maybe?
+                    default:
+                    {
                         int bytes = writeResponse(Tf::NotFound, responseHeader);
                         accessLogger.setResponseBytes( bytes );
                     }
-                    accessLogger.setStatusCode( responseHeader.statusCode() );
-
-                } else if (method == Tf::Post) {
-                    // file upload?
-                } else {
-                    // HEAD, DELETE, ...
                 }
+
+                accessLogger.setStatusCode( responseHeader.statusCode() );
             }
         }
 
