@@ -147,8 +147,8 @@ void TActionContext::execute(THttpRequest &request)
 
             // Routing info exists?
             TRouting rt = TUrlRoute::instance().findRouting(method, path);
-            tSystemDebug("Routing: controller:%s  action:%s", rt.controller.data(),
-                         rt.action.data());
+            tSystemDebug("Routing: controller:%s  action:%s params: [%s]", qPrintable(rt.controller),
+                         qPrintable(rt.action), qPrintable(rt.params.join(',')));
 
             if (rt.isEmpty()) {
                 // Default URL routing
