@@ -10,6 +10,9 @@ public:
         Match = 0,
         Get,
         Post,
+        Patch,
+        Put,
+        Delete,
 
         Invalid = 0xff
     };

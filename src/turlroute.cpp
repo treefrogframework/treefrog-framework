@@ -145,6 +145,15 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
             case TRoute::Post:
                 if (method == Tf::Post) return TRouting(rt.controller, rt.action, params);
                 continue;
+            case TRoute::Patch:
+                if (method == Tf::Patch) return TRouting(rt.controller, rt.action, params);
+                continue;
+            case TRoute::Put:
+                if (method == Tf::Put) return TRouting(rt.controller, rt.action, params);
+                continue;
+            case TRoute::Delete:
+                if (method == Tf::Delete) return TRouting(rt.controller, rt.action, params);
+                continue;
             default:
                 tSystemWarn("Unkown route method in findRouting: %d", rt.method);
                 continue;
