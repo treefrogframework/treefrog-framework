@@ -128,7 +128,7 @@ void TActionContext::execute(THttpRequest &request)
         accessLogger.setRequest(firstLine);
         accessLogger.setRemoteHost( (Tf::app()->appSettings().value(LISTEN_PORT).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)") );
 
-        tSystemDebug("method : %s", hdr.method().data());
+        tSystemDebug("verb : %s", hdr.method().data());
         tSystemDebug("path : %s", hdr.path().data());
 
         Tf::HttpMethod method = httpReq->method();
