@@ -11,6 +11,7 @@
 #include <TSystemGlobal>
 #include <THttpUtility>
 #include "turlroute.h"
+#include "troute.h"
 
 
 static TUrlRoute *urlRoute = 0;
@@ -68,14 +69,10 @@ bool TUrlRoute::parseConfigFile()
 
                 TRoute rt;
 
-                // Check method
-                if (items[0].toLower() == "match") {
-                    rt.method = TRoute::Match;
-                } else if (items[0].toLower() == "get") {
-                    rt.method = TRoute::Get;
-                } else if (items[0].toLower() == "post") {
-                    rt.method = TRoute::Post;
-                } else {
+                rt.method = TRoute::methodFromString(items[0]);
+
+                if (rt.method == TRoute::Invalid)
+                {
                     tError("Invalid directive, '%s'  [line : %d]", qPrintable(items[0]), cnt);
                     continue;
                 }
