@@ -4,23 +4,7 @@
 #include <QByteArray>
 #include <QStringList>
 #include <TGlobal>
-
-
-class TRoute {
-public:
-    enum {
-        Match = 0,
-        Get,
-        Post,
-    };
-
-    int     method;
-    QString path;
-    QByteArray controller;
-    QByteArray action;
-    bool    params;
-};
-
+#include "troute.h"
 
 class TRouting {
 public:

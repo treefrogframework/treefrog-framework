@@ -1,0 +1,11 @@
+*.o
+moc_*.cpp
+.qmake.stash
+Makefile
+src/treefrog.framework
+*.a
+tools/tfmanager/treefrog
+tools/tfserver/tadpole
+tools/tmake/tmake
+tools/tspawn/tspawn
+tools/tspawn/defaults

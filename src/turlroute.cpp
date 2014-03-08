@@ -11,6 +11,7 @@
 #include <TSystemGlobal>
 #include <THttpUtility>
 #include "turlroute.h"
+#include "troute.h"
 
 
 static TUrlRoute *urlRoute = 0;
@@ -68,15 +69,11 @@ bool TUrlRoute::parseConfigFile()
 
                 TRoute rt;
 
-                // Check method
-                if (items[0].toLower() == "match") {
-                    rt.method = TRoute::Match;
-                } else if (items[0].toLower() == "get") {
-                    rt.method = TRoute::Get;
-                } else if (items[0].toLower() == "post") {
-                    rt.method = TRoute::Post;
-                } else {
-                    tError("Invalid directive, '%s'  [line : %d]", qPrintable(items[0]), cnt);
+                rt.method = TRoute::methodFromString(items[0]);
+
+                if (rt.method == TRoute::Invalid)
+                {
+                    tError("Invalid method, '%s'  [line : %d]", qPrintable(items[0]), cnt);
                     continue;
                 }
 
@@ -99,26 +96,13 @@ bool TUrlRoute::parseConfigFile()
                     continue;
                 }
 
+                if ((!rt.params) && (!rt.path.endsWith('/')))
+                    rt.path += QLatin1Char('/');
+
                 routes << rt;
                 tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
                              rt.method, qPrintable(rt.path), rt.controller.data(),
                              rt.action.data(), rt.params);
-
-                if (!rt.params) {
-                    if (rt.path.endsWith('/')) {
-                        rt.path.chop(1);
-                    } else {
-                        rt.path += QLatin1Char('/');
-                    }
-
-                    if (!rt.path.isEmpty()) {
-                        routes << rt;
-                        tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
-                                     rt.method, qPrintable(rt.path), rt.controller.data(),
-                                     rt.action.data(), rt.params);
-                    }
-                }
-
             } else {
                 tError("Invalid directive, '%s'  [line : %d]", qPrintable(line), cnt);
             }
@@ -130,35 +114,51 @@ bool TUrlRoute::parseConfigFile()
 
 TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) const
 {
+    QStringList params;
+
     for (QListIterator<TRoute> i(routes); i.hasNext(); ) {
         const TRoute &rt = i.next();
-        if (!rt.params && rt.path == path) {
-            if (rt.method != TRoute::Match
-                && (rt.method == TRoute::Get && method != Tf::Get)
-                && (rt.method == TRoute::Post && method != Tf::Post)) {
-                return TRouting("", "");  // reject routing
-            }
-            return TRouting(rt.controller, rt.action);
+
+        //If our target is not starting with the same string, there cannot be a match
+        if (!path.startsWith(rt.path)) continue;
+
+        //If we don't have the params set, we need to have an exact match.
+        if (!rt.params && (path != rt.path)) continue;
+
+        //Parse parameters
+        if (rt.params)
+        {
+            int len = rt.path.length();
+            QString paramstr = path.mid(len);
+            params = paramstr.split('/', QString::SkipEmptyParts);
         }
 
-        if (rt.params && path.startsWith(rt.path)) {
-            if (rt.method != TRoute::Match
-                && (rt.method == TRoute::Get && method != Tf::Get)
-                && (rt.method == TRoute::Post && method != Tf::Post)) {
-                return TRouting("", "");  // reject routing
-            }
+        //Check if we have a good http verb
+        switch(rt.method)
+        {
+            case TRoute::Match:
+                return TRouting(rt.controller, rt.action, params);
 
-            QStringList params;
-            int len = rt.path.endsWith('/') ? rt.path.length() : rt.path.length() + 1;
-            QString paramstr = path.mid(len);
-            if (!paramstr.isEmpty()) {
-                params = paramstr.split('/');
-                if (path.endsWith(QLatin1Char('/')) && !params.isEmpty()) {
-                    params.removeLast();  // unuse last item
-                }
-            }
-            return TRouting(rt.controller, rt.action, params);
+            case TRoute::Get:
+                if (method == Tf::Get) return TRouting(rt.controller, rt.action, params);
+                continue;
+            case TRoute::Post:
+                if (method == Tf::Post) return TRouting(rt.controller, rt.action, params);
+                continue;
+            case TRoute::Patch:
+                if (method == Tf::Patch) return TRouting(rt.controller, rt.action, params);
+                continue;
+            case TRoute::Put:
+                if (method == Tf::Put) return TRouting(rt.controller, rt.action, params);
+                continue;
+            case TRoute::Delete:
+                if (method == Tf::Delete) return TRouting(rt.controller, rt.action, params);
+                continue;
+            default:
+                tSystemWarn("Unkown route method in findRouting: %d", rt.method);
+                continue;
         }
     }
+
     return TRouting();  // Not found routing info
 }

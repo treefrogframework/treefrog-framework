@@ -26,6 +26,7 @@ public:
         insert("put",     Tf::Put);
         insert("delete",  Tf::Delete);
         insert("trace",   Tf::Trace);
+        insert("patch",   Tf::Patch);
     }
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
