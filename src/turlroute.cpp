@@ -130,7 +130,11 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
         {
             int len = rt.path.length();
             QString paramstr = path.mid(len);
-            params = paramstr.split('/', QString::SkipEmptyParts);
+            params = paramstr.split('/', QString::KeepEmptyParts);
+
+            if (paramstr.startsWith('/')) params.takeFirst();
+            if (paramstr.endsWith('/')) params.takeLast();
+
         }
 
         //Check if we have a good http verb
