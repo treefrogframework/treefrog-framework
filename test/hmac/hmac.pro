@@ -3,4 +3,4 @@ include(../test.pri)
 TARGET = hmac
 QT += network
 
-SOURCES = main.cpp
+SOURCES = hmac.cpp

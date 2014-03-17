@@ -29,7 +29,7 @@ void TestHMAC::hmacmd5_data()
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("text");
     QTest::addColumn<QByteArray>("result");
-    
+
     QTest::newRow("1") << QByteArray::fromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")
                        << QByteArray("Hi There")
                        << QByteArray::fromHex("9294727a3638bb1c13f48ef8158bfc9d");
@@ -76,7 +76,7 @@ void TestHMAC::hmacsha1_data()
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("text");
     QTest::addColumn<QByteArray>("result");
-    
+
     QTest::newRow("1") << QByteArray::fromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")
                        << QByteArray("Hi There")
                        << QByteArray::fromHex("b617318655057264e28bc0b6fb378c8ef146be00");
@@ -226,7 +226,7 @@ void TestHMAC::crammd5()
 
 
 QTEST_APPLESS_MAIN(TestHMAC)
-#include "main.moc"
+#include "hmac.moc"
 
 
 /*

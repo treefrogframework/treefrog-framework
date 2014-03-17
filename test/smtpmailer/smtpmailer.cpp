@@ -33,4 +33,4 @@ void TestSmtpMailer::sendMail()
 
 
 QTEST_MAIN(TestSmtpMailer)
-#include "main.moc"
+#include "smtpmailer.moc"
