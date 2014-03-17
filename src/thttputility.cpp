@@ -342,11 +342,15 @@ QByteArray THttpUtility::timeZone()
   Returns a byte array for Date field of an HTTP header, containing
   the datetime equivalent of \a localTime.
 */
-QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &localTime)
+QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &dt)
 {
-    QByteArray d = QLocale(QLocale::C).toString(localTime, HTTP_DATE_TIME_FORMAT).toLatin1();
+    QByteArray d = QLocale(QLocale::C).toString(dt, HTTP_DATE_TIME_FORMAT).toLatin1();
     d += ' ';
-    d += timeZone();
+
+    if (dt.timeSpec() == Qt::UTC)
+        d += QString("+0000").toLatin1();
+    else
+        d += timeZone();
     return d;
 }
 
