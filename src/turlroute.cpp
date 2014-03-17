@@ -47,7 +47,7 @@ const TUrlRoute &TUrlRoute::instance()
 
 bool TUrlRoute::addRouteFromString(QString line)
 {
-    QStringList items = line.split(' ');
+    QStringList items = line.split(' ', QString::SkipEmptyParts);
 
     if (items.count() == 3) {
         // Trimm quotes
@@ -141,12 +141,11 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
         if (rt.params)
         {
             int len = rt.path.length();
-            QString paramstr = path.mid(len);
+            QString paramstr = path.mid(len - 1);
             params = paramstr.split('/', QString::KeepEmptyParts);
 
             if (paramstr.startsWith('/')) params.takeFirst();
             if (paramstr.endsWith('/')) params.takeLast();
-
         }
 
         //Check if we have a good http verb

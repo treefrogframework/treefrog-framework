@@ -17,6 +17,8 @@ public:
     TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
     bool isEmpty() const { return empty; }
     bool isAllowed() const { return !empty && !controller.isEmpty(); }
+
+    QString toString() { return QString("-> %1#%2 params: [%3]").arg(QString(controller)).arg(QString(action)).arg(params.join(", ")); }
 };
 
 
@@ -36,8 +38,8 @@ public:
     TRouting findRouting(Tf::HttpMethod method, const QString &path) const;
 
     bool addRouteFromString(QString line);
-private:
     TUrlRoute() { }
+private:
     bool parseConfigFile();
 
     QList<TRoute> routes;

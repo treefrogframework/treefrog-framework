@@ -25,7 +25,4 @@ src/test/rand/rand
 src/test/sharedmemorylogstream/sharedmemorylogstream
 src/test/smtpmailer/smtpmailer
 src/test/viewhelper/viewhelper
-<<<<<<< HEAD
 src/test/urlrouter/urlrouter
-=======
->>>>>>> 2b1bee8... update gitignore with automated test generated files
