@@ -1,6 +1,7 @@
 #include <QTest>
 #include <THttpUtility>
 #include "tmailmessage.h"
+#include <QDebug>
 
 
 class TestMailMessage : public QObject
@@ -15,7 +16,8 @@ private slots:
     void subject();
     void addAddress_data();
     void addAddress();
-    void date();
+    void Local_date();
+    void UTC_date();
     void parse();
 };
 
@@ -147,12 +149,30 @@ void TestMailMessage::addAddress()
 }
 
 
-void TestMailMessage::date()
+void TestMailMessage::Local_date()
 {
     TMailMessage msg;
-    msg.setDate(QDateTime(QDate(2011,3,28), QTime(12,11,04)));
-    //qDebug("%s", msg.date().data());
-    QCOMPARE(msg.date(), QByteArray("Mon, 28 Mar 2011 12:11:04 +0900"));
+
+    msg.setDate(QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::LocalTime));
+
+    uint utc = QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::UTC).toTime_t();
+    uint local = QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::LocalTime).toTime_t();
+    int offset = (utc - local) / 60;
+
+    QString offsetStr = QString("%1%2%3")
+        .arg(offset > 0 ? '+' : '-')
+        .arg(qAbs(offset) / 60, 2, 10, QLatin1Char('0'))
+        .arg(qAbs(offset) % 60, 2, 10, QLatin1Char('0'));
+
+    QCOMPARE(msg.date(), QByteArray(QString("Mon, 28 Mar 2011 12:11:04 %1").arg(offsetStr).toLatin1()));
+}
+
+void TestMailMessage::UTC_date()
+{
+    TMailMessage msg;
+
+    msg.setDate(QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::UTC));
+    QCOMPARE(msg.date(), QByteArray("Mon, 28 Mar 2011 12:11:04 +0000"));
 }
 
 
