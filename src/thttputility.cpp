@@ -325,33 +325,17 @@ QByteArray THttpUtility::getResponseReasonPhrase(int statusCode)
 */
 QByteArray THttpUtility::timeZone()
 {
-    long offset = 0;  // minutes
+    uint utc = QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::UTC).toTime_t();
+    uint local = QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::LocalTime).toTime_t();
+    int offset = (utc - local) / 60;
 
-#if defined(Q_OS_WIN)
-    TIME_ZONE_INFORMATION tzi;
-    memset(&tzi, 0, sizeof(tzi));
-    GetTimeZoneInformation(&tzi);
-    offset = -tzi.Bias;
+    QString tzStr = QString("%1%2%3")
+        .arg(offset > 0 ? '+' : '-')
+        .arg(qAbs(offset) / 60, 2, 10, QLatin1Char('0'))
+        .arg(qAbs(offset) % 60, 2, 10, QLatin1Char('0'));
 
-#elif defined(Q_OS_UNIX)
-    time_t ltime = 0;
-    tm *t = 0;
-# if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
-    tzset();
-    tm res;
-    t = localtime_r(&ltime, &res);
-# else
-    t = localtime(&ltime);
-# endif // _POSIX_THREAD_SAFE_FUNCTIONS
-    offset = t->tm_gmtoff / 60;
-#endif // Q_OS_UNIX
-
-    QByteArray tz;
-    tz += (offset > 0) ? '+' : '-';
-    offset = qAbs(offset);
-    tz += QString("%1%2").arg(offset / 60, 2, 10, QLatin1Char('0')).arg(offset % 60, 2, 10, QLatin1Char('0')).toLatin1();
-    tSystemDebug("tz: %s", tz.data());
-    return tz;
+    tSystemDebug("tz: %s", qPrintable(tzStr));
+    return tzStr.toLatin1();
 }
 
 /*!
