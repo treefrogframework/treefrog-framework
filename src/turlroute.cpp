@@ -45,6 +45,59 @@ const TUrlRoute &TUrlRoute::instance()
     return *urlRoute;
 }
 
+bool TUrlRoute::addRouteFromString(QString line)
+{
+    QStringList items = line.split(' ');
+
+    if (items.count() == 3) {
+        // Trimm quotes
+        QString method = items[0];
+        QString route = THttpUtility::trimmedQuotes(items[1]);
+        QString destination = THttpUtility::trimmedQuotes(items[2]);
+
+        TRoute rt;
+
+        rt.method = TRoute::methodFromString(method);
+
+        if (rt.method == TRoute::Invalid)
+        {
+            tError("Invalid method, '%s'", qPrintable(items[0]));
+            return false;
+        }
+
+        // parse path
+        if (route.endsWith(":params")) {
+            rt.params = true;
+            rt.path = route.left(route.length() - QString(":params").length());
+        } else {
+            rt.params = false;
+            rt.path = route;
+        }
+
+        // parse controller and action
+        QStringList list = destination.split('#');
+        if (list.count() == 2) {
+            rt.controller = list[0].toLower().toLatin1() + "controller";
+            rt.action = list[1].toLatin1();
+        } else {
+            tError("Invalid destination, '%s'", qPrintable(destination));
+            return false;
+        }
+
+        if ((!rt.params) && (!rt.path.endsWith('/')))
+            rt.path += QLatin1Char('/');
+
+        routes << rt;
+        tSystemDebug("added route: method:%d path:%s ctrl:%s action:%s params:%d",
+                     rt.method, qPrintable(rt.path), rt.controller.data(),
+                     rt.action.data(), rt.params);
+        return true;
+    } else {
+        tError("Invalid directive, '%s'", qPrintable(line));
+        return false;
+    }
+}
+
 
 bool TUrlRoute::parseConfigFile()
 {
@@ -61,50 +114,9 @@ bool TUrlRoute::parseConfigFile()
         ++cnt;
 
         if (!line.isEmpty() && !line.startsWith('#')) {
-            QStringList items = line.split(' ');
-            if (items.count() == 3) {
-                // Trimm quotes
-                items[1] = THttpUtility::trimmedQuotes(items[1]);
-                items[2] = THttpUtility::trimmedQuotes(items[2]);
-
-                TRoute rt;
-
-                rt.method = TRoute::methodFromString(items[0]);
-
-                if (rt.method == TRoute::Invalid)
-                {
-                    tError("Invalid method, '%s'  [line : %d]", qPrintable(items[0]), cnt);
-                    continue;
-                }
-
-                // parse path
-                if (items[1].endsWith(":params")) {
-                    rt.params = true;
-                    rt.path = items[1].left(items[1].length() - 7);
-                } else {
-                    rt.params = false;
-                    rt.path = items[1];
-                }
-
-                // parse controller and action
-                QStringList list = items[2].split('#');
-                if (list.count() == 2) {
-                    rt.controller = list[0].toLower().toLatin1() + "controller";
-                    rt.action = list[1].toLatin1();
-                } else {
-                    tError("Invalid action, '%s'  [line : %d]", qPrintable(items[2]), cnt);
-                    continue;
-                }
-
-                if ((!rt.params) && (!rt.path.endsWith('/')))
-                    rt.path += QLatin1Char('/');
-
-                routes << rt;
-                tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
-                             rt.method, qPrintable(rt.path), rt.controller.data(),
-                             rt.action.data(), rt.params);
-            } else {
-                tError("Invalid directive, '%s'  [line : %d]", qPrintable(line), cnt);
+            if (!addRouteFromString(line))
+            {
+                tError("Error parsing route %s [line: %d]", qPrintable(line), cnt);
             }
         }
     }

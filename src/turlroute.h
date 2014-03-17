@@ -35,6 +35,7 @@ public:
     static const TUrlRoute &instance();
     TRouting findRouting(Tf::HttpMethod method, const QString &path) const;
 
+    bool addRouteFromString(QString line);
 private:
     TUrlRoute() { }
     bool parseConfigFile();
