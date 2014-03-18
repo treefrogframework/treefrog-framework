@@ -4,23 +4,7 @@
 #include <QByteArray>
 #include <QStringList>
 #include <TGlobal>
-
-
-class TRoute {
-public:
-    enum {
-        Match = 0,
-        Get,
-        Post,
-    };
-
-    int     method;
-    QString path;
-    QByteArray controller;
-    QByteArray action;
-    bool    params;
-};
-
+#include "troute.h"
 
 class TRouting {
 public:
@@ -33,6 +17,8 @@ public:
     TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
     bool isEmpty() const { return empty; }
     bool isAllowed() const { return !empty && !controller.isEmpty(); }
+
+    QString toString() { return QString("-> %1#%2 params: [%3]").arg(QString(controller)).arg(QString(action)).arg(params.join(", ")); }
 };
 
 
@@ -51,8 +37,9 @@ public:
     static const TUrlRoute &instance();
     TRouting findRouting(Tf::HttpMethod method, const QString &path) const;
 
-private:
+    bool addRouteFromString(QString line);
     TUrlRoute() { }
+private:
     bool parseConfigFile();
 
     QList<TRoute> routes;
