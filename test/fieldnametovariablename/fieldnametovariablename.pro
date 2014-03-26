@@ -3,6 +3,6 @@ include(../test.pri)
 TARGET=fieldnametovariablename
 QT += network
 
-SOURCES = main.cpp
+SOURCES = fieldnametovariablename.cpp
 
 

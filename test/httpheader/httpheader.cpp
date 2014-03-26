@@ -126,6 +126,6 @@ void TestHttpHeader::parseHttpResponseHeader()
 
 #endif // QT_VERSION < 0x050000
 QTEST_MAIN(TestHttpHeader)
-#include "main.moc"
+#include "httpheader.moc"
 
 

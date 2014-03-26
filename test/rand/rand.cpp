@@ -147,7 +147,7 @@ void TestRand::randomstring2()
 }
 
 QTEST_APPLESS_MAIN(TestRand)
-#include "main.moc"
+#include "rand.moc"
 
 /*
 rand: 3656013425

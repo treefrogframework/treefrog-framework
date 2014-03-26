@@ -3,7 +3,7 @@ include(../test.pri)
 TARGET = buildtest
 QT += sql network
 
-SOURCES += main.cpp
+SOURCES += buildtest.cpp
 HEADERS += blog.h
 SOURCES += blog.cpp
 HEADERS += blogobject.h

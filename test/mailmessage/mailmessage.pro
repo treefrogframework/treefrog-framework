@@ -2,4 +2,4 @@ include(../test.pri)
 
 TARGET = mailmessage
 
-SOURCES = main.cpp
+SOURCES = mailmessage.cpp

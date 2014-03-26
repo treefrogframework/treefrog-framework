@@ -86,4 +86,4 @@ void HtmlParser::escapeNoQuotes()
 }
 
 QTEST_MAIN(HtmlParser)
-#include "main.moc"
+#include "htmlescape.moc"

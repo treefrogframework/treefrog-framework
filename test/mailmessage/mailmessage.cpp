@@ -197,4 +197,4 @@ void TestMailMessage::parse()
 }
 
 QTEST_MAIN(TestMailMessage)
-#include "main.moc"
+#include "mailmessage.moc"

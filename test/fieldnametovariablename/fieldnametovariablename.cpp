@@ -48,4 +48,4 @@ void Test::test()
 }
 
 QTEST_APPLESS_MAIN(Test)
-#include "main.moc"
+#include "fieldnametovariablename.moc"

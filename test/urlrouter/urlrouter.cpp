@@ -138,4 +138,4 @@ void TestUrlRouter::should_route_urls_with_no_parameters()
 }
 
 QTEST_MAIN(TestUrlRouter)
-#include "main.moc"
+#include "urlrouter.moc"
