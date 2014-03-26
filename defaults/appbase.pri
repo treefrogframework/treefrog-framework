@@ -13,5 +13,5 @@ win32 {
   } else {
     LIBS += -ltreefrog
   }
-  unix:INCLUDEPATH += /usr/include/treefrog
+  unix:INCLUDEPATH += /Library/Frameworks/treefrog.framework/Headers
 }

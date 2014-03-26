@@ -25,3 +25,4 @@ src/test/rand/rand
 src/test/sharedmemorylogstream/sharedmemorylogstream
 src/test/smtpmailer/smtpmailer
 src/test/viewhelper/viewhelper
+src/test/urlrouter/urlrouter

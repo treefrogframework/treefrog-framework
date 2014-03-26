@@ -85,7 +85,12 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
         return res;
     } else {
         QMetaMethod mm = ptr->metaObject()->method(idx);
-        tSystemDebug("Invoke method: %s", qPrintable(metaType + "#" + method));
+
+        if (argcnt < args.length())
+            tSystemWarn("Method %s#%s accepts only %d arguments. Supplied %d arguments: [%s]", qPrintable(metaType), qPrintable(method), argcnt, args.length(), qPrintable(args.join(" , ")));
+
+        tSystemDebug("Invoke method: %s, with %d arguments: [%s]", qPrintable(metaType + "#" + method), argcnt, qPrintable(QStringList(args.mid(0,argcnt)).join(" , ")));
+
         switch (argcnt) {
         case 0:
             res = mm.invoke(ptr, connectionType);
