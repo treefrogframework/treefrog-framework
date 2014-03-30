@@ -49,11 +49,14 @@ bool TUrlRoute::addRouteFromString(QString line)
 {
     QStringList items = line.split(' ', QString::SkipEmptyParts);
 
-    if (items.count() == 3) {
+    if (items.count() >= 2) {
         // Trimm quotes
         QString method = items[0];
         QString route = THttpUtility::trimmedQuotes(items[1]);
-        QString destination = THttpUtility::trimmedQuotes(items[2]);
+        QString destination;
+
+        if (items.count() >= 3)
+            destination = THttpUtility::trimmedQuotes(items[2]);
 
         TRoute rt;
 
@@ -67,17 +70,41 @@ bool TUrlRoute::addRouteFromString(QString line)
 
         // parse controller and action
         QStringList list = destination.split('#');
-        if (list.count() == 2) {
-            rt.controller = list[0].toLower().toLatin1() + "controller";
-            rt.action = list[1].toLatin1();
-        } else {
-            tError("Invalid destination, '%s'", qPrintable(destination));
-            return false;
+
+        switch(list.count())
+        {
+            case 2:
+                rt.action = list[1].toLatin1();
+                //fallthrough
+            case 1:
+                if (!list[0].isEmpty()) rt.controller = list[0].toLower().toLatin1();
+                break;
+            default:
+                tError("Invalid destination, '%s'", qPrintable(destination));
+                return false;
         }
 
         rt.components = route.split('/');
         if (route.startsWith('/')) rt.components.takeFirst();
         if (route.endsWith('/')) rt.components.takeLast();
+
+        if ((rt.controller.isEmpty() && (rt.components.indexOf(":controller")) < 0))
+        {
+            tError("Can only create a route without a destionation if it accepts the :controller and :action parameters! [%s]", qPrintable(line));
+            return false;
+        }
+
+        if ((rt.action.isEmpty() && (rt.components.indexOf(":action")) < 0))
+        {
+            tError("Can only create a route without a default action if it accepts the :action parameter! [%s]", qPrintable(line));
+            return false;
+        }
+
+        if ((rt.components.indexOf(":controller") >= 0) && (rt.components.indexOf(":action") < 0))
+        {
+            tError("If a route accepts :controller it must also accept :action! [%s]", qPrintable(line));
+            return false;
+        }
 
         if (rt.components.indexOf(":params") >= 0)
         {
@@ -134,6 +161,8 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
 {
     QStringList params;
     QStringList components = path.split('/');
+    QString controller;
+    QString action;
     components.takeFirst();
     components.takeLast();
 
@@ -180,14 +209,40 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
                 continue;
             }
 
+            if (rt.components[j] == ":controller")
+            {
+                controller = components[j];
+                continue;
+            }
+
+            if (rt.components[j] == ":action")
+            {
+                action = components[j];
+                continue;
+            }
+
             goto trynext;
         }
+
+        if (!controller.isEmpty() && action.isEmpty())
+        {
+            tSystemWarn(
+                "Rejecting route [%s] for URL '%s'. Controller parameter set, but action parameter unset!",
+                qPrintable(rt.components.join('/')),
+                qPrintable(path)
+            );
+            goto trynext;
+        }
+
+        if (controller.isEmpty()) controller = rt.controller;
+        if (action.isEmpty()) action = rt.action;
+
 
         //Add any variable params
         if (rt.has_variable_params)
             params << components.mid(rt.components.length());
 
-        return TRouting(rt.controller, rt.action, params);
+        return TRouting(controller, action, params);
 
 trynext:
         continue;
