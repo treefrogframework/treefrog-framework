@@ -35,7 +35,8 @@ private slots:
 
     void should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action();
     void should_not_create_route_if_it_does_not_accept_action_parameter_and_no_default_is_given();
-    void should_not_create_route_if_it_accepts_controller_but_not_action();
+    void should_not_create_route_if_it_accepts_controller_but_not_action_and_no_default_given();
+    void should_create_route_if_it_accepts_controller_but_not_action_but_default_given();
     void should_create_route_if_only_accepts_action();
     void should_create_route_if_destination_does_not_include_action_but_it_accepts_as_parameter();
     void should_create_route_if_destination_is_empty_but_controller_and_action_parameters_given();
@@ -45,8 +46,7 @@ private slots:
     void should_route_correctly_when_only_action_parameter_is_given();
     void should_route_correctly_when_controller_parameter_empty_but_action_is_given();
     void should_not_route_if_controller_given_but_action_is_not();
-
-
+    void should_route_correctly_when_controller_parameter_given_and_does_not_accept_action_parameter();
 };
 
 void TestUrlRouter::init()
@@ -275,12 +275,20 @@ void TestUrlRouter::should_not_create_route_if_it_does_not_accept_action_paramet
     QCOMPARE(result, false);
 }
 
-void TestUrlRouter::should_not_create_route_if_it_accepts_controller_but_not_action()
+void TestUrlRouter::should_not_create_route_if_it_accepts_controller_but_not_action_and_no_default_given()
 {
-    QString route = "GET /:controller 'dummy#default' ";
+    QString route = "GET /:controller 'dummy' ";
     bool result = ur->addRouteFromString(route);
 
     QCOMPARE(result, false);
+}
+
+void TestUrlRouter::should_create_route_if_it_accepts_controller_but_not_action_but_default_given()
+{
+    QString route = "GET /:controller '#defaultaction' ";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, true);
 }
 
 void TestUrlRouter::should_create_route_if_only_accepts_action()
@@ -351,6 +359,17 @@ void TestUrlRouter::should_not_route_if_controller_given_but_action_is_not()
     TRouting r = ur->findRouting(Tf::Get, "/othercontroller/");
 
     QCOMPARE(r.isEmpty(), true);
+}
+
+void TestUrlRouter::should_route_correctly_when_controller_parameter_given_and_does_not_accept_action_parameter()
+{
+    QString route = "GET /:controller '#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "/other/");
+
+    QCOMPARE(QString(r.controller), QString("other"));
+    QCOMPARE(QString(r.action), QString("defaultaction"));
 }
 
 

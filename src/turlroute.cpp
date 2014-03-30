@@ -13,6 +13,8 @@
 #include "turlroute.h"
 #include "troute.h"
 
+#define DIRECT_VIEW_RENDER_MODE  "DirectViewRenderMode"
+
 
 static TUrlRoute *urlRoute = 0;
 
@@ -34,6 +36,16 @@ void TUrlRoute::instantiate()
     if (!urlRoute) {
         urlRoute = new TUrlRoute;
         urlRoute->parseConfigFile();
+
+        //Add default route
+        if (Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool())
+            urlRoute->addRouteFromString("MATCH /:params 'directcontroller#show'");
+        else
+        {
+            urlRoute->addRouteFromString("MATCH /:controller/:params '#index'");
+            urlRoute->addRouteFromString("MATCH /:controller/:action/:params");
+        }
+
         qAddPostRoutine(::cleanup);
     }
 }
@@ -97,12 +109,6 @@ bool TUrlRoute::addRouteFromString(QString line)
         if ((rt.action.isEmpty() && (rt.components.indexOf(":action")) < 0))
         {
             tError("Can only create a route without a default action if it accepts the :action parameter! [%s]", qPrintable(line));
-            return false;
-        }
-
-        if ((rt.components.indexOf(":controller") >= 0) && (rt.components.indexOf(":action") < 0))
-        {
-            tError("If a route accepts :controller it must also accept :action! [%s]", qPrintable(line));
             return false;
         }
 
@@ -224,19 +230,11 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
             goto trynext;
         }
 
-        if (!controller.isEmpty() && action.isEmpty())
-        {
-            tSystemWarn(
-                "Rejecting route [%s] for URL '%s'. Controller parameter set, but action parameter unset!",
-                qPrintable(rt.components.join('/')),
-                qPrintable(path)
-            );
-            goto trynext;
-        }
-
         if (controller.isEmpty()) controller = rt.controller;
         if (action.isEmpty()) action = rt.action;
 
+        if (controller.isEmpty() || action.isEmpty())
+            goto trynext;
 
         //Add any variable params
         if (rt.has_variable_params)
