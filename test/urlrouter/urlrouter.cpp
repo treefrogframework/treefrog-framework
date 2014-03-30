@@ -32,6 +32,21 @@ private slots:
     void should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_is_not_empty();
     void should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_has_multiple_items();
     void should_not_accept_routes_with_params_in_middle();
+
+    void should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action();
+    void should_not_create_route_if_it_does_not_accept_action_parameter_and_no_default_is_given();
+    void should_not_create_route_if_it_accepts_controller_but_not_action();
+    void should_create_route_if_only_accepts_action();
+    void should_create_route_if_destination_does_not_include_action_but_it_accepts_as_parameter();
+    void should_create_route_if_destination_is_empty_but_controller_and_action_parameters_given();
+
+    void should_route_correctly_when_controller_and_action_given_as_parameters();
+    void should_default_to_destination_if_controller_and_action_parameters_are_empty();
+    void should_route_correctly_when_only_action_parameter_is_given();
+    void should_route_correctly_when_controller_parameter_empty_but_action_is_given();
+    void should_not_route_if_controller_given_but_action_is_not();
+
+
 };
 
 void TestUrlRouter::init()
@@ -52,7 +67,7 @@ void TestUrlRouter::should_route_get_correctly()
 
     TRouting r = ur->findRouting(Tf::Get, "/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("get"));
     QCOMPARE(r.params, QStringList());
 }
@@ -63,7 +78,7 @@ void TestUrlRouter::should_route_post_correctly()
 
     TRouting r = ur->findRouting(Tf::Post, "/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("post"));
     QCOMPARE(r.params, QStringList());
 }
@@ -73,7 +88,7 @@ void TestUrlRouter::should_route_put_correctly()
 
     TRouting r = ur->findRouting(Tf::Put, "/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("put"));
     QCOMPARE(r.params, QStringList());
 }
@@ -83,7 +98,7 @@ void TestUrlRouter::should_route_patch_correctly()
 
     TRouting r = ur->findRouting(Tf::Patch, "/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("patch"));
     QCOMPARE(r.params, QStringList());
 }
@@ -93,7 +108,7 @@ void TestUrlRouter::should_route_delete_correctly()
 
     TRouting r = ur->findRouting(Tf::Delete, "/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("del"));
     QCOMPARE(r.params, QStringList());
 }
@@ -122,7 +137,7 @@ void TestUrlRouter::should_route_urls_with_parameters()
     ur->addRouteFromString("GET  /:params 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/p1/p2/p3/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
 }
@@ -132,7 +147,7 @@ void TestUrlRouter::should_route_urls_with_empty_parameters()
     ur->addRouteFromString("GET  /:params 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/p1//p3/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "" << "p3");
 }
@@ -142,7 +157,7 @@ void TestUrlRouter::should_route_urls_with_no_parameters()
     ur->addRouteFromString("GET  /:params 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList());
 }
@@ -152,7 +167,7 @@ void TestUrlRouter::should_route_urls_with_single_parameters_correctly()
     ur->addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/foo/p1/bar/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1");
 }
@@ -170,7 +185,7 @@ void TestUrlRouter::should_route_urls_with_empty_single_parameters_correctly()
     ur->addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/foo//bar/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "");
 }
@@ -180,7 +195,7 @@ void TestUrlRouter::should_route_urls_with_multiple_single_parameters_correctly(
     ur->addRouteFromString("GET  /foo/:param/bar/:param/baz/:param 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/foo/p1/bar/p2/baz/p3/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
 }
@@ -206,7 +221,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
     ur->addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/foo/p1/baz/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1");
 }
@@ -216,7 +231,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
     ur->addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/foo/p1/baz/p2/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2");
 }
@@ -226,7 +241,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
     ur->addRouteFromString("GET  /foo/:param/baz/:params/ 'dummy#index'");
     TRouting r = ur->findRouting(Tf::Get, "/foo/p1/baz/p2/p3/");
 
-    QCOMPARE(QString(r.controller), QString("dummycontroller"));
+    QCOMPARE(QString(r.controller), QString("dummy"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
 }
@@ -234,6 +249,108 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
 void TestUrlRouter::should_not_accept_routes_with_params_in_middle()
 {
     QCOMPARE(ur->addRouteFromString("GET /foo/:params/bar 'dummy#index'"), false);
+}
+
+void TestUrlRouter::should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action()
+{
+    QString route = "GET /";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, false);
+}
+
+void TestUrlRouter::should_create_route_if_destination_is_empty_but_controller_and_action_parameters_given()
+{
+    QString route = "GET /:controller/:action";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, true);
+}
+
+void TestUrlRouter::should_not_create_route_if_it_does_not_accept_action_parameter_and_no_default_is_given()
+{
+    QString route = "GET /:controller 'dummy' ";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, false);
+}
+
+void TestUrlRouter::should_not_create_route_if_it_accepts_controller_but_not_action()
+{
+    QString route = "GET /:controller 'dummy#default' ";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, false);
+}
+
+void TestUrlRouter::should_create_route_if_only_accepts_action()
+{
+    QString route = "GET /:action 'dummy#default' ";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, true);
+}
+
+void TestUrlRouter::should_create_route_if_destination_does_not_include_action_but_it_accepts_as_parameter()
+{
+    QString route = "GET /:action 'default' ";
+    bool result = ur->addRouteFromString(route);
+
+    QCOMPARE(result, true);
+}
+
+void TestUrlRouter::should_route_correctly_when_controller_and_action_given_as_parameters()
+{
+    QString route = "GET /:controller/:action 'default#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "/good/goodaction/");
+
+    QCOMPARE(QString(r.controller), QString("good"));
+    QCOMPARE(QString(r.action), QString("goodaction"));
+}
+
+void TestUrlRouter::should_default_to_destination_if_controller_and_action_parameters_are_empty()
+{
+    QString route = "GET /:controller/:action 'default#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "///");
+
+    QCOMPARE(QString(r.controller), QString("default"));
+    QCOMPARE(QString(r.action), QString("defaultaction"));
+}
+
+void TestUrlRouter::should_route_correctly_when_only_action_parameter_is_given()
+{
+    QString route = "GET /:action 'default#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "/newaction/");
+
+    QCOMPARE(QString(r.controller), QString("default"));
+    QCOMPARE(QString(r.action), QString("newaction"));
+}
+
+void TestUrlRouter::should_route_correctly_when_controller_parameter_empty_but_action_is_given()
+{
+    QString route = "GET /:controller/:action 'default#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "//otheraction/");
+
+    QCOMPARE(QString(r.controller), QString("default"));
+    QCOMPARE(QString(r.action), QString("otheraction"));
+}
+
+void TestUrlRouter::should_not_route_if_controller_given_but_action_is_not()
+{
+    QString route = "GET /:controller/:action 'default#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "/othercontroller/");
+
+    QCOMPARE(r.isEmpty(), true);
 }
 
 
