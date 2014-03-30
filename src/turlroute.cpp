@@ -65,15 +65,6 @@ bool TUrlRoute::addRouteFromString(QString line)
             return false;
         }
 
-        // parse path
-        if (route.endsWith(":params")) {
-            rt.params = true;
-            rt.path = route.left(route.length() - QString(":params").length());
-        } else {
-            rt.params = false;
-            rt.path = route;
-        }
-
         // parse controller and action
         QStringList list = destination.split('#');
         if (list.count() == 2) {
@@ -84,13 +75,28 @@ bool TUrlRoute::addRouteFromString(QString line)
             return false;
         }
 
-        if ((!rt.params) && (!rt.path.endsWith('/')))
-            rt.path += QLatin1Char('/');
+        rt.components = route.split('/');
+        if (route.startsWith('/')) rt.components.takeFirst();
+        if (route.endsWith('/')) rt.components.takeLast();
+
+        if (rt.components.indexOf(":params") >= 0)
+        {
+            if (rt.components.indexOf(":params") != rt.components.length() - 1)
+            {
+                tError("Invalid route: :params must be at the end! [%s]",qPrintable(route));
+                return false;
+            }
+            else
+            {
+                rt.components.takeLast();
+                rt.has_variable_params = 1;
+            }
+        }
 
         routes << rt;
-        tSystemDebug("added route: method:%d path:%s ctrl:%s action:%s params:%d",
-                     rt.method, qPrintable(rt.path), rt.controller.data(),
-                     rt.action.data(), rt.params);
+        tSystemDebug("added route: method:%d components:%s ctrl:%s action:%s, params:%d",
+                     rt.method, qPrintable(rt.components.join('/')), rt.controller.data(),
+                     rt.action.data(), rt.has_variable_params);
         return true;
     } else {
         tError("Invalid directive, '%s'", qPrintable(line));
@@ -127,52 +133,64 @@ bool TUrlRoute::parseConfigFile()
 TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) const
 {
     QStringList params;
+    QStringList components = path.split('/');
+    components.takeFirst();
+    components.takeLast();
 
     for (QListIterator<TRoute> i(routes); i.hasNext(); ) {
         const TRoute &rt = i.next();
-
-        //If our target is not starting with the same string, there cannot be a match
-        if (!path.startsWith(rt.path)) continue;
-
-        //If we don't have the params set, we need to have an exact match.
-        if (!rt.params && (path != rt.path)) continue;
-
-        //Parse parameters
-        if (rt.params)
-        {
-            int len = rt.path.length();
-            QString paramstr = path.mid(len - 1);
-            params = paramstr.split('/', QString::KeepEmptyParts);
-
-            if (paramstr.startsWith('/')) params.takeFirst();
-            if (paramstr.endsWith('/')) params.takeLast();
-        }
 
         //Check if we have a good http verb
         switch(rt.method)
         {
             case TRoute::Match:
-                return TRouting(rt.controller, rt.action, params);
-
+                //We match anything here
+                break;
             case TRoute::Get:
-                if (method == Tf::Get) return TRouting(rt.controller, rt.action, params);
-                continue;
+                if (method != Tf::Get) continue;
+                break;
             case TRoute::Post:
-                if (method == Tf::Post) return TRouting(rt.controller, rt.action, params);
-                continue;
+                if (method != Tf::Post) continue;
+                break;
             case TRoute::Patch:
-                if (method == Tf::Patch) return TRouting(rt.controller, rt.action, params);
-                continue;
+                if (method != Tf::Patch) continue;
+                break;
             case TRoute::Put:
-                if (method == Tf::Put) return TRouting(rt.controller, rt.action, params);
-                continue;
+                if (method != Tf::Put) continue;
+                break;
             case TRoute::Delete:
-                if (method == Tf::Delete) return TRouting(rt.controller, rt.action, params);
-                continue;
+                if (method != Tf::Delete) continue;
+                break;
             default:
                 tSystemWarn("Unkown route method in findRouting: %d", rt.method);
                 continue;
+                break;
         }
+
+        //To short?
+        if (components.length() < rt.components.length()) continue;
+
+        //Parse any parameters
+        for(int j=0; j < rt.components.length(); j++)
+        {
+            if (rt.components[j] == components[j]) continue;
+
+            if (rt.components[j] == ":param") {
+                params << components[j];
+                continue;
+            }
+
+            goto trynext;
+        }
+
+        //Add any variable params
+        if (rt.has_variable_params)
+            params << components.mid(rt.components.length());
+
+        return TRouting(rt.controller, rt.action, params);
+
+trynext:
+        continue;
     }
 
     return TRouting();  // Not found routing info

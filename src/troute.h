@@ -2,7 +2,7 @@
 #define TROUTE_H
 
 #include <QByteArray>
-#include <QString>
+#include <QStringList>
 
 class TRoute {
 public:
@@ -18,10 +18,10 @@ public:
     };
 
     int     method;
-    QString path;
+    QStringList components;
     QByteArray controller;
     QByteArray action;
-    bool    params;
+    bool has_variable_params;
 
     static int methodFromString(QString name);
     QString methodToString(int method);
