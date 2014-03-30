@@ -29,7 +29,6 @@
 #endif
 
 #define AUTO_ID_REGENERATION  "Session.AutoIdRegeneration"
-#define DIRECT_VIEW_RENDER_MODE  "DirectViewRenderMode"
 #define ENABLE_CSRF_PROTECTION_MODULE "EnableCsrfProtectionModule"
 #define SESSION_COOKIE_PATH  "Session.CookiePath"
 #define LISTEN_PORT  "ListenPort"
@@ -150,36 +149,11 @@ void TActionContext::execute(THttpRequest &request)
             tSystemDebug("Routing: controller:%s  action:%s params: [%s]", qPrintable(rt.controller),
                          qPrintable(rt.action), qPrintable(rt.params.join(',')));
 
-            if (rt.isEmpty()) {
-                // Default URL routing
-                rt.params = path.split('/', QString::KeepEmptyParts);
-                if (path.startsWith('/')) rt.params.takeFirst();
-                if (path.endsWith('/')) rt.params.takeLast();
+            // Default URL routing
+            if (rt.controller == "applicationcontroller")
+                rt.controller.clear();  // Can not call 'ApplicationController'
 
-                tSystemDebug("rt.params= %s", qPrintable(rt.params.join(',')));
-
-                // Direct view render mode?
-                if (Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool()) {
-                    // Direct view setting
-                    rt.controller = "directcontroller";
-                    rt.action = "show";
-                } else {
-                    if (!rt.params.value(0).isEmpty()) {
-                        rt.controller = rt.params.takeFirst().toLower().toLatin1() + "controller";
-
-                        if (rt.controller == "applicationcontroller") {
-                            rt.controller.clear();  // Can not call 'ApplicationController'
-                        }
-
-                        // Default action: index
-                        rt.action = rt.params.value(0, QLatin1String("index")).toLatin1();
-                        if (!rt.params.isEmpty()) {
-                            rt.params.takeFirst();
-                        }
-                    }
-                    tSystemDebug("Active Controller : %s", qPrintable(rt.controller));
-                }
-            }
+            tSystemDebug("Active Controller : %s", qPrintable(rt.controller));
 
             // Call controller method
             TDispatcher<TActionController> ctlrDispatcher(rt.controller + "controller");
