@@ -177,12 +177,12 @@ void TActionContext::execute(THttpRequest &request)
                             rt.params.takeFirst();
                         }
                     }
-                    tSystemDebug("Active Controller : %s", rt.controller.data());
+                    tSystemDebug("Active Controller : %s", qPrintable(rt.controller));
                 }
             }
 
             // Call controller method
-            TDispatcher<TActionController> ctlrDispatcher(rt.controller);
+            TDispatcher<TActionController> ctlrDispatcher(rt.controller + "controller");
             currController = ctlrDispatcher.object();
             if (currController) {
                 currController->setActionName(rt.action);
@@ -230,7 +230,7 @@ void TActionContext::execute(THttpRequest &request)
                 if (currController->preFilter()) {
 
                     // Dispathes
-                    bool dispatched = ctlrDispatcher.invoke(rt.action, rt.params);
+                    bool dispatched = ctlrDispatcher.invoke(rt.action.toLatin1(), rt.params);
                     if (dispatched) {
                         autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
 

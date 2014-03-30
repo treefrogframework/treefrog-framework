@@ -9,12 +9,12 @@
 class TRouting {
 public:
     bool empty;
-    QByteArray controller;
-    QByteArray action;
+    QString controller;
+    QString action;
     QStringList params;
 
     TRouting();
-    TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
+    TRouting(const QString &controller, const QString &action, const QStringList &params = QStringList());
     bool isEmpty() const { return empty; }
     bool isAllowed() const { return !empty && !controller.isEmpty(); }
 
@@ -26,7 +26,7 @@ inline TRouting::TRouting()
     : empty(true) { }
 
 
-inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
+inline TRouting::TRouting(const QString &ctrl, const QString &act, const QStringList &p)
     : empty(false), controller(ctrl), action(act), params(p) { }
 
 
