@@ -48,6 +48,7 @@ private slots:
     void should_route_correctly_when_controller_parameter_empty_but_action_is_given();
     void should_not_route_if_controller_given_but_action_is_not();
     void should_route_correctly_when_controller_parameter_given_and_does_not_accept_action_parameter();
+    void should_parse_params_correctly_even_if_preceding_parameter_is_empty();
 };
 
 void TestUrlRouter::init()
@@ -380,6 +381,20 @@ void TestUrlRouter::should_route_correctly_when_controller_parameter_given_and_d
 
     QCOMPARE(QString(r.controller), QString("other"));
     QCOMPARE(QString(r.action), QString("defaultaction"));
+}
+
+void TestUrlRouter::should_parse_params_correctly_even_if_preceding_parameter_is_empty()
+{
+    QString route = "GET /foo/:action/:params 'default#defaultaction' ";
+    ur->addRouteFromString(route);
+
+    TRouting r = ur->findRouting(Tf::Get, "/foo//p1/p2/p3/");
+
+    printf("p=%s\n",qPrintable(r.params.join(',')));
+
+    QCOMPARE(QString(r.controller), QString("default"));
+    QCOMPARE(QString(r.action), QString("defaultaction"));
+    QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
 }
 
 

@@ -42,8 +42,9 @@ void TUrlRoute::instantiate()
             urlRoute->addRouteFromString("MATCH /:params 'directcontroller#show'");
         else
         {
-            urlRoute->addRouteFromString("MATCH /:controller/:params '#index'");
+            urlRoute->addRouteFromString("MATCH /:controller//:params '#index'");
             urlRoute->addRouteFromString("MATCH /:controller/:action/:params");
+            urlRoute->addRouteFromString("MATCH /:controller '#index'");
         }
 
         qAddPostRoutine(::cleanup);
