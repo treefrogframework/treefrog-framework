@@ -15,7 +15,10 @@ private slots:
     void subject();
     void addAddress_data();
     void addAddress();
-    void date();
+    void localDateTime_data();
+    void localDateTime();
+    void utcDateTime_data();
+    void utcDateTime();
     void parse();
 };
 
@@ -146,13 +149,54 @@ void TestMailMessage::addAddress()
     //qDebug("%s", msg.toByteArray().data());
 }
 
-
-void TestMailMessage::date()
+void TestMailMessage::localDateTime_data()
 {
+    QTest::addColumn<QDateTime>("localTime");
+    QTest::addColumn<QString>("result");
+
+    // Timezone
+    uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::UTC).toTime_t();
+    uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::LocalTime).toTime_t();
+    int offset = (utc - local) / 60;
+    QString offsetStr = QString("%1%2%3")
+        .arg(offset > 0 ? '+' : '-')
+        .arg(qAbs(offset) / 60, 2, 10, QLatin1Char('0'))
+        .arg(qAbs(offset) % 60, 2, 10, QLatin1Char('0'));
+
+    QTest::newRow("1") << QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::LocalTime) << "Mon, 28 Mar 2011 12:11:04 " + offsetStr;
+    QTest::newRow("2") << QDateTime(QDate(2014,3,31), QTime(1,0,0), Qt::LocalTime) << "Mon, 31 Mar 2014 01:00:00 " + offsetStr;
+}
+
+void TestMailMessage::localDateTime()
+{
+    QFETCH(QDateTime, localTime);
+    QFETCH(QString, result);
+
     TMailMessage msg;
-    msg.setDate(QDateTime(QDate(2011,3,28), QTime(12,11,04)));
-    //qDebug("%s", msg.date().data());
-    QCOMPARE(msg.date(), QByteArray("Mon, 28 Mar 2011 12:11:04 +0900"));
+    msg.setDate(localTime);
+
+    QCOMPARE(msg.date(), result.toLatin1());
+}
+
+
+void TestMailMessage::utcDateTime_data()
+{
+    QTest::addColumn<QDateTime>("utc");
+    QTest::addColumn<QByteArray>("result");
+
+    QTest::newRow("1") << QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::UTC) << QByteArray("Mon, 28 Mar 2011 12:11:04 +0000");
+    QTest::newRow("2") << QDateTime(QDate(2014,3,31), QTime(1,0,0), Qt::UTC) << QByteArray("Mon, 31 Mar 2014 01:00:00 +0000");
+}
+
+
+void TestMailMessage::utcDateTime()
+{
+    QFETCH(QDateTime, utc);
+    QFETCH(QByteArray, result);
+
+    TMailMessage msg;
+    msg.setDateUTC(utc);
+    QCOMPARE(msg.date(), result);
 }
 
 
