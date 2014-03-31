@@ -32,6 +32,7 @@ private slots:
     void should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_is_not_empty();
     void should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_has_multiple_items();
     void should_not_accept_routes_with_params_in_middle();
+    void should_not_accept_a_route_if_request_has_surplus_parameters();
 
     void should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action();
     void should_not_create_route_if_it_does_not_accept_action_parameter_and_no_default_is_given();
@@ -250,6 +251,15 @@ void TestUrlRouter::should_not_accept_routes_with_params_in_middle()
 {
     QCOMPARE(ur->addRouteFromString("GET /foo/:params/bar 'dummy#index'"), false);
 }
+
+void TestUrlRouter::should_not_accept_a_route_if_request_has_surplus_parameters()
+{
+    ur->addRouteFromString("GET  / 'dummy#index'");
+    TRouting r = ur->findRouting(Tf::Get, "/foo/p1/baz/p2/p3/");
+
+    QCOMPARE(r.isEmpty(), true);
+}
+
 
 void TestUrlRouter::should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action()
 {

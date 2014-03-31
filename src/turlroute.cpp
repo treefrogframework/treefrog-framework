@@ -112,6 +112,7 @@ bool TUrlRoute::addRouteFromString(QString line)
             return false;
         }
 
+        rt.has_variable_params = 0;
         if (rt.components.indexOf(":params") >= 0)
         {
             if (rt.components.indexOf(":params") != rt.components.length() - 1)
@@ -132,7 +133,7 @@ bool TUrlRoute::addRouteFromString(QString line)
                      rt.action.data(), rt.has_variable_params);
         return true;
     } else {
-        tError("Invalid directive, '%s'", qPrintable(line));
+        tError("Directive too short, '%s'", qPrintable(line));
         return false;
     }
 }
@@ -202,7 +203,10 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
                 break;
         }
 
-        //To short?
+        //Too long?
+        if ((components.length() > rt.components.length()) && (!rt.has_variable_params))  continue;
+
+        //Too short?
         if (components.length() < rt.components.length()) continue;
 
         //Parse any parameters
