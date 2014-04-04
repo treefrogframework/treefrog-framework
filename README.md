@@ -7,6 +7,9 @@ programming language. In application development, it provides an O/R mapping
 system and template system on an MVC architecture, aims to achieve high
 productivity through the policy of convention over configuration.
 
+Requirements
+------------
+TreeFrog uses the qt qmake build system.
 
 Features
 --------
