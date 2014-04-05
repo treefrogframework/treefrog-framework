@@ -30,9 +30,9 @@ public:
     static QByteArray getResponseReasonPhrase(int statusCode);
     static QString trimmedQuotes(const QString &string);
     static QByteArray timeZone();
-    static QByteArray toHttpDateTimeString(const QDateTime &localTime);
+    static QByteArray toHttpDateTimeString(const QDateTime &dateTime);
     static QDateTime fromHttpDateTimeString(const QByteArray &localTime);
-    static QByteArray toHttpDateTimeUTCString(const QDateTime &utc);
+    //static QByteArray toHttpDateTimeUTCString(const QDateTime &utc);
     static QDateTime fromHttpDateTimeUTCString(const QByteArray &utc);
     static QByteArray getUTCTimeString();
 

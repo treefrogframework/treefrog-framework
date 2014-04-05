@@ -32,8 +32,8 @@ public:
     void setContentLength(int len);
     QByteArray date() const;
     void setDate(const QByteArray &date);
-    void setDate(const QDateTime &localTime);
-    void setDateUTC(const QDateTime &utc);
+    void setDate(const QDateTime &dateTime);
+    //void setDateUTC(const QDateTime &utc);
     void setCurrentDate();
     virtual QByteArray toByteArray() const;
     TInternetMessageHeader &operator=(const TInternetMessageHeader &other);

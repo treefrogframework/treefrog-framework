@@ -173,19 +173,19 @@ void TInternetMessageHeader::setCurrentDate()
   Sets the value of the header field date to \a localTime
   as the local time on the computer.
 */
-void TInternetMessageHeader::setDate(const QDateTime &localTime)
+void TInternetMessageHeader::setDate(const QDateTime &dateTime)
 {
-    setRawHeader("Date", THttpUtility::toHttpDateTimeString(localTime));
+    setRawHeader("Date", THttpUtility::toHttpDateTimeString(dateTime));
 }
 
 /*!
   Sets the value of the header field date to \a utc as Coordinated
   Universal Time.
 */
-void TInternetMessageHeader::setDateUTC(const QDateTime &utc)
-{
-    setRawHeader("Date", THttpUtility::toHttpDateTimeUTCString(utc));
-}
+// void TInternetMessageHeader::setDateUTC(const QDateTime &utc)
+// {
+//     setRawHeader("Date", THttpUtility::toHttpDateTimeUTCString(utc));
+// }
 
 /*!
   Returns a byte array representation of the Internet message header.

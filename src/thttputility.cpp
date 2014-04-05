@@ -358,11 +358,24 @@ QByteArray THttpUtility::timeZone()
   Returns a byte array for Date field of an HTTP header, containing
   the datetime equivalent of \a localTime.
 */
-QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &localTime)
+QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &dateTime)
 {
-    QByteArray d = QLocale(QLocale::C).toString(localTime, HTTP_DATE_TIME_FORMAT).toLatin1();
+    QByteArray d = QLocale(QLocale::C).toString(dateTime, HTTP_DATE_TIME_FORMAT).toLatin1();
     d += ' ';
-    d += timeZone();
+
+    switch (dateTime.timeSpec()) {
+    case Qt::LocalTime:
+        d += timeZone();
+        break;
+
+    case Qt::UTC:
+        d += "+0000";
+        break;
+
+    default:
+        tWarn("Invalid time specification");
+        break;
+    }
     return d;
 }
 
@@ -383,12 +396,12 @@ QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
   Returns a byte array for Date field of an HTTP header, containing
   the UTC datetime equivalent of \a utc.
 */
-QByteArray THttpUtility::toHttpDateTimeUTCString(const QDateTime &utc)
-{
-    QByteArray d = QLocale(QLocale::C).toString(utc, HTTP_DATE_TIME_FORMAT).toLatin1();
-    d += " +0000";
-    return d;
-}
+// QByteArray THttpUtility::toHttpDateTimeUTCString(const QDateTime &utc)
+// {
+//     QByteArray d = QLocale(QLocale::C).toString(utc, HTTP_DATE_TIME_FORMAT).toLatin1();
+//     d += " +0000";
+//     return d;
+// }
 
 /*!
   Parses the UTC datetime array given in \a utc and returns
