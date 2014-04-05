@@ -11,6 +11,8 @@
 #include <TActionView>
 #include <TMailMessage>
 #include <TSmtpMailer>
+#include <TSendmailMailer>
+#include <QProcess>
 
 #define CONTROLLER_NAME "mailer"
 #define ACTIONE_NAME    "mail"
@@ -52,8 +54,10 @@ bool TActionMailer::deliver(const QString &templateName)
     // Creates the view-object
     TDispatcher<TActionView> viewDispatcher(viewClassName(CONTROLLER_NAME, templateName));
     TActionView *view = viewDispatcher.object();
-    if (!view)
+    if (!view) {
+        tSystemError("no such template : %s", qPrintable(templateName));
         return false;
+    }
 
     view->setVariantMap(allVariants());
     QString msg = view->toString();
@@ -66,6 +70,8 @@ bool TActionMailer::deliver(const QString &templateName)
     TMailMessage mail(msg, sets.value("ActionMailer.CharacterSet", "UTF-8").toByteArray());
 
     // Sets SMTP settings
+    bool delay = sets.value("ActionMailer.DelayedDelivery").toBool();
+
     QByteArray dm = sets.value("ActionMailer.DeliveryMethod").toByteArray().toLower();
     if (dm == "smtp") {
         // SMTP
@@ -86,8 +92,11 @@ bool TActionMailer::deliver(const QString &templateName)
             mailer->setPopBeforeSmtpAuthEnabled(popSvr, popPort, apop, true);
         }
 
+        if (sets.contains(PREFIX_SMTP "DelayedDelivery")) {
+            delay = sets.value(PREFIX_SMTP "DelayedDelivery").toBool();
+        }
+
         // Sends email
-        bool delay = sets.value(PREFIX_SMTP "DelayedDelivery", false).toBool();
         if (delay) {
             mailer->sendLater(mail);
         } else {
@@ -96,7 +105,24 @@ bool TActionMailer::deliver(const QString &templateName)
         }
 
     } else if (dm == "sendmail") {
-        // TODO
+        // Command location of 'sendmail'
+        QString cmd = Tf::app()->appSettings().value("ActionMailer.sendmail.CommandLocation").toString().trimmed();
+        if (cmd.isEmpty()) {
+            cmd = Tf::app()->appSettings().value("ActionMailer.sendMail.CommandLocation").toString().trimmed();
+        }
+
+        if (!cmd.isEmpty()) {
+            TSendmailMailer *mailer = new TSendmailMailer(cmd);
+            QByteArray rawmail = mail.toByteArray();
+            QList<QByteArray> recipients = mail.recipients();
+
+            if (delay) {
+                mailer->sendLater(mail);
+            } else {
+                mailer->send(mail);
+                mailer->deleteLater();
+            }
+        }
 
     } else if (dm.isEmpty()) {
         // not send

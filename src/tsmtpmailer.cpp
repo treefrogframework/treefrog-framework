@@ -10,6 +10,7 @@
 #include <QStringListIterator>
 #include <QDateTime>
 #include <QTimer>
+#include <QMutex>
 #include <QCoreApplication>
 #include <TCryptMac>
 #include <TPopMailer>
@@ -21,6 +22,8 @@
 #else
 #  define CRLF "\r\n"
 #endif
+
+static QMutex sendMutex;
 
 /*!
   \class TSmtpMailer
@@ -117,6 +120,8 @@ void TSmtpMailer::sendAndDeleteLater()
 
 bool TSmtpMailer::send()
 {
+    QMutexLocker locker(&sendMutex); // Global lock for load reduction of mail server
+
     if (pop) {
         // POP before SMTP
         pop->setUserName(userName);
