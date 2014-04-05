@@ -43,21 +43,17 @@ ViewConverter::ViewConverter(const QDir &view, const QDir &output, bool projectF
 
 int ViewConverter::convertView(const QString &templateSystem) const
 {
+    const QStringList OtamaFilter(QLatin1String("*.") + OtamaConverter::fileSuffix());
+    const QStringList ErbFilter(QLatin1String("*.") + ErbConverter::fileSuffix());
+
     QStringList classList;
-    
+
     QDir helpersDir = viewDir;
     helpersDir.cdUp();
     helpersDir.cd("helpers");
 
     ErbConverter erbconv(outputDir, helpersDir);
     OtamaConverter otamaconv(outputDir, helpersDir);
-
-    QStringList filter;
-    if (templateSystem == "Otama") {
-        filter << QLatin1String("*.") + OtamaConverter::fileSuffix();
-    } else {
-        filter << QLatin1String("*.") + ErbConverter::fileSuffix();
-    }
 
     foreach (QString d, viewDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         // Reads erb-files
@@ -71,13 +67,21 @@ int ViewConverter::convertView(const QString &templateSystem) const
             if (erbTrim.open(QIODevice::ReadOnly)) {
                 bool ok;
                 int mode = erbTrim.readLine().trimmed().toInt(&ok);
-                if (ok)
+                if (ok) {
                     trimMode = mode;
-                
+                }
                 erbTrim.close();
             }
         }
 
+        QStringList filter;
+        if (dir.dirName() == QLatin1String("mailer")) {
+            filter = ErbFilter;
+        } else {
+            filter = (templateSystem.toLower() == QLatin1String("otama")) ? OtamaFilter : ErbFilter;
+        }
+
+        // ERB or Otama
         foreach (QFileInfo fileinfo, dir.entryInfoList(filter, QDir::Files)) {
             bool convok = false;
             QString ext = fileinfo.suffix().toLower();
