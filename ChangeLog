@@ -1,3 +1,18 @@
+Changes with version 1.7.6
+  * Modified to specify the max connections of database pool.
+  * Changed identityKeyOfLoginUser() to public function.
+  * Added ApplicationController::staticRelease() function.
+  * Added StandardException class.
+  * Implemented TStaticReleaseThread class.
+  * Implemented command-line interface.
+  * Added setAllowUnauthenticatedUser(1) and setDenyUnauthenticatedUser(1)
+    functions into TAccessValidator class.
+  * Added the permissions parameter to renameUploadedFile().
+  * Modified save() function to call create() instead of mdata()->create().
+  * Fix a bug of files not generated with tspawn.
+  * Fix a bug of ERB generation for mailer directory.
+  * Implemented Sendmail client. [Experimental]
+
 Changes with version 1.7.5
   * Performance improvement of multiplexing server.
   * Modified to start multiple application servers under 'thread' MPM.
