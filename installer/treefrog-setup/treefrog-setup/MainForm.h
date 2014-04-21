@@ -172,7 +172,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.2.0";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.2.1";
             // 
             // labeltop
             // 
