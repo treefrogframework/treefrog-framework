@@ -88,6 +88,12 @@ public:
     QString checkBoxTag(const QString &name, const QVariant &value, bool checked = false,
                         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString checkBoxTag(const QString &name, const QString &value, const QStringList &checkedValues,
+                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString checkBoxTag(const QString &name, const QVariant &value, const QVariantList &checkedValues,
+                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+
     QString checkBoxTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
                         const THtmlAttribute &attributes = THtmlAttribute()) const;
 

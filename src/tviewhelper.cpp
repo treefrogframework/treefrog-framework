@@ -248,6 +248,24 @@ QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, con
 }
 
 /*!
+  Creates a input tag with type="checkbox", name=\a "name" and value=\a "value".
+  If the \a checkedValues parameter contains the \a value parameter, this checkbox is checked.
+*/
+QString TViewHelper::checkBoxTag(const QString &name, const QString &value, const QStringList &checkedValues, const THtmlAttribute &attributes) const
+{
+    return checkBoxTag(name, value, (!value.isEmpty() && checkedValues.contains(value)), attributes);
+}
+
+/*!
+  Creates a input tag with type="checkbox", name=\a "name" and value=\a "value".
+  If the \a checkedValues parameter contains the \a value parameter, this checkbox is checked.
+*/
+QString TViewHelper::checkBoxTag(const QString &name, const QVariant &value, const QVariantList &checkedValues, const THtmlAttribute &attributes) const
+{
+    return checkBoxTag(name, value, (!value.toString().isEmpty() && checkedValues.contains(value)), attributes);
+}
+
+/*!
   Creates a input tag with type="radio", name=\a "name" and value=\a "value".
 */
 QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, bool checked, const THtmlAttribute &attributes) const
