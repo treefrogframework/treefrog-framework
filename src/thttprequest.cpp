@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #endif
 
+#include <QDebug>
 
 class MethodHash : public QHash<QString, Tf::HttpMethod>
 {
@@ -26,6 +27,7 @@ public:
         insert("put",     Tf::Put);
         insert("delete",  Tf::Delete);
         insert("trace",   Tf::Trace);
+        insert("patch",   Tf::Patch);
     }
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
@@ -158,11 +160,24 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
  */
 Tf::HttpMethod THttpRequest::method() const
 {
+    Tf::HttpMethod ret = Tf::Invalid;
+
     QString s = d->header.method().toLower();
     if (!methodHash()->contains(s)) {
         return Tf::Invalid;
     }
-    return methodHash()->value(s);
+
+    ret = methodHash()->value(s);
+
+    //If this is a Post and we have a query parameter named 'method', override.
+    if ((ret == Tf::Post) && (hasQueryItem("_method")))
+    {
+      QString queryMethod = queryItemValue("_method");
+      if (methodHash()->contains(queryMethod))
+        ret = methodHash()->value(queryMethod);
+    }
+
+    return ret;
 }
 
 /*!
