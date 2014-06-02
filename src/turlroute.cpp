@@ -7,10 +7,30 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QHash>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <THttpUtility>
 #include "turlroute.h"
+
+
+class RouteDirectiveHash : public QHash<QString, int>
+{
+public:
+    RouteDirectiveHash() : QHash<QString, int>()
+    {
+        insert("match",    TRoute::Match);
+        insert("get",      TRoute::Get);
+        insert("post",     TRoute::Post);
+        insert("put",      TRoute::Put);
+        insert("patch",    TRoute::Patch);
+        insert("delete",   TRoute::Delete);
+        insert("trace",    TRoute::Trace);
+        insert("connect",  TRoute::Connect);
+        insert("patch",    TRoute::Patch);
+    }
+};
+Q_GLOBAL_STATIC(RouteDirectiveHash, directiveHash)
 
 
 static TUrlRoute *urlRoute = 0;
@@ -23,6 +43,20 @@ static void cleanup()
     }
 }
 
+
+static QStringList pathComponents(const QString &path)
+{
+    QStringList ret = path.split('/');
+
+    if (path.startsWith(QLatin1Char('/'))) {
+        ret.removeFirst();
+    }
+
+    if (path.length() > 1 && path.endsWith(QLatin1Char('/'))) {
+        ret.removeLast();
+    }
+    return ret;
+}
 
 /*!
  * Initializes.
@@ -60,67 +94,8 @@ bool TUrlRoute::parseConfigFile()
         ++cnt;
 
         if (!line.isEmpty() && !line.startsWith('#')) {
-            QStringList items = line.split(' ');
-            if (items.count() == 3) {
-                // Trimm quotes
-                items[1] = THttpUtility::trimmedQuotes(items[1]);
-                items[2] = THttpUtility::trimmedQuotes(items[2]);
-
-                TRoute rt;
-
-                // Check method
-                if (items[0].toLower() == "match") {
-                    rt.method = TRoute::Match;
-                } else if (items[0].toLower() == "get") {
-                    rt.method = TRoute::Get;
-                } else if (items[0].toLower() == "post") {
-                    rt.method = TRoute::Post;
-                } else {
-                    tError("Invalid directive, '%s'  [line : %d]", qPrintable(items[0]), cnt);
-                    continue;
-                }
-
-                // parse path
-                if (items[1].endsWith(":params")) {
-                    rt.params = true;
-                    rt.path = items[1].left(items[1].length() - 7);
-                } else {
-                    rt.params = false;
-                    rt.path = items[1];
-                }
-
-                // parse controller and action
-                QStringList list = items[2].split('#');
-                if (list.count() == 2) {
-                    rt.controller = list[0].toLower().toLatin1() + "controller";
-                    rt.action = list[1].toLatin1();
-                } else {
-                    tError("Invalid action, '%s'  [line : %d]", qPrintable(items[2]), cnt);
-                    continue;
-                }
-
-                routes << rt;
-                tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
-                             rt.method, qPrintable(rt.path), rt.controller.data(),
-                             rt.action.data(), rt.params);
-
-                if (!rt.params) {
-                    if (rt.path.endsWith('/')) {
-                        rt.path.chop(1);
-                    } else {
-                        rt.path += QLatin1Char('/');
-                    }
-
-                    if (!rt.path.isEmpty()) {
-                        routes << rt;
-                        tSystemDebug("route: method:%d path:%s ctrl:%s action:%s params:%d",
-                                     rt.method, qPrintable(rt.path), rt.controller.data(),
-                                     rt.action.data(), rt.params);
-                    }
-                }
-
-            } else {
-                tError("Invalid directive, '%s'  [line : %d]", qPrintable(line), cnt);
+            if (!addRouteFromString(line)) {
+                tError("Error parsing route %s [line: %d]", qPrintable(line), cnt);
             }
         }
     }
@@ -128,37 +103,120 @@ bool TUrlRoute::parseConfigFile()
 }
 
 
+bool TUrlRoute::addRouteFromString(const QString &line)
+{
+     QStringList items = line.simplified().split(' ');
+     if (items.count() != 3) {
+         tError("Invalid directive, '%s'", qPrintable(line));
+         return false;
+     }
+
+     // Trimm quotes
+     items[1] = THttpUtility::trimmedQuotes(items[1]);
+     items[2] = THttpUtility::trimmedQuotes(items[2]);
+     QString &path = items[1];
+
+     if (path.contains(":params") && !path.endsWith(":params")) {
+         return false;
+     }
+
+     TRoute rt;
+
+     // Check method
+     rt.method = directiveHash()->value(items[0].toLower(), TRoute::Invalid);
+     if (rt.method == TRoute::Invalid) {
+         tError("Invalid directive, '%s'", qPrintable(items[0]));
+         return false;
+     }
+
+     // parse path
+     rt.components = pathComponents(path);
+     rt.hasVariableParams = rt.components.contains(":params");
+
+     for (int i = 0; i < rt.components.count(); ++i) {
+         const QString &c = rt.components[i];
+
+         if (!c.isEmpty() && !c.startsWith(":")) {
+             rt.keywordIndexes << i;
+         }
+     }
+
+     // parse controller and action
+     QStringList list = items[2].split('#');
+     if (list.count() == 2) {
+         rt.controller = list[0].toLower().toLatin1() + "controller";
+         rt.action = list[1].toLatin1();
+     } else {
+         tError("Invalid action, '%s'", qPrintable(items[2]));
+         return false;
+     }
+
+     routes << rt;
+     tSystemDebug("route: method:%d path:%s  ctrl:%s action:%s params:%d",
+                  rt.method, qPrintable(QLatin1String("/") + rt.components.join("/")), rt.controller.data(),
+                  rt.action.data(), rt.hasVariableParams);
+     return true;
+}
+
+
 TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) const
 {
+    if (routes.isEmpty()) {
+        TRouting();
+    }
+
+    QStringList pathComps = pathComponents(path);
+
+    bool denied = false;
     for (QListIterator<TRoute> i(routes); i.hasNext(); ) {
         const TRoute &rt = i.next();
-        if (!rt.params && rt.path == path) {
-            if (rt.method != TRoute::Match
-                && (rt.method == TRoute::Get && method != Tf::Get)
-                && (rt.method == TRoute::Post && method != Tf::Post)) {
-                return TRouting("", "");  // reject routing
+
+        // Too long or short?
+        if (rt.hasVariableParams) {
+            if (pathComps.length() < rt.components.length() - 1) {
+                continue;
             }
-            return TRouting(rt.controller, rt.action);
+        } else {
+            if (pathComps.length() != rt.components.length()) {
+                continue;
+            }
         }
 
-        if (rt.params && path.startsWith(rt.path)) {
-            if (rt.method != TRoute::Match
-                && (rt.method == TRoute::Get && method != Tf::Get)
-                && (rt.method == TRoute::Post && method != Tf::Post)) {
-                return TRouting("", "");  // reject routing
+        for (QListIterator<int> it(rt.keywordIndexes); it.hasNext(); ) {
+            int idx = it.next();
+            if (pathComps[idx] != rt.components[idx]) {
+                goto continue_next;
             }
+        }
 
-            QStringList params;
-            int len = rt.path.endsWith('/') ? rt.path.length() : rt.path.length() + 1;
-            QString paramstr = path.mid(len);
-            if (!paramstr.isEmpty()) {
-                params = paramstr.split('/');
-                if (path.endsWith(QLatin1Char('/')) && !params.isEmpty()) {
-                    params.removeLast();  // unuse last item
+        denied = true;
+
+        if (rt.method == TRoute::Match || rt.method == method) {
+            QStringList params = pathComps;
+
+            if (params.count() == 1 && params[0].isEmpty()) {  // means path="/"
+                params.clear();
+            } else {
+                // Erases non-parameters
+                QListIterator<int> it(rt.keywordIndexes);
+                it.toBack();
+                while (it.hasPrevious()) {
+                    int idx = it.previous();
+                    params.removeAt(idx);
                 }
             }
+
             return TRouting(rt.controller, rt.action, params);
         }
+continue_next:
+        continue;
     }
-    return TRouting();  // Not found routing info
+
+    return (denied) ? TRouting("", "") : TRouting() /* Not found routing info */ ;
+}
+
+
+void TUrlRoute::clear()
+{
+    routes.clear();
 }

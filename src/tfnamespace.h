@@ -31,6 +31,8 @@ namespace Tf
         Put,
         Delete,
         Trace,
+        Connect,
+        Patch,
     };
 
     enum HttpStatusCode {

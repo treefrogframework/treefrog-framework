@@ -8,17 +8,28 @@
 
 class TRoute {
 public:
-    enum {
-        Match = 0,
-        Get,
-        Post,
+    enum RouteDirective {
+        Match   = 0,
+        Get     = Tf::Get,
+        Head    = Tf::Head,
+        Post    = Tf::Post,
+        Options = Tf::Options,
+        Put     = Tf::Put,
+        Delete  = Tf::Delete,
+        Trace   = Tf::Trace,
+        Connect = Tf::Connect,
+        Patch   = Tf::Patch,
+        Invalid = 0xff,
     };
 
     int     method;
-    QString path;
+    QStringList components;
+    QList<int>  keywordIndexes;
     QByteArray controller;
     QByteArray action;
-    bool    params;
+    bool    hasVariableParams;
+
+    TRoute() : method(Invalid), hasVariableParams(false) { }
 };
 
 
@@ -32,7 +43,7 @@ public:
     TRouting();
     TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
     bool isEmpty() const { return empty; }
-    bool isAllowed() const { return !empty && !controller.isEmpty(); }
+    bool isDenied() const { return !empty && controller.isEmpty(); }
 };
 
 
@@ -51,10 +62,13 @@ public:
     static const TUrlRoute &instance();
     TRouting findRouting(Tf::HttpMethod method, const QString &path) const;
 
-private:
+protected:
     TUrlRoute() { }
     bool parseConfigFile();
+    bool addRouteFromString(const QString &line);
+    void clear();
 
+private:
     QList<TRoute> routes;
 };
 

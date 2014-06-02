@@ -26,6 +26,8 @@ public:
         insert("put",     Tf::Put);
         insert("delete",  Tf::Delete);
         insert("trace",   Tf::Trace);
+        insert("connect", Tf::Connect);
+        insert("patch",   Tf::Patch);
     }
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
@@ -159,11 +161,42 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 Tf::HttpMethod THttpRequest::method() const
 {
     QString s = d->header.method().toLower();
-    if (!methodHash()->contains(s)) {
-        return Tf::Invalid;
-    }
-    return methodHash()->value(s);
+    return methodHash()->value(s, Tf::Invalid);
 }
+
+/*!
+  Returns a method value of X-HTTP methods override for REST API.
+*/
+Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
+{
+    Tf::HttpMethod method;
+    QString str = d->header.rawHeader("X-HTTP-Method-Override").toLower();
+    method = methodHash()->value(str, Tf::Invalid);
+    if (method != Tf::Invalid) {
+        return method;
+    }
+
+    str = d->header.rawHeader("X-HTTP-Method").toLower();
+    method = methodHash()->value(str, Tf::Invalid);
+    if (method != Tf::Invalid) {
+        return method;
+    }
+
+    str = d->header.rawHeader("X-METHOD-OVERRIDE").toLower();
+    method = methodHash()->value(str, Tf::Invalid);
+    return method;
+}
+
+/*!
+  Returns a method value as a query parameter named '_method'
+  for REST API.
+*/
+Tf::HttpMethod THttpRequest::queryItemMethod()
+{
+    QString queryMethod = queryItemValue("_method");
+    return methodHash()->value(queryMethod, Tf::Invalid);
+}
+
 
 /*!
   Returns the string value whose name is equal to \a name from the URL or the

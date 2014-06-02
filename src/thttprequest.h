@@ -46,6 +46,8 @@ public:
 
     const THttpRequestHeader &header() const { return d->header; }
     Tf::HttpMethod method() const;
+    Tf::HttpMethod getHttpMethodOverride() const;
+    Tf::HttpMethod queryItemMethod();
     QString parameter(const QString &name) const;
     QVariantMap allParameters() const;
 
