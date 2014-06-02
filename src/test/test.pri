@@ -1,6 +1,7 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
+QT += network sql
 QT -= gui
 greaterThan(QT_MAJOR_VERSION, 4) {
   QT += testlib
