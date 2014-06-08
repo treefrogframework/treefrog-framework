@@ -110,6 +110,16 @@ void TActionContext::releaseKvsDatabases()
 }
 
 
+bool directViewRenderMode()
+{
+    static int mode = -1;
+    if (mode < 0) {
+        mode = (int)Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool();
+    }
+    return (bool)mode;
+}
+
+
 void TActionContext::execute(THttpRequest &request)
 {
     T_TRACEFUNC("");
@@ -135,37 +145,25 @@ void TActionContext::execute(THttpRequest &request)
         QString path = THttpUtility::fromUrlEncoding(hdr.path().mid(0, hdr.path().indexOf('?')));
 
         // Routing info exists?
-        TRouting rt = TUrlRoute::instance().findRouting(method, path);
+        QStringList components = TUrlRoute::splitPath(path);
+        TRouting rt = TUrlRoute::instance().findRouting(method, components);
+
         tSystemDebug("Routing: controller:%s  action:%s", rt.controller.data(),
                      rt.action.data());
 
         if (rt.isEmpty()) {
             // Default URL routing
-            rt.params = path.split('/');
-            if (path.startsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
-                rt.params.removeFirst();  // unuse first item
-            }
-            if (path.endsWith(QLatin1Char('/')) && !rt.params.isEmpty()) {
-                rt.params.removeLast();  // unuse last item
-            }
 
-            // Direct view render mode?
-            if (Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool()) {
+            if (directViewRenderMode()) { // Direct view render mode?
                 // Direct view setting
-                rt.controller = "directcontroller";
-                rt.action = "show";
+                rt.setRouting("directcontroller", "show", components);
             } else {
-                if (!rt.params.value(0).isEmpty()) {
-                    rt.controller = rt.params.takeFirst().toLower().toLatin1() + "controller";
-
-                    if (rt.controller == "applicationcontroller") {
-                        rt.controller.clear();  // Can not call 'ApplicationController'
-                    }
-
-                    // Default action: index
-                    rt.action = rt.params.value(0, QLatin1String("index")).toLatin1();
-                    if (!rt.params.isEmpty()) {
-                        rt.params.takeFirst();
+                QByteArray c = components.value(0).toLatin1().toLower();
+                if (!c.isEmpty()) {
+                    if (c != "application") {  // Can not call 'ApplicationController'
+                        // Default action: "index"
+                        QByteArray action = components.value(1, QLatin1String("index")).toLatin1();
+                        rt.setRouting(c + "controller", action, components.mid(2));
                     }
                 }
                 tSystemDebug("Active Controller : %s", rt.controller.data());

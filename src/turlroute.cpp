@@ -44,20 +44,6 @@ static void cleanup()
 }
 
 
-static QStringList pathComponents(const QString &path)
-{
-    QStringList ret = path.split('/');
-
-    if (path.startsWith(QLatin1Char('/'))) {
-        ret.removeFirst();
-    }
-
-    if (path.length() > 1 && path.endsWith(QLatin1Char('/'))) {
-        ret.removeLast();
-    }
-    return ret;
-}
-
 /*!
  * Initializes.
  * Call this in main thread.
@@ -130,7 +116,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
      }
 
      // parse path
-     rt.components = pathComponents(path);
+     rt.components = splitPath(path);
      rt.hasVariableParams = rt.components.contains(":params");
 
      for (int i = 0; i < rt.components.count(); ++i) {
@@ -159,13 +145,11 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 }
 
 
-TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) const
+TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &components) const
 {
     if (routes.isEmpty()) {
         TRouting();
     }
-
-    QStringList pathComps = pathComponents(path);
 
     bool denied = false;
     for (QListIterator<TRoute> i(routes); i.hasNext(); ) {
@@ -173,18 +157,18 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
 
         // Too long or short?
         if (rt.hasVariableParams) {
-            if (pathComps.length() < rt.components.length() - 1) {
+            if (components.length() < rt.components.length() - 1) {
                 continue;
             }
         } else {
-            if (pathComps.length() != rt.components.length()) {
+            if (components.length() != rt.components.length()) {
                 continue;
             }
         }
 
         for (QListIterator<int> it(rt.keywordIndexes); it.hasNext(); ) {
             int idx = it.next();
-            if (pathComps[idx] != rt.components[idx]) {
+            if (components[idx] != rt.components[idx]) {
                 goto continue_next;
             }
         }
@@ -192,7 +176,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QString &path) cons
         denied = true;
 
         if (rt.method == TRoute::Match || rt.method == method) {
-            QStringList params = pathComps;
+            QStringList params = components;
 
             if (params.count() == 1 && params[0].isEmpty()) {  // means path="/"
                 params.clear();
@@ -219,4 +203,16 @@ continue_next:
 void TUrlRoute::clear()
 {
     routes.clear();
+}
+
+
+QStringList TUrlRoute::splitPath(const QString &path)
+{
+    int s = (path.startsWith(QLatin1Char('/'))) ? 1 : 0;
+    int len = path.length();
+
+    if (len > 1 && path.endsWith(QLatin1Char('/'))) {
+        --len;
+    }
+    return path.mid(s, len - s).split('/');
 }

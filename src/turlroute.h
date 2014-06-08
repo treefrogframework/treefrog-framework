@@ -42,8 +42,10 @@ public:
 
     TRouting();
     TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
+
     bool isEmpty() const { return empty; }
     bool isDenied() const { return !empty && controller.isEmpty(); }
+    void setRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
 };
 
 
@@ -54,13 +56,22 @@ inline TRouting::TRouting()
 inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
     : empty(false), controller(ctrl), action(act), params(p) { }
 
+inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
+{
+    empty = false;
+    controller = ctrl;
+    action = act;
+    params = p;
+}
+
 
 class T_CORE_EXPORT TUrlRoute
 {
 public:
     static void instantiate();
     static const TUrlRoute &instance();
-    TRouting findRouting(Tf::HttpMethod method, const QString &path) const;
+    static QStringList splitPath(const QString &path);
+    TRouting findRouting(Tf::HttpMethod method, const QStringList &components) const;
 
 protected:
     TUrlRoute() { }
