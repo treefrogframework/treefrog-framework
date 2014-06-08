@@ -42,6 +42,35 @@ bool ProcessInfo::waitForTerminated(int msecs)
 }
 
 
+QList<qint64> ProcessInfo::childProcessIds() const
+{
+    QList<qint64> ids;
+    QList<qint64> allPids = allConcurrentPids();
+
+    for (QListIterator<qint64> it(allPids); it.hasNext(); ) {
+        qint64 p = it.next();
+        if (ProcessInfo(p).ppid() == pid()) {
+            ids << p;
+        }
+    }
+    return ids;
+}
+
+
+void ProcessInfo::kill(qint64 ppid)
+{
+    ProcessInfo(ppid).kill();
+}
+
+
+void ProcessInfo::kill(QList<qint64> pids)
+{
+    for (QListIterator<qint64> it(pids); it.hasNext(); ) {
+        ProcessInfo(it.next()).kill();
+    }
+}
+
+
 QList<qint64> ProcessInfo::pidsOf(const QString &processName)
 {
     QList<qint64> ret;
@@ -56,17 +85,17 @@ QList<qint64> ProcessInfo::pidsOf(const QString &processName)
 }
 
 
-QList<qint64> ProcessInfo::killProcesses(const QString &name, qint64 ppid)
-{
-    QList<qint64> pids = pidsOf(name);
-    for (QListIterator<qint64> it(pids); it.hasNext(); ) {
-        const qint64 &pid = it.next();
-        ProcessInfo pi(pid);
-        if (pi.ppid() == ppid) {
-            pi.kill();
-        }
-    }
-    return pids;
-}
+// QList<qint64> ProcessInfo::killProcesses(const QString &name, qint64 ppid)
+// {
+//     QList<qint64> pids = pidsOf(name);
+//     for (QListIterator<qint64> it(pids); it.hasNext(); ) {
+//         const qint64 &pid = it.next();
+//         ProcessInfo pi(pid);
+//         if (pi.ppid() == ppid) {
+//             pi.kill();
+//         }
+//     }
+//     return pids;
+// }
 
 } // namespace TreeFrog

@@ -21,8 +21,10 @@ public:
     void kill();       // SIGKILL
     void restart();    // SIGHUP
     bool waitForTerminated(int msecs = 10000);
+    QList<qint64> childProcessIds() const;
 
-    static QList<qint64> killProcesses(const QString &processName, qint64 ppid);
+    static void kill(qint64 ppid);
+    static void kill(QList<qint64> pids);
     static QList<qint64> pidsOf(const QString &processName);
     static QList<qint64> allConcurrentPids();
 
