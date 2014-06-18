@@ -37,7 +37,7 @@ public:
   store database.
 */
 
-const char *const defaultConnection = "tf_default_connection";
+const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 static QMap<QString, TKvsDatabaseData> databaseMap;
 static QMutex mutex(QMutex::Recursive);
