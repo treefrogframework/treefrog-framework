@@ -122,8 +122,14 @@ bool TUrlRoute::addRouteFromString(const QString &line)
      for (int i = 0; i < rt.components.count(); ++i) {
          const QString &c = rt.components[i];
 
-         if (!c.isEmpty() && !c.startsWith(":")) {
-             rt.keywordIndexes << i;
+         if (!c.isEmpty()) {
+             if (c.startsWith(":")) {
+                 if (c != ":param" && c != ":params") {
+                     return false;
+                 }
+             } else {
+                 rt.keywordIndexes << i;
+             }
          }
      }
 

@@ -35,6 +35,7 @@ private slots:
     void should_not_accept_a_route_if_request_has_surplus_parameters();
 
     void should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action();
+    void should_not_create_route_if_bad_param();
     // void should_not_create_route_if_it_does_not_accept_action_parameter_and_no_default_is_given();
     // void should_not_create_route_if_it_accepts_controller_but_not_action_and_no_default_given();
     // void should_create_route_if_it_accepts_controller_but_not_action_but_default_given();
@@ -300,6 +301,14 @@ void TestUrlRouter::should_not_accept_a_route_if_request_has_surplus_parameters(
 void TestUrlRouter::should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action()
 {
     QString route = "GET /";
+    bool result = addRouteFromString(route);
+
+    QCOMPARE(result, false);
+}
+
+void TestUrlRouter::should_not_create_route_if_bad_param()
+{
+    QString route = "GET /foo/:cont 'dummy#index'";
     bool result = addRouteFromString(route);
 
     QCOMPARE(result, false);
