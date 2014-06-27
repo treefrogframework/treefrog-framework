@@ -111,51 +111,6 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 }
 
 /*!
-  Sets the request to \a header and \a body. This function is for internal use only.
-*/
-// void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray &body)
-// {
-//     d->header = THttpRequestHeader(header);
-//     d->queryItems.clear();
-//     d->formItems.clear();
-//     d->multipartFormData.clear();
-// #if QT_VERSION >= 0x050000
-//     d->jsonData = QJsonDocument();
-// #endif
-//     parseBody(body, header);
-// }
-
-/*!
-  Sets the request to \a header and \a body. This function is for internal use only.
-*/
-// void THttpRequest::setRequest(const QByteArray &header, const QByteArray &body)
-// {
-//     d->header = THttpRequestHeader(header);
-//     d->queryItems.clear();
-//     d->formItems.clear();
-//     d->multipartFormData.clear();
-// #if QT_VERSION >= 0x050000
-//     d->jsonData = QJsonDocument();
-// #endif
-//     parseBody(body, header);
-// }
-
-/*!
-  Sets the request to \a header and \a filePath. This function is for internal use only.
-*/
-// void THttpRequest::setRequest(const QByteArray &header, const QString &filePath)
-// {
-//     d->header = THttpRequestHeader(header);
-//     d->queryItems.clear();
-//     d->formItems.clear();
-//     d->multipartFormData = TMultipartFormData(filePath, boundary());
-//     d->formItems.unite(d->multipartFormData.formItems());
-// #if QT_VERSION >= 0x050000
-//     d->jsonData = QJsonDocument();
-// #endif
-// }
-
-/*!
   Returns the method.
  */
 Tf::HttpMethod THttpRequest::method() const
