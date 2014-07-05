@@ -4,6 +4,7 @@ Changes with version 1.7.7
   * Added code of checking parameters to addRouteFromString().
   * Added a test case, 'urlrouter'.
   * Added checkBoxTag() function.
+  * Fix a bug of 'abort' option.
 
 Changes with version 1.7.6
   * Modified to specify the max connections of database pool.
