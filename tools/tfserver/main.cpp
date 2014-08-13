@@ -18,8 +18,9 @@
 #include "signalhandler.h"
 using namespace TreeFrog;
 
-#define CTRL_C_OPTION  "--ctrlc-enable"
-#define SOCKET_OPTION  "-s"
+#define CTRL_C_OPTION     "--ctrlc-enable"
+#define DEBUG_MODE_OPTION "--debug"
+#define SOCKET_OPTION     "-s"
 
 
 #if QT_VERSION >= 0x050000
@@ -152,7 +153,11 @@ int main(int argc, char *argv[])
     }
 
 #ifdef Q_OS_WIN
-    if (sock <= 0) {
+    if (sock <= 0)
+#else
+    if (sock <= 0 && args.contains(DEBUG_MODE_OPTION))
+#endif
+    {
         int port = webapp.appSettings().value("ListenPort").toInt();
         if (port <= 0 || port > USHRT_MAX) {
             tSystemError("Invalid port number: %d", port);
@@ -161,7 +166,6 @@ int main(int argc, char *argv[])
         TApplicationServerBase::nativeSocketInit();
         sock = TApplicationServerBase::nativeListen(QHostAddress::Any, port);
     }
-#endif
 
     if (sock <= 0) {
         tSystemError("Invalid socket descriptor: %d", sock);
