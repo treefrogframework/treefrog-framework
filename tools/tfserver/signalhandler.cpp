@@ -248,12 +248,11 @@ static int DumpSignalInfo(int signal_number, siginfo_t *siginfo, char *buf, size
   formatter.AppendUint64(gettid(), 10);
   formatter.AppendString(") ");
   // Only linux has the PID of the signal sender in si_pid.
-#ifdef Q_OS_LINUX
+#if 0  // Unused in TreeFrog
   formatter.AppendString("from PID ");
   formatter.AppendUint64(siginfo->si_pid, 10);
-  formatter.AppendString("; ");
 #endif
-  formatter.AppendString("stack trace:\n");
+  formatter.AppendString("; stack trace:\n");
   return formatter.num_bytes_written();
 }
 
