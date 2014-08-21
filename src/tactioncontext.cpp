@@ -30,6 +30,7 @@
 
 #define AUTO_ID_REGENERATION  "Session.AutoIdRegeneration"
 #define DIRECT_VIEW_RENDER_MODE  "DirectViewRenderMode"
+#define ENABLE_HTTP_METHOD_OVERRIDE  "EnableHttpMethodOverride"
 #define ENABLE_CSRF_PROTECTION_MODULE "EnableCsrfProtectionModule"
 #define SESSION_COOKIE_PATH  "Session.CookiePath"
 #define LISTEN_PORT  "ListenPort"
@@ -120,6 +121,16 @@ static bool directViewRenderMode()
 }
 
 
+static bool httpMethodOverride()
+{
+    static int method = -1;
+    if (method < 0) {
+        method = (int)Tf::app()->appSettings().value(ENABLE_HTTP_METHOD_OVERRIDE, false).toBool();
+    }
+    return (bool)method;
+}
+
+
 void TActionContext::execute(THttpRequest &request)
 {
     T_TRACEFUNC("");
@@ -142,7 +153,17 @@ void TActionContext::execute(THttpRequest &request)
         tSystemDebug("path : %s", hdr.path().data());
 
         // HTTP method
-        Tf::HttpMethod method = httpReq->method();
+        Tf::HttpMethod method = Tf::Invalid;
+        if ( httpMethodOverride() ) {
+            method = httpReq->queryItemMethod();  // query parameter named '_method'
+            if (method == Tf::Invalid) {
+                method = httpReq->getHttpMethodOverride();  // X-HTTP-* methods override
+            }
+        }
+        if (method == Tf::Invalid) {
+            method = httpReq->method();
+        }
+
         QString path = THttpUtility::fromUrlEncoding(hdr.path().mid(0, hdr.path().indexOf('?')));
 
         // Routing info exists?

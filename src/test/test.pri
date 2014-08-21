@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 INCLUDEPATH += ../../../include
 
 
-include(../../tfbase.pri)
+include(../../../tfbase.pri)
 win32 {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)

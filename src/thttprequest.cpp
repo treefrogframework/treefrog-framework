@@ -8,13 +8,10 @@
 #include <THttpRequest>
 #include <TMultipartFormData>
 #include <THttpUtility>
-#include <TWebApplication>
 #include "tsystemglobal.h"
 #if QT_VERSION >= 0x050000
 #include <QJsonDocument>
 #endif
-
-#define ENABLE_HTTP_METHOD_OVERRIDE  "EnableHttpMethodOverride"
 
 
 class MethodHash : public QHash<QString, Tf::HttpMethod>
@@ -34,16 +31,6 @@ public:
     }
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
-
-
-static bool httpMethodOverride()
-{
-    static int method = -1;
-    if (method < 0) {
-        method = (int)Tf::app()->appSettings().value(ENABLE_HTTP_METHOD_OVERRIDE, false).toBool();
-    }
-    return (bool)method;
-}
 
 
 /*!
@@ -124,33 +111,54 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 }
 
 /*!
-  Returns the method of an HTTP request, which can be overridden by
-  another value, a query parameter named '_method' or
-  X-HTTP-Method-Override header, etc.
-  @sa THttpRequest::realMethod()
-  @sa EnableHttpMethodOverride of application.ini
- */
-Tf::HttpMethod THttpRequest::method() const
-{
-    Tf::HttpMethod method = Tf::Invalid;
-    if ( httpMethodOverride() ) {
-        method = queryItemMethod();  // query parameter named '_method'
-        if (method == Tf::Invalid) {
-            method = getHttpMethodOverride();  // X-HTTP-* methods override
-        }
-    }
-
-    if (method == Tf::Invalid) {
-        method = realMethod();
-    }
-    return method;
-}
+  Sets the request to \a header and \a body. This function is for internal use only.
+*/
+// void THttpRequest::setRequest(const THttpRequestHeader &header, const QByteArray &body)
+// {
+//     d->header = THttpRequestHeader(header);
+//     d->queryItems.clear();
+//     d->formItems.clear();
+//     d->multipartFormData.clear();
+// #if QT_VERSION >= 0x050000
+//     d->jsonData = QJsonDocument();
+// #endif
+//     parseBody(body, header);
+// }
 
 /*!
-  Returns the real method of an HTTP request.
-  @sa THttpRequest::method()
+  Sets the request to \a header and \a body. This function is for internal use only.
+*/
+// void THttpRequest::setRequest(const QByteArray &header, const QByteArray &body)
+// {
+//     d->header = THttpRequestHeader(header);
+//     d->queryItems.clear();
+//     d->formItems.clear();
+//     d->multipartFormData.clear();
+// #if QT_VERSION >= 0x050000
+//     d->jsonData = QJsonDocument();
+// #endif
+//     parseBody(body, header);
+// }
+
+/*!
+  Sets the request to \a header and \a filePath. This function is for internal use only.
+*/
+// void THttpRequest::setRequest(const QByteArray &header, const QString &filePath)
+// {
+//     d->header = THttpRequestHeader(header);
+//     d->queryItems.clear();
+//     d->formItems.clear();
+//     d->multipartFormData = TMultipartFormData(filePath, boundary());
+//     d->formItems.unite(d->multipartFormData.formItems());
+// #if QT_VERSION >= 0x050000
+//     d->jsonData = QJsonDocument();
+// #endif
+// }
+
+/*!
+  Returns the method.
  */
-Tf::HttpMethod THttpRequest::realMethod() const
+Tf::HttpMethod THttpRequest::method() const
 {
     QString s = d->header.method().toLower();
     return methodHash()->value(s, Tf::Invalid);
@@ -183,7 +191,7 @@ Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
   Returns a method value as a query parameter named '_method'
   for REST API.
 */
-Tf::HttpMethod THttpRequest::queryItemMethod() const
+Tf::HttpMethod THttpRequest::queryItemMethod()
 {
     QString queryMethod = queryItemValue("_method");
     return methodHash()->value(queryMethod, Tf::Invalid);

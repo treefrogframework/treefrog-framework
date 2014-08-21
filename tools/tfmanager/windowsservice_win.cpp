@@ -6,6 +6,12 @@
  */
 
 #include <Windows.h>
+#include <stdio.h>
+#include <wchar.h>
+#include <vector>
+#include <QString>
+#include <QFileInfo>
+#include <QDir>
 #include <TGlobal>
 #include <TWebApplication>
 #include <TSystemGlobal>
@@ -25,6 +31,90 @@ static SERVICE_STATUS serviceStatus = {
     0           // dwWaitHint
 };
 
+//! Added by Puchka Roman
+static QString enumerateService(DWORD processId)
+{
+    SC_HANDLE hSCM = OpenSCManager(NULL, NULL,
+        SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_CONNECT);
+
+    if (hSCM == NULL)
+    {
+        return QString();
+    }
+    DWORD bufferSize = 0;
+    DWORD requiredBufferSize = 0;
+    DWORD totalServicesCount = 0;
+    EnumServicesStatusEx(hSCM,
+        SC_ENUM_PROCESS_INFO,
+        SERVICE_WIN32,
+        SERVICE_STATE_ALL,
+        NULL,
+        bufferSize,
+        &requiredBufferSize,
+        &totalServicesCount,
+        NULL,
+        NULL);
+
+    std::vector<BYTE> buffer(requiredBufferSize);
+    EnumServicesStatusEx(hSCM,
+        SC_ENUM_PROCESS_INFO,
+        SERVICE_WIN32,
+        SERVICE_STATE_ALL,
+        buffer.data(),
+        buffer.size(),
+        &requiredBufferSize,
+        &totalServicesCount,
+        NULL,
+        NULL);
+
+    QString name;
+    LPENUM_SERVICE_STATUS_PROCESS services =
+        reinterpret_cast<LPENUM_SERVICE_STATUS_PROCESS>(buffer.data());
+    for (unsigned int i = 0; i < totalServicesCount; ++i)
+    {
+        ENUM_SERVICE_STATUS_PROCESS service = services[i];
+        if (service.ServiceStatusProcess.dwProcessId == processId)
+        {
+            // This is your service.
+            name = QString::fromUtf16((const ushort*)service.lpServiceName);
+            break;
+        }
+    }
+
+    CloseServiceHandle(hSCM);
+
+    return name;
+}
+
+//! Added by Puchka Roman
+static QString serviceFilePath(const QString &serviceName)
+{
+    QString result;
+    // Open the Service Control Manager
+    SC_HANDLE schSCManager = OpenSCManager(
+        NULL,                    // local computer
+        NULL,                    // ServicesActive database
+        SC_MANAGER_ALL_ACCESS);  // full access rights
+
+    if (schSCManager) {
+        // Try to open the service
+        SC_HANDLE schService = OpenService(
+                    schSCManager,
+                    (const wchar_t*)serviceName.utf16(),
+                    SERVICE_QUERY_CONFIG);
+        if (schService) {
+            DWORD sizeNeeded = 0;
+            char data[8 * 1024];
+            if (QueryServiceConfig(schService, (LPQUERY_SERVICE_CONFIG)data, 8 * 1024, &sizeNeeded)) {
+                LPQUERY_SERVICE_CONFIG config = (LPQUERY_SERVICE_CONFIG)data;
+                result = QString::fromUtf16((const ushort*)config->lpBinaryPathName);
+            }
+            CloseServiceHandle(schService);
+        }
+        CloseServiceHandle(schSCManager);
+    }
+    return result;
+}
 
 static void WINAPI serviceHandler(DWORD ctrl)
 {
@@ -54,7 +144,9 @@ static void WINAPI serviceHandler(DWORD ctrl)
 
 void WINAPI winServiceMain(DWORD, LPTSTR *)
 {
-    statusHandle = RegisterServiceCtrlHandler(TEXT("treefrogs"), serviceHandler);
+    //! Changed by Puchka Roman
+    QString serviceName = enumerateService(GetCurrentProcessId());
+    statusHandle = RegisterServiceCtrlHandler((const wchar_t*)serviceName.utf16(), serviceHandler);
     if (!statusHandle)
         return;
     
@@ -63,7 +155,16 @@ void WINAPI winServiceMain(DWORD, LPTSTR *)
     SetServiceStatus(statusHandle, &serviceStatus);
 
     // Main function
-    int ret = managerMain(0, (char**)"");
+    //! Changed by Puchka Roman
+    int ret = 1;
+    QString binary = serviceFilePath(serviceName);
+    if (!binary.isEmpty()) {
+        const char *args[1] = {binary.toStdString().c_str()};
+        try {
+            QDir::setCurrent(QFileInfo(binary).absolutePath());
+            ret = managerMain(1, (char**)args);
+        } catch (...) { }
+    }
 
     // Service status
     serviceStatus.dwCurrentState = SERVICE_STOPPED;
