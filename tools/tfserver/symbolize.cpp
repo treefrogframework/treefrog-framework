@@ -101,9 +101,9 @@ static ATTRIBUTE_NOINLINE void DemangleInplace(char *out, int out_size) {
   char demangled[256];  // Big enough for sane demangled symbols.
   if (Demangle(out, demangled, sizeof(demangled))) {
     // Demangling succeeded. Copy to out if the space allows.
-    size_t len = strlen(demangled);
-    if (len + 1 <= (size_t)out_size) {  // +1 for '\0'.
-      SAFE_ASSERT(len < sizeof(demangled));
+    int len = strlen(demangled);
+    if (len + 1 <= out_size) {  // +1 for '\0'.
+      SAFE_ASSERT(len < (int)sizeof(demangled));
       memmove(out, demangled, len + 1);
     }
   }
@@ -143,8 +143,8 @@ static ssize_t ReadPersistent(const int fd, void *buf, const size_t count) {
   SAFE_ASSERT(fd >= 0);
   SAFE_ASSERT(count <= SSIZE_MAX);
   char *buf0 = reinterpret_cast<char *>(buf);
-  ssize_t num_bytes = 0;
-  while ((size_t)num_bytes < count) {
+  size_t num_bytes = 0;
+  while (num_bytes < count) {
     ssize_t len;
     NO_INTR(len = read(fd, buf0 + num_bytes, count - num_bytes));
     if (len < 0) {  // There was an error other than EINTR.
@@ -155,7 +155,7 @@ static ssize_t ReadPersistent(const int fd, void *buf, const size_t count) {
     }
     num_bytes += len;
   }
-  SAFE_ASSERT((size_t)num_bytes <= count);
+  SAFE_ASSERT(num_bytes <= count);
   return num_bytes;
 }
 
@@ -178,7 +178,7 @@ static ssize_t ReadFromOffset(const int fd, void *buf,
 static bool ReadFromOffsetExact(const int fd, void *buf,
                                 const size_t count, const off_t offset) {
   ssize_t len = ReadFromOffset(fd, buf, count, offset);
-  return len == (ssize_t)count;
+  return len == (int)count;
 }
 
 // Returns elf_header.e_type if the file pointed by fd is an ELF binary.
@@ -206,12 +206,12 @@ GetSectionHeaderByType(const int fd, ElfW(Half) sh_num, const off_t sh_offset,
   for (int i = 0; i < sh_num;) {
     const ssize_t num_bytes_left = (sh_num - i) * sizeof(buf[0]);
     const ssize_t num_bytes_to_read =
-        ((ssize_t)sizeof(buf) > num_bytes_left) ? num_bytes_left : sizeof(buf);
+        ((int)sizeof(buf) > num_bytes_left) ? num_bytes_left : sizeof(buf);
     const ssize_t len = ReadFromOffset(fd, buf, num_bytes_to_read,
                                        sh_offset + i * sizeof(buf[0]));
     SAFE_ASSERT(len % sizeof(buf[0]) == 0);
     const ssize_t num_headers_in_buf = len / sizeof(buf[0]);
-    SAFE_ASSERT((size_t)num_headers_in_buf <= sizeof(buf) / sizeof(buf[0]));
+    SAFE_ASSERT(num_headers_in_buf <= (ssize_t)(sizeof(buf) / sizeof(buf[0])));
     for (int j = 0; j < num_headers_in_buf; ++j) {
       if (buf[j].sh_type == type) {
         *out = buf[j];
@@ -301,7 +301,7 @@ FindSymbol(uint64_t pc, const int fd, char *out, int out_size,
     const ssize_t len = ReadFromOffset(fd, &buf, sizeof(buf), offset);
     SAFE_ASSERT(len % sizeof(buf[0]) == 0);
     const ssize_t num_symbols_in_buf = len / sizeof(buf[0]);
-    SAFE_ASSERT((size_t)num_symbols_in_buf <= sizeof(buf)/sizeof(buf[0]));
+    SAFE_ASSERT(num_symbols_in_buf <= (ssize_t)(sizeof(buf) / sizeof(buf[0])));
     for (int j = 0; j < num_symbols_in_buf; ++j) {
       const ElfW(Sym)& symbol = buf[j];
       uint64_t start_address = symbol.st_value;

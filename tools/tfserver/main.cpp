@@ -18,9 +18,9 @@
 #include "signalhandler.h"
 using namespace TreeFrog;
 
-#define CTRL_C_OPTION     "--ctrlc-enable"
-#define DEBUG_MODE_OPTION "--debug"
-#define SOCKET_OPTION     "-s"
+#define CTRL_C_OPTION  "--ctrlc-enable"
+#define DEBUG_OPTION   "--debug"
+#define SOCKET_OPTION  "-s"
 
 
 #if QT_VERSION >= 0x050000
@@ -154,8 +154,10 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_WIN
     if (sock <= 0)
+#elif defined(Q_OS_UNIX)
+    if (sock <= 0 && args.contains(DEBUG_OPTION))
 #else
-    if (sock <= 0 && args.contains(DEBUG_MODE_OPTION))
+    if (0)
 #endif
     {
         int port = webapp.appSettings().value("ListenPort").toInt();
