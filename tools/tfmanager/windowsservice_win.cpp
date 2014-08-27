@@ -6,7 +6,6 @@
  */
 
 #include <Windows.h>
-#include <stdio.h>
 #include <wchar.h>
 #include <vector>
 #include <QString>
@@ -36,44 +35,41 @@ static QString enumerateService(DWORD processId)
     SC_HANDLE hSCM = OpenSCManager(NULL, NULL,
         SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_CONNECT);
 
-    if (hSCM == NULL)
-    {
+    if (hSCM == NULL) {
         return QString();
     }
     DWORD bufferSize = 0;
     DWORD requiredBufferSize = 0;
     DWORD totalServicesCount = 0;
     EnumServicesStatusEx(hSCM,
-        SC_ENUM_PROCESS_INFO,
-        SERVICE_WIN32,
-        SERVICE_STATE_ALL,
-        NULL,
-        bufferSize,
-        &requiredBufferSize,
-        &totalServicesCount,
-        NULL,
-        NULL);
+			 SC_ENUM_PROCESS_INFO,
+			 SERVICE_WIN32,
+			 SERVICE_STATE_ALL,
+			 NULL,
+			 bufferSize,
+			 &requiredBufferSize,
+			 &totalServicesCount,
+			 NULL,
+			 NULL);
 
     std::vector<BYTE> buffer(requiredBufferSize);
     EnumServicesStatusEx(hSCM,
-        SC_ENUM_PROCESS_INFO,
-        SERVICE_WIN32,
-        SERVICE_STATE_ALL,
-        buffer.data(),
-        buffer.size(),
-        &requiredBufferSize,
-        &totalServicesCount,
-        NULL,
-        NULL);
+			 SC_ENUM_PROCESS_INFO,
+			 SERVICE_WIN32,
+			 SERVICE_STATE_ALL,
+			 buffer.data(),
+			 buffer.size(),
+			 &requiredBufferSize,
+			 &totalServicesCount,
+			 NULL,
+			 NULL);
 
     QString name;
     LPENUM_SERVICE_STATUS_PROCESS services =
         reinterpret_cast<LPENUM_SERVICE_STATUS_PROCESS>(buffer.data());
-    for (unsigned int i = 0; i < totalServicesCount; ++i)
-    {
+    for (unsigned int i = 0; i < totalServicesCount; ++i) {
         ENUM_SERVICE_STATUS_PROCESS service = services[i];
-        if (service.ServiceStatusProcess.dwProcessId == processId)
-        {
+        if (service.ServiceStatusProcess.dwProcessId == processId) {
             // This is your service.
             name = QString::fromUtf16((const ushort*)service.lpServiceName);
             break;
@@ -103,7 +99,7 @@ static QString serviceFilePath(const QString &serviceName)
         if (schService) {
             DWORD sizeNeeded = 0;
             char data[8 * 1024];
-            if (QueryServiceConfig(schService, (LPQUERY_SERVICE_CONFIG)data, 8 * 1024, &sizeNeeded)) {
+            if (QueryServiceConfig(schService, (LPQUERY_SERVICE_CONFIG)data, sizeof(data), &sizeNeeded)) {
                 LPQUERY_SERVICE_CONFIG config = (LPQUERY_SERVICE_CONFIG)data;
                 result = QString::fromUtf16((const ushort*)config->lpBinaryPathName);
             }
@@ -155,7 +151,7 @@ void WINAPI winServiceMain(DWORD, LPTSTR *)
     int ret = 1;
     QString binary = serviceFilePath(serviceName);
     if (!binary.isEmpty()) {
-        const char *args[1] = {binary.toStdString().c_str()};
+        const char *args[1] = { binary.toStdString().c_str() };
         try {
             QDir::setCurrent(QFileInfo(binary).absolutePath());
             ret = managerMain(1, (char**)args);
