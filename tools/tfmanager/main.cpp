@@ -555,15 +555,16 @@ int managerMain(int argc, char *argv[])
 
 } // namespace TreeFrog
 
-
 int main(int argc, char *argv[])
 {
 #ifdef Q_OS_WIN
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-w") == 0) {
             // Windows service mode
-            SERVICE_TABLE_ENTRY entry[] = { { (LPTSTR)TEXT(""), TreeFrog::winServiceMain }, { 0, 0 } };
-            StartServiceCtrlDispatcher(entry);
+            SERVICE_TABLE_ENTRY entry[] = { { (LPTSTR)TEXT(""), (LPSERVICE_MAIN_FUNCTION)TreeFrog::winServiceMain },
+                                            { NULL, NULL } };
+            if (!StartServiceCtrlDispatcher(entry))
+                return 1;
             return 0;
         }
     }
