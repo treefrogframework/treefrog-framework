@@ -29,6 +29,17 @@ TableSchema::TableSchema(const QString &table, const QString &env)
             QSqlTableModel model;
             model.setTable(tablename);
             tableFields = model.record();
+
+            if (model.database().driverName().toUpper() == "QPSQL") {
+                // QPSQLResult doesn't call QSqlField::setAutoValue(), fix it
+                for (int i = 0; i < tableFields.count(); ++i) {
+                    QSqlField f = tableFields.field(i);
+                    if (f.defaultValue().toString().startsWith(QLatin1String("nextval"))) {
+                        f.setAutoValue(true);
+                        tableFields.replace(i, f);
+                    }
+                }
+            }
         } else {
             qCritical("Empty table name");
         }
