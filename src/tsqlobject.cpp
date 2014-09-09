@@ -157,6 +157,16 @@ bool TSqlObject::create()
         // Gets the last inserted value of auto-value field
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
+
+            if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
+                // For PostgreSQL without OIDS
+                ret = query.exec("SELECT LASTVAL()");
+                sqlError = query.lastError();
+                if (ret) {
+                    lastid = query.getNextValue();
+                }
+            }
+
             if (lastid.isValid()) {
                 QObject::setProperty(autoValName.toLatin1().constData(), lastid);
                 QSqlRecord::setValue(autoValueIndex(), lastid);
