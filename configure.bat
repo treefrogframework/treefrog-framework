@@ -4,6 +4,12 @@
 set VERSION=1.7.7
 set TFDIR=C:\TreeFrog\%VERSION%
 
+if "%DevEnvDir%" == "" (
+  set MAKE=mingw32-make
+) else (
+  set MAKE=nmake
+)
+
 :parse_loop
 if "%1" == "" goto :start
 if /i "%1" == "--prefix" goto :prefix
@@ -72,8 +78,8 @@ set TFDIR=%TFDIR:\=/%
 echo Compiling MongoDB driver library ...
 cd 3rdparty\mongo-c-driver
 qmake -r %OPT%
-mingw32-make clean >nul 2>&1
-mingw32-make >nul 2>&1
+%MAKE% clean >nul 2>&1
+%MAKE% >nul 2>&1
 if ERRORLEVEL 1 (
   echo Compile failed.
   echo MongoDB driver not available.
@@ -82,18 +88,18 @@ if ERRORLEVEL 1 (
 cd ..\..
 
 cd src
-if exist Makefile ( mingw32-make -k distclean >nul 2>&1 )
-qmake -spec win32-g++ %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
+if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 cd ..
 cd tools
-if exist Makefile ( mingw32-make -k distclean >nul 2>&1 )
-qmake -recursive -spec win32-g++ %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
-mingw32-make qmake
+if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
+%MAKE% qmake
 cd ..
 
 echo;
-echo First, run "mingw32-make install" in src directory.
-echo Next, run "mingw32-make install" in tools directory.
+echo First, run "%MAKE% install" in src directory.
+echo Next, run "%MAKE% install" in tools directory.
 
 :exit
 exit /b
