@@ -8,7 +8,9 @@ CONFIG += static console
 CONFIG -= qt
 DEFINES += MONGO_HAVE_STDINT MONGO_DLL_BUILD _POSIX_SOURCE
 macx:DEFINES += _DARWIN_C_SOURCE
-QMAKE_CFLAGS += -std=c99
+*-g++|*-clang {
+  QMAKE_CFLAGS += -std=c99
+}
 DEPENDPATH += src
 INCLUDEPATH += src
 
