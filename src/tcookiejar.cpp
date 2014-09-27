@@ -7,6 +7,14 @@
 
 #include <TCookieJar>
 
+#ifdef Q_CC_MSVC
+uint qHash(const TCookie &key)
+{
+    //calculate hash here
+    return reinterpret_cast<quintptr>(&key);
+}
+#endif
+
 /*!
   \class TCookieJar
   \brief The TCookieJar class holds network cookies.

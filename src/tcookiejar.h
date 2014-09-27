@@ -8,6 +8,10 @@
 
 typedef QNetworkCookie TCookie;
 
+#ifdef Q_CC_MSVC
+extern uint qHash(const TCookie &key);
+#endif
+
 
 class T_CORE_EXPORT TCookieJar : protected QList<TCookie>
 {

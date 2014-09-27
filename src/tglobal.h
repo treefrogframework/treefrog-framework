@@ -89,11 +89,18 @@
 
 #define T_VARIANT(VAR)  (variant(QLatin1String(#VAR)).toString())
 
+#ifdef Q_CC_MSVC
+# include <io.h>
+#endif
+
 #ifdef Q_OS_UNIX
-# define TF_CLOSE  tf_close
-# define TF_FLOCK  tf_flock
+# define TF_CLOSE(fd)     tf_close(fd)
+# define TF_FLOCK(fd,op)  tf_flock(fd,op)
+#elif defined(Q_CC_MSVC)
+# define TF_CLOSE(fd)     ::_close(fd)
+# define TF_FLOCK(fd,op)
 #else
-# define TF_CLOSE  ::close
+# define TF_CLOSE(fd)     ::close(fd)
 # define TF_FLOCK(fd,op)
 #endif
 

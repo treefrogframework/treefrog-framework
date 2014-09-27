@@ -12,10 +12,12 @@
 #include <TLog>
 #include <TActionContext>
 #include <TActionThread>
-#include <TActionWorker>
 #include <TActionForkProcess>
 #include <TApplicationScheduler>
 #include <TScheduler>
+#ifdef Q_OS_LINUX
+# include <TActionWorker>
+#endif
 #include <stdlib.h>
 #include <limits.h>
 #include "tloggerfactory.h"

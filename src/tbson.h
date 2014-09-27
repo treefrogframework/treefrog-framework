@@ -12,6 +12,7 @@ class T_CORE_EXPORT TBson
 public:
     TBson();
     ~TBson();
+    TBson(const TBson &other);
     TBsonObject *data() { return bsonData; }
     const TBsonObject *constData() const { return bsonData; }
 
@@ -29,7 +30,7 @@ private:
 
     friend class TMongoDriver;
     friend class TMongoCursor;
-    Q_DISABLE_COPY(TBson)
+    TBson &operator=(const TBson &other);
 };
 
 #endif // TBSON_H

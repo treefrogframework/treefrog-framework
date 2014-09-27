@@ -33,6 +33,12 @@ TBson::~TBson()
 }
 
 
+TBson::TBson(const TBson &other)
+{
+    bson_copy((bson *)bsonData, (bson *)other.bsonData);
+}
+
+
 QVariantMap TBson::fromBson(const TBson &bs)
 {
     return TBson::fromBson(bs.constData());

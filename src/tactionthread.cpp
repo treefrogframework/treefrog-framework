@@ -10,7 +10,9 @@
 #include <QAtomicInt>
 #include <TActionThread>
 #include <THttpRequest>
-#include <unistd.h>
+#ifndef Q_CC_MSVC
+# include <unistd.h>
+#endif
 #include "thttpsocket.h"
 #include "tsystemglobal.h"
 

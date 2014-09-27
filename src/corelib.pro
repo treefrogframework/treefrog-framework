@@ -284,10 +284,20 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 # Files for MongoDB
 INCLUDEPATH += ../3rdparty/mongo-c-driver/src
 win32 {
-  CONFIG(debug, debug|release) {
-    LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a -lws2_32
+  DEFINES += MONGO_STATIC_BUILD
+
+  win32-msvc* {
+    CONFIG(debug, debug|release) {
+      LIBS += ..\3rdparty\mongo-c-driver\debug\mongoc.lib
+    } else {
+      LIBS += ..\3rdparty\mongo-c-driver\release\mongoc.lib
+    }
   } else {
-    LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a -lws2_32
+    CONFIG(debug, debug|release) {
+      LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a -lws2_32
+    } else {
+      LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a -lws2_32
+    }
   }
 } else {
   LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
