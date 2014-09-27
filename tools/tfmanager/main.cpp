@@ -17,6 +17,9 @@
 # include <sys/utsname.h>
 # include <tfcore_unix.h>
 #endif
+#ifdef Q_OS_WIN
+# include <windows.h>
+#endif
 
 namespace TreeFrog {
 

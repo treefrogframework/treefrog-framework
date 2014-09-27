@@ -11,7 +11,9 @@
 #include "filewriter.h"
 #include <QPair>
 #include <QRegExp>
-#include <unistd.h>
+#ifndef Q_CC_MSVC
+# include <unistd.h>
+#endif
 
 #define MONGOOBJECT_HEADER_TEMPLATE                                     \
     "#ifndef %1OBJECT_H\n"                                              \

@@ -10,20 +10,6 @@ INCLUDEPATH += $$header.path
 
 include(../../tfbase.pri)
 
-win32 {
-  CONFIG(debug, debug|release) {
-    TARGET = $$join(TARGET,,,d)
-    LIBS += -ltreefrogd$${TF_VER_MAJ}
-  } else {
-    LIBS += -ltreefrog$${TF_VER_MAJ}
-  }
-  LIBS += -L "$$target.path"
-} else:macx {
-  LIBS += -F$$lib.path -framework treefrog
-} else:unix {
-  LIBS += -L$$lib.path -ltreefrog
-}
-
 isEmpty( target.path ) {
   win32 {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
@@ -31,6 +17,21 @@ isEmpty( target.path ) {
     target.path = /usr/bin
   }
 }
+
+win32 {
+  CONFIG(debug, debug|release) {
+    TARGET = $$join(TARGET,,,d)
+    LIBS += -ltreefrogd$${TF_VER_MAJ}
+  } else {
+    LIBS += -ltreefrog$${TF_VER_MAJ}
+  }
+  LIBS += -L"$$target.path"
+} else:macx {
+  LIBS += -F$$lib.path -framework treefrog
+} else:unix {
+  LIBS += -L$$lib.path -ltreefrog
+}
+
 INSTALLS += target
 
 !CONFIG(debug, debug|release) {

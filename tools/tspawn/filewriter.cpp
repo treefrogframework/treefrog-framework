@@ -5,9 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <unistd.h>
 #include <QtCore>
 #include "filewriter.h"
+#ifndef Q_CC_MSVC
+# include <unistd.h>
+#endif
 
 static bool gOverwrite = false;
 

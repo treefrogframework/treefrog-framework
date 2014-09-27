@@ -25,7 +25,7 @@ win32 {
   } else {
     LIBS += -ltreefrog$${TF_VER_MAJ}
   }
-  LIBS += -L "$$target.path"
+  LIBS += -L"$$target.path"
 } else:macx {
   LIBS += -F$$lib.path -framework treefrog
 } else:unix {

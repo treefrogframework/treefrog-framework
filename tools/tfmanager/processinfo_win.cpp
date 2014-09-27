@@ -30,7 +30,11 @@ qint64 ProcessInfo::ppid() const
     if (hProcess) {
         PROCESS_BASIC_INFORMATION basicInfo;
         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
+#ifdef Q_CC_MSVC
+            ppid = (qint64)basicInfo.UniqueProcessId;
+#else
             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
+#endif
         }
     }
     return ppid;

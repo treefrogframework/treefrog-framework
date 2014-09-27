@@ -5,8 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <unistd.h>
-#include <time.h>
 #include <QtCore>
 #include "global.h"
 #include "controllergenerator.h"
@@ -21,6 +19,10 @@
 #include "tableschema.h"
 #include "mongocommand.h"
 #include "util.h"
+#ifndef Q_CC_MSVC
+# include <unistd.h>
+#endif
+#include <time.h>
 
 #define L(str)  QLatin1String(str)
 #define SEP   QDir::separator()
