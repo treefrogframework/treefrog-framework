@@ -43,10 +43,10 @@
 #    define T_HELPER_EXPORT
 #  elif defined(TF_DLL)   // Use a Treefrog DLL
 #    define T_CORE_EXPORT Q_DECL_IMPORT
-#    define T_MODEL_EXPORT
+#    define T_MODEL_EXPORT Q_DECL_EXPORT
 #    define T_VIEW_EXPORT Q_DECL_EXPORT
 #    define T_CONTROLLER_EXPORT Q_DECL_EXPORT
-#    define T_HELPER_EXPORT
+#    define T_HELPER_EXPORT Q_DECL_EXPORT
 #  else
 #    define T_CORE_EXPORT
 #    define T_MODEL_EXPORT

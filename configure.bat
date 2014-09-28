@@ -77,8 +77,9 @@ set TFDIR=%TFDIR:\=/%
 :: Builds MongoDB driver
 echo Compiling MongoDB driver library ...
 cd 3rdparty\mongo-c-driver
+if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+
 qmake -r %OPT%
-%MAKE% clean >nul 2>&1
 %MAKE% >nul 2>&1
 if ERRORLEVEL 1 (
   echo Compile failed.
