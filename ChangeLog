@@ -1,3 +1,12 @@
+Changes with version 1.7.8
+  * Added a debug mode option for tadpole command.
+  * Fix a bug of TSqlObject for PostgresSQL.
+  * Fix a bug that QPSQLResult doesn't call QSqlField::setAutoValue().
+  * Changed for work of tfmanager in Windows service mode.
+  * Changed a default project file, app.pro.
+  * Changed a signal-handler message.
+  * Support for Visual Studio 2013. [Experimental]
+
 Changes with version 1.7.7
   * Routing enhancements, added ':param' parameter for routes.cfg.
   * Added a directive, EnableHttpMethodOverride, of application.ini.
