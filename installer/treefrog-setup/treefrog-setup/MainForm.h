@@ -333,11 +333,11 @@ namespace treefrogsetup {
             List<String ^>^ bins = gcnew List<String ^>();
 
             if (forderTextBox->Text != L"C:\\") {
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"Tools", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw47_32", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw48_32", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw482_32", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64_opengl", forderTextBox->Text, excludes), excludes));
             }
 
             if (bins->Count == 0) {
@@ -415,25 +415,25 @@ namespace treefrogsetup {
                 Process^ proc = (gcnew Diagnostics::Process())->Start(msiName);
                 proc->WaitForExit();
 
-                // Edits tfenv.bat
-                IO::FileInfo^ fibat = gcnew IO::FileInfo(TF_ENV_BAT);
-                if (proc->ExitCode == 0 && fibat->Exists) {
-                    String^ out;
+                //// Edits tfenv.bat
+                //IO::FileInfo^ fibat = gcnew IO::FileInfo(TF_ENV_BAT);
+                //if (proc->ExitCode == 0 && fibat->Exists) {
+                //    String^ out;
 
-                    StreamReader^ din = File::OpenText(TF_ENV_BAT);
-                    String^ line;
-                    while ((line = din->ReadLine()) != nullptr) {
-                        if (line->StartsWith("set PATH=")) {
-                            line = L"set PATH=%TFDIR%\\bin;" + qtbin + "%PATH%";
-                        }
-                        out += line + "\r\n";
-                    }
-                    din->Close();
+                //    StreamReader^ din = File::OpenText(TF_ENV_BAT);
+                //    String^ line;
+                //    while ((line = din->ReadLine()) != nullptr) {
+                //        if (line->StartsWith("set PATH=")) {
+                //            line = L"set PATH=%TFDIR%\\bin;" + qtbin + "%PATH%";
+                //        }
+                //        out += line + "\r\n";
+                //    }
+                //    din->Close();
 
-                    StreamWriter^ dout = gcnew StreamWriter(TF_ENV_BAT);
-                    dout->Write(out);
-                    dout->Close();
-                }
+                //    StreamWriter^ dout = gcnew StreamWriter(TF_ENV_BAT);
+                //    dout->Write(out);
+                //    dout->Close();
+                //}
 
                 // Install SQL drivers
                 IO::FileInfo^ fiins = gcnew IO::FileInfo(INSTALL_SQLDRIVERS_BAT);
