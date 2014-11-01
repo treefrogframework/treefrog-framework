@@ -172,7 +172,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.3.1";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.3.2";
             // 
             // labeltop
             // 
@@ -183,7 +183,7 @@ namespace treefrogsetup {
             this->labeltop->Name = L"labeltop";
             this->labeltop->Size = System::Drawing::Size(277, 15);
             this->labeltop->TabIndex = 6;
-            this->labeltop->Text = L"TreeFrog Framework requires Qt (MinGW).";
+            this->labeltop->Text = L"TreeFrog Framework requires Qt.";
             // 
             // loadingImg
             // 
@@ -337,6 +337,7 @@ namespace treefrogsetup {
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw47_32", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw48_32", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw482_32", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64", forderTextBox->Text, excludes), excludes));
             }
 
             if (bins->Count == 0) {
