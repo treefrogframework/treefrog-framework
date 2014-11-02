@@ -10,10 +10,9 @@ DESTDIR = ../../lib
 LIBS += -L../../lib -lhelper -lmodel
 QMAKE_CLEAN = *.cpp source.list
 
-tmake.target = source.list
 tmake.commands = tmake -f ../../config/application.ini -v .. -d . -P
-tmake.depends = qmake
-QMAKE_EXTRA_TARGETS = tmake
+QMAKE_EXTRA_TARGETS += tmake
+PRE_TARGETDEPS += tmake
 
 include(../../appbase.pri)
 !exists(source.list) {

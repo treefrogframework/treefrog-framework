@@ -297,8 +297,8 @@ namespace treefrogsetup {
                         return files[0];
                     }
                 }
-            } catch (...) {
-                //
+            } catch (Exception^ e) {
+                abort("Error Exception: " + e->Message, "Error");
             }
             return "";
         }
@@ -361,6 +361,15 @@ namespace treefrogsetup {
                 qmake->WaitForExit();
             }
 
+            // Gets path of qtenv2.bat
+            String^ qtenv = searchFile(bins, "qtenv2.bat");
+            if (qtenv->Length == 0) {
+                abort("Not found qtenv2.bat.\n\nSetup aborts.", "Abort");
+                return;
+            } else {
+                e->Result = qtenv;
+            }
+
             // Get msi file from resource
             int rcid = IDR_TREEFROG_QT52_MSI;
             if (version->IndexOf("Qt version 5.3", StringComparison::OrdinalIgnoreCase) > 0) {
@@ -384,12 +393,12 @@ namespace treefrogsetup {
                     writer->Write(*pRes++);
                 }
 
-                // Result string
-                String^ qtbin;
-                for (int i = 0; i < bins->Count; ++i) {
-                    qtbin += bins[i] + ";";
-                }
-                e->Result = qtbin;
+                //// Result string
+                //String^ qtbin;
+                //for (int i = 0; i < bins->Count; ++i) {
+                //    qtbin += bins[i] + ";";
+                //}
+                //e->Result = qtbin;
 
             } catch (Exception^ e) {
                 abort("Error Exception: " + e->Message, "Error");
@@ -406,14 +415,19 @@ namespace treefrogsetup {
             try {
                 this->Hide();
 
-                String^ qtbin = e->Result->ToString();
-                if (qtbin->Length == 0) {
+                String^ qtenv = e->Result->ToString();
+                if (qtenv->Length == 0) {
                     abort("Not found Qt base folder.\n\nSetup aborts.", "Abort");
                     return;
                 }
 
                 Process^ proc = (gcnew Diagnostics::Process())->Start(msiName);
                 proc->WaitForExit();
+
+                if (proc->ExitCode != 0) {
+                    Application::Exit();
+                    return;
+                }
 
                 //// Edits tfenv.bat
                 //IO::FileInfo^ fibat = gcnew IO::FileInfo(TF_ENV_BAT);
@@ -434,6 +448,26 @@ namespace treefrogsetup {
                 //    dout->Write(out);
                 //    dout->Close();
                 //}
+
+                // Edits tfenv.bat
+                IO::FileInfo^ fibat = gcnew IO::FileInfo(TF_ENV_BAT);
+                if (proc->ExitCode == 0 && fibat->Exists) {
+                    String^ out;
+
+                    StreamReader^ din = File::OpenText(TF_ENV_BAT);
+                    String^ line;
+                    while ((line = din->ReadLine()) != nullptr) {
+                        if (line->StartsWith("set QTENV=")) {
+                            line = L"set QTENV=\"" + qtenv + "\"";
+                        }
+                        out += line + "\r\n";
+                    }
+                    din->Close();
+
+                    StreamWriter^ dout = gcnew StreamWriter(TF_ENV_BAT);
+                    dout->Write(out);
+                    dout->Close();
+                }
 
                 // Install SQL drivers
                 IO::FileInfo^ fiins = gcnew IO::FileInfo(INSTALL_SQLDRIVERS_BAT);
