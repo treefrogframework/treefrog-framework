@@ -5,6 +5,7 @@ Changes with version 1.7.8
   * Changed for work of tfmanager in Windows service mode.
   * Changed a default project file, app.pro.
   * Changed a signal-handler message.
+  * Changed the default project file to build views.
   * Support for Visual Studio 2013. [Experimental]
 
 Changes with version 1.7.7
