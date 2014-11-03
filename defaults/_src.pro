@@ -12,9 +12,9 @@ QMAKE_CLEAN = *.cpp source.list
 
 tmake.target = source.list
 tmake.commands = tmake -f ../../config/application.ini -v .. -d . -P
-tmake.depends = qmake
+tmake.depends = qmake_all
 QMAKE_EXTRA_TARGETS = tmake
-PRE_TARGETDEPS = source.list
+POST_TARGETDEPS = source.list
 
 include(../../appbase.pri)
 !exists(source.list) {
