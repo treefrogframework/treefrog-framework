@@ -7,9 +7,7 @@
 # define STACKTRACE_H "stacktrace_powerpc-inl.h"
 #elif defined(__arm__)  && __GNUC__ >= 2
 # define STACKTRACE_H "stacktrace_arm-inl.h"
-#endif
-
-#if !defined(STACKTRACE_H) && defined(HAVE_EXECINFO_H)
+#else
 # define STACKTRACE_H "stacktrace_generic-inl.h"
 #endif
 

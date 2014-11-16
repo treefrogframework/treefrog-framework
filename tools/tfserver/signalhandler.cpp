@@ -54,6 +54,8 @@
 #    define PC_FROM_UCONTEXT uc_mcontext.sc_ip
 #  elif defined(__ppc__)
 #    define PC_FROM_UCONTEXT uc_mcontext.uc_regs->gregs[PT_NIP]
+#  elif defined(__arm__)
+#    define PC_FROM_UCONTEXT uc_mcontext.arm_pc
 #  endif
 #elif defined(Q_OS_DARWIN)
 #  include <sys/ucontext.h>
@@ -351,7 +353,7 @@ void FailureSignalHandler(int signal_number,
   // Get the program counter from ucontext.
   void *pc = GetPC(ucontext);
   len += DumpStackFrameInfo("PC: ", pc, buf + len, sizeof(buf) - len);
-  
+
   // Dump the stack traces.
   for (int i = 0; i < depth; ++i) {
     len += DumpStackFrameInfo("    ", stack[i], buf + len, sizeof(buf) - len);
