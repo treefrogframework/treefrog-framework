@@ -12,7 +12,11 @@ QMAKE_CLEAN = *.cpp source.list
 
 tmake.target = source.list
 tmake.commands = tmake -f ../../config/application.ini -v .. -d . -P
-tmake.depends = qmake_all
+lessThan(QT_MAJOR_VERSION, 5) {
+  tmake.depends = qmake
+} else {
+  tmake.depends = qmake_all
+}
 QMAKE_EXTRA_TARGETS = tmake
 POST_TARGETDEPS = source.list
 
