@@ -32,14 +32,13 @@
 // This is inspired by Craig Silverstein's PowerPC stacktrace code.
 //
 
-#ifndef BASE_STACKTRACE_ARM_INL_H_
-#define BASE_STACKTRACE_ARM_INL_H_
+#ifndef BASE_STACKTRACE_ARM_INL_H
+#define BASE_STACKTRACE_ARM_INL_H
 // Note: this file is included into stacktrace.cc more than once.
 // Anything that should only be defined once should be here:
 
 #include <stdint.h>   // for uintptr_t
 #include <stdlib.h>
-//#include "base/basictypes.h"  // for NULL
 #include <stacktrace.h>
 #include "gconfig.h"
 
