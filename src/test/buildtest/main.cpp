@@ -4,8 +4,10 @@
 #include <TSqlQueryORMapperIterator>
 #include <TMongoODMapper>
 #include <TModelUtil>
-#include <TJsonUtil>
 #include <TAtomicQueue>
+#if QT_VERSION >= 0x050000
+# include <TJsonUtil>
+#endif
 #include <tglobal.h>
 #include "blog.h"
 #include "blogobject.h"
@@ -128,11 +130,13 @@ void build_check_TModelUtil()
     tfGetModelListByMongoCriteria<Foo, FooObject>(crt, 0, 0);
 }
 
+#if QT_VERSION >= 0x050000
 void build_check_TJsonUtil()
 {
     QList<Foo> fooList;
     tfModelListToJsonArray<Foo>(fooList);
 }
+#endif
 
 void build_check_TAtomicQueue()
 {
