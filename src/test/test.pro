@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
-SUBDIRS = htmlescape httpheader hmac sharedmemorylogstream htmlparser mailmessage  multipartformdata  smtpmailer viewhelper paginator fieldnametovariablename rand urlrouter currenttime urlrouter
+SUBDIRS  = htmlescape httpheader hmac htmlparser
+SUBDIRS += mailmessage  multipartformdata  smtpmailer viewhelper paginator
+SUBDIRS += fieldnametovariablename rand urlrouter currenttime urlrouter
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-  SUBDIRS += buildtest
+!msvc {
+  SUBDIRS += sharedmemorylogstream buildtest
 }

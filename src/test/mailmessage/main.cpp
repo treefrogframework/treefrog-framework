@@ -1,6 +1,9 @@
-#include <QTest>
+﻿#include <QTest>
 #include <THttpUtility>
 #include "tmailmessage.h"
+
+#pragma execution_character_set("utf-8")
+// Store with BOM!
 
 
 class TestMailMessage : public QObject
