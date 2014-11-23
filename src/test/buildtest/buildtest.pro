@@ -1,7 +1,5 @@
 include(../test.pri)
-
 TARGET = buildtest
-
 SOURCES += main.cpp
 HEADERS += blog.h
 SOURCES += blog.cpp
