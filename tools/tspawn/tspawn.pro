@@ -69,45 +69,6 @@ defaults.path = $${datadir}/defaults
 INSTALLS += target defaults
 
 win32 {
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/install_sqldrivers.bat
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/LGPL_EXCEPTION.txt
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/LICENSE.FDL
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/LICENSE.GPL
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/LICENSE.LGPL
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/LICENSE.PREVIEW.COMMERCIAL
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/README
-  sqldrivers.files += ../../sqldrivers/qt5-mingw/README.ja
-  sqldrivers.path = $${datadir}/sqldrivers
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqldb2.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqldb2d.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqlmysql.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqlmysqld.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqloci.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqlocid.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqlpsql.dll
-  drivers502.files += ../../sqldrivers/qt5-mingw/5.0.2/qsqlpsqld.dll
-  drivers502.path = $${datadir}/sqldrivers/5.0.2
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqldb2.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqldb2d.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqlmysql.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqlmysqld.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqloci.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqlocid.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqlpsql.dll
-  drivers510.files += ../../sqldrivers/qt5-mingw/5.1.0/qsqlpsqld.dll
-  drivers510.path = $${datadir}/sqldrivers/5.1.0
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqldb2.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqldb2d.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqlmysql.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqlmysqld.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqloci.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqlocid.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqlpsql.dll
-  drivers511.files += ../../sqldrivers/qt5-mingw/5.1.1/qsqlpsqld.dll
-  drivers511.path = $${datadir}/sqldrivers/5.1.1
-
-  INSTALLS += sqldrivers drivers502 drivers510 drivers511
-
   clientlib.files += ../../sqldrivers/clientlib/COPYING_3RD_PARTY_DLL
   clientlib.files += ../../sqldrivers/clientlib/libintl.dll
   clientlib.files += ../../sqldrivers/clientlib/libmariadb.dll

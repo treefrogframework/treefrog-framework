@@ -5,11 +5,11 @@
   <!-- *** 基本的に 9行目,10行目,41行目も修正する (guidgen使用) *** -->
 
   <!-- プロダクト情報 -->
-  <Product Name='TreeFrog Framework 1.7.8'
-           Id="7D5D8121-26DA-47EC-8CC9-71E70CDE8911"
-           UpgradeCode="B4DF7353-5EAD-4611-A6E9-FDD723C57955"
+  <Product Name='TreeFrog Framework 1.7.9'
+           Id="9F749D63-BC1A-4870-A92C-E4E318888CC8"
+           UpgradeCode="D8C262D6-7B81-419A-9DFF-E15763DBA8A0"
            Language='1041' Codepage='932'
-           Version='1.7.8' Manufacturer='TreeFrog Framework Project'>
+           Version='1.7.9' Manufacturer='TreeFrog Framework Project'>
 
     <!-- パッケージ情報 -->
     <Package Id='*' Keywords='Installer'
@@ -27,18 +27,18 @@
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='WINDOWSVOLUME'>
         <Directory Id='INSTALLDIR' Name='TreeFrog'>
-          <Directory Id='VERSIONDIR' Name='1.7.8'>
+          <Directory Id='VERSIONDIR' Name='1.7.9'>
           </Directory>
         </Directory>
       </Directory>
       
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.7.8"/>
+        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.7.9"/>
       </Directory>
     </Directory>
     
     <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcut" Guid="D0530A30-C95E-4835-8D6A-D6BE9FCE6E37">
+      <Component Id="ApplicationShortcut" Guid="F9BDE0CC-B856-4A23-A152-E343AF2C518F">
         <CreateFolder Directory="ApplicationProgramsFolder"/>
 
         <!-- Shortcut to TF prompt-->

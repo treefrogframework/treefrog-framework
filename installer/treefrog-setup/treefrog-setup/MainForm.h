@@ -40,7 +40,6 @@ namespace treefrogsetup {
 
     private: 
         static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";  // Base Directory
-        static initonly String^ INSTALL_SQLDRIVERS_BAT = "C:\\TreeFrog\\" + VersionString() + "\\sqldrivers\\install_sqldrivers.bat";
 
     public:
         MainForm(void)
@@ -467,17 +466,6 @@ namespace treefrogsetup {
                     StreamWriter^ dout = gcnew StreamWriter(TF_ENV_BAT);
                     dout->Write(out);
                     dout->Close();
-                }
-
-                // Install SQL drivers
-                IO::FileInfo^ fiins = gcnew IO::FileInfo(INSTALL_SQLDRIVERS_BAT);
-                if (fiins->Exists) {
-                    Process^ procins = gcnew Diagnostics::Process;
-                    procins->StartInfo->FileName = INSTALL_SQLDRIVERS_BAT;
-                    procins->StartInfo->CreateNoWindow = true;
-                    procins->StartInfo->WindowStyle = ProcessWindowStyle::Minimized;
-                    procins->Start();
-                    procins->WaitForExit();
                 }
 
             } catch (Exception^ e) {
