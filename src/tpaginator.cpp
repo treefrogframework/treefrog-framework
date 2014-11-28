@@ -87,12 +87,6 @@ int TPaginator::offset() const
     return (currentPage_ - 1) * itemsPerPage_;
 }
 
-void TPaginator::setItemsCount(int count)
-{
-    itemsTotal_ = count;
-    calculateNumPages();
-}
-
 /*!
   Sets the total number of items to \a total and recalculates other
   parameters.
@@ -100,12 +94,6 @@ void TPaginator::setItemsCount(int count)
 void TPaginator::setItemTotalCount(int total)
 {
     itemsTotal_ = total;
-    calculateNumPages();
-}
-
-void TPaginator::setLimit(int limit)
-{
-    itemsPerPage_ = limit;
     calculateNumPages();
 }
 

@@ -36,16 +36,6 @@ public:
     bool hasNext() const { return (currentPage_ < numPages_); }
     bool hasPage(int page) const { return (page > 0 && page <= numPages_); }
 
-    /// @cond
-    int itemsCount() const { return itemsTotal_; }  // obsolete function
-    void setItemsCount(int count);  // obsolete function
-    int limit() const { return itemsPerPage_; }  // obsolete function
-    void setLimit(int limit);   // obsolete function
-    bool hasPreviousPage() const { return (currentPage_ >= 2); }  // obsolete function
-    bool hasNextPage() const { return (currentPage_ < numPages_); }  // obsolete function
-    bool isValidPage(int page) const { return (page > 0 && page <= numPages_); }  // obsolete function
-    /// @endcond
-
 protected:
     void calculateNumPages();  // Internal use
 
