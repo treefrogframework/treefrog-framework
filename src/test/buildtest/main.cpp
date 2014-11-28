@@ -125,7 +125,6 @@ void build_check_TModelUtil()
 {
     TCriteria crt;
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, Tf::DescendingOrder, 0, 0);
-    tfGetModelListByCriteria<Blog, BlogObject>(crt, 1, TSql::DescendingOrder, 0, 0);
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, 0);
     tfGetModelListByMongoCriteria<Foo, FooObject>(crt, 0, 0);
 }
