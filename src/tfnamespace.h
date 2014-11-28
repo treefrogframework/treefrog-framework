@@ -173,11 +173,6 @@ namespace TSql
         Any,           // ANY (val1, ...)
         All,           // ALL (val1, ...)
     };
-
-    enum SortOrder {   // obsoleted. use Tf::SortOrder instead.
-        AscendingOrder = Qt::AscendingOrder,
-        DescendingOrder = Qt::DescendingOrder,
-    };
 }
 
 /*!

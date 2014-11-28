@@ -21,17 +21,6 @@ static QMutex cacheMutex;
          SQL statements.
 */
 
-/*!
-  Constructs a TSqlQuery object using the SQL \a query and the database
-  \a databaseId. If \a query is not an empty string, it will be executed.
- */
-TSqlQuery::TSqlQuery(const QString &query, int databaseId)
-    : QSqlQuery(query, Tf::currentSqlDatabase(databaseId))
-{
-    if (!query.isEmpty()) {  // will be executed immediately
-        tWriteQueryLog(query, !lastError().isValid(), lastError());
-    }
-}
 
 /*!
   Constructs a TSqlQuery object using the database \a databaseId.

@@ -30,7 +30,6 @@ public:
 
     void setLimit(int limit);
     void setOffset(int offset);
-    void setSortOrder(int column, TSql::SortOrder order);  // obsoleted
     void setSortOrder(int column, Tf::SortOrder order);
     void reset();
 
@@ -261,16 +260,6 @@ template <class T>
 inline void TSqlORMapper<T>::setOffset(int offset)
 {
     queryOffset = offset;
-}
-
-/*!
-  Sets the sort order for \a column to \a order.
-*/
-template <class T>
-inline void TSqlORMapper<T>::setSortOrder(int column, TSql::SortOrder order)
-{
-    sortColumn = column;
-    sortOrder = (Tf::SortOrder)order;
 }
 
 /*!

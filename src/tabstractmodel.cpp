@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2014, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -20,7 +20,7 @@
  */
 bool TAbstractModel::isNull() const
 {
-    return mdata()->isNull();
+    return modelData()->isNull();
 }
 
 /*!
@@ -28,7 +28,7 @@ bool TAbstractModel::isNull() const
  */
 bool TAbstractModel::isNew() const
 {
-    return mdata()->isNull();
+    return modelData()->isNull();
 }
 
 /*!
@@ -36,7 +36,7 @@ bool TAbstractModel::isNew() const
  */
 bool TAbstractModel::isSaved() const
 {
-    return !mdata()->isNull();
+    return !modelData()->isNull();
 }
 
 /*!
@@ -44,7 +44,7 @@ bool TAbstractModel::isSaved() const
  */
 bool TAbstractModel::create()
 {
-    return mdata()->create();
+    return modelData()->create();
 }
 
 /*!
@@ -55,7 +55,7 @@ bool TAbstractModel::create()
  */
 bool TAbstractModel::save()
 {
-    return (mdata()->isNull()) ? create() : update();
+    return (modelData()->isNull()) ? create() : update();
 }
 
 /*!
@@ -63,7 +63,7 @@ bool TAbstractModel::save()
  */
 bool TAbstractModel::update()
 {
-    return mdata()->update();
+    return modelData()->update();
 }
 
 /*!
@@ -71,7 +71,7 @@ bool TAbstractModel::update()
  */
 bool TAbstractModel::remove()
 {
-    return mdata()->remove();
+    return modelData()->remove();
 }
 
 /*!
@@ -81,7 +81,7 @@ QVariantMap TAbstractModel::toVariantMap() const
 {
     QVariantMap ret;
 
-    QVariantMap map = mdata()->toVariantMap();
+    QVariantMap map = modelData()->toVariantMap();
     for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
         it.next();
         ret.insert(fieldNameToVariableName(it.key()), it.value());
@@ -95,7 +95,7 @@ QVariantMap TAbstractModel::toVariantMap() const
 void TAbstractModel::setProperties(const QVariantMap &properties)
 {
     // Creates a map of the original property name and the converted name
-    QStringList soprops = mdata()->propertyNames();
+    QStringList soprops = modelData()->propertyNames();
     QMap<QString, QString> sopropMap;
     for (QStringListIterator it(soprops); it.hasNext(); ) {
         const QString &orig = it.next();
@@ -111,7 +111,7 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
         }
     }
 
-    mdata()->setProperties(props);
+    modelData()->setProperties(props);
 }
 
 
@@ -129,15 +129,3 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
   This function is reimplemented in subclasses to return a pointer
   to the data stored in the model object.
 */
-
-
-TModelObject *TAbstractModel::mdata()
-{
-    return modelData() ? modelData() : data();
-}
-
-
-const TModelObject *TAbstractModel::mdata() const
-{
-    return modelData() ? modelData() : data();
-}

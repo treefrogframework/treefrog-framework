@@ -27,14 +27,6 @@ public:
 protected:
     virtual TModelObject *modelData() { return 0; }
     virtual const TModelObject *modelData() const { return 0; }
-
-    // obsolete functions
-    virtual TSqlObject *data() { return NULL; }
-    virtual const TSqlObject *data() const { return NULL; }
-
-private:
-    TModelObject *mdata();
-    const TModelObject *mdata() const;
 };
 
 
