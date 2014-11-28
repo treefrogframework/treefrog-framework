@@ -1,7 +1,7 @@
 @echo OFF
 @setlocal
 
-set VERSION=1.7.9
+set VERSION=1.8.0
 set TFDIR=C:\TreeFrog\%VERSION%
 
 if "%DevEnvDir%" == "" (
