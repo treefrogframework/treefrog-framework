@@ -2,7 +2,9 @@
 #include <THttpUtility>
 #include "tmailmessage.h"
 
-#pragma execution_character_set("utf-8")
+#ifdef Q_OS_WIN
+# pragma execution_character_set("utf-8")
+#endif
 // Store with BOM!
 
 
