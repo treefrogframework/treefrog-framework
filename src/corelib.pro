@@ -233,6 +233,8 @@ HEADERS += tscheduler.h
 SOURCES += tscheduler.cpp
 HEADERS += tapplicationscheduler.h
 SOURCES += tapplicationscheduler.cpp
+HEADERS += tappsettings.h
+SOURCES += tappsettings.cpp
 
 HEADERS += \
            tfnamespace.h \
