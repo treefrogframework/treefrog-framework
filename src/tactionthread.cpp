@@ -75,7 +75,7 @@ void TActionThread::run()
     QEventLoop eventLoop;
     httpSocket = new THttpSocket;
 
-    if (!httpSocket->setSocketDescriptor(TActionContext::socketDesc)) {
+    if (Q_UNLIKELY(!httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
         emitError(httpSocket->error());
         goto socket_error;
     }
@@ -122,12 +122,12 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
     QList<THttpRequest> reqs;
     while (!socket->canReadRequest()) {
         // Check idle timeout
-        if (socket->idleTime() >= 10) {
+        if (Q_UNLIKELY(socket->idleTime() >= 10)) {
             tSystemWarn("Reading a socket timed out after 10 seconds. Descriptor:%d", (int)socket->socketDescriptor());
             break;
         }
 
-        if (socket->socketDescriptor() <= 0) {
+        if (Q_UNLIKELY(socket->socketDescriptor() <= 0)) {
             tSystemWarn("Invalid descriptor (disconnected) : %d", (int)socket->socketDescriptor());
             break;
         }
@@ -135,7 +135,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
         socket->waitForReadyRead(10);
     }
 
-    if (!socket->canReadRequest()) {
+    if (Q_UNLIKELY(!socket->canReadRequest())) {
         socket->abort();
     } else {
         reqs = socket->read();

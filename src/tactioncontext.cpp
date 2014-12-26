@@ -217,17 +217,17 @@ void TActionContext::execute(THttpRequest &request)
             transactions.setEnabled(currController->transactionEnabled());
 
             // Do filters
-            if (currController->preFilter()) {
+            if (Q_LIKELY(currController->preFilter())) {
 
                 // Dispathes
                 bool dispatched = ctlrDispatcher.invoke(rt.action, rt.params);
-                if (dispatched) {
+                if (Q_LIKELY(dispatched)) {
                     autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
 
                     // Post fileter
                     currController->postFilter();
 
-                    if (currController->rollbackRequested()) {
+                    if (Q_UNLIKELY(currController->rollbackRequested())) {
                         rollbackTransactions();
                     } else {
                         // Commits a transaction to the database
@@ -237,7 +237,7 @@ void TActionContext::execute(THttpRequest &request)
                     // Session store
                     if (currController->sessionEnabled()) {
                         bool stored = TSessionManager::instance().store(currController->session());
-                        if (stored) {
+                        if (Q_LIKELY(stored)) {
                             QDateTime expire;
                             if (TSessionManager::sessionLifeTime() > 0) {
                                 expire = Tf::currentDateTimeSec().addSecs(TSessionManager::sessionLifeTime());

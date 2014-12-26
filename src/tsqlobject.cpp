@@ -143,7 +143,7 @@ bool TSqlObject::create()
 
     QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
     QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
-    if (ins.isEmpty()) {
+    if (Q_UNLIKELY(ins.isEmpty())) {
         sqlError = QSqlError(QLatin1String("No fields to insert"),
                              QString(), QSqlError::StatementError);
         tWarn("SQL statement error, no fields to insert");
@@ -153,7 +153,7 @@ bool TSqlObject::create()
     TSqlQuery query(database);
     bool ret = query.exec(ins);
     sqlError = query.lastError();
-    if (ret) {
+    if (Q_LIKELY(ret)) {
         // Gets the last inserted value of auto-value field
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
@@ -162,7 +162,7 @@ bool TSqlObject::create()
                 // For PostgreSQL without OIDS
                 ret = query.exec("SELECT LASTVAL()");
                 sqlError = query.lastError();
-                if (ret) {
+                if (Q_LIKELY(ret)) {
                     lastid = query.getNextValue();
                 }
             }
