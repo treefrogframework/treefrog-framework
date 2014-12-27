@@ -6,7 +6,7 @@
  */
 
 #include <TActionMailer>
-#include <TWebApplication>
+#include <TAppSettings>
 #include <TDispatcher>
 #include <TActionView>
 #include <TMailMessage>
@@ -66,34 +66,29 @@ bool TActionMailer::deliver(const QString &templateName)
         return false;
     }
 
-    const QSettings &sets = Tf::app()->appSettings();
-    TMailMessage mail(msg, sets.value("ActionMailer.CharacterSet", "UTF-8").toByteArray());
+    TMailMessage mail(msg, Tf::appSettings()->value(Tf::ActionMailerCharacterSet, "UTF-8").toByteArray());
 
     // Sets SMTP settings
-    bool delay = sets.value("ActionMailer.DelayedDelivery").toBool();
+    bool delay = Tf::appSettings()->value(Tf::ActionMailerDelayedDelivery, false).toBool();
 
-    QByteArray dm = sets.value("ActionMailer.DeliveryMethod").toByteArray().toLower();
+    QByteArray dm = Tf::appSettings()->value(Tf::ActionMailerDeliveryMethod).toByteArray().toLower();
     if (dm == "smtp") {
         // SMTP
         TSmtpMailer *mailer = new TSmtpMailer;
-        mailer->setHostName(sets.value(PREFIX_SMTP "HostName").toByteArray());
-        mailer->setPort(sets.value(PREFIX_SMTP "Port").toUInt());
-        mailer->setAuthenticationEnabled(sets.value(PREFIX_SMTP "Authentication").toBool());
-        mailer->setUserName(sets.value(PREFIX_SMTP "UserName").toByteArray());
-        mailer->setPassword(sets.value(PREFIX_SMTP "Password").toByteArray());
+        mailer->setHostName(Tf::appSettings()->value(Tf::ActionMailerSmtpHostName).toByteArray());
+        mailer->setPort(Tf::appSettings()->value(Tf::ActionMailerSmtpPort).toUInt());
+        mailer->setAuthenticationEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpAuthentication).toBool());
+        mailer->setUserName(Tf::appSettings()->value(Tf::ActionMailerSmtpUserName).toByteArray());
+        mailer->setPassword(Tf::appSettings()->value(Tf::ActionMailerSmtpPassword).toByteArray());
         tSystemDebug("%s", mail.toByteArray().data());
 
         // POP before SMTP
-        if ( sets.value(PREFIX_SMTP "EnablePopBeforeSmtp", false).toBool() ) {
-            QByteArray popSvr = sets.value(PREFIX_SMTP "PopServer.HostName").toByteArray();
-            quint16 popPort = sets.value(PREFIX_SMTP "PopServer.Port").toInt();
-            bool apop = sets.value(PREFIX_SMTP "PopServer.EnableApop", false).toBool();
+        if ( Tf::appSettings()->value(Tf::ActionMailerSmtpEnablePopBeforeSmtp, false).toBool() ) {
+            QByteArray popSvr = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerHostName).toByteArray();
+            quint16 popPort = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerPort).toInt();
+            bool apop = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerEnableApop, false).toBool();
 
             mailer->setPopBeforeSmtpAuthEnabled(popSvr, popPort, apop, true);
-        }
-
-        if (sets.contains(PREFIX_SMTP "DelayedDelivery")) {
-            delay = sets.value(PREFIX_SMTP "DelayedDelivery").toBool();
         }
 
         // Sends email
@@ -106,9 +101,9 @@ bool TActionMailer::deliver(const QString &templateName)
 
     } else if (dm == "sendmail") {
         // Command location of 'sendmail'
-        QString cmd = Tf::app()->appSettings().value("ActionMailer.sendmail.CommandLocation").toString().trimmed();
+        QString cmd = Tf::appSettings()->value(Tf::ActionMailerSendmailCommandLocation).toString().trimmed();
         if (cmd.isEmpty()) {
-            cmd = Tf::app()->appSettings().value("ActionMailer.sendMail.CommandLocation").toString().trimmed();
+            cmd = Tf::appSettings()->value(Tf::ActionMailerSendmailCommandLocation).toString().trimmed();
         }
 
         if (!cmd.isEmpty()) {

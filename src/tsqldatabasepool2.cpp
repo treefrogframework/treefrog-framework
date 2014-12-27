@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <TWebApplication>
+#include <TAppSettings>
 #include "tsqldatabasepool2.h"
 #include "tatomicset.h"
 #include "tsystemglobal.h"
@@ -293,13 +294,13 @@ QString TSqlDatabasePool2::driverType(const QString &env, int databaseId)
 int TSqlDatabasePool2::maxDbConnectionsPerProcess()
 {
     int maxConnections = 0;
-    QString mpm = Tf::app()->multiProcessingModuleString();
+    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
 
     switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread:
-        maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+        maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
         if (maxConnections <= 0) {
-            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+            maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
         }
         break;
 
@@ -308,9 +309,9 @@ int TSqlDatabasePool2::maxDbConnectionsPerProcess()
         break;
 
     case TWebApplication::Hybrid:
-        maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+        maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
         if (maxConnections <= 0) {
-            maxConnections = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+            maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
         }
         break;
 

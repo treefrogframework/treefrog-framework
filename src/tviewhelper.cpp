@@ -9,10 +9,9 @@
 #include <QRegExp>
 #include <TViewHelper>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TActionView>
 #include <THttpUtility>
-
-#define ENABLE_CSRF_PROTECTION_MODULE "EnableCsrfProtectionModule"
 
 
 /*!
@@ -366,7 +365,7 @@ QString TViewHelper::optionTags(const QList<QPair<QString, QVariant> > &valueLis
 QString TViewHelper::inputAuthenticityTag() const
 {
     QString tag;
-    if (Tf::app()->appSettings().value(ENABLE_CSRF_PROTECTION_MODULE, true).toBool()) {
+    if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool()) {
         QString token = actionView()->authenticityToken();
         if (!token.isEmpty())
             tag = inputTag("hidden", "authenticity_token", token);

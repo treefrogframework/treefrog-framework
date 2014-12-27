@@ -6,73 +6,25 @@
 #include <QMutex>
 #include <TGlobal>
 
+class QSettings;
+
 
 class T_CORE_EXPORT TAppSettings
 {
 public:
-    enum AppAttribute {
-        ListenPort = 0,
-        InternalEncoding,
-        HttpOutputEncoding,
-        Locale,
-        MultiProcessingModule,
-        UploadTemporaryDirectory,
-        SqlDatabaseSettingsFiles,
-        MongoDbSettingsFile,
-        SqlQueriesStoredDirectory,
-        DirectViewRenderMode,
-        SystemLogFile,
-        SqlQueryLogFile,
-        ApplicationAbortOnFatal,
-        LimitRequestBody,
-        EnableCsrfProtectionModule,
-        EnableHttpMethodOverride,
-        SessionName,
-        SessionStoreType,
-        SessionAutoIdRegeneration,
-        SessionLifeTime,
-        SessionCookiePath,
-        SessionGcProbability,
-        SessionGcMaxLifeTime,
-        SessionSecret,
-        SessionCsrfProtectionKey,
-        MPMThreadMaxAppServers,
-        MPMThreadMaxThreadsPerAppServer,
-        MPMPreforkMaxAppServers,
-        MPMPreforkMinAppServers,
-        MPMPreforkSpareAppServers,
-        MPMHybridMaxAppServers,
-        MPMHybridMaxWorkersPerAppServer,
-        SystemLogFilePath,
-        SystemLogLayout,
-        SystemLogDateTimeFormat,
-        AccessLogFilePath,
-        AccessLogLayout,
-        AccessLogDateTimeFormat,
-        ActionMailerDeliveryMethod,
-        ActionMailerCharacterSet,
-        ActionMailerDelayedDelivery,
-        ActionMailerSmtpHostName,
-        ActionMailerSmtpPort,
-        ActionMailerSmtpAuthentication,
-        ActionMailerSmtpUserName,
-        ActionMailerSmtpPassword,
-        ActionMailerSmtpEnablePopBeforeSmtp,
-        ActionMailerSmtpPopServerHostName,
-        ActionMailerSmtpPopServerPort,
-        ActionMailerSmtpPopServerEnableApop,
-        ActionMailerSendmailCommandLocation,
-    };
-
-    const QVariant &value(AppAttribute attr) const;
+    const QVariant &value(Tf::AppAttribute attr, const QVariant &defaultValue = QVariant()) const;
+    QVariant readValue(const QString &attr, const QVariant &defaultValue = QVariant()) const;
     static TAppSettings *instance();
 
 private:
-    TAppSettings();
+    TAppSettings(const QString &path);
+    static void instantiate(const QString &path);
 
-    mutable QMap<int, QVariant> settingsCache;
     mutable QMutex mutex;
+    mutable QMap<int, QVariant> settingsCache;
+    QSettings *appIniSettings;
 
+    friend class TWebApplication;
     Q_DISABLE_COPY(TAppSettings)
 };
 #endif // TAPPSETTINGS_H

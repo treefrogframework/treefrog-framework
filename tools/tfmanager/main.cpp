@@ -9,6 +9,7 @@
 #include <QSysInfo>
 #include <QHostInfo>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TSystemGlobal>
 #include "servermanager.h"
 #include "processinfo.h"
@@ -445,7 +446,7 @@ int managerMain(int argc, char *argv[])
 
     // Check a port number
     quint16 listenPort = 0;
-    QString svrname = app.appSettings().value("ListenPort").toString();
+    QString svrname = Tf::appSettings()->value(Tf::ListenPort).toString();
     if (svrname.startsWith("unix:", Qt::CaseInsensitive)) {
         svrname.remove(0, 5);
     } else {
@@ -474,13 +475,13 @@ int managerMain(int argc, char *argv[])
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
         case TWebApplication::Prefork: {
-            int max = app.appSettings().value("MPM.prefork.MaxServers", "20").toInt();
-            int min = app.appSettings().value("MPM.prefork.MinServers", "5").toInt();
-            int spare = app.appSettings().value("MPM.prefork.SpareServers", "5").toInt();
+            int max = Tf::appSettings()->readValue("MPM.prefork.MaxServers", "20").toInt();
+            int min = Tf::appSettings()->readValue("MPM.prefork.MinServers", "5").toInt();
+            int spare = Tf::appSettings()->readValue("MPM.prefork.SpareServers", "5").toInt();
             // new parameters
-            max = app.appSettings().value("MPM.prefork.MaxAppServers", max).toInt();
-            min = app.appSettings().value("MPM.prefork.MinAppServers", min).toInt();
-            spare = app.appSettings().value("MPM.prefork.SpareAppServers", spare).toInt();
+            max = Tf::appSettings()->readValue("MPM.prefork.MaxAppServers", max).toInt();
+            min = Tf::appSettings()->readValue("MPM.prefork.MinAppServers", min).toInt();
+            spare = Tf::appSettings()->readValue("MPM.prefork.SpareAppServers", spare).toInt();
             tSystemDebug("Max number of app servers: %d", max);
             tSystemDebug("Min number of app servers: %d", min);
             tSystemDebug("Spare number of app servers: %d", spare);

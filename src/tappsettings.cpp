@@ -6,8 +6,13 @@
  */
 
 #include <TAppSettings>
-#include <TWebApplication>
+#include <TSystemGlobal>
+#include <QSettings>
+#include <QCoreApplication>
 #include <QMutexLocker>
+#include <stdio.h>
+
+static TAppSettings *appSettings = 0;
 
 
 class AttributeMap : public QMap<int, QString>
@@ -15,80 +20,108 @@ class AttributeMap : public QMap<int, QString>
 public:
     AttributeMap() : QMap<int, QString>()
     {
-        insert(TAppSettings::ListenPort, "ListenPort");
-        insert(TAppSettings::InternalEncoding, "InternalEncoding");
-        insert(TAppSettings::HttpOutputEncoding, "HttpOutputEncoding");
-        insert(TAppSettings::Locale, "Locale");
-        insert(TAppSettings::MultiProcessingModule, "MultiProcessingModule");
-        insert(TAppSettings::UploadTemporaryDirectory, "UploadTemporaryDirectory");
-        insert(TAppSettings::SqlDatabaseSettingsFiles, "SqlDatabaseSettingsFiles");
-        insert(TAppSettings::MongoDbSettingsFile, "MongoDbSettingsFile");
-        insert(TAppSettings::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
-        insert(TAppSettings::DirectViewRenderMode, "DirectViewRenderMode");
-        insert(TAppSettings::SystemLogFile, "SystemLogFile");
-        insert(TAppSettings::SqlQueryLogFile, "SqlQueryLogFile");
-        insert(TAppSettings::ApplicationAbortOnFatal, "ApplicationAbortOnFatal");
-        insert(TAppSettings::LimitRequestBody, "LimitRequestBody");
-        insert(TAppSettings::EnableCsrfProtectionModule, "EnableCsrfProtectionModule");
-        insert(TAppSettings::EnableHttpMethodOverride, "EnableHttpMethodOverride");
-        insert(TAppSettings::SessionName, "Session.Name");
-        insert(TAppSettings::SessionStoreType, "Session.StoreType");
-        insert(TAppSettings::SessionAutoIdRegeneration, "Session.AutoIdRegeneration");
-        insert(TAppSettings::SessionLifeTime, "Session.LifeTime");
-        insert(TAppSettings::SessionCookiePath, "Session.CookiePath");
-        insert(TAppSettings::SessionGcProbability, "Session.GcProbability");
-        insert(TAppSettings::SessionGcMaxLifeTime, "Session.GcMaxLifeTime");
-        insert(TAppSettings::SessionSecret, "Session.Secret");
-        insert(TAppSettings::SessionCsrfProtectionKey, "Session.CsrfProtectionKey");
-        insert(TAppSettings::MPMThreadMaxAppServers, "MPM.thread.MaxAppServers");
-        insert(TAppSettings::MPMThreadMaxThreadsPerAppServer, "MPM.thread.MaxThreadsPerAppServer");
-        insert(TAppSettings::MPMPreforkMaxAppServers, "MPM.prefork.MaxAppServers");
-        insert(TAppSettings::MPMPreforkMinAppServers, "MPM.prefork.MinAppServers");
-        insert(TAppSettings::MPMPreforkSpareAppServers, "MPM.prefork.SpareAppServers");
-        insert(TAppSettings::MPMHybridMaxAppServers, "MPM.hybrid.MaxAppServers");
-        insert(TAppSettings::MPMHybridMaxWorkersPerAppServer, "MPM.hybrid.MaxWorkersPerAppServer");
-        insert(TAppSettings::SystemLogFilePath, "SystemLog.FilePath");
-        insert(TAppSettings::SystemLogLayout, "SystemLog.Layout");
-        insert(TAppSettings::SystemLogDateTimeFormat, "SystemLog.DateTimeFormat");
-        insert(TAppSettings::AccessLogFilePath, "AccessLog.FilePath");
-        insert(TAppSettings::AccessLogLayout, "AccessLog.Layout");
-        insert(TAppSettings::AccessLogDateTimeFormat, "AccessLog.DateTimeFormat");
-        insert(TAppSettings::ActionMailerDeliveryMethod, "ActionMailer.DeliveryMethod");
-        insert(TAppSettings::ActionMailerCharacterSet, "ActionMailer.CharacterSet");
-        insert(TAppSettings::ActionMailerDelayedDelivery, "ActionMailer.DelayedDelivery");
-        insert(TAppSettings::ActionMailerSmtpHostName, "ActionMailer.smtp.HostName");
-        insert(TAppSettings::ActionMailerSmtpPort, "ActionMailer.smtp.Port");
-        insert(TAppSettings::ActionMailerSmtpAuthentication, "ActionMailer.smtp.Authentication");
-        insert(TAppSettings::ActionMailerSmtpUserName, "ActionMailer.smtp.UserName");
-        insert(TAppSettings::ActionMailerSmtpPassword, "ActionMailer.smtp.Password");
-        insert(TAppSettings::ActionMailerSmtpEnablePopBeforeSmtp, "ActionMailer.smtp.EnablePopBeforeSmtp");
-        insert(TAppSettings::ActionMailerSmtpPopServerHostName, "ActionMailer.smtp.PopServer.HostName");
-        insert(TAppSettings::ActionMailerSmtpPopServerPort, "ActionMailer.smtp.PopServer.Port");
-        insert(TAppSettings::ActionMailerSmtpPopServerEnableApop, "ActionMailer.smtp.PopServer.EnableApop");
-        insert(TAppSettings::ActionMailerSendmailCommandLocation, "ActionMailer.sendmail.CommandLocation");
+        insert(Tf::ListenPort, "ListenPort");
+        insert(Tf::InternalEncoding, "InternalEncoding");
+        insert(Tf::HttpOutputEncoding, "HttpOutputEncoding");
+        insert(Tf::Locale, "Locale");
+        insert(Tf::MultiProcessingModule, "MultiProcessingModule");
+        insert(Tf::UploadTemporaryDirectory, "UploadTemporaryDirectory");
+        insert(Tf::SqlDatabaseSettingsFiles, "SqlDatabaseSettingsFiles");
+        insert(Tf::MongoDbSettingsFile, "MongoDbSettingsFile");
+        insert(Tf::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
+        insert(Tf::DirectViewRenderMode, "DirectViewRenderMode");
+        insert(Tf::SystemLogFile, "SystemLogFile");
+        insert(Tf::SqlQueryLogFile, "SqlQueryLogFile");
+        insert(Tf::ApplicationAbortOnFatal, "ApplicationAbortOnFatal");
+        insert(Tf::LimitRequestBody, "LimitRequestBody");
+        insert(Tf::EnableCsrfProtectionModule, "EnableCsrfProtectionModule");
+        insert(Tf::EnableHttpMethodOverride, "EnableHttpMethodOverride");
+        insert(Tf::SessionName, "Session.Name");
+        insert(Tf::SessionStoreType, "Session.StoreType");
+        insert(Tf::SessionAutoIdRegeneration, "Session.AutoIdRegeneration");
+        insert(Tf::SessionLifeTime, "Session.LifeTime");
+        insert(Tf::SessionCookiePath, "Session.CookiePath");
+        insert(Tf::SessionGcProbability, "Session.GcProbability");
+        insert(Tf::SessionGcMaxLifeTime, "Session.GcMaxLifeTime");
+        insert(Tf::SessionSecret, "Session.Secret");
+        insert(Tf::SessionCsrfProtectionKey, "Session.CsrfProtectionKey");
+        insert(Tf::MPMThreadMaxAppServers, "MPM.thread.MaxAppServers");
+        insert(Tf::MPMThreadMaxThreadsPerAppServer, "MPM.thread.MaxThreadsPerAppServer");
+        insert(Tf::MPMPreforkMaxAppServers, "MPM.prefork.MaxAppServers");
+        insert(Tf::MPMPreforkMinAppServers, "MPM.prefork.MinAppServers");
+        insert(Tf::MPMPreforkSpareAppServers, "MPM.prefork.SpareAppServers");
+        insert(Tf::MPMHybridMaxAppServers, "MPM.hybrid.MaxAppServers");
+        insert(Tf::MPMHybridMaxWorkersPerAppServer, "MPM.hybrid.MaxWorkersPerAppServer");
+        insert(Tf::SystemLogFilePath, "SystemLog.FilePath");
+        insert(Tf::SystemLogLayout, "SystemLog.Layout");
+        insert(Tf::SystemLogDateTimeFormat, "SystemLog.DateTimeFormat");
+        insert(Tf::AccessLogFilePath, "AccessLog.FilePath");
+        insert(Tf::AccessLogLayout, "AccessLog.Layout");
+        insert(Tf::AccessLogDateTimeFormat, "AccessLog.DateTimeFormat");
+        insert(Tf::ActionMailerDeliveryMethod, "ActionMailer.DeliveryMethod");
+        insert(Tf::ActionMailerCharacterSet, "ActionMailer.CharacterSet");
+        insert(Tf::ActionMailerDelayedDelivery, "ActionMailer.DelayedDelivery");
+        insert(Tf::ActionMailerSmtpHostName, "ActionMailer.smtp.HostName");
+        insert(Tf::ActionMailerSmtpPort, "ActionMailer.smtp.Port");
+        insert(Tf::ActionMailerSmtpAuthentication, "ActionMailer.smtp.Authentication");
+        insert(Tf::ActionMailerSmtpUserName, "ActionMailer.smtp.UserName");
+        insert(Tf::ActionMailerSmtpPassword, "ActionMailer.smtp.Password");
+        insert(Tf::ActionMailerSmtpEnablePopBeforeSmtp, "ActionMailer.smtp.EnablePopBeforeSmtp");
+        insert(Tf::ActionMailerSmtpPopServerHostName, "ActionMailer.smtp.PopServer.HostName");
+        insert(Tf::ActionMailerSmtpPopServerPort, "ActionMailer.smtp.PopServer.Port");
+        insert(Tf::ActionMailerSmtpPopServerEnableApop, "ActionMailer.smtp.PopServer.EnableApop");
+        insert(Tf::ActionMailerSendmailCommandLocation, "ActionMailer.sendmail.CommandLocation");
     }
 };
 Q_GLOBAL_STATIC(AttributeMap, attributeMap)
 
 
-TAppSettings::TAppSettings()
+TAppSettings::TAppSettings(const QString &path)
+    : appIniSettings(new QSettings(path, QSettings::IniFormat))
 { }
 
 
-const QVariant &TAppSettings::value(AppAttribute attr) const
+const QVariant &TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue) const
 {
     if (!settingsCache.contains((int)attr)) {
         QMutexLocker locker(&mutex);
         const QString &keystr = (*attributeMap())[attr];
-        QVariant val = Tf::app()->appSettings().value(keystr);
+        if (!appIniSettings->contains(keystr)) {
+            return defaultValue;
+        }
+
+        QVariant val = readValue(keystr);
         settingsCache.insert(attr, val);
     }
     return settingsCache[(int)attr];
 }
 
 
+QVariant TAppSettings::readValue(const QString &attr, const QVariant &defaultValue) const
+{
+    return appIniSettings->value(attr, defaultValue);
+}
+
+
 TAppSettings *TAppSettings::instance()
 {
-    static TAppSettings settings;
-    return &settings;
+    return appSettings;
+}
+
+
+static void cleanup()
+{
+    if (appSettings) {
+        delete appSettings;
+        appSettings = 0;
+    }
+}
+
+
+void TAppSettings::instantiate(const QString &path)
+{
+    if (!appSettings) {
+        appSettings = new TAppSettings(path);
+        qAddPostRoutine(::cleanup);
+    }
 }

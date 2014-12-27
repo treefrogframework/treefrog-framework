@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
+#include <TAppSettings>
 #include <THttpRequestHeader>
 #include "thttpbuffer.h"
 #include "tsystemglobal.h"
@@ -84,7 +84,7 @@ int THttpBuffer::write(const QByteArray &byteArray)
 void THttpBuffer::parse()
 {
     if (limitBodyBytes < 0) {
-        limitBodyBytes = Tf::app()->appSettings().value("LimitRequestBody", "0").toInt();
+        limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toInt();
     }
 
     if (lengthToRead < 0) {

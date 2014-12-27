@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <TGlobal>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TLogger>
 #include <TLog>
 #include <TActionContext>
@@ -29,7 +30,6 @@
 #endif
 #undef tDebug
 #undef tTrace
-#define APPLICATION_ABORT  "ApplicationAbortOnFatal"
 
 static TAbstractLogStream *stream = 0;
 static QList<TLogger *> loggers;
@@ -102,7 +102,7 @@ void tFatal(const char *msg, ...)
     va_end(ap);
     tFlushMessage();
 
-    if (Tf::app()->appSettings().value(APPLICATION_ABORT).toBool()) {
+    if (Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool()) {
 #if (defined(Q_OS_UNIX) || defined(Q_CC_MINGW))
         abort(); // trap; generates core dump
 #else
@@ -174,6 +174,14 @@ void tTrace(const char *msg, ...)
 TWebApplication *Tf::app()
 {
     return static_cast<TWebApplication *>(qApp);
+}
+
+/*!
+  Returns a global pointer referring to the unique application settings object.
+*/
+TAppSettings *Tf::appSettings()
+{
+    return TAppSettings::instance();
 }
 
 /*!

@@ -8,13 +8,11 @@
 #include <THttpRequest>
 #include <TMultipartFormData>
 #include <THttpUtility>
-#include <TWebApplication>
+#include <TAppSettings>
 #include "tsystemglobal.h"
 #if QT_VERSION >= 0x050000
 #include <QJsonDocument>
 #endif
-
-#define ENABLE_HTTP_METHOD_OVERRIDE  "EnableHttpMethodOverride"
 
 
 class MethodHash : public QHash<QString, Tf::HttpMethod>
@@ -40,7 +38,7 @@ static bool httpMethodOverride()
 {
     static int method = -1;
     if (method < 0) {
-        method = (int)Tf::app()->appSettings().value(ENABLE_HTTP_METHOD_OVERRIDE, false).toBool();
+        method = (int)Tf::appSettings()->value(Tf::EnableHttpMethodOverride, false).toBool();
     }
     return (bool)method;
 }

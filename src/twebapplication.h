@@ -49,7 +49,6 @@ public:
 
     bool appSettingsFileExists() const;
     QString appSettingsFilePath() const;
-    QSettings &appSettings() const { return *appSetting; }
     QSettings &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
     bool isSqlDatabaseAvailable() const;
@@ -60,7 +59,6 @@ public:
     QString validationErrorMessage(int rule) const;
     QByteArray internetMediaType(const QString &ext, bool appendCharset = false);
     MultiProcessingModule multiProcessingModule() const;
-    QString multiProcessingModuleString() const;
     int maxNumberOfAppServers(int defaultValue = 1) const;
     QString routesConfigFilePath() const;
     QString systemLogFilePath() const;
@@ -99,7 +97,6 @@ private:
 
     QString webRootAbsolutePath;
     QString dbEnvironment;
-    QSettings *appSetting;
     QVector<QSettings *> sqlSettings;
     QSettings *mongoSetting;
     QSettings *loggerSetting;

@@ -147,12 +147,14 @@ T_CORE_EXPORT void tTrace(const char *, ...) // output trace message
 #endif
 ;
 
+class TAppSettings;
 class TActionContext;
 class QSqlDatabase;
 
 namespace Tf
 {
     T_CORE_EXPORT TWebApplication *app();
+    T_CORE_EXPORT TAppSettings *appSettings();
     T_CORE_EXPORT void msleep(unsigned long msecs);
     T_CORE_EXPORT QDateTime currentDateTimeSec();
 

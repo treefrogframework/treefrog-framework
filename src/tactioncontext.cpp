@@ -12,6 +12,7 @@
 #include <QSet>
 #include <TActionContext>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <THttpRequest>
 #include <THttpResponse>
 #include <THttpUtility>
@@ -27,12 +28,6 @@
 #ifdef Q_OS_UNIX
 # include "tfcore_unix.h"
 #endif
-
-#define AUTO_ID_REGENERATION  "Session.AutoIdRegeneration"
-#define DIRECT_VIEW_RENDER_MODE  "DirectViewRenderMode"
-#define ENABLE_CSRF_PROTECTION_MODULE "EnableCsrfProtectionModule"
-#define SESSION_COOKIE_PATH  "Session.CookiePath"
-#define LISTEN_PORT  "ListenPort"
 
 /*!
   \class TActionContext
@@ -114,7 +109,7 @@ static bool directViewRenderMode()
 {
     static int mode = -1;
     if (mode < 0) {
-        mode = (int)Tf::app()->appSettings().value(DIRECT_VIEW_RENDER_MODE).toBool();
+        mode = (int)Tf::appSettings()->value(Tf::DirectViewRenderMode).toBool();
     }
     return (bool)mode;
 }
@@ -136,7 +131,7 @@ void TActionContext::execute(THttpRequest &request)
         QByteArray firstLine = hdr.method() + ' ' + hdr.path();
         firstLine += QString(" HTTP/%1.%2").arg(hdr.majorVersion()).arg(hdr.minorVersion()).toLatin1();
         accessLogger.setRequest(firstLine);
-        accessLogger.setRemoteHost( (Tf::app()->appSettings().value(LISTEN_PORT).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)") );
+        accessLogger.setRemoteHost( (Tf::appSettings()->value(Tf::ListenPort).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)") );
 
         tSystemDebug("method : %s", hdr.method().data());
         tSystemDebug("path : %s", hdr.path().data());
@@ -192,7 +187,7 @@ void TActionContext::execute(THttpRequest &request)
             }
 
             // Verify authenticity token
-            if (Tf::app()->appSettings().value(ENABLE_CSRF_PROTECTION_MODULE, true).toBool()
+            if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool()
                 && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(rt.action)) {
 
                 if (method == Tf::Post || method == Tf::Put || method == Tf::Delete) {
@@ -203,7 +198,7 @@ void TActionContext::execute(THttpRequest &request)
             }
 
             if (currController->sessionEnabled()) {
-                if (currController->session().id().isEmpty() || Tf::app()->appSettings().value(AUTO_ID_REGENERATION).toBool()) {
+                if (currController->session().id().isEmpty() || Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool()) {
                     TSessionManager::instance().remove(currController->session().sessionId); // Removes the old session
                     // Re-generate session ID
                     currController->session().sessionId = TSessionManager::instance().generateId();
@@ -244,7 +239,7 @@ void TActionContext::execute(THttpRequest &request)
                             }
 
                             // Sets the path in the session cookie
-                            QString cookiePath = Tf::app()->appSettings().value(SESSION_COOKIE_PATH).toString();
+                            QString cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
                             currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath);
                         }
                     }

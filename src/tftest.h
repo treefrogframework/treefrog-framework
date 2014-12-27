@@ -7,6 +7,7 @@
 #include <QByteArray>
 #include <QEventLoop>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TKvsDatabasePool2>
 #ifdef QT_SQL_LIB
 # include <TActionThread>
@@ -38,7 +39,7 @@ int main(int argc, char *argv[]) \
         } \
     }; \
     TWebApplication app(argc, argv); \
-    QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
+    QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
     TF_SET_CODEC_FOR_TR(codec); \
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]) \
 int main(int argc, char *argv[]) \
 { \
     TWebApplication app(argc, argv); \
-    QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
+    QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
     TF_SET_CODEC_FOR_TR(codec); \

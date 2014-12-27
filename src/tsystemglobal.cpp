@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QSqlError>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TLogger>
 #include <TLog>
 #include <TAccessLog>
@@ -20,12 +21,17 @@
 #include "taccesslogstream.h"
 #include "tfileaiowriter.h"
 
+#define DEFAULT_SYSTEMLOG_LAYOUT           "%d %5P %m%n"
+#define DEFAULT_SYSTEMLOG_DATETIME_FORMAT  "yyyy-MM-ddThh:mm:ss"
+#define DEFAULT_ACCESSLOG_LAYOUT           "%h %d \"%r\" %s %O%n"
+#define DEFAULT_ACCESSLOG_DATETIME_FORMAT  "yyyy-MM-ddThh:mm:ss"
+
 static TAccessLogStream *accesslogstrm = 0;
 static TAccessLogStream *sqllogstrm = 0;
 static TFileAioWriter systemLog;
-static QByteArray syslogLayout;
-static QByteArray syslogDateTimeFormat;
-static QByteArray accessLogLayout;
+static QByteArray syslogLayout = DEFAULT_SYSTEMLOG_LAYOUT;
+static QByteArray syslogDateTimeFormat = DEFAULT_SYSTEMLOG_DATETIME_FORMAT;
+static QByteArray accessLogLayout = DEFAULT_ACCESSLOG_LAYOUT;
 static QByteArray accessLogDateTimeFormat;
 
 
@@ -53,8 +59,8 @@ void tSetupSystemLogger()
     systemLog.setFileName(Tf::app()->systemLogFilePath());
     systemLog.open();
 
-    syslogLayout = Tf::app()->appSettings().value("SystemLog.Layout", "%d %5P %m%n").toByteArray();
-    syslogDateTimeFormat = Tf::app()->appSettings().value("SystemLog.DateTimeFormat", "yyyy-MM-ddThh:mm:ss").toByteArray();
+    syslogLayout = Tf::appSettings()->value(Tf::SystemLogLayout, DEFAULT_SYSTEMLOG_LAYOUT).toByteArray();
+    syslogDateTimeFormat = Tf::appSettings()->value(Tf::SystemLogDateTimeFormat, DEFAULT_SYSTEMLOG_DATETIME_FORMAT).toByteArray();
 }
 
 
@@ -72,8 +78,8 @@ void tSetupAccessLogger()
         accesslogstrm = new TAccessLogStream(accesslogpath);
     }
 
-    accessLogLayout = Tf::app()->appSettings().value("AccessLog.Layout", "%h %d \"%r\" %s %O%n").toByteArray();
-    accessLogDateTimeFormat = Tf::app()->appSettings().value("AccessLog.DateTimeFormat", "yyyy-MM-ddThh:mm:ss").toByteArray();
+    accessLogLayout = Tf::appSettings()->value(Tf::AccessLogLayout, DEFAULT_ACCESSLOG_LAYOUT).toByteArray();
+    accessLogDateTimeFormat = Tf::appSettings()->value(Tf::AccessLogDateTimeFormat, DEFAULT_ACCESSLOG_DATETIME_FORMAT).toByteArray();
 }
 
 

@@ -138,6 +138,60 @@ namespace Tf
         AscendingOrder = Qt::AscendingOrder,
         DescendingOrder = Qt::DescendingOrder,
     };
+
+    enum AppAttribute {
+        ListenPort = 0,
+        InternalEncoding,
+        HttpOutputEncoding,
+        Locale,
+        MultiProcessingModule,
+        UploadTemporaryDirectory,
+        SqlDatabaseSettingsFiles,
+        MongoDbSettingsFile,
+        SqlQueriesStoredDirectory,
+        DirectViewRenderMode,
+        SystemLogFile,
+        SqlQueryLogFile,
+        ApplicationAbortOnFatal,
+        LimitRequestBody,
+        EnableCsrfProtectionModule,
+        EnableHttpMethodOverride,
+        SessionName,
+        SessionStoreType,
+        SessionAutoIdRegeneration,
+        SessionLifeTime,
+        SessionCookiePath,
+        SessionGcProbability,
+        SessionGcMaxLifeTime,
+        SessionSecret,
+        SessionCsrfProtectionKey,
+        MPMThreadMaxAppServers,
+        MPMThreadMaxThreadsPerAppServer,
+        MPMPreforkMaxAppServers,
+        MPMPreforkMinAppServers,
+        MPMPreforkSpareAppServers,
+        MPMHybridMaxAppServers,
+        MPMHybridMaxWorkersPerAppServer,
+        SystemLogFilePath,
+        SystemLogLayout,
+        SystemLogDateTimeFormat,
+        AccessLogFilePath,
+        AccessLogLayout,
+        AccessLogDateTimeFormat,
+        ActionMailerDeliveryMethod,
+        ActionMailerCharacterSet,
+        ActionMailerDelayedDelivery,
+        ActionMailerSmtpHostName,
+        ActionMailerSmtpPort,
+        ActionMailerSmtpAuthentication,
+        ActionMailerSmtpUserName,
+        ActionMailerSmtpPassword,
+        ActionMailerSmtpEnablePopBeforeSmtp,
+        ActionMailerSmtpPopServerHostName,
+        ActionMailerSmtpPopServerPort,
+        ActionMailerSmtpPopServerEnableApop,
+        ActionMailerSendmailCommandLocation,
+    };
 }
 
 
@@ -198,11 +252,6 @@ namespace TMongo
         Mod,                // $mod : [ val1, val2 ]
         Size,               // $size : val
         Type,               // $type : val
-    };
-
-    enum SortOrder {
-        AscendingOrder = Qt::AscendingOrder,
-        DescendingOrder = Qt::DescendingOrder,
     };
 }
 

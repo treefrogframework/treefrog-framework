@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <TWebApplication>
 #include <TSystemGlobal>
+#include <TAppSettings>
 #include <stdlib.h>
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
@@ -39,7 +40,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     : QCoreApplication(argc, argv),
 #endif
       dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT),
-      appSetting(0),
+      //appSetting(0),
       sqlSettings(0),
       mongoSetting(0),
       loggerSetting(0),
@@ -88,14 +89,14 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
 
     // Creates settings objects
-    appSetting = new QSettings(appSettingsFilePath(), QSettings::IniFormat, this);
+    TAppSettings::instantiate(appSettingsFilePath());
     loggerSetting = new QSettings(configPath() + "logger.ini", QSettings::IniFormat, this);
     validationSetting = new QSettings(configPath() + "validation.ini", QSettings::IniFormat, this);
     mediaTypes = new QSettings(configPath() + "initializers" + QDir::separator() + "internet_media_types.ini", QSettings::IniFormat, this);
 
     // Gets codecs
-    codecInternal = searchCodec(appSetting->value("InternalEncoding").toByteArray().trimmed().data());
-    codecHttp = searchCodec(appSetting->value("HttpOutputEncoding").toByteArray().trimmed().data());
+    codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
+    codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
 
     // Sets codecs for INI files
     loggerSetting->setIniCodec(codecInternal);
@@ -103,9 +104,9 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     mediaTypes->setIniCodec(codecInternal);
 
     // SQL DB settings
-    QString dbsets = appSetting->value("SqlDatabaseSettingsFiles").toString().trimmed();
+    QString dbsets = Tf::appSettings()->value(Tf::SqlDatabaseSettingsFiles).toString().trimmed();
     if (dbsets.isEmpty()) {
-        dbsets = appSetting->value("DatabaseSettingsFiles").toString().trimmed();
+        dbsets = Tf::appSettings()->readValue("DatabaseSettingsFiles").toString().trimmed();
     }
     QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
     for (QListIterator<QString> it(files); it.hasNext(); ) {
@@ -116,7 +117,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
 
     // MongoDB settings
-    QString mongoini = appSetting->value("MongoDbSettingsFile").toString().trimmed();
+    QString mongoini = Tf::appSettings()->value(Tf::MongoDbSettingsFile).toString().trimmed();
     if (!mongoini.isEmpty()) {
         QString mnginipath = configPath() + mongoini;
         if (QFile(mnginipath).exists())
@@ -212,7 +213,7 @@ QString TWebApplication::tmpPath() const
 */
 bool TWebApplication::appSettingsFileExists() const
 {
-    return !appSetting->allKeys().isEmpty();
+    return !Tf::appSettings()->appIniSettings->allKeys().isEmpty();
 }
 
 /*!
@@ -295,22 +296,13 @@ QString TWebApplication::validationErrorMessage(int rule) const
 }
 
 /*!
-  Returns a string of the module name for multi-processing that is set by the setting
-  \a MultiProcessingModule in the application.ini.
-*/
-QString TWebApplication::multiProcessingModuleString() const
-{
-    return appSettings().value("MultiProcessingModule").toString().toLower();
-}
-
-/*!
   Returns the module name for multi-processing that is set by the setting
   \a MultiProcessingModule in the application.ini.
 */
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
     if (mpm == Invalid) {
-        QString str = multiProcessingModuleString();
+        QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             mpm = Thread;
         } else if (str == "prefork") {
@@ -328,8 +320,8 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
 */
 int TWebApplication::maxNumberOfAppServers(int defaultValue) const
 {
-    QString mpmstr = multiProcessingModuleString();
-    int num = appSettings().value(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
+    QString mpmstr = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+    int num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
 
     if (num > 0) {
         return num;
@@ -344,7 +336,7 @@ int TWebApplication::maxNumberOfAppServers(int defaultValue) const
 
     case Prefork: // FALL THROUGH
     case Hybrid:
-        num = appSettings().value(QLatin1String("MPM.") + mpmstr + ".MaxServers").toInt();
+        num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxServers").toInt();
         break;
 
     default:
@@ -368,7 +360,7 @@ QString TWebApplication::routesConfigFilePath() const
 */
 QString TWebApplication::systemLogFilePath() const
 {
-    QFileInfo fi(appSettings().value("SystemLog.FilePath", "log/treefrog.log").toString());
+    QFileInfo fi(Tf::appSettings()->value(Tf::SystemLogFilePath, "log/treefrog.log").toString());
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
 }
 
@@ -378,7 +370,7 @@ QString TWebApplication::systemLogFilePath() const
 */
 QString TWebApplication::accessLogFilePath() const
 {
-    QString name = appSettings().value("AccessLog.FilePath").toString().trimmed();
+    QString name = Tf::appSettings()->value(Tf::AccessLogFilePath).toString().trimmed();
     if (name.isEmpty())
         return name;
 
@@ -392,7 +384,7 @@ QString TWebApplication::accessLogFilePath() const
 */
 QString TWebApplication::sqlQueryLogFilePath() const
 {
-    QString path = appSettings().value("SqlQueryLogFile").toString();
+    QString path = Tf::appSettings()->value(Tf::SqlQueryLogFile).toString();
     if (!path.isEmpty()) {
         QFileInfo fi(path);
         path = (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();

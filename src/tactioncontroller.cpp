@@ -16,6 +16,7 @@
 #include <QDomDocument>
 #include <TActionController>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TDispatcher>
 #include <TActionView>
 #include <TSession>
@@ -25,10 +26,8 @@
 #include "tsessionmanager.h"
 #include "ttextview.h"
 
-#define STORE_TYPE              "Session.StoreType"
 #define FLASH_VARS_SESSION_KEY  "_flashVariants"
 #define LOGIN_USER_NAME_KEY     "_loginUserName"
-#define CSRF_PROTECTION_KEY     "Session.CsrfProtectionKey"
 
 /*!
   \class TActionController
@@ -213,8 +212,8 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
  */
 QByteArray TActionController::authenticityToken() const
 {
-    if (Tf::app()->appSettings().value(STORE_TYPE).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::app()->appSettings().value(CSRF_PROTECTION_KEY).toString();
+    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
+        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
         QByteArray csrfId = session().value(key).toByteArray();
 
         if (csrfId.isEmpty()) {
@@ -222,7 +221,7 @@ QByteArray TActionController::authenticityToken() const
         }
         return csrfId;
     } else {
-        return QCryptographicHash::hash(session().id() + Tf::app()->appSettings().value("Session.Secret").toByteArray(), QCryptographicHash::Sha1).toHex();
+        return QCryptographicHash::hash(session().id() + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(), QCryptographicHash::Sha1).toHex();
     }
 }
 
@@ -248,8 +247,8 @@ void TActionController::setSession(const TSession &session)
 */
 void TActionController::setCsrfProtectionInto(TSession &session)
 {
-    if (Tf::app()->appSettings().value(STORE_TYPE).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::app()->appSettings().value(CSRF_PROTECTION_KEY).toString();
+    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
+        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
         session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
     }
 }
@@ -290,7 +289,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
         return true;
     }
 
-    if (Tf::app()->appSettings().value(STORE_TYPE).toString().toLower() != QLatin1String("cookie")) {
+    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() != QLatin1String("cookie")) {
         if (session().id().isEmpty()) {
             throw SecurityException("Request Forgery Protection requires a valid session", __FILE__, __LINE__);
         }

@@ -8,6 +8,7 @@
 #include <QDir>
 #include <TTemporaryFile>
 #include <TWebApplication>
+#include <TAppSettings>
 
 /*!
   \class TTemporaryFile
@@ -25,7 +26,7 @@ TTemporaryFile::TTemporaryFile()
 {
     QString tmppath;
     if (Tf::app()) {
-        tmppath = Tf::app()->appSettings().value("UploadTemporaryDirectory").toString().trimmed();
+        tmppath = Tf::appSettings()->value(Tf::UploadTemporaryDirectory).toString().trimmed();
         if (!tmppath.isEmpty() && QDir::isRelativePath(tmppath)) {
             tmppath = Tf::app()->webRootPath() + tmppath + QDir::separator();
         }

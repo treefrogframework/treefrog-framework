@@ -10,6 +10,7 @@
 #include <QMutexLocker>
 #include <TSqlQuery>
 #include <TWebApplication>
+#include <TAppSettings>
 #include "tsystemglobal.h"
 
 static QMap<QString, QString> queryCache;
@@ -71,7 +72,7 @@ bool TSqlQuery::load(const QString &filename)
 */
 QString TSqlQuery::queryDirPath() const
 {
-    QString dir = Tf::app()->webRootPath() + QDir::separator() + Tf::app()->appSettings().value("SqlQueriesStoredDirectory").toString();
+    QString dir = Tf::app()->webRootPath() + QDir::separator() + Tf::appSettings()->value(Tf::SqlQueriesStoredDirectory).toString();
 
     dir.replace(QChar('/'), QDir::separator());
     return dir;

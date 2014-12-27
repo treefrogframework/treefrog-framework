@@ -9,7 +9,7 @@
 #include <QDir>
 #include <QBuffer>
 #include <TTemporaryFile>
-#include <TWebApplication>
+#include <TAppSettings>
 #include <THttpResponse>
 #include <THttpHeader>
 #include <TMultipartFormData>
@@ -135,7 +135,7 @@ bool THttpSocket::canReadRequest() const
 void THttpSocket::readRequest()
 {
     T_TRACEFUNC("");
-    uint limitBodyBytes = Tf::app()->appSettings().value("LimitRequestBody", "0").toUInt();
+    uint limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toUInt();
     qint64 bytes = 0;
     QByteArray buf;
 

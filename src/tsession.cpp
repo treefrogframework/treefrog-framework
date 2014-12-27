@@ -6,7 +6,7 @@
  */
 
 #include <TSession>
-#include <TWebApplication>
+#include <TAppSettings>
 #include <TActionController>
 
 /*!
@@ -33,7 +33,7 @@ void TSession::reset()
  */
 QByteArray TSession::sessionName()
 {
-    return Tf::app()->appSettings().value("Session.Name").toByteArray();
+    return Tf::appSettings()->value(Tf::SessionName).toByteArray();
 }
 
 

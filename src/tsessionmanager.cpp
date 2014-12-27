@@ -8,16 +8,12 @@
 #include <QHostInfo>
 #include <QCryptographicHash>
 #include <QThread>
-#include <TWebApplication>
+#include <QCoreApplication>
+#include <TAppSettings>
 #include <TSessionStore>
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
 #include "tsessionstorefactory.h"
-
-#define STORE_TYPE          "Session.StoreType"
-#define GC_PROBABILITY      "Session.GcProbability"
-#define GC_MAX_LIFE_TIME    "Session.GcMaxLifeTime"
-#define SESSION_LIFETIME    "Session.LifeTime"
 
 
 static QByteArray createHash()
@@ -105,7 +101,7 @@ bool TSessionManager::remove(const QByteArray &id)
 
 QString TSessionManager::storeType() const
 {
-    static QString type = Tf::app()->appSettings().value(STORE_TYPE).toString().toLower();
+    static QString type = Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower();
     return type;
 }
 
@@ -132,7 +128,7 @@ void TSessionManager::collectGarbage()
     static int prob = -1;
 
     if (prob == -1) {
-        prob = Tf::app()->appSettings().value(GC_PROBABILITY).toInt();
+        prob = Tf::appSettings()->value(Tf::SessionGcProbability).toInt();
     }
 
     if (prob > 0) {
@@ -142,9 +138,9 @@ void TSessionManager::collectGarbage()
         if (r == 0) {
             tSystemDebug("Session garbage collector started");
 
-            TSessionStore *store = TSessionStoreFactory::create(Tf::app()->appSettings().value(STORE_TYPE).toString());
+            TSessionStore *store = TSessionStoreFactory::create(Tf::appSettings()->value(Tf::SessionStoreType).toString());
             if (store) {
-                int lifetime = Tf::app()->appSettings().value(GC_MAX_LIFE_TIME).toInt();
+                int lifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
                 store->remove(Tf::currentDateTimeSec().addSecs(-lifetime));
                 delete store;
             }
@@ -165,7 +161,7 @@ int TSessionManager::sessionLifeTime()
     static int lifetime = -1;
 
     if (lifetime < 0) {
-        lifetime = Tf::app()->appSettings().value(SESSION_LIFETIME).toInt();
+        lifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
     }
     return lifetime;
 }

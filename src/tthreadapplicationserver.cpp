@@ -7,6 +7,7 @@
 
 #include <TThreadApplicationServer>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TActionThread>
 #include "tsystemglobal.h"
 
@@ -19,10 +20,11 @@
 TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject *parent)
     : QTcpServer(parent), TApplicationServerBase(), listenSocket(listeningSocket), maxThreads(0)
 {
-    QString mpm = Tf::app()->multiProcessingModuleString();
-    maxThreads = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+    //QString mpm = Tf::app()->multiProcessingModuleString();
+    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+    maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
     if (maxThreads == 0) {
-        maxThreads = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+        maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
     }
     tSystemDebug("MaxThreads: %d", maxThreads);
 

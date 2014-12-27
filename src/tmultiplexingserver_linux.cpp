@@ -7,6 +7,7 @@
 
 #include <netinet/tcp.h>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TApplicationServerBase>
 #include <TMultiplexingServer>
 #include <TThreadApplicationServer>
@@ -109,10 +110,10 @@ bool TMultiplexingServer::start()
 
 void TMultiplexingServer::run()
 {
-    QString mpm = Tf::app()->multiProcessingModuleString();
-    maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+    maxWorkers = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
     if (maxWorkers <= 0) {
-        maxWorkers = Tf::app()->appSettings().value(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+        maxWorkers = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
     }
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 

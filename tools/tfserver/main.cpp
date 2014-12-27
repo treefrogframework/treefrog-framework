@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <QMap>
 #include <TWebApplication>
+#include <TAppSettings>
 #include <TThreadApplicationServer>
 #include <TPreforkApplicationServer>
 #include <TMultiplexingServer>
@@ -123,7 +124,7 @@ int main(int argc, char *argv[])
 #endif
 
     // Sets the app locale
-    QString loc = webapp.appSettings().value("Locale").toString().trimmed();
+    QString loc = Tf::appSettings()->value(Tf::Locale).toString().trimmed();
     if (!loc.isEmpty()) {
         QLocale locale(loc);
         QLocale::setDefault(locale);
@@ -158,7 +159,7 @@ int main(int argc, char *argv[])
     if (sock <= 0 && args.contains(DEBUG_MODE_OPTION))
 #endif
     {
-        int port = webapp.appSettings().value("ListenPort").toInt();
+        int port = Tf::appSettings()->value(Tf::ListenPort).toInt();
         if (port <= 0 || port > USHRT_MAX) {
             tSystemError("Invalid port number: %d", port);
             goto finish;
