@@ -269,20 +269,20 @@ TActionContext *Tf::currentContext()
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Prefork:
         context = TActionForkProcess::currentContext();
-        if (context)
+        if (Q_LIKELY(context))
             return context;
         break;
 
     case TWebApplication::Thread:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
-        if (context)
+        if (Q_LIKELY(context))
             return context;
         break;
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
         context = qobject_cast<TActionWorker *>(QThread::currentThread());
-        if (context)
+        if (Q_LIKELY(context))
             return context;
         break;
 #else

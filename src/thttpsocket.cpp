@@ -105,7 +105,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
     qint64 total = 0;
     for (;;) {
         qint64 written = QTcpSocket::write(data + total, qMin(size - total, WRITE_LENGTH));
-        if (written <= 0) {
+        if (Q_UNLIKELY(written <= 0)) {
             tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
             return -1;
         }
@@ -113,7 +113,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
         if (total >= size)
             break;
 
-        if (!waitForBytesWritten()) {
+        if (Q_UNLIKELY(!waitForBytesWritten())) {
             tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
             break;
         }
@@ -142,7 +142,7 @@ void THttpSocket::readRequest()
     while ((bytes = bytesAvailable()) > 0) {
         buf.resize(bytes);
         bytes = QTcpSocket::read(buf.data(), bytes);
-        if (bytes < 0) {
+        if (Q_UNLIKELY(bytes < 0)) {
             tSystemError("socket read error");
             break;
         }
@@ -166,7 +166,7 @@ void THttpSocket::readRequest()
                 THttpRequestHeader header(readBuffer);
                 tSystemDebug("content-length: %d", header.contentLength());
 
-                if (limitBodyBytes > 0 && header.contentLength() > limitBodyBytes) {
+                if (Q_UNLIKELY(limitBodyBytes > 0 && header.contentLength() > limitBodyBytes)) {
                     throw ClientErrorException(413);  // Request Entity Too Large
                 }
 
@@ -175,7 +175,7 @@ void THttpSocket::readRequest()
                 if (header.contentType().trimmed().startsWith("multipart/form-data")
                     || header.contentLength() > READ_THRESHOLD_LENGTH) {
                     // Writes to file buffer
-                    if (!fileBuffer.open()) {
+                    if (Q_UNLIKELY(!fileBuffer.open())) {
                         throw RuntimeException(QLatin1String("temporary file open error: ") + fileBuffer.fileTemplate(), __FILE__, __LINE__);
                     }
                     if (readBuffer.length() > idx + 4) {

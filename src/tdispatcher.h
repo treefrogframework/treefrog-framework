@@ -60,7 +60,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
                                           "(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)" };
 
     object();
-    if (!ptr) {
+    if (Q_UNLIKELY(!ptr)) {
         tSystemDebug("Failed to invoke, no such class: %s", qPrintable(metaType));
         return false;
     }
@@ -80,7 +80,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     }
 
     bool res = false;
-    if (idx < 0) {
+    if (Q_UNLIKELY(idx < 0)) {
         tSystemDebug("No such method: %s", qPrintable(method));
         return res;
     } else {

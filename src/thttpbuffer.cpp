@@ -83,11 +83,11 @@ int THttpBuffer::write(const QByteArray &byteArray)
 
 void THttpBuffer::parse()
 {
-    if (limitBodyBytes < 0) {
+    if (Q_UNLIKELY(limitBodyBytes < 0)) {
         limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toInt();
     }
 
-    if (lengthToRead < 0) {
+    if (Q_LIKELY(lengthToRead < 0)) {
         int idx = httpBuffer.indexOf("\r\n\r\n");
         if (idx > 0) {
             THttpRequestHeader header(httpBuffer);
