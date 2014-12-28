@@ -23,7 +23,7 @@ public:
     };
 
     int     method;
-    QStringList components;
+    QStringList componentList;
     QList<int>  keywordIndexes;
     QByteArray controller;
     QByteArray action;

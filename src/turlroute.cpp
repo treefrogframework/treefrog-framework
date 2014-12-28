@@ -103,6 +103,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
      QString &path = items[1];
 
      if (path.contains(":params") && !path.endsWith(":params")) {
+         tError(":params must be specified as last directive.");
          return false;
      }
 
@@ -116,20 +117,17 @@ bool TUrlRoute::addRouteFromString(const QString &line)
      }
 
      // parse path
-     rt.components = splitPath(path);
-     rt.hasVariableParams = rt.components.contains(":params");
+     rt.componentList = splitPath(path);
+     rt.hasVariableParams = rt.componentList.contains(":params");
 
-     for (int i = 0; i < rt.components.count(); ++i) {
-         const QString &c = rt.components[i];
-
-         if (!c.isEmpty()) {
-             if (c.startsWith(":")) {
-                 if (c != ":param" && c != ":params") {
-                     return false;
-                 }
-             } else {
-                 rt.keywordIndexes << i;
+     for (int i = 0; i < rt.componentList.count(); ++i) {
+         const QString &c = rt.componentList[i];
+         if (c.startsWith(":")) {
+             if (c != ":param" && c != ":params") {
+                 return false;
              }
+         } else {
+             rt.keywordIndexes << i;
          }
      }
 
@@ -145,7 +143,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 
      routes << rt;
      tSystemDebug("route: method:%d path:%s  ctrl:%s action:%s params:%d",
-                  rt.method, qPrintable(QLatin1String("/") + rt.components.join("/")), rt.controller.data(),
+                  rt.method, qPrintable(QLatin1String("/") + rt.componentList.join("/")), rt.controller.data(),
                   rt.action.data(), rt.hasVariableParams);
      return true;
 }
@@ -163,18 +161,18 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
 
         // Too long or short?
         if (rt.hasVariableParams) {
-            if (components.length() < rt.components.length() - 1) {
+            if (components.length() < rt.componentList.length() - 1) {
                 continue;
             }
         } else {
-            if (components.length() != rt.components.length()) {
+            if (components.length() != rt.componentList.length()) {
                 continue;
             }
         }
 
         for (QListIterator<int> it(rt.keywordIndexes); it.hasNext(); ) {
             int idx = it.next();
-            if (components[idx] != rt.components[idx]) {
+            if (components.value(idx) != rt.componentList[idx]) {
                 goto continue_next;
             }
         }
@@ -182,6 +180,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
         denied = true;
 
         if (rt.method == TRoute::Match || rt.method == method) {
+            // Generates parameters for action
             QStringList params = components;
 
             if (params.count() == 1 && params[0].isEmpty()) {  // means path="/"
@@ -214,11 +213,13 @@ void TUrlRoute::clear()
 
 QStringList TUrlRoute::splitPath(const QString &path)
 {
-    int s = (path.startsWith(QLatin1Char('/'))) ? 1 : 0;
+    const QLatin1Char Slash('/');
+
+    int s = (path.startsWith(Slash)) ? 1 : 0;
     int len = path.length();
 
-    if (len > 1 && path.endsWith(QLatin1Char('/'))) {
+    if (len > 1 && path.endsWith(Slash)) {
         --len;
     }
-    return path.mid(s, len - s).split('/');
+    return path.mid(s, len - s).split(Slash);
 }
