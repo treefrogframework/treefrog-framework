@@ -304,7 +304,7 @@ void TKvsDatabasePool2::instantiate(int maxConnections)
 
 TKvsDatabasePool2 *TKvsDatabasePool2::instance()
 {
-    if (!databasePool) {
+    if (Q_UNLIKELY(!databasePool)) {
         tFatal("Call TKvsDatabasePool2::initialize() function first");
     }
     return databasePool;

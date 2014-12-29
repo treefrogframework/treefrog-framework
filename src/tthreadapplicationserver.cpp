@@ -20,7 +20,6 @@
 TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject *parent)
     : QTcpServer(parent), TApplicationServerBase(), listenSocket(listeningSocket), maxThreads(0)
 {
-    //QString mpm = Tf::app()->multiProcessingModuleString();
     QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
     maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
     if (maxThreads == 0) {

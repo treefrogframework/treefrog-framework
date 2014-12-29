@@ -270,7 +270,7 @@ void TSqlDatabasePool2::instantiate(int maxConnections)
 
 TSqlDatabasePool2 *TSqlDatabasePool2::instance()
 {
-    if (!databasePool) {
+    if (Q_UNLIKELY(!databasePool)) {
         tFatal("Call TSqlDatabasePool2::initialize() function first");
     }
     return databasePool;
@@ -328,7 +328,7 @@ int TSqlDatabasePool2::getDatabaseId(const QSqlDatabase &database)
     bool ok;
     int id = database.connectionName().mid(3,2).toInt(&ok);
 
-    if (ok && id >= 0) {
+    if (Q_LIKELY(ok && id >= 0)) {
         return id;
     }
     return -1;

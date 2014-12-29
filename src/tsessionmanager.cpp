@@ -57,7 +57,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
     TSession session;
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
-        if (store) {
+        if (Q_LIKELY(store)) {
             session = store->find(id, validCreated);
             delete store;
         }
@@ -77,7 +77,7 @@ bool TSessionManager::store(TSession &session)
 
     bool res = false;
     TSessionStore *store = TSessionStoreFactory::create(storeType());
-    if (store) {
+    if (Q_LIKELY(store)) {
         res = store->store(session);
         delete store;
     }
@@ -89,7 +89,7 @@ bool TSessionManager::remove(const QByteArray &id)
 {
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
-        if (store) {
+        if (Q_LIKELY(store)) {
             bool ret = store->remove(id);
             delete store;
             return ret;
@@ -160,7 +160,7 @@ int TSessionManager::sessionLifeTime()
 {
     static int lifetime = -1;
 
-    if (lifetime < 0) {
+    if (Q_UNLIKELY(lifetime < 0)) {
         lifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
     }
     return lifetime;

@@ -53,7 +53,7 @@ TEpollSocket *TEpollSocket::accept(int listeningSocket)
 
     int actfd = tf_accept4(listeningSocket, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
     int err = errno;
-    if (actfd < 0) {
+    if (Q_UNLIKELY(actfd < 0)) {
         if (err != EAGAIN) {
             tSystemWarn("Failed accept.  errno:%d", err);
         }
@@ -68,7 +68,7 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
 {
     TEpollSocket *sock = 0;
 
-    if (socketDescriptor > 0) {
+    if (Q_LIKELY(socketDescriptor > 0)) {
         int id = socketCounter.fetchAndAddOrdered(1);
         sock  = new TEpollSocket(socketDescriptor, id, address);
         sock->moveToThread(QCoreApplication::instance()->thread());
@@ -87,7 +87,7 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 {
     const int BUF_SIZE = 128 * 1024;
 
-    if (!tmpbuf) {
+    if (Q_UNLIKELY(!tmpbuf)) {
         // Creates a common buffer
         int res, sendBufSize, recvBufSize;
         socklen_t optlen;
@@ -251,7 +251,7 @@ void TEpollSocket::dispatchSendData()
         TEpollSocket *sock = epollSockets[sd->id];
         mutexEpollSockets.unlock();
 
-        if (sock && sock->socketDescriptor() > 0) {
+        if (Q_LIKELY(sock && sock->socketDescriptor() > 0)) {
             switch (sd->method) {
             case SendData::Send:
                 sock->sendBuf << sd->buffer;
@@ -283,7 +283,7 @@ void TEpollSocket::setSendData(int id, const THttpHeader *header, QIODevice *bod
     QByteArray response = header->toByteArray();
     QFileInfo fi;
 
-    if (body) {
+    if (Q_LIKELY(body)) {
         QBuffer *buffer = qobject_cast<QBuffer *>(body);
         if (buffer) {
             response += buffer->data();

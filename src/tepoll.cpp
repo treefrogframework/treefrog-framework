@@ -79,7 +79,7 @@ bool TEpoll::canReceive() const
 
 TEpoll *TEpoll::instance()
 {
-    if (!staticInstance) {
+    if (Q_UNLIKELY(!staticInstance)) {
         staticInstance = new TEpoll();
     }
     return staticInstance;
@@ -98,7 +98,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, socket->socketDescriptor(), &ev);
     int err = errno;
-    if (ret < 0){
+    if (Q_UNLIKELY(ret < 0)){
         if (err != EEXIST) {
             tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  sd:%d errno:%d", socket->socketDescriptor(), err);
         }
@@ -122,7 +122,7 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, socket->socketDescriptor(), &ev);
     int err = errno;
-    if (ret < 0) {
+    if (Q_UNLIKELY(ret < 0)) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  sd:%d errno:%d ev:0x%x", socket->socketDescriptor(), err, events);
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_MOD)  sd:%d", socket->socketDescriptor());
@@ -137,7 +137,7 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
     int err = errno;
 
-    if (ret < 0 && err != ENOENT) {
+    if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:%d errno:%d", socket->socketDescriptor(), err);
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:%d", socket->socketDescriptor());

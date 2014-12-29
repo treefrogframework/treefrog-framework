@@ -43,7 +43,7 @@ void TMultiplexingServer::instantiate(int listeningSocket)
 
 TMultiplexingServer *TMultiplexingServer::instance()
 {
-    if (!multiplexingServer) {
+    if (Q_UNLIKELY(!multiplexingServer)) {
         tFatal("Call TMultiplexingServer::instantiate() function first");
     }
     return multiplexingServer;
@@ -145,7 +145,7 @@ void TMultiplexingServer::run()
             if (cltfd == listenSocket) {
                 for (;;) {
                     TEpollSocket *sock = TEpollSocket::accept(listenSocket);
-                    if (!sock)
+                    if (Q_UNLIKELY(!sock))
                         break;
 
                     TEpoll::instance()->addPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));
@@ -177,7 +177,7 @@ void TMultiplexingServer::run()
 
                     // Receive data
                     int len = epSock->recv();
-                    if (len < 0) {
+                    if (Q_UNLIKELY(len < 0)) {
                         TEpoll::instance()->deletePoll(epSock);
                         epSock->close();
                         epSock->deleteLater();
