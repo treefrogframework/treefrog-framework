@@ -1,7 +1,8 @@
 #!/bin/bash
 
+[ -f Makefile ] && make distclean
+
 qmake -r
-make clean
 make -j8
 if [ "$?" != 0 ]; then
   echo
