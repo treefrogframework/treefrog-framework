@@ -272,6 +272,16 @@ unix:!macx {
   SOURCES += tepoll.cpp
   HEADERS += tepollsocket.h
   SOURCES += tepollsocket.cpp
+  HEADERS += tepollhttpsocket.h
+  SOURCES += tepollhttpsocket.cpp
+#  HEADERS += tepollwebsocket.h
+#  SOURCES += tepollwebsocket.cpp
+#  HEADERS += tabstractrecvbuffer.h
+#  SOURCES += tabstractrecvbuffer.cpp
+#  HEADERS += tabstractsendbufferqueue.h
+#  SOURCES += tabstractsendbufferqueue.cpp
+#  HEADERS += thttpsendbufferqueue.h
+#  SOURCES += thttpsendbufferqueue.cpp
 }
 
 # Qt5

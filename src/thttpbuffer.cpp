@@ -26,8 +26,7 @@ THttpBuffer::~THttpBuffer()
 
 THttpBuffer::THttpBuffer(const THttpBuffer &other)
     : httpBuffer(other.httpBuffer),
-      lengthToRead(other.lengthToRead),
-      clientAddr(other.clientAddr)
+      lengthToRead(other.lengthToRead)
 { }
 
 
@@ -35,7 +34,6 @@ THttpBuffer &THttpBuffer::operator=(const THttpBuffer &other)
 {
     httpBuffer = other.httpBuffer;
     lengthToRead = other.lengthToRead;
-    clientAddr = other.clientAddr;
     return *this;
 }
 
@@ -58,9 +56,9 @@ int THttpBuffer::read(char *data, int maxSize)
 }
 
 
-int THttpBuffer::write(const char *data, int maxSize)
+int THttpBuffer::write(const char *data, int len)
 {
-    httpBuffer.append(data, maxSize);
+    httpBuffer.append(data, len);
 
     if (lengthToRead < 0) {
         parse();
@@ -69,9 +67,9 @@ int THttpBuffer::write(const char *data, int maxSize)
             throw ClientErrorException(413);  // Request Entity Too Large
         }
 
-        lengthToRead = qMax(lengthToRead - maxSize, 0LL);
+        lengthToRead = qMax(lengthToRead - len, 0LL);
     }
-    return maxSize;
+    return len;
 }
 
 
@@ -117,5 +115,4 @@ void THttpBuffer::clear()
     lengthToRead = -1;
     httpBuffer.truncate(0);
     httpBuffer.reserve(1023);
-    clientAddr.clear();
 }

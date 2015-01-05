@@ -16,8 +16,8 @@
 #include <THttpHeader>
 #include <TAtomicQueue>
 #include "tepollsocket.h"
+#include "tepollhttpsocket.h"
 #include "tepoll.h"
-#include "tactionworker.h"
 #include "thttpsendbuffer.h"
 #include "tfcore_unix.h"
 
@@ -70,7 +70,7 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
 
     if (Q_LIKELY(socketDescriptor > 0)) {
         int id = socketCounter.fetchAndAddOrdered(1);
-        sock  = new TEpollSocket(socketDescriptor, id, address);
+        sock  = new TEpollHttpSocket(socketDescriptor, id, address);
         sock->moveToThread(QCoreApplication::instance()->thread());
 
         QMutexLocker locker(&mutexEpollSockets);
@@ -121,10 +121,8 @@ void TEpollSocket::releaseAllSockets()
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, int id, const QHostAddress &address)
-    : sd(socketDescriptor), identifier(id), recvBuf(), sendBuf()
-{
-    recvBuf.setClientAddress(address);
-}
+    : sd(socketDescriptor), identifier(id), clientAddr(address)
+{ }
 
 
 TEpollSocket::~TEpollSocket()
@@ -147,6 +145,7 @@ int TEpollSocket::recv()
     int err;
 
     for (;;) {
+#if 0
         errno = 0;
         int len = ::recv(sd, tmpbuf, tmpbuflen, 0);
         err = errno;
@@ -157,6 +156,18 @@ int TEpollSocket::recv()
 
         // Read successfully
         recvBuf.write(tmpbuf, len);
+#else
+        errno = 0;
+        int len = ::recv(sd, tmpbuf, tmpbuflen, 0);
+        err = errno;
+
+        if (len <= 0) {
+            break;
+        }
+
+        // Read successfully
+        write(tmpbuf, len);
+#endif
     }
 
     switch (err) {
@@ -192,7 +203,7 @@ int TEpollSocket::send()
     int err = errno;
     TAccessLogger &logger = sendbuf->accessLogger();
 
-    if (sentlen <= 0) {
+    if (Q_UNLIKELY(sentlen <= 0)) {
         if (err != ECONNRESET) {
             tSystemError("Failed send : errno:%d  datalen:%d", err, len);
         }
@@ -225,12 +236,6 @@ int TEpollSocket::send()
     }
 
     return sentlen;
-}
-
-
-bool TEpollSocket::canReadHttpRequest()
-{
-    return recvBuf.canReadHttpRequest();
 }
 
 
@@ -278,9 +283,9 @@ void TEpollSocket::dispatchSendData()
 }
 
 
-void TEpollSocket::setSendData(int id, const THttpHeader *header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+void TEpollSocket::setSendData(int id, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
-    QByteArray response = header->toByteArray();
+    QByteArray response = header;
     QFileInfo fi;
 
     if (Q_LIKELY(body)) {
@@ -309,12 +314,4 @@ void TEpollSocket::close()
         TF_CLOSE(sd);
         sd = 0;
     }
-}
-
-
-void TEpollSocket::startWorker()
-{
-    TActionWorker *worker = new TActionWorker(this);
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    worker->start();
 }

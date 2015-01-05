@@ -11,7 +11,7 @@
 #include <QCoreApplication>
 #include <QAtomicInt>
 #include "thttpsocket.h"
-#include "tepollsocket.h"
+#include "tepollhttpsocket.h"
 #include "tsystemglobal.h"
 
 // Counter of action workers  (Note: workerCount != contextCount)
@@ -50,12 +50,12 @@ bool TActionWorker::waitForAllDone(int msec)
   \brief The TActionWorker class provides a thread context.
 */
 
-TActionWorker::TActionWorker(TEpollSocket *socket, QObject *parent)
+TActionWorker::TActionWorker(TEpollHttpSocket *socket, QObject *parent)
     : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socketId(socket->id())
 {
     workerCounter.fetchAndAddOrdered(1);
-    httpRequest = socket->recvBuffer().read(INT_MAX);
-    clientAddr = socket->recvBuffer().clientAddress().toString();
+    httpRequest = socket->recvBuf.read(INT_MAX);
+    clientAddr = socket->clientAddress().toString();
 }
 
 
@@ -83,7 +83,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     }
 
     if (!TActionContext::stopped) {
-        TEpollSocket::setSendData(socketId, static_cast<THttpHeader*>(&header), body, autoRemove, accessLogger);
+        TEpollSocket::setSendData(socketId, header.toByteArray(), body, autoRemove, accessLogger);
     }
     accessLogger.close();  // not write in this thread
     return 0;

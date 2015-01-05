@@ -6,7 +6,7 @@
 
 class THttpRequest;
 class THttpResponseHeader;
-class TEpollSocket;
+class TEpollHttpSocket;
 class QIODevice;
 
 
@@ -28,10 +28,10 @@ private:
     QString clientAddr;
     int socketId;  // not socket descriptor
 
-    TActionWorker(TEpollSocket *socket, QObject *parent = 0);
+    TActionWorker(TEpollHttpSocket *socket, QObject *parent = 0);
 
     Q_DISABLE_COPY(TActionWorker)
-    friend class TEpollSocket;
+    friend class TEpollHttpSocket;
 };
 
 #endif // TACTIONWORKER_H

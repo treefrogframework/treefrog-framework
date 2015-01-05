@@ -36,7 +36,7 @@ protected:
     void run();
 
 signals:
-    bool incomingHttpRequest(TEpollSocket *socket);
+    bool incomingRequest(TEpollSocket *socket);
 
 private:
     int maxWorkers;
