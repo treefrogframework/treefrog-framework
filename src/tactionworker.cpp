@@ -54,7 +54,7 @@ TActionWorker::TActionWorker(TEpollHttpSocket *socket, QObject *parent)
     : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socketId(socket->id())
 {
     workerCounter.fetchAndAddOrdered(1);
-    httpRequest = socket->recvBuf.read(INT_MAX);
+    httpRequest = socket->readRequest();
     clientAddr = socket->clientAddress().toString();
 }
 

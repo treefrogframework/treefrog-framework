@@ -14,7 +14,6 @@
 
 class QIODevice;
 class THttpHeader;
-class THttpBuffer;
 class THttpSendBuffer;
 class TEpollSocket;
 

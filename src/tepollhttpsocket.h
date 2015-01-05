@@ -3,7 +3,6 @@
 
 #include <TGlobal>
 #include "tepollsocket.h"
-#include "thttpbuffer.h"
 
 class QHostAddress;
 class TActionWorker;
@@ -16,6 +15,7 @@ public:
     ~TEpollHttpSocket();
 
     virtual bool canReadRequest();
+    QByteArray readRequest();
     virtual void startWorker();
     virtual bool upgradeConnectionReceived() const;
     virtual TEpollSocket *switchProtocol();
@@ -23,9 +23,12 @@ public:
 protected:
     //virtual void *getRecvBuffer(int size);
     virtual int write(const char *data, int len);
+    void parse();
+    void clear();
 
 private:
-    THttpBuffer recvBuf;
+    QByteArray httpBuffer;
+    qint64 lengthToRead;
 
     TEpollHttpSocket(int socketDescriptor, int id, const QHostAddress &address);
 
