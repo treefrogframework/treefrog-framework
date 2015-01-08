@@ -134,13 +134,19 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
+    return deletePoll(socket->socketDescriptor());
+}
+
+
+bool TEpoll::deletePoll(int socketDescriptor)
+{
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socketDescriptor, NULL);
     int err = errno;
 
     if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:%d errno:%d", socket->socketDescriptor(), err);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:%d errno:%d", socketDescriptor, err);
     } else {
-        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:%d", socket->socketDescriptor());
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:%d", socketDescriptor);
     }
 
     return !ret;

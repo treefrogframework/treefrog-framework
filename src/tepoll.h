@@ -21,6 +21,7 @@ public:
     bool addPoll(TEpollSocket *socket, int events);
     bool modifyPoll(TEpollSocket *socket, int events);
     bool deletePoll(TEpollSocket *socket);
+    bool deletePoll(int socketDescripter);
 
     static TEpoll *instance();
 

@@ -1,18 +1,18 @@
-#ifndef TEPOLLHTTPSOCKET_H
-#define TEPOLLHTTPSOCKET_H
+#ifndef TEPOLLWEBSOCKET_H
+#define TEPOLLWEBSOCKET_H
 
 #include <TGlobal>
 #include "tepollsocket.h"
 
 class QHostAddress;
-class TActionWorker;
+//class TActionWorker;
 
 
-class T_CORE_EXPORT TEpollHttpSocket : public TEpollSocket
+class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket
 {
     Q_OBJECT
 public:
-    ~TEpollHttpSocket();
+    ~TEpollWebSocket();
 
     virtual bool canReadRequest();
     QByteArray readRequest();
@@ -28,11 +28,11 @@ private:
     QByteArray httpBuffer;
     qint64 lengthToRead;
 
-    TEpollHttpSocket(int socketDescriptor, const QHostAddress &address);
+    TEpollWebSocket(int socketDescriptor, const QHostAddress &address);
 
-    friend class TEpollSocket;
-    friend class TActionWorker;
-    Q_DISABLE_COPY(TEpollHttpSocket)
+    friend class TEpollHttpSocket;
+    //friend class TActionWorker;
+    Q_DISABLE_COPY(TEpollWebSocket)
 };
 
-#endif // TEPOLLHTTPSOCKET_H
+#endif // TEPOLLWEBSOCKET_H

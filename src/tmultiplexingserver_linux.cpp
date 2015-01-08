@@ -202,7 +202,6 @@ void TMultiplexingServer::run()
         }
     }
 
-    TEpollSocket::releaseAllSockets();
     TActionWorker::waitForAllDone(10000);
 }
 

@@ -10,13 +10,14 @@
 #include <THttpRequestHeader>
 #include "tepollhttpsocket.h"
 #include "tactionworker.h"
+#include "tepollwebsocket.h"
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
 
 
-TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, int id, const QHostAddress &address)
-    : TEpollSocket(socketDescriptor, id, address), lengthToRead(-1)
+TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
+    : TEpollSocket(socketDescriptor, address), lengthToRead(-1)
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
@@ -37,18 +38,6 @@ QByteArray TEpollHttpSocket::readRequest()
     QByteArray ret = httpBuffer;
     clear();
     return ret;
-}
-
-
-bool TEpollHttpSocket::upgradeConnectionReceived() const
-{
-    return false;
-}
-
-
-TEpollSocket *TEpollHttpSocket::switchProtocol()
-{
-    return NULL;
 }
 
 
@@ -95,6 +84,16 @@ void TEpollHttpSocket::parse()
 
             lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);
             tSystemDebug("lengthToRead: %d", (int)lengthToRead);
+
+            if (header.rawHeader("Connection").toLower() == "upgrade") {
+                if (header.rawHeader("Upgrade").toLower() == "websocket") {
+                    THttpResponseHeader header;
+                    TEpollWebSocket *websocket = new TEpollWebSocket(socketDescriptor(), clientAddress());
+                    setSocketDescpriter(0);  // Delegates to new websocket
+
+                    TEpollSocket::setSwitchProtocols(header.toByteArray(), websocket);
+                }
+            }
         }
     } else {
         tSystemWarn("Unreachable code in normal communication");

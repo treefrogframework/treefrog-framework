@@ -29,6 +29,11 @@ THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file
 }
 
 
+THttpSendBuffer::THttpSendBuffer(const QByteArray &header)
+    : arrayBuffer(header), bodyFile(0), fileRemove(false), accesslogger(), arraySentSize(0)
+{ }
+
+
 THttpSendBuffer::THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
     : arrayBuffer(), bodyFile(0), fileRemove(false), accesslogger(), arraySentSize(0)
 {

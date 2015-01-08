@@ -51,7 +51,7 @@ bool TActionWorker::waitForAllDone(int msec)
 */
 
 TActionWorker::TActionWorker(TEpollHttpSocket *socket, QObject *parent)
-    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socketId(socket->id())
+    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), httpSocket(socket)
 {
     workerCounter.fetchAndAddOrdered(1);
     httpRequest = socket->readRequest();
@@ -83,7 +83,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     }
 
     if (!TActionContext::stopped) {
-        TEpollSocket::setSendData(socketId, header.toByteArray(), body, autoRemove, accessLogger);
+        httpSocket->setSendData(header.toByteArray(), body, autoRemove, accessLogger);
     }
     accessLogger.close();  // not write in this thread
     return 0;
@@ -93,7 +93,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 void TActionWorker::closeHttpSocket()
 {
     if (!TActionContext::stopped) {
-        TEpollSocket::setDisconnect(socketId);
+        httpSocket->setDisconnect();
     }
 }
 

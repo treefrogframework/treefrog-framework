@@ -274,8 +274,8 @@ unix:!macx {
   SOURCES += tepollsocket.cpp
   HEADERS += tepollhttpsocket.h
   SOURCES += tepollhttpsocket.cpp
-#  HEADERS += tepollwebsocket.h
-#  SOURCES += tepollwebsocket.cpp
+  HEADERS += tepollwebsocket.h
+  SOURCES += tepollwebsocket.cpp
 #  HEADERS += tabstractrecvbuffer.h
 #  SOURCES += tabstractrecvbuffer.cpp
 #  HEADERS += tabstractsendbufferqueue.h

@@ -10,8 +10,6 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QBuffer>
-#include <QMutex>
-#include <QMutexLocker>
 #include <TSystemGlobal>
 #include <THttpHeader>
 #include <TAtomicQueue>
@@ -25,9 +23,6 @@ class SendData;
 
 static char *tmpbuf = 0;
 static int tmpbuflen = 0;
-static QAtomicInt socketCounter;
-static QMutex mutexEpollSockets(QMutex::Recursive);
-static QMap<int, TEpollSocket *> epollSockets;
 static TAtomicQueue<SendData *> sendRequests;
 
 
@@ -37,12 +32,16 @@ public:
     enum Method {
         Disconnect,
         Send,
+        SwitchProtocols,
     };
     int method;
-    int id;
+    TEpollSocket *socket;
     THttpSendBuffer *buffer;
+    TEpollSocket *upgradedSocket;
 
-    SendData(Method m, int i, THttpSendBuffer *buf = 0) : method(m), id(i), buffer(buf) { }
+    SendData(Method m, TEpollSocket *sock, THttpSendBuffer *buf = 0, TEpollSocket *upgraded = 0)
+        : method(m), socket(sock), buffer(buf), upgradedSocket(upgraded)
+    { }
 };
 
 
@@ -69,12 +68,8 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
     TEpollSocket *sock = 0;
 
     if (Q_LIKELY(socketDescriptor > 0)) {
-        int id = socketCounter.fetchAndAddOrdered(1);
-        sock  = new TEpollHttpSocket(socketDescriptor, id, address);
+        sock  = new TEpollHttpSocket(socketDescriptor, address);
         sock->moveToThread(QCoreApplication::instance()->thread());
-
-        QMutexLocker locker(&mutexEpollSockets);
-        epollSockets.insert(id, sock);
 
         initBuffer(socketDescriptor);
     }
@@ -108,29 +103,13 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 }
 
 
-void TEpollSocket::releaseAllSockets()
-{
-    QMutexLocker locker(&mutexEpollSockets);
-
-    for (QMapIterator<int, TEpollSocket *> it(epollSockets); it.hasNext(); ) {
-        it.next();
-        it.value()->deleteLater();
-    }
-    epollSockets.clear();
-}
-
-
-TEpollSocket::TEpollSocket(int socketDescriptor, int id, const QHostAddress &address)
-    : sd(socketDescriptor), identifier(id), clientAddr(address)
+TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
+    : sd(socketDescriptor), clientAddr(address)
 { }
 
 
 TEpollSocket::~TEpollSocket()
 {
-    mutexEpollSockets.lock();
-    epollSockets.remove(identifier);
-    mutexEpollSockets.unlock();
-
     close();
 
     for (QListIterator<THttpSendBuffer*> it(sendBuf); it.hasNext(); ) {
@@ -252,9 +231,7 @@ void TEpollSocket::dispatchSendData()
     for (QListIterator<SendData *> it(dataList); it.hasNext(); ) {
         SendData *sd = it.next();
 
-        mutexEpollSockets.lock();
-        TEpollSocket *sock = epollSockets[sd->id];
-        mutexEpollSockets.unlock();
+        TEpollSocket *sock = sd->socket;
 
         if (Q_LIKELY(sock && sock->socketDescriptor() > 0)) {
             switch (sd->method) {
@@ -267,6 +244,15 @@ void TEpollSocket::dispatchSendData()
                 TEpoll::instance()->deletePoll(sock);
                 sock->close();
                 sock->deleteLater();
+                break;
+
+	    case SendData::SwitchProtocols:
+                TEpoll::instance()->deletePoll(sd->upgradedSocket->socketDescriptor());
+                sock->deleteLater();
+    tSystemDebug("##### SwitchProtocols");
+                // Switching protocols
+                sd->upgradedSocket->sendBuf << sd->buffer;
+                TEpoll::instance()->addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
                 break;
 
             default:
@@ -283,7 +269,7 @@ void TEpollSocket::dispatchSendData()
 }
 
 
-void TEpollSocket::setSendData(int id, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+void TEpollSocket::setSendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
     QByteArray response = header;
     QFileInfo fi;
@@ -298,13 +284,26 @@ void TEpollSocket::setSendData(int id, const QByteArray &header, QIODevice *body
     }
 
     THttpSendBuffer *sendbuf = new THttpSendBuffer(response, fi, autoRemove, accessLogger);
-    sendRequests.enqueue(new SendData(SendData::Send, id, sendbuf));
+    sendRequests.enqueue(new SendData(SendData::Send, this, sendbuf));
 }
 
 
-void TEpollSocket::setDisconnect(int id)
+void TEpollSocket::setDisconnect()
 {
-    sendRequests.enqueue(new SendData(SendData::Disconnect, id));
+    sendRequests.enqueue(new SendData(SendData::Disconnect, this));
+}
+
+
+void TEpollSocket::setSwitchProtocols(const QByteArray &header, TEpollSocket *target)
+{
+    THttpSendBuffer *sendbuf = new THttpSendBuffer(header);
+    sendRequests.enqueue(new SendData(SendData::SwitchProtocols, this, sendbuf, target));
+}
+
+
+void TEpollSocket::setSocketDescpriter(int socketDescriptor)
+{
+    sd = socketDescriptor;
 }
 
 

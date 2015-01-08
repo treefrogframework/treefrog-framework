@@ -26,7 +26,7 @@ protected:
 private:
     QByteArray httpRequest;
     QString clientAddr;
-    int socketId;  // not socket descriptor
+    TEpollHttpSocket *httpSocket;
 
     TActionWorker(TEpollHttpSocket *socket, QObject *parent = 0);
 

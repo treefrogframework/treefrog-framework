@@ -15,6 +15,7 @@ class T_CORE_EXPORT THttpSendBuffer
 {
 public:
     THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    THttpSendBuffer(const QByteArray &header);
     THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
     ~THttpSendBuffer();
 
