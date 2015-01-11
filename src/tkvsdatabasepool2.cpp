@@ -247,7 +247,7 @@ void TKvsDatabasePool2::pool(TKvsDatabase &database)
 
         DatabaseUse *du = new DatabaseUse;
         du->dbName = database.connectionName();
-        du->lastUsed = Tf::currentDateTimeSec().toTime_t();
+        du->lastUsed = QDateTime::currentDateTime().toTime_t();
         if (dbSet[type].push(du)) {
             tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
         } else {
@@ -273,7 +273,7 @@ void TKvsDatabasePool2::timerEvent(QTimerEvent *event)
         for (int i = 0; i < dbSet[j].maxCount(); ++i) {
             DatabaseUse *du = (DatabaseUse *)dbSet[j].peekPop(i);
             if (du) {
-                if (du->lastUsed < Tf::currentDateTimeSec().toTime_t() - 30) {
+                if (du->lastUsed < QDateTime::currentDateTime().toTime_t() - 30) {
                     TKvsDatabase db = TKvsDatabase::database(du->dbName);
                     if (db.isOpen()) {
                         db.close();

@@ -318,6 +318,7 @@ QSqlDatabase &Tf::currentSqlDatabase(int id)
   Returns the current datetime in the local time zone.
   It provides 1-second accuracy.
 */
+/*
 QDateTime Tf::currentDateTimeSec()
 {
     // QDateTime::currentDateTime() is slow.
@@ -348,3 +349,4 @@ QDateTime Tf::currentDateTimeSec()
 
     return current;
 }
+*/

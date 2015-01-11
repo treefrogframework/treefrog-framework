@@ -127,7 +127,7 @@ void TActionContext::execute(THttpRequest &request)
         const THttpRequestHeader &hdr = httpReq->header();
 
         // Access log
-        accessLogger.setTimestamp(Tf::currentDateTimeSec());
+        accessLogger.setTimestamp(QDateTime::currentDateTime());
         QByteArray firstLine = hdr.method() + ' ' + hdr.path();
         firstLine += QString(" HTTP/%1.%2").arg(hdr.majorVersion()).arg(hdr.minorVersion()).toLatin1();
         accessLogger.setRequest(firstLine);
@@ -235,7 +235,7 @@ void TActionContext::execute(THttpRequest &request)
                         if (Q_LIKELY(stored)) {
                             QDateTime expire;
                             if (TSessionManager::sessionLifeTime() > 0) {
-                                expire = Tf::currentDateTimeSec().addSecs(TSessionManager::sessionLifeTime());
+                                expire = QDateTime::currentDateTime().addSecs(TSessionManager::sessionLifeTime());
                             }
 
                             // Sets the path in the session cookie

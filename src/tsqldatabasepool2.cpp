@@ -206,7 +206,7 @@ void TSqlDatabasePool2::pool(QSqlDatabase &database)
         if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
             DatabaseUse *du = new DatabaseUse;
             du->dbName = database.connectionName();
-            du->lastUsed = Tf::currentDateTimeSec().toTime_t();
+            du->lastUsed = QDateTime::currentDateTime().toTime_t();
 
             if (dbSet[databaseId].push(du)) {
                 tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
@@ -239,7 +239,7 @@ void TSqlDatabasePool2::timerEvent(QTimerEvent *event)
         for (int i = 0; i < dbSet[j].maxCount(); ++i) {
             DatabaseUse *du = (DatabaseUse *)dbSet[j].peekPop(i);
             if (du) {
-                if (du->lastUsed < Tf::currentDateTimeSec().toTime_t() - 30) {
+                if (du->lastUsed < QDateTime::currentDateTime().toTime_t() - 30) {
                     QSqlDatabase db = QSqlDatabase::database(du->dbName, false);
                     if (db.isOpen()) {
                         db.close();

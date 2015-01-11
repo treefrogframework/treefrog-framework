@@ -25,7 +25,7 @@
   Constructor.
 */
 TLog::TLog(int pri, const QByteArray &msg)
-    : timestamp(Tf::currentDateTimeSec()),
+    : timestamp(QDateTime::currentDateTime()),
       priority(pri),
       pid(QCoreApplication::applicationPid()),
 #ifdef Q_OS_UNIX
