@@ -5,10 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QByteArray>
+#include <QFileInfo>
+#include <QBuffer>
 #include <sys/types.h>
 #include <sys/epoll.h>
 #include "tepoll.h"
 #include "tepollsocket.h"
+#include "thttpsendbuffer.h"
 #include "tsystemglobal.h"
 #include "tfcore_unix.h"
 
@@ -17,9 +21,29 @@ const int MaxEvents = 128;
 static TEpoll *staticInstance;
 
 
+class TSendData
+{
+public:
+    enum Method {
+        Disconnect,
+        Send,
+        SwitchProtocols,
+    };
+    int method;
+    quint64  id;
+    THttpSendBuffer *buffer;
+    TEpollSocket *upgradedSocket;
+
+    TSendData(Method m, quint64 i, THttpSendBuffer *buf = 0, TEpollSocket *upgraded = 0)
+        : method(m), id(i), buffer(buf), upgradedSocket(upgraded)
+    { }
+};
+
+
+
 TEpoll::TEpoll()
     : epollFd(0), events(new struct epoll_event[MaxEvents]),
-      polling(false), numEvents(0), eventIterator(0)
+      polling(false), numEvents(0), eventIterator(0), pollingSockets()
 {
     epollFd = epoll_create(1);
     if (epollFd < 0) {
@@ -45,7 +69,7 @@ int TEpoll::wait(int timeout)
     int err = errno;
     polling = false;
 
-    if (numEvents < 0) {
+    if (Q_UNLIKELY(numEvents < 0)) {
         tSystemError("Failed epoll_wait() : errno:%d", err);
     }
 
@@ -58,22 +82,33 @@ TEpollSocket *TEpoll::next()
     return (eventIterator < numEvents) ? (TEpollSocket *)events[eventIterator++].data.ptr : 0;
 }
 
+bool TEpoll::canReceive() const
+{
+    if (Q_UNLIKELY(eventIterator <= 0))
+        return false;
+
+    return (events[eventIterator - 1].events & EPOLLIN);
+}
+
 
 bool TEpoll::canSend() const
 {
-    if (eventIterator <= 0)
+    if (Q_UNLIKELY(eventIterator <= 0))
         return false;
 
     return (events[eventIterator - 1].events & EPOLLOUT);
 }
 
 
-bool TEpoll::canReceive() const
+int TEpoll::recv(TEpollSocket *socket) const
 {
-    if (eventIterator <= 0)
-        return false;
+    return socket->recv();
+}
 
-    return (events[eventIterator - 1].events & EPOLLIN);
+
+int TEpoll::send(TEpollSocket *socket) const
+{
+    return socket->send();
 }
 
 
@@ -88,11 +123,10 @@ TEpoll *TEpoll::instance()
 
 bool TEpoll::addPoll(TEpollSocket *socket, int events)
 {
-    if (!events)
+    if (Q_UNLIKELY(!events))
         return false;
 
     struct epoll_event ev;
-    memset(&ev, 0, sizeof(ev));
     ev.events  = events;
     ev.data.ptr = socket;
 
@@ -104,6 +138,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%d)  sd:%d", events, socket->socketDescriptor());
+        pollingSockets.insert(socket->objectId(), socket);
     }
     return !ret;
 
@@ -116,7 +151,6 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
         return false;
 
     struct epoll_event ev;
-    memset(&ev, 0, sizeof(ev));
     ev.events = events;
     ev.data.ptr = socket;
 
@@ -134,20 +168,110 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    return deletePoll(socket->socketDescriptor());
-}
+    pollingSockets.remove(socket->objectId());
 
-
-bool TEpoll::deletePoll(int socketDescriptor)
-{
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socketDescriptor, NULL);
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
     int err = errno;
 
     if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:%d errno:%d", socketDescriptor, err);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:%d errno:%d", socket->socketDescriptor(), err);
     } else {
-        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:%d", socketDescriptor);
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:%d", socket->socketDescriptor());
     }
 
     return !ret;
 }
+
+
+bool TEpoll::waitSendData(int msec)
+{
+    return sendRequests.wait(msec);
+}
+
+
+void TEpoll::dispatchSendData()
+{
+    QList<TSendData *> dataList = sendRequests.dequeue();
+
+    for (QListIterator<TSendData *> it(dataList); it.hasNext(); ) {
+        TSendData *sd = it.next();
+        TEpollSocket *sock = pollingSockets[sd->id];
+
+        if (Q_LIKELY(sock && sock->socketDescriptor() > 0)) {
+            switch (sd->method) {
+            case TSendData::Send:
+                sock->sendBuf << sd->buffer;
+                modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                break;
+
+            case TSendData::Disconnect:
+                deletePoll(sock);
+                sock->close();
+                sock->deleteLater();
+                break;
+
+            case TSendData::SwitchProtocols:
+                deletePoll(sock);
+                sock->setSocketDescpriter(0);  // Delegates to new websocket
+                sock->deleteLater();
+    tSystemDebug("##### SwitchProtocols");
+                // Switching protocols
+                sd->upgradedSocket->sendBuf << sd->buffer;
+                addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                break;
+
+            default:
+                tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+                if (sd->buffer) {
+                    delete sd->buffer;
+                }
+                break;
+            }
+        }
+
+        delete sd;
+    }
+}
+
+
+void TEpoll::releaseAllPollingSockets()
+{
+    for (QMapIterator<quint64, TEpollSocket *> it(pollingSockets); it.hasNext(); ) {
+        it.next();
+        it.value()->deleteLater();
+    }
+    pollingSockets.clear();
+}
+
+
+void TEpoll::setSendData(quint64 id, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+{
+    QByteArray response = header;
+    QFileInfo fi;
+
+    if (Q_LIKELY(body)) {
+        QBuffer *buffer = qobject_cast<QBuffer *>(body);
+        if (buffer) {
+            response += buffer->data();
+        } else {
+            fi.setFile(*qobject_cast<QFile *>(body));
+        }
+    }
+
+    THttpSendBuffer *sendbuf = new THttpSendBuffer(response, fi, autoRemove, accessLogger);
+    sendRequests.enqueue(new TSendData(TSendData::Send, id, sendbuf));
+}
+
+
+void TEpoll::setDisconnect(quint64 id)
+{
+    sendRequests.enqueue(new TSendData(TSendData::Disconnect, id));
+}
+
+
+void TEpoll::setSwitchProtocols(quint64 id, const QByteArray &header, TEpollSocket *target)
+{
+    THttpSendBuffer *sendbuf = new THttpSendBuffer(header);
+    sendRequests.enqueue(new TSendData(TSendData::SwitchProtocols, id, sendbuf, target));
+}
+

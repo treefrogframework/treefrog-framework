@@ -24,34 +24,30 @@ public:
     void close();
     int socketDescriptor() const { return sd; }
     const QHostAddress &clientAddress() const { return clientAddr; }
+    quint64 objectId() const { return identifier; }
 
     virtual bool canReadRequest() { return false; }
     virtual void startWorker() { }
 
     static TEpollSocket *accept(int listeningSocket);
     static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
-    static bool waitSendData(int msec);
-    static void dispatchSendData();
 
 protected:
-    //virtual void *getRecvBuffer(int size);
-    virtual int write(const char *data, int len) = 0;
+    int send();
+    int recv();
+    virtual void *getRecvBuffer(int size) = 0;
+    virtual bool seekRecvBuffer(int pos) = 0;
     void setSocketDescpriter(int socketDescriptor);
 
-    void setSendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
-    void setDisconnect();
-    void setSwitchProtocols(const QByteArray &header, TEpollSocket *target);
-
 private:
-    int recv();
-    int send();
-
     int sd;
+    quint64 identifier;
     QHostAddress clientAddr;
     QQueue<THttpSendBuffer*> sendBuf;
 
     static void initBuffer(int socketDescriptor);
-    friend class TMultiplexingServer;
+
+    friend class TEpoll;
     Q_DISABLE_COPY(TEpollSocket)
 };
 

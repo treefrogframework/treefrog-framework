@@ -14,6 +14,7 @@ class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
 {
     Q_OBJECT
 public:
+    TActionWorker(TEpollHttpSocket *socket, QObject *parent = 0);
     ~TActionWorker();
     static int workerCount();
     static bool waitForAllDone(int msec);
@@ -26,12 +27,9 @@ protected:
 private:
     QByteArray httpRequest;
     QString clientAddr;
-    TEpollHttpSocket *httpSocket;
-
-    TActionWorker(TEpollHttpSocket *socket, QObject *parent = 0);
+    quint64 socketObject;
 
     Q_DISABLE_COPY(TActionWorker)
-    friend class TEpollHttpSocket;
 };
 
 #endif // TACTIONWORKER_H

@@ -10,6 +10,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QBuffer>
+#include <QDateTime>
 #include <TSystemGlobal>
 #include <THttpHeader>
 #include <TAtomicQueue>
@@ -21,28 +22,9 @@
 
 class SendData;
 
-static char *tmpbuf = 0;
-static int tmpbuflen = 0;
-static TAtomicQueue<SendData *> sendRequests;
-
-
-class SendData
-{
-public:
-    enum Method {
-        Disconnect,
-        Send,
-        SwitchProtocols,
-    };
-    int method;
-    TEpollSocket *socket;
-    THttpSendBuffer *buffer;
-    TEpollSocket *upgradedSocket;
-
-    SendData(Method m, TEpollSocket *sock, THttpSendBuffer *buf = 0, TEpollSocket *upgraded = 0)
-        : method(m), socket(sock), buffer(buf), upgradedSocket(upgraded)
-    { }
-};
+static int sendBufSize = 0;
+static int recvBufSize = 0;
+static QAtomicInt objectCounter(1);
 
 
 TEpollSocket *TEpollSocket::accept(int listeningSocket)
@@ -82,9 +64,9 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 {
     const int BUF_SIZE = 128 * 1024;
 
-    if (Q_UNLIKELY(!tmpbuf)) {
+    if (Q_UNLIKELY(sendBufSize == 0)) {
         // Creates a common buffer
-        int res, sendBufSize, recvBufSize;
+        int res;
         socklen_t optlen;
 
         optlen = sizeof(int);
@@ -97,15 +79,18 @@ void TEpollSocket::initBuffer(int socketDescriptor)
         if (res < 0)
             recvBufSize = BUF_SIZE;
 
-        tmpbuflen = qMax(sendBufSize, recvBufSize);
-        tmpbuf = new char[tmpbuflen];
     }
 }
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : sd(socketDescriptor), clientAddr(address)
-{ }
+    : sd(socketDescriptor), identifier(0), clientAddr(address)
+{
+    quint64 h = QDateTime::currentDateTime().toTime_t();
+    quint64 b = objectCounter.fetchAndAddOrdered(1);
+    identifier = (h << 32) | (b & 0xffffffff);
+    tSystemDebug("TEpollSocket  id:%llu", identifier);
+}
 
 
 TEpollSocket::~TEpollSocket()
@@ -136,8 +121,9 @@ int TEpollSocket::recv()
         // Read successfully
         recvBuf.write(tmpbuf, len);
 #else
+        void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        int len = ::recv(sd, tmpbuf, tmpbuflen, 0);
+        int len = ::recv(sd, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -145,7 +131,7 @@ int TEpollSocket::recv()
         }
 
         // Read successfully
-        write(tmpbuf, len);
+        seekRecvBuffer(len);
 #endif
     }
 
@@ -174,13 +160,26 @@ int TEpollSocket::send()
         return 0;
     }
 
-    THttpSendBuffer *sendbuf = sendBuf.first();
+    THttpSendBuffer *buf = sendBuf.first();
+#if 0
     int len = sendbuf->read(tmpbuf, tmpbuflen);
-
     errno = 0;
     int sentlen = ::send(sd, tmpbuf, len, 0);
     int err = errno;
-    TAccessLogger &logger = sendbuf->accessLogger();
+#else
+    int len = sendBufSize;
+    void *data = buf->getData(len);
+    if (Q_UNLIKELY(len == 0)) {
+        buf->release();
+        delete sendBuf.dequeue(); // delete send-buffer obj
+        return 0;
+    }
+
+    errno = 0;
+    int sentlen = ::send(sd, data, len, 0);
+    int err = errno;
+#endif
+    TAccessLogger &logger = buf->accessLogger();
 
     if (Q_UNLIKELY(sentlen <= 0)) {
         if (err != ECONNRESET) {
@@ -194,15 +193,11 @@ int TEpollSocket::send()
     } else {
         // Sent successfully
         logger.setResponseBytes(logger.responseBytes() + sentlen);
+        buf->seekData(sentlen);
 
-        if (len > sentlen) {
-            tSystemDebug("sendbuf prepend: len:%d", len - sentlen);
-            sendbuf->prepend(tmpbuf + sentlen, len - sentlen);
-        }
-
-        if (sendbuf->atEnd()) {
+        if (buf->atEnd()) {
             logger.write();  // Writes access log
-            sendbuf->release();
+            buf->release();
 
             delete sendBuf.dequeue(); // delete send-buffer obj
 
@@ -217,7 +212,7 @@ int TEpollSocket::send()
     return sentlen;
 }
 
-
+/*
 bool TEpollSocket::waitSendData(int msec)
 {
     return sendRequests.wait(msec);
@@ -247,7 +242,8 @@ void TEpollSocket::dispatchSendData()
                 break;
 
 	    case SendData::SwitchProtocols:
-                TEpoll::instance()->deletePoll(sd->upgradedSocket->socketDescriptor());
+                TEpoll::instance()->deletePoll(sock);
+                sock->setSocketDescpriter(0);
                 sock->deleteLater();
     tSystemDebug("##### SwitchProtocols");
                 // Switching protocols
@@ -267,8 +263,9 @@ void TEpollSocket::dispatchSendData()
         delete sd;
     }
 }
+*/
 
-
+/*
 void TEpollSocket::setSendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
     QByteArray response = header;
@@ -299,7 +296,7 @@ void TEpollSocket::setSwitchProtocols(const QByteArray &header, TEpollSocket *ta
     THttpSendBuffer *sendbuf = new THttpSendBuffer(header);
     sendRequests.enqueue(new SendData(SendData::SwitchProtocols, this, sendbuf, target));
 }
-
+*/
 
 void TEpollSocket::setSocketDescpriter(int socketDescriptor)
 {

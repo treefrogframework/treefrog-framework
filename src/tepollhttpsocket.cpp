@@ -11,13 +11,14 @@
 #include "tepollhttpsocket.h"
 #include "tactionworker.h"
 #include "tepollwebsocket.h"
+#include "tepoll.h"
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
-    : TEpollSocket(socketDescriptor, address), lengthToRead(-1)
+    : TEpollSocket(socketDescriptor, address), lengthToRead(-1), startPos(0)
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
@@ -41,6 +42,35 @@ QByteArray TEpollHttpSocket::readRequest()
 }
 
 
+void *TEpollHttpSocket::getRecvBuffer(int size)
+{
+    httpBuffer.reserve(startPos + size);
+    return httpBuffer.data() + startPos;
+}
+
+
+bool TEpollHttpSocket::seekRecvBuffer(int pos)
+{
+    if (Q_UNLIKELY(pos <= 0 || startPos + pos >= httpBuffer.capacity())) {
+        return false;
+    }
+
+    startPos += pos;
+    httpBuffer.resize(startPos);
+
+    if (lengthToRead < 0) {
+        parse();
+    } else {
+        if (limitBodyBytes > 0 && httpBuffer.length() > limitBodyBytes) {
+            throw ClientErrorException(413);  // Request Entity Too Large
+        }
+
+        lengthToRead = qMax(lengthToRead - pos, 0LL);
+    }
+    return true;
+}
+
+/*
 int TEpollHttpSocket::write(const char *data, int len)
 {
     httpBuffer.append(data, len);
@@ -56,7 +86,7 @@ int TEpollHttpSocket::write(const char *data, int len)
     }
     return len;
 }
-
+*/
 
 void TEpollHttpSocket::startWorker()
 {
@@ -89,9 +119,8 @@ void TEpollHttpSocket::parse()
                 if (header.rawHeader("Upgrade").toLower() == "websocket") {
                     THttpResponseHeader header;
                     TEpollWebSocket *websocket = new TEpollWebSocket(socketDescriptor(), clientAddress());
-                    setSocketDescpriter(0);  // Delegates to new websocket
 
-                    TEpollSocket::setSwitchProtocols(header.toByteArray(), websocket);
+                    TEpoll::instance()->setSwitchProtocols(objectId(), header.toByteArray(), websocket);
                 }
             }
         }
@@ -104,6 +133,7 @@ void TEpollHttpSocket::parse()
 void TEpollHttpSocket::clear()
 {
     lengthToRead = -1;
+    startPos = 0;
     httpBuffer.truncate(0);
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
 }

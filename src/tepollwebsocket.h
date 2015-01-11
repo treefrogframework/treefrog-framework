@@ -19,8 +19,8 @@ public:
     virtual void startWorker();
 
 protected:
-    //virtual void *getRecvBuffer(int size);
-    virtual int write(const char *data, int len);
+    virtual void *getRecvBuffer(int size) { }
+    virtual bool seekRecvBuffer(int pos) { }
     void parse();
     void clear();
 

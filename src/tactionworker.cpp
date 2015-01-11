@@ -12,6 +12,7 @@
 #include <QAtomicInt>
 #include "thttpsocket.h"
 #include "tepollhttpsocket.h"
+#include "tepoll.h"
 #include "tsystemglobal.h"
 
 // Counter of action workers  (Note: workerCount != contextCount)
@@ -51,7 +52,7 @@ bool TActionWorker::waitForAllDone(int msec)
 */
 
 TActionWorker::TActionWorker(TEpollHttpSocket *socket, QObject *parent)
-    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), httpSocket(socket)
+    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socketObject(socket->objectId())
 {
     workerCounter.fetchAndAddOrdered(1);
     httpRequest = socket->readRequest();
@@ -83,7 +84,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     }
 
     if (!TActionContext::stopped) {
-        httpSocket->setSendData(header.toByteArray(), body, autoRemove, accessLogger);
+        TEpoll::instance()->setSendData(socketObject, header.toByteArray(), body, autoRemove, accessLogger);
     }
     accessLogger.close();  // not write in this thread
     return 0;
@@ -93,7 +94,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 void TActionWorker::closeHttpSocket()
 {
     if (!TActionContext::stopped) {
-        httpSocket->setDisconnect();
+        TEpoll::instance()->setDisconnect(socketObject);
     }
 }
 

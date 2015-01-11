@@ -40,6 +40,7 @@ QByteArray TEpollWebSocket::readRequest()
 }
 
 
+/*
 int TEpollWebSocket::write(const char *data, int len)
 {
     httpBuffer.append(data, len);
@@ -55,6 +56,7 @@ int TEpollWebSocket::write(const char *data, int len)
     }
     return len;
 }
+*/
 
 
 void TEpollWebSocket::startWorker()

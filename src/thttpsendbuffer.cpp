@@ -17,7 +17,7 @@
 
 
 THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
-    : arrayBuffer(header), bodyFile(0), fileRemove(autoRemove), accesslogger(logger), arraySentSize(0)
+    : arrayBuffer(header), bodyFile(0), fileRemove(autoRemove), accesslogger(logger), startPos(0)
 {
     if (file.exists() && file.isFile()) {
         bodyFile = new QFile(file.absoluteFilePath());
@@ -30,16 +30,16 @@ THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file
 
 
 THttpSendBuffer::THttpSendBuffer(const QByteArray &header)
-    : arrayBuffer(header), bodyFile(0), fileRemove(false), accesslogger(), arraySentSize(0)
+    : arrayBuffer(header), bodyFile(0), fileRemove(false), accesslogger(), startPos(0)
 { }
 
 
 THttpSendBuffer::THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
-    : arrayBuffer(), bodyFile(0), fileRemove(false), accesslogger(), arraySentSize(0)
+    : arrayBuffer(), bodyFile(0), fileRemove(false), accesslogger(), startPos(0)
 {
     accesslogger.open();
     accesslogger.setStatusCode(statusCode);
-    accesslogger.setTimestamp(Tf::currentDateTimeSec());
+    accesslogger.setTimestamp(QDateTime::currentDateTime());
     accesslogger.setRemoteHost(address.toString().toLatin1());
     accesslogger.setRequest(method);
 
@@ -69,7 +69,7 @@ void THttpSendBuffer::release()
     }
 }
 
-
+/*
 int THttpSendBuffer::read(char *data, int maxSize)
 {
     int ret = 0;
@@ -97,20 +97,67 @@ int THttpSendBuffer::read(char *data, int maxSize)
     }
     return ret;
 }
+*/
+
+void *THttpSendBuffer::getData(int &size)
+{
+    if (Q_UNLIKELY(size <= 0)) {
+        tSystemError("Invalid data size. [%s:%d]", __FILE__, __LINE__);
+        return 0;
+    }
+
+    if (!arrayBuffer.isEmpty()) {
+        size = qMin(arrayBuffer.length() - startPos, size);
+        return arrayBuffer.data() + startPos;
+    }
+
+    if (!bodyFile || bodyFile->atEnd()) {
+        size = 0;
+        return 0;
+    }
+
+    arrayBuffer.reserve(size);
+    size = bodyFile->read(arrayBuffer.data(), size);
+    if (size < 0) {
+        tSystemError("file read error: %s", qPrintable(bodyFile->fileName()));
+        size = 0;
+        release();
+        return 0;
+    }
+
+    startPos = 0;
+    return arrayBuffer.data();
+}
+
+
+bool THttpSendBuffer::seekData(int pos)
+{
+    if (Q_UNLIKELY(pos < 0)) {
+        return false;
+    }
+
+    if (startPos + pos >= arrayBuffer.length()) {
+        arrayBuffer.truncate(0);
+        startPos = 0;
+    } else {
+        startPos += pos;
+    }
+    return true;
+}
 
 
 int THttpSendBuffer::prepend(const char *data, int maxSize)
 {
-    if (arraySentSize > 0) {
-        arrayBuffer.remove(0, arraySentSize);
+    if (startPos > 0) {
+        arrayBuffer.remove(0, startPos);
     }
     arrayBuffer.prepend(data, maxSize);
-    arraySentSize = 0;
+    startPos = 0;
     return maxSize;
 }
 
 
 bool THttpSendBuffer::atEnd() const
 {
-    return arraySentSize >= arrayBuffer.length() && (!bodyFile || bodyFile->atEnd());
+    return startPos >= arrayBuffer.length() && (!bodyFile || bodyFile->atEnd());
 }

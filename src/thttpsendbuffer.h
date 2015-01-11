@@ -20,7 +20,8 @@ public:
     ~THttpSendBuffer();
 
     bool atEnd() const;
-    int read(char *data, int maxSize);
+    void *getData(int &size);
+    bool seekData(int pos);
     int prepend(const char *data, int maxSize);
     TAccessLogger &accessLogger() { return accesslogger; }
     const TAccessLogger &accessLogger() const { return accesslogger; }
@@ -31,7 +32,7 @@ private:
     QFile* bodyFile;
     bool fileRemove;
     TAccessLogger accesslogger;
-    int arraySentSize;
+    int startPos;
 
     THttpSendBuffer();
     Q_DISABLE_COPY(THttpSendBuffer)

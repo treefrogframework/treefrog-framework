@@ -127,10 +127,10 @@ void TMultiplexingServer::run()
 
     for (;;) {
         if (!numEvents && TActionWorker::workerCount() > 0) {
-            TEpollSocket::waitSendData(5);  // mitigation of busy loop
+            TEpoll::instance()->waitSendData(4);  // mitigation of busy loop
         }
 
-        TEpollSocket::dispatchSendData();
+        TEpoll::instance()->dispatchSendData();
 
         // Poll Sending/Receiving/Incoming
         int timeout = (TActionWorker::workerCount() > 0) ? 0 : 100;
@@ -159,7 +159,7 @@ void TMultiplexingServer::run()
             } else {
                 if ( TEpoll::instance()->canSend() ) {
                     // Send data
-                    int len = epSock->send();
+                    int len = TEpoll::instance()->send(epSock);
                     if (Q_UNLIKELY(len < 0)) {
                         TEpoll::instance()->deletePoll(epSock);
                         epSock->close();
@@ -176,7 +176,7 @@ void TMultiplexingServer::run()
                     }
 
                     // Receive data
-                    int len = epSock->recv();
+                    int len = TEpoll::instance()->recv(epSock);
                     if (Q_UNLIKELY(len < 0)) {
                         TEpoll::instance()->deletePoll(epSock);
                         epSock->close();
@@ -202,6 +202,7 @@ void TMultiplexingServer::run()
         }
     }
 
+    TEpoll::instance()->releaseAllPollingSockets();
     TActionWorker::waitForAllDone(10000);
 }
 
