@@ -214,10 +214,10 @@ void TEpoll::dispatchSendData()
                 deletePoll(sock);
                 sock->setSocketDescpriter(0);  // Delegates to new websocket
                 sock->deleteLater();
-    tSystemDebug("##### SwitchProtocols");
+    tSystemWarn("##### SwitchProtocols");
                 // Switching protocols
                 sd->upgradedSocket->sendBuf << sd->buffer;
-                addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLET));  // reset
+                addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
                 break;
 
             default:

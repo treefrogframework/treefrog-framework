@@ -70,23 +70,6 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
     return true;
 }
 
-/*
-int TEpollHttpSocket::write(const char *data, int len)
-{
-    httpBuffer.append(data, len);
-
-    if (lengthToRead < 0) {
-        parse();
-    } else {
-        if (limitBodyBytes > 0 && httpBuffer.length() > limitBodyBytes) {
-            throw ClientErrorException(413);  // Request Entity Too Large
-        }
-
-        lengthToRead = qMax(lengthToRead - len, 0LL);
-    }
-    return len;
-}
-*/
 
 void TEpollHttpSocket::startWorker()
 {
@@ -115,12 +98,19 @@ void TEpollHttpSocket::parse()
             lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);
             tSystemDebug("lengthToRead: %d", (int)lengthToRead);
 
-            if (header.rawHeader("Connection").toLower() == "upgrade") {
-                if (header.rawHeader("Upgrade").toLower() == "websocket") {
-                    THttpResponseHeader header;
-                    TEpollWebSocket *websocket = new TEpollWebSocket(socketDescriptor(), clientAddress());
+            // Check connection header
+            QByteArray connectionHeader = header.rawHeader("Connection").toLower();
+            if (connectionHeader.contains("upgrade")) {
+                QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
+                tSystemDebug("Upgrade: %s", upgradeHeader.data());
+                if (upgradeHeader == "websocket") {
+                    QByteArray secKey = header.rawHeader("Sec-WebSocket-Key");
+                    tSystemDebug("secKey: %s", secKey.data());
+                    TEpollWebSocket *websocket = new TEpollWebSocket(socketDescriptor(), clientAddress(), header);
 
-                    TEpoll::instance()->setSwitchProtocols(objectId(), header.toByteArray(), websocket);
+                    // Switch protocols
+                    THttpResponseHeader responseHeader = websocket->handshakeResponse();
+                    TEpoll::instance()->setSwitchProtocols(objectId(), responseHeader.toByteArray(), websocket);
                 }
             }
         }

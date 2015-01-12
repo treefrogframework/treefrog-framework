@@ -2,10 +2,11 @@
 #define TEPOLLWEBSOCKET_H
 
 #include <TGlobal>
+#include <THttpRequestHeader>
+#include <THttpResponseHeader>
 #include "tepollsocket.h"
 
 class QHostAddress;
-//class TActionWorker;
 
 
 class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket
@@ -19,19 +20,22 @@ public:
     virtual void startWorker();
 
 protected:
-    virtual void *getRecvBuffer(int size) { }
-    virtual bool seekRecvBuffer(int pos) { }
+    virtual void *getRecvBuffer(int size);
+    virtual bool seekRecvBuffer(int pos);
     void parse();
     void clear();
 
+    THttpResponseHeader handshakeResponse() const;
+    QByteArray secWebSocketAcceptString() const;
+
 private:
+    THttpRequestHeader reqHeader;
     QByteArray httpBuffer;
     qint64 lengthToRead;
 
-    TEpollWebSocket(int socketDescriptor, const QHostAddress &address);
+    TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header);
 
     friend class TEpollHttpSocket;
-    //friend class TActionWorker;
     Q_DISABLE_COPY(TEpollWebSocket)
 };
 
