@@ -1,5 +1,9 @@
 #!/bin/bash
 
+WORKDIR=$(cd $(dirname $0) && pwd)
+LD_LIBRARY_PATH=$WORKDIR/..
+export LD_LIBRARY_PATH
+
 [ -f Makefile ] && make distclean
 
 qmake -r
@@ -9,10 +13,6 @@ if [ "$?" != 0 ]; then
   echo "build error!"
   exit 1
 fi
-
-
-LD_LIBRARY_PATH=..
-export LD_LIBRARY_PATH
 
 for e in `ls -d *`; do
   if [ -x "$e/$e" ]; then
