@@ -185,10 +185,10 @@ void TMultiplexingServer::run()
                     }
 
                     if (epSock->canReadRequest()) {
-#if 1  //TODO: delete here for HTTP 2.0 support
+#if 0  //TODO: delete here for HTTP 2.0 support
                         // Stop receiving, otherwise the responses is sometimes
                         // placed in the wrong order in case of HTTP-pipeline.
-                        TEpoll::instance()->modifyPoll(epSock, (EPOLLOUT | EPOLLET));  // reset
+                        TEpoll::instance()->modifyPoll(epSock, (EPOLLOUT | EPOLLET));
 #endif
                         emit incomingRequest(epSock);
                     }

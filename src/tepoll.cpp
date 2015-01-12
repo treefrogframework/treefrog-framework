@@ -12,7 +12,7 @@
 #include <sys/epoll.h>
 #include "tepoll.h"
 #include "tepollsocket.h"
-#include "thttpsendbuffer.h"
+#include "tsendbuffer.h"
 #include "tsystemglobal.h"
 #include "tfcore_unix.h"
 
@@ -31,10 +31,10 @@ public:
     };
     int method;
     quint64  id;
-    THttpSendBuffer *buffer;
+    TSendBuffer *buffer;
     TEpollSocket *upgradedSocket;
 
-    TSendData(Method m, quint64 i, THttpSendBuffer *buf = 0, TEpollSocket *upgraded = 0)
+    TSendData(Method m, quint64 i, TSendBuffer *buf = 0, TEpollSocket *upgraded = 0)
         : method(m), id(i), buffer(buf), upgradedSocket(upgraded)
     { }
 };
@@ -217,7 +217,7 @@ void TEpoll::dispatchSendData()
     tSystemDebug("##### SwitchProtocols");
                 // Switching protocols
                 sd->upgradedSocket->sendBuf << sd->buffer;
-                addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLET));  // reset
                 break;
 
             default:
@@ -258,7 +258,7 @@ void TEpoll::setSendData(quint64 id, const QByteArray &header, QIODevice *body, 
         }
     }
 
-    THttpSendBuffer *sendbuf = new THttpSendBuffer(response, fi, autoRemove, accessLogger);
+    TSendBuffer *sendbuf = new TSendBuffer(response, fi, autoRemove, accessLogger);
     sendRequests.enqueue(new TSendData(TSendData::Send, id, sendbuf));
 }
 
@@ -271,7 +271,6 @@ void TEpoll::setDisconnect(quint64 id)
 
 void TEpoll::setSwitchProtocols(quint64 id, const QByteArray &header, TEpollSocket *target)
 {
-    THttpSendBuffer *sendbuf = new THttpSendBuffer(header);
+    TSendBuffer *sendbuf = new TSendBuffer(header);
     sendRequests.enqueue(new TSendData(TSendData::SwitchProtocols, id, sendbuf, target));
 }
-
