@@ -17,7 +17,7 @@
 #include "tepollsocket.h"
 #include "tepollhttpsocket.h"
 #include "tepoll.h"
-#include "thttpsendbuffer.h"
+#include "tsendbuffer.h"
 #include "tfcore_unix.h"
 
 class SendData;
@@ -97,30 +97,22 @@ TEpollSocket::~TEpollSocket()
 {
     close();
 
-    for (QListIterator<THttpSendBuffer*> it(sendBuf); it.hasNext(); ) {
+    for (QListIterator<TSendBuffer*> it(sendBuf); it.hasNext(); ) {
         delete it.next();
     }
     sendBuf.clear();
 }
 
 
+/*!
+  Receives data
+  @return  0:success  -1:error
+ */
 int TEpollSocket::recv()
 {
     int err;
 
     for (;;) {
-#if 0
-        errno = 0;
-        int len = ::recv(sd, tmpbuf, tmpbuflen, 0);
-        err = errno;
-
-        if (len <= 0) {
-            break;
-        }
-
-        // Read successfully
-        recvBuf.write(tmpbuf, len);
-#else
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
         int len = ::recv(sd, buf, recvBufSize, 0);
@@ -132,9 +124,9 @@ int TEpollSocket::recv()
 
         // Read successfully
         seekRecvBuffer(len);
-#endif
     }
 
+    int ret = 0;
     switch (err) {
     case EAGAIN:
         break;
@@ -142,161 +134,84 @@ int TEpollSocket::recv()
     case 0:  // FALL THROUGH
     case ECONNRESET:
         tSystemDebug("Socket disconnected : errno:%d", err);
-        return -1;
+        ret = -1;
         break;
 
     default:
         tSystemError("Failed recv : errno:%d", err);
-        return -1;
+        ret = -1;
         break;
     }
-    return 0;
+    return ret;
 }
 
-
+/*!
+  Sends data
+  @return  0:success  -1:error
+ */
 int TEpollSocket::send()
 {
     if (sendBuf.isEmpty()) {
         return 0;
     }
 
-    THttpSendBuffer *buf = sendBuf.first();
-#if 0
-    int len = sendbuf->read(tmpbuf, tmpbuflen);
-    errno = 0;
-    int sentlen = ::send(sd, tmpbuf, len, 0);
-    int err = errno;
-#else
-    int len = sendBufSize;
-    void *data = buf->getData(len);
-    if (Q_UNLIKELY(len == 0)) {
-        buf->release();
-        delete sendBuf.dequeue(); // delete send-buffer obj
-        return 0;
-    }
-
-    errno = 0;
-    int sentlen = ::send(sd, data, len, 0);
-    int err = errno;
-#endif
+    int err = 0;
+    int len;
+    TSendBuffer *buf = sendBuf.first();
     TAccessLogger &logger = buf->accessLogger();
 
-    if (Q_UNLIKELY(sentlen <= 0)) {
-        if (err != ECONNRESET) {
-            tSystemError("Failed send : errno:%d  datalen:%d", err, len);
-        }
-        // Access log
-        logger.setResponseBytes(-1);
-        logger.write();
-        return -1;
-
-    } else {
-        // Sent successfully
-        logger.setResponseBytes(logger.responseBytes() + sentlen);
-        buf->seekData(sentlen);
-
-        if (buf->atEnd()) {
-            logger.write();  // Writes access log
-            buf->release();
-
-            delete sendBuf.dequeue(); // delete send-buffer obj
-
-#if 1  //TODO: delete here for HTTP 2.0 support
-            if (sendBuf.isEmpty()) {
-                TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));
-            }
-#endif
-        }
-    }
-
-    return sentlen;
-}
-
-/*
-bool TEpollSocket::waitSendData(int msec)
-{
-    return sendRequests.wait(msec);
-}
-
-
-void TEpollSocket::dispatchSendData()
-{
-    QList<SendData *> dataList = sendRequests.dequeue();
-
-    for (QListIterator<SendData *> it(dataList); it.hasNext(); ) {
-        SendData *sd = it.next();
-
-        TEpollSocket *sock = sd->socket;
-
-        if (Q_LIKELY(sock && sock->socketDescriptor() > 0)) {
-            switch (sd->method) {
-            case SendData::Send:
-                sock->sendBuf << sd->buffer;
-                TEpoll::instance()->modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-                break;
-
-            case SendData::Disconnect:
-                TEpoll::instance()->deletePoll(sock);
-                sock->close();
-                sock->deleteLater();
-                break;
-
-	    case SendData::SwitchProtocols:
-                TEpoll::instance()->deletePoll(sock);
-                sock->setSocketDescpriter(0);
-                sock->deleteLater();
-    tSystemDebug("##### SwitchProtocols");
-                // Switching protocols
-                sd->upgradedSocket->sendBuf << sd->buffer;
-                TEpoll::instance()->addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-                break;
-
-            default:
-                tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
-                if (sd->buffer) {
-                    delete sd->buffer;
-                }
-                break;
-            }
+    for (;;) {
+        len = sendBufSize;
+        void *data = buf->getData(len);
+        if (len == 0) {
+            break;
         }
 
-        delete sd;
-    }
-}
-*/
+        errno = 0;
+        len = ::send(sd, data, len, 0);
+        err = errno;
 
-/*
-void TEpollSocket::setSendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
-{
-    QByteArray response = header;
-    QFileInfo fi;
-
-    if (Q_LIKELY(body)) {
-        QBuffer *buffer = qobject_cast<QBuffer *>(body);
-        if (buffer) {
-            response += buffer->data();
+        if (len > 0) {
+            // Sent successfully
+            logger.setResponseBytes(logger.responseBytes() + len);
+            buf->seekData(len);
         } else {
-            fi.setFile(*qobject_cast<QFile *>(body));
+            break;
         }
     }
 
-    THttpSendBuffer *sendbuf = new THttpSendBuffer(response, fi, autoRemove, accessLogger);
-    sendRequests.enqueue(new SendData(SendData::Send, this, sendbuf));
+    int ret = 0;
+    switch (err) {
+    case 0:  // FALL THROUGH
+    case EAGAIN:
+        break;
+
+    case ECONNRESET:
+        tSystemDebug("Socket disconnected : errno:%d", err);
+        logger.setResponseBytes(-1);
+        ret = -1;
+        break;
+
+    default:
+        tSystemError("Failed send : errno:%d  len:%d", err, len);
+        logger.setResponseBytes(-1);
+        ret = -1;
+        break;
+    }
+
+    if (err != EAGAIN && !sendBuf.isEmpty()) {
+        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    }
+
+    if (buf->atEnd() || ret < 0) {
+        logger.write();  // Writes access log
+        buf->release();
+        delete sendBuf.dequeue(); // delete send-buffer obj
+    }
+
+    return ret;
 }
 
-
-void TEpollSocket::setDisconnect()
-{
-    sendRequests.enqueue(new SendData(SendData::Disconnect, this));
-}
-
-
-void TEpollSocket::setSwitchProtocols(const QByteArray &header, TEpollSocket *target)
-{
-    THttpSendBuffer *sendbuf = new THttpSendBuffer(header);
-    sendRequests.enqueue(new SendData(SendData::SwitchProtocols, this, sendbuf, target));
-}
-*/
 
 void TEpollSocket::setSocketDescpriter(int socketDescriptor)
 {

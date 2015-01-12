@@ -8,7 +8,7 @@
 #include <TGlobal>
 
 class QHostAddress;
-class THttpSendBuffer;
+class TSendBuffer;
 class THttpHeader;
 class TAccessLogger;
 class TAbstractRecvBuffer;
@@ -43,7 +43,7 @@ private:
     int sd;
     quint64 identifier;
     QHostAddress clientAddr;
-    QQueue<THttpSendBuffer*> sendBuf;
+    QQueue<TSendBuffer*> sendBuf;
 
     static void initBuffer(int socketDescriptor);
 

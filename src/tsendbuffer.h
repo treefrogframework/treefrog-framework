@@ -1,5 +1,5 @@
-#ifndef THTTPSENDBUFFER_H
-#define THTTPSENDBUFFER_H
+#ifndef THTTPBUFFER_H
+#define THTTPBUFFER_H
 
 #include <QByteArray>
 #include <TGlobal>
@@ -11,13 +11,13 @@ class QHostAddress;
 class THttpHeader;
 
 
-class T_CORE_EXPORT THttpSendBuffer
+class T_CORE_EXPORT TSendBuffer
 {
 public:
-    THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
-    THttpSendBuffer(const QByteArray &header);
-    THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
-    ~THttpSendBuffer();
+    TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    TSendBuffer(const QByteArray &header);
+    TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
+    ~TSendBuffer();
 
     bool atEnd() const;
     void *getData(int &size);
@@ -34,8 +34,8 @@ private:
     TAccessLogger accesslogger;
     int startPos;
 
-    THttpSendBuffer();
-    Q_DISABLE_COPY(THttpSendBuffer)
+    TSendBuffer();
+    Q_DISABLE_COPY(TSendBuffer)
 };
 
-#endif // THTTPSENDBUFFER_H
+#endif // THTTPBUFFER_H

@@ -12,11 +12,11 @@
 #include <TWebApplication>
 #include <THttpResponseHeader>
 #include <THttpUtility>
-#include "thttpsendbuffer.h"
+#include "tsendbuffer.h"
 #include "tsystemglobal.h"
 
 
-THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
+TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
     : arrayBuffer(header), bodyFile(0), fileRemove(autoRemove), accesslogger(logger), startPos(0)
 {
     if (file.exists() && file.isFile()) {
@@ -29,12 +29,12 @@ THttpSendBuffer::THttpSendBuffer(const QByteArray &header, const QFileInfo &file
 }
 
 
-THttpSendBuffer::THttpSendBuffer(const QByteArray &header)
+TSendBuffer::TSendBuffer(const QByteArray &header)
     : arrayBuffer(header), bodyFile(0), fileRemove(false), accesslogger(), startPos(0)
 { }
 
 
-THttpSendBuffer::THttpSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
+TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
     : arrayBuffer(), bodyFile(0), fileRemove(false), accesslogger(), startPos(0)
 {
     accesslogger.open();
@@ -52,13 +52,13 @@ THttpSendBuffer::THttpSendBuffer(int statusCode, const QHostAddress &address, co
 }
 
 
-THttpSendBuffer::~THttpSendBuffer()
+TSendBuffer::~TSendBuffer()
 {
     release();
 }
 
 
-void THttpSendBuffer::release()
+void TSendBuffer::release()
 {
     if (bodyFile) {
         if (fileRemove) {
@@ -69,44 +69,15 @@ void THttpSendBuffer::release()
     }
 }
 
-/*
-int THttpSendBuffer::read(char *data, int maxSize)
-{
-    int ret = 0;
-    int len;
 
-    // Read the byte array
-    len = qMin(arrayBuffer.length() - arraySentSize, maxSize);
-    if (len > 0) {
-        memcpy(data, arrayBuffer.constData() + arraySentSize, len);
-        arraySentSize += len;
-        data += len;
-        ret += len;
-        maxSize -= len;
-    }
-
-    // Read the file
-    if (maxSize > 0 && !atEnd()) {
-        len = bodyFile->read(data, maxSize);
-        if (len < 0) {
-            tSystemError("file read error: %s", qPrintable(bodyFile->fileName()));
-            release();
-        } else {
-            ret += len;
-        }
-    }
-    return ret;
-}
-*/
-
-void *THttpSendBuffer::getData(int &size)
+void *TSendBuffer::getData(int &size)
 {
     if (Q_UNLIKELY(size <= 0)) {
         tSystemError("Invalid data size. [%s:%d]", __FILE__, __LINE__);
         return 0;
     }
 
-    if (!arrayBuffer.isEmpty()) {
+    if (!arrayBuffer.isEmpty() || startPos < arrayBuffer.length()) {
         size = qMin(arrayBuffer.length() - startPos, size);
         return arrayBuffer.data() + startPos;
     }
@@ -118,19 +89,20 @@ void *THttpSendBuffer::getData(int &size)
 
     arrayBuffer.reserve(size);
     size = bodyFile->read(arrayBuffer.data(), size);
-    if (size < 0) {
+    if (Q_UNLIKELY(size < 0)) {
         tSystemError("file read error: %s", qPrintable(bodyFile->fileName()));
         size = 0;
         release();
         return 0;
     }
 
+    arrayBuffer.resize(size);
     startPos = 0;
     return arrayBuffer.data();
 }
 
 
-bool THttpSendBuffer::seekData(int pos)
+bool TSendBuffer::seekData(int pos)
 {
     if (Q_UNLIKELY(pos < 0)) {
         return false;
@@ -146,7 +118,7 @@ bool THttpSendBuffer::seekData(int pos)
 }
 
 
-int THttpSendBuffer::prepend(const char *data, int maxSize)
+int TSendBuffer::prepend(const char *data, int maxSize)
 {
     if (startPos > 0) {
         arrayBuffer.remove(0, startPos);
@@ -157,7 +129,7 @@ int THttpSendBuffer::prepend(const char *data, int maxSize)
 }
 
 
-bool THttpSendBuffer::atEnd() const
+bool TSendBuffer::atEnd() const
 {
     return startPos >= arrayBuffer.length() && (!bodyFile || bodyFile->atEnd());
 }
