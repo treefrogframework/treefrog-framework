@@ -60,6 +60,18 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
 }
 
 
+TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
+{
+    return new TSendBuffer(header, file, autoRemove, logger);
+}
+
+
+TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &data)
+{
+    return new TSendBuffer(data);
+}
+
+
 void TEpollSocket::initBuffer(int socketDescriptor)
 {
     const int BUF_SIZE = 128 * 1024;
@@ -205,7 +217,6 @@ int TEpollSocket::send()
 
     if (buf->atEnd() || ret < 0) {
         logger.write();  // Writes access log
-        buf->release();
         delete sendBuf.dequeue(); // delete send-buffer obj
     }
 

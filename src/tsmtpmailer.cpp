@@ -46,7 +46,7 @@ TSmtpMailer::~TSmtpMailer()
 {
     T_TRACEFUNC("");
     if (!mailMessage.isEmpty()) {
-        tSystemWarn("Mail not sent. Deleted it.");
+//        tSystemWarn("Mail not sent. Deleted it.");
     }
 
     if (pop)

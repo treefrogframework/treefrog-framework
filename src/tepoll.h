@@ -10,6 +10,7 @@ class QByteArray;
 class TEpollSocket;
 class TAccessLogger;
 class TSendData;
+class THttpRequestHeader;
 struct epoll_event;
 
 
@@ -36,7 +37,7 @@ public:
     // For action workers
     void setSendData(quint64 id, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void setDisconnect(quint64 id);
-    void setSwitchProtocols(quint64 id, const QByteArray &header, TEpollSocket *target);
+    void setSwitchToWebSocket(quint64 id, const THttpRequestHeader &header);
 
     static TEpoll *instance();
 

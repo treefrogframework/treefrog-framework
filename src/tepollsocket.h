@@ -8,10 +8,10 @@
 #include <TGlobal>
 
 class QHostAddress;
+class QFileInfo;
 class TSendBuffer;
 class THttpHeader;
 class TAccessLogger;
-class TAbstractRecvBuffer;
 
 
 class T_CORE_EXPORT TEpollSocket : public QObject
@@ -31,6 +31,8 @@ public:
 
     static TEpollSocket *accept(int listeningSocket);
     static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
+    static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    static TSendBuffer *createSendBuffer(const QByteArray &data);
 
 protected:
     int send();

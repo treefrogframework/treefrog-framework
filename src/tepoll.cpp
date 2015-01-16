@@ -10,9 +10,11 @@
 #include <QBuffer>
 #include <sys/types.h>
 #include <sys/epoll.h>
+#include <THttpRequestHeader>
 #include "tepoll.h"
 #include "tepollsocket.h"
 #include "tsendbuffer.h"
+#include "tepollwebsocket.h"
 #include "tsystemglobal.h"
 #include "tfcore_unix.h"
 
@@ -27,15 +29,20 @@ public:
     enum Method {
         Disconnect,
         Send,
-        SwitchProtocols,
+        SwitchToWebSocket,
     };
+
     int method;
     quint64  id;
     TSendBuffer *buffer;
-    TEpollSocket *upgradedSocket;
+    THttpRequestHeader header;
 
-    TSendData(Method m, quint64 i, TSendBuffer *buf = 0, TEpollSocket *upgraded = 0)
-        : method(m), id(i), buffer(buf), upgradedSocket(upgraded)
+    TSendData(Method m, quint64 i, TSendBuffer *buf = 0)
+        : method(m), id(i), buffer(buf), header()
+    { }
+
+    TSendData(Method m, quint64 i, const THttpRequestHeader &h)
+        : method(m), id(i), buffer(0), header(h)
     { }
 };
 
@@ -210,15 +217,23 @@ void TEpoll::dispatchSendData()
                 sock->deleteLater();
                 break;
 
-            case TSendData::SwitchProtocols:
+            case TSendData::SwitchToWebSocket: {
+                tSystemDebug("Switch to WebSocket");
+                Q_ASSERT(sd->buffer == NULL);
+
+                QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
+                tSystemDebug("secKey: %s", secKey.data());
+                TEpollWebSocket *ws = new TEpollWebSocket(sock->socketDescriptor(), sock->clientAddress(), sd->header);
+
                 deletePoll(sock);
                 sock->setSocketDescpriter(0);  // Delegates to new websocket
                 sock->deleteLater();
-    tSystemWarn("##### SwitchProtocols");
-                // Switching protocols
-                sd->upgradedSocket->sendBuf << sd->buffer;
-                addPoll(sd->upgradedSocket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-                break;
+
+                // Switch to WebSocket
+                THttpResponseHeader response = ws->handshakeResponse();
+                ws->sendBuf << TEpollSocket::createSendBuffer(response.toByteArray());
+                addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                break; }
 
             default:
                 tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
@@ -258,7 +273,7 @@ void TEpoll::setSendData(quint64 id, const QByteArray &header, QIODevice *body, 
         }
     }
 
-    TSendBuffer *sendbuf = new TSendBuffer(response, fi, autoRemove, accessLogger);
+    TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
     sendRequests.enqueue(new TSendData(TSendData::Send, id, sendbuf));
 }
 
@@ -269,8 +284,7 @@ void TEpoll::setDisconnect(quint64 id)
 }
 
 
-void TEpoll::setSwitchProtocols(quint64 id, const QByteArray &header, TEpollSocket *target)
+void TEpoll::setSwitchToWebSocket(quint64 id, const THttpRequestHeader &header)
 {
-    TSendBuffer *sendbuf = new TSendBuffer(header);
-    sendRequests.enqueue(new TSendData(TSendData::SwitchProtocols, id, sendbuf, target));
+    sendRequests.enqueue(new TSendData(TSendData::SwitchToWebSocket, id, header));
 }

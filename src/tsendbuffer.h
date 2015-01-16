@@ -14,9 +14,6 @@ class THttpHeader;
 class T_CORE_EXPORT TSendBuffer
 {
 public:
-    TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
-    TSendBuffer(const QByteArray &header);
-    TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
     ~TSendBuffer();
 
     bool atEnd() const;
@@ -34,7 +31,12 @@ private:
     TAccessLogger accesslogger;
     int startPos;
 
+    TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    TSendBuffer(const QByteArray &header);
+    TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
+
     TSendBuffer();
+    friend class TEpollSocket;
     Q_DISABLE_COPY(TSendBuffer)
 };
 

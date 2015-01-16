@@ -10,7 +10,6 @@
 #include <THttpRequestHeader>
 #include "tepollhttpsocket.h"
 #include "tactionworker.h"
-#include "tepollwebsocket.h"
 #include "tepoll.h"
 
 const int BUFFER_RESERVE_SIZE = 1023;
@@ -103,14 +102,10 @@ void TEpollHttpSocket::parse()
             if (connectionHeader.contains("upgrade")) {
                 QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
-                if (upgradeHeader == "websocket") {
-                    QByteArray secKey = header.rawHeader("Sec-WebSocket-Key");
-                    tSystemDebug("secKey: %s", secKey.data());
-                    TEpollWebSocket *websocket = new TEpollWebSocket(socketDescriptor(), clientAddress(), header);
 
+                if (upgradeHeader == "websocket") {
                     // Switch protocols
-                    THttpResponseHeader responseHeader = websocket->handshakeResponse();
-                    TEpoll::instance()->setSwitchProtocols(objectId(), responseHeader.toByteArray(), websocket);
+                    TEpoll::instance()->setSwitchToWebSocket(objectId(), header);
                 }
             }
         }

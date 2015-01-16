@@ -26,16 +26,15 @@ protected:
     void clear();
 
     THttpResponseHeader handshakeResponse() const;
-    QByteArray secWebSocketAcceptString() const;
 
 private:
     THttpRequestHeader reqHeader;
-    QByteArray httpBuffer;
+    QByteArray recvBuffer;
     qint64 lengthToRead;
 
     TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header);
 
-    friend class TEpollHttpSocket;
+    friend class TEpoll;
     Q_DISABLE_COPY(TEpollWebSocket)
 };
 

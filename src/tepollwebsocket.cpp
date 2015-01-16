@@ -9,6 +9,7 @@
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <THttpRequestHeader>
+#include <THttpUtility>
 #include "tepollwebsocket.h"
 
 const int BUFFER_RESERVE_SIZE = 1023;
@@ -16,9 +17,9 @@ const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
-    : TEpollSocket(socketDescriptor, address), reqHeader(header), lengthToRead(-1)
+    : TEpollSocket(socketDescriptor, address), reqHeader(header), recvBuffer(), lengthToRead(-1)
 {
-    httpBuffer.reserve(BUFFER_RESERVE_SIZE);
+    recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
 
 
@@ -34,22 +35,22 @@ bool TEpollWebSocket::canReadRequest()
 
 QByteArray TEpollWebSocket::readRequest()
 {
-    QByteArray ret = httpBuffer;
+    QByteArray ret = recvBuffer;
     clear();
     return ret;
 }
 
 
-void *TEpollWebSocket::getRecvBuffer(int )
+void *TEpollWebSocket::getRecvBuffer(int size)
 {
-    tSystemWarn("# getRecvBuffer");
-    return 0;
+    recvBuffer.reserve(size);
+    return recvBuffer.data();
 }
 
 
-bool TEpollWebSocket::seekRecvBuffer(int )
+bool TEpollWebSocket::seekRecvBuffer(int pos)
 {
-    tSystemWarn("# seekRecvBuffer");
+    tSystemWarn("# seekRecvBuffer: pos:%d", pos);
     return true;
 }
 
@@ -71,24 +72,20 @@ void TEpollWebSocket::parse()
 void TEpollWebSocket::clear()
 {
     lengthToRead = -1;
-    httpBuffer.truncate(0);
-    httpBuffer.reserve(BUFFER_RESERVE_SIZE);
+    recvBuffer.truncate(0);
+    recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
 
 
 THttpResponseHeader TEpollWebSocket::handshakeResponse() const
 {
     THttpResponseHeader response;
-    response.setStatusLine(Tf::SwitchingProtocols);
+    response.setStatusLine(Tf::SwitchingProtocols, THttpUtility::getResponseReasonPhrase(Tf::SwitchingProtocols));
     response.setRawHeader("Upgrade", "websocket");
     response.setRawHeader("Connection", "Upgrade");
-    response.setRawHeader("Sec-WebSocket-Accept", secWebSocketAcceptString());
+
+    QByteArray secAccept = QCryptographicHash::hash(reqHeader.rawHeader("Sec-WebSocket-Key").trimmed() + saltToken,
+                                                    QCryptographicHash::Sha1).toBase64();
+    response.setRawHeader("Sec-WebSocket-Accept", secAccept);
     return response;
-}
-
-
-QByteArray TEpollWebSocket::secWebSocketAcceptString() const
-{
-    return QCryptographicHash::hash(reqHeader.rawHeader("Sec-WebSocket-Key") + saltToken,
-                                    QCryptographicHash::Sha1).toHex();
 }
