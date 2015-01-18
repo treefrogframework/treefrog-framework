@@ -32,14 +32,15 @@ public:
     static TEpollSocket *accept(int listeningSocket);
     static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
     static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
-    static TSendBuffer *createSendBuffer(const QByteArray &data);
 
 protected:
     int send();
     int recv();
+    void enqueueSendData(const QByteArray &data);
+    void enqueueSendData(TSendBuffer *buffer);
+    void setSocketDescpriter(int socketDescriptor);
     virtual void *getRecvBuffer(int size) = 0;
     virtual bool seekRecvBuffer(int pos) = 0;
-    void setSocketDescpriter(int socketDescriptor);
 
 private:
     int sd;

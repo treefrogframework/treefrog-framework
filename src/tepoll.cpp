@@ -207,7 +207,7 @@ void TEpoll::dispatchSendData()
         if (Q_LIKELY(sock && sock->socketDescriptor() > 0)) {
             switch (sd->method) {
             case TSendData::Send:
-                sock->sendBuf << sd->buffer;
+                sock->enqueueSendData(sd->buffer);
                 modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
                 break;
 
@@ -231,7 +231,7 @@ void TEpoll::dispatchSendData()
 
                 // Switch to WebSocket
                 THttpResponseHeader response = ws->handshakeResponse();
-                ws->sendBuf << TEpollSocket::createSendBuffer(response.toByteArray());
+                ws->enqueueSendData(response.toByteArray());
                 addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
                 break; }
 

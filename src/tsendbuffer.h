@@ -34,8 +34,8 @@ private:
     TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     TSendBuffer(const QByteArray &header);
     TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
-
     TSendBuffer();
+
     friend class TEpollSocket;
     Q_DISABLE_COPY(TSendBuffer)
 };

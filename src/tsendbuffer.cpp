@@ -77,7 +77,7 @@ void *TSendBuffer::getData(int &size)
         return 0;
     }
 
-    if (!arrayBuffer.isEmpty() || startPos < arrayBuffer.length()) {
+    if (startPos < arrayBuffer.length()) {
         size = qMin(arrayBuffer.length() - startPos, size);
         return arrayBuffer.data() + startPos;
     }
