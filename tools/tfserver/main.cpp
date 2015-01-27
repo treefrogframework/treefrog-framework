@@ -19,7 +19,6 @@
 #include "signalhandler.h"
 using namespace TreeFrog;
 
-#define CTRL_C_OPTION     "--ctrlc-enable"
 #define DEBUG_MODE_OPTION "--debug"
 #define SOCKET_OPTION     "-s"
 
@@ -109,7 +108,7 @@ int main(int argc, char *argv[])
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
-    if (!args.contains(CTRL_C_OPTION)) {
+    if (!args.contains(DEBUG_MODE_OPTION)) {
         webapp.ignoreUnixSignal(SIGINT);
     }
 
@@ -118,7 +117,7 @@ int main(int argc, char *argv[])
     setupSignalHandler();
 
 #elif defined(Q_OS_WIN)
-    if (!args.contains(CTRL_C_OPTION)) {
+    if (!args.contains(DEBUG_MODE_OPTION)) {
         webapp.ignoreConsoleSignal();
     }
 #endif
