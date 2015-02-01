@@ -144,7 +144,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
             tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  sd:%d errno:%d", socket->socketDescriptor(), err);
         }
     } else {
-        tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%d)  sd:%d", events, socket->socketDescriptor());
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
         pollingSockets.insert(socket->objectId(), socket);
     }
     return !ret;

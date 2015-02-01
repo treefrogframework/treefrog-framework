@@ -17,7 +17,7 @@ static int limitBodyBytes = -1;
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
-    : TEpollSocket(socketDescriptor, address), lengthToRead(-1), startPos(0)
+    : TEpollSocket(socketDescriptor, address), lengthToRead(-1)
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
@@ -35,27 +35,32 @@ bool TEpollHttpSocket::canReadRequest()
 
 QByteArray TEpollHttpSocket::readRequest()
 {
-    QByteArray ret = httpBuffer;
-    clear();
+    QByteArray ret;
+    if (canReadRequest()) {
+        ret = httpBuffer;
+        clear();
+    }
     return ret;
 }
 
 
 void *TEpollHttpSocket::getRecvBuffer(int size)
 {
-    httpBuffer.reserve(startPos + size);
-    return httpBuffer.data() + startPos;
+    int len = httpBuffer.size();
+    httpBuffer.reserve(len + size);
+    return httpBuffer.data() + len;
 }
 
 
 bool TEpollHttpSocket::seekRecvBuffer(int pos)
 {
-    if (Q_UNLIKELY(pos <= 0 || startPos + pos >= httpBuffer.capacity())) {
+    int len = httpBuffer.size();
+    if (Q_UNLIKELY(pos <= 0 || len + pos > httpBuffer.capacity())) {
         return false;
     }
 
-    startPos += pos;
-    httpBuffer.resize(startPos);
+    len += pos;
+    httpBuffer.resize(len);
 
     if (lengthToRead < 0) {
         parse();
@@ -118,7 +123,6 @@ void TEpollHttpSocket::parse()
 void TEpollHttpSocket::clear()
 {
     lengthToRead = -1;
-    startPos = 0;
     httpBuffer.truncate(0);
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
