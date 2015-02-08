@@ -7,10 +7,10 @@
 
 #include <sys/types.h>
 #include <sys/epoll.h>
-#include <QCoreApplication>
 #include <QFileInfo>
 #include <QBuffer>
 #include <QDateTime>
+#include <TWebApplication>
 #include <TSystemGlobal>
 #include <THttpHeader>
 #include <TAtomicQueue>
@@ -51,7 +51,7 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
 
     if (Q_LIKELY(socketDescriptor > 0)) {
         sock  = new TEpollHttpSocket(socketDescriptor, address);
-        sock->moveToThread(QCoreApplication::instance()->thread());
+        sock->moveToThread(Tf::app()->thread());
 
         initBuffer(socketDescriptor);
     }

@@ -7,12 +7,14 @@
 
 #include <QDataStream>
 #include <QCryptographicHash>
+#include <TWebApplication>
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <THttpRequestHeader>
 #include <THttpUtility>
 #include "tepollwebsocket.h"
 #include "twebsocketframe.h"
+#include "twsactionworker.h"
 
 const int BUFFER_RESERVE_SIZE = 127;
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
@@ -128,14 +130,16 @@ bool TEpollWebSocket::seekRecvBuffer(int pos)
 
 void TEpollWebSocket::startWorker()
 {
-    // TActionWorker *worker = new TActionWorker(this);
-    // connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    // worker->start();
+    Q_ASSERT(canReadRequest());
 
-    QString str = readTextRequest();
-    // ２つ以上のFINフレームの場合がありうるので、ループで処理すべき
-    // TWsActionWorker に渡す引数は pathとdata(QByteArray) だけでよいか、そっちで変換すればいい
-    // TEpollSocket はマルチスレッドでアクセスされることは想定されていない
+    do {
+        TEpollWebSocket::OpCode opcode = frames.first().opCode();
+        QByteArray binary = readBinaryRequest();
+        TWsActionWorker *worker = new TWsActionWorker(opcode, binary);
+        worker->moveToThread(Tf::app()->thread());
+        connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+        worker->start();
+    } while (canReadRequest());
 }
 
 

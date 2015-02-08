@@ -278,6 +278,8 @@ unix:!macx {
   SOURCES += tepollwebsocket.cpp
   HEADERS += twebsocketframe.h
   SOURCES += twebsocketframe.cpp
+  HEADERS += twsactionworker.h
+  SOURCES += twsactionworker.cpp
 #  HEADERS += tabstractrecvbuffer.h
 #  SOURCES += tabstractrecvbuffer.cpp
 #  HEADERS += tabstractsendbufferqueue.h

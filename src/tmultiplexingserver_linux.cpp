@@ -34,8 +34,8 @@ void TMultiplexingServer::instantiate(int listeningSocket)
 {
     if (!multiplexingServer) {
         multiplexingServer = new TMultiplexingServer(listeningSocket);
-        TWorkerStarter *starter = new TWorkerStarter(multiplexingServer);
-        connect(multiplexingServer, SIGNAL(incomingRequest(TEpollSocket *)), starter, SLOT(startWorker(TEpollSocket *)), Qt::BlockingQueuedConnection);  // the emitter and receiver are in different threads.
+        //TWorkerStarter *starter = new TWorkerStarter(multiplexingServer);
+        //connect(multiplexingServer, SIGNAL(incomingRequest(TEpollSocket *)), starter, SLOT(startWorker(TEpollSocket *)), Qt::BlockingQueuedConnection);  // the emitter and receiver are in different threads.
         qAddPostRoutine(::cleanup);
     }
 }
@@ -190,7 +190,8 @@ void TMultiplexingServer::run()
                         // placed in the wrong order in case of HTTP-pipeline.
                         TEpoll::instance()->modifyPoll(epSock, (EPOLLOUT | EPOLLET));
 #endif
-                        emit incomingRequest(epSock);
+                        epSock->startWorker();
+                        //emit incomingRequest(epSock);
                     }
                 }
             }
@@ -224,6 +225,7 @@ void TMultiplexingServer::stop()
  * TWorkerStarter class
  */
 
+/*
 TWorkerStarter::~TWorkerStarter()
 { }
 
@@ -235,3 +237,4 @@ void TWorkerStarter::startWorker(TEpollSocket *socket)
     //
     socket->startWorker();
 }
+*/

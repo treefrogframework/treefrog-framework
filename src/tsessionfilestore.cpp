@@ -24,7 +24,7 @@ bool TSessionFileStore::store(TSession &session)
     if (!dir.exists()) {
         dir.mkpath(".");
     }
-    
+
     bool res = false;
     QFile file(sessionDirPath() + session.id());
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -40,7 +40,7 @@ TSession TSessionFileStore::find(const QByteArray &id, const QDateTime &modified
 {
     QFileInfo fi(sessionDirPath() + id);
 
-    if (fi.exists() && fi.lastModified() >= modified) { 
+    if (fi.exists() && fi.lastModified() >= modified) {
         QFile file(fi.filePath());
 
         if (file.open(QIODevice::ReadOnly)) {
@@ -48,7 +48,7 @@ TSession TSessionFileStore::find(const QByteArray &id, const QDateTime &modified
             TSession result(id);
             ds >> *static_cast<QVariantMap *>(&result);
             if (ds.status() == QDataStream::Ok)
-                return result; 
+                return result;
         }
     }
     return TSession();

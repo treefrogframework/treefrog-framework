@@ -1,10 +1,11 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2013-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <TWebApplication>
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <THttpRequestHeader>
@@ -78,6 +79,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
 void TEpollHttpSocket::startWorker()
 {
     TActionWorker *worker = new TActionWorker(this);
+    worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     worker->start();
 }

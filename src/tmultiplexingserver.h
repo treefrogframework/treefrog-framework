@@ -43,7 +43,6 @@ private:
     int listenSocket;
 
     TMultiplexingServer(int listeningSocket, QObject *parent = 0);  // Constructor
-    friend class TWorkerStarter;
     Q_DISABLE_COPY(TMultiplexingServer)
 };
 
@@ -52,6 +51,7 @@ private:
  * WorkerStarter class declaration
  * This object creates worker threads in the main event loop.
  */
+/*
 class TWorkerStarter : public QObject
 {
     Q_OBJECT
@@ -62,5 +62,6 @@ public:
 public slots:
     void startWorker(TEpollSocket *);
 };
+*/
 
 #endif // TMULTIPLEXINGSERVER_H
