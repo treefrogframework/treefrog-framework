@@ -29,15 +29,21 @@ Features
  * NoSQL database support - MongoDB support
  * OSS  - New BSD License
 
+Releases
+--------
+ https://github.com/treefrogframework/treefrog-framework/releases
 
 Web Site
 --------
  http://www.treefrogframework.org/
 
+Documents
+---------
+ Get addtional information on the site:
+ http://www.treefrogframework.org/documents
 
 MongoDB communication
 ---------------------
-
 TreeFrog Framework uses the 10gen-supported C driver to communicate with the
 MongoDB server. The source code of the driver is included in this package.
 See the README also.
