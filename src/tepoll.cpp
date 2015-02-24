@@ -33,16 +33,16 @@ public:
     };
 
     int method;
-    quint64  id;
+    QByteArray uuid;
     TSendBuffer *buffer;
     THttpRequestHeader header;
 
-    TSendData(Method m, quint64 i, TSendBuffer *buf = 0)
-        : method(m), id(i), buffer(buf), header()
+    TSendData(Method m, const QByteArray &u, TSendBuffer *buf = 0)
+        : method(m), uuid(u), buffer(buf), header()
     { }
 
-    TSendData(Method m, quint64 i, const THttpRequestHeader &h)
-        : method(m), id(i), buffer(0), header(h)
+    TSendData(Method m, const QByteArray &u, const THttpRequestHeader &h)
+        : method(m), uuid(u), buffer(0), header(h)
     { }
 };
 
@@ -145,7 +145,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
-        pollingSockets.insert(socket->objectId(), socket);
+        pollingSockets.insert(socket->socketUuid(), socket);
     }
     return !ret;
 
@@ -175,7 +175,7 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    pollingSockets.remove(socket->objectId());
+    pollingSockets.remove(socket->socketUuid());
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
     int err = errno;
@@ -202,7 +202,7 @@ void TEpoll::dispatchSendData()
 
     for (QListIterator<TSendData *> it(dataList); it.hasNext(); ) {
         TSendData *sd = it.next();
-        TEpollSocket *sock = pollingSockets[sd->id];
+        TEpollSocket *sock = pollingSockets[sd->uuid];
 
         if (Q_LIKELY(sock && sock->socketDescriptor() > 0)) {
             switch (sd->method) {
@@ -251,7 +251,7 @@ void TEpoll::dispatchSendData()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (QMapIterator<quint64, TEpollSocket *> it(pollingSockets); it.hasNext(); ) {
+    for (QMapIterator<QByteArray, TEpollSocket *> it(pollingSockets); it.hasNext(); ) {
         it.next();
         it.value()->deleteLater();
     }
@@ -259,7 +259,7 @@ void TEpoll::releaseAllPollingSockets()
 }
 
 
-void TEpoll::setSendData(quint64 id, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+void TEpoll::setSendData(const QByteArray &uuid, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
     QByteArray response = header;
     QFileInfo fi;
@@ -274,17 +274,17 @@ void TEpoll::setSendData(quint64 id, const QByteArray &header, QIODevice *body, 
     }
 
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
-    sendRequests.enqueue(new TSendData(TSendData::Send, id, sendbuf));
+    sendRequests.enqueue(new TSendData(TSendData::Send, uuid, sendbuf));
 }
 
 
-void TEpoll::setDisconnect(quint64 id)
+void TEpoll::setDisconnect(const QByteArray &uuid)
 {
-    sendRequests.enqueue(new TSendData(TSendData::Disconnect, id));
+    sendRequests.enqueue(new TSendData(TSendData::Disconnect, uuid));
 }
 
 
-void TEpoll::setSwitchToWebSocket(quint64 id, const THttpRequestHeader &header)
+void TEpoll::setSwitchToWebSocket(const QByteArray &uuid, const THttpRequestHeader &header)
 {
-    sendRequests.enqueue(new TSendData(TSendData::SwitchToWebSocket, id, header));
+    sendRequests.enqueue(new TSendData(TSendData::SwitchToWebSocket, uuid, header));
 }

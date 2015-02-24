@@ -112,7 +112,7 @@ void TEpollHttpSocket::parse()
 
                 if (upgradeHeader == "websocket") {
                     // Switch protocols
-                    TEpoll::instance()->setSwitchToWebSocket(objectId(), header);
+                    TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
                 }
             }
         }

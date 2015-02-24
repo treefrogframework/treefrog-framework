@@ -1,7 +1,6 @@
 #ifndef TEPOLLWEBSOCKET_H
 #define TEPOLLWEBSOCKET_H
 
-#include <QUuid>
 #include <TGlobal>
 #include <THttpRequestHeader>
 #include <THttpResponseHeader>
@@ -36,7 +35,6 @@ public:
 
     ~TEpollWebSocket();
 
-    QByteArray socketUuid() const { return uuid.toByteArray(); }
     void sendText(const QString &message);
     void sendBinary(const QByteArray &data);
 
@@ -58,7 +56,6 @@ protected:
     THttpResponseHeader handshakeResponse() const;
 
 private:
-    QUuid uuid;
     THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
     QList<TWebSocketFrame> frames;

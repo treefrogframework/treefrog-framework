@@ -7,13 +7,11 @@
 
 #include <sys/types.h>
 #include <sys/epoll.h>
+#include <QUuid>
 #include <QFileInfo>
-#include <QBuffer>
-#include <QDateTime>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <THttpHeader>
-#include <TAtomicQueue>
 #include "tepollsocket.h"
 #include "tepollhttpsocket.h"
 #include "tepoll.h"
@@ -24,7 +22,6 @@ class SendData;
 
 static int sendBufSize = 0;
 static int recvBufSize = 0;
-static QAtomicInt objectCounter(1);
 
 
 TEpollSocket *TEpollSocket::accept(int listeningSocket)
@@ -90,12 +87,10 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : sd(socketDescriptor), identifier(0), clientAddr(address)
+    : sd(socketDescriptor), uuid(), clientAddr(address)
 {
-    quint64 h = QDateTime::currentDateTime().toTime_t();
-    quint64 b = objectCounter.fetchAndAddOrdered(1);
-    identifier = (h << 32) | (b & 0xffffffff);
-    tSystemDebug("TEpollSocket  id:%llu", identifier);
+    uuid = QUuid::createUuid().toByteArray();  // not thread safe
+    tSystemDebug("TEpollSocket  id:%s", uuid.data());
 }
 
 

@@ -35,9 +35,9 @@ public:
     void releaseAllPollingSockets();
 
     // For action workers
-    void setSendData(quint64 id, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
-    void setDisconnect(quint64 id);
-    void setSwitchToWebSocket(quint64 id, const THttpRequestHeader &header);
+    void setSendData(const QByteArray &uuid, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
+    void setDisconnect(const QByteArray &uuid);
+    void setSwitchToWebSocket(const QByteArray &uuid, const THttpRequestHeader &header);
 
     static TEpoll *instance();
 
@@ -51,7 +51,7 @@ private:
     volatile bool polling;
     int numEvents;
     int eventIterator;
-    QMap<quint64, TEpollSocket*> pollingSockets;
+    QMap<QByteArray, TEpollSocket*> pollingSockets;
     TAtomicQueue<TSendData *> sendRequests;
 
     TEpoll();

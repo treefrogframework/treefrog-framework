@@ -27,7 +27,7 @@ protected:
 private:
     QByteArray httpRequest;
     QString clientAddr;
-    quint64 socketObject;
+    QByteArray socketUuid;
 
     Q_DISABLE_COPY(TActionWorker)
 };

@@ -21,7 +21,7 @@ const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
-    : TEpollSocket(socketDescriptor, address), uuid(QUuid::createUuid()), reqHeader(header),
+    : TEpollSocket(socketDescriptor, address), reqHeader(header),
       recvBuffer(), frames()
 {
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);

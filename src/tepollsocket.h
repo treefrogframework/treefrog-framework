@@ -2,8 +2,8 @@
 #define TEPOLLSOCKET_H
 
 #include <QObject>
+#include <QByteArray>
 #include <QQueue>
-#include <QMutex>
 #include <QHostAddress>
 #include <TGlobal>
 
@@ -24,7 +24,7 @@ public:
     void close();
     int socketDescriptor() const { return sd; }
     const QHostAddress &clientAddress() const { return clientAddr; }
-    quint64 objectId() const { return identifier; }
+    const QByteArray &socketUuid() const { return uuid; }
 
     virtual bool canReadRequest() { return false; }
     virtual void startWorker() { }
@@ -44,7 +44,7 @@ protected:
 
 private:
     int sd;
-    quint64 identifier;
+    QByteArray uuid;
     QHostAddress clientAddr;
     QQueue<TSendBuffer*> sendBuf;
 
