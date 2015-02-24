@@ -280,12 +280,8 @@ unix:!macx {
   SOURCES += twebsocketframe.cpp
   HEADERS += twsactionworker.h
   SOURCES += twsactionworker.cpp
-#  HEADERS += tabstractrecvbuffer.h
-#  SOURCES += tabstractrecvbuffer.cpp
-#  HEADERS += tabstractsendbufferqueue.h
-#  SOURCES += tabstractsendbufferqueue.cpp
-#  HEADERS += thttpsendbufferqueue.h
-#  SOURCES += thttpsendbufferqueue.cpp
+  HEADERS += twebsocketcontroller.h
+  SOURCES += twebsocketcontroller.cpp
 }
 
 # Qt5

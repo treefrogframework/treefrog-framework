@@ -135,7 +135,7 @@ void TEpollWebSocket::startWorker()
     do {
         TEpollWebSocket::OpCode opcode = frames.first().opCode();
         QByteArray binary = readBinaryRequest();
-        TWsActionWorker *worker = new TWsActionWorker(opcode, binary);
+        TWsActionWorker *worker = new TWsActionWorker(socketUuid(), reqHeader.path(), opcode, binary);
         worker->moveToThread(Tf::app()->thread());
         connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
         worker->start();
