@@ -63,6 +63,12 @@ TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFil
 }
 
 
+TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &data)
+{
+    return new TSendBuffer(data);
+}
+
+
 void TEpollSocket::initBuffer(int socketDescriptor)
 {
     const int BUF_SIZE = 128 * 1024;
@@ -216,12 +222,6 @@ int TEpollSocket::send()
 void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 {
     sendBuf << buffer;
-}
-
-
-void TEpollSocket::enqueueSendData(const QByteArray &data)
-{
-    sendBuf << new TSendBuffer(data);
 }
 
 

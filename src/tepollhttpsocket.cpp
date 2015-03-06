@@ -78,6 +78,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
 
 void TEpollHttpSocket::startWorker()
 {
+    tSystemDebug("TEpollHttpSocket::startWorker");
     TActionWorker *worker = new TActionWorker(this);
     worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
@@ -114,6 +115,8 @@ void TEpollHttpSocket::parse()
                     // Switch protocols
                     TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
                 }
+
+                clear();  // buffer clear
             }
         }
     } else {

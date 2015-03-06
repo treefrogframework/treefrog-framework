@@ -14,29 +14,7 @@ class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket
 {
     Q_OBJECT
 public:
-    enum OpCode {
-        Continuation = 0x0,
-        TextFrame    = 0x1,
-        BinaryFrame  = 0x2,
-        Reserve3     = 0x3,
-        Reserve4     = 0x4,
-        Reserve5     = 0x5,
-        Reserve6     = 0x6,
-        Reserve7     = 0x7,
-        Close        = 0x8,
-        Ping         = 0x9,
-        Pong         = 0xA,
-        ReserveB     = 0xB,
-        ReserveC     = 0xC,
-        ReserveD     = 0xD,
-        ReserveE     = 0xE,
-        ReserveF     = 0xF,
-    };
-
     ~TEpollWebSocket();
-
-    void sendText(const QString &message);
-    void sendBinary(const QByteArray &data);
 
     bool isTextRequest() const;
     bool isBinaryRequest() const;
@@ -47,6 +25,9 @@ public:
 
     static void sendText(const QByteArray &socketUuid, const QString &message);
     static void sendBinary(const QByteArray &socketUuid, const QByteArray &data);
+    static void sendPing(const QByteArray &socketUuid);
+    static void sendPong(const QByteArray &socketUuid);
+    static void disconnect(const QByteArray &socketUuid);
 
 protected:
     virtual void *getRecvBuffer(int size);

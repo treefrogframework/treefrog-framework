@@ -36,6 +36,7 @@ public:
 
     // For action workers
     void setSendData(const QByteArray &uuid, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
+    void setSendData(const QByteArray &uuid, const QByteArray &data);
     void setDisconnect(const QByteArray &uuid);
     void setSwitchToWebSocket(const QByteArray &uuid, const THttpRequestHeader &header);
 

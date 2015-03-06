@@ -12,6 +12,7 @@
 #include <TAppSettings>
 #include <THttpRequestHeader>
 #include <THttpUtility>
+#include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocketframe.h"
 #include "twsactionworker.h"
@@ -32,18 +33,6 @@ TEpollWebSocket::~TEpollWebSocket()
 { }
 
 
-void TEpollWebSocket::sendText(const QString &message)
-{
-    sendText(socketUuid(), message);
-}
-
-
-void TEpollWebSocket::sendBinary(const QByteArray &data)
-{
-    sendBinary(socketUuid(), data);
-}
-
-
 bool TEpollWebSocket::canReadRequest()
 {
     for (QListIterator<TWebSocketFrame> it(frames); it.hasNext(); ) {
@@ -60,7 +49,7 @@ bool TEpollWebSocket::isTextRequest() const
 {
     if (!frames.isEmpty()) {
         const TWebSocketFrame &frm = frames.first();
-        return (frm.opCode() == TEpollWebSocket::TextFrame);
+        return (frm.opCode() == TWebSocketFrame::TextFrame);
     }
     return false;
 }
@@ -70,7 +59,7 @@ bool TEpollWebSocket::isBinaryRequest() const
 {
     if (!frames.isEmpty()) {
         const TWebSocketFrame &frm = frames.first();
-        return (frm.opCode() == TEpollWebSocket::BinaryFrame);
+        return (frm.opCode() == TWebSocketFrame::BinaryFrame);
     }
     return false;
 }
@@ -130,10 +119,11 @@ bool TEpollWebSocket::seekRecvBuffer(int pos)
 
 void TEpollWebSocket::startWorker()
 {
+    tSystemDebug("TEpollWebSocket::startWorker");
     Q_ASSERT(canReadRequest());
 
     do {
-        TEpollWebSocket::OpCode opcode = frames.first().opCode();
+        TWebSocketFrame::OpCode opcode = frames.first().opCode();
         QByteArray binary = readBinaryRequest();
         TWsActionWorker *worker = new TWsActionWorker(socketUuid(), reqHeader.path(), opcode, binary);
         worker->moveToThread(Tf::app()->thread());
@@ -284,7 +274,7 @@ int TEpollWebSocket::parse()
             }
 
             // Fragmented message validation
-            if (ref.opCode() == TEpollWebSocket::Continuation) {
+            if (ref.opCode() == TWebSocketFrame::Continuation) {
                 if (frames.count() >= 2) {
                     const TWebSocketFrame &before = frames[frames.count() - 2];
                     if (before.isFinalFrame() || before.isControlFrame()) {
@@ -355,13 +345,39 @@ THttpResponseHeader TEpollWebSocket::handshakeResponse() const
 
 void TEpollWebSocket::sendText(const QByteArray &socketUuid, const QString &message)
 {
-    Q_UNUSED(socketUuid);
-    Q_UNUSED(message);
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::TextFrame);
+    frame.setPayload(message.toUtf8());
+    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
 }
 
 
 void TEpollWebSocket::sendBinary(const QByteArray &socketUuid, const QByteArray &data)
 {
-    Q_UNUSED(socketUuid);
-    Q_UNUSED(data);
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::BinaryFrame);
+    frame.setPayload(data);
+    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+}
+
+
+void TEpollWebSocket::sendPing(const QByteArray &socketUuid)
+{
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::Ping);
+    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+}
+
+
+void TEpollWebSocket::sendPong(const QByteArray &socketUuid)
+{
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::Pong);
+    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+}
+
+
+void TEpollWebSocket::disconnect(const QByteArray &socketUuid)
+{
+    TEpoll::instance()->setDisconnect(socketUuid);
 }

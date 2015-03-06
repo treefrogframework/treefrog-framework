@@ -6,3 +6,73 @@
  */
 
 #include <TWebSocketController>
+#include "twebsocketframe.h"
+
+
+void TWebSocketController::onOpen(const TSession &session)
+{
+    Q_UNUSED(session);
+}
+
+
+void TWebSocketController::onClose()
+{ }
+
+
+void TWebSocketController::onTextReceived(const QString &text)
+{
+    Q_UNUSED(text);
+}
+
+
+void TWebSocketController::onBinaryReceived(const QByteArray &binary)
+{
+    Q_UNUSED(binary);
+}
+
+
+void TWebSocketController::onPing()
+{ }
+
+
+void TWebSocketController::onPong()
+{ }
+
+
+QString TWebSocketController::name() const
+{
+    if (ctrlName.isEmpty()) {
+        ctrlName = className().remove(QRegExp("Controller$"));
+    }
+    return ctrlName;
+}
+
+
+void TWebSocketController::sendText(const QString &text)
+{
+    payloadList << QVariant(text);
+}
+
+
+void TWebSocketController::sendBinary(const QByteArray &binary)
+{
+    payloadList << QVariant(binary);
+}
+
+
+void TWebSocketController::sendPing()
+{
+    payloadList << QVariant((int)TWebSocketFrame::Ping);
+}
+
+
+void TWebSocketController::sendPong()
+{
+    payloadList << QVariant((int)TWebSocketFrame::Pong);
+}
+
+
+void TWebSocketController::closeWebSocket()
+{
+    payloadList << QVariant((int)TWebSocketFrame::Close);
+}

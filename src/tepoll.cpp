@@ -175,7 +175,9 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    pollingSockets.remove(socket->socketUuid());
+    if (pollingSockets.remove(socket->socketUuid()) == 0) {
+        return false;
+    }
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
     int err = errno;
@@ -231,7 +233,7 @@ void TEpoll::dispatchSendData()
 
                 // Switch to WebSocket
                 THttpResponseHeader response = ws->handshakeResponse();
-                ws->enqueueSendData(response.toByteArray());
+                ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
                 addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
                 break; }
 
@@ -274,6 +276,13 @@ void TEpoll::setSendData(const QByteArray &uuid, const QByteArray &header, QIODe
     }
 
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
+    sendRequests.enqueue(new TSendData(TSendData::Send, uuid, sendbuf));
+}
+
+
+void TEpoll::setSendData(const QByteArray &uuid, const QByteArray &data)
+{
+    TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(data);
     sendRequests.enqueue(new TSendData(TSendData::Send, uuid, sendbuf));
 }
 

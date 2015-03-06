@@ -14,7 +14,7 @@
 #include "turlroute.h"
 
 
-TWsActionWorker::TWsActionWorker(const QByteArray &socket, const QByteArray &path, TEpollWebSocket::OpCode opCode, const QByteArray &data, QObject *parent)
+TWsActionWorker::TWsActionWorker(const QByteArray &socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
     : QThread(parent), socketUuid(socket), requestPath(path), opcode(opCode), requestData(data)
 {
     tSystemDebug("TWsActionWorker::TWsActionWorker");
@@ -34,33 +34,76 @@ void TWsActionWorker::run()
     TWebSocketController *wscontroller = ctlrDispatcher.object();
 
     if (wscontroller) {
-        tSystemWarn("TWsActionWorker opcode: %d", opcode);
+        tSystemDebug("Found WsController: %s", qPrintable(controller));
+        tSystemDebug("TWsActionWorker opcode: %d", opcode);
 
         switch (opcode) {
-        case TEpollWebSocket::TextFrame:
+        case TWebSocketFrame::TextFrame:
             wscontroller->onTextReceived(QString::fromUtf8(requestData));
             break;
 
-        case TEpollWebSocket::BinaryFrame:
+        case TWebSocketFrame::BinaryFrame:
             wscontroller->onBinaryReceived(requestData);
             break;
 
-        case TEpollWebSocket::Close:
+        case TWebSocketFrame::Close:
             wscontroller->onClose();
-            TEpoll::instance()->setDisconnect(socketUuid);
+            wscontroller->closeWebSocket();
             break;
 
-        case TEpollWebSocket::Ping:
+        case TWebSocketFrame::Ping:
             wscontroller->onPing();
+            wscontroller->sendPong();
             break;
 
-        case TEpollWebSocket::Pong:
+        case TWebSocketFrame::Pong:
             wscontroller->onPong();
             break;
 
         default:
             tWarn("Invalid opcode: 0x%x  [%s:%d]", (int)opcode, __FILE__, __LINE__);
             break;
+        }
+
+        // Sends payload
+        for (QListIterator<QVariant> it(wscontroller->payloadList); it.hasNext(); ) {
+            const QVariant &var = it.next();
+            switch (var.type()) {
+            case QVariant::String:
+                TEpollWebSocket::sendText(socketUuid, var.toString());
+                break;
+
+            case QVariant::ByteArray:
+                TEpollWebSocket::sendBinary(socketUuid, var.toByteArray());
+                break;
+
+            case QVariant::Int: {
+
+                int opcode = var.toInt();
+                switch (opcode) {
+                case TWebSocketFrame::Close:
+                    TEpollWebSocket::disconnect(socketUuid);
+                    break;
+
+                case TWebSocketFrame::Ping:
+                    TEpollWebSocket::sendPing(socketUuid);
+                    break;
+
+                case TWebSocketFrame::Pong:
+                    TEpollWebSocket::sendPong(socketUuid);
+                    break;
+
+                default:
+                    tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                    break;
+                }
+
+                break; }
+
+            default:
+                tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                break;
+            }
         }
     }
 }

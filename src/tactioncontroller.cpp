@@ -142,7 +142,7 @@ THttpRequest &TActionController::httpRequest()
   Returns a HTTP response to be sent.
 
   \~japanese
-  送信するHHTTPレスポンスへの参照を返す
+  送信するHTTPレスポンスへの参照を返す
 */
 
 /*!
