@@ -121,8 +121,8 @@ void TMultiplexingServer::run()
 
     setNoDeleyOption(listenSocket);
 
-    TEpollSocket *sock = TEpollSocket::create(listenSocket, QHostAddress());
-    TEpoll::instance()->addPoll(sock, EPOLLIN);
+    TEpollSocket *lsn = TEpollSocket::create(listenSocket, QHostAddress());
+    TEpoll::instance()->addPoll(lsn, EPOLLIN);
     int numEvents = 0;
 
     for (;;) {
@@ -138,17 +138,17 @@ void TMultiplexingServer::run()
         if (numEvents < 0)
             break;
 
-        TEpollSocket *epSock;
-        while ( (epSock = TEpoll::instance()->next()) ) {
+        TEpollSocket *sock;
+        while ( (sock = TEpoll::instance()->next()) ) {
 
-            int cltfd = epSock->socketDescriptor();
+            int cltfd = sock->socketDescriptor();
             if (cltfd == listenSocket) {
                 for (;;) {
-                    TEpollSocket *sock = TEpollSocket::accept(listenSocket);
-                    if (Q_UNLIKELY(!sock))
+                    TEpollSocket *acceptedSock = TEpollSocket::accept(listenSocket);
+                    if (Q_UNLIKELY(!acceptedSock))
                         break;
 
-                    TEpoll::instance()->addPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));
+                    TEpoll::instance()->addPoll(acceptedSock, (EPOLLIN | EPOLLOUT | EPOLLET));
 
                     if (appsvrnum > 1) {
                         break;  // Load smoothing
@@ -159,11 +159,11 @@ void TMultiplexingServer::run()
             } else {
                 if ( TEpoll::instance()->canSend() ) {
                     // Send data
-                    int len = TEpoll::instance()->send(epSock);
+                    int len = TEpoll::instance()->send(sock);
                     if (Q_UNLIKELY(len < 0)) {
-                        TEpoll::instance()->deletePoll(epSock);
-                        epSock->close();
-                        epSock->deleteLater();
+                        TEpoll::instance()->deletePoll(sock);
+                        sock->close();
+                        sock->deleteLater();
                         continue;
                     }
                 }
@@ -171,27 +171,27 @@ void TMultiplexingServer::run()
                 if ( TEpoll::instance()->canReceive() ) {
                     if (TActionWorker::workerCount() >= maxWorkers) {
                         // not receive
-                        TEpoll::instance()->modifyPoll(epSock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                        TEpoll::instance()->modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
                         continue;
                     }
 
                     // Receive data
-                    int len = TEpoll::instance()->recv(epSock);
+                    int len = TEpoll::instance()->recv(sock);
                     if (Q_UNLIKELY(len < 0)) {
-                        TEpoll::instance()->deletePoll(epSock);
-                        epSock->close();
-                        epSock->deleteLater();
+                        TEpoll::instance()->deletePoll(sock);
+                        sock->close();
+                        sock->deleteLater();
                         continue;
                     }
 
-                    if (epSock->canReadRequest()) {
+                    if (sock->canReadRequest()) {
 #if 0  //TODO: delete here for HTTP 2.0 support
                         // Stop receiving, otherwise the responses is sometimes
                         // placed in the wrong order in case of HTTP-pipeline.
-                        TEpoll::instance()->modifyPoll(epSock, (EPOLLOUT | EPOLLET));
+                        TEpoll::instance()->modifyPoll(sock, (EPOLLOUT | EPOLLET));
 #endif
-                        epSock->startWorker();
-                        //emit incomingRequest(epSock);
+                        sock->startWorker();
+                        //emit incomingRequest(sock);
                     }
                 }
             }
