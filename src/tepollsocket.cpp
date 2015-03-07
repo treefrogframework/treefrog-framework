@@ -138,7 +138,7 @@ int TEpollSocket::recv()
     case EAGAIN:
         break;
 
-    case 0:  // FALL THROUGH
+    case 0:       // FALL THROUGH
     case ECONNRESET:
         tSystemDebug("Socket disconnected : errno:%d", err);
         ret = -1;
@@ -175,25 +175,25 @@ int TEpollSocket::send()
         }
 
         errno = 0;
-        len = ::send(sd, data, len, 0);
+        len = ::send(sd, data, len, MSG_NOSIGNAL);
         err = errno;
 
-        if (len > 0) {
-            // Sent successfully
-            buf->seekData(len);
-            logger.setResponseBytes(logger.responseBytes() + len);
-        } else {
+        if (len <= 0) {
             break;
         }
+
+        // Sent successfully
+        buf->seekData(len);
+        logger.setResponseBytes(logger.responseBytes() + len);
     }
 
     int ret = 0;
     switch (err) {
-    case 0:  // FALL THROUGH
+    case 0:     // FALL THROUGH
     case EAGAIN:
         break;
 
-    case ECONNRESET:
+    case EPIPE:
         tSystemDebug("Socket disconnected : errno:%d", err);
         logger.setResponseBytes(-1);
         ret = -1;
@@ -206,13 +206,13 @@ int TEpollSocket::send()
         break;
     }
 
-    if (err != EAGAIN && !sendBuf.isEmpty()) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-    }
-
     if (buf->atEnd() || ret < 0) {
         logger.write();  // Writes access log
         delete sendBuf.dequeue(); // delete send-buffer obj
+    }
+
+    if (err != EAGAIN && !sendBuf.isEmpty()) {
+        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
     }
 
     return ret;
