@@ -110,21 +110,31 @@ QByteArray TWebSocketFrame::toByteArray() const
     QDataStream ds(&frame, QIODevice::WriteOnly);
     ds.setByteOrder(QDataStream::BigEndian);
 
-    uchar b = firstByte_ | 0x80;
+    uchar b = firstByte_ | 0x80;  // FIN bit
     if (!opCode()) {
         b |= 0x1;  // text frame
     }
     ds << b;
 
+    b = 0;
+    if (maskKey_) {
+        b = 0x80;  // Mask bit
+    }
+
     if (plen <= 125) {
-        // no masking
-        ds << (uchar)plen;
+        b |= (uchar)plen;
+        ds << b;
     } else if (plen <= (int)0xFFFF) {
-        ds << (uchar)126;
-        ds << (quint16)plen;
+        b |= (uchar)126;
+        ds << b << (quint16)plen;
     } else {
-        ds << (uchar)127;
-        ds << (quint64)plen;
+        b |= (uchar)127;
+        ds << b << (quint64)plen;
+    }
+
+    // masking key
+    if (maskKey_) {
+        ds << maskKey_;
     }
 
     if (plen > 0) {
