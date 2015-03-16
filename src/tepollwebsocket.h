@@ -8,6 +8,7 @@
 
 class QHostAddress;
 class TWebSocketFrame;
+class TSession;
 
 
 class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket
@@ -22,6 +23,7 @@ public:
     QByteArray readBinaryRequest();
     virtual bool canReadRequest();
     virtual void startWorker();
+    void startWorkerForOpening(const TSession &session);
 
     static void sendText(const QByteArray &socketUuid, const QString &message);
     static void sendBinary(const QByteArray &socketUuid, const QByteArray &data);

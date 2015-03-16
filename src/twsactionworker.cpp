@@ -14,8 +14,16 @@
 #include "turlroute.h"
 
 
+TWsActionWorker::TWsActionWorker(const QByteArray &socket, const TSession &session, QObject *parent)
+    : QThread(parent), socketUuid(socket), sessionStore(session), requestPath(),
+      opcode(TWebSocketFrame::Continuation), requestData()
+{
+    tSystemDebug("TWsActionWorker::TWsActionWorker");
+}
+
+
 TWsActionWorker::TWsActionWorker(const QByteArray &socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
-    : QThread(parent), socketUuid(socket), requestPath(path), opcode(opCode), requestData(data)
+    : QThread(parent), socketUuid(socket), sessionStore(), requestPath(path), opcode(opCode), requestData(data)
 {
     tSystemDebug("TWsActionWorker::TWsActionWorker");
 }
@@ -38,6 +46,14 @@ void TWsActionWorker::run()
         tSystemDebug("TWsActionWorker opcode: %d", opcode);
 
         switch (opcode) {
+        case TWebSocketFrame::Continuation:
+            if (sessionStore.id().isEmpty()) {
+                wscontroller->onOpen(sessionStore);
+            } else {
+                tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+            }
+            break;
+
         case TWebSocketFrame::TextFrame:
             wscontroller->onTextReceived(QString::fromUtf8(requestData));
             break;

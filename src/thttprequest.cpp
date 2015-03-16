@@ -415,14 +415,7 @@ QByteArray THttpRequest::boundary() const
  */
 QByteArray THttpRequest::cookie(const QString &name) const
 {
-    QList<TCookie> list = cookies();
-    for (QListIterator<TCookie> i(list); i.hasNext(); ) {
-        const TCookie &c = i.next();
-        if (c.name() == name) {
-            return c.value();
-        }
-    }
-    return QByteArray();
+    return d->header.cookie(name);
 }
 
 /*!
@@ -430,14 +423,7 @@ QByteArray THttpRequest::cookie(const QString &name) const
  */
 QList<TCookie> THttpRequest::cookies() const
 {
-    QList<TCookie> result;
-    QList<QByteArray> cookieStrings = d->header.rawHeader("Cookie").split(';');
-    for (QListIterator<QByteArray> i(cookieStrings); i.hasNext(); ) {
-        QByteArray ba = i.next().trimmed();
-        if (!ba.isEmpty())
-            result += TCookie::parseCookies(ba);
-    }
-    return result;
+    return d->header.cookies();
 }
 
 /*!

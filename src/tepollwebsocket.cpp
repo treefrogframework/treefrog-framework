@@ -133,6 +133,15 @@ void TEpollWebSocket::startWorker()
 }
 
 
+void TEpollWebSocket::startWorkerForOpening(const TSession &session)
+{
+    TWsActionWorker *worker = new TWsActionWorker(socketUuid(), session);
+    worker->moveToThread(Tf::app()->thread());
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    worker->start();
+}
+
+
 int TEpollWebSocket::parse()
 {
     if (frames.isEmpty()) {

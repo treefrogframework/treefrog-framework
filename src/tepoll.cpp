@@ -11,10 +11,12 @@
 #include <sys/types.h>
 #include <sys/epoll.h>
 #include <THttpRequestHeader>
+#include <TSession>
 #include "tepoll.h"
 #include "tepollsocket.h"
 #include "tsendbuffer.h"
 #include "tepollwebsocket.h"
+#include "tsessionmanager.h"
 #include "tsystemglobal.h"
 #include "tfcore_unix.h"
 
@@ -235,6 +237,15 @@ void TEpoll::dispatchSendData()
                 THttpResponseHeader response = ws->handshakeResponse();
                 ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
                 addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+
+                // WebSocket opening
+                TSession session;
+                QByteArray sessionId = sd->header.cookie(TSession::sessionName());
+                if (!sessionId.isEmpty()) {
+                    // Finds a session
+                    session = TSessionManager::instance().findSession(sessionId);
+                }
+                ws->startWorkerForOpening(session);
                 break; }
 
             default:

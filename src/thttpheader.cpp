@@ -137,6 +137,36 @@ void THttpRequestHeader::setRequest(const QByteArray &method, const QByteArray &
 }
 
 /*!
+  Returns the cookie associated with the name.
+ */
+QByteArray THttpRequestHeader::cookie(const QString &name) const
+{
+    QList<TCookie> list = cookies();
+    for (QListIterator<TCookie> i(list); i.hasNext(); ) {
+        const TCookie &c = i.next();
+        if (c.name() == name) {
+            return c.value();
+        }
+    }
+    return QByteArray();
+}
+
+/*!
+  Returns the all cookies.
+ */
+QList<TCookie> THttpRequestHeader::cookies() const
+{
+    QList<TCookie> result;
+    QList<QByteArray> cookieStrings = rawHeader("Cookie").split(';');
+    for (QListIterator<QByteArray> i(cookieStrings); i.hasNext(); ) {
+        QByteArray ba = i.next().trimmed();
+        if (!ba.isEmpty())
+            result += TCookie::parseCookies(ba);
+    }
+    return result;
+}
+
+/*!
   Returns a byte array representation of the HTTP request header.
 */
 QByteArray THttpRequestHeader::toByteArray() const
