@@ -278,8 +278,8 @@ unix:!macx {
   SOURCES += tepollwebsocket.cpp
   HEADERS += twebsocketframe.h
   SOURCES += twebsocketframe.cpp
-  HEADERS += twsactionworker.h
-  SOURCES += twsactionworker.cpp
+  HEADERS += twebsocketworker.h
+  SOURCES += twebsocketworker.cpp
   HEADERS += twebsocketendpoint.h
   SOURCES += twebsocketendpoint.cpp
 }

@@ -8,34 +8,34 @@
 #include <TWebApplication>
 #include <TDispatcher>
 #include <TWebSocketEndpoint>
-#include "twsactionworker.h"
+#include "twebsocketworker.h"
 #include "tepoll.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
 
 
-TWsActionWorker::TWsActionWorker(const QByteArray &socket, const TSession &session, QObject *parent)
+TWebSocketWorker::TWebSocketWorker(const QByteArray &socket, const TSession &session, QObject *parent)
     : QThread(parent), socketUuid(socket), sessionStore(session), requestPath(),
       opcode(TWebSocketFrame::Continuation), requestData()
 {
-    tSystemDebug("TWsActionWorker::TWsActionWorker");
+    tSystemDebug("TWebSocketWorker::TWebSocketWorker");
 }
 
 
-TWsActionWorker::TWsActionWorker(const QByteArray &socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
+TWebSocketWorker::TWebSocketWorker(const QByteArray &socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
     : QThread(parent), socketUuid(socket), sessionStore(), requestPath(path), opcode(opCode), requestData(data)
 {
-    tSystemDebug("TWsActionWorker::TWsActionWorker");
+    tSystemDebug("TWebSocketWorker::TWebSocketWorker");
 }
 
 
-TWsActionWorker::~TWsActionWorker()
+TWebSocketWorker::~TWebSocketWorker()
 {
-    tSystemDebug("TWsActionWorker::~TWsActionWorker");
+    tSystemDebug("TWebSocketWorker::~TWebSocketWorker");
 }
 
 
-void TWsActionWorker::run()
+void TWebSocketWorker::run()
 {
     QString es = TUrlRoute::splitPath(requestPath).value(0).toLower() + "endpoint";
     TDispatcher<TWebSocketEndpoint> dispatcher(es);
@@ -43,7 +43,7 @@ void TWsActionWorker::run()
 
     if (endpoint) {
         tSystemDebug("Found WsController: %s", qPrintable(es));
-        tSystemDebug("TWsActionWorker opcode: %d", opcode);
+        tSystemDebug("TWebSocketWorker opcode: %d", opcode);
 
         switch (opcode) {
         case TWebSocketFrame::Continuation:

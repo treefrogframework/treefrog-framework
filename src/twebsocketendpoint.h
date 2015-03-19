@@ -36,7 +36,7 @@ private:
     mutable QString ctrlName;
     QVariantList payloadList;
 
-    friend class TWsActionWorker;
+    friend class TWebSocketWorker;
     Q_DISABLE_COPY(TWebSocketEndpoint)
 };
 

@@ -16,7 +16,7 @@
 #include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocketframe.h"
-#include "twsactionworker.h"
+#include "twebsocketworker.h"
 #include "turlroute.h"
 #include "tdispatcher.h"
 
@@ -128,7 +128,7 @@ void TEpollWebSocket::startWorker()
     do {
         TWebSocketFrame::OpCode opcode = frames.first().opCode();
         QByteArray binary = readBinaryRequest();
-        TWsActionWorker *worker = new TWsActionWorker(socketUuid(), reqHeader.path(), opcode, binary);
+        TWebSocketWorker *worker = new TWebSocketWorker(socketUuid(), reqHeader.path(), opcode, binary);
         worker->moveToThread(Tf::app()->thread());
         connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
         worker->start();
@@ -138,7 +138,7 @@ void TEpollWebSocket::startWorker()
 
 void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWsActionWorker *worker = new TWsActionWorker(socketUuid(), session);
+    TWebSocketWorker *worker = new TWebSocketWorker(socketUuid(), session);
     worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     worker->start();
