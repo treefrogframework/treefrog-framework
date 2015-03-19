@@ -42,7 +42,7 @@ void TWebSocketWorker::run()
     TWebSocketEndpoint *endpoint = dispatcher.object();
 
     if (endpoint) {
-        tSystemDebug("Found WsController: %s", qPrintable(es));
+        tSystemDebug("Found endpoint: %s", qPrintable(es));
         tSystemDebug("TWebSocketWorker opcode: %d", opcode);
 
         switch (opcode) {
