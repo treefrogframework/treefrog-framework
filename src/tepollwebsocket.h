@@ -25,6 +25,7 @@ public:
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);
 
+    static bool validateHandshakeRequest(const THttpRequestHeader &header);
     static void sendText(const QByteArray &socketUuid, const QString &message);
     static void sendBinary(const QByteArray &socketUuid, const QByteArray &data);
     static void sendPing(const QByteArray &socketUuid);

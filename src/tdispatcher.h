@@ -154,7 +154,7 @@ inline T *TDispatcher<T>::object()
         if (typeId <= 0 && !metaType.isEmpty()) {
             typeId = QMetaType::type(metaType.toLatin1().constData());
             if (typeId > 0) {
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050200
                 ptr = static_cast<T *>(QMetaType::create(typeId));
 #else
                 ptr = static_cast<T *>(QMetaType::construct(typeId));

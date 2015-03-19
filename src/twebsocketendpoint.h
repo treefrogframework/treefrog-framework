@@ -1,5 +1,5 @@
-#ifndef TWEBSOCKETCONTROLLER_H
-#define TWEBSOCKETCONTROLLER_H
+#ifndef TWEBSOCKETENDPOINT_H
+#define TWEBSOCKETENDPOINT_H
 
 #include <QObject>
 #include <QVariant>
@@ -7,12 +7,11 @@
 #include <TSession>
 
 
-class T_CORE_EXPORT TWebSocketController : public QObject
+class T_CORE_EXPORT TWebSocketEndpoint : public QObject
 {
-    Q_OBJECT
 public:
-    TWebSocketController() { }
-    virtual ~TWebSocketController() { }
+    TWebSocketEndpoint() { }
+    virtual ~TWebSocketEndpoint() { }
 
     virtual void onOpen(const TSession &session);
     virtual void onClose();
@@ -23,6 +22,8 @@ public:
 
     QString className() const;
     QString name() const;
+
+    static const QStringList &disabledEndpoints();
 
 protected:
     void sendText(const QString &text);
@@ -36,14 +37,14 @@ private:
     QVariantList payloadList;
 
     friend class TWsActionWorker;
-    Q_DISABLE_COPY(TWebSocketController)
+    Q_DISABLE_COPY(TWebSocketEndpoint)
 };
 
 
 
-inline QString TWebSocketController::className() const
+inline QString TWebSocketEndpoint::className() const
 {
     return QString(metaObject()->className());
 }
 
-#endif // TWEBSOCKETCONTROLLER_H
+#endif // TWEBSOCKETENDPOINT_H

@@ -7,7 +7,7 @@
 
 #include <TWebApplication>
 #include <TDispatcher>
-#include <TWebSocketController>
+#include <TWebSocketEndpoint>
 #include "twsactionworker.h"
 #include "tepoll.h"
 #include "tsystemglobal.h"
@@ -37,43 +37,43 @@ TWsActionWorker::~TWsActionWorker()
 
 void TWsActionWorker::run()
 {
-    QString controller = TUrlRoute::splitPath(requestPath).value(0).toLower() + "controller";
-    TDispatcher<TWebSocketController> ctlrDispatcher(controller);
-    TWebSocketController *wscontroller = ctlrDispatcher.object();
+    QString es = TUrlRoute::splitPath(requestPath).value(0).toLower() + "endpoint";
+    TDispatcher<TWebSocketEndpoint> dispatcher(es);
+    TWebSocketEndpoint *endpoint = dispatcher.object();
 
-    if (wscontroller) {
-        tSystemDebug("Found WsController: %s", qPrintable(controller));
+    if (endpoint) {
+        tSystemDebug("Found WsController: %s", qPrintable(es));
         tSystemDebug("TWsActionWorker opcode: %d", opcode);
 
         switch (opcode) {
         case TWebSocketFrame::Continuation:
             if (sessionStore.id().isEmpty()) {
-                wscontroller->onOpen(sessionStore);
+                endpoint->onOpen(sessionStore);
             } else {
                 tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
             }
             break;
 
         case TWebSocketFrame::TextFrame:
-            wscontroller->onTextReceived(QString::fromUtf8(requestData));
+            endpoint->onTextReceived(QString::fromUtf8(requestData));
             break;
 
         case TWebSocketFrame::BinaryFrame:
-            wscontroller->onBinaryReceived(requestData);
+            endpoint->onBinaryReceived(requestData);
             break;
 
         case TWebSocketFrame::Close:
-            wscontroller->onClose();
-            wscontroller->closeWebSocket();
+            endpoint->onClose();
+            endpoint->closeWebSocket();
             break;
 
         case TWebSocketFrame::Ping:
-            wscontroller->onPing();
-            wscontroller->sendPong();
+            endpoint->onPing();
+            endpoint->sendPong();
             break;
 
         case TWebSocketFrame::Pong:
-            wscontroller->onPong();
+            endpoint->onPong();
             break;
 
         default:
@@ -82,7 +82,7 @@ void TWsActionWorker::run()
         }
 
         // Sends payload
-        for (QListIterator<QVariant> it(wscontroller->payloadList); it.hasNext(); ) {
+        for (QListIterator<QVariant> it(endpoint->payloadList); it.hasNext(); ) {
             const QVariant &var = it.next();
             switch (var.type()) {
             case QVariant::String:

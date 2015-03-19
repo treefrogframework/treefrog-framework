@@ -156,7 +156,7 @@ void TActionContext::execute(THttpRequest &request)
             } else {
                 QByteArray c = components.value(0).toLatin1().toLower();
                 if (!c.isEmpty()) {
-                    if (c != "application") {  // Can not call 'ApplicationController'
+                    if (!TActionController::disabledControllers().contains(c)) { // Can not call 'ApplicationController'
                         // Default action: "index"
                         QByteArray action = components.value(1, QLatin1String("index")).toLatin1();
                         rt.setRouting(c + "controller", action, components.mid(2));
@@ -267,7 +267,7 @@ void TActionContext::execute(THttpRequest &request)
             TSessionManager::instance().collectGarbage();
 
         } else {
-            accessLogger.setStatusCode( Tf::BadRequest );
+            accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
 
             if (method == Tf::Get) {  // GET Method
                 path.remove(0, 1);

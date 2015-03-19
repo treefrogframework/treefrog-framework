@@ -5,41 +5,52 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebSocketController>
+#include <TWebSocketEndpoint>
 #include "twebsocketframe.h"
 
+class DisabledEndpointList : public QStringList
+{
+public:
+    DisabledEndpointList() : QStringList()
+    {
+        append("application");
+        append("twebsocket");
+    }
+};
+Q_GLOBAL_STATIC(DisabledEndpointList, disabledEndpintList);
 
-void TWebSocketController::onOpen(const TSession &session)
+
+void TWebSocketEndpoint::onOpen(const TSession &session)
 {
     Q_UNUSED(session);
 }
 
 
-void TWebSocketController::onClose()
+void TWebSocketEndpoint::onClose()
 { }
 
 
-void TWebSocketController::onTextReceived(const QString &text)
+void TWebSocketEndpoint::onTextReceived(const QString &text)
 {
     Q_UNUSED(text);
 }
 
 
-void TWebSocketController::onBinaryReceived(const QByteArray &binary)
+void TWebSocketEndpoint::onBinaryReceived(const QByteArray &binary)
 {
     Q_UNUSED(binary);
 }
 
 
-void TWebSocketController::onPing()
+void TWebSocketEndpoint::onPing()
 { }
 
 
-void TWebSocketController::onPong()
+void TWebSocketEndpoint::onPong()
 { }
 
 
-QString TWebSocketController::name() const
+QString TWebSocketEndpoint::name() const
 {
     if (ctrlName.isEmpty()) {
         ctrlName = className().remove(QRegExp("Controller$"));
@@ -48,31 +59,37 @@ QString TWebSocketController::name() const
 }
 
 
-void TWebSocketController::sendText(const QString &text)
+void TWebSocketEndpoint::sendText(const QString &text)
 {
     payloadList << QVariant(text);
 }
 
 
-void TWebSocketController::sendBinary(const QByteArray &binary)
+void TWebSocketEndpoint::sendBinary(const QByteArray &binary)
 {
     payloadList << QVariant(binary);
 }
 
 
-void TWebSocketController::sendPing()
+void TWebSocketEndpoint::sendPing()
 {
     payloadList << QVariant((int)TWebSocketFrame::Ping);
 }
 
 
-void TWebSocketController::sendPong()
+void TWebSocketEndpoint::sendPong()
 {
     payloadList << QVariant((int)TWebSocketFrame::Pong);
 }
 
 
-void TWebSocketController::closeWebSocket()
+void TWebSocketEndpoint::closeWebSocket()
 {
     payloadList << QVariant((int)TWebSocketFrame::Close);
+}
+
+
+const QStringList &TWebSocketEndpoint::disabledEndpoints()
+{
+    return *disabledEndpintList();
 }

@@ -12,6 +12,7 @@
 #include "tepollhttpsocket.h"
 #include "tactionworker.h"
 #include "tepoll.h"
+#include "tepollwebsocket.h"
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
@@ -110,12 +111,15 @@ void TEpollHttpSocket::parse()
             if (connectionHeader.contains("upgrade")) {
                 QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
-
                 if (upgradeHeader == "websocket") {
-                    // Switch protocols
-                    TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
+                    if (TEpollWebSocket::validateHandshakeRequest(header)) {
+                        // Switch protocols
+                        TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
+                    } else {
+                        // WebSocket closing
+                        TEpoll::instance()->setDisconnect(socketUuid());
+                    }
                 }
-
                 clear();  // buffer clear
             }
         }

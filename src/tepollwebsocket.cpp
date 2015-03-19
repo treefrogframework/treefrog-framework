@@ -12,10 +12,13 @@
 #include <TAppSettings>
 #include <THttpRequestHeader>
 #include <THttpUtility>
+#include <TWebSocketEndpoint>
 #include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocketframe.h"
 #include "twsactionworker.h"
+#include "turlroute.h"
+#include "tdispatcher.h"
 
 const int BUFFER_RESERVE_SIZE = 127;
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
@@ -335,6 +338,21 @@ void TEpollWebSocket::clear()
     recvBuffer.squeeze();
     recvBuffer.truncate(0);
     frames.clear();
+}
+
+
+bool TEpollWebSocket::validateHandshakeRequest(const THttpRequestHeader &header)
+{
+    QString name = TUrlRoute::splitPath(header.path()).value(0).toLower();
+
+    if (TWebSocketEndpoint::disabledEndpoints().contains(name)) {
+        return false;
+    }
+
+    QString es = name + QLatin1String("endpoint");
+    TDispatcher<TWebSocketEndpoint> dispatcher(es);
+    TWebSocketEndpoint *endpoint = dispatcher.object();
+    return endpoint;
 }
 
 

@@ -29,6 +29,17 @@
 #define FLASH_VARS_SESSION_KEY  "_flashVariants"
 #define LOGIN_USER_NAME_KEY     "_loginUserName"
 
+class DisabledControllerList : public QStringList
+{
+public:
+    DisabledControllerList() : QStringList()
+    {
+        append("application");
+        append("taction");
+    }
+};
+Q_GLOBAL_STATIC(DisabledControllerList, disabledControllerList);
+
 /*!
   \class TActionController
   \~english
@@ -81,7 +92,6 @@ QString TActionController::name() const
     }
     return ctrlName;
 }
-
 
 /*!
   \fn QString TActionController::className() const
@@ -256,7 +266,7 @@ void TActionController::setCsrfProtectionInto(TSession &session)
 /*!
   Returns the list of all available controllers.
 */
-QStringList TActionController::availableControllers()
+const QStringList &TActionController::availableControllers()
 {
     static QStringList controllers;
     static QMutex mutex;
@@ -274,6 +284,12 @@ QStringList TActionController::availableControllers()
         }
     }
     return controllers;
+}
+
+
+const QStringList &TActionController::disabledControllers()
+{
+    return *disabledControllerList();
 }
 
 /*!
@@ -331,7 +347,7 @@ bool TActionController::render(const QString &action, const QString &layout)
 /*!
   \~english
   Renders the template given by \a templateName with the layout \a layout.
- 
+
   \~japanese
   レイアウト \a layout を適用し、テンプレート \a templateName を描画する
 */

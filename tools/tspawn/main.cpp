@@ -134,8 +134,8 @@ public:
         append(L("appbase.pri"));
         append(L("controllers") + SEP + "applicationcontroller.h");
         append(L("controllers") + SEP + "applicationcontroller.cpp");
-        append(L("controllers") + SEP + "websocketcontroller.h");
-        append(L("controllers") + SEP + "websocketcontroller.cpp");
+        append(L("controllers") + SEP + "applicationendpoint.h");
+        append(L("controllers") + SEP + "applicationendpoint.cpp");
         append(L("controllers") + SEP + "controllers.pro");
         append(L("models") + SEP + "models.pro");
         append(L("views") + SEP + "views.pro");
