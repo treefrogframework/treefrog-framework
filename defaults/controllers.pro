@@ -1,6 +1,6 @@
 TARGET = controller
 TEMPLATE = lib
-CONFIG += shared
+CONFIG += shared c++11
 QT += network sql xml
 QT -= gui
 DEFINES += TF_DLL

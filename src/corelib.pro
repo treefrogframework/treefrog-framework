@@ -1,6 +1,6 @@
 TARGET   = treefrog
 TEMPLATE = lib
-CONFIG  += shared
+CONFIG  += shared c++11
 QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
@@ -58,6 +58,11 @@ win32 {
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header test
+
+  # c++11
+  lessThan(QT_MAJOR_VERSION, 5) {
+    QMAKE_CXXFLAGS += -std=c++11
+  }
 }
 
 !CONFIG(debug, debug|release) {

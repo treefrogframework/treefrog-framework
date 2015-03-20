@@ -1,6 +1,6 @@
 TARGET = helper
 TEMPLATE = lib
-CONFIG += shared
+CONFIG += shared c++11
 QT  -= gui
 QT  += 
 DEFINES += TF_DLL

@@ -2,6 +2,7 @@
 #define TWEBSOCKETENDPOINT_H
 
 #include <QObject>
+#include <QStringList>
 #include <QVariant>
 #include <TGlobal>
 #include <TSession>

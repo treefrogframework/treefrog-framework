@@ -1,7 +1,7 @@
 TARGET   = tmake
 TEMPLATE = app
 VERSION  = 1.0.0
-CONFIG  += console
+CONFIG  += console c++11
 CONFIG  -= app_bundle
 QT      -= gui
 INCLUDEPATH += ../../include
