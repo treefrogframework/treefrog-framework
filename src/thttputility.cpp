@@ -23,7 +23,7 @@ static const QHash<int, QByteArray> reasonPhrases = {
     { Tf::Continue, "Continue" },
     { Tf::SwitchingProtocols, "Switching Protocols" },
     // Successful 2xx
-    { Tf::OK, "OK2" },
+    { Tf::OK, "OK" },
     { Tf::Created, "Created" },
     { Tf::Accepted, "Accepted" },
     { Tf::NonAuthoritativeInformation, "Non-Authoritative Information" },
