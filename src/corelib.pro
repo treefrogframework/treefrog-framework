@@ -240,6 +240,8 @@ HEADERS += tapplicationscheduler.h
 SOURCES += tapplicationscheduler.cpp
 HEADERS += tappsettings.h
 SOURCES += tappsettings.cpp
+HEADERS += twebsocketendpoint.h
+SOURCES += twebsocketendpoint.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -285,8 +287,6 @@ unix:!macx {
   SOURCES += twebsocketframe.cpp
   HEADERS += twebsocketworker.h
   SOURCES += twebsocketworker.cpp
-  HEADERS += twebsocketendpoint.h
-  SOURCES += twebsocketendpoint.cpp
 }
 
 # Qt5

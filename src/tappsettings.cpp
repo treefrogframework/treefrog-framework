@@ -81,7 +81,7 @@ TAppSettings::TAppSettings(const QString &path)
 { }
 
 
-const QVariant &TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue) const
+QVariant TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue) const
 {
     if (!settingsCache.contains((int)attr)) {
         QMutexLocker locker(&mutex);

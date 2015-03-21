@@ -9,6 +9,7 @@ class T_CONTROLLER_EXPORT ApplicationEndpoint : public TWebSocketEndpoint
 public:
     ApplicationEndpoint();
     ApplicationEndpoint(const ApplicationEndpoint &other);
+    virtual ~ApplicationEndpoint() { }
 
     void onOpen(const TSession &session);
     void onClose();
