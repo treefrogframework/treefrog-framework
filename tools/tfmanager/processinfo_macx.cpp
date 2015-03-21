@@ -25,7 +25,7 @@ qint64 ProcessInfo::ppid() const
     qint64 ppid = 0;
     struct kinfo_proc kp;
     size_t bufSize = sizeof(struct kinfo_proc);
-    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processId };
+    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, (int)processId };
 
     if (sysctl(mib, 4, &kp, &bufSize, NULL, 0) == 0) {
         ppid = kp.kp_eproc.e_ppid;
@@ -39,7 +39,7 @@ QString ProcessInfo::processName() const
     QString ret;
     struct kinfo_proc kp;
     size_t bufSize = sizeof(struct kinfo_proc);
-    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processId };
+    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, (int)processId };
 
     if (sysctl(mib, 4, &kp, &bufSize, NULL, 0) == 0) {
         ret.append(kp.kp_proc.p_comm);

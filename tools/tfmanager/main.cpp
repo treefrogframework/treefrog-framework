@@ -152,9 +152,9 @@ static void writeStartupLog()
 
     QString qtversion = QLatin1String("Qt ") + qVersion();
 #if defined(Q_OS_WIN)
-    qtversion += QLatin1String(" / ") + winVersion()->value(QSysInfo::WindowsVersion, "Windows");
+    qtversion += QLatin1String(" / ") + winVersion.value(QSysInfo::WindowsVersion, "Windows");
 #elif defined(Q_OS_DARWIN)
-    qtversion += QLatin1String(" / ") + macxVersion()->value(QSysInfo::MacintoshVersion, "Mac OS X");
+    qtversion += QLatin1String(" / ") + macxVersion.value(QSysInfo::MacintoshVersion, "Mac OS X");
 #elif defined(Q_OS_UNIX)
     struct utsname uts;
     if (uname(&uts) == 0) {
