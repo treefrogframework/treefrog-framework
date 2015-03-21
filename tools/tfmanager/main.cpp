@@ -44,46 +44,64 @@ enum CommandOption {
 
 
 #ifdef Q_OS_WIN
-static const QHash<int, QString> winVersion = {
-    { QSysInfo::WV_XP,         "Windows XP" },
-    { QSysInfo::WV_2003,       "Windows Server 2003" },
-    { QSysInfo::WV_VISTA,      "Windows Vista or Windows Server 2008" },
-    { QSysInfo::WV_WINDOWS7,   "Windows 7 or Windows Server 2008 R2" },
+class WinVersion : public  QHash<int, QString>
+{
+public:
+    WinVersion() : QHash<int, QString>()
+    {
+        insert(QSysInfo::WV_XP,         "Windows XP");
+        insert(QSysInfo::WV_2003,       "Windows Server 2003");
+        insert(QSysInfo::WV_VISTA,      "Windows Vista or Windows Server 2008");
+        insert(QSysInfo::WV_WINDOWS7,   "Windows 7 or Windows Server 2008 R2");
 # if QT_VERSION >= 0x050000
-    { QSysInfo::WV_WINDOWS8,   "Windows 8 or Windows Server 2012" },
+        insert(QSysInfo::WV_WINDOWS8,   "Windows 8 or Windows Server 2012");
 # endif
 # if QT_VERSION >= 0x050200
-    { QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2" },
+        insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
 # endif
+    }
 };
+Q_GLOBAL_STATIC(WinVersion, winVersion)
 #endif
 
 #ifdef Q_OS_DARWIN
-static const QHash<int, QString> macxVersion = {
-    { QSysInfo::MV_10_3, "Mac OS X 10.3 Panther" },
-    { QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger" },
-    { QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard" },
-    { QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard" },
+class MacxVersion : public QHash<int, QString>
+{
+public:
+    MacxVersion() : QHash<int, QString>()
+    {
+        insert(QSysInfo::MV_10_3, "Mac OS X 10.3 Panther");
+        insert(QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger");
+        insert(QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard");
+        insert(QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard");
 # if QT_VERSION >= 0x040800
-    { QSysInfo::MV_10_7, "Mac OS X 10.7 Lion" },
-    { QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion" },
+        insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
+        insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
 # endif
 # if QT_VERSION >= 0x050100
-    { QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks" },
+        insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
 # endif
+    }
 };
+Q_GLOBAL_STATIC(MacxVersion, macxVersion)
 #endif
 
-static const QHash<QString, int> options = {
-    { "-e", EnvironmentSpecified },
-    { "-s", SocketSpecified },
-    { "-v", PrintVersion },
-    { "-h", PrintUsage },
-    { "-l", ShowRunningAppList },
-    { "-d", DaemonMode },
-    { "-w", WindowsServiceMode },
-    { "-k", SendSignal },
+class OptionHash : public QHash<QString, int>
+{
+public:
+    OptionHash() : QHash<QString, int>()
+    {
+        insert("-e", EnvironmentSpecified);
+        insert("-s", SocketSpecified);
+        insert("-v", PrintVersion);
+        insert("-h", PrintUsage);
+        insert("-l", ShowRunningAppList);
+        insert("-d", DaemonMode);
+        insert("-w", WindowsServiceMode);
+        insert("-k", SendSignal);
+    }
 };
+Q_GLOBAL_STATIC(OptionHash, options)
 
 
 static void usage()
@@ -108,7 +126,7 @@ static bool checkArguments()
 {
     for (QStringListIterator i(QCoreApplication::arguments()); i.hasNext(); ) {
         const QString &arg = i.next();
-        if (arg.startsWith('-') && options.value(arg, Invalid) == Invalid) {
+        if (arg.startsWith('-') && options()->value(arg, Invalid) == Invalid) {
             fprintf(stderr, "invalid argument\n");
             return false;
         }
@@ -152,9 +170,9 @@ static void writeStartupLog()
 
     QString qtversion = QLatin1String("Qt ") + qVersion();
 #if defined(Q_OS_WIN)
-    qtversion += QLatin1String(" / ") + winVersion.value(QSysInfo::WindowsVersion, "Windows");
+    qtversion += QLatin1String(" / ") + winVersion()->value(QSysInfo::WindowsVersion, "Windows");
 #elif defined(Q_OS_DARWIN)
-    qtversion += QLatin1String(" / ") + macxVersion.value(QSysInfo::MacintoshVersion, "Mac OS X");
+    qtversion += QLatin1String(" / ") + macxVersion()->value(QSysInfo::MacintoshVersion, "Mac OS X");
 #elif defined(Q_OS_UNIX)
     struct utsname uts;
     if (uname(&uts) == 0) {
@@ -360,7 +378,7 @@ int managerMain(int argc, char *argv[])
     args.removeFirst();
     for (QStringListIterator i(args); i.hasNext(); ) {
         const QString &arg = i.next();
-        int cmd = options.value(arg, Invalid);
+        int cmd = options()->value(arg, Invalid);
         switch (cmd) {
         case PrintVersion:
             printf("%s version " TF_VERSION_STR " (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_SRC_REVISION, __DATE__, qVersion());
