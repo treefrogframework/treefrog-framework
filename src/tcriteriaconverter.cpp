@@ -16,33 +16,39 @@
  * \sa TCriteria
  */
 
-static const QHash<int, QString> formatHash = {
-    { TSql::Equal, "=%1" },
-    { TSql::NotEqual, "<>%1" },
-    { TSql::LessThan, "<%1" },
-    { TSql::GreaterThan, ">%1" },
-    { TSql::LessEqual, "<=%1" },
-    { TSql::GreaterEqual, ">=%1" },
-    { TSql::IsNull, " IS NULL" },
-    { TSql::IsNotNull, " IS NOT NULL" },
-    { TSql::Like, " LIKE %1" },
-    { TSql::NotLike, " NOT LIKE %1" },
-    { TSql::LikeEscape, " LIKE %1 ESCAPE %2" },
-    { TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2" },
-    { TSql::ILike, " ILIKE %1" },
-    { TSql::NotILike, " NOT ILIKE %1" },
-    { TSql::ILikeEscape, " ILIKE %1 ESCAPE %2" },
-    { TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2" },
-    { TSql::In, " IN (%1)" },
-    { TSql::NotIn, " NOT IN (%1)" },
-    { TSql::Between, " BETWEEN %1 AND %2" },
-    { TSql::NotBetween, " NOT BETWEEN %1 AND %2" },
-    { TSql::Any, "ANY (%1)" },
-    { TSql::All, "ALL (%1)" },
+class FormatHash : public QHash<int, QString>
+{
+public:
+    FormatHash() : QHash<int, QString>()
+    {
+        insert(TSql::Equal, "=%1");
+        insert(TSql::NotEqual, "<>%1");
+        insert(TSql::LessThan, "<%1");
+        insert(TSql::GreaterThan, ">%1");
+        insert(TSql::LessEqual, "<=%1");
+        insert(TSql::GreaterEqual, ">=%1");
+        insert(TSql::IsNull, " IS NULL");
+        insert(TSql::IsNotNull, " IS NOT NULL");
+        insert(TSql::Like, " LIKE %1");
+        insert(TSql::NotLike, " NOT LIKE %1");
+        insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
+        insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
+        insert(TSql::ILike, " ILIKE %1");
+        insert(TSql::NotILike, " NOT ILIKE %1");
+        insert(TSql::ILikeEscape, " ILIKE %1 ESCAPE %2");
+        insert(TSql::NotILikeEscape, " NOT ILIKE %1 ESCAPE %2");
+        insert(TSql::In, " IN (%1)");
+        insert(TSql::NotIn, " NOT IN (%1)");
+        insert(TSql::Between, " BETWEEN %1 AND %2");
+        insert(TSql::NotBetween, " NOT BETWEEN %1 AND %2");
+        insert(TSql::Any, "ANY (%1)");
+        insert(TSql::All, "ALL (%1)");
+    }
 };
+Q_GLOBAL_STATIC(FormatHash, formatHash)
 
 
 const QHash<int, QString> &TSql::formats()
 {
-    return formatHash;
+    return *formatHash();
 }
