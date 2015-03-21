@@ -37,7 +37,7 @@ TMimeHeader::TMimeHeader(const TMimeHeader &other)
 QByteArray TMimeHeader::header(const QByteArray &headerName) const
 {
     QByteArray name = headerName.toLower();
-    for (QListIterator<QPair<QByteArray, QByteArray> > i(headers); i.hasNext(); ) {
+    for (QListIterator<QPair<QByteArray, QByteArray>> i(headers); i.hasNext(); ) {
         const QPair<QByteArray, QByteArray> &p = i.next();
         if (p.first.toLower() == name) {
             return p.second;

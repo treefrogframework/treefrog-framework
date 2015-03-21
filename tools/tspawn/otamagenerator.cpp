@@ -187,40 +187,28 @@
     "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
 
 
-class ExcludedColumn : public QStringList
-{
-public:
-    ExcludedColumn() : QStringList()
-    {
-        append("created_at");
-        append("updated_at");
-        append("modified_at");
-        append("lock_revision");
-        append("createdAt");
-        append("updatedAt");
-        append("modifiedAt");
-        append("lockRevision");
-    }
+static const QStringList excludedColumn = {
+    "created_at",
+    "updated_at",
+    "modified_at",
+    "lock_revision",
+    "createdAt",
+    "updatedAt",
+    "modifiedAt",
+    "lockRevision",
 };
-Q_GLOBAL_STATIC(ExcludedColumn, excludedColumn)
 
 
-class ExcludedDirName : public QStringList
-{
-public:
-    ExcludedDirName() : QStringList()
-    {
-        append("layouts");
-        append("partial");
-        append("direct");
-        append("_src");
-        append("mailer");
-    }
+static const QStringList excludedDirName = {
+    "layouts",
+    "partial",
+    "direct",
+    "_src",
+    "mailer",
 };
-Q_GLOBAL_STATIC(ExcludedDirName, excludedDirName)
 
 
-OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int autoValIdx)
+OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx)
     : viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
 { }
 
@@ -230,7 +218,7 @@ bool OtamaGenerator::generate(const QString &dstDir) const
     QDir dir(dstDir + viewName.toLower());
 
     // Reserved word check
-    if (excludedDirName()->contains(dir.dirName())) {
+    if (excludedDirName.contains(dir.dirName())) {
         qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dir.dirName()));
         return false;
     }
@@ -268,7 +256,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
         QString mrk = p.first.toLower();
         QString readonly;
 
-        if (!excludedColumn()->contains(var, Qt::CaseInsensitive)) {
+        if (!excludedColumn.contains(var, Qt::CaseInsensitive)) {
             th += "    <th>";
             th += cap;
             th += "</th>\n";

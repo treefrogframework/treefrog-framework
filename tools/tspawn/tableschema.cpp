@@ -53,9 +53,9 @@ bool TableSchema::exists() const
 }
 
 
-QList<QPair<QString, QString> > TableSchema::getFieldList() const
+QList<QPair<QString, QString>> TableSchema::getFieldList() const
 {
-    QList<QPair<QString, QString> > fieldList;
+    QList<QPair<QString, QString>> fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
         fieldList << QPair<QString, QString>(f.name(), QString(QVariant::typeToName(f.type())));
@@ -64,9 +64,9 @@ QList<QPair<QString, QString> > TableSchema::getFieldList() const
 }
 
 
-QList<QPair<QString, QVariant::Type> > TableSchema::getFieldTypeList() const
+QList<QPair<QString, QVariant::Type>> TableSchema::getFieldTypeList() const
 {
-    QList<QPair<QString, QVariant::Type> > fieldList;
+    QList<QPair<QString, QVariant::Type>> fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
         fieldList << QPair<QString, QVariant::Type>(f.name(), f.type());

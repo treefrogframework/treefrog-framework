@@ -341,12 +341,12 @@ QString TViewHelper::optionTags(const QVariantList &valueList, const QVariant &s
 /*!
   Creates option tags for a select tag;
  */
-QString TViewHelper::optionTags(const QList<QPair<QString, QVariant> > &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
+QString TViewHelper::optionTags(const QList<QPair<QString, QVariant>> &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
 {
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (QListIterator<QPair<QString, QVariant> > it(valueList); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, QVariant>> it(valueList); it.hasNext(); ) {
         const QPair<QString, QVariant> &val = it.next();
 
         if (!val.second.isNull() && val.second == selectedValue)

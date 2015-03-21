@@ -14,24 +14,17 @@
 #include <QJsonDocument>
 #endif
 
-
-class MethodHash : public QHash<QString, Tf::HttpMethod>
-{
-public:
-    MethodHash() : QHash<QString, Tf::HttpMethod>()
-    {
-        insert("get",     Tf::Get);
-        insert("head",    Tf::Head);
-        insert("post",    Tf::Post);
-        insert("options", Tf::Options);
-        insert("put",     Tf::Put);
-        insert("delete",  Tf::Delete);
-        insert("trace",   Tf::Trace);
-        insert("connect", Tf::Connect);
-        insert("patch",   Tf::Patch);
-    }
+static const QMap<QString, Tf::HttpMethod> methodHash = {
+    { "get",     Tf::Get },
+    { "head",    Tf::Head },
+    { "post",    Tf::Post },
+    { "options", Tf::Options },
+    { "put",     Tf::Put },
+    { "delete",  Tf::Delete },
+    { "trace",   Tf::Trace },
+    { "connect", Tf::Connect },
+    { "patch",   Tf::Patch },
 };
-Q_GLOBAL_STATIC(MethodHash, methodHash)
 
 
 static bool httpMethodOverride()
@@ -151,7 +144,7 @@ Tf::HttpMethod THttpRequest::method() const
 Tf::HttpMethod THttpRequest::realMethod() const
 {
     QString s = d->header.method().toLower();
-    return methodHash()->value(s, Tf::Invalid);
+    return methodHash.value(s, Tf::Invalid);
 }
 
 /*!
@@ -161,19 +154,19 @@ Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
 {
     Tf::HttpMethod method;
     QString str = d->header.rawHeader("X-HTTP-Method-Override").toLower();
-    method = methodHash()->value(str, Tf::Invalid);
+    method = methodHash.value(str, Tf::Invalid);
     if (method != Tf::Invalid) {
         return method;
     }
 
     str = d->header.rawHeader("X-HTTP-Method").toLower();
-    method = methodHash()->value(str, Tf::Invalid);
+    method = methodHash.value(str, Tf::Invalid);
     if (method != Tf::Invalid) {
         return method;
     }
 
     str = d->header.rawHeader("X-METHOD-OVERRIDE").toLower();
-    method = methodHash()->value(str, Tf::Invalid);
+    method = methodHash.value(str, Tf::Invalid);
     return method;
 }
 
@@ -184,7 +177,7 @@ Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
 Tf::HttpMethod THttpRequest::queryItemMethod() const
 {
     QString queryMethod = queryItemValue("_method");
-    return methodHash()->value(queryMethod, Tf::Invalid);
+    return methodHash.value(queryMethod, Tf::Invalid);
 }
 
 

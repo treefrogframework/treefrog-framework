@@ -29,17 +29,6 @@
 #define FLASH_VARS_SESSION_KEY  "_flashVariants"
 #define LOGIN_USER_NAME_KEY     "_loginUserName"
 
-class DisabledControllerList : public QStringList
-{
-public:
-    DisabledControllerList() : QStringList()
-    {
-        append("application");
-        append("taction");
-    }
-};
-Q_GLOBAL_STATIC(DisabledControllerList, disabledControllerList);
-
 /*!
   \class TActionController
   \~english
@@ -289,7 +278,8 @@ const QStringList &TActionController::availableControllers()
 
 const QStringList &TActionController::disabledControllers()
 {
-    return *disabledControllerList();
+    static const QStringList disabledNames = { "application" };
+    return disabledNames;
 }
 
 /*!

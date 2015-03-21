@@ -17,7 +17,7 @@ public:
     bool wait(int timeout);
 
 private:
-    QAtomicPointer<QList<T> > queue;
+    QAtomicPointer<QList<T>> queue;
     QMutex mutex;
     QWaitCondition enqued;
 };

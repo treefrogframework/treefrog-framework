@@ -14,22 +14,14 @@
 
 #define DEFAULT_TEXT_ENCODING "DefaultTextEncoding"
 
-
-class PriorityHash : public QHash<TLogger::Priority, QByteArray>
-{
-public:
-    PriorityHash() : QHash<TLogger::Priority, QByteArray>()
-    {
-        insert(TLogger::Fatal, "FATAL");
-        insert(TLogger::Error, "ERROR");
-        insert(TLogger::Warn,  "WARN");
-        insert(TLogger::Info,  "INFO");
-        insert(TLogger::Debug, "DEBUG");
-        insert(TLogger::Trace, "TRACE");
-    }
+static const QHash<TLogger::Priority, QByteArray> priorityHash = {
+    { TLogger::Fatal, "FATAL" },
+    { TLogger::Error, "ERROR" },
+    { TLogger::Warn,  "WARN" },
+    { TLogger::Info,  "INFO" },
+    { TLogger::Debug, "DEBUG" },
+    { TLogger::Trace, "TRACE" },
 };
-Q_GLOBAL_STATIC(PriorityHash, priorityHash)
-
 
 /*!
   \class TLogger
@@ -142,7 +134,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 */
 QByteArray TLogger::priorityToString(Priority priority)
 {
-    return priorityHash()->value(priority);
+    return priorityHash.value(priority);
 }
 
 /*!
@@ -169,7 +161,7 @@ void TLogger::readSettings()
     dateTimeFormat_ = settingsValue("DateTimeFormat").toByteArray();
 
     QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
-    threshold_ = priorityHash()->key(pri, TLogger::Trace);
+    threshold_ = priorityHash.key(pri, TLogger::Trace);
 
     QFileInfo fi(settingsValue("Target", "log/app.log").toString());
     target_ = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();

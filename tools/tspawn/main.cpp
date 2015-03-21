@@ -51,115 +51,97 @@ enum SubCommand {
     ShowCollections,
 };
 
-class SubCommands : public QHash<QString, int>
-{
-public:
-    SubCommands() : QHash<QString, int>()
-    {
-        insert("-h", Help);
-        insert("--help", Help);
-        insert("new", New);
-        insert("n", New);
-        insert("controller", Controller);
-        insert("c", Controller);
-        insert("model", Model);
-        insert("m", Model);
-        insert("usermodel", UserModel);
-        insert("u", UserModel);
-        insert("sqlobject", SqlObject);
-        insert("o", SqlObject);
-        insert("mongoscaffold", MongoScaffold);
-        insert("ms", MongoScaffold);
-        insert("mongomodel", MongoModel);
-        insert("mm", MongoModel);
-        insert("validator", Validator);
-        insert("v", Validator);
-        insert("mailer", Mailer);
-        insert("l", Mailer);
-        insert("scaffold", Scaffold);
-        insert("s", Scaffold);
-        insert("delete", Delete);
-        insert("d", Delete);
-        insert("remove", Delete);
-        insert("r", Delete);
-        insert("--show-drivers", ShowDrivers);
-        insert("--show-driver-path", ShowDriverPath);
-        insert("--show-tables", ShowTables);
-        insert("--show-collections", ShowCollections);
-    }
+static const QHash<QString, int> subCommands = {
+    { "-h", Help },
+    { "--help", Help },
+    { "new", New },
+    { "n", New },
+    { "controller", Controller },
+    { "c", Controller },
+    { "model", Model },
+    { "m", Model },
+    { "usermodel", UserModel },
+    { "u", UserModel },
+    { "sqlobject", SqlObject },
+    { "o", SqlObject },
+    { "mongoscaffold", MongoScaffold },
+    { "ms", MongoScaffold },
+    { "mongomodel", MongoModel },
+    { "mm", MongoModel },
+    { "validator", Validator },
+    { "v", Validator },
+    { "mailer", Mailer },
+    { "l", Mailer },
+    { "scaffold", Scaffold },
+    { "s", Scaffold },
+    { "delete", Delete },
+    { "d", Delete },
+    { "remove", Delete },
+    { "r", Delete },
+    { "--show-drivers", ShowDrivers },
+    { "--show-driver-path", ShowDriverPath },
+    { "--show-tables", ShowTables },
+    { "--show-collections", ShowCollections },
 };
-Q_GLOBAL_STATIC(SubCommands, subCommands)
 
 
-class SubDirs : public QStringList
-{
-public:
-    SubDirs() : QStringList()
-    {
-        append(L("controllers"));
-        append(L("models"));
-        append(L("models") + SEP + "sqlobjects");
-        append(L("models") + SEP + "mongoobjects");
-        append(L("views"));
-        append(L("views") + SEP + "layouts");
-        append(L("views") + SEP + "mailer");
-        append(L("views") + SEP + "partial");
-        append(L("views") + SEP + "_src");
-        append(L("helpers"));
-        append(L("config"));
-        append(L("config") + SEP + "environments");
-        append(L("config") + SEP + "initializers");
-        append(L("public"));
-        append(L("public") + SEP + "images");
-        append(L("public") + SEP + "js");
-        append(L("public") + SEP + "css");
-        append(L("db"));
-        append(L("lib"));
-        append(L("log"));
-        append(L("plugin"));
-        append(L("script"));
-        append(L("sql"));
-        append(L("test"));
-        append(L("tmp"));
-    }
+static const QStringList subDirs = {
+    L("controllers"),
+    L("models"),
+    L("models") + SEP + "sqlobjects",
+    L("models") + SEP + "mongoobjects",
+    L("views"),
+    L("views") + SEP + "layouts",
+    L("views") + SEP + "mailer",
+    L("views") + SEP + "partial",
+    L("views") + SEP + "_src",
+    L("helpers"),
+    L("config"),
+    L("config") + SEP + "environments",
+    L("config") + SEP + "initializers",
+    L("public"),
+    L("public") + SEP + "images",
+    L("public") + SEP + "js",
+    L("public") + SEP + "css",
+    L("db"),
+    L("lib"),
+    L("log"),
+    L("plugin"),
+    L("script"),
+    L("sql"),
+    L("test"),
+    L("tmp"),
 };
-Q_GLOBAL_STATIC(SubDirs, subDirs)
 
 
-class FilePaths : public QStringList
-{
-public:
-    FilePaths() : QStringList()
-    {
-        append(L("appbase.pri"));
-        append(L("controllers") + SEP + "applicationcontroller.h");
-        append(L("controllers") + SEP + "applicationcontroller.cpp");
-        append(L("controllers") + SEP + "applicationendpoint.h");
-        append(L("controllers") + SEP + "applicationendpoint.cpp");
-        append(L("controllers") + SEP + "controllers.pro");
-        append(L("models") + SEP + "models.pro");
-        append(L("views") + SEP + "views.pro");
-        append(L("views") + SEP + "_src" + SEP + "_src.pro");
-        append(L("views") + SEP + "mailer" + SEP + ".trim_mode");
-        append(L("helpers") + SEP + "helpers.pro");
-        append(L("helpers") + SEP + "applicationhelper.h");
-        append(L("helpers") + SEP + "applicationhelper.cpp");
-        append(L("config") + SEP + "application.ini");
-        append(L("config") + SEP + "database.ini");
-        append(L("config") + SEP + "development.ini");
-        append(L("config") + SEP + "logger.ini");
-        append(L("config") + SEP + "mongodb.ini");
-        append(L("config") + SEP + "routes.cfg");
-        append(L("config") + SEP + "validation.ini");
-        append(L("config") + SEP + "initializers" + SEP + "internet_media_types.ini");
-        append(L("public") + SEP + "403.html");
-        append(L("public") + SEP + "404.html");
-        append(L("public") + SEP + "413.html");
-        append(L("public") + SEP + "500.html");
-        append(L("script") + SEP + "starttreefrog.bat");
-    }
+static const QStringList filePaths = {
+    L("appbase.pri"),
+    L("controllers") + SEP + "applicationcontroller.h",
+    L("controllers") + SEP + "applicationcontroller.cpp",
+    L("controllers") + SEP + "applicationendpoint.h",
+    L("controllers") + SEP + "applicationendpoint.cpp",
+    L("controllers") + SEP + "controllers.pro",
+    L("models") + SEP + "models.pro",
+    L("views") + SEP + "views.pro",
+    L("views") + SEP + "_src" + SEP + "_src.pro",
+    L("views") + SEP + "mailer" + SEP + ".trim_mode",
+    L("helpers") + SEP + "helpers.pro",
+    L("helpers") + SEP + "applicationhelper.h",
+    L("helpers") + SEP + "applicationhelper.cpp",
+    L("config") + SEP + "application.ini",
+    L("config") + SEP + "database.ini",
+    L("config") + SEP + "development.ini",
+    L("config") + SEP + "logger.ini",
+    L("config") + SEP + "mongodb.ini",
+    L("config") + SEP + "routes.cfg",
+    L("config") + SEP + "validation.ini",
+    L("config") + SEP + "initializers" + SEP + "internet_media_types.ini",
+    L("public") + SEP + "403.html",
+    L("public") + SEP + "404.html",
+    L("public") + SEP + "413.html",
+    L("public") + SEP + "500.html",
+    L("script") + SEP + "starttreefrog.bat",
 };
-Q_GLOBAL_STATIC(FilePaths, filePaths)
 
 
 const QString appIni = QLatin1String("config") + QDir::separator() + "application.ini";
@@ -309,7 +291,7 @@ static bool createNewApplication(const QString &name)
     printf("  created   %s\n", qPrintable(name));
 
     // Creates sub-directories
-    for (QStringListIterator i(*subDirs()); i.hasNext(); ) {
+    for (QStringListIterator i(subDirs); i.hasNext(); ) {
         const QString &str = i.next();
         QString d = name + SEP + str;
         if (!mkpath(dir, d)) {
@@ -320,7 +302,7 @@ static bool createNewApplication(const QString &name)
     // Copies files
     copy(dataDirPath + "app.pro", name + SEP + name + ".pro");
 
-    for (QStringListIterator it(*filePaths()); it.hasNext(); ) {
+    for (QStringListIterator it(filePaths); it.hasNext(); ) {
         const QString &path = it.next();
         QString filename = QFileInfo(path).fileName();
         QString dst = name + SEP + path;
@@ -474,7 +456,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     qsrand(time(NULL));
     QStringList args = QCoreApplication::arguments();
-    int subcmd = subCommands()->value(args.value(1), Invalid);
+    int subcmd = subCommands.value(args.value(1), Invalid);
 
     switch (subcmd) {
     case Invalid:

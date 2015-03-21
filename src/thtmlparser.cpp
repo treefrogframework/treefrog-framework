@@ -68,7 +68,7 @@ void THtmlElement::setAttribute(const QString &name, const QString &value)
 
 void THtmlElement::removeAttribute(const QString &name)
 {
-    for (QMutableListIterator<QPair<QString, QString> > i(attributes); i.hasNext(); ) {
+    for (QMutableListIterator<QPair<QString, QString>> i(attributes); i.hasNext(); ) {
         if (i.next().first == name) {
             i.remove();
         }
@@ -318,9 +318,9 @@ void THtmlParser::parseCloseTag()
 }
 
 
-QList<QPair<QString, QString> > THtmlParser::parseAttributes()
+QList<QPair<QString, QString>> THtmlParser::parseAttributes()
 {
-    QList<QPair<QString, QString> > attrs;
+    QList<QPair<QString, QString>> attrs;
     QString newline, key, value;
 
     while (pos < txt.length()) {

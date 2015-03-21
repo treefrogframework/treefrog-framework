@@ -18,7 +18,7 @@ public:
     bool createMongoObject(const QString &path);
     bool updateMongoObject(const QString &path);
     QString model() const { return modelName; }
-    QList<QPair<QString, QVariant::Type> > fieldList() const { return fields; }
+    QList<QPair<QString, QVariant::Type>> fieldList() const { return fields; }
     int primaryKeyIndex() const;
     int autoValueIndex() const;
     int lockRevisionIndex() const;
@@ -29,7 +29,7 @@ protected:
 private:
     QString modelName;
     QString collectionName;
-    QList<QPair<QString, QVariant::Type> > fields;
+    QList<QPair<QString, QVariant::Type>> fields;
 };
 
 #endif // MONGOOBJGENERATOR_H

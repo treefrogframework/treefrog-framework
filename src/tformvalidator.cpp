@@ -46,7 +46,7 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx,
 /*!
   \class TFormValidator
   \brief The TFormValidator class provides form validation for
-  a map-table-based dictionary. 
+  a map-table-based dictionary.
 */
 
 /*!
@@ -206,8 +206,8 @@ void TFormValidator::setPatternRule(const QString &key, const QRegExp &rx, const
 
 /*!
   Validates the specified parameter \a map by the set rules.
-  
-  As default, TF::Required is set for all parameters. If not required, 
+
+  As default, TF::Required is set for all parameters. If not required,
   set the rule to \a false like this:
     setRule("xxx", Tf::Required, false);
  */
@@ -231,12 +231,12 @@ bool TFormValidator::validate(const QVariantMap &map)
         if (str.isEmpty()) {
             bool req = r.value.toBool();
             if (r.rule == Tf::Required && req) {
-                tSystemDebug("validation error: required parameter is empty, key:%s", qPrintable(r.key)); 
+                tSystemDebug("validation error: required parameter is empty, key:%s", qPrintable(r.key));
                 errors << qMakePair(r.key, r.rule);
             }
         } else {
             bool ok1, ok2;
-            tSystemDebug("validating key:%s value: %s", qPrintable(r.key), qPrintable(str)); 
+            tSystemDebug("validating key:%s value: %s", qPrintable(r.key), qPrintable(str));
             switch (r.rule) {
             case Tf::Required:
                 break;
@@ -286,7 +286,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                     errors << qMakePair(r.key, r.rule);
                 }
                 break; }
-                
+
             case Tf::EmailAddress: { // refer to RFC5321
                 if ( r.value.toBool() ) {
                     QRegExp reg("^" ADDR_SPEC "$");
@@ -358,7 +358,7 @@ bool TFormValidator::validate(const QVariantMap &map)
 QStringList TFormValidator::validationErrorKeys() const
 {
     QStringList ret;
-    for (QListIterator<QPair<QString, int> > it(errors); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, int>> it(errors); it.hasNext(); ) {
         ret << it.next().first;
     }
     return ret;
@@ -370,7 +370,7 @@ QStringList TFormValidator::validationErrorKeys() const
 */
 Tf::ValidationRule TFormValidator::errorRule(const QString &key) const
 {
-    for (QListIterator<QPair<QString, int> > it(errors); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, int>> it(errors); it.hasNext(); ) {
         const QPair<QString, int> &p = it.next();
         if (p.first == key) {
             return (Tf::ValidationRule)p.second;
@@ -409,7 +409,7 @@ QString TFormValidator::errorMessage(const QString &key) const
 QStringList TFormValidator::errorMessages() const
 {
     QStringList msgs;
-    for (QListIterator<QPair<QString, int> > it(errors); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, int>> it(errors); it.hasNext(); ) {
         const QPair<QString, int> &p = it.next();
         QString m = message(p.first, (Tf::ValidationRule)p.second);
         if (!m.isEmpty())

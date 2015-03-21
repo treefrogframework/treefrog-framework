@@ -309,22 +309,17 @@
     "}\n"                                                     \
     "\n"
 
-class ExcludedSetter : public QStringList
-{
-public:
-    ExcludedSetter() : QStringList()
-    {
-        append("created_at");
-        append("updated_at");
-        append("modified_at");
-        append("lock_revision");
-        append("createdAt");
-        append("updatedAt");
-        append("modifiedAt");
-        append(LOCK_REVISION_FIELD);
-    }
+static const QStringList excludedSetter = {
+    "created_at",
+    "updated_at",
+    "modified_at",
+    "lock_revision",
+    "createdAt",
+    "updatedAt",
+    "modifiedAt",
+    LOCK_REVISION_FIELD,
 };
-Q_GLOBAL_STATIC(ExcludedSetter, excludedSetter)
+
 
 ModelGenerator::ModelGenerator(ModelGenerator::ObjectType type, const QString &model, const QString &table, const QStringList &userModelFields)
     : objectType(type), modelName(), tableName(table), userFields(userModelFields)
@@ -420,7 +415,7 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
 QPair<QStringList, QStringList> ModelGenerator::createModelParams()
 {
     QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl, initParams;
-    QList<QPair<QString, QString> > writableFields;
+    QList<QPair<QString, QString>> writableFields;
     bool optlockMethod = false;
     FieldList fields = objGen->fieldList();
     int pkidx = objGen->primaryKeyIndex();
@@ -428,7 +423,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     QString autoFieldName = (autoIndex >= 0) ? fields[autoIndex].first : QString();
     QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
 
-    for (QListIterator<QPair<QString, QVariant::Type> > it(fields); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, QVariant::Type>> it(fields); it.hasNext(); ) {
         const QPair<QString, QVariant::Type> &p = it.next();
         QString var = fieldNameToVariableName(p.first);
         QString type = QVariant::typeToName(p.second);
@@ -439,7 +434,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
         setgetDecl += QString("    %1 %2() const;\n").arg(type, var);
         setgetImpl += QString("%1 %2::%3() const\n{\n    return d->%4;\n}\n\n").arg(type, modelName, var, p.first);
 
-        if (!excludedSetter()->contains(p.first, Qt::CaseInsensitive) && p.first != autoFieldName) {
+        if (!excludedSetter.contains(p.first, Qt::CaseInsensitive) && p.first != autoFieldName) {
             // Setter method
             QString str = fieldNameToEnumName(p.first);
             setgetDecl += QString("    void set%1(%2);\n").arg(str, createParam(p.second, p.first));
@@ -501,7 +496,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     QString createImpl;
     createImpl += QString("    %1Object obj;\n").arg(modelName);
 
-    QListIterator<QPair<QString, QString> > fi(writableFields);
+    QListIterator<QPair<QString, QString>> fi(writableFields);
     while (fi.hasNext()) {
         const QPair<QString, QString> &p = fi.next();
         createImpl += QString("    obj.%1 = %2;\n").arg(p.first, fieldNameToVariableName(p.first));

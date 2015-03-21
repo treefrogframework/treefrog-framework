@@ -23,16 +23,9 @@
 
 static TKvsDatabasePool2 *databasePool = 0;
 
-
-class KvsTypeHash : public QHash<QString, int>
-{
-public:
-    KvsTypeHash() : QHash<QString, int>()
-    {
-        insert("MONGODB", TKvsDatabase::MongoDB);
-    }
+static const QHash<QString, int> kvsTypeHash = {
+    { "MONGODB", TKvsDatabase::MongoDB },
 };
-Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 
 static void cleanup()
@@ -56,7 +49,7 @@ TKvsDatabasePool2::~TKvsDatabasePool2()
 {
     timer.stop();
 
-    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+    for (QHashIterator<QString, int> it(kvsTypeHash); it.hasNext(); ) {
         it.next();
         int type = it.value();
 
@@ -89,14 +82,14 @@ void TKvsDatabasePool2::init()
     if (dbSet)
         return;
 
-    int typeCnt = kvsTypeHash()->count();
+    int typeCnt = kvsTypeHash.count();
     if (typeCnt == 0)
         return;
 
     dbSet = new TAtomicSet[typeCnt];
 
     int typeidx = 0;
-    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+    for (QHashIterator<QString, int> it(kvsTypeHash); it.hasNext(); ) {
         const QString &drv = it.next().key();
         int type = it.value();
 
@@ -240,7 +233,7 @@ bool TKvsDatabasePool2::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase
 void TKvsDatabasePool2::pool(TKvsDatabase &database)
 {
     if (database.isValid()) {
-        int type = kvsTypeHash()->value(database.driverName(), -1);
+        int type = kvsTypeHash.value(database.driverName(), -1);
         if (type < 0) {
             throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         }
@@ -266,7 +259,7 @@ void TKvsDatabasePool2::timerEvent(QTimerEvent *event)
         return;
     }
 
-    int typeCnt = kvsTypeHash()->count();
+    int typeCnt = kvsTypeHash.count();
 
     // Closes connection
     for (int j = 0; j < typeCnt; ++j) {
@@ -313,7 +306,7 @@ TKvsDatabasePool2 *TKvsDatabasePool2::instance()
 
 QString TKvsDatabasePool2::driverName(TKvsDatabase::Type type)
 {
-    return kvsTypeHash()->key((int)type);
+    return kvsTypeHash.key((int)type);
 }
 
 

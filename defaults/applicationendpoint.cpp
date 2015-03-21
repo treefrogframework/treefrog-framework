@@ -26,6 +26,3 @@ void ApplicationEndpoint::onPing()
 
 void ApplicationEndpoint::onPong()
 { }
-
-// Don't remove below this line
-T_REGISTER_CONTROLLER(applicationendpoint)

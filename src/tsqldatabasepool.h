@@ -36,7 +36,7 @@ private:
     Q_DISABLE_COPY(TSqlDatabasePool)
     TSqlDatabasePool(const QString &environment);
 
-    QVector<QMap<QString, uint> > pooledConnections;
+    QVector<QMap<QString, uint>> pooledConnections;
     QMutex mutex;
     QString dbEnvironment;
     QBasicTimer timer;

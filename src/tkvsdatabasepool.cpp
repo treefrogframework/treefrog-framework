@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -23,16 +23,9 @@
 
 static TKvsDatabasePool *databasePool = 0;
 
-
-class KvsTypeHash : public QHash<QString, int>
-{
-public:
-    KvsTypeHash() : QHash<QString, int>()
-    {
-        insert("MONGODB", TKvsDatabase::MongoDB);
-    }
+static const QHash<QString, int> kvsTypeHash = {
+    { "MONGODB", TKvsDatabase::MongoDB },
 };
-Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 
 static void cleanup()
@@ -74,7 +67,7 @@ void TKvsDatabasePool::init()
 {
     // Adds databases previously
 
-    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+    for (QHashIterator<QString, int> it(kvsTypeHash); it.hasNext(); ) {
         const QString &drv = it.next().key();
         int type = it.value();
 
@@ -220,7 +213,7 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
     QMutexLocker locker(&mutex);
 
     if (database.isValid()) {
-        int type = kvsTypeHash()->value(database.driverName(), -1);
+        int type = kvsTypeHash.value(database.driverName(), -1);
         if (type < 0) {
             throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         }
@@ -287,7 +280,7 @@ TKvsDatabasePool *TKvsDatabasePool::instance()
 
 QString TKvsDatabasePool::driverName(TKvsDatabase::Type type)
 {
-    return kvsTypeHash()->key((int)type);
+    return kvsTypeHash.key((int)type);
 }
 
 

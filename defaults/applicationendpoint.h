@@ -6,7 +6,6 @@
 
 class T_CONTROLLER_EXPORT ApplicationEndpoint : public TWebSocketEndpoint
 {
-    Q_OBJECT
 public:
     ApplicationEndpoint();
     ApplicationEndpoint(const ApplicationEndpoint &other);
@@ -18,7 +17,5 @@ public:
     void onPing();
     void onPong();
 };
-
-T_DECLARE_CONTROLLER(ApplicationEndpoint, applicationendpoint)
 
 #endif // APPLICATIONENDPOINT_H

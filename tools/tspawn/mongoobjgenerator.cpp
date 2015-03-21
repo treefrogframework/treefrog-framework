@@ -100,11 +100,11 @@ QString MongoObjGenerator::generate(const QString &dstDir)
 }
 
 
-static QStringList generateCode(const QList<QPair<QString, QVariant::Type> > &fieldList)
+static QStringList generateCode(const QList<QPair<QString, QVariant::Type>> &fieldList)
 {
     QString params, enums, macros;
 
-    for (QListIterator<QPair<QString, QVariant::Type> > it(fieldList); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, QVariant::Type>> it(fieldList); it.hasNext(); ) {
         const QPair<QString, QVariant::Type> &p = it.next();
         QString typeName = QVariant::typeToName(p.second);
         params += QString("    %1 %2;\n").arg(typeName, p.first);
@@ -131,9 +131,9 @@ bool MongoObjGenerator::createMongoObject(const QString &path)
 }
 
 
-static QList<QPair<QString, QVariant::Type> > getFieldList(const QString &filePath)
+static QList<QPair<QString, QVariant::Type>> getFieldList(const QString &filePath)
 {
-    QList<QPair<QString, QVariant::Type> > ret;
+    QList<QPair<QString, QVariant::Type>> ret;
     QRegExp rxend("(\\n[\\t\\r ]*\\n|\\senum\\s)", Qt::CaseSensitive, QRegExp::RegExp2);
     QRegExp rx("\\s([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
 

@@ -49,7 +49,7 @@ SqlObjGenerator::~SqlObjGenerator()
 
 QString SqlObjGenerator::generate(const QString &dstDir)
 {
-    QList<QPair<QString, QString> > fieldList = tableSch->getFieldList();
+    QList<QPair<QString, QString>> fieldList = tableSch->getFieldList();
     if (fieldList.isEmpty()) {
         qCritical("table not found, %s", qPrintable(tableSch->tableName()));
         return QString();
@@ -59,7 +59,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
 
     // Header part
     output += QString(SQLOBJECT_HEADER_TEMPLATE).arg(modelName.toUpper(), modelName);
-    QListIterator<QPair<QString, QString> > it(fieldList);
+    QListIterator<QPair<QString, QString>> it(fieldList);
     while (it.hasNext()) {
         const QPair<QString, QString> &p = it.next();
         output += QString("    %1 %2;\n").arg(p.second, p.first);
@@ -120,7 +120,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
 }
 
 
-QList<QPair<QString, QVariant::Type> > SqlObjGenerator::fieldList() const
+QList<QPair<QString, QVariant::Type>> SqlObjGenerator::fieldList() const
 {
     return tableSch->getFieldTypeList();
 }

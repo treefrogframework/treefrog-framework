@@ -57,7 +57,7 @@ protected:
     void setValidationError(const QString &errorMessage);
 
     QList<RuleEntry> rules;
-    QList<QPair<QString, int> > errors;
+    QList<QPair<QString, int>> errors;
 
 private:
     QString dateFmt;

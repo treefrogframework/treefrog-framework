@@ -18,14 +18,14 @@
   Copy constructor.
 */
 THtmlAttribute::THtmlAttribute(const THtmlAttribute &other)
-    : QList<QPair<QString, QString> >(*static_cast<const QList<QPair<QString, QString> > *>(&other))
+    : QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString> > *>(&other))
 { }
 
 /*!
   Copy constructor.
 */
-THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString> > &list)
-    : QList<QPair<QString, QString> >(list)
+THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString>> &list)
+    : QList<QPair<QString, QString>>(list)
 { }
 
 /*!
@@ -34,7 +34,7 @@ THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString> > &list)
 */
 bool THtmlAttribute::contains(const QString &key) const
 {
-    for (QListIterator<QPair<QString, QString> > i(*this); i.hasNext(); ) {
+    for (QListIterator<QPair<QString, QString>> i(*this); i.hasNext(); ) {
         if (i.next().first == key)
             return true;
     }
@@ -46,7 +46,7 @@ bool THtmlAttribute::contains(const QString &key) const
 */
 void THtmlAttribute::prepend(const QString &key, const QString &value)
 {
-    QList<QPair<QString, QString> >::prepend(qMakePair(key, value));
+    QList<QPair<QString, QString>>::prepend(qMakePair(key, value));
 }
 
 /*!
@@ -54,7 +54,7 @@ void THtmlAttribute::prepend(const QString &key, const QString &value)
 */
 void THtmlAttribute::append(const QString &key, const QString &value)
 {
-    QList<QPair<QString, QString> >::append(qMakePair(key, value));
+    QList<QPair<QString, QString>>::append(qMakePair(key, value));
 }
 
 /*!
@@ -62,7 +62,7 @@ void THtmlAttribute::append(const QString &key, const QString &value)
 */
 THtmlAttribute &THtmlAttribute::operator=(const THtmlAttribute &other)
 {
-    QList<QPair<QString, QString> >::operator=(*static_cast<const QList<QPair<QString, QString> > *>(&other));
+    QList<QPair<QString, QString>>::operator=(*static_cast<const QList<QPair<QString, QString> > *>(&other));
     return *this;
 }
 
@@ -83,7 +83,7 @@ THtmlAttribute THtmlAttribute::operator|(const THtmlAttribute &other) const
 QString THtmlAttribute::toString(bool escape) const
 {
     QString string;
-    for (QListIterator<QPair<QString, QString> > i(*this); i.hasNext(); ) {
+    for (QListIterator<QPair<QString, QString>> i(*this); i.hasNext(); ) {
         const QPair<QString, QString> &p = i.next();
         string.append(" ").append(p.first);
         if (!p.second.isNull()) {

@@ -27,7 +27,6 @@ class TFormValidator;
 
 class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator
 {
-    Q_OBJECT
 public:
     TActionController();
     virtual ~TActionController() { }

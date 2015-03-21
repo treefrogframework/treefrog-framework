@@ -12,7 +12,7 @@ class AbstractObjGenerator;
 class ModelGenerator
 {
 public:
-    typedef QList<QPair<QString, QVariant::Type> >  FieldList;
+    typedef QList<QPair<QString, QVariant::Type>>  FieldList;
 
     enum ObjectType {
         Sql,

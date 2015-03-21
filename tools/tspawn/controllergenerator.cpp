@@ -191,41 +191,29 @@
     "T_REGISTER_CONTROLLER(%1controller)\n"
 
 
-class ConvMethod : public QHash<int, QString>
-{
-public:
-    ConvMethod() : QHash<int, QString>()
-    {
-        insert(QVariant::Int,       "pk.toInt()");
-        insert(QVariant::UInt,      "pk.toUInt()");
-        insert(QVariant::LongLong,  "pk.toLongLong()");
-        insert(QVariant::ULongLong, "pk.toULongLong()");
-        insert(QVariant::Double,    "pk.toDouble()");
-        insert(QVariant::ByteArray, "pk.toByteArray()");
-        insert(QVariant::String,    "pk");
-        insert(QVariant::Date,      "QDate::fromString(pk)");
-        insert(QVariant::Time,      "QTime::fromString(pk)");
-        insert(QVariant::DateTime,  "QDateTime::fromString(pk)");
-    }
+static const QHash<int, QString> convMethod = {
+    { QVariant::Int,       "pk.toInt()" },
+    { QVariant::UInt,      "pk.toUInt()" },
+    { QVariant::LongLong,  "pk.toLongLong()" },
+    { QVariant::ULongLong, "pk.toULongLong()" },
+    { QVariant::Double,    "pk.toDouble()" },
+    { QVariant::ByteArray, "pk.toByteArray()" },
+    { QVariant::String,    "pk" },
+    { QVariant::Date,      "QDate::fromString(pk)" },
+    { QVariant::Time,      "QTime::fromString(pk)" },
+    { QVariant::DateTime,  "QDateTime::fromString(pk)" },
 };
-Q_GLOBAL_STATIC(ConvMethod, convMethod)
 
-class NGCtlrName : public QStringList
-{
-public:
-    NGCtlrName() : QStringList()
-    {
-        append("layouts");
-        append("partial");
-        append("direct");
-        append("_src");
-        append("mailer");
-    }
+static const QStringList ngCtlrName = {
+    "layouts",
+    "partial",
+    "direct",
+    "_src",
+    "mailer",
 };
-Q_GLOBAL_STATIC(NGCtlrName, ngCtlrName)
 
 
-ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type> > &fields, int pkIdx, int lockRevIdx)
+ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int lockRevIdx)
     : controllerName(controller), fieldList(fields), primaryKeyIndex(pkIdx), lockRevIndex(lockRevIdx)
 { }
 
@@ -238,7 +226,7 @@ ControllerGenerator::ControllerGenerator(const QString &controller, const QStrin
 bool ControllerGenerator::generate(const QString &dstDir) const
 {
     // Reserved word check
-    if (ngCtlrName()->contains(tableName.toLower())) {
+    if (ngCtlrName.contains(tableName.toLower())) {
         qCritical("Reserved word error. Please use another word.  Controller name: %s", qPrintable(tableName));
         return false;
     }
@@ -275,7 +263,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             revStr = QLatin1String(", rev");
         }
 
-        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
+        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod.value(pair.second), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
         fws.write(code, false);
         files << fws.fileName();
 

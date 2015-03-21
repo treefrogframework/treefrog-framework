@@ -8,17 +8,6 @@
 #include <TWebSocketEndpoint>
 #include "twebsocketframe.h"
 
-class DisabledEndpointList : public QStringList
-{
-public:
-    DisabledEndpointList() : QStringList()
-    {
-        append("application");
-        append("twebsocket");
-    }
-};
-Q_GLOBAL_STATIC(DisabledEndpointList, disabledEndpintList);
-
 
 void TWebSocketEndpoint::onOpen(const TSession &session)
 {
@@ -91,5 +80,6 @@ void TWebSocketEndpoint::closeWebSocket()
 
 const QStringList &TWebSocketEndpoint::disabledEndpoints()
 {
-    return *disabledEndpintList();
+    static const QStringList disabledNames = { "application" };
+    return disabledNames;
 }
