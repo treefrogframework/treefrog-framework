@@ -409,7 +409,9 @@ void TestPaginator::limitChangesMakeCurrentPageInvalid()
     QCOMPARE(pager.currentPage(), expectedCurrentPage);
 }
 
+#if QT_VERSION < 0x050000
 Q_DECLARE_METATYPE(QList<int>)
+#endif
 
 TF_TEST_MAIN(TestPaginator)
 #include "paginator.moc"
