@@ -8,10 +8,10 @@
 #include <QEventLoop>
 #include <TWebApplication>
 #include <TAppSettings>
-#include <TKvsDatabasePool2>
+#include "tkvsdatabasepool.h"
 #ifdef QT_SQL_LIB
 # include <TActionThread>
-# include <TSqlDatabasePool2>
+# include "tsqldatabasepool.h"
 #endif
 
 
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) \
     QTextCodec::setCodecForLocale(codec); \
     TF_SET_CODEC_FOR_TR(codec); \
     app.setDatabaseEnvironment("test"); \
-    TSqlDatabasePool2::instantiate(); \
-    TKvsDatabasePool2::instantiate(); \
+    TSqlDatabasePool::instantiate(); \
+    TKvsDatabasePool::instantiate(); \
     Thread thread; \
     thread.start(); \
     thread.wait(); \

@@ -38,6 +38,7 @@ private:
 
     QVector<QMap<QString, uint>> pooledConnections;
     QMutex mutex;
+    int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;
 };

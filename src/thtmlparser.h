@@ -23,7 +23,7 @@ public:
     QString toString() const;
 
     QString tag;
-    QList<QPair<QString, QString>> attributes;
+    QList<QPair<QString, QString> > attributes;
     QString selfCloseMark;
     QString text;
     bool tagClosed;
@@ -66,7 +66,7 @@ protected:
     void parse();
     void parseTag();
     bool isTag(int position) const;
-    QList<QPair<QString, QString>> parseAttributes();
+    QList<QPair<QString, QString> > parseAttributes();
     void parseCloseTag();
     QString parseWord();
     void skipWhiteSpace(int *crCount = 0, int *lfCount = 0);

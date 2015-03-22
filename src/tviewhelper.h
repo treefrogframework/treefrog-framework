@@ -112,7 +112,7 @@ public:
     QString optionTags(const QVariantList &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString optionTags(const QList<QPair<QString, QVariant>> &valueList, const QVariant &selectedValue = QVariant(),
+    QString optionTags(const QList<QPair<QString, QVariant> > &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputAuthenticityTag() const;

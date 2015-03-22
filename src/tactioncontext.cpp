@@ -19,8 +19,8 @@
 #include <TDispatcher>
 #include <TActionController>
 #include <TSessionStore>
-#include "tsqldatabasepool2.h"
-#include "tkvsdatabasepool2.h"
+#include "tsqldatabasepool.h"
+#include "tkvsdatabasepool.h"
 #include "tsystemglobal.h"
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
@@ -66,7 +66,7 @@ QSqlDatabase &TActionContext::getSqlDatabase(int id)
 
     QSqlDatabase &db = sqlDatabases[id];
     if (!db.isValid()) {
-        db = TSqlDatabasePool2::instance()->database(id);
+        db = TSqlDatabasePool::instance()->database(id);
         beginTransaction(db);
     }
     return db;
@@ -78,7 +78,7 @@ void TActionContext::releaseSqlDatabases()
     rollbackTransactions();
 
     for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlDatabasePool2::instance()->pool(it.value());
+        TSqlDatabasePool::instance()->pool(it.value());
     }
     sqlDatabases.clear();
 }
@@ -90,7 +90,7 @@ TKvsDatabase &TActionContext::getKvsDatabase(TKvsDatabase::Type type)
 
     TKvsDatabase &db = kvsDatabases[(int)type];
     if (!db.isValid()) {
-        db = TKvsDatabasePool2::instance()->database(type);
+        db = TKvsDatabasePool::instance()->database(type);
     }
     return db;
 }
@@ -99,7 +99,7 @@ TKvsDatabase &TActionContext::getKvsDatabase(TKvsDatabase::Type type)
 void TActionContext::releaseKvsDatabases()
 {
     for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
-        TKvsDatabasePool2::instance()->pool(it.value());
+        TKvsDatabasePool::instance()->pool(it.value());
     }
     kvsDatabases.clear();
 }

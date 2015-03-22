@@ -9,9 +9,9 @@
 #include <QMutexLocker>
 #include <QDateTime>
 #include <QHash>
-#include <TKvsDatabasePool>
 #include <TWebApplication>
-#include <TSqlDatabasePool>
+#include "tkvsdatabasepool.h"
+#include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
 
 /*!
@@ -23,9 +23,16 @@
 
 static TKvsDatabasePool *databasePool = 0;
 
-static const QHash<QString, int> kvsTypeHash = {
-    { "MONGODB", TKvsDatabase::MongoDB },
+
+class KvsTypeHash : public QHash<QString, int>
+{
+public:
+    KvsTypeHash() : QHash<QString, int>()
+    {
+        insert("MONGODB", TKvsDatabase::MongoDB);
+    }
 };
+Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 
 static void cleanup()
@@ -56,7 +63,7 @@ TKvsDatabasePool::~TKvsDatabasePool()
 
 
 TKvsDatabasePool::TKvsDatabasePool(const QString &environment)
-    : QObject(), dbEnvironment(environment)
+    : QObject(), maxConnects(0), dbEnvironment(environment)
 {
     // Starts the timer to close extra-connection
     timer.start(10000, this);
@@ -67,7 +74,7 @@ void TKvsDatabasePool::init()
 {
     // Adds databases previously
 
-    for (QHashIterator<QString, int> it(kvsTypeHash); it.hasNext(); ) {
+    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
         const QString &drv = it.next().key();
         int type = it.value();
 
@@ -78,7 +85,7 @@ void TKvsDatabasePool::init()
             tSystemInfo("KVS database available. type:%d", (int)type);
         }
 
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString().sprintf(CONN_NAME_FORMAT, type, i));
             if (!db.isValid()) {
                 tWarn("KVS init parameter is invalid");
@@ -138,7 +145,7 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
     while (it != map.end()) {
         db = TKvsDatabase::database(it.key());
         it = map.erase(it);
-        if (db.isOpen()) {
+        if (Q_LIKELY(db.isOpen())) {
             tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
             return db;
         } else {
@@ -146,10 +153,10 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
         }
     }
 
-    for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+    for (int i = 0; i < maxConnects; ++i) {
         db = TKvsDatabase::database(QString().sprintf(CONN_NAME_FORMAT, (int)type, i));
         if (!db.isOpen()) {
-            if (!db.open()) {
+            if (Q_UNLIKELY(!db.open())) {
                 tError("KVS database open error");
                 return TKvsDatabase();
             }
@@ -212,9 +219,9 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
     T_TRACEFUNC("");
     QMutexLocker locker(&mutex);
 
-    if (database.isValid()) {
-        int type = kvsTypeHash.value(database.driverName(), -1);
-        if (type < 0) {
+    if (Q_LIKELY(database.isValid())) {
+        int type = kvsTypeHash()->value(database.driverName(), -1);
+        if (Q_UNLIKELY(type < 0)) {
             throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         }
 
@@ -263,6 +270,7 @@ void TKvsDatabasePool::instantiate()
 {
     if (!databasePool) {
         databasePool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
+        databasePool->maxConnects = maxDbConnectionsPerProcess();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }
@@ -271,7 +279,7 @@ void TKvsDatabasePool::instantiate()
 
 TKvsDatabasePool *TKvsDatabasePool::instance()
 {
-    if (!databasePool) {
+    if (Q_UNLIKELY(!databasePool)) {
         tFatal("Call TKvsDatabasePool::initialize() function first");
     }
     return databasePool;
@@ -280,7 +288,7 @@ TKvsDatabasePool *TKvsDatabasePool::instance()
 
 QString TKvsDatabasePool::driverName(TKvsDatabase::Type type)
 {
-    return kvsTypeHash.key((int)type);
+    return kvsTypeHash()->key((int)type);
 }
 
 

@@ -8,8 +8,9 @@
 #include <QMutexLocker>
 #include <QFileInfo>
 #include <QDir>
-#include <TSqlDatabasePool>
 #include <TWebApplication>
+#include <TAppSettings>
+#include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
 
 #define CONN_NAME_FORMAT  "rdb%02d_%d"
@@ -39,7 +40,7 @@ TSqlDatabasePool::~TSqlDatabasePool()
             it = map.erase(it);
         }
 
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             QString name = QString::number(j) + '_' + QString::number(i);
             if (QSqlDatabase::contains(name)) {
                 QSqlDatabase::removeDatabase(name);
@@ -52,7 +53,7 @@ TSqlDatabasePool::~TSqlDatabasePool()
 
 
 TSqlDatabasePool::TSqlDatabasePool(const QString &environment)
-    : QObject(), dbEnvironment(environment)
+    : QObject(), maxConnects(0), dbEnvironment(environment)
 {
     // Starts the timer to close extra-connection
     timer.start(10000, this);
@@ -75,7 +76,7 @@ void TSqlDatabasePool::init()
             continue;
         }
 
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             QSqlDatabase db = QSqlDatabase::addDatabase(type, QString().sprintf(CONN_NAME_FORMAT, j, i));
             if (!db.isValid()) {
                 tWarn("Parameter 'DriverType' is invalid");
@@ -97,7 +98,7 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
     QMutexLocker locker(&mutex);
     QSqlDatabase db;
 
-    if (!Tf::app()->isSqlDatabaseAvailable()) {
+    if (Q_UNLIKELY(!Tf::app()->isSqlDatabaseAvailable())) {
         return db;
     }
 
@@ -107,7 +108,7 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
         while (it != map.end()) {
             db = QSqlDatabase::database(it.key(), false);
             it = map.erase(it);
-            if (db.isOpen()) {
+            if (Q_LIKELY(db.isOpen())) {
                 tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
                 return db;
             } else {
@@ -115,10 +116,10 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
             }
         }
 
-        for (int i = 0; i < maxDbConnectionsPerProcess(); ++i) {
+        for (int i = 0; i < maxConnects; ++i) {
             db = QSqlDatabase::database(QString().sprintf(CONN_NAME_FORMAT, databaseId, i), false);
             if (!db.isOpen()) {
-                if (!db.open()) {
+                if (Q_UNLIKELY(!db.open())) {
                     tError("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
                     tSystemError("Database open error: %s", qPrintable(db.connectionName()));
                     return QSqlDatabase();
@@ -244,6 +245,7 @@ void TSqlDatabasePool::instantiate()
 {
     if (!databasePool) {
         databasePool = new TSqlDatabasePool(Tf::app()->databaseEnvironment());
+        databasePool->maxConnects = maxDbConnectionsPerProcess();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }
@@ -252,7 +254,7 @@ void TSqlDatabasePool::instantiate()
 
 TSqlDatabasePool *TSqlDatabasePool::instance()
 {
-    if (!databasePool) {
+    if (Q_UNLIKELY(!databasePool)) {
         tFatal("Call TSqlDatabasePool::initialize() function first");
     }
     return databasePool;
@@ -275,26 +277,32 @@ QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
 
 int TSqlDatabasePool::maxDbConnectionsPerProcess()
 {
-    static int maxConnections = 0;
+    int maxConnections = 0;
+    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
 
-    if (!maxConnections) {
-        switch (Tf::app()->multiProcessingModule()) {
-        case TWebApplication::Thread:
-            maxConnections = Tf::app()->maxNumberOfServers();
-            break;
-
-        case TWebApplication::Prefork:
-            maxConnections = 1;
-            break;
-
-        case TWebApplication::Hybrid:
-            maxConnections = Tf::app()->maxNumberOfServers(10);
-            break;
-
-        default:
-            break;
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::Thread:
+        maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+        if (maxConnections <= 0) {
+            maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
         }
+        break;
+
+    case TWebApplication::Prefork:
+        maxConnections = 1;
+        break;
+
+    case TWebApplication::Hybrid:
+        maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+        if (maxConnections <= 0) {
+            maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+        }
+        break;
+
+    default:
+        break;
     }
+
     return maxConnections;
 }
 
@@ -304,7 +312,7 @@ int TSqlDatabasePool::getDatabaseId(const QSqlDatabase &database)
     bool ok;
     int id = database.connectionName().mid(3,2).toInt(&ok);
 
-    if (ok && id >= 0) {
+    if (Q_LIKELY(ok && id >= 0)) {
         return id;
     }
     return -1;
