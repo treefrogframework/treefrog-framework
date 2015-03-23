@@ -81,6 +81,9 @@ public:
 # if QT_VERSION >= 0x050100
         insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
 # endif
+# if QT_VERSION >= 0x050400
+        insert(QSysInfo::MV_10_10, "Mac OS X 10.10 Yosemite");
+# endif
     }
 };
 Q_GLOBAL_STATIC(MacxVersion, macxVersion)
