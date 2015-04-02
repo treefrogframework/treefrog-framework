@@ -73,6 +73,28 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
 
         lengthToRead = qMax(lengthToRead - pos, 0LL);
     }
+
+    // WebSocket?
+    if (lengthToRead == 0) {
+        // Check connection header
+        THttpRequestHeader header(httpBuffer);
+        QByteArray connectionHeader = header.rawHeader("Connection").toLower();
+        if (connectionHeader.contains("upgrade")) {
+            QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
+            tSystemDebug("Upgrade: %s", upgradeHeader.data());
+            if (upgradeHeader == "websocket") {
+                if (TEpollWebSocket::validateHandshakeRequest(header)) {
+                    // Switch protocols
+                    TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
+                } else {
+                    // WebSocket closing
+                    TEpoll::instance()->setDisconnect(socketUuid());
+                }
+            }
+            clear();  // buffer clear
+        }
+    }
+
     return true;
 }
 
@@ -105,23 +127,6 @@ void TEpollHttpSocket::parse()
 
             lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);
             tSystemDebug("lengthToRead: %d", (int)lengthToRead);
-
-            // Check connection header
-            QByteArray connectionHeader = header.rawHeader("Connection").toLower();
-            if (connectionHeader.contains("upgrade")) {
-                QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
-                tSystemDebug("Upgrade: %s", upgradeHeader.data());
-                if (upgradeHeader == "websocket") {
-                    if (TEpollWebSocket::validateHandshakeRequest(header)) {
-                        // Switch protocols
-                        TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
-                    } else {
-                        // WebSocket closing
-                        TEpoll::instance()->setDisconnect(socketUuid());
-                    }
-                }
-                clear();  // buffer clear
-            }
         }
     } else {
         tSystemWarn("Unreachable code in normal communication");
