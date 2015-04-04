@@ -15,7 +15,8 @@ class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
     Q_OBJECT
 public:
     TActionWorker(TEpollHttpSocket *socket, QObject *parent = 0);
-    ~TActionWorker();
+    virtual ~TActionWorker();
+
     static int workerCount();
     static bool waitForAllDone(int msec);
 

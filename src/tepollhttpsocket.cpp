@@ -13,6 +13,7 @@
 #include "tactionworker.h"
 #include "tepoll.h"
 #include "tepollwebsocket.h"
+#include "twebsocket.h"
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
@@ -26,7 +27,9 @@ TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &add
 
 
 TEpollHttpSocket::~TEpollHttpSocket()
-{ }
+{
+    tSystemDebug("~TEpollHttpSocket");
+}
 
 
 bool TEpollHttpSocket::canReadRequest()
@@ -82,8 +85,9 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
         if (connectionHeader.contains("upgrade")) {
             QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
             tSystemDebug("Upgrade: %s", upgradeHeader.data());
+
             if (upgradeHeader == "websocket") {
-                if (TEpollWebSocket::validateHandshakeRequest(header)) {
+                if (TWebSocket::searchEndpoint(header)) {
                     // Switch protocols
                     TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
                 } else {
@@ -102,10 +106,27 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
 void TEpollHttpSocket::startWorker()
 {
     tSystemDebug("TEpollHttpSocket::startWorker");
+
     TActionWorker *worker = new TActionWorker(this);
     worker->moveToThread(Tf::app()->thread());
+    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    myWorkerCounter.fetchAndAddOrdered(1); // count-up
     worker->start();
+}
+
+
+void TEpollHttpSocket::releaseWorker()
+{
+    tSystemDebug("TEpollHttpSocket::releaseWorker");
+
+    TActionWorker *worker = dynamic_cast<TActionWorker *>(sender());
+    if (worker) {
+        myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
+        if (deleting) {
+            TEpollSocket::deleteLater();
+        }
+    }
 }
 
 

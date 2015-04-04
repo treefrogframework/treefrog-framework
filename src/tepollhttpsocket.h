@@ -18,6 +18,9 @@ public:
     QByteArray readRequest();
     virtual void startWorker();
 
+public slots:
+    void releaseWorker();
+
 protected:
     virtual void *getRecvBuffer(int size);
     virtual bool seekRecvBuffer(int pos);

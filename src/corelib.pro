@@ -240,8 +240,13 @@ HEADERS += tapplicationscheduler.h
 SOURCES += tapplicationscheduler.cpp
 HEADERS += tappsettings.h
 SOURCES += tappsettings.cpp
+HEADERS += tabstractwebsocket.h
+SOURCES += tabstractwebsocket.cpp
+HEADERS += twebsocket.h
+SOURCES += twebsocket.cpp
 HEADERS += twebsocketendpoint.h
 SOURCES += twebsocketendpoint.cpp
+
 
 HEADERS += \
            tfnamespace.h \

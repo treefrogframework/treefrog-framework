@@ -10,6 +10,7 @@
 #include <QBuffer>
 #include <sys/types.h>
 #include <sys/epoll.h>
+#include <TWebApplication>
 #include <THttpRequestHeader>
 #include <TSession>
 #include "tepoll.h"
@@ -227,14 +228,15 @@ void TEpoll::dispatchSendData()
 
                 QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
                 tSystemDebug("secKey: %s", secKey.data());
-                TEpollWebSocket *ws = new TEpollWebSocket(sock->socketDescriptor(), sock->clientAddress(), sd->header);
+                TEpollWebSocket *ws = new TEpollWebSocket(sock->socketDescriptor(), sock->peerAddress(), sd->header);
+                ws->moveToThread(Tf::app()->thread());
 
                 deletePoll(sock);
                 sock->setSocketDescpriter(0);  // Delegates to new websocket
                 sock->deleteLater();
 
                 // Switch to WebSocket
-                THttpResponseHeader response = ws->handshakeResponse();
+                THttpResponseHeader response = TEpollWebSocket::handshakeResponse(sd->header);
                 ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
                 addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
 

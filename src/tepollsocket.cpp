@@ -93,15 +93,18 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : sd(socketDescriptor), uuid(), clientAddr(address)
+    : deleting(false), myWorkerCounter(0), sd(socketDescriptor), uuid(), clientAddr(address)
 {
-    uuid = QUuid::createUuid().toByteArray();  // not thread safe
+    uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
+    uuid = uuid.mid(1, uuid.length() - 2);
     tSystemDebug("TEpollSocket  id:%s", uuid.data());
 }
 
 
 TEpollSocket::~TEpollSocket()
 {
+    tSystemDebug("TEpollSocket::destructor");
+
     close();
 
     for (QListIterator<TSendBuffer*> it(sendBuf); it.hasNext(); ) {
@@ -140,12 +143,12 @@ int TEpollSocket::recv()
 
     case 0:       // FALL THROUGH
     case ECONNRESET:
-        tSystemDebug("Socket disconnected : errno:%d", err);
+        tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
         ret = -1;
         break;
 
     default:
-        tSystemError("Failed recv : errno:%d", err);
+        tSystemError("Failed recv : sd:%d  errno:%d", sd, err);
         ret = -1;
         break;
     }
@@ -159,6 +162,10 @@ int TEpollSocket::recv()
 int TEpollSocket::send()
 {
     if (sendBuf.isEmpty()) {
+        return 0;
+    }
+
+    if (deleting) {
         return 0;
     }
 
@@ -194,13 +201,13 @@ int TEpollSocket::send()
         break;
 
     case EPIPE:
-        tSystemDebug("Socket disconnected : errno:%d", err);
+        tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
         logger.setResponseBytes(-1);
         ret = -1;
         break;
 
     default:
-        tSystemError("Failed send : errno:%d  len:%d", err, len);
+        tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
         logger.setResponseBytes(-1);
         ret = -1;
         break;
@@ -236,5 +243,15 @@ void TEpollSocket::close()
     if (sd > 0) {
         TF_CLOSE(sd);
         sd = 0;
+    }
+}
+
+
+void TEpollSocket::deleteLater()
+{
+    tSystemDebug("TEpollSocket::deleteLater  countWorker:%d", countWorkers());
+    deleting = true;
+    if (countWorkers() == 0) {
+        QObject::deleteLater();
     }
 }

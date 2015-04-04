@@ -73,6 +73,8 @@ private:
     ProcessingState state_;
     bool valid_;
 
+    friend class TAbstractWebSocket;
+    friend class TWebSocket;
     friend class TEpollWebSocket;
     friend class TWebSocketController;
 };

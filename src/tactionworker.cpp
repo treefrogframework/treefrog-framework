@@ -56,7 +56,7 @@ TActionWorker::TActionWorker(TEpollHttpSocket *socket, QObject *parent)
 {
     workerCounter.fetchAndAddOrdered(1);
     httpRequest = socket->readRequest();
-    clientAddr = socket->clientAddress().toString();
+    clientAddr = socket->peerAddress().toString();
 }
 
 

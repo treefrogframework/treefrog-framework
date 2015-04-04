@@ -2,8 +2,6 @@
 #define TWEBSOCKETWORKER_H
 
 #include <QThread>
-#include <QMutex>
-#include <QThread>
 #include <TGlobal>
 #include <TSession>
 #include "twebsocketframe.h"
@@ -15,7 +13,7 @@ class T_CORE_EXPORT TWebSocketWorker : public QThread
 public:
     TWebSocketWorker(const QByteArray &socket, const TSession &session, QObject *parent = 0);
     TWebSocketWorker(const QByteArray &socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent = 0);
-    ~TWebSocketWorker();
+    virtual ~TWebSocketWorker();
 
 protected:
     void run();

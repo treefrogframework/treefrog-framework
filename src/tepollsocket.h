@@ -5,9 +5,11 @@
 #include <QByteArray>
 #include <QQueue>
 #include <QHostAddress>
+#include <QAtomicInt>
 #include <TGlobal>
 
 class QHostAddress;
+class QThread;
 class QFileInfo;
 class TSendBuffer;
 class THttpHeader;
@@ -23,7 +25,7 @@ public:
 
     void close();
     int socketDescriptor() const { return sd; }
-    const QHostAddress &clientAddress() const { return clientAddr; }
+    const QHostAddress &peerAddress() const { return clientAddr; }
     const QByteArray &socketUuid() const { return uuid; }
 
     virtual bool canReadRequest() { return false; }
@@ -34,13 +36,20 @@ public:
     static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     static TSendBuffer *createSendBuffer(const QByteArray &data);
 
+public slots:
+    void deleteLater();
+
 protected:
     int send();
     int recv();
     void enqueueSendData(TSendBuffer *buffer);
     void setSocketDescpriter(int socketDescriptor);
+    int countWorkers() const;
     virtual void *getRecvBuffer(int size) = 0;
     virtual bool seekRecvBuffer(int pos) = 0;
+
+    volatile bool deleting;
+    QAtomicInt myWorkerCounter;
 
 private:
     int sd;
@@ -53,5 +62,15 @@ private:
     friend class TEpoll;
     Q_DISABLE_COPY(TEpollSocket)
 };
+
+
+inline int TEpollSocket::countWorkers() const
+{
+#if QT_VERSION >= 0x050000
+    return myWorkerCounter.load();
+#else
+    return (int)myWorkerCounter;
+#endif
+}
 
 #endif // TEPOLLSOCKET_H

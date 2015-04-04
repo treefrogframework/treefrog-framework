@@ -5,39 +5,40 @@
 #include <THttpRequestHeader>
 #include <THttpResponseHeader>
 #include "tepollsocket.h"
+#include "tabstractwebsocket.h"
 
 class QHostAddress;
 class TWebSocketFrame;
 class TSession;
 
 
-class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket
+class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket, public TAbstractWebSocket
 {
     Q_OBJECT
 public:
-    ~TEpollWebSocket();
+    virtual ~TEpollWebSocket();
 
     bool isTextRequest() const;
     bool isBinaryRequest() const;
-    QString readTextRequest();
     QByteArray readBinaryRequest();
     virtual bool canReadRequest();
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);
 
-    static bool validateHandshakeRequest(const THttpRequestHeader &header);
     static void sendText(const QByteArray &socketUuid, const QString &message);
     static void sendBinary(const QByteArray &socketUuid, const QByteArray &data);
     static void sendPing(const QByteArray &socketUuid);
     static void sendPong(const QByteArray &socketUuid);
     static void disconnect(const QByteArray &socketUuid);
 
+public slots:
+    void releaseWorker();
+
 protected:
     virtual void *getRecvBuffer(int size);
     virtual bool seekRecvBuffer(int pos);
-    int parse();
+    virtual QList<TWebSocketFrame> &websocketFrames() { return frames; }
     void clear();
-    THttpResponseHeader handshakeResponse() const;
 
 private:
     THttpRequestHeader reqHeader;

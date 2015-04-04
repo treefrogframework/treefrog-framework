@@ -9,11 +9,13 @@
 #include <QEventLoop>
 #include <QAtomicInt>
 #include <TActionThread>
+#include <TWebApplication>
 #include <THttpRequest>
 #ifndef Q_CC_MSVC
 # include <unistd.h>
 #endif
 #include "thttpsocket.h"
+#include "twebsocket.h"
 #include "tsystemglobal.h"
 
 static QAtomicInt threadCounter;
@@ -26,6 +28,7 @@ int TActionThread::threadCount()
     return (int)threadCounter;
 #endif
 }
+
 
 bool TActionThread::waitForAllDone(int msec)
 {
@@ -88,8 +91,32 @@ void TActionThread::run()
         if (reqs.isEmpty())
             break;
 
-        for (QMutableListIterator<THttpRequest> it(reqs); it.hasNext(); ) {
-            THttpRequest &req = it.next();
+        for (auto &req : reqs) {
+            // WebSocket?
+            QByteArray connectionHeader = req.header().rawHeader("Connection").toLower();
+            if (connectionHeader.contains("upgrade")) {
+                QByteArray upgradeHeader = req.header().rawHeader("Upgrade").toLower();
+                tSystemDebug("Upgrade: %s", upgradeHeader.data());
+                if (upgradeHeader == "websocket") {
+                    // Switch to WebSocket
+#if QT_VERSION >= 0x050000
+                    qintptr sd = httpSocket->socketDescriptor();
+#else
+                    int sd = httpSocket->socketDescriptor();
+#endif
+                    if (TWebSocket::searchEndpoint(req.header())) {
+                        httpSocket->setSocketDescriptor(0, QAbstractSocket::UnconnectedState);
+
+                        TWebSocket *sock = new TWebSocket(Tf::app());
+                        sock->setSocketDescriptor(sd);
+                    } else {
+                        goto socket_error;
+                    }
+                }
+
+                goto socket_cleanup;
+            }
+
             TActionContext::execute(req);
 
             httpSocket->flush();  // Flush socket
@@ -102,12 +129,13 @@ void TActionThread::run()
 
     closeHttpSocket();  // disconnect
 
+socket_cleanup:
     // For cleanup
     while (eventLoop.processEvents()) {}
 
 socket_error:
     delete httpSocket;
-    httpSocket = 0;
+    httpSocket = nullptr;
 }
 
 

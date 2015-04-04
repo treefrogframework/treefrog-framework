@@ -17,7 +17,7 @@ class T_CORE_EXPORT THttpSocket : public QTcpSocket
     Q_OBJECT
 public:
     THttpSocket(QObject *parent = 0);
-    ~THttpSocket();
+    virtual ~THttpSocket();
 
     QList<THttpRequest> read();
     bool canReadRequest() const;
