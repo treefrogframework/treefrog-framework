@@ -19,18 +19,13 @@ const int BUFFER_RESERVE_SIZE = 127;
 
 TWebSocket::TWebSocket(QObject *parent)
     : QTcpSocket(parent), frames(), uuid(), reqHeader(), recvBuffer(),
-      workerCounter(0), closing(false)
+      myWorkerCounter(0), deleting(false)
 {
-    if (!parent) {
-        parent = Tf::app();
-    }
-    moveToThread(parent->thread());
-
     uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 
-    connect(this, SIGNAL(disconnected()), this, SLOT(cleanup()));
+    connect(this, SIGNAL(disconnected()), this, SLOT(deleteLater()));
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
 }
 
@@ -42,6 +37,17 @@ TWebSocket::~TWebSocket()
 void TWebSocket::close()
 {
     QTcpSocket::close();
+}
+
+
+bool TWebSocket::canReadRequest() const
+{
+    for (const auto &frm : frames) {
+        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -57,6 +63,16 @@ void TWebSocket::readRequest()
             tSystemError("socket read error");
             break;
         }
+
+        recvBuffer.append(buf.data(), bytes);
+    }
+
+    int len = parse(recvBuffer);
+    if (len < 0) {
+        tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
+        //close();
+        disconnect();
+        return;
     }
 
     QByteArray binary;
@@ -72,34 +88,34 @@ void TWebSocket::readRequest()
             }
         }
 
-         // Starts worker thread
-        TWebSocketWorker *worker = new TWebSocketWorker(socketUuid(), reqHeader.path(), opcode, binary);
+        // Starts worker thread
+        TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), opcode, binary);
         worker->moveToThread(Tf::app()->thread());
-        connect(worker, SIGNAL(finished()), worker, SLOT(cleanupWorker()));
-        workerCounter.fetchAndAddOrdered(1);
+        connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
+        myWorkerCounter.fetchAndAddOrdered(1); // count-up
         worker->start();
     }
 }
 
 
-void TWebSocket::cleanup()
+void TWebSocket::deleteLater()
 {
-    closing = true;
+    deleting = true;
     if (countWorkers() == 0) {
-        deleteLater();
+        QTcpSocket::deleteLater();
     }
 }
 
 
-void TWebSocket::cleanupWorker()
+void TWebSocket::releaseWorker()
 {
     TWebSocketWorker *worker = dynamic_cast<TWebSocketWorker *>(sender());
     if (worker) {
-        workerCounter.fetchAndAddOrdered(-1);
         worker->deleteLater();
+        myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
 
-        if (closing) {
-            cleanup();
+        if (deleting) {
+            deleteLater();
         }
     }
 }

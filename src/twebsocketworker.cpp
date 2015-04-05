@@ -13,7 +13,7 @@
 #include "turlroute.h"
 
 
-TWebSocketWorker::TWebSocketWorker(TEpollWebSocket *s, const TSession &session, QObject *parent)
+TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const TSession &session, QObject *parent)
     : QThread(parent), socket(s), sessionStore(session), requestPath(),
       opcode(TWebSocketFrame::Continuation), requestData()
 {
@@ -21,7 +21,7 @@ TWebSocketWorker::TWebSocketWorker(TEpollWebSocket *s, const TSession &session, 
 }
 
 
-TWebSocketWorker::TWebSocketWorker(TEpollWebSocket *s, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
+TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
     : QThread(parent), socket(s), sessionStore(), requestPath(path), opcode(opCode), requestData(data)
 {
     tSystemDebug("TWebSocketWorker::TWebSocketWorker");

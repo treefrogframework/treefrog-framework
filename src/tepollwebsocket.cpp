@@ -187,6 +187,12 @@ void TEpollWebSocket::sendPong()
 }
 
 
+void TEpollWebSocket::disconnect()
+{
+    TEpollSocket::disconnect();
+}
+
+
 void TEpollWebSocket::sendText(TEpollSocket *socket, const QString &message)
 {
     TWebSocketFrame frame;

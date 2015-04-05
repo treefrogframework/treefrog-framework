@@ -6,22 +6,23 @@
 #include <TSession>
 #include "twebsocketframe.h"
 
-class TEpollSocket;
+class TAbstractWebSocket;
 
 
 class T_CORE_EXPORT TWebSocketWorker : public QThread
 {
     Q_OBJECT
 public:
-    TWebSocketWorker(TEpollWebSocket *socket, const TSession &session, QObject *parent = 0);
-    TWebSocketWorker(TEpollWebSocket *socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent = 0);
+    TWebSocketWorker(TAbstractWebSocket *socket, const TSession &session, QObject *parent = 0);
+    TWebSocketWorker(TAbstractWebSocket *socket, const QByteArray &path, TWebSocketFrame::OpCode opCode,
+                     const QByteArray &data, QObject *parent = 0);
     virtual ~TWebSocketWorker();
 
 protected:
     void run();
 
 private:
-    TEpollWebSocket *socket;
+    TAbstractWebSocket *socket;
     TSession sessionStore;
     QByteArray requestPath;
     TWebSocketFrame::OpCode opcode;

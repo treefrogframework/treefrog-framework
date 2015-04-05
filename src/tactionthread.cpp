@@ -105,10 +105,10 @@ void TActionThread::run()
                     int sd = httpSocket->socketDescriptor();
 #endif
                     if (TWebSocket::searchEndpoint(req.header())) {
-                        httpSocket->setSocketDescriptor(0, QAbstractSocket::UnconnectedState);
-
-                        TWebSocket *sock = new TWebSocket(Tf::app());
+                        httpSocket->setSocketDescriptor(0);
+                        TWebSocket *sock = new TWebSocket();
                         sock->setSocketDescriptor(sd);
+                        sock->moveToThread(Tf::app()->thread());
                     } else {
                         goto socket_error;
                     }

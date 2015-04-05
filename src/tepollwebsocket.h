@@ -24,10 +24,11 @@ public:
     virtual bool canReadRequest();
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);
-    void sendText(const QString &message);
-    void sendBinary(const QByteArray &data);
-    void sendPing();
-    void sendPong();
+    void sendText(const QString &message) override;
+    void sendBinary(const QByteArray &data) override;
+    void sendPing() override;
+    void sendPong() override;
+    void disconnect() override;
 
     static void sendText(TEpollSocket *socket, const QString &message);
     static void sendBinary(TEpollSocket *socket, const QByteArray &data);

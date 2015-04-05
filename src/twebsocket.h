@@ -16,17 +16,24 @@ class T_CORE_EXPORT TWebSocket : public QTcpSocket, public TAbstractWebSocket
 {
     Q_OBJECT
 public:
-    TWebSocket(QObject *parent);
+    TWebSocket(QObject *parent = 0);
     virtual ~TWebSocket();
 
     void close();
-    void readRequest();
     const QByteArray &socketUuid() const { return uuid; }
     int countWorkers() const;
+    bool canReadRequest() const;
+
+    void sendText(const QString &message) override { }
+    void sendBinary(const QByteArray &data) override { }
+    void sendPing() override { }
+    void sendPong() override { }
+    void disconnect() override { }
 
 public slots:
-    void cleanup();
-    void cleanupWorker();
+    void readRequest();
+    void deleteLater();
+    void releaseWorker();
 
 protected:
     virtual void sendData(const QByteArray &data);
@@ -37,8 +44,8 @@ private:
     QByteArray uuid;
     THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
-    QAtomicInt workerCounter;
-    volatile bool closing;
+    QAtomicInt myWorkerCounter;
+    volatile bool deleting;
 
     Q_DISABLE_COPY(TWebSocket)
 };
@@ -47,9 +54,9 @@ private:
 inline int TWebSocket::countWorkers() const
 {
 #if QT_VERSION >= 0x050000
-    return workerCounter.load();
+    return myWorkerCounter.load();
 #else
-    return (int)workerCounter;
+    return (int)myWorkerCounter;
 #endif
 }
 
