@@ -24,12 +24,15 @@ public:
     virtual bool canReadRequest();
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);
+    void sendText(const QString &message);
+    void sendBinary(const QByteArray &data);
+    void sendPing();
+    void sendPong();
 
-    static void sendText(const QByteArray &socketUuid, const QString &message);
-    static void sendBinary(const QByteArray &socketUuid, const QByteArray &data);
-    static void sendPing(const QByteArray &socketUuid);
-    static void sendPong(const QByteArray &socketUuid);
-    static void disconnect(const QByteArray &socketUuid);
+    static void sendText(TEpollSocket *socket, const QString &message);
+    static void sendBinary(TEpollSocket *socket, const QByteArray &data);
+    static void sendPing(TEpollSocket *socket);
+    static void sendPong(TEpollSocket *socket);
 
 public slots:
     void releaseWorker();

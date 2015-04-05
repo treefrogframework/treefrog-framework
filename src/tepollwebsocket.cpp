@@ -13,7 +13,6 @@
 #include <THttpRequestHeader>
 #include <THttpUtility>
 #include <TWebSocketEndpoint>
-#include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocketframe.h"
 #include "twebsocketworker.h"
@@ -121,10 +120,9 @@ void TEpollWebSocket::startWorker()
     do {
         TWebSocketFrame::OpCode opcode = frames.first().opCode();
         QByteArray binary = readBinaryRequest();
-        TWebSocketWorker *worker = new TWebSocketWorker(socketUuid(), reqHeader.path(), opcode, binary);
+        TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), opcode, binary);
         worker->moveToThread(Tf::app()->thread());
         connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-        connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
         myWorkerCounter.fetchAndAddOrdered(1); // count-up
         worker->start();
     } while (canReadRequest());
@@ -134,9 +132,11 @@ void TEpollWebSocket::startWorker()
 void TEpollWebSocket::releaseWorker()
 {
     tSystemDebug("TEpollWebSocket::releaseWorker");
-    TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
+    TWebSocketWorker *worker = dynamic_cast<TWebSocketWorker *>(sender());
     if (worker) {
+        worker->deleteLater();
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
+
         if (deleting) {
             TEpollSocket::deleteLater();
         }
@@ -146,9 +146,8 @@ void TEpollWebSocket::releaseWorker()
 
 void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWebSocketWorker *worker = new TWebSocketWorker(socketUuid(), session);
+    TWebSocketWorker *worker = new TWebSocketWorker(this, session);
     worker->moveToThread(Tf::app()->thread());
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
     myWorkerCounter.fetchAndAddOrdered(1); // count-up
     worker->start();
@@ -164,41 +163,60 @@ void TEpollWebSocket::clear()
 }
 
 
-void TEpollWebSocket::sendText(const QByteArray &socketUuid, const QString &message)
+void TEpollWebSocket::sendText(const QString &message)
+{
+    TEpollWebSocket::sendText(this, message);
+}
+
+
+void TEpollWebSocket::sendBinary(const QByteArray &data)
+{
+    TEpollWebSocket::sendBinary(this, data);
+}
+
+
+void TEpollWebSocket::sendPing()
+{
+    TEpollWebSocket::sendPing(this);
+}
+
+
+void TEpollWebSocket::sendPong()
+{
+    TEpollWebSocket::sendPong(this);
+}
+
+
+void TEpollWebSocket::sendText(TEpollSocket *socket, const QString &message)
 {
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::TextFrame);
     frame.setPayload(message.toUtf8());
-    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+    socket->sendData(frame.toByteArray());
 }
 
 
-void TEpollWebSocket::sendBinary(const QByteArray &socketUuid, const QByteArray &data)
+void TEpollWebSocket::sendBinary(TEpollSocket *socket, const QByteArray &data)
 {
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::BinaryFrame);
     frame.setPayload(data);
-    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+    socket->sendData(frame.toByteArray());
 }
 
 
-void TEpollWebSocket::sendPing(const QByteArray &socketUuid)
+void TEpollWebSocket::sendPing(TEpollSocket *socket)
 {
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::Ping);
-    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+    socket->sendData(frame.toByteArray());
 }
 
 
-void TEpollWebSocket::sendPong(const QByteArray &socketUuid)
+void TEpollWebSocket::sendPong(TEpollSocket *socket)
 {
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::Pong);
-    TEpoll::instance()->setSendData(socketUuid, frame.toByteArray());
+    socket->sendData(frame.toByteArray());
 }
 
-
-void TEpollWebSocket::disconnect(const QByteArray &socketUuid)
-{
-    TEpoll::instance()->setDisconnect(socketUuid);
-}

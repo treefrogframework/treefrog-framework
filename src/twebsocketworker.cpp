@@ -9,25 +9,23 @@
 #include <TDispatcher>
 #include <TWebSocketEndpoint>
 #include "twebsocketworker.h"
-#include "tepoll.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
 
 
-TWebSocketWorker::TWebSocketWorker(const QByteArray &socket, const TSession &session, QObject *parent)
-    : QThread(parent), socketUuid(socket), sessionStore(session), requestPath(),
+TWebSocketWorker::TWebSocketWorker(TEpollWebSocket *s, const TSession &session, QObject *parent)
+    : QThread(parent), socket(s), sessionStore(session), requestPath(),
       opcode(TWebSocketFrame::Continuation), requestData()
 {
     tSystemDebug("TWebSocketWorker::TWebSocketWorker");
 }
 
 
-TWebSocketWorker::TWebSocketWorker(const QByteArray &socket, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
-    : QThread(parent), socketUuid(socket), sessionStore(), requestPath(path), opcode(opCode), requestData(data)
+TWebSocketWorker::TWebSocketWorker(TEpollWebSocket *s, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
+    : QThread(parent), socket(s), sessionStore(), requestPath(path), opcode(opCode), requestData(data)
 {
     tSystemDebug("TWebSocketWorker::TWebSocketWorker");
 }
-
 
 TWebSocketWorker::~TWebSocketWorker()
 {
@@ -86,11 +84,11 @@ void TWebSocketWorker::run()
             const QVariant &var = it.next();
             switch (var.type()) {
             case QVariant::String:
-                TEpollWebSocket::sendText(socketUuid, var.toString());
+                socket->sendText(var.toString());
                 break;
 
             case QVariant::ByteArray:
-                TEpollWebSocket::sendBinary(socketUuid, var.toByteArray());
+                socket->sendBinary(var.toByteArray());
                 break;
 
             case QVariant::Int: {
@@ -98,15 +96,15 @@ void TWebSocketWorker::run()
                 int opcode = var.toInt();
                 switch (opcode) {
                 case TWebSocketFrame::Close:
-                    TEpollWebSocket::disconnect(socketUuid);
+                    socket->disconnect();
                     break;
 
                 case TWebSocketFrame::Ping:
-                    TEpollWebSocket::sendPing(socketUuid);
+                    socket->sendPing();
                     break;
 
                 case TWebSocketFrame::Pong:
-                    TEpollWebSocket::sendPong(socketUuid);
+                    socket->sendPong();
                     break;
 
                 default:

@@ -89,10 +89,10 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
             if (upgradeHeader == "websocket") {
                 if (TWebSocket::searchEndpoint(header)) {
                     // Switch protocols
-                    TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
+                    switchToWebSocket(header);
                 } else {
                     // WebSocket closing
-                    TEpoll::instance()->setDisconnect(socketUuid());
+                    disconnect();
                 }
             }
             clear();  // buffer clear
@@ -110,7 +110,6 @@ void TEpollHttpSocket::startWorker()
     TActionWorker *worker = new TActionWorker(this);
     worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     myWorkerCounter.fetchAndAddOrdered(1); // count-up
     worker->start();
 }
@@ -122,7 +121,9 @@ void TEpollHttpSocket::releaseWorker()
 
     TActionWorker *worker = dynamic_cast<TActionWorker *>(sender());
     if (worker) {
+        worker->deleteLater();
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
+
         if (deleting) {
             TEpollSocket::deleteLater();
         }

@@ -14,6 +14,7 @@ class QFileInfo;
 class TSendBuffer;
 class THttpHeader;
 class TAccessLogger;
+class THttpRequestHeader;
 
 
 class T_CORE_EXPORT TEpollSocket : public QObject
@@ -27,6 +28,10 @@ public:
     int socketDescriptor() const { return sd; }
     const QHostAddress &peerAddress() const { return clientAddr; }
     const QByteArray &socketUuid() const { return uuid; }
+    void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
+    void sendData(const QByteArray &data);
+    void disconnect();
+    void switchToWebSocket(const THttpRequestHeader &header);
 
     virtual bool canReadRequest() { return false; }
     virtual void startWorker() { }
