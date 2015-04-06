@@ -11,6 +11,7 @@
 #include "twebsocketworker.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
+#include "tabstractwebsocket.h"
 
 
 TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const QByteArray &path, const TSession &session, QObject *parent)

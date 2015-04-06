@@ -3,7 +3,6 @@
 
 #include <QByteArray>
 #include <TGlobal>
-#include "tepollwebsocket.h"
 
 
 class T_CORE_EXPORT TWebSocketFrame
