@@ -191,29 +191,6 @@ void THttpSocket::readRequest()
             break;
         }
 
-        // // WebSocket?
-        // if (lengthToRead == 0) {
-        //     // Check connection header
-        //     THttpRequestHeader header(readBuffer);
-        //     QByteArray connectionHeader = header.rawHeader("Connection").toLower();
-        //     if (connectionHeader.contains("upgrade")) {
-        //         QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
-        //         tSystemDebug("Upgrade: %s", upgradeHeader.data());
-        //         if (upgradeHeader == "websocket") {
-        //             // if (TEpollWebSocket::validateHandshakeRequest(header)) {
-        //             //     // Switch protocols
-        //             //     //   TEpoll::instance()->setSwitchToWebSocket(socketUuid(), header);
-        //             // } else {
-        //             //     // WebSocket closing
-        //             //     //TEpoll::instance()->setDisconnect(socketUuid());
-        //             // }
-        //         }
-
-        //         readBuffer.clear();
-        //         lengthToRead = -1;  // buffer clear
-        //     }
-        // }
-
         if (lengthToRead == 0) {
             emit newRequest();
         }

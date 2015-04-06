@@ -11,12 +11,15 @@
 #include <TActionThread>
 #include <TWebApplication>
 #include <THttpRequest>
+#include <TSession>
+#include <TApplicationServerBase>
 #ifndef Q_CC_MSVC
 # include <unistd.h>
 #endif
 #include "thttpsocket.h"
 #include "twebsocket.h"
 #include "tsystemglobal.h"
+#include "tsessionmanager.h"
 
 static QAtomicInt threadCounter;
 
@@ -53,7 +56,7 @@ bool TActionThread::waitForAllDone(int msec)
 */
 
 TActionThread::TActionThread(int socket)
-    : QThread(), TActionContext(), httpSocket(0)
+    : QThread(), TActionContext(), httpSocket(nullptr)
 {
     threadCounter.fetchAndAddOrdered(1);
     TActionContext::socketDesc = socket;
@@ -99,17 +102,7 @@ void TActionThread::run()
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
-#if QT_VERSION >= 0x050000
-                    qintptr sd = httpSocket->socketDescriptor();
-#else
-                    int sd = httpSocket->socketDescriptor();
-#endif
-                    if (TWebSocket::searchEndpoint(req.header())) {
-                        httpSocket->setSocketDescriptor(0);
-                        TWebSocket *sock = new TWebSocket();
-                        sock->setSocketDescriptor(sd);
-                        sock->moveToThread(Tf::app()->thread());
-                    } else {
+                    if (!handshakeForWebSocket(req.header())) {
                         goto socket_error;
                     }
                 }
@@ -183,4 +176,33 @@ qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body
 void TActionThread::closeHttpSocket()
 {
     httpSocket->close();
+}
+
+
+bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
+{
+    if (!TWebSocket::searchEndpoint(header)) {
+        return false;
+    }
+
+    QByteArray resp = TAbstractWebSocket::handshakeResponse(header).toByteArray();
+    httpSocket->writeRawData(resp.data(), resp.length());
+    httpSocket->waitForBytesWritten();
+
+    // Switch to WebSocket
+    int sd = TApplicationServerBase::duplicateSocket(httpSocket->socketDescriptor());
+    TWebSocket *ws = new TWebSocket(sd, httpSocket->peerAddress(), header);
+    connect(ws, SIGNAL(disconnected()), ws, SLOT(deleteLater()));
+    ws->moveToThread(Tf::app()->thread());
+
+    // WebSocket opening
+    TSession session;
+    QByteArray sessionId = header.cookie(TSession::sessionName());
+    if (!sessionId.isEmpty()) {
+        // Finds a session
+        session = TSessionManager::instance().findSession(sessionId);
+    }
+    ws->startWorkerForOpening(session);
+
+    return true;
 }

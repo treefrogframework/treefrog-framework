@@ -13,7 +13,7 @@ class T_CORE_EXPORT TWebSocketWorker : public QThread
 {
     Q_OBJECT
 public:
-    TWebSocketWorker(TAbstractWebSocket *socket, const TSession &session, QObject *parent = 0);
+    TWebSocketWorker(TAbstractWebSocket *socket, const QByteArray &path, const TSession &session, QObject *parent = 0);
     TWebSocketWorker(TAbstractWebSocket *socket, const QByteArray &path, TWebSocketFrame::OpCode opCode,
                      const QByteArray &data, QObject *parent = 0);
     virtual ~TWebSocketWorker();

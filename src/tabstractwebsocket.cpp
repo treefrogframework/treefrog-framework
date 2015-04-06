@@ -21,6 +21,40 @@ TAbstractWebSocket::~TAbstractWebSocket()
 { }
 
 
+void TAbstractWebSocket::sendText(const QString &message)
+{
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::TextFrame);
+    frame.setPayload(message.toUtf8());
+    writeRawData(frame.toByteArray());
+}
+
+
+void TAbstractWebSocket::sendBinary(const QByteArray &data)
+{
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::BinaryFrame);
+    frame.setPayload(data);
+    writeRawData(frame.toByteArray());
+}
+
+
+void TAbstractWebSocket::sendPing()
+{
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::Ping);
+    writeRawData(frame.toByteArray());
+}
+
+
+void TAbstractWebSocket::sendPong()
+{
+    TWebSocketFrame frame;
+    frame.setOpCode(TWebSocketFrame::Pong);
+    writeRawData(frame.toByteArray());
+}
+
+
 bool TAbstractWebSocket::searchEndpoint(const THttpRequestHeader &header)
 {
     QString name = TUrlRoute::splitPath(header.path()).value(0).toLower();

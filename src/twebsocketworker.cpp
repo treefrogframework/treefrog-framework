@@ -13,8 +13,8 @@
 #include "turlroute.h"
 
 
-TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const TSession &session, QObject *parent)
-    : QThread(parent), socket(s), sessionStore(session), requestPath(),
+TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const QByteArray &path, const TSession &session, QObject *parent)
+    : QThread(parent), socket(s), sessionStore(session), requestPath(path),
       opcode(TWebSocketFrame::Continuation), requestData()
 {
     tSystemDebug("TWebSocketWorker::TWebSocketWorker");
@@ -44,7 +44,7 @@ void TWebSocketWorker::run()
         tSystemDebug("TWebSocketWorker opcode: %d", opcode);
 
         switch (opcode) {
-        case TWebSocketFrame::Continuation:
+        case TWebSocketFrame::Continuation:   // means session opening
             if (sessionStore.id().isEmpty()) {
                 endpoint->onOpen(sessionStore);
             } else {

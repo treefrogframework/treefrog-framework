@@ -186,6 +186,9 @@ private:
 
 #if QT_VERSION < 0x050000
 # define TF_SET_CODEC_FOR_TR(codec)  do { QTextCodec::setCodecForTr(codec); QTextCodec::setCodecForCStrings(codec); } while (0)
+# ifndef  Q_DECL_OVERRIDE
+#  define Q_DECL_OVERRIDE
+# endif
 #else
 # define TF_SET_CODEC_FOR_TR(codec)
 #endif

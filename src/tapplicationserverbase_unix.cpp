@@ -38,7 +38,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
         return sd;
     }
 
-    sd = ::fcntl(server.socketDescriptor(), F_DUPFD, 0); // duplicate
+    sd = duplicateSocket(server.socketDescriptor()); // duplicate
 
     if (flag == CloseOnExec) {
         ::fcntl(sd, F_SETFD, ::fcntl(sd, F_GETFD) | FD_CLOEXEC);
@@ -110,4 +110,10 @@ void TApplicationServerBase::nativeClose(int socket)
 {
     if (socket > 0)
         TF_CLOSE(socket);
+}
+
+
+int TApplicationServerBase::duplicateSocket(int socketDescriptor)
+{
+    return ::fcntl(socketDescriptor, F_DUPFD, 0);  // duplicate
 }

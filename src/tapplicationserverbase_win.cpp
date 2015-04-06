@@ -109,3 +109,12 @@ void TApplicationServerBase::nativeClose(int socket)
     if (socket != (int)INVALID_SOCKET)
         closesocket(socket);
 }
+
+
+int TApplicationServerBase::duplicateSocket(int socketDescriptor)
+{
+    WSAPROTOCOL_INFO pi;
+    ::WSADuplicateSocket(socketDescriptor, ::GetCurrentProcessId(), &pi);
+    SOCKET newsock = ::WSASocket(pi.iAddressFamily, pi.iSocketType,pi.iProtocol, &pi, 0, 0);
+    return newsock;
+}

@@ -24,24 +24,16 @@ public:
     virtual bool canReadRequest();
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);
-    void sendText(const QString &message) override;
-    void sendBinary(const QByteArray &data) override;
-    void sendPing() override;
-    void sendPong() override;
-    void disconnect() override;
-
-    static void sendText(TEpollSocket *socket, const QString &message);
-    static void sendBinary(TEpollSocket *socket, const QByteArray &data);
-    static void sendPing(TEpollSocket *socket);
-    static void sendPong(TEpollSocket *socket);
+    void disconnect() Q_DECL_OVERRIDE;
 
 public slots:
     void releaseWorker();
 
 protected:
-    virtual void *getRecvBuffer(int size);
-    virtual bool seekRecvBuffer(int pos);
-    virtual QList<TWebSocketFrame> &websocketFrames() { return frames; }
+    virtual void *getRecvBuffer(int size) Q_DECL_OVERRIDE;
+    virtual bool seekRecvBuffer(int pos) Q_DECL_OVERRIDE;
+    qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
+    virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
     void clear();
 
 private:

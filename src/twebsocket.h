@@ -10,35 +10,37 @@
 #include "tabstractwebsocket.h"
 
 class TWebSocketFrame;
+class TSession;
 
 
 class T_CORE_EXPORT TWebSocket : public QTcpSocket, public TAbstractWebSocket
 {
     Q_OBJECT
 public:
-    TWebSocket(QObject *parent = 0);
+    TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent = 0);
     virtual ~TWebSocket();
 
-    void close();
     const QByteArray &socketUuid() const { return uuid; }
     int countWorkers() const;
     bool canReadRequest() const;
-
-    void sendText(const QString &message) override { }
-    void sendBinary(const QByteArray &data) override { }
-    void sendPing() override { }
-    void sendPong() override { }
-    void disconnect() override { }
+    void disconnect() Q_DECL_OVERRIDE;
 
 public slots:
     void readRequest();
     void deleteLater();
     void releaseWorker();
+    void sendRawData(const QByteArray &data);
+    void close();
 
 protected:
-    virtual void sendData(const QByteArray &data);
-    virtual QList<TWebSocketFrame> &websocketFrames() { return frames; }
+    void startWorkerForOpening(const TSession &session);
+    virtual qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
+    virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
     QList<TWebSocketFrame> frames;
+
+signals:
+    void sendByWorker(const QByteArray &data);
+    void disconnectByWorker();
 
 private:
     QByteArray uuid;
@@ -47,6 +49,7 @@ private:
     QAtomicInt myWorkerCounter;
     volatile bool deleting;
 
+    friend class TActionThread;
     Q_DISABLE_COPY(TWebSocket)
 };
 

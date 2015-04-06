@@ -40,6 +40,8 @@ private:
     QByteArray readBuffer;
     TTemporaryFile fileBuffer;
     QDateTime lastProcessed;
+
+    friend class TActionThread;
 };
 
 #endif // THTTPSOCKET_H

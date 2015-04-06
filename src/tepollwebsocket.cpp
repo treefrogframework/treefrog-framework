@@ -146,7 +146,7 @@ void TEpollWebSocket::releaseWorker()
 
 void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWebSocketWorker *worker = new TWebSocketWorker(this, session);
+    TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), session);
     worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
     myWorkerCounter.fetchAndAddOrdered(1); // count-up
@@ -163,27 +163,10 @@ void TEpollWebSocket::clear()
 }
 
 
-void TEpollWebSocket::sendText(const QString &message)
+qint64 TEpollWebSocket::writeRawData(const QByteArray &data)
 {
-    TEpollWebSocket::sendText(this, message);
-}
-
-
-void TEpollWebSocket::sendBinary(const QByteArray &data)
-{
-    TEpollWebSocket::sendBinary(this, data);
-}
-
-
-void TEpollWebSocket::sendPing()
-{
-    TEpollWebSocket::sendPing(this);
-}
-
-
-void TEpollWebSocket::sendPong()
-{
-    TEpollWebSocket::sendPong(this);
+    sendData(data);
+    return data.length();
 }
 
 
@@ -191,38 +174,3 @@ void TEpollWebSocket::disconnect()
 {
     TEpollSocket::disconnect();
 }
-
-
-void TEpollWebSocket::sendText(TEpollSocket *socket, const QString &message)
-{
-    TWebSocketFrame frame;
-    frame.setOpCode(TWebSocketFrame::TextFrame);
-    frame.setPayload(message.toUtf8());
-    socket->sendData(frame.toByteArray());
-}
-
-
-void TEpollWebSocket::sendBinary(TEpollSocket *socket, const QByteArray &data)
-{
-    TWebSocketFrame frame;
-    frame.setOpCode(TWebSocketFrame::BinaryFrame);
-    frame.setPayload(data);
-    socket->sendData(frame.toByteArray());
-}
-
-
-void TEpollWebSocket::sendPing(TEpollSocket *socket)
-{
-    TWebSocketFrame frame;
-    frame.setOpCode(TWebSocketFrame::Ping);
-    socket->sendData(frame.toByteArray());
-}
-
-
-void TEpollWebSocket::sendPong(TEpollSocket *socket)
-{
-    TWebSocketFrame frame;
-    frame.setOpCode(TWebSocketFrame::Pong);
-    socket->sendData(frame.toByteArray());
-}
-

@@ -17,21 +17,27 @@ const qint64 WRITE_LENGTH = 1280;
 const int BUFFER_RESERVE_SIZE = 127;
 
 
-TWebSocket::TWebSocket(QObject *parent)
-    : QTcpSocket(parent), frames(), uuid(), reqHeader(), recvBuffer(),
+TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
+    : QTcpSocket(parent), frames(), uuid(), reqHeader(header), recvBuffer(),
       myWorkerCounter(0), deleting(false)
 {
+    setSocketDescriptor(socketDescriptor);
+    setPeerAddress(address);
+
     uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 
-    connect(this, SIGNAL(disconnected()), this, SLOT(deleteLater()));
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
+    connect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
+    connect(this, SIGNAL(disconnectByWorker()), this, SLOT(close()));
 }
 
 
 TWebSocket::~TWebSocket()
-{ }
+{
+    tSystemDebug("~TWebSocket");
+}
 
 
 void TWebSocket::close()
@@ -70,7 +76,6 @@ void TWebSocket::readRequest()
     int len = parse(recvBuffer);
     if (len < 0) {
         tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
-        //close();
         disconnect();
         return;
     }
@@ -98,9 +103,26 @@ void TWebSocket::readRequest()
 }
 
 
+void TWebSocket::startWorkerForOpening(const TSession &session)
+{
+    TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), session);
+    worker->moveToThread(Tf::app()->thread());
+    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
+    myWorkerCounter.fetchAndAddOrdered(1); // count-up
+    worker->start();
+}
+
+
 void TWebSocket::deleteLater()
 {
+    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", countWorkers());
+
     deleting = true;
+
+    QObject::disconnect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
+    QObject::disconnect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
+    QObject::disconnect(this, SIGNAL(disconnectByWorker()), this, SLOT(close()));
+
     if (countWorkers() == 0) {
         QTcpSocket::deleteLater();
     }
@@ -121,13 +143,16 @@ void TWebSocket::releaseWorker()
 }
 
 
-void TWebSocket::sendData(const QByteArray &data)
+void TWebSocket::sendRawData(const QByteArray &data)
 {
     if (data.isEmpty())
         return;
 
     qint64 total = 0;
     for (;;) {
+        if (!deleting)
+            return;
+
         qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
             tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
@@ -143,4 +168,17 @@ void TWebSocket::sendData(const QByteArray &data)
             break;
         }
     }
+}
+
+
+qint64 TWebSocket::writeRawData(const QByteArray &data)
+{
+    emit sendByWorker(data);
+    return data.length();
+}
+
+
+void TWebSocket::disconnect()
+{
+    emit disconnectByWorker();
 }

@@ -6,6 +6,7 @@
 
 class THttpSocket;
 class THttpRequest;
+class THttpRequestHeader;
 class THttpResponseHeader;
 class QIODevice;
 
@@ -24,9 +25,9 @@ public:
 protected:
     void run();
     void emitError(int socketError);
-
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
     void closeHttpSocket();
+    bool handshakeForWebSocket(const THttpRequestHeader &header);
 
 signals:
     void error(int socketError);
