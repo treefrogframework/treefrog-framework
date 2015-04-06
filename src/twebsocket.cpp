@@ -150,7 +150,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
     qint64 total = 0;
     for (;;) {
-        if (!deleting)
+        if (deleting)
             return;
 
         qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
