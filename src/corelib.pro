@@ -246,6 +246,10 @@ HEADERS += twebsocket.h
 SOURCES += twebsocket.cpp
 HEADERS += twebsocketendpoint.h
 SOURCES += twebsocketendpoint.cpp
+HEADERS += twebsocketframe.h
+SOURCES += twebsocketframe.cpp
+HEADERS += twebsocketworker.h
+SOURCES += twebsocketworker.cpp
 
 
 HEADERS += \
@@ -288,10 +292,6 @@ unix:!macx {
   SOURCES += tepollhttpsocket.cpp
   HEADERS += tepollwebsocket.h
   SOURCES += tepollwebsocket.cpp
-  HEADERS += twebsocketframe.h
-  SOURCES += twebsocketframe.cpp
-  HEADERS += twebsocketworker.h
-  SOURCES += twebsocketworker.cpp
 }
 
 # Qt5
