@@ -344,8 +344,11 @@ static int killTreeFrogProcess(const QString &cmd)
 
         pi.kill();  // kills the manager process
         tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
+#ifdef Q_CC_MSVC
+        ::_unlink(pidFilePath().toLatin1().data());
+#else
         ::unlink(pidFilePath().toLatin1().data());
-
+#endif
         ProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
         printf("Killed TreeFrog application server processes\n");

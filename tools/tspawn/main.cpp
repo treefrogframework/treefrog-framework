@@ -281,7 +281,7 @@ static QByteArray randomString(int length)
 {
     static char ch[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     QByteArray ret;
-    int max = strlen(ch) - 1;
+    int max = (int)strlen(ch) - 1;
 
     for (int i = 0; i < length; ++i) {
         ret += ch[random(max)];
