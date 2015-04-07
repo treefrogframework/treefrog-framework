@@ -119,7 +119,7 @@ void TEpollHttpSocket::releaseWorker()
 {
     tSystemDebug("TEpollHttpSocket::releaseWorker");
 
-    TActionWorker *worker = dynamic_cast<TActionWorker *>(sender());
+    TActionWorker *worker = qobject_cast<TActionWorker *>(sender());
     if (worker) {
         worker->deleteLater();
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down

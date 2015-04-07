@@ -9,6 +9,10 @@
 #include "twebsocketframe.h"
 
 
+TWebSocketEndpoint::TWebSocketEndpoint()
+    : ctrlName(), payloadList(), rollback(false)
+{ }
+
 void TWebSocketEndpoint::onOpen(const TSession &session)
 {
     Q_UNUSED(session);

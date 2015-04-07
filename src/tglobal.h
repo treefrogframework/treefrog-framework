@@ -149,6 +149,7 @@ T_CORE_EXPORT void tTrace(const char *, ...) // output trace message
 
 class TAppSettings;
 class TActionContext;
+class TDatabaseContext;
 class QSqlDatabase;
 
 namespace Tf
@@ -163,6 +164,7 @@ namespace Tf
     T_CORE_EXPORT quint32 random(quint32 max);
 
     T_CORE_EXPORT TActionContext *currentContext();
+    T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
 }
 

@@ -4,12 +4,13 @@
 #include <QThread>
 #include <TGlobal>
 #include <TSession>
+#include "tdatabasecontext.h"
 #include "twebsocketframe.h"
 
 class TAbstractWebSocket;
 
 
-class T_CORE_EXPORT TWebSocketWorker : public QThread
+class T_CORE_EXPORT TWebSocketWorker : public QThread, public TDatabaseContext
 {
     Q_OBJECT
 public:

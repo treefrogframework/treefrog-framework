@@ -1,0 +1,124 @@
+/* Copyright (c) 2015, AOYAMA Kazuharu
+ * All rights reserved.
+ *
+ * This software may be used and distributed according to the terms of
+ * the New BSD License, which is incorporated herein by reference.
+ */
+
+#include <QtCore>
+#include <QSqlDatabase>
+#include <QSqlDriver>
+#include <TWebApplication>
+#include "tdatabasecontext.h"
+#include "tsqldatabasepool.h"
+#include "tkvsdatabasepool.h"
+#include "tsystemglobal.h"
+
+/*!
+  \class TDatabaseContext
+  \brief The TDatabaseContext class is the base class of contexts for
+  database access.
+*/
+
+TDatabaseContext::TDatabaseContext()
+    : transactions(),
+      sqlDatabases(),
+      kvsDatabases()
+{ }
+
+
+TDatabaseContext::~TDatabaseContext()
+{
+    release();
+}
+
+
+QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
+{
+    T_TRACEFUNC("id:%d", id);
+
+    if (!Tf::app()->isSqlDatabaseAvailable()) {
+        return sqlDatabases[0];  // invalid database
+    }
+
+    if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
+        throw RuntimeException("error database id", __FILE__, __LINE__);
+    }
+
+    QSqlDatabase &db = sqlDatabases[id];
+    if (!db.isValid()) {
+        db = TSqlDatabasePool::instance()->database(id);
+        beginTransaction(db);
+    }
+    return db;
+}
+
+
+void TDatabaseContext::releaseSqlDatabases()
+{
+    rollbackTransactions();
+
+    for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        TSqlDatabasePool::instance()->pool(it.value());
+    }
+    sqlDatabases.clear();
+}
+
+
+TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
+{
+    T_TRACEFUNC("type:%d", (int)type);
+
+    TKvsDatabase &db = kvsDatabases[(int)type];
+    if (!db.isValid()) {
+        db = TKvsDatabasePool::instance()->database(type);
+    }
+    return db;
+}
+
+
+void TDatabaseContext::releaseKvsDatabases()
+{
+    for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
+        TKvsDatabasePool::instance()->pool(it.value());
+    }
+    kvsDatabases.clear();
+}
+
+
+void TDatabaseContext::release()
+{
+    // Releases all SQL database sessions
+    releaseSqlDatabases();
+
+    // Releases all KVS database sessions
+    releaseKvsDatabases();
+}
+
+
+void TDatabaseContext::setTransactionEnabled(bool enable)
+{
+    transactions.setEnabled(enable);
+}
+
+
+bool TDatabaseContext::beginTransaction(QSqlDatabase &database)
+{
+    bool ret = true;
+    if (database.driver()->hasFeature(QSqlDriver::Transactions)) {
+        ret = transactions.begin(database);
+    }
+    return ret;
+}
+
+
+void TDatabaseContext::commitTransactions()
+{
+    transactions.commit();
+}
+
+
+void TDatabaseContext::rollbackTransactions()
+{
+    transactions.rollback();
+}

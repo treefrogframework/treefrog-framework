@@ -116,13 +116,7 @@ void TWebSocket::startWorkerForOpening(const TSession &session)
 void TWebSocket::deleteLater()
 {
     tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", countWorkers());
-
     deleting = true;
-
-    QObject::disconnect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
-    QObject::disconnect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
-    QObject::disconnect(this, SIGNAL(disconnectByWorker()), this, SLOT(close()));
-
     if (countWorkers() == 0) {
         QTcpSocket::deleteLater();
     }
@@ -131,7 +125,7 @@ void TWebSocket::deleteLater()
 
 void TWebSocket::releaseWorker()
 {
-    TWebSocketWorker *worker = dynamic_cast<TWebSocketWorker *>(sender());
+    TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
     if (worker) {
         worker->deleteLater();
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
@@ -173,6 +167,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
 qint64 TWebSocket::writeRawData(const QByteArray &data)
 {
+    // Calls send-function in main thread
     emit sendByWorker(data);
     return data.length();
 }
@@ -180,5 +175,6 @@ qint64 TWebSocket::writeRawData(const QByteArray &data)
 
 void TWebSocket::disconnect()
 {
+    // Calls close-function in main thread
     emit disconnectByWorker();
 }

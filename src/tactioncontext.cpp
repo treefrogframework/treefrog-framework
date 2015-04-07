@@ -6,8 +6,6 @@
  */
 
 #include <QtCore>
-#include <QSqlDatabase>
-#include <QSqlDriver>
 #include <QHostAddress>
 #include <QSet>
 #include <TActionContext>
@@ -19,8 +17,6 @@
 #include <TDispatcher>
 #include <TActionController>
 #include <TSessionStore>
-#include "tsqldatabasepool.h"
-#include "tkvsdatabasepool.h"
 #include "tsystemglobal.h"
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
@@ -36,9 +32,7 @@
 */
 
 TActionContext::TActionContext()
-    : transactions(),
-      sqlDatabases(),
-      kvsDatabases(),
+    : TDatabaseContext(),
       stopped(false),
       socketDesc(0),
       currController(0),
@@ -49,59 +43,6 @@ TActionContext::TActionContext()
 TActionContext::~TActionContext()
 {
     release();
-}
-
-
-QSqlDatabase &TActionContext::getSqlDatabase(int id)
-{
-    T_TRACEFUNC("id:%d", id);
-
-    if (!Tf::app()->isSqlDatabaseAvailable()) {
-        return sqlDatabases[0];  // invalid database
-    }
-
-    if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
-        throw RuntimeException("error database id", __FILE__, __LINE__);
-    }
-
-    QSqlDatabase &db = sqlDatabases[id];
-    if (!db.isValid()) {
-        db = TSqlDatabasePool::instance()->database(id);
-        beginTransaction(db);
-    }
-    return db;
-}
-
-
-void TActionContext::releaseSqlDatabases()
-{
-    rollbackTransactions();
-
-    for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlDatabasePool::instance()->pool(it.value());
-    }
-    sqlDatabases.clear();
-}
-
-
-TKvsDatabase &TActionContext::getKvsDatabase(TKvsDatabase::Type type)
-{
-    T_TRACEFUNC("type:%d", (int)type);
-
-    TKvsDatabase &db = kvsDatabases[(int)type];
-    if (!db.isValid()) {
-        db = TKvsDatabasePool::instance()->database(type);
-    }
-    return db;
-}
-
-
-void TActionContext::releaseKvsDatabases()
-{
-    for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
-        TKvsDatabasePool::instance()->pool(it.value());
-    }
-    kvsDatabases.clear();
 }
 
 
@@ -209,7 +150,7 @@ void TActionContext::execute(THttpRequest &request)
             }
 
             // Database Transaction
-            transactions.setEnabled(currController->transactionEnabled());
+            setTransactionEnabled(currController->transactionEnabled());
 
             // Do filters
             if (Q_LIKELY(currController->preFilter())) {
@@ -310,6 +251,7 @@ void TActionContext::execute(THttpRequest &request)
 
     } catch (ClientErrorException &e) {
         tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+        tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
         int bytes = writeResponse(e.statusCode(), responseHeader);
         accessLogger.setResponseBytes( bytes );
         accessLogger.setStatusCode( e.statusCode() );
@@ -345,11 +287,7 @@ void TActionContext::execute(THttpRequest &request)
 
 void TActionContext::release()
 {
-    // Releases all SQL database sessions
-    TActionContext::releaseSqlDatabases();
-
-    // Releases all KVS database sessions
-    TActionContext::releaseKvsDatabases();
+    TDatabaseContext::release();
 
     for (QListIterator<TTemporaryFile *> i(tempFiles); i.hasNext(); ) {
         delete i.next();
@@ -414,28 +352,6 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 
 void TActionContext::emitError(int )
 { }
-
-
-bool TActionContext::beginTransaction(QSqlDatabase &database)
-{
-    bool ret = true;
-    if (database.driver()->hasFeature(QSqlDriver::Transactions)) {
-        ret = transactions.begin(database);
-    }
-    return ret;
-}
-
-
-void TActionContext::commitTransactions()
-{
-    transactions.commit();
-}
-
-
-void TActionContext::rollbackTransactions()
-{
-    transactions.rollback();
-}
 
 
 TTemporaryFile &TActionContext::createTemporaryFile()

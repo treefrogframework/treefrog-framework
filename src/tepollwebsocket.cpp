@@ -132,7 +132,7 @@ void TEpollWebSocket::startWorker()
 void TEpollWebSocket::releaseWorker()
 {
     tSystemDebug("TEpollWebSocket::releaseWorker");
-    TWebSocketWorker *worker = dynamic_cast<TWebSocketWorker *>(sender());
+    TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
     if (worker) {
         worker->deleteLater();
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down

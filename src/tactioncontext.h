@@ -3,11 +3,9 @@
 
 #include <QStringList>
 #include <QMap>
-#include <QSqlDatabase>
 #include <TGlobal>
-#include <TSqlTransaction>
-#include <TKvsDatabase>
 #include <TAccessLog>
+#include "tdatabasecontext.h"
 
 class QHostAddress;
 class THttpResponseHeader;
@@ -19,16 +17,12 @@ class TTemporaryFile;
 class TActionController;
 
 
-class T_CORE_EXPORT TActionContext
+class T_CORE_EXPORT TActionContext : public TDatabaseContext
 {
 public:
     TActionContext();
     virtual ~TActionContext();
 
-    QSqlDatabase &getSqlDatabase(int id);
-    void releaseSqlDatabases();
-    TKvsDatabase &getKvsDatabase(TKvsDatabase::Type type);
-    void releaseKvsDatabases();
     TTemporaryFile &createTemporaryFile();
     void stop() { stopped = true; }
     QHostAddress clientAddress() const;
@@ -39,12 +33,6 @@ public:
 protected:
     void execute(THttpRequest &request);
     void release();
-
-    virtual void emitError(int socketError);
-    bool beginTransaction(QSqlDatabase &database);
-    void commitTransactions();
-    void rollbackTransactions();
-
     int socketDescriptor() const { return socketDesc; }
     qint64 writeResponse(int statusCode, THttpResponseHeader &header);
     qint64 writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length);
@@ -52,10 +40,8 @@ protected:
 
     virtual qint64 writeResponse(THttpResponseHeader &, QIODevice *) { return 0; }
     virtual void closeHttpSocket() { }
+    virtual void emitError(int socketError);
 
-    TSqlTransaction transactions;
-    QMap<int, QSqlDatabase> sqlDatabases;
-    QMap<int, TKvsDatabase> kvsDatabases;
     volatile bool stopped;
     QStringList autoRemoveFiles;
     int socketDesc;

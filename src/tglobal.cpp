@@ -12,6 +12,7 @@
 #include <TLogger>
 #include <TLog>
 #include <TActionContext>
+#include <TDatabaseContext>
 #include <TActionThread>
 #include <TActionForkProcess>
 #include <TApplicationScheduler>
@@ -21,6 +22,7 @@
 #endif
 #include <stdlib.h>
 #include <limits.h>
+#include "twebsocketworker.h"
 #include "tloggerfactory.h"
 #include "tsharedmemorylogstream.h"
 #include "tbasiclogstream.h"
@@ -264,7 +266,7 @@ quint32 Tf::randXor128()
 
 TActionContext *Tf::currentContext()
 {
-    TActionContext *context = 0;
+    TActionContext *context = nullptr;
 
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Prefork:
@@ -305,13 +307,47 @@ TActionContext *Tf::currentContext()
         return context;
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
-    return NULL;
+}
+
+
+TDatabaseContext *Tf::currentDatabaseContext()
+{
+    TDatabaseContext *context = nullptr;
+
+    switch ( Tf::app()->multiProcessingModule() ) {
+    case TWebApplication::Thread:
+        context = qobject_cast<TActionThread *>(QThread::currentThread());
+        if (Q_LIKELY(context))
+            return context;
+        break;
+
+    case TWebApplication::Hybrid:
+#ifdef Q_OS_LINUX
+        context = qobject_cast<TActionWorker *>(QThread::currentThread());
+        if (Q_LIKELY(context))
+            return context;
+        break;
+#else
+        tFatal("Unsupported MPM: hybrid");
+#endif
+        break;
+
+    default:
+        break;
+    }
+
+    // TWebSocketWorker
+    context = qobject_cast<TWebSocketWorker *>(QThread::currentThread());
+    if (context)
+        return context;
+
+    throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
 }
 
 
 QSqlDatabase &Tf::currentSqlDatabase(int id)
 {
-    return currentContext()->getSqlDatabase(id);
+    return currentDatabaseContext()->getSqlDatabase(id);
 }
 
 /*!
