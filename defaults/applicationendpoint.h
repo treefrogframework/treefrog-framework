@@ -11,12 +11,14 @@ public:
     ApplicationEndpoint(const ApplicationEndpoint &other);
     virtual ~ApplicationEndpoint() { }
 
-    void onOpen(const TSession &session);
-    void onClose();
-    void onTextReceived(const QString &text);
-    void onBinaryReceived(const QByteArray &binary);
-    void onPing();
-    void onPong();
+protected:
+    virtual void onOpen(const TSession &session);
+    virtual void onClose();
+    virtual void onTextReceived(const QString &text);
+    virtual void onBinaryReceived(const QByteArray &binary);
+    virtual void onPing();
+    virtual void onPong();
+    virtual bool transactionEnabled() const;
 };
 
 #endif // APPLICATIONENDPOINT_H

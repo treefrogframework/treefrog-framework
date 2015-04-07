@@ -26,3 +26,8 @@ void ApplicationEndpoint::onPing()
 
 void ApplicationEndpoint::onPong()
 { }
+
+bool ApplicationEndpoint::transactionEnabled() const
+{
+    return TWebSocketEndpoint::transactionEnabled();
+}
