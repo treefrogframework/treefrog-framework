@@ -282,6 +282,12 @@ const QStringList &TActionController::disabledControllers()
     return disabledNames;
 }
 
+
+QString TActionController::loginUserNameKey()
+{
+    return QLatin1String(LOGIN_USER_NAME_KEY);
+}
+
 /*!
   \~english
   Verifies the HTTP request \a request.

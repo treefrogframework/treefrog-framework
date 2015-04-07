@@ -51,6 +51,7 @@ public:
     static void setCsrfProtectionInto(TSession &session);
     static const QStringList &availableControllers();
     static const QStringList &disabledControllers();
+    static QString loginUserNameKey();
 
 protected:
     virtual bool preFilter() { return true; }

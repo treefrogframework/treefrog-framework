@@ -6,6 +6,7 @@
  */
 
 #include <TWebSocketEndpoint>
+#include <TActionController>
 #include "twebsocketframe.h"
 
 
@@ -79,6 +80,18 @@ void TWebSocketEndpoint::sendPong()
 void TWebSocketEndpoint::closeWebSocket()
 {
     payloadList << QVariant((int)TWebSocketFrame::Close);
+}
+
+
+bool TWebSocketEndpoint::isUserLoggedIn(const TSession &session)
+{
+    return session.contains(TActionController::loginUserNameKey());
+}
+
+
+QString TWebSocketEndpoint::identityKeyOfLoginUser(const TSession &session)
+{
+    return session.value(TActionController::loginUserNameKey()).toString();
 }
 
 

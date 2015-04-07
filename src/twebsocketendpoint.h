@@ -23,6 +23,9 @@ public:
     void rollbackTransaction();
     bool rollbackRequested() const;
     void closeWebSocket();
+
+    static bool isUserLoggedIn(const TSession &session);
+    static QString identityKeyOfLoginUser(const TSession &session);
     static const QStringList &disabledEndpoints();
 
 protected:
