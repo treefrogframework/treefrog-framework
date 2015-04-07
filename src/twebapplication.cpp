@@ -40,7 +40,6 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     : QCoreApplication(argc, argv),
 #endif
       dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT),
-      //appSetting(0),
       sqlSettings(0),
       mongoSetting(0),
       loggerSetting(0),
@@ -305,10 +304,12 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             mpm = Thread;
-        } else if (str == "prefork") {
-            mpm = Prefork;
+//        } else if (str == "prefork") {
+//            mpm = Prefork;
         } else if (str == "hybrid") {
             mpm = Hybrid;
+        } else {
+            tError("Unsupported MPM: %s", qPrintable(str));
         }
     }
     return mpm;

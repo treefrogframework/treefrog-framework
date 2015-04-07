@@ -28,8 +28,8 @@ public:
     enum MultiProcessingModule {
         Invalid = 0,
         Thread,
-        Prefork,
         Hybrid,
+        Prefork,  // obsolete
     };
 
     TWebApplication(int &argc, char **argv);

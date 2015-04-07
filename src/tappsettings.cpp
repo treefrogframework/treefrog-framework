@@ -47,9 +47,9 @@ public:
         insert(Tf::SessionCsrfProtectionKey, "Session.CsrfProtectionKey");
         insert(Tf::MPMThreadMaxAppServers, "MPM.thread.MaxAppServers");
         insert(Tf::MPMThreadMaxThreadsPerAppServer, "MPM.thread.MaxThreadsPerAppServer");
-        insert(Tf::MPMPreforkMaxAppServers, "MPM.prefork.MaxAppServers");
-        insert(Tf::MPMPreforkMinAppServers, "MPM.prefork.MinAppServers");
-        insert(Tf::MPMPreforkSpareAppServers, "MPM.prefork.SpareAppServers");
+        insert(Tf::MPMPreforkMaxAppServers, "MPM.prefork.MaxAppServers");        // obsolete
+        insert(Tf::MPMPreforkMinAppServers, "MPM.prefork.MinAppServers");        // obsolete
+        insert(Tf::MPMPreforkSpareAppServers, "MPM.prefork.SpareAppServers");    // obsolete
         insert(Tf::MPMHybridMaxAppServers, "MPM.hybrid.MaxAppServers");
         insert(Tf::MPMHybridMaxWorkersPerAppServer, "MPM.hybrid.MaxWorkersPerAppServer");
         insert(Tf::SystemLogFilePath, "SystemLog.FilePath");
