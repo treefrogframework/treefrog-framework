@@ -4,7 +4,9 @@
 set VERSION=1.8.0
 set TFDIR=C:\TreeFrog\%VERSION%
 
-if "%DevEnvDir%" == "" (
+if "%Platform%" == "X64" (
+  set MAKE=nmake
+) else if "%DevEnvDir%" == "" (
   set MAKE=mingw32-make
 ) else (
   set MAKE=nmake

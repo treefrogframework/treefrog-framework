@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -23,6 +23,35 @@ bool ProcessInfo::exists() const
 }
 
 
+#ifdef Q_CC_MSVC
+qint64 ProcessInfo::ppid() const
+{
+    DWORD pidParent = 0;
+    HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (hSnapShot == INVALID_HANDLE_VALUE) {
+        return pidParent;
+    }
+
+    PROCESSENTRY32 procentry;
+    ZeroMemory((LPVOID)&procentry, sizeof(PROCESSENTRY32));
+    procentry.dwSize = sizeof(PROCESSENTRY32);
+
+    if (Process32First(hSnapShot, &procentry)) {
+        do {
+            if (procentry.th32ProcessID == (DWORD)processId) {
+                pidParent = procentry.th32ParentProcessID;
+                break;
+            }
+            procentry.dwSize = sizeof(PROCESSENTRY32);
+        } while (Process32Next(hSnapShot, &procentry));
+    }
+
+    CloseHandle(hSnapShot);
+    return pidParent;
+}
+
+#else
+
 qint64 ProcessInfo::ppid() const
 {
     qint64 ppid = 0;
@@ -30,16 +59,12 @@ qint64 ProcessInfo::ppid() const
     if (hProcess) {
         PROCESS_BASIC_INFORMATION basicInfo;
         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
-#ifdef Q_CC_MSVC
-            ppid = (qint64)basicInfo.UniqueProcessId;
-#else
             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
-#endif
         }
     }
     return ppid;
 }
-
+#endif
 
 QString ProcessInfo::processName() const
 {
@@ -138,6 +163,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
             ret << (qint64)entry.th32ProcessID;
         } while(Process32Next(hSnapshot, &entry));
     }
+    CloseHandle(hSnapshot);
 
     qSort(ret.begin(), ret.end());  // Sorts the items
     return ret;
