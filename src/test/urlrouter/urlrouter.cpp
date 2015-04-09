@@ -1,4 +1,4 @@
-#include <QTest>
+#include <TfTest/TfTest>
 #include <QDebug>
 #include "../../turlroute.h"
 
@@ -442,5 +442,5 @@ void TestUrlRouter::should_not_create_route_if_bad_param()
 // }
 
 
-QTEST_MAIN(TestUrlRouter)
+TF_TEST_MAIN(TestUrlRouter)
 #include "urlrouter.moc"

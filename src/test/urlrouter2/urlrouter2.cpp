@@ -1,4 +1,4 @@
-#include <QTest>
+#include <TfTest/TfTest>
 #include <QDebug>
 #include "../../turlroute.h"
 
@@ -105,5 +105,5 @@ void TestUrlRouter2::should_route_get_correctly()
 }
 
 
-QTEST_MAIN(TestUrlRouter2)
+TF_TEST_MAIN(TestUrlRouter2)
 #include "urlrouter2.moc"
