@@ -9,21 +9,17 @@
 #include <THttpRequest>
 #include <TMultiplexingServer>
 #include <QCoreApplication>
-#include <QAtomicInt>
+#include <atomic>
 #include "tepollhttpsocket.h"
 #include "tsystemglobal.h"
 
 // Counter of action workers  (Note: workerCount != contextCount)
-QAtomicInt workerCounter;
+static std::atomic<int> workerCounter(0);
 
 
 int TActionWorker::workerCount()
 {
-#if QT_VERSION >= 0x050000
     return workerCounter.load();
-#else
-    return (int)workerCounter;
-#endif
 }
 
 
@@ -52,7 +48,7 @@ bool TActionWorker::waitForAllDone(int msec)
 TActionWorker::TActionWorker(TEpollHttpSocket *sock, QObject *parent)
     : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socket(sock)//socketUuid(socket->socketUuid())
 {
-    workerCounter.fetchAndAddOrdered(1);
+    ++workerCounter;
     httpRequest = socket->readRequest();
     clientAddr = socket->peerAddress().toString();
 }
@@ -61,7 +57,7 @@ TActionWorker::TActionWorker(TEpollHttpSocket *sock, QObject *parent)
 TActionWorker::~TActionWorker()
 {
     tSystemDebug("TActionWorker::~TActionWorker");
-    workerCounter.fetchAndAddOrdered(-1);
+    --workerCounter;
 }
 
 
@@ -81,7 +77,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
         }
     }
 
-    if (!TActionContext::stopped) {
+    if (!TActionContext::stopped.load()) {
         socket->sendData(header.toByteArray(), body, autoRemove, accessLogger);
     }
     accessLogger.close();  // not write in this thread
@@ -91,7 +87,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 
 void TActionWorker::closeHttpSocket()
 {
-    if (!TActionContext::stopped) {
+    if (!TActionContext::stopped.load()) {
         socket->disconnect();
     }
 }
@@ -109,7 +105,7 @@ void TActionWorker::run()
         TActionContext::execute(req);
         TActionContext::release();
 
-        if (TActionContext::stopped) {
+        if (TActionContext::stopped.load()) {
             break;
         }
     }

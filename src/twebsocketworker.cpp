@@ -125,7 +125,7 @@ void TWebSocketWorker::run()
                     socket_->closing = true;
                 }
 
-                if (socket_->closing && socket_->closeSent) {
+                if (socket_->closing.load() && socket_->closeSent.load()) {
                     // close-frame sent and received
                     socket_->disconnect();
                 } else {

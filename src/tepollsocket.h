@@ -5,8 +5,8 @@
 #include <QByteArray>
 #include <QQueue>
 #include <QHostAddress>
-#include <QAtomicInt>
 #include <TGlobal>
+#include <atomic>
 
 class QHostAddress;
 class QThread;
@@ -49,12 +49,11 @@ protected:
     int recv();
     void enqueueSendData(TSendBuffer *buffer);
     void setSocketDescpriter(int socketDescriptor);
-    int countWorkers() const;
     virtual void *getRecvBuffer(int size) = 0;
     virtual bool seekRecvBuffer(int pos) = 0;
 
-    volatile bool deleting;
-    QAtomicInt myWorkerCounter;
+    std::atomic<bool> deleting;
+    std::atomic<int> myWorkerCounter;
 
 private:
     int sd;
@@ -67,15 +66,5 @@ private:
     friend class TEpoll;
     Q_DISABLE_COPY(TEpollSocket)
 };
-
-
-inline int TEpollSocket::countWorkers() const
-{
-#if QT_VERSION >= 0x050000
-    return myWorkerCounter.load();
-#else
-    return (int)myWorkerCounter;
-#endif
-}
 
 #endif // TEPOLLSOCKET_H

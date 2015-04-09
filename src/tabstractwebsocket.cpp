@@ -24,7 +24,7 @@ TAbstractWebSocket::TAbstractWebSocket()
 
 TAbstractWebSocket::~TAbstractWebSocket()
 {
-    if (!closing) {
+    if (!closing.load()) {
         tSystemWarn("Logic warning  [%s:%d]", __FILE__, __LINE__);
     }
 }
@@ -66,8 +66,7 @@ void TAbstractWebSocket::sendPong()
 
 void TAbstractWebSocket::sendClose(int code)
 {
-    if (!closeSent) {
-        closeSent = true;
+    if (!closeSent.exchange(true)) {
         TWebSocketFrame frame;
         frame.setOpCode(TWebSocketFrame::Close);
         QDataStream ds(&frame.payload(), QIODevice::WriteOnly);

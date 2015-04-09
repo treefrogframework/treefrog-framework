@@ -5,6 +5,7 @@
 #include <QMap>
 #include <TGlobal>
 #include <TAccessLog>
+#include <atomic>
 #include "tdatabasecontext.h"
 
 class QHostAddress;
@@ -42,7 +43,7 @@ protected:
     virtual void closeHttpSocket() { }
     virtual void emitError(int socketError);
 
-    volatile bool stopped;
+    std::atomic<bool> stopped;
     QStringList autoRemoveFiles;
     int socketDesc;
     TAccessLogger accessLogger;

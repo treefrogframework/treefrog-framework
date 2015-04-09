@@ -1,7 +1,7 @@
 #ifndef TATOMICQUEUE_H
 #define TATOMICQUEUE_H
 
-#include <QAtomicPointer>
+#include <atomic>
 #include <QList>
 #include <QMutex>
 #include <QWaitCondition>
@@ -17,7 +17,7 @@ public:
     bool wait(int timeout);
 
 private:
-    QAtomicPointer<QList<T>> queue;
+    std::atomic<void *> queue;
     QMutex mutex;
     QWaitCondition enqued;
 };
@@ -30,12 +30,13 @@ inline void TAtomicQueue<T>::enqueue(const T &t)
     newQue->append(t);
 
     for (;;) {
-        if (queue.testAndSetOrdered(NULL, newQue)) {
+        void *ptr = nullptr;
+        if (queue.compare_exchange_strong(ptr, newQue)) {
             enqued.wakeOne();
             break;
         }
 
-        QList<T> *oldQue = queue.fetchAndStoreOrdered(NULL);
+        QList<T> *oldQue = (QList<T> *)queue.exchange(nullptr);
         if (oldQue) {
             *oldQue << *newQue;
             delete newQue;
@@ -49,7 +50,7 @@ template <class T>
 inline QList<T> TAtomicQueue<T>::dequeue()
 {
     QList<T> ret;
-    QList<T> *ptr = queue.fetchAndStoreOrdered(0);
+    QList<T> *ptr = (QList<T> *)queue.exchange(nullptr);
 
     if (ptr) {
         ret = *ptr;

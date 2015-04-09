@@ -19,7 +19,7 @@ const int BUFFER_RESERVE_SIZE = 127;
 
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
     : QTcpSocket(parent), frames(), uuid(), reqHeader(header), recvBuffer(),
-      myWorkerCounter(0), /*myWorkerCounter2(0),*/ deleting(false)
+      myWorkerCounter(0), deleting(false)
 {
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
@@ -111,9 +111,10 @@ void TWebSocket::startWorkerForOpening(const TSession &session)
 
 void TWebSocket::startWorkerForClosing()
 {
-    if (!TAbstractWebSocket::closing) {
-        TAbstractWebSocket::closing = true;
+    if (!TAbstractWebSocket::closing.exchange(true)) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
+
+ tSystemDebug("TWebSocket::startWorkerForClosing()");
         startWorker(worker);
     }
 }
@@ -121,9 +122,9 @@ void TWebSocket::startWorkerForClosing()
 
 void TWebSocket::startWorker(TWebSocketWorker *worker)
 {
-    worker->moveToThread(thread());
+    worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    myWorkerCounter.fetchAndAddOrdered(1); // count-up
+    ++myWorkerCounter; // count-up
     worker->start();
 }
 
@@ -133,7 +134,7 @@ void TWebSocket::releaseWorker()
     TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
     if (worker) {
         worker->deleteLater();
-        myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
+        --myWorkerCounter;  // count-down
 
         if (deleting.load()) {
             deleteLater();
@@ -144,14 +145,13 @@ void TWebSocket::releaseWorker()
 
 void TWebSocket::deleteLater()
 {
-    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", countWorkers());
+    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", (int)myWorkerCounter);
 
     if (!deleting.exchange(true)) {
         startWorkerForClosing();
-        return;
     }
 
-    if (countWorkers() == 0) {
+    if ((int)myWorkerCounter == 0) {
         QTcpSocket::deleteLater();
     }
 }

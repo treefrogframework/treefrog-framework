@@ -10,6 +10,7 @@
 #include <TGlobal>
 #include <TApplicationServerBase>
 #include <TAccessLog>
+#include <atomic>
 #include "tatomicqueue.h"
 
 class QIODevice;
@@ -39,7 +40,7 @@ signals:
 
 private:
     int maxWorkers;
-    volatile bool stopped;
+    std::atomic<bool> stopped;
     int listenSocket;
 
     TMultiplexingServer(int listeningSocket, QObject *parent = 0);  // Constructor

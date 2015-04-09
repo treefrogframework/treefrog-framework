@@ -9,9 +9,9 @@
 #include <QDateTime>
 #include <QRegExp>
 #include <QStringList>
-#include <QAtomicInt>
 #include <QCoreApplication>
 #include <QtEndian>
+#include <atomic>
 #include "mongo.h"
 
 /*!
@@ -308,9 +308,10 @@ static inline int oidFuzz()
 
 static inline int oidInc()
 {
-    static QAtomicInt incr = Tf::randXor128();
+    static std::atomic<uint> incr(Tf::randXor128());
     int pid = QCoreApplication::applicationPid();
-    return ((pid & 0xFF) << 24) | ((int)incr.fetchAndAddOrdered(1) & 0xFFFFFF);
+    ++incr;
+    return ((pid & 0xFF) << 24) | ((int)incr & 0xFFFFFF);
 }
 
 

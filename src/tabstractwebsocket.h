@@ -4,6 +4,7 @@
 #include <QList>
 #include <QByteArray>
 #include <TGlobal>
+#include <atomic>
 
 class THttpRequestHeader;
 class THttpResponseHeader;
@@ -31,8 +32,8 @@ protected:
     virtual QList<TWebSocketFrame> &websocketFrames() = 0;
     int parse(QByteArray &recvData);
 
-    volatile bool closing;
-    volatile bool closeSent;
+    std::atomic<bool> closing;
+    std::atomic<bool> closeSent;
 
     friend class TWebSocketWorker;
     Q_DISABLE_COPY(TAbstractWebSocket)

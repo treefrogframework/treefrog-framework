@@ -110,7 +110,7 @@ void TEpollHttpSocket::startWorker()
     TActionWorker *worker = new TActionWorker(this);
     worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    myWorkerCounter.fetchAndAddOrdered(1); // count-up
+    ++myWorkerCounter; // count-up
     worker->start();
 }
 
@@ -122,9 +122,9 @@ void TEpollHttpSocket::releaseWorker()
     TActionWorker *worker = qobject_cast<TActionWorker *>(sender());
     if (worker) {
         worker->deleteLater();
-        myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
+        --myWorkerCounter;  // count-down
 
-        if (deleting) {
+        if (deleting.load()) {
             TEpollSocket::deleteLater();
         }
     }

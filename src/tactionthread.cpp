@@ -7,12 +7,12 @@
 
 #include <QCoreApplication>
 #include <QEventLoop>
-#include <QAtomicInt>
 #include <TActionThread>
 #include <TWebApplication>
 #include <THttpRequest>
 #include <TSession>
 #include <TApplicationServerBase>
+#include <atomic>
 #ifndef Q_CC_MSVC
 # include <unistd.h>
 #endif
@@ -21,15 +21,12 @@
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
 
-static QAtomicInt threadCounter;
+static std::atomic<int> threadCounter(0);
+
 
 int TActionThread::threadCount()
 {
-#if QT_VERSION >= 0x050000
     return threadCounter.load();
-#else
-    return (int)threadCounter;
-#endif
 }
 
 
@@ -58,7 +55,7 @@ bool TActionThread::waitForAllDone(int msec)
 TActionThread::TActionThread(int socket)
     : QThread(), TActionContext(), httpSocket(nullptr)
 {
-    threadCounter.fetchAndAddOrdered(1);
+    ++threadCounter;
     TActionContext::socketDesc = socket;
 }
 
@@ -71,7 +68,7 @@ TActionThread::~TActionThread()
     if (TActionContext::socketDesc > 0)
         TF_CLOSE(TActionContext::socketDesc);
 
-    threadCounter.fetchAndAddOrdered(-1);
+    --threadCounter;
 }
 
 

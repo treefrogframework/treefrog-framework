@@ -131,7 +131,7 @@ void TEpollWebSocket::startWorker(TWebSocketWorker *worker)
 {
     worker->moveToThread(thread());
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    myWorkerCounter.fetchAndAddOrdered(1); // count-up
+    ++myWorkerCounter; // count-up
     worker->start();
 }
 
@@ -142,9 +142,9 @@ void TEpollWebSocket::releaseWorker()
     TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
     if (worker) {
         worker->deleteLater();
-        myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
+        --myWorkerCounter;  // count-down
 
-        if (deleting) {
+        if (deleting.load()) {
             TEpollWebSocket::deleteLater();
         }
     }
@@ -153,8 +153,8 @@ void TEpollWebSocket::releaseWorker()
 
 void TEpollWebSocket::deleteLater()
 {
-    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d", countWorkers());
-    if (!deleting) {
+    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d", (int)myWorkerCounter);
+    if (!deleting.load()) {
         startWorkerForClosing();
     }
 
@@ -172,8 +172,7 @@ void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 
 void TEpollWebSocket::startWorkerForClosing()
 {
-    if (!TAbstractWebSocket::closing) {
-        TAbstractWebSocket::closing = true;
+    if (!TAbstractWebSocket::closing.exchange(true)) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
     }

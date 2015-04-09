@@ -6,7 +6,6 @@
  */
 
 #include <TCriteriaConverter>
-#include <QAtomicPointer>
 
 /*!
  * \class TCriteriaConverter<>

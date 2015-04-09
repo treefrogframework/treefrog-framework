@@ -198,7 +198,7 @@ void TMultiplexingServer::run()
         }
 
         // Check stop flag
-        if (stopped) {
+        if (stopped.load()) {
             break;
         }
     }
@@ -210,9 +210,7 @@ void TMultiplexingServer::run()
 
 void TMultiplexingServer::stop()
 {
-    if (!stopped) {
-        stopped = true;
-
+    if (!stopped.exchange(true)) {
         if (isRunning()) {
             QThread::wait(10000);
         }

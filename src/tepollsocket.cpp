@@ -165,7 +165,7 @@ int TEpollSocket::send()
         return 0;
     }
 
-    if (deleting) {
+    if (deleting.load()) {
         return 0;
     }
 
@@ -249,37 +249,37 @@ void TEpollSocket::close()
 
 void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
-    if (!deleting)
+    if (!deleting.load())
         TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
 }
 
 
 void TEpollSocket::sendData(const QByteArray &data)
 {
-    if (!deleting)
+    if (!deleting.load())
         TEpoll::instance()->setSendData(this, data);
 }
 
 
 void TEpollSocket::disconnect()
 {
-    if (!deleting)
+    if (!deleting.load())
         TEpoll::instance()->setDisconnect(this);
 }
 
 
 void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 {
-    if (!deleting)
+    if (!deleting.load())
         TEpoll::instance()->setSwitchToWebSocket(this, header);
 }
 
 
 void TEpollSocket::deleteLater()
 {
-    tSystemDebug("TEpollSocket::deleteLater  countWorker:%d", countWorkers());
+    tSystemDebug("TEpollSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
     deleting = true;
-    if (countWorkers() == 0) {
+    if ((int)myWorkerCounter == 0) {
         QObject::deleteLater();
     }
 }

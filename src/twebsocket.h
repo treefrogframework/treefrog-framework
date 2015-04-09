@@ -4,7 +4,6 @@
 #include <QTcpSocket>
 #include <QList>
 #include <QByteArray>
-#include <QAtomicInt>
 #include <TGlobal>
 #include <THttpRequestHeader>
 #include <atomic>
@@ -23,7 +22,6 @@ public:
     virtual ~TWebSocket();
 
     const QByteArray &socketUuid() const { return uuid; }
-    int countWorkers() const;
     bool canReadRequest() const;
     void disconnect() Q_DECL_OVERRIDE;
 
@@ -51,22 +49,11 @@ private:
     QByteArray uuid;
     THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
-    QAtomicInt myWorkerCounter;
-    //std::atomic_int myWorkerCounter2;
+    std::atomic<int> myWorkerCounter;
     std::atomic<bool> deleting;
 
     friend class TActionThread;
     Q_DISABLE_COPY(TWebSocket)
 };
-
-
-inline int TWebSocket::countWorkers() const
-{
-#if QT_VERSION >= 0x050000
-    return myWorkerCounter.load();
-#else
-    return (int)myWorkerCounter;
-#endif
-}
 
 #endif // TWEBSOCKET_H

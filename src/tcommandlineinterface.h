@@ -6,8 +6,8 @@
 #include <TWebApplication>
 #include <TActionThread>
 #include <TSystemGlobal>
-#include <TSqlDatabasePool2>
-#include <TKvsDatabasePool2>
+#include <TSqlDatabasePool>
+#include <TKvsDatabasePool>
 
 
 #define TF_CLI_MAIN(STATICFUNCTION) \
@@ -43,8 +43,8 @@
      int idx = QCoreApplication::arguments().indexOf("-e"); \
      QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product"); \
      app.setDatabaseEnvironment(env); \
-     TSqlDatabasePool2::instantiate(1); \
-     TKvsDatabasePool2::instantiate(1); \
+     TSqlDatabasePool::instantiate(1); \
+     TKvsDatabasePool::instantiate(1); \
      Thread thread; \
      QObject::connect(&thread, SIGNAL(finished()), &app, SLOT(quit())); \
      thread.start(); \
