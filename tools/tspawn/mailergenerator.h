@@ -8,13 +8,12 @@
 class MailerGenerator
 {
 public:
-    MailerGenerator(const QString &name, const QStringList &actions, const QString &dst);
-    bool generate() const;
+    MailerGenerator(const QString &name, const QStringList &actions);
+    bool generate(const QString &dst) const;
 
 private:
     QString mailerName;
     QStringList actionList;
-    QDir dstDir;
 };
 
 #endif // MAILERGENERATOR_H

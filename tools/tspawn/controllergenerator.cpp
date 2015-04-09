@@ -293,7 +293,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         // Generates a controller source code
         QString actimpl;
         for (QStringListIterator i(actionList); i.hasNext(); ) {
-            actimpl.append("void ").append(controllerName).append("Controller::").append(i.next()).append("()\n{\n    // write codes\n}\n\n");
+            actimpl.append("void ").append(controllerName).append("Controller::").append(i.next()).append("()\n{\n    // write code\n}\n\n");
         }
         code = QString(CONTROLLER_TINY_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, actimpl);
         fws.write(code, false);

@@ -36,17 +36,17 @@
     "}\n"
 
 
-ValidatorGenerator::ValidatorGenerator(const QString &validator, const QString &dst)
-    : dstDir(dst)
+ValidatorGenerator::ValidatorGenerator(const QString &validator)
 {
     name = fieldNameToEnumName(validator);
     name.remove(QRegExp("validator$", Qt::CaseInsensitive));
 }
 
 
-bool ValidatorGenerator::generate() const
+bool ValidatorGenerator::generate(const QString &dst) const
 {
     // Writes each files
+    QDir dstDir(dst);
     QString output = QString(VALIDATOR_HEADER_TEMPLATE).arg(name.toUpper()).arg(name);
     FileWriter(dstDir.filePath(name.toLower() + "validator.h")).write(output, false);
 

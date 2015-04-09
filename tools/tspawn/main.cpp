@@ -11,9 +11,10 @@
 #include "modelgenerator.h"
 #include "sqlobjgenerator.h"
 #include "mongoobjgenerator.h"
+#include "websocketgenerator.h"
+#include "validatorgenerator.h"
 #include "otamagenerator.h"
 #include "erbgenerator.h"
-#include "validatorgenerator.h"
 #include "mailergenerator.h"
 #include "projectfilegenerator.h"
 #include "tableschema.h"
@@ -41,6 +42,7 @@ enum SubCommand {
     SqlObject,
     MongoScaffold,
     MongoModel,
+    WebSocketEndpoint,
     Validator,
     Mailer,
     Scaffold,
@@ -72,6 +74,8 @@ public:
         insert("ms", MongoScaffold);
         insert("mongomodel", MongoModel);
         insert("mm", MongoModel);
+        insert("websocket", WebSocketEndpoint);
+        insert("w", WebSocketEndpoint);
         insert("validator", Validator);
         insert("v", Validator);
         insert("mailer", Mailer);
@@ -134,8 +138,6 @@ public:
         append(L("appbase.pri"));
         append(L("controllers") + SEP + "applicationcontroller.h");
         append(L("controllers") + SEP + "applicationcontroller.cpp");
-        append(L("controllers") + SEP + "applicationendpoint.h");
-        append(L("controllers") + SEP + "applicationendpoint.cpp");
         append(L("controllers") + SEP + "controllers.pro");
         append(L("models") + SEP + "models.pro");
         append(L("views") + SEP + "views.pro");
@@ -185,6 +187,7 @@ static void usage()
            "  sqlobject (o)   <table-name> [model-name]\n"         \
            "  mongoscaffold (ms) <model-name>\n"                   \
            "  mongomodel (mm) <model-name>\n"                      \
+           "  websocket (w)   <endpoint-name>\n"                   \
            "  validator (v)   <name>\n"                            \
            "  mailer (l)      <mailer-name> action [action ...]\n" \
            "  delete (d)      <table-name or validator-name>\n");
@@ -634,14 +637,32 @@ int main(int argc, char *argv[])
             modelgen.generate(D_MODELS);
             break; }
 
+        case WebSocketEndpoint: {
+            const QString appendpointfiles[] = { L("controllers") + SEP + "applicationendpoint.h",
+                                                 L("controllers") + SEP + "applicationendpoint.cpp" };
+
+            ProjectFileGenerator progen(D_CTRLS + "controllers.pro");
+
+            for (auto &dst : appendpointfiles) {
+                if (!QFile::exists(dst)) {
+                    QString filename = QFileInfo(dst).fileName();
+                    copy(dataDirPath + filename, dst);
+                    progen.add(QStringList(filename));
+                }
+            }
+
+            WebSocketGenerator wsgen(args.value(2));
+            wsgen.generate(D_CTRLS);
+            break; }
+
         case Validator: {
-            ValidatorGenerator validgen(args.value(2), D_HELPERS);
-            validgen.generate();
+            ValidatorGenerator validgen(args.value(2));
+            validgen.generate(D_HELPERS);
             break; }
 
         case Mailer: {
-            MailerGenerator mailgen(args.value(2), args.mid(3), D_CTRLS);
-            mailgen.generate();
+            MailerGenerator mailgen(args.value(2), args.mid(3));
+            mailgen.generate(D_CTRLS);
             copy(dataDirPath + "mail.erb", D_VIEWS + "mailer" + SEP +"mail.erb");
             break; }
 

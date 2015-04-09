@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -33,20 +33,21 @@
     "%2\n"
 
 
-MailerGenerator::MailerGenerator(const QString &name, const QStringList &actions, const QString &dst)
-    :  actionList(actions), dstDir(dst)
+MailerGenerator::MailerGenerator(const QString &name, const QStringList &actions)
+    :  actionList(actions)
 {
     mailerName = fieldNameToEnumName(name);
 }
 
 
-bool MailerGenerator::generate() const
+bool MailerGenerator::generate(const QString &dst) const
 {
     if (actionList.isEmpty()) {
         qCritical("Bad parameter: Action name empty");
         return false;
     }
 
+    QDir dstDir(dst);
     QStringList files;
     FileWriter fwh(dstDir.filePath(mailerName.toLower() + "mailer.h"));
     FileWriter fws(dstDir.filePath(mailerName.toLower() + "mailer.cpp"));
@@ -56,15 +57,15 @@ bool MailerGenerator::generate() const
     for (QStringListIterator i(actionList); i.hasNext(); ) {
         act.append("    void ").append(i.next()).append("();\n");
     }
-    
+
     QString code = QString(MAILER_HEADER_FILE_TEMPLATE).arg(mailerName.toUpper(), mailerName, act);
     fwh.write(code, false);
     files << fwh.fileName();
-    
+
     // Generates a mailer source code
     QString actimpl;
     for (QStringListIterator i(actionList); i.hasNext(); ) {
-        actimpl.append("void ").append(mailerName).append("Mailer::").append(i.next()).append("()\n{\n    //\n    // write codes\n    //\n\n    deliver(\"mail\");\n}\n\n");
+        actimpl.append("void ").append(mailerName).append("Mailer::").append(i.next()).append("()\n{\n    //\n    // write code\n    //\n\n    deliver(\"mail\");\n}\n\n");
     }
     code = QString(MAILER_SOURCE_FILE_TEMPLATE).arg(mailerName.toLower(), actimpl);
     fws.write(code, false);

@@ -7,12 +7,11 @@
 class ValidatorGenerator
 {
 public:
-    ValidatorGenerator(const QString &validator, const QString &dst);
-    bool generate() const;
+    ValidatorGenerator(const QString &validator);
+    bool generate(const QString &dst) const;
 
 private:
     QString name;
-    QDir dstDir;
 };
 
 #endif // VALIDATORGENERATOR_H
