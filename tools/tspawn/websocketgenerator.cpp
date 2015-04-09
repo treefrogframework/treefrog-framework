@@ -43,7 +43,7 @@
     "void %2Endpoint::onOpen(const TSession &)\n"                       \
     "{ }\n"                                                             \
     "\n"                                                                \
-    "void %2Endpoint::onClose(int closeCode)\n"                         \
+    "void %2Endpoint::onClose(int)\n"                                   \
     "{ }\n"                                                             \
     "\n"                                                                \
     "void %2Endpoint::onTextReceived(const QString &)\n"                \

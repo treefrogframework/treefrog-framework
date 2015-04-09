@@ -12,7 +12,7 @@ ApplicationEndpoint::ApplicationEndpoint(const ApplicationEndpoint &)
 void ApplicationEndpoint::onOpen(const TSession &)
 { }
 
-void ApplicationEndpoint::onClose()
+void ApplicationEndpoint::onClose(int)
 { }
 
 void ApplicationEndpoint::onTextReceived(const QString &)
