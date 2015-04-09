@@ -53,7 +53,7 @@ private:
     QByteArray recvBuffer;
     QAtomicInt myWorkerCounter;
     //std::atomic_int myWorkerCounter2;
-    std::atomic_bool deleting;
+    std::atomic<bool> deleting;
 
     friend class TActionThread;
     Q_DISABLE_COPY(TWebSocket)
