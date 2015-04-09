@@ -79,7 +79,7 @@ QByteArray TEpollWebSocket::readBinaryRequest()
             break;
         }
     }
-    tSystemDebug("readBinaryRequest: %s", ret.data());
+    tSystemDebug("readBinaryRequest: payload len:%d", ret.length());
     return ret;
 }
 
@@ -120,12 +120,19 @@ void TEpollWebSocket::startWorker()
     do {
         TWebSocketFrame::OpCode opcode = frames.first().opCode();
         QByteArray binary = readBinaryRequest();
-        TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), opcode, binary);
-        worker->moveToThread(Tf::app()->thread());
-        connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-        myWorkerCounter.fetchAndAddOrdered(1); // count-up
-        worker->start();
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
+        worker->setPayload(opcode, binary);
+        startWorker(worker);
     } while (canReadRequest());
+}
+
+
+void TEpollWebSocket::startWorker(TWebSocketWorker *worker)
+{
+    worker->moveToThread(thread());
+    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
+    myWorkerCounter.fetchAndAddOrdered(1); // count-up
+    worker->start();
 }
 
 
@@ -138,19 +145,38 @@ void TEpollWebSocket::releaseWorker()
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
 
         if (deleting) {
-            TEpollSocket::deleteLater();
+            TEpollWebSocket::deleteLater();
         }
     }
 }
 
 
+void TEpollWebSocket::deleteLater()
+{
+    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d", countWorkers());
+    if (!deleting) {
+        startWorkerForClosing();
+    }
+
+    TEpollSocket::deleteLater();
+}
+
+
 void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), session);
-    worker->moveToThread(Tf::app()->thread());
-    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    myWorkerCounter.fetchAndAddOrdered(1); // count-up
-    worker->start();
+    TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Opening, this, reqHeader.path());
+    worker->setSession(session);
+    startWorker(worker);
+}
+
+
+void TEpollWebSocket::startWorkerForClosing()
+{
+    if (!TAbstractWebSocket::closing) {
+        TAbstractWebSocket::closing = true;
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
+        startWorker(worker);
+    }
 }
 
 

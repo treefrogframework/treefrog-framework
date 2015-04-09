@@ -14,20 +14,29 @@ class T_CORE_EXPORT TWebSocketWorker : public QThread, public TDatabaseContext
 {
     Q_OBJECT
 public:
-    TWebSocketWorker(TAbstractWebSocket *socket, const QByteArray &path, const TSession &session, QObject *parent = 0);
-    TWebSocketWorker(TAbstractWebSocket *socket, const QByteArray &path, TWebSocketFrame::OpCode opCode,
-                     const QByteArray &data, QObject *parent = 0);
+    enum RunMode {
+        Opening,
+        Sending,
+        Receiving,
+        Closing,
+    };
+
+    TWebSocketWorker(RunMode mode, TAbstractWebSocket *socket, const QByteArray &path, QObject *parent = 0);
     virtual ~TWebSocketWorker();
+
+    void setPayload(TWebSocketFrame::OpCode opCode, const QByteArray &data);
+    void setSession(const TSession &session);
 
 protected:
     void run();
 
 private:
-    TAbstractWebSocket *socket;
-    TSession sessionStore;
-    QByteArray requestPath;
-    TWebSocketFrame::OpCode opcode;
-    QByteArray requestData;
+    RunMode mode_;
+    TAbstractWebSocket *socket_;
+    TSession sessionStore_;
+    QByteArray requestPath_;
+    TWebSocketFrame::OpCode opcode_;
+    QByteArray requestData_;
 };
 
 #endif // TWEBSOCKETWORKER_H

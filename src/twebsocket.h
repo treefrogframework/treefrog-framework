@@ -7,9 +7,11 @@
 #include <QAtomicInt>
 #include <TGlobal>
 #include <THttpRequestHeader>
+#include <atomic>
 #include "tabstractwebsocket.h"
 
 class TWebSocketFrame;
+class TWebSocketWorker;
 class TSession;
 
 
@@ -34,6 +36,7 @@ public slots:
 
 protected:
     void startWorkerForOpening(const TSession &session);
+    void startWorkerForClosing();
     virtual qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
     virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
     QList<TWebSocketFrame> frames;
@@ -43,11 +46,14 @@ signals:
     void disconnectByWorker();
 
 private:
+    void startWorker(TWebSocketWorker *worker);
+
     QByteArray uuid;
     THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
     QAtomicInt myWorkerCounter;
-    volatile bool deleting;
+    //std::atomic_int myWorkerCounter2;
+    std::atomic_bool deleting;
 
     friend class TActionThread;
     Q_DISABLE_COPY(TWebSocket)

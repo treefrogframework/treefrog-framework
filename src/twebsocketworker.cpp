@@ -14,20 +14,10 @@
 #include "tabstractwebsocket.h"
 
 
-TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const QByteArray &path, const TSession &session, QObject *parent)
-    : QThread(parent), TDatabaseContext(), socket(s), sessionStore(session),
-      requestPath(path), opcode(TWebSocketFrame::Continuation), requestData()
-{
-    tSystemDebug("TWebSocketWorker::TWebSocketWorker");
-}
+TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
+    : QThread(parent), TDatabaseContext(), mode_(m), socket_(s), requestPath_(path)
+{ }
 
-
-TWebSocketWorker::TWebSocketWorker(TAbstractWebSocket *s, const QByteArray &path, TWebSocketFrame::OpCode opCode, const QByteArray &data, QObject *parent)
-    : QThread(parent), TDatabaseContext(), socket(s), sessionStore(), requestPath(path),
-      opcode(opCode), requestData(data)
-{
-    tSystemDebug("TWebSocketWorker::TWebSocketWorker");
-}
 
 TWebSocketWorker::~TWebSocketWorker()
 {
@@ -35,40 +25,70 @@ TWebSocketWorker::~TWebSocketWorker()
 }
 
 
+void TWebSocketWorker::setPayload(TWebSocketFrame::OpCode opCode, const QByteArray &payload)
+{
+    opcode_ = opCode;
+    requestData_ = payload;
+}
+
+
+void TWebSocketWorker::setSession(const TSession &session)
+{
+    sessionStore_ = session;
+}
+
+
 void TWebSocketWorker::run()
 {
-    QString es = TUrlRoute::splitPath(requestPath).value(0).toLower() + "endpoint";
+    QString es = TUrlRoute::splitPath(requestPath_).value(0).toLower() + "endpoint";
     TDispatcher<TWebSocketEndpoint> dispatcher(es);
     TWebSocketEndpoint *endpoint = dispatcher.object();
+    if (!endpoint) {
+        return;
+    }
+
     try {
-        if (endpoint) {
-            tSystemDebug("Found endpoint: %s", qPrintable(es));
-            tSystemDebug("TWebSocketWorker opcode: %d", opcode);
+        tSystemDebug("Found endpoint: %s", qPrintable(es));
+        tSystemDebug("TWebSocketWorker opcode: %d", opcode_);
 
-            // Database Transaction
-            setTransactionEnabled(endpoint->transactionEnabled());
+        // Database Transaction
+        setTransactionEnabled(endpoint->transactionEnabled());
 
-            switch (opcode) {
-            case TWebSocketFrame::Continuation:   // means session opening
-                if (sessionStore.id().isEmpty()) {
-                    endpoint->onOpen(sessionStore);
-                } else {
-                    tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
-                }
-                break;
+        switch (mode_) {
+        case Opening:
+            endpoint->onOpen(sessionStore_);
+            break;
 
+        case Sending:
+            break;
+
+        case Closing:
+            endpoint->onClose(Tf::GoingAway);
+            goto transaction_cleanup;
+            break;
+
+        case Receiving: {
+
+            switch (opcode_) {
             case TWebSocketFrame::TextFrame:
-                endpoint->onTextReceived(QString::fromUtf8(requestData));
+                endpoint->onTextReceived(QString::fromUtf8(requestData_));
                 break;
 
             case TWebSocketFrame::BinaryFrame:
-                endpoint->onBinaryReceived(requestData);
+                endpoint->onBinaryReceived(requestData_);
                 break;
 
-            case TWebSocketFrame::Close:
-                endpoint->onClose();
-                endpoint->closeWebSocket();
-                break;
+            case TWebSocketFrame::Close: {
+                quint16 closeCode = Tf::GoingAway;
+                if (requestData_.length() >= 2) {
+                    QDataStream ds(&requestData_, QIODevice::ReadOnly);
+                    ds.setByteOrder(QDataStream::BigEndian);
+                    ds >> closeCode;
+                }
+
+                endpoint->onClose(closeCode);
+                endpoint->close(closeCode);  // close response
+                break; }
 
             case TWebSocketFrame::Ping:
                 endpoint->onPing();
@@ -80,57 +100,72 @@ void TWebSocketWorker::run()
                 break;
 
             default:
-                tWarn("Invalid opcode: 0x%x  [%s:%d]", (int)opcode, __FILE__, __LINE__);
+                tSystemWarn("Invalid opcode: 0x%x  [%s:%d]", (int)opcode_, __FILE__, __LINE__);
                 break;
             }
+            break; }
 
-            // Sends payload
-            for (const QVariant &var : endpoint->payloadList) {
-                switch (var.type()) {
-                case QVariant::String:
-                    socket->sendText(var.toString());
+        default:
+            break;
+        }
+
+        // Sends payload
+        for (const QVariant &var : endpoint->payloadList) {
+            switch (var.type()) {
+            case QVariant::String:
+                socket_->sendText(var.toString());
+                break;
+
+            case QVariant::ByteArray:
+                socket_->sendBinary(var.toByteArray());
+                break;
+
+            case QVariant::UInt:
+                if (opcode_ == TWebSocketFrame::Close) {
+                    socket_->closing = true;
+                }
+
+                if (socket_->closing && socket_->closeSent) {
+                    // close-frame sent and received
+                    socket_->disconnect();
+                } else {
+                    uint closeCode = var.toUInt();
+                    socket_->sendClose(closeCode);
+                }
+                break;
+
+            case QVariant::Int: {
+
+                int rescode = var.toInt();
+                switch (rescode) {
+                case TWebSocketFrame::Ping:
+                    socket_->sendPing();
                     break;
 
-                case QVariant::ByteArray:
-                    socket->sendBinary(var.toByteArray());
+                case TWebSocketFrame::Pong:
+                    socket_->sendPong();
                     break;
-
-                case QVariant::Int: {
-
-                    int opcode = var.toInt();
-                    switch (opcode) {
-                    case TWebSocketFrame::Close:
-                        socket->disconnect();
-                        break;
-
-                    case TWebSocketFrame::Ping:
-                        socket->sendPing();
-                        break;
-
-                    case TWebSocketFrame::Pong:
-                        socket->sendPong();
-                        break;
-
-                    default:
-                        tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
-                        break;
-                    }
-
-                    break; }
 
                 default:
-                    tError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                    tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
                     break;
                 }
-            }
 
-            // transaction
-            if (Q_UNLIKELY(endpoint->rollbackRequested())) {
-                rollbackTransactions();
-            } else {
-                // Commits a transaction to the database
-                commitTransactions();
+                break; }
+
+            default:
+                tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                break;
             }
+        }
+
+    transaction_cleanup:
+        // transaction
+        if (Q_UNLIKELY(endpoint->rollbackRequested())) {
+            rollbackTransactions();
+        } else {
+            // Commits a transaction to the database
+            commitTransactions();
         }
 
     } catch (ClientErrorException &e) {

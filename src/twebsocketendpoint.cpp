@@ -11,7 +11,7 @@
 
 
 TWebSocketEndpoint::TWebSocketEndpoint()
-    : ctrlName(), payloadList(), rollback(false)
+    : payloadList(), rollback(false)
 { }
 
 void TWebSocketEndpoint::onOpen(const TSession &session)
@@ -20,8 +20,10 @@ void TWebSocketEndpoint::onOpen(const TSession &session)
 }
 
 
-void TWebSocketEndpoint::onClose()
-{ }
+void TWebSocketEndpoint::onClose(int closeCode)
+{
+    Q_UNUSED(closeCode);
+}
 
 
 void TWebSocketEndpoint::onTextReceived(const QString &text)
@@ -46,10 +48,7 @@ void TWebSocketEndpoint::onPong()
 
 QString TWebSocketEndpoint::name() const
 {
-    if (ctrlName.isEmpty()) {
-        ctrlName = className().remove(QRegExp("Controller$"));
-    }
-    return ctrlName;
+    return className().remove(QRegExp("Endpoint$"));
 }
 
 
@@ -77,9 +76,9 @@ void TWebSocketEndpoint::sendPong()
 }
 
 
-void TWebSocketEndpoint::closeWebSocket()
+void TWebSocketEndpoint::close(int closeCode)
 {
-    payloadList << QVariant((int)TWebSocketFrame::Close);
+    payloadList << QVariant((uint)closeCode);
 }
 
 

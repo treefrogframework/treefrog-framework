@@ -192,6 +192,25 @@ namespace Tf
         ActionMailerSmtpPopServerEnableApop,
         ActionMailerSendmailCommandLocation,
     };
+
+    // Reason codes why a web socket has been closed
+    enum CloseCode {
+        NormalClosure           = 1000,
+        GoingAway               = 1001,
+        ProtocolError           = 1002,
+        UnsupportedData         = 1003,
+        Reserved                = 1004,
+        NoStatusRcvd            = 1005,
+        AbnormalClosure         = 1006,
+        InvalidFramePayloadData = 1007,
+        PolicyViolation         = 1008,
+        MessageTooBig           = 1009,
+        MandatoryExtension      = 1010,
+        InternalError           = 1011,
+        ServiceRestart          = 1012,
+        TryAgainLater           = 1013,
+        TLSHandshake            = 1015,
+    };
 }
 
 

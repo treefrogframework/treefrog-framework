@@ -12,6 +12,7 @@
 #include <sys/epoll.h>
 #include <TWebApplication>
 #include <THttpRequestHeader>
+#include <TApplicationServerBase>
 #include <TSession>
 #include "tepoll.h"
 #include "tepollsocket.h"
@@ -230,14 +231,13 @@ void TEpoll::dispatchSendData()
 
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
             tSystemDebug("secKey: %s", secKey.data());
-            TEpollWebSocket *ws = new TEpollWebSocket(sock->socketDescriptor(), sock->peerAddress(), sd->header);
-            ws->moveToThread(Tf::app()->thread());
-
+            int newsocket = TApplicationServerBase::duplicateSocket(sock->socketDescriptor());
             deletePoll(sock);
-            sock->setSocketDescpriter(0);  // Delegates to new websocket
             sock->deleteLater();
 
             // Switch to WebSocket
+            TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), sd->header);
+            ws->moveToThread(Tf::app()->thread());
             THttpResponseHeader response = TEpollWebSocket::handshakeResponse(sd->header);
             ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
             addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset

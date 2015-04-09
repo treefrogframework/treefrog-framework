@@ -20,9 +20,9 @@ public:
     void sendBinary(const QByteArray &binary);
     void sendPing();
     void sendPong();
+    void close(int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
     bool rollbackRequested() const;
-    void closeWebSocket();
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);
@@ -30,7 +30,7 @@ public:
 
 protected:
     virtual void onOpen(const TSession &session);
-    virtual void onClose();
+    virtual void onClose(int closeCode);
     virtual void onTextReceived(const QString &text);
     virtual void onBinaryReceived(const QByteArray &binary);
     virtual void onPing();
@@ -38,7 +38,6 @@ protected:
     virtual bool transactionEnabled() const;
 
 private:
-    mutable QString ctrlName;
     QVariantList payloadList;
     bool rollback;
 

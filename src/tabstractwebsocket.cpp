@@ -17,8 +17,17 @@
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
-TAbstractWebSocket::~TAbstractWebSocket()
+TAbstractWebSocket::TAbstractWebSocket()
+    : closing(false), closeSent(false)
 { }
+
+
+TAbstractWebSocket::~TAbstractWebSocket()
+{
+    if (!closing) {
+        tSystemWarn("Logic warning  [%s:%d]", __FILE__, __LINE__);
+    }
+}
 
 
 void TAbstractWebSocket::sendText(const QString &message)
@@ -52,6 +61,20 @@ void TAbstractWebSocket::sendPong()
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::Pong);
     writeRawData(frame.toByteArray());
+}
+
+
+void TAbstractWebSocket::sendClose(int code)
+{
+    if (!closeSent) {
+        closeSent = true;
+        TWebSocketFrame frame;
+        frame.setOpCode(TWebSocketFrame::Close);
+        QDataStream ds(&frame.payload(), QIODevice::WriteOnly);
+        ds.setByteOrder(QDataStream::BigEndian);
+        ds << (qint16)code;
+        writeRawData(frame.toByteArray());
+    }
 }
 
 

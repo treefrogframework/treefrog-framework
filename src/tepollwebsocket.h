@@ -8,6 +8,7 @@
 #include "tabstractwebsocket.h"
 
 class QHostAddress;
+class TWebSocketWorker;
 class TWebSocketFrame;
 class TSession;
 
@@ -24,9 +25,11 @@ public:
     virtual bool canReadRequest();
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);
+    void startWorkerForClosing();
     void disconnect() Q_DECL_OVERRIDE;
 
 public slots:
+    void deleteLater();
     void releaseWorker();
 
 protected:
@@ -37,6 +40,8 @@ protected:
     void clear();
 
 private:
+    void startWorker(TWebSocketWorker *worker);
+
     THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
     QList<TWebSocketFrame> frames;

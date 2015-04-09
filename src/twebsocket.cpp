@@ -19,7 +19,7 @@ const int BUFFER_RESERVE_SIZE = 127;
 
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
     : QTcpSocket(parent), frames(), uuid(), reqHeader(header), recvBuffer(),
-      myWorkerCounter(0), deleting(false)
+      myWorkerCounter(0), /*myWorkerCounter2(0),*/ deleting(false)
 {
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
@@ -94,32 +94,37 @@ void TWebSocket::readRequest()
         }
 
         // Starts worker thread
-        TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), opcode, binary);
-        worker->moveToThread(Tf::app()->thread());
-        connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-        myWorkerCounter.fetchAndAddOrdered(1); // count-up
-        worker->start();
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
+        worker->setPayload(opcode, binary);
+        startWorker(worker);
     }
 }
 
 
 void TWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWebSocketWorker *worker = new TWebSocketWorker(this, reqHeader.path(), session);
-    worker->moveToThread(Tf::app()->thread());
-    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    myWorkerCounter.fetchAndAddOrdered(1); // count-up
-    worker->start();
+    TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Opening, this, reqHeader.path());
+    worker->setSession(session);
+    startWorker(worker);
 }
 
 
-void TWebSocket::deleteLater()
+void TWebSocket::startWorkerForClosing()
 {
-    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", countWorkers());
-    deleting = true;
-    if (countWorkers() == 0) {
-        QTcpSocket::deleteLater();
+    if (!TAbstractWebSocket::closing) {
+        TAbstractWebSocket::closing = true;
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
+        startWorker(worker);
     }
+}
+
+
+void TWebSocket::startWorker(TWebSocketWorker *worker)
+{
+    worker->moveToThread(thread());
+    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
+    myWorkerCounter.fetchAndAddOrdered(1); // count-up
+    worker->start();
 }
 
 
@@ -130,9 +135,24 @@ void TWebSocket::releaseWorker()
         worker->deleteLater();
         myWorkerCounter.fetchAndAddOrdered(-1);  // count-down
 
-        if (deleting) {
+        if (deleting.load()) {
             deleteLater();
         }
+    }
+}
+
+
+void TWebSocket::deleteLater()
+{
+    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", countWorkers());
+
+    if (!deleting.exchange(true)) {
+        startWorkerForClosing();
+        return;
+    }
+
+    if (countWorkers() == 0) {
+        QTcpSocket::deleteLater();
     }
 }
 
@@ -144,7 +164,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
     qint64 total = 0;
     for (;;) {
-        if (deleting)
+        if (deleting.load())
             return;
 
         qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));

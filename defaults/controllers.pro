@@ -13,5 +13,3 @@ include(../appbase.pri)
 
 HEADERS += applicationcontroller.h
 SOURCES += applicationcontroller.cpp
-HEADERS += applicationendpoint.h
-SOURCES += applicationendpoint.cpp
