@@ -26,10 +26,11 @@ protected:
     void releaseKvsDatabases();
     void releaseSqlDatabases();
 
-private:
-    TSqlTransaction transactions;
     QMap<int, QSqlDatabase> sqlDatabases;
     QMap<int, TKvsDatabase> kvsDatabases;
+
+private:
+    TSqlTransaction transactions;
 
     Q_DISABLE_COPY(TDatabaseContext)
 };

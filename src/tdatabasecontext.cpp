@@ -21,9 +21,9 @@
 */
 
 TDatabaseContext::TDatabaseContext()
-    : transactions(),
-      sqlDatabases(),
-      kvsDatabases()
+    : sqlDatabases(),
+      kvsDatabases(),
+      transactions()
 { }
 
 

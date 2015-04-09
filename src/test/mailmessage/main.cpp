@@ -1,4 +1,4 @@
-﻿#include <QTest>
+﻿#include <TfTest/TfTest>
 #include <THttpUtility>
 #include "tmailmessage.h"
 
@@ -203,5 +203,5 @@ void TestMailMessage::parse()
     QCOMPARE(mail.recipients().count(), 3);
 }
 
-QTEST_MAIN(TestMailMessage)
+TF_TEST_MAIN(TestMailMessage)
 #include "main.moc"
