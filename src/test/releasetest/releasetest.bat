@@ -23,6 +23,7 @@ sqlite3.exe %DBFILE% < create_blog_table.sql
 
 cd %APPNAME%
 tspawn s blog
+tspawn w foo
 qmake -r CONFIG+=release
 %MAKE%
 if ERRORLEVEL 1 (
