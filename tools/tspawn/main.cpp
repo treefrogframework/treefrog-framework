@@ -136,10 +136,14 @@ public:
     FilePaths() : QStringList()
     {
         append(L("appbase.pri"));
+        append(L("controllers") + SEP + "controllers.pro");
         append(L("controllers") + SEP + "applicationcontroller.h");
         append(L("controllers") + SEP + "applicationcontroller.cpp");
-        append(L("controllers") + SEP + "controllers.pro");
         append(L("models") + SEP + "models.pro");
+#ifdef Q_OS_WIN
+        append(L("models") + SEP + "_dummymodel.h");
+        append(L("models") + SEP + "_dummymodel.cpp");
+#endif
         append(L("views") + SEP + "views.pro");
         append(L("views") + SEP + "_src" + SEP + "_src.pro");
         append(L("views") + SEP + "mailer" + SEP + ".trim_mode");
@@ -335,6 +339,13 @@ static bool createNewApplication(const QString &name)
         }
     }
 
+#ifdef Q_OS_WIN
+    // Add dummy model files
+    ProjectFileGenerator progen(name + SEP + D_MODELS + "models.pro");
+    QStringList dummy = { "_dummymodel.h", "_dummymodel.cpp" };
+    progen.add(dummy);
+#endif
+
     return true;
 }
 
@@ -441,7 +452,7 @@ static void printSuccessMessage(const QString &model)
         cmd.waitForFinished();
 
         // `make qmake`
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
         cmd.start("mingw32-make", QStringList("qmake"));
 #else
         cmd.start("make", QStringList("qmake"));

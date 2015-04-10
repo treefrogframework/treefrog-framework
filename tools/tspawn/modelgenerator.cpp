@@ -11,6 +11,7 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "filewriter.h"
+#include "util.h"
 
 #define USER_VIRTUAL_METHOD  "identityKey"
 #define LOCK_REVISION_FIELD "lockRevision"
@@ -369,7 +370,23 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 
     // Generates a project file
     ProjectFileGenerator progen(QDir(dstDir).filePath("models.pro"));
-    return progen.add(files);
+    bool ret = progen.add(files);
+
+#ifdef Q_OS_WIN
+    if (ret) {
+        // Deletes dummy models
+        QStringList dummy = { "_dummymodel.h", "_dummymodel.cpp" };
+        bool rmd = false;
+        for (auto &f : dummy) {
+            rmd |= ::remove(QDir(dstDir).filePath(f));
+        }
+        if (rmd) {
+            progen.remove(dummy);
+        }
+    }
+#endif
+
+    return ret;
 }
 
 

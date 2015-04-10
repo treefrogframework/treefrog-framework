@@ -16,7 +16,7 @@ unix {
 }
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin

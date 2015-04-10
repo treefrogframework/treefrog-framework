@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -44,6 +44,12 @@ bool rmpath(const QString &path)
 }
 
 
+bool remove(const QString &file)
+{
+    return remove(QFile(file));
+}
+
+
 bool remove(QFile &file)
 {
     bool ret = file.remove();
@@ -59,14 +65,14 @@ bool replaceString(const QString &fileName, const QByteArray &before, const QByt
     QFile file(fileName);
     if (!file.exists() || !file.open(QIODevice::ReadOnly))
         return false;
-    
+
     QByteArray text = file.readAll();
     text.replace(before, after);
     file.close();
-    
+
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return false;
-    
+
     file.write(text);
     file.close();
     return true;

@@ -10,9 +10,9 @@ public:
     ProjectFileGenerator(const QString &path) : filePath(path) { }
     QString path() const { return filePath; }
     bool exists() const;
-    bool add(const QStringList &files);
-    bool remove(const QStringList &files);
-    
+    bool add(const QStringList &files) const;
+    bool remove(const QStringList &files) const;
+
 private:
     QString filePath;
 };

@@ -11,7 +11,7 @@ INCLUDEPATH += $$header.path
 include(../../tfbase.pri)
 
 isEmpty( datadir ) {
-  win32 {
+  windows {
     datadir = C:/TreeFrog/$${TF_VERSION}
   } else {
     datadir = /usr/share/treefrog
@@ -19,7 +19,7 @@ isEmpty( datadir ) {
 }
 DEFINES += TREEFROG_DATA_DIR=\\\"$$datadir\\\"
 
-win32 {
+windows {
   CONFIG(debug, debug|release) {
     LIBS += -ltreefrogd$${TF_VER_MAJ}
   } else {
@@ -38,7 +38,7 @@ win32 {
 }
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin
@@ -72,10 +72,14 @@ defaults.files += defaults/mongodb.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
 defaults.files += defaults/views.pro
+windows {
+  defaults.files += defaults/_dummymodel.h
+  defaults.files += defaults/_dummymodel.cpp
+}
 defaults.path = $${datadir}/defaults
 INSTALLS += target defaults
 
-win32 {
+windows {
   clientlib.files += ../../sqldrivers/clientlib/COPYING_3RD_PARTY_DLL
   clientlib.files += ../../sqldrivers/clientlib/libintl.dll
   clientlib.files += ../../sqldrivers/clientlib/libmariadb.dll
@@ -89,7 +93,7 @@ win32 {
 # Erases CR codes on UNIX
 !exists(defaults) : system( mkdir defaults )
 for(F, defaults.files) {
-  win32 {
+  windows {
     F = $$replace(F, /, \\)
     system( COPY /Y ..\\..\\$${F} $${F} > nul )
   }

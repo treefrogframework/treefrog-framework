@@ -11,14 +11,14 @@ INCLUDEPATH += $$header.path
 include(../../tfbase.pri)
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin
   }
 }
 
-win32 {
+windows {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ}
@@ -55,7 +55,7 @@ SOURCES += main.cpp \
 HEADERS += servermanager.h \
            processinfo.h
 
-win32 {
+windows {
   LIBS += -lws2_32
   SOURCES += processinfo_win.cpp
   SOURCES += windowsservice_win.cpp

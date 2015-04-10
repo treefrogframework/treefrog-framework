@@ -169,6 +169,7 @@ bool FileWriter::write(const QString &data) const
 
     QTextStream ts(&file);
     ts << data;
+    file.close();
     return (ts.status() == QTextStream::Ok);
 }
 

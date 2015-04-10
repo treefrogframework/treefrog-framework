@@ -11,14 +11,14 @@ INCLUDEPATH += $$header.path
 include(../../tfbase.pri)
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin
   }
 }
 
-win32 {
+windows {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ}
