@@ -59,7 +59,7 @@ bool TApplicationServerBase::loadLibraries()
                 tSystemDebug("Library loaded: %s", qPrintable(lib.fileName()));
                 libLoaded = true;
             } else {
-                tSystemError("%s", qPrintable(lib.errorString()));
+                tSystemWarn("%s", qPrintable(lib.errorString()));
             }
         }
 

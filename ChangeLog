@@ -1,3 +1,17 @@
+Changes with version 1.8.0
+  * Support WebSocket protocol.
+  * C++11 support enabled as default.
+  * Performance improvement in hybrid MPM.
+  * Fix a bug of 'abort' subcommand of treefrog on Windows.
+  * Fix a bug of routing URL.
+  * Modified to use std::atomic instead of QAtomic.
+  * Modified to catch SIGINT in case of debug mode.
+  * Modified so as not to use Tf::currentDateTimeSec() function.
+  * Modified to collect settings infomation to TAppSettings class.
+  * Added hint macros, QLIKELY/QUNLIKELY.
+  * Unsupported prefork MPM.
+  * Deleted obsolete functions.
+
 Changes with version 1.7.9
   * Support for Raspberry Pi, ARM architecture.
   * Fix a bug of settings of default project file on Qt4.
