@@ -15,7 +15,7 @@ Features
  * Support for many DB  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
                           InterBase and MongoDB
  * Support WebSocket  - Providing full-duplex communications channels
- * Generator  - Automatically generates scaffolds and Makefiles
+ * Generator  - Generates scaffolds and Makefiles automatically
  * Cross-platform  - Windows, Mac OS X, Linux, etc.  Same source code can
                      work on other platforms
  * Ajax support  - JSON, XML and Plain text available
