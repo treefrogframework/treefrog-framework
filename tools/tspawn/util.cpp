@@ -46,7 +46,8 @@ bool rmpath(const QString &path)
 
 bool remove(const QString &file)
 {
-    return remove(QFile(file));
+    QFile f(file);
+    return remove(f);
 }
 
 

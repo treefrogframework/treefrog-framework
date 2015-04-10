@@ -108,7 +108,7 @@ bool ProjectFileGenerator::remove(const QStringList &files) const
         int idx = 0;
         if (!str.isEmpty() && (idx = output.indexOf(str)) >= 0 ) {
             output.remove(idx, str.length());
-            if (idx < output.length() && output.at(idx) == "\n") {
+            if (idx < output.length() && output.at(idx) == '\n') {
                 output.remove(idx, 1);
             }
         }

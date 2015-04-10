@@ -23,7 +23,6 @@ bool ProcessInfo::exists() const
 }
 
 
-#ifdef Q_CC_MSVC
 qint64 ProcessInfo::ppid() const
 {
     DWORD pidParent = 0;
@@ -50,21 +49,20 @@ qint64 ProcessInfo::ppid() const
     return pidParent;
 }
 
-#else
 
-qint64 ProcessInfo::ppid() const
-{
-    qint64 ppid = 0;
-    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
-    if (hProcess) {
-        PROCESS_BASIC_INFORMATION basicInfo;
-        if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
-            ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
-        }
-    }
-    return ppid;
-}
-#endif
+// qint64 ProcessInfo::ppid() const
+// {
+//     qint64 ppid = 0;
+//     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+//     if (hProcess) {
+//         PROCESS_BASIC_INFORMATION basicInfo;
+//         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
+//             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
+//         }
+//     }
+//     return ppid;
+// }
+
 
 QString ProcessInfo::processName() const
 {
