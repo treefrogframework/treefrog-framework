@@ -12,6 +12,7 @@ call "C:\Qt\Qt5.3.2\5.3\msvc2013_64\bin\qtenv2.bat"
 
 if "%Platform%" == "X64" (
   set MAKE=nmake
+  set CL=/MP
 ) else if "%DevEnvDir%" == "" (
   set MAKE=mingw32-make -j4
 ) else (

@@ -1,13 +1,12 @@
 @ECHO OFF
 @setlocal
 
-::
-:: Edit this line to run the batch file for Qt environment.
-::
-call "C:\TreeFrog\1.7.9\bin\tfenv.bat"
+call "..\..\tfenv.bat"
 
-
-if "%DevEnvDir%" == "" (
+if "%Platform%" == "X64" (
+  set MAKE=nmake
+  set CL=/MP
+) else if "%DevEnvDir%" == "" (
   set MAKE=mingw32-make -j4
 ) else (
   set MAKE=nmake

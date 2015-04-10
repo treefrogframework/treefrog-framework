@@ -6,7 +6,11 @@
 set APPNAME=blogapp
 set DBFILE=%APPNAME%\db\dbfile
 
-if "%DevEnvDir%" == "" (
+
+if "%Platform%" == "X64" (
+  set MAKE=nmake
+  set CL=/MP
+) else if "%DevEnvDir%" == "" (
   set MAKE=mingw32-make -j4
 ) else (
   set MAKE=nmake
