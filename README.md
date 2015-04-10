@@ -1,5 +1,5 @@
-TreeFrog Framework
-==================
+Small but Powerful and Efficient
+================================
 
 TreeFrog Framework is a high-speed and full-stack web application framework
 based on C++ and Qt. Web applications can run faster than that of lightweight
@@ -7,35 +7,31 @@ programming language. In application development, it provides an O/R mapping
 system and template system on an MVC architecture, aims to achieve high
 productivity through the policy of convention over configuration.
 
+Features
+--------
+ * High performance  - Highly optimized Application server engine of C++
+ * O/R mapping  - Conceals complex and troublesome database accesses
+ * Template system  - Completely divided templates and presentation logic
+ * Support for many DB  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
+                          InterBase and MongoDB
+ * Support WebSocket  - Providing full-duplex communications channels
+ * Generator  - Generates scaffolds and Makefiles automatically
+ * Cross-platform  - Windows, Mac OS X, Linux, etc.  Same source code can
+                     work on other platforms
+ * Ajax support  - JSON, XML and Plain text available
+ * OSS  - New BSD License
+
 Requirements
 ------------
 TreeFrog uses the qt qmake build system.
 
-Features
+Web Site
 --------
-
- * High performance  - High-speed web application is much better for users!
- * Framework written in C++  - Web application can be developed in C++ lang
- * Template system  - Completely divided templates and presentation logic
- * Full-stack  - Most modules included
- * Cross-platform  - Windows, Mac OS X, Linux, etc.  Same source code can
-                      work on other platforms
- * MVC architecture
- * O/R mapping  - Conceals complex and troublesome database accesses
- * Routing system  - No need to write the routing rules one by one into a
-                      configuration file
- * Generator - Automatically generates scaffolds and Makefiles
- * Ajax support - JSON, XML and Plain text available
- * NoSQL database support - MongoDB support
- * OSS  - New BSD License
+ http://www.treefrogframework.org/
 
 Releases
 --------
  https://github.com/treefrogframework/treefrog-framework/releases
-
-Web Site
---------
- http://www.treefrogframework.org/
 
 Documents
 ---------
