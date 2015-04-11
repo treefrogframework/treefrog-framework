@@ -23,19 +23,39 @@ Installation
     Windows:
       Build binaries of two modes, release and debug.
       Run the following commands in Qt Command Prompt.
-       > cd treefrog-x.x.x
-       > configure --enable-debug
-       > cd src
-       > mingw32-make install
-       > cd ..\tools
-       > mingw32-make instal
-       > cd ..
-       > configure
-       > cd src
-       > mingw32-make install
-       > cd ..\tools
-       > mingw32-make instal
-    
+       MinGW:
+         > cd (treefrog-x.x.x)
+         > configure --enable-debug
+         > cd src
+         > mingw32-make install
+         > cd ..\tools
+         > mingw32-make install
+         > cd ..
+         > configure
+         > cd src
+         > mingw32-make install
+         > cd ..\tools
+         > mingw32-make install
+
+       Visual Studio:
+       Call vcvarsall.bat to complete environment setup in Qt Command Prompt.
+        e.g.
+         > cd "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64"
+         > vcvars64.bat
+
+         > cd (treefrog-x.x.x)
+         > configure --enable-debug
+         > cd src
+         > nmake install
+         > cd ..\tools
+         > nmake install
+         > cd ..
+         > configure
+         > cd src
+         > nmake install
+         > cd ..\tools
+         > nmake install
+
       Or, double-click to run the build.bat after editing it for your Qt
       environment.
 
