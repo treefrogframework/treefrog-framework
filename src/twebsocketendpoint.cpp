@@ -10,6 +10,12 @@
 #include "twebsocketframe.h"
 
 
+/*!
+  \class TWebSocketEndpoint
+  \brief The TWebSocketEndpoint is the base class of endpoints for
+  WebSocket communication.
+ */
+
 TWebSocketEndpoint::TWebSocketEndpoint()
     : payloadList(), rollback(false)
 { }

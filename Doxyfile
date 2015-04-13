@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrog Framework
-PROJECT_NUMBER         = 1.7
+PROJECT_NUMBER         = 1.8
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -147,8 +147,16 @@ EXCLUDE                = src/test \
                          src/thttpbuffer.h \
                          src/thttpsendbuffer.h \
                          src/tmultiplexingserver.h \
+                         src/tabstractwebsocket.h \
                          src/tepoll.h \
                          src/tepollsocket.h \
+                         src/tepollhttpsocket.h \
+                         src/tepollwebsocket.h \
+                         src/twebsocket.h \
+                         src/twebsocketworker.h \
+                         src/twebsocketframe.h \
+                         src/tsendbuffer.h \
+                         src/tappsettings.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp
