@@ -46,6 +46,18 @@ void TWebSocket::close()
 }
 
 
+void TWebSocket::sendText(const QString &text)
+{
+    TAbstractWebSocket::sendText(text);
+}
+
+
+void TWebSocket::sendBinary(const QByteArray &binary)
+{
+    TAbstractWebSocket::sendBinary(binary);
+}
+
+
 bool TWebSocket::canReadRequest() const
 {
     for (const auto &frm : frames) {
@@ -113,8 +125,6 @@ void TWebSocket::startWorkerForClosing()
 {
     if (!TAbstractWebSocket::closing.exchange(true)) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
-
- tSystemDebug("TWebSocket::startWorkerForClosing()");
         startWorker(worker);
     }
 }

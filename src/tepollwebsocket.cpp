@@ -67,6 +67,18 @@ bool TEpollWebSocket::isBinaryRequest() const
 }
 
 
+void TEpollWebSocket::sendText(const QString &text)
+{
+    TAbstractWebSocket::sendText(text);
+}
+
+
+void TEpollWebSocket::sendBinary(const QByteArray &binary)
+{
+    TAbstractWebSocket::sendBinary(binary);
+}
+
+
 QByteArray TEpollWebSocket::readBinaryRequest()
 {
     Q_ASSERT(canReadRequest());

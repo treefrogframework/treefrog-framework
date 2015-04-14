@@ -12,6 +12,7 @@
 #include "tsystemglobal.h"
 #include "turlroute.h"
 #include "tabstractwebsocket.h"
+#include "tpublisher.h"
 
 
 TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
@@ -43,6 +44,7 @@ void TWebSocketWorker::run()
     QString es = TUrlRoute::splitPath(requestPath_).value(0).toLower() + "endpoint";
     TDispatcher<TWebSocketEndpoint> dispatcher(es);
     TWebSocketEndpoint *endpoint = dispatcher.object();
+
     if (!endpoint) {
         return;
     }
@@ -59,11 +61,9 @@ void TWebSocketWorker::run()
             endpoint->onOpen(sessionStore_);
             break;
 
-        case Sending:
-            break;
-
         case Closing:
             endpoint->onClose(Tf::GoingAway);
+            endpoint->unsubscribeFromAll();
             goto transaction_cleanup;
             break;
 
@@ -88,6 +88,7 @@ void TWebSocketWorker::run()
 
                 endpoint->onClose(closeCode);
                 endpoint->close(closeCode);  // close response
+                endpoint->unsubscribeFromAll();
                 break; }
 
             case TWebSocketFrame::Ping:
@@ -109,18 +110,17 @@ void TWebSocketWorker::run()
             break;
         }
 
-        // Sends payload
-        for (const QVariant &var : endpoint->payloadList) {
-            switch (var.type()) {
-            case QVariant::String:
-                socket_->sendText(var.toString());
+        for (auto &p : endpoint->taskList) {
+            switch (p.first) {
+            case TWebSocketEndpoint::SendText:
+                socket_->sendText(p.second.toString());
                 break;
 
-            case QVariant::ByteArray:
-                socket_->sendBinary(var.toByteArray());
+            case TWebSocketEndpoint::SendBinary:
+                socket_->sendBinary(p.second.toByteArray());
                 break;
 
-            case QVariant::UInt:
+            case TWebSocketEndpoint::SendClose:
                 if (opcode_ == TWebSocketFrame::Close) {
                     socket_->closing = true;
                 }
@@ -129,28 +129,39 @@ void TWebSocketWorker::run()
                     // close-frame sent and received
                     socket_->disconnect();
                 } else {
-                    uint closeCode = var.toUInt();
+                    uint closeCode = p.second.toUInt();
                     socket_->sendClose(closeCode);
                 }
                 break;
 
-            case QVariant::Int: {
+            case TWebSocketEndpoint::SendPing:
+                socket_->sendPing();
+                break;
 
-                int rescode = var.toInt();
-                switch (rescode) {
-                case TWebSocketFrame::Ping:
-                    socket_->sendPing();
-                    break;
+            case TWebSocketEndpoint::SendPong:
+                socket_->sendPong();
+                break;
 
-                case TWebSocketFrame::Pong:
-                    socket_->sendPong();
-                    break;
+            case TWebSocketEndpoint::Subscribe:
+                TPublisher::instance()->subscribe(p.second.toString(), socket_);
+                break;
 
-                default:
-                    tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
-                    break;
-                }
+            case TWebSocketEndpoint::Unsubscribe:
+                TPublisher::instance()->unsubscribe(p.second.toString(), socket_);
+                break;
 
+            case TWebSocketEndpoint::UnsubscribeFromAll:
+                TPublisher::instance()->unsubscribeFromAll(socket_);
+                break;
+
+            case TWebSocketEndpoint::PublishText: {
+                QVariantList lst = p.second.toList();
+                TPublisher::instance()->publish(lst[0].toString(), lst[1].toString());
+                break; }
+
+            case TWebSocketEndpoint::PublishBinary: {
+                QVariantList lst = p.second.toList();
+                TPublisher::instance()->publish(lst[0].toString(), lst[1].toByteArray());
                 break; }
 
             default:

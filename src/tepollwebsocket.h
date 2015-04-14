@@ -31,6 +31,8 @@ public:
 public slots:
     void deleteLater();
     void releaseWorker();
+    void sendText(const QString &text);
+    void sendBinary(const QByteArray &binary);
 
 protected:
     virtual void *getRecvBuffer(int size) Q_DECL_OVERRIDE;

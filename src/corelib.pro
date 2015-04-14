@@ -252,6 +252,8 @@ HEADERS += twebsocketframe.h
 SOURCES += twebsocketframe.cpp
 HEADERS += twebsocketworker.h
 SOURCES += twebsocketworker.cpp
+HEADERS += tpublisher.h
+SOURCES += tpublisher.cpp
 
 
 HEADERS += \

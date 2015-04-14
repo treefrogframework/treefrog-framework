@@ -16,7 +16,6 @@ class T_CORE_EXPORT TWebSocketWorker : public QThread, public TDatabaseContext
 public:
     enum RunMode {
         Opening,
-        Sending,
         Receiving,
         Closing,
     };

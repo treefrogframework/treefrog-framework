@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QPair>
 #include <QVariant>
 #include <TGlobal>
 #include <TSession>
@@ -23,6 +24,11 @@ public:
     void close(int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
     bool rollbackRequested() const;
+    void subscribe(const QString &topic);
+    void unsubscribe(const QString &topic);
+    void unsubscribeFromAll();
+    void publish(const QString &topic, const QString &text);
+    void publish(const QString &topic, const QByteArray &binary);
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);
@@ -38,7 +44,20 @@ protected:
     virtual bool transactionEnabled() const;
 
 private:
-    QVariantList payloadList;
+    enum TaskType {
+        SendText = 0,
+        SendBinary,
+        SendClose,
+        SendPing,
+        SendPong,
+        Subscribe,
+        Unsubscribe,
+        UnsubscribeFromAll,
+        PublishText,
+        PublishBinary,
+    };
+
+    QList<QPair<int, QVariant> > taskList;
     bool rollback;
 
     friend class TWebSocketWorker;

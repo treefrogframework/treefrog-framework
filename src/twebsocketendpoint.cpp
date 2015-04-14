@@ -17,7 +17,7 @@
  */
 
 TWebSocketEndpoint::TWebSocketEndpoint()
-    : payloadList(), rollback(false)
+    : taskList(), rollback(false)
 { }
 
 void TWebSocketEndpoint::onOpen(const TSession &session)
@@ -60,31 +60,31 @@ QString TWebSocketEndpoint::name() const
 
 void TWebSocketEndpoint::sendText(const QString &text)
 {
-    payloadList << QVariant(text);
+    taskList << qMakePair((int)SendText, QVariant(text));
 }
 
 
 void TWebSocketEndpoint::sendBinary(const QByteArray &binary)
 {
-    payloadList << QVariant(binary);
+    taskList << qMakePair((int)SendBinary, QVariant(binary));
 }
 
 
 void TWebSocketEndpoint::sendPing()
 {
-    payloadList << QVariant((int)TWebSocketFrame::Ping);
+    taskList << qMakePair((int)SendPing, QVariant());
 }
 
 
 void TWebSocketEndpoint::sendPong()
 {
-    payloadList << QVariant((int)TWebSocketFrame::Pong);
+    taskList << qMakePair((int)SendPong, QVariant());
 }
 
 
 void TWebSocketEndpoint::close(int closeCode)
 {
-    payloadList << QVariant((uint)closeCode);
+    taskList << qMakePair((int)SendClose, QVariant(closeCode));
 }
 
 
@@ -104,4 +104,38 @@ const QStringList &TWebSocketEndpoint::disabledEndpoints()
 {
     static const QStringList disabledNames = { "application" };
     return disabledNames;
+}
+
+
+void TWebSocketEndpoint::subscribe(const QString &topic)
+{
+    taskList << qMakePair((int)Subscribe, QVariant(topic));
+}
+
+
+void TWebSocketEndpoint::unsubscribe(const QString &topic)
+{
+    taskList << qMakePair((int)Unsubscribe, QVariant(topic));
+}
+
+
+void TWebSocketEndpoint::unsubscribeFromAll()
+{
+    taskList << qMakePair((int)UnsubscribeFromAll, QVariant());
+}
+
+
+void TWebSocketEndpoint::publish(const QString &topic, const QString &text)
+{
+    QVariantList message;
+    message << topic << text;
+    taskList << qMakePair((int)PublishText, QVariant(message));
+}
+
+
+void TWebSocketEndpoint::publish(const QString &topic, const QByteArray &binary)
+{
+    QVariantList message;
+    message << topic << binary;
+    taskList << qMakePair((int)PublishBinary, QVariant(message));
 }

@@ -26,11 +26,13 @@ public:
     void disconnect() Q_DECL_OVERRIDE;
 
 public slots:
+    void sendText(const QString &text);
+    void sendBinary(const QByteArray &binary);
     void readRequest();
-    void deleteLater();
     void releaseWorker();
     void sendRawData(const QByteArray &data);
     void close();
+    void deleteLater();
 
 protected:
     void startWorkerForOpening(const TSession &session);
