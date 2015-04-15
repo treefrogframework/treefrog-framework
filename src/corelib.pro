@@ -1,6 +1,6 @@
 TARGET   = treefrog
 TEMPLATE = lib
-CONFIG  += shared c++11
+CONFIG  += shared console c++11
 QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
@@ -254,7 +254,8 @@ HEADERS += twebsocketworker.h
 SOURCES += twebsocketworker.cpp
 HEADERS += tpublisher.h
 SOURCES += tpublisher.cpp
-
+HEADERS += tsystembus.h
+SOURCES += tsystembus.cpp
 
 HEADERS += \
            tfnamespace.h \

@@ -69,6 +69,7 @@ bool TEpollWebSocket::isBinaryRequest() const
 
 void TEpollWebSocket::sendText(const QString &text)
 {
+    tSystemDebug("sendText  text len:%d  (pid:%d)", text.length(), getpid());
     TAbstractWebSocket::sendText(text);
 }
 

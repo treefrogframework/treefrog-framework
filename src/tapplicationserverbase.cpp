@@ -16,6 +16,8 @@
 #include "tkvsdatabasepool.h"
 #include "turlroute.h"
 #include "tsystemglobal.h"
+#include "tsystembus.h"
+#include "tpublisher.h"
 
 /*!
   \class TApplicationServerBase
@@ -68,6 +70,8 @@ bool TApplicationServerBase::loadLibraries()
     }
     QDir::setCurrent(Tf::app()->webRootPath());
 
+    TSystemBus::instantiate();
+    TPublisher::instantiate();
     TUrlRoute::instantiate();
     TSqlDatabasePool::instantiate();
     TKvsDatabasePool::instantiate();

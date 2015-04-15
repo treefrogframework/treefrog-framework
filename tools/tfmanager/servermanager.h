@@ -32,12 +32,14 @@ protected:
 
     void ajustServers() const;
     void startServer() const;
+    void readProcess(QProcess *process);
 
 protected slots:
     void updateServerStatus();
     void errorDetect(QProcess::ProcessError error);
     void serverFinish(int exitCode, QProcess::ExitStatus exitStatus) const;
     void readStandardOutput();
+    void readStandardOutputOfAll();
     void readStandardError() const;
 
 private:
@@ -46,6 +48,7 @@ private:
     int minServers;
     int spareServers;
     volatile bool running;
+    volatile bool pipeReading;
 
     Q_DISABLE_COPY(ServerManager)
 };

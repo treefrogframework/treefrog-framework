@@ -12,24 +12,29 @@
 #include "tpublisher.h"
 #include "twebsocket.h"
 #include "tepollwebsocket.h"
+#include "tsystembus.h"
 
 static QMutex mutex(QMutex::NonRecursive);
+static TPublisher *globalInstance = nullptr;
 
 
 class Pub : public QObject
 {
     Q_OBJECT
 public:
-    Pub() : subscribers() { }
+    Pub(const QString &t) : topic(t), subscribers() { }
     bool subscribe(const QObject *receiver);
     bool unsubscribe(const QObject *receiver);
-    void publish(const QString &message) { emit textPublished(message); }
-    void publish(const QByteArray &binary) { emit binaryPublished(binary); }
+    void publish(const QString &message);
+    void publish(const QByteArray &binary);
+    void publishLocal(const QString &message);
+    void publishLocal(const QByteArray &binary);
     int subscriberCounter() const { return subscribers.count(); }
 signals:
     void textPublished(const QString &);
     void binaryPublished(const QByteArray &);
 private:
+    QString topic;
     QSet<const void*> subscribers;
 };
 #include "tpublisher.moc"
@@ -71,6 +76,31 @@ bool Pub::unsubscribe(const QObject *receiver)
     return true;
 }
 
+
+void Pub::publish(const QString &message)
+{
+    TSystemBus::instance()->send(Tf::WebSocketPublishText, topic, message.toUtf8());
+    publishLocal(message);
+}
+
+
+void Pub::publish(const QByteArray &binary)
+{
+    TSystemBus::instance()->send(Tf::WebSocketPublishBinary, topic, binary);
+    publishLocal(binary);
+}
+
+
+void Pub::publishLocal(const QString &message)
+{
+    emit textPublished(message);
+}
+
+
+void Pub::publishLocal(const QByteArray &binary)
+{
+    emit binaryPublished(binary);
+}
 
 /*!
   \class TPublisher
@@ -183,14 +213,56 @@ bool TPublisher::publish(const QString &topic, const QByteArray &binary)
 
 TPublisher *TPublisher::instance()
 {
-    static TPublisher globalInstance;
-    return &globalInstance;
+    return globalInstance;
+}
+
+
+void TPublisher::instantiate()
+{
+    if (!globalInstance) {
+        globalInstance = new TPublisher;
+        connect(TSystemBus::instance(), SIGNAL(readyRead()), globalInstance, SLOT(readSystemBus()));
+    }
+}
+
+
+void TPublisher::readSystemBus()
+{
+    TSystemBusMessage msg = TSystemBus::instance()->recv();
+    if (!msg.validate()) {
+        return;
+    }
+
+    switch (msg.opCode) {
+    case Tf::WebSocketSendText:
+        break;
+
+    case Tf::WebSocketSendBinary:
+        break;
+
+    case Tf::WebSocketPublishText: {
+        Pub *pub = get(msg.dst);
+        if (pub) {
+            pub->publishLocal(QString::fromUtf8(msg.payload));
+        }
+        break; }
+
+    case Tf::WebSocketPublishBinary: {
+        Pub *pub = get(msg.dst);
+        if (pub) {
+            pub->publishLocal(msg.payload);
+        }
+        break; }
+
+    default:
+        break;
+    }
 }
 
 
 Pub *TPublisher::create(const QString &topic)
 {
-    Pub *pub = new Pub;
+    Pub *pub = new Pub(topic);
     pub->moveToThread(Tf::app()->thread());
     pubobj.insert(topic, pub);
     tSystemDebug("create topic: %s", qPrintable(topic));
