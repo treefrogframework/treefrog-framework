@@ -11,8 +11,10 @@
 #include "tsystemglobal.h"
 #include "tpublisher.h"
 #include "twebsocket.h"
-#include "tepollwebsocket.h"
 #include "tsystembus.h"
+#ifdef Q_OS_LINUX
+# include "tepollwebsocket.h"
+#endif
 
 static QMutex mutex(QMutex::NonRecursive);
 static TPublisher *globalInstance = nullptr;
