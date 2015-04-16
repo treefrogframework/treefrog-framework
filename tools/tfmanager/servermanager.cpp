@@ -14,6 +14,7 @@
 #include <TLog>
 #include "qplatformdefs.h"
 #include "servermanager.h"
+#include "tfcore.h"
 
 namespace TreeFrog {
 

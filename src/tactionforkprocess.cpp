@@ -5,10 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <iostream>
 #include <TActionForkProcess>
 #include <TWebApplication>
 #include <TActionThread>
+#include <iostream>
+#include "tfcore.h"
 #include "thttpsocket.h"
 #include "tsystemglobal.h"
 

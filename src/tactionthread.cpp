@@ -13,13 +13,11 @@
 #include <TSession>
 #include <TApplicationServerBase>
 #include <atomic>
-#ifndef Q_CC_MSVC
-# include <unistd.h>
-#endif
 #include "thttpsocket.h"
 #include "twebsocket.h"
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
+#include "tfcore.h"
 
 static std::atomic<int> threadCounter(0);
 

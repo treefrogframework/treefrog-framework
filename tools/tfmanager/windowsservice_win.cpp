@@ -58,7 +58,7 @@ static QString enumerateService(DWORD processId)
 			 SERVICE_WIN32,
 			 SERVICE_STATE_ALL,
 			 buffer.data(),
-			 buffer.size(),
+			 (DWORD)buffer.size(),
 			 &requiredBufferSize,
 			 &totalServicesCount,
 			 NULL,

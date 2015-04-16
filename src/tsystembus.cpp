@@ -28,7 +28,7 @@ void TSystemBus::instantiate()
 TSystemBus::TSystemBus()
     : buffer()
 {
-    stdinNotifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read, this);
+    stdinNotifier = new QSocketNotifier(tf_fileno(stdin), QSocketNotifier::Read, this);
     connect(stdinNotifier, SIGNAL(activated(int)), this, SLOT(readStdIn()));
     stdinNotifier->setEnabled(true);
 }

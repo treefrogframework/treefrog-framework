@@ -1,6 +1,7 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
+#include <QtGlobal>
 #include <QMetaType>
 #include <TfNamespace>
 

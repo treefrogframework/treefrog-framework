@@ -1,8 +1,6 @@
 #ifndef TFNAMESPACE_H
 #define TFNAMESPACE_H
 
-#include <Qt>
-
 class TWebApplication;
 
 /*!

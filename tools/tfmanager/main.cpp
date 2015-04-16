@@ -22,6 +22,12 @@
 # include <windows.h>
 #endif
 
+#ifdef Q_OS_WIN
+# define TF_FLOCK(fd,op)
+#else
+# define TF_FLOCK(fd,op)  tf_flock((fd),(op))
+#endif
+
 namespace TreeFrog {
 
 #ifdef Q_OS_WIN
@@ -239,10 +245,10 @@ static bool addRunningApplication(const QString &rootPath)
         return false;
     }
 
-    tf_flock(file.handle(), LOCK_EX); // lock
+    TF_FLOCK(file.handle(), LOCK_EX); // lock
     file.write(rootPath.toLatin1());
     file.write("\n");
-    tf_flock(file.handle(), LOCK_UN); // unlock
+    TF_FLOCK(file.handle(), LOCK_UN); // unlock
     file.close();
     return true;
 }
@@ -254,9 +260,9 @@ static QStringList runningApplicationPathList()
     QFile file(runningApplicationsFilePath());
 
     if (file.open(QIODevice::ReadOnly)) {
-        tf_flock(file.handle(), LOCK_SH); // lock
+        TF_FLOCK(file.handle(), LOCK_SH); // lock
         QList<QByteArray> lst = file.readAll().split('\n');
-        tf_flock(file.handle(), LOCK_UN); // unlock
+        TF_FLOCK(file.handle(), LOCK_UN); // unlock
         file.close();
 
         for (QListIterator<QByteArray> it(lst); it.hasNext(); ) {
@@ -284,10 +290,10 @@ static void cleanupRunningApplicationList()
     }
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        tf_flock(file.handle(), LOCK_EX); // lock
+        TF_FLOCK(file.handle(), LOCK_EX); // lock
         file.write(runapps.join("\n").toLatin1());
         file.write("\n");
-        tf_flock(file.handle(), LOCK_UN); // unlock
+        TF_FLOCK(file.handle(), LOCK_UN); // unlock
         file.close();
     }
 }
