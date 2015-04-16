@@ -21,9 +21,6 @@
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
 #include "turlroute.h"
-#ifdef Q_OS_UNIX
-# include "tfcore_unix.h"
-#endif
 
 /*!
   \class TActionContext

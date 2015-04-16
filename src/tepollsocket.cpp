@@ -16,7 +16,7 @@
 #include "tepollhttpsocket.h"
 #include "tepoll.h"
 #include "tsendbuffer.h"
-#include "tfcore_unix.h"
+#include "tfcore.h"
 
 class SendData;
 
@@ -125,7 +125,7 @@ int TEpollSocket::recv()
     for (;;) {
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        int len = ::recv(sd, buf, recvBufSize, 0);
+        int len = tf_recv(sd, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -182,7 +182,7 @@ int TEpollSocket::send()
         }
 
         errno = 0;
-        len = ::send(sd, data, len, MSG_NOSIGNAL);
+        len = tf_send(sd, data, len, MSG_NOSIGNAL);
         err = errno;
 
         if (len <= 0) {
@@ -241,7 +241,7 @@ void TEpollSocket::setSocketDescpriter(int socketDescriptor)
 void TEpollSocket::close()
 {
     if (sd > 0) {
-        TF_CLOSE(sd);
+        tf_close(sd);
         sd = 0;
     }
 }

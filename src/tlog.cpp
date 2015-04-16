@@ -7,9 +7,7 @@
 
 #include <QThread>
 #include "TLog"
-#ifdef Q_OS_UNIX
-# include "tfcore_unix.h"
-#endif
+#include "tfcore.h"
 
 /*!
   \class TLog

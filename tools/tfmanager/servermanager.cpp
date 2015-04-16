@@ -99,7 +99,7 @@ void ServerManager::stop()
     running = false;
 
     if (listeningSocket > 0) {
-        TF_CLOSE(listeningSocket);
+        tf_close(listeningSocket);
     }
     listeningSocket = 0;
 

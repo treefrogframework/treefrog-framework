@@ -20,7 +20,7 @@
 #include "tepollwebsocket.h"
 #include "tsessionmanager.h"
 #include "tsystemglobal.h"
-#include "tfcore_unix.h"
+#include "tfcore.h"
 
 const int MaxEvents = 128;
 
@@ -68,7 +68,7 @@ TEpoll::~TEpoll()
     delete events;
 
     if (epollFd > 0)
-        TF_CLOSE(epollFd);
+        tf_close(epollFd);
 }
 
 

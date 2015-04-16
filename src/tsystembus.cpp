@@ -12,6 +12,7 @@
 #include <TApplicationServerBase>
 #include "tsystembus.h"
 #include "tsystemglobal.h"
+#include "tfcore.h"
 
 static TSystemBus *systemBus = nullptr;
 
@@ -55,7 +56,6 @@ bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteAr
         ds.skipRawData(sizeof(quint8));
         ds << (int)buf.length() - 5;  // overwrite the length
     }
-
     //tSystemDebug("0x%x 0x%x 0x%x 0x%x 0x%x", (char)buf[0], (char)buf[1], (char)buf[2], (char)buf[3], (char)buf[4]);
 
     QFile stdOut;
@@ -103,7 +103,7 @@ void TSystemBus::readStdIn()
     int currentLen = buffer.length();
     buffer.reserve(currentLen + 1024);
 
-    int len = ::read(fileno(stdin), buffer.data() + currentLen, 1024);
+    int len = tf_read(tf_fileno(stdin), buffer.data() + currentLen, 1024);
     if (len <= 0) {
         tSystemError("stdin read error  [%s:%d]", __FILE__, __LINE__);
         buffer.clear();

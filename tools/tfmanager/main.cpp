@@ -11,12 +11,12 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TSystemGlobal>
+# include <tfcore.h>
 #include "servermanager.h"
 #include "processinfo.h"
 
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
-# include <tfcore_unix.h>
 #endif
 #ifdef Q_OS_WIN
 # include <windows.h>
@@ -239,10 +239,10 @@ static bool addRunningApplication(const QString &rootPath)
         return false;
     }
 
-    TF_FLOCK(file.handle(), LOCK_EX); // lock
+    tf_flock(file.handle(), LOCK_EX); // lock
     file.write(rootPath.toLatin1());
     file.write("\n");
-    TF_FLOCK(file.handle(), LOCK_UN); // unlock
+    tf_flock(file.handle(), LOCK_UN); // unlock
     file.close();
     return true;
 }
@@ -254,9 +254,9 @@ static QStringList runningApplicationPathList()
     QFile file(runningApplicationsFilePath());
 
     if (file.open(QIODevice::ReadOnly)) {
-        TF_FLOCK(file.handle(), LOCK_SH); // lock
+        tf_flock(file.handle(), LOCK_SH); // lock
         QList<QByteArray> lst = file.readAll().split('\n');
-        TF_FLOCK(file.handle(), LOCK_UN); // unlock
+        tf_flock(file.handle(), LOCK_UN); // unlock
         file.close();
 
         for (QListIterator<QByteArray> it(lst); it.hasNext(); ) {
@@ -284,10 +284,10 @@ static void cleanupRunningApplicationList()
     }
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        TF_FLOCK(file.handle(), LOCK_EX); // lock
+        tf_flock(file.handle(), LOCK_EX); // lock
         file.write(runapps.join("\n").toLatin1());
         file.write("\n");
-        TF_FLOCK(file.handle(), LOCK_UN); // unlock
+        tf_flock(file.handle(), LOCK_UN); // unlock
         file.close();
     }
 }

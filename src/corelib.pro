@@ -259,6 +259,7 @@ SOURCES += tsystembus.cpp
 
 HEADERS += \
            tfnamespace.h \
+           tfcore.h \
            tfexception.h \
            tcookie.h \
            tdispatcher.h \

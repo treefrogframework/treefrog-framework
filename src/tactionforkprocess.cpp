@@ -34,7 +34,7 @@ TActionForkProcess::~TActionForkProcess()
         delete httpSocket;
 
     if (TActionContext::socketDesc > 0)
-        TF_CLOSE(TActionContext::socketDesc);
+        tf_close(TActionContext::socketDesc);
 
     currentActionContext = 0;
 }

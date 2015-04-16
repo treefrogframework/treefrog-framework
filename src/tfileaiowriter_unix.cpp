@@ -80,7 +80,7 @@ void TFileAioWriter::close()
     flush();
 
     if (d->fileDescriptor > 0) {
-        TF_CLOSE(d->fileDescriptor);
+        tf_close(d->fileDescriptor);
     }
     d->fileDescriptor = 0;
 }
@@ -137,7 +137,7 @@ int TFileAioWriter::write(const char *data, int length)
         } else {
 #ifdef Q_OS_DARWIN
             // try sync-write
-            return (::write(d->fileDescriptor, data, length) > 0) ? 0 : -1;
+            return (tf_write(d->fileDescriptor, data, length) > 0) ? 0 : -1;
 #endif
         }
         return ret;
