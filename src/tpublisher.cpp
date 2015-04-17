@@ -106,7 +106,7 @@ void Pub::publishLocal(const QByteArray &binary)
 
 /*!
   \class TPublisher
-  \brief The TPublisher class provides a means of publish–subscribe messaging.
+  \brief The TPublisher class provides a means of publish subscribe messaging.
 */
 
 TPublisher::TPublisher()
