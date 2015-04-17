@@ -2,6 +2,7 @@
 #define TSYSTEMBUS_H
 
 #include <QObject>
+#include <QMutex>
 #include <TGlobal>
 #include "tsystemglobal.h"
 
@@ -13,8 +14,8 @@ class T_CORE_EXPORT TSystemBus : public QObject
 {
     Q_OBJECT
 public:
-    bool send(const TSystemBusMessage &message) const;
-    bool send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload) const;
+    bool send(const TSystemBusMessage &message);
+    bool send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload);
     TSystemBusMessage recv();
 
     static TSystemBus *instance();
@@ -22,13 +23,20 @@ public:
 
 public slots:
     void readStdIn();
+    void writeStdOut();
 
 signals:
     void readyRead();
 
 private:
-    QSocketNotifier *stdinNotifier;
-    QByteArray buffer;
+    int readFd;
+    int writeFd;
+    QSocketNotifier *readNotifier;
+    QSocketNotifier *writeNotifier;
+    QByteArray readBuffer;
+    QByteArray writeBuffer;
+    QMutex mutexRead;
+    QMutex mutexWrite;
 
     TSystemBus();
     Q_DISABLE_COPY(TSystemBus)

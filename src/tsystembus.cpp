@@ -7,7 +7,6 @@
 
 #include <QMutex>
 #include <QDataStream>
-#include <QFile>
 #include <QSocketNotifier>
 #include <TApplicationServerBase>
 #include "tsystembus.h"
@@ -15,6 +14,39 @@
 #include "tfcore.h"
 
 static TSystemBus *systemBus = nullptr;
+const int HEADER_LEN = 5;
+
+// static bool select(int fd, int timeout, bool checkRead, bool checkWrite)
+// {
+// #if Q_OS_WIN
+//     // doesn't work for descriptors of stdin and stdout on Windows
+//     Q_UNUSED(fd);
+//     Q_UNUSED(timeout);
+//     Q_UNUSED(checkRead);
+//     Q_UNUSED(checkWrite);
+//     return true;
+// #else
+//     fd_set fdread;
+//     FD_ZERO(&fdread);
+//     if (checkRead) {
+//         FD_SET(fd, &fdread);
+//     }
+
+//     fd_set fdwrite;
+//     FD_ZERO(&fdwrite);
+//     if (checkWrite) {
+//         FD_SET(fd, &fdwrite);
+//     }
+
+//     struct timeval tv;
+//     tv.tv_sec = timeout / 1000;
+//     tv.tv_usec = (timeout % 1000) * 1000;
+
+//     int ret;
+//     ret = tf_select(fd + 1, &fdread, &fdwrite, nullptr, (timeout < 0 ? nullptr : &tv));
+//     return ret > 0;
+// #endif
+// }
 
 
 void TSystemBus::instantiate()
@@ -26,24 +58,33 @@ void TSystemBus::instantiate()
 
 
 TSystemBus::TSystemBus()
-    : buffer()
+    : readFd(0), writeFd(0), readNotifier(nullptr), writeNotifier(nullptr), readBuffer(), writeBuffer()
 {
-    stdinNotifier = new QSocketNotifier(tf_fileno(stdin), QSocketNotifier::Read, this);
-    connect(stdinNotifier, SIGNAL(activated(int)), this, SLOT(readStdIn()));
-    stdinNotifier->setEnabled(true);
+    readFd = tf_dup(tf_fileno(stdin));
+    writeFd = tf_dup(tf_fileno(stdout));
+
+#ifndef Q_OS_WIN
+    ::fcntl(readFd, F_SETFL, ::fcntl(readFd, F_GETFL) | O_NONBLOCK);   // non-block
+    ::fcntl(writeFd, F_SETFL, ::fcntl(writeFd, F_GETFL) | O_NONBLOCK); // non-block
+#endif
+
+    readNotifier = new QSocketNotifier(readFd, QSocketNotifier::Read, this);
+    writeNotifier = new QSocketNotifier(writeFd, QSocketNotifier::Write, this);
+    connect(readNotifier, SIGNAL(activated(int)), this, SLOT(readStdIn()));
+    connect(writeNotifier, SIGNAL(activated(int)), this, SLOT(writeStdOut()));
+    readNotifier->setEnabled(true);
+    writeNotifier->setEnabled(false);
 }
 
 
-bool TSystemBus::send(const TSystemBusMessage &message) const
+bool TSystemBus::send(const TSystemBusMessage &message)
 {
     return send((Tf::ServerOpCode)message.opCode, message.dst, message.payload);
 }
 
 
-bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload) const
+bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload)
 {
-    static QMutex mutex;
-
     QByteArray buf;
     {
         QDataStream ds(&buf, QIODevice::WriteOnly);
@@ -54,18 +95,15 @@ bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteAr
         QDataStream ds(&buf, QIODevice::WriteOnly);
         ds.setByteOrder(QDataStream::BigEndian);
         ds.skipRawData(sizeof(quint8));
-        ds << (int)buf.length() - 5;  // overwrite the length
+        ds << (int)buf.length() - HEADER_LEN;  // overwrite the length
     }
     //tSystemDebug("0x%x 0x%x 0x%x 0x%x 0x%x", (char)buf[0], (char)buf[1], (char)buf[2], (char)buf[3], (char)buf[4]);
-
-    QFile stdOut;
-    QMutexLocker locker(&mutex);
-    stdOut.open(stdout, QIODevice::WriteOnly);
-
+#if 0
+    QMutexLocker locker(&mutexWrite);
     int total = 0;
     int len;
     for (;;) {
-        len = stdOut.write(buf.data() + total, buf.length() - total);
+        len = tf_write(writeFd, buf.data() + total, buf.length() - total);
         if (len < 0) {
             tSystemError("System Bus write error  [%s:%d]", __FILE__, __LINE__);
             break;
@@ -75,14 +113,27 @@ bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteAr
         if (total == buf.length()) {
             break;
         }
+
+        if (!select(writeFd, 1000, false, true)) {
+            tSystemError("System Bus write-wait error  [%s:%d]", __FILE__, __LINE__);
+            break;
+        }
     }
     return len > 0;
+#else
+    QMutexLocker locker(&mutexWrite);
+    writeBuffer += buf;
+    writeNotifier->setEnabled(true);
+    return true;
+#endif
 }
 
 
 TSystemBusMessage TSystemBus::recv()
 {
-    QDataStream ds(buffer);
+    QMutexLocker locker(&mutexRead);
+
+    QDataStream ds(readBuffer);
     ds.setByteOrder(QDataStream::BigEndian);
     quint8 opcode;
     int length;
@@ -91,41 +142,66 @@ TSystemBusMessage TSystemBus::recv()
 
     ds >> opcode >> length >> dst >> payload;
     TSystemBusMessage message(opcode, dst, payload);
-    buffer.remove(0, length + 5);
+    readBuffer.remove(0, length + HEADER_LEN);
     return message;
 }
 
 
 void TSystemBus::readStdIn()
 {
-    stdinNotifier->setEnabled(false);
+    const int BUFLEN = 4096;
+    QMutexLocker locker(&mutexRead);
 
-    int currentLen = buffer.length();
-    buffer.reserve(currentLen + 1024);
+    readNotifier->setEnabled(false);
+    int currentLen = readBuffer.length();
+    readBuffer.reserve(currentLen + BUFLEN);
 
-    int len = tf_read(tf_fileno(stdin), buffer.data() + currentLen, 1024);
-    if (len <= 0) {
+    int len = tf_read(readFd, readBuffer.data() + currentLen, BUFLEN);
+    if (Q_UNLIKELY(len <= 0)) {
         tSystemError("stdin read error  [%s:%d]", __FILE__, __LINE__);
-        buffer.clear();
+        readBuffer.clear();
     } else {
-        buffer.resize(currentLen + len);
+        readBuffer.resize(currentLen + len);
 
-        QDataStream ds(buffer);
+        QDataStream ds(readBuffer);
         ds.setByteOrder(QDataStream::BigEndian);
         quint8 opcode;
         int length;
         ds >> opcode >> length;
-        if (buffer.length() >= length + 5) {
+        if (readBuffer.length() >= length + HEADER_LEN) {
             if (opcode > 0 && opcode < (int)Tf::MaxServerOpCode) {
                 emit readyRead();
             } else {
                 tSystemError("Invalid opcode: %d  [%s:%d]", opcode, __FILE__, __LINE__);
-                buffer.remove(0, length + 5);
+                readBuffer.remove(0, length + HEADER_LEN);
             }
         }
     }
 
-    stdinNotifier->setEnabled(true);
+    readNotifier->setEnabled(true);
+}
+
+
+void TSystemBus::writeStdOut()
+{
+    writeNotifier->setEnabled(false);
+    QMutexLocker locker(&mutexWrite);
+
+    if (Q_LIKELY(!writeBuffer.isEmpty())) {
+        int len = tf_write(writeFd, writeBuffer.data(), writeBuffer.length());
+        if (Q_UNLIKELY(len <= 0)) {
+            tSystemError("System Bus write error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
+            writeBuffer.clear();
+        } else {
+            if (len == writeBuffer.length()) {
+                writeBuffer.truncate(0);
+            } else {
+                writeBuffer.remove(0, len);
+            }
+        }
+    }
+
+    writeNotifier->setEnabled(!writeBuffer.isEmpty());
 }
 
 

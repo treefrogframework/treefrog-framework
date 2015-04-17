@@ -81,6 +81,23 @@ static inline int tf_recv(int sockfd, void *buf, size_t len, int flags)
 }
 
 
+static inline int tf_select(int nfds, fd_set *readfds, fd_set *writefds,
+                            fd_set *exceptfds, struct timeval *timeout)
+{
+    TF_EINTR_LOOP(::select(nfds, readfds, writefds, exceptfds, timeout));
+}
+
+
+static inline int tf_dup(int fd)
+{
+#if Q_OS_WIN
+    return ::_dup(fd);
+#else
+    return ::fcntl(fd, F_DUPFD, 0);
+#endif
+}
+
+
 static inline int tf_flock(int fd, int op)
 {
 #ifdef Q_OS_WIN
