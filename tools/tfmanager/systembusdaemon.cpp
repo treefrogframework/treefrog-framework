@@ -39,7 +39,14 @@ bool SystemBusDaemon::open()
         tSystemWarn("File removed for UNIX domain socket : %s", qPrintable(file.fileName()));
     }
 #endif
-    return localServer->listen(TSystemBus::connectionName());
+
+    bool ret = localServer->listen(TSystemBus::connectionName());
+    if (ret) {
+        tSystemDebug("system bus open : %s", qPrintable(localServer->fullServerName()));
+    } else {
+        tSystemError("system bus open error  [%s:%d]", __FILE__, __LINE__);
+    }
+    return ret;
 }
 
 
