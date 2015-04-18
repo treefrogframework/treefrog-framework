@@ -8,6 +8,7 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QFile>
+#include <QDir>
 #include <TWebApplication>
 #include <tsystembus.h>
 #include "systembusdaemon.h"
@@ -15,6 +16,13 @@
 static SystemBusDaemon *systemBusDaemon = nullptr;
 static int maxServers = 0;
 
+
+#ifdef Q_OS_UNIX
+static QString unixDomainServerDir()
+{
+    return QDir::cleanPath(QDir::tempPath()) + QDir::separator();
+}
+#endif
 
 SystemBusDaemon::SystemBusDaemon()
     : QObject(), localServer(new QLocalServer), socketSet()
@@ -33,7 +41,7 @@ bool SystemBusDaemon::open()
 {
 #ifdef Q_OS_UNIX
     // UNIX
-    QFile file(QLatin1String("/tmp/") + TSystemBus::connectionName());
+    QFile file(unixDomainServerDir() + TSystemBus::connectionName());
     if (file.exists()) {
         file.remove();
         tSystemWarn("File removed for UNIX domain socket : %s", qPrintable(file.fileName()));
@@ -173,7 +181,7 @@ void SystemBusDaemon::releaseResource(qint64 pid)
 {
 #ifdef Q_OS_UNIX
     // UNIX
-    QFile file(QLatin1String("/tmp/") + TSystemBus::connectionName(pid));
+    QFile file(unixDomainServerDir() + TSystemBus::connectionName(pid));
     if (file.exists()) {
         file.remove();
         tSystemWarn("File removed for UNIX domain socket : %s", qPrintable(file.fileName()));
