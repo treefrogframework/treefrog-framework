@@ -3,10 +3,10 @@
 
 #include <QObject>
 #include <QMutex>
+#include <QLocalSocket>
 #include <TGlobal>
 #include "tsystemglobal.h"
 
-class QSocketNotifier;
 class TSystemBusMessage;
 
 
@@ -14,25 +14,28 @@ class T_CORE_EXPORT TSystemBus : public QObject
 {
     Q_OBJECT
 public:
+    ~TSystemBus();
     bool send(const TSystemBusMessage &message);
     bool send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload);
     TSystemBusMessage recv();
+    void connect();
 
     static TSystemBus *instance();
     static void instantiate();
-
-public slots:
-    void readStdIn();
-    void writeStdOut();
+    static QString connectionName();
+    static QString connectionName(qint64 pid);
 
 signals:
-    void readyRead();
+    void readyReceive();
+    void disconnected();
+
+protected slots:
+    void readBus();
+    void writeBus();
+    void handleError(QLocalSocket::LocalSocketError error);
 
 private:
-    int readFd;
-    int writeFd;
-    QSocketNotifier *readNotifier;
-    QSocketNotifier *writeNotifier;
+    QLocalSocket *busSocket;
     QByteArray readBuffer;
     QByteArray writeBuffer;
     QMutex mutexRead;

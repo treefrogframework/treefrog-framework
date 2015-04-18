@@ -29,7 +29,7 @@ protected:
     static QObject *castToObject(TAbstractWebSocket *socket);
 
 protected slots:
-    void readSystemBus();
+    void receiveSystemBus();
 
 private:
     TPublisher();

@@ -5,7 +5,7 @@ QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
-win32:CONFIG(debug, debug|release) {
+windows:CONFIG(debug, debug|release) {
   TARGET = $$join(TARGET,,,d)
 }
 
@@ -14,7 +14,7 @@ include(../include/headers.pri)
 VERSION = $$TF_VERSION
 
 isEmpty(target.path) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${VERSION}/bin
   } else:macx {
     target.path = /Library/Frameworks
@@ -24,7 +24,7 @@ isEmpty(target.path) {
 }
 INSTALLS += target
 
-win32 {
+windows {
   LIBS += -lws2_32
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
@@ -256,6 +256,8 @@ HEADERS += tpublisher.h
 SOURCES += tpublisher.cpp
 HEADERS += tsystembus.h
 SOURCES += tsystembus.cpp
+HEADERS += tprocessinfo.h
+SOURCES += tprocessinfo.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -273,10 +275,11 @@ HEADERS += \
            thttpresponseheader.h \
            tcommandlineinterface.h
 
-win32 {
+windows {
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp
+  SOURCES += tprocessinfo_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
@@ -284,8 +287,7 @@ unix {
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
 }
-unix:!macx {
-  # For Linux
+linux-* {
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
   HEADERS += tactionworker.h
@@ -298,6 +300,10 @@ unix:!macx {
   SOURCES += tepollhttpsocket.cpp
   HEADERS += tepollwebsocket.h
   SOURCES += tepollwebsocket.cpp
+  SOURCES += tprocessinfo_linux.cpp
+}
+macx {
+  SOURCES += tprocessinfo_macx.cpp
 }
 
 # Qt5
@@ -311,7 +317,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 # Files for MongoDB
 INCLUDEPATH += ../3rdparty/mongo-c-driver/src
-win32 {
+windows {
   DEFINES += MONGO_STATIC_BUILD
 
   win32-msvc* {

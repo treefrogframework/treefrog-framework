@@ -223,12 +223,12 @@ void TPublisher::instantiate()
 {
     if (!globalInstance) {
         globalInstance = new TPublisher;
-        connect(TSystemBus::instance(), SIGNAL(readyRead()), globalInstance, SLOT(readSystemBus()));
+        connect(TSystemBus::instance(), SIGNAL(readyReceive()), globalInstance, SLOT(receiveSystemBus()));
     }
 }
 
 
-void TPublisher::readSystemBus()
+void TPublisher::receiveSystemBus()
 {
     TSystemBusMessage msg = TSystemBus::instance()->recv();
     if (!msg.validate()) {

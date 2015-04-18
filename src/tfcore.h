@@ -103,6 +103,16 @@ static inline int tf_flock(int fd, int op)
 }
 
 
+static inline int tf_unlink(const char *pathname)
+{
+#ifdef Q_OS_WIN
+    return ::_unlink(pathname);
+#else
+    return ::unlink(pathname);
+#endif
+}
+
+
 static inline int tf_fileno(FILE *stream)
 {
 #ifdef Q_OS_WIN

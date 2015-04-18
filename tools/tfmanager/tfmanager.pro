@@ -50,19 +50,12 @@ DEFINES += INSTALL_PATH=\\\"$$target.path\\\"
 
 SOURCES += main.cpp \
            servermanager.cpp \
-           processinfo.cpp
+           systembusdaemon.cpp
 
 HEADERS += servermanager.h \
-           processinfo.h
+           systembusdaemon.h
 
 windows {
   LIBS += -lws2_32
-  SOURCES += processinfo_win.cpp
   SOURCES += windowsservice_win.cpp
-}
-linux-* {
-  SOURCES += processinfo_linux.cpp
-}
-macx {
-  SOURCES += processinfo_macx.cpp
 }

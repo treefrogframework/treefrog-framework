@@ -11,9 +11,10 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TSystemGlobal>
-# include <tfcore.h>
+#include <tprocessinfo.h>
+#include <tfcore.h>
 #include "servermanager.h"
-#include "processinfo.h"
+#include "systembusdaemon.h"
 
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
@@ -216,7 +217,7 @@ static qint64 runningApplicationPid(const QString &appRoot = QString())
 {
     qint64 pid = readPidFileOfApplication(appRoot);
     if (pid > 0) {
-        QString name = ProcessInfo(pid).processName().toLower();
+        QString name = TProcessInfo(pid).processName().toLower();
         if (name == "treefrog" || name == "treefrogd")
             return pid;
     }
@@ -335,7 +336,7 @@ static int killTreeFrogProcess(const QString &cmd)
         return 1;
     }
 
-    ProcessInfo pi(pid);
+    TProcessInfo pi(pid);
 
     if (cmd == "stop") {  // stop command
         pi.terminate();
@@ -349,13 +350,11 @@ static int killTreeFrogProcess(const QString &cmd)
         QList<qint64> pids = pi.childProcessIds();
 
         pi.kill();  // kills the manager process
+        SystemBusDaemon::releaseResource(pid);
+        tf_unlink(pidFilePath().toLatin1().data());
         tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
-#ifdef Q_CC_MSVC
-        ::_unlink(pidFilePath().toLatin1().data());
-#else
-        ::unlink(pidFilePath().toLatin1().data());
-#endif
-        ProcessInfo::kill(pids);  // kills the server process
+
+        TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
         printf("Killed TreeFrog application server processes\n");
 
@@ -514,6 +513,8 @@ int managerMain(int argc, char *argv[])
 
         // Startup
         writeStartupLog();
+        SystemBusDaemon::instantiate();
+
         bool started;
         if (listenPort > 0) {
             // TCP/IP
@@ -551,6 +552,7 @@ int managerMain(int argc, char *argv[])
         ret = app.exec();
         tSystemDebug("TreeFrog manager process caught a signal [code:%d]", ret);
         manager->stop();
+        SystemBusDaemon::instance()->close();
 
         if (ret == 1) {  // means SIGHUP
             tSystemInfo("Restarts TreeFrog application servers");

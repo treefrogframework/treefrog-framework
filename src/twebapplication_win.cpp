@@ -11,7 +11,7 @@
 #include <windows.h>
 #include <winuser.h>
 
-const QString LOCAL_SERVER_PREFIX = "treefrog_tfmanager_";
+const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
 static volatile int ctrlSignal = -1;
 
 
