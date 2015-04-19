@@ -158,12 +158,8 @@ void TSystemBus::instantiate()
 
 QString TSystemBus::connectionName()
 {
-#ifdef Q_OS_WIN
-# ifdef TF_NO_DEBUG
-    const QString processName = "tadpole.exe";
-# else
-    const QString processName = "tadpoled.exe";
-# endif
+#if defined(Q_OS_WIN) && !defined(TF_NO_DEBUG)
+    const QString processName = "tadpoled";
 #else
     const QString processName = "tadpole";
 #endif
