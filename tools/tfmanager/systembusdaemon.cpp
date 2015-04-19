@@ -80,26 +80,26 @@ void SystemBusDaemon::readSocket()
         return;
     }
 
-    QByteArray buf;
-    for (;;) {
-        buf += socket->readAll();
-        if (maxServers <= 1) {
-            // do nothing
-            break;
-        }
+    QByteArray buf = socket->readAll();
+    if (maxServers <= 1) {
+        // do nothing
+        return;
+    }
 
+    quint8 opcode;
+    quint32 length;
+
+    for (;;) {
         QDataStream ds(buf);
         ds.setByteOrder(QDataStream::BigEndian);
-
-        quint8 opcode;
-        int  length;
         ds >> opcode >> length;
 
-        if (buf.length() < HEADER_LEN || buf.length() < length + HEADER_LEN) {
-            if (!socket->waitForReadyRead(1000)) {
+        if ((uint)buf.length() < length + HEADER_LEN) {
+            if (!socket->waitForReadyRead(10)) {
                 tSystemError("Manager frame too short  [%s:%d]", __FILE__, __LINE__);
                 break;
             }
+            buf += socket->readAll();
             continue;
         }
 
@@ -108,7 +108,7 @@ void SystemBusDaemon::readSocket()
         // Writes to other tfservers
         for (auto *tfserver : socketSet) {
             if (tfserver != socket) {
-                int wrotelen = 0;
+                uint wrotelen = 0;
                 for (;;) {
                     int len = tfserver->write(buf.data() + wrotelen, length - wrotelen);
                     if (len <= 0) {
@@ -130,24 +130,11 @@ void SystemBusDaemon::readSocket()
         }
 
         buf.remove(0, length);
-        if (buf.isEmpty())
-            break;
-
-        if (!socket->waitForReadyRead(1000)) {
-            tSystemError("Invalid frame  [%s:%d]", __FILE__, __LINE__);
+        if (buf.isEmpty()) {
             break;
         }
     }
 }
-
-/* Data format
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
- +---------------+-----------------------------------------------+
- |   opcode (8)  |           Payload length (32)                 |
- |---------------+-----------------------------------------------+
- |               |           Payload data  ...                   |
-*/
 
 
 void SystemBusDaemon::handleDisconnect()
