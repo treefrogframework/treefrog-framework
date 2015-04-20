@@ -25,7 +25,7 @@ windows {
   } else {
     LIBS += -ltreefrog$${TF_VER_MAJ}
   }
-  LIBS += -L"$$target.path" -lpsapi -lntdll
+  LIBS += -L"$$target.path" -lntdll
   win32-msvc* {
     LIBS += advapi32.lib
   }

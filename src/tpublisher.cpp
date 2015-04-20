@@ -230,41 +230,41 @@ void TPublisher::instantiate()
 
 void TPublisher::receiveSystemBus()
 {
-    TSystemBusMessage msg = TSystemBus::instance()->recv();
-    if (!msg.validate()) {
-        return;
-    }
+    auto messages = TSystemBus::instance()->recvAll();
 
-    switch (msg.opCode) {
-    case Tf::WebSocketSendText:
-        break;
+    for (auto &msg : messages) {
+        switch (msg.opCode()) {
+        case Tf::WebSocketSendText:
+            break;
 
-    case Tf::WebSocketSendBinary:
-        break;
+        case Tf::WebSocketSendBinary:
+            break;
 
-    case Tf::WebSocketPublishText: {
-        Pub *pub = get(msg.dst);
-        if (pub) {
-            pub->publishLocal(QString::fromUtf8(msg.payload));
+        case Tf::WebSocketPublishText: {
+            Pub *pub = get(msg.target());
+            if (pub) {
+                pub->publishLocal(QString::fromUtf8(msg.data()));
+            }
+            break; }
+
+        case Tf::WebSocketPublishBinary: {
+            Pub *pub = get(msg.target());
+            if (pub) {
+                pub->publishLocal(msg.data());
+            }
+            break; }
+
+        default:
+            tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
+            break;
         }
-        break; }
-
-    case Tf::WebSocketPublishBinary: {
-        Pub *pub = get(msg.dst);
-        if (pub) {
-            pub->publishLocal(msg.payload);
-        }
-        break; }
-
-    default:
-        break;
     }
 }
 
 
 Pub *TPublisher::create(const QString &topic)
 {
-    Pub *pub = new Pub(topic);
+    auto *pub = new Pub(topic);
     pub->moveToThread(Tf::app()->thread());
     pubobj.insert(topic, pub);
     tSystemDebug("create topic: %s", qPrintable(topic));

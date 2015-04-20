@@ -25,7 +25,7 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  LIBS += -lws2_32
+  LIBS += -lws2_32 -lpsapi
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
 

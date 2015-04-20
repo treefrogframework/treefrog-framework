@@ -16,13 +16,14 @@
 #include "tprocessinfo.h"
 #include "tfcore.h"
 
-static TSystemBus *systemBus = nullptr;
 const int HEADER_LEN = 5;
 const QString SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";
 
+static TSystemBus *systemBus = nullptr;
+
 
 TSystemBus::TSystemBus()
-    : readBuffer(), writeBuffer(), mutexRead(QMutex::Recursive), mutexWrite(QMutex::NonRecursive)
+    : readBuffer(), sendBuffer(), mutexRead(QMutex::NonRecursive), mutexWrite(QMutex::NonRecursive)
 {
     busSocket = new QLocalSocket();
     QObject::connect(busSocket, SIGNAL(readyRead()), this, SLOT(readBus()));
@@ -40,82 +41,63 @@ TSystemBus::~TSystemBus()
 
 bool TSystemBus::send(const TSystemBusMessage &message)
 {
-    return send((Tf::ServerOpCode)message.opCode, message.dst, message.payload);
-}
-
-
-bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload)
-{
-    QByteArray buf;
-    {
-        QDataStream ds(&buf, QIODevice::WriteOnly);
-        ds.setByteOrder(QDataStream::BigEndian);
-        ds << (quint8)opcode << (int)0 << dst << payload;
-    }
-    {
-        QDataStream ds(&buf, QIODevice::WriteOnly);
-        ds.setByteOrder(QDataStream::BigEndian);
-        ds.skipRawData(sizeof(quint8));
-        ds << (int)buf.length() - HEADER_LEN;  // overwrite the length
-    }
-    //tSystemDebug("0x%x 0x%x 0x%x 0x%x 0x%x", (char)buf[0], (char)buf[1], (char)buf[2], (char)buf[3], (char)buf[4]);
-
     QMutexLocker locker(&mutexWrite);
-    writeBuffer += buf;
+    sendBuffer += message.toByteArray();
     QTimer::singleShot(0, this, SLOT(writeBus()));   // Writes in main thread
     return true;
 }
 
 
-TSystemBusMessage TSystemBus::recv()
+bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload)
 {
+    return send(TSystemBusMessage(opcode, dst, payload));
+}
+
+
+QList<TSystemBusMessage> TSystemBus::recvAll()
+{
+    QList<TSystemBusMessage> ret;
+    quint8 opcode;
+    quint32 length;
     QMutexLocker locker(&mutexRead);
 
-    QDataStream ds(readBuffer);
-    ds.setByteOrder(QDataStream::BigEndian);
-    quint8 opcode;
-    int length;
-    QString dst;
-    QByteArray payload;
+    for (;;) {
+        QDataStream ds(readBuffer);
+        ds.setByteOrder(QDataStream::BigEndian);
+        ds >> opcode >> length;
 
-    ds >> opcode >> length >> dst >> payload;
-    TSystemBusMessage message(opcode, dst, payload);
-    readBuffer.remove(0, length + HEADER_LEN);
-    return message;
+        if ((uint)readBuffer.length() < length + HEADER_LEN) {
+            break;
+        }
+
+        auto message = TSystemBusMessage::parse(readBuffer);
+        if (message.isValid()) {
+            ret << message;
+        }
+    }
+    return ret;
 }
 
 
 void TSystemBus::readBus()
 {
-    const int BUFLEN = 4096;
-    QMutexLocker locker(&mutexRead);
-
-    int currentLen = readBuffer.length();
-    readBuffer.reserve(currentLen + BUFLEN);
-
-    int len = busSocket->read(readBuffer.data() + currentLen, BUFLEN);
-    if (Q_UNLIKELY(len <= 0)) {
-        tSystemError("stdin read error  [%s:%d]", __FILE__, __LINE__);
-        readBuffer.clear();
-    } else {
-        readBuffer.resize(currentLen + len);
+    bool ready = false;
+    {
+        QMutexLocker locker(&mutexRead);
+        readBuffer += busSocket->readAll();
 
         QDataStream ds(readBuffer);
         ds.setByteOrder(QDataStream::BigEndian);
         quint8 opcode;
-        int length;
+        quint32 length;
         ds >> opcode >> length;
 
-        if (readBuffer.length() >= length + HEADER_LEN) {
-            if (opcode > 0 && opcode < (int)Tf::MaxServerOpCode) {
-                emit readyReceive();
-            } else {
-                tSystemError("Invalid opcode: %d  [%s:%d]", opcode, __FILE__, __LINE__);
-                readBuffer.remove(0, length + HEADER_LEN);
-            }
-        }
+        ready = ((uint)readBuffer.length() >= length + HEADER_LEN);
     }
 
+    if (ready) {
+        emit readyReceive();
+    }
 }
 
 
@@ -123,24 +105,24 @@ void TSystemBus::writeBus()
 {
     QMutexLocker locker(&mutexWrite);
 
-    while (!writeBuffer.isEmpty()) {
-        int len = busSocket->write(writeBuffer.data(), writeBuffer.length());
+    for (;;) {
+        int len = busSocket->write(sendBuffer.data(), sendBuffer.length());
+
         if (Q_UNLIKELY(len <= 0)) {
             tSystemError("System Bus write error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
-            writeBuffer.clear();
+            sendBuffer.resize(0);
         } else {
-            if (len == writeBuffer.length()) {
-                writeBuffer.truncate(0);
-                break;
-            } else {
-                writeBuffer.remove(0, len);
-            }
+            sendBuffer.remove(0, len);
+        }
 
-            if (!busSocket->waitForBytesWritten(1000)) {
-                tSystemError("System Bus write-wait error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
-                writeBuffer.clear();
-                break;
-            }
+        if (sendBuffer.isEmpty()) {
+            break;
+        }
+
+        if (!busSocket->waitForBytesWritten(1000)) {
+            tSystemError("System Bus write-wait error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
+            sendBuffer.resize(0);
+            break;
         }
     }
 }
@@ -191,10 +173,10 @@ QString TSystemBus::connectionName()
 
     qint64 pid = 0;
     QString cmd = TWebApplication::arguments().first();
-    if (cmd.lastIndexOf(processName) > 0) {
+    if (cmd.endsWith(processName)) {
         pid = TProcessInfo(TWebApplication::applicationPid()).ppid();
     } else {
-        pid = TProcessInfo(TWebApplication::applicationPid()).pid();
+        pid = TWebApplication::applicationPid();
     }
 
     return connectionName(pid);
@@ -207,15 +189,117 @@ QString TSystemBus::connectionName(qint64 pid)
 }
 
 
-TSystemBusMessage::TSystemBusMessage(int o, const QString &d, const QByteArray &p)
-    : opCode(o), dst(d), payload(p)
+
+TSystemBusMessage::TSystemBusMessage()
+    : firstByte_(0), payload_(), valid_(false)
 { }
+
+
+TSystemBusMessage::TSystemBusMessage(quint8 op, const QByteArray &d)
+    : firstByte_(0), payload_(), valid_(false)
+{
+    firstByte_ = 0x80 | (op & 0x3F);
+    QDataStream ds(&payload_, QIODevice::WriteOnly);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds << QByteArray() << d;
+}
+
+
+TSystemBusMessage::TSystemBusMessage(quint8 op, const QString &t, const QByteArray &d)
+    : firstByte_(0), payload_(), valid_(false)
+{
+    firstByte_ = 0x80 | (op & 0x3F);
+    QDataStream ds(&payload_, QIODevice::WriteOnly);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds << t << d;
+}
+
+
+QString TSystemBusMessage::target() const
+{
+    QString ret;
+    QDataStream ds(payload_);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds >> ret;
+    return ret;
+}
+
+
+QByteArray TSystemBusMessage::data() const
+{
+    QByteArray ret;
+    QString target;
+    QDataStream ds(payload_);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds >> target >> ret;
+    return ret;
+}
 
 
 bool TSystemBusMessage::validate()
 {
-    if (opCode <= 0 || opCode >= (int)Tf::MaxServerOpCode) {
-        return false;
+    valid_  = true;
+    valid_ &= (firstBit() == true);
+    valid_ &= (rsvBit() == false);
+    if (!valid_) {
+        tSystemError("Invalid byte: 0x%x  [%s:%d]", firstByte_, __FILE__, __LINE__);
     }
-    return true;
+
+    valid_ &= (opCode() > 0 && opCode() <= MaxOpCode);
+    if (!valid_) {
+        tSystemError("Invalid opcode: %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
+    }
+    return valid_;
 }
+
+
+QByteArray TSystemBusMessage::toByteArray() const
+{
+    QByteArray buf;
+    buf.reserve(HEADER_LEN + payload_.length());
+
+    QDataStream ds(&buf, QIODevice::WriteOnly);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds << firstByte_ << (quint32)payload_.length();
+    ds.writeRawData(payload_.data(), payload_.length());
+    return buf;
+}
+
+
+TSystemBusMessage TSystemBusMessage::parse(QByteArray &bytes)
+{
+    QDataStream ds(bytes);
+    ds.setByteOrder(QDataStream::BigEndian);
+
+    quint8 opcode;
+    quint32 length;
+    ds >> opcode >> length;
+
+    if ((uint)bytes.length() < HEADER_LEN || (uint)bytes.length() < HEADER_LEN + length) {
+        tSystemError("Invalid length: %d  [%s:%d]", length, __FILE__, __LINE__);
+        bytes.resize(0);
+        return TSystemBusMessage();
+    }
+
+    TSystemBusMessage message;
+    message.firstByte_ = opcode;
+    message.payload_ = bytes.mid(HEADER_LEN, length);
+    message.validate();
+    bytes.remove(0, HEADER_LEN + length);
+    return message;
+}
+
+
+/* Data format for system bus
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-----------+-----------------------------------------------+
+ |F|R|  opcode   |              Payload length                   |
+ |L|S|   (6)     |                  (32)                         |
+ |G|V|           |                                               |
+ +-+-+-----------+-----------------------------------------------+
+ |               | Payload data : target (QString format)        |
+ +---------------+-----------------------------------------------+
+ |            Payload data : QByteArray format                   |
+ +---------------+-----------------------------------------------+
+*/

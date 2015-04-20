@@ -2,6 +2,7 @@
 #define TSYSTEMBUS_H
 
 #include <QObject>
+#include <QList>
 #include <QMutex>
 #include <QLocalSocket>
 #include <TGlobal>
@@ -18,6 +19,7 @@ public:
     bool send(const TSystemBusMessage &message);
     bool send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload);
     TSystemBusMessage recv();
+    QList<TSystemBusMessage> recvAll();
     void connect();
 
     static TSystemBus *instance();
@@ -37,7 +39,7 @@ protected slots:
 private:
     QLocalSocket *busSocket;
     QByteArray readBuffer;
-    QByteArray writeBuffer;
+    QByteArray sendBuffer;
     QMutex mutexRead;
     QMutex mutexWrite;
 
@@ -49,12 +51,40 @@ private:
 class T_CORE_EXPORT TSystemBusMessage
 {
 public:
-    int opCode;
-    QString dst;
-    QByteArray payload;
+    enum OpCode {
+        Invalid                 = 0x00,
+        WebSocketSendText       = 0x01,
+        WebSocketSendBinary     = 0x02,
+        WebSocketPublishText    = 0x03,
+        WebSocketPublishBinary  = 0x04,
+        MaxOpCode               = 0x04,
+    };
 
-    TSystemBusMessage(int opcode, const QString &dst, const QByteArray &payload);
+    TSystemBusMessage();
+    TSystemBusMessage(quint8 opcode, const QByteArray &data);
+    TSystemBusMessage(quint8 opcode, const QString &target, const QByteArray &data);
+
+    bool firstBit() const { return firstByte_ & 0x80; }
+    bool rsvBit() const { return firstByte_ & 0x40; }
+    OpCode opCode() const { return (OpCode)(firstByte_ & 0x3F); }
+    QString target() const;
+    QByteArray data() const;
+
+    int payloadLength() const { return payload_.length(); }
+    QByteArray toByteArray() const;
+    bool isValid() const { return valid_; }
+
+    static TSystemBusMessage parse(QByteArray &bytes);
+
+private:
+    const QByteArray &payload() const { return payload_; }
     bool validate();
+
+    quint8 firstByte_;
+    QByteArray payload_;
+    bool valid_;
+
+    friend class TSystemBus;
 };
 
 #endif // TSYSTEMBUS_H
