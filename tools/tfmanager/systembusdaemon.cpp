@@ -95,7 +95,7 @@ void SystemBusDaemon::readSocket()
         ds >> opcode >> length;
 
         if ((uint)buf.length() < length + HEADER_LEN) {
-            if (!socket->waitForReadyRead(10)) {
+            if (!socket->waitForReadyRead(100)) {
                 tSystemError("Manager frame too short  [%s:%d]", __FILE__, __LINE__);
                 break;
             }
