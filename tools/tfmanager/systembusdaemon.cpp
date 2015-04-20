@@ -60,8 +60,10 @@ bool SystemBusDaemon::open()
 
 void SystemBusDaemon::close()
 {
-    tSystemDebug("close system bus daemon : %s", qPrintable(localServer->fullServerName()));
+    QObject::disconnect(this, nullptr, nullptr, nullptr);
+    QObject::disconnect(nullptr, nullptr, this, nullptr);
     localServer->close();
+    tSystemDebug("close system bus daemon : %s", qPrintable(localServer->fullServerName()));
 }
 
 

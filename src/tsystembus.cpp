@@ -154,9 +154,16 @@ void TSystemBus::connect()
 
 void TSystemBus::handleError(QLocalSocket::LocalSocketError error)
 {
-    tSystemError("Local socket error : %d", (int)error);
-}
+    switch (error) {
+    case QLocalSocket::PeerClosedError:
+        tSystemError("Remote socket closed the connection");
+        break;
 
+    default:
+        tSystemError("Local socket error : %d", (int)error);
+        break;
+    }
+}
 
 
 TSystemBus *TSystemBus::instance()

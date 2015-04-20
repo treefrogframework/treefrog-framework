@@ -552,7 +552,6 @@ int managerMain(int argc, char *argv[])
         ret = app.exec();
         tSystemDebug("TreeFrog manager process caught a signal [code:%d]", ret);
         manager->stop();
-        SystemBusDaemon::instance()->close();
 
         if (ret == 1) {  // means SIGHUP
             tSystemInfo("Restarts TreeFrog application servers");
@@ -561,6 +560,9 @@ int managerMain(int argc, char *argv[])
             break;
         }
     }
+
+    // Close system bus
+    SystemBusDaemon::instance()->close();
 
     if (!svrname.isEmpty()) {  // UNIX domain file
         QFile(svrname).remove();
