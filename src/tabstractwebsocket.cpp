@@ -5,6 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QObject>
 #include <QCryptographicHash>
 #include <THttpRequestHeader>
 #include <THttpUtility>
@@ -18,7 +19,8 @@ const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
 TAbstractWebSocket::TAbstractWebSocket()
-    : closing(false), closeSent(false)
+    : closing(false), closeSent(false), mutexKeepAlive(QMutex::NonRecursive),
+      keepAliveTimerId(0), keepAliveInterval(0)
 { }
 
 
@@ -36,6 +38,8 @@ void TAbstractWebSocket::sendText(const QString &message)
     frame.setOpCode(TWebSocketFrame::TextFrame);
     frame.setPayload(message.toUtf8());
     writeRawData(frame.toByteArray());
+
+    renewKeepAlive();  // Renew Keep-Alive interval
 }
 
 
@@ -45,21 +49,25 @@ void TAbstractWebSocket::sendBinary(const QByteArray &data)
     frame.setOpCode(TWebSocketFrame::BinaryFrame);
     frame.setPayload(data);
     writeRawData(frame.toByteArray());
+
+    renewKeepAlive();  // Renew Keep-Alive interval
 }
 
 
-void TAbstractWebSocket::sendPing()
+void TAbstractWebSocket::sendPing(const QByteArray &data)
 {
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::Ping);
+    frame.setPayload(data);
     writeRawData(frame.toByteArray());
 }
 
 
-void TAbstractWebSocket::sendPong()
+void TAbstractWebSocket::sendPong(const QByteArray &data)
 {
     TWebSocketFrame frame;
     frame.setOpCode(TWebSocketFrame::Pong);
+    frame.setPayload(data);
     writeRawData(frame.toByteArray());
 }
 
@@ -73,6 +81,41 @@ void TAbstractWebSocket::sendClose(int code)
         ds.setByteOrder(QDataStream::BigEndian);
         ds << (qint16)code;
         writeRawData(frame.toByteArray());
+
+        stopKeepAlive();
+    }
+}
+
+
+void TAbstractWebSocket::startKeepAlive(int interval)
+{
+    QMutexLocker locker(&mutexKeepAlive);
+    if (interval > 0) {
+        keepAliveInterval = interval;
+        keepAliveTimerId = thisObject()->startTimer(keepAliveInterval * 1000);
+        tSystemDebug("startKeepAlive  inteval:%d  id:%d", interval, keepAliveTimerId);
+    }
+}
+
+
+void TAbstractWebSocket::stopKeepAlive()
+{
+    tSystemDebug("stopKeepAlive");
+    QMutexLocker locker(&mutexKeepAlive);
+    if (keepAliveTimerId > 0) {
+        thisObject()->killTimer(keepAliveTimerId);
+        keepAliveInterval = 0;
+    }
+}
+
+
+void TAbstractWebSocket::renewKeepAlive()
+{
+    tSystemDebug("renewKeepAlive");
+    QMutexLocker locker(&mutexKeepAlive);
+    if (keepAliveInterval > 0) {
+        thisObject()->killTimer(keepAliveTimerId);
+        keepAliveTimerId = thisObject()->startTimer(keepAliveInterval * 1000);
     }
 }
 

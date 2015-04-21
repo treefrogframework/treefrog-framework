@@ -33,12 +33,15 @@ public slots:
     void releaseWorker();
     void sendText(const QString &text);
     void sendBinary(const QByteArray &binary);
+    void sendPong(const QByteArray &data = QByteArray());
 
 protected:
     virtual void *getRecvBuffer(int size) Q_DECL_OVERRIDE;
     virtual bool seekRecvBuffer(int pos) Q_DECL_OVERRIDE;
-    qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
+    virtual QObject *thisObject() Q_DECL_OVERRIDE { return this; }
+    virtual qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
     virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
+    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
     void clear();
 
 private:

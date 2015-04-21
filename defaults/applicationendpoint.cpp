@@ -21,10 +21,12 @@ void ApplicationEndpoint::onTextReceived(const QString &)
 void ApplicationEndpoint::onBinaryReceived(const QByteArray &)
 { }
 
-void ApplicationEndpoint::onPing()
-{ }
+void ApplicationEndpoint::onPing(const QByteArray &data)
+{
+    TWebSocketEndpoint::onPing(data);
+}
 
-void ApplicationEndpoint::onPong()
+void ApplicationEndpoint::onPong(const QByteArray &)
 { }
 
 bool ApplicationEndpoint::transactionEnabled() const

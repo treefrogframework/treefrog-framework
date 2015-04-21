@@ -76,7 +76,15 @@ void TEpollWebSocket::sendText(const QString &text)
 
 void TEpollWebSocket::sendBinary(const QByteArray &binary)
 {
+    tSystemDebug("sendBinary  binary len:%d  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
     TAbstractWebSocket::sendBinary(binary);
+}
+
+
+void TEpollWebSocket::sendPong(const QByteArray &data)
+{
+    tSystemDebug("sendPong  data len:%d  (pid:%d)", data.length(), (int)QCoreApplication::applicationPid());
+    TAbstractWebSocket::sendPong(data);
 }
 
 
@@ -211,4 +219,15 @@ qint64 TEpollWebSocket::writeRawData(const QByteArray &data)
 void TEpollWebSocket::disconnect()
 {
     TEpollSocket::disconnect();
+    stopKeepAlive();
+}
+
+
+void TEpollWebSocket::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == keepAliveTimerId) {
+        sendPong();
+    } else {
+        TEpollSocket::timerEvent(event);
+    }
 }

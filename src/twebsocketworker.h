@@ -35,7 +35,7 @@ private:
     TSession sessionStore_;
     QByteArray requestPath_;
     TWebSocketFrame::OpCode opcode_;
-    QByteArray requestData_;
+    QByteArray payload_;
 };
 
 #endif // TWEBSOCKETWORKER_H

@@ -29,7 +29,7 @@ TWebSocketWorker::~TWebSocketWorker()
 void TWebSocketWorker::setPayload(TWebSocketFrame::OpCode opCode, const QByteArray &payload)
 {
     opcode_ = opCode;
-    requestData_ = payload;
+    payload_ = payload;
 }
 
 
@@ -41,6 +41,7 @@ void TWebSocketWorker::setSession(const TSession &session)
 
 void TWebSocketWorker::run()
 {
+    bool sendTask = false;
     QString es = TUrlRoute::splitPath(requestPath_).value(0).toLower() + "endpoint";
     TDispatcher<TWebSocketEndpoint> dispatcher(es);
     TWebSocketEndpoint *endpoint = dispatcher.object();
@@ -71,17 +72,17 @@ void TWebSocketWorker::run()
 
             switch (opcode_) {
             case TWebSocketFrame::TextFrame:
-                endpoint->onTextReceived(QString::fromUtf8(requestData_));
+                endpoint->onTextReceived(QString::fromUtf8(payload_));
                 break;
 
             case TWebSocketFrame::BinaryFrame:
-                endpoint->onBinaryReceived(requestData_);
+                endpoint->onBinaryReceived(payload_);
                 break;
 
             case TWebSocketFrame::Close: {
                 quint16 closeCode = Tf::GoingAway;
-                if (requestData_.length() >= 2) {
-                    QDataStream ds(&requestData_, QIODevice::ReadOnly);
+                if (payload_.length() >= 2) {
+                    QDataStream ds(&payload_, QIODevice::ReadOnly);
                     ds.setByteOrder(QDataStream::BigEndian);
                     ds >> closeCode;
                 }
@@ -92,12 +93,11 @@ void TWebSocketWorker::run()
                 break; }
 
             case TWebSocketFrame::Ping:
-                endpoint->onPing();
-                endpoint->sendPong();
+                endpoint->onPing(payload_);
                 break;
 
             case TWebSocketFrame::Pong:
-                endpoint->onPong();
+                endpoint->onPong(payload_);
                 break;
 
             default:
@@ -111,13 +111,17 @@ void TWebSocketWorker::run()
         }
 
         for (auto &p : endpoint->taskList) {
+            const QVariant &taskData = p.second;
+
             switch (p.first) {
             case TWebSocketEndpoint::SendText:
-                socket_->sendText(p.second.toString());
+                socket_->sendText(taskData.toString());
+                sendTask = true;
                 break;
 
             case TWebSocketEndpoint::SendBinary:
-                socket_->sendBinary(p.second.toByteArray());
+                socket_->sendBinary(taskData.toByteArray());
+                sendTask = true;
                 break;
 
             case TWebSocketEndpoint::SendClose:
@@ -129,25 +133,28 @@ void TWebSocketWorker::run()
                     // close-frame sent and received
                     socket_->disconnect();
                 } else {
-                    uint closeCode = p.second.toUInt();
+                    uint closeCode = taskData.toUInt();
                     socket_->sendClose(closeCode);
+                    sendTask = true;
                 }
                 break;
 
             case TWebSocketEndpoint::SendPing:
-                socket_->sendPing();
+                socket_->sendPing(taskData.toByteArray());
+                sendTask = true;
                 break;
 
             case TWebSocketEndpoint::SendPong:
-                socket_->sendPong();
+                socket_->sendPong(taskData.toByteArray());
+                sendTask = true;
                 break;
 
             case TWebSocketEndpoint::Subscribe:
-                TPublisher::instance()->subscribe(p.second.toString(), socket_);
+                TPublisher::instance()->subscribe(taskData.toString(), socket_);
                 break;
 
             case TWebSocketEndpoint::Unsubscribe:
-                TPublisher::instance()->unsubscribe(p.second.toString(), socket_);
+                TPublisher::instance()->unsubscribe(taskData.toString(), socket_);
                 break;
 
             case TWebSocketEndpoint::UnsubscribeFromAll:
@@ -155,19 +162,34 @@ void TWebSocketWorker::run()
                 break;
 
             case TWebSocketEndpoint::PublishText: {
-                QVariantList lst = p.second.toList();
+                QVariantList lst = taskData.toList();
                 TPublisher::instance()->publish(lst[0].toString(), lst[1].toString());
+                sendTask = true;
                 break; }
 
             case TWebSocketEndpoint::PublishBinary: {
-                QVariantList lst = p.second.toList();
+                QVariantList lst = taskData.toList();
                 TPublisher::instance()->publish(lst[0].toString(), lst[1].toByteArray());
+                sendTask = true;
                 break; }
+
+            case TWebSocketEndpoint::StartKeepAlive:
+                socket_->startKeepAlive(taskData.toInt());
+                break;
+
+            case TWebSocketEndpoint::StopKeepAlive:
+                socket_->stopKeepAlive();
+                break;
 
             default:
                 tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
                 break;
             }
+        }
+
+        if (!sendTask) {
+            // Renew keep-alive
+            socket_->renewKeepAlive();
         }
 
     transaction_cleanup:

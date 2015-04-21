@@ -44,12 +44,16 @@ void TWebSocketEndpoint::onBinaryReceived(const QByteArray &binary)
 }
 
 
-void TWebSocketEndpoint::onPing()
-{ }
+void TWebSocketEndpoint::onPing(const QByteArray &data)
+{
+    sendPong(data);
+}
 
 
-void TWebSocketEndpoint::onPong()
-{ }
+void TWebSocketEndpoint::onPong(const QByteArray &data)
+{
+    Q_UNUSED(data);
+}
 
 
 QString TWebSocketEndpoint::name() const
@@ -70,15 +74,15 @@ void TWebSocketEndpoint::sendBinary(const QByteArray &binary)
 }
 
 
-void TWebSocketEndpoint::sendPing()
+void TWebSocketEndpoint::sendPing(const QByteArray &data)
 {
-    taskList << qMakePair((int)SendPing, QVariant());
+    taskList << qMakePair((int)SendPing, QVariant(data));
 }
 
 
-void TWebSocketEndpoint::sendPong()
+void TWebSocketEndpoint::sendPong(const QByteArray &data)
 {
-    taskList << qMakePair((int)SendPong, QVariant());
+    taskList << qMakePair((int)SendPong, QVariant(data));
 }
 
 
@@ -138,4 +142,14 @@ void TWebSocketEndpoint::publish(const QString &topic, const QByteArray &binary)
     QVariantList message;
     message << topic << binary;
     taskList << qMakePair((int)PublishBinary, QVariant(message));
+}
+
+
+void TWebSocketEndpoint::startKeepAlive(int interval)
+{
+    if (interval > 0) {
+        taskList << qMakePair((int)StartKeepAlive, QVariant(interval));
+    } else {
+        taskList << qMakePair((int)StopKeepAlive, QVariant(0));
+    }
 }
