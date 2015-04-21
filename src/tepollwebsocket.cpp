@@ -225,7 +225,7 @@ void TEpollWebSocket::disconnect()
 
 void TEpollWebSocket::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == keepAliveTimerId) {
+    if (event->timerId() == keepAliveTimer->timerId()) {
         sendPong();
     } else {
         TEpollSocket::timerEvent(event);

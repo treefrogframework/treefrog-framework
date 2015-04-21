@@ -222,7 +222,7 @@ void TWebSocket::disconnect()
 
 void TWebSocket::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == keepAliveTimerId) {
+    if (event->timerId() == keepAliveTimer->timerId()) {
         sendPong();
     } else {
         QTcpSocket::timerEvent(event);

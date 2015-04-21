@@ -6,7 +6,9 @@
  */
 
 #include <QObject>
+#include <QTimer>
 #include <QCryptographicHash>
+#include <TWebApplication>
 #include <THttpRequestHeader>
 #include <THttpUtility>
 #include "tabstractwebsocket.h"
@@ -20,7 +22,7 @@ const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 TAbstractWebSocket::TAbstractWebSocket()
     : closing(false), closeSent(false), mutexKeepAlive(QMutex::NonRecursive),
-      keepAliveTimerId(0), keepAliveInterval(0)
+      keepAliveTimer(nullptr)
 { }
 
 
@@ -28,6 +30,10 @@ TAbstractWebSocket::~TAbstractWebSocket()
 {
     if (!closing.load()) {
         tSystemWarn("Logic warning  [%s:%d]", __FILE__, __LINE__);
+    }
+
+    if (keepAliveTimer) {
+        delete keepAliveTimer;
     }
 }
 
@@ -89,12 +95,17 @@ void TAbstractWebSocket::sendClose(int code)
 
 void TAbstractWebSocket::startKeepAlive(int interval)
 {
+    tSystemDebug("startKeepAlive");
     QMutexLocker locker(&mutexKeepAlive);
-    if (interval > 0) {
-        keepAliveInterval = interval;
-        keepAliveTimerId = thisObject()->startTimer(keepAliveInterval * 1000);
-        tSystemDebug("startKeepAlive  inteval:%d  id:%d", interval, keepAliveTimerId);
+
+    if (!keepAliveTimer) {
+        keepAliveTimer = new TBasicTimer();
+        keepAliveTimer->moveToThread(Tf::app()->thread());
+        keepAliveTimer->setReceiver(thisObject());
     }
+
+    keepAliveTimer->setInterval(interval * 1000);
+    QTimer::singleShot(0, keepAliveTimer, SLOT(start()));
 }
 
 
@@ -102,9 +113,9 @@ void TAbstractWebSocket::stopKeepAlive()
 {
     tSystemDebug("stopKeepAlive");
     QMutexLocker locker(&mutexKeepAlive);
-    if (keepAliveTimerId > 0) {
-        thisObject()->killTimer(keepAliveTimerId);
-        keepAliveInterval = 0;
+
+    if (keepAliveTimer) {
+        QTimer::singleShot(0, keepAliveTimer, SLOT(stop()));
     }
 }
 
@@ -113,9 +124,9 @@ void TAbstractWebSocket::renewKeepAlive()
 {
     tSystemDebug("renewKeepAlive");
     QMutexLocker locker(&mutexKeepAlive);
-    if (keepAliveInterval > 0) {
-        thisObject()->killTimer(keepAliveTimerId);
-        keepAliveTimerId = thisObject()->startTimer(keepAliveInterval * 1000);
+
+    if (keepAliveTimer) {
+        QTimer::singleShot(0, keepAliveTimer, SLOT(start()));
     }
 }
 

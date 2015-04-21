@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <TGlobal>
 #include <atomic>
+#include "tbasictimer.h"
 
 class QObject;
 class THttpRequestHeader;
@@ -41,8 +42,7 @@ protected:
     std::atomic<bool> closing;
     std::atomic<bool> closeSent;
     QMutex mutexKeepAlive;
-    int keepAliveTimerId;
-    int keepAliveInterval;
+    TBasicTimer *keepAliveTimer;
 
     friend class TWebSocketWorker;
     Q_DISABLE_COPY(TAbstractWebSocket)

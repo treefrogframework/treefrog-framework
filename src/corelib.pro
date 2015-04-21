@@ -258,6 +258,8 @@ HEADERS += tsystembus.h
 SOURCES += tsystembus.cpp
 HEADERS += tprocessinfo.h
 SOURCES += tprocessinfo.cpp
+HEADERS += tbasictimer.h
+SOURCES += tbasictimer.cpp
 
 HEADERS += \
            tfnamespace.h \
