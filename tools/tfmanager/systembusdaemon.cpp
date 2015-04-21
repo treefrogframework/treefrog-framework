@@ -64,7 +64,8 @@ void SystemBusDaemon::close()
     localServer->close();
 
     for (auto *socket : socketSet) {
-        socket->close();
+        disconnect(socket, nullptr, nullptr, nullptr);
+        socket->abort();
         delete socket;
     }
 
@@ -156,6 +157,8 @@ void SystemBusDaemon::handleDisconnect()
     QLocalSocket *socket = qobject_cast<QLocalSocket *>(sender());
     if (socket) {
         socketSet.remove(socket);
+        disconnect(socket, nullptr, nullptr, nullptr);
+        socket->deleteLater();
         tSystemDebug("disconnected local socket : %p", socket);
     }
 }
