@@ -4,10 +4,10 @@
 #include <QTimer>
 #include <QThread>
 #include <TGlobal>
-#include <TActionContext>
+#include <TDatabaseContext>
 
 
-class T_CORE_EXPORT TScheduler : public QThread, public TActionContext
+class T_CORE_EXPORT TScheduler : public QThread, public TDatabaseContext
 {
     Q_OBJECT
 public:

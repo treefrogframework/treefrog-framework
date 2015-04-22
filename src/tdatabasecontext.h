@@ -1,10 +1,11 @@
 #ifndef TDATABASECONTEXT_H
 #define TDATABASECONTEXT_H
 
-#include <TGlobal>
+#include <QMap>
 #include <QSqlDatabase>
 #include <TSqlTransaction>
 #include <TKvsDatabase>
+#include <TGlobal>
 
 
 class T_CORE_EXPORT TDatabaseContext

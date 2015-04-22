@@ -296,16 +296,6 @@ TActionContext *Tf::currentContext()
         break;
     }
 
-    // TApplicationScheduler
-    context = qobject_cast<TApplicationScheduler *>(QThread::currentThread());
-    if (context)
-        return context;
-
-    // TScheduler
-    context = qobject_cast<TScheduler *>(QThread::currentThread());
-    if (context)
-        return context;
-
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
 }
 
@@ -338,6 +328,16 @@ TDatabaseContext *Tf::currentDatabaseContext()
 
     // TWebSocketWorker
     context = qobject_cast<TWebSocketWorker *>(QThread::currentThread());
+    if (context)
+        return context;
+
+    // TApplicationScheduler
+    context = qobject_cast<TApplicationScheduler *>(QThread::currentThread());
+    if (context)
+        return context;
+
+    // TScheduler
+    context = qobject_cast<TScheduler *>(QThread::currentThread());
     if (context)
         return context;
 

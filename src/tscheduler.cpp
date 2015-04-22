@@ -97,10 +97,10 @@ void TScheduler::run()
     job();
 
     if (rollback) {
-        TActionContext::rollbackTransactions();
+        TDatabaseContext::rollbackTransactions();
     } else {
-        TActionContext::commitTransactions();
+        TDatabaseContext::commitTransactions();
     }
 
-    TActionContext::release();
+    TDatabaseContext::release();
 }
