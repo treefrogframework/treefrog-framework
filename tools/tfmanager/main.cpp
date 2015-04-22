@@ -119,16 +119,23 @@ static void usage()
     char text[] =
         "Usage: %1 [-d] [-e environment] [application-directory]\n"     \
         "Usage: %1 [-k stop|abort|restart] [application-directory]\n"   \
+        "%2"                                                            \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
-        "  -k              : send signal to a manager process\n\n"      \
+        "  -k              : send signal to a manager process\n"        \
+        "%3\n"                                                          \
         "Type '%1 -l' to show your running applications.\n"             \
         "Type '%1 -h' to show this information.\n"                      \
         "Type '%1 -v' to show the program version.";
 
     QString cmd = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
-    puts(qPrintable(QString(text).arg(cmd)));
+    QString text1, text2;
+#ifdef Q_OS_WIN
+    text1 = QString("Usage: %1 -w [-e environment] application-directory\n").arg(cmd);
+    text2 = "  -w              : run as Windows service mode\n";
+#endif
+    puts(qPrintable(QString(text).arg(cmd).arg(text1).arg(text2)));
 }
 
 

@@ -12,6 +12,13 @@ class ServerManager : public QObject
 {
     Q_OBJECT
 public:
+    enum ManagerState {
+        NotRunning = 0,
+        Starting,
+        Running,
+        Stopping,
+    };
+
     ServerManager(int min = 5, int max = 10, int spare = 5, QObject *parent = 0);
     virtual ~ServerManager();
 
@@ -19,24 +26,18 @@ public:
     bool start(const QString &fileDomain);  // For UNIX domain
     void stop();
     bool isRunning() const;
+    ManagerState state() const { return managerState; }
     int serverCount() const;
     int spareServerCount() const;
 
 protected:
-    enum ServerProcessState {
-        NotRunning = 0,
-        Listening,
-        Running,
-        Closing,
-    };
-
-    void ajustServers() const;
-    void startServer() const;
+    void ajustServers();
+    void startServer(int id = -1) const;
 
 protected slots:
     void updateServerStatus();
     void errorDetect(QProcess::ProcessError error);
-    void serverFinish(int exitCode, QProcess::ExitStatus exitStatus) const;
+    void serverFinish(int exitCode, QProcess::ExitStatus exitStatus);
     void readStandardError() const;
 
 private:
@@ -44,7 +45,7 @@ private:
     int maxServers;
     int minServers;
     int spareServers;
-    volatile bool running;
+    volatile ManagerState managerState;
 
     Q_DISABLE_COPY(ServerManager)
 };
