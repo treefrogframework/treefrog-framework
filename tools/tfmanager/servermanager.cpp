@@ -237,9 +237,7 @@ void ServerManager::errorDetect(QProcess::ProcessError error)
     if (server) {
         tSystemError("tfserver error detected(%d). [%s]", error, TFSERVER_CMD);
         //server->close();  // long blocking..
-        server->deleteLater();
-        int id = serversStatus.take(server);
-        startServer(id);
+        server->kill();
     }
 }
 
@@ -250,11 +248,11 @@ void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus)
     if (server) {
         //server->close();  // long blocking..
         server->deleteLater();
-        serversStatus.remove(server);
+        int id = serversStatus.take(server);
 
         if (isRunning()) {
             tSystemError("Detected a server crashed. exitCode:%d  exitStatus:%d", exitCode, (int)exitStatus);
-            ajustServers();
+            startServer(id);
         } else {
             tSystemDebug("Detected normal exit of server. exitCode:%d", exitCode);
             if (serversStatus.count() == 0) {
