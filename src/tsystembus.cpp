@@ -9,6 +9,7 @@
 #include <QDataStream>
 #include <QLocalSocket>
 #include <QTimer>
+#include <QStringList>
 #include <TWebApplication>
 #include <TApplicationServerBase>
 #include "tsystembus.h"
