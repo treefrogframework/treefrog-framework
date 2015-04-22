@@ -299,7 +299,9 @@ TSystemBusMessage TSystemBusMessage::parse(QByteArray &bytes)
  |G|V|           |                                               |
  +-+-+-----------+-----------------------------------------------+
  |               | Payload data : target (QString format)        |
+ |               |          (x)                                  |
  +---------------+-----------------------------------------------+
  |            Payload data : QByteArray format                   |
+ |                     (y)                                       |
  +---------------+-----------------------------------------------+
 */

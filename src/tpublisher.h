@@ -17,8 +17,8 @@ public:
     void subscribe(const QString &topic, TAbstractWebSocket *socket);
     void unsubscribe(const QString &topic, TAbstractWebSocket *socket);
     void unsubscribeFromAll(TAbstractWebSocket *socket);
-    bool publish(const QString &topic, const QString &text);
-    bool publish(const QString &topic, const QByteArray &binary);
+    void publish(const QString &topic, const QString &text);
+    void publish(const QString &topic, const QByteArray &binary);
     static TPublisher *instance();
     static void instantiate();
 

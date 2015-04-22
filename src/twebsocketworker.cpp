@@ -16,7 +16,8 @@
 
 
 TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
-    : QThread(parent), TDatabaseContext(), mode_(m), socket_(s), requestPath_(path)
+    : QThread(parent), TDatabaseContext(), mode_(m), socket_(s), requestPath_(path),
+      opcode_((TWebSocketFrame::OpCode)0), payload_()
 { }
 
 
@@ -63,9 +64,10 @@ void TWebSocketWorker::run()
             break;
 
         case Closing:
-            endpoint->onClose(Tf::GoingAway);
-            endpoint->unsubscribeFromAll();
-            goto transaction_cleanup;
+            if (!socket_->closing.exchange(true)) {
+                endpoint->onClose(Tf::GoingAway);
+                endpoint->unsubscribeFromAll();
+            }
             break;
 
         case Receiving: {
@@ -87,9 +89,11 @@ void TWebSocketWorker::run()
                     ds >> closeCode;
                 }
 
-                endpoint->onClose(closeCode);
-                endpoint->close(closeCode);  // close response
-                endpoint->unsubscribeFromAll();
+                if (!socket_->closing.exchange(true)) {
+                    endpoint->onClose(closeCode);
+                    endpoint->unsubscribeFromAll();
+                }
+                endpoint->close(closeCode);  // close response or disconnect
                 break; }
 
             case TWebSocketFrame::Ping:
@@ -125,10 +129,6 @@ void TWebSocketWorker::run()
                 break;
 
             case TWebSocketEndpoint::SendClose:
-                if (opcode_ == TWebSocketFrame::Close) {
-                    socket_->closing = true;
-                }
-
                 if (socket_->closing.load() && socket_->closeSent.load()) {
                     // close-frame sent and received
                     socket_->disconnect();
@@ -192,7 +192,6 @@ void TWebSocketWorker::run()
             socket_->renewKeepAlive();
         }
 
-    transaction_cleanup:
         // transaction
         if (Q_UNLIKELY(endpoint->rollbackRequested())) {
             rollbackTransactions();

@@ -29,8 +29,6 @@ public:
     bool unsubscribe(const QObject *receiver);
     void publish(const QString &message);
     void publish(const QByteArray &binary);
-    void publishLocal(const QString &message);
-    void publishLocal(const QByteArray &binary);
     int subscriberCounter() const { return subscribers.count(); }
 signals:
     void textPublished(const QString &);
@@ -81,28 +79,15 @@ bool Pub::unsubscribe(const QObject *receiver)
 
 void Pub::publish(const QString &message)
 {
-    TSystemBus::instance()->send(Tf::WebSocketPublishText, topic, message.toUtf8());
-    publishLocal(message);
+    emit textPublished(message);
 }
 
 
 void Pub::publish(const QByteArray &binary)
 {
-    TSystemBus::instance()->send(Tf::WebSocketPublishBinary, topic, binary);
-    publishLocal(binary);
-}
-
-
-void Pub::publishLocal(const QString &message)
-{
-    emit textPublished(message);
-}
-
-
-void Pub::publishLocal(const QByteArray &binary)
-{
     emit binaryPublished(binary);
 }
+
 
 /*!
   \class TPublisher
@@ -189,27 +174,27 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
 }
 
 
-bool TPublisher::publish(const QString &topic, const QString &text)
+void TPublisher::publish(const QString &topic, const QString &text)
 {
-    QMutexLocker locker(&mutex);
+    TSystemBus::instance()->send(Tf::WebSocketPublishText, topic, text.toUtf8());
 
+    QMutexLocker locker(&mutex);
     Pub *pub = get(topic);
     if (pub) {
         pub->publish(text);
     }
-    return (bool)pub;
 }
 
 
-bool TPublisher::publish(const QString &topic, const QByteArray &binary)
+void TPublisher::publish(const QString &topic, const QByteArray &binary)
 {
-    QMutexLocker locker(&mutex);
+    TSystemBus::instance()->send(Tf::WebSocketPublishBinary, topic, binary);
 
+    QMutexLocker locker(&mutex);
     Pub *pub = get(topic);
     if (pub) {
         pub->publish(binary);
     }
-    return (bool)pub;
 }
 
 
@@ -243,14 +228,14 @@ void TPublisher::receiveSystemBus()
         case Tf::WebSocketPublishText: {
             Pub *pub = get(msg.target());
             if (pub) {
-                pub->publishLocal(QString::fromUtf8(msg.data()));
+                pub->publish(QString::fromUtf8(msg.data()));
             }
             break; }
 
         case Tf::WebSocketPublishBinary: {
             Pub *pub = get(msg.target());
             if (pub) {
-                pub->publishLocal(msg.data());
+                pub->publish(msg.data());
             }
             break; }
 

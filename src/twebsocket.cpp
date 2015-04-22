@@ -132,7 +132,7 @@ void TWebSocket::startWorkerForOpening(const TSession &session)
 
 void TWebSocket::startWorkerForClosing()
 {
-    if (!TAbstractWebSocket::closing.exchange(true)) {
+    if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
     }
@@ -164,10 +164,11 @@ void TWebSocket::releaseWorker()
 
 void TWebSocket::deleteLater()
 {
-    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", (int)myWorkerCounter);
+    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d  deleting:%d", (int)myWorkerCounter, (bool)deleting);
 
     if (!deleting.exchange(true)) {
         startWorkerForClosing();
+        return;
     }
 
     if ((int)myWorkerCounter == 0) {

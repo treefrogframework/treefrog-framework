@@ -174,12 +174,16 @@ void TEpollWebSocket::releaseWorker()
 
 void TEpollWebSocket::deleteLater()
 {
-    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d", (int)myWorkerCounter);
-    if (!deleting.load()) {
+    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d  deleting:%d", (int)myWorkerCounter, (bool)deleting);
+
+    if (!deleting.exchange(true)) {
         startWorkerForClosing();
+        return;
     }
 
-    TEpollSocket::deleteLater();
+    if ((int)myWorkerCounter == 0) {
+        QObject::deleteLater();
+    }
 }
 
 
@@ -193,7 +197,7 @@ void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 
 void TEpollWebSocket::startWorkerForClosing()
 {
-    if (!TAbstractWebSocket::closing.exchange(true)) {
+    if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
     }

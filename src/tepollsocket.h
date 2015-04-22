@@ -42,7 +42,7 @@ public:
     static TSendBuffer *createSendBuffer(const QByteArray &data);
 
 public slots:
-    void deleteLater();
+    virtual void deleteLater();
 
 protected:
     int send();
