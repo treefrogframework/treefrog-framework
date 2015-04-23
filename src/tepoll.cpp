@@ -232,8 +232,6 @@ void TEpoll::dispatchSendData()
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
             tSystemDebug("secKey: %s", secKey.data());
             int newsocket = TApplicationServerBase::duplicateSocket(sock->socketDescriptor());
-            deletePoll(sock);
-            sock->deleteLater();
 
             // Switch to WebSocket
             TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), sd->header);
@@ -241,6 +239,10 @@ void TEpoll::dispatchSendData()
             THttpResponseHeader response = TEpollWebSocket::handshakeResponse(sd->header);
             ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
             addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+
+            // Stop polling and delete
+            deletePoll(sock);
+            sock->deleteLater();
 
             // WebSocket opening
             TSession session;
