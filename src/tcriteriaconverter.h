@@ -91,7 +91,7 @@ protected:
 
 private:
     TCriteria criteria;
-    const QSqlDatabase &database;
+    QSqlDatabase database;
 };
 
 

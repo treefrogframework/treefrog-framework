@@ -322,12 +322,13 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
     QString query = "SELECT COUNT(1) FROM ";
     query += tableName();
 
+    QSqlDatabase db = database();
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database());
+        TCriteriaConverter<T> conv(cri, db);
         query.append(QLatin1String(" WHERE ")).append(conv.toString());
     }
 
-    TSqlQuery q(database());
+    TSqlQuery q(db);
     bool res = q.exec(query);
     if (res) {
         q.next();
@@ -411,7 +412,8 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     upd.reserve(256);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
-    TCriteriaConverter<T> conv(cri, database());
+    QSqlDatabase db = database();
+    TCriteriaConverter<T> conv(cri, db);
     QString where = conv.toString();
 
     if (values.isEmpty()) {
@@ -426,7 +428,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         if (prop == UpdatedAt || prop == ModifiedAt) {
             upd += propName;
             upd += '=';
-            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), database());
+            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), db);
             upd += QLatin1String(", ");
             break;
         }
@@ -437,7 +439,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         it.next();
         upd += TCriteriaConverter<T>::propertyName(it.key());
         upd += '=';
-        upd += TSqlQuery::formatValue(it.value(), database());
+        upd += TSqlQuery::formatValue(it.value(), db);
 
         if (!it.hasNext())
             break;
@@ -449,7 +451,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         upd.append(QLatin1String(" WHERE ")).append(where);
     }
 
-    TSqlQuery sqlQuery(database());
+    TSqlQuery sqlQuery(db);
     bool res = sqlQuery.exec(upd);
     return res ? sqlQuery.numRowsAffected() : -1;
 }
@@ -473,9 +475,10 @@ inline int TSqlORMapper<T>::updateAll(const TCriteria &cri, int column, QVariant
 template <class T>
 inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
 {
-    QString del = database().driver()->sqlStatement(QSqlDriver::DeleteStatement,
+    QSqlDatabase db = database();
+    QString del = db.driver()->sqlStatement(QSqlDriver::DeleteStatement,
                                                     T().tableName(), QSqlRecord(), false);
-    TCriteriaConverter<T> conv(cri, database());
+    TCriteriaConverter<T> conv(cri, db);
     QString where = conv.toString();
 
     if (del.isEmpty()) {
@@ -486,7 +489,7 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
         del.append(QLatin1String(" WHERE ")).append(where);
     }
 
-    TSqlQuery sqlQuery(database());
+    TSqlQuery sqlQuery(db);
     bool res = sqlQuery.exec(del);
     return res ? sqlQuery.numRowsAffected() : -1;
 }
