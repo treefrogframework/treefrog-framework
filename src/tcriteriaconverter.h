@@ -154,9 +154,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
             case TSql::NotIn: {
                 QString str;
                 QList<QVariant> lst = cri.val1.toList();
-                QListIterator<QVariant> i(lst);
-                while (i.hasNext()) {
-                    QString s = TSqlQuery::formatValue(i.next(), database);
+                for (auto &v : lst) {
+                    QString s = TSqlQuery::formatValue(v, database);
                     if (!s.isEmpty()) {
                         str.append(s).append(',');
                     }
@@ -225,7 +224,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
         case TSql::NotILikeEscape:
         case TSql::Between:
         case TSql::NotBetween:
-            sqlString = "(" + propertyName + TSql::formats().value(op).arg(v1, v2) + ")";
+            sqlString = QLatin1Char('(') + propertyName + TSql::formats().value(op).arg(v1, v2) + QLatin1Char(')');
             break;
 
         default:
@@ -248,10 +247,9 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
         case TSql::Any:
         case TSql::All: {
             QString str;
-            QList<QVariant> list = val.toList();
-            QListIterator<QVariant> i(list);
-            while (i.hasNext()) {
-                QString s = TSqlQuery::formatValue(i.next(), database);
+            QList<QVariant> lst = val.toList();
+            for (auto &v : lst) {
+                QString s = TSqlQuery::formatValue(v, database);
                 if (!s.isEmpty()) {
                     str.append(s).append(',');
                 }
@@ -276,18 +274,29 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
 template <class T>
 inline QString TCriteriaConverter<T>::join(const QString &s1, TCriteria::LogicalOperator op, const QString &s2)
 {
-    if (op == TCriteria::None || s2.isEmpty()) {
+    if (op == TCriteria::None || (s2.isEmpty() && op != TCriteria::Not)) {
         return s1;
     }
 
     QString string;
-    if (op == TCriteria::And) {
+    switch (op) {
+    case TCriteria::And:
         string = s1 + " AND " + s2;
-    } else if (op == TCriteria::Or) {
-        string = QLatin1String("( ") + s1 + QLatin1String(" OR ") + s2 + QLatin1String(" )");
-    } else {
+        break;
+
+    case TCriteria::Or:
+        string = QLatin1Char('(') + s1 + QLatin1String(" OR ") + s2 + QLatin1Char(')');
+        break;
+
+    case TCriteria::Not:
+        string = QLatin1String("(NOT ") + s1 + QLatin1Char(')');
+        break;
+
+    default:
         tSystemError("Logic error: [%s:%d]", __FILE__, __LINE__);
+        break;
     }
+
     return string;
 }
 

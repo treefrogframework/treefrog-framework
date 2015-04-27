@@ -43,6 +43,9 @@ void build_check_TSqlORMapper()
     mapper.updateAll(crt, 1, 1);
     mapper.updateAll(crt, QMap<int, QVariant>());
     mapper.removeAll(crt);
+    mapper.removeAll(crt && crt);
+    mapper.removeAll(crt || crt);
+    mapper.removeAll(!crt);
 }
 
 void build_check_TSqlORMapperIterator()

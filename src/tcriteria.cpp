@@ -315,6 +315,16 @@ const TCriteria TCriteria::operator||(const TCriteria &criteria) const
 }
 
 /*!
+  Returns a WHERE clause that negated this criteria.
+*/
+const TCriteria TCriteria::operator!() const
+{
+    TCriteria cri(*this);
+    cri.logiOp = Not;
+    return cri;
+}
+
+/*!
   Assignment operator.
 */
 TCriteria &TCriteria::operator=(const TCriteria &other)
