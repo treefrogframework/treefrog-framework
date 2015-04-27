@@ -16,8 +16,8 @@ Features
                           InterBase and MongoDB
  * Support WebSocket  - Providing full-duplex communications channels
  * Generator  - Generates scaffolds and Makefiles automatically
- * Cross-platform  - Windows, Mac OS X, Linux, etc.  Same source code can
-                     work on other platforms
+ * Cross-platform  - Windows, Mac OS X, Linux, etc. Write once, compile
+                     anywhere.
  * Ajax support  - JSON, XML and Plain text available
  * OSS  - New BSD License
 
