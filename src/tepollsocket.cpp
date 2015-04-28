@@ -95,7 +95,7 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
     : deleting(false), myWorkerCounter(0), sd(socketDescriptor), uuid(), clientAddr(address)
 {
-    uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
+    uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
     tSystemDebug("TEpollSocket  id:%s", uuid.data());
 }

@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QMutex>
 #include <TGlobal>
+#include <TWebSocketSession>
 #include <atomic>
 #include "tbasictimer.h"
 
@@ -26,9 +27,12 @@ public:
     void sendPong(const QByteArray &data = QByteArray());
     void sendClose(int code);
     virtual void disconnect() = 0;
+    virtual const QByteArray &socketUuid() const = 0;
     void startKeepAlive(int interval);
     void stopKeepAlive();
     void renewKeepAlive();
+    TWebSocketSession session() const;
+    void setSession(const TWebSocketSession &session);
 
     static bool searchEndpoint(const THttpRequestHeader &header);
     static THttpResponseHeader handshakeResponse(const THttpRequestHeader &header);
@@ -41,7 +45,8 @@ protected:
 
     std::atomic<bool> closing;
     std::atomic<bool> closeSent;
-    QMutex mutexKeepAlive;
+    mutable QMutex mutexData;
+    TWebSocketSession sessionStore;
     TBasicTimer *keepAliveTimer;
 
     friend class TWebSocketWorker;

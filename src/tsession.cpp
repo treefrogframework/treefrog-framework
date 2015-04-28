@@ -43,7 +43,7 @@ QByteArray TSession::sessionName()
 */
 
 /*!
-  \fn TSession::TSession(const TSession &)
+  \fn TSession::TSession(const TSession &other)
   Copy constructor.
 */
 

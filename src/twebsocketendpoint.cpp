@@ -17,7 +17,7 @@
  */
 
 TWebSocketEndpoint::TWebSocketEndpoint()
-    : taskList(), rollback(false)
+    : uuid(), taskList(), rollback(false)
 { }
 
 void TWebSocketEndpoint::onOpen(const TSession &session)
@@ -111,9 +111,11 @@ const QStringList &TWebSocketEndpoint::disabledEndpoints()
 }
 
 
-void TWebSocketEndpoint::subscribe(const QString &topic)
+void TWebSocketEndpoint::subscribe(const QString &topic, bool noLocal)
 {
-    taskList << qMakePair((int)Subscribe, QVariant(topic));
+    QVariantList subinfo;
+    subinfo << topic << noLocal;
+    taskList << qMakePair((int)Subscribe, QVariant(subinfo));
 }
 
 

@@ -21,8 +21,8 @@ const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
 TAbstractWebSocket::TAbstractWebSocket()
-    : closing(false), closeSent(false), mutexKeepAlive(QMutex::NonRecursive),
-      keepAliveTimer(nullptr)
+    : closing(false), closeSent(false), mutexData(QMutex::NonRecursive),
+      sessionStore(), keepAliveTimer(nullptr)
 { }
 
 
@@ -96,7 +96,7 @@ void TAbstractWebSocket::sendClose(int code)
 void TAbstractWebSocket::startKeepAlive(int interval)
 {
     tSystemDebug("startKeepAlive");
-    QMutexLocker locker(&mutexKeepAlive);
+    QMutexLocker locker(&mutexData);
 
     if (!keepAliveTimer) {
         keepAliveTimer = new TBasicTimer();
@@ -112,7 +112,7 @@ void TAbstractWebSocket::startKeepAlive(int interval)
 void TAbstractWebSocket::stopKeepAlive()
 {
     tSystemDebug("stopKeepAlive");
-    QMutexLocker locker(&mutexKeepAlive);
+    QMutexLocker locker(&mutexData);
 
     if (keepAliveTimer) {
         QTimer::singleShot(0, keepAliveTimer, SLOT(stop()));
@@ -123,11 +123,26 @@ void TAbstractWebSocket::stopKeepAlive()
 void TAbstractWebSocket::renewKeepAlive()
 {
     tSystemDebug("renewKeepAlive");
-    QMutexLocker locker(&mutexKeepAlive);
+    QMutexLocker locker(&mutexData);
 
     if (keepAliveTimer) {
         QTimer::singleShot(0, keepAliveTimer, SLOT(start()));
     }
+}
+
+
+TWebSocketSession TAbstractWebSocket::session() const
+{
+    QMutexLocker locker(&mutexData);
+    TWebSocketSession ret = sessionStore;
+    return ret;
+}
+
+
+void TAbstractWebSocket::setSession(const TWebSocketSession &session)
+{
+    QMutexLocker locker(&mutexData);
+    sessionStore = session;
 }
 
 

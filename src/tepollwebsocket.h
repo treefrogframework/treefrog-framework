@@ -27,12 +27,13 @@ public:
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() Q_DECL_OVERRIDE;
+    const QByteArray &socketUuid() const { return TEpollSocket::socketUuid(); }
 
 public slots:
     void deleteLater();
     void releaseWorker();
-    void sendText(const QString &text);
-    void sendBinary(const QByteArray &binary);
+    void sendTextForPublish(const QString &text, const QObject *except);
+    void sendBinaryForPublish(const QByteArray &binary, const QObject *except);
     void sendPong(const QByteArray &data = QByteArray());
 
 protected:

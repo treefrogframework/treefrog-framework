@@ -14,11 +14,11 @@ class T_CORE_EXPORT TPublisher : public QObject
 {
     Q_OBJECT
 public:
-    void subscribe(const QString &topic, TAbstractWebSocket *socket);
+    void subscribe(const QString &topic, bool noLocal, TAbstractWebSocket *socket);
     void unsubscribe(const QString &topic, TAbstractWebSocket *socket);
     void unsubscribeFromAll(TAbstractWebSocket *socket);
-    void publish(const QString &topic, const QString &text);
-    void publish(const QString &topic, const QByteArray &binary);
+    void publish(const QString &topic, const QString &text, TAbstractWebSocket *socket);
+    void publish(const QString &topic, const QByteArray &binary, TAbstractWebSocket *socket);
     static TPublisher *instance();
     static void instantiate();
 

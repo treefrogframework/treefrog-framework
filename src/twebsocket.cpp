@@ -24,7 +24,7 @@ TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const 
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
 
-    uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
+    uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 

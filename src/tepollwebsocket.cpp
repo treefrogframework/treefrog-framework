@@ -67,17 +67,21 @@ bool TEpollWebSocket::isBinaryRequest() const
 }
 
 
-void TEpollWebSocket::sendText(const QString &text)
+void TEpollWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
     tSystemDebug("sendText  text len:%d  (pid:%d)", text.length(), (int)QCoreApplication::applicationPid());
-    TAbstractWebSocket::sendText(text);
+    if (except != this) {
+        TAbstractWebSocket::sendText(text);
+    }
 }
 
 
-void TEpollWebSocket::sendBinary(const QByteArray &binary)
+void TEpollWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
     tSystemDebug("sendBinary  binary len:%d  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
-    TAbstractWebSocket::sendBinary(binary);
+    if (except != this) {
+        TAbstractWebSocket::sendBinary(binary);
+    }
 }
 
 

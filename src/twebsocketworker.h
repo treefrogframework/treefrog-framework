@@ -32,7 +32,7 @@ protected:
 private:
     RunMode mode_;
     TAbstractWebSocket *socket_;
-    TSession sessionStore_;
+    TSession httpSession_;
     QByteArray requestPath_;
     TWebSocketFrame::OpCode opcode_;
     QByteArray payload_;

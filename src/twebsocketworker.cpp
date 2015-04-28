@@ -36,7 +36,7 @@ void TWebSocketWorker::setPayload(TWebSocketFrame::OpCode opCode, const QByteArr
 
 void TWebSocketWorker::setSession(const TSession &session)
 {
-    sessionStore_ = session;
+    httpSession_ = session;
 }
 
 
@@ -55,12 +55,17 @@ void TWebSocketWorker::run()
         tSystemDebug("Found endpoint: %s", qPrintable(es));
         tSystemDebug("TWebSocketWorker opcode: %d", opcode_);
 
+        endpoint->sessionStore = socket_->session(); // Sets websocket session
+        endpoint->uuid = socket_->socketUuid();
         // Database Transaction
         setTransactionEnabled(endpoint->transactionEnabled());
 
         switch (mode_) {
         case Opening:
-            endpoint->onOpen(sessionStore_);
+            endpoint->onOpen(httpSession_);
+            if (endpoint->keepAliveInterval() > 0) {
+                endpoint->startKeepAlive(endpoint->keepAliveInterval());
+            }
             break;
 
         case Closing:
@@ -114,6 +119,9 @@ void TWebSocketWorker::run()
             break;
         }
 
+        // Sets session to the websocket
+        socket_->setSession(endpoint->session());
+
         for (auto &p : endpoint->taskList) {
             const QVariant &taskData = p.second;
 
@@ -149,9 +157,10 @@ void TWebSocketWorker::run()
                 sendTask = true;
                 break;
 
-            case TWebSocketEndpoint::Subscribe:
-                TPublisher::instance()->subscribe(taskData.toString(), socket_);
-                break;
+            case TWebSocketEndpoint::Subscribe: {
+                QVariantList lst = taskData.toList();
+                TPublisher::instance()->subscribe(lst[0].toString(), lst[1].toBool(), socket_);
+                break; }
 
             case TWebSocketEndpoint::Unsubscribe:
                 TPublisher::instance()->unsubscribe(taskData.toString(), socket_);
@@ -163,13 +172,13 @@ void TWebSocketWorker::run()
 
             case TWebSocketEndpoint::PublishText: {
                 QVariantList lst = taskData.toList();
-                TPublisher::instance()->publish(lst[0].toString(), lst[1].toString());
+                TPublisher::instance()->publish(lst[0].toString(), lst[1].toString(), socket_);
                 sendTask = true;
                 break; }
 
             case TWebSocketEndpoint::PublishBinary: {
                 QVariantList lst = taskData.toList();
-                TPublisher::instance()->publish(lst[0].toString(), lst[1].toByteArray());
+                TPublisher::instance()->publish(lst[0].toString(), lst[1].toByteArray(), socket_);
                 sendTask = true;
                 break; }
 

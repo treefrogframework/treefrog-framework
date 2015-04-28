@@ -29,6 +29,11 @@ void ApplicationEndpoint::onPing(const QByteArray &data)
 void ApplicationEndpoint::onPong(const QByteArray &)
 { }
 
+int ApplicationEndpoint::keepAliveInterval() const
+{
+    return 0;
+}
+
 bool ApplicationEndpoint::transactionEnabled() const
 {
     return TWebSocketEndpoint::transactionEnabled();

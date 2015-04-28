@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <TGlobal>
 #include <TSession>
+#include <TWebSocketSession>
 
 
 class T_CORE_EXPORT TWebSocketEndpoint : public QObject
@@ -24,12 +25,15 @@ public:
     void close(int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
     bool rollbackRequested() const;
-    void subscribe(const QString &topic);
+    void subscribe(const QString &topic, bool noLocal = false);
     void unsubscribe(const QString &topic);
     void unsubscribeFromAll();
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
     void startKeepAlive(int interval);
+    const TWebSocketSession &session() const { return sessionStore; }
+    TWebSocketSession &session() { return sessionStore; }
+    const QByteArray &socketUuid() const { return uuid; }
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);
@@ -42,6 +46,7 @@ protected:
     virtual void onBinaryReceived(const QByteArray &binary);
     virtual void onPing(const QByteArray &data);
     virtual void onPong(const QByteArray &data);
+    virtual int keepAliveInterval() const { return 0; }
     virtual bool transactionEnabled() const;
 
 private:
@@ -60,6 +65,8 @@ private:
         StopKeepAlive,
     };
 
+    TWebSocketSession sessionStore;
+    QByteArray uuid;
     QList<QPair<int, QVariant> > taskList;
     bool rollback;
 

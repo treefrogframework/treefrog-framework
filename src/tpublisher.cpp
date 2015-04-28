@@ -25,22 +25,22 @@ class Pub : public QObject
     Q_OBJECT
 public:
     Pub(const QString &t) : topic(t), subscribers() { }
-    bool subscribe(const QObject *receiver);
+    bool subscribe(const QObject *receiver, bool noLocal);
     bool unsubscribe(const QObject *receiver);
-    void publish(const QString &message);
-    void publish(const QByteArray &binary);
+    void publish(const QString &message, const QObject *sender);
+    void publish(const QByteArray &binary, const QObject *sender);
     int subscriberCounter() const { return subscribers.count(); }
 signals:
-    void textPublished(const QString &);
-    void binaryPublished(const QByteArray &);
+    void textPublished(const QString &, const QObject *sender);
+    void binaryPublished(const QByteArray &, const QObject *sender);
 private:
     QString topic;
-    QSet<const void*> subscribers;
+    QMap<const QObject*, bool> subscribers;
 };
 #include "tpublisher.moc"
 
 
-bool Pub::subscribe(const QObject *receiver)
+bool Pub::subscribe(const QObject *receiver, bool noLocal)
 {
     tSystemDebug("Pub::subscribe");
 
@@ -48,15 +48,17 @@ bool Pub::subscribe(const QObject *receiver)
         return false;
     }
 
-    if (subscribers.contains(receiver))
+    if (subscribers.contains(receiver)) {
+        subscribers[receiver] = noLocal;
         return true;
+    }
 
-    connect(this, SIGNAL(textPublished(const QString&)),
-            receiver, SLOT(sendText(const QString&)), Qt::QueuedConnection);
-    connect(this, SIGNAL(binaryPublished(const QByteArray&)),
-            receiver, SLOT(sendBinary(const QByteArray&)), Qt::QueuedConnection);
+    connect(this, SIGNAL(textPublished(const QString&, const QObject*)),
+            receiver, SLOT(sendTextForPublish(const QString&, const QObject*)), Qt::QueuedConnection);
+    connect(this, SIGNAL(binaryPublished(const QByteArray&, const QObject*)),
+            receiver, SLOT(sendBinaryForPublish(const QByteArray&, const QObject*)), Qt::QueuedConnection);
 
-    subscribers.insert(receiver);
+    subscribers.insert(receiver, noLocal);
     tSystemDebug("subscriber counter: %d", subscriberCounter());
     return true;
 }
@@ -77,15 +79,25 @@ bool Pub::unsubscribe(const QObject *receiver)
 }
 
 
-void Pub::publish(const QString &message)
+void Pub::publish(const QString &message, const QObject *sender)
 {
-    emit textPublished(message);
+    const QObject *except = nullptr;
+    bool noLocal = subscribers.value(sender, false);
+    if (noLocal) {
+        except = sender;
+    }
+    emit textPublished(message, except);
 }
 
 
-void Pub::publish(const QByteArray &binary)
+void Pub::publish(const QByteArray &binary, const QObject *sender)
 {
-    emit binaryPublished(binary);
+    const QObject *except = nullptr;
+    bool noLocal = subscribers.value(sender, false);
+    if (noLocal) {
+        except = sender;
+    }
+    emit binaryPublished(binary, except);
 }
 
 
@@ -99,7 +111,7 @@ TPublisher::TPublisher()
 { }
 
 
-void TPublisher::subscribe(const QString &topic, TAbstractWebSocket *socket)
+void TPublisher::subscribe(const QString &topic, bool noLocal, TAbstractWebSocket *socket)
 {
     tSystemDebug("TPublisher::subscribe: %s", qPrintable(topic));
     QMutexLocker locker(&mutex);
@@ -109,7 +121,7 @@ void TPublisher::subscribe(const QString &topic, TAbstractWebSocket *socket)
         pub = create(topic);
     }
 
-    pub->subscribe(castToObject(socket));
+    pub->subscribe(castToObject(socket), noLocal);
 }
 
 
@@ -174,26 +186,26 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
 }
 
 
-void TPublisher::publish(const QString &topic, const QString &text)
+void TPublisher::publish(const QString &topic, const QString &text, TAbstractWebSocket *socket)
 {
     TSystemBus::instance()->send(Tf::WebSocketPublishText, topic, text.toUtf8());
 
     QMutexLocker locker(&mutex);
     Pub *pub = get(topic);
     if (pub) {
-        pub->publish(text);
+        pub->publish(text, castToObject(socket));
     }
 }
 
 
-void TPublisher::publish(const QString &topic, const QByteArray &binary)
+void TPublisher::publish(const QString &topic, const QByteArray &binary, TAbstractWebSocket *socket)
 {
     TSystemBus::instance()->send(Tf::WebSocketPublishBinary, topic, binary);
 
     QMutexLocker locker(&mutex);
     Pub *pub = get(topic);
     if (pub) {
-        pub->publish(binary);
+        pub->publish(binary, castToObject(socket));
     }
 }
 
@@ -228,14 +240,14 @@ void TPublisher::receiveSystemBus()
         case Tf::WebSocketPublishText: {
             Pub *pub = get(msg.target());
             if (pub) {
-                pub->publish(QString::fromUtf8(msg.data()));
+                pub->publish(QString::fromUtf8(msg.data()), nullptr);
             }
             break; }
 
         case Tf::WebSocketPublishBinary: {
             Pub *pub = get(msg.target());
             if (pub) {
-                pub->publish(msg.data());
+                pub->publish(msg.data(), nullptr);
             }
             break; }
 
