@@ -46,17 +46,21 @@ void TWebSocket::close()
 }
 
 
-void TWebSocket::sendText(const QString &text)
+void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
     tSystemDebug("sendText  text len:%d  (pid:%d)", text.length(), (int)QCoreApplication::applicationPid());
-    TAbstractWebSocket::sendText(text);
+    if (except != this) {
+        TAbstractWebSocket::sendText(text);
+    }
 }
 
 
-void TWebSocket::sendBinary(const QByteArray &binary)
+void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
     tSystemDebug("sendBinary  binary len:%d  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
-    TAbstractWebSocket::sendBinary(binary);
+    if (except != this) {
+        TAbstractWebSocket::sendBinary(binary);
+    }
 }
 
 

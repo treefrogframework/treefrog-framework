@@ -26,8 +26,8 @@ public:
     void disconnect() Q_DECL_OVERRIDE;
 
 public slots:
-    void sendText(const QString &text);
-    void sendBinary(const QByteArray &binary);
+    void sendTextForPublish(const QString &text, const QObject *except);
+    void sendBinaryForPublish(const QByteArray &binary, const QObject *except);
     void sendPong(const QByteArray &data = QByteArray());
     void readRequest();
     void releaseWorker();
