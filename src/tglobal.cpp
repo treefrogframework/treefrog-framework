@@ -216,15 +216,6 @@ void Tf::msleep(unsigned long msecs)
 #endif
 }
 
-/*!
-  Random number generator in the range from 0 to \a max.
-  The maximum number of \a max is UINT_MAX.
- */
-quint32 Tf::random(quint32 max)
-{
-    return (quint32)((double)randXor128() * (1.0 + max) / (1.0 + UINT_MAX));
-}
-
 /*
   Xorshift random number generator implement
 */
@@ -241,9 +232,10 @@ static quint32 w = 1;
 */
 void Tf::srandXor128(quint32 seed)
 {
-    QMutexLocker lock(&randMutex);
+    randMutex.lock();
     w = seed;
     z = w ^ (w >> 8) ^ (w << 5);
+    randMutex.unlock();
 }
 
 /*!
@@ -261,6 +253,39 @@ quint32 Tf::randXor128()
     z = w;
     w = w ^ (w >> 19) ^ (t ^ (t >> 8));
     return w;
+}
+
+static std::random_device randev;
+static std::mt19937     mt(randev());
+static std::mt19937_64  mt64(randev());
+
+uint32_t Tf::rand_r()
+{
+    randMutex.lock();
+    uint32_t ret = mt();
+    randMutex.unlock();
+    return ret;
+}
+
+
+uint64_t Tf::rand64_r()
+{
+    randMutex.lock();
+    uint64_t ret = mt64();
+    randMutex.unlock();
+    return ret;
+}
+
+/*!
+  Random number generator in the range from \a min to \a max.
+*/
+uint64_t Tf::random(uint64_t min, uint64_t max)
+{
+    randMutex.lock();
+    std::uniform_int_distribution<uint64_t> uniform(min, max);
+    uint64_t ret = uniform(mt64);
+    randMutex.unlock();
+    return ret;
 }
 
 

@@ -147,7 +147,11 @@ namespace Tf
     // Xorshift random number generator
     T_CORE_EXPORT void srandXor128(quint32 seed);
     T_CORE_EXPORT quint32 randXor128();
-    T_CORE_EXPORT quint32 random(quint32 max);
+
+    // Thread-safe std::random number generator
+    T_CORE_EXPORT uint32_t rand_r();
+    T_CORE_EXPORT uint64_t rand64_r();
+    T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max);
 
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();

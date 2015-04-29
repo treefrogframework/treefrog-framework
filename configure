@@ -58,7 +58,14 @@ if which uname >/dev/null 2>&1; then
   MACHINE=`uname -m`
   RELEASE=`uname -r`
 
-  if [ "$KERNEL" = "Darwin" ]; then
+  if [ "$QMAKESPEC" != "" ]; then
+    OPT="-spec $QMAKESPEC"
+
+    if [ "$MACHINE" = "x86_64" ]; then
+      OPT="$OPT CONFIG+=x86_64"
+    fi
+
+  elif [ "$KERNEL" = "Darwin" ]; then
     QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
     QT_MAJOR=${QT_VERSION:0:1}
     if [ "$QT_MAJOR" -ge 5 ]; then
@@ -77,7 +84,11 @@ if which uname >/dev/null 2>&1; then
     fi
   else
     if [ "$KERNEL" = "Linux" ]; then
-      OPT="-spec linux-g++"
+      if which clang++ >/dev/null 2>&1; then
+        OPT="-spec linux-clang"
+      else
+        OPT="-spec linux-g++"
+      fi
     elif [ "$KERNEL" = "FreeBSD" ]; then
       OPT="-spec freebsd-g++"
     fi

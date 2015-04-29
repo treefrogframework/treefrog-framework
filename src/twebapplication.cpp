@@ -124,7 +124,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
 
     // sets a seed for random numbers
-    Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
+    //Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
 }
 
 

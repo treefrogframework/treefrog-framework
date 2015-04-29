@@ -300,18 +300,28 @@ TBson TBson::toBson(const QStringList &lst)
 
 static inline int oidFuzz()
 {
+#if 0
     static int machineId = Tf::randXor128();
     int pid = QCoreApplication::applicationPid();
     return qToBigEndian((machineId << 8) | ((pid & 0xFF00) >> 8));
+#else
+    static int machineId = Tf::rand_r();
+    return machineId;
+#endif
 }
 
 
 static inline int oidInc()
 {
+#if 0
     static std::atomic<uint> incr(Tf::randXor128());
     int pid = QCoreApplication::applicationPid();
     ++incr;
     return ((pid & 0xFF) << 24) | ((int)incr & 0xFFFFFF);
+#else
+    static std::atomic<uint> incr(Tf::rand_r());
+    return incr++;
+#endif
 }
 
 

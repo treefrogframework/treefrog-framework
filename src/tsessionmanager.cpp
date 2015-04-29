@@ -34,7 +34,7 @@ static QByteArray createHash()
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
-    data.append(QByteArray::number(Tf::randXor128()));
+    data.append(QByteArray::number(Tf::rand_r()));
     return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }
 
@@ -132,7 +132,7 @@ void TSessionManager::collectGarbage()
     }
 
     if (prob > 0) {
-        int r = Tf::random(prob - 1);
+        int r = Tf::random(0, prob - 1);
         tSystemDebug("Session garbage collector : rand = %d", r);
 
         if (r == 0) {
