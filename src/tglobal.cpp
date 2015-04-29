@@ -22,6 +22,7 @@
 #endif
 #include <stdlib.h>
 #include <limits.h>
+#include <random>
 #include "twebsocketworker.h"
 #include "tloggerfactory.h"
 #include "tsharedmemorylogstream.h"

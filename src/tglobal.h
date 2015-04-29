@@ -4,6 +4,7 @@
 #include <QtGlobal>
 #include <QMetaType>
 #include <TfNamespace>
+#include <cstdint>
 
 #define TF_VERSION_STR "1.8.1"
 #define TF_VERSION_NUMBER 0x010801
@@ -145,8 +146,8 @@ namespace Tf
     T_CORE_EXPORT void msleep(unsigned long msecs);
 
     // Xorshift random number generator
-    T_CORE_EXPORT void srandXor128(quint32 seed);
-    T_CORE_EXPORT quint32 randXor128();
+    T_CORE_EXPORT void srandXor128(quint32 seed);  // obsolete
+    T_CORE_EXPORT quint32 randXor128();            // obsolete
 
     // Thread-safe std::random number generator
     T_CORE_EXPORT uint32_t rand_r();
