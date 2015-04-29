@@ -10,7 +10,7 @@
 #include <QSettings>
 #include <QCoreApplication>
 #include <QMutexLocker>
-#include <stdio.h>
+#include <cstdio>
 
 static TAppSettings *appSettings = 0;
 

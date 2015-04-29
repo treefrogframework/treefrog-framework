@@ -13,7 +13,7 @@
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
 #else
-#include <time.h>
+#include <ctime>
 #endif
 
 #define HTTP_DATE_TIME_FORMAT "ddd, d MMM yyyy hh:mm:ss"

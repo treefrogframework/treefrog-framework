@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -7,8 +7,8 @@
 
 #include <TWebApplication>
 #include <TSystemGlobal>
-#include <signal.h>
-#include <errno.h>
+#include <csignal>
+#include <cerrno>
 
 static volatile sig_atomic_t unixSignal = -1;
 

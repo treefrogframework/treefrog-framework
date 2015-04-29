@@ -23,7 +23,7 @@
 #ifndef Q_CC_MSVC
 # include <unistd.h>
 #endif
-#include <time.h>
+#include <ctime>
 
 #define L(str)  QLatin1String(str)
 #define SEP   QDir::separator()

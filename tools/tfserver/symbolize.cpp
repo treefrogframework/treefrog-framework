@@ -68,9 +68,9 @@
 
 #if defined(HAVE_SYMBOLIZE)
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <cstring>
+#include <cstdlib>
+#include <cstdint>
 #include "symbolize.h"
 #include "demangle.h"
 
@@ -115,15 +115,15 @@ _END_GOOGLE_NAMESPACE_
 
 #include <dlfcn.h>
 #include <elf.h>
-#include <errno.h>
+#include <cerrno>
 #include <fcntl.h>
-#include <limits.h>
+#include <climits>
 #include <link.h>  // For ElfW() macro.
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstddef>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -647,7 +647,7 @@ _END_GOOGLE_NAMESPACE_
 #elif defined(Q_OS_DARWIN)
 
 #include <dlfcn.h>
-#include <string.h>
+#include <cstring>
 
 _START_GOOGLE_NAMESPACE_
 

@@ -12,7 +12,7 @@
 
 #include <TPaginator>
 #include <QtCore>
-#include <math.h>
+#include <cmath>
 
 /*!
   \class TPaginator

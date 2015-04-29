@@ -20,8 +20,8 @@
 #ifdef Q_OS_LINUX
 # include <TActionWorker>
 #endif
-#include <stdlib.h>
-#include <limits.h>
+#include <cstdlib>
+#include <climits>
 #include <random>
 #include "twebsocketworker.h"
 #include "tloggerfactory.h"

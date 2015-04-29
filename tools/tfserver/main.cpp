@@ -14,7 +14,7 @@
 #include <TPreforkApplicationServer>
 #include <TMultiplexingServer>
 #include <TSystemGlobal>
-#include <stdlib.h>
+#include <cstdlib>
 #include "tsystemglobal.h"
 #include "signalhandler.h"
 using namespace TreeFrog;

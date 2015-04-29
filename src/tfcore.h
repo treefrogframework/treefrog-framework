@@ -2,6 +2,8 @@
 #define TFCORE_H
 
 #include <QtGlobal>
+#include <cstdio>
+#include <cerrno>
 #ifdef Q_OS_WIN
 # include <io.h>
 #else
@@ -9,8 +11,6 @@
 # include <sys/file.h>
 # include <sys/socket.h>
 #endif
-#include <stdio.h>
-#include <errno.h>
 
 #define TF_EINTR_LOOP(func)                       \
     int ret;                                      \

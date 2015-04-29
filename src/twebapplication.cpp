@@ -11,7 +11,7 @@
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <TAppSettings>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
 #define DEFAULT_DATABASE_ENVIRONMENT  "product"

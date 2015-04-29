@@ -7,7 +7,7 @@
 
 #include <QDir>
 #include <QFileInfo>
-#include <stdio.h>
+#include <cstdio>
 #include "util.h"
 
 QString dataDirPath = QLatin1String(TREEFROG_DATA_DIR) + QDir::separator() + "defaults" + QDir::separator();
