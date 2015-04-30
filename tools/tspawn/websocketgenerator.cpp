@@ -23,7 +23,7 @@
     "    %2Endpoint(const %2Endpoint &other);\n"                        \
     "\n"                                                                \
     "protected:\n"                                                      \
-    "    void onOpen(const TSession &session);\n"                       \
+    "    void onOpen(const TSession &httpSession);\n"                   \
     "    void onClose(int closeCode);\n"                                \
     "    void onTextReceived(const QString &text);\n"                   \
     "    void onBinaryReceived(const QByteArray &binary);\n"            \

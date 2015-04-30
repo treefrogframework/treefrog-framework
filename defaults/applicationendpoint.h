@@ -12,7 +12,7 @@ public:
     virtual ~ApplicationEndpoint() { }
 
 protected:
-    virtual void onOpen(const TSession &session);
+    virtual void onOpen(const TSession &httpSession);
     virtual void onClose(int closeCode);
     virtual void onTextReceived(const QString &text);
     virtual void onBinaryReceived(const QByteArray &binary);

@@ -289,6 +289,14 @@ uint64_t Tf::random(uint64_t min, uint64_t max)
     return ret;
 }
 
+/*!
+  Random number generator in the range from 0 to \a max.
+*/
+uint64_t Tf::random(uint64_t max)
+{
+    return random(0, max);
+}
+
 
 TActionContext *Tf::currentContext()
 {

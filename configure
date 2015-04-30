@@ -84,11 +84,7 @@ if which uname >/dev/null 2>&1; then
     fi
   else
     if [ "$KERNEL" = "Linux" ]; then
-      if which clang++ >/dev/null 2>&1; then
-        OPT="-spec linux-clang"
-      else
-        OPT="-spec linux-g++"
-      fi
+      OPT="-spec linux-g++"
     elif [ "$KERNEL" = "FreeBSD" ]; then
       OPT="-spec freebsd-g++"
     fi
