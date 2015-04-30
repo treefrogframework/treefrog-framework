@@ -20,9 +20,10 @@ TWebSocketEndpoint::TWebSocketEndpoint()
     : uuid(), taskList(), rollback(false)
 { }
 
-void TWebSocketEndpoint::onOpen(const TSession &session)
+bool TWebSocketEndpoint::onOpen(const TSession &session)
 {
     Q_UNUSED(session);
+    return true;
 }
 
 

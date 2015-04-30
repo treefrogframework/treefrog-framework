@@ -4,6 +4,8 @@
 #include <QVariant>
 #include <TGlobal>
 
+class TSession;
+
 
 class T_CORE_EXPORT TWebSocketSession : public QVariantMap
 {
@@ -15,6 +17,7 @@ public:
     iterator insert(const QString &key, const QVariant &value);
     const QVariant value(const QString &key) const;
     const QVariant value(const QString &key, const QVariant &defaultValue) const;
+    TWebSocketSession &unite(const TSession &session);
     void reset();
 
 private:

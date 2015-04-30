@@ -40,7 +40,7 @@ public:
     static const QStringList &disabledEndpoints();
 
 protected:
-    virtual void onOpen(const TSession &session);
+    virtual bool onOpen(const TSession &session);
     virtual void onClose(int closeCode);
     virtual void onTextReceived(const QString &text);
     virtual void onBinaryReceived(const QByteArray &binary);

@@ -18,7 +18,6 @@ public:
     iterator insert(const QString &key, const QVariant &value);
     const QVariant value(const QString &key) const;
     const QVariant value(const QString &key, const QVariant &defaultValue) const;
-
     static QByteArray sessionName();
 
 private:

@@ -6,3 +6,11 @@
  */
 
 #include <TWebSocketSession>
+#include <TSession>
+
+
+TWebSocketSession &TWebSocketSession::unite(const TSession &session)
+{
+    QVariantMap::unite(*static_cast<const QVariantMap*>(&session));
+    return *this;
+}

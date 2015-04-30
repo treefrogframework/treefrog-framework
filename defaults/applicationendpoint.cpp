@@ -9,8 +9,10 @@ ApplicationEndpoint::ApplicationEndpoint(const ApplicationEndpoint &)
     : TWebSocketEndpoint()
 { }
 
-void ApplicationEndpoint::onOpen(const TSession &)
-{ }
+bool ApplicationEndpoint::onOpen(const TSession &)
+{
+    return true;
+}
 
 void ApplicationEndpoint::onClose(int)
 { }

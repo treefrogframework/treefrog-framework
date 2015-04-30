@@ -23,10 +23,10 @@
     "    %2Endpoint(const %2Endpoint &other);\n"                        \
     "\n"                                                                \
     "protected:\n"                                                      \
-    "    void onOpen(const TSession &httpSession);\n"                   \
-    "    void onClose(int closeCode);\n"                                \
-    "    void onTextReceived(const QString &text);\n"                   \
-    "    void onBinaryReceived(const QByteArray &binary);\n"            \
+    "    bool onOpen(const TSession &httpSession) override;\n"          \
+    "    void onClose(int closeCode) override;\n"                       \
+    "    void onTextReceived(const QString &text) override;\n"          \
+    "    void onBinaryReceived(const QByteArray &binary) override;\n"   \
     "};\n"                                                              \
     "\n"                                                                \
     "T_DECLARE_CONTROLLER(%2Endpoint, %3endpoint)\n"                    \
@@ -40,8 +40,10 @@
     "    : ApplicationEndpoint()\n"                                     \
     "{ }\n"                                                             \
     "\n"                                                                \
-    "void %2Endpoint::onOpen(const TSession &)\n"                       \
-    "{ }\n"                                                             \
+    "bool %2Endpoint::onOpen(const TSession &)\n"                       \
+    "{\n"                                                               \
+    "    return true;\n"                                                \
+    "}\n"                                                               \
     "\n"                                                                \
     "void %2Endpoint::onClose(int)\n"                                   \
     "{ }\n"                                                             \
