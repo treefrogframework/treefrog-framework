@@ -236,8 +236,6 @@ void TEpoll::dispatchSendData()
             // Switch to WebSocket
             TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), sd->header);
             ws->moveToThread(Tf::app()->thread());
-            THttpResponseHeader response = TEpollWebSocket::handshakeResponse(sd->header);
-            ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
             addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
 
             // Stop polling and delete

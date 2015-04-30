@@ -8,6 +8,7 @@
 #include <TWebApplication>
 #include <TDispatcher>
 #include <TWebSocketEndpoint>
+#include <THttpRequestHeader>
 #include "twebsocketworker.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
@@ -61,12 +62,19 @@ void TWebSocketWorker::run()
         setTransactionEnabled(endpoint->transactionEnabled());
 
         switch (mode_) {
-        case Opening:
-            endpoint->onOpen(httpSession_);
-            if (endpoint->keepAliveInterval() > 0) {
-                endpoint->startKeepAlive(endpoint->keepAliveInterval());
+        case Opening: {
+            bool res = endpoint->onOpen(httpSession_);
+            if (res) {
+                // For switch response
+                endpoint->taskList.prepend(qMakePair((int)TWebSocketEndpoint::OpenSuccess, QVariant()));
+
+                if (endpoint->keepAliveInterval() > 0) {
+                    endpoint->startKeepAlive(endpoint->keepAliveInterval());
+                }
+            } else {
+                endpoint->taskList.prepend(qMakePair((int)TWebSocketEndpoint::OpenError, QVariant()));
             }
-            break;
+            break; }
 
         case Closing:
             if (!socket_->closing.exchange(true)) {
@@ -126,6 +134,17 @@ void TWebSocketWorker::run()
             const QVariant &taskData = p.second;
 
             switch (p.first) {
+            case TWebSocketEndpoint::OpenSuccess:
+                socket_->sendHandshakeResponse();
+                break;
+
+            case TWebSocketEndpoint::OpenError:
+                socket_->closing = true;
+                socket_->closeSent = true;
+                socket_->disconnect();
+                goto open_error;
+                break;
+
             case TWebSocketEndpoint::SendText:
                 socket_->sendText(taskData.toString());
                 sendTask = true;
@@ -201,6 +220,7 @@ void TWebSocketWorker::run()
             socket_->renewKeepAlive();
         }
 
+    open_error:
         // transaction
         if (Q_UNLIKELY(endpoint->rollbackRequested())) {
             rollbackTransactions();

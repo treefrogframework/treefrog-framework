@@ -18,8 +18,8 @@ const int BUFFER_RESERVE_SIZE = 127;
 
 
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
-    : QTcpSocket(parent), frames(), uuid(), reqHeader(header), recvBuffer(),
-      myWorkerCounter(0), deleting(false)
+    : QTcpSocket(parent), TAbstractWebSocket(header), frames(), uuid(),
+      recvBuffer(), myWorkerCounter(0), deleting(false)
 {
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
@@ -139,6 +139,8 @@ void TWebSocket::startWorkerForClosing()
     if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
+    } else {
+        deleteLater();
     }
 }
 

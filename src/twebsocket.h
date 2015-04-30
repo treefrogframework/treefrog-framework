@@ -5,13 +5,13 @@
 #include <QList>
 #include <QByteArray>
 #include <TGlobal>
-#include <THttpRequestHeader>
 #include <atomic>
 #include "tabstractwebsocket.h"
 
 class TWebSocketFrame;
 class TWebSocketWorker;
 class TSession;
+class THttpRequestHeader;
 
 
 class T_CORE_EXPORT TWebSocket : public QTcpSocket, public TAbstractWebSocket
@@ -52,7 +52,6 @@ private:
     void startWorker(TWebSocketWorker *worker);
 
     QByteArray uuid;
-    THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
     std::atomic<int> myWorkerCounter;
     std::atomic<bool> deleting;

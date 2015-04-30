@@ -51,7 +51,9 @@ protected:
 
 private:
     enum TaskType {
-        SendText = 0,
+        OpenSuccess = 0,
+        OpenError,
+        SendText,
         SendBinary,
         SendClose,
         SendPing,

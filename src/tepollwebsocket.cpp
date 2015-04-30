@@ -23,8 +23,8 @@ const int BUFFER_RESERVE_SIZE = 127;
 
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
-    : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(),
-      reqHeader(header), recvBuffer(), frames()
+    : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(header),
+      recvBuffer(), frames()
 {
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
@@ -204,6 +204,8 @@ void TEpollWebSocket::startWorkerForClosing()
     if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
+    } else {
+        deleteLater();
     }
 }
 

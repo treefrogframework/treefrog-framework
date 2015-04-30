@@ -2,7 +2,6 @@
 #define TEPOLLWEBSOCKET_H
 
 #include <TGlobal>
-#include <THttpRequestHeader>
 #include <THttpResponseHeader>
 #include "tepollsocket.h"
 #include "tabstractwebsocket.h"
@@ -11,6 +10,7 @@ class QHostAddress;
 class TWebSocketWorker;
 class TWebSocketFrame;
 class TSession;
+class THttpRequestHeader;
 
 
 class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket, public TAbstractWebSocket
@@ -48,7 +48,6 @@ protected:
 private:
     void startWorker(TWebSocketWorker *worker);
 
-    THttpRequestHeader reqHeader;
     QByteArray recvBuffer;
     QList<TWebSocketFrame> frames;
 

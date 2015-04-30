@@ -180,10 +180,6 @@ bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
         return false;
     }
 
-    QByteArray resp = TAbstractWebSocket::handshakeResponse(header).toByteArray();
-    httpSocket->writeRawData(resp.data(), resp.length());
-    httpSocket->waitForBytesWritten();
-
     // Switch to WebSocket
     int sd = TApplicationServerBase::duplicateSocket(httpSocket->socketDescriptor());
     TWebSocket *ws = new TWebSocket(sd, httpSocket->peerAddress(), header);
@@ -197,7 +193,7 @@ bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
         // Finds a session
         session = TSessionManager::instance().findSession(sessionId);
     }
-    ws->startWorkerForOpening(session);
 
+    ws->startWorkerForOpening(session);
     return true;
 }
