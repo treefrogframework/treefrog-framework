@@ -32,6 +32,9 @@ public:
     void sendData(const QByteArray &data);
     void disconnect();
     void switchToWebSocket(const THttpRequestHeader &header);
+    int countWorker() const { return myWorkerCounter; }
+    qint64 bufferedBytes() const;
+    int bufferedListCount() const;
 
     virtual bool canReadRequest() { return false; }
     virtual void startWorker() { }

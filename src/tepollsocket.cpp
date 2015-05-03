@@ -107,8 +107,8 @@ TEpollSocket::~TEpollSocket()
 
     close();
 
-    for (QListIterator<TSendBuffer*> it(sendBuf); it.hasNext(); ) {
-        delete it.next();
+    for (auto p : sendBuf) {
+        delete p;
     }
     sendBuf.clear();
 }
@@ -272,6 +272,25 @@ void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 {
     if (!deleting.load())
         TEpoll::instance()->setSwitchToWebSocket(this, header);
+}
+
+
+qint64 TEpollSocket::bufferedBytes() const
+{
+    qint64 ret = 0;
+    for (auto &d : sendBuf) {
+        ret += d->arrayBuffer.size();
+        if (d->bodyFile) {
+            ret += d->bodyFile->size();
+        }
+    }
+    return ret;
+}
+
+
+int TEpollSocket::bufferedListCount() const
+{
+    return sendBuf.count();
 }
 
 
