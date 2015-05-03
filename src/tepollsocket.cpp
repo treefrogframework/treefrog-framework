@@ -169,53 +169,63 @@ int TEpollSocket::send()
         return 0;
     }
 
+    int ret = 0;
+    int total = 0;
     int err = 0;
     int len;
-    TSendBuffer *buf = sendBuf.first();
-    TAccessLogger &logger = buf->accessLogger();
 
-    for (;;) {
-        len = sendBufSize;
-        void *data = buf->getData(len);
-        if (len == 0) {
+    while (total < sendBufSize && !sendBuf.isEmpty()) {
+        TSendBuffer *buf = sendBuf.first();
+        TAccessLogger &logger = buf->accessLogger();
+
+        err = 0;
+        for (;;) {
+            len = sendBufSize - total;
+            void *data = buf->getData(len);
+            if (len == 0) {
+                break;
+            }
+
+            errno = 0;
+            len = tf_send(sd, data, len, MSG_NOSIGNAL);
+            err = errno;
+
+            if (len <= 0) {
+                break;
+            }
+            total += len;
+
+            // Sent successfully
+            buf->seekData(len);
+            logger.setResponseBytes(logger.responseBytes() + len);
+        }
+
+        switch (err) {
+        case 0:     // FALL THROUGH
+        case EAGAIN:
+            break;
+
+        case EPIPE:
+            tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+            logger.setResponseBytes(-1);
+            ret = -1;
+            break;
+
+        default:
+            tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
+            logger.setResponseBytes(-1);
+            ret = -1;
             break;
         }
 
-        errno = 0;
-        len = tf_send(sd, data, len, MSG_NOSIGNAL);
-        err = errno;
-
-        if (len <= 0) {
-            break;
+        if (buf->atEnd() || ret < 0) {
+            logger.write();  // Writes access log
+            delete sendBuf.dequeue(); // delete send-buffer obj
         }
 
-        // Sent successfully
-        buf->seekData(len);
-        logger.setResponseBytes(logger.responseBytes() + len);
-    }
-
-    int ret = 0;
-    switch (err) {
-    case 0:     // FALL THROUGH
-    case EAGAIN:
-        break;
-
-    case EPIPE:
-        tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
-        logger.setResponseBytes(-1);
-        ret = -1;
-        break;
-
-    default:
-        tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
-        logger.setResponseBytes(-1);
-        ret = -1;
-        break;
-    }
-
-    if (buf->atEnd() || ret < 0) {
-        logger.write();  // Writes access log
-        delete sendBuf.dequeue(); // delete send-buffer obj
+        if (ret < 0) {
+            break;
+        }
     }
 
     if (err != EAGAIN && !sendBuf.isEmpty()) {
