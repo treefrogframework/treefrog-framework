@@ -125,13 +125,13 @@ static const AbbrevPair kSubstitutionList[] = {
   { "St", "" },
   { "Sa", "allocator" },
   { "Sb", "basic_string" },
-  // std::basic_string<char, std::char_traits<char>,std::allocator<char> >
+  // std::basic_string<char, std::char_traits<char>,std::allocator<char>>
   { "Ss", "string"},
-  // std::basic_istream<char, std::char_traits<char> >
+  // std::basic_istream<char, std::char_traits<char>>
   { "Si", "istream" },
-  // std::basic_ostream<char, std::char_traits<char> >
+  // std::basic_ostream<char, std::char_traits<char>>
   { "So", "ostream" },
-  // std::basic_iostream<char, std::char_traits<char> >
+  // std::basic_iostream<char, std::char_traits<char>>
   { "Sd", "iostream" },
   { nullptr, nullptr }
 };
