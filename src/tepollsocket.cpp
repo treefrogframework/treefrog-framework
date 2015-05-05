@@ -179,8 +179,7 @@ int TEpollSocket::send()
         TAccessLogger &logger = buf->accessLogger();
 
         err = 0;
-        for (;;) {
-            len = sendBufSize - total;
+        while ((len = sendBufSize - total) > 0) {
             void *data = buf->getData(len);
             if (len == 0) {
                 break;
@@ -200,30 +199,28 @@ int TEpollSocket::send()
             logger.setResponseBytes(logger.responseBytes() + len);
         }
 
-        switch (err) {
-        case 0:     // FALL THROUGH
-        case EAGAIN:
-            break;
-
-        case EPIPE:
-            tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
-            logger.setResponseBytes(-1);
-            ret = -1;
-            break;
-
-        default:
-            tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
-            logger.setResponseBytes(-1);
-            ret = -1;
-            break;
-        }
-
-        if (buf->atEnd() || ret < 0) {
+        if (buf->atEnd()) {
             logger.write();  // Writes access log
             delete sendBuf.dequeue(); // delete send-buffer obj
         }
 
-        if (ret < 0) {
+        if (err > 0) {
+            switch (err) {
+            case EAGAIN:
+                break;
+
+            case EPIPE:
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                logger.setResponseBytes(-1);
+                ret = -1;
+                break;
+
+            default:
+                tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
+                logger.setResponseBytes(-1);
+                ret = -1;
+                break;
+            }
             break;
         }
     }

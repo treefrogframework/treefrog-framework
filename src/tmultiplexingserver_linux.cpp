@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -34,8 +34,6 @@ void TMultiplexingServer::instantiate(int listeningSocket)
 {
     if (!multiplexingServer) {
         multiplexingServer = new TMultiplexingServer(listeningSocket);
-        //TWorkerStarter *starter = new TWorkerStarter(multiplexingServer);
-        //connect(multiplexingServer, SIGNAL(incomingRequest(TEpollSocket *)), starter, SLOT(startWorker(TEpollSocket *)), Qt::BlockingQueuedConnection);  // the emitter and receiver are in different threads.
         qAddPostRoutine(::cleanup);
     }
 }
@@ -175,6 +173,12 @@ void TMultiplexingServer::run()
                         continue;
                     }
 
+                    if (sock->countWorker() > 0) {
+                        // not receive
+                        TEpoll::instance()->modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                        continue;
+                    }
+
                     // Receive data
                     int len = TEpoll::instance()->recv(sock);
                     if (Q_UNLIKELY(len < 0)) {
@@ -191,7 +195,6 @@ void TMultiplexingServer::run()
                         TEpoll::instance()->modifyPoll(sock, (EPOLLOUT | EPOLLET));
 #endif
                         sock->startWorker();
-                        //emit incomingRequest(sock);
                     }
                 }
             }
@@ -217,22 +220,3 @@ void TMultiplexingServer::stop()
         TStaticReleaseThread::exec();
     }
 }
-
-
-/*
- * TWorkerStarter class
- */
-
-/*
-TWorkerStarter::~TWorkerStarter()
-{ }
-
-
-void TWorkerStarter::startWorker(TEpollSocket *socket)
-{
-    //
-    // Create worker threads in main thread for signal/slot mechanism!
-    //
-    socket->startWorker();
-}
-*/

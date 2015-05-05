@@ -105,15 +105,18 @@ void TSystemBus::readBus()
 void TSystemBus::writeBus()
 {
     QMutexLocker locker(&mutexWrite);
+    tSystemDebug("TSystemBus::writeBus  len:%d", sendBuffer.length());
 
     for (;;) {
         int len = busSocket->write(sendBuffer.data(), sendBuffer.length());
 
-        if (Q_UNLIKELY(len <= 0)) {
+        if (Q_UNLIKELY(len < 0)) {
             tSystemError("System Bus write error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
             sendBuffer.resize(0);
         } else {
-            sendBuffer.remove(0, len);
+            if (len > 0) {
+                sendBuffer.remove(0, len);
+            }
         }
 
         if (sendBuffer.isEmpty()) {

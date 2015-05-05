@@ -84,18 +84,21 @@ bool TWebSocket::canReadRequest() const
 
 void TWebSocket::readRequest()
 {
-    qint64 bytes;
-    QByteArray buf;
+    if (myWorkerCounter > 0) {
+        tSystemWarn("Worker already running  (sd:%lld)", (quint64)socketDescriptor());
+        return;
+    }
 
-    while ((bytes = bytesAvailable()) > 0) {
-        buf.resize(bytes);
-        bytes = QTcpSocket::read(buf.data(), bytes);
-        if (Q_UNLIKELY(bytes < 0)) {
+    int bytes = bytesAvailable();
+    if (bytes > 0) {
+        int sz = recvBuffer.size();
+        recvBuffer.resize(sz + bytes);
+        int rd = QTcpSocket::read(recvBuffer.data() + sz, bytes);
+        if (Q_UNLIKELY(rd != bytes)) {
             tSystemError("socket read error");
-            break;
+            recvBuffer.resize(0);
+            return;
         }
-
-        recvBuffer.append(buf.data(), bytes);
     }
 
     int len = parse(recvBuffer);
@@ -105,22 +108,27 @@ void TWebSocket::readRequest()
         return;
     }
 
-    QByteArray binary;
-    while (!frames.isEmpty()) {
-        binary.clear();
-        TWebSocketFrame::OpCode opcode = frames.first().opCode();
+    QList<QPair<int, QByteArray>> payloads;
+    QByteArray pay;
+
+    while (canReadRequest()) {
+        int opcode = frames.first().opCode();
+        pay.resize(0);
 
         while (!frames.isEmpty()) {
             TWebSocketFrame frm = frames.takeFirst();
-            binary += frm.payload();
+            pay += frm.payload();
             if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+                payloads << qMakePair(opcode, pay);
                 break;
             }
         }
+    }
 
+    if (!payloads.isEmpty()) {
         // Starts worker thread
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
-        worker->setPayload(opcode, binary);
+        worker->setPayloads(payloads);
         startWorker(worker);
     }
 }
@@ -163,6 +171,10 @@ void TWebSocket::releaseWorker()
 
         if (deleting.load()) {
             deleteLater();
+        } else {
+            if (bytesAvailable() > 0) {
+                readRequest();
+            }
         }
     }
 }
@@ -193,6 +205,13 @@ void TWebSocket::sendRawData(const QByteArray &data)
         if (deleting.load())
             return;
 
+        if (QTcpSocket::bytesToWrite() > 0) {
+            if (Q_UNLIKELY(!waitForBytesWritten())) {
+                tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+                break;
+            }
+        }
+
         qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
             tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
@@ -200,11 +219,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
         }
 
         total += written;
-        if (total >= data.length())
-            break;
-
-        if (Q_UNLIKELY(!waitForBytesWritten())) {
-            tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+        if (total >= data.length()) {
             break;
         }
     }

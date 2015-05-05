@@ -1,6 +1,8 @@
 #ifndef TEPOLLWEBSOCKET_H
 #define TEPOLLWEBSOCKET_H
 
+#include <QList>
+#include <QPair>
 #include <TGlobal>
 #include <THttpResponseHeader>
 #include "tepollsocket.h"
@@ -21,7 +23,7 @@ public:
 
     bool isTextRequest() const;
     bool isBinaryRequest() const;
-    QByteArray readBinaryRequest();
+    QList<QPair<int, QByteArray>> readAllBinaryRequest();
     virtual bool canReadRequest();
     virtual void startWorker();
     void startWorkerForOpening(const TSession &session);

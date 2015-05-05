@@ -38,7 +38,7 @@ private:
     Q_DISABLE_COPY(TKvsDatabasePool)
     TKvsDatabasePool(const QString &environment);
 
-    QVector<QMap<QString, uint> > pooledConnections;
+    QVector<QMap<QString, uint>> pooledConnections;
     QMutex mutex;
     int maxConnects;
     QString dbEnvironment;

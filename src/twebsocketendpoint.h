@@ -69,7 +69,7 @@ private:
 
     TWebSocketSession sessionStore;
     QByteArray uuid;
-    QList<QPair<int, QVariant> > taskList;
+    QList<QPair<int, QVariant>> taskList;
     bool rollback;
 
     friend class TWebSocketWorker;

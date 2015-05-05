@@ -11,14 +11,14 @@
 /*!
   \class THtmlAttribute
   \brief The THtmlAttribute class represents HTML attributes for customizing
-  web elements. 
+  web elements.
 */
 
 /*!
   Copy constructor.
 */
 THtmlAttribute::THtmlAttribute(const THtmlAttribute &other)
-    : QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString> > *>(&other))
+    : QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString>> *>(&other))
 { }
 
 /*!
@@ -62,7 +62,7 @@ void THtmlAttribute::append(const QString &key, const QString &value)
 */
 THtmlAttribute &THtmlAttribute::operator=(const THtmlAttribute &other)
 {
-    QList<QPair<QString, QString>>::operator=(*static_cast<const QList<QPair<QString, QString> > *>(&other));
+    QList<QPair<QString, QString>>::operator=(*static_cast<const QList<QPair<QString, QString>> *>(&other));
     return *this;
 }
 

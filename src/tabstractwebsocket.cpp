@@ -163,6 +163,7 @@ bool TAbstractWebSocket::searchEndpoint(const THttpRequestHeader &header)
 
 int TAbstractWebSocket::parse(QByteArray &recvData)
 {
+    tSystemDebug("parse enter  data len:%d  uuid:%s", recvData.length(), qPrintable(socketUuid()));
     if (websocketFrames().isEmpty()) {
         websocketFrames().append(TWebSocketFrame());
     } else {
@@ -172,7 +173,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
         }
     }
 
-    TWebSocketFrame &ref = websocketFrames().last();
+    TWebSocketFrame *pfrm = &websocketFrames().last();
     quint8  b;
     quint16 w;
     quint32 n;
@@ -183,7 +184,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
     QIODevice *dev = ds.device();
 
     while (!ds.atEnd()) {
-        switch (ref.state()) {
+        switch (pfrm->state()) {
         case TWebSocketFrame::Empty: {
             if (Q_UNLIKELY(dev->bytesAvailable() < 4)) {
                 tSystemError("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
@@ -191,8 +192,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             }
 
             ds >> b;
-            ref.setFirstByte(b);
-
+            pfrm->setFirstByte(b);
             ds >> b;
             bool maskFlag = b & 0x80;
             quint8 len = b & 0x7f;
@@ -209,7 +209,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     tSystemError("WebSocket protocol error  [%s:%d]", __FILE__, __LINE__);
                     return -1;
                 }
-                ref.setPayloadLength( w );
+                pfrm->setPayloadLength( w );
                 break;
 
             case 127:
@@ -222,11 +222,11 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     tSystemError("WebSocket protocol error  [%s:%d]", __FILE__, __LINE__);
                     return -1;
                 }
-                ref.setPayloadLength( d );
+                pfrm->setPayloadLength( d );
                 break;
 
             default:
-                ref.setPayloadLength( len );
+                pfrm->setPayloadLength( len );
                 break;
             }
 
@@ -237,115 +237,116 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     return -1;
                 }
                 ds >> n;
-                ref.setMaskKey( n );
+                pfrm->setMaskKey( n );
             }
 
-            if (ref.payloadLength() == 0) {
-                ref.setState(TWebSocketFrame::Completed);
+            if (pfrm->payloadLength() == 0) {
+                pfrm->setState(TWebSocketFrame::Completed);
             } else {
-                ref.setState(TWebSocketFrame::HeaderParsed);
-                ref.payload().reserve(ref.payloadLength());
+                pfrm->setState(TWebSocketFrame::HeaderParsed);
+                if (pfrm->payloadLength() >= 2 * 1024 * 1024 * 1024ULL) {
+                    tSystemError("Too big frame  [%s:%d]", __FILE__, __LINE__);
+                    pfrm->clear();
+                } else {
+                    pfrm->payload().reserve(pfrm->payloadLength());
+                }
             }
 
-            tSystemDebug("WebSocket header read length: %lld", dev->pos());
-            tSystemDebug("WebSocket payload length:%lld", ref.payloadLength());
+            tSystemDebug("WebSocket parse pos: %lld", dev->pos());
+            tSystemDebug("WebSocket payload length:%lld", pfrm->payloadLength());
             break; }
 
         case TWebSocketFrame::HeaderParsed:  // fall through
         case TWebSocketFrame::MoreData: {
             tSystemDebug("WebSocket reading payload:  available length:%lld", dev->bytesAvailable());
-            int size = qMin((qint64)(ref.payloadLength() - ref.payload().size()), dev->bytesAvailable());
-            if (Q_UNLIKELY(size <= 0)) {
+            tSystemDebug("WebSocket parsing  length to read:%llu  current buf len:%d", pfrm->payloadLength(), pfrm->payload().size());
+            quint64 size = qMin((pfrm->payloadLength() - pfrm->payload().size()), (quint64)dev->bytesAvailable());
+            if (Q_UNLIKELY(size == 0)) {
                 Q_ASSERT(0);
                 break;
             }
 
-            char *p = ref.payload().data() + ref.payload().size();
+            char *p = pfrm->payload().data() + pfrm->payload().size();
             size = ds.readRawData(p, size);
 
-            if (ref.maskKey()) {
+            if (pfrm->maskKey()) {
                 // Unmask
-                const quint8 mask[4] = { quint8((ref.maskKey() & 0xFF000000) >> 24),
-                                         quint8((ref.maskKey() & 0x00FF0000) >> 16),
-                                         quint8((ref.maskKey() & 0x0000FF00) >> 8),
-                                         quint8((ref.maskKey() & 0x000000FF)) };
+                const quint8 mask[4] = { quint8((pfrm->maskKey() & 0xFF000000) >> 24),
+                                         quint8((pfrm->maskKey() & 0x00FF0000) >> 16),
+                                         quint8((pfrm->maskKey() & 0x0000FF00) >> 8),
+                                         quint8((pfrm->maskKey() & 0x000000FF)) };
 
-                int i = ref.payload().size();
+                int i = pfrm->payload().size();
                 const char *end = p + size;
                 while (p < end) {
                     *p++ ^= mask[i++ % 4];
                 }
             }
-            ref.payload().resize( ref.payload().size() + size );
-            tSystemDebug("WebSocket payload length read: %d", ref.payload().length());
+            pfrm->payload().resize( pfrm->payload().size() + size );
+            tSystemDebug("WebSocket payload curent buf len: %d", pfrm->payload().length());
 
-            if ((quint64)ref.payload().size() == ref.payloadLength()) {
-                ref.setState(TWebSocketFrame::Completed);
+            if ((quint64)pfrm->payload().size() == pfrm->payloadLength()) {
+                pfrm->setState(TWebSocketFrame::Completed);
+                tSystemDebug("Parse Completed   payload len: %d", pfrm->payload().size());
             } else {
-                ref.setState(TWebSocketFrame::MoreData);
+                pfrm->setState(TWebSocketFrame::MoreData);
+                tSystemDebug("Parse MoreData   payload len: %d", pfrm->payload().size());
             }
             break; }
 
-        case TWebSocketFrame::Completed:
-            break;
-
+        case TWebSocketFrame::Completed:  // fall through
         default:
             Q_ASSERT(0);
-            return -1;
             break;
         }
 
-        if (ref.state() == TWebSocketFrame::Completed) {
-            if (Q_UNLIKELY(!ref.validate())) {
-                ref.clear();
+        if (pfrm->state() == TWebSocketFrame::Completed) {
+            if (Q_UNLIKELY(!pfrm->validate())) {
+                pfrm->clear();
                 continue;
             }
 
             // Fragmented message validation
-            if (ref.opCode() == TWebSocketFrame::Continuation) {
+            if (pfrm->opCode() == TWebSocketFrame::Continuation) {
                 if (websocketFrames().count() >= 2) {
                     const TWebSocketFrame &before = websocketFrames()[websocketFrames().count() - 2];
                     if (before.isFinalFrame() || before.isControlFrame()) {
-                        ref.clear();
+                        pfrm->clear();
+                        tSystemWarn("Invalid continuation frame detected  [%s:%d]", __FILE__, __LINE__);
                         continue;
                     }
                 }
             }
 
             // In case of control frame, moves forward after previous control frames
-            if (ref.isControlFrame()) {
+            if (pfrm->isControlFrame()) {
                 if (websocketFrames().count() >= 2) {
                     TWebSocketFrame frm = websocketFrames().takeLast();
                     QMutableListIterator<TWebSocketFrame> it(websocketFrames());
-                    it.toBack();
-                    while (it.hasPrevious()) {
-                        TWebSocketFrame &f = it.previous();
-                        if (f.isControlFrame()) {
-                            // Inserts after control frame
-                            it.next();
-                            it.insert(frm);
+                    while (it.hasNext()) {
+                        TWebSocketFrame &f = it.next();
+                        if (!f.isControlFrame()) {
+                            break;
                         }
                     }
 
-                    if (!it.hasPrevious()) {
-                        websocketFrames().prepend(frm);
-                    }
-
-                    ref = websocketFrames().last();
+                    it.insert(frm);
                 }
             }
 
-            if (!ds.atEnd() && ref.isFinalFrame()) {
+            if (!ds.atEnd()) {
                 // Prepare next frame
                 websocketFrames().append(TWebSocketFrame());
-                ref = websocketFrames().last();
+                pfrm = &websocketFrames().last();
+            } else {
+                break;
             }
         }
     }
 
     Q_ASSERT(dev->bytesAvailable() == 0);
     int sz = recvData.size();
-    recvData.truncate(0);
+    recvData.resize(0);
     return sz - dev->bytesAvailable();
 }
 

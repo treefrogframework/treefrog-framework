@@ -19,6 +19,8 @@
 const uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
 const qint64 WRITE_LENGTH = 1280;
 const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
+const int    SEND_BUF_SIZE = 16 * 1024;
+const int    RECV_BUF_SIZE = 128 * 1024;
 
 /*!
   \class THttpSocket
@@ -104,17 +106,21 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 {
     qint64 total = 0;
     for (;;) {
+        if (QTcpSocket::bytesToWrite() > 0) {
+            if (Q_UNLIKELY(!waitForBytesWritten())) {
+                tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+                break;
+            }
+        }
+
         qint64 written = QTcpSocket::write(data + total, qMin(size - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
             tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
             return -1;
         }
-        total += written;
-        if (total >= size)
-            break;
 
-        if (Q_UNLIKELY(!waitForBytesWritten())) {
-            tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+        total += written;
+        if (total >= size) {
             break;
         }
     }
@@ -141,9 +147,10 @@ void THttpSocket::readRequest()
 
     while ((bytes = bytesAvailable()) > 0) {
         buf.resize(bytes);
-        bytes = QTcpSocket::read(buf.data(), bytes);
-        if (Q_UNLIKELY(bytes < 0)) {
+        int rd = QTcpSocket::read(buf.data(), bytes);
+        if (Q_UNLIKELY(rd != bytes)) {
             tSystemError("socket read error");
+            buf.resize(0);
             break;
         }
         lastProcessed = QDateTime::currentDateTime();
@@ -203,4 +210,44 @@ void THttpSocket::readRequest()
 int THttpSocket::idleTime() const
 {
     return lastProcessed.secsTo(QDateTime::currentDateTime());
+}
+
+
+bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState socketState, OpenMode openMode)
+{
+    bool ret  = QTcpSocket::setSocketDescriptor(socketDescriptor, socketState, openMode);
+    if (ret) {
+        // Sets socket options
+        QTcpSocket::setSocketOption(QAbstractSocket::LowDelayOption, 1);
+
+        // Sets buffer size of socket
+#if QT_VERSION >= 0x050300
+        int val = QTcpSocket::socketOption(QAbstractSocket::SendBufferSizeSocketOption).toInt();
+        if (val < SEND_BUF_SIZE) {
+            QTcpSocket::setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, SEND_BUF_SIZE);
+        }
+
+        val = QTcpSocket::socketOption(QAbstractSocket::ReceiveBufferSizeSocketOption).toInt();
+        if (val < RECV_BUF_SIZE) {
+            QTcpSocket::setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, RECV_BUF_SIZE);
+        }
+#else
+# ifdef Q_OS_UNIX
+        int res, bufsize;
+
+        bufsize = SEND_BUF_SIZE;
+        res = setsockopt((int)socketDescriptor, SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
+        if (res < 0) {
+            tSystemWarn("setsockopt error [SO_SNDBUF] fd:%d", (int)socketDescriptor);
+        }
+
+        bufsize = RECV_BUF_SIZE;
+        res = setsockopt((int)socketDescriptor, SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
+        if (res < 0) {
+            tSystemWarn("setsockopt error [SO_RCVBUF] fd:%d", (int)socketDescriptor);
+        }
+# endif
+#endif
+    }
+    return ret;
 }

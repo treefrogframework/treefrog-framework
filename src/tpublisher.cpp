@@ -188,7 +188,9 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
 
 void TPublisher::publish(const QString &topic, const QString &text, TAbstractWebSocket *socket)
 {
-    TSystemBus::instance()->send(Tf::WebSocketPublishText, topic, text.toUtf8());
+    if (Tf::app()->maxNumberOfAppServers() > 1) {
+        TSystemBus::instance()->send(Tf::WebSocketPublishText, topic, text.toUtf8());
+    }
 
     QMutexLocker locker(&mutex);
     Pub *pub = get(topic);
@@ -200,7 +202,9 @@ void TPublisher::publish(const QString &topic, const QString &text, TAbstractWeb
 
 void TPublisher::publish(const QString &topic, const QByteArray &binary, TAbstractWebSocket *socket)
 {
-    TSystemBus::instance()->send(Tf::WebSocketPublishBinary, topic, binary);
+    if (Tf::app()->maxNumberOfAppServers() > 1) {
+        TSystemBus::instance()->send(Tf::WebSocketPublishBinary, topic, binary);
+    }
 
     QMutexLocker locker(&mutex);
     Pub *pub = get(topic);

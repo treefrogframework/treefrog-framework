@@ -92,19 +92,25 @@ void TEpollWebSocket::sendPong(const QByteArray &data)
 }
 
 
-QByteArray TEpollWebSocket::readBinaryRequest()
+QList<QPair<int, QByteArray>> TEpollWebSocket::readAllBinaryRequest()
 {
     Q_ASSERT(canReadRequest());
+    QList<QPair<int, QByteArray>> ret;
+    QByteArray payload;
 
-    QByteArray ret;
-    while (!frames.isEmpty()) {
-        TWebSocketFrame frm = frames.takeFirst();
-        ret += frm.payload();
-        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
-            break;
+    while (canReadRequest()) {
+        int opcode = frames.first().opCode();
+        payload.resize(0);
+
+        while (!frames.isEmpty()) {
+            TWebSocketFrame frm = frames.takeFirst();
+            payload += frm.payload();
+            if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+                ret << qMakePair(opcode, payload);
+                break;
+            }
         }
     }
-    tSystemDebug("readBinaryRequest: payload len:%d", ret.length());
     return ret;
 }
 
@@ -121,13 +127,14 @@ bool TEpollWebSocket::seekRecvBuffer(int pos)
 {
     int size = recvBuffer.size();
     if (Q_UNLIKELY(pos <= 0 || size + pos > recvBuffer.capacity())) {
-        clear();
+        Q_ASSERT(0);
         return false;
     }
 
     size += pos;
     recvBuffer.resize(size);
     int len = parse(recvBuffer);
+    tSystemDebug("WebSocket parse len : %d", len);
     if (len < 0) {
         tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
         close();
@@ -142,13 +149,12 @@ void TEpollWebSocket::startWorker()
     tSystemDebug("TEpollWebSocket::startWorker");
     Q_ASSERT(canReadRequest());
 
-    do {
-        TWebSocketFrame::OpCode opcode = frames.first().opCode();
-        QByteArray binary = readBinaryRequest();
+    auto payloads = readAllBinaryRequest();
+    if (!payloads.isEmpty()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
-        worker->setPayload(opcode, binary);
+        worker->setPayloads(payloads);
         startWorker(worker);
-    } while (canReadRequest());
+    }
 }
 
 
