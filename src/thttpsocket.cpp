@@ -213,7 +213,13 @@ int THttpSocket::idleTime() const
 }
 
 
-bool THttpSocket::setSocketDescriptor(qint64 socketDescriptor, SocketState socketState, OpenMode openMode)
+bool THttpSocket::setSocketDescriptor(
+#if QT_VERSION >= 0x050000
+    qintptr socketDescriptor,
+#else
+    int socketDescriptor,
+#endif
+    SocketState socketState, OpenMode openMode)
 {
     bool ret  = QTcpSocket::setSocketDescriptor(socketDescriptor, socketState, openMode);
     if (ret) {
