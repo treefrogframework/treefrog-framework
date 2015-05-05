@@ -23,7 +23,7 @@ public:
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
     int idleTime() const;
-    bool setSocketDescriptor(qintptr socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
+    bool setSocketDescriptor(qint64 socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
 
 protected:
     qint64 writeRawData(const char *data, qint64 size);
