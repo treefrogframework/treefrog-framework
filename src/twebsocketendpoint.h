@@ -23,6 +23,9 @@ public:
     void sendPing(const QByteArray &data = QByteArray());
     void sendPong(const QByteArray &data = QByteArray());
     void close(int closeCode = Tf::NormalClosure);
+    void sendText(const QByteArray &uuid, const QString &text);
+    void sendBinary(const QByteArray &uuid, const QByteArray &binary);
+    void close(const QByteArray &uuid, int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
     bool rollbackRequested() const;
     void subscribe(const QString &topic, bool noLocal = false);
@@ -58,6 +61,9 @@ private:
         SendClose,
         SendPing,
         SendPong,
+        SendTextTo,
+        SendBinaryTo,
+        SendCloseTo,
         Subscribe,
         Unsubscribe,
         UnsubscribeFromAll,

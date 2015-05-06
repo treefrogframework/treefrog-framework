@@ -40,6 +40,7 @@ protected:
     void startWorkerForClosing();
     virtual QObject *thisObject() Q_DECL_OVERRIDE { return this; }
     virtual qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
+    virtual TAbstractWebSocket *searchPeerSocket(const QByteArray &uuid) Q_DECL_OVERRIDE;
     virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
     void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
     QList<TWebSocketFrame> frames;

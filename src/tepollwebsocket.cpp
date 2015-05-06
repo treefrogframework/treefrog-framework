@@ -21,18 +21,28 @@
 
 const int BUFFER_RESERVE_SIZE = 127;
 
+static QMutex mutexMap;
+static QMap<QByteArray, TEpollWebSocket*> websocketMap;
+
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
     : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(header),
       recvBuffer(), frames()
 {
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
+
+    mutexMap.lock();
+    websocketMap.insert(socketUuid(), this);
+    mutexMap.unlock();
 }
 
 
 TEpollWebSocket::~TEpollWebSocket()
 {
     tSystemDebug("~TEpollWebSocket");
+    mutexMap.lock();
+    websocketMap.remove(socketUuid());
+    mutexMap.unlock();
 }
 
 
@@ -246,4 +256,11 @@ void TEpollWebSocket::timerEvent(QTimerEvent *event)
     } else {
         TEpollSocket::timerEvent(event);
     }
+}
+
+
+TAbstractWebSocket *TEpollWebSocket::searchPeerSocket(const QByteArray &uuid)
+{
+    QMutexLocker locker(&mutexMap);
+    return websocketMap.value(uuid, nullptr);
 }

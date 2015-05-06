@@ -194,6 +194,30 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 sendTask = true;
                 break;
 
+            case TWebSocketEndpoint::SendTextTo: {
+                QVariantList lst = taskData.toList();
+                TAbstractWebSocket *websocket = _socket->searchPeerSocket(lst[0].toByteArray());
+                if (websocket) {
+                    websocket->sendText(lst[1].toString());
+                }
+                break; }
+
+            case TWebSocketEndpoint::SendBinaryTo: {
+                QVariantList lst = taskData.toList();
+                TAbstractWebSocket *websocket = _socket->searchPeerSocket(lst[0].toByteArray());
+                if (websocket) {
+                    websocket->sendBinary(lst[1].toByteArray());
+                }
+                break; }
+
+            case TWebSocketEndpoint::SendCloseTo: {
+                QVariantList lst = taskData.toList();
+                TAbstractWebSocket *websocket = _socket->searchPeerSocket(lst[0].toByteArray());
+                if (websocket) {
+                    websocket->sendClose(lst[1].toInt());
+                }
+                break; }
+
             case TWebSocketEndpoint::Subscribe: {
                 QVariantList lst = taskData.toList();
                 TPublisher::instance()->subscribe(lst[0].toString(), lst[1].toBool(), _socket);

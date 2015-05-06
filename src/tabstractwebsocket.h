@@ -39,6 +39,7 @@ protected:
     void sendHandshakeResponse();
     virtual QObject *thisObject() = 0;
     virtual qint64 writeRawData(const QByteArray &data) = 0;
+    virtual TAbstractWebSocket *searchPeerSocket(const QByteArray &uuid) = 0;
     virtual QList<TWebSocketFrame> &websocketFrames() = 0;
     int parse(QByteArray &recvData);
 

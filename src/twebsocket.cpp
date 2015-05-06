@@ -16,6 +16,9 @@
 const qint64 WRITE_LENGTH = 1280;
 const int BUFFER_RESERVE_SIZE = 127;
 
+static QMutex mutexMap;
+static QMap<QByteArray, TWebSocket*> websocketMap;
+
 
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
     : QTcpSocket(parent), TAbstractWebSocket(header), frames(), uuid(),
@@ -31,12 +34,19 @@ TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const 
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
     connect(this, SIGNAL(disconnectByWorker()), this, SLOT(close()));
+
+    mutexMap.lock();
+    websocketMap.insert(uuid, this);
+    mutexMap.unlock();
 }
 
 
 TWebSocket::~TWebSocket()
 {
     tSystemDebug("~TWebSocket");
+    mutexMap.lock();
+    websocketMap.remove(uuid);
+    mutexMap.unlock();
 }
 
 
@@ -239,6 +249,13 @@ void TWebSocket::disconnect()
     // Calls close-function in main thread
     emit disconnectByWorker();
     stopKeepAlive();
+}
+
+
+TAbstractWebSocket *TWebSocket::searchPeerSocket(const QByteArray &uuid)
+{
+    QMutexLocker locker(&mutexMap);
+    return websocketMap.value(uuid, nullptr);
 }
 
 

@@ -93,6 +93,30 @@ void TWebSocketEndpoint::close(int closeCode)
 }
 
 
+void TWebSocketEndpoint::sendText(const QByteArray &uuid, const QString &text)
+{
+    QVariantList info;
+    info << uuid << text;
+    taskList << qMakePair((int)SendTextTo, info);
+}
+
+
+void TWebSocketEndpoint::sendBinary(const QByteArray &uuid, const QByteArray &binary)
+{
+    QVariantList info;
+    info << uuid << binary;
+    taskList << qMakePair((int)SendBinaryTo, info);
+}
+
+
+void TWebSocketEndpoint::close(const QByteArray &uuid, int closeCode)
+{
+    QVariantList info;
+    info << uuid << closeCode;
+    taskList << qMakePair((int)SendCloseTo, info);
+}
+
+
 bool TWebSocketEndpoint::isUserLoggedIn(const TSession &session)
 {
     return session.contains(TActionController::loginUserNameKey());
