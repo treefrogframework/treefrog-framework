@@ -106,7 +106,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 {
     qint64 total = 0;
     for (;;) {
-        if (QTcpSocket::bytesToWrite() > 0) {
+        if (QTcpSocket::bytesToWrite() > SEND_BUF_SIZE * 3 / 4) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {
                 tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
                 break;
