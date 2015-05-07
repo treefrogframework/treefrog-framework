@@ -6,7 +6,6 @@
  */
 
 #include <sys/types.h>
-#include <sys/epoll.h>
 #include <QUuid>
 #include <QFileInfo>
 #include <TWebApplication>
@@ -93,7 +92,8 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : deleting(false), myWorkerCounter(0), sd(socketDescriptor), uuid(), clientAddr(address)
+    : deleting(false), myWorkerCounter(0), pollIn(false), sd(socketDescriptor),
+      uuid(), clientAddr(address)
 {
     uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
@@ -225,9 +225,9 @@ int TEpollSocket::send()
         }
     }
 
-    if (err != EAGAIN && !sendBuf.isEmpty()) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-    }
+    // if (err != EAGAIN && !sendBuf.isEmpty()) {
+    //     TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    // }
 
     return ret;
 }

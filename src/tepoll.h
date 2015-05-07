@@ -4,6 +4,7 @@
 #include <QMap>
 #include <TGlobal>
 #include <TAtomicQueue>
+#include <sys/epoll.h>
 
 class QIODevice;
 class QByteArray;
