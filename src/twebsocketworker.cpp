@@ -234,13 +234,11 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             case TWebSocketEndpoint::PublishText: {
                 QVariantList lst = taskData.toList();
                 TPublisher::instance()->publish(lst[0].toString(), lst[1].toString(), _socket);
-                sendTask = true;
                 break; }
 
             case TWebSocketEndpoint::PublishBinary: {
                 QVariantList lst = taskData.toList();
                 TPublisher::instance()->publish(lst[0].toString(), lst[1].toByteArray(), _socket);
-                sendTask = true;
                 break; }
 
             case TWebSocketEndpoint::StartKeepAlive:
@@ -258,7 +256,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         }
 
         if (!sendTask) {
-            // Renew keep-alive
+            // Receiving but not sending, so renew keep-alive
             _socket->renewKeepAlive();
         }
 
