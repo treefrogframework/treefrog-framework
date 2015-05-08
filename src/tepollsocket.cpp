@@ -92,8 +92,8 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : deleting(false), myWorkerCounter(0), pollIn(false), sd(socketDescriptor),
-      uuid(), clientAddr(address)
+    : deleting(false), myWorkerCounter(0), pollIn(false), pollOut(false),
+      sd(socketDescriptor), uuid(), clientAddr(address)
 {
     uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
@@ -162,8 +162,10 @@ int TEpollSocket::recv()
 int TEpollSocket::send()
 {
     if (sendBuf.isEmpty()) {
+        pollOut = true;
         return 0;
     }
+    pollOut = false;
 
     if (deleting.load()) {
         return 0;
@@ -204,7 +206,7 @@ int TEpollSocket::send()
             delete sendBuf.dequeue(); // delete send-buffer obj
         }
 
-        if (err > 0) {
+        if (len < 0) {
             switch (err) {
             case EAGAIN:
                 break;
@@ -224,10 +226,6 @@ int TEpollSocket::send()
             break;
         }
     }
-
-    // if (err != EAGAIN && !sendBuf.isEmpty()) {
-    //     TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-    // }
 
     return ret;
 }
@@ -256,15 +254,17 @@ void TEpollSocket::close()
 
 void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
-    if (!deleting.load())
+    if (!deleting.load()) {
         TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
+    }
 }
 
 
 void TEpollSocket::sendData(const QByteArray &data)
 {
-    if (!deleting.load())
+    if (!deleting.load()) {
         TEpoll::instance()->setSendData(this, data);
+    }
 }
 
 

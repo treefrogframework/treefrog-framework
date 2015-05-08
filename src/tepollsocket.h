@@ -57,7 +57,8 @@ protected:
 
     std::atomic<bool> deleting;
     std::atomic<int> myWorkerCounter;
-    volatile bool pollIn;
+    std::atomic<bool> pollIn;
+    std::atomic<bool> pollOut;
 
 private:
     int sd;

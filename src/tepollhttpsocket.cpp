@@ -127,8 +127,7 @@ void TEpollHttpSocket::releaseWorker()
         if (deleting.load()) {
             TEpollSocket::deleteLater();
         } else {
-            if (pollIn) {
-                pollIn = false;
+            if (pollIn.exchange(false)) {
                 TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
             }
         }

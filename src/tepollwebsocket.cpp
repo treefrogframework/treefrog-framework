@@ -189,8 +189,7 @@ void TEpollWebSocket::releaseWorker()
         if (deleting.load()) {
             TEpollWebSocket::deleteLater();
         } else {
-            if (pollIn) {
-                pollIn = false;
+            if (pollIn.exchange(false)) {
                 TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
             }
         }

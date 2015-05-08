@@ -168,13 +168,7 @@ void tSystemTrace(const char *msg, ...)
     va_end(ap);
 }
 
-#else
-
-void tSystemDebug(const char *, ...) { }
-void tSystemTrace(const char *, ...) { }
-
 #endif
-
 
 void tQueryLog(const char *msg, ...)
 {
