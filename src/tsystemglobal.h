@@ -35,25 +35,17 @@ T_CORE_EXPORT void tSystemInfo(const char *, ...) // system info message
 #endif
 ;
 
-#ifndef TF_NO_DEBUG
 T_CORE_EXPORT void tSystemDebug(const char *, ...) // system debug message
-# if defined(Q_CC_GNU) && !defined(__INSURE__)
+#if defined(Q_CC_GNU) && !defined(__INSURE__)
     __attribute__ ((format (printf, 1, 2)))
-# endif
-;
-#else
-static inline void tSystemDebug(const char *, ...) { }
 #endif
+;
 
-#ifndef TF_NO_DEBUG
 T_CORE_EXPORT void tSystemTrace(const char *, ...) // system trace message
-# if defined(Q_CC_GNU) && !defined(__INSURE__)
+#if defined(Q_CC_GNU) && !defined(__INSURE__)
     __attribute__ ((format (printf, 1, 2)))
-# endif
-;
-#else
-static inline void tSystemTrace(const char *, ...) { }
 #endif
+;
 
 T_CORE_EXPORT void tQueryLog(const char *, ...) // SQL query log
 #if defined(Q_CC_GNU) && !defined(__INSURE__)
