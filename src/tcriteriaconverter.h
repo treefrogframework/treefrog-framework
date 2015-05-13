@@ -181,8 +181,15 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
                 break; }
 
             case TSql::IsNull:
+            case TSql::IsEmpty:
             case TSql::IsNotNull:
+            case TSql::IsNotEmpty:
                 sqlString += name + TSql::formats().value(cri.op1);
+                break;
+
+            case TSql::IsNullOrEmpty:
+            case TSql::IsNotNullAndEmpty:
+                sqlString += TSql::formats().value(cri.op1).arg(name);
                 break;
 
             default:
