@@ -228,11 +228,9 @@ namespace TSql
         LessEqual,    // <= val
         GreaterEqual, // >= val
         IsNull,       // IS NULL
-        IsEmpty,      // = ''
-        IsNullOrEmpty, // (column IS NULL OR column = '')
-        IsNotNull,     // IS NOT NULL
-        IsNotEmpty,    // <> ''
-        IsNotNullAndEmpty, // column IS NOT NULL AND column <> ''
+        IsEmpty,      // (column IS NULL OR column = '')
+        IsNotNull,    // IS NOT NULL
+        IsNotEmpty,   // column IS NOT NULL AND column <> ''
         Like,          // LIKE val
         NotLike,       // NOT LIKE val
         LikeEscape,    // LIKE val1 ESCAPE val2
