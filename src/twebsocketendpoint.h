@@ -28,7 +28,7 @@ public:
     void close(const QByteArray &uuid, int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
     bool rollbackRequested() const;
-    void subscribe(const QString &topic, bool noLocal = false);
+    void subscribe(const QString &topic, bool local = true);
     void unsubscribe(const QString &topic);
     void unsubscribeFromAll();
     void publish(const QString &topic, const QString &text);

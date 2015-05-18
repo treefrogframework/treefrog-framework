@@ -136,10 +136,10 @@ const QStringList &TWebSocketEndpoint::disabledEndpoints()
 }
 
 
-void TWebSocketEndpoint::subscribe(const QString &topic, bool noLocal)
+void TWebSocketEndpoint::subscribe(const QString &topic, bool local)
 {
     QVariantList subinfo;
-    subinfo << topic << noLocal;
+    subinfo << topic << local;
     taskList << qMakePair((int)Subscribe, QVariant(subinfo));
 }
 
