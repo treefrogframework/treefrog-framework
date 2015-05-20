@@ -245,8 +245,12 @@ namespace treefrogsetup {
         {
             List<String ^>^ ret = gcnew List<String^>();
             try {
-                array<String^>^ dir = Directory::GetDirectories(folderPath);
+                array<String^>^ dir = Directory::GetDirectories(folderPath, name);
+                if (dir->Length > 0) {
+                    return gcnew List<String^>(dir);
+                }
 
+                dir = Directory::GetDirectories(folderPath);
                 for (int i = 0; i < dir->Length; ++i) {
                     // check excludes
                     bool exc = false;
@@ -332,11 +336,8 @@ namespace treefrogsetup {
             List<String ^>^ bins = gcnew List<String ^>();
 
             if (forderTextBox->Text != L"C:\\") {
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw47_32", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw48_32", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw482_32", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64_opengl", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw*", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc20*", forderTextBox->Text, excludes), excludes));
             }
 
             if (bins->Count == 0) {
@@ -358,6 +359,9 @@ namespace treefrogsetup {
                 qmake->Start();
                 version = qmake->StandardOutput->ReadToEnd();
                 qmake->WaitForExit();
+            } else {
+                abort("Not found qmake.exe.\n\nSetup aborts.", "Abort");
+                return;
             }
 
             // Gets path of qtenv2.bat
