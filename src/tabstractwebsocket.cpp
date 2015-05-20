@@ -186,25 +186,30 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
     while (!ds.atEnd()) {
         switch (pfrm->state()) {
         case TWebSocketFrame::Empty: {
-            if (Q_UNLIKELY(dev->bytesAvailable() < 4)) {
-                tSystemError("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
-                return -1;
+            QByteArray hdr = dev->peek(14);
+            QDataStream dshdr(hdr);
+            dshdr.setByteOrder(QDataStream::BigEndian);
+            QIODevice *devhdr = dshdr.device();
+
+            if (Q_UNLIKELY(devhdr->bytesAvailable() < 2)) {
+                tSystemWarn("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
+                goto parse_end;
             }
 
-            ds >> b;
+            dshdr >> b;
             pfrm->setFirstByte(b);
-            ds >> b;
+            dshdr >> b;
             bool maskFlag = b & 0x80;
             quint8 len = b & 0x7f;
 
             // payload length
             switch (len) {
             case 126:
-                if (Q_UNLIKELY(dev->bytesAvailable() < (int)sizeof(w))) {
-                    tSystemError("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
-                    return -1;
+                if (Q_UNLIKELY(devhdr->bytesAvailable() < (int)sizeof(w))) {
+                    tSystemWarn("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
+                    goto parse_end;
                 }
-                ds >> w;
+                dshdr >> w;
                 if (Q_UNLIKELY(w < 126)) {
                     tSystemError("WebSocket protocol error  [%s:%d]", __FILE__, __LINE__);
                     return -1;
@@ -213,11 +218,11 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                 break;
 
             case 127:
-                if (Q_UNLIKELY(dev->bytesAvailable() < (int)sizeof(d))) {
-                    tSystemError("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
-                    return -1;
+                if (Q_UNLIKELY(devhdr->bytesAvailable() < (int)sizeof(d))) {
+                    tSystemWarn("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
+                    goto parse_end;
                 }
-                ds >> d;
+                dshdr >> d;
                 if (Q_UNLIKELY(d <= 0xFFFF)) {
                     tSystemError("WebSocket protocol error  [%s:%d]", __FILE__, __LINE__);
                     return -1;
@@ -232,11 +237,11 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
 
             // Mask key
             if (maskFlag) {
-                if (Q_UNLIKELY(dev->bytesAvailable() < (int)sizeof(n))) {
+                if (Q_UNLIKELY(devhdr->bytesAvailable() < (int)sizeof(n))) {
                     tSystemError("WebSocket parse error  [%s:%d]", __FILE__, __LINE__);
-                    return -1;
+                    goto parse_end;
                 }
-                ds >> n;
+                dshdr >> n;
                 pfrm->setMaskKey( n );
             }
 
@@ -252,8 +257,11 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                 }
             }
 
-            tSystemDebug("WebSocket parse pos: %lld", dev->pos());
+            tSystemDebug("WebSocket parse header pos: %lld", devhdr->pos());
             tSystemDebug("WebSocket payload length:%lld", pfrm->payloadLength());
+
+            int hdrlen = hdr.length() - devhdr->bytesAvailable();
+            ds.skipRawData(hdrlen);  // Forwards the pos
             break; }
 
         case TWebSocketFrame::HeaderParsed:  // fall through
@@ -344,10 +352,10 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
         }
     }
 
-    Q_ASSERT(dev->bytesAvailable() == 0);
-    int sz = recvData.size();
-    recvData.resize(0);
-    return sz - dev->bytesAvailable();
+parse_end:
+    int parsedlen = recvData.size() - dev->bytesAvailable();
+    recvData.remove(0, parsedlen);
+    return parsedlen;
 }
 
 
