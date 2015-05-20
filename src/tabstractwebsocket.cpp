@@ -182,17 +182,17 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
     QDataStream ds(recvData);
     ds.setByteOrder(QDataStream::BigEndian);
     QIODevice *dev = ds.device();
+    QByteArray hdr;
 
     while (!ds.atEnd()) {
         switch (pfrm->state()) {
         case TWebSocketFrame::Empty: {
-            QByteArray hdr = dev->peek(14);
+            hdr = dev->peek(14);
             QDataStream dshdr(hdr);
             dshdr.setByteOrder(QDataStream::BigEndian);
             QIODevice *devhdr = dshdr.device();
 
             if (Q_UNLIKELY(devhdr->bytesAvailable() < 2)) {
-                tSystemWarn("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
                 goto parse_end;
             }
 
@@ -206,7 +206,6 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             switch (len) {
             case 126:
                 if (Q_UNLIKELY(devhdr->bytesAvailable() < (int)sizeof(w))) {
-                    tSystemWarn("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
                     goto parse_end;
                 }
                 dshdr >> w;
@@ -219,7 +218,6 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
 
             case 127:
                 if (Q_UNLIKELY(devhdr->bytesAvailable() < (int)sizeof(d))) {
-                    tSystemWarn("WebSocket header too short  [%s:%d]", __FILE__, __LINE__);
                     goto parse_end;
                 }
                 dshdr >> d;
@@ -238,7 +236,6 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             // Mask key
             if (maskFlag) {
                 if (Q_UNLIKELY(devhdr->bytesAvailable() < (int)sizeof(n))) {
-                    tSystemError("WebSocket parse error  [%s:%d]", __FILE__, __LINE__);
                     goto parse_end;
                 }
                 dshdr >> n;
