@@ -216,7 +216,17 @@ void TEpoll::dispatchSendData()
         switch (sd->method) {
         case TSendData::Send:
             sock->enqueueSendData(sd->buffer);
-            modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            if (sock->pollOut) {
+                // send immediately
+                int len = send(sock);
+                if (Q_UNLIKELY(len < 0)) {
+                    deletePoll(sock);
+                    sock->close();
+                    sock->deleteLater();
+                }
+            } else {
+                modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            }
             break;
 
         case TSendData::Disconnect:

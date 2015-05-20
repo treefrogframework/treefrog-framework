@@ -25,7 +25,7 @@ class Pub : public QObject
     Q_OBJECT
 public:
     Pub(const QString &t) : topic(t), subscribers() { }
-    bool subscribe(const QObject *receiver, bool noLocal);
+    bool subscribe(const QObject *receiver, bool local);
     bool unsubscribe(const QObject *receiver);
     void publish(const QString &message, const QObject *sender);
     void publish(const QByteArray &binary, const QObject *sender);
@@ -40,7 +40,7 @@ private:
 #include "tpublisher.moc"
 
 
-bool Pub::subscribe(const QObject *receiver, bool noLocal)
+bool Pub::subscribe(const QObject *receiver, bool local)
 {
     tSystemDebug("Pub::subscribe");
 
@@ -49,7 +49,7 @@ bool Pub::subscribe(const QObject *receiver, bool noLocal)
     }
 
     if (subscribers.contains(receiver)) {
-        subscribers[receiver] = noLocal;
+        subscribers[receiver] = local;
         return true;
     }
 
@@ -58,7 +58,7 @@ bool Pub::subscribe(const QObject *receiver, bool noLocal)
     connect(this, SIGNAL(binaryPublished(const QByteArray&, const QObject*)),
             receiver, SLOT(sendBinaryForPublish(const QByteArray&, const QObject*)), Qt::QueuedConnection);
 
-    subscribers.insert(receiver, noLocal);
+    subscribers.insert(receiver, local);
     tSystemDebug("subscriber counter: %d", subscriberCounter());
     return true;
 }
@@ -82,8 +82,8 @@ bool Pub::unsubscribe(const QObject *receiver)
 void Pub::publish(const QString &message, const QObject *sender)
 {
     const QObject *except = nullptr;
-    bool noLocal = subscribers.value(sender, false);
-    if (noLocal) {
+    bool local = subscribers.value(sender, true);
+    if (!local) {
         except = sender;
     }
     emit textPublished(message, except);
@@ -93,8 +93,8 @@ void Pub::publish(const QString &message, const QObject *sender)
 void Pub::publish(const QByteArray &binary, const QObject *sender)
 {
     const QObject *except = nullptr;
-    bool noLocal = subscribers.value(sender, false);
-    if (noLocal) {
+    bool local = subscribers.value(sender, true);
+    if (!local) {
         except = sender;
     }
     emit binaryPublished(binary, except);
@@ -111,7 +111,7 @@ TPublisher::TPublisher()
 { }
 
 
-void TPublisher::subscribe(const QString &topic, bool noLocal, TAbstractWebSocket *socket)
+void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket *socket)
 {
     tSystemDebug("TPublisher::subscribe: %s", qPrintable(topic));
     QMutexLocker locker(&mutex);
@@ -121,7 +121,7 @@ void TPublisher::subscribe(const QString &topic, bool noLocal, TAbstractWebSocke
         pub = create(topic);
     }
 
-    pub->subscribe(castToObject(socket), noLocal);
+    pub->subscribe(castToObject(socket), local);
 }
 
 

@@ -14,6 +14,7 @@
 #include <THttpUtility>
 #include <TWebSocketEndpoint>
 #include "tepollwebsocket.h"
+#include "tepoll.h"
 #include "twebsocketframe.h"
 #include "twebsocketworker.h"
 #include "turlroute.h"
@@ -187,6 +188,10 @@ void TEpollWebSocket::releaseWorker()
 
         if (deleting.load()) {
             TEpollWebSocket::deleteLater();
+        } else {
+            if (pollIn.exchange(false)) {
+                TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            }
         }
     }
 }

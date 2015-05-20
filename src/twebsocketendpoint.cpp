@@ -97,7 +97,7 @@ void TWebSocketEndpoint::sendText(const QByteArray &uuid, const QString &text)
 {
     QVariantList info;
     info << uuid << text;
-    taskList << qMakePair((int)SendTextTo, info);
+    taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 
@@ -105,7 +105,7 @@ void TWebSocketEndpoint::sendBinary(const QByteArray &uuid, const QByteArray &bi
 {
     QVariantList info;
     info << uuid << binary;
-    taskList << qMakePair((int)SendBinaryTo, info);
+    taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 
@@ -113,7 +113,7 @@ void TWebSocketEndpoint::close(const QByteArray &uuid, int closeCode)
 {
     QVariantList info;
     info << uuid << closeCode;
-    taskList << qMakePair((int)SendCloseTo, info);
+    taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
 
@@ -136,10 +136,10 @@ const QStringList &TWebSocketEndpoint::disabledEndpoints()
 }
 
 
-void TWebSocketEndpoint::subscribe(const QString &topic, bool noLocal)
+void TWebSocketEndpoint::subscribe(const QString &topic, bool local)
 {
     QVariantList subinfo;
-    subinfo << topic << noLocal;
+    subinfo << topic << local;
     taskList << qMakePair((int)Subscribe, QVariant(subinfo));
 }
 

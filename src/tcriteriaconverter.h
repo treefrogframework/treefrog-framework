@@ -185,6 +185,11 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
                 sqlString += name + TSql::formats().value(cri.op1);
                 break;
 
+            case TSql::IsEmpty:
+            case TSql::IsNotEmpty:
+                sqlString += TSql::formats().value(cri.op1).arg(name);
+                break;
+
             default:
                 tWarn("error parameter");
                 break;

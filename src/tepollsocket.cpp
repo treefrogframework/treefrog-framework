@@ -6,7 +6,6 @@
  */
 
 #include <sys/types.h>
-#include <sys/epoll.h>
 #include <QUuid>
 #include <QFileInfo>
 #include <TWebApplication>
@@ -93,7 +92,8 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : deleting(false), myWorkerCounter(0), sd(socketDescriptor), uuid(), clientAddr(address)
+    : deleting(false), myWorkerCounter(0), pollIn(false), pollOut(false),
+      sd(socketDescriptor), uuid(), clientAddr(address)
 {
     uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
@@ -120,12 +120,14 @@ TEpollSocket::~TEpollSocket()
  */
 int TEpollSocket::recv()
 {
-    int err;
+    int ret = 0;
+    int err = 0;
+    int len;
 
     for (;;) {
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        int len = tf_recv(sd, buf, recvBufSize, 0);
+        len = tf_recv(sd, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -136,21 +138,21 @@ int TEpollSocket::recv()
         seekRecvBuffer(len);
     }
 
-    int ret = 0;
-    switch (err) {
-    case EAGAIN:
-        break;
+    if (len < 0) {
+        switch (err) {
+        case EAGAIN:
+            break;
 
-    case 0:       // FALL THROUGH
-    case ECONNRESET:
-        tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
-        ret = -1;
-        break;
+        case ECONNRESET:
+            tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+            ret = -1;
+            break;
 
-    default:
-        tSystemError("Failed recv : sd:%d  errno:%d", sd, err);
-        ret = -1;
-        break;
+        default:
+            tSystemError("Failed recv : sd:%d  errno:%d", sd, err);
+            ret = -1;
+            break;
+        }
     }
     return ret;
 }
@@ -162,24 +164,26 @@ int TEpollSocket::recv()
 int TEpollSocket::send()
 {
     if (sendBuf.isEmpty()) {
+        pollOut = true;
         return 0;
     }
+    pollOut = false;
 
     if (deleting.load()) {
         return 0;
     }
 
     int ret = 0;
-    int total = 0;
     int err = 0;
     int len;
 
-    while (total < sendBufSize && !sendBuf.isEmpty()) {
+    while (!sendBuf.isEmpty()) {
         TSendBuffer *buf = sendBuf.first();
         TAccessLogger &logger = buf->accessLogger();
 
         err = 0;
-        while ((len = sendBufSize - total) > 0) {
+        for (;;) {
+            len = sendBufSize;
             void *data = buf->getData(len);
             if (len == 0) {
                 break;
@@ -192,7 +196,6 @@ int TEpollSocket::send()
             if (len <= 0) {
                 break;
             }
-            total += len;
 
             // Sent successfully
             buf->seekData(len);
@@ -204,12 +207,13 @@ int TEpollSocket::send()
             delete sendBuf.dequeue(); // delete send-buffer obj
         }
 
-        if (err > 0) {
+        if (len < 0) {
             switch (err) {
             case EAGAIN:
                 break;
 
-            case EPIPE:
+            case EPIPE:   // FALL THROUGH
+            case ECONNRESET:
                 tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
                 logger.setResponseBytes(-1);
                 ret = -1;
@@ -221,12 +225,9 @@ int TEpollSocket::send()
                 ret = -1;
                 break;
             }
+
             break;
         }
-    }
-
-    if (err != EAGAIN && !sendBuf.isEmpty()) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
     }
 
     return ret;
@@ -256,15 +257,17 @@ void TEpollSocket::close()
 
 void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
-    if (!deleting.load())
+    if (!deleting.load()) {
         TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
+    }
 }
 
 
 void TEpollSocket::sendData(const QByteArray &data)
 {
-    if (!deleting.load())
+    if (!deleting.load()) {
         TEpoll::instance()->setSendData(this, data);
+    }
 }
 
 

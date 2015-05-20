@@ -175,7 +175,7 @@ void TMultiplexingServer::run()
 
                     if (sock->countWorker() > 0) {
                         // not receive
-                        TEpoll::instance()->modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+                        sock->pollIn = true;
                         continue;
                     }
 
@@ -189,11 +189,6 @@ void TMultiplexingServer::run()
                     }
 
                     if (sock->canReadRequest()) {
-#if 0  //TODO: delete here for HTTP 2.0 support
-                        // Stop receiving, otherwise the responses is sometimes
-                        // placed in the wrong order in case of HTTP-pipeline.
-                        TEpoll::instance()->modifyPoll(sock, (EPOLLOUT | EPOLLET));
-#endif
                         sock->startWorker();
                     }
                 }

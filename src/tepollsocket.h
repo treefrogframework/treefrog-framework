@@ -57,6 +57,8 @@ protected:
 
     std::atomic<bool> deleting;
     std::atomic<int> myWorkerCounter;
+    std::atomic<bool> pollIn;
+    std::atomic<bool> pollOut;
 
 private:
     int sd;
@@ -67,6 +69,7 @@ private:
     static void initBuffer(int socketDescriptor);
 
     friend class TEpoll;
+    friend class TMultiplexingServer;
     Q_DISABLE_COPY(TEpollSocket)
 };
 
