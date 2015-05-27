@@ -260,7 +260,7 @@ static std::random_device randev;
 static std::mt19937     mt(randev());
 static std::mt19937_64  mt64(randev());
 
-uint32_t Tf::rand_r()
+uint32_t Tf::rand32_r()
 {
     randMutex.lock();
     uint32_t ret = mt();

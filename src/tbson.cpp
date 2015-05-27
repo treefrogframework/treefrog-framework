@@ -305,7 +305,7 @@ static inline int oidFuzz()
     int pid = QCoreApplication::applicationPid();
     return qToBigEndian((machineId << 8) | ((pid & 0xFF00) >> 8));
 #else
-    static int machineId = Tf::rand_r();
+    static int machineId = Tf::rand32_r();
     return machineId;
 #endif
 }
@@ -319,7 +319,7 @@ static inline int oidInc()
     ++incr;
     return ((pid & 0xFF) << 24) | ((int)incr & 0xFFFFFF);
 #else
-    static std::atomic<uint> incr(Tf::rand_r());
+    static std::atomic<uint> incr(Tf::rand32_r());
     return incr++;
 #endif
 }

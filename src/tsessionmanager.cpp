@@ -34,7 +34,7 @@ static QByteArray createHash()
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
-    data.append(QByteArray::number(Tf::rand_r()));
+    data.append(QByteArray::number(Tf::rand32_r()));
     return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }
 
