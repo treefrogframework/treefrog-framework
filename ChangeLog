@@ -1,3 +1,18 @@
+Changes with version 1.9.0
+  * Implemented keep-alive modules for WebSocket.
+  * Implemented publish/subscribe functions for WebSocket.
+  * Changed API of endpoint class.
+  * Changed default random generator to std::mt19937.
+  * Changed system bus module so as to use local socket class.
+  * Added TSql::IsEmpty operator for TCriteria class.
+  * Added NOT operator for TCriteria class.
+  * Fix a bug of parsing WebSocket frame.
+  * Fix a bug of sending logic for epoll.
+  * Fix a bug of segmentation error.
+  * Fix a bug of throwing runtime exception of treefrog.
+  * Fix a buf of windows installer.
+  * Performance improvement of multiplexing server.
+
 Changes with version 1.8.0
   * Support WebSocket protocol.
   * C++11 support enabled as default.
