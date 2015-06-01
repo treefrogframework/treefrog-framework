@@ -48,8 +48,7 @@
     "\n"                                                                \
     "@for :\n"                                                          \
     "tfetch(QList<%2>, %3List);\n"                                      \
-    "for (QListIterator<%2> it(%3List); it.hasNext(); ) {\n"            \
-    "    const %2 &i = it.next();\n"                                    \
+    "for (const auto &i : %3List) {\n"                                  \
     "    %%\n"                                                          \
     "}\n"                                                               \
     "\n"                                                                \

@@ -31,8 +31,7 @@
     "%3"                                                                \
     "  </tr>\n"                                                         \
     "<% tfetch(QList<%4>, %5List); %>\n"                                \
-    "<% for (QListIterator<%4> it(%5List); it.hasNext(); ) {\n"         \
-    "     const %4 &i = it.next(); %>\n"                                \
+    "<% for (const auto &i : %5List) { %>\n"                            \
     "  <tr>\n"                                                          \
     "%6"                                                                \
     "    <td>\n"                                                        \
