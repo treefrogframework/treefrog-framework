@@ -143,12 +143,14 @@ int main(int argc, char *argv[])
 
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");
+        fprintf(stderr, "No such directory\n");
         goto finish;
     }
     tSystemDebug("Web Root: %s", qPrintable(webapp.webRootPath()));
 
     if (!webapp.appSettingsFileExists()) {
         tSystemError("Settings file not found");
+        fprintf(stderr, "Settings file not found\n");
         goto finish;
     }
 
@@ -161,6 +163,7 @@ int main(int argc, char *argv[])
         int port = Tf::appSettings()->value(Tf::ListenPort).toInt();
         if (port <= 0 || port > USHRT_MAX) {
             tSystemError("Invalid port number: %d", port);
+            fprintf(stderr, "Invalid port number: %d\n", port);
             goto finish;
         }
         TApplicationServerBase::nativeSocketInit();
@@ -169,6 +172,7 @@ int main(int argc, char *argv[])
 
     if (sock <= 0) {
         tSystemError("Invalid socket descriptor: %d", sock);
+        fprintf(stderr, "Invalid option\n");
         goto finish;
     }
 
@@ -183,6 +187,7 @@ int main(int argc, char *argv[])
             tSystemDebug("Set socket descriptor: %d", sock);
         } else {
             tSystemError("Failed to set socket descriptor: %d", sock);
+            fprintf(stderr, "Failed to set socket descriptor: %d\n", sock);
             goto finish;
         }
         server = svr;
@@ -205,6 +210,7 @@ int main(int argc, char *argv[])
 
     if (!server->start()) {
         tSystemError("Server open failed");
+        fprintf(stderr, "Server open failed\n");
         goto finish;
     }
 
