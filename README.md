@@ -2,10 +2,11 @@ Small but Powerful and Efficient
 ================================
 
 TreeFrog Framework is a high-speed and full-stack web application framework
-based on C++ and Qt. Web applications can run faster than that of lightweight
-programming language. In application development, it provides an O/R mapping
-system and template system on an MVC architecture, aims to achieve high
-productivity through the policy of convention over configuration.
+based on C++ and Qt, which supports HTTP and WebSocket protocol. Web
+applications can run faster than that of lightweight programming language.
+In application development, it provides an O/R mapping system and template
+system on an MVC architecture, aims to achieve high productivity through the
+policy of convention over configuration.
 
 Features
 --------
@@ -19,6 +20,7 @@ Features
  * Cross-platform  - Windows, Mac OS X, Linux, etc. Write once, compile
                      anywhere.
  * Ajax support  - JSON, XML and Plain text available
+ * Less resource  -  Stable operation even on Raspberry Pi
  * OSS  - New BSD License
 
 Requirements
@@ -37,6 +39,11 @@ Documents
 ---------
  Get addtional information on the site:
  http://www.treefrogframework.org/documents
+
+Forum
+-----
+ Discussion group for TreeFrog Framework:
+ https://groups.google.com/forum/#!forum/treefrogframework
 
 MongoDB communication
 ---------------------
