@@ -181,17 +181,17 @@ int main(int argc, char *argv[])
         server = new TThreadApplicationServer(sock, &webapp);
         break;
 
-    case TWebApplication::Prefork: {
-        TPreforkApplicationServer *svr = new TPreforkApplicationServer(&webapp);
-        if (svr->setSocketDescriptor(sock)) {
-            tSystemDebug("Set socket descriptor: %d", sock);
-        } else {
-            tSystemError("Failed to set socket descriptor: %d", sock);
-            fprintf(stderr, "Failed to set socket descriptor: %d\n", sock);
-            goto finish;
-        }
-        server = svr;
-        break; }
+    // case TWebApplication::Prefork: {
+    //     TPreforkApplicationServer *svr = new TPreforkApplicationServer(&webapp);
+    //     if (svr->setSocketDescriptor(sock)) {
+    //         tSystemDebug("Set socket descriptor: %d", sock);
+    //     } else {
+    //         tSystemError("Failed to set socket descriptor: %d", sock);
+    //         fprintf(stderr, "Failed to set socket descriptor: %d\n", sock);
+    //         goto finish;
+    //     }
+    //     server = svr;
+    //     break; }
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX

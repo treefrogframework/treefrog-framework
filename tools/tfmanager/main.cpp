@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -492,19 +492,19 @@ int managerMain(int argc, char *argv[])
     for (;;) {
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
-        case TWebApplication::Prefork: {
-            int max = Tf::appSettings()->readValue("MPM.prefork.MaxServers", "20").toInt();
-            int min = Tf::appSettings()->readValue("MPM.prefork.MinServers", "5").toInt();
-            int spare = Tf::appSettings()->readValue("MPM.prefork.SpareServers", "5").toInt();
-            // new parameters
-            max = Tf::appSettings()->readValue("MPM.prefork.MaxAppServers", max).toInt();
-            min = Tf::appSettings()->readValue("MPM.prefork.MinAppServers", min).toInt();
-            spare = Tf::appSettings()->readValue("MPM.prefork.SpareAppServers", spare).toInt();
-            tSystemDebug("Max number of app servers: %d", max);
-            tSystemDebug("Min number of app servers: %d", min);
-            tSystemDebug("Spare number of app servers: %d", spare);
-            manager = new ServerManager(max, min, spare, &app);
-            break; }
+        // case TWebApplication::Prefork: {
+        //     int max = Tf::appSettings()->readValue("MPM.prefork.MaxServers", "20").toInt();
+        //     int min = Tf::appSettings()->readValue("MPM.prefork.MinServers", "5").toInt();
+        //     int spare = Tf::appSettings()->readValue("MPM.prefork.SpareServers", "5").toInt();
+        //     // new parameters
+        //     max = Tf::appSettings()->readValue("MPM.prefork.MaxAppServers", max).toInt();
+        //     min = Tf::appSettings()->readValue("MPM.prefork.MinAppServers", min).toInt();
+        //     spare = Tf::appSettings()->readValue("MPM.prefork.SpareAppServers", spare).toInt();
+        //     tSystemDebug("Max number of app servers: %d", max);
+        //     tSystemDebug("Min number of app servers: %d", min);
+        //     tSystemDebug("Spare number of app servers: %d", spare);
+        //     manager = new ServerManager(max, min, spare, &app);
+        //     break; }
 
         case TWebApplication::Thread:  // FALL THROUGH
         case TWebApplication::Hybrid: {
