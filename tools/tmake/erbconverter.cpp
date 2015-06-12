@@ -114,11 +114,23 @@ bool ErbConverter::convert(const QString &className, const QString &erb) const
 
 QString ErbConverter::escapeNewline(const QString &string)
 {
-    QString s = string;
-    s.replace(QLatin1Char('\n'), QLatin1String("\\n"));
-    s.replace(QLatin1Char('\r'), QLatin1String("\\r"));
-    s.replace(QLatin1Char('"'), QLatin1String("\\\""));
-    return s;
+    QString str;
+    str.reserve(string.length() * 1.1);
+
+    for (auto &s : string) {
+        if (s == QLatin1Char('\\')) {
+            str += QLatin1String("\\\\");
+        } else if (s == QLatin1Char('\n')) {
+            str += QLatin1String("\\n");
+        } else if (s == QLatin1Char('\r')) {
+            str += QLatin1String("\\r");
+        } else if (s == QLatin1Char('"')) {
+            str += QLatin1String("\\\"");
+        } else {
+            str += s;
+        }
+    }
+    return str;
 }
 
 

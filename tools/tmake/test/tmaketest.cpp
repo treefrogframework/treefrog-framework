@@ -63,7 +63,7 @@ void TestTfpconverter::parse()
     THtmlParser parser;
     parser.parse(html);
     QString result = parser.toString();
-    
+
     QFile res("result.phtm");
     res.open(QIODevice::WriteOnly | QIODevice::Truncate);
     QTextStream rests(&res);
@@ -105,7 +105,7 @@ void TestTfpconverter::otamaconvert_data()
     QTest::newRow("c2") << "indexc2.html" << "logic1.olg" << "resc2.html";
     QTest::newRow("c3") << "indexc3.html" << "logic1.olg" << "resc3.html";
     QTest::newRow("c4") << "indexc4.html" << "logic1.olg" << "resc4.html";
-        
+
     QTest::newRow("dm") << "dummy.html"  << "logic1.olg" << "resdm.html";
 }
 
@@ -120,7 +120,7 @@ void TestTfpconverter::otamaconvert()
     QVERIFY(htmlFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tshtml(&htmlFile);
     tshtml.setCodec("UTF-8");
-  
+
     QFile olgFile(olgFileName);
     QVERIFY(olgFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tsolg(&olgFile);
@@ -148,7 +148,7 @@ void TestTfpconverter::erbparse_data()
                        << "  responsebody += tr(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += tr(\"</body>\");\n";
     QTest::newRow("3") << "<body>Hello <%# this is comment!! %>   \n</body>"
                        << "  responsebody += tr(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += tr(\"</body>\");\n";
-    
+
     QTest::newRow("4") << "<body>Hello <%# this is \"comment!!\" %></body>"
                        << "  responsebody += tr(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += tr(\"</body>\");\n";
     QTest::newRow("5") << "<body>Hello <%# this is \"comment!!\" %>  \r\n</body>"
@@ -197,6 +197,11 @@ void TestTfpconverter::erbparse_data()
                         << "  responsebody += tr(\"<body>\");\n  techoex2(number, (33));\n  responsebody += tr(\"</body>\");\n";
     QTest::newRow("21") << "<body><%== \"  %|%\" %|% \"%|%\" -%> \t \n</body>"
                         << "  responsebody += tr(\"<body>\");\n  { QString ___s = QVariant(\"  %|%\").toString(); responsebody += (___s.isEmpty()) ? QVariant(\"%|%\").toString() : ___s; }\n  responsebody += tr(\"</body>\");\n";
+
+    QTest::newRow("21") << "<body><script>function() { return '\\n'; }</script></body>"
+                        << "  responsebody += tr(\"<body><script>function() { return '\\\\n'; }</script></body>\");\n";
+    QTest::newRow("22") << "<body><script>function() { return \"\\n\"; }</script></body>"
+                        << "  responsebody += tr(\"<body><script>function() { return \\\"\\\\n\\\"; }</script></body>\");\n";
 }
 
 
