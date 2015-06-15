@@ -14,7 +14,7 @@
   \brief The TSession class holds information associated with individual
          visitors.
          This class inherits QVariantMap class.
-  \sa http://qt-project.org/doc/qt-4.8/qvariant.html#QVariantMap-typedef
+  \sa http://doc.qt.io/qt-5/qvariant.html#QVariantMap-typedef
 */
 
 

@@ -54,11 +54,7 @@ void tSetupAppLoggers()
     }
 
     if (!stream) {
-        if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-            stream = new TSharedMemoryLogStream(loggers, 4096, qApp);
-        } else {
-            stream = new TBasicLogStream(loggers, qApp);
-        }
+        stream = new TBasicLogStream(loggers, qApp);
     }
 }
 
@@ -303,12 +299,6 @@ TActionContext *Tf::currentContext()
     TActionContext *context = nullptr;
 
     switch ( Tf::app()->multiProcessingModule() ) {
-    case TWebApplication::Prefork:
-        context = TActionForkProcess::currentContext();
-        if (Q_LIKELY(context))
-            return context;
-        break;
-
     case TWebApplication::Thread:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
         if (Q_LIKELY(context))

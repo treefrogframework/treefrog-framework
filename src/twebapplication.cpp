@@ -335,7 +335,6 @@ int TWebApplication::maxNumberOfAppServers(int defaultValue) const
         num = 1;
         break;
 
-    case Prefork: // FALL THROUGH
     case Hybrid:
         num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxServers").toInt();
         break;

@@ -26,8 +26,8 @@ public:
 
     void close();
     int socketDescriptor() const { return sd; }
-    const QHostAddress &peerAddress() const { return clientAddr; }
-    const QByteArray &socketUuid() const { return uuid; }
+    QHostAddress peerAddress() const { return clientAddr; }
+    QByteArray socketUuid() const { return uuid; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
     void disconnect();
@@ -45,11 +45,11 @@ public:
     static TSendBuffer *createSendBuffer(const QByteArray &data);
 
 public slots:
-    virtual void deleteLater();
+    void deleteLater();
 
 protected:
-    int send();
-    int recv();
+    virtual int send();
+    virtual int recv();
     void enqueueSendData(TSendBuffer *buffer);
     void setSocketDescpriter(int socketDescriptor);
     virtual void *getRecvBuffer(int size) = 0;

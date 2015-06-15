@@ -81,7 +81,7 @@ void TActionForkProcess::start()
 
         for (QMutableListIterator<THttpRequest> it(reqs); it.hasNext(); ) {
             THttpRequest &req = it.next();
-            TActionContext::execute(req);
+            TActionContext::execute(req, httpSocket->socketUuid());
 
             httpSocket->flush();  // Flush socket
             TActionContext::release();

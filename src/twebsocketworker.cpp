@@ -14,6 +14,8 @@
 #include "turlroute.h"
 #include "tabstractwebsocket.h"
 #include "tpublisher.h"
+#include "thttpsocket.h"
+#include "tepollhttpsocket.h"
 
 
 TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
@@ -150,6 +152,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
         for (auto &p : endpoint->taskList) {
             const QVariant &taskData = p.second;
+            tSystemDebug("WebSocket Task: %d", p.first);
 
             switch (p.first) {
             case TWebSocketEndpoint::OpenSuccess:
@@ -196,7 +199,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::SendTextTo: {
                 QVariantList lst = taskData.toList();
-                TAbstractWebSocket *websocket = _socket->searchPeerSocket(lst[0].toByteArray());
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
                 if (websocket) {
                     websocket->sendText(lst[1].toString());
                 }
@@ -204,7 +207,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::SendBinaryTo: {
                 QVariantList lst = taskData.toList();
-                TAbstractWebSocket *websocket = _socket->searchPeerSocket(lst[0].toByteArray());
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
                 if (websocket) {
                     websocket->sendBinary(lst[1].toByteArray());
                 }
@@ -212,7 +215,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::SendCloseTo: {
                 QVariantList lst = taskData.toList();
-                TAbstractWebSocket *websocket = _socket->searchPeerSocket(lst[0].toByteArray());
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
                 if (websocket) {
                     websocket->sendClose(lst[1].toInt());
                 }
@@ -248,6 +251,34 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             case TWebSocketEndpoint::StopKeepAlive:
                 _socket->stopKeepAlive();
                 break;
+
+            case TWebSocketEndpoint::HttpSend: {
+                QVariantList lst = taskData.toList();
+                auto uuid = lst[0].toByteArray();
+
+                switch ( Tf::app()->multiProcessingModule() ) {
+                case TWebApplication::Thread: {
+                    auto *sock = THttpSocket::searchSocket(uuid);
+                    if (sock) {
+                        sock->writeRawDataFromWebSocket(lst[1].toByteArray());
+                    }
+                    break; }
+
+                case TWebApplication::Hybrid: {
+#ifdef Q_OS_LINUX
+                    auto *sock = TEpollHttpSocket::searchSocket(uuid);
+                    if (sock) {
+                        sock->sendData(lst[1].toByteArray());
+                    }
+#else
+                    tFatal("Unsupported MPM: hybrid");
+#endif
+                    break; }
+
+                default:
+                    break;
+                }
+                break; }
 
             default:
                 tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);

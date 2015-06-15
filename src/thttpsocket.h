@@ -3,7 +3,7 @@
 
 #include <QTcpSocket>
 #include <QByteArray>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <THttpRequest>
 #include <TTemporaryFile>
 #include <TGlobal>
@@ -22,29 +22,36 @@ public:
     QList<THttpRequest> read();
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
-    int idleTime() const;
+    int idleTime() const { return idleElapsed.elapsed() / 1000; }
+    QByteArray socketUuid() const { return uuid; }
+    void deleteLater();
+
 #if QT_VERSION >= 0x050000
     bool setSocketDescriptor(qintptr socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
 #else
     bool setSocketDescriptor(int socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
 #endif
 
-protected:
-    qint64 writeRawData(const char *data, qint64 size);
+    static THttpSocket *searchSocket(const QByteArray &uuid);
+    void writeRawDataFromWebSocket(const QByteArray &data);
 
 protected slots:
     void readRequest();
+    qint64 writeRawData(const char *data, qint64 size);
+    qint64 writeRawData(const QByteArray &data);
 
 signals:
     void newRequest();
+    void requestWrite(const QByteArray &data);  // internal use
 
 private:
     Q_DISABLE_COPY(THttpSocket)
 
+    QByteArray uuid;
     qint64 lengthToRead;
     QByteArray readBuffer;
     TTemporaryFile fileBuffer;
-    QDateTime lastProcessed;
+    QElapsedTimer idleElapsed;
 
     friend class TActionThread;
 };

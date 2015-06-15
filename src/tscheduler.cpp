@@ -35,22 +35,12 @@ TScheduler::~TScheduler()
 
 void TScheduler::start(int msec)
 {
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-        tError("Unsupported TScheduler in prefork MPM");
-        return;
-    }
-
     timer->start(msec);
 }
 
 
 void TScheduler::stop()
 {
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-        tError("Unsupported TScheduler in prefork MPM");
-        return;
-    }
-
     timer->stop();
 
     if (QThread::isRunning()) {

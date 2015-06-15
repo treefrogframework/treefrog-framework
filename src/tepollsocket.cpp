@@ -229,7 +229,6 @@ int TEpollSocket::send()
             break;
         }
     }
-
     return ret;
 }
 

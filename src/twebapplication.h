@@ -29,7 +29,6 @@ public:
         Invalid = 0,
         Thread,
         Hybrid,
-        Prefork,  // obsolete
     };
 
     TWebApplication(int &argc, char **argv);

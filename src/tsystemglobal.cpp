@@ -39,10 +39,6 @@ void writeAccessLog(const TAccessLog &log)
 {
     if (accesslogstrm) {
         accesslogstrm->writeLog(log.toByteArray(accessLogLayout, accessLogDateTimeFormat));
-
-        if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-            accesslogstrm->flush();
-        }
     }
 }
 
@@ -116,10 +112,6 @@ static void tSystemMessage(int priority, const char *msg, va_list ap)
     TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
     systemLog.write(buf.data(), buf.length());
-
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-        systemLog.flush();
-    }
 }
 
 
@@ -185,10 +177,6 @@ void tQueryLog(const char *msg, ...)
         QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
         sqllogstrm->writeLog(buf);
         va_end(ap);
-
-        if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-            sqllogstrm->flush();
-        }
     }
 }
 

@@ -6,6 +6,7 @@
  */
 
 #include <netinet/tcp.h>
+#include <QElapsedTimer>
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TApplicationServerBase>
@@ -15,6 +16,7 @@
 #include <TActionWorker>
 #include "tepoll.h"
 #include "tepollsocket.h"
+#include "tepollhttpsocket.h"
 
 const int SEND_BUF_SIZE = 16 * 1024;
 const int RECV_BUF_SIZE = 128 * 1024;
@@ -116,12 +118,17 @@ void TMultiplexingServer::run()
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 
     int appsvrnum = qMax(Tf::app()->maxNumberOfAppServers(), 1);
-
     setNoDeleyOption(listenSocket);
 
     TEpollSocket *lsn = TEpollSocket::create(listenSocket, QHostAddress());
     TEpoll::instance()->addPoll(lsn, EPOLLIN);
     int numEvents = 0;
+
+    int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+    QElapsedTimer idleTimer;
+    if (keepAlivetimeout > 0) {
+        idleTimer.start();
+    }
 
     for (;;) {
         if (!numEvents && TActionWorker::workerCount() > 0) {
@@ -191,6 +198,21 @@ void TMultiplexingServer::run()
                     if (sock->canReadRequest()) {
                         sock->startWorker();
                     }
+                }
+            }
+        }
+
+        // Check keep-alive timeout for HTTP sockets
+        if (Q_UNLIKELY(keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000)) {
+            idleTimer.start();
+
+            auto sockets = TEpollHttpSocket::allSockets();
+            for (auto *http : sockets) {
+                if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
+                    tSystemDebug("KeepAlive timeout: %s", http->socketUuid().data());
+                    TEpoll::instance()->deletePoll(http);
+                    http->close();
+                    http->deleteLater();
                 }
             }
         }

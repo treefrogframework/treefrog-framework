@@ -21,7 +21,6 @@
 #include "tdispatcher.h"
 
 const int BUFFER_RESERVE_SIZE = 127;
-
 static QMutex mutexMap;
 static QMap<QByteArray, TEpollWebSocket*> websocketMap;
 
@@ -208,6 +207,10 @@ void TEpollWebSocket::deleteLater()
 
     if ((int)myWorkerCounter == 0) {
         QObject::deleteLater();
+
+        mutexMap.lock();
+        websocketMap.remove(socketUuid());
+        mutexMap.unlock();
     }
 }
 
@@ -257,14 +260,14 @@ void TEpollWebSocket::disconnect()
 void TEpollWebSocket::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == keepAliveTimer->timerId()) {
-        sendPong();
+        sendPing();
     } else {
         TEpollSocket::timerEvent(event);
     }
 }
 
 
-TAbstractWebSocket *TEpollWebSocket::searchPeerSocket(const QByteArray &uuid)
+TEpollWebSocket *TEpollWebSocket::searchSocket(const QByteArray &uuid)
 {
     QMutexLocker locker(&mutexMap);
     return websocketMap.value(uuid, nullptr);

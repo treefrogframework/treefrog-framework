@@ -16,6 +16,8 @@
 #include "twebsocketendpoint.h"
 #include "turlroute.h"
 #include "tdispatcher.h"
+#include "twebsocket.h"
+#include "tepollwebsocket.h"
 
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
@@ -368,4 +370,30 @@ void TAbstractWebSocket::sendHandshakeResponse()
     response.setRawHeader("Sec-WebSocket-Accept", secAccept);
 
     writeRawData(response.toByteArray());
+}
+
+
+TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(const QByteArray &uuid)
+{
+    TAbstractWebSocket *sock = nullptr;
+
+    switch ( Tf::app()->multiProcessingModule() ) {
+    case TWebApplication::Thread:
+        sock = TWebSocket::searchSocket(uuid);
+        break;
+
+    case TWebApplication::Hybrid: {
+#ifdef Q_OS_LINUX
+        sock = TEpollWebSocket::searchSocket(uuid);
+        break;
+#else
+        tFatal("Unsupported MPM: hybrid");
+#endif
+        break; }
+
+    default:
+        break;
+    }
+
+    return sock;
 }

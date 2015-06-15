@@ -7,6 +7,7 @@
 
 #include <TActionWorker>
 #include <THttpRequest>
+#include <TAppSettings>
 #include <TMultiplexingServer>
 #include <QCoreApplication>
 #include <atomic>
@@ -15,6 +16,7 @@
 
 // Counter of action workers  (Note: workerCount != contextCount)
 static std::atomic<int> workerCounter(0);
+static int keepAliveTimeout = -1;
 
 
 int TActionWorker::workerCount()
@@ -46,11 +48,16 @@ bool TActionWorker::waitForAllDone(int msec)
 */
 
 TActionWorker::TActionWorker(TEpollHttpSocket *sock, QObject *parent)
-    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socket(sock)//socketUuid(socket->socketUuid())
+    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socket(sock)
 {
     ++workerCounter;
     httpRequest = socket->readRequest();
     clientAddr = socket->peerAddress().toString();
+
+    if (keepAliveTimeout < 0) {
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        keepAliveTimeout = qMax(timeout, 0);
+    }
 }
 
 
@@ -63,7 +70,9 @@ TActionWorker::~TActionWorker()
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
-    header.setRawHeader("Connection", "Keep-Alive");
+    if (keepAliveTimeout > 0) {
+        header.setRawHeader("Connection", "Keep-Alive");
+    }
     accessLogger.setStatusCode(header.statusCode());
 
     // Check auto-remove
@@ -102,7 +111,7 @@ void TActionWorker::run()
         THttpRequest &req = it.next();
 
         // Executes a action context
-        TActionContext::execute(req);
+        TActionContext::execute(req, socket->socketUuid());
         TActionContext::release();
 
         if (TActionContext::stopped.load()) {

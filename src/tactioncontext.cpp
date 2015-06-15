@@ -21,6 +21,7 @@
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
 #include "turlroute.h"
+#include "tabstractwebsocket.h"
 
 /*!
   \class TActionContext
@@ -53,7 +54,7 @@ static bool directViewRenderMode()
 }
 
 
-void TActionContext::execute(THttpRequest &request)
+void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid)
 {
     T_TRACEFUNC("");
 
@@ -109,6 +110,7 @@ void TActionContext::execute(THttpRequest &request)
         currController = ctlrDispatcher.object();
         if (currController) {
             currController->setActionName(rt.action);
+            currController->setSocketUuid(socketUuid);
 
             // Session
             if (currController->sessionEnabled()) {
@@ -181,6 +183,43 @@ void TActionContext::execute(THttpRequest &request)
                             currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath);
                         }
                     }
+
+                    // WebSocket tasks
+                    if (!currController->taskList.isEmpty()) {
+                        for (auto &task : currController->taskList) {
+                            const QVariant &taskData = task.second;
+
+                            switch (task.first) {
+                            case TActionController::SendTextTo: {
+                                QVariantList lst = taskData.toList();
+                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                                if (websocket) {
+                                    websocket->sendText(lst[1].toString());
+                                }
+                                break; }
+
+                            case TActionController::SendBinaryTo: {
+                                QVariantList lst = taskData.toList();
+                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                                if (websocket) {
+                                    websocket->sendBinary(lst[1].toByteArray());
+                                }
+                                break; }
+
+                            case TActionController::SendCloseTo: {
+                                QVariantList lst = taskData.toList();
+                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                                if (websocket) {
+                                    websocket->sendClose(lst[1].toInt());
+                                }
+                                break; }
+
+                            default:
+                                tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -197,8 +236,9 @@ void TActionContext::execute(THttpRequest &request)
             currController->response.header().setStatusLine(accessLogger.statusCode(), THttpUtility::getResponseReasonPhrase(accessLogger.statusCode()));
 
             // Writes a response and access log
+            qint64 bodyLength = (currController->response.header().contentLength() > 0) ? currController->response.header().contentLength() : currController->response.bodyLength();
             int bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
-                                      currController->response.bodyLength());
+                                      bodyLength);
             accessLogger.setResponseBytes(bytes);
 
             // Session GC

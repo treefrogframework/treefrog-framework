@@ -27,19 +27,19 @@ public:
     void sendPong(const QByteArray &data = QByteArray());
     void sendClose(int code);
     virtual void disconnect() = 0;
-    virtual const QByteArray &socketUuid() const = 0;
+    virtual QByteArray socketUuid() const = 0;
     void startKeepAlive(int interval);
     void stopKeepAlive();
     void renewKeepAlive();
     TWebSocketSession session() const;
     void setSession(const TWebSocketSession &session);
     static bool searchEndpoint(const THttpRequestHeader &header);
+    static TAbstractWebSocket *searchWebSocket(const QByteArray &uuid);
 
 protected:
     void sendHandshakeResponse();
     virtual QObject *thisObject() = 0;
     virtual qint64 writeRawData(const QByteArray &data) = 0;
-    virtual TAbstractWebSocket *searchPeerSocket(const QByteArray &uuid) = 0;
     virtual QList<TWebSocketFrame> &websocketFrames() = 0;
     int parse(QByteArray &recvData);
 

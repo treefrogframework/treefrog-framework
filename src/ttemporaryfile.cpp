@@ -16,7 +16,7 @@
   context of web application. After an action of a controller returns,
   temporary files created in the action will be deleted. Because this
   class inherits QTemporaryFile, you can use same functions as that.
-  \sa http://qt-project.org/doc/qt-4.8/qtemporaryfile.html
+  \sa http://doc.qt.io/qt-5/qtemporaryfile.html
 */
 
 /*!
@@ -53,4 +53,20 @@ QString TTemporaryFile::absoluteFilePath() const
 {
     QFileInfo info(*this);
     return info.absoluteFilePath();
+}
+
+/*!
+  Creates a unique file name for the temporary file, and opens it in
+  QIODevice::ReadWrite mode. The file is guaranteed to have been created
+  by this function (i.e., it has never existed before).
+*/
+bool TTemporaryFile::open()
+{
+    return QTemporaryFile::open();
+}
+
+
+bool TTemporaryFile::open(OpenMode flags)
+{
+    return QTemporaryFile::open(flags);
 }

@@ -20,23 +20,23 @@ public:
     QString name() const;
     void sendText(const QString &text);
     void sendBinary(const QByteArray &binary);
-    void sendPing(const QByteArray &data = QByteArray());
-    void sendPong(const QByteArray &data = QByteArray());
+    void ping(const QByteArray &payload = QByteArray());
+    void sendPing(const QByteArray &payload = QByteArray());
     void close(int closeCode = Tf::NormalClosure);
     void sendText(const QByteArray &uuid, const QString &text);
     void sendBinary(const QByteArray &uuid, const QByteArray &binary);
     void close(const QByteArray &uuid, int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
-    bool rollbackRequested() const;
     void subscribe(const QString &topic, bool local = true);
     void unsubscribe(const QString &topic);
     void unsubscribeFromAll();
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
     void startKeepAlive(int interval);
+    void sendHttp(const QByteArray &uuid, const QByteArray &data);
     const TWebSocketSession &session() const { return sessionStore; }
     TWebSocketSession &session() { return sessionStore; }
-    const QByteArray &socketUuid() const { return uuid; }
+    QByteArray socketUuid() const { return uuid; }
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);
@@ -47,10 +47,11 @@ protected:
     virtual void onClose(int closeCode);
     virtual void onTextReceived(const QString &text);
     virtual void onBinaryReceived(const QByteArray &binary);
-    virtual void onPing(const QByteArray &data);
-    virtual void onPong(const QByteArray &data);
+    virtual void onPing(const QByteArray &payload);
+    virtual void onPong(const QByteArray &payload);
     virtual int keepAliveInterval() const { return 0; }
     virtual bool transactionEnabled() const;
+    void sendPong(const QByteArray &payload = QByteArray());
 
 private:
     enum TaskType {
@@ -71,7 +72,10 @@ private:
         PublishBinary,
         StartKeepAlive,
         StopKeepAlive,
+        HttpSend,
     };
+
+    bool rollbackRequested() const;
 
     TWebSocketSession sessionStore;
     QByteArray uuid;

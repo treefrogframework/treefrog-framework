@@ -30,42 +30,18 @@ TApplicationScheduler::~TApplicationScheduler()
 
 void TApplicationScheduler::start(int msec)
 {
-    switch ( Tf::app()->multiProcessingModule() ) {
-    case TWebApplication::Prefork:
-        tError("Unsupported TApplicationScheduler in prefork MPM");
-        break;
-
-    case TWebApplication::Thread:  // FALL THROUGH
-    case TWebApplication::Hybrid:
-        if (Tf::app()->applicationServerId() == 0) {
-            // Starts where applicaraion server ID is 0
-            TScheduler::start(msec);
-            tSystemDebug("TApplicationScheduler::start msec:%d", msec);
-        }
-        break;
-
-    default:
-        break;
+    if (Tf::app()->applicationServerId() == 0) {
+        // Starts where applicaraion server ID is 0
+        TScheduler::start(msec);
+        tSystemDebug("TApplicationScheduler::start msec:%d", msec);
     }
 }
 
 
 void TApplicationScheduler::stop()
 {
-    switch ( Tf::app()->multiProcessingModule() ) {
-    case TWebApplication::Prefork:
-        tError("Unsupported TApplicationScheduler in prefork MPM");
-        break;
-
-    case TWebApplication::Thread:  // FALL THROUGH
-    case TWebApplication::Hybrid:
-        if (Tf::app()->applicationServerId() == 0) {
-            TScheduler::stop();
-        }
-        break;
-
-    default:
-        break;
+    if (Tf::app()->applicationServerId() == 0) {
+        TScheduler::stop();
     }
 }
 

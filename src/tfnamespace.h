@@ -189,6 +189,8 @@ namespace Tf
         ActionMailerSmtpPopServerPort,
         ActionMailerSmtpPopServerEnableApop,
         ActionMailerSendmailCommandLocation,
+        //
+        HttpKeepAliveTimeout,
     };
 
     // Reason codes why a web socket has been closed

@@ -17,18 +17,29 @@
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
+static QMutex mutexMap;
+static QMap<QByteArray, TEpollHttpSocket*> socketMap;
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
-    : TEpollSocket(socketDescriptor, address), lengthToRead(-1)
+    : TEpollSocket(socketDescriptor, address), lengthToRead(-1), idleElapsed()
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
+    idleElapsed.start();
+
+    mutexMap.lock();
+    socketMap.insert(socketUuid(), this);
+    mutexMap.unlock();
 }
 
 
 TEpollHttpSocket::~TEpollHttpSocket()
 {
     tSystemDebug("~TEpollHttpSocket");
+
+    mutexMap.lock();
+    socketMap.remove(socketUuid());
+    mutexMap.unlock();
 }
 
 
@@ -44,6 +55,26 @@ QByteArray TEpollHttpSocket::readRequest()
     if (canReadRequest()) {
         ret = httpBuffer;
         clear();
+    }
+    return ret;
+}
+
+
+int TEpollHttpSocket::send()
+{
+    int ret = TEpollSocket::send();
+    if (ret == 0) {
+        idleElapsed.start();
+    }
+    return ret;
+}
+
+
+int TEpollHttpSocket::recv()
+{
+    int ret = TEpollSocket::recv();
+    if (ret == 0) {
+        idleElapsed.start();
     }
     return ret;
 }
@@ -165,4 +196,32 @@ void TEpollHttpSocket::clear()
     lengthToRead = -1;
     httpBuffer.truncate(0);
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
+}
+
+
+void TEpollHttpSocket::deleteLater()
+{
+    tSystemDebug("TEpollHttpSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
+    deleting = true;
+    if ((int)myWorkerCounter == 0) {
+        QObject::deleteLater();
+
+        mutexMap.lock();
+        socketMap.remove(socketUuid());
+        mutexMap.unlock();
+    }
+}
+
+
+TEpollHttpSocket *TEpollHttpSocket::searchSocket(const QByteArray &uuid)
+{
+    QMutexLocker locker(&mutexMap);
+    return socketMap.value(uuid, nullptr);
+}
+
+
+QList<TEpollHttpSocket*> TEpollHttpSocket::allSockets()
+{
+    QMutexLocker locker(&mutexMap);
+    return socketMap.values();
 }

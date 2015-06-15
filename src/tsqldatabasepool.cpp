@@ -288,10 +288,6 @@ int TSqlDatabasePool::maxDbConnectionsPerProcess()
         }
         break;
 
-    case TWebApplication::Prefork:
-        maxConnections = 1;
-        break;
-
     case TWebApplication::Hybrid:
         maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
         if (maxConnections <= 0) {

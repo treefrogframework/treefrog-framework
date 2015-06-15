@@ -19,7 +19,6 @@ const int BUFFER_RESERVE_SIZE = 127;
 static QMutex mutexMap;
 static QMap<QByteArray, TWebSocket*> websocketMap;
 
-
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
     : QTcpSocket(parent), TAbstractWebSocket(header), frames(), uuid(),
       recvBuffer(), myWorkerCounter(0), deleting(false)
@@ -252,7 +251,7 @@ void TWebSocket::disconnect()
 }
 
 
-TAbstractWebSocket *TWebSocket::searchPeerSocket(const QByteArray &uuid)
+TAbstractWebSocket *TWebSocket::searchSocket(const QByteArray &uuid)
 {
     QMutexLocker locker(&mutexMap);
     return websocketMap.value(uuid, nullptr);
@@ -262,7 +261,7 @@ TAbstractWebSocket *TWebSocket::searchPeerSocket(const QByteArray &uuid)
 void TWebSocket::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == keepAliveTimer->timerId()) {
-        sendPong();
+        sendPing();
     } else {
         QTcpSocket::timerEvent(event);
     }

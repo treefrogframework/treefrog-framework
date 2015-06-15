@@ -29,7 +29,8 @@ public:
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() Q_DECL_OVERRIDE;
-    const QByteArray &socketUuid() const { return TEpollSocket::socketUuid(); }
+    QByteArray socketUuid() const { return TEpollSocket::socketUuid(); }
+    static TEpollWebSocket *searchSocket(const QByteArray &uuid);
 
 public slots:
     void deleteLater();
@@ -43,7 +44,6 @@ protected:
     virtual bool seekRecvBuffer(int pos) Q_DECL_OVERRIDE;
     virtual QObject *thisObject() Q_DECL_OVERRIDE { return this; }
     virtual qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
-    virtual TAbstractWebSocket *searchPeerSocket(const QByteArray &uuid) Q_DECL_OVERRIDE;
     virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
     void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
     void clear();

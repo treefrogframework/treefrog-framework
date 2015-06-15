@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QDir>
 #include <QBuffer>
+#include <QUuid>
 #include <TTemporaryFile>
 #include <TAppSettings>
 #include <THttpResponse>
@@ -22,22 +23,38 @@ const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 const int    SEND_BUF_SIZE = 16 * 1024;
 const int    RECV_BUF_SIZE = 128 * 1024;
 
+static QMutex mutexMap;
+static QMap<QByteArray, THttpSocket*> socketMap;
+
 /*!
   \class THttpSocket
   \brief The THttpSocket class provides a socket for the HTTP.
 */
 
 THttpSocket::THttpSocket(QObject *parent)
-    : QTcpSocket(parent), lengthToRead(-1), lastProcessed(QDateTime::currentDateTime())
+    : QTcpSocket(parent), uuid(), lengthToRead(-1), idleElapsed()
 {
     T_TRACEFUNC("");
+
+    uuid = QUuid::createUuid().toByteArray();  // not thread safe
+    uuid = uuid.mid(1, uuid.length() - 2);
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
+    connect(this, SIGNAL(requestWrite(const QByteArray&)), this, SLOT(writeRawData(const QByteArray&)), Qt::QueuedConnection);
+
+    mutexMap.lock();
+    socketMap.insert(uuid, this);
+    mutexMap.unlock();
+
+    idleElapsed.start();
 }
 
 
 THttpSocket::~THttpSocket()
 {
     T_TRACEFUNC("");
+    mutexMap.lock();
+    socketMap.remove(uuid);
+    mutexMap.unlock();
 }
 
 
@@ -102,6 +119,12 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 }
 
 
+void THttpSocket::writeRawDataFromWebSocket(const QByteArray &data)
+{
+    emit requestWrite(data);
+}
+
+
 qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 {
     qint64 total = 0;
@@ -124,7 +147,15 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
             break;
         }
     }
+
+    idleElapsed.start();
     return total;
+}
+
+
+qint64 THttpSocket::writeRawData(const QByteArray &data)
+{
+    return writeRawData(data.data(), data.size());
 }
 
 /*!
@@ -153,7 +184,7 @@ void THttpSocket::readRequest()
             buf.resize(0);
             break;
         }
-        lastProcessed = QDateTime::currentDateTime();
+        idleElapsed.start();
 
         if (lengthToRead > 0) {
             // Writes to buffer
@@ -204,14 +235,6 @@ void THttpSocket::readRequest()
     }
 }
 
-/*!
-  Returns the number of seconds of idle time.
-*/
-int THttpSocket::idleTime() const
-{
-    return lastProcessed.secsTo(QDateTime::currentDateTime());
-}
-
 
 bool THttpSocket::setSocketDescriptor(
 #if QT_VERSION >= 0x050000
@@ -257,3 +280,30 @@ bool THttpSocket::setSocketDescriptor(
     }
     return ret;
 }
+
+
+void THttpSocket::deleteLater()
+{
+    QObject::deleteLater();
+
+    mutexMap.lock();
+    socketMap.remove(uuid);
+    mutexMap.unlock();
+}
+
+
+THttpSocket *THttpSocket::searchSocket(const QByteArray &uuid)
+{
+    mutexMap.lock();
+    THttpSocket *sock = socketMap.value(uuid);
+    mutexMap.unlock();
+    return sock;
+}
+
+
+
+/*!
+  \fn int idleTime() const
+  Returns the number of seconds of idle time.
+*/
+

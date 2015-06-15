@@ -146,7 +146,7 @@ void TestRand::tf_randXor128_bench()
 void TestRand::tf_rand_r()
 {
     QBENCHMARK {
-        Tf::rand_r();
+        Tf::rand32_r();
     }
 }
 
