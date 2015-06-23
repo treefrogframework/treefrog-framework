@@ -204,11 +204,11 @@ void TEpollHttpSocket::deleteLater()
     tSystemDebug("TEpollHttpSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
     deleting = true;
     if ((int)myWorkerCounter == 0) {
-        QObject::deleteLater();
-
         mutexMap.lock();
         socketMap.remove(socketUuid());
         mutexMap.unlock();
+
+        QObject::deleteLater();
     }
 }
 

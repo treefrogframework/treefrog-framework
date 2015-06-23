@@ -216,14 +216,14 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
         if (QTcpSocket::bytesToWrite() > 0) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {
-                tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+                tWarn("websocket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
                 break;
             }
         }
 
         qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
-            tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
+            tWarn("websocket write error: total:%d (%d)", (int)total, (int)written);
             break;
         }
 

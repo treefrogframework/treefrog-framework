@@ -206,11 +206,11 @@ void TEpollWebSocket::deleteLater()
     }
 
     if ((int)myWorkerCounter == 0) {
-        QObject::deleteLater();
-
         mutexMap.lock();
         websocketMap.remove(socketUuid());
         mutexMap.unlock();
+
+        QObject::deleteLater();
     }
 }
 
