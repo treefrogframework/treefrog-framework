@@ -118,7 +118,7 @@ static void usage()
 {
     char text[] =
         "Usage: %1 [-d] [-e environment] [application-directory]\n"     \
-        "Usage: %1 [-k stop|abort|restart] [application-directory]\n"   \
+        "Usage: %1 [-k stop|abort|restart|status] [application-directory]\n" \
         "%2"                                                            \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
@@ -338,6 +338,16 @@ static void showRunningAppList()
 static int killTreeFrogProcess(const QString &cmd)
 {
     qint64 pid = runningApplicationPid();
+
+    if (cmd == "status") {  // status command
+        if (pid > 0) {
+            printf("TreeFrog server is running.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+        } else {
+            printf("TreeFrog server is stopped.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+        }
+        return (pid > 0) ? 0 : 1;
+    }
+
     if (pid < 0) {
         printf("TreeFrog server not running\n");
         return 1;
