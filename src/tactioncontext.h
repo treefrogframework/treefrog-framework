@@ -8,6 +8,7 @@
 #include <atomic>
 #include "tdatabasecontext.h"
 
+class QIODevice;
 class QHostAddress;
 class THttpResponseHeader;
 class THttpSocket;

@@ -9,6 +9,7 @@
 #include <QLocalSocket>
 #include <QFile>
 #include <QDir>
+#include <QDataStream>
 #include <TWebApplication>
 #include <tsystembus.h>
 #include "systembusdaemon.h"
