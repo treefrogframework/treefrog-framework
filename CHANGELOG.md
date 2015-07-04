@@ -1,4 +1,12 @@
-#ChangeLog
+# ChangeLog
+
+## 1.9.1
+ - Added 'status' subcommand for treefrog.
+ - Added imageLinkTo() method to TViewHelper class.
+ - Implemented HTTP send function from WebSocket module.
+ - Fix a bug of outputing a newline code by tmake command.
+ - Fix compilation error on Qt5.5
+ - Enhanced C++11 support.
 
 ## 1.9.0
  - Implemented keep-alive modules for WebSocket.
