@@ -374,9 +374,9 @@ namespace treefrogsetup {
             }
 
             // Get msi file from resource
-            int rcid = IDR_TREEFROG_QT54_MSI;
-            if (version->IndexOf("Qt version 5.3", StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT53_MSI;
+            int rcid = IDR_TREEFROG_QT55_MSI;
+            if (version->IndexOf("Qt version 5.4", StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT54_MSI;
             }
 
             System::Reflection::Module^ mod = System::Reflection::Assembly::GetExecutingAssembly()->GetModules()[0];
