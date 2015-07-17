@@ -18,6 +18,7 @@
 #include "tsessionsqlobjectstore.h"
 #include "tsessioncookiestore.h"
 #include "tsessionfilestore.h"
+#include "tsessionredisstore.h"
 #include "tsystemglobal.h"
 #if QT_VERSION >= 0x050000
 # include <QJsonArray>
@@ -59,6 +60,7 @@ QStringList TSessionStoreFactory::keys()
     ret << TSessionSqlObjectStore().key().toLower()
         << TSessionCookieStore().key().toLower()
         << TSessionFileStore().key().toLower()
+        << TSessionRedisStore().key().toLower()
         << sessIfMap->keys();
 
     return ret;
@@ -75,6 +77,7 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     static const QString COOKIE_KEY = TSessionCookieStore().key().toLower();
     static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
     static const QString FILE_KEY = TSessionFileStore().key().toLower();
+    static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
 
     QMutexLocker locker(&mutex);
 
@@ -88,6 +91,8 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
         ret = new TSessionSqlObjectStore;
     } else if (k == FILE_KEY) {
         ret = new TSessionFileStore;
+    } else if (k == REDIS_KEY) {
+        ret = new TSessionRedisStore;
     } else {
         TSessionStoreInterface *ssif = sessIfMap->value(k);
         if (ssif) {

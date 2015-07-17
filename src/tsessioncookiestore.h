@@ -8,10 +8,10 @@ class TSessionCookieStore : public TSessionStore
 {
 public:
     QString key() const { return "cookie"; }
-    TSession find(const QByteArray &id, const QDateTime &modified);
+    TSession find(const QByteArray &id);
     bool store(TSession &session);
-    bool remove(const QDateTime &garbageExpiration);
     bool remove(const QByteArray &id);
+    int gc(const QDateTime &expire);
 };
 
 #endif // TSESSIONCOOKIESTORE_H
