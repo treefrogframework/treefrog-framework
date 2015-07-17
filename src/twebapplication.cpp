@@ -42,6 +42,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
       dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT),
       sqlSettings(0),
       mongoSetting(0),
+      redisSetting(0),
       loggerSetting(0),
       validationSetting(0),
       mediaTypes(0),
@@ -123,8 +124,13 @@ TWebApplication::TWebApplication(int &argc, char **argv)
             mongoSetting = new QSettings(mnginipath, QSettings::IniFormat, this);
     }
 
-    // sets a seed for random numbers
-    //Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
+    // Redis settings
+    QString redisini = Tf::appSettings()->value(Tf::RedisSettingsFile).toString().trimmed();
+    if (!redisini.isEmpty()) {
+        QString redisinipath = configPath() + redisini;
+        if (QFile(redisinipath).exists())
+            redisSetting = new QSettings(redisinipath, QSettings::IniFormat, this);
+    }
 }
 
 
@@ -259,11 +265,28 @@ QSettings &TWebApplication::mongoDbSettings() const
 }
 
 /*!
-  Returns true if MongoDB is available; otherwise returns false.
+  Returns true if MongoDB settings is available; otherwise returns false.
 */
 bool TWebApplication::isMongoDbAvailable() const
 {
     return (bool)mongoSetting;
+}
+
+/*!
+  Returns a reference to the QSettings object for settings of the
+  Redis system.
+*/
+QSettings &TWebApplication::redisSettings() const
+{
+    return *redisSetting;
+}
+
+/*!
+  Returns true if Redis settings is available; otherwise returns false.
+*/
+bool TWebApplication::isRedisAvailable() const
+{
+    return (bool)redisSetting;
 }
 
 /*!

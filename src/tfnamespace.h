@@ -191,6 +191,7 @@ namespace Tf
         ActionMailerSendmailCommandLocation,
         //
         HttpKeepAliveTimeout,
+        RedisSettingsFile,
     };
 
     // Reason codes why a web socket has been closed

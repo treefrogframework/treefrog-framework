@@ -30,6 +30,7 @@ public:
     KvsTypeHash() : QHash<QString, int>()
     {
         insert("MONGODB", TKvsDatabase::MongoDB);
+        insert("REDIS", TKvsDatabase::Redis);
     }
 };
 Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
@@ -77,6 +78,7 @@ void TKvsDatabasePool::init()
     for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
         const QString &drv = it.next().key();
         int type = it.value();
+        pooledConnections.append(QMap<QString, uint>());
 
         if (!isKvsAvailable((TKvsDatabase::Type)type)) {
             tSystemDebug("KVS database not available. type:%d", (int)type);
@@ -95,8 +97,6 @@ void TKvsDatabasePool::init()
             setDatabaseSettings(db, (TKvsDatabase::Type)type, dbEnvironment);
             tSystemDebug("Add KVS successfully. name:%s", qPrintable(db.connectionName()));
         }
-
-        pooledConnections.append(QMap<QString, uint>());
     }
 }
 
@@ -107,6 +107,11 @@ bool TKvsDatabasePool::isKvsAvailable(TKvsDatabase::Type type) const
     case TKvsDatabase::MongoDB:
         return Tf::app()->isMongoDbAvailable();
         break;
+
+    case TKvsDatabase::Redis:
+        return Tf::app()->isRedisAvailable();
+        break;
+
     default:
         throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         break;
@@ -122,6 +127,14 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
             return Tf::app()->mongoDbSettings();
         }
         break;
+
+    case TKvsDatabase::Redis:
+        if (Tf::app()->isRedisAvailable()) {
+            return Tf::app()->redisSettings();
+        }
+        break;
+
+
     default:
         throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         break;
@@ -134,6 +147,7 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
 TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
 {
     T_TRACEFUNC("");
+
     QMutexLocker locker(&mutex);
     TKvsDatabase db;
 
@@ -177,12 +191,15 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
 
     QString databaseName = settings.value("DatabaseName").toString().trimmed();
     if (databaseName.isEmpty()) {
-        tError("KVS Database name empty string");
-        settings.endGroup();
-        return false;
+        if (type != TKvsDatabase::Redis) {
+            tWarn("KVS Database name empty string");
+            settings.endGroup();
+            return false;
+        }
+    } else {
+        tSystemDebug("KVS db name:%s  driver name:%s", qPrintable(databaseName), qPrintable(database.driverName()));
+        database.setDatabaseName(databaseName);
     }
-    tSystemDebug("KVS db name:%s  driver name:%s", qPrintable(databaseName), qPrintable(database.driverName()));
-    database.setDatabaseName(databaseName);
 
     QString hostName = settings.value("HostName").toString().trimmed();
     tSystemDebug("KVS HostName: %s", qPrintable(hostName));
