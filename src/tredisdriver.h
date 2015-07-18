@@ -2,6 +2,7 @@
 #define TREDISDRIVER_H
 
 #include <QString>
+#include <QVariant>
 #include <TGlobal>
 #include <TKvsDriver>
 
