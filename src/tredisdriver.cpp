@@ -11,11 +11,7 @@
 #include <QElapsedTimer>
 #include <TSystemGlobal>
 
-#if defined(Q_OS_WIN)
-#  define CRLF "\n"
-#else
-#  define CRLF "\r\n"
-#endif
+#define CRLF "\r\n"
 
 const int DEFAULT_PORT = 6379;
 
