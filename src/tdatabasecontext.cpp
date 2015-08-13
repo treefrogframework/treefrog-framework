@@ -73,6 +73,7 @@ TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
     if (!db.isValid()) {
         db = TKvsDatabasePool::instance()->database(type);
     }
+
     return db;
 }
 

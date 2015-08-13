@@ -23,7 +23,6 @@ const int DEFAULT_PORT = 6379;
 TRedisDriver::TRedisDriver()
     : TKvsDriver(), redis(new QTcpSocket()), buffer(), pos(0)
 {
-    tSystemWarn("TRedisDriver::TRedisDriver");
     buffer.reserve(1023);
 }
 
@@ -47,8 +46,15 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
         port = DEFAULT_PORT;
     }
 
+    tSystemDebug("Redis open host:%s  port:%d", qPrintable(hst), port);
     redis->connectToHost(hst, port);
-    return waitForState(QAbstractSocket::ConnectedState, 5000);
+    bool ret = waitForState(QAbstractSocket::ConnectedState, 5000);
+    if (ret) {
+        tSystemDebug("Redis open successfully");
+    } else {
+        tSystemError("Redis open failed");
+    }
+    return ret;
 }
 
 
@@ -106,8 +112,9 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &reply
     int startpos = pos;
 
     QByteArray cmd = toMultiBulk(command);
-    tSystemDebug("Redis command: %s", cmd.data());
+    //tSystemDebug("Redis command: %s", cmd.data());
     redis->write(cmd);
+    redis->flush();
     clearBuffer();
 
     for (;;) {

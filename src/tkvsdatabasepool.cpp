@@ -151,8 +151,22 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
     QMutexLocker locker(&mutex);
     TKvsDatabase db;
 
-    if (!isKvsAvailable(type))
+    if (!isKvsAvailable(type)) {
+        switch (type) {
+        case TKvsDatabase::MongoDB:
+            tSystemError("MongoDB not available. Check the settings file.");
+            break;
+
+        case TKvsDatabase::Redis:
+            tSystemError("Redis not available. Check the settings file.");
+            break;
+
+        default:
+            throw RuntimeException("No such KVS type", __FILE__, __LINE__);
+            break;
+        }
         return db;
+    }
 
     QMap<QString, uint> &map = pooledConnections[(int)type];
     QMap<QString, uint>::iterator it = map.begin();
@@ -172,6 +186,7 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
         if (!db.isOpen()) {
             if (Q_UNLIKELY(!db.open())) {
                 tError("KVS database open error");
+                tSystemError("KVS Database open error: %s", qPrintable(db.connectionName()));
                 return TKvsDatabase();
             }
             tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(dbEnvironment), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
