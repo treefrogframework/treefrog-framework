@@ -3,13 +3,12 @@
 
 #include <QString>
 #include <QVariant>
+#include <QTcpSocket>
 #include <TGlobal>
 #include <TKvsDriver>
 
-class QTcpSocket;
 
-
-class T_CORE_EXPORT TRedisDriver : public TKvsDriver
+class T_CORE_EXPORT TRedisDriver : public TKvsDriver, protected QTcpSocket
 {
 public:
     TRedisDriver();
@@ -43,7 +42,6 @@ protected:
     static QByteArray toMultiBulk(const QList<QByteArray> &data);
 
 private:
-    QTcpSocket *redis;
     QByteArray buffer;
     int pos;
 

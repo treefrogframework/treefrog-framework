@@ -6,7 +6,6 @@
  */
 
 #include "tredisdriver.h"
-#include <QTcpSocket>
 #include <QEventLoop>
 #include <QElapsedTimer>
 #include <TSystemGlobal>
@@ -17,7 +16,7 @@ const int DEFAULT_PORT = 6379;
 
 
 TRedisDriver::TRedisDriver()
-    : TKvsDriver(), redis(new QTcpSocket()), buffer(), pos(0)
+    : TKvsDriver(), QTcpSocket(), buffer(), pos(0)
 {
     buffer.reserve(1023);
 }
@@ -26,7 +25,6 @@ TRedisDriver::TRedisDriver()
 TRedisDriver::~TRedisDriver()
 {
     close();
-    delete redis;
 }
 
 
@@ -43,7 +41,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     }
 
     tSystemDebug("Redis open host:%s  port:%d", qPrintable(hst), port);
-    redis->connectToHost(hst, port);
+    connectToHost(hst, port);
     bool ret = waitForState(QAbstractSocket::ConnectedState, 5000);
     if (ret) {
         tSystemDebug("Redis open successfully");
@@ -56,13 +54,13 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
 void TRedisDriver::close()
 {
-    redis->close();
+    QTcpSocket::close();
 }
 
 
 bool TRedisDriver::isOpen() const
 {
-    return redis->isOpen();
+    return QTcpSocket::isOpen();
 }
 
 
@@ -92,7 +90,7 @@ bool TRedisDriver::readReply()
 
         Tf::msleep(0);  // context switch
         while (eventLoop.processEvents()) {}
-        buffer += redis->readAll();
+        buffer += QTcpSocket::readAll();
     }
 
     //tSystemDebug("Redis reply: %s", buffer.data());
@@ -109,8 +107,8 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &reply
 
     QByteArray cmd = toMultiBulk(command);
     //tSystemDebug("Redis command: %s", cmd.data());
-    redis->write(cmd);
-    redis->flush();
+    QTcpSocket::write(cmd);
+    QTcpSocket::flush();
     clearBuffer();
 
     for (;;) {
@@ -340,9 +338,9 @@ bool TRedisDriver::waitForState(int state, int msecs)
     QElapsedTimer timer;
     timer.start();
 
-    while (redis->state() != state) {
+    while (QTcpSocket::state() != state) {
         if (timer.elapsed() >= msecs) {
-            tSystemWarn("waitForState timeout.  current state:%d  timeout:%d", redis->state(), msecs);
+            tSystemWarn("waitForState timeout.  current state:%d  timeout:%d", QTcpSocket::state(), msecs);
             return false;
         }
 
