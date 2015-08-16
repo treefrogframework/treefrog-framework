@@ -33,6 +33,12 @@ TRedisDriver::~TRedisDriver()
 }
 
 
+bool TRedisDriver::isOpen() const
+{
+    return (client) ? client->isOpen() : false;
+}
+
+
 bool TRedisDriver::open(const QString &, const QString &, const QString &, const QString &host, quint16 port, const QString &)
 {
     if (!client) {
@@ -66,15 +72,6 @@ void TRedisDriver::close()
     if (client) {
         client->close();
     }
-}
-
-
-bool TRedisDriver::isOpen() const
-{
-    if (client) {
-        return client->isOpen();
-    }
-    return false;
 }
 
 
@@ -371,16 +368,16 @@ void TRedisDriver::moveToThread(QThread *thread)
         return;
     }
 
-    int fd = 0;
-    if (client) {
-        fd = TApplicationServerBase::duplicateSocket(client->socketDescriptor());
+    int socket = 0;
+    if (isOpen()) {
+        socket = TApplicationServerBase::duplicateSocket(client->socketDescriptor());
         delete client;
     }
 
     client = new QTcpSocket();
     client->moveToThread(thread);
 
-    if (fd > 0) {
-        client->setSocketDescriptor(fd);
+    if (socket > 0) {
+        client->setSocketDescriptor(socket);
     }
 }
