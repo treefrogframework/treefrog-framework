@@ -8,6 +8,8 @@
 #include "tredisdriver.h"
 #include <QEventLoop>
 #include <QElapsedTimer>
+#include <QTcpSocket>
+#include <TApplicationServerBase>
 #include <TSystemGlobal>
 
 #define CRLF "\r\n"
@@ -16,7 +18,7 @@ const int DEFAULT_PORT = 6379;
 
 
 TRedisDriver::TRedisDriver()
-    : TKvsDriver(), QTcpSocket(), buffer(), pos(0)
+    : TKvsDriver(), client(nullptr), buffer(), pos(0)
 {
     buffer.reserve(1023);
 }
@@ -25,11 +27,18 @@ TRedisDriver::TRedisDriver()
 TRedisDriver::~TRedisDriver()
 {
     close();
+    if (client) {
+        delete client;
+    }
 }
 
 
 bool TRedisDriver::open(const QString &, const QString &, const QString &, const QString &host, quint16 port, const QString &)
 {
+    if (!client) {
+        client = new QTcpSocket();
+    }
+
     if (isOpen()) {
         return true;
     }
@@ -41,7 +50,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     }
 
     tSystemDebug("Redis open host:%s  port:%d", qPrintable(hst), port);
-    connectToHost(hst, port);
+    client->connectToHost(hst, port);
     bool ret = waitForState(QAbstractSocket::ConnectedState, 5000);
     if (ret) {
         tSystemDebug("Redis open successfully");
@@ -54,13 +63,18 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
 void TRedisDriver::close()
 {
-    QTcpSocket::close();
+    if (client) {
+        client->close();
+    }
 }
 
 
 bool TRedisDriver::isOpen() const
 {
-    return QTcpSocket::isOpen();
+    if (client) {
+        return client->isOpen();
+    }
+    return false;
 }
 
 
@@ -90,7 +104,7 @@ bool TRedisDriver::readReply()
 
         Tf::msleep(0);  // context switch
         while (eventLoop.processEvents()) {}
-        buffer += QTcpSocket::readAll();
+        buffer += client->readAll();
     }
 
     //tSystemDebug("Redis reply: %s", buffer.data());
@@ -107,8 +121,8 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &reply
 
     QByteArray cmd = toMultiBulk(command);
     //tSystemDebug("Redis command: %s", cmd.data());
-    QTcpSocket::write(cmd);
-    QTcpSocket::flush();
+    client->write(cmd);
+    client->flush();
     clearBuffer();
 
     for (;;) {
@@ -338,9 +352,9 @@ bool TRedisDriver::waitForState(int state, int msecs)
     QElapsedTimer timer;
     timer.start();
 
-    while (QTcpSocket::state() != state) {
+    while (client->state() != state) {
         if (timer.elapsed() >= msecs) {
-            tSystemWarn("waitForState timeout.  current state:%d  timeout:%d", QTcpSocket::state(), msecs);
+            tSystemWarn("waitForState timeout.  current state:%d  timeout:%d", client->state(), msecs);
             return false;
         }
 
@@ -348,4 +362,25 @@ bool TRedisDriver::waitForState(int state, int msecs)
         while (eventLoop.processEvents()) {}
     }
     return true;
+}
+
+
+void TRedisDriver::moveToThread(QThread *thread)
+{
+    if (client && client->thread() == thread) {
+        return;
+    }
+
+    int fd = 0;
+    if (client) {
+        fd = TApplicationServerBase::duplicateSocket(client->socketDescriptor());
+        delete client;
+    }
+
+    client = new QTcpSocket();
+    client->moveToThread(thread);
+
+    if (fd > 0) {
+        client->setSocketDescriptor(fd);
+    }
 }
