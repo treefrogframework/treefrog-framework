@@ -57,8 +57,9 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
     tSystemDebug("Redis open host:%s  port:%d", qPrintable(hst), port);
     client->connectToHost(hst, port);
+
     bool ret = waitForState(QAbstractSocket::ConnectedState, 5000);
-    if (ret) {
+    if (Q_LIKELY(ret)) {
         tSystemDebug("Redis open successfully");
     } else {
         tSystemError("Redis open failed");
@@ -77,12 +78,12 @@ void TRedisDriver::close()
 
 bool TRedisDriver::readReply()
 {
-    if (!isOpen()) {
+    if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
 
-    if (pos > 0) {
+    if (Q_UNLIKELY(pos > 0)) {
         buffer.remove(0, pos);
         pos = 0;
     }
@@ -92,7 +93,11 @@ bool TRedisDriver::readReply()
     timer.start();
 
     int len = buffer.length();
-    while (buffer.length() == len) {
+    for (;;) {
+        buffer += client->readAll();
+        if (buffer.length() != len) {
+            break;
+        }
 
         if (timer.elapsed() >= 2000) {
             tSystemWarn("Read timeout");
@@ -101,7 +106,6 @@ bool TRedisDriver::readReply()
 
         Tf::msleep(0);  // context switch
         while (eventLoop.processEvents()) {}
-        buffer += client->readAll();
     }
 
     //tSystemDebug("Redis reply: %s", buffer.data());
@@ -111,6 +115,11 @@ bool TRedisDriver::readReply()
 
 bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &reply)
 {
+    if (Q_UNLIKELY(!isOpen())) {
+        tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
+        return false;
+    }
+
     bool ret = true;
     QByteArray str;
     bool ok = false;
@@ -355,7 +364,12 @@ bool TRedisDriver::waitForState(int state, int msecs)
             return false;
         }
 
-        Tf::msleep(1);
+        if (client->error() >= 0) {
+            tSystemWarn("waitForState : Error detected.  current state:%d  error:%d", client->state(), client->error());
+            return false;
+        }
+
+        Tf::msleep(0); // context switch
         while (eventLoop.processEvents()) {}
     }
     return true;
