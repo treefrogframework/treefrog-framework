@@ -47,6 +47,7 @@ enum CommandOption {
     DaemonMode,
     WindowsServiceMode,
     SendSignal,
+    AutoReload,
 };
 
 
@@ -109,6 +110,7 @@ public:
         insert("-d", DaemonMode);
         insert("-w", WindowsServiceMode);
         insert("-k", SendSignal);
+        insert("-r", AutoReload);
     }
 };
 Q_GLOBAL_STATIC(OptionHash, options)
@@ -124,6 +126,7 @@ static void usage()
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
         "  -k              : send signal to a manager process\n"        \
+        "  -r              : reload app automatically for development\n" \
         "%3\n"                                                          \
         "Type '%1 -l' to show your running applications.\n"             \
         "Type '%1 -h' to show this information.\n"                      \
@@ -400,6 +403,7 @@ int managerMain(int argc, char *argv[])
     }
 
     bool daemonMode = false;
+    bool autoReloadMode = false;
     QString signalCmd;
 
     QStringList args = QCoreApplication::arguments();
@@ -433,6 +437,10 @@ int managerMain(int argc, char *argv[])
 
         case SendSignal:
             signalCmd = i.next(); // assign a command
+            break;
+
+        case AutoReload:
+            autoReloadMode = true;
             break;
 
         default:
@@ -502,23 +510,12 @@ int managerMain(int argc, char *argv[])
     for (;;) {
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
-        // case TWebApplication::Prefork: {
-        //     int max = Tf::appSettings()->readValue("MPM.prefork.MaxServers", "20").toInt();
-        //     int min = Tf::appSettings()->readValue("MPM.prefork.MinServers", "5").toInt();
-        //     int spare = Tf::appSettings()->readValue("MPM.prefork.SpareServers", "5").toInt();
-        //     // new parameters
-        //     max = Tf::appSettings()->readValue("MPM.prefork.MaxAppServers", max).toInt();
-        //     min = Tf::appSettings()->readValue("MPM.prefork.MinAppServers", min).toInt();
-        //     spare = Tf::appSettings()->readValue("MPM.prefork.SpareAppServers", spare).toInt();
-        //     tSystemDebug("Max number of app servers: %d", max);
-        //     tSystemDebug("Min number of app servers: %d", min);
-        //     tSystemDebug("Spare number of app servers: %d", spare);
-        //     manager = new ServerManager(max, min, spare, &app);
-        //     break; }
-
         case TWebApplication::Thread:  // FALL THROUGH
         case TWebApplication::Hybrid: {
-            int num = qMax(app.maxNumberOfAppServers(), 1);
+            int num = 1;
+            if (!autoReloadMode) {
+                num = qMax(app.maxNumberOfAppServers(), 1);
+            }
             tSystemDebug("Max number of app servers: %d", num);
             manager = new ServerManager(num, num, 0, &app);
             break; }
