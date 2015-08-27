@@ -47,6 +47,8 @@ bool TApplicationServerBase::loadLibraries()
             return false;
         }
 
+        loadedTimestamp = latestLibraryTimestamp();
+
 #if defined(Q_OS_WIN)
         QStringList libs = { "controller", "view" };
 #elif defined(Q_OS_LINUX)
@@ -66,7 +68,6 @@ bool TApplicationServerBase::loadLibraries()
                 tSystemWarn("%s", qPrintable(lib->errorString()));
             }
         }
-        loadedTimestamp = latestLibraryTimestamp();
 
         QStringList controllers = TActionController::availableControllers();
         tSystemDebug("Available controllers: %s", qPrintable(controllers.join(" ")));
@@ -85,13 +86,13 @@ bool TApplicationServerBase::loadLibraries()
 QDateTime TApplicationServerBase::latestLibraryTimestamp()
 {
 #if defined(Q_OS_WIN)
-    QStringList libs = { "controller", "model", "view" };
+    QStringList libs = { "controller", "model", "view", "helper" };
 #elif defined(Q_OS_LINUX)
-    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so" };
+    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
 #elif defined(Q_OS_DARWIN)
-    QStringList libs = { "libcontroller.dylib", "libmodel.dylib", "libview.dylib" };
+    QStringList libs = { "libcontroller.dylib", "libmodel.dylib", "libview.dylib", "libhelper.dylib" };
 #else
-    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so" };
+    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
 #endif
 
     QDateTime ret = QDateTime::fromTime_t(0);
