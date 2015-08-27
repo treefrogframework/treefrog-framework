@@ -126,19 +126,22 @@ static void usage()
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
         "  -k              : send signal to a manager process\n"        \
-        "  -r              : reload app automatically for development\n" \
+        "%4"                                                            \
         "%3\n"                                                          \
         "Type '%1 -l' to show your running applications.\n"             \
         "Type '%1 -h' to show this information.\n"                      \
         "Type '%1 -v' to show the program version.";
 
     QString cmd = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
-    QString text1, text2;
+    QString text2, text3, text4;
 #ifdef Q_OS_WIN
-    text1 = QString("Usage: %1 -w [-e environment] application-directory\n").arg(cmd);
-    text2 = "  -w              : run as Windows service mode\n";
+    text2 = QString("Usage: %1 -w [-e environment] application-directory\n").arg(cmd);
+    text3 = "  -w              : run as Windows service mode\n";
+#else
+    text4 = "  -r              : reload app automatically for development\n";
 #endif
-    puts(qPrintable(QString(text).arg(cmd).arg(text1).arg(text2)));
+
+    puts(qPrintable(QString(text).arg(cmd).arg(text2).arg(text3).arg(text4)));
 }
 
 
