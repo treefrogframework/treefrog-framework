@@ -127,7 +127,9 @@ void TActionThread::run()
         // Next request
         while (!httpSocket->waitForReadyRead(100)) {
             if (httpSocket->state() != QAbstractSocket::ConnectedState) {
-                tSystemWarn("Error occurred : error:%d  socket:%s", httpSocket->error(), httpSocket->socketUuid().data());
+                if (httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
+                    tSystemWarn("Error occurred : error:%d  socket:%s", httpSocket->error(), httpSocket->socketUuid().data());
+                }
                 goto receive_end;
             }
 

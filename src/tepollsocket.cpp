@@ -138,20 +138,25 @@ int TEpollSocket::recv()
         seekRecvBuffer(len);
     }
 
-    if (len < 0 || err > 0) {
-        switch (err) {
-        case EAGAIN:
-            break;
+    if (!len && !err) {
+        tSystemDebug("Socket disconnected : sd:%d", sd);
+        ret = -1;
+    } else {
+        if (len < 0 || err > 0) {
+            switch (err) {
+            case EAGAIN:
+                break;
 
-        case ECONNRESET:
-            tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
-            ret = -1;
-            break;
+            case ECONNRESET:
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                ret = -1;
+                break;
 
-        default:
-            tSystemError("Failed recv : sd:%d  errno:%d  len:%d", sd, err, len);
-            ret = -1;
-            break;
+            default:
+                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", sd, err, len);
+                ret = -1;
+                break;
+            }
         }
     }
     return ret;

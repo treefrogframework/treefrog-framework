@@ -19,12 +19,12 @@ public:
     QByteArray readRequest();
     int idleTime() const { return idleElapsed.elapsed() / 1000; }
     virtual void startWorker();
+    virtual void deleteLater();
     static TEpollHttpSocket *searchSocket(const QByteArray &uuid);
     static QList<TEpollHttpSocket*> allSockets();
 
 public slots:
     void releaseWorker();
-    void deleteLater();
 
 protected:
     virtual int send();

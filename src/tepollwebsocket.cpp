@@ -29,6 +29,7 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
     : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(header),
       recvBuffer(), frames()
 {
+    tSystemDebug("TEpollWebSocket  [%p]", this);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 
     mutexMap.lock();
@@ -39,7 +40,7 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
 
 TEpollWebSocket::~TEpollWebSocket()
 {
-    tSystemDebug("~TEpollWebSocket");
+    tSystemDebug("~TEpollWebSocket  [%p]", this);
     mutexMap.lock();
     websocketMap.remove(socketUuid());
     mutexMap.unlock();

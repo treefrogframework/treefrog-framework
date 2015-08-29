@@ -38,14 +38,12 @@ public:
 
     virtual bool canReadRequest() { return false; }
     virtual void startWorker() { }
+    virtual void deleteLater();
 
     static TEpollSocket *accept(int listeningSocket);
     static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
     static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     static TSendBuffer *createSendBuffer(const QByteArray &data);
-
-public slots:
-    void deleteLater();
 
 protected:
     virtual int send();

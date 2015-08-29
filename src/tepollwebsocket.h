@@ -26,6 +26,7 @@ public:
     QList<QPair<int, QByteArray>> readAllBinaryRequest();
     virtual bool canReadRequest();
     virtual void startWorker();
+    virtual void deleteLater();
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() Q_DECL_OVERRIDE;
@@ -33,7 +34,6 @@ public:
     static TEpollWebSocket *searchSocket(const QByteArray &uuid);
 
 public slots:
-    void deleteLater();
     void releaseWorker();
     void sendTextForPublish(const QString &text, const QObject *except);
     void sendBinaryForPublish(const QByteArray &binary, const QObject *except);
