@@ -251,7 +251,9 @@ void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus)
         int id = serversStatus.take(server);
 
         if (isRunning()) {
-            tSystemError("Detected a server crashed. exitCode:%d  exitStatus:%d", exitCode, (int)exitStatus);
+            if (exitCode != 127) {  // 127 : for auto reloading
+                tSystemError("Detected a server crashed. exitCode:%d  exitStatus:%d", exitCode, (int)exitStatus);
+            }
             startServer(id);
         } else {
             tSystemDebug("Detected normal exit of server. exitCode:%d", exitCode);

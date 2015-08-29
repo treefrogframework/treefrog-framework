@@ -53,6 +53,8 @@ public:
     bool isSqlDatabaseAvailable() const;
     QSettings &mongoDbSettings() const;
     bool isMongoDbAvailable() const;
+    QSettings &redisSettings() const;
+    bool isRedisAvailable() const;
     QSettings &loggerSettings() const { return *loggerSetting; }
     QSettings &validationSettings() const { return *validationSetting; }
     QString validationErrorMessage(int rule) const;
@@ -98,6 +100,7 @@ private:
     QString dbEnvironment;
     QVector<QSettings *> sqlSettings;
     QSettings *mongoSetting;
+    QSettings *redisSetting;
     QSettings *loggerSetting;
     QSettings *validationSetting;
     QSettings *mediaTypes;

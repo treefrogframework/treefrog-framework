@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QDataStream>
 #include <QCryptographicHash>
 #include <TWebApplication>
 #include <THttpRequestHeader>
@@ -17,7 +18,9 @@
 #include "turlroute.h"
 #include "tdispatcher.h"
 #include "twebsocket.h"
-#include "tepollwebsocket.h"
+#ifdef Q_OS_LINUX
+# include "tepollwebsocket.h"
+#endif
 
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 

@@ -1,17 +1,17 @@
-#ifndef TSESSIONCOOKIESTORE_H
-#define TSESSIONCOOKIESTORE_H
+#ifndef TSESSIONREDISSTORE_H
+#define TSESSIONREDISSTORE_H
 
 #include <TSessionStore>
 
 
-class TSessionCookieStore : public TSessionStore
+class TSessionRedisStore : public TSessionStore
 {
 public:
-    QString key() const { return "cookie"; }
+    QString key() const { return "redis"; }
     TSession find(const QByteArray &id);
     bool store(TSession &session);
     bool remove(const QByteArray &id);
     int gc(const QDateTime &expire);
 };
 
-#endif // TSESSIONCOOKIESTORE_H
+#endif // TSESSIONREDISSTORE_H

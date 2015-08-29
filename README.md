@@ -37,7 +37,7 @@ Releases
 
 Documents
 ---------
- Get addtional information on the site:
+ Get additional information on the site:
  http://www.treefrogframework.org/documents
 
 Forum

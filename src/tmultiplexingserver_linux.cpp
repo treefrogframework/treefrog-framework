@@ -84,7 +84,7 @@ static void setNoDeleyOption(int fd)
 
 TMultiplexingServer::TMultiplexingServer(int listeningSocket, QObject *parent)
     : QThread(parent), TApplicationServerBase(), maxWorkers(0), stopped(false),
-      listenSocket(listeningSocket)
+      listenSocket(listeningSocket), reloadTimer()
 {
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
 }
@@ -235,5 +235,34 @@ void TMultiplexingServer::stop()
             QThread::wait(10000);
         }
         TStaticReleaseThread::exec();
+    }
+}
+
+
+void TMultiplexingServer::setAutoReloadingEnabled(bool enable)
+{
+    if (enable) {
+        reloadTimer.start(500, this);
+    } else {
+        reloadTimer.stop();
+    }
+}
+
+
+bool TMultiplexingServer::isAutoReloadingEnabled()
+{
+    return reloadTimer.isActive();
+}
+
+
+void TMultiplexingServer::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() != reloadTimer.timerId()) {
+        QThread::timerEvent(event);
+    } else {
+        if (newerLibraryExists()) {
+            tSystemInfo("Detect new library of application. Reloading the libraries.");
+            Tf::app()->exit(127);
+        }
     }
 }

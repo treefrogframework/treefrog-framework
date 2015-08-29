@@ -155,6 +155,7 @@ public:
         append(L("config") + SEP + "development.ini");
         append(L("config") + SEP + "logger.ini");
         append(L("config") + SEP + "mongodb.ini");
+        append(L("config") + SEP + "redis.ini");
         append(L("config") + SEP + "routes.cfg");
         append(L("config") + SEP + "validation.ini");
         append(L("config") + SEP + "initializers" + SEP + "internet_media_types.ini");

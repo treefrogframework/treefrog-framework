@@ -36,8 +36,9 @@ bool TSessionSqlObjectStore::store(TSession &session)
 }
 
 
-TSession TSessionSqlObjectStore::find(const QByteArray &id, const QDateTime &modified)
+TSession TSessionSqlObjectStore::find(const QByteArray &id)
 {
+    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs);
     TSqlORMapper<TSessionObject> mapper;
     TCriteria cri;
     cri.add(TSessionObject::Id, TSql::Equal, id);
@@ -54,18 +55,18 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id, const QDateTime &mod
 }
 
 
-bool TSessionSqlObjectStore::remove(const QDateTime &garbageExpiration)
-{
-    TSqlORMapper<TSessionObject> mapper;
-    TCriteria cri(TSessionObject::UpdatedAt, TSql::LessThan, garbageExpiration);
-    int cnt = mapper.removeAll(cri);
-    return (cnt >= 0);
-}
-
-
 bool TSessionSqlObjectStore::remove(const QByteArray &id)
 {
     TSqlORMapper<TSessionObject> mapper;
     int cnt = mapper.removeAll(TCriteria(TSessionObject::Id, id));
     return (cnt > 0);
+}
+
+
+int TSessionSqlObjectStore::gc(const QDateTime &expire)
+{
+    TSqlORMapper<TSessionObject> mapper;
+    TCriteria cri(TSessionObject::UpdatedAt, TSql::LessThan, expire);
+    int cnt = mapper.removeAll(cri);
+    return cnt;
 }

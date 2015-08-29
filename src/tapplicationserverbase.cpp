@@ -6,7 +6,9 @@
  */
 
 #include <QLibrary>
+#include <QList>
 #include <QDir>
+#include <QDateTime>
 #include <TWebApplication>
 #include <TActionContext>
 #include <TDispatcher>
@@ -25,7 +27,8 @@
   an web application server.
 */
 
-static bool libLoaded = false;
+static QList<QLibrary*> libsLoaded;
+static QDateTime loadedTimestamp;
 
 
 bool TApplicationServerBase::loadLibraries()
@@ -33,7 +36,7 @@ bool TApplicationServerBase::loadLibraries()
     T_TRACEFUNC("");
 
     // Loads libraries
-    if (!libLoaded) {
+    if (libsLoaded.isEmpty()) {
         // Sets work directory
         QString libPath = Tf::app()->libPath();
         if (QDir(libPath).exists()) {
@@ -44,24 +47,25 @@ bool TApplicationServerBase::loadLibraries()
             return false;
         }
 
-        QStringList libs;
+        loadedTimestamp = latestLibraryTimestamp();
+
 #if defined(Q_OS_WIN)
-        libs << "controller" << "view";
+        QStringList libs = { "controller", "view" };
 #elif defined(Q_OS_LINUX)
-        libs << "libcontroller.so" << "libview.so";
+        QStringList libs = { "libcontroller.so", "libview.so" };
 #elif defined(Q_OS_DARWIN)
-        libs << "libcontroller.dylib" << "libview.dylib";
+        QStringList libs = { "libcontroller.dylib", "libview.dylib" };
 #else
-        libs << "libcontroller" << "libview";
+        QStringList libs = { "libcontroller.so", "libview.so" };
 #endif
 
-        for (QStringListIterator it(libs); it.hasNext(); ) {
-            QLibrary lib(it.next());
-            if (lib.load()) {
-                tSystemDebug("Library loaded: %s", qPrintable(lib.fileName()));
-                libLoaded = true;
+        for (const auto &libname : libs) {
+            auto lib = new QLibrary(libname);
+            if (lib->load()) {
+                tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
+                libsLoaded << lib;
             } else {
-                tSystemWarn("%s", qPrintable(lib.errorString()));
+                tSystemWarn("%s", qPrintable(lib->errorString()));
             }
         }
 
@@ -76,6 +80,37 @@ bool TApplicationServerBase::loadLibraries()
     TSqlDatabasePool::instantiate();
     TKvsDatabasePool::instantiate();
     return true;
+}
+
+
+QDateTime TApplicationServerBase::latestLibraryTimestamp()
+{
+#if defined(Q_OS_WIN)
+    QStringList libs = { "controller", "model", "view", "helper" };
+#elif defined(Q_OS_LINUX)
+    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
+#elif defined(Q_OS_DARWIN)
+    QStringList libs = { "libcontroller.dylib", "libmodel.dylib", "libview.dylib", "libhelper.dylib" };
+#else
+    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
+#endif
+
+    QDateTime ret = QDateTime::fromTime_t(0);
+
+    QString libPath = Tf::app()->libPath();
+    for (auto lib : libs) {
+        QFileInfo fi(libPath + lib);
+        if (fi.isFile() && fi.lastModified() > ret) {
+            ret = fi.lastModified();
+        }
+    }
+    return ret;
+}
+
+
+bool TApplicationServerBase::newerLibraryExists()
+{
+    return (latestLibraryTimestamp() > loadedTimestamp);
 }
 
 

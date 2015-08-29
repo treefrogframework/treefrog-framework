@@ -12,6 +12,7 @@ class T_CORE_EXPORT TKvsDatabase
 public:
     enum Type {
         MongoDB = 0,
+        Redis,
     };
 
     TKvsDatabase();

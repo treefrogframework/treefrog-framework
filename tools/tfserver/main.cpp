@@ -11,7 +11,6 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TThreadApplicationServer>
-#include <TPreforkApplicationServer>
 #include <TMultiplexingServer>
 #include <TSystemGlobal>
 #include <cstdlib>
@@ -19,8 +18,9 @@
 #include "signalhandler.h"
 using namespace TreeFrog;
 
-#define DEBUG_MODE_OPTION "--debug"
-#define SOCKET_OPTION     "-s"
+#define DEBUG_MODE_OPTION  "--debug"
+#define SOCKET_OPTION      "-s"
+#define AUTO_RELOAD_OPTION "-r"
 
 
 #if QT_VERSION >= 0x050000
@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
 #endif
     QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
     int sock = args.value(SOCKET_OPTION).toInt();
+    bool reload = args.contains(AUTO_RELOAD_OPTION);
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
@@ -181,18 +182,6 @@ int main(int argc, char *argv[])
         server = new TThreadApplicationServer(sock, &webapp);
         break;
 
-    // case TWebApplication::Prefork: {
-    //     TPreforkApplicationServer *svr = new TPreforkApplicationServer(&webapp);
-    //     if (svr->setSocketDescriptor(sock)) {
-    //         tSystemDebug("Set socket descriptor: %d", sock);
-    //     } else {
-    //         tSystemError("Failed to set socket descriptor: %d", sock);
-    //         fprintf(stderr, "Failed to set socket descriptor: %d\n", sock);
-    //         goto finish;
-    //     }
-    //     server = svr;
-    //     break; }
-
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
         // Sets a listening socket descriptor
@@ -208,6 +197,7 @@ int main(int argc, char *argv[])
         break;
     }
 
+    server->setAutoReloadingEnabled(reload);
     if (!server->start()) {
         tSystemError("Server open failed");
         fprintf(stderr, "Server open failed\n");

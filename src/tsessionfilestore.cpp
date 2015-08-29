@@ -36,9 +36,10 @@ bool TSessionFileStore::store(TSession &session)
 }
 
 
-TSession TSessionFileStore::find(const QByteArray &id, const QDateTime &modified)
+TSession TSessionFileStore::find(const QByteArray &id)
 {
     QFileInfo fi(sessionDirPath() + id);
+    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs);
 
     if (fi.exists() && fi.lastModified() >= modified) {
         QFile file(fi.filePath());
@@ -55,28 +56,29 @@ TSession TSessionFileStore::find(const QByteArray &id, const QDateTime &modified
 }
 
 
-bool TSessionFileStore::remove(const QDateTime &garbageExpiration)
+bool TSessionFileStore::remove(const QByteArray &id)
 {
-    bool res = true;
+    return QFile::remove(sessionDirPath() + id);
+}
+
+
+int TSessionFileStore::gc(const QDateTime &expire)
+{
+    bool res = 0;
     QDir dir(sessionDirPath());
     if (dir.exists()) {
-        QList<QFileInfo> list = dir.entryInfoList(QDir::Files, QDir::Time | QDir::Reversed);
-        for (QListIterator<QFileInfo> i(list); i.hasNext(); ) {
-            const QFileInfo &fi = i.next();
-            if (fi.lastModified() < garbageExpiration) {
-                res &= dir.remove(fi.fileName());
+        QList<QFileInfo> lst = dir.entryInfoList(QDir::Files, QDir::Time | QDir::Reversed);
+        for (auto &fi : lst) {
+            if (fi.lastModified() < expire) {
+                if (dir.remove(fi.fileName())) {
+                    res++;
+                }
             } else {
                 break;
             }
         }
     }
     return res;
-}
-
-
-bool TSessionFileStore::remove(const QByteArray &id)
-{
-    return QFile::remove(sessionDirPath() + id);
 }
 
 

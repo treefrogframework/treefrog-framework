@@ -2,6 +2,7 @@
 #define TTHREADAPPLICATIONSERVER_H
 
 #include <QTcpServer>
+#include <QBasicTimer>
 #include <TGlobal>
 #include <TApplicationServerBase>
 #include <TActionThread>
@@ -17,6 +18,8 @@ public:
     bool start();
     void stop();
     bool isSocketOpen() const;
+    void setAutoReloadingEnabled(bool enable);
+    bool isAutoReloadingEnabled();
 
 protected:
 #if QT_VERSION >= 0x050000
@@ -24,10 +27,12 @@ protected:
 #else
     void incomingConnection(int socketDescriptor);
 #endif
+    void timerEvent(QTimerEvent *event);
 
 private:
     int listenSocket;
     int maxThreads;
+    QBasicTimer reloadTimer;
 
     Q_DISABLE_COPY(TThreadApplicationServer)
 };

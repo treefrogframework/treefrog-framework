@@ -5,6 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QDataStream>
 #include <TWebApplication>
 #include <TDispatcher>
 #include <TWebSocketEndpoint>
@@ -15,7 +16,9 @@
 #include "tabstractwebsocket.h"
 #include "tpublisher.h"
 #include "thttpsocket.h"
-#include "tepollhttpsocket.h"
+#ifdef Q_OS_LINUX
+# include "tepollhttpsocket.h"
+#endif
 
 
 TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
