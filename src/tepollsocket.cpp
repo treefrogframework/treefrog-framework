@@ -138,7 +138,7 @@ int TEpollSocket::recv()
         seekRecvBuffer(len);
     }
 
-    if (len < 0) {
+    if (len < 0 || err > 0) {
         switch (err) {
         case EAGAIN:
             break;
@@ -149,7 +149,7 @@ int TEpollSocket::recv()
             break;
 
         default:
-            tSystemError("Failed recv : sd:%d  errno:%d", sd, err);
+            tSystemError("Failed recv : sd:%d  errno:%d  len:%d", sd, err, len);
             ret = -1;
             break;
         }
