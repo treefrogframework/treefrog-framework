@@ -163,7 +163,11 @@ done
 PID=$$
 cd "$BASEDIR"
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
-sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+if [ "$KERNEL" = "Darwin" ]; then
+  sed -e "s/macx:INCLUDEPATH +=.*$/macx:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+else
+  sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+fi
 command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
 
 if [ -n "$FRAMEWORK" ]; then
