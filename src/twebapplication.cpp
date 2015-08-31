@@ -327,12 +327,18 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             mpm = Thread;
-//        } else if (str == "prefork") {
-//            mpm = Prefork;
         } else if (str == "hybrid") {
+#ifdef Q_OS_LINUX
             mpm = Hybrid;
+#else
+            tSystemWarn("Unsupported MPM: hybrid  (Linux only)");
+            tWarn("Unsupported MPM: hybrid  (Linux only)");
+            mpm = Thread;
+#endif
         } else {
-            tError("Unsupported MPM: %s", qPrintable(str));
+            tSystemWarn("Unsupported MPM: %s", qPrintable(str));
+            tWarn("Unsupported MPM: %s", qPrintable(str));
+            mpm = Thread;
         }
     }
     return mpm;
