@@ -35,7 +35,7 @@ TRedisDriver::~TRedisDriver()
 
 bool TRedisDriver::isOpen() const
 {
-    return (client) ? client->isOpen() : false;
+    return (client) ? (client->state() == QAbstractSocket::ConnectedState) : false;
 }
 
 
@@ -47,6 +47,10 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
     if (isOpen()) {
         return true;
+    }
+
+    if (client->state() != QAbstractSocket::UnconnectedState) {
+        return false;
     }
 
     QString hst = (host.isEmpty()) ? "localhost" : host;
@@ -63,6 +67,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
         tSystemDebug("Redis open successfully");
     } else {
         tSystemError("Redis open failed");
+        close();
     }
     return ret;
 }
@@ -72,6 +77,8 @@ void TRedisDriver::close()
 {
     if (client) {
         client->close();
+        delete client;
+        client = nullptr;
     }
 }
 

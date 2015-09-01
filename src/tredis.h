@@ -15,7 +15,8 @@ public:
     TRedis(const TRedis &other);
     virtual ~TRedis() { }
 
-    bool exists(const QByteArray &key);
+    bool isOpen() const;
+    //bool exists(const QByteArray &key);
     QByteArray get(const QByteArray &key);
     bool set(const QByteArray &key, const QByteArray &value);
     bool setEx(const QByteArray &key, const QByteArray &value, int seconds);
