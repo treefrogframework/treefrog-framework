@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.9.2
+ - Implemented Redis driver.
+ - Implemented auto reloading system for application.
+ - Fix a bug of receiveing way of TEpollSocket.
+ - Fix a bug of timing of calling deleteLater().
+ - Fix a bug of segmentation fault on OS X.
+
 ## 1.9.1
  - Added 'status' subcommand for treefrog.
  - Added imageLinkTo() method to TViewHelper class.
