@@ -22,6 +22,13 @@ public:
     virtual void setProperties(const QVariantMap &properties);
     virtual QVariantMap toVariantMap() const;
 
+    virtual void beforeCreate();
+    virtual void afterCreate();
+    virtual void beforeUpdate();
+    virtual void afterUpdate();
+    virtual void beforeSave();
+    virtual void afterSave();
+
     static QString fieldNameToVariableName(const QString &name);
 
 protected:
