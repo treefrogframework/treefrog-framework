@@ -44,7 +44,10 @@ bool TAbstractModel::isSaved() const
  */
 bool TAbstractModel::create()
 {
-    return modelData()->create();
+    beforeCreate();
+    bool ret =  modelData()->create();
+    afterCreate();
+    return ret;
 }
 
 /*!
@@ -55,7 +58,10 @@ bool TAbstractModel::create()
  */
 bool TAbstractModel::save()
 {
-    return (modelData()->isNull()) ? create() : update();
+    beforeSave();
+    bool ret = (modelData()->isNull()) ? create() : update();
+    afterSave();
+    return ret;
 }
 
 /*!
@@ -63,7 +69,10 @@ bool TAbstractModel::save()
  */
 bool TAbstractModel::update()
 {
-    return modelData()->update();
+    beforeUpdate();
+    bool ret = modelData()->update();
+    afterUpdate();
+    return ret;
 }
 
 /*!
@@ -129,3 +138,10 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
   This function is reimplemented in subclasses to return a pointer
   to the data stored in the model object.
 */
+
+void TAbstractModel::beforeCreate() {};
+void TAbstractModel::afterCreate() {};
+void TAbstractModel::afterUpdate() {};
+void TAbstractModel::beforeUpdate() {};
+void TAbstractModel::afterSave() {};
+void TAbstractModel::beforeSave() {};
