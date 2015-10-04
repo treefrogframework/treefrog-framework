@@ -180,7 +180,7 @@ void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid
 
                             // Sets the path in the session cookie
                             QString cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
-                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath);
+                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath, QString(), false, true);
                         }
                     }
 
