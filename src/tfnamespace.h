@@ -192,6 +192,7 @@ namespace Tf
         //
         HttpKeepAliveTimeout,
         RedisSettingsFile,
+        LDPreload,
     };
 
     // Reason codes why a web socket has been closed

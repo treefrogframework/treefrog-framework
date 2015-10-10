@@ -67,6 +67,9 @@ public:
 # if QT_VERSION >= 0x050200
         insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
 # endif
+# if QT_VERSION >= 0x050500
+        insert(QSysInfo::WV_WINDOWS10,  "Windows 10");
+# endif
     }
 };
 Q_GLOBAL_STATIC(WinVersion, winVersion)
@@ -91,6 +94,9 @@ public:
 # endif
 # if QT_VERSION >= 0x050400
         insert(QSysInfo::MV_10_10, "Mac OS X 10.10 Yosemite");
+# endif
+# if QT_VERSION >= 0x050500
+        insert(QSysInfo::MV_10_11, "Mac OS X 10.11 El Capitan");
 # endif
     }
 };
