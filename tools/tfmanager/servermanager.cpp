@@ -11,6 +11,7 @@
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <TApplicationServerBase>
+#include <TAppSettings>
 #include <TLog>
 #include "qplatformdefs.h"
 #include "servermanager.h"
@@ -209,8 +210,14 @@ void ServerManager::startServer(int id) const
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_LIBRARY_PATH", ldpath);
-    tfserver->setProcessEnvironment(env);
     tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qPrintable(ldpath));
+
+    QString preload = Tf::appSettings()->value(Tf::LDPreload).toString();
+    if (!preload.isEmpty()) {
+        env.insert("LD_PRELOAD", preload);
+        tSystemDebug("export %s=%s", "LD_PRELOAD", qPrintable(preload));
+    }
+    tfserver->setProcessEnvironment(env);
 #endif
 
     // Executes treefrog server
