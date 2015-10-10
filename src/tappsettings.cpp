@@ -38,6 +38,7 @@ public:
         insert(Tf::EnableCsrfProtectionModule, "EnableCsrfProtectionModule");
         insert(Tf::EnableHttpMethodOverride, "EnableHttpMethodOverride");
         insert(Tf::HttpKeepAliveTimeout, "HttpKeepAliveTimeout");
+        insert(Tf::LDPreload, "LDPreload");
         insert(Tf::SessionName, "Session.Name");
         insert(Tf::SessionStoreType, "Session.StoreType");
         insert(Tf::SessionAutoIdRegeneration, "Session.AutoIdRegeneration");
