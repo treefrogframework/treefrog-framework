@@ -6,9 +6,9 @@
 #include <TfNamespace>
 #include <cstdint>
 
-#define TF_VERSION_STR "1.9.2"
-#define TF_VERSION_NUMBER 0x010902
-#define TF_SRC_REVISION 954
+#define TF_VERSION_STR "1.10.0"
+#define TF_VERSION_NUMBER 0x0101000
+#define TF_SRC_REVISION 984
 
 
 #define T_DECLARE_CONTROLLER(TYPE, NAME)  \
