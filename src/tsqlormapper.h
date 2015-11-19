@@ -374,7 +374,7 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
     QString query;
     query += QLatin1String("SELECT COUNT(*) FROM (");
     query += selectStatement();
-    query += QLatin1Char(')');
+    query += QLatin1String(") t");
 
     int cnt = -1;
     TSqlQuery q(database());
