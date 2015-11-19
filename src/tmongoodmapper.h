@@ -131,7 +131,7 @@ inline int TMongoODMapper<T>::find(const TCriteria &criteria)
 {
     QVariantMap order;
     if (sortColumn >= 0) {
-        QString name = TCriteriaConverter<T>::propertyName(sortColumn);
+        QString name = TCriteriaMongoConverter<T>::propertyName(sortColumn);
         if (!name.isEmpty()) {
             order.insert(name, (sortOrder == Tf::AscendingOrder) ? 1 : -1);
         }
@@ -221,7 +221,7 @@ inline QList<T> TMongoODMapper<T>::findAllIn(int column, const QVariantList &val
 template <class T>
 inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, int column, QVariant value)
 {
-    QString s = TCriteriaConverter<T>::propertyName(column);
+    QString s = TCriteriaMongoConverter<T>::propertyName(column);
     if (s.isEmpty())
         return -1;
 
@@ -239,7 +239,7 @@ inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QV
 
     for (QMapIterator<int, QVariant> it(values); it.hasNext(); ) {
         it.next();
-        QString s = TCriteriaConverter<T>::propertyName(it.key());
+        QString s = TCriteriaMongoConverter<T>::propertyName(it.key());
         if (!s.isEmpty()) {
             doc.insert(s, it.value());
         }
