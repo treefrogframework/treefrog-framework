@@ -27,7 +27,7 @@ public:
 
     static void clearCachedQueries();
     static QString escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type = QSqlDriver::FieldName, int databaseId = 0);
-    static QString escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, const QSqlDatabase &database);
+    static QString escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, const QSqlDriver *driver);
     static QString formatValue(const QVariant &val, int databaseId = 0);
     static QString formatValue(const QVariant &val, const QSqlDatabase &database);
 };

@@ -9,6 +9,7 @@
 #include <TCriteria>
 #include <TCriteriaConverter>
 #include <TSqlQuery>
+#include <TSqlJoin>
 #include "tsystemglobal.h"
 
 /*!
@@ -31,6 +32,7 @@ public:
     void setLimit(int limit);
     void setOffset(int offset);
     void setSortOrder(int column, Tf::SortOrder order);
+    template <class C> void setJoin(int column, const TSqlJoin<C> &join);
     void reset();
 
     T findFirst(const TCriteria &cri = TCriteria());
@@ -69,6 +71,9 @@ private:
     Tf::SortOrder sortOrder;
     int queryLimit;
     int queryOffset;
+    int joinCount;
+    QStringList joinClauses;
+    QStringList joinWhereClauses;
 };
 
 
@@ -79,7 +84,7 @@ template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
     : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId())),
       sortColumn(-1), sortOrder(Tf::AscendingOrder), queryLimit(0),
-      queryOffset(0)
+      queryOffset(0), joinCount(0), joinClauses(), joinWhereClauses()
 {
     setTable(T().tableName());
 }
@@ -99,7 +104,7 @@ template <class T>
 inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
 {
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database());
+        TCriteriaConverter<T> conv(cri, database(), "t0");
         setFilter(conv.toString());
     } else {
         setFilter(QString());
@@ -151,7 +156,7 @@ template <class T>
 inline int TSqlORMapper<T>::find(const TCriteria &cri)
 {
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database());
+        TCriteriaConverter<T> conv(cri, database(), "t0");
         setFilter(conv.toString());
     } else {
         setFilter(QString());
@@ -291,10 +296,51 @@ inline void TSqlORMapper<T>::setFilter(const QString &filter)
 template <class T>
 inline QString TSqlORMapper<T>::selectStatement() const
 {
-    QString query = QSqlTableModel::selectStatement();
+    QString query;
+    query.reserve(256);
+    bool joinFlag = !joinClauses.isEmpty();
 
-    if (!queryFilter.isEmpty())
-        query.append(QLatin1String(" WHERE ")).append(queryFilter);
+    auto rec = record();
+    for (int i = 0; i < rec.count(); ++i) {
+        if (rec.isGenerated(i)) {
+            if (joinFlag) {
+                query += QLatin1String("t0.");
+            }
+            query += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
+            query += QLatin1String(", ");
+        }
+    }
+
+    if (query.isEmpty()) {
+        return query;
+    } else {
+        query.chop(2);
+    }
+
+    if (joinFlag) {
+        query.prepend(QLatin1String("SELECT DISTINCT "));
+    } else {
+        query.prepend(QLatin1String("SELECT "));
+    }
+    query += QLatin1String(" FROM ");
+    query += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database().driver());
+    query += QLatin1String(" t0");  // alias needed
+
+    for (auto &join : joinClauses) {
+        query += join;
+    }
+
+    QString filter = queryFilter;
+    for (auto &wh : joinWhereClauses) {
+        if (!filter.isEmpty()) {
+            filter += QLatin1String(" AND ");
+        }
+        filter += wh;
+    }
+
+    if (!filter.isEmpty()) {
+        query.append(QLatin1String(" WHERE ")).append(filter);
+    }
 
     QString orderby = orderBy();
     if (!orderby.isEmpty()) {
@@ -318,17 +364,20 @@ inline QString TSqlORMapper<T>::selectStatement() const
 template <class T>
 inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
 {
-    int cnt = -1;
-    QString query = "SELECT COUNT(1) FROM ";
-    query += tableName();
-
-    QSqlDatabase db = database();
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, db);
-        query.append(QLatin1String(" WHERE ")).append(conv.toString());
+        TCriteriaConverter<T> conv(cri, database(), "t0");
+        setFilter(conv.toString());
+    } else {
+        setFilter(QString());
     }
 
-    TSqlQuery q(db);
+    QString query;
+    query += QLatin1String("SELECT COUNT(*) FROM (");
+    query += selectStatement();
+    query += QLatin1Char(')');
+
+    int cnt = -1;
+    TSqlQuery q(database());
     bool res = q.exec(query);
     if (res) {
         q.next();
@@ -355,7 +404,7 @@ template <class T>
 inline QList<T> TSqlORMapper<T>::findAll(const TCriteria &cri)
 {
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database());
+        TCriteriaConverter<T> conv(cri, database(), "t0");
         setFilter(conv.toString());
     } else {
         setFilter(QString());
@@ -437,7 +486,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     QMapIterator<int, QVariant> it(values);
     for (;;) {
         it.next();
-        upd += TCriteriaConverter<T>::propertyName(it.key());
+        upd += TCriteriaConverter<T>::propertyName(it.key(), db.driver());
         upd += '=';
         upd += TSqlQuery::formatValue(it.value(), db);
 
@@ -494,6 +543,52 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
     return res ? sqlQuery.numRowsAffected() : -1;
 }
 
+template <class T>
+template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
+{
+    if (column < 0 || join.joinColumn() < 0) {
+        return;
+    }
+
+    QString clause;
+
+    switch (join.joinMode()) {
+    case TSql::InnerJoin:
+        clause = QLatin1String(" INNER JOIN ");
+        break;
+
+    case  TSql::LeftJoin:
+        clause = QLatin1String(" LEFT OUTER JOIN ");
+        break;
+
+    case TSql::RightJoin:
+        clause = QLatin1String(" RIGHT OUTER JOIN ");
+        break;
+
+    default:
+        break;
+    }
+
+    int joinCount = joinClauses.count();
+    QString alias = QLatin1Char('t') + QString::number(joinCount + 1);
+    QSqlDatabase db = database();
+
+    clause += C().tableName();
+    clause += QLatin1Char(' ');
+    clause += alias;
+    clause += QLatin1String(" ON ");
+    clause += TCriteriaConverter<T>::propertyName(column, db.driver(), "t0");
+    clause += QLatin1Char('=');
+    clause += TCriteriaConverter<C>::propertyName(join.joinColumn(), db.driver(), alias);
+    joinClauses << clause;
+
+    if (!join.criteria().isEmpty()) {
+        TCriteriaConverter<C> conv(join.criteria(), db, alias);
+        joinWhereClauses << conv.toString();
+    }
+}
+
+
 /*!
   Reset the internal state of the mapper object.
 */
@@ -515,6 +610,9 @@ inline void TSqlORMapper<T>::clear()
     sortOrder = Tf::AscendingOrder;
     queryLimit = 0;
     queryOffset = 0;
+    joinCount = 0;
+    joinClauses.clear();
+    joinWhereClauses.clear();
 
     // Don't call the setTable() here,
     // or it causes a segmentation fault.
@@ -528,7 +626,7 @@ inline QString TSqlORMapper<T>::orderBy() const
 {
     QString str;
     if (sortColumn >= 0) {
-        QString field = TCriteriaConverter<T>::propertyName(sortColumn);
+        QString field = TCriteriaConverter<T>::propertyName(sortColumn, database().driver(), "t0");
         if (!field.isEmpty()) {
             str.append(QLatin1String(" ORDER BY ")).append(field);
             str.append((sortOrder == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));

@@ -161,7 +161,7 @@ inline T TSqlQueryORMapper<T>::value() const
 template <class T>
 inline QString TSqlQueryORMapper<T>::fieldName(int index) const
 {
-    return TCriteriaConverter<T>::propertyName(index);
+    return TCriteriaConverter<T>::propertyName(index, driver());
 }
 
 #endif // TSQLQUERYORMAPPER_H

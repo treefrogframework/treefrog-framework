@@ -94,18 +94,17 @@ void TSqlQuery::clearCachedQueries()
 */
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, int databaseId)
 {
-    return escapeIdentifier(identifier, type, Tf::currentSqlDatabase(databaseId));
+    return escapeIdentifier(identifier, type, Tf::currentSqlDatabase(databaseId).driver());
 }
 
 /*!
   Returns the \a identifier escaped according to the rules of the
-  database \a database. The \a identifier can either be a table name
+  driver \a driver. The \a identifier can either be a table name
   or field name, dependent on \a type.
 */
-QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, const QSqlDatabase &database)
+QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, const QSqlDriver *driver)
 {
     QString ret = identifier;
-    QSqlDriver *driver = database.driver();
     if (!driver->isIdentifierEscaped(identifier, type)) {
         ret = driver->escapeIdentifier(identifier, type);
     }

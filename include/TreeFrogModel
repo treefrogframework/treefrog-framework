@@ -10,6 +10,7 @@
 #include "tsqlquery.h"
 #include "tsqlqueryormapper.h"
 #include "tsqlqueryormapperiterator.h"
+#include "tsqljoin.h"
 #include "tmongoodmapper.h"
 #include "twebapplication.h"
 
