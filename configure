@@ -100,13 +100,14 @@ fi
 
 # default values
 BASEDIR=`pwd`/`dirname $0`
-PREFIX=/usr
 
 if [ "$KERNEL" = "Darwin" ]; then
+  PREFIX=/usr/local
   FRAMEWORK=/Library/Frameworks
   LIBDIR=$FRAMEWORK
   INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
 else
+  PREFIX=/usr
   LIBDIR=$PREFIX/lib
   INCLUDEDIR=$PREFIX/include/treefrog
 fi
