@@ -246,7 +246,13 @@ static qint64 runningApplicationPid(const QString &appRoot = QString())
 
 static QString runningApplicationsFilePath()
 {
-    return QDir::homePath() + QDir::separator() + ".treefrog" + QDir::separator() + "runnings";
+    QString home = QDir::homePath();
+#ifdef Q_OS_LINUX
+    if (home == QDir::rootPath()) {
+        home = QLatin1String("/root");
+    }
+#endif
+    return home + QDir::separator() + ".treefrog" + QDir::separator() + "runnings";
 }
 
 

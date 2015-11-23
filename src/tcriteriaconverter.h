@@ -79,31 +79,33 @@ template <class T>
 class TCriteriaConverter
 {
 public:
-    TCriteriaConverter(const TCriteria &cri, const QSqlDatabase &db) : criteria(cri), database(db) { }
+    TCriteriaConverter(const TCriteria &cri, const QSqlDatabase &db, const QString &aliasTableName = QString()) : criteria(cri), database(db), tableAlias(aliasTableName) { }
     QString toString() const;
-    static QString propertyName(int property);
+    static QString propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString());
+
 
 protected:
-    static QString criteriaToString(const QVariant &cri, const QSqlDatabase &database);
+    QString criteriaToString(const QVariant &cri) const;
     static QString criteriaToString(const QString &propertyName, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database);
     static QString criteriaToString(const QString &propertyName, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database);
-    static QString join(const QString &s1, TCriteria::LogicalOperator op, const QString &s2);
+    static QString concat(const QString &s1, TCriteria::LogicalOperator op, const QString &s2);
 
 private:
     TCriteria criteria;
     QSqlDatabase database;
+    QString tableAlias;
 };
 
 
 template <class T>
 inline QString TCriteriaConverter<T>::toString() const
 {
-    return criteriaToString(QVariant::fromValue(criteria), database);
+    return criteriaToString(QVariant::fromValue(criteria));
 }
 
 
 template <class T>
-inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, const QSqlDatabase &database)
+inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) const
 {
     QString sqlString;
     if (var.isNull()) {
@@ -115,8 +117,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
         if (cri.isEmpty()) {
             return QString();
         }
-        sqlString = join(criteriaToString(cri.first(), database), cri.logicalOperator(),
-                         criteriaToString(cri.second(), database));
+        sqlString = concat(criteriaToString(cri.first()), cri.logicalOperator(),
+                           criteriaToString(cri.second()));
 
     } else if (var.canConvert<TCriteriaData>()) {
         TCriteriaData cri = var.value<TCriteriaData>();
@@ -124,7 +126,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
             return QString();
         }
 
-        QString name = propertyName(cri.property);
+        QString name = propertyName(cri.property, database.driver(), tableAlias);
         if (name.isEmpty()) {
             return QString();
         }
@@ -207,10 +209,19 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var, cons
 
 
 template <class T>
-inline QString TCriteriaConverter<T>::propertyName(int property)
+inline QString TCriteriaConverter<T>::propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName)
 {
     const QMetaObject *metaObject = T().metaObject();
-    return (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).name() : QString();
+    QString name = (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).name() : QString();
+    if (name.isEmpty()) {
+        return name;
+    }
+
+    name = TSqlQuery::escapeIdentifier(name, QSqlDriver::FieldName, driver);
+    if (!aliasTableName.isEmpty()) {
+        name = aliasTableName + QLatin1Char('.') + name;
+    }
+    return name;
 }
 
 
@@ -277,7 +288,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
 
 
 template <class T>
-inline QString TCriteriaConverter<T>::join(const QString &s1, TCriteria::LogicalOperator op, const QString &s2)
+inline QString TCriteriaConverter<T>::concat(const QString &s1, TCriteria::LogicalOperator op, const QString &s2)
 {
     if (op == TCriteria::None || (s2.isEmpty() && op != TCriteria::Not)) {
         return s1;

@@ -250,6 +250,12 @@ namespace TSql
         Any,           // ANY (val1, ...)
         All,           // ALL (val1, ...)
     };
+
+    enum JoinMode {
+        InnerJoin = 0,
+        LeftJoin,
+        RightJoin,
+    };
 }
 
 /*!

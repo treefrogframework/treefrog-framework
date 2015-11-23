@@ -94,6 +94,8 @@ SOURCES += tactionthread.cpp
 #SOURCES += tactionforkprocess.cpp
 HEADERS += thttpsocket.h
 SOURCES += thttpsocket.cpp
+#HEADERS += thttp2socket.h
+#SOURCES += thttp2socket.cpp
 #HEADERS += thttpbuffer.h
 #SOURCES += thttpbuffer.cpp
 HEADERS += tsendbuffer.h
@@ -281,6 +283,7 @@ HEADERS += \
            tsessionstoreplugin.h \
            tjavascriptobject.h \
            tsqlormapper.h \
+           tsqljoin.h \
            thttprequestheader.h \
            thttpresponseheader.h \
            tcommandlineinterface.h
