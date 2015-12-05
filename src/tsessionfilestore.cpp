@@ -64,7 +64,7 @@ bool TSessionFileStore::remove(const QByteArray &id)
 
 int TSessionFileStore::gc(const QDateTime &expire)
 {
-    bool res = 0;
+    int res = 0;
     QDir dir(sessionDirPath());
     if (dir.exists()) {
         QList<QFileInfo> lst = dir.entryInfoList(QDir::Files, QDir::Time | QDir::Reversed);
