@@ -1,5 +1,14 @@
 # ChangeLog
 
+## 1.10.0
+ - Implemented a class which represents SQL join clause for the O/R mapper.
+ - Implemented LD_PRELOAD mechanism to the treefrog command, Linux only.
+ - Added RDB client dlls for 64bit Windows.
+ - Fix a bug of TMongoODMapper class.
+ - Fux a bug of SQL for SELECT-COUNT query.
+ - Fix a bug of getting running application's file path for root user.
+ - Support for OS X El capitan.
+
 ## 1.9.2
  - Implemented Redis driver.
  - Implemented auto reloading system for application.
