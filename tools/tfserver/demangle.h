@@ -60,7 +60,7 @@
 // | _ZN3FooC1Ev   | Foo::Foo()    | Foo::Foo()
 // | _Z1fSs        | f()           | f(std::basic_string<char,
 // |               |               |   std::char_traits<char>,
-// |               |               |   std::allocator<char> >)
+// |               |               |   std::allocator<char>>)
 //
 // See the unit test for more examples.
 //

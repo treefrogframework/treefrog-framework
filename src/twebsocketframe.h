@@ -47,7 +47,7 @@ public:
 
 private:
     enum ProcessingState {
-        Empty,
+        Empty = 0,
         HeaderParsed,
         MoreData,
         Completed,

@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2012-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -31,8 +31,7 @@
     "%3"                                                                \
     "  </tr>\n"                                                         \
     "<% tfetch(QList<%4>, %5List); %>\n"                                \
-    "<% for (QListIterator<%4> it(%5List); it.hasNext(); ) {\n"         \
-    "     const %4 &i = it.next(); %>\n"                                \
+    "<% for (const auto &i : %5List) { %>\n"                            \
     "  <tr>\n"                                                          \
     "%6"                                                                \
     "    <td>\n"                                                        \

@@ -112,7 +112,7 @@ public:
     QString optionTags(const QVariantList &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString optionTags(const QList<QPair<QString, QVariant> > &valueList, const QVariant &selectedValue = QVariant(),
+    QString optionTags(const QList<QPair<QString, QVariant>> &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputAuthenticityTag() const;
@@ -137,7 +137,10 @@ public:
     QString imageTag(const QString &src, const THtmlAttribute &attributes) const;
 
     QString imageLinkTo(const QString &src, const QUrl &url, const QSize &size = QSize(),
+                        const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;  // obsolete
+    QString imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
                         const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
+    QString imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
@@ -309,6 +312,27 @@ inline QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url,
                                         const THtmlAttribute &attributes) const
 {
     return linkTo(imageTag(src, size, alt, attributes), url);
+}
+
+/*!
+  \fn QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp, const QString &alt, const THtmlAttribute &attributes) const
+  Creates a \<a\> link tag of a given \a url with a \<img\> tag of
+  src=\a "src".
+*/
+inline QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
+                                        const QString &alt, const THtmlAttribute &attributes) const
+{
+    return linkTo(imageTag(src, withTimestamp, QSize(), alt, attributes), url);
+}
+
+/*!
+  \fn QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes) const
+  Creates a \<a\> link tag of a given \a url with a \<img\> tag of
+  src=\a "src".
+*/
+inline QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes) const
+{
+    return imageLinkTo(url, src, false, QString(), attributes);
 }
 
 #endif // TVIEWHELPER_H

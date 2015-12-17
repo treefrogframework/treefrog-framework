@@ -58,7 +58,14 @@ if which uname >/dev/null 2>&1; then
   MACHINE=`uname -m`
   RELEASE=`uname -r`
 
-  if [ "$KERNEL" = "Darwin" ]; then
+  if [ "$QMAKESPEC" != "" ]; then
+    OPT="-spec $QMAKESPEC"
+
+    if [ "$MACHINE" = "x86_64" ]; then
+      OPT="$OPT CONFIG+=x86_64"
+    fi
+
+  elif [ "$KERNEL" = "Darwin" ]; then
     QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
     QT_MAJOR=${QT_VERSION:0:1}
     if [ "$QT_MAJOR" -ge 5 ]; then
@@ -93,13 +100,14 @@ fi
 
 # default values
 BASEDIR=`pwd`/`dirname $0`
-PREFIX=/usr
 
 if [ "$KERNEL" = "Darwin" ]; then
+  PREFIX=/usr/local
   FRAMEWORK=/Library/Frameworks
   LIBDIR=$FRAMEWORK
   INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
 else
+  PREFIX=/usr
   LIBDIR=$PREFIX/lib
   INCLUDEDIR=$PREFIX/include/treefrog
 fi
@@ -156,7 +164,11 @@ done
 PID=$$
 cd "$BASEDIR"
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
-sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+if [ "$KERNEL" = "Darwin" ]; then
+  sed -e "s/macx:INCLUDEPATH +=.*$/macx:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+else
+  sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+fi
 command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
 
 if [ -n "$FRAMEWORK" ]; then

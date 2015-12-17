@@ -1,8 +1,6 @@
 #ifndef TFNAMESPACE_H
 #define TFNAMESPACE_H
 
-#include <Qt>
-
 class TWebApplication;
 
 /*!
@@ -191,6 +189,10 @@ namespace Tf
         ActionMailerSmtpPopServerPort,
         ActionMailerSmtpPopServerEnableApop,
         ActionMailerSendmailCommandLocation,
+        //
+        HttpKeepAliveTimeout,
+        RedisSettingsFile,
+        LDPreload,
     };
 
     // Reason codes why a web socket has been closed
@@ -230,9 +232,11 @@ namespace TSql
         LessEqual,    // <= val
         GreaterEqual, // >= val
         IsNull,       // IS NULL
+        IsEmpty,      // (column IS NULL OR column = '')
         IsNotNull,    // IS NOT NULL
-        Like,         // LIKE val
-        NotLike,      // NOT LIKE val
+        IsNotEmpty,   // column IS NOT NULL AND column <> ''
+        Like,          // LIKE val
+        NotLike,       // NOT LIKE val
         LikeEscape,    // LIKE val1 ESCAPE val2
         NotLikeEscape, // NOT LIKE val1 ESCAPE val2
         ILike,         // ILIKE val
@@ -245,6 +249,12 @@ namespace TSql
         NotBetween,    // NOT BETWEEN val1 AND val2
         Any,           // ANY (val1, ...)
         All,           // ALL (val1, ...)
+    };
+
+    enum JoinMode {
+        InnerJoin = 0,
+        LeftJoin,
+        RightJoin,
     };
 }
 

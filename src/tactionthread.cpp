@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -12,16 +12,16 @@
 #include <THttpRequest>
 #include <TSession>
 #include <TApplicationServerBase>
+#include <TAppSettings>
 #include <atomic>
-#ifndef Q_CC_MSVC
-# include <unistd.h>
-#endif
 #include "thttpsocket.h"
 #include "twebsocket.h"
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
+#include "tfcore.h"
 
 static std::atomic<int> threadCounter(0);
+static int keepAliveTimeout = -1;
 
 
 int TActionThread::threadCount()
@@ -57,16 +57,22 @@ TActionThread::TActionThread(int socket)
 {
     ++threadCounter;
     TActionContext::socketDesc = socket;
+
+    if (keepAliveTimeout < 0) {
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        keepAliveTimeout = qMax(timeout, 0);
+    }
 }
 
 
 TActionThread::~TActionThread()
 {
-    if (httpSocket)
-        delete httpSocket;
+    if (httpSocket) {
+        httpSocket->deleteLater();
+    }
 
     if (TActionContext::socketDesc > 0)
-        TF_CLOSE(TActionContext::socketDesc);
+        tf_close(TActionContext::socketDesc);
 
     --threadCounter;
 }
@@ -88,8 +94,9 @@ void TActionThread::run()
         reqs = readRequest(httpSocket);
         tSystemDebug("HTTP request count: %d", reqs.count());
 
-        if (reqs.isEmpty())
+        if (reqs.isEmpty()) {
             break;
+        }
 
         for (auto &req : reqs) {
             // WebSocket?
@@ -107,16 +114,35 @@ void TActionThread::run()
                 goto socket_cleanup;
             }
 
-            TActionContext::execute(req);
+            TActionContext::execute(req, httpSocket->socketUuid());
 
             httpSocket->flush();  // Flush socket
             TActionContext::release();
         }
 
-        if (!httpSocket->waitForReadyRead(5000))
+        if (keepAliveTimeout == 0) {
             break;
+        }
+
+        // Next request
+        while (!httpSocket->waitForReadyRead(100)) {
+            if (httpSocket->state() != QAbstractSocket::ConnectedState) {
+                if (httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
+                    tSystemWarn("Error occurred : error:%d  socket:%s", httpSocket->error(), httpSocket->socketUuid().data());
+                }
+                goto receive_end;
+            }
+
+            if (httpSocket->idleTime() >= keepAliveTimeout) {
+                tSystemDebug("KeepAlive timeout : socket:%s", httpSocket->socketUuid().data());
+                goto receive_end;
+            }
+
+            while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {}
+        }
     }
 
+receive_end:
     closeHttpSocket();  // disconnect
 
 socket_cleanup:
@@ -124,7 +150,7 @@ socket_cleanup:
     while (eventLoop.processEvents()) {}
 
 socket_error:
-    delete httpSocket;
+    httpSocket->deleteLater();
     httpSocket = nullptr;
 }
 
@@ -140,8 +166,8 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
     QList<THttpRequest> reqs;
     while (!socket->canReadRequest()) {
         // Check idle timeout
-        if (Q_UNLIKELY(socket->idleTime() >= 10)) {
-            tSystemWarn("Reading a socket timed out after 10 seconds. Descriptor:%d", (int)socket->socketDescriptor());
+        if (Q_UNLIKELY(socket->idleTime() >= keepAliveTimeout)) {
+            tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout, (int)socket->socketDescriptor());
             break;
         }
 
@@ -150,7 +176,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
             break;
         }
 
-        socket->waitForReadyRead(10);
+        socket->waitForReadyRead(500);  // Repeats per 500 msecs
     }
 
     if (Q_UNLIKELY(!socket->canReadRequest())) {
@@ -165,7 +191,9 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 
 qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
-    header.setRawHeader("Connection", "Keep-Alive");
+    if (keepAliveTimeout > 0) {
+        header.setRawHeader("Connection", "Keep-Alive");
+    }
     return httpSocket->write(static_cast<THttpHeader*>(&header), body);
 }
 
@@ -182,10 +210,6 @@ bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
         return false;
     }
 
-    QByteArray resp = TAbstractWebSocket::handshakeResponse(header).toByteArray();
-    httpSocket->writeRawData(resp.data(), resp.length());
-    httpSocket->waitForBytesWritten();
-
     // Switch to WebSocket
     int sd = TApplicationServerBase::duplicateSocket(httpSocket->socketDescriptor());
     TWebSocket *ws = new TWebSocket(sd, httpSocket->peerAddress(), header);
@@ -199,7 +223,7 @@ bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
         // Finds a session
         session = TSessionManager::instance().findSession(sessionId);
     }
-    ws->startWorkerForOpening(session);
 
+    ws->startWorkerForOpening(session);
     return true;
 }

@@ -11,7 +11,7 @@ template<class T>
 class TAtomicQueue
 {
 public:
-    TAtomicQueue() : queue(), mutex(), enqued() { }
+    TAtomicQueue() : queue(0), mutex(), enqued() { }
     void enqueue(const T &t);
     QList<T> dequeue();
     bool wait(int timeout);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -32,7 +32,7 @@ bool TSessionCookieStore::store(TSession &session)
 }
 
 
-TSession TSessionCookieStore::find(const QByteArray &id, const QDateTime &)
+TSession TSessionCookieStore::find(const QByteArray &id)
 {
     TSession session;
     if (id.isEmpty())
@@ -62,13 +62,13 @@ TSession TSessionCookieStore::find(const QByteArray &id, const QDateTime &)
 }
 
 
-bool TSessionCookieStore::remove(const QDateTime &)
+bool TSessionCookieStore::remove(const QByteArray &)
 {
     return true;
 }
 
 
-bool TSessionCookieStore::remove(const QByteArray &)
+int TSessionCookieStore::gc(const QDateTime &)
 {
-    return true;
+    return 0;
 }

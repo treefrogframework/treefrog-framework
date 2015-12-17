@@ -69,6 +69,7 @@ defaults.files += defaults/logger.ini
 defaults.files += defaults/mail.erb
 defaults.files += defaults/models.pro
 defaults.files += defaults/mongodb.ini
+defaults.files += defaults/redis.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
 defaults.files += defaults/views.pro
@@ -80,11 +81,23 @@ defaults.path = $${datadir}/defaults
 INSTALLS += target defaults
 
 windows {
-  clientlib.files += ../../sqldrivers/clientlib/COPYING_3RD_PARTY_DLL
-  clientlib.files += ../../sqldrivers/clientlib/libintl.dll
-  clientlib.files += ../../sqldrivers/clientlib/libmariadb.dll
-  clientlib.files += ../../sqldrivers/clientlib/libmysql.dll
-  clientlib.files += ../../sqldrivers/clientlib/libpq.dll
+  contains(QMAKE_TARGET.arch, x86_64) {
+    clientlib.files += ../../sqldrivers/clientlib64/COPYING_3RD_PARTY_DLL
+    clientlib.files += ../../sqldrivers/clientlib64/libeay32.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libintl-8.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libmariadb.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libmysql.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libpq.dll
+    clientlib.files += ../../sqldrivers/clientlib64/ssleay32.dll
+  } else {
+    clientlib.files += ../../sqldrivers/clientlib32/COPYING_3RD_PARTY_DLL
+    clientlib.files += ../../sqldrivers/clientlib32/intl.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libeay32.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libmariadb.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libmysql.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libpq.dll
+    clientlib.files += ../../sqldrivers/clientlib32/ssleay32.dll
+  }
   clientlib.path = $${datadir}/bin
   INSTALLS += clientlib
 }

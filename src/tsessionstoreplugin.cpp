@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -12,7 +12,7 @@
   \brief The TSessionStorePlugin class provides an abstract base for
   custom TSessionStore plugins. Refer to 'How to Create Qt Plugins'
   in the Qt documentation.
-  \sa http://qt-project.org/doc/qt-4.8/plugins-howto.html
+  \sa http://doc.qt.io/qt-5/plugins-howto.html
 */
 
 /*!
@@ -38,7 +38,7 @@
   \class TSessionStoreInterface
   \brief The TSessionStoreInterface class provides an interface to implement
   TSessionStore plugins.
-  \sa http://qt-project.org/doc/qt-4.8/plugins-howto.html
+  \sa http://doc.qt.io/qt-5/plugins-howto.html
 */
 
 /*!

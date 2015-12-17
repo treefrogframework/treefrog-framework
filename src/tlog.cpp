@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -7,9 +7,7 @@
 
 #include <QThread>
 #include "TLog"
-#ifdef Q_OS_UNIX
-# include "tfcore_unix.h"
-#endif
+#include "tfcore.h"
 
 /*!
   \class TLog

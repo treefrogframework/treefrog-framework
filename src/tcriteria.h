@@ -44,6 +44,7 @@ public:
 
     const TCriteria operator&&(const TCriteria &criteria) const;
     const TCriteria operator||(const TCriteria &criteria) const;
+    const TCriteria operator!() const;
     TCriteria &operator=(const TCriteria &other);
 
 protected:
@@ -51,6 +52,7 @@ protected:
         None = 0,
         And,
         Or,
+        Not,
     };
 
     const QVariant &first() const { return cri1; }

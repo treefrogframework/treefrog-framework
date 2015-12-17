@@ -13,7 +13,8 @@
 #include <QStringListIterator>
 #include <QMutex>
 #include <QMutexLocker>
-#include <TMongoDriver>
+#include "tmongodriver.h"
+#include "tredisdriver.h"
 
 class TKvsDatabaseData
 {
@@ -49,6 +50,8 @@ static TKvsDriver *createDriver(const QString &driverName)
 
     if (driverName == QLatin1String("MONGODB")) {
         ret = new TMongoDriver();
+    } else if (driverName == QLatin1String("REDIS")) {
+        ret = new TRedisDriver();
     }
 
     if (!ret) {
@@ -71,9 +74,9 @@ TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &con
     QMutexLocker lock(&mutex);
 
     // Removes it if exists
-    if (databaseMap.contains(connectionName))
+    if (databaseMap.contains(connectionName)) {
         removeDatabase(connectionName);
-
+    }
     TKvsDatabaseData data;
     data.connectionName = connectionName;
     data.driver = createDriver(driver);  // creates a driver
@@ -88,9 +91,9 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
     TKvsDatabase db = database(connectionName);
 
     db.close();
-    if (db.drv)
+    if (db.drv) {
         delete db.drv;
-
+    }
     databaseMap.remove(connectionName);
 }
 

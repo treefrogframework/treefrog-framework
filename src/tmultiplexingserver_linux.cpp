@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -6,6 +6,7 @@
  */
 
 #include <netinet/tcp.h>
+#include <QElapsedTimer>
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TApplicationServerBase>
@@ -15,6 +16,7 @@
 #include <TActionWorker>
 #include "tepoll.h"
 #include "tepollsocket.h"
+#include "tepollhttpsocket.h"
 
 const int SEND_BUF_SIZE = 16 * 1024;
 const int RECV_BUF_SIZE = 128 * 1024;
@@ -34,8 +36,6 @@ void TMultiplexingServer::instantiate(int listeningSocket)
 {
     if (!multiplexingServer) {
         multiplexingServer = new TMultiplexingServer(listeningSocket);
-        //TWorkerStarter *starter = new TWorkerStarter(multiplexingServer);
-        //connect(multiplexingServer, SIGNAL(incomingRequest(TEpollSocket *)), starter, SLOT(startWorker(TEpollSocket *)), Qt::BlockingQueuedConnection);  // the emitter and receiver are in different threads.
         qAddPostRoutine(::cleanup);
     }
 }
@@ -84,7 +84,7 @@ static void setNoDeleyOption(int fd)
 
 TMultiplexingServer::TMultiplexingServer(int listeningSocket, QObject *parent)
     : QThread(parent), TApplicationServerBase(), maxWorkers(0), stopped(false),
-      listenSocket(listeningSocket)
+      listenSocket(listeningSocket), reloadTimer()
 {
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
 }
@@ -118,12 +118,17 @@ void TMultiplexingServer::run()
     tSystemDebug("MaxWorkers: %d", maxWorkers);
 
     int appsvrnum = qMax(Tf::app()->maxNumberOfAppServers(), 1);
-
     setNoDeleyOption(listenSocket);
 
     TEpollSocket *lsn = TEpollSocket::create(listenSocket, QHostAddress());
     TEpoll::instance()->addPoll(lsn, EPOLLIN);
     int numEvents = 0;
+
+    int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+    QElapsedTimer idleTimer;
+    if (keepAlivetimeout > 0) {
+        idleTimer.start();
+    }
 
     for (;;) {
         if (!numEvents && TActionWorker::workerCount() > 0) {
@@ -175,6 +180,12 @@ void TMultiplexingServer::run()
                         continue;
                     }
 
+                    if (sock->countWorker() > 0) {
+                        // not receive
+                        sock->pollIn = true;
+                        continue;
+                    }
+
                     // Receive data
                     int len = TEpoll::instance()->recv(sock);
                     if (Q_UNLIKELY(len < 0)) {
@@ -185,14 +196,23 @@ void TMultiplexingServer::run()
                     }
 
                     if (sock->canReadRequest()) {
-#if 0  //TODO: delete here for HTTP 2.0 support
-                        // Stop receiving, otherwise the responses is sometimes
-                        // placed in the wrong order in case of HTTP-pipeline.
-                        TEpoll::instance()->modifyPoll(sock, (EPOLLOUT | EPOLLET));
-#endif
                         sock->startWorker();
-                        //emit incomingRequest(sock);
                     }
+                }
+            }
+        }
+
+        // Check keep-alive timeout for HTTP sockets
+        if (Q_UNLIKELY(keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000)) {
+            idleTimer.start();
+
+            auto sockets = TEpollHttpSocket::allSockets();
+            for (auto *http : sockets) {
+                if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
+                    tSystemDebug("KeepAlive timeout: %s", http->socketUuid().data());
+                    TEpoll::instance()->deletePoll(http);
+                    http->close();
+                    http->deleteLater();
                 }
             }
         }
@@ -219,20 +239,30 @@ void TMultiplexingServer::stop()
 }
 
 
-/*
- * TWorkerStarter class
- */
-
-/*
-TWorkerStarter::~TWorkerStarter()
-{ }
-
-
-void TWorkerStarter::startWorker(TEpollSocket *socket)
+void TMultiplexingServer::setAutoReloadingEnabled(bool enable)
 {
-    //
-    // Create worker threads in main thread for signal/slot mechanism!
-    //
-    socket->startWorker();
+    if (enable) {
+        reloadTimer.start(500, this);
+    } else {
+        reloadTimer.stop();
+    }
 }
-*/
+
+
+bool TMultiplexingServer::isAutoReloadingEnabled()
+{
+    return reloadTimer.isActive();
+}
+
+
+void TMultiplexingServer::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() != reloadTimer.timerId()) {
+        QThread::timerEvent(event);
+    } else {
+        if (newerLibraryExists()) {
+            tSystemInfo("Detect new library of application. Reloading the libraries.");
+            Tf::app()->exit(127);
+        }
+    }
+}

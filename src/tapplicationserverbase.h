@@ -22,7 +22,12 @@ public:
     virtual ~TApplicationServerBase();
     virtual bool start() { return false; }
     virtual void stop() { }
+    virtual void setAutoReloadingEnabled(bool) { }
+    virtual bool isAutoReloadingEnabled() { return false; }
+
     static bool loadLibraries();
+    static QDateTime latestLibraryTimestamp();
+    static bool newerLibraryExists();
     static void nativeSocketInit();
     static void nativeSocketCleanup();
     static int nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag = CloseOnExec);

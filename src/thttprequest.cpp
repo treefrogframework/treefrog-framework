@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -342,7 +342,12 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
 #if QT_VERSION >= 0x050000
-            d->jsonData = QJsonDocument::fromJson(body);
+            QJsonParseError error;
+            d->jsonData = QJsonDocument::fromJson(body, &error);
+            if (error.error != QJsonParseError::NoError) {
+                tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qPrintable(error.errorString()),
+                            error.offset);
+            }
 #else
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
 #endif

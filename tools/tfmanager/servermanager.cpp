@@ -1,18 +1,22 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QtCore>
 #include <QtNetwork>
 #include <TGlobal>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <TApplicationServerBase>
+#include <TAppSettings>
 #include <TLog>
 #include "qplatformdefs.h"
 #include "servermanager.h"
+#include "systembusdaemon.h"
+#include "tfcore.h"
 
 namespace TreeFrog {
 
@@ -27,7 +31,8 @@ static uint startCounter = 0;  // start-counter of treefrog servers
 
 
 ServerManager::ServerManager(int max, int min, int spare, QObject *parent)
-    : QObject(parent), listeningSocket(0), maxServers(max), minServers(min), spareServers(spare), running(false)
+    : QObject(parent), listeningSocket(0), maxServers(max), minServers(min),
+      spareServers(spare), managerState(NotRunning)
 {
     spareServers = qMax(spareServers, 0);
     minServers = qMax(minServers, 1);
@@ -50,6 +55,11 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
     if (isRunning())
         return true;
 
+    if (managerState == Stopping) {
+        tSystemWarn("Manager stopping  [%s:%d]", __FILE__, __LINE__);
+        return false;
+    }
+
 #ifdef Q_OS_UNIX
     int sd = TApplicationServerBase::nativeListen(address, port, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
@@ -62,9 +72,9 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
     Q_UNUSED(address);
 #endif
 
-    running = true;
+    managerState = Starting;
+    tSystemDebug("TreeFrog application servers starting up.  port:%d", port);
     ajustServers();
-    tSystemInfo("TreeFrog application servers start up.  port:%d", port);
     return true;
 }
 
@@ -74,6 +84,11 @@ bool ServerManager::start(const QString &fileDomain)
     if (isRunning())
         return true;
 
+    if (managerState == Stopping) {
+        tSystemWarn("Manager stopping  [%s:%d]", __FILE__, __LINE__);
+        return false;
+    }
+
     int sd = TApplicationServerBase::nativeListen(fileDomain, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("listening socket create failed  [%s:%d]", __FILE__, __LINE__);
@@ -82,9 +97,9 @@ bool ServerManager::start(const QString &fileDomain)
     }
 
     listeningSocket = sd;
-    running = true;
+    managerState = Starting;
+    tSystemDebug("TreeFrog application servers starting up.  Domain file name:%s", qPrintable(fileDomain));
     ajustServers();
-    tSystemInfo("TreeFrog application servers start up.  Domain file name:%s", qPrintable(fileDomain));
     return true;
 }
 
@@ -94,10 +109,10 @@ void ServerManager::stop()
     if (!isRunning())
         return;
 
-    running = false;
+    managerState = Stopping;
 
     if (listeningSocket > 0) {
-        TF_CLOSE(listeningSocket);
+        tf_close(listeningSocket);
     }
     listeningSocket = 0;
 
@@ -122,12 +137,13 @@ void ServerManager::stop()
     }
 
     startCounter = 0;
+    managerState = NotRunning;
 }
 
 
 bool ServerManager::isRunning() const
 {
-    return running;
+    return managerState == Running || managerState == Starting;
 }
 
 
@@ -137,39 +153,35 @@ int ServerManager::serverCount() const
 }
 
 
-int ServerManager::spareServerCount() const
-{
-    int count = 0;
-    for (QMapIterator<QProcess *, int> i(serversStatus); i.hasNext(); ) {
-        int state = i.next().value();
-        if (state == Listening) {
-            ++count;
-        }
-    }
-    return count;
-}
-
-
-void ServerManager::ajustServers() const
+void ServerManager::ajustServers()
 {
     if (isRunning()) {
-        tSystemDebug("serverCount: %d  spare: %d", serverCount(), spareServerCount());
-        if (serverCount() < maxServers && (serverCount() < minServers || spareServerCount() < spareServers)) {
+        tSystemDebug("serverCount: %d", serverCount());
+        if (serverCount() < maxServers && serverCount() < minServers) {
             startServer();
+        } else {
+            if (managerState != Running) {
+                tSystemInfo("TreeFrog application servers started up.");
+                managerState = Running;
+            }
         }
     }
 }
 
 
-void ServerManager::startServer() const
+void ServerManager::startServer(int id) const
 {
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
 
+    if (id < 0) {
+        id = startCounter;
+    }
+
     TWebApplication::MultiProcessingModule mpm = Tf::app()->multiProcessingModule();
     if (mpm == TWebApplication::Hybrid || mpm == TWebApplication::Thread) {
-        if (startCounter < (uint)maxServers) {
-            args.prepend(QString::number(startCounter));
+        if (id < maxServers) {
+            args.prepend(QString::number(id));
             args.prepend("-i");  // give ID for app server
         }
     }
@@ -180,13 +192,12 @@ void ServerManager::startServer() const
     }
 
     QProcess *tfserver = new QProcess;
-    serversStatus.insert(tfserver, NotRunning);
+    serversStatus.insert(tfserver, id);
 
     connect(tfserver, SIGNAL(started()), this, SLOT(updateServerStatus()));
     connect(tfserver, SIGNAL(error(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
     connect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(serverFinish(int, QProcess::ExitStatus)));
-    connect(tfserver, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
-    connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
+    connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));    // For error notification
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
     // Sets LD_LIBRARY_PATH environment variable
@@ -199,12 +210,19 @@ void ServerManager::startServer() const
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_LIBRARY_PATH", ldpath);
-    tfserver->setProcessEnvironment(env);
     tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qPrintable(ldpath));
+
+    QString preload = Tf::appSettings()->value(Tf::LDPreload).toString();
+    if (!preload.isEmpty()) {
+        env.insert("LD_PRELOAD", preload);
+        tSystemDebug("export %s=%s", "LD_PRELOAD", qPrintable(preload));
+    }
+    tfserver->setProcessEnvironment(env);
 #endif
 
     // Executes treefrog server
     tfserver->start(TFSERVER_CMD, args, QIODevice::ReadOnly);
+    tfserver->closeReadChannel(QProcess::StandardOutput);
     tfserver->closeWriteChannel();
     tSystemDebug("tfserver started");
     ++startCounter;
@@ -215,10 +233,6 @@ void ServerManager::updateServerStatus()
 {
     QProcess *server = qobject_cast<QProcess *>(sender());
     if (server) {
-        if (serversStatus.contains(server)) {
-            serversStatus.insert(server, Listening);
-        }
-
         ajustServers();
     }
 }
@@ -230,24 +244,24 @@ void ServerManager::errorDetect(QProcess::ProcessError error)
     if (server) {
         tSystemError("tfserver error detected(%d). [%s]", error, TFSERVER_CMD);
         //server->close();  // long blocking..
-        server->deleteLater();
-        serversStatus.remove(server);
-
-        ajustServers();
+        server->kill();
     }
 }
 
 
-void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus) const
+void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus)
 {
     QProcess *server = qobject_cast<QProcess *>(sender());
     if (server) {
         //server->close();  // long blocking..
         server->deleteLater();
-        serversStatus.remove(server);
+        int id = serversStatus.take(server);
 
-        if (exitStatus == QProcess::CrashExit) {
-            ajustServers();
+        if (isRunning()) {
+            if (exitCode != 127) {  // 127 : for auto reloading
+                tSystemError("Detected a server crashed. exitCode:%d  exitStatus:%d", exitCode, (int)exitStatus);
+            }
+            startServer(id);
         } else {
             tSystemDebug("Detected normal exit of server. exitCode:%d", exitCode);
             if (serversStatus.count() == 0) {
@@ -258,31 +272,13 @@ void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus) 
 }
 
 
-void ServerManager::readStandardOutput()
-{
-    QProcess *server = qobject_cast<QProcess *>(sender());
-    if (server) {
-        QByteArray buf = server->readAllStandardOutput();
-        // writes a TLog object to stdout
-        printf("treefrog stdout: %s", buf.constData());
-    }
-}
-
-
 void ServerManager::readStandardError() const
 {
     QProcess *server = qobject_cast<QProcess *>(sender());
     if (server) {
         QByteArray buf = server->readAllStandardError();
-        if (buf == "_accepted") {
-            if (serversStatus.contains(server)) {
-                serversStatus.insert(server, Running);
-                ajustServers();
-            }
-        } else {
-            tSystemWarn("treefrog stderr: %s", buf.constData());
-            fprintf(stderr, "treefrog stderr: %s", buf.constData());
-        }
+        tSystemWarn("treefrog stderr: %s", buf.constData());
+        fprintf(stderr, "treefrog stderr: %s", buf.constData());
     }
 }
 

@@ -6,7 +6,7 @@
 ::  - Requires WiX Toolset
 ::
 
-set VERSION=1.8.0
+set VERSION=1.10.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set PATH="C:\Program Files (x86)\WiX Toolset v3.7\bin";%PATH%
 

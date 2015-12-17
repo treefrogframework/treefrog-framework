@@ -3,6 +3,9 @@
 #include <QHostInfo>
 #include <tglobal.h>
 #include <stdio.h>
+#include <random>
+
+static QMutex mutex;
 
 
 static QByteArray randomString()
@@ -34,7 +37,7 @@ static QByteArray randomString(int length)
     ret.reserve(length);
 
     for (int i = 0; i < length; ++i) {
-        ret += ch[Tf::random(num)];
+        ret += ch[Tf::random(0, num)];
     }
     return ret;
 }
@@ -61,10 +64,18 @@ class TestRand : public QObject
 private slots:
     void initTestCase();
     void cleanupTestCase();
-    void random_data();
-    void random();
-    void bench_data();
-    void bench();
+    void tf_randXor128_data();
+    void tf_randXor128();
+    void tf_randXor128_bench_data();
+    void tf_randXor128_bench();
+    void tf_rand_r();
+    void random_device();
+    void mt19937();
+    void mt19937_64();
+    void mt19937_with_uniform();
+    void minstd_rand();
+    void ranlux24_base();
+    void ranlux48_base();
     void randomstring1();
     void randomstring2();
 
@@ -101,7 +112,7 @@ void TestRand::cleanupTestCase()
 }
 
 
-void TestRand::random_data()
+void TestRand::tf_randXor128_data()
 {
     QTest::addColumn<int>("seed");
     QTest::newRow("1") << 1;
@@ -110,7 +121,7 @@ void TestRand::random_data()
 }
 
 
-void TestRand::random()
+void TestRand::tf_randXor128()
 {
     QFETCH(int, seed);
     Tf::srandXor128(seed);
@@ -119,17 +130,99 @@ void TestRand::random()
 }
 
 
-void TestRand::bench_data()
+void TestRand::tf_randXor128_bench_data()
 {
     Tf::srandXor128(1222);
 }
 
 
-void TestRand::bench()
+void TestRand::tf_randXor128_bench()
 {
     QBENCHMARK {
         Tf::randXor128();
      }
+}
+
+void TestRand::tf_rand_r()
+{
+    QBENCHMARK {
+        Tf::rand32_r();
+    }
+}
+
+void TestRand::random_device()
+{
+    std::random_device rd;
+    QBENCHMARK {
+        mutex.lock();
+        rd();
+        mutex.unlock();
+    }
+}
+
+// Mersenne Twister 32bit
+void TestRand::mt19937()
+{
+    std::mt19937 mt(1);
+    QBENCHMARK {
+        mutex.lock();
+        mt();
+        mutex.unlock();
+    }
+}
+
+// Mersenne Twister 64bit
+void TestRand::mt19937_64()
+{
+    std::mt19937_64 mt(1);
+    QBENCHMARK {
+        mutex.lock();
+        mt();
+        mutex.unlock();
+    }
+}
+
+// Mersenne Twister / uniform_int_distribution
+void TestRand::mt19937_with_uniform()
+{
+    std::mt19937 mt(1);
+    std::uniform_int_distribution<int> form(0, 65536);
+    QBENCHMARK {
+        mutex.lock();
+        form(mt);
+        mutex.unlock();
+    }
+}
+
+// Linear congruential generator
+void TestRand::minstd_rand()
+{
+    std::minstd_rand mr(1);
+    QBENCHMARK {
+        mr();
+    }
+}
+
+// Lagged Fibonacci 24bit
+void TestRand::ranlux24_base()
+{
+    std::ranlux24_base rb(1);
+    QBENCHMARK {
+        mutex.lock();
+        rb();
+        mutex.unlock();
+    }
+}
+
+// Lagged Fibonacci 48bit
+void TestRand::ranlux48_base()
+{
+    std::ranlux48_base rb(1);
+    QBENCHMARK {
+        mutex.lock();
+        rb();
+        mutex.unlock();
+    }
 }
 
 void TestRand::randomstring1()

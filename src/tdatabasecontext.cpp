@@ -9,6 +9,7 @@
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <TWebApplication>
+#include <TKvsDriver>
 #include "tdatabasecontext.h"
 #include "tsqldatabasepool.h"
 #include "tkvsdatabasepool.h"
@@ -72,6 +73,10 @@ TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
     TKvsDatabase &db = kvsDatabases[(int)type];
     if (!db.isValid()) {
         db = TKvsDatabasePool::instance()->database(type);
+    }
+
+    if (db.driver()) {
+        db.driver()->moveToThread(QThread::currentThread());
     }
     return db;
 }

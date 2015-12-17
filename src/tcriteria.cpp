@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -312,6 +312,16 @@ const TCriteria TCriteria::operator||(const TCriteria &criteria) const
     TCriteria res(*this);
     res.addOr(criteria);
     return res;
+}
+
+/*!
+  Returns a WHERE clause that negated this criteria.
+*/
+const TCriteria TCriteria::operator!() const
+{
+    TCriteria cri(*this);
+    cri.logiOp = Not;
+    return cri;
 }
 
 /*!

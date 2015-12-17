@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -38,8 +38,8 @@ void ErbParser::parse(const QString &erb)
             srcCode += QLatin1String("  responsebody += tr(\"");
             srcCode += ErbConverter::escapeNewline(text);
             srcCode += QLatin1String("\");\n");
-        } 
-            
+        }
+
         if (i >= 0) {
             pos = i;
             parsePercentTag();
@@ -154,7 +154,7 @@ void ErbParser::parsePercentTag()
             }
         }
 
-    } else {  // <% 
+    } else {  // <%
         --pos;
         QPair<QString, QString> p = parseEndPercentTag();
         str = p.first.trimmed();
@@ -184,10 +184,10 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
                 } else {
                     string.chop(1);
                 }
-                
+
                 if (c == QLatin1Char('-'))
                     skipWhiteSpacesAndNewLineCode();
-                
+
             } else if (trimMode == StrongTrim) { // StrongTrim:2
                 skipWhiteSpacesAndNewLineCode();
 
@@ -195,7 +195,7 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
                 if (startTag == QLatin1String("<%") || startTag.startsWith("<%#")) {
                     skipWhiteSpacesAndNewLineCode();
                 }
-                
+
             } else if (trimMode == TrimOff) { // TrimOff:0
                 // do not skip whitespaces
             } else {
@@ -203,7 +203,7 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
             }
             break;
         }
-        
+
         if (posMatchWith("%|%")) {
             defaultFlag = true;
             pos += 3;
@@ -254,7 +254,7 @@ QString ErbParser::parseQuote()
         return QString();
     }
     ++pos;
-    
+
     QString quote = m;
     while (pos < erbData.length()) {
         quote += erbData[pos++];

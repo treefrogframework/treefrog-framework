@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2012-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -282,6 +282,10 @@ TMongoDriver *TMongoQuery::driver()
 #ifdef TF_NO_DEBUG
     return (TMongoDriver *)database.driver();
 #else
+    if (!database.driver()) {
+        return nullptr;
+    }
+
     TMongoDriver *driver = dynamic_cast<TMongoDriver *>(database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
@@ -298,6 +302,10 @@ const TMongoDriver *TMongoQuery::driver() const
 #ifdef TF_NO_DEBUG
     return (const TMongoDriver *)database.driver();
 #else
+    if (!database.driver()) {
+        return nullptr;
+    }
+
     const TMongoDriver *driver = dynamic_cast<const TMongoDriver *>(database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);

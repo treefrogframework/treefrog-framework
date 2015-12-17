@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -368,7 +368,7 @@ QString TViewHelper::inputAuthenticityTag() const
     if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool()) {
         QString token = actionView()->authenticityToken();
         if (!token.isEmpty())
-            tag = inputTag("hidden", "authenticity_token", token);
+            tag = inputTag("hidden", "authenticity_token", token, a("id", "authenticity_token"));
     }
     return tag;
 }

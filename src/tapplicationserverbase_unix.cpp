@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -109,7 +109,7 @@ socket_error:
 void TApplicationServerBase::nativeClose(int socket)
 {
     if (socket > 0)
-        TF_CLOSE(socket);
+        tf_close(socket);
 }
 
 

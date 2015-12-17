@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -11,15 +11,22 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TSystemGlobal>
+#include <tprocessinfo.h>
+#include <tfcore.h>
 #include "servermanager.h"
-#include "processinfo.h"
+#include "systembusdaemon.h"
 
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
-# include <tfcore_unix.h>
 #endif
 #ifdef Q_OS_WIN
 # include <windows.h>
+#endif
+
+#ifdef Q_OS_WIN
+# define TF_FLOCK(fd,op)
+#else
+# define TF_FLOCK(fd,op)  tf_flock((fd),(op))
 #endif
 
 namespace TreeFrog {
@@ -40,6 +47,7 @@ enum CommandOption {
     DaemonMode,
     WindowsServiceMode,
     SendSignal,
+    AutoReload,
 };
 
 
@@ -58,6 +66,9 @@ public:
 # endif
 # if QT_VERSION >= 0x050200
         insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
+# endif
+# if QT_VERSION >= 0x050500
+        insert(QSysInfo::WV_WINDOWS10,  "Windows 10");
 # endif
     }
 };
@@ -84,6 +95,9 @@ public:
 # if QT_VERSION >= 0x050400
         insert(QSysInfo::MV_10_10, "Mac OS X 10.10 Yosemite");
 # endif
+# if QT_VERSION >= 0x050500
+        insert(QSysInfo::MV_10_11, "Mac OS X 10.11 El Capitan");
+# endif
     }
 };
 Q_GLOBAL_STATIC(MacxVersion, macxVersion)
@@ -102,6 +116,7 @@ public:
         insert("-d", DaemonMode);
         insert("-w", WindowsServiceMode);
         insert("-k", SendSignal);
+        insert("-r", AutoReload);
     }
 };
 Q_GLOBAL_STATIC(OptionHash, options)
@@ -111,17 +126,28 @@ static void usage()
 {
     char text[] =
         "Usage: %1 [-d] [-e environment] [application-directory]\n"     \
-        "Usage: %1 [-k stop|abort|restart] [application-directory]\n"   \
+        "Usage: %1 [-k stop|abort|restart|status] [application-directory]\n" \
+        "%2"                                                            \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
         "  -e environment  : specify an environment of the database settings\n" \
-        "  -k              : send signal to a manager process\n\n"      \
+        "  -k              : send signal to a manager process\n"        \
+        "%4"                                                            \
+        "%3\n"                                                          \
         "Type '%1 -l' to show your running applications.\n"             \
         "Type '%1 -h' to show this information.\n"                      \
         "Type '%1 -v' to show the program version.";
 
     QString cmd = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
-    puts(qPrintable(QString(text).arg(cmd)));
+    QString text2, text3, text4;
+#ifdef Q_OS_WIN
+    text2 = QString("Usage: %1 -w [-e environment] application-directory\n").arg(cmd);
+    text3 = "  -w              : run as Windows service mode\n";
+#else
+    text4 = "  -r              : reload app automatically for development\n";
+#endif
+
+    puts(qPrintable(QString(text).arg(cmd).arg(text2).arg(text3).arg(text4)));
 }
 
 
@@ -210,7 +236,7 @@ static qint64 runningApplicationPid(const QString &appRoot = QString())
 {
     qint64 pid = readPidFileOfApplication(appRoot);
     if (pid > 0) {
-        QString name = ProcessInfo(pid).processName().toLower();
+        QString name = TProcessInfo(pid).processName().toLower();
         if (name == "treefrog" || name == "treefrogd")
             return pid;
     }
@@ -220,7 +246,13 @@ static qint64 runningApplicationPid(const QString &appRoot = QString())
 
 static QString runningApplicationsFilePath()
 {
-    return QDir::homePath() + QDir::separator() + ".treefrog" + QDir::separator() + "runnings";
+    QString home = QDir::homePath();
+#ifdef Q_OS_LINUX
+    if (home == QDir::rootPath()) {
+        home = QLatin1String("/root");
+    }
+#endif
+    return home + QDir::separator() + ".treefrog" + QDir::separator() + "runnings";
 }
 
 
@@ -324,12 +356,22 @@ static void showRunningAppList()
 static int killTreeFrogProcess(const QString &cmd)
 {
     qint64 pid = runningApplicationPid();
+
+    if (cmd == "status") {  // status command
+        if (pid > 0) {
+            printf("TreeFrog server is running.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+        } else {
+            printf("TreeFrog server is stopped.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+        }
+        return (pid > 0) ? 0 : 1;
+    }
+
     if (pid < 0) {
         printf("TreeFrog server not running\n");
         return 1;
     }
 
-    ProcessInfo pi(pid);
+    TProcessInfo pi(pid);
 
     if (cmd == "stop") {  // stop command
         pi.terminate();
@@ -343,13 +385,11 @@ static int killTreeFrogProcess(const QString &cmd)
         QList<qint64> pids = pi.childProcessIds();
 
         pi.kill();  // kills the manager process
+        SystemBusDaemon::releaseResource(pid);
+        tf_unlink(pidFilePath().toLatin1().data());
         tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
-#ifdef Q_CC_MSVC
-        ::_unlink(pidFilePath().toLatin1().data());
-#else
-        ::unlink(pidFilePath().toLatin1().data());
-#endif
-        ProcessInfo::kill(pids);  // kills the server process
+
+        TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
         printf("Killed TreeFrog application server processes\n");
 
@@ -378,6 +418,7 @@ int managerMain(int argc, char *argv[])
     }
 
     bool daemonMode = false;
+    bool autoReloadMode = false;
     QString signalCmd;
 
     QStringList args = QCoreApplication::arguments();
@@ -411,6 +452,10 @@ int managerMain(int argc, char *argv[])
 
         case SendSignal:
             signalCmd = i.next(); // assign a command
+            break;
+
+        case AutoReload:
+            autoReloadMode = true;
             break;
 
         default:
@@ -480,23 +525,12 @@ int managerMain(int argc, char *argv[])
     for (;;) {
         ServerManager *manager = 0;
         switch ( app.multiProcessingModule() ) {
-        case TWebApplication::Prefork: {
-            int max = Tf::appSettings()->readValue("MPM.prefork.MaxServers", "20").toInt();
-            int min = Tf::appSettings()->readValue("MPM.prefork.MinServers", "5").toInt();
-            int spare = Tf::appSettings()->readValue("MPM.prefork.SpareServers", "5").toInt();
-            // new parameters
-            max = Tf::appSettings()->readValue("MPM.prefork.MaxAppServers", max).toInt();
-            min = Tf::appSettings()->readValue("MPM.prefork.MinAppServers", min).toInt();
-            spare = Tf::appSettings()->readValue("MPM.prefork.SpareAppServers", spare).toInt();
-            tSystemDebug("Max number of app servers: %d", max);
-            tSystemDebug("Min number of app servers: %d", min);
-            tSystemDebug("Spare number of app servers: %d", spare);
-            manager = new ServerManager(max, min, spare, &app);
-            break; }
-
         case TWebApplication::Thread:  // FALL THROUGH
         case TWebApplication::Hybrid: {
-            int num = qMax(app.maxNumberOfAppServers(), 1);
+            int num = 1;
+            if (!autoReloadMode) {
+                num = qMax(app.maxNumberOfAppServers(), 1);
+            }
             tSystemDebug("Max number of app servers: %d", num);
             manager = new ServerManager(num, num, 0, &app);
             break; }
@@ -508,6 +542,8 @@ int managerMain(int argc, char *argv[])
 
         // Startup
         writeStartupLog();
+        SystemBusDaemon::instantiate();
+
         bool started;
         if (listenPort > 0) {
             // TCP/IP
@@ -553,6 +589,9 @@ int managerMain(int argc, char *argv[])
             break;
         }
     }
+
+    // Close system bus
+    SystemBusDaemon::instance()->close();
 
     if (!svrname.isEmpty()) {  // UNIX domain file
         QFile(svrname).remove();

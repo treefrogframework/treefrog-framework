@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -121,11 +121,11 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
             if (!db.isOpen()) {
                 if (Q_UNLIKELY(!db.open())) {
                     tError("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
-                    tSystemError("Database open error: %s", qPrintable(db.connectionName()));
+                    tSystemError("SQL database open error: %s", qPrintable(db.connectionName()));
                     return QSqlDatabase();
                 }
 
-                tSystemDebug("Database opened successfully (env:%s)", qPrintable(dbEnvironment));
+                tSystemDebug("SQL database opened successfully (env:%s)", qPrintable(dbEnvironment));
                 tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
                 return db;
             }
@@ -286,10 +286,6 @@ int TSqlDatabasePool::maxDbConnectionsPerProcess()
         if (maxConnections <= 0) {
             maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
         }
-        break;
-
-    case TWebApplication::Prefork:
-        maxConnections = 1;
         break;
 
     case TWebApplication::Hybrid:

@@ -2,6 +2,7 @@
 #include <TSqlORMapperIterator>
 #include <TSqlQueryORMapper>
 #include <TSqlQueryORMapperIterator>
+#include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
 #include <TAtomicQueue>
@@ -43,6 +44,11 @@ void build_check_TSqlORMapper()
     mapper.updateAll(crt, 1, 1);
     mapper.updateAll(crt, QMap<int, QVariant>());
     mapper.removeAll(crt);
+    mapper.removeAll(crt && crt);
+    mapper.removeAll(crt || crt);
+    mapper.removeAll(!crt);
+    auto joinCri = TCriteria(BlogObject::Title, "hoge");
+    mapper.setJoin(BlogObject::Id, TSqlJoin<BlogObject>(BlogObject::Title, joinCri));
 }
 
 void build_check_TSqlORMapperIterator()

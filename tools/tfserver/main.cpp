@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -11,16 +11,16 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TThreadApplicationServer>
-#include <TPreforkApplicationServer>
 #include <TMultiplexingServer>
 #include <TSystemGlobal>
-#include <stdlib.h>
+#include <cstdlib>
 #include "tsystemglobal.h"
 #include "signalhandler.h"
 using namespace TreeFrog;
 
-#define DEBUG_MODE_OPTION "--debug"
-#define SOCKET_OPTION     "-s"
+#define DEBUG_MODE_OPTION  "--debug"
+#define SOCKET_OPTION      "-s"
+#define AUTO_RELOAD_OPTION "-r"
 
 
 #if QT_VERSION >= 0x050000
@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
 #endif
     QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
     int sock = args.value(SOCKET_OPTION).toInt();
+    bool reload = args.contains(AUTO_RELOAD_OPTION);
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
@@ -143,12 +144,14 @@ int main(int argc, char *argv[])
 
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");
+        fprintf(stderr, "No such directory\n");
         goto finish;
     }
     tSystemDebug("Web Root: %s", qPrintable(webapp.webRootPath()));
 
     if (!webapp.appSettingsFileExists()) {
         tSystemError("Settings file not found");
+        fprintf(stderr, "Settings file not found\n");
         goto finish;
     }
 
@@ -161,6 +164,7 @@ int main(int argc, char *argv[])
         int port = Tf::appSettings()->value(Tf::ListenPort).toInt();
         if (port <= 0 || port > USHRT_MAX) {
             tSystemError("Invalid port number: %d", port);
+            fprintf(stderr, "Invalid port number: %d\n", port);
             goto finish;
         }
         TApplicationServerBase::nativeSocketInit();
@@ -169,6 +173,7 @@ int main(int argc, char *argv[])
 
     if (sock <= 0) {
         tSystemError("Invalid socket descriptor: %d", sock);
+        fprintf(stderr, "Invalid option\n");
         goto finish;
     }
 
@@ -176,17 +181,6 @@ int main(int argc, char *argv[])
     case TWebApplication::Thread:
         server = new TThreadApplicationServer(sock, &webapp);
         break;
-
-    case TWebApplication::Prefork: {
-        TPreforkApplicationServer *svr = new TPreforkApplicationServer(&webapp);
-        if (svr->setSocketDescriptor(sock)) {
-            tSystemDebug("Set socket descriptor: %d", sock);
-        } else {
-            tSystemError("Failed to set socket descriptor: %d", sock);
-            goto finish;
-        }
-        server = svr;
-        break; }
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
@@ -203,8 +197,10 @@ int main(int argc, char *argv[])
         break;
     }
 
+    server->setAutoReloadingEnabled(reload);
     if (!server->start()) {
         tSystemError("Server open failed");
+        fprintf(stderr, "Server open failed\n");
         goto finish;
     }
 

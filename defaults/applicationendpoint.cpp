@@ -9,8 +9,10 @@ ApplicationEndpoint::ApplicationEndpoint(const ApplicationEndpoint &)
     : TWebSocketEndpoint()
 { }
 
-void ApplicationEndpoint::onOpen(const TSession &)
-{ }
+bool ApplicationEndpoint::onOpen(const TSession &)
+{
+    return true;
+}
 
 void ApplicationEndpoint::onClose(int)
 { }
@@ -21,11 +23,18 @@ void ApplicationEndpoint::onTextReceived(const QString &)
 void ApplicationEndpoint::onBinaryReceived(const QByteArray &)
 { }
 
-void ApplicationEndpoint::onPing()
+void ApplicationEndpoint::onPing(const QByteArray &data)
+{
+    TWebSocketEndpoint::onPing(data);
+}
+
+void ApplicationEndpoint::onPong(const QByteArray &)
 { }
 
-void ApplicationEndpoint::onPong()
-{ }
+int ApplicationEndpoint::keepAliveInterval() const
+{
+    return 0;
+}
 
 bool ApplicationEndpoint::transactionEnabled() const
 {

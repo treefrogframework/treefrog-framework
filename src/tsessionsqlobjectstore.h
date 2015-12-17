@@ -8,10 +8,10 @@ class TSessionSqlObjectStore : public TSessionStore
 {
 public:
     QString key() const { return "sqlobject"; }
-    TSession find(const QByteArray &id, const QDateTime &modified);
+    TSession find(const QByteArray &id);
     bool store(TSession &session);
-    bool remove(const QDateTime &garbageExpiration);
     bool remove(const QByteArray &id);
+    int gc(const QDateTime &expire);
 };
 
 #endif // TSESSIONSQLOBJECTSTORE_H

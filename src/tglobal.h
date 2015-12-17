@@ -1,12 +1,14 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
+#include <QtGlobal>
 #include <QMetaType>
 #include <TfNamespace>
+#include <cstdint>
 
-#define TF_VERSION_STR "1.8.0"
-#define TF_VERSION_NUMBER 0x010800
-#define TF_SRC_REVISION 840
+#define TF_VERSION_STR "1.10.0"
+#define TF_VERSION_NUMBER 0x0101000
+#define TF_SRC_REVISION 984
 
 
 #define T_DECLARE_CONTROLLER(TYPE, NAME)  \
@@ -89,21 +91,6 @@
 
 #define T_VARIANT(VAR)  (variant(QLatin1String(#VAR)).toString())
 
-#ifdef Q_CC_MSVC
-# include <io.h>
-#endif
-
-#ifdef Q_OS_UNIX
-# define TF_CLOSE(fd)     tf_close(fd)
-# define TF_FLOCK(fd,op)  tf_flock(fd,op)
-#elif defined(Q_CC_MSVC)
-# define TF_CLOSE(fd)     ::_close(fd)
-# define TF_FLOCK(fd,op)
-#else
-# define TF_CLOSE(fd)     ::close(fd)
-# define TF_FLOCK(fd,op)
-#endif
-
 
 class TLogger;
 class TLog;
@@ -159,9 +146,14 @@ namespace Tf
     T_CORE_EXPORT void msleep(unsigned long msecs);
 
     // Xorshift random number generator
-    T_CORE_EXPORT void srandXor128(quint32 seed);
-    T_CORE_EXPORT quint32 randXor128();
-    T_CORE_EXPORT quint32 random(quint32 max);
+    T_CORE_EXPORT void srandXor128(quint32 seed);  // obsolete
+    T_CORE_EXPORT quint32 randXor128();            // obsolete
+
+    // Thread-safe std::random number generator
+    T_CORE_EXPORT uint32_t rand32_r();
+    T_CORE_EXPORT uint64_t rand64_r();
+    T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max);
+    T_CORE_EXPORT uint64_t random(uint64_t max);
 
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();

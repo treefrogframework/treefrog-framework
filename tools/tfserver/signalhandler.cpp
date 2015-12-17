@@ -34,12 +34,12 @@
 #include "symbolize.h"
 #include "gconfig.h"
 
-#include <signal.h>
-#include <time.h>
-#include <stdint.h>
+#include <csignal>
+#include <ctime>
+#include <cstdint>
 #include <unistd.h>
 #include <pthread.h>
-#include <string.h>
+#include <cstring>
 #include <algorithm>
 #include <QtGlobal>
 #include <tfcore_unix.h>
