@@ -17,7 +17,7 @@ public:
     bool contains(const QString &key) const;
     void prepend(const QString &key, const QString &value);
     void append(const QString &key, const QString &value);
-    THtmlAttribute& operator()(const QString &key, const QString &value);
+    THtmlAttribute &operator()(const QString &key, const QString &value);
     THtmlAttribute &operator=(const THtmlAttribute &other);
     THtmlAttribute operator|(const THtmlAttribute &other) const;
     QString toString(bool escape = true) const;

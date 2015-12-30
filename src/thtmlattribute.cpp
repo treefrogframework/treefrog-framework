@@ -68,7 +68,7 @@ void THtmlAttribute::append(const QString &key, const QString &value)
 /*!
   Inserts a new item at the end of the attributes.
 */
-THtmlAttribute& THtmlAttribute::operator()(const QString &key, const QString &value)
+THtmlAttribute &THtmlAttribute::operator()(const QString &key, const QString &value)
 {
     append(key, value);
     return *this;
