@@ -11,8 +11,7 @@ public:
     enum TrimMode {
         TrimOff = 0,
         NormalTrim,  // Removes whitespaces if the start is "<%" and the end is "%>"
-        StrongTrim,  // Removes whitespaces if the end is "%>"
-        TrimAll,     // Removes whitespaces from the start and the end
+        StrongTrim,  // Removes whitespaces from the start and the end
     };
 
     ErbParser(TrimMode mode) : trimMode(mode), pos(0) { }
