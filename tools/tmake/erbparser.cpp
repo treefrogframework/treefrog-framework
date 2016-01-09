@@ -23,11 +23,32 @@ static QString semicolonTrim(const QString &str)
 }
 
 
+static bool isAsciiString(const QString &str)
+{
+    for (auto &c : str) {
+        if (c.unicode() >= 128)
+            return false;
+    }
+    return true;
+}
+
+
 void ErbParser::parse(const QString &erb)
 {
     srcCode.clear();
     srcCode.reserve(erb.length() * 2);
-    erbData = erb;
+
+    // trimming all
+    if (trimMode == TrimAll) {
+        erbData.clear();
+        for (auto &line : erb.split('\n')) {
+            erbData += line.trimmed();
+            erbData += ' ';
+        }
+        erbData = erbData.trimmed();
+    } else {
+        erbData = erb;
+    }
     pos = 0;
 
     while (pos < erbData.length()) {
@@ -35,7 +56,11 @@ void ErbParser::parse(const QString &erb)
         QString text = erbData.mid(pos, i - pos);
         if (!text.isEmpty()) {
             // HTML output
-            srcCode += QLatin1String("  responsebody += tr(\"");
+            if (isAsciiString(text)) {
+                srcCode += QLatin1String("  responsebody += QLatin1String(\"");
+            } else {
+                srcCode += QLatin1String("  responsebody += tr(\"");
+            }
             srcCode += ErbConverter::escapeNewline(text);
             srcCode += QLatin1String("\");\n");
         }
@@ -188,7 +213,7 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
                 if (c == QLatin1Char('-'))
                     skipWhiteSpacesAndNewLineCode();
 
-            } else if (trimMode == StrongTrim) { // StrongTrim:2
+            } else if (trimMode == StrongTrim || trimMode == TrimAll) { // StrongTrim:2
                 skipWhiteSpacesAndNewLineCode();
 
             } else if (trimMode == NormalTrim) { // NormalTrim:1
@@ -239,7 +264,7 @@ void ErbParser::skipWhiteSpacesAndNewLineCode()
             break;
         }
 
-        if (!c.isSpace()) {
+        if (!c.isSpace() || c.unicode() >= 128) {
             pos = p;  // no skip
             break;
         }
