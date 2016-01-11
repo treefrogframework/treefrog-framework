@@ -13,8 +13,6 @@
 #include <THtmlParser>
 #include "otamaconverter.h"
 #include "otmparser.h"
-#include "erbconverter.h"
-#include "erbparser.h"
 #include "viewconverter.h"
 
 #define TF_ATTRIBUTE_NAME  QLatin1String("data-tf")
@@ -26,6 +24,8 @@
 
 QString devIni;
 static QString replaceMarker;
+extern int defaultTrimMode;
+
 
 QString generateErbPhrase(const QString &str, int echoOption)
 {
@@ -78,7 +78,7 @@ OtamaConverter::~OtamaConverter()
 { }
 
 
-bool OtamaConverter::convert(const QString &filePath) const
+bool OtamaConverter::convert(const QString &filePath, int trimMode) const
 {
     QFile htmlFile(filePath);
     QFile otmFile(ViewConverter::changeFileExtension(filePath, logicFileSuffix()));
@@ -112,12 +112,12 @@ bool OtamaConverter::convert(const QString &filePath) const
         otm = QTextStream(&otmFile).readAll();
     }
 
-    QString erb = OtamaConverter::convertToErb(QTextStream(&htmlFile).readAll(), otm);
-    return erbConverter.convert(className, erb);
+    QString erb = OtamaConverter::convertToErb(QTextStream(&htmlFile).readAll(), otm, trimMode);
+    return erbConverter.convert(className, erb, 1);
 }
 
 
-QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
+QString OtamaConverter::convertToErb(const QString &html, const QString &otm, int trimMode)
 {
     if (replaceMarker.isEmpty()) {
         // Sets a replace-marker
@@ -125,8 +125,12 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
         replaceMarker = devSetting.value("Otama.ReplaceMarker", "%%").toString();
     }
 
+    // Sets trim mode
+    if (trimMode < 0)
+        trimMode = defaultTrimMode;
+
     // Parses HTML and Otama files
-    THtmlParser htmlParser;
+    THtmlParser htmlParser(trimMode);
     htmlParser.parse(html);
 
     OtmParser otmParser(replaceMarker);
@@ -157,7 +161,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm)
         }
 
         if (label == DUMMY_LABEL) {
-            htmlParser.removeElementTree(i);
+            htmlParser.removeElementTree(i, true);
             continue;
         }
 

@@ -55,7 +55,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QFile erbFile(erbPath);
     QString className = ViewConverter::getViewClassName(erbPath);
     QFile outFile(outputDirectory.filePath(className + ".cpp"));
-    
+
     // Checks file's timestamp
     QFileInfo erbFileInfo(erbFile);
     QFileInfo outFileInfo(outFile);
@@ -69,7 +69,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
             }
         }
     }
-    
+
     if (!erbFile.open(QIODevice::ReadOnly)) {
         qCritical("failed to read html.erb file : %s", qPrintable(erbFile.fileName()));
         return false;
@@ -92,7 +92,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
 }
 
 
-bool ErbConverter::convert(const QString &className, const QString &erb) const
+bool ErbConverter::convert(const QString &className, const QString &erb, int trimMode) const
 {
     QFile outFile(outputDirectory.filePath(className + ".cpp"));
     if (!outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -100,7 +100,7 @@ bool ErbConverter::convert(const QString &className, const QString &erb) const
         return false;
     }
 
-    ErbParser parser((ErbParser::TrimMode)defaultTrimMode);
+    ErbParser parser((ErbParser::TrimMode)trimMode);
     parser.parse(erb);
     QString code = parser.sourceCode();
     QTextStream ts(&outFile);

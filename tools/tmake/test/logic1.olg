@@ -50,3 +50,9 @@ for (;;) {
 for (;true;) {
   %%
 }
+
+@id ~= i.id()
+
+@title ~= i.title()
+
+@body ~= i.body()

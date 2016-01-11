@@ -3,6 +3,7 @@ TEMPLATE = app
 VERSION  = 1.0.0
 CONFIG  += console c++11
 CONFIG  -= app_bundle
+QT      +=
 QT      -= gui
 INCLUDEPATH += ../../include
 

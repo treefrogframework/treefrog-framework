@@ -7,6 +7,7 @@
 
 #include "erbparser.h"
 #include "erbconverter.h"
+#include <THtmlParser>
 
 
 static QString semicolonTrim(const QString &str)
@@ -32,33 +33,6 @@ static bool isAsciiString(const QString &str)
     return true;
 }
 
-/* Returns a string that has ascii whitespace removed from the start and the end */
-static QString trim(const QString &str)
-{
-    if (str.isEmpty()) {
-        return str;
-    }
-
-    int start = 0;
-    int end = str.length() - 1;
-    if (!str[start].isSpace() && !str[end].isSpace()) {
-        return str;
-    }
-
-    while (start <= end && str[start].isSpace() && str[start].unicode() < 128) {
-        start++;
-    }
-    while (end > start && str[end].isSpace() && str[end].unicode() < 128) {
-        end--;
-    }
-
-    int len = end - start + 1;
-    if (len <= 0) {
-        return QString();
-    }
-    return str.mid(start, len);
-}
-
 
 void ErbParser::parse(const QString &erb)
 {
@@ -69,13 +43,13 @@ void ErbParser::parse(const QString &erb)
     if (trimMode == StrongTrim) {
         erbData.clear();
         for (auto &line : erb.split('\n', QString::SkipEmptyParts)) {
-            QString trm = trim(line);
+            QString trm = THtmlParser::trim(line);
             if (!trm.isEmpty()) {
                 erbData += trm;
                 erbData += '\n';
             }
         }
-        erbData = trim(erbData);
+        erbData = THtmlParser::trim(erbData);
     } else {
         erbData = erb;
     }

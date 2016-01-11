@@ -88,7 +88,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
             if (ext == ErbConverter::fileSuffix()) {
                 convok = erbconv.convert(fileinfo.absoluteFilePath(), trimMode);
             } else if (ext == OtamaConverter::fileSuffix()) {
-                convok = otamaconv.convert(fileinfo.absoluteFilePath());
+                convok = otamaconv.convert(fileinfo.absoluteFilePath(), trimMode);
             } else {
                 continue;
             }
