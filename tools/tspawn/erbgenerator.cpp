@@ -159,6 +159,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
         return false;
     }
     mkpath(dir);
+    copy(dataDirPath + ".trim_mode", dir);
 
     if (primaryKeyIndex < 0) {
         qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));

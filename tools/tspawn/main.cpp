@@ -599,6 +599,7 @@ int main(int argc, char *argv[])
             // Create view directory
             QDir dir(D_VIEWS + ((ctrl.contains('_')) ? ctrl.toLower() : fieldNameToVariableName(ctrl).toLower()));
             mkpath(dir, ".");
+            copy(dataDirPath + ".trim_mode", dir);
             break; }
 
         case Model: {

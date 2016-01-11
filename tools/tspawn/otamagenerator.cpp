@@ -9,6 +9,7 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "filewriter.h"
+#include "util.h"
 
 #define INDEX_HTML_TEMPLATE                                             \
     "<!DOCTYPE html>\n"                                                 \
@@ -223,6 +224,7 @@ bool OtamaGenerator::generate(const QString &dstDir) const
     }
 
     mkpath(dir);
+    copy(dataDirPath + ".trim_mode", dir);
 
     // Generates view files
     generateViews(dir.path());
