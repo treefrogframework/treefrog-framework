@@ -35,7 +35,13 @@ public:
 class T_CORE_EXPORT THtmlParser
 {
 public:
-    THtmlParser();
+    enum TrimMode {
+        TrimOff = 0,
+        NormalTrim,  // Removes whitespaces if the start is "<%" and the end is "%>"
+        StrongTrim,  // Removes whitespaces from the start and the end
+    };
+
+    THtmlParser(TrimMode trimMode = NormalTrim);
     void parse(const QString &text);
     int elementCount() const { return elements.count(); }
     int lastIndex() const { return elements.count() - 1; }
@@ -47,7 +53,7 @@ public:
     THtmlElement &appendNewElement(int parent);
     THtmlElement &insertNewElement(int parent, int index);
     THtmlElement &appendElementTree(int parent, const THtmlElement &element);
-    void removeElementTree(int index);
+    void removeElementTree(int index, bool removeNewline = false);
     void removeChildElements(int index);
     void removeTag(int index);
     THtmlParser mid(int index) const;
@@ -61,6 +67,7 @@ public:
     bool parentExists(int i, const QString &tag) const;
     static THtmlParser mergeElements(const QString &s1, const QString &s2);
     static bool isTag(const QString &tag);
+    static QString trim(const QString &str);
 
 protected:
     void parse();
@@ -78,6 +85,7 @@ protected:
     //void dumpHtml() const;
 
 private:
+    int trimMode;
     QVector<THtmlElement> elements;
     QString txt;
     int pos;
