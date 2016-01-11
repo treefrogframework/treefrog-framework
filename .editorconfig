@@ -19,3 +19,7 @@ trim_trailing_whitespace = true
 [Makefile]
 indent_style = tab
 
+[*.{html,htm}]
+trim_trailing_whitespace = false 
+insert_final_newline = false
+
