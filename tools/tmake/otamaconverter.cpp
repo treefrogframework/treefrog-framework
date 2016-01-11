@@ -130,7 +130,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         trimMode = defaultTrimMode;
 
     // Parses HTML and Otama files
-    THtmlParser htmlParser(trimMode);
+    THtmlParser htmlParser((THtmlParser::TrimMode)trimMode);
     htmlParser.parse(html);
 
     OtmParser otmParser(replaceMarker);
