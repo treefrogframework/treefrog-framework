@@ -12,7 +12,7 @@
 #include <QCoreApplication>
 #include <QtEndian>
 #include <atomic>
-#include "mongo.h"
+#include "mongoc.h"
 
 /*!
   \class TBson
@@ -20,91 +20,117 @@
 */
 
 TBson::TBson()
-    : bsonData(new bson)
-{
-    bson_init((bson *)bsonData);
-}
+    : bsonData(bson_new())
+{ }
 
 
 TBson::~TBson()
 {
-    bson_destroy((bson *)bsonData);
-    delete (bson *)bsonData;
+    bson_destroy(bsonData);
 }
 
 
 TBson::TBson(const TBson &other)
 {
-    bson_copy((bson *)bsonData, (bson *)other.bsonData);
+    bsonData = bson_copy(other.bsonData);
 }
 
 
-QVariantMap TBson::fromBson(const TBson &bs)
+TBson::TBson(const TBsonObject *bson)
 {
-    return TBson::fromBson(bs.constData());
+    bsonData = (bson) ? bson_copy((const bson_t *)bson) : bson_new();
+}
+
+
+QVariant TBson::value(const QString &key, const QVariant &defaultValue) const
+{
+    return fromBson(*this).value(key, defaultValue);
+}
+
+
+QVariantMap TBson::fromBson(const TBson &bson)
+{
+    return TBson::fromBson(bson.constData());
 }
 
 
 QVariantMap TBson::fromBson(const TBsonObject *obj)
 {
     QVariantMap ret;
-    bson_iterator it[1];
+    bson_iter_t it;
+    const bson_t *bson = (const bson_t *)obj;
 
-    bson_iterator_init(it, (const bson *)obj);
-    while (bson_iterator_more(it)) {
-        bson_type t = bson_iterator_next(it);
-        QString key(bson_iterator_key(it));
+    bson_iter_init(&it, bson);
+    while (bson_iter_next(&it)) {
+        bson_type_t t = bson_iter_type(&it);
+        QString key(bson_iter_key(&it));
 
         switch (t) {
-        case BSON_EOO:
+        case BSON_TYPE_EOD:
             return ret;
             break;
 
-        case BSON_DOUBLE:
-            ret[key] = bson_iterator_double(it);
+        case BSON_TYPE_DOUBLE:
+            ret[key] = bson_iter_double(&it);
             break;
 
-        case BSON_STRING:
-            ret[key] = QString(bson_iterator_string(it));
+        case BSON_TYPE_UTF8:
+            ret[key] = QString::fromUtf8(bson_iter_utf8(&it, nullptr));
             break;
 
-        case BSON_ARRAY: {
-            bson sub[1];
-            bson_iterator_subobject_init(it, sub, (bson_bool_t)true);
-            ret[key] = fromBson(sub).values();
+        case BSON_TYPE_ARRAY: {
+            const uint8_t *docbuf = nullptr;
+            uint32_t doclen = 0;
+            bson_t sub[1];
+
+            bson_iter_array(&it, &doclen, &docbuf);
+            if (bson_init_static(sub, docbuf, doclen)) {
+                ret[key] = fromBson(sub).values();
+            }
             break; }
 
-        case BSON_OBJECT: {
-            bson sub[1];
-            bson_iterator_subobject_init(it, sub, (bson_bool_t)true);
-            ret[key] = fromBson(sub);
+        case BSON_TYPE_DOCUMENT: {
+            const uint8_t *docbuf = nullptr;
+            uint32_t doclen = 0;
+            bson_t sub[1];
+
+            bson_iter_document(&it, &doclen, &docbuf);
+            if (bson_init_static(sub, docbuf, doclen)) {
+                ret[key] = fromBson(sub);
+            }
             break; }
 
-        case BSON_BINDATA: {
-            int len = bson_iterator_bin_len(it);
-            ret[key] = QByteArray(bson_iterator_bin_data(it), len);
+        case BSON_TYPE_BINARY: {
+            const uint8_t *binary = nullptr;
+            bson_subtype_t subtype = BSON_SUBTYPE_BINARY;
+            uint32_t len = 0;
+
+            bson_iter_binary(&it, &subtype, &len, &binary);
+            if (binary) {
+                ret[key] = QByteArray((char *)binary, len);
+            }
             break; }
 
-        case BSON_UNDEFINED:
+        case BSON_TYPE_UNDEFINED:
             ret[key] = QVariant();
             break;
 
-        case BSON_OID: {
+        case BSON_TYPE_OID: {
             char oidhex[25];
-            bson_oid_to_string(bson_iterator_oid(it), oidhex);
+            bson_oid_to_string(bson_iter_oid(&it), oidhex);
             ret[key] = QString(oidhex);
             break; }
 
-        case BSON_BOOL:
-            ret[key] = (bool)bson_iterator_bool(it);
+        case BSON_TYPE_BOOL:
+            ret[key] = (bool)bson_iter_bool(&it);
             break;
 
-        case BSON_DATE: {
+        case BSON_TYPE_DATE_TIME: {
 #if QT_VERSION >= 0x040700
             QDateTime date;
-            date.setMSecsSinceEpoch(bson_iterator_date(it));
+            date.setMSecsSinceEpoch(bson_iter_date_time(&it));
 #else
-            qint64 val = bson_iterator_date(it);
+            qint64 val = bson_iter_date_time(&it);
             qint64 days = val / 86400000;  // 24*60*60*1000
             int msecs = val % 86400000;
             QDate dt = QDate(1970, 1, 1).addDays(days);
@@ -114,35 +140,32 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             ret[key] = date;
             break; }
 
-        case BSON_NULL:
+        case BSON_TYPE_NULL:
             ret[key] = QVariant();
             break;
 
-        case BSON_REGEX:
-            ret[key] = QRegExp(QLatin1String(bson_iterator_regex(it)));
+        case BSON_TYPE_REGEX:
+            ret[key] = QRegExp(QLatin1String(bson_iter_regex(&it, nullptr)));
             break;
 
-        case BSON_DBREF: // Deprecated
+        case BSON_TYPE_CODE:
+            ret[key] = QString(bson_iter_code(&it, nullptr));
             break;
 
-        case BSON_CODE:
-            ret[key] = QString(bson_iterator_code(it));
+        case BSON_TYPE_SYMBOL:
+            ret[key] = QString(bson_iter_symbol(&it, nullptr));
             break;
 
-        case BSON_SYMBOL:
-            ret[key] = QString(bson_iterator_string(it));
+        case BSON_TYPE_INT32:
+            ret[key] = bson_iter_int32(&it);
             break;
 
-        case BSON_INT:
-            ret[key] = bson_iterator_int(it);
+        case BSON_TYPE_INT64:
+            ret[key] = (qint64)bson_iter_int64(&it);
             break;
 
-        case BSON_LONG:
-            ret[key] = (qint64)bson_iterator_long(it);
-            break;
-
-        case BSON_CODEWSCOPE: // FALL THROUGH
-        case BSON_TIMESTAMP:  // FALL THROUGH (internal use)
+        case BSON_TYPE_CODEWSCOPE: // FALL THROUGH
+        case BSON_TYPE_TIMESTAMP:  // FALL THROUGH (internal use)
             // do nothing
             break;
 
@@ -156,7 +179,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
 }
 
 
-static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
+static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &value)
 {
     const QLatin1String oidkey("_id");
     bool ok = true;
@@ -164,39 +187,39 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
 
     switch (type) {
     case QVariant::Int:
-        bson_append_int(b, qPrintable(key), value.toInt(&ok));
+        BSON_APPEND_INT32(bson, qPrintable(key), value.toInt(&ok));
         break;
 
     case QVariant::String:
         if (key == oidkey) {
             // OID
             bson_oid_t oid;
-            bson_oid_from_string(&oid, qPrintable(value.toString()));
-            bson_append_oid(b, oidkey.latin1(), &oid);
+            bson_oid_init_from_string(&oid, qPrintable(value.toString()));
+            BSON_APPEND_OID(bson, oidkey.latin1(), &oid);
         } else {
-            bson_append_string(b, qPrintable(key), qPrintable(value.toString()));
+            BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
         }
         break;
 
     case QVariant::LongLong:
-        bson_append_long(b, qPrintable(key), value.toLongLong(&ok));
+        BSON_APPEND_INT64(bson, qPrintable(key), value.toLongLong(&ok));
         break;
 
     case QVariant::Map:
-        bson_append_bson(b, qPrintable(key), (const bson *)TBson::toBson(value.toMap()).constData());
+        BSON_APPEND_DOCUMENT(bson, qPrintable(key), (const bson_t *)TBson::toBson(value.toMap()).constData());
         break;
 
     case QVariant::Double:
-        bson_append_double(b, qPrintable(key), value.toDouble(&ok));
+        BSON_APPEND_DOUBLE(bson, qPrintable(key), value.toDouble(&ok));
         break;
 
     case QVariant::Bool:
-        bson_append_bool(b, qPrintable(key), value.toBool());
+        BSON_APPEND_BOOL(bson, qPrintable(key), value.toBool());
         break;
 
     case QVariant::DateTime: {
 #if QT_VERSION >= 0x040700
-        bson_append_date(b, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
+        BSON_APPEND_DATE_TIME(bson, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
 #else
         QDateTime utcDate = value.toDateTime().toUTC();
         qint64 ms = utcDate.time().msec();
@@ -204,31 +227,29 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
         if (ms > 0) {
           tm += ms;
         }
-        bson_append_date(b, qPrintable(key), tm);
+        BSON_APPEND_DATE_TIME(bson, qPrintable(key), tm);
 #endif
         break; }
 
     case QVariant::ByteArray: {
         QByteArray ba = value.toByteArray();
-        bson_append_binary(b, qPrintable(key), BSON_BIN_BINARY, ba.constData(), ba.length());
+        BSON_APPEND_BINARY(bson, qPrintable(key), BSON_SUBTYPE_BINARY, (uint8_t *)ba.constData(), ba.length());
         break; }
 
     case QVariant::List:  // FALL THROUGH
     case QVariant::StringList: {
-        bson_append_start_array(b, qPrintable(key));
-        QVariantList lst = value.toList();
+        bson_t child;
+        BSON_APPEND_ARRAY_BEGIN(bson, qPrintable(key), &child);
 
         int i = 0;
-        for (QListIterator<QVariant> it(lst); it.hasNext(); ) {
-            const QVariant &var = it.next();
-            appendBsonValue(b, QString::number(i++), var);
+        for (auto &var : value.toList()) {
+            appendBsonValue(&child, QString::number(i++), var);
         }
-
-        bson_append_finish_array(b);
+        bson_append_array_end(bson, &child);
         break; }
 
     case QVariant::Invalid:
-        bson_append_undefined(b,  qPrintable(key));
+        BSON_APPEND_UNDEFINED(bson, qPrintable(key));
         break;
 
     default:
@@ -240,11 +261,11 @@ static bool appendBsonValue(bson *b, const QString &key, const QVariant &value)
 }
 
 
-static void appendBson(TBsonObject *bs, const QVariantMap &map)
+static void appendBson(TBsonObject *bson, const QVariantMap &map)
 {
     for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
         const QVariant &val = it.next().value();
-        bool res = appendBsonValue((bson *)bs, qPrintable(it.key()), val);
+        bool res = appendBsonValue((bson_t *)bson, qPrintable(it.key()), val);
         if (!res)
             break;
     }
@@ -255,7 +276,6 @@ TBson TBson::toBson(const QVariantMap &map)
 {
     TBson ret;
     appendBson(ret.data(), map);
-    bson_finish((bson *)ret.data());
     return ret;
 }
 
@@ -263,20 +283,19 @@ TBson TBson::toBson(const QVariantMap &map)
 TBson TBson::toBson(const QVariantMap &query, const QVariantMap &orderBy)
 {
     TBson ret;
+    bson_t child;
 
     // query clause
-    bson_append_start_object((bson *)ret.data(), "$query");
-    appendBson(ret.data(), query);
-    bson_append_finish_object((bson *)ret.data());
+    BSON_APPEND_DOCUMENT_BEGIN((bson_t *)ret.data(), "$query", &child);
+    appendBson(&child, query);
+    bson_append_document_end((bson_t *)ret.data(), &child);
 
     // orderBy clause
     if (!orderBy.isEmpty()) {
-        bson_append_start_object((bson *)ret.data(), "$orderby");
-        appendBson(ret.data(), orderBy);
-        bson_append_finish_object((bson *)ret.data());
+        BSON_APPEND_DOCUMENT_BEGIN((bson_t *)ret.data(), "$orderby", &child);
+        appendBson(&child, orderBy);
+        bson_append_document_end((bson_t *)ret.data(), &child);
     }
-
-    bson_finish((bson *)ret.data());
     return ret;
 }
 
@@ -284,59 +303,19 @@ TBson TBson::toBson(const QVariantMap &query, const QVariantMap &orderBy)
 TBson TBson::toBson(const QStringList &lst)
 {
     TBson ret;
-
-    for (QStringListIterator it(lst); it.hasNext(); ) {
-        const QString &str = it.next();
-
-        bool res = appendBsonValue((bson *)ret.data(), qPrintable(str), 1);
+    for (auto &str : lst) {
+        bool res = appendBsonValue((bson_t *)ret.data(), qPrintable(str), 1);
         if (!res)
             break;
     }
-
-    bson_finish((bson *)ret.data());
     return ret;
-}
-
-
-static inline int oidFuzz()
-{
-#if 0
-    static int machineId = Tf::randXor128();
-    int pid = QCoreApplication::applicationPid();
-    return qToBigEndian((machineId << 8) | ((pid & 0xFF00) >> 8));
-#else
-    static int machineId = Tf::rand32_r();
-    return machineId;
-#endif
-}
-
-
-static inline int oidInc()
-{
-#if 0
-    static std::atomic<uint> incr(Tf::randXor128());
-    int pid = QCoreApplication::applicationPid();
-    ++incr;
-    return ((pid & 0xFF) << 24) | ((int)incr & 0xFFFFFF);
-#else
-    static std::atomic<uint> incr(Tf::rand32_r());
-    return incr++;
-#endif
 }
 
 
 QString TBson::generateObjectId()
 {
-    static bool once = false;
-
-    if (!once) {
-        bson_set_oid_fuzz(oidFuzz);
-        bson_set_oid_inc(oidInc);
-        once = true;
-    }
-
     bson_oid_t oid;
-    bson_oid_gen(&oid);
+    bson_oid_init(&oid, NULL);
 
     QByteArray oidhex = QByteArray((char *)&oid, sizeof(oid)).toHex();
     return QLatin1String(oidhex.data());

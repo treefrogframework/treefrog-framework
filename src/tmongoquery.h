@@ -20,7 +20,7 @@ public:
     void setLimit(int limit);
     int offset() const;
     void setOffset(int offset);
-    int find(const QVariantMap &criteria = QVariantMap(), const QVariantMap &orderBy = QVariantMap(), const QStringList &fields = QStringList());
+    bool find(const QVariantMap &criteria = QVariantMap(), const QVariantMap &orderBy = QVariantMap(), const QStringList &fields = QStringList());
     bool next();
     QVariantMap value() const;
 
@@ -34,7 +34,6 @@ public:
     bool removeById(const QVariantMap &document);
     int count(const QVariantMap &criteria = QVariantMap());
     int numDocsAffected() const;
-    int lastErrorCode() const;
     QString lastErrorString() const;
 
     TMongoQuery &operator=(const TMongoQuery &other);
@@ -45,10 +44,9 @@ private:
 
 private:
     TKvsDatabase database;
-    QString nameSpace;
+    QString collection;
     int queryLimit;
     int queryOffset;
-    QVariantMap lastWriteStatus;
 };
 
 

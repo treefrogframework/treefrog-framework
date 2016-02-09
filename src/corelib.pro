@@ -329,9 +329,9 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 
 # Files for MongoDB
-INCLUDEPATH += ../3rdparty/mongo-c-driver/src
+INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
 windows {
-  DEFINES += MONGO_STATIC_BUILD
+#  DEFINES += MONGO_STATIC_BUILD
 
   win32-msvc* {
     CONFIG(debug, debug|release) {
@@ -349,7 +349,7 @@ windows {
 } else {
   LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
 }
-DEFINES += MONGO_HAVE_STDINT
+#DEFINES += MONGO_HAVE_STDINT
 
 HEADERS += tmongodriver.h
 SOURCES += tmongodriver.cpp
