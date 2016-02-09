@@ -301,7 +301,7 @@
     "    QJsonArray array;\n"                                 \
     "    TMongoODMapper<%1Object> mapper;\n"                  \
     "\n"                                                      \
-    "    if (mapper.find() > 0) {\n"                          \
+    "    if (mapper.find()) {\n"                              \
     "        while (mapper.next()) {\n"                       \
     "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(mapper.value()).toVariantMap())));\n" \
     "        }\n"                                             \
@@ -579,8 +579,8 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
 bool ModelGenerator::gen(const QString &fileName, const QString &format, const QStringList &args)
 {
     QString out = format;
-    for (QStringListIterator i(args); i.hasNext(); ) {
-        out = out.arg(i.next());
+    for (auto &arg : args) {
+        out = out.arg(arg);
     }
 
     FileWriter fw(fileName);

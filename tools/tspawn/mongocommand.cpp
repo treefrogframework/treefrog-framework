@@ -74,7 +74,7 @@ QStringList MongoCommand::getCollectionNames() const
     if (!driver->isOpen())
         return ret;
 
-    int cnt = driver->find(databaseName + ".system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
+    int cnt = driver->find("system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
     if (cnt > 0) {
         while (driver->cursor().next()) {
             QVariantMap val = driver->cursor().value();

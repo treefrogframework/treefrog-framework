@@ -558,8 +558,8 @@ int main(int argc, char *argv[])
 
             QStringList colls = mongo.getCollectionNames();
             printf("-----------------\nExisting collections:\n");
-            for (QStringListIterator i(colls); i.hasNext(); ) {
-                printf("  %s\n", qPrintable(i.next()));
+            for (auto &col : colls) {
+                printf("  %s\n", qPrintable(col));
             }
             putchar('\n');
         }
