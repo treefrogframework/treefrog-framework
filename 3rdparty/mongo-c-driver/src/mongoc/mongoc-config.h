@@ -23,7 +23,7 @@
  * MONGOC_ENABLE_SSL is set from configure to determine if we are
  * compiled with SSL support.
  */
-#define MONGOC_ENABLE_SSL 1
+#define MONGOC_ENABLE_SSL 0
 
 #if MONGOC_ENABLE_SSL != 1
 #  undef MONGOC_ENABLE_SSL

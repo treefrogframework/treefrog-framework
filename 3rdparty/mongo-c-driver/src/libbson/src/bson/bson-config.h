@@ -1,7 +1,7 @@
 #ifndef BSON_CONFIG_H
 #define BSON_CONFIG_H
 
-#include <QtCore>
+#include <qglobal.h>
 
 /*
  * Define to 1234 for Little Endian, 4321 for Big Endian.
