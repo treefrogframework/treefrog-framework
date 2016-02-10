@@ -16,6 +16,8 @@ public:
     QByteArray id() const { return sessionId; }
     void reset();
     iterator insert(const QString &key, const QVariant &value);
+    int remove(const QString &key);
+    QVariant take(const QString &key);
     const QVariant value(const QString &key) const;
     const QVariant value(const QString &key, const QVariant &defaultValue) const;
     static QByteArray sessionName();
@@ -47,6 +49,16 @@ inline TSession &TSession::operator=(const TSession &other)
 inline TSession::iterator TSession::insert(const QString &key, const QVariant &value)
 {
     return QVariantMap::insert(key, value);
+}
+
+inline int TSession::remove(const QString &key)
+{
+    return QVariantMap::remove(key);
+}
+
+inline QVariant TSession::take(const QString &key)
+{
+    return QVariantMap::take(key);
 }
 
 inline const QVariant TSession::value(const QString &key) const
