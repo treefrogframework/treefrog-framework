@@ -294,8 +294,14 @@ template <class T>
 inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder order)
 {
     if (!column.isEmpty()) {
-        sortColumn = column;
-        sortOrder = order;
+        T obj;
+        if (obj.propertyNames().contains(column, Qt::CaseInsensitive)) {
+            sortColumn = column;
+            sortOrder = order;
+        } else {
+            tWarn("Unable to set sort order : '%s' column not found in '%s' table",
+                  qPrintable(column), qPrintable(obj.tableName()));
+        }
     }
 }
 
@@ -697,7 +703,8 @@ inline QString TSqlORMapper<T>::orderBy() const
 {
     QString str;
     if (!sortColumn.isEmpty()) {
-        str.append(QLatin1String(" ORDER BY t0.")).append(sortColumn);
+        QString column = TSqlQuery::escapeIdentifier(sortColumn, QSqlDriver::FieldName, database().driver());
+        str.append(QLatin1String(" ORDER BY t0.")).append(column);
         str.append((sortOrder == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
     }
     return str;

@@ -103,8 +103,14 @@ template <class T>
 inline void TMongoODMapper<T>::setSortOrder(const QString &column, Tf::SortOrder order)
 {
     if (!column.isEmpty()) {
-        sortColumn = column;
-        sortOrder = order;
+        T obj;
+        if (obj.propertyNames().contains(column, Qt::CaseSensitive)) {
+            sortColumn = column;
+            sortOrder = order;
+        } else {
+            tWarn("Unable to set sort order : '%s' field not found in '%s' collection",
+                  qPrintable(column), qPrintable(obj.collectionName()));
+        }
     }
 }
 

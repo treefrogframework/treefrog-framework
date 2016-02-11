@@ -115,6 +115,43 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
 }
 
 
+QString TAbstractModel::variableNameToFieldName(const QString &name) const
+{
+    for (auto &prop : modelData()->propertyNames()) {
+        if (fieldNameToVariableName(prop) == name) {
+            return prop;
+        }
+    }
+    return QString();
+}
+
+
+QString TAbstractModel::fieldNameToVariableName(const QString &name)
+{
+    QString ret;
+    bool existsLower = false;
+    bool existsUnders = name.contains('_');
+    const QLatin1Char Underscore('_');
+
+    ret.reserve(name.length());
+
+    for (int i = 0; i < name.length(); ++i) {
+        const QChar &c = name[i];
+        if (c == Underscore) {
+            if (i > 0 && i + 1 < name.length()) {
+                ret += name[++i].toUpper();
+            }
+        } else {
+            if (!existsLower && c.isLower()) {
+                existsLower = true;
+            }
+            ret += (existsLower && !existsUnders) ? c : c.toLower();
+        }
+    }
+    return ret;
+}
+
+
 /*!
   \fn virtual TModelObject *TAbstractModel::modelData()
 
