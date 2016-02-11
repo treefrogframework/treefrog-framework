@@ -134,4 +134,11 @@
 #endif
 
 
+/*
+ * strerror_r() not supported on Windows.
+ */
+#ifdef Q_OS_WIN
+# define strerror_r(errno,buf,len)  ((strerror_s((buf),(len),(errno)) != 0) ? (buf) : NULL)
+#endif
+
 #endif /* BSON_CONFIG_H */
