@@ -59,7 +59,11 @@
  * Link-Time-Optimization (LTO) in our constant-time mongoc_memcmp()
  * This is known to work with GNU GCC and Solaris Studio
  */
-#define MONGOC_HAVE_WEAK_SYMBOLS 1
+#ifdef Q_CC_MSVC
+# define MONGOC_HAVE_WEAK_SYMBOLS 0
+#else
+# define MONGOC_HAVE_WEAK_SYMBOLS 1
+#endif
 
 #if MONGOC_HAVE_WEAK_SYMBOLS != 1
 #  undef MONGOC_HAVE_WEAK_SYMBOLS

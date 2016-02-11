@@ -74,7 +74,12 @@
 /*
  * Define to 1 if you have clock_gettime() available.
  */
-#define BSON_HAVE_CLOCK_GETTIME 1
+#ifdef Q_CC_MSVC
+# define BSON_HAVE_CLOCK_GETTIME 0
+#else
+# define BSON_HAVE_CLOCK_GETTIME 1
+#endif
+
 #if BSON_HAVE_CLOCK_GETTIME != 1
 # undef BSON_HAVE_CLOCK_GETTIME
 #endif
@@ -101,11 +106,12 @@
 /*
  * Define to 1 if you have _set_output_format (VS2013 and older).
  */
-#if Q_CC_MSVC
+#ifdef Q_CC_MSVC
 # define BSON_NEEDS_SET_OUTPUT_FORMAT 1
 #else
 # define BSON_NEEDS_SET_OUTPUT_FORMAT 0
 #endif
+
 #if BSON_NEEDS_SET_OUTPUT_FORMAT != 1
 # undef BSON_NEEDS_SET_OUTPUT_FORMAT
 #endif
