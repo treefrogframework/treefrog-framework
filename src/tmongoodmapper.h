@@ -22,9 +22,16 @@ public:
     TMongoODMapper();
     virtual ~TMongoODMapper();
 
+    // Method chaining
+    TMongoODMapper<T> &limit(int limit);
+    TMongoODMapper<T> &offset(int offset);
+    TMongoODMapper<T> &orderBy(int column, Tf::SortOrder order = Tf::AscendingOrder);
+    TMongoODMapper<T> &orderBy(const QString &column, Tf::SortOrder order = Tf::AscendingOrder);
+
     void setLimit(int limit);
     void setOffset(int offset);
-    void setSortOrder(int column, Tf::SortOrder order);
+    void setSortOrder(int column, Tf::SortOrder order = Tf::AscendingOrder);
+    void setSortOrder(const QString &column, Tf::SortOrder order = Tf::AscendingOrder);
 
     T findOne(const TCriteria &cri = TCriteria());
     T findFirst(const TCriteria &cri = TCriteria()) { return findOne(cri); }
@@ -46,8 +53,9 @@ public:
     int removeAll(const TCriteria &cri = TCriteria());
 
 private:
-    int sortColumn;
+    QString sortColumn;
     Tf::SortOrder sortOrder;
+
     Q_DISABLE_COPY(TMongoODMapper)
 };
 
@@ -57,7 +65,7 @@ private:
 */
 template <class T>
 inline TMongoODMapper<T>::TMongoODMapper()
-    : TMongoQuery(T().collectionName()), sortColumn(-1), sortOrder(Tf::AscendingOrder)
+    : TMongoQuery(T().collectionName()), sortColumn(), sortOrder(Tf::AscendingOrder)
 { }
 
 /*!
@@ -82,10 +90,54 @@ inline void TMongoODMapper<T>::setOffset(int offset)
 
 
 template <class T>
-void TMongoODMapper<T>::setSortOrder(int column, Tf::SortOrder order)
+inline void TMongoODMapper<T>::setSortOrder(int column, Tf::SortOrder order)
 {
-    sortColumn = column;
-    sortOrder = order;
+    if (column >= 0) {
+        sortColumn = TCriteriaMongoConverter<T>::propertyName(column);
+        sortOrder = order;
+    }
+}
+
+
+template <class T>
+inline void TMongoODMapper<T>::setSortOrder(const QString &column, Tf::SortOrder order)
+{
+    if (!column.isEmpty()) {
+        sortColumn = column;
+        sortOrder = order;
+    }
+}
+
+
+template <class T>
+TMongoODMapper<T> &TMongoODMapper<T>::limit(int l)
+{
+    setLimit(l);
+    return *this;
+}
+
+
+template <class T>
+inline TMongoODMapper<T> &TMongoODMapper<T>::offset(int o)
+{
+    setOffset(o);
+    return *this;
+}
+
+
+template <class T>
+inline TMongoODMapper<T> &TMongoODMapper<T>::orderBy(int column, Tf::SortOrder order)
+{
+    setSortOrder(column, order);
+    return *this;
+}
+
+
+template <class T>
+inline TMongoODMapper<T> &TMongoODMapper<T>::orderBy(const QString &column, Tf::SortOrder order)
+{
+    setSortOrder(column, order);
+    return *this;
 }
 
 
@@ -130,11 +182,8 @@ template <class T>
 inline int TMongoODMapper<T>::find(const TCriteria &criteria)
 {
     QVariantMap order;
-    if (sortColumn >= 0) {
-        QString name = TCriteriaMongoConverter<T>::propertyName(sortColumn);
-        if (!name.isEmpty()) {
-            order.insert(name, (sortOrder == Tf::AscendingOrder) ? 1 : -1);
-        }
+    if (!sortColumn.isEmpty()) {
+        order.insert(sortColumn, ((sortOrder == Tf::AscendingOrder) ? 1 : -1));
     }
 
     return TMongoQuery::find(TCriteriaMongoConverter<T>(criteria).toVariantMap(), order);

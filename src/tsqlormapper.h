@@ -29,9 +29,17 @@ public:
     TSqlORMapper();
     virtual ~TSqlORMapper();
 
+    // Method chaining
+    TSqlORMapper<T> &limit(int limit);
+    TSqlORMapper<T> &offset(int offset);
+    TSqlORMapper<T> &orderBy(int column, Tf::SortOrder order = Tf::AscendingOrder);
+    TSqlORMapper<T> &orderBy(const QString &column, Tf::SortOrder order = Tf::AscendingOrder);
+    template <class C> TSqlORMapper<T> &join(int column, const TSqlJoin<C> &join);
+
     void setLimit(int limit);
     void setOffset(int offset);
-    void setSortOrder(int column, Tf::SortOrder order);
+    void setSortOrder(int column, Tf::SortOrder order = Tf::AscendingOrder);
+    void setSortOrder(const QString &column, Tf::SortOrder order = Tf::AscendingOrder);
     template <class C> void setJoin(int column, const TSqlJoin<C> &join);
     void reset();
 
@@ -67,7 +75,7 @@ private:
     Q_DISABLE_COPY(TSqlORMapper)
 
     QString queryFilter;
-    int sortColumn;
+    QString sortColumn;
     Tf::SortOrder sortOrder;
     int queryLimit;
     int queryOffset;
@@ -83,7 +91,7 @@ private:
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
     : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId())),
-      sortColumn(-1), sortOrder(Tf::AscendingOrder), queryLimit(0),
+      sortColumn(), sortOrder(Tf::AscendingOrder), queryLimit(0),
       queryOffset(0), joinCount(0), joinClauses(), joinWhereClauses()
 {
     setTable(T().tableName());
@@ -273,8 +281,64 @@ inline void TSqlORMapper<T>::setOffset(int offset)
 template <class T>
 inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
 {
-    sortColumn = column;
-    sortOrder = order;
+    if (column >= 0) {
+        sortColumn = TCriteriaConverter<T>::propertyName(column, database().driver());
+        sortOrder = order;
+    }
+}
+
+/*!
+  Sets the sort order for \a column to \a order.
+*/
+template <class T>
+inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder order)
+{
+    if (!column.isEmpty()) {
+        sortColumn = column;
+        sortOrder = order;
+    }
+}
+
+/*!
+  Sets the limit to \a limit, which is the limited number of rows for
+  execution of SELECT statement.
+*/
+template <class T>
+inline TSqlORMapper<T> &TSqlORMapper<T>::limit(int l)
+{
+    setLimit(l);
+    return *this;
+}
+
+/*!
+  Sets the offset to \a offset, which is the number of rows to skip
+  for execution of SELECT statement.
+*/
+template <class T>
+inline TSqlORMapper<T> &TSqlORMapper<T>::offset(int o)
+{
+    setOffset(o);
+    return *this;
+}
+
+/*!
+  Sets the sort order for \a column to \a order.
+*/
+template <class T>
+inline TSqlORMapper<T> &TSqlORMapper<T>::orderBy(int column, Tf::SortOrder order)
+{
+    setSortOrder(column, order);
+    return *this;
+}
+
+/*!
+  Sets the sort order for \a column to \a order.
+*/
+template <class T>
+inline TSqlORMapper<T> &TSqlORMapper<T>::orderBy(const QString &column, Tf::SortOrder order)
+{
+    setSortOrder(column, order);
+    return *this;
 }
 
 /*!
@@ -543,6 +607,7 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
     return res ? sqlQuery.numRowsAffected() : -1;
 }
 
+
 template <class T>
 template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
 {
@@ -588,6 +653,12 @@ template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJo
     }
 }
 
+template <class T>
+template <class C> inline TSqlORMapper<T> &TSqlORMapper<T>::join(int column, const TSqlJoin<C> &j)
+{
+    setJoin(column, j);
+    return *this;
+}
 
 /*!
   Reset the internal state of the mapper object.
@@ -606,7 +677,7 @@ inline void TSqlORMapper<T>::clear()
 {
     QSqlTableModel::clear();
     queryFilter.clear();
-    sortColumn = -1;
+    sortColumn.clear();
     sortOrder = Tf::AscendingOrder;
     queryLimit = 0;
     queryOffset = 0;
@@ -625,12 +696,9 @@ template <class T>
 inline QString TSqlORMapper<T>::orderBy() const
 {
     QString str;
-    if (sortColumn >= 0) {
-        QString field = TCriteriaConverter<T>::propertyName(sortColumn, database().driver(), "t0");
-        if (!field.isEmpty()) {
-            str.append(QLatin1String(" ORDER BY ")).append(field);
-            str.append((sortOrder == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
-        }
+    if (!sortColumn.isEmpty()) {
+        str.append(QLatin1String(" ORDER BY t0.")).append(sortColumn);
+        str.append((sortOrder == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
     }
     return str;
 }
