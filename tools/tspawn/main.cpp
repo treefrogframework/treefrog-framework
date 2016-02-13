@@ -146,7 +146,9 @@ public:
 #endif
         append(L("views") + SEP + "views.pro");
         append(L("views") + SEP + "_src" + SEP + "_src.pro");
-        append(L("views") + SEP + "mailer" + SEP + ".trim_mode");
+        append(L("views") + SEP + "layouts" + SEP + ".trim_mode");
+        append(L("views") + SEP + "mailer"  + SEP + ".trim_mode");
+        append(L("views") + SEP + "partial" + SEP + ".trim_mode");
         append(L("helpers") + SEP + "helpers.pro");
         append(L("helpers") + SEP + "applicationhelper.h");
         append(L("helpers") + SEP + "applicationhelper.cpp");
