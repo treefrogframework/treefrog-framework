@@ -125,7 +125,7 @@ Q_GLOBAL_STATIC(OptionHash, options)
 static void usage()
 {
     char text[] =
-        "Usage: %1 [-d] [-e environment] [application-directory]\n"     \
+        "Usage: %1 [-d] [-e environment] [-r] [application-directory]\n" \
         "Usage: %1 [-k stop|abort|restart|status] [application-directory]\n" \
         "%2"                                                            \
         "Options:\n"                                                    \
