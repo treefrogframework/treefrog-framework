@@ -320,17 +320,35 @@ QString TViewHelper::optionTag(const QString &text, const QVariant &value, bool 
   Creates option tags for a select tag;
   The option tag which value is equal to \a selectedValue parameter is selected.
  */
+QString TViewHelper::optionTags(const QStringList &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
+{
+    QString ret;
+    THtmlAttribute attr = attributes;
+
+    for (auto &val : valueList) {
+        if (!val.isEmpty() && val == selectedValue) {
+            attr.prepend("selected", QString());
+        }
+        attr.prepend("value", val);
+        ret += tag("option", attr, val);
+        attr = attributes;
+    }
+    return ret;
+}
+
+/*!
+  Creates option tags for a select tag;
+  The option tag which value is equal to \a selectedValue parameter is selected.
+ */
 QString TViewHelper::optionTags(const QVariantList &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
 {
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (QListIterator<QVariant> it(valueList); it.hasNext(); ) {
-        const QVariant &val = it.next();
-
-        if (!val.isNull() && val == selectedValue)
+    for (auto &val : valueList) {
+        if (!val.isNull() && val == selectedValue) {
             attr.prepend("selected", QString());
-
+        }
         attr.prepend("value", val.toString());
         ret += tag("option", attr, val.toString());
         attr = attributes;
@@ -346,12 +364,10 @@ QString TViewHelper::optionTags(const QList<QPair<QString, QVariant>> &valueList
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (QListIterator<QPair<QString, QVariant>> it(valueList); it.hasNext(); ) {
-        const QPair<QString, QVariant> &val = it.next();
-
-        if (!val.second.isNull() && val.second == selectedValue)
+    for (auto &val : valueList) {
+        if (!val.second.isNull() && val.second == selectedValue) {
             attr.prepend("selected", QString());
-
+        }
         attr.prepend("value", val.second.toString());
         ret += tag("option", attr, val.first);
         attr = attributes;

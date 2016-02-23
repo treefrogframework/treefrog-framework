@@ -109,6 +109,9 @@ public:
     QString optionTag(const QString &text, const QVariant &value, bool selected = false,
                       const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString optionTags(const QStringList &valueList, const QVariant &selectedValue = QVariant(),
+                       const THtmlAttribute &attributes = THtmlAttribute()) const;
+
     QString optionTags(const QVariantList &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
