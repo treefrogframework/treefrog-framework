@@ -173,9 +173,14 @@ void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid
                     if (currController->sessionEnabled()) {
                         bool stored = TSessionManager::instance().store(currController->session());
                         if (Q_LIKELY(stored)) {
+                            static int cookielifetime = -1;
                             QDateTime expire;
-                            if (TSessionManager::sessionLifeTime() > 0) {
-                                expire = QDateTime::currentDateTime().addSecs(TSessionManager::sessionLifeTime());
+
+                            if (cookielifetime < 0) {
+                                cookielifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
+                            }
+                            if (cookielifetime > 0) {
+                                expire = QDateTime::currentDateTime().addSecs(cookielifetime);
                             }
 
                             // Sets the path in the session cookie
