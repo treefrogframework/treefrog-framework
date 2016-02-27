@@ -37,7 +37,7 @@
  * dependent. For example, some PPC or ARM systems may not have it even
  * if it is a recent GCC version.
  */
-#if (defined(Q_OS_LINUX) || defined(Q_OS_MAC)) && !defined(Q_PROCESSOR_ARM)
+#if (defined(Q_OS_LINUX) || defined(Q_OS_MAC)) && !defined(QT_ARCH_ARM) && !defined(Q_PROCESSOR_ARM)
 # define BSON_HAVE_ATOMIC_32_ADD_AND_FETCH 1
 #else
 # define BSON_HAVE_ATOMIC_32_ADD_AND_FETCH 0
@@ -50,7 +50,7 @@
 /*
  * Similarly, define to 1 if we have access to GCC 64-bit atomic builtins.
  */
-#if (defined(Q_OS_LINUX) || defined(Q_OS_MAC)) && !defined(Q_PROCESSOR_ARM)
+#if (defined(Q_OS_LINUX) || defined(Q_OS_MAC)) && !defined(QT_ARCH_ARM) && !defined(Q_PROCESSOR_ARM)
 # define BSON_HAVE_ATOMIC_64_ADD_AND_FETCH 1
 #else
 # define BSON_HAVE_ATOMIC_64_ADD_AND_FETCH 0
