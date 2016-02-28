@@ -1,0 +1,12 @@
+language: cpp
+install:
+  - sudo apt-get update
+  - sudo apt-get install qt5-qmake libqt5core5 libqt5network5 qt5-default
+
+script:
+  - g++ --version
+  - qmake -v
+  - ./configure
+  - make -j3 -C src
+  - sudo make -C src install
+  - make -j3 -C tools
