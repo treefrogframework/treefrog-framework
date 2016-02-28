@@ -3,12 +3,14 @@ language: cpp
 before_install:
   - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update -qq
-  - sudo apt-get install qtbase5-dev libsqlite3-dev qt5-default qttools5-dev-tools
+  - sudo apt-get install -qq qtbase5-dev libsqlite3-dev qt5-default qttools5-dev-tools
 
 script:
   - g++ --version
   - qmake -v
   - ./configure
-  - make -j3 -C src
+  - make  -j4 -C src
   - sudo make -C src install
-  - make -j3 -C tools
+  - make  -j4 -C tools
+  - sudo make -C tools install
+  - treefrog -v
