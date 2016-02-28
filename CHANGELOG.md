@@ -1,5 +1,19 @@
 # ChangeLog
 
+## 1.11.0
+ - Updated the mongo C driver to version 1.3.3.
+ - Added a optionTags() function.
+ - Added variableNameToFieldName() function.
+ - Added method chaining to TMongoODMapper class and TSqlORMapper class.
+ - Added setSortOrder(const QString &column).
+ - Modified the strong trim mode, '2', to delete white spaces and trim views
+   strongly.
+ - Modified the trim mode for ERB parser, use '.trim_mode' file in
+   subdirectories for view.
+ - Modified the tmake command to use QLatin1Sring() in preference to tr().
+ - Fix a bug of tmake command when c++ code is empty in ERB.
+ - Fix a bug of setting cookie for session.
+
 ## 1.10.0
  - Implemented a class which represents SQL join clause for the O/R mapper.
  - Implemented LD_PRELOAD mechanism to the treefrog command, Linux only.
