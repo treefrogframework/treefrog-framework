@@ -74,15 +74,26 @@
 #define T_FETCH(TYPE,VAR)  TYPE VAR = variant(QLatin1String(#VAR)).value<TYPE>()
 #define tfetch(TYPE,VAR)  T_FETCH(TYPE,VAR)
 
+#define T_FETCH_V(TYPE,VAR,DEFAULT)  TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
+#define tfetchv(TYPE,VAR,DEFAULT)  T_FETCH_V(TYPE,VAR,DEFAULT)
+
 #define T_EHEX(VAR)  eh(variant(QLatin1String(#VAR)))
 #define tehex(VAR)  T_EHEX(VAR)
 
+#define T_EHEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) eh(DEFAULT); else eh(___##VAR##_); } while(0)
+#define tehexv(VAR,DEFAULT)  T_EHEX_V(VAR,DEFAULT)
+
+// alias of tehexv
 #define T_EHEX2(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) eh(DEFAULT); else eh(___##VAR##_); } while(0)
 #define tehex2(VAR,DEFAULT)  T_EHEX2(VAR,DEFAULT)
 
 #define T_ECHOEX(VAR)  echo(variant(QLatin1String(#VAR)))
 #define techoex(VAR)  T_ECHOEX(VAR)
 
+#define T_ECHOEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) echo(DEFAULT); else echo(___##VAR##_); } while(0)
+#define techoexv(VAR,DEFAULT)  T_ECHOEX_V(VAR,DEFAULT)
+
+// alias of techoexv
 #define T_ECHOEX2(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) echo(DEFAULT); else echo(___##VAR##_); } while(0)
 #define techoex2(VAR,DEFAULT)  T_ECHOEX2(VAR,DEFAULT)
 
