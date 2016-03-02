@@ -220,7 +220,9 @@ QString TViewHelper::inputTag(const QString &type, const QString &name, const QV
                               const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
-    attr.prepend("value", value.toString());
+    if (!value.isNull()) {
+        attr.prepend("value", value.toString());
+    }
     attr.prepend("name", name);
     attr.prepend("type", type);
     return selfClosingTag("input", attr);
@@ -463,6 +465,8 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
     THtmlAttribute attr = attributes;
     if (!alt.isEmpty()) {
         attr.prepend("alt", alt);
+    } else {
+        attr.prepend("alt", "");  // output 'alt' always
     }
 
     if (!size.isEmpty()) {

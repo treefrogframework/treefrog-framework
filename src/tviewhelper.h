@@ -76,7 +76,10 @@ public:
     QString inputTextTag(const QString &name, const QVariant &value,
                          const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString inputFileTag(const QString &name, const QVariant &value,
+    QString inputFileTag(const QString &name, const QVariant &value,   // obsolete
+                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString inputFileTag(const QString &name,
                          const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputPasswordTag(const QString &name, const QVariant &value,
@@ -267,14 +270,21 @@ inline QString TViewHelper::inputTextTag(const QString &name, const QVariant &va
     return inputTag("text", name, value, attributes);
 }
 
-/*!
-  Creates a input tag with type="file", name=\a "name" and value=\a "value".
-  This function overloads inputTag().
-*/
+// obsolete  'value is disabled at input type=file tag.'
 inline QString TViewHelper::inputFileTag(const QString &name, const QVariant &value,
                                          const THtmlAttribute &attributes) const
 {
     return inputTag("file", name, value, attributes);
+}
+
+/*!
+  Creates a input tag with type="file", name=\a "name".
+  This function overloads inputTag().
+*/
+inline QString TViewHelper::inputFileTag(const QString &name,
+                                         const THtmlAttribute &attributes) const
+{
+    return inputTag("file", name, QVariant(), attributes);
 }
 
 /*!
