@@ -5,7 +5,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq qtbase5-dev libsqlite3-dev qt5-default qttools5-dev-tools
 
-script:
+install:
   - g++ --version
   - qmake -v
   - ./configure
@@ -14,3 +14,10 @@ script:
   - make  -j4 -C tools
   - sudo make -C tools install
   - treefrog -v
+
+before_script:
+  - qmake tools/tmake/test/tmaketest.pro
+  - make -C tools/tmake/test
+
+script:
+  - ./src/test/testall.sh
