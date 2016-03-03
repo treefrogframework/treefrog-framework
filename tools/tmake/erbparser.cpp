@@ -259,7 +259,7 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
             ++pos;
         }
     }
-    return qMakePair(string.trimmed(), defaultVal.trimmed());
+    return qMakePair(string, defaultVal.trimmed());
 }
 
 

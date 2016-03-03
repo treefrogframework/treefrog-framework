@@ -21,3 +21,5 @@ before_script:
 
 script:
   - ./src/test/testall.sh
+  - cd tools/tmake/test
+  - ./tmaketest
