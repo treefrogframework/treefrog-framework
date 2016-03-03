@@ -4,6 +4,8 @@ WORKDIR=$(cd $(dirname $0) && pwd)
 LD_LIBRARY_PATH=$WORKDIR/..
 export LD_LIBRARY_PATH
 
+cd $WORKDIR
+
 for e in `ls -d *`; do
   if [ -f "$e/Makefile" ]; then
     make -C $e clean
