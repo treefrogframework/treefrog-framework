@@ -1,5 +1,9 @@
 language: cpp
 
+env:
+  global:
+    - CI_WORK=`pwd`
+
 before_install:
   - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update -qq
@@ -16,10 +20,13 @@ install:
   - treefrog -v
 
 before_script:
-  - qmake tools/tmake/test/tmaketest.pro
-  - make -C tools/tmake/test
+  - cd $CI_WORK
+  - cd tools/tmake/test
+  - qmake tmaketest.pro
+  - make
 
 script:
+  - cd $CI_WORK
   - ./src/test/testall.sh
   - cd tools/tmake/test
   - ./tmaketest
