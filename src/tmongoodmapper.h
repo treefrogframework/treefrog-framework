@@ -37,9 +37,9 @@ public:
     T findFirst(const TCriteria &cri = TCriteria()) { return findOne(cri); }
     T findFirstBy(int column, QVariant value);
     T findByObjectId(const QString &id);
-    int find(const TCriteria &cri = TCriteria());
-    int findBy(int column, QVariant value);
-    int findIn(int column, const QVariantList &values);
+    bool find(const TCriteria &cri = TCriteria());
+    bool findBy(int column, QVariant value);
+    bool findIn(int column, const QVariantList &values);
     bool next();
     T value() const;
 
@@ -185,7 +185,7 @@ inline T TMongoODMapper<T>::findByObjectId(const QString &id)
 
 
 template <class T>
-inline int TMongoODMapper<T>::find(const TCriteria &criteria)
+inline bool TMongoODMapper<T>::find(const TCriteria &criteria)
 {
     QVariantMap order;
     if (!sortColumn.isEmpty()) {
@@ -197,14 +197,14 @@ inline int TMongoODMapper<T>::find(const TCriteria &criteria)
 
 
 template <class T>
-inline int TMongoODMapper<T>::findBy(int column, QVariant value)
+inline bool TMongoODMapper<T>::findBy(int column, QVariant value)
 {
     return find(TCriteria(column, value));
 }
 
 
 template <class T>
-inline int TMongoODMapper<T>::findIn(int column, const QVariantList &values)
+inline bool TMongoODMapper<T>::findIn(int column, const QVariantList &values)
 {
     return find(TCriteria(column, TMongo::In, values));
 }
