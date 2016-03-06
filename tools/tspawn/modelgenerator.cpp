@@ -480,6 +480,10 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     }
     crtparams.chop(2);
 
+    if (crtparams.isEmpty()) {
+        crtparams += "const QString &";
+    }
+
     initParams += (initParams.isEmpty()) ? ' ' : '\n';
 
     // Creates parameters of get() method
