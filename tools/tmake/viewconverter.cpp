@@ -35,7 +35,7 @@
     "}\n"                                                               \
     "include(source.list)\n"
 
-extern int defaultTrimMode;
+int defaultTrimMode;
 
 
 ViewConverter::ViewConverter(const QDir &view, const QDir &output, bool projectFile)
