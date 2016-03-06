@@ -194,9 +194,9 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
             bson_oid_init_from_string(&oid, qPrintable(oidVal));
             BSON_APPEND_OID(bson, oidkey.latin1(), &oid);
         } else {
-            qint64 id = value.toLongLong(&ok);
+            int id = value.toInt(&ok);
             if (ok) {
-                BSON_APPEND_INT64(bson, oidkey.latin1(), id);
+                BSON_APPEND_INT32(bson, oidkey.latin1(), id);
             } else {
                 BSON_APPEND_UTF8(bson, oidkey.latin1(), oidVal.toUtf8().data());
             }
