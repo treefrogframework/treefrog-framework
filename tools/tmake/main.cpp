@@ -15,8 +15,8 @@
 
 #define DEFAULT_OUTPUT_DIR  "viewcodes"
 
+int defaultTrimMode;
 extern QString devIni;
-extern int defaultTrimMode;
 
 
 static int usage()

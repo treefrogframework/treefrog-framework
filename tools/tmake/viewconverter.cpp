@@ -35,6 +35,8 @@
     "}\n"                                                               \
     "include(source.list)\n"
 
+extern int defaultTrimMode;
+
 
 ViewConverter::ViewConverter(const QDir &view, const QDir &output, bool projectFile)
     : viewDir(view), outputDir(output), createProFile(projectFile)
@@ -61,14 +63,14 @@ int ViewConverter::convertView(const QString &templateSystem) const
         dir.cd(d);
 
         // Reads trim_mode file
-        int trimMode = -1;
+        int trimMode = defaultTrimMode;
         QFile erbTrim(dir.absoluteFilePath(".trim_mode"));
         if (erbTrim.exists()) {
             if (erbTrim.open(QIODevice::ReadOnly)) {
                 bool ok;
                 int mode = erbTrim.readLine().trimmed().toInt(&ok);
                 if (ok) {
-                    trimMode = mode;
+                    trimMode = qMin(qMax(0, mode), 2);
                 }
                 erbTrim.close();
             }

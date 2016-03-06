@@ -38,8 +38,6 @@
     "\n"                                                        \
     "#include \"%1.moc\"\n"
 
-int defaultTrimMode;
-
 
 ErbConverter::ErbConverter(const QDir &output, const QDir &helpers)
     : outputDirectory(output), helpersDirectory(helpers)
@@ -48,10 +46,6 @@ ErbConverter::ErbConverter(const QDir &output, const QDir &helpers)
 
 bool ErbConverter::convert(const QString &erbPath, int trimMode) const
 {
-    // Sets trim mode
-    if (trimMode < 0)
-        trimMode = defaultTrimMode;
-
     QFile erbFile(erbPath);
     QString className = ViewConverter::getViewClassName(erbPath);
     QFile outFile(outputDirectory.filePath(className + ".cpp"));
@@ -86,7 +80,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        printf("  created  %s\n", qPrintable(outFile.fileName()));
+        printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
     }
     return true;
 }
@@ -106,7 +100,7 @@ bool ErbConverter::convert(const QString &className, const QString &erb, int tri
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        printf("  created  %s\n", qPrintable(outFile.fileName()));
+        printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
     }
     return true;
 }

@@ -24,7 +24,6 @@
 
 QString devIni;
 static QString replaceMarker;
-extern int defaultTrimMode;
 
 
 QString generateErbPhrase(const QString &str, int echoOption)
@@ -113,7 +112,7 @@ bool OtamaConverter::convert(const QString &filePath, int trimMode) const
     }
 
     QString erb = OtamaConverter::convertToErb(QTextStream(&htmlFile).readAll(), otm, trimMode);
-    return erbConverter.convert(className, erb, 1);
+    return erbConverter.convert(className, erb, trimMode);
 }
 
 
@@ -124,10 +123,6 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         QSettings devSetting(devIni, QSettings::IniFormat);
         replaceMarker = devSetting.value("Otama.ReplaceMarker", "%%").toString();
     }
-
-    // Sets trim mode
-    if (trimMode < 0)
-        trimMode = defaultTrimMode;
 
     // Parses HTML and Otama files
     THtmlParser htmlParser((THtmlParser::TrimMode)trimMode);
@@ -263,4 +258,3 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
 
     return htmlParser.toString();
 }
-
