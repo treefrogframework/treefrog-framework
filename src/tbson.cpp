@@ -185,20 +185,32 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     bool ok = true;
     int type = value.type();
 
+    // _id
+    if (key == oidkey) {
+        QString oidVal = value.toString();
+        if (oidVal.length() == 24) {
+            // ObjectId
+            bson_oid_t oid;
+            bson_oid_init_from_string(&oid, qPrintable(oidVal));
+            BSON_APPEND_OID(bson, oidkey.latin1(), &oid);
+        } else {
+            qint64 id = value.toLongLong(&ok);
+            if (ok) {
+                BSON_APPEND_INT64(bson, oidkey.latin1(), id);
+            } else {
+                BSON_APPEND_UTF8(bson, oidkey.latin1(), oidVal.toUtf8().data());
+            }
+        }
+        return true;
+    }
+
     switch (type) {
     case QVariant::Int:
         BSON_APPEND_INT32(bson, qPrintable(key), value.toInt(&ok));
         break;
 
     case QVariant::String:
-        if (key == oidkey) {
-            // OID
-            bson_oid_t oid;
-            bson_oid_init_from_string(&oid, qPrintable(value.toString()));
-            BSON_APPEND_OID(bson, oidkey.latin1(), &oid);
-        } else {
-            BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
-        }
+        BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
         break;
 
     case QVariant::LongLong:
