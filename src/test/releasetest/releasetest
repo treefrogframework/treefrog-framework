@@ -30,6 +30,7 @@ sqlite3 $DBFILE < create_blog_table.sql || exit
 # Build
 cd $APPROOT
 tspawn s blog || exit
+tspawn ms fuga || exit
 tspawn w foo || exit
 qmake -r || exit
 make -j4
@@ -48,6 +49,8 @@ mkdir -p $WORKDIR
 cd $WORKDIR
 wget http://localhost:8800/blog/index || exit
 wget http://localhost:8800/blog/entry || exit
+wget http://localhost:8800/fuga/index || exit
+
 
 # POST method
 # create1
