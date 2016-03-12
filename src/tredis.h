@@ -3,7 +3,7 @@
 
 #include <QVariant>
 #include <QByteArray>
-#include <QString>
+#include <QStringList>
 #include <TGlobal>
 #include <TKvsDatabase>
 
