@@ -115,12 +115,12 @@ bool TRedisDriver::readReply()
         while (eventLoop.processEvents()) {}
     }
 
-    //tSystemDebug("Redis reply: %s", buffer.data());
+    //tSystemDebug("Redis response: %s", buffer.data());
     return (buffer.length() > len);
 }
 
 
-bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &reply)
+bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &response)
 {
     if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
@@ -148,33 +148,33 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &reply
         case Error:
             ret = false;
             str = getLine(&ok);
-            tSystemError("Redis error reply: %s", qPrintable(str));
+            tSystemError("Redis error response: %s", qPrintable(str));
             break;
 
         case SimpleString:
             str = getLine(&ok);
-            tSystemDebug("Redis reply: %s", qPrintable(str));
+            tSystemDebug("Redis response: %s", qPrintable(str));
             break;
 
         case Integer: {
             pos++;
             int num = getNumber(&ok);
             if (ok) {
-                reply << num;
+                response << num;
             }
             break; }
 
         case BulkString:
             str = parseBulkString(&ok);
             if (ok) {
-                reply << str;
+                response << str;
             }
             break;
 
         case Array:
-            reply = parseArray(&ok);
+            response = parseArray(&ok);
             if (!ok) {
-                reply.clear();
+                response.clear();
             }
             break;
 

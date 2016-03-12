@@ -20,7 +20,7 @@ public:
     void close();
     bool isOpen() const;
     void moveToThread(QThread *thread);
-    bool request(const QList<QByteArray> &command, QVariantList &replay);
+    bool request(const QList<QByteArray> &command, QVariantList &response);
 
 protected:
     enum DataType {

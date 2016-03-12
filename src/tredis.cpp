@@ -76,16 +76,29 @@ bool TRedis::isOpen() const
 }
 
 
+bool TRedis::exists(const QByteArray &key)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "EXISTS", key };
+    bool res = driver()->request(command, resp);
+    return (res && resp.value(0).toInt() == 1);
+}
+
+
 QByteArray TRedis::get(const QByteArray &key)
 {
     if (!driver()) {
         return QByteArray();
     }
 
-    QVariantList reply;
+    QVariantList resp;
     QList<QByteArray> command = { "GET", key };
-    bool res = driver()->request(command, reply);
-    return (res) ? reply.value(0).toByteArray() : QByteArray();
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toByteArray() : QByteArray();
 }
 
 
@@ -95,9 +108,9 @@ bool TRedis::set(const QByteArray &key, const QByteArray &value)
         return false;
     }
 
-    QVariantList reply;
+    QVariantList resp;
     QList<QByteArray> command = { "SET", key, value };
-    return driver()->request(command, reply);
+    return driver()->request(command, resp);
 }
 
 
@@ -107,9 +120,9 @@ bool TRedis::setEx(const QByteArray &key, const QByteArray &value, int seconds)
         return false;
     }
 
-    QVariantList reply;
+    QVariantList resp;
     QList<QByteArray> command = { "SETEX", key, QByteArray::number(seconds), value };
-    return driver()->request(command, reply);
+    return driver()->request(command, resp);
 }
 
 
@@ -119,10 +132,10 @@ QByteArray TRedis::getSet(const QByteArray &key, const QByteArray &value)
         return QByteArray();
     }
 
-    QVariantList reply;
+    QVariantList resp;
     QList<QByteArray> command = { "GETSET", key, value };
-    bool res = driver()->request(command, reply);
-    return (res) ? reply.value(0).toByteArray() : QByteArray();
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toByteArray() : QByteArray();
 }
 
 
@@ -140,9 +153,110 @@ int TRedis::del(const QList<QByteArray> &keys)
         return 0;
     }
 
-    QVariantList reply;
+    QVariantList resp;
     QList<QByteArray> command = { "DEL" };
     command << keys;
-    bool res = driver()->request(command, reply);
-    return (res) ? reply.value(0).toInt() : 0;
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toInt() : 0;
+}
+
+/*!
+  Inserts all the \a values at the tail of the list stored at key.
+  Returns the length of the list after the push operation.
+ */
+int TRedis::rpush(const QByteArray &key, const QList<QByteArray> &values)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "RPUSH", key };
+    command << values;
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toInt() : 0;
+}
+
+/*!
+  Inserts all the \a values at the tail of the list stored at key.
+  Returns the length of the list after the push operation.
+ */
+int TRedis::lpush(const QByteArray &key, const QList<QByteArray> &values)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "LPUSH", key };
+    command << values;
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toInt() : 0;
+}
+
+
+QList<QByteArray> TRedis::lrange(const QByteArray &key, int start, int end)
+{
+    if (!driver()) {
+        return QList<QByteArray>();
+    }
+
+    QList<QByteArray> ret;
+    QVariantList resp;
+    QList<QByteArray> command = { "LRANGE", key, QByteArray::number(start), QByteArray::number(end) };
+    bool res = driver()->request(command, resp);
+    if (res) {
+        for (auto &var : resp) {
+            ret << var.toByteArray();
+        }
+    }
+    return ret;
+}
+
+
+QByteArray TRedis::lindex(const QByteArray &key, int index)
+{
+    if (!driver()) {
+        return QByteArray();
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "LINDEX", key, QByteArray::number(index) };
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toByteArray() : QByteArray();
+}
+
+/*!
+  Returns the length of the list stored at key.
+*/
+int TRedis::llen(const QByteArray &key)
+{
+    if (!driver()) {
+        return -1;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "LLEN", key };
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toInt() : -1;
+}
+
+
+QList<QByteArray> TRedis::toByteArrayList(const QStringList &values)
+{
+    QList<QByteArray> ret;
+    for (auto &val : values) {
+        ret << val.toUtf8();
+    }
+    return ret;
+}
+
+
+QStringList TRedis::toStringList(const QList<QByteArray> &values)
+{
+    QStringList ret;
+    for (auto &val : values) {
+        ret << QString::fromUtf8(val);
+    }
+    return ret;
 }
