@@ -478,6 +478,44 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
     return selfClosingTag("img", attr);
 }
 
+
+QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString &mediaType,
+                                    const QSize &size, const QString &alt,
+                                    const THtmlAttribute &attributes) const
+{
+    QByteArray data;
+    QFile img(file.absoluteFilePath());
+    if (img.open(QIODevice::ReadOnly)) {
+        data = img.readAll();
+        img.close();
+    }
+    return inlineImageTag(data, mediaType, size, alt, attributes);
+}
+
+
+QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &mediaType,
+                                    const QSize &size, const QString &alt,
+                                    const THtmlAttribute &attributes) const
+{
+    THtmlAttribute attr = attributes;
+    if (!alt.isEmpty()) {
+        attr.prepend("alt", alt);
+    } else {
+        attr.prepend("alt", "");  // output 'alt' always
+    }
+
+    if (!size.isEmpty()) {
+        attr.prepend("height", QString::number(size.height()));
+        attr.prepend("width", QString::number(size.width()));
+    }
+
+    QByteArray dataUrl = "data:";
+    dataUrl += mediaType.toLatin1() + ";base64,";
+    dataUrl += data.toBase64();
+    attr.prepend("src", dataUrl);
+    return selfClosingTag("img", attr);
+}
+
 /*!
   Creates a \<link\> link tag for a style sheet with href=\a "src". The
   \a src must be one of URL, a absolute path or a relative path. If \a src
