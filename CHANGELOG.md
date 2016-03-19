@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.11.1
+ - Added inlineImageTag() function.
+ - Added functions to Redis driver class.
+ - Fix a bug of mongo driver.
+
 ## 1.11.0
  - Updated the mongo C driver to version 1.3.3.
  - Added a optionTags() function.
@@ -19,7 +24,7 @@
  - Implemented LD_PRELOAD mechanism to the treefrog command, Linux only.
  - Added RDB client dlls for 64bit Windows.
  - Fix a bug of TMongoODMapper class.
- - Fux a bug of SQL for SELECT-COUNT query.
+ - Fix a bug of SQL for SELECT-COUNT query.
  - Fix a bug of getting running application's file path for root user.
  - Support for OS X El capitan.
 
