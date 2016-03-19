@@ -90,7 +90,7 @@ inline int TRedis::lpushs(const QByteArray &key, const QStringList &values)
     return lpush(key, toByteArrayList(values));
 }
 
-inline QStringList TRedis::lranges(const QByteArray &key, int start, int end)
+inline QStringList TRedis::lranges(const QByteArray &key, int start, int end = -1)
 {
     return toStringList(lrange(key, start, end));
 }

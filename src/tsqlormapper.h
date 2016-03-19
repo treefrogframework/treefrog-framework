@@ -613,7 +613,9 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
     return res ? sqlQuery.numRowsAffected() : -1;
 }
 
-
+/*!
+  Sets a JOIN clause for \a column to \a join.
+ */
 template <class T>
 template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
 {

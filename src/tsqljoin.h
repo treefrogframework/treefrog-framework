@@ -6,6 +6,8 @@
 
 /*!
   \class TSqlJoin
+  \brief The TSqlJoin class represents JOIN clause for combination
+  to a record of other table.
 */
 
 
