@@ -262,7 +262,7 @@
  - Added to output SQL query log.
  - Modified a function name to be called.
  - Update a parameter, QHash<QString,QString> -> QVariantHash.
- - Add setValidationError() function for custom validation.
+ - Added setValidationError() function for custom validation.
  - Writes stderr output of tfserver to a debug file.
  - Modified parameters of imageLinkTo() function.
  - Imports new setting file, development.ini.
@@ -276,11 +276,11 @@
  - Implemented UNIX domain socket.
  - Modified to check the socket's timeout.
  - The default prefix of Otama marking was changed, '#' -> '@'.
- - Add to set a default value into TAccessAuthenticator::clear() function.
+ - Added to set a default value into TAccessAuthenticator::clear() function.
  - Added a method, redirectToPage().
  - Added to install defaults/403.html.
  - Added new class, TAccessAuthenticator.
- - Add a method, currentController(), to TActionContext class.
+ - Added a method, currentController(), to TActionContext class.
  - Modified to update only DB-fields whose values were changed.
  - Fix a bug of generating a user-model.
  - Added logic of initializing member variables of model class to
