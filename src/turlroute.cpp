@@ -44,6 +44,36 @@ static void cleanup()
 }
 
 
+QString TRoute::toPathString(const std::vector<QVariant> &args) const
+{
+    if (args.size() < (size_t) keywordIndexes.size()) {
+        tError("Not enough parameters provided for named route "+name+".");
+    }
+
+    QString resultPath = "";
+    unsigned int argsCursor = 0;
+    for (QString component : componentList) {
+        if (component == ":params") {
+            break;
+        }
+        resultPath += "/";
+        if (component == ":param") {
+            resultPath += args[argsCursor].toString();
+            argsCursor++;
+            continue;
+        }
+        resultPath += component;
+    }
+    if (hasVariableParams) {
+        for (++argsCursor; argsCursor < args.size(); argsCursor++) {
+            resultPath += "/";
+            resultPath += args[argsCursor].toString();
+        }
+    }
+    return resultPath;
+}
+
+
 /*!
  * Initializes.
  * Call this in main thread.
@@ -92,7 +122,8 @@ bool TUrlRoute::parseConfigFile()
 bool TUrlRoute::addRouteFromString(const QString &line)
 {
      QStringList items = line.simplified().split(' ');
-     if (items.count() != 3) {
+     int itemsCount = items.count();
+     if (itemsCount != 3 && itemsCount != 4) {
          tError("Invalid directive, '%s'", qPrintable(line));
          return false;
      }
@@ -100,14 +131,34 @@ bool TUrlRoute::addRouteFromString(const QString &line)
      // Trimm quotes
      items[1] = THttpUtility::trimmedQuotes(items[1]);
      items[2] = THttpUtility::trimmedQuotes(items[2]);
-     QString &path = items[1];
 
+     QByteArray pathName = "";
+     if (itemsCount == 4) {
+         items[3] = THttpUtility::trimmedQuotes(items[3]);
+         pathName = items[3].toLatin1();
+         QRegExp pathNameRegExp("^[a-zA-Z0-9_]+$");
+         // Check if pathName consists of illegal characters
+         if (!pathNameRegExp.exactMatch(pathName)) {
+             tError("path name must contain underscores or alphanumeric characters only.");
+             return false;
+         }
+         // Check if pathName does not starts with number
+         if (QRegExp("^[0-9]{1}.+").exactMatch(pathName)) {
+             tError("path name cannot start with a number.");
+             return false;
+         }
+     }
+
+     QString &path = items[1];
      if (path.contains(":params") && !path.endsWith(":params")) {
          tError(":params must be specified as last directive.");
          return false;
      }
 
      TRoute rt;
+     // set name
+     if (itemsCount == 4)
+         rt.name = pathName;
 
      // Check method
      rt.method = directiveHash()->value(items[0].toLower(), TRoute::Invalid);
@@ -202,6 +253,20 @@ continue_next:
     }
 
     return (denied) ? TRouting("", "") : TRouting() /* Not found routing info */ ;
+}
+
+
+TRoute TUrlRoute::findRouteByName(const QByteArray &pathName) const
+{
+    TRoute matchedRoute;
+    for (int i = 0; i < routes.size(); i++) {
+        TRoute rt = routes.value(i);
+        if (rt.name == pathName) {
+            matchedRoute = rt;
+        }
+    }
+
+    return matchedRoute;
 }
 
 

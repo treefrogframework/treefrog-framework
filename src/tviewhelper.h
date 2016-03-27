@@ -187,6 +187,8 @@ public:
 
     QString srcPath(const QString &src, const QString &dir, bool withTimestamp = false) const;
 
+    QString route(const QByteArray &name, const std::vector<QVariant> &args = std::vector<QVariant>()) const;
+
     THtmlAttribute a(const QString &key, const QString &value) const;
     THtmlAttribute a() const { return THtmlAttribute(); }
 

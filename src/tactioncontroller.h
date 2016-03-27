@@ -98,6 +98,7 @@ protected:
     void sendTextToWebSocket(const QByteArray &uuid, const QString &text);
     void sendBinaryToWebSocket(const QByteArray &uuid, const QByteArray &binary);
     void closeWebSokcet(const QByteArray &uuid, int closeCode = Tf::NormalClosure);
+    QString route(const QByteArray &name, const std::vector<QVariant> &args = std::vector<QVariant>()) const;
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
