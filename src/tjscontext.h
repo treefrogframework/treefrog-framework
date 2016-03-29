@@ -2,6 +2,7 @@
 #define TJSCONTEXT_H
 
 #include <QString>
+#include <QStringList>
 #include <QJSValue>
 #include <QMutex>
 #include <TGlobal>
