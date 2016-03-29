@@ -321,8 +321,13 @@ macx {
 
 # Qt5
 greaterThan(QT_MAJOR_VERSION, 4) {
+  QT      += qml
   HEADERS += tjsonutil.h
   SOURCES += tjsonutil.cpp
+  HEADERS += tjscontext.h
+  SOURCES += tjscontext.cpp
+  HEADERS += treactcomponent.h
+  SOURCES += treactcomponent.cpp
 
   SOURCES += tactioncontroller_qt5.cpp
 }

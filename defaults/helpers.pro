@@ -1,8 +1,9 @@
 TARGET = helper
 TEMPLATE = lib
 CONFIG += shared c++11
+QT  += xml
 QT  -= gui
-QT  += 
+greaterThan(QT_MAJOR_VERSION, 4): QT += qml
 DEFINES += TF_DLL
 DESTDIR = ../lib
 DEPENDPATH +=

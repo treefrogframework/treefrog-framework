@@ -6,9 +6,15 @@
  */
 
 #include <TActionView>
+#include <TWebApplication>
 #include <TActionController>
 #include <THttpUtility>
 #include <THtmlAttribute>
+#include <TReactComponent>
+#include <QDir>
+#include <QMutex>
+#include <QMutexLocker>
+#include "tsystemglobal.h"
 
 /*!
   \class TActionView
@@ -39,9 +45,53 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
 {
     QString temp = templateName;
     if (!temp.contains('/')) {
-        temp = QLatin1String("partial/") + temp;
+        temp = QLatin1String("partial") + QDir::separator() + temp;
     }
     return (actionController) ? actionController->getRenderingData(temp, vars) : QString();
+}
+
+/*!
+  Renders the React \a component on the server. Calls ReactDOMServer.renderToString()
+  internally.
+*/
+QString TActionView::renderReact(const QString &component)
+{
+    static QMap<QString, TReactComponent*> reactComponents;
+    static QMutex mutex;
+
+    if (component.isEmpty()) {
+        return QString();
+    }
+
+    QMutexLocker locker(&mutex);
+    TReactComponent *react = reactComponents.value(component);
+
+    if (react) {
+        QDateTime modified = QFileInfo(react->filePath()).lastModified();
+        if (!modified.isValid() || modified > react->loadedDateTime()) {
+            // Removes the item to reload
+            reactComponents.remove(component);
+            delete react;
+            react = nullptr;
+        }
+    }
+    locker.unlock();
+
+    if (!react) {
+        QDir dir(Tf::app()->publicPath() + "js" + QDir::separator() + "components");
+        QStringList filter = { component + ".*" };
+        QString file = dir.entryList(filter, QDir::Files).value(0);
+
+        if (!file.isEmpty()) {
+            react = new TReactComponent(dir.absolutePath() + QDir::separator() + file);
+            locker.relock();
+            reactComponents.insert(component, react);
+            locker.unlock();
+        } else {
+            return QString();
+        }
+    }
+    return react->renderToString(component);
 }
 
 /*!

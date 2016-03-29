@@ -165,7 +165,9 @@ public:
         append(L("public") + SEP + "404.html");
         append(L("public") + SEP + "413.html");
         append(L("public") + SEP + "500.html");
-        append(L("script") + SEP + "starttreefrog.bat");
+        append(L("script") + SEP + "JSXTransformer.js");  // React
+        append(L("script") + SEP + "react.min.js");       // React
+        append(L("script") + SEP + "react-dom-server.min.js"); // React
     }
 };
 Q_GLOBAL_STATIC(FilePaths, filePaths)

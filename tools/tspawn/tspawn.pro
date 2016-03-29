@@ -73,6 +73,10 @@ defaults.files += defaults/redis.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
 defaults.files += defaults/views.pro
+# React scripts
+defaults.files += defaults/JSXTransformer.js
+defaults.files += defaults/react.min.js
+defaults.files += defaults/react-dom-server.min.js
 windows {
   defaults.files += defaults/_dummymodel.h
   defaults.files += defaults/_dummymodel.cpp
