@@ -119,7 +119,7 @@ QString TReactComponent::compileJsxFile(const QString &fileName)
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
         tSystemError("TReactComponent open error: %s", qPrintable(fileName));
-        return false;
+        return QString();
     }
 
     QTextStream stream(&script);
