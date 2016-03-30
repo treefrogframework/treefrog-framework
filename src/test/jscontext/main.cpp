@@ -10,6 +10,8 @@ class BenchMark : public QObject
 private slots:
     void eval_data();
     void eval();
+
+#if QT_VERSION > 0x050400
     void callFunc_data();
     void callFunc();
     void callFunc1_data();
@@ -17,6 +19,7 @@ private slots:
     void transform_data();
     void transform();
     void benchCall();
+#endif
 };
 
 
@@ -42,6 +45,7 @@ void BenchMark::eval()
     QCOMPARE(result, output);
 }
 
+#if QT_VERSION > 0x050400
 
 void BenchMark::callFunc_data()
 {
@@ -121,6 +125,8 @@ void BenchMark::benchCall()
         //qDebug() << res.property("code").toString();
     }
 }
+
+#endif
 
 TF_TEST_MAIN(BenchMark)
 #include "main.moc"
