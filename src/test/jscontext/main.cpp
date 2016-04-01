@@ -75,7 +75,7 @@ void BenchMark::callFunc1_data()
     QTest::addColumn<QString>("output");
 
     QTest::newRow("01") << "function(a){return a*a;}" << "4" << "16";
-    QTest::newRow("01") << "function(s){return 'Hello '+s;}" << "world" << "Hello world";
+    QTest::newRow("02") << "function(s){return 'Hello '+s;}" << "world" << "Hello world";
 }
 
 

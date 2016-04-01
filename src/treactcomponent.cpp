@@ -96,12 +96,12 @@ QString TReactComponent::renderToString(const QString &component)
 QString TReactComponent::compileJsx(const QString &jsx)
 {
     static TJSContext js;
-    static std::atomic<bool> once(false);
+    static bool once = false;
     static QMutex mutex;
 
-    if (!once.load()) {
+    if (Q_UNLIKELY(!once)) {
         QMutexLocker locker(&mutex);
-        if (!once.load()) {
+        if (!once) {
             js.load(Tf::app()->webRootPath()+ "script" + QDir::separator() + "JSXTransformer.js");
             once = true;
         }
