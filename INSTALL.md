@@ -6,9 +6,8 @@ Requirements
  - C compiler and C++ compiler
  - Make utility
 
-On Linux, you can install by 'apt-get' or 'yum'.  
+On Linux, you can install by 'apt-get' or 'yum'.
 Case of Ubuntu:
-
   Install Qt libraries and dev tools.
 
       $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
@@ -27,8 +26,8 @@ Installation
 1. Extract the downloaded tar.gz file.
 
 2. Run build commands.  
-   Linux, Mac OS X, or Unix-like OS:  
-    Run the following commands.
+  Linux, Mac OS X, or Unix-like OS:  
+  Run the following commands.
 
        $ cd treefrog-x.x.x
        $ ./configure
@@ -39,10 +38,10 @@ Installation
        $ make
        $ sudo make install
 
-    Windows:  
-      Build binaries of two modes, release and debug.  
-      Run the following commands in Qt Command Prompt.  
-       MinGW:  
+  Windows:  
+  Build binaries of two modes, release and debug.  
+  Run the following commands in Qt Command Prompt.  
+    MinGW:  
 
          > cd (treefrog-x.x.x)
          > configure --enable-debug
@@ -57,9 +56,8 @@ Installation
          > cd ..\tools
          > mingw32-make install
 
-       Visual Studio:  
-       Call vcvarsall.bat to complete environment setup in Qt Command Prompt.
-        e.g.
+    Visual Studio:  
+    Call vcvarsall.bat to complete environment setup in Qt Command Prompt. e.g.
 
          > cd "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64"
          > vcvars64.bat
