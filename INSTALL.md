@@ -10,6 +10,7 @@ On Linux, you can install by 'apt-get' or 'yum'.
 Case of Ubuntu:
 
   Install Qt libraries and dev tools.
+
       $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
            libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5
            gcc g++ make
@@ -25,9 +26,10 @@ Installation
 ------------
 1. Extract the downloaded tar.gz file.
 
-2. Run build commands.
+2. Run build commands.  
    Linux, Mac OS X, or Unix-like OS:  
     Run the following commands.
+
        $ cd treefrog-x.x.x
        $ ./configure
        $ cd src
@@ -37,10 +39,10 @@ Installation
        $ make
        $ sudo make install
 
-    Windows:
-      Build binaries of two modes, release and debug.
-      Run the following commands in Qt Command Prompt.
-       MinGW:
+    Windows:  
+      Build binaries of two modes, release and debug.  
+      Run the following commands in Qt Command Prompt.  
+       MinGW:  
 
          > cd (treefrog-x.x.x)
          > configure --enable-debug
@@ -55,7 +57,7 @@ Installation
          > cd ..\tools
          > mingw32-make install
 
-       Visual Studio:
+       Visual Studio:  
        Call vcvarsall.bat to complete environment setup in Qt Command Prompt.
         e.g.
 
@@ -81,8 +83,8 @@ Installation
 3. Create a shortcut to TreeFrog Command Prompt (on Windows only).  
    Locate the program:
 
-     C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
-     ("x.x.x" is version)
+      C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
+      ("x.x.x" is version)
 
    * In the TreeFrog Command Prompt, build Web applications and run
      TreeFrog commands such as tspawn or treefrog.
