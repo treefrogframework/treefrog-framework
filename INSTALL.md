@@ -7,7 +7,7 @@ Requirements
  - Make utility
 
 On Linux, you can install by 'apt-get' or 'yum'.
-Case of Ubuntu:
+Case of Ubuntu:  
   Install Qt libraries and dev tools.
 
       $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
@@ -79,13 +79,13 @@ Installation
       environment.
 
 3. Create a shortcut to TreeFrog Command Prompt (on Windows only).  
-   Locate the program:
+  Locate the program:
 
       C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
       ("x.x.x" is version)
 
-   * In the TreeFrog Command Prompt, build Web applications and run
-     TreeFrog commands such as tspawn or treefrog.
+  * In the TreeFrog Command Prompt, build Web applications and run
+    TreeFrog commands such as tspawn or treefrog.
 
  
  Enjoy!
