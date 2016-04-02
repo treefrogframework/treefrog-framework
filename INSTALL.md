@@ -8,12 +8,14 @@ Requirements
 
  On Linux, you can install by 'apt-get' or 'yum'.
  Case of Ubuntu:
+
    Install Qt libraries and dev tools.
      $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
          libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5
          gcc g++ make
 
    Install DB client libraries. (optional)
+
      $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
 
    For more understanding see http://doc.qt.io/qt-5/sql-driver.html
@@ -39,6 +41,7 @@ Installation
       Build binaries of two modes, release and debug.
       Run the following commands in Qt Command Prompt.
        MinGW:
+
          > cd (treefrog-x.x.x)
          > configure --enable-debug
          > cd src
@@ -55,6 +58,7 @@ Installation
        Visual Studio:
        Call vcvarsall.bat to complete environment setup in Qt Command Prompt.
         e.g.
+
          > cd "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64"
          > vcvars64.bat
 
