@@ -4,21 +4,21 @@ Requirements
  - Windows, Linux, Mac OS X, or POSIX compliant Unix-like OS
  - Qt Toolkit version 4.8 or later, 5.0 or later
  - C compiler and C++ compiler
- - make utility
+ - Make utility
 
- On Linux, you can install by 'apt-get' or 'yum'.  
- Case of Ubuntu:
+On Linux, you can install by 'apt-get' or 'yum'.  
+Case of Ubuntu:
 
-   Install Qt libraries and dev tools.
-     $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
-         libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5
-         gcc g++ make
+  Install Qt libraries and dev tools.
+      $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
+           libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5
+           gcc g++ make
 
-   Install DB client libraries. (optional)
+  Install DB client libraries. (optional)
 
-     $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
+      $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
 
-   For more understanding see http://doc.qt.io/qt-5/sql-driver.html
+  For more understanding see http://doc.qt.io/qt-5/sql-driver.html
 
 
 Installation
