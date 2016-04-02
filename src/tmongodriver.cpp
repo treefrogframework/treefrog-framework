@@ -10,7 +10,9 @@
 #include <TBson>
 #include <TSystemGlobal>
 #include <QDateTime>
+extern "C" {
 #include "mongoc.h"
+}
 
 
 TMongoDriver::TMongoDriver()

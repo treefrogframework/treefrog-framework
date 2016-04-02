@@ -24,13 +24,13 @@ public:
     bool isTextRequest() const;
     bool isBinaryRequest() const;
     QList<QPair<int, QByteArray>> readAllBinaryRequest();
-    virtual bool canReadRequest();
-    virtual void startWorker();
-    virtual void deleteLater();
+    virtual bool canReadRequest() Q_DECL_OVERRIDE;
+    virtual void startWorker() Q_DECL_OVERRIDE;
+    virtual void deleteLater() Q_DECL_OVERRIDE;
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() Q_DECL_OVERRIDE;
-    QByteArray socketUuid() const { return TEpollSocket::socketUuid(); }
+    QByteArray socketUuid() const Q_DECL_OVERRIDE { return TEpollSocket::socketUuid(); }
     static TEpollWebSocket *searchSocket(const QByteArray &uuid);
 
 public slots:

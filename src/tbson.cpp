@@ -12,7 +12,9 @@
 #include <QCoreApplication>
 #include <QtEndian>
 #include <atomic>
+extern "C" {
 #include "mongoc.h"
+}
 
 /*!
   \class TBson

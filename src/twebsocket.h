@@ -21,7 +21,7 @@ public:
     TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent = 0);
     virtual ~TWebSocket();
 
-    QByteArray socketUuid() const { return uuid; }
+    QByteArray socketUuid() const Q_DECL_OVERRIDE { return uuid; }
     bool canReadRequest() const;
     void disconnect() Q_DECL_OVERRIDE;
     static TAbstractWebSocket *searchSocket(const QByteArray &uuid);
@@ -33,7 +33,7 @@ public slots:
     void readRequest();
     void releaseWorker();
     void sendRawData(const QByteArray &data);
-    void close();
+    void close() Q_DECL_OVERRIDE;
     void deleteLater();
 
 protected:

@@ -7,7 +7,9 @@
 
 #include <TMongoCursor>
 #include <TBson>
+extern "C" {
 #include "mongoc.h"
+}
 
 
 TMongoCursor::TMongoCursor()
