@@ -6,7 +6,7 @@ Requirements
  - C compiler and C++ compiler
  - make utility
 
- On Linux, you can install by 'apt-get' or 'yum'.
+ On Linux, you can install by 'apt-get' or 'yum'.  
  Case of Ubuntu:
 
    Install Qt libraries and dev tools.
@@ -26,8 +26,8 @@ Installation
 1. Extract the downloaded tar.gz file.
 
 2. Run build commands.
-    Linux, Mac OS X, or Unix-like OS:
-      Run the following commands.
+   Linux, Mac OS X, or Unix-like OS:  
+    Run the following commands.
        $ cd treefrog-x.x.x
        $ ./configure
        $ cd src
@@ -78,8 +78,9 @@ Installation
       Or, double-click to run the build.bat after editing it for your Qt
       environment.
 
-3. Create a shortcut to TreeFrog Command Prompt (on Windows only).
+3. Create a shortcut to TreeFrog Command Prompt (on Windows only).  
    Locate the program:
+
      C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
      ("x.x.x" is version)
 
