@@ -8,7 +8,7 @@
 
 set VERSION=1.11.0
 set TFDIR=C:\TreeFrog\%VERSION%
-set PATH="C:\Program Files (x86)\WiX Toolset v3.7\bin";%PATH%
+set PATH="C:\Program Files (x86)\WiX Toolset v3.10\bin";%PATH%
 
 cd /D %~dp0
 

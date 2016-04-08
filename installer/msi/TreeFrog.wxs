@@ -2,7 +2,7 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
   <!-- *** 8行目,12行目,30行目,36行目を修正せよ *** -->
-  <!-- *** 基本的に 9行目,10行目,41行目も修正する (guidgen使用) *** -->
+  <!-- *** 基本的に 9行目,10行目,36行目,42行目,44行目,54行目,59行目も修正する (guidgen使用) *** -->
 
   <!-- プロダクト情報 -->
   <Product Name='TreeFrog Framework 1.11.0'
@@ -31,24 +31,37 @@
           </Directory>
         </Directory>
       </Directory>
-      
+      <Directory Id="DesktopFolder"  SourceName="Desktop"/>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.11.0"/>
       </Directory>
     </Directory>
-    
+
+    <!-- デスクトップショートカット -->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="BF3587B4-F52E-411E-8814-CFCBF8201C0D">
+        <Shortcut Id="PromptDesktopShortcut"
+                  Name="TreeFrog Prompt 1.11.0"
+                  Description="TreeFrog Framework Prompt"
+                  Target="[SystemFolder]cmd.exe" Arguments="/K [VERSIONDIR]bin\\tfenv.bat"
+                  WorkingDirectory="PersonalFolder"/>
+        <RegistryValue Root="HKCU" Key="Software\TreeFrog" Name="DTSC" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!-- プログラムメニューショートカット -->
     <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcut" Guid="868A7A2D-A814-49F1-9DA8-529EA383A622">
+      <Component Id="ApplicationShortcut" Guid="107008B5-687E-4FC6-9C05-14D200C67FCA">
         <CreateFolder Directory="ApplicationProgramsFolder"/>
 
         <!-- Shortcut to TF prompt-->
-        <Shortcut Id="TreeFrogFrameworkPrompt"
-                  Name="TreeFrog Framework Prompt"
+        <Shortcut Id="PromptProgramMenuShortcut"
+                  Name="TreeFrog Prompt 1.11.0"
                   Description="TreeFrog Framework Prompt"
                   Target="[SystemFolder]cmd.exe" Arguments="/K [VERSIONDIR]bin\\tfenv.bat"
                   WorkingDirectory="PersonalFolder"/>
         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-        <RegistryValue Root="HKCU" Key="Software\TreeFrog" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\TreeFrog" Name="PMSC" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
 
@@ -59,6 +72,7 @@
 
       <Feature Id='TreeFrogSDK' Title='SDK' Description='TreeFrog Fromework' Level='1'>
         <ComponentGroupRef Id='TreeFrogFiles' />
+        <ComponentRef Id='DesktopShortcut' />
         <ComponentRef Id='ApplicationShortcut' />
       </Feature>
 
