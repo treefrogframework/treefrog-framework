@@ -7,10 +7,14 @@
 
 #include <QJSEngine>
 #include <QJSValue>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include "tjscontext.h"
 #include "tsystemglobal.h"
+
+static QStringList importPaths = { "." };
 
 
 inline const char *prop(const QJSValue &val, const QString &name = QString())
@@ -19,11 +23,55 @@ inline const char *prop(const QJSValue &val, const QString &name = QString())
 }
 
 
-TJSContext::TJSContext(const QStringList &scriptFiles)
-    : jsEngine(new QJSEngine()), funcObj(nullptr), lastFunc(), mutex(QMutex::Recursive)
+static bool isCommentPosition(const QString &content, int pos)
 {
+    if (pos < 0 || pos >= content.length()) {
+        return false;
+    }
+
+    int idx = 0;
+    while (idx < pos) {
+        QChar ch = content[idx++];
+        if (ch == '/') {
+            auto str = content.mid(idx - 1, 2);
+            if (str == "/*") {
+                if ((idx = content.indexOf("*/", idx)) < 0) {
+                    break;
+                }
+                idx += 2;
+            } else if (str == "//") {
+                if ((idx = content.indexOf(QChar::LineFeed, idx)) < 0) {
+                    break;
+                }
+                idx++;
+            }
+        } else if (ch == '\"') {
+            if ((idx = content.indexOf("\"", idx)) < 0) {
+                break;
+            }
+            idx++;
+
+        } else if (ch == '\'') {
+            if ((idx = content.indexOf("'", idx)) < 0) {
+                break;
+            }
+            idx++;
+        }
+    }
+    return (idx != pos);
+}
+
+
+TJSContext::TJSContext(bool commonJsMode, const QStringList &scriptFiles)
+    : jsEngine(new QJSEngine()), commonJs(commonJsMode), funcObj(nullptr),
+      lastFunc(), mutex(QMutex::Recursive)
+{
+    if (commonJsMode) {
+        jsEngine->evaluate("exports={};module={};module.exports={};");
+    }
+
     for (auto &file : scriptFiles) {
-        load(file);
+        load(file, QDir("."));
     }
 }
 
@@ -98,26 +146,103 @@ eval_error:
 }
 
 
-bool TJSContext::load(const QString &fileName)
+QString TJSContext::read(const QString &moduleName, const QDir &dir)
 {
-    QMutexLocker locker(&mutex);
+    QString fileName;
+
+    if (moduleName.startsWith("./")) {
+        fileName = dir.filePath(moduleName);
+    } else {
+        for (auto &path : importPaths) {
+            QString mod = moduleName;
+            if (QFileInfo(mod).suffix().isEmpty()) {
+                mod += ".*";
+            }
+
+            for (auto &f : QDir(path).entryList(QStringList(mod), QDir::Files)) {
+                if (QFileInfo(f).suffix() == "js") {
+                    fileName = f;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (fileName.isEmpty()) {
+        tSystemError("TJSContext file not found: %s\n", qPrintable(moduleName));
+        return QString();
+    }
 
     QFile script(fileName);
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
-        tSystemError("TJSContext open error: %s", qPrintable(fileName));
-        return false;
+        tSystemError("TJSContext file open error: %s", qPrintable(fileName));
+        return QString();
     }
 
     QTextStream stream(&script);
-    QString contents = stream.readAll();
+    QString program = stream.readAll();
     script.close();
 
-    QJSValue res = evaluate(contents, fileName);
+    if (commonJs) {
+        QDir dir = QFileInfo(fileName).dir();
+        replaceRequire(program, dir);
+
+
+    }
+    return program;
+}
+
+
+bool TJSContext::load(const QString &moduleName, const QDir &dir)
+{
+    auto program = read(moduleName, dir);
+
+    QMutexLocker locker(&mutex);
+    QJSValue res = evaluate(program, moduleName);
     if (res.isError()) {
         return false;
     }
 
-    tSystemDebug("TJSContext evaluation completed: %s", qPrintable(fileName));
+    tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
     return true;
+}
+
+
+void TJSContext::replaceRequire(QString &content, const QDir &dir)
+{
+    const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ]+)[\"']\\s*\\)");
+
+    int pos = 0;
+    QString prefix = QLatin1String("_tf") + QString::number(Tf::rand32_r()) + "_";
+
+    while ((pos = rx.indexIn(content, pos)) != -1) {
+        if (isCommentPosition(content, pos)) {
+            pos += rx.matchedLength();
+            continue;
+        }
+
+        auto module = rx.cap(1);
+        QString require;
+        if (!module.isEmpty()) {
+            require = read(module, dir);
+        }
+
+        QString var = prefix + QString::number(pos);
+        if (commonJs) {
+            require.prepend(QString("var %1=function(){").arg(var));
+            require.append(";return module.exports;}();");
+        }
+
+        QMutexLocker locker(&mutex);
+        QJSValue res = evaluate(require, module);
+        if (res.isError()) {
+            tSystemError("TJSContext evaluation error: %s", qPrintable(module));
+        } else {
+            tSystemDebug("TJSContext evaluation completed: %s", qPrintable(module));
+        }
+
+        content.replace(pos, rx.matchedLength(), var);
+        pos += var.length();
+    }
 }

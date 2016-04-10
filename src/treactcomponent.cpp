@@ -18,7 +18,7 @@
 
 
 TReactComponent::TReactComponent(const QString &script)
-    : context(new TJSContext()), jsValue(new QJSValue()), scriptPath(), loadedTime()
+    : context(new TJSContext(false)), jsValue(new QJSValue()), scriptPath(), loadedTime()
 {
     init();
     load(script);
@@ -95,7 +95,7 @@ QString TReactComponent::renderToString(const QString &component)
 
 QString TReactComponent::compileJsx(const QString &jsx)
 {
-    static TJSContext js;
+    static TJSContext js(false);
     static bool once = false;
     static QMutex mutex;
 

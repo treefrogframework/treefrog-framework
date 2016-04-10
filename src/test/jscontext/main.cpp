@@ -18,6 +18,8 @@ private slots:
     void callFunc1();
     void transform_data();
     void transform();
+    void load_data();
+    void load();
     void benchCall();
 #endif
 };
@@ -124,6 +126,28 @@ void BenchMark::benchCall()
         auto res = js.call("JSXTransformer.transform", QString("<HelloWorld />"));
         //qDebug() << res.property("code").toString();
     }
+}
+
+
+void BenchMark::load_data()
+{
+    QTest::addColumn<QStringList>("files");
+    QTest::addColumn<QString>("variable");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("01") << QStringList({"./js/main.js"}) << "sub('hello, world')" << "hello hello, world";
+}
+
+
+void BenchMark::load()
+{
+    QFETCH(QStringList, files);
+    QFETCH(QString, variable);
+    QFETCH(QString, result);
+
+    TJSContext js(true, files);  // commonJs mode
+    QString output = js.evaluate(variable).toString();
+    QCOMPARE(output, result);
 }
 
 #endif
