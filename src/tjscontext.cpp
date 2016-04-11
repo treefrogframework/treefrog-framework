@@ -185,10 +185,7 @@ QString TJSContext::read(const QString &moduleName, const QDir &dir)
     script.close();
 
     if (commonJs) {
-        QDir dir = QFileInfo(fileName).dir();
-        replaceRequire(program, dir);
-
-
+        replaceRequire(program, QFileInfo(fileName).dir());
     }
     return program;
 }
@@ -214,7 +211,8 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
     const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ]+)[\"']\\s*\\)");
 
     int pos = 0;
-    QString prefix = QLatin1String("_tf") + QString::number(Tf::rand32_r()) + "_";
+    auto crc = content.toLatin1();
+    QString varprefix = QLatin1String("_tf") + QString::number(Tf::rand32_r(), 36) + "_" + QString::number(qChecksum(crc.data(), crc.length()), 36) + "_";
 
     while ((pos = rx.indexIn(content, pos)) != -1) {
         if (isCommentPosition(content, pos)) {
@@ -228,7 +226,7 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
             require = read(module, dir);
         }
 
-        QString var = prefix + QString::number(pos);
+        QString var = varprefix + QString::number(pos, 36);
         if (commonJs) {
             require.prepend(QString("var %1=function(){").arg(var));
             require.append(";return module.exports;}();");
