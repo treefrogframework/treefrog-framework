@@ -4,9 +4,12 @@
 #include "../../tjscontext.h"
 
 
-class BenchMark : public QObject
+class JSContext : public QObject
 {
     Q_OBJECT
+    QString jsxTransform(const QString &jsx);
+    QString jsxTransformFile(const QString &file);
+
 private slots:
     void eval_data();
     void eval();
@@ -20,12 +23,16 @@ private slots:
     void transform();
     void load_data();
     void load();
-    void benchCall();
+    void react_data();
+    void react();
+    void reactjsx_data();
+    void reactjsx();
+    void benchmark();
 #endif
 };
 
 
-void BenchMark::eval_data()
+void JSContext::eval_data()
 {
     QTest::addColumn<QString>("expr");
     QTest::addColumn<QString>("output");
@@ -37,7 +44,7 @@ void BenchMark::eval_data()
 }
 
 
-void BenchMark::eval()
+void JSContext::eval()
 {
     QFETCH(QString, expr);
     QFETCH(QString, output);
@@ -49,7 +56,7 @@ void BenchMark::eval()
 
 #if QT_VERSION > 0x050400
 
-void BenchMark::callFunc_data()
+void JSContext::callFunc_data()
 {
     QTest::addColumn<QString>("func");
     QTest::addColumn<QString>("output");
@@ -60,7 +67,7 @@ void BenchMark::callFunc_data()
 }
 
 
-void BenchMark::callFunc()
+void JSContext::callFunc()
 {
     QFETCH(QString, func);
     QFETCH(QString, output);
@@ -70,7 +77,7 @@ void BenchMark::callFunc()
     QCOMPARE(result, output);
 }
 
-void BenchMark::callFunc1_data()
+void JSContext::callFunc1_data()
 {
     QTest::addColumn<QString>("func");
     QTest::addColumn<QString>("arg");
@@ -81,7 +88,7 @@ void BenchMark::callFunc1_data()
 }
 
 
-void BenchMark::callFunc1()
+void JSContext::callFunc1()
 {
     QFETCH(QString, func);
     QFETCH(QString, arg);
@@ -93,7 +100,7 @@ void BenchMark::callFunc1()
 }
 
 
-void BenchMark::transform_data()
+void JSContext::transform_data()
 {
     QTest::addColumn<QString>("jsx");
     QTest::addColumn<QString>("output");
@@ -104,23 +111,23 @@ void BenchMark::transform_data()
 }
 
 
-void BenchMark::transform()
+void JSContext::transform()
 {
     QFETCH(QString, jsx);
     QFETCH(QString, output);
 
     TJSContext js;
-    js.load("JSXTransformer.js");
+    js.load("JSXTransformer");
 
     auto result = js.call("JSXTransformer.transform", jsx).property("code").toString();
     QCOMPARE(result, output);
 }
 
 
-void BenchMark::benchCall()
+void JSContext::benchmark()
 {
     TJSContext js;
-    js.load("JSXTransformer.js");
+    js.load("JSXTransformer");
 
     QBENCHMARK {
         auto res = js.call("JSXTransformer.transform", QString("<HelloWorld />"));
@@ -129,7 +136,7 @@ void BenchMark::benchCall()
 }
 
 
-void BenchMark::load_data()
+void JSContext::load_data()
 {
     QTest::addColumn<QStringList>("files");
     QTest::addColumn<QString>("variable");
@@ -139,7 +146,7 @@ void BenchMark::load_data()
 }
 
 
-void BenchMark::load()
+void JSContext::load()
 {
     QFETCH(QStringList, files);
     QFETCH(QString, variable);
@@ -150,7 +157,109 @@ void BenchMark::load()
     QCOMPARE(output, result);
 }
 
+
+void JSContext::react_data()
+{
+    QTest::addColumn<QString>("variable");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("01") << "JSXTransformer.transform('<HelloWorld />')['code']"
+                        << "React.createElement(HelloWorld, null)";
+    QTest::newRow("02") << "ReactDOMServer.renderToString(React.createElement('div'))"
+                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"2058293082\"></div>";
+}
+
+
+void JSContext::react()
+{
+    QFETCH(QString, variable);
+    QFETCH(QString, result);
+
+    TJSContext js;
+    js.load("JSXTransformer");
+    js.load("react");
+    js.load("react-dom-server");
+
+    QString output = js.evaluate(variable).toString();
+    QCOMPARE(output, result);
+}
+
+void JSContext::reactjsx_data()
+{
+    QTest::addColumn<QStringList>("jsxfiles");
+    QTest::addColumn<QString>("func");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("01") << QStringList()
+                        << "ReactDOMServer.renderToString(<div/>)"
+                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"2058293082\"></div>";
+    QTest::newRow("02") << QStringList("./js/react_samlple.jsx")
+                        << "ReactDOMServer.renderToString(React.createElement(MyComponent, null))"
+                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
+    QTest::newRow("03") << QStringList("./js/react_samlple.jsx")
+                        << "ReactDOMServer.renderToString(<MyComponent/>)"
+                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
+    QTest::newRow("04") << QStringList()
+                        << "ReactDOMServer.renderToString(<ReactBootstrap.Button/>)"
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
+    QTest::newRow("05") << QStringList({"js/react_bootstrap_sample.jsx"})
+                        << "ReactDOMServer.renderToString(<Button/>)"
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
+    QTest::newRow("06") << QStringList({"js/react_bootstrap_sample.jsx"})
+                        << "ReactDOMServer.renderToString(SimpleButton)"
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1694638448\">Hello</button>";
+    QTest::newRow("07") << QStringList({"js/react_bootstrap_sample.jsx"})
+                        << "ReactDOMServer.renderToString(HelloButton)"
+                        << "<button class=\"btn btn-lg btn-primary\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1572807667\">Hello</button>";
+}
+
+
+void JSContext::reactjsx()
+{
+    QFETCH(QStringList, jsxfiles);
+    QFETCH(QString, func);
+    QFETCH(QString, result);
+
+    TJSContext js;
+    js.load("react");
+    js.load("react-dom-server");
+    js.load("react-bootstrap");
+
+    // Loads JSX
+    if (!jsxfiles.isEmpty()) {
+        for (auto &f : jsxfiles) {
+            js.evaluate(jsxTransformFile(f), f);
+        }
+    }
+    QString fn = jsxTransform(func);
+    QString output = js.evaluate(fn).toString();
+    QCOMPARE(output, result);
+}
+
 #endif
 
-TF_TEST_MAIN(BenchMark)
+QString JSContext::jsxTransform(const QString &jsx)
+{
+    TJSContext js;
+    js.load("JSXTransformer");
+    auto val = js.call("JSXTransformer.transform", jsx);
+    return val.property("code").toString();
+}
+
+QString JSContext::jsxTransformFile(const QString &file)
+{
+    QFile script(file);
+    if (!script.open(QIODevice::ReadOnly)) {
+        // open error
+        printf("open error: %s\n", qPrintable(file));
+        return QString();
+    }
+
+    QTextStream stream(&script);
+    QString contents = stream.readAll();
+    script.close();
+    return jsxTransform(contents);
+}
+
+TF_TEST_MAIN(JSContext)
 #include "main.moc"
