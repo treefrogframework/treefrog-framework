@@ -5,7 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <atomic>
 #include <QJSEngine>
 #include <QJSValue>
 #include <QFile>
@@ -64,7 +63,7 @@ bool TReactComponent::load(const QString &scriptFile)
         QJSValue res = context->evaluate(program, scriptFile);
         ok = !res.isError();
     } else {
-        ok = context->load(scriptFile);
+        ok = !context->load(scriptFile).isError();
     }
 
     if (ok) {

@@ -15,6 +15,7 @@
 #include "tsystemglobal.h"
 
 static QStringList importPaths = { "." };
+//#define tSystemError  printf
 
 
 inline const char *prop(const QJSValue &val, const QString &name = QString())
@@ -191,18 +192,17 @@ QString TJSContext::read(const QString &moduleName, const QDir &dir)
 }
 
 
-bool TJSContext::load(const QString &moduleName, const QDir &dir)
+QJSValue TJSContext::load(const QString &moduleName, const QDir &dir)
 {
     auto program = read(moduleName, dir);
 
     QMutexLocker locker(&mutex);
-    QJSValue res = evaluate(program, moduleName);
-    if (res.isError()) {
-        return false;
-    }
+    QJSValue ret =  evaluate(program, moduleName);
 
-    tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
-    return true;
+    if (!ret.isError()) {
+        tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
+    }
+    return ret;
 }
 
 
@@ -212,7 +212,7 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
 
     int pos = 0;
     auto crc = content.toLatin1();
-    QString varprefix = QLatin1String("_tf") + QString::number(Tf::rand32_r(), 36) + "_" + QString::number(qChecksum(crc.data(), crc.length()), 36) + "_";
+    const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc.data(), crc.length()), 36) + "_%2";
 
     while ((pos = rx.indexIn(content, pos)) != -1) {
         if (isCommentPosition(content, pos)) {
@@ -226,7 +226,7 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
             require = read(module, dir);
         }
 
-        QString var = varprefix + QString::number(pos, 36);
+        QString var = varprefix.arg(QString::number(Tf::rand32_r(), 36)).arg(QString::number(pos, 36));
         if (commonJs) {
             require.prepend(QString("var %1=function(){").arg(var));
             require.append(";return module.exports;}();");

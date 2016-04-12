@@ -27,6 +27,8 @@ private slots:
     void react();
     void reactjsx_data();
     void reactjsx();
+    void reactjsxCommonJs_data();
+    void reactjsxCommonJs();
     void benchmark();
 #endif
 };
@@ -233,6 +235,31 @@ void JSContext::reactjsx()
     }
     QString fn = jsxTransform(func);
     QString output = js.evaluate(fn).toString();
+    QCOMPARE(output, result);
+}
+
+
+void JSContext::reactjsxCommonJs_data()
+{
+    QTest::addColumn<QString>("jsfile");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("01") << "./js/react_bootstrap_require.js"
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
+    QTest::newRow("02") << "./js/react_bootstrap_require2.js"
+                        << "<div class=\"commentBox\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1960517848\">Hello, world! I am a CommentBox.</div>";
+}
+
+
+void JSContext::reactjsxCommonJs()
+{
+    QFETCH(QString, jsfile);
+    QFETCH(QString, result);
+
+    TJSContext js(true);  // CommonJS mode
+
+    // Loads JSX
+    QString output = js.load(jsfile).toString();
     QCOMPARE(output, result);
 }
 

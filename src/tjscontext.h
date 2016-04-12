@@ -17,7 +17,7 @@ public:
     TJSContext(bool commonJsMode = false, const QStringList &scriptFiles = QStringList());
     virtual ~TJSContext();
 
-    bool load(const QString &moduleName, const QDir &dir = QDir("."));
+    QJSValue load(const QString &moduleName, const QDir &dir = QDir("."));
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
     QJSValue call(const QString &func, const QJSValue &arg);
     QJSValue call(const QString &func, const QJSValueList &args = QJSValueList());
