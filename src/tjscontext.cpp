@@ -11,11 +11,21 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <TWebApplication>
 #include "tjscontext.h"
 #include "tsystemglobal.h"
 
-static QStringList importPaths = { "." };
-//#define tSystemError  printf
+static QStringList searchPaths = { "." };
+//#define tSystemError(fmt, ...)  printf(fmt "\n", __VA_ARGS__)
+//#define tSystemDebug(fmt, ...)  printf(fmt "\n", __VA_ARGS__)
+
+
+void TJSContext::setSearchPaths(const QStringList &paths)
+{
+    searchPaths = paths;
+}
 
 
 inline const char *prop(const QJSValue &val, const QString &name = QString())
@@ -64,8 +74,8 @@ static bool isCommentPosition(const QString &content, int pos)
 
 
 TJSContext::TJSContext(bool commonJsMode, const QStringList &scriptFiles)
-    : jsEngine(new QJSEngine()), commonJs(commonJsMode), funcObj(nullptr),
-      lastFunc(), mutex(QMutex::Recursive)
+    : jsEngine(new QJSEngine()), commonJs(commonJsMode), loadedFiles(),
+      funcObj(nullptr), lastFunc(), mutex(QMutex::Recursive)
 {
     if (commonJsMode) {
         jsEngine->evaluate("exports={};module={};module.exports={};");
@@ -147,37 +157,80 @@ eval_error:
 }
 
 
-QString TJSContext::read(const QString &moduleName, const QDir &dir)
+static QString absolutePath(const QString &moduleName, const QDir &dir)
 {
-    QString fileName;
+    QString filePath;
 
-    if (moduleName.startsWith("./")) {
-        fileName = dir.filePath(moduleName);
+    if (moduleName.isEmpty()) {
+        return filePath;
+    }
+
+    if (QFileInfo(moduleName).isAbsolute()) {
+        if (QFileInfo::exists(moduleName + ".js")) {
+            filePath = moduleName + ".js";
+        } else {
+            filePath = moduleName;
+        }
+
+    } else if (moduleName.startsWith("./")) {
+        if (dir.exists(moduleName + ".js")) {
+            filePath = dir.absoluteFilePath(moduleName + ".js");
+        } else {
+            filePath = dir.absoluteFilePath(moduleName);
+        }
+
+    } else if (dir.exists(moduleName + ".js")) {
+        filePath = dir.absoluteFilePath(moduleName + ".js");
     } else {
-        for (auto &path : importPaths) {
-            QString mod = moduleName;
-            if (QFileInfo(mod).suffix().isEmpty()) {
-                mod += ".*";
+        for (auto &p : searchPaths) {
+            QDir path(p);
+            if (!path.isAbsolute()) {
+                path = QDir(Tf::app()->webRootPath() + p);
             }
 
-            for (auto &f : QDir(path).entryList(QStringList(mod), QDir::Files)) {
-                if (QFileInfo(f).suffix() == "js") {
-                    fileName = f;
+            QString fpath = path.absoluteFilePath(moduleName + ".js");
+            if (QFileInfo(fpath).exists()) {
+                filePath = fpath;
+                break;
+            }
+
+            // search package.json
+            path = QDir(path.filePath(moduleName));
+            QFile packageJson(path.filePath("package.json"));
+            if (packageJson.exists() && packageJson.open(QIODevice::ReadOnly)) {
+                auto json = QJsonDocument::fromJson(packageJson.readAll()).object();
+                auto mainjs = json.value("main").toString();
+                if (!mainjs.isEmpty()) {
+                    filePath = path.absoluteFilePath(mainjs);
                     break;
                 }
             }
         }
     }
 
-    if (fileName.isEmpty()) {
+    if (filePath.isEmpty()) {
         tSystemError("TJSContext file not found: %s\n", qPrintable(moduleName));
+    } else {
+        filePath = QFileInfo(filePath).canonicalFilePath();
+        tSystemDebug("TJSContext search path: %s", qPrintable(filePath));
+    }
+    return filePath;
+}
+
+
+QString TJSContext::read(const QString &filePath)
+{
+    QMutexLocker locker(&mutex);
+    QFile script(filePath);
+
+    if (filePath.isEmpty() || !script.exists()) {
+        tSystemError("TJSContext file not found: %s\n", qPrintable(filePath));
         return QString();
     }
 
-    QFile script(fileName);
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
-        tSystemError("TJSContext file open error: %s", qPrintable(fileName));
+        tSystemError("TJSContext file open error: %s", qPrintable(filePath));
         return QString();
     }
 
@@ -186,7 +239,7 @@ QString TJSContext::read(const QString &moduleName, const QDir &dir)
     script.close();
 
     if (commonJs) {
-        replaceRequire(program, QFileInfo(fileName).dir());
+        replaceRequire(program, QFileInfo(filePath).dir());
     }
     return program;
 }
@@ -194,10 +247,11 @@ QString TJSContext::read(const QString &moduleName, const QDir &dir)
 
 QJSValue TJSContext::load(const QString &moduleName, const QDir &dir)
 {
-    auto program = read(moduleName, dir);
+    auto filePath = absolutePath(moduleName, dir);
+    auto program = read(filePath);
 
     QMutexLocker locker(&mutex);
-    QJSValue ret =  evaluate(program, moduleName);
+    QJSValue ret = evaluate(program, moduleName);
 
     if (!ret.isError()) {
         tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
@@ -221,26 +275,35 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
         }
 
         auto module = rx.cap(1);
-        QString require;
-        if (!module.isEmpty()) {
-            require = read(module, dir);
+        QString varName;
+        auto filePath = absolutePath(module, dir);
+
+        if (!module.isEmpty() && !filePath.isEmpty()) {
+            // Check if it's loaded file
+            varName = loadedFiles.value(filePath);
+
+            if (varName.isEmpty()) {
+                auto require = read(filePath);
+
+                varName = varprefix.arg(QString::number(Tf::rand32_r(), 36)).arg(QString::number(pos, 36));
+                if (commonJs) {
+                    require.prepend(QString("var %1=function(){").arg(varName));
+                    require.append(";return module.exports;}();");
+                }
+
+                QMutexLocker locker(&mutex);
+                QJSValue res = evaluate(require, module);
+                if (res.isError()) {
+                    tSystemError("TJSContext evaluation error: %s", qPrintable(module));
+                } else {
+                    tSystemDebug("TJSContext evaluation completed: %s", qPrintable(module));
+                    // Inserts the loaded file path
+                    loadedFiles.insert(filePath, varName);
+                }
+            }
         }
 
-        QString var = varprefix.arg(QString::number(Tf::rand32_r(), 36)).arg(QString::number(pos, 36));
-        if (commonJs) {
-            require.prepend(QString("var %1=function(){").arg(var));
-            require.append(";return module.exports;}();");
-        }
-
-        QMutexLocker locker(&mutex);
-        QJSValue res = evaluate(require, module);
-        if (res.isError()) {
-            tSystemError("TJSContext evaluation error: %s", qPrintable(module));
-        } else {
-            tSystemDebug("TJSContext evaluation completed: %s", qPrintable(module));
-        }
-
-        content.replace(pos, rx.matchedLength(), var);
-        pos += var.length();
+        content.replace(pos, rx.matchedLength(), varName);
+        pos += varName.length();
     }
 }

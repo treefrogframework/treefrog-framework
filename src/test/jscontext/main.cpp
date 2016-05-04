@@ -23,6 +23,8 @@ private slots:
     void transform();
     void load_data();
     void load();
+    // void load2_data();
+    // void load2();
     void react_data();
     void react();
     void reactjsx_data();
@@ -144,7 +146,9 @@ void JSContext::load_data()
     QTest::addColumn<QString>("variable");
     QTest::addColumn<QString>("result");
 
-    QTest::newRow("01") << QStringList({"./js/main.js"}) << "sub('hello, world')" << "hello hello, world";
+    QTest::newRow("01") << QStringList({"./js/main.js"}) << "sub('world')" << "Hello world";
+    QTest::newRow("02") << QStringList({"./js/main.js"}) << "sub2('world')" << "Hello world";
+    QTest::newRow("03") << QStringList({"./js/main.js"}) << "sub2('世界', 'ja')" << tr("こんにちは 世界");
 }
 
 
@@ -154,10 +158,34 @@ void JSContext::load()
     QFETCH(QString, variable);
     QFETCH(QString, result);
 
+    TJSContext::setSearchPaths({"."});
     TJSContext js(true, files);  // commonJs mode
     QString output = js.evaluate(variable).toString();
+    qDebug() << qPrintable(output);
     QCOMPARE(output, result);
 }
+
+// void JSContext::load2_data()
+// {
+//     QTest::addColumn<QStringList>("files");
+//     QTest::addColumn<QString>("variable");
+//     QTest::addColumn<QString>("result");
+
+//     QTest::newRow("01") << QStringList({"./js/req.js"}) << "sub('hello, world')" << "hello hello, world";
+// }
+
+
+// void JSContext::load2()
+// {
+//     QFETCH(QStringList, files);
+//     QFETCH(QString, variable);
+//     QFETCH(QString, result);
+
+//     TJSContext::setSearchPaths({".", "/usr/local/lib/node_modules"});
+//     TJSContext js(true, files);  // commonJs mode
+//     QString output = js.evaluate(variable).toString();
+//     QCOMPARE(output, result);
+// }
 
 
 void JSContext::react_data()
@@ -177,6 +205,7 @@ void JSContext::react()
     QFETCH(QString, variable);
     QFETCH(QString, result);
 
+    TJSContext::setSearchPaths({"."});
     TJSContext js;
     js.load("JSXTransformer");
     js.load("react");
@@ -222,6 +251,7 @@ void JSContext::reactjsx()
     QFETCH(QString, func);
     QFETCH(QString, result);
 
+    TJSContext::setSearchPaths({"."});
     TJSContext js;
     js.load("react");
     js.load("react-dom-server");

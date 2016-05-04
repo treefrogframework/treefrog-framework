@@ -19,16 +19,18 @@ public:
 
     QJSValue load(const QString &moduleName, const QDir &dir = QDir("."));
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
-    QJSValue call(const QString &func, const QJSValue &arg);
-    QJSValue call(const QString &func, const QJSValueList &args = QJSValueList());
+    QJSValue call(const QString &func, const QJSValue &arg = QJSValue());
+    QJSValue call(const QString &func, const QJSValueList &args);
+    static void setSearchPaths(const QStringList &paths);
 
 protected:
-    QString read(const QString &moduleName, const QDir &dir = QDir("."));
+    QString read(const QString &filePath);
     void replaceRequire(QString &content, const QDir &dir);
 
 private:
     QJSEngine *jsEngine;
     bool commonJs;
+    QMap<QString, QString> loadedFiles;
     QJSValue *funcObj;
     QString lastFunc;
     QMutex mutex;
