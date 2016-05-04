@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QJSValue>
 #include <QDir>
+#include <QMap>
 #include <QMutex>
 #include <TGlobal>
 
@@ -17,13 +18,15 @@ public:
     TJSContext(bool commonJsMode = false, const QStringList &scriptFiles = QStringList());
     virtual ~TJSContext();
 
-    QJSValue load(const QString &moduleName, const QDir &dir = QDir("."));
+    QJSValue load(const QString &moduleName);
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
     QJSValue call(const QString &func, const QJSValue &arg = QJSValue());
     QJSValue call(const QString &func, const QJSValueList &args);
+    QJSValue callAsConstructor(const QString &className, const QJSValueList &args = QJSValueList());
     static void setSearchPaths(const QStringList &paths);
 
 protected:
+    QJSValue load(const QString &moduleName, const QDir &dir);
     QString read(const QString &filePath);
     void replaceRequire(QString &content, const QDir &dir);
 

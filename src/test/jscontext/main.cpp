@@ -15,6 +15,8 @@ private slots:
     void eval();
 
 #if QT_VERSION > 0x050400
+    void callAsConstructor_data();
+    void callAsConstructor();
     void callFunc_data();
     void callFunc();
     void callFunc1_data();
@@ -59,6 +61,40 @@ void JSContext::eval()
 }
 
 #if QT_VERSION > 0x050400
+
+void JSContext::callAsConstructor_data()
+{
+    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<QString>("className");
+    QTest::addColumn<QString>("arg");
+    QTest::addColumn<QString>("method");
+    QTest::addColumn<QString>("methodArg");
+
+    QTest::newRow("01") << "./js/mobile-detect" << "MobileDetect" << "Mozilla/5.0 (Linux; U; Android 4.0.3; en-in; SonyEricssonMT11i Build/4.1.A.0.562) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
+                        << "mobile" << QString();
+}
+
+
+void JSContext::callAsConstructor()
+{
+    QFETCH(QString, fileName);
+    QFETCH(QString, className);
+    QFETCH(QString, arg);
+    QFETCH(QString, method);
+    QFETCH(QString, methodArg);
+
+    TJSContext::setSearchPaths({"."});
+    TJSContext js(true);
+    js.load(fileName);
+    auto classModule = js.callAsConstructor(className, {QJSValue(arg)});
+    QCOMPARE(classModule.isError(), false);
+    qDebug() << "classModule:" << className << ":" << classModule.toString();
+    auto meth = classModule.property(method);
+    qDebug() << "method:" << meth.toString();
+    auto res = meth.call();
+    qDebug() << "res:" << res.toString();
+}
+
 
 void JSContext::callFunc_data()
 {
@@ -286,6 +322,7 @@ void JSContext::reactjsxCommonJs()
     QFETCH(QString, jsfile);
     QFETCH(QString, result);
 
+    TJSContext::setSearchPaths({"."});
     TJSContext js(true);  // CommonJS mode
 
     // Loads JSX

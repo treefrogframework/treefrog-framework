@@ -14,6 +14,7 @@
 #include "qplatformdefs.h"
 
 class QTextCodec;
+class TJSContext;
 
 
 class T_CORE_EXPORT TWebApplication
@@ -68,6 +69,7 @@ public:
     QTextCodec *codecForInternal() const { return codecInternal; }
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
     int applicationServerId() const { return appServerId; }
+    bool loadJSModule(const QString &moduleName, TJSContext *context);
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
@@ -109,6 +111,7 @@ private:
     int appServerId;
     QBasicTimer timer;
     mutable MultiProcessingModule mpm;
+    QMap<QString, TJSContext*> jsContexts;
 
     static void resetSignalNumber();
 };

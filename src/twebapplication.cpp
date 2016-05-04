@@ -12,6 +12,9 @@
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <cstdlib>
+#if QT_VERSION >= 0x050000
+# include <TJSContext>
+#endif
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
 #define DEFAULT_DATABASE_ENVIRONMENT  "product"
@@ -439,6 +442,33 @@ void TWebApplication::timerEvent(QTimerEvent *event)
     }
 }
 
+/*!
+  Loads the JavaScript module \a moduleName and returns true if
+  successful; otherwise returns false.
+*/
+bool TWebApplication::loadJSModule(const QString &moduleName, TJSContext *context)
+{
+#if QT_VERSION >= 0x050000
+    static QMutex mutex(QMutex::Recursive);
+    QMutexLocker lock(&mutex);
+
+    context = jsContexts.value(moduleName);
+    if (!context) {
+        context = new TJSContext(true);
+        auto res = context->load(moduleName);
+        if (res.isError()) {
+            delete context;
+            context = nullptr;
+            return false;
+        } else {
+            jsContexts.insert(moduleName, context);
+        }
+    }
+    return true;
+#else
+    return false;
+#endif
+}
 
 /*!
   \fn QString TWebApplication::webRootPath() const
