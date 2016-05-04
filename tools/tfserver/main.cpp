@@ -12,6 +12,9 @@
 #include <TAppSettings>
 #include <TThreadApplicationServer>
 #include <TMultiplexingServer>
+#if QT_VERSION >= 0x050000
+# include <TJSContext>
+#endif
 #include <TSystemGlobal>
 #include <cstdlib>
 #include "tsystemglobal.h"
@@ -153,6 +156,12 @@ int main(int argc, char *argv[])
         tSystemError("Settings file not found");
         fprintf(stderr, "Settings file not found\n");
         goto finish;
+    } else {
+#if QT_VERSION >= 0x050000
+        // Sets search paths for JavaScript
+        QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath, "script;node_modules").toString().split(';');
+        TJSContext::setSearchPaths(jpaths);
+#endif
     }
 
 #ifdef Q_OS_WIN
