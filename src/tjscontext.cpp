@@ -166,7 +166,7 @@ static QString absolutePath(const QString &moduleName, const QDir &dir)
     }
 
     if (QFileInfo(moduleName).isAbsolute()) {
-        if (QFileInfo::exists(moduleName + ".js")) {
+        if (QFileInfo(moduleName + ".js").exists()) {
             filePath = moduleName + ".js";
         } else {
             filePath = moduleName;
