@@ -2,6 +2,7 @@
 #include <QJSEngine>
 #include <QJSValue>
 #include "../../tjscontext.h"
+#include "../../tjsinstance.h"
 
 
 class JSContext : public QObject
@@ -17,6 +18,8 @@ private slots:
 #if QT_VERSION > 0x050400
     void callAsConstructor_data();
     void callAsConstructor();
+    void require_data();
+    void require();
     void callFunc_data();
     void callFunc();
     void callFunc1_data();
@@ -64,35 +67,71 @@ void JSContext::eval()
 
 void JSContext::callAsConstructor_data()
 {
-    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<QStringList>("modules");
     QTest::addColumn<QString>("className");
     QTest::addColumn<QString>("arg");
     QTest::addColumn<QString>("method");
     QTest::addColumn<QString>("methodArg");
+    QTest::addColumn<QString>("output");
 
-    QTest::newRow("01") << "./js/mobile-detect" << "MobileDetect" << "Mozilla/5.0 (Linux; U; Android 4.0.3; en-in; SonyEricssonMT11i Build/4.1.A.0.562) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
-                        << "mobile" << QString();
+    QTest::newRow("01") << QStringList({"./js/hello"}) << "Hello" << "Taro" << "hello" << QString()
+                        << "My name is Taro";
+    QTest::newRow("02") << QStringList({"./js/hello"}) << "Hello" << QString() << "hello" << QString()
+                        << "My name is ";
 }
 
 
 void JSContext::callAsConstructor()
 {
-    QFETCH(QString, fileName);
+    QFETCH(QStringList, modules);
     QFETCH(QString, className);
     QFETCH(QString, arg);
     QFETCH(QString, method);
     QFETCH(QString, methodArg);
+    QFETCH(QString, output);
 
     TJSContext::setSearchPaths({"."});
-    TJSContext js(true);
-    js.load(fileName);
-    auto classModule = js.callAsConstructor(className, {QJSValue(arg)});
-    QCOMPARE(classModule.isError(), false);
-    qDebug() << "classModule:" << className << ":" << classModule.toString();
-    auto meth = classModule.property(method);
-    qDebug() << "method:" << meth.toString();
-    auto res = meth.call();
-    qDebug() << "res:" << res.toString();
+    TJSContext js(true, modules);
+    auto instance = js.callAsConstructor(className, {QJSValue(arg)});
+    QCOMPARE(instance.isError(), false);
+    auto result = instance.call(method, {QJSValue(methodArg)}).toString();
+    QCOMPARE(result, output);
+}
+
+
+void JSContext::require_data()
+{
+    QTest::addColumn<QStringList>("requireModules");
+    QTest::addColumn<QString>("module");
+    QTest::addColumn<QString>("className");
+    QTest::addColumn<QString>("arg");
+    QTest::addColumn<QString>("method");
+    QTest::addColumn<QString>("methodArg");
+    QTest::addColumn<QString>("output");
+
+    QTest::newRow("01") << QStringList({"./js/require"}) << "./js/mobile-detect" << "MobileDetect" << "Mozilla/5.0 (Linux; U; Android 4.0.3; en-in; SonyEricssonMT11i Build/4.1.A.0.562) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
+                        << "version" << "Android"
+                        << "4.03";
+}
+
+
+void JSContext::require()
+{
+    QFETCH(QStringList, requireModules);
+    QFETCH(QString, module);
+    QFETCH(QString, className);
+    QFETCH(QString, arg);
+    QFETCH(QString, method);
+    QFETCH(QString, methodArg);
+    QFETCH(QString, output);
+
+    TJSContext::setSearchPaths({"."});
+    TJSContext js(true, requireModules);
+    js.require(module, className);
+    auto instance = js.callAsConstructor(className, {QJSValue(arg)});
+    QCOMPARE(instance.isError(), false);
+    auto result = instance.call(method, {QJSValue(methodArg)}).toString();
+    QCOMPARE(result, output);
 }
 
 

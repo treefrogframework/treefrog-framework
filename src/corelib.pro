@@ -326,6 +326,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
   SOURCES += tjsonutil.cpp
   HEADERS += tjscontext.h
   SOURCES += tjscontext.cpp
+  HEADERS += tjsinstance.h
+  SOURCES += tjsinstance.cpp
   HEADERS += treactcomponent.h
   SOURCES += treactcomponent.cpp
 

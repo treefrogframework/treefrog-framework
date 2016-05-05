@@ -7,6 +7,7 @@
 
 #include <QJSEngine>
 #include <QJSValue>
+#include <QJSValueIterator>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -14,12 +15,23 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <TWebApplication>
-#include "tjscontext.h"
+#include <TJSContext>
+#include <TJSInstance>
 #include "tsystemglobal.h"
 
 static QStringList searchPaths = { "." };
-#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
-#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
+//#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
+//#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
+
+
+// static void dump(const QJSValue &object)
+// {
+//     QJSValueIterator it(object);
+//     while (it.hasNext()) {
+//         it.next();
+//         tSystemDebug("%s: %s", qPrintable(it.name()), qPrintable(it.value().toString()));
+//     }
+// }
 
 
 void TJSContext::setSearchPaths(const QStringList &paths)
@@ -157,18 +169,18 @@ eval_error:
 }
 
 
-QJSValue TJSContext::callAsConstructor(const QString &className, const QJSValueList &args)
+TJSInstance TJSContext::callAsConstructor(const QString &className, const QJSValueList &args)
 {
     QMutexLocker locker(&mutex);
 
     QJSValue construct = evaluate(className);
     tSystemDebug("construct: %s", qPrintable(construct.toString()));
-    QJSValue ret = construct.callAsConstructor(args);
-    if (ret.isError()) {
-        tSystemError("JS uncaught exception at %s:%s : %s", prop(ret, "fileName"),
-                     prop(ret, "lineNumber"), prop(ret));
+    QJSValue res = construct.callAsConstructor(args);
+    if (res.isError()) {
+        tSystemError("JS uncaught exception at %s:%s : %s", prop(res, "fileName"),
+                     prop(res, "lineNumber"), prop(res));
     }
-    return ret;
+    return TJSInstance(res);
 }
 
 
@@ -273,6 +285,24 @@ QString TJSContext::read(const QString &filePath)
 }
 
 
+QJSValue TJSContext::require(const QString &moduleName, const QString &varName)
+{
+    QJSValue ret;
+    QString program = QString("var %1 = require('%2');").arg(varName).arg(moduleName);
+    replaceRequire(program, QDir("."));
+
+    if (!program.isEmpty()) {
+        QMutexLocker locker(&mutex);
+        ret = evaluate(program, moduleName);
+
+        if (!ret.isError()) {
+            tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
+        }
+    }
+    return ret;
+}
+
+
 QJSValue TJSContext::load(const QString &moduleName)
 {
     QJSValue ret;
@@ -311,7 +341,7 @@ QJSValue TJSContext::load(const QString &moduleName, const QDir &dir)
 
 void TJSContext::replaceRequire(QString &content, const QDir &dir)
 {
-    const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ]+)[\"']\\s*\\)");
+    const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ,]+)[\"']\\s*\\)");
 
     int pos = 0;
     auto crc = content.toLatin1();
@@ -353,9 +383,11 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
                     loadedFiles.insert(filePath, varName);
                 }
             }
-        }
 
-        content.replace(pos, rx.matchedLength(), varName);
-        pos += varName.length();
+            content.replace(pos, rx.matchedLength(), varName);
+            pos += varName.length();
+        } else {
+            pos++;
+        }
     }
 }

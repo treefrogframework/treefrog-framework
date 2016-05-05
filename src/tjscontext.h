@@ -10,6 +10,7 @@
 #include <TGlobal>
 
 class QJSEngine;
+class TJSInstance;
 
 
 class T_CORE_EXPORT TJSContext
@@ -19,10 +20,11 @@ public:
     virtual ~TJSContext();
 
     QJSValue load(const QString &moduleName);
+    QJSValue require(const QString &moduleName, const QString &varName);
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
     QJSValue call(const QString &func, const QJSValue &arg = QJSValue());
     QJSValue call(const QString &func, const QJSValueList &args);
-    QJSValue callAsConstructor(const QString &className, const QJSValueList &args = QJSValueList());
+    TJSInstance callAsConstructor(const QString &className, const QJSValueList &args = QJSValueList());
     static void setSearchPaths(const QStringList &paths);
 
 protected:
