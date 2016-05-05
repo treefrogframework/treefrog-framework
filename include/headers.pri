@@ -8,6 +8,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
   HEADER_FILES   += treactcomponent.h
   HEADER_CLASSES += ../include/TJSContext
   HEADER_FILES   += tjscontext.h
+  HEADER_CLASSES += ../include/TJSInstance
+  HEADER_FILES   += tjsinstance.h
 }
 
 unix {
