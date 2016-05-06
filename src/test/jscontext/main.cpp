@@ -97,9 +97,9 @@ void JSContext::callAsConstructor()
 
     TJSContext::setSearchPaths({"."});
     TJSContext js(modules);
-    auto instance = js.callAsConstructor(className, {QJSValue(arg)});
+    auto instance = js.callAsConstructor(className, arg);
     QCOMPARE(instance.isError(), false);
-    auto result = instance.call(method, {QJSValue(methodArg)}).toString();
+    auto result = instance.call(method, methodArg).toString();
     QCOMPARE(result, output);
 }
 
@@ -131,9 +131,9 @@ void JSContext::require()
     TJSContext::setSearchPaths({"."});
     TJSContext js;
     js.import(className, module);
-    auto instance = js.callAsConstructor(className, {QJSValue(arg)});
+    auto instance = js.callAsConstructor(className, arg);
     QCOMPARE(instance.isError(), false);
-    auto result = instance.call(method, {QJSValue(methodArg)}).toString();
+    auto result = instance.call(method, methodArg).toString();
     QCOMPARE(result, output);
 }
 
