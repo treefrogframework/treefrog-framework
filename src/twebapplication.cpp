@@ -443,7 +443,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 }
 
 /*!
-  Loads the JavaScript module \a moduleName and returns true if
+  Imports the JavaScript module \a moduleName and returns true if
   successful; otherwise returns false.
 */
 bool TWebApplication::importJSModule(const QString &moduleName, TJSContext *context)
