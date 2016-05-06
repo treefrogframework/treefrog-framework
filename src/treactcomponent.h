@@ -16,7 +16,7 @@ public:
     virtual ~TReactComponent();
 
     QString filePath() const;
-    bool load(const QString &scriptFile);
+    bool import(const QString &moduleName);
     QString renderToString(const QString &component);
     QDateTime loadedDateTime() const { return loadedTime; }
 

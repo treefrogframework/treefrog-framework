@@ -6,6 +6,7 @@
  */
 
 #include <TJSInstance>
+#include <QJSValueIterator>
 
 
 TJSInstance::TJSInstance() : QJSValue()

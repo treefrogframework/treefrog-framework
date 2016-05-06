@@ -85,16 +85,14 @@ static bool isCommentPosition(const QString &content, int pos)
 }
 
 
-TJSContext::TJSContext(bool commonJsMode, const QStringList &scriptFiles)
-    : jsEngine(new QJSEngine()), commonJs(commonJsMode), loadedFiles(),
-      funcObj(nullptr), lastFunc(), mutex(QMutex::Recursive)
+TJSContext::TJSContext(const QStringList &scriptFiles)
+    : jsEngine(new QJSEngine()), loadedFiles(), funcObj(nullptr),
+      lastFunc(), mutex(QMutex::Recursive)
 {
-    if (commonJsMode) {
-        jsEngine->evaluate("exports={};module={};module.exports={};");
-    }
+    jsEngine->evaluate("exports={};module={};module.exports={};");
 
     for (auto &file : scriptFiles) {
-        load(file);
+        import(file);
     }
 }
 
@@ -110,6 +108,8 @@ TJSContext::~TJSContext()
 
 QJSValue TJSContext::evaluate(const QString &program, const QString &fileName, int lineNumber)
 {
+    QMutexLocker locker(&mutex);
+
     QJSValue ret = jsEngine->evaluate(program, fileName, lineNumber);
     if (ret.isError()) {
         tSystemError("JS uncaught exception at %s:%s : %s", prop(ret, "fileName"),
@@ -255,7 +255,6 @@ static QString absolutePath(const QString &moduleName, const QDir &dir)
 
 QString TJSContext::read(const QString &filePath)
 {
-    QMutexLocker locker(&mutex);
     QFile script(filePath);
 
     if (filePath.isEmpty()) {
@@ -278,21 +277,18 @@ QString TJSContext::read(const QString &filePath)
     QString program = stream.readAll();
     script.close();
 
-    if (commonJs) {
-        replaceRequire(program, QFileInfo(filePath).dir());
-    }
+    replaceRequire(program, QFileInfo(filePath).dir());
     return program;
 }
 
 
-QJSValue TJSContext::require(const QString &moduleName, const QString &varName)
+QJSValue TJSContext::import(const QString &defaultMember, const QString &moduleName)
 {
     QJSValue ret;
-    QString program = QString("var %1 = require('%2');").arg(varName).arg(moduleName);
+    QString program = QString("var %1 = require('%2');").arg(defaultMember).arg(moduleName);
     replaceRequire(program, QDir("."));
 
     if (!program.isEmpty()) {
-        QMutexLocker locker(&mutex);
         ret = evaluate(program, moduleName);
 
         if (!ret.isError()) {
@@ -303,14 +299,16 @@ QJSValue TJSContext::require(const QString &moduleName, const QString &varName)
 }
 
 
-QJSValue TJSContext::load(const QString &moduleName)
+QJSValue TJSContext::import(const QString &moduleName)
 {
     QJSValue ret;
     auto filePath = search(moduleName);
-    auto program = read(filePath);
+    if (filePath.isEmpty()) {
+        return ret;
+    }
 
+    auto program = read(filePath);
     if (!program.isEmpty()) {
-        QMutexLocker locker(&mutex);
         ret = evaluate(program, moduleName);
 
         if (!ret.isError()) {
@@ -321,22 +319,22 @@ QJSValue TJSContext::load(const QString &moduleName)
 }
 
 
-QJSValue TJSContext::load(const QString &moduleName, const QDir &dir)
-{
-    QJSValue ret;
-    auto filePath = absolutePath(moduleName, dir);
-    auto program = read(filePath);
+// QJSValue TJSContext::readModule(const QString &moduleName, const QDir &dir)
+// {
+//     QJSValue ret;
+//     auto filePath = absolutePath(moduleName, dir);
+//     auto program = read(filePath);
 
-    if (!program.isEmpty()) {
-        QMutexLocker locker(&mutex);
-        ret = evaluate(program, moduleName);
+//     if (!program.isEmpty()) {
+//         QMutexLocker locker(&mutex);
+//         ret = evaluate(program, moduleName);
 
-        if (!ret.isError()) {
-            tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
-        }
-    }
-    return ret;
-}
+//         if (!ret.isError()) {
+//             tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
+//         }
+//     }
+//     return ret;
+// }
 
 
 void TJSContext::replaceRequire(QString &content, const QDir &dir)
@@ -368,12 +366,9 @@ void TJSContext::replaceRequire(QString &content, const QDir &dir)
                 }
 
                 varName = varprefix.arg(QString::number(Tf::rand32_r(), 36)).arg(QString::number(pos, 36));
-                if (commonJs) {
-                    require.prepend(QString("var %1=function(){").arg(varName));
-                    require.append(";return module.exports;}();");
-                }
+                require.prepend(QString("var %1=function(){").arg(varName));
+                require.append(";return module.exports;}();");
 
-                QMutexLocker locker(&mutex);
                 QJSValue res = evaluate(require, module);
                 if (res.isError()) {
                     tSystemError("TJSContext evaluation error: %s", qPrintable(module));

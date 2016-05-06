@@ -454,8 +454,8 @@ bool TWebApplication::loadJSModule(const QString &moduleName, TJSContext *contex
 
     context = jsContexts.value(moduleName);
     if (!context) {
-        context = new TJSContext(true);
-        auto res = context->load(moduleName);
+        context = new TJSContext();
+        auto res = context->import(moduleName);
         if (res.isError()) {
             delete context;
             context = nullptr;

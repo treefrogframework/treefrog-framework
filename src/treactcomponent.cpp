@@ -17,10 +17,10 @@
 
 
 TReactComponent::TReactComponent(const QString &script)
-    : context(new TJSContext(false)), jsValue(new QJSValue()), scriptPath(), loadedTime()
+    : context(new TJSContext()), jsValue(new QJSValue()), scriptPath(), loadedTime()
 {
     init();
-    load(script);
+    import(script);
 }
 
 
@@ -43,8 +43,8 @@ TReactComponent::~TReactComponent()
 
 void TReactComponent::init()
 {
-    load(Tf::app()->webRootPath()+ "script" + QDir::separator() + "react.min.js");
-    load(Tf::app()->webRootPath()+ "script" + QDir::separator() + "react-dom-server.min.js");
+    import(Tf::app()->webRootPath()+ "script" + QDir::separator() + "react.min.js");
+    import(Tf::app()->webRootPath()+ "script" + QDir::separator() + "react-dom-server.min.js");
 }
 
 
@@ -54,21 +54,21 @@ QString TReactComponent::filePath() const
 }
 
 
-bool TReactComponent::load(const QString &scriptFile)
+bool TReactComponent::import(const QString &moduleName)
 {
     bool ok;
-    if (QFileInfo(scriptFile).suffix().compare("jsx", Qt::CaseInsensitive) == 0) {
+    if (QFileInfo(moduleName).suffix().compare("jsx", Qt::CaseInsensitive) == 0) {
         // Loads JSX file
-        QString program = compileJsxFile(scriptFile);
-        QJSValue res = context->evaluate(program, scriptFile);
+        QString program = compileJsxFile(moduleName);
+        QJSValue res = context->evaluate(program, moduleName);
         ok = !res.isError();
     } else {
-        ok = !context->load(scriptFile).isError();
+        ok = !context->import(moduleName).isError();
     }
 
     if (ok) {
         loadedTime = QDateTime::currentDateTime();
-        scriptPath = scriptFile;
+        scriptPath = moduleName;
     } else {
         loadedTime = QDateTime();
         scriptPath = QString();
@@ -94,14 +94,14 @@ QString TReactComponent::renderToString(const QString &component)
 
 QString TReactComponent::compileJsx(const QString &jsx)
 {
-    static TJSContext js(false);
+    static TJSContext js;
     static bool once = false;
     static QMutex mutex;
 
     if (Q_UNLIKELY(!once)) {
         QMutexLocker locker(&mutex);
         if (!once) {
-            js.load(Tf::app()->webRootPath()+ "script" + QDir::separator() + "JSXTransformer.js");
+            js.import(Tf::app()->webRootPath()+ "script" + QDir::separator() + "JSXTransformer.js");
             once = true;
         }
     }
