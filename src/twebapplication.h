@@ -69,7 +69,7 @@ public:
     QTextCodec *codecForInternal() const { return codecInternal; }
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
     int applicationServerId() const { return appServerId; }
-    bool loadJSModule(const QString &moduleName, TJSContext *context);
+    bool importJSModule(const QString &moduleName, TJSContext *context);
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);

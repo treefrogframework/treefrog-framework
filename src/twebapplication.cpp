@@ -446,7 +446,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
   Loads the JavaScript module \a moduleName and returns true if
   successful; otherwise returns false.
 */
-bool TWebApplication::loadJSModule(const QString &moduleName, TJSContext *context)
+bool TWebApplication::importJSModule(const QString &moduleName, TJSContext *context)
 {
 #if QT_VERSION >= 0x050000
     static QMutex mutex(QMutex::Recursive);
