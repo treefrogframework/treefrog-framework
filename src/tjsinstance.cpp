@@ -27,6 +27,13 @@ TJSInstance::~TJSInstance()
 { }
 
 
+QJSValue TJSInstance::call(const QString &method, const QJSValue &arg)
+{
+    QJSValueList args = { arg };
+    return call(method, args);
+}
+
+
 QJSValue TJSInstance::call(const QString &method, const QJSValueList &args)
 {
     auto meth = property(method);

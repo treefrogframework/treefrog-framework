@@ -14,6 +14,7 @@ public:
     TJSInstance(const QJSValue &other);
     ~TJSInstance();
 
+    QJSValue call(const QString &method, const QJSValue &arg);
     QJSValue call(const QString &method, const QJSValueList &args = QJSValueList());
 };
 

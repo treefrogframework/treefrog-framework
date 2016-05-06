@@ -443,30 +443,45 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 }
 
 /*!
-  Imports the JavaScript module \a moduleName and returns true if
+  Loads the JavaScript module \a moduleName and returns true if
   successful; otherwise returns false.
 */
-bool TWebApplication::importJSModule(const QString &moduleName, TJSContext *context)
+TJSContext *TWebApplication::loadJSModule(const QString &moduleName)
+{
+    return loadJSModule(QString(), moduleName);
+}
+
+/*!
+  Loads the JavaScript module \a moduleName and returns true if
+  successful; otherwise returns false.
+*/
+TJSContext *TWebApplication::loadJSModule(const QString &defaultMember, const QString &moduleName)
 {
 #if QT_VERSION >= 0x050000
     static QMutex mutex(QMutex::Recursive);
     QMutexLocker lock(&mutex);
+    QString key = defaultMember + QLatin1Char(';') + moduleName;
+    TJSContext *context = jsContexts.value(key);
 
-    context = jsContexts.value(moduleName);
     if (!context) {
         context = new TJSContext();
-        auto res = context->import(moduleName);
+        QJSValue res;
+        if (defaultMember.isEmpty()) {
+            res = context->import(moduleName);
+        } else {
+            res = context->import(defaultMember, moduleName);
+        }
+
         if (res.isError()) {
             delete context;
             context = nullptr;
-            return false;
         } else {
-            jsContexts.insert(moduleName, context);
+            jsContexts.insert(key, context);
         }
     }
-    return true;
+    return context;
 #else
-    return false;
+    return nullptr;
 #endif
 }
 

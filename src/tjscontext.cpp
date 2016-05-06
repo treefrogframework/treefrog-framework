@@ -169,6 +169,13 @@ eval_error:
 }
 
 
+TJSInstance TJSContext::callAsConstructor(const QString &className, const QJSValue &arg)
+{
+    QJSValueList args = { arg };
+    return callAsConstructor(className, args);
+}
+
+
 TJSInstance TJSContext::callAsConstructor(const QString &className, const QJSValueList &args)
 {
     QMutexLocker locker(&mutex);
