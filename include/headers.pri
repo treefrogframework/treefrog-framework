@@ -4,12 +4,14 @@ HEADER_FILES = tabstractmodel.h tabstractuser.h tactioncontext.h tactioncontroll
 
 # Qt5
 greaterThan(QT_MAJOR_VERSION, 4) {
-  HEADER_CLASSES += ../include/TReactComponent
-  HEADER_FILES   += treactcomponent.h
+  HEADER_CLASSES += ../include/TJSLoader
+  HEADER_FILES   += tjsloader.h
   HEADER_CLASSES += ../include/TJSContext
   HEADER_FILES   += tjscontext.h
   HEADER_CLASSES += ../include/TJSInstance
   HEADER_FILES   += tjsinstance.h
+  HEADER_CLASSES += ../include/TReactComponent
+  HEADER_FILES   += treactcomponent.h
 }
 
 unix {

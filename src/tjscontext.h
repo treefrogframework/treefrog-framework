@@ -24,8 +24,8 @@ public:
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
     QJSValue call(const QString &func, const QJSValue &arg);
     QJSValue call(const QString &func, const QJSValueList &args = QJSValueList());
-    TJSInstance callAsConstructor(const QString &className, const QJSValue &arg);
-    TJSInstance callAsConstructor(const QString &className, const QJSValueList &args = QJSValueList());
+    TJSInstance callAsConstructor(const QString &constructorName, const QJSValue &arg);
+    TJSInstance callAsConstructor(const QString &constructorName, const QJSValueList &args = QJSValueList());
     static void setSearchPaths(const QStringList &paths);
 
 protected:

@@ -7,6 +7,7 @@
 
 #include <TJSInstance>
 #include <QJSValueIterator>
+#include "tsystemglobal.h"
 
 
 TJSInstance::TJSInstance() : QJSValue()
@@ -36,6 +37,12 @@ QJSValue TJSInstance::call(const QString &method, const QJSValue &arg)
 
 QJSValue TJSInstance::call(const QString &method, const QJSValueList &args)
 {
+    if (isError()) {
+        tSystemError("Uncaught exception at line %d : %s", property("lineNumber").toInt(),
+                     qPrintable(toString()));
+        return QJSValue();
+    }
+
     auto meth = property(method);
     return (meth.isError()) ? meth : meth.callWithInstance(*dynamic_cast<QJSValue *>(this), args);
 }

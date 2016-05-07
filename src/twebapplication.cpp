@@ -12,9 +12,6 @@
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <cstdlib>
-#if QT_VERSION >= 0x050000
-# include <TJSContext>
-#endif
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
 #define DEFAULT_DATABASE_ENVIRONMENT  "product"
@@ -442,48 +439,6 @@ void TWebApplication::timerEvent(QTimerEvent *event)
     }
 }
 
-/*!
-  Loads the JavaScript module \a moduleName and returns true if
-  successful; otherwise returns false.
-*/
-TJSContext *TWebApplication::loadJSModule(const QString &moduleName)
-{
-    return loadJSModule(QString(), moduleName);
-}
-
-/*!
-  Loads the JavaScript module \a moduleName and returns true if
-  successful; otherwise returns false.
-*/
-TJSContext *TWebApplication::loadJSModule(const QString &defaultMember, const QString &moduleName)
-{
-#if QT_VERSION >= 0x050000
-    static QMutex mutex(QMutex::Recursive);
-    QMutexLocker lock(&mutex);
-    QString key = defaultMember + QLatin1Char(';') + moduleName;
-    TJSContext *context = jsContexts.value(key);
-
-    if (!context) {
-        context = new TJSContext();
-        QJSValue res;
-        if (defaultMember.isEmpty()) {
-            res = context->import(moduleName);
-        } else {
-            res = context->import(defaultMember, moduleName);
-        }
-
-        if (res.isError()) {
-            delete context;
-            context = nullptr;
-        } else {
-            jsContexts.insert(key, context);
-        }
-    }
-    return context;
-#else
-    return nullptr;
-#endif
-}
 
 /*!
   \fn QString TWebApplication::webRootPath() const

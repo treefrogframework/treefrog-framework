@@ -324,6 +324,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
   QT      += qml
   HEADERS += tjsonutil.h
   SOURCES += tjsonutil.cpp
+  HEADERS += tjsloader.h
+  SOURCES += tjsloader.cpp
   HEADERS += tjscontext.h
   SOURCES += tjscontext.cpp
   HEADERS += tjsinstance.h

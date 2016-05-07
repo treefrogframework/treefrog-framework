@@ -169,18 +169,18 @@ eval_error:
 }
 
 
-TJSInstance TJSContext::callAsConstructor(const QString &className, const QJSValue &arg)
+TJSInstance TJSContext::callAsConstructor(const QString &constructorName, const QJSValue &arg)
 {
     QJSValueList args = { arg };
-    return callAsConstructor(className, args);
+    return callAsConstructor(constructorName, args);
 }
 
 
-TJSInstance TJSContext::callAsConstructor(const QString &className, const QJSValueList &args)
+TJSInstance TJSContext::callAsConstructor(const QString &constructorName, const QJSValueList &args)
 {
     QMutexLocker locker(&mutex);
 
-    QJSValue construct = evaluate(className);
+    QJSValue construct = evaluate(constructorName);
     tSystemDebug("construct: %s", qPrintable(construct.toString()));
     QJSValue res = construct.callAsConstructor(args);
     if (res.isError()) {
