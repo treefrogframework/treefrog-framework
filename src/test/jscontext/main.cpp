@@ -3,6 +3,7 @@
 #include <QJSValue>
 #include "../../tjscontext.h"
 #include "../../tjsinstance.h"
+#include "../../tjsloader.h"
 
 
 class JSContext : public QObject
@@ -307,19 +308,16 @@ void JSContext::reactjsx()
     QFETCH(QString, result);
 
     TJSContext::setSearchPaths({"."});
-    TJSContext js;
-    js.import("React", "react");
-    js.import("ReactDOMServer", "react-dom-server");
-    js.import("ReactBootstrap", "react-bootstrap");
+    auto *js = TJSLoader().loadJSModule("reactmodule");
 
     // Loads JSX
     if (!jsxfiles.isEmpty()) {
         for (auto &f : jsxfiles) {
-            js.evaluate(jsxTransformFile(f), f);
+            js->evaluate(jsxTransformFile(f), f);
         }
     }
     QString fn = jsxTransform(func);
-    QString output = js.evaluate(fn).toString();
+    QString output = js->evaluate(fn).toString();
     QCOMPARE(output, result);
 }
 
@@ -353,9 +351,7 @@ void JSContext::reactjsxCommonJs()
 
 QString JSContext::jsxTransform(const QString &jsx)
 {
-    TJSContext js;
-    js.import("JSXTransformer", "JSXTransformer");
-    auto val = js.call("JSXTransformer.transform", jsx);
+    auto val = TJSLoader().loadJSModule("Jtf", "JSXTransformer")->call("Jtf.transform", jsx);
     return val.property("code").toString();
 }
 
