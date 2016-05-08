@@ -31,7 +31,7 @@ void TFileAioWriterData::clearSyncBuffer()
     if (!syncBuffer.isEmpty()) {
         for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
             struct aiocb *cb = it.next();
-            delete (char *)cb->aio_buf;
+            delete [] (char *) cb->aio_buf;
             delete cb;
         }
         syncBuffer.clear();
