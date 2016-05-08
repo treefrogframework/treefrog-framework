@@ -1,8 +1,10 @@
 # ChangeLog
 
-## 1.11.1
+## 1.12.0
+ - Added helper generator to tspawn command.
  - Added inlineImageTag() function.
  - Added functions to Redis driver class.
+ - Added modules for server-side JavaScript processing. [Experimental]
  - Fix a bug of mongo driver.
 
 ## 1.11.0
