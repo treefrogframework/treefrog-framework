@@ -9,6 +9,7 @@
 #include "global.h"
 #include "controllergenerator.h"
 #include "modelgenerator.h"
+#include "helpergenerator.h"
 #include "sqlobjgenerator.h"
 #include "mongoobjgenerator.h"
 #include "websocketgenerator.h"
@@ -38,8 +39,10 @@ enum SubCommand {
     New,
     Controller,
     Model,
+    Helper,
     UserModel,
     SqlObject,
+    //UpdateModel,
     MongoScaffold,
     MongoModel,
     WebSocketEndpoint,
@@ -66,12 +69,16 @@ public:
         insert("c", Controller);
         insert("model", Model);
         insert("m", Model);
+        insert("helper", Helper);
+        insert("h", Helper);
         insert("usermodel", UserModel);
         insert("u", UserModel);
         insert("sqlobject", SqlObject);
         insert("o", SqlObject);
         insert("mongoscaffold", MongoScaffold);
         insert("ms", MongoScaffold);
+        // insert("updatemodel", UpdateModel);
+        // insert("um", UpdateModel);
         insert("mongomodel", MongoModel);
         insert("mm", MongoModel);
         insert("websocket", WebSocketEndpoint);
@@ -192,6 +199,7 @@ static void usage()
            "  scaffold (s)    <table-name> [model-name]\n" \
            "  controller (c)  <controller-name> action [action ...]\n" \
            "  model (m)       <table-name> [model-name]\n" \
+           "  helper (h)      <name>\n" \
            "  usermodel (u)   <table-name> [username password [model-name]]\n" \
            "  sqlobject (o)   <table-name> [model-name]\n"         \
            "  mongoscaffold (ms) <model-name>\n"                   \
@@ -199,7 +207,7 @@ static void usage()
            "  websocket (w)   <endpoint-name>\n"                   \
            "  validator (v)   <name>\n"                            \
            "  mailer (l)      <mailer-name> action [action ...]\n" \
-           "  delete (d)      <table-name or validator-name>\n");
+           "  delete (d)      <table-name, helper-name or validator-name>\n");
 }
 
 
@@ -360,7 +368,15 @@ static int deleteScaffold(const QString &name)
     // Removes files
     QString str = name;
     str = str.remove('_').toLower().trimmed();
-    if (str.endsWith("validator", Qt::CaseInsensitive)) {
+
+    if (QFileInfo(D_HELPERS + str + ".h").exists()) {
+        QStringList helpers;
+        helpers << str + ".h"
+                << str + ".cpp";
+
+        rmfiles(helpers, D_HELPERS, "helpers.pro");
+
+    } else if (str.endsWith("validator", Qt::CaseInsensitive)) {
         QStringList helpers;
         helpers << str + ".h"
                 << str + ".cpp";
@@ -611,6 +627,11 @@ int main(int argc, char *argv[])
             modelgen.generate(D_MODELS);
             break; }
 
+        case Helper: {
+            HelperGenerator helpergen(args.value(2));
+            helpergen.generate(D_HELPERS);
+            break; }
+
         case UserModel: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(5), args.value(2), args.mid(3, 2));
             modelgen.generate(D_MODELS, true);
@@ -719,8 +740,9 @@ int main(int argc, char *argv[])
         case Delete: {
             // Removes files
             int ret = deleteScaffold(args.value(2));
-            if (ret)
+            if (ret) {
                 return ret;
+            }
             break; }
 
         default:

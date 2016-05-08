@@ -159,5 +159,7 @@ HEADERS += mailergenerator.h
 SOURCES += mailergenerator.cpp
 HEADERS += mongocommand.h
 SOURCES += mongocommand.cpp
+HEADERS += helpergenerator.h
+SOURCES += helpergenerator.cpp
 HEADERS += util.h
 SOURCES += util.cpp
