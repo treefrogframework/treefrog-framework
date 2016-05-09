@@ -12,11 +12,12 @@ class QJSValue;
 class T_CORE_EXPORT TReactComponent
 {
 public:
-    TReactComponent(const QString &scriptFile);
+    TReactComponent(const QString &moduleName = QString());
     virtual ~TReactComponent();
 
     QString filePath() const;
     bool import(const QString &moduleName);
+    bool import(const QString &defaultMember, const QString &moduleName);
     QString renderToString(const QString &component);
     QDateTime loadedDateTime() const { return loadedTime; }
 
@@ -29,7 +30,7 @@ protected:
 private:
     TJSContext *context;
     QJSValue *jsValue;
-    QString scriptPath;
+    QString modulePath;
     QDateTime loadedTime;
 
     Q_DISABLE_COPY(TReactComponent)

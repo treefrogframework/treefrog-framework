@@ -4,6 +4,7 @@
 #include "../../tjscontext.h"
 #include "../../tjsinstance.h"
 #include "../../tjsloader.h"
+#include "../../treactcomponent.h"
 
 
 class JSContext : public QObject
@@ -36,6 +37,8 @@ private slots:
     void reactjsx();
     void reactjsxCommonJs_data();
     void reactjsxCommonJs();
+    void reactComponent_data();
+    void reactComponent();
     void benchmark();
 #endif
 };
@@ -273,29 +276,29 @@ void JSContext::react()
 
 void JSContext::reactjsx_data()
 {
-    QTest::addColumn<QStringList>("jsxfiles");
+    QTest::addColumn<QString>("jsxfile");
     QTest::addColumn<QString>("func");
     QTest::addColumn<QString>("result");
 
-    QTest::newRow("01") << QStringList()
+    QTest::newRow("01") << QString()
                         << "ReactDOMServer.renderToString(<div/>)"
                         << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"2058293082\"></div>";
-    QTest::newRow("02") << QStringList("./js/react_samlple.jsx")
+    QTest::newRow("02") << "./js/react_samlple.jsx"
                         << "ReactDOMServer.renderToString(React.createElement(MyComponent, null))"
                         << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
-    QTest::newRow("03") << QStringList("./js/react_samlple.jsx")
+    QTest::newRow("03") << "./js/react_samlple.jsx"
                         << "ReactDOMServer.renderToString(<MyComponent/>)"
                         << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
-    QTest::newRow("04") << QStringList()
+    QTest::newRow("04") << QString()
                         << "ReactDOMServer.renderToString(<ReactBootstrap.Button/>)"
                         << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
-    QTest::newRow("05") << QStringList({"js/react_bootstrap_sample.jsx"})
+    QTest::newRow("05") << QString("js/react_bootstrap_sample.jsx")
                         << "ReactDOMServer.renderToString(<Button/>)"
                         << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
-    QTest::newRow("06") << QStringList({"js/react_bootstrap_sample.jsx"})
+    QTest::newRow("06") << QString("js/react_bootstrap_sample.jsx")
                         << "ReactDOMServer.renderToString(SimpleButton)"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1694638448\">Hello</button>";
-    QTest::newRow("07") << QStringList({"js/react_bootstrap_sample.jsx"})
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-2012470818\">Sample</button>";
+    QTest::newRow("07") << QString("js/react_bootstrap_sample.jsx")
                         << "ReactDOMServer.renderToString(HelloButton)"
                         << "<button class=\"btn btn-lg btn-primary\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1572807667\">Hello</button>";
 }
@@ -303,7 +306,7 @@ void JSContext::reactjsx_data()
 
 void JSContext::reactjsx()
 {
-    QFETCH(QStringList, jsxfiles);
+    QFETCH(QString, jsxfile);
     QFETCH(QString, func);
     QFETCH(QString, result);
 
@@ -311,10 +314,8 @@ void JSContext::reactjsx()
     auto *js = TJSLoader().loadJSModule("reactmodule");
 
     // Loads JSX
-    if (!jsxfiles.isEmpty()) {
-        for (auto &f : jsxfiles) {
-            js->evaluate(jsxTransformFile(f), f);
-        }
+    if (!jsxfile.isEmpty()) {
+        js->evaluate(jsxTransformFile(jsxfile), jsxfile);
     }
     QString fn = jsxTransform(func);
     QString output = js->evaluate(fn).toString();
@@ -344,6 +345,40 @@ void JSContext::reactjsxCommonJs()
 
     // Loads JSX
     QString output = js.import(jsfile).toString();
+    QCOMPARE(output, result);
+}
+
+
+void JSContext::reactComponent_data()
+{
+    QTest::addColumn<QString>("jsxfile");
+    QTest::addColumn<QString>("component");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("01") << "js/react_samlple.jsx" << "<MyComponent/>"
+                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
+    QTest::newRow("02") << "js/react_bootstrap_sample.jsx" << "<Button/>"
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
+    QTest::newRow("03") << "js/react_bootstrap_sample.jsx" << "SimpleButton"
+                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-2012470818\">Sample</button>";
+    QTest::newRow("04") << "js/react_bootstrap_sample.jsx" << "HelloButton"
+                        << "<button class=\"btn btn-lg btn-primary\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1572807667\">Hello</button>";
+}
+
+
+void JSContext::reactComponent()
+{
+    QFETCH(QString, jsxfile);
+    QFETCH(QString, component);
+    QFETCH(QString, result);
+
+    TJSContext::setSearchPaths({"../../../defaults", "."});
+    TReactComponent comp;
+    comp.import("ReactBootstrap", "react-bootstrap");
+    comp.import(jsxfile);
+
+    // Loads JSX
+    QString output = comp.renderToString(component);
     QCOMPARE(output, result);
 }
 

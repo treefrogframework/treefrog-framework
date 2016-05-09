@@ -83,7 +83,7 @@ QString TActionView::renderReact(const QString &component)
         QString file = dir.entryList(filter, QDir::Files).value(0);
 
         if (!file.isEmpty()) {
-            react = new TReactComponent(dir.absolutePath() + QDir::separator() + file);
+            react = new TReactComponent(dir.absoluteFilePath(file));
             locker.relock();
             reactComponents.insert(component, react);
             locker.unlock();

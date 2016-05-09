@@ -85,14 +85,14 @@ static bool isCommentPosition(const QString &content, int pos)
 }
 
 
-TJSContext::TJSContext(const QStringList &scriptFiles)
+TJSContext::TJSContext(const QStringList &moduleNames)
     : jsEngine(new QJSEngine()), loadedFiles(), funcObj(nullptr),
       lastFunc(), mutex(QMutex::Recursive)
 {
     jsEngine->evaluate("exports={};module={};module.exports={};");
 
-    for (auto &file : scriptFiles) {
-        import(file);
+    for (auto &mod : moduleNames) {
+        import(mod);
     }
 }
 
@@ -254,7 +254,6 @@ static QString absolutePath(const QString &moduleName, const QDir &dir)
         tSystemError("TJSContext file not found: %s", qPrintable(moduleName));
     } else {
         filePath = QFileInfo(filePath).canonicalFilePath();
-        tSystemDebug("TJSContext search path: %s", qPrintable(filePath));
     }
     return filePath;
 }
@@ -283,6 +282,7 @@ QString TJSContext::read(const QString &filePath)
     QTextStream stream(&script);
     QString program = stream.readAll();
     script.close();
+    tSystemDebug("TJSContext file read: %s", qPrintable(script.fileName()));
 
     replaceRequire(program, QFileInfo(filePath).dir());
     return program;
@@ -320,6 +320,7 @@ QJSValue TJSContext::import(const QString &moduleName)
 
         if (!ret.isError()) {
             tSystemDebug("TJSContext evaluation completed: %s", qPrintable(moduleName));
+            importedModulePath = filePath;
         }
     }
     return ret;

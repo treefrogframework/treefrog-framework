@@ -16,7 +16,7 @@ class TJSInstance;
 class T_CORE_EXPORT TJSContext
 {
 public:
-    TJSContext(const QStringList &scriptFiles = QStringList());
+    TJSContext(const QStringList &moduleNames = QStringList());
     virtual ~TJSContext();
 
     QJSValue import(const QString &moduleName);
@@ -26,6 +26,7 @@ public:
     QJSValue call(const QString &func, const QJSValueList &args = QJSValueList());
     TJSInstance callAsConstructor(const QString &constructorName, const QJSValue &arg);
     TJSInstance callAsConstructor(const QString &constructorName, const QJSValueList &args = QJSValueList());
+    QString lastImportedModulePath() const { return importedModulePath; }
     static void setSearchPaths(const QStringList &paths);
 
 protected:
@@ -37,6 +38,7 @@ private:
     QMap<QString, QString> loadedFiles;
     QJSValue *funcObj;
     QString lastFunc;
+    QString importedModulePath;
     QMutex mutex;
 
     Q_DISABLE_COPY(TJSContext);

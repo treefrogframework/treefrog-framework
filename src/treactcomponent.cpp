@@ -15,23 +15,16 @@
 #include <TReactComponent>
 #include "tsystemglobal.h"
 
+//#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
+//#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
-TReactComponent::TReactComponent(const QString &script)
-    : context(new TJSContext()), jsValue(new QJSValue()), scriptPath(), loadedTime()
+
+TReactComponent::TReactComponent(const QString &moduleName)
+    : context(new TJSContext()), jsValue(new QJSValue()), modulePath(), loadedTime()
 {
     init();
-    import(script);
+    import(moduleName);
 }
-
-
-// TReactComponent::TReactComponent(const QStringList &scripts)
-//     : context(new TJSContext()), jsValue(new QJSValue())
-// {
-//     init();
-//     for (auto &s : scripts) {
-//         load(s);
-//     }
-// }
 
 
 TReactComponent::~TReactComponent()
@@ -43,35 +36,50 @@ TReactComponent::~TReactComponent()
 
 void TReactComponent::init()
 {
-    import(Tf::app()->webRootPath()+ "script" + QDir::separator() + "react.min.js");
-    import(Tf::app()->webRootPath()+ "script" + QDir::separator() + "react-dom-server.min.js");
+    context->import("React", "react-with-addons");
+    context->import("ReactDOMServer", "react-dom-server");
 }
 
 
 QString TReactComponent::filePath() const
 {
-    return scriptPath;
+    return modulePath;
 }
 
 
 bool TReactComponent::import(const QString &moduleName)
 {
-    bool ok;
+    return import("", moduleName);
+}
+
+
+bool TReactComponent::import(const QString &defaultMember, const QString &moduleName)
+{
+    bool ok = false;
+
+    if (moduleName.isEmpty()) {
+        return ok;
+    }
+
     if (QFileInfo(moduleName).suffix().compare("jsx", Qt::CaseInsensitive) == 0) {
         // Loads JSX file
         QString program = compileJsxFile(moduleName);
         QJSValue res = context->evaluate(program, moduleName);
         ok = !res.isError();
     } else {
-        ok = !context->import(moduleName).isError();
+        if (defaultMember.isEmpty()) {
+            ok = !context->import(moduleName).isError();
+        } else {
+            ok = !context->import(defaultMember, moduleName).isError();
+        }
     }
 
     if (ok) {
         loadedTime = QDateTime::currentDateTime();
-        scriptPath = moduleName;
+        modulePath = context->lastImportedModulePath();
     } else {
         loadedTime = QDateTime();
-        scriptPath = QString();
+        modulePath = QString();
     }
     return ok;
 }
@@ -79,15 +87,8 @@ bool TReactComponent::import(const QString &moduleName)
 
 QString TReactComponent::renderToString(const QString &component)
 {
-    QString comp = component.trimmed();
-    if (!comp.startsWith("<")) {
-        comp.prepend('<');
-    }
-    if (!comp.endsWith("/>")) {
-        comp.append("/>");
-    }
-
-    QString func = QLatin1String("ReactDOMServer.renderToString(") + compileJsx(comp) + QLatin1String(");");
+    QString func = QLatin1String("ReactDOMServer.renderToString(") + compileJsx(component) + QLatin1String(");");
+    tSystemDebug("TReactComponent func: %s", qPrintable(func));
     return context->evaluate(func).toString();
 }
 
@@ -101,7 +102,7 @@ QString TReactComponent::compileJsx(const QString &jsx)
     if (Q_UNLIKELY(!once)) {
         QMutexLocker locker(&mutex);
         if (!once) {
-            js.import(Tf::app()->webRootPath()+ "script" + QDir::separator() + "JSXTransformer.js");
+            js.import("JSXTransformer", "JSXTransformer");
             once = true;
         }
     }
