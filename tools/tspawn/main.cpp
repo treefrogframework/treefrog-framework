@@ -172,9 +172,10 @@ public:
         append(L("public") + SEP + "404.html");
         append(L("public") + SEP + "413.html");
         append(L("public") + SEP + "500.html");
-        append(L("script") + SEP + "JSXTransformer.js");   // React
-        append(L("script") + SEP + "react.js");            // React
-        append(L("script") + SEP + "react-dom-server.js"); // React
+        append(L("script") + SEP + "JSXTransformer.js");
+        append(L("script") + SEP + "react.js");             // React
+        append(L("script") + SEP + "react-with-addons.js"); // React
+        append(L("script") + SEP + "react-dom-server.js");  // React
     }
 };
 Q_GLOBAL_STATIC(FilePaths, filePaths)
