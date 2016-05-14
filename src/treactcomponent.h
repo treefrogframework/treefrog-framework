@@ -1,13 +1,12 @@
 #ifndef TREACTCOMPONENT_H
 #define TREACTCOMPONENT_H
 
-#include <QString>
+#include <QStringList>
 #include <QDateTime>
 #include <TGlobal>
 
-class TJSContext;
-class QJSValue;
 class TJSLoader;
+
 
 class T_CORE_EXPORT TReactComponent
 {

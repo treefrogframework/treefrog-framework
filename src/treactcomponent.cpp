@@ -5,13 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QJSEngine>
-#include <QJSValue>
-#include <QFile>
-#include <QDir>
-#include <QTextStream>
-#include <TWebApplication>
-#include <TJSModule>
 #include <TJSLoader>
 #include <TReactComponent>
 #include "tsystemglobal.h"
