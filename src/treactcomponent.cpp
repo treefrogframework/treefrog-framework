@@ -11,7 +11,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <TWebApplication>
-#include <TJSContext>
+#include <TJSModule>
 #include <TJSLoader>
 #include <TReactComponent>
 #include "tsystemglobal.h"

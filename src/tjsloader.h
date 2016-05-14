@@ -3,7 +3,7 @@
 
 #include <QJSValue>
 #include <TGlobal>
-#include <TJSContext>
+#include <TJSModule>
 #include <TJSInstance>
 
 
@@ -18,7 +18,7 @@ public:
     TJSLoader(const QString &moduleName, AltJS alt = Default);
     TJSLoader(const QString &defaultMember, const QString &moduleName, AltJS alt = Default);
 
-    TJSContext *load(bool reload = false);
+    TJSModule *load(bool reload = false);
     void import(const QString &moduleName);
     void import(const QString &defaultMember, const QString &moduleName);
     TJSInstance loadAsConstructor(const QJSValue &arg) const;
@@ -29,10 +29,10 @@ public:
     static QString compileJsx(const QString &jsx);
 
 protected:
-    QJSValue importTo(TJSContext *context, bool isMain) const;
+    QJSValue importTo(TJSModule *context, bool isMain) const;
     QString search(const QString &moduleName, AltJS alt) const;
     QString absolutePath(const QString &moduleName, const QDir &dir, AltJS alt) const;
-    void replaceRequire(TJSContext *context, QString &content, const QDir &dir) const;
+    void replaceRequire(TJSModule *context, QString &content, const QDir &dir) const;
 
 private:
     QString module;
@@ -41,7 +41,7 @@ private:
     QStringList searchPaths;
     QList<QPair<QString, QString>> importFiles;
 
-    friend class TJSContext;
+    friend class TJSModule;
 };
 
 #endif // TJSLOADER_H

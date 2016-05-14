@@ -7,8 +7,8 @@
 
 #include <QJSEngine>
 #include <QJSValue>
+#include <TJSModule>
 #include <TJSLoader>
-#include <TJSContext>
 #include <TJSInstance>
 #include "tsystemglobal.h"
 
@@ -24,7 +24,7 @@ inline const char *prop(const QJSValue &val, const QString &name = QString())
 }
 
 
-TJSContext::TJSContext(QObject *parent)
+TJSModule::TJSModule(QObject *parent)
     : QObject(parent), jsEngine(new QJSEngine()), loadedFiles(), funcObj(nullptr),
       lastFunc(), mutex(QMutex::Recursive)
 {
@@ -32,7 +32,7 @@ TJSContext::TJSContext(QObject *parent)
 }
 
 
-TJSContext::~TJSContext()
+TJSModule::~TJSModule()
 {
     if (funcObj) {
         delete funcObj;
@@ -41,7 +41,7 @@ TJSContext::~TJSContext()
 }
 
 
-QJSValue TJSContext::evaluate(const QString &program, const QString &fileName, int lineNumber)
+QJSValue TJSModule::evaluate(const QString &program, const QString &fileName, int lineNumber)
 {
     QMutexLocker locker(&mutex);
 
@@ -54,14 +54,14 @@ QJSValue TJSContext::evaluate(const QString &program, const QString &fileName, i
 }
 
 
-QJSValue TJSContext::call(const QString &func, const QJSValue &arg)
+QJSValue TJSModule::call(const QString &func, const QJSValue &arg)
 {
     QJSValueList args = { arg };
     return call(func, args);
 }
 
 
-QJSValue TJSContext::call(const QString &func, const QJSValueList &args)
+QJSValue TJSModule::call(const QString &func, const QJSValueList &args)
 {
     QMutexLocker locker(&mutex);
     QJSValue ret;
@@ -104,14 +104,14 @@ eval_error:
 }
 
 
-TJSInstance TJSContext::callAsConstructor(const QString &constructorName, const QJSValue &arg)
+TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const QJSValue &arg)
 {
     QJSValueList args = { arg };
     return callAsConstructor(constructorName, args);
 }
 
 
-TJSInstance TJSContext::callAsConstructor(const QString &constructorName, const QJSValueList &args)
+TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const QJSValueList &args)
 {
     QMutexLocker locker(&mutex);
 
@@ -126,14 +126,14 @@ TJSInstance TJSContext::callAsConstructor(const QString &constructorName, const 
 }
 
 
-QJSValue TJSContext::import(const QString &moduleName)
+QJSValue TJSModule::import(const QString &moduleName)
 {
     TJSLoader loader(moduleName);
     return loader.importTo(this, false);
 }
 
 
-QJSValue TJSContext::import(const QString &defaultMember, const QString &moduleName)
+QJSValue TJSModule::import(const QString &defaultMember, const QString &moduleName)
 {
     TJSLoader loader(defaultMember, moduleName);
     return loader.importTo(this, false);

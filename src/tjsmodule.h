@@ -1,5 +1,5 @@
-#ifndef TJSCONTEXT_H
-#define TJSCONTEXT_H
+#ifndef TJSMODULE_H
+#define TJSMODULE_H
 
 #include <QString>
 #include <QObject>
@@ -14,11 +14,11 @@ class QJSEngine;
 class TJSInstance;
 
 
-class T_CORE_EXPORT TJSContext : public QObject
+class T_CORE_EXPORT TJSModule : public QObject
 {
 public:
-    TJSContext(QObject *parent = nullptr);
-    virtual ~TJSContext();
+    TJSModule(QObject *parent = nullptr);
+    virtual ~TJSModule();
 
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
     QJSValue call(const QString &func, const QJSValue &arg);
@@ -38,10 +38,10 @@ private:
     QString moduleFilePath;
     QMutex mutex;
 
-    Q_DISABLE_COPY(TJSContext);
+    Q_DISABLE_COPY(TJSModule);
 
     friend class TJSLoader;
     friend class TReactComponent;
 };
 
-#endif // TJSCONTEXT_H
+#endif // TJSMODULE_H

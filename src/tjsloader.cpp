@@ -18,7 +18,7 @@
 // #define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
-static QMap<QString, TJSContext*> jsContexts;
+static QMap<QString, TJSModule*> jsContexts;
 static QStringList defaultSearchPaths;
 static QMutex gMutex(QMutex::Recursive);
 
@@ -120,7 +120,7 @@ TJSLoader::TJSLoader(const QString &defaultMember, const QString &moduleName, Al
   if successful; otherwise returns null pointer.
   i.e. var \a defaultMember = require( \a moduleName );
 */
-TJSContext *TJSLoader::load(bool reload)
+TJSModule *TJSLoader::load(bool reload)
 {
     if (module.isEmpty()) {
         return nullptr;
@@ -128,7 +128,7 @@ TJSContext *TJSLoader::load(bool reload)
 
     QMutexLocker lock(&gMutex);
     QString key = member + QLatin1Char(';') + module;
-    TJSContext *context = jsContexts.value(key);
+    TJSModule *context = jsContexts.value(key);
 
     if (reload && context) {
         jsContexts.remove(key);
@@ -137,7 +137,7 @@ TJSContext *TJSLoader::load(bool reload)
     }
 
     if (!context) {
-        context = new TJSContext();
+        context = new TJSModule();
 
         for (auto &p : importFiles) {
             // Imports as JavaScript
@@ -243,7 +243,7 @@ void TJSLoader::import(const QString &defaultMember, const QString &moduleName)
 }
 
 
-QJSValue TJSLoader::importTo(TJSContext *context, bool isMain) const
+QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 {
     if (!context) {
         return false;
@@ -324,7 +324,7 @@ void TJSLoader::setDefaultSearchPaths(const QStringList &paths)
 }
 
 
-void TJSLoader::replaceRequire(TJSContext *context, QString &content, const QDir &dir) const
+void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir &dir) const
 {
     const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ,]+)[\"']\\s*\\)");
 
