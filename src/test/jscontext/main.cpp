@@ -46,7 +46,7 @@ private slots:
 
 void JSContext::initTestCase()
 {
-    TJSContext::setSearchPaths({"."});
+    TJSLoader::setDefaultSearchPaths({"."});
 }
 
 
@@ -76,32 +76,31 @@ void JSContext::eval()
 
 void JSContext::callAsConstructor_data()
 {
-    QTest::addColumn<QStringList>("modules");
+    QTest::addColumn<QString>("module");
     QTest::addColumn<QString>("className");
     QTest::addColumn<QString>("arg");
     QTest::addColumn<QString>("method");
     QTest::addColumn<QString>("methodArg");
     QTest::addColumn<QString>("output");
 
-    QTest::newRow("01") << QStringList({"./js/hello"}) << "Hello" << "Taro" << "hello" << QString()
+    QTest::newRow("01") << "./js/hello" << "Hello" << "Taro" << "hello" << QString()
                         << "My name is Taro";
-    QTest::newRow("02") << QStringList({"./js/hello"}) << "Hello" << QString() << "hello" << QString()
+    QTest::newRow("02") << "./js/hello" << "Hello" << QString() << "hello" << QString()
                         << "My name is ";
 }
 
 
 void JSContext::callAsConstructor()
 {
-    QFETCH(QStringList, modules);
+    QFETCH(QString, module);
     QFETCH(QString, className);
     QFETCH(QString, arg);
     QFETCH(QString, method);
     QFETCH(QString, methodArg);
     QFETCH(QString, output);
 
-    TJSContext::setSearchPaths({"."});
-    TJSContext js(modules);
-    auto instance = js.callAsConstructor(className, arg);
+    TJSContext *js = TJSLoader(module).load();
+    auto instance = js->callAsConstructor(className, arg);
     QCOMPARE(instance.isError(), false);
     auto result = instance.call(method, methodArg).toString();
     QCOMPARE(result, output);
@@ -132,10 +131,10 @@ void JSContext::require()
     QFETCH(QString, methodArg);
     QFETCH(QString, output);
 
-    TJSContext::setSearchPaths({"."});
-    TJSContext js;
-    js.import(className, module);
-    auto instance = js.callAsConstructor(className, arg);
+    TJSLoader loader(className, module);
+    TJSContext *js = loader.load();
+
+    auto instance = js->callAsConstructor(className, arg);
     QCOMPARE(instance.isError(), false);
     auto result = instance.call(method, methodArg).toString();
     QCOMPARE(result, output);
@@ -202,20 +201,18 @@ void JSContext::transform()
     QFETCH(QString, jsx);
     QFETCH(QString, output);
 
-    TJSContext js;
-    js.import("JSXTransformer", "JSXTransformer");
-    auto result = js.call("JSXTransformer.transform", QJSValue(jsx)).property("code").toString();
+    TJSContext *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
+    auto result = js->call("JSXTransformer.transform", QJSValue(jsx)).property("code").toString();
     QCOMPARE(result, output);
 }
 
 
 void JSContext::benchmark()
 {
-    TJSContext js;
-    js.import("JSXTransformer", "JSXTransformer");
+    TJSContext *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
 
     QBENCHMARK {
-        auto res = js.call("JSXTransformer.transform", QString("<HelloWorld />"));
+        auto res = js->call("JSXTransformer.transform", QString("<HelloWorld />"));
         //qDebug() << res.property("code").toString();
     }
 }
@@ -223,25 +220,24 @@ void JSContext::benchmark()
 
 void JSContext::load_data()
 {
-    QTest::addColumn<QStringList>("files");
+    QTest::addColumn<QString>("file");
     QTest::addColumn<QString>("variable");
     QTest::addColumn<QString>("result");
 
-    QTest::newRow("01") << QStringList({"./js/main.js"}) << "sub('world')" << "Hello world";
-    QTest::newRow("02") << QStringList({"./js/main.js"}) << "sub2('world')" << "Hello world";
-    QTest::newRow("03") << QStringList({"./js/main.js"}) << "sub2('世界', 'ja')" << tr("こんにちは 世界");
+    QTest::newRow("01") << "./js/main.js" << "sub('world')" << "Hello world";
+    QTest::newRow("02") << "./js/main.js" << "sub2('world')" << "Hello world";
+    QTest::newRow("03") << "./js/main.js" << "sub2('世界', 'ja')" << tr("こんにちは 世界");
 }
 
 
 void JSContext::load()
 {
-    QFETCH(QStringList, files);
+    QFETCH(QString, file);
     QFETCH(QString, variable);
     QFETCH(QString, result);
 
-    TJSContext::setSearchPaths({"."});
-    TJSContext js(files);  // commonJs mode
-    QString output = js.evaluate(variable).toString();
+    TJSContext *js = TJSLoader(file).load();
+    QString output = js->evaluate(variable).toString();
     qDebug() << qPrintable(output);
     QCOMPARE(output, result);
 }
@@ -264,7 +260,6 @@ void JSContext::react()
     QFETCH(QString, variable);
     QFETCH(QString, result);
 
-    TJSContext::setSearchPaths({"."});
     TJSContext js;
     js.import("JSXTransformer", "JSXTransformer");
     js.import("React", "react");
@@ -310,8 +305,7 @@ void JSContext::reactjsx()
     QFETCH(QString, func);
     QFETCH(QString, result);
 
-    TJSContext::setSearchPaths({"."});
-    auto *js = TJSLoader().loadJSModule("reactmodule");
+    auto *js = TJSLoader("reactmodule").load();
 
     // Loads JSX
     if (!jsxfile.isEmpty()) {
@@ -340,7 +334,6 @@ void JSContext::reactjsxCommonJs()
     QFETCH(QString, jsfile);
     QFETCH(QString, result);
 
-    TJSContext::setSearchPaths({"."});
     TJSContext js;
 
     // Loads JSX
@@ -372,10 +365,8 @@ void JSContext::reactComponent()
     QFETCH(QString, component);
     QFETCH(QString, result);
 
-    TJSContext::setSearchPaths({"../../../defaults", "."});
-    TReactComponent comp;
+    TReactComponent comp(jsxfile);
     comp.import("ReactBootstrap", "react-bootstrap");
-    comp.import(jsxfile);
 
     // Loads JSX
     QString output = comp.renderToString(component);
@@ -386,7 +377,7 @@ void JSContext::reactComponent()
 
 QString JSContext::jsxTransform(const QString &jsx)
 {
-    auto val = TJSLoader().loadJSModule("Jtf", "JSXTransformer")->call("Jtf.transform", jsx);
+    auto val = TJSLoader("Jtf", "JSXTransformer").load()->call("Jtf.transform", jsx);
     return val.property("code").toString();
 }
 

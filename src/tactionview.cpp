@@ -56,42 +56,8 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
 */
 QString TActionView::renderReact(const QString &component)
 {
-    static QMap<QString, TReactComponent*> reactComponents;
-    static QMutex mutex;
-
-    if (component.isEmpty()) {
-        return QString();
-    }
-
-    QMutexLocker locker(&mutex);
-    TReactComponent *react = reactComponents.value(component);
-
-    if (react) {
-        QDateTime modified = QFileInfo(react->filePath()).lastModified();
-        if (!modified.isValid() || modified > react->loadedDateTime()) {
-            // Removes the item to reload
-            reactComponents.remove(component);
-            delete react;
-            react = nullptr;
-        }
-    }
-    locker.unlock();
-
-    if (!react) {
-        QDir dir(Tf::app()->publicPath() + "js" + QDir::separator() + "components");
-        QStringList filter = { component + ".*" };
-        QString file = dir.entryList(filter, QDir::Files).value(0);
-
-        if (!file.isEmpty()) {
-            react = new TReactComponent(dir.absoluteFilePath(file));
-            locker.relock();
-            reactComponents.insert(component, react);
-            locker.unlock();
-        } else {
-            return QString();
-        }
-    }
-    return react->renderToString(component);
+    QStringList path = { Tf::app()->publicPath() + "js" + QDir::separator() + "components" };
+    return TReactComponent(component, path).renderToString(component);
 }
 
 /*!

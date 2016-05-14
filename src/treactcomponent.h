@@ -7,30 +7,21 @@
 
 class TJSContext;
 class QJSValue;
-
+class TJSLoader;
 
 class T_CORE_EXPORT TReactComponent
 {
 public:
-    TReactComponent(const QString &moduleName = QString());
-    virtual ~TReactComponent();
+    TReactComponent(const QString &moduleName, const QStringList &searchPaths);
+    virtual ~TReactComponent() { }
 
-    QString filePath() const;
-    bool import(const QString &moduleName);
-    bool import(const QString &defaultMember, const QString &moduleName);
+    void import(const QString &moduleName);
+    void import(const QString &defaultMember, const QString &moduleName);
     QString renderToString(const QString &component);
     QDateTime loadedDateTime() const { return loadedTime; }
 
-    static QString compileJsx(const QString &jsx);
-    static QString compileJsxFile(const QString &fileName);
-
-protected:
-    void init();
-
 private:
-    TJSContext *context;
-    QJSValue *jsValue;
-    QString modulePath;
+    TJSLoader *jsLoader;
     QDateTime loadedTime;
 
     Q_DISABLE_COPY(TReactComponent)

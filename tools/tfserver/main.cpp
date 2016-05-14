@@ -13,7 +13,7 @@
 #include <TThreadApplicationServer>
 #include <TMultiplexingServer>
 #if QT_VERSION >= 0x050000
-# include <TJSContext>
+# include <TJSLoader>
 #endif
 #include <TSystemGlobal>
 #include <cstdlib>
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 #if QT_VERSION >= 0x050000
         // Sets search paths for JavaScript
         QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath, "script;node_modules").toString().split(';');
-        TJSContext::setSearchPaths(jpaths);
+        TJSLoader::setDefaultSearchPaths(jpaths);
 #endif
     }
 
