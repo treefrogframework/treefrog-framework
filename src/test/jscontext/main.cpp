@@ -1,7 +1,7 @@
 #include <TfTest/TfTest>
 #include <QJSEngine>
 #include <QJSValue>
-#include "../../tjscontext.h"
+#include "../../tjsmodule.h"
 #include "../../tjsinstance.h"
 #include "../../tjsloader.h"
 #include "../../treactcomponent.h"
@@ -67,7 +67,7 @@ void JSContext::eval()
     QFETCH(QString, expr);
     QFETCH(QString, output);
 
-    TJSContext js;
+    TJSModule js;
     auto result = js.evaluate(expr).toString();
     QCOMPARE(result, output);
 }
@@ -99,11 +99,11 @@ void JSContext::callAsConstructor()
     QFETCH(QString, methodArg);
     QFETCH(QString, output);
 
-    TJSContext *js = TJSLoader(module).load();
+    TJSModule *js = TJSLoader(module).load();
     auto instance = js->callAsConstructor(className, arg);
     QCOMPARE(instance.isError(), false);
-    auto result = instance.call(method, methodArg).toString();
-    QCOMPARE(result, output);
+    auto result1 = instance.call(method, methodArg).toString();
+    QCOMPARE(result1, output);
 }
 
 
@@ -131,13 +131,21 @@ void JSContext::require()
     QFETCH(QString, methodArg);
     QFETCH(QString, output);
 
-    TJSLoader loader(className, module);
-    TJSContext *js = loader.load();
+    { // Test 1
+        TJSLoader loader(className, module);
+        TJSModule *js = loader.load();
 
-    auto instance = js->callAsConstructor(className, arg);
-    QCOMPARE(instance.isError(), false);
-    auto result = instance.call(method, methodArg).toString();
-    QCOMPARE(result, output);
+        auto instance = js->callAsConstructor(className, arg);
+        QCOMPARE(instance.isError(), false);
+        auto result1 = instance.call(method, methodArg).toString();
+        QCOMPARE(result1, output);
+    }
+    { // Test 2
+        auto instance = TJSLoader(module).loadAsConstructor(arg);
+        QCOMPARE(instance.isError(), false);
+        auto result2 = instance.call(method, methodArg).toString();
+        QCOMPARE(result2, output);
+    }
 }
 
 
@@ -157,7 +165,7 @@ void JSContext::callFunc()
     QFETCH(QString, func);
     QFETCH(QString, output);
 
-    TJSContext js;
+    TJSModule js;
     auto result = js.call(func).toString();
     QCOMPARE(result, output);
 }
@@ -179,7 +187,7 @@ void JSContext::callFunc1()
     QFETCH(QString, arg);
     QFETCH(QString, output);
 
-    TJSContext js;
+    TJSModule js;
     auto result = js.call(func, arg).toString();
     QCOMPARE(result, output);
 }
@@ -201,7 +209,7 @@ void JSContext::transform()
     QFETCH(QString, jsx);
     QFETCH(QString, output);
 
-    TJSContext *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
+    TJSModule *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
     auto result = js->call("JSXTransformer.transform", QJSValue(jsx)).property("code").toString();
     QCOMPARE(result, output);
 }
@@ -209,7 +217,7 @@ void JSContext::transform()
 
 void JSContext::benchmark()
 {
-    TJSContext *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
+    TJSModule *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
 
     QBENCHMARK {
         auto res = js->call("JSXTransformer.transform", QString("<HelloWorld />"));
@@ -236,7 +244,7 @@ void JSContext::load()
     QFETCH(QString, variable);
     QFETCH(QString, result);
 
-    TJSContext *js = TJSLoader(file).load();
+    TJSModule *js = TJSLoader(file).load();
     QString output = js->evaluate(variable).toString();
     qDebug() << qPrintable(output);
     QCOMPARE(output, result);
@@ -260,7 +268,7 @@ void JSContext::react()
     QFETCH(QString, variable);
     QFETCH(QString, result);
 
-    TJSContext js;
+    TJSModule js;
     js.import("JSXTransformer", "JSXTransformer");
     js.import("React", "react");
     js.import("ReactDOMServer", "react-dom-server");
@@ -334,7 +342,7 @@ void JSContext::reactjsxCommonJs()
     QFETCH(QString, jsfile);
     QFETCH(QString, result);
 
-    TJSContext js;
+    TJSModule js;
 
     // Loads JSX
     QString output = js.import(jsfile).toString();

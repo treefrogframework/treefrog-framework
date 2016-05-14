@@ -12,7 +12,7 @@ class TJSLoader;
 class T_CORE_EXPORT TReactComponent
 {
 public:
-    TReactComponent(const QString &moduleName, const QStringList &searchPaths);
+    TReactComponent(const QString &moduleName, const QStringList &searchPaths = QStringList());
     virtual ~TReactComponent() { }
 
     void import(const QString &moduleName);

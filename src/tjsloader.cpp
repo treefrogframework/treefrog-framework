@@ -301,8 +301,8 @@ TJSInstance TJSLoader::loadAsConstructor(const QJSValue &arg) const
 TJSInstance TJSLoader::loadAsConstructor(const QJSValueList &args) const
 {
     QMutexLocker lock(&gMutex);
-    QString constructorName = (member.isEmpty()) ? QLatin1String("_T") + QFileInfo(module).baseName().replace(QChar('-'), QChar('_')) : member;
-    auto *ctx = TJSLoader(constructorName).load();
+    QString constructorName = (member.isEmpty()) ? QLatin1String("_TF_") + QFileInfo(module).baseName().replace(QChar('-'), QChar('_')) : member;
+    auto *ctx = TJSLoader(constructorName, module).load();
     return (ctx) ? ctx->callAsConstructor(constructorName, args) : TJSInstance();
 }
 
