@@ -9,7 +9,7 @@
            Id="838A4A29-D8CB-4474-909B-17A1F45D05C7"
            UpgradeCode="36CA699E-4E01-4CEA-B95D-C2598B54C3BB"
            Language='1041' Codepage='932'
-           Version='1.11.0' Manufacturer='TreeFrog Framework Project'>
+           Version='1.12.0' Manufacturer='TreeFrog Framework Project'>
 
     <!-- パッケージ情報 -->
     <Package Id='*' Keywords='Installer'
