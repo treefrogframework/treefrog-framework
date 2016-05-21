@@ -160,7 +160,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version 5.4 or later.";
+            this->label->Text = L"Specify a base folder of Qt version 5.5 or later.";
             // 
             // label1
             // 
@@ -171,7 +171,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.5.0";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.6.0";
             // 
             // labeltop
             // 
