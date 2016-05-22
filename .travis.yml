@@ -10,7 +10,6 @@ addons:
       - debian-sid
     packages:
       - qt5-default
-      - qt5-qmake
 
 install:
   - g++ --version
