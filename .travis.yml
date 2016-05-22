@@ -6,6 +6,8 @@ env:
 
 addons:
   apt:
+    sources:
+      - debian-sid
     packages:
       - qtbase5-dev
       - libsqlite3-dev
