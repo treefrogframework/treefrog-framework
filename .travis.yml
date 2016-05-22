@@ -10,10 +10,8 @@ addons:
       - debian-sid
     packages:
       - qtbase5-dev
-      - libsqlite3-dev
       - qt5-default
       - qt5-qmake
-      - qttools5-dev-tools
       - qtdeclarative5-dev-tools
       - qtdeclarative5-dev
 
