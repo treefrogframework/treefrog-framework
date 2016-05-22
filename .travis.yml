@@ -4,13 +4,6 @@ env:
   global:
     - CI_WORK=`pwd`
 
-addons:
-  apt:
-    sources:
-      - debian-sid
-    packages:
-      - qt5-default
-
 install:
   - g++ --version
   - qmake -v
