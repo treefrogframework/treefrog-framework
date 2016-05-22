@@ -6,8 +6,6 @@ env:
 
 addons:
   apt:
-    sources:
-      - ubuntu-sdk-team
     packages:
       - qtbase5-dev
       - libsqlite3-dev
