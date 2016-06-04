@@ -198,7 +198,7 @@ fi
 
 cd "$BASEDIR/src"
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
+$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI QMAKE_SONAME_PREFIX=@rpath
 cd "$BASEDIR/tools"
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"

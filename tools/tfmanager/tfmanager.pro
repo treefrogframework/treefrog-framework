@@ -30,9 +30,9 @@ windows {
     LIBS += advapi32.lib
   }
 } else:macx {
-  LIBS += -F$$lib.path -framework treefrog
+  LIBS += -Wl,-rpath,$$lib.path -F$$lib.path -framework treefrog
 } else:unix {
-  LIBS += -L$$lib.path -ltreefrog
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
