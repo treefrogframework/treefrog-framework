@@ -36,7 +36,7 @@ Configuration:
   --enable-gui-mod    compile and link with QtGui module
 
 Fine tuning of the installation directories:
-  --framework=PREFIX  install framework files in PREFIX [$FRAMEWORK]
+  --framework=PREFIX  install this framework in PREFIX [$FRAMEWORK]
   --bindir=DIR        user executables [$BINDIR]
   --datadir=DIR       read-only architecture-independent data [$DATADIR]
 _EOF
