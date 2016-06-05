@@ -165,8 +165,8 @@ PID=$$
 cd "$BASEDIR"
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
 if [ "$KERNEL" = "Darwin" ]; then
-  sed -i '' -e "s/macx:LIBS +=.*$/macx:LIBS += -Wl,-rpath,\$LIBDIR -F\$LIBDIR -framework treefrog/" defaults/appbase.pri
-  sed -i '' -e "s/macx:INCLUDEPATH +=.*$/macx:INCLUDEPATH += \$INCDIR/" defaults/appbase.pri
+  sed -i '' -e "s|macx:LIBS +=.*$|macx:LIBS += -Wl,-rpath,$LIBDIR -F$LIBDIR -framework treefrog|" defaults/appbase.pri
+  sed -i '' -e "s|macx:INCLUDEPATH +=.*$|macx:INCLUDEPATH += $INCDIR|" defaults/appbase.pri
 else
   sed -i -e "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
   sed -i -e "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCDIR|" defaults/appbase.pri
