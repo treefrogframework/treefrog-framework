@@ -39,6 +39,7 @@ windows {
   INSTALLS += header script test
 } else:macx {
   CONFIG += lib_bundle
+  QMAKE_SONAME_PREFIX=@rpath
   FRAMEWORK_HEADERS.version = Versions
   FRAMEWORK_HEADERS.files = $$HEADER_FILES $$HEADER_CLASSES
   FRAMEWORK_HEADERS.files += $$MONGODB_FILES $$MONGODB_CLASSES

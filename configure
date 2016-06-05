@@ -165,11 +165,12 @@ PID=$$
 cd "$BASEDIR"
 INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
 if [ "$KERNEL" = "Darwin" ]; then
-  sed -e "s/macx:INCLUDEPATH +=.*$/macx:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+  sed -i '' -e "s/macx:LIBS +=.*$/macx:LIBS += -Wl,-rpath,\$LIBDIR -F\$LIBDIR -framework treefrog/" defaults/appbase.pri
+  sed -i '' -e "s/macx:INCLUDEPATH +=.*$/macx:INCLUDEPATH += \$INCDIR/" defaults/appbase.pri
 else
-  sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
+  sed -i -e "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
+  sed -i -e "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCDIR|" defaults/appbase.pri
 fi
-command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
 
 if [ -n "$FRAMEWORK" ]; then
   FRM=`echo $FRAMEWORK | sed -e 's/\\//\\\\\\//g'`
@@ -198,7 +199,7 @@ fi
 
 cd "$BASEDIR/src"
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI QMAKE_SONAME_PREFIX=@rpath
+$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI
 cd "$BASEDIR/tools"
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
