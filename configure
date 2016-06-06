@@ -38,7 +38,6 @@ Configuration:
 Fine tuning of the installation directories:
   --framework=PREFIX  install this framework in PREFIX [$FRAMEWORK]
   --bindir=DIR        user executables [$BINDIR]
-  --datadir=DIR       read-only architecture-independent data [$DATADIR]
 _EOF
 }
 
@@ -103,16 +102,18 @@ BASEDIR=`pwd`/`dirname $0`
 
 if [ "$KERNEL" = "Darwin" ]; then
   PREFIX=/usr/local
+  BINDIR=$PREFIX/bin
   FRAMEWORK=/Library/Frameworks
   LIBDIR=$FRAMEWORK
   INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
+  DATADIR=$FRAMEWORK/treefrog.framework/Share
 else
   PREFIX=/usr
+  BINDIR=$PREFIX/bin
   LIBDIR=$PREFIX/lib
   INCLUDEDIR=$PREFIX/include/treefrog
+  DATADIR=$PREFIX/share/treefrog
 fi
-BINDIR=$PREFIX/bin
-DATADIR=$PREFIX/share/treefrog
 
 # parse options
 while [ -n "`echo $1 | grep '-'`" ]; do
@@ -146,6 +147,7 @@ while [ -n "`echo $1 | grep '-'`" ]; do
       FRAMEWORK=$optarg
       LIBDIR=$FRAMEWORK
       INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
+      DATADIR=$FRAMEWORK/treefrog.framework/Share
       ;;
     --enable-debug | --enable-debug=*)
       ENABLE_DEBUG=yes
@@ -161,21 +163,14 @@ while [ -n "`echo $1 | grep '-'`" ]; do
   shift
 done
 
-PID=$$
 cd "$BASEDIR"
-INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
 if [ "$KERNEL" = "Darwin" ]; then
+  # MacOS
   sed -i '' -e "s|macx:LIBS +=.*$|macx:LIBS += -Wl,-rpath,$LIBDIR -F$LIBDIR -framework treefrog|" defaults/appbase.pri
-  sed -i '' -e "s|macx:INCLUDEPATH +=.*$|macx:INCLUDEPATH += $INCDIR|" defaults/appbase.pri
+  sed -i '' -e "s|macx:INCLUDEPATH +=.*$|macx:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
 else
   sed -i -e "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-  sed -i -e "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCDIR|" defaults/appbase.pri
-fi
-
-if [ -n "$FRAMEWORK" ]; then
-  FRM=`echo $FRAMEWORK | sed -e 's/\\//\\\\\\//g'`
-  sed -e "s/LIBS += -F.*/LIBS += -F$FRM/" defaults/appbase.pri > defaults/appbase.pri.$PID
-  command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
+  sed -i -e "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
 fi
 
 if [ -n "$ENABLE_DEBUG" ]; then

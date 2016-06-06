@@ -8,10 +8,10 @@ win32 {
   }
 } else {
   macx {
-    macx:LIBS += -F/Library/Frameworks -framework treefrog
+    macx:LIBS += -Wl,-rpath,/Library/Frameworks -F/Library/Frameworks -framework treefrog
     macx:INCLUDEPATH += /Library/Frameworks/treefrog.framework/Headers
   } else {
-    unix:LIBS += -ltreefrog
+    unix:LIBS += -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
     unix:INCLUDEPATH += /usr/include/treefrog
   }
 
