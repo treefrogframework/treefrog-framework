@@ -7,6 +7,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QRegExp>
 #include <QHash>
 #include <TWebApplication>
 #include <TSystemGlobal>
@@ -132,7 +133,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
      }
 
      // parse controller and action
-     QStringList list = items[2].split('#');
+     QStringList list = items[2].split(QRegExp("[#\\.]"));
      if (list.count() == 2) {
          rt.controller = list[0].toLower().toLatin1() + "controller";
          rt.action = list[1].toLatin1();
