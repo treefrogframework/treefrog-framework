@@ -8,9 +8,13 @@
 #include <QCryptographicHash>
 #include <QHash>
 #include <QScopedPointer>  // fix compilation error in Qt5.0
+#if QT_VERSION >= 0x050100
+# include <QMessageAuthenticationCode>
+#endif
 #include <TCryptMac>
 
 
+#if QT_VERSION < 0x050100
 class BlockSizeHash : public QHash<int, int>
 {
 public:
@@ -26,6 +30,7 @@ public:
     }
 };
 Q_GLOBAL_STATIC(BlockSizeHash, blockSizeHash)
+#endif
 
 
 /*!
@@ -38,8 +43,9 @@ Q_GLOBAL_STATIC(BlockSizeHash, blockSizeHash)
   Returns a cryptographic hash value generated from the given binary or
   text data \a data with \a key using \a method.
 */
-QByteArray TCryptMac::mac(const QByteArray &data, const QByteArray &key, Algorithm method)
+QByteArray TCryptMac::hash(const QByteArray &data, const QByteArray &key, Algorithm method)
 {
+#if QT_VERSION < 0x050100
     int blockSize = blockSizeHash()->value(method);
     QByteArray tk = (key.length() > blockSize) ? QCryptographicHash::hash(key, (QCryptographicHash::Algorithm)method) : key;
     QByteArray k_ipad(blockSize, '\0');
@@ -56,4 +62,8 @@ QByteArray TCryptMac::mac(const QByteArray &data, const QByteArray &key, Algorit
     QByteArray hash = QCryptographicHash::hash(k_ipad, (QCryptographicHash::Algorithm)method);
     k_opad.append(hash);
     return QCryptographicHash::hash(k_opad, (QCryptographicHash::Algorithm)method);
+
+#else
+    return QMessageAuthenticationCode::hash(data, key, (QCryptographicHash::Algorithm)method);
+#endif
 }

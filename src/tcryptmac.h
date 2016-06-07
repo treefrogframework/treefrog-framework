@@ -16,10 +16,16 @@ public:
         Hmac_Sha256 = QCryptographicHash::Sha256,
         Hmac_Sha384 = QCryptographicHash::Sha384,
         Hmac_Sha512 = QCryptographicHash::Sha512,
+# if QT_VERSION >= 0x050100
+        Hmac_Sha3_224 = QCryptographicHash::Sha3_224,
+        Hmac_Sha3_256 = QCryptographicHash::Sha3_256,
+        Hmac_Sha3_384 = QCryptographicHash::Sha3_384,
+        Hmac_Sha3_512 = QCryptographicHash::Sha3_512,
+# endif
 #endif
     };
 
-    static QByteArray mac(const QByteArray &data, const QByteArray &key, Algorithm method);
+    static QByteArray hash(const QByteArray &data, const QByteArray &key, Algorithm method);
 };
 
 #endif // TCRYPTMAC_H
