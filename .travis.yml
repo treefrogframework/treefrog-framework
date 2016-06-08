@@ -13,10 +13,10 @@ before_install:
 install:
   - g++ --version
   - qmake -v
-  - ./configure
-  - make  -j4 -C src
-  - sudo make -C src install
-  - make  -j4 -C tools
+  - ./configure --prefix=$CI_WORK/local --bindir=/usr/bin
+  - make -j4 -C src
+  - make -C src install
+  - make -j4 -C tools
   - sudo make -C tools install
   - treefrog -v
 
