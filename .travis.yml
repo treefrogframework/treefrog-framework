@@ -9,11 +9,12 @@ env:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y qtbase5-dev libsqlite3-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools
+  - sudo apt-get install -y gdb
 
 install:
   - g++ --version
   - qmake -v
-  - ./configure --prefix=$CI_WORK/local --bindir=/usr/bin
+  - ./configure --prefix=$HOME/local --bindir=/usr/bin
   - make -j4 -C src
   - make -C src install
   - make -j4 -C tools
