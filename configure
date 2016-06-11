@@ -106,7 +106,8 @@ if [ "$KERNEL" = "Darwin" ]; then
   FRAMEWORK=/Library/Frameworks
   LIBDIR=$FRAMEWORK
   INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
-  DATADIR=$FRAMEWORK/treefrog.framework/Share
+  DATADIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/share
+  BINDIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/bin
 else
   PREFIX=/usr
   BINDIR=$PREFIX/bin
@@ -147,7 +148,8 @@ while [ -n "`echo $1 | grep '-'`" ]; do
       FRAMEWORK=$optarg
       LIBDIR=$FRAMEWORK
       INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
-      DATADIR=$FRAMEWORK/treefrog.framework/Share
+      DATADIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/share
+      BINDIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/bin
       ;;
     --enable-debug | --enable-debug=*)
       ENABLE_DEBUG=yes

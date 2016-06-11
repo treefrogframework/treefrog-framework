@@ -31,6 +31,7 @@ windows {
   }
 } else:macx {
   LIBS += -Wl,-rpath,$$lib.path -F$$lib.path -framework treefrog
+  QMAKE_RPATHDIR += @loader_path/../../../../../
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
 
