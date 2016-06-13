@@ -7,13 +7,8 @@ win32 {
     LIBS += -ltreefrog1
   }
 } else {
-  macx {
-    macx:LIBS += -Wl,-rpath,/Library/Frameworks -F/Library/Frameworks -framework treefrog
-    macx:INCLUDEPATH += /Library/Frameworks/treefrog.framework/Headers
-  } else {
-    unix:LIBS += -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
-    unix:INCLUDEPATH += /usr/include/treefrog
-  }
+  unix:LIBS += -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
+  unix:INCLUDEPATH += /usr/include/treefrog
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {

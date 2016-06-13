@@ -4,7 +4,7 @@
 #
 
 # usage message
-usage_unix()
+usage()
 {
   cat <<_EOF
 Usage: $0 [OPTION]... [VAR=VALUE]...
@@ -23,31 +23,6 @@ Fine tuning of the installation directories:
   --includedir=DIR    C++ header files [$INCLUDEDIR]
   --datadir=DIR       read-only architecture-independent data [$DATADIR]
 _EOF
-}
-
-usage_macx()
-{
-  cat <<_EOF
-Usage: $0 [OPTION]... [VAR=VALUE]...
-
-Configuration:
-  -h, --help          display this help and exit
-  --enable-debug      compile with debugging information
-  --enable-gui-mod    compile and link with QtGui module
-
-Fine tuning of the installation directories:
-  --framework=PREFIX  install this framework in PREFIX [$FRAMEWORK]
-  --bindir=DIR        user executables [$BINDIR]
-_EOF
-}
-
-usage()
-{
-  if [ "$KERNEL" = "Darwin" ]; then
-    usage_macx
-  else
-    usage_unix
-  fi
 }
 
 
@@ -101,20 +76,16 @@ fi
 BASEDIR=`pwd`/`dirname $0`
 
 if [ "$KERNEL" = "Darwin" ]; then
+  SED="sed -i '' -e"
   PREFIX=/usr/local
-  BINDIR=$PREFIX/bin
-  FRAMEWORK=/Library/Frameworks
-  LIBDIR=$FRAMEWORK
-  INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
-  DATADIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/share
-  BINDIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/bin
 else
+  SED="sed -i -e"
   PREFIX=/usr
-  BINDIR=$PREFIX/bin
-  LIBDIR=$PREFIX/lib
-  INCLUDEDIR=$PREFIX/include/treefrog
-  DATADIR=$PREFIX/share/treefrog
 fi
+BINDIR=$PREFIX/bin
+LIBDIR=$PREFIX/lib
+INCLUDEDIR=$PREFIX/include/treefrog
+DATADIR=$PREFIX/share/treefrog
 
 # parse options
 while [ -n "`echo $1 | grep '-'`" ]; do
@@ -144,13 +115,6 @@ while [ -n "`echo $1 | grep '-'`" ]; do
     --datadir=*)
       DATADIR=$optarg
       ;;
-    --framework=*)
-      FRAMEWORK=$optarg
-      LIBDIR=$FRAMEWORK
-      INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
-      DATADIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/share
-      BINDIR=$FRAMEWORK/treefrog.framework/Versions/Current/Supports/bin
-      ;;
     --enable-debug | --enable-debug=*)
       ENABLE_DEBUG=yes
       ;;
@@ -166,14 +130,8 @@ while [ -n "`echo $1 | grep '-'`" ]; do
 done
 
 cd "$BASEDIR"
-if [ "$KERNEL" = "Darwin" ]; then
-  # MacOS
-  sed -i '' -e "s|macx:LIBS +=.*$|macx:LIBS += -Wl,-rpath,$LIBDIR -F$LIBDIR -framework treefrog|" defaults/appbase.pri
-  sed -i '' -e "s|macx:INCLUDEPATH +=.*$|macx:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
-else
-  sed -i -e "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-  sed -i -e "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
-fi
+$SED "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
+$SED "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
