@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2013-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -35,22 +35,12 @@ TScheduler::~TScheduler()
 
 void TScheduler::start(int msec)
 {
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-        tError("Unsupported TScheduler in prefork MPM");
-        return;
-    }
-
     timer->start(msec);
 }
 
 
 void TScheduler::stop()
 {
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Prefork) {
-        tError("Unsupported TScheduler in prefork MPM");
-        return;
-    }
-
     timer->stop();
 
     if (QThread::isRunning()) {
@@ -97,10 +87,10 @@ void TScheduler::run()
     job();
 
     if (rollback) {
-        TActionContext::rollbackTransactions();
+        TDatabaseContext::rollbackTransactions();
     } else {
-        TActionContext::commitTransactions();
+        TDatabaseContext::commitTransactions();
     }
 
-    TActionContext::release();
+    TDatabaseContext::release();
 }

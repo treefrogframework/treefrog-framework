@@ -3,6 +3,7 @@ TEMPLATE = app
 VERSION  = 1.0.0
 CONFIG  += console c++11
 CONFIG  -= app_bundle
+QT      +=
 QT      -= gui
 INCLUDEPATH += ../../include
 
@@ -11,12 +12,12 @@ include(../../tfbase.pri)
 unix {
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_CXXFLAGS += -std=c++0x
   }
 }
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin

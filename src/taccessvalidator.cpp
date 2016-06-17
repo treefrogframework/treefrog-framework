@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -164,7 +164,11 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
                 break;
             }
         }
-        tSystemDebug("Access '%s' action by an unauthenticated user : %s", qPrintable(controller->activeAction()), (ret ? "Allow" : "Deny"));
+        if (ret) {
+            tSystemDebug("Access '%s' action by an unauthenticated user : Allow", qPrintable(controller->activeAction()));
+        } else {
+            tSystemWarn("Access '%s' action by an unauthenticated user : Deny", qPrintable(controller->activeAction()));
+        }
 
     } else {
         for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
@@ -176,7 +180,11 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
                 break;
             }
         }
-        tSystemDebug("Access '%s' action by '%s' user : %s", qPrintable(controller->activeAction()), qPrintable(user->identityKey()), (ret ? "Allow" : "Deny"));
+        if (ret) {
+            tSystemDebug("Access '%s' action by '%s' user : Allow", qPrintable(controller->activeAction()), qPrintable(user->identityKey()));
+        } else {
+            tSystemWarn("Access '%s' action by '%s' user : Deny", qPrintable(controller->activeAction()), qPrintable(user->identityKey()));
+        }
     }
 
     return ret;

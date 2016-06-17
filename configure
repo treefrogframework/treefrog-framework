@@ -4,7 +4,7 @@
 #
 
 # usage message
-usage_unix()
+usage()
 {
   cat <<_EOF
 Usage: $0 [OPTION]... [VAR=VALUE]...
@@ -25,32 +25,6 @@ Fine tuning of the installation directories:
 _EOF
 }
 
-usage_macx()
-{
-  cat <<_EOF
-Usage: $0 [OPTION]... [VAR=VALUE]...
-
-Configuration:
-  -h, --help          display this help and exit
-  --enable-debug      compile with debugging information
-  --enable-gui-mod    compile and link with QtGui module
-
-Fine tuning of the installation directories:
-  --framework=PREFIX  install framework files in PREFIX [$FRAMEWORK]
-  --bindir=DIR        user executables [$BINDIR]
-  --datadir=DIR       read-only architecture-independent data [$DATADIR]
-_EOF
-}
-
-usage()
-{
-  if [ "$KERNEL" = "Darwin" ]; then
-    usage_macx
-  else
-    usage_unix
-  fi
-}
-
 
 # check the platform
 if which uname >/dev/null 2>&1; then
@@ -58,7 +32,14 @@ if which uname >/dev/null 2>&1; then
   MACHINE=`uname -m`
   RELEASE=`uname -r`
 
-  if [ "$KERNEL" = "Darwin" ]; then
+  if [ "$QMAKESPEC" != "" ]; then
+    OPT="-spec $QMAKESPEC"
+
+    if [ "$MACHINE" = "x86_64" ]; then
+      OPT="$OPT CONFIG+=x86_64"
+    fi
+
+  elif [ "$KERNEL" = "Darwin" ]; then
     QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
     QT_MAJOR=${QT_VERSION:0:1}
     if [ "$QT_MAJOR" -ge 5 ]; then
@@ -93,17 +74,17 @@ fi
 
 # default values
 BASEDIR=`pwd`/`dirname $0`
-PREFIX=/usr
 
 if [ "$KERNEL" = "Darwin" ]; then
-  FRAMEWORK=/Library/Frameworks
-  LIBDIR=$FRAMEWORK
-  INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
+  SED="sed -i '' -e"
+  PREFIX=/usr/local
 else
-  LIBDIR=$PREFIX/lib
-  INCLUDEDIR=$PREFIX/include/treefrog
+  SED="sed -i -e"
+  PREFIX=/usr
 fi
 BINDIR=$PREFIX/bin
+LIBDIR=$PREFIX/lib
+INCLUDEDIR=$PREFIX/include/treefrog
 DATADIR=$PREFIX/share/treefrog
 
 # parse options
@@ -134,11 +115,6 @@ while [ -n "`echo $1 | grep '-'`" ]; do
     --datadir=*)
       DATADIR=$optarg
       ;;
-    --framework=*)
-      FRAMEWORK=$optarg
-      LIBDIR=$FRAMEWORK
-      INCLUDEDIR=$FRAMEWORK/treefrog.framework/Headers
-      ;;
     --enable-debug | --enable-debug=*)
       ENABLE_DEBUG=yes
       ;;
@@ -153,17 +129,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
   shift
 done
 
-PID=$$
 cd "$BASEDIR"
-INCDIR=`echo $INCLUDEDIR | sed -e 's/\\//\\\\\\//g'`
-sed -e "s/unix:INCLUDEPATH +=.*$/unix:INCLUDEPATH += $INCDIR/" defaults/appbase.pri > defaults/appbase.pri.$PID
-command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
-
-if [ -n "$FRAMEWORK" ]; then
-  FRM=`echo $FRAMEWORK | sed -e 's/\\//\\\\\\//g'`
-  sed -e "s/LIBS += -F.*/LIBS += -F$FRM/" defaults/appbase.pri > defaults/appbase.pri.$PID
-  command mv -f defaults/appbase.pri.$PID defaults/appbase.pri
-fi
+$SED "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
+$SED "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
@@ -174,6 +142,7 @@ fi
 # search qmake command
 if [ -z "$QMAKE" ]; then
   which qmake-qt4 >/dev/null 2>&1 && QMAKE=qmake-qt4
+  which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
   which qmake     >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then

@@ -2,6 +2,7 @@
 #include <TSqlORMapperIterator>
 #include <TSqlQueryORMapper>
 #include <TSqlQueryORMapperIterator>
+#include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
 #include <TAtomicQueue>
@@ -23,10 +24,10 @@ void build_check_TSqlORMapper()
     TCriteria crt;
     TSqlORMapper<BlogObject> mapper;
 
-    mapper.find();
     mapper.setLimit(100);
     mapper.setOffset(1);
     mapper.setSortOrder(1, Tf::AscendingOrder);
+    mapper.setSortOrder("id", Tf::AscendingOrder);
     mapper.reset();
     mapper.findFirst(crt);
     mapper.findFirstBy(BlogObject::Body, "hoge");
@@ -43,6 +44,13 @@ void build_check_TSqlORMapper()
     mapper.updateAll(crt, 1, 1);
     mapper.updateAll(crt, QMap<int, QVariant>());
     mapper.removeAll(crt);
+    mapper.removeAll(crt && crt);
+    mapper.removeAll(crt || crt);
+    mapper.removeAll(!crt);
+    auto joinCri = TCriteria(BlogObject::Title, "hoge");
+    mapper.setJoin(BlogObject::Id, TSqlJoin<BlogObject>(BlogObject::Title, joinCri));
+    mapper.limit(10).offset(11).orderBy(1, Tf::AscendingOrder).join(BlogObject::Id, TSqlJoin<BlogObject>(TSql::LeftJoin, BlogObject::Title, joinCri));
+    mapper.limit(10).orderBy("hoge").find();
 }
 
 void build_check_TSqlORMapperIterator()
@@ -119,6 +127,8 @@ void build_check_TMongoODMapper()
     mapper.updateAll(crt, FooObject::Id, "hoge");
     mapper.updateAll(crt, QMap<int, QVariant>());
     mapper.removeAll(crt);
+    mapper.limit(10).offset(1).orderBy("hoge").find();
+    mapper.orderBy(1, Tf::DescendingOrder).findOne();
 }
 
 void build_check_TModelUtil()

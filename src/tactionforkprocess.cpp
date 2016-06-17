@@ -1,14 +1,15 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <iostream>
 #include <TActionForkProcess>
 #include <TWebApplication>
 #include <TActionThread>
+#include <iostream>
+#include "tfcore.h"
 #include "thttpsocket.h"
 #include "tsystemglobal.h"
 
@@ -34,7 +35,7 @@ TActionForkProcess::~TActionForkProcess()
         delete httpSocket;
 
     if (TActionContext::socketDesc > 0)
-        TF_CLOSE(TActionContext::socketDesc);
+        tf_close(TActionContext::socketDesc);
 
     currentActionContext = 0;
 }
@@ -80,7 +81,7 @@ void TActionForkProcess::start()
 
         for (QMutableListIterator<THttpRequest> it(reqs); it.hasNext(); ) {
             THttpRequest &req = it.next();
-            TActionContext::execute(req);
+            TActionContext::execute(req, httpSocket->socketUuid());
 
             httpSocket->flush();  // Flush socket
             TActionContext::release();

@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -7,6 +7,7 @@
 
 #include "erbparser.h"
 #include "erbconverter.h"
+#include <THtmlParser>
 
 
 static QString semicolonTrim(const QString &str)
@@ -23,11 +24,35 @@ static QString semicolonTrim(const QString &str)
 }
 
 
+static bool isAsciiString(const QString &str)
+{
+    for (auto &c : str) {
+        if (c.unicode() >= 128)
+            return false;
+    }
+    return true;
+}
+
+
 void ErbParser::parse(const QString &erb)
 {
     srcCode.clear();
     srcCode.reserve(erb.length() * 2);
-    erbData = erb;
+
+    // trimming strongly
+    if (trimMode == StrongTrim) {
+        erbData.clear();
+        for (auto &line : erb.split('\n', QString::SkipEmptyParts)) {
+            QString trm = THtmlParser::trim(line);
+            if (!trm.isEmpty()) {
+                erbData += trm;
+                erbData += '\n';
+            }
+        }
+        erbData = THtmlParser::trim(erbData);
+    } else {
+        erbData = erb;
+    }
     pos = 0;
 
     while (pos < erbData.length()) {
@@ -35,11 +60,15 @@ void ErbParser::parse(const QString &erb)
         QString text = erbData.mid(pos, i - pos);
         if (!text.isEmpty()) {
             // HTML output
-            srcCode += QLatin1String("  responsebody += tr(\"");
+            if (isAsciiString(text)) {
+                srcCode += QLatin1String("  responsebody += QLatin1String(\"");
+            } else {
+                srcCode += QLatin1String("  responsebody += tr(\"");
+            }
             srcCode += ErbConverter::escapeNewline(text);
             srcCode += QLatin1String("\");\n");
-        } 
-            
+        }
+
         if (i >= 0) {
             pos = i;
             parsePercentTag();
@@ -92,16 +121,18 @@ void ErbParser::parsePercentTag()
             pos += 2;
             // Outputs 'echo' the export value
             QPair<QString, QString> p = parseEndPercentTag();
-            if (p.second.isEmpty()) {
-                srcCode += QLatin1String("techoex(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(");\n");
-            } else {
-                srcCode += QLatin1String("techoex2(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(", (");
-                srcCode += semicolonTrim(p.second);
-                srcCode += QLatin1String("));\n");
+            if (!p.first.isEmpty()) {
+                if (p.second.isEmpty()) {
+                    srcCode += QLatin1String("techoex(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(");\n");
+                } else {
+                    srcCode += QLatin1String("techoex2(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(", (");
+                    srcCode += semicolonTrim(p.second);
+                    srcCode += QLatin1String("));\n");
+                }
             }
 
         } else if (posMatchWith("$")) {  // <%=$
@@ -109,16 +140,18 @@ void ErbParser::parsePercentTag()
             ++pos;
             // Outputs 'eh' the export value
             QPair<QString, QString> p = parseEndPercentTag();
-            if (p.second.isEmpty()) {
-                srcCode += QLatin1String("tehex(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(");\n");
-            } else {
-                srcCode += QLatin1String("tehex2(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(", (");
-                srcCode += semicolonTrim(p.second);
-                srcCode += QLatin1String("));\n");
+            if (!p.first.isEmpty()) {
+                if (p.second.isEmpty()) {
+                    srcCode += QLatin1String("tehex(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(");\n");
+                } else {
+                    srcCode += QLatin1String("tehex2(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(", (");
+                    srcCode += semicolonTrim(p.second);
+                    srcCode += QLatin1String("));\n");
+                }
             }
 
         } else if (posMatchWith("=")) {  // <%==
@@ -126,35 +159,39 @@ void ErbParser::parsePercentTag()
             ++pos;
             // Outputs the value
             QPair<QString, QString> p = parseEndPercentTag();
-            if (p.second.isEmpty()) {
-                srcCode += QLatin1String("responsebody += QVariant(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(").toString();\n");
-            } else {
-                srcCode += QLatin1String("{ QString ___s = QVariant(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? QVariant(");
-                srcCode += semicolonTrim(p.second);
-                srcCode += QLatin1String(").toString() : ___s; }\n");
+            if (!p.first.isEmpty()) {
+                if (p.second.isEmpty()) {
+                    srcCode += QLatin1String("responsebody += QVariant(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(").toString();\n");
+                } else {
+                    srcCode += QLatin1String("{ QString ___s = QVariant(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? QVariant(");
+                    srcCode += semicolonTrim(p.second);
+                    srcCode += QLatin1String(").toString() : ___s; }\n");
+                }
             }
 
         } else {  // <%=
             // Outputs the escaped value
             QPair<QString, QString> p = parseEndPercentTag();
-            if (p.second.isEmpty()) {
-                srcCode += QLatin1String("responsebody += THttpUtility::htmlEscape(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(");\n");
-            } else {
-                srcCode += QLatin1String("{ QString ___s = QVariant(");
-                srcCode += semicolonTrim(p.first);
-                srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? THttpUtility::htmlEscape(");
-                srcCode += semicolonTrim(p.second);
-                srcCode += QLatin1String(") : THttpUtility::htmlEscape(___s); }\n");
+            if (!p.first.isEmpty()) {
+                if (p.second.isEmpty()) {
+                    srcCode += QLatin1String("responsebody += THttpUtility::htmlEscape(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(");\n");
+                } else {
+                    srcCode += QLatin1String("{ QString ___s = QVariant(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? THttpUtility::htmlEscape(");
+                    srcCode += semicolonTrim(p.second);
+                    srcCode += QLatin1String(") : THttpUtility::htmlEscape(___s); }\n");
+                }
             }
         }
 
-    } else {  // <% 
+    } else {  // <%
         --pos;
         QPair<QString, QString> p = parseEndPercentTag();
         str = p.first.trimmed();
@@ -184,18 +221,15 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
                 } else {
                     string.chop(1);
                 }
-                
+
                 if (c == QLatin1Char('-'))
                     skipWhiteSpacesAndNewLineCode();
-                
-            } else if (trimMode == StrongTrim) { // StrongTrim:2
-                skipWhiteSpacesAndNewLineCode();
 
-            } else if (trimMode == NormalTrim) { // NormalTrim:1
+            } else if (trimMode == NormalTrim || trimMode == StrongTrim) { // NormalTrim:1
                 if (startTag == QLatin1String("<%") || startTag.startsWith("<%#")) {
                     skipWhiteSpacesAndNewLineCode();
                 }
-                
+
             } else if (trimMode == TrimOff) { // TrimOff:0
                 // do not skip whitespaces
             } else {
@@ -203,7 +237,7 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
             }
             break;
         }
-        
+
         if (posMatchWith("%|%")) {
             defaultFlag = true;
             pos += 3;
@@ -225,7 +259,7 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
             ++pos;
         }
     }
-    return qMakePair(string, defaultVal);
+    return qMakePair(string, defaultVal.trimmed());
 }
 
 
@@ -239,7 +273,7 @@ void ErbParser::skipWhiteSpacesAndNewLineCode()
             break;
         }
 
-        if (!c.isSpace()) {
+        if (!c.isSpace() || c.unicode() >= 128) {
             pos = p;  // no skip
             break;
         }
@@ -254,7 +288,7 @@ QString ErbParser::parseQuote()
         return QString();
     }
     ++pos;
-    
+
     QString quote = m;
     while (pos < erbData.length()) {
         quote += erbData[pos++];

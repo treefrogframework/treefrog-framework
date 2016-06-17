@@ -7,6 +7,7 @@
 #include <QPoint>
 #include <QSize>
 #include <QPair>
+#include <QFileInfo>
 #include <TGlobal>
 #include <THtmlAttribute>
 
@@ -76,7 +77,10 @@ public:
     QString inputTextTag(const QString &name, const QVariant &value,
                          const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString inputFileTag(const QString &name, const QVariant &value,
+    QString inputFileTag(const QString &name, const QVariant &value,   // obsolete
+                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString inputFileTag(const QString &name,
                          const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputPasswordTag(const QString &name, const QVariant &value,
@@ -109,10 +113,13 @@ public:
     QString optionTag(const QString &text, const QVariant &value, bool selected = false,
                       const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString optionTags(const QStringList &valueList, const QVariant &selectedValue = QVariant(),
+                       const THtmlAttribute &attributes = THtmlAttribute()) const;
+
     QString optionTags(const QVariantList &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString optionTags(const QList<QPair<QString, QVariant> > &valueList, const QVariant &selectedValue = QVariant(),
+    QString optionTags(const QList<QPair<QString, QVariant>> &valueList, const QVariant &selectedValue = QVariant(),
                        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputAuthenticityTag() const;
@@ -136,8 +143,25 @@ public:
 
     QString imageTag(const QString &src, const THtmlAttribute &attributes) const;
 
+    QString inlineImageTag(const QFileInfo &file, const QString &mediaType,
+                           const QSize &size = QSize(), const QString &alt = QString(),
+                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString inlineImageTag(const QFileInfo &file, const QString &mediaType,
+                           const THtmlAttribute &attributes) const;
+
+    QString inlineImageTag(const QByteArray &data, const QString &mediaType,
+                           const QSize &size = QSize(), const QString &alt = QString(),
+                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString inlineImageTag(const QByteArray &data, const QString &mediaType,
+                           const THtmlAttribute &attributes) const;
+
     QString imageLinkTo(const QString &src, const QUrl &url, const QSize &size = QSize(),
+                        const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;  // obsolete
+    QString imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
                         const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
+    QString imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
@@ -261,14 +285,21 @@ inline QString TViewHelper::inputTextTag(const QString &name, const QVariant &va
     return inputTag("text", name, value, attributes);
 }
 
-/*!
-  Creates a input tag with type="file", name=\a "name" and value=\a "value".
-  This function overloads inputTag().
-*/
+// obsolete  'value is disabled at input type=file tag.'
 inline QString TViewHelper::inputFileTag(const QString &name, const QVariant &value,
                                          const THtmlAttribute &attributes) const
 {
     return inputTag("file", name, value, attributes);
+}
+
+/*!
+  Creates a input tag with type="file", name=\a "name".
+  This function overloads inputTag().
+*/
+inline QString TViewHelper::inputFileTag(const QString &name,
+                                         const THtmlAttribute &attributes) const
+{
+    return inputTag("file", name, QVariant(), attributes);
 }
 
 /*!
@@ -309,6 +340,47 @@ inline QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url,
                                         const THtmlAttribute &attributes) const
 {
     return linkTo(imageTag(src, size, alt, attributes), url);
+}
+
+/*!
+  \fn QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp, const QString &alt, const THtmlAttribute &attributes) const
+  Creates a \<a\> link tag of a given \a url with a \<img\> tag of
+  src=\a "src".
+*/
+inline QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
+                                        const QString &alt, const THtmlAttribute &attributes) const
+{
+    return linkTo(imageTag(src, withTimestamp, QSize(), alt, attributes), url);
+}
+
+/*!
+  \fn QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes) const
+  Creates a \<a\> link tag of a given \a url with a \<img\> tag of
+  src=\a "src".
+*/
+inline QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes) const
+{
+    return imageLinkTo(url, src, false, QString(), attributes);
+}
+
+/*!
+  \fn QString TViewHelper::inlineImageTag(const QString &filePath, const QString &mediaType, const THtmlAttribute &attributes) const
+  Creates a inline image tag with data of \a filePath and \a mediaType.
+ */
+inline QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString &mediaType,
+                                           const THtmlAttribute &attributes) const
+{
+    return inlineImageTag(file, mediaType, QSize(), QString(), attributes);
+}
+
+/*!
+  \fn QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &mediaType, const THtmlAttribute &attributes) const
+  Creates a inline image tag with \a data and \a mediaType.
+ */
+inline QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &mediaType,
+                                           const THtmlAttribute &attributes) const
+{
+    return inlineImageTag(data, mediaType, QSize(), QString(), attributes);
 }
 
 #endif // TVIEWHELPER_H

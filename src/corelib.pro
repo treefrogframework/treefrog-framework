@@ -1,11 +1,11 @@
 TARGET   = treefrog
 TEMPLATE = lib
-CONFIG  += shared c++11
+CONFIG  += shared console c++11
 QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
-win32:CONFIG(debug, debug|release) {
+windows:CONFIG(debug, debug|release) {
   TARGET = $$join(TARGET,,,d)
 }
 
@@ -14,7 +14,7 @@ include(../include/headers.pri)
 VERSION = $$TF_VERSION
 
 isEmpty(target.path) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${VERSION}/bin
   } else:macx {
     target.path = /Library/Frameworks
@@ -24,8 +24,8 @@ isEmpty(target.path) {
 }
 INSTALLS += target
 
-win32 {
-  LIBS += -lws2_32
+windows {
+  LIBS += -lws2_32 -lpsapi
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
 
@@ -39,6 +39,7 @@ win32 {
   INSTALLS += header script test
 } else:macx {
   CONFIG += lib_bundle
+  QMAKE_SONAME_PREFIX=@rpath
   FRAMEWORK_HEADERS.version = Versions
   FRAMEWORK_HEADERS.files = $$HEADER_FILES $$HEADER_CLASSES
   FRAMEWORK_HEADERS.files += $$MONGODB_FILES $$MONGODB_CLASSES
@@ -61,7 +62,7 @@ win32 {
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_CXXFLAGS += -std=c++0x
   }
 }
 
@@ -82,18 +83,20 @@ HEADERS += tapplicationserverbase.h
 SOURCES += tapplicationserverbase.cpp
 HEADERS += tthreadapplicationserver.h
 SOURCES += tthreadapplicationserver.cpp
-HEADERS += tpreforkapplicationserver.h
-SOURCES += tpreforkapplicationserver.cpp
+#HEADERS += tpreforkapplicationserver.h
+#SOURCES += tpreforkapplicationserver.cpp
 HEADERS += tactioncontext.h
 SOURCES += tactioncontext.cpp
 HEADERS += tdatabasecontext.h
 SOURCES += tdatabasecontext.cpp
 HEADERS += tactionthread.h
 SOURCES += tactionthread.cpp
-HEADERS += tactionforkprocess.h
-SOURCES += tactionforkprocess.cpp
+#HEADERS += tactionforkprocess.h
+#SOURCES += tactionforkprocess.cpp
 HEADERS += thttpsocket.h
 SOURCES += thttpsocket.cpp
+#HEADERS += thttp2socket.h
+#SOURCES += thttp2socket.cpp
 #HEADERS += thttpbuffer.h
 #SOURCES += thttpbuffer.cpp
 HEADERS += tsendbuffer.h
@@ -166,6 +169,8 @@ HEADERS += tsessioncookiestore.h
 SOURCES += tsessioncookiestore.cpp
 HEADERS += tsessionfilestore.h
 SOURCES += tsessionfilestore.cpp
+HEADERS += tsessionredisstore.h
+SOURCES += tsessionredisstore.cpp
 HEADERS += thtmlparser.h
 SOURCES += thtmlparser.cpp
 HEADERS += tabstractmodel.h
@@ -228,6 +233,10 @@ HEADERS += tkvsdatabasepool.h
 SOURCES += tkvsdatabasepool.cpp
 HEADERS += tkvsdriver.h
 SOURCES += tkvsdriver.cpp
+HEADERS += tredisdriver.h
+SOURCES += tredisdriver.cpp
+HEADERS += tredis.h
+SOURCES += tredis.cpp
 #HEADERS += tatomicset.h
 #SOURCES += tatomicset.cpp
 HEADERS += tatomicqueue.h
@@ -252,10 +261,20 @@ HEADERS += twebsocketframe.h
 SOURCES += twebsocketframe.cpp
 HEADERS += twebsocketworker.h
 SOURCES += twebsocketworker.cpp
-
+HEADERS += twebsocketsession.h
+SOURCES += twebsocketsession.cpp
+HEADERS += tpublisher.h
+SOURCES += tpublisher.cpp
+HEADERS += tsystembus.h
+SOURCES += tsystembus.cpp
+HEADERS += tprocessinfo.h
+SOURCES += tprocessinfo.cpp
+HEADERS += tbasictimer.h
+SOURCES += tbasictimer.cpp
 
 HEADERS += \
            tfnamespace.h \
+           tfcore.h \
            tfexception.h \
            tcookie.h \
            tdispatcher.h \
@@ -265,14 +284,16 @@ HEADERS += \
            tsessionstoreplugin.h \
            tjavascriptobject.h \
            tsqlormapper.h \
+           tsqljoin.h \
            thttprequestheader.h \
            thttpresponseheader.h \
            tcommandlineinterface.h
 
-win32 {
+windows {
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp
+  SOURCES += tprocessinfo_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
@@ -280,8 +301,7 @@ unix {
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
 }
-unix:!macx {
-  # For Linux
+linux-* {
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
   HEADERS += tactionworker.h
@@ -294,21 +314,34 @@ unix:!macx {
   SOURCES += tepollhttpsocket.cpp
   HEADERS += tepollwebsocket.h
   SOURCES += tepollwebsocket.cpp
+  SOURCES += tprocessinfo_linux.cpp
+}
+macx {
+  SOURCES += tprocessinfo_macx.cpp
 }
 
 # Qt5
 greaterThan(QT_MAJOR_VERSION, 4) {
+  QT      += qml
   HEADERS += tjsonutil.h
   SOURCES += tjsonutil.cpp
+  HEADERS += tjsloader.h
+  SOURCES += tjsloader.cpp
+  HEADERS += tjsmodule.h
+  SOURCES += tjsmodule.cpp
+  HEADERS += tjsinstance.h
+  SOURCES += tjsinstance.cpp
+  HEADERS += treactcomponent.h
+  SOURCES += treactcomponent.cpp
 
   SOURCES += tactioncontroller_qt5.cpp
 }
 
 
 # Files for MongoDB
-INCLUDEPATH += ../3rdparty/mongo-c-driver/src
-win32 {
-  DEFINES += MONGO_STATIC_BUILD
+INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
+windows {
+#  DEFINES += MONGO_STATIC_BUILD
 
   win32-msvc* {
     CONFIG(debug, debug|release) {
@@ -326,7 +359,7 @@ win32 {
 } else {
   LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
 }
-DEFINES += MONGO_HAVE_STDINT
+#DEFINES += MONGO_HAVE_STDINT
 
 HEADERS += tmongodriver.h
 SOURCES += tmongodriver.cpp

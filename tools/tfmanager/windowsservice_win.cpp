@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2012-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -58,7 +58,7 @@ static QString enumerateService(DWORD processId)
 			 SERVICE_WIN32,
 			 SERVICE_STATE_ALL,
 			 buffer.data(),
-			 buffer.size(),
+			 (DWORD)buffer.size(),
 			 &requiredBufferSize,
 			 &totalServicesCount,
 			 NULL,

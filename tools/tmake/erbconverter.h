@@ -13,7 +13,7 @@ class ErbConverter
 public:
     ErbConverter(const QDir &output, const QDir &helpers);
     bool convert(const QString &erbPath, int trimMode) const;
-    bool convert(const QString &className, const QString &erb) const;
+    bool convert(const QString &className, const QString &erb, int trimMode) const;
     QDir outputDir() const { return outputDirectory; }
     //static QString convertToSourceCode(const QString &className, const QString &erb);
     static QString fileSuffix() { return "erb"; }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -11,14 +11,22 @@
 /*!
   \class THtmlAttribute
   \brief The THtmlAttribute class represents HTML attributes for customizing
-  web elements. 
+  web elements.
 */
+
+/*!
+  Constructor.
+*/
+THtmlAttribute::THtmlAttribute(const QString &key, const QString &value)
+{
+    QList<QPair<QString, QString>>::append(qMakePair(key, value));
+}
 
 /*!
   Copy constructor.
 */
 THtmlAttribute::THtmlAttribute(const THtmlAttribute &other)
-    : QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString> > *>(&other))
+    : QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString>> *>(&other))
 { }
 
 /*!
@@ -34,8 +42,8 @@ THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString>> &list)
 */
 bool THtmlAttribute::contains(const QString &key) const
 {
-    for (QListIterator<QPair<QString, QString>> i(*this); i.hasNext(); ) {
-        if (i.next().first == key)
+    for (const auto &p : *this) {
+        if (p.first == key)
             return true;
     }
     return false;
@@ -58,11 +66,20 @@ void THtmlAttribute::append(const QString &key, const QString &value)
 }
 
 /*!
+  Inserts a new item at the end of the attributes.
+*/
+THtmlAttribute &THtmlAttribute::operator()(const QString &key, const QString &value)
+{
+    append(key, value);
+    return *this;
+}
+
+/*!
   Assignment operator.
 */
 THtmlAttribute &THtmlAttribute::operator=(const THtmlAttribute &other)
 {
-    QList<QPair<QString, QString>>::operator=(*static_cast<const QList<QPair<QString, QString> > *>(&other));
+    QList<QPair<QString, QString>>::operator=(*static_cast<const QList<QPair<QString, QString>> *>(&other));
     return *this;
 }
 
@@ -83,8 +100,7 @@ THtmlAttribute THtmlAttribute::operator|(const THtmlAttribute &other) const
 QString THtmlAttribute::toString(bool escape) const
 {
     QString string;
-    for (QListIterator<QPair<QString, QString>> i(*this); i.hasNext(); ) {
-        const QPair<QString, QString> &p = i.next();
+    for (const auto &p : *this) {
         string.append(" ").append(p.first);
         if (!p.second.isNull()) {
             string.append("=\"");
@@ -94,6 +110,7 @@ QString THtmlAttribute::toString(bool escape) const
     }
     return string;
 }
+
 
 /*!
   \fn THtmlAttribute::THtmlAttribute()

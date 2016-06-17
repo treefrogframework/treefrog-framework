@@ -1,12 +1,14 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
+#include <QtGlobal>
 #include <QMetaType>
 #include <TfNamespace>
+#include <cstdint>
 
-#define TF_VERSION_STR "1.8.0"
-#define TF_VERSION_NUMBER 0x010800
-#define TF_SRC_REVISION 820
+#define TF_VERSION_STR "1.12.0"
+#define TF_VERSION_NUMBER 0x011200
+#define TF_SRC_REVISION 1112
 
 
 #define T_DECLARE_CONTROLLER(TYPE, NAME)  \
@@ -72,15 +74,26 @@
 #define T_FETCH(TYPE,VAR)  TYPE VAR = variant(QLatin1String(#VAR)).value<TYPE>()
 #define tfetch(TYPE,VAR)  T_FETCH(TYPE,VAR)
 
+#define T_FETCH_V(TYPE,VAR,DEFAULT)  TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
+#define tfetchv(TYPE,VAR,DEFAULT)  T_FETCH_V(TYPE,VAR,DEFAULT)
+
 #define T_EHEX(VAR)  eh(variant(QLatin1String(#VAR)))
 #define tehex(VAR)  T_EHEX(VAR)
 
+#define T_EHEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) eh(DEFAULT); else eh(___##VAR##_); } while(0)
+#define tehexv(VAR,DEFAULT)  T_EHEX_V(VAR,DEFAULT)
+
+// alias of tehexv
 #define T_EHEX2(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) eh(DEFAULT); else eh(___##VAR##_); } while(0)
 #define tehex2(VAR,DEFAULT)  T_EHEX2(VAR,DEFAULT)
 
 #define T_ECHOEX(VAR)  echo(variant(QLatin1String(#VAR)))
 #define techoex(VAR)  T_ECHOEX(VAR)
 
+#define T_ECHOEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) echo(DEFAULT); else echo(___##VAR##_); } while(0)
+#define techoexv(VAR,DEFAULT)  T_ECHOEX_V(VAR,DEFAULT)
+
+// alias of techoexv
 #define T_ECHOEX2(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) echo(DEFAULT); else echo(___##VAR##_); } while(0)
 #define techoex2(VAR,DEFAULT)  T_ECHOEX2(VAR,DEFAULT)
 
@@ -88,21 +101,6 @@
 #define tflash(VAR)  T_FLASH(VAR)
 
 #define T_VARIANT(VAR)  (variant(QLatin1String(#VAR)).toString())
-
-#ifdef Q_CC_MSVC
-# include <io.h>
-#endif
-
-#ifdef Q_OS_UNIX
-# define TF_CLOSE(fd)     tf_close(fd)
-# define TF_FLOCK(fd,op)  tf_flock(fd,op)
-#elif defined(Q_CC_MSVC)
-# define TF_CLOSE(fd)     ::_close(fd)
-# define TF_FLOCK(fd,op)
-#else
-# define TF_CLOSE(fd)     ::close(fd)
-# define TF_FLOCK(fd,op)
-#endif
 
 
 class TLogger;
@@ -159,9 +157,14 @@ namespace Tf
     T_CORE_EXPORT void msleep(unsigned long msecs);
 
     // Xorshift random number generator
-    T_CORE_EXPORT void srandXor128(quint32 seed);
-    T_CORE_EXPORT quint32 randXor128();
-    T_CORE_EXPORT quint32 random(quint32 max);
+    T_CORE_EXPORT void srandXor128(quint32 seed);  // obsolete
+    T_CORE_EXPORT quint32 randXor128();            // obsolete
+
+    // Thread-safe std::random number generator
+    T_CORE_EXPORT uint32_t rand32_r();
+    T_CORE_EXPORT uint64_t rand64_r();
+    T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max);
+    T_CORE_EXPORT uint64_t random(uint64_t max);
 
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();

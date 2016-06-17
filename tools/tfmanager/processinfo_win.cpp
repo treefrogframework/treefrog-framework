@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -25,20 +25,43 @@ bool ProcessInfo::exists() const
 
 qint64 ProcessInfo::ppid() const
 {
-    qint64 ppid = 0;
-    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
-    if (hProcess) {
-        PROCESS_BASIC_INFORMATION basicInfo;
-        if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
-#ifdef Q_CC_MSVC
-            ppid = (qint64)basicInfo.UniqueProcessId;
-#else
-            ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
-#endif
-        }
+    DWORD pidParent = 0;
+    HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (hSnapShot == INVALID_HANDLE_VALUE) {
+        return pidParent;
     }
-    return ppid;
+
+    PROCESSENTRY32 procentry;
+    ZeroMemory((LPVOID)&procentry, sizeof(PROCESSENTRY32));
+    procentry.dwSize = sizeof(PROCESSENTRY32);
+
+    if (Process32First(hSnapShot, &procentry)) {
+        do {
+            if (procentry.th32ProcessID == (DWORD)processId) {
+                pidParent = procentry.th32ParentProcessID;
+                break;
+            }
+            procentry.dwSize = sizeof(PROCESSENTRY32);
+        } while (Process32Next(hSnapShot, &procentry));
+    }
+
+    CloseHandle(hSnapShot);
+    return pidParent;
 }
+
+
+// qint64 ProcessInfo::ppid() const
+// {
+//     qint64 ppid = 0;
+//     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+//     if (hProcess) {
+//         PROCESS_BASIC_INFORMATION basicInfo;
+//         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
+//             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
+//         }
+//     }
+//     return ppid;
+// }
 
 
 QString ProcessInfo::processName() const
@@ -58,6 +81,7 @@ QString ProcessInfo::processName() const
 }
 
 
+#if QT_VERSION < 0x050000
 static BOOL CALLBACK terminateProc(HWND hwnd, LPARAM procId)
 {
     DWORD currentPid = 0;
@@ -68,6 +92,7 @@ static BOOL CALLBACK terminateProc(HWND hwnd, LPARAM procId)
     }
     return TRUE;
 }
+#endif
 
 
 void ProcessInfo::terminate()
@@ -78,8 +103,6 @@ void ProcessInfo::terminate()
 #else
         // Sends to the local socket of tfmanager
         TWebApplication::sendLocalCtrlMessage(QByteArray::number(WM_CLOSE), processId);
-
-        Q_UNUSED(terminateProc);
 #endif
     }
 }
@@ -99,6 +122,7 @@ void ProcessInfo::kill()
 }
 
 
+#if QT_VERSION < 0x050000
 static BOOL CALLBACK restartProc(HWND hwnd, LPARAM procId)
 {
     DWORD currentPid = 0;
@@ -109,6 +133,7 @@ static BOOL CALLBACK restartProc(HWND hwnd, LPARAM procId)
     }
     return TRUE;
 }
+#endif
 
 
 void ProcessInfo::restart()
@@ -119,8 +144,6 @@ void ProcessInfo::restart()
 #else
         // Sends to the local socket of tfmanager
         TWebApplication::sendLocalCtrlMessage(QByteArray::number(WM_APP), processId);
-
-        Q_UNUSED(restartProc);
 #endif
     }
 }
@@ -138,6 +161,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
             ret << (qint64)entry.th32ProcessID;
         } while(Process32Next(hSnapshot, &entry));
     }
+    CloseHandle(hSnapshot);
 
     qSort(ret.begin(), ret.end());  // Sorts the items
     return ret;

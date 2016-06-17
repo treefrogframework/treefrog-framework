@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -35,6 +35,8 @@
     "}\n"                                                               \
     "include(source.list)\n"
 
+int defaultTrimMode;
+
 
 ViewConverter::ViewConverter(const QDir &view, const QDir &output, bool projectFile)
     : viewDir(view), outputDir(output), createProFile(projectFile)
@@ -61,14 +63,14 @@ int ViewConverter::convertView(const QString &templateSystem) const
         dir.cd(d);
 
         // Reads trim_mode file
-        int trimMode = -1;
+        int trimMode = defaultTrimMode;
         QFile erbTrim(dir.absoluteFilePath(".trim_mode"));
         if (erbTrim.exists()) {
             if (erbTrim.open(QIODevice::ReadOnly)) {
                 bool ok;
                 int mode = erbTrim.readLine().trimmed().toInt(&ok);
                 if (ok) {
-                    trimMode = mode;
+                    trimMode = qMin(qMax(0, mode), 2);
                 }
                 erbTrim.close();
             }
@@ -88,7 +90,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
             if (ext == ErbConverter::fileSuffix()) {
                 convok = erbconv.convert(fileinfo.absoluteFilePath(), trimMode);
             } else if (ext == OtamaConverter::fileSuffix()) {
-                convok = otamaconv.convert(fileinfo.absoluteFilePath());
+                convok = otamaconv.convert(fileinfo.absoluteFilePath(), trimMode);
             } else {
                 continue;
             }

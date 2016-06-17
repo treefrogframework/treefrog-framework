@@ -14,25 +14,36 @@
 #include <THttpUtility>
 #include <TWebSocketEndpoint>
 #include "tepollwebsocket.h"
+#include "tepoll.h"
 #include "twebsocketframe.h"
 #include "twebsocketworker.h"
 #include "turlroute.h"
 #include "tdispatcher.h"
 
 const int BUFFER_RESERVE_SIZE = 127;
+static QMutex mutexMap;
+static QMap<QByteArray, TEpollWebSocket*> websocketMap;
 
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
-    : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(),
-      reqHeader(header), recvBuffer(), frames()
+    : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(header),
+      recvBuffer(), frames()
 {
+    tSystemDebug("TEpollWebSocket  [%p]", this);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
+
+    mutexMap.lock();
+    websocketMap.insert(socketUuid(), this);
+    mutexMap.unlock();
 }
 
 
 TEpollWebSocket::~TEpollWebSocket()
 {
-    tSystemDebug("~TEpollWebSocket");
+    tSystemDebug("~TEpollWebSocket  [%p]", this);
+    mutexMap.lock();
+    websocketMap.remove(socketUuid());
+    mutexMap.unlock();
 }
 
 
@@ -67,19 +78,50 @@ bool TEpollWebSocket::isBinaryRequest() const
 }
 
 
-QByteArray TEpollWebSocket::readBinaryRequest()
+void TEpollWebSocket::sendTextForPublish(const QString &text, const QObject *except)
+{
+    tSystemDebug("sendText  text len:%d  (pid:%d)", text.length(), (int)QCoreApplication::applicationPid());
+    if (except != this) {
+        TAbstractWebSocket::sendText(text);
+    }
+}
+
+
+void TEpollWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
+{
+    tSystemDebug("sendBinary  binary len:%d  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
+    if (except != this) {
+        TAbstractWebSocket::sendBinary(binary);
+    }
+}
+
+
+void TEpollWebSocket::sendPong(const QByteArray &data)
+{
+    tSystemDebug("sendPong  data len:%d  (pid:%d)", data.length(), (int)QCoreApplication::applicationPid());
+    TAbstractWebSocket::sendPong(data);
+}
+
+
+QList<QPair<int, QByteArray>> TEpollWebSocket::readAllBinaryRequest()
 {
     Q_ASSERT(canReadRequest());
+    QList<QPair<int, QByteArray>> ret;
+    QByteArray payload;
 
-    QByteArray ret;
-    while (!frames.isEmpty()) {
-        TWebSocketFrame frm = frames.takeFirst();
-        ret += frm.payload();
-        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
-            break;
+    while (canReadRequest()) {
+        int opcode = frames.first().opCode();
+        payload.resize(0);
+
+        while (!frames.isEmpty()) {
+            TWebSocketFrame frm = frames.takeFirst();
+            payload += frm.payload();
+            if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+                ret << qMakePair(opcode, payload);
+                break;
+            }
         }
     }
-    tSystemDebug("readBinaryRequest: payload len:%d", ret.length());
     return ret;
 }
 
@@ -96,13 +138,14 @@ bool TEpollWebSocket::seekRecvBuffer(int pos)
 {
     int size = recvBuffer.size();
     if (Q_UNLIKELY(pos <= 0 || size + pos > recvBuffer.capacity())) {
-        clear();
+        Q_ASSERT(0);
         return false;
     }
 
     size += pos;
     recvBuffer.resize(size);
     int len = parse(recvBuffer);
+    tSystemDebug("WebSocket parse len : %d", len);
     if (len < 0) {
         tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
         close();
@@ -117,13 +160,12 @@ void TEpollWebSocket::startWorker()
     tSystemDebug("TEpollWebSocket::startWorker");
     Q_ASSERT(canReadRequest());
 
-    do {
-        TWebSocketFrame::OpCode opcode = frames.first().opCode();
-        QByteArray binary = readBinaryRequest();
+    auto payloads = readAllBinaryRequest();
+    if (!payloads.isEmpty()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
-        worker->setPayload(opcode, binary);
+        worker->setPayloads(payloads);
         startWorker(worker);
-    } while (canReadRequest());
+    }
 }
 
 
@@ -146,6 +188,10 @@ void TEpollWebSocket::releaseWorker()
 
         if (deleting.load()) {
             TEpollWebSocket::deleteLater();
+        } else {
+            if (pollIn.exchange(false)) {
+                TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            }
         }
     }
 }
@@ -153,12 +199,20 @@ void TEpollWebSocket::releaseWorker()
 
 void TEpollWebSocket::deleteLater()
 {
-    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d", (int)myWorkerCounter);
-    if (!deleting.load()) {
+    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d  deleting:%d", (int)myWorkerCounter, (bool)deleting);
+
+    if (!deleting.exchange(true)) {
         startWorkerForClosing();
+        return;
     }
 
-    TEpollSocket::deleteLater();
+    if ((int)myWorkerCounter == 0) {
+        mutexMap.lock();
+        websocketMap.remove(socketUuid());
+        mutexMap.unlock();
+
+        QObject::deleteLater();
+    }
 }
 
 
@@ -172,9 +226,11 @@ void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 
 void TEpollWebSocket::startWorkerForClosing()
 {
-    if (!TAbstractWebSocket::closing.exchange(true)) {
+    if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
+    } else {
+        deleteLater();
     }
 }
 
@@ -198,4 +254,22 @@ qint64 TEpollWebSocket::writeRawData(const QByteArray &data)
 void TEpollWebSocket::disconnect()
 {
     TEpollSocket::disconnect();
+    stopKeepAlive();
+}
+
+
+void TEpollWebSocket::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == keepAliveTimer->timerId()) {
+        sendPing();
+    } else {
+        TEpollSocket::timerEvent(event);
+    }
+}
+
+
+TEpollWebSocket *TEpollWebSocket::searchSocket(const QByteArray &uuid)
+{
+    QMutexLocker locker(&mutexMap);
+    return websocketMap.value(uuid, nullptr);
 }

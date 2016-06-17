@@ -156,8 +156,17 @@ bool TWebSocketFrame::validate()
     valid_ &= (rsv1Bit() == false);
     valid_ &= (rsv2Bit() == false);
     valid_ &= (rsv3Bit() == false);
+    if (!valid_) {
+        tSystemError("WebSocket frame validation error : Incorrect RSV bit  [%s:%d]", __FILE__, __LINE__);
+        return valid_;
+    }
+
     valid_ &= ((opCode() >= TWebSocketFrame::Continuation && opCode() <= TWebSocketFrame::BinaryFrame)
                || (opCode() >= TWebSocketFrame::Close && opCode() <= TWebSocketFrame::Pong));
+    if (!valid_) {
+        tSystemError("WebSocket frame validation error : Incorrect opcode : %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
+        return valid_;
+    }
 
     if (isControlFrame()) {
         valid_ &= (payloadLength() <= 125); // MUST have a payload length of 125 bytes or less
@@ -165,7 +174,29 @@ bool TWebSocketFrame::validate()
     }
 
     if (!valid_) {
-        tSystemError("WebSocket frame validation error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("WebSocket frame validation error : Invalid control frame  [%s:%d]", __FILE__, __LINE__);
     }
     return valid_;
 }
+
+
+// void TWebSocketFrame::checkRsv() const
+// {
+//     bool valid  = true;
+//     valid &= (rsv1Bit() == false);
+//     if (!valid) {
+//         tSystemError("##checkRsv frame validation error : Incorrect RSV1 bit  [%s:%d]", __FILE__, __LINE__);
+//     }
+
+
+//     valid &= (rsv2Bit() == false);
+//     if (!valid) {
+//         tSystemError("##checkRsv frame validation error : Incorrect RSV2 bit  [%s:%d]", __FILE__, __LINE__);
+//     }
+
+
+//     valid &= (rsv3Bit() == false);
+//     if (!valid) {
+//         tSystemError("##checkRsv frame validation error : Incorrect RSV3 bit  [%s:%d]", __FILE__, __LINE__);
+//     }
+// }

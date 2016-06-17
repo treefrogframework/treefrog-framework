@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -61,7 +61,7 @@
     "\n"                                                       \
     "void %2Controller::show(const QString &pk)\n"             \
     "{\n"                                                      \
-    "    %2 %3 = %2::get(%4);\n"                               \
+    "    auto %3 = %2::get(%4);\n"                             \
     "    texport(%3);\n"                                       \
     "    render();\n"                                          \
     "}\n"                                                      \
@@ -77,8 +77,8 @@
     "        return;\n"                                        \
     "    }\n"                                                  \
     "\n"                                                       \
-    "    QVariantMap form = httpRequest().formItems(\"%3\");\n"     \
-    "    %2 %3 = %2::create(form);\n"                               \
+    "    auto form = httpRequest().formItems(\"%3\");\n"            \
+    "    auto %3 = %2::create(form);\n"                             \
     "    if (!%3.isNull()) {\n"                                     \
     "        QString notice = \"Created successfully.\";\n"         \
     "        tflash(notice);\n"                                     \
@@ -98,7 +98,7 @@
     "\n"                                                            \
     "void %2Controller::edit(const QString &pk)\n"                  \
     "{\n"                                                           \
-    "    %2 %3 = %2::get(%4);\n"                                    \
+    "    auto %3 = %2::get(%4);\n"                                  \
     "    if (!%3.isNull()) {\n"                                     \
     "%5"                                                                \
     "        renderEdit(%3.toVariantMap());\n"                          \
@@ -115,7 +115,7 @@
     "\n"                                                                \
     "    QString error;\n"                                              \
     "%6"                                                                \
-    "    %2 %3 = %2::get(%4%7);\n"                                      \
+    "    auto %3 = %2::get(%4%7);\n"                                    \
     "    if (%3.isNull()) {\n"                                          \
     "        error = \"Original data not found. It may have been updated/removed by another transaction.\";\n" \
     "        tflash(error);\n"                                          \
@@ -123,7 +123,7 @@
     "        return;\n"                                                 \
     "    }\n"                                                           \
     "\n"                                                                \
-    "    QVariantMap form = httpRequest().formItems(\"%3\");\n"         \
+    "    auto form = httpRequest().formItems(\"%3\");\n"                \
     "    %3.setProperties(form);\n"                                     \
     "    if (%3.save()) {\n"                                            \
     "        QString notice = \"Updated successfully.\";\n"             \
@@ -148,7 +148,7 @@
     "        return;\n"                                                 \
     "    }\n"                                                           \
     "\n"                                                                \
-    "    %2 %3 = %2::get(%4);\n"                                        \
+    "    auto %3 = %2::get(%4);\n"                                      \
     "    %3.remove();\n"                                                \
     "    redirect(urla(\"index\"));\n"                                  \
     "}\n"                                                               \

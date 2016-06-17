@@ -1,4 +1,4 @@
-/* Copyright (c) 013, AOYAMA Kazuharu
+/* Copyright (c) 2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -74,7 +74,7 @@ void *TSendBuffer::getData(int &size)
 {
     if (Q_UNLIKELY(size <= 0)) {
         tSystemError("Invalid data size. [%s:%d]", __FILE__, __LINE__);
-        return 0;
+        return nullptr;
     }
 
     if (startPos < arrayBuffer.length()) {
@@ -84,7 +84,7 @@ void *TSendBuffer::getData(int &size)
 
     if (!bodyFile || bodyFile->atEnd()) {
         size = 0;
-        return 0;
+        return nullptr;
     }
 
     arrayBuffer.reserve(size);
@@ -93,7 +93,7 @@ void *TSendBuffer::getData(int &size)
         tSystemError("file read error: %s", qPrintable(bodyFile->fileName()));
         size = 0;
         release();
-        return 0;
+        return nullptr;
     }
 
     arrayBuffer.resize(size);

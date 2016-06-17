@@ -1,5 +1,5 @@
-TreeFrog Framework
-==================
+小さくて、パワフル、そして高性能
+===========================
 
 TreeFrog Framework は、C++によるフルスタックの高速Webアプリケーションフレーム
 ワークです。
@@ -12,29 +12,37 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 
 特徴
 ----
-
- * 高いパフォーマンス ： ユーザにとってWebアプリケーションは早いほうがいい！
- * C++ のフレームワーク ： 高速に動作する Web アプリケーションを手に入れよう
- * テンプレートシステム ： テンプレートとプレゼンテーションロジックを完全に分離
- * フルスタック ： 一通りのモジュールがそろっているのですぐに始められる
- * クロスプラットフォーム ： Windows, Mac OS X, Linux で同じコードが動作
- * MVC アーキテクチャ : モデル・ビュー・コントローラの３つに分割
+ * 高いパフォーマンス ： 高度に最適化されたC++アプリケーションサーバエンジン
  * O/R マッピング ： 複雑で面倒なデータベースアクセスを隠蔽
- * URLルーティング ： URL とアクションの関連付けをファイルに記述する必要がない
+ * テンプレートシステム ： テンプレートとプレゼンテーションロジックを完全に分離
+ * DB　サポート ：　MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
+               　 InterBase,  MongoDB
+ * WebSocket サポート ： アプリケーションサーバとの全二重通信を提供
  * ジェネレータ ： 「足場」となるソースコードや Makefile を自動で生成
+ * クロスプラットフォーム ： Windows, Mac OS X, Linux で同じコードが動作
  * Ajax サポート ： JSON、XML、プレインテキストを非同期で送信
- * NoSQLデータベース対応 : MongoDBに対応
  * オープンソースソフトウェア ： New BSD License
 
+
+要件
+----
+Qt による qmake ビルドシステム採用
 
 Webサイト
 ---------
  http://www.treefrogframework.org/ja/
 
+リリース
+------
+ https://github.com/treefrogframework/treefrog-framework/releases
 
-MongoDBとの連携
+ドキュメント
+----------
+ こちらのサイトでどうぞ
+ http://www.treefrogframework.org/documents
+
+MongoDB サポート
 -------------
-
 TreeFrog Framework は、10gen社の支援によるMongoDBのC言語ドライバを使って、
 MongoDB とデータの受け渡しをします。そのドライバのソースコードは本パッケージに
 含まれています。詳細は README をご覧ください。

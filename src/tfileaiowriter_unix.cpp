@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2013-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -31,7 +31,7 @@ void TFileAioWriterData::clearSyncBuffer()
     if (!syncBuffer.isEmpty()) {
         for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
             struct aiocb *cb = it.next();
-            delete (char *)cb->aio_buf;
+            delete [] (char *) cb->aio_buf;
             delete cb;
         }
         syncBuffer.clear();
@@ -80,7 +80,7 @@ void TFileAioWriter::close()
     flush();
 
     if (d->fileDescriptor > 0) {
-        TF_CLOSE(d->fileDescriptor);
+        tf_close(d->fileDescriptor);
     }
     d->fileDescriptor = 0;
 }
@@ -137,7 +137,7 @@ int TFileAioWriter::write(const char *data, int length)
         } else {
 #ifdef Q_OS_DARWIN
             // try sync-write
-            return (::write(d->fileDescriptor, data, length) > 0) ? 0 : -1;
+            return (tf_write(d->fileDescriptor, data, length) > 0) ? 0 : -1;
 #endif
         }
         return ret;

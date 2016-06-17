@@ -23,8 +23,12 @@ private slots:
     void parse();
     void otamaconvert_data();
     void otamaconvert();
+    void otamaconvertStrong_data();
+    void otamaconvertStrong();
     void erbparse_data();
     void erbparse();
+    void erbparseStrong_data();
+    void erbparseStrong();
 };
 
 
@@ -63,7 +67,7 @@ void TestTfpconverter::parse()
     THtmlParser parser;
     parser.parse(html);
     QString result = parser.toString();
-    
+
     QFile res("result.phtm");
     res.open(QIODevice::WriteOnly | QIODevice::Truncate);
     QTextStream rests(&res);
@@ -81,7 +85,8 @@ void TestTfpconverter::otamaconvert_data()
     QTest::addColumn<QString>("olgFileName");
     QTest::addColumn<QString>("resultFileName");
 
-    QTest::newRow("1")  << "index1.html"  << "logic1.olg" << "res1.html";
+    QTest::newRow("1")   << "index1.html"  << "logic1.olg" << "res1.html";
+    QTest::newRow("1-2") << "index1-2.html" << "logic1.olg" << "res1-2.html";
     QTest::newRow("2")  << "index2.html"  << "logic1.olg" << "res2.html";
     QTest::newRow("3")  << "index3.html"  << "logic1.olg" << "res3.html";
     QTest::newRow("4")  << "index4.html"  << "logic1.olg" << "res4.html";
@@ -95,17 +100,22 @@ void TestTfpconverter::otamaconvert_data()
     QTest::newRow("12") << "index12.html" << "logic1.olg" << "res12.html";
     QTest::newRow("13") << "index13.html" << "logic1.olg" << "res13.html";
     QTest::newRow("14") << "index14.html" << "logic1.olg" << "res14.html";
+    QTest::newRow("14-2") << "index14-2.html" << "logic1.olg" << "res14-2.html";
+    QTest::newRow("14-3") << "index14-3.html" << "logic1.olg" << "res14-3.html";
+    QTest::newRow("14-4") << "index14-4.html" << "logic1.olg" << "res14-4.html";
     QTest::newRow("15") << "index15.html" << "logic1.olg" << "res15.html";
     QTest::newRow("16") << "index16.html" << "logic1.olg" << "res16.html";
     QTest::newRow("17") << "index17.html" << "logic1.olg" << "res17.html";
     QTest::newRow("18") << "index18.html" << "logic1.olg" << "res18.html";
     QTest::newRow("19") << "index19.html" << "logic1.olg" << "res19.html";
+    QTest::newRow("19") << "index19.html" << "logic1.olg" << "res19.html";
+    QTest::newRow("20") << "index20.html" << "logic1.olg" << "res20.html";
 
     QTest::newRow("c1") << "indexc1.html" << "logic1.olg" << "resc1.html";
     QTest::newRow("c2") << "indexc2.html" << "logic1.olg" << "resc2.html";
     QTest::newRow("c3") << "indexc3.html" << "logic1.olg" << "resc3.html";
     QTest::newRow("c4") << "indexc4.html" << "logic1.olg" << "resc4.html";
-        
+
     QTest::newRow("dm") << "dummy.html"  << "logic1.olg" << "resdm.html";
 }
 
@@ -120,7 +130,7 @@ void TestTfpconverter::otamaconvert()
     QVERIFY(htmlFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tshtml(&htmlFile);
     tshtml.setCodec("UTF-8");
-  
+
     QFile olgFile(olgFileName);
     QVERIFY(olgFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tsolg(&olgFile);
@@ -131,7 +141,56 @@ void TestTfpconverter::otamaconvert()
     QTextStream tsres(&resultFile);
     tsres.setCodec("UTF-8");
 
-    QString result = OtamaConverter::convertToErb(tshtml.readAll(), tsolg.readAll());
+    QString result = OtamaConverter::convertToErb(tshtml.readAll(), tsolg.readAll(), 1);
+    QString expect = tsres.readAll();
+    QCOMPARE(result, expect);
+}
+
+
+void TestTfpconverter::otamaconvertStrong_data()
+{
+    QTest::addColumn<QString>("htmlFileName");
+    QTest::addColumn<QString>("olgFileName");
+    QTest::addColumn<QString>("resultFileName");
+
+    QTest::newRow("1")   << "index1.html"   << "logic1.olg" << "res1st.html";
+    QTest::newRow("1-2") << "index1-2.html" << "logic1.olg" << "res1-2st.html";
+    QTest::newRow("2")   << "index2.html"   << "logic1.olg" << "res2st.html";
+    QTest::newRow("3")   << "index3.html"   << "logic1.olg" << "res3st.html";
+    QTest::newRow("4")   << "index4.html"   << "logic1.olg" << "res4st.html";
+    QTest::newRow("5")   << "index5.html"   << "logic1.olg" << "res5st.html";
+    QTest::newRow("6")   << "index6.html"   << "logic1.olg" << "res6st.html";
+    QTest::newRow("7")   << "index7.html"   << "logic1.olg" << "res7st.html";
+    QTest::newRow("8")   << "index8.html"   << "logic1.olg" << "res8st.html";
+    QTest::newRow("9")   << "index9.html"   << "logic1.olg" << "res9st.html";
+    QTest::newRow("10")  << "index10.html"  << "logic1.olg" << "res10st.html";
+
+    QTest::newRow("20") << "index20.html" << "logic1.olg" << "res20st.html";
+}
+
+
+void TestTfpconverter::otamaconvertStrong()
+{
+    QFETCH(QString, htmlFileName);
+    QFETCH(QString, olgFileName);
+    QFETCH(QString, resultFileName);
+
+    QFile htmlFile(htmlFileName);
+    QVERIFY(htmlFile.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream tshtml(&htmlFile);
+    tshtml.setCodec("UTF-8");
+
+    QFile olgFile(olgFileName);
+    QVERIFY(olgFile.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream tsolg(&olgFile);
+    tsolg.setCodec("UTF-8");
+
+    QFile resultFile(resultFileName);
+    QVERIFY(resultFile.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream tsres(&resultFile);
+    tsres.setCodec("UTF-8");
+
+    QString result = OtamaConverter::convertToErb(tshtml.readAll(), tsolg.readAll(), 2);
     QString expect = tsres.readAll();
     QCOMPARE(result, expect);
 }
@@ -143,60 +202,67 @@ void TestTfpconverter::erbparse_data()
     QTest::addColumn<QString>("expe");
 
     QTest::newRow("1") << "<body>Hello ... \n</body>"
-                       << "  responsebody += tr(\"<body>Hello ... \\n</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello ... \\n</body>\");\n";
+    QTest::newRow("1-2") << "  <body>Hello ... \n</body> \t"
+                         << "  responsebody += QLatin1String(\"  <body>Hello ... \\n</body> \t\");\n";
     QTest::newRow("2") << "<body>Hello <%# this is comment!! %></body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += tr(\"</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("3") << "<body>Hello <%# this is comment!! %>   \n</body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += tr(\"</body>\");\n";
-    
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += QLatin1String(\"</body>\");\n";
+
     QTest::newRow("4") << "<body>Hello <%# this is \"comment!!\" %></body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += tr(\"</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("5") << "<body>Hello <%# this is \"comment!!\" %>  \r\n</body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += tr(\"</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += QLatin1String(\"</body>\");\n";
 
     QTest::newRow("6") << "<body>Hello <% int i; %></body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  int i;\n  responsebody += tr(\"</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("7") << "<body>Hello <% QString s(\"%>\"); %></body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  QString s(\"%>\");\n  responsebody += tr(\"</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  QString s(\"%>\");\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("8") << "<body>Hello <%== vvv %></body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  responsebody += QVariant(vvv).toString();\n  responsebody += tr(\"</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += QVariant(vvv).toString();\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("9") << "<body>Hello <%= vvv %> \n</body>"
-                       << "  responsebody += tr(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\" \\n</body>\");\n";
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\" \\n</body>\");\n";
     QTest::newRow("10") << "<body>Hello <%= vvv; -%> \n</body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\"</body>\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("11") << "<body>Hello <% int i; -%> \r\n </body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  int i;\n  responsebody += tr(\" </body>\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\" </body>\");\n";
     QTest::newRow("12") << "<body>Hello <% int i; %> \r\n</body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  int i;\n  responsebody += tr(\"</body>\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\"</body>\");\n";
     QTest::newRow("13") << "<body>Hello ... \r\n</body>"
-                        << "  responsebody += tr(\"<body>Hello ... \\r\\n</body>\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello ... \\r\\n</body>\");\n";
     QTest::newRow("14") << "<body>Hello <%= vvv; +%> \n</body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\" \\n</body>\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\" \\n</body>\");\n";
     QTest::newRow("15") << "<body>Hello <%= vvv; +%></body>\r\n"
-                        << "  responsebody += tr(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\"</body>\\r\\n\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\"</body>\\r\\n\");\n";
     QTest::newRow("16") << "<body>Hello <% int i; +%> \r\n </body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  int i;\n  responsebody += tr(\" \\r\\n </body>\");\n";
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\" \\r\\n </body>\");\n";
 
     /** echo export object **/
-    QTest::newRow("20") << "<body>Hello <%=$ hoge -%> \r\n </body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  tehex(hoge);\n  responsebody += tr(\" </body>\");\n";
-    QTest::newRow("21") << "<body>Hello <%==$ hoge %> \r\n </body>"
-                        << "  responsebody += tr(\"<body>Hello \");\n  techoex(hoge);\n  responsebody += tr(\" \\r\\n </body>\");\n";
+    QTest::newRow("17") << "<body>Hello <%=$ hoge -%> \r\n </body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  tehex(hoge);\n  responsebody += QLatin1String(\" </body>\");\n";
+    QTest::newRow("18") << "<body>Hello <%==$ hoge %> \r\n </body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  techoex(hoge);\n  responsebody += QLatin1String(\" \\r\\n </body>\");\n";
 
     /** Echo a default value on ERB **/
-    QTest::newRow("16") << "<body><%# comment. %|% 33 %></body>"
-                        << "  responsebody += tr(\"<body>\");\n  /* comment. */\n  responsebody += tr(\"</body>\");\n";
-    QTest::newRow("17") << "<body><%= number %|% 33 %></body>"
-                        << "  responsebody += tr(\"<body>\");\n  { QString ___s = QVariant(number).toString(); responsebody += (___s.isEmpty()) ? THttpUtility::htmlEscape(33) : THttpUtility::htmlEscape(___s); }\n  responsebody += tr(\"</body>\");\n";
-    QTest::newRow("18") << "<body><%== number %|% 33 %></body>"
-                        << "  responsebody += tr(\"<body>\");\n  { QString ___s = QVariant(number).toString(); responsebody += (___s.isEmpty()) ? QVariant(33).toString() : ___s; }\n  responsebody += tr(\"</body>\");\n";
-    QTest::newRow("19") << "<body><%=$number %|% 33 %></body>"
-                        << "  responsebody += tr(\"<body>\");\n  tehex2(number, (33));\n  responsebody += tr(\"</body>\");\n";
+    QTest::newRow("19") << "<body><%# comment. %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  /* comment. */\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("20") << "<body><%= number %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  { QString ___s = QVariant(number).toString(); responsebody += (___s.isEmpty()) ? THttpUtility::htmlEscape(33) : THttpUtility::htmlEscape(___s); }\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("21") << "<body><%== number %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  { QString ___s = QVariant(number).toString(); responsebody += (___s.isEmpty()) ? QVariant(33).toString() : ___s; }\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("22") << "<body><%=$number %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  tehex2(number, (33));\n  responsebody += QLatin1String(\"</body>\");\n";
     // Irregular pattern
-    QTest::newRow("20") << "<body><%==$number %|% 33 -%>\t\n</body>"
-                        << "  responsebody += tr(\"<body>\");\n  techoex2(number, (33));\n  responsebody += tr(\"</body>\");\n";
-    QTest::newRow("21") << "<body><%== \"  %|%\" %|% \"%|%\" -%> \t \n</body>"
-                        << "  responsebody += tr(\"<body>\");\n  { QString ___s = QVariant(\"  %|%\").toString(); responsebody += (___s.isEmpty()) ? QVariant(\"%|%\").toString() : ___s; }\n  responsebody += tr(\"</body>\");\n";
+    QTest::newRow("23") << "<body><%==$number %|% 33 -%>\t\n</body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  techoex2(number, (33));\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("24") << "<body><%== \"  %|%\" %|% \"%|%\" -%> \t \n</body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  { QString ___s = QVariant(\"  %|%\").toString(); responsebody += (___s.isEmpty()) ? QVariant(\"%|%\").toString() : ___s; }\n  responsebody += QLatin1String(\"</body>\");\n";
+
+    QTest::newRow("25") << "<body><script>function() { return '\\n'; }</script></body>"
+                        << "  responsebody += QLatin1String(\"<body><script>function() { return '\\\\n'; }</script></body>\");\n";
+    QTest::newRow("26") << "<body><script>function() { return \"\\n\"; }</script></body>"
+                        << "  responsebody += QLatin1String(\"<body><script>function() { return \\\"\\\\n\\\"; }</script></body>\");\n";
 }
 
 
@@ -206,6 +272,90 @@ void TestTfpconverter::erbparse()
     QFETCH(QString, expe);
 
     ErbParser parser(ErbParser::NormalTrim);
+    parser.parse(erb);
+    QString result = parser.sourceCode();
+    QCOMPARE(result, expe);
+}
+
+
+void TestTfpconverter::erbparseStrong_data()
+{
+    QTest::addColumn<QString>("erb");
+    QTest::addColumn<QString>("expe");
+
+    QTest::newRow("1") << "<body>Hello ... \n</body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello ...\\n</body>\");\n";
+    QTest::newRow("1-2") << "<body>Hello ... \n \t</body>"
+                         << "  responsebody += QLatin1String(\"<body>Hello ...\\n</body>\");\n";
+    QTest::newRow("2") << "<body>Hello <%# this is comment!! %></body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("3") << "<body>Hello <%# this is comment!! %>   \n</body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is comment!! */\n  responsebody += QLatin1String(\"</body>\");\n";
+
+    QTest::newRow("4") << "<body>Hello <%# this is \"comment!!\" %></body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("5") << "<body>Hello <%# this is \"comment!!\" %>  \r\n</body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  /* this is \"comment!!\" */\n  responsebody += QLatin1String(\"</body>\");\n";
+
+    QTest::newRow("6") << "<body>Hello <% int i; %></body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("7") << "<body>Hello <% QString s(\"%>\"); %></body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  QString s(\"%>\");\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("8") << "<body>Hello <%== vvv %></body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += QVariant(vvv).toString();\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("9") << "<body>Hello <%= vvv %> \n</body>"
+                       << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\"\\n</body>\");\n";
+    QTest::newRow("9-2") << "<body>Hello <%= vvv %>　\n</body>"
+                         << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += tr(\"　\\n</body>\");\n";
+    QTest::newRow("10") << "<body>Hello <%= vvv; -%>  \n</body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("11") << "  <body>Hello <% int i; -%> \r\n </body>  "
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("12") << "<body>Hello <% int i; %> \r\n</body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("13") << "<body>Hello ... \t\r\n\t</body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello ...\\n</body>\");\n";
+    QTest::newRow("14") << "<body>Hello <%= vvv; +%> \n</body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\"\\n</body>\");\n";
+    QTest::newRow("15") << "<body>Hello <%= vvv; +%></body>\t\r\n"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  responsebody += THttpUtility::htmlEscape(vvv);\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("16") << " \t<body>Hello <% int i; +%> \r\n </body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  int i;\n  responsebody += QLatin1String(\"\\n</body>\");\n";
+
+    /** echo export object **/
+    QTest::newRow("17") << " \t <body>Hello <%=$ hoge -%> \r\n </body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  tehex(hoge);\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("18") << "<body>Hello <%==$ hoge %> \r\n </body>"
+                        << "  responsebody += QLatin1String(\"<body>Hello \");\n  techoex(hoge);\n  responsebody += QLatin1String(\"\\n</body>\");\n";
+
+    /** Echo a default value on ERB **/
+    QTest::newRow("19") << "<body><%# comment. %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  /* comment. */\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("20") << "<body><%= number %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  { QString ___s = QVariant(number).toString(); responsebody += (___s.isEmpty()) ? THttpUtility::htmlEscape(33) : THttpUtility::htmlEscape(___s); }\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("21") << "<body><%== number %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  { QString ___s = QVariant(number).toString(); responsebody += (___s.isEmpty()) ? QVariant(33).toString() : ___s; }\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("22") << "<body><%=$number %|% 33 %></body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  tehex2(number, (33));\n  responsebody += QLatin1String(\"</body>\");\n";
+    // Irregular pattern
+    QTest::newRow("23") << "<body><%==$number %|% 33 -%>\t\n</body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  techoex2(number, (33));\n  responsebody += QLatin1String(\"</body>\");\n";
+    QTest::newRow("24") << "<body><%== \"  %|%\" %|% \"%|%\" -%> \t \n</body>"
+                        << "  responsebody += QLatin1String(\"<body>\");\n  { QString ___s = QVariant(\"  %|%\").toString(); responsebody += (___s.isEmpty()) ? QVariant(\"%|%\").toString() : ___s; }\n  responsebody += QLatin1String(\"</body>\");\n";
+
+    QTest::newRow("25") << "<body><script>function() { return '\\n'; }</script></body>"
+                        << "  responsebody += QLatin1String(\"<body><script>function() { return '\\\\n'; }</script></body>\");\n";
+    QTest::newRow("26") << "<body><script>function() { return \"\\n\"; }</script></body>"
+                        << "  responsebody += QLatin1String(\"<body><script>function() { return \\\"\\\\n\\\"; }</script></body>\");\n";
+}
+
+
+void TestTfpconverter::erbparseStrong()
+{
+    QFETCH(QString, erb);
+    QFETCH(QString, expe);
+
+    ErbParser parser(ErbParser::StrongTrim);
     parser.parse(erb);
     QString result = parser.sourceCode();
     QCOMPARE(result, expe);

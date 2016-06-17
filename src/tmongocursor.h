@@ -3,14 +3,14 @@
 
 #include <QVariant>
 #include <TGlobal>
-
-typedef void TMongoCursorObject;
-struct mongo;
+#include <TBson>
 
 
 class T_CORE_EXPORT TMongoCursor
 {
 public:
+    typedef void TCursorObject;
+
     ~TMongoCursor();
 
     bool next();
@@ -18,13 +18,14 @@ public:
     QVariantList toList();
 
 protected:
-    void init(mongo *connection, const QString &ns);
     void release();
-    TMongoCursorObject *cursor() { return mongoCursor; }
-    void setCursor(TMongoCursorObject *cursor);
+    TCursorObject *cursor() { return mongoCursor; }
+    void setCursor(void *cursor);
 
 private:
-    TMongoCursorObject *mongoCursor;  // pointer to object of struct mongo_cursor
+    typedef struct _mongoc_cursor_t mongoc_cursor_t;
+    mongoc_cursor_t *mongoCursor;
+    const TBsonObject *bsonDoc;  // pointer to a object of bson_t
 
     TMongoCursor();
     friend class TMongoDriver;

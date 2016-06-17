@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrog Framework
-PROJECT_NUMBER         = 1.7
+PROJECT_NUMBER         = 1.11
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -102,6 +102,7 @@ FILE_PATTERNS          =
 RECURSIVE              = NO
 EXCLUDE                = src/test \
                          src/trash \
+                         src/tpreforkapplicationserver.h \
                          src/directcontroller.h \
                          src/tabstractlogstream.h \
                          src/taccesslog.h \
@@ -143,12 +144,25 @@ EXCLUDE                = src/test \
                          src/tmongocursor.h \
                          src/tmongomapper.h \
                          src/tmongoobject.h \
+                         src/tredisdriver.h \
                          src/tcriteriamongoconverter.h \
                          src/thttpbuffer.h \
                          src/thttpsendbuffer.h \
                          src/tmultiplexingserver.h \
+                         src/tabstractwebsocket.h \
                          src/tepoll.h \
                          src/tepollsocket.h \
+                         src/tepollhttpsocket.h \
+                         src/tepollwebsocket.h \
+                         src/twebsocket.h \
+                         src/twebsocketworker.h \
+                         src/twebsocketframe.h \
+                         src/tsendbuffer.h \
+                         src/tappsettings.h \
+                         src/tbasictimer.h \
+                         src/tprocessinfo.h \
+                         src/tsystembus.h \
+                         src/tsystembusmessage.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp

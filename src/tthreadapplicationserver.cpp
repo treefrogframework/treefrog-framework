@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -18,7 +18,7 @@
 */
 
 TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject *parent)
-    : QTcpServer(parent), TApplicationServerBase(), listenSocket(listeningSocket), maxThreads(0)
+    : QTcpServer(parent), TApplicationServerBase(), listenSocket(listeningSocket), maxThreads(0), reloadTimer()
 {
     QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
     maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
@@ -61,7 +61,9 @@ void TThreadApplicationServer::stop()
     QTcpServer::close();
     listenSocket = 0;
 
-    TActionThread::waitForAllDone(10000);
+    if (!isAutoReloadingEnabled()) {
+        TActionThread::waitForAllDone(10000);
+    }
     TStaticReleaseThread::exec();
 }
 
@@ -73,9 +75,8 @@ void TThreadApplicationServer::incomingConnection(
     int socketDescriptor)
 #endif
 {
-    T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
-
     for (;;) {
+        tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
         if (TActionThread::threadCount() < maxThreads) {
             TActionThread *thread = new TActionThread(socketDescriptor);
             connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -84,5 +85,34 @@ void TThreadApplicationServer::incomingConnection(
         }
         Tf::msleep(1);
         qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
+    }
+}
+
+
+void TThreadApplicationServer::setAutoReloadingEnabled(bool enable)
+{
+    if (enable) {
+        reloadTimer.start(500, this);
+    } else {
+        reloadTimer.stop();
+    }
+}
+
+
+bool TThreadApplicationServer::isAutoReloadingEnabled()
+{
+    return reloadTimer.isActive();
+}
+
+
+void TThreadApplicationServer::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() != reloadTimer.timerId()) {
+        QTcpServer::timerEvent(event);
+    } else {
+        if (newerLibraryExists()) {
+            tSystemInfo("Detect new library of application. Reloading the libraries.");
+            Tf::app()->exit(127);
+        }
     }
 }

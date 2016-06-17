@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -13,7 +13,7 @@
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
 #else
-#include <time.h>
+#include <ctime>
 #endif
 
 #define HTTP_DATE_TIME_FORMAT "ddd, d MMM yyyy hh:mm:ss"

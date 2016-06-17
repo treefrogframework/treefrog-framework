@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2014, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -112,6 +112,43 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
     }
 
     modelData()->setProperties(props);
+}
+
+
+QString TAbstractModel::variableNameToFieldName(const QString &name) const
+{
+    for (auto &prop : modelData()->propertyNames()) {
+        if (fieldNameToVariableName(prop) == name) {
+            return prop;
+        }
+    }
+    return QString();
+}
+
+
+QString TAbstractModel::fieldNameToVariableName(const QString &name)
+{
+    QString ret;
+    bool existsLower = false;
+    bool existsUnders = name.contains('_');
+    const QLatin1Char Underscore('_');
+
+    ret.reserve(name.length());
+
+    for (int i = 0; i < name.length(); ++i) {
+        const QChar &c = name[i];
+        if (c == Underscore) {
+            if (i > 0 && i + 1 < name.length()) {
+                ret += name[++i].toUpper();
+            }
+        } else {
+            if (!existsLower && c.isLower()) {
+                existsLower = true;
+            }
+            ret += (existsLower && !existsUnders) ? c : c.toLower();
+        }
+    }
+    return ret;
 }
 
 

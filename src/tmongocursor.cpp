@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2012-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -7,11 +7,13 @@
 
 #include <TMongoCursor>
 #include <TBson>
-#include "mongo.h"
+extern "C" {
+#include "mongoc.h"
+}
 
 
 TMongoCursor::TMongoCursor()
-    : mongoCursor(0)
+    : mongoCursor(nullptr), bsonDoc(nullptr)
 { }
 
 
@@ -23,17 +25,14 @@ TMongoCursor::~TMongoCursor()
 
 bool TMongoCursor::next()
 {
-    return (mongoCursor) ? (mongo_cursor_next((mongo_cursor *)mongoCursor) == MONGO_OK) : false;
+    bsonDoc = nullptr;
+    return (mongoCursor) ? mongoc_cursor_next(mongoCursor, (const bson_t **)&bsonDoc) : false;
 }
 
 
 QVariantMap TMongoCursor::value() const
 {
-    if (mongoCursor) {
-        const bson *bs = mongo_cursor_bson((mongo_cursor *)mongoCursor);
-        return (bs) ? TBson::fromBson(bs) : QVariantMap();
-    }
-    return QVariantMap();
+    return (mongoCursor && bsonDoc) ? TBson::fromBson(bsonDoc) : QVariantMap();
 }
 
 
@@ -47,27 +46,18 @@ QVariantList TMongoCursor::toList()
 }
 
 
-void TMongoCursor::init(mongo *connection, const QString &ns)
-{
-    release();
-
-    mongoCursor = mongo_cursor_alloc();
-    ((mongo_cursor *)mongoCursor)->flags |= MONGO_CURSOR_MUST_FREE;
-    mongo_cursor_init((mongo_cursor *)mongoCursor, connection, qPrintable(ns));
-}
-
-
 void TMongoCursor::release()
 {
     if (mongoCursor) {
-        mongo_cursor_destroy((mongo_cursor *)mongoCursor);
-        mongoCursor = 0;
+        mongoc_cursor_destroy(mongoCursor);
+        mongoCursor = nullptr;
     }
+    bsonDoc = nullptr;
 }
 
 
-void TMongoCursor::setCursor(TMongoCursorObject *cursor)
+void TMongoCursor::setCursor(void *cursor)
 {
     release();
-    mongoCursor = cursor;
+    mongoCursor = (mongoc_cursor_t *)cursor;
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, AOYAMA Kazuharu
+/* Copyright (c) 2014-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -10,7 +10,7 @@
 #include <QSettings>
 #include <QCoreApplication>
 #include <QMutexLocker>
-#include <stdio.h>
+#include <cstdio>
 
 static TAppSettings *appSettings = 0;
 
@@ -28,6 +28,7 @@ public:
         insert(Tf::UploadTemporaryDirectory, "UploadTemporaryDirectory");
         insert(Tf::SqlDatabaseSettingsFiles, "SqlDatabaseSettingsFiles");
         insert(Tf::MongoDbSettingsFile, "MongoDbSettingsFile");
+        insert(Tf::RedisSettingsFile, "RedisSettingsFile");
         insert(Tf::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
         insert(Tf::DirectViewRenderMode, "DirectViewRenderMode");
         insert(Tf::SystemLogFile, "SystemLogFile");
@@ -36,6 +37,9 @@ public:
         insert(Tf::LimitRequestBody, "LimitRequestBody");
         insert(Tf::EnableCsrfProtectionModule, "EnableCsrfProtectionModule");
         insert(Tf::EnableHttpMethodOverride, "EnableHttpMethodOverride");
+        insert(Tf::HttpKeepAliveTimeout, "HttpKeepAliveTimeout");
+        insert(Tf::LDPreload, "LDPreload");
+        insert(Tf::JavaScriptPath, "JavaScriptPath");
         insert(Tf::SessionName, "Session.Name");
         insert(Tf::SessionStoreType, "Session.StoreType");
         insert(Tf::SessionAutoIdRegeneration, "Session.AutoIdRegeneration");
@@ -47,9 +51,6 @@ public:
         insert(Tf::SessionCsrfProtectionKey, "Session.CsrfProtectionKey");
         insert(Tf::MPMThreadMaxAppServers, "MPM.thread.MaxAppServers");
         insert(Tf::MPMThreadMaxThreadsPerAppServer, "MPM.thread.MaxThreadsPerAppServer");
-        insert(Tf::MPMPreforkMaxAppServers, "MPM.prefork.MaxAppServers");        // obsolete
-        insert(Tf::MPMPreforkMinAppServers, "MPM.prefork.MinAppServers");        // obsolete
-        insert(Tf::MPMPreforkSpareAppServers, "MPM.prefork.SpareAppServers");    // obsolete
         insert(Tf::MPMHybridMaxAppServers, "MPM.hybrid.MaxAppServers");
         insert(Tf::MPMHybridMaxWorkersPerAppServer, "MPM.hybrid.MaxWorkersPerAppServer");
         insert(Tf::SystemLogFilePath, "SystemLog.FilePath");
@@ -83,17 +84,21 @@ TAppSettings::TAppSettings(const QString &path)
 
 QVariant TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue) const
 {
-    if (!settingsCache.contains((int)attr)) {
+    QVariant ret = settingsCache.value((int)attr, QVariant());
+    if (ret.isNull()) {
         QMutexLocker locker(&mutex);
         const QString &keystr = (*attributeMap())[attr];
         if (!appIniSettings->contains(keystr)) {
             return defaultValue;
         }
 
-        QVariant val = readValue(keystr);
-        settingsCache.insert(attr, val);
+        ret = readValue(keystr);
+        if (ret.isNull()) {
+            ret = QVariant("");
+        }
+        settingsCache.insert(attr, ret);
     }
-    return settingsCache[(int)attr];
+    return ret;
 }
 
 

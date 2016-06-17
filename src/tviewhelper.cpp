@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -220,7 +220,9 @@ QString TViewHelper::inputTag(const QString &type, const QString &name, const QV
                               const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
-    attr.prepend("value", value.toString());
+    if (!value.isNull()) {
+        attr.prepend("value", value.toString());
+    }
     attr.prepend("name", name);
     attr.prepend("type", type);
     return selfClosingTag("input", attr);
@@ -320,17 +322,35 @@ QString TViewHelper::optionTag(const QString &text, const QVariant &value, bool 
   Creates option tags for a select tag;
   The option tag which value is equal to \a selectedValue parameter is selected.
  */
+QString TViewHelper::optionTags(const QStringList &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
+{
+    QString ret;
+    THtmlAttribute attr = attributes;
+
+    for (auto &val : valueList) {
+        if (!val.isEmpty() && val == selectedValue) {
+            attr.prepend("selected", QString());
+        }
+        attr.prepend("value", val);
+        ret += tag("option", attr, val);
+        attr = attributes;
+    }
+    return ret;
+}
+
+/*!
+  Creates option tags for a select tag;
+  The option tag which value is equal to \a selectedValue parameter is selected.
+ */
 QString TViewHelper::optionTags(const QVariantList &valueList, const QVariant &selectedValue, const THtmlAttribute &attributes) const
 {
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (QListIterator<QVariant> it(valueList); it.hasNext(); ) {
-        const QVariant &val = it.next();
-
-        if (!val.isNull() && val == selectedValue)
+    for (auto &val : valueList) {
+        if (!val.isNull() && val == selectedValue) {
             attr.prepend("selected", QString());
-
+        }
         attr.prepend("value", val.toString());
         ret += tag("option", attr, val.toString());
         attr = attributes;
@@ -346,12 +366,10 @@ QString TViewHelper::optionTags(const QList<QPair<QString, QVariant>> &valueList
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (QListIterator<QPair<QString, QVariant>> it(valueList); it.hasNext(); ) {
-        const QPair<QString, QVariant> &val = it.next();
-
-        if (!val.second.isNull() && val.second == selectedValue)
+    for (auto &val : valueList) {
+        if (!val.second.isNull() && val.second == selectedValue) {
             attr.prepend("selected", QString());
-
+        }
         attr.prepend("value", val.second.toString());
         ret += tag("option", attr, val.first);
         attr = attributes;
@@ -368,7 +386,7 @@ QString TViewHelper::inputAuthenticityTag() const
     if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool()) {
         QString token = actionView()->authenticityToken();
         if (!token.isEmpty())
-            tag = inputTag("hidden", "authenticity_token", token);
+            tag = inputTag("hidden", "authenticity_token", token, a("id", "authenticity_token"));
     }
     return tag;
 }
@@ -447,6 +465,8 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
     THtmlAttribute attr = attributes;
     if (!alt.isEmpty()) {
         attr.prepend("alt", alt);
+    } else {
+        attr.prepend("alt", "");  // output 'alt' always
     }
 
     if (!size.isEmpty()) {
@@ -455,6 +475,44 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
     }
 
     attr.prepend("src", imagePath(src, withTimestamp));
+    return selfClosingTag("img", attr);
+}
+
+
+QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString &mediaType,
+                                    const QSize &size, const QString &alt,
+                                    const THtmlAttribute &attributes) const
+{
+    QByteArray data;
+    QFile img(file.absoluteFilePath());
+    if (img.open(QIODevice::ReadOnly)) {
+        data = img.readAll();
+        img.close();
+    }
+    return inlineImageTag(data, mediaType, size, alt, attributes);
+}
+
+
+QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &mediaType,
+                                    const QSize &size, const QString &alt,
+                                    const THtmlAttribute &attributes) const
+{
+    THtmlAttribute attr = attributes;
+    if (!alt.isEmpty()) {
+        attr.prepend("alt", alt);
+    } else {
+        attr.prepend("alt", "");  // output 'alt' always
+    }
+
+    if (!size.isEmpty()) {
+        attr.prepend("height", QString::number(size.height()));
+        attr.prepend("width", QString::number(size.width()));
+    }
+
+    QByteArray dataUrl = "data:";
+    dataUrl += mediaType.toLatin1() + ";base64,";
+    dataUrl += data.toBase64();
+    attr.prepend("src", dataUrl);
     return selfClosingTag("img", attr);
 }
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -169,6 +169,7 @@ bool FileWriter::write(const QString &data) const
 
     QTextStream ts(&file);
     ts << data;
+    file.close();
     return (ts.status() == QTextStream::Ok);
 }
 

@@ -29,7 +29,7 @@ void TestHMAC::hmacmd5_data()
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("text");
     QTest::addColumn<QByteArray>("result");
-    
+
     QTest::newRow("1") << QByteArray::fromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")
                        << QByteArray("Hi There")
                        << QByteArray::fromHex("9294727a3638bb1c13f48ef8158bfc9d");
@@ -66,7 +66,7 @@ void TestHMAC::hmacmd5()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Md5);
+    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Md5);
     QCOMPARE(actual, result);
 }
 
@@ -76,7 +76,7 @@ void TestHMAC::hmacsha1_data()
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("text");
     QTest::addColumn<QByteArray>("result");
-    
+
     QTest::newRow("1") << QByteArray::fromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")
                        << QByteArray("Hi There")
                        << QByteArray::fromHex("b617318655057264e28bc0b6fb378c8ef146be00");
@@ -113,7 +113,7 @@ void TestHMAC::hmacsha1()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha1);
+    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha1);
     QCOMPARE(actual, result);
 }
 
@@ -146,7 +146,7 @@ void TestHMAC::hmacsha256()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha256);
+    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha256);
     QCOMPARE(actual, result);
 }
 
@@ -178,7 +178,7 @@ void TestHMAC::hmacsha384()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha384);
+    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha384);
     QCOMPARE(actual, result);
 }
 
@@ -210,7 +210,7 @@ void TestHMAC::hmacsha512()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::mac(text, key, TCryptMac::Hmac_Sha512);
+    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha512);
     QCOMPARE(actual, result);
 }
 

@@ -7,6 +7,7 @@
 #include <QList>
 #include <QByteArray>
 #include <QFileInfo>
+#include <QBasicTimer>
 #include <TGlobal>
 #include <TApplicationServerBase>
 #include <TAccessLog>
@@ -28,12 +29,15 @@ public:
     bool isListening() const { return listenSocket > 0; }
     bool start();
     void stop();
+    void setAutoReloadingEnabled(bool enable);
+    bool isAutoReloadingEnabled();
 
     static void instantiate(int listeningSocket);
     static TMultiplexingServer *instance();
 
 protected:
     void run();
+    void timerEvent(QTimerEvent *event);
 
 signals:
     bool incomingRequest(TEpollSocket *socket);
@@ -42,6 +46,7 @@ private:
     int maxWorkers;
     std::atomic<bool> stopped;
     int listenSocket;
+    QBasicTimer reloadTimer;
 
     TMultiplexingServer(int listeningSocket, QObject *parent = 0);  // Constructor
     Q_DISABLE_COPY(TMultiplexingServer)

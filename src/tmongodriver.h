@@ -6,8 +6,8 @@
 #include <TGlobal>
 #include <TKvsDriver>
 
-struct mongo;
 class TMongoCursor;
+class TBson;
 
 
 class T_CORE_EXPORT TMongoDriver : public TKvsDriver
@@ -21,27 +21,34 @@ public:
     void close();
     bool isOpen() const;
 
-    int find(const QString &ns, const QVariantMap &criteria, const QVariantMap &orderBy,
-             const QStringList &fields, int limit, int skip, int options);
-    QVariantMap findOne(const QString &ns, const QVariantMap &criteria,
+    bool find(const QString &collection, const QVariantMap &criteria, const QVariantMap &orderBy,
+              const QStringList &fields, int limit, int skip, int options);
+    QVariantMap findOne(const QString &collection, const QVariantMap &criteria,
                         const QStringList &fields = QStringList());
-    bool insert(const QString &ns, const QVariantMap &object);
-    bool remove(const QString &ns, const QVariantMap &object);
-    bool update(const QString &ns, const QVariantMap &criteria,
+    bool insert(const QString &collection, const QVariantMap &object);
+    bool remove(const QString &collection, const QVariantMap &object);
+    bool update(const QString &collection, const QVariantMap &criteria,
                 const QVariantMap &object, bool upsert = false);
-    bool updateMulti(const QString &ns, const QVariantMap &criteria,
+    bool updateMulti(const QString &collection, const QVariantMap &criteria,
                      const QVariantMap &object);
-    int count(const QString &ns, const QVariantMap &criteria);
-    int lastErrorCode() const;
-    QString lastErrorString() const;
-    QVariantMap getLastCommandStatus(const QString &db);
+    int count(const QString &collection, const QVariantMap &criteria);
+    int lastErrorCode() const { return errorCode; }
+    QString lastErrorString() const { return errorString; }
+    QVariantMap getLastCommandStatus() const;
 
     TMongoCursor &cursor() { return *mongoCursor; }
     const TMongoCursor &cursor() const { return *mongoCursor; }
 
 private:
-    struct mongo *mongoConnection;
+    void setLastCommandStatus(const void *bson);
+
+    typedef struct _mongoc_client_t mongoc_client_t;
+    mongoc_client_t *mongoClient;
+    QString dbName;
     TMongoCursor *mongoCursor;
+    TBson *lastStatus;
+    int errorCode;
+    QString errorString;
 
     Q_DISABLE_COPY(TMongoDriver)
 };

@@ -160,7 +160,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version 5.2 or later.";
+            this->label->Text = L"Specify a base folder of Qt version 5.5 or later.";
             // 
             // label1
             // 
@@ -171,7 +171,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.3.2";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.6.0";
             // 
             // labeltop
             // 
@@ -245,8 +245,12 @@ namespace treefrogsetup {
         {
             List<String ^>^ ret = gcnew List<String^>();
             try {
-                array<String^>^ dir = Directory::GetDirectories(folderPath);
+                array<String^>^ dir = Directory::GetDirectories(folderPath, name);
+                if (dir->Length > 0) {
+                    return gcnew List<String^>(dir);
+                }
 
+                dir = Directory::GetDirectories(folderPath);
                 for (int i = 0; i < dir->Length; ++i) {
                     // check excludes
                     bool exc = false;
@@ -332,11 +336,8 @@ namespace treefrogsetup {
             List<String ^>^ bins = gcnew List<String ^>();
 
             if (forderTextBox->Text != L"C:\\") {
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw47_32", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw48_32", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw482_32", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64", forderTextBox->Text, excludes), excludes));
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc2013_64_opengl", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw*", forderTextBox->Text, excludes), excludes));
+                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc20*", forderTextBox->Text, excludes), excludes));
             }
 
             if (bins->Count == 0) {
@@ -358,6 +359,9 @@ namespace treefrogsetup {
                 qmake->Start();
                 version = qmake->StandardOutput->ReadToEnd();
                 qmake->WaitForExit();
+            } else {
+                abort("Not found qmake.exe.\n\nSetup aborts.", "Abort");
+                return;
             }
 
             // Gets path of qtenv2.bat
@@ -370,9 +374,9 @@ namespace treefrogsetup {
             }
 
             // Get msi file from resource
-            int rcid = IDR_TREEFROG_QT52_MSI;
-            if (version->IndexOf("Qt version 5.3", StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT53_MSI;
+            int rcid = IDR_TREEFROG_QT56_MSI;
+            if (version->IndexOf("Qt version 5.5", StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT55_MSI;
             }
 
             System::Reflection::Module^ mod = System::Reflection::Assembly::GetExecutingAssembly()->GetModules()[0];

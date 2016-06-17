@@ -16,33 +16,67 @@
 const qint64 WRITE_LENGTH = 1280;
 const int BUFFER_RESERVE_SIZE = 127;
 
+static QMutex mutexMap;
+static QMap<QByteArray, TWebSocket*> websocketMap;
 
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
-    : QTcpSocket(parent), frames(), uuid(), reqHeader(header), recvBuffer(),
-      myWorkerCounter(0), deleting(false)
+    : QTcpSocket(parent), TAbstractWebSocket(header), frames(), uuid(),
+      recvBuffer(), myWorkerCounter(0), deleting(false)
 {
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
 
-    uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
+    uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
     connect(this, SIGNAL(disconnectByWorker()), this, SLOT(close()));
+
+    mutexMap.lock();
+    websocketMap.insert(uuid, this);
+    mutexMap.unlock();
 }
 
 
 TWebSocket::~TWebSocket()
 {
     tSystemDebug("~TWebSocket");
+    mutexMap.lock();
+    websocketMap.remove(uuid);
+    mutexMap.unlock();
 }
 
 
 void TWebSocket::close()
 {
     QTcpSocket::close();
+}
+
+
+void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
+{
+    tSystemDebug("sendText  text len:%d  (pid:%d)", text.length(), (int)QCoreApplication::applicationPid());
+    if (except != this) {
+        TAbstractWebSocket::sendText(text);
+    }
+}
+
+
+void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
+{
+    tSystemDebug("sendBinary  binary len:%d  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
+    if (except != this) {
+        TAbstractWebSocket::sendBinary(binary);
+    }
+}
+
+
+void TWebSocket::sendPong(const QByteArray &data)
+{
+    tSystemDebug("sendPong  data len:%d  (pid:%d)", data.length(), (int)QCoreApplication::applicationPid());
+    TAbstractWebSocket::sendPong(data);
 }
 
 
@@ -59,18 +93,21 @@ bool TWebSocket::canReadRequest() const
 
 void TWebSocket::readRequest()
 {
-    qint64 bytes;
-    QByteArray buf;
+    if (myWorkerCounter > 0) {
+        tSystemWarn("Worker already running  (sd:%lld)", (quint64)socketDescriptor());
+        return;
+    }
 
-    while ((bytes = bytesAvailable()) > 0) {
-        buf.resize(bytes);
-        bytes = QTcpSocket::read(buf.data(), bytes);
-        if (Q_UNLIKELY(bytes < 0)) {
+    int bytes = bytesAvailable();
+    if (bytes > 0) {
+        int sz = recvBuffer.size();
+        recvBuffer.resize(sz + bytes);
+        int rd = QTcpSocket::read(recvBuffer.data() + sz, bytes);
+        if (Q_UNLIKELY(rd != bytes)) {
             tSystemError("socket read error");
-            break;
+            recvBuffer.resize(0);
+            return;
         }
-
-        recvBuffer.append(buf.data(), bytes);
     }
 
     int len = parse(recvBuffer);
@@ -80,22 +117,27 @@ void TWebSocket::readRequest()
         return;
     }
 
-    QByteArray binary;
-    while (!frames.isEmpty()) {
-        binary.clear();
-        TWebSocketFrame::OpCode opcode = frames.first().opCode();
+    QList<QPair<int, QByteArray>> payloads;
+    QByteArray pay;
+
+    while (canReadRequest()) {
+        int opcode = frames.first().opCode();
+        pay.resize(0);
 
         while (!frames.isEmpty()) {
             TWebSocketFrame frm = frames.takeFirst();
-            binary += frm.payload();
+            pay += frm.payload();
             if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+                payloads << qMakePair(opcode, pay);
                 break;
             }
         }
+    }
 
+    if (!payloads.isEmpty()) {
         // Starts worker thread
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
-        worker->setPayload(opcode, binary);
+        worker->setPayloads(payloads);
         startWorker(worker);
     }
 }
@@ -111,11 +153,11 @@ void TWebSocket::startWorkerForOpening(const TSession &session)
 
 void TWebSocket::startWorkerForClosing()
 {
-    if (!TAbstractWebSocket::closing.exchange(true)) {
+    if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
-
- tSystemDebug("TWebSocket::startWorkerForClosing()");
         startWorker(worker);
+    } else {
+        deleteLater();
     }
 }
 
@@ -138,6 +180,10 @@ void TWebSocket::releaseWorker()
 
         if (deleting.load()) {
             deleteLater();
+        } else {
+            if (bytesAvailable() > 0) {
+                readRequest();
+            }
         }
     }
 }
@@ -145,10 +191,11 @@ void TWebSocket::releaseWorker()
 
 void TWebSocket::deleteLater()
 {
-    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d", (int)myWorkerCounter);
+    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d  deleting:%d", (int)myWorkerCounter, (bool)deleting);
 
     if (!deleting.exchange(true)) {
         startWorkerForClosing();
+        return;
     }
 
     if ((int)myWorkerCounter == 0) {
@@ -167,18 +214,21 @@ void TWebSocket::sendRawData(const QByteArray &data)
         if (deleting.load())
             return;
 
+        if (QTcpSocket::bytesToWrite() > 0) {
+            if (Q_UNLIKELY(!waitForBytesWritten())) {
+                tWarn("websocket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+                break;
+            }
+        }
+
         qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
-            tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
+            tWarn("websocket write error: total:%d (%d)", (int)total, (int)written);
             break;
         }
 
         total += written;
-        if (total >= data.length())
-            break;
-
-        if (Q_UNLIKELY(!waitForBytesWritten())) {
-            tWarn("socket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+        if (total >= data.length()) {
             break;
         }
     }
@@ -197,4 +247,22 @@ void TWebSocket::disconnect()
 {
     // Calls close-function in main thread
     emit disconnectByWorker();
+    stopKeepAlive();
+}
+
+
+TAbstractWebSocket *TWebSocket::searchSocket(const QByteArray &uuid)
+{
+    QMutexLocker locker(&mutexMap);
+    return websocketMap.value(uuid, nullptr);
+}
+
+
+void TWebSocket::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == keepAliveTimer->timerId()) {
+        sendPing();
+    } else {
+        QTcpSocket::timerEvent(event);
+    }
 }

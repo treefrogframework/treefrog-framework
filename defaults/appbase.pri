@@ -7,16 +7,11 @@ win32 {
     LIBS += -ltreefrog1
   }
 } else {
-  macx {
-    LIBS += -F/Library/Frameworks
-    LIBS += -framework treefrog
-  } else {
-    LIBS += -ltreefrog
-  }
+  unix:LIBS += -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
   unix:INCLUDEPATH += /usr/include/treefrog
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_CXXFLAGS += -std=c++0x
   }
 }

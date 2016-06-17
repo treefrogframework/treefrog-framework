@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -34,7 +34,7 @@ static QByteArray createHash()
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
-    data.append(QByteArray::number(Tf::randXor128()));
+    data.append(QByteArray::number(Tf::rand32_r()));
     return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }
 
@@ -52,13 +52,13 @@ TSession TSessionManager::findSession(const QByteArray &id)
     T_TRACEFUNC("");
 
     QDateTime now = QDateTime::currentDateTime();
-    QDateTime validCreated = (sessionLifeTime() > 0) ? now.addSecs(-sessionLifeTime()) : now.addYears(-20);
-
     TSession session;
+
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
         if (Q_LIKELY(store)) {
-            session = store->find(id, validCreated);
+            store->setLifeTime(sessionLifeTime());
+            session = store->find(id);
             delete store;
         }
     }
@@ -78,6 +78,7 @@ bool TSessionManager::store(TSession &session)
     bool res = false;
     TSessionStore *store = TSessionStoreFactory::create(storeType());
     if (Q_LIKELY(store)) {
+        store->setLifeTime(sessionLifeTime());
         res = store->store(session);
         delete store;
     }
@@ -90,6 +91,7 @@ bool TSessionManager::remove(const QByteArray &id)
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
         if (Q_LIKELY(store)) {
+            store->setLifeTime(sessionLifeTime());
             bool ret = store->remove(id);
             delete store;
             return ret;
@@ -132,16 +134,17 @@ void TSessionManager::collectGarbage()
     }
 
     if (prob > 0) {
-        int r = Tf::random(prob - 1);
+        int r = Tf::random(0, prob - 1);
         tSystemDebug("Session garbage collector : rand = %d", r);
 
         if (r == 0) {
             tSystemDebug("Session garbage collector started");
 
-            TSessionStore *store = TSessionStoreFactory::create(Tf::appSettings()->value(Tf::SessionStoreType).toString());
+            TSessionStore *store = TSessionStoreFactory::create(storeType());
             if (store) {
-                int lifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
-                store->remove(QDateTime::currentDateTime().addSecs(-lifetime));
+                int gclifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
+                QDateTime expire = QDateTime::currentDateTime().addSecs(-gclifetime);
+                store->gc(expire);
                 delete store;
             }
         }
@@ -162,6 +165,9 @@ int TSessionManager::sessionLifeTime()
 
     if (Q_UNLIKELY(lifetime < 0)) {
         lifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
+        if (lifetime == 0) {
+            lifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
+        }
     }
     return lifetime;
 }

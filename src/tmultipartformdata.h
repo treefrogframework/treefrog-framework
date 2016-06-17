@@ -27,7 +27,7 @@ protected:
 
 private:
     static int skipWhitespace(const QByteArray &text, int pos);
-    QList<QPair<QByteArray, QByteArray> >  headers;
+    QList<QPair<QByteArray, QByteArray>>  headers;
 };
 
 

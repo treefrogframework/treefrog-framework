@@ -56,6 +56,17 @@ T_CORE_EXPORT void tQueryLog(const char *, ...) // SQL query log
 T_CORE_EXPORT void tWriteQueryLog(const QString &query, bool success, const QSqlError &error);
 
 
+namespace Tf
+{
+enum ServerOpCode {
+    WebSocketSendText       = 0x01,
+    WebSocketSendBinary     = 0x02,
+    WebSocketPublishText    = 0x03,
+    WebSocketPublishBinary  = 0x04,
+    MaxServerOpCode,
+};
+}
+
 #if !defined(TF_NO_DEBUG) && ENABLE_TO_TRACE_FUNCTION && !defined(Q_OS_WIN)
 
 class T_CORE_EXPORT TTraceFunc

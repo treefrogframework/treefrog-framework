@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2013-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -20,7 +20,7 @@
 #include "tepollwebsocket.h"
 #include "tsessionmanager.h"
 #include "tsystemglobal.h"
-#include "tfcore_unix.h"
+#include "tfcore.h"
 
 const int MaxEvents = 128;
 
@@ -68,7 +68,7 @@ TEpoll::~TEpoll()
     delete events;
 
     if (epollFd > 0)
-        TF_CLOSE(epollFd);
+        tf_close(epollFd);
 }
 
 
@@ -216,7 +216,17 @@ void TEpoll::dispatchSendData()
         switch (sd->method) {
         case TSendData::Send:
             sock->enqueueSendData(sd->buffer);
-            modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            if (sock->pollOut) {
+                // send immediately
+                int len = send(sock);
+                if (Q_UNLIKELY(len < 0)) {
+                    deletePoll(sock);
+                    sock->close();
+                    sock->deleteLater();
+                }
+            } else {
+                modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            }
             break;
 
         case TSendData::Disconnect:
@@ -232,15 +242,15 @@ void TEpoll::dispatchSendData()
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
             tSystemDebug("secKey: %s", secKey.data());
             int newsocket = TApplicationServerBase::duplicateSocket(sock->socketDescriptor());
-            deletePoll(sock);
-            sock->deleteLater();
 
             // Switch to WebSocket
             TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), sd->header);
             ws->moveToThread(Tf::app()->thread());
-            THttpResponseHeader response = TEpollWebSocket::handshakeResponse(sd->header);
-            ws->enqueueSendData(TEpollSocket::createSendBuffer(response.toByteArray()));
             addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+
+            // Stop polling and delete
+            deletePoll(sock);
+            sock->deleteLater();
 
             // WebSocket opening
             TSession session;

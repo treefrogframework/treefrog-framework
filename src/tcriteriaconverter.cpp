@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -27,7 +27,9 @@ public:
         insert(TSql::LessEqual, "<=%1");
         insert(TSql::GreaterEqual, ">=%1");
         insert(TSql::IsNull, " IS NULL");
+        insert(TSql::IsEmpty, "(%1 IS NULL OR %1='')");
         insert(TSql::IsNotNull, " IS NOT NULL");
+        insert(TSql::IsNotEmpty, "%1 IS NOT NULL AND %1<>''");
         insert(TSql::Like, " LIKE %1");
         insert(TSql::NotLike, " NOT LIKE %1");
         insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");

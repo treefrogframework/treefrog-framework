@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -38,8 +38,6 @@
     "\n"                                                        \
     "#include \"%1.moc\"\n"
 
-int defaultTrimMode;
-
 
 ErbConverter::ErbConverter(const QDir &output, const QDir &helpers)
     : outputDirectory(output), helpersDirectory(helpers)
@@ -48,14 +46,10 @@ ErbConverter::ErbConverter(const QDir &output, const QDir &helpers)
 
 bool ErbConverter::convert(const QString &erbPath, int trimMode) const
 {
-    // Sets trim mode
-    if (trimMode < 0)
-        trimMode = defaultTrimMode;
-
     QFile erbFile(erbPath);
     QString className = ViewConverter::getViewClassName(erbPath);
     QFile outFile(outputDirectory.filePath(className + ".cpp"));
-    
+
     // Checks file's timestamp
     QFileInfo erbFileInfo(erbFile);
     QFileInfo outFileInfo(outFile);
@@ -69,7 +63,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
             }
         }
     }
-    
+
     if (!erbFile.open(QIODevice::ReadOnly)) {
         qCritical("failed to read html.erb file : %s", qPrintable(erbFile.fileName()));
         return false;
@@ -86,13 +80,13 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        printf("  created  %s\n", qPrintable(outFile.fileName()));
+        printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
     }
     return true;
 }
 
 
-bool ErbConverter::convert(const QString &className, const QString &erb) const
+bool ErbConverter::convert(const QString &className, const QString &erb, int trimMode) const
 {
     QFile outFile(outputDirectory.filePath(className + ".cpp"));
     if (!outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -100,13 +94,13 @@ bool ErbConverter::convert(const QString &className, const QString &erb) const
         return false;
     }
 
-    ErbParser parser((ErbParser::TrimMode)defaultTrimMode);
+    ErbParser parser((ErbParser::TrimMode)trimMode);
     parser.parse(erb);
     QString code = parser.sourceCode();
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        printf("  created  %s\n", qPrintable(outFile.fileName()));
+        printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
     }
     return true;
 }
@@ -114,11 +108,23 @@ bool ErbConverter::convert(const QString &className, const QString &erb) const
 
 QString ErbConverter::escapeNewline(const QString &string)
 {
-    QString s = string;
-    s.replace(QLatin1Char('\n'), QLatin1String("\\n"));
-    s.replace(QLatin1Char('\r'), QLatin1String("\\r"));
-    s.replace(QLatin1Char('"'), QLatin1String("\\\""));
-    return s;
+    QString str;
+    str.reserve(string.length() * 1.1);
+
+    for (auto &s : string) {
+        if (s == QLatin1Char('\\')) {
+            str += QLatin1String("\\\\");
+        } else if (s == QLatin1Char('\n')) {
+            str += QLatin1String("\\n");
+        } else if (s == QLatin1Char('\r')) {
+            str += QLatin1String("\\r");
+        } else if (s == QLatin1Char('"')) {
+            str += QLatin1String("\\\"");
+        } else {
+            str += s;
+        }
+    }
+    return str;
 }
 
 

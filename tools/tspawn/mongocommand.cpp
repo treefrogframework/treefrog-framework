@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2013-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -74,7 +74,7 @@ QStringList MongoCommand::getCollectionNames() const
     if (!driver->isOpen())
         return ret;
 
-    int cnt = driver->find(databaseName + ".system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
+    int cnt = driver->find("system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
     if (cnt > 0) {
         while (driver->cursor().next()) {
             QVariantMap val = driver->cursor().value();

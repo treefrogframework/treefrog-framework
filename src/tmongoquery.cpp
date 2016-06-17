@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2012-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -25,18 +25,15 @@ const QLatin1String ObjectIdKey("_id");
 */
 TMongoQuery::TMongoQuery(const QString &collection)
     : database(Tf::currentContext()->getKvsDatabase(TKvsDatabase::MongoDB)),
-      nameSpace(), queryLimit(0), queryOffset(0), lastWriteStatus()
-{
-    nameSpace = database.databaseName() + '.' + collection.trimmed();
-}
+      collection(collection.trimmed()), queryLimit(0), queryOffset(0)
+{ }
 
 /*!
   Copy constructor.
 */
 TMongoQuery::TMongoQuery(const TMongoQuery &other)
-    : database(other.database), nameSpace(other.nameSpace),
-      queryLimit(other.queryLimit), queryOffset(other.queryOffset),
-      lastWriteStatus(other.lastWriteStatus)
+    : database(other.database), collection(other.collection),
+      queryLimit(other.queryLimit), queryOffset(other.queryOffset)
 { }
 
 /*!
@@ -45,10 +42,9 @@ TMongoQuery::TMongoQuery(const TMongoQuery &other)
 TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
 {
     database = other.database;
-    nameSpace = other.nameSpace;
+    collection = other.collection;
     queryLimit = other.queryLimit;
     queryOffset = other.queryOffset;
-    lastWriteStatus = other.lastWriteStatus;
     return *this;
 }
 
@@ -58,15 +54,14 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
   control the fields to return.
   \sa TMongoQuery::next()
 */
-int TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, const QStringList &fields)
+bool TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, const QStringList &fields)
 {
     if (!database.isValid()) {
         tSystemError("TMongoQuery::find : driver not loaded");
         return false;
     }
 
-    lastWriteStatus.clear();
-    return driver()->find(nameSpace, criteria, orderBy, fields, queryLimit, queryOffset, 0);
+    return driver()->find(collection, criteria, orderBy, fields, queryLimit, queryOffset, 0);
 }
 
 /*!
@@ -107,8 +102,7 @@ QVariantMap TMongoQuery::findOne(const QVariantMap &criteria, const QStringList 
         return QVariantMap();
     }
 
-    lastWriteStatus.clear();
-    return driver()->findOne(nameSpace, criteria, fields);
+    return driver()->findOne(collection, criteria, fields);
 }
 
 
@@ -140,8 +134,7 @@ bool TMongoQuery::insert(QVariantMap &document)
         document.insert(ObjectIdKey, TBson::generateObjectId());
     }
 
-    bool ret = driver()->insert(nameSpace, document);
-    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    bool ret = driver()->insert(collection, document);
     return ret;
 }
 
@@ -155,8 +148,7 @@ bool TMongoQuery::remove(const QVariantMap &criteria)
         return false;
     }
 
-    bool ret = driver()->remove(nameSpace, criteria);
-    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    bool ret = driver()->remove(collection, criteria);
     return ret;
 }
 
@@ -190,8 +182,7 @@ bool TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &documen
         return false;
     }
 
-    bool ret = driver()->update(nameSpace, criteria, document, upsert);
-    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    bool ret = driver()->update(collection, criteria, document, upsert);
     return ret;
 }
 
@@ -214,8 +205,7 @@ bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &do
         doc = document;
     }
 
-    bool ret = driver()->updateMulti(nameSpace, criteria, doc);
-    lastWriteStatus = driver()->getLastCommandStatus(database.databaseName());
+    bool ret = driver()->updateMulti(collection, criteria, doc);
     return ret;
 }
 
@@ -244,8 +234,7 @@ int TMongoQuery::count(const QVariantMap &criteria)
         return -1;
     }
 
-    lastWriteStatus.clear();
-    return driver()->count(nameSpace, criteria);
+    return driver()->count(collection, criteria);
 }
 
 /*!
@@ -254,16 +243,15 @@ int TMongoQuery::count(const QVariantMap &criteria)
 */
 int TMongoQuery::numDocsAffected() const
 {
-    return lastWriteStatus.value(QLatin1String("n"), -1).toInt();
+    int num = 0;
+    QVariantMap status = driver()->getLastCommandStatus();
+    num += status.value(QLatin1String("nInserted"), 0).toInt();
+    num += status.value(QLatin1String("nMatched"), 0).toInt();
+    num += status.value(QLatin1String("nUpserted"), 0).toInt();
+    num += status.value(QLatin1String("nRemoved"), 0).toInt();
+    return num;
 }
 
-/*!
-  Returns the code of the most recent error with the current connection.
-*/
-int TMongoQuery::lastErrorCode() const
-{
-    return driver()->lastErrorCode();
-}
 
 /*!
   Returns the string of the most recent error with the current connection.
@@ -282,6 +270,10 @@ TMongoDriver *TMongoQuery::driver()
 #ifdef TF_NO_DEBUG
     return (TMongoDriver *)database.driver();
 #else
+    if (!database.driver()) {
+        return nullptr;
+    }
+
     TMongoDriver *driver = dynamic_cast<TMongoDriver *>(database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
@@ -298,6 +290,10 @@ const TMongoDriver *TMongoQuery::driver() const
 #ifdef TF_NO_DEBUG
     return (const TMongoDriver *)database.driver();
 #else
+    if (!database.driver()) {
+        return nullptr;
+    }
+
     const TMongoDriver *driver = dynamic_cast<const TMongoDriver *>(database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);

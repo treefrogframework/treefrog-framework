@@ -8,10 +8,10 @@ class T_CORE_EXPORT TSessionFileStore : public TSessionStore
 {
 public:
     QString key() const { return "file"; }
-    TSession find(const QByteArray &id, const QDateTime &modified);
+    TSession find(const QByteArray &id);
     bool store(TSession &session);
-    bool remove(const QDateTime &garbageExpiration);
     bool remove(const QByteArray &id);
+    int gc(const QDateTime &expire);
 
     static QString sessionDirPath();
 };

@@ -1,0 +1,34 @@
+language: cpp
+sudo: required
+dist: trusty
+
+env:
+  global:
+    - CI_WORK=`pwd`
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y qtbase5-dev libsqlite3-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools
+  - sudo apt-get install -y gdb
+
+install:
+  - g++ --version
+  - qmake -v
+  - ./configure --prefix=$HOME/local --bindir=/usr/bin
+  - make -j4 -C src
+  - make -C src install
+  - make -j4 -C tools
+  - sudo make -C tools install
+  - treefrog -v
+
+before_script:
+  - cd $CI_WORK
+  - cd tools/tmake/test
+  - qmake tmaketest.pro
+  - make
+
+script:
+  - cd $CI_WORK
+  - ./src/test/testall.sh
+  - cd tools/tmake/test
+  - ./tmaketest

@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, AOYAMA Kazuharu
+/* Copyright (c) 2012-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -10,13 +10,15 @@
 #include <TBson>
 #include <TSystemGlobal>
 #include <QDateTime>
-#include "mongo.h"
+extern "C" {
+#include "mongoc.h"
+}
 
 
 TMongoDriver::TMongoDriver()
-    : mongoConnection(new mongo), mongoCursor(new TMongoCursor())
+    : mongoClient(nullptr), dbName(), mongoCursor(new TMongoCursor()), lastStatus(nullptr), errorCode(0), errorString()
 {
-    mongo_init(mongoConnection);
+    mongoc_init();
 }
 
 
@@ -24,200 +26,261 @@ TMongoDriver::~TMongoDriver()
 {
     close();
     delete mongoCursor;
-    mongo_destroy(mongoConnection);
-    delete mongoConnection;
+
+    if (lastStatus) {
+        delete lastStatus;
+    }
 }
 
 
-bool TMongoDriver::open(const QString &db, const QString &user, const QString &password, const QString &host, quint16 port, const QString &)
+bool TMongoDriver::open(const QString &db, const QString &user, const QString &password, const QString &host, quint16 port, const QString &options)
 {
-    if (host.isEmpty()) {
-        return false;
+    if (isOpen()) {
+        return true;
     }
 
     if (!port)
-        port = MONGO_DEFAULT_PORT;
+        port = MONGOC_DEFAULT_PORT;
 
-    mongo_clear_errors(mongoConnection);
-    mongo_set_op_timeout(mongoConnection, 1000);
-    int status = mongo_client(mongoConnection, qPrintable(host), port);
-
-    if (status != MONGO_OK) {
-        switch (mongoConnection->err) {
-        case MONGO_CONN_NO_SOCKET:
-            tSystemError("MongoDB socket error: %s", mongoConnection->lasterrstr);
-            break;
-
-        case MONGO_CONN_FAIL:
-            tSystemError("MongoDB connection failed: %s", mongoConnection->lasterrstr);
-            break;
-
-        case MONGO_CONN_NOT_MASTER:
-            tSystemDebug("MongoDB not master: %s", mongoConnection->lasterrstr);
-            break;
-
-        default:
-            tSystemError("MongoDB error: %s", mongoConnection->lasterrstr);
-            break;
-        }
-        return false;
-    }
-
+    QString uri;
     if (!user.isEmpty()) {
-        status = mongo_cmd_authenticate(mongoConnection, qPrintable(db), qPrintable(user), qPrintable(password));
-        if (status != MONGO_OK) {
-            tSystemDebug("MongoDB authentication error: %s", mongoConnection->lasterrstr);
-            return false;
+        uri += user;
+        if (!password.isEmpty()) {
+            uri += ':';
+            uri += password;
+            uri += '@';
         }
     }
+    uri += host;
+    if (!options.isEmpty()) {
+        uri += "/?";
+        uri += options;
+    }
 
-    return (status == MONGO_OK);
+    if (!uri.isEmpty()) {
+        uri.prepend(QLatin1String("mongodb://"));
+    }
+
+    // connect
+    mongoClient = mongoc_client_new(qPrintable(uri));
+    if (mongoClient) {
+        dbName = db;
+    } else {
+        tSystemError("MongoDB client create error");
+    }
+    return (bool)mongoClient;
 }
 
 
 void TMongoDriver::close()
 {
-    if (isOpen())
-        mongo_disconnect(mongoConnection);
+    if (isOpen()) {
+        mongoc_client_destroy(mongoClient);
+        mongoClient = nullptr;
+    }
 }
 
 
 bool TMongoDriver::isOpen() const
 {
-    return (bool)mongo_is_connected(mongoConnection);
+    return (bool)mongoClient;
 }
 
 
-int TMongoDriver::find(const QString &ns, const QVariantMap &criteria, const QVariantMap &orderBy,
-                       const QStringList &fields, int limit, int skip, int options)
+bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, const QVariantMap &orderBy,
+                       const QStringList &fields, int limit, int skip, int )
 {
-    int num = -1;
-    mongo_clear_errors(mongoConnection);
-    mongo_cursor *cursor = mongo_find(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(criteria, orderBy).data(),
-                                      (bson *)TBson::toBson(fields).data(), limit, skip, options);
+    if (!isOpen()) {
+        return false;
+    }
+
+    errorCode = 0;
+    errorString.clear();
+
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_cursor_t *cursor = mongoc_collection_find(col, MONGOC_QUERY_NONE, skip, limit, 0,
+                                                     (bson_t *)TBson::toBson(criteria, orderBy).data(),
+                                                     (bson_t *)TBson::toBson(fields).data(),
+                                                     NULL); /* Read Prefs, NULL for default */
+
+    setLastCommandStatus(mongoc_collection_get_last_error(col));
+    mongoc_collection_destroy(col);
     mongoCursor->setCursor(cursor);
 
-    if (!cursor) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
-    } else {
-        if (cursor->reply) {
-            num = cursor->reply->fields.num;
+    if (cursor) {
+        bson_error_t error;
+        if (mongoc_cursor_error(cursor, &error)) {
+            errorCode = error.code;
+            errorString = QLatin1String(error.message);
         }
+    } else {
+        tSystemError("MongoDB Cursor Error");
     }
-    return num;
+    return (bool)cursor;
 }
 
 
-QVariantMap TMongoDriver::findOne(const QString &ns, const QVariantMap &criteria,
+QVariantMap TMongoDriver::findOne(const QString &collection, const QVariantMap &criteria,
                                   const QStringList &fields)
 {
-    TBson bs;
+    QVariantMap ret;
 
-    mongo_clear_errors(mongoConnection);
-    int status = mongo_find_one(mongoConnection, qPrintable(ns), (bson *)TBson::toBson(criteria).data(),
-                                (bson *)TBson::toBson(fields).data(), (bson *)bs.data());
-    if (status != MONGO_OK) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
-        return QVariantMap();
+    bool res = find(collection, criteria, QVariantMap(), fields, 1, 0, 0);
+    if (res && mongoCursor->next()) {
+        ret = mongoCursor->value();
     }
-    return TBson::fromBson(bs);
+    return ret;
 }
 
 
-bool TMongoDriver::insert(const QString &ns, const QVariantMap &object)
+bool TMongoDriver::insert(const QString &collection, const QVariantMap &object)
 {
-    mongo_clear_errors(mongoConnection);
-    int status = mongo_insert(mongoConnection, qPrintable(ns),
-                              (const bson *)TBson::toBson(object).constData(), 0);
-    if (status != MONGO_OK) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
+    if (!isOpen()) {
         return false;
     }
-    return true;
+
+    errorCode = 0;
+    errorString.clear();
+    bson_error_t error;
+
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    bool res = mongoc_collection_insert(col, MONGOC_INSERT_NONE, (bson_t *)TBson::toBson(object).constData(),
+                                        nullptr, &error);
+
+    setLastCommandStatus(mongoc_collection_get_last_error(col));
+    mongoc_collection_destroy(col);
+    if (!res) {
+        tSystemError("MongoDB Insert Error: %s", error.message);
+        errorCode = error.code;
+        errorString = QLatin1String(error.message);
+    }
+    return res;
 }
 
 
-bool TMongoDriver::remove(const QString &ns, const QVariantMap &object)
+bool TMongoDriver::remove(const QString &collection, const QVariantMap &object)
 {
-    mongo_clear_errors(mongoConnection);
-    int status = mongo_remove(mongoConnection, qPrintable(ns),
-                              (const bson *)TBson::toBson(object).data(), 0);
-    if (status != MONGO_OK) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
+    if (!isOpen()) {
         return false;
     }
-    return true;
+
+    errorCode = 0;
+    errorString.clear();
+    bson_error_t error;
+
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    bool res = mongoc_collection_remove(col, MONGOC_REMOVE_SINGLE_REMOVE,
+                                        (bson_t *)TBson::toBson(object).constData(), nullptr, &error);
+
+    setLastCommandStatus(mongoc_collection_get_last_error(col));
+    mongoc_collection_destroy(col);
+
+    if (!res) {
+        tSystemError("MongoDB Remove Error: %s", error.message);
+        errorCode = error.code;
+        errorString = QLatin1String(error.message);
+    }
+    return res;
 }
 
 
-bool TMongoDriver::update(const QString &ns, const QVariantMap &criteria, const QVariantMap &object,
+bool TMongoDriver::update(const QString &collection, const QVariantMap &criteria, const QVariantMap &object,
                           bool upsert)
 {
-    mongo_clear_errors(mongoConnection);
-    int flag = (upsert) ? MONGO_UPDATE_UPSERT : MONGO_UPDATE_BASIC;
-    int status = mongo_update(mongoConnection, qPrintable(ns), (const bson *)TBson::toBson(criteria).data(),
-                              (const bson *)TBson::toBson(object).data(), flag, 0);
-    if (status != MONGO_OK) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
+    if (!isOpen()) {
         return false;
     }
-    return true;
+
+    errorCode = 0;
+    errorString.clear();
+    bson_error_t error;
+
+    mongoc_update_flags_t flag = (upsert) ? MONGOC_UPDATE_UPSERT : MONGOC_UPDATE_NONE;
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    bool res = mongoc_collection_update(col, flag, (bson_t *)TBson::toBson(criteria).data(),
+                                        (bson_t *)TBson::toBson(object).data(), nullptr, &error);
+
+    setLastCommandStatus(mongoc_collection_get_last_error(col));
+    mongoc_collection_destroy(col);
+
+    if (!res) {
+        tSystemError("MongoDB Update Error: %s", error.message);
+        errorCode = error.code;
+        errorString = QLatin1String(error.message);
+    }
+    return res;
 }
 
 
-bool TMongoDriver::updateMulti(const QString &ns, const QVariantMap &criteria, const QVariantMap &object)
+bool TMongoDriver::updateMulti(const QString &collection, const QVariantMap &criteria, const QVariantMap &object)
 {
-    mongo_clear_errors(mongoConnection);
-    int status = mongo_update(mongoConnection, qPrintable(ns), (const bson *)TBson::toBson(criteria).data(),
-                              (const bson *)TBson::toBson(object).data(), MONGO_UPDATE_MULTI, 0);
-   if (status != MONGO_OK) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
+    if (!isOpen()) {
         return false;
     }
-   return true;
-}
 
+    errorCode = 0;
+    errorString.clear();
+    bson_error_t error;
 
-int TMongoDriver::count(const QString &ns, const QVariantMap &criteria)
-{
-    mongo_clear_errors(mongoConnection);
-    int cnt = -1;
-    int index = ns.indexOf('.');
-    if (index < 0)
-        return cnt;
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    bool res = mongoc_collection_update(col, MONGOC_UPDATE_MULTI_UPDATE,
+                                        (bson_t *)TBson::toBson(criteria).data(),
+                                        (bson_t *)TBson::toBson(object).data(), nullptr, &error);
 
-    QString db = ns.mid(0, index);
-    QString coll = ns.mid(index + 1);
-    cnt = mongo_count(mongoConnection, qPrintable(db), qPrintable(coll), (const bson *)TBson::toBson(criteria).data());
-    if (cnt == MONGO_ERROR) {
-        tSystemError("MongoDB Error: %s", mongoConnection->lasterrstr);
-        return -1;
+    setLastCommandStatus(mongoc_collection_get_last_error(col));
+    mongoc_collection_destroy(col);
+
+    if (!res) {
+        tSystemError("MongoDB UpdateMulti Error: %s", error.message);
+        errorCode = error.code;
+        errorString = QLatin1String(error.message);
     }
-    return cnt;
+    return res;
 }
 
 
-int TMongoDriver::lastErrorCode() const
+int TMongoDriver::count(const QString &collection, const QVariantMap &criteria)
 {
-    return mongo_get_server_err(mongoConnection);
-}
-
-
-QString TMongoDriver::lastErrorString() const
-{
-    return QLatin1String(mongo_get_server_err_string(mongoConnection));
-}
-
-
-QVariantMap TMongoDriver::getLastCommandStatus(const QString &db)
-{
-    QVariantMap ret;
-    bson bs;
-
-    memset(&bs, 0, sizeof(bs));
-    if (mongo_cmd_get_last_error(mongoConnection, qPrintable(db), &bs) == MONGO_OK) {
-        ret = TBson::fromBson((TBsonObject *)&bs);
+    if (!isOpen()) {
+        return false;
     }
-    bson_destroy(&bs);
-    return ret;
+
+    errorCode = 0;
+    errorString.clear();
+    bson_error_t error;
+
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    int count = mongoc_collection_count(col, MONGOC_QUERY_NONE, (bson_t *)TBson::toBson(criteria).data(),
+                                        0, 0, nullptr, &error);
+
+    setLastCommandStatus(mongoc_collection_get_last_error(col));
+    mongoc_collection_destroy(col);
+
+    if (count < 0) {
+        tSystemError("MongoDB Count Error: %s", error.message);
+        errorCode = error.code;
+        errorString = QLatin1String(error.message);
+    }
+    return count;
+}
+
+
+// QString TMongoDriver::lastErrorString() const
+// {
+//     return lastStatus->value("writeErrors").toStringList().value(0);
+// }
+
+
+QVariantMap TMongoDriver::getLastCommandStatus() const
+{
+    return TBson::fromBson(*lastStatus);
+}
+
+
+void TMongoDriver::setLastCommandStatus(const void *bson)
+{
+    if (lastStatus) {
+        delete lastStatus;
+    }
+    lastStatus = new TBson((const TBsonObject *)bson);
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -6,9 +6,15 @@
  */
 
 #include <TActionView>
+#include <TWebApplication>
 #include <TActionController>
 #include <THttpUtility>
 #include <THtmlAttribute>
+#include <TReactComponent>
+#include <QDir>
+#include <QMutex>
+#include <QMutexLocker>
+#include "tsystemglobal.h"
 
 /*!
   \class TActionView
@@ -39,9 +45,19 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
 {
     QString temp = templateName;
     if (!temp.contains('/')) {
-        temp = QLatin1String("partial/") + temp;
+        temp = QLatin1String("partial") + QDir::separator() + temp;
     }
     return (actionController) ? actionController->getRenderingData(temp, vars) : QString();
+}
+
+/*!
+  Renders the React \a component on the server. Calls ReactDOMServer.renderToString()
+  internally.
+*/
+QString TActionView::renderReact(const QString &component)
+{
+    QStringList path = { Tf::app()->publicPath() + "js" + QDir::separator() + "components" };
+    return TReactComponent(component, path).renderToString(component);
 }
 
 /*!

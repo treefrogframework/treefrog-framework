@@ -50,7 +50,7 @@ inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri, int limit = 
         mapper.setOffset(offset);
 
     QList<T> list;
-    if (mapper.find(cri) > 0) {
+    if (mapper.find(cri)) {
         while (mapper.next()) {
             list << T(mapper.value());
         }

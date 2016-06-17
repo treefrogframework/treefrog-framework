@@ -2,6 +2,8 @@
 #define TWEBSOCKETWORKER_H
 
 #include <QThread>
+#include <QList>
+#include <QPair>
 #include <TGlobal>
 #include <TSession>
 #include "tdatabasecontext.h"
@@ -15,8 +17,7 @@ class T_CORE_EXPORT TWebSocketWorker : public QThread, public TDatabaseContext
     Q_OBJECT
 public:
     enum RunMode {
-        Opening,
-        Sending,
+        Opening = 0,
         Receiving,
         Closing,
     };
@@ -25,18 +26,19 @@ public:
     virtual ~TWebSocketWorker();
 
     void setPayload(TWebSocketFrame::OpCode opCode, const QByteArray &data);
+    void setPayloads(QList<QPair<int, QByteArray>> payloads);
     void setSession(const TSession &session);
 
 protected:
     void run();
+    void execute(int opcode = 0, const QByteArray &payload = QByteArray());
 
 private:
-    RunMode mode_;
-    TAbstractWebSocket *socket_;
-    TSession sessionStore_;
-    QByteArray requestPath_;
-    TWebSocketFrame::OpCode opcode_;
-    QByteArray requestData_;
+    RunMode _mode;
+    TAbstractWebSocket *_socket;
+    TSession _httpSession;
+    QByteArray _requestPath;
+    QList<QPair<int, QByteArray>> _payloads;
 };
 
 #endif // TWEBSOCKETWORKER_H

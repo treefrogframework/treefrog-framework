@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -139,7 +139,7 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, qint64
 
 /*!
   Sets the validation rule for the key \a key and set the error
-  message of it to \a errorMessage. 
+  message of it to \a errorMessage.
  */
 void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, float val, const QString &errorMessage)
 {

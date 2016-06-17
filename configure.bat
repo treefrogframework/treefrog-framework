@@ -1,14 +1,8 @@
 @echo OFF
 @setlocal
 
-set VERSION=1.8.0
+set VERSION=1.12.0
 set TFDIR=C:\TreeFrog\%VERSION%
-
-if "%DevEnvDir%" == "" (
-  set MAKE=mingw32-make
-) else (
-  set MAKE=nmake
-)
 
 :parse_loop
 if "%1" == "" goto :start
@@ -59,8 +53,38 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
-for %%I in (qtenv2.bat) do if exist %%~$path:I set QTENV=%%~$path:I
+for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
+for %%I in (cl.exe) do if exist %%~$path:I set MSCOMPILER=%%~$path:I
+for %%I in (g++.exe) do if exist %%~$path:I set GNUCOMPILER=%%~$path:I
 
+if "%QMAKE%" == "" (
+  echo Qt environment not found
+  exit /b
+)
+if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
+  echo compiler not found
+  exit /b
+)
+
+:: vcvarsall.bat setup
+if not "%MSCOMPILER%" == "" (
+  set MAKE=nmake
+  if "%Platform%" == "X64" (
+    set VCVARSOPT=amd64
+    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  ) else (
+    set VCVARSOPT=x86
+    set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+  )
+) else (
+  set MAKE=mingw32-make
+  set ENVSTR=Environment to build for 32-bit executable  MinGW / Qt
+)
+SET /P X="%ENVSTR%"<NUL
+qtpaths.exe --qt-version
+
+
+for %%I in (qtenv2.bat) do if exist %%~$path:I set QTENV=%%~$path:I
 set TFENV=tfenv.bat
 echo @echo OFF> %TFENV%
 echo ::>> %TFENV%
@@ -71,10 +95,25 @@ echo set TFDIR=%TFDIR%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo if exist %%QTENV%% ( call %%QTENV%% )>> %TFENV%
+if not "%VCVARSOPT%" == "" (
+  echo if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo   set VCVARSBAT="%%VS120COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
+  echo ^) else if not "%%VS110COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo   set VCVARSBAT="%%VS110COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
+  echo ^) else if not "%%VS100COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo   set VCVARSBAT="%%VS100COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
+  echo ^) else ^(>> %TFENV%
+  echo   set VCVARSBAT="">> %TFENV%
+  echo ^)>> %TFENV%
+  echo if exist %%VCVARSBAT%% ^(>> %TFENV%
+  echo   echo Setting up environment for MSVC usage...>> %TFENV%
+  echo   call %%VCVARSBAT%% %VCVARSOPT%>> %TFENV%
+  echo ^)>> %TFENV%
+)
 echo set PATH=%%TFDIR^%%\bin;%%PATH%%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
-echo ::echo -- QMAKESPEC set to %%QMAKESPEC%%>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
+echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 
 set TFDIR=%TFDIR:\=/%

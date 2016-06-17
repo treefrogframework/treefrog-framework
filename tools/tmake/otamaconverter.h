@@ -12,8 +12,8 @@ public:
     OtamaConverter(const QDir &output, const QDir &helpers);
     ~OtamaConverter();
 
-    bool convert(const QString &filePath) const;
-    static QString convertToErb(const QString &html, const QString &otm);
+    bool convert(const QString &filePath, int trimMode) const;
+    static QString convertToErb(const QString &html, const QString &otm, int trimMode);
     static QString fileSuffix() { return "html"; }
     static QString logicFileSuffix() { return "otm"; }
 

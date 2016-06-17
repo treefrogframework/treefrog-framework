@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -17,7 +17,7 @@ bool ProjectFileGenerator::exists() const
 }
 
 
-bool ProjectFileGenerator::add(const QStringList &files)
+bool ProjectFileGenerator::add(const QStringList &files) const
 {
     QString output;
 
@@ -52,7 +52,7 @@ bool ProjectFileGenerator::add(const QStringList &files)
                 str += '\n';
             }
         }
-        
+
         if (!str.isEmpty() && !output.contains(str)) {
             if (!output.endsWith('\n')) {
                 output += '\n';
@@ -65,7 +65,7 @@ bool ProjectFileGenerator::add(const QStringList &files)
 }
 
 
-bool ProjectFileGenerator::remove(const QStringList &files)
+bool ProjectFileGenerator::remove(const QStringList &files) const
 {
     QString output;
 
@@ -73,6 +73,7 @@ bool ProjectFileGenerator::remove(const QStringList &files)
     if (pro.exists()) {
         if (pro.open(QIODevice::ReadOnly | QIODevice::Text)) {
             output = pro.readAll();
+            pro.close();
         } else {
             qCritical("failed to open file: %s", qPrintable(pro.fileName()));
             return false;
@@ -81,32 +82,35 @@ bool ProjectFileGenerator::remove(const QStringList &files)
         qCritical("Project file not found: %s", qPrintable(pro.fileName()));
         return false;
     }
-    pro.close();
 
     if (files.isEmpty())
         return true;
 
-    for (QStringListIterator i(files); i.hasNext(); ) {
-        const QString &f = i.next();
+    for (const QString &f : files) {
         QString str;
         QRegExp rx("*.h");
         rx.setPatternSyntax(QRegExp::Wildcard);
         if (rx.exactMatch(f)) {
             str  = "HEADERS += ";
             str += f;
-            str += '\n';
         } else {
             rx.setPattern("*.cpp");
             if (rx.exactMatch(f)) {
                 str  = "SOURCES += ";
                 str += f;
-                str += '\n';
             }
         }
-        
+
+#ifdef Q_OS_WIN
+        str.replace("\\", "/");
+#endif
+
         int idx = 0;
         if (!str.isEmpty() && (idx = output.indexOf(str)) >= 0 ) {
             output.remove(idx, str.length());
+            if (idx < output.length() && output.at(idx) == '\n') {
+                output.remove(idx, 1);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -11,7 +11,7 @@
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <TAppSettings>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
 #define DEFAULT_DATABASE_ENVIRONMENT  "product"
@@ -42,6 +42,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
       dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT),
       sqlSettings(0),
       mongoSetting(0),
+      redisSetting(0),
       loggerSetting(0),
       validationSetting(0),
       mediaTypes(0),
@@ -123,8 +124,13 @@ TWebApplication::TWebApplication(int &argc, char **argv)
             mongoSetting = new QSettings(mnginipath, QSettings::IniFormat, this);
     }
 
-    // sets a seed for random numbers
-    Tf::srandXor128((QDateTime::currentDateTime().toTime_t() << 14) | (QCoreApplication::applicationPid() & 0x3fff));
+    // Redis settings
+    QString redisini = Tf::appSettings()->value(Tf::RedisSettingsFile).toString().trimmed();
+    if (!redisini.isEmpty()) {
+        QString redisinipath = configPath() + redisini;
+        if (QFile(redisinipath).exists())
+            redisSetting = new QSettings(redisinipath, QSettings::IniFormat, this);
+    }
 }
 
 
@@ -259,11 +265,28 @@ QSettings &TWebApplication::mongoDbSettings() const
 }
 
 /*!
-  Returns true if MongoDB is available; otherwise returns false.
+  Returns true if MongoDB settings is available; otherwise returns false.
 */
 bool TWebApplication::isMongoDbAvailable() const
 {
     return (bool)mongoSetting;
+}
+
+/*!
+  Returns a reference to the QSettings object for settings of the
+  Redis system.
+*/
+QSettings &TWebApplication::redisSettings() const
+{
+    return *redisSetting;
+}
+
+/*!
+  Returns true if Redis settings is available; otherwise returns false.
+*/
+bool TWebApplication::isRedisAvailable() const
+{
+    return (bool)redisSetting;
 }
 
 /*!
@@ -304,12 +327,18 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             mpm = Thread;
-//        } else if (str == "prefork") {
-//            mpm = Prefork;
         } else if (str == "hybrid") {
+#ifdef Q_OS_LINUX
             mpm = Hybrid;
+#else
+            tSystemWarn("Unsupported MPM: hybrid  (Linux only)");
+            tWarn("Unsupported MPM: hybrid  (Linux only)");
+            mpm = Thread;
+#endif
         } else {
-            tError("Unsupported MPM: %s", qPrintable(str));
+            tSystemWarn("Unsupported MPM: %s", qPrintable(str));
+            tWarn("Unsupported MPM: %s", qPrintable(str));
+            mpm = Thread;
         }
     }
     return mpm;
@@ -335,7 +364,6 @@ int TWebApplication::maxNumberOfAppServers(int defaultValue) const
         num = 1;
         break;
 
-    case Prefork: // FALL THROUGH
     case Hybrid:
         num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxServers").toInt();
         break;

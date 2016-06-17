@@ -13,6 +13,8 @@ public:
     TBson();
     ~TBson();
     TBson(const TBson &other);
+    TBson(const TBsonObject *bson);
+    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
     TBsonObject *data() { return bsonData; }
     const TBsonObject *constData() const { return bsonData; }
 
@@ -26,7 +28,8 @@ protected:
     static QVariantMap fromBson(const TBsonObject *obj);
 
 private:
-    TBsonObject *bsonData;   // pointer to object of struct bson
+    typedef struct _bson_t bson_t;
+    bson_t *bsonData;   // pointer to object of bson_t
 
     friend class TMongoDriver;
     friend class TMongoCursor;

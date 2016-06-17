@@ -5,20 +5,21 @@ CONFIG  += console c++11
 CONFIG  -= app_bundle
 QT      += network sql
 QT      -= gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += qml
 DEFINES += TF_DLL
 INCLUDEPATH += $$header.path
 
 include(../../tfbase.pri)
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin
   }
 }
 
-win32 {
+windows {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ}
@@ -27,13 +28,14 @@ win32 {
   }
   LIBS += -L"$$target.path"
 } else:macx {
-  LIBS += -F$$lib.path -framework treefrog
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  QMAKE_RPATHDIR += @loader_path/../../../../../
 } else:unix {
-  LIBS += -L$$lib.path -ltreefrog
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_CXXFLAGS += -std=c++0x
   }
 }
 

@@ -8,6 +8,7 @@
 #include <atomic>
 #include "tdatabasecontext.h"
 
+class QIODevice;
 class QHostAddress;
 class THttpResponseHeader;
 class THttpSocket;
@@ -32,7 +33,7 @@ public:
     const THttpRequest &httpRequest() const { return *httpReq; }
 
 protected:
-    void execute(THttpRequest &request);
+    void execute(THttpRequest &request, const QByteArray &socketUuid);
     void release();
     int socketDescriptor() const { return socketDesc; }
     qint64 writeResponse(int statusCode, THttpResponseHeader &header);

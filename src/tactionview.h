@@ -52,6 +52,7 @@ protected:
     QString eh(double d, char format = 'g', int precision = 6);
     QString eh(const THtmlAttribute &attr);
     QString eh(const QVariant &var);
+    QString renderReact(const QString &component);
     QString responsebody;
 
 private:

@@ -11,7 +11,7 @@ INCLUDEPATH += $$header.path
 include(../../tfbase.pri)
 
 isEmpty( datadir ) {
-  win32 {
+  windows {
     datadir = C:/TreeFrog/$${TF_VERSION}
   } else {
     datadir = /usr/share/treefrog
@@ -19,7 +19,7 @@ isEmpty( datadir ) {
 }
 DEFINES += TREEFROG_DATA_DIR=\\\"$$datadir\\\"
 
-win32 {
+windows {
   CONFIG(debug, debug|release) {
     LIBS += -ltreefrogd$${TF_VER_MAJ}
   } else {
@@ -27,18 +27,19 @@ win32 {
   }
   LIBS += -L"$$target.path"
 } else:macx {
-  LIBS += -F$$lib.path -framework treefrog
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  QMAKE_RPATHDIR += @loader_path/../../../../../
 } else:unix {
-  LIBS += -L$$lib.path -ltreefrog
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_CXXFLAGS += -std=c++0x
   }
 }
 
 isEmpty( target.path ) {
-  win32 {
+  windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin
   } else {
     target.path = /usr/bin
@@ -69,18 +70,40 @@ defaults.files += defaults/logger.ini
 defaults.files += defaults/mail.erb
 defaults.files += defaults/models.pro
 defaults.files += defaults/mongodb.ini
+defaults.files += defaults/redis.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
 defaults.files += defaults/views.pro
+# React scripts
+defaults.files += defaults/JSXTransformer.js
+defaults.files += defaults/react.js
+defaults.files += defaults/react-with-addons.js
+defaults.files += defaults/react-dom-server.js
+windows {
+  defaults.files += defaults/_dummymodel.h
+  defaults.files += defaults/_dummymodel.cpp
+}
 defaults.path = $${datadir}/defaults
 INSTALLS += target defaults
 
-win32 {
-  clientlib.files += ../../sqldrivers/clientlib/COPYING_3RD_PARTY_DLL
-  clientlib.files += ../../sqldrivers/clientlib/libintl.dll
-  clientlib.files += ../../sqldrivers/clientlib/libmariadb.dll
-  clientlib.files += ../../sqldrivers/clientlib/libmysql.dll
-  clientlib.files += ../../sqldrivers/clientlib/libpq.dll
+windows {
+  contains(QMAKE_TARGET.arch, x86_64) {
+    clientlib.files += ../../sqldrivers/clientlib64/COPYING_3RD_PARTY_DLL
+    clientlib.files += ../../sqldrivers/clientlib64/libeay32.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libintl-8.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libmariadb.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libmysql.dll
+    clientlib.files += ../../sqldrivers/clientlib64/libpq.dll
+    clientlib.files += ../../sqldrivers/clientlib64/ssleay32.dll
+  } else {
+    clientlib.files += ../../sqldrivers/clientlib32/COPYING_3RD_PARTY_DLL
+    clientlib.files += ../../sqldrivers/clientlib32/intl.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libeay32.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libmariadb.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libmysql.dll
+    clientlib.files += ../../sqldrivers/clientlib32/libpq.dll
+    clientlib.files += ../../sqldrivers/clientlib32/ssleay32.dll
+  }
   clientlib.path = $${datadir}/bin
   INSTALLS += clientlib
 }
@@ -89,7 +112,7 @@ win32 {
 # Erases CR codes on UNIX
 !exists(defaults) : system( mkdir defaults )
 for(F, defaults.files) {
-  win32 {
+  windows {
     F = $$replace(F, /, \\)
     system( COPY /Y ..\\..\\$${F} $${F} > nul )
   }
@@ -138,5 +161,7 @@ HEADERS += mailergenerator.h
 SOURCES += mailergenerator.cpp
 HEADERS += mongocommand.h
 SOURCES += mongocommand.cpp
+HEADERS += helpergenerator.h
+SOURCES += helpergenerator.cpp
 HEADERS += util.h
 SOURCES += util.cpp

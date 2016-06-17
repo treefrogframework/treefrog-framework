@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -130,8 +130,8 @@ QString THtmlElement::toString() const
 }
 
 
-THtmlParser::THtmlParser()
-    : pos(0)
+THtmlParser::THtmlParser(TrimMode mode)
+    : trimMode(mode), pos(0)
 {
     elements.resize(1);
 }
@@ -168,9 +168,24 @@ void THtmlParser::parse(const QString &text)
 {
     elements.clear();
     elements.resize(1);
-    txt = text;
-    pos = 0;
 
+        // trimming strongly
+    if (trimMode == StrongTrim) {
+        txt.clear();
+        txt.reserve(text.length());
+        for (auto &line : text.split('\n', QString::SkipEmptyParts)) {
+            QString trm = trim(line);
+            if (!trm.isEmpty()) {
+                txt += trm;
+                txt += '\n';
+            }
+        }
+        txt = trim(txt);
+    } else {
+        txt = text;
+    }
+
+    pos = 0;
     parse();
     //dumpHtml();
 }
@@ -188,6 +203,33 @@ bool THtmlParser::isTag(int position) const
 bool THtmlParser::isTag(const QString &tag)
 {
     return (tag.indexOf(htmlTagReg, 0) == 0);
+}
+
+/* Returns a string that has ascii whitespace removed from the start and the end */
+QString THtmlParser::trim(const QString &str)
+{
+    if (str.isEmpty()) {
+        return str;
+    }
+
+    int start = 0;
+    int end = str.length() - 1;
+    if (!str[start].isSpace() && !str[end].isSpace()) {
+        return str;
+    }
+
+    while (start <= end && str[start].isSpace() && str[start].unicode() < 128) {
+        start++;
+    }
+    while (end > start && str[end].isSpace() && str[end].unicode() < 128) {
+        end--;
+    }
+
+    int len = end - start + 1;
+    if (len <= 0) {
+        return QString();
+    }
+    return str.mid(start, len);
 }
 
 
@@ -409,16 +451,18 @@ int THtmlParser::nextElementInSameParent(int index) const
 }
 
 
-void THtmlParser::removeElementTree(int index)
+void THtmlParser::removeElementTree(int index, bool removeNewline)
 {
     removeChildElements(index);
     at(index).clear();
 
-    int idx = nextElementInSameParent(index);
-    if (idx > 0) {
-        THtmlElement &n = at(idx);
-        if (n.tag.isEmpty() && n.text.startsWith("\n")) {
-            n.text.remove(0, 1);  // delete a newline code after the close tag
+    if (removeNewline) {
+        int idx = nextElementInSameParent(index);
+        if (idx > 0) {
+            THtmlElement &n = at(idx);
+            if (n.tag.isEmpty() && n.text.startsWith("\n")) {
+                n.text.remove(0, 1);  // delete a newline code after the close tag
+            }
         }
     }
 }
@@ -544,7 +588,7 @@ bool THtmlParser::parentExists(int i, const QString &tag) const
 // void THtmlParser::dumpHtml() const
 // {
 //     for (int i = 0; i < elements.count(); ++i) {
-//         tSystemDebug("%s:%s:%d:%s", qPrintable(QString(depth(i) * 4, QLatin1Char(' '))), qPrintable(at(i).tag), at(i).children.count(), qPrintable(at(i).text));
+//         ("%s:%s:%d:%s", qPrintable(QString(depth(i) * 4, QLatin1Char(' '))), qPrintable(at(i).tag), at(i).children.count(), qPrintable(at(i).text));
 //     }
 // }
 

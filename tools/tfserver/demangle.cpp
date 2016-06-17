@@ -30,7 +30,7 @@
 // Author: Satoru Takabayashi
 // Modified by AOYAMA Kazuharu
 
-#include <stdio.h>  // for NULL
+#include <cstdio>
 #include "demangle.h"
 
 _START_GOOGLE_NAMESPACE_
@@ -91,7 +91,7 @@ static const AbbrevPair kOperatorList[] = {
   { "qu", "?" },
   { "st", "sizeof" },
   { "sz", "sizeof" },
-  { NULL, NULL },
+  { nullptr, nullptr },
 };
 
 // List of builtin types from Itanium C++ ABI.
@@ -117,7 +117,7 @@ static const AbbrevPair kBuiltinTypeList[] = {
   { "e", "long double" },
   { "g", "__float128" },
   { "z", "ellipsis" },
-  { NULL, NULL }
+  { nullptr, nullptr }
 };
 
 // List of substitutions Itanium C++ ABI.
@@ -125,15 +125,15 @@ static const AbbrevPair kSubstitutionList[] = {
   { "St", "" },
   { "Sa", "allocator" },
   { "Sb", "basic_string" },
-  // std::basic_string<char, std::char_traits<char>,std::allocator<char> >
+  // std::basic_string<char, std::char_traits<char>,std::allocator<char>>
   { "Ss", "string"},
-  // std::basic_istream<char, std::char_traits<char> >
+  // std::basic_istream<char, std::char_traits<char>>
   { "Si", "istream" },
-  // std::basic_ostream<char, std::char_traits<char> >
+  // std::basic_ostream<char, std::char_traits<char>>
   { "So", "ostream" },
-  // std::basic_iostream<char, std::char_traits<char> >
+  // std::basic_iostream<char, std::char_traits<char>>
   { "Sd", "iostream" },
-  { NULL, NULL }
+  { nullptr, nullptr }
 };
 
 // State needed for demangling.
@@ -179,7 +179,7 @@ static void InitState(State *state, const char *mangled,
   state->out_cur = out;
   state->out_begin = out;
   state->out_end = out + out_size;
-  state->prev_name  = NULL;
+  state->prev_name  = nullptr;
   state->prev_name_length = -1;
   state->nest_level = -1;
   state->number = -1;
@@ -704,7 +704,7 @@ static bool ParseOperatorName(State *state) {
   }
   // We may want to perform a binary search if we really need speed.
   const AbbrevPair *p;
-  for (p = kOperatorList; p->abbrev != NULL; ++p) {
+  for (p = kOperatorList; p->abbrev != nullptr; ++p) {
     if (state->mangled_cur[0] == p->abbrev[0] &&
         state->mangled_cur[1] == p->abbrev[1]) {
       MaybeAppend(state, "operator");
@@ -929,7 +929,7 @@ static bool ParseCVQualifiers(State *state) {
 //                ::= u <source-name>
 static bool ParseBuiltinType(State *state) {
   const AbbrevPair *p;
-  for (p = kBuiltinTypeList; p->abbrev != NULL; ++p) {
+  for (p = kBuiltinTypeList; p->abbrev != nullptr; ++p) {
     if (state->mangled_cur[0] == p->abbrev[0]) {
       MaybeAppend(state, p->real_name);
       ++state->mangled_cur;
@@ -1204,7 +1204,7 @@ static bool ParseSubstitution(State *state) {
   // Expand abbreviations like "St" => "std".
   if (ParseChar(state, 'S')) {
     const AbbrevPair *p;
-    for (p = kSubstitutionList; p->abbrev != NULL; ++p) {
+    for (p = kSubstitutionList; p->abbrev != nullptr; ++p) {
       if (state->mangled_cur[0] == p->abbrev[1]) {
         MaybeAppend(state, "std");
         if (p->real_name[0] != '\0') {

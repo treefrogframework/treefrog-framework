@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -11,6 +11,7 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "filewriter.h"
+#include "util.h"
 
 #define USER_VIRTUAL_METHOD  "identityKey"
 #define LOCK_REVISION_FIELD "lockRevision"
@@ -300,7 +301,7 @@
     "    QJsonArray array;\n"                                 \
     "    TMongoODMapper<%1Object> mapper;\n"                  \
     "\n"                                                      \
-    "    if (mapper.find() > 0) {\n"                          \
+    "    if (mapper.find()) {\n"                              \
     "        while (mapper.next()) {\n"                       \
     "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(mapper.value()).toVariantMap())));\n" \
     "        }\n"                                             \
@@ -369,7 +370,23 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 
     // Generates a project file
     ProjectFileGenerator progen(QDir(dstDir).filePath("models.pro"));
-    return progen.add(files);
+    bool ret = progen.add(files);
+
+#ifdef Q_OS_WIN
+    if (ret) {
+        // Deletes dummy models
+        QStringList dummy = { "_dummymodel.h", "_dummymodel.cpp" };
+        bool rmd = false;
+        for (auto &f : dummy) {
+            rmd |= ::remove(QDir(dstDir).filePath(f));
+        }
+        if (rmd) {
+            progen.remove(dummy);
+        }
+    }
+#endif
+
+    return ret;
 }
 
 
@@ -462,6 +479,10 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
             optlockMethod = true;
     }
     crtparams.chop(2);
+
+    if (crtparams.isEmpty()) {
+        crtparams += "const QString &";
+    }
 
     initParams += (initParams.isEmpty()) ? ' ' : '\n';
 
@@ -562,8 +583,8 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
 bool ModelGenerator::gen(const QString &fileName, const QString &format, const QStringList &args)
 {
     QString out = format;
-    for (QStringListIterator i(args); i.hasNext(); ) {
-        out = out.arg(i.next());
+    for (auto &arg : args) {
+        out = out.arg(arg);
     }
 
     FileWriter fw(fileName);

@@ -45,7 +45,7 @@ protected:
         int rule;
         QVariant value;
         QString message;
-    
+
         RuleEntry(const QString &key, int rule, bool enable, const QString &errorMessage);
         RuleEntry(const QString &key, int rule, qint64 val, const QString &errorMessage);
         RuleEntry(const QString &key, int rule, double val, const QString &errorMessage);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -203,7 +203,7 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 {
     QByteArray out = username;
     out += " ";
-    out += TCryptMac::mac(QByteArray::fromBase64(in), password, TCryptMac::Hmac_Md5).toHex();
+    out += TCryptMac::hash(QByteArray::fromBase64(in), password, TCryptMac::Hmac_Md5).toHex();
     return out.toBase64();
 }
 
@@ -434,7 +434,3 @@ int TSmtpMailer::read(QList<QByteArray> *reply)
       554 Transaction failed  (Or, in the case of a connection-opening
           response, "No SMTP service here")
 */
-
-
-
-

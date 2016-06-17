@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, AOYAMA Kazuharu
+/* Copyright (c) 2011-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -47,8 +47,7 @@ QList<qint64> ProcessInfo::childProcessIds() const
     QList<qint64> ids;
     QList<qint64> allPids = allConcurrentPids();
 
-    for (QListIterator<qint64> it(allPids); it.hasNext(); ) {
-        qint64 p = it.next();
+    for (qint64 p : allPids) {
         if (ProcessInfo(p).ppid() == pid()) {
             ids << p;
         }
@@ -65,8 +64,8 @@ void ProcessInfo::kill(qint64 ppid)
 
 void ProcessInfo::kill(QList<qint64> pids)
 {
-    for (QListIterator<qint64> it(pids); it.hasNext(); ) {
-        ProcessInfo(it.next()).kill();
+    for (qint64 pid : pids) {
+        ProcessInfo(pid).kill();
     }
 }
 
@@ -75,8 +74,9 @@ QList<qint64> ProcessInfo::pidsOf(const QString &processName)
 {
     QList<qint64> ret;
     QList<qint64> pids = allConcurrentPids();
-    for (QListIterator<qint64> it(pids); it.hasNext(); ) {
-        ProcessInfo pi(it.next());
+
+    for (auto pid : pids) {
+        ProcessInfo pi(pid);
         if (pi.processName() == processName) {
             ret << pi.pid();
         }
@@ -84,18 +84,5 @@ QList<qint64> ProcessInfo::pidsOf(const QString &processName)
     return ret;
 }
 
-
-// QList<qint64> ProcessInfo::killProcesses(const QString &name, qint64 ppid)
-// {
-//     QList<qint64> pids = pidsOf(name);
-//     for (QListIterator<qint64> it(pids); it.hasNext(); ) {
-//         const qint64 &pid = it.next();
-//         ProcessInfo pi(pid);
-//         if (pi.ppid() == ppid) {
-//             pi.kill();
-//         }
-//     }
-//     return pids;
-// }
 
 } // namespace TreeFrog

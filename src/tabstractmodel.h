@@ -22,37 +22,12 @@ public:
     virtual void setProperties(const QVariantMap &properties);
     virtual QVariantMap toVariantMap() const;
 
+    QString variableNameToFieldName(const QString &name) const;
     static QString fieldNameToVariableName(const QString &name);
 
 protected:
     virtual TModelObject *modelData() { return 0; }
     virtual const TModelObject *modelData() const { return 0; }
 };
-
-
-inline QString TAbstractModel::fieldNameToVariableName(const QString &name)
-{
-    QString ret;
-    bool existsLower = false;
-    bool existsUnders = name.contains('_');
-    const QLatin1Char Underscore('_');
-
-    ret.reserve(name.length());
-
-    for (int i = 0; i < name.length(); ++i) {
-        const QChar &c = name[i];
-        if (c == Underscore) {
-            if (i > 0 && i + 1 < name.length()) {
-                ret += name[++i].toUpper();
-            }
-        } else {
-            if (!existsLower && c.isLower()) {
-                existsLower = true;
-            }
-            ret += (existsLower && !existsUnders) ? c : c.toLower();
-        }
-    }
-    return ret;
-}
 
 #endif // TABSTRACTMODEL_H

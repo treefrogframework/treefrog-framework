@@ -1,4 +1,4 @@
-/* Copyright (c) 2013, AOYAMA Kazuharu
+/* Copyright (c) 2013-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -6,7 +6,6 @@
  */
 
 #include <sys/types.h>
-#include <sys/epoll.h>
 #include <QUuid>
 #include <QFileInfo>
 #include <TWebApplication>
@@ -16,7 +15,7 @@
 #include "tepollhttpsocket.h"
 #include "tepoll.h"
 #include "tsendbuffer.h"
-#include "tfcore_unix.h"
+#include "tfcore.h"
 
 class SendData;
 
@@ -93,9 +92,10 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : deleting(false), myWorkerCounter(0), sd(socketDescriptor), uuid(), clientAddr(address)
+    : deleting(false), myWorkerCounter(0), pollIn(false), pollOut(false),
+      sd(socketDescriptor), uuid(), clientAddr(address)
 {
-    uuid = QUuid::createUuid().toByteArray().replace('-', "");  // not thread safe
+    uuid = QUuid::createUuid().toByteArray();  // not thread safe
     uuid = uuid.mid(1, uuid.length() - 2);
     tSystemDebug("TEpollSocket  id:%s", uuid.data());
 }
@@ -107,8 +107,8 @@ TEpollSocket::~TEpollSocket()
 
     close();
 
-    for (QListIterator<TSendBuffer*> it(sendBuf); it.hasNext(); ) {
-        delete it.next();
+    for (auto p : sendBuf) {
+        delete p;
     }
     sendBuf.clear();
 }
@@ -120,12 +120,14 @@ TEpollSocket::~TEpollSocket()
  */
 int TEpollSocket::recv()
 {
-    int err;
+    int ret = 0;
+    int err = 0;
+    int len;
 
     for (;;) {
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        int len = ::recv(sd, buf, recvBufSize, 0);
+        len = tf_recv(sd, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -136,21 +138,26 @@ int TEpollSocket::recv()
         seekRecvBuffer(len);
     }
 
-    int ret = 0;
-    switch (err) {
-    case EAGAIN:
-        break;
-
-    case 0:       // FALL THROUGH
-    case ECONNRESET:
-        tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+    if (!len && !err) {
+        tSystemDebug("Socket disconnected : sd:%d", sd);
         ret = -1;
-        break;
+    } else {
+        if (len < 0 || err > 0) {
+            switch (err) {
+            case EAGAIN:
+                break;
 
-    default:
-        tSystemError("Failed recv : sd:%d  errno:%d", sd, err);
-        ret = -1;
-        break;
+            case ECONNRESET:
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                ret = -1;
+                break;
+
+            default:
+                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", sd, err, len);
+                ret = -1;
+                break;
+            }
+        }
     }
     return ret;
 }
@@ -162,66 +169,71 @@ int TEpollSocket::recv()
 int TEpollSocket::send()
 {
     if (sendBuf.isEmpty()) {
+        pollOut = true;
         return 0;
     }
+    pollOut = false;
 
     if (deleting.load()) {
         return 0;
     }
 
+    int ret = 0;
     int err = 0;
     int len;
-    TSendBuffer *buf = sendBuf.first();
-    TAccessLogger &logger = buf->accessLogger();
 
-    for (;;) {
-        len = sendBufSize;
-        void *data = buf->getData(len);
-        if (len == 0) {
-            break;
+    while (!sendBuf.isEmpty()) {
+        TSendBuffer *buf = sendBuf.first();
+        TAccessLogger &logger = buf->accessLogger();
+
+        err = 0;
+        for (;;) {
+            len = sendBufSize;
+            void *data = buf->getData(len);
+            if (len == 0) {
+                break;
+            }
+
+            errno = 0;
+            len = tf_send(sd, data, len, MSG_NOSIGNAL);
+            err = errno;
+
+            if (len <= 0) {
+                break;
+            }
+
+            // Sent successfully
+            buf->seekData(len);
+            logger.setResponseBytes(logger.responseBytes() + len);
         }
 
-        errno = 0;
-        len = ::send(sd, data, len, MSG_NOSIGNAL);
-        err = errno;
-
-        if (len <= 0) {
-            break;
+        if (buf->atEnd()) {
+            logger.write();  // Writes access log
+            delete sendBuf.dequeue(); // delete send-buffer obj
         }
 
-        // Sent successfully
-        buf->seekData(len);
-        logger.setResponseBytes(logger.responseBytes() + len);
+        if (len < 0) {
+            switch (err) {
+            case EAGAIN:
+                break;
+
+            case EPIPE:   // FALL THROUGH
+            case ECONNRESET:
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                logger.setResponseBytes(-1);
+                ret = -1;
+                break;
+
+            default:
+                tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
+                logger.setResponseBytes(-1);
+                ret = -1;
+                break;
+            }
+
+            break;
+        }
     }
-
-    int ret = 0;
-    switch (err) {
-    case 0:     // FALL THROUGH
-    case EAGAIN:
-        break;
-
-    case EPIPE:
-        tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
-        logger.setResponseBytes(-1);
-        ret = -1;
-        break;
-
-    default:
-        tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
-        logger.setResponseBytes(-1);
-        ret = -1;
-        break;
-    }
-
-    if (buf->atEnd() || ret < 0) {
-        logger.write();  // Writes access log
-        delete sendBuf.dequeue(); // delete send-buffer obj
-    }
-
-    if (err != EAGAIN && !sendBuf.isEmpty()) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-    }
-
     return ret;
 }
 
@@ -241,7 +253,7 @@ void TEpollSocket::setSocketDescpriter(int socketDescriptor)
 void TEpollSocket::close()
 {
     if (sd > 0) {
-        TF_CLOSE(sd);
+        tf_close(sd);
         sd = 0;
     }
 }
@@ -249,15 +261,17 @@ void TEpollSocket::close()
 
 void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
-    if (!deleting.load())
+    if (!deleting.load()) {
         TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
+    }
 }
 
 
 void TEpollSocket::sendData(const QByteArray &data)
 {
-    if (!deleting.load())
+    if (!deleting.load()) {
         TEpoll::instance()->setSendData(this, data);
+    }
 }
 
 
@@ -272,6 +286,25 @@ void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 {
     if (!deleting.load())
         TEpoll::instance()->setSwitchToWebSocket(this, header);
+}
+
+
+qint64 TEpollSocket::bufferedBytes() const
+{
+    qint64 ret = 0;
+    for (auto &d : sendBuf) {
+        ret += d->arrayBuffer.size();
+        if (d->bodyFile) {
+            ret += d->bodyFile->size();
+        }
+    }
+    return ret;
+}
+
+
+int TEpollSocket::bufferedListCount() const
+{
+    return sendBuf.count();
 }
 
 

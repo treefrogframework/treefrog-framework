@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2013, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -9,6 +9,7 @@
 #include "global.h"
 #include "controllergenerator.h"
 #include "modelgenerator.h"
+#include "helpergenerator.h"
 #include "sqlobjgenerator.h"
 #include "mongoobjgenerator.h"
 #include "websocketgenerator.h"
@@ -23,7 +24,7 @@
 #ifndef Q_CC_MSVC
 # include <unistd.h>
 #endif
-#include <time.h>
+#include <ctime>
 
 #define L(str)  QLatin1String(str)
 #define SEP   QDir::separator()
@@ -38,8 +39,10 @@ enum SubCommand {
     New,
     Controller,
     Model,
+    Helper,
     UserModel,
     SqlObject,
+    //UpdateModel,
     MongoScaffold,
     MongoModel,
     WebSocketEndpoint,
@@ -66,12 +69,16 @@ public:
         insert("c", Controller);
         insert("model", Model);
         insert("m", Model);
+        insert("helper", Helper);
+        insert("h", Helper);
         insert("usermodel", UserModel);
         insert("u", UserModel);
         insert("sqlobject", SqlObject);
         insert("o", SqlObject);
         insert("mongoscaffold", MongoScaffold);
         insert("ms", MongoScaffold);
+        // insert("updatemodel", UpdateModel);
+        // insert("um", UpdateModel);
         insert("mongomodel", MongoModel);
         insert("mm", MongoModel);
         insert("websocket", WebSocketEndpoint);
@@ -136,13 +143,19 @@ public:
     FilePaths() : QStringList()
     {
         append(L("appbase.pri"));
+        append(L("controllers") + SEP + "controllers.pro");
         append(L("controllers") + SEP + "applicationcontroller.h");
         append(L("controllers") + SEP + "applicationcontroller.cpp");
-        append(L("controllers") + SEP + "controllers.pro");
         append(L("models") + SEP + "models.pro");
+#ifdef Q_OS_WIN
+        append(L("models") + SEP + "_dummymodel.h");
+        append(L("models") + SEP + "_dummymodel.cpp");
+#endif
         append(L("views") + SEP + "views.pro");
         append(L("views") + SEP + "_src" + SEP + "_src.pro");
-        append(L("views") + SEP + "mailer" + SEP + ".trim_mode");
+        append(L("views") + SEP + "layouts" + SEP + ".trim_mode");
+        append(L("views") + SEP + "mailer"  + SEP + ".trim_mode");
+        append(L("views") + SEP + "partial" + SEP + ".trim_mode");
         append(L("helpers") + SEP + "helpers.pro");
         append(L("helpers") + SEP + "applicationhelper.h");
         append(L("helpers") + SEP + "applicationhelper.cpp");
@@ -151,6 +164,7 @@ public:
         append(L("config") + SEP + "development.ini");
         append(L("config") + SEP + "logger.ini");
         append(L("config") + SEP + "mongodb.ini");
+        append(L("config") + SEP + "redis.ini");
         append(L("config") + SEP + "routes.cfg");
         append(L("config") + SEP + "validation.ini");
         append(L("config") + SEP + "initializers" + SEP + "internet_media_types.ini");
@@ -158,7 +172,10 @@ public:
         append(L("public") + SEP + "404.html");
         append(L("public") + SEP + "413.html");
         append(L("public") + SEP + "500.html");
-        append(L("script") + SEP + "starttreefrog.bat");
+        append(L("script") + SEP + "JSXTransformer.js");
+        append(L("script") + SEP + "react.js");             // React
+        append(L("script") + SEP + "react-with-addons.js"); // React
+        append(L("script") + SEP + "react-dom-server.js");  // React
     }
 };
 Q_GLOBAL_STATIC(FilePaths, filePaths)
@@ -183,6 +200,7 @@ static void usage()
            "  scaffold (s)    <table-name> [model-name]\n" \
            "  controller (c)  <controller-name> action [action ...]\n" \
            "  model (m)       <table-name> [model-name]\n" \
+           "  helper (h)      <name>\n" \
            "  usermodel (u)   <table-name> [username password [model-name]]\n" \
            "  sqlobject (o)   <table-name> [model-name]\n"         \
            "  mongoscaffold (ms) <model-name>\n"                   \
@@ -190,7 +208,7 @@ static void usage()
            "  websocket (w)   <endpoint-name>\n"                   \
            "  validator (v)   <name>\n"                            \
            "  mailer (l)      <mailer-name> action [action ...]\n" \
-           "  delete (d)      <table-name or validator-name>\n");
+           "  delete (d)      <table-name, helper-name or validator-name>\n");
 }
 
 
@@ -335,6 +353,13 @@ static bool createNewApplication(const QString &name)
         }
     }
 
+#ifdef Q_OS_WIN
+    // Add dummy model files
+    ProjectFileGenerator progen(name + SEP + D_MODELS + "models.pro");
+    QStringList dummy = { "_dummymodel.h", "_dummymodel.cpp" };
+    progen.add(dummy);
+#endif
+
     return true;
 }
 
@@ -344,7 +369,15 @@ static int deleteScaffold(const QString &name)
     // Removes files
     QString str = name;
     str = str.remove('_').toLower().trimmed();
-    if (str.endsWith("validator", Qt::CaseInsensitive)) {
+
+    if (QFileInfo(D_HELPERS + str + ".h").exists()) {
+        QStringList helpers;
+        helpers << str + ".h"
+                << str + ".cpp";
+
+        rmfiles(helpers, D_HELPERS, "helpers.pro");
+
+    } else if (str.endsWith("validator", Qt::CaseInsensitive)) {
         QStringList helpers;
         helpers << str + ".h"
                 << str + ".cpp";
@@ -441,7 +474,7 @@ static void printSuccessMessage(const QString &model)
         cmd.waitForFinished();
 
         // `make qmake`
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
         cmd.start("mingw32-make", QStringList("qmake"));
 #else
         cmd.start("make", QStringList("qmake"));
@@ -546,8 +579,8 @@ int main(int argc, char *argv[])
 
             QStringList colls = mongo.getCollectionNames();
             printf("-----------------\nExisting collections:\n");
-            for (QStringListIterator i(colls); i.hasNext(); ) {
-                printf("  %s\n", qPrintable(i.next()));
+            for (auto &col : colls) {
+                printf("  %s\n", qPrintable(col));
             }
             putchar('\n');
         }
@@ -587,11 +620,17 @@ int main(int argc, char *argv[])
             // Create view directory
             QDir dir(D_VIEWS + ((ctrl.contains('_')) ? ctrl.toLower() : fieldNameToVariableName(ctrl).toLower()));
             mkpath(dir, ".");
+            copy(dataDirPath + ".trim_mode", dir);
             break; }
 
         case Model: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             modelgen.generate(D_MODELS);
+            break; }
+
+        case Helper: {
+            HelperGenerator helpergen(args.value(2));
+            helpergen.generate(D_HELPERS);
             break; }
 
         case UserModel: {
@@ -702,8 +741,9 @@ int main(int argc, char *argv[])
         case Delete: {
             // Removes files
             int ret = deleteScaffold(args.value(2));
-            if (ret)
+            if (ret) {
                 return ret;
+            }
             break; }
 
         default:
