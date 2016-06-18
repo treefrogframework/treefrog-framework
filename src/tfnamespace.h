@@ -180,6 +180,7 @@ namespace Tf
         ActionMailerCharacterSet,
         ActionMailerDelayedDelivery,
         ActionMailerSmtpHostName,
+        ActionMailerSmtpMode,
         ActionMailerSmtpPort,
         ActionMailerSmtpAuthentication,
         ActionMailerSmtpUserName,

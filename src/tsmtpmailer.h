@@ -20,9 +20,18 @@ public:
         Plain,
     };
 
+    enum ConnectionType
+    {
+        TcpConnection = 0,
+        SslConnection = 1,
+        TlsConnection = 2      // STARTTLS
+    };
+
     TSmtpMailer(QObject *parent = 0);
     TSmtpMailer(const QString &hostName, quint16 port, QObject *parent = 0);
     ~TSmtpMailer();
+
+    void setSmtpMode(int type);
 
     QString key() const { return "smtp"; }
     QString hostName() const { return smtpHostName; }
@@ -60,6 +69,7 @@ protected:
 private:
     Q_DISABLE_COPY(TSmtpMailer)
 
+    ConnectionType connectionType;
     QTcpSocket *socket;
     QString smtpHostName;
     quint16 smtpPort;
