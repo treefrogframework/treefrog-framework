@@ -14,6 +14,7 @@
 #include <QCoreApplication>
 #include <TCryptMac>
 #include <TPopMailer>
+#include <QSslSocket>
 #include "tsmtpmailer.h"
 #include "tsystemglobal.h"
 
@@ -32,14 +33,33 @@ static QMutex sendMutex;
 */
 
 TSmtpMailer::TSmtpMailer(QObject *parent)
-    : QObject(parent), socket(new QTcpSocket), smtpPort(0), authEnable(false), pop(0)
+    : QObject(parent), smtpPort(0), authEnable(false), pop(0)
 { }
 
 
 TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QTcpSocket), smtpHostName(hostName), smtpPort(port),
+    : QObject(parent), smtpHostName(hostName), smtpPort(port),
       authEnable(false), pop(0)
 { }
+
+void TSmtpMailer::setSmtpMode(int type)
+{
+    if(type == (int)ConnectionType::TcpConnection) //tcp
+    {
+        connectionType = ConnectionType::TcpConnection;
+        socket = new QTcpSocket;
+    }
+    else if(type == (int)ConnectionType::SslConnection)
+    {
+        connectionType = ConnectionType::SslConnection;
+        socket = new QSslSocket;
+    }
+    else if(type == (int)ConnectionType::TlsConnection)
+    {
+        connectionType = ConnectionType::TlsConnection;
+        socket = new QSslSocket;
+    }
+}
 
 
 TSmtpMailer::~TSmtpMailer()
@@ -210,7 +230,18 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 
 bool TSmtpMailer::connectToHost(const QString &hostName, quint16 port)
 {
-    socket->connectToHost(hostName, port);
+//  socket->connectToHost(hostName, port);
+    switch (connectionType)
+    {
+    case TlsConnection:
+    case TcpConnection:
+        socket->connectToHost(hostName, port);
+        break;
+    case SslConnection:
+        ((QSslSocket*) socket)->connectToHostEncrypted(hostName, port);
+        break;
+    }
+
     if (!socket->waitForConnected(5000)) {
         tSystemError("SMTP server connect error: %s", qPrintable(socket->errorString()));
         return false;

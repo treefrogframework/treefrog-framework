@@ -63,6 +63,7 @@ public:
         insert(Tf::ActionMailerCharacterSet, "ActionMailer.CharacterSet");
         insert(Tf::ActionMailerDelayedDelivery, "ActionMailer.DelayedDelivery");
         insert(Tf::ActionMailerSmtpHostName, "ActionMailer.smtp.HostName");
+        insert(Tf::ActionMailerSmtpMode, "ActionMailer.smtp.Mode");
         insert(Tf::ActionMailerSmtpPort, "ActionMailer.smtp.Port");
         insert(Tf::ActionMailerSmtpAuthentication, "ActionMailer.smtp.Authentication");
         insert(Tf::ActionMailerSmtpUserName, "ActionMailer.smtp.UserName");
