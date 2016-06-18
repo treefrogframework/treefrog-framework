@@ -29,9 +29,6 @@ windows {
   win32-msvc* {
     LIBS += advapi32.lib
   }
-} else:macx {
-  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
-  QMAKE_RPATHDIR += @loader_path/../../../../../
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
 

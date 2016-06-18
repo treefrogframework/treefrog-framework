@@ -1,6 +1,7 @@
 TARGET   = treefrog
 TEMPLATE = lib
 CONFIG  += shared console c++11
+CONFIG  -= lib_bundle
 QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
@@ -17,7 +18,7 @@ isEmpty(target.path) {
   windows {
     target.path = C:/TreeFrog/$${VERSION}/bin
   } else:macx {
-    target.path = /Library/Frameworks
+    target.path = /usr/local/lib
   } else:unix {
     target.path = /usr/lib
   }
@@ -37,25 +38,12 @@ windows {
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header script test
-} else:macx {
-  CONFIG += lib_bundle
-  QMAKE_SONAME_PREFIX=@rpath
-  FRAMEWORK_HEADERS.version = Versions
-  FRAMEWORK_HEADERS.files = $$HEADER_FILES $$HEADER_CLASSES
-  FRAMEWORK_HEADERS.files += $$MONGODB_FILES $$MONGODB_CLASSES
-
-  FRAMEWORK_HEADERS.path = Headers
-  FRAMEWORK_TEST.version = Versions
-  FRAMEWORK_TEST.files = $$TEST_FILES $$TEST_CLASSES
-  FRAMEWORK_TEST.path = Headers/TfTest
-  QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS FRAMEWORK_TEST
 } else:unix {
+  macx:QMAKE_SONAME_PREFIX=@rpath
+
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
 
-  isEmpty(header.path) {
-    header.path = /usr/include/treefrog
-  }
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header test
