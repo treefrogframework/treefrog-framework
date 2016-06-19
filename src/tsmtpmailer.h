@@ -6,7 +6,7 @@
 #include <QByteArray>
 #include <TMailMessage>
 
-class QTcpSocket;
+class QSslSocket;
 class TPopMailer;
 
 class T_CORE_EXPORT TSmtpMailer : public QObject
@@ -30,6 +30,7 @@ public:
     quint16 port() const { return smtpPort; }
     void setPort(quint16 port);
     void setAuthenticationEnabled(bool enable);
+    void setStartTlsEnabled(bool enable);
     void setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
@@ -46,6 +47,7 @@ protected:
     bool send();
     bool connectToHost(const QString &hostName, quint16 port);
     bool cmdEhlo();
+    bool cmdStartTls();
     bool cmdAuth();
     bool cmdRset();
     bool cmdMail(const QByteArray &from);
@@ -60,12 +62,14 @@ protected:
 private:
     Q_DISABLE_COPY(TSmtpMailer)
 
-    QTcpSocket *socket;
+    QSslSocket *socket;
     QString smtpHostName;
     quint16 smtpPort;
     TMailMessage mailMessage;
     QStringList  svrAuthMethods;
     bool authEnable;
+    bool tlsEnable;
+    bool tlsAvailable;
     QByteArray userName;
     QByteArray password;
     TPopMailer *pop;
@@ -75,6 +79,12 @@ private:
 inline void TSmtpMailer::setAuthenticationEnabled(bool enable)
 {
     authEnable = enable;
+}
+
+
+inline void TSmtpMailer::setStartTlsEnabled(bool enable)
+{
+    tlsEnable = enable;
 }
 
 

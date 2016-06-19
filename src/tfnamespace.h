@@ -194,6 +194,7 @@ namespace Tf
         RedisSettingsFile,
         LDPreload,
         JavaScriptPath,
+        ActionMailerSmtpEnableSTARTTLS,
     };
 
     // Reason codes why a web socket has been closed
