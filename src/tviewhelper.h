@@ -164,6 +164,8 @@ public:
     QString imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
+    
+    QString scriptTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString tag(const QString &name, const THtmlAttribute &attributes);
 
