@@ -539,7 +539,7 @@ QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &att
   \a src must be one of URL, a absolute path or a relative path. If \a src
   is a relative path, it must exist in the public/js directory.
 */
-QString TViewHelper::jsTag(const QString &src, const THtmlAttribute &attributes) const
+QString TViewHelper::scriptTag(const QString &src, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (!attr.contains("type"))
