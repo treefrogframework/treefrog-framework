@@ -550,6 +550,21 @@ QString TViewHelper::scriptTag(const QString &src, const THtmlAttribute &attribu
 }
 
 /*!
+  Creates a \<script\> script tag with src=\a "src". The
+  \a src must be one of URL, a absolute path or a relative path. If \a src
+  is a relative path, it must exist in the public/js directory.
+*/
+QString TViewHelper::jsTag(const QString &src, const THtmlAttribute &attributes) const
+{
+    THtmlAttribute attr = attributes;
+    if (!attr.contains("type"))
+        attr.prepend("type", "text/javascript");
+
+    attr.prepend("src", cssPath(src));
+    return selfClosingTag("script", attr);
+}
+
+/*!
   Creates and returns a THtmlAttribute object with \a key =\a "value".
 */
 THtmlAttribute TViewHelper::a(const QString &key, const QString &value) const
