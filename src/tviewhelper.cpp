@@ -561,7 +561,7 @@ QString TViewHelper::jsTag(const QString &src, const THtmlAttribute &attributes)
         attr.prepend("type", "text/javascript");
 
     attr.prepend("src", cssPath(src));
-    return selfClosingTag("script", attr);
+    return tag("script", attr, false);
 }
 
 /*!
