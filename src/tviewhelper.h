@@ -165,6 +165,8 @@ public:
 
     QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString scriptTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
+
     QString tag(const QString &name, const THtmlAttribute &attributes);
 
     QString tag(const QString &name, const THtmlAttribute &attributes, bool selfClose);

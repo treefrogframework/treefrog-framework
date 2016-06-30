@@ -524,14 +524,29 @@ QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &media
 QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
-    if (!attr.contains("type"))
+    if (!attr.contains("type")) {
         attr.prepend("type", "text/css");
-
-    if (!attr.contains("rel"))
+    }
+    if (!attr.contains("rel")) {
         attr.prepend("rel", "stylesheet");
-
+    }
     attr.prepend("href", cssPath(src));
     return selfClosingTag("link", attr);
+}
+
+/*!
+  Creates a \<script\> script tag with src=\a "src". The \a src must
+  be one of URL, a absolute path or a relative path. If \a src is a
+  relative path, it must exist in the public/js directory.
+*/
+QString TViewHelper::scriptTag(const QString &src, const THtmlAttribute &attributes) const
+{
+    THtmlAttribute attr = attributes;
+    if (!attr.contains("type")) {
+        attr.prepend("type", "text/javascript");
+    }
+    attr.prepend("src", jsPath(src));
+    return tag("script", attr, QString());
 }
 
 /*!
