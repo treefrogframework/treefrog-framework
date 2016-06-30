@@ -19,7 +19,7 @@
   Constructs a TRedis object.
 */
 TRedis::TRedis()
-    : database(Tf::currentContext()->getKvsDatabase(TKvsDatabase::Redis))
+    : database(Tf::currentDatabaseContext()->getKvsDatabase(TKvsDatabase::Redis))
 { }
 
 /*!
