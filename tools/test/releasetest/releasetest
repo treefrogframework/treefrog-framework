@@ -7,7 +7,8 @@ APPROOT=$BASEDIR/$APPNAME
 WORKDIR=$APPROOT/_work.$$
 DBFILE=$APPROOT/db/dbfile
 RANDOMTXT="1234567890123456asdfghjklLKJHGFDSA_____"
-
+TREEFROG=treefrog
+TSPAWN=tspawn
 
 # Function
 row_count()
@@ -20,28 +21,28 @@ row_count()
 # Create app
 cd $BASEDIR
 if [ -d "$APPNAME" ]; then
-  treefrog -k abort $APPNAME
+  $TREEFROG -k abort $APPNAME
   rm -rf $APPNAME
 fi
 
-tspawn new $APPNAME
+$TSPAWN new $APPNAME
 sqlite3 $DBFILE < create_blog_table.sql || exit
 
 # Build
 cd $APPROOT
-tspawn s blog || exit
-tspawn ms fuga || exit
-tspawn w foo || exit
+$TSPAWN s blog || exit
+$TSPAWN ms fuga || exit
+$TSPAWN w foo || exit
 qmake -r || exit
 make -j4
 make || exit
 
 # Start Check
-treefrog -e dev -d || exit
+$TREEFROG -e dev -d || exit
 sleep 1
-treefrog -k abort || exit
+$TREEFROG -k abort || exit
 sleep 1
-treefrog -e dev -d || exit
+$TREEFROG -e dev -d || exit
 sleep 1
 
 # GET method
@@ -83,7 +84,7 @@ curl  --data-urlencode 'dummy'  http://localhost:8800/blog/remove/2  > remove2 |
 
 # Cleanup
 cd $APPROOT
-treefrog -k stop || exit
+$TREEFROG -k stop || exit
 
 cd $BASEDIR
 rm -rf $WORKDIR

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 WORKDIR=$(cd $(dirname $0) && pwd)
-LD_LIBRARY_PATH=$WORKDIR/..
-export LD_LIBRARY_PATH
+#LD_LIBRARY_PATH=$WORKDIR/..
+#export LD_LIBRARY_PATH
 
 cd $WORKDIR
 
