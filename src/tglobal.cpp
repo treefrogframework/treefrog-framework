@@ -373,6 +373,13 @@ QSqlDatabase &Tf::currentSqlDatabase(int id)
     return currentDatabaseContext()->getSqlDatabase(id);
 }
 
+
+QMap<QString, const QMetaObject*> *Tf::metaObjects()
+{
+    static QMap<QString, const QMetaObject*> metaObjectMap;
+    return &metaObjectMap;
+}
+
 /*!
   Returns the current datetime in the local time zone.
   It provides 1-second accuracy.

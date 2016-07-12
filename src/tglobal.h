@@ -3,12 +3,13 @@
 
 #include <QtGlobal>
 #include <QMetaType>
+#include <QHash>
 #include <TfNamespace>
 #include <cstdint>
 
-#define TF_VERSION_STR "1.12.0"
-#define TF_VERSION_NUMBER 0x011200
-#define TF_SRC_REVISION 1112
+#define TF_VERSION_STR "1.13.0"
+#define TF_VERSION_NUMBER 0x011300
+#define TF_SRC_REVISION 1152
 
 
 #define T_DECLARE_CONTROLLER(TYPE, NAME)  \
@@ -23,7 +24,8 @@
     public:                                                     \
         Static##TYPE##Instance()                                \
         {                                                       \
-            qRegisterMetaType<TYPE>();                          \
+            qRegisterMetaType<TYPE>(); /*TODO: delete this line */ \
+            Tf::metaObjects()->insert(#TYPE, &TYPE::staticMetaObject); \
         }                                                       \
     };                                                          \
     static Static##TYPE##Instance _static##TYPE##Instance;
@@ -169,6 +171,7 @@ namespace Tf
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
+    T_CORE_EXPORT QMap<QString, const QMetaObject*> *metaObjects();
 }
 
 /*!

@@ -22,6 +22,7 @@
     "{\n"                                                                     \
     "    Q_OBJECT\n"                                                          \
     "public:\n"                                                               \
+    "    Q_INVOKABLE\n"                                                       \
     "    %2Controller() { }\n"                                                \
     "    %2Controller(const %2Controller &other);\n"                          \
     "\n"                                                                      \
@@ -167,6 +168,7 @@
     "{\n"                                                                     \
     "    Q_OBJECT\n"                                                          \
     "public:\n"                                                               \
+    "    Q_INVOKABLE\n"                                                       \
     "    %2Controller() { }\n"                                                \
     "    %2Controller(const %2Controller &other);\n"                          \
     "\n"                                                                      \
