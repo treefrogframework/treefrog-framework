@@ -3,7 +3,7 @@
 #include "../../tabstractmodel.h"
 
 
-class Test : public QObject
+class TestFieldnametovariablename : public QObject
 {
     Q_OBJECT
 private slots:
@@ -12,7 +12,7 @@ private slots:
 };
 
 
-void Test::test_data()
+void TestFieldnametovariablename::test_data()
 {
     QTest::addColumn<QString>("field");
     QTest::addColumn<QString>("result");
@@ -34,7 +34,7 @@ void Test::test_data()
     QTest::newRow("15") << "hogeFOsksdhfkhKJHKH_uHHo" << "hogefosksdhfkhkjhkhUhho";
 }
 
-void Test::test()
+void TestFieldnametovariablename::test()
 {
     QFETCH(QString, field);
     QFETCH(QString, result);
@@ -47,5 +47,5 @@ void Test::test()
     // }
 }
 
-QTEST_APPLESS_MAIN(Test)
+QTEST_APPLESS_MAIN(TestFieldnametovariablename)
 #include "main.moc"
