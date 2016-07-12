@@ -19,7 +19,7 @@
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
 static QMap<QString, TJSModule*> jsContexts;
-static QStringList defaultSearchPaths;
+static QStringList defaultPaths;
 static QMutex gMutex(QMutex::Recursive);
 
 
@@ -105,14 +105,14 @@ static bool isCommentPosition(const QString &content, int pos)
   Constructor.
  */
 TJSLoader::TJSLoader(const QString &moduleName, AltJS alt)
-    : module(moduleName), altJs(alt), member(), searchPaths(defaultSearchPaths)
+    : module(moduleName), altJs(alt), member(), searchPaths(defaultPaths)
 { }
 
 /*!
   Constructor.
  */
 TJSLoader::TJSLoader(const QString &defaultMember, const QString &moduleName, AltJS alt)
-    : module(moduleName), altJs(alt), member(defaultMember), searchPaths(defaultSearchPaths)
+    : module(moduleName), altJs(alt), member(defaultMember), searchPaths(defaultPaths)
 { }
 
 /*!
@@ -309,18 +309,21 @@ TJSInstance TJSLoader::loadAsConstructor(const QJSValueList &args) const
 
 void TJSLoader::setSearchPaths(const QStringList &paths)
 {
-    if (!paths.isEmpty()) {
-        searchPaths = paths + searchPaths;
-    }
+    searchPaths = paths + searchPaths;
 }
 
 
 void TJSLoader::setDefaultSearchPaths(const QStringList &paths)
 {
-    if (!paths.isEmpty()) {
-        QMutexLocker lock(&gMutex);
-        defaultSearchPaths = paths + defaultSearchPaths;
-    }
+    QMutexLocker lock(&gMutex);
+    defaultPaths = paths;
+}
+
+
+QStringList TJSLoader::defaultSearchPaths()
+{
+    QMutexLocker lock(&gMutex);
+    return defaultPaths;
 }
 
 

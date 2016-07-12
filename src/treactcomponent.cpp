@@ -16,6 +16,8 @@
 TReactComponent::TReactComponent(const QString &moduleName, const QStringList &searchPaths)
     : jsLoader(new TJSLoader(moduleName, TJSLoader::Jsx)), loadedTime()
 {
+    QStringList paths = searchPaths;
+    paths << TJSLoader::defaultSearchPaths();
     jsLoader->setSearchPaths(searchPaths);
     jsLoader->import("React", "react-with-addons");
     jsLoader->import("ReactDOMServer", "react-dom-server");
@@ -45,7 +47,7 @@ QString TReactComponent::renderToString(const QString &component)
             QFileInfo fi(context->modulePath());
             if (context->modulePath().isEmpty() || (fi.exists() && fi.lastModified() > loadedTime)) {
                 context = jsLoader->load(true);
-                QDateTime::currentDateTime();
+                loadedTime = QDateTime::currentDateTime();
             }
         }
     }

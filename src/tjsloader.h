@@ -26,6 +26,7 @@ public:
 
     void setSearchPaths(const QStringList &paths);
     static void setDefaultSearchPaths(const QStringList &paths);
+    static QStringList defaultSearchPaths();
     static QString compileJsx(const QString &jsx);
 
 protected:
