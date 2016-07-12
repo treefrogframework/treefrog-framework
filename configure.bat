@@ -117,19 +117,6 @@ echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 
 set TFDIR=%TFDIR:\=/%
-:: Builds MongoDB driver
-echo Compiling MongoDB driver library ...
-cd 3rdparty\mongo-c-driver
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
-
-qmake -r %OPT%
-%MAKE% >nul 2>&1
-if ERRORLEVEL 1 (
-  echo Compile failed.
-  echo MongoDB driver not available.
-  exit /b
-)
-cd ..\..
 
 cd src
 if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
