@@ -33,7 +33,7 @@ template <class T>
 inline TDispatcher<T>::TDispatcher(const QString &metaTypeName)
     : metaType(metaTypeName),
       typeId(0),
-      ptr(0)
+      ptr(nullptr)
 { }
 
 template <class T>
@@ -149,6 +149,18 @@ template <class T>
 inline T *TDispatcher<T>::object()
 {
     T_TRACEFUNC("");
+
+    /*  TODO:  Change to use QMetaObject::newInstance()
+    if (!ptr) {
+        const QMetaObject *meta = Tf::metaObjects()->value(metaType);
+        if (meta) {
+            QObject *obj = meta->newInstance();
+            if (obj) {
+                ptr = static_cast<T *>(obj);
+            }
+        }
+    }
+    */
 
     if (!ptr) {
         if (typeId <= 0 && !metaType.isEmpty()) {
