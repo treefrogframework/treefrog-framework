@@ -295,7 +295,7 @@ void THttpSocket::deleteLater()
 THttpSocket *THttpSocket::searchSocket(const QByteArray &uuid)
 {
     mutexMap.lock();
-    THttpSocket *sock = socketMap.value(uuid);
+    THttpSocket *sock = socketMap.value(uuid, nullptr);
     mutexMap.unlock();
     return sock;
 }
@@ -306,4 +306,3 @@ THttpSocket *THttpSocket::searchSocket(const QByteArray &uuid)
   \fn int idleTime() const
   Returns the number of seconds of idle time.
 */
-
