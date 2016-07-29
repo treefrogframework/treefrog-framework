@@ -259,6 +259,12 @@ HEADERS += tprocessinfo.h
 SOURCES += tprocessinfo.cpp
 HEADERS += tbasictimer.h
 SOURCES += tbasictimer.cpp
+HEADERS += thazardpointer.h
+SOURCES += thazardpointer.cpp
+HEADERS += thazardobject.h
+SOURCES += thazardobject.cpp
+HEADERS += thazardpointermanager.h
+SOURCES += thazardpointermanager.cpp
 
 HEADERS += \
            tfnamespace.h \
