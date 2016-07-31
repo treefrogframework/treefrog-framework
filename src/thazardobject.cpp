@@ -4,11 +4,22 @@
 extern THazardPointerManager hazardPointerManager;
 
 
+THazardObject::THazardObject()
+{
+    hazardPointerManager.gc();
+}
+
+
+THazardObject::THazardObject(const THazardObject &)
+{
+    hazardPointerManager.gc();
+}
+
+
 void THazardObject::deleteLater()
 {
-    bool False = false;
-    if (deleted.compare_exchange_strong(False, true)) {
-        hazardPointerManager.gc();
+    if (!deleted.test_and_set(std::memory_order_acquire)) {
         hazardPointerManager.push(this);
-    }
+     }
+    hazardPointerManager.gc();
 }

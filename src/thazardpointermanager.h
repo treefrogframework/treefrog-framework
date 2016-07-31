@@ -6,6 +6,7 @@
 
 class THazardPointerRecord;
 class THazardObject;
+class THazardRemoverThread;
 
 
 class T_CORE_EXPORT THazardPointerManager
@@ -25,10 +26,12 @@ private:
     std::atomic<int> hprCount { 0 };
     std::atomic<THazardObject*> objHead;
     std::atomic<int> objCount { 0 };
-    std::atomic<bool> gcFlag { false };
+    std::atomic_flag gcFlag { ATOMIC_FLAG_INIT };
+    THazardRemoverThread *removerThread { nullptr };
 
     friend class THazardPointer;
     friend class THazardObject;
+    friend class THazardRemoverThread;
 
     // Deleted functions
     THazardPointerManager(const THazardPointerManager &) = delete;

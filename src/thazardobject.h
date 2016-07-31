@@ -8,22 +8,21 @@
 class T_CORE_EXPORT THazardObject
 {
 public:
-    THazardObject() : next(nullptr), deleted(false) {}
-    THazardObject(const THazardObject &) : next(nullptr), deleted(false) {}
-    ~THazardObject() {}
+    THazardObject();
+    THazardObject(const THazardObject &);
+    THazardObject(THazardObject &&) { }
+    virtual ~THazardObject() {}
 
     void deleteLater();
     THazardObject &operator=(const THazardObject &) { return *this; }
+    THazardObject &operator=(THazardObject &&) { return *this; }
 
 private:
     THazardObject *next { nullptr };
-    std::atomic<bool> deleted { false };
+    std::atomic_flag deleted { ATOMIC_FLAG_INIT };
 
     friend class THazardPointerManager;
-
-    // Deleted functions
-    THazardObject(THazardObject &&) = delete;
-    THazardObject &operator=(THazardObject &&) = delete;
+    friend class THazardRemoverThread;
 };
 
 #endif // THAZARDOBJECT_H

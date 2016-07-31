@@ -8,24 +8,42 @@ THazardPointer::THazardPointer()
     : rec(new THazardPointerRecord())
 {
     hazardPointerManager.push(rec);
+    //hazardPointerManager.gcHazardPointers();
+    hazardPointerManager.gc();
 }
 
 
 THazardPointer::~THazardPointer()
 {
-    rec->hazptr.store((const THazardObject*)0x01, std::memory_order_release);
+#if 1
+    //rec->hazptr.store((const THazardObject*)0x01, std::memory_order_release);
+    rec->hazptr.store((const THazardObject*)0x01);
+#else
+    rec->hazptr.fetchAndStoreRelease((THazardObject*)0x01);
+#endif
+    //hazardPointerManager.gcHazardPointers();
+    hazardPointerManager.gc();
 }
 
 
-void THazardPointer::set(const THazardObject *ptr)
+void THazardPointer::set(THazardObject *ptr)
 {
+#if 1
     rec->hazptr.store(ptr, std::memory_order_release);
+#else
+    rec->hazptr.fetchAndStoreRelease(ptr);
+#endif
 }
 
 
 void THazardPointer::clear()
 {
-    rec->hazptr.store(nullptr, std::memory_order_release);
+#if 1
+    //rec->hazptr.store(nullptr, std::memory_order_release);
+    rec->hazptr.store(nullptr);
+#else
+    rec->hazptr.fetchAndStoreRelease(nullptr);
+#endif
 }
 
 

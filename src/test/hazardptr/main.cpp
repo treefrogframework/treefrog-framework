@@ -5,6 +5,8 @@
 #include <thazardobject.h>
 #include "stack.h"
 #include <unistd.h>
+#include <thread>
+
 
 class Box
 {
@@ -31,13 +33,21 @@ public:
     PopThread() { }
 protected:
     void run() {
-        for (int i = 0; i < 1000; i++) {
+        for (;;) {
+            //for (int i = 0; i < 100000; i++) {
             Box box;
-            stackBox.pop(box);
+            if (stackBox.pop(box)) {
+                Q_ASSERT(box.a + box.b == 1000);
+            } else {
+                // std::this_thread::yield();
+                //Tf::msleep(1);
+            }
+            //Tf::msleep(1);
         }
-        qDebug() << stackBox.count();
+        //qDebug() << stackBox.count();
     }
 };
+
 
 class PushThread : public QThread
 {
@@ -46,18 +56,29 @@ public:
     PushThread() { }
 protected:
     void run() {
-        for (int i = 0; i < 1000; i++) {
+        for (;;) {
+            //for (int i = 0; i < 100000; i++) {
             Box box;
             if (stackBox.peak(box)) {
+                Q_ASSERT(box.a + box.b == 1000);
+
                 box.a++;
+                Tf::msleep(1);
                 box.b--;
             } else {
                 box.a = 1000;
                 box.b = 0;
             }
-            stackBox.push(box);
+
+            if (stackBox.count() < 100) {
+                stackBox.push(box);
+                std::this_thread::yield();
+                //Tf::msleep(1);
+            } else {
+                //Tf::msleep(1);
+            }
         }
-        qDebug() << stackBox.count();
+        //qDebug() << stackBox.count();
     }
 };
 
@@ -65,6 +86,10 @@ protected:
 class TestHazardPointer : public QObject
 {
     Q_OBJECT
+    //public slots:
+    void startPopThread();
+    void startPushThread();
+
 private slots:
     void push_pop();
 };
@@ -72,22 +97,39 @@ private slots:
 
 void TestHazardPointer::push_pop()
 {
-    for (int i = 0; i < 1000; i++) {
-        auto *threada = new PushThread();
-
-        connect(threada, SIGNAL(finished()), threada, SLOT(deleteLater()));
-
-        threada->start();
+    for (int i = 0; i < 1; i++) {
+        startPopThread();
+        startPushThread();
     }
-    for (int i = 0; i < 1000; i++) {
-        auto *threadb = new PopThread();
 
-        connect(threadb, SIGNAL(finished()), threadb, SLOT(deleteLater()));
-
-        threadb->start();
+    QEventLoop eventLoop;
+    for (;;) {
+        eventLoop.processEvents();
+        Tf::msleep(1);
     }
-    sleep(20);
 }
 
-QTEST_APPLESS_MAIN(TestHazardPointer)
+
+void TestHazardPointer::startPopThread()
+{
+    auto *threada = new PushThread();
+    connect(threada, SIGNAL(finished()), threada, SLOT(deleteLater()));
+    //connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
+    threada->start();
+    //threada->wait(10);
+}
+
+
+void TestHazardPointer::startPushThread()
+{
+    auto *threadb = new PopThread();
+    connect(threadb, SIGNAL(finished()), threadb, SLOT(deleteLater()));
+    //connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));
+    threadb->start();
+    //threadb->wait(10);
+}
+
+
+//QTEST_APPLESS_MAIN(TestHazardPointer)
+QTEST_MAIN(TestHazardPointer)
 #include "main.moc"
