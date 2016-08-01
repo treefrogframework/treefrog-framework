@@ -33,18 +33,13 @@ public:
     PopThread() { }
 protected:
     void run() {
-        for (;;) {
-            //for (int i = 0; i < 100000; i++) {
+        //for (;;) {
+        for (int i = 0; i < 100000; i++) {
             Box box;
             if (stackBox.pop(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
-            } else {
-                // std::this_thread::yield();
-                //Tf::msleep(1);
             }
-            //Tf::msleep(1);
         }
-        //qDebug() << stackBox.count();
     }
 };
 
@@ -56,14 +51,14 @@ public:
     PushThread() { }
 protected:
     void run() {
-        for (;;) {
-            //for (int i = 0; i < 100000; i++) {
+        //for (;;) {
+        for (int i = 0; i < 100000; i++) {
             Box box;
             if (stackBox.peak(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
 
                 box.a++;
-                Tf::msleep(1);
+                std::this_thread::yield();
                 box.b--;
             } else {
                 box.a = 1000;
@@ -72,13 +67,11 @@ protected:
 
             if (stackBox.count() < 100) {
                 stackBox.push(box);
-                std::this_thread::yield();
-                //Tf::msleep(1);
             } else {
-                //Tf::msleep(1);
+                // printf("## push stack count: %d\n", stackBox.count());
+                std::this_thread::yield();
             }
         }
-        //qDebug() << stackBox.count();
     }
 };
 
@@ -86,7 +79,7 @@ protected:
 class TestHazardPointer : public QObject
 {
     Q_OBJECT
-    //public slots:
+public slots:
     void startPopThread();
     void startPushThread();
 
@@ -97,7 +90,8 @@ private slots:
 
 void TestHazardPointer::push_pop()
 {
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 1000; i++) {
+        startPopThread();
         startPopThread();
         startPushThread();
     }
@@ -112,9 +106,9 @@ void TestHazardPointer::push_pop()
 
 void TestHazardPointer::startPopThread()
 {
-    auto *threada = new PushThread();
+    auto *threada = new PopThread();
     connect(threada, SIGNAL(finished()), threada, SLOT(deleteLater()));
-    //connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
+    connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
     threada->start();
     //threada->wait(10);
 }
@@ -122,9 +116,9 @@ void TestHazardPointer::startPopThread()
 
 void TestHazardPointer::startPushThread()
 {
-    auto *threadb = new PopThread();
+    auto *threadb = new PushThread();
     connect(threadb, SIGNAL(finished()), threadb, SLOT(deleteLater()));
-    //connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));
+    connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));
     threadb->start();
     //threadb->wait(10);
 }

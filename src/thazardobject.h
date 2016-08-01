@@ -10,7 +10,7 @@ class T_CORE_EXPORT THazardObject
 public:
     THazardObject();
     THazardObject(const THazardObject &);
-    THazardObject(THazardObject &&) { }
+    THazardObject(THazardObject &&) {}
     virtual ~THazardObject() {}
 
     void deleteLater();

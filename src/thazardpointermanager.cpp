@@ -10,7 +10,7 @@ THazardPointerManager hazardPointerManager;
 class THazardRemoverThread : public QThread
 {
 public:
-    THazardRemoverThread() : QThread() { setPriority(QThread::TimeCriticalPriority); }
+    THazardRemoverThread() : QThread() {  }
 protected:
     void run();
 };
@@ -19,71 +19,53 @@ protected:
 void THazardRemoverThread::run()
 {
     auto &hpm = hazardPointerManager;
-    int loopcnt = 0;
-printf("I'm in.... (%d)\n", loopcnt);
-    int startObjCnt = hpm.objCount.load(std::memory_order_acquire);
-    //int startHprCnt = hpm.hprCount.load(std::memory_order_acquire);
 
-    for(;;) {
+    printf("I'm in.  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(std::memory_order_acquire), hpm.hprCount.load(std::memory_order_acquire));
 
-    // printf("I'm in.... (%d)\n", loopcnt);
-    // if (loopcnt > 10) {
-    // }
-printf("I'm in.  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(std::memory_order_acquire), hpm.hprCount.load(std::memory_order_acquire));
+    for (;;) {
+        int startObjCnt = hpm.objCount.load(std::memory_order_acquire);
+        int startHprCnt = hpm.hprCount.load(std::memory_order_acquire);
 
-    THazardObject *prevObj = nullptr;
-    THazardObject *crtObj = hpm.objHead.load(std::memory_order_acquire);
-    THazardPointerRecord *hprhead = hpm.hprHead.load(std::memory_order_acquire);
+        THazardObject *prevObj = nullptr;
+        THazardObject *crtObj = hpm.objHead.load(std::memory_order_acquire);
+        THazardPointerRecord *hprhead = hpm.hprHead.load(std::memory_order_acquire);
 
-    while (crtObj) {
-        THazardPointerRecord *hpr = hprhead;
-        THazardPointerRecord *prevHpr = nullptr;
-        const void *guardp = nullptr;
+        while (crtObj) {
+            THazardPointerRecord *hpr = hprhead;
+            THazardPointerRecord *prevHpr = nullptr;
+            const void *guardp = nullptr;
 
-        while (hpr) {
-#if 0
-            guardp = hpr->hazptr.load(std::memory_order_acquire);
-#else
-            guardp = hpr->hazptr;
-#endif
-
-            if (guardp == (void*)0x01) {  // unused pointer
-                if (hpm.pop(hpr, prevHpr)) {
-//printf("delete hzp  %p\n", hzp);
-                    delete hpr;
-                    hpr = prevHpr->next;
-                    continue;
+            while (hpr) {
+                guardp = hpr->hazptr.load(std::memory_order_acquire);
+                if (guardp == (void*)0x01) {  // unused pointer
+                    if (hpm.pop(hpr, prevHpr)) {
+                        delete hpr;
+                        hpr = prevHpr->next;
+                        continue;
+                    }
                 }
+                if (crtObj == guardp) {
+                    break;
+                }
+                prevHpr = hpr;
+                hpr = hpr->next;
             }
-            if (crtObj == guardp) {
-//printf("guard object %p  hzp cnt:%d  obj cnt:%d\n", obj, hprCount.load(), objCount.load());
-                break;
+
+            if (crtObj != guardp && hpm.pop(crtObj, prevObj)) {
+                delete crtObj;
+                crtObj = prevObj->next;
+            } else {
+                prevObj = crtObj;
+                crtObj = crtObj->next;
             }
-            prevHpr = hpr;
-            hpr = hpr->next;
         }
 
-        if (crtObj != guardp && hpm.pop(crtObj, prevObj)) {
-            // static int cnt = 0;
-            // printf("deleted obj cnt=%d  remain:%d\n", ++cnt, hpm.objCount.load());
-
-            delete crtObj;
-            crtObj = prevObj->next;
-        } else {
-            prevObj = crtObj;
-            crtObj = crtObj->next;
+        int crtObjCnt = hpm.objCount.load(std::memory_order_acquire);
+        int crtHprCnt = hpm.hprCount.load(std::memory_order_acquire);
+        if (crtObjCnt < startObjCnt || crtObjCnt < 10 || crtHprCnt < startHprCnt) {
+            break;
         }
-        //       printf("################# next:%p  obj-cnt:%d  hzp cnt:%d\n", obj, objCount.load(), hprCount.load());
     }
-
-    int cntCnt = hpm.objCount.load(std::memory_order_acquire);
-    if (cntCnt <= startObjCnt || cntCnt < 10) {
-        break;
-    }
-    //Tf::msleep(1);
-    }
-    // unlock
-    //hpm.gcFlag.clear(std::memory_order_release);
     printf("I'm out  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(std::memory_order_acquire), hpm.hprCount.load(std::memory_order_acquire));
 }
 
@@ -131,10 +113,10 @@ void THazardPointerManager::push(THazardObject* obj)
     for (;;) {
         int objcnt = objCount.load(std::memory_order_acquire);
         int hzcnt = hprCount.load(std::memory_order_acquire);
-        if (objcnt < hzcnt * 5) {
+        if (objcnt < (hzcnt + 1) * 5) {
             break;
         }
-        QThread::yieldCurrentThread();
+        gc();
     }
 }
 
@@ -153,32 +135,6 @@ bool THazardPointerManager::pop(THazardObject *obj, THazardObject *prev)
 void THazardPointerManager::gc()
 {
     if (!removerThread->isRunning()) {
-        removerThread->start();
+        removerThread->start(QThread::TimeCriticalPriority);
     }
 }
-
-
-// void THazardPointerManager::gcHazardPointers()
-// {
-//     if (gcFlag.test_and_set(std::memory_order_acquire)) {
-//         return;
-//     }
-
-//     THazardPointerRecord *prevHpr = nullptr;
-//     THazardPointerRecord *hpr = hprHead.load(std::memory_order_acquire);
-//     while (hpr) {
-//         if (hpr->hazptr.load(std::memory_order_acquire) == (void*)0x01) {  // unused pointer
-//             if (pop(hpr, prevHpr)) {
-//                 delete hpr;
-//                 hpr = prevHpr->next;
-//                 continue;
-//             }
-//         }
-//         prevHpr = hpr;
-//         hpr = hpr->next;
-// //printf("gcHazardPointers prev:%p  cur:%p\n", prevHpr, hpr);
-//     }
-
-//     // unlock
-//     gcFlag.clear();
-// }

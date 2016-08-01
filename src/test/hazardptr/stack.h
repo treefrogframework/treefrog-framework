@@ -37,7 +37,6 @@ inline void stack<T>::push(const T &val)
 #if 1
     auto *pnode = new Node(val);
     do {
-  printf("##2\n");
         pnode->next = head.load(std::memory_order_acquire);
     } while (!head.compare_exchange_weak(pnode->next, pnode));
     ++cnt;
@@ -61,8 +60,9 @@ inline bool stack<T>::pop(T &val)
     //thread_local THazardPointer hzptr;
     Node *pnode;
 #if 1
+//    printf("##0\n");
     while ((pnode = hzptr.guard<Node>(&head))) {
-        printf("##\n");
+//        printf("##1\n");
         if (head.compare_exchange_weak(pnode, pnode->next)) {
             break;
         }
@@ -92,20 +92,9 @@ inline bool stack<T>::peak(T &val)
 // THazardPointer hzptr;
     Node *pnode;
 #if 1
-    while ((pnode = hzptr.guard<Node>(&head))) {
-        auto next = pnode->next;
-  printf("##1\n");
-        if (head.compare_exchange_weak(pnode, next)) {
-            break;
-        }
-    }
+    pnode = hzptr.guard<Node>(&head);
 #else
-    while ((pnode = hzptr.guard<Node>(&head))) {
-        auto next = pnode->next;
-        if (head.testAndSetAcquire(pnode, next)) {
-            break;
-        }
-    }
+    pnode = hzptr.guard<Node>(&head);
 #endif
 
     if (pnode) {

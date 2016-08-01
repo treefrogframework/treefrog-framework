@@ -26,7 +26,6 @@ private:
     std::atomic<int> hprCount { 0 };
     std::atomic<THazardObject*> objHead;
     std::atomic<int> objCount { 0 };
-    std::atomic_flag gcFlag { ATOMIC_FLAG_INIT };
     THazardRemoverThread *removerThread { nullptr };
 
     friend class THazardPointer;
