@@ -10,6 +10,7 @@
 # include <TJsonUtil>
 #endif
 #include <tglobal.h>
+#include <tatomicptr.h>
 #include "blog.h"
 #include "blogobject.h"
 #include "foo.h"
@@ -154,6 +155,20 @@ void build_check_TAtomicQueue()
     queue.dequeue();
     queue.wait(0);
 }
+
+void atomic_ptr()
+{
+    Foo *foo = new Foo();
+    TAtomicPtr<Foo> ptr(foo);
+    TAtomicPtr<Foo> ptr2(ptr);
+    foo = ptr2;
+    ptr2.load();
+    ptr.store(foo);
+    ptr.compareExchange(foo, nullptr);
+    ptr = ptr2;
+    Tf::threadFence();
+}
+
 
 int main()
 {

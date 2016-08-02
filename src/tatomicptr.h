@@ -3,6 +3,14 @@
 
 #include <atomic>
 
+namespace Tf
+{
+    inline void threadFence()
+    {
+        atomic_thread_fence(std::memory_order_seq_cst);
+    }
+}
+
 
 template <class T>
 class TAtomicPtr
@@ -18,8 +26,6 @@ public:
     bool compareExchange(T *expected, T *newValue);
     TAtomicPtr<T> &operator=(T *value);
     TAtomicPtr<T> &operator=(const TAtomicPtr<T> &other);
-
-    static void threadFence();
 
 private:
     std::atomic<T*> atomicPtr { nullptr };
@@ -38,7 +44,7 @@ inline TAtomicPtr<T>::TAtomicPtr(T *value)
 
 template <class T>
 inline TAtomicPtr<T>::TAtomicPtr(const TAtomicPtr<T> &other)
-    : atomicPtr(other.atomicPtr)
+    : atomicPtr(other.atomicPtr.load())
 { }
 
 
