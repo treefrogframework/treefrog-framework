@@ -1,8 +1,9 @@
 #ifndef THAZARDPOINTERMANAGER_H
 #define THAZARDPOINTERMANAGER_H
 
-#include <atomic>
 #include <TGlobal>
+#include <QAtomicInt>
+#include "tatomicptr.h"
 
 class THazardPointerRecord;
 class THazardObject;
@@ -22,10 +23,10 @@ private:
     bool pop(THazardObject *ptr, THazardObject *prev);
     void gc();
 
-    std::atomic<THazardPointerRecord*> hprHead;
-    std::atomic<int> hprCount { 0 };
-    std::atomic<THazardObject*> objHead;
-    std::atomic<int> objCount { 0 };
+    TAtomicPtr<THazardPointerRecord> hprHead;
+    QAtomicInt hprCount { 0 };
+    TAtomicPtr<THazardObject> objHead;
+    QAtomicInt objCount { 0 };
     THazardRemoverThread *removerThread { nullptr };
 
     friend class THazardPointer;

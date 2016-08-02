@@ -1,6 +1,7 @@
-#include <atomic>
+#include <QAtomicInt>
 #include "thazardobject.h"
 #include "thazardpointer.h"
+#include "tatomicptr.h"
 
 static thread_local THazardPointer hzptr;
 
@@ -14,13 +15,8 @@ template <class T> class stack
         Node(const T &v) : value(v) { }
     };
 
-#if 1
-    std::atomic<Node*> head { nullptr };
-    std::atomic<int> cnt { 0 };
-#else
-    QAtomicPointer<Node> head { nullptr };
+    TAtomicPtr<Node> head { nullptr };
     QAtomicInt cnt { 0 };
-#endif
 
 public:
     stack() { }
@@ -34,23 +30,11 @@ public:
 template <class T>
 inline void stack<T>::push(const T &val)
 {
-#if 1
     auto *pnode = new Node(val);
     do {
-        pnode->next = head.load(std::memory_order_acquire);
-    } while (!head.compare_exchange_weak(pnode->next, pnode));
+        pnode->next = head.load();
+    } while (!head.compareExchange(pnode->next, pnode));
     ++cnt;
-#else
-    auto *pnode = new Node(val);
-
-    // static int cnt = 0;
-    // printf("new obj cnt=%d\n", ++cnt);
-
-    do {
-        pnode->next = (Node*)head;
-    } while (!head.testAndSetAcquire(pnode->next, pnode));
-    cnt.fetchAndAddOrdered(1);
-#endif
 }
 
 
@@ -59,27 +43,17 @@ inline bool stack<T>::pop(T &val)
 {
     //thread_local THazardPointer hzptr;
     Node *pnode;
-#if 1
-//    printf("##0\n");
     while ((pnode = hzptr.guard<Node>(&head))) {
-//        printf("##1\n");
-        if (head.compare_exchange_weak(pnode, pnode->next)) {
+        if (head.compareExchange(pnode, pnode->next)) {
             break;
         }
     }
-#else
-    while ((pnode = hzptr.guard<Node>(&head))) {
-        if (head.testAndSetOrdered(pnode, pnode->next)) {
-            break;
-        }
-    }
-#endif
+
     if (pnode) {
         val = pnode->value;
         pnode->next = nullptr;
         pnode->deleteLater();
         --cnt;
-        //cnt.fetchAndAddOrdered(-1);
     }
     hzptr.clear();
     return (bool)pnode;
@@ -91,11 +65,7 @@ inline bool stack<T>::peak(T &val)
 {
 // THazardPointer hzptr;
     Node *pnode;
-#if 1
     pnode = hzptr.guard<Node>(&head);
-#else
-    pnode = hzptr.guard<Node>(&head);
-#endif
 
     if (pnode) {
         val = pnode->value;

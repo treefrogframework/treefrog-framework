@@ -14,18 +14,18 @@ THazardPointer::THazardPointer()
 
 THazardPointer::~THazardPointer()
 {
-    rec->hazptr.store((THazardObject*)0x01, std::memory_order_release);
+    rec->hazptr.store((THazardObject*)0x01);
     hazardPointerManager.gc();
 }
 
 
 void THazardPointer::guard(THazardObject *ptr)
 {
-    rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask), std::memory_order_release);
+    rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask));
 }
 
 
 void THazardPointer::clear()
 {
-    rec->hazptr.store(nullptr, std::memory_order_release);
+    rec->hazptr.store(nullptr);
 }

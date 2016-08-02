@@ -95,10 +95,10 @@ void TestHazardPointer::push_pop()
 
     QElapsedTimer timer;
     timer.start();
+
     QEventLoop eventLoop;
     while (timer.elapsed() < 5000) {
         eventLoop.processEvents();
-        Tf::msleep(1);
     }
     _exit(0);
 }
