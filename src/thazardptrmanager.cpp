@@ -1,10 +1,10 @@
-#include "thazardpointermanager.h"
-#include "thazardpointer.h"
+#include "thazardptrmanager.h"
+#include "thazardptr.h"
 #include "thazardobject.h"
 #include <QThread>
 
 
-THazardPointerManager hazardPointerManager;
+THazardPtrManager hazardPtrManager;
 
 
 class THazardRemoverThread : public QThread
@@ -18,8 +18,8 @@ protected:
 
 void THazardRemoverThread::run()
 {
-    auto &hpm = hazardPointerManager;
-    printf("I'm in.  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(), hpm.hprCount.load());
+    auto &hpm = hazardPtrManager;
+    //printf("I'm in.  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(), hpm.hprCount.load());
 
     for (;;) {
         int startObjCnt = hpm.objCount.load();
@@ -27,11 +27,11 @@ void THazardRemoverThread::run()
 
         THazardObject *prevObj = nullptr;
         THazardObject *crtObj = hpm.objHead.load();
-        THazardPointerRecord *hprhead = hpm.hprHead.load();
+        THazardPtrRecord *hprhead = hpm.hprHead.load();
 
         while (crtObj) {
-            THazardPointerRecord *hpr = hprhead;
-            THazardPointerRecord *prevHpr = nullptr;
+            THazardPtrRecord *hpr = hprhead;
+            THazardPtrRecord *prevHpr = nullptr;
             const void *guardp = nullptr;
 
             while (hpr) {
@@ -65,23 +65,23 @@ void THazardRemoverThread::run()
             break;
         }
     }
-    printf("I'm out  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(), hpm.hprCount.load());
+    //printf("I'm out  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(), hpm.hprCount.load());
 }
 
 
-THazardPointerManager::THazardPointerManager()
+THazardPtrManager::THazardPtrManager()
     : removerThread(new THazardRemoverThread())
 { }
 
 
-THazardPointerManager::~THazardPointerManager()
+THazardPtrManager::~THazardPtrManager()
 {
     removerThread->wait();
     delete removerThread;
 }
 
 
-void THazardPointerManager::push(THazardPointerRecord *ptr)
+void THazardPtrManager::push(THazardPtrRecord *ptr)
 {
     do {
         ptr->next = hprHead.load();
@@ -90,7 +90,7 @@ void THazardPointerManager::push(THazardPointerRecord *ptr)
 }
 
 
-bool THazardPointerManager::pop(THazardPointerRecord *ptr, THazardPointerRecord *prev)
+bool THazardPtrManager::pop(THazardPtrRecord *ptr, THazardPtrRecord *prev)
 {
     if (ptr && prev) {
         prev->next = ptr->next;
@@ -101,7 +101,7 @@ bool THazardPointerManager::pop(THazardPointerRecord *ptr, THazardPointerRecord 
 }
 
 
-void THazardPointerManager::push(THazardObject* obj)
+void THazardPtrManager::push(THazardObject* obj)
 {
     do {
         obj->next = objHead.load();
@@ -120,7 +120,7 @@ void THazardPointerManager::push(THazardObject* obj)
 }
 
 
-bool THazardPointerManager::pop(THazardObject *obj, THazardObject *prev)
+bool THazardPtrManager::pop(THazardObject *obj, THazardObject *prev)
 {
     if (obj && prev) {
         prev->next = obj->next;
@@ -131,7 +131,7 @@ bool THazardPointerManager::pop(THazardObject *obj, THazardObject *prev)
 }
 
 
-void THazardPointerManager::gc()
+void THazardPtrManager::gc()
 {
     if (!removerThread->isRunning()) {
         removerThread->start(QThread::TimeCriticalPriority);

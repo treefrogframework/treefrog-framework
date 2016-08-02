@@ -1,7 +1,7 @@
 #include <QTest>
 #include <QThread>
 #include <QDebug>
-#include <thazardpointer.h>
+#include <thazardptr.h>
 #include <thazardobject.h>
 #include "stack.h"
 #include <unistd.h>

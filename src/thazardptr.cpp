@@ -1,31 +1,31 @@
-#include "thazardpointer.h"
-#include "thazardpointermanager.h"
+#include "thazardptr.h"
+#include "thazardptrmanager.h"
 
-extern THazardPointerManager hazardPointerManager;
+extern THazardPtrManager hazardPtrManager;
 
 
-THazardPointer::THazardPointer()
-    : rec(new THazardPointerRecord())
+THazardPtr::THazardPtr()
+    : rec(new THazardPtrRecord())
 {
-    hazardPointerManager.push(rec);
-    hazardPointerManager.gc();
+    hazardPtrManager.push(rec);
+    hazardPtrManager.gc();
 }
 
 
-THazardPointer::~THazardPointer()
+THazardPtr::~THazardPtr()
 {
     rec->hazptr.store((THazardObject*)0x01);
-    hazardPointerManager.gc();
+    hazardPtrManager.gc();
 }
 
 
-void THazardPointer::guard(THazardObject *ptr)
+void THazardPtr::guard(THazardObject *ptr)
 {
     rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask));
 }
 
 
-void THazardPointer::clear()
+void THazardPtr::clear()
 {
     rec->hazptr.store(nullptr);
 }

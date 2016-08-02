@@ -1,9 +1,9 @@
 #include <QAtomicInt>
 #include "thazardobject.h"
-#include "thazardpointer.h"
+#include "thazardptr.h"
 #include "tatomicptr.h"
 
-static thread_local THazardPointer hzptr;
+static thread_local THazardPtr hzptr;
 
 
 template <class T> class stack
@@ -41,7 +41,6 @@ inline void stack<T>::push(const T &val)
 template <class T>
 inline bool stack<T>::pop(T &val)
 {
-    //thread_local THazardPointer hzptr;
     Node *pnode;
     while ((pnode = hzptr.guard<Node>(&head))) {
         if (head.compareExchange(pnode, pnode->next)) {
@@ -63,7 +62,6 @@ inline bool stack<T>::pop(T &val)
 template <class T>
 inline bool stack<T>::peak(T &val)
 {
-// THazardPointer hzptr;
     Node *pnode;
     pnode = hzptr.guard<Node>(&head);
 

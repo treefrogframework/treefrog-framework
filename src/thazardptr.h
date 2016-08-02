@@ -1,48 +1,48 @@
-#ifndef THAZARDPOINTER_H
-#define THAZARDPOINTER_H
+#ifndef THAZARDPTR_H
+#define THAZARDPTR_H
 
 #include <TGlobal>
 #include "tatomicptr.h"
 
 class THazardObject;
-class THazardPointerRecord;
+class THazardPtrRecord;
 
 
-class T_CORE_EXPORT THazardPointer
+class T_CORE_EXPORT THazardPtr
 {
 public:
-    THazardPointer();
-    ~THazardPointer();
+    THazardPtr();
+    ~THazardPtr();
 
     template <typename T> T *guard(TAtomicPtr<T> *src);
     void guard(THazardObject *ptr);
     void clear();
 
 private:
-    THazardPointerRecord *rec;
+    THazardPtrRecord *rec;
 
     enum { Mask = 0x3 };
-    friend class THazardPointerManager;
+    friend class THazardPtrManager;
 };
 
 
-class T_CORE_EXPORT THazardPointerRecord
+class T_CORE_EXPORT THazardPtrRecord
 {
 public:
-    THazardPointerRecord() { }
-    ~THazardPointerRecord() { }
+    THazardPtrRecord() { }
+    ~THazardPtrRecord() { }
 
     TAtomicPtr<THazardObject> hazptr { nullptr };
-    THazardPointerRecord *next { nullptr };
+    THazardPtrRecord *next { nullptr };
 };
 
 
 template <typename T>
-inline T *THazardPointer::guard(TAtomicPtr<T>  *src)
+inline T *THazardPtr::guard(TAtomicPtr<T>  *src)
 {
     T *ptr = src->load();
     rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask));  // 4byte alignment
     return ptr;
 }
 
-#endif // THAZARDPOINTER_H
+#endif // THAZARDPTR_H

@@ -1,25 +1,25 @@
 #include "thazardobject.h"
-#include "thazardpointermanager.h"
+#include "thazardptrmanager.h"
 
-extern THazardPointerManager hazardPointerManager;
+extern THazardPtrManager hazardPtrManager;
 
 
 THazardObject::THazardObject()
 {
-    hazardPointerManager.gc();
+    hazardPtrManager.gc();
 }
 
 
 THazardObject::THazardObject(const THazardObject &)
 {
-    hazardPointerManager.gc();
+    hazardPtrManager.gc();
 }
 
 
 void THazardObject::deleteLater()
 {
     if (!deleted.test_and_set(std::memory_order_acquire)) {
-        hazardPointerManager.push(this);
+        hazardPtrManager.push(this);
      }
-    hazardPointerManager.gc();
+    hazardPtrManager.gc();
 }

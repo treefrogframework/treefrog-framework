@@ -261,12 +261,12 @@ HEADERS += tbasictimer.h
 SOURCES += tbasictimer.cpp
 HEADERS += tatomicptr.h
 SOURCES += tatomicptr.cpp
-HEADERS += thazardpointer.h
-SOURCES += thazardpointer.cpp
+HEADERS += thazardptr.h
+SOURCES += thazardptr.cpp
 HEADERS += thazardobject.h
 SOURCES += thazardobject.cpp
-HEADERS += thazardpointermanager.h
-SOURCES += thazardpointermanager.cpp
+HEADERS += thazardptrmanager.h
+SOURCES += thazardptrmanager.cpp
 
 HEADERS += \
            tfnamespace.h \

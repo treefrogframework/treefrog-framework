@@ -21,7 +21,7 @@ private:
     THazardObject *next { nullptr };
     std::atomic_flag deleted { ATOMIC_FLAG_INIT };
 
-    friend class THazardPointerManager;
+    friend class THazardPtrManager;
     friend class THazardRemoverThread;
 };
 

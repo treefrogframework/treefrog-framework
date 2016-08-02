@@ -1,43 +1,43 @@
-#ifndef THAZARDPOINTERMANAGER_H
-#define THAZARDPOINTERMANAGER_H
+#ifndef THAZARDPTRMANAGER_H
+#define THAZARDPTRMANAGER_H
 
 #include <TGlobal>
 #include <QAtomicInt>
 #include "tatomicptr.h"
 
-class THazardPointerRecord;
+class THazardPtrRecord;
 class THazardObject;
 class THazardRemoverThread;
 
 
-class T_CORE_EXPORT THazardPointerManager
+class T_CORE_EXPORT THazardPtrManager
 {
 public:
-    THazardPointerManager();
-    ~THazardPointerManager();
+    THazardPtrManager();
+    ~THazardPtrManager();
 
 private:
-    void push(THazardPointerRecord *ptr);
-    bool pop(THazardPointerRecord *ptr, THazardPointerRecord *prev);
+    void push(THazardPtrRecord *ptr);
+    bool pop(THazardPtrRecord *ptr, THazardPtrRecord *prev);
     void push(THazardObject *obj);
     bool pop(THazardObject *ptr, THazardObject *prev);
     void gc();
 
-    TAtomicPtr<THazardPointerRecord> hprHead;
+    TAtomicPtr<THazardPtrRecord> hprHead;
     QAtomicInt hprCount { 0 };
     TAtomicPtr<THazardObject> objHead;
     QAtomicInt objCount { 0 };
     THazardRemoverThread *removerThread { nullptr };
 
-    friend class THazardPointer;
+    friend class THazardPtr;
     friend class THazardObject;
     friend class THazardRemoverThread;
 
     // Deleted functions
-    THazardPointerManager(const THazardPointerManager &) = delete;
-    THazardPointerManager(THazardPointerManager &&) = delete;
-    THazardPointerManager &operator=(const THazardPointerManager &) = delete;
-    THazardPointerManager &operator=(THazardPointerManager &&) = delete;
+    THazardPtrManager(const THazardPtrManager &) = delete;
+    THazardPtrManager(THazardPtrManager &&) = delete;
+    THazardPtrManager &operator=(const THazardPtrManager &) = delete;
+    THazardPtrManager &operator=(THazardPtrManager &&) = delete;
 };
 
-#endif // THAZARDPOINTERMANAGER_H
+#endif // THAZARDPTRMANAGER_H
