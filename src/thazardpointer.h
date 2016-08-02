@@ -21,6 +21,7 @@ public:
 private:
     THazardPointerRecord *rec;
 
+    enum { Mask = 0x3 };
     friend class THazardPointerManager;
 };
 
@@ -31,7 +32,7 @@ public:
     THazardPointerRecord() { }
     ~THazardPointerRecord() { }
 
-    std::atomic<const THazardObject*> hazptr { nullptr };
+    std::atomic<THazardObject*> hazptr { nullptr };
     THazardPointerRecord *next { nullptr };
 };
 
@@ -40,7 +41,7 @@ template <typename T>
 inline T *THazardPointer::guard(std::atomic<T*> *src)
 {
     T *ptr = src->load(std::memory_order_acquire);
-    rec->hazptr.store(ptr, std::memory_order_release);
+    rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask), std::memory_order_release);  // 4byte alignment
     return ptr;
 }
 

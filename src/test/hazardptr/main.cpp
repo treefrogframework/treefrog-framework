@@ -5,7 +5,6 @@
 #include <thazardobject.h>
 #include "stack.h"
 #include <unistd.h>
-#include <thread>
 
 
 class Box
@@ -34,7 +33,7 @@ public:
 protected:
     void run() {
         //for (;;) {
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 500000; i++) {
             Box box;
             if (stackBox.pop(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
@@ -52,13 +51,13 @@ public:
 protected:
     void run() {
         //for (;;) {
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 500000; i++) {
             Box box;
             if (stackBox.peak(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
 
                 box.a++;
-                std::this_thread::yield();
+                QThread::yieldCurrentThread();
                 box.b--;
             } else {
                 box.a = 1000;
@@ -67,9 +66,6 @@ protected:
 
             if (stackBox.count() < 100) {
                 stackBox.push(box);
-            } else {
-                // printf("## push stack count: %d\n", stackBox.count());
-                std::this_thread::yield();
             }
         }
     }
@@ -90,40 +86,41 @@ private slots:
 
 void TestHazardPointer::push_pop()
 {
+    // Starts threads
     for (int i = 0; i < 1000; i++) {
         startPopThread();
         startPopThread();
         startPushThread();
     }
 
+    QElapsedTimer timer;
+    timer.start();
     QEventLoop eventLoop;
-    for (;;) {
+    while (timer.elapsed() < 5000) {
         eventLoop.processEvents();
         Tf::msleep(1);
     }
+    _exit(0);
 }
 
 
 void TestHazardPointer::startPopThread()
 {
     auto *threada = new PopThread();
-    connect(threada, SIGNAL(finished()), threada, SLOT(deleteLater()));
     connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
+    connect(threada, SIGNAL(finished()), threada, SLOT(deleteLater()));
     threada->start();
-    //threada->wait(10);
 }
 
 
 void TestHazardPointer::startPushThread()
 {
     auto *threadb = new PushThread();
-    connect(threadb, SIGNAL(finished()), threadb, SLOT(deleteLater()));
     connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));
+    connect(threadb, SIGNAL(finished()), threadb, SLOT(deleteLater()));
     threadb->start();
-    //threadb->wait(10);
 }
 
 
-//QTEST_APPLESS_MAIN(TestHazardPointer)
 QTEST_MAIN(TestHazardPointer)
 #include "main.moc"

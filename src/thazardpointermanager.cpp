@@ -19,7 +19,6 @@ protected:
 void THazardRemoverThread::run()
 {
     auto &hpm = hazardPointerManager;
-
     printf("I'm in.  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(std::memory_order_acquire), hpm.hprCount.load(std::memory_order_acquire));
 
     for (;;) {
@@ -113,7 +112,7 @@ void THazardPointerManager::push(THazardObject* obj)
     for (;;) {
         int objcnt = objCount.load(std::memory_order_acquire);
         int hzcnt = hprCount.load(std::memory_order_acquire);
-        if (objcnt < (hzcnt + 1) * 5) {
+        if (objcnt < (hzcnt + 1) * 4) {
             break;
         }
         gc();

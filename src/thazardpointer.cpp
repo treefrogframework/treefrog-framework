@@ -21,7 +21,7 @@ THazardPointer::~THazardPointer()
 
 void THazardPointer::guard(THazardObject *ptr)
 {
-    rec->hazptr.store(ptr, std::memory_order_release);
+    rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask), std::memory_order_release);
 }
 
 
