@@ -27,6 +27,10 @@ public:
     TAtomicPtr<T> &operator=(T *value);
     TAtomicPtr<T> &operator=(const TAtomicPtr<T> &other);
 
+    void mark();
+    void unmark();
+    bool isMarked() const;
+
 private:
     std::atomic<T*> atomicPtr { nullptr };
 
@@ -89,6 +93,37 @@ inline TAtomicPtr<T> &TAtomicPtr<T>::operator=(const TAtomicPtr<T> &other)
 {
     store(other.load());
     return *this;
+}
+
+
+template <class T>
+inline void TAtomicPtr<T>::mark()
+{
+    for (;;) {
+        T* ptr = load();
+        if ((ptr & 0x1) || compareExchange(ptr, ptr | 0x1)) {
+            break;
+        }
+    }
+}
+
+
+template <class T>
+inline void TAtomicPtr<T>::unmark()
+{
+    for (;;) {
+        T* ptr = load();
+        if (!(ptr & 0x1) || compareExchange(ptr, ptr & ~0x1)) {
+            break;
+        }
+    }
+}
+
+
+template <class T>
+inline bool TAtomicPtr<T>::isMarked() const
+{
+    return load() & 0x1;
 }
 
 #endif // TATOMICPTR_H

@@ -19,7 +19,7 @@ public:
     void clear();
 
 private:
-    THazardPtrRecord *rec;
+    THazardPtrRecord *rec { nullptr };
 
     enum { Mask = 0x3 };
     friend class THazardPtrManager;
