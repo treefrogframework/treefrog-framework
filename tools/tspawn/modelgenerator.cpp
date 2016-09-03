@@ -73,7 +73,7 @@
     "#include \"%1object.h\"\n"                               \
     "\n"                                                      \
     "%2::%2()\n"                                              \
-    "    : TAbstractModel(), d(new %2Object)\n"               \
+    "    : TAbstractModel(), d(new %2Object())\n"             \
     "{%3}\n"                                                  \
     "\n"                                                      \
     "%2::%2(const %2 &other)\n"                               \
@@ -199,7 +199,7 @@
     "#include \"%1object.h\"\n"                               \
     "\n"                                                      \
     "%2::%2()\n"                                              \
-    "    : TAbstractUser(), TAbstractModel(), d(new %2Object)\n" \
+    "    : TAbstractUser(), TAbstractModel(), d(new %2Object())\n" \
     "{%3}\n"                                                  \
     "\n"                                                      \
     "%2::%2(const %2 &other)\n"                               \
