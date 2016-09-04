@@ -86,7 +86,7 @@ void THazardPtrManager::push(THazardPtrRecord *ptr)
     do {
         ptr->next = hprHead.load();
     } while (!hprHead.compareExchange(ptr->next, ptr));
-    ++hprCount;
+    hprCount++;
 }
 
 
@@ -94,7 +94,7 @@ bool THazardPtrManager::pop(THazardPtrRecord *ptr, THazardPtrRecord *prev)
 {
     if (ptr && prev) {
         prev->next = ptr->next;
-        --hprCount;
+        hprCount--;
         return true;
     }
     return false;
@@ -106,7 +106,7 @@ void THazardPtrManager::push(THazardObject* obj)
     do {
         obj->next = objHead.load();
     } while (!objHead.compareExchange(obj->next, obj));
-    ++objCount;
+    objCount++;
 
     // Limits objects
     for (;;) {
@@ -124,7 +124,7 @@ bool THazardPtrManager::pop(THazardObject *obj, THazardObject *prev)
 {
     if (obj && prev) {
         prev->next = obj->next;
-        --objCount;
+        objCount--;
         return true;
     }
     return false;
