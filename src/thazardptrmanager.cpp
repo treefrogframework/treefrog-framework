@@ -112,7 +112,7 @@ void THazardPtrManager::push(THazardObject* obj)
     for (;;) {
         int objcnt = objCount.load();
         int hzcnt = hprCount.load();
-        if (objcnt < (hzcnt + 1) * 4) {
+        if (objcnt < (hzcnt + 1) * 2) {
             break;
         }
         gc();
