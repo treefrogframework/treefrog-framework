@@ -2,6 +2,7 @@
 #define TATOMICPTR_H
 
 #include <atomic>
+#include <TGlobal>
 
 namespace Tf
 {
@@ -21,7 +22,7 @@ public:
     ~TAtomicPtr() {}
 
     operator T*() const;
-    T *load() const;
+    T *load(bool *mark = nullptr) const;
     void store(T *value);
     bool compareExchange(T *expected, T *newValue);
     TAtomicPtr<T> &operator=(T *value);
@@ -32,6 +33,11 @@ public:
     bool isMarked() const;
 
 private:
+    enum {
+        MASK = 0x3
+    };
+
+    T *raw() const;
     std::atomic<T*> atomicPtr { nullptr };
 
     // Deleted functions
@@ -60,7 +66,18 @@ inline TAtomicPtr<T>::operator T*() const
 
 
 template <class T>
-inline T *TAtomicPtr<T>::load() const
+inline T *TAtomicPtr<T>::load(bool *mark) const
+{
+    T *ptr = atomicPtr.load(std::memory_order_acquire);
+    if (mark) {
+        *mark = (quintptr)ptr & 0x1;
+    }
+    return (T*)((quintptr)ptr & ~MASK);
+}
+
+
+template <class T>
+inline T *TAtomicPtr<T>::raw() const
 {
     return atomicPtr.load(std::memory_order_acquire);
 }

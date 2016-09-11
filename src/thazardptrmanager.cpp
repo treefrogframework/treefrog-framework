@@ -33,10 +33,11 @@ void THazardRemoverThread::run()
             THazardPtrRecord *hpr = hprhead;
             THazardPtrRecord *prevHpr = nullptr;
             const void *guardp = nullptr;
+            bool mark;
 
             while (hpr) {
-                guardp = hpr->hazptr.load();
-                if (guardp == (void*)0x01) {  // unused pointer
+                guardp = hpr->hazptr.load(&mark);
+                if (mark && guardp == nullptr) {  // unused pointer
                     if (hpm.pop(hpr, prevHpr)) {
                         delete hpr;
                         hpr = prevHpr->next;
@@ -61,7 +62,7 @@ void THazardRemoverThread::run()
 
         int crtObjCnt = hpm.objCount.load();
         int crtHprCnt = hpm.hprCount.load();
-        if (crtObjCnt < startObjCnt || crtObjCnt < 10 || crtHprCnt < startHprCnt) {
+        if (crtObjCnt < startObjCnt || crtHprCnt < startHprCnt) {
             break;
         }
     }
@@ -110,8 +111,8 @@ void THazardPtrManager::push(THazardObject* obj)
 
     // Limits objects
     for (;;) {
-        int objcnt = objCount.load();
         int hzcnt = hprCount.load();
+        int objcnt = objCount.load();
         if (objcnt < (hzcnt + 1) * 2) {
             break;
         }
@@ -134,6 +135,6 @@ bool THazardPtrManager::pop(THazardObject *obj, THazardObject *prev)
 void THazardPtrManager::gc()
 {
     if (!removerThread->isRunning()) {
-        removerThread->start(QThread::TimeCriticalPriority);
+        removerThread->start(QThread::HighestPriority);
     }
 }

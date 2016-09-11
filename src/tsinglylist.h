@@ -13,7 +13,7 @@ public:
     int remove(const QString &key);
     T take(const QString &key);
 
-private
+private:
     struct Node : public THazardObject
     {
         QString key;

@@ -5,7 +5,6 @@
 
 static thread_local THazardPtr hzptr;
 
-
 template <class T> class stack
 {
     struct Node : public THazardObject
@@ -15,11 +14,11 @@ template <class T> class stack
         Node(const T &v) : value(v) { }
     };
 
-    TAtomicPtr<Node> head { nullptr };
-    QAtomicInt cnt { 0 };
+    TAtomicPtr<Node> head {nullptr};
+    QAtomicInt cnt {0};
 
 public:
-    stack() { }
+    stack() {}
     void push(const T &val);
     bool pop(T &val);
     bool peak(T &val);
