@@ -6,6 +6,7 @@
 #include "stack.h"
 #include <unistd.h>
 
+static QAtomicInt counter = 0;
 
 class Box
 {
@@ -13,10 +14,11 @@ public:
     int a { 0 };
     int b { 0 };
 
-    Box() {}
+    Box() { counter++; }
     Box(const Box &box)
-      : a(box.a), b(box.b) {}
+      : a(box.a), b(box.b) { counter++; }
     Box &operator=(const Box &box) {
+        counter++;
         a = box.a;
         b = box.b;
         return *this;
@@ -61,6 +63,7 @@ protected:
                 box.b--;
             } else {
                 box.a = 1000;
+                QThread::yieldCurrentThread();
                 box.b = 0;
             }
 
@@ -97,9 +100,10 @@ void TestHazardPointer::push_pop()
     timer.start();
 
     QEventLoop eventLoop;
-    while (timer.elapsed() < 5000) {
+    while (timer.elapsed() < 10000) {
         eventLoop.processEvents();
     }
+    printf("counter=%d\n", (int)counter);
     _exit(0);
 }
 

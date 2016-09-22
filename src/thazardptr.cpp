@@ -1,27 +1,25 @@
 #include "thazardptr.h"
 #include "thazardptrmanager.h"
 
-extern THazardPtrManager hazardPtrManager;
-
 
 THazardPtr::THazardPtr()
     : rec(new THazardPtrRecord())
 {
-    hazardPtrManager.push(rec);
-    hazardPtrManager.gc();
+    THazardPtrManager::instance().push(rec);
+    THazardPtrManager::instance().gc();
 }
 
 
 THazardPtr::~THazardPtr()
 {
     rec->hazptr.store((THazardObject*)0x01);
-    hazardPtrManager.gc();
+    THazardPtrManager::instance().gc();
 }
 
 
 void THazardPtr::guard(THazardObject *ptr)
 {
-    rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask));
+    rec->hazptr.store(ptr);
 }
 
 

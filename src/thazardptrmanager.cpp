@@ -4,13 +4,10 @@
 #include <QThread>
 
 
-THazardPtrManager hazardPtrManager;
-
-
 class THazardRemoverThread : public QThread
 {
 public:
-    THazardRemoverThread() : QThread() {  }
+    THazardRemoverThread() : QThread() { }
 protected:
     void run();
 };
@@ -18,12 +15,12 @@ protected:
 
 void THazardRemoverThread::run()
 {
-    auto &hpm = hazardPtrManager;
+    auto &hpm = THazardPtrManager::instance();
     //printf("I'm in.  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(), hpm.hprCount.load());
 
     for (;;) {
-        int startObjCnt = hpm.objCount.load();
-        int startHprCnt = hpm.hprCount.load();
+        int startObjCnt = hpm.objCount;
+        int startHprCnt = hpm.hprCount;
 
         THazardObject *prevObj = nullptr;
         THazardObject *crtObj = hpm.objHead.load();
@@ -38,17 +35,17 @@ void THazardRemoverThread::run()
             while (hpr) {
                 guardp = hpr->hazptr.load(&mark);
                 if (mark && guardp == nullptr) {  // unused pointer
-                    if (hpm.pop(hpr, prevHpr)) {
+                    if (Q_LIKELY(hpm.pop(hpr, prevHpr))) {
                         delete hpr;
                         hpr = prevHpr->next;
                         continue;
                     }
                 }
-                if (crtObj == guardp) {
+                if (Q_UNLIKELY(crtObj == guardp)) {
                     break;
                 }
                 prevHpr = hpr;
-                hpr = hpr->next;
+                hpr = hpr->next; // to next
             }
 
             if (crtObj != guardp && hpm.pop(crtObj, prevObj)) {
@@ -60,13 +57,11 @@ void THazardRemoverThread::run()
             }
         }
 
-        int crtObjCnt = hpm.objCount.load();
-        int crtHprCnt = hpm.hprCount.load();
-        if (crtObjCnt < startObjCnt || crtHprCnt < startHprCnt) {
+        if ((int)hpm.objCount <= startObjCnt || (int)hpm.hprCount <= startHprCnt) {
             break;
         }
     }
-    //printf("I'm out  obj-cnt:%d  hzp cnt:%d\n", hpm.objCount.load(), hpm.hprCount.load());
+    //printf("I'm out  obj-cnt:%d  hzp cnt:%d\n", (int)hpm.objCount, (int)hpm.hprCount);
 }
 
 
@@ -93,7 +88,7 @@ void THazardPtrManager::push(THazardPtrRecord *ptr)
 
 bool THazardPtrManager::pop(THazardPtrRecord *ptr, THazardPtrRecord *prev)
 {
-    if (ptr && prev) {
+    if (Q_LIKELY(ptr && prev)) {
         prev->next = ptr->next;
         hprCount--;
         return true;
@@ -111,9 +106,7 @@ void THazardPtrManager::push(THazardObject* obj)
 
     // Limits objects
     for (;;) {
-        int hzcnt = hprCount.load();
-        int objcnt = objCount.load();
-        if (objcnt < (hzcnt + 1) * 2) {
+        if ((int)objCount < ((int)hprCount + 1) * 2) {
             break;
         }
         gc();
@@ -123,7 +116,7 @@ void THazardPtrManager::push(THazardObject* obj)
 
 bool THazardPtrManager::pop(THazardObject *obj, THazardObject *prev)
 {
-    if (obj && prev) {
+    if (Q_LIKELY(obj && prev)) {
         prev->next = obj->next;
         objCount--;
         return true;
@@ -137,4 +130,11 @@ void THazardPtrManager::gc()
     if (!removerThread->isRunning()) {
         removerThread->start(QThread::HighestPriority);
     }
+}
+
+
+THazardPtrManager &THazardPtrManager::instance()
+{
+    static THazardPtrManager hazardPtrManager;
+    return hazardPtrManager;
 }

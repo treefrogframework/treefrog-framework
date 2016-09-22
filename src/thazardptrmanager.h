@@ -22,12 +22,13 @@ private:
     void push(THazardObject *obj);
     bool pop(THazardObject *ptr, THazardObject *prev);
     void gc();
+    static THazardPtrManager &instance();
 
-    TAtomicPtr<THazardPtrRecord> hprHead;
-    QAtomicInt hprCount { 0 };
-    TAtomicPtr<THazardObject> objHead;
-    QAtomicInt objCount { 0 };
-    THazardRemoverThread *removerThread { nullptr };
+    TAtomicPtr<THazardPtrRecord> hprHead {nullptr};
+    QAtomicInt hprCount {0};
+    TAtomicPtr<THazardObject> objHead {nullptr};
+    QAtomicInt objCount {0};
+    THazardRemoverThread *removerThread {nullptr};
 
     friend class THazardPtr;
     friend class THazardObject;

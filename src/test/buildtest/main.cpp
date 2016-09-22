@@ -11,6 +11,7 @@
 #endif
 #include <tglobal.h>
 #include <tatomicptr.h>
+#include <tsinglylist.h>
 #include "blog.h"
 #include "blogobject.h"
 #include "foo.h"
@@ -167,6 +168,15 @@ void atomic_ptr()
     ptr.compareExchange(foo, nullptr);
     ptr = ptr2;
     Tf::threadFence();
+}
+
+void singly_list()
+{
+    TSinglyList<QString> lst;
+    lst.value("");
+    lst.insert("","");
+    lst.remove("");
+    lst.take("");
 }
 
 

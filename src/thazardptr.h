@@ -14,14 +14,13 @@ public:
     THazardPtr();
     ~THazardPtr();
 
-    template <typename T> T *guard(TAtomicPtr<T> *src);
+    template <typename T> T *guard(TAtomicPtr<T> *src, bool *mark = nullptr);
     void guard(THazardObject *ptr);
     void clear();
 
 private:
-    THazardPtrRecord *rec { nullptr };
+    THazardPtrRecord *rec {nullptr};
 
-    enum { Mask = 0x3 };
     friend class THazardPtrManager;
 };
 
@@ -32,16 +31,16 @@ public:
     THazardPtrRecord() { }
     ~THazardPtrRecord() { }
 
-    TAtomicPtr<THazardObject> hazptr { nullptr };
-    THazardPtrRecord *next { nullptr };
+    TAtomicPtr<THazardObject> hazptr {nullptr};
+    THazardPtrRecord *next {nullptr};
 };
 
 
 template <typename T>
-inline T *THazardPtr::guard(TAtomicPtr<T>  *src)
+inline T *THazardPtr::guard(TAtomicPtr<T> *src, bool *mark)
 {
-    T *ptr = src->load();
-    rec->hazptr.store((THazardObject*)((quintptr)ptr & ~Mask));  // 4byte alignment
+    T *ptr = src->load(mark);
+    rec->hazptr.store(ptr);
     return ptr;
 }
 

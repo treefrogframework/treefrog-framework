@@ -38,11 +38,11 @@ private:
     };
 
     T *raw() const;
-    std::atomic<T*> atomicPtr { nullptr };
+    std::atomic<T*> atomicPtr {nullptr};
 
     // Deleted functions
-    TAtomicPtr(TAtomicPtr &&) = delete;
-    TAtomicPtr &operator=(TAtomicPtr &&) = delete;
+    TAtomicPtr(TAtomicPtr<T> &&) = delete;
+    TAtomicPtr<T> &operator=(TAtomicPtr<T> &&) = delete;
 };
 
 
