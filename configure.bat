@@ -96,7 +96,9 @@ echo set QTENV="%QTENV%">> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo if exist %%QTENV%% ( call %%QTENV%% )>> %TFENV%
 if not "%VCVARSOPT%" == "" (
-  echo if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo if not "%%VS140COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo   set VCVARSBAT="%%VS140COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
+  echo ^) else if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
   echo   set VCVARSBAT="%%VS120COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
   echo ^) else if not "%%VS110COMNTOOLS%%" == "" ^(>> %TFENV%
   echo   set VCVARSBAT="%%VS110COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
