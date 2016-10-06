@@ -267,8 +267,10 @@ HEADERS += thazardobject.h
 SOURCES += thazardobject.cpp
 HEADERS += thazardptrmanager.h
 SOURCES += thazardptrmanager.cpp
-HEADERS += tsinglylist.h
-SOURCES += tsinglylist.cpp
+#HEADERS += tsinglylist.h
+#SOURCES += tsinglylist.cpp
+HEADERS += tstack.h
+SOURCES += tstack.cpp
 
 HEADERS += \
            tfnamespace.h \

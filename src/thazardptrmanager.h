@@ -2,7 +2,7 @@
 #define THAZARDPTRMANAGER_H
 
 #include <TGlobal>
-#include <QAtomicInt>
+#include <atomic>
 #include "tatomicptr.h"
 
 class THazardPtrRecord;
@@ -25,9 +25,9 @@ private:
     static THazardPtrManager &instance();
 
     TAtomicPtr<THazardPtrRecord> hprHead {nullptr};
-    QAtomicInt hprCount {0};
+    std::atomic<int> hprCount {0};
     TAtomicPtr<THazardObject> objHead {nullptr};
-    QAtomicInt objCount {0};
+    std::atomic<int> objCount {0};
     THazardRemoverThread *removerThread {nullptr};
 
     friend class THazardPtr;

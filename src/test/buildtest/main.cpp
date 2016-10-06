@@ -5,13 +5,13 @@
 #include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
-#include <TAtomicQueue>
+//#include <TAtomicQueue>
 #if QT_VERSION >= 0x050000
 # include <TJsonUtil>
 #endif
 #include <tglobal.h>
 #include <tatomicptr.h>
-#include <tsinglylist.h>
+#include <tstack.h>
 #include "blog.h"
 #include "blogobject.h"
 #include "foo.h"
@@ -149,13 +149,13 @@ void build_check_TJsonUtil()
 }
 #endif
 
-void build_check_TAtomicQueue()
-{
-    TAtomicQueue<int> queue;
-    queue.enqueue(1);
-    queue.dequeue();
-    queue.wait(0);
-}
+// void build_check_TAtomicQueue()
+// {
+//     TAtomicQueue<int> queue;
+//     queue.enqueue(1);
+//     queue.dequeue();
+//     queue.wait(0);
+// }
 
 void atomic_ptr()
 {
@@ -170,13 +170,13 @@ void atomic_ptr()
     Tf::threadFence();
 }
 
-void singly_list()
+void stack()
 {
-    TSinglyList<QString> lst;
-    lst.value("");
-    lst.insert("","");
-    lst.remove("");
-    lst.take("");
+    TStack<QString> stack;
+    stack.push(QString());
+    QString s;
+    stack.pop(s);
+    stack.top(s);
 }
 
 
