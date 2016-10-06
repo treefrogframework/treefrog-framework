@@ -5,11 +5,13 @@
 #include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
-#include <TAtomicQueue>
+//#include <TAtomicQueue>
 #if QT_VERSION >= 0x050000
 # include <TJsonUtil>
 #endif
 #include <tglobal.h>
+#include <tatomicptr.h>
+#include <tstack.h>
 #include "blog.h"
 #include "blogobject.h"
 #include "foo.h"
@@ -147,13 +149,36 @@ void build_check_TJsonUtil()
 }
 #endif
 
-void build_check_TAtomicQueue()
+// void build_check_TAtomicQueue()
+// {
+//     TAtomicQueue<int> queue;
+//     queue.enqueue(1);
+//     queue.dequeue();
+//     queue.wait(0);
+// }
+
+void atomic_ptr()
 {
-    TAtomicQueue<int> queue;
-    queue.enqueue(1);
-    queue.dequeue();
-    queue.wait(0);
+    Foo *foo = new Foo();
+    TAtomicPtr<Foo> ptr(foo);
+    TAtomicPtr<Foo> ptr2(ptr);
+    foo = ptr2;
+    ptr2.load();
+    ptr.store(foo);
+    ptr.compareExchange(foo, nullptr);
+    ptr = ptr2;
+    Tf::threadFence();
 }
+
+void stack()
+{
+    TStack<QString> stack;
+    stack.push(QString());
+    QString s;
+    stack.pop(s);
+    stack.top(s);
+}
+
 
 int main()
 {
