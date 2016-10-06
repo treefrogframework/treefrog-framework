@@ -1,12 +1,10 @@
 #include <QTest>
 #include <QThread>
-#include <QDebug>
-#include <thazardptr.h>
-#include <thazardobject.h>
-#include "stack.h"
 #include <unistd.h>
+#include <atomic>
+#include "tstack.h"
 
-static QAtomicInt counter = 0;
+static std::atomic<int> counter {0};
 
 class Box
 {
@@ -16,7 +14,7 @@ public:
 
     Box() { counter++; }
     Box(const Box &box)
-      : a(box.a), b(box.b) { counter++; }
+        : a(box.a), b(box.b) { counter++; }
     Box &operator=(const Box &box) {
         counter++;
         a = box.a;
@@ -24,7 +22,7 @@ public:
         return *this;
     }
 };
-stack<Box> stackBox;
+TStack<Box> stackBox;
 
 
 class PopThread : public QThread
@@ -55,7 +53,7 @@ protected:
         //for (;;) {
         for (int i = 0; i < 500000; i++) {
             Box box;
-            if (stackBox.peak(box)) {
+            if (stackBox.top(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
 
                 box.a++;
