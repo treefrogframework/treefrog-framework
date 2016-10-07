@@ -104,13 +104,18 @@ void THazardPtrManager::push(THazardObject* obj)
     } while (!objHead.compareExchange(obj->next, obj));
     objCount++;
 
+#if 1
     // Limits objects
     for (;;) {
-        if ((int)objCount < ((int)hprCount + 1) * 2) {
+        int limit = qMax(100, (int)hprCount * 2);
+        if ((int)objCount < limit) {
             break;
         }
         gc();
     }
+#else
+    gc();
+#endif
 }
 
 

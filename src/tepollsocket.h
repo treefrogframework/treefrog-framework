@@ -27,7 +27,7 @@ public:
     void close();
     int socketDescriptor() const { return sd; }
     QHostAddress peerAddress() const { return clientAddr; }
-    QByteArray socketUuid() const { return uuid; }
+    int socketId() const { return sid; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
     void disconnect();
@@ -52,6 +52,8 @@ protected:
     void setSocketDescpriter(int socketDescriptor);
     virtual void *getRecvBuffer(int size) = 0;
     virtual bool seekRecvBuffer(int pos) = 0;
+    static TEpollSocket *searchSocket(int sid);
+    static QList<TEpollSocket*> allSockets();
 
     std::atomic<bool> deleting;
     std::atomic<int> myWorkerCounter;
@@ -59,8 +61,8 @@ protected:
     std::atomic<bool> pollOut;
 
 private:
-    int sd;
-    QByteArray uuid;
+    int sd;  // socket descriptor
+    int sid;
     QHostAddress clientAddr;
     QQueue<TSendBuffer*> sendBuf;
 

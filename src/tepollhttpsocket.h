@@ -20,7 +20,7 @@ public:
     int idleTime() const { return idleElapsed.elapsed() / 1000; }
     virtual void startWorker();
     virtual void deleteLater();
-    static TEpollHttpSocket *searchSocket(const QByteArray &uuid);
+    static TEpollHttpSocket *searchSocket(int sid);
     static QList<TEpollHttpSocket*> allSockets();
 
 public slots:

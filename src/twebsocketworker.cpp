@@ -80,7 +80,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         tSystemDebug("TWebSocketWorker opcode: %d", opcode);
 
         endpoint->sessionStore = _socket->session(); // Sets websocket session
-        endpoint->uuid = _socket->socketUuid();
+        endpoint->sid = _socket->socketId();
         // Database Transaction
         setTransactionEnabled(endpoint->transactionEnabled());
 
@@ -202,7 +202,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::SendTextTo: {
                 QVariantList lst = taskData.toList();
-                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                 if (websocket) {
                     websocket->sendText(lst[1].toString());
                 }
@@ -210,7 +210,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::SendBinaryTo: {
                 QVariantList lst = taskData.toList();
-                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                 if (websocket) {
                     websocket->sendBinary(lst[1].toByteArray());
                 }
@@ -218,7 +218,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::SendCloseTo: {
                 QVariantList lst = taskData.toList();
-                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                 if (websocket) {
                     websocket->sendClose(lst[1].toInt());
                 }
@@ -257,11 +257,11 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
             case TWebSocketEndpoint::HttpSend: {
                 QVariantList lst = taskData.toList();
-                auto uuid = lst[0].toByteArray();
+                auto id = lst[0].toInt();
 
                 switch ( Tf::app()->multiProcessingModule() ) {
                 case TWebApplication::Thread: {
-                    auto *sock = THttpSocket::searchSocket(uuid);
+                    auto *sock = THttpSocket::searchSocket(id);
                     if (sock) {
                         sock->writeRawDataFromWebSocket(lst[1].toByteArray());
                     }
@@ -269,7 +269,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
                 case TWebApplication::Hybrid: {
 #ifdef Q_OS_LINUX
-                    auto *sock = TEpollHttpSocket::searchSocket(uuid);
+                    auto *sock = TEpollHttpSocket::searchSocket(id);
                     if (sock) {
                         sock->sendData(lst[1].toByteArray());
                     }

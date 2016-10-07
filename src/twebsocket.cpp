@@ -5,47 +5,44 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QUuid>
 #include <TWebSocketEndpoint>
 #include <TWebApplication>
 #include "twebsocket.h"
 #include "twebsocketworker.h"
 #include "turlroute.h"
 #include "tdispatcher.h"
+#include "tatomicptr.h"
 
 const qint64 WRITE_LENGTH = 1280;
 const int BUFFER_RESERVE_SIZE = 127;
 
-static QMutex mutexMap;
-static QMap<QByteArray, TWebSocket*> websocketMap;
+static TAtomicPtr<TWebSocket> socketManager[USHRT_MAX + 1];
+static std::atomic<ushort> point {0};
+
 
 TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
-    : QTcpSocket(parent), TAbstractWebSocket(header), frames(), uuid(),
+    : QTcpSocket(parent), TAbstractWebSocket(header), frames(),
       recvBuffer(), myWorkerCounter(0), deleting(false)
 {
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
 
-    uuid = QUuid::createUuid().toByteArray();  // not thread safe
-    uuid = uuid.mid(1, uuid.length() - 2);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
+
+    do {
+        sid = point.fetch_add(1);
+    } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
 
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
     connect(this, SIGNAL(disconnectByWorker()), this, SLOT(close()));
-
-    mutexMap.lock();
-    websocketMap.insert(uuid, this);
-    mutexMap.unlock();
 }
 
 
 TWebSocket::~TWebSocket()
 {
     tSystemDebug("~TWebSocket");
-    mutexMap.lock();
-    websocketMap.remove(uuid);
-    mutexMap.unlock();
+    socketManager[sid].compareExchangeStrong(this, nullptr); // clear
 }
 
 
@@ -199,6 +196,7 @@ void TWebSocket::deleteLater()
     }
 
     if ((int)myWorkerCounter == 0) {
+        socketManager[sid].compareExchange(this, nullptr); // clear
         QTcpSocket::deleteLater();
     }
 }
@@ -251,10 +249,9 @@ void TWebSocket::disconnect()
 }
 
 
-TAbstractWebSocket *TWebSocket::searchSocket(const QByteArray &uuid)
+TAbstractWebSocket *TWebSocket::searchSocket(int sid)
 {
-    QMutexLocker locker(&mutexMap);
-    return websocketMap.value(uuid, nullptr);
+    return socketManager[sid & 0xffff].load();
 }
 
 

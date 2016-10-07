@@ -8,13 +8,13 @@
 #include <QTimer>
 #include <QDir>
 #include <QBuffer>
-#include <QUuid>
 #include <TTemporaryFile>
 #include <TAppSettings>
 #include <THttpResponse>
 #include <THttpHeader>
 #include <TMultipartFormData>
 #include "thttpsocket.h"
+#include "tatomicptr.h"
 #include "tsystemglobal.h"
 
 const uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
@@ -23,8 +23,8 @@ const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 const int    SEND_BUF_SIZE = 16 * 1024;
 const int    RECV_BUF_SIZE = 128 * 1024;
 
-static QMutex mutexMap;
-static QMap<QByteArray, THttpSocket*> socketMap;
+static TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
+static std::atomic<ushort> point {0};
 
 /*!
   \class THttpSocket
@@ -32,18 +32,17 @@ static QMap<QByteArray, THttpSocket*> socketMap;
 */
 
 THttpSocket::THttpSocket(QObject *parent)
-    : QTcpSocket(parent), uuid(), lengthToRead(-1), idleElapsed()
+    : QTcpSocket(parent), lengthToRead(-1), idleElapsed()
 {
     T_TRACEFUNC("");
 
-    uuid = QUuid::createUuid().toByteArray();  // not thread safe
-    uuid = uuid.mid(1, uuid.length() - 2);
+    do {
+        sid = point.fetch_add(1);
+    } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
+    tSystemDebug("THttpSocket  sid:%d", sid);
+
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(requestWrite(const QByteArray&)), this, SLOT(writeRawData(const QByteArray&)), Qt::QueuedConnection);
-
-    mutexMap.lock();
-    socketMap.insert(uuid, this);
-    mutexMap.unlock();
 
     idleElapsed.start();
 }
@@ -52,9 +51,8 @@ THttpSocket::THttpSocket(QObject *parent)
 THttpSocket::~THttpSocket()
 {
     T_TRACEFUNC("");
-    mutexMap.lock();
-    socketMap.remove(uuid);
-    mutexMap.unlock();
+    socketManager[sid].compareExchangeStrong(this, nullptr); // clear
+    tSystemDebug("THttpSocket deleted  sid:%d", sid);
 }
 
 
@@ -284,20 +282,14 @@ bool THttpSocket::setSocketDescriptor(
 
 void THttpSocket::deleteLater()
 {
+    socketManager[sid].compareExchange(this, nullptr); // clear
     QObject::deleteLater();
-
-    mutexMap.lock();
-    socketMap.remove(uuid);
-    mutexMap.unlock();
 }
 
 
-THttpSocket *THttpSocket::searchSocket(const QByteArray &uuid)
+THttpSocket *THttpSocket::searchSocket(int sid)
 {
-    mutexMap.lock();
-    THttpSocket *sock = socketMap.value(uuid, nullptr);
-    mutexMap.unlock();
-    return sock;
+    return socketManager[sid & 0xffff].load();
 }
 
 

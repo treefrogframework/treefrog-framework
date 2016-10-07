@@ -149,7 +149,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
-        pollingSockets.insert(socket, socket->socketUuid());
+        pollingSockets.insert(socket, socket->socketId());
     }
     return !ret;
 }
@@ -209,7 +209,7 @@ void TEpoll::dispatchSendData()
         TEpollSocket *sock = sd->socket;
 
         if (!pollingSockets.contains(sock) || sock->socketDescriptor() <= 0) {
-            tSystemDebug("already disconnected:  uuid:%s", sock->socketUuid().data());
+            tSystemDebug("already disconnected:  sid:%d", sock->socketId());
             continue;
         }
 
@@ -277,7 +277,7 @@ void TEpoll::dispatchSendData()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (QMapIterator<TEpollSocket *, QByteArray> it(pollingSockets); it.hasNext(); ) {
+    for (QMapIterator<TEpollSocket *, int> it(pollingSockets); it.hasNext(); ) {
         it.next();
         it.key()->deleteLater();
     }

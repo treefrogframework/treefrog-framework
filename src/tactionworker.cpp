@@ -111,7 +111,7 @@ void TActionWorker::run()
         THttpRequest &req = it.next();
 
         // Executes a action context
-        TActionContext::execute(req, socket->socketUuid());
+        TActionContext::execute(req, socket->socketId());
         TActionContext::release();
 
         if (TActionContext::stopped.load()) {

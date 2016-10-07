@@ -21,8 +21,6 @@
 #include "tdispatcher.h"
 
 const int BUFFER_RESERVE_SIZE = 127;
-static QMutex mutexMap;
-static QMap<QByteArray, TEpollWebSocket*> websocketMap;
 
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
@@ -31,19 +29,12 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
 {
     tSystemDebug("TEpollWebSocket  [%p]", this);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
-
-    mutexMap.lock();
-    websocketMap.insert(socketUuid(), this);
-    mutexMap.unlock();
 }
 
 
 TEpollWebSocket::~TEpollWebSocket()
 {
     tSystemDebug("~TEpollWebSocket  [%p]", this);
-    mutexMap.lock();
-    websocketMap.remove(socketUuid());
-    mutexMap.unlock();
 }
 
 
@@ -207,10 +198,6 @@ void TEpollWebSocket::deleteLater()
     }
 
     if ((int)myWorkerCounter == 0) {
-        mutexMap.lock();
-        websocketMap.remove(socketUuid());
-        mutexMap.unlock();
-
         QObject::deleteLater();
     }
 }
@@ -268,8 +255,8 @@ void TEpollWebSocket::timerEvent(QTimerEvent *event)
 }
 
 
-TEpollWebSocket *TEpollWebSocket::searchSocket(const QByteArray &uuid)
+TEpollWebSocket *TEpollWebSocket::searchSocket(int sid)
 {
-    QMutexLocker locker(&mutexMap);
-    return websocketMap.value(uuid, nullptr);
+    TEpollSocket *sock = TEpollSocket::searchSocket(sid);
+    return dynamic_cast<TEpollWebSocket*>(sock);
 }

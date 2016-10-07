@@ -13,7 +13,7 @@ template <class T> class TStack
     struct Node : public THazardObject
     {
         T value;
-        Node *next { nullptr };
+        Node *next {nullptr};
         Node(const T &v) : value(v) { }
     };
 

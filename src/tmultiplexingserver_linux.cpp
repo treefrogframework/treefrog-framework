@@ -209,7 +209,7 @@ void TMultiplexingServer::run()
             auto sockets = TEpollHttpSocket::allSockets();
             for (auto *http : sockets) {
                 if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
-                    tSystemDebug("KeepAlive timeout: %s", http->socketUuid().data());
+                    tSystemDebug("KeepAlive timeout: sid:%d", http->socketId());
                     TEpoll::instance()->deletePoll(http);
                     http->close();
                     http->deleteLater();

@@ -114,7 +114,7 @@ void TActionThread::run()
                 goto socket_cleanup;
             }
 
-            TActionContext::execute(req, httpSocket->socketUuid());
+            TActionContext::execute(req, httpSocket->socketId());
 
             httpSocket->flush();  // Flush socket
             TActionContext::release();
@@ -128,13 +128,13 @@ void TActionThread::run()
         while (!httpSocket->waitForReadyRead(100)) {
             if (httpSocket->state() != QAbstractSocket::ConnectedState) {
                 if (httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
-                    tSystemWarn("Error occurred : error:%d  socket:%s", httpSocket->error(), httpSocket->socketUuid().data());
+                    tSystemWarn("Error occurred : error:%d  socket:%d", httpSocket->error(), httpSocket->socketId());
                 }
                 goto receive_end;
             }
 
             if (httpSocket->idleTime() >= keepAliveTimeout) {
-                tSystemDebug("KeepAlive timeout : socket:%s", httpSocket->socketUuid().data());
+                tSystemDebug("KeepAlive timeout : socket:%d", httpSocket->socketId());
                 goto receive_end;
             }
 
@@ -166,7 +166,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
     QList<THttpRequest> reqs;
     while (!socket->canReadRequest()) {
         // Check idle timeout
-        if (Q_UNLIKELY(socket->idleTime() >= keepAliveTimeout)) {
+        if (Q_UNLIKELY(keepAliveTimeout > 0 && socket->idleTime() >= keepAliveTimeout)) {
             tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout, (int)socket->socketDescriptor());
             break;
         }

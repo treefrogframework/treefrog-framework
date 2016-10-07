@@ -23,9 +23,9 @@ public:
     void ping(const QByteArray &payload = QByteArray());
     void sendPing(const QByteArray &payload = QByteArray());
     void close(int closeCode = Tf::NormalClosure);
-    void sendText(const QByteArray &uuid, const QString &text);
-    void sendBinary(const QByteArray &uuid, const QByteArray &binary);
-    void close(const QByteArray &uuid, int closeCode = Tf::NormalClosure);
+    void sendText(int sid, const QString &text);
+    void sendBinary(int sid, const QByteArray &binary);
+    void closeSocket(int sid, int closeCode = Tf::NormalClosure);
     void rollbackTransaction();
     void subscribe(const QString &topic, bool local = true);
     void unsubscribe(const QString &topic);
@@ -33,10 +33,10 @@ public:
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
     void startKeepAlive(int interval);
-    void sendHttp(const QByteArray &uuid, const QByteArray &data);
+    void sendHttp(int sid, const QByteArray &data);
     const TWebSocketSession &session() const { return sessionStore; }
     TWebSocketSession &session() { return sessionStore; }
-    QByteArray socketUuid() const { return uuid; }
+    int socketId() const { return sid; }
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);
@@ -78,9 +78,9 @@ private:
     bool rollbackRequested() const;
 
     TWebSocketSession sessionStore;
-    QByteArray uuid;
+    int sid {0};
     QList<QPair<int, QVariant>> taskList;
-    bool rollback;
+    bool rollback {false};
 
     friend class TWebSocketWorker;
     Q_DISABLE_COPY(TWebSocketEndpoint)

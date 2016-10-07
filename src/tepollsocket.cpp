@@ -6,7 +6,7 @@
  */
 
 #include <sys/types.h>
-#include <QUuid>
+#include <atomic>
 #include <QFileInfo>
 #include <TWebApplication>
 #include <TSystemGlobal>
@@ -16,11 +16,14 @@
 #include "tepoll.h"
 #include "tsendbuffer.h"
 #include "tfcore.h"
+#include "tatomicptr.h"
 
 class SendData;
 
 static int sendBufSize = 0;
 static int recvBufSize = 0;
+static TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
+static std::atomic<ushort> point {0};
 
 
 TEpollSocket *TEpollSocket::accept(int listeningSocket)
@@ -79,25 +82,26 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
         optlen = sizeof(int);
         res = getsockopt(socketDescriptor, SOL_SOCKET, SO_SNDBUF, &sendBufSize, &optlen);
-        if (res < 0)
+        if (res < 0) {
             sendBufSize = BUF_SIZE;
-
+        }
         optlen = sizeof(int);
         res = getsockopt(socketDescriptor, SOL_SOCKET, SO_RCVBUF, &recvBufSize, &optlen);
-        if (res < 0)
+        if (res < 0) {
             recvBufSize = BUF_SIZE;
-
+        }
     }
 }
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
     : deleting(false), myWorkerCounter(0), pollIn(false), pollOut(false),
-      sd(socketDescriptor), uuid(), clientAddr(address)
+      sd(socketDescriptor), clientAddr(address)
 {
-    uuid = QUuid::createUuid().toByteArray();  // not thread safe
-    uuid = uuid.mid(1, uuid.length() - 2);
-    tSystemDebug("TEpollSocket  id:%s", uuid.data());
+    do {
+        sid = point.fetch_add(1);
+    } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
+    tSystemDebug("TEpollSocket  sid:%d", sid);
 }
 
 
@@ -111,6 +115,8 @@ TEpollSocket::~TEpollSocket()
         delete p;
     }
     sendBuf.clear();
+
+    socketManager[sid].compareExchangeStrong(this, nullptr); //clear
 }
 
 
@@ -313,6 +319,28 @@ void TEpollSocket::deleteLater()
     tSystemDebug("TEpollSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
     deleting = true;
     if ((int)myWorkerCounter == 0) {
+        socketManager[sid].compareExchange(this, nullptr); //clear
         QObject::deleteLater();
     }
+}
+
+
+TEpollSocket *TEpollSocket::searchSocket(int sid)
+{
+    return socketManager[sid & 0xffff].load();
+}
+
+
+QList<TEpollSocket*> TEpollSocket::allSockets()
+{
+    tSystemDebug("TEpollSocket::allSockets");
+
+    QList<TEpollSocket*> lst;
+    for (int i = 0; i <= USHRT_MAX; i++) {
+        TEpollSocket *p = socketManager[i].load();
+        if (p) {
+            lst.append(p);
+        }
+    }
+    return lst;
 }

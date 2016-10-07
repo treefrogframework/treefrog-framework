@@ -53,7 +53,7 @@ private:
     volatile bool polling;
     int numEvents;
     int eventIterator;
-    QMap<TEpollSocket*, QByteArray> pollingSockets;
+    QMap<TEpollSocket*, int> pollingSockets;
     TAtomicQueue<TSendData *> sendRequests;
 
     TEpoll();

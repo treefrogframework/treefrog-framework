@@ -31,13 +31,30 @@ TSqlDatabasePool::~TSqlDatabasePool()
 {
     timer.stop();
 
-    QMutexLocker locker(&mutex);
-    for (int j = 0; j < pooledConnections.count(); ++j) {
-        QMap<QString, uint> &map = pooledConnections[j];
-        QMap<QString, uint>::iterator it = map.begin();
-        while (it != map.end()) {
-            QSqlDatabase::database(it.key(), false).close();
-            it = map.erase(it);
+    // QMutexLocker locker(&mutex);
+    // for (int j = 0; j < pooledConnections.count(); ++j) {
+    //     QMap<QString, uint> &map = pooledConnections[j];
+    //     QMap<QString, uint>::iterator it = map.begin();
+    //     while (it != map.end()) {
+    //         QSqlDatabase::database(it.key(), false).close();
+    //         it = map.erase(it);
+    //     }
+
+    //     for (int i = 0; i < maxConnects; ++i) {
+    //         QString name = QString::number(j) + '_' + QString::number(i);
+    //         if (QSqlDatabase::contains(name)) {
+    //             QSqlDatabase::removeDatabase(name);
+    //         } else {
+    //             break;
+    //         }
+    //     }
+    // }
+
+    for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
+        auto &stack = pooledDatabase[j];
+        QString name;
+        while (stack.pop(name)) {
+            QSqlDatabase::database(name, false).close();
         }
 
         for (int i = 0; i < maxConnects; ++i) {
@@ -66,6 +83,8 @@ void TSqlDatabasePool::init()
         tSystemWarn("SQL database not available");
         return;
     } else {
+        pooledDatabase = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
+        lastPooledTime = new std::atomic<uint>[Tf::app()->sqlDatabaseSettingsCount()];
         tSystemDebug("SQL database available");
     }
 
@@ -87,7 +106,7 @@ void TSqlDatabasePool::init()
             tSystemDebug("Add Database successfully. name:%s", qPrintable(db.connectionName()));
         }
 
-        pooledConnections.append(QMap<QString, uint>());
+        //pooledDatebases.append(TStack<Pool>());
     }
 }
 
@@ -95,19 +114,17 @@ void TSqlDatabasePool::init()
 QSqlDatabase TSqlDatabasePool::database(int databaseId)
 {
     T_TRACEFUNC("");
-    QMutexLocker locker(&mutex);
     QSqlDatabase db;
 
     if (Q_UNLIKELY(!Tf::app()->isSqlDatabaseAvailable())) {
         return db;
     }
 
-    if (databaseId >= 0 && databaseId < pooledConnections.count()) {
-        QMap<QString, uint> &map = pooledConnections[databaseId];
-        QMap<QString, uint>::iterator it = map.begin();
-        while (it != map.end()) {
-            db = QSqlDatabase::database(it.key(), false);
-            it = map.erase(it);
+    if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
+        auto &stack = pooledDatabase[databaseId];
+        QString name;
+        if (stack.pop(name)) {
+            db = QSqlDatabase::database(name, false);
             if (Q_LIKELY(db.isOpen())) {
                 tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
                 return db;
@@ -133,6 +150,38 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
     }
 
     throw RuntimeException("No pooled connection", __FILE__, __LINE__);
+
+    // if (databaseId >= 0 && databaseId < pooledConnections.count()) {
+    //     QMap<QString, uint> &map = pooledConnections[databaseId];
+    //     QMap<QString, uint>::iterator it = map.begin();
+    //     while (it != map.end()) {
+    //         db = QSqlDatabase::database(it.key(), false);
+    //         it = map.erase(it);
+    //         if (Q_LIKELY(db.isOpen())) {
+    //             tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
+    //             return db;
+    //         } else {
+    //             tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
+    //         }
+    //     }
+
+    //     for (int i = 0; i < maxConnects; ++i) {
+    //         db = QSqlDatabase::database(QString().sprintf(CONN_NAME_FORMAT, databaseId, i), false);
+    //         if (!db.isOpen()) {
+    //             if (Q_UNLIKELY(!db.open())) {
+    //                 tError("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
+    //                 tSystemError("SQL database open error: %s", qPrintable(db.connectionName()));
+    //                 return QSqlDatabase();
+    //             }
+
+    //             tSystemDebug("SQL database opened successfully (env:%s)", qPrintable(dbEnvironment));
+    //             tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
+    //             return db;
+    //         }
+    //     }
+    // }
+
+    //throw RuntimeException("No pooled connection", __FILE__, __LINE__);
 }
 
 
@@ -192,13 +241,26 @@ bool TSqlDatabasePool::setDatabaseSettings(QSqlDatabase &database, const QString
 void TSqlDatabasePool::pool(QSqlDatabase &database)
 {
     T_TRACEFUNC("");
-    QMutexLocker locker(&mutex);
+    // QMutexLocker locker(&mutex);
+
+    // if (database.isValid()) {
+    //     int databaseId = getDatabaseId(database);
+
+    //     if (databaseId >= 0 && databaseId < pooledConnections.count()) {
+    //         pooledConnections[databaseId].insert(database.connectionName(), QDateTime::currentDateTime().toTime_t());
+    //         tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
+    //     } else {
+    //         tSystemError("Pooled invalid database  [%s:%d]", __FILE__, __LINE__);
+    //     }
+    // }
 
     if (database.isValid()) {
         int databaseId = getDatabaseId(database);
 
-        if (databaseId >= 0 && databaseId < pooledConnections.count()) {
-            pooledConnections[databaseId].insert(database.connectionName(), QDateTime::currentDateTime().toTime_t());
+        if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
+            // pool
+            pooledDatabase[databaseId].push(database.connectionName());
+            lastPooledTime[databaseId].store(QDateTime::currentDateTime().toTime_t());
             tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
         } else {
             tSystemError("Pooled invalid database  [%s:%d]", __FILE__, __LINE__);
@@ -214,23 +276,35 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
 
     if (event->timerId() == timer.timerId()) {
         // Closes extra-connection
-        if (mutex.tryLock()) {
-            for (int i = 0; i < pooledConnections.count(); ++i) {
-                QMap<QString, uint> &map = pooledConnections[i];
-                QMap<QString, uint>::iterator it = map.begin();
-                while (it != map.end()) {
-                    uint tm = it.value();
-                    if (tm < QDateTime::currentDateTime().toTime_t() - 30) { // 30sec
-                        QSqlDatabase::database(it.key(), false).close();
-                        tSystemDebug("Closed database connection, name: %s", qPrintable(it.key()));
-                        it = map.erase(it);
-                    } else {
-                        ++it;
-                    }
+        for (int i = 0; i < Tf::app()->sqlDatabaseSettingsCount(); ++i) {
+            uint tm = lastPooledTime[i].load();
+            if (tm < QDateTime::currentDateTime().toTime_t() - 30) { // 30sec
+                auto &stack = pooledDatabase[i];
+                QString name;
+                while (stack.pop(name)) {
+                    QSqlDatabase::database(name, false).close();
+                    tSystemDebug("Closed database connection, name: %s", qPrintable(name));
                 }
             }
-            mutex.unlock();
         }
+
+        // if (mutex.tryLock()) {
+        //     for (int i = 0; i < pooledConnections.count(); ++i) {
+        //         QMap<QString, uint> &map = pooledConnections[i];
+        //         QMap<QString, uint>::iterator it = map.begin();
+        //         while (it != map.end()) {
+        //             uint tm = it.value();
+        //             if (tm < QDateTime::currentDateTime().toTime_t() - 30) { // 30sec
+        //                 QSqlDatabase::database(it.key(), false).close();
+        //                 tSystemDebug("Closed database connection, name: %s", qPrintable(it.key()));
+        //                 it = map.erase(it);
+        //             } else {
+        //                 ++it;
+        //             }
+        //         }
+        //     }
+        //     mutex.unlock();
+        // }
     } else {
         QObject::timerEvent(event);
     }

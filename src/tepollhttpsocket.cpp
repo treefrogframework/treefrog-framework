@@ -17,8 +17,6 @@
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
-static QMutex mutexMap;
-static QMap<QByteArray, TEpollHttpSocket*> socketMap;
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
@@ -26,20 +24,12 @@ TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &add
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
     idleElapsed.start();
-
-    mutexMap.lock();
-    socketMap.insert(socketUuid(), this);
-    mutexMap.unlock();
 }
 
 
 TEpollHttpSocket::~TEpollHttpSocket()
 {
     tSystemDebug("~TEpollHttpSocket");
-
-    mutexMap.lock();
-    socketMap.remove(socketUuid());
-    mutexMap.unlock();
 }
 
 
@@ -204,24 +194,26 @@ void TEpollHttpSocket::deleteLater()
     tSystemDebug("TEpollHttpSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
     deleting = true;
     if ((int)myWorkerCounter == 0) {
-        mutexMap.lock();
-        socketMap.remove(socketUuid());
-        mutexMap.unlock();
-
         QObject::deleteLater();
     }
 }
 
 
-TEpollHttpSocket *TEpollHttpSocket::searchSocket(const QByteArray &uuid)
+TEpollHttpSocket *TEpollHttpSocket::searchSocket(int sid)
 {
-    QMutexLocker locker(&mutexMap);
-    return socketMap.value(uuid, nullptr);
+    TEpollSocket *sock = TEpollSocket::searchSocket(sid);
+    return dynamic_cast<TEpollHttpSocket*>(sock);
 }
 
 
 QList<TEpollHttpSocket*> TEpollHttpSocket::allSockets()
 {
-    QMutexLocker locker(&mutexMap);
-    return socketMap.values();
+    QList<TEpollHttpSocket*> lst;
+    for (auto sock : TEpollSocket::allSockets()) {
+        auto p = dynamic_cast<TEpollHttpSocket*>(sock);
+        if (p) {
+            lst.append(p);
+        }
+    }
+    return lst;
 }

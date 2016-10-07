@@ -93,11 +93,11 @@ protected:
     void rollbackTransaction() { rollback = true; }
     void setAutoRemove(const QString &filePath);
     bool validateAccess(const TAbstractUser *user);
-    QByteArray socketUuid() const { return uuid; }
+    int socketId() const { return sockId; }
     // For WebSocket
-    void sendTextToWebSocket(const QByteArray &uuid, const QString &text);
-    void sendBinaryToWebSocket(const QByteArray &uuid, const QByteArray &binary);
-    void closeWebSokcet(const QByteArray &uuid, int closeCode = Tf::NormalClosure);
+    void sendTextToWebSocket(int sid, const QString &text);
+    void sendBinaryToWebSocket(int sid, const QByteArray &binary);
+    void closeWebSokcet(int sid, int closeCode = Tf::NormalClosure);
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
@@ -114,7 +114,7 @@ private:
     };
 
     void setActionName(const QString &name);
-    void setSocketUuid(const QByteArray &socketUuid) { uuid = socketUuid; }
+    void setSocketId(int sid) { sockId = sid; }
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
     void exportAllFlashVariants();
@@ -136,7 +136,7 @@ private:
     bool rollback;
     QStringList autoRemoveFiles;
     QList<QPair<int, QVariant>> taskList;
-    QByteArray uuid;
+    int sockId {0};
 
     friend class TActionContext;
     friend class TSessionCookieStore;
