@@ -133,7 +133,15 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
             }
         }
 
-        for (int i = 0; i < maxConnects; ++i) {
+        for (;;) {
+            int i = index.fetch_add(1);  // increment
+            if (i == maxConnects) {
+                index.store(-1);
+                continue;
+            } else if (i > maxConnects) {
+                continue;
+            }
+
             db = QSqlDatabase::database(QString().sprintf(CONN_NAME_FORMAT, databaseId, i), false);
             if (!db.isOpen()) {
                 if (Q_UNLIKELY(!db.open())) {
