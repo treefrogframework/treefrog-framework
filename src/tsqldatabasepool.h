@@ -37,9 +37,10 @@ private:
     Q_DISABLE_COPY(TSqlDatabasePool)
     TSqlDatabasePool(const QString &environment);
 
-    TStack<QString> *pooledDatabase {nullptr};
-    std::atomic<uint> *lastPooledTime {nullptr};
-    std::atomic<int> index {0};
+    TStack<QString> *cachedDatabase {nullptr};
+    std::atomic<uint> *lastCachedTime {nullptr};
+    TStack<QString> *availableNames {nullptr};
+    //std::atomic<int> index {0};
     int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;

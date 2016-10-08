@@ -18,7 +18,7 @@
 #include "tsystemglobal.h"
 
 const uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
-const qint64 WRITE_LENGTH = 1280;
+const qint64 WRITE_LENGTH = 1408;
 const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 const int    SEND_BUF_SIZE = 16 * 1024;
 const int    RECV_BUF_SIZE = 128 * 1024;
