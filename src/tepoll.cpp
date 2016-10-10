@@ -182,7 +182,7 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
         return false;
     }
 
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), nullptr);
     int err = errno;
 
     if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
@@ -195,19 +195,13 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
 }
 
 
-// bool TEpoll::waitSendData(int msec)
-// {
-//     return sendRequests.wait(msec);
-// }
-
-
 void TEpoll::dispatchSendData()
 {
     TSendData *sd;
     while (sendRequests.dequeue(sd)) {
         TEpollSocket *sock = sd->socket;
 
-        if (!pollingSockets.contains(sock) || sock->socketDescriptor() <= 0) {
+        if (Q_UNLIKELY(sock->socketDescriptor() <= 0)) {
             tSystemDebug("already disconnected:  sid:%d", sock->socketId());
             continue;
         }
@@ -221,7 +215,7 @@ void TEpoll::dispatchSendData()
 
         case TSendData::SwitchToWebSocket: {
             tSystemDebug("Switch to WebSocket");
-            Q_ASSERT(sd->buffer == NULL);
+            Q_ASSERT(sd->buffer == nullptr);
 
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
             tSystemDebug("secKey: %s", secKey.data());
