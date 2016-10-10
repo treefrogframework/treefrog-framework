@@ -1,3 +1,3 @@
 include(../test.pri)
-TARGET = hazardptr
+TARGET = stack
 SOURCES = main.cpp

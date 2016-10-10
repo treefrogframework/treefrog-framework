@@ -72,7 +72,7 @@ protected:
 };
 
 
-class TestHazardPointer : public QObject
+class TestStack : public QObject
 {
     Q_OBJECT
 public slots:
@@ -84,7 +84,7 @@ private slots:
 };
 
 
-void TestHazardPointer::push_pop()
+void TestStack::push_pop()
 {
     // Starts threads
     for (int i = 0; i < 1000; i++) {
@@ -106,7 +106,7 @@ void TestHazardPointer::push_pop()
 }
 
 
-void TestHazardPointer::startPopThread()
+void TestStack::startPopThread()
 {
     auto *threada = new PopThread();
     connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
@@ -115,7 +115,7 @@ void TestHazardPointer::startPopThread()
 }
 
 
-void TestHazardPointer::startPushThread()
+void TestStack::startPushThread()
 {
     auto *threadb = new PushThread();
     connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));
@@ -124,5 +124,5 @@ void TestHazardPointer::startPushThread()
 }
 
 
-QTEST_MAIN(TestHazardPointer)
+QTEST_MAIN(TestStack)
 #include "main.moc"
