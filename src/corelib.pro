@@ -271,6 +271,8 @@ SOURCES += thazardptrmanager.cpp
 #SOURCES += tsinglylist.cpp
 HEADERS += tstack.h
 SOURCES += tstack.cpp
+HEADERS += tqueue.h
+SOURCES += tqueue.cpp
 
 HEADERS += \
            tfnamespace.h \

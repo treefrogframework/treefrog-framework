@@ -17,7 +17,7 @@ template <class T> class TStack
         Node(const T &v) : value(v) { }
     };
 
-    TAtomicPtr<Node> head {nullptr};
+    TAtomicPtr<Node> stkHead {nullptr};
     std::atomic<int> counter {0};
 
 public:
@@ -34,8 +34,8 @@ inline void TStack<T>::push(const T &val)
 {
     auto *pnode = new Node(val);
     do {
-        pnode->next = head.load();
-    } while (!head.compareExchange(pnode->next, pnode));
+        pnode->next = stkHead.load();
+    } while (!stkHead.compareExchange(pnode->next, pnode));
     counter++;
 }
 
@@ -44,8 +44,8 @@ template <class T>
 inline bool TStack<T>::pop(T &val)
 {
     Node *pnode;
-    while ((pnode = hzptrStack.guard<Node>(&head))) {
-        if (head.compareExchange(pnode, pnode->next)) {
+    while ((pnode = hzptrStack.guard<Node>(&stkHead))) {
+        if (stkHead.compareExchange(pnode, pnode->next)) {
             break;
         }
     }
@@ -65,7 +65,7 @@ template <class T>
 inline bool TStack<T>::top(T &val)
 {
     Node *pnode;
-    pnode = hzptrStack.guard<Node>(&head);
+    pnode = hzptrStack.guard<Node>(&stkHead);
 
     if (pnode) {
         val = pnode->value;

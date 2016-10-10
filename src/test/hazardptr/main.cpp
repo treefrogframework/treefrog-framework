@@ -6,11 +6,10 @@
 
 static std::atomic<int> counter {0};
 
-class Box
+struct Box
 {
-public:
-    int a { 0 };
-    int b { 0 };
+    int a {0};
+    int b {0};
 
     Box() { counter++; }
     Box(const Box &box)
@@ -102,6 +101,7 @@ void TestHazardPointer::push_pop()
         eventLoop.processEvents();
     }
     printf("counter=%d\n", (int)counter);
+    printf("stack count=%d\n", (int)stackBox.count());
     _exit(0);
 }
 
