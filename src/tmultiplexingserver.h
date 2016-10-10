@@ -12,7 +12,6 @@
 #include <TApplicationServerBase>
 #include <TAccessLog>
 #include <atomic>
-#include "tatomicqueue.h"
 
 class QIODevice;
 class THttpHeader;

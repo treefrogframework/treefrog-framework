@@ -132,7 +132,7 @@ void TMultiplexingServer::run()
 
     for (;;) {
         if (!numEvents && TActionWorker::workerCount() > 0) {
-            TEpoll::instance()->waitSendData(4);  // mitigation of busy loop
+            QThread::yieldCurrentThread();  // mitigation of busy loop
         }
 
         TEpoll::instance()->dispatchSendData();

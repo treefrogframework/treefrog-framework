@@ -7,6 +7,7 @@
 #include <QHostAddress>
 #include <TGlobal>
 #include <atomic>
+#include "tqueue.h"
 
 class QHostAddress;
 class QThread;
@@ -33,7 +34,6 @@ public:
     void disconnect();
     void switchToWebSocket(const THttpRequestHeader &header);
     int countWorker() const { return myWorkerCounter; }
-    qint64 bufferedBytes() const;
     int bufferedListCount() const;
 
     virtual bool canReadRequest() { return false; }
@@ -64,7 +64,7 @@ private:
     int sd;  // socket descriptor
     int sid;
     QHostAddress clientAddr;
-    QQueue<TSendBuffer*> sendBuf;
+    TQueue<TSendBuffer*> sendBuf;
 
     static void initBuffer(int socketDescriptor);
 

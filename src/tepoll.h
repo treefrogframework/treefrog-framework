@@ -3,8 +3,8 @@
 
 #include <QMap>
 #include <TGlobal>
-#include <TAtomicQueue>
 #include <sys/epoll.h>
+#include "tqueue.h"
 
 class QIODevice;
 class QByteArray;
@@ -31,7 +31,7 @@ public:
     bool addPoll(TEpollSocket *socket, int events);
     bool modifyPoll(TEpollSocket *socket, int events);
     bool deletePoll(TEpollSocket *socket);
-    bool waitSendData(int msec);
+    //bool waitSendData(int msec);
     void dispatchSendData();
     void releaseAllPollingSockets();
 
@@ -54,7 +54,7 @@ private:
     int numEvents;
     int eventIterator;
     QMap<TEpollSocket*, int> pollingSockets;
-    TAtomicQueue<TSendData *> sendRequests;
+    TQueue<TSendData *> sendRequests;
 
     TEpoll();
     Q_DISABLE_COPY(TEpoll);

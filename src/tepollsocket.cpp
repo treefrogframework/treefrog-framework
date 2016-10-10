@@ -111,10 +111,10 @@ TEpollSocket::~TEpollSocket()
 
     close();
 
-    for (auto p : sendBuf) {
-        delete p;
+    TSendBuffer *buf;
+    if (sendBuf.dequeue(buf)) {
+        delete buf;
     }
-    sendBuf.clear();
 
     socketManager[sid].compareExchangeStrong(this, nullptr); //clear
 }
@@ -174,7 +174,7 @@ int TEpollSocket::recv()
  */
 int TEpollSocket::send()
 {
-    if (sendBuf.isEmpty()) {
+    if (sendBuf.count() == 0) {
         pollOut = true;
         return 0;
     }
@@ -187,9 +187,9 @@ int TEpollSocket::send()
     int ret = 0;
     int err = 0;
     int len;
+    TSendBuffer *buf;
 
-    while (!sendBuf.isEmpty()) {
-        TSendBuffer *buf = sendBuf.first();
+    while (sendBuf.head(buf)) {
         TAccessLogger &logger = buf->accessLogger();
 
         err = 0;
@@ -215,7 +215,9 @@ int TEpollSocket::send()
 
         if (buf->atEnd()) {
             logger.write();  // Writes access log
-            delete sendBuf.dequeue(); // delete send-buffer obj
+            if (sendBuf.dequeue(buf)) {
+                delete buf;  // delete send-buffer obj
+            }
         }
 
         if (len < 0) {
@@ -246,7 +248,7 @@ int TEpollSocket::send()
 
 void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 {
-    sendBuf << buffer;
+    sendBuf.enqueue(buffer);
 }
 
 
@@ -295,17 +297,17 @@ void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 }
 
 
-qint64 TEpollSocket::bufferedBytes() const
-{
-    qint64 ret = 0;
-    for (auto &d : sendBuf) {
-        ret += d->arrayBuffer.size();
-        if (d->bodyFile) {
-            ret += d->bodyFile->size();
-        }
-    }
-    return ret;
-}
+// qint64 TEpollSocket::bufferedBytes() const
+// {
+//     qint64 ret = 0;
+//     for (auto &d : sendBuf) {
+//         ret += d->arrayBuffer.size();
+//         if (d->bodyFile) {
+//             ret += d->bodyFile->size();
+//         }
+//     }
+//     return ret;
+// }
 
 
 int TEpollSocket::bufferedListCount() const

@@ -185,6 +185,7 @@ void queue()
     queue.enqueue(QString());
     QString s;
     queue.dequeue(s);
+    queue.head(s);
     queue.count();
 }
 

@@ -134,9 +134,9 @@ TEpoll *TEpoll::instance()
 
 bool TEpoll::addPoll(TEpollSocket *socket, int events)
 {
-    if (Q_UNLIKELY(!events))
+    if (Q_UNLIKELY(!events)) {
         return false;
-
+    }
     struct epoll_event ev;
     ev.events  = events;
     ev.data.ptr = socket;
@@ -157,9 +157,9 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 {
-   if (!events)
+    if (Q_UNLIKELY(!events)) {
         return false;
-
+    }
     struct epoll_event ev;
     ev.events = events;
     ev.data.ptr = socket;
@@ -178,7 +178,7 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    if (pollingSockets.remove(socket) == 0) {
+    if (Q_UNLIKELY(pollingSockets.remove(socket) == 0)) {
         return false;
     }
 
@@ -195,17 +195,16 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
 }
 
 
-bool TEpoll::waitSendData(int msec)
-{
-    return sendRequests.wait(msec);
-}
+// bool TEpoll::waitSendData(int msec)
+// {
+//     return sendRequests.wait(msec);
+// }
 
 
 void TEpoll::dispatchSendData()
 {
-    QList<TSendData *> dataList = sendRequests.dequeue();
-
-    for (TSendData *sd : dataList) {
+    TSendData *sd;
+    while (sendRequests.dequeue(sd)) {
         TEpollSocket *sock = sd->socket;
 
         if (!pollingSockets.contains(sock) || sock->socketDescriptor() <= 0) {
@@ -214,21 +213,6 @@ void TEpoll::dispatchSendData()
         }
 
         switch (sd->method) {
-        case TSendData::Send:
-            sock->enqueueSendData(sd->buffer);
-            if (sock->pollOut) {
-                // send immediately
-                int len = send(sock);
-                if (Q_UNLIKELY(len < 0)) {
-                    deletePoll(sock);
-                    sock->close();
-                    sock->deleteLater();
-                }
-            } else {
-                modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-            }
-            break;
-
         case TSendData::Disconnect:
             deletePoll(sock);
             sock->close();
@@ -300,14 +284,16 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevi
     }
 
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
-    sendRequests.enqueue(new TSendData(TSendData::Send, socket, sendbuf));
+    socket->enqueueSendData(sendbuf);
+    modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
 }
 
 
 void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &data)
 {
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(data);
-    sendRequests.enqueue(new TSendData(TSendData::Send, socket, sendbuf));
+    socket->enqueueSendData(sendbuf);
+    modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
 }
 
 

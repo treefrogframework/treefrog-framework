@@ -25,6 +25,7 @@ public:
     TQueue();
     void enqueue(const T &val);
     bool dequeue(T &val);
+    bool head(T &val);
     int count() const { return counter.load(); }
 };
 
@@ -50,8 +51,8 @@ inline void TQueue<T>::enqueue(const T &val)
             continue;
         }
 
-        if (next != nullptr) {
-            queTail.compareExchangeStrong(tail, next); // update queTail
+        if (next) {
+            queTail.compareExchangeStrong(tail, next);  // update queTail
             continue;
         }
 
@@ -78,14 +79,14 @@ inline bool TQueue<T>::dequeue(T &val)
         }
 
         if (head == tail) {
-            if (next == nullptr) {
+            if (!next) {
                 // no item
                 break;
             }
-            queTail.compareExchangeStrong(tail, next); // update queTail
+            queTail.compareExchangeStrong(tail, next);  // update queTail
 
         } else {
-            if (next == nullptr) {
+            if (!next) {
                 continue;
             }
 
@@ -95,6 +96,26 @@ inline bool TQueue<T>::dequeue(T &val)
                 counter--;
                 break;
             }
+        }
+    }
+    hzptrQueue.clear();
+    return (bool)next;
+}
+
+
+template <class T>
+inline bool TQueue<T>::head(T &val)
+{
+    Node *next;
+    for (;;) {
+        Node *headp = queHead.load();
+        next = hzptrQueue.guard<Node>(&headp->next);
+
+        if (Q_LIKELY(headp == queHead.load())) {
+            if (next) {
+                val = next->value;
+            }
+            break;
         }
     }
     hzptrQueue.clear();
