@@ -25,6 +25,7 @@
 #include <TFormValidator>
 #include "tsessionmanager.h"
 #include "ttextview.h"
+#include "turlroute.h"
 
 #define FLASH_VARS_SESSION_KEY  "_flashVariants"
 #define LOGIN_USER_NAME_KEY     "_loginUserName"
@@ -869,6 +870,13 @@ void TActionController::closeWebSokcet(const QByteArray &uuid, int closeCode)
     info << uuid << closeCode;
     taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
+
+
+QString TActionController::route(const QByteArray &name, const std::vector<QVariant> &args) const
+{
+    return TUrlRoute::instance().findRouteByName(name).toPathString(args);
+}
+
 
 /*!
   \fn const TSession &TActionController::session() const;

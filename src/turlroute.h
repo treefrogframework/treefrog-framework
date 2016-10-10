@@ -27,9 +27,11 @@ public:
     QList<int>  keywordIndexes;
     QByteArray controller;
     QByteArray action;
+    QByteArray name;
     bool    hasVariableParams;
 
     TRoute() : method(Invalid), hasVariableParams(false) { }
+    QString toPathString(const std::vector<QVariant> &args = std::vector<QVariant>()) const;
 };
 
 
@@ -72,6 +74,7 @@ public:
     static const TUrlRoute &instance();
     static QStringList splitPath(const QString &path);
     TRouting findRouting(Tf::HttpMethod method, const QStringList &components) const;
+    TRoute findRouteByName(const QByteArray &pathName) const;
 
 protected:
     TUrlRoute() { }

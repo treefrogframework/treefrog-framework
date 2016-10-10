@@ -12,6 +12,7 @@
 #include <TAppSettings>
 #include <TActionView>
 #include <THttpUtility>
+#include "turlroute.h"
 
 
 /*!
@@ -659,6 +660,12 @@ QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTi
         }
     }
     return ret;
+}
+
+
+QString TViewHelper::route(const QByteArray &name, const std::vector<QVariant> &args) const
+{
+    return TUrlRoute::instance().findRouteByName(name).toPathString(args);
 }
 
 
