@@ -23,7 +23,7 @@ public:
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
     int idleTime() const { return idleElapsed.elapsed() / 1000; }
-    QByteArray socketUuid() const { return uuid; }
+    int socketId() const { return sid; }
     void deleteLater();
 
 #if QT_VERSION >= 0x050000
@@ -32,7 +32,7 @@ public:
     bool setSocketDescriptor(int socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
 #endif
 
-    static THttpSocket *searchSocket(const QByteArray &uuid);
+    static THttpSocket *searchSocket(int id);
     void writeRawDataFromWebSocket(const QByteArray &data);
 
 protected slots:
@@ -47,8 +47,8 @@ signals:
 private:
     Q_DISABLE_COPY(THttpSocket)
 
-    QByteArray uuid;
-    qint64 lengthToRead;
+    int sid {0};
+    qint64 lengthToRead {-1};
     QByteArray readBuffer;
     TTemporaryFile fileBuffer;
     QElapsedTimer idleElapsed;

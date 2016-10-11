@@ -227,8 +227,8 @@ HEADERS += tredis.h
 SOURCES += tredis.cpp
 #HEADERS += tatomicset.h
 #SOURCES += tatomicset.cpp
-HEADERS += tatomicqueue.h
-SOURCES += tatomicqueue.cpp
+#HEADERS += tatomicqueue.h
+#SOURCES += tatomicqueue.cpp
 HEADERS += tfileaiologger.h
 SOURCES += tfileaiologger.cpp
 HEADERS += tfileaiowriter.h
@@ -271,6 +271,8 @@ SOURCES += thazardptrmanager.cpp
 #SOURCES += tsinglylist.cpp
 HEADERS += tstack.h
 SOURCES += tstack.cpp
+HEADERS += tqueue.h
+SOURCES += tqueue.cpp
 
 HEADERS += \
            tfnamespace.h \

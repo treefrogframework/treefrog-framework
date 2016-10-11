@@ -21,10 +21,10 @@ public:
     TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent = 0);
     virtual ~TWebSocket();
 
-    QByteArray socketUuid() const Q_DECL_OVERRIDE { return uuid; }
+    int socketId() const Q_DECL_OVERRIDE { return sid; }
     bool canReadRequest() const;
     void disconnect() Q_DECL_OVERRIDE;
-    static TAbstractWebSocket *searchSocket(const QByteArray &uuid);
+    static TAbstractWebSocket *searchSocket(int sid);
 
 public slots:
     void sendTextForPublish(const QString &text, const QObject *except);
@@ -52,7 +52,7 @@ signals:
 private:
     void startWorker(TWebSocketWorker *worker);
 
-    QByteArray uuid;
+    int sid;
     QByteArray recvBuffer;
     std::atomic<int> myWorkerCounter;
     std::atomic<bool> deleting;

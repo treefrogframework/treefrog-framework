@@ -27,14 +27,14 @@ public:
     void sendPong(const QByteArray &data = QByteArray());
     void sendClose(int code);
     virtual void disconnect() = 0;
-    virtual QByteArray socketUuid() const = 0;
+    virtual int socketId() const = 0;
     void startKeepAlive(int interval);
     void stopKeepAlive();
     void renewKeepAlive();
     TWebSocketSession session() const;
     void setSession(const TWebSocketSession &session);
     static bool searchEndpoint(const THttpRequestHeader &header);
-    static TAbstractWebSocket *searchWebSocket(const QByteArray &uuid);
+    static TAbstractWebSocket *searchWebSocket(int sid);
 
 protected:
     void sendHandshakeResponse();

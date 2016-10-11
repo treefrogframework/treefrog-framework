@@ -134,9 +134,9 @@ TEpoll *TEpoll::instance()
 
 bool TEpoll::addPoll(TEpollSocket *socket, int events)
 {
-    if (Q_UNLIKELY(!events))
+    if (Q_UNLIKELY(!events)) {
         return false;
-
+    }
     struct epoll_event ev;
     ev.events  = events;
     ev.data.ptr = socket;
@@ -149,7 +149,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
-        pollingSockets.insert(socket, socket->socketUuid());
+        pollingSockets.insert(socket, socket->socketId());
     }
     return !ret;
 }
@@ -157,9 +157,9 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 {
-   if (!events)
+    if (Q_UNLIKELY(!events)) {
         return false;
-
+    }
     struct epoll_event ev;
     ev.events = events;
     ev.data.ptr = socket;
@@ -178,11 +178,11 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    if (pollingSockets.remove(socket) == 0) {
+    if (Q_UNLIKELY(pollingSockets.remove(socket) == 0)) {
         return false;
     }
 
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), NULL);
+    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), nullptr);
     int err = errno;
 
     if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
@@ -195,40 +195,18 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
 }
 
 
-bool TEpoll::waitSendData(int msec)
-{
-    return sendRequests.wait(msec);
-}
-
-
 void TEpoll::dispatchSendData()
 {
-    QList<TSendData *> dataList = sendRequests.dequeue();
-
-    for (TSendData *sd : dataList) {
+    TSendData *sd;
+    while (sendRequests.dequeue(sd)) {
         TEpollSocket *sock = sd->socket;
 
-        if (!pollingSockets.contains(sock) || sock->socketDescriptor() <= 0) {
-            tSystemDebug("already disconnected:  uuid:%s", sock->socketUuid().data());
+        if (Q_UNLIKELY(sock->socketDescriptor() <= 0)) {
+            tSystemDebug("already disconnected:  sid:%d", sock->socketId());
             continue;
         }
 
         switch (sd->method) {
-        case TSendData::Send:
-            sock->enqueueSendData(sd->buffer);
-            if (sock->pollOut) {
-                // send immediately
-                int len = send(sock);
-                if (Q_UNLIKELY(len < 0)) {
-                    deletePoll(sock);
-                    sock->close();
-                    sock->deleteLater();
-                }
-            } else {
-                modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-            }
-            break;
-
         case TSendData::Disconnect:
             deletePoll(sock);
             sock->close();
@@ -237,7 +215,7 @@ void TEpoll::dispatchSendData()
 
         case TSendData::SwitchToWebSocket: {
             tSystemDebug("Switch to WebSocket");
-            Q_ASSERT(sd->buffer == NULL);
+            Q_ASSERT(sd->buffer == nullptr);
 
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
             tSystemDebug("secKey: %s", secKey.data());
@@ -277,7 +255,7 @@ void TEpoll::dispatchSendData()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (QMapIterator<TEpollSocket *, QByteArray> it(pollingSockets); it.hasNext(); ) {
+    for (QMapIterator<TEpollSocket *, int> it(pollingSockets); it.hasNext(); ) {
         it.next();
         it.key()->deleteLater();
     }
@@ -300,14 +278,16 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevi
     }
 
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
-    sendRequests.enqueue(new TSendData(TSendData::Send, socket, sendbuf));
+    socket->enqueueSendData(sendbuf);
+    modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
 }
 
 
 void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &data)
 {
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(data);
-    sendRequests.enqueue(new TSendData(TSendData::Send, socket, sendbuf));
+    socket->enqueueSendData(sendbuf);
+    modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
 }
 
 

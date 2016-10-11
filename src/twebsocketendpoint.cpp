@@ -17,7 +17,7 @@
  */
 
 TWebSocketEndpoint::TWebSocketEndpoint()
-    : uuid(), taskList(), rollback(false)
+    : taskList(), rollback(false)
 { }
 
 /*!
@@ -133,33 +133,33 @@ void TWebSocketEndpoint::close(int closeCode)
 }
 
 /*!
-  Sends the given \a text over the socket of the \a uuid as a text message.
+  Sends the given \a text over the socket of the \a id as a text message.
 */
-void TWebSocketEndpoint::sendText(const QByteArray &uuid, const QString &text)
+void TWebSocketEndpoint::sendText(int sid, const QString &text)
 {
     QVariantList info;
-    info << uuid << text;
+    info << sid << text;
     taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 /*!
-  Sends the given \a binary over the socket of the \a uuid as a binary message.
+  Sends the given \a binary over the socket of the \a id as a binary message.
 */
-void TWebSocketEndpoint::sendBinary(const QByteArray &uuid, const QByteArray &binary)
+void TWebSocketEndpoint::sendBinary(int sid, const QByteArray &binary)
 {
     QVariantList info;
-    info << uuid << binary;
+    info << sid << binary;
     taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 /*!
-  Disconnects the WebSocket's connection of the \a uuid, closes
+  Disconnects the WebSocket's connection of the \a id, closes
   the socket.
 */
-void TWebSocketEndpoint::close(const QByteArray &uuid, int closeCode)
+void TWebSocketEndpoint::closeSocket(int sid, int closeCode)
 {
     QVariantList info;
-    info << uuid << closeCode;
+    info << sid << closeCode;
     taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
@@ -253,12 +253,12 @@ void TWebSocketEndpoint::startKeepAlive(int interval)
 }
 
 /*!
-  Sends the given \a data over the HTTP socket of the \a uuid.
+  Sends the given \a data over the HTTP socket of the \a id.
 */
-void TWebSocketEndpoint::sendHttp(const QByteArray &uuid, const QByteArray &data)
+void TWebSocketEndpoint::sendHttp(int id, const QByteArray &data)
 {
     QVariantList info;
-    info << uuid << data;
+    info << id << data;
     taskList << qMakePair((int)HttpSend, QVariant(info));
 }
 
@@ -277,8 +277,8 @@ void TWebSocketEndpoint::sendHttp(const QByteArray &uuid, const QByteArray &data
 */
 
 /*!
-  \fn QByteArray TWebSocketEndpoint::socketUuid() const
-  Returns the UUID string representation of this socket.
+  \fn QByteArray TWebSocketEndpoint::socketId() const
+  Returns the ID of this socket.
 */
 
 /*!

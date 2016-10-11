@@ -54,7 +54,7 @@ static bool directViewRenderMode()
 }
 
 
-void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid)
+void TActionContext::execute(THttpRequest &request, int sid)
 {
     T_TRACEFUNC("");
 
@@ -110,7 +110,7 @@ void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid
         currController = ctlrDispatcher.object();
         if (currController) {
             currController->setActionName(rt.action);
-            currController->setSocketUuid(socketUuid);
+            currController->setSocketId(sid);
 
             // Session
             if (currController->sessionEnabled()) {
@@ -197,7 +197,7 @@ void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid
                             switch (task.first) {
                             case TActionController::SendTextTo: {
                                 QVariantList lst = taskData.toList();
-                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                                 if (websocket) {
                                     websocket->sendText(lst[1].toString());
                                 }
@@ -205,7 +205,7 @@ void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid
 
                             case TActionController::SendBinaryTo: {
                                 QVariantList lst = taskData.toList();
-                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                                 if (websocket) {
                                     websocket->sendBinary(lst[1].toByteArray());
                                 }
@@ -213,7 +213,7 @@ void TActionContext::execute(THttpRequest &request, const QByteArray &socketUuid
 
                             case TActionController::SendCloseTo: {
                                 QVariantList lst = taskData.toList();
-                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toByteArray());
+                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                                 if (websocket) {
                                     websocket->sendClose(lst[1].toInt());
                                 }

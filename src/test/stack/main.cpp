@@ -6,11 +6,10 @@
 
 static std::atomic<int> counter {0};
 
-class Box
+struct Box
 {
-public:
-    int a { 0 };
-    int b { 0 };
+    int a {0};
+    int b {0};
 
     Box() { counter++; }
     Box(const Box &box)
@@ -73,7 +72,7 @@ protected:
 };
 
 
-class TestHazardPointer : public QObject
+class TestStack : public QObject
 {
     Q_OBJECT
 public slots:
@@ -85,7 +84,7 @@ private slots:
 };
 
 
-void TestHazardPointer::push_pop()
+void TestStack::push_pop()
 {
     // Starts threads
     for (int i = 0; i < 1000; i++) {
@@ -102,11 +101,12 @@ void TestHazardPointer::push_pop()
         eventLoop.processEvents();
     }
     printf("counter=%d\n", (int)counter);
+    printf("stack count=%d\n", (int)stackBox.count());
     _exit(0);
 }
 
 
-void TestHazardPointer::startPopThread()
+void TestStack::startPopThread()
 {
     auto *threada = new PopThread();
     connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
@@ -115,7 +115,7 @@ void TestHazardPointer::startPopThread()
 }
 
 
-void TestHazardPointer::startPushThread()
+void TestStack::startPushThread()
 {
     auto *threadb = new PushThread();
     connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));
@@ -124,5 +124,5 @@ void TestHazardPointer::startPushThread()
 }
 
 
-QTEST_MAIN(TestHazardPointer)
+QTEST_MAIN(TestStack)
 #include "main.moc"

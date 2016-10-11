@@ -106,7 +106,8 @@ void THazardPtrManager::push(THazardObject* obj)
 
     // Limits objects
     for (;;) {
-        if ((int)objCount < ((int)hprCount + 1) * 2) {
+        int limit = qMax(20, (int)hprCount * 2);
+        if ((int)objCount < limit) {
             break;
         }
         gc();

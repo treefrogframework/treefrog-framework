@@ -6,10 +6,10 @@
 #include <QVector>
 #include <QMap>
 #include <QString>
-#include <QMutex>
 #include <QDateTime>
 #include <QBasicTimer>
 #include <TGlobal>
+#include "tstack.h"
 
 
 class T_CORE_EXPORT TSqlDatabasePool : public QObject
@@ -36,8 +36,9 @@ private:
     Q_DISABLE_COPY(TSqlDatabasePool)
     TSqlDatabasePool(const QString &environment);
 
-    QVector<QMap<QString, uint>> pooledConnections;
-    QMutex mutex;
+    TStack<QString> *cachedDatabase {nullptr};
+    std::atomic<uint> *lastCachedTime {nullptr};
+    TStack<QString> *availableNames {nullptr};
     int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;

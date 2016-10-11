@@ -5,10 +5,11 @@
 #include <QString>
 #include <QVector>
 #include <QMap>
-#include <QMutex>
 #include <QBasicTimer>
 #include <TKvsDatabase>
 #include <TGlobal>
+#include <atomic>
+#include "tstack.h"
 
 class QSettings;
 
@@ -38,8 +39,9 @@ private:
     Q_DISABLE_COPY(TKvsDatabasePool)
     TKvsDatabasePool(const QString &environment);
 
-    QVector<QMap<QString, uint>> pooledConnections;
-    QMutex mutex;
+    TStack<QString> *cachedDatabase {nullptr};
+    std::atomic<uint> *lastCachedTime {nullptr};
+    TStack<QString> *availableNames {nullptr};
     int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;

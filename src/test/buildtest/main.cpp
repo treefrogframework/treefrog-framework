@@ -5,13 +5,13 @@
 #include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
-//#include <TAtomicQueue>
 #if QT_VERSION >= 0x050000
 # include <TJsonUtil>
 #endif
 #include <tglobal.h>
 #include <tatomicptr.h>
 #include <tstack.h>
+#include <tqueue.h>
 #include "blog.h"
 #include "blogobject.h"
 #include "foo.h"
@@ -179,6 +179,15 @@ void stack()
     stack.top(s);
 }
 
+void queue()
+{
+    TQueue<QString> queue;
+    queue.enqueue(QString());
+    QString s;
+    queue.dequeue(s);
+    queue.head(s);
+    queue.count();
+}
 
 int main()
 {

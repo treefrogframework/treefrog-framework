@@ -168,7 +168,7 @@ bool TAbstractWebSocket::searchEndpoint(const THttpRequestHeader &header)
 
 int TAbstractWebSocket::parse(QByteArray &recvData)
 {
-    tSystemDebug("parse enter  data len:%d  uuid:%s", recvData.length(), qPrintable(socketUuid()));
+    tSystemDebug("parse enter  data len:%d  sid:%d", recvData.length(), socketId());
     if (websocketFrames().isEmpty()) {
         websocketFrames().append(TWebSocketFrame());
     } else {
@@ -376,18 +376,18 @@ void TAbstractWebSocket::sendHandshakeResponse()
 }
 
 
-TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(const QByteArray &uuid)
+TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(int sid)
 {
     TAbstractWebSocket *sock = nullptr;
 
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Thread:
-        sock = TWebSocket::searchSocket(uuid);
+        sock = TWebSocket::searchSocket(sid);
         break;
 
     case TWebApplication::Hybrid: {
 #ifdef Q_OS_LINUX
-        sock = TEpollWebSocket::searchSocket(uuid);
+        sock = TEpollWebSocket::searchSocket(sid);
         break;
 #else
         tFatal("Unsupported MPM: hybrid");

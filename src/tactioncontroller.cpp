@@ -52,8 +52,7 @@ TActionController::TActionController()
       statCode(Tf::OK),  // 200 OK
       rendered(false),
       layoutEnable(true),
-      rollback(false),
-      uuid()
+      rollback(false)
 {
     // Default content type
     setContentType("text/html");
@@ -847,26 +846,26 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 }
 
 
-void TActionController::sendTextToWebSocket(const QByteArray &uuid, const QString &text)
+void TActionController::sendTextToWebSocket(int sid, const QString &text)
 {
     QVariantList info;
-    info << uuid << text;
+    info << sid << text;
     taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 
-void TActionController::sendBinaryToWebSocket(const QByteArray &uuid, const QByteArray &binary)
+void TActionController::sendBinaryToWebSocket(int sid, const QByteArray &binary)
 {
     QVariantList info;
-    info << uuid << binary;
+    info << sid << binary;
     taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 
-void TActionController::closeWebSokcet(const QByteArray &uuid, int closeCode)
+void TActionController::closeWebSokcet(int sid, int closeCode)
 {
     QVariantList info;
-    info << uuid << closeCode;
+    info << sid << closeCode;
     taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 

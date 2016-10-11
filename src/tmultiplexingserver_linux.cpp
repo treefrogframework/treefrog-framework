@@ -131,15 +131,10 @@ void TMultiplexingServer::run()
     }
 
     for (;;) {
-        if (!numEvents && TActionWorker::workerCount() > 0) {
-            TEpoll::instance()->waitSendData(4);  // mitigation of busy loop
-        }
-
         TEpoll::instance()->dispatchSendData();
 
         // Poll Sending/Receiving/Incoming
-        int timeout = (TActionWorker::workerCount() > 0) ? 0 : 100;
-        numEvents = TEpoll::instance()->wait(timeout);
+        numEvents = TEpoll::instance()->wait(100);
         if (numEvents < 0)
             break;
 
@@ -204,17 +199,16 @@ void TMultiplexingServer::run()
 
         // Check keep-alive timeout for HTTP sockets
         if (Q_UNLIKELY(keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000)) {
-            idleTimer.start();
-
             auto sockets = TEpollHttpSocket::allSockets();
             for (auto *http : sockets) {
                 if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
-                    tSystemDebug("KeepAlive timeout: %s", http->socketUuid().data());
+                    tSystemDebug("KeepAlive timeout: sid:%d", http->socketId());
                     TEpoll::instance()->deletePoll(http);
                     http->close();
                     http->deleteLater();
                 }
             }
+            idleTimer.start();
         }
 
         // Check stop flag

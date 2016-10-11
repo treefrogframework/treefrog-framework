@@ -30,8 +30,8 @@ public:
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() Q_DECL_OVERRIDE;
-    QByteArray socketUuid() const Q_DECL_OVERRIDE { return TEpollSocket::socketUuid(); }
-    static TEpollWebSocket *searchSocket(const QByteArray &uuid);
+    int socketId() const Q_DECL_OVERRIDE { return TEpollSocket::socketId(); }
+    static TEpollWebSocket *searchSocket(int sid);
 
 public slots:
     void releaseWorker();

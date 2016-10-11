@@ -37,8 +37,10 @@ private slots:
     void reactjsx();
     void reactjsxCommonJs_data();
     void reactjsxCommonJs();
+# if QT_VERSION > 0x050600
     void reactComponent_data();
     void reactComponent();
+# endif
     void benchmark();
 #endif
 };
@@ -349,6 +351,7 @@ void JSContext::reactjsxCommonJs()
     QCOMPARE(output, result);
 }
 
+# if QT_VERSION > 0x050600
 
 void JSContext::reactComponent_data()
 {
@@ -381,6 +384,7 @@ void JSContext::reactComponent()
     QCOMPARE(output, result);
 }
 
+#endif
 #endif
 
 QString JSContext::jsxTransform(const QString &jsx)
