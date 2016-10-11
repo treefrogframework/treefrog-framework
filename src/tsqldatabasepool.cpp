@@ -32,19 +32,16 @@ TSqlDatabasePool::~TSqlDatabasePool()
     timer.stop();
 
     for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
-        auto &stack = cachedDatabase[j];
+        auto &cache = cachedDatabase[j];
         QString name;
-        while (stack.pop(name)) {
+        while (cache.pop(name)) {
             QSqlDatabase::database(name, false).close();
+            QSqlDatabase::removeDatabase(name);
         }
 
-        for (int i = 0; i < maxConnects; ++i) {
-            QString name = QString::number(j) + '_' + QString::number(i);
-            if (QSqlDatabase::contains(name)) {
-                QSqlDatabase::removeDatabase(name);
-            } else {
-                break;
-            }
+        auto &stack = availableNames[j];
+        while (stack.pop(name)) {
+            QSqlDatabase::removeDatabase(name);
         }
     }
 

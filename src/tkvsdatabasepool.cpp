@@ -6,7 +6,6 @@
  */
 
 #include <QStringList>
-#include <QMutexLocker>
 #include <QDateTime>
 #include <QHash>
 #include <TWebApplication>
@@ -49,17 +48,26 @@ TKvsDatabasePool::~TKvsDatabasePool()
 {
     timer.stop();
 
-    QMutexLocker locker(&mutex);
-    for (int j = 0; j < pooledConnections.count(); ++j) {
-        QMap<QString, uint> &map = pooledConnections[j];
-        QMap<QString, uint>::iterator it = map.begin();
-        while (it != map.end()) {
-            TKvsDatabase::database(it.key()).close();
-            it = map.erase(it);
+    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+        int type = it.value();
+
+        auto &cache = cachedDatabase[type];
+        QString name;
+        while (cache.pop(name)) {
+            TKvsDatabase::database(name).close();
+            TKvsDatabase::removeDatabase(name);
+        }
+
+        auto &stack = availableNames[type];
+        while (stack.pop(name)) {
+            TKvsDatabase::removeDatabase(name);
         }
     }
 
-    TKvsDatabase::removeAllDatabases();
+    delete[] cachedDatabase;
+    delete[] lastCachedTime;
+    delete[] availableNames;
+
 }
 
 
@@ -73,12 +81,17 @@ TKvsDatabasePool::TKvsDatabasePool(const QString &environment)
 
 void TKvsDatabasePool::init()
 {
-    // Adds databases previously
+    if (cachedDatabase) {
+        return;
+    }
+    cachedDatabase = new TStack<QString>[kvsTypeHash()->count()];
+    lastCachedTime = new std::atomic<uint>[kvsTypeHash()->count()];
+    availableNames = new TStack<QString>[kvsTypeHash()->count()];
 
+    // Adds databases previously
     for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
         const QString &drv = it.next().key();
         int type = it.value();
-        pooledConnections.append(QMap<QString, uint>());
 
         if (!isKvsAvailable((TKvsDatabase::Type)type)) {
             tSystemDebug("KVS database not available. type:%d", (int)type);
@@ -87,6 +100,7 @@ void TKvsDatabasePool::init()
             tSystemInfo("KVS database available. type:%d", (int)type);
         }
 
+        auto &stack = availableNames[type];
         for (int i = 0; i < maxConnects; ++i) {
             TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString().sprintf(CONN_NAME_FORMAT, type, i));
             if (!db.isValid()) {
@@ -95,6 +109,7 @@ void TKvsDatabasePool::init()
             }
 
             setDatabaseSettings(db, (TKvsDatabase::Type)type, dbEnvironment);
+            stack.push(db.connectionName());  // push onto stack
             tSystemDebug("Add KVS successfully. name:%s", qPrintable(db.connectionName()));
         }
     }
@@ -134,7 +149,6 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
         }
         break;
 
-
     default:
         throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         break;
@@ -148,7 +162,6 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
 {
     T_TRACEFUNC("");
 
-    QMutexLocker locker(&mutex);
     TKvsDatabase db;
 
     if (!isKvsAvailable(type)) {
@@ -168,29 +181,39 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
         return db;
     }
 
-    QMap<QString, uint> &map = pooledConnections[(int)type];
-    QMap<QString, uint>::iterator it = map.begin();
-    while (it != map.end()) {
-        db = TKvsDatabase::database(it.key());
-        it = map.erase(it);
-        if (Q_LIKELY(db.isOpen())) {
-            tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
-            return db;
-        } else {
-            tSystemError("Pooled KVS database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
-        }
-    }
+    auto &cache = cachedDatabase[(int)type];
+    auto &stack = availableNames[(int)type];
 
-    for (int i = 0; i < maxConnects; ++i) {
-        db = TKvsDatabase::database(QString().sprintf(CONN_NAME_FORMAT, (int)type, i));
-        if (!db.isOpen()) {
-            if (Q_UNLIKELY(!db.open())) {
-                tError("KVS database open error");
-                tSystemError("KVS Database open error: %s", qPrintable(db.connectionName()));
-                return TKvsDatabase();
+    for (;;) {
+        QString name;
+        if (cache.pop(name)) {
+            db = TKvsDatabase::database(name);
+            if (Q_LIKELY(db.isOpen())) {
+                tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
+                return db;
+            } else {
+                tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
+                stack.push(name);
+                continue;
             }
-            tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(dbEnvironment), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
-            return db;
+        }
+
+        if (Q_LIKELY(stack.pop(name))) {
+            db = TKvsDatabase::database(name);
+            if (Q_UNLIKELY(db.isOpen())) {
+                tSystemWarn("Gets a opend KVS database: %s", qPrintable(db.connectionName()));
+                return db;
+            } else {
+                if (Q_UNLIKELY(!db.open())) {
+                    tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
+                    tSystemError("KVS database open error: %s", qPrintable(db.connectionName()));
+                    return TKvsDatabase();;
+                }
+
+                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(dbEnvironment), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
+                tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
+                return db;
+            }
         }
     }
 
@@ -249,7 +272,6 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
 void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
     T_TRACEFUNC("");
-    QMutexLocker locker(&mutex);
 
     if (Q_LIKELY(database.isValid())) {
         int type = kvsTypeHash()->value(database.driverName(), -1);
@@ -257,7 +279,8 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
             throw RuntimeException("No such KVS type", __FILE__, __LINE__);
         }
 
-        pooledConnections[type].insert(database.connectionName(), QDateTime::currentDateTime().toTime_t());
+        cachedDatabase[type].push(database.connectionName());
+        lastCachedTime[type].store(QDateTime::currentDateTime().toTime_t());
         tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
     }
     database = TKvsDatabase();  // Sets an invalid object
@@ -269,24 +292,18 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
     T_TRACEFUNC("");
 
     if (event->timerId() == timer.timerId()) {
-        // Closes extra-connection
-        if (mutex.tryLock()) {
-            for (int i = 0; i < pooledConnections.count(); ++i) {
-                QMap<QString, uint> &map = pooledConnections[i];
-                QMap<QString, uint>::iterator it = map.begin();
+        QString name;
 
-                while (it != map.end()) {
-                    uint tm = it.value();
-                    if (tm < QDateTime::currentDateTime().toTime_t() - 30) {  // 30sec
-                        TKvsDatabase::database(it.key()).close();
-                        tSystemDebug("Closed KVS database connection, name: %s", qPrintable(it.key()));
-                        it = map.erase(it);
-                    } else {
-                        ++it;
-                    }
-                }
+        // Closes extra-connection
+        for (int i = 0; i < kvsTypeHash()->count(); ++i) {
+            auto &cache = cachedDatabase[i];
+
+            while (lastCachedTime[i].load() < QDateTime::currentDateTime().toTime_t() - 30
+                   && cache.pop(name)) {
+                TKvsDatabase::database(name).close();
+                tSystemDebug("Closed KVS database connection, name: %s", qPrintable(name));
+                availableNames[i].push(name);
             }
-            mutex.unlock();
         }
     } else {
         QObject::timerEvent(event);

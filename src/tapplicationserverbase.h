@@ -1,8 +1,6 @@
 #ifndef TAPPLICATIONSERVERBASE_H
 #define TAPPLICATIONSERVERBASE_H
 
-#include <QSet>
-#include <QMutex>
 #include <QHostAddress>
 #include <TGlobal>
 

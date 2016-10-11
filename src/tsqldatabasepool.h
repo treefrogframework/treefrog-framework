@@ -6,7 +6,6 @@
 #include <QVector>
 #include <QMap>
 #include <QString>
-#include <QMutex>
 #include <QDateTime>
 #include <QBasicTimer>
 #include <TGlobal>
@@ -40,7 +39,6 @@ private:
     TStack<QString> *cachedDatabase {nullptr};
     std::atomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
-    //std::atomic<int> index {0};
     int maxConnects;
     QString dbEnvironment;
     QBasicTimer timer;
