@@ -1,6 +1,7 @@
 #ifndef MONGOCOMMAND_H
 #define MONGOCOMMAND_H
 
+#include <TGlobal>
 #include <QStringList>
 
 class TMongoDriver;
@@ -20,6 +21,7 @@ private:
     TMongoDriver *driver;
     QString settingsPath;
     QString databaseName;
+
     T_DISABLE_COPY(MongoCommand)
     T_DISABLE_MOVE(MongoCommand)
 };

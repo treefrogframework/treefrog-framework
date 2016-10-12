@@ -48,8 +48,10 @@ TKvsDatabasePool::~TKvsDatabasePool()
 {
     timer.stop();
 
-    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
-        int type = it.value();
+    for (int type = 0; type < TKvsDatabase::TypeNum; type++) {
+        if (!isKvsAvailable((TKvsDatabase::Type)type)) {
+            continue;
+        }
 
         auto &cache = cachedDatabase[type];
         QString name;

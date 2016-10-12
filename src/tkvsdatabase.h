@@ -13,6 +13,7 @@ public:
     enum Type {
         MongoDB = 0,
         Redis,
+        TypeNum // = 2
     };
 
     TKvsDatabase();
