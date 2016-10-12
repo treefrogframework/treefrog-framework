@@ -297,14 +297,20 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
         QString name;
 
         // Closes extra-connection
-        for (int i = 0; i < kvsTypeHash()->count(); ++i) {
-            auto &cache = cachedDatabase[i];
+        for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+            int type = it.value();
 
-            while (lastCachedTime[i].load() < QDateTime::currentDateTime().toTime_t() - 30
+            if (!isKvsAvailable((TKvsDatabase::Type)type)) {
+                continue;
+            }
+
+            auto &cache = cachedDatabase[type];
+
+            while (lastCachedTime[type].load() < QDateTime::currentDateTime().toTime_t() - 30
                    && cache.pop(name)) {
                 TKvsDatabase::database(name).close();
                 tSystemDebug("Closed KVS database connection, name: %s", qPrintable(name));
-                availableNames[i].push(name);
+                availableNames[type].push(name);
             }
         }
     } else {
