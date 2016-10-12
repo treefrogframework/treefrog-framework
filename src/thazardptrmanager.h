@@ -34,11 +34,8 @@ private:
     friend class THazardObject;
     friend class THazardRemoverThread;
 
-    // Deleted functions
-    THazardPtrManager(const THazardPtrManager &) = delete;
-    THazardPtrManager(THazardPtrManager &&) = delete;
-    THazardPtrManager &operator=(const THazardPtrManager &) = delete;
-    THazardPtrManager &operator=(THazardPtrManager &&) = delete;
+    T_DISABLE_COPY(THazardPtrManager)
+    T_DISABLE_MOVE(THazardPtrManager)
 };
 
 #endif // THAZARDPTRMANAGER_H

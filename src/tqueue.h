@@ -1,6 +1,7 @@
 #ifndef TQUEUE_H
 #define TQUEUE_H
 
+#include <TGlobal>
 #include "thazardobject.h"
 #include "thazardptr.h"
 #include "tatomicptr.h"
@@ -12,6 +13,7 @@ namespace Tf
 
 template <class T> class TQueue
 {
+private:
     struct Node : public THazardObject
     {
         T value;
@@ -29,15 +31,18 @@ public:
     bool dequeue(T &val);
     bool head(T &val);
     int count() const { return counter.load(); }
+
+    T_DISABLE_COPY(TQueue)
+    T_DISABLE_MOVE(TQueue)
 };
 
 
 template <class T>
 inline TQueue<T>::TQueue()
 {
-    auto *newnode = new Node(T());
-    queHead.store(newnode);
-    queTail.store(newnode);
+    auto *dummy = new Node(T());  // dummy node
+    queHead.store(dummy);
+    queTail.store(dummy);
 }
 
 

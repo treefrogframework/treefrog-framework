@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QByteArray>
-#include <QQueue>
 #include <QHostAddress>
 #include <TGlobal>
 #include <atomic>

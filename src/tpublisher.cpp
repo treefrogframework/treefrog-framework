@@ -223,7 +223,7 @@ TPublisher *TPublisher::instance()
 void TPublisher::instantiate()
 {
     if (!globalInstance) {
-        globalInstance = new TPublisher;
+        globalInstance = new TPublisher();
         connect(TSystemBus::instance(), SIGNAL(readyReceive()), globalInstance, SLOT(receiveSystemBus()));
     }
 }

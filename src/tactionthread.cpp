@@ -82,7 +82,7 @@ void TActionThread::run()
 {
     QList<THttpRequest> reqs;
     QEventLoop eventLoop;
-    httpSocket = new THttpSocket;
+    httpSocket = new THttpSocket();
 
     if (Q_UNLIKELY(!httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
         emitError(httpSocket->error());
@@ -94,14 +94,14 @@ void TActionThread::run()
         reqs = readRequest(httpSocket);
         tSystemDebug("HTTP request count: %d", reqs.count());
 
-        if (reqs.isEmpty()) {
+        if (Q_UNLIKELY(reqs.isEmpty())) {
             break;
         }
 
         for (auto &req : reqs) {
             // WebSocket?
             QByteArray connectionHeader = req.header().rawHeader("Connection").toLower();
-            if (connectionHeader.contains("upgrade")) {
+            if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
                 QByteArray upgradeHeader = req.header().rawHeader("Upgrade").toLower();
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
                 if (upgradeHeader == "websocket") {

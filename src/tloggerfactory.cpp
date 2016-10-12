@@ -72,7 +72,7 @@ TLogger *TLoggerFactory::create(const QString &key)
 
     QString k = key.toLower();
     if (k == FILE_KEY) {
-        logger = new TFileLogger;
+        logger = new TFileLogger();
     } else {
         TLoggerInterface *lggif = lggIfMap->value(k);
         if (lggif) {

@@ -28,11 +28,8 @@ private:
     TAtomicPtr<Node> head {nullptr};
     static thread_local THazardPtr hzptr;
 
-    // Deleted functions
-    TSinglyList(TSinglyList<T> &) = delete;
-    TSinglyList<T> &operator=(TSinglyList<T> &) = delete;
-    TSinglyList(TSinglyList<T> &&) = delete;
-    TSinglyList<T> &operator=(TSinglyList<T> &&) = delete;
+    T_DISABLE_COPY(TSinglyList)
+    T_DISABLE_MOVE(TSinglyList)
 };
 
 

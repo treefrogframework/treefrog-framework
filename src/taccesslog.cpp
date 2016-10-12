@@ -119,7 +119,7 @@ TAccessLogger &TAccessLogger::operator=(const TAccessLogger &other)
 void TAccessLogger::open()
 {
     if (!accessLog)
-        accessLog = new TAccessLog;
+        accessLog = new TAccessLog();
 }
 
 

@@ -7,6 +7,7 @@
 
 #include "tscheduler.h"
 #include <TWebApplication>
+#include "tpublisher.h"
 #include "tsystemglobal.h"
 
 /*!
@@ -70,6 +71,18 @@ void TScheduler::setSingleShot(bool singleShot)
 void TScheduler::rollbackTransaction()
 {
     rollback = true;
+}
+
+
+void TScheduler::publish(const QString &topic, const QString &text)
+{
+    TPublisher::instance()->publish(topic, text, nullptr);
+}
+
+
+void TScheduler::publish(const QString &topic, const QByteArray &binary)
+{
+    TPublisher::instance()->publish(topic, binary, nullptr);
 }
 
 

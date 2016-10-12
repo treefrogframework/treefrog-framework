@@ -41,9 +41,7 @@ private:
     T *raw() const;
     std::atomic<T*> atomicPtr {nullptr};
 
-    // Deleted functions
-    TAtomicPtr(TAtomicPtr<T> &&) = delete;
-    TAtomicPtr<T> &operator=(TAtomicPtr<T> &&) = delete;
+    T_DISABLE_MOVE(TAtomicPtr)
 };
 
 

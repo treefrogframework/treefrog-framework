@@ -161,7 +161,7 @@ TSystemBus *TSystemBus::instance()
 void TSystemBus::instantiate()
 {
     if (!systemBus) {
-        systemBus = new TSystemBus;
+        systemBus = new TSystemBus();
         systemBus->connect();
     }
 }

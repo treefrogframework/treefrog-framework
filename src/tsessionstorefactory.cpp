@@ -86,13 +86,13 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
 
     QString k = key.toLower();
     if (k == COOKIE_KEY) {
-        ret = new TSessionCookieStore;
+        ret = new TSessionCookieStore();
     } else if (k == SQLOBJECT_KEY) {
-        ret = new TSessionSqlObjectStore;
+        ret = new TSessionSqlObjectStore();
     } else if (k == FILE_KEY) {
-        ret = new TSessionFileStore;
+        ret = new TSessionFileStore();
     } else if (k == REDIS_KEY) {
-        ret = new TSessionRedisStore;
+        ret = new TSessionRedisStore();
     } else {
         TSessionStoreInterface *ssif = sessIfMap->value(k);
         if (ssif) {

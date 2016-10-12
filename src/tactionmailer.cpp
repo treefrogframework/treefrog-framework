@@ -74,7 +74,7 @@ bool TActionMailer::deliver(const QString &templateName)
     QByteArray dm = Tf::appSettings()->value(Tf::ActionMailerDeliveryMethod).toByteArray().toLower();
     if (dm == "smtp") {
         // SMTP
-        TSmtpMailer *mailer = new TSmtpMailer;
+        TSmtpMailer *mailer = new TSmtpMailer();
         mailer->setHostName(Tf::appSettings()->value(Tf::ActionMailerSmtpHostName).toByteArray());
         mailer->setPort(Tf::appSettings()->value(Tf::ActionMailerSmtpPort).toUInt());
         mailer->setStartTlsEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpEnableSTARTTLS).toBool());

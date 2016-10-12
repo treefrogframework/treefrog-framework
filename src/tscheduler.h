@@ -23,6 +23,8 @@ public:
 protected:
     virtual void job() = 0;
     void rollbackTransaction();
+    void publish(const QString &topic, const QString &text);
+    void publish(const QString &topic, const QByteArray &binary);
 
 private slots:
     void start(Priority priority = InheritPriority);
@@ -31,7 +33,7 @@ private:
     void run();
 
     QTimer *timer;
-    volatile bool rollback;
+    bool rollback {false};
 
     Q_DISABLE_COPY(TScheduler)
 };

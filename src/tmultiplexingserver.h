@@ -3,7 +3,6 @@
 
 #include <QThread>
 #include <QMap>
-#include <QQueue>
 #include <QList>
 #include <QByteArray>
 #include <QFileInfo>
