@@ -5,7 +5,10 @@
 #include "thazardptr.h"
 #include "tatomicptr.h"
 
-static thread_local THazardPtr hzptrStack;
+namespace Tf
+{
+    static thread_local THazardPtr hzptrStack;
+}
 
 
 template <class T> class TStack
@@ -44,7 +47,7 @@ template <class T>
 inline bool TStack<T>::pop(T &val)
 {
     Node *pnode;
-    while ((pnode = hzptrStack.guard<Node>(&stkHead))) {
+    while ((pnode = Tf::hzptrStack.guard<Node>(&stkHead))) {
         if (stkHead.compareExchange(pnode, pnode->next)) {
             break;
         }
@@ -56,7 +59,7 @@ inline bool TStack<T>::pop(T &val)
         pnode->next = nullptr;
         pnode->deleteLater();
     }
-    hzptrStack.clear();
+    Tf::hzptrStack.clear();
     return (bool)pnode;
 }
 
@@ -65,12 +68,12 @@ template <class T>
 inline bool TStack<T>::top(T &val)
 {
     Node *pnode;
-    pnode = hzptrStack.guard<Node>(&stkHead);
+    pnode = Tf::hzptrStack.guard<Node>(&stkHead);
 
     if (pnode) {
         val = pnode->value;
     }
-    hzptrStack.clear();
+    Tf::hzptrStack.clear();
     return (bool)pnode;
 }
 
