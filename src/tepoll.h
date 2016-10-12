@@ -57,7 +57,8 @@ private:
     TQueue<TSendData *> sendRequests;
 
     TEpoll();
-    Q_DISABLE_COPY(TEpoll);
+    T_DISABLE_COPY(TEpoll)
+    T_DISABLE_MOVE(TEpoll);
 };
 
 #endif // TEPOLL_H

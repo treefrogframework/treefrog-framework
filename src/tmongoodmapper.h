@@ -56,7 +56,8 @@ private:
     QString sortColumn;
     Tf::SortOrder sortOrder;
 
-    Q_DISABLE_COPY(TMongoODMapper)
+    T_DISABLE_COPY(TMongoODMapper)
+    T_DISABLE_MOVE(TMongoODMapper)
 };
 
 

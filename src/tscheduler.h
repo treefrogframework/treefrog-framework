@@ -35,7 +35,8 @@ private:
     QTimer *timer;
     bool rollback {false};
 
-    Q_DISABLE_COPY(TScheduler)
+    T_DISABLE_COPY(TScheduler)
+    T_DISABLE_MOVE(TScheduler)
 };
 
 #endif // TSCHEDULER_H

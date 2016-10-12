@@ -47,7 +47,8 @@ private:
     QByteArray buffer;
     int pos;
 
-    Q_DISABLE_COPY(TRedisDriver)
+    T_DISABLE_COPY(TRedisDriver)
+    T_DISABLE_MOVE(TRedisDriver)
 };
 
 #endif // TREDISDRIVER_H

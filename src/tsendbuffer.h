@@ -37,7 +37,8 @@ private:
     TSendBuffer();
 
     friend class TEpollSocket;
-    Q_DISABLE_COPY(TSendBuffer)
+    T_DISABLE_COPY(TSendBuffer)
+    T_DISABLE_MOVE(TSendBuffer)
 };
 
 #endif // THTTPBUFFER_H

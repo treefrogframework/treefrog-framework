@@ -39,7 +39,8 @@ private:
     QList<TLogger *> loggerList;
     bool nonBuffering;
 
-    Q_DISABLE_COPY(TAbstractLogStream)
+    T_DISABLE_COPY(TAbstractLogStream)
+    T_DISABLE_MOVE(TAbstractLogStream)
 };
 
 #endif // TABSTRACTLOGSTREAM_H

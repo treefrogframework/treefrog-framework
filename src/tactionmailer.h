@@ -16,7 +16,8 @@ protected:
     bool deliver(const QString &templateName = "mail");
 
 private:
-    Q_DISABLE_COPY(TActionMailer)
+    T_DISABLE_COPY(TActionMailer)
+    T_DISABLE_MOVE(TActionMailer)
 };
 
 #endif // TACTIONMAILER_H

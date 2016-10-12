@@ -60,7 +60,8 @@ protected:
     bool write(const QByteArray &command);
 
 private:
-    Q_DISABLE_COPY(TSmtpMailer)
+    T_DISABLE_COPY(TSmtpMailer)
+    T_DISABLE_MOVE(TSmtpMailer)
 
     QSslSocket *socket;
     QString smtpHostName;

@@ -54,7 +54,8 @@ private:
     QList<TTemporaryFile *> tempFiles;
     THttpRequest *httpReq;
 
-    Q_DISABLE_COPY(TActionContext)
+    T_DISABLE_COPY(TActionContext)
+    T_DISABLE_MOVE(TActionContext)
 };
 
 #endif // TACTIONCONTEXT_H

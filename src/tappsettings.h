@@ -25,6 +25,7 @@ private:
     QSettings *appIniSettings;
 
     friend class TWebApplication;
-    Q_DISABLE_COPY(TAppSettings)
+    T_DISABLE_COPY(TAppSettings)
+    T_DISABLE_MOVE(TAppSettings)
 };
 #endif // TAPPSETTINGS_H

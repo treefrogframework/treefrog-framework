@@ -47,7 +47,8 @@ private:
     QBasicTimer reloadTimer;
 
     TMultiplexingServer(int listeningSocket, QObject *parent = 0);  // Constructor
-    Q_DISABLE_COPY(TMultiplexingServer)
+    T_DISABLE_COPY(TMultiplexingServer)
+    T_DISABLE_MOVE(TMultiplexingServer)
 };
 
 

@@ -21,7 +21,8 @@ private:
 
     // Disable
     TAccessLogStream();
-    Q_DISABLE_COPY(TAccessLogStream)
+    T_DISABLE_COPY(TAccessLogStream)
+    T_DISABLE_MOVE(TAccessLogStream)
 };
 
 #endif // TACCESSLOGSTREAM_H

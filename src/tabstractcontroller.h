@@ -27,7 +27,8 @@ protected:
 
 private:
     QVariantMap exportVars;
-    Q_DISABLE_COPY(TAbstractController)
+    T_DISABLE_COPY(TAbstractController)
+    T_DISABLE_MOVE(TAbstractController)
 };
 
 

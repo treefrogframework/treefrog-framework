@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSet>
+#include <TGlobal>
 
 class QLocalServer;
 class QLocalSocket;
@@ -30,7 +31,9 @@ private:
     QSet<QLocalSocket *> socketSet;
 
     SystemBusDaemon();
-    Q_DISABLE_COPY(SystemBusDaemon)
+
+    T_DISABLE_COPY(SystemBusDaemon)
+    T_DISABLE_MOVE(SystemBusDaemon)
 };
 
 #endif // SYSTEMBUSDAEMON_H

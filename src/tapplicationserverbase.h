@@ -41,7 +41,8 @@ private:
     friend class TThreadApplicationServer;
     friend class TPreforkApplicationServer;
     friend class TMultiplexingServer;
-    Q_DISABLE_COPY(TApplicationServerBase)
+    T_DISABLE_COPY(TApplicationServerBase)
+    T_DISABLE_MOVE(TApplicationServerBase)
 };
 
 #endif // TAPPLICATIONSERVERBASE_H

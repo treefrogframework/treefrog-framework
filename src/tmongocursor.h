@@ -29,7 +29,8 @@ private:
 
     TMongoCursor();
     friend class TMongoDriver;
-    Q_DISABLE_COPY(TMongoCursor)
+    T_DISABLE_COPY(TMongoCursor)
+    T_DISABLE_MOVE(TMongoCursor)
 };
 
 #endif // TMONGOCURSOR_H

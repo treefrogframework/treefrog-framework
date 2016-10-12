@@ -51,7 +51,8 @@ protected:
     TBasicTimer *keepAliveTimer;
 
     friend class TWebSocketWorker;
-    Q_DISABLE_COPY(TAbstractWebSocket)
+    T_DISABLE_COPY(TAbstractWebSocket)
+    T_DISABLE_MOVE(TAbstractWebSocket)
 };
 
 #endif // TABSTRACTWEBSOCKET_H

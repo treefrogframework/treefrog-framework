@@ -43,7 +43,8 @@ private:
 
     friend class TEpollSocket;
     friend class TActionWorker;
-    Q_DISABLE_COPY(TEpollHttpSocket)
+    T_DISABLE_COPY(TEpollHttpSocket)
+    T_DISABLE_MOVE(TEpollHttpSocket)
 };
 
 #endif // TEPOLLHTTPSOCKET_H

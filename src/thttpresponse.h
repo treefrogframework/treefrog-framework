@@ -29,7 +29,8 @@ private:
     QByteArray tmpByteArray;
     QIODevice *bodyDevice;
 
-    Q_DISABLE_COPY(THttpResponse)
+    T_DISABLE_COPY(THttpResponse)
+    T_DISABLE_MOVE(THttpResponse)
 };
 
 

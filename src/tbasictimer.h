@@ -24,7 +24,8 @@ private:
     int interval_;
     QObject *receiver_;
 
-    Q_DISABLE_COPY(TBasicTimer)
+    T_DISABLE_COPY(TBasicTimer)
+    T_DISABLE_MOVE(TBasicTimer)
 };
 
 #endif // TBASICTIMER_H

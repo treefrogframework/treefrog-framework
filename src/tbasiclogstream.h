@@ -23,7 +23,8 @@ private:
     QMutex mutex;
     QBasicTimer timer;
 
-    Q_DISABLE_COPY(TBasicLogStream)
+    T_DISABLE_COPY(TBasicLogStream)
+    T_DISABLE_MOVE(TBasicLogStream)
 };
 
 #endif // TBASICLOGSTREAM_H

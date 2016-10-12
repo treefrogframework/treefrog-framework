@@ -30,7 +30,8 @@ private:
     QSharedMemory *shareMem;
     QBasicTimer timer;
 
-    Q_DISABLE_COPY(TSharedMemoryLogStream)
+    T_DISABLE_COPY(TSharedMemoryLogStream)
+    T_DISABLE_MOVE(TSharedMemoryLogStream)
 };
 
 #endif // TSHAREDMEMORYLOGSTREAM_H

@@ -38,7 +38,8 @@ private:
     QString moduleFilePath;
     QMutex mutex;
 
-    Q_DISABLE_COPY(TJSModule);
+    T_DISABLE_COPY(TJSModule)
+    T_DISABLE_MOVE(TJSModule);
 
     friend class TJSLoader;
     friend class TReactComponent;

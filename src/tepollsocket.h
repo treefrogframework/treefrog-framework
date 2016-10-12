@@ -69,7 +69,8 @@ private:
 
     friend class TEpoll;
     friend class TMultiplexingServer;
-    Q_DISABLE_COPY(TEpollSocket)
+    T_DISABLE_COPY(TEpollSocket)
+    T_DISABLE_MOVE(TEpollSocket)
 };
 
 #endif // TEPOLLSOCKET_H

@@ -94,8 +94,6 @@ protected:
     static int signalNumber();
 
 private:
-    Q_DISABLE_COPY(TWebApplication)
-
     QString webRootAbsolutePath;
     QString dbEnvironment;
     QVector<QSettings *> sqlSettings;
@@ -111,6 +109,9 @@ private:
     mutable MultiProcessingModule mpm;
 
     static void resetSignalNumber();
+
+    T_DISABLE_COPY(TWebApplication)
+    T_DISABLE_MOVE(TWebApplication)
 };
 
 

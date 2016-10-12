@@ -22,7 +22,8 @@ protected:
     void rollbackTransaction();
 
 private:
-    Q_DISABLE_COPY(TApplicationScheduler)
+    T_DISABLE_COPY(TApplicationScheduler)
+    T_DISABLE_MOVE(TApplicationScheduler)
 };
 
 #endif // TAPPLICATIONSCHEDULER_H

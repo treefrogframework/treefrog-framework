@@ -23,7 +23,8 @@ private:
     TJSLoader *jsLoader;
     QDateTime loadedTime;
 
-    Q_DISABLE_COPY(TReactComponent)
+    T_DISABLE_COPY(TReactComponent)
+    T_DISABLE_MOVE(TReactComponent)
 };
 
 #endif // TREACTCOMPONENT_H

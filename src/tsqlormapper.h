@@ -72,7 +72,8 @@ protected:
     virtual int rowCount(const QModelIndex &parent) const;
 
 private:
-    Q_DISABLE_COPY(TSqlORMapper)
+    T_DISABLE_COPY(TSqlORMapper)
+    T_DISABLE_MOVE(TSqlORMapper)
 
     QString queryFilter;
     QString sortColumn;
