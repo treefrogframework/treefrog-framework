@@ -30,7 +30,7 @@ public:
     void push(const T &val);
     bool pop(T &val);
     bool top(T &val);
-    int count() const { return counter.load(); }
+    int count() const { return counter.load(std::memory_order_acquire); }
 
     T_DISABLE_COPY(TStack)
     T_DISABLE_MOVE(TStack)

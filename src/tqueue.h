@@ -30,7 +30,7 @@ public:
     void enqueue(const T &val);
     bool dequeue(T &val);
     bool head(T &val);
-    int count() const { return counter.load(); }
+    int count() const { return counter.load(std::memory_order_acquire); }
 
     T_DISABLE_COPY(TQueue)
     T_DISABLE_MOVE(TQueue)

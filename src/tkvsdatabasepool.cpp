@@ -75,10 +75,7 @@ TKvsDatabasePool::~TKvsDatabasePool()
 
 TKvsDatabasePool::TKvsDatabasePool(const QString &environment)
     : QObject(), maxConnects(0), dbEnvironment(environment)
-{
-    // Starts the timer to close extra-connection
-    timer.start(10000, this);
-}
+{ }
 
 
 void TKvsDatabasePool::init()
@@ -86,9 +83,11 @@ void TKvsDatabasePool::init()
     if (cachedDatabase) {
         return;
     }
+
     cachedDatabase = new TStack<QString>[kvsTypeHash()->count()];
     lastCachedTime = new std::atomic<uint>[kvsTypeHash()->count()];
     availableNames = new TStack<QString>[kvsTypeHash()->count()];
+    bool aval = false;
 
     // Adds databases previously
     for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
@@ -99,6 +98,7 @@ void TKvsDatabasePool::init()
             tSystemDebug("KVS database not available. type:%d", (int)type);
             continue;
         } else {
+            aval = true;
             tSystemInfo("KVS database available. type:%d", (int)type);
         }
 
@@ -114,6 +114,11 @@ void TKvsDatabasePool::init()
             stack.push(db.connectionName());  // push onto stack
             tSystemDebug("Add KVS successfully. name:%s", qPrintable(db.connectionName()));
         }
+    }
+
+    if (aval) {
+        // Starts the timer to close extra-connection
+        timer.start(10000, this);
     }
 }
 
@@ -297,20 +302,17 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
         QString name;
 
         // Closes extra-connection
-        for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
-            int type = it.value();
-
-            if (!isKvsAvailable((TKvsDatabase::Type)type)) {
+        for (int t = 0; t < kvsTypeHash()->count(); t++) {
+            if (!isKvsAvailable((TKvsDatabase::Type)t)) {
                 continue;
             }
 
-            auto &cache = cachedDatabase[type];
-
-            while (lastCachedTime[type].load() < QDateTime::currentDateTime().toTime_t() - 30
+            auto &cache = cachedDatabase[t];
+            while (lastCachedTime[t].load() < QDateTime::currentDateTime().toTime_t() - 30
                    && cache.pop(name)) {
                 TKvsDatabase::database(name).close();
                 tSystemDebug("Closed KVS database connection, name: %s", qPrintable(name));
-                availableNames[type].push(name);
+                availableNames[t].push(name);
             }
         }
     } else {
