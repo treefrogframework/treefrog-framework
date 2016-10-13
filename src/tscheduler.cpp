@@ -25,6 +25,9 @@ TScheduler::TScheduler(QObject *parent)
     timer->setSingleShot(false);
 
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(start()));
+    QObject::connect(this, SIGNAL(startTimer(int)), timer, SLOT(start(int)));
+    QObject::connect(this, SIGNAL(startTimer()), timer, SLOT(start()));
+    QObject::connect(this, SIGNAL(stopTimer()), timer, SLOT(stop()));
 }
 
 
@@ -36,17 +39,19 @@ TScheduler::~TScheduler()
 
 void TScheduler::start(int msec)
 {
-    timer->start(msec);
+    emit startTimer(msec);
+}
+
+
+void TScheduler::restart()
+{
+    emit startTimer();
 }
 
 
 void TScheduler::stop()
 {
-    timer->stop();
-
-    if (QThread::isRunning()) {
-        QThread::wait();
-    }
+    emit stopTimer();
 }
 
 

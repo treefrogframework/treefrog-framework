@@ -15,6 +15,7 @@ public:
     virtual ~TScheduler();
 
     void start(int msec);
+    void restart();
     void stop();
     int	interval() const;
     bool isSingleShot() const;
@@ -29,10 +30,15 @@ protected:
 private slots:
     void start(Priority priority = InheritPriority);
 
+signals:
+    void startTimer(int msec);
+    void startTimer();
+    void stopTimer();
+
 private:
     void run();
 
-    QTimer *timer;
+    QTimer *timer {nullptr};
     bool rollback {false};
 
     T_DISABLE_COPY(TScheduler)
