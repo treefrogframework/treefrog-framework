@@ -1,6 +1,7 @@
 #include "thazardptrmanager.h"
 #include "thazardptr.h"
 #include "thazardobject.h"
+#include "tsqldatabasepool.h"
 #include <QThread>
 
 
@@ -105,8 +106,9 @@ void THazardPtrManager::push(THazardObject* obj)
     objCount++;
 
     // Limits objects
+    static const int threshold = qMax(100, TSqlDatabasePool::maxDbConnectionsPerProcess());
     for (;;) {
-        int limit = qMax(20, (int)hprCount * 2);
+        int limit = qMax(threshold, (int)hprCount * 2);
         if ((int)objCount < limit) {
             break;
         }
