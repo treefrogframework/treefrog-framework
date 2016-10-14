@@ -5,7 +5,7 @@
 #include <QMap>
 #include <TGlobal>
 #include <TAccessLog>
-#include <atomic>
+#include "tatomic.h"
 #include "tdatabasecontext.h"
 
 class QIODevice;
@@ -44,7 +44,7 @@ protected:
     virtual void closeHttpSocket() { }
     virtual void emitError(int socketError);
 
-    std::atomic<bool> stopped;
+    TAtomic<bool> stopped;
     QStringList autoRemoveFiles;
     int socketDesc;
     TAccessLogger accessLogger;

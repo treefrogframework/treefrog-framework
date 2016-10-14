@@ -4,6 +4,7 @@
 #include <TGlobal>
 #include "thazardobject.h"
 #include "thazardptr.h"
+#include "tatomic.h"
 #include "tatomicptr.h"
 
 namespace Tf
@@ -23,14 +24,14 @@ private:
     };
 
     TAtomicPtr<Node> stkHead {nullptr};
-    std::atomic<int> counter {0};
+    TAtomic<int> counter {0};
 
 public:
     TStack() {}
     void push(const T &val);
     bool pop(T &val);
     bool top(T &val);
-    int count() const { return counter.load(std::memory_order_acquire); }
+    int count() const { return counter.load(); }
 
     T_DISABLE_COPY(TStack)
     T_DISABLE_MOVE(TStack)

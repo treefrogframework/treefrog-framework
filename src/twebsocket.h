@@ -5,7 +5,7 @@
 #include <QList>
 #include <QByteArray>
 #include <TGlobal>
-#include <atomic>
+#include "tatomic.h"
 #include "tabstractwebsocket.h"
 
 class TWebSocketFrame;
@@ -54,8 +54,8 @@ private:
 
     int sid;
     QByteArray recvBuffer;
-    std::atomic<int> myWorkerCounter;
-    std::atomic<bool> deleting;
+    TAtomic<int> myWorkerCounter;
+    TAtomic<bool> deleting;
 
     friend class TActionThread;
     T_DISABLE_COPY(TWebSocket)

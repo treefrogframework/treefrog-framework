@@ -61,6 +61,7 @@ public:
     QByteArray internetMediaType(const QString &ext, bool appendCharset = false);
     MultiProcessingModule multiProcessingModule() const;
     int maxNumberOfAppServers(int defaultValue = 1) const;
+    int maxNumberOfThreadsPerAppServer() const;
     QString routesConfigFilePath() const;
     QString systemLogFilePath() const;
     QString accessLogFilePath() const;

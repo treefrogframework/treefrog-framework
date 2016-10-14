@@ -4,6 +4,7 @@
 #include <TGlobal>
 #include "thazardobject.h"
 #include "thazardptr.h"
+#include "tatomic.h"
 #include "tatomicptr.h"
 
 namespace Tf
@@ -23,14 +24,14 @@ private:
 
     TAtomicPtr<Node> queHead {nullptr};
     TAtomicPtr<Node> queTail {nullptr};
-    std::atomic<int> counter {0};
+    TAtomic<int> counter {0};
 
 public:
     TQueue();
     void enqueue(const T &val);
     bool dequeue(T &val);
     bool head(T &val);
-    int count() const { return counter.load(std::memory_order_acquire); }
+    int count() const { return counter.load(); }
 
     T_DISABLE_COPY(TQueue)
     T_DISABLE_MOVE(TQueue)

@@ -8,7 +8,7 @@
 #include <QBasicTimer>
 #include <TKvsDatabase>
 #include <TGlobal>
-#include <atomic>
+#include "tatomic.h"
 #include "tstack.h"
 
 class QSettings;
@@ -33,7 +33,6 @@ protected:
     void timerEvent(QTimerEvent *event);
 
     static QString driverName(TKvsDatabase::Type type);
-    static int maxDbConnectionsPerProcess();
 
 private:
     T_DISABLE_COPY(TKvsDatabasePool)
@@ -41,7 +40,7 @@ private:
     TKvsDatabasePool(const QString &environment);
 
     TStack<QString> *cachedDatabase {nullptr};
-    std::atomic<uint> *lastCachedTime {nullptr};
+    TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
     int maxConnects;
     QString dbEnvironment;

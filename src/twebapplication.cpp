@@ -376,6 +376,37 @@ int TWebApplication::maxNumberOfAppServers(int defaultValue) const
 }
 
 /*!
+  Maximum number of action threads allowed to start simultaneously
+  per server process.
+*/
+int TWebApplication::maxNumberOfThreadsPerAppServer() const
+{
+    int maxNum = 0;
+    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::Thread:
+        maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+        if (maxNum <= 0) {
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+        }
+        break;
+
+    case TWebApplication::Hybrid:
+        maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+        if (maxNum <= 0) {
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+        }
+        break;
+
+    default:
+        break;
+    }
+
+    return maxNum;
+}
+
+/*!
   Returns the absolute file path of the routes config.
 */
 QString TWebApplication::routesConfigFilePath() const

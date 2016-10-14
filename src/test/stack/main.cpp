@@ -2,9 +2,11 @@
 #include <QThread>
 #include <unistd.h>
 #include <atomic>
+#include <iostream>
 #include "tstack.h"
+#include <TfTest/TfTest>
 
-static std::atomic<int> counter {0};
+static std::atomic<qint64> counter {0};
 
 struct Box
 {
@@ -100,8 +102,9 @@ void TestStack::push_pop()
     while (timer.elapsed() < 10000) {
         eventLoop.processEvents();
     }
-    printf("counter=%d\n", (int)counter);
-    printf("stack count=%d\n", (int)stackBox.count());
+
+    std::cout << "counter=" << counter.load() << std::endl;
+    std::cout << "stack count=" << stackBox.count() << std::endl;
     _exit(0);
 }
 
@@ -124,5 +127,5 @@ void TestStack::startPushThread()
 }
 
 
-QTEST_MAIN(TestStack)
+TF_TEST_SQLLESS_MAIN(TestStack)
 #include "main.moc"
