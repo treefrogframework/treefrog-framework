@@ -30,7 +30,8 @@ private:
     QString clientAddr;
     TEpollHttpSocket *socket;
 
-    Q_DISABLE_COPY(TActionWorker)
+    T_DISABLE_COPY(TActionWorker)
+    T_DISABLE_MOVE(TActionWorker)
 };
 
 #endif // TACTIONWORKER_H

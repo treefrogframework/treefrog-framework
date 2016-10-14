@@ -1,6 +1,7 @@
 #ifndef OTAMACONVERTER_H
 #define OTAMACONVERTER_H
 
+#include <TGlobal>
 #include <QString>
 #include <QDir>
 #include "erbconverter.h"
@@ -18,9 +19,10 @@ public:
     static QString logicFileSuffix() { return "otm"; }
 
 private:
-    Q_DISABLE_COPY(OtamaConverter)
-
     ErbConverter erbConverter;
+
+    T_DISABLE_COPY(OtamaConverter)
+    T_DISABLE_MOVE(OtamaConverter)
 };
 
 #endif // OTAMACONVERTER_H

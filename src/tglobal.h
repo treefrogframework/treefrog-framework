@@ -104,6 +104,14 @@
 
 #define T_VARIANT(VAR)  (variant(QLatin1String(#VAR)).toString())
 
+//  Some classes do not permit copies and moves to be made of an object.
+#define T_DISABLE_COPY(Class)                 \
+    Class(const Class &) = delete;            \
+    Class &operator=(const Class &) = delete;
+
+#define T_DISABLE_MOVE(Class)                 \
+    Class(Class &&) = delete;                 \
+    Class &operator=(Class &&) = delete;
 
 class TLogger;
 class TLog;

@@ -35,7 +35,8 @@ signals:
 private:
     THttpSocket *httpSocket;
 
-    Q_DISABLE_COPY(TActionThread)
+    T_DISABLE_COPY(TActionThread)
+    T_DISABLE_MOVE(TActionThread)
 };
 
 #endif // TACTIONTHREAD_H

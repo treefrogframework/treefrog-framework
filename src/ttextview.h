@@ -15,9 +15,10 @@ public:
     QString toString();
 
 private:
-    Q_DISABLE_COPY(TTextView)
-
     QString viewText;
+
+    T_DISABLE_COPY(TTextView)
+    T_DISABLE_MOVE(TTextView)
 };
 
 

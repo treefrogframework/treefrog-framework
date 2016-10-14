@@ -57,7 +57,8 @@ private:
     TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header);
 
     friend class TEpoll;
-    Q_DISABLE_COPY(TEpollWebSocket)
+    T_DISABLE_COPY(TEpollWebSocket)
+    T_DISABLE_MOVE(TEpollWebSocket)
 };
 
 #endif // TEPOLLWEBSOCKET_H

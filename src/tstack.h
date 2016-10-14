@@ -1,6 +1,7 @@
 #ifndef TSTACK_H
 #define TSTACK_H
 
+#include <TGlobal>
 #include "thazardobject.h"
 #include "thazardptr.h"
 #include "tatomicptr.h"
@@ -13,6 +14,7 @@ namespace Tf
 
 template <class T> class TStack
 {
+private:
     struct Node : public THazardObject
     {
         T value;
@@ -28,7 +30,10 @@ public:
     void push(const T &val);
     bool pop(T &val);
     bool top(T &val);
-    int count() const { return counter.load(); }
+    int count() const { return counter.load(std::memory_order_acquire); }
+
+    T_DISABLE_COPY(TStack)
+    T_DISABLE_MOVE(TStack)
 };
 
 

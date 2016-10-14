@@ -33,7 +33,8 @@ protected:
 private:
     TSqlTransaction transactions;
 
-    Q_DISABLE_COPY(TDatabaseContext)
+    T_DISABLE_COPY(TDatabaseContext)
+    T_DISABLE_MOVE(TDatabaseContext)
 };
 
 #endif // TDATABASECONTEXT_H

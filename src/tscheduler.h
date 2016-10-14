@@ -15,6 +15,7 @@ public:
     virtual ~TScheduler();
 
     void start(int msec);
+    void restart();
     void stop();
     int	interval() const;
     bool isSingleShot() const;
@@ -23,17 +24,25 @@ public:
 protected:
     virtual void job() = 0;
     void rollbackTransaction();
+    void publish(const QString &topic, const QString &text);
+    void publish(const QString &topic, const QByteArray &binary);
 
 private slots:
     void start(Priority priority = InheritPriority);
 
+signals:
+    void startTimer(int msec);
+    void startTimer();
+    void stopTimer();
+
 private:
     void run();
 
-    QTimer *timer;
-    volatile bool rollback;
+    QTimer *timer {nullptr};
+    bool rollback {false};
 
-    Q_DISABLE_COPY(TScheduler)
+    T_DISABLE_COPY(TScheduler)
+    T_DISABLE_MOVE(TScheduler)
 };
 
 #endif // TSCHEDULER_H

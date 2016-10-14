@@ -23,7 +23,8 @@ public:
     virtual QStringList propertyNames() const;
 
 private:
-    Q_DISABLE_COPY(TModelObject)
+    T_DISABLE_COPY(TModelObject)
+    T_DISABLE_MOVE(TModelObject)
 };
 
 #endif // TMODELOBJECT_H

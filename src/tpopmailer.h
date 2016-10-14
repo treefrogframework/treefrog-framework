@@ -43,7 +43,8 @@ protected:
     bool write(const QByteArray &command);
 
 private:
-    Q_DISABLE_COPY(TPopMailer)
+    T_DISABLE_COPY(TPopMailer)
+    T_DISABLE_MOVE(TPopMailer)
 
     QTcpSocket *socket;
     QString popHostName;

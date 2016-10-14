@@ -16,7 +16,8 @@ protected:
     bool open(OpenMode flags);
 
 private:
-    Q_DISABLE_COPY(TTemporaryFile)
+    T_DISABLE_COPY(TTemporaryFile)
+    T_DISABLE_MOVE(TTemporaryFile)
 };
 
 #endif // TTEMPORARYFILE_H

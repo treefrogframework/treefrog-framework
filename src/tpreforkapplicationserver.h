@@ -24,7 +24,8 @@ protected:
 #endif
 
 private:
-    Q_DISABLE_COPY(TPreforkApplicationServer)
+    T_DISABLE_COPY(TPreforkApplicationServer)
+    T_DISABLE_MOVE(TPreforkApplicationServer)
 };
 
 #endif // TPREFORKAPPLICATIONSERVER_H

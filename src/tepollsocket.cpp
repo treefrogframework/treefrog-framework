@@ -22,6 +22,7 @@ class SendData;
 
 static int sendBufSize = 0;
 static int recvBufSize = 0;
+static std::atomic<int> socketCounter {0};
 static TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
 static std::atomic<ushort> point {0};
 
@@ -102,6 +103,7 @@ TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
         sid = point.fetch_add(1);
     } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
     tSystemDebug("TEpollSocket  sid:%d", sid);
+    socketCounter++;
 }
 
 
@@ -117,6 +119,7 @@ TEpollSocket::~TEpollSocket()
     }
 
     socketManager[sid].compareExchangeStrong(this, nullptr); //clear
+    socketCounter--;
 }
 
 
@@ -335,14 +338,18 @@ TEpollSocket *TEpollSocket::searchSocket(int sid)
 
 QList<TEpollSocket*> TEpollSocket::allSockets()
 {
-    tSystemDebug("TEpollSocket::allSockets");
-
     QList<TEpollSocket*> lst;
     for (int i = 0; i <= USHRT_MAX; i++) {
         TEpollSocket *p = socketManager[i].load();
         if (p) {
             lst.append(p);
+
+            if (lst.count() == socketCounter.load(std::memory_order_acquire)) {
+                break;
+            }
         }
     }
+
+    //tSystemDebug("TEpollSocket::allSockets  count:%d", lst.count());
     return lst;
 }

@@ -25,7 +25,8 @@ private:
     int typeId;
     T *ptr;
 
-    Q_DISABLE_COPY(TDispatcher)
+    T_DISABLE_COPY(TDispatcher)
+    T_DISABLE_MOVE(TDispatcher)
 };
 
 
@@ -48,16 +49,17 @@ template <class T>
 inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &args, Qt::ConnectionType connectionType)
 {
     T_TRACEFUNC("");
-    static const char *const params[] = { "()", "(QString)",
-                                          "(QString,QString)",
-                                          "(QString,QString,QString)",
-                                          "(QString,QString,QString,QString)",
-                                          "(QString,QString,QString,QString,QString)",
-                                          "(QString,QString,QString,QString,QString,QString)",
-                                          "(QString,QString,QString,QString,QString,QString,QString)",
-                                          "(QString,QString,QString,QString,QString,QString,QString,QString)",
-                                          "(QString,QString,QString,QString,QString,QString,QString,QString,QString)",
-                                          "(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)" };
+    const int NUM_PARAMS = 11;
+    static const char *const params[NUM_PARAMS] = { "()", "(QString)",
+                                                    "(QString,QString)",
+                                                    "(QString,QString,QString)",
+                                                    "(QString,QString,QString,QString)",
+                                                    "(QString,QString,QString,QString,QString)",
+                                                    "(QString,QString,QString,QString,QString,QString)",
+                                                    "(QString,QString,QString,QString,QString,QString,QString)",
+                                                    "(QString,QString,QString,QString,QString,QString,QString,QString)",
+                                                    "(QString,QString,QString,QString,QString,QString,QString,QString,QString)",
+                                                    "(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)" };
 
     object();
     if (Q_UNLIKELY(!ptr)) {
@@ -67,7 +69,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
 
     int argcnt = 0;
     int idx = -1;
-    for (int i = qMin(args.count(), 10); i >= 0; --i) {
+    for (int i = qMin(args.count(), NUM_PARAMS - 1); i >= 0; i--) {
         // Find method
         QByteArray mtd = method + params[i];
         //mtd = QMetaObject::normalizedSignature(mtd);
@@ -153,9 +155,9 @@ inline T *TDispatcher<T>::object()
     /*  TODO:  Change to use QMetaObject::newInstance()
     if (!ptr) {
         const QMetaObject *meta = Tf::metaObjects()->value(metaType);
-        if (meta) {
+        if (Q_LIKELY(meta)) {
             QObject *obj = meta->newInstance();
-            if (obj) {
+            if (Q_LIKELY(obj)) {
                 ptr = static_cast<T *>(obj);
             }
         }
@@ -163,9 +165,9 @@ inline T *TDispatcher<T>::object()
     */
 
     if (!ptr) {
-        if (typeId <= 0 && !metaType.isEmpty()) {
+        if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
             typeId = QMetaType::type(metaType.toLatin1().constData());
-            if (typeId > 0) {
+            if (Q_LIKELY(typeId > 0)) {
 #if QT_VERSION >= 0x050000
                 ptr = static_cast<T *>(QMetaType::create(typeId));
 #else

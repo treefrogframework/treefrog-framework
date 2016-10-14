@@ -45,7 +45,8 @@ signals:
     void requestWrite(const QByteArray &data);  // internal use
 
 private:
-    Q_DISABLE_COPY(THttpSocket)
+    T_DISABLE_COPY(THttpSocket)
+    T_DISABLE_MOVE(THttpSocket)
 
     int sid {0};
     qint64 lengthToRead {-1};

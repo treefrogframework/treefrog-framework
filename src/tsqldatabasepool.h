@@ -33,7 +33,8 @@ protected:
     void timerEvent(QTimerEvent *event);
 
 private:
-    Q_DISABLE_COPY(TSqlDatabasePool)
+    T_DISABLE_COPY(TSqlDatabasePool)
+    T_DISABLE_MOVE(TSqlDatabasePool)
     TSqlDatabasePool(const QString &environment);
 
     TStack<QString> *cachedDatabase {nullptr};

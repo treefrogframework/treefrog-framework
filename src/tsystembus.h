@@ -44,7 +44,8 @@ private:
     QMutex mutexWrite;
 
     TSystemBus();
-    Q_DISABLE_COPY(TSystemBus)
+    T_DISABLE_COPY(TSystemBus)
+    T_DISABLE_MOVE(TSystemBus)
 };
 
 

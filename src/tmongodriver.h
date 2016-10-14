@@ -50,7 +50,8 @@ private:
     int errorCode;
     QString errorString;
 
-    Q_DISABLE_COPY(TMongoDriver)
+    T_DISABLE_COPY(TMongoDriver)
+    T_DISABLE_MOVE(TMongoDriver)
 };
 
 #endif // TMONGODRIVER_H

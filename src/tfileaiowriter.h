@@ -24,7 +24,8 @@ public:
 private:
     TFileAioWriterData *d;
 
-    Q_DISABLE_COPY(TFileAioWriter)
+    T_DISABLE_COPY(TFileAioWriter)
+    T_DISABLE_MOVE(TFileAioWriter)
 };
 
 #endif // TFILEAIOWRITER_H

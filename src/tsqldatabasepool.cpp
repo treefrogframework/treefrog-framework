@@ -53,10 +53,7 @@ TSqlDatabasePool::~TSqlDatabasePool()
 
 TSqlDatabasePool::TSqlDatabasePool(const QString &environment)
     : QObject(), maxConnects(0), dbEnvironment(environment)
-{
-    // Starts the timer to close extra-connection
-    timer.start(10000, this);
-}
+{ }
 
 
 void TSqlDatabasePool::init()
@@ -64,12 +61,13 @@ void TSqlDatabasePool::init()
     if (!Tf::app()->isSqlDatabaseAvailable()) {
         tSystemWarn("SQL database not available");
         return;
-    } else {
-        cachedDatabase = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
-        lastCachedTime = new std::atomic<uint>[Tf::app()->sqlDatabaseSettingsCount()];
-        availableNames = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
-        tSystemDebug("SQL database available");
     }
+
+    cachedDatabase = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
+    lastCachedTime = new std::atomic<uint>[Tf::app()->sqlDatabaseSettingsCount()];
+    availableNames = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
+    bool aval = false;
+    tSystemDebug("SQL database available");
 
     // Adds databases previously
     for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
@@ -77,6 +75,7 @@ void TSqlDatabasePool::init()
         if (type.isEmpty()) {
             continue;
         }
+        aval = true;
 
         auto &stack = availableNames[j];
         for (int i = 0; i < maxConnects; ++i) {
@@ -90,6 +89,11 @@ void TSqlDatabasePool::init()
             stack.push(db.connectionName());  // push onto stack
             tSystemDebug("Add Database successfully. name:%s", qPrintable(db.connectionName()));
         }
+    }
+
+    if (aval) {
+        // Starts the timer to close extra-connection
+        timer.start(10000, this);
     }
 }
 
@@ -227,6 +231,9 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
         // Closes extra-connection
         for (int i = 0; i < Tf::app()->sqlDatabaseSettingsCount(); ++i) {
             auto &cache = cachedDatabase[i];
+            if (cache.count() == 0) {
+                continue;
+            }
 
             while (lastCachedTime[i].load() < QDateTime::currentDateTime().toTime_t() - 30
                    && cache.pop(name)) {

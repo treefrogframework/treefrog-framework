@@ -83,7 +83,8 @@ private:
     bool rollback {false};
 
     friend class TWebSocketWorker;
-    Q_DISABLE_COPY(TWebSocketEndpoint)
+    T_DISABLE_COPY(TWebSocketEndpoint)
+    T_DISABLE_MOVE(TWebSocketEndpoint)
 };
 
 

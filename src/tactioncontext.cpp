@@ -89,13 +89,13 @@ void TActionContext::execute(THttpRequest &request, int sid)
         if (rt.isEmpty()) {
             // Default URL routing
 
-            if (directViewRenderMode()) { // Direct view render mode?
+            if (Q_UNLIKELY(directViewRenderMode())) { // Direct view render mode?
                 // Direct view setting
                 rt.setRouting("directcontroller", "show", components);
             } else {
                 QByteArray c = components.value(0).toLatin1().toLower();
-                if (!c.isEmpty()) {
-                    if (!TActionController::disabledControllers().contains(c)) { // Can not call 'ApplicationController'
+                if (Q_LIKELY(!c.isEmpty())) {
+                    if (Q_LIKELY(!TActionController::disabledControllers().contains(c))) { // Can not call 'ApplicationController'
                         // Default action: "index"
                         QByteArray action = components.value(1, QLatin1String("index")).toLatin1();
                         rt.setRouting(c + "controller", action, components.mid(2));
@@ -191,12 +191,13 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
                     // WebSocket tasks
                     if (!currController->taskList.isEmpty()) {
+                        QVariantList lst;
                         for (auto &task : currController->taskList) {
                             const QVariant &taskData = task.second;
 
                             switch (task.first) {
                             case TActionController::SendTextTo: {
-                                QVariantList lst = taskData.toList();
+                                lst = taskData.toList();
                                 TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                                 if (websocket) {
                                     websocket->sendText(lst[1].toString());
@@ -204,7 +205,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 break; }
 
                             case TActionController::SendBinaryTo: {
-                                QVariantList lst = taskData.toList();
+                                lst = taskData.toList();
                                 TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                                 if (websocket) {
                                     websocket->sendBinary(lst[1].toByteArray());
@@ -212,7 +213,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 break; }
 
                             case TActionController::SendCloseTo: {
-                                QVariantList lst = taskData.toList();
+                                lst = taskData.toList();
                                 TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
                                 if (websocket) {
                                     websocket->sendClose(lst[1].toInt());
@@ -252,7 +253,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         } else {
             accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
 
-            if (method == Tf::Get) {  // GET Method
+            if (Q_LIKELY(method == Tf::Get)) {  // GET Method
                 path.remove(0, 1);
                 QFile reqPath(Tf::app()->publicPath() + path);
                 QFileInfo fi(reqPath);

@@ -26,7 +26,8 @@ public:
 private:
     TFileAioWriter *writer;
 
-    Q_DISABLE_COPY(TFileAioLogger)
+    T_DISABLE_COPY(TFileAioLogger)
+    T_DISABLE_MOVE(TFileAioLogger)
 };
 
 #endif // TFILEAIOLOGGER_H

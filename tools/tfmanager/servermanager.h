@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QHostAddress>
 #include <QProcess>
+#include <TGlobal>
 
 namespace TreeFrog {
 
@@ -47,7 +48,8 @@ private:
     int spareServers;
     volatile ManagerState managerState;
 
-    Q_DISABLE_COPY(ServerManager)
+    T_DISABLE_COPY(ServerManager)
+    T_DISABLE_MOVE(ServerManager)
 };
 
 }

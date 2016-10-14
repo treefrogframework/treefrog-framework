@@ -22,7 +22,8 @@ public:
     static int sessionLifeTime();
 
 private:
-    Q_DISABLE_COPY(TSessionManager)
+    T_DISABLE_COPY(TSessionManager)
+    T_DISABLE_MOVE(TSessionManager)
     TSessionManager();
 };
 

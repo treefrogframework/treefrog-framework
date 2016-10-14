@@ -18,7 +18,8 @@ protected:
     bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false);
     
 private:
-    Q_DISABLE_COPY(TDirectView)
+    T_DISABLE_COPY(TDirectView)
+    T_DISABLE_MOVE(TDirectView)
 };
 
 #endif // TDIRECTVIEW_H

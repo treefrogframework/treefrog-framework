@@ -141,7 +141,8 @@ private:
     friend class TActionContext;
     friend class TSessionCookieStore;
     friend class TDirectView;
-    Q_DISABLE_COPY(TActionController)
+    T_DISABLE_COPY(TActionController)
+    T_DISABLE_MOVE(TActionController)
 };
 
 

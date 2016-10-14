@@ -36,7 +36,8 @@ protected:
     static int maxDbConnectionsPerProcess();
 
 private:
-    Q_DISABLE_COPY(TKvsDatabasePool)
+    T_DISABLE_COPY(TKvsDatabasePool)
+    T_DISABLE_MOVE(TKvsDatabasePool)
     TKvsDatabasePool(const QString &environment);
 
     TStack<QString> *cachedDatabase {nullptr};

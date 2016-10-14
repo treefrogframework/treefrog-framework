@@ -56,7 +56,8 @@ protected:
     QString responsebody;
 
 private:
-    Q_DISABLE_COPY(TActionView)
+    T_DISABLE_COPY(TActionView)
+    T_DISABLE_MOVE(TActionView)
 
     void setVariantMap(const QVariantMap &vars);
     void setController(TActionController *controller);

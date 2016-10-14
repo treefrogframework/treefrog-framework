@@ -58,7 +58,8 @@ private:
     std::atomic<bool> deleting;
 
     friend class TActionThread;
-    Q_DISABLE_COPY(TWebSocket)
+    T_DISABLE_COPY(TWebSocket)
+    T_DISABLE_MOVE(TWebSocket)
 };
 
 #endif // TWEBSOCKET_H

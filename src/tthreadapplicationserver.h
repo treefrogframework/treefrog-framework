@@ -34,7 +34,8 @@ private:
     int maxThreads;
     QBasicTimer reloadTimer;
 
-    Q_DISABLE_COPY(TThreadApplicationServer)
+    T_DISABLE_COPY(TThreadApplicationServer)
+    T_DISABLE_MOVE(TThreadApplicationServer)
 };
 
 

@@ -52,7 +52,7 @@ static void cleanup()
 void TUrlRoute::instantiate()
 {
     if (!urlRoute) {
-        urlRoute = new TUrlRoute;
+        urlRoute = new TUrlRoute();
         urlRoute->parseConfigFile();
         qAddPostRoutine(::cleanup);
     }

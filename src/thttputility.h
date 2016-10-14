@@ -38,7 +38,8 @@ public:
 
 private:
     THttpUtility();
-    Q_DISABLE_COPY(THttpUtility)
+    T_DISABLE_COPY(THttpUtility)
+    T_DISABLE_MOVE(THttpUtility)
 };
 
 

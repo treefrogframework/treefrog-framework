@@ -35,7 +35,8 @@ private:
     TPublisher();
     QMap<QString, Pub*> pubobj;
 
-    Q_DISABLE_COPY(TPublisher)
+    T_DISABLE_COPY(TPublisher)
+    T_DISABLE_MOVE(TPublisher)
 };
 
 #endif // TPUBLISHER_H
