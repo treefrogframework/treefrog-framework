@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     tSetupAppLoggers();
 
     // Setup hazard pointer
-    THazardPtrManager::instance().setGarbageCollectionBufferSize(Tf::app()->maxNumberOfAppServers());
+    THazardPtrManager::instance().setGarbageCollectionBufferSize(Tf::app()->maxNumberOfThreadsPerAppServer());
 
 #if QT_VERSION >= 0x050000
     qInstallMessageHandler(messageOutput);

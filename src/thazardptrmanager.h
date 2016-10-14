@@ -15,7 +15,7 @@ class T_CORE_EXPORT THazardPtrManager
 public:
     ~THazardPtrManager();
 
-    void setGarbageCollectionBufferSize(int size) { if (size > 0) gcThreshold = size; }
+    void setGarbageCollectionBufferSize(int size);
     static THazardPtrManager &instance();
 
 private:
@@ -31,7 +31,7 @@ private:
     TAtomic<int> hprCount {0};
     TAtomicPtr<THazardObject> objHead {nullptr};
     TAtomic<int> objCount {0};
-    int gcThreshold {100};
+    int gcBufferSize {100};
     THazardRemoverThread *removerThread {nullptr};
 
     friend class THazardPtr;

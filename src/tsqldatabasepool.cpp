@@ -256,7 +256,7 @@ void TSqlDatabasePool::instantiate()
 {
     if (!databasePool) {
         databasePool = new TSqlDatabasePool(Tf::app()->databaseEnvironment());
-        databasePool->maxConnects = Tf::app()->maxNumberOfAppServers();
+        databasePool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }

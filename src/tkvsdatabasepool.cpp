@@ -329,7 +329,7 @@ void TKvsDatabasePool::instantiate()
 {
     if (!databasePool) {
         databasePool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
-        databasePool->maxConnects = Tf::app()->maxNumberOfAppServers();
+        databasePool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }

@@ -77,6 +77,12 @@ THazardPtrManager::~THazardPtrManager()
 }
 
 
+void THazardPtrManager::setGarbageCollectionBufferSize(int size)
+{
+    gcBufferSize = qMax(size, 100);
+}
+
+
 void THazardPtrManager::push(THazardPtrRecord *ptr)
 {
     do {
@@ -106,7 +112,7 @@ void THazardPtrManager::push(THazardObject* obj)
 
     // Limits objects
     for (;;) {
-        int limit = qMax(gcThreshold, (int)hprCount * 2);
+        int limit = qMax(gcBufferSize, (int)hprCount * 2);
         if ((int)objCount < limit) {
             break;
         }
