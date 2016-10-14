@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QBasicTimer>
 #include <TGlobal>
+#include "tatomic.h"
 #include "tstack.h"
 
 
@@ -24,7 +25,6 @@ public:
     static TSqlDatabasePool *instance();
 
     static QString driverType(const QString &env, int databaseId);
-    static int maxDbConnectionsPerProcess();
     static bool setDatabaseSettings(QSqlDatabase &database, const QString &env, int databaseId);
     static int getDatabaseId(const QSqlDatabase &database);
 
@@ -38,7 +38,7 @@ private:
     TSqlDatabasePool(const QString &environment);
 
     TStack<QString> *cachedDatabase {nullptr};
-    std::atomic<uint> *lastCachedTime {nullptr};
+    TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
     int maxConnects;
     QString dbEnvironment;

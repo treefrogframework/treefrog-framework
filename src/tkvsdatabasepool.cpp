@@ -85,7 +85,7 @@ void TKvsDatabasePool::init()
     }
 
     cachedDatabase = new TStack<QString>[kvsTypeHash()->count()];
-    lastCachedTime = new std::atomic<uint>[kvsTypeHash()->count()];
+    lastCachedTime = new TAtomic<uint>[kvsTypeHash()->count()];
     availableNames = new TStack<QString>[kvsTypeHash()->count()];
     bool aval = false;
 
@@ -329,7 +329,7 @@ void TKvsDatabasePool::instantiate()
 {
     if (!databasePool) {
         databasePool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
-        databasePool->maxConnects = maxDbConnectionsPerProcess();
+        databasePool->maxConnects = Tf::app()->maxNumberOfAppServers();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }
@@ -348,10 +348,4 @@ TKvsDatabasePool *TKvsDatabasePool::instance()
 QString TKvsDatabasePool::driverName(TKvsDatabase::Type type)
 {
     return kvsTypeHash()->key((int)type);
-}
-
-
-int TKvsDatabasePool::maxDbConnectionsPerProcess()
-{
-    return TSqlDatabasePool::maxDbConnectionsPerProcess();
 }

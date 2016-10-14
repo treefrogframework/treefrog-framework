@@ -10,7 +10,7 @@
 #include <TGlobal>
 #include <TApplicationServerBase>
 #include <TAccessLog>
-#include <atomic>
+#include "tatomic.h"
 
 class QIODevice;
 class THttpHeader;
@@ -42,7 +42,7 @@ signals:
 
 private:
     int maxWorkers;
-    std::atomic<bool> stopped;
+    TAtomic<bool> stopped;
     int listenSocket;
     QBasicTimer reloadTimer;
 

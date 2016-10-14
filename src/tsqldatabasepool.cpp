@@ -64,7 +64,7 @@ void TSqlDatabasePool::init()
     }
 
     cachedDatabase = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
-    lastCachedTime = new std::atomic<uint>[Tf::app()->sqlDatabaseSettingsCount()];
+    lastCachedTime = new TAtomic<uint>[Tf::app()->sqlDatabaseSettingsCount()];
     availableNames = new TStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
     bool aval = false;
     tSystemDebug("SQL database available");
@@ -256,7 +256,7 @@ void TSqlDatabasePool::instantiate()
 {
     if (!databasePool) {
         databasePool = new TSqlDatabasePool(Tf::app()->databaseEnvironment());
-        databasePool->maxConnects = maxDbConnectionsPerProcess();
+        databasePool->maxConnects = Tf::app()->maxNumberOfAppServers();
         databasePool->init();
         qAddPostRoutine(::cleanup);
     }
@@ -283,34 +283,6 @@ QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
         tDebug("Parameter 'DriverType' is empty");
     }
     return type;
-}
-
-
-int TSqlDatabasePool::maxDbConnectionsPerProcess()
-{
-    int maxConnections = 0;
-    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
-
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
-        maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-        if (maxConnections <= 0) {
-            maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
-        }
-        break;
-
-    case TWebApplication::Hybrid:
-        maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
-        if (maxConnections <= 0) {
-            maxConnections = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
-        }
-        break;
-
-    default:
-        break;
-    }
-
-    return maxConnections;
 }
 
 

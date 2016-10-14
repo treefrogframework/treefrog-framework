@@ -5,7 +5,7 @@
 #include <QByteArray>
 #include <QHostAddress>
 #include <TGlobal>
-#include <atomic>
+#include "tatomic.h"
 #include "tqueue.h"
 
 class QHostAddress;
@@ -54,10 +54,10 @@ protected:
     static TEpollSocket *searchSocket(int sid);
     static QList<TEpollSocket*> allSockets();
 
-    std::atomic<bool> deleting;
-    std::atomic<int> myWorkerCounter;
-    std::atomic<bool> pollIn;
-    std::atomic<bool> pollOut;
+    TAtomic<bool> deleting;
+    TAtomic<int> myWorkerCounter;
+    TAtomic<bool> pollIn;
+    TAtomic<bool> pollOut;
 
 private:
     int sd;  // socket descriptor

@@ -10,6 +10,7 @@
 #endif
 #include <tglobal.h>
 #include <tatomicptr.h>
+#include <tatomic.h>
 #include <tstack.h>
 #include <tqueue.h>
 #include "blog.h"
@@ -168,6 +169,25 @@ void atomic_ptr()
     ptr.compareExchange(foo, nullptr);
     ptr = ptr2;
     Tf::threadFence();
+}
+
+void atomic_int()
+{
+    TAtomic<int> counter;
+    TAtomic<int> counter2 {0};
+    counter.fetchAdd(2);
+    counter.fetchSub(2);
+    counter++;
+    ++counter;
+    counter--;
+    --counter;
+    int tmp = counter.load();
+    counter.store(3);
+    tmp = counter.exchange(3);
+    counter = 0;
+    counter.compareExchange(tmp, 0);
+    counter.compareExchangeStrong(tmp, 0);
+    tmp = counter++ + --counter2;
 }
 
 void stack()

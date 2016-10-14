@@ -2,7 +2,7 @@
 #define THAZARDPTRMANAGER_H
 
 #include <TGlobal>
-#include <atomic>
+#include "tatomic.h"
 #include "tatomicptr.h"
 
 class THazardPtrRecord;
@@ -13,8 +13,10 @@ class THazardRemoverThread;
 class T_CORE_EXPORT THazardPtrManager
 {
 public:
-    THazardPtrManager();
     ~THazardPtrManager();
+
+    void setGarbageCollectionBufferSize(int size) { if (size > 0) gcThreshold = size; }
+    static THazardPtrManager &instance();
 
 private:
     void push(THazardPtrRecord *ptr);
@@ -22,12 +24,14 @@ private:
     void push(THazardObject *obj);
     bool pop(THazardObject *ptr, THazardObject *prev);
     void gc();
-    static THazardPtrManager &instance();
+
+    THazardPtrManager();  // constructor
 
     TAtomicPtr<THazardPtrRecord> hprHead {nullptr};
-    std::atomic<int> hprCount {0};
+    TAtomic<int> hprCount {0};
     TAtomicPtr<THazardObject> objHead {nullptr};
-    std::atomic<int> objCount {0};
+    TAtomic<int> objCount {0};
+    int gcThreshold {100};
     THazardRemoverThread *removerThread {nullptr};
 
     friend class THazardPtr;

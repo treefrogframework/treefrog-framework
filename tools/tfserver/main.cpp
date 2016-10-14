@@ -17,6 +17,7 @@
 #endif
 #include <TSystemGlobal>
 #include <cstdlib>
+#include "thazardptrmanager.h"
 #include "tsystemglobal.h"
 #include "signalhandler.h"
 using namespace TreeFrog;
@@ -100,6 +101,9 @@ int main(int argc, char *argv[])
     tSetupAccessLogger();
     tSetupQueryLogger();
     tSetupAppLoggers();
+
+    // Setup hazard pointer
+    THazardPtrManager::instance().setGarbageCollectionBufferSize(Tf::app()->maxNumberOfAppServers());
 
 #if QT_VERSION >= 0x050000
     qInstallMessageHandler(messageOutput);

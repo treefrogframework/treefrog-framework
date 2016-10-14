@@ -7,7 +7,7 @@
 #include <TGlobal>
 #include <TWebSocketSession>
 #include <THttpRequestHeader>
-#include <atomic>
+#include "tatomic.h"
 #include "tbasictimer.h"
 
 class QObject;
@@ -44,8 +44,8 @@ protected:
     int parse(QByteArray &recvData);
 
     THttpRequestHeader reqHeader;
-    std::atomic<bool> closing;
-    std::atomic<bool> closeSent;
+    TAtomic<bool> closing;
+    TAtomic<bool> closeSent;
     mutable QMutex mutexData;
     TWebSocketSession sessionStore;
     TBasicTimer *keepAliveTimer;
