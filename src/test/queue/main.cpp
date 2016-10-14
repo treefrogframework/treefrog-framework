@@ -2,6 +2,8 @@
 #include <QThread>
 #include <unistd.h>
 #include <atomic>
+#include <iostream>
+#include <TfTest/TfTest>
 #include "tqueue.h"
 
 TQueue<quint64> intQueue;
@@ -69,7 +71,8 @@ void TestQueue::queue()
     while (timer.elapsed() < 10000) {
         eventLoop.processEvents();
     }
-    printf("queue count=%d\n", (int)intQueue.count());
+
+    std::cout << "queue count=" << intQueue.count() << std::endl;
     _exit(0);
 }
 
@@ -92,5 +95,5 @@ void TestQueue::startPushThread()
 }
 
 
-QTEST_MAIN(TestQueue)
+TF_TEST_SQLLESS_MAIN(TestQueue)
 #include "main.moc"
