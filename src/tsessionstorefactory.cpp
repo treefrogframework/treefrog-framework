@@ -53,7 +53,6 @@ static void cleanup()
 */
 QStringList TSessionStoreFactory::keys()
 {
-    QMutexLocker locker(&mutex);
     QStringList ret;
 
     loadPlugins();
@@ -78,8 +77,6 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
     static const QString FILE_KEY = TSessionFileStore().key().toLower();
     static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
-
-    QMutexLocker locker(&mutex);
 
     loadPlugins();
     TSessionStore *ret = 0;
@@ -109,6 +106,11 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
 void TSessionStoreFactory::loadPlugins()
 {
     if (!sessIfMap) {
+        QMutexLocker locker(&mutex);
+        if (sessIfMap) {
+            return;
+        }
+
         sessIfMap = new QMap<QString, TSessionStoreInterface*>();
         qAddPostRoutine(cleanup);
 

@@ -8,6 +8,7 @@
 #include <QList>
 #include <QMutexLocker>
 #include "tfileaiowriter.h"
+#include "tqueue.h"
 #include "tfcore_unix.h"
 
 const int MAX_NUM_BUFFERING_DATA = 10000;
@@ -19,30 +20,16 @@ public:
     mutable QMutex mutex;
     QString fileName;
     int fileDescriptor;
-    QList<struct aiocb *> syncBuffer;
+    TQueue<struct aiocb*> syncBuffer;
 
     TFileAioWriterData() : mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
-    void clearSyncBuffer();
 };
-
-
-void TFileAioWriterData::clearSyncBuffer()
-{
-    if (!syncBuffer.isEmpty()) {
-        for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
-            struct aiocb *cb = it.next();
-            delete [] (char *) cb->aio_buf;
-            delete cb;
-        }
-        syncBuffer.clear();
-    }
-}
 
 /*!
   Constructor.
  */
 TFileAioWriter::TFileAioWriter(const QString &name)
-    : d(new TFileAioWriterData)
+    : d(new TFileAioWriterData())
 {
     d->fileName = name;
 }
@@ -94,24 +81,35 @@ bool TFileAioWriter::isOpen() const
 
 int TFileAioWriter::write(const char *data, int length)
 {
-    QMutexLocker locker(&d->mutex);
-
     if (!isOpen()) {
         return -1;
     }
 
-    if (length <= 0)
+    if (length <= 0) {
         return -1;
+    }
 
-    // check whether last writing is finished
     if (d->syncBuffer.count() > 0) {
-        struct aiocb *lastcb = d->syncBuffer.last();
-        if (aio_error(lastcb) != EINPROGRESS) {
-            d->clearSyncBuffer();
-        } else {
-            if (d->syncBuffer.count() > MAX_NUM_BUFFERING_DATA) {
-                flush();
+        if (d->mutex.tryLock()) {
+            // check whether head's item  writing is finished
+            struct aiocb *headcb;
+            while (d->syncBuffer.head(headcb)) {
+                if (aio_error(headcb) == EINPROGRESS) {
+                    break;
+                }
+
+                if (d->syncBuffer.dequeue(headcb)) {
+                    delete [] (char *)headcb->aio_buf;
+                    delete headcb;
+                } else {
+                    break;
+                }
             }
+            d->mutex.unlock();
+        }
+
+        if (d->syncBuffer.count() > MAX_NUM_BUFFERING_DATA) {
+            flush();
         }
     }
 
@@ -143,21 +141,31 @@ int TFileAioWriter::write(const char *data, int length)
         return ret;
     }
 
-    d->syncBuffer << cb;
+    d->syncBuffer.enqueue(cb);
     return 0;
 }
 
 
 void TFileAioWriter::flush()
 {
-    QMutexLocker locker(&d->mutex);
+    if (d->syncBuffer.count() == 0) {
+        return;
+    }
 
-    if (d->syncBuffer.count() > 0) {
-        struct aiocb *lastcb = d->syncBuffer.last();
-        while (aio_error(lastcb) == EINPROGRESS) { }
-        d->clearSyncBuffer();
+    QMutexLocker locker(&d->mutex);
+    struct aiocb *headcb;
+
+    while (d->syncBuffer.count() > 0) {
+        if (d->syncBuffer.head(headcb) && aio_error(headcb) != EINPROGRESS) {
+            // Dequeue
+            if (d->syncBuffer.dequeue(headcb)) {
+                delete [] (char *)headcb->aio_buf;
+                delete headcb;
+            }
+        }
     }
 }
+
 
 void TFileAioWriter::setFileName(const QString &name)
 {
