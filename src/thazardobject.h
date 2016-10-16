@@ -2,7 +2,7 @@
 #define THAZARDOBJECT_H
 
 #include <TGlobal>
-#include <atomic>
+#include <TAtomic>
 
 
 class T_CORE_EXPORT THazardObject
@@ -18,8 +18,8 @@ public:
     THazardObject &operator=(THazardObject &&) { return *this; }
 
 private:
-    THazardObject *next { nullptr };
-    std::atomic_flag deleted { ATOMIC_FLAG_INIT };
+    THazardObject *next {nullptr};
+    TAtomic<bool> deleted {false};
 
     friend class THazardPtrManager;
     friend class THazardRemoverThread;

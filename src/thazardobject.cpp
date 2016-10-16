@@ -16,7 +16,7 @@ THazardObject::THazardObject(const THazardObject &)
 
 void THazardObject::deleteLater()
 {
-    if (!deleted.test_and_set(std::memory_order_acquire)) {
+    if (!deleted.exchange(true)) {
         THazardPtrManager::instance().push(this);
      }
     THazardPtrManager::instance().gc();
