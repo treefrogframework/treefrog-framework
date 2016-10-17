@@ -18,6 +18,10 @@ src/test/sharedmemorylogstream/log/
 *.pro.user
 3rdparty/mongo-c-driver/src/*.os
 
+# macOS
+*.dylib
+**/target_wrapper.sh
+
 # Windows
 **/Release/
 **/Debug/
