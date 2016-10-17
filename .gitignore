@@ -1,17 +1,28 @@
-*.obj
-*.pdb
 *.moc
 moc_*.cpp
 Makefile
 Makefile.*
+*~
+*.bak
+log/
+src/trash/
 tools/tspawn/defaults/
 src/test/sharedmemorylogstream/log/
-*~
+
+# Linux
+*.o
+*.a
+*.so
+*.so.*
+*.pro.user
+3rdparty/mongo-c-driver/src/*.os
 
 # Windows
 **/Release/
 **/Debug/
 **/target_wrapper.bat
+*.obj
+*.pdb
 *.rc
 *.ilk
 *.Release
