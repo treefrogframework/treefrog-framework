@@ -77,7 +77,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     output += QLatin1String("    };\n\n");
 
     // primaryKeyIndex() method
-    output += QLatin1String("    int primaryKeyIndex() const { return ");
+    output += QLatin1String("    int primaryKeyIndex() const override { return ");
     QString pkName = tableSch->primaryKeyFieldName();
     if (pkName.isEmpty()) {
         output += QLatin1String("-1; }\n");
@@ -87,7 +87,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     }
 
     // auto-value field, for example auto-increment value
-    output += QLatin1String("    int autoValueIndex() const { return ");
+    output += QLatin1String("    int autoValueIndex() const override { return ");
     QString autoValue = tableSch->autoValueFieldName();
     if (autoValue.isEmpty()) {
         output += QLatin1String("-1; }\n");
@@ -97,7 +97,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     }
 
     // tableName() method
-    output += QLatin1String("    QString tableName() const { return QLatin1String(\"");
+    output += QLatin1String("    QString tableName() const override { return QLatin1String(\"");
     output += tableSch->tableName();
     output += QLatin1String("\"); }\n\n");
 
