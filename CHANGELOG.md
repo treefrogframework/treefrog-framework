@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.13.0
+ - Implements hazard pointer, lock-free algorithm.
+ - Fix a compilation error in MSVC2015.
+ - Added TAtomic class, TAtomicPtr class.
+ - Performance tuning.
+ - Required C++11 compiler.
+
 ## 1.12.0
  - Added helper generator to tspawn command.
  - Added inlineImageTag() function.
