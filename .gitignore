@@ -4,6 +4,7 @@ Makefile
 Makefile.*
 *~
 *.bak
+.qmake.stash
 log/
 src/trash/
 tools/tspawn/defaults/
@@ -30,3 +31,6 @@ src/test/sharedmemorylogstream/log/
 *.suo
 *.sdf
 *.wixpdb
+*.wixobj
+installer/msi/TreeFrogFiles.wxs
+
