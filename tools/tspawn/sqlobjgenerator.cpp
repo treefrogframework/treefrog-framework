@@ -34,6 +34,29 @@
     "#endif // %1OBJECT_H\n"
 
 
+static bool isNumericType(const QString &typeName)
+{
+    switch (QMetaType::type(typeName.toLatin1())) {
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::Long:
+    case QMetaType::LongLong:
+    case QMetaType::Short:
+    case QMetaType::Char:
+    case QMetaType::SChar:
+    case QMetaType::UChar:
+    case QMetaType::ULong:
+    case QMetaType::ULongLong:
+    case QMetaType::UShort:
+    case QMetaType::Double:
+    case QMetaType::Float:
+        return true;
+    default:
+        return false;
+    }
+}
+
+
 SqlObjGenerator::SqlObjGenerator(const QString &model, const QString &table)
     : modelName(), tableSch(new TableSchema(table))
 {
@@ -62,7 +85,11 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     QListIterator<QPair<QString, QString>> it(fieldList);
     while (it.hasNext()) {
         const QPair<QString, QString> &p = it.next();
-        output += QString("    %1 %2;\n").arg(p.second, p.first);
+        if (isNumericType(p.second)) {
+            output += QString("    %1 %2 {0};\n").arg(p.second, p.first);
+        } else {
+            output += QString("    %1 %2;\n").arg(p.second, p.first);
+        }
     }
 
     // enum part
