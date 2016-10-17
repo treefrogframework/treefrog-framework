@@ -21,9 +21,9 @@ public:
     TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent = 0);
     virtual ~TWebSocket();
 
-    int socketId() const Q_DECL_OVERRIDE { return sid; }
+    int socketId() const override { return sid; }
     bool canReadRequest() const;
-    void disconnect() Q_DECL_OVERRIDE;
+    void disconnect() override;
     static TAbstractWebSocket *searchSocket(int sid);
 
 public slots:
@@ -33,16 +33,16 @@ public slots:
     void readRequest();
     void releaseWorker();
     void sendRawData(const QByteArray &data);
-    void close() Q_DECL_OVERRIDE;
+    void close() override;
     void deleteLater();
 
 protected:
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
-    virtual QObject *thisObject() Q_DECL_OVERRIDE { return this; }
-    virtual qint64 writeRawData(const QByteArray &data) Q_DECL_OVERRIDE;
-    virtual QList<TWebSocketFrame> &websocketFrames() Q_DECL_OVERRIDE { return frames; }
-    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
+    virtual QObject *thisObject() override { return this; }
+    virtual qint64 writeRawData(const QByteArray &data) override;
+    virtual QList<TWebSocketFrame> &websocketFrames() override { return frames; }
+    void timerEvent(QTimerEvent *event) override;
     QList<TWebSocketFrame> frames;
 
 signals:
