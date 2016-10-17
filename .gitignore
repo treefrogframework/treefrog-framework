@@ -1,0 +1,21 @@
+*.obj
+*.pdb
+*.moc
+moc_*.cpp
+Makefile
+Makefile.*
+tools/tspawn/defaults/
+src/test/sharedmemorylogstream/log/
+*~
+
+# Windows
+**/Release/
+**/Debug/
+**/target_wrapper.bat
+*.rc
+*.ilk
+*.Release
+*.Debug
+*.suo
+*.sdf
+*.wixpdb
