@@ -2332,7 +2332,7 @@ _bson_as_json_visit_double (const bson_iter_t *iter,
    bson_json_state_t *state = data;
 
 #ifdef BSON_NEEDS_SET_OUTPUT_FORMAT
-#if defined(_MSV_VER) && (_MSC_VER < 1900)
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
    unsigned int current_format = _set_output_format(_TWO_DIGIT_EXPONENT);
 #endif
 #endif
@@ -2340,7 +2340,7 @@ _bson_as_json_visit_double (const bson_iter_t *iter,
    bson_string_append_printf (state->str, "%.15g", v_double);
 
 #ifdef BSON_NEEDS_SET_OUTPUT_FORMAT
-#if defined(_MSV_VER) && (_MSC_VER < 1900)
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
    _set_output_format(current_format);
 #endif
 #endif
