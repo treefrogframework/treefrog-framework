@@ -1,4 +1,4 @@
-@ECHO ON
+@ECHO OFF
 @setlocal
 ::
 :: Edit this line to run the batch file for Qt environment.
@@ -11,16 +11,16 @@ set SLNFILE=%BASEDIR%\treefrog-setup\treefrog-setup.sln
 cd %BASEDIR%
 
 :: MinGW
-call :build_msi "C:\Qt\Qt5.6.1-MinGW\5.6\mingw49_32\bin\qtenv2.bat"   5.6
+call :build_msi "C:\Qt\Qt5.6.2-mingw\5.6\mingw49_32\bin\qtenv2.bat"   5.6
 call :build_msi "C:\Qt\Qt5.7.0-mingw\5.7\mingw53_32\bin\qtenv2.bat"   5.7
 call :build_setup treefrog-%VERSION%-mingw-setup.exe
 
 
 :: MSVC2013
-call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
-call :build_msi "C:\Qt\Qt5.6.1-msvc2013\5.6\msvc2013_64\bin\qtenv2.bat"  5.6
-call :build_msi "C:\Qt\Qt5.7.0-msvc2013\5.7\msvc2013_64\bin\qtenv2.bat"  5.7
-call :build_setup treefrog-%VERSION%-msvc2013_64-setup.exe
+::call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
+::call :build_msi "C:\Qt\Qt5.6.1-msvc2013\5.6\msvc2013_64\bin\qtenv2.bat"  5.6
+::call :build_msi "C:\Qt\Qt5.7.0-msvc2013\5.7\msvc2013_64\bin\qtenv2.bat"  5.7
+::call :build_setup treefrog-%VERSION%-msvc2013_64-setup.exe
 
 
 :: MSVC2015
