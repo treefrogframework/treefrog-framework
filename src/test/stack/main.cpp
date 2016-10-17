@@ -33,8 +33,8 @@ public:
     PopThread() { }
 protected:
     void run() {
-        //for (;;) {
-        for (int i = 0; i < 500000; i++) {
+        for (;;) {
+        //for (int i = 0; i < 500000; i++) {
             Box box;
             if (stackBox.pop(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
@@ -51,8 +51,8 @@ public:
     PushThread() { }
 protected:
     void run() {
-        //for (;;) {
-        for (int i = 0; i < 500000; i++) {
+        for (;;) {
+        //for (int i = 0; i < 500000; i++) {
             Box box;
             if (stackBox.top(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
@@ -89,7 +89,7 @@ private slots:
 void TestStack::push_pop()
 {
     // Starts threads
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 200; i++) {
         startPopThread();
         startPopThread();
         startPushThread();
