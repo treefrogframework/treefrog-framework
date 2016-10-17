@@ -89,7 +89,7 @@ private slots:
 void TestStack::push_pop()
 {
     // Starts threads
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 100; i++) {
         startPopThread();
         startPopThread();
         startPushThread();
