@@ -43,13 +43,15 @@ static bool isNumericType(const QString &typeName)
     case QMetaType::LongLong:
     case QMetaType::Short:
     case QMetaType::Char:
-    case QMetaType::SChar:
     case QMetaType::UChar:
     case QMetaType::ULong:
     case QMetaType::ULongLong:
     case QMetaType::UShort:
     case QMetaType::Double:
     case QMetaType::Float:
+#if QT_VERSION >= 0x050000
+    case QMetaType::SChar:
+#endif
         return true;
     default:
         return false;

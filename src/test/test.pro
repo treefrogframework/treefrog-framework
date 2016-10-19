@@ -2,8 +2,12 @@ TEMPLATE = subdirs
 CONFIG  += testcase
 SUBDIRS  = htmlescape httpheader hmac htmlparser
 SUBDIRS += mailmessage multipartformdata  smtpmailer viewhelper paginator
-SUBDIRS += fieldnametovariablename rand urlrouter urlrouter2 jscontext
+SUBDIRS += fieldnametovariablename rand urlrouter urlrouter2
 SUBDIRS += sharedmemorylogstream buildtest stack queue
+
+greaterThan(QT_MAJOR_VERSION, 4) {
+  SUBDIRS += jscontext
+}
 
 fwtests.target = test
 fwtests.commands = make check
