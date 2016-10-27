@@ -144,7 +144,7 @@ static void usage()
     text2 = QString("Usage: %1 -w [-e environment] application-directory\n").arg(cmd);
     text3 = "  -w              : run as Windows service mode\n";
 #else
-    text4 = "  -r              : reload app automatically for development\n";
+    text4 = "  -r              : reload app automatically when updated (for development)\n";
 #endif
 
     puts(qPrintable(QString(text).arg(cmd).arg(text2).arg(text3).arg(text4)));

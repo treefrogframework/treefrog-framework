@@ -69,6 +69,7 @@ public:
     QTextCodec *codecForInternal() const { return codecInternal; }
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
     int applicationServerId() const { return appServerId; }
+    QThread *databaseContextMainThread() const;
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);

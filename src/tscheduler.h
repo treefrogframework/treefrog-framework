@@ -4,10 +4,10 @@
 #include <QTimer>
 #include <QThread>
 #include <TGlobal>
-#include <TDatabaseContext>
+#include "tdatabasecontextthread.h"
 
 
-class T_CORE_EXPORT TScheduler : public QThread, public TDatabaseContext
+class T_CORE_EXPORT TScheduler : public TDatabaseContextThread
 {
     Q_OBJECT
 public:
@@ -36,7 +36,7 @@ signals:
     void stopTimer();
 
 private:
-    void run();
+    void run() override;
 
     QTimer *timer {nullptr};
     bool rollback {false};
