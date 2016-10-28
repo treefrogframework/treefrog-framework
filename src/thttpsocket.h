@@ -3,7 +3,6 @@
 
 #include <QTcpSocket>
 #include <QByteArray>
-#include <QElapsedTimer>
 #include <THttpRequest>
 #include <TTemporaryFile>
 #include <TGlobal>
@@ -22,7 +21,7 @@ public:
     QList<THttpRequest> read();
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
-    int idleTime() const { return idleElapsed.elapsed() / 1000; }
+    int idleTime() const;
     int socketId() const { return sid; }
     void deleteLater();
 
@@ -52,7 +51,7 @@ private:
     qint64 lengthToRead {-1};
     QByteArray readBuffer;
     TTemporaryFile fileBuffer;
-    QElapsedTimer idleElapsed;
+    uint idleElapsed {0};
 
     friend class TActionThread;
 };

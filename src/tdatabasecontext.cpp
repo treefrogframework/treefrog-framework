@@ -10,6 +10,7 @@
 #include <QSqlDriver>
 #include <TWebApplication>
 #include <TKvsDriver>
+#include <ctime>
 #include "tdatabasecontext.h"
 #include "tsqldatabasepool.h"
 #include "tkvsdatabasepool.h"
@@ -51,6 +52,8 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
         db = TSqlDatabasePool::instance()->database(id);
         beginTransaction(db);
     }
+
+    idleElapsed = (uint)std::time(nullptr);
     return db;
 }
 
@@ -78,6 +81,8 @@ TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
     if (db.driver()) {
         db.driver()->moveToThread(QThread::currentThread());
     }
+
+    idleElapsed = (uint)std::time(nullptr);
     return db;
 }
 
@@ -98,6 +103,8 @@ void TDatabaseContext::release()
 
     // Releases all KVS database sessions
     releaseKvsDatabases();
+
+    idleElapsed = 0;
 }
 
 
@@ -126,4 +133,10 @@ void TDatabaseContext::commitTransactions()
 void TDatabaseContext::rollbackTransactions()
 {
     transactions.rollback();
+}
+
+
+int TDatabaseContext::idleTime() const
+{
+    return (idleElapsed > 0) ? (uint)std::time(nullptr) - idleElapsed : -1;
 }

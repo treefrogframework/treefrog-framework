@@ -100,7 +100,7 @@ void TKvsDatabasePool::init()
             continue;
         } else {
             aval = true;
-            tSystemInfo("KVS database available. type:%d", (int)type);
+            tSystemDebug("KVS database available. type:%d", (int)type);
         }
 
         auto &stack = availableNames[type];

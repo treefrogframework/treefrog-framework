@@ -171,12 +171,12 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
             break;
         }
 
-        if (Q_UNLIKELY(socket->socketDescriptor() <= 0)) {
+        if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
             tSystemWarn("Invalid descriptor (disconnected) : %d", (int)socket->socketDescriptor());
             break;
         }
 
-        socket->waitForReadyRead(500);  // Repeats per 500 msecs
+        socket->waitForReadyRead(200);  // Repeats per 200 msecs
     }
 
     if (Q_UNLIKELY(!socket->canReadRequest())) {

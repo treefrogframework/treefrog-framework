@@ -7,6 +7,20 @@
 
 #include <TSessionStore>
 
+int TSessionStore::lifeTimeSecs()
+{
+    static int lifetime = -1;
+
+    if (Q_UNLIKELY(lifetime < 0)) {
+        lifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
+        if (lifetime == 0) {
+            lifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
+        }
+    }
+    return lifetime;
+}
+
+
 /*!
   \class TSessionStore
   \brief The TSessionStore is an abstract class that stores HTTP sessions.

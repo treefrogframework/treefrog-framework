@@ -1,7 +1,6 @@
 #ifndef TEPOLLHTTPSOCKET_H
 #define TEPOLLHTTPSOCKET_H
 
-#include <QElapsedTimer>
 #include <TGlobal>
 #include "tepollsocket.h"
 
@@ -17,7 +16,7 @@ public:
 
     virtual bool canReadRequest();
     QByteArray readRequest();
-    int idleTime() const { return idleElapsed.elapsed() / 1000; }
+    int idleTime() const;
     virtual void startWorker();
     virtual void deleteLater();
     static TEpollHttpSocket *searchSocket(int sid);
@@ -37,7 +36,7 @@ protected:
 private:
     QByteArray httpBuffer;
     qint64 lengthToRead;
-    QElapsedTimer idleElapsed;
+    uint idleElapsed {0};
 
     TEpollHttpSocket(int socketDescriptor, const QHostAddress &address);
 

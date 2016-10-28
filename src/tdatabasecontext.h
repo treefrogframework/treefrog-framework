@@ -22,6 +22,7 @@ public:
     bool beginTransaction(QSqlDatabase &database);
     void commitTransactions();
     void rollbackTransactions();
+    int idleTime() const;
 
 protected:
     void releaseKvsDatabases();
@@ -32,6 +33,7 @@ protected:
 
 private:
     TSqlTransaction transactions;
+    uint idleElapsed {0};
 
     T_DISABLE_COPY(TDatabaseContext)
     T_DISABLE_MOVE(TDatabaseContext)

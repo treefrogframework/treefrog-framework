@@ -6,7 +6,7 @@
 #include <QtPlugin>
 #include <TGlobal>
 
-#define TSessionStoreInterface_iid "org.treefrogframework.TreeFrog.TSessionStoreInterface/1.0"
+#define TSessionStoreInterface_iid "org.treefrogframework.TreeFrog.TSessionStoreInterface/2.0"
 
 class TSessionStore;
 
@@ -16,6 +16,7 @@ class T_CORE_EXPORT TSessionStoreInterface
 public:
     virtual ~TSessionStoreInterface() { }
     virtual TSessionStore *create(const QString &key) = 0;
+    virtual void destroy(const QString &key, TSessionStore *store) = 0;
 #if QT_VERSION < 0x050000
     virtual QStringList keys() const = 0;
 #endif
@@ -34,6 +35,7 @@ public:
     ~TSessionStorePlugin() { }
 
     virtual TSessionStore *create(const QString &key) = 0;
+    virtual void destroy(const QString &key, TSessionStore *store) = 0;
 #if QT_VERSION < 0x050000
     virtual QStringList keys() const = 0;
 #endif

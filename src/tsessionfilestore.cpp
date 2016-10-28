@@ -39,7 +39,7 @@ bool TSessionFileStore::store(TSession &session)
 TSession TSessionFileStore::find(const QByteArray &id)
 {
     QFileInfo fi(sessionDirPath() + id);
-    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs);
+    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
 
     if (fi.exists() && fi.lastModified() >= modified) {
         QFile file(fi.filePath());
