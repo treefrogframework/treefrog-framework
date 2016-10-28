@@ -6,6 +6,8 @@
  */
 
 #include <TSessionStore>
+#include <TAppSettings>
+
 
 int TSessionStore::lifeTimeSecs()
 {

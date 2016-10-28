@@ -149,6 +149,8 @@ HEADERS += tsession.h
 SOURCES += tsession.cpp
 HEADERS += tsessionmanager.h
 SOURCES += tsessionmanager.cpp
+HEADERS += tsessionstore.h
+SOURCES += tsessionstore.cpp
 HEADERS += tsessionstorefactory.h
 SOURCES += tsessionstorefactory.cpp
 HEADERS += tsessionsqlobjectstore.h
@@ -282,7 +284,6 @@ HEADERS += \
            tdispatcher.h \
            tloggerplugin.h \
            tsessionobject.h \
-           tsessionstore.h \
            tsessionstoreplugin.h \
            tjavascriptobject.h \
            tsqlormapper.h \
