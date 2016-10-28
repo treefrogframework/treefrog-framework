@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <TWebApplication>
+#include <ctime>
 #include "tkvsdatabasepool.h"
 #include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
@@ -99,7 +100,7 @@ void TKvsDatabasePool::init()
             continue;
         } else {
             aval = true;
-            tSystemInfo("KVS database available. type:%d", (int)type);
+            tSystemDebug("KVS database available. type:%d", (int)type);
         }
 
         auto &stack = availableNames[type];
@@ -287,7 +288,7 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
         }
 
         cachedDatabase[type].push(database.connectionName());
-        lastCachedTime[type].store(QDateTime::currentDateTime().toTime_t());
+        lastCachedTime[type].store((uint)std::time(nullptr));
         tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
     }
     database = TKvsDatabase();  // Sets an invalid object
@@ -308,7 +309,7 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
             }
 
             auto &cache = cachedDatabase[t];
-            while (lastCachedTime[t].load() < QDateTime::currentDateTime().toTime_t() - 30
+            while (lastCachedTime[t].load() < (uint)std::time(nullptr) - 30
                    && cache.pop(name)) {
                 TKvsDatabase::database(name).close();
                 tSystemDebug("Closed KVS database connection, name: %s", qPrintable(name));

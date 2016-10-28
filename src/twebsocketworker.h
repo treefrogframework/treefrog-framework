@@ -6,13 +6,13 @@
 #include <QPair>
 #include <TGlobal>
 #include <TSession>
-#include "tdatabasecontext.h"
+#include "tdatabasecontextthread.h"
 #include "twebsocketframe.h"
 
 class TAbstractWebSocket;
 
 
-class T_CORE_EXPORT TWebSocketWorker : public QThread, public TDatabaseContext
+class T_CORE_EXPORT TWebSocketWorker : public TDatabaseContextThread
 {
     Q_OBJECT
 public:
@@ -30,7 +30,7 @@ public:
     void setSession(const TSession &session);
 
 protected:
-    void run();
+    void run() override;
     void execute(int opcode = 0, const QByteArray &payload = QByteArray());
 
 private:

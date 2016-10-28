@@ -26,7 +26,7 @@
 #endif
 
 static QMutex mutex;
-static QMap<QString, TSessionStoreInterface*> *sessIfMap = 0;
+static QMap<QString, TSessionStoreInterface*> *sessIfMap = nullptr;
 
 
 /*!
@@ -44,7 +44,7 @@ static void cleanup()
             delete it.value();
         }
         delete sessIfMap;
-        sessIfMap = 0;
+        sessIfMap = nullptr;
     }
 }
 
@@ -79,17 +79,21 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
 
     loadPlugins();
-    TSessionStore *ret = 0;
+    TSessionStore *ret = nullptr;
 
     QString k = key.toLower();
     if (k == COOKIE_KEY) {
-        ret = new TSessionCookieStore();
+        static TSessionCookieStore cookieStore;
+        ret = &cookieStore;
     } else if (k == SQLOBJECT_KEY) {
-        ret = new TSessionSqlObjectStore();
+        static TSessionSqlObjectStore sqlObjectStore;
+        ret = &sqlObjectStore;
     } else if (k == FILE_KEY) {
-        ret = new TSessionFileStore();
+        static TSessionFileStore fileStore;
+        ret = &fileStore;
     } else if (k == REDIS_KEY) {
-        ret = new TSessionRedisStore();
+        static TSessionRedisStore redisStore;
+        ret = &redisStore;
     } else {
         TSessionStoreInterface *ssif = sessIfMap->value(k);
         if (ssif) {
@@ -99,6 +103,38 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
 
     return ret;
 }
+
+/*!
+  Destroys the \a store, assuming it is of the \a key.
+ */
+void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
+{
+    static const QString COOKIE_KEY = TSessionCookieStore().key().toLower();
+    static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
+    static const QString FILE_KEY = TSessionFileStore().key().toLower();
+    static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
+
+    if (!store) {
+        return;
+    }
+
+    QString k = key.toLower();
+    if (k == COOKIE_KEY) {
+        // do nothing
+    } else if (k == SQLOBJECT_KEY) {
+        // do nothing
+    } else if (k == FILE_KEY) {
+        // do nothing
+    } else if (k == REDIS_KEY) {
+        // do nothing
+    } else {
+        TSessionStoreInterface *ssif = sessIfMap->value(k);
+        if (ssif) {
+            ssif->destroy(key, store);
+        }
+    }
+}
+
 
 /*!
   Loads session store plugins in the plugin directory.

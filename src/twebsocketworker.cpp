@@ -22,7 +22,7 @@
 
 
 TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
-    : QThread(parent), TDatabaseContext(), _mode(m), _socket(s), _httpSession(),
+    : TDatabaseContextThread(parent), _mode(m), _socket(s), _httpSession(),
       _requestPath(path), _payloads()
 { }
 

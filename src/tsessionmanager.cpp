@@ -51,15 +51,13 @@ TSession TSessionManager::findSession(const QByteArray &id)
 {
     T_TRACEFUNC("");
 
-    QDateTime now = QDateTime::currentDateTime();
     TSession session;
 
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
         if (Q_LIKELY(store)) {
-            store->setLifeTime(sessionLifeTime());
             session = store->find(id);
-            delete store;
+            TSessionStoreFactory::destroy(storeType(), store);
         }
     }
     return session;
@@ -78,9 +76,8 @@ bool TSessionManager::store(TSession &session)
     bool res = false;
     TSessionStore *store = TSessionStoreFactory::create(storeType());
     if (Q_LIKELY(store)) {
-        store->setLifeTime(sessionLifeTime());
         res = store->store(session);
-        delete store;
+        TSessionStoreFactory::destroy(storeType(), store);
     }
     return res;
 }
@@ -91,9 +88,8 @@ bool TSessionManager::remove(const QByteArray &id)
     if (!id.isEmpty()) {
         TSessionStore *store = TSessionStoreFactory::create(storeType());
         if (Q_LIKELY(store)) {
-            store->setLifeTime(sessionLifeTime());
             bool ret = store->remove(id);
-            delete store;
+            TSessionStoreFactory::destroy(storeType(), store);
             return ret;
         }
     }
@@ -145,7 +141,7 @@ void TSessionManager::collectGarbage()
                 int gclifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
                 QDateTime expire = QDateTime::currentDateTime().addSecs(-gclifetime);
                 store->gc(expire);
-                delete store;
+                TSessionStoreFactory::destroy(storeType(), store);
             }
         }
     }
@@ -156,18 +152,4 @@ TSessionManager &TSessionManager::instance()
 {
     static TSessionManager manager;
     return manager;
-}
-
-
-int TSessionManager::sessionLifeTime()
-{
-    static int lifetime = -1;
-
-    if (Q_UNLIKELY(lifetime < 0)) {
-        lifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
-        if (lifetime == 0) {
-            lifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
-        }
-    }
-    return lifetime;
 }

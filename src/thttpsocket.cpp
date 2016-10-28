@@ -5,6 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <ctime>
 #include <QTimer>
 #include <QDir>
 #include <QBuffer>
@@ -32,7 +33,7 @@ static std::atomic<ushort> point {0};
 */
 
 THttpSocket::THttpSocket(QObject *parent)
-    : QTcpSocket(parent), lengthToRead(-1), idleElapsed()
+    : QTcpSocket(parent), lengthToRead(-1)
 {
     T_TRACEFUNC("");
 
@@ -44,7 +45,7 @@ THttpSocket::THttpSocket(QObject *parent)
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(requestWrite(const QByteArray&)), this, SLOT(writeRawData(const QByteArray&)), Qt::QueuedConnection);
 
-    idleElapsed.start();
+    idleElapsed = std::time(nullptr);
 }
 
 
@@ -146,7 +147,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
         }
     }
 
-    idleElapsed.start();
+    idleElapsed = std::time(nullptr);
     return total;
 }
 
@@ -182,7 +183,7 @@ void THttpSocket::readRequest()
             buf.resize(0);
             break;
         }
-        idleElapsed.start();
+        idleElapsed = std::time(nullptr);
 
         if (lengthToRead > 0) {
             // Writes to buffer
@@ -292,9 +293,10 @@ THttpSocket *THttpSocket::searchSocket(int sid)
     return socketManager[sid & 0xffff].load();
 }
 
-
-
 /*!
-  \fn int idleTime() const
   Returns the number of seconds of idle time.
 */
+int THttpSocket::idleTime() const
+{
+    return (uint)std::time(nullptr) - idleElapsed;
+}

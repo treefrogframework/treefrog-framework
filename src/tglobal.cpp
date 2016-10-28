@@ -14,18 +14,16 @@
 #include <TActionContext>
 #include <TDatabaseContext>
 #include <TActionThread>
-#include <TApplicationScheduler>
-#include <TScheduler>
 #ifdef Q_OS_LINUX
 # include <TActionWorker>
 #endif
 #include <cstdlib>
 #include <climits>
 #include <random>
-#include "twebsocketworker.h"
 #include "tloggerfactory.h"
 #include "tsharedmemorylogstream.h"
 #include "tbasiclogstream.h"
+#include "tdatabasecontextthread.h"
 #include "tsystemglobal.h"
 #ifdef Q_OS_WIN
 # include <Windows.h>
@@ -349,20 +347,11 @@ TDatabaseContext *Tf::currentDatabaseContext()
         break;
     }
 
-    // TWebSocketWorker
-    context = qobject_cast<TWebSocketWorker *>(QThread::currentThread());
-    if (context)
+    // TDatabaseContextThread
+    context = dynamic_cast<TDatabaseContextThread *>(QThread::currentThread());
+    if (context) {
         return context;
-
-    // TApplicationScheduler
-    context = qobject_cast<TApplicationScheduler *>(QThread::currentThread());
-    if (context)
-        return context;
-
-    // TScheduler
-    context = qobject_cast<TScheduler *>(QThread::currentThread());
-    if (context)
-        return context;
+    }
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
 }

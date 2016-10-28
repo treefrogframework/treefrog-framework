@@ -5,6 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <ctime>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <TAppSettings>
@@ -23,7 +24,7 @@ TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &add
     : TEpollSocket(socketDescriptor, address), lengthToRead(-1), idleElapsed()
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
-    idleElapsed.start();
+    idleElapsed = std::time(nullptr);
 }
 
 
@@ -54,7 +55,7 @@ int TEpollHttpSocket::send()
 {
     int ret = TEpollSocket::send();
     if (ret == 0) {
-        idleElapsed.start();
+        idleElapsed = std::time(nullptr);
     }
     return ret;
 }
@@ -64,7 +65,7 @@ int TEpollHttpSocket::recv()
 {
     int ret = TEpollSocket::recv();
     if (ret == 0) {
-        idleElapsed.start();
+        idleElapsed = std::time(nullptr);
     }
     return ret;
 }
@@ -216,4 +217,12 @@ QList<TEpollHttpSocket*> TEpollHttpSocket::allSockets()
         }
     }
     return lst;
+}
+
+/*!
+   Returns the number of seconds of idle time.
+*/
+int TEpollHttpSocket::idleTime() const
+{
+    return (uint)std::time(nullptr) - idleElapsed;
 }

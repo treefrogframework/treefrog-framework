@@ -10,6 +10,7 @@
 #include <QDir>
 #include <TWebApplication>
 #include <TAppSettings>
+#include <ctime>
 #include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
 
@@ -211,7 +212,7 @@ void TSqlDatabasePool::pool(QSqlDatabase &database)
         if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
             // pool
             cachedDatabase[databaseId].push(database.connectionName());
-            lastCachedTime[databaseId].store(QDateTime::currentDateTime().toTime_t());
+            lastCachedTime[databaseId].store((uint)std::time(nullptr));
             tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
         } else {
             tSystemError("Pooled invalid database  [%s:%d]", __FILE__, __LINE__);
@@ -235,7 +236,7 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
                 continue;
             }
 
-            while (lastCachedTime[i].load() < QDateTime::currentDateTime().toTime_t() - 30
+            while (lastCachedTime[i].load() < (uint)std::time(nullptr) - 30
                    && cache.pop(name)) {
                 QSqlDatabase::database(name, false).close();
                 tSystemDebug("Closed database connection, name: %s", qPrintable(name));

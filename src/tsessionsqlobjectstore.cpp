@@ -38,7 +38,7 @@ bool TSessionSqlObjectStore::store(TSession &session)
 
 TSession TSessionSqlObjectStore::find(const QByteArray &id)
 {
-    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs);
+    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
     TSqlORMapper<TSessionObject> mapper;
     TCriteria cri;
     cri.add(TSessionObject::Id, TSql::Equal, id);
