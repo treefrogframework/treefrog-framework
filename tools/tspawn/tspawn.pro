@@ -85,21 +85,21 @@ INSTALLS += target defaults
 
 windows {
   contains(QMAKE_TARGET.arch, x86_64) {
-    clientlib.files += ../../sqldrivers/clientlib64/COPYING_3RD_PARTY_DLL
-    clientlib.files += ../../sqldrivers/clientlib64/libeay32.dll
-    clientlib.files += ../../sqldrivers/clientlib64/libintl-8.dll
-    clientlib.files += ../../sqldrivers/clientlib64/libmariadb.dll
-    clientlib.files += ../../sqldrivers/clientlib64/libmysql.dll
-    clientlib.files += ../../sqldrivers/clientlib64/libpq.dll
-    clientlib.files += ../../sqldrivers/clientlib64/ssleay32.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/COPYING_3RD_PARTY_DLL
+    clientlib.files += ../../3rdparty/clientlib/win64/libeay32.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/libintl-8.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/libmariadb.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/libmysql.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/libpq.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/ssleay32.dll
   } else {
-    clientlib.files += ../../sqldrivers/clientlib32/COPYING_3RD_PARTY_DLL
-    clientlib.files += ../../sqldrivers/clientlib32/intl.dll
-    clientlib.files += ../../sqldrivers/clientlib32/libeay32.dll
-    clientlib.files += ../../sqldrivers/clientlib32/libmariadb.dll
-    clientlib.files += ../../sqldrivers/clientlib32/libmysql.dll
-    clientlib.files += ../../sqldrivers/clientlib32/libpq.dll
-    clientlib.files += ../../sqldrivers/clientlib32/ssleay32.dll
+    clientlib.files += ../../3rdparty/clientlib/win32/COPYING_3RD_PARTY_DLL
+    clientlib.files += ../../3rdparty/clientlib/win32/intl.dll
+    clientlib.files += ../../3rdparty/clientlib/win32/libeay32.dll
+    clientlib.files += ../../3rdparty/clientlib/win32/libmariadb.dll
+    clientlib.files += ../../3rdparty/clientlib/win32/libmysql.dll
+    clientlib.files += ../../3rdparty/clientlib/win32/libpq.dll
+    clientlib.files += ../../3rdparty/clientlib/win32/ssleay32.dll
   }
   clientlib.path = $${datadir}/bin
   INSTALLS += clientlib
