@@ -451,6 +451,10 @@ int managerMain(int argc, char *argv[])
             break;
 
         case SendSignal:
+            if (!i.hasNext()) {
+                fprintf(stderr, "Missing signal name\n");
+                return 1;
+            }
             signalCmd = i.next(); // assign a command
             break;
 
