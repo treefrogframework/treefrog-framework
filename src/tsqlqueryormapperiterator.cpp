@@ -38,7 +38,7 @@
 */
 
 /*!
-  \fn void TSqlQueryORMapperIterator<T>::toFront() 
+  \fn void TSqlQueryORMapperIterator<T>::toFront()
   Moves the iterator to the front of the results (before the first
   object).
 */

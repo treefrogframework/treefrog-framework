@@ -22,8 +22,7 @@
 bool TSessionSqlObjectStore::store(TSession &session)
 {
     TSqlORMapper<TSessionObject> mapper;
-    QString id = QString::fromLatin1(session.id().data(), session.id().length());
-    TCriteria cri(TSessionObject::Id, TSql::Equal, id);
+    TCriteria cri(TSessionObject::Id, TSql::Equal, session.id());
     TSessionObject so = mapper.findFirst(cri);
 
     QDataStream ds(&so.data, QIODevice::WriteOnly);
@@ -42,7 +41,7 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
     TSqlORMapper<TSessionObject> mapper;
     TCriteria cri;
-    cri.add(TSessionObject::Id, TSql::Equal, QString::fromLatin1(id.data(), id.length()));
+    cri.add(TSessionObject::Id, TSql::Equal, id);
     cri.add(TSessionObject::UpdatedAt, TSql::GreaterEqual, modified);
 
     TSessionObject sess = mapper.findFirst(cri);

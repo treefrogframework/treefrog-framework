@@ -49,7 +49,19 @@ public:
 Q_GLOBAL_STATIC(FormatHash, formatHash)
 
 
-const QHash<int, QString> &TSql::formats()
+QString TSql::formatArg(int op)
 {
-    return *formatHash();
+    return formatHash()->value(op);
+}
+
+
+QString TSql::formatArg(int op, const QString &a)
+{
+    return formatHash()->value(op).arg(a);
+}
+
+
+QString TSql::formatArg(int op, const QString &a1, const QString &a2)
+{
+    return formatHash()->value(op).arg(a1, a2);
 }

@@ -275,6 +275,8 @@ HEADERS += tqueue.h
 SOURCES += tqueue.cpp
 HEADERS += tdatabasecontextthread.h
 SOURCES += tdatabasecontextthread.cpp
+HEADERS += tdatabasecontextmainthread.h
+SOURCES += tdatabasecontextmainthread.cpp
 
 HEADERS += \
            tfnamespace.h \

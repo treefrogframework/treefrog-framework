@@ -218,7 +218,7 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-            where.append("=").append(TSqlQuery::formatValue(oldRevision, database));
+            where.append("=").append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
             where.append(" AND ");
         } else {
             // continue
@@ -230,7 +230,8 @@ bool TSqlObject::update()
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
     int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
-    const char *pkName = metaObject()->property(pkidx).name();
+    QMetaProperty metaProp = metaObject()->property(pkidx);
+    const char *pkName = metaProp.name();
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
@@ -238,20 +239,22 @@ bool TSqlObject::update()
         return false;
     }
 
+    QVariant::Type pkType = metaProp.type();
     QVariant origpkval = value(pkName);
     where.append(QLatin1String(pkName));
-    where.append("=").append(TSqlQuery::formatValue(origpkval, database));
+    where.append("=").append(TSqlQuery::formatValue(origpkval, pkType, database));
     // Restore the value of primary key
     QObject::setProperty(pkName, origpkval);
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
-        const char *propName = metaObject()->property(i).name();
+        metaProp = metaObject()->property(i);
+        const char *propName = metaProp.name();
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
         if (i != pkidx && recval.isValid() && recval != newval) {
             upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
-            upd.append(TSqlQuery::formatValue(newval, database));
+            upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
             upd.append(QLatin1String(", "));
         }
     }
@@ -318,7 +321,7 @@ bool TSqlObject::remove()
             }
 
             del.append(QLatin1String(propName));
-            del.append("=").append(TSqlQuery::formatValue(revision, database));
+            del.append("=").append(TSqlQuery::formatValue(revision, QVariant::Int, database));
             del.append(" AND ");
 
             revIndex = i;
@@ -326,7 +329,8 @@ bool TSqlObject::remove()
         }
     }
 
-    const char *pkName = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex()).name();
+    auto metaProp = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex());
+    const char *pkName = metaProp.name();
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
@@ -334,7 +338,7 @@ bool TSqlObject::remove()
         return false;
     }
     del.append(QLatin1String(pkName));
-    del.append("=").append(TSqlQuery::formatValue(value(pkName), database));
+    del.append("=").append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
 
     TSqlQuery query(database);
     bool ret = query.exec(del);

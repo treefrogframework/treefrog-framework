@@ -115,9 +115,24 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
   Returns a string representation of the value \a val for the database
   \a databaseId.
 */
-QString TSqlQuery::formatValue(const QVariant &val, int databaseId)
+QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, int databaseId)
 {
-    return formatValue(val, Tf::currentSqlDatabase(databaseId));
+    return formatValue(val, type, Tf::currentSqlDatabase(databaseId));
+}
+
+/*!
+  Returns a string representation of the value \a val for the database
+  \a database.
+*/
+QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const QSqlDatabase &database)
+{
+    if (Q_UNLIKELY(type == QVariant::Invalid)) {
+        type = val.type();
+    }
+
+    QSqlField field("dummy", type);
+    field.setValue(val);
+    return database.driver()->formatValue(field);
 }
 
 /*!
@@ -126,9 +141,7 @@ QString TSqlQuery::formatValue(const QVariant &val, int databaseId)
 */
 QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database)
 {
-    QSqlField field("dummy", val.type());
-    field.setValue(val);
-    return database.driver()->formatValue(field);
+    return formatValue(val, val.type(), database);
 }
 
 /*!
