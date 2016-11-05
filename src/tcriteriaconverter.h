@@ -11,7 +11,9 @@
 
 namespace TSql
 {
-    T_CORE_EXPORT const QHash<int, QString> &formats();
+    T_CORE_EXPORT QString formatArg(int op);
+    T_CORE_EXPORT QString formatArg(int op, const QString &a);
+    T_CORE_EXPORT QString formatArg(int op, const QString &a1, const QString &a2);
 }
 
 /*!
@@ -29,16 +31,16 @@ public:
     TCriteriaData(int property, int op1, int op2, const QVariant &val);
     bool isEmpty() const;
 
-    int property;
-    int op1;
-    int op2;
+    int property {-1};
+    QVariant::Type varType {QVariant::Invalid};
+    int op1 {TSql::Invalid};
+    int op2 {TSql::Invalid};
     QVariant val1;
     QVariant val2;
 };
 
 
 inline TCriteriaData::TCriteriaData()
-    : property(-1), op1(TSql::Invalid), op2(TSql::Invalid)
 { }
 
 
@@ -81,16 +83,19 @@ class TCriteriaConverter
 public:
     TCriteriaConverter(const TCriteria &cri, const QSqlDatabase &db, const QString &aliasTableName = QString()) : criteria(cri), database(db), tableAlias(aliasTableName) { }
     QString toString() const;
-    static QString propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString());
-
+    QVariant::Type variantType(int property) const;
+    QString propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString()) const;
+    static QString getPropertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString());
 
 protected:
+    static QString getPropertyName(const QMetaObject *metaObject, int property, const QSqlDriver *driver, const QString &aliasTableName);
     QString criteriaToString(const QVariant &cri) const;
-    static QString criteriaToString(const QString &propertyName, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database);
-    static QString criteriaToString(const QString &propertyName, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database);
+    static QString criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database);
+    static QString criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database);
     static QString concat(const QString &s1, TCriteria::LogicalOperator op, const QString &s2);
 
 private:
+    T obj;
     TCriteria criteria;
     QSqlDatabase database;
     QString tableAlias;
@@ -125,6 +130,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
         if (cri.isEmpty()) {
             return QString();
         }
+        cri.varType = variantType(cri.property);
 
         QString name = propertyName(cri.property, database.driver(), tableAlias);
         if (name.isEmpty()) {
@@ -132,10 +138,10 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
         }
 
         if (cri.op1 != TSql::Invalid && cri.op2 != TSql::Invalid && !cri.val1.isNull()) {
-            sqlString += criteriaToString(name, (TSql::ComparisonOperator)cri.op1, (TSql::ComparisonOperator)cri.op2, cri.val1, database);
+            sqlString += criteriaToString(name, cri.varType, (TSql::ComparisonOperator)cri.op1, (TSql::ComparisonOperator)cri.op2, cri.val1, database);
 
         } else if (cri.op1 != TSql::Invalid && !cri.val1.isNull() && !cri.val2.isNull()) {
-            sqlString += criteriaToString(name, (TSql::ComparisonOperator)cri.op1, cri.val1, cri.val2, database);
+            sqlString += criteriaToString(name, cri.varType, (TSql::ComparisonOperator)cri.op1, cri.val1, cri.val2, database);
 
         } else if (cri.op1 != TSql::Invalid) {
             switch(cri.op1) {
@@ -149,7 +155,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             case TSql::NotLike:
             case TSql::ILike:
             case TSql::NotILike:
-                sqlString += name + TSql::formats().value(cri.op1).arg(TSqlQuery::formatValue(cri.val1, database));
+                sqlString += name + TSql::formatArg(cri.op1, TSqlQuery::formatValue(cri.val1, cri.varType, database));
                 break;
 
             case TSql::In:
@@ -157,14 +163,14 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                 QString str;
                 QList<QVariant> lst = cri.val1.toList();
                 for (auto &v : lst) {
-                    QString s = TSqlQuery::formatValue(v, database);
+                    QString s = TSqlQuery::formatValue(v, cri.varType, database);
                     if (!s.isEmpty()) {
                         str.append(s).append(',');
                     }
                 }
                 str.chop(1);
                 if (!str.isEmpty()) {
-                    sqlString += name + TSql::formats().value(cri.op1).arg(str);
+                    sqlString += name + TSql::formatArg(cri.op1, str);
                 } else {
                     tWarn("error parameter");
                 }
@@ -178,18 +184,18 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             case TSql::NotBetween: {
                 QList<QVariant> lst = cri.val1.toList();
                 if (lst.count() == 2) {
-                    sqlString += criteriaToString(name, (TSql::ComparisonOperator)cri.op1, lst[0], lst[1], database);
+                    sqlString += criteriaToString(name, cri.varType, (TSql::ComparisonOperator)cri.op1, lst[0], lst[1], database);
                 }
                 break; }
 
             case TSql::IsNull:
             case TSql::IsNotNull:
-                sqlString += name + TSql::formats().value(cri.op1);
+                sqlString += name + TSql::formatArg(cri.op1);
                 break;
 
             case TSql::IsEmpty:
             case TSql::IsNotEmpty:
-                sqlString += TSql::formats().value(cri.op1).arg(name);
+                sqlString += TSql::formatArg(cri.op1, name);
                 break;
 
             default:
@@ -209,9 +215,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
 
 
 template <class T>
-inline QString TCriteriaConverter<T>::propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName)
+inline QString TCriteriaConverter<T>::getPropertyName(const QMetaObject *metaObject, int property, const QSqlDriver *driver, const QString &aliasTableName)
 {
-    const QMetaObject *metaObject = T().metaObject();
     QString name = (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).name() : QString();
     if (name.isEmpty()) {
         return name;
@@ -226,11 +231,33 @@ inline QString TCriteriaConverter<T>::propertyName(int property, const QSqlDrive
 
 
 template <class T>
-inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database)
+inline QString TCriteriaConverter<T>::propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName) const
+{
+    return getPropertyName(obj.metaObject(), property, driver, aliasTableName);
+}
+
+
+template <class T>
+inline QString TCriteriaConverter<T>::getPropertyName(int property, const QSqlDriver *driver, const QString &aliasTableName)
+{
+    return getPropertyName(T().metaObject(), property, driver, aliasTableName);
+}
+
+
+template <class T>
+inline QVariant::Type TCriteriaConverter<T>::variantType(int property) const
+{
+    const QMetaObject *metaObject = obj.metaObject();
+    return (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).type() : QVariant::Invalid;
+}
+
+
+template <class T>
+inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database)
 {
     QString sqlString;
-    QString v1 = TSqlQuery::formatValue(val1, database);
-    QString v2 = TSqlQuery::formatValue(val2, database);
+    QString v1 = TSqlQuery::formatValue(val1, (QVariant::Type)varType, database);
+    QString v2 = TSqlQuery::formatValue(val2, (QVariant::Type)varType, database);
 
     if (!v1.isEmpty() && !v2.isEmpty()) {
         switch(op) {
@@ -240,7 +267,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
         case TSql::NotILikeEscape:
         case TSql::Between:
         case TSql::NotBetween:
-            sqlString = QLatin1Char('(') + propertyName + TSql::formats().value(op).arg(v1, v2) + QLatin1Char(')');
+            sqlString = QLatin1Char('(') + propertyName + TSql::formatArg(op, v1, v2) + QLatin1Char(')');
             break;
 
         default:
@@ -255,7 +282,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
 
 
 template <class T>
-inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database)
+inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database)
 {
     QString sqlString;
     if (op1 != TSql::Invalid && op2 != TSql::Invalid && !val.isNull()) {
@@ -265,15 +292,15 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
             QString str;
             QList<QVariant> lst = val.toList();
             for (auto &v : lst) {
-                QString s = TSqlQuery::formatValue(v, database);
+                QString s = TSqlQuery::formatValue(v, varType, database);
                 if (!s.isEmpty()) {
                     str.append(s).append(',');
                 }
             }
             str.chop(1);
-            str = TSql::formats().value(op2).arg(str);
+            str = TSql::formatArg(op2, str);
             if (!str.isEmpty()) {
-                sqlString += propertyName + TSql::formats().value(op1).arg(str);
+                sqlString += propertyName + TSql::formatArg(op1, str);
             }
             break; }
 

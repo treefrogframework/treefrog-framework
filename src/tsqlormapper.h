@@ -283,7 +283,7 @@ template <class T>
 inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
 {
     if (column >= 0) {
-        sortColumn = TCriteriaConverter<T>::propertyName(column, database().driver());
+        sortColumn = TCriteriaConverter<T>::getPropertyName(column, database().driver());
         sortOrder = order;
     }
 }
@@ -548,7 +548,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         if (prop == UpdatedAt || prop == ModifiedAt) {
             upd += propName;
             upd += '=';
-            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), db);
+            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), QVariant::DateTime, db);
             upd += QLatin1String(", ");
             break;
         }
@@ -557,9 +557,9 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     QMapIterator<int, QVariant> it(values);
     for (;;) {
         it.next();
-        upd += TCriteriaConverter<T>::propertyName(it.key(), db.driver());
+        upd += conv.propertyName(it.key(), db.driver());
         upd += '=';
-        upd += TSqlQuery::formatValue(it.value(), db);
+        upd += TSqlQuery::formatValue(it.value(), conv.variantType(it.key()), db);
 
         if (!it.hasNext())
             break;
@@ -651,9 +651,9 @@ template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJo
     clause += QLatin1Char(' ');
     clause += alias;
     clause += QLatin1String(" ON ");
-    clause += TCriteriaConverter<T>::propertyName(column, db.driver(), "t0");
+    clause += TCriteriaConverter<T>::getPropertyName(column, db.driver(), "t0");
     clause += QLatin1Char('=');
-    clause += TCriteriaConverter<C>::propertyName(join.joinColumn(), db.driver(), alias);
+    clause += TCriteriaConverter<C>::getPropertyName(join.joinColumn(), db.driver(), alias);
     joinClauses << clause;
 
     if (!join.criteria().isEmpty()) {

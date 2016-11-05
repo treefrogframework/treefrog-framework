@@ -12,7 +12,7 @@
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <cstdlib>
-#include "tdatabasecontextthread.h"
+#include "tdatabasecontextmainthread.h"
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
 #define DEFAULT_DATABASE_ENVIRONMENT  "product"
@@ -474,12 +474,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 
 QThread *TWebApplication::databaseContextMainThread() const
 {
-    static TDatabaseContextThread databaseThread;
-
-    if (!databaseThread.isRunning()) {
-        databaseThread.setTransactionEnabled(false);
-        databaseThread.start();
-    }
+    static TDatabaseContextMainThread databaseThread;
     return &databaseThread;
 }
 
