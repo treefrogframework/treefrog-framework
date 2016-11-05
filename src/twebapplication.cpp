@@ -475,6 +475,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 QThread *TWebApplication::databaseContextMainThread() const
 {
     static TDatabaseContextMainThread databaseThread;
+    databaseThread.start();
     return &databaseThread;
 }
 

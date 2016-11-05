@@ -5,5 +5,4 @@ TDatabaseContextMainThread::TDatabaseContextMainThread(QObject *parent)
     : TDatabaseContextThread(parent)
 {
     setTransactionEnabled(false);
-    start();
 }
