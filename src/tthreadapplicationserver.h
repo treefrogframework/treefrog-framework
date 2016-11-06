@@ -46,6 +46,7 @@ public:
     {
         TStaticInitializeThread *initializer = new TStaticInitializeThread();
         initializer->start();
+        QThread::yieldCurrentThread();  // needed to avoid deadlock on win
         initializer->wait();
         delete initializer;
 
