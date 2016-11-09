@@ -72,9 +72,6 @@ protected:
     virtual int rowCount(const QModelIndex &parent) const;
 
 private:
-    T_DISABLE_COPY(TSqlORMapper)
-    T_DISABLE_MOVE(TSqlORMapper)
-
     QString queryFilter;
     QString sortColumn;
     Tf::SortOrder sortOrder;
@@ -83,6 +80,9 @@ private:
     int joinCount;
     QStringList joinClauses;
     QStringList joinWhereClauses;
+
+    T_DISABLE_COPY(TSqlORMapper)
+    T_DISABLE_MOVE(TSqlORMapper)
 };
 
 
@@ -382,7 +382,7 @@ inline QString TSqlORMapper<T>::selectStatement() const
         }
     }
 
-    if (query.isEmpty()) {
+    if (Q_UNLIKELY(query.isEmpty())) {
         return query;
     } else {
         query.chop(2);
@@ -397,19 +397,23 @@ inline QString TSqlORMapper<T>::selectStatement() const
     query += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database().driver());
     query += QLatin1String(" t0");  // alias needed
 
-    for (auto &join : joinClauses) {
-        query += join;
+    if (joinFlag) {
+        for (auto &join : joinClauses) {
+            query += join;
+        }
     }
 
     QString filter = queryFilter;
-    for (auto &wh : joinWhereClauses) {
-        if (!filter.isEmpty()) {
-            filter += QLatin1String(" AND ");
+    if (!joinWhereClauses.isEmpty()) {
+        for (auto &wh : joinWhereClauses) {
+            if (!filter.isEmpty()) {
+                filter += QLatin1String(" AND ");
+            }
+            filter += wh;
         }
-        filter += wh;
     }
 
-    if (!filter.isEmpty()) {
+    if (Q_LIKELY(!filter.isEmpty())) {
         query.append(QLatin1String(" WHERE ")).append(filter);
     }
 
