@@ -358,7 +358,7 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
     rendered = true;
 
     // Creates view-object and displays it
-    QStringList names = templateName.split("/");
+    QStringList names = templateName.split(QDir::separator());
     if (names.count() != 2) {
         tError("Invalid patameter: %s", qPrintable(templateName));
         return false;
@@ -485,7 +485,7 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
     T_TRACEFUNC("templateName: %s", qPrintable(templateName));
 
     // Creates view-object
-    QStringList names = templateName.split("/");
+    QStringList names = templateName.split(QDir::separator());
     if (names.count() != 2) {
         tError("Invalid patameter: %s", qPrintable(templateName));
         return QString();

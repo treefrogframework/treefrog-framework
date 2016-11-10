@@ -130,8 +130,10 @@ while [ -n "`echo $1 | grep '-'`" ]; do
 done
 
 cd "$BASEDIR"
-$SED "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-$SED "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
+$SED "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog
+|" defaults/appbase.pri
+$SED "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR
+|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
@@ -160,19 +162,6 @@ cd "$BASEDIR/tools"
 $QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
 make qmake
 
-# compile MongoDB files
-cd "$BASEDIR/3rdparty/mongo-c-driver"
-echo
-echo -n "Compiling MongoDB driver library ... "
-$QMAKE $OPT mongo-c-driver.pro
-make clean >/dev/null 2>&1
-make >/dev/null 2>&1
-RET=$?
-if [ $RET != 0 ]; then
-  echo "failed"
-  echo "MongoDB driver not available."
-  exit $RET
-fi
 echo "OK"
 
 echo
