@@ -79,6 +79,7 @@ public:
     bool renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     void clear();
 
+    bool hasEntity(const QByteArray &dataName) const;
     TMimeEntity entity(const QByteArray &dataName) const;
     QList<TMimeEntity> entityList(const QByteArray &dataName) const;
 

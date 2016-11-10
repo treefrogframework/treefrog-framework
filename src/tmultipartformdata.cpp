@@ -497,6 +497,21 @@ QString TMultipartFormData::writeContent(QIODevice *dev) const
 }
 
 /*!
+  Returns true if the MIME entity object associated with the name \a dataName
+  exists; otherwise false.
+*/
+bool TMultipartFormData::hasEntity(const QByteArray &dataName) const
+{
+    for (QListIterator<TMimeEntity> i(uploadedFiles); i.hasNext(); ) {
+        const TMimeEntity &p = i.next();
+        if (p.header().dataName() == dataName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*!
   Returns the MIME entity object associated with the name \a dataName.
 */
 TMimeEntity TMultipartFormData::entity(const QByteArray &dataName) const
