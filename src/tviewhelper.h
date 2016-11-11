@@ -163,9 +163,13 @@ public:
                         const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
     QString imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString styleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
+    QString styleSheetTag(const QString &src, const THtmlAttribute &attributes) const;
 
-    QString scriptTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
+    QString styleSheetTag(const QString &src, bool withTimestamp = true, const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString scriptTag(const QString &src, const THtmlAttribute &attributes) const;
+
+    QString scriptTag(const QString &src, bool withTimestamp = true, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString tag(const QString &name, const THtmlAttribute &attributes);
 
@@ -181,13 +185,13 @@ public:
 
     QString allEndTags();
 
-    QString imagePath(const QString &src, bool withTimestamp = false) const;
+    QString imagePath(const QString &src, bool withTimestamp = true) const;
 
-    QString cssPath(const QString &src) const;
+    QString cssPath(const QString &src, bool withTimestamp = true) const;
 
-    QString jsPath(const QString &src) const;
+    QString jsPath(const QString &src, bool withTimestamp = true) const;
 
-    QString srcPath(const QString &src, const QString &dir, bool withTimestamp = false) const;
+    QString srcPath(const QString &src, const QString &dir, bool withTimestamp = true) const;
 
     THtmlAttribute a(const QString &key, const QString &value) const;
     THtmlAttribute a() const { return THtmlAttribute(); }

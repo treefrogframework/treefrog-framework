@@ -523,6 +523,16 @@ QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &media
 */
 QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &attributes) const
 {
+    return styleSheetTag(src, true, attributes);
+}
+
+/*!
+  Creates a \<link\> link tag for a style sheet with href=\a "src". The
+  \a src must be one of URL, a absolute path or a relative path. If \a src
+  is a relative path, it must exist in the public/css directory.
+*/
+QString TViewHelper::styleSheetTag(const QString &src, bool withTimestamp, const THtmlAttribute &attributes) const
+{
     THtmlAttribute attr = attributes;
     if (!attr.contains("type")) {
         attr.prepend("type", "text/css");
@@ -530,7 +540,7 @@ QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &att
     if (!attr.contains("rel")) {
         attr.prepend("rel", "stylesheet");
     }
-    attr.prepend("href", cssPath(src));
+    attr.prepend("href", cssPath(src, withTimestamp));
     return selfClosingTag("link", attr);
 }
 
@@ -541,11 +551,21 @@ QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &att
 */
 QString TViewHelper::scriptTag(const QString &src, const THtmlAttribute &attributes) const
 {
+    return scriptTag(src, true, attributes);
+}
+
+/*!
+  Creates a \<script\> script tag with src=\a "src". The \a src must
+  be one of URL, a absolute path or a relative path. If \a src is a
+  relative path, it must exist in the public/js directory.
+*/
+QString TViewHelper::scriptTag(const QString &src, bool withTimestamp, const THtmlAttribute &attributes) const
+{
     THtmlAttribute attr = attributes;
     if (!attr.contains("type")) {
         attr.prepend("type", "text/javascript");
     }
-    attr.prepend("src", jsPath(src));
+    attr.prepend("src", jsPath(src, withTimestamp));
     return tag("script", attr, QString());
 }
 
@@ -623,9 +643,9 @@ QString TViewHelper::imagePath(const QString &src, bool withTimestamp) const
   path or a relative path. If \a src is a relative path, it must exist
   in the public/css directory.
 */
-QString TViewHelper::cssPath(const QString &src) const
+QString TViewHelper::cssPath(const QString &src, bool withTimestamp) const
 {
-    return srcPath(src, "/css/");
+    return srcPath(src, "/css/", withTimestamp);
 }
 
 /*!
@@ -633,9 +653,9 @@ QString TViewHelper::cssPath(const QString &src) const
   path or a relative path. If \a src is a relative path, it must exist
   in the public/js directory.
  */
-QString TViewHelper::jsPath(const QString &src) const
+QString TViewHelper::jsPath(const QString &src, bool withTimestamp) const
 {
-    return srcPath(src, "/js/");
+    return srcPath(src, "/js/", withTimestamp);
 }
 
 /*!
