@@ -40,8 +40,11 @@
     "#include \"%1.moc\"\n"
 
 
-ErbConverter::ErbConverter(const QDir &output, const QDir &helpers)
-    : outputDirectory(output), helpersDirectory(helpers)
+const QRegExp RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
+
+
+ErbConverter::ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial)
+    : outputDirectory(output), helpersDirectory(helpers), partialDirectory(partial)
 { }
 
 
@@ -54,20 +57,34 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     // Checks file's timestamp
     QFileInfo erbFileInfo(erbFile);
     QFileInfo outFileInfo(outFile);
-    if (erbFileInfo.exists() && outFileInfo.exists()) {
-        if (outFileInfo.lastModified() > erbFileInfo.lastModified()) {
-            //printf("  done    %s\n", qPrintable(outFile.fileName()));
-            return true;
-        } else {
-            if (outFile.remove()) {
-                printf("  removed  %s\n", qPrintable(outFile.fileName()));
-            }
+
+    if (!erbFile.open(QIODevice::ReadOnly)) {
+        qCritical("failed to read template.erb file : %s", qPrintable(erbFile.fileName()));
+        return false;
+    }
+
+    QString erbSrc = QTextStream(&erbFile).readAll();
+    auto partialList = replacePartialTag(erbSrc, 0);
+
+    QDateTime latestPartialTs;
+    for (const auto &file : partialList) {
+        auto ts = QFileInfo(partialDirectory.filePath(file)).lastModified();
+        if (ts.isValid() && ts > latestPartialTs) {
+            latestPartialTs = ts;
         }
     }
 
-    if (!erbFile.open(QIODevice::ReadOnly)) {
-        qCritical("failed to read html.erb file : %s", qPrintable(erbFile.fileName()));
-        return false;
+    // Checks timestamps
+    if (outFileInfo.exists()) {
+        if ((latestPartialTs.isValid() && latestPartialTs >= outFileInfo.lastModified())
+            || erbFileInfo.lastModified() >= outFileInfo.lastModified()) {
+            if (outFile.remove()) {
+                printf("  removed  %s\n", qPrintable(outFile.fileName()));
+            }
+        } else {
+            //printf("  done    %s\n", qPrintable(outFile.fileName()));
+            return true;
+        }
     }
 
     if (!outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -76,7 +93,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     }
 
     ErbParser parser((ErbParser::TrimMode)trimMode);
-    parser.parse(QTextStream(&erbFile).readAll());
+    parser.parse(erbSrc);
     QString code = parser.sourceCode();
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
@@ -140,4 +157,46 @@ QString ErbConverter::generateIncludeCode(const ErbParser &parser) const
         code += "\"\n";
     }
     return code;
+}
+
+
+QStringList ErbConverter::replacePartialTag(QString &erbSrc, int depth) const
+{
+    QStringList ret;  // partial files replaced
+    QString erbReplaced;
+    int pos = 0;
+
+    while (pos < erbSrc.length()) {
+        int idx;
+        if ((idx = RxPartialTag.indexIn(erbSrc, pos)) < 0) {
+            erbReplaced += erbSrc.mid(pos);
+            break;
+        }
+
+        QString partialFile = RxPartialTag.cap(1);
+        if (QFileInfo(partialFile).suffix().toLower() != "erb") {
+            partialFile += ".erb";
+        }
+
+        if (depth > 10) {
+            // no more replace
+            qWarning("Partial template '%s' infinitely recursively included?", partialFile.toLocal8Bit().data());
+            return ret;
+        }
+
+        erbReplaced += erbSrc.mid(pos, idx - pos);
+        pos = idx + RxPartialTag.matchedLength();
+
+        // Includes the partial
+        QFile partErb(partialDirectory.filePath(partialFile));
+        if (partErb.open(QIODevice::ReadOnly)) {
+            ret << partialFile;
+            QString part = QTextStream(&partErb).readAll();
+            ret << replacePartialTag(part, depth + 1);
+        }
+    }
+
+    erbSrc = erbReplaced;
+    ret.removeDuplicates();
+    return ret;
 }
