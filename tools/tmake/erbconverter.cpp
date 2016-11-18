@@ -193,6 +193,7 @@ QStringList ErbConverter::replacePartialTag(QString &erbSrc, int depth) const
             ret << partialFile;
             QString part = QTextStream(&partErb).readAll();
             ret << replacePartialTag(part, depth + 1);
+            erbReplaced += part;
         }
     }
 
