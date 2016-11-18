@@ -16,7 +16,7 @@ class TestTfpconverter: public QObject, public ErbConverter
 {
     Q_OBJECT
 public:
-    TestTfpconverter() : ErbConverter(QDir("."), QDir()) { }
+    TestTfpconverter() : ErbConverter(QDir("."), QDir(), QDir()) { }
 private slots:
     void initTestCase();
     void parse_data();
