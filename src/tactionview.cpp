@@ -45,7 +45,7 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
 {
     QString temp = templateName;
     if (!temp.contains('/')) {
-        temp = QLatin1String("partial") + QDir::separator() + temp;
+        temp = QLatin1String("partial/") + temp;
     }
     return (actionController) ? actionController->getRenderingData(temp, vars) : QString();
 }
