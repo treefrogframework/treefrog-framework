@@ -6,7 +6,7 @@
  */
 
 #include <QCryptographicHash>
-#include <QHash>
+#include <QMap>
 #include <QScopedPointer>  // fix compilation error in Qt5.0
 #if QT_VERSION >= 0x050100
 # include <QMessageAuthenticationCode>
@@ -15,10 +15,10 @@
 
 
 #if QT_VERSION < 0x050100
-class BlockSizeHash : public QHash<int, int>
+class BlockSizeHash : public QMap<int, int>
 {
 public:
-    BlockSizeHash() : QHash<int, int>()
+    BlockSizeHash() : QMap<int, int>()
     {
         insert(TCryptMac::Hmac_Md5, 64);
         insert(TCryptMac::Hmac_Sha1, 64);

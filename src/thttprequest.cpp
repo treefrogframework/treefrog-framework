@@ -15,10 +15,10 @@
 #endif
 
 
-class MethodHash : public QHash<QString, Tf::HttpMethod>
+class MethodHash : public QMap<QString, Tf::HttpMethod>
 {
 public:
-    MethodHash() : QHash<QString, Tf::HttpMethod>()
+    MethodHash() : QMap<QString, Tf::HttpMethod>()
     {
         insert("get",     Tf::Get);
         insert("head",    Tf::Head);

@@ -8,17 +8,17 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
-#include <QHash>
+#include <QMap>
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <THttpUtility>
 #include "turlroute.h"
 
 
-class RouteDirectiveHash : public QHash<QString, int>
+class RouteDirectiveHash : public QMap<QString, int>
 {
 public:
-    RouteDirectiveHash() : QHash<QString, int>()
+    RouteDirectiveHash() : QMap<QString, int>()
     {
         insert("match",    TRoute::Match);
         insert("get",      TRoute::Get);

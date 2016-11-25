@@ -7,7 +7,7 @@
 
 #include <QStringList>
 #include <QDateTime>
-#include <QHash>
+#include <QMap>
 #include <TWebApplication>
 #include <ctime>
 #include "tkvsdatabasepool.h"
@@ -24,10 +24,10 @@
 static TKvsDatabasePool *databasePool = 0;
 
 
-class KvsTypeHash : public QHash<QString, int>
+class KvsTypeHash : public QMap<QString, int>
 {
 public:
-    KvsTypeHash() : QHash<QString, int>()
+    KvsTypeHash() : QMap<QString, int>()
     {
         insert("MONGODB", TKvsDatabase::MongoDB);
         insert("REDIS", TKvsDatabase::Redis);
@@ -91,7 +91,7 @@ void TKvsDatabasePool::init()
     bool aval = false;
 
     // Adds databases previously
-    for (QHashIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
+    for (QMapIterator<QString, int> it(*kvsTypeHash()); it.hasNext(); ) {
         const QString &drv = it.next().key();
         int type = it.value();
 

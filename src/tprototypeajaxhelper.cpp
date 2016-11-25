@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QHash>
+#include <QMap>
 #include <TPrototypeAjaxHelper>
 #include <TActionView>
 
@@ -16,10 +16,10 @@
 */
 
 
-class BehaviorHash : public QHash<int, QString>
+class BehaviorHash : public QMap<int, QString>
 {
 public:
-    BehaviorHash() : QHash<int, QString>()
+    BehaviorHash() : QMap<int, QString>()
     {
         insert(TPrototypeAjaxHelper::InsertBefore,            QLatin1String("insertion:'before', "));
         insert(TPrototypeAjaxHelper::InsertAfter,             QLatin1String("insertion:'after', "));
@@ -30,10 +30,10 @@ public:
 Q_GLOBAL_STATIC(BehaviorHash, behaviorHash)
 
 
-class EventStringHash : public QHash<int, QString>
+class EventStringHash : public QMap<int, QString>
 {
 public:
-    EventStringHash() : QHash<int, QString>()
+    EventStringHash() : QMap<int, QString>()
     {
         insert(Tf::Create,        QLatin1String("onCreate:"));
         insert(Tf::Uninitialized, QLatin1String("onUninitialized:"));
@@ -48,10 +48,10 @@ public:
 Q_GLOBAL_STATIC(EventStringHash, eventStringHash)
 
 
-class StringOptionHash : public QHash<int, QString>
+class StringOptionHash : public QMap<int, QString>
 {
 public:
-    StringOptionHash() : QHash<int, QString>()
+    StringOptionHash() : QMap<int, QString>()
     {
         insert(Tf::ContentType,    QLatin1String("contentType:"));
         insert(Tf::Encoding,       QLatin1String("encoding:"));
@@ -62,10 +62,10 @@ public:
 Q_GLOBAL_STATIC(StringOptionHash, stringOptionHash)
 
 
-class BoolOptionHash : public QHash<int, QString>
+class BoolOptionHash : public QMap<int, QString>
 {
 public:
-    BoolOptionHash() : QHash<int, QString>()
+    BoolOptionHash() : QMap<int, QString>()
     {
         insert(Tf::Asynchronous, QLatin1String("asynchronous:"));
         insert(Tf::EvalJS,       QLatin1String("evalJS:"));
@@ -76,10 +76,10 @@ public:
 Q_GLOBAL_STATIC(BoolOptionHash, boolOptionHash)
 
 
-class MethodHash : public QHash<int, QString>
+class MethodHash : public QMap<int, QString>
 {
 public:
-    MethodHash() : QHash<int, QString>()
+    MethodHash() : QMap<int, QString>()
     {
         insert(Tf::Get,     QLatin1String("get"));
         insert(Tf::Head,    QLatin1String("head"));
@@ -288,7 +288,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
                 }
                 val.chop(2);
             }
-            
+
             if (!val.isEmpty()) {
                 string += QLatin1String("parameters: { ");
                 string += val;

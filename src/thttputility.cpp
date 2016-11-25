@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QHash>
+#include <QMap>
 #include <QTextCodec>
 #include <QLocale>
 #include "tsystemglobal.h"
@@ -19,10 +19,10 @@
 #define HTTP_DATE_TIME_FORMAT "ddd, d MMM yyyy hh:mm:ss"
 
 
-class ReasonPhrase : public QHash<int, QByteArray>
+class ReasonPhrase : public QMap<int, QByteArray>
 {
 public:
-    ReasonPhrase() : QHash<int, QByteArray>()
+    ReasonPhrase() : QMap<int, QByteArray>()
     {
         // Informational 1xx
         insert(Tf::Continue, "Continue");

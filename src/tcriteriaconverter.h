@@ -3,7 +3,6 @@
 
 #include <QMetaObject>
 #include <QVariant>
-#include <QHash>
 #include <TCriteria>
 #include <TSqlQuery>
 #include <TGlobal>

@@ -6,6 +6,7 @@
  */
 
 #include <TCriteriaConverter>
+#include <QMap>
 
 /*!
  * \class TCriteriaConverter<>
@@ -15,10 +16,10 @@
  * \sa TCriteria
  */
 
-class FormatHash : public QHash<int, QString>
+class FormatHash : public QMap<int, QString>
 {
 public:
-    FormatHash() : QHash<int, QString>()
+    FormatHash() : QMap<int, QString>()
     {
         insert(TSql::Equal, "=%1");
         insert(TSql::NotEqual, "<>%1");

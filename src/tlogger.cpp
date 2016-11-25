@@ -15,10 +15,10 @@
 #define DEFAULT_TEXT_ENCODING "DefaultTextEncoding"
 
 
-class PriorityHash : public QHash<TLogger::Priority, QByteArray>
+class PriorityHash : public QMap<TLogger::Priority, QByteArray>
 {
 public:
-    PriorityHash() : QHash<TLogger::Priority, QByteArray>()
+    PriorityHash() : QMap<TLogger::Priority, QByteArray>()
     {
         insert(TLogger::Fatal, "FATAL");
         insert(TLogger::Error, "ERROR");

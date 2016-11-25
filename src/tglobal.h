@@ -3,7 +3,6 @@
 
 #include <QtGlobal>
 #include <QMetaType>
-#include <QHash>
 #include <TfNamespace>
 #include <cstdint>
 
