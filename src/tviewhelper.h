@@ -157,8 +157,6 @@ public:
     QString inlineImageTag(const QByteArray &data, const QString &mediaType,
                            const THtmlAttribute &attributes) const;
 
-    QString imageLinkTo(const QString &src, const QUrl &url, const QSize &size = QSize(),
-                        const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;  // obsolete
     QString imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
                         const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
     QString imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
@@ -334,18 +332,6 @@ inline QString TViewHelper::inputHiddenTag(const QString &name, const QVariant &
 inline QString TViewHelper::imageTag(const QString &src, const THtmlAttribute &attributes) const
 {
     return imageTag(src, QSize(), QString(), attributes);
-}
-
-/*!
-  \fn QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url, const QSize &size, const QString &alt, const THtmlAttribute &attributes) const
-  Creates a \<a\> link tag of a given \a url with a \<img\> tag of
-  src=\a "src".
-*/
-inline QString TViewHelper::imageLinkTo(const QString &src, const QUrl &url,
-                                        const QSize &size, const QString &alt,
-                                        const THtmlAttribute &attributes) const
-{
-    return linkTo(imageTag(src, size, alt, attributes), url);
 }
 
 /*!
