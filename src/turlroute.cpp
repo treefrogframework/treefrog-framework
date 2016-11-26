@@ -119,6 +119,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 
      // parse path
      rt.componentList = splitPath(path);
+     rt.paramNum = rt.componentList.count(":param");
      rt.hasVariableParams = rt.componentList.contains(":params");
 
      for (int i = 0; i < rt.componentList.count(); ++i) {
@@ -157,9 +158,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
     }
 
     bool denied = false;
-    for (QListIterator<TRoute> i(routes); i.hasNext(); ) {
-        const TRoute &rt = i.next();
-
+    for (const auto &rt : routes) {
         // Too long or short?
         if (rt.hasVariableParams) {
             if (components.length() < rt.componentList.length() - 1) {
@@ -171,8 +170,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
             }
         }
 
-        for (QListIterator<int> it(rt.keywordIndexes); it.hasNext(); ) {
-            int idx = it.next();
+        for (int idx : (const QList<int>&)rt.keywordIndexes) {
             if (components.value(idx) != rt.componentList[idx]) {
                 goto continue_next;
             }
@@ -203,6 +201,51 @@ continue_next:
     }
 
     return (denied) ? TRouting("", "") : TRouting() /* Not found routing info */ ;
+}
+
+
+static QString generatePath(const QStringList &components, const QStringList &params)
+{
+    QString ret = QLatin1String("/");
+    int cnt = 0;
+    for (auto &c : components) {
+        if (c == QLatin1String(":param")) {
+            ret += params.value(cnt++);
+        } else if (c == QLatin1String(":params")) {
+            ret += params.mid(cnt).join("/") + QLatin1Char('/');
+            break;
+        } else {
+            ret += c;
+        }
+        ret += QLatin1Char('/');
+    }
+
+    if (ret.length() > 1) {
+        ret.chop(1);
+    }
+    return ret;
+}
+
+
+QString TUrlRoute::findUrl(const QString &controller, const QString &action, const QStringList &params) const
+{
+    if (routes.isEmpty()) {
+        return QString();
+    }
+
+    for (const auto &rt : routes) {
+        QByteArray ctrl = controller.toLower().toLatin1() + "controller";
+        QByteArray act = action.toLower().toLatin1();
+
+        if (rt.controller == ctrl && rt.action == act) {
+            if ((rt.paramNum == params.count() && !rt.hasVariableParams)
+                || (rt.paramNum <= params.count() && rt.hasVariableParams)) {
+                return generatePath(rt.componentList, params);
+            }
+        }
+    }
+
+    return QString();
 }
 
 

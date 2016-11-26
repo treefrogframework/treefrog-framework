@@ -9,6 +9,7 @@
 #include <TActionController>
 #include <THttpUtility>
 #include <TSystemGlobal>
+#include "turlroute.h"
 
 /*!
   \class TActionHelper
@@ -51,13 +52,16 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
                         const QStringList &args, const QString &query) const
 {
     Q_ASSERT(this->controller());
-    QString path;
     QString ctrl = (controller.isEmpty()) ? this->controller()->name() : controller;
     QString act = (action.isEmpty()) ? this->controller()->activeAction() : action;
-    path.append('/').append(ctrl).append('/').append(act);
+    QString path = TUrlRoute::instance().findUrl(ctrl, act, args);
 
-    for (QStringListIterator i(args); i.hasNext(); ) {
-        path.append('/').append(THttpUtility::toUrlEncoding(i.next()));
+    if (path.isEmpty()) {
+        path.append('/').append(ctrl).append('/').append(act);
+    }
+
+    for (auto &a : args) {
+        path.append('/').append(THttpUtility::toUrlEncoding(a));
     }
 
     // appends query items

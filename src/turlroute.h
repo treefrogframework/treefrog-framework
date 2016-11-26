@@ -22,25 +22,24 @@ public:
         Invalid = 0xff,
     };
 
-    int     method;
+    int     method {Invalid};
     QStringList componentList;
     QList<int>  keywordIndexes;
     QByteArray controller;
     QByteArray action;
-    bool    hasVariableParams;
-
-    TRoute() : method(Invalid), hasVariableParams(false) { }
+    int     paramNum {0};
+    bool    hasVariableParams {false};
 };
 
 
 class TRouting {
 public:
-    bool empty;
+    bool empty {true};
     QByteArray controller;
     QByteArray action;
     QStringList params;
 
-    TRouting();
+    TRouting() { }
     TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
 
     bool isEmpty() const { return empty; }
@@ -49,12 +48,9 @@ public:
 };
 
 
-inline TRouting::TRouting()
-    : empty(true) { }
-
-
 inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
     : empty(false), controller(ctrl), action(act), params(p) { }
+
 
 inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
 {
@@ -72,6 +68,7 @@ public:
     static const TUrlRoute &instance();
     static QStringList splitPath(const QString &path);
     TRouting findRouting(Tf::HttpMethod method, const QStringList &components) const;
+    QString findUrl(const QString &controller, const QString &action, const QStringList &params = QStringList()) const;
 
 protected:
     TUrlRoute() { }
