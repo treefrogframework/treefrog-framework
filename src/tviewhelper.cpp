@@ -327,7 +327,7 @@ QString TViewHelper::optionTags(const QStringList &valueList, const QVariant &se
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (auto &val : constOf(valueList)) {
+    for (auto &val : valueList) {
         if (!val.isEmpty() && val == selectedValue) {
             attr.prepend("selected", QString());
         }
@@ -347,7 +347,7 @@ QString TViewHelper::optionTags(const QVariantList &valueList, const QVariant &s
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (auto &val : constOf(valueList)) {
+    for (auto &val : valueList) {
         if (!val.isNull() && val == selectedValue) {
             attr.prepend("selected", QString());
         }
@@ -366,7 +366,7 @@ QString TViewHelper::optionTags(const QList<QPair<QString, QVariant>> &valueList
     QString ret;
     THtmlAttribute attr = attributes;
 
-    for (auto &val : constOf(valueList)) {
+    for (auto &val : valueList) {
         if (!val.second.isNull() && val.second == selectedValue) {
             attr.prepend("selected", QString());
         }

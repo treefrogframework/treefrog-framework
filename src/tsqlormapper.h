@@ -395,14 +395,14 @@ inline QString TSqlORMapper<T>::selectStatement() const
     query += QLatin1String(" t0");  // alias needed
 
     if (joinFlag) {
-        for (auto &join : constOf(joinClauses)) {
+        for (auto &join : (const QStringList&)joinClauses) {
             query += join;
         }
     }
 
     QString filter = queryFilter;
     if (!joinWhereClauses.isEmpty()) {
-        for (auto &wh : constOf(joinWhereClauses)) {
+        for (auto &wh : (const QStringList&)joinWhereClauses) {
             if (!filter.isEmpty()) {
                 filter += QLatin1String(" AND ");
             }

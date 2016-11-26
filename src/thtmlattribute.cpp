@@ -42,7 +42,7 @@ THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString>> &list)
 */
 bool THtmlAttribute::contains(const QString &key) const
 {
-    for (const auto &p : constOf(*this)) {
+    for (const auto &p : *this) {
         if (p.first == key)
             return true;
     }
@@ -100,7 +100,7 @@ THtmlAttribute THtmlAttribute::operator|(const THtmlAttribute &other) const
 QString THtmlAttribute::toString(bool escape) const
 {
     QString string;
-    for (const auto &p : constOf(*this)) {
+    for (const auto &p : *this) {
         string.append(" ").append(p.first);
         if (!p.second.isNull()) {
             string.append("=\"");

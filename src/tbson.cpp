@@ -256,7 +256,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         BSON_APPEND_ARRAY_BEGIN(bson, qPrintable(key), &child);
 
         int i = 0;
-        for (auto &var : constOf(value.toList())) {
+        for (auto &var : (const QList<QVariant>&)value.toList()) {
             appendBsonValue(&child, QString::number(i++), var);
         }
         bson_append_array_end(bson, &child);
@@ -317,7 +317,7 @@ TBson TBson::toBson(const QVariantMap &query, const QVariantMap &orderBy)
 TBson TBson::toBson(const QStringList &lst)
 {
     TBson ret;
-    for (auto &str : constOf(lst)) {
+    for (auto &str : lst) {
         bool res = appendBsonValue((bson_t *)ret.data(), qPrintable(str), 1);
         if (!res)
             break;

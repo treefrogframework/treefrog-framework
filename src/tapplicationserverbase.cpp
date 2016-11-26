@@ -50,16 +50,16 @@ bool TApplicationServerBase::loadLibraries()
         loadedTimestamp = latestLibraryTimestamp();
 
 #if defined(Q_OS_WIN)
-        QStringList libs = { "controller", "view" };
+        const QStringList libs = { "controller", "view" };
 #elif defined(Q_OS_LINUX)
-        QStringList libs = { "libcontroller.so", "libview.so" };
+        const QStringList libs = { "libcontroller.so", "libview.so" };
 #elif defined(Q_OS_DARWIN)
-        QStringList libs = { "libcontroller.dylib", "libview.dylib" };
+        const QStringList libs = { "libcontroller.dylib", "libview.dylib" };
 #else
-        QStringList libs = { "libcontroller.so", "libview.so" };
+        const QStringList libs = { "libcontroller.so", "libview.so" };
 #endif
 
-        for (const auto &libname : constOf(libs)) {
+        for (const auto &libname : libs) {
             auto lib = new QLibrary(libname);
             if (lib->load()) {
                 tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
@@ -86,19 +86,19 @@ bool TApplicationServerBase::loadLibraries()
 QDateTime TApplicationServerBase::latestLibraryTimestamp()
 {
 #if defined(Q_OS_WIN)
-    QStringList libs = { "controller", "model", "view", "helper" };
+    const QStringList libs = { "controller", "model", "view", "helper" };
 #elif defined(Q_OS_LINUX)
-    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
+    const QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
 #elif defined(Q_OS_DARWIN)
-    QStringList libs = { "libcontroller.dylib", "libmodel.dylib", "libview.dylib", "libhelper.dylib" };
+    const QStringList libs = { "libcontroller.dylib", "libmodel.dylib", "libview.dylib", "libhelper.dylib" };
 #else
-    QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
+    const QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
 #endif
 
     QDateTime ret = QDateTime::fromTime_t(0);
 
     QString libPath = Tf::app()->libPath();
-    for (auto &lib : constOf(libs)) {
+    for (auto &lib : libs) {
         QFileInfo fi(libPath + lib);
         if (fi.isFile() && fi.lastModified() > ret) {
             ret = fi.lastModified();

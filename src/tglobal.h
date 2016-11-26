@@ -115,10 +115,6 @@
 class TLogger;
 class TLog;
 
-template<typename T>
-const T &constOf(const T &t) { return t; }
-
-
 T_CORE_EXPORT void tSetupAppLoggers();   // internal use
 T_CORE_EXPORT void tReleaseAppLoggers(); // internal use
 

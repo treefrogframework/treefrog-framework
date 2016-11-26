@@ -243,7 +243,7 @@ bool TSmtpMailer::cmdEhlo()
     }
 
     // Gets AUTH methods
-    for (auto &s : constOf(reply)) {
+    for (auto &s : (const QList<QByteArray>&)reply) {
         QString str(s);
         if (str.startsWith("AUTH ", Qt::CaseInsensitive)) {
             svrAuthMethods = str.mid(5).split(' ', QString::SkipEmptyParts);

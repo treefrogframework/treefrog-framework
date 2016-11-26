@@ -192,7 +192,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     // WebSocket tasks
                     if (!currController->taskList.isEmpty()) {
                         QVariantList lst;
-                        for (auto &task : constOf(currController->taskList)) {
+                        for (auto &task : (const QList<QPair<int, QVariant>>&)currController->taskList) {
                             const QVariant &taskData = task.second;
 
                             switch (task.first) {

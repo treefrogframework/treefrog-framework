@@ -210,7 +210,7 @@ TEpollHttpSocket *TEpollHttpSocket::searchSocket(int sid)
 QList<TEpollHttpSocket*> TEpollHttpSocket::allSockets()
 {
     QList<TEpollHttpSocket*> lst;
-    for (auto sock : constOf(TEpollSocket::allSockets())) {
+    for (auto sock : (const QList<TEpollSocket*>&)TEpollSocket::allSockets()) {
         auto p = dynamic_cast<TEpollHttpSocket*>(sock);
         if (p) {
             lst.append(p);

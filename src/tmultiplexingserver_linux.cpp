@@ -199,7 +199,7 @@ void TMultiplexingServer::run()
 
         // Check keep-alive timeout for HTTP sockets
         if (Q_UNLIKELY(keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000)) {
-            for (auto *http : constOf(TEpollHttpSocket::allSockets())) {
+            for (auto *http : (const QList<TEpollHttpSocket*>&)TEpollHttpSocket::allSockets()) {
                 if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
                     tSystemDebug("KeepAlive timeout: sid:%d", http->socketId());
                     TEpoll::instance()->deletePoll(http);

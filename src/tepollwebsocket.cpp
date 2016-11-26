@@ -40,7 +40,7 @@ TEpollWebSocket::~TEpollWebSocket()
 
 bool TEpollWebSocket::canReadRequest()
 {
-    for (auto &frm : constOf(frames)) {
+    for (auto &frm : (const QList<TWebSocketFrame>&)frames) {
         if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
             return true;
         }
