@@ -41,9 +41,6 @@ void build_check_TSqlORMapper()
     mapper.value(0);
     mapper.findCount(crt);
     mapper.findCountBy(BlogObject::Id, 123);
-    mapper.findAll(crt);
-    mapper.findAllBy(BlogObject::Id, 111);
-    mapper.findAllIn(2, QVariantList());
     mapper.updateAll(crt, 1, 1);
     mapper.updateAll(crt, QMap<int, QVariant>());
     mapper.removeAll(crt);
@@ -82,7 +79,6 @@ void build_check_TSqlQueryORMapper()
     mapper.exec();
     mapper.execFirst("hoge");
     mapper.execFirst();
-    mapper.execAll();
     mapper.numRowsAffected();
     mapper.size();
     mapper.next();
@@ -124,9 +120,6 @@ void build_check_TMongoODMapper()
     mapper.value();
     mapper.findCount(crt);
     mapper.findCountBy(FooObject::Id, "hoge");
-    mapper.findAll(crt);
-    mapper.findAllBy(FooObject::Id, "hoge");
-    mapper.findAllIn(FooObject::Id, QVariantList());
     mapper.updateAll(crt, FooObject::Id, "hoge");
     mapper.updateAll(crt, QMap<int, QVariant>());
     mapper.removeAll(crt);

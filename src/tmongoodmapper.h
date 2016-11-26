@@ -45,9 +45,6 @@ public:
 
     int findCount(const TCriteria &cri = TCriteria());
     int findCountBy(int column, QVariant value);
-    QList<T> findAll(const TCriteria &cri = TCriteria());
-    QList<T> findAllBy(int column, QVariant value);
-    QList<T> findAllIn(int column, const QVariantList &values);
     int updateAll(const TCriteria &cri, int column, QVariant value);
     int updateAll(const TCriteria &cri, const QMap<int, QVariant> &values);
     int removeAll(const TCriteria &cri = TCriteria());
@@ -244,34 +241,34 @@ inline int TMongoODMapper<T>::findCountBy(int column, QVariant value)
 }
 
 
-template <class T>
-inline QList<T> TMongoODMapper<T>::findAll(const TCriteria &cri)
-{
-    QList<T> lst;
-    int cnt = find(cri);
-    tSystemDebug("Mongo documents count: %d", cnt);
+// template <class T>
+// inline QList<T> TMongoODMapper<T>::findAll(const TCriteria &cri)
+// {
+//     QList<T> lst;
+//     int cnt = find(cri);
+//     tSystemDebug("Mongo documents count: %d", cnt);
 
-    if (cnt > 0) {
-        while (next()) {
-            lst << value();
-        }
-    }
-    return lst;
-}
-
-
-template <class T>
-inline QList<T> TMongoODMapper<T>::findAllBy(int column, QVariant value)
-{
-    return findAll(TCriteria(column, value));
-}
+//     if (cnt > 0) {
+//         while (next()) {
+//             lst << value();
+//         }
+//     }
+//     return lst;
+// }
 
 
-template <class T>
-inline QList<T> TMongoODMapper<T>::findAllIn(int column, const QVariantList &values)
-{
-    return findAll(TCriteria(column, TMongo::In, values));
-}
+// template <class T>
+// inline QList<T> TMongoODMapper<T>::findAllBy(int column, QVariant value)
+// {
+//     return findAll(TCriteria(column, value));
+// }
+
+
+// template <class T>
+// inline QList<T> TMongoODMapper<T>::findAllIn(int column, const QVariantList &values)
+// {
+//     return findAll(TCriteria(column, TMongo::In, values));
+// }
 
 
 template <class T>

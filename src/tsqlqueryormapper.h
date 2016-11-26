@@ -31,7 +31,6 @@ public:
     bool exec();
     T execFirst(const QString &query);
     T execFirst();
-    QList<T> execAll();
     int numRowsAffected() const;
     int size() const;
     bool next();
@@ -110,20 +109,6 @@ template <class T>
 inline T TSqlQueryORMapper<T>::execFirst()
 {
     return (exec() && next()) ? value() : T();
-}
-
-
-template <class T>
-inline QList<T> TSqlQueryORMapper<T>::execAll()
-{
-    QList<T> ret;
-
-    if (exec()) {
-        while (next()) {
-            ret << value();
-        }
-    }
-    return ret;
 }
 
 
