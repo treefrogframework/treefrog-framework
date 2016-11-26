@@ -12,7 +12,7 @@ inline QJsonArray tfModelListToJsonArray(const QList<T> &models)
 {
     QJsonArray array;
 
-    for (auto &mdl : constOf(models)) {
+    for (auto &mdl : models) {
         array.append(QJsonValue(QJsonObject::fromVariantMap(mdl.toVariantMap())));
     }
     return array;
