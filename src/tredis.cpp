@@ -231,7 +231,7 @@ QList<QByteArray> TRedis::lrange(const QByteArray &key, int start, int end = -1)
     QList<QByteArray> command = { "LRANGE", key, QByteArray::number(start), QByteArray::number(end) };
     bool res = driver()->request(command, resp);
     if (res) {
-        for (auto &var : resp) {
+        for (auto &var : constOf(resp)) {
             ret << var.toByteArray();
         }
     }
@@ -272,7 +272,7 @@ int TRedis::llen(const QByteArray &key)
 QList<QByteArray> TRedis::toByteArrayList(const QStringList &values)
 {
     QList<QByteArray> ret;
-    for (auto &val : values) {
+    for (auto &val : constOf(values)) {
         ret << val.toUtf8();
     }
     return ret;
@@ -282,7 +282,7 @@ QList<QByteArray> TRedis::toByteArrayList(const QStringList &values)
 QStringList TRedis::toStringList(const QList<QByteArray> &values)
 {
     QStringList ret;
-    for (auto &val : values) {
+    for (auto &val : constOf(values)) {
         ret << QString::fromUtf8(val);
     }
     return ret;

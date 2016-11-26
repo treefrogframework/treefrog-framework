@@ -68,7 +68,7 @@ int TSessionFileStore::gc(const QDateTime &expire)
     QDir dir(sessionDirPath());
     if (dir.exists()) {
         QList<QFileInfo> lst = dir.entryInfoList(QDir::Files, QDir::Time | QDir::Reversed);
-        for (auto &fi : lst) {
+        for (auto &fi : constOf(lst)) {
             if (fi.lastModified() < expire) {
                 if (dir.remove(fi.fileName())) {
                     res++;

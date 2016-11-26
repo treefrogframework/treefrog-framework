@@ -54,7 +54,7 @@ void TWebSocketWorker::setSession(const TSession &session)
 void TWebSocketWorker::run()
 {
     if (_mode == Receiving) {
-        for (QPair<int, QByteArray> &p : _payloads) {
+        for (auto &p : constOf(_payloads)) {
             execute(p.first, p.second);
         }
         _payloads.clear();
@@ -153,7 +153,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         // Sets session to the websocket
         _socket->setSession(endpoint->session());
 
-        for (auto &p : endpoint->taskList) {
+        for (auto &p : constOf(endpoint->taskList)) {
             const QVariant &taskData = p.second;
             tSystemDebug("WebSocket Task: %d", p.first);
 

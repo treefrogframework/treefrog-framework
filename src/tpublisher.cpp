@@ -233,7 +233,7 @@ void TPublisher::receiveSystemBus()
 {
     auto messages = TSystemBus::instance()->recvAll();
 
-    for (auto &msg : messages) {
+    for (auto &msg : constOf(messages)) {
         switch (msg.opCode()) {
         case Tf::WebSocketSendText:
             break;

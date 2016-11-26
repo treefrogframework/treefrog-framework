@@ -139,7 +139,7 @@ TJSModule *TJSLoader::load(bool reload)
     if (!context) {
         context = new TJSModule();
 
-        for (auto &p : importFiles) {
+        for (auto &p : constOf(importFiles)) {
             // Imports as JavaScript
             TJSLoader(p.first, p.second, Default).importTo(context, false);
         }
@@ -160,7 +160,7 @@ QString TJSLoader::search(const QString &moduleName, AltJS alt) const
 {
     QString filePath;
 
-    for (const auto &spath : searchPaths) {
+    for (const auto &spath : constOf(searchPaths)) {
         QString p = spath.trimmed();
         if (p.isEmpty()) {
             continue;
@@ -234,7 +234,7 @@ void TJSLoader::import(const QString &moduleName)
 
 void TJSLoader::import(const QString &defaultMember, const QString &moduleName)
 {
-    for (auto &p : importFiles) {
+    for (auto &p : constOf(importFiles)) {
         if (p.first == defaultMember && p.second == moduleName) {
             return;
         }

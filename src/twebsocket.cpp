@@ -79,7 +79,7 @@ void TWebSocket::sendPong(const QByteArray &data)
 
 bool TWebSocket::canReadRequest() const
 {
-    for (const auto &frm : frames) {
+    for (const auto &frm : constOf(frames)) {
         if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
             return true;
         }

@@ -173,7 +173,7 @@ void THtmlParser::parse(const QString &text)
     if (trimMode == StrongTrim) {
         txt.clear();
         txt.reserve(text.length());
-        for (auto &line : text.split('\n', QString::SkipEmptyParts)) {
+        for (auto &line : constOf(text.split('\n', QString::SkipEmptyParts))) {
             QString trm = trim(line);
             if (!trm.isEmpty()) {
                 txt += trm;

@@ -161,7 +161,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             case TSql::NotIn: {
                 QString str;
                 QList<QVariant> lst = cri.val1.toList();
-                for (auto &v : lst) {
+                for (auto &v : constOf(lst)) {
                     QString s = TSqlQuery::formatValue(v, cri.varType, database);
                     if (!s.isEmpty()) {
                         str.append(s).append(',');
@@ -290,7 +290,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
         case TSql::All: {
             QString str;
             QList<QVariant> lst = val.toList();
-            for (auto &v : lst) {
+            for (auto &v : constOf(lst)) {
                 QString s = TSqlQuery::formatValue(v, varType, database);
                 if (!s.isEmpty()) {
                     str.append(s).append(',');

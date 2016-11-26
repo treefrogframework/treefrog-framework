@@ -34,13 +34,13 @@ public:
 Q_GLOBAL_STATIC(RouteDirectiveHash, directiveHash)
 
 
-static TUrlRoute *urlRoute = 0;
+static TUrlRoute *urlRoute = nullptr;
 
 static void cleanup()
 {
     if (urlRoute) {
         delete urlRoute;
-        urlRoute = 0;
+        urlRoute = nullptr;
     }
 }
 

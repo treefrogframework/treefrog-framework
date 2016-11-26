@@ -45,7 +45,7 @@ QList<qint64> TProcessInfo::childProcessIds() const
     QList<qint64> ids;
     QList<qint64> allPids = allConcurrentPids();
 
-    for (qint64 p : allPids) {
+    for (qint64 p : constOf(allPids)) {
         if (TProcessInfo(p).ppid() == pid()) {
             ids << p;
         }
@@ -62,7 +62,7 @@ void TProcessInfo::kill(qint64 ppid)
 
 void TProcessInfo::kill(QList<qint64> pids)
 {
-    for (qint64 pid : pids) {
+    for (qint64 pid : constOf(pids)) {
         TProcessInfo(pid).kill();
     }
 }
@@ -73,7 +73,7 @@ QList<qint64> TProcessInfo::pidsOf(const QString &processName)
     QList<qint64> ret;
     QList<qint64> pids = allConcurrentPids();
 
-    for (auto pid : pids) {
+    for (auto pid : constOf(pids)) {
         TProcessInfo pi(pid);
         if (pi.processName() == processName) {
             ret << pi.pid();

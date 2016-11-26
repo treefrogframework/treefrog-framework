@@ -352,7 +352,7 @@ QByteArray TRedisDriver::toMultiBulk(const QList<QByteArray> &data)
     mbulk += "*";
     mbulk += QByteArray::number(data.count());
     mbulk += CRLF;
-    for (auto &d : data) {
+    for (auto &d : constOf(data)) {
         mbulk += toBulk(d);
     }
     return mbulk;

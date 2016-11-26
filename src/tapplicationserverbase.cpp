@@ -59,7 +59,7 @@ bool TApplicationServerBase::loadLibraries()
         QStringList libs = { "libcontroller.so", "libview.so" };
 #endif
 
-        for (const auto &libname : libs) {
+        for (const auto &libname : constOf(libs)) {
             auto lib = new QLibrary(libname);
             if (lib->load()) {
                 tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
@@ -98,7 +98,7 @@ QDateTime TApplicationServerBase::latestLibraryTimestamp()
     QDateTime ret = QDateTime::fromTime_t(0);
 
     QString libPath = Tf::app()->libPath();
-    for (auto lib : libs) {
+    for (auto &lib : constOf(libs)) {
         QFileInfo fi(libPath + lib);
         if (fi.isFile() && fi.lastModified() > ret) {
             ret = fi.lastModified();
