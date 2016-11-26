@@ -28,19 +28,13 @@
     "\n"                                                                      \
     "public slots:\n"                                                         \
     "    void index();\n"                                                     \
-    "    void show(const QString &pk);\n"                                     \
-    "    void entry();\n"                                                     \
+    "    void show(const QString &id);\n"                                     \
     "    void create();\n"                                                    \
-    "    void edit(const QString &pk);\n"                                     \
-    "    void save(const QString &pk);\n"                                     \
-    "    void remove(const QString &pk);\n"                                   \
-    "\n"                                                                      \
-    "private:\n"                                                              \
-    "    void renderEntry(const QVariantMap &%3 = QVariantMap());\n"          \
-    "    void renderEdit(const QVariantMap &%3 = QVariantMap());\n"           \
+    "    void save(const QString &id);\n"                                     \
+    "    void remove(const QString &id);\n"                                   \
     "};\n"                                                                    \
     "\n"                                                                      \
-    "T_DECLARE_CONTROLLER(%2Controller, %4controller)\n"                      \
+    "T_DECLARE_CONTROLLER(%2Controller, %3controller)\n"                      \
     "\n"                                                                      \
     "#endif // %1CONTROLLER_H\n"
 
@@ -55,97 +49,96 @@
     "\n"                                                       \
     "void %2Controller::index()\n"                             \
     "{\n"                                                      \
-    "    QList<%2> %3List = %2::getAll();\n"                   \
+    "    auto %3List = %2::getAll();\n"                        \
     "    texport(%3List);\n"                                   \
     "    render();\n"                                          \
     "}\n"                                                      \
     "\n"                                                       \
-    "void %2Controller::show(const QString &pk)\n"             \
+    "void %2Controller::show(const QString &id)\n"             \
     "{\n"                                                      \
     "    auto %3 = %2::get(%4);\n"                             \
     "    texport(%3);\n"                                       \
     "    render();\n"                                          \
     "}\n"                                                      \
     "\n"                                                       \
-    "void %2Controller::entry()\n"                             \
-    "{\n"                                                      \
-    "    renderEntry();\n"                                     \
-    "}\n"                                                      \
-    "\n"                                                       \
     "void %2Controller::create()\n"                            \
     "{\n"                                                      \
-    "    if (httpRequest().method() != Tf::Post) {\n"          \
-    "        return;\n"                                        \
-    "    }\n"                                                  \
+    "    switch (httpRequest().method()) {\n"                  \
+    "    case Tf::Get:\n"                                      \
+    "        render();\n"                                      \
+    "        break;\n"                                         \
     "\n"                                                       \
-    "    auto form = httpRequest().formItems(\"%3\");\n"            \
-    "    auto %3 = %2::create(form);\n"                             \
-    "    if (!%3.isNull()) {\n"                                     \
-    "        QString notice = \"Created successfully.\";\n"         \
-    "        tflash(notice);\n"                                     \
-    "        redirect(urla(\"show\", %3.%8()));\n"                  \
-    "    } else {\n"                                                \
-    "        QString error = \"Failed to create.\";\n"              \
-    "        texport(error);\n"                                     \
-    "        renderEntry(form);\n"                                  \
-    "    }\n"                                                       \
-    "}\n"                                                           \
-    "\n"                                                            \
-    "void %2Controller::renderEntry(const QVariantMap &%3)\n"       \
-    "{\n"                                                           \
-    "    texport(%3);\n"                                            \
-    "    render(\"entry\");\n"                                      \
-    "}\n"                                                           \
-    "\n"                                                            \
-    "void %2Controller::edit(const QString &pk)\n"                  \
-    "{\n"                                                           \
-    "    auto %3 = %2::get(%4);\n"                                  \
-    "    if (!%3.isNull()) {\n"                                     \
-    "%5"                                                                \
-    "        renderEdit(%3.toVariantMap());\n"                          \
-    "    } else {\n"                                                    \
-    "        redirect(urla(\"entry\"));\n"                              \
+    "    case Tf::Post: {\n"                                   \
+    "        auto %3 = httpRequest().formItems(\"%3\");\n"     \
+    "        auto model = %2::create(%3);\n"                   \
+    "\n"                                                       \
+    "        if (!model.isNull()) {\n"                         \
+    "            QString notice = \"Created successfully.\";\n" \
+    "            tflash(notice);\n"                             \
+    "            redirect(urla(\"show\", model.id()));\n"       \
+    "        } else {\n"                                        \
+    "            QString error = \"Failed to create.\";\n"      \
+    "            texport(error);\n"                             \
+    "            texport(%3);\n"                                \
+    "            render();\n"                                   \
+    "        }\n"                                               \
+    "        break; }\n"                                        \
+    "\n"                                                        \
+    "    default:\n"                                            \
+    "        renderErrorResponse(Tf::NotFound);\n"              \
+    "        break;\n"                                          \
+    "    }\n"                                                   \
+    "}\n"                                                       \
+    "\n"                                                        \
+    "void %2Controller::save(const QString &id)\n"              \
+    "{\n"                                                       \
+    "    switch (httpRequest().method()) {\n"                   \
+    "    case Tf::Get: {\n"                                     \
+    "        auto model = %2::get(%4);\n"                       \
+    "        if (!model.isNull()) {\n"                          \
+    "%5"                                                        \
+    "            auto %3 = model.toVariantMap();\n"             \
+    "            texport(%3);\n"                                \
+    "            render();\n"                                   \
+    "        }\n"                                               \
+    "        break; }\n"                                        \
+    "\n"                                                        \
+    "    case Tf::Post: {\n"                                    \
+    "        QString error;\n"                                  \
+    "%6"                                                        \
+    "        auto model = %2::get(%4%7);\n"                     \
+    "        \n"                                                \
+    "        if (model.isNull()) {\n"                           \
+    "            error = \"Original data not found. It may have been updated/removed by another transaction.\";\n" \
+    "            tflash(error);\n"                                      \
+    "            redirect(urla(\"save\", id));\n"                       \
+    "            break;\n"                                              \
+    "        }\n"                                                       \
+    "\n"                                                                \
+    "        auto %3 = httpRequest().formItems(\"%3\");\n"              \
+    "        model.setProperties(%3);\n"                                \
+    "        if (model.save()) {\n"                                     \
+    "            QString notice = \"Updated successfully.\";\n"         \
+    "            tflash(notice);\n"                                     \
+    "            redirect(urla(\"show\", model.%8()));\n"               \
+    "        } else {\n"                                                \
+    "            error = \"Failed to update.\";\n"                      \
+    "            texport(error);\n"                                     \
+    "            texport(%3);\n"                                        \
+    "            render();\n"                                           \
+    "        }\n"                                                       \
+    "        break; }\n"                                                \
+    "\n"                                                                \
+    "    default:\n"                                                    \
+    "        renderErrorResponse(Tf::NotFound);\n"                      \
+    "        break;\n"                                                  \
     "    }\n"                                                           \
     "}\n"                                                               \
     "\n"                                                                \
-    "void %2Controller::save(const QString &pk)\n"                      \
+    "void %2Controller::remove(const QString &id)\n"                    \
     "{\n"                                                               \
     "    if (httpRequest().method() != Tf::Post) {\n"                   \
-    "        return;\n"                                                 \
-    "    }\n"                                                           \
-    "\n"                                                                \
-    "    QString error;\n"                                              \
-    "%6"                                                                \
-    "    auto %3 = %2::get(%4%7);\n"                                    \
-    "    if (%3.isNull()) {\n"                                          \
-    "        error = \"Original data not found. It may have been updated/removed by another transaction.\";\n" \
-    "        tflash(error);\n"                                          \
-    "        redirect(urla(\"edit\", pk));\n"                           \
-    "        return;\n"                                                 \
-    "    }\n"                                                           \
-    "\n"                                                                \
-    "    auto form = httpRequest().formItems(\"%3\");\n"                \
-    "    %3.setProperties(form);\n"                                     \
-    "    if (%3.save()) {\n"                                            \
-    "        QString notice = \"Updated successfully.\";\n"             \
-    "        tflash(notice);\n"                                         \
-    "        redirect(urla(\"show\", pk));\n"                           \
-    "    } else {\n"                                                    \
-    "        error = \"Failed to update.\";\n"                          \
-    "        texport(error);\n"                                         \
-    "        renderEdit(form);\n"                                       \
-    "    }\n"                                                           \
-    "}\n"                                                               \
-    "\n"                                                                \
-    "void %2Controller::renderEdit(const QVariantMap &%3)\n"            \
-    "{\n"                                                               \
-    "    texport(%3);\n"                                                \
-    "    render(\"edit\");\n"                                           \
-    "}\n"                                                               \
-    "\n"                                                                \
-    "void %2Controller::remove(const QString &pk)\n"                    \
-    "{\n"                                                               \
-    "    if (httpRequest().method() != Tf::Post) {\n"                   \
+    "        renderErrorResponse(Tf::NotFound);\n"                      \
     "        return;\n"                                                 \
     "    }\n"                                                           \
     "\n"                                                                \
@@ -198,16 +191,16 @@ class ConvMethod : public QHash<int, QString>
 public:
     ConvMethod() : QHash<int, QString>()
     {
-        insert(QVariant::Int,       "pk.toInt()");
-        insert(QVariant::UInt,      "pk.toUInt()");
-        insert(QVariant::LongLong,  "pk.toLongLong()");
-        insert(QVariant::ULongLong, "pk.toULongLong()");
-        insert(QVariant::Double,    "pk.toDouble()");
-        insert(QVariant::ByteArray, "pk.toByteArray()");
-        insert(QVariant::String,    "pk");
-        insert(QVariant::Date,      "QDate::fromString(pk)");
-        insert(QVariant::Time,      "QTime::fromString(pk)");
-        insert(QVariant::DateTime,  "QDateTime::fromString(pk)");
+        insert(QVariant::Int,       "id.toInt()");
+        insert(QVariant::UInt,      "id.toUInt()");
+        insert(QVariant::LongLong,  "id.toLongLong()");
+        insert(QVariant::ULongLong, "id.toULongLong()");
+        insert(QVariant::Double,    "id.toDouble()");
+        insert(QVariant::ByteArray, "id.toByteArray()");
+        insert(QVariant::String,    "id");
+        insert(QVariant::Date,      "QDate::fromString(id)");
+        insert(QVariant::Time,      "QTime::fromString(id)");
+        insert(QVariant::DateTime,  "QDateTime::fromString(id)");
     }
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
@@ -267,13 +260,13 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, varName, controllerName.toLower());
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower());
         fwh.write(code, false);
         files << fwh.fileName();
 
         if (lockRevIndex >= 0) {
-            sessInsertStr = QString("        session().insert(\"%1_lockRevision\", %1.lockRevision());\n").arg(varName);
-            sessGetStr = QString("    int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
+            sessInsertStr = QString("            session().insert(\"%1_lockRevision\", model.lockRevision());\n").arg(varName);
+            sessGetStr = QString("        int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
             revStr = QLatin1String(", rev");
         }
 

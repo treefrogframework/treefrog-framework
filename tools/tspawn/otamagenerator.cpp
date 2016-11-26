@@ -56,11 +56,11 @@
     "%4"                                                                \
     "@link_to_show :== linkTo(\"Show\", urla(\"show\", i.%5()))\n"      \
     "\n"                                                                \
-    "@link_to_edit :== linkTo(\"Edit\", urla(\"edit\", i.%5()))\n"      \
+    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", i.%5()))\n"      \
     "\n"                                                                \
     "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n" \
     "\n"                                                                \
-    "@link_to_entry :== linkTo(\"New entry\", urla(\"entry\"))\n"
+    "@link_to_entry :== linkTo(\"New entry\", urla(\"create\"))\n"
 
 #define SHOW_HTML_TEMPLATE                                              \
     "<!DOCTYPE html>\n"                                                 \
@@ -95,11 +95,11 @@
     "@notice_msg ~=$ notice\n"                                          \
     "\n"                                                                \
     "%4"                                                                \
-    "@link_to_edit :== linkTo(\"Edit\", urla(\"edit\", %3.%5()))\n"     \
+    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", %3.%5()))\n"     \
     "\n"                                                                \
     "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n"
 
-#define ENTRY_HTML_TEMPLATE                                             \
+#define CREATE_HTML_TEMPLATE                                            \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -124,7 +124,7 @@
     "</body>\n"                                                         \
     "</html>\n"
 
-#define ENTRY_OTM_TEMPLATE                                              \
+#define CREATE_OTM_TEMPLATE                                             \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -141,7 +141,7 @@
     "%3"                                                                \
     "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
 
-#define EDIT_HTML_TEMPLATE                                              \
+#define SAVE_HTML_TEMPLATE                                              \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -167,7 +167,7 @@
     "</body>\n"                                                         \
     "</html>\n"
 
-#define EDIT_OTM_TEMPLATE                                               \
+#define SAVE_OTM_TEMPLATE                                               \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -312,29 +312,29 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     }
 
     // Generates entry.html
-    output = QString(ENTRY_HTML_TEMPLATE).arg(caption, entryColumn);
-    fw.setFilePath(dir.filePath("entry.html"));
+    output = QString(CREATE_HTML_TEMPLATE).arg(caption, entryColumn);
+    fw.setFilePath(dir.filePath("create.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates entry.otm
-    output = QString(ENTRY_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
-    fw.setFilePath(dir.filePath("entry.otm"));
+    output = QString(CREATE_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
+    fw.setFilePath(dir.filePath("create.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.html
-    output = QString(EDIT_HTML_TEMPLATE).arg(caption, editColumn);
-    fw.setFilePath(dir.filePath("edit.html"));
+    output = QString(SAVE_HTML_TEMPLATE).arg(caption, editColumn);
+    fw.setFilePath(dir.filePath("save.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.otm
-    output = QString(EDIT_OTM_TEMPLATE).arg(varName.toLower(), varName, pkVarName, editOtm);
-    fw.setFilePath(dir.filePath("edit.otm"));
+    output = QString(SAVE_OTM_TEMPLATE).arg(varName.toLower(), varName, pkVarName, editOtm);
+    fw.setFilePath(dir.filePath("save.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
