@@ -212,7 +212,7 @@ static QString generatePath(const QStringList &components, const QStringList &pa
         if (c == QLatin1String(":param")) {
             ret += params.value(cnt++);
         } else if (c == QLatin1String(":params")) {
-            ret += params.mid(cnt).join("/") + QLatin1Char('/');
+            ret += QStringList(params.mid(cnt)).join("/") + QLatin1Char('/');
             break;
         } else {
             ret += c;
