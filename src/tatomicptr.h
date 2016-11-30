@@ -25,7 +25,7 @@ public:
     T *load(bool *mark = nullptr) const;
     void store(T *value);
     bool compareExchange(T *expected, T *newValue);
-    bool compareExchangeStrong(T* &expected, T *newValue);
+    bool compareExchangeStrong(T *expected, T *newValue);
     TAtomicPtr<T> &operator=(T *value);
     TAtomicPtr<T> &operator=(const TAtomicPtr<T> &other);
 
