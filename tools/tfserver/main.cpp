@@ -113,10 +113,11 @@ int main(int argc, char *argv[])
     QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
     int sock = args.value(SOCKET_OPTION).toInt();
     bool reload = args.contains(AUTO_RELOAD_OPTION);
+    bool debug = args.contains(DEBUG_MODE_OPTION);
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
-    if (!args.contains(DEBUG_MODE_OPTION)) {
+    if (!debug) {
         webapp.ignoreUnixSignal(SIGINT);
     }
 
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
     setupSignalHandler();
 
 #elif defined(Q_OS_WIN)
-    if (!args.contains(DEBUG_MODE_OPTION)) {
+    if (!debug) {
         webapp.ignoreConsoleSignal();
     }
 #endif
@@ -171,7 +172,7 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_WIN
     if (sock <= 0)
 #else
-    if (sock <= 0 && args.contains(DEBUG_MODE_OPTION))
+    if (sock <= 0 && debug)
 #endif
     {
         int port = Tf::appSettings()->value(Tf::ListenPort).toInt();
@@ -211,7 +212,7 @@ int main(int argc, char *argv[])
     }
 
     server->setAutoReloadingEnabled(reload);
-    if (!server->start()) {
+    if (!server->start(debug)) {
         tSystemError("Server open failed");
         fprintf(stderr, "Server open failed\n");
         goto finish;

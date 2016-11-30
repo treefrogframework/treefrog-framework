@@ -9,6 +9,12 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TActionThread>
+#include "tsqldatabasepool.h"
+#include "tkvsdatabasepool.h"
+#include "turlroute.h"
+#include "tsystemglobal.h"
+#include "tsystembus.h"
+#include "tpublisher.h"
 #include "tsystemglobal.h"
 
 /*!
@@ -35,10 +41,20 @@ TThreadApplicationServer::~TThreadApplicationServer()
 { }
 
 
-bool TThreadApplicationServer::start()
+bool TThreadApplicationServer::start(bool debugMode)
 {
     if (isListening()) {
         return true;
+    }
+
+    bool res = loadLibraries();
+    if (!res) {
+        if (debugMode) {
+            tSystemError("Failed to load application libraries.");
+            return false;
+        } else {
+            tSystemWarn("Failed to load application libraries.");
+        }
     }
 
     if (listenSocket <= 0 || !setSocketDescriptor(listenSocket)) {
@@ -46,7 +62,15 @@ bool TThreadApplicationServer::start()
         return false;
     }
 
-    loadLibraries();
+    // instantiate
+    if (!debugMode) {
+        TSystemBus::instantiate();
+        TPublisher::instantiate();
+    }
+    TUrlRoute::instantiate();
+    TSqlDatabasePool::instantiate();
+    TKvsDatabasePool::instantiate();
+
     TStaticInitializeThread::exec();
     return true;
 }

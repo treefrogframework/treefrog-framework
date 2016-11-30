@@ -98,6 +98,9 @@ public:
 # if QT_VERSION >= 0x050500
         insert(QSysInfo::MV_10_11, "Mac OS X 10.11 El Capitan");
 # endif
+# if QT_VERSION >= 0x050800
+        insert(QSysInfo::MV_10_12, "macOS 10.12 Sierra");
+# endif
     }
 };
 Q_GLOBAL_STATIC(MacxVersion, macxVersion)

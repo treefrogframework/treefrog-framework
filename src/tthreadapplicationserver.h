@@ -15,19 +15,19 @@ public:
     TThreadApplicationServer(int listeningSocket, QObject *parent = 0);
     ~TThreadApplicationServer();
 
-    bool start();
-    void stop();
+    bool start(bool debugMode) override;
+    void stop() override;
     bool isSocketOpen() const;
-    void setAutoReloadingEnabled(bool enable);
-    bool isAutoReloadingEnabled();
+    void setAutoReloadingEnabled(bool enable) override;
+    bool isAutoReloadingEnabled() override;
 
 protected:
 #if QT_VERSION >= 0x050000
-    void incomingConnection(qintptr socketDescriptor);
+    void incomingConnection(qintptr socketDescriptor) override;
 #else
-    void incomingConnection(int socketDescriptor);
+    void incomingConnection(int socketDescriptor) override;
 #endif
-    void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
 
 private:
     int listenSocket;

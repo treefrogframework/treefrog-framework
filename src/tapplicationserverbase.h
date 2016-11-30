@@ -18,12 +18,13 @@ public:
     };
 
     virtual ~TApplicationServerBase();
-    virtual bool start() { return false; }
+    virtual bool start(bool) { return false; }
     virtual void stop() { }
     virtual void setAutoReloadingEnabled(bool) { }
     virtual bool isAutoReloadingEnabled() { return false; }
 
     static bool loadLibraries();
+    static void unloadLibraries();
     static QDateTime latestLibraryTimestamp();
     static bool newerLibraryExists();
     static void nativeSocketInit();
@@ -39,7 +40,6 @@ private:
     TApplicationServerBase();
 
     friend class TThreadApplicationServer;
-    friend class TPreforkApplicationServer;
     friend class TMultiplexingServer;
     T_DISABLE_COPY(TApplicationServerBase)
     T_DISABLE_MOVE(TApplicationServerBase)

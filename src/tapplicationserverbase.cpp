@@ -14,12 +14,6 @@
 #include <TDispatcher>
 #include <TActionController>
 #include "tapplicationserverbase.h"
-#include "tsqldatabasepool.h"
-#include "tkvsdatabasepool.h"
-#include "turlroute.h"
-#include "tsystemglobal.h"
-#include "tsystembus.h"
-#include "tpublisher.h"
 
 /*!
   \class TApplicationServerBase
@@ -34,6 +28,7 @@ static QDateTime loadedTimestamp;
 bool TApplicationServerBase::loadLibraries()
 {
     T_TRACEFUNC("");
+    bool ret = true;
 
     // Loads libraries
     if (libsLoaded.isEmpty()) {
@@ -59,13 +54,16 @@ bool TApplicationServerBase::loadLibraries()
         const QStringList libs = { "libcontroller.so", "libview.so" };
 #endif
 
-        for (const auto &libname : libs) {
+        for (auto &libname : libs) {
             auto lib = new QLibrary(libname);
             if (lib->load()) {
                 tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
                 libsLoaded << lib;
             } else {
                 tSystemWarn("%s", qPrintable(lib->errorString()));
+                ret = false;
+                unloadLibraries();
+                break;
             }
         }
 
@@ -74,12 +72,17 @@ bool TApplicationServerBase::loadLibraries()
     }
     QDir::setCurrent(Tf::app()->webRootPath());
 
-    TSystemBus::instantiate();
-    TPublisher::instantiate();
-    TUrlRoute::instantiate();
-    TSqlDatabasePool::instantiate();
-    TKvsDatabasePool::instantiate();
-    return true;
+    return ret;
+}
+
+
+void TApplicationServerBase::unloadLibraries()
+{
+    for (auto lib : libsLoaded) {
+        lib->unload();
+        tSystemDebug("Library unloaded: %s", qPrintable(lib->fileName()));
+    }
+    libsLoaded.clear();
 }
 
 
