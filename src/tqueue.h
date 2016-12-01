@@ -7,10 +7,12 @@
 #include "tatomic.h"
 #include "tatomicptr.h"
 
+
 namespace Tf
 {
-    static thread_local THazardPtr hzptrQueue;
+    THazardPtr &hazardPtrForQueue();
 }
+
 
 template <class T> class TQueue
 {
@@ -80,7 +82,7 @@ inline bool TQueue<T>::dequeue(T &val)
     for (;;) {
         Node *head = queHead.load();
         Node *tail = queTail.load();
-        next = Tf::hzptrQueue.guard<Node>(&head->next);
+        next = Tf::hazardPtrForQueue().guard<Node>(&head->next);
 
         if (Q_UNLIKELY(head != queHead.load())) {
             continue;
@@ -106,7 +108,7 @@ inline bool TQueue<T>::dequeue(T &val)
             }
         }
     }
-    Tf::hzptrQueue.clear();
+    Tf::hazardPtrForQueue().clear();
     return (bool)next;
 }
 
@@ -117,7 +119,7 @@ inline bool TQueue<T>::head(T &val)
     Node *next;
     for (;;) {
         Node *headp = queHead.load();
-        next = Tf::hzptrQueue.guard<Node>(&headp->next);
+        next = Tf::hazardPtrForQueue().guard<Node>(&headp->next);
 
         if (Q_LIKELY(headp == queHead.load())) {
             if (next) {
@@ -126,7 +128,7 @@ inline bool TQueue<T>::head(T &val)
             break;
         }
     }
-    Tf::hzptrQueue.clear();
+    Tf::hazardPtrForQueue().clear();
     return (bool)next;
 }
 
