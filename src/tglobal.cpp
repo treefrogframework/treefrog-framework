@@ -40,10 +40,10 @@ static QList<TLogger *> loggers;
 */
 void tSetupAppLoggers()
 {
-    QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
+    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
 
-    for (QStringListIterator i(loggerList); i.hasNext(); ) {
-        TLogger *lgr = TLoggerFactory::create(i.next());
+    for (auto &lg : loggerList) {
+        TLogger *lgr = TLoggerFactory::create(lg);
         if (lgr) {
             loggers << lgr;
             tSystemDebug("Logger added: %s", qPrintable(lgr->key()));
@@ -66,8 +66,8 @@ void tReleaseAppLoggers()
         stream = 0;
     }
 
-    for (QListIterator<TLogger *> it(loggers); it.hasNext(); ) {
-        delete it.next();
+    for (auto &logger : (const QList<TLogger*>&)loggers) {
+        delete logger;
     }
     loggers.clear();
 }

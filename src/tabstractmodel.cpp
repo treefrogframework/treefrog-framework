@@ -95,10 +95,9 @@ QVariantMap TAbstractModel::toVariantMap() const
 void TAbstractModel::setProperties(const QVariantMap &properties)
 {
     // Creates a map of the original property name and the converted name
-    QStringList soprops = modelData()->propertyNames();
+    const QStringList soprops = modelData()->propertyNames();
     QMap<QString, QString> sopropMap;
-    for (QStringListIterator it(soprops); it.hasNext(); ) {
-        const QString &orig = it.next();
+    for (auto &orig : soprops) {
         sopropMap.insert(fieldNameToVariableName(orig), orig);
     }
 

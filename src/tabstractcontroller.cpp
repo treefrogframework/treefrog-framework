@@ -45,12 +45,11 @@ void TAbstractController::exportVariants(const QVariantMap &map)
 }
 
 /*!
-  Exports validation error messages with the prefix \a prefix each. 
+  Exports validation error messages with the prefix \a prefix each.
  */
 void TAbstractController::exportValidationErrors(const TFormValidator &v, const QString &prefix)
 {
-    for (QStringListIterator i(v.validationErrorKeys()); i.hasNext(); ) {
-        const QString &key = i.next();
+    for (auto &key : (const QStringList&)v.validationErrorKeys()) {
         QString msg = v.errorMessage(key);
         exportVariant(prefix + key, QVariant(msg));
     }
@@ -78,20 +77,20 @@ QString TAbstractController::viewClassName(const QString &contoller, const QStri
 
 /*!
   \fn const QVariantMap &TAbstractController::allVariants() const
-  
+
   Returns all the exported variables. Internal use only.
 */
 
 /*!
   \fn virtual QString TAbstractController::name() const
-  
+
   This function is reimplemented in subclasses to return a
   controller name.
 */
 
 /*!
   \fn virtual QString TAbstractController::activeAction() const
-  
+
   This function is reimplemented in subclasses to return a active
   action name.
 */
@@ -104,7 +103,7 @@ QString TAbstractController::viewClassName(const QString &contoller, const QStri
 
 /*!
   \fn bool TAbstractController::hasVariant(const QString &name) const
-  
+
   Returns true if a variable with the \a name is exported for views; otherwise returns false.
   Internal use only.
 */
