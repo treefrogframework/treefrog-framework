@@ -17,7 +17,7 @@ Features
                           InterBase, MongoDB and Redis.
  * Support WebSocket  - Providing full-duplex communications channels
  * Generator  - Generates scaffolds and Makefiles automatically
- * Cross-platform  - Windows, Mac OS X, Linux, etc. Write once, compile
+ * Cross-platform  - Windows, macOS, Linux, etc. Write once, compile
                      anywhere.
  * Ajax support  - JSON, XML and Plain text available
  * Less resource  -  Stable operation even on Raspberry Pi
@@ -39,6 +39,10 @@ Documents
 ---------
  Get additional information on the site:
  http://www.treefrogframework.org/documents
+
+API Reference
+-------------
+ http://treefrogframework.org/tf_doxygen/classes.html
 
 Forum
 -----

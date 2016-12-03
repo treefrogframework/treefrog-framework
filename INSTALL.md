@@ -1,7 +1,7 @@
 
 Requirements
 ------------
- - Windows, Linux, Mac OS X, or POSIX compliant Unix-like OS
+ - Windows, Linux, macOS, or POSIX compliant Unix-like OS
  - Qt Toolkit version 4.8 or later, 5.0 or later
  - C compiler and C++11 compiler
  - Make utility
@@ -26,7 +26,7 @@ Installation
 1. Extract the downloaded tar.gz file.
 
 2. Run build commands.  
-  Linux, Mac OS X, or Unix-like OS:  
+  Linux, macOS, or Unix-like OS:
   Run the following commands.
 
        $ cd treefrog-x.x.x

@@ -19,7 +19,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
                　 InterBase,  MongoDB
  * WebSocket サポート ： アプリケーションサーバとの全二重通信を提供
  * ジェネレータ ： 「足場」となるソースコードや Makefile を自動で生成
- * クロスプラットフォーム ： Windows, Mac OS X, Linux で同じコードが動作
+ * クロスプラットフォーム ： Windows, macOS, Linux で同じコードが動作
  * Ajax サポート ： JSON、XML、プレインテキストを非同期で送信
  * オープンソースソフトウェア ： New BSD License
 
@@ -40,6 +40,10 @@ Webサイト
 ----------
  こちらのサイトでどうぞ
  http://www.treefrogframework.org/documents
+
+APIリファレンス
+-------------
+ http://treefrogframework.org/tf_doxygen/classes.html
 
 MongoDB サポート
 -------------

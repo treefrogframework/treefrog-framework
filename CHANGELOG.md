@@ -1,5 +1,20 @@
 # ChangeLog
 
+## 1.14.0
+ - Modified to use QThreadStorage class instead of thread_local.
+ - Modified the scaffold generater to generate better codes.
+ - Modified url() and urla() so as to generate the url to search routing file.
+ - Modified url() and urla() functions so as to generate the url, searching
+   the routing file.
+ - Added '#partial' tag in ERB.
+ - Added hasEntity() function to TMultipartFormData class.
+ - Fix a bug of renderPartial() funcion on Windows.
+ - Fix a bug of treefrog termination.
+ - Fix a bug of session sqlobject store in PostgreSQL.
+ - Fix crash on missing treefrog -k signal argument.
+ - Deleted obsolete functions.
+ - Performance improvement.
+
 ## 1.13.0
  - Implements hazard pointer, lock-free algorithm.
  - Fix a compilation error in MSVC2015.
