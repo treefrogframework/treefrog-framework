@@ -138,7 +138,7 @@ bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg,  int targetPro
     socket->connectToServer(LOCAL_SERVER_PREFIX + QString::number(targetProcess));
     if (socket->waitForConnected(1000)) {
         socket->write(msg);
-        socket->flush();
+        socket->waitForBytesWritten();
         socket->close();
         ret = true;
         tSystemDebug("Sent local message to server [pid:%d]", targetProcess);
