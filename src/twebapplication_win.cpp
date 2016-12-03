@@ -10,6 +10,7 @@
 #include <QLocalSocket>
 #include <windows.h>
 #include <winuser.h>
+#include "tsystemglobal.h"
 
 const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
 static volatile int ctrlSignal = -1;
@@ -140,6 +141,9 @@ bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg,  int targetPro
         socket->flush();
         socket->close();
         ret = true;
+        tSystemDebug("Sent local message to server [pid:%d]", targetProcess);
+    } else {
+        tSystemWarn("Failed to connect to server [pid:%d]", targetProcess);
     }
 
     delete socket;
