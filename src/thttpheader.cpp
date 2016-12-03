@@ -141,9 +141,8 @@ void THttpRequestHeader::setRequest(const QByteArray &method, const QByteArray &
  */
 QByteArray THttpRequestHeader::cookie(const QString &name) const
 {
-    QList<TCookie> list = cookies();
-    for (QListIterator<TCookie> i(list); i.hasNext(); ) {
-        const TCookie &c = i.next();
+    const QList<TCookie> lst = cookies();
+    for (auto &c : lst) {
         if (c.name() == name) {
             return c.value();
         }
@@ -157,11 +156,13 @@ QByteArray THttpRequestHeader::cookie(const QString &name) const
 QList<TCookie> THttpRequestHeader::cookies() const
 {
     QList<TCookie> result;
-    QList<QByteArray> cookieStrings = rawHeader("Cookie").split(';');
-    for (QListIterator<QByteArray> i(cookieStrings); i.hasNext(); ) {
-        QByteArray ba = i.next().trimmed();
-        if (!ba.isEmpty())
+    const QList<QByteArray> cookieStrings = rawHeader("Cookie").split(';');
+
+    for (auto &ck : cookieStrings) {
+        QByteArray ba = ck.trimmed();
+        if (!ba.isEmpty()) {
             result += TCookie::parseCookies(ba);
+        }
     }
     return result;
 }

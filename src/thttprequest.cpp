@@ -238,9 +238,10 @@ QString THttpRequest::queryItemValue(const QString &name, const QString &default
 QStringList THttpRequest::allQueryItemValues(const QString &name) const
 {
     QStringList ret;
-    QVariantList values = d->queryItems.values(name);
-    for (QListIterator<QVariant> it(values); it.hasNext(); ) {
-        ret << it.next().toString();
+    const QVariantList values = d->queryItems.values(name);
+
+    for (auto &val : values) {
+        ret << val.toString();
     }
     return ret;
 }
@@ -293,9 +294,10 @@ QString THttpRequest::formItemValue(const QString &name, const QString &defaultV
 QStringList THttpRequest::allFormItemValues(const QString &name) const
 {
     QStringList ret;
-    QVariantList values = d->formItems.values(name);
-    for (QListIterator<QVariant> it(values); it.hasNext(); ) {
-        ret << it.next().toString();
+    const QVariantList values = d->formItems.values(name);
+
+    for (auto &val : values) {
+        ret << val.toString();
     }
     return ret;
 }
@@ -354,9 +356,9 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         } else {
             // 'application/x-www-form-urlencoded'
             if (!body.isEmpty()) {
-                QList<QByteArray> formdata = body.split('&');
-                for (QListIterator<QByteArray> i(formdata); i.hasNext(); ) {
-                    QList<QByteArray> nameval = i.next().split('=');
+                const QList<QByteArray> formdata = body.split('&');
+                for (auto &frm : formdata) {
+                    QList<QByteArray> nameval = frm.split('=');
                     if (!nameval.value(0).isEmpty()) {
                         // URL decode
                         QString key = THttpUtility::fromUrlEncoding(nameval.value(0));
@@ -374,9 +376,9 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         QList<QByteArray> data = d->header.path().split('?');
         QString getdata = data.value(1);
         if (!getdata.isEmpty()) {
-            QStringList pairs = getdata.split('&', QString::SkipEmptyParts);
-            for (QStringListIterator i(pairs); i.hasNext(); ) {
-                QStringList s = i.next().split('=');
+            const QStringList pairs = getdata.split('&', QString::SkipEmptyParts);
+            for (auto &p : pairs) {
+                QStringList s = p.split('=');
                 if (!s.value(0).isEmpty()) {
                     QString key = THttpUtility::fromUrlEncoding(s.value(0).toLatin1());
                     QString val = THttpUtility::fromUrlEncoding(s.value(1).toLatin1());
@@ -402,9 +404,9 @@ QByteArray THttpRequest::boundary() const
     QString contentType = d->header.rawHeader("content-type").trimmed();
 
     if (contentType.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
-        QStringList lst = contentType.split(QChar(';'), QString::SkipEmptyParts, Qt::CaseSensitive);
-        for (QStringListIterator it(lst); it.hasNext(); ) {
-            QString string = it.next().trimmed();
+        const QStringList lst = contentType.split(QChar(';'), QString::SkipEmptyParts, Qt::CaseSensitive);
+        for (auto &bnd : lst) {
+            QString string = bnd.trimmed();
             if (string.startsWith("boundary=", Qt::CaseInsensitive)) {
                 boundary  = "--";
                 boundary += string.mid(9).toLatin1();

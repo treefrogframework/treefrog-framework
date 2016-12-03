@@ -91,10 +91,9 @@ void TLoggerFactory::loadPlugins()
         qAddPostRoutine(::cleanup);
 
         QDir dir(Tf::app()->pluginPath());
-        QStringList list = dir.entryList(QDir::Files);
-        for (QStringListIterator i(list); i.hasNext(); ) {
-            QPluginLoader loader(dir.absoluteFilePath(i.next()));
-
+        const QStringList lst = dir.entryList(QDir::Files);
+        for (auto &plg : lst) {
+            QPluginLoader loader(dir.absoluteFilePath(plg));
             tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
             if (!loader.load()) {
                 tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
@@ -104,16 +103,16 @@ void TLoggerFactory::loadPlugins()
             TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
             if ( iface ) {
 #if QT_VERSION >= 0x050000
-                QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
-                for (QListIterator<QVariant> it(array); it.hasNext(); ) {
-                    QString key = it.next().toString().toLower();
+                const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
+                for (auto &k : array) {
+                    QString key = k.toString().toLower();
                     tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
                     lggIfMap->insert(key, iface);
                 }
 #else
-                QStringList keys = iface->keys();
-                for (QStringListIterator j(keys); j.hasNext(); ) {
-                    QString key = j.next().toLower();
+                const QStringList keys = iface->keys();
+                for (auto &k : keys) {
+                    QString key = k.toLower();
                     tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
                     lggIfMap->insert(key, iface);
                 }

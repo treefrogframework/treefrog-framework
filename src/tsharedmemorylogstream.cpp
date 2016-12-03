@@ -6,7 +6,6 @@
  */
 
 #include <QSharedMemory>
-#include <QListIterator>
 #include <TSystemGlobal>
 #include "tsharedmemorylogstream.h"
 
@@ -17,7 +16,7 @@ class TSharedMemoryLocker
 {
 public:
     TSharedMemoryLocker(QSharedMemory *memory) : sm(memory) { sm->lock(); }
-    ~TSharedMemoryLocker() { sm->unlock(); }    
+    ~TSharedMemoryLocker() { sm->unlock(); }
 
 private:
     QSharedMemory *sm;
@@ -32,7 +31,7 @@ TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, i
         tSystemError("Shared memory size not enough: %d (bytes)", shareMem->size());
         return;
     }
-    
+
     if (shareMem->create(size)) {
         TSharedMemoryLocker locker(shareMem);
         clearBuffer();
@@ -42,7 +41,7 @@ TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, i
         } else {
             if (!shareMem->attach()) {
                 tSystemError("Shared memory attach error: %s", qPrintable(shareMem->errorString()));
-            } 
+            }
         }
     }
 }
@@ -151,7 +150,7 @@ bool TSharedMemoryLogStream::smWrite(const QList<TLog> &logs)
         // over the shared memory size
         return false;
     }
-    
+
     if (!shareMem->data()) {
         tSystemError("Shared memory not attached");
         return false;
@@ -177,7 +176,7 @@ void TSharedMemoryLogStream::timerEvent(QTimerEvent *event)
         QObject::timerEvent(event);
         return;
     }
-    
+
     flush();
     timer.stop();
 }

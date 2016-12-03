@@ -134,8 +134,8 @@ void TAccessValidator::setDenyUnauthenticatedUser(const QStringList &actions)
 */
 void TAccessValidator::addRules(int type, const QString &key, const QStringList &actions, bool allow)
 {
-    for (QListIterator<QString> it(actions); it.hasNext(); ) {
-        accessRules << AccessRule(type, key, it.next(), allow);
+    for (auto &act : actions) {
+        accessRules << AccessRule(type, key, act, allow);
     }
 }
 
@@ -156,8 +156,7 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
 
     if (!user || user->identityKey().isEmpty()) {
         // Searches a access rule for an unauthenticated user
-        for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
-            const AccessRule &rule = it.next();
+        for (const auto &rule : accessRules) {
             if (rule.type == AccessRule::UnauthenticatedUser
                 && rule.action == controller->activeAction()) {
                 ret = rule.allow;
@@ -171,8 +170,7 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
         }
 
     } else {
-        for (QListIterator<AccessRule> it(accessRules); it.hasNext(); ) {
-            const AccessRule &rule = it.next();
+        for (const auto &rule : accessRules) {
             if (rule.action == controller->activeAction()
                 && ((rule.type == AccessRule::User && rule.key == user->identityKey())
                     || (!user->groupKey().isEmpty() && rule.key == user->groupKey()))) {

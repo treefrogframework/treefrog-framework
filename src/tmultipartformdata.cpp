@@ -37,8 +37,7 @@ TMimeHeader::TMimeHeader(const TMimeHeader &other)
 QByteArray TMimeHeader::header(const QByteArray &headerName) const
 {
     QByteArray name = headerName.toLower();
-    for (QListIterator<QPair<QByteArray, QByteArray>> i(headers); i.hasNext(); ) {
-        const QPair<QByteArray, QByteArray> &p = i.next();
+    for (const auto &p : headers) {
         if (p.first.toLower() == name) {
             return p.second;
         }
@@ -324,9 +323,10 @@ void TMultipartFormData::clear()
 QStringList TMultipartFormData::allFormItemValues(const QString &name) const
 {
     QStringList ret;
-    QVariantList values = postParameters.values(name);
-    for (QListIterator<QVariant> it(values); it.hasNext(); ) {
-        ret << it.next().toString();
+    const QVariantList values = postParameters.values(name);
+
+    for (auto &val : values) {
+        ret << val.toString();
     }
     return ret;
 }
@@ -502,8 +502,7 @@ QString TMultipartFormData::writeContent(QIODevice *dev) const
 */
 bool TMultipartFormData::hasEntity(const QByteArray &dataName) const
 {
-    for (QListIterator<TMimeEntity> i(uploadedFiles); i.hasNext(); ) {
-        const TMimeEntity &p = i.next();
+    for (auto &p : uploadedFiles) {
         if (p.header().dataName() == dataName) {
             return true;
         }
@@ -516,8 +515,7 @@ bool TMultipartFormData::hasEntity(const QByteArray &dataName) const
 */
 TMimeEntity TMultipartFormData::entity(const QByteArray &dataName) const
 {
-    for (QListIterator<TMimeEntity> i(uploadedFiles); i.hasNext(); ) {
-        const TMimeEntity &p = i.next();
+    for (auto &p : uploadedFiles) {
         if (p.header().dataName() == dataName) {
             return p;
         }
@@ -538,8 +536,7 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
         k += QLatin1String("[]");
     }
 
-    for (QListIterator<TMimeEntity> i(uploadedFiles); i.hasNext(); ) {
-        const TMimeEntity &p = i.next();
+    for (auto &p : uploadedFiles) {
         if (p.header().dataName() == k) {
             list << p;
         }

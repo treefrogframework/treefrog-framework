@@ -109,9 +109,8 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     if (dbsets.isEmpty()) {
         dbsets = Tf::appSettings()->readValue("DatabaseSettingsFiles").toString().trimmed();
     }
-    QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
-    for (QListIterator<QString> it(files); it.hasNext(); ) {
-        const QString &f = it.next();
+    const QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
+    for (auto &f : files) {
         QSettings *set = new QSettings(configPath() + f, QSettings::IniFormat, this);
         set->setIniCodec(codecInternal);
         sqlSettings.append(set);

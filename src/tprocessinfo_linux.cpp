@@ -53,10 +53,9 @@ QList<qint64> TProcessInfo::allConcurrentPids()
 {
     QList<qint64> ret;
     QDir proc("/proc");
-    QStringList dirs = proc.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+    const QStringList dirs = proc.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
 
-    for (QStringListIterator it(dirs); it.hasNext(); ) {
-        const QString &s = it.next();
+    for (const auto &s : dirs) {
         qint64 pid = s.toLongLong();
         if (pid > 0) {
             ret << pid;

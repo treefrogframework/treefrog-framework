@@ -332,13 +332,13 @@ void TActionContext::release()
 {
     TDatabaseContext::release();
 
-    for (QListIterator<TTemporaryFile *> i(tempFiles); i.hasNext(); ) {
-        delete i.next();
+    for (auto temp : (const QList<TTemporaryFile*> &)tempFiles) {
+        delete temp;
     }
     tempFiles.clear();
 
-    for (QStringListIterator i(autoRemoveFiles); i.hasNext(); ) {
-        QFile(i.next()).remove();
+    for (auto &file : (const QStringList&)autoRemoveFiles) {
+        QFile(file).remove();
     }
     autoRemoveFiles.clear();
 }

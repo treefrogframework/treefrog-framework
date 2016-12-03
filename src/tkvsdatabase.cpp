@@ -10,7 +10,6 @@
 #include <TSystemGlobal>
 #include <QMap>
 #include <QString>
-#include <QStringListIterator>
 #include <QMutex>
 #include <QMutexLocker>
 #include "tmongodriver.h"
@@ -101,12 +100,11 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 void TKvsDatabase::removeAllDatabases()
 {
     QMutexLocker lock(&mutex);
-    QStringList keys = databaseMap.keys();
+    const QStringList keys = databaseMap.keys();
 
-    for (QStringListIterator it(keys); it.hasNext(); ) {
-        removeDatabase(it.next());
+    for (auto &key : keys) {
+        removeDatabase(key);
     }
-
     databaseMap.clear();
 }
 

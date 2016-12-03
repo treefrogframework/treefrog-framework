@@ -26,9 +26,10 @@ public:
 
 void TFileAioLoggerData::clearSyncBuffer()
 {
-    for (QListIterator<struct aiocb *> it(syncBuffer); it.hasNext(); ) {
-        struct aiocb *cb = it.next();
-        delete (char *)cb->aio_buf;
+    for (auto cb : (const List<struct aiocb*> &)syncBuffer) {
+        if (cb->aio_buf) {
+            delete (char *)cb->aio_buf;
+        }
         delete cb;
     }
     syncBuffer.clear();

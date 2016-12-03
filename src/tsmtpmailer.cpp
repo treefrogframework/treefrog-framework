@@ -7,7 +7,6 @@
 
 #include <QSslSocket>
 #include <QHostAddress>
-#include <QStringListIterator>
 #include <QDateTime>
 #include <QTimer>
 #include <QMutex>
@@ -344,8 +343,8 @@ bool TSmtpMailer::cmdRcpt(const QList<QByteArray> &to)
     if (to.isEmpty())
         return false;
 
-    for (QListIterator<QByteArray> i(to); i.hasNext(); ) {
-        QByteArray rcpt("RCPT TO:<" + i.next() + '>');
+    for (auto &tostr : to) {
+        QByteArray rcpt("RCPT TO:<" + tostr + '>');
         if (cmd(rcpt) != 250) {
             return false;
         }

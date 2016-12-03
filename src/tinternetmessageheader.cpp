@@ -55,8 +55,7 @@ bool TInternetMessageHeader::hasRawHeader(const QByteArray &key) const
 */
 QByteArray TInternetMessageHeader::rawHeader(const QByteArray &key) const
 {
-    for (QListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        const RawHeaderPair &p = i.next();
+    for (const auto &p : headerPairList) {
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
             return p.second;
         }
@@ -70,8 +69,8 @@ QByteArray TInternetMessageHeader::rawHeader(const QByteArray &key) const
 QList<QByteArray> TInternetMessageHeader::rawHeaderList() const
 {
     QList<QByteArray> list;
-    for (QListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        list << i.next().first;
+    for (const auto &p : headerPairList) {
+        list << p.first;
     }
     return list;
 }
@@ -193,8 +192,7 @@ void TInternetMessageHeader::setDate(const QDateTime &dateTime)
 QByteArray TInternetMessageHeader::toByteArray() const
 {
     QByteArray res;
-    for (QListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        const RawHeaderPair &p = i.next();
+    for (const auto &p : headerPairList) {
         res += p.first;
         res += ": ";
         res += p.second;

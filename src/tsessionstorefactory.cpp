@@ -150,9 +150,9 @@ void TSessionStoreFactory::loadPlugins()
         qAddPostRoutine(cleanup);
 
         QDir dir(Tf::app()->pluginPath());
-        QStringList list = dir.entryList(QDir::Files);
-        for (QStringListIterator i(list); i.hasNext(); ) {
-            QPluginLoader loader(dir.absoluteFilePath(i.next()));
+        const QStringList list = dir.entryList(QDir::Files);
+        for (auto &file : list) {
+            QPluginLoader loader(dir.absoluteFilePath(file));
 
             tSystemDebug("plugin library for session store: %s", qPrintable(loader.fileName()));
             if (!loader.load()) {
@@ -163,16 +163,16 @@ void TSessionStoreFactory::loadPlugins()
             TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
             if ( iface ) {
 #if QT_VERSION >= 0x050000
-                QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
-                for (QListIterator<QVariant> it(array); it.hasNext(); ) {
-                    QString key = it.next().toString().toLower();
+                const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
+                for (auto &k : array) {
+                    QString key = k.toString().toLower();
                     tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
                     sessIfMap->insert(key, iface);
                 }
 #else
-                QStringList keys = iface->keys();
-                for (QStringListIterator j(keys); j.hasNext(); ) {
-                    QString key = j.next().toLower();
+                const QStringList keys = iface->keys();
+                for (auto &k : keys) {
+                    QString key = k.toLower();
                     tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
                     sessIfMap->insert(key, iface);
                 }

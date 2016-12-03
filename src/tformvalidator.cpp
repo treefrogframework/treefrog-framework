@@ -217,15 +217,13 @@ bool TFormValidator::validate(const QVariantMap &map)
 
     // Add default rules, Tf::Required.
     QString msg = Tf::app()->validationErrorMessage(Tf::Required);
-    for (QStringListIterator i(map.keys()); i.hasNext(); ) {
-        const QString &k = i.next();
+    for (auto &k : (const QStringList&)map.keys()) {
         if (!containsRule(k, Tf::Required)) {
             rules.append(RuleEntry(k, (int)Tf::Required, true, msg));
         }
     }
 
-    for (QListIterator<RuleEntry> i(rules); i.hasNext(); ) {
-        const RuleEntry &r = i.next();
+    for (auto &r : (const QList<RuleEntry>&)rules) {
         QString str = map.value(r.key).toString();  // value string
 
         if (str.isEmpty()) {
@@ -358,8 +356,8 @@ bool TFormValidator::validate(const QVariantMap &map)
 QStringList TFormValidator::validationErrorKeys() const
 {
     QStringList ret;
-    for (QListIterator<QPair<QString, int>> it(errors); it.hasNext(); ) {
-        ret << it.next().first;
+    for (auto &err : errors) {
+        ret << err.first;
     }
     return ret;
 }
@@ -370,10 +368,9 @@ QStringList TFormValidator::validationErrorKeys() const
 */
 Tf::ValidationRule TFormValidator::errorRule(const QString &key) const
 {
-    for (QListIterator<QPair<QString, int>> it(errors); it.hasNext(); ) {
-        const QPair<QString, int> &p = it.next();
-        if (p.first == key) {
-            return (Tf::ValidationRule)p.second;
+    for (auto &err : errors) {
+        if (err.first == key) {
+            return (Tf::ValidationRule)err.second;
         }
     }
     return Tf::Required;
@@ -384,8 +381,7 @@ Tf::ValidationRule TFormValidator::errorRule(const QString &key) const
 */
 QString TFormValidator::message(const QString &key, Tf::ValidationRule rule) const
 {
-    for (QListIterator<RuleEntry> i(rules); i.hasNext(); ) {
-        const RuleEntry &r = i.next();
+    for (auto &r : rules) {
         if (r.key == key && r.rule == rule) {
             return r.message;
         }
@@ -409,9 +405,8 @@ QString TFormValidator::errorMessage(const QString &key) const
 QStringList TFormValidator::errorMessages() const
 {
     QStringList msgs;
-    for (QListIterator<QPair<QString, int>> it(errors); it.hasNext(); ) {
-        const QPair<QString, int> &p = it.next();
-        QString m = message(p.first, (Tf::ValidationRule)p.second);
+    for (auto &err : errors) {
+        QString m = message(err.first, (Tf::ValidationRule)err.second);
         if (!m.isEmpty())
             msgs.prepend(m);
     }
@@ -424,8 +419,7 @@ QStringList TFormValidator::errorMessages() const
  */
 bool TFormValidator::containsRule(const QString &key, Tf::ValidationRule rule) const
 {
-    for (QListIterator<RuleEntry> i(rules); i.hasNext(); ) {
-        const RuleEntry &r = i.next();
+    for (auto &r : rules) {
         if (r.key == key && r.rule == rule) {
             return true;
         }

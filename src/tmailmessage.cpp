@@ -167,9 +167,9 @@ QByteArray TMailMessage::fromAddress() const
 QList<QByteArray> TMailMessage::addresses(const QByteArray &field) const
 {
     QList<QByteArray> addrList;
-    QList<QByteArray> lst = rawHeader(field).split(',');
-    for (QListIterator<QByteArray> it(lst); it.hasNext(); ) {
-        const QByteArray &ba = it.next();
+    const QList<QByteArray> lst = rawHeader(field).split(',');
+
+    for (const auto &ba : lst) {
         QByteArray addr;
         int i = ba.indexOf('<');
         if (i >= 0) {
@@ -269,8 +269,8 @@ QByteArray TMailMessage::toByteArray() const
 void TMailMessage::addRecipient(const QByteArray &address)
 {
     // Duplication check
-    for (QListIterator<QByteArray> i(recipientList); i.hasNext(); ) {
-        if (i.next() == address)
+    for (const auto &recp : (const QList<QByteArray>&)recipientList) {
+        if (recp == address)
             return;
     }
     recipientList << address;
@@ -279,8 +279,8 @@ void TMailMessage::addRecipient(const QByteArray &address)
 
 void TMailMessage::addRecipients(const QList<QByteArray> &addresses)
 {
-    for (QListIterator<QByteArray> i(addresses); i.hasNext(); ) {
-        addRecipient(i.next());
+    for (const auto &addr : (const QList<QByteArray>&)addresses) {
+        addRecipient(addr);
     }
 }
 

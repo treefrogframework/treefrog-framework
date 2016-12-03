@@ -177,8 +177,8 @@ bool TActionController::addCookie(const TCookie &cookie)
 
     cookieJar.addCookie(cookie);
     response.header().removeAllRawHeaders("Set-Cookie");
-    for (QListIterator<TCookie> i(cookieJar.allCookies()); i.hasNext(); ) {
-        response.header().addRawHeader("Set-Cookie", i.next().toRawForm());
+    for (auto &ck : (const QList<TCookie>&)cookieJar.allCookies()) {
+        response.header().addRawHeader("Set-Cookie", ck.toRawForm());
     }
     return true;
 }
@@ -446,8 +446,8 @@ bool TActionController::renderXml(const QVariantList &list)
     QDomElement root = doc.createElement("list");
     doc.appendChild(root);
 
-    for (QListIterator<QVariant> it(list); it.hasNext(); ) {
-        QVariantMap map = it.next().toMap();
+    for (auto &var : list) {
+        QVariantMap map = var.toMap();
         root.appendChild(createDomElement("map", map, doc));
     }
     return renderXml(doc);
@@ -462,8 +462,7 @@ bool TActionController::renderXml(const QStringList &list)
     QDomElement root = doc.createElement("list");
     doc.appendChild(root);
 
-    for (QStringListIterator it(list); it.hasNext(); ) {
-        const QString &str = it.next();
+    for (auto &str : list) {
         QDomElement tag = doc.createElement("string");
         root.appendChild(tag);
         QDomText text = doc.createTextNode(str);
@@ -838,8 +837,7 @@ QHostAddress TActionController::clientAddress() const
 */
 void TActionController::setFlashValidationErrors(const TFormValidator &v, const QString &prefix)
 {
-    for (QStringListIterator i(v.validationErrorKeys()); i.hasNext(); ) {
-        const QString &key = i.next();
+    for (auto &key : (const QStringList &)v.validationErrorKeys()) {
         QString msg = v.errorMessage(key);
         setFlash(prefix + key, msg);
     }

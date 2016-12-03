@@ -26,8 +26,7 @@ TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers, QObject 
 bool TAbstractLogStream::loggerOpen(LoggerType type)
 {
     bool res = true;
-    for (QListIterator<TLogger *> i(loggerList); i.hasNext(); ) {
-        TLogger *logger = i.next();
+    for (auto logger : (const QList<TLogger*>&)loggerList) {
         if (logger) {
             if (type == All
                 || (type == MultiProcessSafe && logger->isMultiProcessSafe())
@@ -42,8 +41,7 @@ bool TAbstractLogStream::loggerOpen(LoggerType type)
 
 void TAbstractLogStream::loggerClose(LoggerType type)
 {
-    for (QListIterator<TLogger *> i(loggerList); i.hasNext(); ) {
-        TLogger *logger = i.next();
+    for (auto logger : (const QList<TLogger*>&)loggerList) {
         if (logger) {
             if (type == All
                 || (type == MultiProcessSafe && logger->isMultiProcessSafe())
@@ -57,8 +55,7 @@ void TAbstractLogStream::loggerClose(LoggerType type)
 
 void TAbstractLogStream::loggerWrite(const TLog &log)
 {
-    for (QListIterator<TLogger *> i(loggerList); i.hasNext(); ) {
-        TLogger *logger = i.next();
+    for (auto logger : (const QList<TLogger*>&)loggerList) {
         if (logger && logger->isOpen() && log.priority <= logger->threshold()) {
             logger->log(log);
             if (nonBuffering)
@@ -70,16 +67,15 @@ void TAbstractLogStream::loggerWrite(const TLog &log)
 
 void TAbstractLogStream::loggerWrite(const QList<TLog> &logs)
 {
-    for (QListIterator<TLog> i(logs); i.hasNext(); ) {
-        loggerWrite(i.next());
+    for (auto logger : (const QList<TLog>&)logs) {
+        loggerWrite(logger);
     }
 }
 
 
 void TAbstractLogStream::loggerFlush()
 {
-    for (QListIterator<TLogger *> i(loggerList); i.hasNext(); ) {
-        TLogger *logger = i.next();
+    for (auto logger : (const QList<TLogger*>&)loggerList) {
         if (logger && logger->isOpen())
             logger->flush();
     }
