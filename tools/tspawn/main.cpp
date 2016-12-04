@@ -392,7 +392,9 @@ static int deleteScaffold(const QString &name)
         models << QLatin1String("sqlobjects") + SEP + str + "object.h"
                << QLatin1String("mongoobjects") + SEP + str + "object.h"
                << str + ".h"
-               << str + ".cpp";
+               << str + ".cpp"
+               << str + "ext.h"
+               << str + "ext.cpp";
 
         // Template system
         if (templateSystem == "otama") {

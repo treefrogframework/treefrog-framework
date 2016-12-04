@@ -27,43 +27,47 @@
     "#include <TGlobal>\n"                               \
     "#include <TAbstractModel>\n"                        \
     "\n"                                                 \
+    "#include \"%2ext.h\"\n"                             \
+    "\n"                                                 \
     "class TModelObject;\n"                              \
-    "class %2Object;\n"                                  \
-    "%7"                                                 \
+    "class %3Object;\n"                                  \
+    "%8"                                                 \
     "\n\n"                                               \
-    "class T_MODEL_EXPORT %2 : public TAbstractModel\n"  \
+    "class T_MODEL_EXPORT %3 : public TAbstractModel\n"  \
     "{\n"                                                \
     "public:\n"                                          \
-    "    %2();\n"                                        \
-    "    %2(const %2 &other);\n"                         \
-    "    %2(const %2Object &object);\n"                  \
-    "    ~%2();\n"                                       \
+    "    %3();\n"                                        \
+    "    %3(const %3 &other);\n"                         \
+    "    %3(const %3Object &object);\n"                  \
+    "    ~%3();\n"                                       \
     "\n"                                                 \
-    "%3"                                                 \
-    "    %2 &operator=(const %2 &other);\n"              \
+    "%4"                                                 \
+    "    %3 &operator=(const %3 &other);\n"              \
+    "\n"                                                 \
+    "    T_%1_EXTEND_FIELDS"                             \
     "\n"                                                 \
     "    bool create() { return TAbstractModel::create(); }\n" \
     "    bool update() { return TAbstractModel::update(); }\n" \
     "    bool save()   { return TAbstractModel::save(); }\n"   \
     "    bool remove() { return TAbstractModel::remove(); }\n" \
     "\n"                                                 \
-    "    static %2 create(%4);\n"                        \
-    "    static %2 create(const QVariantMap &values);\n" \
-    "    static %2 get(%5);\n"                           \
-    "%6"                                                 \
+    "    static %3 create(%5);\n"                        \
+    "    static %3 create(const QVariantMap &values);\n" \
+    "    static %3 get(%6);\n"                           \
+    "%7"                                                 \
     "    static int count();\n"                          \
-    "    static QList<%2> getAll();\n"                   \
-    "%8"                                                 \
+    "    static QList<%3> getAll();\n"                   \
+    "%9"                                                 \
     "\n"                                                 \
     "private:\n"                                         \
-    "    QSharedDataPointer<%2Object> d;\n"              \
+    "    QSharedDataPointer<%3Object> d;\n"              \
     "\n"                                                 \
     "    TModelObject *modelData();\n"                   \
     "    const TModelObject *modelData() const;\n"       \
     "};\n"                                               \
     "\n"                                                 \
-    "Q_DECLARE_METATYPE(%2)\n"                           \
-    "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
+    "Q_DECLARE_METATYPE(%3)\n"                           \
+    "Q_DECLARE_METATYPE(QList<%3>)\n"                    \
     "\n"                                                 \
     "#endif // %1_H\n"
 
@@ -72,38 +76,38 @@
     "#include \"%1.h\"\n"                                     \
     "#include \"%1object.h\"\n"                               \
     "\n"                                                      \
-    "%2::%2()\n"                                              \
-    "    : TAbstractModel(), d(new %2Object())\n"             \
-    "{%3}\n"                                                  \
+    "%3::%3()\n"                                              \
+    "    : TAbstractModel(), d(new %3Object())\n"             \
+    "{%4}\n"                                                  \
     "\n"                                                      \
-    "%2::%2(const %2 &other)\n"                               \
-    "    : TAbstractModel(), d(new %2Object(*other.d))\n"     \
+    "%3::%3(const %3 &other)\n"                               \
+    "    : TAbstractModel(), d(new %3Object(*other.d))\n"     \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%2::%2(const %2Object &object)\n"                        \
-    "    : TAbstractModel(), d(new %2Object(object))\n"       \
+    "%3::%3(const %3Object &object)\n"                        \
+    "    : TAbstractModel(), d(new %3Object(object))\n"       \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%2::~%2()\n"                                             \
+    "%3::~%3()\n"                                             \
     "{\n"                                                     \
     "    // If the reference count becomes 0,\n"              \
-    "    // the shared data object '%2Object' is deleted.\n"  \
+    "    // the shared data object '%3Object' is deleted.\n"  \
     "}\n"                                                     \
     "\n"                                                      \
-    "%4"                                                      \
-    "%2 &%2::operator=(const %2 &other)\n"                    \
+    "%5"                                                      \
+    "%3 &%3::operator=(const %3 &other)\n"                    \
     "{\n"                                                     \
     "    d = other.d;  // increments the reference count of the data\n" \
     "    return *this;\n"                                     \
     "}\n\n"                                                   \
-    "%2 %2::create(%5)\n"                                     \
+    "%3 %3::create(%6)\n"                                     \
     "{\n"                                                     \
-    "%6"                                                      \
+    "%7"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::create(const QVariantMap &values)\n"              \
+    "%3 %3::create(const QVariantMap &values)\n"              \
     "{\n"                                                     \
-    "    %2 model;\n"                                         \
+    "    %3 model;\n"                                         \
     "    model.setProperties(values);\n"                      \
     "    if (!model.d->create()) {\n"                         \
     "        model.d->clear();\n"                             \
@@ -111,30 +115,30 @@
     "    return model;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::get(%7)\n"                                        \
+    "%3 %3::get(%8)\n"                                        \
     "{\n"                                                     \
-    "%8"                                                      \
+    "%9"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%10"                                                     \
-    "int %2::count()\n"                                       \
+    "%11"                                                     \
+    "int %3::count()\n"                                       \
     "{\n"                                                     \
-    "    %13<%2Object> mapper;\n"                             \
+    "    %14<%3Object> mapper;\n"                             \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%2> %2::getAll()\n"                                \
+    "QList<%3> %3::getAll()\n"                                \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria());\n" \
+    "    return tfGetModelListBy%12Criteria<%3, %3Object>(TCriteria());\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%12"                                                     \
-    "TModelObject *%2::modelData()\n"                         \
+    "%13"                                                     \
+    "TModelObject *%3::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"                                                     \
     "\n"                                                      \
-    "const TModelObject *%2::modelData() const\n"             \
+    "const TModelObject *%3::modelData() const\n"             \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"
@@ -151,47 +155,67 @@
     "#include <TAbstractUser>\n"                         \
     "#include <TAbstractModel>\n"                        \
     "\n"                                                 \
+    "#include \"%2ext.h\"\n"                             \
+    "\n"                                                 \
     "class TModelObject;\n"                              \
-    "class %2Object;\n"                                  \
-    "%7"                                                 \
+    "class %3Object;\n"                                  \
+    "%8"                                                 \
     "\n\n"                                               \
-    "class T_MODEL_EXPORT %2 : public TAbstractUser, public TAbstractModel\n" \
+    "class T_MODEL_EXPORT %3 : public TAbstractUser, public TAbstractModel\n" \
     "{\n"                                                \
     "public:\n"                                          \
-    "    %2();\n"                                        \
-    "    %2(const %2 &other);\n"                         \
-    "    %2(const %2Object &object);\n"                  \
-    "    ~%2();\n"                                       \
+    "    %3();\n"                                        \
+    "    %3(const %3 &other);\n"                         \
+    "    %3(const %3Object &object);\n"                  \
+    "    ~%3();\n"                                       \
     "\n"                                                 \
-    "%3"                                                 \
-    "%11"                                                \
-    "    %2 &operator=(const %2 &other);\n"              \
+    "%4"                                                 \
+    "%12"                                                \
+    "    %3 &operator=(const %3 &other);\n"              \
+    "\n"                                                 \
+    "    T_%1_EXTEND_FIELDS"                             \
     "\n"                                                 \
     "    bool create() { return TAbstractModel::create(); }\n" \
     "    bool update() { return TAbstractModel::update(); }\n" \
     "    bool save()   { return TAbstractModel::save(); }\n"   \
     "    bool remove() { return TAbstractModel::remove(); }\n" \
     "\n"                                                 \
-    "    static %2 authenticate(const QString &%9, const QString &%10);\n" \
-    "    static %2 create(%4);\n"                        \
-    "    static %2 create(const QVariantMap &values);\n" \
-    "    static %2 get(%5);\n"                           \
-    "%6"                                                 \
+    "    static %3 authenticate(const QString &%10, const QString &%11);\n" \
+    "    static %3 create(%5);\n"                        \
+    "    static %3 create(const QVariantMap &values);\n" \
+    "    static %3 get(%6);\n"                           \
+    "%7"                                                 \
     "    static int count();\n"                          \
-    "    static QList<%2> getAll();\n"                   \
-    "%8"                                                 \
+    "    static QList<%3> getAll();\n"                   \
+    "%9"                                                 \
     "\n"                                                 \
     "private:\n"                                         \
-    "    QSharedDataPointer<%2Object> d;\n"              \
+    "    QSharedDataPointer<%3Object> d;\n"              \
     "\n"                                                 \
     "    TModelObject *modelData();\n"                   \
     "    const TModelObject *modelData() const;\n"       \
     "};\n"                                               \
     "\n"                                                 \
-    "Q_DECLARE_METATYPE(%2)\n"                           \
-    "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
+    "Q_DECLARE_METATYPE(%3)\n"                           \
+    "Q_DECLARE_METATYPE(QList<%3>)\n"                    \
     "\n"                                                 \
     "#endif // %1_H\n"
+
+#define MODELEXT_HEADER_FILE_TEMPLATE                       \
+    "#ifndef %1_EXTEND_H\n"                                 \
+    "#define %1_EXTEND_H\n"                                 \
+    "\n"                                                    \
+    "#define T_%1_EXTEND_FIELDS\n"                          \
+    "\n"                                                    \
+    "#endif // %1_H\n"
+
+#define MODELEXT_IMPL_TEMPLATE                                \
+    "#include <TreeFrogModel>\n"                              \
+    "#include \"%1.h\"\n"                                     \
+    "#include \"%1object.h\"\n"                               \
+
+
+
 
 #define USER_MODEL_IMPL_TEMPLATE                              \
     "#include <TreeFrogModel>\n"                              \
@@ -402,6 +426,13 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
+
+    fileName = dir.filePath(modelName.toLower() + "ext.h");
+    gen(fileName, MODELEXT_HEADER_FILE_TEMPLATE, QStringList() << modelName.toUpper());
+    ret << QFileInfo(fileName).fileName();
+
+    fileName = dir.filePath(modelName.toLower() + "ext.cpp");
+    gen(fileName, MODELEXT_IMPL_TEMPLATE, QStringList() << modelName.toLower());
     ret << QFileInfo(fileName).fileName();
     return ret;
 }
@@ -424,6 +455,14 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
     p.second << fieldNameToVariableName(usernameField) << fieldNameToVariableName(passwordField)
              << fieldNameToEnumName(usernameField) << passwordField;
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
+    ret << QFileInfo(fileName).fileName();
+
+    fileName = dir.filePath(modelName.toLower() + "ext.h");
+    gen(fileName, MODELEXT_HEADER_FILE_TEMPLATE, QStringList() << modelName.toUpper());
+    ret << QFileInfo(fileName).fileName();
+
+    fileName = dir.filePath(modelName.toLower() + "ext.cpp");
+    gen(fileName, MODELEXT_IMPL_TEMPLATE, QStringList() << modelName.toLower());
     ret << QFileInfo(fileName).fileName();
     return ret;
 }
@@ -511,7 +550,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     }
 
     QStringList headerArgs;
-    headerArgs << modelName.toUpper() << modelName << setgetDecl << crtparams << getparams << getOptDecl;
+    headerArgs << modelName.toUpper() << modelName.toLower() << modelName << setgetDecl << crtparams << getparams << getOptDecl;
 
     // Creates a model implementation
     QString createImpl;
