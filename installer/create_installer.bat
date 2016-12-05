@@ -4,7 +4,7 @@
 :: Edit this line to run the batch file for Qt environment.
 ::
 
-set VERSION=1.13.0
+set VERSION=1.14.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set BASEDIR=%~dp0
 set SLNFILE=%BASEDIR%\treefrog-setup\treefrog-setup.sln
@@ -25,7 +25,7 @@ call :build_setup treefrog-%VERSION%-mingw-setup.exe
 
 :: MSVC2015
 ::call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-::call :build_msi "C:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\qtenv2.bat"  5.6
+::call :build_msi "C:\Qt\Qt5.6.2-msvc2015\5.6\msvc2015_64\bin\qtenv2.bat"  5.6
 ::call :build_msi "C:\Qt\Qt5.7.0\5.7\msvc2015_64\bin\qtenv2.bat"  5.7
 ::call :build_setup treefrog-%VERSION%-msvc2015_64-setup.exe
 
