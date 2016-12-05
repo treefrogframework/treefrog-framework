@@ -100,10 +100,6 @@ if not "%VCVARSOPT%" == "" (
   echo   set VCVARSBAT="%%VS140COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
   echo ^) else if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
   echo   set VCVARSBAT="%%VS120COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
-  echo ^) else if not "%%VS110COMNTOOLS%%" == "" ^(>> %TFENV%
-  echo   set VCVARSBAT="%%VS110COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
-  echo ^) else if not "%%VS100COMNTOOLS%%" == "" ^(>> %TFENV%
-  echo   set VCVARSBAT="%%VS100COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
   echo ^) else ^(>> %TFENV%
   echo   set VCVARSBAT="">> %TFENV%
   echo ^)>> %TFENV%
