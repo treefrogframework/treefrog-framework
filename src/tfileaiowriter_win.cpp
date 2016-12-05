@@ -14,8 +14,8 @@
 
 typedef struct
 {
-    char *aio_buf {nullptr};
-    int aio_nbytes {0};
+    char *aio_buf;
+    int aio_nbytes;
     OVERLAPPED aio_overlap;
 } aiobuf_t;
 
