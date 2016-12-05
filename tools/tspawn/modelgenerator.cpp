@@ -44,7 +44,7 @@
     "%4"                                                 \
     "    %3 &operator=(const %3 &other);\n"              \
     "\n"                                                 \
-    "    T_%1_EXTEND_FIELDS"                             \
+    "    T_%1_EXTEND_FIELDS\n"                           \
     "\n"                                                 \
     "    bool create() { return TAbstractModel::create(); }\n" \
     "    bool update() { return TAbstractModel::update(); }\n" \
@@ -173,7 +173,7 @@
     "%12"                                                \
     "    %3 &operator=(const %3 &other);\n"              \
     "\n"                                                 \
-    "    T_%1_EXTEND_FIELDS"                             \
+    "    T_%1_EXTEND_FIELDS\n"                           \
     "\n"                                                 \
     "    bool create() { return TAbstractModel::create(); }\n" \
     "    bool update() { return TAbstractModel::update(); }\n" \
@@ -207,7 +207,7 @@
     "\n"                                                    \
     "#define T_%1_EXTEND_FIELDS\n"                          \
     "\n"                                                    \
-    "#endif // %1_H\n"
+    "#endif // %1_EXTEND_H\n"
 
 #define MODELEXT_IMPL_TEMPLATE                                \
     "#include <TreeFrogModel>\n"                              \
