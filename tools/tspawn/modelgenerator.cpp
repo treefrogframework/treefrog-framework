@@ -428,12 +428,18 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
 
     fileName = dir.filePath(modelName.toLower() + "ext.h");
-    gen(fileName, MODELEXT_HEADER_FILE_TEMPLATE, QStringList() << modelName.toUpper());
-    ret << QFileInfo(fileName).fileName();
+    if (!QFile::exists(fileName))
+    {
+        gen(fileName, MODELEXT_HEADER_FILE_TEMPLATE, QStringList() << modelName.toUpper());
+        ret << QFileInfo(fileName).fileName();
+    }
 
     fileName = dir.filePath(modelName.toLower() + "ext.cpp");
-    gen(fileName, MODELEXT_IMPL_TEMPLATE, QStringList() << modelName.toLower());
-    ret << QFileInfo(fileName).fileName();
+    if (!QFile::exists(fileName))
+    {
+        gen(fileName, MODELEXT_IMPL_TEMPLATE, QStringList() << modelName.toLower());
+        ret << QFileInfo(fileName).fileName();
+    }
     return ret;
 }
 
@@ -458,12 +464,18 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
     ret << QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + "ext.h");
-    gen(fileName, MODELEXT_HEADER_FILE_TEMPLATE, QStringList() << modelName.toUpper());
-    ret << QFileInfo(fileName).fileName();
+    if (!QFile::exists(fileName))
+    {
+        gen(fileName, MODELEXT_HEADER_FILE_TEMPLATE, QStringList() << modelName.toUpper());
+        ret << QFileInfo(fileName).fileName();
+    }
 
     fileName = dir.filePath(modelName.toLower() + "ext.cpp");
-    gen(fileName, MODELEXT_IMPL_TEMPLATE, QStringList() << modelName.toLower());
-    ret << QFileInfo(fileName).fileName();
+    if (!QFile::exists(fileName))
+    {
+        gen(fileName, MODELEXT_IMPL_TEMPLATE, QStringList() << modelName.toLower());
+        ret << QFileInfo(fileName).fileName();
+    }
     return ret;
 }
 
