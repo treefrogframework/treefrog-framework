@@ -426,6 +426,7 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
+    ret << QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + "ext.h");
     if (!QFile::exists(fileName))
