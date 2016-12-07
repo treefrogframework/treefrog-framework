@@ -3,7 +3,6 @@
 ## 1.14.0
  - Modified to use QThreadStorage class instead of thread_local.
  - Modified the scaffold generater to generate better codes.
- - Modified url() and urla() so as to generate the url to search routing file.
  - Modified url() and urla() functions so as to generate the url, searching
    the routing file.
  - Added '#partial' tag in ERB.
