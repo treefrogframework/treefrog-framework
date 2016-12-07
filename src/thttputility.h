@@ -27,6 +27,7 @@ public:
     static QByteArray toMimeEncoded(const QString &input, const QByteArray &encoding = "UTF-8");
     static QByteArray toMimeEncoded(const QString &input, QTextCodec *codec);
     static QString fromMimeEncoded(const QByteArray &mime);
+    static QString fromCharSetEncoded(const QString &charset, const QByteArray &data);
     static QByteArray getResponseReasonPhrase(int statusCode);
     static QString trimmedQuotes(const QString &string);
     static QByteArray timeZone();

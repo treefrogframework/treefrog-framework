@@ -312,6 +312,17 @@ QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
 }
 
 /*!
+  Returns a decoded copy of the \a charset encoded array \a data.
+*/
+QString THttpUtility::fromCharSetEncoded(const QString &charset, const QByteArray &data)
+{
+    QTextCodec* codec = QTextCodec::codecForName(charset.toStdString().c_str());
+    if (!codec)
+        codec = QTextCodec::codecForName("UTF-8");
+    return codec->toUnicode(data);
+}
+
+/*!
   Returns a reason phrase of the HTTP status code \a statusCode.
 */
 QByteArray THttpUtility::getResponseReasonPhrase(int statusCode)
