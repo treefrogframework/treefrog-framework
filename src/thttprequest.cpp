@@ -33,7 +33,6 @@ public:
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
 
-
 static bool httpMethodOverride()
 {
     static int method = -1;
@@ -41,6 +40,14 @@ static bool httpMethodOverride()
         method = (int)Tf::appSettings()->value(Tf::EnableHttpMethodOverride, false).toBool();
     }
     return (bool)method;
+}
+
+static QString charset(const QString& ctype, const QString& defaultValue = "UTF-8")
+{
+    auto pos = ctype.toLower().indexOf("charset=");
+    if (pos < 0)
+        return defaultValue;
+    return ctype.right(ctype.length() - pos - 8);
 }
 
 
@@ -342,9 +349,10 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->multipartFormData = TMultipartFormData(body, boundary());
             d->formItems = d->multipartFormData.formItems();
 
-        } else if (ctype.startsWith("application/xml", Qt::CaseInsensitive)) {
+        } else if (ctype.startsWith("application/xml", Qt::CaseInsensitive) ||
+                   ctype.startsWith("text/xml", Qt::CaseInsensitive)) {
             static QString key("xml");
-            QString val = QString::fromUtf8(body.constData(), body.length());
+            QString val = THttpUtility::fromCharSetEncoded(charset(ctype), body);
             d->formItems.insertMulti(key, val);
             tSystemDebug("POST Hash << %s : %s", qPrintable(key), qPrintable(val));
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
