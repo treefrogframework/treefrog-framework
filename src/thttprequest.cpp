@@ -342,6 +342,11 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->multipartFormData = TMultipartFormData(body, boundary());
             d->formItems = d->multipartFormData.formItems();
 
+        } else if (ctype.startsWith("text/xml", Qt::CaseInsensitive)) {
+            static QString key("xml");
+            QString val = QString::fromUtf8(body.constData(), body.length());
+            d->formItems.insertMulti(key, val);
+            tSystemDebug("POST Hash << %s : %s", qPrintable(key), qPrintable(val));
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
 #if QT_VERSION >= 0x050000
             QJsonParseError error;
