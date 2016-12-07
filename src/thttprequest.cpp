@@ -342,7 +342,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->multipartFormData = TMultipartFormData(body, boundary());
             d->formItems = d->multipartFormData.formItems();
 
-        } else if (ctype.startsWith("text/xml", Qt::CaseInsensitive)) {
+        } else if (ctype.startsWith("application/xml", Qt::CaseInsensitive)) {
             static QString key("xml");
             QString val = QString::fromUtf8(body.constData(), body.length());
             d->formItems.insertMulti(key, val);
