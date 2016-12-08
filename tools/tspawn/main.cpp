@@ -41,6 +41,7 @@ enum SubCommand {
     Model,
     Helper,
     UserModel,
+    MongoUserModel,
     SqlObject,
     //UpdateModel,
     MongoScaffold,
@@ -79,6 +80,8 @@ public:
         insert("ms", MongoScaffold);
         // insert("updatemodel", UpdateModel);
         // insert("um", UpdateModel);
+        insert("mongousermodel", MongoUserModel);
+        insert("mu", MongoUserModel);
         insert("mongomodel", MongoModel);
         insert("mm", MongoModel);
         insert("websocket", WebSocketEndpoint);
@@ -204,6 +207,7 @@ static void usage()
            "  usermodel (u)   <table-name> [username password [model-name]]\n" \
            "  sqlobject (o)   <table-name> [model-name]\n"         \
            "  mongoscaffold (ms) <model-name>\n"                   \
+           "  mongousermodel (mu) <model-name> [username password]\n"                      \
            "  mongomodel (mm) <model-name>\n"                      \
            "  websocket (w)   <endpoint-name>\n"                   \
            "  validator (v)   <name>\n"                            \
@@ -637,6 +641,11 @@ int main(int argc, char *argv[])
 
         case UserModel: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(5), args.value(2), args.mid(3, 2));
+            modelgen.generate(D_MODELS, true);
+            break; }
+
+        case MongoUserModel: {
+            ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2), "", args.mid(3, 2));
             modelgen.generate(D_MODELS, true);
             break; }
 
