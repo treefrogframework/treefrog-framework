@@ -39,7 +39,7 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri = TCriteria(), int
 
 
 template <class T, class S>
-inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri, int limit = 0, int offset = 0)
+inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri = TCriteria(), int limit = 0, int offset = 0)
 {
     TMongoODMapper<S> mapper;
 
