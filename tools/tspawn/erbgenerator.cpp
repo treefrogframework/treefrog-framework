@@ -22,9 +22,9 @@
     "</head>\n"                                                         \
     "<body>\n"                                                          \
     "\n"                                                                \
-    "<h1>Listing %2</h1>\n"                                             \
+    "<h1><%= tr(\"Listing %2\") %></h1>\n"                                             \
     "\n"                                                                \
-    "<%== linkTo(\"New entry\", urla(\"create\")) %><br />\n"           \
+    "<%== linkTo(tr(\"New entry\"), urla(\"create\")) %><br />\n"           \
     "<br />\n"                                                          \
     "<table border=\"1\" cellpadding=\"5\" style=\"border: 1px #d0d0d0 solid; border-collapse: collapse;\">\n" \
     "  <tr>\n"                                                          \
@@ -36,8 +36,8 @@
     "%6"                                                                \
     "    <td>\n"                                                        \
     "      <%== linkTo(\"Show\", urla(\"show\", i.%7())) %>\n"          \
-    "      <%== linkTo(\"Edit\", urla(\"save\", i.%7())) %>\n"          \
-    "      <%== linkTo(\"Remove\", urla(\"remove\", i.%7()), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
+    "      <%== linkTo(tr(\"Edit\"), urla(\"save\", i.%7())) %>\n"          \
+    "      <%== linkTo(tr(\"Remove\"), urla(\"remove\", i.%7()), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
     "    </td>\n"                                                       \
     "  </tr>\n"                                                         \
     "<% } %>\n"                                                         \
@@ -59,11 +59,11 @@
     "<p style=\"color: red\"><%=$ error %></p>\n"                       \
     "<p style=\"color: green\"><%=$ notice %></p>\n"                    \
     "\n"                                                                \
-    "<h1>Showing %4</h1>\n"                                             \
+    "<h1><%= tr(\"Showing %4\") %></h1>\n"                                             \
     "%5"                                                                \
     "\n"                                                                \
-    "<%== linkTo(\"Edit\", urla(\"save\", %3.%6())) %> |\n"             \
-    "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
+    "<%== linkTo(tr(\"Edit\"), urla(\"save\", %3.%6())) %> |\n"             \
+    "<%== linkTo(tr(\"Back\"), urla(\"index\")) %>\n"                       \
     "\n"                                                                \
     "</body>\n"                                                         \
     "</html>\n"
@@ -82,16 +82,16 @@
     "<p style=\"color: red\"><%=$ error %></p>\n"                       \
     "<p style=\"color: green\"><%=$ notice %></p>\n"                    \
     "\n"                                                                \
-    "<h1>New %3</h1>\n"                                                 \
+    "<h1><%= tr(\"New %3\") %></h1>\n"                                                 \
     "\n"                                                                \
     "<%== formTag(urla(\"create\"), Tf::Post) %>\n"                     \
     "%4"                                                                \
     "  <p>\n"                                                           \
-    "    <input type=\"submit\" value=\"Create\" />\n"                  \
+    "    <input type=\"submit\" value=\"<%= tr(\"Create\") %>\" />\n"                  \
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \
-    "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
+    "<%== linkTo(tr(\"Back\"), urla(\"index\")) %>\n"                       \
     "\n"                                                                \
     "</body>\n"                                                         \
     "</html>\n"
@@ -109,7 +109,7 @@
     "<p style=\"color: red\"><%=$ error %></p>\n"                       \
     "<p style=\"color: green\"><%=$ notice %></p>\n"                    \
     "\n"                                                                \
-    "<h1>Editing %3</h1>\n"                                             \
+    "<h1><%= tr(\"Editing %3\") %></h1>\n"                                             \
     "\n"                                                                \
     "<%== formTag(urla(\"save\", %2[\"%4\"]), Tf::Post) %>\n"           \
     "%6"                                                                \
@@ -118,8 +118,8 @@
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \
-    "<%== linkTo(\"Show\", urla(\"show\", %2[\"%4\"])) %> |\n"          \
-    "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
+    "<%== linkTo(tr(\"Show\"), urla(\"show\", %2[\"%4\"])) %> |\n"          \
+    "<%== linkTo(tr(\"Back\"), urla(\"index\")) %>\n"                       \
     "</body>\n"                                                         \
     "</html>\n"
 
@@ -179,6 +179,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
         const QPair<QString, QVariant::Type> &p = fieldList[i];
 
         QString icap = fieldNameToCaption(p.first);
+        icap = QString("<%= tr(\"%1\") %>").arg(icap);
         QString ivar = fieldNameToVariableName(p.first);
 
         showitems += "<dt>";

@@ -73,11 +73,11 @@
     "        auto model = %2::create(%3);\n"                   \
     "\n"                                                       \
     "        if (!model.isNull()) {\n"                         \
-    "            QString notice = \"Created successfully.\";\n" \
+    "            QString notice = tr(\"Created successfully.\");\n" \
     "            tflash(notice);\n"                             \
     "            redirect(urla(\"show\", model.id()));\n"       \
     "        } else {\n"                                        \
-    "            QString error = \"Failed to create.\";\n"      \
+    "            QString error = tr(\"Failed to create.\");\n"      \
     "            texport(error);\n"                             \
     "            texport(%3);\n"                                \
     "            render();\n"                                   \
@@ -109,7 +109,7 @@
     "        auto model = %2::get(%4%7);\n"                     \
     "        \n"                                                \
     "        if (model.isNull()) {\n"                           \
-    "            error = \"Original data not found. It may have been updated/removed by another transaction.\";\n" \
+    "            error = tr(\"Original data not found. It may have been updated/removed by another transaction.\");\n" \
     "            tflash(error);\n"                                      \
     "            redirect(urla(\"save\", id));\n"                       \
     "            break;\n"                                              \
@@ -118,11 +118,11 @@
     "        auto %3 = httpRequest().formItems(\"%3\");\n"              \
     "        model.setProperties(%3);\n"                                \
     "        if (model.save()) {\n"                                     \
-    "            QString notice = \"Updated successfully.\";\n"         \
+    "            QString notice = tr(\"Updated successfully.\");\n"         \
     "            tflash(notice);\n"                                     \
     "            redirect(urla(\"show\", model.%8()));\n"               \
     "        } else {\n"                                                \
-    "            error = \"Failed to update.\";\n"                      \
+    "            error = tr(\"Failed to update.\");\n"                      \
     "            texport(error);\n"                                     \
     "            texport(%3);\n"                                        \
     "            render();\n"                                           \
