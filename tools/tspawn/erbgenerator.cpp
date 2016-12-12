@@ -37,7 +37,7 @@
     "    <td>\n"                                                        \
     "      <%== linkTo(\"Show\", urla(\"show\", i.%7())) %>\n"          \
     "      <%== linkTo(tr(\"Edit\"), urla(\"save\", i.%7())) %>\n"          \
-    "      <%== linkTo(tr(\"Remove\"), urla(\"remove\", i.%7()), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
+    "      <%== linkTo(tr(\"Remove\"), urla(\"remove\", i.%7()), Tf::Post, \"confirm('\" + tr(\"Are you sure?\") + \"')\") %>\n" \
     "    </td>\n"                                                       \
     "  </tr>\n"                                                         \
     "<% } %>\n"                                                         \
