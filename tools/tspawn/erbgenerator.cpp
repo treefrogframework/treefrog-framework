@@ -114,7 +114,7 @@
     "<%== formTag(urla(\"save\", %2[\"%4\"]), Tf::Post) %>\n"           \
     "%6"                                                                \
     "  <p>\n"                                                           \
-    "    <input type=\"submit\" value=\"Update\" />\n"                  \
+    "    <input type=\"submit\" value=\"<%= tr(\"Update\") %>\" />\n"                  \
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \
