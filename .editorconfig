@@ -26,3 +26,6 @@ insert_final_newline = false
 [*.ini]
 end_of_line = crlf
 
+[*.bat]
+end_of_line = crlf
+

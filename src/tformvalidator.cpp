@@ -443,11 +443,21 @@ void TFormValidator::removeRule(const QString &key, Tf::ValidationRule rule)
 
 /*!
   Sets the message of custom validation error to \a errorMessage.
+  [obsolete]
 */
 void TFormValidator::setValidationError(const QString &errorMessage)
 {
-    errors << qMakePair(QString("_CustomValidationError"), (int)Tf::Custom);
-    rules.append(RuleEntry("_CustomValidationError", Tf::Custom, "dummy", errorMessage));
+    setValidationError(QLatin1String("_CustomValidationError"), errorMessage);
+}
+
+/*!
+  Sets the message of custom validation error to \a errorMessage for the
+  key \a key.
+*/
+void TFormValidator::setValidationError(const QString &key, const QString &errorMessage)
+{
+    errors << qMakePair(key, (int)Tf::Custom);
+    rules.append(RuleEntry(key, Tf::Custom, "dummy", errorMessage));
 }
 
 /*!
