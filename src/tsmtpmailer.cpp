@@ -91,6 +91,12 @@ void TSmtpMailer::setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 
 }
 
 
+QString TSmtpMailer::lastServerResponse() const
+{
+    return QString(lastResponse);
+}
+
+
 bool TSmtpMailer::send(const TMailMessage &message)
 {
     T_TRACEFUNC("");
@@ -174,32 +180,32 @@ bool TSmtpMailer::send()
 
     if (authEnable) {
         if (!cmdAuth()) {
-            tSystemError("SMTP: User Authentication Failed: username:%s", userName.data());
+            tSystemError("SMTP: User Authentication Failed: username:%s : [%s]", userName.data(), qPrintable(lastServerResponse()));
             cmdQuit();
             return false;
         }
     }
 
     if (!cmdRset()) {
-        tSystemError("SMTP: RSET Command Failed");
+        tSystemError("SMTP: RSET Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
     if (!cmdMail(mailMessage.fromAddress())) {
-        tSystemError("SMTP: MAIL Command Failed");
+        tSystemError("SMTP: MAIL Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
     if (!cmdRcpt(mailMessage.recipients())) {
-        tSystemError("SMTP: RCPT Command Failed");
+        tSystemError("SMTP: RCPT Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
     if (!cmdData(mailMessage.toByteArray())) {
-        tSystemError("SMTP: DATA Command Failed");
+        tSystemError("SMTP: DATA Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
     }
@@ -372,6 +378,7 @@ bool TSmtpMailer::cmdQuit()
 
 int TSmtpMailer::cmd(const QByteArray &command, QList<QByteArray> *reply)
 {
+    lastResponse.clear();
     if (!write(command))
         return -1;
 
@@ -399,8 +406,9 @@ int TSmtpMailer::read(QList<QByteArray> *reply)
         reply->clear();
 
     int code = 0;
+    QByteArray rcv;
     for (;;) {
-        QByteArray rcv = socket->readLine().trimmed();
+        rcv = socket->readLine().trimmed();
         if (rcv.isEmpty()) {
             if (socket->waitForReadyRead(5000)) {
                 continue;
@@ -425,6 +433,7 @@ int TSmtpMailer::read(QList<QByteArray> *reply)
         if (code > 0 && rcv.at(3) == ' ')
             break;
     }
+    lastResponse = rcv;
     return code;
 }
 

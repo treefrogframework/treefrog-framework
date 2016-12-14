@@ -34,6 +34,7 @@ public:
     void setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
+    QString lastServerResponse() const;
 
     bool send(const TMailMessage &message);
     void sendLater(const TMailMessage &message);
@@ -74,6 +75,7 @@ private:
     QByteArray userName;
     QByteArray password;
     TPopMailer *pop;
+    QByteArray lastResponse;
 };
 
 
