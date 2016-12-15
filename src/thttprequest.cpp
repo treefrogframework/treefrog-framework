@@ -353,8 +353,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 #else
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
 #endif
-        } else {
-            // 'application/x-www-form-urlencoded'
+        } else if (ctype.startsWith("application/x-www-form-urlencoded", Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
                 const QList<QByteArray> formdata = body.split('&');
                 for (auto &frm : formdata) {
@@ -368,6 +367,8 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                     }
                 }
             }
+        } else {
+            tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
         }
         /* FALL THROUGH */ }
 
