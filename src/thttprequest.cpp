@@ -408,8 +408,12 @@ QByteArray THttpRequest::boundary() const
         for (auto &bnd : lst) {
             QString string = bnd.trimmed();
             if (string.startsWith("boundary=", Qt::CaseInsensitive)) {
-                boundary  = "--";
-                boundary += string.mid(9).toLatin1();
+                boundary = string.mid(9).toLatin1();
+                // strip optional surrounding quotes (RFC 2046 and 7578)
+                if (boundary.startsWith('"') && boundary.endsWith('"')) {
+                    boundary = boundary.mid(1, boundary.size() - 2);
+                }
+                boundary.prepend("--");
                 break;
             }
         }
