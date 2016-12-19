@@ -49,7 +49,7 @@ void TSendmailMailer::sendLater(const TMailMessage &message)
     T_TRACEFUNC("");
 
     mailMessage = message;
-    QTimer::singleShot(0, this, SLOT(sendAndDeleteLater()));
+    QTimer::singleShot(1, this, SLOT(sendAndDeleteLater()));
 }
 
 

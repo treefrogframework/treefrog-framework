@@ -9,7 +9,6 @@
 #include <QHostAddress>
 #include <QDateTime>
 #include <QTimer>
-#include <QMutex>
 #include <QCoreApplication>
 #include <TCryptMac>
 #include <TPopMailer>
@@ -25,8 +24,6 @@
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 //#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
-static QMutex sendMutex;
-
 /*!
   \class TSmtpMailer
   \brief The TSmtpMailer class provides a simple functionality to send
@@ -34,13 +31,13 @@ static QMutex sendMutex;
 */
 
 TSmtpMailer::TSmtpMailer(QObject *parent)
-    : QObject(parent), socket(new QSslSocket), smtpPort(0), authEnable(false),
+    : QObject(parent), socket(new QSslSocket()), sendMutex(), smtpPort(0), authEnable(false),
       tlsEnable(false), tlsAvailable(false), pop(nullptr)
 { }
 
 
 TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QSslSocket), smtpHostName(hostName), smtpPort(port),
+    : QObject(parent), socket(new QSslSocket()), sendMutex(), smtpHostName(hostName), smtpPort(port),
       authEnable(false), tlsEnable(false), tlsAvailable(false), pop(nullptr)
 { }
 
@@ -56,6 +53,16 @@ TSmtpMailer::~TSmtpMailer()
         delete pop;
     }
     delete socket;
+}
+
+
+void TSmtpMailer::moveToThread(QThread *targetThread)
+{
+    QObject::moveToThread(targetThread);
+    socket->moveToThread(targetThread);
+    if (pop) {
+        pop->moveToThread(targetThread);
+    }
 }
 
 
@@ -113,14 +120,13 @@ void TSmtpMailer::sendLater(const TMailMessage &message)
     T_TRACEFUNC("");
 
     mailMessage = message;
-    QTimer::singleShot(0, this, SLOT(sendAndDeleteLater()));
+    QTimer::singleShot(1, this, SLOT(sendAndDeleteLater()));
 }
 
 
 void TSmtpMailer::sendAndDeleteLater()
 {
     T_TRACEFUNC("");
-
     send();
     mailMessage.clear();
     deleteLater();
@@ -129,7 +135,7 @@ void TSmtpMailer::sendAndDeleteLater()
 
 bool TSmtpMailer::send()
 {
-    QMutexLocker locker(&sendMutex); // Global lock for load reduction of mail server
+    QMutexLocker locker(&sendMutex); // Lock for load reduction of mail server
 
     if (pop) {
         // POP before SMTP

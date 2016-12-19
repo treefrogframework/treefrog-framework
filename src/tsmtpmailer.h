@@ -2,6 +2,7 @@
 #define TSMTPMAILER_H
 
 #include <QObject>
+#include <QMutex>
 #include <QStringList>
 #include <QByteArray>
 #include <TMailMessage>
@@ -36,6 +37,7 @@ public:
     void setPassword(const QByteArray &password);
     QString lastServerResponse() const;
 
+    void moveToThread(QThread *targetThread);
     bool send(const TMailMessage &message);
     void sendLater(const TMailMessage &message);
 
@@ -65,6 +67,7 @@ private:
     T_DISABLE_MOVE(TSmtpMailer)
 
     QSslSocket *socket;
+    QMutex sendMutex;
     QString smtpHostName;
     quint16 smtpPort;
     TMailMessage mailMessage;
