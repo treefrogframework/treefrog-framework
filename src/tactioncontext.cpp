@@ -33,8 +33,8 @@ TActionContext::TActionContext()
     : TDatabaseContext(),
       stopped(false),
       socketDesc(0),
-      currController(0),
-      httpReq(0)
+      currController(nullptr),
+      httpReq(nullptr)
 { }
 
 

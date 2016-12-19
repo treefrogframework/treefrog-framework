@@ -17,6 +17,12 @@
 #include "tepoll.h"
 #include "tepollsocket.h"
 #include "tepollhttpsocket.h"
+#include "tsqldatabasepool.h"
+#include "tkvsdatabasepool.h"
+#include "turlroute.h"
+#include "tsystemglobal.h"
+#include "tsystembus.h"
+#include "tpublisher.h"
 
 const int SEND_BUF_SIZE = 16 * 1024;
 const int RECV_BUF_SIZE = 128 * 1024;
@@ -94,13 +100,30 @@ TMultiplexingServer::~TMultiplexingServer()
 { }
 
 
-bool TMultiplexingServer::start()
+bool TMultiplexingServer::start(bool debugMode)
 {
     if (isRunning())
         return true;
 
     // Loads libs
-    TApplicationServerBase::loadLibraries();
+    bool res = loadLibraries();
+    if (!res) {
+        if (debugMode) {
+           tSystemError("Failed to load application libraries.");
+            return false;
+        } else {
+            tSystemWarn("Failed to load application libraries.");
+        }
+    }
+
+    // instantiate
+    if (!debugMode) {
+        TSystemBus::instantiate();
+        TPublisher::instantiate();
+    }
+    TUrlRoute::instantiate();
+    TSqlDatabasePool::instantiate();
+    TKvsDatabasePool::instantiate();
 
     TStaticInitializeThread::exec();
     QThread::start();
