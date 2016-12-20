@@ -35,11 +35,12 @@ public:
 
     virtual bool validate(const QVariantMap &map);
     bool hasValidationError() const;
+    bool isValidationError(const QString &key) const;
     QStringList validationErrorKeys() const;
-    Tf::ValidationRule errorRule(const QString &key) const;
     QString errorMessage(const QString &key) const;
     QStringList errorMessages() const;
     QString value(const QString &key, const QString &defaultValue = QString()) const;
+    Tf::ValidationRule errorRule(const QString &key) const;
 
 protected:
     class RuleEntry

@@ -373,11 +373,25 @@ bool TFormValidator::validate(const QVariantMap &map)
 }
 
 /*!
-  Returns true if an error is set, otherwise false.
+  Returns false if validation error is not set, otherwise true.
  */
 bool TFormValidator::hasValidationError() const
 {
     return !errors.isEmpty();
+}
+
+/*!
+  Returns true if an validation error is set for the key \a key,
+  otherwise false.
+ */
+bool TFormValidator::isValidationError(const QString &key) const
+{
+    for (auto &err : errors) {
+        if (err.first == key) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /*!
