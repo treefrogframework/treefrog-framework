@@ -12,7 +12,9 @@ class T_CORE_EXPORT TFormValidator
 {
 public:
     TFormValidator() { }
+    TFormValidator(const TFormValidator &other);
     virtual ~TFormValidator() { }
+    TFormValidator &operator=(const TFormValidator &other);
 
     void setRule(const QString &key, Tf::ValidationRule rule, bool enable = true, const QString &errorMessage = QString());
     void setRule(const QString &key, Tf::ValidationRule rule, const QString &errorMessage);
@@ -32,10 +34,12 @@ public:
     QString dateTimeFormat() const;
 
     virtual bool validate(const QVariantMap &map);
+    bool hasValidationError() const;
     QStringList validationErrorKeys() const;
     Tf::ValidationRule errorRule(const QString &key) const;
     QString errorMessage(const QString &key) const;
     QStringList errorMessages() const;
+    QString value(const QString &key, const QString &defaultValue = QString()) const;
 
 protected:
     class RuleEntry
@@ -64,6 +68,7 @@ private:
     QString dateFmt;
     QString timeFmt;
     QString dateTimeFmt;
+    QVariantMap values;
 };
 
 

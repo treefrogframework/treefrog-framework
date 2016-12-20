@@ -23,6 +23,8 @@
     "    %2Validator();\n"                                              \
     "};\n"                                                              \
     "\n"                                                                \
+    "Q_DECLARE_METATYPE(%2Validator)\n"                                 \
+    "\n"                                                                \
     "#endif // %1VALIDATOR_H\n"
 
 #define VALIDATOR_IMPL_TEMPLATE                         \

@@ -50,6 +50,28 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx,
 */
 
 /*!
+  Copy constructor.
+ */
+TFormValidator::TFormValidator(const TFormValidator &other)
+    : rules(other.rules), errors(other.errors), dateFmt(other.dateFmt), timeFmt(other.timeFmt),
+      dateTimeFmt(other.dateTimeFmt), values(other.values)
+{ }
+
+/*!
+  Assignment operator.
+ */
+TFormValidator &TFormValidator::operator=(const TFormValidator &other)
+{
+    rules = other.rules;
+    errors = other.errors;
+    dateFmt = other.dateFmt;
+    timeFmt = other.timeFmt;
+    dateTimeFmt = other.dateTimeFmt;
+    values = other.values;
+    return *this;
+}
+
+/*!
   Returns the date format specified by the validation settings file.
 */
 QString TFormValidator::dateFormat() const
@@ -213,6 +235,7 @@ void TFormValidator::setPatternRule(const QString &key, const QRegExp &rx, const
  */
 bool TFormValidator::validate(const QVariantMap &map)
 {
+    values = map;
     errors.clear();
 
     // Add default rules, Tf::Required.
@@ -350,6 +373,14 @@ bool TFormValidator::validate(const QVariantMap &map)
 }
 
 /*!
+  Returns true if an error is set, otherwise false.
+ */
+bool TFormValidator::hasValidationError() const
+{
+    return !errors.isEmpty();
+}
+
+/*!
   Returns a list of all keys of validation errors.
   This function must be call after calling \a validate() function.
  */
@@ -411,6 +442,14 @@ QStringList TFormValidator::errorMessages() const
             msgs.prepend(m);
     }
     return msgs;
+}
+
+/*!
+  Returns the value associated with the key \a key.
+ */
+QString TFormValidator::value(const QString &key, const QString &defaultValue) const
+{
+    return values.value(key, defaultValue).toString();
 }
 
 /*!
