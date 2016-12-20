@@ -41,6 +41,7 @@ public:
     QStringList errorMessages() const;
     QString value(const QString &key, const QString &defaultValue = QString()) const;
     Tf::ValidationRule errorRule(const QString &key) const;
+    void setValidationError(const QString &key, const QString &errorMessage);
 
 protected:
     class RuleEntry
@@ -60,7 +61,6 @@ protected:
     bool containsRule(const QString &key, Tf::ValidationRule rule) const;
     void removeRule(const QString &key, Tf::ValidationRule rule);
     void setValidationError(const QString &errorMessage);
-    void setValidationError(const QString &key, const QString &errorMessage);
 
     QList<RuleEntry> rules;
     QList<QPair<QString, int>> errors;
