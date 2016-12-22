@@ -191,11 +191,6 @@ inline QString TActionController::flash(const QString &name) const
     return flashVars.value(name).toString();
 }
 
-inline void TActionController::setFlash(const QString &name, const QVariant &value)
-{
-    flashVars.insert(name, value);
-}
-
 inline QByteArray TActionController::contentType() const
 {
     return response.header().contentType();

@@ -10,6 +10,7 @@
 #include <QDataStream>
 #include <TWebApplication>
 #include "tsessionfilestore.h"
+#include "tsystemglobal.h"
 
 #define SESSION_DIR_NAME "session"
 
@@ -25,12 +26,30 @@ bool TSessionFileStore::store(TSession &session)
         dir.mkpath(".");
     }
 
+#ifndef TF_NO_DEBUG
+    {
+        QByteArray badummy;
+        QDataStream dsdmy(&badummy, QIODevice::ReadWrite);
+        dsdmy << *static_cast<const QVariantMap *>(&session);
+
+        TSession dummy;
+        dsdmy.device()->seek(0);
+        dsdmy >> *static_cast<QVariantMap *>(&dummy);
+        if (dsdmy.status() != QDataStream::Ok) {
+            tSystemError("Failed to store a session into the cookie store. Must set objects that can be serialized.");
+        }
+    }
+#endif
+
     bool res = false;
     QFile file(sessionDirPath() + session.id());
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         QDataStream ds(&file);
         ds << *static_cast<const QVariantMap *>(&session);
         res = (ds.status() == QDataStream::Ok);
+        if (!res) {
+            tSystemError("Failed to store session. Must set objects that can be serialized.");
+        }
     }
     return res;
 }
@@ -48,8 +67,12 @@ TSession TSessionFileStore::find(const QByteArray &id)
             QDataStream ds(&file);
             TSession result(id);
             ds >> *static_cast<QVariantMap *>(&result);
-            if (ds.status() == QDataStream::Ok)
+
+            if (ds.status() == QDataStream::Ok) {
                 return result;
+            } else {
+                tSystemError("Failed to load a session from the file store.");
+            }
         }
     }
     return TSession();

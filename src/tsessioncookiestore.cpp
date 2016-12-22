@@ -22,9 +22,29 @@ bool TSessionCookieStore::store(TSession &session)
     if (session.isEmpty())
         return true;
 
+#ifndef TF_NO_DEBUG
+    {
+        QByteArray badummy;
+        QDataStream dsdmy(&badummy, QIODevice::ReadWrite);
+        dsdmy << *static_cast<const QVariantMap *>(&session);
+
+        TSession dummy;
+        dsdmy.device()->seek(0);
+        dsdmy >> *static_cast<QVariantMap *>(&dummy);
+        if (dsdmy.status() != QDataStream::Ok) {
+            tSystemError("Failed to store a session into the cookie store. Must set objects that can be serialized.");
+        }
+    }
+#endif
+
     QByteArray ba;
     QDataStream ds(&ba, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
+    if (ds.status() != QDataStream::Ok) {
+        tSystemError("Failed to store session. Must set objects that can be serialized.");
+        return false;
+    }
+
     QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
                                                  QCryptographicHash::Sha1);
     session.sessionId = ba.toHex() + "_" + digest.toHex();
@@ -35,9 +55,9 @@ bool TSessionCookieStore::store(TSession &session)
 TSession TSessionCookieStore::find(const QByteArray &id)
 {
     TSession session;
-    if (id.isEmpty())
+    if (id.isEmpty()) {
         return session;
-
+    }
     QList<QByteArray> balst = id.split('_');
     if (balst.count() == 2 && !balst.value(0).isEmpty() && !balst.value(1).isEmpty()) {
         QByteArray ba = QByteArray::fromHex(balst.value(0));
@@ -54,7 +74,7 @@ TSession TSessionCookieStore::find(const QByteArray &id)
         ds >> *static_cast<QVariantMap *>(&session);
 
         if (ds.status() != QDataStream::Ok) {
-            tSystemError("Unable to load a session from the cookie store.");
+            tSystemError("Failed to load a session from the cookie store.");
             session.clear();
         }
     }

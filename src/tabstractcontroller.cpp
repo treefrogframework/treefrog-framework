@@ -7,6 +7,7 @@
 
 #include <TAbstractController>
 #include <TFormValidator>
+#include "tsystemglobal.h"
 
 /*!
   \class TAbstractController
@@ -26,6 +27,11 @@ TAbstractController::TAbstractController()
 */
 void TAbstractController::exportVariant(const QString &name, const QVariant &value, bool overwrite)
 {
+    if (!value.isValid()) {
+        tSystemWarn("An invalid QVariant object for exportVariant(), name:%s", qPrintable(name));
+        return;
+    }
+
     if (overwrite || !exportVars.contains(name)) {
         exportVars.insert(name, value);
     }

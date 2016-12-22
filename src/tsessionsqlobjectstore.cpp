@@ -25,8 +25,28 @@ bool TSessionSqlObjectStore::store(TSession &session)
     TCriteria cri(TSessionObject::Id, TSql::Equal, session.id());
     TSessionObject so = mapper.findFirst(cri);
 
+#ifndef TF_NO_DEBUG
+    {
+        QByteArray badummy;
+        QDataStream dsdmy(&badummy, QIODevice::ReadWrite);
+        dsdmy << *static_cast<const QVariantMap *>(&session);
+
+        TSession dummy;
+        dsdmy.device()->seek(0);
+        dsdmy >> *static_cast<QVariantMap *>(&dummy);
+        if (dsdmy.status() != QDataStream::Ok) {
+            tSystemError("Failed to store a session into the cookie store. Must set objects that can be serialized.");
+        }
+    }
+#endif
+
     QDataStream ds(&so.data, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
+
+    if (ds.status() != QDataStream::Ok) {
+        tSystemError("Failed to store session. Must set objects that can be serialized.");
+        return false;
+    }
 
     if (so.isEmpty()) {
         so.id = session.id();
@@ -51,6 +71,10 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     TSession result(id);
     QDataStream ds(&sess.data, QIODevice::ReadOnly);
     ds >> *static_cast<QVariantMap *>(&result);
+
+    if (ds.status() != QDataStream::Ok) {
+        tSystemError("Failed to load a session from the sqlobject store.");
+    }
     return result;
 }
 

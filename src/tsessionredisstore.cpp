@@ -23,6 +23,21 @@ bool TSessionRedisStore::store(TSession &session)
     QDataStream ds(&data, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
 
+#ifndef TF_NO_DEBUG
+    {
+        QByteArray badummy;
+        QDataStream dsdmy(&badummy, QIODevice::ReadWrite);
+        dsdmy << *static_cast<const QVariantMap *>(&session);
+
+        TSession dummy;
+        dsdmy.device()->seek(0);
+        dsdmy >> *static_cast<QVariantMap *>(&dummy);
+        if (dsdmy.status() != QDataStream::Ok) {
+            tSystemError("Failed to store a session into the cookie store. Must set objects that can be serialized.");
+        }
+    }
+#endif
+
     TRedis redis;
     tSystemDebug("TSessionRedisStore::store  id:%s", session.id().data());
     return redis.setEx('_' + session.id(), data, lifeTimeSecs());
@@ -41,6 +56,10 @@ TSession TSessionRedisStore::find(const QByteArray &id)
     QDataStream ds(data);
     TSession session(id);
     ds >> *static_cast<QVariantMap *>(&session);
+
+    if (ds.status() != QDataStream::Ok) {
+        tSystemError("Failed to load a session from the redis store.");
+    }
     return session;
 }
 
