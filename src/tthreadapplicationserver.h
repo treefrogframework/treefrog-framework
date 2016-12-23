@@ -46,6 +46,7 @@ public:
     {
         TStaticInitializeThread *initializer = new TStaticInitializeThread();
         initializer->start();
+        QThread::yieldCurrentThread();  // needed to avoid deadlock on win
         initializer->wait();
         delete initializer;
 
@@ -54,7 +55,7 @@ public:
 protected:
     TStaticInitializeThread() : TActionThread(0) { }
 
-    void run()
+    void run() override
     {
         TApplicationServerBase::invokeStaticInitialize();
     }
@@ -75,7 +76,7 @@ public:
 protected:
     TStaticReleaseThread() : TActionThread(0) { }
 
-    void run()
+    void run() override
     {
         TApplicationServerBase::invokeStaticRelease();
     }

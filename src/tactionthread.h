@@ -23,10 +23,10 @@ public:
     static QList<THttpRequest> readRequest(THttpSocket *socket);
 
 protected:
-    void run();
-    void emitError(int socketError);
-    qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
-    void closeHttpSocket();
+    void run() override;
+    void emitError(int socketError) override;
+    qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
+    void closeHttpSocket() override;
     bool handshakeForWebSocket(const THttpRequestHeader &header);
 
 signals:

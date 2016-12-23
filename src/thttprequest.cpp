@@ -353,8 +353,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 #else
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
 #endif
-        } else {
-            // 'application/x-www-form-urlencoded'
+        } else if (ctype.startsWith("application/x-www-form-urlencoded", Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
                 const QList<QByteArray> formdata = body.split('&');
                 for (auto &frm : formdata) {
@@ -368,6 +367,8 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                     }
                 }
             }
+        } else {
+            tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
         }
         /* FALL THROUGH */ }
 
@@ -408,8 +409,12 @@ QByteArray THttpRequest::boundary() const
         for (auto &bnd : lst) {
             QString string = bnd.trimmed();
             if (string.startsWith("boundary=", Qt::CaseInsensitive)) {
-                boundary  = "--";
-                boundary += string.mid(9).toLatin1();
+                boundary = string.mid(9).toLatin1();
+                // strip optional surrounding quotes (RFC 2046 and 7578)
+                if (boundary.startsWith('"') && boundary.endsWith('"')) {
+                    boundary = boundary.mid(1, boundary.size() - 2);
+                }
+                boundary.prepend("--");
                 break;
             }
         }
