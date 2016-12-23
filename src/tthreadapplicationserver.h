@@ -55,7 +55,7 @@ public:
 protected:
     TStaticInitializeThread() : TActionThread(0) { }
 
-    void run()
+    void run() override
     {
         TApplicationServerBase::invokeStaticInitialize();
     }
@@ -76,7 +76,7 @@ public:
 protected:
     TStaticReleaseThread() : TActionThread(0) { }
 
-    void run()
+    void run() override
     {
         TApplicationServerBase::invokeStaticRelease();
     }
