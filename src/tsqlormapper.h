@@ -60,6 +60,34 @@ public:
     int updateAll(const TCriteria &cri, const QMap<int, QVariant> &values);
     int removeAll(const TCriteria &cri = TCriteria());
 
+    class ConstIterator;
+    inline ConstIterator begin() const { return ConstIterator(this, 0); }
+    inline ConstIterator end() const { return ConstIterator(this, rowCount()); }
+
+    /*!
+      Const iterator
+     */
+    class ConstIterator {
+    public:
+        const TSqlORMapper<T> *m {nullptr};
+        int it {0};
+
+        inline ConstIterator() {}
+        inline ConstIterator(const ConstIterator &o) : m(o.m), it(o.it) {}
+        inline ConstIterator &operator=(const ConstIterator &o) { m = o.m; it = o.it; return *this; }
+        inline const T operator*() const { return m->value(it); }
+        inline bool operator==(const ConstIterator &o) const { return m == o.m && it == o.it; }
+        inline bool operator!=(const ConstIterator &o) const { return m != o.m || it != o.it; }
+        inline ConstIterator &operator++() { it = qMin(it + 1, m->rowCount()); return *this; }
+        inline ConstIterator operator++(int) { int i = it; it = qMin(it + 1, m->rowCount()); return ConstIterator(m, i); }
+        inline ConstIterator &operator--() { --it; return *this; }
+        inline ConstIterator operator--(int) { int i = it++; return ConstIterator(m, i); }
+
+    private:
+        inline ConstIterator(const TSqlORMapper<T> *mapper, int i) : m(mapper), it(i) {}
+        friend class TSqlORMapper;
+    };
+
 protected:
     void setFilter(const QString &filter);
     QString orderBy() const;
@@ -81,7 +109,6 @@ private:
     T_DISABLE_COPY(TSqlORMapper)
     T_DISABLE_MOVE(TSqlORMapper)
 };
-
 
 /*!
   Constructor.
@@ -467,56 +494,6 @@ inline int TSqlORMapper<T>::findCountBy(int column, QVariant value)
 {
     return findCount(TCriteria(column, value));
 }
-
-// /*!
-//   Returns a list of all ORM objects in the results retrieved with the
-//   criteria \a cri from the table.
-// */
-// template <class T>
-// inline QList<T> TSqlORMapper<T>::findAll(const TCriteria &cri)
-// {
-//     if (!cri.isEmpty()) {
-//         TCriteriaConverter<T> conv(cri, database(), "t0");
-//         setFilter(conv.toString());
-//     } else {
-//         setFilter(QString());
-//     }
-
-//     QList<T> list;
-//     bool ret = select();
-//     tWriteQueryLog(query().lastQuery(), ret, lastError());
-
-//     if (ret) {
-//         tSystemDebug("rowCount: %d", rowCount());
-//         for (int i = 0; i < rowCount(); ++i) {
-//             T rec;
-//             rec.setRecord(record(i), QSqlError());
-//             list << rec;
-//         }
-//     }
-
-//     return list;
-// }
-
-// /*!
-//   Returns a list of all ORM objects in the results retrieved with the criteria
-//   for the \a column as the \a value.
-// */
-// template <class T>
-// inline QList<T> TSqlORMapper<T>::findAllBy(int column, QVariant value)
-// {
-//     return findAll(TCriteria(column, value));
-// }
-
-// /*!
-//   Returns a list of all ORM objects in the results retrieved with the criteria
-//   that the \a column is within the list of values \a values.
-// */
-// template <class T>
-// inline QList<T> TSqlORMapper<T>::findAllIn(int column, const QVariantList &values)
-// {
-//     return findAll(TCriteria(column, TSql::In, values));
-// }
 
 /*!
   Updates the values of the columns specified in the first elements in the each pairs of \a values in

@@ -23,8 +23,8 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, int sortColumn, T
 
     QList<T> list;
     if (mapper.find(cri) > 0) {
-        for (TSqlORMapperIterator<S> i(mapper); i.hasNext(); ) {
-            list << T(i.next());
+        for (auto &o : mapper) {
+            list << T(o);
         }
     }
     return list;
