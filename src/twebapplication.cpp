@@ -8,6 +8,10 @@
 #include <QDir>
 #include <QTextCodec>
 #include <QDateTime>
+#if QT_VERSION >= 0x050000
+# include <QJsonDocument>
+# include <QJsonObject>
+#endif
 #include <TWebApplication>
 #include <TSystemGlobal>
 #include <TAppSettings>
@@ -40,17 +44,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 #else
     : QCoreApplication(argc, argv),
 #endif
-      dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT),
-      sqlSettings(0),
-      mongoSetting(0),
-      redisSetting(0),
-      loggerSetting(0),
-      validationSetting(0),
-      mediaTypes(0),
-      codecInternal(0),
-      codecHttp(0),
-      appServerId(-1),
-      mpm(Invalid)
+      dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
 {
 #if defined(Q_OS_WIN) && QT_VERSION >= 0x050000
     installNativeEventFilter(new TNativeEventFilter);
@@ -476,6 +470,58 @@ QThread *TWebApplication::databaseContextMainThread() const
     static TDatabaseContextMainThread databaseThread;
     databaseThread.start();
     return &databaseThread;
+}
+
+
+QVariantMap TWebApplication::getInitializer(const QString &initializer)
+{
+    auto ikey = initializer.toLower();
+
+    if (!initializers.contains(ikey)) {
+        QDir dir(configPath() + "initializers");
+        QStringList filters = { initializer + ".*", initializer };
+        const auto filist = dir.entryInfoList(filters);
+
+        for (auto &fi : filist) {
+            auto suffix = fi.completeSuffix().toLower();
+            if (suffix == "ini") {
+                // INI format initializer
+                QVariantMap map;
+                QSettings settings(fi.absoluteFilePath(), QSettings::IniFormat);
+                for (auto &k : (const QStringList &)settings.allKeys()) {
+                    map.insert(k, settings.value(k));
+                }
+                initializers.insert(ikey, map);
+
+#if QT_VERSION >= 0x050000
+            } else if (suffix == "json") {
+                QFile jsonFile(fi.absoluteFilePath());
+                if (jsonFile.open(QIODevice::ReadOnly)) {
+                    auto json = QJsonDocument::fromJson(jsonFile.readAll()).object();
+                    jsonFile.close();
+                    if (!json.isEmpty()) {
+                        initializers.insert(ikey, json.toVariantMap());
+                    }
+                }
+#endif
+            } else {
+                tSystemWarn("No such initializer, %s", qPrintable(fi.fileName()));
+                return QVariantMap();
+            }
+        }
+    }
+
+    const QVariant &vmap = initializers[ikey];
+    if (vmap.isNull() || vmap.type() != QVariant::Map) {
+        return QVariantMap();
+    }
+    return vmap.toMap();
+}
+
+
+QVariant TWebApplication::getInitializerValue(const QString &initializer, const QString &key, const QVariant &defaultValue)
+{
+    return getInitializer(initializer).value(key, defaultValue);
 }
 
 

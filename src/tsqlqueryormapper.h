@@ -36,6 +36,31 @@ public:
     bool next();
     T value() const;
     QString fieldName(int index) const;
+
+    class ConstIterator;
+    inline ConstIterator begin() { return ConstIterator(this, 0); }
+    inline ConstIterator end() { return ConstIterator(this, size()); }
+
+    /*!
+      Const iterator
+     */
+    class ConstIterator {
+    public:
+        TSqlQueryORMapper<T> *m {nullptr};
+        int it {0};
+
+        inline ConstIterator() {}
+        inline ConstIterator(const ConstIterator &o) : m(o.m), it(o.it) {}
+        inline ConstIterator &operator=(const ConstIterator &o) { m = o.m; it = o.it; return *this; }
+        inline const T operator*() const { if (it == 0) m->first(); return m->value(); }
+        inline bool operator==(const ConstIterator &o) const { return m == o.m && it == o.it; }
+        inline bool operator!=(const ConstIterator &o) const { return m != o.m || it != o.it; }
+        inline ConstIterator &operator++() { it = qMin(it + 1, m->size()); m->next(); return *this; }
+
+    private:
+        inline ConstIterator(TSqlQueryORMapper<T> *mapper, int i) : m(mapper), it(i) {}
+        friend class TSqlQueryORMapper;
+    };
 };
 
 

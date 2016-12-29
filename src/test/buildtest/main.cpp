@@ -84,6 +84,10 @@ void build_check_TSqlORMapper_ConstIterator()
         it--;
         --it;
     }
+    for (auto &o : mapper) {
+        auto obj = o;
+        Q_UNUSED(obj);
+    }
 }
 
 void build_check_TSqlQueryORMapper()
@@ -104,6 +108,26 @@ void build_check_TSqlQueryORMapper()
     mapper.next();
     mapper.value();
     mapper.fieldName(0);
+    mapper.begin();
+    mapper.end();
+}
+
+void build_check_TSqlQueryORMapper_ConstIterator()
+{
+    TSqlQueryORMapper<BlogObject> mapper;
+    TSqlQueryORMapper<BlogObject>::ConstIterator it = mapper.begin();
+    auto i = it;
+    it = i;
+    auto val = *it;
+    bool b = (i == it);
+    b = (i != it);
+    if (b) {
+        ++it;
+    }
+    for (auto &o : mapper) {
+        auto obj = o;
+        Q_UNUSED(obj);
+    }
 }
 
 void build_check_TSqlQueryORMapperIterator()
