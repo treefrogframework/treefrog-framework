@@ -51,6 +51,8 @@ void build_check_TSqlORMapper()
     mapper.setJoin(BlogObject::Id, TSqlJoin<BlogObject>(BlogObject::Title, joinCri));
     mapper.limit(10).offset(11).orderBy(1, Tf::AscendingOrder).join(BlogObject::Id, TSqlJoin<BlogObject>(TSql::LeftJoin, BlogObject::Title, joinCri));
     mapper.limit(10).orderBy("hoge").find();
+    mapper.begin();
+    mapper.end();
 }
 
 void build_check_TSqlORMapperIterator()
@@ -64,6 +66,24 @@ void build_check_TSqlORMapperIterator()
     it.toBack();
     it.toFront();
     it.value();
+}
+
+void build_check_TSqlORMapper_ConstIterator()
+{
+    TSqlORMapper<BlogObject> mapper;
+    TSqlORMapper<BlogObject>::ConstIterator it = mapper.begin();
+    auto i = it;
+    it = i;
+    auto val = *it;
+    bool b = (i == it);
+    b = (i != it);
+    if (b) {
+        it++;
+        ++it;
+    } else {
+        it--;
+        --it;
+    }
 }
 
 void build_check_TSqlQueryORMapper()
@@ -142,14 +162,6 @@ void build_check_TJsonUtil()
     tfModelListToJsonArray<Foo>(fooList);
 }
 #endif
-
-// void build_check_TAtomicQueue()
-// {
-//     TAtomicQueue<int> queue;
-//     queue.enqueue(1);
-//     queue.dequeue();
-//     queue.wait(0);
-// }
 
 void atomic_ptr()
 {
