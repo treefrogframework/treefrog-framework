@@ -118,8 +118,6 @@ public:
         append(L("views") + SEP + "_src");
         append(L("helpers"));
         append(L("config"));
-        append(L("config") + SEP + "environments");
-        append(L("config") + SEP + "initializers");
         append(L("public"));
         append(L("public") + SEP + "images");
         append(L("public") + SEP + "js");
@@ -162,12 +160,12 @@ public:
         append(L("config") + SEP + "application.ini");
         append(L("config") + SEP + "database.ini");
         append(L("config") + SEP + "development.ini");
+        append(L("config") + SEP + "internet_media_types.ini");
         append(L("config") + SEP + "logger.ini");
         append(L("config") + SEP + "mongodb.ini");
         append(L("config") + SEP + "redis.ini");
         append(L("config") + SEP + "routes.cfg");
         append(L("config") + SEP + "validation.ini");
-        append(L("config") + SEP + "initializers" + SEP + "internet_media_types.ini");
         append(L("public") + SEP + "403.html");
         append(L("public") + SEP + "404.html");
         append(L("public") + SEP + "413.html");

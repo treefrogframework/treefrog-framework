@@ -70,8 +70,8 @@ public:
     QTextCodec *codecForHttpOutput() const { return codecHttp; }
     int applicationServerId() const { return appServerId; }
     QThread *databaseContextMainThread() const;
-    QVariantMap getInitializer(const QString &initializer);
-    QVariant getInitializerValue(const QString &initializer, const QString &key, const QVariant &defaultValue = QVariant());
+    const QVariantMap &getConfig(const QString &configName);
+    QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
@@ -111,7 +111,7 @@ private:
     int appServerId  {-1};
     QBasicTimer timer;
     mutable MultiProcessingModule mpm  {Invalid};
-    QVariantMap initializers;
+    QMap<QString, QVariantMap> configMap;
 
     static void resetSignalNumber();
 

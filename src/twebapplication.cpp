@@ -87,8 +87,12 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     TAppSettings::instantiate(appSettingsFilePath());
     loggerSetting = new QSettings(configPath() + "logger.ini", QSettings::IniFormat, this);
     validationSetting = new QSettings(configPath() + "validation.ini", QSettings::IniFormat, this);
-    mediaTypes = new QSettings(configPath() + "initializers" + QDir::separator() + "internet_media_types.ini", QSettings::IniFormat, this);
-
+    // Internet media types
+    if (QFileInfo(configPath() + "internet_media_types.ini").exists()) {
+        mediaTypes = new QSettings(configPath() + "internet_media_types.ini", QSettings::IniFormat, this);
+    } else {
+        mediaTypes = new QSettings(configPath() + "initializers" + QDir::separator() + "internet_media_types.ini", QSettings::IniFormat, this);
+    }
     // Gets codecs
     codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
     codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
@@ -473,55 +477,54 @@ QThread *TWebApplication::databaseContextMainThread() const
 }
 
 
-QVariantMap TWebApplication::getInitializer(const QString &initializer)
+const QVariantMap &TWebApplication::getConfig(const QString &configName)
 {
-    auto ikey = initializer.toLower();
+    auto cnf = configName.toLower();
 
-    if (!initializers.contains(ikey)) {
-        QDir dir(configPath() + "initializers");
-        QStringList filters = { initializer + ".*", initializer };
+    if (!configMap.contains(cnf)) {
+        QDir dir(configPath());
+        QStringList filters = { configName + ".*", configName };
         const auto filist = dir.entryInfoList(filters);
 
-        for (auto &fi : filist) {
-            auto suffix = fi.completeSuffix().toLower();
-            if (suffix == "ini") {
-                // INI format initializer
-                QVariantMap map;
-                QSettings settings(fi.absoluteFilePath(), QSettings::IniFormat);
-                for (auto &k : (const QStringList &)settings.allKeys()) {
-                    map.insert(k, settings.value(k));
-                }
-                initializers.insert(ikey, map);
+        if (filist.isEmpty()) {
+            tSystemWarn("No such config, %s", qPrintable(configName));
+        } else {
+            for (auto &fi : filist) {
+                auto suffix = fi.completeSuffix().toLower();
+                if (suffix == "ini") {
+                    // INI format
+                    QVariantMap map;
+                    QSettings settings(fi.absoluteFilePath(), QSettings::IniFormat);
+                    for (auto &k : (const QStringList &)settings.allKeys()) {
+                        map.insert(k, settings.value(k));
+                    }
+                    configMap.insert(cnf, map);
+                    break;
 
 #if QT_VERSION >= 0x050000
-            } else if (suffix == "json") {
-                QFile jsonFile(fi.absoluteFilePath());
-                if (jsonFile.open(QIODevice::ReadOnly)) {
-                    auto json = QJsonDocument::fromJson(jsonFile.readAll()).object();
-                    jsonFile.close();
-                    if (!json.isEmpty()) {
-                        initializers.insert(ikey, json.toVariantMap());
+                } else if (suffix == "json") {
+                    // JSON format
+                    QFile jsonFile(fi.absoluteFilePath());
+                    if (jsonFile.open(QIODevice::ReadOnly)) {
+                        auto json = QJsonDocument::fromJson(jsonFile.readAll()).object();
+                        jsonFile.close();
+                        configMap.insert(cnf, json.toVariantMap());
+                        break;
                     }
-                }
 #endif
-            } else {
-                tSystemWarn("No such initializer, %s", qPrintable(fi.fileName()));
-                return QVariantMap();
+                } else {
+                    tSystemWarn("Invalid format config, %s", qPrintable(fi.fileName()));
+                }
             }
         }
     }
-
-    const QVariant &vmap = initializers[ikey];
-    if (vmap.isNull() || vmap.type() != QVariant::Map) {
-        return QVariantMap();
-    }
-    return vmap.toMap();
+    return configMap[cnf];
 }
 
 
-QVariant TWebApplication::getInitializerValue(const QString &initializer, const QString &key, const QVariant &defaultValue)
+QVariant TWebApplication::getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue)
 {
-    return getInitializer(initializer).value(key, defaultValue);
+    return getConfig(configName).value(key, defaultValue);
 }
 
 
