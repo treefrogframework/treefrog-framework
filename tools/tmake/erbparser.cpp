@@ -42,7 +42,7 @@ void ErbParser::parse(const QString &erb)
     // trimming strongly
     if (trimMode == StrongTrim) {
         erbData.clear();
-        for (auto &line : erb.split('\n', QString::SkipEmptyParts)) {
+        for (auto &line : (const QStringList&)erb.split('\n', QString::SkipEmptyParts)) {
             QString trm = THtmlParser::trim(line);
             if (!trm.isEmpty()) {
                 erbData += trm;
@@ -195,7 +195,7 @@ void ErbParser::parsePercentTag()
         --pos;
         QPair<QString, QString> p = parseEndPercentTag();
         str = p.first.trimmed();
-        if (!str.endsWith(';')) {
+        if (!str.endsWith(';') && !str.endsWith('{')) {
             str += QLatin1Char(';');
         }
         // Raw codes
