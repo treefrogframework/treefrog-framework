@@ -145,7 +145,7 @@ void TInternetMessageHeader::setContentLength(int len)
 }
 
 /*!
-  Returns the value of the header field date.
+  Returns the value of the header field Date.
 */
 QByteArray TInternetMessageHeader::date() const
 {
@@ -153,7 +153,7 @@ QByteArray TInternetMessageHeader::date() const
 }
 
 /*!
-  Sets the value of the header field date to \a date.
+  Sets the value of the header field Date to \a date.
 */
 void TInternetMessageHeader::setDate(const QByteArray &date)
 {
@@ -161,7 +161,7 @@ void TInternetMessageHeader::setDate(const QByteArray &date)
 }
 
 /*!
-  Sets the value of the header field date to the current date/time.
+  Sets the value of the header field Date to the current date/time.
  */
 void TInternetMessageHeader::setCurrentDate()
 {
@@ -169,7 +169,7 @@ void TInternetMessageHeader::setCurrentDate()
 }
 
 /*!
-  Sets the value of the header field date to \a localTime
+  Sets the value of the header field Date to \a localTime
   as the local time on the computer.
 */
 void TInternetMessageHeader::setDate(const QDateTime &dateTime)
@@ -178,7 +178,7 @@ void TInternetMessageHeader::setDate(const QDateTime &dateTime)
 }
 
 /*!
-  Sets the value of the header field date to \a utc as Coordinated
+  Sets the value of the header field Date to \a utc as Coordinated
   Universal Time.
 */
 // void TInternetMessageHeader::setDateUTC(const QDateTime &utc)
