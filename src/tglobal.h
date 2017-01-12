@@ -216,7 +216,7 @@ private:
 #  define T_CHECK_NO_CHANGE(val, type)
 #endif  // TF_NO_DEBUG
 
-#include "tfnamespace.h"
+#include <TWebApplication>
 #include "tfexception.h"
 
 #endif // TGLOBAL_H
