@@ -215,6 +215,15 @@ namespace Tf
         TryAgainLater           = 1013,
         TLSHandshake            = 1015,
     };
+
+    enum LogPriority {
+        FatalLevel = 0, //!< Severe error events that will presumably lead the app to abort.
+        ErrorLevel,     //!< Error events that might still allow the app to continue running.
+        WarnLevel,      //!< Potentially harmful situations.
+        InfoLevel,      //!< Informational messages that highlight the progress of the app.
+        DebugLevel,     //!< Informational events that are most useful to debug the app.
+        TraceLevel,     //!< Finer-grained informational events than the DEBUG.
+    };
 }
 
 

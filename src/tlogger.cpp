@@ -15,17 +15,17 @@
 #define DEFAULT_TEXT_ENCODING "DefaultTextEncoding"
 
 
-class PriorityHash : public QMap<TLogger::Priority, QByteArray>
+class PriorityHash : public QMap<Tf::LogPriority, QByteArray>
 {
 public:
-    PriorityHash() : QMap<TLogger::Priority, QByteArray>()
+    PriorityHash() : QMap<Tf::LogPriority, QByteArray>()
     {
-        insert(TLogger::Fatal, "FATAL");
-        insert(TLogger::Error, "ERROR");
-        insert(TLogger::Warn,  "WARN");
-        insert(TLogger::Info,  "INFO");
-        insert(TLogger::Debug, "DEBUG");
-        insert(TLogger::Trace, "TRACE");
+        insert(Tf::FatalLevel, "FATAL");
+        insert(Tf::ErrorLevel, "ERROR");
+        insert(Tf::WarnLevel,  "WARN");
+        insert(Tf::InfoLevel,  "INFO");
+        insert(Tf::DebugLevel, "DEBUG");
+        insert(Tf::TraceLevel, "TRACE");
     }
 };
 Q_GLOBAL_STATIC(PriorityHash, priorityHash)
@@ -39,7 +39,7 @@ Q_GLOBAL_STATIC(PriorityHash, priorityHash)
 /*!
   Constructor.
 */
-TLogger::TLogger() : threshold_(Trace), codec_(0)
+TLogger::TLogger() : threshold_(Tf::TraceLevel), codec_(nullptr)
 { }
 
 /*!
@@ -99,7 +99,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
                     message.append(log.timestamp.toString(Qt::ISODate).toLatin1());
                 }
             } else if (c == 'p' || c == 'P') {  // %p or %P : priority
-                QByteArray pri = priorityToString((TLogger::Priority)log.priority);
+                QByteArray pri = priorityToString((Tf::LogPriority)log.priority);
                 if (c == 'p') {
                     pri = pri.toLower();
                 }
@@ -140,7 +140,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 /*!
   Returns a QByteArray containing the priority \a priority.
 */
-QByteArray TLogger::priorityToString(Priority priority)
+QByteArray TLogger::priorityToString(Tf::LogPriority priority)
 {
     return priorityHash()->value(priority);
 }
@@ -169,7 +169,7 @@ void TLogger::readSettings()
     dateTimeFormat_ = settingsValue("DateTimeFormat").toByteArray();
 
     QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
-    threshold_ = priorityHash()->key(pri, TLogger::Trace);
+    threshold_ = priorityHash()->key(pri, Tf::TraceLevel);
 
     QFileInfo fi(settingsValue("Target", "log/app.log").toString());
     target_ = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();

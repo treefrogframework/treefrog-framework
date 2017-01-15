@@ -5,12 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QStringList>
 #include <TGlobal>
 #include <TWebApplication>
 #include <TAppSettings>
-#include <TLogger>
-#include <TLog>
 #include <TActionContext>
 #include <TDatabaseContext>
 #include <TActionThread>
@@ -20,149 +17,10 @@
 #include <cstdlib>
 #include <climits>
 #include <random>
-#include "tloggerfactory.h"
-#include "tsharedmemorylogstream.h"
-#include "tbasiclogstream.h"
 #include "tdatabasecontextthread.h"
-#include "tsystemglobal.h"
 #ifdef Q_OS_WIN
 # include <Windows.h>
 #endif
-#undef tDebug
-#undef tTrace
-
-static TAbstractLogStream *stream = 0;
-static QList<TLogger *> loggers;
-
-/*!
-  Sets up all the loggers set in the logger.ini.
-  This function is for internal use only.
-*/
-void tSetupAppLoggers()
-{
-    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
-
-    for (auto &lg : loggerList) {
-        TLogger *lgr = TLoggerFactory::create(lg);
-        if (lgr) {
-            loggers << lgr;
-            tSystemDebug("Logger added: %s", qPrintable(lgr->key()));
-        }
-    }
-
-    if (!stream) {
-        stream = new TBasicLogStream(loggers, qApp);
-    }
-}
-
-/*!
-  Releases all the loggers.
-  This function is for internal use only.
-*/
-void tReleaseAppLoggers()
-{
-    if (stream) {
-        delete stream;
-        stream = 0;
-    }
-
-    for (auto &logger : (const QList<TLogger*>&)loggers) {
-        delete logger;
-    }
-    loggers.clear();
-}
-
-
-static void tMessage(int priority, const char *msg, va_list ap)
-{
-    TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
-    if (stream)
-        stream->writeLog(log);
-}
-
-
-static void tFlushMessage()
-{
-    if (stream)
-        stream->flush();
-}
-
-/*!
-  Writes the fatal message \a msg to the file app.log.
-*/
-void tFatal(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tMessage(TLogger::Fatal, msg, ap);
-    va_end(ap);
-    tFlushMessage();
-
-    if (Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool()) {
-#if (defined(Q_OS_UNIX) || defined(Q_CC_MINGW))
-        abort(); // trap; generates core dump
-#else
-        _exit(-1);
-#endif
-    }
-}
-
-/*!
-  Writes the error message \a msg to the file app.log.
-*/
-void tError(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tMessage(TLogger::Error, msg, ap);
-    va_end(ap);
-    tFlushMessage();
-}
-
-/*!
-  Writes the warning message \a msg to the file app.log.
-*/
-void tWarn(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tMessage(TLogger::Warn, msg, ap);
-    va_end(ap);
-    tFlushMessage();
-}
-
-/*!
-  Writes the information message \a msg to the file app.log.
-*/
-void tInfo(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tMessage(TLogger::Info, msg, ap);
-    va_end(ap);
-}
-
-/*!
-  Writes the debug message \a msg to the file app.log.
-*/
-void tDebug(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tMessage(TLogger::Debug, msg, ap);
-    va_end(ap);
-}
-
-/*!
-  Writes the trace message \a msg to the file app.log.
-*/
-void tTrace(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tMessage(TLogger::Trace, msg, ap);
-    va_end(ap);
-}
 
 /*!
   Returns a global pointer referring to the unique application object.

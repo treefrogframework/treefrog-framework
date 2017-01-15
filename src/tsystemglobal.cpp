@@ -119,7 +119,7 @@ void tSystemError(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
-    tSystemMessage(TLogger::Error, msg, ap);
+    tSystemMessage(Tf::ErrorLevel, msg, ap);
     va_end(ap);
 }
 
@@ -128,7 +128,7 @@ void tSystemWarn(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
-    tSystemMessage(TLogger::Warn, msg, ap);
+    tSystemMessage(Tf::WarnLevel, msg, ap);
     va_end(ap);
 }
 
@@ -137,7 +137,7 @@ void tSystemInfo(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
-    tSystemMessage(TLogger::Info, msg, ap);
+    tSystemMessage(Tf::InfoLevel, msg, ap);
     va_end(ap);
 }
 
@@ -147,7 +147,7 @@ void tSystemDebug(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
-    tSystemMessage(TLogger::Debug, msg, ap);
+    tSystemMessage(Tf::DebugLevel, msg, ap);
     va_end(ap);
 }
 
@@ -156,7 +156,7 @@ void tSystemTrace(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
-    tSystemMessage(TLogger::Trace, msg, ap);
+    tSystemMessage(Tf::TraceLevel, msg, ap);
     va_end(ap);
 }
 

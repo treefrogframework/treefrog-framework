@@ -275,6 +275,8 @@ HEADERS += tdatabasecontextthread.h
 SOURCES += tdatabasecontextthread.cpp
 HEADERS += tdatabasecontextmainthread.h
 SOURCES += tdatabasecontextmainthread.cpp
+HEADERS += tdebug.h
+SOURCES += tdebug.cpp
 
 HEADERS += \
            tfnamespace.h \

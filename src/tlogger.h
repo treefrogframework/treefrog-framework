@@ -6,21 +6,13 @@
 #include <TGlobal>
 #include <TLog>
 
+class TLog;
 class QTextCodec;
 
 
 class T_CORE_EXPORT TLogger
 {
 public:
-    enum Priority {
-        Fatal = 0, //!< Severe error events that will presumably lead the app to abort.
-        Error,  //!< Error events that might still allow the app to continue running.
-        Warn,   //!< Potentially harmful situations.
-        Info,   //!< Informational messages that highlight the progress of the app.
-        Debug,  //!< Informational events that are most useful to debug the app.
-        Trace,  //!< Finer-grained informational events than the DEBUG.
-    };
-
     TLogger();
     virtual ~TLogger() { }
     virtual QString key() const = 0;
@@ -36,17 +28,17 @@ public:
     void readSettings();
     const QByteArray &layout() const { return layout_; }
     const QByteArray &dateTimeFormat() const { return dateTimeFormat_; }
-    Priority threshold() const { return threshold_; }
+    Tf::LogPriority threshold() const { return threshold_; }
     const QString &target() const { return target_; }
     QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
     static QByteArray logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec = 0);
-    static QByteArray priorityToString(Priority priority);
+    static QByteArray priorityToString(Tf::LogPriority priority);
 
 protected:
     QByteArray layout_;
     QByteArray dateTimeFormat_;
-    Priority threshold_;
+    Tf::LogPriority threshold_;
     QString  target_;
     QTextCodec *codec_;
 };
