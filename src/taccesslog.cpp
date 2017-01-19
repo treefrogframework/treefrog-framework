@@ -27,6 +27,8 @@ TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req)
 QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &dateTimeFormat) const
 {
     QByteArray message;
+    message.reserve(layout.length()+100);
+
     int pos = 0;
     while (pos < layout.length()) {
         char c = layout.at(pos++);
@@ -65,7 +67,8 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 message.append(QString::number(statusCode));
 
             } else if (c == 'O') {
-                message.append(QString::number(responseBytes));
+                QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
+                message.append(QString("%1").arg(responseBytes, dig.toInt(),10, fillChar).toLatin1());
 
             } else if (c == 'n') {  // %n : newline
                 message.append('\n');
