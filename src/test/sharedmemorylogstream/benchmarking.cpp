@@ -25,7 +25,7 @@ private slots:
 
 void BenchMark::systemDebug()
 {
-    tSetupSystemLogger();
+    Tf::setupSystemLogger();
 
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
