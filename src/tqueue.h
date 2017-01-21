@@ -10,7 +10,7 @@
 
 namespace Tf
 {
-    THazardPtr &hazardPtrForQueue();
+    T_CORE_EXPORT THazardPtr &hazardPtrForQueue();
 }
 
 

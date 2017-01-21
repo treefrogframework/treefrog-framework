@@ -18,7 +18,7 @@ cd /D %~dp0
 if exist Makefile (
   %MAKE% distclean
 )
-qmake -r CONFIG+=release
+qmake -r CONFIG+=debug
 %MAKE%
 if ERRORLEVEL 1 goto :build_error
 
