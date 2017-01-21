@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, AOYAMA Kazuharu
+/* Copyright (c) 2016-2017, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
