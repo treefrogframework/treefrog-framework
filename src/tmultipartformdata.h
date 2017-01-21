@@ -15,6 +15,8 @@ class T_CORE_EXPORT TMimeHeader
 public:
     TMimeHeader() { }
     TMimeHeader(const TMimeHeader &other);
+    TMimeHeader &operator=(const TMimeHeader &other);
+
     bool isEmpty() const { return headers.isEmpty(); }
     QByteArray header(const QByteArray &headerName) const;
     void setHeader(const QByteArray &headerName, const QByteArray &value);
@@ -27,31 +29,32 @@ protected:
 
 private:
     static int skipWhitespace(const QByteArray &text, int pos);
-    QList<QPair<QByteArray, QByteArray>>  headers;
+    QList<QPair<QByteArray, QByteArray>> headers;
 };
 
 
-class T_CORE_EXPORT TMimeEntity : protected QPair<TMimeHeader, QString>
+class T_CORE_EXPORT TMimeEntity
 {
 public:
     static const QFile::Permissions DefaultPermissions;
 
     TMimeEntity() { }
     TMimeEntity(const TMimeEntity &other);
+    TMimeEntity &operator=(const TMimeEntity &other);
 
-    const TMimeHeader &header() const { return first; }
-    TMimeHeader &header() { return first; }
-    QByteArray header(const QByteArray &headerName) const { return first.header(headerName); }
-    QByteArray dataName() const { return first.dataName(); }
+    const TMimeHeader &header() const { return entity.first; }
+    TMimeHeader &header() { return entity.first; }
+    QByteArray header(const QByteArray &headerName) const { return entity.first.header(headerName); }
+    QByteArray dataName() const { return entity.first.dataName(); }
     QString contentType() const;
     qint64 fileSize() const;
-    QString originalFileName() const { return first.originalFileName(); }
+    QString originalFileName() const { return entity.first.originalFileName(); }
     bool renameUploadedFile(const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     QString uploadedFilePath() const;
 
 private:
     TMimeEntity(const TMimeHeader &header, const QString &body);
-
+    QPair<TMimeHeader, QString> entity;
     friend class TMultipartFormData;
 };
 

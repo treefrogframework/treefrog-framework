@@ -34,7 +34,7 @@ public:
     static TMultiplexingServer *instance();
 
 protected:
-    void run();
+    void run() override;
     void timerEvent(QTimerEvent *event);
 
 signals:

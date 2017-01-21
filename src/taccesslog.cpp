@@ -28,6 +28,9 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
 {
     QByteArray message;
     int pos = 0;
+    QByteArray dig;
+    message.reserve(127);
+
     while (pos < layout.length()) {
         char c = layout.at(pos++);
         if (c != '%') {
@@ -35,7 +38,7 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
             continue;
         }
 
-        QByteArray dig;
+        dig.clear();
         for (;;) {
             if (pos >= layout.length()) {
                 message.append('%').append(dig);
@@ -48,34 +51,49 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 continue;
             }
 
-            if (c == 'h') {
+            switch (c) {
+            case 'h':
                 message.append(remoteHost);
+                break;
 
-            } else if (c == 'd') {  // %d : timestamp
+            case 'd': // %d : timestamp
                 if (!dateTimeFormat.isEmpty()) {
                     message.append(timestamp.toString(dateTimeFormat).toLocal8Bit());
                 } else {
                     message.append(timestamp.toString(Qt::ISODate).toLatin1());
                 }
+                break;
 
-            } else if (c == 'r') {
+            case 'r':
                 message.append(request);
+                break;
 
-            } else if (c == 's') {
+            case 's':
                 message.append(QString::number(statusCode));
+                break;
 
-            } else if (c == 'O') {
-                message.append(QString::number(responseBytes));
+            case 'O':
+                if (dig.isEmpty()) {
+                    message.append(QString::number(responseBytes));
+                } else {
+                    const QChar fillChar = (dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
+                    message.append(QString("%1").arg(responseBytes, dig.toInt(), 10, fillChar).toLatin1());
+                }
+                break;
 
-            } else if (c == 'n') {  // %n : newline
+            case 'n': // %n : newline
                 message.append('\n');
+                break;
 
-            } else if (c == '%') {
+            case '%':
                 message.append('%').append(dig);
                 dig.clear();
                 continue;
-            } else {
+                break;
+
+            default:
                 message.append('%').append(dig).append(c);
+                break;
             }
             break;
         }

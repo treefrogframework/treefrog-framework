@@ -239,7 +239,7 @@ void TJSLoader::import(const QString &defaultMember, const QString &moduleName)
             return;
         }
     }
-    importFiles << QPair<QString, QString>(defaultMember, moduleName);
+    importFiles << qMakePair(defaultMember, moduleName);
 }
 
 

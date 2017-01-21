@@ -1,9 +1,11 @@
 #include <QTest>
 #include <QThread>
-#include <unistd.h>
 #include <atomic>
 #include <iostream>
 #include "tstack.h"
+#ifndef Q_CC_MSVC
+# include <unistd.h>
+#endif
 #include <TfTest/TfTest>
 
 static std::atomic<qint64> counter {0};

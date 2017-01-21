@@ -1,9 +1,11 @@
 #include <QTest>
 #include <QThread>
-#include <unistd.h>
 #include <atomic>
 #include <iostream>
 #include <TfTest/TfTest>
+#ifndef Q_CC_MSVC
+# include <unistd.h>
+#endif
 #include "tqueue.h"
 
 TQueue<quint64> intQueue;

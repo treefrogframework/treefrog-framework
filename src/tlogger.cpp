@@ -69,9 +69,10 @@ QByteArray TLogger::logToByteArray(const TLog &log) const
 QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec)
 {
     QByteArray message;
+    int pos = 0;
+    QByteArray dig;
     message.reserve(layout.length() + log.message.length() + 100);
 
-    int pos = 0;
     while (pos < layout.length()) {
         char c = layout.at(pos++);
         if (c != '%') {
@@ -79,7 +80,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
             continue;
         }
 
-        QByteArray dig;
+        dig.clear();
         for (;;) {
             if (pos >= layout.length()) {
                 message.append('%').append(dig);
@@ -92,13 +93,17 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
                 continue;
             }
 
-            if (c == 'd') {  // %d : timestamp
+            switch (c) {
+            case 'd':  // %d : timestamp
                 if (!dateTimeFormat.isEmpty()) {
                     message.append(log.timestamp.toString(dateTimeFormat).toLatin1());
                 } else {
                     message.append(log.timestamp.toString(Qt::ISODate).toLatin1());
                 }
-            } else if (c == 'p' || c == 'P') {  // %p or %P : priority
+                break;
+
+            case 'p':
+            case 'P': {  // %p or %P : priority
                 QByteArray pri = priorityToString((Tf::LogPriority)log.priority);
                 if (c == 'p') {
                     pri = pri.toLower();
@@ -110,25 +115,37 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
                         message.append(QByteArray(d, ' '));
                     }
                 }
+                break; }
 
-            } else if (c == 't' || c == 'T') {  // %t or %T : thread ID (dec or hex)
-                QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
+            case 't':
+            case 'T': { // %t or %T : thread ID (dec or hex)
+                const QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                 message.append(QString("%1").arg((qulonglong)log.threadId, dig.toInt(), ((c == 't') ? 10 : 16), fillChar).toLatin1());
+                break; }
 
-            } else if (c == 'i' || c == 'I') {  // %i or %I : PID (dec or hex)
-                QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
+            case 'i':
+            case 'I': {  // %i or %I : PID (dec or hex)
+                const QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                 message.append(QString("%1").arg(log.pid, dig.toInt(), ((c == 'i') ? 10 : 16), fillChar).toLatin1());
+                break; }
 
-            } else if (c == 'n') {  // %n : newline
+            case 'n':  // %n : newline
                 message.append('\n');
-            } else if (c == 'm') {  // %m : message
+                break;
+
+            case 'm':  // %m : message
                 message.append(log.message);
-            } else if (c == '%') {
+                break;
+
+            case '%':
                 message.append('%').append(dig);
                 dig.clear();
                 continue;
-            } else {
+                break;
+
+            default:
                 message.append('%').append(dig).append(c);
+                break;
             }
             break;
         }
