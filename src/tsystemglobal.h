@@ -8,14 +8,30 @@
 class TAccessLog;
 class QSqlError;
 
+namespace Tf
+{
+    T_CORE_EXPORT void setupSystemLogger();   // internal use
+    T_CORE_EXPORT void releaseSystemLogger(); // internal use
+    T_CORE_EXPORT void setupAccessLogger();   // internal use
+    T_CORE_EXPORT void releaseAccessLogger(); // internal use
+    T_CORE_EXPORT void setupQueryLogger();    // internal use
+    T_CORE_EXPORT void releaseQueryLogger();  // internal use
+    T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log
+    T_CORE_EXPORT void writeQueryLog(const QString &query, bool success, const QSqlError &error);
+    T_CORE_EXPORT void traceQueryLog(const char *, ...) // SQL query log
+#if defined(Q_CC_GNU) && !defined(__INSURE__)
+        __attribute__ ((format (printf, 1, 2)))
+#endif
+    ;
 
-T_CORE_EXPORT void tSetupSystemLogger();   // internal use
-T_CORE_EXPORT void tReleaseSystemLogger(); // internal use
-T_CORE_EXPORT void tSetupAccessLogger();   // internal use
-T_CORE_EXPORT void tReleaseAccessLogger(); // internal use
-T_CORE_EXPORT void tSetupQueryLogger();    // internal use
-T_CORE_EXPORT void tReleaseQueryLogger();  // internal use
-T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log
+    enum ServerOpCode {
+        WebSocketSendText       = 0x01,
+        WebSocketSendBinary     = 0x02,
+        WebSocketPublishText    = 0x03,
+        WebSocketPublishBinary  = 0x04,
+        MaxServerOpCode,
+    };
+}
 
 T_CORE_EXPORT void tSystemError(const char *, ...) // system error message
 #if defined(Q_CC_GNU) && !defined(__INSURE__)
@@ -46,26 +62,6 @@ T_CORE_EXPORT void tSystemTrace(const char *, ...) // system trace message
     __attribute__ ((format (printf, 1, 2)))
 #endif
 ;
-
-T_CORE_EXPORT void tQueryLog(const char *, ...) // SQL query log
-#if defined(Q_CC_GNU) && !defined(__INSURE__)
-    __attribute__ ((format (printf, 1, 2)))
-#endif
-;
-
-T_CORE_EXPORT void tWriteQueryLog(const QString &query, bool success, const QSqlError &error);
-
-
-namespace Tf
-{
-enum ServerOpCode {
-    WebSocketSendText       = 0x01,
-    WebSocketSendBinary     = 0x02,
-    WebSocketPublishText    = 0x03,
-    WebSocketPublishBinary  = 0x04,
-    MaxServerOpCode,
-};
-}
 
 #if !defined(TF_NO_DEBUG) && ENABLE_TO_TRACE_FUNCTION && !defined(Q_OS_WIN)
 

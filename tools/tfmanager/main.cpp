@@ -477,7 +477,7 @@ int managerMain(int argc, char *argv[])
     }
 
     // Setup system loggers
-    tSetupSystemLogger();
+    Tf::setupSystemLogger();
 
 #if defined(Q_OS_UNIX)
     app.watchUnixSignal(SIGTERM);
@@ -626,6 +626,6 @@ int main(int argc, char *argv[])
     }
 #endif
     int ret = TreeFrog::managerMain(argc, argv);
-    tReleaseSystemLogger();
+    Tf::releaseSystemLogger();
     return ret;
 }

@@ -151,7 +151,7 @@ QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database
 bool TSqlQuery::exec(const QString &query)
 {
     bool ret = QSqlQuery::exec(query);
-    tWriteQueryLog(query, ret, lastError());
+    Tf::writeQueryLog(query, ret, lastError());
     return ret;
 }
 
@@ -162,7 +162,7 @@ bool TSqlQuery::exec(const QString &query)
 bool TSqlQuery::exec()
 {
     bool ret = QSqlQuery::exec();
-    tWriteQueryLog(executedQuery(), ret, lastError());
+    Tf::writeQueryLog(executedQuery(), ret, lastError());
     return ret;
 }
 

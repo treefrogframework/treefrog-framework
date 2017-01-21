@@ -97,10 +97,10 @@ int main(int argc, char *argv[])
     int ret = -1;
 
     // Setup loggers
-    tSetupSystemLogger();
-    tSetupAccessLogger();
-    tSetupQueryLogger();
-    tSetupAppLoggers();
+    Tf::setupSystemLogger();
+    Tf::setupAccessLogger();
+    Tf::setupQueryLogger();
+    Tf::setupAppLoggers();
 
     // Setup hazard pointer
     THazardPtrManager::instance().setGarbageCollectionBufferSize(Tf::app()->maxNumberOfThreadsPerAppServer());
@@ -223,10 +223,10 @@ int main(int argc, char *argv[])
 
 finish:
     // Release loggers
-    tReleaseAppLoggers();
-    tReleaseQueryLogger();
-    tReleaseAccessLogger();
-    tReleaseSystemLogger();
+    Tf::releaseAppLoggers();
+    Tf::releaseQueryLogger();
+    Tf::releaseAccessLogger();
+    Tf::releaseSystemLogger();
 
     _exit(ret);
     return ret;

@@ -35,7 +35,7 @@ static QByteArray accessLogLayout = DEFAULT_ACCESSLOG_LAYOUT;
 static QByteArray accessLogDateTimeFormat;
 
 
-void writeAccessLog(const TAccessLog &log)
+void Tf::writeAccessLog(const TAccessLog &log)
 {
     if (accesslogstrm) {
         accesslogstrm->writeLog(log.toByteArray(accessLogLayout, accessLogDateTimeFormat));
@@ -43,7 +43,7 @@ void writeAccessLog(const TAccessLog &log)
 }
 
 
-void tSetupSystemLogger()
+void Tf::setupSystemLogger()
 {
     // Log directory
     QDir logdir(Tf::app()->logPath());
@@ -60,13 +60,13 @@ void tSetupSystemLogger()
 }
 
 
-void tReleaseSystemLogger()
+void Tf::releaseSystemLogger()
 {
     systemLog.close();
 }
 
 
-void tSetupAccessLogger()
+void Tf::setupAccessLogger()
 {
     // access log
     QString accesslogpath = Tf::app()->accessLogFilePath();
@@ -79,7 +79,7 @@ void tSetupAccessLogger()
 }
 
 
-void tReleaseAccessLogger()
+void Tf::releaseAccessLogger()
 {
     if (accesslogstrm) {
         delete accesslogstrm;
@@ -88,7 +88,7 @@ void tReleaseAccessLogger()
 }
 
 
-void tSetupQueryLogger()
+void Tf::setupQueryLogger()
 {
     // sql query log
     QString querylogpath = Tf::app()->sqlQueryLogFilePath();
@@ -98,7 +98,7 @@ void tSetupQueryLogger()
 }
 
 
-void tReleaseQueryLogger()
+void Tf::releaseQueryLogger()
 {
     if (sqllogstrm) {
         delete sqllogstrm;
@@ -168,7 +168,7 @@ void tSystemTrace(const char *, ...) { }
 #endif
 
 
-void tQueryLog(const char *msg, ...)
+void Tf::traceQueryLog(const char *msg, ...)
 {
     if (sqllogstrm) {
         va_list ap;
@@ -181,7 +181,7 @@ void tQueryLog(const char *msg, ...)
 }
 
 
-void tWriteQueryLog(const QString &query, bool success, const QSqlError &error)
+void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &error)
 {
     QString q = query;
 
@@ -192,5 +192,5 @@ void tWriteQueryLog(const QString &query, bool success, const QSqlError &error)
         }
         q = QLatin1String("(Query failed) ") + err + query;
     }
-    tQueryLog("%s", qPrintable(q));
+    Tf::traceQueryLog("%s", qPrintable(q));
 }

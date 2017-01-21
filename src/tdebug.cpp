@@ -27,7 +27,7 @@ static QList<TLogger *> loggers;
   Sets up all the loggers set in the logger.ini.
   This function is for internal use only.
 */
-void tSetupAppLoggers()
+void Tf::setupAppLoggers()
 {
     const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
 
@@ -48,7 +48,7 @@ void tSetupAppLoggers()
   Releases all the loggers.
   This function is for internal use only.
 */
-void tReleaseAppLoggers()
+void Tf::releaseAppLoggers()
 {
     if (stream) {
         delete stream;

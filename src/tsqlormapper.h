@@ -146,7 +146,7 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
     int oldLimit = queryLimit;
     queryLimit = 1;
     bool ret = select();
-    tWriteQueryLog(query().lastQuery(), ret, lastError());
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
     queryLimit = oldLimit;
 
     tSystemDebug("rowCount: %d", rowCount());

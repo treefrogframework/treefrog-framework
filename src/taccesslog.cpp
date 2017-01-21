@@ -126,7 +126,7 @@ void TAccessLogger::open()
 void TAccessLogger::write()
 {
     if (accessLog) {
-        writeAccessLog(*accessLog);
+        Tf::writeAccessLog(*accessLog);
     }
     close();
 }

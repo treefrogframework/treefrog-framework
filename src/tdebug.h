@@ -5,8 +5,11 @@
 #include <QString>
 #include <QTextStream>
 
-T_CORE_EXPORT void tSetupAppLoggers();   // internal use
-T_CORE_EXPORT void tReleaseAppLoggers(); // internal use
+namespace Tf
+{
+    T_CORE_EXPORT void setupAppLoggers();   // internal use
+    T_CORE_EXPORT void releaseAppLoggers(); // internal use
+}
 
 
 class T_CORE_EXPORT TDebug

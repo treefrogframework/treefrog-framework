@@ -50,7 +50,7 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
     }
 
     if (database.transaction()) {
-        tQueryLog("[BEGIN] [databaseId:%d]", id);
+        Tf::traceQueryLog("[BEGIN] [databaseId:%d]", id);
     }
 
     databases[id] = database;
@@ -64,7 +64,7 @@ void TSqlTransaction::commit()
         QSqlDatabase &db = databases[i];
         if (db.isValid()) {
             if (db.commit()) {
-                tQueryLog("[COMMIT] [databaseId:%d]", i);
+                Tf::traceQueryLog("[COMMIT] [databaseId:%d]", i);
             }
         }
         db = QSqlDatabase();
@@ -78,7 +78,7 @@ void TSqlTransaction::rollback()
         QSqlDatabase &db = databases[i];
         if (db.isValid()) {
             if (db.rollback()) {
-                tQueryLog("[ROLLBACK] [databaseId:%d]", i);
+                Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", i);
             }
         }
         db = QSqlDatabase();
