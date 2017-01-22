@@ -1,7 +1,7 @@
 @ECHO OFF
 @setlocal
 
-::call "C:\TreeFrog\1.7.9\bin\tfenv.bat"
+::call "C:\TreeFrog\1.15.0\bin\tfenv.bat"
 
 set APPNAME=blogapp
 set DBFILE=%APPNAME%\db\dbfile
