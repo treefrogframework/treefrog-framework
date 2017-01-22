@@ -11,9 +11,9 @@ set SLNFILE=%BASEDIR%\treefrog-setup\treefrog-setup.sln
 cd %BASEDIR%
 
 :: MinGW
-call :build_msi "C:\Qt\Qt5.6.2-mingw\5.6\mingw49_32\bin\qtenv2.bat"   5.6
-call :build_msi "C:\Qt\Qt5.7.1-mingw\5.7\mingw53_32\bin\qtenv2.bat"   5.7
-call :build_setup treefrog-%VERSION%-mingw-setup.exe
+::call :build_msi "C:\Qt\Qt5.6.2-mingw\5.6\mingw49_32\bin\qtenv2.bat"   5.6
+::call :build_msi "C:\Qt\Qt5.7.1-mingw\5.7\mingw53_32\bin\qtenv2.bat"   5.7
+::call :build_setup treefrog-%VERSION%-mingw-setup.exe
 
 
 :: MSVC2013
@@ -24,10 +24,10 @@ call :build_setup treefrog-%VERSION%-mingw-setup.exe
 
 
 :: MSVC2015
-::call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-::call :build_msi "C:\Qt\Qt5.6.2-msvc2015\5.6\msvc2015_64\bin\qtenv2.bat"  5.6
-::call :build_msi "C:\Qt\Qt5.7.1-msvc2015\5.7\msvc2015_64\bin\qtenv2.bat"  5.7
-::call :build_setup treefrog-%VERSION%-msvc2015_64-setup.exe
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+call :build_msi "C:\Qt\Qt5.6.2-msvc2015\5.6\msvc2015_64\bin\qtenv2.bat"  5.6
+call :build_msi "C:\Qt\Qt5.7.1-msvc2015\5.7\msvc2015_64\bin\qtenv2.bat"  5.7
+call :build_setup treefrog-%VERSION%-msvc2015_64-setup.exe
 
 
 echo.
