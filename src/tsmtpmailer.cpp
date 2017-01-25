@@ -8,7 +8,6 @@
 #include <QSslSocket>
 #include <QHostAddress>
 #include <QDateTime>
-#include <QTimer>
 #include <QCoreApplication>
 #include <TCryptMac>
 #include <TPopMailer>
@@ -120,7 +119,7 @@ void TSmtpMailer::sendLater(const TMailMessage &message)
     T_TRACEFUNC("");
 
     mailMessage = message;
-    QTimer::singleShot(1, this, SLOT(sendAndDeleteLater()));
+    QMetaObject::invokeMethod(this, "sendAndDeleteLater", Qt::QueuedConnection);
 }
 
 

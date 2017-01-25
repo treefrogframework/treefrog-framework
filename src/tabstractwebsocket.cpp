@@ -6,7 +6,6 @@
  */
 
 #include <QObject>
-#include <QTimer>
 #include <QDataStream>
 #include <QCryptographicHash>
 #include <TWebApplication>
@@ -110,7 +109,7 @@ void TAbstractWebSocket::startKeepAlive(int interval)
     }
 
     keepAliveTimer->setInterval(interval * 1000);
-    QTimer::singleShot(0, keepAliveTimer, SLOT(start()));
+    QMetaObject::invokeMethod(keepAliveTimer, "start", Qt::QueuedConnection);
 }
 
 
@@ -120,7 +119,7 @@ void TAbstractWebSocket::stopKeepAlive()
     QMutexLocker locker(&mutexData);
 
     if (keepAliveTimer) {
-        QTimer::singleShot(0, keepAliveTimer, SLOT(stop()));
+        QMetaObject::invokeMethod(keepAliveTimer, "stop", Qt::QueuedConnection);
     }
 }
 
@@ -131,7 +130,7 @@ void TAbstractWebSocket::renewKeepAlive()
     QMutexLocker locker(&mutexData);
 
     if (keepAliveTimer) {
-        QTimer::singleShot(0, keepAliveTimer, SLOT(start()));
+        QMetaObject::invokeMethod(keepAliveTimer, "start", Qt::QueuedConnection);
     }
 }
 
