@@ -98,11 +98,10 @@ protected:
 
 private:
     QString queryFilter;
-    QString sortColumn;
-    Tf::SortOrder sortOrder;
-    int queryLimit;
-    int queryOffset;
-    int joinCount;
+    QList<QPair<QString, Tf::SortOrder>> sortColumns;
+    int queryLimit {0};
+    int queryOffset {0};
+    int joinCount {0};
     QStringList joinClauses;
     QStringList joinWhereClauses;
 
@@ -115,9 +114,7 @@ private:
 */
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
-    : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId())),
-      sortColumn(), sortOrder(Tf::AscendingOrder), queryLimit(0),
-      queryOffset(0), joinCount(0), joinClauses(), joinWhereClauses()
+    : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId()))
 {
     setTable(T().tableName());
 }
@@ -307,8 +304,8 @@ template <class T>
 inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
 {
     if (column >= 0) {
-        sortColumn = TCriteriaConverter<T>::getPropertyName(column, database().driver());
-        sortOrder = order;
+        QString columnName = TCriteriaConverter<T>::getPropertyName(column, database().driver());
+        sortColumns << qMakePair(columnName, order);
     }
 }
 
@@ -321,8 +318,7 @@ inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder o
     if (!column.isEmpty()) {
         T obj;
         if (obj.propertyNames().contains(column, Qt::CaseInsensitive)) {
-            sortColumn = column;
-            sortOrder = order;
+            sortColumns << qMakePair(column, order);
         } else {
             tWarn("Unable to set sort order : '%s' column not found in '%s' table",
                   qPrintable(column), qPrintable(obj.tableName()));
@@ -402,14 +398,14 @@ inline QString TSqlORMapper<T>::selectStatement() const
                 query += QLatin1String("t0.");
             }
             query += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
-            query += QLatin1String(", ");
+            query += QLatin1Char(',');
         }
     }
 
     if (Q_UNLIKELY(query.isEmpty())) {
         return query;
     } else {
-        query.chop(2);
+        query.chop(1);
     }
 
     if (joinFlag) {
@@ -527,7 +523,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
             upd += propName;
             upd += '=';
             upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), QVariant::DateTime, db);
-            upd += QLatin1String(", ");
+            upd += QLatin1Char(',');
             break;
         }
     }
@@ -542,7 +538,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         if (!it.hasNext())
             break;
 
-        upd += QLatin1String(", ");
+        upd += QLatin1Char(',');
     }
 
     if (!where.isEmpty()) {
@@ -664,8 +660,7 @@ inline void TSqlORMapper<T>::clear()
 {
     QSqlTableModel::clear();
     queryFilter.clear();
-    sortColumn.clear();
-    sortOrder = Tf::AscendingOrder;
+    sortColumns.clear();
     queryLimit = 0;
     queryOffset = 0;
     joinCount = 0;
@@ -683,10 +678,15 @@ template <class T>
 inline QString TSqlORMapper<T>::orderBy() const
 {
     QString str;
-    if (!sortColumn.isEmpty()) {
-        QString column = TSqlQuery::escapeIdentifier(sortColumn, QSqlDriver::FieldName, database().driver());
-        str.append(QLatin1String(" ORDER BY t0.")).append(column);
-        str.append((sortOrder == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
+
+    if (!sortColumns.isEmpty()) {
+        str += QLatin1String(" ORDER BY ");
+        for (auto &p : sortColumns) {
+            str += QLatin1String("t0.");
+            str += TSqlQuery::escapeIdentifier(p.first, QSqlDriver::FieldName, database().driver());
+            str += (p.second == Tf::AscendingOrder) ? QLatin1String(" ASC,") : QLatin1String(" DESC,");
+        }
+        str.chop(1);
     }
     return str;
 }

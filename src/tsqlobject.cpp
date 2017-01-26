@@ -218,7 +218,7 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-            where.append("=").append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
+            where.append('=').append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
             where.append(" AND ");
         } else {
             // continue
@@ -255,16 +255,16 @@ bool TSqlObject::update()
             upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
             upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
-            upd.append(QLatin1String(", "));
+            upd.append(QLatin1Char(','));
         }
     }
 
-    if (!upd.endsWith(QLatin1String(", "))) {
+    if (!upd.endsWith(QLatin1Char(','))) {
         tSystemDebug("SQL UPDATE: Same values as that of the record. No need to update.");
         return true;
     }
 
-    upd.chop(2);
+    upd.chop(1);
     syncToSqlRecord();
     upd.append(where);
 
@@ -321,7 +321,7 @@ bool TSqlObject::remove()
             }
 
             del.append(QLatin1String(propName));
-            del.append("=").append(TSqlQuery::formatValue(revision, QVariant::Int, database));
+            del.append('=').append(TSqlQuery::formatValue(revision, QVariant::Int, database));
             del.append(" AND ");
 
             revIndex = i;
@@ -338,7 +338,7 @@ bool TSqlObject::remove()
         return false;
     }
     del.append(QLatin1String(pkName));
-    del.append("=").append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
+    del.append('=').append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
 
     TSqlQuery query(database);
     bool ret = query.exec(del);
