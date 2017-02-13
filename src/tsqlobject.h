@@ -21,7 +21,7 @@ public:
     virtual ~TSqlObject() { }
 
     virtual QString tableName() const;
-    virtual int primaryKeyIndex() const { return -1; }
+    virtual QList<int> primaryKeyIndex() const { QList<int> pkidxs;return pkidxs; }
     virtual int autoValueIndex() const { return -1; }
     virtual int databaseId() const { return 0; }
     void setRecord(const QSqlRecord &record, const QSqlError &error);

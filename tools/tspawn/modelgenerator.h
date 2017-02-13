@@ -23,7 +23,7 @@ public:
     ~ModelGenerator();
     bool generate(const QString &dst, bool userModel = false);
     FieldList fieldList() const;
-    int primaryKeyIndex() const;
+    QList<int> primaryKeyIndex() const;
     int autoValueIndex() const;
     int lockRevisionIndex() const;
     QString model() const { return modelName; }

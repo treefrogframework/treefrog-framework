@@ -106,14 +106,15 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     output += QLatin1String("    };\n\n");
 
     // primaryKeyIndex() method
-    output += QLatin1String("    int primaryKeyIndex() const override { return ");
-    QString pkName = tableSch->primaryKeyFieldName();
-    if (pkName.isEmpty()) {
-        output += QLatin1String("-1; }\n");
-    } else {
+    output += QLatin1String("    QList<int> primaryKeyIndex() const override { QList<int> pkidxs; ");
+    QStringList pkNames = tableSch->primaryKeyFieldName();
+    for (auto pkName:pkNames){
+        output += QLatin1String("pkidxs<<");
         output += fieldNameToEnumName(pkName);
-        output += QLatin1String("; }\n");
+        output += QLatin1String("; ");
     }
+
+    output += QLatin1String("return pkidxs; }\n");
 
     // auto-value field, for example auto-increment value
     output += QLatin1String("    int autoValueIndex() const override { return ");
@@ -155,7 +156,7 @@ QList<QPair<QString, QVariant::Type>> SqlObjGenerator::fieldList() const
 }
 
 
-int SqlObjGenerator::primaryKeyIndex() const
+QList<int> SqlObjGenerator::primaryKeyIndex() const
 {
     return tableSch->primaryKeyIndex();
 }

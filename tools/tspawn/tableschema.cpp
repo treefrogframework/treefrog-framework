@@ -75,31 +75,31 @@ QList<QPair<QString, QVariant::Type>> TableSchema::getFieldTypeList() const
 }
 
 
-int TableSchema::primaryKeyIndex() const
+QList<int> TableSchema::primaryKeyIndex() const
 {
     QSqlTableModel model;
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
-    if (index.isEmpty()) {
-        return -1;
-    }
 
-    QSqlField fi = index.field(0);
-    return model.record().indexOf(fi.name());
+    QList<int> pkidxs;
+    for (auto &fi:index){
+        pkidxs<<model.record().indexOf(fi.name());
+    }
+    return pikdxs;
 }
 
 
-QString TableSchema::primaryKeyFieldName() const
+QStringList TableSchema::primaryKeyFieldName() const
 {
     QSqlTableModel model;
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
-    if (index.isEmpty()) {
-        return QString();
-    }
 
-    QSqlField fi = index.field(0);
-    return fi.name();
+    QStringList pkfns;
+    for (auto &fi:index){
+        pkfns<<fi.name();
+    }
+    return pkfns;
 }
 
 
@@ -125,27 +125,27 @@ QString TableSchema::autoValueFieldName() const
 }
 
 
-QPair<QString, QString> TableSchema::getPrimaryKeyField() const
+QList<QPair<QString, QString>> TableSchema::getPrimaryKeyField() const
 {
-    QPair<QString, QString> pair;
-    int index = primaryKeyIndex();
-    if (index >= 0) {
+    QList<QPair<QString, QString>> pairlist;
+    QList<int> indexs = primaryKeyIndex();
+    for (auto index:indexs){
         QSqlField f = tableFields.field(index);
-        pair = QPair<QString, QString>(f.name(), QString(QVariant::typeToName(f.type())));
+        pairlist<< QPair<QString, QString>(f.name(), QString(QVariant::typeToName(f.type())));
     }
-    return pair;
+    return pairlist;
 }
 
 
-QPair<QString, QVariant::Type> TableSchema::getPrimaryKeyFieldType() const
+QList<QPair<QString, QVariant::Type>> TableSchema::getPrimaryKeyFieldType() const
 {
-    QPair<QString, QVariant::Type> pair;
-    int index = primaryKeyIndex();
-    if (index >= 0) {
+    QList<QPair<QString, QString>> pairlist;
+    QList<int> indexs = primaryKeyIndex();
+     for (auto index:indexs){
         QSqlField f = tableFields.field(index);
-        pair = QPair<QString, QVariant::Type>(f.name(), f.type());
+        pairlist = QPair<QString, QVariant::Type>(f.name(), f.type());
     }
-    return pair;
+    return pairlist;
 }
 
 

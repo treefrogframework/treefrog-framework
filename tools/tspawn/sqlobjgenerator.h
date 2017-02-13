@@ -16,7 +16,7 @@ public:
     ~SqlObjGenerator();
     QString generate(const QString &dstDir);
     QList<QPair<QString, QVariant::Type>> fieldList() const;
-    int primaryKeyIndex() const;
+    QList<int> primaryKeyIndex() const;
     int autoValueIndex() const;
     int lockRevisionIndex() const;
     QString model() const { return modelName; }

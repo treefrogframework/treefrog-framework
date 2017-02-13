@@ -8,7 +8,7 @@
 class ControllerGenerator
 {
 public:
-    ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int lockRevIdx);
+    ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type>> &fields, const QList<int> pkIdxs, int lockRevIdx);
     ControllerGenerator(const QString &controller, const QStringList &actions);
     ~ControllerGenerator() { }
     bool generate(const QString &dstDir) const;
@@ -18,7 +18,7 @@ private:
     QString tableName;
     QStringList actionList;
     QList<QPair<QString, QVariant::Type>> fieldList;
-    int primaryKeyIndex;
+    QList<int> primaryKeyIndexs;
     int lockRevIndex;
 };
 

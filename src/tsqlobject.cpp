@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2017, AOYAMA Kazuharu
+/* Copyright (c) 2010-2015, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -16,6 +16,9 @@ const QByteArray LockRevision("lock_revision");
 const QByteArray CreatedAt("created_at");
 const QByteArray UpdatedAt("updated_at");
 const QByteArray ModifiedAt("modified_at");
+
+const QByteArray UserId("user_id");
+extern int userId;
 
 /*!
   \class TSqlObject
@@ -67,8 +70,8 @@ QString TSqlObject::tableName() const
 }
 
 /*!
-  \fn virtual int TSqlObject::primaryKeyIndex() const
-  Returns the position of the primary key field on the table.
+  \fn virtual QList<int> TSqlObject::primaryKeyIndexs() const
+  Returns the positions of the primary key fields on the table.
   This is a virtual function.
 */
 
@@ -121,14 +124,16 @@ bool TSqlObject::create()
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
-
         if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
             setProperty(propName, QDateTime::currentDateTime());
         } else if (prop == LockRevision) {
             // Sets the default value of 'revision' property
             setProperty(propName, 1);  // 1 : default value
-        } else {
+        } else if (prop == UserId){
+            setProperty(propName, userId);
+        }else {
             // do nothing
+
         }
     }
 
@@ -199,8 +204,9 @@ bool TSqlObject::update()
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
 
-        if (!updflag && (prop == UpdatedAt || prop == ModifiedAt)) {
+        if (!updflag && (prop == UpdatedAt || prop == ModifiedAt || prop == UserId)) {
             setProperty(propName, QDateTime::currentDateTime());
+            setProperty(propName, userId);
             updflag = true;
 
         } else if (revIndex < 0 && prop == LockRevision) {
@@ -229,29 +235,42 @@ bool TSqlObject::update()
     upd.reserve(255);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
-    int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
-    QMetaProperty metaProp = metaObject()->property(pkidx);
-    const char *pkName = metaProp.name();
-    if (primaryKeyIndex() < 0 || !pkName) {
+    QList<int> pkidxs=primaryKeyIndex();
+
+    if (pkidxs.isEmpty()){
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
         tError("%s", qPrintable(msg));
         return false;
     }
 
-    QVariant::Type pkType = metaProp.type();
-    QVariant origpkval = value(pkName);
-    where.append(QLatin1String(pkName));
-    where.append("=").append(TSqlQuery::formatValue(origpkval, pkType, database));
-    // Restore the value of primary key
-    QObject::setProperty(pkName, origpkval);
+    for (int idx:pkidxs){
+        int pkidx = metaObject()->propertyOffset() + idx;
+        QMetaProperty metaProp = metaObject()->property(pkidx);
+        const char *pkName = metaProp.name();
+        if (idx < 0 || !pkName) {
+            QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
+            sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
+            tError("%s", qPrintable(msg));
+            return false;
+        }
+
+        QVariant::Type pkType = metaProp.type();
+        QVariant origpkval = value(pkName);
+        where.append(QLatin1String(pkName));
+        where.append("=").append(TSqlQuery::formatValue(origpkval, pkType, database));
+        where .append(" AND ");
+        // Restore the value of primary key
+        QObject::setProperty(pkName, origpkval);
+   }
+    where.chop(5);
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
-        metaProp = metaObject()->property(i);
+        QMetaProperty metaProp = metaObject()->property(i);
         const char *propName = metaProp.name();
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
-        if (i != pkidx && recval.isValid() && recval != newval) {
+        if (!pkidxs.contains(i) && recval.isValid() && recval != newval) {
             upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
             upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
@@ -329,16 +348,30 @@ bool TSqlObject::remove()
         }
     }
 
-    auto metaProp = metaObject()->property(metaObject()->propertyOffset() + primaryKeyIndex());
-    const char *pkName = metaProp.name();
-    if (primaryKeyIndex() < 0 || !pkName) {
+    QList<int> pkidxs=primaryKeyIndex();
+
+    if (pkidxs.isEmpty()){
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
         tError("%s", qPrintable(msg));
         return false;
     }
-    del.append(QLatin1String(pkName));
-    del.append("=").append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
+
+    for (int idx:pkidxs){
+
+        auto metaProp = metaObject()->property(metaObject()->propertyOffset() + idx);
+        const char *pkName = metaProp.name();
+        if (idx < 0 || !pkName) {
+            QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
+            sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
+            tError("%s", qPrintable(msg));
+            return false;
+        }
+        del.append(QLatin1String(pkName));
+        del.append("=").append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
+        del.append(" AND ");
+    }
+    del.chop(5);
 
     TSqlQuery query(database);
     bool ret = query.exec(del);

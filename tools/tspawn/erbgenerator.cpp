@@ -35,9 +35,9 @@
     "  <tr>\n"                                                          \
     "%6"                                                                \
     "    <td>\n"                                                        \
-    "      <%== linkTo(\"Show\", urla(\"show\", i.%7())) %>\n"          \
-    "      <%== linkTo(\"Edit\", urla(\"save\", i.%7())) %>\n"          \
-    "      <%== linkTo(\"Remove\", urla(\"remove\", i.%7()), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
+    "      <%== linkTo(\"Show\", urla(\"show\", %7) %>\n"          \
+    "      <%== linkTo(\"Edit\", urla(\"save\", %7)) %>\n"          \
+    "      <%== linkTo(\"Remove\", urla(\"remove\", %7), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
     "    </td>\n"                                                       \
     "  </tr>\n"                                                         \
     "<% } %>\n"                                                         \
@@ -62,7 +62,7 @@
     "<h1>Showing %4</h1>\n"                                             \
     "%5"                                                                \
     "\n"                                                                \
-    "<%== linkTo(\"Edit\", urla(\"save\", %3.%6())) %> |\n"             \
+    "<%== linkTo(\"Edit\", urla(\"save\", %6)) %> |\n"             \
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "\n"                                                                \
     "</body>\n"                                                         \
@@ -118,7 +118,7 @@
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \
-    "<%== linkTo(\"Show\", urla(\"show\", %2[\"%4\"])) %> |\n"          \
+    "<%== linkTo(\"Show\", urla(\"show\", %4)) %> |\n"          \
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "</body>\n"                                                         \
     "</html>\n"
@@ -144,8 +144,8 @@ static const QStringList excludedDirName = {
 };
 
 
-ErbGenerator::ErbGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx)
-    : viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
+ErbGenerator::ErbGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, QList<int> pkIdxs, int autoValIdx)
+    : viewName(view), fieldList(fields), primaryKeyIndexs(pkIdxs), autoValueIndex(autoValIdx)
 { }
 
 
@@ -161,7 +161,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
     mkpath(dir);
     copy(dataDirPath + ".trim_mode", dir);
 
-    if (primaryKeyIndex < 0) {
+    if (primaryKeyIndexs.isEmpty()) {
         qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));
         return false;
     }
@@ -170,8 +170,33 @@ bool ErbGenerator::generate(const QString &dstDir) const
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
-    QString pkVarName = fieldNameToVariableName(pkFld.first);
+
+    QStringList pkFldList;
+    QString pkUrlIndex="";
+    QString pkUrlShow="";
+    QString pkUrlSave="";
+    for (auto pkIdx:primaryKeyIndexs){
+        const QPair<QString, QVariant::Type> &pkFld = fieldList[pkIdx];
+        pkFldList<<pkFld.first;
+
+        pkUrlIndex +="QVariant(i.";
+        pkUrlIndex +=fieldNameToVariableName(pkFld.first);
+        pkUrlIndex +="()).toString()";
+        pkUrlIndex +="+\"\\\"+";
+
+        pkUrlShow +="QVariant("+varName+".";
+        pkUrlShow +=fieldNameToVariableName(pkFld.first);
+        pkUrlShow +="()).toString()";
+        pkUrlShow +="+\"\\\"+";
+
+        pkUrlShow +="QVariant("+varName+"[\"";
+        pkUrlShow +=fieldNameToVariableName(pkFld.first);
+        pkUrlShow +="\"].toString()";
+        pkUrlShow +="+\"\\\"+";
+    }
+    pkUrlIndex.chop(5);
+    pkUrlShow.chop(5);
+    pkUrlSave.chop(5);
 
     // Generates index.html.erb
     QString th, td, showitems, entryitems, edititems;
@@ -212,20 +237,20 @@ bool ErbGenerator::generate(const QString &dstDir) const
             edititems += "\" value=\"<%= ";
             edititems += varName + "[\"" + ivar + "\"]";
             edititems += " %>\"";
-            if (p.first == pkFld.first) {
+            if (pkFldList.contains(p.first)) {
                 edititems += " readonly=\"readonly\"";
             }
             edititems += " /></label>\n  </p>\n";
         }
     }
 
-    output = QString(INDEX_TEMPLATE).arg(varName.toLower(), caption, th, viewName, varName,td, pkVarName);
+    output = QString(INDEX_TEMPLATE).arg(varName.toLower(), caption, th, viewName, varName,td, pkUrlIndex);
     fw.setFilePath(dir.filePath("index.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
-    output = QString(SHOW_TEMPLATE).arg(varName.toLower(), viewName, varName, caption, showitems, pkVarName);
+    output = QString(SHOW_TEMPLATE).arg(varName.toLower(), viewName, varName, caption, showitems, pkUrlShow);
     fw.setFilePath(dir.filePath("show.erb"));
     if (!fw.write(output, false)) {
         return false;
@@ -237,7 +262,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
         return false;
     }
 
-    output = QString(SAVE_TEMPLATE).arg(varName.toLower(), varName, caption, pkVarName, edititems);
+    output = QString(SAVE_TEMPLATE).arg(varName.toLower(), varName, caption, pkUrlSave, edititems);
     fw.setFilePath(dir.filePath("save.erb"));
     if (!fw.write(output, false)) {
         return false;

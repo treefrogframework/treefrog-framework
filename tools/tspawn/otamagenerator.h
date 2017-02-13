@@ -10,7 +10,7 @@
 class OtamaGenerator
 {
 public:
-    OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx);
+    OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, const QList<int> pkIdxs, int autoValIdx);
     bool generate(const QString &dstDir) const;
 
 protected:
@@ -19,7 +19,7 @@ protected:
 private:
     QString viewName;
     QList<QPair<QString, QVariant::Type>> fieldList;
-    int primaryKeyIndex;
+    QList<int> primaryKeyIndexs;
     int autoValueIndex;
 };
 

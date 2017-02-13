@@ -13,7 +13,7 @@ public:
     virtual ~AbstractObjGenerator() { }
     virtual QString generate(const QString &dstDir) = 0;
     virtual QList<QPair<QString, QVariant::Type>> fieldList() const = 0;
-    virtual int primaryKeyIndex() const { return -1; }
+    virtual QList<int> primaryKeyIndex() const { QList<int> pkidxs;return pkidxs; }
     virtual int autoValueIndex() const { return -1; }
     virtual int lockRevisionIndex() const { return -1; }
 };
