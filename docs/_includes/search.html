@@ -1,0 +1,33 @@
+<script>
+    var tipuesearch = {
+        "pages": []
+    };
+
+    {% assign root = include.rootFolder %}
+    {% assign rootLength = root | size %}
+
+    {% for site in site.html_pages %}
+        {% assign pagePath = site.url %}
+        {% assign pathSlice = pagePath | slice: 0, rootLength %}
+        {% if root == pathSlice %}
+            tipuesearch.pages.push({
+                "title": {{ site.title | jsonify }},
+                "text": {{ site.content | strip_html | strip_newlines | jsonify }},
+                "url": {{ site.url | jsonify }},
+                "tags": ""
+            });
+        {% endif %}
+    {% endfor %}
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#tipue_search_input').tipuesearch({
+        'mode': 'static',
+        'show': 10,
+        'newWindow': false,
+        'minimumLength': 2,
+        'wholeWords': false
+    });
+});
+</script>

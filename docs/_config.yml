@@ -1,0 +1,13 @@
+name:         Treefrog Framework
+markdown:     kramdown
+highlighter:  rouge
+
+github:       [metadata]
+gems:         [markdown]
+theme:        jekyll-theme-slate
+baseurl:      ""
+url:          https://thomasgueldner.github.io
+
+# Server
+port: 		    4000
+encoding: 	    utf-8

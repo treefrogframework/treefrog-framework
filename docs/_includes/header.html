@@ -1,0 +1,11 @@
+<div class="inner">
+    {% if page.url contains '/jp/' %}
+        {% assign url = 'jp' %}
+    {% else %}
+        {% assign url = '' %}
+    {% endif %}
+    <a href="{{ site.baseurl }}/{{ url }}" id="title"><h1 id="project_title">Treefrog Framework</h1></a>
+    <h2 id="project_tagline">High-speed C++ MVC Framework for Web Application</h2> {% if site.show_downloads %}
+    <section id="downloads"> <a class="zip_download_link" href="{{ site.github.zip_url }}">Download this project as a .zip file</a> <a class="tar_download_link" href="{{ site.github.tar_url }}">Download this project as a tar.gz file</a> </section> {% endif %} 
+    <a href="{{ site.baseurl }}/{{ url }}" id="logo-link"><img id="logo" src="{{ site.baseurl }}/assets/images/treefrog-logo.png"></a>
+</div>
