@@ -3,11 +3,12 @@ markdown:     kramdown
 highlighter:  rouge
 
 github:       [metadata]
+repository:   https://github.com/treefrogframework/treefrog-framework
 gems:         [markdown]
 theme:        jekyll-theme-slate
 baseurl:      ""
-url:          https://thomasgueldner.github.io
+url:          https://treefrogframework.github.io
 
 # Server
-port: 		    4000
-encoding: 	    utf-8
+port: 		  4000
+encoding: 	  utf-8
