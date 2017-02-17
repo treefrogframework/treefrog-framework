@@ -7,8 +7,8 @@ page_id: "070.030"
 
 Place static contents that is accessible from the browser in the *public* directory. Only save published files here.
 
-For example, it assumes that an HTML file is in public/sample.html. 
-When you access http://URL:PORT/sample.html from the browser, in case the application server (AP server) is running, its content will be displayed.
+For example, it assumes that an HTML file is in *public/sample.html*. 
+When you access *http://URL:PORT/sample.html* from the browser, in case the application server (AP server) is running, its content will be displayed.
 
 After creating the skeleton of the application by using the generator command, the following subdirectories will be created.
 

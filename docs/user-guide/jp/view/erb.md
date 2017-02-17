@@ -173,7 +173,7 @@ Qt 付属の foreach 文を使えば、より短く書けます。
 ```
  <%== linkTo("Back", QUrl("/Blog/index")) %>
                ↓
-<a href="/Blog/index">Back</a>
+ <a href="/Blog/index">Back</a>
 ```
 
 linkTo() メソッドには他にも引数が指定可能です。詳細は [API リファレンス](http://treefrogframework.org/tf_doxygen/classes.html){:target="_blank"} をご覧ください。
@@ -294,8 +294,8 @@ CSRF 対策の詳細については、[セキュリティの章](/user-guide/jp/
 アクションで呼ばれる render() メソッドの第２引数でレイアウト名を設定します。
 次は simplelayout.erb をレイアウトに使う例です。
 
-```
- render("show", "simplelayout");
+```c++
+render("show", "simplelayout");
 ```
 
 これで、simplelayout のレイアウトに show テンプレートの内容がマージされて、レスポンスとして返却されます。
@@ -304,8 +304,8 @@ CSRF 対策の詳細については、[セキュリティの章](/user-guide/jp/
 
 コントローラのコンストラクタの中で、レイアウト名を引数に指定して setLayout() メソッドを呼びます。
 
-```
- setLayout("basiclayout");  // basiclayout.erb をレイアウトに使う
+```c++
+setLayout("basiclayout");  // basiclayout.erb をレイアウトに使う
 ``` 
 
 **３．デフォルトのレイアウト**

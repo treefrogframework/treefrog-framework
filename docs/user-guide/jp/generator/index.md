@@ -76,7 +76,7 @@ connectOptions=
 | connectOptions | 接続オプション | 詳細は Qt ドキュメント参照：<br>[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="_blank"}                                                                                                                                             |
 
 </div><br>
-　
+
 データベースドライバが Qt SDK に組み込まれていないとデータベースへアクセスできません。もし組み込まれていなければ、FAQ を参照して組み込んでください。あるいは、[ダウンロードページ](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}からデータベースドライバをダウンロードし、組み込んでください。
 
 そうしてからジェネレータコマンドを実行すると、足場が生成されます。コマンドは必ずアプリケーションルートディレクトリで実行してください。
@@ -96,7 +96,8 @@ connectOptions=
 <br>
 <span style="color: #b22222">**結論：  データベースにスキーマを定義し、ジェネレータコマンドで足場を作れ。**</span>
 
-**テーブル名とモデル名/コントローラ名の関係** <br>
+### テーブル名とモデル名/コントローラ名の関係
+
 ジェネレータが生成するクラスの名前はテーブル名に基づいて決められ、次のようなルールになります。
 
 ```
@@ -109,9 +110,9 @@ connectOptions=
 
 ## ジェネレータのサブコマンド
 
-```
- tspawn コマンドの usage です。
+tspawn コマンドの usage です。
 
+```
  $ tspawn -h
  usage: tspawn <subcommand> [args]
  Available subcommands:

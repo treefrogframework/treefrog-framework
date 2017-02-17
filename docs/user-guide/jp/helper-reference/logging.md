@@ -61,7 +61,7 @@ tError("Invalid Parameter : value : %d", value);
 FileLogger.Layout="%d %5P [%t] %m%n"
 ```
  
-ログレイアウトにある %d の部分にはログの発生日時が挿入されます。日時のフォーマットは FileLogger.DateTimeFormat パラメータに指定します。指定可能な形式は QDateTime::toString() に引数に渡す値と同じですので、詳しくは Qt ドキュメントをご覧ください。
+ログレイアウトにある %d の部分にはログの発生日時が挿入されます。日時のフォーマットは FileLogger.DateTimeFormat パラメータに指定します。指定可能な形式は QDateTime::toString() に引数に渡す値と同じですので、詳しくは [Qt ドキュメント](http://doc.qt.io/qt-5/qdatetime.html){:target="_target"}をご覧ください。
 
 ```ini
 # Specify the date-time format of FileLogger, see also QDateTime

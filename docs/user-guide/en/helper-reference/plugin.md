@@ -81,7 +81,7 @@ SOURCES = sampleplugin.cpp \
           samplelogger.cpp
 ```
 
-- It’s important to include the appbase.pri file by using the include function.
+- It’s <span style="color: red">important</span> to include the appbase.pri file by using the include function.
 
 After this, when you build you can make plug-ins that are dynamically loadable. Save the plug-in to the plugin directory every time without fault, because the application server (AP server) loads the plug-ins from this directory.
 Please see the Qt documentation for more details of the [plug-in system](http://doc.qt.io/qt-5/plugins-howto.html){:target="_blank"}.
@@ -111,7 +111,7 @@ In order to implement the logger, you can override the following methods in the 
 * key(): returns the name of the logger.
 * open(): open of the log called by the plug-in immediately after loading.
 * close(): close the log.
-* log(): output the log. This method may be called from multiple threads, make this as thread-safe.
+* log(): output the log. This method may be called from multiple threads, make this as **thread-safe**.
 * isMultiProcessSafe(): indicates whether it is safe for you to output a log in a multi-process. When it is safe, it returns true. I not, it returns as false.
 
 About MultiProcessSafe method, when it returns false (meaning it is not safe) and the application server is running in a multiprocess mode as well, the isMultiProcessSafe() method calls open()/close() each time before and after it is logging output (leads into increasing overhead). 

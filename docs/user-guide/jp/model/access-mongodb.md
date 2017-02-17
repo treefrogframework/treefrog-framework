@@ -21,6 +21,24 @@ MongoDB と RDB の階層構造について比較してみます。
 
 </div><br>	 
 
+## インストール
+
+次のコマンドでフレームワークを再インストールします。
+
+```
+ $ tar xvzf treefrog-x.x.x.tar.gz
+ $ cd treefrog-x.x.x
+ $ ./configure --enable-mongo
+ $ cd src
+ $ make
+ $ sudo make install
+ $ cd ../tools
+ $ make
+ $ sudo make install
+```
+
+- x.x.x はバージョン
+
 ## 接続情報の設定
 
 MongoDB はインストールが済んでおり、サーバが起動しているとします。<br>
@@ -77,7 +95,8 @@ mongo.insert(doc);   // 新規作成
    
 内部的には、insert() が実行されるタイミングで一意の ObjectID が割り振られます。
  
-**補足**<br>
+### 補足
+
 この例が示すように、MongoDB との接続／切断の処理について、開発者は全く気にする必要がありません。コネクションの管理はフレームワークが行なっているからです。このような仕組みにすることで、コネクションを再利用することが可能となり、オーバヘッドのかかる接続／切断の回数が抑えられているのです。
  
 ## ドキュメントを読み込む
@@ -128,9 +147,9 @@ mongo.find(criteria);    // 検索を実行
 * **$in**: In
 * **$nin**: Not in
 
-OR演算子
+### OR演算子
 
-２つの以上の条件を OR 演算子 $or で結合してみます。
+２つの以上の条件を OR 演算子 **$or** で結合してみます。
 
 ```c++
 QVariantMap criteria;
@@ -151,11 +170,11 @@ MongoDB サーバから読み込んだドキュメントを更新してみます
 ```c++
 TMongoQuery mongo("blog"); 
 QVariantMap criteria;
-criteria["title"] = "foo";   // 検索条件を設定
+criteria["title"] = "foo";             // 検索条件を設定
 QVariantMap doc = findOne(criteria);   // 1件取得
-doc["body"] = "bar baz";     // ドキュメントの内容を変更
+doc["body"] = "bar baz";               // ドキュメントの内容を変更
 
-criteria["_id"] = doc["_id"];    // 検索条件にObjectIDを追加 
+criteria["_id"] = doc["_id"];          // 検索条件にObjectIDを追加 
 mongo.update(criteria, doc);
 ```
   

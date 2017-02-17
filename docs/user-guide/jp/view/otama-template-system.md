@@ -15,7 +15,11 @@ Otama は、テンプレートとプレゼンテーションロジックを完�
 
 テンプレート（.html）は完全な HTML で記述し、書き換えたい要素（タグ）に対して「マーク」をつけておきます。そのマークと C++ コードの関連付けをプレゼンテーションロジックファイル（.otm）に記述します。そうしてから、ビルドすると自動的に C++ コードに変換され、ビューの共有ライブラリが作られます。
 
-![View Convention](http://www.treefrogframework.org/wp-content/uploads/views_conv.png "View Convention")
+<div class="img-center" markdown="1">
+
+![View Convention]({{ site.baseurl }}/assets/images/documentation/views_conv.png "View Convention")
+
+</div>
 
 基本的に、アクション毎にテンプレートとプレゼンテーションロジックのセットを作ります。ファイル名は、大文字小文字を区別 して 「アクション名.html」、「アクション名.otm」 とします。ファイルは「views/コントローラ名/」 ディレクトリに置きます。
 

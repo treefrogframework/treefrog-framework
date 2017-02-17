@@ -17,11 +17,12 @@ As you will know, SQL injection means that due to the problems of SQL sentence c
 * Use TSqlQuery place holder when constructing SQL sentences => the values are processed by escape automatically.
 * When constructing SQL sentences by string concatenation, use TSqlQuery::escapeIdentifier() for field name, and TSqlQuery::formatValue() for value. => escape processing is done for each.
  
-## Cross-site Scripting Prevention
+## Cross-site Scripting Prevention (CSRF)
 
 If there is a deficiency in the process of generating websites, it can allow the inclusion of malicious scripts, and if that happens, a cross-site scripting attack can be established. In order to guard against this, you should implement a policy of using escape for all values and attribute outputs which output dynamically into the view area. In the TreeFrog, the following is done.
 
 * The eh() method or '<%= .. %>' notation should be used for outputting values.
+
 You have to be very careful if you output the area WITHOUT using the escape processing, that is the echo() method or '<%= .. %>' notation.
 
 Basically, for the content of any \<script\> .. \</script\> element, I recommend that you don't output dynamically any information dependent on outside input.

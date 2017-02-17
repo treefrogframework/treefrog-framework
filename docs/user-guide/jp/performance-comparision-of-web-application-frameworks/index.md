@@ -72,7 +72,11 @@ PHPは単純なコードだと、相当速いことがよく分かりました�
 
 結果は下記の通り。値が高いものほど速いです。
 
-![結果](http://www.treefrogframework.org/wp-content/uploads/snapshot4.png "結果")
+<div class="img-center" markdown="1">
+
+![結果]({{ site.baseurl }}/assets/images/documentation/snapshot4.png "結果")
+
+</div>
 
 ### 考察
 
@@ -107,10 +111,16 @@ topコマンドを使った目視なので説得力にかけるのですが、�
 
 **TreeFrog Framework 高負荷時の top コマンド画面**
 
-![top コマンド画面 1](http://www.treefrogframework.org/wp-content/uploads/2012/07/snapshot2-2.png "top コマンド画面 1")
+<div class="img-center" markdown="1">
+
+![top コマンド画面 1]({{ site.baseurl }}/assets/images/documentation/snapshot2-2.png "top コマンド画面 1")
+
+</div>
 
 **Codeigniter 高負荷時の top コマンド画面**
 
-![top コマンド画面 2](http://www.treefrogframework.org/wp-content/uploads/2012/07/snapshot2-2.png "top コマンド画面 2")
+<div class="img-center" markdown="1">
 
+![top コマンド画面 2]({{ site.baseurl }}/assets/images/documentation/snapshot2-2.png "top コマンド画面 2")
 
+</div>

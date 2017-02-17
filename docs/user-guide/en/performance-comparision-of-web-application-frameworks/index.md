@@ -58,9 +58,9 @@ We conducted the test about 10 times per framework, and took the average of the 
  $ siege -b -c 10 -t 3S http://192.168.x.x/controller/path
 ```
  
-By the way, when measured with code written in Plain PHP, the result was 1261 trans/sec; a very high number.
+By the way, when measured with [code](https://github.com/ichikaway/CakePHP-PerformanceCheckSample/blob/master/php/view.php){:target="_blank"} written in Plain PHP, the result was 1261 trans/sec; a very high number.
 
-If PHP [code](http://github.com/ichikaway/CakePHP-PerformanceCheckSample/blob/master/php/view.php){:target="_blank"} is very small, it can be very fast. On the other hand, it seems slower than expected when the amount of code and the amount of function calls is large. It may be a feature of a scripting language.
+If PHP code is very small, it can be very fast. On the other hand, it seems slower than expected when the amount of code and the amount of function calls is [large](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}. It may be a feature of a scripting language.
  
 ### Result List
 
@@ -70,7 +70,11 @@ I have summarized the detailed results in a [spreadsheet](https://docs.google.co
 
 Results are shown in the following graph. Higher values mean faster.
 
-![Result Graph](http://www.treefrogframework.org/wp-content/uploads/snapshot4.png "Result Graph")
+<div class="img-center" markdown="1">
+
+![Result Graph]({{ site.baseurl }}/assets/images/documentation/snapshot4.png "Result Graph")
+
+</div>
 
 ### Discussion
 
@@ -106,8 +110,16 @@ With all that in mind, I would like to show the result of top command under load
 
 **Top command screen when TreeFrog Framework has high load:**
 
-![Top Command Screen 1](http://www.treefrogframework.org/wp-content/uploads/2012/07/snapshot2-2.png "Top Command Screen 1")
+<div class="img-center" markdown="1">
+
+![Top Command Screen 1]({{ site.baseurl }}/assets/images/documentation/snapshot2-2.png "Top Command Screen 1")
+
+</div>
 
 **Top command screen when Codeigniter has high load:**
 
-![Top Command Screen 2](http://www.treefrogframework.org/wp-content/uploads/2012/07/snapshot2-2.png "Top Command Screen 2")
+<div class="img-center" markdown="1">
+
+![Top Command Screen 2]({{ site.baseurl }}/assets/images/documentation/snapshot2-2.png "Top Command Screen 2")
+
+</div>

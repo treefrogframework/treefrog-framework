@@ -105,17 +105,20 @@ void AccountController::form()
 login アクションでは、ポストされたユーザ名とパスワードで行う認証処理を次のように書いてみます。認証が成功したら、userLogin メソッドを呼び出してユーザをシステムにログインさせています。
 
 ```c++
-QString username = httpRequest().formItemValue("username");
-QString password = httpRequest().formItemValue("password");
+void AccountController::login()
+{
+    QString username = httpRequest().formItemValue("username");
+    QString password = httpRequest().formItemValue("password");
  
-User user = User::authenticate(username, password);
-if (!user.isNull()) {
-    userLogin(&user);
-    redirect(QUrl(...));
-} else {
-    QString message = "Login failed";
-    texport(message);
-    render("form");
+    User user = User::authenticate(username, password);
+    if (!user.isNull()) {
+        userLogin(&user);
+        redirect(QUrl(...));
+    } else {
+        QString message = "Login failed";
+        texport(message);
+        render("form");
+    }
 }
 ```
 
@@ -137,7 +140,7 @@ QString identityKey() const { return username(); }
 
 ログアウトするには、アクションの中で userLogout メソッドを呼び出すだけです。
 
-```
+```c++
 void AccountController::logout()
 {
     userLogout();
@@ -181,7 +184,7 @@ User User::getByIdentityKey(const QString &username)
 
 コントローラでは次のように呼び出します。
 
-```
+```c++
 QString username = identityKeyOfLoginUser();
 User loginUser = User::getByIdentityKey(username);
 ``` 

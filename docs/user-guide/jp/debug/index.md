@@ -66,7 +66,11 @@ page_id: "110.0"
 
 アプリのソースコードを Qt Creator にインポートします。 [ File ] – [ Open File or Project... ] をクリックし、ファイル選択画面でアプリケーションルートにあるプロジェクトファイルを選択します。[ Configure Porject ]ボタンをクリックし、プロジェクトをインポートします。次は blogapp という名のプロジェクトをインポートする画面です。
 
-![Qt Creator インポート](http://www.treefrogframework.org/wp-content/uploads/2012/12/QtCreator-import.png "Qt Creator インポート")
+<div class="img-center" markdown="1">
+
+![Qt Creator インポート]({{ site.baseurl }}/assets/images/documentation/QtCreator-import.png "Qt Creator インポート")
+
+</div>
 
 ※ 画像をクリックすると拡大します。
 
@@ -76,18 +80,30 @@ tadpole コマンドの引数の末尾に、-eオプションとアプリケー�
 Linux の場合：<br>
 次は、アプリケーションルートに /var/tmp/blogapp を指定したときの画面です。
 
-![Qt Creator runenv](http://www.treefrogframework.org/wp-content/uploads/QtCreator-runenv(1).png "Qt Creator runenv")
+<div class="img-center" markdown="1">
+
+![Qt Creator runenv]({{ site.baseurl }}/assets/images/documentation/QtCreator-runenv(1).png "Qt Creator runenv")
+
+</div>
 
 WIndows の場合：<br>
 上記の内容をビルド設定画面と実行時設定画面の２つで設定します。
 
 ビルド設定の例：
 
-![ビルド設定の例](http://www.treefrogframework.org/wp-content/uploads/2012/12/QtCreator-build-settings-win.png "ビルド設定の例")
+<div class="img-center" markdown="1">
+
+![ビルド設定の例]({{ site.baseurl }}/assets/images/documentation/QtCreator-build-settings-win.png "ビルド設定の例")
+
+</div>
 
 実行時の設定の例：
 
-![実行時の設定の例](http://www.treefrogframework.org/wp-content/uploads/QtCreator-run-settings-win.png "実行時の設定の例")
+<div class="img-center" markdown="1">
+
+![実行時の設定の例]({{ site.baseurl }}/assets/images/documentation/QtCreator-run-settings-win.png "実行時の設定の例")
+
+</div>
  
 以上で、設定は完了です。<br>
 あとは、ソースコードにブレークポイントを追加し、Webブラウザからアクセスしてみてください。

@@ -164,7 +164,7 @@ It does not convert the singular-plural form of words, as Rails does.
 #### View Naming Conventions
 
 Template files are generated with the file name "action name + extension" all in lower case, in the 'views/controller name" directory. The extension used depends on the template system.
-Also, when you build the view, and then output the source file in views/_src directory they are converted to C++ code templates. When these are compiled, a shared library view is created.
+Also, when you build the view, and then output the source file in *views/_src* directory they are converted to C++ code templates. When these are compiled, a shared library view is created.
  
 
 #### CRUD

@@ -17,7 +17,7 @@ Cookies are produced by the Web application. In accordance with the specificatio
 When the relevant action occurs, the following functions are called, and the key-value pairs will be saved to cookies.
 
 ```c++
- addCookie("key1", "Hello world.");
+addCookie("key1", "Hello world.");
 ```
 
 An expiration date can be set on the cookie. The cookie rides on the HTTP request, and is sent between server and browser. Once it reaches the expiration date the cookie is automatically erased from the browser, and disappears. This is specified in the third argument of addCookie() function expiration date. For more information, refer to the [API reference](http://treefrogframework.org/tf_doxygen/classes.html){:target="_blank"}.
@@ -27,6 +27,6 @@ An expiration date can be set on the cookie. The cookie rides on the HTTP reques
 Using the key, values can be retrieved from the cookies present in the HTTP request, as follows.
 
 ```c++
- QByteArray text = httpRequest().cookie("key1");
-  // text = "Hello world."
+QByteArray text = httpRequest().cookie("key1");
+// text = "Hello world."
 ```

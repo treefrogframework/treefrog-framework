@@ -97,6 +97,5 @@ ActionMailer.smtp.DelayedDelivery=true
 
 By doing this, the deliver() method will be a non-blocking function of merely queuing data. Processing of the mail sending will occur after returning an HTTP response.
 
-### Additional note
-
+**Additional note:**
 If you do not set the delay sending (in the case of false), the deliver() method would keep blocking until the SMTP processing would end, or be in error.

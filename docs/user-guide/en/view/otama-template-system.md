@@ -15,7 +15,11 @@ Views are created for the Otama system when the configuration file (development.
 
 The template is written in full HTML (with the .html file extension). A "mark" is used for the tag elements where logic code is to be inserted. The presentation logic file (.otm) is written with the associated C++ code, and the mark. This will be then automatically converted to C++ code when the shared view library is built.
 
-![View Convention](http://www.treefrogframework.org/wp-content/uploads/views_conv.png "View Convention")
+<div class="img-center" markdown="1">
+
+![View Convention]({{ site.baseurl }}/assets/images/documentation/views_conv.png "View Convention")
+
+</div>
 
 Basically, a set of presentation logic and template are made for every action. The file names are [action name].html and [action name].otm (case-sensitive). The files are placed in the "views/controller-name/" directory.
 
@@ -278,7 +282,7 @@ By using this operator, the information for the design (HTML attributes) can be 
 
 <span style="color: #b22222">**In brief: Leave the attribute related to the design of the template and merge it by using the \|== operator.** </span>
 
-**Note:**
+**Note:**<br>
 The \|== operator is only available in this format (i.e. \|== ), neither '\|' on its own, nor '\|=' will work.
  
 ## Form Tag
@@ -325,7 +329,8 @@ Then, the view will make the following results.
 
 ## Erasing the Tag
 
-You can keep a content and erase a start-tag and an end-tag only.
+You can keep a content and erase a start-tag and an end-tag only.<br>
+For example, when using a layout, the \<html> tag is outputted by the layout file side, so you don't need to output it anymore on the template side, but leave the \<html> tag on the template side if you want your layout have based on HTML. <br>
 Suppose you wrote the following to the template.
 
 ```html

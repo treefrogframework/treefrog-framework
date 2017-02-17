@@ -57,6 +57,8 @@ First we create a form as follows.
 </form>
 ``` 
 
+When creating an input tag with JavaScript dynamically, it is important to add "[]" at the end of the 'name' like name = "picture []".
+
 To receive the uploaded file in the upload action, you can access the two files through the TMimeEntity object as follows. But don’t forget here using the Iterator for that.
 
 ```c++

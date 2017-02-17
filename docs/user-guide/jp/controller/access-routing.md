@@ -55,4 +55,4 @@ bool FooController::preFilter()
 ```
 
 preFilter()メソッドは false を返すと、この後アクションは実行されません。これでアクセスを拒否することになります。<br>
-この例では renderErrorResponse()メソッドを使うことで、静的なエラーページ（public/403.html）を表示させています。
+この例では renderErrorResponse()メソッドを使うことで、静的なエラーページ（*public/403.html*）を表示させています。

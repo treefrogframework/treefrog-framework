@@ -17,8 +17,6 @@ Debugging the Web application is equivalent to debugging the shared common libra
 
 In debug, the following settings are used according to the platforms.
 
-In the case of Linux/ Mac OS X:
-
 <div class="center aligned" markdown="1">
 
 **In the case of Linux/ Mac OS X:**
@@ -40,7 +38,6 @@ In the case of Linux/ Mac OS X:
 **In the case of Windows:**
 
 </div>
-<br>
 <div class="table-div" markdown="1">
 
 | Option           | Value                                                                                                                                                                                |
@@ -68,7 +65,11 @@ First, make a thread in the [MPM]({{ site.baseurl }}/user-guide/en/performance/i
 
 Import the source code of the application file to Qt Creator. Then click [File] – [Open File or Project...] and then choose the project file on the file selection screen. Click the [Configure Project] button, and then import the project. The following screen is seen when the blogapp project is imported.
 
-![QtCreator Import](http://www.treefrogframework.org/wp-content/uploads/2012/12/QtCreator-import.png "QtCreator Import")
+<div class="img-center" markdown="1">
+
+![QtCreator Import]({{ site.baseurl }}/assets/images/documentation/QtCreator-import.png "QtCreator Import")
+
+</div>
 
 Now we will run the settings screen for debugging.
 The last of the tadpole command arguments, specifies -e option and the application route’s absolute path. You may remember that the -e option is the setting for switching the DB environment. Let's assume you choose dev.
@@ -76,18 +77,30 @@ The last of the tadpole command arguments, specifies -e option and the applicati
 In the case of Linux:<br>
 In the next screen we choose /var/tmp/blogapp as the application root.
 
-![QtCreator runenv](http://www.treefrogframework.org/wp-content/uploads/QtCreator-runenv(1).png "QtCreator runenv")
+<div class="img-center" markdown="1">
+
+![QtCreator runenv]({{ site.baseurl }}/assets/images/documentation/QtCreator-runenv(1).png "QtCreator runenv")
+
+</div>
  
 In Windows:<br>
 We can set the content in two ways by building the configuration screen and by implementing the configuration screen.
 
 Example of build configuration: (sorry for only having Japanese images for this demonstration...)
 
-![QtCreator build settings window 1](http://www.treefrogframework.org/wp-content/uploads/2012/12/QtCreator-build-settings-win.png "QtCreator build settings window 1")
+<div class="img-center" markdown="1">
+
+![QtCreator build settings window 1]({{ site.baseurl }}/assets/images/documentation/QtCreator-build-settings-win.png "QtCreator build settings window 1")
+
+</div>
 
 And an example of run configuration :
 
-![QtCreator build settings window 2](http://www.treefrogframework.org/wp-content/uploads/QtCreator-run-settings-win.png "QtCreator build settings window 2")
+<div class="img-center" markdown="1">
+
+![QtCreator build settings window 2]({{ site.baseurl }}/assets/images/documentation/QtCreator-run-settings-win.png "QtCreator build settings window 2")
+
+</div>
 
 That is all about the configuration settings.
 When adding a breakpoint to the source code, always try to access it from your Web browser.

@@ -21,8 +21,6 @@ Here is a comparison between the layered structures of an RDB and MongoDB.
 
 </div><br>
 
-TreeFrog Framework has been designed to respond to MongoDB in its current trial version. Please first understand that what has been described here may therefore change in future versions
-
 ## Installation
 
 Re-install the framework with the following command.
@@ -40,7 +38,6 @@ Re-install the framework with the following command.
 ```
 
 - x.x.x will be version.
-- create both release and debug versions for Windows.
 
 ## Setting Credentials
 
@@ -48,13 +45,13 @@ Assume that MongoDB has being installed, and the server is running. Then you mak
 
 Let’s set the connection information in order to communicate with the MongoDB server. First, edit the following line in *config/application.ini*.
 
-```
+```ini
  MongoDbSettingsFile=mongodb.ini
 ``` 
  
 Then edit the *config/mongodb.ini*, specifying the host name and database name. As with the configuration file for the SQL database, this file is divided into three sections, *dev*, *test*, and *product*.
  
-```
+```ini
  [dev]
  DatabaseName=foodb        # Database name
  HostName=192.168.x.x      # Host name or IP address
@@ -74,6 +71,10 @@ Check the settings. Execute the following in the application root directory when
  -----------------
  Existing collections:
 ```
+
+If it succeeds, it will be displayed like this.
+
+Web applications can access both MongoDB and SQL databases. This enables the Web application to respond in a flexible way in case of an increased load of the Web system.
 
 ## Creating New Document
 
@@ -107,6 +108,7 @@ In the following example, we use an object that sets criteria as an argument to 
 ```c++
 TMongoQuery mongo("blog"); 
 QVariantMap criteria;
+
 criteria["title"] = "foo";  // Set the search criteria
 criteria["body"] = "bar";  // Set the search criteria
 
@@ -127,7 +129,7 @@ QVariantMap doc = mongo.findOne(criteria);
 
 The following is a example to read documents that the value of 'num' key is greater than 10. Specify **$gt** as the comparison operator for a criteria object.
 
-```
+```c++
 QVariantMap criteria;
 QVariantMap gt;
 gt.insert("$gt", 10);
@@ -146,7 +148,7 @@ mongo.find(criteria);    // Run the search
 * **$in**: In
 * **$nin**: Not in
 
-**OR Operator**
+### OR Operator
 
 Joins query clauses with a logical OR **$or**.
 
@@ -158,6 +160,8 @@ criteria.insert("$or", orlst);
   :
 ```
 
+As described above, the search condition in *TMongoQuery* is represented by an object from type *QVariantMap*. In MongoDB, the search condition is represented by JSON, so when executing the query, the QVariantMap object will be converted to a JSON object. Therefore you can specify all the operators provided by MongoDB provided that you describe them properly according to the rules. An efficient search will be possible.
+
 Other operators are provided by MongoDB. Please see [MongoDB documents](http://docs.mongodb.org/manual/reference/operator/nav-query/){:target="_blank"} for details.
 
 ## Updating the Document
@@ -167,11 +171,11 @@ We will read a document from the MongoDB server and then update it. As indicated
 ```c++
 TMongoQuery mongo("blog"); 
 QVariantMap criteria;
-criteria["title"] = "foo";    // Set the search criteria
+criteria["title"] = "foo";             // Set the search criteria
 QVariantMap doc = findOne(criteria);   // Get one
-doc["body"] = "bar baz";      // Change the contents of the document
+doc["body"] = "bar baz";               // Change the contents of the document
 
-criteria["_id"] = doc["_id"]; // Set ObjectID to the search criteria  
+criteria["_id"] = doc["_id"];          // Set ObjectID to the search criteria  
 mongo.update(criteria, doc);
 ```
 

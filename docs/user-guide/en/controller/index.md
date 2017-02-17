@@ -41,8 +41,8 @@ If more than 10 are specified it will be assuming that only 10 are to be designa
 Here are some concrete examples. Actions from the BlogController class are called in each case.
 
 ```
- /blog/show      →  show();
- /blog/show/2    →  show(QString("2"));
+ /blog/show        →  show();
+ /blog/show/2      →  show(QString("2"));
  /blog/show/foo/5  →  show(QString("foo"), QString("5"));  
 ```
 
@@ -144,7 +144,7 @@ To pass variables to view, use the macros texport(variable) or T_EXPORT(variable
  QString foo = "Hello world";
  texport(foo);
 
-    // Alternatively
+ // Alternatively
 
  int bar;
  bar = …
@@ -153,30 +153,30 @@ To pass variables to view, use the macros texport(variable) or T_EXPORT(variable
 
 **Note:** the variable must be specified as an argument to texport. You can’t directly specify a string ("Hello world") or numbers (such as 100).
 
-To use the variable in view, you must first declare the variable in tfetch (Type, variable). Please see the view chapter for more information.
+To use the variable in view, you must first declare the variable in tfetch (Type, variable). Please see the [view]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"} chapter for more information.
 
 <span style="color: #b22222">**In brief: Pass the object to the view by tfetch().** </span>
  
-### In the case of a user-defined class:
+**In the case of a user-defined class:**
 
 When you make the new class passing to the view (user-defined class), please add the following charm at the end of the header class. See the section on ["Creating original model"](/user-guide/en/model/index/html){:target="_blank"}.
 
 ```c++
-  Q_DECLARE_METATYPE(ClassName)     // ← Please replace the class name
+ Q_DECLARE_METATYPE(ClassName)     // ← Please replace the class name
 ```
 
 You do not need to declare a class that is provided in Qt to Q_DECLARE_METATYPE. However, declaration is required if you want to pass to the view an object of a template class, such as QHash and QList. In that case, please add the following at the end of the *helpers/applicationhelper.h*.
 
 ```c++
-    :
-  Q_DECLARE_METATYPE(QList<float>)
+   :
+ Q_DECLARE_METATYPE(QList<float>)
 ```
 
 A Q_DECLARE_METATYPE macro argument is the name of a class, however, if you include a comma (such as QHash \<Foo, Bar\>), a compile error will occur. In this case, the name used should be declared as typedef QHash \<Foo, Bar\>.
 
 ```c++
-  typedef QHash<Foo, Bar> BarHash;
-  Q_DECLARE_METATYPE(BarHash)
+ typedef QHash<Foo, Bar> BarHash;
+ Q_DECLARE_METATYPE(BarHash)
 ``` 
 
 Export object
@@ -192,6 +192,8 @@ After processing the business logic returns the result of the process as an HTML
 
 If you want to return a response with a different template, specify the action name as an argument action. The layout file name can be specified as a layout argument.
 
+The method **render()** means to "request the view/tempalte to create a response". This is also called "drawing".
+
 <span style="color: #b22222">**In brief: To render the template, use render().** </span>
 
 ### Layout
@@ -203,9 +205,7 @@ When you create a site, the header and footer and some other parts are usually c
 TreeFrog, has so far adopted two template systems, Otama, and ERB. In ERB code is embedded, as you will know using <% .. %>. The Otama system is specific to TreeFrog and is a template system that completely separates the logic (.otm), and the presentation templates (.html). 
  
 * ERB uses file extension: xxx.erb
-* Otama uses file extensions: xxx.otm and xxx.html
-
-     (xxx being the action name)
+* Otama uses file extensions: xxx.otm and xxx.html<br>(xxx being the action name)
  
 ## Direct Rendering of a String
 
@@ -236,7 +236,7 @@ In order to redirect the browser to another URL, you can use the redirect method
 
 You are then able to redirect to other actions on the same host.
 
-```
+```c++
  / redirecting to the incdex action of the Blog controller 
  redirect( url("blog", "index") );
 ```
@@ -245,7 +245,7 @@ Here is another useful url method. It returns the appropriate QUrl instance if y
 
 To redirect to other actions in the same controller, you can omit the controller name.
 
-```
+```c++
  // redirecting to the show action of the same controller
  redirect( urla("show") );
 ```
@@ -283,7 +283,7 @@ Actual application is not this simple, it isn’t always necessarily possible to
 
 With that said, in practice most actions come down to either *redirect()* method or *render()* method.
 
-By the way …<br>
+**By the way …**<br>
 In the manner described above, when a redirect occurs, the processing is cut once it goes to the Web application. Objects that survive in spite of this can make other contexts (action), whereas the flash object is implemented using the session.
  
 ## staticInitialize() Method
@@ -300,3 +300,8 @@ In this case, write the processing as *ApplicationController#staticInitialize()*
 ```
 
 This staticInitialize() method, is called only once when the server process is started. However, care must be taken so that it does not create an extra load function, by being called every time the process starts when you select the PreFork as [MPM](/user-guide/en/performance/index/html){:target="_blank"}).
+
+## Lifespan of a controller instance
+
+An instance of a controller is created just before the action is invoked and destroyed as soon as the action is finished. It means that the creation and the destruction of a controller are associated with each HTTP request.<br>
+Because of this specification, the controller doesn't often have instance variables. Please implement the *ApplicationController* the same way.

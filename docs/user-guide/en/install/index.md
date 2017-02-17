@@ -27,7 +27,7 @@ Case of Ubuntu :
 
 ### Installation Instructions
 
-1. Extract the file you downloaded.
+1. Extract the file you [downloaded](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}.
 
    The following applies to version 'x.x.x'. Please update as appropriate.  
    
@@ -70,7 +70,7 @@ Case of Ubuntu :
   $ sudo make install
    ```
 
-   Note: In order to debug the TreeFrog Framework itself, please use the configure option.
+   **Note:** In order to debug the TreeFrog Framework itself, please use the configure option.
    Run Type
 
    ```
@@ -90,7 +90,21 @@ Case of Ubuntu :
 C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
    ```
 
-   x.x.x is version.
+   ('x.x.x' represents the version)
+   
+   <div class="img-center" markdown="1">
+  
+   ![Create Shortcut]({{ site.baseurl }}/assets/images/documentation/shortcut_en.png "Create Shortcut")
+   
+   </div>
+
+   Set the Shortcut name to 'TreeFrog Command Prompt'.
+
+   <div class="img-center" markdown="1">
+   
+   ![Shortcut name]({{ site.baseurl }}/assets/images/documentation/shortcut-name_en.png "Shortcut name")
+   
+   </div>
 
 ### Configure option
 
@@ -104,6 +118,8 @@ Options available on Windows using “Configure option” :
  Configuration:
    -h, --help          display this help and exit
    --enable-debug      compile with debugging information
+   --enable-gui-mod    compile and link with QtGui module
+   --enable-mongo      compile with MongoDB driver library
 
  Installation directories:
    --prefix=PREFIX     install files in PREFIX [C:\TreeFrog\x.x.x]
@@ -117,6 +133,8 @@ Options available on Linux, and UNIX-like OS :
  Configuration:
    -h, --help          display this help and exit
    --enable-debug      compile with debugging information
+   --enable-gui-mod    compile and link with QtGui module
+   --enable-mongo      compile with MongoDB driver library
 
  Installation directories:
    --prefix=PREFIX     install files in PREFIX [/usr]
@@ -136,9 +154,11 @@ Options available in Max OS X :
  Configuration:
    -h, --help          display this help and exit
    --enable-debug      compile with debugging information
+   --enable-gui-mod    compile and link with QtGui module
+   --enable-mongo      compile with MongoDB driver library
 
  Fine tuning of the installation directories:
    --framework=PREFIX  install framework files in PREFIX [/Library/Frameworks]
    --bindir=DIR        user executables [/usr/bin]
-   --datadir=DIR       read-only architecture-independent data [/usr/share/treefrog]
+   --datadir=DIR       read-only architecture-independent data [/usr/share/treefrog
 ```

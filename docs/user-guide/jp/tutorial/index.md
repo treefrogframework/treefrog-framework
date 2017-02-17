@@ -48,16 +48,16 @@ blogapp という名でスケルトン（ディレクトリツリーと各種設
  Query OK, 0 rows affected (0.02 sec)
 
  mysql> DESC blog;
- +---------------+--------------+------+-----+---------------------+------
- | Field         | Type         | Null | Key | Default             | Extra
- +---------------+--------------+------+-----+---------------------+------
- | id            | int(11)      | NO   | PRI | NULL                | auto_     
- | title         | varchar(20)  | YES  |     | NULL                |      
- | body          | varchar(200) | YES  |     | NULL                |      
- | created_at    | datetime     | YES  |     | NULL                | 
- | updated_at    | datetime     | YES  |     | NULL                |      
- | lock_revision | int(11)      | YES  |     | NULL                |      
- +---------------+--------------+------+-----+---------------------+------
+ +---------------+--------------+------+-----+---------+----------------+
+ | Field         | Type         | Null | Key | Default | Extra          |
+ +---------------+--------------+------+-----+---------+----------------+
+ | id            | int(11)      | NO   | PRI | NULL    | auto_increment |
+ | title         | varchar(20)  | YES  |     | NULL    |                |
+ | body          | varchar(200) | YES  |     | NULL    |                |
+ | created_at    | datetime     | YES  |     | NULL    |                |
+ | updated_at    | datetime     | YES  |     | NULL    |                |
+ | lock_revision | int(11)      | YES  |     | NULL    |                |
+ +---------------+--------------+------+-----+---------+----------------+
  6 rows in set (0.01 sec)
 
  mysql> quit
@@ -86,7 +86,8 @@ created_at と updated_at のフィールドがあると、TreeFrog はそれぞ
 ## データベースの情報を設定
 
 データベースの情報を config/database.ini ファイルに設定します。<br>
-エディタでファイルを開き、[dev] の各項目に環境に応じた適切な値を入力して、保存します。<br>
+エディタでファイルを開き、[dev] の各項目に環境に応じた適切な値を入力して、保存します。
+
 MySQL の例：
 
 ```
@@ -129,8 +130,11 @@ SQLite の例：
  
 このように表示されれば成功です。
 
-もし 使用する SQL ドライバがQt SDK に組み込まれていないと、ここでエラーが発生します。<br>
-"QSqlDatabase: QMYSQL driver not loaded"
+もし 使用する SQL ドライバがQt SDK に組み込まれていないと、ここでエラーが発生します。
+
+```
+ QSqlDatabase: QMYSQL driver not loaded
+```
  
 この場合、[ダウンロードのページ](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}でSQLデータベースドライバをダウンロードして、インストールしてください。<br>
 組み込まれたSQLドライバは次のコマンドで確認することができます。
@@ -150,7 +154,7 @@ SQLite の SQL ドライバはあらかじめ組み込まれているので、�
 ## テンプレートシステムの指定
 
 TreeFrog Framework では、テンプレートシステムとして ERB と Otama のどちらかを指定します。
-development.ini ファイルにある TemplateSystem パラメータに設定します。
+*development.ini* ファイルにある TemplateSystem パラメータに設定します。
 
 ```
  TemplateSystem=ERB
@@ -180,6 +184,44 @@ development.ini ファイルにある TemplateSystem パラメータに設定し
 ```
  
 ※ tspawn の オプションによって、コントローラだけ、あるいはモデルだけ生成するように変えられます。
+
+たとえば、テーブルを変更した後、次のコマンドを実行してsqlobjectクラスのみを更新します。
+
+```
+ $ tspawn sqlobject blog
+ DriverType:   QSQLITE
+ DatabaseName: db/dbfile
+ HostName:     
+ Database opened successfully
+   overwrite models/sqlobjects/blogobject.h? [ynaqdh] y
+   updated   models/sqlobjects/blogobject.h
+   unchanged models/models.pro
+```
+ 
+tspawnコマンドのヘルプ:
+
+```
+ $ tspawn --help
+ usage: tspawn <subcommand> [args]
+
+ Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
+ Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
+ Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
+ Type 'tspawn --show-collections' to show all collections in the MongoDB.
+
+ Available subcommands:
+   new (n)         <application-name>
+   scaffold (s)    <table-name> [model-name]
+   controller (c)  <controller-name> action [action ...]
+   model (m)       <table-name> [model-name]
+   usermodel (u)   <table-name> [username password [model-name]]
+   sqlobject (o)   <table-name> [model-name]
+   mongoscaffold (ms) <model-name>
+   mongomodel (mm) <model-name>
+   validator (v)   <name>
+   mailer (l)      <mailer-name> action [action ...]
+   delete (d)      <table-name or validator-name>
+```
  
 ## ソースコードをビルド
 
@@ -266,14 +308,24 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 ## ブラウザでアクセス
 
 ブラウザで http://localhost:8800/Blog にアクセスしてみましょう。<br>
-次のような一覧画面が表示されるはずです（Railsを真似てます..）。最初は１件も登録がありません。
+次のような一覧画面が表示されるはずです（Railsを真似てます..）。
 
-![Listing Blog 1](http://www.treefrogframework.org/wp-content/uploads/2011/01/ListingBlog-300x216.png "Listing Blog 1")
+最初は１件も登録がありません。
+
+<div class="img-center" markdown="1">
+
+![Listing Blog 1]({{ site.baseurl }}/assets/images/documentation/ListingBlog-300x216.png "Listing Blog 1")
+
+</div>
 
 ２件ほど登録してみたところ。すでに新規登録、参照、編集、削除を行うができます。<br>
 日本語の表示も問題なし。とっても簡単！
 
-![Listing Blog 2](http://www.treefrogframework.org/wp-content/uploads/2011/01/ListingBlog2-300x216.png "Listing Blog 2")
+<div class="img-center" markdown="1">
+
+![Listing Blog 2]({{ site.baseurl }}/assets/images/documentation/ListingBlog2-300x216.png "Listing Blog 2")
+
+</div>
 
 他のフレームワークと同様に TreeFrog においても、リクエストされた URL から該当するコントローラのメソッド（アクション）を呼び出す仕組み（ルーティングシステム）が備わっています。<br>
 開発したソースコードはビルドしなおせば、他のプラットフォームでも動作します。
@@ -285,7 +337,7 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 生成されたコントローラの中身を見てみましょう。<br>
 まずはヘッダファイル。おまじないコードが幾つかありますが、URLによるディスパッチングのために必要な措置なのです。
 
-*public slots* の部分に、ディスパッチさせたいアクション（メソッド）を宣言するのがポイントです。そこには CRUD に相当するアクションが定義されていますね。<br>
+*public slots* の部分に、ディスパッチさせたいアクション（メソッド）を宣言するのがポイントです。そこには [CRUD](https://ja.wikipedia.org/wiki/CRUD){:target="_blank"} に相当するアクションが定義されていますね。<br>
 ちなみに、*slots* キーワードは Qt  による機能拡張のものです。詳細は Qt ドキュメントをご覧ください。
 
 ```c++
@@ -293,17 +345,16 @@ class T_CONTROLLER_EXPORT BlogController : public ApplicationController
 {
     Q_OBJECT
 public:
+    Q_INVOKABLE
     BlogController() { }
     BlogController(const BlogController &other);
 
 public slots:
     void index();                     // 一覧表示
-    void show(const QString &pk);     // １件表示
-    void entry();                     // 登録画面表示
+    void show(const QString &id);     // １件表示
     void create();                    // 新規登録
-    void edit(const QString &pk);     // 編集画面表示
-    void save(const QString &pk);     // 保存（更新）
-    void remove(const QString &pk);   // １件削除
+    void save(const QString &id);     // 保存（更新）
+    void remove(const QString &id);   // １件削除
 };
 
 T_DECLARE_CONTROLLER(BlogController, blogcontroller)        // おまじない
@@ -322,93 +373,110 @@ BlogController::BlogController(const BlogController &)
 
 void BlogController::index()
 {
-    QList<Blog> blogList = Blog::getAll();       // Blogオブジェクトの全リストを取得
-    texport(blogList);             // ビューへ値を渡す
-    render();                      // ビュー（テンプレート）を描画
+    auto blogList = Blog::getAll(); // Blogオブジェクトの全リストを取得
+    texport(blogList);              // ビューへ値を渡す
+    render();                       // ビュー（テンプレート）を描画
 }
 
-void BlogController::show(const QString &pk)
+void BlogController::show(const QString &id)
 {
-    Blog blog = Blog::get(pk.toInt());      // プライマリキーでBlogモデルを取得
+    auto blog = Blog::get(id.toInt()); // プライマリキーでBlogモデルを取得
     texport(blog);                          
-    render();
-}
-
-void BlogController::entry()
-{
     render();
 }
 
 void BlogController::create()
 {
-    if (httpRequest().method() != Tf::Post) {   // POSTメソッドであることをチェック
-        return;
-    }
-    
-    Blog blog = Blog::create( httpRequest().parameters("blog") );  // POSTされた情報からオブジェクト生成
-    if (!blog.isNull()) {
-        QString notice = "Created successfully.";
-        tflash(notice);                           // flash メッセージを設定
-        redirect(urla("show", blog.id()));        // show アクションへリダイレクト
-    } else {
-        QString error = "Failed to create.";     // オブジェクト生成失敗時
-        texport(error);                         
-        render("entry");
-    }
-}
-
-void BlogController::edit(const QString &pk)
-{
-    Blog blog = Blog::get(pk.toInt());  // 編集するために Blog オブジェクトを取得
-    if (!blog.isNull()) {
-        texport(blog);    
-       session().insert("blog_lockRevision", blog.lockRevision());  // ロックリビジョンをセッションへ保存
+    switch (httpRequest().method()) {  // httpRequestメソッドのタイプをチェック
+    case Tf::Get:
         render();
-    } else {
-        redirect(urla("entry"));
+        break;
+
+    case Tf::Post: {
+        auto blog = httpRequest().formItems("blog");  // 入って来るフォームデータを「blog」という変数
+                                                      //（QVariantMap型）保存する
+        auto model = Blog::create(blog);              // POSTされた情報からオブジェクト生成
+
+        if (!model.isNull()) {
+            QString notice = "Created successfully.";
+            tflash(notice);                      // flash メッセージを設定          
+            redirect(urla("show", model.id()));  // show アクションへリダイレクト
+        } else {
+            QString error = "Failed to create."; // オブジェクト生成失敗時
+            texport(error);
+            texport(blog);
+            render();
+        }
+        break; 
+    }
+
+    default:
+        renderErrorResponse(Tf::NotFound);       // エラーページが表示される
+        break;
     }
 }
 
 void BlogController::save(const QString &pk)
 {
-    if (httpRequest().method() != Tf::Post) {
-        return;
+    switch (httpRequest().method()) {
+    case Tf::Get: {
+        auto model = Blog::get(id.toInt()); // Get a Blog object for update
+        if (!model.isNull()) {
+            session().insert("blog_lockRevision", model.lockRevision()); // Sets the lock revision
+            auto blog = model.toVariantMap();
+            texport(blog);                  // Sends the blog-data to the view
+            render();
+        }
+        break; 
     }
 
-    QString error;
-    int rev = session().value("blog_lockRevision").toInt(); // ロックリビジョンを取得
-    Blog blog = Blog::get(pk.toInt(), rev);     // データを保存するための Blog オブジェクトを取得
-    if (blog.isNull()) {
-        error = "Original data not found. It may have been updated/removed by another transaction.";
-        tflash(error);
-        redirect(urla("edit", pk));
-        return;
-    } 
-    
-    blog.setProperties( httpRequest().parameters("blog") );  // リクエストされたデータを設定
-    if (blog.save()) {                   // オブジェクトを保存（永続化）
-        QString notice = "Updated successfully.";
-        tflash(notice);
-    } else {
-        error = "Failed to update.";
-        tflash(error);
+    case Tf::Post: {
+        QString error;
+        int rev = session().value("blog_lockRevision").toInt(); // ロックリビジョンを取得
+        auto model = Blog::get(id.toInt(), rev);                // データを保存するための Blog オブジェクトを取得
+        
+        if (model.isNull()) {
+            error = "Original data not found. It may have been updated/removed by another transaction.";
+            tflash(error);
+            redirect(urla("save", id));
+            break;
+        }
+
+        auto blog = httpRequest().formItems("blog");
+        model.setProperties(blog);              // リクエストされたデータを設定
+        if (model.save()) {                     // オブジェクトを保存（永続化）
+            QString notice = "Updated successfully.";
+            tflash(notice);
+            redirect(urla("show", model.id())); // show アクションへリダイレクト
+        } else {
+            error = "Failed to update.";
+            texport(error);
+            texport(blog);
+            render();
+        }
+        break; 
     }
-    redirect(urla("show", pk));       // show アクションへリダイレクト
+
+    default:
+        renderErrorResponse(Tf::NotFound);
+        break;
+    }
 }
 
-void BlogController::remove(const QString &pk)
+void BlogController::remove(const QString &id)
 {
     if (httpRequest().method() != Tf::Post) {
+        renderErrorResponse(Tf::NotFound);
         return;
     }
-    
-    Blog blog = Blog::get(pk.toInt());   // Blog オブジェクトを取得
-    blog.remove();                       // 削除
+
+    auto blog = Blog::get(id.toInt());  // Blog オブジェクトを取得
+    blog.remove();                      // 削除
     redirect(urla("index"));
 }
 
 // Don't remove below this line
-T_REGISTER_CONTROLLER(blogcontroller)            // おまじない
+T_REGISTER_CONTROLLER(blogcontroller)   // おまじない
 ```
 
 ※ ロックリビジョンは楽観的ロックを実現するために使用されます。詳細は「モデル」の章で後述します。
@@ -432,6 +500,7 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
 </head>
 <body>
 <h1>Listing Blog</h1>
+
 <%== linkTo("New entry", urla("entry")) %><br />
 <br />
 <table border="1" cellpadding="5" style="border: 1px #d0d0d0 solid; border-collapse: collapse;">
@@ -441,15 +510,14 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
     <th>Body</th>
   </tr>
 <% tfetch(QList<Blog>, blogList); %>
-<% for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
-     const Blog &i = it.next(); %>
+<% for (const auto &i : blogList) { %>
   <tr>
     <td><%= i.id() %></td>
     <td><%= i.title() %></td>
     <td><%= i.body() %></td>
     <td>
       <%== linkTo("Show", urla("show", i.id())) %>
-      <%== linkTo("Edit", urla("edit", i.id())) %>
+      <%== linkTo("Edit", urla("save", i.id())) %>
       <%== linkTo("Remove", urla("remove", i.id()), Tf::Post, "confirm('Are you sure?')") %>
     </td>
   </tr>
@@ -524,8 +592,6 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 @linkToEdit :== linkTo("Edit", urla("edit", i.id()))
 
 @linkToRemove :== linkTo("Remove", urla("remove", i.id()), Tf::Post, "confirm('Are you sure?')")
-
-@linkToEntry :== linkTo("New entry", urla("entry"))
 ```
 
 簡単に Otama 演算子を説明します。<br>
@@ -534,7 +600,7 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 従って、~= は右辺の結果をHTMLエスケープし、要素のコンテントに設定します。HTMLエスケープしたくなかったら、~== を使います。<br>
 また、: (コロン)は、マークされた要素および子要素をその右辺の結果で置き換えます。従って、:== はHTMLエスケープせずに要素を置き換えます。
 
-<span style="color: #b22222">**コントローラからビューへのデータの引き渡し**</span>
+### コントローラからビューへのデータの引き渡し
 
 コントローラで texport されたデータ（オブジェクト）をビューで使う場合は、tfetch メソッド（実はマクロ）で宣言する必要があります。引数には、変数の型と変数名を指定します。すると、指定された変数は texport される直前の状態と同じになるので、通常の変数と全く同じように使えます。上記のプレゼンテーションロジックの中で、実際そのように使われてます。<br>
 使い方の例：
@@ -553,7 +619,7 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
  
 Otama システムは、これらテンプレートファイルとプレゼンテーションファイルを元に C++ コードを生成します。内部的には、tmake がそれを処理しています。その後、コードはコンパイルされ、ビューとして１つの共有ライブラリになります。なので、動作は非常に高速です。
 
-### HTML用語解説
+## HTML用語解説
 
 要素（element）は、開始タグ (Start-tag)、コンテント (Content)、終了タグ (End-tag) の3つで構成されます。例として "\<p>Hello\</p>" という要素があったとすると、\<p> が開始タグ、Hello がコンテント、\</p> が終了タグになります。<br>
 一般にコンテントのことを「内容」と呼ぶことの方が多いようですが、個人的に少々紛らわしいと思うので、ここではコンテントと書いています。
@@ -571,13 +637,13 @@ C++ は静的型付け言語なので、型の宣言が必要です。生成さ�
 class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData
 {
 public:
-    int id;
+    int id {0};
     QString title;
     QString body;
     QDateTime created_at;
     QDateTime updated_at;
-    int lock_revision;
-　
+    int lock_revision {0};
+
     enum PropertyIndex {
         Id = 0,
         Title,
@@ -586,9 +652,12 @@ public:
         UpdatedAt,
         LockRevision,
     };
-    int primaryKeyIndex() const { return Id; }
 
-    /*** Don't modify below this line ***/   // ここから下はおまじないマクロ
+    int primaryKeyIndex() const override { return Id; }
+    int autoValueIndex() const override { return Id; }
+    QString tableName() const override { return QLatin1String("blog"); }
+
+private:    /*** Don't modify below this line ***/      // ここから下はおまじないマクロ
     Q_OBJECT
     Q_PROPERTY(int id READ getid WRITE setid)
     T_DEFINE_PROPERTY(int, id)
@@ -617,11 +686,10 @@ class T_MODEL_EXPORT Blog : public TAbstractModel
 public:
     Blog();
     Blog(const Blog &other);
-    Blog(const BlogObject &object);   // ORM オブジェクト指定のコンストラクタ
+    Blog(const BlogObject &object);  // ORM オブジェクト指定のコンストラクタ
     ~Blog();
-　
+
     int id() const;     // ここからセッター、ゲッターが並ぶ
-    void setId(int id);
     QString title() const;
     void setTitle(const QString &title);
     QString body() const;
@@ -629,20 +697,29 @@ public:
     QDateTime createdAt() const;
     QDateTime updatedAt() const;
     int lockRevision() const;
-　
-    static Blog create(int id, const QString &title, const QString &body);   // オブジェクト生成
-    static Blog create(const QHash<QString, QString> &values);  // Hash でプロパティを渡してオブジェクト生成
-    static Blog get(int id);    // ID 指定でモデルオブジェクトを取得
-    static Blog get(int id, int lockRevision); 
-    static QList<Blog> getAll();      //  モデルオブジェクトを全取得
+    Blog &operator=(const Blog &other);
+
+    bool create() { return TAbstractModel::create(); }
+    bool update() { return TAbstractModel::update(); }
+    bool save()   { return TAbstractModel::save(); }
+    bool remove() { return TAbstractModel::remove(); }
+
+    static Blog create(const QString &title, const QString &body); // オブジェクト生成
+    static Blog create(const QVariantMap &values);                 // Hash でプロパティを渡してオブジェクト生成
+    static Blog get(int id);                    // ID 指定でモデルオブジェクトを取得
+    static Blog get(int id, int lockRevision);  // ID とlockRevision指定でモデルオブジェクトを取得
+    static int count();             // ブログデータアイテムの量
+    static QList<Blog> getAll();    // モデルオブジェクトを全取得
+    static QJsonArray getAllJson(); // JSONスタイルにモデルオブジェクトを全取得
 
 private:
     QSharedDataPointer<BlogObject> d;   // ORM オブジェクトのポインタを持つ
-    TSqlObject *data();
-    const TSqlObject *data() const;
+
+    TModelObject *modelData();
+    const TModelObject *modelData() const;
 };
 
-Q_DECLARE_METATYPE(Blog)      // おまじない
+Q_DECLARE_METATYPE(Blog)    // おまじない
 Q_DECLARE_METATYPE(QList<Blog>)
 ```
 
@@ -653,4 +730,8 @@ Q_DECLARE_METATYPE(QList<Blog>)
  
 ## サンプルブログアプリ作成デモ
 
+<div class="img-center" markdown="1">
+
 [![Video Demo – Sample blog Application Creation](http://img.youtube.com/vi/M_ZUPZzi9V8/0.jpg)](https://www.youtube.com/watch?v=M_ZUPZzi9V8)
+
+</div>

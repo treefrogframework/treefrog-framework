@@ -34,7 +34,7 @@ Use allowUser() and allowGroup() to allow access, and define denyUser() and deny
 For permissions/denials from the user that do not define the access rules, the default settings will be used. Use setAllowDefault() method or setDenyDefault() method for this.
 
 ```c++
- setDenyDefault(true);
+setDenyDefault(true);
 ```
  
 Here is the logic to validate users with access. This overrides preFilter() method of the controller, and returns false when the user denies the access. The controller preFilter() method overrides to deny access the user if false is returned.

@@ -83,7 +83,7 @@ SOURCES = sampleplugin.cpp \
 ※ include 関数で、appbase.pri ファイルをインクルードするのが<span style="color: red">重要</span>。
   
 こうしてからビルドすると、動的ロード可能なプラグインが作成されます。プラグインは**必ず** plugin ディレクトリに保存してください。アプリケーションサーバ（APサーバ）は、このディレクトリにあるプラグインを読み込みます。<br>
-プラグインシステムの詳細は Qt ドキュメントをご覧ください。
+[プラグインシステム](http://doc.qt.io/qt-5/plugins-howto.html){:target="_blank"}の詳細は Qt ドキュメントをご覧ください。
 
 ## ロガープラグイン
 
@@ -102,7 +102,8 @@ SOURCES = sampleplugin.cpp \
 * プラグインインターフェース ： TLoggerPlugin
 * ロガーインターフェース ： TLogger
  
-**ロガーのメソッドについて**<br>
+### ロガーのメソッドについて
+
 ロガーを実装するため、TLogger クラスにある次のメソッドをオーバライドします。
 
 * key() ： ロガーの名前を返す。

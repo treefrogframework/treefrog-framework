@@ -11,7 +11,7 @@ In the process of application development, testing is very important. Testing re
 
 In this session, we will try to check if the model works the right way. The test framework follows TestLib attached by Qt (please check out the [documentation](http://qt-project.org/doc/qt-5.0/qttestlib/qtest-overview.html){:target="_blank"} for more details).
 
-Let’s test the Blog model code that we made in the [tutorial](/user-guide/en/tutorial/index.html)(:target="_blank"). Make a common library for the model in advance. At first, we will create a working directory in the *test* directory.
+Let’s test the Blog model code that we made in the [tutorial](/user-guide/en/tutorial/index.html){:target="_blank"}. Make a common library for the model in advance. At first, we will create a working directory in the *test* directory.
 
 ```
  $ cd test
@@ -97,7 +97,7 @@ Next, create a project file to make the *Makefile*. The file name is *testblog.p
 Part of the specification has changed after the update to Qt5. If you are using Qt5, please change the 5th line of the above as the following.
 
 ```
-QT += network sql testlib
+ QT += network sql testlib
 ```
 
 After you save the project file, you can create a binary by running the following command in its directory
@@ -119,9 +119,9 @@ If you use Windows, an exe file of the test is created in the debug directory, s
 To make a symbolic link, you must run the command from the command prompt launched with administrator privileges.
 
 ```
-> cd debug 
-> mklink /D  config  ..\..\..\config
-> mklink /D  db  ..\..\..\db
+ > cd debug 
+ > mklink /D  config  ..\..\..\config
+ > mklink /D  db  ..\..\..\db
 ```
    
 Furthermore, take the path to the common library including the Blog model. 

@@ -14,12 +14,14 @@ First we will need to make a skeleton (various settings files and a directory tr
 
 ```
  $ tspawn new blogapp
-   created  blogapp
-   created  blogapp/controllers
-   created  blogapp/models
-   created  blogapp/models/queries
-   created  blogapp/models/sqlobjects
-   created  blogapp/views
+  created   blogapp
+  created   blogapp/controllers
+  created   blogapp/models
+  created   blogapp/models/sqlobjects
+  created   blogapp/views
+  created   blogapp/views/layouts
+  created   blogapp/views/mailer
+  created   blogapp/views/partial
    :
 ```
 
@@ -45,23 +47,23 @@ Set the character set to UTF-8. You can also specify this when generating the da
  Query OK, 0 rows affected (0.02 sec)
 
  mysql> DESC blog;
- +---------------+--------------+------+-----+---------------------+------
- | Field         | Type         | Null | Key | Default             | Extra
- +---------------+--------------+------+-----+---------------------+------
- | id            | int(11)      | NO   | PRI | NULL                | auto_
- | title         | varchar(20)  | YES  |     | NULL                |      
- | body          | varchar(200) | YES  |     | NULL                |      
- | created_at    | datetime     | YES  |     | NULL                | 
- | updated_at    | datetime     | YES  |     | NULL                |      
- | lock_revision | int(11)      | YES  |     | NULL                |      
- +---------------+--------------+------+-----+---------------------+------
+ +---------------+--------------+------+-----+---------+----------------+
+ | Field         | Type         | Null | Key | Default | Extra          |
+ +---------------+--------------+------+-----+---------+----------------+
+ | id            | int(11)      | NO   | PRI | NULL    | auto_increment |
+ | title         | varchar(20)  | YES  |     | NULL    |                |
+ | body          | varchar(200) | YES  |     | NULL    |                |
+ | created_at    | datetime     | YES  |     | NULL    |                |
+ | updated_at    | datetime     | YES  |     | NULL    |                |
+ | lock_revision | int(11)      | YES  |     | NULL    |                |
+ +---------------+--------------+------+-----+---------+----------------+
  6 rows in set (0.01 sec)
 
  mysql> quit
  Bye
 ```
   
-Example in SQLite:
+**Example in SQLite:**<br>
 We are going to put the database files in the DB directory .
 
 ```
@@ -127,8 +129,11 @@ If everything is setup properly, it will display a message like this:
   blog
 ```
  
-If a required SQL driver is not included in the Qt SDK, the following error message will appear.
-"QSqlDatabase: QMYSQL driver not loaded"
+If a required SQL driver is not included in the Qt SDK, the following error message will appear:
+
+```
+ QSqlDatabase: QMYSQL driver not loaded
+```
 
 If you receive this message, download the SQL database driver from the [download page](http://www.treefrogframework.org/download){:target="_blank"}, and install it.
 
@@ -161,16 +166,19 @@ TemplateSystem=Otama
 From the command line, run the command generator (tspawn) which will generate the underlying code. The example below shows the production of controller, model, and view. The table name is specified as the command argument.
 
 ```
- $ cd blogapp
  $ tspawn scaffold blog
-   created  controllers/blogcontroller.h
-   created  controllers/blogcontroller.cpp
-   created  controllers/controllers.pro
-   created  models/sqlobjects/blogobject.h
-   created  models/blog.h
-   created  models/blog.cpp
-   created  models/models.pro
-   created  views/blog/index.html
+ DriverType: QSQLITE
+ DatabaseName: db/blogdb
+ HostName:
+ Database open successfully
+   created   controllers/blogcontroller.h
+   created   controllers/blogcontroller.cpp
+   updated   controllers/controllers.pro
+   created   models/sqlobjects/blogobject.h
+   created   models/blog.h
+   created   models/blog.cpp
+   updated   models/models.pro
+   created   views/blog
  　　:
 ```
   
@@ -250,7 +258,7 @@ In Windows, start by using *treefrog**d**.exe*.
 > treefrogd.exe -e dev
 ```
 
-In Windows, start by using treefroge**d**.exe when you build web applications in debug mode, and start by using treefrog.exe when you want to build a web application in release mode. <u>Release and debug modes should not be mixed, as the result will not work properly</u>.
+In Windows, start by using treefroge**d**.exe when you build web applications in debug mode, and start by using treefrog.exe when you want to build a web application in release mode. <span style="color: #b22222">**Release and debug modes should not be mixed, as the result will not work properly</span>.
 
 If you want it to run in the background, use the option -d together with any other required options.
 
@@ -258,7 +266,7 @@ If you want it to run in the background, use the option -d together with any oth
  $ treefrog -d -e dev
 ```
 
-The command option '-e'  appears in the above examples. When this is followed by a section name that you have specified in database.ini before, it can be used to change the database settings. If no section name is specified it is assumed that the command refers to a product (when the project is being made, the following three sections are predefined). 
+The command option '-e'  appears in the above examples. When this is followed by a **section name** that you have specified in database.ini before, it can be used to change the database settings. If no section name is specified it is assumed that the command refers to a product (when the project is being made, the following three sections are predefined). 
 
 <div class="table-div" markdown="1">
 
@@ -298,16 +306,24 @@ We will now use your web browser to access http://localhost:8800/Blog. A list sc
 
 Initially, there is nothing registered.
 
-![Listing Blog 1](http://www.treefrogframework.org/wp-content/uploads/2011/01/ListingBlog-300x216.png "Listing Blog 1")
+<div class="img-center" markdown="1">
+
+![Listing Blog 1]({{ site.baseurl }}/assets/images/documentation/ListingBlog-300x216.png "Listing Blog 1")
+
+</div>
 
 When two items are registered the options show, edit, and remove become visible. As you can see, there is even no problem in displaying Japanese text.
 
-![Listing Blog 2](http://www.treefrogframework.org/wp-content/uploads/2011/01/ListingBlog2-300x216.png "Listing Blog 2")
+<div class="img-center" markdown="1">
+
+![Listing Blog 2]({{ site.baseurl }}/assets/images/documentation/ListingBlog2-300x216.png "Listing Blog 2")
+
+</div>
 
 TreeFrog is equipped with a call method mechanism (Routing system) for the appropriate controller from the requested URL to the action (as well as other frameworks).
 Developed source code can work on other platforms, if it is re-built.
 
-To see a sample Web application. Go [here](http://treefrogframework.org:8800/Blog/index/){:target="_blank"}.
+To see a sample Web application. You can watch it [here](http://treefrogframework.org:8800/Blog/index/){:target="_blank"}.
 You can play with this and it will respond at the same speed as the average desktop application.
 
 ## Source Code of Controller
@@ -315,30 +331,30 @@ You can play with this and it will respond at the same speed as the average desk
 Let's take a look at the contents of the controller which is generated.
 First, the header file. There are several charm codes, but these are required for sending by URL.
 
-The purpose of public slots is to declare the actions (methods) you want to send. Actions corresponding to the CRUD are defined. Incidentally, the slots keyword is a feature of the Qt extension. Please see the Qt documentation for more details.
+The purpose of public slots is to declare the actions (methods) you want to send. Actions corresponding to the [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete){:target="_blank"} are defined. Incidentally, the slots keyword is a feature of the Qt extension. Please see the Qt documentation for more details.
 
 ```c++
 class T_CONTROLLER_EXPORT BlogController : public ApplicationController
 {
     Q_OBJECT
 public:
+    Q_INVOKABLE
     BlogController() { }
     BlogController(const BlogController &other);
 
-public slots:
-    void index();                     // Lists all
-    void show(const QString &pk);     // Shows one entry
-    void entry();                     // Registration screen display
+public slots: 
+    void index();                     // Lists all entries
+    void show(const QString &id);     // Shows one entry
     void create();                    // New registration
-    void edit(const QString &pk);     // Displays editing screen
-    void save(const QString &pk);     // Updates (save)
-    void remove(const QString &pk);   // Deletes one entry
+    void save(const QString &id);     // Updates (save)
+    void remove(const QString &id);   // Deletes one entry
 };
 
 T_DECLARE_CONTROLLER(BlogController, blogcontroller)     // Charm
 ```
 　
-Next, let’s look at the source file. At about 100 lines, it’s a bit long, but please bear with me.
+Next, let’s look at the source file. <br>
+The source code is a bit long, but please bear with me.
 
 ```c++
 #include "blogcontroller.h"
@@ -350,93 +366,110 @@ BlogController::BlogController(const BlogController &)
 
 void BlogController::index()
 {
-    QList<Blog> blogList = Blog::getAll();  // Get a list of all Blog objects
-    texport(blogList);             // Pass the value to a view
-    render();                      // Render the view (template)
+    auto blogList = Blog::getAll();  // Get a list of all Blog objects
+    texport(blogList);               // Pass the value to a view
+    render();                        // Render the view (template)
 }
 
-void BlogController::show(const QString &pk)
+void BlogController::show(const QString &id)
 {
-    Blog blog = Blog::get(pk.toInt()) ;  // Gets Blog model by primary key
+    auto blog = Blog::get(id.toInt()) ;  // Gets Blog model by primary key
     texport(blog);                          
     render();
 }
 
-void BlogController::entry()
-{
-    render();
-}
-
 void BlogController::create()
-{
-    if (httpRequest().method() != Tf::Post) {   // Checks that the method is POST
-        return;
-    }
-    
-    Blog blog = Blog::create( httpRequest().parameters("blog") );  // Creates the object from POST information
-    if (!blog.isNull()) {
-        QString notice = "Created successfully.";
-        tflash(notice);                           // Sets the flash message
-        redirect(urla("show", blog.id()));        // redirect to show action
-    } else {
-        QString error = "Failed to create.";     // Object creation failure
-        texport(error);                         
-        render("entry");
-    }
-}
-
-void BlogController::edit(const QString &pk)
-{
-    Blog blog = Blog::get(pk.toInt());  // Get a Blog object for editing
-    if (!blog.isNull()) {
-        texport(blog);    
-       session().insert("blog_lockRevision", blog.lockRevision());  // Save the lock-revision to session
+{    
+    switch (httpRequest().method()) { // Checks the incoming httpRequest method type 
+    case Tf::Get:
         render();
-    } else {
-        redirect(urla("entry"));
+        break;
+
+    case Tf::Post: {
+        auto blog = httpRequest().formItems("blog"); // Saves the incoming form-data in 
+                                                     // the 'blog' variable from type 'QVariantMap'
+        auto model = Blog::create(blog);             // Creates the object from POST
+
+        if (!model.isNull()) {
+            QString notice = "Created successfully.";
+            tflash(notice);                      // Sets the flash message
+            redirect(urla("show", model.id()));  // Redirect to show action
+        } else {
+            QString error = "Failed to create."; // Object creation failure
+            texport(error);
+            texport(blog);
+            render();
+        }
+        break; 
+    }
+
+    default:
+        renderErrorResponse(Tf::NotFound);       // Shows an error page
+        break;
     }
 }
 
-void BlogController::save(const QString &pk)
+void BlogController::save(const QString &id)
 {
-    if (httpRequest().method() != Tf::Post) {
-        return;
+    switch (httpRequest().method()) {
+    case Tf::Get: {
+        auto model = Blog::get(id.toInt()); // Get a Blog object for update
+        if (!model.isNull()) {
+            session().insert("blog_lockRevision", model.lockRevision()); // Sets the lock revision
+            auto blog = model.toVariantMap();
+            texport(blog);                  // Sends the blog-data to the view
+            render();
+        }
+        break; 
     }
 
-    QString error;
-    int rev = session().value("blog_lockRevision").toInt();  // Gets the lock revision
-    Blog blog = Blog::get(pk.toInt(), rev);  // Get a Blog object for update
-    if (blog.isNull()) {
-        error = "Original data not found. It may have been updated/removed by another transaction.";
-        tflash(error);
-        redirect(urla("edit", pk));
-        return;
-    } 
-    
-    blog.setProperties( httpRequest().parameters("blog") );  // Sets the requested data
-    if (blog.save()) {                   // Saves the object
-        QString notice = "Updated successfully.";
-        tflash(notice);
-    } else {
-        error = "Failed to update.";
-        tflash(error);
+    case Tf::Post: {
+        QString error;
+        int rev = session().value("blog_lockRevision").toInt(); // Gets the lock revision
+        auto model = Blog::get(id.toInt(), rev);                // Obtaining blog-data by its ID
+        
+        if (model.isNull()) {
+            error = "Original data not found. It may have been updated/removed by another transaction.";
+            tflash(error);
+            redirect(urla("save", id));
+            break;
+        }
+
+        auto blog = httpRequest().formItems("blog");
+        model.setProperties(blog);              // Sets the data coming from the request
+        if (model.save()) {                     // Saves the object
+            QString notice = "Updated successfully.";
+            tflash(notice);
+            redirect(urla("show", model.id())); // Redirects to show action 
+        } else {
+            error = "Failed to update.";
+            texport(error);
+            texport(blog);
+            render();
+        }
+        break; 
     }
-    redirect(urla("show", pk));      // Redirects to show action 
+
+    default:
+        renderErrorResponse(Tf::NotFound);
+        break;
+    }
 }
 
 void BlogController::remove(const QString &pk)
 {
     if (httpRequest().method() != Tf::Post) {
+        renderErrorResponse(Tf::NotFound);
         return;
     }
-    
-    Blog blog = Blog::get(pk.toInt());   // Gets a Blog object
+
+    auto blog = Blog::get(id.toInt());   // Gets a Blog object
     blog.remove();                       // Removes it
     redirect(urla("index"));
 }
 
 // Don't remove below this line
-T_REGISTER_CONTROLLER(blogcontroller)       // Charm
+T_REGISTER_CONTROLLER(blogcontroller)    // Charm
 ```
   
 Lock revision is used to realize the optimistic locking. See "model", which comes later in this chapter, for more information.
@@ -459,6 +492,7 @@ The default view that is automatically generated by the generator is an ERB file
 </head>
 <body>
 <h1>Listing Blog</h1>
+
 <%== linkTo("New entry", urla("entry")) %><br />
 <br />
 <table border="1" cellpadding="5" style="border: 1px #d0d0d0 solid; border-collapse: collapse;">
@@ -468,15 +502,14 @@ The default view that is automatically generated by the generator is an ERB file
     <th>Body</th>
   </tr>
 <% tfetch(QList<Blog>, blogList); %>
-<% for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
-     const Blog &i = it.next(); %>
+<% for (const auto &i : blogList) { %>
   <tr>
     <td><%= i.id() %></td>
     <td><%= i.title() %></td>
     <td><%= i.body() %></td>
     <td>
       <%== linkTo("Show", urla("show", i.id())) %>
-      <%== linkTo("Edit", urla("edit", i.id())) %>
+      <%== linkTo("Edit", urla("save", i.id())) %>
       <%== linkTo("Remove", urla("remove", i.id()), Tf::Post, "confirm('Are you sure?')") %>
     </td>
   </tr>
@@ -484,7 +517,7 @@ The default view that is automatically generated by the generator is an ERB file
 </table>
 ``` 
 
-### Next, let's have a look at the Otama template system.
+**Next, let's have a look at the Otama template system.**
 
 Otama is a template system that completely separates the presentation logic from the templates. The template is written in HTML and a "mark" element is inserted as the start tag of the section to be rewritten dynamically. The presentation logic file, written in C++ code, provides the logic in relation to the "mark".
 
@@ -552,8 +585,6 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 @linkToEdit :== linkTo("Edit", urla("edit", i.id()))
 
 @linkToRemove :== linkTo("Remove", urla("remove", i.id()), Tf::Post, "confirm('Are you sure?')")
-
-@linkToEntry :== linkTo("New entry", urla("entry"))
 ```
 
 The Otama operators, (and their combinations) are fairly simple:
@@ -580,7 +611,7 @@ View side :
 
 The Otama system, generates the C++ code based on the presentation file and the template file. Internally, tmake is responsible for processing it. After that the code is compiled, with the shared library as one view, so, the operation is very fast.
  
-### HTML Glossary:
+## HTML Glossary
 
 An HTML element consists of three components, a start tag, the content, end an tag. For example, in the typical HTML element,
 "\<p\>Hello\</p\>",  \<p\> is the start tag, Hello is the content, and \</p\> is the end tag.
@@ -598,13 +629,13 @@ There is a charm code half, but the field in the table is declared as a public m
 class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData
 {
 public:
-    int id;
+    int id {0};
     QString title;
     QString body;
     QDateTime created_at;
     QDateTime updated_at;
-    int lock_revision;
-    
+    int lock_revision {0};
+
     enum PropertyIndex {
         Id = 0,
         Title,
@@ -613,10 +644,13 @@ public:
         UpdatedAt,
         LockRevision,
     };
-    int primaryKeyIndex() const { return Id; }
 
-    /*** Don't modify below this line ***/
-    Q_OBJECT                             // Below is the charm macro
+    int primaryKeyIndex() const override { return Id; }
+    int autoValueIndex() const override { return Id; }
+    QString tableName() const override { return QLatin1String("blog"); }
+
+private:    /*** Don't modify below this line ***/
+    Q_OBJECT
     Q_PROPERTY(int id READ getid WRITE setid)
     T_DEFINE_PROPERTY(int, id)
     Q_PROPERTY(QString title READ gettitle WRITE settitle)
@@ -643,11 +677,10 @@ class T_MODEL_EXPORT Blog : public TAbstractModel
 public:
     Blog();
     Blog(const Blog &other);
-    Blog(const BlogObject &object);  // constructor made from ORM object
+    Blog(const BlogObject &object); // constructor made from the ORM object
     ~Blog();
-    
-    int id() const;    // The following lines are the setter/getter 
-    void setId(int id);
+
+    int id() const;      // The following lines are the setter/getter 
     QString title() const;
     void setTitle(const QString &title);
     QString body() const;
@@ -655,20 +688,29 @@ public:
     QDateTime createdAt() const;
     QDateTime updatedAt() const;
     int lockRevision() const;
-    
-    static Blog create(int id, const QString &title, const QString &body);  // object creation
-    static Blog create(const QHash<QString, QString> &values);    // object creation from Hash
-    static Blog get(int id);        // Gets object specified by ID
-    static Blog get(int id, int lockRevision);
-    static QList<Blog> getAll();      // Gets all model objects
-private:
-    QSharedDataPointer<BlogObject> d;   // a pointer to the ORM object
+    Blog &operator=(const Blog &other);
 
-    TSqlObject *data();
-    const TSqlObject *data() const;
+    bool create() { return TAbstractModel::create(); }
+    bool update() { return TAbstractModel::update(); }
+    bool save()   { return TAbstractModel::save(); }
+    bool remove() { return TAbstractModel::remove(); }
+
+    static Blog create(const QString &title, const QString &body); // object creation
+    static Blog create(const QVariantMap &values);                 // object creation from Hash
+    static Blog get(int id);                   // Gets object specified by ID
+    static Blog get(int id, int lockRevision); // Gets object specified by ID and lockRevision
+    static int count();                 // Returns the amount of blog data items
+    static QList<Blog> getAll();        // Gets all model objects                              
+    static QJsonArray getAllJson();     // Gets all model objects in JSON style
+
+private:
+    QSharedDataPointer<BlogObject> d;   // Holds the pointer of the ORM object 
+
+    TModelObject *modelData();
+    const TModelObject *modelData() const;
 };
 
-Q_DECLARE_METATYPE(Blog)        // Charm, from here
+Q_DECLARE_METATYPE(Blog)
 Q_DECLARE_METATYPE(QList<Blog>)
 ```
 
@@ -681,4 +723,8 @@ In the background, the code as described above also functions to provide; CSRF m
 
 ## Video Demo – Sample blog Application Creation
 
+<div class="img-center" markdown="1">
+
 [![Video Demo – Sample blog Application Creation](http://img.youtube.com/vi/M_ZUPZzi9V8/0.jpg)](https://www.youtube.com/watch?v=M_ZUPZzi9V8)
+
+</div>

@@ -67,7 +67,7 @@ Again if you do not want to use escape, you can use <%== … %> which gives exac
  <%== "<p>Hello world</p>"  %>
 ```
  
-**Note:**
+**Note:**<br>
 When you write <%= … %> in the original (eRuby) specification it outputs a string WITHOUT HTML escape. In TreeFrog, the thinking is that by using the shorter code for indicating HTML escape, safety is increased, based on the possibility that extra bits of code can easily be omitted in error. It seems to be becoming the mainstream in recent years.
  
 ## Display of Default Value

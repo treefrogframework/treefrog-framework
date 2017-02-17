@@ -42,8 +42,8 @@ public slots:   // この下にアクションを定義する！
 ということで、具体的な例を次に挙げます。いずれの場合も BlogController クラスのアクションが呼び出されます。
 
 ```
- /blog/show      →  show();
- /blog/show/2    →  show(QString("2"));
+ /blog/show        →  show();
+ /blog/show/2      →  show(QString("2"));
  /blog/show/foo/5  →  show(QString("foo"), QString("5"));  
 ```
 
@@ -141,7 +141,7 @@ QString val = httpRequest().queryItemValue("mode");
 
 ビューに対し、変数を渡すためには、texport( *variable* ) または T_EXPORT( *variable* ) を使います（これらはマクロです）。引数には、QVariant 型になりうる全ての変数を指定することができます。int, QString, QList, QHash はもちろん、ユーザ定義のモデルのインスタンスも指定することができます。次のように使います。
 
-```
+```c++
 QString foo = "Hello world";
 texport(foo);
 
@@ -197,15 +197,16 @@ bool render(const QString &action = QString(), const QString &layout = QString()
 
 <span style="color: #b22222">**結論： render() でテンプレートを描画せよ。** </span>
   
-**レイアウトとは**: <br>
+### レイアウトとは
+
 サイトを作ると、ページのヘッダやフッタといった共通部分は同じで、中身が異なることはよくあります。レイアウトとは、この共通部分だけを記述した、土台となるテンプレートのことを言います。レイアウトファイルは、views/layouts ディレクトリに置かれます。
 
-**テンプレートシステムについて** <br>
+### テンプレートシステムについて
+
 TreeFrog のテンプレートシステムには、今のところ ERB と Otama の２つが採用されています。ERB はご存じのとおり、<% %> を使ってコードを埋め込むものです。Otama は TreeFrog 独自のもので、テンプレート（.html）とプレゼンテーションロジック（.otm）を完全に分離したテンプレートシステムです。
 
-ERB ファイルの拡張子：  xxx.erb
-Otama ファイルの拡張子： xxx.html と xxx.otm
-（xxx はアクション名）
+* ERB ファイルの拡張子：  xxx.erb
+* Otama ファイルの拡張子： xxx.html と xxx.otm<br>(xxx はアクション名）
 
 ## 文字列を直接描画する
 
@@ -268,7 +269,7 @@ tflash( foo );
 ここで渡された変数のことを「フラッシュオブジェクト」と呼びます。<br>
 このフラッシュオブジェクトは、リダイレクト先のビューでエクスポートオブジェクトに変換されます。あとは eh メソッドあるいは echo メソッドで出力すれば、メッセージを表示させることができるという訳です。
  
-**フラッシュオブジェクトを使うと何が嬉しいのか**
+### フラッシュオブジェクトを使うと何が嬉しいのか
 
 実際のところ，フラッシュオブジェクトを全く使わなくともWebアプリケーションは作成できます。ただ、ある条件がそろった時にフラッシュオブジェクトを使えば、コードが分かりやすくなります（慣れもありますが）。
 
@@ -303,4 +304,4 @@ void ApplicationController::staticInitialize()
 ## コントローラのインスタンスの寿命
 
 コントローラのインスタンスは、アクションが呼び出される直前に生成され、アクションの処理が終わると直ちに破棄されます。HTTPリクエスト毎に生成と破棄が行われるということです。<br>
-このような仕様であるので、コントローラはインスタンス変数を持つことがあまりありません。ApplicationController の実装も同様にしてください。
+このような仕様であるので、コントローラはインスタンス変数を持つことがあまりありません。*ApplicationController* の実装も同様にしてください。

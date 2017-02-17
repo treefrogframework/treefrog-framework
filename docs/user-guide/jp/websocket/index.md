@@ -14,11 +14,11 @@ HTTP では、基本的にリクエスト毎に接続・切断を繰り返し、
 
 <span style="color: #b22222">**WebSocket はステートフルで双方向通信**</span>
 
-クライアントがブラウザの場合には、WebSocoket の接続を確立したページを閉じてしまったり、別のページに移動してしまうと、その接続は切れてしまいます。
+クライアントがブラウザの場合には、WebSocket の接続を確立したページを閉じてしまったり、別のページに移動してしまうと、その接続は切れてしまいます。
 
 ブラウザでの WebSocket は JavaScript で実装するので、そのコンテキスト（オブジェクト）がなくなればコネクションが切れるのは当然と言えば当然です。切断のタイミングがページ遷移時であることを考えると、実際には長時間接続しつづけるケースはあまり多くないと考えられます。
 
-さて、WebSocket に対応したブラウザを用意し、JavaScirpt を書いてみます。
+さて、WebSocket に対応したブラウザを用意し、JavaScript を書いてみます。
 
 まず、WebSocketオブジェクト生成します。パラメータには、ws:// または wss:// から始まるURLを渡します。<br>
 生成のタイミングで接続処理が行われます。
@@ -54,9 +54,9 @@ WebSocket オブジェクトのメソッドは次のとおり。
 これらを踏まえ、チャットアプリを作ってみましょう。<br>
 名前とメッセージを書き込むと、ページを開いている全員に配信されるようにします。
 
-まずはクライアントサイドから作成しましょう。以下の例ではjQueryを使っています。
+まずはクライアントサイドから作成しましょう。以下の例では[jQuery](https://jquery.com/){:target="_blank"}を使っています。
 
-HTML （抜粋）<br>
+**HTML （抜粋）**<br>
 public/index.html として保存します。
 
 ```html
@@ -139,9 +139,9 @@ public:
     ChatEndpoint() { }
     ChatEndpoint(const ChatEndpoint &other);
 protected:
-    bool onOpen(const TSession &httpSession);  // 開始ハンドラ
-    void onClose(int closeCode);               // 終了ハンドラ
-    void onTextReceived(const QString &text);  // テキスト受信ハンドラ
+    bool onOpen(const TSession &httpSession);        // 開始ハンドラ
+    void onClose(int closeCode);                     // 終了ハンドラ
+    void onTextReceived(const QString &text);        // テキスト受信ハンドラ
     void onBinaryReceived(const QByteArray &binary); // バイナリ受信ハンドラ
 };
 ```
@@ -152,11 +152,10 @@ protected:
 
 代わりに、WebSocketSession オブジェクトを使って、ここに情報を保存しましょう。 エンドポイントクラスの各メソッド内において、session()メソッドで取り出せます。 ちなみに、その情報はメモリ上に置かれるので、大きなサイズのものは保存するとコネクションが増えるとメモリを圧迫します。
 
-また、opOpen() の戻り値で false を返すと、WebSocketの接続を拒否することができます。接続リクエストを全て受け入れたくない場合、例えばHTTPセッションに秘密の値を保存しておき、その値が正しい場合のみ受け入れるという実装が可能です。
+また、onOpen() の戻り値で false を返すと、WebSocketの接続を拒否することができます。接続リクエストを全て受け入れたくない場合、例えばHTTPセッションに秘密の値を保存しておき、その値が正しい場合のみ受け入れるという実装が可能です。
   
-次に chatendpoint.cpp です。
-受信したテキストを参加者全員に送信したいわけですが、
-出版/購読型(Pub/Sub)方式で行います。
+次に chatendpoint.cpp です。<br>
+受信したテキストを参加者全員に送信したいわけですが、出版/購読型(Pub/Sub)方式で行います。
 
 まず、受信者はある"トピック"を購読するよう登録します。送信者はその"トピック"へメッセージを送信すると、購読者全員に配信されます。
 
@@ -192,8 +191,8 @@ void ChatEndpoint::onBinaryReceived(const QByteArray &)
 
 ### ビルド
 
-今回のケースでは、VIEWは使わないので、ビルドから外します。<br>
-chatapp.pro を次のように編集して保存します。
+今回のケースでは、**VIEW**は使わないので、ビルドから外します。<br>
+*chatapp.pro* を次のように編集して保存します。
 
 ```
  TEMPLATE = subdirs

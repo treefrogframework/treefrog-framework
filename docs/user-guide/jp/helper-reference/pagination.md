@@ -5,7 +5,7 @@ page_id: "080.080"
 
 ## ページネーション
 
-１ページでは表示できないほどのデータがあるとき、これらを複数のページに分割して表示する機能のことをページネーション、またはページングと呼び、Webアプリケーションでよく提供される機能の１つです。
+１ページでは表示できないほどのデータがあるとき、これらを複数のページに分割して表示する機能のことを**ページネーション**、または**ページング**と呼び、Webアプリケーションでよく提供される機能の１つです。
 
 TreeFrog Framework では、ごく基本的な機能をもつページネーションクラスを用意しています。TPaginator というクラスを使って、実装していきます。以下の例は ERB で記述しますが、Otama でも同様なものになります。
 
@@ -39,8 +39,8 @@ render();
   <%== linkToIf(pager.hasPrevious(), "Prev", urlq("page=" + QString::number( pager.previousPage() ))) %>
 
   <% for (QListIterator<int> i(pager.range()); i.hasNext(); ) {
-       int page = i.next(); %>
-  <%== linkToIf((page != pager.currentPage()), QString::number(page), urlq("page=" + QString::number(page))); %>
+      int page = i.next(); %>
+      <%== linkToIf((page != pager.currentPage()), QString::number(page), urlq("page=" + QString::number(page))); %>
   <% } %>
 
   <%== linkToIf(pager.hasNext(), "Next", urlq("page=" + QString::number( pager.nextPage() ))) %>
@@ -53,7 +53,7 @@ render();
 <%== renderPartial("pagination") %>
 ```
  
-また、このテンプレートでは、コントローラから渡されたモデルの一覧を描画します。繰り返しになるのでコードは省略します。ジェネレータで作成した index テンプレートなどを参考にしてださい。
+また、このテンプレートでは、コントローラから渡されたモデルの一覧を描画します。繰り返しになるのでコードは省略します。[ジェネレータ](/user-guide/jp/generator/index.html){:target="_blank"}で作成した index テンプレートなどを参考にしてださい。
  
 次に、モデルの取得です。<br>
 該当するモデルの一覧を取得するには、データベースに対して、LIMIT 句 と OFFSET 句を指定したクエリを発行すれば良いでしょう。要件によっては、WHERE句やソートを指定する必要があるかもしれませんね。
@@ -70,6 +70,5 @@ QList<Blog> Blog::getBlogs(int limit, int offset)
 ※ [API リファレンス 参照](http://treefrogframework.org/tf_doxygen/tmodelutil_8h.html){:target="_blank"}
   
  
-追記：
-
+**追記：**<br>
 ちなみにですが、ページネーションはそれほど難しい機能ではないので、TPaginator を使わなくとも独自に実装できると思います。これで足りなければ、実装にチャレンジしてみてください。

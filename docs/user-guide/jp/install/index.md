@@ -13,7 +13,9 @@ Linux の場合は、ディストリビューションで用意されている�
 Ubuntu の例：
 
 ```
- $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev qtdeclarative5-dev qtbase5-dev-tools gcc g++ make
+ $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql 
+ libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev 
+ qtdeclarative5-dev qtbase5-dev-tools gcc g++ make
 ```
 
 DBクライアントライブラリもインストールします。
@@ -76,14 +78,25 @@ DBクライアントライブラリもインストールします。
    ショートカットを作成するフォルダで右クリックし、「新規作成」 – 「ショートカット」をクリックします。<br>
    リンク先は次を設定します。<br>
    
-   C:\Windows\System32\cmd.exe /K C:\TreeFrog\x.x.x\bin\tfenv.bat
+   ```
+C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
+   ```
+   
   （x.x.x はバージョン）
   
-   ![ショートカット](http://www.treefrogframework.org/wp-content/uploads/2012/02/shortcut.png "ショートカット")
+   <div class="img-center" markdown="1">
+  
+   ![ショートカット]({{ site.baseurl }}/assets/images/documentation/shortcut.png "ショートカット")
+   
+   </div>
 
    名前は 'TreeFrog Command Prompt'とします。
 
-   ![ショートカットの名前](http://www.treefrogframework.org/wp-content/uploads/2012/02/shortcut-name.png "ショートカットの名前")
+   <div class="img-center" markdown="1">
+   
+   ![ショートカットの名前]({{ site.baseurl }}/assets/images/documentation/shortcut-name.png "ショートカットの名前")
+   
+   </div>
 
    Windowsでは、あらかじめ環境変数が設定された TreeFrog Command Prompt  を使って TreeFrog のアプリケーションを開発していきます。
 

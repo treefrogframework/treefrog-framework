@@ -91,7 +91,7 @@ SMTP 認証を行う場合、ActionMailer.smtp.Authentication=**true** を指定
 
 SMTP によるメール送信は外部のサーバとデータの受け渡しをすることから、他に比べて時間のかかる処理です。メールを送る処理は後にまわして、先にHTTPレスポンスを返すことができます。
 
-次のとおりに application.ini ファイルを編集します。
+次のとおりに *application.ini* ファイルを編集します。
 
 ```ini
 ActionMailer.smtp.DelayedDelivery=true
@@ -99,5 +99,5 @@ ActionMailer.smtp.DelayedDelivery=true
 
 こうすることで、deliver() メソッドは単にデータをキューイングするだけのノンブロッキング関数となります。HTTPレスポンスを返した後にメール送信の処理が行われます。
 
-**補足**<br>
+**補足：**<br>
 遅延送信を設定しないと（falseの場合）、deliver() メソッドは SMTP の処理が完了またはエラーになるまでブロックします。

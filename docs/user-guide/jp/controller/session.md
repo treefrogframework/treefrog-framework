@@ -83,7 +83,7 @@ MySQLの例：
  > CREATE TABLE session (id VARCHAR(50) PRIMARY KEY, data BLOB, updated_at TIMESTAMP);
 ```
 
-application.ini ファイルも編集します。
+*application.ini* ファイルも編集します。
 
 ```
  Session.StoreType=sqlobject
@@ -96,7 +96,7 @@ application.ini ファイルも編集します。
 セッションの有効期間は、設定ファイルの Session.LifeTime に秒単位で設定します。有効期限が過ぎると、そのセッションは破棄または消去されるので、ゴミが残ることはありません。<br>
 また、ブラウザが起動している間のみ有効とするには 0 を指定します。この場合、ブラウザを閉じるとそのセッションは破棄されます。
 
-**コラム**
+### コラム
 
 セッションはブラウザ毎に１つずつ割り当てられます。PCが異なればセッションは異なるし、同じPCであってもブラウザが変わればセッションも異なります。
 

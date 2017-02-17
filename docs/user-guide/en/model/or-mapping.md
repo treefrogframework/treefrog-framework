@@ -8,7 +8,11 @@ page_id: "060.010"
 The model accesses the database internally through O/R mapping objects. This object will basically be a one-to-one relationship, and will be referred to as an ORM object. It can be represented by a diagram such as the following.
 One record is related to one object. However, there are often cases of one-to-many relationships, (discussed below).
 
-![ORM](http://www.treefrogframework.org/wp-content/uploads/2011/01/orm.png "ORM")
+<div class="img-center" markdown="1">
+
+![ORM]({{ site.baseurl }}/assets/images/documentation/orm.png "ORM")
+
+</div>
 
 Because the model is a collection of information to be returned to the browser, you need to understand how to access and manipulate the RDB ORM object.
 
@@ -96,7 +100,7 @@ If you want to process the search results one by one, you can use the iterator.
 TSqlORMapper<BlogObject> mapper;
 mapper.find();           // execute queries
 TSqlORMapperIterator<BlogObject> i(mapper);
-while (i.hasNext()) {       // Itaration
+while (i.hasNext()) {    // Itaration
     BlogObject obj = i.next();
     // do something ..
 }

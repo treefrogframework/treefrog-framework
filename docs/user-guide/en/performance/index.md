@@ -29,6 +29,7 @@ Be sure to consider the above when choosing an MPM.
 The following comparisons use a sample application (blogapp) and the benchmark software *httperf*.
 
 **Test environment:**
+
 * PC: MacBook Pro [ 2.4GHz Intel Core 2 Duo, 4GB 1067MHz DDR3 ]
 * OS: Mac OS X 10.6
 * DB: SQLite (no record)
@@ -36,6 +37,7 @@ The following comparisons use a sample application (blogapp) and the benchmark s
 * TreeFrog: 0.54 (compiled by -O2 option)
 
 **Test Method**
+
 * Performance is measured by sending huge amount of one request to /blog/index in localhost in one connection. Httperf is used.
 
 The framework, individual requests, controller, model, DB, and view are all comprehensively checked. Since the DB cache system is not implemented (in the case of 0.54), an SQL query is called to the DB each time. 

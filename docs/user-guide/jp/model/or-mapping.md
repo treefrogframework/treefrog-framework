@@ -8,7 +8,11 @@ page_id: "060.010"
 モデルは、内部で O/R マッピングのオブジェクトを通じてデータベースにアクセスしています。このオブジェクト（ORM オブジェクトと呼ぶ）とレコードは基本的に1対1の関係になり、次のイメージで表されるでしょう。<br>
 1件のレコードが１つのオブジェクトに関連付きます。1対多の関係もよくありますが、ここでは割愛します。
 
-![ORM](http://www.treefrogframework.org/wp-content/uploads/2011/01/orm.png "ORM")
+<div class="img-center" markdown="1">
+
+![ORM]({{ site.baseurl }}/assets/images/documentation/orm.png "ORM")
+
+</div>
 
 繰り返しになりますが、モデルはブラウザに返す情報を集めたものであり、ORM オブジェクトは RDB へアクセスして操作するものと理解してください。
 
