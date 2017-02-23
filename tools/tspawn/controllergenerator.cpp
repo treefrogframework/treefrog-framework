@@ -75,7 +75,7 @@
     "        if (!model.isNull()) {\n"                         \
     "            QString notice = \"Created successfully.\";\n" \
     "            tflash(notice);\n"                             \
-    "            redirect(urla(\"show\", model.id()));\n"       \
+    "            redirect(urla(\"show\", model.%8()));\n"       \
     "        } else {\n"                                        \
     "            QString error = \"Failed to create.\";\n"      \
     "            texport(error);\n"                             \
