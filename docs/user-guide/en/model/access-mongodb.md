@@ -5,9 +5,9 @@ page_id: "060.050"
 
 ## Access MongoDB
 
-MongoDB is a document-oriented open source database, it’s one of the so-called NoSQL systems.
+MongoDB is a document-oriented open source database. It is one of the so-called NoSQL systems.
 
-To manage the data in the RDB, you need to define the table (schema) in advance, but you will most likely not need to do that with MongoDB. In MongoDB, data is represented by a (BSON) format like JSON called "Documents", and the set is managed as a "collection". Each document is assigned a unique ID (ObjectID) by the system.
+To manage the data in the RDB, you need to define a table (schema) in advance, but you will most likely not need to do that with MongoDB. In MongoDB, data is represented by a like JSON format (BSON) called "Documents", and the set is managed as a "collection". Each document has assigned a unique ID (ObjectID) by the system.
 
 Here is a comparison between the layered structures of an RDB and MongoDB.
 
@@ -23,7 +23,7 @@ Here is a comparison between the layered structures of an RDB and MongoDB.
 
 ## Installation
 
-Re-install the framework with the following command.
+Re-install the framework with the following command:
 
 ```
  $ tar xvzf treefrog-x.x.x.tar.gz
@@ -37,11 +37,11 @@ Re-install the framework with the following command.
  $ sudo make install
 ```
 
-- x.x.x will be version.
+- x.x.x represents the current version you have downloaded.
 
 ## Setting Credentials
 
-Assume that MongoDB has being installed, and the server is running. Then you make a skeleton of the application in the generator.
+Assume that MongoDB has being installed and the server is running. Then you can make a skeleton of the application in the generator.
 
 Let’s set the connection information in order to communicate with the MongoDB server. First, edit the following line in *config/application.ini*.
 
@@ -49,7 +49,7 @@ Let’s set the connection information in order to communicate with the MongoDB 
  MongoDbSettingsFile=mongodb.ini
 ``` 
  
-Then edit the *config/mongodb.ini*, specifying the host name and database name. As with the configuration file for the SQL database, this file is divided into three sections, *dev*, *test*, and *product*.
+Then edit the *config/mongodb.ini*, specifying the host name and database name. As for the configuration file for the SQL database, this file is divided into three sections, *dev*, *test*, and *product*.
  
 ```ini
  [dev]
@@ -61,7 +61,7 @@ Then edit the *config/mongodb.ini*, specifying the host name and database name. 
  ConnectOptions=           # unused
 ```
 
-Check the settings. Execute the following in the application root directory when MongoDB is running.
+Now, let's check the settings by execute the following command in the application root directory *when MongoDB is running*:
 
 ```
  $ tspawn --show-collections
@@ -72,15 +72,15 @@ Check the settings. Execute the following in the application root directory when
  Existing collections:
 ```
 
-If it succeeds, it will be displayed like this.
+If it succeeds, it will be displayed like above.
 
-Web applications can access both MongoDB and SQL databases. This enables the Web application to respond in a flexible way in case of an increased load of the Web system.
+Web applications can access both MongoDB and SQL databases. This enables the Web application to respond in a flexible way in case of an increased load on the Web system.
 
 ## Creating New Document
 
-To access the MongoDB server, use the TMongoQuery object. Specify the collection name as an argument to the constructor to create an instance.
+To access the MongoDB server, use the *TMongoQuery* object. Specify the collection name as an argument to the constructor to create an instance.
 
-MongoDB document is represented by QVariantMap object. Set the key-value pair for the object and then insert it by using the insert() method into the MongoDB at the end.
+MongoDB document is represented by a QVariantMap object. Set the key-value pair for the object and then insert it by using the insert() method into the MongoDB at the end.
 
 ```c++
 #include <TMongoQuery>
@@ -93,17 +93,17 @@ doc["body"] = "Hello world.";
 mongo.insert(doc);   // Inserts new
 ```
 
-Internally, a unique ObjectID is allocated when insert() is run.
+Internally, a unique ObjectID is allocated when the insert() method is being called.
 
 ### Supplement
 
-As this example shows, there is no need for developers to worry at all about the process of connect/disconnect with MongoDB; management of the connection is handled by the framework. Through the mechanism of re-using connections as they become available, the overhead caused by the number of connections/disconnections is kept low.
+As this example shows, there is no need for developers to worry at all about the process of connect/disconnect with MongoDB, because the management of the connection is handled by the framework itself. Through the  mechanism of re-using connections, the overhead caused by the number of connections/disconnections is kept low.
  
 ## Reading the Document
 
-Search for the documents that match the criteria; load them one by one. Please take care, since the search criteria are expressed in QVariantMap object as well.
+When you search for documents and some of them (or all) match the previously set criteria, it is necessary to pass the returned documents (if any) one by one into a QVariantMap. Please be ware, that we have to use QVariantMap here, because the search criteria is expressed as QVariantMap, too.
 
-In the following example, we use an object that sets criteria as an argument to the find() method, and then click Search. Assuming that there is more than one document that matches the search criteria we use a while statement to create a loop.
+The following example creates an Criteria object which contains two criteria sets and then being passed as an argument to the find() method. Assuming that there is more than one document that matches the search criteria we use the *while* statement to loop through the list of available documents.
 
 ```c++
 TMongoQuery mongo("blog"); 
@@ -119,15 +119,15 @@ while (mongo.next()) {
 }
 ```
  
-- Two criteria are joined by AND operator.
+- Two criteria are joined by the AND operator.
 
-To read only one search result, you can use the findOne() method.
+If your are looking for only one documents that matches the criteria, you can use the findOne() method.
 
 ```c++
 QVariantMap doc = mongo.findOne(criteria);
 ``` 
 
-The following is a example to read documents that the value of 'num' key is greater than 10. Specify **$gt** as the comparison operator for a criteria object.
+The following example sets an criteria for a 'num'. Only documents those value 'num' is greater than 10 will match. In order to achieve this, use **$gt** as the comparison operator for your criteria object.
 
 ```c++
 QVariantMap criteria;
@@ -150,7 +150,7 @@ mongo.find(criteria);    // Run the search
 
 ### OR Operator
 
-Joins query clauses with a logical OR **$or**.
+Joins query clauses with a logical OR **$or** operator.
 
 ```c++
 QVariantMap criteria;
@@ -160,13 +160,13 @@ criteria.insert("$or", orlst);
   :
 ```
 
-As described above, the search condition in *TMongoQuery* is represented by an object from type *QVariantMap*. In MongoDB, the search condition is represented by JSON, so when executing the query, the QVariantMap object will be converted to a JSON object. Therefore you can specify all the operators provided by MongoDB provided that you describe them properly according to the rules. An efficient search will be possible.
+As described above, the search condition in *TMongoQuery* is represented by an object from type *QVariantMap*. In MongoDB, the search condition is represented by JSON, so when executing a query, the QVariantMap object will be converted to a JSON object. Therefore you can specify all the operators supported by MongoDB provided that you have described them properly according to their rules. An efficient search will be then possible.
 
-Other operators are provided by MongoDB. Please see [MongoDB documents](http://docs.mongodb.org/manual/reference/operator/nav-query/){:target="_blank"} for details.
+There are more operators provided by MongoDB. Please have a look at the [MongoDB documents](http://docs.mongodb.org/manual/reference/operator/nav-query/){:target="_blank"} for an insight view.
 
-## Updating the Document
+## Updating a Document
 
-We will read a document from the MongoDB server and then update it. As indicated by the update() method we will update one document that matches the criteria.
+We will read a document from the MongoDB server and then update it. As indicated by the update() method, we will update one document that matches the criteria.
 
 ```c++
 TMongoQuery mongo("blog"); 
@@ -179,7 +179,7 @@ criteria["_id"] = doc["_id"];          // Set ObjectID to the search criteria
 mongo.update(criteria, doc);
 ```
 
-As an additional comment, even if there are several documents matching the search criteria, in order to be sure the document can be updated, add ObjectID to the search criteria.
+It is important to note here, that even if there are several documents matching the search criteria, but in order to be sure the the document can be updated, add the *ObjectID* to the search criteria.
 
 In addition, if you want to update all documents that match the criteria, you can use the updateMulti() method.
 
@@ -189,18 +189,18 @@ mongo.updateMulti(criteria, doc);
 
 ## Removing a Document
 
-You can remove all documents that match the criteria.
+Specify the object ID as a condition If you want to delete one document.
+
+```c++
+criteria["_id"] = "517b4909c6efa89aed288706";  // Removes by ObjectID
+mongo.remove(criteria);
+```
+
+You can also remove all documents that match the criteria.
 
 ```c++
 TMongoQuery mongo("blog");
 QVariantMap criteria;
 criteria["foo"] = "bar";
 mongo.remove(criteria);    // Remove
-```
-
-Specify the object ID as a condition If you want to delete one document.
-
-```c++
-criteria["_id"] = "517b4909c6efa89aed288706";  // Removes by ObjectID
-mongo.remove(criteria);
 ```

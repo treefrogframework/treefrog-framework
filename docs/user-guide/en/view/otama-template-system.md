@@ -34,23 +34,23 @@ If you have not already done so, it is recommended that you read the ERB chapter
 
 ## Output a String
 
-We are going to the output of the statement "Hello world".
-On the template page, written in HTML , use a custom attribute called data-tf to put a "mark" for the element. The attribute name must start with "@". For example, we write as follows.
+We are going to the output of the statement "Hello world".<br>
+On the template page, written in HTML , use a custom attribute called data-tf to put a "mark" for the element. The attribute name must start with "@". For example, we write as follows:
 
 ```html
 <p data-tf="@hello"></p>
 ```
 
-We've used paragraph tags (\<p\> \</p\>) around the @hello mark.
+We've used paragraph tags (\<p\> \</p\>) around the @hello mark.<br>
 In the mark you may only use alphanumeric characters and the underscore '_'. Do not use anything else.
 
-Next, we’ll look at the presentation logic file in C++ code. We need to associate the C++ code with the mark made above. We write this as follows.
+Next, we’ll look at the presentation logic file in C++ code. We need to associate the C++ code with the mark made above. We write this as follows:
 
 ```
  @hello ~ eh("Hello world");
 ```
 
-We then build, run the app, and then the view will output the following results.
+We then build, run the app, and then the view will output the following results:
 
 ```html
 <p>Hello world</p>
@@ -60,7 +60,7 @@ The tilde (~) that connects the C++ code with the mark that was intended for the
 
 In other words, the content between the p tags (blank in this case) is replaced with "Hello world". The data-tf attribute will then disappear entirely.
 
-In addition, as an alternative way of outputting the same result, it’s also possible to write as follows.
+In addition, as an alternative way of outputting the same result, it’s also possible to write as follows:
 
 ```
  @hello ~= "Hello world"
@@ -84,13 +84,13 @@ This time, we’ll use a different Otama operator. Let's assume that presentatio
  @hello : eh("Hello world");
 ```
 
-The Result of View is as Follows.
+The Result of View is as follows:
 
 ```html
  Hello world
 ```
 
-The p tag has been removed. This is because the colon has the effect of "replace the whole element marked", with this result. Similar to the above, this could also be written as follows.
+The p tag has been removed. This is because the colon has the effect of "replace the whole element marked", with this result. Similar to the above, this could also be written as follows:
 
 ```
  @hello := "Hello world"
@@ -98,7 +98,7 @@ The p tag has been removed. This is because the colon has the effect of "replace
 
 ## Using an Object Passed from the Controller
 
-In order to display the export object passed from the controller, as with ERB, you can use it after fetching by tfetch() macro or T_FETCH() macro. When msg can export an object of QString type, you can describe as follows.
+In order to display the export object passed from the controller, as with ERB, you can use it after fetching by tfetch() macro or T_FETCH() macro. When msg can export an object of QString type, you can describe as follows:
 
 ```
  @hello : tfetch(QString, msg);  eh(msg);
@@ -110,7 +110,7 @@ Typically, C++ code will not fit in one instruction line. To write a C++ code of
 
 <span style="color: #b22222">**In brief: logic is delimited by an empty line.** </span>
 
-Next, we look at the case of wanting to display an export object in two different locations. In this case, if you describe it at #init, it will be called first (fetched). After that, it can be used freely in the presentation logic. It should look similar to the following.
+Next, we look at the case of wanting to display an export object in two different locations. In this case, if you describe it at #init, it will be called first (fetched). After that, it can be used freely in the presentation logic. It should look similar to the following:
 
 ```
  #init : tfetch(QString, msg);
@@ -122,8 +122,8 @@ Next, we look at the case of wanting to display an export object in two differen
  
 With that said, for exporting objects that are referenced more than once, use the fetch processing at *#init*.
  
-Here is yet another way to export output objects.
-Place "$" after the Otama operator. For example, you could write the following to export the output object called obj1.
+Here is yet another way to export output objects.<br>
+Place "$" after the Otama operator. For example, you could write the following to export the output object called *obj1*.
 
 ```
  @foo1 :=$ obj1
@@ -131,7 +131,7 @@ Place "$" after the Otama operator. For example, you could write the following t
  
 This is, output the value using the eh() method while fetch() processing for obj1. However, this process is only an equivalent to fetch processing, the local variable is not actually defined.
 
-To obtain output using the echo() method, you can write as follows.
+To obtain output using the echo() method, you can write as follows:
 
 ```
  @foo1 :==$ obj1
@@ -143,7 +143,7 @@ Just like ERB.
 
 ## Loop
 
-Next, I will explain how to use loop processing for repeatedly displaying the numbers in a list.
+Next, I will explain how to use loop processing for repeatedly displaying the numbers in a list.<br>
 In the template, we want a text description.
 
 ```html
@@ -169,7 +169,7 @@ That is exported as an object in the list of Blog class named blogList. We want 
  @body ~= b.body()
 ```
 　
-The %% sign is important, because it refers to the entire element (*@foreach*) of the mark. In other words, in this case, it refers to the element from \<tr\> up to \</ tr\>. Therefore, by repeating the \<tr\> tags, the foreach statement which sets the value of each content element with *@id*, *@title*, and *@body*, results in the view output being something like the following.
+The %% sign is important, because it refers to the entire element (*@foreach*) of the mark. In other words, in this case, it refers to the element from \<tr\> up to \</ tr\>. Therefore, by repeating the \<tr\> tags, the foreach statement which sets the value of each content element with *@id*, *@title*, and *@body*, results in the view output being something like the following:
 
 ```html
 <tr>
@@ -188,29 +188,29 @@ The data-tf attribute will disappear, the same as before.
 
 ## Adding an Attribute
 
-Let's use the Otama operator to add an attribute to the element.
-Suppose you have marked such as the following in the template.
+Let's use the Otama operator to add an attribute to the element.<br>
+Suppose you have marked such as the following in the template:
 
 ```html
 <span data-tf="@spancolor">Message</span>
 ```
  
-Now, suppose you wrote the following in the presentation logic.
+Now, suppose you wrote the following in the presentation logic:
 
 ```
  @spancolor + echo("class=\"c1\" title=\"foo\"");
 ```
 
-As a result, the following is output.
+As a result, the following is output:
 
 ```html
  <span class="c1" title="foo">Message</span>
 ```
 
-In this way, by using the + operator, you can add only the attribute.
+In this way, by using the + operator, you can add only the attribute.<br>
 As a side note, you cannot use the eh() method instead of the echo() method, because this will take on a different meaning when the double quotes are escaped.
 
-Another method that we could also use would be written as follows in the presentation logic.
+Another method that we could also use would be written as follows in the presentation logic:
 
 ```
  @spancolor +== "class=\"c1\" title=\"foo\""
@@ -228,22 +228,22 @@ The a() method creates a THtmlAttribute object that represents the HTML attribut
 
 You may use more if you wish.
 
-## Rewriting the \<a\> tag
+## Rewriting the \<a\> Tag
 
-The \<a\> tag can be rewritten using the colon ':' operator. It acts as described above.
-To recap a little; the \<a\> tag is to be marked on the template as follows.
+The \<a\> tag can be rewritten using the colon ':' operator. It acts as described above.<br>
+To recap a little; the \<a\> tag is to be marked on the template as follows:
 
 ```html
 <a class="c1" data-tf="@foo">Back</a>
 ```
 
-As an example; we can write the presentation logic of the view (of the Blog), as follows.
+As an example; we can write the presentation logic of the view (of the Blog) as follows:
 
 ```
  @foo :== linkTo("Back", urla("index"))
 ```
 
-As a result, the view outputs the following.
+As a result, the view outputs the following:
 
 ```html
 <a href="/Blog/index/">Back</a>
@@ -251,7 +251,7 @@ As a result, the view outputs the following.
 
 Since the linkTo() method generates the \<a\> tag, we can get this result. Unfortunately, the class attribute that was originally located has disappeared. The reason is that this operator has the effect of replacing the whole element.
  
-If you want to set the attribute you can add it as an argument to the linkTo() method.
+If you want to set the attribute you can add it as an argument to the linkTo() method:
 
 ```
  @foo :== linkTo("Back", urla("index"), Tf::Get, "", a("class", "c1"))
@@ -259,16 +259,16 @@ If you want to set the attribute you can add it as an argument to the linkTo() m
 
 The class attribute will also be output as a result like the same as above.
 
-Although attribute information could be output, you wouldn’t really want to bother to write such information in the presentation logic.
+Although attribute information could be output, you wouldn’t really want to bother to write such information in the presentation logic.<br>
 As a solution there is the \|== operator. This has the effect of merging the contents while leaving the information of the attributes attached to the tag.
 
-So, let’s rewrite the presentation logic as follows.
+So, let’s rewrite the presentation logic as follows:
 
 ```
  @foo  |== linkTo("Back", urla("index"))
 ```
 
-As a result, the view outputs the following.
+As a result, the view outputs the following:
 
 ```html
 <a class="c1" href="/Blog/index/">Back</a>
@@ -358,7 +358,7 @@ For example, if you want to include *user.h* and *blog.h* files, you would write
  #include "user.h"
 ```
  
-All the same as the C++ code!
+All the same as the C++ code!<br>
 Lines beginning with an #include string are moved directly to the code view.
  
 ## Otama Operator

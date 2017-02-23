@@ -7,8 +7,7 @@ page_id: "010.020"
 
 ### Modified BSD license (New BSD License)
 
-Modification, distribution or copying of source code is allowed in accordance with the license conditions below. If you modify source code you don’t need to publish it; you can select “not publish” if you wish.
- 
+Modification, distribution or copying of source code is allowed in accordance with the license conditions below. If you modify the source code, you don’t need to publish it; you can select “not publish” if you wish.
 
 Copyright (c) 2010-2013, AOYAMA Kazuharu
 All rights reserved.

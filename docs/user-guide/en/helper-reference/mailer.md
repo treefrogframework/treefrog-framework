@@ -5,9 +5,9 @@ page_id: "080.040"
 
 ## Mailer
 
-TreeFrog Framework incorporates a mailer (mail client) which makes it possible to send mail by SMTP. For now (v1.0), only SMTP message sending is possible. To create mail messages, an ERB template is used.
+TreeFrog Framework incorporates a mailer (mail client) which makes it possible to send mails by SMTP. For now (v1.0), only SMTP message sending is possible. To create mail messages, an ERB template is used.
 
-First, let's create a mail skeleton with the following command.
+First, let's create a mail skeleton with the following command:
 
 ```
  $ tspawn mailer information send
@@ -17,9 +17,9 @@ First, let's create a mail skeleton with the following command.
    created  views/mailer/mail.erb
 ```
  
-The class of InformationMailer is created in the controller directory, and a template with the name *mail.erb* is created in the views directory.
+The class of InformationMailer is created in the controller directory, and the template with the name *mail.erb* is created in the views directory.
 
-Next, open the *mail.erb* that was created, and then save as the following content.
+Next, open the *mail.erb* that was previously created and then change its content to the following:
 
 ```
  Subject: Test Mail
@@ -34,7 +34,7 @@ Above the blank line is the mail header, and below is the content of the body. S
 
 If you are using multi-byte characters, such as Japanese, save the file by setting the encoding (default UTF-8) in the settings file of InternalEncoding.
 
-Call the deliver() method at the end of the send() method of InformationMailer class.
+Call the deliver() method at the end of the send() method of the InformationMailer class.
 
 ```c++
 void InformationMailer::send()
@@ -45,11 +45,12 @@ void InformationMailer::send()
 }
 ``` 
  
-You are now able to call from outside of class. By writing the following code in the action, the process of mail sending is executed.
+You are now able to call from outside of the class. By writing the following code in the action, the process of mail sending will be executed:
 
 ```c++
 InformationMailer().send();
 ```
+
 - When you actually send a mail, please see the following "SMTP Settings" section.
 
 When you need to send a mail directly without using a template, you can use the TSmtpMailer::send() method.
@@ -80,22 +81,27 @@ ActionMailer.smtp.Password=
 ActionMailer.smtp.DelayedDelivery=false
 ```
  
-If you do SMTP authentication, you specify the *ActionMailer.smtp.Authentication*=true.
+If you use SMTP authentication, you need to set this:
+
+```ini
+*ActionMailer.smtp.Authentication*=true
+```
+
 As for the authentication method, CRAM-MD5, LOGIN and PLAIN (using this priority) are mounted in a way, so that the authentication process is performed automatically.
 
 In this framework, SMTPS email sending is not supported.
  
 ## Delay sending the mail
 
-Since mail sending by SMTP needs to pass the data through an external server, it requires time compared to processes. You can return an HTTP response before the mail sending process is executed. 
+Since mail sending by SMTP needs to pass the data through an external server, it requires time compared to the process. You can return an HTTP response before the mail sending process is executed. 
 
-Edit the *application.ini* file as follows.
+Edit the *application.ini* file as follows:
 
 ```ini
 ActionMailer.smtp.DelayedDelivery=true
 ```
 
-By doing this, the deliver() method will be a non-blocking function of merely queuing data. Processing of the mail sending will occur after returning an HTTP response.
+By doing this, the deliver() method will be a non-blocking function of merely queuing data. The mail sending provess will occur after returning an HTTP response.
 
 **Additional note:**
-If you do not set the delay sending (in the case of false), the deliver() method would keep blocking until the SMTP processing would end, or be in error.
+If you don't set the delay sending (in case of *false*), the deliver() method would keep blocking until the SMTP processing ends, or all ends up in an error.

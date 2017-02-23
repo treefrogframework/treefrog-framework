@@ -5,9 +5,10 @@ page_id: "110.0"
 
 ## Debug
 
-When you build the source code that you have created, four shared libraries are generated. These are the substance of the Web application. The TreeFrog application server (AP server) reads them on startup, then waits for access from a browser.
+When you build the source code that you have created, four shared libraries are generated. These are the basement of your Web application. The TreeFrog application server (AP server) reads them during the startup, then waits for access from a browser.
 
-Debugging the Web application is equivalent to debugging the shared common libraries. First of all, let's compile the source code in debug mode. In the application root directory, you can run the following command.
+Debugging the Web application is equivalent to debugging the shared common libraries. First of all, let's compile the source code in debug mode. <br>
+In the application root directory, you can run the following command:
 
 ```
  $ qmake -r "CONFIG+=debug"
@@ -15,7 +16,7 @@ Debugging the Web application is equivalent to debugging the shared common libra
  $ make
 ```
 
-In debug, the following settings are used according to the platforms.
+When debugging, the following settings are used according to the platforms:
 
 <div class="center aligned" markdown="1">
 
@@ -49,13 +50,13 @@ In debug, the following settings are used according to the platforms.
 
 </div><br>
 
-- x.x.x is the version of TreeFrog.
+- x.x.x stands for the version of TreeFrog.
 
-Next we will configure these items.
+Next we are going to configure these items.
  
 ## Debugging with Qt Creator
 
-Let’s introduce debugging using the Qt Creator, I think the way you debug is basically the same with other debuggers.
+Let’s introduce *debugging* using the *Qt Creator*, I think the way you debug is basically the same with other debuggers.
 
 First, make a thread in the [MPM]({{ site.baseurl }}/user-guide/en/performance/index.html){:target="_blank"} application configuration file.
 
@@ -63,7 +64,7 @@ First, make a thread in the [MPM]({{ site.baseurl }}/user-guide/en/performance/i
  MultiProcessingModule=thread
 ```
 
-Import the source code of the application file to Qt Creator. Then click [File] – [Open File or Project...] and then choose the project file on the file selection screen. Click the [Configure Project] button, and then import the project. The following screen is seen when the blogapp project is imported.
+Import the source code of the application file to the Qt Creator. Then click *[File] – [Open File or Project...]* and then choose the project file on the file selection screen. Click the *[Configure Project]* button, and then import the project. The following screen is seen when the *blogapp* project has been successfully imported.
 
 <div class="img-center" markdown="1">
 
@@ -71,8 +72,8 @@ Import the source code of the application file to Qt Creator. Then click [File] 
 
 </div>
 
-Now we will run the settings screen for debugging.
-The last of the tadpole command arguments, specifies -e option and the application route’s absolute path. You may remember that the -e option is the setting for switching the DB environment. Let's assume you choose dev.
+Now we will run the settings screen for debugging.<br>
+The last of the tadpole command arguments, specifies the *-e* option and the absolute path of application route. You may remember that the -e option is the option for switching the DB environment. Let's assume you choose *dev*.
  
 In the case of Linux:<br>
 In the next screen we choose /var/tmp/blogapp as the application root.
@@ -86,7 +87,7 @@ In the next screen we choose /var/tmp/blogapp as the application root.
 In Windows:<br>
 We can set the content in two ways by building the configuration screen and by implementing the configuration screen.
 
-Example of build configuration: (sorry for only having Japanese images for this demonstration...)
+Example of a build configuration: (sorry for only having Japanese images for this demonstration...)
 
 <div class="img-center" markdown="1">
 
@@ -94,7 +95,7 @@ Example of build configuration: (sorry for only having Japanese images for this 
 
 </div>
 
-And an example of run configuration :
+And an example of run configuration:
 
 <div class="img-center" markdown="1">
 
@@ -102,7 +103,7 @@ And an example of run configuration :
 
 </div>
 
-That is all about the configuration settings.
+That is all about the configuration settings.<br>
 When adding a breakpoint to the source code, always try to access it from your Web browser.
 
-Check the processing. Does it stop at the breakpoint?
+Now check out whether the browser stops at the previously placed breakpoint. Does it stop at the there?

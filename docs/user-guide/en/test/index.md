@@ -19,8 +19,8 @@ Let’s test the Blog model code that we made in the [tutorial](/user-guide/en/t
  $ cd blog
 ```
 
-We will try to create the test case for creating and reading of the Blog model.
-For example, let’s set the name of the implementing test as follows: *TestBlog*. The source code with the following content is saved as the file name *testlog.cpp*.
+We will try to create the test case for creating and reading of the Blog model.<br>
+For example, let’s set the name of the implementing test as follows: *TestBlog*. The source code with the following content is saved as a file named *testlog.cpp*.
 
 ```c++
 #include <TfTest/TfTest>
@@ -100,23 +100,23 @@ Part of the specification has changed after the update to Qt5. If you are using 
  QT += network sql testlib
 ```
 
-After you save the project file, you can create a binary by running the following command in its directory
+After you save the project file, you can create a binary by running the following command in its directory:
 
 ```
  $ qmake
  $ make
 ``` 
 
-Next, configuration needs to be done for the testing process. 
-Because of the need to refer to the various configuration files, the test command requires a symbolic link to the config directory. Its location should be directly below of the test command. When SQLite is used for the database, we need to make a symbolic link to db directory as well. 
+Next, some little configuration needs to be done for the testing process.<br> 
+Because of the need to refer to the various configuration files, the test command requires a symbolic link to the config directory. Its location should be directly below of the test command. When SQLite is used for the database, we need to make a symbolic link to the *db* directory as well. 
 
 ```
  $ ln -s  ../../config  config
  $ ln -s  ../../db  db
 ```
 
-If you use Windows, an exe file of the test is created in the debug directory, so that a symbolic link is made there. Please be careful; it is NOT a shortcut.  
-To make a symbolic link, you must run the command from the command prompt launched with administrator privileges.
+If you use Windows, an exe file of the test is created in the *debug* directory, so that a symbolic link is created there. Please be careful: it is NOT a shortcut!  
+To create a symbolic link, you must run the command from the command prompt launched with administrator privileges.
 
 ```
  > cd debug 
@@ -124,14 +124,14 @@ To make a symbolic link, you must run the command from the command prompt launch
  > mklink /D  db  ..\..\..\db
 ```
    
-Furthermore, take the path to the common library including the Blog model. 
-In the case of Linux, set the environment variable as follows.
+Furthermore, take the path to the common library including the Blog model.<br> 
+In the case of Linux, set the environment variable as follows:
 
 ```
  $ export  LD_LIBRARY_PATH=/path/to/blogapp/lib
 ```
 
-If you use Windows, add the setting to PATH variables.
+If you use Windows, add the setting to PATH variables like this:
 
 ```
  > set PATH=C:\path\to\blogapp\lib;%PATH%
@@ -150,8 +150,7 @@ Password=
 ConnectOptions=
 ```
 
-The configuration is now complete. Next, the test is implemented. If you can test successfully, you can see the following message on the screen. 
-In the case of Windows, please implement on the TreeFrog Command Prompt.
+The configuration is now complete. Next, the test needs to be executed. If the test was a throughout success, you can see the following message on the screen: 
 
 ```
 $ ./testblog
@@ -162,8 +161,9 @@ PASS   : TestBlog::create()
 PASS   : TestBlog::cleanupTestCase()
 Totals: 3 passed, 0 failed, 0 skipped
 ********* Finished testing of TestBlog *********
-``` 
- 
+```
+
+In the case of Windows, please execute the test on the TreeFrog Command Prompt.<br>
 If, however, the result is not what was expected, you will see the following message.
 
 ```
@@ -179,4 +179,4 @@ Totals: 2 passed, 1 failed, 0 skipped
  ********* Finished testing of TestBlog *********
 ```
 
-Make a test case in each model. Then please do the test. The key to a good Web application development is to be sure that the model is working properly.
+Make a test case for each each model. Then please do the test. The key to a good Web application development is to be sure that the model is working properly.

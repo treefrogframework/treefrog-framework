@@ -5,24 +5,24 @@ page_id: "160.0"
 
 ## Performance
 
-### Constructing the application server
+### Creating the Application Server
 
-The TreeFrog Application server (AP server) is constructed by a server process that handles HTTP (*tadpole*), and the process that monitors its life and death (*treefrog*).
+The TreeFrog Application server (AP server) is created by a server process that handles HTTP (*tadpole*) and a process that monitors its life and death (*treefrog*).
 
-If a segmentation fault causes the *tadpole* process to go down, the *treefrog* process will detect it, and then restart the *tadpole* process. This kind of fault-tolerant mechanisms makes it possible for the service itself to be provided continuously.
+If a segmentation fault causes the *tadpole* process to go down, the *treefrog* process will detect it and then restart the *tadpole* process. This kind of fault-tolerant mechanism makes it possible for the service itself to be provided continuously.
  
 ## Multi-Processing Module – MPM
 
-There are two MPMs (Multi-Processing Modules) to make multiprocessing modules for the application server (AP server), these are prefork and thread. These are similar to Apache. You need to choose one of them and then specify it in setting file. The default is 'thread'.
+There are two MPMs (Multi-Processing Modules) to create multiprocessing modules for the application server (AP server): *prefork* and *thread*. These are similar to Apache. You need to choose one of them and then specify it in setting file. The default is 'thread'.
 
-* **prefork:** Make the process “fork” in advance, and then make socket as “listen”. The action is performed on the process, and when the request has been operated and the response returned, the process disappears. Do not reuse it. If the action is down by fault or illegal operation, it would not then affect any actions.
-* **thread:** Thread is created every time there is a request. Action runs on the thread, and when the request has been processed and the response sent, the thread disappears. Performance is good.
-* **hybrid (v1.7 or later):** Sockets are monitored by epoll system call and an HTTP request is processed on a thread. It's available on Linux only. It is implemented for the C10K problem, that can keep many sockets.
+* **prefork:** Create the process “fork” in advance, and then create socket as “listen”. The action is performed during the process, and when the request has been operated and the response returned, the process disappears. Do not reuse it! If the action is down by fault or illegal operation, it wouldn't then affect any actions.
+* **thread:** Thread is created every time when there is a request. Action runs on the thread and when the request has been processed and the response sent, the thread disappears. The performance is good.
+* **hybrid (v1.7 or later):** Sockets are monitored by epoll system call and an HTTP request is processed on a thread. It's available on Linux only. It is implemented for the C10K problem that can maintain many sockets.
 
-If you use the thread module, performance can be very high (about 14x of 'prefork'). If you use the hybrid module on Linux, performance can be much better at high load. However, when, for example, a segmentation fault occurs, each process can go down, therefore all threads can be down. If a certain action has a fault, other actions running in parallel could also be affected. That would cause problems. In the case of the prefork module the process is divided into individual actions, so that this kind of concern is avoided.
+If you use the thread module, performance can be very high (about 14x of 'prefork'). If you use the hybrid module on Linux, performance can be much better at high level load. However, when, for example, a segmentation fault occurs, each process can go down, therefore all threads can be down. If a certain action has a fault, other parallel running actions could also be affected. That would cause problems. In the case of the prefork module the process is divided into individual actions, so that this kind of concern can be avoided.
 
-In addition, in the case of using the thread or hybrid module setting, when a web application has a memory leak fault, by continuing operation, sooner or later the memory will be used up. Of course, the memory leak bug should be fixed, but if you cannot solve it, you can use the prefork module. Each time a process is exited you can avoid the memory being eaten up. However, it is annoying!
-Be sure to consider the above when choosing an MPM.
+In addition, in case of using the thread or hybrid module setting, when a web application has a memory leak fault, by continuing operation, sooner or later the memory will be used up. Of course, the memory leak bug should be fixed, but if you cannot solve it, you can use the prefork module. Each time a process is exited you can avoid the memory being eaten up. However, it is annoying!<br>
+Be sure to consider the mentioned things above when choosing an MPM.
 
 ## Benchmark
 
@@ -38,7 +38,7 @@ The following comparisons use a sample application (blogapp) and the benchmark s
 
 **Test Method**
 
-* Performance is measured by sending huge amount of one request to /blog/index in localhost in one connection. Httperf is used.
+* The performance here is measured by sending huge amount of requests to */blog/index* in localhost in one connection. Httperf is used.
 
 The framework, individual requests, controller, model, DB, and view are all comprehensively checked. Since the DB cache system is not implemented (in the case of 0.54), an SQL query is called to the DB each time. 
 
@@ -73,7 +73,7 @@ In the case of the thread module:<br>
  Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
 ```
 
-* by running the test several times, I was able to find an intermediate result, as posted above ↑
+* By running the test several times, I was able to find an intermediate result, as posted above ↑
 
 About 562 times requests are executed per second. This is the number when the record is 0, so that it would represents the highest performance figure of which TreeFrog is capable. I think it indicates top class performance in the web application framework. What do you think?
 

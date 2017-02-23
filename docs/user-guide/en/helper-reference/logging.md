@@ -5,7 +5,7 @@ page_id: "080.050"
 
 ## Logging
 
-Your Web application will log four outputs as follows.
+Your Web application will log four outputs as follow:
 
 <div class="table-div" markdown="1">
 
@@ -20,7 +20,7 @@ Your Web application will log four outputs as follows.
 
 ## Output of the Application Log
 
-The application log is used for logging your Web application. Use the following method if you want to output the application log.
+The application log is used for logging your Web application. There are several types of methods that you can use to output the application log:
 
 * tFatal()
 * tError()
@@ -29,13 +29,13 @@ The application log is used for logging your Web application. Use the following 
 * tDebug()
 * tTrace()
 
-Arguments that can be passed are the same as the printf-format of format string and a variable number. For example, like this.
+Arguments that can be passed here are the same as the printf-format of format string and a variable number. For example, like this:
 
 ```c++
 tError("Invalid Parameter : value : %d", value);
 ```
 
-Then, the following log will be output to the *log/app.log* file.
+Then, the following log will be output to the *log/app.log* file:
 
 ```
  2011-04-01 21:06:04 ERROR [12345678] Invalid Parameter : value : -1
@@ -61,8 +61,8 @@ It is possible to change the layout of the log output, by setting FileLogger.Lay
 FileLogger.Layout="%d %5P [%t] %m%n"
 ```
  
-When a log was generated, date and time will be inserted there and tagged with '%d' in the log layout.
-The date format is specified in the FileLogger.DateTimeFormat parameter. The format that can be specified is the same value to the argument of QDateTime::toString(). Please refer to the [Qt document](http://doc.qt.io/qt-5/qdatetime.html){:target="_blank"} for further detail. 
+When a log was generated, date and time will be inserted there and tagged with '%d' in the log layout.<br>
+The date format is specified in the FileLogger.DateTimeFormat parameter. The format that can be specified is the same value as the argument of QDateTime::toString(). Please refer to the [Qt document](http://doc.qt.io/qt-5/qdatetime.html){:target="_blank"} for further detail. 
 
 ```ini
 # Specify the date-time format of FileLogger, see also QDateTime
@@ -72,7 +72,7 @@ FileLogger.DateTimeFormat="yyyy-MM-dd hh:mm:ss"
 
 ## Changing the Logging Level
 
-You can set the log output level using the following parameter in logger.ini.
+You can set the log output level using the following parameter in *logger.ini*:
 
 ```ini
 # Outputs the logs of equal or higher priority than this.

@@ -5,7 +5,7 @@ page_id: "080.010"
 
 ## File Upload
 
-Let's make a form for file upload. Below is an example of writing in ERB. By specifying true for the third argument of the formTag() method, a form as multipart/form-data will be generated.
+In this chapter we will create a simple form for a file upload. The code example below is using ERB. By specifying *true* for the third argument of the formTag() method, a form will be generated as multipart/form-data.
 
 ```html
 <%== formTag(urla("upload"), Tf::Post, true) %>
@@ -20,14 +20,15 @@ Let's make a form for file upload. Below is an example of writing in ERB. By spe
  
 In this example, the destination of the file upload is the upload action in the same controller.
 
-In the action that receives the upload file, you can rename the file by using the following method. The uploaded file is treated as a temporary file; if you do rename it now, the file is automatically deleted after the action ends.
+The upload file that is being received in action can be renamed as well by using the following method:
 
 ```c++
 TMultipartFormData &formdata = httpRequest().multipartFormData();
 formdata.renameUploadedFile("picture", "dest_path");
 ```
 
-The original file name can be obtained using the following method.
+The uploaded file is treated as a temporary file. If you do rename the upload file, the file is automatically deleted after the action ends.<br> 
+The original file name can be obtained using the following method:
 
 ```c++
 QString origname = formdata.originalFileName("picture");
@@ -41,9 +42,9 @@ QString upfile = formdata.uploadedFile("picture");
 
 ## Upload a variable number of files
 
-TreeFrog Framework also supports uploading a variable number of files. You can upload files of variable number when you use the Javascript library. Here, I’ll explain an easier way of uploading two files (or more).
+TreeFrog Framework also supports uploading a variable number of files. You can upload a variable number files provided that you use the Javascript library. Here, I’ll explain an easier way of uploading two files (or more).
 
-First we create a form as follows.
+First we create a form as follows:
 
 ```html
 <%== formTag(urla("upload"), Tf::Post, true) %>
@@ -59,7 +60,7 @@ First we create a form as follows.
 
 When creating an input tag with JavaScript dynamically, it is important to add "[]" at the end of the 'name' like name = "picture []".
 
-To receive the uploaded file in the upload action, you can access the two files through the TMimeEntity object as follows. But don’t forget here using the Iterator for that.
+To receive the uploaded files in the upload action, you can access the two files through the TMimeEntity object as follows: 
 
 ```c++
 QList<TMimeEntity> lst = httpRequest().multipartFormData().entityList( "picture[]" );
@@ -70,3 +71,5 @@ for (QListIterator<TMimeEntity> it(lst); it.hasNext(); ) {
       :
 }
 ```
+
+Don’t forget to use the Iterator here for that.

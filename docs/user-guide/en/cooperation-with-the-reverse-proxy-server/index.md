@@ -5,16 +5,16 @@ page_id: "140.0"
 
 ## Cooperation with the Reverse Proxy Server
 
-The TreeFrog Framework provides an application server (AP server) to send back the dynamic content at the request of the individual. As previously mentioned, this application server also functions as a Web server, so you can also process static content. For the Web server role, we have specialized in one function only, the implementation of high speed return of static content.
+The TreeFrog Framework provides an application server (AP server) to send back a dynamic created content for an inidvidual request. As previously mentioned, the application server also functions as a Web server, so you can also process static content. As for the Web server role, we have specialized it in one function only for an high speed respond of static content.
 
-As it stands, this is sufficient for small and medium-sized Web sites. However, when making a large Web site system, in order to achieve stable operation and load balance it becomes necessary to use a Web server (reverse proxy) system such as nginx or Apache.
+As it stands, this is sufficient for small and medium-sized Web sites. However, when making a large Web site system, in order to achieve stable operation and load balance it becomes necessary to use a Web server (reverse proxy) system such as *nginx* or* Apache*.<br>
 Also, if you want to work with compression response and SSL, you must set up a Web server separately.
 
-<span style="color: #b22222">**In brief: For large scale sites, set up the web server.** </span>
+<span style="color: #b22222">**In brief: For large scale sites, set up a Web server.** </span>
 
 <div class="center aligned" markdown="1">
 
-**Roles of server-side**
+**Server-side Roles**
 
 </div>
 
@@ -28,11 +28,12 @@ Also, if you want to work with compression response and SSL, you must set up a W
 
 </div><br>
 
-I'll not go into detail about reverse proxy configuration for Apache and nginx, since a great deal of information is readily available on the internet. The basic idea is that reverse proxy listens on port 80, with requests being transferred to the application server as they are received. Of course, the application server should be assigned a port number that does not duplicate other services. Use the *ListenPort* parameter in the *application.ini* file to set the port number.
+I'll not go into detail about the reverse proxy configuration for Apache and nginx, since a great deal of information is readily available on the internet.<br> 
+The basic idea is that reverse proxy listens to port 80 with requests being transferred to the application server as they are received. Of course, the application server should be assigned a port number that does not duplicate other services. Use the *ListenPort* parameter in the *application.ini* file to set the port number.
 
-If you run your application server and reverse proxy on the same host, you can use the UNIX domain socket connection to them. The advantages of using the UNIX domain socket are that its overhead is less than the TCP socket and that it cannot be connected to from an external host. That can make you feel a little bit more secure.
+If you run your application server and reverse proxy on the same host, you can use the UNIX domain socket connection to them. The advantages of using the UNIX domain socket are that its overhead is less than the TCP socket and cannot be connected to an external host. This can make you feel a little bit more secure.
 
-For settings corresponding to the UNIX domain socket server application, perform the ListenPort parameters as follows.
+For settings corresponding to the UNIX domain socket server application, perform the ListenPort parameters as follows:
 
 ```
  ListenPort=unix:/tmp/foo
@@ -55,5 +56,5 @@ server {
 }
 ```
  
-Then all you should need to do is to save the setting.
-Start the AP server and then the Web server, then try to visit from the browser to be sure if it is working correctly. If it doesn’t work properly, try looking for the reason and checking the access log.
+Then all you should need to do is to save the setting.<br>
+Start the AP server and then the Web server, then try to visit it from the browser to be sure if it is working correctly. If it doesn’t work properly, try looking for the reason and checking the access log.

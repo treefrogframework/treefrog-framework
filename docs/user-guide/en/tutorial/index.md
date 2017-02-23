@@ -5,7 +5,7 @@ page_id: "030.0"
 
 ## Tutorial
 
-Let's create a TreeFrog Application.
+Let's create a TreeFrog Application.<br>
 We'll try to make a simple blog system which can list, view, and add/edit/delete text.
 
 ### Generate the Application Skeleton
@@ -29,7 +29,7 @@ First we will need to make a skeleton (various settings files and a directory tr
 
 Now we need to create a table in the database. We’ll create the field title and content (body). Here are examples in MySQL and SQLite’ 
  
-Example in MySQL:
+Example in MySQL:<br>
 Set the character set to UTF-8. You can also specify this when generating the database (do ensure that it is being set correctly, see FAQ). You can specify the configuration file for the database, as described below. Also, make the path through into MySQL using the command line tool.
 
 ```

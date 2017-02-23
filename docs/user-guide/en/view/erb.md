@@ -5,9 +5,9 @@ page_id: "070.010"
 
 ## ERB
 
-ERB was originally a library for embedding Ruby script into text documents. As is well known, it has been adopted as (one of the) template engines such as Rails, you can embed the code in HTML between the tags, <% … %>.
+Originally, ERB was a library for embedding Ruby script into text documents. It has been adopted as (one of the) template engines, such as Rails, that you can embed code in HTML between the tags likes these: <% … %>.
 
-In the same way TreeFrog Framework, uses the tags <% … %> , to embed C++ code. For convenience, I'll refer to this implementation as ERB as well.
+In the same way, TreeFrog Framework uses tags <% … %> as well to embed C++ code. For convenience, I'll refer to this implementation as ERB as well.
  
 First, I'll make sure that the items in the configuration file *development.ini* are as follows. Unless you’ve changed from the default, they should be.
 
@@ -26,28 +26,29 @@ If you want to add a new template, please follow the same naming convention.
 
 ## Relationship of View and Action
 
-I would like to review the relationship between view and action. As an example, when the bar action of Foo controller calls the render() method without arguments, the content of the following template is output.
+I would like to review the relationship between view and action. As an example, when the bar action of the Foo controller calls the render() method without arguments, the content of the following template will be output.
 
 ```
  views/foo/bar.erb
 ```
 
-If you call the render() method with an argument, the contents of the appropriate template is output.
+If you call the render() method with an argument, the contents of the appropriate template will be output.
  
-Template files that you like can be added. Once you have added a new one, run the following command once in the view directory. It’s all that’s needed in order to add the new template which will be then added to the makefile entry of the build.
+You can add template files as you like. But consider, once you have added a new one (or several), you must run the following command once in the view directory:
 
 ```
  $ cd views 
  $ make qmake
 ```
 
+That's all that was needed to do in order to add the new template which will has been added to the makefile entry of the build.<br>
 Remember to reflect the new template that you’ve added in the shared library.
 
-<span style="color: #b22222">**In brief: After you add a template file use "make qmake".** </span>
+<span style="color: #b22222">**In brief: After you have added a template file, use the "make qmake" command.** </span>
 
 ## To Output a String
 
-We are going to the output the string "Hello world". There are two ways to do this. First, we can use the following method.
+We are going to the output the string "Hello world". There are two ways to do this. First, we can use the following method:
 
 ```
  <% eh("Hello world"); %>
@@ -68,12 +69,12 @@ Again if you do not want to use escape, you can use <%== … %> which gives exac
 ```
  
 **Note:**<br>
-When you write <%= … %> in the original (eRuby) specification it outputs a string WITHOUT HTML escape. In TreeFrog, the thinking is that by using the shorter code for indicating HTML escape, safety is increased, based on the possibility that extra bits of code can easily be omitted in error. It seems to be becoming the mainstream in recent years.
+When you write <%= … %> in the original (eRuby) specification, it outputs a string WITHOUT HTML escape. In TreeFrog, the idea is that by using the shorter code for indicating HTML escape, safety is increased, based on the possibility that extra bits of code can easily be omitted in error. It seems to be becoming the mainstream in recent years.
  
-## Display of Default Value
+## Display of a Default Value
 
-If a variable is an empty string, let's display the default value as an alternative.
-By writing as follows, if the variable str is empty, then the string "none" is displayed.
+If a variable is an empty string, let's display the default value as an alternative.<br>
+By writing as follows, if the variable *str* is empty, then the string "none" is displayed.
 
 ```
  <%= str %|% "none" %> 
@@ -81,7 +82,7 @@ By writing as follows, if the variable str is empty, then the string "none" is d
 
 ## To Use the Object Passed from the Controller
 
-In order to display the object that is exported from the controller by texport() method, first declare type(class) and variable names using the tfetch() macro or T_FETCH macro. We’ll refer to this operation as 'fetch'.
+In order to display the object that is exported from the controller by the texport() method, first declare type (class) and variable names using the the tfetch() macro or T_FETCH macro. We’ll refer to this operation as 'fetch'.
 
 ```
  <% tfetch(Blog, blog); %>
@@ -134,7 +135,7 @@ After the C++ code is placed in the views/_src directory, it is compiled. Look h
 ## Include Files
 
 If you use a class, such as a model, in the ERB template, you will need to include the header file in the same way as with C++. Note that it is not automatically included.
-Include these next.
+Include these next:
 
 ```
  <%#include "blog.h" %>
@@ -146,7 +147,7 @@ Remember that the template is converted to C++ code as it is, so don’t forget 
 
 ## Loop
 
-Let's write a loop to use on a list. For example, take the list blogList which is made up of objects called Blog, it looks like this. (If it is exporting an object, do the fetch processing in advance.)
+Let's write a loop to use on a list. For example, take the list blogList which is made up of objects called Blog, it looks like this (if it is exporting an object, do the fetch processing in advance):
 
 ```
  <% QListIterator<Blog> i(blogList);
@@ -156,7 +157,7 @@ Let's write a loop to use on a list. For example, take the list blogList which i
  <% } %>
 ```
  
-You can use the foreach statement from Qt which makes coding shorter.
+You can use the foreach statement from Qt which makes coding shorter:
 
 ```
  <% foreach (Blog b, blogList) { %>
@@ -168,7 +169,7 @@ This looks more like C++.
 
 ## Creating an \<a\> Tag
 
-To create an \<a\> tag, use the linkTo() method.
+To create an \<a\> tag, use the linkTo() method:
 
 ```
  <%== linkTo("Back", QUrl("/Blog/index")) %>
@@ -186,7 +187,7 @@ You could also use the url() method to specify a URL. Specify the controller nam
  <a href="/Blog/index/">Back</a>
 ```
 
-If the template is on the same controller, you use the urla() method and specify only the action name.
+If the template is on the same controller, you use the urla() method and specify only the action name:
 
 ```
  <%== linkTo("Back", urla("index")) %>
@@ -194,7 +195,7 @@ If the template is on the same controller, you use the urla() method and specify
  <a href="/Blog/index/">Back</a>
 ```
 
-Using JavaScript, the link and confirmation dialog can be written as follows.
+Using JavaScript, the link and confirmation dialog can be written as follows:
 
 ```
  <%== linkTo(tr("Delete"), urla("remove", 1), Tf::Post, "confirm('Are you sure?')") %>
@@ -206,7 +207,7 @@ Using JavaScript, the link and confirmation dialog can be written as follows.
         } return false;">Delete</a>
 ```
 
-Now let’s add an attribute to the tag, using the THtmlAttribute class.
+Now let’s add an attribute to the tag, using the THtmlAttribute class:
 
 ```
  <%== linkTo("Back", urla("index"), Tf::Get, "", THtmlAttribute("class", "menu")) %>
@@ -214,13 +215,13 @@ Now let’s add an attribute to the tag, using the THtmlAttribute class.
  <a href="/Blog/index/" class="menu">Back</a>
 ```
 
-You can use the short a() method code to generate the same THtmlAttribute output.
+You can use the short a() method code to generate the same THtmlAttribute output:
 
 ```
  <%== linkTo("Back", urla("index"), Tf::Get, "", a("class", "menu")) %>
 ```
 
-If there is more than one attribute, use '\|' operator.
+If there is more than one attribute, use '\|' operator:
 
 ```
  a("class", "menu") | a("title", "hello")

@@ -1,9 +1,9 @@
 ---
-title: Object-Document Mapping on MongoDB
+title: Object-Document Mapping in MongoDB
 page_id: "060.060"
 ---
 
-## Object-Document Mapping on MongoDB
+## Object-Document Mapping in MongoDB
 
 MongoDB expresses data to be saved in a JSON-like format and saves it as a document. The function of associating such a document with an object in a programming language is called **object-document mapping (O/D mapping)**. 
 

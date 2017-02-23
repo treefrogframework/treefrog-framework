@@ -5,17 +5,17 @@ page_id: "040.0"
 
 ## Generator
 
-Here, we'll take a look at the generator command, tspawn.
+In this chapter we'll take a look at the generator command with the short name: *tspawn*.
 
-## Generate Skeleton
+## Generate a Skeleton
 
-First, we must create a skeleton of the application before we can do anything else. We'll use the name blogapp again for our creation. Enter the following command from the command line. (In Windows, run from the TreeFrog Command Prompt).
+First, we must create a skeleton of the application before we can do anything else. We'll use the name *blogapp* again for our creation. Enter the following command from the command line (in Windows, run it from the TreeFrog Command Prompt):
 
 ```
  $ tspawn new blogapp
 ```
 
-When you run this command, the directory tree including the application root directory at the top, the configuration file (ini), and the project files (pro) are generated. The directory is just one of the names you have seen before. 
+When you run this command, the directory tree will then include the application root directory at the top. The configuration file (*ini*) and the project files (*pro*) will be generated, too. The directory is just one of the names you have already seen before.<br> 
 The following items will be generated as a directory.
 
 * controllers
@@ -32,18 +32,18 @@ The following items will be generated as a directory.
 * test    
 * tmp         – temparary directory, such as a file upload
  
-## Generate Scaffold
+## Generate a Scaffold
 
-The scaffold is a basic implementation that allows CRUD operations to take place. Included in the scaffold are; controller, model, source files for views, and project files (pro). The scaffold therefore forms a good basis on which to start a full-scale development.
+The scaffold contains a basic implementation allowing CRUD operations to take place. The scaffold includes the following components: controller, model, source files for *views*, and project files (pro). Therefore, the scaffold forms a good basement on which you can start to establish your full-scale development.
 
-In order to make a scaffold in the generator command, you need to define a table in the database in advance, and to describe the database information in the configuration file. Now, let's define a table.
-See this example:
+In order to generate a scaffold with the generator command *tspawn*, you need to define a table in the database in advance and to set the database information in the configuration file (*database.ini*).<br> 
+Now, let's define a table. See the following example:
 
 ```sql
 > CREATE TABLE blog (id INTEGER PRIMARY KEY, title VARCHAR(20), body VARCHAR(200));
 ```
 
-If you want to use SQLite for the database, you should make the database file in the application root directory. You can set the database information in the configuration file (database.ini). The generator command refers to the information that is set in the dev section.
+If you want to use SQLite for your database, you should make the database file in the application root directory. You can set the database information in the configuration file. The generator command refers to the information that is set in the *dev* section.
 
 ```ini
 [dev]
@@ -76,7 +76,7 @@ connectOptions=
 
 </div><br>
 
-If the database driver is not included in the Qt SDK, you will not be able to access the database. If you have not yet built, you should incorporate the driver by reference to the FAQ. Alternatively, you can download the database driver from the [download page](http://www.treefrogframework.org/download){:target="_blank"}, and then install it.
+If the database driver is not included in the Qt SDK, you won't be able to access the database. If you haven't built yet, you should setup the driver. Alternatively, you can download the database driver from the [download page](http://www.treefrogframework.org/download){:target="_blank"}, and then install it.
 
 When you run the generator command (after the above mentioned steps), the scaffolding will be generated. Every command should be running from the application root directory.
 
@@ -93,11 +93,11 @@ Database open successfully
 ```
 
 <br>
-<span style="color: #b22222">**In brief: Define the schema in the database, and make the scaffolding with the generator command.** </span>
+<span style="color: #b22222">**In brief: Define the schema in the database and make us the generator command for the scaffolding.** </span>
  
-### Relationship of model-name/controller-name and table name
+### Relationship of Model-Name/Controller-Name and Table Name
 
-The generator will generate class names determined on the basis of the table name. The rules are as the following.
+The generator will create class names determined on the basis of the table name. The rules are as follows:
 
 ```
 　Table name        Model name   Controller name      Sql object name
@@ -106,9 +106,9 @@ The generator will generate class names determined on the basis of the table nam
 
 Notice that when the underscore is removed, the next character is capitalized. You may completely ignore any distinction between singular and plural word forms.
 
-## Generator Sub-commands
+## Generator Sub-Commands
 
-Here are the usage rules for the tspawn command.
+Here are the usage rules for the tspawn command:
 
 ```
 $ tspawn -h
@@ -121,19 +121,19 @@ Available subcommands:
   sqlobject (o)  <table-name>
 ```
 
-If you specify “controller”, “model”, or “sqlobject“ as a sub-command, you can generate ONLY “controller”, ONLY “model”, or ONLY “SqlObject”.
+If you specify “controller”, “model”, or “sqlobject“ as a sub-command, you can generate ONLY “controller”, “model” and “SqlObject”.
 
 ### Column
 
 TreeFrog has no migration feature or other mechanism for making changes to and differential management of the DB schema. I think this is unimportant for the following reasons:
 
-1. If I had made a Migration function, users would face the extra learning cost.
+1. If I had made a migration function, users would face the extra learning cost.
 2. Those that are knowledgeable about SQL can enjoy the full functionality of DB operations.
 3. In TreeFrog, it is possible to regenerate only the ORM object classes when changing table.
  → (Unfortunately there might be some possibilities for affecting something to the model class…)
 4. I consider that there is little merit to framework-side differential management of SQL commands.
 
-Agreed?
+Do you agree?
 
 ## Naming Conventions
 
@@ -141,36 +141,33 @@ TreeFrog has a class naming and file naming convention. With the generator, clas
 
 #### Convention for Naming of Controllers
 
-The class name of the controller is "table name + Controller". Always begin with an upper-case letter, do not use the underscore ('_') to separate words but capitalize the first letter after where the separator would be.
-The following class names are good examples:
+The class name of the controller is "table name + Controller". The controller's class name always begins with an upper-case letter, do not use the underscore ('_') to separate words, but capitalize the first letter (*camelcase*) after where the separator would be.<br>
+The following class names are good examples to understand the here described convention:
 
 * BlogController
 * EntryCommentController
 
-These files are stored in the controller’s directory. File names in that case will be something that you want to be in all lowercase; the class name plus the relevant extension (.cpp or .h).
+These files are stored in the controller’s directory. File names inside the that folder will be all in lowercase; the class name plus the relevant extension (.cpp or .h).
  
-
 #### Conventions for Naming Models
 
-In the same manner as with the controller, model names should always begin with a capital letter, erase the underscore ('_') to separate words but capitalize the first letter after where the separator would be. For example, class names such as the following.
+In the same manner as with the controller, model names should always begin with a capital letter, erase the underscore ('_') to separate words but capitalize the first letter after where the separator would be. For example, class names such as the following:
 
 * Blog
 * EntryComment
 
-These files are stored in the models directory. As well as the controller, the file name will be something that you want all in lowercase. The model name is used, plus the file extension (.cpp or .h).
-It does not convert the singular-plural form of words, as Rails does.
- 
+These files are stored in the models directory. As well as the controller, the file name will be all in lowercase. The model name is used plus the file extension (.cpp or .h).
+Unlike in Rails, we don't use convertion of singular and plural form of words here.
 
 #### View Naming Conventions
 
-Template files are generated with the file name "action name + extension" all in lower case, in the 'views/controller name" directory. The extension used depends on the template system.
-Also, when you build the view, and then output the source file in *views/_src* directory they are converted to C++ code templates. When these are compiled, a shared library view is created.
- 
+Template files are generated with the file name "action name + extension" all in lower case, in the 'views/controller name" directory. The extension, which is used here, depends on the template system.
+Also, when you build the view and then output the source file in *views/_src* directory, you will notice that these files have been all converted to C++ code templates. When these files are compiled, a shared library view will be created, too.
 
 #### CRUD
 
 CRUD covers the four major functions found in a Web application. The name comes from taking the initial letters of "Create (generate)," "Read (Read)", "Update (update)", and "Delete (Delete)".
-When you create a scaffolding, the generator command generates the naming code in the next.
+When you create a scaffolding, the generator command generates the naming code as follows:
  
 <div class="center aligned" markdown="1">
 
@@ -191,13 +188,13 @@ When you create a scaffolding, the generator command generates the naming code i
 
 ## About the T_CONTROLLER_EXPORT Macro
 
-The controller class that you created in the generator, will have added a macro called T_CONTROLLER_EXPORT.
+The controller class that you have created in the generator, will have added a macro called T_CONTROLLER_EXPORT.
 
-In Windows, the controller is a single DLL file, but in order to be available from outside the classes and functions of these, we need to define it with a keyword __declspec called (dllexport). The T_CONTROLLER_EXPORT macro is then replaced with this keyword. 
+In Windows, the controller is a single DLL file, but in order to the classes and functions of these available from outside, we need to define it with a keyword __declspec called (dllexport). The T_CONTROLLER_EXPORT macro is then replaced with this keyword. <br>
 However, nothing is defined in the T_CONTROLLER_EXPORT in Linux and Mac OS X installations, because a keyword is unnecessary.
 
 ```
  #define T_CONTROLLER_EXPORT
 ```
 
-In this way, the same source code is used, and you are thus able to support multiple platforms.
+In this way, the same source code is used and you are thus able to support multiple platforms.
