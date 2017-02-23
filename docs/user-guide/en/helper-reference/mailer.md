@@ -84,7 +84,7 @@ ActionMailer.smtp.DelayedDelivery=false
 If you use SMTP authentication, you need to set this:
 
 ```ini
-*ActionMailer.smtp.Authentication*=true
+ActionMailer.smtp.Authentication=true
 ```
 
 As for the authentication method, CRAM-MD5, LOGIN and PLAIN (using this priority) are mounted in a way, so that the authentication process is performed automatically.

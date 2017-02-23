@@ -11,7 +11,7 @@ On Windows and Mac OS X, download the package from the [Qt site](http://qt-proje
 On Linux, you can install a package for each distribution.
 
 In case of Ubuntu:<br>
-Install the Qt libraries and dev tools.
+Install the Qt libraries and dev tools:
 
 ```
  $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql 
@@ -19,7 +19,7 @@ Install the Qt libraries and dev tools.
  qtdeclarative5-dev qtbase5-dev-tools gcc g++ make
 ```
 
-Now install the DB client libraries.
+Now install the DB client libraries:
 
 ```
  $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
@@ -70,7 +70,8 @@ Now install the DB client libraries.
   $ sudo make install
    ```
 
-   **Note:** In order to debug the TreeFrog Framework itself, please use the *configure* option.<br>
+   **Note:** <br>
+   In order to debug the TreeFrog Framework itself, please use the *configure* option.<br>
    Now please run this command:
 
    ```
@@ -106,11 +107,11 @@ C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
    
    </div>
 
-### Configure option
+### Configure Option
 
 By specifying various options, you can customize to suit your environment.
  
-Options available on Windows using “Configure option” :
+Options available on Windows using “Configure option”:
 
 ```
  > configure --help
@@ -125,7 +126,7 @@ Options available on Windows using “Configure option” :
    --prefix=PREFIX     install files in PREFIX [C:\TreeFrog\x.x.x]
 ```
   
-Options available on Linux, and UNIX-like OS :
+Options available on Linux, and UNIX-like OS:
 
 ```
  $ ./configure --help
@@ -146,7 +147,7 @@ Options available on Linux, and UNIX-like OS :
    --datadir=DIR       read-only architecture-independent data [/usr/share/treefrog]
 ```
 
-Options available in Max OS X :
+Options available in Max OS X:
 
 ```
  $ ./configure --help

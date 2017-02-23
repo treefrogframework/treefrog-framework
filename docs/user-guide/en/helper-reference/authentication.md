@@ -149,7 +149,7 @@ void AccountController::logout()
 }
 ```
 
-## Checking logging in
+## Checking Logging In
 
 If you want to prevent access from users who are not logged, you can override the preFilter() of controller. Write that process there.
 
@@ -167,7 +167,7 @@ bool HogeController::preFilter()
 When the preFilter() method returns *false*, the action will not be processed after this.<br>
 If you would like to restrict access in many controllers, you can set it to preFilter() of the ApplicationController class.
  
-## Getting the logged-in user
+## Getting the Logged-in User
 
 First of all, we need to get an instance of the logged-in user. You can get the identity information of the logged-in user by the identityKeyOfLoginUser() method. If the return value is empty, it indicates that nobody is logging in the session; otherwise the value is a user name from type string by default.
 
