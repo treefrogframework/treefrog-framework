@@ -5,27 +5,27 @@ page_id: "050.030"
 
 ## URL Routing
 
-The URL Routing is the mechanism that determines the action to call for the requested URL. When a request is received from a browser, the URL is checked for correspondence with the routing rules and, where applicable, the defined action is called. If no action has been specifically allocated, action by the default rule is invoked.
+The URL Routing is the mechanism that determines the action to call for a requested URL. When a request is received from a browser, the URL checks for correspondence with the routing rules and, where applicable, the defined action will be called. If no action has been specifically determined, action by the default rule is invoked.
  
-Here is a reminder of those default rules.
+Here is a little reminder of those default rules:
 
 ```
  /controller-name/action-name/argument1/argument2/...
 ```
 
-Let's look at customizing the routing rules.
-The routing definition is written to config/routes.cfg. For each entry, the directives, path, and an action, are written side by side on a single line. The directive is to select match, get, or post.
-In addition, a line that begins with '#' is considered a comment line.
+Let's look at customizing the routing rules.<br>
+The routing definition is written in the *config/routes.cfg* file. For each entry, the directives, path and an action are written side by side on a single line. The directive is to select *match*, *get*, or *post*.
+In addition, a line that begins with '#' is considered to be a comment line.
  
-Here’s an example;
+Here’s an example:
 
 ```
  match  "/index"  "Merge#index"
 ```
 
-In this case, if the browser requests '/index' either by POST method or GET method, the controller will respond with the *index* action of *Merge*. 
+In this case, if the browser requests '/index' either by POST method or GET method, the controller will respond with the *index* action of the *Merge* controller. 
 
-The next case is where the get directives have been defined.
+The next case is where the get directives have been defined:
 
 ```
  get  "/index"  "Merge#index"
@@ -39,14 +39,15 @@ Similarly, if you specify a post directive, it is only valid for POST method req
  post  "/index"  "Merge#index"
 ``` 
 
-The following is about how to pass arguments to the action. Suppose you have defined the following entries as the routing rules. It's important to use the keyword ':params'.
+The following is about how to pass arguments to the action. Suppose you have defined the following entries as routing rules:
 
 ```
  get  "/search/:params"  "Searcher#search"
 ```
 
-In the case of */search/foo*, when the request is made with the GET method, a search action with one argument is called to *Searcher* controller. The "foo" in the argument is passed.
-Similarly with /search/foo/bar. Following this request, a search action with two arguments is called. Both "foo" and "bar" are passed, as first argument and second argument.
+It's important to use the keyword ':params'.<br>
+In the case of */search/foo*, when the request is made with the GET method, a search action with one argument is called to the *Searcher* controller. The "foo" in the argument is passed.
+Similarly with /search/foo/bar. Following this request, a search action with two arguments ("foo" and "bar") is called.
 
 ```
  /search/foo    ->   Call search("foo") of SearcherController

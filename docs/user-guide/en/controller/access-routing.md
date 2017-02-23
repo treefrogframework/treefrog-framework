@@ -5,18 +5,23 @@ page_id: "050.040"
 
 ## Access Control
 
-Access control in a website can be considered in two ways. It can be any control by the user authentication, or control by connecting host (IP address). For control by the host, please set for the Web server (Apache/nginx) as required.
+Access control in a website can be done in two ways: 
 
-First, I will discuss control by the user.
+* by sser suthenticiation and
+* by the connecting host (IP address). 
+
+For access control by the host, please set for the Web server (Apache/nginx) as required.
+
+First of all, we will talk about how to control user access for Web sites.
 
 ## User Access Control
 
-On some Web sites, there is a fixed page that anyone can access, and also pages that can only be accessed by users. For example an Admin page would only be accessible to persons with the right authority. In such cases, you can deny access in the following ways:
+On some Web sites, there is a fixed amount pages that anyone can access, and also pages that can only be accessed by users. For example an Admin page would only be accessible to persons with the right authority. In such cases, you can deny access in the following ways:
 
-First, refer to the section on [authentication]({{ site.baseurl }}/user-guide/en/helper-reference/authentication.html){:target="_blank"} and create a user model class.
-For the page to which you want to restrict access, login authentication should be required. By doing so, an instance of the user model will be obtained by doing so.
+First, refer to the section on [authentication]({{ site.baseurl }}/user-guide/en/helper-reference/authentication.html){:target="_blank"} and create a user model class.<br>
+For the page to which you want to restrict access, login authentication should be required. By doing so, an instance of the user model will be obtained.
 
-Then override setAccessRules of controller() method. Set the access rules of access allow/deny the action by group or user ID. User ID and group point to the user model classes of identityKey() method and groupKey() method respectively for the return value.
+Then override setAccessRules of the controller() method. Set the access rules for any the action by group or user ID to *allow* or *deny*. Both *User ID* and *Group* point to the user model class. The identityKey() method and the groupKey() method in the model class each return the value that represents granted or denied access when the user is performing an action.
 
 ```c++
 void FooController::setAccessRules()
@@ -37,7 +42,7 @@ For permissions/denials from the user that do not define the access rules, the d
 setDenyDefault(true);
 ```
  
-Here is the logic to validate users with access. This overrides preFilter() method of the controller, and returns false when the user denies the access. The controller preFilter() method overrides to deny access the user if false is returned.
+Here is the logic to validate users with access. The following method here overrides the preFilter() method of the controller and returns *false* when the user access has been denied. The controller preFilter() method returns *false* if user access is not granted.
 
 ```c++
 bool FooController::preFilter()
@@ -54,4 +59,4 @@ bool FooController::preFilter()
 }
 ```
 
-If the preFilter() method returns false, the action will not be executed. You will therefore want to deny access. You can then use renderErrorResponse() method to display a static error page (*public/403.html* in this example).
+If the preFilter() method returns false, the action will not be executed. You will therefore want to visualize that the access hs been denied. For this purpose, you can then use the renderErrorResponse() method to display a static error page (*public/403.html* in this example).

@@ -5,7 +5,7 @@ page_id: "050.050"
 
 ## JSON/XML Response
 
-There are cases where, in order to provide information to an external application, data needs to be output in XML format or JSON. A case in point would be the Ajax applications.
+There are cases where, in order to provide information to an external application, data needs to be output in XML format or JSON. A case would be the Ajax applications.
 
 ## Send the Contents of the Model in JSON Format
 
@@ -28,7 +28,7 @@ Sending All Blog Objects in List Format
 
 This is also simple! However, please note that if there are a large number of records in the blog database, results could be unexpected.
 
-In addition to this, the following methods are available. Please check this, because there is little information on the [API reference](http://treefrogframework.org/tf_doxygen/classes.html){:target="_blank"}.
+In addition to this, the following methods are available. Please check the [API reference](http://treefrogframework.org/tf_doxygen/classes.html){:target="_blank"} for this.
 
 ```c++
  bool renderJson(const QJsonDocument &document);
@@ -41,7 +41,7 @@ In addition to this, the following methods are available. Please check this, bec
 
 ## Send the Contents of the Model in XML Format
 
-The way to send the contents of the model in XML format is not much different from the way we send in JSON format. Call one of the following methods:
+The way to send the content of the model in XML format is not much different from the way we send in JSON format. Call one of the following methods in order to achieve this:
 
 ```c++
  bool renderXml(const QDomDocument &document);
@@ -50,7 +50,7 @@ The way to send the contents of the model in XML format is not much different fr
  bool renderXml(const QStringList &list);
 ```
 
-If the input from the output of these does not suit your requirements, you can implement a new template. How to implement is described in the [view chapter]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"}, but do not forget that you only set the content type of the response in the controller.
+If the input from the output of these does not suit your requirements, you can implement a new template. How to implement it is described in the [view chapter]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"} section, but don't forget that you only set the content type of the response in the controller.
 
 ```c++
  setContentType("text/xml")
