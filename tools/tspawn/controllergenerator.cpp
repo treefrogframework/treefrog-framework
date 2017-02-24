@@ -28,10 +28,10 @@
     "\n"                                                                      \
     "public slots:\n"                                                         \
     "    void index();\n"                                                     \
-    "    void show(const QString &id);\n"                                     \
+    "    void show(const QString &%4);\n"                                     \
     "    void create();\n"                                                    \
-    "    void save(const QString &id);\n"                                     \
-    "    void remove(const QString &id);\n"                                   \
+    "    void save(const QString &%4);\n"                                     \
+    "    void remove(const QString &%4);\n"                                   \
     "};\n"                                                                    \
     "\n"                                                                      \
     "T_DECLARE_CONTROLLER(%2Controller, %3controller)\n"                      \
@@ -54,7 +54,7 @@
     "    render();\n"                                          \
     "}\n"                                                      \
     "\n"                                                       \
-    "void %2Controller::show(const QString &id)\n"             \
+    "void %2Controller::show(const QString &%8)\n"             \
     "{\n"                                                      \
     "    auto %3 = %2::get(%4);\n"                             \
     "    texport(%3);\n"                                       \
@@ -90,7 +90,7 @@
     "    }\n"                                                   \
     "}\n"                                                       \
     "\n"                                                        \
-    "void %2Controller::save(const QString &id)\n"              \
+    "void %2Controller::save(const QString &%8)\n"              \
     "{\n"                                                       \
     "    switch (httpRequest().method()) {\n"                   \
     "    case Tf::Get: {\n"                                     \
@@ -111,7 +111,7 @@
     "        if (model.isNull()) {\n"                           \
     "            error = \"Original data not found. It may have been updated/removed by another transaction.\";\n" \
     "            tflash(error);\n"                                      \
-    "            redirect(urla(\"save\", id));\n"                       \
+    "            redirect(urla(\"save\", %8));\n"                       \
     "            break;\n"                                              \
     "        }\n"                                                       \
     "\n"                                                                \
@@ -135,7 +135,7 @@
     "    }\n"                                                           \
     "}\n"                                                               \
     "\n"                                                                \
-    "void %2Controller::remove(const QString &id)\n"                    \
+    "void %2Controller::remove(const QString &%8)\n"                    \
     "{\n"                                                               \
     "    if (httpRequest().method() != Tf::Post) {\n"                   \
     "        renderErrorResponse(Tf::NotFound);\n"                      \
@@ -191,16 +191,16 @@ class ConvMethod : public QHash<int, QString>
 public:
     ConvMethod() : QHash<int, QString>()
     {
-        insert(QVariant::Int,       "id.toInt()");
-        insert(QVariant::UInt,      "id.toUInt()");
-        insert(QVariant::LongLong,  "id.toLongLong()");
-        insert(QVariant::ULongLong, "id.toULongLong()");
-        insert(QVariant::Double,    "id.toDouble()");
-        insert(QVariant::ByteArray, "id.toByteArray()");
-        insert(QVariant::String,    "id");
-        insert(QVariant::Date,      "QDate::fromString(id)");
-        insert(QVariant::Time,      "QTime::fromString(id)");
-        insert(QVariant::DateTime,  "QDateTime::fromString(id)");
+        insert(QVariant::Int,       "%1.toInt()");
+        insert(QVariant::UInt,      "%1.toUInt()");
+        insert(QVariant::LongLong,  "%1.toLongLong()");
+        insert(QVariant::ULongLong, "%1.toULongLong()");
+        insert(QVariant::Double,    "%1.toDouble()");
+        insert(QVariant::ByteArray, "%1.toByteArray()");
+        insert(QVariant::String,    "%1");
+        insert(QVariant::Date,      "QDate::fromString(%1)");
+        insert(QVariant::Time,      "QTime::fromString(%1)");
+        insert(QVariant::DateTime,  "QDateTime::fromString(%1)");
     }
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
@@ -260,7 +260,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower());
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(),fieldNameToVariableName(pair.first));
         fwh.write(code, false);
         files << fwh.fileName();
 
@@ -270,7 +270,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             revStr = QLatin1String(", rev");
         }
 
-        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
+        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first)), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
         fws.write(code, false);
         files << fws.fileName();
 
