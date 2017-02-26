@@ -8,7 +8,6 @@
 #include <QMutex>
 #include <QDataStream>
 #include <QLocalSocket>
-#include <QTimer>
 #include <QStringList>
 #include <TWebApplication>
 #include <TApplicationServerBase>
@@ -44,7 +43,7 @@ bool TSystemBus::send(const TSystemBusMessage &message)
 {
     QMutexLocker locker(&mutexWrite);
     sendBuffer += message.toByteArray();
-    QTimer::singleShot(0, this, SLOT(writeBus()));   // Writes in main thread
+    QMetaObject::invokeMethod(this, "writeBus", Qt::QueuedConnection); // Writes in main thread
     return true;
 }
 

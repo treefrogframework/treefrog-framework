@@ -534,11 +534,13 @@ int managerMain(int argc, char *argv[])
         switch ( app.multiProcessingModule() ) {
         case TWebApplication::Thread:  // FALL THROUGH
         case TWebApplication::Hybrid: {
-            int num = 1;
-            if (!autoReloadMode) {
-                num = qMax(app.maxNumberOfAppServers(), 1);
+            int num = qMax(app.maxNumberOfAppServers(), 1);
+            if (autoReloadMode && num > 1) {
+                num = 1;
+                tSystemWarn("Fix the max number of application servers to one in auto-reload mode.");
+            } else {
+                tSystemDebug("Max number of app servers: %d", num);
             }
-            tSystemDebug("Max number of app servers: %d", num);
             manager = new ServerManager(num, num, 0, &app);
             break; }
 

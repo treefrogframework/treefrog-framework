@@ -1,5 +1,18 @@
 # ChangeLog
 
+## 1.15.0
+ - Added setValidationError(2) function to TFormValidator class
+ - Added debug functions like 'tDebug() << "foo" << ..'.
+ - Added config-initializer functions to TWebApplication class.
+ - Added C++11 for-loop for TSqlORMapper class.
+ - Modified functions of TFormValidator class.
+ - Modified to handle quoted multipart/form-data boundary value.
+ - Fix a bug of JSON parser of THttpRequest class.
+ - Fix a bug of deadlock of thread on win64.
+ - Fixed risky fallback for Content-Type in POST handling.
+ - Added C++11 for-loop for TSqlORMapper class.
+ - Added a fixed width setting for %O parameter for access log.
+
 ## 1.14.0
  - Modified to use QThreadStorage class instead of thread_local.
  - Modified the scaffold generater to generate better codes.

@@ -19,7 +19,7 @@ public:
     bool updateMongoObject(const QString &path);
     QString model() const { return modelName; }
     QList<QPair<QString, QVariant::Type>> fieldList() const { return fields; }
-    int primaryKeyIndex() const;
+    QList<int> primaryKeyIndex() const;
     int autoValueIndex() const;
     int lockRevisionIndex() const;
 

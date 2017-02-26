@@ -54,7 +54,7 @@
     "    render();\n"                                          \
     "}\n"                                                      \
     "\n"                                                       \
-    "void %2Controller::show(%8)\n"             \
+    "void %2Controller::show(%8)\n"                            \
     "{\n"                                                      \
     "    auto %3 = %2::get(%4);\n"                             \
     "    texport(%3);\n"                                       \
@@ -75,7 +75,7 @@
     "        if (!model.isNull()) {\n"                         \
     "            QString notice = \"Created successfully.\";\n" \
     "            tflash(notice);\n"                             \
-    "            redirect(urla(\"show\", %9));\n"       \
+    "            redirect(urla(\"show\", QStringList()%9));\n"  \
     "        } else {\n"                                        \
     "            QString error = \"Failed to create.\";\n"      \
     "            texport(error);\n"                             \
@@ -111,7 +111,7 @@
     "        if (model.isNull()) {\n"                           \
     "            error = \"Original data not found. It may have been updated/removed by another transaction.\";\n" \
     "            tflash(error);\n"                                      \
-    "            redirect(urla(\"save\", %10));\n"                       \
+    "            redirect(urla(\"save\", QStringList()%10));\n"         \
     "            break;\n"                                              \
     "        }\n"                                                       \
     "\n"                                                                \
@@ -120,7 +120,7 @@
     "        if (model.save()) {\n"                                     \
     "            QString notice = \"Updated successfully.\";\n"         \
     "            tflash(notice);\n"                                     \
-    "            redirect(urla(\"show\", %9));\n"               \
+    "            redirect(urla(\"show\", QStringList()%9));\n"          \
     "        } else {\n"                                                \
     "            error = \"Failed to update.\";\n"                      \
     "            texport(error);\n"                                     \
@@ -259,27 +259,33 @@ bool ControllerGenerator::generate(const QString &dstDir) const
                  pair    = fieldList[pkidx];
                  QString fieldVariableName=fieldNameToVariableName(pair.first);
 
-                 controllerPara +="const QString &";
-                 controllerPara +=fieldVariableName;
-                 controllerPara +=", ";
+                 controllerPara += "const QString &";
+                 controllerPara += fieldVariableName;
+                 controllerPara += ", ";
 
-                 controllerUrl +=fieldVariableName;
-                 controllerUrl +="+\"\\\"+"
+                 controllerUrl += "<<";
+                 controllerUrl += fieldVariableName;
 
                  modelPara +=convMethod()->value(pair.second).arg(fieldVariableName);
                  modelPara +=", ";
 
+                 switch (pair.second) {
+                 case QVariant::Int:
+                 case QVariant::UInt:
+                 case QVariant::LongLong:
+                 case QVariant::ULongLong:
+                 case QVariant::Double:
+                     modelUrl += QString("<<QString::number(model.%1())").arg(fieldVariableName);
+                     break;
+                 default:
+                     modelUrl += QString("<<model.%1()").arg(fieldVariableName);
 
-                 modelUrl +="QVariant(model.";
-                 modelUrl +=fieldVariableName;
-                 modelUrl +="()).toString()";
-                 modelUrl +="+\"\\\"+";
+                     break;
+                 }
 
             }
             controllerPara.chop(2);
-            controllerUrl.chop(5);
             modelPara.chop(2);
-            modelUrl.chop(5);
         }
         // Generates a controller source code
         QString sessInsertStr;
@@ -288,7 +294,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(),pksStr);
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(),controllerPara);
         fwh.write(code, false);
         files << fwh.fileName();
 
@@ -297,8 +303,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             sessGetStr = QString("        int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
             revStr = QLatin1String(", rev");
         }
-
-        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, modelPara, sessInsertStr, sessGetStr, revStr,controllerPara ,controllerUrl ,controllerUrl);
+        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, modelPara, sessInsertStr, sessGetStr, revStr,controllerPara ,modelUrl).arg(controllerUrl);
         fws.write(code, false);
         files << fws.fileName();
 

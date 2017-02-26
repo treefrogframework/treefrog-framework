@@ -5,7 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QTimer>
 #include <QMutex>
 #include <TWebApplication>
 #include "tsendmailmailer.h"
@@ -49,7 +48,7 @@ void TSendmailMailer::sendLater(const TMailMessage &message)
     T_TRACEFUNC("");
 
     mailMessage = message;
-    QTimer::singleShot(1, this, SLOT(sendAndDeleteLater()));
+    QMetaObject::invokeMethod(this, "sendAndDeleteLater", Qt::QueuedConnection);
 }
 
 

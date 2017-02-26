@@ -41,6 +41,7 @@ public:
 
     bool isEmpty() const;
     void clear();
+    int  length() const;
 
     const TCriteria operator&&(const TCriteria &criteria) const;
     const TCriteria operator||(const TCriteria &criteria) const;
@@ -64,6 +65,7 @@ private:
     QVariant cri1;
     QVariant cri2;
     int logiOp;
+    int cricount{0};
 
     template<class T> friend class TCriteriaConverter;
     template<class T> friend class TCriteriaMongoConverter;

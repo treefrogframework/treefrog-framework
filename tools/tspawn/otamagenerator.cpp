@@ -54,11 +54,11 @@
     "}\n"                                                               \
     "\n"                                                                \
     "%4"                                                                \
-    "@link_to_show :== linkTo(\"Show\", urla(\"show\", i.%5()))\n"      \
+    "@link_to_show :== linkTo(\"Show\", urla(\"show\", QStringList()%5))\n"      \
     "\n"                                                                \
-    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", i.%5()))\n"      \
+    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", QStringList()%5))\n"      \
     "\n"                                                                \
-    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n" \
+    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", QStringList()%5), Tf::Post, \"confirm('Are you sure?')\")\n" \
     "\n"                                                                \
     "@link_to_entry :== linkTo(\"New entry\", urla(\"create\"))\n"
 
@@ -95,7 +95,7 @@
     "@notice_msg ~=$ notice\n"                                          \
     "\n"                                                                \
     "%4"                                                                \
-    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", %3.%5()))\n"     \
+    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", QStringList()%5))\n"     \
     "\n"                                                                \
     "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n"
 
@@ -179,10 +179,10 @@
     "\n"                                                                \
     "@notice_msg ~=$ notice\n"                                          \
     "\n"                                                                \
-    "@edit_form |== formTag(urla(\"save\", %2[\"%3\"]))\n"              \
+    "@edit_form |== formTag(urla(\"save\", QStringList()%3))\n"              \
     "\n"                                                                \
-    "%5"                                                                \
-    "@link_to_show |== linkTo(\"Show\", urla(\"show\", %2[\"%3\"]))\n"  \
+    "%4"                                                                \
+    "@link_to_show |== linkTo(\"Show\", urla(\"show\", QStringList()%3))\n"  \
     "\n"                                                                \
     "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
 
@@ -208,8 +208,8 @@ static const QStringList excludedDirName = {
 };
 
 
-OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx)
-    : viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
+OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, QList<int> pkIdxs, int autoValIdx)
+    : viewName(view), fieldList(fields), primaryKeyIndexs(pkIdxs), autoValueIndex(autoValIdx)
 { }
 
 
@@ -236,7 +236,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
 {
     QStringList files;
 
-    if (primaryKeyIndex < 0) {
+    if (primaryKeyIndexs.isEmpty()) {
         qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));
         return files;
     }
@@ -246,7 +246,29 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
+
+    QStringList pkVarNames;
+    QString indexPkValues,showPkValues,savePkValues;
+    for (auto &p :primaryKeyIndexs){
+        QString pkVarName = fieldNameToVariableName(fieldList[p].first);
+        pkVarNames<<pkVarName;
+        switch (fieldList[p].second) {
+        case QVariant::Int:
+        case QVariant::UInt:
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+        case QVariant::Double:
+            indexPkValues += QString("<<QString::number(i.%1())").arg(pkVarName);
+            showPkValues += QString("<<QString::number(%1.%2())").arg(varName,pkVarName);
+            savePkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
+            break;
+        default:
+            indexPkValues += QString("<<i.%1()").arg(pkVarName);
+            showPkValues += QString("<<%1.%2()").arg(varName,pkVarName);
+            savePkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
+            break;
+        }
+    }
 
     // Generates index.html
     QString th ,td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
@@ -274,7 +296,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
             }
 
             editColumn += QString("  <p>\n    <label>%1<br /><input data-tf=\"@%2\" /></label>\n  </p>\n").arg(cap, mrk);
-            if  (p.first == pkFld.first) {
+            if  (pkVarNames.contains(p.first)) {
                 readonly = QLatin1String(", a(\"readonly\", \"readonly\")");
             }
             editOtm += QString("@%1 |== inputTextTag(\"%2[%3]\", %2[\"%3\"].toString()%4);\n\n").arg(mrk, varName, var, readonly);
@@ -290,8 +312,8 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     }
 
     // Generates index.otm
-    QString pkVarName = fieldNameToVariableName(pkFld.first);
-    output = QString(INDEX_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, indexOtm, pkVarName);
+
+    output = QString(INDEX_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, indexOtm, indexPkValues);
     fw.setFilePath(dir.filePath("index.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
@@ -305,7 +327,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     }
 
     // Generates show.otm
-    output = QString(SHOW_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, showOtm, pkVarName);
+    output = QString(SHOW_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, showOtm, showPkValues);
     fw.setFilePath(dir.filePath("show.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
@@ -333,7 +355,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     }
 
     // Generates edit.otm
-    output = QString(SAVE_OTM_TEMPLATE).arg(varName.toLower(), varName, pkVarName, editOtm);
+    output = QString(SAVE_OTM_TEMPLATE).arg(varName.toLower(), varName, savePkValues, editOtm);
     fw.setFilePath(dir.filePath("save.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();

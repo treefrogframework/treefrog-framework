@@ -43,11 +43,12 @@ public:
     template <class C> void setJoin(int column, const TSqlJoin<C> &join);
     void reset();
 
-    T findFirstBy(const TCriteria &cri = TCriteria());
+    T findFirst(const TCriteria &cri = TCriteria());
     T findFirstBy(int column, QVariant value);
     T findByPrimaryKey(QVariant pk);
-    T findByPrimaryKey(const QVariantList &pks);
-    int findBy(const TCriteria &cri = TCriteria());
+    T findByPrimaryKeys(const TCriteria &cri = TCriteria());
+
+    int find(const TCriteria &cri = TCriteria());
     int findBy(int column, QVariant value);
     int findIn(int column, const QVariantList &values);
     int rowCount() const;
@@ -99,11 +100,10 @@ protected:
 
 private:
     QString queryFilter;
-    QStringList sortColumns;
-    QList<Tf::SortOrder> sortOrders;
-    int queryLimit;
-    int queryOffset;
-    int joinCount;
+    QList<QPair<QString, Tf::SortOrder>> sortColumns;
+    int queryLimit {0};
+    int queryOffset {0};
+    int joinCount {0};
     QStringList joinClauses;
     QStringList joinWhereClauses;
 
@@ -116,9 +116,7 @@ private:
 */
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper()
-    : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId())),
-      sortColumns(), sortOrders(), queryLimit(0),
-      queryOffset(0), joinCount(0), joinClauses(), joinWhereClauses()
+    : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId()))
 {
     setTable(T().tableName());
 }
@@ -129,6 +127,228 @@ inline TSqlORMapper<T>::TSqlORMapper()
 template <class T>
 inline TSqlORMapper<T>::~TSqlORMapper()
 { }
+
+/*!
+  Returns the first ORM object retrieved with the criteria \a cri from
+  the table.
+*/
+template <class T>
+inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
+{
+    if (!cri.isEmpty()) {
+        TCriteriaConverter<T> conv(cri, database(), "t0");
+        setFilter(conv.toString());
+    } else {
+        setFilter(QString());
+    }
+
+    int oldLimit = queryLimit;
+    queryLimit = 1;
+    bool ret = select();
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
+    queryLimit = oldLimit;
+
+    tSystemDebug("rowCount: %d", rowCount());
+    return first();
+}
+
+/*!
+  Returns the first ORM object retrieved with the criteria for the
+  \a column as the \a value in the table.
+*/
+template <class T>
+inline T TSqlORMapper<T>::findFirstBy(int column, QVariant value)
+{
+    return findFirst(TCriteria(column, value));
+}
+
+/*!
+  Returns the ORM object retrieved with the primary key \a pk from
+  the table.
+*/
+template <class T>
+inline T TSqlORMapper<T>::findByPrimaryKey(QVariant pk)
+{
+    QList<int> idxs = T().primaryKeyIndex();
+     if (idxs.isEmpty()) {
+         tSystemDebug("Primary key not found, table name: %s", qPrintable(T().tableName()));
+         return T();
+     }else if (idxs.length()>1){
+         tSystemDebug("Primary keys more than one, table name: %s", qPrintable(T().tableName()));
+         return T();
+     }
+
+     return findFirstBy(idxs.at(0), pk);
+}
+
+/*!
+  Returns the ORM object retrieved with the primary keys list \a pks from
+  the table.
+*/
+template <class T>
+inline T TSqlORMapper<T>::findByPrimaryKeys(const TCriteria &cri)
+{
+    QList<int> idxs = T().primaryKeyIndex();
+    if (idxs.isEmpty()) {
+        tSystemDebug("Primary key not found, table name: %s", qPrintable(T().tableName()));
+        return T();
+    }else if(idxs.length()!=cri.length()){
+        tSystemDebug("Cri count not match primary key length, table name: %s", qPrintable(T().tableName()));
+        return T();
+    }
+    return findFirst(cri);
+}
+
+
+/*!
+  Retrieves with the criteria \a cri from the table and returns
+  the number of the ORM objects. TSqlORMapperIterator is used to get
+  the retrieved ORM objects.
+  \sa TSqlORMapperIterator
+*/
+template <class T>
+inline int TSqlORMapper<T>::find(const TCriteria &cri)
+{
+    if (!cri.isEmpty()) {
+        TCriteriaConverter<T> conv(cri, database(), "t0");
+        setFilter(conv.toString());
+    } else {
+        setFilter(QString());
+    }
+
+    bool ret = select();
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
+    tSystemDebug("rowCount: %d", rowCount());
+    return ret ? rowCount() : -1;
+}
+
+/*!
+  Retrieves with the criteria for the \a column as the \a value in the
+  table and returns the number of the ORM objects. TSqlORMapperIterator
+  is used to get the retrieved ORM objects.
+  \sa TSqlORMapperIterator
+*/
+template <class T>
+inline int TSqlORMapper<T>::findBy(int column, QVariant value)
+{
+    return find(TCriteria(column, value));
+}
+
+/*!
+  Retrieves with the criteria that the \a column is within the list of values
+  \a values returns the number of the ORM objects. TSqlORMapperIterator is
+  used to get the retrieved ORM objects.
+  \sa TSqlORMapperIterator
+*/
+template <class T>
+inline int TSqlORMapper<T>::findIn(int column, const QVariantList &values)
+{
+    return find(TCriteria(column, TSql::In, values));
+}
+
+/*!
+  Returns the number of rows of the current query.
+ */
+template <class T>
+inline int TSqlORMapper<T>::rowCount() const
+{
+    return QSqlTableModel::rowCount();
+}
+
+/*!
+  Returns the number of rows of the current query.
+ */
+template <class T>
+inline int TSqlORMapper<T>::rowCount(const QModelIndex &parent) const
+{
+    return QSqlTableModel::rowCount(parent);
+}
+
+/*!
+  Returns the first ORM object in the results retrieved by find() function.
+  \sa find(const TCriteria &)
+*/
+template <class T>
+inline T TSqlORMapper<T>::first() const
+{
+    return value(0);
+}
+
+/*!
+  Returns the last ORM object in the results retrieved by find() function.
+  \sa find(const TCriteria &)
+*/
+template <class T>
+inline T TSqlORMapper<T>::last() const
+{
+    return value(rowCount() - 1);
+}
+
+/*!
+  Returns the ORM object in the results retrieved by find() function.
+  If \a i is the index of a valid row on the results, the ORM object
+  will be populated with values from that row.
+*/
+template <class T>
+inline T TSqlORMapper<T>::value(int i) const
+{
+    T rec;
+    if (i >= 0 && i < rowCount()) {
+        rec.setRecord(record(i), QSqlError());
+    } else {
+        tSystemDebug("no such record, index: %d  rowCount:%d", i, rowCount());
+    }
+    return rec;
+}
+
+/*!
+  Sets the limit to \a limit, which is the limited number of rows for
+  execution of SELECT statement.
+*/
+template <class T>
+inline void TSqlORMapper<T>::setLimit(int limit)
+{
+    queryLimit = limit;
+}
+
+/*!
+  Sets the offset to \a offset, which is the number of rows to skip
+  for execution of SELECT statement.
+*/
+template <class T>
+inline void TSqlORMapper<T>::setOffset(int offset)
+{
+    queryOffset = offset;
+}
+
+/*!
+  Sets the sort order for \a column to \a order.
+*/
+template <class T>
+inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
+{
+    if (column >= 0) {
+        QString columnName = TCriteriaConverter<T>::getPropertyName(column, database().driver());
+        sortColumns << qMakePair(columnName, order);
+    }
+}
+
+/*!
+  Sets the sort order for \a column to \a order.
+*/
+template <class T>
+inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder order)
+{
+    if (!column.isEmpty()) {
+        T obj;
+        if (obj.propertyNames().contains(column, Qt::CaseInsensitive)) {
+            sortColumns << qMakePair(column, order);
+        } else {
+            tWarn("Unable to set sort order : '%s' column not found in '%s' table",
+                  qPrintable(column), qPrintable(obj.tableName()));
+        }
+    }
+}
 
 /*!
   Sets the limit to \a limit, which is the limited number of rows for
@@ -172,291 +392,88 @@ inline TSqlORMapper<T> &TSqlORMapper<T>::orderBy(const QString &column, Tf::Sort
     return *this;
 }
 
+/*!
+  Sets the current filter to \a filter.
+  The filter is a SQL WHERE clause without the keyword WHERE (for example,
+  name='Hanako'). The filter will be applied the next time a query is
+  executed.
+*/
 template <class T>
-template <class C> inline TSqlORMapper<T> &TSqlORMapper<T>::join(int column, const TSqlJoin<C> &j)
+inline void TSqlORMapper<T>::setFilter(const QString &filter)
 {
-    setJoin(column, j);
-    return *this;
+    queryFilter = filter;
 }
 
 /*!
-  Sets the limit to \a limit, which is the limited number of rows for
-  execution of SELECT statement.
+  Returns a SELECT statement generated from the specified parameters.
+  This function is for internal use only.
 */
 template <class T>
-inline void TSqlORMapper<T>::setLimit(int limit)
+inline QString TSqlORMapper<T>::selectStatement() const
 {
-    queryLimit = limit;
-}
+    QString query;
+    query.reserve(256);
+    bool joinFlag = !joinClauses.isEmpty();
 
-/*!
-  Sets the offset to \a offset, which is the number of rows to skip
-  for execution of SELECT statement.
-*/
-template <class T>
-inline void TSqlORMapper<T>::setOffset(int offset)
-{
-    queryOffset = offset;
-}
-
-/*!
-  Sets the sort order for \a column to \a order.
-*/
-template <class T>
-inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
-{
-    if (column >= 0) {
-        sortColumns<<TCriteriaConverter<T>::getPropertyName(column, database().driver());
-        sortOrders<<order;
-    }
-}
-
-/*!
-  Sets the sort order for \a column to \a order.
-*/
-template <class T>
-inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder order)
-{
-    if (!column.isEmpty()) {
-        T obj;
-        if (obj.propertyNames().contains(column, Qt::CaseInsensitive)) {
-            sortColumns<<column;
-            sortOrders<<order;
-        } else {
-            tWarn("Unable to set sort order : '%s' column not found in '%s' table",
-                  qPrintable(column), qPrintable(obj.tableName()));
+    auto rec = record();
+    for (int i = 0; i < rec.count(); ++i) {
+        if (rec.isGenerated(i)) {
+            if (joinFlag) {
+                query += QLatin1String("t0.");
+            }
+            query += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
+            query += QLatin1Char(',');
         }
     }
-}
 
-/*!
-  Sets a JOIN clause for \a column to \a join.
- */
-template <class T>
-template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
-{
-    if (column < 0 || join.joinColumn() < 0) {
-        return;
-    }
-
-    QString clause;
-
-    switch (join.joinMode()) {
-    case TSql::InnerJoin:
-        clause = QLatin1String(" INNER JOIN ");
-        break;
-
-    case  TSql::LeftJoin:
-        clause = QLatin1String(" LEFT OUTER JOIN ");
-        break;
-
-    case TSql::RightJoin:
-        clause = QLatin1String(" RIGHT OUTER JOIN ");
-        break;
-
-    default:
-        break;
-    }
-
-    int joinCount = joinClauses.count();
-    QString alias = QLatin1Char('t') + QString::number(joinCount + 1);
-    QSqlDatabase db = database();
-
-    clause += C().tableName();
-    clause += QLatin1Char(' ');
-    clause += alias;
-    clause += QLatin1String(" ON ");
-    clause += TCriteriaConverter<T>::getPropertyName(column, db.driver(), "t0");
-    clause += QLatin1Char('=');
-    clause += TCriteriaConverter<C>::getPropertyName(join.joinColumn(), db.driver(), alias);
-    joinClauses << clause;
-
-    if (!join.criteria().isEmpty()) {
-        TCriteriaConverter<C> conv(join.criteria(), db, alias);
-        joinWhereClauses << conv.toString();
-    }
-}
-
-
-/*!
-  Reset the internal state of the mapper object.
-*/
-template <class T>
-inline void TSqlORMapper<T>::reset()
-{
-    setTable(tableName());
-}
-
-
-/*!
-  Returns the first ORM object retrieved with the criteria \a cri from
-  the table.
-*/
-template <class T>
-inline T TSqlORMapper<T>::findFirstBy(const TCriteria &cri)
-{
-    if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database(), "t0");
-        setFilter(conv.toString());
+    if (Q_UNLIKELY(query.isEmpty())) {
+        return query;
     } else {
-        setFilter(QString());
+        query.chop(1);
     }
 
-    int oldLimit = queryLimit;
-    queryLimit = 1;
-    bool ret = select();
-    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
-    queryLimit = oldLimit;
-
-    tSystemDebug("rowCount: %d", rowCount());
-    return first();
-}
-
-/*!
-  Returns the first ORM object retrieved with the criteria for the
-  \a column as the \a value in the table.
-*/
-template <class T>
-inline T TSqlORMapper<T>::findFirstBy(int column, QVariant value)
-{
-    return findFirstBy(TCriteria(column, value));
-}
-
-/*!
-  Returns the ORM object retrieved with the primary key \a pk from
-  the table.
-*/
-template <class T>
-inline T TSqlORMapper<T>::findByPrimaryKey(QVariant pk)
-{
-    QList<int> idxs = T().primaryKeyIndexs();
-    if (idxs.isEmpty()) {
-        tSystemDebug("Primary key not found, table name: %s", qPrintable(T().tableName()));
-        return T();
-    }else if (idxs.length()>1){
-        tSystemDebug("Primary keys more than one, table name: %s", qPrintable(T().tableName()));
-        return T();
-    }
-
-    return findFirstBy(idxs.at(0), pk);
-}
-
-/*!
-  Returns the ORM object retrieved with the primary keys list \a pks from
-  the table.
-*/
-template <class T>
-inline T TSqlORMapper<T>::findByPrimaryKey(const QVariantList &pks)
-{
-    QList<int> idxs = T().primaryKeyIndexs();
-    if (idxs.isEmpty()) {
-        tSystemDebug("Primary key not found, table name: %s", qPrintable(T().tableName()));
-        return T();
-    }
-    if (idxs.length()!=pks.length()){
-        tSystemDebug("Primary key length not match, table name: %s", qPrintable(T().tableName()));
-        return T();
-    }
-    TCriteria cri;
-
-    for (int i=0;i<idxs.count();++i){
-        cri.add(idxs.at(i),pks.at(i));
-    }
-
-    return findFirstBy(cri);
-}
-
-
-/*!
-  Retrieves with the criteria \a cri from the table and returns
-  the number of the ORM objects. TSqlORMapperIterator is used to get
-  the retrieved ORM objects.
-  \sa TSqlORMapperIterator
-*/
-template <class T>
-inline int TSqlORMapper<T>::findBy(const TCriteria &cri)
-{
-    if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database(), "t0");
-        setFilter(conv.toString());
+    if (joinFlag) {
+        query.prepend(QLatin1String("SELECT DISTINCT "));
     } else {
-        setFilter(QString());
+        query.prepend(QLatin1String("SELECT "));
+    }
+    query += QLatin1String(" FROM ");
+    query += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database().driver());
+    query += QLatin1String(" t0");  // alias needed
+
+    if (joinFlag) {
+        for (auto &join : (const QStringList&)joinClauses) {
+            query += join;
+        }
     }
 
-    bool ret = select();
-    tWriteQueryLog(query().lastQuery(), ret, lastError());
-    tSystemDebug("rowCount: %d", rowCount());
-    return ret ? rowCount() : -1;
-}
-
-/*!
-  Retrieves with the criteria for the \a column as the \a value in the
-  table and returns the number of the ORM objects. TSqlORMapperIterator
-  is used to get the retrieved ORM objects.
-  \sa TSqlORMapperIterator
-*/
-template <class T>
-inline int TSqlORMapper<T>::findBy(int column, QVariant value)
-{
-    return find(TCriteria(column, value));
-}
-
-/*!
-  Retrieves with the criteria that the \a column is within the list of values
-  \a values returns the number of the ORM objects. TSqlORMapperIterator is
-  used to get the retrieved ORM objects.
-  \sa TSqlORMapperIterator
-*/
-template <class T>
-inline int TSqlORMapper<T>::findIn(int column, const QVariantList &values)
-{
-    return find(TCriteria(column, TSql::In, values));
-}
-
-/*!
-  Returns the number of rows of the current query.
- */
-template <class T>
-inline int TSqlORMapper<T>::rowCount() const
-{
-    return QSqlTableModel::rowCount();
-}
-
-/*!
-  Returns the first ORM object in the results retrieved by find() function.
-  \sa find(const TCriteria &)
-*/
-template <class T>
-inline T TSqlORMapper<T>::first() const
-{
-    return value(0);
-}
-
-/*!
-  Returns the last ORM object in the results retrieved by find() function.
-  \sa find(const TCriteria &)
-*/
-template <class T>
-inline T TSqlORMapper<T>::last() const
-{
-    return value(rowCount() - 1);
-}
-
-/*!
-  Returns the ORM object in the results retrieved by find() function.
-  If \a i is the index of a valid row on the results, the ORM object
-  will be populated with values from that row.
-*/
-template <class T>
-inline T TSqlORMapper<T>::value(int i) const
-{
-    T rec;
-    if (i >= 0 && i < rowCount()) {
-        rec.setRecord(record(i), QSqlError());
-    } else {
-        tSystemDebug("no such record, index: %d  rowCount:%d", i, rowCount());
+    QString filter = queryFilter;
+    if (!joinWhereClauses.isEmpty()) {
+        for (auto &wh : (const QStringList&)joinWhereClauses) {
+            if (!filter.isEmpty()) {
+                filter += QLatin1String(" AND ");
+            }
+            filter += wh;
+        }
     }
-    return rec;
+
+    if (Q_LIKELY(!filter.isEmpty())) {
+        query.append(QLatin1String(" WHERE ")).append(filter);
+    }
+
+    QString orderby = orderBy();
+    if (!orderby.isEmpty()) {
+        query.append(orderby);
+    }
+
+    if (queryLimit > 0) {
+        query.append(QLatin1String(" LIMIT ")).append(QString::number(queryLimit));
+    }
+    if (queryOffset > 0) {
+        query.append(QLatin1String(" OFFSET ")).append(QString::number(queryOffset));
+    }
+
+    return query;
 }
 
 /*!
@@ -498,7 +515,6 @@ inline int TSqlORMapper<T>::findCountBy(int column, QVariant value)
     return findCount(TCriteria(column, value));
 }
 
-
 /*!
   Updates the values of the columns specified in the first elements in the each pairs of \a values in
   all rows that satisfy the criteria \a cri and returns the number of the rows
@@ -531,7 +547,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
             upd += propName;
             upd += '=';
             upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), QVariant::DateTime, db);
-            upd += QLatin1String(", ");
+            upd += QLatin1Char(',');
             break;
         }
     }
@@ -546,7 +562,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         if (!it.hasNext())
             break;
 
-        upd += QLatin1String(", ");
+        upd += QLatin1Char(',');
     }
 
     if (!where.isEmpty()) {
@@ -597,35 +613,67 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
 }
 
 /*!
-  Sets the current filter to \a filter.
-  The filter is a SQL WHERE clause without the keyword WHERE (for example,
-  name='Hanako'). The filter will be applied the next time a query is
-  executed.
-*/
+  Sets a JOIN clause for \a column to \a join.
+ */
 template <class T>
-inline void TSqlORMapper<T>::setFilter(const QString &filter)
+template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
 {
-    queryFilter = filter;
+    if (column < 0 || join.joinColumn() < 0) {
+        return;
+    }
+
+    QString clause;
+
+    switch (join.joinMode()) {
+    case TSql::InnerJoin:
+        clause = QLatin1String(" INNER JOIN ");
+        break;
+
+    case  TSql::LeftJoin:
+        clause = QLatin1String(" LEFT OUTER JOIN ");
+        break;
+
+    case TSql::RightJoin:
+        clause = QLatin1String(" RIGHT OUTER JOIN ");
+        break;
+
+    default:
+        break;
+    }
+
+    int joinCount = joinClauses.count();
+    QString alias = QLatin1Char('t') + QString::number(joinCount + 1);
+    QSqlDatabase db = database();
+
+    clause += C().tableName();
+    clause += QLatin1Char(' ');
+    clause += alias;
+    clause += QLatin1String(" ON ");
+    clause += TCriteriaConverter<T>::getPropertyName(column, db.driver(), "t0");
+    clause += QLatin1Char('=');
+    clause += TCriteriaConverter<C>::getPropertyName(join.joinColumn(), db.driver(), alias);
+    joinClauses << clause;
+
+    if (!join.criteria().isEmpty()) {
+        TCriteriaConverter<C> conv(join.criteria(), db, alias);
+        joinWhereClauses << conv.toString();
+    }
+}
+
+template <class T>
+template <class C> inline TSqlORMapper<T> &TSqlORMapper<T>::join(int column, const TSqlJoin<C> &j)
+{
+    setJoin(column, j);
+    return *this;
 }
 
 /*!
-  Returns a SQL WHERE clause generated from a criteria.
+  Reset the internal state of the mapper object.
 */
 template <class T>
-inline QString TSqlORMapper<T>::orderBy() const
+inline void TSqlORMapper<T>::reset()
 {
-    QString str;
-    if (!sortColumns.isEmpty()) {
-        str.append(QLatin1String(" ORDER BY"));
-        for (int i=0;i<sortColumns.length();++i){
-            QString column = TSqlQuery::escapeIdentifier(sortColumns.at(i), QSqlDriver::FieldName, database().driver());
-            str.append(" t0.").append(column);
-            str.append((sortOrders.at(i) == Tf::AscendingOrder) ? QLatin1String(" ASC") : QLatin1String(" DESC"));
-            str.append(", ");
-        }
-        str.chop(2);
-    }
-    return str;
+    setTable(tableName());
 }
 
 /*!
@@ -637,7 +685,6 @@ inline void TSqlORMapper<T>::clear()
     QSqlTableModel::clear();
     queryFilter.clear();
     sortColumns.clear();
-    sortOrders.clear();
     queryLimit = 0;
     queryOffset = 0;
     joinCount = 0;
@@ -649,84 +696,23 @@ inline void TSqlORMapper<T>::clear()
 }
 
 /*!
-  Returns a SELECT statement generated from the specified parameters.
-  This function is for internal use only.
+  Returns a SQL WHERE clause generated from a criteria.
 */
 template <class T>
-inline QString TSqlORMapper<T>::selectStatement() const
+inline QString TSqlORMapper<T>::orderBy() const
 {
-    QString query;
-    query.reserve(256);
-    bool joinFlag = !joinClauses.isEmpty();
+    QString str;
 
-    auto rec = record();
-    for (int i = 0; i < rec.count(); ++i) {
-        if (rec.isGenerated(i)) {
-            if (joinFlag) {
-                query += QLatin1String("t0.");
-            }
-            query += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
-            query += QLatin1String(", ");
+    if (!sortColumns.isEmpty()) {
+        str += QLatin1String(" ORDER BY ");
+        for (auto &p : sortColumns) {
+            str += QLatin1String("t0.");
+            str += TSqlQuery::escapeIdentifier(p.first, QSqlDriver::FieldName, database().driver());
+            str += (p.second == Tf::AscendingOrder) ? QLatin1String(" ASC,") : QLatin1String(" DESC,");
         }
+        str.chop(1);
     }
-
-    if (Q_UNLIKELY(query.isEmpty())) {
-        return query;
-    } else {
-        query.chop(2);
-    }
-
-    if (joinFlag) {
-        query.prepend(QLatin1String("SELECT DISTINCT "));
-    } else {
-        query.prepend(QLatin1String("SELECT "));
-    }
-    query += QLatin1String(" FROM ");
-    query += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database().driver());
-    query += QLatin1String(" t0");  // alias needed
-
-    if (joinFlag) {
-        for (auto &join : (const QStringList&)joinClauses) {
-            query += join;
-        }
-    }
-
-    QString filter = queryFilter;
-    if (!joinWhereClauses.isEmpty()) {
-        for (auto &wh : (const QStringList&)joinWhereClauses) {
-            if (!filter.isEmpty()) {
-                filter += QLatin1String(" AND ");
-            }
-            filter += wh;
-        }
-    }
-
-    if (Q_LIKELY(!filter.isEmpty())) {
-        query.append(QLatin1String(" WHERE ")).append(filter);
-    }
-
-    QString orderby = orderBy();
-    if (!orderby.isEmpty()) {
-        query.append(orderby);
-    }
-
-    if (queryLimit > 0) {
-        query.append(QLatin1String(" LIMIT ")).append(QString::number(queryLimit));
-    }
-    if (queryOffset > 0) {
-        query.append(QLatin1String(" OFFSET ")).append(QString::number(queryOffset));
-    }
-
-    return query;
-}
-
-/*!
-  Returns the number of rows of the current query.
- */
-template <class T>
-inline int TSqlORMapper<T>::rowCount(const QModelIndex &parent) const
-{
-    return QSqlTableModel::rowCount(parent);
+    return str;
 }
 
 #endif // TSQLORMAPPER_H

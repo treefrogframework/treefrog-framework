@@ -28,7 +28,7 @@ TCriteria::TCriteria()
   Copy constructor.
 */
 TCriteria::TCriteria(const TCriteria &other)
-    : cri1(other.cri1), cri2(other.cri2), logiOp(other.logiOp)
+    : cri1(other.cri1), cri2(other.cri2), logiOp(other.logiOp),cricount(other.cricount)
 { }
 
 /*!
@@ -42,6 +42,7 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op)
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op));
+    cricount++;
 }
 
 /*!
@@ -55,6 +56,7 @@ TCriteria::TCriteria(int property, const QVariant &val)
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, TSql::Equal, val));
+    cricount++;
 }
 
 /*!
@@ -68,6 +70,7 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op, val));
+    cricount++;
 }
 
 /*!
@@ -82,6 +85,7 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op, val1, val2));
+    cricount++;
 }
 
 /*!
@@ -96,6 +100,7 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op1, TSql::Compariso
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op1, op2, val));
+    cricount++;
 }
 
 
@@ -103,6 +108,7 @@ TCriteria::TCriteria(int property, TMongo::ComparisonOperator op)
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op));
+    cricount++;
 }
 
 
@@ -110,6 +116,7 @@ TCriteria::TCriteria(int property, TMongo::ComparisonOperator op, const QVariant
     : logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op, val));
+    cricount++;
 }
 
 /*!
@@ -276,6 +283,7 @@ TCriteria &TCriteria::addOr(const TCriteria &criteria)
 */
 TCriteria &TCriteria::add(LogicalOperator op, const TCriteria &criteria)
 {
+    cricount++;
     if (cri1.isNull()) {
         cri1 = QVariant::fromValue(criteria);
         logiOp = None;
@@ -332,6 +340,7 @@ TCriteria &TCriteria::operator=(const TCriteria &other)
     cri1 = other.cri1;
     cri2 = other.cri2;
     logiOp = other.logiOp;
+    cricount = other.cricount;
     return *this;
 }
 
@@ -351,7 +360,17 @@ void TCriteria::clear()
     cri1.clear();
     logiOp = None;
     cri2.clear();
+    cricount = 0;
 }
+
+/*!
+  Return the count of the criteria.
+*/
+int TCriteria::length() const
+{
+  return this->cricount;
+}
+
 
 /*!
   \fn const QVariant &TCriteria::first() const

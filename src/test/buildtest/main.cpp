@@ -174,6 +174,8 @@ void build_check_TMongoODMapper()
 void build_check_TModelUtil()
 {
     TCriteria crt;
+    QList<QPair<int, Tf::SortOrder>> sortColumns;
+    tfGetModelListByCriteria<Blog, BlogObject>(crt, sortColumns, 0, 0);
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, Tf::DescendingOrder, 0, 0);
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, 0);
     tfGetModelListByMongoCriteria<Foo, FooObject>(crt, 0, 0);
