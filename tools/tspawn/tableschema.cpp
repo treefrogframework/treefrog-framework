@@ -81,11 +81,12 @@ QList<int> TableSchema::primaryKeyIndex() const
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
 
+
     QList<int> pkidxs;
-    for (auto &fi:index){
-        pkidxs<<model.record().indexOf(fi.name());
+    for (int i=0;i<index.count();++i){
+        pkidxs<<model.record().indexOf(index.fieldName(i));
     }
-    return pikdxs;
+    return pkidxs;
 }
 
 
@@ -95,11 +96,11 @@ QStringList TableSchema::primaryKeyFieldName() const
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
 
-    QStringList pkfns;
-    for (auto &fi:index){
-        pkfns<<fi.name();
+    QStringList pkFieldNamess;
+    for (int i=0;i<index.count();++i){
+        pkFieldNamess<<index.fieldName(i);
     }
-    return pkfns;
+    return pkFieldNamess;
 }
 
 
@@ -131,7 +132,7 @@ QList<QPair<QString, QString>> TableSchema::getPrimaryKeyField() const
     QList<int> indexs = primaryKeyIndex();
     for (auto index:indexs){
         QSqlField f = tableFields.field(index);
-        pairlist<< QPair<QString, QString>(f.name(), QString(QVariant::typeToName(f.type())));
+        pairlist<< qMakePair(f.name(), QString(QVariant::typeToName(f.type())));
     }
     return pairlist;
 }
@@ -139,11 +140,11 @@ QList<QPair<QString, QString>> TableSchema::getPrimaryKeyField() const
 
 QList<QPair<QString, QVariant::Type>> TableSchema::getPrimaryKeyFieldType() const
 {
-    QList<QPair<QString, QString>> pairlist;
+    QList<QPair<QString, QVariant::Type>> pairlist;
     QList<int> indexs = primaryKeyIndex();
      for (auto index:indexs){
         QSqlField f = tableFields.field(index);
-        pairlist = QPair<QString, QVariant::Type>(f.name(), f.type());
+        pairlist<<qMakePair(f.name(), f.type());
     }
     return pairlist;
 }

@@ -17,9 +17,6 @@ const QByteArray CreatedAt("created_at");
 const QByteArray UpdatedAt("updated_at");
 const QByteArray ModifiedAt("modified_at");
 
-const QByteArray UserId("user_id");
-extern int userId;
-
 /*!
   \class TSqlObject
   \brief The TSqlObject class is the base class of ORM objects.
@@ -129,9 +126,7 @@ bool TSqlObject::create()
         } else if (prop == LockRevision) {
             // Sets the default value of 'revision' property
             setProperty(propName, 1);  // 1 : default value
-        } else if (prop == UserId){
-            setProperty(propName, userId);
-        }else {
+        } else {
             // do nothing
 
         }
@@ -204,11 +199,11 @@ bool TSqlObject::update()
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
 
-        if (!updflag && (prop == UpdatedAt || prop == ModifiedAt || prop == UserId)) {
-            setProperty(propName, QDateTime::currentDateTime());
-            setProperty(propName, userId);
+        if (!updflag) {
+            if (prop == UpdatedAt || prop == ModifiedAt){
+                setProperty(propName, QDateTime::currentDateTime());
+            }
             updflag = true;
-
         } else if (revIndex < 0 && prop == LockRevision) {
             bool ok;
             int oldRevision = property(propName).toInt(&ok);
@@ -224,7 +219,7 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-            where.append("=").append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
+            where.append('=').append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
             where.append(" AND ");
         } else {
             // continue
@@ -259,7 +254,7 @@ bool TSqlObject::update()
         QVariant origpkval = value(pkName);
         where.append(QLatin1String(pkName));
         where.append("=").append(TSqlQuery::formatValue(origpkval, pkType, database));
-        where .append(" AND ");
+        where.append(" AND ");
         // Restore the value of primary key
         QObject::setProperty(pkName, origpkval);
    }
@@ -274,16 +269,16 @@ bool TSqlObject::update()
             upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
             upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
-            upd.append(QLatin1String(", "));
+            upd.append(QLatin1Char(','));
         }
     }
 
-    if (!upd.endsWith(QLatin1String(", "))) {
+    if (!upd.endsWith(QLatin1Char(','))) {
         tSystemDebug("SQL UPDATE: Same values as that of the record. No need to update.");
         return true;
     }
 
-    upd.chop(2);
+    upd.chop(1);
     syncToSqlRecord();
     upd.append(where);
 
@@ -340,7 +335,7 @@ bool TSqlObject::remove()
             }
 
             del.append(QLatin1String(propName));
-            del.append("=").append(TSqlQuery::formatValue(revision, QVariant::Int, database));
+            del.append('=').append(TSqlQuery::formatValue(revision, QVariant::Int, database));
             del.append(" AND ");
 
             revIndex = i;
@@ -368,7 +363,7 @@ bool TSqlObject::remove()
             return false;
         }
         del.append(QLatin1String(pkName));
-        del.append("=").append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
+        del.append('=').append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
         del.append(" AND ");
     }
     del.chop(5);

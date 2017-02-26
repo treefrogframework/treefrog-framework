@@ -35,9 +35,9 @@
     "  <tr>\n"                                                          \
     "%6"                                                                \
     "    <td>\n"                                                        \
-    "      <%== linkTo(\"Show\", urla(\"show\", %7) %>\n"          \
-    "      <%== linkTo(\"Edit\", urla(\"save\", %7)) %>\n"          \
-    "      <%== linkTo(\"Remove\", urla(\"remove\", %7), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
+    "      <%== linkTo(\"Show\", urla(\"show\", QStringList()%7)) %>\n"  \
+    "      <%== linkTo(\"Edit\", urla(\"save\", QStringList()%7)) %>\n" \
+    "      <%== linkTo(\"Remove\", urla(\"remove\", QStringList()%7), Tf::Post, \"confirm('Are you sure?')\") %>\n" \
     "    </td>\n"                                                       \
     "  </tr>\n"                                                         \
     "<% } %>\n"                                                         \
@@ -62,7 +62,7 @@
     "<h1>Showing %4</h1>\n"                                             \
     "%5"                                                                \
     "\n"                                                                \
-    "<%== linkTo(\"Edit\", urla(\"save\", %6)) %> |\n"             \
+    "<%== linkTo(\"Edit\", urla(\"save\", QStringList()%6)) %> |\n"             \
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "\n"                                                                \
     "</body>\n"                                                         \
@@ -111,14 +111,14 @@
     "\n"                                                                \
     "<h1>Editing %3</h1>\n"                                             \
     "\n"                                                                \
-    "<%== formTag(urla(\"save\", %2[\"%4\"]), Tf::Post) %>\n"           \
+    "<%== formTag(urla(\"save\", QStringList()%4), Tf::Post) %>\n"           \
     "%6"                                                                \
     "  <p>\n"                                                           \
     "    <input type=\"submit\" value=\"Update\" />\n"                  \
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \
-    "<%== linkTo(\"Show\", urla(\"show\", %4)) %> |\n"          \
+    "<%== linkTo(\"Show\", urla(\"show\", QStringList()%4)) %> |\n"          \
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "</body>\n"                                                         \
     "</html>\n"
@@ -171,32 +171,28 @@ bool ErbGenerator::generate(const QString &dstDir) const
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
 
-    QStringList pkFldList;
-    QString pkUrlIndex="";
-    QString pkUrlShow="";
-    QString pkUrlSave="";
-    for (auto pkIdx:primaryKeyIndexs){
-        const QPair<QString, QVariant::Type> &pkFld = fieldList[pkIdx];
-        pkFldList<<pkFld.first;
-
-        pkUrlIndex +="QVariant(i.";
-        pkUrlIndex +=fieldNameToVariableName(pkFld.first);
-        pkUrlIndex +="()).toString()";
-        pkUrlIndex +="+\"\\\"+";
-
-        pkUrlShow +="QVariant("+varName+".";
-        pkUrlShow +=fieldNameToVariableName(pkFld.first);
-        pkUrlShow +="()).toString()";
-        pkUrlShow +="+\"\\\"+";
-
-        pkUrlShow +="QVariant("+varName+"[\"";
-        pkUrlShow +=fieldNameToVariableName(pkFld.first);
-        pkUrlShow +="\"].toString()";
-        pkUrlShow +="+\"\\\"+";
+    QStringList pkVarNames;
+    QString indexPkValues,showPkValues,savePkValues;
+    for (auto &p :primaryKeyIndexs){
+        QString pkVarName = fieldNameToVariableName(fieldList[p].first);
+        pkVarNames<<pkVarName;
+        switch (fieldList[p].second) {
+        case QVariant::Int:
+        case QVariant::UInt:
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+        case QVariant::Double:
+            indexPkValues += QString("<<QString::number(i.%1())").arg(pkVarName);
+            showPkValues += QString("<<QString::number(%1.%2())").arg(varName,pkVarName);
+            savePkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
+            break;
+        default:
+            indexPkValues += QString("<<i.%1()").arg(pkVarName);
+            showPkValues += QString("<<%1.%2()").arg(varName,pkVarName);
+            savePkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
+            break;
+        }
     }
-    pkUrlIndex.chop(5);
-    pkUrlShow.chop(5);
-    pkUrlSave.chop(5);
 
     // Generates index.html.erb
     QString th, td, showitems, entryitems, edititems;
@@ -237,20 +233,20 @@ bool ErbGenerator::generate(const QString &dstDir) const
             edititems += "\" value=\"<%= ";
             edititems += varName + "[\"" + ivar + "\"]";
             edititems += " %>\"";
-            if (pkFldList.contains(p.first)) {
+            if (pkVarNames.contains(p.first)) {
                 edititems += " readonly=\"readonly\"";
             }
             edititems += " /></label>\n  </p>\n";
         }
     }
 
-    output = QString(INDEX_TEMPLATE).arg(varName.toLower(), caption, th, viewName, varName,td, pkUrlIndex);
+    output = QString(INDEX_TEMPLATE).arg(varName.toLower(), caption, th, viewName, varName,td, indexPkValues);
     fw.setFilePath(dir.filePath("index.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
-    output = QString(SHOW_TEMPLATE).arg(varName.toLower(), viewName, varName, caption, showitems, pkUrlShow);
+    output = QString(SHOW_TEMPLATE).arg(varName.toLower(), viewName, varName, caption, showitems, showPkValues);
     fw.setFilePath(dir.filePath("show.erb"));
     if (!fw.write(output, false)) {
         return false;
@@ -262,7 +258,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
         return false;
     }
 
-    output = QString(SAVE_TEMPLATE).arg(varName.toLower(), varName, caption, pkUrlSave, edititems);
+    output = QString(SAVE_TEMPLATE).arg(varName.toLower(), varName, caption, savePkValues, edititems);
     fw.setFilePath(dir.filePath("save.erb"));
     if (!fw.write(output, false)) {
         return false;

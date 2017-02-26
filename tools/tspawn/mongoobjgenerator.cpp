@@ -189,24 +189,30 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
 }
 
 
-int MongoObjGenerator::primaryKeyIndex() const
+QList<int> MongoObjGenerator::primaryKeyIndex() const
 {
+    QList<int> pkidx;
     if (fields.isEmpty()) {
         qCritical("Mongo file not generated");
-        return -1;
+        return pkidx;
     }
 
     for (int i = 0; i < fields.count(); ++i) {
-        if (fields[i].first == "_id")
-            return i;
+        if (fields[i].first == "_id"){
+            pkidx<<i;
+            return pkidx;
+        }
     }
-    return -1;
+    return pkidx;
 }
 
 
 int MongoObjGenerator::autoValueIndex() const
 {
-    return primaryKeyIndex();
+    if (primaryKeyIndex().isEmpty())
+        return -1;
+    else
+        return primaryKeyIndex().at(0);
 }
 
 

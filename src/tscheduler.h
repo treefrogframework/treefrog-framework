@@ -1,10 +1,9 @@
 #ifndef TSCHEDULER_H
 #define TSCHEDULER_H
 
-#include <QTimer>
-#include <QThread>
 #include <TGlobal>
-#include "tdatabasecontextthread.h"
+#include <TDatabaseContextThread>
+#include <QTimer>
 
 
 class T_CORE_EXPORT TScheduler : public TDatabaseContextThread

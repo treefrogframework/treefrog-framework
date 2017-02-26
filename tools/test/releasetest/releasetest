@@ -16,7 +16,20 @@ row_count()
   echo "SELECT COUNT(1) FROM blog;" | sqlite3 $DBFILE
 }
 
+# Cleanup
+cleanup()
+{
+  # Cleanup
+  cd $APPROOT
+  $TREEFROG -k abort
+
+  cd $BASEDIR
+  rm -rf $WORKDIR
+  rm -rf $APPNAME
+}
+
 ## Main ##
+trap 'cleanup' 2 3 15 EXIT
 
 # Create app
 cd $BASEDIR
@@ -40,7 +53,7 @@ make || exit
 # Start Check
 $TREEFROG -e dev -d || exit
 sleep 1
-$TREEFROG -k abort || exit
+$TREEFROG -k stop || exit
 sleep 1
 $TREEFROG -e dev -d || exit
 sleep 1
@@ -49,9 +62,7 @@ sleep 1
 mkdir -p $WORKDIR
 cd $WORKDIR
 wget http://localhost:8800/blog/index || exit
-wget http://localhost:8800/blog/entry || exit
-wget http://localhost:8800/fuga/index || exit
-
+wget http://localhost:8800/blog/create || exit
 
 # POST method
 # create1
@@ -81,14 +92,6 @@ curl  --data-urlencode 'dummy'  http://localhost:8800/blog/remove/1  > remove1 |
 curl  --data-urlencode 'dummy'  http://localhost:8800/blog/remove/2  > remove2 || exit
 [ `row_count` = "0" ] || exit
 
-
-# Cleanup
-cd $APPROOT
-$TREEFROG -k stop || exit
-
-cd $BASEDIR
-rm -rf $WORKDIR
-rm -rf $APPNAME
 
 echo
 echo "Test completed."

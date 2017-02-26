@@ -435,7 +435,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     QList<QPair<QString, QString>> writableFields;
     bool optlockMethod = false;
     FieldList fields = objGen->fieldList();
-    int pkidx = objGen->primaryKeyIndex();
+    QList<int> pkidxs = objGen->primaryKeyIndex();
     int autoIndex = objGen->autoValueIndex();
     QString autoFieldName = (autoIndex >= 0) ? fields[autoIndex].first : QString();
     QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
@@ -488,26 +488,35 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
 
     // Creates parameters of get() method
     QString getparams;
-    if (pkidx < 0) {
+    if (pkidxs.isEmpty()) {
         getparams = crtparams;
     } else {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
-        getparams = createParam(pair.second, pair.first);
+        for (auto &p : pkidxs){
+            const QPair<QString, QVariant::Type> &pair = fields[p];
+            getparams += createParam(pair.second, pair.first);
+            getparams +=", ";
+        }
+         getparams.chop(2);
     }
 
     // Creates a declaration and a implementation of 'get' method for optimistic lock
-    if (pkidx >= 0 && optlockMethod) {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
-        getOptDecl = QString("    static %1 get(%2, int lockRevision);\n").arg(modelName, createParam(pair.second, pair.first));
+    if (!pkidxs.isEmpty() && optlockMethod) {
 
+        getOptDecl = QString("    static %1 get(%2, int lockRevision);\n").arg(modelName, getparams);
+        QString criadd;
+        for (auto &p : pkidxs){
+            const QPair<QString, QVariant::Type> &pair = fields[p];
+            criadd += "    cri.add(%1Object::%1, %2);\n";
+            criadd.arg(fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first));
+        }
         getOptImpl = QString("%1 %1::get(%2, int lockRevision)\n"       \
                              "{\n"                                      \
-                             "    %5<%1Object> mapper;\n"               \
+                             "    %3<%1Object> mapper;\n"               \
                              "    TCriteria cri;\n"                     \
-                             "    cri.add(%1Object::%3, %4);\n"         \
+                             "%4"                                       \
                              "    cri.add(%1Object::LockRevision, lockRevision);\n" \
                              "    return %1(mapper.findFirst(cri));\n"  \
-                             "}\n\n").arg(modelName, createParam(pair.second, pair.first), fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first), mapperstr);
+                             "}\n\n").arg(modelName, getparams, mapperstr,criadd);
     }
 
     QStringList headerArgs;
@@ -529,7 +538,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
 
     // Creates a implementation of get() method
     QString getImpl;
-    if (pkidx < 0) {
+    if (pkidxs.isEmpty()) {
         // If no primary index exists
         getImpl += QString("    TCriteria cri;\n");
         fi.toFront();
@@ -542,12 +551,27 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     getImpl += QString("    %1<%2Object> mapper;\n").arg(mapperstr, modelName);
     getImpl += QString("    return %1(mapper.").arg(modelName);
 
-    if (pkidx < 0) {
+    if (pkidxs.isEmpty()) {
         getImpl += "findFirst(cri));\n";
-    } else {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
-        getImpl += (objectType == Sql) ? "findByPrimaryKey(" : "findByObjectId(";
-        getImpl += fieldNameToVariableName(pair.first);
+    } else {       
+        if (pkidxs.length()==1){
+            getImpl += (objectType == Sql) ? "findByPrimaryKey(" : "findByObjectId(";
+            const QPair<QString, QVariant::Type> &pair = fields[0];
+            getImpl += fieldNameToVariableName(pair.first);
+        }else{
+            getImpl += "findByPrimaryKeys(";
+            getImpl += "TCriteria()";
+            for (auto &p :pkidxs){
+                const QPair<QString, QVariant::Type> &pair = fields[p];
+                getImpl += ".add(";
+                getImpl += modelName;
+                getImpl += "Object::";
+                getImpl += fieldNameToEnumName(pair.first);
+                getImpl += ", ";
+                getImpl += fieldNameToVariableName(pair.first);
+                getImpl += ")";
+            }
+        }
         getImpl += QString("));\n");
     }
 
@@ -614,7 +638,7 @@ ModelGenerator::FieldList ModelGenerator::fieldList() const
 }
 
 
-int ModelGenerator::primaryKeyIndex() const
+QList<int> ModelGenerator::primaryKeyIndex() const
 {
     return objGen->primaryKeyIndex();
 }

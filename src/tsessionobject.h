@@ -18,7 +18,7 @@ public:
     };
 
     QString tableName() const { return "session"; }
-    int primaryKeyIndex() const { return Id; }
+    QList<int> primaryKeyIndex() const { QList<int> pkidxs;pkidxs<<Id;return pkidxs; }
 
 private:    /*** Don't modify below this line ***/
     Q_OBJECT
