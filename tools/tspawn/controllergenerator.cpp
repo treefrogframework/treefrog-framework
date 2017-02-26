@@ -260,7 +260,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(),fieldNameToVariableName(pair.first));
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(), fieldNameToVariableName(pair.first));
         fwh.write(code, false);
         files << fwh.fileName();
 
