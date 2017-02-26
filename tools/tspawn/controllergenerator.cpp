@@ -294,7 +294,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(),controllerPara);
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(), controllerPara);
         fwh.write(code, false);
         files << fwh.fileName();
 
@@ -303,7 +303,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             sessGetStr = QString("        int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
             revStr = QLatin1String(", rev");
         }
-        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, modelPara, sessInsertStr, sessGetStr, revStr,controllerPara ,modelUrl).arg(controllerUrl);
+        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, modelPara, sessInsertStr, sessGetStr, revStr, controllerPara, modelUrl).arg(controllerUrl);
         fws.write(code, false);
         files << fws.fileName();
 
