@@ -37,12 +37,12 @@ call configure.bat
 if ERRORLEVEL 1 goto :error
 
 cd src
-%MAKE% clean
+::%MAKE% clean
 %MAKE% install
 if ERRORLEVEL 1 goto :error
 
 cd ..\tools
-%MAKE% clean
+::%MAKE% clean
 %MAKE% install
 if ERRORLEVEL 1 goto :error
 
