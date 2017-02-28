@@ -57,7 +57,7 @@ See the README also.
 
 
 
-Muti primary keys support
+Composite primary keys support
 ================================
 This TreeFrog Framework support muti primary keys.
 

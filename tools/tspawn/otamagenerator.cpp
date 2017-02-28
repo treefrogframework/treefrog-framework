@@ -333,28 +333,28 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
         files << fw.fileName();
     }
 
-    // Generates entry.html
+    // Generates create.html
     output = QString(CREATE_HTML_TEMPLATE).arg(caption, entryColumn);
     fw.setFilePath(dir.filePath("create.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
-    // Generates entry.otm
+    // Generates create.otm
     output = QString(CREATE_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
     fw.setFilePath(dir.filePath("create.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
-    // Generates edit.html
+    // Generates save.html
     output = QString(SAVE_HTML_TEMPLATE).arg(caption, editColumn);
     fw.setFilePath(dir.filePath("save.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
-    // Generates edit.otm
+    // Generates save.otm
     output = QString(SAVE_OTM_TEMPLATE).arg(varName.toLower(), varName, savePkValues, editOtm);
     fw.setFilePath(dir.filePath("save.otm"));
     if (fw.write(output, false)) {
