@@ -172,7 +172,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
     QString varName = enumNameToVariableName(viewName);
 
     QStringList pkVarNames;
-    QString indexPkValues,showPkValues,savePkValues;
+    QString indexPkValues,showPkValues,editPkValues;
     for (auto &p :primaryKeyIndexs){
         QString pkVarName = fieldNameToVariableName(fieldList[p].first);
         pkVarNames<<pkVarName;
@@ -184,12 +184,12 @@ bool ErbGenerator::generate(const QString &dstDir) const
         case QVariant::Double:
             indexPkValues += QString("<<QString::number(i.%1())").arg(pkVarName);
             showPkValues += QString("<<QString::number(%1.%2())").arg(varName,pkVarName);
-            savePkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
+            editPkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
             break;
         default:
             indexPkValues += QString("<<i.%1()").arg(pkVarName);
             showPkValues += QString("<<%1.%2()").arg(varName,pkVarName);
-            savePkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
+            editPkValues += QString("<<%1[\"%2\"].toString()").arg(varName,pkVarName);
             break;
         }
     }
@@ -258,7 +258,7 @@ bool ErbGenerator::generate(const QString &dstDir) const
         return false;
     }
 
-    output = QString(EDIT_TEMPLATE).arg(varName.toLower(), varName, caption, pkVarName, edititems);
+    output = QString(EDIT_TEMPLATE).arg(varName.toLower(), varName, caption, editPkValues, edititems);
     fw.setFilePath(dir.filePath("edit.erb"));
     if (!fw.write(output, false)) {
         return false;
