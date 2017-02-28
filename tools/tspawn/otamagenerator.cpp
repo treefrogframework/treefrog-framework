@@ -99,7 +99,7 @@
     "\n"                                                                \
     "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n"
 
-#define CREATE_HTML_TEMPLATE                                            \
+#define ENTRY_HTML_TEMPLATE                                            \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -124,7 +124,7 @@
     "</body>\n"                                                         \
     "</html>\n"
 
-#define CREATE_OTM_TEMPLATE                                             \
+#define ENTRY_OTM_TEMPLATE                                             \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -141,7 +141,7 @@
     "%3"                                                                \
     "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
 
-#define SAVE_HTML_TEMPLATE                                              \
+#define EDIT_HTML_TEMPLATE                                              \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -167,7 +167,7 @@
     "</body>\n"                                                         \
     "</html>\n"
 
-#define SAVE_OTM_TEMPLATE                                               \
+#define EDIT_OTM_TEMPLATE                                               \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -334,29 +334,29 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     }
 
     // Generates entry.html
-    output = QString(CREATE_HTML_TEMPLATE).arg(caption, entryColumn);
-    fw.setFilePath(dir.filePath("create.html"));
+    output = QString(ENTRY_HTML_TEMPLATE).arg(caption, entryColumn);
+    fw.setFilePath(dir.filePath("entry.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates entry.otm
-    output = QString(CREATE_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
-    fw.setFilePath(dir.filePath("create.otm"));
+    output = QString(ENTRY_OTM_TEMPLATE).arg(varName.toLower(), varName, entryOtm);
+    fw.setFilePath(dir.filePath("entry.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.html
-    output = QString(SAVE_HTML_TEMPLATE).arg(caption, editColumn);
-    fw.setFilePath(dir.filePath("save.html"));
+    output = QString(EDIT_HTML_TEMPLATE).arg(caption, editColumn);
+    fw.setFilePath(dir.filePath("edit.html"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }
 
     // Generates edit.otm
-    output = QString(SAVE_OTM_TEMPLATE).arg(varName.toLower(), varName, savePkValues, editOtm);
-    fw.setFilePath(dir.filePath("save.otm"));
+    output = QString(EDIT_OTM_TEMPLATE).arg(varName.toLower(), varName, pkVarName, editOtm);
+    fw.setFilePath(dir.filePath("edit.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();
     }

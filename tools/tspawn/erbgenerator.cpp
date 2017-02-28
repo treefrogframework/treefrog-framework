@@ -69,7 +69,7 @@
     "</html>\n"
 
 
-#define CREATE_TEMPLATE                                                 \
+#define ENTRY_TEMPLATE                                                 \
     "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
@@ -96,7 +96,7 @@
     "</body>\n"                                                         \
     "</html>\n"
 
-#define SAVE_TEMPLATE                                                   \
+#define EDIT_TEMPLATE                                                   \
     "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
@@ -252,14 +252,14 @@ bool ErbGenerator::generate(const QString &dstDir) const
         return false;
     }
 
-    output = QString(CREATE_TEMPLATE).arg(varName.toLower(), varName, caption, entryitems);
-    fw.setFilePath(dir.filePath("create.erb"));
+    output = QString(ENTRY_TEMPLATE).arg(varName.toLower(), varName, caption, entryitems);
+    fw.setFilePath(dir.filePath("entry.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
 
-    output = QString(SAVE_TEMPLATE).arg(varName.toLower(), varName, caption, savePkValues, edititems);
-    fw.setFilePath(dir.filePath("save.erb"));
+    output = QString(EDIT_TEMPLATE).arg(varName.toLower(), varName, caption, pkVarName, edititems);
+    fw.setFilePath(dir.filePath("edit.erb"));
     if (!fw.write(output, false)) {
         return false;
     }
