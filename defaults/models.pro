@@ -9,6 +9,7 @@ DESTDIR = ../lib
 INCLUDEPATH += ../helpers sqlobjects mongoobjects
 DEPENDPATH  += ../helpers sqlobjects mongoobjects
 LIBS += -L../lib -lhelper
+MOC_DIR = .obj/
+OBJECTS_DIR = .obj/
 
 include(../appbase.pri)
-

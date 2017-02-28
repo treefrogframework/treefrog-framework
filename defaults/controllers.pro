@@ -9,6 +9,8 @@ DESTDIR = ../lib
 INCLUDEPATH += ../helpers ../models
 DEPENDPATH  += ../helpers ../models
 LIBS += -L../lib -lhelper -lmodel
+MOC_DIR = .obj/
+OBJECTS_DIR = .obj/
 
 include(../appbase.pri)
 
