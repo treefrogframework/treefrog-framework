@@ -24,7 +24,7 @@
     "\n"                                                                \
     "<h1>Listing %2</h1>\n"                                             \
     "\n"                                                                \
-    "<%== linkTo(\"New entry\", urla(\"create\")) %><br />\n"           \
+    "<%== linkTo(\"Create a new %2\", urla(\"create\")) %><br />\n"     \
     "<br />\n"                                                          \
     "<table border=\"1\" cellpadding=\"5\" style=\"border: 1px #d0d0d0 solid; border-collapse: collapse;\">\n" \
     "  <tr>\n"                                                          \
@@ -114,7 +114,7 @@
     "<%== formTag(urla(\"save\", %2[\"%4\"]), Tf::Post) %>\n"           \
     "%6"                                                                \
     "  <p>\n"                                                           \
-    "    <input type=\"submit\" value=\"Update\" />\n"                  \
+    "    <input type=\"submit\" value=\"Save\" />\n"                    \
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \

@@ -22,7 +22,7 @@
     "\n"                                                                \
     "<h1>Listing %1</h1>\n"                                             \
     "\n"                                                                \
-    "<a href=\"#\" data-tf=\"@link_to_entry\">New entry</a><br />\n"    \
+    "<a href=\"#\" data-tf=\"@link_to_entry\">Create a new %1</a><br />\n" \
     "<br />\n"                                                          \
     "<table border=\"1\" cellpadding=\"5\" style=\"border: 1px #d0d0d0 solid; border-collapse: collapse;\">\n" \
     "  <tr>\n"                                                          \
@@ -54,13 +54,13 @@
     "}\n"                                                               \
     "\n"                                                                \
     "%4"                                                                \
+    "@link_to_entry :== linkTo(\"Create a new %6\", urla(\"create\"))\n" \
+    "\n"                                                                \
     "@link_to_show :== linkTo(\"Show\", urla(\"show\", i.%5()))\n"      \
     "\n"                                                                \
     "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", i.%5()))\n"      \
     "\n"                                                                \
-    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n" \
-    "\n"                                                                \
-    "@link_to_entry :== linkTo(\"New entry\", urla(\"create\"))\n"
+    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n"
 
 #define SHOW_HTML_TEMPLATE                                              \
     "<!DOCTYPE html>\n"                                                 \
@@ -157,7 +157,7 @@
     "<form method=\"post\" data-tf=\"@edit_form\">\n"                   \
     "%2"                                                                \
     "  <p>\n"                                                           \
-    "    <input type=\"submit\" value=\"Update\" />\n"                  \
+    "    <input type=\"submit\" value=\"Save\" />\n"                    \
     "  </p>\n"                                                          \
     "</form>\n"                                                         \
     "\n"                                                                \
@@ -291,7 +291,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
 
     // Generates index.otm
     QString pkVarName = fieldNameToVariableName(pkFld.first);
-    output = QString(INDEX_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, indexOtm, pkVarName);
+    output = QString(INDEX_OTM_TEMPLATE).arg(varName.toLower(), viewName, varName, indexOtm, pkVarName, caption);
     fw.setFilePath(dir.filePath("index.otm"));
     if (fw.write(output, false)) {
         files << fw.fileName();

@@ -398,15 +398,15 @@ static int deleteScaffold(const QString &name)
                   << str + SEP + "index.otm"
                   << str + SEP + "show.html"
                   << str + SEP + "show.otm"
-                  << str + SEP + "entry.html"
-                  << str + SEP + "entry.otm"
-                  << str + SEP + "edit.html"
-                  << str + SEP + "edit.otm";
+                  << str + SEP + "create.html"
+                  << str + SEP + "create.otm"
+                  << str + SEP + "save.html"
+                  << str + SEP + "save.otm";
         } else if (templateSystem == "erb") {
             views << str + SEP + "index.erb"
                   << str + SEP + "show.erb"
-                  << str + SEP + "entry.erb"
-                  << str + SEP + "edit.erb";
+                  << str + SEP + "create.erb"
+                  << str + SEP + "save.erb";
         } else {
             qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
             return 2;
