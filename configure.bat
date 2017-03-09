@@ -2,7 +2,7 @@
 @setlocal
 
 set VERSION=1.16.0
-set TFDIR=D:\TreeFrog\%VERSION%
+set TFDIR=C:\TreeFrog\%VERSION%
 
 :parse_loop
 if "%1" == "" goto :start

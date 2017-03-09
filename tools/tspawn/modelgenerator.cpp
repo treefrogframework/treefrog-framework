@@ -116,19 +116,19 @@
     "%8"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%10"                                                     \
+    "%9"                                                     \
     "int %2::count()\n"                                       \
     "{\n"                                                     \
-    "    %13<%2Object> mapper;\n"                             \
+    "    %12<%2Object> mapper;\n"                             \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria());\n" \
+    "    return tfGetModelListBy%10Criteria<%2, %2Object>(TCriteria());\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%12"                                                     \
+    "%11"                                                     \
     "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
@@ -224,14 +224,14 @@
     "    return *this;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::authenticate(const QString &%14, const QString &%15)\n" \
+    "%2 %2::authenticate(const QString &%13, const QString &%14)\n" \
     "{\n"                                                     \
-    "    if (%14.isEmpty() || %15.isEmpty())\n"               \
+    "    if (%13.isEmpty() || %14.isEmpty())\n"               \
     "        return %2();\n"                                  \
     "\n"                                                      \
-    "    %13<%2Object> mapper;\n"                             \
-    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%16, %14));\n" \
-    "    if (obj.isNull() || obj.%17 != %15) {\n"             \
+    "    %12<%2Object> mapper;\n"                             \
+    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%15, %13));\n" \
+    "    if (obj.isNull() || obj.%16 != %14) {\n"             \
     "        obj.clear();\n"                                  \
     "    }\n"                                                 \
     "    return %2(obj);\n"                                   \
@@ -257,19 +257,19 @@
     "%8"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%10"                                                     \
+    "%9"                                                     \
     "int %2::count()\n"                                       \
     "{\n"                                                     \
-    "    %13<%2Object> mapper;\n"                             \
+    "    %12<%2Object> mapper;\n"                             \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
     "QList<%2> %2::getAll()\n"                                \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11Criteria<%2, %2Object>();\n" \
+    "    return tfGetModelListBy%10Criteria<%2, %2Object>();\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%12"                                                     \
+    "%11"                                                     \
     "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
@@ -506,8 +506,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
         QString criadd;
         for (auto &p : pkidxs){
             const QPair<QString, QVariant::Type> &pair = fields[p];
-            criadd += "    cri.add(%1Object::%1, %2);\n";
-            criadd.arg(fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first));
+            criadd += QString("    cri.add(%1Object::%2, %3);\n").arg(modelName, fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first));
         }
         getOptImpl = QString("%1 %1::get(%2, int lockRevision)\n"       \
                              "{\n"                                      \
@@ -516,7 +515,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
                              "%4"                                       \
                              "    cri.add(%1Object::LockRevision, lockRevision);\n" \
                              "    return %1(mapper.findFirst(cri));\n"  \
-                             "}\n\n").arg(modelName, getparams, mapperstr,criadd);
+                             "}\n\n").arg(modelName, getparams, mapperstr, criadd);
     }
 
     QStringList headerArgs;

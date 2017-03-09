@@ -1,4 +1,5 @@
 tfenv.bat
+build.bat
 *.moc
 moc_*.cpp
 Makefile
