@@ -1,0 +1,14 @@
+name:         Treefrog Framework
+markdown:     kramdown
+highlighter:  rouge
+
+github:       [metadata]
+repository:   https://github.com/treefrogframework/treefrog-framework
+gems:         [markdown]
+theme:        jekyll-theme-slate
+baseurl:      ""
+url:          https://treefrogframework.github.io
+
+# Server
+port: 		  4000
+encoding: 	  utf-8

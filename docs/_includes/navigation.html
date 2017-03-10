@@ -1,0 +1,50 @@
+<h4 class="widget-title">Search</h4>
+{% if page.url contains '/jp/' %}
+<form action="{{ site.baseurl }}/jp/search.html" class="search-form-navi" method="get">
+    <input type="text" class="search-box-navi" placeholder="検索..." name="q">
+    <input type="submit" class="search-button-navi" value="検索">
+    {% else %}
+<form action="{{ site.baseurl }}/search.html" class="search-form-navi" method="get">
+    <input type="text" class="search-box-navi" placeholder="Search..." name="q">
+    <input type="submit" class="search-button-navi" value="Search">
+    {% endif %}
+</form>
+<h4 class="widget-title">Languages</h4>
+<ul>
+{% if page.url contains '/jp/' %}
+    <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">日本語 (Japanese)</a></li>
+    {% assign url = page.url | prepend: site.github.url %}
+    {% if page.url contains '/user-guide/' %}
+        {% assign en_url = url | replace: '/jp/', '/en/' %}
+        <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    {% elsif page.url contains '/search.html' %}
+        {% assign en_url = url | replace: '/jp/', '' %}
+        <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
+    {% else %}
+        {% assign en_url = url | replace: '/jp/', '' %}
+        <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
+    {% endif %}
+{% elsif page.url contains '/en/' %} 
+    {% assign jp_url = page.url | prepend: site.github.url %}
+    {% assign en_url = page.url | prepend: site.github.url %}
+    {% assign jp_url = jp_url | replace: '/en/', '/jp/' %}
+    <li><a href="{{ site.baseurl }}{{ jp_url }}" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+{% else %} 
+    {% if page.url contains '/search.html' %}
+        <li><a href="{{ site.baseurl }}/jp/search.html" class="language-link">日本語 (Japanese)</a></li>
+    {% else %}
+        <li><a href="{{ site.baseurl }}/jp" class="language-link">日本語 (Japanese)</a></li>
+    {% endif %}
+    <li><a href="{{ site.baseurl }}/" class="language-link">English</a></li>
+{% endif %}
+</ul>
+<h4 class="widget-title">Users Guide</h4>
+{% if page.url contains '/jp/' %}
+    {% include generateDynamicMenu.html root="/user-guide/jp" %}
+{% elsif page.url contains '/en/' %}   
+    {% include generateDynamicMenu.html root="/user-guide/en" %}
+{% else %} 
+    {% include generateDynamicMenu.html root="/user-guide/en" %}
+{% endif %}
+<a id="forkme_banner" href="{{ site.repository }}">View on GitHub</a>
