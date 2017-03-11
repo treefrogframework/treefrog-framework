@@ -53,7 +53,7 @@ Webアプリではデータを永続化する場合にDBがよく使われるの
 
 <span style="color: #b22222">**結論：  ORM オブジェクトを使うなら TAbstractModel クラスを継承せよ。** </span>
 
-ジェネレータでモデルを生成すると、各プロパティのゲッター・セッターに加え、生成(C) および読込(R) に相当するクラスメソッド（静的メソッド）が定義されます。次の例は[チュートリアルの章](/user-guide/jp/tutorial/index.html){:target="_target"}で作った Blog クラスの抜粋です。
+ジェネレータでモデルを生成すると、各プロパティのゲッター・セッターに加え、生成(C) および読込(R) に相当するクラスメソッド（静的メソッド）が定義されます。次の例は[チュートリアルの章](/user-guide/ja/tutorial/index.html){:target="_target"}で作った Blog クラスの抜粋です。
 
 ```c++
 static Blog create(const QString &title, const QString &body);
