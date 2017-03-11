@@ -4,6 +4,6 @@ title: News
 
 ## *Users Guide*
 
-[English](/treefrog-framework/user-guide/en/introduction/)  
-[日本語](/treefrog-framework/user-guide/ja/introduction/)
+[English](user-guide/en/introduction/)  
+[日本語](user-guide/ja/introduction/)
 
