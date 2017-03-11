@@ -203,7 +203,7 @@ When you create a site, the header and footer and some other parts are usually c
 
 ### About the Template System
 
-TreeFrog, so far, has adopted two template systems: **Otama**, and **ERB**. In ERB, code will be embedded by using <% .. %>. The Otama system has a little different treatment in Treefrog, because it completely separates the logic (.otm) and the presentation templates (.html). 
+TreeFrog, so far, has adopted two template systems: **Otama**, and **ERB**. In ERB, code will be embedded by using <% .. %>. The Otama system has a little different treatment in TreeFrog, because it completely separates the logic (.otm) and the presentation templates (.html). 
  
 * ERB uses file extension: xxx.erb
 * Otama uses file extensions: xxx.otm and xxx.html<br>(where 'xxx' is the action name)

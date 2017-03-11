@@ -9,7 +9,7 @@ title: 開発
 
 TreeFrog Framework は GitHub でリポジトリを公開しています。
 
-[Treefrog Framework on Github >>](https://github.com/treefrogframework){:target="_blank"}
+[TreeFrog Framework on Github >>](https://github.com/treefrogframework){:target="_blank"}
 
 If you have any patches, please send a pull-request to the repository with your comments.
 
@@ -17,6 +17,6 @@ If you have any patches, please send a pull-request to the repository with your 
 
 ディスカッションはこちらで： 
 
-[Treefrog Framework Forum >>](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
+[TreeFrog Framework Forum >>](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
 
 ＃ 英語は苦手なので、英語で質問されてもあまり答えられないんですが…

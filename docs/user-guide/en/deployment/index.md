@@ -62,7 +62,7 @@ Some distributions may require you to have root privileges if you want to open p
 
 In addition, in Linux, you will be able to activate the app automatically by making the *init.d* script. In Windows, this is possible by registering the startup. Because there are many articles on the internet about how to start the service automatically at OS boot time, I won't need to go into detail here.
 
-The next statement shows the Stop Command for stopping the Treefrog service.
+The next statement shows the Stop Command for stopping the TreeFrog service.
 
 ```
  $ sudo treefrog -k stop [application_root_path]
