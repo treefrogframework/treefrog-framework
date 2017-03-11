@@ -6,8 +6,8 @@ layout: default
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/tipuesearch.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
-    {% if page.url contains '/jp/' %}
-        var language = "jp"
+    {% if page.url contains '/ja/' %}
+        var language = "ja"
     {% else %}
         var language = "en"
     {% endif %}
@@ -15,11 +15,11 @@ layout: default
 <script src="{{ site.baseurl }}/assets/js/tipuesearch_set.js"></script>
 <script src="{{ site.baseurl }}/assets/js/tipuesearch.min.js"></script>
 
-<form action="{{ site.baseurl }}/jp/search.html" id="search-form" method="get">
+<form action="{{ site.baseurl }}/ja/search.html" id="search-form" method="get">
     <input type="text" name="q" id="tipue_search_input" class="search-box" placeholder="検索...">
     <input type="submit" id="tipue_search_input" class="result-search-button" value="検索">
 </form>
 
 <div id="tipue_search_content"></div>
 
-{% include search.html rootFolder = "/user-guide/jp" %}
+{% include search.html rootFolder = "/user-guide/ja" %}
