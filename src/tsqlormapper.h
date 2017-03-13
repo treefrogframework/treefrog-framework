@@ -193,6 +193,9 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
     }
 
     bool ret = select();
+    while (canFetchMore()) { // For SQLite, not report back the size of a query
+        fetchMore();
+    }
     Tf::writeQueryLog(query().lastQuery(), ret, lastError());
     tSystemDebug("rowCount: %d", rowCount());
     return ret ? rowCount() : -1;
