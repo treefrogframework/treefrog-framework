@@ -377,7 +377,7 @@ var SITEBASE_URL = "{{ site.baseurl }}";
                               {
                                    if (l_o >= start && l_o < set.show + start)
                                    {                                   
-                                        out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                        out += '<div class="tipue_search_content_title"><a href="' + SITEBASE_URL + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
  
                                         if (set.debug)
                                         {                                             
