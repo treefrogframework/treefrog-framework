@@ -23,18 +23,32 @@ layout: default
 <div id="tipue_search_content"></div>
 {% include search_json.html rootFolder="/user-guide/en" %}
 
-<script type="text/javascript">
+<script type="text/javascript">      
     $(function() {
+        updateSearchUrls();
+    });
+    
+    function updateSearchUrls() {
         var searchTitleLinkUrls= document.getElementsByClassName("tipue_search_content_title");
         var searchContentLinkUrls = document.getElementsByClassName("tipue_search_content_url");
+        var searchFooterButtons = document.getElementsByClassName("tipue_search_foot_box");
         var titleUrl;
+        var baseurl = "{{ site.baseurl }}";
+               
         for (var i = 0; i < searchTitleLinkUrls.length; i++) {
             titleUrl = searchTitleLinkUrls[i].firstChild.href;
-            searchTitleLinkUrls[i].firstChild.href = "{{ site.baseurl }}" + titleUrl.substring(titleUrl.indexOf('/user-guide/') + 1);
+            searchTitleLinkUrls[i].firstChild.href = baseurl + titleUrl.substring(titleUrl.indexOf('/user-guide/') + 1);
         }
+        
         for (var i = 0; i < searchContentLinkUrls.length; i++) {
             titleUrl = searchContentLinkUrls[i].firstChild.href;
-            searchContentLinkUrls[i].firstChild.href = "{{ site.baseurl }}" + titleUrl.substring(titleUrl.indexOf('/user-guide/') + 1);
+            searchContentLinkUrls[i].firstChild.href = baseurl + titleUrl.substring(titleUrl.indexOf('/user-guide/') + 1);
         }
-    });
+         
+        for (var i = 0; i < searchFooterButtons.length; i++) {
+            searchFooterButtons[i].onclick = function(){ 
+                updateSearchUrls();
+            }
+        }
+    }
 </script>
