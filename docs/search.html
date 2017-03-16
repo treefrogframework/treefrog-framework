@@ -32,17 +32,27 @@ layout: default
         var searchTitleLinkUrls= document.getElementsByClassName("tipue_search_content_title");
         var searchContentLinkUrls = document.getElementsByClassName("tipue_search_content_url");
         var searchFooterButtons = document.getElementsByClassName("tipue_search_foot_box");
+        var currentBrowserUrl = window.location.href;
         var titleUrl;
-        var baseurl = "{{ site.baseurl }}";
+        var baseurlLastIndex;
+        var baseurl = "{{ site.baseurl }};
+        
+        // Set another baseurl depending the website's location 
+        // (i.e. if this page is being redirected to the official Treefrog-Homepage)
+        if (currentBrowserUrl.indexOf("treefrogframework.github.io/") != -1) {
+            baseurl = "www.treefrogframework.org/";
+        }
+        
+        baseurlLastIndex = currentBrowserUrl.indexOf(baseurl) + baseurl.length;
                
         for (var i = 0; i < searchTitleLinkUrls.length; i++) {
             titleUrl = searchTitleLinkUrls[i].firstChild.href;
-            searchTitleLinkUrls[i].firstChild.href = baseurl + titleUrl.substring(titleUrl.indexOf('/user-guide/') + 1);
+            searchTitleLinkUrls[i].firstChild.href = baseurl + titleUrl.substring(baseurlLastIndex);
         }
         
         for (var i = 0; i < searchContentLinkUrls.length; i++) {
             titleUrl = searchContentLinkUrls[i].firstChild.href;
-            searchContentLinkUrls[i].firstChild.href = baseurl + titleUrl.substring(titleUrl.indexOf('/user-guide/') + 1);
+            searchContentLinkUrls[i].firstChild.href = baseurl + titleUrl.substring(baseurlLastIndex);
         }
          
         for (var i = 0; i < searchFooterButtons.length; i++) {
