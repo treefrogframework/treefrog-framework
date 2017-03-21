@@ -54,7 +54,7 @@ var tipuesearch_related = {'searches': [
 
 // Internal strings
 
-if (language == "jp") {
+if (language == "ja") {
     var tipuesearch_string_1 = 'タイトルなし';
     var tipuesearch_string_2 = '検索結果を表示: ';
     var tipuesearch_string_3 = '代わりに検索: ';
