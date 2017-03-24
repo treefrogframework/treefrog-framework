@@ -1,14 +1,9 @@
----
----   
-
 /*
 Tipue Search 6.0
 Copyright (c) 2017 Tipue
 Tipue Search is released under the MIT License
 http://www.tipue.com/search
 */
-
-var SITEBASE_URL = "{{ site.baseurl }}";
 
 (function($) {
 
@@ -22,6 +17,7 @@ var SITEBASE_URL = "{{ site.baseurl }}";
           'contextStart'           : 90,
           'debug'                  : false,
           'descriptiveWords'       : 25,
+          'githubPageBaseUrl'      : '',
           'highlightTerms'         : true,
           'liveContent'            : '*',
           'liveDescription'        : '*',
@@ -377,7 +373,7 @@ var SITEBASE_URL = "{{ site.baseurl }}";
                               {
                                    if (l_o >= start && l_o < set.show + start)
                                    {                                   
-                                        out += '<div class="tipue_search_content_title"><a href="' + SITEBASE_URL + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                        out += '<div class="tipue_search_content_title"><a href="' + set.githubPageBaseUrl + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
  
                                         if (set.debug)
                                         {                                             
@@ -391,7 +387,7 @@ var SITEBASE_URL = "{{ site.baseurl }}";
                                              {
                                                   s_u = s_u.slice(7);
                                              }                                             
-                                             out += '<div class="tipue_search_content_url"><a href="' + SITEBASE_URL + found[i].url + '"' + tipue_search_w + '>' + s_u + '</a></div>';
+                                             out += '<div class="tipue_search_content_url"><a href="' + set.githubPageBaseUrl + found[i].url + '"' + tipue_search_w + '>' + s_u + '</a></div>';
                                         }
                                         
                                         if (found[i].desc)
