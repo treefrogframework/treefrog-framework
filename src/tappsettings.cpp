@@ -21,6 +21,7 @@ public:
     AttributeMap() : QMap<int, QString>()
     {
         insert(Tf::ListenPort, "ListenPort");
+        insert(Tf::ListenAddress, "ListenAddress");
         insert(Tf::InternalEncoding, "InternalEncoding");
         insert(Tf::HttpOutputEncoding, "HttpOutputEncoding");
         insert(Tf::Locale, "Locale");

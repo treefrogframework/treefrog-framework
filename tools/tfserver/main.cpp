@@ -181,8 +181,14 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Invalid port number: %d\n", port);
             goto finish;
         }
+        // Listen address
+        QString listenAddress = Tf::appSettings()->value(Tf::ListenAddress).toString();
+        if (listenAddress.isEmpty()) {
+            listenAddress = "0.0.0.0";
+        }
+
         TApplicationServerBase::nativeSocketInit();
-        sock = TApplicationServerBase::nativeListen(QHostAddress::Any, port);
+        sock = TApplicationServerBase::nativeListen(QHostAddress(listenAddress), port);
     }
 
     if (sock <= 0) {

@@ -195,6 +195,7 @@ namespace Tf
         LDPreload,
         JavaScriptPath,
         ActionMailerSmtpEnableSTARTTLS,
+        ListenAddress,
     };
 
     // Reason codes why a web socket has been closed

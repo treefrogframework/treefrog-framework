@@ -517,6 +517,12 @@ int managerMain(int argc, char *argv[])
         svrname.clear();
     }
 
+    // Listen address
+    QString listenAddress = Tf::appSettings()->value(Tf::ListenAddress).toString();
+    if (listenAddress.isEmpty()) {
+        listenAddress = "0.0.0.0";
+    }
+
     // start daemon process
     if (daemonMode) {
         if ( !startDaemon() ) {
@@ -556,7 +562,7 @@ int managerMain(int argc, char *argv[])
         bool started;
         if (listenPort > 0) {
             // TCP/IP
-            started = manager->start(QHostAddress::Any, listenPort);
+            started = manager->start(QHostAddress(listenAddress), listenPort);
         } else {
             // UNIX domain
             started = manager->start(svrname);

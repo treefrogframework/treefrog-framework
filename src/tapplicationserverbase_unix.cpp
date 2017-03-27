@@ -34,7 +34,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
     QTcpServer server;
 
     if (!server.listen(address, port)) {
-        tSystemError("Listen failed  port:%d", port);
+        tSystemError("Listen failed  address:%s port:%d", qPrintable(address.toString()), port);
         return sd;
     }
 
