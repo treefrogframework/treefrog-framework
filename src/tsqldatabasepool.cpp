@@ -10,6 +10,7 @@
 #include <QDir>
 #include <TWebApplication>
 #include <TAppSettings>
+#include <TSqlQuery>
 #include <ctime>
 #include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
@@ -140,6 +141,18 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
 
                     tSystemDebug("SQL database opened successfully (env:%s)", qPrintable(dbEnvironment));
                     tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
+
+                    // Executes setup-queries
+                    auto &settings = Tf::app()->sqlDatabaseSettings(databaseId);
+                    settings.beginGroup(dbEnvironment);
+                    QString statements = settings.value("PostOpenStatements").toString().trimmed();
+                    if (!statements.isEmpty()) {
+                        TSqlQuery query(db);
+                        for (auto &st : statements.split(";", QString::SkipEmptyParts)) {
+                            query.exec(st);
+                        }
+                    }
+                    settings.endGroup();
                     return db;
                 }
             }
