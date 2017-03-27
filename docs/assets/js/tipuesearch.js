@@ -1,11 +1,9 @@
-
 /*
 Tipue Search 6.0
 Copyright (c) 2017 Tipue
 Tipue Search is released under the MIT License
 http://www.tipue.com/search
 */
-
 
 (function($) {
 
@@ -19,6 +17,7 @@ http://www.tipue.com/search
           'contextStart'           : 90,
           'debug'                  : false,
           'descriptiveWords'       : 25,
+          'githubPageBaseUrl'      : '',
           'highlightTerms'         : true,
           'liveContent'            : '*',
           'liveDescription'        : '*',
@@ -374,7 +373,7 @@ http://www.tipue.com/search
                               {
                                    if (l_o >= start && l_o < set.show + start)
                                    {                                   
-                                        out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                        out += '<div class="tipue_search_content_title"><a href="' + set.githubPageBaseUrl + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
  
                                         if (set.debug)
                                         {                                             
@@ -388,7 +387,7 @@ http://www.tipue.com/search
                                              {
                                                   s_u = s_u.slice(7);
                                              }                                             
-                                             out += '<div class="tipue_search_content_url"><a href="' + found[i].url + '"' + tipue_search_w + '>' + s_u + '</a></div>';
+                                             out += '<div class="tipue_search_content_url"><a href="' + set.githubPageBaseUrl + found[i].url + '"' + tipue_search_w + '>' + s_u + '</a></div>';
                                         }
                                         
                                         if (found[i].desc)
