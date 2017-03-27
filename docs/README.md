@@ -2,6 +2,13 @@
 
 This is the readMe. Here you can find useful links and information how to use Github Pages.
 
+### Installs the jekyll.
+```
+ sudo apt install jekyll ruby ruby-dev ruby-all-dev make gcc gem
+ sudo gem update
+ bundle install
+```
+
 ### Show Website in Browser
 
 ```
