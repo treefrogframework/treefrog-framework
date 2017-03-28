@@ -8,13 +8,26 @@ body {
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     color: #666;
 }
-.inner {
-    min-width: 980px;
-    margin: 0px auto;
-    padding: 15px;
+#header_wrap {
+    background: -webkit-linear-gradient(top, #373737, #31791d) !important;
 }
-#header_wrap .inner {
-    padding: 20px 10px 30px 10px !important;
+.header-inner {
+    width: 980px;
+    margin: 0px auto;
+    padding: 10px 0px 10px 0 !important; 
+}
+.main-inner {
+    width: 980px;
+    margin: 0px auto;
+    padding: 20px 10px 30px 10px !important; 
+}
+.header-background-wrapper {
+    border-radius: 10px;
+    background-image: url(../images/header.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 130px;
+    border: 2px solid #aaaaaa;
 }
 #header {
     width: 100%;
@@ -35,9 +48,12 @@ img#logo {
     margin: 0px;
     box-shadow: none;
 }
+#project_title {
+    margin-left: 10px;
+}
 #project_tagline {
     float: left;
-    margin: 0px;
+    margin: 0px 0px 0px 10px;
 }
 #main-content {
     width: 720px;
@@ -112,7 +128,8 @@ a.activeMenuItem {
 }
 #footer_wrap {
     color: white;
-    margin-bottom: 25px;
+    background: -webkit-linear-gradient(bottom, #373737, #31791d);
+    padding-bottom: 25px;
 }
 #site-info {
     float: left;
