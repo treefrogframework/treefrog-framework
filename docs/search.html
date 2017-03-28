@@ -14,14 +14,6 @@ layout: default
 </script>
 <script src="{{ site.baseurl }}/assets/js/tipuesearch_set.js"></script>
 <script src="{{ site.baseurl }}/assets/js/tipuesearch.min.js"></script>
-<script>
-$(document).ready(function() {
-     $('#tipue_search_input').tipuesearch({
-          'githubPageBaseUrl': '{{ site.baseurl }}',
-          'showTitleCount': false
-     });
-});
-</script>
 
 <form action="{{ site.baseurl }}/search.html" id="search-form" method="get">
     <input type="text" name="q" id="tipue_search_input" class="search-box" placeholder="Search...">

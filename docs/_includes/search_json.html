@@ -22,12 +22,9 @@
 
 <script>
 $(document).ready(function() {
-    $('#tipue_search_input').tipuesearch({
-        'mode': 'static',
-        'show': 10,
-        'newWindow': false,
-        'minimumLength': 2,
-        'wholeWords': false
-    });
+     $('#tipue_search_input').tipuesearch({
+          'githubPageBaseUrl': '{{ site.baseurl }}',
+          'showTitleCount': false
+     });
 });
 </script>
