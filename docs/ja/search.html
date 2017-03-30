@@ -6,11 +6,7 @@ layout: default
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/tipuesearch.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
-    {% if page.url contains '/ja/' %}
-        var language = "ja"
-    {% else %}
-        var language = "en"
-    {% endif %}
+	var language = "ja"	// language setup for tipuesearch_set.js
 </script>
 <script src="{{ site.baseurl }}/assets/js/tipuesearch_set.js"></script>
 <script src="{{ site.baseurl }}/assets/js/tipuesearch.min.js"></script>
