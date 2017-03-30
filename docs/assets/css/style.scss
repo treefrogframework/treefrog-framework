@@ -9,25 +9,27 @@ body {
     color: #666;
 }
 #header_wrap {
-    background: -webkit-linear-gradient(top, #373737, #31791d) !important;
+    background: #f2f2f2;
 }
 .header-inner {
     width: 980px;
     margin: 0px auto;
-    padding: 10px 0px 10px 0 !important; 
 }
 .main-inner {
     width: 980px;
     margin: 0px auto;
     padding: 20px 10px 30px 10px !important; 
 }
+.footer-inner {
+    width: 980px;
+    padding: 20px 10px;
+    margin: 0 auto;
+}
 .header-background-wrapper {
-    border-radius: 10px;
     background-image: url(../images/header.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    min-height: 130px;
-    border: 2px solid #aaaaaa;
+    min-height: 137px;
 }
 #header {
     width: 100%;
@@ -62,6 +64,7 @@ img#logo {
 }
 #main_content_wrap {
     overflow: auto;
+    border: none;
 }
 #header-background {
     position: absolute;
