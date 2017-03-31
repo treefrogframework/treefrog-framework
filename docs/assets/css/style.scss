@@ -20,9 +20,27 @@ body {
     margin: 0px auto;
     padding: 20px 10px 30px 10px !important; 
 }
+h1 {
+    font-size: 24px;
+}
+h2 {
+    font-size: 20px;
+}
+h3 {
+    font-size: 17px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 16px;
+}
+h6 {
+    font-size: 16px;
+}
 .footer-inner {
     width: 980px;
-    padding: 20px 10px;
+    padding: 30px 10px;
     margin: 0 auto;
 }
 .header-background-wrapper {
@@ -51,11 +69,16 @@ img#logo {
     box-shadow: none;
 }
 #project_title {
-    margin-left: 10px;
+    margin-left: 20px;
+    padding-top: 10px;
 }
 #project_tagline {
     float: left;
-    margin: 0px 0px 0px 10px;
+    margin-top: 0px;
+    margin-left: 20px;
+    color: #C2DEFF;
+    font-style: italic;
+    font-size: 19px;
 }
 #main-content {
     width: 720px;
@@ -156,19 +179,18 @@ a.activeMenuItem {
     text-align: center;
 }
 .search-box-navi {
-    height: 20px;
-    float: left;
-    width: 64%;
+    height: 16px;
+    width: 60%;
 }
 .search-form-navi {
     background: none;
     padding: 0px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 .search-button-navi {
     height: 26px;
-    float: right;
-    width: 30%;
+    width: 26%;
+    font-size: 12px;
 }
 .result-search-button {
     width: 15%;
