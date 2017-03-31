@@ -6,10 +6,11 @@
 
 body {
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-    color: #666;
+    color: #555;
+    background: #f8f8f8;
 }
 #header_wrap {
-    background: #f2f2f2;
+    background: #f8f8f8;
 }
 .header-inner {
     width: 980px;
@@ -24,7 +25,7 @@ h1 {
     font-size: 24px;
 }
 h2 {
-    font-size: 20px;
+    font-size: 18px;
 }
 h3 {
     font-size: 17px;
@@ -33,14 +34,14 @@ h4 {
     font-size: 16px;
 }
 h5 {
-    font-size: 16px;
+    font-size: 15px;
 }
 h6 {
-    font-size: 16px;
+    font-size: 15px;
 }
 .footer-inner {
     width: 980px;
-    padding: 30px 10px;
+    padding: 6px 20px 20px;
     margin: 0 auto;
 }
 .header-background-wrapper {
@@ -88,6 +89,8 @@ img#logo {
 #main_content_wrap {
     overflow: auto;
     border: none;
+    padding-bottom: 30px;
+    background: #f8f8f8;
 }
 #header-background {
     position: absolute;
@@ -116,7 +119,7 @@ img#logo {
     float: right;
     padding: 0 10px 10px 10px;
     font-size: 0.8em;
-    background: #fbfbfb;
+    background: #FDFEEF;
     border-radius: 10px;
     border: 1px solid #CCC;
     margin-left: 10px;
@@ -155,7 +158,7 @@ a.activeMenuItem {
 #footer_wrap {
     color: white;
     background: -webkit-linear-gradient(bottom, #373737, #31791d);
-    padding-bottom: 25px;
+    padding-bottom: 20px;
 }
 #site-info {
     float: left;
@@ -170,7 +173,9 @@ a.activeMenuItem {
     color: white;
 }
 .highlight {
-    width: calc( 100% - 20px );
+    width: calc( 100% - 10px );
+    background-color: #FFF;
+    padding: 10px;
 }
 .table-div table {
     margin: 0px auto;
