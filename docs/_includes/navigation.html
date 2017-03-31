@@ -2,11 +2,11 @@
 
 {% if page.url contains '/ja/' %}
 <form action="{{ site.baseurl }}/ja/search.html" class="search-form-navi" method="get">
-    <input type="text" class="search-box-navi" placeholder="検索..." name="q">
+    <input type="text" class="search-box-navi" placeholder="" name="q">
     <input type="submit" class="search-button-navi" value="検索">
     {% else %}
 <form action="{{ site.baseurl }}/search.html" class="search-form-navi" method="get">
-    <input type="text" class="search-box-navi" placeholder="Search..." name="q">
+    <input type="text" class="search-box-navi" placeholder="" name="q">
     <input type="submit" class="search-button-navi" value="Search">
     {% endif %}
 </form>
