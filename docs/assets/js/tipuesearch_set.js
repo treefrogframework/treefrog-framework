@@ -61,12 +61,12 @@ if (language == "ja") {
     var tipuesearch_string_4 = '1 件';
     var tipuesearch_string_5 = '件';
     var tipuesearch_string_6 = '戻る';
-    var tipuesearch_string_7 = '一段と';
-    var tipuesearch_string_8 = '結果が見つかりません。';
+    var tipuesearch_string_7 = '＞＞';
+    var tipuesearch_string_8 = '該当するページが見つかりません。';
     var tipuesearch_string_9 = '一般的な言葉はほとんど無視されます。';
     var tipuesearch_string_10 = '入力が短すぎます。';
     var tipuesearch_string_11 = '1文字以上である必要があります。';
-    var tipuesearch_string_12 = '';
+    var tipuesearch_string_12 = 'である必要があります';
     var tipuesearch_string_13 = '文字以上である必要があります。';
     var tipuesearch_string_14 = '秒';
     var tipuesearch_string_15 = '関連する検索: ';
