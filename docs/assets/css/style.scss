@@ -136,24 +136,22 @@ a.activeMenuItem {
     text-align: center;
 }
 .search-box-navi {
-    height: 20px;
-    float: left;
-    width: 64%;
+    height: 16px;
+    width: 60%;
 }
 .search-form-navi {
     background: none;
     padding: 0px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 .search-button-navi {
     height: 26px;
-    float: right;
-    width: 30%;
+    width: 26%;
+    font-size: 12px;
 }
 .result-search-button {
     width: 15%;
     height: 26px;
-    margin-left: 28px;
 }
 .search-box {
     height: 20px;

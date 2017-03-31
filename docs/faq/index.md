@@ -1,7 +1,0 @@
----
-title: FAQ
----
-
-## FAQ
-
-FAQ..
