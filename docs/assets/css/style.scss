@@ -8,10 +8,31 @@ body {
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     color: #666;
 }
+h1 {
+    font-size: 24px;
+}
+h2 {
+    font-size: 20px;
+}
+h3 {
+    font-size: 17px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 16px;
+}
+h6 {
+    font-size: 16px;
+}
 .inner {
     min-width: 980px;
     margin: 0px auto;
     padding: 15px;
+}
+#project_title {
+    font-size: 30px;
 }
 #header_wrap .inner {
     padding: 20px 10px 30px 10px !important;
@@ -38,6 +59,9 @@ img#logo {
 #project_tagline {
     float: left;
     margin: 0px;
+    color: #C2DEFF;
+    font-style: italic;
+    font-size: 19px;
 }
 #main-content {
     width: 720px;
@@ -136,19 +160,18 @@ a.activeMenuItem {
     text-align: center;
 }
 .search-box-navi {
-    height: 20px;
-    float: left;
-    width: 64%;
+    height: 16px;
+    width: 60%;
 }
 .search-form-navi {
     background: none;
     padding: 0px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 .search-button-navi {
     height: 26px;
-    float: right;
-    width: 30%;
+    width: 26%;
+    font-size: 12px;
 }
 .result-search-button {
     width: 15%;

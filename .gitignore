@@ -9,6 +9,7 @@ log/
 src/trash/
 tools/tspawn/defaults/
 src/test/sharedmemorylogstream/log/
+Gemfile.lock
 
 # Linux
 *.o
