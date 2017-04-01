@@ -32,7 +32,7 @@ render();
 
 テンプレート： views/partial/pagination.erb
 
-```html
+```
 <%#include <TPaginator> %>
 <% tfetch(TPaginator, pager); %>
 <div class="pagination">
@@ -49,7 +49,7 @@ render();
   
 部分テンプレートを描画する方法は、次のとおりでした。
 
-```html
+```
 <%== renderPartial("pagination") %>
 ```
  

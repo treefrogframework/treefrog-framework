@@ -7,7 +7,7 @@ page_id: "080.010"
 
 In this chapter we will create a simple form for a file upload. The code example below is using ERB. By specifying *true* for the third argument of the formTag() method, a form will be generated as multipart/form-data.
 
-```html
+```
 <%== formTag(urla("upload"), Tf::Post, true) %>
   <p>
     File: <input name="picture" type="file">
@@ -46,7 +46,7 @@ TreeFrog Framework also supports uploading a variable number of files. You can u
 
 First we create a form as follows:
 
-```html
+```
 <%== formTag(urla("upload"), Tf::Post, true) %>
   <p>
     File1: <input name="picture[]" type="file">

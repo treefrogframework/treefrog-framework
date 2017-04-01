@@ -61,7 +61,7 @@ Now let's start with the implementation, starting with the client side. **Note:*
 **HTML (excerpt)**<br>
 Save it as public/index.html.
 
-```html
+```
 <!-- Message display area -->
 <div id="log" style="max-width: 900px; max-height: 480px; overflow: auto;"></div>
 <!-- Input area -->

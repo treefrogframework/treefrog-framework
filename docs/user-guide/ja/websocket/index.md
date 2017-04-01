@@ -28,11 +28,11 @@ WebSocket オブジェクトに対し、次のイベントハンドラを登録�
 <div class="table-div" markdown="1">
 
 | 名称      	| 説明           	|
-|-----------|----------------|
-| onopen    	| 開始ハンドラ   	|
-| onclose   	| 切断ハンドラ   	|
-| onmessage 	| 受信ハンドラ   	|
-| onerror   	| エラーハンドラ 	|
+|-----------|-------------------|
+| onopen    | 開始ハンドラ   	|
+| onclose   | 切断ハンドラ   	|
+| onmessage | 受信ハンドラ   	|
+| onerror   | エラーハンドラ 	|
 
 </div><br>
 
@@ -40,10 +40,10 @@ WebSocket オブジェクトのメソッドは次のとおり。
 
 <div class="table-div" markdown="1">
 
-| メソッド    	| 説明           	|
-|-------------|----------------|
-| send(msg)   	| メッセージ送信 	|
-| close(code) 	| 切断           	|
+| メソッド    	| 説明          	 |
+|---------------|----------------|
+| send(msg)   	| メッセージ送信  |
+| close(code) 	| 切断           |
 
 </div><br>
 
@@ -59,7 +59,7 @@ WebSocket オブジェクトのメソッドは次のとおり。
 **HTML （抜粋）**<br>
 public/index.html として保存します。
 
-```html
+```
 <!-- メッセージ表示領域 -->
 <div id="log" style="max-width: 900px; max-height: 480px; overflow: auto;"></div>
 <!-- 入力領域 -->

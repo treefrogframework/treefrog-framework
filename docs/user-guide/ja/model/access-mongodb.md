@@ -21,24 +21,6 @@ MongoDB と RDB の階層構造について比較してみます。
 
 </div><br>	 
 
-## インストール
-
-次のコマンドでフレームワークを再インストールします。
-
-```
- $ tar xvzf treefrog-x.x.x.tar.gz
- $ cd treefrog-x.x.x
- $ ./configure --enable-mongo
- $ cd src
- $ make
- $ sudo make install
- $ cd ../tools
- $ make
- $ sudo make install
-```
-
-- x.x.x はバージョン
-
 ## 接続情報の設定
 
 MongoDB はインストールが済んでおり、サーバが起動しているとします。<br>
@@ -57,7 +39,7 @@ MongoDB サーバと通信するための接続情報を設定しましょう。
  HostName=192.168.x.x      # IPアドレスまたはホスト名
  Port=
  UserName=
- Password=                    
+ Password=
  ConnectOptions=           # 今回は不使用
 ``` 
 

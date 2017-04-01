@@ -45,7 +45,7 @@ setRule("title", Tf::Required, false);
 
 <div class="table-div" markdown="1">
 
-| enum         | Meaning                 |
+| 値           | 説明                 |
 |--------------|-------------------------|
 | Required     | 入力必須                 |
 | MaxLength    | 文字列の最大長            |

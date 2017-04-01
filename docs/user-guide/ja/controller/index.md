@@ -90,7 +90,7 @@ const THttpRequest & TActionController::httpRequest () const;
 まず、コントローラの中でポストデータを取得する方法です。<br>
 ビューに、次のようなinput タグを作ったとします。
 
-```html
+```
 <input type="text" name="title" />
 ``` 
  
@@ -105,7 +105,7 @@ QString val = httpRequest().formItemValue("title")
 送られてくるデータが多数ある場合、一つずつ取得するのは少々面倒です。値を一気に取得するメソッドもあります。<br>
 例えば、タグに次のように名前を付けます。
 
-```html
+```
 <input type="text" name="blog[title]" />
 <input type="text" name="blog[body]" />
 ```
@@ -180,7 +180,7 @@ typedef QHash<Foo, Bar> BarHash;
 Q_DECLARE_METATYPE(BarHash)
 ``` 
 
-**エクスポートオブジェクト** <br>
+#### エクスポートオブジェクト
 ビューに渡されたオブジェクト（texport されたオブジェクト）を「エクスポートオブジェクト」と呼ぶことにします。
  
 ## レスポンスの作成を依頼する

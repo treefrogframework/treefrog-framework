@@ -7,7 +7,7 @@ page_id: "080.010"
 
 ファイルのアップロードのためのフォームをつくりましょう。下はERBで書く例です。formTag() メソッドの第３引数に true を指定することで、 multipart/form-data のフォームが生成されます。
 
-```html
+```
 <%== formTag(urla("upload"), Tf::Post, true) %>
   <p>
     File: <input name="picture" type="file">
@@ -46,7 +46,7 @@ TreeFrog Framework はこのようなケースにも対応しています。以�
 
 次のようにフォームを作成します。
 
-```html
+```
 <%== formTag(urla("upload"), Tf::Post, true) %>
   <p>
     File1: <input name="picture[]" type="file">

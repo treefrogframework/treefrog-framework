@@ -33,7 +33,7 @@ In the following example, we used the passed *TPaginator* object to draw the pag
 
 Using template: views/partial/pagination.erb
 
-```html
+```
 <%#include <TPaginator> %>
 <% tfetch(TPaginator, pager); %>
 

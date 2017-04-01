@@ -78,7 +78,7 @@ void AccountController::form()
  
 ログインフォームのビュー views/account/form.erb を次のように作ります。ログインフォームのポスト先は login アクションとします。
 
-```html
+```
 <!DOCTYPE HTML>
 <html>
 <head>

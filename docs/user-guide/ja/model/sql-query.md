@@ -84,7 +84,7 @@ TSqlQueryMapper オブジェクトを使ってクエリを実行します。そ�
 
 ```c++
 TSqlQueryORMapper<BlogObject> mapper;
-mapper.prepare("SELECT blog.* FROM blog WHERE ...”);
+mapper.prepare("SELECT blog.* FROM blog WHERE ...");
 mapper.exec();  // クエリ実行
 
 TSqlQueryORMapperIterator<BlogObject> it(mapper);

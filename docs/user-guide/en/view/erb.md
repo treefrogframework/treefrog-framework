@@ -269,7 +269,7 @@ Only one layout is used when drawing the view, but a different layout can be use
    
 Let’s take the example of a very simple layout (as per the following). It is saved with the extension .erb. The location of the layout is the view/layouts directory.
 
-```html
+```
 <!DOCTYPE HTML>
 <html>
 <head>

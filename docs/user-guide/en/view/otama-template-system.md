@@ -37,7 +37,7 @@ If you have not already done so, it is recommended that you read the ERB chapter
 We are going to the output of the statement "Hello world".<br>
 On the template page, written in HTML , use a custom attribute called data-tf to put a "mark" for the element. The attribute name must start with "@". For example, we write as follows:
 
-```html
+```
 <p data-tf="@hello"></p>
 ```
 
@@ -52,7 +52,7 @@ Next, we’ll look at the presentation logic file in C++ code. We need to associ
 
 We then build, run the app, and then the view will output the following results:
 
-```html
+```
 <p>Hello world</p>
 ```
 
@@ -86,7 +86,7 @@ This time, we’ll use a different Otama operator. Let's assume that presentatio
 
 The Result of View is as follows:
 
-```html
+```
  Hello world
 ```
 
@@ -146,7 +146,7 @@ Just like ERB.
 Next, I will explain how to use loop processing for repeatedly displaying the numbers in a list.<br>
 In the template, we want a text description.
 
-```html
+```
 <tr data-tf="@foreach">
   <td data-tf="@id"></td>
   <td data-tf="@title"></td>
@@ -154,14 +154,15 @@ In the template, we want a text description.
 </tr>
 ```
 
-That is exported as an object in the list of Blog class named blogList. We want to write a loop using a foreach statement (as included in Qt). The while statement will also be similar.
+That is exported as an object in the list of Blog class named blogList. We want to write a loop using a for statement. The while statement will also be similar.
 
 ```
  @foreach :
  tfetch(QList<Blog>, blogList);    /* Fetch processing */
- foreach (Blog b, blogList) {
+ for (auto &b, blogList) {
      %%
  }
+
  @id ~= b.id()
 
  @title ~= b.title()
@@ -171,7 +172,7 @@ That is exported as an object in the list of Blog class named blogList. We want 
 　
 The %% sign is important, because it refers to the entire element (*@foreach*) of the mark. In other words, in this case, it refers to the element from \<tr\> up to \</ tr\>. Therefore, by repeating the \<tr\> tags, the foreach statement which sets the value of each content element with *@id*, *@title*, and *@body*, results in the view output being something like the following:
 
-```html
+```
 <tr>
   <td>100</td>
   <td>Hello</td>
@@ -191,7 +192,7 @@ The data-tf attribute will disappear, the same as before.
 Let's use the Otama operator to add an attribute to the element.<br>
 Suppose you have marked such as the following in the template:
 
-```html
+```
 <span data-tf="@spancolor">Message</span>
 ```
  
@@ -203,7 +204,7 @@ Now, suppose you wrote the following in the presentation logic:
 
 As a result, the following is output:
 
-```html
+```
  <span class="c1" title="foo">Message</span>
 ```
 
@@ -233,7 +234,7 @@ You may use more if you wish.
 The \<a\> tag can be rewritten using the colon ':' operator. It acts as described above.<br>
 To recap a little; the \<a\> tag is to be marked on the template as follows:
 
-```html
+```
 <a class="c1" data-tf="@foo">Back</a>
 ```
 
@@ -245,7 +246,7 @@ As an example; we can write the presentation logic of the view (of the Blog) as 
 
 As a result, the view outputs the following:
 
-```html
+```
 <a href="/Blog/index/">Back</a>
 ```
 
@@ -270,7 +271,7 @@ So, let’s rewrite the presentation logic as follows:
 
 As a result, the view outputs the following:
 
-```html
+```
 <a class="c1" href="/Blog/index/">Back</a>
 ```
 
@@ -293,7 +294,7 @@ We use the \<form\> tag in the template. After putting the mark to the \<form\> 
 
 Template:
 
-```html
+```
   :
 <form method="post" data-tf="@form">
   :
@@ -313,7 +314,7 @@ For those who have enabled CSRF measures and want to have more details about sec
 
 If you mark *@dummy* elements in the template, it is not output as a view. Suppose you wrote the following to the template.
 
-```html
+```
 <div>
   <p>Hello</p>
   <p data-tf="@dummy">message ..</p>
@@ -321,7 +322,7 @@ If you mark *@dummy* elements in the template, it is not output as a view. Suppo
 ``` 
 Then, the view will make the following results.
 
-```html
+```
 <div>
   <p>Hello</p>
 </div>
@@ -333,7 +334,7 @@ You can keep a content and erase a start-tag and an end-tag only.<br>
 For example, when using a layout, the \<html> tag is outputted by the layout file side, so you don't need to output it anymore on the template side, but leave the \<html> tag on the template side if you want your layout have based on HTML. <br>
 Suppose you wrote the following to the template.
 
-```html
+```
 <html data-tf="@dummytag">
   <p>Hello</p>
 </html>
@@ -341,7 +342,7 @@ Suppose you wrote the following to the template.
 
 Then, the view will make the following results.
 
-```html
+```
 <p>Hello</p>
 ```
 

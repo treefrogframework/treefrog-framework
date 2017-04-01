@@ -80,7 +80,7 @@ In this example, we simply display the form, but if you have already logged in, 
 
 Now, we'll create a view of the login form using the view file *views/account/form.erb*. Here, login action is the place for the login form to be posted.
 
-```html
+```
 <!DOCTYPE HTML>
 <html>
 <head>

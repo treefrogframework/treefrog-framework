@@ -89,7 +89,7 @@ An HTTP request sent from the client (browser) consists of a method, a header, a
 The following example shows how to obtain post data in the controller.
 Let’s consider that you’ve made an \<input> tag in the view. 
 
-```html
+```
  <input type="text" name="title" />
 ```
 
@@ -104,7 +104,7 @@ By the way, if you want to convert a value into *int*, you can use the Qt includ
 If you have a large number of data items sent, getting them one by one can be a bit cumbersome. For this, there is also a method available to obtain the values all at once.<br>
 For example, you could write your tags as follows.
 
-```html
+```
  <input type="text" name="blog[title]" />
  <input type="text" name="blog[body]" />
 ```
@@ -179,7 +179,7 @@ A Q_DECLARE_METATYPE macro argument is the name of a class. But if you include a
  Q_DECLARE_METATYPE(BarHash)
 ``` 
 
-### Export object
+#### Export object
 
 We refer to an object passed to the view (object that set in the texport() method) as an "export object".
  

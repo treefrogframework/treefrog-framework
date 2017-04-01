@@ -184,22 +184,8 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
 ```
  
 ※ tspawn の オプションによって、コントローラだけ、あるいはモデルだけ生成するように変えられます。
-
-たとえば、テーブルを変更した後、次のコマンドを実行してsqlobjectクラスのみを更新します。
-
-```
- $ tspawn sqlobject blog
- DriverType:   QSQLITE
- DatabaseName: db/dbfile
- HostName:     
- Database opened successfully
-   overwrite models/sqlobjects/blogobject.h? [ynaqdh] y
-   updated   models/sqlobjects/blogobject.h
-   unchanged models/models.pro
-```
  
-tspawnコマンドのヘルプ:
-
+参考：tspawnコマンドのヘルプ
 ```
  $ tspawn --help
  usage: tspawn <subcommand> [args]
@@ -330,7 +316,7 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 他のフレームワークと同様に TreeFrog においても、リクエストされた URL から該当するコントローラのメソッド（アクション）を呼び出す仕組み（ルーティングシステム）が備わっています。<br>
 開発したソースコードはビルドしなおせば、他のプラットフォームでも動作します。
 
-このサンプルWebアプリケーションを公開してます。[ここにアクセスして](http://treefrogframework.org:8800/Blog/index/){:target="_blank"}、遊んでみてください。デスクトップアプリケーション並の速さです。
+このサンプルWebアプリケーションを公開してます。[ここにアクセスして](http://blogapp.treefrogframework.org/Blog){:target="_blank"}、遊んでみてください。デスクトップアプリケーション並の速さです。
  
 ## コントローラの中身　
 
@@ -490,7 +476,7 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
 ジェネレータで自動生成されるデフォルトのビューは ERBのファイルです。index.erb の中身を見てみましょう。<br>
 ご覧のように <% .. %> で囲まれた部分にC++コードを書きます。index アクションから render メソッドが呼び出されると、この index.erb の内容がレスポンスとして返されます。
 
-```html
+```
 <!DOCTYPE HTML>
 <%#include "blog.h" %>
 <html>
@@ -531,7 +517,7 @@ Otama はテンプレートとプレゼンテーションロジックを完全�
 
 次の例は、テンプレートシステムに Otama を指定した時にジェネレータによって生成されるファイルです。ファイルを見ると分かりますが、HTML(バージョン5)に準拠しているので、今時のブラウザで開けばデザインは全く崩れません。
 
-```html
+```
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -619,7 +605,7 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
  
 Otama システムは、これらテンプレートファイルとプレゼンテーションファイルを元に C++ コードを生成します。内部的には、tmake がそれを処理しています。その後、コードはコンパイルされ、ビューとして１つの共有ライブラリになります。なので、動作は非常に高速です。
 
-## HTML用語解説
+#### HTML用語解説
 
 要素（element）は、開始タグ (Start-tag)、コンテント (Content)、終了タグ (End-tag) の3つで構成されます。例として "\<p>Hello\</p>" という要素があったとすると、\<p> が開始タグ、Hello がコンテント、\</p> が終了タグになります。<br>
 一般にコンテントのことを「内容」と呼ぶことの方が多いようですが、個人的に少々紛らわしいと思うので、ここではコンテントと書いています。

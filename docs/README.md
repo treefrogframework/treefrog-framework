@@ -4,7 +4,7 @@ This is the readMe. Here you can find useful links and information how to use Gi
 
 ### Installs the jekyll.
 ```
- sudo apt install jekyll ruby ruby-dev ruby-all-dev make gcc gem
+ sudo apt install jekyll ruby ruby-dev ruby-all-dev make gcc gem ruby-bundler
  sudo gem update
  bundle install
 ```
