@@ -90,8 +90,14 @@ private slots:
 
 void TestStack::push_pop()
 {
+#ifdef Q_OS_LINUX
+    const int NUM = 128;
+#else
+    const int NUM = 32;
+#endif
+
     // Starts threads
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < NUM; i++) {
         startPopThread();
         startPopThread();
         startPushThread();
