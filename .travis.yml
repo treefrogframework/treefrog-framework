@@ -4,10 +4,6 @@ os:
   - linux
   - osx
 
-compiler:
-  - g++
-  - clang++
-
 matrix:
   include:
     - os: linux
@@ -21,6 +17,7 @@ matrix:
       sudo: required
       before_install:
         - brew install qt
+        - brew link --force qt
 
 env:
   global:
@@ -28,7 +25,7 @@ env:
 
 install:
   - qmake -v
-  - ./configure --prefix=$HOME/local --bindir=/usr/bin
+  - ./configure --prefix=/usr/local --bindir=/usr/local/bin
   - make -j4 -C src
   - make -C src install
   - make -j4 -C tools
