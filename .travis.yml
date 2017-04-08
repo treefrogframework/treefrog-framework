@@ -15,19 +15,20 @@ matrix:
         - sudo apt-get install -y gdb
     - os: osx
       sudo: required
-      before_install:
-        - brew install qt
-        - brew link --force qt
 
 env:
   global:
     - CI_WORK=`pwd`
 
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; sudo apt-get install -y qtbase5-dev libsqlite3-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools gdb; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; brew link --force qt; fi
+
 install:
   - qmake -v
-  - ./configure --prefix=/usr/local --bindir=/usr/local/bin
+  - ./configure --prefix=/usr/local
   - make -j4 -C src
-  - make -C src install
+  - sudo make -C src install
   - make -j4 -C tools
   - sudo make -C tools install
   - treefrog -v
