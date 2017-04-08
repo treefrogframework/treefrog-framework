@@ -37,8 +37,8 @@ Releases
 
 Documents
 ---------
- Get additional information on the site:
- http://www.treefrogframework.org/documents
+ Get additional information:
+ http://treefrogframework.github.io/treefrog-framework/
 
 API Reference
 -------------
