@@ -1,4 +1,11 @@
 # ChangeLog
+## 1.16.0
+ - Added a config for listening IP address.
+ - Added a config for executing SQL statements on post-open.
+ - Added a function for multi-fields 'order by', tfGetModelListByCriteria().
+ - Fix a bug of selecting aarge number of rows in sqlite
+ - Modified the generator to generate better code.
+ - Added pages for GigHub Pages, English and Japanese.
 
 ## 1.15.0
  - Added setValidationError(2) function to TFormValidator class

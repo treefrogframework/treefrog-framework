@@ -3,7 +3,7 @@
 
 #define TF_VERSION_STR "1.16.0"
 #define TF_VERSION_NUMBER 0x011600
-#define TF_SRC_REVISION 1357
+#define TF_SRC_REVISION 1373
 
 #include <QtGlobal>
 #include <QMetaType>
