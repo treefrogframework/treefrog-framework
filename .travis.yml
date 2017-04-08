@@ -1,21 +1,30 @@
 language: cpp
-os:
-  - linux
-  - osx
-sudo: required
 
 matrix:
   include:
     - os: linux
       dist: trusty
+      sudo: required
     - os: osx
+      sudo: required
 
 env:
   global:
     - CI_WORK=`pwd`
 
+addons:
+  apt:
+    packages:
+      - qtbase5-dev
+      - qt5-default
+      - qt5-qmake
+      - qttools5-dev-tools
+      - qtdeclarative5-dev
+      - qtdeclarative5-dev-tools
+      - libsqlite3-dev
+      - gdb
+
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; sudo apt-get install -y qtbase5-dev libsqlite3-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools gdb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; brew link --force qt; fi
 
 install:
