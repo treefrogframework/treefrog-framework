@@ -81,7 +81,11 @@ private slots:
 
 private:
     enum {
+#ifdef Q_OS_LINUX
         THREADS_NUM = 256,
+#else
+        THREADS_NUM = 64,
+#endif
     };
 
     Thread *thread[THREADS_NUM];
