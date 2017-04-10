@@ -64,6 +64,7 @@ This TreeFrog Framework support composite primary keys.
 Changed files
 -----------------
 src:
+
 	tsqlobject.h
 	tsqlobject.cpp
 
@@ -75,6 +76,7 @@ src:
 	tsqlormapper.h
 
 tools:
+
 	tableschema.h
 	tableschema.cpp
 	
