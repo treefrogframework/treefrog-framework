@@ -39,6 +39,15 @@ TAppSettings *Tf::appSettings()
 }
 
 /*!
+  Returns the map associated with config file \a configName in 'conf'
+  directory.
+*/
+const QVariantMap &Tf::conf(const QString &configName)
+{
+    return Tf::app()->getConfig(configName);
+}
+
+/*!
   Causes the current thread to sleep for \a msecs milliseconds.
 */
 void Tf::msleep(unsigned long msecs)

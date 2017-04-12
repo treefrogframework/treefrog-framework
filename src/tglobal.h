@@ -152,6 +152,7 @@ namespace Tf
 {
     T_CORE_EXPORT TWebApplication *app();
     T_CORE_EXPORT TAppSettings *appSettings();
+    T_CORE_EXPORT const QVariantMap &conf(const QString &configName);
     T_CORE_EXPORT void msleep(unsigned long msecs);
 
     // Xorshift random number generator
