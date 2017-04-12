@@ -48,6 +48,7 @@ enum CommandOption {
     WindowsServiceMode,
     SendSignal,
     AutoReload,
+    Port,
 };
 
 
@@ -120,6 +121,7 @@ public:
         insert("-w", WindowsServiceMode);
         insert("-k", SendSignal);
         insert("-r", AutoReload);
+        insert("-p", Port);
     }
 };
 Q_GLOBAL_STATIC(OptionHash, options)
@@ -423,6 +425,7 @@ int managerMain(int argc, char *argv[])
     bool daemonMode = false;
     bool autoReloadMode = false;
     QString signalCmd;
+    quint16 listenPort = 0;
 
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
@@ -465,6 +468,14 @@ int managerMain(int argc, char *argv[])
             autoReloadMode = true;
             break;
 
+        case Port:
+            if (!i.hasNext()) {
+                fprintf(stderr, "Missing port number\n");
+                return 1;
+            }
+            listenPort = i.next().toInt();
+            break;
+
         default:
             // do nothing
             break;
@@ -503,18 +514,21 @@ int managerMain(int argc, char *argv[])
     }
 
     // Check a port number
-    quint16 listenPort = 0;
-    QString svrname = Tf::appSettings()->value(Tf::ListenPort).toString();
-    if (svrname.startsWith("unix:", Qt::CaseInsensitive)) {
-        svrname.remove(0, 5);
-    } else {
-        int port = svrname.toInt();
-        if (port <= 0 || port > USHRT_MAX) {
-            tSystemError("Invalid port number: %d", port);
-            return 1;
+    QString svrname;
+    if (listenPort <= 0) {
+        svrname = Tf::appSettings()->value(Tf::ListenPort).toString();
+
+        if (svrname.startsWith("unix:", Qt::CaseInsensitive)) {
+            svrname.remove(0, 5);
+        } else {
+            int port = svrname.toInt();
+            if (port <= 0 || port > USHRT_MAX) {
+                tSystemError("Invalid port number: %d", port);
+                return 1;
+            }
+            listenPort = port;
+            svrname.clear();
         }
-        listenPort = port;
-        svrname.clear();
     }
 
     // Listen address
@@ -536,11 +550,11 @@ int managerMain(int argc, char *argv[])
     QFile pidfile;
 
     for (;;) {
-        ServerManager *manager = 0;
+        ServerManager *manager = nullptr;
         switch ( app.multiProcessingModule() ) {
         case TWebApplication::Thread:  // FALL THROUGH
         case TWebApplication::Hybrid: {
-            int num = qMax(app.maxNumberOfAppServers(), 1);
+            int num = app.maxNumberOfAppServers();
             if (autoReloadMode && num > 1) {
                 num = 1;
                 tSystemWarn("Fix the max number of application servers to one in auto-reload mode.");

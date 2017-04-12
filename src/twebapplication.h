@@ -60,7 +60,7 @@ public:
     QString validationErrorMessage(int rule) const;
     QByteArray internetMediaType(const QString &ext, bool appendCharset = false);
     MultiProcessingModule multiProcessingModule() const;
-    int maxNumberOfAppServers(int defaultValue = 1) const;
+    int maxNumberOfAppServers() const;
     int maxNumberOfThreadsPerAppServer() const;
     QString routesConfigFilePath() const;
     QString systemLogFilePath() const;

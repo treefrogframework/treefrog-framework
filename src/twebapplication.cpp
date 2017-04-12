@@ -16,6 +16,7 @@
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include <cstdlib>
+#include <thread>  // for hardware_concurrency()
 #include "tdatabasecontextmainthread.h"
 
 #define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
@@ -346,31 +347,11 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
   Returns the maximum number of application servers, which is set in the
   application.ini.
 */
-int TWebApplication::maxNumberOfAppServers(int defaultValue) const
+int TWebApplication::maxNumberOfAppServers() const
 {
     QString mpmstr = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
     int num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
-
-    if (num > 0) {
-        return num;
-    }
-
-    // For compatibility
-    int mpm = multiProcessingModule();
-    switch (mpm) {
-    case Thread:
-        num = 1;
-        break;
-
-    case Hybrid:
-        num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxServers").toInt();
-        break;
-
-    default:
-        break;
-    }
-
-    return (num > 0) ? num : defaultValue;
+    return (num > 0) ? num : qMax(std::thread::hardware_concurrency(), (uint)1);
 }
 
 /*!
