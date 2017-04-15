@@ -130,11 +130,12 @@ Q_GLOBAL_STATIC(OptionHash, options)
 static void usage()
 {
     char text[] =
-        "Usage: %1 [-d] [-e environment] [-r] [application-directory]\n" \
+        "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n" \
         "Usage: %1 [-k stop|abort|restart|status] [application-directory]\n" \
         "%2"                                                            \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
+        "  -p port         : run server on specified port\n"            \
         "  -e environment  : specify an environment of the database settings\n" \
         "  -k              : send signal to a manager process\n"        \
         "%4"                                                            \
