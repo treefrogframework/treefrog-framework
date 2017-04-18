@@ -61,7 +61,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
     }
 
     for (auto &a : args) {
-        path.append('/').append(THttpUtility::toUrlEncoding(a));
+        path.append('/').append(a);
     }
 
     // appends query items

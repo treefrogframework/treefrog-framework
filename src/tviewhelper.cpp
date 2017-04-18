@@ -40,7 +40,7 @@ QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod
 QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method, const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     QString string("<a href=\"");
-    string.append(url.toString()).append("\"");
+    string.append(url.toString(QUrl::FullyEncoded)).append("\"");
 
     if (method == Tf::Post) {
         string.append(" onclick=\"");

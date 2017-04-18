@@ -49,7 +49,7 @@ The tar file is copied to the production environment. Once copied, it can then b
 ```
  $ mkdir app_name
  $ cd app_name
- $ tar xvfz (ディレクトリ名)/app.tar.gz
+ $ tar xvfz (directory-name)/app.tar.gz
 ```
 
 To start, use the following command by specifying the application root directory (must be an absolute path):
