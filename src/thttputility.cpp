@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QTextCodec>
 #include <QLocale>
+#include <QUrl>
 #include "tsystemglobal.h"
 #include "thttputility.h"
 #if defined(Q_OS_WIN)
@@ -174,7 +175,11 @@ QString THttpUtility::htmlEscape(const QByteArray &input, Tf::EscapeFlag flag)
 */
 QString THttpUtility::htmlEscape(const QVariant &input, Tf::EscapeFlag flag)
 {
-    return htmlEscape(input.toString(), flag);
+    if (input.userType() == QMetaType::QUrl) {
+        return htmlEscape(input.toUrl().toString(QUrl::FullyEncoded), flag);
+    } else {
+        return htmlEscape(input.toString(), flag);
+    }
 }
 
 /*!

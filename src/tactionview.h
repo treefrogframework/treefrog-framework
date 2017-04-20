@@ -153,12 +153,6 @@ inline QString TActionView::echo(double d, char format, int precision)
     return QString();
 }
 
-inline QString TActionView::echo(const QVariant &var)
-{
-    responsebody += var.toString();
-    return QString();
-}
-
 inline QString TActionView::eh(const QString &str)
 {
     return echo(THttpUtility::htmlEscape(str));
@@ -202,11 +196,6 @@ inline QString TActionView::eh(qulonglong n, int base)
 inline QString TActionView::eh(double d, char format, int precision)
 {
     return echo(THttpUtility::htmlEscape(QString::number(d, format, precision)));
-}
-
-inline QString TActionView::eh(const QVariant &var)
-{
-    return echo(THttpUtility::htmlEscape(var.toString()));
 }
 
 inline void TActionView::setController(TActionController *controller)

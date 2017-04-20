@@ -86,12 +86,40 @@ QString TActionView::echo(const THtmlAttribute &attr)
 }
 
 /*!
+  \fn QString TActionView::echo(const QVariant &var)
+  Outputs the variant variable \a var to a view template.
+*/
+QString TActionView::echo(const QVariant &var)
+{
+    if (var.userType() == QMetaType::QUrl) {
+        responsebody += var.toUrl().toString(QUrl::FullyEncoded);
+    } else {
+        responsebody += var.toString();
+    }
+    return QString();
+}
+
+/*!
   Outputs a escaped string of the HTML attribute \a attr to
   a view template.
 */
 QString TActionView::eh(const THtmlAttribute &attr)
 {
     return echo(THttpUtility::htmlEscape(attr.toString().trimmed()));
+}
+
+/*!
+  \fn QString TActionView::eh(const QVariant &var)
+  Outputs a escaped string of the variant variable \a var
+  to a view template.
+*/
+QString TActionView::eh(const QVariant &var)
+{
+    if (var.userType() == QMetaType::QUrl) {
+        return echo(var.toUrl().toString(QUrl::FullyEncoded));
+    } else {
+        return echo(THttpUtility::htmlEscape(var.toString()));
+    }
 }
 
 /*!
@@ -129,11 +157,6 @@ const THttpRequest &TActionView::httpRequest() const
 */
 
 /*!
-  \fn QString TActionView::echo(const QVariant &var)
-  Outputs the variant variable \a var to a view template.
-*/
-
-/*!
   \fn QString TActionView::eh(const QString &str)
   Outputs a escaped string of the \a str to a view template.
 */
@@ -156,12 +179,6 @@ const THttpRequest &TActionView::httpRequest() const
 /*!
   \fn QString TActionView::eh(double d, char format, int precision)
   Outputs the number \a d to a view template.
-*/
-
-/*!
-  \fn QString TActionView::eh(const QVariant &var)
-  Outputs a escaped string of the variant variable \a var
-  to a view template.
 */
 
 /*!
