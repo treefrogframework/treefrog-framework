@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) \
     Thread thread; \
     thread.start(); \
     thread.wait(); \
-    QCoreApplication::processEvents(); \
+    _exit(thread.returnCode); \
     return thread.returnCode; \
 }
 

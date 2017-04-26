@@ -35,7 +35,7 @@ public:
 
 protected:
     void run() override;
-    void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
 
 signals:
     bool incomingRequest(TEpollSocket *socket);
