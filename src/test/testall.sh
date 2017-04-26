@@ -22,7 +22,8 @@ if [ "$?" != 0 ]; then
   exit 1
 fi
 
-for e in `ls -d *`; do
+for dir in `ls -d */`; do
+  e=`basename $dir`
   if [ -x "$e/$e" ]; then
     echo "-------------------------------------------------"
     echo "Testing $e/$e ..."
