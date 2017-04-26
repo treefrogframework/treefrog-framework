@@ -24,7 +24,6 @@
     "public:\n"                                                               \
     "    Q_INVOKABLE\n"                                                       \
     "    %2Controller() { }\n"                                                \
-    "    %2Controller(const %2Controller &other);\n"                          \
     "\n"                                                                      \
     "public slots:\n"                                                         \
     "    void index();\n"                                                     \
@@ -43,10 +42,6 @@
     "#include \"%1controller.h\"\n"                            \
     "#include \"%1.h\"\n"                                      \
     "\n\n"                                                     \
-    "%2Controller::%2Controller(const %2Controller &)\n"       \
-    "    : ApplicationController()\n"                          \
-    "{ }\n"                                                    \
-    "\n"                                                       \
     "void %2Controller::index()\n"                             \
     "{\n"                                                      \
     "    auto %3List = %2::getAll();\n"                        \

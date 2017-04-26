@@ -5,10 +5,6 @@ ApplicationController::ApplicationController()
     : TActionController()
 { }
 
-ApplicationController::ApplicationController(const ApplicationController &)
-    : TActionController()
-{ }
-
 ApplicationController::~ApplicationController()
 { }
 

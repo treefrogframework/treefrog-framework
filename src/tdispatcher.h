@@ -22,8 +22,7 @@ public:
 
 private:
     QString metaType;
-    int typeId;
-    T *ptr;
+    T *ptr {nullptr};
 
     T_DISABLE_COPY(TDispatcher)
     T_DISABLE_MOVE(TDispatcher)
@@ -32,16 +31,14 @@ private:
 
 template <class T>
 inline TDispatcher<T>::TDispatcher(const QString &metaTypeName)
-    : metaType(metaTypeName),
-      typeId(0),
-      ptr(nullptr)
+    : metaType(metaTypeName)
 { }
 
 template <class T>
 inline TDispatcher<T>::~TDispatcher()
 {
     if (ptr) {
-        QMetaType::destroy(typeId, ptr);
+        delete ptr;
     }
 }
 
@@ -165,31 +162,12 @@ inline T *TDispatcher<T>::object()
 {
     T_TRACEFUNC("");
 
-    /*  TODO:  Change to use QMetaObject::newInstance()
     if (!ptr) {
         const QMetaObject *meta = Tf::metaObjects()->value(metaType);
         if (Q_LIKELY(meta)) {
             QObject *obj = meta->newInstance();
             if (Q_LIKELY(obj)) {
                 ptr = static_cast<T *>(obj);
-            }
-        }
-    }
-    */
-
-    if (!ptr) {
-        if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
-            typeId = QMetaType::type(metaType.toLatin1().constData());
-            if (Q_LIKELY(typeId > 0)) {
-#if QT_VERSION >= 0x050000
-                ptr = static_cast<T *>(QMetaType::create(typeId));
-#else
-                ptr = static_cast<T *>(QMetaType::construct(typeId));
-#endif
-                Q_CHECK_PTR(ptr);
-                tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(metaType), typeId);
-            } else {
-                tSystemDebug("No such object class : %s", qPrintable(metaType));
             }
         }
     }

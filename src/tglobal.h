@@ -20,7 +20,6 @@
     public:                                                     \
         Static##TYPE##Instance()                                \
         {                                                       \
-            qRegisterMetaType<TYPE>(); /*TODO: delete this line */ \
             Tf::metaObjects()->insert(#TYPE, &TYPE::staticMetaObject); \
         }                                                       \
     };                                                          \
