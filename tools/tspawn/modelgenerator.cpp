@@ -42,10 +42,10 @@
     "%3"                                                 \
     "    %2 &operator=(const %2 &other);\n"              \
     "\n"                                                 \
-    "    bool create() { return TAbstractModel::create(); }\n" \
-    "    bool update() { return TAbstractModel::update(); }\n" \
-    "    bool save()   { return TAbstractModel::save(); }\n"   \
-    "    bool remove() { return TAbstractModel::remove(); }\n" \
+    "    bool create() override { return TAbstractModel::create(); }\n" \
+    "    bool update() override { return TAbstractModel::update(); }\n" \
+    "    bool save()   override { return TAbstractModel::save(); }\n"   \
+    "    bool remove() override { return TAbstractModel::remove(); }\n" \
     "\n"                                                 \
     "    static %2 create(%4);\n"                        \
     "    static %2 create(const QVariantMap &values);\n" \
@@ -58,8 +58,8 @@
     "private:\n"                                         \
     "    QSharedDataPointer<%2Object> d;\n"              \
     "\n"                                                 \
-    "    TModelObject *modelData();\n"                   \
-    "    const TModelObject *modelData() const;\n"       \
+    "    TModelObject *modelData() override;\n"          \
+    "    const TModelObject *modelData() const override;\n" \
     "};\n"                                               \
     "\n"                                                 \
     "Q_DECLARE_METATYPE(%2)\n"                           \

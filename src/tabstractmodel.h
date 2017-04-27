@@ -26,8 +26,8 @@ public:
     static QString fieldNameToVariableName(const QString &name);
 
 protected:
-    virtual TModelObject *modelData() { return 0; }
-    virtual const TModelObject *modelData() const { return 0; }
+    virtual TModelObject *modelData() { return nullptr; }
+    virtual const TModelObject *modelData() const { return nullptr; }
 };
 
 #endif // TABSTRACTMODEL_H
