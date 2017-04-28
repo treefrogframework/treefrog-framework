@@ -62,6 +62,8 @@
     "    const TModelObject *modelData() const override;\n" \
     "};\n"                                               \
     "\n"                                                 \
+    "QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
+    "QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
     "Q_DECLARE_METATYPE(%2)\n"                           \
     "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
     "\n"                                                 \
@@ -137,7 +139,25 @@
     "const TModelObject *%2::modelData() const\n"             \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
-    "}\n"
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QDataStream &operator<<(QDataStream &ds, const %2 &model)\n" \
+    "{\n"                                                     \
+    "    auto varmap = model.toVariantMap();\n"               \
+    "    ds << varmap;\n"                                     \
+    "    return ds;\n"                                        \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QDataStream &operator>>(QDataStream &ds, %2 &model)\n"   \
+    "{\n"                                                     \
+    "    QVariantMap varmap;\n"                               \
+    "    ds >> varmap;\n"                                     \
+    "    model.setProperties(varmap);\n"                      \
+    "    return ds;\n"                                        \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "// Don't remove below this line\n"                       \
+    "T_REGISTER_STREAM_OPERATORS(%2)"
 
 #define USER_MODEL_HEADER_FILE_TEMPLATE                  \
     "#ifndef %1_H\n"                                     \
@@ -188,6 +208,8 @@
     "    const TModelObject *modelData() const;\n"       \
     "};\n"                                               \
     "\n"                                                 \
+    "QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
+    "QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
     "Q_DECLARE_METATYPE(%2)\n"                           \
     "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
     "\n"                                                 \
@@ -278,7 +300,25 @@
     "const TModelObject *%2::modelData() const\n"             \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
-    "}\n"
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QDataStream &operator<<(QDataStream &ds, const %2 &model)\n" \
+    "{\n"                                                     \
+    "    auto varmap = model.toVariantMap();\n"               \
+    "    ds << varmap;\n"                                     \
+    "    return ds;\n"                                        \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QDataStream &operator>>(QDataStream &ds, %2 &model)\n"   \
+    "{\n"                                                     \
+    "    QVariantMap varmap;\n"                               \
+    "    ds >> varmap;\n"                                     \
+    "    model.setProperties(varmap);\n"                      \
+    "    return ds;\n"                                        \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "// Don't remove below this line\n"                       \
+    "T_REGISTER_STREAM_OPERATORS(%2)"
 
 #define MODEL_IMPL_GETALLJSON                                 \
     "QJsonArray %1::getAllJson()\n"                           \

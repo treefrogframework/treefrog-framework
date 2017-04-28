@@ -25,6 +25,17 @@
     };                                                          \
     static Static##TYPE##Instance _static##TYPE##Instance;
 
+#define T_REGISTER_STREAM_OPERATORS(TYPE)                       \
+    class Static##TYPE##Instance                                \
+    {                                                           \
+    public:                                                     \
+        Static##TYPE##Instance()                                \
+        {                                                       \
+            qRegisterMetaTypeStreamOperators<TYPE>(#TYPE);      \
+        }                                                       \
+    };                                                          \
+    static Static##TYPE##Instance _static##TYPE##Instance;
+
 #define T_DEFINE_PROPERTY(TYPE,PROPERTY)                           \
     inline void set##PROPERTY(const TYPE &v__) { PROPERTY = v__; } \
     inline TYPE get##PROPERTY() const { return PROPERTY; }
