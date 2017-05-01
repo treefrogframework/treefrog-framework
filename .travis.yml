@@ -22,6 +22,8 @@ addons:
       - qttools5-dev-tools
       - qtdeclarative5-dev
       - qtdeclarative5-dev-tools
+      - libqt5sql5
+      - libqt5sql5-sqlite
       - libsqlite3-dev
       - gdb
 
