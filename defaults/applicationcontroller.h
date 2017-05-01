@@ -11,6 +11,7 @@ class T_CONTROLLER_EXPORT ApplicationController : public TActionController
 public:
     Q_INVOKABLE
     ApplicationController();
+    ApplicationController(const ApplicationController &other);
     virtual ~ApplicationController();
 
 public slots:
