@@ -9,6 +9,7 @@ DBFILE=$APPROOT/db/dbfile
 RANDOMTXT="1234567890123456asdfghjklLKJHGFDSA_____"
 TREEFROG=treefrog
 TSPAWN=tspawn
+PORT=8885
 
 # Function
 row_count()
@@ -21,7 +22,7 @@ cleanup()
 {
   # Cleanup
   cd $APPROOT
-  $TREEFROG -k abort
+  $TREEFROG -k abort >/dev/null 2>&1
 
   cd $BASEDIR
   rm -rf $WORKDIR
@@ -51,48 +52,50 @@ make -j4
 make || exit
 
 # Start Check
-$TREEFROG -e dev -d || exit
+$TREEFROG -e dev -p $PORT -d || exit
 sleep 1
 $TREEFROG -k stop || exit
 sleep 1
-$TREEFROG -e dev -d || exit
+$TREEFROG -e dev -p $PORT -d || exit
 sleep 1
 
 # GET method
 mkdir -p $WORKDIR
 cd $WORKDIR
-wget http://localhost:8800/blog/index || exit
-wget http://localhost:8800/blog/create || exit
+wget http://localhost:$PORT/blog/index || exit
+wget http://localhost:$PORT/blog/create || exit
 
 # POST method
 # create1
-curl --data-urlencode 'blog[title]=hello' --data-urlencode 'blog[body]=Hello world.' http://localhost:8800/blog/create > create1 || exit
+curl --data-urlencode 'blog[title]=hello' --data-urlencode 'blog[body]=Hello world.' http://localhost:$PORT/blog/create > create1 || exit
 [ `row_count` = "1" ] || exit
 
-wget http://localhost:8800/blog/show/1 || exit
+wget http://localhost:$PORT/blog/show/1 || exit
 
 # create2
-curl --data-urlencode 'blog[title]=Hi!' --data-urlencode 'blog[body]=Hi, all' http://localhost:8800/blog/create > create2 || exit
+curl --data-urlencode 'blog[title]=Hi!' --data-urlencode 'blog[body]=Hi, all' http://localhost:$PORT/blog/create > create2 || exit
 [ `row_count` = "2" ] || exit
 
-wget http://localhost:8800/blog/show/2 || exit
+wget http://localhost:$PORT/blog/show/2 || exit
 
 # update
-curl --data-urlencode 'blog[id]=1' --data-urlencode 'blog[title]=Hi!' --data-urlencode "blog[body]=$RANDOMTXT" http://localhost:8800/blog/save/1 > save1 || exit
+curl --data-urlencode 'blog[id]=1' --data-urlencode 'blog[title]=Hi!' --data-urlencode "blog[body]=$RANDOMTXT" http://localhost:$PORT/blog/save/1 > save1 || exit
 [ `row_count` = "2" ] || exit
 
 # update check
-wget http://localhost:8800/blog/show/1 -O show1 || exit
+wget http://localhost:$PORT/blog/show/1 -O show1 || exit
 if ! grep "$RANDOMTXT" show1 >/dev/null 2>&1; then exit; fi
 
 # delete
-curl  --data-urlencode 'dummy'  http://localhost:8800/blog/remove/1  > remove1 || exit
+curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/1  > remove1 || exit
 [ `row_count` = "1" ] || exit
 
-curl  --data-urlencode 'dummy'  http://localhost:8800/blog/remove/2  > remove2 || exit
+curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/2  > remove2 || exit
 [ `row_count` = "0" ] || exit
 
-
+# Stop app
+cd $APPROOT
+$TREEFROG -k stop || exit
 echo
 echo "Test completed."
 echo "Congratulations!"

@@ -46,5 +46,8 @@ before_script:
 script:
   - cd $CI_WORK
   - ./src/test/testall.sh
-  - cd tools/tmake/test
+  - cd $CI_WORK/tools/tmake/test
   - ./tmaketest
+  - cd $CI_WORK/tools/test
+  - ./releasetest/releasetest
+
