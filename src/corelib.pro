@@ -275,6 +275,10 @@ HEADERS += tdatabasecontextthread.h
 SOURCES += tdatabasecontextthread.cpp
 HEADERS += tdatabasecontextmainthread.h
 SOURCES += tdatabasecontextmainthread.cpp
+HEADERS += tbackgroundprocess.h
+SOURCES += tbackgroundprocess.cpp
+HEADERS += tbackgroundprocesshandler.h
+SOURCES += tbackgroundprocesshandler.cpp
 HEADERS += tdebug.h
 SOURCES += tdebug.cpp
 
