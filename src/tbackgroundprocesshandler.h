@@ -5,6 +5,8 @@
 #include <TGlobal>
 #include <TDatabaseContext>
 
+class TBackgroundProcess;
+
 
 class T_CORE_EXPORT TBackgroundProcessHandler : public QObject, public TDatabaseContext
 {
@@ -15,6 +17,7 @@ public:
 
     bool autoDelete() const;
     void setAutoDelete(bool autoDelete);
+    TBackgroundProcess *backgroundProcess() const { return _process; }
 
 protected slots:
     virtual void handleFinished(int exitCode, QProcess::ExitStatus exitStatus) = 0;
@@ -30,7 +33,10 @@ protected slots:
     void deleteAutoDeleteHandler();
 
 private:
+    TBackgroundProcess *_process {nullptr};
     bool _autoDelete {true};
+
+    friend class TBackgroundProcess;
 };
 
 #endif // BACKGROUNDPROCESSHANDLER_H

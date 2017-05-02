@@ -19,6 +19,9 @@ public:
 
 protected slots:
     void callStart(const QString &program, const QStringList &arguments, int mode);
+
+protected:
+    void connectToSlots(TBackgroundProcessHandler *handler);
 };
 
 #endif // BACKGROUNDPROCESS_H
