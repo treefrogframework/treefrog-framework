@@ -37,6 +37,8 @@ private:
     bool _autoDelete {true};
 
     friend class TBackgroundProcess;
+     T_DISABLE_COPY(TBackgroundProcessHandler)
+     T_DISABLE_MOVE(TBackgroundProcessHandler)
 };
 
 #endif // BACKGROUNDPROCESSHANDLER_H
