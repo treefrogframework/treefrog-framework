@@ -5,12 +5,12 @@
 @import "{{ site.theme }}";
 
 body {
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-    color: #222;
-    background: #f8f8f8;
+    font-family: helvetica, arial, "hiragino kaku gothic pron", meiryo, "ms pgothic", sans-serif;
+    color: #444;
+    background: #FDFEEF;
 }
 #header_wrap {
-    background: #f8f8f8;
+    background: #FDFEEF;
 }
 .header-inner {
     width: 980px;
@@ -23,15 +23,19 @@ body {
 }
 h1 {
     font-size: 24px;
+    color: #555;
 }
 h2 {
     font-size: 18px;
+    color: #555;
 }
 h3 {
     font-size: 17px;
+    color: #555;
 }
 h4 {
     font-size: 16px;
+    color: #555;
 }
 h5 {
     font-size: 15px;
@@ -39,6 +43,7 @@ h5 {
 }
 h6 {
     font-size: 15px;
+    color: #555;
 }
 .footer-inner {
     width: 980px;
@@ -91,7 +96,7 @@ img#logo {
     overflow: auto;
     border: none;
     padding-bottom: 30px;
-    background: #f8f8f8;
+    background: #FDFEEF;
 }
 #header-background {
     position: absolute;
@@ -120,7 +125,7 @@ img#logo {
     float: right;
     padding: 0 10px 10px 10px;
     font-size: 0.8em;
-    background: #FAFCDE;
+    background: #F5DEB3;
     border-radius: 10px;
     border: 1px solid #CCC;
     margin-left: 10px;
@@ -180,6 +185,12 @@ a.activeMenuItem {
 }
 .table-div table {
     margin: 0px auto;
+    background-color: #FFF;
+}
+.table-div th {
+    background-color: #555;
+    border: 1px solid #000;
+    text-align: center;
 }
 .center.aligned {
     text-align: center;
