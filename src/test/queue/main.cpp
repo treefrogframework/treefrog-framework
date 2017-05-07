@@ -23,6 +23,7 @@ protected:
         for (;;) {
             quint64 num;
             if (intQueue.dequeue(num)) {
+                //std::cout << "pop:" << num << std::endl;
                 QVERIFY(num == lastNum);
                 lastNum++;
             }
@@ -63,8 +64,8 @@ private slots:
 void TestQueue::queue()
 {
     // Starts threads
-    startPushThread();
     startPopThread();
+    startPushThread();
 
     QElapsedTimer timer;
     timer.start();

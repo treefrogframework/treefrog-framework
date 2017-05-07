@@ -18,6 +18,6 @@ void THazardObject::deleteLater()
 {
     if (!deleted.exchange(true)) {
         THazardPtrManager::instance().push(this);
-     }
+    }
     THazardPtrManager::instance().gc();
 }

@@ -25,11 +25,11 @@ if ERRORLEVEL 1 goto :build_error
 for /d %%d in (*) do (
   set TESTNAME=%%d
   echo ---------------------------------------------------------------------
-  if exist %%d\release\%%d.exe (
-    echo Testing %%d\release\%%d.exe ...
+  if exist %%d\debug\%%d.exe (
+    echo Testing %%d\debug\%%d.exe ...
 
     cd %%d
-    release\%%d.exe
+    debug\%%d.exe
     if ERRORLEVEL 1 goto :error
     cd ..
   ) else if exist %%d\%%d.bat (

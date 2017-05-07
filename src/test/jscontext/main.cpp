@@ -234,9 +234,9 @@ void JSContext::load_data()
     QTest::addColumn<QString>("variable");
     QTest::addColumn<QString>("result");
 
-    QTest::newRow("01") << "./js/main.js" << "sub('world')" << "Hello world";
-    QTest::newRow("02") << "./js/main.js" << "sub2('world')" << "Hello world";
-    QTest::newRow("03") << "./js/main.js" << "sub2('世界', 'ja')" << tr("こんにちは 世界");
+    QTest::newRow("01") << "./js/main.js" << u8"sub('world')" << "Hello world";
+    QTest::newRow("02") << "./js/main.js" << u8"sub2('world')" << "Hello world";
+    QTest::newRow("03") << "./js/main.js" << u8"sub2('世界', 'ja')" << tr(u8"こんにちは 世界");
 }
 
 
