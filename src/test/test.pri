@@ -16,6 +16,9 @@ include(../../tfbase.pri)
 INCLUDEPATH += ../../../include  ../..
 
 win32 {
+  win32-msvc* {
+    QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
+  }
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -L../../debug -ltreefrogd$${TF_VER_MAJ}

@@ -1,11 +1,6 @@
-﻿#include <TfTest/TfTest>
+#include <TfTest/TfTest>
 #include <THttpUtility>
 #include "tmailmessage.h"
-
-#ifdef Q_OS_WIN
-# pragma execution_character_set("utf-8")
-#endif
-// Store with BOM!
 
 
 class TestMailMessage : public QObject
@@ -32,10 +27,10 @@ void TestMailMessage::mimeEncode_data()
     QTest::addColumn<QByteArray>("result");
 
     // `echo 無事？ | nkf -jM`
-    QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?=");
-    QTest::newRow("2") << QString::fromUtf8("田") << QByteArray("=?ISO-2022-JP?B?GyRCRUQbKEI=?=");
-    QTest::newRow("3") << QString::fromUtf8("あ1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?GyRCJCIbKEIxGyRCIzEbKEJhQRskQiNBJCQbKEIyGyRCIzI0QTt6GyhCMw==?=");
-    QTest::newRow("4") << QString::fromUtf8("1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?MRskQiMxGyhCYUEbJEIjQSQkGyhCMhskQiMyNEE7ehsoQjM=?=");
+    QTest::newRow("1") << QString::fromUtf8(u8"無事？") << QByteArray(u8"=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?=");
+    QTest::newRow("2") << QString::fromUtf8(u8"田") << QByteArray(u8"=?ISO-2022-JP?B?GyRCRUQbKEI=?=");
+    QTest::newRow("3") << QString::fromUtf8(u8"あ1１aAＡい2２漢字3") << QByteArray(u8"=?ISO-2022-JP?B?GyRCJCIbKEIxGyRCIzEbKEJhQRskQiNBJCQbKEIyGyRCIzI0QTt6GyhCMw==?=");
+    QTest::newRow("4") << QString::fromUtf8(u8"1１aAＡい2２漢字3") << QByteArray(u8"=?ISO-2022-JP?B?MRskQiMxGyhCYUEbJEIjQSQkGyhCMhskQiMyNEE7ehsoQjM=?=");
 }
 
 
@@ -55,16 +50,16 @@ void TestMailMessage::mimeDecode_data()
     QTest::addColumn<QString>("data");
     QTest::addColumn<QByteArray>("encoding");
 
-    QTest::newRow("1") << QString::fromUtf8("aaaa") << QByteArray("UTF-8");
-    QTest::newRow("2") << QString::fromUtf8("あいうえお") << QByteArray("UTF-8");
-    QTest::newRow("3") << QString::fromUtf8("あいうえお") << QByteArray("EUC-JP");
-    QTest::newRow("4") << QString::fromUtf8("０0１1２2３3４4５5６6７7８8９9") << QByteArray("UTF-8");
-    QTest::newRow("5") << QString::fromUtf8("あaaa") << QByteArray("iso-2022-jp");
-    QTest::newRow("6") << QString::fromUtf8("無事？") << QByteArray("UTF-8");
-    QTest::newRow("7") << QString::fromUtf8("無事？") << QByteArray("shift-jis");
-    QTest::newRow("8") << QString::fromUtf8("無a事？z") << QByteArray("iso-2022-jp");
-    QTest::newRow("9") << QString::fromUtf8("無a事？z") << QByteArray("UTF-8");
-    QTest::newRow("10") << QString::fromUtf8("無a事？z") << QByteArray("shift-jis");}
+    QTest::newRow("1") << QString::fromUtf8(u8"aaaa") << QByteArray(u8"UTF-8");
+    QTest::newRow("2") << QString::fromUtf8(u8"あいうえお") << QByteArray(u8"UTF-8");
+    QTest::newRow("3") << QString::fromUtf8(u8"あいうえお") << QByteArray(u8"EUC-JP");
+    QTest::newRow("4") << QString::fromUtf8(u8"０0１1２2３3４4５5６6７7８8９9") << QByteArray(u8"UTF-8");
+    QTest::newRow("5") << QString::fromUtf8(u8"あaaa") << QByteArray(u8"iso-2022-jp");
+    QTest::newRow("6") << QString::fromUtf8(u8"無事？") << QByteArray(u8"UTF-8");
+    QTest::newRow("7") << QString::fromUtf8(u8"無事？") << QByteArray(u8"shift-jis");
+    QTest::newRow("8") << QString::fromUtf8(u8"無a事？z") << QByteArray(u8"iso-2022-jp");
+    QTest::newRow("9") << QString::fromUtf8(u8"無a事？z") << QByteArray(u8"UTF-8");
+    QTest::newRow("10") << QString::fromUtf8(u8"無a事？z") << QByteArray(u8"shift-jis");}
 
 
 void TestMailMessage::mimeDecode()
@@ -82,8 +77,8 @@ void TestMailMessage::subject_data()
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("encoding");
 
-    QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("UTF-8");
-    QTest::newRow("2") << QString::fromUtf8("こんにちは") << QByteArray("ISO-2022-JP");
+    QTest::newRow("1") << QString::fromUtf8(u8"無事？") << QByteArray(u8"UTF-8");
+    QTest::newRow("2") << QString::fromUtf8(u8"こんにちは") << QByteArray(u8"ISO-2022-JP");
 }
 
 
@@ -109,21 +104,21 @@ void TestMailMessage::addAddress_data()
     QTest::addColumn<QString>("name");
     QTest::addColumn<QByteArray>("result");
 
-    QTest::newRow("1") << QByteArray("iso-2022-jp")
-                       << QByteArray("aol1@aol.com")
-                       << QByteArray("aol2@aol.com")
-                       << QByteArray("aol3@aol.com")
-                       << QByteArray("aol4@aol.com")
-                       << QString::fromUtf8("無事？")
-                       << QByteArray("=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?= <aol1@aol.com>");
+    QTest::newRow("1") << QByteArray(u8"iso-2022-jp")
+                       << QByteArray(u8"aol1@aol.com")
+                       << QByteArray(u8"aol2@aol.com")
+                       << QByteArray(u8"aol3@aol.com")
+                       << QByteArray(u8"aol4@aol.com")
+                       << QString::fromUtf8(u8"無事？")
+                       << QByteArray(u8"=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?= <aol1@aol.com>");
 
-    QTest::newRow("2") << QByteArray("UTF-8")
-                       << QByteArray("aol1@aol.com")
-                       << QByteArray("aol2@aol.com")
-                       << QByteArray("aol3@aol.com")
-                       << QByteArray("aol4@aol.com")
-                       << QString::fromUtf8("aoyama kazz")
-                       << QByteArray("aoyama kazz <aol1@aol.com>");
+    QTest::newRow("2") << QByteArray(u8"UTF-8")
+                       << QByteArray(u8"aol1@aol.com")
+                       << QByteArray(u8"aol2@aol.com")
+                       << QByteArray(u8"aol3@aol.com")
+                       << QByteArray(u8"aol4@aol.com")
+                       << QString::fromUtf8(u8"aoyama kazz")
+                       << QByteArray(u8"aoyama kazz <aol1@aol.com>");
 }
 
 void TestMailMessage::addAddress()
@@ -186,7 +181,7 @@ void TestMailMessage::dateTime()
 void TestMailMessage::parse()
 {
     QString msg = QString::fromUtf8(
-        "From: hoge <test@example.com>\n"               \
+      u8"From: hoge <test@example.com>\n"               \
         "To: <test1@example.jp>\n"                      \
         "Cc: aoyama <test3@example.jp>\n"               \
         "Bcc: <test3@example.jp>, <test4@example.jp>\n" \

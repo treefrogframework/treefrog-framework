@@ -29,6 +29,9 @@ windows {
   LIBS += -lws2_32 -lpsapi
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+  win32-msvc* {
+    QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
+  }
 
   isEmpty(header.path) {
     header.path = C:/TreeFrog/$${VERSION}/include
