@@ -43,8 +43,9 @@ public:
 template <class T>
 inline TQueue<T>::TQueue()
 {
-    queHead.store(new Node(T()));  // dummy node
-    queTail.store(new Node(T()));  // dummy node
+    auto dummy = new Node(T()); // dummy node
+    queHead.store(dummy);
+    queTail.store(dummy);
 }
 
 
@@ -88,19 +89,19 @@ inline bool TQueue<T>::dequeue(T &val)
         }
 
         if (head == tail) {
-            if (!next) {
+            if (next) {
+                queTail.compareExchange(tail, next);  // update queTail
+            } else {
                 // no item
                 break;
-            } else {
-                queTail.compareExchange(tail, next);  // update queTail
             }
         } else {
             if (Q_UNLIKELY(!next)) {
                 continue;
             }
 
-            val = next->value;
             if (queHead.compareExchange(head, next)) {
+                val = next->value;
                 head->deleteLater();  // gc
                 counter--;
                 break;

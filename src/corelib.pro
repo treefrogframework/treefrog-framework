@@ -6,6 +6,8 @@ QT      += sql network xml
 DEFINES += TF_MAKEDLL
 INCLUDEPATH += ../include
 DEPENDPATH  += ../include
+MOC_DIR = .obj/
+OBJECTS_DIR = .obj/
 windows:CONFIG(debug, debug|release) {
   TARGET = $$join(TARGET,,,d)
 }
