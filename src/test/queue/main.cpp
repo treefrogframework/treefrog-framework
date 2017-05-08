@@ -18,17 +18,22 @@ class PopThread : public QThread
 public:
     PopThread() { }
 protected:
-    void run() {
-        quint64 lastNum = 0;
-        for (;;) {
-            quint64 num;
-            if (intQueue.dequeue(num)) {
-                //std::cout << "pop:" << num << std::endl;
-                QVERIFY(num == lastNum);
-                lastNum++;
+    void run() override {
+        try {
+            quint64 lastNum = 0;
+            for (;;) {
+                quint64 num;
+                if (intQueue.dequeue(num)) {
+                    //std::cout << "pop:" << intQueue.count() << std::endl;
+#ifdef Q_CC_MSVC
+                    Tf::msleep(1);
+#endif
+                    QVERIFY(num == lastNum);
+                    lastNum++;
+                }
             }
-            QThread::yieldCurrentThread();
-        }
+        } catch (...) {}
+        std::cout << "PopThread ...done. queue cnt:" << intQueue.count() << std::endl;
     }
 };
 
@@ -38,14 +43,18 @@ class PushThread : public QThread
 public:
     PushThread() { }
 protected:
-    void run() {
-        for (;;) {
-            if (intQueue.count() < 1000) {
-                intQueue.enqueue(generator.fetch_add(1));
-                //printf("%lld\n", generator.load());
+    void run() override {
+        try {
+            for (;;) {
+                if (intQueue.count() < 1000) {
+                    intQueue.enqueue(generator.fetch_add(1));
+                    //std::cout << "queue cnt:" << intQueue.count() << std::endl;
+                } else {
+                    Tf::msleep(1);
+                }
             }
-            QThread::yieldCurrentThread();
-        }
+        } catch (...) {}
+        std::cout << "PushThread ...done. queue cnt:" << intQueue.count() << std::endl;
     }
 };
 
