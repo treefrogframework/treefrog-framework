@@ -25,7 +25,7 @@ protected:
                 quint64 num;
                 if (intQueue.dequeue(num)) {
                     //std::cout << "pop:" << intQueue.count() << std::endl;
-#ifdef Q_CC_MSVC
+#ifdef Q_OS_WIN
                     Tf::msleep(1);
 #endif
                     QVERIFY(num == lastNum);
