@@ -265,7 +265,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
                     if (!ifModifiedSince.isEmpty()) {
                         QDateTime dt = THttpUtility::fromHttpDateTimeString(ifModifiedSince);
-                        sendfile = (!dt.isValid() || dt != fi.lastModified());
+                        if (dt.isValid()) {
+                            sendfile = (dt.toMSecsSinceEpoch() / 1000 != fi.lastModified().toMSecsSinceEpoch() / 1000);
+                        }
                     }
 
                     if (sendfile) {
