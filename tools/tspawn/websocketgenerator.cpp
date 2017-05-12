@@ -19,6 +19,7 @@
     "class T_CONTROLLER_EXPORT %2Endpoint : public ApplicationEndpoint\n" \
     "{\n"                                                               \
     "public:\n"                                                         \
+    "    Q_INVOKABLE\n"                                                 \
     "    %2Endpoint() { }\n"                                            \
     "    %2Endpoint(const %2Endpoint &other);\n"                        \
     "\n"                                                                \

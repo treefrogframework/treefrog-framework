@@ -8,6 +8,7 @@ class DirectController : public TActionController
 {
     Q_OBJECT
 public:
+    Q_INVOKABLE
     DirectController() : TActionController() { }
     DirectController(const DirectController &) : TActionController() { }
 
