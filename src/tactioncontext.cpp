@@ -258,7 +258,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 QFile reqPath(Tf::app()->publicPath() + path);
                 QFileInfo fi(reqPath);
 
-                if (fi.isFile() && fi.isReadable()) {
+                if (fi.isFile() && fi.isReadable() && (fi.canonicalPath() + '/').contains(Tf::app()->publicPath())) {
                     // Check "If-Modified-Since" header for caching
                     bool sendfile = true;
                     QByteArray ifModifiedSince = hdr.rawHeader("If-Modified-Since");
