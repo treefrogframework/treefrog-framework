@@ -20,7 +20,8 @@
     public:                                                     \
         Static##TYPE##Instance()                                \
         {                                                       \
-            qRegisterMetaType<TYPE>();                          \
+            qRegisterMetaType<TYPE>(); /* TODO delete */        \
+            Tf::metaObjects()->insert(QByteArray(#TYPE).toLower(), &TYPE::staticMetaObject); \
         }                                                       \
     };                                                          \
     static Static##TYPE##Instance _static##TYPE##Instance;
@@ -178,6 +179,7 @@ namespace Tf
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
+    T_CORE_EXPORT QMap<QByteArray, const QMetaObject*> *metaObjects();
 }
 
 #endif // TGLOBAL_H

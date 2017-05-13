@@ -18,9 +18,10 @@
     "\n"                                                                \
     "class T_CONTROLLER_EXPORT %2Endpoint : public ApplicationEndpoint\n" \
     "{\n"                                                               \
+    "    Q_OBJECT\n"                                                    \
     "public:\n"                                                         \
     "    Q_INVOKABLE\n"                                                 \
-    "    %2Endpoint() { }\n"                                            \
+    "    %2Endpoint();\n"                                               \
     "    %2Endpoint(const %2Endpoint &other);\n"                        \
     "\n"                                                                \
     "protected:\n"                                                      \
@@ -36,6 +37,10 @@
 
 #define ENDPOINT_IMPL_TEMPLATE                                          \
     "#include \"%1endpoint.h\"\n"                                       \
+    "\n"                                                                \
+    "%2Endpoint::%2Endpoint()\n"                                        \
+    "    : ApplicationEndpoint()\n"                                     \
+    "{ }\n"                                                             \
     "\n"                                                                \
     "%2Endpoint::%2Endpoint(const %2Endpoint &)\n"                      \
     "    : ApplicationEndpoint()\n"                                     \
