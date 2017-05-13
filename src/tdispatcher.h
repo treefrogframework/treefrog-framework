@@ -22,6 +22,7 @@ public:
 
 private:
     QString metaType;
+    int typeId {0};
     T *ptr {nullptr};
 
     T_DISABLE_COPY(TDispatcher)
@@ -38,7 +39,7 @@ template <class T>
 inline TDispatcher<T>::~TDispatcher()
 {
     if (ptr) {
-        delete ptr;
+        QMetaType::destroy(typeId, ptr);
     }
 }
 
@@ -162,12 +163,32 @@ inline T *TDispatcher<T>::object()
 {
     T_TRACEFUNC("");
 
+    /* doesn't work in chat app..
     if (!ptr) {
         const QMetaObject *meta = Tf::metaObjects()->value(metaType);
         if (Q_LIKELY(meta)) {
             QObject *obj = meta->newInstance();
             if (Q_LIKELY(obj)) {
                 ptr = static_cast<T *>(obj);
+                return ptr;
+            }
+        }
+    }
+    */
+
+    if (!ptr) {
+        if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
+            typeId = QMetaType::type(metaType.toLatin1().constData());
+            if (Q_LIKELY(typeId > 0)) {
+#if QT_VERSION >= 0x050000
+                ptr = static_cast<T *>(QMetaType::create(typeId));
+#else
+                ptr = static_cast<T *>(QMetaType::construct(typeId));
+#endif
+                Q_CHECK_PTR(ptr);
+                tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(metaType), typeId);
+            } else {
+                tSystemDebug("No such object class : %s", qPrintable(metaType));
             }
         }
     }
