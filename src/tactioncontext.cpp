@@ -254,11 +254,12 @@ void TActionContext::execute(THttpRequest &request, int sid)
             accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
 
             if (Q_LIKELY(method == Tf::Get)) {  // GET Method
-                path.remove(0, 1);
-                QFile reqPath(Tf::app()->publicPath() + path);
+                QString canonicalPath = QUrl(".").resolved(QUrl(path)).toString().mid(1);
+                QFile reqPath(Tf::app()->publicPath() + canonicalPath);
                 QFileInfo fi(reqPath);
+                tSystemDebug("canonicalPath : %s", qPrintable(canonicalPath));
 
-                if (fi.isFile() && fi.isReadable() && fi.canonicalPath().contains(QFileInfo(Tf::app()->publicPath()).canonicalFilePath())) {
+                if (fi.isFile() && fi.isReadable()) {
                     // Check "If-Modified-Since" header for caching
                     bool sendfile = true;
                     QByteArray ifModifiedSince = hdr.rawHeader("If-Modified-Since");
