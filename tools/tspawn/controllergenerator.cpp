@@ -23,7 +23,7 @@
     "    Q_OBJECT\n"                                                          \
     "public:\n"                                                               \
     "    Q_INVOKABLE\n"                                                       \
-    "    %2Controller() { }\n"                                                \
+    "    %2Controller() : ApplicationController() {}\n"                       \
     "\n"                                                                      \
     "public slots:\n"                                                         \
     "    void index();\n"                                                     \
@@ -143,7 +143,7 @@
     "}\n"                                                               \
     "\n\n"                                                              \
     "// Don't remove below this line\n"                                 \
-    "T_REGISTER_CONTROLLER(%1controller)\n"
+    "T_REGISTER_CONTROLLER(%2Controller)\n"
 
 
 #define CONTROLLER_TINY_HEADER_FILE_TEMPLATE                                  \
@@ -178,7 +178,7 @@
     "\n"                                                       \
     "%3\n"                                                     \
     "// Don't remove below this line\n"                        \
-    "T_REGISTER_CONTROLLER(%1controller)\n"
+    "T_REGISTER_CONTROLLER(%2Controller)\n"
 
 
 class ConvMethod : public QHash<int, QString>

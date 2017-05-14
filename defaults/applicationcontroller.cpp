@@ -24,4 +24,4 @@ bool ApplicationController::preFilter()
 }
 
 // Don't remove below this line
-T_REGISTER_CONTROLLER(applicationcontroller)
+T_REGISTER_CONTROLLER(ApplicationController)

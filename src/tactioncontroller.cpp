@@ -328,7 +328,7 @@ bool TActionController::render(const QString &action, const QString &layout)
     T_TRACEFUNC("");
 
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
         return false;
     }
     rendered = true;
@@ -591,7 +591,7 @@ bool TActionController::renderErrorResponse(int statusCode)
  */
 QString TActionController::layoutClassName(const QString &layout)
 {
-    return QLatin1String("layouts_") + layout + "View";
+    return QLatin1String("layouts_") + layout + QLatin1String("View");
 }
 
 /*!
@@ -603,7 +603,7 @@ QString TActionController::layoutClassName(const QString &layout)
  */
 QString TActionController::partialViewClassName(const QString &partial)
 {
-    return QLatin1String("partial_") + partial + "View";
+    return QLatin1String("partial_") + partial + QLatin1String("View");
 }
 
 /*!

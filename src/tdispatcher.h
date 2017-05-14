@@ -39,7 +39,11 @@ template <class T>
 inline TDispatcher<T>::~TDispatcher()
 {
     if (ptr) {
-        QMetaType::destroy(typeId, ptr);
+        if (typeId > 0) {
+            QMetaType::destroy(typeId, ptr);
+        } else {
+            delete ptr;
+        }
     }
 }
 
@@ -163,18 +167,17 @@ inline T *TDispatcher<T>::object()
 {
     T_TRACEFUNC("");
 
-    /* TODO comment-in
-        QMetaObject is for QObject.
-        QMetaType::create() is for any classes.
-
     if (!ptr) {
-        const QMetaObject *meta = Tf::metaObjects()->value(metaType);
+        const QMetaObject *meta = Tf::metaObjects()->value(metaType.toLatin1().toLower());
         if (Q_LIKELY(meta)) {
             ptr = dynamic_cast<T*>(meta->newInstance());
+            if (ptr) {
+                typeId = 0;
+            }
         }
     }
-    */
 
+    // TODO delete
     if (!ptr) {
         if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
             typeId = QMetaType::type(metaType.toLatin1().constData());

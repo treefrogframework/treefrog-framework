@@ -8,9 +8,7 @@
 #include <QtGlobal>
 #include <QMetaType>
 
-#define T_DECLARE_CONTROLLER(TYPE,NAME)  \
-    typedef TYPE NAME;                   \
-    Q_DECLARE_METATYPE(NAME)
+#define T_DECLARE_CONTROLLER(TYPE,NAME)  typedef TYPE NAME;
 
 #define T_REGISTER_CONTROLLER(TYPE) T_REGISTER_METATYPE(TYPE)
 #define T_REGISTER_VIEW(TYPE) T_REGISTER_METATYPE(TYPE)
@@ -20,7 +18,7 @@
     public:                                                     \
         Static##TYPE##Instance()                                \
         {                                                       \
-            qRegisterMetaType<TYPE>(); /* TODO delete */        \
+            /* qRegisterMetaType<TYPE>();  TODO delete */       \
             Tf::metaObjects()->insert(QByteArray(#TYPE).toLower(), &TYPE::staticMetaObject); \
         }                                                       \
     };                                                          \

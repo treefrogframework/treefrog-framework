@@ -63,7 +63,7 @@
     "{ }\n"                                                             \
     "\n\n"                                                              \
     "// Don't remove below this line\n"                                 \
-    "T_REGISTER_CONTROLLER(%1endpoint)\n"
+    "T_REGISTER_CONTROLLER(%2Endpoint)\n"
 
 
 WebSocketGenerator::WebSocketGenerator(const QString &n)

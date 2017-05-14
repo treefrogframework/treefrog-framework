@@ -78,7 +78,7 @@ QString TAbstractController::viewClassName(const QString &contoller, const QStri
 {
     // If action string is empty, active action name.
     // If controller string is empty, active contoller name.
-    return (contoller.isEmpty() ? name().toLower() : contoller.toLower()) + '_' + (action.isEmpty() ? activeAction() : action) + "View";
+    return (contoller.isEmpty() ? name().toLower() : contoller.toLower()) + '_' + (action.isEmpty() ? activeAction() : action) + QLatin1String("View");
 }
 
 /*!
