@@ -163,15 +163,14 @@ inline T *TDispatcher<T>::object()
 {
     T_TRACEFUNC("");
 
-    /* doesn't work in chat app..
+    /* TODO comment-in
+        QMetaObject is for QObject.
+        QMetaType::create() is for any classes.
+
     if (!ptr) {
         const QMetaObject *meta = Tf::metaObjects()->value(metaType);
         if (Q_LIKELY(meta)) {
-            QObject *obj = meta->newInstance();
-            if (Q_LIKELY(obj)) {
-                ptr = static_cast<T *>(obj);
-                return ptr;
-            }
+            ptr = dynamic_cast<T*>(meta->newInstance());
         }
     }
     */
