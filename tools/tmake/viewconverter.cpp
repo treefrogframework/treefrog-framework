@@ -49,6 +49,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
     const QStringList ErbFilter(QLatin1String("*.") + ErbConverter::fileSuffix());
 
     QStringList classList;
+    QStringList viewFiles;
 
     QDir helpersDir = viewDir;
     helpersDir.cdUp();
@@ -59,7 +60,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
     ErbConverter erbconv(outputDir, helpersDir, partialDir);
     OtamaConverter otamaconv(outputDir, helpersDir, partialDir);
 
-    foreach (QString d, viewDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+    for (const QString &d : viewDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         // Reads erb-files
         QDir dir = viewDir;
         dir.cd(d);
@@ -87,13 +88,17 @@ int ViewConverter::convertView(const QString &templateSystem) const
         }
 
         // ERB or Otama
-        foreach (QFileInfo fileinfo, dir.entryInfoList(filter, QDir::Files)) {
+        for (const QFileInfo &fileinfo : dir.entryInfoList(filter, QDir::Files)) {
             bool convok = false;
             QString ext = fileinfo.suffix().toLower();
             if (ext == ErbConverter::fileSuffix()) {
                 convok = erbconv.convert(fileinfo.absoluteFilePath(), trimMode);
+                viewFiles << fileinfo.filePath();
             } else if (ext == OtamaConverter::fileSuffix()) {
                 convok = otamaconv.convert(fileinfo.absoluteFilePath(), trimMode);
+                viewFiles << fileinfo.filePath();
+                QString otmFile = fileinfo.filePath().replace("." + OtamaConverter::fileSuffix(), "." + OtamaConverter::logicFileSuffix());
+                viewFiles << otmFile;
             } else {
                 continue;
             }
@@ -108,7 +113,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
     if (createProFile) {
         createProjectFile();
     }
-    createSourceList(classList);
+    createSourceList(classList, viewFiles);
     return 0;
 }
 
@@ -119,17 +124,24 @@ bool ViewConverter::createProjectFile() const
 }
 
 
-bool ViewConverter::createSourceList(const QStringList &classNameList) const
+bool ViewConverter::createSourceList(const QStringList &classNameList, const QStringList &viewFileList) const
 {
     QString string;
-    for (QStringListIterator i(classNameList); i.hasNext(); ) {
-        const QString &c = i.next();
+    for (const auto &c : classNameList) {
         string += QLatin1String("HEADERS += ");
         string += c;
         string += QLatin1String(".moc\nSOURCES += ");
         string += c;
         string += QLatin1String(".cpp\n");
     }
+
+    for (const auto &v : viewFileList) {
+        string += QLatin1String("views.files += ");
+        string += v;
+        string += '\n';
+    }
+    string += QLatin1String("views.path = .\n");
+    string += QLatin1String("INSTALLS += views\n");
     return write(outputDir.filePath("source.list"), string);
 }
 

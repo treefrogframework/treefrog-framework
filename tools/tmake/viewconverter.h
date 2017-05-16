@@ -20,7 +20,7 @@ public:
 
 protected:
     bool createProjectFile() const;
-    bool createSourceList(const QStringList &classNameList) const;
+    bool createSourceList(const QStringList &classNameList, const QStringList &viewFileList) const;
     bool write(const QString &filePath, const QString &data) const;
 
 private:
