@@ -135,13 +135,16 @@ bool ViewConverter::createSourceList(const QStringList &classNameList, const QSt
         string += QLatin1String(".cpp\n");
     }
 
-    for (const auto &v : viewFileList) {
-        string += QLatin1String("views.files += ");
-        string += v;
-        string += '\n';
+    if (! viewFileList.isEmpty()) {
+        string += QLatin1String("\n# include view files in the project\n");
+        for (const auto &v : viewFileList) {
+            string += QLatin1String("views.files += ");
+            string += v;
+            string += '\n';
+        }
+        string += QLatin1String("views.path = .dummy\n");
+        string += QLatin1String("INSTALLS += views\n");
     }
-    string += QLatin1String("views.path = .\n");
-    string += QLatin1String("INSTALLS += views\n");
     return write(outputDir.filePath("source.list"), string);
 }
 
