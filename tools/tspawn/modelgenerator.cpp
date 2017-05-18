@@ -60,10 +60,10 @@
     "\n"                                                 \
     "    TModelObject *modelData() override;\n"          \
     "    const TModelObject *modelData() const override;\n" \
+    "    friend QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
+    "    friend QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
     "};\n"                                               \
     "\n"                                                 \
-    "QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
-    "QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
     "Q_DECLARE_METATYPE(%2)\n"                           \
     "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
     "\n"                                                 \
@@ -206,10 +206,10 @@
     "\n"                                                 \
     "    TModelObject *modelData();\n"                   \
     "    const TModelObject *modelData() const;\n"       \
+    "    friend QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
+    "    friend QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
     "};\n"                                               \
     "\n"                                                 \
-    "QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
-    "QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
     "Q_DECLARE_METATYPE(%2)\n"                           \
     "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
     "\n"                                                 \
