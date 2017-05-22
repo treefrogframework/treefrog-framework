@@ -27,10 +27,10 @@
     "\n"                                                                      \
     "public slots:\n"                                                         \
     "    void index();\n"                                                     \
-    "    void show(const QString &%4);\n"                                     \
+    "    void show(const QString &%3);\n"                                     \
     "    void create();\n"                                                    \
-    "    void save(const QString &%4);\n"                                     \
-    "    void remove(const QString &%4);\n"                                   \
+    "    void save(const QString &%3);\n"                                     \
+    "    void remove(const QString &%3);\n"                                   \
     "};\n"                                                                    \
     "\n"                                                                      \
     "#endif // %1CONTROLLER_H\n"
@@ -144,7 +144,7 @@
     "T_DEFINE_CONTROLLER(%2Controller)\n"
 
 
-#define CONTROLLER_TINY_HEADER_FILE_TEMPLATE                                  \
+#define CONTROLLER_TINY_HEADER_FILE_TEMPLATE        \
     "#ifndef %1CONTROLLER_H\n"                                                \
     "#define %1CONTROLLER_H\n"                                                \
     "\n"                                                                      \
@@ -251,7 +251,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, controllerName.toLower(), fieldNameToVariableName(pair.first));
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, fieldNameToVariableName(pair.first));
         fwh.write(code, false);
         files << fwh.fileName();
 
@@ -272,7 +272,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             actions.append("    void ").append(i.next()).append("();\n");
         }
 
-        QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, actions, controllerName.toLower());
+        QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, actions);
         fwh.write(code, false);
         files << fwh.fileName();
 

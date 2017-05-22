@@ -157,7 +157,7 @@
     "}\n"                                                     \
     "\n"                                                      \
     "// Don't remove below this line\n"                       \
-    "T_REGISTER_STREAM_OPERATORS(%2)"
+    "T_REGISTER_STREAM_OPERATORS(%2)\n"
 
 #define USER_MODEL_HEADER_FILE_TEMPLATE                  \
     "#ifndef %1_H\n"                                     \
