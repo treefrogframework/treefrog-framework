@@ -8,8 +8,11 @@
 #include <QtGlobal>
 #include <QMetaType>
 
-#define T_DECLARE_CONTROLLER(TYPE,NAME)  typedef TYPE NAME;
+#define T_DECLARE_CONTROLLER(TYPE,NAME)  \
+    typedef TYPE NAME;                   \
+    Q_DECLARE_METATYPE(NAME)
 
+// Deprecated
 #define T_REGISTER_CONTROLLER(TYPE) T_REGISTER_METATYPE(TYPE)
 #define T_REGISTER_VIEW(TYPE) T_REGISTER_METATYPE(TYPE)
 #define T_REGISTER_METATYPE(TYPE)                               \
@@ -18,11 +21,22 @@
     public:                                                     \
         Static##TYPE##Instance()                                \
         {                                                       \
-            /* qRegisterMetaType<TYPE>();  TODO delete */       \
-            Tf::metaObjects()->insert(QByteArray(#TYPE).toLower(), &TYPE::staticMetaObject); \
+            qRegisterMetaType<TYPE>();                          \
         }                                                       \
     };                                                          \
     static Static##TYPE##Instance _static##TYPE##Instance;
+
+#define T_DEFINE_CONTROLLER(TYPE) T_DEFINE_VIEW(TYPE)
+#define T_DEFINE_VIEW(TYPE)                                     \
+    class Static##TYPE##Definition                              \
+    {                                                           \
+    public:                                                     \
+        Static##TYPE##Definition()                              \
+        {                                                       \
+            Tf::metaObjects()->insert(QByteArray(#TYPE).toLower(), &TYPE::staticMetaObject); \
+        }                                                       \
+    };                                                          \
+    static Static##TYPE##Definition _static##TYPE##Definition;
 
 #define T_REGISTER_STREAM_OPERATORS(TYPE)                       \
     class Static##TYPE##Instance                                \

@@ -33,7 +33,7 @@
     "  return responsebody;\n"                                  \
     "}\n"                                                       \
     "\n"                                                        \
-    "T_REGISTER_VIEW(%1)\n"                                     \
+    "T_DEFINE_VIEW(%1)\n"                                       \
     "\n"                                                        \
     "#include \"%1.moc\"\n"
 

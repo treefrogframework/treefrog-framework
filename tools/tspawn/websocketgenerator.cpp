@@ -31,8 +31,6 @@
     "    void onBinaryReceived(const QByteArray &binary) override;\n"   \
     "};\n"                                                              \
     "\n"                                                                \
-    "T_DECLARE_CONTROLLER(%2Endpoint, %3endpoint)\n"                    \
-    "\n"                                                                \
     "#endif // %1ENDPOINT_H\n"
 
 #define ENDPOINT_IMPL_TEMPLATE                                          \
@@ -63,7 +61,7 @@
     "{ }\n"                                                             \
     "\n\n"                                                              \
     "// Don't remove below this line\n"                                 \
-    "T_REGISTER_CONTROLLER(%2Endpoint)\n"
+    "T_DEFINE_CONTROLLER(%2Endpoint)\n"
 
 
 WebSocketGenerator::WebSocketGenerator(const QString &n)

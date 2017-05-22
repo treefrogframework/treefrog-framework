@@ -5,10 +5,6 @@ ApplicationEndpoint::ApplicationEndpoint()
     : TWebSocketEndpoint()
 { }
 
-ApplicationEndpoint::ApplicationEndpoint(const ApplicationEndpoint &)
-    : TWebSocketEndpoint()
-{ }
-
 bool ApplicationEndpoint::onOpen(const TSession &)
 {
     return true;

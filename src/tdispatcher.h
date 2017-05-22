@@ -177,7 +177,6 @@ inline T *TDispatcher<T>::object()
         }
     }
 
-    // TODO delete
     if (!ptr) {
         if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
             typeId = QMetaType::type(metaType.toLatin1().constData());

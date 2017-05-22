@@ -14,7 +14,7 @@ void DirectController::show(const QString &view)
     render(view);
 }
 
-T_REGISTER_CONTROLLER(DirectController)
+T_DEFINE_CONTROLLER(DirectController)
 
 /*!
   \class DirectController

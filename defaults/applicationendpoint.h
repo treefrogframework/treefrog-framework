@@ -8,7 +8,6 @@ class T_CONTROLLER_EXPORT ApplicationEndpoint : public TWebSocketEndpoint
 {
 public:
     ApplicationEndpoint();
-    ApplicationEndpoint(const ApplicationEndpoint &other);
     virtual ~ApplicationEndpoint() { }
 
 protected:

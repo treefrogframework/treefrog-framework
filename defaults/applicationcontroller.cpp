@@ -5,10 +5,6 @@ ApplicationController::ApplicationController()
     : TActionController()
 { }
 
-ApplicationController::ApplicationController(const ApplicationController &)
-    : TActionController()
-{ }
-
 ApplicationController::~ApplicationController()
 { }
 
@@ -24,4 +20,4 @@ bool ApplicationController::preFilter()
 }
 
 // Don't remove below this line
-T_REGISTER_CONTROLLER(ApplicationController)
+T_DEFINE_CONTROLLER(ApplicationController)

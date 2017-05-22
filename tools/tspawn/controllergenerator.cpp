@@ -33,8 +33,6 @@
     "    void remove(const QString &%4);\n"                                   \
     "};\n"                                                                    \
     "\n"                                                                      \
-    "T_DECLARE_CONTROLLER(%2Controller, %3controller)\n"                      \
-    "\n"                                                                      \
     "#endif // %1CONTROLLER_H\n"
 
 
@@ -143,7 +141,7 @@
     "}\n"                                                               \
     "\n\n"                                                              \
     "// Don't remove below this line\n"                                 \
-    "T_REGISTER_CONTROLLER(%2Controller)\n"
+    "T_DEFINE_CONTROLLER(%2Controller)\n"
 
 
 #define CONTROLLER_TINY_HEADER_FILE_TEMPLATE                                  \
@@ -164,8 +162,6 @@
     "%3"                                                                      \
     "};\n"                                                                    \
     "\n"                                                                      \
-    "T_DECLARE_CONTROLLER(%2Controller, %4controller)\n"                      \
-    "\n"                                                                      \
     "#endif // %1CONTROLLER_H\n"
 
 
@@ -178,7 +174,7 @@
     "\n"                                                       \
     "%3\n"                                                     \
     "// Don't remove below this line\n"                        \
-    "T_REGISTER_CONTROLLER(%2Controller)\n"
+    "T_DEFINE_CONTROLLER(%2Controller)\n"
 
 
 class ConvMethod : public QHash<int, QString>
