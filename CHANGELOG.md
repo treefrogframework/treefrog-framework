@@ -1,4 +1,12 @@
 # ChangeLog
+## 1.17.0
+ - Fix a bug of comparisn logic of If-Modified-Since header.
+ - Fix a bug of URL path traversal.
+ - Modified to add view files into the project when tmake was executed.
+ - Added logics to invoke a controller constructor by QMetaObject::newInstance()
+   function.
+ - Added a class to process in background, TBackgroundProcess.
+
 ## 1.16.0
  - Added a config for listening IP address.
  - Added a config for executing SQL statements on post-open.
