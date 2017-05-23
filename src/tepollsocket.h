@@ -54,14 +54,14 @@ protected:
     static TEpollSocket *searchSocket(int sid);
     static QList<TEpollSocket*> allSockets();
 
-    TAtomic<bool> deleting;
-    TAtomic<int> myWorkerCounter;
-    TAtomic<bool> pollIn;
-    TAtomic<bool> pollOut;
+    TAtomic<bool> deleting {false};
+    TAtomic<int> myWorkerCounter {0};
+    TAtomic<bool> pollIn {false};
+    TAtomic<bool> pollOut {false};
 
 private:
-    int sd;  // socket descriptor
-    int sid;
+    int sd {0};  // socket descriptor
+    int sid {0};
     QHostAddress clientAddr;
     TQueue<TSendBuffer*> sendBuf;
 

@@ -12,7 +12,6 @@
 #include <TAppSettings>
 #include <THttpRequestHeader>
 #include <THttpUtility>
-#include <TWebSocketEndpoint>
 #include "tepollwebsocket.h"
 #include "tepoll.h"
 #include "twebsocketframe.h"

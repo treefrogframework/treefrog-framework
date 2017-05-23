@@ -387,7 +387,6 @@ TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(int sid)
     case TWebApplication::Hybrid: {
 #ifdef Q_OS_LINUX
         sock = TEpollWebSocket::searchSocket(sid);
-        break;
 #else
         tFatal("Unsupported MPM: hybrid");
 #endif

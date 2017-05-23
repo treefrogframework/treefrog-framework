@@ -5,7 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebSocketEndpoint>
 #include <TWebApplication>
 #include "twebsocket.h"
 #include "twebsocketworker.h"

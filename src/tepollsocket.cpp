@@ -96,8 +96,7 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : deleting(false), myWorkerCounter(0), pollIn(false), pollOut(false),
-      sd(socketDescriptor), clientAddr(address)
+    : sd(socketDescriptor), clientAddr(address)
 {
     do {
         sid = point.fetch_add(1);
