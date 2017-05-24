@@ -32,6 +32,7 @@ public:
     static int nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag = CloseOnExec);
     static int nativeListen(const QString &fileDomain, OpenFlag flag = CloseOnExec);
     static void nativeClose(int socket);
+    static QPair<QHostAddress, quint16> getPeerInfo(int socketDescriptor);
     static int duplicateSocket(int socketDescriptor);
     static void invokeStaticInitialize();
     static void invokeStaticRelease();

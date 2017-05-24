@@ -117,6 +117,37 @@ bool TApplicationServerBase::newerLibraryExists()
 }
 
 
+QPair<QHostAddress, quint16> TApplicationServerBase::getPeerInfo(int socketDescriptor)
+{
+    auto peerInfo = QPair<QHostAddress, quint16>(QHostAddress(), 0);
+
+    union {
+        sockaddr a;
+        sockaddr_in a4;
+        sockaddr_in6 a6;
+    } sa;
+    socklen_t sasize = sizeof(sa);
+
+    memset(&sa, 0, sizeof(sa));
+    if (socketDescriptor <= 0 || ::getpeername(socketDescriptor, &sa.a, &sasize) < 0) {
+        return peerInfo;
+    }
+
+    if (sa.a.sa_family == AF_INET6) {
+        // IPv6
+        Q_IPV6ADDR tmp;
+        memcpy(&tmp, &sa.a6.sin6_addr, sizeof(tmp));
+        peerInfo.first.setAddress(tmp);
+        peerInfo.second = ntohs(sa.a6.sin6_port);
+    } else {
+        // IPv4
+        peerInfo.first.setAddress(ntohl(sa.a4.sin_addr.s_addr));
+        peerInfo.second = ntohs(sa.a4.sin_port);
+    }
+    return peerInfo;
+}
+
+
 void TApplicationServerBase::invokeStaticInitialize()
 {
     // Calls staticInitialize()
