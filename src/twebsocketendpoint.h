@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QPair>
 #include <QVariant>
+#include <QHostAddress>
 #include <TGlobal>
 #include <TSession>
 #include <TWebSocketSession>
@@ -37,6 +38,8 @@ public:
     const TWebSocketSession &session() const { return sessionStore; }
     TWebSocketSession &session() { return sessionStore; }
     int socketId() const { return sid; }
+    QHostAddress peerAddress() const { return peerAddr; }
+    quint16 peerPort() const { return peerPortNumber; }
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);
@@ -81,6 +84,8 @@ private:
     int sid {0};
     QList<QPair<int, QVariant>> taskList;
     bool rollback {false};
+    QHostAddress peerAddr;
+    quint16 peerPortNumber {0};
 
     friend class TWebSocketWorker;
     T_DISABLE_COPY(TWebSocketEndpoint)

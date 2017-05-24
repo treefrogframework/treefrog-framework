@@ -10,6 +10,7 @@
 #include <TDispatcher>
 #include <TWebSocketEndpoint>
 #include <THttpRequestHeader>
+#include <TApplicationServerBase>
 #include "twebsocketworker.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
@@ -81,6 +82,9 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 
         endpoint->sessionStore = _socket->session(); // Sets websocket session
         endpoint->sid = _socket->socketId();
+        auto peerInfo = TApplicationServerBase::getPeerInfo(_socket->socketDescriptor());
+        endpoint->peerAddr = peerInfo.first;
+        endpoint->peerPortNumber = peerInfo.second;
         // Database Transaction
         setTransactionEnabled(endpoint->transactionEnabled());
 

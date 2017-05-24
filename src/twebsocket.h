@@ -21,6 +21,7 @@ public:
     TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent = 0);
     virtual ~TWebSocket();
 
+    qintptr socketDescriptor() const override { return QTcpSocket::socketDescriptor(); }
     int socketId() const override { return sid; }
     bool canReadRequest() const;
     void disconnect() override;

@@ -30,6 +30,7 @@ public:
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() override;
+    qintptr socketDescriptor() const override { return TEpollSocket::socketDescriptor(); }
     int socketId() const override { return TEpollSocket::socketId(); }
     static TEpollWebSocket *searchSocket(int sid);
 
