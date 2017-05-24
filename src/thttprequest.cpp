@@ -240,8 +240,9 @@ QStringList THttpRequest::allQueryItemValues(const QString &name) const
     QStringList ret;
     const QVariantList values = d->queryItems.values(name);
 
-    for (auto &val : values) {
-        ret << val.toString();
+    // reverse
+    for (int i = values.count() - 1; i >= 0; i--) {
+        ret << values[i].toString();
     }
     return ret;
 }
@@ -296,8 +297,9 @@ QStringList THttpRequest::allFormItemValues(const QString &name) const
     QStringList ret;
     const QVariantList values = d->formItems.values(name);
 
-    for (auto &val : values) {
-        ret << val.toString();
+    // reverse
+    for (int i = values.count() - 1; i >= 0; i--) {
+        ret << values[i].toString();
     }
     return ret;
 }

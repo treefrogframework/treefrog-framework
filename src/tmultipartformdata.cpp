@@ -325,7 +325,7 @@ bool TMultipartFormData::isEmpty() const
 }
 
 /*!
-
+    Clears this data.
  */
 void TMultipartFormData::clear()
 {
@@ -343,8 +343,9 @@ QStringList TMultipartFormData::allFormItemValues(const QString &name) const
     QStringList ret;
     const QVariantList values = postParameters.values(name);
 
-    for (auto &val : values) {
-        ret << val.toString();
+    // reverse
+    for (int i = values.count() - 1; i >= 0; i--) {
+        ret << values[i].toString();
     }
     return ret;
 }
