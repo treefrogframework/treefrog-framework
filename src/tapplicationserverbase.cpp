@@ -14,6 +14,10 @@
 #include <TDispatcher>
 #include <TActionController>
 #include "tapplicationserverbase.h"
+#ifdef Q_OS_WIN
+# include <winsock2.h>
+# include <ws2tcpip.h>
+#endif
 
 /*!
   \class TApplicationServerBase
