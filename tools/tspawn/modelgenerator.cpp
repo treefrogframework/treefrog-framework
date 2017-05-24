@@ -53,6 +53,7 @@
     "%6"                                                 \
     "    static int count();\n"                          \
     "    static QList<%2> getAll();\n"                   \
+    "    static QList<%2> getPage(const int pageindex,const int pagesize);\n"                   \
     "%8"                                                 \
     "\n"                                                 \
     "private:\n"                                         \
@@ -130,6 +131,11 @@
     "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria());\n" \
     "}\n"                                                     \
     "\n"                                                      \
+    "QList<%2> %2::getPage(const int pageindex=0, const int pagesize=0)\n"                                \
+    "{\n"                                                     \
+    "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria(),pagesize,pageindex*pagesize);\n" \
+    "}\n"                                                     \
+    "\n"                                                      \
     "%12"                                                     \
     "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
@@ -199,6 +205,7 @@
     "%6"                                                 \
     "    static int count();\n"                          \
     "    static QList<%2> getAll();\n"                   \
+    "    static QList<%2> getPage(const int pageindex,const int pagesize);\n" \
     "%8"                                                 \
     "\n"                                                 \
     "private:\n"                                         \
@@ -291,6 +298,11 @@
     "    return tfGetModelListBy%11Criteria<%2, %2Object>();\n" \
     "}\n"                                                     \
     "\n"                                                      \
+    "QList<%2> %2::getPage(const int pageindex=0, const int pagesize=0)\n"                                \
+    "{\n"                                                     \
+    "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria(),pagesize,pageindex*pagesize);\n" \
+    "}\n"                                                     \
+    "\n"                                                      \
     "%12"                                                     \
     "TModelObject *%2::modelData()\n"                         \
     "{\n"                                                     \
@@ -320,7 +332,7 @@
     "// Don't remove below this line\n"                       \
     "T_REGISTER_STREAM_OPERATORS(%2)"
 
-#define MODEL_IMPL_GETALLJSON                                 \
+#define MODEL_IMPL_GETJSON                                 \
     "QJsonArray %1::getAllJson()\n"                           \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
@@ -333,9 +345,26 @@
     "    }\n"                                                 \
     "    return array;\n"                                     \
     "}\n"                                                     \
+    "\n"													  \
+    "QJsonArray %1::getPageJson(const int pageindex=0,const int pagesize=0)\n"                           \
+    "{\n"                                                     \
+    "    QJsonArray array;\n"                                 \
+    "    TSqlORMapper<%1Object> mapper;\n"                    \
+	"    if (pageindex*pagesize > 0)\n"                       \
+    "    mapper.setOffset (pageindex*pagesize);\n"            \
+	"    if (pagesize > 0)\n"                                 \
+    "    mapper.setLimit (pagesize);\n"                       \
+    "\n"                                                      \
+    "    if (mapper.find() > 0) {\n"                          \
+    "        for (TSqlORMapperIterator<%1Object> i(mapper); i.hasNext(); ) {\n" \
+    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(i.next()).toVariantMap())));\n" \
+    "        }\n"                                             \
+    "    }\n"                                                 \
+    "    return array;\n"                                     \
+    "}\n"                                                     \
     "\n"
 
-#define MODEL_IMPL_GETALLJSON_MONGO                           \
+#define MODEL_IMPL_GETJSON_MONGO                           \
     "QJsonArray %1::getAllJson()\n"                           \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
@@ -344,6 +373,23 @@
     "    if (mapper.find()) {\n"                              \
     "        while (mapper.next()) {\n"                       \
     "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(mapper.value()).toVariantMap())));\n" \
+    "        }\n"                                             \
+    "    }\n"                                                 \
+    "    return array;\n"                                     \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QJsonArray %1::getPageJson(const int pageindex=0,const int pagesize=0)\n"                           \
+    "{\n"                                                     \
+    "    QJsonArray array;\n"                                 \
+    "    TMongoODMapper<%1Object> mapper;\n"                    \
+	"    if (pageindex*pagesize > 0)\n"                       \
+    "    mapper.setOffset (pageindex*pagesize);\n"            \
+	"    if (pagesize > 0)\n"                                 \
+    "    mapper.setLimit (pagesize);\n"                       \
+    "\n"                                                      \
+    "    if (mapper.find() > 0) {\n"                          \
+    "        for (TSqlORMapperIterator<%1Object> i(mapper); i.hasNext(); ) {\n" \
+    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(i.next()).toVariantMap())));\n" \
     "        }\n"                                             \
     "    }\n"                                                 \
     "    return array;\n"                                     \
@@ -596,7 +642,7 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
     implArgs << ((objectType == Mongo) ? "Mongo" : "");
 
 #if QT_VERSION >= 0x050000
-    headerArgs  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+    headerArgs  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n    static QJsonArray getPageJson(const int pageindex,const int pagesize);\n";
     switch (objectType) {
     case Sql:
         implArgs << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
