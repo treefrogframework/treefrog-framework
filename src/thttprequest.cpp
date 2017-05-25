@@ -103,7 +103,7 @@ THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, co
     d->header = THttpRequestHeader(header);
     d->clientAddress = clientAddress;
     d->multipartFormData = TMultipartFormData(filePath, boundary());
-    d->formItems = d->multipartFormData.formItems();
+    d->formItems = d->multipartFormData.postParameters;
 }
 
 /*!
@@ -197,11 +197,16 @@ QString THttpRequest::parameter(const QString &name) const
     return allParameters()[name].toString();
 }
 
-/*!
-  \fn bool THttpRequest::hasQuery() const
 
-  Returns true if the URL contains a Query.
- */
+bool THttpRequest::hasItem(const QString &name, const QList<QPair<QString, QString>> &items)
+{
+    for (auto &p : items) {
+        if (p.first == name) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /*!
   Returns true if there is a query string pair whose name is equal to \a name
@@ -209,7 +214,7 @@ QString THttpRequest::parameter(const QString &name) const
  */
 bool THttpRequest::hasQueryItem(const QString &name) const
 {
-    return d->queryItems.contains(name);
+    return hasItem(name, d->queryItems);
 }
 
 /*!
@@ -217,7 +222,18 @@ bool THttpRequest::hasQueryItem(const QString &name) const
  */
 QString THttpRequest::queryItemValue(const QString &name) const
 {
-    return d->queryItems.value(name).toString();
+    return queryItemValue(name, QString());
+}
+
+
+QString THttpRequest::itemValue(const QString &name, const QString &defaultValue, const QList<QPair<QString, QString>> &items)
+{
+    for (auto &p : items) {
+        if (p.first == name) {
+            return p.second;
+        }
+    }
+    return defaultValue;
 }
 
 /*!
@@ -228,7 +244,19 @@ QString THttpRequest::queryItemValue(const QString &name) const
  */
 QString THttpRequest::queryItemValue(const QString &name, const QString &defaultValue) const
 {
-    return d->queryItems.value(name, QVariant(defaultValue)).toString();
+    return itemValue(name, defaultValue, d->queryItems);
+}
+
+
+QStringList THttpRequest::allItemValues(const QString &name, const QList<QPair<QString, QString>> &items)
+{
+    QStringList ret;
+    for (auto &p : items) {
+        if (p.first == name) {
+            ret << p.second;
+        }
+    }
+    return ret;
 }
 
 /*!
@@ -237,21 +265,27 @@ QString THttpRequest::queryItemValue(const QString &name, const QString &default
  */
 QStringList THttpRequest::allQueryItemValues(const QString &name) const
 {
-    QStringList ret;
-    const QVariantList values = d->queryItems.values(name);
+    return allItemValues(name, d->queryItems);
+}
 
-    // reverse
-    for (int i = values.count() - 1; i >= 0; i--) {
-        ret << values[i].toString();
+
+QVariantMap THttpRequest::itemMap(const QList<QPair<QString, QString>> &items)
+{
+    QVariantMap map;
+    for (auto &p : items) {
+        map.insertMulti(p.first, p.second);
     }
-    return ret;
+    return map;
 }
 
 /*!
   \fn QVariantMap THttpRequest::queryItems() const
   Returns the query string of the URL, as a map of keys and values.
  */
-
+QVariantMap THttpRequest::queryItems() const
+{
+    return itemMap(d->queryItems);
+}
 
 /*!
   \fn bool THttpRequest::hasForm() const
@@ -266,7 +300,7 @@ QStringList THttpRequest::allQueryItemValues(const QString &name) const
  */
 bool THttpRequest::hasFormItem(const QString &name) const
 {
-    return d->formItems.contains(name);
+    return hasItem(name, d->formItems);
 }
 
 /*!
@@ -274,7 +308,7 @@ bool THttpRequest::hasFormItem(const QString &name) const
  */
 QString THttpRequest::formItemValue(const QString &name) const
 {
-    return d->formItems.value(name).toString();
+    return formItemValue(name, QString());
 }
 
 /*!
@@ -285,7 +319,7 @@ QString THttpRequest::formItemValue(const QString &name) const
  */
 QString THttpRequest::formItemValue(const QString &name, const QString &defaultValue) const
 {
-    return d->formItems.value(name, QVariant(defaultValue)).toString();
+    return itemValue(name, defaultValue, d->formItems);
 }
 
 /*!
@@ -294,14 +328,7 @@ QString THttpRequest::formItemValue(const QString &name, const QString &defaultV
  */
 QStringList THttpRequest::allFormItemValues(const QString &name) const
 {
-    QStringList ret;
-    const QVariantList values = d->formItems.values(name);
-
-    // reverse
-    for (int i = values.count() - 1; i >= 0; i--) {
-        ret << values[i].toString();
-    }
-    return ret;
+    return allItemValues(name, d->formItems);
 }
 
 /*!
@@ -317,22 +344,87 @@ QStringList THttpRequest::formItemList(const QString &key) const
     return allFormItemValues(k);
 }
 
+
+QVariantList THttpRequest::itemVariantList(const QString &key, const QList<QPair<QString, QString>> &items)
+{
+    // format of key: hoge[][foo] or hoge[][]
+    QVariantList lst;
+    const QRegExp rx(key + "\\[\\]\\[([^\\[\\]]+)\\]");
+
+    for (auto &p : items) {
+        if (rx.exactMatch(p.first)) {
+            QString k = rx.cap(1);
+            if (k.isEmpty()) {
+                lst << p.second;
+            } else {
+                lst << QVariantMap({{k, p.second}});
+            }
+        }
+    }
+    return lst;
+}
+
+/*!
+  Returns the list of QVariant value whose key is equal to \a key, such as
+  "foo[]", from the form data.
+ */
+QVariantList THttpRequest::formItemVariantList(const QString &key) const
+{
+    return itemVariantList(key, d->formItems);
+}
+
+
+QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString, QString>> &items)
+{
+    // format of key: hoge[foo], hoge[foo][] or hoge[foo][fuga]
+    QVariantMap map;
+    const QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
+    const QRegExp rx2(key + "\\[([^\\[\\]]+)\\]\\[([^\\[\\]]+)\\]");
+
+    for (auto &p : items) {
+        if (rx.exactMatch(p.first)) {
+            map.insert(rx.cap(1), p.second);
+
+        } else if (rx2.exactMatch(p.first)) {
+            QString k1 = rx2.cap(1);
+            QString k2 = rx2.cap(2);
+            QVariant v = map.value(k1);
+
+            if (k2.isEmpty()) {
+                // QMap<QString, QVariantList>
+                auto vlst = v.toList();
+                vlst << p.second;
+                map.insert(k1, QVariant(vlst));
+            } else {
+                // QMap<QString, QVariantMap>
+                auto vmap = v.toMap();
+                vmap.insertMulti(k2, p.second);
+                map.insert(k1, QVariant(vmap));
+            }
+        } else {
+            // do nothing
+        }
+    }
+    return map;
+}
+
 /*!
   Returns the map of variant value whose key is equal to \a key from
   the form data.
  */
 QVariantMap THttpRequest::formItems(const QString &key) const
 {
-    QVariantMap map;
-    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    for (QMapIterator<QString, QVariant> i(d->formItems); i.hasNext(); ) {
-        i.next();
-        if (rx.exactMatch(i.key())) {
-            map.insert(rx.cap(1), i.value());
-        }
-    }
-    return map;
+    return itemMap(key, d->formItems);
 }
+
+/*!
+  Returns the map of all form data.
+*/
+QVariantMap THttpRequest::formItems() const
+{
+    return itemMap(d->formItems);
+}
+
 
 void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &header)
 {
@@ -344,7 +436,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         if (ctype.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
             // multipart/form-data
             d->multipartFormData = TMultipartFormData(body, boundary());
-            d->formItems = d->multipartFormData.formItems();
+            d->formItems = d->multipartFormData.postParameters;
 
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
 #if QT_VERSION >= 0x050000
@@ -366,7 +458,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                         // URL decode
                         QString key = THttpUtility::fromUrlEncoding(nameval.value(0));
                         QString val = THttpUtility::fromUrlEncoding(nameval.value(1));
-                        d->formItems.insertMulti(key, val);
+                        d->formItems << QPair<QString, QString>(key, val);
                         tSystemDebug("x-www-form-urlencoded << %s : %s", qPrintable(key), qPrintable(val));
                     }
                 }
@@ -387,7 +479,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                 if (!s.value(0).isEmpty()) {
                     QString key = THttpUtility::fromUrlEncoding(s.value(0).toLatin1());
                     QString val = THttpUtility::fromUrlEncoding(s.value(1).toLatin1());
-                    d->queryItems.insertMulti(key, val);
+                    d->queryItems << QPair<QString, QString>(key, val);
                     tSystemDebug("GET Hash << %s : %s", qPrintable(key), qPrintable(val));
                 }
             }
@@ -447,8 +539,9 @@ QList<TCookie> THttpRequest::cookies() const
 */
 QVariantMap THttpRequest::allParameters() const
 {
-    QVariantMap params = d->queryItems;
-    return params.unite(d->formItems);
+    auto params = d->queryItems;
+    params << d->formItems;
+    return itemMap(params);
 }
 
 
@@ -474,6 +567,7 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
     return reqList;
 }
 
+
 /*!
   \fn const THttpRequestHeader &THttpRequest::header() const
   Returns the HTTP header of the request.
@@ -482,11 +576,6 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
 /*!
   \fn TMultipartFormData &THttpRequest::multipartFormData()
   Returns a object of multipart/form-data.
-*/
-
-/*!
-  \fn const QVariantMap &THttpRequest::formItems() const
-  Returns the map of all form data.
 */
 
 /*!
@@ -503,3 +592,8 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
   \fn const QJsonDocument &THttpRequest::jsonData() const
   Return the JSON data contained in the request.
 */
+
+/*!
+  \fn bool THttpRequest::hasQuery() const
+  Returns true if the URL contains a Query.
+ */

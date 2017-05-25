@@ -15,6 +15,7 @@
 #include <THttpUtility>
 #include <TActionContext>
 #include <TTemporaryFile>
+#include <THttpRequest>
 
 const QFile::Permissions TMultipartFormData::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
 const QFile::Permissions TMimeEntity::DefaultPermissions = TMultipartFormData::DefaultPermissions;
@@ -324,6 +325,16 @@ bool TMultipartFormData::isEmpty() const
     return postParameters.isEmpty() && uploadedFiles.isEmpty();
 }
 
+bool TMultipartFormData::hasFormItem(const QString &name) const
+{
+    return THttpRequest::hasItem(name, postParameters);
+}
+
+QString TMultipartFormData::formItemValue(const QString &name) const
+{
+    return THttpRequest::itemValue(name, QString(), postParameters);
+}
+
 /*!
     Clears this data.
  */
@@ -337,17 +348,19 @@ void TMultipartFormData::clear()
 /*!
   Returns a list of form string values whose name is equal to \a name
   from the multipart/form-data.
-*/
+ */
 QStringList TMultipartFormData::allFormItemValues(const QString &name) const
 {
-    QStringList ret;
-    const QVariantList values = postParameters.values(name);
+    return THttpRequest::allItemValues(name, postParameters);
+}
 
-    // reverse
-    for (int i = values.count() - 1; i >= 0; i--) {
-        ret << values[i].toString();
-    }
-    return ret;
+/*
+  Returns a list of QVariant values whose name is equal to \a name
+  from the multipart/form-data.
+  */
+QVariantList TMultipartFormData::formItemVariantList(const QString &key) const
+{
+    return THttpRequest::itemVariantList(key, postParameters);
 }
 
 /*!
@@ -356,15 +369,16 @@ QStringList TMultipartFormData::allFormItemValues(const QString &name) const
  */
 QVariantMap TMultipartFormData::formItems(const QString &key) const
 {
-    QVariantMap map;
-    QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    for (QMapIterator<QString, QVariant> i(postParameters); i.hasNext(); ) {
-        i.next();
-        if (rx.exactMatch(i.key())) {
-            map.insert(rx.cap(1), i.value());
-        }
-    }
-    return map;
+    return THttpRequest::itemMap(key, postParameters);
+}
+
+/*!
+  Returns a QVariantMap object with the form items of this
+  multipart/form-data.
+*/
+QVariantMap TMultipartFormData::formItems() const
+{
+    return THttpRequest::itemMap(postParameters);
 }
 
 /*!
@@ -434,7 +448,7 @@ void TMultipartFormData::parse(QIODevice *dev)
                 QByteArray cont = parseContent(dev);
 
                 QTextCodec *codec = Tf::app()->codecForHttpOutput();
-                postParameters.insertMulti(codec->toUnicode(name), codec->toUnicode(cont));
+                postParameters << QPair<QString, QString>(codec->toUnicode(name), codec->toUnicode(cont));
             }
         }
     }
@@ -605,10 +619,4 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
   \fn QString TMultipartFormData::formItemValue(const QString &name) const
   Returns the first form string value whose name is equal to \a name
   from the multipart/form-data.
-*/
-
-/*!
-  \fn const QVariantMap &TMultipartFormData::formItems() const
-  Returns a QVariantMap object with the form items of this
-  multipart/form-data.
 */

@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QVariant>
 #include <QList>
+#include <QPair>
 #include <QHostAddress>
 #include <QSharedData>
 #include <TGlobal>
@@ -24,8 +25,8 @@ public:
     ~THttpRequestData() { }
 
     THttpRequestHeader header;
-    QVariantMap queryItems;
-    QVariantMap formItems;
+    QList<QPair<QString, QString>> queryItems;
+    QList<QPair<QString, QString>> formItems;
     TMultipartFormData multipartFormData;
 #if QT_VERSION >= 0x050000
     QJsonDocument jsonData;
@@ -57,15 +58,16 @@ public:
     QString queryItemValue(const QString &name) const;
     QString queryItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allQueryItemValues(const QString &name) const;
-    const QVariantMap &queryItems() const { return d->queryItems; }
+    QVariantMap queryItems() const;
     bool hasForm() const { return !d->formItems.isEmpty(); }
     bool hasFormItem(const QString &name) const;
     QString formItemValue(const QString &name) const;
     QString formItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allFormItemValues(const QString &name) const;
     QStringList formItemList(const QString &key) const;
+    QVariantList formItemVariantList(const QString &key) const;
     QVariantMap formItems(const QString &key) const;
-    const QVariantMap &formItems() const { return d->formItems; }
+    QVariantMap formItems() const;
     TMultipartFormData &multipartFormData() { return d->multipartFormData; }
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
@@ -81,10 +83,18 @@ public:
 protected:
     QByteArray boundary() const;
 
+    static bool hasItem(const QString &name, const QList<QPair<QString, QString>> &items);
+    static QString itemValue(const QString &name, const QString &defaultValue, const QList<QPair<QString, QString>> &items);
+    static QStringList allItemValues(const QString &name, const QList<QPair<QString, QString>> &items);
+    static QVariantList itemVariantList(const QString &key, const QList<QPair<QString, QString>> &items);
+    static QVariantMap itemMap(const QList<QPair<QString, QString>> &items);
+    static QVariantMap itemMap(const QString &key, const QList<QPair<QString, QString>> &items);
+
 private:
     void parseBody(const QByteArray &body, const THttpRequestHeader &header);
 
     QSharedDataPointer<THttpRequestData> d;
+    friend class TMultipartFormData;
 };
 
 Q_DECLARE_METATYPE(THttpRequest)

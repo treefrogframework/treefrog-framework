@@ -70,11 +70,12 @@ public:
     ~TMultipartFormData() { }
 
     bool isEmpty() const;
-    bool hasFormItem(const QString &name) const { return postParameters.contains(name); }
-    QString formItemValue(const QString &name) const { return postParameters.value(name).toString(); }
+    bool hasFormItem(const QString &name) const;
+    QString formItemValue(const QString &name) const;
     QStringList allFormItemValues(const QString &name) const;
+    QVariantList formItemVariantList(const QString &key) const;
     QVariantMap formItems(const QString &key) const;
-    const QVariantMap &formItems() const { return postParameters; }
+    QVariantMap formItems() const;
 
     QString contentType(const QByteArray &dataName) const;
     QString originalFileName(const QByteArray &dataName) const;
@@ -95,8 +96,10 @@ private:
     QString writeContent(QIODevice *dev) const;
 
     QByteArray dataBoundary;
-    QVariantMap postParameters;
+    QList<QPair<QString, QString>> postParameters;
     QList<TMimeEntity> uploadedFiles;
+
+    friend class THttpRequest;
 };
 
 

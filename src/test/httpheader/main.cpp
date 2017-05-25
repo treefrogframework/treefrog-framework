@@ -9,6 +9,10 @@ class TestHttpHeader : public QObject
 private slots:
     void parseHttpRequest_data();
     void parseHttpRequest();
+    void parseRequestVariantList_data();
+    void parseRequestVariantList();
+    void parseRequestVariantMap_data();
+    void parseRequestVariantMap();
 };
 
 void TestHttpHeader::parseHttpRequest_data()
@@ -61,6 +65,100 @@ void TestHttpHeader::parseHttpRequest()
     QCOMPARE(http.formItemValue(key1), val1);
     QCOMPARE(http.formItemList(key2), val2);
 }
+
+
+void TestHttpHeader::parseRequestVariantList_data()
+{
+    QTest::addColumn<QString>("header");
+    QTest::addColumn<QString>("body");
+    QTest::addColumn<QString>("key");
+    QTest::addColumn<QString>("key0");
+    QTest::addColumn<QString>("val0");
+    QTest::addColumn<QString>("key1");
+    QTest::addColumn<QString>("val1");
+
+    QTest::newRow("1") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5B%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5B%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "excludeTags"
+                       << u8"全体病変"
+                       << "01normalstomach"
+                       << u8"フォルダ"
+                       << "AAA";
+    QTest::newRow("2") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5B%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5B%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "excludeTags"
+                       << "foo"
+                       << QString()
+                       << u8"全体病変"
+                       << QString();
+}
+
+
+void TestHttpHeader::parseRequestVariantList()
+{
+    QFETCH(QString, header);
+    QFETCH(QString, body);
+    QFETCH(QString, key);
+    QFETCH(QString, key0);
+    QFETCH(QString, val0);
+    QFETCH(QString, key1);
+    QFETCH(QString, val1);
+
+    THttpRequestHeader h(header.toUtf8());
+    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    auto vlist = http.formItemVariantList(key);
+    QCOMPARE(vlist[0].toMap()[key0].toString(), val0);
+    QCOMPARE(vlist[1].toMap()[key1].toString(), val1);
+}
+
+void TestHttpHeader::parseRequestVariantMap_data()
+{
+    QTest::addColumn<QString>("header");
+    QTest::addColumn<QString>("body");
+    QTest::addColumn<QString>("mapname");
+    QTest::addColumn<QString>("key");
+    QTest::addColumn<QString>("key0");
+    QTest::addColumn<QString>("val0");
+    QTest::addColumn<QString>("key1");
+    QTest::addColumn<QString>("val1");
+
+    QTest::newRow("1") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5Baa%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5Baa%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B33%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "excludeTags"
+                       << "aa"
+                       << u8"全体病変"
+                       << "01normalstomach"
+                       << u8"フォルダ"
+                       << "AAA";
+    QTest::newRow("1") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5Baa%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5Baa%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B33%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "excludeTags"
+                       << "33"
+                       << u8"全体病変"
+                       << QString()
+                       << u8"制御"
+                       << "trash";
+}
+
+void TestHttpHeader::parseRequestVariantMap()
+{
+    QFETCH(QString, header);
+    QFETCH(QString, body);
+    QFETCH(QString, mapname);
+    QFETCH(QString, key);
+    QFETCH(QString, key0);
+    QFETCH(QString, val0);
+    QFETCH(QString, key1);
+    QFETCH(QString, val1);
+
+    THttpRequestHeader h(header.toUtf8());
+    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    auto map = http.formItems(mapname);
+    auto vmap = map.value(key).toMap();
+    QCOMPARE(vmap[key0].toString(), val0);
+    QCOMPARE(vmap[key1].toString(), val1);
+}
+
 
 #else // QT_VERSION < 0x050000
 
