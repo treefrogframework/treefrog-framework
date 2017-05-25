@@ -7,6 +7,8 @@ class TestHttpHeader : public QObject
 {
     Q_OBJECT
 private slots:
+    void parseParamExists_data();
+    void parseParamExists();
     void parseHttpRequest_data();
     void parseHttpRequest();
     void parseRequestVariantList_data();
@@ -14,6 +16,51 @@ private slots:
     void parseRequestVariantMap_data();
     void parseRequestVariantMap();
 };
+
+
+void TestHttpHeader::parseParamExists_data()
+{
+    QTest::addColumn<QString>("header");
+    QTest::addColumn<QString>("body");
+    QTest::addColumn<QString>("key1");
+    QTest::addColumn<bool>("ex1");
+    QTest::addColumn<QString>("key2");
+    QTest::addColumn<bool>("ex2");
+
+    QTest::newRow("1") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5B%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5Baa%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B33%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "row"
+                       << true
+                       << "excludeTags"
+                       << true;
+    QTest::newRow("2") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5B%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5Baa%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B33%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "row1"
+                       << false
+                       << "excludeTags[aa]"
+                       << true;
+    QTest::newRow("3") << "POST /generate HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1000"
+                       << "row=%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80&excludeTags%5B%5D%5B%E5%85%A8%E4%BD%93%E7%97%85%E5%A4%89%5D=01normalstomach&excludeTags%5Baa%5D%5B%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%5D=AAA&excludeTags%5B33%5D%5B%E5%88%B6%E5%BE%A1%5D=trash&auth%5B%5D=&auth%5B%5D=unchecked"
+                       << "excludeTags[]"
+                       << true
+                       << u8"excludeTags[全体病変]"
+                       << false;
+}
+
+void TestHttpHeader::parseParamExists()
+{
+    QFETCH(QString, header);
+    QFETCH(QString, body);
+    QFETCH(QString, key1);
+    QFETCH(bool, ex1);
+    QFETCH(QString, key2);
+    QFETCH(bool, ex2);
+
+    THttpRequestHeader h(header.toUtf8());
+    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    QCOMPARE(http.hasFormItem(key1), ex1);
+    QCOMPARE(http.hasFormItem(key2), ex2);
+}
 
 void TestHttpHeader::parseHttpRequest_data()
 {

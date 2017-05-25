@@ -200,8 +200,10 @@ QString THttpRequest::parameter(const QString &name) const
 
 bool THttpRequest::hasItem(const QString &name, const QList<QPair<QString, QString>> &items)
 {
+    const QRegExp rx(QRegExp::escape(name) + "(\\[[^\\[\\]]*\\]){0,2}");
+
     for (auto &p : items) {
-        if (p.first == name) {
+        if (rx.exactMatch(p.first)) {
             return true;
         }
     }
@@ -349,7 +351,7 @@ QVariantList THttpRequest::itemVariantList(const QString &key, const QList<QPair
 {
     // format of key: hoge[][foo] or hoge[][]
     QVariantList lst;
-    const QRegExp rx(key + "\\[\\]\\[([^\\[\\]]+)\\]");
+    const QRegExp rx(QRegExp::escape(key) + "\\[\\]\\[([^\\[\\]]*)\\]");
 
     for (auto &p : items) {
         if (rx.exactMatch(p.first)) {
@@ -378,8 +380,8 @@ QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString,
 {
     // format of key: hoge[foo], hoge[foo][] or hoge[foo][fuga]
     QVariantMap map;
-    const QRegExp rx(key + "\\[([^\\[\\]]+)\\]");
-    const QRegExp rx2(key + "\\[([^\\[\\]]+)\\]\\[([^\\[\\]]+)\\]");
+    const QRegExp rx(QRegExp::escape(key) + "\\[([^\\[\\]]+)\\]");
+    const QRegExp rx2(QRegExp::escape(key) + "\\[([^\\[\\]]+)\\]\\[([^\\[\\]]*)\\]");
 
     for (auto &p : items) {
         if (rx.exactMatch(p.first)) {
