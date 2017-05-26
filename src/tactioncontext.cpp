@@ -252,6 +252,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
         } else {
             accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
+            if (rt.controller.startsWith("/")) {
+                path = rt.controller;
+            }
 
             if (Q_LIKELY(method == Tf::Get)) {  // GET Method
                 QString canonicalPath = QUrl(".").resolved(QUrl(path)).toString().mid(1);
