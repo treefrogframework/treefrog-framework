@@ -31,7 +31,7 @@
     "%4"                                                                \
     "    };\n"                                                          \
     "\n"                                                                \
-    "    virtual QString collectionName() const { return \"%5\"; }\n"   \
+    "    virtual QString collectionName() const { return QLatin1String(\"%5\"); }\n" \
     "    virtual QString objectId() const { return _id; }\n"            \
     "    virtual QString &objectId() { return _id; }\n"                 \
     "\n"                                                                \
@@ -50,7 +50,7 @@
     "%5"                                                                \
     "    };\n"                                                          \
     "\n"                                                                \
-    "    virtual QString collectionName() const { return \"%2\"; }\n"   \
+    "    virtual QString collectionName() const { return QLatin1String(\"%2\"); }\n" \
     "    virtual QString objectId() const { return _id; }\n"            \
     "    virtual QString &objectId() { return _id; }\n"                 \
     "\n"                                                                \
