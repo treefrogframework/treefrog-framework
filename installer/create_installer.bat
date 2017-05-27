@@ -4,7 +4,7 @@
 :: Edit this line to run the batch file for Qt environment.
 ::
 
-set VERSION=1.16.0
+set VERSION=1.17.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set BASEDIR=%~dp0
 set SLNFILE=%BASEDIR%\treefrog-setup\treefrog-setup.sln
