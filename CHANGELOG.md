@@ -5,6 +5,7 @@
  - Modified to add view files into the project when tmake was executed.
  - Added logics to invoke a controller constructor by QMetaObject::newInstance()
    function.
+ - Added logic of routing to a static file.
  - Added a class to process in background, TBackgroundProcess.
 
 ## 1.16.0
