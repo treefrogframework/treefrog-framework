@@ -5,7 +5,7 @@ page_id: "010.010"
 
 ## Requirements
 
-### Operating environment
+### Execution environment
 
 * Windows 7/8, Linux, UNIX-like OS or Mac OS X
 * Qt version 5.2 or later – [The Qt Company](https://www.qt.io/)

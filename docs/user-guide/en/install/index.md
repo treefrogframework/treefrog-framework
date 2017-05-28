@@ -7,10 +7,10 @@ page_id: "020.0"
 
 First of all, we need to install the Qt library in advance.
 
-On Windows and Mac OS X, download the package from the [Qt site](http://qt-project.org/downloads){:target="_blank"} and install it.<br>
+On Windows and Mac OS X, download the package from the [Qt site](http://qt-project.org/downloads){:target="_blank"} and install it.  
 On Linux, you can install a package for each distribution.
 
-In case of Ubuntu:<br>
+In case of Ubuntu:  
 Install the Qt libraries and dev tools:
 
 ```
@@ -37,7 +37,7 @@ Now install the DB client libraries:
 
 2. Run build commands. 
  
-   In Windows:<br>
+   In Windows:  
    Please create a binary of two types for *release* and for *debugging*.
    Start the Qt Command Prompt and then build with the following commands. The configuration batch should be run twice.
 
@@ -56,7 +56,7 @@ Now install the DB client libraries:
   > mingw32-make install
    ```
 
-   In UNIX-based OS Linux, and Mac OS X:<br>   
+   In UNIX-based OS Linux, and Mac OS X:     
    Enter the following command from the command line:
 
    ```
@@ -70,8 +70,8 @@ Now install the DB client libraries:
   $ sudo make install
    ```
 
-   **Note:** <br>
-   In order to debug the TreeFrog Framework itself, please use the *configure* option.<br>
+   **Note:**   
+   In order to debug the TreeFrog Framework itself, please use the *configure* option.  
    Now please run this command:
 
    ```
