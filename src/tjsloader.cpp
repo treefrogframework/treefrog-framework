@@ -18,6 +18,13 @@
 // #define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
+
+/*!
+  \class TJSLoader
+  \brief The TJSLoader class loads a JavaScript module at run-time.
+*/
+
+
 static QMap<QString, TJSModule*> jsContexts;
 static QStringList defaultPaths;
 static QMutex gMutex(QMutex::Recursive);

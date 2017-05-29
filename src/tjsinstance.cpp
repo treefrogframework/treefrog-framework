@@ -9,6 +9,11 @@
 #include <QJSValueIterator>
 #include "tsystemglobal.h"
 
+/*!
+  \class TJSInstance
+  \brief The TJSInstance class acts as a instance for JavaScript data types.
+*/
+
 
 TJSInstance::TJSInstance() : QJSValue()
 { }

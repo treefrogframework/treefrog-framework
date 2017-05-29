@@ -103,7 +103,7 @@ void Pub::publish(const QByteArray &binary, const QObject *sender)
 
 /*!
   \class TPublisher
-  \brief The TPublisher class provides a means of publish subscribe messaging.
+  \brief The TPublisher class provides a means of publish subscribe messaging for websocket.
 */
 
 TPublisher::TPublisher()

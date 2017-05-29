@@ -4,6 +4,11 @@
 #include <QObject>
 #include <QMetaType>
 
+/*!
+  \class TBackgroundProcess
+  \brief The TBackgroundProcess class is used to start external programs in background.
+*/
+
 
 TBackgroundProcess::TBackgroundProcess(QObject *parent)
     : QProcess(parent)

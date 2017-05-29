@@ -20,6 +20,11 @@
 #undef tDebug
 #undef tTrace
 
+/*!
+  \class TDebug
+  \brief The TDebug class provides a file output stream for debugging information.
+*/
+
 static TAbstractLogStream *stream = nullptr;
 static QList<TLogger *> loggers;
 

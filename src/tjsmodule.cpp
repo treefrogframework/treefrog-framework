@@ -23,6 +23,11 @@ inline const char *prop(const QJSValue &val, const QString &name = QString())
     return (name.isEmpty()) ? qPrintable(val.toString()) : qPrintable(val.property(name).toString());
 }
 
+/*!
+  \class TJSModule
+  \brief The TJSModule class represents a module for evaluating JavaScript code.
+*/
+
 
 TJSModule::TJSModule(QObject *parent)
     : QObject(parent), jsEngine(new QJSEngine()), loadedFiles(), funcObj(nullptr),
