@@ -215,6 +215,13 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
         break;
 
+    case QVariant::RegExp: {
+        auto e = value.toRegExp();
+        BSON_APPEND_REGEX(bson, qPrintable(key),
+            e.pattern().toUtf8().data(),
+            e.caseSensitivity() == Qt::CaseInsensitive ? "i" : NULL);
+        break; }
+
     case QVariant::LongLong:
         BSON_APPEND_INT64(bson, qPrintable(key), value.toLongLong(&ok));
         break;
