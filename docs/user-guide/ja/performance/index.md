@@ -24,7 +24,7 @@ prefork モジュールと比べると thread モジュールを採用した方�
 
 また、thread または hybrid モジュールを使う設定で Web アプリケーションにメモリリークの不具合がありながら運用を続けると、いずれはメモリを食いつぶすことになるでしょう。メモリリークは修正すべきバグですが、もし解消できない場合は prefork モジュールを採用することができます。毎回プロセスが exit するので、メモリを食いつぶすようなことは回避できるでしょう。ただ精神衛生上気持ち悪いですが。。
 これらを踏まえて MPM を選択するようにしてください。
- 
+
 ## ベンチマーク
 
 チュートリアルの章で作ったサンプルアプリ(blogapp)とベンチマークソフト httperf を使って、性能を計測してみました。
@@ -48,7 +48,7 @@ thread モジュールの場合：<br>
 
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=10000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=10000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1
@@ -89,7 +89,7 @@ prefork モジュールの場合：
 
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=1000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=1000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1
@@ -114,7 +114,7 @@ prefork モジュールの場合：
  Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
  Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
 ```
- 
+
 prefork モジュールでは約 40 リクエスト／秒までパフォーマンスが落ちました。結構落ちますね。<br>
 実装をチューニングすれば、もう少し性能は出せるかもしれません。今後の課題ということで。
 

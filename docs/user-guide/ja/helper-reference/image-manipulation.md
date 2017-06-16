@@ -6,7 +6,7 @@ page_id: "080.070"
 ## 画像の操作
 
 画像処理が可能なライブラリはいろいろ存在します。複雑な画像処理を行う場合は [OpenCV](http://opencv.org/){:target="_blank"} を使用しなければならないかもしれませんが、ここでは Qt ライブラリを使った手軽な方法を解説します。 TreeFrog Framework のベースライブラリである Qt はGUI ツールキットなので、画像処理のための便利な関数がたくさん用意されているのです。
-  
+
 まず、画像の処理を行うためには、QtGUIモジュールを有効にした TreeFrog Framework が必要です。
 フレームワークをリコンパイルしましょう。
 
@@ -15,7 +15,7 @@ Linux / Mac OS Xの場合：
 ```
  $ ./configure --enable-gui-mod
  $ cd src
- $ make 
+ $ make
  $ sudo make install
  $ cd ../tools
  $ make
@@ -58,8 +58,8 @@ QImage img = QImage("src.jpg").scaled(320, 240, Qt::KeepAspectRatio);
 img.save("qvga.jpg");
 ```
 
-※ 実際には、ファイルパスとして絶対パスで記述してください。 
-  
+※ 実際には、ファイルパスとして絶対パスで記述してください。
+
 この QImage クラスを使えば、アスペクト比を無視して変換することも可能ですし、別の画像フォーマットに変換することも容易です。詳細は [Qt ドキュメント](http://qt-project.org/doc/qt-4.8/){:target="_blank"}をご覧ください。
 
 ## 画像の回転
@@ -71,7 +71,7 @@ QImage img("src.jpg");
 QImage rotatedImg = img.transformed(QMatrix().rotate(90.0));
 rotatedImg.save("rotated.jpg");
 ```
- 
+
 とても簡単です。
 
 ## 画像の合成

@@ -18,8 +18,8 @@ if (...) {
     rollbackTransaction();
       :
 }
-```  
- 
+```
+
 If you don't want to activate the transaction itself deliberately, you can override the transactionEnabled() method of the controller and then return *false*.
 
 ```c++

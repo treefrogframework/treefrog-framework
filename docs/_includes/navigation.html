@@ -22,57 +22,57 @@
     {% assign url = page.url | prepend: site.github.url %}
     {% if page.url contains '/user-guide/' %}
         {% assign en_url = url | replace: '/ja/', '/en/' %}
-		{% assign ch_url = url | replace: '/ja/', '/ch/' %}
-		<li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+        {% assign ch_url = url | replace: '/ja/', '/ch/' %}
         <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+        <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% elsif page.url contains '/search.html' %}
         {% assign en_url = url | replace: '/ja/', '' %}
-		{% assign ch_url = url | replace: '/ja/', '/ch/' %}
-		<li><a href="{{ site.baseurl }}/{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+        {% assign ch_url = url | replace: '/ja/', '/ch/' %}
         <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
+        <li><a href="{{ site.baseurl }}/{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% else %}
         {% assign en_url = url | replace: '/ja/', '' %}
-		{% assign ch_url = url | replace: '/ja/', '/ch/' %}
-		<li><a href="{{ site.baseurl }}{{ ch_url }}/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+        {% assign ch_url = url | replace: '/ja/', '/ch/' %}
         <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
+        <li><a href="{{ site.baseurl }}{{ ch_url }}/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% endif %}
 {% elsif page.url contains '/ch/' %}
     <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% assign url = page.url | prepend: site.github.url %}
-    {% if page.url contains '/user-guide/' %}	
-		{% assign jp_url = url | replace: '/ch/', '/jp/' %}
+    {% if page.url contains '/user-guide/' %}
+        {% assign ja_url = url | replace: '/ch/', '/ja/' %}
         {% assign en_url = url | replace: '/ch/', '/en/' %}
-		<li><a href="{{ site.baseurl }}{{ jp_url }}" class="language-link">日本語 (Japanese)</a></li>
         <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+        <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
     {% elsif page.url contains '/search.html' %}
         {% assign en_url = url | replace: '/ch/', '' %}
-		{% assign jp_url = url | replace: '/ch/', '/jp/' %}
-		<li><a href="{{ site.baseurl }}/{{ jp_url }}" class="language-link">日本語 (Japanese)</a></li>
+        {% assign ja_url = url | replace: '/ch/', '/ja/' %}
         <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
+        <li><a href="{{ site.baseurl }}/{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
     {% else %}
         {% assign en_url = url | replace: '/ch/', '' %}
-		{% assign jp_url = url | replace: '/ch/', '/jp/' %}
-		<li><a href="{{ site.baseurl }}{{ jp_url }}/" class="language-link">日本語 (Japanese)</a></li>
+        {% assign ja_url = url | replace: '/ch/', '/ja/' %}
         <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
+        <li><a href="{{ site.baseurl }}{{ ja_url }}/" class="language-link">日本語 (Japanese)</a></li>
     {% endif %} 
 {% elsif page.url contains '/en/' %} 
-    {% assign jp_url = page.url | prepend: site.github.url %}
+    {% assign ja_url = page.url | prepend: site.github.url %}
     {% assign en_url = page.url | prepend: site.github.url %}
-	{% assign ch_url = page.url | prepend: site.github.url %}
-    {% assign jp_url = jp_url | replace: '/en/', '/ja/' %}
-	{% assign ch_url = ch_url | replace: '/en/', '/ch/' %}
-    <li><a href="{{ site.baseurl }}{{ jp_url }}" class="language-link">日本語 (Japanese)</a></li>
-	<li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+    {% assign ch_url = page.url | prepend: site.github.url %}
+    {% assign ja_url = ja_url | replace: '/en/', '/ja/' %}
+    {% assign ch_url = ch_url | replace: '/en/', '/ch/' %}
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
 {% else %} 
+    <li><a href="{{ site.baseurl }}/" class="language-link">English</a></li>
     {% if page.url contains '/search.html' %}
         <li><a href="{{ site.baseurl }}/ja/search.html" class="language-link">日本語 (Japanese)</a></li>
-		<li><a href="{{ site.baseurl }}/ch/search.html" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+        <li><a href="{{ site.baseurl }}/ch/search.html" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% else %}
         <li><a href="{{ site.baseurl }}/ja" class="language-link">日本語 (Japanese)</a></li>
-		<li><a href="{{ site.baseurl }}/ch" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+        <li><a href="{{ site.baseurl }}/ch" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% endif %}
-    <li><a href="{{ site.baseurl }}/" class="language-link">English</a></li>
 {% endif %}
 </ul>
 

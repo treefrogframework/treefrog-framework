@@ -33,7 +33,7 @@ When debugging, the following settings are used according to the platforms:
 | LD_LIBRARY_PATH env variable<br>(not needed on Mac OS X) | Specify the *lib* directory of web application.  |
 
 </div><br>
- 
+
 <div class="center aligned" markdown="1">
 
 **In the case of Windows:**
@@ -53,7 +53,7 @@ When debugging, the following settings are used according to the platforms:
 - x.x.x stands for the version of TreeFrog.
 
 Next we are going to configure these items.
- 
+
 ## Debugging with Qt Creator
 
 Let's introduce *debugging* using the *Qt Creator*, I think the way you debug is basically the same with other debuggers.
@@ -74,7 +74,7 @@ Import the source code of the application file to the Qt Creator. Then click *[F
 
 Now we will run the settings screen for debugging.<br>
 The last of the tadpole command arguments, specifies the *-e* option and the absolute path of application root. You may remember that the -e option is the option for switching the DB environment. Let's assume you choose *dev*.
- 
+
 In the case of Linux:<br>
 In the next screen we choose /var/tmp/blogapp as the application root.
 
@@ -83,7 +83,7 @@ In the next screen we choose /var/tmp/blogapp as the application root.
 ![QtCreator runenv]({{ site.baseurl }}/assets/images/documentation/QtCreator-runenv(1).png "QtCreator runenv")
 
 </div>
- 
+
 In Windows:<br>
 We can set the content in two ways by building the configuration screen and by implementing the configuration screen.
 

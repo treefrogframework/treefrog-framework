@@ -38,9 +38,9 @@ private slots:
 void TestBlog::create_data()
 {
     // テストデータの定義
-    QTest::addColumn<QString>("title"); 
+    QTest::addColumn<QString>("title");
     QTest::addColumn<QString>("body");
-   
+
     // テストデータに追加
     QTest::newRow("No1") << "Hello" << "Hello world.";
 }
@@ -48,7 +48,7 @@ void TestBlog::create_data()
 void TestBlog::create()
 {
     // テストデータの取込
-    QFETCH(QString, title); 
+    QFETCH(QString, title);
     QFETCH(QString, body);
 
     // テストのロジック
@@ -56,15 +56,15 @@ void TestBlog::create()
     int id = created.id();
     Blog blog = Blog::get(id);  // IDでモデルを取得
 
-    // 実行結果の検証 
-    QCOMPARE(blog.title(), title); 
+    // 実行結果の検証
+    QCOMPARE(blog.title(), title);
     QCOMPARE(blog.body(), body);
 }
 
 TF_TEST_MAIN(TestBlog)   // 作成したクラス名を指定
 #include "testblog.moc"      // おまじない。拡張子を .moc にする
 ```
- 
+
 補足すると、この中でテストを実行するのは create() メソッドであり、実際に戻り値を検証するのは QCOMPARE マクロです。create_data() メソッドは、テストデータを create() メソッドへ渡す役目をします。メソッド名の末尾には '_data' をつけるのがルールです。
 
 この例で、create_data() メソッドでは次の処理を行なっています。
@@ -93,7 +93,7 @@ create() メソッドでは次の処理を行なっています。
  include(../../appbase.pri)
  SOURCES = testblog.cpp      # ファイル名を指定する
 ```
- 
+
 Qt5 になって一部仕様が変わりました。Qt5 を使用している場合、上記５行目を次のように設定してください。
 
 ```
@@ -118,7 +118,7 @@ Qt5 になって一部仕様が変わりました。Qt5 を使用している場
 Windows の場合、テストの EXE ファイルは debug ディレクトリに作られるので、そこでシンボリックリンクを作ります。「ショートカット」ではないので注意してください。シンボリックリンクを作るには、**管理者権限**で起動したコマンドプロンプトからコマンドを実行する必要があります。
 
 ```
- > cd debug 
+ > cd debug
  > mklink /D  config  ..\..\..\config
  > mklink /D  db  ..\..\..\db
 ```
@@ -175,6 +175,6 @@ Windows の場合には、PATH 変数に設定を追加します。
  PASS   : TestBlog::cleanupTestCase()
  Totals: 2 passed, 1 failed, 0 skipped
  ********* Finished testing of TestBlog *********
-```  
- 
+```
+
 モデルごとにテストケースを作成し、どんどんテストを行なってください。モデルがきちんと動作するかどうかが、Web アプリの要（かなめ）となるのです。

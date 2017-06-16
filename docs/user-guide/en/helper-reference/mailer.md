@@ -16,7 +16,7 @@ First, let's create a mail skeleton with the following command:
    created  controllers/controllers.pro
    created  views/mailer/mail.erb
 ```
- 
+
 The class of InformationMailer is created in the controller directory, and the template with the name *mail.erb* is created in the views directory.
 
 Next, open the *mail.erb* that was previously created and then change its content to the following:
@@ -25,7 +25,7 @@ Next, open the *mail.erb* that was previously created and then change its conten
  Subject: Test Mail
  To: <%==$ to %>
  From: foo@example.com
-   
+
  Hi,
  This is a test mail.
 ```
@@ -43,8 +43,8 @@ void InformationMailer::send()
     texport(to);
     deliver("mail");   // ← mail.erb Mail sent by template
 }
-``` 
- 
+```
+
 You are now able to call from outside of the class. By writing the following code in the action, the process of mail sending will be executed:
 
 ```c++
@@ -54,33 +54,33 @@ InformationMailer().send();
 - When you actually send a mail, please see the following "SMTP Settings" section.
 
 When you need to send a mail directly without using a template, you can use the TSmtpMailer::send() method.
- 
+
 ## SMTP Settings
 
-There is no configuration information for SMTP in the code above. It becomes necessary to set information about SMTP in the *application.ini* file. 
+There is no configuration information for SMTP in the code above. It becomes necessary to set information about SMTP in the *application.ini* file.
 
 ```ini
-# Specify the connection's host name or IP address. 
+# Specify the connection's host name or IP address.
 ActionMailer.smtp.HostName=smtp.example.com
- 
+
 # Specify the connection's port number.
 ActionMailer.smtp.Port=25
-  
+
 # Enables SMTP authentication if true; disables SMTP
 # authentication if false.
 ActionMailer.smtp.Authentication=false
-  
+
 # Specify the user name for SMTP authentication.
 ActionMailer.smtp.UserName=
-  
+
 # Specify the password for SMTP authentication.
 ActionMailer.smtp.Password=
-  
+
 # Enables the delayed delivery of email if true. If enabled, deliver() method
 # only adds the email to the queue and therefore the method doesn't block.
 ActionMailer.smtp.DelayedDelivery=false
 ```
- 
+
 If you use SMTP authentication, you need to set this:
 
 ```ini
@@ -90,10 +90,10 @@ ActionMailer.smtp.Authentication=true
 As for the authentication method, CRAM-MD5, LOGIN and PLAIN (using this priority) are mounted in a way, so that the authentication process is performed automatically.
 
 In this framework, SMTPS email sending is not supported.
- 
+
 ## Delay sending the mail
 
-Since mail sending by SMTP needs to pass the data through an external server, it requires time compared to the process. You can return an HTTP response before the mail sending process is executed. 
+Since mail sending by SMTP needs to pass the data through an external server, it requires time compared to the process. You can return an HTTP response before the mail sending process is executed.
 
 Edit the *application.ini* file as follows:
 

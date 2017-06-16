@@ -5,10 +5,10 @@ page_id: "050.040"
 
 ## Access Control
 
-Access control in a website can be done in two ways: 
+Access control in a website can be done in two ways:
 
 * by user authenticiation and
-* by the connecting host (IP address). 
+* by the connecting host (IP address).
 
 For access control by the host, please set for the Web server (Apache/nginx) as required.
 
@@ -41,7 +41,7 @@ For permissions/denials from the user that do not define the access rules, the d
 ```c++
 setDenyDefault(true);
 ```
- 
+
 Here is the logic to validate users with access. The following method here overrides the preFilter() method of the controller and returns *false* when the user access has been denied. The controller preFilter() method returns *false* if user access is not granted.
 
 ```c++

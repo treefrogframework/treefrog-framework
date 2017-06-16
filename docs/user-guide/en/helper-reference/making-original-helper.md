@@ -9,7 +9,7 @@ When you create a helper, it can be accessible from the model/controller/view. P
 
 ## How to Make the helper
 
-You can implement the class as you like in the *helpers* directory, remember to put the charm of T_HELPER_EXPORT. Other than that you can do anything. 
+You can implement the class as you like in the *helpers* directory, remember to put the charm of T_HELPER_EXPORT. Other than that you can do anything.
 
 ```c++
 #include <TGlobal>

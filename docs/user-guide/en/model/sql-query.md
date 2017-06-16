@@ -33,7 +33,7 @@ query.exec("SELECT id, title FROM blog");  // Query execution
 while (query.next()) {
     int id = query.value(0).toInt(); //  Convert the field first to int type
     QString str = query.value(1).toString(); // Convert the second field to QString type
-    // do something 
+    // do something
 }
 ```
 
@@ -73,12 +73,12 @@ Or like the following:
 
 ```c++
  $ treefrog -k restart
-``` 
+```
 
 ## Get an ORM Object from the Result of a Query
 
 In the above method, it is necessary to retrieve the value of every field from the results of the query; however, single records can be extracted as ORM objects in the following manner.
- 
+
 Run the query using the TSqlQueryMapper object. Then extract the ORM object from the results using an iterator. It's important to specify the 'blog. *' in the SELECT statement in order to select and target all fields.
 
 ```c++

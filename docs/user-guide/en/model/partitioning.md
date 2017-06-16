@@ -29,7 +29,7 @@ UserName=root
 Password=xxxx
 ConnectOptions=
 ```
- 
+
 Next define the file names of the database configuration files in the application configuration file (*application.ini*). Use *DatabaseSettingsFiles* with the values written side by side and seperate them by spaces.
 
 ```ini

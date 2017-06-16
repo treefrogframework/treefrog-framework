@@ -15,7 +15,7 @@ First, we must create a skeleton of the application before we can do anything el
  $ tspawn new blogapp
 ```
 
-When you run this command, the directory tree will then include the application root directory at the top. The configuration file (*ini*) and the project files (*pro*) will be generated, too. The directory is just one of the names you have already seen before.<br> 
+When you run this command, the directory tree will then include the application root directory at the top. The configuration file (*ini*) and the project files (*pro*) will be generated, too. The directory is just one of the names you have already seen before.<br>
 The following items will be generated as a directory.
 
 * controllers
@@ -24,19 +24,19 @@ The following items will be generated as a directory.
 * heplers
 * config      – configuration files
 * db          - database file storage (SQLite)
-* lib    
+* lib
 * log         – log files
-* plugin 
+* plugin
 * public      – static HTML files, images and JavaScript files
-* script  
-* test    
+* script
+* test
 * tmp         – temparary directory, such as a file upload
- 
+
 ## Generate a Scaffold
 
 The scaffold contains a basic implementation allowing CRUD operations to take place. The scaffold includes the following components: controller, model, source files for *views*, and project files (pro). Therefore, the scaffold forms a good basement on which you can start to establish your full-scale development.
 
-In order to generate a scaffold with the generator command *tspawn*, you need to define a table in the database in advance and to set the database information in the configuration file (*database.ini*).<br> 
+In order to generate a scaffold with the generator command *tspawn*, you need to define a table in the database in advance and to set the database information in the configuration file (*database.ini*).<br>
 Now, let's define a table. See the following example:
 
 ```sql
@@ -94,7 +94,7 @@ Database open successfully
 
 <br>
 <span style="color: #b22222">**In brief: Define the schema in the database and make us the generator command for the scaffolding.** </span>
- 
+
 ### Relationship of Model-Name/Controller-Name and Table Name
 
 The generator will create class names determined on the basis of the table name. The rules are as follows:
@@ -148,7 +148,7 @@ The following class names are good examples to understand the here described con
 * EntryCommentController
 
 These files are stored in the controller's directory. File names inside the that folder will be all in lowercase; the class name plus the relevant extension (.cpp or .h).
- 
+
 #### Conventions for Naming Models
 
 In the same manner as with the controller, model names should always begin with a capital letter, erase the underscore ('_') to separate words but capitalize the first letter after where the separator would be. For example, class names such as the following:
@@ -168,7 +168,7 @@ Also, when you build the view and then output the source file in *views/_src* di
 
 CRUD covers the four major functions found in a Web application. The name comes from taking the initial letters of "Create (generate)," "Read (Read)", "Update (update)", and "Delete (Delete)".
 When you create a scaffolding, the generator command generates the naming code as follows:
- 
+
 <div class="center aligned" markdown="1">
 
 **CRUD Correspondence Table**

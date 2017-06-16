@@ -41,12 +41,12 @@ When coding the class of models, the following conventions are in place. These s
 * Use the texport() method to pass arguments to the view.
     → This is equal to set to a variable from type QVariant (by using the setValue() method) in the following classes:　
     - public default constructor
-    - public copy constructor 
+    - public copy constructor
     - public destructor
     - Declaration in Q_DECLARE_METATYPE macro (At the end of the header per file)
 
 Please read the [Qt documentation](http://doc.qt.io/qt-5/qmetatype.html){:target="_blank"} if you want to learn more about it.
- 
+
 <span style="color: #b22222">**★ A model that is created by the generator command already meets the minimum requirements to work.** </span>
 
 The model class that is created in the generator is inherited from the TAbstractModel class. I have inherited it in order to take advantage of its features. Additionally, convenient methods for handling ORM objects will be available, too. Basically, the inheritance is merely for reusability. Those models that don't access the database at all, don't need to deal with inheritance though.
@@ -59,7 +59,7 @@ When the model is created by the generator, the getter/setter of each property a
 static Blog create(const QString &title, const QString &body);
 static Blog create(const QVariantMap &values);
 static Blog get(int id);       // Get the model object with a specified ID
-static Blog get(int id, int lockRevision); 
+static Blog get(int id, int lockRevision);
 static QList<Blog> getAll();   // Get all model objects
 ```
 
@@ -84,7 +84,7 @@ The code which is generated here is only the tip of the iceberg. You can add or 
 
 ## Creating a Model with a Different Name to the Table Name
 
-When you create a model using the generator command, the model name are derived from the table name in this format '_' (underscore).<br> 
+When you create a model using the generator command, the model name are derived from the table name in this format '_' (underscore).<br>
 If you want to give an individual model a different name with this format, you can deal with it using the command with a string at the end such as follows:
 
 ```

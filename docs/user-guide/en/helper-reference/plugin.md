@@ -9,13 +9,13 @@ In TreeFrog, the plug-in refers to dynamic libraries (shared library, DLL) that 
 
 * Logger plug-in (for log output)
 * The session store plug-in (for Saving and reading sessions)
- 
+
 ## How to Create a Plug-in
 
 Create a plug-in is exactly the same as how to create a plug-in for Qt. To demonstrate this, let's create a logger plug-in. First, we'll create a working directory in the *plugin* directory
 
 ```
- > cd plugin 
+ > cd plugin
  > mkdir sample
 ```
 
@@ -32,10 +32,10 @@ class SamplePlugin : public TLoggerPlugin
     TLogger *create(const QString &key);
 };
 ```
- 
+
 In the keys() method, the string that can be the key for supporting the plug-in, is returned as a list. In the create() method, the instance of the logger that corresponds to the key is created and implemented in a way to be returned as a pointer.
 
-After including the QtPlugin in the source file, you can register the plug-in by putting a macro, such as the following: 
+After including the QtPlugin in the source file, you can register the plug-in by putting a macro, such as the following:
 
 * The first argument can be any string such as the name of the plug-in
 * The second argument is a plug-in class name.
@@ -65,8 +65,8 @@ public:
     void log(const TLog &log);
      ...
 };
-``` 
- 
+```
+
 Our next target is the project file (.pro). Do not forget to add the value "plugin" to the CONFIG parameter in this file!
 
 ```
@@ -113,7 +113,7 @@ In order to implement the logger, you can override the following methods in the 
 * log(): output the log. This method may be called from multiple threads, make this as **thread-safe**.
 * isMultiProcessSafe(): indicates whether it is safe for you to output a log in a multi-process. When it is safe, it returns true. I not, it returns as false.
 
-About MultiProcessSafe method: when it returns *false* (meaning it is not safe) and the application server is running in a multiprocess mode as well, the isMultiProcessSafe() method calls open()/close() each time before and after it is logging output (leads into increasing overhead).<br> 
+About MultiProcessSafe method: when it returns *false* (meaning it is not safe) and the application server is running in a multiprocess mode as well, the isMultiProcessSafe() method calls open()/close() each time before and after it is logging output (leads into increasing overhead).<br>
 By the way, this system has lock/unlock around this by semaphore, so that there is no conflict. And when you return *true*, the system will only call the open() method first.
 
 ## Session Store Plug-in

@@ -74,7 +74,7 @@ blogapp という名でスケルトン（ディレクトリツリーと各種設
  sqlite> CREATE TABLE blog (id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(20), body VARCHAR(200), created_at TIMESTAMP, updated_at TIMESTAMP, lock_revision INTEGER);
  sqlite> .quit
 ```
- 
+
 これで id、title, bady, created_at, updated_at, lock_revision のフィールドを持つ blog テーブルができました。
 
 created_at と updated_at のフィールドがあると、TreeFrog はそれぞれ作成日時、更新日時を自動で挿入・更新してくれます。lock_revision フィールドは、楽観的ロックを実現するためのもので、integer 型で作っておきます。
@@ -117,17 +117,17 @@ SQLite の例：
 正しく設定されたか、DBにアクセスしてテーブルを表示してみましょう。
 
 ```
- $ cd blogapp 
+ $ cd blogapp
  $ tspawn --show-tables
  DriverType:   QSQLITE
- DatabaseName: db\blogdb 
+ DatabaseName: db\blogdb
  HostName:
  Database opened successfully
  -----
  Available tables:
    blog
-``` 
- 
+```
+
 このように表示されれば成功です。
 
 もし 使用する SQL ドライバがQt SDK に組み込まれていないと、ここでエラーが発生します。
@@ -135,16 +135,16 @@ SQLite の例：
 ```
  QSqlDatabase: QMYSQL driver not loaded
 ```
- 
+
 この場合、[ダウンロードのページ](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}でSQLデータベースドライバをダウンロードして、インストールしてください。<br>
 組み込まれたSQLドライバは次のコマンドで確認することができます。
 
 ```
  $ tspawn --show-drivers
  Available database drivers for Qt:
-  QSQLITE 
-  QMYSQL3 
-  QMYSQL 
+  QSQLITE
+  QMYSQL3
+  QMYSQL
   QODBC3
   QODBC
 ```
@@ -160,8 +160,8 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
  TemplateSystem=ERB
    または
  TemplateSystem=Otama
-``` 
- 
+```
+
 ## 作ったテーブルからコードを自動生成
 
 コマンドラインから、ジェネレータコマンド（*tspawn*）を実行し、ベースとなるコードを生成します。下記の例ではコントローラ、モデル、ビューを生成しています。引数には、テーブル名を指定します。
@@ -182,9 +182,9 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
    created   views/blog
  　 　:
 ```
- 
+
 ※ tspawn の オプションによって、コントローラだけ、あるいはモデルだけ生成するように変えられます。
- 
+
 参考：tspawnコマンドのヘルプ
 ```
  $ tspawn --help
@@ -208,7 +208,7 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
    mailer (l)      <mailer-name> action [action ...]
    delete (d)      <table-name or validator-name>
 ```
- 
+
 ## ソースコードをビルド
 
 make する前に、一度だけ次のコマンドを実行し、Makefile を生成します。
@@ -226,11 +226,11 @@ WARNING メッセージが表示されますが、問題はありません。そ
 ビルドが成功すると、４つの共有ライブラリ（controller, model, view, helper）が lib ディレクトリに作られます。<br>
 デフォルトでは、デバッグモードのライブラリが生成されますが、リリースモードのライブラリを作成するには次のコマンドでMakefileを再生成すればよいでしょう。
 
-リリースモードのMakefile作成： 
+リリースモードのMakefile作成：
 
 ```
  $ qmake -r "CONFIG+=release"
-```  
+```
 
 ## アプリケーションサーバを起動
 
@@ -249,13 +249,13 @@ Windows では、*treefrog**d**.exe* を使って起動します。
 
 Windows では、Web アプリケーションをデバッグモードでビルドした場合は *treefrog**d**.exe* を、リリースモードでビルドした場合は *treefrog.exe* を使って起動してください。<br>
 <span style="color: #b22222">**リリースモードとデバッグモードのオブジェクトが混在すると、正常に動作しません。**</span>
- 
+
 バックグランドで起動する場合は、-d オプションを指定します。
 
 ```
  $ treefrog -d -e dev
-```   
- 
+```
+
 ここまで現れた -e オプションについて補足します。<br>
 このオプションの後に database.ini で設定した**セクション名**を指定することで、データベースの設定を切り替えることができます。省略時は、product を指定したとみなされます。プロジェクトの作成時は次の３つが定義されています。
 
@@ -268,9 +268,9 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 | product |	正式版用、製品版用 |
 
 </div>
-   
+
 ※ -e は environment の頭文字からきています。
- 
+
 停止コマンド：
 
 ```
@@ -317,7 +317,7 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 開発したソースコードはビルドしなおせば、他のプラットフォームでも動作します。
 
 このサンプルWebアプリケーションを公開してます。[ここにアクセスして](http://blogapp.treefrogframework.org/Blog){:target="_blank"}、遊んでみてください。デスクトップアプリケーション並の速さです。
- 
+
 ## コントローラの中身　
 
 生成されたコントローラの中身を見てみましょう。<br>
@@ -367,7 +367,7 @@ void BlogController::index()
 void BlogController::show(const QString &id)
 {
     auto blog = Blog::get(id.toInt()); // プライマリキーでBlogモデルを取得
-    texport(blog);                          
+    texport(blog);
     render();
 }
 
@@ -385,7 +385,7 @@ void BlogController::create()
 
         if (!model.isNull()) {
             QString notice = "Created successfully.";
-            tflash(notice);                      // flash メッセージを設定          
+            tflash(notice);                      // flash メッセージを設定
             redirect(urla("show", model.id()));  // show アクションへリダイレクト
         } else {
             QString error = "Failed to create."; // オブジェクト生成失敗時
@@ -393,7 +393,7 @@ void BlogController::create()
             texport(blog);
             render();
         }
-        break; 
+        break;
     }
 
     default:
@@ -413,14 +413,14 @@ void BlogController::save(const QString &pk)
             texport(blog);                  // Sends the blog-data to the view
             render();
         }
-        break; 
+        break;
     }
 
     case Tf::Post: {
         QString error;
         int rev = session().value("blog_lockRevision").toInt(); // ロックリビジョンを取得
         auto model = Blog::get(id.toInt(), rev);                // データを保存するための Blog オブジェクトを取得
-        
+
         if (model.isNull()) {
             error = "Original data not found. It may have been updated/removed by another transaction.";
             tflash(error);
@@ -440,7 +440,7 @@ void BlogController::save(const QString &pk)
             texport(blog);
             render();
         }
-        break; 
+        break;
     }
 
     default:
@@ -466,13 +466,13 @@ T_REGISTER_CONTROLLER(blogcontroller)   // おまじない
 ```
 
 ※ ロックリビジョンは楽観的ロックを実現するために使用されます。詳細は「モデル」の章で後述します。
- 
+
 ご覧のとおり、ビュー（テンプレート）に対してデータを渡すには  texport メソッドを使います。この texport メソッドの引数は QVariant のオブジェクトです。QVariant はあらゆる型になりえるので、int, QString, QList, QHash はもちろん任意のオブジェクトが渡せます。QVariant の詳細は Qt ドキュメントを参照ください。
 
 ## ビューの仕組み
 
 TreeFrog では、今のところ２つのテンプレートシステムを採用しています。ERB と 独自システム（Otama と呼んでいます）です。Rails などで知られているとおり、ERB はHTMLにコードを埋め込むものです。
- 
+
 ジェネレータで自動生成されるデフォルトのビューは ERBのファイルです。index.erb の中身を見てみましょう。<br>
 ご覧のように <% .. %> で囲まれた部分にC++コードを書きます。index アクションから render メソッドが呼び出されると、この index.erb の内容がレスポンスとして返されます。
 
@@ -509,7 +509,7 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
   </tr>
 <% } %>
 </table>
-```  
+```
 
 **次は、Otamaテンプレートシステムを見てみましょう。**
 
@@ -596,13 +596,13 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
    int foo;
    foo = ...
    texport(foo);
- 
+
  ビュー側：
   tfetch(int, foo);
 ```
 
 ※ ２つ以上の変数に対しそれぞれ texport をコールすれば、ビューに引き渡すことができます
- 
+
 Otama システムは、これらテンプレートファイルとプレゼンテーションファイルを元に C++ コードを生成します。内部的には、tmake がそれを処理しています。その後、コードはコンパイルされ、ビューとして１つの共有ライブラリになります。なので、動作は非常に高速です。
 
 #### HTML用語解説
@@ -616,7 +616,7 @@ TreeFrog では、モデルが ORM オブジェクトを含むという関係な
 
 TreeFrog には SqlObject という名の O/R マッパーがデフォルトで組み込まれています。<br>
 C++ は静的型付け言語なので、型の宣言が必要です。生成された SqlObject  ファイル blogobject.h を見てみましょう。
- 
+
 半分ほどおまじないコードがありますが、テーブルのフィールドがパブリックなメンバ変数として宣言されています。構造体に近いですね。たったこれだけで、CRUD 相当のメソッド(create, findFirst, update, remove) が使えるようになります。それらのメソッドは TSqlObject  クラスと TSqlORMapper クラスに定義されています。
 
 ```c++
@@ -711,9 +711,9 @@ Q_DECLARE_METATYPE(QList<Blog>)
 
 ジェネレータで自動生成されたコードはそんなに多くないステップ数にも関わらず、基本的な機能ができあがっています。<br>
 当然ながら生成されたコードは完全ではなく、実際のアプリケーションではさらに複雑な処理になるはずなので、そのままは使えないことが多いかもしれません。手直しが必要でしょう。ジェネレータは、コードを書く手間を少々省く程度のものと考えてください。
- 
+
 上記で説明したコードの裏では、クッキーの改ざんチェック、楽観的ロック、SQL インジェクション対策や認証トークンを使った CSRF 対策が機能しています。興味のある方、ソースをのぞいてみてください。
- 
+
 ## サンプルブログアプリ作成デモ
 
 <div class="img-center" markdown="1">

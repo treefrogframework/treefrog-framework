@@ -27,7 +27,7 @@ Access to the session in the action. Alternatively, we could also write as follo
  session()["name"] = "foo";
   or
  session()["index"] = 123;
-``` 
+```
 
 ## Reading the Data from the Session
 
@@ -45,7 +45,7 @@ Alternatively, we could also write as follows:
  QString name = session()["name"].toString();
   or
  int index = session()["index"].toInt();
-``` 
+```
 
 ## Set the Session Destination
 
@@ -59,13 +59,13 @@ If you would like to set a cookie destination, you can simply write:
 
 ```
  Session.StoreType=cookie
-``` 
+```
 
 By saving cookies, so that the contents of the session will be saved to the client (browser) side, the contents will be available for the users to view if you wish to allow it. Information that should not be shown to the user should be saved on the server (such as RDB). As a rule, you should try to put in the session only a minimum amount of necessary information.
 
 ## Session Save File Destination
 
-If you would like to set a destination for your cookie files, you can simply write the following (Session files will be continuously made in the *tmp* directory of the application root directory): 
+If you would like to set a destination for your cookie files, you can simply write the following (Session files will be continuously made in the *tmp* directory of the application root directory):
 
 ```
  Session.StoreType=file

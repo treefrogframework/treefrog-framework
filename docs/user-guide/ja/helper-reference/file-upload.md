@@ -12,12 +12,12 @@ page_id: "080.010"
   <p>
     File: <input name="picture" type="file">
   </p>
-  <p> 
+  <p>
     <input type="submit" value="Upload">
   </p>
 </form>
 ```
- 
+
 この例では、ファイルのアップロード先は同じコントローラの upload アクションになります。
 
 アップロードファイルを受け取るアクションでは、次のメソッドを使うことでそのファイルをリネームすることができます。アップロードファイルは一時ファイルの扱いなので、リネームしないとアクション終了後にファイルは自動的に削除されます。
@@ -37,7 +37,7 @@ QString origname = formdata.originalFileName("picture");
 
 ```
 QString upfile = formdata.uploadedFile("picture");
-``` 
+```
 
 ## 可変個のファイルのアップロード
 
@@ -52,7 +52,7 @@ TreeFrog Framework はこのようなケースにも対応しています。以�
     File1: <input name="picture[]" type="file">
     File2: <input name="picture[]" type="file">
   </p>
-  <p> 
+  <p>
     <input type="submit" value="Upload">
   </p>
 </form>

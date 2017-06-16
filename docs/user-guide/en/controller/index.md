@@ -19,13 +19,13 @@ class T_CONTROLLER_EXPORT FooController : public ApplicationController
     Q_OBJECT
      :
 public slots:   // The action is defined here
-    void bar();  
+    void bar();
     void baz(const QString &str);
      :
 ```
 
 After that, carry on implementing those actions in the same way as always.
- 
+
 ## Determination of an Action
 
 When the URL string is requested, the correct action to be invoked will be determined. By default, the following rules will be used.
@@ -33,25 +33,25 @@ When the URL string is requested, the correct action to be invoked will be deter
 ```
  /controller-name/action-name/argument1/argument2/ ...
 ```
- 
+
 These arguments will be referred as the "Action Arguments".
 
 If more than 10 are specified, only 10 arguments will be taken into account. If you want to use 11 or more arguments, please use the post or data URL arguments as described below.
- 
+
 Here are some concrete examples. Actions from the BlogController class are called in each case.
 
 ```
  /blog/show        →  show();
  /blog/show/2      →  show(QString("2"));
- /blog/show/foo/5  →  show(QString("foo"), QString("5"));  
+ /blog/show/foo/5  →  show(QString("foo"), QString("5"));
 ```
 
 If the action name is omitted, then the action with the name *index* will be called by default. This could look like as follow:
 
 ```
  /blog   →  index();
-```  
- 
+```
+
 If the action corresponding to the requested URL is not defined, status code 500 (Internal Server Error) is returned to the browser.
 
 For each action that is called, the following process will be carried out in most cases:
@@ -66,7 +66,7 @@ For each action that is called, the following process will be carried out in mos
 This usually means a lot of work and code to be written for the programmer. Therefore, as a result, some people may end up with a large and complex controllers. To combat this, try to keep the implementation of the model side business logic only. You should always try to keep the controller as simple and as small as possible.
 
 Once you have learned the mechanism on how an action is invoked, it is possible to customize the action that is determined by the URL. Please see the section on [URL routing](http://www.treefrogframework.org/documents/controller/url-routing){:target="_blank"} for more details.
- 
+
 ## Acquisition of the Request
 
 An HTTP request is represented by the THttpRequest class.
@@ -85,9 +85,9 @@ An HTTP request sent from the client (browser) consists of a method, a header, a
 * post data - data submitted from a form using the POST method
 * URL argument (query parameter) - data assigned to a URL argument after "?" as (format of key = value & …)
 * Action argument - data that has been granted after action (the 3 part of "/blog/edit/3") ←see above.
- 
+
 The following example shows how to obtain post data in the controller.
-Let's consider that you've made an \<input> tag in the view. 
+Let's consider that you've made an \<input> tag in the view.
 
 ```
  <input type="text" name="title" />
@@ -116,7 +116,7 @@ In the controller, data can be obtained as follows:
  QVariant t = blog["title"];
  QVariant b = blog["body"];
   :
-``` 
+```
 Request data can be represented by the hash format.
 
 How to get the URL argument (query parameters)? Here is an example:
@@ -133,9 +133,9 @@ You can use the following method to the value named *mode* here in the *index* a
 ```
 
 By the way, if you want to get the data without specifying the URL argument and post data, you can use the methods allParameters() and methods().
- 
+
 In order to verify whether requested data is in the form required by the application side, a validation function is provided, too. For more information, visit the chapter on [validation](/user-guide/en/helper-reference/validation.html){:target="_blank"}.
- 
+
 ## Passing Variables to a View
 
 To pass variables to a view, use the macros* texport(variable)* or *T_EXPORT(variable)*. You can specify the arguments as *QVariant*, *int*, *QString*, *QList*, or *QHash*. Or you can, of course, also specify the instance of a user-defined model. These are used as follows:
@@ -156,7 +156,7 @@ To pass variables to a view, use the macros* texport(variable)* or *T_EXPORT(var
 To use a variable inside a view, you must first declare the variable in *tfetch (Type, variable)*. Please see the [view]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"} chapter for more information.
 
 <span style="color: #b22222">**In brief: Pass the object to the view by using tfetch().** </span>
- 
+
 **In case of an user-defined class:**
 
 When you make the new class passing to the view (user-defined class), please add the following charm at the end of the header class. For more information about this, see the section on ["Creating original model"](/user-guide/en/model/index/html){:target="_blank"}.
@@ -177,12 +177,12 @@ A Q_DECLARE_METATYPE macro argument is the name of a class. But if you include a
 ```c++
  typedef QHash<Foo, Bar> BarHash;
  Q_DECLARE_METATYPE(BarHash)
-``` 
+```
 
 #### Export object
 
 We refer to an object passed to the view (object that set in the texport() method) as an "export object".
- 
+
 ## Requesting the Creation of a Response
 
 After processing the business logic, a result of the process as an HTML response will be returned. If the BlogController *show* action is executed, the response is generated by the template name (extension due to the template system) as in *views/blog/show.xxx*. To request a response, you can use the render() method.
@@ -203,11 +203,11 @@ When you create a site, the header and footer and some other parts are usually c
 
 ### About the Template System
 
-TreeFrog, so far, has adopted two template systems: **Otama**, and **ERB**. In ERB, code will be embedded by using <% .. %>. The Otama system has a little different treatment in TreeFrog, because it completely separates the logic (.otm) and the presentation templates (.html). 
- 
+TreeFrog, so far, has adopted two template systems: **Otama**, and **ERB**. In ERB, code will be embedded by using <% .. %>. The Otama system has a little different treatment in TreeFrog, because it completely separates the logic (.otm) and the presentation templates (.html).
+
 * ERB uses file extension: xxx.erb
 * Otama uses file extensions: xxx.otm and xxx.html<br>(where 'xxx' is the action name)
- 
+
 ## Direct Rendering of a String
 
 To render a string directly, use the renderText() method.
@@ -231,14 +231,14 @@ For more information about layouts, please refer to the [view](/user-guide/en/vi
 In order to redirect the browser to another URL, you can use the redirect method. For the first argument, specify the instance of the *QUrl* class.
 
 ```c++
- // redirecting to www.example.org 
+ // redirecting to www.example.org
  redirect(QUrl("www.example.org"));
 ```
 
 You are then able to redirect to other actions on the same host.
 
 ```c++
- / redirecting to the incdex action of the Blog controller 
+ / redirecting to the incdex action of the Blog controller
  redirect( url("blog", "index") );
 ```
 
@@ -252,7 +252,7 @@ To redirect to other actions inside the same controller, you can omit the contro
 ```
 
 It is important to use the urla() method.
- 
+
 ## To Display Messages in the Redirect Destination
 
 A redirection leads to another URL. This is because, from the point of view of the server, the URL receives a new destination, thus it has the effect of another action being called.
@@ -277,7 +277,7 @@ Personally, I think it's better and easier to understand, to have each action co
 
 If the action creates separate independent displays of almost the same content, the code becomes simpler when using the flash object.
 
-The way the *blogapp* (the subject of the [tutorial chapter](/user-guide/en/tutorial/index/html){:target="_blank"}) uses the *create* and *show* action are good examples. But processing of these actions is different, but both only display the contents of the blog 1 as a result of this processing. In the create action, after the successful data registration, the data will be displayed by redirecting to the show action. At the same time, the message "Created successfully." is displayed by using the flash object. 
+The way the *blogapp* (the subject of the [tutorial chapter](/user-guide/en/tutorial/index/html){:target="_blank"}) uses the *create* and *show* action are good examples. But processing of these actions is different, but both only display the contents of the blog 1 as a result of this processing. In the create action, after the successful data registration, the data will be displayed by redirecting to the show action. At the same time, the message "Created successfully." is displayed by using the flash object.
 
 Actually, an application is not always this simple, because it isn't always necessarily possible to capture and use the flash object. Therefore, please try to use it to strike a balance.
 
@@ -285,7 +285,7 @@ With that being said, in practice most actions come down to either using the *re
 
 **By the way …**<br>
 In the manner described above, when a redirect occurs, the processing is cut once it goes to the Web application. Objects that survive in spite of this can make other contexts (actions), whereas the flash object is implemented using the session.
- 
+
 ## staticInitialize() Method
 
 When starting up, there is only one process in the application. You may want to keep reading the initial data from the DB in advance.

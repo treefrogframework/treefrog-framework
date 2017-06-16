@@ -20,12 +20,12 @@ TPaginator pager(totalCount, 10, 5);
 pager.setCurrentPage(current);  // 現在のページを設定
 texport(pager);
 
-// 該当する項目を取得し、ビューへ受け渡し 
+// 該当する項目を取得し、ビューへ受け渡し
 QList<Blog> blogList = Blog::getBlogs( pager.itemCountPerPage(), pager.offset() );
 texport(blogList);
 render();
 ```
- 
+
 次はビューです。<br>
 ページ番号を表示するには、部分テンプレートを使用するのが良いでしょう。<br>
 次の例では、渡された TPaginator オブジェクトを使って、ページ番号とそのリンクを描画しています。urlq()メソッドは、現在のアクションに対して、指定したクエリ引数を追加したURLを生成します。
@@ -46,15 +46,15 @@ render();
   <%== linkToIf(pager.hasNext(), "Next", urlq("page=" + QString::number( pager.nextPage() ))) %>
 </div>
 ```
-  
+
 部分テンプレートを描画する方法は、次のとおりでした。
 
 ```
 <%== renderPartial("pagination") %>
 ```
- 
+
 また、このテンプレートでは、コントローラから渡されたモデルの一覧を描画します。繰り返しになるのでコードは省略します。[ジェネレータ](/user-guide/ja/generator/index.html){:target="_blank"}で作成した index テンプレートなどを参考にしてださい。
- 
+
 次に、モデルの取得です。<br>
 該当するモデルの一覧を取得するには、データベースに対して、LIMIT 句 と OFFSET 句を指定したクエリを発行すれば良いでしょう。要件によっては、WHERE句やソートを指定する必要があるかもしれませんね。
 
@@ -68,7 +68,7 @@ QList<Blog> Blog::getBlogs(int limit, int offset)
 ```
 
 ※ [API リファレンス 参照](http://treefrogframework.org/tf_doxygen/tmodelutil_8h.html){:target="_blank"}
-  
- 
+
+
 **追記：**<br>
 ちなみにですが、ページネーションはそれほど難しい機能ではないので、TPaginator を使わなくとも独自に実装できると思います。これで足りなければ、実装にチャレンジしてみてください。

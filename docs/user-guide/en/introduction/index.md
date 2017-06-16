@@ -14,7 +14,7 @@ With the aim of reducing development costs while producing a C++ framework, a po
 ### Cross-platform
 
 TreeFrog Framework is cross-platform. It runs on Windows, of course, but also on UNIX-like Operating Systems, Mac OS X, and Linux. Using Windows open-source coding, it is possible to support Linux. Web applications that run on multiple platforms are also possible, simply by recompiling the source code.
- 
+
 ### Controller
 
 Developers will be easily able to obtain the data representing HTTP request/response, and the session. In addition to this, it has already provided same useful rough features such as login authentication, form validation, and access control.
@@ -34,7 +34,7 @@ In addition, this framework is compatible with all major database programs such 
 ### Qt-based
 
 Qt and the TreeFrog Framework are linked. Not only is the Qt GUI framework powerful, but the non-GUI functionality is also very good. By combining Web applications for the core module container class, network, SQL, JSON, unit test, and meta-object, app developers are provided with very convenient usability features.
- 
+
 ### Open source
 
 TreeFrog Framework is open-source software, under the new BSD license (3-clause BSD License).

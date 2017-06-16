@@ -5,7 +5,7 @@ page_id: "060.060"
 
 ## Object-Document Mapping in MongoDB
 
-MongoDB expresses data to be saved in a JSON-like format and saves it as a document. The function of associating such a document with an object in a programming language is called **object-document mapping (O/D mapping)**. 
+MongoDB expresses data to be saved in a JSON-like format and saves it as a document. The function of associating such a document with an object in a programming language is called **object-document mapping (O/D mapping)**.
 
 As in the [O/R mapping](/user-guide/en/model/or-mapping.html){:target="_blank"} chapter described, one document here is also associated with one object in the O/D mapping.
 
@@ -21,7 +21,7 @@ Since MongoDB documents are JSON-like formats, it is possible to have a hierarch
 
 ## Setup
 
-If you are not sure anymore how to setup a MongoDB connection properly, please refer to the [Access MongoDB](/user-guide/en/model/access-mongodb.html){:target="_blank"} chapter. 
+If you are not sure anymore how to setup a MongoDB connection properly, please refer to the [Access MongoDB](/user-guide/en/model/access-mongodb.html){:target="_blank"} chapter.
 
 For generating the class for O/D mapping, execute the following command in the application root directory. In this example, we create a collection named *foo*. The name of the model will be *Foo*.
 
@@ -67,7 +67,7 @@ Execute the following command again in order to reflect the added contents to ot
 Type 'Y' for all files with changes.<br>
 This completes the model with [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete){:target="_blank"}.
 
-If you want to generate scaffolds including *controllers* and *views*, you can execute the following command instead of 'tspawn mm foo'. 
+If you want to generate scaffolds including *controllers* and *views*, you can execute the following command instead of 'tspawn mm foo'.
 
 ```
  $ tspawn ms foo
@@ -150,7 +150,7 @@ class T_MODEL_EXPORT FooObject : public TMongoObject, public QSharedData
 public:
     QString _id;
     QStringList  texts;
-     : 
+     :
 ```
 
 * Please consider: **QStringList** cannot be defined in ORM object classes.

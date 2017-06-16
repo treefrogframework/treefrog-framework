@@ -30,7 +30,7 @@ void FooController::setAccessRules()
 ```
 
 アクセスを許可するには allowUser() や allowGroup() を使い、アクセスを拒否するには denyUser() や denyGroup() を使って定義します。第１引数には、ユーザIDまたはグループを指定します。第２引数には、アクション名またはそのリスト(QStringList)を指定します。
-  
+
 アクセスルールを定義していないユーザからの許可／拒否については、デフォルトの設定が使われます。これは setAllowDefault()メソッドか、 setDenyDefault()メソッドで設定します。
 
 ```c++

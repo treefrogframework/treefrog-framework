@@ -7,15 +7,15 @@ page_id: "020.0"
 
 First of all, we need to install the Qt library in advance.
 
-On Windows and Mac OS X, download the package from the [Qt site](http://qt-project.org/downloads){:target="_blank"} and install it.  
+On Windows and Mac OS X, download the package from the [Qt site](http://qt-project.org/downloads){:target="_blank"} and install it.
 On Linux, you can install a package for each distribution.
 
-In case of Ubuntu:  
+In case of Ubuntu:
 Install the Qt libraries and dev tools:
 
 ```
- $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql 
- libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev 
+ $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
+ libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev
  qtdeclarative5-dev qtbase5-dev-tools gcc g++ make
 ```
 
@@ -29,15 +29,15 @@ Now install the DB client libraries:
 
 1. Extract the file you just have [downloaded](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}.
 
-   The following command applies to version 'x.x.x'. Please update it appropriately.  
-   
+   The following command applies to version 'x.x.x'. Please update it appropriately.
+
    ```
     $ tar xvfz treefrog-x.x.x.tar.gz
    ```
 
-2. Run build commands. 
- 
-   In Windows:  
+2. Run build commands.
+
+   In Windows:
    Please create a binary of two types for *release* and for *debugging*.
    Start the Qt Command Prompt and then build with the following commands. The configuration batch should be run twice.
 
@@ -56,7 +56,7 @@ Now install the DB client libraries:
   > mingw32-make install
    ```
 
-   In UNIX-based OS Linux, and Mac OS X:     
+   In UNIX-based OS Linux, and Mac OS X:
    Enter the following command from the command line:
 
    ```
@@ -70,8 +70,8 @@ Now install the DB client libraries:
   $ sudo make install
    ```
 
-   **Note:**   
-   In order to debug the TreeFrog Framework itself, please use the *configure* option.  
+   **Note:**
+   In order to debug the TreeFrog Framework itself, please use the *configure* option.
    Now please run this command:
 
    ```
@@ -82,8 +82,8 @@ Now install the DB client libraries:
 
    ```
   $ sudo ldconfig
-   ```  
- 
+   ```
+
 3. Create a shortcut of TreeFrog Command Prompt (Windows only).
    Right-click on the folder on which you want to create a shortcut and select ⋅⋅⋅"New" – and then click the "shortcut". Set the links as follows:
 
@@ -92,25 +92,25 @@ C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
    ```
 
    ('x.x.x' represents the current version you use)
-   
+
    <div class="img-center" markdown="1">
-  
+
    ![Create Shortcut]({{ site.baseurl }}/assets/images/documentation/shortcut_en.png "Create Shortcut")
-   
+
    </div>
 
    Set the Shortcut name to 'TreeFrog Command Prompt'.
 
    <div class="img-center" markdown="1">
-   
+
    ![Shortcut name]({{ site.baseurl }}/assets/images/documentation/shortcut-name_en.png "Shortcut name")
-   
+
    </div>
 
 ### Configure Option
 
 By specifying various options, you can customize to suit your environment.
- 
+
 Options available on Windows using "Configure option":
 
 ```
@@ -125,7 +125,7 @@ Options available on Windows using "Configure option":
  Installation directories:
    --prefix=PREFIX     install files in PREFIX [C:\TreeFrog\x.x.x]
 ```
-  
+
 Options available on Linux, and UNIX-like OS:
 
 ```

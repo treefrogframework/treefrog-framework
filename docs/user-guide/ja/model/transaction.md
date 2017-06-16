@@ -19,7 +19,7 @@ if (...) {
       :
 }
 ```
- 
+
 敢えてトランザクションそのものを作動させたくなければ、コントローラの transactionEnabled() メソッドをオーバライドして false を返します。
 
 ```c++
@@ -27,7 +27,7 @@ bool FooController::transactionEnabled() const
 {
     return false;
 }
-``` 
+```
 
 この例のようにコントローラ毎にも設定できますし、全く使用しなければ ApplicationController でオーバライドすることができます。
 

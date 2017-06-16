@@ -10,7 +10,7 @@ page_id: "160.0"
 The TreeFrog Application server (AP server) is created by a server process that handles HTTP (*tadpole*) and a process that monitors its life and death (*treefrog*).
 
 If a segmentation fault causes the *tadpole* process to go down, the *treefrog* process will detect it and then restart the *tadpole* process. This kind of fault-tolerant mechanism makes it possible for the service itself to be provided continuously.
- 
+
 ## Multi-Processing Module – MPM
 
 There are two MPMs (Multi-Processing Modules) to create multiprocessing modules for the application server (AP server): *prefork* and *thread*. These are similar to Apache. You need to choose one of them and then specify it in setting file. The default is 'thread'.
@@ -40,14 +40,14 @@ The following comparisons use a sample application (blogapp) and the benchmark s
 
 * The performance here is measured by sending huge amount of requests to */blog/index* in localhost in one connection. Httperf is used.
 
-The framework, individual requests, controller, model, DB, and view are all comprehensively checked. Since the DB cache system is not implemented (in the case of 0.54), an SQL query is called to the DB each time. 
+The framework, individual requests, controller, model, DB, and view are all comprehensively checked. Since the DB cache system is not implemented (in the case of 0.54), an SQL query is called to the DB each time.
 
 In the case of the thread module:<br>
 **Parameter: MPM.thread.MaxServers=20**
 
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=10000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=10000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1
@@ -88,7 +88,7 @@ Case of *prefork* module:
 
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=1000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=1000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1
@@ -113,7 +113,7 @@ Case of *prefork* module:
  Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
  Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
 ```
- 
+
 In the prefork module, performance drops to about 40 requests per second. It is a significant drop, although, by careful tuning in a real implementation, you may obtain higher performance. We need to improve this in the next stage.
 
 <span style="color: #b22222">**In brief: Use 'thread' as your MPM. If on Linux, use 'hybrid'.**</span>

@@ -28,7 +28,7 @@ Once you have created a new template, in order for this to be reflected in the v
 ```
  $ cd views
  $ make qmake
-``` 
+```
 
 If you have not already done so, it is recommended that you read the ERB chapter before continuing with this chapter, since there is much in common between the two template systems. Also, there is so much to learn about the Otama system that knowing ERB in advance will make it easier to understand.
 
@@ -64,8 +64,8 @@ In addition, as an alternative way of outputting the same result, it's also poss
 
 ```
  @hello ~= "Hello world"
-``` 
- 
+```
+
 As in ERB; The combination of ~ and eh() method can be rewritten as '~='; similarly, the combination of ~ and echo() method can be rewritten as '~=='.
 
 Although we've output a static string here, in order to simplify the explanation, it's also possible to output a variable in the same way. Of course, it is also possible to output an object that is passed from the controller.
@@ -103,7 +103,7 @@ In order to display the export object passed from the controller, as with ERB, y
 ```
  @hello : tfetch(QString, msg);  eh(msg);
 ```
- 
+
 As with ERB, objects fetched are defined as a local variable.
 
 Typically, C++ code will not fit in one instruction line. To write a C++ code of multiple rows for one mark, write side by side as normal but put a blank line at the end. The blank line is considered to be one set of the parts of the mark. Thus, between one mark and the next a blank line (including a line with only blank characters) acts as a separator in the presentation logic.
@@ -114,21 +114,21 @@ Next, we look at the case of wanting to display an export object in two differen
 
 ```
  #init : tfetch(QString, msg);
- 
+
  @foo1 := msg
- 
+
  @foo2 ~= QString("message is ") + msg
 ```
- 
+
 With that said, for exporting objects that are referenced more than once, use the fetch processing at *#init*.
- 
+
 Here is yet another way to export output objects.<br>
 Place "$" after the Otama operator. For example, you could write the following to export the output object called *obj1*.
 
 ```
  @foo1 :=$ obj1
 ```
- 
+
 This is, output the value using the eh() method while fetch() processing for obj1. However, this process is only an equivalent to fetch processing, the local variable is not actually defined.
 
 To obtain output using the echo() method, you can write as follows:
@@ -195,7 +195,7 @@ Suppose you have marked such as the following in the template:
 ```
 <span data-tf="@spancolor">Message</span>
 ```
- 
+
 Now, suppose you wrote the following in the presentation logic:
 
 ```
@@ -251,7 +251,7 @@ As a result, the view outputs the following:
 ```
 
 Since the linkTo() method generates the \<a\> tag, we can get this result. Unfortunately, the class attribute that was originally located has disappeared. The reason is that this operator has the effect of replacing the whole element.
- 
+
 If you want to set the attribute you can add it as an argument to the linkTo() method:
 
 ```
@@ -276,7 +276,7 @@ As a result, the view outputs the following:
 ```
 
 The class attribute that existed originally remains; it does NOT disappear.
- 
+
 The \|== operator has a condition to merge the elements. That is the elements must be the same tags. In addition, if the same attribute is present in both, the value of the presentation logic takes precedence.
 
 By using this operator, the information for the design (HTML attributes) can be transferred to the template side.
@@ -285,7 +285,7 @@ By using this operator, the information for the design (HTML attributes) can be 
 
 **Note:**<br>
 The \|== operator is only available in this format (i.e. \|== ), neither '\|' on its own, nor '\|=' will work.
- 
+
 ## Form Tag
 
 Do not use the form tag \<form\> to POST data unless you have enabled the CSRF measures. It does not accept POST data but only describes the form tag in the template. We need to embed the secret information as a hidden parameter.
@@ -319,7 +319,7 @@ If you mark *@dummy* elements in the template, it is not output as a view. Suppo
   <p>Hello</p>
   <p data-tf="@dummy">message ..</p>
 </div>
-``` 
+```
 Then, the view will make the following results.
 
 ```
@@ -355,13 +355,13 @@ We talked about the presentation logic template being converted to C++ code. The
 For example, if you want to include *user.h* and *blog.h* files, you would write these in at the top of the presentation logic.
 
 ```
- #include "blog.h" 
+ #include "blog.h"
  #include "user.h"
 ```
- 
+
 All the same as the C++ code!<br>
 Lines beginning with an #include string are moved directly to the code view.
- 
+
 ## Otama Operator
 
 The following table describes the Otama operator which we've been discussing.
@@ -370,11 +370,11 @@ The following table describes the Otama operator which we've been discussing.
 
 | Operator | Description                                                                                                                                                                                | Remarks                                                |
 |----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
-| :        | **Element replacement**<br>The components and subcomponents that are markedwill be completely replaced and output by the string inside the eh() or echo() method which are on the right-hand side of this operator. | %% means the elements themselves that can be replaced. 
+| :        | **Element replacement**<br>The components and subcomponents that are markedwill be completely replaced and output by the string inside the eh() or echo() method which are on the right-hand side of this operator. | %% means the elements themselves that can be replaced.
 | ~        | **Content replacement**<br>The content of marked elementswill be replaced and output by the string inside the eh() or echo() method which are on the right-hand side of this operator.                    |                                                        |
 | +        | **Attribute addition**<br>If you want to add an attribute to an element that is marked, use this operator plus a string inside the echo() method, which is supposed to be output on the right-hand side of this operator.                      | += is HTML escaping, perhaps not used that much.            |
 | \|==     | **Element merger**<br>Based on the marked elements, the specified strings will be merged on the right-hand side of this operator.                                                                                  | '\|' and '\|=' are disabled.                           |
- 
+
  </div><br>
 
 Extended versions of these four operators are as follows.

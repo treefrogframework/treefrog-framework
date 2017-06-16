@@ -10,7 +10,7 @@ page_id: "150.0"
 Following the example of [cakepher's article](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}, I have tried to compare the web application framework throughput, not only using PHP but also MVC oriented. Due to my skills and my time, I was able to compare only four: CakePHP, Codeigniter, Ruby on Rails and TreeFrog Framework. I would have liked to include Java framework, but I was not able to because of a lack of knowledge.
 
 * Measured the throughput when one record is obtained from the DB and then displayed.
- 
+
 ### Note
 
 In this article, "fast" is used to mean "throughput is high".
@@ -24,7 +24,7 @@ In this article, "fast" is used to mean "throughput is high".
  Ruby 1.9.3p194
  Apache 2.2.22
  MySQL 5.5.24
-``` 
+```
 
 ### Schema of 'posts' Table
 
@@ -47,7 +47,7 @@ In the table, there are 10 records including Japanese text. Since I only wanted 
 * CakePHP 2.2.0
 * Codeigniter2.0.2
 * Rails 3.2.6 (Apache+Passenger+Asset Pipeline ON)
- 
+
 ### Measurement Tool
 
 The Siege measurement looks at how many cases are processed in 3 seconds with 10 concurrent connections from a remote machine. It is considered that accurate measurement is not possible by using the tool on the same machine, so it is done remotely.
@@ -57,11 +57,11 @@ We conducted the test about 10 times per framework and took the average of the t
 ```
  $ siege -b -c 10 -t 3S http://192.168.x.x/controller/path
 ```
- 
+
 By the way, when measured with [code](https://github.com/ichikaway/CakePHP-PerformanceCheckSample/blob/master/php/view.php){:target="_blank"} written in Plain PHP, the result was 1261 trans/sec; a very high number.
 
 If PHP code is very small, it can be very fast. On the other hand, it seems slower than expected when the amount of code and the amount of function calls is [large](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}. This may be because of its nature to be a scripting language.
- 
+
 ### Result List
 
 I have summarized the detailed results in a [spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0AlpTorSDNQjbdEpWTURuRE5TaEtNN0FYbXU5Vl92RUE#gid=0){:target="_blank"}.
@@ -86,7 +86,7 @@ As I expected, Codeigniter is three times faster than Cake PHP. Codeigniter has 
 
 I had an image that Rails (Ruby) was slow, but it seems that this image is outdated. It cannot reach Codeigniter's speed, but it has almost doubled the throughput of CakePHP. However I was monitoring my operating system so I was aware that *Passenger* was consuming a lot of memory (I can't give figures unfortunately). Pursuit of speed seems to consume memory. As for Rails, there are faster web serves, but I'll discuss that later.
 
-### Measured Applications 
+### Measured Applications
 
 I used Cake PHP and Codeigniter from the [cakephper's articles](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}.
 

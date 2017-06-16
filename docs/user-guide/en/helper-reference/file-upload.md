@@ -12,12 +12,12 @@ In this chapter we will create a simple form for a file upload. The code example
   <p>
     File: <input name="picture" type="file">
   </p>
-  <p> 
+  <p>
     <input type="submit" value="Upload">
   </p>
 </form>
 ```
- 
+
 In this example, the destination of the file upload is the upload action in the same controller.
 
 The upload file that is being received in action can be renamed as well by using the following method:
@@ -27,18 +27,18 @@ TMultipartFormData &formdata = httpRequest().multipartFormData();
 formdata.renameUploadedFile("picture", "dest_path");
 ```
 
-The uploaded file is treated as a temporary file. If you do rename the upload file, the file is automatically deleted after the action ends.<br> 
+The uploaded file is treated as a temporary file. If you do rename the upload file, the file is automatically deleted after the action ends.<br>
 The original file name can be obtained using the following method:
 
 ```c++
 QString origname = formdata.originalFileName("picture");
 ```
- 
+
 It may not be much used, but you can get a temporary file name just after uploading by using the uploadFile() method. Random file names have been attached to make sure that they do not overlap.
 
 ```c++
 QString upfile = formdata.uploadedFile("picture");
-``` 
+```
 
 ## Upload a variable number of files
 
@@ -52,15 +52,15 @@ First we create a form as follows:
     File1: <input name="picture[]" type="file">
     File2: <input name="picture[]" type="file">
   </p>
-  <p> 
+  <p>
     <input type="submit" value="Upload">
   </p>
 </form>
-``` 
+```
 
 When creating an input tag with JavaScript dynamically, it is important to add "[]" at the end of the 'name' like name = "picture []".
 
-To receive the uploaded files in the upload action, you can access the two files through the TMimeEntity object as follows: 
+To receive the uploaded files in the upload action, you can access the two files through the TMimeEntity object as follows:
 
 ```c++
 QList<TMimeEntity> lst = httpRequest().multipartFormData().entityList( "picture[]" );

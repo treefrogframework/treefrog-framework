@@ -17,7 +17,7 @@ MongoDB のドキュメントは JSON ライクな形式であることから、
   "age": 20,
   "email": "foo@example.com"
 }
-``` 
+```
 
 ## 準備
 
@@ -31,7 +31,7 @@ MongoDB のドキュメントは JSON ライクな形式であることから、
   created   models/foo.h
   created   models/foo.cpp
   updated   models/models.pro
-``` 
+```
 
 次に、ドキュメントに保存されるデータを定義します。ファイル models/mongoobjects/fooobject.h を編集し、文字型の変数 title と body を追加することにします。
 
@@ -53,7 +53,7 @@ public:
     };
   :
 ```
- 
+
 変数 _id 以外の変数は必須ではありませんので、削除しても構いません。変数 _id は、MongoDB の ObjectID に相当するものなので、削除しないでください。
 
 ※ このオブジェクトは MongoDB へのアクセスを担当するもので、以降では "Mongoオブジェクト"と呼ぶことにします。
@@ -94,7 +94,7 @@ QString id;
 id = ...
 TMongoODMapper<FooObject> mapper;
 FooObject foo = mapper.findByObjectId(id));
-``` 
+```
 
 ## Mongo オブジェクトを生成する
 
@@ -105,8 +105,8 @@ FooObject foo;
 foo.title = ...
 foo.body = ...
 foo.create();
-```    
-    
+```
+
 オブジェクトIDは自動で生成されるので、何も設定しないでください。
 
 ## Mongo オブジェクトを更新する
@@ -131,7 +131,7 @@ Mongo オブジェクトを削除すると、そのドキュメントが削除�
 TMongoODMapper<FooObject> mapper;
 FooObject foo = mapper.findByObjectId(id));
 foo.remove();
-``` 
+```
 
 <span style="color: #b22222">**補足**</span><br>
 
@@ -141,7 +141,7 @@ foo.remove();
 ただし、分散させる場合には、データの性質によって RDB に保存すべきか、MongoDB に保存すべきかを検討するべきです。おそらく、トランザクションを使いたいかどうかがポイントになるでしょう。
 
 このように、仕組みの違う２つデータベースシステムに簡単にアクセスすることができるので、Webアプリケーションとしてスケーラビリティの高いシステムを構築することができます。
- 
+
 Mongo オブジェクトクラスと ORM オブジェクトクラスの相違点：
 
 Mongo オブジェクトクラスには、インスタンス変数として QStringList 型を定義することが可能です。つまり、次のように定義できるということです。
@@ -152,7 +152,7 @@ class T_MODEL_EXPORT FooObject : public TMongoObject, public QSharedData
 public:
     QString _id;
     QStringList  texts;
-     : 
+     :
 ```
 
 ※ ORM オブジェクトクラスにはQStringList 型を定義できません。

@@ -16,7 +16,7 @@ As you will know, SQL injection means that due to the problems of SQL sentence c
 * Use ORM object => you can make safe SQL query sentences inside.
 * Use TSqlQuery place holder when constructing SQL sentences => the values are processed by escape automatically.
 * When constructing SQL sentences by string concatenation, use TSqlQuery::escapeIdentifier() for field name, and TSqlQuery::formatValue() for value. => escape processing is done for each.
- 
+
 ## Cross-site Scripting Prevention (CSRF)
 
 If there is a deficiency in the process of generating websites, it can allow the inclusion of malicious scripts, and if that happens, a cross-site scripting attack can be established. In order to guard against this, you should implement a policy of using escape for all values and attribute outputs which output dynamically into the view area. In the TreeFrog, the following is done:
@@ -26,18 +26,18 @@ If there is a deficiency in the process of generating websites, it can allow the
 You have to be very careful if you output the area WITHOUT using the escape processing, that is the echo() method or '<%= .. %>' notation.
 
 Basically, for the content of any \<script\> .. \</script\> element, I recommend you to not dynamically output any information dependent on outside input.
- 
+
 ## CSRF Protection
 
 Any site that accepts user requests without any verification, has a possible vulnerability to CSRF (Cross-Site Request Forgery) exists. If an HTTP request has been trumped by a third party, you have to discard it.
- 
+
 To prevent this, perform the followings both.
 
 * As for the information on the form, ONLY accept requests in the POST method.
 * Put a row of letters that is difficult to predict as a hidden parameter on one of the information items within the form, and validate it when receiving it. => by generating a form tag with the formTag() method, the hidden parameter is automatically granted.
 
 If this hidden parameter is easily predictable, this CSRF protection is insufficient. This parameter is a string that has been converted by the hash function, using the Session.Secret parameter, in the *application.ini* configuration file. It is therefore sufficiently difficult for the string to be guessed by anyone not knowing the *Session.Secret* value.
- 
+
 In order to turn on the CSRF protection, you need to set the following in the *application.ini* file:
 
 ```
@@ -47,7 +47,7 @@ In order to turn on the CSRF protection, you need to set the following in the *a
 I would recommend that you turn this feature off during the development of the application.
 
 <span style="color: #b22222">**In brief: Generate a form tag using the formTag() method.** </span>
- 
+
 ## Session Hijacking Prevention
 
 When a session ID is easily guessed or stolen, spoof-like acts are possible. This kind of spoof-like conduct is called session hijacking.

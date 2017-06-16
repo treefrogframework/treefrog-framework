@@ -9,7 +9,7 @@ When data cannot be displayed on one single Web page, you might have already hea
 
 TreeFrog provides a class for pagination with very basic functions. In order to use TreeFrog's pagination ability you need to use the *TPaginator* class. The following example - written in ERB, but similar to Otama - will show you how to use pagination.
 
-First of all, in the action of the *controller* class we will retrieve information about the current displaying page number by using query arguments. Then we get a list of models that correspond to that page number and pass them to the view. 
+First of all, in the action of the *controller* class we will retrieve information about the current displaying page number by using query arguments. Then we get a list of models that correspond to that page number and pass them to the view.
 
 ```c++
 int current = httpRequest().queryItemValue("page", "1").toInt();
@@ -21,7 +21,7 @@ TPaginator pager(totalCount, 10, 5);
 pager.setCurrentPage(current);  // Set the page number that is supposed to be displayed
 texport(pager);
 
-// Obtain the corresponding items and add them to the view 
+// Obtain the corresponding items and add them to the view
 QList<Blog> blogList = Blog::getBlogs( pager.itemCountPerPage(), pager.offset() );
 texport(blogList);
 render();

@@ -19,7 +19,7 @@ MongoDB と RDB の階層構造について比較してみます。
 | コレクション | テーブル    |               |
 | ドキュメント | レコード   |               |
 
-</div><br>	 
+</div><br>	
 
 ## 接続情報の設定
 
@@ -41,7 +41,7 @@ MongoDB サーバと通信するための接続情報を設定しましょう。
  UserName=
  Password=
  ConnectOptions=           # 今回は不使用
-``` 
+```
 
 設定が正しいかチェックしましょう。MongoDB が動作している時に、次のコマンドをアプリケーションルートディレクトリで実行します。
 
@@ -53,7 +53,7 @@ MongoDB サーバと通信するための接続情報を設定しましょう。
  -----------------
  Existing collections:
 ```
- 
+
 成功すれば、このように表示されるでしょう。
 
 Web アプリケーションは、MongoDB と SQL データベースの**両方へ**アクセスすることが可能です。これにより、Web システムの負荷の増大に対して柔軟に対応することができるのです。
@@ -66,7 +66,7 @@ MongoDB ドキュメントは QVariantMap オブジェクトで表されます�
 
 ```c++
 #include <TMongoQuery>
----  
+---
 TMongoQuery mongo("blog");  // blogコレクションに対する操作
 QVariantMap doc;
 
@@ -74,23 +74,23 @@ doc["title"] = "Hello";
 doc["body"] = "Hello world.";
 mongo.insert(doc);   // 新規作成
 ```
-   
+
 内部的には、insert() が実行されるタイミングで一意の ObjectID が割り振られます。
- 
+
 ### 補足
 
 この例が示すように、MongoDB との接続／切断の処理について、開発者は全く気にする必要がありません。コネクションの管理はフレームワークが行なっているからです。このような仕組みにすることで、コネクションを再利用することが可能となり、オーバヘッドのかかる接続／切断の回数が抑えられているのです。
- 
+
 ## ドキュメントを読み込む
 
 条件と一致するドキュメントを検索し、それらを１件ずつ読み込んでみます。検索条件もまた QVariantMap オブジェクトで表現されるので間違えないようにしてください。
- 
+
 次の例では、条件をセットしたオブジェクトを find() メソッドに引数として渡し、検索を実行します。検索条件にマッチするドキュメントが複数存在することを想定し、while 文でループ処理をしています。
 
 ```c++
-TMongoQuery mongo("blog"); 
+TMongoQuery mongo("blog");
 QVariantMap criteria;
- 
+
 criteria["title"] = "foo";  // 検索条件
 criteria["body"] = "bar";   // 検索条件
 mongo.find(criteria);       // 検索実行
@@ -101,7 +101,7 @@ while (mongo.next()) {
 ```
 
 ※ これら２つの条件は AND 演算子で結ばれます
-  
+
 検索結果から１件だけ読み込むならば、findOne() メソッドを使用することができます。
 
 ```c++
@@ -118,7 +118,7 @@ criteria.insert("num", gt);   // 検索条件
 mongo.find(criteria);    // 検索を実行
    :
 ```
- 
+
 比較演算子は次のとおりです。
 
 * **$gt**: Greater than
@@ -142,7 +142,7 @@ criteria.insert("$or", orlst);
 ```
 
 以上のように、TMongoQuery において検索条件は QVariantMap 型で表現されます。MongoDB では検索条件は JSON で表現されるので、クエリが実行される際、その QVariantMap オブジェクトがそのまま JSON オブジェクトに変換されることになります。従って、ルールどおりに記述すれば MongoDB で提供されている全ての演算子を指定することができます。効率的な検索が可能になるでしょう。
- 
+
 その他の演算子については [MongoDB ドキュメント](http://docs.mongodb.org/manual/reference/operator/nav-query/){:target="_blank"}をご覧ください。
 
 ## ドキュメントを更新する
@@ -150,23 +150,23 @@ criteria.insert("$or", orlst);
 MongoDB サーバから読み込んだドキュメントを更新してみます。次で示す update() メソッドは、条件にマッチする１件のドキュメントを更新するものです。
 
 ```c++
-TMongoQuery mongo("blog"); 
+TMongoQuery mongo("blog");
 QVariantMap criteria;
 criteria["title"] = "foo";             // 検索条件を設定
 QVariantMap doc = findOne(criteria);   // 1件取得
 doc["body"] = "bar baz";               // ドキュメントの内容を変更
 
-criteria["_id"] = doc["_id"];          // 検索条件にObjectIDを追加 
+criteria["_id"] = doc["_id"];          // 検索条件にObjectIDを追加
 mongo.update(criteria, doc);
 ```
-  
+
 ちょっと補足しますと、検索条件にマッチするドキュメントが複数存在してもそのドキュメントが確実に更新されるように、検索条件に ObjectID を追加しています。
-   
+
 また、条件に一致する全てのドキュメントを更新する場合は、updateMulti() メソッドを使用します。
 
 ```c++
 mongo.updateMulti(criteria, doc);
-```  
+```
 
 ## ドキュメントを削除する
 

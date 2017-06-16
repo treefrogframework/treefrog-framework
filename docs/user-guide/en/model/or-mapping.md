@@ -127,7 +127,7 @@ You can also combine and apply multiple conditions.
 TCriteria crt(BlogObject::Title, tr("Hello World"));
 QDateTime dt = QDateTime::fromString("2011-01-25T13:30:00", Qt::ISODate);
 crt.add(BlogObject::CreatedAt, TSql::GreaterThan, dt);  // AND add to the end operator
-    
+
 TSqlORMapper<BlogObject> mapper;
 BlogObject blog = mapper.findFirst(crt);
   :
@@ -159,7 +159,7 @@ blog.id = ...
 blog.title = ...
 blog.body = ...
 blog.create();  // Inserts to DB
-``` 
+```
 
 ## Update an ORM Object
 
@@ -194,15 +194,15 @@ mapper.removeAll( TCriteria(BlogObject::Title, tr("Hello")) );
 ## Automatic ID Serial Numbering
 
 In some database systems, there is an automatic numbering function for fields. For example, in MySQL, the AUTO_INCREMENT attribute, with the equivalent in PostgreSQL being a field of serial type.
- 
-The TreeFrog Framework is also equipped with this mechanism. That means, in the examples below numbers are assigned automatically. There is no need to update or to register a new value model.<br> 
+
+The TreeFrog Framework is also equipped with this mechanism. That means, in the examples below numbers are assigned automatically. There is no need to update or to register a new value model.<br>
 First, create a table with a field for the automatically sequenced number. Then, when the model is created by the generator command, we don't to manually apply updating the field (here 'id') anymore.
 
 Example in MySQL:
 
 ```sql
  CREATE TABLE animal ( id INT PRIMARY KEY AUTO_INCREMENT,  ...
-``` 
+```
 
 Example in PostgreSQL:
 
@@ -232,7 +232,7 @@ It doesn't really matter either way, I think either that we do not care, but by 
 ## Optimistic Locking
 
 The optimistic locking is a way to save data while verifying that it is not updated by others, without doing "record locking" while updating is taking place. The update is abandoned if another update is already taking place.
- 
+
 In advance, prepare a field named *lock_revision* as an integer to record also using the auto increment ability. Lock revision is then incremented with each update. When reading the value and it is found to be different from that in the update, it means that it has been updated from elsewhere. Only if the values are the same, the update proceeds. In this way, we are able to securely proceeds updates. Since lock is not used, saving of DB system memory and an improvement in processing speeds, even if these are slight, can be expected.
 
 To take advantage of optimistic locking in the SqlObject, add an integer type field named *lock_revision* to the table. It creates a class using the generator. With this alone, optimistic locking is activated when you call TSqlObject::remove() method and TSqlObject::update() method.

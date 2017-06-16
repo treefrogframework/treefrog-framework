@@ -7,7 +7,7 @@ page_id: "090.0"
 
 WebSocket is a communication standard that performs bidirectional communication between server and client, and is widely supported by browsers.
 
-HTTP repeatedly establishes connections and disconnections for every request that is made and it is not supposed to establish connections for a long time.<br> 
+HTTP repeatedly establishes connections and disconnections for every request that is made and it is not supposed to establish connections for a long time.<br>
 WebSocket, on the other hand, maintains the TCP connection once it has been established successfully. During a persisting connection, messages can be sent from either side. Because it is assumed that a connection will be long-lasting, so-called **Ping/Pong** frames are defined to confirm the other side's life and death.
 
 Additionally, since the connection is stateful (maintaining an established connection), you don't need to return the session ID by using a cookie.
@@ -46,9 +46,9 @@ The methods of the WebSocket object are as follows:
 | close(code) 	| disconnect |
 
 </div><br>
-         
+
 For more insight details, please visit [http://www.w3.org/TR/websockets/](http://www.w3.org/TR/websockets/){:target="_blank"}.
- 
+
 ## Make a chat application
 
 Let's make a chat application based on these handlers. <br>
@@ -69,31 +69,31 @@ Name  <input type="text" id="name" />
 <input type="button" value="Write" onclick="sendMessage()" /><br>
 <textarea id="msg" rows="4"></textarea>
 ```
- 
+
 Here is an example made with JavaScript.
 
 ```js
 $(function(){
     // create WebSocket to 'chat' endpoint
     ws = new WebSocket("ws://" + location.host + "/chat");
- 
+
     // message received
     ws.onmessage = function(message){
         var msg = escapeHtml(message.data);
         $("#log").append("<p>" + msg + "</p>");
     }
- 
+
     // error event
     ws.onerror = function(){
         $("#log").append("[ Error occurred. Try reloading. ]");
     }
- 
+
     // onclose event
     ws.onclose = function(){
         $("#log").append("[ Connection closed. Try reloading. ]");
     }
 });
-// Sending as one message containing 'Name' and 'Time' 
+// Sending as one message containing 'Name' and 'Time'
 function sendMessage() {
     if ($('#msg').val() != '') {
         var name = $.trim($('#name').val());
@@ -106,7 +106,7 @@ function sendMessage() {
     }
 }
 ```
- 
+
 Next, let's implement the server side by using scaffold.
 
 ```
@@ -129,7 +129,7 @@ This is made with the name ('chat' in this example) set as the path of URL passe
     :
 ```
 
-The generated *chatendpoint.h* looks then as follows.<br> 
+The generated *chatendpoint.h* looks then as follows.<br>
 There is no need to modify it in particular.
 
 ```c++
@@ -146,13 +146,13 @@ protected:
 };
 ```
 
-**Explaining the onOpen() handler:**<br> 
+**Explaining the onOpen() handler:**<br>
 The HTTP session object at that time is passed in the *httpSession* argument. The endpoint is read only and its content cannot be changed (I may deal with this in the future).
 
 Instead, let's save the information here using the *WebSocketSession* object. Within each method of the endpoint class, the information can be retrieved using the *session()* method. By the way, since the information is stored in the memory, if you store data of a large size, memory will be compressed if the connection load increases.
 
-Furthermore, the WebSocket connection can be rejected if the return value of *onOpen()* is *false*. If you don't want to accept all connection requests, it is possible to implement some sort secret values stored in HTTP sessions, for example, accepting them only if they are correct. 
-  
+Furthermore, the WebSocket connection can be rejected if the return value of *onOpen()* is *false*. If you don't want to accept all connection requests, it is possible to implement some sort secret values stored in HTTP sessions, for example, accepting them only if they are correct.
+
 Next is the *chatendpoint.cpp*. <br>
 We want to send the received text to all the subscribers. This can be done by using the *publication/subscription* (Pub/Sub) method.
 
@@ -190,14 +190,14 @@ void ChatEndpoint::onBinaryReceived(const QByteArray &)
 
 ### Build
 
-In this case, I will not use **VIEW**, so I will remove it from the build. 
+In this case, I will not use **VIEW**, so I will remove it from the build.
 Edit *chatapp.pro* as follows and save it.
 
 ```
  TEMPLATE = subdirs
  CONFIG += ordered
  SUBDIRS = helpers models controllers
-``` 
+```
 
 Build command:
 
@@ -205,7 +205,7 @@ Build command:
  $ qmake -r
  $ make   (nmake or mingw32-make on Windows)
  $ treefrog -d
- 
+
  (stop command)
  $ treefrog -k stop
 ```
@@ -216,7 +216,7 @@ Did it work properly?
 
 We are now publishing what we just have implemented, so the result should look like the following: [http://chatsample.treefrogframework.org/](http://chatsample.treefrogframework.org/){:target="_blank"}
 
-The following functions are added from the sample above: 
+The following functions are added from the sample above:
 
 * 30 most recent messages are stored in DB
 * the message is sent immediately after connection (*onOpen()*)
@@ -237,7 +237,7 @@ int keepAliveInterval() const { return 300; }
 If the value is 0, the keep-alive function will not work. The default is 0 (not keepalive).
 
 By keeping alive, you can check not only whether the communication path is valid, but also you can check that the host software is not down. However, the API that detects it is currently available (2015/6), but not implemented in TreeFrog yet.
- 
+
 **Reference**<br>
 tspawn HELP
 

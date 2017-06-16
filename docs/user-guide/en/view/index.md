@@ -6,7 +6,7 @@ page_id: "070.0"
 ## View
 
 The role of view in a Web application is to generate an HTML document from a response. The developer creates each template for an HTML document to be embedded in a predetermined portion of the variable passed from the controller (model).
- 
+
 There are two template systems so far adopted into the TreeFrog Framework. These are Otama and ERB. In both systems you can output the value dynamically using the template, and perform loops and conditional branching.
 
 The ERB system, such as in Ruby, is used to embed the template code in the program (library). While there are benefits in that it is easy to understand as a mechanism, it is difficult to check or change the Web design.

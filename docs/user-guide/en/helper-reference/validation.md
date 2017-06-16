@@ -24,7 +24,7 @@ The validation rules are set in the construction of the generated BlogValidator 
 BlogValidator::BlogValidator() : TFormValidator()
 {
    setRule("title", Tf::MinLength, 4);
-   setRule("title", Tf::MaxLength, 20); 
+   setRule("title", Tf::MaxLength, 20);
 }
 ```
 
@@ -36,7 +36,7 @@ Rules are implicitly set for "mandatory input". If you do NOT want an input to b
 
 ```c++
 setRule("title", Tf::Required, false);
-``` 
+```
 
 <div class="center aligned" markdown="1">
 
@@ -76,15 +76,15 @@ if (!validator.validate(blog)) {
       :
 }
 ```
- 
+
 Normally, since there are sets of multiple rules, there will also be multiple error messages. One-by-one processing is a little cumbersome. However, if you use the following method, you can export the all validation error messages at once (to be passed to the view):
 
 ```c++
 exportValidationErrors(valid, "err_");
-``` 
- 
-In the second argument, specify a prefix as the variable name for the export object. 
- 
+```
+
+In the second argument, specify a prefix as the variable name for the export object.
+
 <span style="color: #b22222">**In brief: Set rules for the form data and validate them by using validate().** </span>
 
 ## Custom validation
@@ -100,7 +100,7 @@ bool FooValidator::validate(const QVariantMap &hash)
     if (ret) {
         QDate startDate = hash.value("startDate").toDate();
         QDate endDate = hash.value("endDate").toDate();
-        
+
         if (endDate < startDate) {
             setValidationError("error");
             return false;

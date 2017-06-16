@@ -33,12 +33,12 @@ query.exec("SELECT id, title FROM blog");  // クエリ実行
 while (query.next()) {
 int id = query.value(0).toInt(); // 最初のフィールドをint型へ変換
     QString str = query.value(1).toString(); // 2番目のフィールドをQString型へ変換
-    // do something 
+    // do something
 }
 ```
 
 TSqlQueryクラスは Qt の[QSqlQuery クラス](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"}を継承しているので、同じメソッドが使用できます。詳しくは、Qtドキュメントを参照ください。
-  
+
 <span style="color: #b22222">**結論： プレースホルダを使ってクエリを生成せよ。** </span>
 
 実際に、どんなクエリが実行されたのかを[クエリログ]({{ site.baseurl }}/user-guide/ja/helper-reference/logging.html){:target="_blank"}で確認することができます。
@@ -74,12 +74,12 @@ load メソッドの内部ではキャッシュが働きます（ただし [MPM]
 
 ```
  $ treefrog -k restart
-``` 
+```
 
 ## クエリの結果からORMオブジェクトを取得する
 
 上記の方法では、クエリの結果から１フィールド毎に値を取り出す必要がありますが、次の方法ではレコードを ORM オブジェクトとして取り出すことができるのです。
- 
+
 TSqlQueryMapper オブジェクトを使ってクエリを実行します。その結果からイテレータを使って ORM オブジェクトを取り出します。SELECT 文では 'blog.*' と指定し、すべてのフィールドを選択対象とするのがポイントです。
 
 ```c++

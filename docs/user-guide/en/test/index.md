@@ -37,9 +37,9 @@ private slots:
 void TestBlog::create_data()
 {
     // definition of test data
-    QTest::addColumn<QString>("title"); 
+    QTest::addColumn<QString>("title");
     QTest::addColumn<QString>("body");
-   
+
     // adding to test data
     QTest::newRow("No1") << "Hello" << "Hello world.";
 }
@@ -47,7 +47,7 @@ void TestBlog::create_data()
 void TestBlog::create()
 {
     // acquisition of test data
-    QFETCH(QString, title); 
+    QFETCH(QString, title);
     QFETCH(QString, body);
 
     // logic of the test
@@ -55,8 +55,8 @@ void TestBlog::create()
     int id = created.id();
     Blog blog = Blog::get(id);  // Getting model ID
 
-    // verification of result execution 
-    QCOMPARE(blog.title(), title); 
+    // verification of result execution
+    QCOMPARE(blog.title(), title);
     QCOMPARE(blog.body(), body);
 }
 
@@ -64,7 +64,7 @@ TF_TEST_MAIN(TestBlog)   // specify the class name you created
 #include "testblog.moc"  // charm. Make the extension .moc
 ```
 
-As supplemental comment, among this, create() method can do the test, and QCOMPARE macro can check the real returning value. The create_data() method works as passing test data to the create_data() method. 
+As supplemental comment, among this, create() method can do the test, and QCOMPARE macro can check the real returning value. The create_data() method works as passing test data to the create_data() method.
 The rule is always to put '_data' at the end of the method name.
 
 In this example, I am doing the following in create_data() method.
@@ -93,7 +93,7 @@ Next, create a project file to make the *Makefile*. The file name is *testblog.p
  include(../../appbase.pri)
  SOURCES = testblog.cpp      # Specifying the file name
 ```
- 
+
 Part of the specification has changed after the update to Qt5. If you are using Qt5, please change the 5th line of the above as the following.
 
 ```
@@ -105,26 +105,26 @@ After you save the project file, you can create a binary by running the followin
 ```
  $ qmake
  $ make
-``` 
+```
 
-Next, some little configuration needs to be done for the testing process.<br> 
-Because of the need to refer to the various configuration files, the test command requires a symbolic link to the config directory. Its location should be directly below of the test command. When SQLite is used for the database, we need to make a symbolic link to the *db* directory as well. 
+Next, some little configuration needs to be done for the testing process.<br>
+Because of the need to refer to the various configuration files, the test command requires a symbolic link to the config directory. Its location should be directly below of the test command. When SQLite is used for the database, we need to make a symbolic link to the *db* directory as well.
 
 ```
  $ ln -s  ../../config  config
  $ ln -s  ../../db  db
 ```
 
-If you use Windows, an exe file of the test is created in the *debug* directory, so that a symbolic link is created there. Please be careful: it is NOT a shortcut!  
+If you use Windows, an exe file of the test is created in the *debug* directory, so that a symbolic link is created there. Please be careful: it is NOT a shortcut!
 To create a symbolic link, you must run the command from the command prompt launched with administrator privileges.
 
 ```
- > cd debug 
+ > cd debug
  > mklink /D  config  ..\..\..\config
  > mklink /D  db  ..\..\..\db
 ```
-   
-Furthermore, take the path to the common library including the Blog model.<br> 
+
+Furthermore, take the path to the common library including the Blog model.<br>
 In the case of Linux, set the environment variable as follows:
 
 ```
@@ -150,7 +150,7 @@ Password=
 ConnectOptions=
 ```
 
-The configuration is now complete. Next, the test needs to be executed. If the test was a throughout success, you can see the following message on the screen: 
+The configuration is now complete. Next, the test needs to be executed. If the test was a throughout success, you can see the following message on the screen:
 
 ```
 $ ./testblog

@@ -29,7 +29,7 @@ UserName=root
 Password=xxxx
 ConnectOptions=
 ```
- 
+
 次のこれらデータベース設定ファイルのファイル名をアプリケーション設定ファイル（application.ini）に定義します。DatabaseSettingsFiles の値に、スペース区切りで並べて書きます。
 
 ```ini
@@ -54,8 +54,8 @@ class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData
     int databaseId() const { return 1; }  // ID:1を返却
       :
 };
-```  
-  
+```
+
 こうすることで、BlogObject に関するクエリは常にホストBへ発行されることになります。あとは、これまで通り SqlObject  を使うだけです。
 
 ここでの例は２つのDBサーバに対する内容でしたが、３つ以上のDBサーバにも対応しています。DatabaseSettingsFiles に設定ファイルを追加するだけです。

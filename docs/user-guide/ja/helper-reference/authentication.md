@@ -11,7 +11,7 @@ TreeFrog では、簡潔な認証の仕組みを提供しています。<br>
 ```sql
  > CREATE TABLE user ( username VARCHAR(128) PRIMARY KEY, password VARCHAR(128) );
 ```
-  
+
 次に、アプリケーションルートディレクトリに移動して、ジェネレータコマンドでモデルクラスを生成します。
 
 ```
@@ -39,7 +39,7 @@ User User::authenticate(const QString &username, const QString &password)
 {
     if (username.isEmpty() || password.isEmpty())
         return User();
-        
+
     TSqlORMapper<UserObject> mapper;
     UserObject obj = mapper.findFirst(TCriteria(UserObject::Username, username));
     if (obj.isNull() || obj.password != password) {
@@ -48,7 +48,7 @@ User User::authenticate(const QString &username, const QString &password)
     return User(obj);
 }
 ```
- 
+
 これをベースにして修正するようにしてください。<br>
 認証の処理は外部のシステムに委ねる場合もあるでしょうし、あるいはパスワードには md5 値を保存したいという要望もあるかもしれません。
 
@@ -75,7 +75,7 @@ void AccountController::form()
 ```
 
 ここでは単にフォームを表示させましたが、すでにログインしていたら直ちに別の画面へリダイレクトさせることも可能です。要件に応じて対応してください。
- 
+
 ログインフォームのビュー views/account/form.erb を次のように作ります。ログインフォームのポスト先は login アクションとします。
 
 ```
@@ -100,7 +100,7 @@ void AccountController::form()
   </form>
 </body>
 </html>
-```  
+```
 
 login アクションでは、ポストされたユーザ名とパスワードで行う認証処理を次のように書いてみます。認証が成功したら、userLogin メソッドを呼び出してユーザをシステムにログインさせています。
 
@@ -109,7 +109,7 @@ void AccountController::login()
 {
     QString username = httpRequest().formItemValue("username");
     QString password = httpRequest().formItemValue("password");
- 
+
     User user = User::authenticate(username, password);
     if (!user.isNull()) {
         userLogin(&user);
@@ -124,9 +124,9 @@ void AccountController::login()
 
 ※ user.h ファイルをインクルードしてください。そうしないとコンパイルエラーになります。
 
-ログインの処理が出来上がりました。 <br> 
+ログインの処理が出来上がりました。 <br>
 上の例では行なっていませんが、すでにログインしている状態で userLogin() メソッド呼ぶと、重複ログインのエラーになるので、その戻り値（bool）をチェックするのがベターでしょう。
-  
+
 また、userLogin() メソッドが成功すると、ユーザモデルのidentityKey()の戻り値がセッションの格納されます。デフォルト実装では、ユーザ名が格納されます。
 
 ```c++
@@ -161,11 +161,11 @@ bool FooController::preFilter()
     }
     return true;
 }
-``` 
- 
+```
+
 preFilter メソッドが false を返すと、この後でアクションは処理されません。<br>
 もし、多くのコントローラにおいてアクセスを保護したい場合は、ApplicationController クラスの preFilter に設定することができます。
- 
+
 ## ログインユーザの取得
 
 ログインしているユーザのインスタンスを取得しましょう。<br>
@@ -187,7 +187,7 @@ User User::getByIdentityKey(const QString &username)
 ```c++
 QString username = identityKeyOfLoginUser();
 User loginUser = User::getByIdentityKey(username);
-``` 
+```
 
 **補足**
 

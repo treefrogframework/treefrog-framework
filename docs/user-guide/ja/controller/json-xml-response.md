@@ -10,7 +10,7 @@ page_id: "050.050"
 ## モデルの内容を JSON 形式で送る
 
 外部のアプリケーションが JavaScript であるならば、JSON（JavaScript Object Notation）形式が扱いやすいです。本フレームワークで JSON を扱うには、Qt バージョン５以降が必要になります。
-  
+
 コントローラから１件の JSON オブジェクトを送る例を紹介します。
 
 ```c++
@@ -25,7 +25,7 @@ renderJson(blog.toVariantMap());
 ```c++
 renderJson( Blog::getAllJson() );
 ```
- 
+
 これまた簡単！ ただし、データベースに Blog のレコードが大量にあると、とんでもなことになるので注意してください。
 
 この他にも、次のメソッドが用意されています。 [APIリファレンス](http://treefrogframework.org/tf_doxygen/classTActionController.html){:target="_blank"}に少し情報があるのでご覧ください。
@@ -37,7 +37,7 @@ bool renderJson(const QJsonArray &array);
 bool renderJson(const QVariantMap &map);
 bool renderJson(const QVariantList &list);
 bool renderJson(const QStringList &list);
-``` 
+```
 
 ## モデルの内容を XML 形式で送る
 
@@ -48,8 +48,8 @@ bool renderXml(const QDomDocument &document);
 bool renderXml(const QVariantMap &map);
 bool renderXml(const QVariantList &list);
 bool renderXml(const QStringList &list);
-```    
-  
+```
+
 もしこれらの出力する内容が要件と合わない場合は、新たにテンプレートを使って実装するようにしてください。実装方法については[ビューの章]({{ site.baseurl }}/user-guide/ja/view/index.html){:target="_blank"}で説明されるとおりですが、コントローラの中でレスポンスのコンテントタイプを設定することだけは忘れないでください。
 
 ```c++

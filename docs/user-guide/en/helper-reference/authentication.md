@@ -22,17 +22,17 @@ Then navigate to the application root directory and create a model class by usin
    created  models/user.cpp
    created  models/models.pro
 ```
- 
+
 By specifying the 'usermodel' option (or you can use 'u' option), the user model class, that inherits from TAbstractUser class, will be created.
 
-The field names of user name and password of the user model class are 'username' and 'password' and they are created by default, but, of course, you can change them. For example, in case you want to define a schema using the field names 'user_id' and 'pass' instead, use the generator command as follows: 
+The field names of user name and password of the user model class are 'username' and 'password' and they are created by default, but, of course, you can change them. For example, in case you want to define a schema using the field names 'user_id' and 'pass' instead, use the generator command as follows:
 
 ```
  $ tspawn usermodel user user_id pass
 ```
 
 - You just simply need to add those field names at the end of the command.
- 
+
 Unlike a normal class model, an authentication method, such as the following, has been added to the user model class. This method is used to authenticate the user's name. For this purpose, the user name is set the key for retriving the user data object. Then the authentication method reads the user object, compares the password, and only if it matches, it returns the correct model object.
 
 ```c++
@@ -40,7 +40,7 @@ User User::authenticate(const QString &username, const QString &password)
 {
     if (username.isEmpty() || password.isEmpty())
         return User();
-        
+
     TSqlORMapper<UserObject> mapper;
     UserObject obj = mapper.findFirst(TCriteria(UserObject::Username, username));
     if (obj.isNull() || obj.password != password) {
@@ -103,7 +103,7 @@ Now, we'll create a view of the login form using the view file *views/account/fo
 </body>
 </html>
 ```
- 
+
 In the login action, you can write the authentication process that is executed when a user name and a password are posted. Once the authentication was successful, call the userLogin() method and then let the user login to the system.
 
 ```c++
@@ -111,7 +111,7 @@ void AccountController::login()
 {
     QString username = httpRequest().formItemValue("username");
     QString password = httpRequest().formItemValue("password");
- 
+
     User user = User::authenticate(username, password);
     if (!user.isNull()) {
         userLogin(&user);
@@ -123,12 +123,12 @@ void AccountController::login()
     }
 }
 ```
- 
+
 - If you do not include the *user.h* file it would cause a compile-time error.
 
 That completes the login process.<br>
 Although not included in the code above, it is recommended to call the userLogin() method once the user is logged in order to check for any duplicate login(s). Checking the return value (bool) is therefore advised.
- 
+
 After calling the userLogin() method, the return value of identityKey() method of user model is stored into the session. By default, a user name is stored.
 
 ```c++
@@ -136,7 +136,7 @@ After calling the userLogin() method, the return value of identityKey() method o
 ```
 
 You can modify the return value, which should be unique in your system. For example, you can let return a primary key or ID and then can get the value by calling the identityKeyOfLoginUser() method.
- 
+
 ## Logout
 
 To log out, all you need to do is simply to call the userLogout() method in the action.
@@ -162,11 +162,11 @@ bool HogeController::preFilter()
     }
     return true;
 }
-``` 
+```
 
 When the preFilter() method returns *false*, the action will not be processed after this.<br>
 If you would like to restrict access in many controllers, you can set it to preFilter() of the ApplicationController class.
- 
+
 ## Getting the Logged-in User
 
 First of all, we need to get an instance of the logged-in user. You can get the identity information of the logged-in user by the identityKeyOfLoginUser() method. If the return value is empty, it indicates that nobody is logging in the session; otherwise the value is a user name from type string by default.
@@ -188,7 +188,7 @@ In the controller, use the following code:
 QString username = identityKeyOfLoginUser();
 User loginUser = User::getByIdentityKey(username);
 ```
- 
+
 ### Additional Comment
 
 The implementations of login that are described here in this chapter all using the session. Therefore, the lifetime of the session will be simultaneously the lifetime of the login.

@@ -37,7 +37,7 @@ In addition to this, the following methods are available. Please check the [API 
  bool renderJson(const QVariantMap &map);
  bool renderJson(const QVariantList &list);
  bool renderJson(const QStringList &list);
-``` 
+```
 
 ## Send the Contents of the Model in XML Format
 

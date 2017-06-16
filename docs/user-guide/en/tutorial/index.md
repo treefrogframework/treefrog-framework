@@ -27,8 +27,8 @@ First we will need to make a skeleton (various settings files and a directory tr
 
 ### Create a Table
 
-Now we need to create a table in the database. We'll create the field title and content (body). Here are examples in MySQL and SQLite' 
- 
+Now we need to create a table in the database. We'll create the field title and content (body). Here are examples in MySQL and SQLite'
+
 Example in MySQL:<br>
 Set the character set to UTF-8. You can also specify this when generating the database (do ensure that it is being set correctly, see FAQ). You can specify the configuration file for the database, as described below. Also, make the path through into MySQL using the command line tool.
 
@@ -62,7 +62,7 @@ Set the character set to UTF-8. You can also specify this when generating the da
  mysql> quit
  Bye
 ```
-  
+
 **Example in SQLite:**<br>
 We are going to put the database files in the DB directory.
 
@@ -77,17 +77,17 @@ We are going to put the database files in the DB directory.
 A blog table is created with the fields:  id, title, body, created_at, updated_at, and lock_revision.
 
 With the fields updated_at and created_at, TreeFrog will automatically insert the date and time of creation and of each update. The lock_revision field, which is intended for use with optimistic locking, needs to be created as an integer type.
- 
+
 #### Optimistic Locking
 
-The optimistic locking is used to store data while verifying that information is not locked by being updated by another user. Since there is no actual write lock, you can expect processing to be a little faster. 
+The optimistic locking is used to store data while verifying that information is not locked by being updated by another user. Since there is no actual write lock, you can expect processing to be a little faster.
 See the section on O/R mapping for more information.
 
 ## Set the Database Information
 
 Use *config/database.ini* to set information about the database.<br>
 Open the file in the editor, enter the appropriate values for your environment to each item in the [dev] section, and then click Save.
- 
+
 Example in MySQL:
 
 ```
@@ -113,22 +113,22 @@ Example in SQLite:
  Password=
  ConnectOptions=
 ```
-  
+
 Once you have correctly set these details, it's time to display the table to access the DB.<br>
 If everything is setup properly, it will display a message like this:
 
 ```
- $ cd blogapp 
+ $ cd blogapp
  $ tspawn --show-tables
  DriverType:   QSQLITE
- DatabaseName: db\blogdb 
+ DatabaseName: db\blogdb
  HostName:
  Database opened successfully
  -----
  Available tables:
   blog
 ```
- 
+
 If a required SQL driver is not included in the Qt SDK, the following error message will appear:
 
 ```
@@ -147,8 +147,8 @@ You can check which SQL drivers are installed with the following command;
   QMYSQL
   QODBC3
   QODBC
-``` 
- 
+```
+
 The pre-built SQL driver can be used for SQLite, although the SQLite driver can also be used with a little effort.
 
 ## Specifying a Template System
@@ -159,7 +159,7 @@ In TreeFrog Framework, we can specify either Otama or ERB as a template system. 
 TemplateSystem=ERB
   or
 TemplateSystem=Otama
-```  
+```
 
 ## Automatic Generation of Code Created from the Table
 
@@ -181,9 +181,9 @@ From the command line, run the command generator (tspawn) which will generate th
    created   views/blog
  　　:
 ```
-  
+
 With the tspawn options you can generate/update the model/view.
- 
+
 Help of the tspawn command:
 ```
  $ tspawn --help
@@ -221,14 +221,14 @@ A WARNING message will be displayed, but there is actually no problem. Next, run
 ```
  $ make     (On MinGW run 'mingw32-make', on MSVC run 'nmake' command instead)
 ```
- 
+
 If the build succeeds, four shared libraries (controller, model, view, helper) will be created in the lib directory. By default, the library is generated in debug mode; however, you can regenerate the Makefile, using the following command, to create a library in release mode.
 
 Creating a Makefile in release mode:
 
 ```
  $ qmake -r "CONFIG+=release"
-``` 
+```
 
 ## To Start the Application Server
 
@@ -237,8 +237,8 @@ Change to the root directory of the application before starting the application 
 ```
  $ treefrog -e dev
 ```
- 
-In Windows, start by using *treefrog**d**.exe*. 
+
+In Windows, start by using *treefrog**d**.exe*.
 
 ```
 > treefrogd.exe -e dev
@@ -252,7 +252,7 @@ If you want it to run in the background, use the option -d together with any oth
  $ treefrog -d -e dev
 ```
 
-The command option '-e'  appears in the above examples. When this is followed by a **section name** that you have specified in database.ini before, it can be used to change the database settings. If no section name is specified it is assumed that the command refers to a product (when the project is being made, the following three sections are predefined). 
+The command option '-e'  appears in the above examples. When this is followed by a **section name** that you have specified in database.ini before, it can be used to change the database settings. If no section name is specified it is assumed that the command refers to a product (when the project is being made, the following three sections are predefined).
 
 <div class="table-div" markdown="1">
 
@@ -263,7 +263,7 @@ The command option '-e'  appears in the above examples. When this is followed by
 | product |	For official version, production version |
 
 </div>
- 
+
 '-e' comes from the initials letter of "environment".
 
 Stop command:
@@ -328,7 +328,7 @@ public:
     BlogController() { }
     BlogController(const BlogController &other);
 
-public slots: 
+public slots:
     void index();                     // Lists all entries
     void show(const QString &id);     // Shows one entry
     void create();                    // New registration
@@ -360,19 +360,19 @@ void BlogController::index()
 void BlogController::show(const QString &id)
 {
     auto blog = Blog::get(id.toInt()) ;  // Gets Blog model by primary key
-    texport(blog);                          
+    texport(blog);
     render();
 }
 
 void BlogController::create()
-{    
-    switch (httpRequest().method()) { // Checks the incoming httpRequest method type 
+{
+    switch (httpRequest().method()) { // Checks the incoming httpRequest method type
     case Tf::Get:
         render();
         break;
 
     case Tf::Post: {
-        auto blog = httpRequest().formItems("blog"); // Saves the incoming form-data in 
+        auto blog = httpRequest().formItems("blog"); // Saves the incoming form-data in
                                                      // the 'blog' variable from type 'QVariantMap'
         auto model = Blog::create(blog);             // Creates the object from POST
 
@@ -386,7 +386,7 @@ void BlogController::create()
             texport(blog);
             render();
         }
-        break; 
+        break;
     }
 
     default:
@@ -406,14 +406,14 @@ void BlogController::save(const QString &id)
             texport(blog);                  // Sends the blog-data to the view
             render();
         }
-        break; 
+        break;
     }
 
     case Tf::Post: {
         QString error;
         int rev = session().value("blog_lockRevision").toInt(); // Gets the lock revision
         auto model = Blog::get(id.toInt(), rev);                // Obtaining blog-data by its ID
-        
+
         if (model.isNull()) {
             error = "Original data not found. It may have been updated/removed by another transaction.";
             tflash(error);
@@ -426,14 +426,14 @@ void BlogController::save(const QString &id)
         if (model.save()) {                     // Saves the object
             QString notice = "Updated successfully.";
             tflash(notice);
-            redirect(urla("show", model.id())); // Redirects to show action 
+            redirect(urla("show", model.id())); // Redirects to show action
         } else {
             error = "Failed to update.";
             texport(error);
             texport(blog);
             render();
         }
-        break; 
+        break;
     }
 
     default:
@@ -457,9 +457,9 @@ void BlogController::remove(const QString &pk)
 // Don't remove below this line
 T_REGISTER_CONTROLLER(blogcontroller)    // Charm
 ```
-  
+
 Lock revision is used to realize the optimistic locking. See "model", which comes later in this chapter, for more information.
-  
+
 As you can see, you can use the texport method to pass data to the view (template). The argument for this texport method is a QVariant object. QVariant can be any type, so int, QString, QList, and QHash can pass any object. For more details on QVariant, please refer to the Qt documentation.
 
 ## View Mechanism
@@ -501,7 +501,7 @@ The default view that is automatically generated by the generator is an ERB file
   </tr>
 <% } %>
 </table>
-``` 
+```
 
 **Next, let's have a look at the Otama template system.**
 
@@ -578,11 +578,11 @@ The Otama operators, (and their combinations) are fairly simple:<br>
 \=  output the HTML escape, therefore ~= sets the content of the element to the results of the right-hand side then HTML-escape, if you don't want to escape HTML, you can use  ~==.
 
 \: (colon) replaces the result of the right-hand child elements and the elements that are marked, therefore :== replaces the element without HTML escape.
- 
+
 ### Passing Data from the Controller to the View
 
 If you want to use the textport data in view, the controller (object), must be declared in the tfetch (macro) method. For the argument, specify the variable name and type of the variable. Because it is the same state as immediately before the specified variable is texported, it can be used in exactly the same way as a normal variable. In the presentation logic above, it is used as the actual variable.
- 
+
 Here is an example in use :
 
 ```
@@ -590,18 +590,18 @@ Controller side :
  int hoge;
  hoge = ...
  texport(hoge);
- 
+
 View side :
  tfetch(int, hoge);
 ```
 
 The Otama system, generates the C++ code based on the presentation file and the template file. Internally, tmake is responsible for processing it. After that the code is compiled, with the shared library as one view, so, the operation is very fast.
- 
+
 #### HTML Glossary
 
 An HTML element consists of three components, a start tag, the content, end an tag. For example, in the typical HTML element,
 "\<p\>Hello\</p\>",  \<p\> is the start tag, Hello is the content, and \</p\> is the end tag.
- 
+
 
 ## Model and ORM
 
@@ -651,7 +651,7 @@ private:    /*** Don't modify below this line ***/
     T_DEFINE_PROPERTY(int, lock_revision)
 };
 ```
- 
+
 There are methods to query and update the primary key in the TreeFrog's O/R mapper, but the primary key SqlObject can have only one return primaryKeyIndex() method. Therefore, any table with multiple primary keys should be corrected to return one only. It is also possible to issue more complex queries by using the TCriteria class condition. Please see following chapters for details.
 
 Next, let's look at the model.<br>
@@ -666,7 +666,7 @@ public:
     Blog(const BlogObject &object); // constructor made from the ORM object
     ~Blog();
 
-    int id() const;      // The following lines are the setter/getter 
+    int id() const;      // The following lines are the setter/getter
     QString title() const;
     void setTitle(const QString &title);
     QString body() const;
@@ -686,11 +686,11 @@ public:
     static Blog get(int id);                   // Gets object specified by ID
     static Blog get(int id, int lockRevision); // Gets object specified by ID and lockRevision
     static int count();                 // Returns the amount of blog data items
-    static QList<Blog> getAll();        // Gets all model objects                              
+    static QList<Blog> getAll();        // Gets all model objects
     static QJsonArray getAllJson();     // Gets all model objects in JSON style
 
 private:
-    QSharedDataPointer<BlogObject> d;   // Holds the pointer of the ORM object 
+    QSharedDataPointer<BlogObject> d;   // Holds the pointer of the ORM object
 
     TModelObject *modelData();
     const TModelObject *modelData() const;
@@ -705,7 +705,7 @@ Despite the fact that the number of code steps automatically generated by the ge
 Of course, automatically generated code is not perfect. Real life applications may need to be more complex. The code may not be sufficient as generated, thus some reworking may be necessary. Nevertheless, the generator will save a little time and effort in writing code.
 
 In the background, the code as described above also functions to provide; CSRF measures with cookie tampering check, optimistic locking, and token authentication against SQL Injection. If you are interested, please look into the source.
- 
+
 
 ## Video Demo – Sample Blog Application Creation
 

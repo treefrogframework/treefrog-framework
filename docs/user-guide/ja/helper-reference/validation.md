@@ -24,7 +24,7 @@ page_id: "080.030"
 BlogValidator::BlogValidator() : TFormValidator()
 {
    setRule("title", Tf::MinLength, 4);
-   setRule("title", Tf::MaxLength, 20); 
+   setRule("title", Tf::MaxLength, 20);
 }
 ```
 
@@ -35,7 +35,7 @@ setRule() の第４引数には、検証エラー時のメッセージを設定�
 
 ```c++
 setRule("title", Tf::Required, false);
-``` 
+```
 
 <div class="center aligned" markdown="1">
 
@@ -62,7 +62,7 @@ setRule("title", Tf::Required, false);
 | Pattern      | 正規表現                 |
 
 </div><br>
- 
+
 ルール設定をしたら、コントローラの中で使ってみましょう。該当するヘッダファイルをインクルードしておいてください。<br>
 フォームから取得したリクエストデータを検証します。検証エラーになった場合に、エラーメッセージを取得します。
 
@@ -75,14 +75,14 @@ if (!validator.validate(blog)) {
        :
 }
 ```
- 
-通常、複数のルールを設定するはずなので、エラーメッセージも複数になります。１つ１つ処理するのは少々面倒なものです。<br> 
+
+通常、複数のルールを設定するはずなので、エラーメッセージも複数になります。１つ１つ処理するのは少々面倒なものです。<br>
 次のメソッドを使えば、検証エラーのメッセージを一括でエクスポートする（ビューに渡す）ことができます。第2引数には、エクスポートオブジェクトの変数名へのプレフィックスを指定します。
 
 ```c++
 exportValidationErrors(valid, "err_");
-``` 
- 
+```
+
 <span style="color: #b22222">**結論： フォームのデータはルールを設定し、validate() で検証せよ。** </span>
 
 ## カスタムバリデーション
@@ -108,5 +108,5 @@ bool FooValidator::validate(const QVariantMap &hash)
     return ret;
 }
 ```
-  
+
 startDate の値と endData の値を比較して、正しくない場合に検証エラーにしています。

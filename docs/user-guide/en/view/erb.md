@@ -8,7 +8,7 @@ page_id: "070.010"
 Originally, ERB was a library for embedding Ruby script into text documents. It has been adopted as (one of the) template engines, such as Rails, that you can embed code in HTML between the tags likes these: <% … %>.
 
 In the same way, TreeFrog Framework uses tags <% … %> as well to embed C++ code. For convenience, I'll refer to this implementation as ERB as well.
- 
+
 First, I'll make sure that the items in the configuration file *development.ini* are as follows. Unless you've changed from the default, they should be.
 
 ```
@@ -22,7 +22,7 @@ Then, when you generate a view in the command generator, the ERB template format
 ```
 
 If you want to add a new template, please follow the same naming convention.
- 
+
 
 ## Relationship of View and Action
 
@@ -33,11 +33,11 @@ I would like to review the relationship between view and action. As an example, 
 ```
 
 If you call the render() method with an argument, the contents of the appropriate template will be output.
- 
+
 You can add template files as you like. But consider, once you have added a new one (or several), you must run the following command once in the view directory:
 
 ```
- $ cd views 
+ $ cd views
  $ make qmake
 ```
 
@@ -67,17 +67,17 @@ Again if you do not want to use escape, you can use <%== … %> which gives exac
 ```
  <%== "<p>Hello world</p>"  %>
 ```
- 
+
 **Note:**<br>
 When you write <%= … %> in the original (eRuby) specification, it outputs a string WITHOUT HTML escape. In TreeFrog, the idea is that by using the shorter code for indicating HTML escape, safety is increased, based on the possibility that extra bits of code can easily be omitted in error. It seems to be becoming the mainstream in recent years.
- 
+
 ## Display of a Default Value
 
 If a variable is an empty string, let's display the default value as an alternative.<br>
 By writing as follows, if the variable *str* is empty, then the string "none" is displayed.
 
 ```
- <%= str %|% "none" %> 
+ <%= str %|% "none" %>
 ```
 
 ## To Use the Object Passed from the Controller
@@ -86,11 +86,11 @@ In order to display the object that is exported from the controller by the texpo
 
 ```
  <% tfetch(Blog, blog); %>
- <%= blog.title %>       ← output tha value of blog.title 
+ <%= blog.title %>       ← output tha value of blog.title
 ```
 
 The variable (object) that has been fetched, can be accessed later in the same file. In other words, it becomes a local variable.
- 
+
 You might ask if fetch processing has to be processed each time of using, but you could see that the fetch processing does not have to be run every time you want to use the variable.
 
 The fetched object is a local variable in a function. Therefore, if we fetched the same object twice, because the variables are the same we would have defined twice, giving an error at compile time. Of course, it would not be a compile-time error if we divided the block, but it probably would not make much sense to do so.
@@ -103,19 +103,19 @@ If you export objects of the type int and QString type, then you can only output
  <% tehex(foo); %>
 ```
 
-Understand that tehex() function as a combination of the eh() and the fetch() method. There is a difference in defining between fetching and local variables, as you can see in here, function variable (*foo* in this example) outputs the value without defining. 
+Understand that tehex() function as a combination of the eh() and the fetch() method. There is a difference in defining between fetching and local variables, as you can see in here, function variable (*foo* in this example) outputs the value without defining.
 
 If you do not want to escape the HTML processing, use the techoex() function, which is a combination of echo() and fetch() methods. In the same way, the variable is not defined.
 
-In addition, there is another way to export the output objects. You can use the code <=$ .. %>. Note that there must be no space between '$' (dollar) and '=' (equal). 
+In addition, there is another way to export the output objects. You can use the code <=$ .. %>. Note that there must be no space between '$' (dollar) and '=' (equal).
 This produces exactly the same result.
 
 ```
  <%=$ foo %>
 ```
 
-Codes have been considerably simplified. 
-This means that you can replace the tehex() method with the "=$" code. 
+Codes have been considerably simplified.
+This means that you can replace the tehex() method with the "=$" code.
 Similarly, <% techoex(..); %> can be rewritten in the notation <==$ .. %>.
 
 To sum up, to export an object of int type or QString type, I think it's better to output using the notation <=$ .. %>, unless you want to output just once (in which case, use the fetch process ).
@@ -156,7 +156,7 @@ Let's write a loop to use on a list. For example, take the list blogList which i
     ...
  <% } %>
 ```
- 
+
 You can use the foreach statement from Qt which makes coding shorter:
 
 ```
@@ -200,7 +200,7 @@ Using JavaScript, the link and confirmation dialog can be written as follows:
 ```
  <%== linkTo(tr("Delete"), urla("remove", 1), Tf::Post, "confirm('Are you sure?')") %>
                       ↓
- <a href="/Blog/remove/1/" onclick="if (confirm('Are you sure?')) { 
+ <a href="/Blog/remove/1/" onclick="if (confirm('Are you sure?')) {
           var f = document.createElement('form');
             :  (omission)
           f.submit();
@@ -227,8 +227,8 @@ If there is more than one attribute, use '\|' operator:
  a("class", "menu") | a("title", "hello")
                  ↓
  class="menu" title="hello"
-``` 
- 
+```
+
 By the way, there is the anchor() method, that aliases the linkTo() method; they can be used in exactly the same way.
 
 In addition, many other methods are available, see the [API Document](http://treefrogframework.org/tf_doxygen/classes.html){:target="_blank"}
@@ -266,7 +266,7 @@ There are four ways to interact with the layout when the controller requests vie
 4. Do not use layout.
 
 Only one layout is used when drawing the view, but a different layout can be used if the above list gives it a higher priority. So, for example, this means that rather than "layout that is set for each controller," being used, the rule "layout is set for each action" takes precedence.
-   
+
 Let's take the example of a very simple layout (as per the following). It is saved with the extension .erb. The location of the layout is the view/layouts directory.
 
 ```
@@ -283,7 +283,7 @@ Let's take the example of a very simple layout (as per the following). It is sav
 ```
 
 The important part here is the line; <%== yield(); %>. This line outputs the contents of the template. In other words, when the render() method is called, the content of the template will be merged into the layout.
- 
+
 By using a layout like this, you can put together a common design, such as headers and footers, for the site. Changing the design of the site then becomes much easier, because all you need to change is the layout.
 
 <span style="color: #b22222">**In brief: Layout is the overall outline for the site design.** </span>
@@ -292,7 +292,7 @@ Now, I will describe each method to set the layout.
 
 **１．Set the layout for each action**
 
-You can set the layout name as the second argument of the render() method when it is called in the action. 
+You can set the layout name as the second argument of the render() method when it is called in the action.
 This example layout simplelayout.erb is used here.
 
 ```c++
@@ -312,7 +312,7 @@ setLayout("basiclayout");  // basiclayout.erb the layout used
 **３．Use the default layout**
 
 The file application.erb is the default layout file. If you do not specify a particular layout, this default layout is used.
- 
+
 
 **４．Do not use layout**
 

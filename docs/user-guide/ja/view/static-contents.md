@@ -21,7 +21,7 @@ page_id: "070.030"
 | public/css/    | カスケーディングスタイルシート (CSS) | /css/...    |
 
 </div><br>
- 
+
 public ディレクトリには、自由にサブディレクトリを作って構いません。
 
 ## インターネットメディアタイプ（MIMEタイプ）
@@ -35,10 +35,10 @@ TreeFrog Framework は、ファイル拡張子を config/initializers/internet_m
  js=application/javascript
  zip=application/zip
    :
-```   
-  
+```
+
 **インターネットメディアタイプが足りない場合、このファイルに追記します。**その後、追加した定義情報を反映させるためにAPサーバを再起動してください。
-   
+
 ## エラー表示
 
 アプリケーションサーバはエラーや例外が発生したとしても何らかのレスポンスを返さなければならない宿命にあります。レスポンスのためのステータスコードは [RFC](http://www.ietf.org/rfc/rfc2616.txt){:target="_blank"} で定義されています。<br>
@@ -53,9 +53,9 @@ TreeFrog Framework は、ファイル拡張子を config/initializers/internet_m
 | その他エラー    | public/500.html |
 
 </div><br>
- 
+
 これらの静的ファイルを編集することで、表示する内容を変更することができます。
- 
+
 アクションの中から次のように関数を呼び出すことで、エラーを示す静的ファイルを返却することができます。こうすることで、レスポンスのステータスコードに 401 がセットされ、public/401.html の内容が返されます。
 
 ```c++
@@ -66,7 +66,7 @@ renderErrorResponse(401);
 
 ```c++
 redirect(QUrl("/401.html"));
-``` 
+```
 
 ## ファイルの送信
 
@@ -74,8 +74,8 @@ redirect(QUrl("/401.html"));
 
 ```c++
 sendFile("filepath.jpg", "image/jpeg");
-``` 
- 
+```
+
 この関数でファイルを送ると、Webブラウザ側ではファイルのダウンロード処理が実行されることになります。ダイヤログが表示され、ファイルを開くか保存するかを尋ねられます。<br>
 この関数は HTTP レスポンスとしてファイルを送ることから、render() メソッドと同等の処理が行われます。したがって、コントローラはもう render() メソッドでテンプレートを出力することはできません。
 
@@ -83,7 +83,7 @@ sendFile("filepath.jpg", "image/jpeg");
 
 ```c++
 #include <TWebApplication>
-``` 
+```
 
 ## データの送信
 

@@ -47,17 +47,17 @@ Let's set the connection information in order to communicate with the MongoDB se
 
 ```ini
  MongoDbSettingsFile=mongodb.ini
-``` 
- 
+```
+
 Then edit the *config/mongodb.ini*, specifying the host name and database name. As for the configuration file for the SQL database, this file is divided into three sections, *dev*, *test*, and *product*.
- 
+
 ```ini
  [dev]
  DatabaseName=foodb        # Database name
  HostName=192.168.x.x      # Host name or IP address
  Port=
  UserName=
- Password=                    
+ Password=
  ConnectOptions=           # unused
 ```
 
@@ -84,7 +84,7 @@ MongoDB document is represented by a QVariantMap object. Set the key-value pair 
 
 ```c++
 #include <TMongoQuery>
----  
+---
 TMongoQuery mongo("blog");  // Operations on a blog collection
 QVariantMap doc;
 
@@ -98,7 +98,7 @@ Internally, a unique ObjectID is allocated when the insert() method is being cal
 ### Supplement
 
 As this example shows, there is no need for developers to worry at all about the process of connect/disconnect with MongoDB, because the management of the connection is handled by the framework itself. Through the  mechanism of re-using connections, the overhead caused by the number of connections/disconnections is kept low.
- 
+
 ## Reading the Document
 
 When you search for documents and some of them (or all) match the previously set criteria, it is necessary to pass the returned documents (if any) one by one into a QVariantMap. Please be ware, that we have to use QVariantMap here, because the search criteria is expressed as QVariantMap, too.
@@ -106,7 +106,7 @@ When you search for documents and some of them (or all) match the previously set
 The following example creates an Criteria object which contains two criteria sets and then being passed as an argument to the find() method. Assuming that there is more than one document that matches the search criteria we use the *while* statement to loop through the list of available documents.
 
 ```c++
-TMongoQuery mongo("blog"); 
+TMongoQuery mongo("blog");
 QVariantMap criteria;
 
 criteria["title"] = "foo";  // Set the search criteria
@@ -118,14 +118,14 @@ while (mongo.next()) {
     // Do something
 }
 ```
- 
+
 - Two criteria are joined by the AND operator.
 
 If you are looking for only one documents that matches the criteria, you can use the findOne() method.
 
 ```c++
 QVariantMap doc = mongo.findOne(criteria);
-``` 
+```
 
 The following example sets an criteria for a 'num'. Only documents those value 'num' is greater than 10 will match. In order to achieve this, use **$gt** as the comparison operator for your criteria object.
 
@@ -169,13 +169,13 @@ There are more operators provided by MongoDB. Please have a look at the [MongoDB
 We will read a document from the MongoDB server and then update it. As indicated by the update() method, we will update one document that matches the criteria.
 
 ```c++
-TMongoQuery mongo("blog"); 
+TMongoQuery mongo("blog");
 QVariantMap criteria;
 criteria["title"] = "foo";             // Set the search criteria
 QVariantMap doc = findOne(criteria);   // Get one
 doc["body"] = "bar baz";               // Change the contents of the document
 
-criteria["_id"] = doc["_id"];          // Set ObjectID to the search criteria  
+criteria["_id"] = doc["_id"];          // Set ObjectID to the search criteria
 mongo.update(criteria, doc);
 ```
 

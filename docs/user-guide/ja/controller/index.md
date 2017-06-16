@@ -20,13 +20,13 @@ class T_CONTROLLER_EXPORT FooController : public ApplicationController
     Q_OBJECT
      :
 public slots:   // この下にアクションを定義する！
-    void bar();  
+    void bar();
     void baz(const QString &str);
      :
 ```
-  
+
 あとは、いつもと同じように実装するだけです。
- 
+
 ## アクションの決定
 
 リクエストされたURL文字列から、呼び出されるアクションが１つ決まります。デフォルトで、次のルールが使われます。
@@ -38,23 +38,23 @@ public slots:   // この下にアクションを定義する！
 ※ これらの引数を「アクション引数」と呼ぶことにします
 
 アクション引数は０個から１０個まで指定することができます。１１個以上指定された場合は、１０個指定されたものとみなされます。もし１１個以上の引数を使いたい場合は、URL引数（下記参照）かポストデータを使ってください。
- 
+
 ということで、具体的な例を次に挙げます。いずれの場合も BlogController クラスのアクションが呼び出されます。
 
 ```
  /blog/show        →  show();
  /blog/show/2      →  show(QString("2"));
- /blog/show/foo/5  →  show(QString("foo"), QString("5"));  
+ /blog/show/foo/5  →  show(QString("foo"), QString("5"));
 ```
 
 アクション名が省略された場合、デフォルトで index アクションが呼ばれます。つまり、こうなります。
 
 ```
  /blog   →  index();
-```  
- 
-リクエストされたURLに該当するアクションが定義**されていない**場合、ブラウザにはステータスコード 500 (Internal Server Error) が返ります。   
-  
+```
+
+リクエストされたURLに該当するアクションが定義**されていない**場合、ブラウザにはステータスコード 500 (Internal Server Error) が返ります。
+
 呼び出されるアクションでは、主に次の処理が行われるでしょう。
 
 * リクエストの精査
@@ -67,7 +67,7 @@ public slots:   // この下にアクションを定義する！
 プログラマの中は、アクションにたくさん処理を詰め込んで、その結果コントローラを大きくて複雑にしてしまう人がいます。あくまでビジネスロジックはモデル側に実装するようにし、コントローラはできる限り小さくてシンプルになるように心がけましょう。
 
 アクションが呼び出されるメカニズムについて説明しましたが、URL によって決定されるアクションはカスタマイズすることが可能です。後述の[URLルーティングの章](/user-guide/ja/controller/url-routing.html){:target="_target"}をご覧ください。
- 
+
 ## リクエストの取得
 
 HTTP リクエストは、THttpRequest クラスによって表されます。<br>
@@ -92,8 +92,8 @@ const THttpRequest & TActionController::httpRequest () const;
 
 ```
 <input type="text" name="title" />
-``` 
- 
+```
+
 その送られた先のコントローラ側で値を取得するには、次のようにします。
 
 ```c++
@@ -130,13 +130,13 @@ http://example.com/blog/index?mode=normal
 
 ```c++
 QString val = httpRequest().queryItemValue("mode");
-// val = "normal"  
+// val = "normal"
 ```
 
 ちなみに、ポストデータと URL 引数を区別しないでデータを取得したい場合は、parameter()メソッドや allParameters()メソッドを使うことができます。
- 
+
 リクエストデータがアプリ側の望む形式であるかどうかを検証する仕組みとして、バリデーション機能が提供されています。詳細は、[バリデーションの章]({{ site.baseurl }}/user-guide/ja/helper-reference/validation.html){:target="_blank"}をご覧ください。
- 
+
 ## 変数をビューへ渡す
 
 ビューに対し、変数を渡すためには、texport( *variable* ) または T_EXPORT( *variable* ) を使います（これらはマクロです）。引数には、QVariant 型になりうる全ての変数を指定することができます。int, QString, QList, QHash はもちろん、ユーザ定義のモデルのインスタンスも指定することができます。次のように使います。
@@ -154,10 +154,10 @@ texport(bar);
 
 **注意：** texport の引数には必ず**変数**を指定してください。文字列("Hello world")や数値(100) などを直接指定することはできません。
 
-その後、ビューでこの変数を使う場合、まず tfetch( Type, variable ) で宣言する必要があります。詳細は[ビューの章]({{ site.baseurl }}/user-guide/ja/view/index/html){:target="_blank"}をご覧ください。 
+その後、ビューでこの変数を使う場合、まず tfetch( Type, variable ) で宣言する必要があります。詳細は[ビューの章]({{ site.baseurl }}/user-guide/ja/view/index/html){:target="_blank"}をご覧ください。
 
 <span style="color: #b22222">**結論： オブジェクトは tfetch() でビューへ渡せ。**</span>
- 
+
 **ユーザ定義クラスの場合：**
 
 ビューに渡すクラスを新規に実装した場合（ユーザ定義クラス）、そのクラスのヘッダークラスの末尾に、クラス名を引数とした次のおまじないを追加してください。「[独自モデルの作成]({{ site.baseurl }}/user-guide/ja/model/index.html){:target="_blank"}」の節をご覧ください。
@@ -171,18 +171,18 @@ Qt で提供されているクラスは Q_DECLARE_METATYPE 宣言する必要は
 ```c++
    :
 Q_DECLARE_METATYPE(QList<float>)
-``` 
+```
 
 Q_DECLARE_METATYPE マクロの引数はクラス名ですが、QHash\<Foo, Bar\> のようなカンマ付きを指定すると、コンパイルエラーになります。この場合、QHash\<Foo, Bar\> を typedef 宣言した名称を使えば良いです。
 
 ```c++
 typedef QHash<Foo, Bar> BarHash;
 Q_DECLARE_METATYPE(BarHash)
-``` 
+```
 
 #### エクスポートオブジェクト
 ビューに渡されたオブジェクト（texport されたオブジェクト）を「エクスポートオブジェクト」と呼ぶことにします。
- 
+
 ## レスポンスの作成を依頼する
 
 アクションでビジネスロジックを処理した後は、その処理結果を HTML のレスポンスとして返します。BlogController の show アクションが実行された場合は、views/blog/show.xxx (拡張子はテンプレートシステムに拠る) という名前のテンプレートによってレスポンスが生成されます。それを依頼するには、次の render メソッドを使います。
@@ -196,7 +196,7 @@ bool render(const QString &action = QString(), const QString &layout = QString()
 ※ render というメソッド名が示すように 「レスポンスの作成をビューに依頼する」ことを、「描画する」とも言います。
 
 <span style="color: #b22222">**結論： render() でテンプレートを描画せよ。** </span>
-  
+
 ### レイアウトとは
 
 サイトを作ると、ページのヘッダやフッタといった共通部分は同じで、中身が異なることはよくあります。レイアウトとは、この共通部分だけを記述した、土台となるテンプレートのことを言います。レイアウトファイルは、views/layouts ディレクトリに置かれます。
@@ -223,7 +223,7 @@ renderText("Hello world");
 // レイアウトを適用しつつ "Hello world" という文字列を描画する
 renderText("Hello world", true);
 ```
- 
+
 レイアウトの詳細については、「[ビュー]({{ site.baseurl }}/user-guide/ja/view/index.html){:target="_blank"}」の章をご覧ください。
 
 ## リダイレクトする
@@ -241,7 +241,7 @@ redirect(QUrl("www.example.org"));
 // Blog コントローラの index アクションへリダイレクトさせる
 redirect( url("blog", "index") );
 ```
- 
+
 ここに出た url メソッドは便利なメソッドで、コントローラ名とアクション名を渡すと適切な QUrl インスタンスを返してくれるのです。
 
 同一コントローラの他のアクションへリダイレクトさせるには、コントローラ名を省略できます。
@@ -256,7 +256,7 @@ redirect( urla("show") );
 ## リダイレクトした先でメッセージを表示するには
 
 リダイレクトとは、別のURLへ転送させることです。サーバの視点で考えれば、その転送先のURLで新たなリクエストを受信するので、別のアクションが呼ばれることになります。
-  
+
 TreeFrog Framework では、リダイレクトで転送した先のコントローラに対してメッセージ（変数）を渡す仕組みがあります。<br>
 次のように、変数を tflash メソッドまたはT_FLASH メソッドに渡すだけです。
 
@@ -268,13 +268,13 @@ tflash( foo );
 
 ここで渡された変数のことを「フラッシュオブジェクト」と呼びます。<br>
 このフラッシュオブジェクトは、リダイレクト先のビューでエクスポートオブジェクトに変換されます。あとは eh メソッドあるいは echo メソッドで出力すれば、メッセージを表示させることができるという訳です。
- 
+
 ### フラッシュオブジェクトを使うと何が嬉しいのか
 
 実際のところ，フラッシュオブジェクトを全く使わなくともWebアプリケーションは作成できます。ただ、ある条件がそろった時にフラッシュオブジェクトを使えば、コードが分かりやすくなります（慣れもありますが）。
 
 個人的に、アクションはそれ自体で独立かつ完結しているほうが分かりやすいと思います。つまり、アクション同士の関連性を減らすのです。１つのリクエストで２つ以上のアクションが呼び出されるような実装は良いと言えません。できるだけ１リクエストで１アクションという関係を保ちましょう。
- 
+
 もし、独立した別々のアクションがほぼ同じ内容を表示する場合、フラッシュオブジェクトを使うことでコードがシンプルになるのです。
 
 [チュートリアルの章]({{ site.baseurl }}/user-guide/ja/tutorial/index.html){:target="_blank"}で紹介した blogapp の show アクションと create アクションがいい例になります。これらのアクションの処理は異なっていますが、処理の結果としてどちらも1件のブログ内容を表示するだけです。create アクションでは、データの登録が成功したら show アクションへリダイレクトさせてデータを表示していますが、同時にフラッシュオブジェクトを使い「登録が成功した」というメッセージを表示しているのです。<br>
