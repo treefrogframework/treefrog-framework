@@ -16,11 +16,11 @@ page_id: "050.040"
 ```c++
 void FooController::setAccessRules()
 {
-setDenyDefault(true);
-QStringList allowed;
-allowed << "index" << "show" << "entry" << "create";
-setAllowUser("user1", allowed);
-:
+    setDenyDefault(true);
+    QStringList allowed;
+    allowed << "index" << "show" << "entry" << "create";
+    setAllowUser("user1", allowed);
+    :
 }
 ```
 使用allowUser()和allowGroup()来允许访问, 使用denyUser()和denyGroup()来禁止访问.第一个参数指定组(Group)或者用户(User Id), 第二个参数指定操作的列表(QStringList).
@@ -32,15 +32,15 @@ setDenyDefault(true);
 ```c++
 bool FooController::preFilter()
 {
-ApplicationController::preFilter();
-:
-:   // 获得用户模型(user model)实例
-:
-if (!validateAccess(&loginUser)) {  // 检查访问规则, 是否被禁止访问
-renderErrorResponse(403);
-return false;
-}
-return true;
+    ApplicationController::preFilter();
+    :
+    :   // 获得用户模型(user model)实例
+    :
+    if (!validateAccess(&loginUser)) {  // 检查访问规则, 是否被禁止访问
+        renderErrorResponse(403);
+        return false;
+    }
+    return true;
 }
 ```
 如果preFilter()方法返回false, 操作(action)将不会被执行.你会希望能看到访问被禁止的信息.为此, 你可以使用renderErrorRepose()方法显示一个静态的错误页面(如*public/403.html*).

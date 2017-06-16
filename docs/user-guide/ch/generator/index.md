@@ -45,7 +45,9 @@ connectOptions=
 <div class="center aligned" markdown="1">
 **设置清单**
 </div>
+
 <div class="table-div" markdown="1">
+
 | 项目           | 含义           | 说明                                                                                                                                 |
 | -------------- |--------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | driverType     | 驱动名称       | 有以下选项:<br>- QDB2: IBM DB2<br>- QIBASE: Borland InterBase Driver<br>- QMYSQL: MySQL Driver<br>- QOCI: Oracle Call Interface Driver<br>- QODBC: ODBC Driver<br>- QPSQL: PostgreSQL Driver<br>- QSQLITE: SQLite version 3 or above |
@@ -55,7 +57,9 @@ connectOptions=
 | userName       | 用户名          |     |
 | password       | 密码           |     |
 | connectOptions | 连接选项 | 更多信息参看Qt文档:<br>[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="_blank"} |
+
 </div><br>
+
 如果Qt SDK没有提供数据库驱动将不能访问数据库.如果没有还没有构建,你必须设置好驱动.作为替代, 你可以从[下载页](http://www.treefrogframework.org/download){:target="_blank"}下载数据库驱动,然后安装它.
 当你执行完生成器命令(完成上面提到的步骤), 骨架就会生成.每条命令都应该在应用程序的根目录下执行.
 ```
@@ -78,6 +82,7 @@ created  controllers/blogcontroller.cpp
 銆€blog_entry   鈫? BlogEntry   BlogEntryController   BlogEntryObject
 ```
 请注意下划线会被删掉,后面的第一个字母会改成大写的.可以完全忽略单词单数和复数形式直接区别.
+
 ## 生成器子命令
 这里是tspawn命令的用法规则:
 ```
@@ -91,6 +96,7 @@ model (m)  <table-name>
 sqlobject (o)  <table-name>
 ```
 如果你使用"controller","model","sqlobject"作为子命令, 将只会生成"controller", "model" 和 "SqlObject".
+
 ### 列
 Treefrog没有升级数据库的功能或者更改管理数据库表结构的机制.基于以下原因,我认为它是不重要的:
 1. 如果我实现升级功能, 用户会有额外的学习成本.
@@ -98,37 +104,46 @@ Treefrog没有升级数据库的功能或者更改管理数据库表结构的机
 3. 在Treefrog, 可以在表更改后重新生成ORM对象类.(不幸, 可能也会影响到Model类)
 4. 我认为对SQL命令进行框架差异管理是没有什么价值的。
 你是否同意这些观点?
+
 ## 名称转换
 Treefrog 有类名和文件名转换功能.生成器按照下面的条款和规定生成类名和文件名.
+
 #### 控制器名称的转换
 控制器类名是"表名+Controller"控制器的类名永远使用大写字母打头, 不要使用下划线分隔单词,而是将下划线后的单词首个字母换成大写的.<br>
 以下类名是很好的例子帮助理解如何转换.
 * BlogController
 * EntryCommentController
 这些文件保存在controller文件夹内.文件夹内的文件名是全部小写的, 类名加上对应的扩展名(.cpp 或 .h).
+
 #### 模型名称的转换
 和控制器的方式一样, 模型名称永远使用大写字母打头, 不要使用下划线分隔单词,而是将下划线后的单词首个字母换成大写的.例如下面的类名:
 * Blog
 * EntryComment
 这些文件保存在models文件夹内.和控制器一样, 这些文件名全部是小写的.模型名后加上文件扩展(.cpp 或 .h).
 和Rails不同, 我们不使用单词单数和复数形式的转换.
+
 #### 视图名称的转换
 模版文件按照"控制器名称+扩展名"的文件名形式生成,文件名全部是小写的, 在"views/控制器名"目录内.扩展名取决于选择的模版系统.
 同时, 但你构建视图然后输出源文件在"views/_src"文件内.你会注意到这些文件已经全部转换成了C++ 代码模版.当文件编译后, 会生成一个view的共享库.
+
 #### CRUD
 CRUD包括了网页应用的四个主要功能.这个名称来自于四个单词的首字符"新建(Create)","读取(Read)","更新(Update)",和"删除(Delete)".
 当你新建一个骨架, 生成器命令生成如下名称的代码:
 <div class="center aligned" markdown="1">
 **CURD对应表**
 </div>
+
 <div class="table-div" markdown="1">
+
 |       | Action    | Model     | ORM       | SQL       |
 | ----- |-----------|-----------|-----------|-----------|
 | C| create| create() [static]<br>create()  | create()| INSERT    |
 | R     | index<br>show | get() [static]<br>getAll() [static] | find() | SELECT |
 | U| save| save()<br>update() | update()| UPDATE    |
 | D| remove| remove()| remove()| DELETE    |
+
 </div><br>
+
 ## 关于 T_CONTROLLER_EXPORT宏
 生成器生成的控制器类将会增加到宏T_CONTROLLER_EXPORT.
 在Windows上, 控制器是一个单独的DLL文件, 但是为了在DLL外可使用这些类和功能, 我们需要使用关键字__declspec (称为dllexport)定义它.T_CONTROLLER_EXPORT宏会用这个关键字完成替换.<br>

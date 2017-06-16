@@ -58,7 +58,7 @@ const THttpRequest & TActionController::httpRequest () const;
 * URL参数(查询参数) - 附加在URL上在"?"后的参数,(格式为Key=value&...)
 *Action参数 - 在Action后的参数("blog/edit/3"的第三部分)  <-见上面的内容.
 接下来的例子说明了如何在控制器中获取post数据.
-我们假设视图中已经有了一个<input>标签.
+我们假设视图中已经有了一个input标签.
 ```
 <input type="text" name="title" />
 ```

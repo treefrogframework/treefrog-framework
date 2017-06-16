@@ -14,21 +14,28 @@ HTTP的每次请求都要建立连接和断开连接,  不支持长时间的连�
 首先, 我们将生成一个WebSocket对象.传递*ws://*或者*wss://*起头的URL作为参数.<br>
 连接的处理在创建的时刻进行.
 可以为WebSocket对象注册下面的事件处理器(event handers):
+
 <div class="table-div" markdown="1">
+
 | 名称 | 描述  |
 |-----------|----------------|
 | onopen | open处理器 |
 | onclose | close处理器  |
 | onmessage | message处理器 |
 | onerror | error 处理器 |
+
 </div><br>
+
 下面是WebSocket对象的方法:
 <div class="table-div" markdown="1">
+
 | 方法 | 描述 |
 |---------------|--------------|
 | send(msg) | 发送消息 |
 | close(code) | 断开连接 |
+
 </div><br>
+
 更多详细信息,请看 [http://www.w3.org/TR/websockets/](http://www.w3.org/TR/websockets/){:target="_blank"}.
 ## 创建一个聊天程序
 让我们基于这些处理器(handlers)生成一个聊天程序.<br>
@@ -140,6 +147,7 @@ publish(TOPIC_NAME, text);  // 发送信息
 void ChatEndpoint::onBinaryReceived(const QByteArray &)
 { }
 ```
+
 ### 构建
 此例中, 我将不使用**VIEW**, 所以我将会从构建中删掉它.
 编辑*chatapp.pro*如下并保存它.
@@ -163,6 +171,7 @@ $ treefrog- k stop
 * 数据库中最近的30条信息.
 * 在连接(*onOpen*)后信息立即被发送
 * 增加了一些样式表使应用看起来漂亮一些
+
 ## 保持在线(keep alive)
 当TCP会话长时间持续在无通讯状态, 通信设备例如路由器,将会停止路由.这种情况下, 即使你从服务器发送一个消息, 它再也到达不了客户端了.
 要避免这种情况, 需要通过定期通信来保持在线(keep alive).*保持在线(keep alive)在WebSocket中是通过发送和接收*乒乓Ping/Pong*数据帧实现的.

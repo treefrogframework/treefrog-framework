@@ -2,17 +2,21 @@
 title: 访问MongoDB
 page_id: "060.050"
 ---
+
 ## 访问MongoDB
 MongoDB是一个开源的文档存储数据库.它是NoSql体系中的一个.
 为了在关系型数据库中管理数据, 你必须先定义一个表(架构), 但是在MongoDb中将不再需要做这些.在MongoDB中, 数据是通过一种叫做"文档(Documents)"的类似于JSON格式(BSON)进行存储的, 数据集(set)通过"集合(Collection)"管理.在系统中, 每一个文档(document)分配一个唯一的ID(ObjectID).
 这里是关系型数据库和MongoDB分层结构的对比:
 <div class="table-div" markdown="1">
+
 | MongoDB    | 关系型数据库      | 说明       |
 |------------|----------|---------------|
 | Database   | Database | 术语一样 |
 | Collection | Table    |               |
 | Document   | Record   |               |
+
 </div><br>
+
 ## 安装
 使用下面的命令重新安装框架:
 ```
@@ -27,6 +31,7 @@ $ make
 $ sudo make install
 ```
 -x.x.x表示当前下载的版本.
+
 ## 关键设置
 假设MongoDB已经被安装并且服务器已经在运行.然后你可以使用生成器生成应用的框架.
 为了和MongoDB服务器通讯, 让我们设置连接信息.首先, 编辑*config/application.ini*的这一行.
@@ -54,6 +59,7 @@ Existing collections:
 ```
 如果成功了, 将会显示上面的内容.
 网页应用可以同时访问MongoDB和SQL数据库.这样能够使网页应用在系统复杂增加的情况下灵活响应.
+
 ## 新建文档
 要访问MongoDB服务器, 使用*TmongoQuery*对象.指定集合名称为构建器的参数来创建实例.
 MongoDB文档用QVariantMap对象来表示.设置对象的键值对,然后用insert()方法插入到MongoDB的尾部.
@@ -67,8 +73,10 @@ doc["body"] = "Hello world.";
 mongo.insert(doc);   // 插入新文档
 ```
 在内部, 当insert()方法被调用时,分配了一个唯一的ObjectID.
+
 ### 补充
 从这个例子中可以看到, 开发者不需要关心连接/断开MongoDB, 因为连接管理是框架自己来处理的.通过复用连接的机制, 连接/端口是数量可以保存在少量.
+
 ## 读取文档(Document)
 当你搜索文档时, 并且有符合设置条件时, 必须一个一个地将返回的文档传递到一个QVariantMap中.请小心, 这里必须使用QVariantMap, 因为查询条件也表示为QVariantMap.
 下面的例子创建了一个包含两个查询条件的Criteria对象, 然后作为find()方法的参数被传递.假设这里有不知道一个i文档符合查询条件, 我们使用*while*语句循环列出可用的文档(documents).
@@ -105,6 +113,7 @@ mongo.find(criteria); // 执行查询
 * **$ne**: 不等于
 * **$in**: 在结果中
 * **$nin**: 不再结果中
+
 ### OR运算符
 使用逻辑运算符OR **$or** 操作符连接查询条件
 ```c++
@@ -116,6 +125,7 @@ criteria.insert("$or", orlst);
 ```
 如上所述, *TmongoQuery*的查询条件是用一个那个*QVariantMap*类型的对象表示的.在MongoDB中, 查询条件用JSON表示, 所以当执行一条查询时, QvariantMap对象会被转换成JSON对象.因此你可以指定所有MongoDB支持的操作符(这些操作符已经根据它们的规则被进行了正确的描述).有效的查询然后就变的可能了.
 MongoDB还提供了更多的运算符.要更深入的了解请查看[MongoDB文档](http://docs.mongodb.org/manual/reference/operator/nav-query/){:target="_blank"}.
+
 ## 更新文档
 我们将从MongoDB服务器读取一个文档然后更新它.如update()方法所示, 我们将更新匹配匹配的文档.
 ```c++
