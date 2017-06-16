@@ -57,4 +57,4 @@ server {
 ```
  
 Then all you should need to do is to save the setting.<br>
-Start the AP server and then the Web server, then try to visit it from the browser to be sure if it is working correctly. If it doesn’t work properly, try looking for the reason and checking the access log.
+Start the AP server and then the Web server, then try to visit it from the browser to be sure if it is working correctly. If it doesn't work properly, try looking for the reason and checking the access log.

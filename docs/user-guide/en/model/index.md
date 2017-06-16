@@ -5,7 +5,7 @@ page_id: "060.0"
 
 ## Model
 
-The model is an object that represents the (abstract) information that should be returned to the browser. In fact it is not so simple in terms of business logic. So, let’s try to understand it.
+The model is an object that represents the (abstract) information that should be returned to the browser. In fact it is not so simple in terms of business logic. So, let's try to understand it.
 
 Models are stored in a system or in an external database in a persistent state. Looking from the controller side, regardless of the model, you are accessing a database for information wanted for the HTTP response. Once the information has been left in a persistent state in the database, you will be able to get a model with information that you can pass to the view.
 
@@ -78,7 +78,7 @@ virtual bool isSaved() const;   // Whether stored in the DB
 void setProperties(const QVariantMap &properties);
 ```
 
-The save() method internally calls the create() method if the ORM object doesn't already exist, or the update() method if it does exist. So, if you don’t want to distinguish between the create() and update() method, then you can simply use the save() method to call the model.
+The save() method internally calls the create() method if the ORM object doesn't already exist, or the update() method if it does exist. So, if you don't want to distinguish between the create() and update() method, then you can simply use the save() method to call the model.
 
 The code which is generated here is only the tip of the iceberg. You can add or modify the property by shifting, for example, from *protected* to *private* or whatever you like.
 

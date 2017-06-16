@@ -30,7 +30,7 @@ Next, open the *mail.erb* that was previously created and then change its conten
  This is a test mail.
 ```
 
-Above the blank line is the mail header, and below is the content of the body. Specify subject and destination in the header. It is possible to add any field of header. However, Content-Type and Date field are automatically added, so that you don’t need to write them there.
+Above the blank line is the mail header, and below is the content of the body. Specify subject and destination in the header. It is possible to add any field of header. However, Content-Type and Date field are automatically added, so that you don't need to write them there.
 
 If you are using multi-byte characters, such as Japanese, save the file by setting the encoding (default UTF-8) in the settings file of InternalEncoding.
 
@@ -101,7 +101,7 @@ Edit the *application.ini* file as follows:
 ActionMailer.smtp.DelayedDelivery=true
 ```
 
-By doing this, the deliver() method will be a non-blocking function of merely queuing data. The mail sending provess will occur after returning an HTTP response.
+By doing this, the deliver() method will be a non-blocking function of merely queuing data. The mail sending process will occur after returning an HTTP response.
 
 **Additional note:**
 If you don't set the delay sending (in case of *false*), the deliver() method would keep blocking until the SMTP processing ends, or all ends up in an error.

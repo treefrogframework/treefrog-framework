@@ -20,7 +20,7 @@ if (...) {
 }
 ```  
  
-If you don’t want to activate the transaction itself deliberately, you can override the transactionEnabled() method of the controller and then return *false*.
+If you don't want to activate the transaction itself deliberately, you can override the transactionEnabled() method of the controller and then return *false*.
 
 ```c++
 bool FooController::transactionEnabled() const
@@ -29,7 +29,7 @@ bool FooController::transactionEnabled() const
 }
 ```
 
-You can set each controller, as in this example, or, if you don’t want to use it all, you can override in ApplicationController.
+You can set each controller, as in this example, or, if you don't want to use it all, you can override in ApplicationController.
 
 ```c++
 bool ApplicationController::transactionEnabled() const

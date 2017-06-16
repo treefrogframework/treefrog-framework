@@ -5,10 +5,10 @@ page_id: "080.070"
 
 ## Image Manipulation
 
-There are various libraries that are capable of image processing. If you need to do complicated image processing, you may need to use [OpenCV](http://opencv.org/){:target="_blank"}, but in this chapter I would like to explain about image manipulation using the Qt library. It’s easy to use. Since Qt is the base library of the TreeFrog Framework, it is ready to provide a GUI tool kit including many useful functions for image processing.
+There are various libraries that are capable of image processing. If you need to do complicated image processing, you may need to use [OpenCV](http://opencv.org/){:target="_blank"}, but in this chapter I would like to explain about image manipulation using the Qt library. It's easy to use. Since Qt is the base library of the TreeFrog Framework, it is ready to provide a GUI tool kit including many useful functions for image processing.
 
 At first, it is necessary to activate the QtGUI module of the TreeFrog framework.<br>
-For this purpose, let’s recompile the framework.
+For this purpose, let's recompile the framework.
 
 In the case of Linux / Mac OS X :
 
@@ -29,7 +29,7 @@ In the case of Windows :
  > cd src
  > mingw32-make install
  > cd ..\tools
- > mingw32-make instal
+ > mingw32-make install
  > cd ..
  > configure --enable-gui-mod
  > cd src
@@ -73,7 +73,7 @@ rotatedImg.save("rotated.jpg");
 
 ## Image Synthesis
 
-Let’s superimpose two images. You can align the small image to the coordinates of the upper right corner in the big picture.
+Let's superimpose two images. You can align the small image to the coordinates of the upper right corner in the big picture.
 
 ```c++
 QImage background("back.jpg");

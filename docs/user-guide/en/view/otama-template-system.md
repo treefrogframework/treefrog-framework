@@ -44,7 +44,7 @@ On the template page, written in HTML , use a custom attribute called data-tf to
 We've used paragraph tags (\<p\> \</p\>) around the @hello mark.<br>
 In the mark you may only use alphanumeric characters and the underscore '_'. Do not use anything else.
 
-Next, we’ll look at the presentation logic file in C++ code. We need to associate the C++ code with the mark made above. We write this as follows:
+Next, we'll look at the presentation logic file in C++ code. We need to associate the C++ code with the mark made above. We write this as follows:
 
 ```
  @hello ~ eh("Hello world");
@@ -60,7 +60,7 @@ The tilde (~) that connects the C++ code with the mark that was intended for the
 
 In other words, the content between the p tags (blank in this case) is replaced with "Hello world". The data-tf attribute will then disappear entirely.
 
-In addition, as an alternative way of outputting the same result, it’s also possible to write as follows:
+In addition, as an alternative way of outputting the same result, it's also possible to write as follows:
 
 ```
  @hello ~= "Hello world"
@@ -68,7 +68,7 @@ In addition, as an alternative way of outputting the same result, it’s also po
  
 As in ERB; The combination of ~ and eh() method can be rewritten as '~='; similarly, the combination of ~ and echo() method can be rewritten as '~=='.
 
-Although we’ve output a static string here, in order to simplify the explanation, it’s also possible to output a variable in the same way. Of course, it is also possible to output an object that is passed from the controller.
+Although we've output a static string here, in order to simplify the explanation, it's also possible to output a variable in the same way. Of course, it is also possible to output an object that is passed from the controller.
 
 <span style="color: #b22222">**In brief: Place a mark where you want to output a variable. Then connect the mark to the code.** </span>
 
@@ -78,7 +78,7 @@ The symbols that are sandwiched between the C++ code and the mark are called the
 
 Associate C++ code and elements using the Otama operator, and then decide how these should function. In the presentation logic, note that there must be a space on each side of the Otama operator.
 
-This time, we’ll use a different Otama operator. Let's assume that presentation logic is written as the following (colon).
+This time, we'll use a different Otama operator. Let's assume that presentation logic is written as the following (colon).
 
 ```
  @hello : eh("Hello world");
@@ -225,7 +225,7 @@ In addition, for the same output result, the following alternative method could 
  @spancolor +== a("class", "c1") | a("title", "foo")
 ```
 
-The a() method creates a THtmlAttribute object that represents the HTML attribute, using \| (vertical bar) to concatenate these. It is not an THtmlAttribute object after concatenation but, if you output with the echo() method, they are converted to a string of *key1="val1”, key2=“val2”…*, means that attributes are added as a result.
+The a() method creates a THtmlAttribute object that represents the HTML attribute, using \| (vertical bar) to concatenate these. It is not an THtmlAttribute object after concatenation but, if you output with the echo() method, they are converted to a string of *key1="val1", key2="val2"…*, means that attributes are added as a result.
 
 You may use more if you wish.
 
@@ -260,10 +260,10 @@ If you want to set the attribute you can add it as an argument to the linkTo() m
 
 The class attribute will also be output as a result like the same as above.
 
-Although attribute information could be output, you wouldn’t really want to bother to write such information in the presentation logic.<br>
+Although attribute information could be output, you wouldn't really want to bother to write such information in the presentation logic.<br>
 As a solution there is the \|== operator. This has the effect of merging the contents while leaving the information of the attributes attached to the tag.
 
-So, let’s rewrite the presentation logic as follows:
+So, let's rewrite the presentation logic as follows:
 
 ```
  @foo  |== linkTo("Back", urla("index"))
@@ -364,7 +364,7 @@ Lines beginning with an #include string are moved directly to the code view.
  
 ## Otama Operator
 
-The following table describes the Otama operator which we’ve been discussing.
+The following table describes the Otama operator which we've been discussing.
 
 <div class="table-div" markdown="1">
 

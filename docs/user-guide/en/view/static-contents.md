@@ -25,7 +25,7 @@ You can make subdirectories freely within the public directory.
 
 ## Internet Media Type (MIME type)
 
-When the web server returns static content, the rule is to set the internet media type (MIME type) in the response’s content-type header field. These are the strings such as "text/html" and ”image/jpg”. Using this information, the browser can determine the format in which the data has been sent. 
+When the web server returns static content, the rule is to set the internet media type (MIME type) in the response's content-type header field. These are the strings such as "text/html" and "image/jpg". Using this information, the browser can determine the format in which the data has been sent. 
 
 TreeFrog Framework returns the media type by using the file extension and referring to the defined content in the *config/initializers/internet_media_types.ini* file. In that file, line by line, file extensions and internet media types are defined and connected with "=". It is as in the following table.
 
@@ -36,7 +36,7 @@ TreeFrog Framework returns the media type by using the file extension and referr
    :
 ```
 
-If the Internet media types don’t cover your needs, you can add other types in this file. After doing so, you should restart the AP server to reflect the definition information that you added.
+If the Internet media types don't cover your needs, you can add other types in this file. After doing so, you should restart the AP server to reflect the definition information that you added.
    
 ## Error Display
 

@@ -21,7 +21,7 @@ Create a plug-in is exactly the same as how to create a plug-in for Qt. To demon
 
 - Basically, you can choose any place for the working directory, but when thinking about the path solution, it is a good idea to create the working directory as just previously mentioned above.
 
-We’ll create a plug-in wrapper class (TLoggerPlugin in this example). We do this by inheriting the class as an interface and then we override some of the virtual functions.
+We'll create a plug-in wrapper class (TLoggerPlugin in this example). We do this by inheriting the class as an interface and then we override some of the virtual functions.
 
 ```c++
 sampleplugin.h
@@ -49,7 +49,7 @@ sampleplugin.cpp
 Q_EXPORT_PLUGIN2(samplePlugin, SamplePlugin)
 ```
 
-Next, we create a function to extend the plug-in (class). We’ll make a logger that outputs a log here. As above, we do this by inheriting the TLogger class as an interface from logger and then override some virtual functions again.
+Next, we create a function to extend the plug-in (class). We'll make a logger that outputs a log here. As above, we do this by inheriting the TLogger class as an interface from logger and then override some virtual functions again.
 
 ```c++
 samplelogger.h

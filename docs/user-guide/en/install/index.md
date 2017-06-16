@@ -111,7 +111,7 @@ C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
 
 By specifying various options, you can customize to suit your environment.
  
-Options available on Windows using “Configure option”:
+Options available on Windows using "Configure option":
 
 ```
  > configure --help

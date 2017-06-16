@@ -21,7 +21,7 @@ Since MongoDB documents are JSON-like formats, it is possible to have a hierarch
 
 ## Setup
 
-If you are not sure anymore how to setup a MondoDB connection properly, please refer to the [Access MongoDB](/user-guide/en/model/access-mongodb.html){:target="_blank"} chapter. 
+If you are not sure anymore how to setup a MongoDB connection properly, please refer to the [Access MongoDB](/user-guide/en/model/access-mongodb.html){:target="_blank"} chapter. 
 
 For generating the class for O/D mapping, execute the following command in the application root directory. In this example, we create a collection named *foo*. The name of the model will be *Foo*.
 

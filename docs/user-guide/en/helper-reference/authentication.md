@@ -7,7 +7,7 @@ page_id: "080.020"
 
 TreeFrog offers a concise authentication mechanism.<br>
 In order to implement the functionality of authentication, you need to create a model class that represents the "user" first. Here, we will try to make a user class containing the properties *username* and *password*.
-We’ll define a table as follows:
+We'll define a table as follows:
 
 ```sql
  > CREATE TABLE user ( username VARCHAR(128) PRIMARY KEY, password VARCHAR(128) );
@@ -50,7 +50,7 @@ User User::authenticate(const QString &username, const QString &password)
 }
 ```
 
-Please ensure that any modifications are based on the code above<br>.
+Please ensure that any modifications are based on the code above.<br>
 There may be cases where the authentication process is left to an external system. Also there may be cases when a password values need to be saved in md5.
 
 ## Login

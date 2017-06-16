@@ -43,7 +43,7 @@ Re-install the framework with the following command:
 
 Assume that MongoDB has being installed and the server is running. Then you can make a skeleton of the application in the generator.
 
-Let’s set the connection information in order to communicate with the MongoDB server. First, edit the following line in *config/application.ini*.
+Let's set the connection information in order to communicate with the MongoDB server. First, edit the following line in *config/application.ini*.
 
 ```ini
  MongoDbSettingsFile=mongodb.ini
@@ -121,7 +121,7 @@ while (mongo.next()) {
  
 - Two criteria are joined by the AND operator.
 
-If your are looking for only one documents that matches the criteria, you can use the findOne() method.
+If you are looking for only one documents that matches the criteria, you can use the findOne() method.
 
 ```c++
 QVariantMap doc = mongo.findOne(criteria);

@@ -17,7 +17,7 @@ Let's look at customizing the routing rules.<br>
 The routing definition is written in the *config/routes.cfg* file. For each entry, the directives, path and an action are written side by side on a single line. The directive is to select *match*, *get*, or *post*.
 In addition, a line that begins with '#' is considered to be a comment line.
  
-Here’s an example:
+Here's an example:
 
 ```
  match  "/index"  "Merge#index"
