@@ -84,10 +84,10 @@ An HTTP request sent from the client (browser) consists of a method, a header, a
 
 * post data - data submitted from a form using the POST method
 * URL argument (query parameter) - data assigned to a URL argument after "?" as (format of key = value & …)
-* Action argument - data that has been granted after action (the 3 part of “/blog/edit/3”) ←see above.
+* Action argument - data that has been granted after action (the 3 part of "/blog/edit/3") ←see above.
  
 The following example shows how to obtain post data in the controller.
-Let’s consider that you’ve made an \<input> tag in the view. 
+Let's consider that you've made an \<input> tag in the view. 
 
 ```
  <input type="text" name="title" />
@@ -151,7 +151,7 @@ To pass variables to a view, use the macros* texport(variable)* or *T_EXPORT(var
  texport(bar);
 ```
 
-**Note:** the variable must be specified as an argument to texport. You can’t directly specify a string ("Hello world") or numbers (such as 100).
+**Note:** the variable must be specified as an argument to texport. You can't directly specify a string ("Hello world") or numbers (such as 100).
 
 To use a variable inside a view, you must first declare the variable in *tfetch (Type, variable)*. Please see the [view]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"} chapter for more information.
 
@@ -273,13 +273,13 @@ The flash object is converted to an export object in the view of the redirect. B
 
 In fact, you can create a web application without using any flash objects. However, if you do use them, when certain conditions are met, code can become an easy-to-understand manner (once you get used to it).
 
-Personally, I think it’s better and easier to understand, to have each action completely independent in order to reduce the dependence of actions on each other. I would advise against implementing a call to more than one action in a single request. Let's keep the relationship of one action to one request as much as possible.
+Personally, I think it's better and easier to understand, to have each action completely independent in order to reduce the dependence of actions on each other. I would advise against implementing a call to more than one action in a single request. Let's keep the relationship of one action to one request as much as possible.
 
 If the action creates separate independent displays of almost the same content, the code becomes simpler when using the flash object.
 
 The way the *blogapp* (the subject of the [tutorial chapter](/user-guide/en/tutorial/index/html){:target="_blank"}) uses the *create* and *show* action are good examples. But processing of these actions is different, but both only display the contents of the blog 1 as a result of this processing. In the create action, after the successful data registration, the data will be displayed by redirecting to the show action. At the same time, the message "Created successfully." is displayed by using the flash object. 
 
-Actually, an application is not always this simple, because it isn’t always necessarily possible to capture and use the flash object. Therefore, please try to use it to strike a balance.
+Actually, an application is not always this simple, because it isn't always necessarily possible to capture and use the flash object. Therefore, please try to use it to strike a balance.
 
 With that being said, in practice most actions come down to either using the *redirect()* or *render()* method.
 
@@ -290,7 +290,7 @@ In the manner described above, when a redirect occurs, the processing is cut onc
 
 When starting up, there is only one process in the application. You may want to keep reading the initial data from the DB in advance.
 
-In this case, write the processing as *ApplicationController#staticInitialize()*.”
+In this case, write the processing as *ApplicationController#staticInitialize()*."
 
 ```c++
  void ApplicationController::staticInitialize()

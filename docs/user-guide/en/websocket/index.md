@@ -74,7 +74,7 @@ Here is an example made with JavaScript.
 
 ```js
 $(function(){
-    // create WebSocket to 'chat' entpoint
+    // create WebSocket to 'chat' endpoint
     ws = new WebSocket("ws://" + location.host + "/chat");
  
     // message received

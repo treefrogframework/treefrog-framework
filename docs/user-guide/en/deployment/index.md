@@ -7,7 +7,7 @@ page_id: "130.0"
 
 A developed application is deployed in the production environment (or test environment) and it is about to run there.
 
-Although it’s easier if the source code is built in the production environment, in general the production environment and the build machine are separate. For building, the computer needs to have the same OS/Library installed as in the production environment. The binary for the release can then be built. The binary and its related files, which all will be created, are then transferred from the archive to the production environment.
+Although it's easier if the source code is built in the production environment, in general the production environment and the build machine are separate. For building, the computer needs to have the same OS/Library installed as in the production environment. The binary for the release can then be built. The binary and its related files, which all will be created, are then transferred from the archive to the production environment.
  
 ### Release Mode Building
 

@@ -7,13 +7,13 @@ page_id: "150.0"
 
 ### Comparing the Throughput of Web Application Frameworks
 
-Following the example of [cakepher’s article](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}, I have tried to compare the web application framework throughput, not only using PHP but also MVC oriented. Due to my skills and my time, I was able to compare only four: CakePHP, Codeigniter, Ruby on Rails and TreeFrog Framework. I would have liked to include Java framework, but I was not able to because of a lack of knowledge.
+Following the example of [cakepher's article](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}, I have tried to compare the web application framework throughput, not only using PHP but also MVC oriented. Due to my skills and my time, I was able to compare only four: CakePHP, Codeigniter, Ruby on Rails and TreeFrog Framework. I would have liked to include Java framework, but I was not able to because of a lack of knowledge.
 
 * Measured the throughput when one record is obtained from the DB and then displayed.
  
 ### Note
 
-In this article, “fast” is used to mean “throughput is high”.
+In this article, "fast" is used to mean "throughput is high".
 
 ### Environment
 
@@ -26,7 +26,7 @@ In this article, “fast” is used to mean “throughput is high”.
  MySQL 5.5.24
 ``` 
 
-### Schema of ‘posts’ Table
+### Schema of 'posts' Table
 
 ```sql
  CREATE TABLE IF NOT EXISTS `posts` (
@@ -84,11 +84,11 @@ Comparing the results the PHP framework (including Plain PHP) with cakephper, ov
 
 As I expected, Codeigniter is three times faster than Cake PHP. Codeigniter has plenty of functions so I was surprised to see this result. Cake PHP has many users and a good documentation. If speed is not the main factor, it can be then a good choice.
 
-I had an image that Rails (Ruby) was slow, but it seems that this image is outdated. It cannot reach Codeigniter's speed, but it has almost doubled the throughput of CakePHP. However I was monitoring my operating system so I was aware that *Passenger* was consuming a lot of memory (I can’t give figures unfortunately). Pursuit of speed seems to consume memory. As for Rails, there are faster web serves, but I’ll discuss that later.
+I had an image that Rails (Ruby) was slow, but it seems that this image is outdated. It cannot reach Codeigniter's speed, but it has almost doubled the throughput of CakePHP. However I was monitoring my operating system so I was aware that *Passenger* was consuming a lot of memory (I can't give figures unfortunately). Pursuit of speed seems to consume memory. As for Rails, there are faster web serves, but I'll discuss that later.
 
 ### Measured Applications 
 
-I used Cake PHP and Codeigniter from the [cakephper’s articles](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}.
+I used Cake PHP and Codeigniter from the [cakephper's articles](http://d.hatena.ne.jp/cakephper/20110802/1312275110){:target="_blank"}.
 
 Rails: [Here >>](https://docs.google.com/open?id=0B1pTorSDNQjbT2t3Ylc1Wl9aUzg){:target="_blank"}
 
@@ -120,6 +120,6 @@ With all that in mind, I would like to show the result of top command under load
 
 <div class="img-center" markdown="1">
 
-![Top Command Screen 2]({{ site.baseurl }}/assets/images/documentation/snapshot2-2.png "Top Command Screen 2")
+![Top Command Screen 2]({{ site.baseurl }}/assets/images/documentation/snapshot3-2.png "Top Command Screen 2")
 
 </div>

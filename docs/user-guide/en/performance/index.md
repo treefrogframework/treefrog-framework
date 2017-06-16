@@ -15,7 +15,7 @@ If a segmentation fault causes the *tadpole* process to go down, the *treefrog* 
 
 There are two MPMs (Multi-Processing Modules) to create multiprocessing modules for the application server (AP server): *prefork* and *thread*. These are similar to Apache. You need to choose one of them and then specify it in setting file. The default is 'thread'.
 
-* **prefork:** Create the process “fork” in advance, and then create socket as “listen”. The action is performed during the process, and when the request has been operated and the response returned, the process disappears. Do not reuse it! If the action is down by fault or illegal operation, it wouldn't then affect any actions.
+* **prefork:** Create the process "fork" in advance, and then create socket as "listen". The action is performed during the process, and when the request has been operated and the response returned, the process disappears. Do not reuse it! If the action is down by fault or illegal operation, it wouldn't then affect any actions.
 * **thread:** Thread is created every time when there is a request. Action runs on the thread and when the request has been processed and the response sent, the thread disappears. The performance is good.
 * **hybrid (v1.7 or later):** Sockets are monitored by epoll system call and an HTTP request is processed on a thread. It's available on Linux only. It is implemented for the C10K problem that can maintain many sockets.
 

@@ -42,7 +42,7 @@ QString upfile = formdata.uploadedFile("picture");
 
 ## Upload a variable number of files
 
-TreeFrog Framework also supports uploading a variable number of files. You can upload a variable number files provided that you use the Javascript library. Here, I’ll explain an easier way of uploading two files (or more).
+TreeFrog Framework also supports uploading a variable number of files. You can upload a variable number files provided that you use the Javascript library. Here, I'll explain an easier way of uploading two files (or more).
 
 First we create a form as follows:
 
@@ -72,4 +72,4 @@ for (QListIterator<TMimeEntity> it(lst); it.hasNext(); ) {
 }
 ```
 
-Don’t forget to use the Iterator here for that.
+Don't forget to use the Iterator here for that.

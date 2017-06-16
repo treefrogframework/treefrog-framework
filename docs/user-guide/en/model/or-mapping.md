@@ -64,7 +64,7 @@ Parameters that can be set are the following:
 
 </div><br>
 
-In this way, when you start a Web application, the system will manage the database connection automatically. From developer side, you don’t need to deal with the process of opening or closing the database.
+In this way, when you start a Web application, the system will manage the database connection automatically. From developer side, you don't need to deal with the process of opening or closing the database.
 
 After you create a table in the database, set the connection information in the dev section of the configuration file.
 
@@ -225,13 +225,13 @@ For saving date and time in case of a record creation, you can use the field nam
 
 </div><br>
 
-The tools for storing date and time automatically are handeled by the database itself as well. My recommendation is that, even though it can be done quite well in the database, it’s better to do it in the framework.
+The tools for storing date and time automatically are handeled by the database itself as well. My recommendation is that, even though it can be done quite well in the database, it's better to do it in the framework.
 
-It doesn’t really matter either way, I think either that we do not care, but by using the framework, you can define elaborate field names as you wish and leave the database side to do the rest.
+It doesn't really matter either way, I think either that we do not care, but by using the framework, you can define elaborate field names as you wish and leave the database side to do the rest.
 
 ## Optimistic Locking
 
-The optimistic locking is a way to save data while verifying that it is not updated by others, without doing “record locking” while updating is taking place. The update is abandoned if another update is already taking place.
+The optimistic locking is a way to save data while verifying that it is not updated by others, without doing "record locking" while updating is taking place. The update is abandoned if another update is already taking place.
  
 In advance, prepare a field named *lock_revision* as an integer to record also using the auto increment ability. Lock revision is then incremented with each update. When reading the value and it is found to be different from that in the update, it means that it has been updated from elsewhere. Only if the values are the same, the update proceeds. In this way, we are able to securely proceeds updates. Since lock is not used, saving of DB system memory and an improvement in processing speeds, even if these are slight, can be expected.
 

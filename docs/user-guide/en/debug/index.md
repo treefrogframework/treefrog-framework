@@ -56,7 +56,7 @@ Next we are going to configure these items.
  
 ## Debugging with Qt Creator
 
-Let’s introduce *debugging* using the *Qt Creator*, I think the way you debug is basically the same with other debuggers.
+Let's introduce *debugging* using the *Qt Creator*, I think the way you debug is basically the same with other debuggers.
 
 First, make a thread in the [MPM]({{ site.baseurl }}/user-guide/en/performance/index.html){:target="_blank"} application configuration file.
 
@@ -73,7 +73,7 @@ Import the source code of the application file to the Qt Creator. Then click *[F
 </div>
 
 Now we will run the settings screen for debugging.<br>
-The last of the tadpole command arguments, specifies the *-e* option and the absolute path of application route. You may remember that the -e option is the option for switching the DB environment. Let's assume you choose *dev*.
+The last of the tadpole command arguments, specifies the *-e* option and the absolute path of application root. You may remember that the -e option is the option for switching the DB environment. Let's assume you choose *dev*.
  
 In the case of Linux:<br>
 In the next screen we choose /var/tmp/blogapp as the application root.

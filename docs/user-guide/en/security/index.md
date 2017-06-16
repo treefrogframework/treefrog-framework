@@ -5,7 +5,7 @@ page_id: "100.0"
 
 ## Security
 
-Once you publish the website, you have to understand the threats it faces and set security measures. The application developer has to program carefully in order to avoid vulnerability on the web. You can find detailed articles on the internet, that’s why I’ll not go to deept into detail here.
+Once you publish the website, you have to understand the threats it faces and set security measures. The application developer has to program carefully in order to avoid vulnerability on the web. You can find detailed articles on the internet, that's why I'll not go to deept into detail here.
 
 Since TreeFrog has an inbuilt security system, you can establish a safe website when using it properly.
 

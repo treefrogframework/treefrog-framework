@@ -9,7 +9,7 @@ Sometimes, data that is sent as a request may not have the format that the devel
 
 As mentioned in the [controller chapter]({{ site.baseurl }}/user-guide/en/controller/index.html){:target="_blank"}, data in received requests is expressed as hash format. Usually before sending the request data to the model, each value should be validated the value's format.
 
-First, we will generate a validation class skeleton for validating request data (hash) for *blog*. Navigate to the application route directory and then execute the following commands.
+First, we will generate a validation class skeleton for validating request data (hash) for *blog*. Navigate to the application root directory and then execute the following commands.
 
 ```
  $ tspawn validator blog
@@ -30,7 +30,7 @@ BlogValidator::BlogValidator() : TFormValidator()
 
 The enum value is the second argument. You can specify mandatory input, maximum/minimum string length, integer of maximum/minimum value, date format, e-mail address format, user-defined rules (regular expression), and so on (defined in tfnamespace.h).
 
-There is also a fourth argument: setRule(). This sets the validation error message. If you don’t specify a message (what we have done here), the message defined in *config/validation.ini* file is used.
+There is also a fourth argument: setRule(). This sets the validation error message. If you don't specify a message (what we have done here), the message defined in *config/validation.ini* file is used.
 
 Rules are implicitly set for "mandatory input". If you do NOT want an input to be "mandatory", describe the validation rule as follows:
 

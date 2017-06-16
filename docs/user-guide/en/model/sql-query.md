@@ -79,11 +79,11 @@ Or like the following:
 
 In the above method, it is necessary to retrieve the value of every field from the results of the query; however, single records can be extracted as ORM objects in the following manner.
  
-Run the query using the TSqlQueryMapper object. Then extract the ORM object from the results using an iterator. It’s important to specify the 'blog. *' in the SELECT statement in order to select and target all fields.
+Run the query using the TSqlQueryMapper object. Then extract the ORM object from the results using an iterator. It's important to specify the 'blog. *' in the SELECT statement in order to select and target all fields.
 
 ```c++
 TSqlQueryORMapper<BlogObject> mapper;
-mapper.prepare("SELECT blog.* FROM blog WHERE ...”);
+mapper.prepare("SELECT blog.* FROM blog WHERE ...");
 mapper.exec();  // Query execution
 TSqlQueryORMapperIterator<BlogObject> it(mapper);
 while (it.hasNext()) {

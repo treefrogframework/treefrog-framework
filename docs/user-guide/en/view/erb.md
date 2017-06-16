@@ -9,7 +9,7 @@ Originally, ERB was a library for embedding Ruby script into text documents. It 
 
 In the same way, TreeFrog Framework uses tags <% … %> as well to embed C++ code. For convenience, I'll refer to this implementation as ERB as well.
  
-First, I'll make sure that the items in the configuration file *development.ini* are as follows. Unless you’ve changed from the default, they should be.
+First, I'll make sure that the items in the configuration file *development.ini* are as follows. Unless you've changed from the default, they should be.
 
 ```
  TemplateSystem=ERB
@@ -42,7 +42,7 @@ You can add template files as you like. But consider, once you have added a new 
 ```
 
 That's all that was needed to do in order to add the new template which will has been added to the makefile entry of the build.<br>
-Remember to reflect the new template that you’ve added in the shared library.
+Remember to reflect the new template that you've added in the shared library.
 
 <span style="color: #b22222">**In brief: After you have added a template file, use the "make qmake" command.** </span>
 
@@ -82,7 +82,7 @@ By writing as follows, if the variable *str* is empty, then the string "none" is
 
 ## To Use the Object Passed from the Controller
 
-In order to display the object that is exported from the controller by the texport() method, first declare type (class) and variable names using the the tfetch() macro or T_FETCH macro. We’ll refer to this operation as 'fetch'.
+In order to display the object that is exported from the controller by the texport() method, first declare type (class) and variable names using the the tfetch() macro or T_FETCH macro. We'll refer to this operation as 'fetch'.
 
 ```
  <% tfetch(Blog, blog); %>
@@ -118,7 +118,7 @@ Codes have been considerably simplified.
 This means that you can replace the tehex() method with the "=$" code. 
 Similarly, <% techoex(..); %> can be rewritten in the notation <==$ .. %>.
 
-To sum up, to export an object of int type or QString type, I think it’s better to output using the notation <=$ .. %>, unless you want to output just once (in which case, use the fetch process ).
+To sum up, to export an object of int type or QString type, I think it's better to output using the notation <=$ .. %>, unless you want to output just once (in which case, use the fetch process ).
 
 **In brief: Use \<=\$ .. %> to export objects that do not output only once.**
 
@@ -141,9 +141,9 @@ Include these next:
  <%#include "blog.h" %>
 ```
 
-Note that there must be no space between ‘#’ and ‘include’. In this example, the blog.h file is to be included.
+Note that there must be no space between '#' and 'include'. In this example, the blog.h file is to be included.
 
-Remember that the template is converted to C++ code as it is, so don’t forget to include the template file.
+Remember that the template is converted to C++ code as it is, so don't forget to include the template file.
 
 ## Loop
 
@@ -207,7 +207,7 @@ Using JavaScript, the link and confirmation dialog can be written as follows:
         } return false;">Delete</a>
 ```
 
-Now let’s add an attribute to the tag, using the THtmlAttribute class:
+Now let's add an attribute to the tag, using the THtmlAttribute class:
 
 ```
  <%== linkTo("Back", urla("index"), Tf::Get, "", THtmlAttribute("class", "menu")) %>
@@ -267,7 +267,7 @@ There are four ways to interact with the layout when the controller requests vie
 
 Only one layout is used when drawing the view, but a different layout can be used if the above list gives it a higher priority. So, for example, this means that rather than "layout that is set for each controller," being used, the rule "layout is set for each action" takes precedence.
    
-Let’s take the example of a very simple layout (as per the following). It is saved with the extension .erb. The location of the layout is the view/layouts directory.
+Let's take the example of a very simple layout (as per the following). It is saved with the extension .erb. The location of the layout is the view/layouts directory.
 
 ```
 <!DOCTYPE HTML>
@@ -320,7 +320,7 @@ If none of the above three conditions are met, no layout is used. In addition, i
 
 ## Partial Template
 
-If you viewing a website, you will often notice an area of the page which is constant, that is it shows the same content on multiple pages. Perhaps it’s an advertising area, or some kind of toolbar.
+If you viewing a website, you will often notice an area of the page which is constant, that is it shows the same content on multiple pages. Perhaps it's an advertising area, or some kind of toolbar.
 
 To work on a Web application in cases like this, besides the methods discussed above for including such an area in the layout, there is also a way to share content by cutting the area into a "partial" templates.
 

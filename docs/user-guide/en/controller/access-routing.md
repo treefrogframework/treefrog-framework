@@ -7,7 +7,7 @@ page_id: "050.040"
 
 Access control in a website can be done in two ways: 
 
-* by sser suthenticiation and
+* by user authenticiation and
 * by the connecting host (IP address). 
 
 For access control by the host, please set for the Web server (Apache/nginx) as required.

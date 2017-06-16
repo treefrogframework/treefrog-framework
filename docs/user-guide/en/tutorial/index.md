@@ -10,7 +10,7 @@ We'll try to make a simple blog system which can list, view, and add/edit/delete
 
 ### Generate the Application Skeleton
 
-First we will need to make a skeleton (various settings files and a directory tree). We’ll use the name “blogapp”. Run the following command from the command line. (In Windows, please run from the TreeFrog Command Prompt).
+First we will need to make a skeleton (various settings files and a directory tree). We'll use the name "blogapp". Run the following command from the command line. (In Windows, please run from the TreeFrog Command Prompt).
 
 ```
  $ tspawn new blogapp
@@ -27,7 +27,7 @@ First we will need to make a skeleton (various settings files and a directory tr
 
 ### Create a Table
 
-Now we need to create a table in the database. We’ll create the field title and content (body). Here are examples in MySQL and SQLite’ 
+Now we need to create a table in the database. We'll create the field title and content (body). Here are examples in MySQL and SQLite' 
  
 Example in MySQL:<br>
 Set the character set to UTF-8. You can also specify this when generating the database (do ensure that it is being set correctly, see FAQ). You can specify the configuration file for the database, as described below. Also, make the path through into MySQL using the command line tool.
@@ -264,7 +264,7 @@ The command option '-e'  appears in the above examples. When this is followed by
 
 </div>
  
-'-e' comes from the initials letter of “environment”.
+'-e' comes from the initials letter of "environment".
 
 Stop command:
 
@@ -339,7 +339,7 @@ public slots:
 T_DECLARE_CONTROLLER(BlogController, blogcontroller)     // Charm
 ```
 　
-Next, let’s look at the source file. <br>
+Next, let's look at the source file. <br>
 The source code is a bit long, but please bear with me.
 
 ```c++
@@ -575,7 +575,7 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 
 The Otama operators, (and their combinations) are fairly simple:<br>
 \~  (tilde) sets the content of marked elements to the result of the right-hand side,
-\=  output the HTML escape, therefore ~= sets the content of the element to the results of the right-hand side then HTML-escape, if you don’t want to escape HTML, you can use  ~==.
+\=  output the HTML escape, therefore ~= sets the content of the element to the results of the right-hand side then HTML-escape, if you don't want to escape HTML, you can use  ~==.
 
 \: (colon) replaces the result of the right-hand child elements and the elements that are marked, therefore :== replaces the element without HTML escape.
  
@@ -652,7 +652,7 @@ private:    /*** Don't modify below this line ***/
 };
 ```
  
-There are methods to query and update the primary key in the TreeFrog’s O/R mapper, but the primary key SqlObject can have only one return primaryKeyIndex() method. Therefore, any table with multiple primary keys should be corrected to return one only. It is also possible to issue more complex queries by using the TCriteria class condition. Please see following chapters for details.
+There are methods to query and update the primary key in the TreeFrog's O/R mapper, but the primary key SqlObject can have only one return primaryKeyIndex() method. Therefore, any table with multiple primary keys should be corrected to return one only. It is also possible to issue more complex queries by using the TCriteria class condition. Please see following chapters for details.
 
 Next, let's look at the model.<br>
 The setter/getter for each property and static method of generation/acquisition of the object are defined.  The parent class TAbstractModel defines the methods to save and to remove, because of this, the Blog class is equipped with the CRUD methods (*create, get, save, remove*) .

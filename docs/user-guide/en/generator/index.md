@@ -121,7 +121,7 @@ Available subcommands:
   sqlobject (o)  <table-name>
 ```
 
-If you specify “controller”, “model”, or “sqlobject“ as a sub-command, you can generate ONLY “controller”, “model” and “SqlObject”.
+If you specify "controller", "model", or "sqlobject" as a sub-command, you can generate ONLY "controller", "model" and "SqlObject".
 
 ### Column
 
@@ -147,7 +147,7 @@ The following class names are good examples to understand the here described con
 * BlogController
 * EntryCommentController
 
-These files are stored in the controller’s directory. File names inside the that folder will be all in lowercase; the class name plus the relevant extension (.cpp or .h).
+These files are stored in the controller's directory. File names inside the that folder will be all in lowercase; the class name plus the relevant extension (.cpp or .h).
  
 #### Conventions for Naming Models
 
