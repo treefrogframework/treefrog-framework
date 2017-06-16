@@ -52,7 +52,7 @@ $ treefrog -k abort ;   treefrog -d  -e dev
 或者像下面这样:
 ```c++
 $ treefrog- k restart
-``` 
+```
 ## 从查询结果获得ORM对象
 在上面的方法中, 必须从查询的结果获取每个字段的值, 然而, 单条记录可以用下面的方式提取成ORM对象.
 使用TSqlQueryMapper对象执行查询.然后对结果使用迭代器提取ORM对象.为了选择所有的字段, 在SELECT语句中定义'blog.*'是非常重要的.

@@ -31,7 +31,7 @@ QString to = "sample@example.com";
 texport(to);
 deliver("mail");   // <-mail.erb 邮件被模版发送了
 }
-``` 
+```
 现在你可以在类的外面调用.在操作(action)中写下面的代码, 邮件发送的过程将会被执行:
 ```c++
 InformationMailer().send();

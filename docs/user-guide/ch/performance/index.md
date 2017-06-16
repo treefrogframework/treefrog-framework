@@ -29,7 +29,7 @@ thread模块的例子:<br>
 **参数: MPM.thread.MaxServers=20**
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=10000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=10000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1
@@ -64,7 +64,7 @@ thread模块的例子:<br>
 - MPM.prefork.SpareServers=5
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=1000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=1000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1

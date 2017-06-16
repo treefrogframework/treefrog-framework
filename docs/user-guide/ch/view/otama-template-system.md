@@ -16,7 +16,7 @@ TemplateSystem=Otama
 ```
 $ cd views
 $ make qmake
-``` 
+```
 如果没有这样做, 检验在继续这一章时先阅读ERB章节, 因为两个模版系统有很多相同的地方.还有, 关于Otama系统有很多内容要学习, 先学会ERB将更容易理解Otama.
 ## 输出字符串
 我们将要输出字符串"Hello world.<br>"
@@ -39,7 +39,7 @@ $ make qmake
 此外, 还有一个替代的方法输出同样的内容, 它也可以这样写:
 ```
 @hello ~= "Hello world"
-``` 
+```
 和ERB中一样, ~和eh()方法的组合可以被写成'~=', ~和echo()方法的组合可以写成'~=='.
 虽然, 为了简单解释,我们在这里输出了一个静态的字符串, 其实它可以用同样的方式输出一个变量. 当然, 它也可以输出从控制器(controller)传递的对象.
 <span style="color: #b22222">**概要: 在想要输出变量的地方放置标记(mark).然后连接mark到代码.** </span>
@@ -89,7 +89,7 @@ P标签被删除了.这是因为冒号用结果"更换整个标记(maked)的元�
 接下来, 我将接收如何使用循环重复显示列表的数字.<br>
 在模版中, 我们这样写.
 ```
-< tr data- tf="@ foreach"> 
+< tr data- tf="@ foreach">
 < td data- tf="@ id"></ td>
 < td data- tf="@ title"></ td>
 < td data- tf="@ body"></ td>
@@ -168,7 +168,7 @@ As a result, the view outputs the following:
 @foo :== linkTo("Back", urla("index"), Tf::Get, "", a("class", "c1"))
 ```
 类属性将会和上面的结果一样被输出.
-虽然属性信息可以被输出, 你肯定不会像在界面逻辑中麻烦地重写这些信息.<br> 
+虽然属性信息可以被输出, 你肯定不会像在界面逻辑中麻烦地重写这些信息.<br>
 这里有个解决方法\|==操作符.它有合并标签内容的同时保留属性的效果.
 所以, 让我们这样重写界面逻辑:
 ```
@@ -206,7 +206,7 @@ As a result, the view outputs the following:
 <p>Hello </p>
 <p data-tf="@dummy">message ..</p>
 </div>
-``` 
+```
 然后, 视图(view)将输出下面的结果
 ```
 <div>

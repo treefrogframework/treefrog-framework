@@ -13,7 +13,7 @@ if (...) {
 rollbackTransaction();
 :
 }
-``` 
+```
 如果不想让事务(transaction)自己激活, 你可以重写控制器的transactionEnabled()方法,然后返回*false*.
 ```c++
 bool FooController::transactionEnabled() const

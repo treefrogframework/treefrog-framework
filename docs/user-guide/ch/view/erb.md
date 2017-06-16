@@ -22,7 +22,7 @@ views/foo/bar.erb
 如果你带参数调用render()方法, 对应的模版内容将被输出.
 你可以随便增加模版文件.但要记住, 一旦当你增加了一个或者几个模版后, 你必须在view目录下执行一次下面的命令.
 ```
-$ cd views 
+$ cd views
 $ make qmake
 ```
 那就是为了增加新模版需要做的所有动作,新模版会被增加到makefile进行构建.
@@ -48,7 +48,7 @@ eh()方法使用HTML转义输出字符串, 这样有跨域脚本保护.如果你
 如果变量是一个空值, 让我们显示一个默认值作为替代.<br>
 按下面的写法, 如果变量*str*为空, 字符"none"将显示.
 ```
-<%= str %|% "none" %> 
+<%= str %|% "none" %>
 ```
 ## 使用从控制器(controller)传递的对象
 为了显示从控制器(controller)使用texport()方法传递的对象, 首先用tfetch()宏或者T_FETCH宏声明类型和变量的名字.我们将把这个操作当成是'获取(fetch)'.
@@ -130,7 +130,7 @@ const Blog &b = i.next();  %>
 ```
 <%== linkTo(tr("Delete"), urla("remove", 1), Tf::Post, "confirm('Are you sure?')") %>
 ||
-<a href="/Blog/remove/1/" onclick="if (confirm('Are you sure?')) { 
+<a href="/Blog/remove/1/" onclick="if (confirm('Are you sure?')) {
 var f = document.createElement('form');
 :  (omission)
 f.submit();
@@ -151,7 +151,7 @@ f.submit();
 a("class", "menu") | a("title", "hello")
 ||
 class="menu" title="hello"
-``` 
+```
 随便说一句, 还有一个LinkTo()方法的别名anchor()方法, 可以用同样的方式使用它们.
 此外, 还有更多可以使用的方法, 请参见[API文档](http://treefrogframework.org/tf_doxygen/classes.html){:target="_blank"}
 ## 表单

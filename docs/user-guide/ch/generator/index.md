@@ -17,11 +17,11 @@ $ tspawn new blogapp
 * heplers
 * config      -配置文件
 * db          - 数据库存储文件 (SQLite)
-* lib 
+* lib
 * log         -记录文件
-* plugin 
+* plugin
 * public      -静态HTML文件, 图片,JavaScript 文件
-* script 
+* script
 * test
 * tmp         -临时目录,例如上传的文件
 ## 生成骨架

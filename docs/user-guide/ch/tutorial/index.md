@@ -82,8 +82,8 @@ DriverType=QSQLITE
 DatabaseName=db/blogdb
 HostName=
 Port=
-UserName= 
-Password= 
+UserName=
+Password=
 ConnectOptions=
 ```
 一旦你正确完成了这些设置,就可以显示数据库的表.<br>
@@ -113,7 +113,7 @@ QMYSQL3
 QMYSQL
 QODBC3
 QODBC
-``` 
+```
 内建的SQL驱动可以用于SQLite,虽然也可以通过完成一点点工作来使用SQLite驱动.
 ## 定义一个模版系统
 在Treefrog框架中, 我们可以定义Otama或者ERB作为模版系统.我们将在*development.ini*文件中设置TemplateSystem参数.
@@ -121,7 +121,7 @@ QODBC
 TemplateSystem=ERB
 or
 TemplateSystem=Otama
-``` 
+```
 ## 自动从表生成代码
 从命令行, 执行生成器(tspawn)命令生成下面的代码.下面的例子展示了控制器(controller),模型(model)和视图(view)的生成.表名作为命令的参数.
 ```
@@ -175,7 +175,7 @@ $ make     (MinGW 执行'mingw32-make'命令代替'make', MSVC 执行'nmake' 命
 生成release模式的Makefile文件:
 ```
 $ qmake- r" CONFIG+= release"
-``` 
+```
 ## 启动应用服务器
 在启动应用服务器(AP server)前改变应用的根目录.服务器将会把命令执行的路径当作应用的根目录启动.按Ctrl+c停止服务器.
 ```
@@ -264,17 +264,17 @@ render();                        // 渲染视图 (模版template)
 void BlogController::show(const QString &id)
 {
 auto blog = Blog::get(id.toInt()) ;  // 通过主键取得Blog模型(model)
-texport(blog); 
+texport(blog);
 render();
 }
 void BlogController::create()
-{ 
-switch (httpRequest().method()) { // 检查http请求的方法类型(method type) 
+{
+switch (httpRequest().method()) { // 检查http请求的方法类型(method type)
 case Tf::Get:
 render();
 break;
 case Tf::Post: {
-auto blog = httpRequest().formItems("blog"); // 保存从'QVariantMap'类型来的'blog'变量的表单数据 
+auto blog = httpRequest().formItems("blog"); // 保存从'QVariantMap'类型来的'blog'变量的表单数据
 auto model = Blog::create(blog);             // 从POST新建对象
 if (!model.isNull()) {
 QString notice = "Created successfully.";
@@ -321,7 +321,7 @@ model.setProperties(blog);              // 设置请求的数据
 if (model.save()) {                     // 保存对象
 QString notice = "Updated successfully.";
 tflash(notice);
-redirect(urla("show", model.id())); // 重定向到 show action 
+redirect(urla("show", model.id())); // 重定向到 show action
 } else {
 error = "Failed to update.";
 texport(error);
@@ -385,7 +385,7 @@ Lock revision用来实现乐观锁.参考后续的模型(model)获取更多信�
 </tr>
 <% } %>
 </table>
-``` 
+```
 **接下来, 让我们看看Otama模版系统.**
 Otama模版系统系统将界面逻辑从模版中完全分离出来..模版写成HTML文件,掩码元素作为节的开始标识插入到HTML文件中, 掩码元素会被动态改写.界面逻辑文件, 由C++代码编写, 提供关于掩码的逻辑.
 下面的范例是*index.html*, 当定义为Otama模版系统时由生成器生成.它可以包含文件数据, 不过你将会看到, 如果你用浏览器直接打开它, 因为它使用了HTML5, 设计在没有数据的情况下完全没有崩溃.
@@ -512,7 +512,7 @@ Blog();
 Blog(const Blog &other);
 Blog(const BlogObject &object); // 从 ORM 对象创建模型
 ~Blog();
-int id() const;      // 下面的代码是 setter/getter 
+int id() const;      // 下面的代码是 setter/getter
 QString title() const;
 void setTitle(const QString &title);
 QString body() const;
@@ -533,7 +533,7 @@ static int count();                 // 返回blog的记录数
 static QList<Blog> getAll();        // 获得所有模型对象
 static QJsonArray getAllJson();     // 获得JSON方式的所有模型对象
 private:
-QSharedDataPointer<BlogObject> d;   // ORM对象的指针 
+QSharedDataPointer<BlogObject> d;   // ORM对象的指针
 TModelObject *modelData();
 const TModelObject *modelData() const;
 };

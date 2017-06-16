@@ -17,7 +17,7 @@ updated   helpers/helpers.pro
 BlogValidator::BlogValidator() : TFormValidator()
 {
 setRule("title", Tf::MinLength, 4);
-setRule("title", Tf::MaxLength, 20); 
+setRule("title", Tf::MaxLength, 20);
 }
 ```
 枚举值是第二个参数.你可以定义强制输入, 最大/最小字符长度, 最大/最小整形值, 日期格式, e-mail地址格式, 用户定义的规则(正则表达式)等(这些规则定义在tfnamespach.h).
@@ -25,7 +25,7 @@ setRule()也有第四个参数.它用来设置验证器错误信息.如果你没
 规则是隐式设置为"强制输入的".如果不想输入为"强制", 可将规则写成这样:
 ```c++
 setRule("title", Tf::Required, false);
-``` 
+```
 <div class="center aligned" markdown="1">
 **规则**
 </div>
@@ -60,7 +60,7 @@ QStringList errs = validator.errorMessages();
 通常情况下, 因为有多个规则, 也就会有多个错误信息.一个一个地处理有点太麻烦了.然而, 如果使用下面的方法, 你可以一次导出所有的验证错误信息(传递给视图(view)).
 ```c++
 exportValidationErrors(valid, "err_");
-``` 
+```
 第二个参数, 为导出对象定义了一个变量名的前缀.
 <span style="color: #b22222">**概要: 给表单数据设置规则, 然后使用validate()验证.** </span>
 ## 客户化验证

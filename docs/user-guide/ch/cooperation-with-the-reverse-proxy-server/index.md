@@ -16,7 +16,7 @@ PHP 5.3.10 with APC3.1.7
 Ruby 1.9.3p194
 Apache 2.2.22
 MySQL 5.5.24
-``` 
+```
 ### 'posts'表的结构
 ```sql
 CREATE TABLE IF NOT EXISTS `posts` (

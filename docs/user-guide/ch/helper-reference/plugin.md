@@ -9,7 +9,7 @@ page_id: "080.060"
 ## 如何创建插件
 创建插件与如何为Qt创建插件的一模一样的.为了说明这一点, 让我们来创建个记录插件.首先, 我们将在*plugin*文件夹下创建一个工作目录.
 ```
-> cd plugin 
+> cd plugin
 > mkdir sample
 ```
 - 本质上, 可以选择任何地方作为工作目录, 但是当考虑路径方案时, 像前面提到的那样创建工作目录是一个好的方式.
@@ -50,7 +50,7 @@ bool isOpen() const;
 void log(const TLog &log);
 ...
 };
-``` 
+```
 接下来的目标是项目文件(.pro).不要忘记将"plugin"添加到CONFIG参数!
 ```
 TARGET = sampleplugin

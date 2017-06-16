@@ -109,7 +109,7 @@ blog.id = ...
 blog.title = ...
 blog.body = ...
 blog.create();  // 插入到数据库中
-``` 
+```
 ## 更新一个ORM对象
 为了更新ORM对象, 在读取记录前需要首先创建一个ORM对象.一旦从数据库中取得ORM对象, 你可以设置它的属性, 然后用update()方法更新它的状态.
 ```c++
@@ -135,11 +135,11 @@ mapper.removeAll( TCriteria(BlogObject::Title, tr("Hello")) );
 ## 自动ID序列号
 在一些数据库系统, 有字段的自动编号功能.例如, 在MySQL的AUTO_INCREMENT属性, 或者PostgreSQL的serial类型.
 Treefrog框架也设计了这种机制.也就是说, 下面的例子数字是自动分配的.没有必要去更新或者新建这个字段.<br>
-首先, 创建一个还有自动序列的字段的表.然后, 使用生成器命令创建模型(model)后, 我们不再需要人工更新字段(这里是'id'). 
+首先, 创建一个还有自动序列的字段的表.然后, 使用生成器命令创建模型(model)后, 我们不再需要人工更新字段(这里是'id').
 MySQL范例:
 ```sql
 CREATE TABLE animal ( id INT PRIMARY KEY AUTO_INCREMENT,  ...
-``` 
+```
 PostgreSQL范例:
 ```sql
 CREATE TABLE animal ( id SERIAL PRIMARY KEY, ...

@@ -25,7 +25,7 @@ bool renderJson(const QJsonArray &array);
 bool renderJson(const QVariantMap &map);
 bool renderJson(const QVariantList &list);
 bool renderJson(const QStringList &list);
-``` 
+```
 ## 用XML格式发送Model的内容
 用XML格式发送模型(model)内容与用JSON格式发送模型(model)内容没有多少不同.使用下面的其中一个方法可实现:
 ```c++

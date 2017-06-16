@@ -28,7 +28,7 @@ QString origname = formdata.originalFileName("picture");
 它可能用得不多, 不过你可以在使用uploadFile()方法后获得一个临时的文件名.随机文件名可以确保文件不会重叠覆盖.
 ```c++
 QString upfile = formdata.uploadedFile("picture");
-``` 
+```
 ## 上传多个文件
 Treefrog框架同样支持上传多个文件.你可以使用JavaScript库来上传多个文件.这里, 我将解释一种比较简单的方法来上传2个文件(或者多个)
 首先,我们创建下面的表单:
@@ -42,7 +42,7 @@ File2: <input name="picture[]" type="file">
 <input type="submit" value="Upload">
 </p>
 </form>
-``` 
+```
 当使用JavaScript动态创建一个Input标签, 增加"[]"到'name'后是非常重要的, 例如name="picture[]".
 要在upload操作(action)中接收上传的文件, 你可以通过TMimeEntity对象访问这两个文件,如下:
 ```c++

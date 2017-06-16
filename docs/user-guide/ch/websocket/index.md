@@ -64,7 +64,7 @@ ws.onclose = function(){
 $("#log").append("[ Connection closed. Try reloading. ]");
 }
 });
-// 发送包含 '名字Name' 和 '时间Time'的信息 
+// 发送包含 '名字Name' 和 '时间Time'的信息
 function sendMessage() {
 if ($('#msg').val() != '') {
 var name = $.trim($('#name').val());
@@ -110,7 +110,7 @@ void onTextReceived(const QString &text);        // text receive 处理器
 void onBinaryReceived(const QByteArray &binary); // binary receive 处理器
 };
 ```
-**解释 onOpen() 处理器:**<br> 
+**解释 onOpen() 处理器:**<br>
 HTTP会话对象那个时刻被传递到*httpSession*参数中.端点是只读的并且它的内容不能被更改(我可以在将来处理它).
 我们将使用*WebSocketSession*对象代替来保存信息.在endpoint类的每个方法中, 可以使用*session()*方法获取信息.顺便说一下, 因为信息是保存在内存里的, 如果数据量大, 在连接负载增加时内存会被压缩.
 还有, 如果*onOpen()*返回*false*, WebSocket连接会被拒绝.如果不想接受所有的连接请求, 可以实现一些分类的秘密的值存储在HTTP会话中.例如,仅在它们正确的情况下才接受.
@@ -147,7 +147,7 @@ void ChatEndpoint::onBinaryReceived(const QByteArray &)
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS = helpers models controllers
-``` 
+```
 构建命令:
 ```
 $ qmake -r

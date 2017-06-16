@@ -9,8 +9,8 @@ page_id: "020.0"
 如果是Ubuntu:
 安装Qt库和开发工具
 ```
-$ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql 
-libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev 
+$ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
+libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev
 qtdeclarative5-dev qtbase5-dev-tools gcc g++ make
 ```
 现在安装数据库客户端库:
@@ -53,7 +53,7 @@ $ cd ../tools
 $ make
 $ sudo make install
 ```
-**说明:** 
+**说明:**
 为了调试Treefrog框架本身,请使用*configure*选项.
 现在请执行命令:
 ```

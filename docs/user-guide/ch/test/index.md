@@ -27,7 +27,7 @@ void create();
 void TestBlog::create_data()
 {
 // 定义测试数据
-QTest::addColumn<QString>("title"); 
+QTest::addColumn<QString>("title");
 QTest::addColumn<QString>("body");
 //增加测试数据
 QTest::newRow("No1") << "Hello" << "Hello world.";
@@ -35,14 +35,14 @@ QTest::newRow("No1") << "Hello" << "Hello world.";
 void TestBlog::create()
 {
 // 获取测试数据
-QFETCH(QString, title); 
+QFETCH(QString, title);
 QFETCH(QString, body);
 //测试的逻辑
 Blog created = Blog::create(title, body);
 int id = created.id();
 Blog blog = Blog::get(id);  // 获取模型 ID
 //检查结果的执行
-QCOMPARE(blog.title(), title); 
+QCOMPARE(blog.title(), title);
 QCOMPARE(blog.body(), body);
 }
 TF_TEST_MAIN( TestBlog)// 指定你创建的类名
@@ -79,7 +79,7 @@ QT += network sql testlib
 ```
 $ qmake
 $ make
-``` 
+```
 接下来, 要执行测试过程,一些配置需要完成.
 因为需要引用各种配置文件, 测试命令需要一个配置目录的符号连接.它的位置应该直接在测试命令下.当使用SQLite数据库时, 我们也需要生成一个符号连接到*db*文件夹.
 ```
@@ -89,7 +89,7 @@ $ ln -s  ../../db  db
 如果你使用window, 一个测试的exe文件在*debug*文件夹内生成, 故在那里生成符号连接.请注意: 它不是一个快捷方式.
 要创建一个符号连接, 必须有管理员权限从命令行窗口运行命令.
 ```
-> cd debug 
+> cd debug
 > mklink /D  config  ..\..\..\config
 > mklink /D  db  ..\..\..\db
 ```

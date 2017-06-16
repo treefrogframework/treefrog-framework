@@ -18,7 +18,7 @@ session().insert("index", 123);
 session()["name"] = "foo";
 或
 session()["index"] = 123;
-``` 
+```
 ## 从会话(Session)中读取数据
 可以这样从会话(Session)中读取数据:
 ```
@@ -31,7 +31,7 @@ int index = session().value("index").toInt();
 QString name = session()["name"].toString();
 或
 int index = session()["index"].toInt();
-``` 
+```
 ## 设置会话(Session)的保存位置
 到目前为止, 会话可以看成是一个键值对的"联合数组(Hash)", 这些数据表现为字符串形式.会话本身是一个对象, 为了在页面间携带这些信息,我们需要将信息保存在某个地方.
 在Treefrog框架内, 你可以选择一个文件, 数据库(RDB SQlObject), cookies作为会话内容的保存位置. Session类已经实现这些功能.存储类型在*apliction.ini*中设置.
@@ -39,7 +39,7 @@ int index = session()["index"].toInt();
 如果喜欢用Cookies保存, 可以简单的写成:
 ```
 Session.StoreType=cookie
-``` 
+```
 通过保存cookies, 会话的内容将会保存在客户端(浏览器), 在你允许的情况下, 用户还可以获得这些内容.信息不应该显示给用户的, 应该保存在服务器(例如, 数据库RDB).作为规则, 你应该仅将最小的必要信息保存在会话(Session)中.
 ## 设置用文件保存会话(Session)
 如果你希望设置一个cookie保存文件, 可以简单的写成这样(会话文件将持续的写如应用程序根目录下的*tmp*文件夹内):

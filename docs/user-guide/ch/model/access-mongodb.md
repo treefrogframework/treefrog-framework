@@ -32,7 +32,7 @@ $ sudo make install
 为了和MongoDB服务器通讯, 让我们设置连接信息.首先, 编辑*config/application.ini*的这一行.
 ```ini
 MongoDbSettingsFile=mongodb.ini
-``` 
+```
 然后编辑*config/mongodb.ini*, 指定主机名和数据库名.像SQL数据库的配置文件一样, 配置文件的内容分成3节, *dev*, *test*,和*product*.
 ```ini
 [dev]
@@ -59,7 +59,7 @@ Existing collections:
 MongoDB文档用QVariantMap对象来表示.设置对象的键值对,然后用insert()方法插入到MongoDB的尾部.
 ```c++
 #include <TMongoQuery>
---- 
+---
 TMongoQuery mongo("blog");  // 对blog集合进行操作
 QVariantMap doc;
 doc["title"] = "Hello";
@@ -87,7 +87,7 @@ QVariantMap doc = mongo.value(); // 获得一个文档
 如果你仅仅查找一个符合条件的文档, 你可以使用findOne()方法.
 ```c++
 QVariantMap doc = mongo.findOne(criteria);
-``` 
+```
 这下面的例子设置'num'的查询条件.只有符合'num'的值大于10的文档才匹配.为了实现它, 使用**$gt**作为查询条件对象的比较运算符.
 ```c++
 QVariantMap criteria;

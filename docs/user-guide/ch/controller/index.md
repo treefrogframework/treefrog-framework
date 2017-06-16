@@ -13,7 +13,7 @@ class T_CONTROLLER_EXPORT FooController : public ApplicationController
 Q_OBJECT
 :
 public slots:   // 动作(action)定义在这里
-void bar(); 
+void bar();
 void baz(const QString &str);
 :
 ```
@@ -29,12 +29,12 @@ void baz(const QString &str);
 ```
 /blog/show        -> show();
 /blog/show/2      -> show(QString("2"));
-/blog/show/foo/5  -> show(QString("foo"), QString("5")); 
+/blog/show/foo/5  -> show(QString("foo"), QString("5"));
 ```
 如果省略操作(Action),默认情况下会调用*index*操作.这个看起来像这样:
 ```
 /blog   -> index();
-``` 
+```
 如果请求的URL对应的操作(action)没有定义, 将返回状态码500(内部服务器错误)给浏览器.
 在大多数情况下,每个调用的操作(action)都会进行以下处理过程:
 * 请求的审查
@@ -79,7 +79,7 @@ QVariantMap blog = httpRequest().formItems("blog");
 QVariant t = blog["title"];
 QVariant b = blog["body"];
 :
-``` 
+```
 请求的数据可以表现为hash格式.
 如何获取URL参数(查询参数)?这里有个例子:
 ```
@@ -118,7 +118,7 @@ Q_DECLARE_METATYPE 宏的参数是一个类名. 但是,如果你包含了一个�
 ```c++
 typedef QHash<Foo, Bar> BarHash;
 Q_DECLARE_METATYPE(BarHash)
-``` 
+```
 #### 导出对象
 我们视导出对象到视图(view)(在texport()方法设置的对象)为"导出对象".
 ## 请求建立反馈内容
@@ -150,7 +150,7 @@ renderText("Hello world", true);
 ## 重定向
 要重定向浏览器到另外的URL, 可以使用redirect()方法.第一个参数, 指定一个*QUrl*类的实例.
 ```c++
-// 重定向到 www.example.org 
+// 重定向到 www.example.org
 redirect(QUrl("www.example.org"));
 ```
 你可以重定向到同一台主机的其他操作(action)上.

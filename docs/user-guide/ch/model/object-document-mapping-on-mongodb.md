@@ -107,6 +107,6 @@ class T_MODEL_EXPORT FooObject : public TMongoObject, public QSharedData
 public:
 QString _id;
 QStringList  texts;
-: 
+:
 ```
 * 请留意: **QstringList**不能被在ORM对象类中定义.

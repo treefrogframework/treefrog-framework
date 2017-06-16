@@ -127,7 +127,7 @@ return false;
 }
 return true;
 }
-``` 
+```
 当preFilter()方法返回*false*, 操作(action)不会在它后面执行.<br>
 如果你想在许多个控制器(controller)上限制访问, 可以将代码写在ApplicationController类的preFilter().
 ##  获取已登录用户

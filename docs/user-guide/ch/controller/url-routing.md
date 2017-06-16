@@ -15,7 +15,7 @@ URL路由是一种决定请求的URL如何调用操作(action)的一种机制.�
 ```
 match  "/index"  "Merge#index"
 ```
-在这个例子中, 如果浏览器请求'/index', 不论是POST请求还是GET请求, 控制器将返回*Merge*控制器的*index*操作(action). 
+在这个例子中, 如果浏览器请求'/index', 不论是POST请求还是GET请求, 控制器将返回*Merge*控制器的*index*操作(action).
 接下来的例子定义了get指令:
 ```
 get  "/index"  "Merge#index"
@@ -24,7 +24,7 @@ get  "/index"  "Merge#index"
 类似地, 如果定义了一个Post指令, 仅对POST请求有效.GET请求将会被拒绝.
 ```
 post"/ index"" Merge# index"
-``` 
+```
 下面的内容是关于如何传递参数给操作(action).假设已经定义了下面的入口作为路由规则:
 ```
 get  "/search/:params"  "Searcher#search"
@@ -34,5 +34,5 @@ get  "/search/:params"  "Searcher#search"
 类似地, /serch/foo/bar, 一个操作(action)带着两个参数("foo" 和"bar")将被调用
 ```
 /search/foo    ->   调用SearcherController的search("foo")
-/search/foo/bar ->  调用SearcherController的search("foo", "bar") of 
+/search/foo/bar ->  调用SearcherController的search("foo", "bar") of
 ```

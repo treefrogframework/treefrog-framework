@@ -22,19 +22,19 @@ page_id: "060.0"
 当编写模型类时, 应该知道下面的这些惯例.
 * 使用texport()方法传递参数到视图(view). ->这相当与在下面的类中从QVariant类型设置一个变量(使用setValue()方法):
 - public default constructor
-- public copy constructor 
+- public copy constructor
 - public destructor
 - Q_DECLARE_METATYPE 宏声明 (在每个头文件的尾部)
 如果想更进一步了解它, 请阅读 [Qt文档](http://doc.qt.io/qt-5/qmetatype.html){:target="_blank"}.
 <span style="color: #b22222">**通过命令行生成器生成的模型(model)已经满足了工作的最小需求.** </span>
-生成器生成的模型(model)类继承于TAbstractModel类.我为使用TAbstractModel的优点, 使Model类继承了它.还有, 处理ORM对象的实用的方法也能够使用.本质上, 继承是为了重用, 通过继承后,这些模型(model)根本不需要访问数据库. 
+生成器生成的模型(model)类继承于TAbstractModel类.我为使用TAbstractModel的优点, 使Model类继承了它.还有, 处理ORM对象的实用的方法也能够使用.本质上, 继承是为了重用, 通过继承后,这些模型(model)根本不需要访问数据库.
 <span style="color: #b22222">**简单地说: 如果你想使用ORM对象, 你应该继承TAbstractModel类.** </span>
 当生成器生成模型(model)后, 每个属性的getter/setter和等效于"create"和"read"的类的方法都已经定义好了.下面的例子是在[教程({{ site.baseurl }}/user-guide/cn/tutorial/index.html){:target="_blank"}中生成的Blog类的片段.
 ```c++
 static Blog create(const QString &title, const QString &body);
 static Blog create(const QVariantMap &values);
 static Blog get(int id);       // 通过特定的ID获得模型(model)对象
-static Blog get(int id, int lockRevision); 
+static Blog get(int id, int lockRevision);
 static QList<Blog> getAll();   // 获取所有的模型(model)对象
 ```
 当年运行create()方法, 对象的内容将保存在数据库中.
@@ -53,7 +53,7 @@ void setProperties(const QVariantMap &properties);
 这里生成的代码只是冰山上的一角.你可以增加或修改属性, 例如从*protected*到*private*转换或者任何你喜欢的修改.
 ## 使用不同于表名的名字创建模型(model)名
 当你使用生成器命令生成模型(model)时, 模型(model)名基于表名的格式'_'(下划线). <br>
-如果你希望给模型(model)一个不同的名称, 你可以按下面的方式在命令后紧接着一个字符串: 
+如果你希望给模型(model)一个不同的名称, 你可以按下面的方式在命令后紧接着一个字符串:
 ```
 $ tspawn  model  blog_entries  BlogEntry    -> 仅创建模型(model)
 $ tspawn  s  blog_entries  BlogEntry   -> 创建模型(model)-视图(view)-控制器(controller)
@@ -71,4 +71,4 @@ public:
 Q_DECLARE_METATYPE(Post)        // 传递给视图(view)的宏
 Q_DECLARE_METATYPE(QList<Post>) // 传递列表给视图(view)的宏
 ```
-保存它在models文件夹, 定义头文件和源文件的名字 并把文件增加到项目(*models.pro*). 
+保存它在models文件夹, 定义头文件和源文件的名字 并把文件增加到项目(*models.pro*).

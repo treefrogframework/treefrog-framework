@@ -2,6 +2,7 @@
 title: 静态内容
 page_id: "070.030"
 ---
+
 ## 静态内容
 将浏览器可以访问的静态内容放在*public*目录内.在这里仅放置公共文件.
 例如, 假设一个HTML文件这样存放*public/sample.html*.当你从浏览器访问*http://URL:PORT/sample.html*, 在应用服务器(AP server)运行的情况下, 它的内容将可以显示.
@@ -14,7 +15,8 @@ page_id: "070.030"
 | public/css/    | 样式表 | /css/... |
 </div><br>
 你可以在public目录下自由的创建子目录.
-## 互联网媒体类型(MIME type)
+
+## 互联网媒体类型 (MIME type)
 当网页服务器返回静态内容时, 这个规则是在反馈的content-type 头字段中设置MIME type.它们是这样的字符串,例如"text/html"和"image/jpg".有了这些信息, 浏览器就能判定发送过来的数据的格式.
 Treefrog框架通过使用文件扩展名返回互联网媒体类型, 参考定义在*config/initializers/internet_media_types.ini*文件中.在那个文件中,  文件的扩展和互联网媒体类型用"="连接起来, 一行一行地进行定义.就像下面的表:
 ```
@@ -24,6 +26,7 @@ zip=application/zip
 :
 ```
 如果这些互联网媒体类型不能覆盖你的需求, 你可以在文件总增加其他类型.做完这些后, 你应重启应用服务器来反射你已添加的定义信息.
+
 ## 错误显示
 应用服务器总是需要返回一些响应, 即使发生了一些错误或者异常.这些情况下, 错误响应的状态代码在中[RFC](http://www.ietf.org/rfc/rfc2616.txt){:target="_blank"}已经定义.<br>
 在这个框架中, 当发生错误或异常时, 下面文件的内容将作为响应返回.
@@ -52,13 +55,13 @@ sendFile("filepath.jpg", "image/jpeg");
 顺便说一句, 这里的文件路径, 如果你定义的是一个绝对路径, 应该确保它可以被找到.如果你使用Tf::app->webRootPath()函数, 你将获得应用程序的绝对路径, 所以你可以很容易创建一个文件的绝对路径.要使用这样函数, 请在头文件中包含TwebAplication
 ```c++
 #include <TWebApplication>
-``` 
+```
 ## 发送数据
 要发送内存中的数据, 而不是一个文件, 你可以使用sendData()方法:
 ```c++
 QByteArray data;
 data = ...
 sendFile(data, "text/plain");
-``` 
+```
 相比与sendFile()方法, 你可以省略访问的处理减少开销.<br>
 有点类似于文件下载的操作在浏览器端被执行, 在那之后不能调用render()方法(如果这样做,可能会不工作).
