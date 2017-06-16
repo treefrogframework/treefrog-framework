@@ -121,6 +121,6 @@ topコマンドを使った目視なので説得力にかけるのですが、�
 
 <div class="img-center" markdown="1">
 
-![top コマンド画面 2]({{ site.baseurl }}/assets/images/documentation/snapshot2-2.png "top コマンド画面 2")
+![top コマンド画面 2]({{ site.baseurl }}/assets/images/documentation/snapshot3-2.png "top コマンド画面 2")
 
 </div>

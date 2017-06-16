@@ -2,7 +2,7 @@
     <div class="header-background-wrapper">
         {% if page.url contains '/ja/' %}
             {% assign url = 'ja' %}
-		{% elseif page.url contains '/ch/' %}
+        {% elsif page.url contains '/ch/' %}
             {% assign url = 'ch' %}
         {% else %}
             {% assign url = '' %}
