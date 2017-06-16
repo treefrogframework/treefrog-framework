@@ -70,7 +70,23 @@ if (language == "ja") {
     var tipuesearch_string_13 = '文字以上である必要があります。';
     var tipuesearch_string_14 = '秒';
     var tipuesearch_string_15 = '関連する検索: ';
-} else {
+} else if(language == "ch") {
+    var tipuesearch_string_1 = '没有标题';
+    var tipuesearch_string_2 = '显示搜索';
+    var tipuesearch_string_3 = '替代搜索';
+    var tipuesearch_string_4 = '1 条结果';
+    var tipuesearch_string_5 = '搜索结果';
+    var tipuesearch_string_6 = '返回';
+    var tipuesearch_string_7 = '更多';
+    var tipuesearch_string_8 = '没有结果';
+    var tipuesearch_string_9 = '太长的词组被忽略';
+    var tipuesearch_string_10 = '查询内容太短';
+    var tipuesearch_string_11 = '应该多于一个字.';
+    var tipuesearch_string_12 = '应该';
+    var tipuesearch_string_13 = '个词语或更多';
+    var tipuesearch_string_14 = '秒';
+    var tipuesearch_string_15 = '关于搜索';
+}else {
     var tipuesearch_string_1 = 'No title';
     var tipuesearch_string_2 = 'Showing results for';
     var tipuesearch_string_3 = 'Search instead for';
