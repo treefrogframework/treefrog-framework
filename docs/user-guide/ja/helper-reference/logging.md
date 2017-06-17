@@ -80,4 +80,4 @@ FileLogger.Threshold=debug
 
 この例では debug レベル以上のログが出力されます。
 
-<span style="color: #b22222">**結論： 開発で必要なデバッグログは tDebug() 関数で出力しておけ。** </span>
+##### 結論： 開発で必要なデバッグログは tDebug() 関数で出力しておけ。

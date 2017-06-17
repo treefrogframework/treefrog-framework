@@ -131,7 +131,7 @@ FooObject foo = mapper.findByObjectId(id));
 foo.remove();
 ```
 
-#### <span style="color: #b22222">Supplement</span>
+##### Supplement
 
 As mentioned above, Mongo objects can be used in the same way as ORM objects (O/R mapper objects). Looking from the controller's point of view, since the functions provided by the model class are the same, there is no difference in their use. These objects are hidden in the 'private' area of the model.
 

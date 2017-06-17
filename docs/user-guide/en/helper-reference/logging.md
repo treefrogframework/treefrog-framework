@@ -81,4 +81,4 @@ FileLogger.Threshold=debug
 
 In this example, the log level is higher than debug.
 
-<span style="color: #b22222">**In brief: Using the tDebug() function to output the debug log (necessary for development).** </span>
+##### In brief: Using the tDebug() function to output the debug log (necessary for development).

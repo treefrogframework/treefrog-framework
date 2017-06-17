@@ -237,4 +237,4 @@ In advance, prepare a field named *lock_revision* as an integer to record also u
 
 To take advantage of optimistic locking in the SqlObject, add an integer type field named *lock_revision* to the table. It creates a class using the generator. With this alone, optimistic locking is activated when you call TSqlObject::remove() method and TSqlObject::update() method.
 
-<span style="color: #b22222">**In brief: Create a field named lock_revision from type integer in the table.** </span>
+##### In brief: Create a field named lock_revision from type integer in the table.

@@ -116,4 +116,4 @@ Case of *prefork* module:
 
 In the prefork module, performance drops to about 40 requests per second. It is a significant drop, although, by careful tuning in a real implementation, you may obtain higher performance. We need to improve this in the next stage.
 
-<span style="color: #b22222">**In brief: Use 'thread' as your MPM. If on Linux, use 'hybrid'.**</span>
+##### In brief: Use 'thread' as your MPM. If on Linux, use 'hybrid'.

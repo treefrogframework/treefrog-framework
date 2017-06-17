@@ -33,8 +33,8 @@ Any site that accepts user requests without any verification, has a possible vul
 
 To prevent this, perform the followings both.
 
-* As for the information on the form, ONLY accept requests in the POST method.
-* Put a row of letters that is difficult to predict as a hidden parameter on one of the information items within the form, and validate it when receiving it. => by generating a form tag with the formTag() method, the hidden parameter is automatically granted.
+ * As for the information on the form, ONLY accept requests in the POST method.
+ * Put a row of letters that is difficult to predict as a hidden parameter on one of the information items within the form, and validate it when receiving it. => by generating a form tag with the formTag() method, the hidden parameter is automatically granted.
 
 If this hidden parameter is easily predictable, this CSRF protection is insufficient. This parameter is a string that has been converted by the hash function, using the Session.Secret parameter, in the *application.ini* configuration file. It is therefore sufficiently difficult for the string to be guessed by anyone not knowing the *Session.Secret* value.
 
@@ -56,4 +56,4 @@ In the TreeFrog Framework, as a defense against session hijacking, a new session
 
 Although guessing a session ID is difficult, a more serious threat is possible eavesdropping on the network. To counter this, it is possible to encrypt (SSL) the communication channel by reverse proxy (such as nginx or Apache).
 
-<span style="color: #b22222">**In brief: Encrypt by SSL all sites where important information is being dealt with.** </span>
+##### In brief: Encrypt by SSL all sites where important information is being dealt with.

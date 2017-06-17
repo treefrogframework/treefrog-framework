@@ -20,7 +20,7 @@ created   blogapp/ views
 created   blogapp/ views/ layouts
 created   blogapp/views/mailer
 created   blogapp/views/partial
-:
+ :
 ```
 
 ### 新建表
@@ -76,6 +76,7 @@ sqlite>. quit
 使用 *config/database.ini* 设置数据库信息.<br>
 在编辑器中打开文件,在[dev]处为每个配置项输入恰当的值,然后点击保存.
 MySQL范例:
+
 ```
 [dev]
 DriverType=QMYSQL
@@ -86,7 +87,9 @@ UserName= root
 Password= root
 ConnectOptions=
 ```
+
 SQLite范例:
+
 ```
 [dev]
 DriverType=QSQLITE
@@ -97,8 +100,10 @@ UserName=
 Password=
 ConnectOptions=
 ```
-一旦你正确完成了这些设置,就可以显示数据库的表.<br>
+
+一旦你正确完成了这些设置,就可以显示数据库的表.
 如果所有项都被正确设置了,将显示一条信息如下:
+
 ```
 $ cd blogapp
 $ tspawn --show-tables
@@ -110,12 +115,16 @@ Database opened successfully
 Available tables:
 blog
 ```
+
 如果需要的SQL驱动没有包含在Qt SDK中,下面的错误信息将出现:
+
 ```
 QSqlDatabase: QMYSQL driver not loaded
 ```
+
 如果收到这条信息,从 [下载页面](http://www.treefrogframework.org/download){:target="_blank"}下载SQL驱动,并安装它.
 可以通过下面的命令检查哪些SQL驱动已经安装;
+
 ```
 $ tspawn --show-drivers
 Available database drivers for Qt:
@@ -125,10 +134,12 @@ QMYSQL
 QODBC3
 QODBC
 ```
+
 内建的SQL驱动可以用于SQLite,虽然也可以通过完成一点点工作来使用SQLite驱动.
 
 ## 定义一个模版系统
 在Treefrog框架中, 我们可以定义Otama或者ERB作为模版系统.我们将在*development.ini*文件中设置TemplateSystem参数.
+
 ```
 TemplateSystem=ERB
 or
@@ -137,24 +148,27 @@ TemplateSystem=Otama
 
 ## 自动从表生成代码
 从命令行, 执行生成器(tspawn)命令生成下面的代码.下面的例子展示了控制器(controller),模型(model)和视图(view)的生成.表名作为命令的参数.
+
 ```
 $ tspawn scaffold blog
-DriverType: QSQLITE
-DatabaseName: db/blogdb
-HostName:
-Database open successfully
-created   controllers/blogcontroller.h
-created   controllers/blogcontroller.cpp
-updated controllers/ controllers. pro
-created models/ sqlobjects/ blogobject. h
-created models/ blog. h
-created models/ blog. cpp
-updated models/ models. pro
-created views/ blog
-:
+ DriverType: QSQLITE
+ DatabaseName: db/blogdb
+ HostName:
+ Database open successfully
+ created   controllers/blogcontroller.h
+ created   controllers/blogcontroller.cpp
+ updated controllers/ controllers. pro
+ created models/ sqlobjects/ blogobject. h
+ created models/ blog. h
+ created models/ blog. cpp
+ updated models/ models. pro
+ created views/ blog
+  :
 ```
+
 使用tspawn选项可以生成/更新模型(model)/视图(view).
 tspawn命令的帮助:
+
 ```
 $ tspawn --help
 usage: tspawn <subcommand> [args]
@@ -178,29 +192,40 @@ delete (d)      <table-name or validator-name>
 
 ## Build源代码
 开始Build进程前,执行下面的命令一次(仅一次),它将会生成一个Makefile文件.
+
 ```
 $ qmake -r "CONFIG+=debug"
 ```
+
 一个WARNING信息将会显示,不过事实上没有影响.接下来, 执行make命令来编译控制器(controller), 模型(model), 视图(view)和工具助手(helper).
+
 ```
 $ make     (MinGW 执行'mingw32-make'命令代替'make', MSVC 执行'nmake' 命令代替'make')
 ```
+
 如果构建成功,4个共享库(controller, model, view, helper)将出现在lib文件夹.默认情况下,这些生成的库的debug模式的,不过,你可以重新生成Makefile文件, 使用下面的命令来生成release模式的库.
 生成release模式的Makefile文件:
+
 ```
 $ qmake- r" CONFIG+= release"
 ```
 
 ## 启动应用服务器
 在启动应用服务器(AP server)前改变应用的根目录.服务器将会把命令执行的路径当作应用的根目录启动.按Ctrl+c停止服务器.
+
 ```
 $ treefrog -e dev
 ```
+
 在Windows下, 使用*treefrog**d**.exe*启动.
+
 ```
 > treefrogd.exe -e dev
 ```
-在Windows下, 当你构建debug模式的网页应用时,使用treefrog**d**.exe启动,当你构建release模式的网页应用时,使用treefrog.exe启动.<span style="color: #b22222">**Release and debug 模式不能混着使用, 否则不能正常工作</span>.
+
+在Windows下, 当你构建debug模式的网页应用时,使用treefrog**d**.exe启动,当你构建release模式的网页应用时,使用treefrog.exe启动.
+
+##### Release and debug 模式不能混着使用, 否则不能正常工作.
 如果希望在后台运行, 可配合任何其他需要的选项使用-d选项.
 ```
 $ treefrog -d -e dev

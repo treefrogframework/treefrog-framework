@@ -244,7 +244,9 @@ In Windows, start by using *treefrog**d**.exe*.
 > treefrogd.exe -e dev
 ```
 
-In Windows, start by using treefroge**d**.exe when you build web applications in debug mode, and start by using treefrog.exe when you want to build a web application in release mode. <span style="color: #b22222">**Release and debug modes should not be mixed, as the result will not work properly</span>.
+In Windows, start by using treefroge**d**.exe when you build web applications in debug mode, and start by using treefrog.exe when you want to build a web application in release mode. 
+
+##### Release and debug modes should not be mixed, as the result will not work properly.
 
 If you want it to run in the background, use the option -d together with any other required options.
 

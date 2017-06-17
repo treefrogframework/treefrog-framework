@@ -336,4 +336,4 @@ From the fact that both are types of merging, the layout and partial template sh
 
 My opinion is that it is good way to define the layout for sections such as footer and header that are always present on the page, and to use additional partial templates to display the parts that are often but not always displayed on the page.
 
-<span style="color: #b22222">**In brief: Define areas of your layout that have persistent and not persistent content and put them into partial templates.** </span>
+##### In brief: Define areas of your layout that have persistent and not persistent content and put them into partial templates.
