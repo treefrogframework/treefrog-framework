@@ -139,9 +139,7 @@ texport(bar);
 **说明:**texport的参数必须指定为变量.你不能直接指定一个字符串("Hello world")或者数字(例如100).
 在视图(view)内要使用变量, 你必须首先用*tfetch(Type,variable)*声明变量.更多详细内容请参见[视图(view)]({{ site.baseurl }}/user-guide/ch/view/index.html){:target="_blank"}章节.
 
-<span style="color: #b22222">
-**简单地说: 使用tfetch()传递一个对象到视图(view).**
-</span>
+##### 简单地说: 使用tfetch()传递一个对象到视图(view).
 
 ** 用户自定义的类的情况**
 当你需要传递一个新的类(自定义的类)到视图(view), 请件下面的宏增加到头文件的尾部.更多详细的信息请参见 ["新建原始模型(original model)"](/user-guide/en/model/index/html){:target="_blank"}节.
@@ -177,9 +175,7 @@ bool render(const QString &action = QString(), const QString &layout = QString()
 如果你想反馈一个不同的模版,指定操作(action)名为参数即可.布局(layout)文件名可以被指定为布局参数.
 方法**render()**表示"请求 view/template 建立反馈内容".这也称之为"绘图(drawing)".
 
-<span style="color: #b22222">
-**简单地说:要渲染模版,使用 render() 方法.**
-</span>
+##### 简单地说:要渲染模版,使用 render() 方法.
 
 ### 布局(Layout)
 当年创建一个网站的是, 网页页眉,网页页脚还有一些其他的部分通常所有的页面中是通用的, 只是网页的内容不同而已.术语布局(layout)是给这些通用的部分使用的, 模版基于这些通用的部分.布局(layout)文件应该放在views/layouts文件夹内.

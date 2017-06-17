@@ -25,9 +25,7 @@ page_id: "060.0"
 
 缺点就是代码量增加了一点.
 
-<span style="color: #b22222">
-**简单地说: 隐藏视图(controller)和视图(view)不需要的信息.**
-</span>
+##### 简单地说: 隐藏视图(controller)和视图(view)不需要的信息.
 
 ## 模型(Model)的API
 通常, 一个类越独立就越能够重复使用.因此, 理想的模型依应该赖的尽可能小.
@@ -48,9 +46,7 @@ page_id: "060.0"
 
 生成器生成的模型(model)类继承于TAbstractModel类.我为使用TAbstractModel的优点, 使Model类继承了它.还有, 处理ORM对象的实用的方法也能够使用.本质上, 继承是为了重用, 通过继承后,这些模型(model)根本不需要访问数据库.
 
-<span style="color: #b22222">
-**简单地说: 如果你想使用ORM对象, 你应该继承TAbstractModel类.**
-</span>
+##### 简单地说: 如果你想使用ORM对象, 你应该继承TAbstractModel类.
 
 当生成器生成模型(model)后, 每个属性的getter/setter和等效于"create"和"read"的类的方法都已经定义好了.下面的例子是在[教程({{ site.baseurl }}/user-guide/cn/tutorial/index.html){:target="_blank"}中生成的Blog类的片段.
 

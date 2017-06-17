@@ -108,6 +108,4 @@ thread模块的例子:<br>
 ```
 
 在prefork模块, 性能跌落到大约40 request每秒.它是一个明显的下降, 我们需要在下一个阶段改进它.
-<span style="color: #b22222">
-**概要:使用'thread'作为多处理模块MPM, 如果是Linux,使用'hybrid' .**
-</span>
+##### 概要:使用'thread'作为多处理模块MPM, 如果是Linux,使用'hybrid' .
