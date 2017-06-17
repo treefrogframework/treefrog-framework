@@ -28,7 +28,9 @@ Doing it this way is beneficial in a number of ways:
 
 The disadvantage is that the amount of code increases a bit.
 
-<span style="color: #b22222">**In brief: Hide unnecessary information to the controller and the view.** </span>
+<span style="color: #b22222">
+**In brief: Hide unnecessary information to the controller and the view.**
+</span>
 
 ## API of Model
 
@@ -38,8 +40,9 @@ In Web applications, the DB is often used for store data in a persisting state, 
 
 When coding the class of models, the following conventions are in place. These should be learnt.
 
-* Use the texport() method to pass arguments to the view.
-    → This is equal to set to a variable from type QVariant (by using the setValue() method) in the following classes:　
+Use the texport() method to pass arguments to the view.
+This is equal to set to a variable from type QVariant (by using the setValue() method) in the following classes:　
+
     - public default constructor
     - public copy constructor
     - public destructor
@@ -47,7 +50,9 @@ When coding the class of models, the following conventions are in place. These s
 
 Please read the [Qt documentation](http://doc.qt.io/qt-5/qmetatype.html){:target="_blank"} if you want to learn more about it.
 
-<span style="color: #b22222">**★ A model that is created by the generator command already meets the minimum requirements to work.** </span>
+<span style="color: #b22222">
+**★ A model that is created by the generator command already meets the minimum requirements to work.**
+</span>
 
 The model class that is created in the generator is inherited from the TAbstractModel class. I have inherited it in order to take advantage of its features. Additionally, convenient methods for handling ORM objects will be available, too. Basically, the inheritance is merely for reusability. Those models that don't access the database at all, don't need to deal with inheritance though.
 
