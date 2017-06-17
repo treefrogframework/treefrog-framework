@@ -74,4 +74,4 @@ FileLogger.Threshold=debug
 
 此例, 记录的级别是高于debug.
 
-<span style="color: #b22222">**概要: 使用tDebug()函数输出调试信息(开发中需要).** </span>
+##### 概要: 使用tDebug()函数输出调试信息(开发中需要).

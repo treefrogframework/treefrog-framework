@@ -56,7 +56,7 @@ Please read the [Qt documentation](http://doc.qt.io/qt-5/qmetatype.html){:target
 
 The model class that is created in the generator is inherited from the TAbstractModel class. I have inherited it in order to take advantage of its features. Additionally, convenient methods for handling ORM objects will be available, too. Basically, the inheritance is merely for reusability. Those models that don't access the database at all, don't need to deal with inheritance though.
 
-<span style="color: #b22222">**In brief: if you want to use an ORM object, you should inherit from the TAbstractModel class regardlessly.** </span>
+##### In brief: if you want to use an ORM object, you should inherit from the TAbstractModel class regardlessly.
 
 When the model is created by the generator, the getter/setter of each property and the class methods, that are equivalent to "create" and "read", are defined. The following example is an excerpt of the Blog class which we made in the [tutorial chapter]({{ site.baseurl }}/user-guide/en/tutorial/index.html){:target="_blank"}.
 

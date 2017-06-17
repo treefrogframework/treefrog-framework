@@ -46,7 +46,7 @@ In order to turn on the CSRF protection, you need to set the following in the *a
 
 I would recommend that you turn this feature off during the development of the application.
 
-<span style="color: #b22222">**In brief: Generate a form tag using the formTag() method.** </span>
+##### In brief: Generate a form tag using the formTag() method.
 
 ## Session Hijacking Prevention
 

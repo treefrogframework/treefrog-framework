@@ -39,7 +39,7 @@ while (query.next()) {
 
 The same method can be used for the TSqlQuery class, because it inherits the [QSqlQuery class](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"} of Qt.
 
-<span style="color: #b22222">**In brief: queries can be created using placeholders in all cases.** </span>
+##### In brief: queries can be created using placeholders in all cases.
 
 In fact, you can see any query that has been executed in the [query log]({{ site.baseurl }}/user-guide/en/helper-reference/logging.html){:target="_blank"} file.
 

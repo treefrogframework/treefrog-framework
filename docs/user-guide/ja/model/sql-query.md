@@ -39,7 +39,7 @@ int id = query.value(0).toInt(); // 最初のフィールドをint型へ変換
 
 TSqlQueryクラスは Qt の[QSqlQuery クラス](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"}を継承しているので、同じメソッドが使用できます。詳しくは、Qtドキュメントを参照ください。
 
-<span style="color: #b22222">**結論： プレースホルダを使ってクエリを生成せよ。** </span>
+##### 結論： プレースホルダを使ってクエリを生成せよ。
 
 実際に、どんなクエリが実行されたのかを[クエリログ]({{ site.baseurl }}/user-guide/ja/helper-reference/logging.html){:target="_blank"}で確認することができます。
 

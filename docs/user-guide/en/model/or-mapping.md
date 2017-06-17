@@ -145,7 +145,7 @@ crt.addOr(BlogObject::CreatedAt, TSql::GreaterThan, dt);  // OR add to the end o
 
 If you add a condition in the addOr() method, the condition clause is enclosed in parentheses. If you use a combination of add() and addOr() methods, take care about the order in which they are called.
 
-<span style="color: #b22222">**NOTE** </span>
+##### NOTE
 
 Remember, that when using AND and OR operators together, the AND operator has priority during its evaluation. That means, when expressions mix AND and OR operators, the AND operator is evaluated from the expression first, while the OR operator is evaluated in the second place. If you don't wish an operator to be evaluated in this order, you have to parantheses.
 

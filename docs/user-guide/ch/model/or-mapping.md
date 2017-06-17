@@ -121,7 +121,7 @@ crt.addOr(BlogObject::CreatedAt, TSql::GreaterThan, dt);  // 增加AddOr到运�
 :
 ```
 如果用addOr()方法增加查询条件, 查询条件会用括号闭合.如果组合使用add()和addOr()方法, 使用它们时需要小心它们的顺序.
-<span style="color: #b22222">**注意** </span>
+##### 注意
 记住, 当一起使用AND和OR运算时, AND运算有优先权.也就是说, 当混合使用AND和OR运算时, 先计算AND运算符,然后在计算OR运输.如果你希望安装顺序执行计算, 需要使用扩号.
 
 ## 创建ORM对象
@@ -187,4 +187,4 @@ CREATE TABLE animal ( id SERIAL PRIMARY KEY, ...
 乐观锁是在要更新记录时确认记录没有被其他人更新,而不用在数据库锁定记录.如果已经发生了其他更新, 就会放弃更新.
 使用一个自增的整形(integer)类型的字段*lock_revision*是前提条件.Lock revision在每次更新时增加.当读取到的值与更要更新的值不相同时, 意味着已经被其他人更新了.只有在值相同时才进行更新.通过这样的方式, 我们能够安全的更新记录.因为没有使用锁, 可以预期会节省了数据库系统的内存和提升了处理速度, 虽然它们是比较轻微的.
 要在SQlObject中使用乐观锁的优势, 在表中增加一个整形字段,并命名为*lock_revision*.使用生成器创建一个类.当调用TSqlObject::remove()和TSqlObject:: update()方法时, 乐观锁将激活.
-<span style="color: #b22222">**简单地说: 在表中创建一个整形的字段并命名为lock_revision.** </span>
+##### 简单地说: 在表中创建一个整形的字段并命名为lock_revision.

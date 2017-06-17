@@ -93,7 +93,7 @@ Database open successfully
 ```
 
 <br>
-<span style="color: #b22222">**In brief: Define the schema in the database and make us the generator command for the scaffolding.** </span>
+##### In brief: Define the schema in the database and make us the generator command for the scaffolding.
 
 ### Relationship of Model-Name/Controller-Name and Table Name
 

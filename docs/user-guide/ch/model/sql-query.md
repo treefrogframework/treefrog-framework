@@ -29,7 +29,7 @@ QString str = query.value(1).toString(); // 转换第二个字段为字符串类
 }
 ```
 TSqlQuery类也可以同样的方法, 因为它继承于Qt的[QSqlQuery类](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"}.
-<span style="color: #b22222">**简单地说: 任何情况下都可以使用占位符创建查询.** </span>
+##### 简单地说: 任何情况下都可以使用占位符创建查询.
 事实上, 可以在[查询记录]({{ site.baseurl }}/user-guide/en/helper-reference/logging.html){:target="_blank"} 中查看已经被执行的任何查询.
 ## 从文件中读取一个查询
 因为源代码中的查询在每次的编写或者修改后都需要执行编译, 你可能会感到在应用开发的过程中显得很麻烦.为了减轻这种麻烦, 这里有机制可以将查询语句写在独立分离的文件中, 然后在运行时进行加载(译者:可以在开发完成后再写入源文件中).

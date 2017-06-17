@@ -83,7 +83,7 @@ if (!validator.validate(blog)) {
 exportValidationErrors(valid, "err_");
 ```
 
-<span style="color: #b22222">**結論： フォームのデータはルールを設定し、validate() で検証せよ。** </span>
+##### 結論： フォームのデータはルールを設定し、validate() で検証せよ。
 
 ## カスタムバリデーション
 

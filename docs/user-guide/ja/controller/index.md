@@ -156,7 +156,7 @@ texport(bar);
 
 その後、ビューでこの変数を使う場合、まず tfetch( Type, variable ) で宣言する必要があります。詳細は[ビューの章]({{ site.baseurl }}/user-guide/ja/view/index/html){:target="_blank"}をご覧ください。
 
-<span style="color: #b22222">**結論： オブジェクトは tfetch() でビューへ渡せ。**</span>
+##### 結論： オブジェクトは tfetch() でビューへ渡せ。
 
 **ユーザ定義クラスの場合：**
 
@@ -195,7 +195,7 @@ bool render(const QString &action = QString(), const QString &layout = QString()
 
 ※ render というメソッド名が示すように 「レスポンスの作成をビューに依頼する」ことを、「描画する」とも言います。
 
-<span style="color: #b22222">**結論： render() でテンプレートを描画せよ。** </span>
+##### 結論： render() でテンプレートを描画せよ。
 
 ### レイアウトとは
 

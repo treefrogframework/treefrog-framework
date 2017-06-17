@@ -70,7 +70,7 @@ As in ERB; The combination of ~ and eh() method can be rewritten as '~='; simila
 
 Although we've output a static string here, in order to simplify the explanation, it's also possible to output a variable in the same way. Of course, it is also possible to output an object that is passed from the controller.
 
-<span style="color: #b22222">**In brief: Place a mark where you want to output a variable. Then connect the mark to the code.** </span>
+##### In brief: Place a mark where you want to output a variable. Then connect the mark to the code.
 
 ## Otama Operator
 
@@ -108,7 +108,7 @@ As with ERB, objects fetched are defined as a local variable.
 
 Typically, C++ code will not fit in one instruction line. To write a C++ code of multiple rows for one mark, write side by side as normal but put a blank line at the end. The blank line is considered to be one set of the parts of the mark. Thus, between one mark and the next a blank line (including a line with only blank characters) acts as a separator in the presentation logic.
 
-<span style="color: #b22222">**In brief: logic is delimited by an empty line.** </span>
+##### In brief: logic is delimited by an empty line.
 
 Next, we look at the case of wanting to display an export object in two different locations. In this case, if you describe it at #init, it will be called first (fetched). After that, it can be used freely in the presentation logic. It should look similar to the following:
 
@@ -139,7 +139,7 @@ To obtain output using the echo() method, you can write as follows:
 
 Just like ERB.
 
-<span style="color: #b22222">**In brief: for export objects, output using =$ or ~=$.** </span>
+##### In brief: for export objects, output using =$ or ~=$.
 
 ## Loop
 
@@ -281,7 +281,7 @@ The \|== operator has a condition to merge the elements. That is the elements mu
 
 By using this operator, the information for the design (HTML attributes) can be transferred to the template side.
 
-<span style="color: #b22222">**In brief: Leave the attribute related to the design of the template and merge it by using the \|== operator.** </span>
+##### In brief: Leave the attribute related to the design of the template and merge it by using the \|== operator.
 
 **Note:**<br>
 The \|== operator is only available in this format (i.e. \|== ), neither '\|' on its own, nor '\|=' will work.

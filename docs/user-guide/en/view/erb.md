@@ -44,7 +44,7 @@ You can add template files as you like. But consider, once you have added a new 
 That's all that was needed to do in order to add the new template which will has been added to the makefile entry of the build.<br>
 Remember to reflect the new template that you've added in the shared library.
 
-<span style="color: #b22222">**In brief: After you have added a template file, use the "make qmake" command.** </span>
+##### In brief: After you have added a template file, use the "make qmake" command.
 
 ## To Output a String
 
@@ -95,7 +95,7 @@ You might ask if fetch processing has to be processed each time of using, but yo
 
 The fetched object is a local variable in a function. Therefore, if we fetched the same object twice, because the variables are the same we would have defined twice, giving an error at compile time. Of course, it would not be a compile-time error if we divided the block, but it probably would not make much sense to do so.
 
-<span style="color: #b22222">**In brief: Use the fetch case only once.** </span>
+##### In brief: Use the fetch case only once.
 
 If you export objects of the type int and QString type, then you can only output in the tehex() function. Fetch processing eliminates the need for it to be this way.
 
@@ -286,7 +286,7 @@ The important part here is the line; <%== yield(); %>. This line outputs the con
 
 By using a layout like this, you can put together a common design, such as headers and footers, for the site. Changing the design of the site then becomes much easier, because all you need to change is the layout.
 
-<span style="color: #b22222">**In brief: Layout is the overall outline for the site design.** </span>
+##### In brief: Layout is the overall outline for the site design.
 
 Now, I will describe each method to set the layout.
 

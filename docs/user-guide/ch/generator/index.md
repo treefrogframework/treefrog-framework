@@ -74,7 +74,7 @@ created  controllers/blogcontroller.cpp
 :
 ```
 <br>
-<span style="color: #b22222">**简单地说:在数据库中定义好表结构, 然后使用生成器生成骨架.** </span>
+##### 简单地说:在数据库中定义好表结构, 然后使用生成器生成骨架.
 ### 模型名称(Model-Name)/控制器名称(Controller-Name)和表名(Table Name)的关系
 生成器会基于表名生产类的名字.规则如下:
 ```

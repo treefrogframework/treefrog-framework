@@ -10,7 +10,7 @@ The TreeFrog Framework provides an application server (AP server) to send back a
 As it stands, this is sufficient for small and medium-sized Web sites. However, when making a large Web site system, in order to achieve stable operation and load balance it becomes necessary to use a Web server (reverse proxy) system such as *nginx* or* Apache*.<br>
 Also, if you want to work with compression response and SSL, you must set up a Web server separately.
 
-<span style="color: #b22222">**In brief: For large scale sites, set up a Web server.** </span>
+##### In brief: For large scale sites, set up a Web server.
 
 <div class="center aligned" markdown="1">
 

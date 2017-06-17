@@ -146,7 +146,7 @@ crt.addOr(BlogObject::CreatedAt, TSql::GreaterThan, dt);  // OR演算子で末�
 
 addOr メソッドで条件を追加すると、それまでの条件句は括弧で囲まれます。add メソッドと addOr メソッドを組み合わせて使う場合は、呼ぶ順番に注意してください。
 
-<span style="color: #b22222">**コラム**</span>
+##### コラム
 
 AND演算子とOR演算子はどちらが優先されて評価されるかを覚えていますか。
 
@@ -241,4 +241,4 @@ PostgreSQL の例：
 
 SqlObject で楽観的ロックを利用するには、テーブルに lock_revision という名のカラム（列）を integer 型で追加し、ジェネレータを使ってクラスを生成します。これだけで、TSqlObject::update メソッドと TSqlObject::remove メソッドを呼び出した時に楽観的ロックが作動します。
 
-<span style="color: #b22222">**結論： レコードを更新する必要があるなら、integer 型で lock_revision という名のカラムを追加せよ。**</span>
+##### 結論： レコードを更新する必要があるなら、integer 型で lock_revision という名のカラムを追加せよ。

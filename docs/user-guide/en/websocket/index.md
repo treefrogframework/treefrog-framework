@@ -12,7 +12,7 @@ WebSocket, on the other hand, maintains the TCP connection once it has been esta
 
 Additionally, since the connection is stateful (maintaining an established connection), you don't need to return the session ID by using a cookie.
 
-<span style="color: #b22222">**In short: WebSocket is a stateful and bidirectional communication**</span>
+##### In short: WebSocket is a stateful and bidirectional communication
 
 In case the client is a browser, the connection will be lost, if you move to another page or if the WebSocket connection established for a page is closed.
 

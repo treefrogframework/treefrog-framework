@@ -85,7 +85,7 @@ exportValidationErrors(valid, "err_");
 
 In the second argument, specify a prefix as the variable name for the export object.
 
-<span style="color: #b22222">**In brief: Set rules for the form data and validate them by using validate().** </span>
+##### In brief: Set rules for the form data and validate them by using validate().
 
 ## Custom validation
 

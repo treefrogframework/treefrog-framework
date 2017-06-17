@@ -155,7 +155,7 @@ To pass variables to a view, use the macros* texport(variable)* or *T_EXPORT(var
 
 To use a variable inside a view, you must first declare the variable in *tfetch (Type, variable)*. Please see the [view]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"} chapter for more information.
 
-<span style="color: #b22222">**In brief: Pass the object to the view by using tfetch().** </span>
+##### In brief: Pass the object to the view by using tfetch().
 
 **In case of an user-defined class:**
 
@@ -195,7 +195,7 @@ If you want to return a response with a different template, specify the action n
 
 The method **render()** means to "request the view/template to create a response". This is also called "drawing".
 
-<span style="color: #b22222">**In brief: To render the template, use the render() method.** </span>
+##### In brief: To render the template, use the render() method.
 
 ### Layout
 
