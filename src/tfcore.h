@@ -5,7 +5,9 @@
 #include <cstdio>
 #include <cerrno>
 #ifdef Q_OS_WIN
+# include <windows.h>
 # include <io.h>
+# include <winbase.h>
 #else
 # include <unistd.h>
 # include <fcntl.h>
@@ -111,7 +113,10 @@ static inline int tf_lockfile(int fd, bool exclusiveLock, bool blocking)
     if (!blocking) {
         flag |= LOCKFILE_FAIL_IMMEDIATELY;
     }
-    ::LockFileEx(fd, flag, 0, 0, 0);
+    OVERLAPPED overlap;
+    overlap.Offset = 0;
+    overlap.OffsetHigh = 0;
+    ::LockFileEx((HANDLE)fd, flag, 0, 0, 0, &overlap);
     return 0;
 #else
     struct flock lck;
