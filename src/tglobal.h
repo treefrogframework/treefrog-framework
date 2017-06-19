@@ -1,9 +1,9 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
-#define TF_VERSION_STR "1.17.0"
-#define TF_VERSION_NUMBER 0x011700
-#define TF_SRC_REVISION 1437
+#define TF_VERSION_STR "1.18.0"
+#define TF_VERSION_NUMBER 0x011800
+#define TF_SRC_REVISION 1459
 
 #include <QtGlobal>
 #include <QMetaType>
