@@ -156,7 +156,6 @@
     "public:\n"                                                               \
     "    Q_INVOKABLE\n"                                                       \
     "    %2Controller() { }\n"                                                \
-    "    %2Controller(const %2Controller &other);\n"                          \
     "\n"                                                                      \
     "public slots:\n"                                                         \
     "%3"                                                                      \
@@ -168,11 +167,7 @@
 #define CONTROLLER_TINY_SOURCE_FILE_TEMPLATE                   \
     "#include \"%1controller.h\"\n"                            \
     "\n\n"                                                     \
-    "%2Controller::%2Controller(const %2Controller &)\n"       \
-    "    : ApplicationController()\n"                          \
-    "{ }\n"                                                    \
-    "\n"                                                       \
-    "%3\n"                                                     \
+    "%3"                                                       \
     "// Don't remove below this line\n"                        \
     "T_DEFINE_CONTROLLER(%2Controller)\n"
 
