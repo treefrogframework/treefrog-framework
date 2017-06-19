@@ -8,11 +8,15 @@
 #include <QFile>
 #include <QDir>
 #include <QDataStream>
+#include <QReadWriteLock>
 #include <TWebApplication>
 #include "tsessionfilestore.h"
 #include "tsystemglobal.h"
+#include "tfcore.h"
 
 #define SESSION_DIR_NAME "session"
+
+static QReadWriteLock rwLock(QReadWriteLock::Recursive);  // Global read-write lock
 
 /*!
   \class TSessionFileStore
@@ -43,7 +47,15 @@ bool TSessionFileStore::store(TSession &session)
 
     bool res = false;
     QFile file(sessionDirPath() + session.id());
-    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+    if (file.open(QIODevice::ReadWrite)) {
+        auto res = tf_flock(file.handle(), F_WRLCK, true);  // blocking flock for processes
+        int err = errno;
+        if (res < 0) {
+            tSystemWarn("flock error  errno:%d", err);
+        }
+        QWriteLocker locker(&rwLock);  // lock for threads
+
+        file.resize(0); // truncate
         QDataStream ds(&file);
         ds << *static_cast<const QVariantMap *>(&session);
         res = (ds.status() == QDataStream::Ok);
@@ -64,6 +76,13 @@ TSession TSessionFileStore::find(const QByteArray &id)
         QFile file(fi.filePath());
 
         if (file.open(QIODevice::ReadOnly)) {
+            auto res = tf_flock(file.handle(), F_RDLCK, true);  // blocking flock for processes
+            int err = errno;
+            if (res < 0) {
+                tSystemWarn("flock error  errno:%d", err);
+            }
+            QReadLocker locker(&rwLock);  // lock for threads
+
             QDataStream ds(&file);
             TSession result(id);
             ds >> *static_cast<QVariantMap *>(&result);

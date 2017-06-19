@@ -8,6 +8,7 @@
 # include <io.h>
 #else
 # include <unistd.h>
+# include <fcntl.h>
 # include <sys/file.h>
 # include <sys/socket.h>
 #endif
@@ -99,6 +100,23 @@ static inline int tf_flock(int fd, int op)
     return 0;
 #else
     TF_EINTR_LOOP(::flock(fd, op));
+#endif
+}
+
+// op:F_RDLCK,F_WRLCK,F_UNLCK
+static inline int tf_flock(int fd, int op, bool blocking)
+{
+#ifdef Q_OS_WIN
+    Q_UNUSED(fd);
+    Q_UNUSED(op);
+    return 0;
+#else
+    struct flock lck;
+    memset(&lck, 0, sizeof(struct flock));
+    lck.l_type = op;
+    lck.l_whence = SEEK_SET;
+    auto cmd = (blocking) ? F_SETLKW : F_SETLK;
+    TF_EINTR_LOOP(::fcntl(fd, cmd, &lck));
 #endif
 }
 
