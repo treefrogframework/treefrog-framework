@@ -135,6 +135,37 @@ static void WINAPI serviceHandler(DWORD ctrl)
     }
 }
 
+static LPSTR *splitCommandLine(const QString &cmdLine, int *argc)
+{
+    int argNum;
+    LPWSTR *argList;
+    argList = CommandLineToArgvW(cmdLine.trimmed().toStdWString().c_str(), &argNum);
+
+    *argc = argNum;
+    LPSTR *argv = NULL;
+    if (argList != NULL && argNum > 0) {
+
+        argv = new LPSTR[argNum];
+        for (int i=0; i<argNum; ++i) {
+            int length = WideCharToMultiByte(CP_UTF8, 0, argList[i], -1, 0, 0, NULL, NULL);
+            argv[i] = new char[length];
+            WideCharToMultiByte(CP_UTF8, 0, argList[i], -1, argv[i], length, NULL, NULL);
+        }
+    }
+
+    LocalFree(argList);
+    return argv;
+}
+
+static void freeCommandLine(LPSTR *argv, int argc)
+{
+    if (argv) {
+        for (int i=0; i<argc; ++i) {
+            delete[] argv[i];
+        }
+        delete[] argv;
+    }
+}
 
 void WINAPI winServiceMain(DWORD, LPTSTR *)
 {
@@ -150,12 +181,21 @@ void WINAPI winServiceMain(DWORD, LPTSTR *)
     // Main function
     int ret = 1;
     QString binary = serviceFilePath(serviceName);
+
     if (!binary.isEmpty()) {
-        const char *args[1] = { binary.toStdString().c_str() };
-        try {
-            QDir::setCurrent(QFileInfo(binary).absolutePath());
-            ret = managerMain(1, (char**)args);
-        } catch (...) { }
+
+        int argc;
+        LPSTR *argv;
+        argv = splitCommandLine(binary, &argc);
+        if (argv) {
+
+            try {
+                QDir::setCurrent(QFileInfo(argv[0]).absolutePath());
+                ret = managerMain(argc, argv);
+            } catch (...) { }
+
+            freeCommandLine(argv, argc);
+        }
     }
 
     // Service status
