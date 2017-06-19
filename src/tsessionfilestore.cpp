@@ -48,7 +48,7 @@ bool TSessionFileStore::store(TSession &session)
     bool res = false;
     QFile file(sessionDirPath() + session.id());
     if (file.open(QIODevice::ReadWrite)) {
-        auto res = tf_flock(file.handle(), F_WRLCK, true);  // blocking flock for processes
+        auto res = tf_lockfile(file.handle(), true, true);  // blocking flock for processes
         int err = errno;
         if (res < 0) {
             tSystemWarn("flock error  errno:%d", err);
@@ -76,7 +76,7 @@ TSession TSessionFileStore::find(const QByteArray &id)
         QFile file(fi.filePath());
 
         if (file.open(QIODevice::ReadOnly)) {
-            auto res = tf_flock(file.handle(), F_RDLCK, true);  // blocking flock for processes
+            auto res = tf_lockfile(file.handle(), false, true);  // blocking flock for processes
             int err = errno;
             if (res < 0) {
                 tSystemWarn("flock error  errno:%d", err);

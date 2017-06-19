@@ -103,17 +103,21 @@ static inline int tf_flock(int fd, int op)
 #endif
 }
 
-// op:F_RDLCK,F_WRLCK,F_UNLCK
-static inline int tf_flock(int fd, int op, bool blocking)
+// advisory lock. exclusiveLock, false:shared lock
+static inline int tf_lockfile(int fd, bool exclusiveLock, bool blocking)
 {
 #ifdef Q_OS_WIN
-    Q_UNUSED(fd);
-    Q_UNUSED(op);
+    DWORD flag = (exclusiveLock) ? LOCKFILE_EXCLUSIVE_LOCK : 0;
+    if (!blocking) {
+        flag |= LOCKFILE_FAIL_IMMEDIATELY;
+    }
+    ::LockFileEx(fd, flag, 0, 0, 0);
     return 0;
 #else
     struct flock lck;
+
     memset(&lck, 0, sizeof(struct flock));
-    lck.l_type = op;
+    lck.l_type = (exclusiveLock) ? F_WRLCK : F_RDLCK;
     lck.l_whence = SEEK_SET;
     auto cmd = (blocking) ? F_SETLKW : F_SETLK;
     TF_EINTR_LOOP(::fcntl(fd, cmd, &lck));
