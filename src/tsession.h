@@ -25,7 +25,7 @@ public:
 private:
     QByteArray sessionId;
 
-    void clear() {} // disabled
+    void clear(); // disabled
     friend class TSessionCookieStore;
     friend class TActionContext;
 };

@@ -54,10 +54,11 @@ bool TSessionCookieStore::store(TSession &session)
 
 TSession TSessionCookieStore::find(const QByteArray &id)
 {
-    TSession session;
+    TSession session(id);
     if (id.isEmpty()) {
         return session;
     }
+
     QList<QByteArray> balst = id.split('_');
     if (balst.count() == 2 && !balst.value(0).isEmpty() && !balst.value(1).isEmpty()) {
         QByteArray ba = QByteArray::fromHex(balst.value(0));
@@ -75,7 +76,7 @@ TSession TSessionCookieStore::find(const QByteArray &id)
 
         if (ds.status() != QDataStream::Ok) {
             tSystemError("Failed to load a session from the cookie store.");
-            session.clear();
+            session.reset();
         }
     }
     return session;

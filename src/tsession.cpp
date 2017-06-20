@@ -8,6 +8,7 @@
 #include <TSession>
 #include <TAppSettings>
 #include <TActionController>
+#include "tsystemglobal.h"
 
 /*!
   \class TSession
@@ -26,6 +27,12 @@ void TSession::reset()
     QVariantMap::clear();
     // Agsinst CSRF
     TActionController::setCsrfProtectionInto(*this);
+}
+
+
+void TSession::clear()
+{
+    tSystemWarn("TSession::clear()  obsoleted");
 }
 
 /*!

@@ -186,6 +186,8 @@ void TActionContext::execute(THttpRequest &request, int sid)
                             // Sets the path in the session cookie
                             QString cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
                             currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath, QString(), false, true);
+                        } else {
+                            tSystemError("Failed to store a session");
                         }
                     }
 
