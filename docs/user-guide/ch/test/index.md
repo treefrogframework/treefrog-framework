@@ -4,36 +4,40 @@ page_id: "120.0"
 ---
 
 ## 测试
-在开发的过程中, 测试是非常重要的.测试需要重复检查, 它是一个烦人的过程.出于这个原因, 自动处理这个过程就变得非常有用了.
+
+在开发的过程中, 测试是非常重要的. 测试需要重复检查, 它是一个烦人的过程. 出于这个原因, 自动处理这个过程就变得非常有用了.
 
 ## 模型(model)的单元测试
-在这一节总, 我们将尝试检查模型(model)是否工作在正确的方式.测试框架使用了Qt的TestLib(更多详细信息,请查看[文档](http://qt-project.org/doc/qt-5.0/qttestlib/qtest-overview.html){:target="_blank"}).
-让我们测试[教程](/user-guide/en/tutorial/index.html){:target="_blank"}中生成的Blog模型(model)的代码.先提前为模型(model)生成一个共享库.首先, 我们在*test*目录下创建工作目录.
+
+在这一节总, 我们将尝试检查模型(model)是否工作在正确的方式. 测试框架使用了Qt的TestLib(更多详细信息,请查看[文档](http://qt-project.org/doc/qt-5.0/qttestlib/qtest-overview.html){:target="_blank"}).
+
+让我们测试[教程](/user-guide/en/tutorial/index.html){:target="_blank"}中生成的Blog模型(model)的代码. 先提前为模型(model)生成一个共享库. 首先, 我们在*test*目录下创建工作目录.
 
 ```
 $ cd test
 $ mkdir blog
 $ cd blog
-
 ```
-我们将尝试创建 生成和读取Blog模型的测试用例.<br>
-例如, 我们设置实现测试的名字为*TestBlog*.下面内容的源代码保存在名为*testblog.cpp*的文件中.
+
+我们将尝试创建生成和读取Blog模型的测试用例.<br>
+例如, 我们设置实现测试的名字为*TestBlog*. 下面内容的源代码保存在名为*testblog.cpp*的文件中.
 
 ```c++
 #include <TfTest/TfTest>
 #include "models/blog.h"    //  包含模型类
+
 class TestBlog : public QObject
 {
     Q_OBJECT
-private slots:
-    void create_data();
+    private slots:
+void create_data();
     void create();
 };
 
 void TestBlog::create_data()
 {
     // 定义测试数据
-    QTest::addColumn<QString>("title");
+    QTest::addColumn<QString>("title"); 
     QTest::addColumn<QString>("body");
     //增加测试数据
     QTest::newRow("No1") << "Hello" << "Hello world.";
@@ -42,23 +46,23 @@ void TestBlog::create_data()
 void TestBlog::create()
 {
     // 获取测试数据
-    QFETCH(QString, title);
+    QFETCH(QString, title); 
     QFETCH(QString, body);
     //测试的逻辑
     Blog created = Blog::create(title, body);
     int id = created.id();
     Blog blog = Blog::get(id);  // 获取模型 ID
     //检查结果的执行
-    QCOMPARE(blog.title(), title);
+    QCOMPARE(blog.title(), title); 
     QCOMPARE(blog.body(), body);
 }
-
 TF_TEST_MAIN( TestBlog)// 指定你创建的类名
 #include "testblog.moc"  // 宏. Make .moc扩展
 ```
 
-作为补充说明, create()方法可以执行这个测试, QCOMPARE宏可以检查实际返回的值.create_data()方法传递测试数据.
+作为补充说明, create()方法可以执行这个测试, QCOMPARE宏可以检查实际返回的值. create_data()方法传递测试数据.
 规则是在方法名后名添加'_data".
+
 在这个例子, 我在create_data()方法中执行下面的内容.
 
 * QTest::addColumn() function: 定义名字和测试数据的类型.
@@ -70,7 +74,7 @@ TF_TEST_MAIN( TestBlog)// 指定你创建的类名
 * 执行测试逻辑
 * 检查结果是否正确.
 
-接下来, 创建一个项目文件来生成*Makefile*.文件名是*testblog.pro*. 保存下面的内容.
+接下来, 创建一个项目文件来生成*Makefile*. 文件名是*testblog.pro*. 保存下面的内容.
 
 ```
 TARGET = testblog
@@ -86,7 +90,7 @@ include(../../appbase.pri)
 SOURCES = testblog.cpp      # 指定文件名
 ```
 
-Qt5以后有些规范已经更改了.如果使用Qt5, 请更改上面的第5行如下.
+Qt5以后有些规范已经更改了. 如果使用Qt5, 请更改上面的第5行如下.
 
 ```
 QT += network sql testlib
@@ -97,21 +101,21 @@ QT += network sql testlib
 ```
 $ qmake
 $ make
-```
+``` 
 
 接下来, 要执行测试过程,一些配置需要完成.
-因为需要引用各种配置文件, 测试命令需要一个配置目录的符号连接.它的位置应该直接在测试命令下.当使用SQLite数据库时, 我们也需要生成一个符号连接到*db*文件夹.
+因为需要引用各种配置文件, 测试命令需要一个配置目录的符号连接. 它的位置应该直接在测试命令下. 当使用SQLite数据库时, 我们也需要生成一个符号连接到*db*文件夹.
 
 ```
 $ ln -s  ../../config  config
 $ ln -s  ../../db  db
 ```
 
-如果你使用window, 一个测试的exe文件在*debug*文件夹内生成, 故在那里生成符号连接.请注意: 它不是一个快捷方式.
+如果你使用window, 一个测试的exe文件在*debug*文件夹内生成, 故在那里生成符号连接. 请注意: 它不是一个快捷方式.
 要创建一个符号连接, 必须有管理员权限从命令行窗口运行命令.
 
 ```
-> cd debug
+> cd debug 
 > mklink /D  config  ..\..\..\config
 > mklink /D  db  ..\..\..\db
 ```
@@ -142,7 +146,7 @@ Password=
 ConnectOptions=
 ```
 
-配置现在完成了.接下来, 测试需要被执行.如果测试从头到尾都是成功的, 你可以在屏幕上看到下面的信息.
+配置现在完成了. 接下来, 测试需要被执行. 如果测试从头到尾都是成功的, 你可以在屏幕上看到下面的信息.
 
 ```
 $ ./testblog
