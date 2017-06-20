@@ -27,7 +27,7 @@ windows {
   }
   LIBS += -L"$$target.path" -lntdll
   win32-msvc* {
-    LIBS += advapi32.lib
+    LIBS += advapi32.lib shell32.lib
   }
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
