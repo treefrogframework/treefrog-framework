@@ -1,0 +1,21 @@
+<div class="top-navigation-inner">
+    <ul>
+    	{% if page.url contains '/ja/' %}
+    	<li><a href="{{ site.baseurl }}/" class="{% if page.url == '/' %}activeMenuItem {% endif %}" title="Home">ホーム</a></li>
+        <li><a href="{{ site.baseurl }}/ja//download" class="{% if page.url == '/ja/download/' %}activeMenuItem {% endif %}" title="Download">ダウンロード</a></li>
+        <li><a href="{{ site.baseurl }}/ja//documents" class="{% if page.url == '/ja/documents/' %}activeMenuItem {% endif %}" title="Home">ドキュメント</a></li>
+        <li><a href="{{ site.baseurl }}/ja//api-reference" class="{% if page.url == '/ja/api-reference/' %}activeMenuItem {% endif %}" title="API Reference">API リファレンス</a></li>
+        <li><a href="{{ site.baseurl }}/ja//faq" class="{% if page.url == '/ja/faq/' %}activeMenuItem {% endif %}" title="FAQ">FAQ</a></li>
+        <li><a href="{{ site.baseurl }}/ja//blog" class="{% if page.url == '/ja/blog/' %}activeMenuItem {% endif %}" title="Blog">ブログ</a></li>
+        <li><a href="{{ site.baseurl }}/ja//development" class="{% if page.url == '/ja/development/' %}activeMenuItem {% endif %}" title="Development">開発</a></li>
+		{% else %}
+        <li><a href="{{ site.baseurl }}/" class="{% if page.url == '/' %}activeMenuItem {% endif %}" title="Home">Home</a></li>
+        <li><a href="{{ site.baseurl }}/download" class="{% if page.url == '/download/' %}activeMenuItem {% endif %}" title="Download">Download</a></li>
+        <li><a href="{{ site.baseurl }}/documents" class="{% if page.url == '/documents/' %}activeMenuItem {% endif %}" title="Home">Documents</a></li>
+        <li><a href="{{ site.baseurl }}/api-reference" class="{% if page.url == '/api-reference/' %}activeMenuItem {% endif %}" title="API Reference">API Reference</a></li>
+        <li><a href="{{ site.baseurl }}/faq" class="{% if page.url == '/faq/' %}activeMenuItem {% endif %}" title="FAQ">FAQ</a></li>
+        <li><a href="{{ site.baseurl }}/blog" class="{% if page.url == '/blog/' %}activeMenuItem {% endif %}" title="Blog">Blog</a></li>
+        <li><a href="{{ site.baseurl }}/development" class="{% if page.url == '/development/' %}activeMenuItem {% endif %}" title="Development">Development</a></li>
+    	{% endif %}
+    </ul>
+</div>
