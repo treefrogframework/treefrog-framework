@@ -5,12 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <Windows.h>
-#include <wchar.h>
+#include <windows.h>
 #include <vector>
-#include <QString>
-#include <QFileInfo>
-#include <QDir>
+#include <QtCore>
 #include <TGlobal>
 #include <TWebApplication>
 #include <TSystemGlobal>
@@ -30,44 +27,27 @@ static SERVICE_STATUS serviceStatus = {
     0           // dwWaitHint
 };
 
-static QString enumerateService(DWORD processId)
+
+static QString getServiceName(DWORD processId)
 {
-    SC_HANDLE hSCM = OpenSCManager(NULL, NULL,
-        SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_CONNECT);
-
-    if (hSCM == NULL) {
-        return QString();
-    }
-    DWORD bufferSize = 0;
-    DWORD requiredBufferSize = 0;
-    DWORD totalServicesCount = 0;
-    EnumServicesStatusEx(hSCM,
-			 SC_ENUM_PROCESS_INFO,
-			 SERVICE_WIN32,
-			 SERVICE_STATE_ALL,
-			 NULL,
-			 bufferSize,
-			 &requiredBufferSize,
-			 &totalServicesCount,
-			 NULL,
-			 NULL);
-
-    std::vector<BYTE> buffer(requiredBufferSize);
-    EnumServicesStatusEx(hSCM,
-			 SC_ENUM_PROCESS_INFO,
-			 SERVICE_WIN32,
-			 SERVICE_STATE_ALL,
-			 buffer.data(),
-			 (DWORD)buffer.size(),
-			 &requiredBufferSize,
-			 &totalServicesCount,
-			 NULL,
-			 NULL);
-
     QString name;
-    LPENUM_SERVICE_STATUS_PROCESS services =
-        reinterpret_cast<LPENUM_SERVICE_STATUS_PROCESS>(buffer.data());
-    for (unsigned int i = 0; i < totalServicesCount; ++i) {
+    SC_HANDLE hSCM = OpenSCManager(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_CONNECT);
+    if (! hSCM) {
+        return name;
+    }
+
+    DWORD bufSize = 0;
+    DWORD servCount = 0;
+    EnumServicesStatusEx(hSCM, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL,
+                         nullptr, 0, &bufSize, &servCount, nullptr, nullptr);
+
+    std::vector<BYTE> buffer(bufSize);
+    EnumServicesStatusEx(hSCM, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL,
+                         buffer.data(), (DWORD)buffer.size(), &bufSize,
+                         &servCount, nullptr, nullptr);
+
+    auto services = reinterpret_cast<LPENUM_SERVICE_STATUS_PROCESS>(buffer.data());
+    for (unsigned int i = 0; i < servCount; ++i) {
         ENUM_SERVICE_STATUS_PROCESS service = services[i];
         if (service.ServiceStatusProcess.dwProcessId == processId) {
             // This is your service.
@@ -75,27 +55,21 @@ static QString enumerateService(DWORD processId)
             break;
         }
     }
-
     CloseServiceHandle(hSCM);
-
     return name;
 }
 
-static QString serviceFilePath(const QString &serviceName)
+
+static QString getServiceFilePath(const QString &serviceName)
 {
     QString result;
     // Open the Service Control Manager
-    SC_HANDLE schSCManager = OpenSCManager(
-        NULL,                    // local computer
-        NULL,                    // ServicesActive database
-        SC_MANAGER_ALL_ACCESS);  // full access rights
-
+    SC_HANDLE schSCManager = OpenSCManager(nullptr,                // local computer
+                                           nullptr,                // ServicesActive database
+                                           SC_MANAGER_ALL_ACCESS); // full access rights
     if (schSCManager) {
         // Try to open the service
-        SC_HANDLE schService = OpenService(
-                    schSCManager,
-                    (const wchar_t*)serviceName.utf16(),
-                    SERVICE_QUERY_CONFIG);
+        SC_HANDLE schService = OpenService(schSCManager, (const wchar_t*)serviceName.utf16(), SERVICE_QUERY_CONFIG);
         if (schService) {
             DWORD sizeNeeded = 0;
             char data[8 * 1024];
@@ -110,6 +84,7 @@ static QString serviceFilePath(const QString &serviceName)
     return result;
 }
 
+
 static void WINAPI serviceHandler(DWORD ctrl)
 {
     switch (ctrl) {
@@ -121,14 +96,14 @@ static void WINAPI serviceHandler(DWORD ctrl)
         SetServiceStatus(statusHandle, &serviceStatus);
         Tf::app()->exit(0);
         break;
-        
+
     case SERVICE_CONTROL_PAUSE:
     case SERVICE_CONTROL_CONTINUE:
     case SERVICE_CONTROL_INTERROGATE:
         tSystemWarn("Windows service: Received ctrl code: %ld ", ctrl);
         SetServiceStatus(statusHandle, &serviceStatus);
         break;
-        
+
     default:
         tSystemWarn("Windows service: Invalid ctrl code: %ld ", ctrl);
         break;
@@ -136,32 +111,51 @@ static void WINAPI serviceHandler(DWORD ctrl)
 }
 
 
+static QList<QByteArray> parseArguments(const QString &str)
+{
+    const QRegExp rx("(\"([^\"]*)\"|([^ ]+))", Qt::CaseSensitive, QRegExp::RegExp2);
+
+    QList<QByteArray> res;
+    int pos = 0;
+    while ((pos = rx.indexIn(str, pos)) >= 0) {
+        auto cap2 = rx.cap(2);
+        res << ((cap2.isEmpty()) ? rx.cap(3) : cap2).toLocal8Bit();
+        pos += rx.matchedLength();
+    }
+    return res;
+}
+
+
 void WINAPI winServiceMain(DWORD, LPTSTR *)
 {
-    QString serviceName = enumerateService(GetCurrentProcessId());
+    auto serviceName = getServiceName(GetCurrentProcessId());
     statusHandle = RegisterServiceCtrlHandler((const wchar_t*)serviceName.utf16(), serviceHandler);
-    if (!statusHandle)
+    if (! statusHandle) {
         return;
-    
+    }
+
     // Service status
+    int ret = 1;
     serviceStatus.dwCurrentState = SERVICE_RUNNING;
     SetServiceStatus(statusHandle, &serviceStatus);
 
     // Main function
-    int ret = 1;
-    QString binary = serviceFilePath(serviceName);
-    if (!binary.isEmpty()) {
-        const char *args[1] = { binary.toStdString().c_str() };
-        try {
-            QDir::setCurrent(QFileInfo(binary).absolutePath());
-            ret = managerMain(1, (char**)args);
-        } catch (...) { }
+    QString pathstr = getServiceFilePath(serviceName);
+    if (!pathstr.isEmpty()) {
+        auto argList = parseArguments(pathstr);
+        auto *args = new char*[argList.count()];
+
+        for (int i = 0; i < argList.count(); i++) {
+            args[i] = argList[i].data();
+        }
+        ret = managerMain(argList.count(), args);
     }
 
     // Service status
     serviceStatus.dwCurrentState = SERVICE_STOPPED;
     serviceStatus.dwWin32ExitCode = ret;
     SetServiceStatus(statusHandle, &serviceStatus);
+    tSystemInfo("Windows service stopped");
 }
 
 } // namespace TreeFrog
