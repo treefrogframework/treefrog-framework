@@ -135,11 +135,11 @@ void WINAPI winServiceMain(DWORD, LPTSTR *)
     }
 
     // Service status
-    int ret = 1;
     serviceStatus.dwCurrentState = SERVICE_RUNNING;
     SetServiceStatus(statusHandle, &serviceStatus);
 
     // Main function
+    int ret = 1;
     QString pathstr = getServiceFilePath(serviceName);
     if (!pathstr.isEmpty()) {
         auto argList = parseArguments(pathstr);
