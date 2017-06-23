@@ -149,6 +149,7 @@ void WINAPI winServiceMain(DWORD, LPTSTR *)
             args[i] = argList[i].data();
         }
         ret = managerMain(argList.count(), args);
+        delete[] args;
     }
 
     // Service status
