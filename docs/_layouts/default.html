@@ -16,30 +16,36 @@
 <body>
     {% include analytics.html %}
     <!-- HEADER -->
-    <div id="header_wrap" class="outer">
+    <header id="header-wrap" class="outer">
         {% include header.html %}
-    </div>
+    </header>
     <!-- /#HEADER -->
+
+    <!-- TOP-NAVIGATION -->
+    <nav id="top-navigation-wrap" class="outer">
+        {% include top-navigation.html %}
+    </nav>
+    <!-- TOP-NAVIGATION -->
     
     <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
+    <section id="main-content-wrap" class="outer">
         <div class="main-inner">
             <div id="main-content"> 
                 {{ content }}
             </div>
-            <!-- NAIVGATION -->
-            <div id="navigation"> 
-                {% include navigation.html %} 
-            </div>
-            <!-- /#NAIVGATION -->
+            <!-- SIDE-NAIVGATION -->
+            <nav id="side-navigation"> 
+                {% include side-navigation.html %} 
+            </nav>
+            <!-- /#SIDE-NAIVGATION -->
         </div>
-    </div>
+    </section>
     <!-- /#MAIN CONTENT -->
     
     <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
+    <footer id="footer-wrap" class="outer">
         {% include footer.html %}
-    </div>
+    </footer>
     <!-- /#FOOTER  -->
 </body>
 
