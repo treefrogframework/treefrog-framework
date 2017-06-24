@@ -14,15 +14,20 @@
 </head>
 
 <body>
-    {% include analytics.html %}
     <!-- HEADER -->
-    <div id="header_wrap" class="outer">
+    <div id="header-wrap" class="outer">
         {% include header.html %}
     </div>
     <!-- /#HEADER -->
+
+    <!-- NAV -->
+    <nav id="nav-wrap" class="outer">
+        {% include nav.html %}
+    </nav>
+    <!-- NAV -->
     
     <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
+    <div id="main-content-wrap" class="outer">
         <div class="main-inner">
             <div id="main-content"> 
                 {{ content }}
@@ -37,10 +42,10 @@
     <!-- /#MAIN CONTENT -->
     
     <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
+    <div id="footer-wrap" class="outer">
         {% include footer.html %}
     </div>
     <!-- /#FOOTER  -->
+    {% include analytics.html %}
 </body>
-
 </html>
