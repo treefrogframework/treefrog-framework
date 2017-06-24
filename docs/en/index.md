@@ -21,7 +21,7 @@ May 27, 2017
   - Added a class to process in background, TBackgroundProcess.
   - Other bugfixes.
         
-[<span style="color: blue;">Download this version</span>](/download/en)
+[<span style="color: blue;">Download this version</span>](download/en)
 
 Apr 8, 2017
 
