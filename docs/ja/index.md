@@ -78,7 +78,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 TreeFrog Framework は次のような特徴を兼ね備えています。
 
- 1. 高いパフォーマンス ： 高度に最適化されたアプリケーションサーバエンジン  外部のベンチマークサイト
+ 1. 高いパフォーマンス ： 高度に最適化されたアプリケーションサーバエンジン  [外部のベンチマークサイト](http://www.techempower.com/benchmarks/)
  2. O/R マッピング ： 複雑で面倒なデータベースアクセスを隠蔽
  3. テンプレートシステム ： テンプレートとプレゼンテーションロジックを完全に分離
  4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2, InterBase, MongoDB, Redis.
