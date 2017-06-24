@@ -26,12 +26,12 @@
         <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
         <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% elsif page.url contains '/search.html' %}
-        {% assign en_url = url | replace: '/ja/', '' %}
+        {% assign en_url = url | replace: '/ja/', '/en/' %}
         {% assign ch_url = url | replace: '/ja/', '/ch/' %}
         <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
         <li><a href="{{ site.baseurl }}/{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% else %}
-        {% assign en_url = url | replace: '/ja/', '' %}
+        {% assign en_url = url | replace: '/ja/', '/en/' %}
         {% assign ch_url = url | replace: '/ja/', '/ch/' %}
         <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
         <li><a href="{{ site.baseurl }}{{ ch_url }}/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
@@ -45,12 +45,12 @@
         <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
         <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
     {% elsif page.url contains '/search.html' %}
-        {% assign en_url = url | replace: '/ch/', '' %}
+        {% assign en_url = url | replace: '/ch/', '/en/' %}
         {% assign ja_url = url | replace: '/ch/', '/ja/' %}
         <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
         <li><a href="{{ site.baseurl }}/{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
     {% else %}
-        {% assign en_url = url | replace: '/ch/', '' %}
+        {% assign en_url = url | replace: '/ch/', '/en/' %}
         {% assign ja_url = url | replace: '/ch/', '/ja/' %}
         <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
         <li><a href="{{ site.baseurl }}{{ ja_url }}/" class="language-link">日本語 (Japanese)</a></li>

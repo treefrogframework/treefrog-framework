@@ -47,6 +47,11 @@ div.nav-inner a.activeMenuItem, div.nav-inner a.activeMenuItem:visited {
     margin: 0px auto;
     padding: 20px 10px 30px 10px !important; 
 }
+h1, h2, h3, h4, h5, h6 {
+  //font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
+    font-family: helvetica, arial, "hiragino kaku gothic pron", meiryo, "ms pgothic", sans-serif;
+    letter-spacing: 0;
+}
 h1 {
     font-size: 24px;
     color: #555;
@@ -70,6 +75,9 @@ h5 {
 h6 {
     font-size: 15px;
     color: #555;
+}
+th {
+    padding: 2px;
 }
 .footer-inner {
     width: 980px;
@@ -177,9 +185,6 @@ a:hover {
 }
 a.menuItemLink:hover {
     color: #007edf !important;
-}
-ul.menu > li.branch.open {
-    list-style-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="9" height="6" viewBox="0 0 400 300"><path d="M 0 0 L 400 0 L 200 300 z" fill="%23424242" /></svg>');
 }
 .widget-title {
     border-bottom: 1px solid #222222;
