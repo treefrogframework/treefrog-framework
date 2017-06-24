@@ -6,7 +6,7 @@ page_id: "home.00"
 ## Small but Powerful and Efficient
 
 TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and WebSocket protocol.
- 
+
 Because the sever-side framework was written in C++/Qt, web applications can run faster than that of scripting language. In application development, it provides an O/R mapping system and template systems on an MVC architecture, aims to achieve high productivity through the policy of  convention over configuration.
 
 ## Latest News
@@ -20,8 +20,8 @@ May 27, 2017
   - Added logic of routing to a static file.
   - Added a class to process in background, TBackgroundProcess.
   - Other bugfixes.
-        
-[<span style="color: blue;">Download this version</span>](download/en)
+
+ <a href="{{site.baseurl}}/download/en"><span style="color: blue;">Download this version</span></a>
 
 Apr 8, 2017
 
@@ -32,7 +32,7 @@ Apr 8, 2017
   - Added a function for multi-fields 'order by', tfGetModelListByCriteria().
   - Added pages for GigHub Pages, English and Japanese.
   - Other bugfixes.
-           
+
 Jan 22, 2017
 
 ### TreeFrog Framework version 1.15.0 (stable) release
@@ -42,7 +42,7 @@ Jan 22, 2017
   - Added C++11 for-loop for TSqlORMapper class.
   - Modified functions of TFormValidator class.
   - Other bugfixes.
-        
+
 Dec 5, 2016
 
 ### TreeFrog Framework version 1.14.0 (stable) release
@@ -55,7 +55,7 @@ Dec 5, 2016
   - Performance improvement.
   - Other bugfixes.
 
-   
+
 ##### WANTED
  - Developers, testers.
 

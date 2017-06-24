@@ -22,8 +22,8 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
   - 静的ファイルへのルーティング設定を追加
   - バックグランドプロセスを実現するTBackgroundProcessクラスを追加
   - その他バグフィックス
-   
-[<span style="color: blue;">ダウンロードはこちらから</span>](download/ja)
+
+ <a href="{{site.baseurl}}/download/ja"><span style="color: blue;">ダウンロードはこちらから</span></a>
 
 ### 2017/4/8  TreeFrog Framework バージョン1.16.0 （安定版）リリース
 
@@ -32,7 +32,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
   - マルチフィールドのorder byに対応した関数を追加
   - GigHub Pages（日本語、英語）を追加
   - その他バグフィックス
-  
+
 ### 2017/1/22  TreeFrog Framework バージョン1.15.0 （安定版）リリース
 
   - 'tDebug() << "foo" ' のようなデバッグ出力に対応
@@ -40,7 +40,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
   - TSqlORMapper が C++11 スタイルの for 文に対応
   - TFormValidator クラスの関数を修正
   - その他バグフィックス
-    
+
 ### 2016/12/5  TreeFrog Framework バージョン1.14.0 （安定版）リリース
 
   - thread_local の代わりにQThreadStorageを使うよう修正
@@ -55,13 +55,13 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 
  - 本サイトを英訳してくれる方、どなたかお願いします m(_ _)m
  - 開発者、テスター、ドキュメント作成
- 
+
 
 ときどき つぶやきます [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
- 
+
 企業向け有償サポートは[イディ株式会社](http://www.ideeinc.co.jp/){:target="_blank"} にお問い合わせください。
 
- 
+
 ## TreeFrog Framework という選択
 
 Webアプリの開発において、開発効率と動作速度はトレードオフの関係があると言われますが、本当にそうなのでしょうか？
