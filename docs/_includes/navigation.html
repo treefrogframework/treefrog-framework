@@ -17,27 +17,29 @@
 
 <h4 class="widget-title">Languages</h4>
 <ul>
-{% if page.url contains '/ja/' %}
+{% assign url = page.url | prepend: site.github.url %} 
+{% if page.url contains '/en/' %}
+    <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    {% assign ja_url = url | replace: '/en/', '/ja/' %}
+    {% assign ch_url = url | replace: '/en/', '/ch/' %}
+    <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+{% elsif page.url contains '/ja/' %}
     <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">日本語 (Japanese)</a></li>
-    {% assign url = page.url | prepend: site.github.url %} 
     {% assign en_url = url | replace: '/ja/', '/en/' %}
     {% assign ch_url = url | replace: '/ja/', '/ch/' %}
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
     <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
 {% elsif page.url contains '/ch/' %}
     <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% assign url = page.url | prepend: site.github.url %}
     {% assign en_url = url | replace: '/ch/', '/en/' %}
     {% assign ja_url = url | replace: '/ch/', '/ja/' %}
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
     <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
 {% else %}  
-    <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
-    {% assign url = page.url | prepend: site.github.url %}
-    {% assign ja_url = url | replace: '/en/', '/ja/' %}
-    {% assign ch_url = url | replace: '/en/', '/ch/' %}
-    <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
-    <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+    <li><a href="{{ site.baseurl }}/en/" class="language-link">English</a></li>
+    <li><a href="{{ site.baseurl }}/ja/" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}/ch/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
 {% endif %}
 </ul>
 

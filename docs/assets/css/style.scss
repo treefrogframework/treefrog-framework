@@ -88,7 +88,7 @@ th {
     background-image: url(../images/header.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    min-height: 118px;
+    min-height: 128px;
 }
 #header {
     width: 100%;
@@ -105,20 +105,21 @@ img#logo {
     width: 90%;
     height: 90%;
     border: none;
-    padding: 5px 0px 0px 0px;
-    margin: 0px;
+    padding: 5px 0 0 0;
+    margin: 0;
     box-shadow: none;
 }
 #project-title {
-    margin-left: 20px;
-    padding-top: 10px;
+    margin-top: 0;
+    margin-left: 40px;
+    padding-top: 20px;
     color: #FFF;
     font-size: 30px;
 }
 h2#project-tagline {
     float: left;
-    margin-top: 0px;
-    margin-left: 20px;
+    margin-top: 0;
+    margin-left: 40px;
     color: #C2DEFF;
     font-style: italic;
     font-size: 17px;
