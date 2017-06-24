@@ -7,20 +7,20 @@ page_id: "user-guide.00"
 
 ### TreeFrog Framework Documentation
 
-Chapter 1. [はじめに](user-guide/ja/introduction/)
+Chapter 1. [はじめに](introduction/)
 
-Chapter 2. [インストール](user-guide/ja/install/)
+Chapter 2. [インストール](install/)
 
-Chapter 3. [チュートリアル](user-guide/ja/tutorial/)
+Chapter 3. [チュートリアル](tutorial/)
 
-Chapter 4. [ジェネレータ](user-guide/ja/generator/)
+Chapter 4. [ジェネレータ](generator/)
 
-Chapter 5. [コントローラ](user-guide/ja/controller/)
+Chapter 5. [コントローラ](controller/)
 
-Chapter 6. [モデル](user-guide/ja/model/)
+Chapter 6. [モデル](model/)
 
-Chapter 7. [ビュー](user-guide/ja/view/)
+Chapter 7. [ビュー](view/)
 
-Chapter 8. [ヘルパ](user-guide/ja/helper-reference/)
+Chapter 8. [ヘルパ](helper-reference/)
 
-Chapter 9. [WebSocket](user-guide/ja/websocket/)
+Chapter 9. [WebSocket](websocket/)
