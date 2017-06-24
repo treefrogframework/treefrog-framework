@@ -11,15 +11,11 @@ body {
 }
 .header-inner {
     width: 980px;
-    margin: 0px auto;
-}
-nav#top-navigation-wrap {
-    border-bottom-left-radius: 7px;
-    border-bottom-right-radius: 7px;
+    margin: 0 auto;
 }
 div.nav-inner {
     width: 980px;
-    margin: 0px auto;
+    margin: 0 auto;
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
     background: linear-gradient(to bottom, #ccc2b0, #c7bda9 50%, #ac9c7f);
@@ -28,7 +24,7 @@ div.nav-inner {
     font-weight: bold;
 }
 div.nav-inner ul {
-    margin: 0px;
+    margin: 0;
 }
 div.nav-inner ul li {
     list-style-type: none;
@@ -44,11 +40,10 @@ div.nav-inner a.activeMenuItem, div.nav-inner a.activeMenuItem:visited {
 }
 .main-inner {
     width: 980px;
-    margin: 0px auto;
+    margin: 0 auto;
     padding: 20px 10px 30px 10px !important; 
 }
 h1, h2, h3, h4, h5, h6 {
-  //font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
     font-family: helvetica, arial, "hiragino kaku gothic pron", meiryo, "ms pgothic", sans-serif;
     letter-spacing: 0;
 }
@@ -109,28 +104,27 @@ img#logo {
     margin: 0;
     box-shadow: none;
 }
-#project-title {
-    margin-top: 0;
-    margin-left: 40px;
+.site-title {
+    display: block;
+    margin: 0 40px;
     padding-top: 20px;
     color: #FFF;
     font-size: 30px;
 }
-h2#project-tagline {
-    float: left;
-    margin-top: 0;
-    margin-left: 40px;
+.site-tagline {
+    display: block;
+    margin: 0 40px;
     color: #C2DEFF;
     font-style: italic;
     font-size: 17px;
     background: none;
 }
-#main-content {
+.main-content {
     width: 720px;
     float: left;
     padding-bottom: 10px;
 }
-#main-content-wrap {
+.main-content-wrap {
     overflow: auto;
     border: none;
     padding-bottom: 30px;
@@ -139,26 +133,7 @@ h2#project-tagline {
 #header-background {
     position: absolute;
 }
-#site-title {
-    width: 55%;
-    position: absolute; 
-    margin-top: 44px; 
-    margin-left: 40px; 
-    color: #FEF9EE; 
-}
-#site-description {
-    text-align: right; 
-    padding-right: 20px; 
-    width: 40%;
-    text-align:left; 
-    clear: both; 
-    float: left; 
-    position:absolute;  
-    margin-top: 90px;  
-    margin-left: 40px;
-    color: #C2DEFF;
-}
-#navigation {
+.navigation {
     width: 220px;
     float: right;
     padding: 0 10px 10px 10px;
@@ -169,7 +144,7 @@ h2#project-tagline {
     margin-left: 10px;
     margin-bottom: 10px;
 }
-#navigation ul {
+.navigation ul {
     margin-bottom: 0px;
 }
 .thanks-banner img {
