@@ -34,7 +34,7 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 </div>
  
- [<span style="color:blue;">以前のバージョンはこちら</span>](https://github.com/treefrogframework/treefrog-framework/releases)
+ [以前のバージョンはこちら>](https://github.com/treefrogframework/treefrog-framework/releases)
 
 最新のソースコードは [GitHub](https://github.com/treefrogframework/) からどうぞ。
 
