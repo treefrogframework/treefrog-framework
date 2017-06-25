@@ -9,12 +9,17 @@ body {
     color: #444;
     background: #FDFEEF;
 }
-.header-inner {
+#wrapper {
+    margin: 0 auto;
     width: 980px;
+    min-width: 980px;
+}
+.header-inner {
+    width: 100%;
     margin: 0 auto;
 }
 div.nav-inner {
-    width: 980px;
+    width: 100%;
     margin: 0 auto;
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
@@ -37,11 +42,6 @@ div.nav-inner a:link, div.nav-inner a:visited {
 }
 div.nav-inner a.activeMenuItem, div.nav-inner a.activeMenuItem:visited {
     color: #000;
-}
-.main-inner {
-    width: 980px;
-    margin: 0 auto;
-    padding: 20px 10px 30px 10px !important; 
 }
 h1, h2, h3, h4, h5, h6 {
     font-family: helvetica, arial, "hiragino kaku gothic pron", meiryo, "ms pgothic", sans-serif;
@@ -114,20 +114,26 @@ img#logo {
     font-size: 17px;
     background: none;
 }
-.main-content {
-    width: 720px;
-    float: left;
-    padding-bottom: 10px;
-}
 .main-content-wrap {
-    overflow: auto;
     border: none;
     padding-bottom: 30px;
     background: #FDFEEF;
 }
+.main-inner {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 10px 30px 10px !important;
+}
+.main-content {
+    display: inline-block;
+    vertical-align: top;
+    width: 724px;
+    padding-bottom: 10px;
+}
 .navigation {
-    width: 220px;
-    float: right;
+    display: inline-block;
+    vertical-align: top;
+    width: 204px;
     padding: 0 10px 10px 10px;
     font-size: 0.8em;
     background: #F5DEB3;
@@ -169,21 +175,14 @@ a.activeMenuItem {
 .footer-wrap {
     color: white;
     background: linear-gradient(to bottom, #ad9d80, #7b6f59);
-    padding-bottom: 20px;
 }
 .footer-inner {
-    width: 980px;
-    padding: 6px 20px 20px;
+    width: 960px;
+    padding: 6px 20px 10px;
     margin: 0 auto;
-}
-#site-info {
-    float: left;
 }
 #treefrog-homepage-link, #go-to-github-link {
     color: #FFF;
-}
-#publisher-info {
-    float: right;
 }
 .standard-link {
     color: white;
