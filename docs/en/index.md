@@ -21,7 +21,7 @@ May 27, 2017
   - Added a class to process in background, TBackgroundProcess.
   - Other bugfixes.
 
- <a href="{{site.baseurl}}/en/download/"><span style="color: blue;">Download this version</span></a>
+ <a href="{{site.baseurl}}/en/download/">Download this version</a>
 
 Apr 8, 2017
 

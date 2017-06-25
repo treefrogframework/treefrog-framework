@@ -23,7 +23,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
   - バックグランドプロセスを実現するTBackgroundProcessクラスを追加
   - その他バグフィックス
 
- [<span style="color: blue;">ダウンロードはこちらから</span>](download/)
+ [ダウンロードはこちらから](download/)
 
 ### 2017/4/8  TreeFrog Framework バージョン1.16.0 （安定版）リリース
 

@@ -5,8 +5,6 @@ page_id: "user-guide.00"
 
 ## Documents
 
-### TreeFrog Framework Documentation
-
 Chapter 1. [はじめに](introduction/)
 
 Chapter 2. [インストール](install/)

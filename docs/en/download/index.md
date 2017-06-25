@@ -27,14 +27,14 @@ The source code packages of TreeFrog Framework are available.
 
 | Source         | File                             |
 |----------------|----------------------------------|
-| version 1.17.0 | treefrog-framework-1.17.0.tar.gz |
+| version 1.17.0 | [treefrog-framework-1.17.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.17.0.tar.gz) |
 
  </div>
 
-[<span style="color:blue;">All previous versions</span>](https://github.com/treefrogframework/treefrog-framework/releases)
+[All previous versions](https://github.com/treefrogframework/treefrog-framework/releases)
 
 Latest souce code is in [GitHub](https://github.com/treefrogframework/).
- 
+
 ## Homebrew
 
 Can install by Homebrew on macOS.
