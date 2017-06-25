@@ -187,10 +187,13 @@ a.activeMenuItem {
 .standard-link {
     color: white;
 }
+.highlighter-rouge {
+    margin: 0 8px;
+}
 .highlight {
     width: calc( 100% - 10px );
-    background-color: #FFF;
     padding: 10px;
+    background-color: #FFF;
 }
 .table-div table {
     margin: 0px auto;
