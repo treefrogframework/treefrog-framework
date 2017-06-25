@@ -5,20 +5,21 @@
     <title>TreeFrog Framework | High-speed C++ MVC Framework for Web Application</title>
     <meta name="keywords" content="TreeFrog,MVC,Web,Fast,WebSocket,Framework,ORM,C++,full stack,mongodb,C++11,Qt,generator,scaffold" />
     <meta name="description" content="TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
     <link rel="stylesheet" type="text/css" media="screen" href="{{ site.baseurl }}/assets/css/style.css">
     <link rel="icon" href="{{site.baseurl}}/favicon.ico">
 </head>
 <body>
     <!-- HEADER -->
-    <div class="header-wrap" class="outer">
+    <div class="header-wrap outer">
     {% include header.html %}
     </div>
     <!-- NAV -->
-    <nav class="nav-wrap" class="outer">
+    <nav class="nav-wrap outer">
     {% include nav.html %}
     </nav>
     <!-- MAIN CONTENT -->
-    <div class="main-content-wrap" class="outer">
+    <div class="main-content-wrap outer">
         <div class="main-inner">
             <div class="main-content">
             {{ content }}
@@ -30,7 +31,7 @@
         </div>
     </div>
     <!-- FOOTER  -->
-    <div id="footer-wrap" class="outer">
+    <div class="footer-wrap outer">
     {% include footer.html %}
     </div>
     {% include analytics.html %}

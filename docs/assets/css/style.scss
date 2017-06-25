@@ -74,11 +74,6 @@ h6 {
 th {
     padding: 2px;
 }
-.footer-inner {
-    width: 980px;
-    padding: 6px 20px 20px;
-    margin: 0 auto;
-}
 .header-background-wrapper {
     background-image: url(../images/header.jpg);
     background-repeat: no-repeat;
@@ -130,9 +125,6 @@ img#logo {
     padding-bottom: 30px;
     background: #FDFEEF;
 }
-#header-background {
-    position: absolute;
-}
 .navigation {
     width: 220px;
     float: right;
@@ -174,10 +166,15 @@ a.activeMenuItem {
 .language-link:hover {
     color: blue;
 }
-#footer-wrap {
+.footer-wrap {
     color: white;
     background: linear-gradient(to bottom, #ad9d80, #7b6f59);
     padding-bottom: 20px;
+}
+.footer-inner {
+    width: 980px;
+    padding: 6px 20px 20px;
+    margin: 0 auto;
 }
 #site-info {
     float: left;
