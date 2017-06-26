@@ -47,13 +47,14 @@ bool TSessionFileStore::store(TSession &session)
 
     bool res = false;
     QFile file(sessionDirPath() + session.id());
+    QWriteLocker locker(&rwLock);  // lock for threads
+
     if (file.open(QIODevice::ReadWrite)) {
         auto reslock = tf_lockfile(file.handle(), true, true);  // blocking flock for processes
         int err = errno;
         if (reslock < 0) {
             tSystemWarn("flock error  errno:%d", err);
         }
-        QWriteLocker locker(&rwLock);  // lock for threads
 
         file.resize(0); // truncate
         QDataStream ds(&file);
@@ -75,13 +76,13 @@ TSession TSessionFileStore::find(const QByteArray &id)
     if (fi.exists() && fi.lastModified() >= modified) {
         QFile file(fi.filePath());
 
+        QReadLocker locker(&rwLock);  // lock for threads
         if (file.open(QIODevice::ReadOnly)) {
             auto reslock = tf_lockfile(file.handle(), false, true);  // blocking flock for processes
             int err = errno;
             if (reslock < 0) {
                 tSystemWarn("flock error  errno:%d", err);
             }
-            QReadLocker locker(&rwLock);  // lock for threads
 
             QDataStream ds(&file);
             TSession result(id);

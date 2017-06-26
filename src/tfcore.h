@@ -109,10 +109,13 @@ static inline int tf_flock(int fd, int op)
 static inline int tf_lockfile(int fd, bool exclusive, bool blocking)
 {
 #ifdef Q_OS_WIN
-    Q_UNUSED(fd);
-    Q_UNUSED(exclusive);
-    Q_UNUSED(blocking);
-    return 0;
+    auto handle = reinterpret_cast<HANDLE>(_get_osfhandle(fd));
+    DWORD dwFlags = (exclusive) ? LOCKFILE_EXCLUSIVE_LOCK : 0;
+    dwFlags |= (blocking) ? 0 : LOCKFILE_FAIL_IMMEDIATELY;
+    OVERLAPPED ov;
+    memset(&ov, 0, sizeof(OVERLAPPED));
+    BOOL res = LockFileEx(handle, dwFlags, 0, 0, 0, &ov);
+    return (res) ? 0 : -1;
 #else
     struct flock lck;
 
