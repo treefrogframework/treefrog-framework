@@ -45,11 +45,11 @@
 
 <h4 class="widget-title">Users Guide</h4>
 {% if page.url contains '/ja/' %}
-    {% include generateDynamicMenu.html root="/ja/user-guide" %}
+    {% include generateDynamicMenu.html root="/ja/user-guide/" %}
 {% elsif page.url contains '/ch/' %}   
-    {% include generateDynamicMenu.html root="/ch/user-guide" %}
+    {% include generateDynamicMenu.html root="/ch/user-guide/" %}
 {% else %} 
-    {% include generateDynamicMenu.html root="/en/user-guide" %}
+    {% include generateDynamicMenu.html root="/en/user-guide/" %}
 {% endif %}
 
 <h4 class="widget-title">Many Thanks to</h4>

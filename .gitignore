@@ -18,6 +18,7 @@ Gemfile.lock
 *.so.*
 *.pro.user
 3rdparty/mongo-c-driver/src/*.os
+docs/_site/
 
 # macOS
 *.dylib
