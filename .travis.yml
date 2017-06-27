@@ -32,10 +32,11 @@ addons:
       - gem
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt remove bundler; sudo gem update; bundle install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt remove bundler; sudo gem update; cd $CI_WORK/docs; bundle install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; brew link --force qt; fi
 
 install:
+  - cd $CI_WORK
   - qmake -v
   - ./configure --prefix=/usr/local
   - make -j4 -C src
