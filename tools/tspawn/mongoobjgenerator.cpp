@@ -31,9 +31,9 @@
     "%4"                                                                \
     "    };\n"                                                          \
     "\n"                                                                \
-    "    virtual QString collectionName() const { return QLatin1String(\"%5\"); }\n" \
-    "    virtual QString objectId() const { return _id; }\n"            \
-    "    virtual QString &objectId() { return _id; }\n"                 \
+    "    virtual QString collectionName() const override { return QLatin1String(\"%5\"); }\n" \
+    "    virtual QString objectId() const override { return _id; }\n"   \
+    "    virtual QString &objectId() override { return _id; }\n"        \
     "\n"                                                                \
     "private:\n"                                                        \
     "    Q_OBJECT\n"                                                    \
@@ -50,9 +50,9 @@
     "%5"                                                                \
     "    };\n"                                                          \
     "\n"                                                                \
-    "    virtual QString collectionName() const { return QLatin1String(\"%2\"); }\n" \
-    "    virtual QString objectId() const { return _id; }\n"            \
-    "    virtual QString &objectId() { return _id; }\n"                 \
+    "    virtual QString collectionName() const override { return QLatin1String(\"%2\"); }\n" \
+    "    virtual QString objectId() const override { return _id; }\n"   \
+    "    virtual QString &objectId() override { return _id; }\n"        \
     "\n"                                                                \
     "private:\n"                                                        \
     "    Q_OBJECT\n"                                                    \

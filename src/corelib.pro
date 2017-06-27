@@ -158,6 +158,8 @@ HEADERS += tsessionstorefactory.h
 SOURCES += tsessionstorefactory.cpp
 HEADERS += tsessionsqlobjectstore.h
 SOURCES += tsessionsqlobjectstore.cpp
+HEADERS += tsessionmongoobjectstore.h
+SOURCES += tsessionmongoobjectstore.cpp
 HEADERS += tsessioncookiestore.h
 SOURCES += tsessioncookiestore.cpp
 HEADERS += tsessionfilestore.h
@@ -295,6 +297,7 @@ HEADERS += \
            tdispatcher.h \
            tloggerplugin.h \
            tsessionobject.h \
+           tsessionmongoobject.h \
            tsessionstoreplugin.h \
            tjavascriptobject.h \
            tsqlormapper.h \

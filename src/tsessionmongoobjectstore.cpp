@@ -1,29 +1,28 @@
-/* Copyright (c) 2010-2017, AOYAMA Kazuharu
+/* Copyright (c) 2017, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSqlORMapper>
+#include <TMongoODMapper>
 #include <TCriteria>
-#include "tsessionsqlobjectstore.h"
-#include "tsessionobject.h"
+#include "tsessionmongoobjectstore.h"
+#include "tsessionmongoobject.h"
 
 /*!
-  \class TSessionSqlObjectStore
-  \brief The TSessionSqlObjectStore class stores HTTP sessions into database
-         system using object-relational mapping tool.
-  \sa TSessionObject
+  \class TSessionMongoObjectStore
+  \brief The TSessionMongoObjectStore class stores HTTP sessions into MongoDB
+         system using object-document mapping tool.
+  \sa TSessionMongoObject
 */
 
-/* create table session ( id varchar(50) primary key, data blob, updated_at datetime ); */
-
-bool TSessionSqlObjectStore::store(TSession &session)
+bool TSessionMongoObjectStore::store(TSession &session)
 {
-    TSqlORMapper<TSessionObject> mapper;
-    TCriteria cri(TSessionObject::Id, TSql::Equal, session.id());
-    TSessionObject so = mapper.findFirst(cri);
+    TMongoODMapper<TSessionMongoObject> mapper;
+    TCriteria cri;
+    cri.add(TSessionMongoObject::SessionId, TMongo::Equal, session.id());
+    TSessionMongoObject so = mapper.findOne(cri);
 
 #ifndef TF_NO_DEBUG
     {
@@ -49,22 +48,22 @@ bool TSessionSqlObjectStore::store(TSession &session)
     }
 
     if (so.isNull()) {
-        so.id = session.id();
+        so.sessionId = session.id();
         return so.create();
     }
     return so.update();
 }
 
 
-TSession TSessionSqlObjectStore::find(const QByteArray &id)
+TSession TSessionMongoObjectStore::find(const QByteArray &id)
 {
     QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
-    TSqlORMapper<TSessionObject> mapper;
+    TMongoODMapper<TSessionMongoObject> mapper;
     TCriteria cri;
-    cri.add(TSessionObject::Id, TSql::Equal, id);
-    cri.add(TSessionObject::UpdatedAt, TSql::GreaterEqual, modified);
+    cri.add(TSessionMongoObject::SessionId, TMongo::Equal, id);
+    cri.add(TSessionMongoObject::UpdatedAt, TMongo::GreaterEqual, modified);
 
-    TSessionObject so = mapper.findFirst(cri);
+    TSessionMongoObject so = mapper.findOne(cri);
     if (so.isNull()) {
         return TSession();
     }
@@ -74,24 +73,24 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     ds >> *static_cast<QVariantMap *>(&session);
 
     if (ds.status() != QDataStream::Ok) {
-        tSystemError("Failed to load a session from the sqlobject store.");
+        tSystemError("Failed to load a session from the mongoobject store.");
     }
     return session;
 }
 
 
-bool TSessionSqlObjectStore::remove(const QByteArray &id)
+bool TSessionMongoObjectStore::remove(const QByteArray &id)
 {
-    TSqlORMapper<TSessionObject> mapper;
-    int cnt = mapper.removeAll(TCriteria(TSessionObject::Id, id));
+    TMongoODMapper<TSessionMongoObject> mapper;
+    int cnt = mapper.removeAll(TCriteria(TSessionMongoObject::Id, id));
     return (cnt > 0);
 }
 
 
-int TSessionSqlObjectStore::gc(const QDateTime &expire)
+int TSessionMongoObjectStore::gc(const QDateTime &expire)
 {
-    TSqlORMapper<TSessionObject> mapper;
-    TCriteria cri(TSessionObject::UpdatedAt, TSql::LessThan, expire);
+    TMongoODMapper<TSessionMongoObject> mapper;
+    TCriteria cri(TSessionMongoObject::UpdatedAt, TMongo::LessThan, expire);
     int cnt = mapper.removeAll(cri);
     return cnt;
 }
