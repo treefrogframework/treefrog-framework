@@ -111,7 +111,7 @@ bool TMongoObject::update()
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
         QString prop = TAbstractModel::fieldNameToVariableName(QString::fromLatin1(propName));
-QVariant V = property(propName);
+
         if (!updflag && (prop == UpdatedAt || prop == ModifiedAt)) {
             setProperty(propName, QDateTime::currentDateTime());
             updflag = true;
