@@ -1,0 +1,34 @@
+#
+# appveyor.yml
+#
+branches:
+  only:
+    - master
+
+# Do not build on tags (GitHub and BitBucket)
+skip_tags: true
+
+# Skipping commits affecting specific files (GitHub only).
+skip_commits:
+  files:
+    - docs/*
+    - '**/*.html'
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf false
+
+install:
+  - cmd: set PATH=C:\Qt\5.9\msvc2015_64\bin;%PATH%
+  - cmd: configure.bat
+  - cmd: cd src
+  - cmd: nmake install
+  - cmd: cd ..\tools
+  - cmd: nmake install
