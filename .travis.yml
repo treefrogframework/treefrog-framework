@@ -32,7 +32,7 @@ addons:
       - gem
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then apt remove bundler; gem update; bundle install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt remove bundler; sudo gem update; bundle install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; brew link --force qt; fi
 
 install:
