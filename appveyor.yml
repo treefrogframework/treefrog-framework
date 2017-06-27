@@ -25,7 +25,11 @@ image: Visual Studio 2015
 init:
   - git config --global core.autocrlf false
 
-install:
+# to disable automatic builds
+build: off
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
   - cmd: call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - cmd: set PATH=C:\Qt\5.9\msvc2015_64\bin;%PATH%
