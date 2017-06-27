@@ -5,7 +5,7 @@ page_id: "160.0"
 
 ## 性能
 
-###创建应用服务器
+### 创建应用服务器
 
 Treefrog应用服务器(AP server)创建了一个服务进程处理HTTP(*tadpole*)和一个进程监控它的生死(*treefrog*).
 
@@ -15,9 +15,9 @@ Treefrog应用服务器(AP server)创建了一个服务进程处理HTTP(*tadpole
 
 这里有两种多处理模块(Multi-Processing Module)来创建应用服务器(AP server)的多处理模块: *prefork* 和 *thred*.它们类似于Apache. 你需要在配置文件中选择它们中的一个. 默认的是'thread'.
 
-* **prefork:** 提前创建'fork'进程, 然后创建嵌套字(socket)作为"监听(listen)". 操作(action)在进程过程中执行, 当请求被处理和反馈返回时, 进程消失. 不要重复使用它! 如果操作(action)默认停止了或者非法操作, 它不会影响任何操作(action).
+* **prefork:** 提前创建'fork'进程, 然后创建嵌套字(socket)作为"监听(listen)". 操作(action)在进程过程中执行, 当请求被处理和反馈返回时, 进程消失. 不要重复使用它! 如果操作(action)默认停止了或者非法操作, 它不会影响任何操作(action).  **[废弃]**
 * **thread:** 当有请求时,每次购创建线程. 操作(action)在线程过程中执行, 当请求被处理完和响应发送后, 线程消失. 性能很好.
-* **hybrid (v1.7或更高版本):** 嵌套字(sockets)被epoll系统调用监控, HTTP请求在线程中处理. 它只在Linux中可用. 它是为了解决能保持很多嵌套字(sockets)的C10K问题而实现的.
+* **hybrid:** 嵌套字(sockets)被epoll系统调用监控, HTTP请求在线程中处理. 它只在Linux中可用. 它是为了解决能保持很多嵌套字(sockets)的C10K问题而实现的.
 
 如果你使用thread模块, 性能将可以非常高(大约14倍于'prefork'). 如果在linux上使用hybrid模块, 性能在高负载时可以好很多. 然而, 当分段错误发生时, 每个处理会停止, 因此所有线程可以停止. 如果一些操作(action)有一个故障, 其他平行运行的操作(actions)也会受到影响. 那将导致问题. 使用prefork模块时, 处理被分成了独立的操作. 所以这个问题的担心可以避免.
 
@@ -49,7 +49,7 @@ thread模块的例子:<br>
 
 ```
  $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=10000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
+ httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
  –recv-buffer=16384 –num-conns=10000 –num-calls=1
  httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
  Maximum connect burst length: 1
@@ -81,41 +81,5 @@ thread模块的例子:<br>
 
 在真实的网页应用中, 控制器(controller)和模型(model)的逻辑是比较复杂的, 而且应该有大量的记录, 所以性能应该会必上面的低. 这些图应该作为参考.
 
-*prefork*模块的例子:
 
-* 参数:
-    - MPM.prefork.MaxServers=20
-    - MPM.prefork.MinServers=5
-    - MPM.prefork.SpareServers=5
-```
-
- $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=1000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096 
- –recv-buffer=16384 –num-conns=1000 –num-calls=1
- httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
- Maximum connect burst length: 1
- Total: connections 1000 requests 1000 replies 1000 test-duration 24.863 s
-
- Connection rate: 40.2 conn/s (24.9 ms/conn, <=1 concurrent connections)
- Connection time [ms]: min 1.1 avg 24.9 max 193.8 median 19.5 stddev 21.2
- Connection time [ms]: connect 3.1
- Connection length [replies/conn]: 1.000
-
- Request rate: 40.2 req/s (24.9 ms/req)
- Request size [B]: 73.0
-
- Reply rate [replies/s]: min 39.8 avg 40.1 max 40.3 stddev 0.2 (4 samples)
- Reply time [ms]: response 21.7 transfer 0.0
- Reply size [B]: header 313.0 content 421.0 footer 0.0 (total 734.0)
- Reply status: 1xx=0 2xx=1000 3xx=0 4xx=0 5xx=0
-
- CPU time [s]: user 0.76 system 3.31 (user 3.0% system 13.3% total 16.4%)
- Net I/O: 31.7 KB/s (0.3*10^6 bps)
-
- Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
- Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
-```
-
-在prefork模块, 性能跌落到大约40 request每秒. 它是一个明显的下降, 我们需要在下一个阶段改进它.
-
-##### 概要:使用'thread'作为多处理模块MPM, 如果是Linux,使用'hybrid'.
+##### 概要:使用'thread'作为多处理模块MPM. 如果使用WebSocket协议，请考虑设置"hybrid".

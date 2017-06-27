@@ -15,9 +15,9 @@ If a segmentation fault causes the *tadpole* process to go down, the *treefrog* 
 
 There are two MPMs (Multi-Processing Modules) to create multiprocessing modules for the application server (AP server): *prefork* and *thread*. These are similar to Apache. You need to choose one of them and then specify it in setting file. The default is 'thread'.
 
-* **prefork:** Create the process "fork" in advance, and then create socket as "listen". The action is performed during the process, and when the request has been operated and the response returned, the process disappears. Do not reuse it! If the action is down by fault or illegal operation, it wouldn't then affect any actions.
+* **prefork:** Create the process "fork" in advance, and then create socket as "listen". The action is performed during the process, and when the request has been operated and the response returned, the process disappears. Do not reuse it! If the action is down by fault or illegal operation, it wouldn't then affect any actions.  **[Deprecated]**
 * **thread:** Thread is created every time when there is a request. Action runs on the thread and when the request has been processed and the response sent, the thread disappears. The performance is good.
-* **hybrid (v1.7 or later):** Sockets are monitored by epoll system call and an HTTP request is processed on a thread. It's available on Linux only. It is implemented for the C10K problem that can maintain many sockets.
+* **hybrid:** Sockets are monitored by epoll system call and an HTTP request is processed on a thread. It's available on Linux only. It is implemented for the C10K problem that can maintain many sockets.
 
 If you use the thread module, performance can be very high (about 14x of 'prefork'). If you use the hybrid module on Linux, performance can be much better at high level load. However, when, for example, a segmentation fault occurs, each process can go down, therefore all threads can be down. If a certain action has a fault, other parallel running actions could also be affected. That would cause problems. In the case of the prefork module the process is divided into individual actions, so that this kind of concern can be avoided.
 
@@ -79,41 +79,4 @@ About 562 times requests are executed per second. This is the number when the re
 
 In real web applications, the logic of controller and model is more complicated, and there should would be a large number of records, so performance would be less than the above. These figures should therefore be taken as a reference.
 
-Case of *prefork* module:
-
-* Parameters:
-    - MPM.prefork.MaxServers=20
-    - MPM.prefork.MinServers=5
-    - MPM.prefork.SpareServers=5
-
-```
- $ httperf –server=localhost –port=8800 –uri=/Blog/index/ –num-conns=1000 –num-calls=1
- httperf –client=0/1 –server=localhost –port=8800 –uri=/Blog/index/ –send-buffer=4096
- –recv-buffer=16384 –num-conns=1000 –num-calls=1
- httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
- Maximum connect burst length: 1
- Total: connections 1000 requests 1000 replies 1000 test-duration 24.863 s
-
- Connection rate: 40.2 conn/s (24.9 ms/conn, <=1 concurrent connections)
- Connection time [ms]: min 1.1 avg 24.9 max 193.8 median 19.5 stddev 21.2
- Connection time [ms]: connect 3.1
- Connection length [replies/conn]: 1.000
-
- Request rate: 40.2 req/s (24.9 ms/req)
- Request size [B]: 73.0
-
- Reply rate [replies/s]: min 39.8 avg 40.1 max 40.3 stddev 0.2 (4 samples)
- Reply time [ms]: response 21.7 transfer 0.0
- Reply size [B]: header 313.0 content 421.0 footer 0.0 (total 734.0)
- Reply status: 1xx=0 2xx=1000 3xx=0 4xx=0 5xx=0
-
- CPU time [s]: user 0.76 system 3.31 (user 3.0% system 13.3% total 16.4%)
- Net I/O: 31.7 KB/s (0.3*10^6 bps)
-
- Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
- Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
-```
-
-In the prefork module, performance drops to about 40 requests per second. It is a significant drop, although, by careful tuning in a real implementation, you may obtain higher performance. We need to improve this in the next stage.
-
-##### In brief: Use 'thread' as your MPM. If on Linux, use 'hybrid'.
+##### In brief: Use 'thread' as your MPM. If using the WebSocket protocol, consider setting 'hybrid' as well.
