@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include <TAppSettings>
 #include <TSessionStore>
+#include <TAtomic>
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
 #include "tsessionstorefactory.h"
@@ -18,7 +19,7 @@
 
 static QByteArray createHash()
 {
-    static quint32 seq = 0;
+    static TAtomic<quint32> seq(0);
     QByteArray data;
     data.reserve(127);
 
