@@ -7,21 +7,21 @@
 
 #include <TMongoODMapper>
 #include <TCriteria>
-#include "tsessionmongoobjectstore.h"
+#include "tsessionmongostore.h"
 #include "tsessionmongoobject.h"
 
 /*!
-  \class TSessionMongoObjectStore
-  \brief The TSessionMongoObjectStore class stores HTTP sessions into MongoDB
+  \class TSessionMongoStore
+  \brief The TSessionMongoStore class stores HTTP sessions into MongoDB
          system using object-document mapping tool.
   \sa TSessionMongoObject
 */
 
-bool TSessionMongoObjectStore::store(TSession &session)
+bool TSessionMongoStore::store(TSession &session)
 {
     TMongoODMapper<TSessionMongoObject> mapper;
     TCriteria cri;
-    cri.add(TSessionMongoObject::SessionId, TMongo::Equal, session.id());
+    cri.add(TSessionMongoObject::SessionId, TMongo::Equal, QString::fromUtf8(session.id()));
     TSessionMongoObject so = mapper.findOne(cri);
 
 #ifndef TF_NO_DEBUG
@@ -55,16 +55,17 @@ bool TSessionMongoObjectStore::store(TSession &session)
 }
 
 
-TSession TSessionMongoObjectStore::find(const QByteArray &id)
+TSession TSessionMongoStore::find(const QByteArray &id)
 {
     QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
     TMongoODMapper<TSessionMongoObject> mapper;
     TCriteria cri;
-    cri.add(TSessionMongoObject::SessionId, TMongo::Equal, id);
+    cri.add(TSessionMongoObject::SessionId, TMongo::Equal, QString::fromUtf8(id));
     cri.add(TSessionMongoObject::UpdatedAt, TMongo::GreaterEqual, modified);
 
     TSessionMongoObject so = mapper.findOne(cri);
     if (so.isNull()) {
+        tSystemDebug("Session not found: %s", id.data());
         return TSession();
     }
 
@@ -79,15 +80,15 @@ TSession TSessionMongoObjectStore::find(const QByteArray &id)
 }
 
 
-bool TSessionMongoObjectStore::remove(const QByteArray &id)
+bool TSessionMongoStore::remove(const QByteArray &id)
 {
     TMongoODMapper<TSessionMongoObject> mapper;
-    int cnt = mapper.removeAll(TCriteria(TSessionMongoObject::Id, id));
+    int cnt = mapper.removeAll(TCriteria(TSessionMongoObject::SessionId, QString::fromUtf8(id)));
     return (cnt > 0);
 }
 
 
-int TSessionMongoObjectStore::gc(const QDateTime &expire)
+int TSessionMongoStore::gc(const QDateTime &expire)
 {
     TMongoODMapper<TSessionMongoObject> mapper;
     TCriteria cri(TSessionMongoObject::UpdatedAt, TMongo::LessThan, expire);

@@ -1,17 +1,17 @@
-#ifndef TSESSIONMONGOOBJECTSTORE_H
-#define TSESSIONMONGOOBJECTSTORE_H
+#ifndef TSESSIONMONGOSTORE_H
+#define TSESSIONMONGOSTORE_H
 
 #include <TSessionStore>
 
 
-class TSessionMongoObjectStore : public TSessionStore
+class TSessionMongoStore : public TSessionStore
 {
 public:
-    QString key() const { return "mongoobject"; }
+    QString key() const { return "mongodb"; }
     TSession find(const QByteArray &id) override;
     bool store(TSession &session) override;
     bool remove(const QByteArray &id) override;
     int gc(const QDateTime &expire) override;
 };
 
-#endif // TSESSIONMONGOOBJECTSTORE_H
+#endif // TSESSIONMONGOSTORE_H
