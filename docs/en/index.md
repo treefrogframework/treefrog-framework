@@ -43,23 +43,13 @@ Jan 22, 2017
   - Modified functions of TFormValidator class.
   - Other bugfixes.
 
-Dec 5, 2016
 
-### TreeFrog Framework version 1.14.0 (stable) release
+## Wanted
 
-  - Modified to use QThreadStorage class instead of thread_local.
-  - Modified the scaffold generater to generate better codes.
-  - Added '#partial' tag in ERB.
-  - Fix a bug of renderPartial() funcion on Windows.
-  - Fix a bug of session sqlobject store in PostgreSQL.
-  - Performance improvement.
-  - Other bugfixes.
+ - Developers, testers, translators.
 
-
-##### WANTED
- - Developers, testers.
-
-Please email me or ML. Welcome!
+Since this site is built with GitHub Pages, documents can also be sent by a pull-request.
+Visit [GitHub](https://github.com/treefrogframework/treefrog-framework). Welcome!
 
 ## Features
 
@@ -72,3 +62,9 @@ Please email me or ML. Welcome!
   7. Generator – Automatically generates scaffolds and Makefiles.
   8. Less resource -  Stable operation even on Raspberry Pi.
   9. OSS  - New BSD License
+
+## Information
+
+[TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework)
+
+Twitter [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
