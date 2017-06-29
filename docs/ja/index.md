@@ -44,7 +44,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 
 ## 募集中
 
-協力者を募集しています！ [GitHub](https://github.com/treefrogframework/treefrog-framework)にてバグ報告やプルリクエストをお待ちしています。
+協力者を募集しています！ [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}にてバグ報告やプルリクエストをお待ちしています。
 
  - 開発者、テスター、翻訳者
 
@@ -66,7 +66,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 TreeFrog Framework は次のような特徴を兼ね備えています。
 
- 1. 高いパフォーマンス ： 高度に最適化されたアプリケーションサーバエンジン  [外部のベンチマークサイト](http://www.techempower.com/benchmarks/)
+ 1. 高いパフォーマンス ： 高度に最適化されたアプリケーションサーバエンジン  [外部のベンチマークサイト](http://www.techempower.com/benchmarks/){:target="_blank"}
  2. O/R マッピング ： 複雑で面倒なデータベースアクセスを隠蔽
  3. テンプレートシステム ： テンプレートとプレゼンテーションロジックを完全に分離
  4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2, InterBase, MongoDB, Redis.
@@ -78,7 +78,7 @@ TreeFrog Framework は次のような特徴を兼ね備えています。
 
 ## インフォメーション
 
- 開発は主にGitHubで行われていますが [TreeFrogフォーラム](https://groups.google.com/forum/#!forum/treefrogframework) もあります。
+ 開発は主にGitHubで行われていますが[TreeFrogフォーラム](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}もあります。
 
 ときどき つぶやきます [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
 

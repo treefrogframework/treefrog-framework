@@ -49,11 +49,11 @@ Jan 22, 2017
  - Developers, testers, translators.
 
 Since this site is built with GitHub Pages, documents can also be sent by a pull-request.
-Visit [GitHub](https://github.com/treefrogframework/treefrog-framework). Welcome!
+Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Welcome!
 
 ## Features
 
-  1. High performance - Highly optimized Application server engine of C++.  [Benckmarks by 3rd party](http://www.techempower.com/benchmarks/).
+  1. High performance - Highly optimized Application server engine of C++.  [Benckmarks by 3rd party](http://www.techempower.com/benchmarks/){:target="_blank"}.
   2. O/R mapping  - Conceals complex and troublesome database accesses.
   3. Template system  - Completely divided templates and presentation logic.
   4. Support for many DB – MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2, InterBase, MongoDB and Redis.
@@ -65,6 +65,6 @@ Visit [GitHub](https://github.com/treefrogframework/treefrog-framework). Welcome
 
 ## Information
 
-[TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework)
+[TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
 
 Twitter [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
