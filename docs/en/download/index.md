@@ -33,7 +33,7 @@ The source code packages of TreeFrog Framework are available.
 
 [All previous versions](https://github.com/treefrogframework/treefrog-framework/releases)
 
-Latest souce code is in [GitHub](https://github.com/treefrogframework/).
+Latest source code is in [GitHub](https://github.com/treefrogframework/).
 
 ## Homebrew
 
