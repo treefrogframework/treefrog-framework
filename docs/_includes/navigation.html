@@ -43,6 +43,9 @@
 {% endif %}
 </ul>
 
+<h4 class="widget-title">Translate</h4>
+{% include translate_tool.html %}
+
 <h4 class="widget-title">Users Guide</h4>
 {% if page.url contains '/ja/' %}
     {% include generateDynamicMenu.html root="/ja/user-guide/" %}

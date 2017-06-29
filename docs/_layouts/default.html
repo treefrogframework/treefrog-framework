@@ -1,5 +1,11 @@
 <!DOCTYPE html>
-<html>
+{% if page.url contains '/ja/' %}
+<html lang="ja">
+{% elsif page.url contains '/ch/' %}
+<html lang="zh">
+{% else %}
+<html lang="en">
+{% endif %}
 <head>
     <meta charset='utf-8'>
     <title>TreeFrog Framework | High-speed C++ MVC Framework for Web Application</title>

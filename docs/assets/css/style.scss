@@ -242,3 +242,20 @@ a.activeMenuItem {
 .img-center {
     text-align: center;
 }
+div#google_translate_element {
+    text-align: center;
+}
+div#google_translate_element div.goog-te-gadget-simple {
+    background-color: #F6F6F6;
+    padding: 3px;
+    border-radius: 5px;
+    border: solid 1px #888;
+}
+div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
+    font-size: 13px;
+    color: #333;
+}
+div#google_translate_element img {
+    padding: 0;
+    margin: 0;
+}
