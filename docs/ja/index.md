@@ -44,7 +44,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 
 ## 募集中
 
-協力者を募集しています！ GitHub にてバグ報告やプルリクエストをお待ちしています。
+協力者を募集しています！ [GitHub](https://github.com/treefrogframework/treefrog-framework)にてバグ報告やプルリクエストをお待ちしています。
 
  - 開発者、テスター、翻訳者
 
