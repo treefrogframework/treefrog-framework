@@ -23,9 +23,6 @@ IDR_TREEFROG_QT59_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK-Qt5.9.msi"
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 IDR_TREEFROG_QT58_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK-Qt5.8.msi"
 
-LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
-IDR_TREEFROG_QT57_MSI   TREEFROG_MSI   "..\\..\\msi\\TreeFrog-SDK-Qt5.7.msi"
-
 //
 // String Table resources
 //
