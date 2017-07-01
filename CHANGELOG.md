@@ -1,4 +1,11 @@
 # ChangeLog
+## 1.18.0
+ - Implemented a session store for MongoDB.
+ - Fix a bug of file session store.
+ - Fix a bug of generator of controllers.
+ - Fix a bug of parsing arguments when running as Windows service.
+ - Fix leak of db connections.
+
 ## 1.17.0
  - Fix a bug of comparisn logic of If-Modified-Since header.
  - Fix a bug of URL path traversal.
