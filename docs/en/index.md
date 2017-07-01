@@ -11,9 +11,21 @@ Because the sever-side framework was written in C++/Qt, web applications can run
 
 ## Latest News
 
+Jul. 1, 2017
+
+### TreeFrog Framework version 1.18.0 (stable) release <span style="color: red;">New!</span>
+
+  - Implemented a session store for MongoDB.
+  - Fix a bug of file session store.
+  - Fix a bug of generator of controllers.
+  - Fix a bug of parsing arguments when running as Windows service.
+  - Fix leak of db connections.
+
+ <a href="{{site.baseurl}}/en/download/">Download this version</a>
+
 May 27, 2017
 
-### TreeFrog Framework version 1.17.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.17.0 (stable) release
 
   - Fix a bug of comparisn logic of If-Modified-Since header.
   - Fix a bug of URL path traversal.
@@ -21,9 +33,7 @@ May 27, 2017
   - Added a class to process in background, TBackgroundProcess.
   - Other bugfixes.
 
- <a href="{{site.baseurl}}/en/download/">Download this version</a>
-
-Apr 8, 2017
+Apr. 8, 2017
 
 ### TreeFrog Framework version 1.16.0 (stable) release
 
@@ -33,7 +43,7 @@ Apr 8, 2017
   - Added pages for GigHub Pages, English and Japanese.
   - Other bugfixes.
 
-Jan 22, 2017
+Jan. 22, 2017
 
 ### TreeFrog Framework version 1.15.0 (stable) release
 
