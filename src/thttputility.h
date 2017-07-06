@@ -21,6 +21,7 @@ public:
     static QString htmlEscape(ulong n);
     static QString htmlEscape(qlonglong n);
     static QString htmlEscape(qulonglong n);
+    static QString htmlEscape(double n);
     static QString htmlEscape(const char *input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(const QByteArray &input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(const QVariant &input, Tf::EscapeFlag flag = Tf::Quotes);
@@ -83,6 +84,14 @@ inline QString THttpUtility::htmlEscape(qlonglong n)
   Internal use.
  */
 inline QString THttpUtility::htmlEscape(qulonglong n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(double n)
 {
     return QString::number(n);
 }
