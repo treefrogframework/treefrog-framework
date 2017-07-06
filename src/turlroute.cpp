@@ -235,8 +235,8 @@ QString TUrlRoute::findUrl(const QString &controller, const QString &action, con
     }
 
     for (const auto &rt : routes) {
-        QByteArray ctrl = controller.toLower().toLatin1() + "controller";
-        QByteArray act = action.toLower().toLatin1();
+        const QByteArray ctrl = controller.toLower().toLatin1() + "controller";
+        const QByteArray act = action.toLower().toLatin1();
 
         if (rt.controller == ctrl && rt.action == act) {
             if ((rt.paramNum == params.count() && !rt.hasVariableParams)
