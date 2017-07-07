@@ -336,6 +336,10 @@ linux-* {
 macx {
   SOURCES += tprocessinfo_macx.cpp
 }
+freebsd {
+  SOURCES += tprocessinfo_freebsd.cpp
+  LIBS += -lutil -lprocstat
+}
 
 # Qt5
 greaterThan(QT_MAJOR_VERSION, 4) {
