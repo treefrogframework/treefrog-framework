@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Guess values for system-dependent variables and create Makefiles.
 #

@@ -85,14 +85,14 @@
 #  elif defined(__x86_64__)
 #    define PC_FROM_UCONTEXT uc_mcontext.mc_rip
 #  endif
-#esif defined(Q_OS_NETBSD)
+#elif defined(Q_OS_NETBSD)
 #  include <ucontext.h>
 #  if defined(__i386__)
 #    define PC_FROM_UCONTEXT uc_mcontext.__gregs[_REG_EIP]
 #  elif defined(__x86_64__)
 #    define PC_FROM_UCONTEXT uc_mcontext.__gregs[_REG_RIP]
 #  endif
-#esif defined(Q_OS_SOLARIS)
+#elif defined(Q_OS_SOLARIS)
 #  include <ucontext.h>
 #  define PC_FROM_UCONTEXT uc_mcontext.gregs[REG_PC]
 #endif
