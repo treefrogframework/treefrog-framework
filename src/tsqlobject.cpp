@@ -158,7 +158,11 @@ bool TSqlObject::create()
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
 
+#if QT_VERSION >= 0x050400
+            if (!lastid.isValid() && database.driver()->dbmsType() == QSqlDriver::PostgreSQL) {
+#else
             if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
+#endif
                 // For PostgreSQL without OIDS
                 ret = query.exec("SELECT LASTVAL()");
                 sqlError = query.lastError();
@@ -280,6 +284,87 @@ bool TSqlObject::update()
         }
     }
     return ret;
+}
+
+/*!
+  Depending on whether condition matches, inserts new record or updates
+  the corresponding record with the properties of the object. If possible,
+  invokes UPSERT in relational database.
+*/
+bool TSqlObject::save()
+{
+    /*
+    bool isnew = isNew();
+    if (! "EnableUpsert" || driver()->isUpsertSupported()) {
+        return (isnew) ? create() : update();
+    }
+
+    if (isnew) {
+        // Sets the values of 'created_at', 'updated_at' or 'modified_at' properties
+        for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+            const char *propName = metaObject()->property(i).name();
+            QByteArray prop = QByteArray(propName).toLower();
+
+            if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
+                setProperty(propName, QDateTime::currentDateTime());
+            } else if (prop == LockRevision) {
+                // Sets the default value of 'revision' property
+                setProperty(propName, 1);  // 1 : default value
+            } else {
+                // do nothing
+            }
+        }
+    }
+
+    syncToSqlRecord();
+
+    QString autoValName;
+    QSqlRecord record = *this;
+    if (autoValueIndex() >= 0) {
+        autoValName = field(autoValueIndex()).name();
+        record.remove(autoValueIndex()); // not insert the value of auto-value field
+    }
+
+    QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
+    //QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
+    QString upst = ...
+    if (Q_UNLIKELY(upst.isEmpty())) {
+        sqlError = QSqlError(QLatin1String("No fields to upsert"),
+                             QString(), QSqlError::StatementError);
+        tWarn("SQL statement error, no fields to upsert");
+        return false;
+    }
+
+    TSqlQuery query(database);
+    bool ret = query.exec(upst);
+    sqlError = query.lastError();
+    if (ret && isnew) {
+        // Gets the last inserted value of auto-value field
+        if (autoValueIndex() >= 0) {
+            QVariant lastid = query.lastInsertId();
+
+#if QT_VERSION >= 0x050400
+            if (!lastid.isValid() && database.driver()->dbmsType() == QSqlDriver::PostgreSQL) {
+#else
+            if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
+#endif
+                // For PostgreSQL without OIDS
+                ret = query.exec("SELECT LASTVAL()");
+                sqlError = query.lastError();
+                if (Q_LIKELY(ret)) {
+                    lastid = query.getNextValue();
+                }
+            }
+
+            if (lastid.isValid()) {
+                QObject::setProperty(autoValName.toLatin1().constData(), lastid);
+                QSqlRecord::setValue(autoValueIndex(), lastid);
+            }
+        }
+    }
+    return ret;
+    */
+    return false;
 }
 
 /*!

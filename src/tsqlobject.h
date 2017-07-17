@@ -27,6 +27,7 @@ public:
     void setRecord(const QSqlRecord &record, const QSqlError &error);
     bool create();
     bool update();
+    bool save();
     bool remove();
     bool reload();
     bool isNull() const { return QSqlRecord::isEmpty(); }
