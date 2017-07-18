@@ -6,6 +6,7 @@
  */
 
 #include "tsqldatabase.h"
+#include "tsqldriverextension.h"
 #include "tsystemglobal.h"
 #include <QMap>
 #include <QFileInfo>
@@ -126,4 +127,10 @@ bool TSqlDatabase::contains(const QString &connectionName)
     auto *dict = dbDict();
     QReadLocker locker(&dict->lock);
     return dict->contains(connectionName);
+}
+
+
+bool TSqlDatabase::isUpsertSupported() const
+{
+    return _driverExtension && _driverExtension->isUpsertSupported();
 }

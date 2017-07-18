@@ -11,6 +11,8 @@
 #include <TSqlObject>
 #include <TSqlQuery>
 #include <TSystemGlobal>
+#include "tsqldatabase.h"
+#include "tsqldriverextension.h"
 
 const QByteArray LockRevision("lock_revision");
 const QByteArray CreatedAt("created_at");
@@ -293,9 +295,11 @@ bool TSqlObject::update()
 */
 bool TSqlObject::save()
 {
-    /*
     bool isnew = isNew();
-    if (! "EnableUpsert" || driver()->isUpsertSupported()) {
+    auto &sqldb = Tf::currentSqlDatabase(databaseId());
+    auto &db = TSqlDatabase::database(sqldb.connectionName());
+
+    if (! db.isUpsertSupported() || ! db.isUpsertEnabled()) {
         return (isnew) ? create() : update();
     }
 
@@ -325,9 +329,7 @@ bool TSqlObject::save()
         record.remove(autoValueIndex()); // not insert the value of auto-value field
     }
 
-    QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
-    //QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
-    QString upst = ...
+    QString upst = db.driverExtension()->upsertStatement(tableName(), record);
     if (Q_UNLIKELY(upst.isEmpty())) {
         sqlError = QSqlError(QLatin1String("No fields to upsert"),
                              QString(), QSqlError::StatementError);
@@ -335,7 +337,7 @@ bool TSqlObject::save()
         return false;
     }
 
-    TSqlQuery query(database);
+    TSqlQuery query(sqldb);
     bool ret = query.exec(upst);
     sqlError = query.lastError();
     if (ret && isnew) {
@@ -343,11 +345,7 @@ bool TSqlObject::save()
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
 
-#if QT_VERSION >= 0x050400
-            if (!lastid.isValid() && database.driver()->dbmsType() == QSqlDriver::PostgreSQL) {
-#else
-            if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
-#endif
+            if (!lastid.isValid() && db.dbmsType() == TSqlDatabase::PostgreSQL) {
                 // For PostgreSQL without OIDS
                 ret = query.exec("SELECT LASTVAL()");
                 sqlError = query.lastError();
@@ -363,8 +361,6 @@ bool TSqlObject::save()
         }
     }
     return ret;
-    */
-    return false;
 }
 
 /*!

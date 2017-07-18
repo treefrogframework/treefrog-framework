@@ -6,6 +6,8 @@
 #include <QSqlDriver>
 #include <TGlobal>
 
+class TSqlDriverExtension;
+
 
 class T_CORE_EXPORT TSqlDatabase
 {
@@ -50,6 +52,8 @@ public:
     void setPostOpenStatements(const QStringList &statements) { _postOpenStatements = statements; }
     bool isUpsertEnabled() const { return _enableUpsert; }
     void setUpsertEnabled(bool enable) { _enableUpsert = enable; }
+    bool isUpsertSupported() const;
+    const TSqlDriverExtension *driverExtension() const { return _driverExtension; }
 
     static const char *const defaultConnection;
     static const TSqlDatabase &database(const QString &connectionName = QLatin1String(defaultConnection));
@@ -61,6 +65,7 @@ private:
     QSqlDatabase _sqlDatabase;
     QStringList _postOpenStatements;
     bool _enableUpsert {false};
+    TSqlDriverExtension *_driverExtension {nullptr};
 };
 
 
@@ -69,7 +74,8 @@ inline TSqlDatabase::TSqlDatabase(const QSqlDatabase &database)
 {}
 
 inline TSqlDatabase::TSqlDatabase(const TSqlDatabase &other)
-    : _sqlDatabase(other._sqlDatabase), _postOpenStatements(other._postOpenStatements), _enableUpsert(other._enableUpsert)
+    : _sqlDatabase(other._sqlDatabase), _postOpenStatements(other._postOpenStatements),
+      _enableUpsert(other._enableUpsert), _driverExtension(other._driverExtension)
 {}
 
 inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)
@@ -77,6 +83,7 @@ inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)
     _sqlDatabase = other._sqlDatabase;
     _postOpenStatements = other._postOpenStatements;
     _enableUpsert = other._enableUpsert;
+    _driverExtension = other._driverExtension;
     return *this;
 }
 

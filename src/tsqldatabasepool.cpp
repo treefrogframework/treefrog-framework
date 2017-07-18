@@ -119,7 +119,7 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
             if (cache.pop(name)) {
                 tdb = TSqlDatabase::database(name);
                 if (Q_LIKELY(tdb.sqlDatabase().isOpen())) {
-                    tSystemDebug("Gets database: %s", qPrintable(tdb.connectionName()));
+                    tSystemDebug("Gets cached database: %s", qPrintable(tdb.connectionName()));
                     return tdb.sqlDatabase();
                 } else {
                     tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(tdb.connectionName()), __FILE__, __LINE__);
@@ -173,11 +173,7 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, const QString
         return false;
     }
     tSystemDebug("SQL driver name:%s  dbname:%s", qPrintable(database.sqlDatabase().driverName()), qPrintable(databaseName));
-#if QT_VERSION >= 0x050400
-    if (database.sqlDatabase().driver() && database.sqlDatabase().driver()->dbmsType() == QSqlDriver::SQLite) {
-#else
-    if (database.driverName().toUpper().startsWith("QSQLITE")) {
-#endif
+    if (database.dbmsType() == TSqlDatabase::SQLite) {
         QFileInfo fi(databaseName);
         if (fi.isRelative()) {
             // For SQLite
