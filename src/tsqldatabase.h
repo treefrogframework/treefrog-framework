@@ -54,6 +54,7 @@ public:
     void setUpsertEnabled(bool enable) { _enableUpsert = enable; }
     bool isUpsertSupported() const;
     const TSqlDriverExtension *driverExtension() const { return _driverExtension; }
+    void setDriverExtension(TSqlDriverExtension *extension);
 
     static const char *const defaultConnection;
     static const TSqlDatabase &database(const QString &connectionName = QLatin1String(defaultConnection));

@@ -13,6 +13,7 @@
 #include <ctime>
 #include "tsqldatabase.h"
 #include "tsqldatabasepool.h"
+#include "tsqldriverextensionfactory.h"
 #include "tsystemglobal.h"
 
 #define CONN_NAME_FORMAT  "rdb%02d_%d"
@@ -221,6 +222,9 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, const QString
     bool enableUpsert = settings.value("EnableUpsert", false).toBool();
     tSystemDebug("Database enableUpsert: %d", enableUpsert);
     database.setUpsertEnabled(enableUpsert);
+
+    auto *extension = TSqlDriverExtensionFactory::create(database.sqlDatabase().driverName(), database.sqlDatabase().driver());
+    database.setDriverExtension(extension);
 
     settings.endGroup();
     return true;

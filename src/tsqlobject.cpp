@@ -329,12 +329,11 @@ bool TSqlObject::save()
         record.remove(autoValueIndex()); // not insert the value of auto-value field
     }
 
-    QString upst = db.driverExtension()->upsertStatement(tableName(), record);
-    if (Q_UNLIKELY(upst.isEmpty())) {
-        sqlError = QSqlError(QLatin1String("No fields to upsert"),
-                             QString(), QSqlError::StatementError);
-        tWarn("SQL statement error, no fields to upsert");
-        return false;
+    QString pkname = (primaryKeyIndex() >= 0) ? field(primaryKeyIndex()).name() : QString();
+    QString upst = db.driverExtension()->upsertStatement(tableName(), record, pkname);
+    if (upst.isEmpty()) {
+        // In case unable to generate upsert statement
+        return (isnew) ? create() : update();
     }
 
     TSqlQuery query(sqldb);
