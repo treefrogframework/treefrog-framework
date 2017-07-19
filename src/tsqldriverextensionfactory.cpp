@@ -30,18 +30,19 @@ public:
     TMySQLDriverExtension(const QSqlDriver *drv = nullptr) : driver(drv) {}
     QString key() const override { return QLatin1String("QMYSQL"); }
     bool isUpsertSupported() const override { return true; }
-    QString upsertStatement(const QString &tableName, const QSqlRecord &rec, const QString &uniqueKeyName) const override;
+    QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert, const QSqlRecord &recordToUpdate, const QString &lockRevisionField) const override;
+
 private:
     const QSqlDriver *driver {nullptr};
 };
 
-QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const QSqlRecord &rec,
-                                               const QString &uniqueKeyName) const
+
+QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert,
+                                               const QSqlRecord &recordToUpdate, const QString &lockRevisionField) const
 {
     QString statement;
 
-    auto sqlField = rec.field(uniqueKeyName);
-    if (tableName.isEmpty() || uniqueKeyName.isEmpty() || sqlField.isNull()) {
+    if (tableName.isEmpty() || recordToInsert.isEmpty() || recordToUpdate.isEmpty()) {
         return statement;
     }
 
@@ -49,12 +50,12 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
     statement.append(QLatin1String("INSERT INTO ")).append(tableName).append(QLatin1String(" ("));
     QString vals;
 
-    for (int i = 0; i < rec.count(); ++i) {
-        if (!rec.isGenerated(i)) {
+    for (int i = 0; i < recordToInsert.count(); ++i) {
+        if (!recordToInsert.isGenerated(i)) {
             continue;
         }
-        statement.append(prepareIdentifier(rec.fieldName(i), QSqlDriver::FieldName, driver)).append(QLatin1String(", "));
-        vals.append(driver->formatValue(rec.field(i)));
+        statement.append(prepareIdentifier(recordToInsert.fieldName(i), QSqlDriver::FieldName, driver)).append(QLatin1String(", "));
+        vals.append(driver->formatValue(recordToInsert.field(i)));
         vals.append(QLatin1String(", "));
     }
 
@@ -65,8 +66,29 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
         statement[statement.length() - 2] = QLatin1Char(')');
         statement.append(QLatin1String("VALUES (")).append(vals);
         statement.append(QLatin1String(") ON DUPLICATE KEY UPDATE "));
-        statement.append(prepareIdentifier(uniqueKeyName, QSqlDriver::FieldName, driver));
-        statement.append(QLatin1Char('=')).append(driver->formatValue(sqlField));
+        vals.clear();
+
+        for (int i = 0; i < recordToUpdate.count(); ++i) {
+            if (!recordToUpdate.isGenerated(i)) {
+                continue;
+            }
+            vals.append(prepareIdentifier(recordToUpdate.fieldName(i), QSqlDriver::FieldName, driver));
+            vals.append(QLatin1Char('='));
+            vals.append(driver->formatValue(recordToUpdate.field(i)));
+            vals.append(QLatin1String(", "));
+        }
+
+        if (! lockRevisionField.isEmpty()) {
+            auto str = prepareIdentifier(lockRevisionField, QSqlDriver::FieldName, driver);
+            vals.append(str).append(QLatin1String("=1+")).append(str).append(QLatin1String(", "));
+        }
+
+        if (vals.isEmpty()) {
+            statement.clear();
+        } else {
+            vals.chop(2); // remove trailing comma
+            statement.append(vals);
+        }
     }
     return statement;
 }

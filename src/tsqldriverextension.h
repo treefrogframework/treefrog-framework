@@ -13,15 +13,18 @@ public:
     virtual ~TSqlDriverExtension() { }
     virtual QString key() const = 0;
     virtual bool isUpsertSupported() const { return false; }
-    virtual QString upsertStatement(const QString &tableName, const QSqlRecord &rec, const QString &uniqueKeyName) const;
+    virtual QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert,
+                                    const QSqlRecord &recordToUpdate, const QString &lockRevisionField) const;
 };
 
 
-inline QString TSqlDriverExtension::upsertStatement(const QString &tableName, const QSqlRecord &rec, const QString &uniqueKeyName) const
+inline QString TSqlDriverExtension::upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert,
+                                                    const QSqlRecord &recordToUpdate, const QString &lockRevisionField) const
 {
     Q_UNUSED(tableName);
-    Q_UNUSED(rec);
-    Q_UNUSED(uniqueKeyName);
+    Q_UNUSED(recordToInsert);
+    Q_UNUSED(recordToUpdate);
+    Q_UNUSED(lockRevisionField);
     return QString();
 }
 

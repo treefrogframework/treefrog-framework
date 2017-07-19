@@ -295,51 +295,60 @@ bool TSqlObject::update()
 */
 bool TSqlObject::save()
 {
-    bool isnew = isNew();
     auto &sqldb = Tf::currentSqlDatabase(databaseId());
     auto &db = TSqlDatabase::database(sqldb.connectionName());
+    QString lockrev;
 
     if (! db.isUpsertSupported() || ! db.isUpsertEnabled()) {
-        return (isnew) ? create() : update();
+        return (isNew()) ? create() : update();
     }
 
-    if (isnew) {
-        // Sets the values of 'created_at', 'updated_at' or 'modified_at' properties
-        for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
-            const char *propName = metaObject()->property(i).name();
-            QByteArray prop = QByteArray(propName).toLower();
+    // Sets the values of 'created_at', 'updated_at' or 'modified_at' properties
+    for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        const char *propName = metaObject()->property(i).name();
+        QByteArray prop = QByteArray(propName).toLower();
 
-            if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
-                setProperty(propName, QDateTime::currentDateTime());
-            } else if (prop == LockRevision) {
-                // Sets the default value of 'revision' property
-                setProperty(propName, 1);  // 1 : default value
-            } else {
-                // do nothing
-            }
+        if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
+            setProperty(propName, QDateTime::currentDateTime());
+        } else if (prop == LockRevision) {
+            // Sets the default value of 'revision' property
+            setProperty(propName, 1);  // 1 : default value
+            lockrev = LockRevision;
+        } else {
+            // do nothing
         }
     }
 
     syncToSqlRecord();
 
+    QSqlRecord recordToInsert = *this;
+    QSqlRecord recordToUpdate = *this;
+    QList<int> removeFields;
     QString autoValName;
-    QSqlRecord record = *this;
-    if (autoValueIndex() >= 0) {
+
+    if (autoValueIndex() >= 0 && autoValueIndex() != primaryKeyIndex()) {
         autoValName = field(autoValueIndex()).name();
-        record.remove(autoValueIndex()); // not insert the value of auto-value field
+        recordToInsert.remove(autoValueIndex()); // not insert the value of auto-value field
     }
 
-    QString pkname = (primaryKeyIndex() >= 0) ? field(primaryKeyIndex()).name() : QString();
-    QString upst = db.driverExtension()->upsertStatement(tableName(), record, pkname);
+    int idxtmp;
+    if ((idxtmp = recordToUpdate.indexOf(CreatedAt)) >= 0) {
+        recordToUpdate.remove(idxtmp);
+    }
+    if ((idxtmp = recordToUpdate.indexOf(LockRevision)) >= 0) {
+        recordToUpdate.remove(idxtmp);
+    }
+
+    QString upst = db.driverExtension()->upsertStatement(tableName(), recordToInsert, recordToUpdate, lockrev);
     if (upst.isEmpty()) {
         // In case unable to generate upsert statement
-        return (isnew) ? create() : update();
+        return (isNew()) ? create() : update();
     }
 
     TSqlQuery query(sqldb);
     bool ret = query.exec(upst);
     sqlError = query.lastError();
-    if (ret && isnew) {
+    if (ret) {
         // Gets the last inserted value of auto-value field
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
