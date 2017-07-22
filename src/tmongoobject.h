@@ -21,11 +21,12 @@ public:
     virtual QString collectionName() const;
     virtual QString objectId() const { return QString(); }
     void setBsonData(const QVariantMap &bson);
-    bool create();
-    bool update();
-    bool remove();
+    bool create() override;
+    bool update() override;
+    bool save() override;
+    bool remove() override;
     bool reload();
-    bool isNull() const { return objectId().isEmpty(); }
+    bool isNull() const override { return objectId().isEmpty(); }
     bool isNew() const { return objectId().isEmpty(); }
     bool isModified() const;
     void clear();

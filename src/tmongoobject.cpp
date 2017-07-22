@@ -151,6 +151,12 @@ bool TMongoObject::update()
 }
 
 
+bool TMongoObject::save()
+{
+    return (isNull()) ? create() : update();
+}
+
+
 bool TMongoObject::remove()
 {
     if (isNull()) {

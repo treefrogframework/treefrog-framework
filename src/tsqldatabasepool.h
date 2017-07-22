@@ -12,6 +12,8 @@
 #include "tatomic.h"
 #include "tstack.h"
 
+class TSqlDatabase;
+
 
 class T_CORE_EXPORT TSqlDatabasePool : public QObject
 {
@@ -25,7 +27,7 @@ public:
     static TSqlDatabasePool *instance();
 
     static QString driverType(const QString &env, int databaseId);
-    static bool setDatabaseSettings(QSqlDatabase &database, const QString &env, int databaseId);
+    static bool setDatabaseSettings(TSqlDatabase &database, const QString &env, int databaseId);
     static int getDatabaseId(const QSqlDatabase &database);
 
 protected:

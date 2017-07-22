@@ -197,7 +197,7 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
         if (cache.pop(name)) {
             db = TKvsDatabase::database(name);
             if (Q_LIKELY(db.isOpen())) {
-                tSystemDebug("Gets database: %s", qPrintable(db.connectionName()));
+                tSystemDebug("Gets cached KVS database: %s", qPrintable(db.connectionName()));
                 return db;
             } else {
                 tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
@@ -249,28 +249,33 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
 
     QString hostName = settings.value("HostName").toString().trimmed();
     tSystemDebug("KVS HostName: %s", qPrintable(hostName));
-    if (!hostName.isEmpty())
+    if (!hostName.isEmpty()) {
         database.setHostName(hostName);
+    }
 
     int port = settings.value("Port").toInt();
     tSystemDebug("KVS Port: %d", port);
-    if (port > 0)
+    if (port > 0) {
         database.setPort(port);
+    }
 
     QString userName = settings.value("UserName").toString().trimmed();
     tSystemDebug("KVS UserName: %s", qPrintable(userName));
-    if (!userName.isEmpty())
+    if (!userName.isEmpty()) {
         database.setUserName(userName);
+    }
 
     QString password = settings.value("Password").toString().trimmed();
     tSystemDebug("KVS Password: %s", qPrintable(password));
-    if (!password.isEmpty())
+    if (!password.isEmpty()) {
         database.setPassword(password);
+    }
 
     QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
     tSystemDebug("KVS ConnectOptions: %s", qPrintable(connectOptions));
-    if (!connectOptions.isEmpty())
+    if (!connectOptions.isEmpty()) {
         database.setConnectOptions(connectOptions);
+    }
 
     settings.endGroup();
     return true;
