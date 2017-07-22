@@ -339,7 +339,7 @@ bool TSqlObject::save()
         recordToUpdate.remove(idxtmp);
     }
 
-    QString upst = db.driverExtension()->upsertStatement(tableName(), recordToInsert, recordToUpdate, lockrev);
+    QString upst = db.driverExtension()->upsertStatement(tableName(), recordToInsert, recordToUpdate, field(primaryKeyIndex()).name(), lockrev);
     if (upst.isEmpty()) {
         // In case unable to generate upsert statement
         return (isNew()) ? create() : update();
