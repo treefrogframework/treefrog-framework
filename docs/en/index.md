@@ -58,7 +58,7 @@ Jan. 22, 2017
 
  - Developers, testers, translators.
 
-Since this site is built with GitHub Pages, documents can also be sent by a pull-request.
+Since this site is built with [GitHub Pages](https://pages.github.com/), translations can also be sent by a pull-request.
 Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Welcome!
 
 ## Features
