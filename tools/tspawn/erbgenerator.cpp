@@ -17,7 +17,7 @@
     "<%#include \"%1.h\" %>\n"                                          \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title><%= controller()->name() + \": \" + controller()->activeAction() %></title>\n" \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
@@ -52,7 +52,7 @@
     "<% tfetch(%2, %3); %>\n"                                           \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title><%= controller()->name() + \": \" + controller()->activeAction() %></title>\n" \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
@@ -75,7 +75,7 @@
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title><%= controller()->name() + \": \" + controller()->activeAction() %></title>\n" \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
@@ -102,7 +102,7 @@
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title><%= controller()->name() + \": \" + controller()->activeAction() %></title>\n" \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
