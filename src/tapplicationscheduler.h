@@ -8,7 +8,7 @@ class T_CORE_EXPORT TApplicationScheduler : public TScheduler
 {
     Q_OBJECT
 public:
-    TApplicationScheduler(QObject *parent);
+    TApplicationScheduler(QObject *parent = nullptr);
     virtual ~TApplicationScheduler();
 
     void start(int msec);

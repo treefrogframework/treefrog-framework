@@ -199,5 +199,7 @@ void TSqlDriverExtensionFactory::destroy(const QString &key, TSqlDriverExtension
         delete extension;
     } else if (k == PSQL_KEY) {
         delete extension;
+    } else {
+        delete extension;
     }
 }
