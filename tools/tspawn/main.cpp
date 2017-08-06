@@ -188,7 +188,7 @@ static QString templateSystem;
 
 static void usage()
 {
-    qDebug("usage: tspawn <subcommand> [args]\n\n" \
+    printf("usage: tspawn <subcommand> [args]\n\n" \
            "Type 'tspawn --show-drivers' to show all the available database drivers for Qt.\n" \
            "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n" \
            "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n" \

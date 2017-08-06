@@ -183,7 +183,7 @@ bool TableSchema::openDatabase(const QString &env) const
     if (driverType.isEmpty()) {
         qWarning("Parameter 'DriverType' is empty");
     }
-    qDebug("DriverType:   %s", qPrintable(driverType));
+    printf("DriverType:   %s", qPrintable(driverType));
 
     QSqlDatabase db = QSqlDatabase::addDatabase(driverType);
     if (!db.isValid()) {
@@ -192,12 +192,12 @@ bool TableSchema::openDatabase(const QString &env) const
     }
 
     QString databaseName = dbSettings->value("DatabaseName").toString().trimmed();
-    qDebug("DatabaseName: %s", qPrintable(databaseName));
+    printf("DatabaseName: %s", qPrintable(databaseName));
     if (!databaseName.isEmpty())
         db.setDatabaseName(databaseName);
 
     QString hostName = dbSettings->value("HostName").toString().trimmed();
-    qDebug("HostName:     %s", qPrintable(hostName));
+    printf("HostName:     %s", qPrintable(hostName));
     if (!hostName.isEmpty())
         db.setHostName(hostName);
 
@@ -224,7 +224,7 @@ bool TableSchema::openDatabase(const QString &env) const
         return false;
     }
 
-    qDebug("Database opened successfully");
+    printf("Database opened successfully");
     return true;
 }
 

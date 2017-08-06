@@ -248,7 +248,7 @@ void JSContext::load()
 
     TJSModule *js = TJSLoader(file).load();
     QString output = js->evaluate(variable).toString();
-    qDebug() << qPrintable(output);
+    //qDebug() << qPrintable(output);
     QCOMPARE(output, result);
 }
 
