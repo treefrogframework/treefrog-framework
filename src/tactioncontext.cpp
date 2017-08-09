@@ -110,6 +110,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         currController = ctlrDispatcher.object();
         if (currController) {
             currController->setActionName(route.action);
+            currController->setArguments(route.params);
             currController->setSocketId(sid);
 
             // Session

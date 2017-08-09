@@ -34,6 +34,7 @@ public:
     QString className() const;
     QString name() const;
     QString activeAction() const;
+    QStringList arguments() const;
     const THttpRequest &httpRequest() const;
     const THttpResponse &httpResponse() const { return response; }
     QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
@@ -114,6 +115,7 @@ private:
     };
 
     void setActionName(const QString &name);
+    void setArguments(const QStringList &arguments) { args = arguments; }
     void setSocketId(int sid) { sockId = sid; }
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
@@ -125,6 +127,7 @@ private:
 
     mutable QString ctrlName;
     QString actName;
+    QStringList args;
     int  statCode;
     bool rendered;
     bool layoutEnable;
@@ -154,6 +157,11 @@ inline QString TActionController::className() const
 inline QString TActionController::activeAction() const
 {
     return actName;
+}
+
+inline QStringList TActionController::arguments() const
+{
+    return args;
 }
 
 inline void TActionController::setActionName(const QString &name)

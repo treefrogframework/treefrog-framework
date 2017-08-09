@@ -49,11 +49,12 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
   If \a query is not empty, sets the query string to \a query.
 */
 QUrl TActionHelper::url(const QString &controller, const QString &action,
-                        const QStringList &args, const QString &query) const
+                        const QStringList &arguments, const QString &query) const
 {
     Q_ASSERT(this->controller());
-    QString ctrl = (controller.isEmpty()) ? this->controller()->name() : controller;
-    QString act = (action.isEmpty()) ? this->controller()->activeAction() : action;
+    const QString ctrl = (controller.isEmpty()) ? this->controller()->name() : controller;
+    const QString act = (action.isEmpty()) ? this->controller()->activeAction() : action;
+    const QStringList args = (controller.isEmpty() && action.isEmpty() && arguments.isEmpty()) ? this->controller()->arguments() : arguments;
     QString path = TUrlRoute::instance().findUrl(ctrl, act, args);
 
     if (path.isEmpty()) {
