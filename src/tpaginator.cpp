@@ -28,8 +28,7 @@
   current page on a pagination bar, and should be an odd number.
 */
 TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange)
-    : _itemsTotal(itemsTotal), _itemsPerPage(itemsPerPage), _midRange(midRange),
-      _numPages(1), _currentPage(1)
+    : _itemsTotal(itemsTotal), _itemsPerPage(itemsPerPage), _midRange(midRange)
 {
     calculateNumPages();
 }
@@ -149,6 +148,14 @@ QList<int> TPaginator::range() const
         ret << i;
     }
     return ret;
+}
+
+/*!
+  Returns the number of items of current page.
+*/
+int TPaginator::itemCountOfCurrentPage() const
+{
+    return qBound(0, _itemsTotal - offset(), _itemsPerPage);
 }
 
 

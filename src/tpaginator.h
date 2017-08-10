@@ -23,7 +23,8 @@ public:
     // Getter
     int itemTotalCount() const { return _itemsTotal; }
     int numPages() const { return _numPages; }
-    int itemCountPerPage() { return _itemsPerPage; }
+    int itemCountPerPage() const { return _itemsPerPage; }
+    int itemCountOfCurrentPage() const;
     int offset() const;
     int midRange() const { return _midRange; }
     virtual QList<int> range() const;
@@ -40,11 +41,11 @@ protected:
     void calculateNumPages();  // Internal use
 
 private:
-    int _itemsTotal;
-    int _itemsPerPage;
-    int _midRange;
-    int _numPages;
-    int _currentPage;
+    int _itemsTotal {0};
+    int _itemsPerPage {10};
+    int _midRange {5};
+    int _numPages {1};
+    int _currentPage {1};
 };
 
 Q_DECLARE_METATYPE(TPaginator)
