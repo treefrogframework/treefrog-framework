@@ -19,7 +19,10 @@ class T_CORE_EXPORT TViewHelper
 public:
     virtual ~TViewHelper() { }
 
-    QString linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method = Tf::Get,
+    QString linkTo(const QString &text, const QUrl &url,
+                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method,
                    const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method,
@@ -45,6 +48,12 @@ public:
 
     QString buttonToFunction(const QString &text, const QString &function,
                              const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString anchor(const QString &text, const QUrl &url,
+                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
+                   const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method = Tf::Get,
                    const QString &jsCondition = QString(),
@@ -203,6 +212,15 @@ private:
 
 
 /*!
+  Creates a \<a\> link tag of the given \a text using the given URL
+  \a url and HTML attributes \a attributes.
+*/
+inline QString TViewHelper::linkTo(const QString &text, const QUrl &url, const THtmlAttribute &attributes) const
+{
+    return linkTo(text, url, Tf::Get, QString(), attributes);
+}
+
+/*!
   Creates a \<a\> link tag of the given text using the given \a url.
   This is an overloaded function. Returns a link tag if \a condition is true;
   otherwise returns a null string.
@@ -222,6 +240,23 @@ inline QString TViewHelper::linkToUnless(bool condition, const QString &text, co
                                          const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return linkToIf(!condition, text, url, method, jsCondition, attributes);
+}
+
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkTo().
+*/
+inline QString TViewHelper::anchor(const QString &text, const QUrl &url, const THtmlAttribute &attributes) const
+{
+    return linkTo(text, url, attributes);
+}
+
+/*!
+  Creates a \<a\> link tag with the given arguments. Equivalent to linkTo().
+*/
+inline QString TViewHelper::anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
+                                   const THtmlAttribute &attributes) const
+{
+    return linkTo(text, url, method, attributes);
 }
 
 /*!
