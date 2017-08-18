@@ -38,9 +38,11 @@ div.nav-inner ul li {
 }
 div.nav-inner a:link, div.nav-inner a:visited {
     color: #FFF;
+    font-weight: bold;
 }
 div.nav-inner a:link:hover, div.nav-inner a:visited:hover {
     color: #7693e8;
+    font-weight: bold;
 }
 div.nav-inner a.activeMenuItem, div.nav-inner a.activeMenuItem:visited {
     color: #000;
