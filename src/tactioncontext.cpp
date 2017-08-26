@@ -86,7 +86,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         tSystemDebug("Routing: controller:%s  action:%s", route.controller.data(),
                      route.action.data());
 
-        if (route.isEmpty()) {
+        if (! route.exists) {
             // Default URL routing
 
             if (Q_UNLIKELY(directViewRenderMode())) { // Direct view render mode?
@@ -289,7 +289,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         accessLogger.setResponseBytes( bytes );
                     }
                 } else {
-                    if (route.isEmpty()) {
+                    if (! route.exists) {
                         int bytes = writeResponse(Tf::NotFound, responseHeader);
                         accessLogger.setResponseBytes( bytes );
                     } else {

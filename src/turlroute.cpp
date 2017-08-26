@@ -144,7 +144,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
         }
     }
 
-    routes << rt;
+    _routes << rt;
     tSystemDebug("route: method:%d path:%s  ctrl:%s action:%s params:%d",
         rt.method, qPrintable(QLatin1String("/") + rt.componentList.join("/")), rt.controller.data(),
         rt.action.data(), rt.hasVariableParams);
@@ -154,12 +154,11 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 
 TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &components) const
 {
-    if (routes.isEmpty()) {
+    if (_routes.isEmpty()) {
         TRouting();
     }
 
-    bool denied = false;
-    for (const auto &rt : routes) {
+    for (const auto &rt : _routes) {
         // Too long or short?
         if (rt.hasVariableParams) {
             if (components.length() < rt.componentList.length() - 1) {
@@ -177,8 +176,6 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
             }
         }
 
-        denied = true;
-
         if (rt.method == TRoute::Match || rt.method == method) {
             // Generates parameters for action
             QStringList params = components;
@@ -195,13 +192,15 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
                 }
             }
 
-            return TRouting(rt.controller, rt.action, params);
+            TRouting routing(rt.controller, rt.action, params);
+            routing.exists = true;
+            return routing;
         }
 continue_next:
         continue;
     }
 
-    return (denied) ? TRouting("", "") : TRouting() /* Not found routing info */ ;
+    return TRouting() /* Not found routing info */ ;
 }
 
 
@@ -230,11 +229,11 @@ static QString generatePath(const QStringList &components, const QStringList &pa
 
 QString TUrlRoute::findUrl(const QString &controller, const QString &action, const QStringList &params) const
 {
-    if (routes.isEmpty()) {
+    if (_routes.isEmpty()) {
         return QString();
     }
 
-    for (const auto &rt : routes) {
+    for (const auto &rt : _routes) {
         const QByteArray ctrl = controller.toLower().toLatin1() + "controller";
         const QByteArray act = action.toLower().toLatin1();
 
@@ -252,7 +251,7 @@ QString TUrlRoute::findUrl(const QString &controller, const QString &action, con
 
 void TUrlRoute::clear()
 {
-    routes.clear();
+    _routes.clear();
 }
 
 
