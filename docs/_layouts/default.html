@@ -1,46 +1,51 @@
 <!DOCTYPE html>
-<html>
-
+{% if page.url contains '/ja/' %}
+<html lang="ja">
+{% elsif page.url contains '/ch/' %}
+<html lang="zh">
+{% else %}
+<html lang="en">
+{% endif %}
 <head>
     <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="{{ site.title | default: site.github.repository_name }} : {{ site.description | default: site.github.project_tagline }}">
+    <title>TreeFrog Framework | High-speed C++ MVC Framework for Web Application</title>
+    <meta name="keywords" content="TreeFrog,MVC,Web,Fast,WebSocket,Framework,ORM,C++,full stack,mongodb,C++11,Qt,generator,scaffold" />
+{% if page.url contains '/ja/' %}
+    <meta name="description" content="TreeFrog Framework は、C++によるフルスタックの高速Webアプリケーションフレームワークであり、HTTP はもちろん WebSocket プロトコルもサポートしています。" />
+{% else %}
+    <meta name="description" content="TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and WebSocket protocol" />
+{% endif %}
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" type="text/css" media="screen" href="{{ site.baseurl }}/assets/css/style.css">
-    <title>{{ site.title | default: site.github.repository_name }}</title>
-    
-    <!-- Favicons -->
-    <link rel="apple-touch-icon" href="{{ site.baseurl }}/apple-touch-icon.png">
-    <link rel="icon" href="{{ site.baseurl }}/favicon.ico">
+    <link rel="icon" href="/favicon.ico">
 </head>
-
 <body>
-    {% include analytics.html %}
+<div id="wrapper">
     <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        {% include header.html %}
+    <div class="header-wrap outer">
+    {% include header.html %}
     </div>
-    <!-- /#HEADER -->
-    
+    <!-- NAV -->
+    <nav class="nav-wrap outer">
+    {% include nav.html %}
+    </nav>
     <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
+    <div class="main-content-wrap outer">
         <div class="main-inner">
-            <div id="main-content"> 
-                {{ content }}
+            <div class="main-content">
+            {{ content }}
             </div>
             <!-- NAIVGATION -->
-            <div id="navigation"> 
-                {% include navigation.html %} 
+            <div class="navigation">
+            {% include navigation.html %}
             </div>
-            <!-- /#NAIVGATION -->
         </div>
     </div>
-    <!-- /#MAIN CONTENT -->
-    
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-        {% include footer.html %}
-    </div>
-    <!-- /#FOOTER  -->
+</div>
+<!-- FOOTER  -->
+<div class="footer-wrap outer">
+{% include footer.html %}
+</div>
+{% include analytics.html %}
 </body>
-
 </html>

@@ -16,7 +16,12 @@ public:
     static QString fromUrlEncoding(const QByteArray &enc);
     static QByteArray toUrlEncoding(const QString &input, const QByteArray &exclude = "-._");
     static QString htmlEscape(const QString &input, Tf::EscapeFlag flag = Tf::Quotes);
-    static QString htmlEscape(int n, Tf::EscapeFlag flag = Tf::Quotes);
+    static QString htmlEscape(int n);
+    static QString htmlEscape(long n);
+    static QString htmlEscape(ulong n);
+    static QString htmlEscape(qlonglong n);
+    static QString htmlEscape(qulonglong n);
+    static QString htmlEscape(double n);
     static QString htmlEscape(const char *input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(const QByteArray &input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(const QVariant &input, Tf::EscapeFlag flag = Tf::Quotes);
@@ -42,6 +47,54 @@ private:
     T_DISABLE_MOVE(THttpUtility)
 };
 
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(int n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(long n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(ulong n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(qlonglong n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(qulonglong n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(double n)
+{
+    return QString::number(n);
+}
 
 /*!
  * Returns a string that has quotes removed from the start and

@@ -17,8 +17,9 @@ public:
         UpdatedAt,
     };
 
-    QString tableName() const { return "session"; }
-    int primaryKeyIndex() const { return Id; }
+    int primaryKeyIndex() const override { return Id; }
+    int autoValueIndex() const override { return -1; }
+    QString tableName() const override { return QLatin1String("session"); }
 
 private:    /*** Don't modify below this line ***/
     Q_OBJECT

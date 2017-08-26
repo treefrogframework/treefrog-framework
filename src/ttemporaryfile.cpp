@@ -25,6 +25,7 @@
 TTemporaryFile::TTemporaryFile()
 {
     QString tmppath;
+
     if (Tf::app()) {
         tmppath = Tf::appSettings()->value(Tf::UploadTemporaryDirectory).toString().trimmed();
         if (!tmppath.isEmpty() && QDir::isRelativePath(tmppath)) {
@@ -43,7 +44,7 @@ TTemporaryFile::TTemporaryFile()
     if (!tmppath.endsWith(QDir::separator())) {
         tmppath += QDir::separator();
     }
-    setFileTemplate(tmppath + "tf_temp.XXXXXXXXXXXXXXXX");
+    setFileTemplate(tmppath + QLatin1String("tf_temp.XXXXXXXXXXXXXXXX"));
 }
 
 /*!

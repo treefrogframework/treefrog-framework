@@ -148,7 +148,6 @@ inline QVariantMap TCriteriaMongoConverter<T>::criteriaToVariantMap(const QVaria
     } else {
         tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
     }
-
     return ret;
 }
 

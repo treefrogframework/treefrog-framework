@@ -107,8 +107,9 @@ int TableSchema::autoValueIndex() const
 {
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
-        if (f.isAutoValue())
+        if (f.isAutoValue()) {
             return i;
+        }
     }
     return -1;
 }
@@ -118,8 +119,9 @@ QString TableSchema::autoValueFieldName() const
 {
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
-        if (f.isAutoValue())
+        if (f.isAutoValue()) {
             return f.name();
+        }
     }
     return QString();
 }
@@ -183,7 +185,7 @@ bool TableSchema::openDatabase(const QString &env) const
     if (driverType.isEmpty()) {
         qWarning("Parameter 'DriverType' is empty");
     }
-    qDebug("DriverType:   %s", qPrintable(driverType));
+    printf("DriverType:   %s\n", qPrintable(driverType));
 
     QSqlDatabase db = QSqlDatabase::addDatabase(driverType);
     if (!db.isValid()) {
@@ -192,30 +194,36 @@ bool TableSchema::openDatabase(const QString &env) const
     }
 
     QString databaseName = dbSettings->value("DatabaseName").toString().trimmed();
-    qDebug("DatabaseName: %s", qPrintable(databaseName));
-    if (!databaseName.isEmpty())
+    printf("DatabaseName: %s\n", qPrintable(databaseName));
+    if (!databaseName.isEmpty()) {
         db.setDatabaseName(databaseName);
+    }
 
     QString hostName = dbSettings->value("HostName").toString().trimmed();
-    qDebug("HostName:     %s", qPrintable(hostName));
-    if (!hostName.isEmpty())
+    printf("HostName:     %s\n", qPrintable(hostName));
+    if (!hostName.isEmpty()) {
         db.setHostName(hostName);
+    }
 
     int port = dbSettings->value("Port").toInt();
-    if (port > 0)
+    if (port > 0) {
         db.setPort(port);
+    }
 
     QString userName = dbSettings->value("UserName").toString().trimmed();
-    if (!userName.isEmpty())
+    if (!userName.isEmpty()) {
         db.setUserName(userName);
+    }
 
     QString password = dbSettings->value("Password").toString().trimmed();
-    if (!password.isEmpty())
+    if (!password.isEmpty()) {
         db.setPassword(password);
+    }
 
     QString connectOptions = dbSettings->value("ConnectOptions").toString().trimmed();
-    if (!connectOptions.isEmpty())
+    if (!connectOptions.isEmpty()) {
         db.setConnectOptions(connectOptions);
+    }
 
     dbSettings->endGroup();
 
@@ -224,7 +232,7 @@ bool TableSchema::openDatabase(const QString &env) const
         return false;
     }
 
-    qDebug("Database opened successfully");
+    printf("Database opened successfully\n");
     return true;
 }
 
@@ -249,8 +257,9 @@ QStringList TableSchema::tables(const QString &env)
     if (QSqlDatabase::database().isOpen()) {
         for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Tables)); i.hasNext(); ) {
             TableSchema t(i.next());
-            if (t.exists())
+            if (t.exists()) {
                 set << t.tableName(); // If value already exists, the set is left unchanged
+            }
         }
     }
 

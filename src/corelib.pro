@@ -102,6 +102,8 @@ HEADERS += tactionview.h
 SOURCES += tactionview.cpp
 HEADERS += tactionmailer.h
 SOURCES += tactionmailer.cpp
+HEADERS += tsqldatabase.h
+SOURCES += tsqldatabase.cpp
 HEADERS += tsqldatabasepool.h
 SOURCES += tsqldatabasepool.cpp
 HEADERS += tsqlobject.h
@@ -116,6 +118,10 @@ HEADERS += tsqlqueryormapperiterator.h
 SOURCES += tsqlqueryormapperiterator.cpp
 HEADERS += tsqltransaction.h
 SOURCES += tsqltransaction.cpp
+HEADERS += tsqldriverextension.h
+SOURCES += tsqldriverextension.cpp
+HEADERS += tsqldriverextensionfactory.h
+SOURCES += tsqldriverextensionfactory.cpp
 HEADERS += tcriteria.h
 SOURCES += tcriteria.cpp
 HEADERS += tcriteriaconverter.h
@@ -158,6 +164,8 @@ HEADERS += tsessionstorefactory.h
 SOURCES += tsessionstorefactory.cpp
 HEADERS += tsessionsqlobjectstore.h
 SOURCES += tsessionsqlobjectstore.cpp
+HEADERS += tsessionmongostore.h
+SOURCES += tsessionmongostore.cpp
 HEADERS += tsessioncookiestore.h
 SOURCES += tsessioncookiestore.cpp
 HEADERS += tsessionfilestore.h
@@ -295,6 +303,7 @@ HEADERS += \
            tdispatcher.h \
            tloggerplugin.h \
            tsessionobject.h \
+           tsessionmongoobject.h \
            tsessionstoreplugin.h \
            tjavascriptobject.h \
            tsqlormapper.h \
@@ -332,6 +341,10 @@ linux-* {
 }
 macx {
   SOURCES += tprocessinfo_macx.cpp
+}
+freebsd {
+  SOURCES += tprocessinfo_freebsd.cpp
+  LIBS += -lutil -lprocstat
 }
 
 # Qt5

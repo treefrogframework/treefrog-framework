@@ -60,7 +60,6 @@ bool TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, 
         tSystemError("TMongoQuery::find : driver not loaded");
         return false;
     }
-
     return driver()->find(collection, criteria, orderBy, fields, queryLimit, queryOffset, 0);
 }
 
@@ -74,7 +73,6 @@ bool TMongoQuery::next()
     if (!database.isValid()) {
         return false;
     }
-
     return driver()->cursor().next();
 }
 
@@ -86,7 +84,6 @@ QVariantMap TMongoQuery::value() const
     if (!database.isValid()) {
         return QVariantMap();
     }
-
     return driver()->cursor().value();
 }
 
@@ -101,7 +98,6 @@ QVariantMap TMongoQuery::findOne(const QVariantMap &criteria, const QStringList 
         tSystemError("TMongoQuery::findOne : driver not loaded");
         return QVariantMap();
     }
-
     return driver()->findOne(collection, criteria, fields);
 }
 
@@ -233,7 +229,6 @@ int TMongoQuery::count(const QVariantMap &criteria)
         tSystemError("TMongoQuery::count : driver not loaded");
         return -1;
     }
-
     return driver()->count(collection, criteria);
 }
 

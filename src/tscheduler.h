@@ -10,7 +10,7 @@ class T_CORE_EXPORT TScheduler : public TDatabaseContextThread
 {
     Q_OBJECT
 public:
-    TScheduler(QObject *parent = 0);
+    TScheduler(QObject *parent = nullptr);
     virtual ~TScheduler();
 
     void start(int msec);

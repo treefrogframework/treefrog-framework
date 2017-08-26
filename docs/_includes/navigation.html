@@ -4,87 +4,62 @@
 <form action="{{ site.baseurl }}/ja/search.html" class="search-form-navi" method="get">
     <input type="text" class="search-box-navi" placeholder="" name="q">
     <input type="submit" class="search-button-navi" value="検索">
-    {% elsif page.url contains '/ch/' %}
-<form action="{{ site.baseurl }}/ja/search.html" class="search-form-navi" method="get">
+{% elsif page.url contains '/ch/' %}
+<form action="{{ site.baseurl }}/ch/search.html" class="search-form-navi" method="get">
     <input type="text" class="search-box-navi" placeholder="" name="q">
     <input type="submit" class="search-button-navi" value="搜索">
-    {% else %}
-<form action="{{ site.baseurl }}/search.html" class="search-form-navi" method="get">
+{% else %}
+<form action="{{ site.baseurl }}/en/search.html" class="search-form-navi" method="get">
     <input type="text" class="search-box-navi" placeholder="" name="q">
     <input type="submit" class="search-button-navi" value="Search">
-    {% endif %}
+{% endif %}
 </form>
 
 <h4 class="widget-title">Languages</h4>
 <ul>
-{% if page.url contains '/ja/' %}
-    <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">日本語 (Japanese)</a></li>
-    {% assign url = page.url | prepend: site.github.url %}
-    {% if page.url contains '/user-guide/' %}
-        {% assign en_url = url | replace: '/ja/', '/en/' %}
-        {% assign ch_url = url | replace: '/ja/', '/ch/' %}
-        <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
-        <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% elsif page.url contains '/search.html' %}
-        {% assign en_url = url | replace: '/ja/', '' %}
-        {% assign ch_url = url | replace: '/ja/', '/ch/' %}
-        <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
-        <li><a href="{{ site.baseurl }}/{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% else %}
-        {% assign en_url = url | replace: '/ja/', '' %}
-        {% assign ch_url = url | replace: '/ja/', '/ch/' %}
-        <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
-        <li><a href="{{ site.baseurl }}{{ ch_url }}/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% endif %}
-{% elsif page.url contains '/ch/' %}
-    <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% assign url = page.url | prepend: site.github.url %}
-    {% if page.url contains '/user-guide/' %}
-        {% assign ja_url = url | replace: '/ch/', '/ja/' %}
-        {% assign en_url = url | replace: '/ch/', '/en/' %}
-        <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
-        <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
-    {% elsif page.url contains '/search.html' %}
-        {% assign en_url = url | replace: '/ch/', '' %}
-        {% assign ja_url = url | replace: '/ch/', '/ja/' %}
-        <li><a href="{{ site.baseurl }}/{{ en_url }}" class="language-link">English</a></li>
-        <li><a href="{{ site.baseurl }}/{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
-    {% else %}
-        {% assign en_url = url | replace: '/ch/', '' %}
-        {% assign ja_url = url | replace: '/ch/', '/ja/' %}
-        <li><a href="{{ site.baseurl }}{{ en_url }}/" class="language-link">English</a></li>
-        <li><a href="{{ site.baseurl }}{{ ja_url }}/" class="language-link">日本語 (Japanese)</a></li>
-    {% endif %} 
-{% elsif page.url contains '/en/' %} 
-    {% assign ja_url = page.url | prepend: site.github.url %}
-    {% assign en_url = page.url | prepend: site.github.url %}
-    {% assign ch_url = page.url | prepend: site.github.url %}
-    {% assign ja_url = ja_url | replace: '/en/', '/ja/' %}
-    {% assign ch_url = ch_url | replace: '/en/', '/ch/' %}
+{% assign url = page.url | prepend: site.github.url %} 
+{% if page.url contains '/en/' %}
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    {% assign ja_url = url | replace: '/en/', '/ja/' %}
+    {% assign ch_url = url | replace: '/en/', '/ch/' %}
     <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
     <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-{% else %} 
-    <li><a href="{{ site.baseurl }}/" class="language-link">English</a></li>
-    {% if page.url contains '/search.html' %}
-        <li><a href="{{ site.baseurl }}/ja/search.html" class="language-link">日本語 (Japanese)</a></li>
-        <li><a href="{{ site.baseurl }}/ch/search.html" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% else %}
-        <li><a href="{{ site.baseurl }}/ja" class="language-link">日本語 (Japanese)</a></li>
-        <li><a href="{{ site.baseurl }}/ch" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
-    {% endif %}
+{% elsif page.url contains '/ja/' %}
+    <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">日本語 (Japanese)</a></li>
+    {% assign en_url = url | replace: '/ja/', '/en/' %}
+    {% assign ch_url = url | replace: '/ja/', '/ch/' %}
+    <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+{% elsif page.url contains '/ch/' %}
+    <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+    {% assign en_url = url | replace: '/ch/', '/en/' %}
+    {% assign ja_url = url | replace: '/ch/', '/ja/' %}
+    <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
+{% else %}  
+    <li><a href="{{ site.baseurl }}/en/" class="language-link">English</a></li>
+    <li><a href="{{ site.baseurl }}/ja/" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}/ch/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
 {% endif %}
 </ul>
 
+<h4 class="widget-title">Translate</h4>
+{% include translate_tool.html %}
+
 <h4 class="widget-title">Users Guide</h4>
 {% if page.url contains '/ja/' %}
-    {% include generateDynamicMenu.html root="/user-guide/ja" %}
+    {% include generateDynamicMenu.html root="/ja/user-guide/" %}
 {% elsif page.url contains '/ch/' %}   
-    {% include generateDynamicMenu.html root="/user-guide/ch" %}
-{% elsif page.url contains '/en/' %}   
-    {% include generateDynamicMenu.html root="/user-guide/en" %}
+    {% include generateDynamicMenu.html root="/ch/user-guide/" %}
 {% else %} 
-    {% include generateDynamicMenu.html root="/user-guide/en" %}
+    {% include generateDynamicMenu.html root="/en/user-guide/" %}
 {% endif %}
 
-<a id="forkme_banner" href="{{ site.repository }}">View on GitHub</a>
+<h4 class="widget-title">Many Thanks to</h4>
+<div class="thanks-banner">
+  <a href="{{site.repository}}" target="_blank"><img src="{{site.baseurl}}/assets/images/github.png" alt="GitHub"></a>
+  <a href="https://travis-ci.org/" target="_blank"><img src="{{site.baseurl}}/assets/images/travisci.png" alt="TravisCI"></a>
+  <a href="https://hub.docker.com/r/treefrogframework/treefrog-docker/" target="_blank"><img src="{{site.baseurl}}/assets/images/dockerhub.png" alt="docker hub"></a>
+  <a href="https://ci.appveyor.com/project/treefrogframework/treefrog-framework/" target="_blank"><img src="{{site.baseurl}}/assets/images/appveyor.png" alt="AppVeyor"></a>
+  <a href="http://www.ideeinc.co.jp" target="_blank"><img src="{{site.baseurl}}/assets/images/idee.png" alt="idee inc."></a>
+</div>

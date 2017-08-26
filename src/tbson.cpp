@@ -329,7 +329,7 @@ TBson TBson::toBson(const QStringList &lst)
 QString TBson::generateObjectId()
 {
     bson_oid_t oid;
-    bson_oid_init(&oid, NULL);
+    bson_oid_init(&oid, nullptr);
 
     QByteArray oidhex = QByteArray((char *)&oid, sizeof(oid)).toHex();
     return QLatin1String(oidhex.data());
@@ -341,4 +341,10 @@ QString TBson::generateObjectId()
     a 3-byte machine identifier,
     a 2-byte process id, and
     a 3-byte counter, starting with a random value.
+*/
+
+/* BSON dump
+    auto str = bson_as_json(bson, nullptr);
+    printf("%s\n", str);
+    bson_free(str);
 */

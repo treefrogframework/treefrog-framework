@@ -34,7 +34,7 @@ public:
 
 class TRouting {
 public:
-    bool empty {true};
+    bool exists {false};
     QByteArray controller;
     QByteArray action;
     QStringList params;
@@ -42,19 +42,16 @@ public:
     TRouting() { }
     TRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
 
-    bool isEmpty() const { return empty; }
-    bool isDenied() const { return !empty && controller.isEmpty(); }
     void setRouting(const QByteArray &controller, const QByteArray &action, const QStringList &params = QStringList());
 };
 
 
 inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
-    : empty(false), controller(ctrl), action(act), params(p) { }
+    : controller(ctrl), action(act), params(p){ }
 
 
 inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
 {
-    empty = false;
     controller = ctrl;
     action = act;
     params = p;
@@ -77,7 +74,7 @@ protected:
     void clear();
 
 private:
-    QList<TRoute> routes;
+    QList<TRoute> _routes;
 };
 
 #endif // TURLROUTE_H

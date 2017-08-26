@@ -5,6 +5,7 @@
 #include <TGlobal>
 
 class TKvsDriver;
+class TKvsDatabaseData;
 
 
 class T_CORE_EXPORT TKvsDatabase
@@ -16,9 +17,9 @@ public:
         TypeNum // = 2
     };
 
-    TKvsDatabase();
+    TKvsDatabase() {}
     TKvsDatabase(const TKvsDatabase &other);
-    ~TKvsDatabase() { }
+    ~TKvsDatabase() {}
     TKvsDatabase &operator=(const TKvsDatabase &other);
 
     QString driverName() const;
@@ -47,14 +48,14 @@ public:
     static TKvsDatabase database(const QString &connectionName = QLatin1String(defaultConnection));
     static TKvsDatabase addDatabase(const QString &driver, const QString &connectionName = QLatin1String(defaultConnection));
     static void removeDatabase(const QString &connectionName = QLatin1String(defaultConnection));
-    static void removeAllDatabases();
     static bool contains(const QString &connectionName = QLatin1String(defaultConnection));
 
 private:
     QString connectName;
-    TKvsDriver *drv;
+    TKvsDriver *drv {nullptr};
 
     TKvsDatabase(const QString &connectionName, TKvsDriver *driver);
+    TKvsDatabase(const TKvsDatabaseData &data);
 };
 
 #endif // TKVSDATABASE_H

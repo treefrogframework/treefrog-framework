@@ -52,7 +52,7 @@
       {% assign levelDiff = lastPathLength | minus: nextPathLength %}
 
       {% if levelDiff < 0 %}
-        <ul class="{{ include.listClass }}" {{ depthAttr }}="{{ depth }}">
+        <ul class="{{include.listClass}}" {{depthAttr}}="{{depth}}">
       {% else %}
         {% for i in (1..levelDiff) %}
           </ul></li>
@@ -63,10 +63,12 @@
     {% endif %}
 
     {% assign depth = nextPathLength | minus: rootComponentsLength %}
+    {% if depth > 0 %}
     <li class="menuItem">
-        <a href="{{ site.baseurl }}{{ sortedPage.url }}" class="{% if page.url == sortedPage.url %}activeMenuItem {% else %}menuItemLink{% endif %}">
-      {{ sortedPage.title }}
+        <a href="{{site.baseurl}}{{sortedPage.url}}" class="{% if page.url == sortedPage.url %}activeMenuItem {% else %}menuItemLink{% endif %}">
+          {{sortedPage.title}}
         </a>
+    {% endif %}
     {% assign lastPath = nextPath %}
   {% endif %}
 {% endfor %}

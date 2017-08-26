@@ -658,9 +658,9 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
     response.setBodyFile(filePath);
     response.header().setContentType(contentType);
 
-    if (autoRemove)
+    if (autoRemove) {
         setAutoRemove(filePath);
-
+    }
     return true;
 }
 
@@ -812,8 +812,9 @@ QString TActionController::identityKeyOfLoginUser() const
 */
 void TActionController::setAutoRemove(const QString &filePath)
 {
-    if (!filePath.isEmpty() && !autoRemoveFiles.contains(filePath))
+    if (!filePath.isEmpty() && !autoRemoveFiles.contains(filePath)) {
         autoRemoveFiles << filePath;
+    }
 }
 
 /*!

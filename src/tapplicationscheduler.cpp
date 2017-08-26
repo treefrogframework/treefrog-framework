@@ -13,7 +13,8 @@
   \class TApplicationScheduler
   \brief The TApplicationScheduler class provides functionality for job
   scheduler. Jobs scheduled by this class will be executed in only one
-  application server process.
+  application server process. This scheduler will be started in
+  staticInitialize() function.
 */
 
 /*!

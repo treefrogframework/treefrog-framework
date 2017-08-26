@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include <TAppSettings>
 #include <TSessionStore>
+#include <TAtomic>
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
 #include "tsessionstorefactory.h"
@@ -18,7 +19,7 @@
 
 static QByteArray createHash()
 {
-    static quint32 seq = 0;
+    static TAtomic<quint32> seq(0);
     QByteArray data;
     data.reserve(127);
 
@@ -58,6 +59,8 @@ TSession TSessionManager::findSession(const QByteArray &id)
         if (Q_LIKELY(store)) {
             session = store->find(id);
             TSessionStoreFactory::destroy(storeType(), store);
+        } else {
+            tSystemError("Session store not found: %s", qPrintable(storeType()));
         }
     }
     return session;
@@ -78,6 +81,8 @@ bool TSessionManager::store(TSession &session)
     if (Q_LIKELY(store)) {
         res = store->store(session);
         TSessionStoreFactory::destroy(storeType(), store);
+    } else {
+        tSystemError("Session store not found: %s", qPrintable(storeType()));
     }
     return res;
 }
@@ -91,6 +96,8 @@ bool TSessionManager::remove(const QByteArray &id)
             bool ret = store->remove(id);
             TSessionStoreFactory::destroy(storeType(), store);
             return ret;
+        } else {
+            tSystemError("Session store not found: %s", qPrintable(storeType()));
         }
     }
     return false;

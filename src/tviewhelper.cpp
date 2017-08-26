@@ -469,8 +469,10 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
         attr.prepend("alt", "");  // output 'alt' always
     }
 
-    if (!size.isEmpty()) {
+    if (size.height() > 0) {
         attr.prepend("height", QString::number(size.height()));
+    }
+    if (size.width() > 0) {
         attr.prepend("width", QString::number(size.width()));
     }
 
@@ -504,8 +506,10 @@ QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &media
         attr.prepend("alt", "");  // output 'alt' always
     }
 
-    if (!size.isEmpty()) {
+    if (size.height() > 0) {
         attr.prepend("height", QString::number(size.height()));
+    }
+    if (size.width() > 0) {
         attr.prepend("width", QString::number(size.width()));
     }
 

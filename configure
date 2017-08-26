@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Guess values for system-dependent variables and create Makefiles.
 #
@@ -25,6 +25,13 @@ Fine tuning of the installation directories:
 _EOF
 }
 
+# absorbs the difference of GNU sed and BSD sed
+replace()
+{
+  [ ! -f "$2" ] && return
+  sed -e "$1" "$2" > "$2".$$
+  mv -f "$2".$$ "$2"
+}
 
 # check the platform
 if which uname >/dev/null 2>&1; then
@@ -60,7 +67,7 @@ if which uname >/dev/null 2>&1; then
     if [ "$KERNEL" = "Linux" ]; then
       OPT="-spec linux-g++"
     elif [ "$KERNEL" = "FreeBSD" ]; then
-      OPT="-spec freebsd-g++"
+      OPT="-spec freebsd-clang"
     fi
 
     if [ "$MACHINE" = "x86_64" ]; then
@@ -76,10 +83,8 @@ fi
 BASEDIR=`pwd`/`dirname $0`
 
 if [ "$KERNEL" = "Darwin" ]; then
-  SED="sed -i '' -e"
   PREFIX=/usr/local
 else
-  SED="sed -i -e"
   PREFIX=/usr
 fi
 BINDIR=$PREFIX/bin
@@ -130,8 +135,8 @@ while [ -n "`echo $1 | grep '-'`" ]; do
 done
 
 cd "$BASEDIR"
-$SED "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-$SED "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
+replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
+replace "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"

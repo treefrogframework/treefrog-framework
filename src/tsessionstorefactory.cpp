@@ -18,6 +18,7 @@
 #include "tsessioncookiestore.h"
 #include "tsessionfilestore.h"
 #include "tsessionredisstore.h"
+#include "tsessionmongostore.h"
 #include "tsystemglobal.h"
 #if QT_VERSION >= 0x050000
 # include <QJsonArray>
@@ -59,6 +60,7 @@ QStringList TSessionStoreFactory::keys()
         << TSessionCookieStore().key().toLower()
         << TSessionFileStore().key().toLower()
         << TSessionRedisStore().key().toLower()
+        << TSessionMongoStore().key().toLower()
         << sessIfMap->keys();
 
     return ret;
@@ -76,6 +78,7 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
     static const QString FILE_KEY = TSessionFileStore().key().toLower();
     static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
+    static const QString MONGODB_KEY = TSessionMongoStore().key().toLower();
 
     loadPlugins();
     TSessionStore *ret = nullptr;
@@ -93,6 +96,9 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     } else if (k == REDIS_KEY) {
         static TSessionRedisStore redisStore;
         ret = &redisStore;
+    } else if (k == MONGODB_KEY) {
+        static TSessionMongoStore mongoStore;
+        ret = &mongoStore;
     } else {
         TSessionStoreInterface *ssif = sessIfMap->value(k);
         if (ssif) {
@@ -112,6 +118,7 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
     static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
     static const QString FILE_KEY = TSessionFileStore().key().toLower();
     static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
+    static const QString MONGODB_KEY = TSessionMongoStore().key().toLower();
 
     if (!store) {
         return;
@@ -125,6 +132,8 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
     } else if (k == FILE_KEY) {
         // do nothing
     } else if (k == REDIS_KEY) {
+        // do nothing
+    } else if (k == MONGODB_KEY) {
         // do nothing
     } else {
         TSessionStoreInterface *ssif = sessIfMap->value(k);

@@ -149,14 +149,6 @@ QString THttpUtility::htmlEscape(const QString &input, Tf::EscapeFlag flag)
 /*!
   This function overloads htmlEscape(const QString &, Tf::EscapeFlag).
 */
-QString THttpUtility::htmlEscape(int n, Tf::EscapeFlag)
-{
-    return htmlEscape(QString::number(n));
-}
-
-/*!
-  This function overloads htmlEscape(const QString &, Tf::EscapeFlag).
-*/
 QString THttpUtility::htmlEscape(const char *input, Tf::EscapeFlag flag)
 {
     return htmlEscape(QString(input), flag);

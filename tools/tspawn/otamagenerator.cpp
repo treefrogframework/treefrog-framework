@@ -15,7 +15,7 @@
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title data-tf=\"@head_title\"></title>\n"                       \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
@@ -66,7 +66,7 @@
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title data-tf=\"@head_title\"></title>\n"                       \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
@@ -103,7 +103,7 @@
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title data-tf=\"@head_title\"></title>\n"                       \
     "</head>\n"                                                         \
     "<body>\n"                                                          \
@@ -145,7 +145,7 @@
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
-    "  <meta http-equiv=\"content-type\" content=\"text/html;charset=UTF-8\" />\n" \
+    "  <meta charset=\"UTF-8\">\n"                                      \
     "  <title data-tf=\"@head_title\"></title>\n"                       \
     "</head>\n"                                                         \
     "<body>\n"                                                          \

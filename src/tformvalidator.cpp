@@ -294,7 +294,7 @@ bool TFormValidator::validate(const QVariantMap &map)
 
             case Tf::DoubleMax: {
                 double n = str.toDouble(&ok1);
-                double max = r.value.toLongLong(&ok2);
+                double max = r.value.toDouble(&ok2);
                 if (!ok1 || !ok2 || n > max) {
                     errors << qMakePair(r.key, r.rule);
                 }

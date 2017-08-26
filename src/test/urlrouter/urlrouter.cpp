@@ -67,7 +67,7 @@ void TestUrlRouter::should_route_get_correctly()
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("hoge"));
     QCOMPARE(r.params, QStringList());
@@ -79,7 +79,7 @@ void TestUrlRouter::should_route_post_correctly()
 
     TRouting r = findRouting(Tf::Post, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("foo"));
     QCOMPARE(r.params, QStringList());
@@ -91,7 +91,7 @@ void TestUrlRouter::should_route_put_correctly()
 
     TRouting r = findRouting(Tf::Put, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("fuga"));
     QCOMPARE(r.params, QStringList());
@@ -103,7 +103,7 @@ void TestUrlRouter::should_route_patch_correctly()
 
     TRouting r = findRouting(Tf::Patch, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("hoge"));
     QCOMPARE(r.params, QStringList());
@@ -115,7 +115,7 @@ void TestUrlRouter::should_not_route_get()
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), true);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_not_route_post()
@@ -124,7 +124,7 @@ void TestUrlRouter::should_not_route_post()
 
     TRouting r = findRouting(Tf::Post, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), true);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_route_delete_correctly()
@@ -133,7 +133,7 @@ void TestUrlRouter::should_route_delete_correctly()
 
     TRouting r = findRouting(Tf::Delete, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("foo"));
     QCOMPARE(r.params, QStringList());
@@ -143,8 +143,7 @@ void TestUrlRouter::should_route_to_empty_if_no_route_present()
 {
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isEmpty(), true);
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_route_to_empty_if_no_method_matches()
@@ -156,7 +155,7 @@ void TestUrlRouter::should_route_to_empty_if_no_method_matches()
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), true);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_route_urls_with_parameters()
@@ -165,7 +164,7 @@ void TestUrlRouter::should_route_urls_with_parameters()
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/p1/p2/p3/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
@@ -176,7 +175,7 @@ void TestUrlRouter::should_route_urls_with_empty_parameters()
     addRouteFromString("GET  /:params 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/p1//p3/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "" << "p3");
@@ -187,7 +186,7 @@ void TestUrlRouter::should_route_urls_with_no_parameters()
     addRouteFromString("GET  /:params 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList());
@@ -198,7 +197,7 @@ void TestUrlRouter::should_route_urls_with_single_parameters_correctly()
     addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/bar/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1");
@@ -209,8 +208,7 @@ void TestUrlRouter::should_not_route_urls_with_multiple_parameters_instead_of_si
     addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/p2/bar/"));
 
-    QCOMPARE(r.isEmpty(), true);
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_route_urls_with_empty_single_parameters_correctly()
@@ -228,7 +226,7 @@ void TestUrlRouter::should_route_urls_with_multiple_single_parameters_correctly(
     addRouteFromString("GET  /foo/:param/bar/:param/baz/:param 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/bar/p2/baz/p3/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
@@ -239,7 +237,7 @@ void TestUrlRouter::should_not_route_urls_with_missing_single_parameters()
     addRouteFromString("GET  /foo/:param/bar/ 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/bar/"));
 
-    QCOMPARE(r.isEmpty(), true);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_not_route_urls_if_static_part_is_not_matching()
@@ -247,8 +245,7 @@ void TestUrlRouter::should_not_route_urls_if_static_part_is_not_matching()
     addRouteFromString("GET  /foo/:param/bar/ 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/"));
 
-    QCOMPARE(r.isEmpty(), true);
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_is_empty()
@@ -256,7 +253,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
     addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1");
@@ -277,7 +274,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
     addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/p2/p3"));
 
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, true);
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
     QCOMPARE(QString(r.action), QString("index"));
     QCOMPARE(r.params, QStringList() << "p1" << "p2" << "p3");
@@ -294,8 +291,7 @@ void TestUrlRouter::should_not_accept_a_route_if_request_has_surplus_parameters(
     addRouteFromString("GET  / 'dummy#index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/p2/p3/"));
 
-    QCOMPARE(r.isEmpty(), true);
-    QCOMPARE(r.isDenied(), false);
+    QCOMPARE(r.exists, false);
 }
 
 void TestUrlRouter::should_not_create_route_if_destination_empty_and_route_does_not_accept_controller_and_action()
@@ -413,7 +409,7 @@ void TestUrlRouter::should_not_create_route_if_bad_param()
 
 //     TRouting r = findRouting(Tf::Get, "/othercontroller/");
 
-//     QCOMPARE(r.isEmpty(), true);
+//     QCOMPARE(r.exists, false);
 // }
 
 // void TestUrlRouter::should_route_correctly_when_controller_parameter_given_and_does_not_accept_action_parameter()

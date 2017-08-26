@@ -634,6 +634,7 @@ int managerMain(int argc, char *argv[])
 
 } // namespace TreeFrog
 
+
 int main(int argc, char *argv[])
 {
 #ifdef Q_OS_WIN
@@ -641,9 +642,8 @@ int main(int argc, char *argv[])
         if (strcmp(argv[i], "-w") == 0) {
             // Windows service mode
             SERVICE_TABLE_ENTRY entry[] = { { (LPTSTR)TEXT(""), (LPSERVICE_MAIN_FUNCTION)TreeFrog::winServiceMain },
-                                            { NULL, NULL } };
-            if (!StartServiceCtrlDispatcher(entry))
-                return 1;
+                                            { nullptr, nullptr } };
+            StartServiceCtrlDispatcher(entry);
             return 0;
         }
     }

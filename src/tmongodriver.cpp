@@ -88,7 +88,7 @@ bool TMongoDriver::isOpen() const
 
 
 bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, const QVariantMap &orderBy,
-                       const QStringList &fields, int limit, int skip, int )
+                        const QStringList &fields, int limit, int skip, int )
 {
     if (!isOpen()) {
         return false;
@@ -101,7 +101,7 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
     mongoc_cursor_t *cursor = mongoc_collection_find(col, MONGOC_QUERY_NONE, skip, limit, 0,
                                                      (bson_t *)TBson::toBson(criteria, orderBy).data(),
                                                      (bson_t *)TBson::toBson(fields).data(),
-                                                     NULL); /* Read Prefs, NULL for default */
+                                                     nullptr); /* Read Prefs, nullptr for default */
 
     setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);

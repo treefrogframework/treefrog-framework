@@ -21,30 +21,31 @@ public:
     void setCurrentPage(int page);
 
     // Getter
-    int itemTotalCount() const { return itemsTotal_; }
-    int numPages() const { return numPages_; }
-    int itemCountPerPage() { return itemsPerPage_; }
+    int itemTotalCount() const { return _itemsTotal; }
+    int numPages() const { return _numPages; }
+    int itemCountPerPage() const { return _itemsPerPage; }
+    int itemCountOfCurrentPage() const;
     int offset() const;
-    int midRange() const { return midRange_; }
+    int midRange() const { return _midRange; }
     virtual QList<int> range() const;
-    int currentPage() const { return currentPage_; }
+    int currentPage() const { return _currentPage; }
     int firstPage() const { return 1; }
-    int previousPage() const { return qMax(currentPage_ - 1, 1); }
-    int nextPage() const { return qMin(currentPage_ + 1, numPages_); }
-    int lastPage() const { return numPages_; }
-    bool hasPrevious() const { return (currentPage_ >= 2); }
-    bool hasNext() const { return (currentPage_ < numPages_); }
-    bool hasPage(int page) const { return (page > 0 && page <= numPages_); }
+    int previousPage() const { return qMax(_currentPage - 1, 1); }
+    int nextPage() const { return qMin(_currentPage + 1, _numPages); }
+    int lastPage() const { return _numPages; }
+    bool hasPrevious() const { return (_currentPage >= 2); }
+    bool hasNext() const { return (_currentPage < _numPages); }
+    bool hasPage(int page) const { return (page > 0 && page <= _numPages); }
 
 protected:
     void calculateNumPages();  // Internal use
 
 private:
-    int itemsTotal_;
-    int itemsPerPage_;
-    int midRange_;
-    int numPages_;
-    int currentPage_;
+    int _itemsTotal {0};
+    int _itemsPerPage {10};
+    int _midRange {5};
+    int _numPages {1};
+    int _currentPage {1};
 };
 
 Q_DECLARE_METATYPE(TPaginator)

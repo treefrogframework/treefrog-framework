@@ -25,11 +25,12 @@ public:
     virtual int autoValueIndex() const { return -1; }
     virtual int databaseId() const { return 0; }
     void setRecord(const QSqlRecord &record, const QSqlError &error);
-    bool create();
-    bool update();
-    bool remove();
+    bool create() override;
+    bool update() override;
+    bool save() override;
+    bool remove() override;
     bool reload();
-    bool isNull() const { return QSqlRecord::isEmpty(); }
+    bool isNull() const override { return QSqlRecord::isEmpty(); }
     bool isNew() const { return QSqlRecord::isEmpty(); }
     bool isModified() const;
     void clear() { QSqlRecord::clear(); }

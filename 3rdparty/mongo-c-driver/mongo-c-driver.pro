@@ -5,12 +5,8 @@
 TEMPLATE = lib
 TARGET = mongoc
 CONFIG += static console
-#CONFIG -= qt
-macx:DEFINES += _DARWIN_C_SOURCE
-DEFINES += _POSIX_SOURCE MONGOC_COMPILATION BSON_COMPILATION _GNU_SOURCE
-*-g++|*-clang {
-#  QMAKE_CFLAGS += -std=c99
-}
+DEFINES += MONGOC_COMPILATION BSON_COMPILATION
+*-g++:DEFINES += _GNU_SOURCE
 DEPENDPATH += src
 INCLUDEPATH += src src/libbson/src/bson src/libbson/src
 OBJECTS_DIR = .obj

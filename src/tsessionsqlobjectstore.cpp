@@ -48,7 +48,7 @@ bool TSessionSqlObjectStore::store(TSession &session)
         return false;
     }
 
-    if (so.isEmpty()) {
+    if (so.isNull()) {
         so.id = session.id();
         return so.create();
     }
@@ -64,18 +64,19 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     cri.add(TSessionObject::Id, TSql::Equal, id);
     cri.add(TSessionObject::UpdatedAt, TSql::GreaterEqual, modified);
 
-    TSessionObject sess = mapper.findFirst(cri);
-    if (sess.isEmpty())
+    TSessionObject so = mapper.findFirst(cri);
+    if (so.isNull()) {
         return TSession();
+    }
 
-    TSession result(id);
-    QDataStream ds(&sess.data, QIODevice::ReadOnly);
-    ds >> *static_cast<QVariantMap *>(&result);
+    TSession session(id);
+    QDataStream ds(&so.data, QIODevice::ReadOnly);
+    ds >> *static_cast<QVariantMap *>(&session);
 
     if (ds.status() != QDataStream::Ok) {
         tSystemError("Failed to load a session from the sqlobject store.");
     }
-    return result;
+    return session;
 }
 
 

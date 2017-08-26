@@ -46,18 +46,21 @@ bool TSessionFileStore::store(TSession &session)
 #endif
 
     bool res = false;
+    QWriteLocker locker(&rwLock);  // lock for threads
     QFile file(sessionDirPath() + session.id());
+
     if (file.open(QIODevice::ReadWrite)) {
-        auto res = tf_lockfile(file.handle(), true, true);  // blocking flock for processes
+        auto reslock = tf_lockfile(file.handle(), true, true);  // blocking flock for processes
         int err = errno;
-        if (res < 0) {
+        if (reslock < 0) {
             tSystemWarn("flock error  errno:%d", err);
         }
-        QWriteLocker locker(&rwLock);  // lock for threads
 
         file.resize(0); // truncate
         QDataStream ds(&file);
         ds << *static_cast<const QVariantMap *>(&session);
+        file.close();
+
         res = (ds.status() == QDataStream::Ok);
         if (!res) {
             tSystemError("Failed to store session. Must set objects that can be serialized.");
@@ -73,19 +76,20 @@ TSession TSessionFileStore::find(const QByteArray &id)
     QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
 
     if (fi.exists() && fi.lastModified() >= modified) {
+        QReadLocker locker(&rwLock);  // lock for threads
         QFile file(fi.filePath());
 
         if (file.open(QIODevice::ReadOnly)) {
-            auto res = tf_lockfile(file.handle(), false, true);  // blocking flock for processes
+            auto reslock = tf_lockfile(file.handle(), false, true);  // blocking flock for processes
             int err = errno;
-            if (res < 0) {
+            if (reslock < 0) {
                 tSystemWarn("flock error  errno:%d", err);
             }
-            QReadLocker locker(&rwLock);  // lock for threads
 
             QDataStream ds(&file);
             TSession result(id);
             ds >> *static_cast<QVariantMap *>(&result);
+            file.close();
 
             if (ds.status() == QDataStream::Ok) {
                 return result;

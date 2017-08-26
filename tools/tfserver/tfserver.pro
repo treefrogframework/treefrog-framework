@@ -29,6 +29,8 @@ windows {
   LIBS += -L"$$target.path"
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  *-g++:DEFINES += _GNU_SOURCE
+  freebsd-*:DEFINES += _GNU_SOURCE
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {

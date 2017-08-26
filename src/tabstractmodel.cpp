@@ -55,7 +55,7 @@ bool TAbstractModel::create()
  */
 bool TAbstractModel::save()
 {
-    return (modelData()->isNull()) ? create() : update();
+    return modelData()->save();
 }
 
 /*!

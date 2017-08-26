@@ -105,24 +105,22 @@ static inline int tf_flock(int fd, int op)
 #endif
 }
 
-// advisory lock. exclusiveLock, false:shared lock
-static inline int tf_lockfile(int fd, bool exclusiveLock, bool blocking)
+// advisory lock. exclusive:true=exclusive lock, false=shared lock
+static inline int tf_lockfile(int fd, bool exclusive, bool blocking)
 {
 #ifdef Q_OS_WIN
-    DWORD flag = (exclusiveLock) ? LOCKFILE_EXCLUSIVE_LOCK : 0;
-    if (!blocking) {
-        flag |= LOCKFILE_FAIL_IMMEDIATELY;
-    }
-    OVERLAPPED overlap;
-    overlap.Offset = 0;
-    overlap.OffsetHigh = 0;
-    ::LockFileEx((HANDLE)fd, flag, 0, 0, 0, &overlap);
-    return 0;
+    auto handle = reinterpret_cast<HANDLE>(_get_osfhandle(fd));
+    DWORD dwFlags = (exclusive) ? LOCKFILE_EXCLUSIVE_LOCK : 0;
+    dwFlags |= (blocking) ? 0 : LOCKFILE_FAIL_IMMEDIATELY;
+    OVERLAPPED ov;
+    memset(&ov, 0, sizeof(OVERLAPPED));
+    BOOL res = LockFileEx(handle, dwFlags, 0, 0, 0, &ov);
+    return (res) ? 0 : -1;
 #else
     struct flock lck;
 
     memset(&lck, 0, sizeof(struct flock));
-    lck.l_type = (exclusiveLock) ? F_WRLCK : F_RDLCK;
+    lck.l_type = (exclusive) ? F_WRLCK : F_RDLCK;
     lck.l_whence = SEEK_SET;
     auto cmd = (blocking) ? F_SETLKW : F_SETLK;
     TF_EINTR_LOOP(::fcntl(fd, cmd, &lck));

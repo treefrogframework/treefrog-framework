@@ -160,7 +160,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version 5.7 or later.";
+            this->label->Text = L"Specify a base folder of Qt version 5.8 or later.";
             // 
             // label1
             // 
@@ -374,9 +374,9 @@ namespace treefrogsetup {
             }
 
             // Get msi file from resource
-            int rcid = IDR_TREEFROG_QT58_MSI;
-            if (version->IndexOf("Qt version 5.7", StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT57_MSI;
+            int rcid = IDR_TREEFROG_QT59_MSI;
+            if (version->IndexOf("Qt version 5.8", StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT58_MSI;
             }
 
             System::Reflection::Module^ mod = System::Reflection::Assembly::GetExecutingAssembly()->GetModules()[0];

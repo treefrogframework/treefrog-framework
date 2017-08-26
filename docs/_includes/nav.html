@@ -1,0 +1,29 @@
+<div class="nav-inner">
+  <ul>
+  {% if page.url contains '/ja/' %}
+    <li><a href="{{ site.baseurl }}/ja" class="{% if page.url == '/ja/' %}activeMenuItem{% endif %}" title="Home">ホーム</a></li>
+    <li><a href="{{ site.baseurl }}/ja/download" class="{% if page.url == '/ja/download/' %}activeMenuItem{% endif %}" title="Download">ダウンロード</a></li>
+    <li><a href="{{ site.baseurl }}/ja/user-guide" class="{% if page.url == '/ja/user-guide/' %}activeMenuItem{% endif %}" title="Documents">ドキュメント</a></li>
+    <li><a href="{{ site.baseurl }}/ja/api-reference" class="{% if page.url == '/ja/api-reference/' %}activeMenuItem{% endif %}" title="API Reference">API リファレンス</a></li>
+    <li><a href="{{ site.baseurl }}/ja/faq" class="{% if page.url == '/ja/faq/' %}activeMenuItem{% endif %}" title="FAQ">FAQ</a></li>
+    <li><a href="{{ site.baseurl }}/ja/blog" class="{% if page.url == '/ja/blog/' %}activeMenuItem{% endif %}" title="Blog">ブログ</a></li>
+    <li><a href="{{ site.baseurl }}/ja/development" class="{% if page.url == '/ja/development/' %}activeMenuItem{% endif %}" title="Development">開発</a></li>
+  {% elsif page.url contains '/ch/' %}
+    <li><a href="{{ site.baseurl }}/ch" class="{% if page.url == '/ch/' %}activeMenuItem{% endif %}" title="Home">Home</a></li>
+    <li><a href="{{ site.baseurl }}/ch/download" class="{% if page.url == '/ch/download/' %}activeMenuItem{% endif %}" title="Download">Download</a></li>
+    <li><a href="{{ site.baseurl }}/ch/user-guide" class="{% if page.url == '/ch/user-guide/' %}activeMenuItem{% endif %}" title="Documents">Documents</a></li>
+    <li><a href="{{ site.baseurl }}/ch/api-reference" class="{% if page.url == '/ch/api-reference/' %}activeMenuItem{% endif %}" title="API Reference">API Reference</a></li>
+    <li><a href="{{ site.baseurl }}/ch/faq" class="{% if page.url == '/ch/faq/' %}activeMenuItem{% endif %}" title="FAQ">FAQ</a></li>
+    <li><a href="{{ site.baseurl }}/ch/blog" class="{% if page.url == '/ch/blog/' %}activeMenuItem{% endif %}" title="Blog">Blog</a></li>
+    <li><a href="{{ site.baseurl }}/ch/development" class="{% if page.url == '/ch/development/' %}activeMenuItem{% endif %}" title="Development">Development</a></li>
+  {% else %}
+    <li><a href="{{ site.baseurl }}/" class="{% if page.url == '/' %}activeMenuItem{% endif %}" title="Home">Home</a></li>
+    <li><a href="{{ site.baseurl }}/en/download" class="{% if page.url == '/en/download/' %}activeMenuItem{% endif %}" title="Download">Download</a></li>
+    <li><a href="{{ site.baseurl }}/en/user-guide" class="{% if page.url == '/en/user-guide/' %}activeMenuItem{% endif %}" title="Documents">Documents</a></li>
+    <li><a href="{{ site.baseurl }}/en/api-reference" class="{% if page.url == '/en/api-reference/' %}activeMenuItem{% endif %}" title="API Reference">API Reference</a></li>
+    <li><a href="{{ site.baseurl }}/en/faq" class="{% if page.url == '/en/faq/' %}activeMenuItem{% endif %}" title="FAQ">FAQ</a></li>
+    <li><a href="{{ site.baseurl }}/en/blog" class="{% if page.url == '/en/blog/' %}activeMenuItem{% endif %}" title="Blog">Blog</a></li>
+    <li><a href="{{ site.baseurl }}/en/development" class="{% if page.url == '/en/development/' %}activeMenuItem{% endif %}" title="Development">Development</a></li>
+  {% endif %}
+  </ul>
+</div>

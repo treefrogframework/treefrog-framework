@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>TreeFrog Framework | High-speed C++ MVC Framework for Web Application</title>
+    <meta name="keywords" content="TreeFrog,MVC,Web,Fast,WebSocket,Framework,ORM,C++,full stack,mongodb,C++11,Qt,generator,scaffold" />
+{% if page.url contains '/ja/' %}
+    <meta name="description" content="TreeFrog Framework は、C++によるフルスタックの高速Webアプリケーションフレームワークであり、HTTP はもちろん WebSocket プロトコルもサポートしています。" />
+{% else %}
+    <meta name="description" content="TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and WebSocket protocol" />
+{% endif %}
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ site.baseurl }}/assets/css/style.css">
+    <link rel="icon" href="{{site.baseurl}}/favicon.ico">
+</head>
+<body>
+<div id="wrapper">
+    <!-- HEADER -->
+    <div class="header-wrap outer">
+    {% include header.html %}
+    </div>
+    <!-- NAV -->
+    <nav class="nav-wrap outer">
+    {% include nav.html %}
+    </nav>
+    <!-- MAIN CONTENT -->
+    <div class="main-content-wrap outer">
+        <div class="main-inner">
+            <div class="main-content">
+            <h2>{{page.title}}</h2>
+            {% if page.url contains '/ja/' %}
+                {% include generateDynamicMenu.html root="/ja/user-guide/" %}
+            {% elsif page.url contains '/ch/' %}   
+                {% include generateDynamicMenu.html root="/ch/user-guide/" %}
+            {% else %} 
+                {% include generateDynamicMenu.html root="/en/user-guide/" %}
+            {% endif %}
+            </div>
+            <!-- NAIVGATION -->
+            <div class="navigation">
+            {% include navigation.html %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FOOTER  -->
+<div class="footer-wrap outer">
+{% include footer.html %}
+</div>
+{% include analytics.html %}
+</body>
+</html>

@@ -26,11 +26,17 @@ addons:
       - libqt5sql5-sqlite
       - libsqlite3-dev
       - gdb
+      - ruby
+      - ruby-dev
+      - ruby-all-dev
+      - gem
 
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt remove bundler; sudo gem update; cd $CI_WORK/docs; bundle install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; brew link --force qt; fi
 
 install:
+  - cd $CI_WORK
   - qmake -v
   - ./configure --prefix=/usr/local
   - make -j4 -C src
@@ -52,4 +58,5 @@ script:
   - ./tmaketest
   - cd $CI_WORK/tools/test
   - ./releasetest/releasetest
-
+  - cd $CI_WORK/docs
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bundle exec jekyll build; fi
