@@ -51,14 +51,11 @@ int ViewConverter::convertView(const QString &templateSystem) const
     QStringList classList;
     QStringList viewFiles;
 
-    QDir helpersDir = viewDir;
-    helpersDir.cdUp();
-    helpersDir.cd("helpers");
     QDir partialDir = viewDir;
     partialDir.cd("partial");
 
-    ErbConverter erbconv(outputDir, helpersDir, partialDir);
-    OtamaConverter otamaconv(outputDir, helpersDir, partialDir);
+    ErbConverter erbconv(outputDir, partialDir);
+    OtamaConverter otamaconv(outputDir, partialDir);
 
     for (const QString &d : viewDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         // Reads erb-files
