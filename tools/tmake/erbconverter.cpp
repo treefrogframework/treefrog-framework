@@ -41,8 +41,8 @@
 const QRegExp RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
 
 
-ErbConverter::ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial)
-    : outputDirectory(output), helpersDirectory(helpers), partialDirectory(partial)
+ErbConverter::ErbConverter(const QDir &output, const QDir &partial)
+    : outputDirectory(output), partialDirectory(partial)
 { }
 
 
@@ -147,13 +147,6 @@ QString ErbConverter::escapeNewline(const QString &string)
 QString ErbConverter::generateIncludeCode(const ErbParser &parser) const
 {
     QString code = parser.includeCode();
-    QStringList filter;
-    filter << "*.h" << "*.hh" << "*.hpp" << "*.hxx";
-    foreach (QString f, helpersDirectory.entryList(filter, QDir::Files)) {
-        code += "#include \"";
-        code += f;
-        code += "\"\n";
-    }
     return code;
 }
 

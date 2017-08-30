@@ -68,8 +68,8 @@ QString generateErbPhrase(const QString &str, int echoOption)
 }
 
 
-OtamaConverter::OtamaConverter(const QDir &output, const QDir &helpers, const QDir &partial)
-    : erbConverter(output, helpers, partial)
+OtamaConverter::OtamaConverter(const QDir &output, const QDir &partial)
+    : erbConverter(output, partial)
 { }
 
 
