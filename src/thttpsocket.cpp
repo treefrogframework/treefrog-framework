@@ -127,6 +127,11 @@ void THttpSocket::writeRawDataFromWebSocket(const QByteArray &data)
 qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 {
     qint64 total = 0;
+
+    if (Q_UNLIKELY(!data || size == 0)) {
+        return total;
+    }
+
     for (;;) {
         if (QTcpSocket::bytesToWrite() > SEND_BUF_SIZE * 3 / 4) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {

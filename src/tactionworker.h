@@ -22,7 +22,7 @@ public:
 
 protected:
     void run();
-    qint64 writeResponse(THttpResponseHeader &header, QIODevice *body);
+    qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
     void closeHttpSocket();
 
 private:

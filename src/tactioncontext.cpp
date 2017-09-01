@@ -365,6 +365,10 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 {
     T_TRACEFUNC("statusCode:%d", statusCode);
     QByteArray body;
+
+    if (statusCode == Tf::NotModified) {
+        return writeResponse(statusCode, header, QByteArray(), nullptr, 0);
+    }
     if (statusCode >= 400) {
         QFile html(Tf::app()->publicPath() + QString::number(statusCode) + ".html");
         if (html.exists() && html.open(QIODevice::ReadOnly)) {
@@ -390,8 +394,9 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
     T_TRACEFUNC("statusCode:%d  contentType:%s  length:%s", statusCode, contentType.data(), qPrintable(QString::number(length)));
 
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
-    if (!contentType.isEmpty())
+    if (!contentType.isEmpty()) {
         header.setContentType(contentType);
+    }
 
     return writeResponse(header, body, length);
 }
