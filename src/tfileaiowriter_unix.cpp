@@ -64,6 +64,9 @@ void TFileAioWriter::close()
 {
     QMutexLocker locker(&d->mutex);
 
+    if (!isOpen())
+        return;
+
     flush();
 
     if (d->fileDescriptor > 0) {

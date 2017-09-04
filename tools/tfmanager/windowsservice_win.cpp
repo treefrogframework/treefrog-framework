@@ -152,11 +152,14 @@ void WINAPI winServiceMain(DWORD, LPTSTR *)
         delete[] args;
     }
 
+    // Cleanup code must be executed before setting status to SERVICE_STOPPED
+    tSystemInfo("Windows service stopped");
+    Tf::releaseSystemLogger();
+
     // Service status
     serviceStatus.dwCurrentState = SERVICE_STOPPED;
     serviceStatus.dwWin32ExitCode = ret;
     SetServiceStatus(statusHandle, &serviceStatus);
-    tSystemInfo("Windows service stopped");
 }
 
 } // namespace TreeFrog
