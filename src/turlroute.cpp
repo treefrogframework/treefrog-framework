@@ -155,7 +155,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &components) const
 {
     if (_routes.isEmpty()) {
-        TRouting();
+        return TRouting();
     }
 
     for (const auto &rt : _routes) {
