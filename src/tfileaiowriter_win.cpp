@@ -156,6 +156,10 @@ void TFileAioWriter::flush()
 {
     QMutexLocker locker(&d->mutex);
 
+    if (!isOpen()) {
+        return;
+    }
+
     FlushFileBuffers(d->fileHandle);
     d->clearSyncBuffer();
 }

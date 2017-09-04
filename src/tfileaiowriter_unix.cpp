@@ -99,7 +99,7 @@ int TFileAioWriter::write(const char *data, int length)
                 }
 
                 if (d->syncBuffer.dequeue(headcb)) {
-                    delete [] (char *)headcb->aio_buf;
+                    delete[] (char *)headcb->aio_buf;
                     delete headcb;
                 } else {
                     break;
@@ -148,6 +148,10 @@ int TFileAioWriter::write(const char *data, int length)
 
 void TFileAioWriter::flush()
 {
+    if (!isOpen()) {
+        return;
+    }
+
     if (d->syncBuffer.count() == 0) {
         return;
     }
@@ -159,7 +163,7 @@ void TFileAioWriter::flush()
         if (d->syncBuffer.head(headcb) && aio_error(headcb) != EINPROGRESS) {
             // Dequeue
             if (d->syncBuffer.dequeue(headcb)) {
-                delete [] (char *)headcb->aio_buf;
+                delete[] (char *)headcb->aio_buf;
                 delete headcb;
             }
         }
