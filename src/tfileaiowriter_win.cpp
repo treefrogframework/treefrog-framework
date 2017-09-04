@@ -83,9 +83,6 @@ void TFileAioWriter::close()
 {
     QMutexLocker locker(&d->mutex);
 
-    if (!isOpen())
-        return;
-
     flush();
 
     if (d->fileHandle != INVALID_HANDLE_VALUE) {
@@ -158,6 +155,10 @@ int TFileAioWriter::write(const char *data, int length)
 void TFileAioWriter::flush()
 {
     QMutexLocker locker(&d->mutex);
+
+    if (!isOpen()) {
+        return;
+    }
 
     FlushFileBuffers(d->fileHandle);
     d->clearSyncBuffer();
