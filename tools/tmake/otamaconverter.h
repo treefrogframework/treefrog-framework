@@ -10,7 +10,7 @@
 class OtamaConverter
 {
 public:
-    OtamaConverter(const QDir &output, const QDir &helpers, const QDir &partial);
+    OtamaConverter(const QDir &output, const QDir &partial);
     ~OtamaConverter();
 
     bool convert(const QString &filePath, int trimMode) const;
