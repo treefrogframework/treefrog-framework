@@ -307,8 +307,10 @@ template <class T>
 inline void TSqlORMapper<T>::setSortOrder(int column, Tf::SortOrder order)
 {
     if (column >= 0) {
-        QString columnName = TCriteriaConverter<T>::getPropertyName(column, database().driver());
-        sortColumns << qMakePair(columnName, order);
+        QString columnName = TCriteriaConverter<T>::getPropertyName(column, QSqlTableModel::database().driver());
+        if (!columnName.isEmpty()) {
+            sortColumns << qMakePair(columnName, order);
+        }
     }
 }
 
