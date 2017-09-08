@@ -174,8 +174,11 @@ void build_check_TMongoODMapper()
 void build_check_TModelUtil()
 {
     TCriteria crt;
-    QList<QPair<int, Tf::SortOrder>> sortColumns;
+    QList<QPair<QString, Tf::SortOrder>> sortColumns;
+    QList<QPair<int, Tf::SortOrder>> sortColumns2;
     tfGetModelListByCriteria<Blog, BlogObject>(crt, sortColumns, 0, 0);
+    tfGetModelListByCriteria<Blog, BlogObject>(crt, sortColumns2, 0, 0);
+    tfGetModelListByCriteria<Blog, BlogObject>(crt, "hoge", Tf::DescendingOrder, 0, 0);
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, Tf::DescendingOrder, 0, 0);
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, 0);
     tfGetModelListByMongoCriteria<Foo, FooObject>(crt, 0, 0);
