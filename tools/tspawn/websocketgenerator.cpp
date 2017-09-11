@@ -75,7 +75,7 @@ bool WebSocketGenerator::generate(const QString &dst) const
 {
     // Writes each files
     QDir dstDir(dst);
-    QString output = QString(ENDPOINT_HEADER_TEMPLATE).arg(name.toUpper()).arg(name).arg(name.toLower());
+    QString output = QString(ENDPOINT_HEADER_TEMPLATE).arg(name.toUpper()).arg(name);
     FileWriter(dstDir.filePath(name.toLower() + "endpoint.h")).write(output, false);
 
     output = QString(ENDPOINT_IMPL_TEMPLATE).arg(name.toLower()).arg(name);
