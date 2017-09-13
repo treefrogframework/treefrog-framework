@@ -68,6 +68,7 @@ QList<THttpRequest> THttpSocket::read()
             fileBuffer.close();
             THttpRequest req(readBuffer, fileBuffer.fileName(), peerAddress());
             reqList << req;
+            fileBuffer.resize(0);
         } else {
             reqList = THttpRequest::generate(readBuffer, peerAddress());
         }
