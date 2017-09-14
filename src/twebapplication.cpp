@@ -476,6 +476,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     // INI format
                     QVariantMap map;
                     QSettings settings(fi.absoluteFilePath(), QSettings::IniFormat);
+					settings.setIniCodec(codecInternal);
                     for (auto &k : (const QStringList &)settings.allKeys()) {
                         map.insert(k, settings.value(k));
                     }
@@ -487,7 +488,8 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     // JSON format
                     QFile jsonFile(fi.absoluteFilePath());
                     if (jsonFile.open(QIODevice::ReadOnly)) {
-                        auto json = QJsonDocument::fromJson(jsonFile.readAll()).object();
+						QString data = codecInternal->toUnicode(jsonFile.readAll());
+                        auto json = QJsonDocument::fromJson(data.toLatin1()).object();
                         jsonFile.close();
                         configMap.insert(cnf, json.toVariantMap());
                         break;
