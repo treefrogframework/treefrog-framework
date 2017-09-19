@@ -1,4 +1,17 @@
 # ChangeLog
+## 1.19.0
+ - Added TSqlDriverExtension class for upsert statement.
+ - Added QString arguments to sort columns function.
+ - Added linkTo() functions that has various arguments.
+ - Added itemCountOfCurrentPage() into TPaginator class.
+ - Added routes.cfg settings by which redirecting to URL path.
+ - Modified to send a message of empty body when the status code is 304.
+ - Fix a bug of Windows service stop-request.
+ - Fix a bug of routing when any controller is not found.
+ - Fix a bug that urlq() function doesn't keep arguments.
+ - Fix a bug of printing help messages.
+ - Fix compilation error on FreeBSD.
+
 ## 1.18.0
  - Implemented a session store for MongoDB.
  - Fix a bug of file session store.
