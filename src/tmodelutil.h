@@ -39,10 +39,9 @@ template <class T, class S>
 inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, const QList<QPair<int, Tf::SortOrder>> &sortColumns, int limit = 0, int offset = 0)
 {
     QList<QPair<QString, Tf::SortOrder>> sorts;
-    QSqlDriver *driver = Tf::currentSqlDatabase(S().databaseId()).driver();
 
     for (auto &p : sortColumns) {
-        QString columnName = TCriteriaConverter<S>::getPropertyName(p.first, driver);
+        QString columnName = TCriteriaConverter<S>::getPropertyName(p.first, nullptr);
         if (! columnName.isEmpty()) {
             sorts << qMakePair(columnName, p.second);
         }

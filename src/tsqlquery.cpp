@@ -104,7 +104,7 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, const QSqlDriver *driver)
 {
     QString ret = identifier;
-    if (!driver->isIdentifierEscaped(identifier, type)) {
+    if (driver && !driver->isIdentifierEscaped(identifier, type)) {
         ret = driver->escapeIdentifier(identifier, type);
     }
     return ret;

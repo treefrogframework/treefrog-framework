@@ -216,6 +216,10 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
 template <class T>
 inline QString TCriteriaConverter<T>::getPropertyName(const QMetaObject *metaObject, int property, const QSqlDriver *driver, const QString &aliasTableName)
 {
+    if (property < 0) {
+        return QString();
+    }
+
     QString name = (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).name() : QString();
     if (name.isEmpty()) {
         return name;
