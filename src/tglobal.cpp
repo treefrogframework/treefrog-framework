@@ -238,6 +238,12 @@ QMap<QByteArray, const QMetaObject*> *Tf::metaObjects()
     return &metaObjectMap;
 }
 
+QMap<QByteArray, std::function<QObject*()>> *Tf::objectFactories()
+{
+    static QMap<QByteArray, std::function<QObject*()>> objectFactoryMap;
+    return &objectFactoryMap;
+}
+
 /*!
   Returns the current datetime in the local time zone.
   It provides 1-second accuracy.

@@ -33,6 +33,7 @@
     public:                                                     \
         Static##TYPE##Definition()                              \
         {                                                       \
+            Tf::objectFactories()->insert(QByteArray(#TYPE).toLower(), [](){ return new TYPE(); }); \
             Tf::metaObjects()->insert(QByteArray(#TYPE).toLower(), &TYPE::staticMetaObject); \
         }                                                       \
     };                                                          \
@@ -165,6 +166,7 @@
 #include <TWebApplication>
 #include "tfexception.h"
 #include <cstdint>
+#include <functional>
 
 class TAppSettings;
 class TActionContext;
@@ -192,6 +194,7 @@ namespace Tf
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
     T_CORE_EXPORT QMap<QByteArray, const QMetaObject*> *metaObjects();
+    T_CORE_EXPORT QMap<QByteArray, std::function<QObject*()>> *objectFactories();
 }
 
 #endif // TGLOBAL_H
