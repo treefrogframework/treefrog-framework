@@ -13,7 +13,7 @@ With the aim of reducing development costs while producing a C++ framework, a po
 
 ### Cross-platform
 
-TreeFrog Framework is cross-platform. It runs on Windows, of course, but also on UNIX-like Operating Systems, Mac OS X, and Linux. Using Windows open-source coding, it is possible to support Linux. Web applications that run on multiple platforms are also possible, simply by recompiling the source code.
+TreeFrog Framework is cross-platform. It runs on Windows, of course, but also on UNIX-like Operating Systems, macOS, and Linux. Using Windows open-source coding, it is possible to support Linux. Web applications that run on multiple platforms are also possible, simply by recompiling the source code.
 
 ### Controller
 

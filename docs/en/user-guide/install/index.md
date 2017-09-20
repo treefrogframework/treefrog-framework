@@ -7,7 +7,7 @@ page_id: "020.0"
 
 First of all, we need to install the Qt library in advance.
 
-On Windows and Mac OS X, download the package from the [Qt site](http://qt-project.org/downloads){:target="_blank"} and install it.
+On Windows and macOS, download the package from the [Qt site](http://qt-project.org/downloads){:target="_blank"} and install it.
 On Linux, you can install a package for each distribution.
 
 In case of Ubuntu:
@@ -56,7 +56,7 @@ Now install the DB client libraries:
   > mingw32-make install
    ```
 
-   In UNIX-based OS Linux, and Mac OS X:
+   In UNIX-based OS Linux, and macOS:
    Enter the following command from the command line:
 
    ```
@@ -147,7 +147,7 @@ Options available on Linux, and UNIX-like OS:
    --datadir=DIR       read-only architecture-independent data [/usr/share/treefrog]
 ```
 
-Options available in Max OS X:
+Options available in macOS:
 
 ```
  $ ./configure --help

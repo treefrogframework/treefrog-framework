@@ -7,7 +7,7 @@ page_id: "020.0"
 
 あらかじめ Qt ライブラリをインストールしておいてください。
 
-Windows や Mac OS X の場合は、 Qt の[サイト](https://www.qt.io/download/){:target="_blank"}からダウンロードしてインストールしてください。
+Windows や macOS の場合は、 Qt の[サイト](https://www.qt.io/download/){:target="_blank"}からダウンロードしてインストールしてください。
 Linux の場合は、ディストリビューションで用意されているパッケージを使用することができます。
 
 Ubuntu の例：
@@ -52,7 +52,7 @@ DBクライアントライブラリもインストールします。
   > mingw32-make install
    ```
 
-   Linux, Mac OS X など UNIX 系 OS の場合：  コマンドラインから次を入力します。
+   Linux, macOS など UNIX 系 OS の場合：  コマンドラインから次を入力します。
 
    ```
   $ cd treefrog-x.x.x
@@ -140,7 +140,7 @@ Linux, UNIX系OSで指定可能なオプション：
    --datadir=DIR       read-only architecture-independent data [/usr/share/treefrog]
 ```
 
-Max OS X で指定できるオプション：
+macOS で指定できるオプション：
 
 ```
  $ ./configure --help

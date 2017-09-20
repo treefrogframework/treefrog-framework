@@ -9,11 +9,50 @@ TreeFrog Framework is a high-speed and full-stack C++ framework for developing W
 
 Because the sever-side framework was written in C++/Qt, web applications can run faster than that of scripting language. In application development, it provides an O/R mapping system and template systems on an MVC architecture, aims to achieve high productivity through the policy of  convention over configuration.
 
+
+## Features
+
+  1. High performance - Highly optimized Application server engine of C++.  [Benckmarks by 3rd party](http://www.techempower.com/benchmarks/){:target="_blank"}
+  2. O/R mapping  - Conceals complex and troublesome database accesses
+  3. Template system  - ERB-like template engine
+  4. Support for many DB - MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
+  5. Cross-platform  - Same source code can work on Windows, macOS and Linux
+  6. Support WebSocket - Providing full-duplex communications channels
+  7. Generator - Automatically generates scaffolds and Makefiles
+  8. Less resource -  Stable operation even on Raspberry Pi
+  9. OSS  - New BSD License
+
+
+## Select TreeFrog Framework
+
+It is said that there is a trade-off relationship between development efficiency and operation speed in web application development, is it really true?
+
+There is not such a thing. it is possible to develop efficiently by providing convenient development tools and excellent libraries from the framework and by specifying specifications to minimize the configuration file.
+
+In recent years, cloud computing has emerged, the importance of Web applications is increasing year by year. Although it is known that the execution speed of the script language decreases as the amount of code increases, C++ language can operate at the fastest speed with a small memory footprint and does not decrease execution speed even as the amount of code increases.
+
+Multiple application servers running in scripting language can be aggregated into one without degrading performance.
+Try TreeFrog Framework which combines high productivity and high speed operation!
+
+
 ## Latest News
+
+Sep. 20, 2017
+
+### TreeFrog Framework version 1.19.0 (stable) release <span style="color: red;">New!</span>
+
+  - Added TSqlDriverExtension class for upsert statement.
+  - Added QString arguments to sort columns function.
+  - Added routes.cfg settings by which redirecting to URL path.
+  - Modified to send a message of empty body when the status code is 304.
+  - Fix compilation error on FreeBSD.
+  - Other bugfixes.
+
+  [Download this version](download/)
 
 Jul. 1, 2017
 
-### TreeFrog Framework version 1.18.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.18.0 (stable) release New!
 
   - Implemented a session store for MongoDB.
   - Fix a bug of file session store.
@@ -21,37 +60,8 @@ Jul. 1, 2017
   - Fix a bug of parsing arguments when running as Windows service.
   - Fix leak of db connections.
 
- <a href="{{site.baseurl}}/en/download/">Download this version</a>
-
-May 27, 2017
-
-### TreeFrog Framework version 1.17.0 (stable) release
-
-  - Fix a bug of comparisn logic of If-Modified-Since header.
-  - Fix a bug of URL path traversal.
-  - Added logic of routing to a static file.
-  - Added a class to process in background, TBackgroundProcess.
-  - Other bugfixes.
-
-Apr. 8, 2017
-
-### TreeFrog Framework version 1.16.0 (stable) release
-
-  - Added a config for listening IP address.
-  - Added a config for executing SQL statements on post-open.
-  - Added a function for multi-fields 'order by', tfGetModelListByCriteria().
-  - Added pages for GigHub Pages, English and Japanese.
-  - Other bugfixes.
-
-Jan. 22, 2017
-
-### TreeFrog Framework version 1.15.0 (stable) release
-
-  - Added debug functions like 'tDebug() << "foo" '.
-  - Added config-initializer functions to TWebApplication class.
-  - Added C++11 for-loop for TSqlORMapper class.
-  - Modified functions of TFormValidator class.
-  - Other bugfixes.
+ [All older releases](https://github.com/treefrogframework/treefrog-framework/releases)  
+ [All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
 ## Wanted
@@ -61,17 +71,6 @@ Jan. 22, 2017
 Since this site is built with [GitHub Pages](https://pages.github.com/), translations can also be sent by a pull-request.
 Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Welcome!
 
-## Features
-
-  1. High performance - Highly optimized Application server engine of C++.  [Benckmarks by 3rd party](http://www.techempower.com/benchmarks/){:target="_blank"}.
-  2. O/R mapping  - Conceals complex and troublesome database accesses.
-  3. Template system  - Completely divided templates and presentation logic.
-  4. Support for many DB – MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2, InterBase, MongoDB and Redis.
-  5. Cross-platform  - Windows, Mac OS X, Linux, etc.  Same source code can work on other platforms.
-  6. Support WebSocket – Providing full-duplex communications channels.
-  7. Generator – Automatically generates scaffolds and Makefiles.
-  8. Less resource -  Stable operation even on Raspberry Pi.
-  9. OSS  - New BSD License
 
 ## Information
 

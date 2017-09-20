@@ -20,7 +20,7 @@ When debugging, the following settings are used according to the platforms:
 
 <div class="center aligned" markdown="1">
 
-**In the case of Linux/ Mac OS X:**
+**In the case of Linux/macOS:**
 
 </div>
 
@@ -30,7 +30,7 @@ When debugging, the following settings are used according to the platforms:
 |-------------------------------------------------------|------------------------------------------------|
 | Command                                               | tadpole                                        |
 | Command argument                                      | \--debug -e dev (Absolute path of the app root) |
-| LD_LIBRARY_PATH env variable<br>(not needed on Mac OS X) | Specify the *lib* directory of web application.  |
+| LD_LIBRARY_PATH env variable<br>(not needed on macOS) | Specify the *lib* directory of web application.  |
 
 </div><br>
 

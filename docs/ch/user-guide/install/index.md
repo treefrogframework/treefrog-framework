@@ -7,15 +7,15 @@ page_id: "020.0"
 
 首先,我们需要先安装好Qt库.
 
-对于Windows和Mac OS X,从[Qt 网站](http://qt-project.org/downloads){:target="_blank"} 下载并安装它.
+对于Windows和macOS,从[Qt 网站](http://qt-project.org/downloads){:target="_blank"} 下载并安装它.
 对于Linux,你可以安装一个发布的包.
 
 如果是Ubuntu:
 安装Qt库和开发工具:
 
 ```
-$ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql 
-libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev 
+$ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
+libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev
 qtdeclarative5-dev qtbase5-dev-tools gcc g++ make
 ```
 
@@ -55,9 +55,9 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
    > mingw32-make install
    ```
 
-   在基于UNIX的操作系统Linux和Mac OS X:
+   在基于UNIX的操作系统Linux和macOS:
    在命令行输入以下命令:
-   
+
    ```
    $ cd treefrog-x.x.x
    $ ./configure
@@ -68,8 +68,8 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
    $ make
    $ sudo make install
    ```
-   
-   **说明:** 
+
+   **说明:**
    为了调试Treefrog框架本身,请使用*configure*选项.
    现在请执行命令:
 
@@ -82,7 +82,7 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
    ```
    $ sudo ldconfig
    ```
-   
+
 3.创建Treefrog命令行窗口的快捷方式(仅在Windows).
    在你想要的文件夹下点击右键, 选择"新建"然后点击"快捷方式". 设置链接目标如下:
 
@@ -93,7 +93,7 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
    ('x.x.x'表示当前使用的版本)
 
    <div class="img-center" markdown="1">
-   
+
    ![创建快捷方式]({{ site.baseurl }}/assets/images/documentation/shortcut_ch.png "新建快捷方式")
 
    </div>
@@ -101,11 +101,11 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
    设置快捷方式的名字为'Treefrog命令行窗口'.
 
    <div class="img-center" markdown="1">
-   
+
    ![快捷方式名称]({{ site.baseurl }}/assets/images/documentation/shortcut-name_ch.png "快捷方式名称")
 
    </div>
-   
+
 ### 配置选项
 
 通过定义各自选项,可以进行环境的客户化设定.
