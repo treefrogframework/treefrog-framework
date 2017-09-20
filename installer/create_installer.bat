@@ -16,10 +16,10 @@ call :build_msi "C:\Qt\Qt5.8.0-mingw\5.8\mingw53_32\bin\qtenv2.bat"   5.8
 call :build_setup treefrog-%VERSION%-mingw-setup.exe
 
 :: MSVC2015
-::call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-::call :build_msi "C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\bin\qtenv2.bat"        5.9
-::call :build_msi "C:\Qt\Qt5.8.0-msvc2015\5.8\msvc2015_64\bin\qtenv2.bat" 5.8
-::call :build_setup treefrog-%VERSION%-msvc2015_64-setup.exe
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+call :build_msi "C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\bin\qtenv2.bat"        5.9
+call :build_msi "C:\Qt\Qt5.8.0-msvc2015\5.8\msvc2015_64\bin\qtenv2.bat" 5.8
+call :build_setup treefrog-%VERSION%-msvc2015_64-setup.exe
 
 
 echo.
