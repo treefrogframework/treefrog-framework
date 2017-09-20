@@ -115,6 +115,7 @@ echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 
 set TFDIR=%TFDIR:\=/%
+del 3rdparty\mongo-c-driver\.qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
 :: Builds MongoDB driver
 echo Compiling MongoDB driver library ...
 cd 3rdparty\mongo-c-driver

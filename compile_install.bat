@@ -1,8 +1,9 @@
 @ECHO OFF
 @setlocal
 
-:: Requires Qt environment.
+cd /D %~dp0
 
+:: Requires Qt environment.
 
 if "%Platform%" == "X64" (
   set MAKE=nmake

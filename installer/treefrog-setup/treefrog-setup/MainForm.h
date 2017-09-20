@@ -160,7 +160,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version 5.8 or later.";
+            this->label->Text = L"Specify a base folder of Qt version 5.8 or 5.9.";
             // 
             // label1
             // 
@@ -171,7 +171,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.8.0";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt5.9.1\\5.9.1\\msvc2015_64";
             // 
             // labeltop
             // 
@@ -338,6 +338,11 @@ namespace treefrogsetup {
             if (forderTextBox->Text != L"C:\\") {
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw*", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc20*", forderTextBox->Text, excludes), excludes));
+
+                // Qt 5.9 or later
+                if (bins->Count == 0) {
+                    bins->AddRange(searchSubDirectories(L"bin", forderTextBox->Text, excludes));
+                }
             }
 
             if (bins->Count == 0) {
