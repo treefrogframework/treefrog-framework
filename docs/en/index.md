@@ -3,14 +3,14 @@ title: Home
 page_id: "home.00"
 ---
 
-## Small but Powerful and Efficient
+## <i class="fa fa-bolt" aria-hidden="true"></i> Small but Powerful and Efficient
 
 TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and WebSocket protocol.
 
 Because the sever-side framework was written in C++/Qt, web applications can run faster than that of scripting language. In application development, it provides an O/R mapping system and template systems on an MVC architecture, aims to achieve high productivity through the policy of  convention over configuration.
 
 
-## Features
+## <i class="fa fa-flag" aria-hidden="true"></i> Features
 
   1. High performance - Highly optimized Application server engine of C++.  [Benckmarks by 3rd party](http://www.techempower.com/benchmarks/){:target="_blank"}
   2. O/R mapping  - Conceals complex and troublesome database accesses
@@ -23,7 +23,7 @@ Because the sever-side framework was written in C++/Qt, web applications can run
   9. OSS  - New BSD License
 
 
-## Select TreeFrog Framework
+## <i class="fa fa-comment" aria-hidden="true"></i> Select TreeFrog Framework
 
 It is said that there is a trade-off relationship between development efficiency and operation speed in web application development, is it really true?
 
@@ -35,7 +35,7 @@ Multiple application servers running in scripting language can be aggregated int
 Try TreeFrog Framework which combines high productivity and high speed operation!
 
 
-## Latest News
+## <i class="fa fa-exclamation-circle" aria-hidden="true"></i> Latest News
 
 Sep. 20, 2017
 
@@ -48,11 +48,11 @@ Sep. 20, 2017
   - Fix compilation error on FreeBSD.
   - Other bugfixes.
 
-  [Download this version](download/)
+  [<i class="fa fa-download" aria-hidden="true"></i> Download this version](download/)
 
 Jul. 1, 2017
 
-### TreeFrog Framework version 1.18.0 (stable) release New!
+### TreeFrog Framework version 1.18.0 (stable) release
 
   - Implemented a session store for MongoDB.
   - Fix a bug of file session store.
@@ -60,10 +60,10 @@ Jul. 1, 2017
   - Fix a bug of parsing arguments when running as Windows service.
   - Fix leak of db connections.
 
- [All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
+ [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
-## Wanted
+## <i class="fa fa-user" aria-hidden="true"></i> Wanted
 
  - Developers, testers, translators.
 
@@ -71,7 +71,7 @@ Since this site is built with [GitHub Pages](https://pages.github.com/), transla
 Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Welcome!
 
 
-## Information
+## <i class="fa fa-info-circle" aria-hidden="true"></i> Information
 
 [TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
 

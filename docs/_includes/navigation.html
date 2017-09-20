@@ -1,4 +1,4 @@
-<h4 class="widget-title">Search</h4>
+<h4 class="widget-title"><i class="fa fa-search" aria-hidden="true"></i> Search</h4>
 
 {% if page.url contains '/ja/' %}
 <form action="{{ site.baseurl }}/ja/search.html" class="search-form-navi" method="get">
@@ -15,7 +15,7 @@
 {% endif %}
 </form>
 
-<h4 class="widget-title">Languages</h4>
+<h4 class="widget-title"><i class="fa fa-globe" aria-hidden="true"></i> Languages</h4>
 <ul>
 {% assign url = page.url | prepend: site.github.url %} 
 {% if page.url contains '/en/' %}
@@ -43,10 +43,10 @@
 {% endif %}
 </ul>
 
-<h4 class="widget-title">Translate</h4>
+<h4 class="widget-title"><i class="fa fa-files-o" aria-hidden="true"></i> Translate</h4>
 {% include translate_tool.html %}
 
-<h4 class="widget-title">Users Guide</h4>
+<h4 class="widget-title"><i class="fa fa-book" aria-hidden="true"></i> Users Guide</h4>
 {% if page.url contains '/ja/' %}
     {% include generateDynamicMenu.html root="/ja/user-guide/" %}
 {% elsif page.url contains '/ch/' %}   
@@ -55,7 +55,7 @@
     {% include generateDynamicMenu.html root="/en/user-guide/" %}
 {% endif %}
 
-<h4 class="widget-title">Many Thanks to</h4>
+<h4 class="widget-title"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Many Thanks to</h4>
 <div class="thanks-banner">
   <a href="{{site.repository}}" target="_blank"><img src="{{site.baseurl}}/assets/images/github.png" alt="GitHub"></a>
   <a href="https://travis-ci.org/" target="_blank"><img src="{{site.baseurl}}/assets/images/travisci.png" alt="TravisCI"></a>

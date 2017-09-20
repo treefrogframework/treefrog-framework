@@ -3,7 +3,7 @@ title: ホーム
 page_id: "home.00"
 ---
 
-## 小さくて パワフル そして 高性能
+## <i class="fa fa-bolt" aria-hidden="true"></i> 小さくて パワフル そして 高性能
 
 TreeFrog Framework は、C++によるフルスタックの高速Webアプリケーションフレームワーク
 であり、HTTP はもちろん WebSocket プロトコルもサポートしています。
@@ -14,7 +14,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 高い生産性の実現を目指しています。
 
 
-## 特徴
+## <i class="fa fa-flag" aria-hidden="true"></i> 特徴
 
 TreeFrog Framework は次のような特徴を兼ね備えています。
 
@@ -29,7 +29,7 @@ TreeFrog Framework は次のような特徴を兼ね備えています。
   9. オープンソースソフトウェア ： New BSD License
 
 
-## TreeFrog Framework という選択
+## <i class="fa fa-comment" aria-hidden="true"></i> TreeFrog Framework という選択
 
 Webアプリの開発において、開発効率と動作速度はトレードオフの関係があると言われますが、本当にそうなのでしょうか？
 
@@ -42,9 +42,9 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 高い生産性と高速動作を両立した TreeFrog Framework をぜひお試し下さい。
 
 
-## お知らせ
+## <i class="fa fa-exclamation-circle" aria-hidden="true"></i> お知らせ
 
-### 2017/7/1  TreeFrog Framework バージョン1.19.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース <span style="color: red;">New!</span>
 
   - Upsert文のためにTSqlDriverExtensionクラスを追加
   - QStringタイプの引数を持つSQLソート関数を追加
@@ -53,7 +53,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - FreeBSDでのコンパイルエラーの解消
   - その他バグフィックス
 
- [ダウンロードはこちらから](download/)
+ [<i class="fa fa-download" aria-hidden="true"></i> ダウンロードはこちらから](download/)
 
 ### 2017/7/1  TreeFrog Framework バージョン1.18.0 （安定版）リリース
 
@@ -63,10 +63,10 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  - Windows サービスとして起動したときに引数解析の不具合修正.
  - DB接続オブジェクトがリークする可能性がある不具合修正.
 
- [全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
+ [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
-## 募集中
+## <i class="fa fa-user" aria-hidden="true"></i> 募集中
 
 協力者を募集しています！ [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}にてバグ報告やプルリクエストをお待ちしています。
 
@@ -75,7 +75,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  当サイトは[GitHub Pages](https://pages.github.com/)で構築されているので、翻訳文をプルリクエストで送って頂くことができます。
 
 
-## インフォメーション
+## <i class="fa fa-info-circle" aria-hidden="true"></i> インフォメーション
 
  開発は主にGitHubで行われていますが[TreeFrogフォーラム](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}もあります。
 
