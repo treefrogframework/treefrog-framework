@@ -60,7 +60,6 @@ Jul. 1, 2017
   - Fix a bug of parsing arguments when running as Windows service.
   - Fix leak of db connections.
 
- [All older releases](https://github.com/treefrogframework/treefrog-framework/releases)  
  [All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 

@@ -63,7 +63,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  - Windows サービスとして起動したときに引数解析の不具合修正.
  - DB接続オブジェクトがリークする可能性がある不具合修正.
 
- [過去のリリース](https://github.com/treefrogframework/treefrog-framework/releases)
  [全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
