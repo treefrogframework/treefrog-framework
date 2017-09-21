@@ -7,7 +7,7 @@ page_id: "home.00"
 
 TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and WebSocket protocol.
 
-Because the sever-side framework was written in C++/Qt, web applications can run faster than that of scripting language. In application development, it provides an O/R mapping system and template systems on an MVC architecture, aims to achieve high productivity through the policy of  convention over configuration.
+Web applications can run faster than that of scripting language because the server-side framework was written in C++/Qt. In application development, it provides an O/R mapping system and template systems on an MVC architecture, aims to achieve high productivity through the policy of  convention over configuration.
 
 
 ## <i class="fa fa-flag" aria-hidden="true"></i> Features
