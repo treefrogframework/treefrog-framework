@@ -9,7 +9,6 @@ class T_CONTROLLER_EXPORT ApplicationController : public TActionController
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE
     ApplicationController();
     virtual ~ApplicationController();
 

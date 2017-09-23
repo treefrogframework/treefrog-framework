@@ -178,16 +178,6 @@ inline T *TDispatcher<T>::object()
     }
 
     if (!ptr) {
-        const QMetaObject *meta = Tf::metaObjects()->value(metaType.toLatin1().toLower());
-        if (Q_LIKELY(meta)) {
-            ptr = dynamic_cast<T*>(meta->newInstance());
-            if (ptr) {
-                typeId = 0;
-            }
-        }
-    }
-
-    if (!ptr) {
         if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
             typeId = QMetaType::type(metaType.toLatin1().constData());
             if (Q_LIKELY(typeId > 0)) {

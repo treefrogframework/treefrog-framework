@@ -20,7 +20,6 @@
     "{\n"                                                               \
     "    Q_OBJECT\n"                                                    \
     "public:\n"                                                         \
-    "    Q_INVOKABLE\n"                                                 \
     "    %2Endpoint();\n"                                               \
     "    %2Endpoint(const %2Endpoint &other);\n"                        \
     "\n"                                                                \

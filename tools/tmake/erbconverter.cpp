@@ -21,7 +21,6 @@
     "{\n"                                                       \
     "  Q_OBJECT\n"                                              \
     "public:\n"                                                 \
-    "  Q_INVOKABLE\n"                                           \
     "  %1() : TActionView() { }\n"                              \
     "  QString toString();\n"                                   \
     "};\n"                                                      \

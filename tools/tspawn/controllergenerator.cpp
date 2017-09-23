@@ -22,7 +22,6 @@
     "{\n"                                                                     \
     "    Q_OBJECT\n"                                                          \
     "public:\n"                                                               \
-    "    Q_INVOKABLE\n"                                                       \
     "    %2Controller() : ApplicationController() {}\n"                       \
     "\n"                                                                      \
     "public slots:\n"                                                         \
@@ -154,7 +153,6 @@
     "{\n"                                                                     \
     "    Q_OBJECT\n"                                                          \
     "public:\n"                                                               \
-    "    Q_INVOKABLE\n"                                                       \
     "    %2Controller() : ApplicationController() { }\n"                      \
     "\n"                                                                      \
     "public slots:\n"                                                         \

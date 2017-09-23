@@ -1,9 +1,9 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
-#define TF_VERSION_STR "1.19.0"
-#define TF_VERSION_NUMBER 0x011900
-#define TF_SRC_REVISION 1584
+#define TF_VERSION_STR "1.20.0"
+#define TF_VERSION_NUMBER 0x012000
+#define TF_SRC_REVISION 1592
 
 #include <QtGlobal>
 #include <QMetaType>
@@ -14,7 +14,7 @@
 
 // Deprecated
 #define T_REGISTER_CONTROLLER(TYPE) T_REGISTER_METATYPE(TYPE)
-#define T_REGISTER_VIEW(TYPE) T_REGISTER_METATYPE(TYPE)
+#define T_REGISTER_VIEW(TYPE)       T_REGISTER_METATYPE(TYPE)
 #define T_REGISTER_METATYPE(TYPE)                               \
     class Static##TYPE##Instance                                \
     {                                                           \
@@ -26,15 +26,15 @@
     };                                                          \
     static Static##TYPE##Instance _static##TYPE##Instance;
 
-#define T_DEFINE_CONTROLLER(TYPE) T_DEFINE_VIEW(TYPE)
-#define T_DEFINE_VIEW(TYPE)                                     \
+#define T_DEFINE_CONTROLLER(TYPE)  T_DEFINE_TYPE(TYPE)
+#define T_DEFINE_VIEW(TYPE)        T_DEFINE_TYPE(TYPE)
+#define T_DEFINE_TYPE(TYPE)                                     \
     class Static##TYPE##Definition                              \
     {                                                           \
     public:                                                     \
         Static##TYPE##Definition()                              \
         {                                                       \
             Tf::objectFactories()->insert(QByteArray(#TYPE).toLower(), [](){ return new TYPE(); }); \
-            Tf::metaObjects()->insert(QByteArray(#TYPE).toLower(), &TYPE::staticMetaObject); \
         }                                                       \
     };                                                          \
     static Static##TYPE##Definition _static##TYPE##Definition;
@@ -193,7 +193,6 @@ namespace Tf
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
-    T_CORE_EXPORT QMap<QByteArray, const QMetaObject*> *metaObjects();
     T_CORE_EXPORT QMap<QByteArray, std::function<QObject*()>> *objectFactories();
 }
 

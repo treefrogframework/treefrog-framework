@@ -8,7 +8,6 @@ class DirectController : public TActionController
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE
     DirectController() : TActionController() { }
 
 public slots:
