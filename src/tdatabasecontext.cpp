@@ -126,13 +126,25 @@ bool TDatabaseContext::beginTransaction(QSqlDatabase &database)
 
 void TDatabaseContext::commitTransactions()
 {
-    transactions.commit();
+    transactions.commitAll();
+}
+
+
+bool TDatabaseContext::commitTransaction(int id)
+{
+    return transactions.commit(id);
 }
 
 
 void TDatabaseContext::rollbackTransactions()
 {
-    transactions.rollback();
+    transactions.rollbackAll();
+}
+
+
+bool TDatabaseContext::rollbackTransaction(int id)
+{
+    return transactions.rollback(id);
 }
 
 

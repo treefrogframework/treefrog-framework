@@ -14,14 +14,16 @@ public:
     TDatabaseContext();
     virtual ~TDatabaseContext();
 
-    QSqlDatabase &getSqlDatabase(int id);
+    QSqlDatabase &getSqlDatabase(int id = 0);
     TKvsDatabase &getKvsDatabase(TKvsDatabase::Type type);
 
     void setTransactionEnabled(bool enable);
     void release();
     bool beginTransaction(QSqlDatabase &database);
     void commitTransactions();
+    bool commitTransaction(int id = 0);
     void rollbackTransactions();
+    bool rollbackTransaction(int id = 0);
     int idleTime() const;
 
 protected:

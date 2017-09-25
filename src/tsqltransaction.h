@@ -16,8 +16,10 @@ public:
     TSqlTransaction();
     ~TSqlTransaction();
     bool begin(QSqlDatabase &database);
-    void commit();
-    void rollback();
+    void commitAll();
+    bool commit(int id);
+    void rollbackAll();
+    bool rollback(int id);
     void setEnabled(bool enable);
     void setDisabled(bool disable);
 

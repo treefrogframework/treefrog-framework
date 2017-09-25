@@ -23,7 +23,7 @@ TSqlTransaction::TSqlTransaction()
 
 TSqlTransaction::~TSqlTransaction()
 {
-    rollback();
+    rollbackAll();
 }
 
 
@@ -58,33 +58,59 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
 }
 
 
-void TSqlTransaction::commit()
+bool TSqlTransaction::commit(int id)
+{
+    bool res = false;
+
+    if (id >= 0 && id < databases.count()) {
+        QSqlDatabase &db = databases[id];
+        if (db.isValid()) {
+            res = db.commit();
+            if (res) {
+                Tf::traceQueryLog("[COMMIT] [databaseId:%d]", id);
+            } else {
+                Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d]", id);
+            }
+
+            db = QSqlDatabase();
+        }
+    }
+    return res;
+}
+
+
+void TSqlTransaction::commitAll()
 {
     for (int i = 0; i < databases.count(); ++i) {
-        QSqlDatabase &db = databases[i];
-        if (db.isValid()) {
-            if (db.commit()) {
-                Tf::traceQueryLog("[COMMIT] [databaseId:%d]", i);
-            } else {
-                Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d]", i);
-            }
-        }
-        db = QSqlDatabase();
+        commit(i);
     }
 }
 
 
-void TSqlTransaction::rollback()
+bool TSqlTransaction::rollback(int id)
+{
+    bool res = false;
+
+    if (id >= 0 && id < databases.count()) {
+        QSqlDatabase &db = databases[id];
+        if (db.isValid()) {
+            res = db.rollback();
+            if (res) {
+                Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", id);
+            } else {
+                Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d]", id);
+            }
+
+            db = QSqlDatabase();
+        }
+    }
+    return res;
+}
+
+
+void TSqlTransaction::rollbackAll()
 {
     for (int i = 0; i < databases.count(); ++i) {
-        QSqlDatabase &db = databases[i];
-        if (db.isValid()) {
-            if (db.rollback()) {
-                Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", i);
-            } else {
-                Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d]", i);
-            }
-        }
-        db = QSqlDatabase();
+        rollback(i);
     }
 }
