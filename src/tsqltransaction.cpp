@@ -65,6 +65,8 @@ void TSqlTransaction::commit()
         if (db.isValid()) {
             if (db.commit()) {
                 Tf::traceQueryLog("[COMMIT] [databaseId:%d]", i);
+            } else {
+                Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d]", i);
             }
         }
         db = QSqlDatabase();
@@ -79,6 +81,8 @@ void TSqlTransaction::rollback()
         if (db.isValid()) {
             if (db.rollback()) {
                 Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", i);
+            } else {
+                Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d]", i);
             }
         }
         db = QSqlDatabase();
