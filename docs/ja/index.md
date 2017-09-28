@@ -38,7 +38,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 高い生産性と高速動作を両立した TreeFrog Framework をぜひお試し下さい。
 
 
-## <i class="fa fa-exclamation-circle" aria-hidden="true"></i> お知らせ
+## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
 ### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース <span style="color: red;">New!</span>
 
@@ -49,7 +49,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - FreeBSDでのコンパイルエラーの解消
   - その他バグフィックス
 
- [<i class="fa fa-download" aria-hidden="true"></i> ダウンロードはこちらから](download/)
+ [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](download/)
 
 ### 2017/7/1  TreeFrog Framework バージョン1.18.0 （安定版）リリース
 

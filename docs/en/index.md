@@ -23,7 +23,7 @@ Web applications can run faster than that of scripting language because the serv
   9. OSS  - New BSD License
 
 
-## <i class="fa fa-comment" aria-hidden="true"></i> Select TreeFrog Framework
+## <i class="fa fa-comment" aria-hidden="true"></i> Selecting TreeFrog Framework
 
 It is said that there is a trade-off relationship between development efficiency and operation speed in web application development, is it really true?
 
@@ -35,7 +35,7 @@ Multiple application servers running in scripting language can be aggregated int
 Try TreeFrog Framework which combines high productivity and high speed operation!
 
 
-## <i class="fa fa-exclamation-circle" aria-hidden="true"></i> Latest News
+## <i class="fa fa-bell" aria-hidden="true"></i> News
 
 Sep. 20, 2017
 
@@ -48,7 +48,7 @@ Sep. 20, 2017
   - Fix compilation error on FreeBSD.
   - Other bugfixes.
 
-  [<i class="fa fa-download" aria-hidden="true"></i> Download this version](download/)
+  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](download/)
 
 Jul. 1, 2017
 

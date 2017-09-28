@@ -13,8 +13,8 @@ TreeFrog Installer for Qt 5 has been released. If installing it, the development
 
 | Version                           | File                                   |
 |-------------------------------------|--------------------------------------|
-| 1.19.0 for MinGW (Qt 5.9 or 5.8)    | [treefrog-1.19.0-mingw-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.19.0/treefrog-1.19.0-mingw-setup.exe)   |
-| 1.19.0 for MSVC 2015 (Qt 5.9 or 5.8)| [treefrog-1.19.0-msvc2015_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.19.0/treefrog-1.19.0-msvc2015_64-setup.exe) |
+| 1.19.0 for MinGW (Qt 5.9 or 5.8)    | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.19.0-mingw-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.19.0/treefrog-1.19.0-mingw-setup.exe)   |
+| 1.19.0 for MSVC 2015 (Qt 5.9 or 5.8)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.19.0-msvc2015_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.19.0/treefrog-1.19.0-msvc2015_64-setup.exe) |
 
 </div>
 
@@ -27,11 +27,11 @@ The source code packages of TreeFrog Framework are available.
 
 | Source         | File                             |
 |----------------|----------------------------------|
-| version 1.19.0 | [treefrog-framework-1.19.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.19.0.tar.gz) |
+| version 1.19.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.19.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.19.0.tar.gz) |
 
  </div>
 
-[All previous versions](https://github.com/treefrogframework/treefrog-framework/releases)
+[All previous versions <i class="fa fa-angle-double-right" aria-hidden="true"></i>](https://github.com/treefrogframework/treefrog-framework/releases)
 
 Latest source code is in [GitHub](https://github.com/treefrogframework/).
 
