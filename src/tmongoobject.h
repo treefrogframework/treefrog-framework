@@ -23,6 +23,7 @@ public:
     void setBsonData(const QVariantMap &bson);
     bool create() override;
     bool update() override;
+    bool upsert(const QVariantMap &criteria);
     bool save() override;
     bool remove() override;
     bool reload();

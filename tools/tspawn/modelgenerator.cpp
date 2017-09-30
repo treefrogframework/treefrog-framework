@@ -14,11 +14,11 @@
 #include "util.h"
 
 #define USER_VIRTUAL_METHOD  "identityKey"
-#define LOCK_REVISION_FIELD "lockRevision"
+#define LOCK_REVISION_FIELD  "lockRevision"
 
 #define MODEL_HEADER_FILE_TEMPLATE                       \
-    "#ifndef %1_H\n"                                     \
-    "#define %1_H\n"                                     \
+    "#ifndef %head%_H\n"                                 \
+    "#define %head%_H\n"                                 \
     "\n"                                                 \
     "#include <QStringList>\n"                           \
     "#include <QDateTime>\n"                             \
@@ -28,84 +28,87 @@
     "#include <TAbstractModel>\n"                        \
     "\n"                                                 \
     "class TModelObject;\n"                              \
-    "class %2Object;\n"                                  \
-    "%7"                                                 \
+    "class %model%Object;\n"                             \
+    "%7%"                                                \
     "\n\n"                                               \
-    "class T_MODEL_EXPORT %2 : public TAbstractModel\n"  \
+    "class T_MODEL_EXPORT %model% : public TAbstractModel\n" \
     "{\n"                                                \
     "public:\n"                                          \
-    "    %2();\n"                                        \
-    "    %2(const %2 &other);\n"                         \
-    "    %2(const %2Object &object);\n"                  \
-    "    ~%2();\n"                                       \
+    "    %model%();\n"                                   \
+    "    %model%(const %model% &other);\n"               \
+    "    %model%(const %model%Object &object);\n"        \
+    "    ~%model%();\n"                                  \
     "\n"                                                 \
-    "%3"                                                 \
-    "    %2 &operator=(const %2 &other);\n"              \
+    "%setgetDecl%"                                       \
+    "    %model% &operator=(const %model% &other);\n"    \
     "\n"                                                 \
     "    bool create() override { return TAbstractModel::create(); }\n" \
     "    bool update() override { return TAbstractModel::update(); }\n" \
+    "%upsertDecl%"                                                      \
     "    bool save()   override { return TAbstractModel::save(); }\n"   \
     "    bool remove() override { return TAbstractModel::remove(); }\n" \
     "\n"                                                 \
-    "    static %2 create(%4);\n"                        \
-    "    static %2 create(const QVariantMap &values);\n" \
-    "    static %2 get(%5);\n"                           \
-    "%6"                                                 \
+    "    static %model% create(%4%);\n"                  \
+    "    static %model% create(const QVariantMap &values);\n" \
+    "    static %model% get(%5%);\n"                     \
+    "%6%"                                                \
     "    static int count();\n"                          \
-    "    static QList<%2> getAll();\n"                   \
-    "%8"                                                 \
+    "    static QList<%model%> getAll();\n"              \
+    "%8%"                                                \
     "\n"                                                 \
     "private:\n"                                         \
-    "    QSharedDataPointer<%2Object> d;\n"              \
+    "    QSharedDataPointer<%model%Object> d;\n"         \
     "\n"                                                 \
     "    TModelObject *modelData() override;\n"          \
     "    const TModelObject *modelData() const override;\n" \
-    "    friend QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
-    "    friend QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
+    "    friend QDataStream &operator<<(QDataStream &ds, const %model% &model);\n" \
+    "    friend QDataStream &operator>>(QDataStream &ds, %model% &model);\n" \
     "};\n"                                               \
     "\n"                                                 \
-    "Q_DECLARE_METATYPE(%2)\n"                           \
-    "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
+    "Q_DECLARE_METATYPE(%model%)\n"                      \
+    "Q_DECLARE_METATYPE(QList<%model%>)\n"               \
     "\n"                                                 \
-    "#endif // %1_H\n"
+    "#endif // %head%_H\n"
 
 #define MODEL_IMPL_TEMPLATE                                   \
     "#include <TreeFrogModel>\n"                              \
-    "#include \"%1.h\"\n"                                     \
-    "#include \"%1object.h\"\n"                               \
+    "#include \"%inc%.h\"\n"                                  \
+    "#include \"%inc%object.h\"\n"                            \
     "\n"                                                      \
-    "%2::%2()\n"                                              \
-    "    : TAbstractModel(), d(new %2Object())\n"             \
-    "{%3}\n"                                                  \
+    "%model%::%model%()\n"                                    \
+    "    : TAbstractModel(), d(new %model%Object())\n"        \
+    "{%initParams%}\n"                                        \
     "\n"                                                      \
-    "%2::%2(const %2 &other)\n"                               \
-    "    : TAbstractModel(), d(new %2Object(*other.d))\n"     \
+    "%model%::%model%(const %model% &other)\n"                \
+    "    : TAbstractModel(), d(new %model%Object(*other.d))\n" \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%2::%2(const %2Object &object)\n"                        \
-    "    : TAbstractModel(), d(new %2Object(object))\n"       \
+    "%model%::%model%(const %model%Object &object)\n"         \
+    "    : TAbstractModel(), d(new %model%Object(object))\n"  \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%2::~%2()\n"                                             \
+    "%model%::~%model%()\n"                                   \
     "{\n"                                                     \
     "    // If the reference count becomes 0,\n"              \
-    "    // the shared data object '%2Object' is deleted.\n"  \
+    "    // the shared data object '%model%Object' is deleted.\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%4"                                                      \
-    "%2 &%2::operator=(const %2 &other)\n"                    \
+    "%4%"                                                     \
+    "%model% &%model%::operator=(const %model% &other)\n"     \
     "{\n"                                                     \
     "    d = other.d;  // increments the reference count of the data\n" \
     "    return *this;\n"                                     \
-    "}\n\n"                                                   \
-    "%2 %2::create(%5)\n"                                     \
-    "{\n"                                                     \
-    "%6"                                                      \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::create(const QVariantMap &values)\n"              \
+    "%upsertImpl%"                                            \
+    "%model% %model%::create(%5%)\n"                          \
     "{\n"                                                     \
-    "    %2 model;\n"                                         \
+    "%6%"                                                     \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "%model% %model%::create(const QVariantMap &values)\n"    \
+    "{\n"                                                     \
+    "    %model% model;\n"                                    \
     "    model.setProperties(values);\n"                      \
     "    if (!model.d->create()) {\n"                         \
     "        model.d->clear();\n"                             \
@@ -113,42 +116,42 @@
     "    return model;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::get(%7)\n"                                        \
+    "%model% %model%::get(%7%)\n"                             \
     "{\n"                                                     \
-    "%8"                                                      \
+    "%8%"                                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%10"                                                     \
-    "int %2::count()\n"                                       \
+    "%10%"                                                    \
+    "int %model%::count()\n"                                  \
     "{\n"                                                     \
-    "    %13<%2Object> mapper;\n"                             \
+    "    %13%<%model%Object> mapper;\n"                       \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%2> %2::getAll()\n"                                \
+    "QList<%model%> %model%::getAll()\n"                      \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11Criteria<%2, %2Object>(TCriteria());\n" \
+    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(TCriteria());\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%12"                                                     \
-    "TModelObject *%2::modelData()\n"                         \
-    "{\n"                                                     \
-    "    return d.data();\n"                                  \
-    "}\n"                                                     \
-    "\n"                                                      \
-    "const TModelObject *%2::modelData() const\n"             \
+    "%12%"                                                    \
+    "TModelObject *%model%::modelData()\n"                    \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"                                                     \
     "\n"                                                      \
-    "QDataStream &operator<<(QDataStream &ds, const %2 &model)\n" \
+    "const TModelObject *%model%::modelData() const\n"        \
+    "{\n"                                                     \
+    "    return d.data();\n"                                  \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QDataStream &operator<<(QDataStream &ds, const %model% &model)\n" \
     "{\n"                                                     \
     "    auto varmap = model.toVariantMap();\n"               \
     "    ds << varmap;\n"                                     \
     "    return ds;\n"                                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QDataStream &operator>>(QDataStream &ds, %2 &model)\n"   \
+    "QDataStream &operator>>(QDataStream &ds, %model% &model)\n" \
     "{\n"                                                     \
     "    QVariantMap varmap;\n"                               \
     "    ds >> varmap;\n"                                     \
@@ -157,11 +160,11 @@
     "}\n"                                                     \
     "\n"                                                      \
     "// Don't remove below this line\n"                       \
-    "T_REGISTER_STREAM_OPERATORS(%2)\n"
+    "T_REGISTER_STREAM_OPERATORS(%model%)\n"
 
 #define USER_MODEL_HEADER_FILE_TEMPLATE                  \
-    "#ifndef %1_H\n"                                     \
-    "#define %1_H\n"                                     \
+    "#ifndef %head%_H\n"                                 \
+    "#define %head%_H\n"                                 \
     "\n"                                                 \
     "#include <QStringList>\n"                           \
     "#include <QDateTime>\n"                             \
@@ -172,101 +175,103 @@
     "#include <TAbstractModel>\n"                        \
     "\n"                                                 \
     "class TModelObject;\n"                              \
-    "class %2Object;\n"                                  \
-    "%7"                                                 \
+    "class %model%Object;\n"                             \
+    "%7%"                                                \
     "\n\n"                                               \
-    "class T_MODEL_EXPORT %2 : public TAbstractUser, public TAbstractModel\n" \
+    "class T_MODEL_EXPORT %model% : public TAbstractUser, public TAbstractModel\n" \
     "{\n"                                                \
     "public:\n"                                          \
-    "    %2();\n"                                        \
-    "    %2(const %2 &other);\n"                         \
-    "    %2(const %2Object &object);\n"                  \
-    "    ~%2();\n"                                       \
+    "    %model%();\n"                                   \
+    "    %model%(const %model% &other);\n"               \
+    "    %model%(const %model%Object &object);\n"        \
+    "    ~%model%();\n"                                  \
     "\n"                                                 \
-    "%3"                                                 \
-    "%11"                                                \
-    "    %2 &operator=(const %2 &other);\n"              \
+    "%setgetDecl%"                                       \
+    "%11%"                                               \
+    "    %model% &operator=(const %model% &other);\n"    \
     "\n"                                                 \
     "    bool create() { return TAbstractModel::create(); }\n" \
     "    bool update() { return TAbstractModel::update(); }\n" \
-    "    bool save()   { return TAbstractModel::save(); }\n"   \
+    "%upsertDecl%"                                           \
+    "    bool save()   { return TAbstractModel::save(); }\n" \
     "    bool remove() { return TAbstractModel::remove(); }\n" \
     "\n"                                                 \
-    "    static %2 authenticate(const QString &%9, const QString &%10);\n" \
-    "    static %2 create(%4);\n"                        \
-    "    static %2 create(const QVariantMap &values);\n" \
-    "    static %2 get(%5);\n"                           \
-    "%6"                                                 \
+    "    static %model% authenticate(const QString &%9%, const QString &%10%);\n" \
+    "    static %model% create(%4%);\n"                  \
+    "    static %model% create(const QVariantMap &values);\n" \
+    "    static %model% get(%5%);\n"                     \
+    "%6%"                                                \
     "    static int count();\n"                          \
-    "    static QList<%2> getAll();\n"                   \
-    "%8"                                                 \
+    "    static QList<%model%> getAll();\n"              \
+    "%8%"                                                \
     "\n"                                                 \
     "private:\n"                                         \
-    "    QSharedDataPointer<%2Object> d;\n"              \
+    "    QSharedDataPointer<%model%Object> d;\n"         \
     "\n"                                                 \
     "    TModelObject *modelData();\n"                   \
     "    const TModelObject *modelData() const;\n"       \
-    "    friend QDataStream &operator<<(QDataStream &ds, const %2 &model);\n" \
-    "    friend QDataStream &operator>>(QDataStream &ds, %2 &model);\n" \
+    "    friend QDataStream &operator<<(QDataStream &ds, const %model% &model);\n" \
+    "    friend QDataStream &operator>>(QDataStream &ds, %model% &model);\n" \
     "};\n"                                               \
     "\n"                                                 \
-    "Q_DECLARE_METATYPE(%2)\n"                           \
-    "Q_DECLARE_METATYPE(QList<%2>)\n"                    \
+    "Q_DECLARE_METATYPE(%model%)\n"                      \
+    "Q_DECLARE_METATYPE(QList<%model%>)\n"               \
     "\n"                                                 \
-    "#endif // %1_H\n"
+    "#endif // %head%_H\n"
 
 #define USER_MODEL_IMPL_TEMPLATE                              \
     "#include <TreeFrogModel>\n"                              \
-    "#include \"%1.h\"\n"                                     \
-    "#include \"%1object.h\"\n"                               \
+    "#include \"%inc%.h\"\n"                                  \
+    "#include \"%inc%object.h\"\n"                            \
     "\n"                                                      \
-    "%2::%2()\n"                                              \
-    "    : TAbstractUser(), TAbstractModel(), d(new %2Object())\n" \
-    "{%3}\n"                                                  \
+    "%model%::%model%()\n"                                    \
+    "    : TAbstractUser(), TAbstractModel(), d(new %model%Object())\n" \
+    "{%initParams%}\n"                                        \
     "\n"                                                      \
-    "%2::%2(const %2 &other)\n"                               \
-    "    : TAbstractUser(), TAbstractModel(), d(new %2Object(*other.d))\n" \
+    "%model%::%model%(const %model% &other)\n"                \
+    "    : TAbstractUser(), TAbstractModel(), d(new %model%Object(*other.d))\n" \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%2::%2(const %2Object &object)\n"                        \
-    "    : TAbstractUser(), TAbstractModel(), d(new %2Object(object))\n" \
+    "%model%::%model%(const %model%Object &object)\n"         \
+    "    : TAbstractUser(), TAbstractModel(), d(new %model%Object(object))\n" \
     "{ }\n"                                                   \
     "\n"                                                      \
     "\n"                                                      \
-    "%2::~%2()\n"                                             \
+    "%model%::~%model%()\n"                                   \
     "{\n"                                                     \
     "    // If the reference count becomes 0,\n"              \
-    "    // the shared data object '%2Object' is deleted.\n"  \
+    "    // the shared data object '%model%Object' is deleted.\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%4"                                                      \
-    "%2 &%2::operator=(const %2 &other)\n"                    \
+    "%4%"                                                     \
+    "%model% &%model%::operator=(const %model% &other)\n"     \
     "{\n"                                                     \
     "    d = other.d;  // increments the reference count of the data\n" \
     "    return *this;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::authenticate(const QString &%14, const QString &%15)\n" \
+    "%upsertImpl%"                                            \
+    "%model% %model%::authenticate(const QString &%14%, const QString &%15%)\n" \
     "{\n"                                                     \
-    "    if (%14.isEmpty() || %15.isEmpty())\n"               \
-    "        return %2();\n"                                  \
+    "    if (%14%.isEmpty() || %15%.isEmpty())\n"             \
+    "        return %model%();\n"                             \
     "\n"                                                      \
-    "    %13<%2Object> mapper;\n"                             \
-    "    %2Object obj = mapper.findFirst(TCriteria(%2Object::%16, %14));\n" \
-    "    if (obj.isNull() || obj.%17 != %15) {\n"             \
+    "    %13%<%model%Object> mapper;\n"                       \
+    "    %model%Object obj = mapper.findFirst(TCriteria(%model%Object::%16%, %14%));\n" \
+    "    if (obj.isNull() || obj.%17% != %15%) {\n"           \
     "        obj.clear();\n"                                  \
     "    }\n"                                                 \
-    "    return %2(obj);\n"                                   \
+    "    return %model%(obj);\n"                              \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::create(%5)\n"                                     \
+    "%model% %model%::create(%5%)\n"                          \
     "{\n"                                                     \
-    "%6"                                                      \
+    "%6%"                                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::create(const QVariantMap &values)\n"              \
+    "%model% %model%::create(const QVariantMap &values)\n"    \
     "{\n"                                                     \
-    "    %2 model;\n"                                         \
+    "    %model% model;\n"                                    \
     "    model.setProperties(values);\n"                      \
     "    if (!model.d->create()) {\n"                         \
     "        model.d->clear();\n"                             \
@@ -274,42 +279,42 @@
     "    return model;\n"                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%2 %2::get(%7)\n"                                        \
+    "%model% %model%::get(%7%)\n"                             \
     "{\n"                                                     \
-    "%8"                                                      \
+    "%8%"                                                     \
     "}\n"                                                     \
     "\n"                                                      \
-    "%10"                                                     \
-    "int %2::count()\n"                                       \
+    "%10%"                                                    \
+    "int %model%::count()\n"                                  \
     "{\n"                                                     \
-    "    %13<%2Object> mapper;\n"                             \
+    "    %13%<%model%Object> mapper;\n"                       \
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%2> %2::getAll()\n"                                \
+    "QList<%model%> %model%::getAll()\n"                      \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11Criteria<%2, %2Object>();\n" \
+    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>();\n" \
     "}\n"                                                     \
     "\n"                                                      \
-    "%12"                                                     \
-    "TModelObject *%2::modelData()\n"                         \
-    "{\n"                                                     \
-    "    return d.data();\n"                                  \
-    "}\n"                                                     \
-    "\n"                                                      \
-    "const TModelObject *%2::modelData() const\n"             \
+    "%12%"                                                    \
+    "TModelObject *%model%::modelData()\n"                    \
     "{\n"                                                     \
     "    return d.data();\n"                                  \
     "}\n"                                                     \
     "\n"                                                      \
-    "QDataStream &operator<<(QDataStream &ds, const %2 &model)\n" \
+    "const TModelObject *%model%::modelData() const\n"        \
+    "{\n"                                                     \
+    "    return d.data();\n"                                  \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QDataStream &operator<<(QDataStream &ds, const %model% &model)\n" \
     "{\n"                                                     \
     "    auto varmap = model.toVariantMap();\n"               \
     "    ds << varmap;\n"                                     \
     "    return ds;\n"                                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QDataStream &operator>>(QDataStream &ds, %2 &model)\n"   \
+    "QDataStream &operator>>(QDataStream &ds, %model% &model)\n" \
     "{\n"                                                     \
     "    QVariantMap varmap;\n"                               \
     "    ds >> varmap;\n"                                     \
@@ -318,17 +323,17 @@
     "}\n"                                                     \
     "\n"                                                      \
     "// Don't remove below this line\n"                       \
-    "T_REGISTER_STREAM_OPERATORS(%2)"
+    "T_REGISTER_STREAM_OPERATORS(%model%)"
 
 #define MODEL_IMPL_GETALLJSON                                 \
-    "QJsonArray %1::getAllJson()\n"                           \
+    "QJsonArray %model%::getAllJson()\n"                      \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
-    "    TSqlORMapper<%1Object> mapper;\n"                    \
+    "    TSqlORMapper<%model%Object> mapper;\n"               \
     "\n"                                                      \
     "    if (mapper.find() > 0) {\n"                          \
-    "        for (TSqlORMapperIterator<%1Object> i(mapper); i.hasNext(); ) {\n" \
-    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(i.next()).toVariantMap())));\n" \
+    "        for (TSqlORMapperIterator<%model%Object> i(mapper); i.hasNext(); ) {\n" \
+    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%model%(i.next()).toVariantMap())));\n" \
     "        }\n"                                             \
     "    }\n"                                                 \
     "    return array;\n"                                     \
@@ -336,14 +341,14 @@
     "\n"
 
 #define MODEL_IMPL_GETALLJSON_MONGO                           \
-    "QJsonArray %1::getAllJson()\n"                           \
+    "QJsonArray %model%::getAllJson()\n"                      \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
-    "    TMongoODMapper<%1Object> mapper;\n"                  \
+    "    TMongoODMapper<%model%Object> mapper;\n"             \
     "\n"                                                      \
     "    if (mapper.find()) {\n"                              \
     "        while (mapper.next()) {\n"                       \
-    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%1(mapper.value()).toVariantMap())));\n" \
+    "            array.append(QJsonValue(QJsonObject::fromVariantMap(%model%(mapper.value()).toVariantMap())));\n" \
     "        }\n"                                             \
     "    }\n"                                                 \
     "    return array;\n"                                     \
@@ -360,6 +365,12 @@ static const QStringList excludedSetter = {
     "modifiedAt",
     LOCK_REVISION_FIELD,
 };
+
+
+inline QPair<QString, QString> pair(const char *first, const QString &second)
+{
+    return qMakePair(QString::fromUtf8(first), second);
+}
 
 
 ModelGenerator::ModelGenerator(ModelGenerator::ObjectType type, const QString &model, const QString &table, const QStringList &userModelFields)
@@ -434,7 +445,7 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
 {
     QStringList ret;
     QDir dir(dstDir);
-    QPair<QStringList, QStringList> p = createModelParams();
+    auto p = createModelParams();
 
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
@@ -451,25 +462,28 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
 {
     QStringList ret;
     QDir dir(dstDir);
-    QPair<QStringList, QStringList> p = createModelParams();
+    auto p = createModelParams();
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     QString userVar = fieldNameToVariableName(usernameField);
-    p.first << userVar << fieldNameToVariableName(passwordField);
-    p.first << QLatin1String("    QString ") + USER_VIRTUAL_METHOD + "() const { return " + userVar + "(); }\n";
+    p.first << pair("9", userVar)
+            << pair("10", fieldNameToVariableName(passwordField))
+            << pair("11", QLatin1String("    QString ") + USER_VIRTUAL_METHOD + "() const { return " + userVar + "(); }\n");
 
     gen(fileName, USER_MODEL_HEADER_FILE_TEMPLATE, p.first);
     ret << QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
-    p.second << fieldNameToVariableName(usernameField) << fieldNameToVariableName(passwordField)
-             << fieldNameToEnumName(usernameField) << passwordField;
+    p.second << pair("14", fieldNameToVariableName(usernameField))
+             << pair("15", fieldNameToVariableName(passwordField))
+             << pair("16", fieldNameToEnumName(usernameField))
+             << pair("17", passwordField);
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
     ret << QFileInfo(fileName).fileName();
     return ret;
 }
 
 
-QPair<QStringList, QStringList> ModelGenerator::createModelParams()
+QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGenerator::createModelParams()
 {
     QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl, initParams;
     QList<QPair<QString, QString>> writableFields;
@@ -515,8 +529,9 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
             break;
         }
 
-        if (var == LOCK_REVISION_FIELD)
+        if (var == LOCK_REVISION_FIELD) {
             optlockMethod = true;
+        }
     }
     crtparams.chop(2);
 
@@ -550,8 +565,26 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
                              "}\n\n").arg(modelName, createParam(pair.second, pair.first), fieldNameToEnumName(pair.first), fieldNameToVariableName(pair.first), mapperstr);
     }
 
-    QStringList headerArgs;
-    headerArgs << modelName.toUpper() << modelName << setgetDecl << crtparams << getparams << getOptDecl;
+    PlaceholderList headerList, implList;
+
+    headerList << pair("head", modelName.toUpper())
+               << pair("model", modelName)
+               << pair("setgetDecl", setgetDecl)
+               << pair("4", crtparams)
+               << pair("5", getparams)
+               << pair("6", getOptDecl);
+
+    QString upsertDecl, upsertImpl;
+    if (objectType == Mongo) {
+        upsertDecl = "    bool upsert(const QVariantMap &criteria);\n";
+        upsertImpl = "bool Foo::upsert(const QVariantMap &criteria)\n" \
+                     "{\n" \
+                     "    auto *obj = dynamic_cast<TMongoObject*>(modelData());\n" \
+                     "    return (obj) ? obj->upsert(criteria) : false;\n" \
+                     "}\n\n";
+    }
+    headerList << pair("upsertDecl", upsertDecl);
+    implList << pair("upsertImpl", upsertImpl);
 
     // Creates a model implementation
     QString createImpl;
@@ -591,45 +624,63 @@ QPair<QStringList, QStringList> ModelGenerator::createModelParams()
         getImpl += QString("));\n");
     }
 
-    QStringList implArgs;
-    implArgs << modelName.toLower() << modelName << initParams << setgetImpl << crtparams << createImpl << getparams << getImpl << getOptImpl;
-    implArgs << ((objectType == Mongo) ? "Mongo" : "");
+    implList << pair("inc", modelName.toLower())
+             << pair("model", modelName)
+             << pair("initParams", initParams)
+             << pair("4", setgetImpl)
+             << pair("5", crtparams)
+             << pair("6", createImpl)
+             << pair("7", getparams)
+             << pair("8", getImpl)
+             << pair("10", getOptImpl)
+             << pair("11", ((objectType == Mongo) ? "Mongo" : ""));
 
-#if QT_VERSION >= 0x050000
-    headerArgs  << "class QJsonArray;\n" << "    static QJsonArray getAllJson();\n";
+    headerList << pair("7", "class QJsonArray;\n")
+               << pair("8", "    static QJsonArray getAllJson();\n");
+
     switch (objectType) {
     case Sql:
-        implArgs << QString(MODEL_IMPL_GETALLJSON).arg(modelName);
+        implList << pair("12", replaceholder(MODEL_IMPL_GETALLJSON, pair("model", modelName)));
         break;
 
     case Mongo:
-        implArgs << QString(MODEL_IMPL_GETALLJSON_MONGO).arg(modelName);
+        implList << pair("12", replaceholder(MODEL_IMPL_GETALLJSON_MONGO, pair("model", modelName)));
         break;
 
     default:
-        implArgs << "";
+        implList << pair("12", "");
         break;
     }
-#else
-    headerArgs << "" << "";
-    implArgs << "";
-#endif
 
-    implArgs << mapperstr;
-    return QPair<QStringList, QStringList>(headerArgs, implArgs);
+    implList <<  pair("13", mapperstr);
+    return qMakePair(headerList, implList);
 }
 
 
-bool ModelGenerator::gen(const QString &fileName, const QString &format, const QStringList &args)
+QString ModelGenerator::replaceholder(const QString &format, const QPair<QString, QString> &value)
 {
     QString out = format;
-    for (auto &arg : args) {
-        out = out.arg(arg);
-    }
+    QString placeholder = QLatin1Char('%') + value.first + QLatin1Char('%');
+    out.replace(placeholder, value.second);
+    return out;
+}
 
+
+QString ModelGenerator::replaceholder(const QString &format, const PlaceholderList &values)
+{
+    QString out = format;
+    for (auto &p : values) {
+        out = replaceholder(out, p);
+    }
+    return out;
+}
+
+
+void ModelGenerator::gen(const QString &fileName, const QString &format, const QList<QPair<QString, QString>> &values)
+{
+    QString out = replaceholder(format, values);
     FileWriter fw(fileName);
     fw.write(out, false);
-    return true;
 }
 
 

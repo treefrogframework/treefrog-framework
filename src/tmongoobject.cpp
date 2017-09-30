@@ -146,8 +146,33 @@ bool TMongoObject::update()
         QString msg = QString("Doc was updated or deleted from table ") + collectionName();
         throw KvsException(msg, __FILE__, __LINE__);
     }
-
     return ret;
+}
+
+
+bool TMongoObject::upsert(const QVariantMap &criteria)
+{
+    for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        const char *propName = metaObject()->property(i).name();
+        QString prop = TAbstractModel::fieldNameToVariableName(QString::fromLatin1(propName));
+
+        if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
+            setProperty(propName, QDateTime::currentDateTime());
+        } else if (prop == LockRevision) {
+            // Sets the default value of 'revision' property
+            if (property(propName).toInt() < 1) {
+                setProperty(propName, 1);  // 1 : default value
+            }
+        } else {
+            // continue
+        }
+    }
+
+    syncToVariantMap();
+    QVariantMap::remove("_id");
+
+    TMongoQuery mongo(collectionName());
+    return mongo.update(criteria, *this, true);
 }
 
 
