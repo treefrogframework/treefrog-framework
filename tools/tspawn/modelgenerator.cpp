@@ -577,11 +577,11 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     QString upsertDecl, upsertImpl;
     if (objectType == Mongo) {
         upsertDecl = "    bool upsert(const QVariantMap &criteria);\n";
-        upsertImpl = "bool Foo::upsert(const QVariantMap &criteria)\n" \
-                     "{\n" \
-                     "    auto *obj = dynamic_cast<TMongoObject*>(modelData());\n" \
-                     "    return (obj) ? obj->upsert(criteria) : false;\n" \
-                     "}\n\n";
+        upsertImpl = QString("bool %1::upsert(const QVariantMap &criteria)\n" \
+                             "{\n" \
+                             "    auto *obj = dynamic_cast<TMongoObject*>(modelData());\n" \
+                             "    return (obj) ? obj->upsert(criteria) : false;\n" \
+                             "}\n\n").arg(modelName);
     }
     headerList << pair("upsertDecl", upsertDecl);
     implList << pair("upsertImpl", upsertImpl);
