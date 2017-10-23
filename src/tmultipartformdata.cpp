@@ -310,7 +310,7 @@ TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteAr
   the file with the given \a bodyFilePath.
 */
 TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary)
-    : dataBoundary(boundary)
+    : dataBoundary(boundary), bodyFile(bodyFilePath)
 {
     QFile file(bodyFilePath);
     parse(&file);

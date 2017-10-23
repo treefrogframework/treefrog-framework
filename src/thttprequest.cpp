@@ -9,6 +9,7 @@
 #include <TMultipartFormData>
 #include <THttpUtility>
 #include <TAppSettings>
+#include <QBuffer>
 #include "tsystemglobal.h"
 #if QT_VERSION >= 0x050000
 #include <QJsonDocument>
@@ -52,6 +53,7 @@ static bool httpMethodOverride()
 THttpRequestData::THttpRequestData(const THttpRequestData &other)
     : QSharedData(other),
       header(other.header),
+      bodyArray(other.bodyArray),
       queryItems(other.queryItems),
       formItems(other.formItems),
       multipartFormData(other.multipartFormData),
@@ -89,6 +91,7 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
     : d(new THttpRequestData)
 {
     d->header = header;
+    d->bodyArray = body;
     d->clientAddress = clientAddress;
     parseBody(body, header);
 }
@@ -110,13 +113,24 @@ THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, co
   Destructor.
 */
 THttpRequest::~THttpRequest()
-{ }
+{
+    if (bodyDevide) {
+        bodyDevide->close();
+        delete bodyDevide;
+    }
+}
 
 /*!
   Assignment operator.
 */
 THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 {
+    if (bodyDevide) {
+        bodyDevide->close();
+        delete bodyDevide;
+        bodyDevide = nullptr;
+    }
+
     d = other.d;
     return *this;
 }
@@ -472,7 +486,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 
     case Tf::Get: {
         // query parameter
-        QList<QByteArray> data = d->header.path().split('?');
+        QList<QByteArray> data = header.path().split('?');
         QString getdata = data.value(1);
         if (!getdata.isEmpty()) {
             const QStringList pairs = getdata.split('&', QString::SkipEmptyParts);
@@ -567,6 +581,19 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
     }
 
     return reqList;
+}
+
+
+QIODevice *THttpRequest::rawBody()
+{
+    if (! bodyDevide) {
+        if (! d->multipartFormData.bodyFile.isEmpty()) {
+            bodyDevide = new QFile(d->multipartFormData.bodyFile);
+        } else {
+            bodyDevide = new QBuffer(&d->bodyArray);
+        }
+    }
+    return bodyDevide;
 }
 
 

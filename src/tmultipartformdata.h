@@ -98,6 +98,7 @@ private:
     QByteArray dataBoundary;
     QList<QPair<QString, QString>> postParameters;
     QList<TMimeEntity> uploadedFiles;
+    QString bodyFile;
 
     friend class THttpRequest;
 };
