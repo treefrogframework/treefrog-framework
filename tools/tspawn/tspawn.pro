@@ -27,7 +27,7 @@ windows {
   }
   LIBS += -L"$$target.path"
 } else:unix {
-  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog -lrt
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
