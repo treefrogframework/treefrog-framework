@@ -28,7 +28,8 @@ windows {
   }
   LIBS += -L"$$target.path"
 } else:unix {
-  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog -lrt
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  linux-*:LIBS += -lrt
   *-g++:DEFINES += _GNU_SOURCE
   freebsd-*:DEFINES += _GNU_SOURCE
 

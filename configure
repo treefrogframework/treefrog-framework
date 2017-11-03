@@ -135,7 +135,7 @@ while [ -n "`echo $1 | grep '-'`" ]; do
 done
 
 cd "$BASEDIR"
-replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog -lrt|" defaults/appbase.pri
+replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
 replace "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then

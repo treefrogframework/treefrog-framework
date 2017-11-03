@@ -30,7 +30,8 @@ windows {
     LIBS += advapi32.lib
   }
 } else:unix {
-  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog -lrt
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  linux-*:LIBS += -lrt
 
   # c++11
   lessThan(QT_MAJOR_VERSION, 5) {
