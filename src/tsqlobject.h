@@ -33,7 +33,7 @@ public:
     bool isNull() const override { return QSqlRecord::isEmpty(); }
     bool isNew() const { return QSqlRecord::isEmpty(); }
     bool isModified() const;
-    void clear() { QSqlRecord::clear(); }
+    void clear() override { QSqlRecord::clear(); }
     QSqlError error() const { return sqlError; }
 
 protected:

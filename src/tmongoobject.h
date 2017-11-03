@@ -30,7 +30,7 @@ public:
     bool isNull() const override { return objectId().isEmpty(); }
     bool isNew() const { return objectId().isEmpty(); }
     bool isModified() const;
-    void clear();
+    void clear() override;
 
 protected:
     void syncToVariantMap();
