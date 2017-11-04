@@ -148,7 +148,8 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
                     // Executes setup-queries
                     if (! tdb.postOpenStatements().isEmpty()) {
                         TSqlQuery query(tdb.sqlDatabase());
-                        for (auto &st : tdb.postOpenStatements()) {
+                        for (QString st : tdb.postOpenStatements()) {
+                            st = st.trimmed();
                             query.exec(st);
                         }
                     }
