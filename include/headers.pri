@@ -2,6 +2,8 @@ HEADER_CLASSES = ../include/TAbstractModel ../include/TAbstractUser ../include/T
 
 HEADER_FILES = tabstractmodel.h tabstractuser.h tactioncontext.h tactioncontroller.h tactionhelper.h tactionthread.h tactionview.h tprototypeajaxhelper.h tapplicationserverbase.h tthreadapplicationserver.h tpreforkapplicationserver.h tcontentheader.h tcookie.h tcookiejar.h tcriteria.h tcriteriaconverter.h tcryptmac.h tdirectview.h tdispatcher.h tfcore.h tfexception.h tfnamespace.h tglobal.h thtmlattribute.h thtmlparser.h thttpheader.h thttprequest.h thttprequestheader.h thttpresponse.h thttpresponseheader.h thttputility.h tinternetmessageheader.h tjavascriptobject.h tlog.h tlogger.h tloggerplugin.h tmailmessage.h tmodelutil.h tmultipartformdata.h toption.h tsession.h tsessionstore.h tsessionstoreplugin.h tsharedmemorylogstream.h tsmtpmailer.h tsqlobject.h tsqlormapper.h tsqlormapperiterator.h tsqlquery.h tsqlqueryormapper.h tsystemglobal.h ttemporaryfile.h tviewhelper.h twebapplication.h tabstractcontroller.h tactionmailer.h tformvalidator.h tsqlqueryormapperiterator.h taccessvalidator.h tsqltransaction.h tpaginator.h tkvsdatabase.h tkvsdriver.h tmodelobject.h tpopmailer.h tmultiplexingserver.h taccesslog.h tactionworker.h tatomicqueue.h tjsonutil.h tscheduler.h tapplicationscheduler.h tcommandlineinterface.h tsendmailmailer.h tappsettings.h twebsocketendpoint.h tdatabasecontext.h tdatabasecontextthread.h tsystembus.h tprocessinfo.h twebsocketsession.h tredis.h tsqljoin.h thazardptrmanager.h tatomic.h tatomicptr.h tdebug.h tbackgroundprocess.h tbackgroundprocesshandler.h
 
+HEADER_FILES += tsqldatabasepool.h tkvsdatabasepool.h
+
 # Qt5
 greaterThan(QT_MAJOR_VERSION, 4) {
   HEADER_CLASSES += ../include/TJSLoader
