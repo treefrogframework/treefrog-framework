@@ -53,7 +53,7 @@
     "    static %model% get(%5%);\n"                     \
     "%6%"                                                \
     "    static int count();\n"                          \
-    "    static QList<%model%> getAll();\n"              \
+    "    static QList<%model%> getAll(const TCriteria &cri = TCriteria());\n"              \
     "%8%"                                                \
     "\n"                                                 \
     "private:\n"                                         \
@@ -128,9 +128,9 @@
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%model%> %model%::getAll()\n"                      \
+    "QList<%model%> %model%::getAll(const TCriteria &cri = TCriteria())\n"                      \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(TCriteria());\n" \
+    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(cri);\n" \
     "}\n"                                                     \
     "\n"                                                      \
     "%12%"                                                    \
@@ -202,7 +202,7 @@
     "    static %model% get(%5%);\n"                     \
     "%6%"                                                \
     "    static int count();\n"                          \
-    "    static QList<%model%> getAll();\n"              \
+    "    static QList<%model%> getAll(const TCriteria &cri = TCriteria());\n"              \
     "%8%"                                                \
     "\n"                                                 \
     "private:\n"                                         \
@@ -291,9 +291,9 @@
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%model%> %model%::getAll()\n"                      \
+    "QList<%model%> %model%::getAll(const TCriteria &cri = TCriteria())\n"                      \
     "{\n"                                                     \
-    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>();\n" \
+    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(cri);\n" \
     "}\n"                                                     \
     "\n"                                                      \
     "%12%"                                                    \
