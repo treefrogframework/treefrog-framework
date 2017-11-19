@@ -128,7 +128,7 @@
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%model%> %model%::getAll(const TCriteria &cri = TCriteria())\n"                      \
+    "QList<%model%> %model%::getAll(const TCriteria &cri)\n"                      \
     "{\n"                                                     \
     "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(cri);\n" \
     "}\n"                                                     \
@@ -291,7 +291,7 @@
     "    return mapper.findCount();\n"                        \
     "}\n"                                                     \
     "\n"                                                      \
-    "QList<%model%> %model%::getAll(const TCriteria &cri = TCriteria())\n"                      \
+    "QList<%model%> %model%::getAll(const TCriteria &cri)\n"                      \
     "{\n"                                                     \
     "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(cri);\n" \
     "}\n"                                                     \
