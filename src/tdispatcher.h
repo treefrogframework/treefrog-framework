@@ -177,8 +177,8 @@ inline T *TDispatcher<T>::object()
         }
     }
 
-    if (!ptr) {
-        if (Q_LIKELY(typeId <= 0 && !metaType.isEmpty())) {
+    if (Q_UNLIKELY(!ptr)) {
+        if (typeId <= 0 && !metaType.isEmpty()) {
             typeId = QMetaType::type(metaType.toLatin1().constData());
             if (Q_LIKELY(typeId > 0)) {
 #if QT_VERSION >= 0x050000
