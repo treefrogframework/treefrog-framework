@@ -17,6 +17,7 @@ public:
     static QByteArray toUrlEncoding(const QString &input, const QByteArray &exclude = "-._");
     static QString htmlEscape(const QString &input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(int n);
+    static QString htmlEscape(uint n);
     static QString htmlEscape(long n);
     static QString htmlEscape(ulong n);
     static QString htmlEscape(qlonglong n);
@@ -52,6 +53,14 @@ private:
   Internal use.
  */
 inline QString THttpUtility::htmlEscape(int n)
+{
+    return QString::number(n);
+}
+
+/*!
+  Internal use.
+ */
+inline QString THttpUtility::htmlEscape(uint n)
 {
     return QString::number(n);
 }
