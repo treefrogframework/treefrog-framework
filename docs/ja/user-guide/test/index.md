@@ -83,21 +83,15 @@ create() メソッドでは次の処理を行なっています。
 ```
  TARGET = testblog
  TEMPLATE = app
- CONFIG += console debug qtestlib
+ CONFIG += console debug c++11
  CONFIG -= app_bundle
- QT += network sql
+ QT += network sql testlib
  QT -= gui
  DEFINES += TF_DLL
  INCLUDEPATH += ../..
  LIBS += -L../../lib -lmodel
  include(../../appbase.pri)
  SOURCES = testblog.cpp      # ファイル名を指定する
-```
-
-Qt5 になって一部仕様が変わりました。Qt5 を使用している場合、上記５行目を次のように設定してください。
-
-```
- QT += network sql testlib
 ```
 
 プロジェクトファイルを保存したら、そのディレクトリで次のコマンドを実行してバイナリを作成します。
@@ -152,29 +146,28 @@ Windows の場合には、PATH 変数に設定を追加します。
 以上で設定は完了です。それでは、テストを実行してみましょう。テストが成功すれば、次のようなメッセージが表示されます。Windows の場合には、TreeFrog Command Prompt 上で実行してください。
 
 ```
- $ ./testblog
- ********* Start testing of TestBlog *********
- Config: Using QTest library 4.8.3, Qt 4.8.3
- PASS   : TestBlog::initTestCase()
- PASS   : TestBlog::create()
- PASS   : TestBlog::cleanupTestCase()
- Totals: 3 passed, 0 failed, 0 skipped
- ********* Finished testing of TestBlog *********
+$ ./testblog
+Config: Using QtTest library 5.5.1, Qt 5.5.1 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 5.4.0 20160609)
+PASS   : TestBlog::initTestCase()
+PASS   : TestBlog::create(No1)
+PASS   : TestBlog::cleanupTestCase()
+Totals: 3 passed, 0 failed, 0 skipped, 0 blacklisted
+********* Finished testing of TestBlog *********
 ```
 
 もし期待した結果と一致しなければ、次のようなメッセージが表示されるでしょう。
 
 ```
- ********* Start testing of TestBlog *********
- Config: Using QTest library 4.8.3, Qt 4.8.3
- PASS   : TestBlog::initTestCase()
- FAIL!  : TestBlog::create(No1) Compared values are not the same
-    Actual (blog.body()): foo bar.
-    Expected (body): Hello world.
-    Loc: [testblog.cpp(33)]
- PASS   : TestBlog::cleanupTestCase()
- Totals: 2 passed, 1 failed, 0 skipped
- ********* Finished testing of TestBlog *********
+********* Start testing of TestBlog *********
+Config: Using QtTest library 5.5.1, Qt 5.5.1 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 5.4.0 20160609)
+PASS   : TestBlog::initTestCase()
+FAIL!  : TestBlog::create(No1) Compared values are not the same
+   Actual   (blog.body()): "foo."
+   Expected (body): "Hello world."
+   Loc: [testblog.cpp(35)]
+PASS   : TestBlog::cleanupTestCase()
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted
+********* Finished testing of TestBlog *******
 ```
 
 モデルごとにテストケースを作成し、どんどんテストを行なってください。モデルがきちんと動作するかどうかが、Web アプリの要（かなめ）となるのです。

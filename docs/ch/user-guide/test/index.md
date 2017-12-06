@@ -37,7 +37,7 @@ void create_data();
 void TestBlog::create_data()
 {
     // 定义测试数据
-    QTest::addColumn<QString>("title"); 
+    QTest::addColumn<QString>("title");
     QTest::addColumn<QString>("body");
     //增加测试数据
     QTest::newRow("No1") << "Hello" << "Hello world.";
@@ -46,14 +46,14 @@ void TestBlog::create_data()
 void TestBlog::create()
 {
     // 获取测试数据
-    QFETCH(QString, title); 
+    QFETCH(QString, title);
     QFETCH(QString, body);
     //测试的逻辑
     Blog created = Blog::create(title, body);
     int id = created.id();
     Blog blog = Blog::get(id);  // 获取模型 ID
     //检查结果的执行
-    QCOMPARE(blog.title(), title); 
+    QCOMPARE(blog.title(), title);
     QCOMPARE(blog.body(), body);
 }
 TF_TEST_MAIN( TestBlog)// 指定你创建的类名
@@ -79,9 +79,9 @@ TF_TEST_MAIN( TestBlog)// 指定你创建的类名
 ```
 TARGET = testblog
 TEMPLATE = app
-CONFIG += console debug qtestlib
+CONFIG += console debug c++11
 CONFIG -= app_bundle
-QT += network sql
+QT += network sql testlib
 QT -= gui
 DEFINES += TF_DLL
 INCLUDEPATH += ../..
@@ -90,18 +90,12 @@ include(../../appbase.pri)
 SOURCES = testblog.cpp      # 指定文件名
 ```
 
-Qt5以后有些规范已经更改了. 如果使用Qt5, 请更改上面的第5行如下.
-
-```
-QT += network sql testlib
-```
-
 在你保存项目文件后, 你可以通过下面的命令在目录生成一个二进制文件.
 
 ```
 $ qmake
 $ make
-``` 
+```
 
 接下来, 要执行测试过程,一些配置需要完成.
 因为需要引用各种配置文件, 测试命令需要一个配置目录的符号连接. 它的位置应该直接在测试命令下. 当使用SQLite数据库时, 我们也需要生成一个符号连接到*db*文件夹.
@@ -115,7 +109,7 @@ $ ln -s  ../../db  db
 要创建一个符号连接, 必须有管理员权限从命令行窗口运行命令.
 
 ```
-> cd debug 
+> cd debug
 > mklink /D  config  ..\..\..\config
 > mklink /D  db  ..\..\..\db
 ```
@@ -150,12 +144,11 @@ ConnectOptions=
 
 ```
 $ ./testblog
-********* Start testing of TestBlog *********
-Config: Using QTest library 4.8.3, Qt 4.8.3
+Config: Using QtTest library 5.5.1, Qt 5.5.1 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 5.4.0 20160609)
 PASS   : TestBlog::initTestCase()
-PASS   : TestBlog::create()
+PASS   : TestBlog::create(No1)
 PASS   : TestBlog::cleanupTestCase()
-Totals: 3 passed, 0 failed, 0 skipped
+Totals: 3 passed, 0 failed, 0 skipped, 0 blacklisted
 ********* Finished testing of TestBlog *********
 ```
 
@@ -164,15 +157,15 @@ Totals: 3 passed, 0 failed, 0 skipped
 
 ```
 ********* Start testing of TestBlog *********
-Config: Using QTest library 4.8.3, Qt 4.8.3
-PASS : TestBlog::initTestCase()
-FAIL!: TestBlog:: create( No1) Compared values are not the same
-Actual (blog.body()): foo bar.
-Expected (body): Hello world.
-Loc: [testblog.cpp(33)]
-PASS : TestBlog::cleanupTestCase()
-Totals: 2 passed, 1 failed, 0 skipped
-********* Finished testing of TestBlog *********
+Config: Using QtTest library 5.5.1, Qt 5.5.1 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 5.4.0 20160609)
+PASS   : TestBlog::initTestCase()
+FAIL!  : TestBlog::create(No1) Compared values are not the same
+   Actual   (blog.body()): "foo."
+   Expected (body): "Hello world."
+   Loc: [testblog.cpp(35)]
+PASS   : TestBlog::cleanupTestCase()
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted
+********* Finished testing of TestBlog *******
 ```
 
 为每个模型生成一个测试用例, 然后执行这个测试.一个好的网页应用开发的关键是确保模型(model)正确工作.

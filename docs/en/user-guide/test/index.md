@@ -20,7 +20,7 @@ Let's test the Blog model code that we made in the [tutorial](/user-guide/en/tut
 ```
 
 We will try to create the test case for creating and reading of the Blog model.<br>
-For example, let's set the name of the implementing test as follows: *TestBlog*. The source code with the following content is saved as a file named *testBlog.cpp*.
+For example, let's set the name of the implementing test as follows: *TestBlog*. The source code with the following content is saved as a file named *testblog.cpp*.
 
 ```c++
 #include <TfTest/TfTest>
@@ -83,21 +83,15 @@ Next, create a project file to make the *Makefile*. The file name is *testblog.p
 ```
  TARGET = testblog
  TEMPLATE = app
- CONFIG += console debug qtestlib
+ CONFIG += console debug c++11
  CONFIG -= app_bundle
- QT += network sql
+ QT += network sql testlib
  QT -= gui
  DEFINES += TF_DLL
  INCLUDEPATH += ../..
  LIBS += -L../../lib -lmodel
  include(../../appbase.pri)
  SOURCES = testblog.cpp      # Specifying the file name
-```
-
-Part of the specification has changed after the update to Qt5. If you are using Qt5, please change the 5th line of the above as the following.
-
-```
- QT += network sql testlib
 ```
 
 After you save the project file, you can create a binary by running the following command in its directory:
@@ -154,12 +148,11 @@ The configuration is now complete. Next, the test needs to be executed. If the t
 
 ```
 $ ./testblog
-********* Start testing of TestBlog *********
-Config: Using QTest library 4.8.3, Qt 4.8.3
+Config: Using QtTest library 5.5.1, Qt 5.5.1 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 5.4.0 20160609)
 PASS   : TestBlog::initTestCase()
-PASS   : TestBlog::create()
+PASS   : TestBlog::create(No1)
 PASS   : TestBlog::cleanupTestCase()
-Totals: 3 passed, 0 failed, 0 skipped
+Totals: 3 passed, 0 failed, 0 skipped, 0 blacklisted
 ********* Finished testing of TestBlog *********
 ```
 
@@ -168,15 +161,15 @@ If, however, the result is not what was expected, you will see the following mes
 
 ```
 ********* Start testing of TestBlog *********
-Config: Using QTest library 4.8.3, Qt 4.8.3
+Config: Using QtTest library 5.5.1, Qt 5.5.1 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 5.4.0 20160609)
 PASS   : TestBlog::initTestCase()
 FAIL!  : TestBlog::create(No1) Compared values are not the same
-   Actual (blog.body()): foo bar.
-   Expected (body): Hello world.
-   Loc: [testblog.cpp(33)]
+   Actual   (blog.body()): "foo."
+   Expected (body): "Hello world."
+   Loc: [testblog.cpp(35)]
 PASS   : TestBlog::cleanupTestCase()
-Totals: 2 passed, 1 failed, 0 skipped
- ********* Finished testing of TestBlog *********
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted
+********* Finished testing of TestBlog *******
 ```
 
 Make a test case for each each model. Then please do the test. The key to a good Web application development is to be sure that the model is working properly.
