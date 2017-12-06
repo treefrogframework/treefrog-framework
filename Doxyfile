@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrogFramework
-PROJECT_NUMBER         = 1.18
+PROJECT_NUMBER         = 1.20
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -119,20 +119,24 @@ EXCLUDE                = src/test \
                          src/tsharedmemorylogstream.h \
                          src/tsqldatabasepool.h \
                          src/tsqldatabasepool2.h \
+                         src/tsqldatabase.h \
+                         src/tsqldriverextension.h \
+                         src/tsqldriverextensionfactory.h \
                          src/turlroute.h \
                          src/tbasiclogstream.h \
                          src/tactionthread.h \
                          src/thtmlparser.h \
                          src/tfilelogger.h \
                          src/tdirectview.h \
+                         src/tmailmessage.h \
                          src/tsessionmanager.h \
                          src/tsmtpmailer.h \
                          src/tsessionobject.h \
-                         src/tmailmessage.h \
                          src/thttpsocket.h \
                          src/tsessioncookiestore.h \
                          src/tsessionfilestore.h \
                          src/tsessionsqlobjectstore.h \
+                         src/tsessionmongoobject.h \
                          src/tlazyloader.h \
                          src/tdispatcher.h \
                          src/tactioncontext.h \
@@ -179,6 +183,7 @@ EXCLUDE                = src/test \
                          src/thazardptrmanager.h \
                          src/tdatabasecontextmainthread.h \
                          src/tdatabasecontextthread.h \
+                         src/tconcurrentmap.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp

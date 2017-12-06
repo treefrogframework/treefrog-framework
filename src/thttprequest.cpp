@@ -278,10 +278,43 @@ QStringList THttpRequest::allItemValues(const QString &name, const QList<QPair<Q
 /*!
   Returns the list of query string values whose name is equal to \a name from
   the URL.
+  \see QStringList queryItemList()
  */
 QStringList THttpRequest::allQueryItemValues(const QString &name) const
 {
     return allItemValues(name, d->queryItems);
+}
+
+/*!
+  Returns the list of query string value whose key is equal to \a key, such as
+  "foo[]", from the URL.
+  \see QStringList THttpRequest::allQueryItemValues()
+ */
+QStringList THttpRequest::queryItemList(const QString &key) const
+{
+    QString k = key;
+    if (!k.endsWith("[]")) {
+        k += QLatin1String("[]");
+    }
+    return allQueryItemValues(k);
+}
+
+/*!
+  Returns the list of query value whose key is equal to \a key, such as
+  "foo[]", from the URL.
+ */
+QVariantList THttpRequest::queryItemVariantList(const QString &key) const
+{
+    return itemVariantList(key, d->queryItems);
+}
+
+/*!
+  Returns the map of query value whose key is equal to \a key from
+  the URL.
+ */
+QVariantMap THttpRequest::queryItems(const QString &key) const
+{
+    return itemMap(key, d->queryItems);
 }
 
 
@@ -341,6 +374,7 @@ QString THttpRequest::formItemValue(const QString &name, const QString &defaultV
 /*!
   Returns the list of string value whose name is equal to \a name from the
   form data.
+  \see QStringList formItemList()
  */
 QStringList THttpRequest::allFormItemValues(const QString &name) const
 {
@@ -350,6 +384,7 @@ QStringList THttpRequest::allFormItemValues(const QString &name) const
 /*!
   Returns the list of string value whose key is equal to \a key, such as
   "foo[]", from the form data.
+  \see QStringList allFormItemValues()
  */
 QStringList THttpRequest::formItemList(const QString &key) const
 {

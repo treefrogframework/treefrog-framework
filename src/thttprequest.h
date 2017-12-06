@@ -61,6 +61,9 @@ public:
     QString queryItemValue(const QString &name) const;
     QString queryItemValue(const QString &name, const QString &defaultValue) const;
     QStringList allQueryItemValues(const QString &name) const;
+    QStringList queryItemList(const QString &key) const;
+    QVariantList queryItemVariantList(const QString &key) const;
+    QVariantMap queryItems(const QString &key) const;
     QVariantMap queryItems() const;
     bool hasForm() const { return !d->formItems.isEmpty(); }
     bool hasFormItem(const QString &name) const;
