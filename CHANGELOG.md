@@ -1,4 +1,11 @@
 # ChangeLog
+## 1.20.0
+ - Implemented rawBody() function in THttpRequest class.
+ - Added some functions for getting query string.
+ - Added sql statements to PostOpenStatements in database.ini.
+ - Fix compilation error on Ubuntu 17.10 and macOS.
+ - Fix compilation error on Qt 5.10.
+
 ## 1.19.0
  - Added TSqlDriverExtension class for upsert statement.
  - Added QString arguments to sort columns function.
