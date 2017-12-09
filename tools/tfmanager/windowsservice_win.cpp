@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <windows.h>
-#include <vector>
 #include <QtCore>
 #include <TGlobal>
 #include <TWebApplication>
 #include <TSystemGlobal>
+#include <vector>
+#include <windows.h>
 namespace TreeFrog {
 
 extern int managerMain(int argc, char *argv[]);

@@ -72,6 +72,9 @@ if not "%MSCOMPILER%" == "" (
   if "%Platform%" == "X64" (
     set VCVARSOPT=amd64
     set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  ) else if "%Platform%" == "x64" (
+    set VCVARSOPT=amd64
+    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
   ) else (
     set VCVARSOPT=x86
     set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt

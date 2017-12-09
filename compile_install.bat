@@ -5,7 +5,7 @@ cd /D %~dp0
 
 :: Requires Qt environment.
 
-if "%Platform%" == "X64" (
+if not "%Platform%" == "" (
   set MAKE=nmake
   set CL=/MP
 ) else if not "%DevEnvDir%" == "" (

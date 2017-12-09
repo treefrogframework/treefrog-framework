@@ -10,8 +10,6 @@
 #include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
-#include <winternl.h>
-#include <ntstatus.h>
 #include "tprocessinfo.h"
 
 
