@@ -13,8 +13,8 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 | バージョン                                       | ファイル                                  |
 |------------------------------------------------|---------------------------------------|
-| 1.19.0 for MinGW [ Qt5.9 または 5.8 ]          | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.19.0-mingw-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.19.0/treefrog-1.19.0-mingw-setup.exe)       |
-| 1.19.0 for MSVC2015 64bit [ Qt5.9 または 5.8 ] | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.19.0-msvc2015_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.19.0/treefrog-1.19.0-msvc2015_64-setup.exe) |
+| 1.20.0 for MinGW [ Qt5.10 または 5.9 ]          | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.20.0-mingw-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.20.0/treefrog-1.20.0-mingw-setup.exe)       |
+| 1.20.0 for MSVC2015 64bit [ Qt5.10 または 5.9 ] | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.20.0-msvc2015_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.20.0/treefrog-1.20.0-msvc2015_64-setup.exe) |
 
 </div>
 
@@ -30,7 +30,7 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 | ソースパッケージ  | ファイル                         |
 |-------------------|----------------------------------|
-| バージョン 1.19.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.19.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.19.0.tar.gz) |
+| バージョン 1.20.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.20.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.20.0.tar.gz) |
 
 </div>
 

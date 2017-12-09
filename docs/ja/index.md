@@ -40,7 +40,17 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2017/12/9  TreeFrog Framework バージョン1.20.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - THttpRequestクラスへrawBody()を実装
+ - クエリ文字列を取得する関数を追加
+ - database.iniにあるPostOpenStatementsにSQL文を設定することで、オープン直後に実行される仕組みを追加
+ - Ubuntu 17.10とmacOSでのコンパイルエラー解消
+ - Qt 5.10でのコンパイルエラー解消
+
+ [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](download/)
+
+### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース
 
   - Upsert文のためにTSqlDriverExtensionクラスを追加
   - QStringタイプの引数を持つSQLソート関数を追加
@@ -48,8 +58,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - ステータスコードが304の場合に空ボディのメッセージを送信するよう変更
   - FreeBSDでのコンパイルエラーの解消
   - その他バグフィックス
-
- [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](download/)
 
 ### 2017/7/1  TreeFrog Framework バージョン1.18.0 （安定版）リリース
 
