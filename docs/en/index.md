@@ -48,7 +48,7 @@ Dec. 9, 2017
   - Fix compilation error on Qt 5.10.
 
 
-  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](download/)
+  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
 
 Sep. 20, 2017
 
