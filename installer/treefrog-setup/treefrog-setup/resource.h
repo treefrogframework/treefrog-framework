@@ -16,3 +16,4 @@
 #define IDR_TREEFROG_QT57_MSI                   1057
 #define IDR_TREEFROG_QT58_MSI                   1058
 #define IDR_TREEFROG_QT59_MSI                   1059
+#define IDR_TREEFROG_QT510_MSI                  10510

@@ -12,7 +12,7 @@ if not "%Platform%" == "" (
   set MAKE=nmake
   set CL=/MP
 ) else (
-  set MAKE=mingw32-make -j4
+  set MAKE=mingw32-make -j8
 )
 
 ::
