@@ -9,11 +9,7 @@
 #include "tsystemglobal.h"
 #include "thttputility.h"
 
-#ifdef Q_OS_WIN
-#define CRLF "\n"
-#else
 #define CRLF "\r\n"
-#endif
 
 /*!
   \class TInternetMessageHeader
