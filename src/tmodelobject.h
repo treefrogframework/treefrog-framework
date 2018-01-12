@@ -22,10 +22,6 @@ public:
     virtual void clear();
     virtual QVariantMap toVariantMap() const;
     virtual QStringList propertyNames() const;
-
-private:
-    T_DISABLE_COPY(TModelObject)
-    T_DISABLE_MOVE(TModelObject)
 };
 
 #endif // TMODELOBJECT_H
