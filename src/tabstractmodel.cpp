@@ -6,7 +6,6 @@
  */
 
 #include <TAbstractModel>
-#include <TSqlObject>
 #include <TModelObject>
 
 /*!
@@ -95,16 +94,16 @@ QVariantMap TAbstractModel::toVariantMap() const
 void TAbstractModel::setProperties(const QVariantMap &properties)
 {
     // Creates a map of the original property name and the converted name
-    const QStringList soprops = modelData()->propertyNames();
-    QMap<QString, QString> sopropMap;
-    for (auto &orig : soprops) {
-        sopropMap.insert(fieldNameToVariableName(orig), orig);
+    const QStringList moprops = modelData()->propertyNames();
+    QMap<QString, QString> mopropMap;
+    for (auto &orig : moprops) {
+        mopropMap.insert(fieldNameToVariableName(orig), orig);
     }
 
     QVariantMap props;
     for (QMapIterator<QString, QVariant> it(properties); it.hasNext(); ) {
         it.next();
-        const QString &p = sopropMap[it.key()];
+        const QString &p = mopropMap[it.key()];
         if (!p.isEmpty()) {
             props.insert(p, it.value());
         }
