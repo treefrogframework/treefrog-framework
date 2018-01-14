@@ -24,12 +24,7 @@ public:
     int idleTime() const;
     int socketId() const { return sid; }
     void deleteLater();
-
-#if QT_VERSION >= 0x050000
     bool setSocketDescriptor(qintptr socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
-#else
-    bool setSocketDescriptor(int socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
-#endif
 
     static THttpSocket *searchSocket(int id);
     void writeRawDataFromWebSocket(const QByteArray &data);

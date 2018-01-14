@@ -16,9 +16,6 @@ class T_CORE_EXPORT TLoggerInterface
 public:
     virtual ~TLoggerInterface() { }
     virtual TLogger *create(const QString &key) = 0;
-#if QT_VERSION < 0x050000
-    virtual QStringList keys() const = 0;
-#endif
 };
 
 Q_DECLARE_INTERFACE(TLoggerInterface, TLoggerInterface_iid)
@@ -34,9 +31,6 @@ public:
     ~TLoggerPlugin() { }
 
     virtual TLogger *create(const QString &key) = 0;
-#if QT_VERSION < 0x050000
-    virtual QStringList keys() const = 0;
-#endif
 };
 
 #endif // TLOGGERPLUGIN_H

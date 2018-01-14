@@ -42,7 +42,6 @@ int main(int argc, char *argv[]) \
     QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
-    TF_SET_CODEC_FOR_TR(codec); \
     app.setDatabaseEnvironment("test"); \
     TSqlDatabasePool::instantiate(); \
     TKvsDatabasePool::instantiate(); \
@@ -61,7 +60,6 @@ int main(int argc, char *argv[]) \
     QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray(); \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
-    TF_SET_CODEC_FOR_TR(codec); \
     TestObject tc; \
     return QTest::qExec(&tc, argc, argv); \
 }

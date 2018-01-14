@@ -181,11 +181,7 @@ inline T *TDispatcher<T>::object()
         if (typeId <= 0 && !metaType.isEmpty()) {
             typeId = QMetaType::type(metaType.toLatin1().constData());
             if (Q_LIKELY(typeId > 0)) {
-#if QT_VERSION >= 0x050000
                 ptr = static_cast<T *>(QMetaType::create(typeId));
-#else
-                ptr = static_cast<T *>(QMetaType::construct(typeId));
-#endif
                 Q_CHECK_PTR(ptr);
                 tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(metaType), typeId);
             } else {

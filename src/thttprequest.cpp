@@ -11,9 +11,7 @@
 #include <TAppSettings>
 #include <QBuffer>
 #include "tsystemglobal.h"
-#if QT_VERSION >= 0x050000
 #include <QJsonDocument>
-#endif
 
 
 class MethodHash : public QMap<QString, Tf::HttpMethod>
@@ -57,9 +55,7 @@ THttpRequestData::THttpRequestData(const THttpRequestData &other)
       queryItems(other.queryItems),
       formItems(other.formItems),
       multipartFormData(other.multipartFormData),
-#if QT_VERSION >= 0x050000
       jsonData(other.jsonData),
-#endif
       clientAddress(other.clientAddress)
 { }
 
@@ -490,16 +486,12 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->formItems = d->multipartFormData.postParameters;
 
         } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
-#if QT_VERSION >= 0x050000
             QJsonParseError error;
             d->jsonData = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
                 tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qPrintable(error.errorString()),
                             error.offset);
             }
-#else
-            tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
-#endif
         } else if (ctype.startsWith("application/x-www-form-urlencoded", Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
                 const QList<QByteArray> formdata = body.split('&');

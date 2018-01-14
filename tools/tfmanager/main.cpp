@@ -62,9 +62,7 @@ public:
         insert(QSysInfo::WV_2003,       "Windows Server 2003");
         insert(QSysInfo::WV_VISTA,      "Windows Vista or Windows Server 2008");
         insert(QSysInfo::WV_WINDOWS7,   "Windows 7 or Windows Server 2008 R2");
-# if QT_VERSION >= 0x050000
         insert(QSysInfo::WV_WINDOWS8,   "Windows 8 or Windows Server 2012");
-# endif
 # if QT_VERSION >= 0x050200
         insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
 # endif
@@ -86,10 +84,8 @@ public:
         insert(QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger");
         insert(QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard");
         insert(QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard");
-# if QT_VERSION >= 0x040800
         insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
         insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
-# endif
 # if QT_VERSION >= 0x050100
         insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
 # endif
@@ -498,9 +494,7 @@ int managerMain(int argc, char *argv[])
 
 #elif defined(Q_OS_WIN)
     app.watchConsoleSignal();
-# if QT_VERSION >= 0x050000
     app.watchLocalSocket();
-# endif
 #endif
 
     if (!signalCmd.isEmpty()) {

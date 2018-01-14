@@ -63,19 +63,6 @@ void TWebApplication::ignoreConsoleSignal()
     timer.stop();
 }
 
-#if QT_VERSION < 0x050000
-
-bool TWebApplication::winEventFilter(MSG *msg, long *result)
-{
-    if (msg->message == WM_CLOSE) {
-        quit();
-    } else if (msg->message == WM_APP) {
-        exit(1);
-    }
-    return QCoreApplication::winEventFilter(msg, result);
-}
-
-#else
 
 bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
 {
@@ -150,4 +137,3 @@ bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg,  int targetPro
     return ret;
 }
 
-#endif // QT_VERSION < 0x050000

@@ -36,7 +36,6 @@
      QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray(); \
      QTextCodec *codec = QTextCodec::codecForName(codecName); \
      QTextCodec::setCodecForLocale(codec); \
-     TF_SET_CODEC_FOR_TR(codec); \
      tSetupSystemLogger(); \
      tSetupQueryLogger(); \
      tSetupAppLoggers(); \

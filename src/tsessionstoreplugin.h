@@ -17,9 +17,6 @@ public:
     virtual ~TSessionStoreInterface() { }
     virtual TSessionStore *create(const QString &key) = 0;
     virtual void destroy(const QString &key, TSessionStore *store) = 0;
-#if QT_VERSION < 0x050000
-    virtual QStringList keys() const = 0;
-#endif
 };
 
 Q_DECLARE_INTERFACE(TSessionStoreInterface, TSessionStoreInterface_iid)
@@ -36,9 +33,6 @@ public:
 
     virtual TSessionStore *create(const QString &key) = 0;
     virtual void destroy(const QString &key, TSessionStore *store) = 0;
-#if QT_VERSION < 0x050000
-    virtual QStringList keys() const = 0;
-#endif
 };
 
 #endif // TSESSIONSTOREPLUGIN_H

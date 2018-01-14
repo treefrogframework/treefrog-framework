@@ -482,11 +482,7 @@ static void printSuccessMessage(const QString &model)
 
         msg = "Run `qmake -r%0 CONFIG+=debug` to generate a Makefile for debug mode.\nRun `qmake -r%0 CONFIG+=release` to generate a Makefile for release mode.";
 #ifdef Q_OS_DARWIN
-# if QT_VERSION >= 0x050000
         msg = msg.arg(" -spec macx-clang");
-# else
-        msg = msg.arg(" -spec macx-g++");
-# endif
 #else
         msg = msg.arg("");
 #endif
@@ -598,10 +594,6 @@ int main(int argc, char *argv[])
         QTextCodec *codec = QTextCodec::codecForName(appSettings.value("InternalEncoding").toByteArray().trimmed());
         codec = (codec) ? codec : QTextCodec::codecForLocale();
         QTextCodec::setCodecForLocale(codec);
-#if QT_VERSION < 0x050000
-        QTextCodec::setCodecForTr(codec);
-        QTextCodec::setCodecForCStrings(codec);
-#endif
 
         // ERB or Otama
         templateSystem = devSettings.value("TemplateSystem").toString().toLower();

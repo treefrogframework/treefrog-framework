@@ -15,10 +15,8 @@
 #include "tloggerfactory.h"
 #include "tfilelogger.h"
 #include "tsystemglobal.h"
-#if QT_VERSION >= 0x050000
-# include <QJsonArray>
-# include <QJsonObject>
-#endif
+#include <QJsonArray>
+#include <QJsonObject>
 
 static QMutex mutex;
 static QMap<QString, TLoggerInterface *> *lggIfMap = 0;
@@ -102,21 +100,12 @@ void TLoggerFactory::loadPlugins()
 
             TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
             if ( iface ) {
-#if QT_VERSION >= 0x050000
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {
                     QString key = k.toString().toLower();
                     tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
                     lggIfMap->insert(key, iface);
                 }
-#else
-                const QStringList keys = iface->keys();
-                for (auto &k : keys) {
-                    QString key = k.toLower();
-                    tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
-                    lggIfMap->insert(key, iface);
-                }
-#endif
             }
         }
     }

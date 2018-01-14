@@ -20,10 +20,8 @@
 #include "tsessionredisstore.h"
 #include "tsessionmongostore.h"
 #include "tsystemglobal.h"
-#if QT_VERSION >= 0x050000
-# include <QJsonArray>
-# include <QJsonObject>
-#endif
+#include <QJsonArray>
+#include <QJsonObject>
 
 static QMutex mutex;
 static QMap<QString, TSessionStoreInterface*> *sessIfMap = nullptr;
@@ -171,21 +169,12 @@ void TSessionStoreFactory::loadPlugins()
 
             TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
             if ( iface ) {
-#if QT_VERSION >= 0x050000
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {
                     QString key = k.toString().toLower();
                     tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
                     sessIfMap->insert(key, iface);
                 }
-#else
-                const QStringList keys = iface->keys();
-                for (auto &k : keys) {
-                    QString key = k.toLower();
-                    tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
-                    sessIfMap->insert(key, iface);
-                }
-#endif
             }
         }
     }

@@ -12,9 +12,7 @@
 #include <TAppSettings>
 #include <TThreadApplicationServer>
 #include <TMultiplexingServer>
-#if QT_VERSION >= 0x050000
-# include <TJSLoader>
-#endif
+#include <TJSLoader>
 #include <TSystemGlobal>
 #include <cstdlib>
 #include "thazardptrmanager.h"
@@ -27,7 +25,6 @@ using namespace TreeFrog;
 #define AUTO_RELOAD_OPTION "-r"
 
 
-#if QT_VERSION >= 0x050000
 static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
 {
     QByteArray msg = message.toLocal8Bit();
@@ -46,25 +43,7 @@ static void messageOutput(QtMsgType type, const QMessageLogContext &context, con
         break;
     }
 }
-#else
-static void messageOutput(QtMsgType type, const char *msg)
-{
-    switch (type) {
-    case QtFatalMsg:
-    case QtCriticalMsg:
-        tSystemError("%s", msg);
-        break;
-    case QtWarningMsg:
-        tSystemWarn("%s", msg);
-        break;
-    case QtDebugMsg:
-        tSystemDebug("%s", msg);
-        break;
-    default:
-        break;
-    }
-}
-#endif // QT_VERSION >= 0x050000
+
 
 #if defined(Q_OS_UNIX)
 static void writeFailure(const void *data, int size)
@@ -105,11 +84,7 @@ int main(int argc, char *argv[])
     // Setup hazard pointer
     THazardPtrManager::instance().setGarbageCollectionBufferSize(Tf::app()->maxNumberOfThreadsPerAppServer());
 
-#if QT_VERSION >= 0x050000
     qInstallMessageHandler(messageOutput);
-#else
-    qInstallMsgHandler(messageOutput);
-#endif
     QMap<QString, QString> args = convertArgs(QCoreApplication::arguments());
     int sock = args.value(SOCKET_OPTION).toInt();
     bool reload = args.contains(AUTO_RELOAD_OPTION);
@@ -143,13 +118,6 @@ int main(int argc, char *argv[])
     QTextCodec *codec = webapp.codecForInternal();
     QTextCodec::setCodecForLocale(codec);
 
-#if QT_VERSION < 0x050000
-    QTextCodec::setCodecForTr(codec);
-    QTextCodec::setCodecForCStrings(codec);
-    tSystemDebug("setCodecForTr: %s", codec->name().data());
-    tSystemDebug("setCodecForCStrings: %s", codec->name().data());
-#endif
-
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");
         fprintf(stderr, "No such directory\n");
@@ -162,11 +130,9 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Settings file not found\n");
         goto finish;
     } else {
-#if QT_VERSION >= 0x050000
         // Sets search paths for JavaScript
         QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath, "script;node_modules").toString().split(';');
         TJSLoader::setDefaultSearchPaths(jpaths);
-#endif
     }
 
 #ifdef Q_OS_WIN

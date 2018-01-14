@@ -11,10 +11,7 @@
 #include <TMultipartFormData>
 #include <TCookieJar>
 #include <THttpRequestHeader>
-
-#if QT_VERSION >= 0x050000
 #include <QJsonDocument>
-#endif
 
 class QIODevice;
 
@@ -31,9 +28,7 @@ public:
     QList<QPair<QString, QString>> queryItems;
     QList<QPair<QString, QString>> formItems;
     TMultipartFormData multipartFormData;
-#if QT_VERSION >= 0x050000
     QJsonDocument jsonData;
-#endif
     QHostAddress clientAddress;
 };
 
@@ -79,11 +74,8 @@ public:
     QList<TCookie> cookies() const;
     QHostAddress clientAddress() const { return d->clientAddress; }
     QIODevice *rawBody();
-
-#if QT_VERSION >= 0x050000
     bool hasJson() const { return !d->jsonData.isNull(); }
     const QJsonDocument &jsonData() const { return d->jsonData; }
-#endif
 
     static QList<THttpRequest> generate(const QByteArray &byteArray, const QHostAddress &address);
 

@@ -67,9 +67,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
         }
 
     } else if (address.protocol() == QAbstractSocket::IPv4Protocol
-#if QT_VERSION >= 0x050000
                || address.protocol() == QAbstractSocket::AnyIPProtocol
-#endif
         ) {
         struct sockaddr_in sa;
         memset(&sa, 0, sizeof(sa));

@@ -81,16 +81,11 @@ public:
 #if defined(Q_OS_WIN)
     void watchConsoleSignal();
     void ignoreConsoleSignal();
-
-# if QT_VERSION < 0x050000
-    virtual bool winEventFilter(MSG *msg, long *result);
-# else
     void watchLocalSocket();
     static bool sendLocalCtrlMessage(const QByteArray &msg,  int targetProcess);
 
 private slots:
     void recvLocalSocket();
-# endif
 #endif // Q_OS_WIN
 
 protected:
@@ -130,7 +125,7 @@ inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 }
 
 
-#if defined(Q_OS_WIN) && QT_VERSION >= 0x050000
+#if defined(Q_OS_WIN)
 #include <QAbstractNativeEventFilter>
 
 class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter
@@ -139,6 +134,6 @@ public:
     virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *);
 };
 
-#endif // QT_VERSION >= 0x050000
+#endif // Q_OS_WIN
 
 #endif // TWEBAPPLICATION_H

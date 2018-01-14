@@ -81,29 +81,12 @@ QString ProcessInfo::processName() const
 }
 
 
-#if QT_VERSION < 0x050000
-static BOOL CALLBACK terminateProc(HWND hwnd, LPARAM procId)
-{
-    DWORD currentPid = 0;
-    GetWindowThreadProcessId(hwnd, &currentPid);
-    if (currentPid == (DWORD)procId) {
-        PostMessage(hwnd, WM_CLOSE, 0, 0);
-        return FALSE;
-    }
-    return TRUE;
-}
-#endif
-
 
 void ProcessInfo::terminate()
 {
     if (processId > 0) {
-#if QT_VERSION < 0x050000
-        EnumWindows(terminateProc, processId);
-#else
         // Sends to the local socket of tfmanager
         TWebApplication::sendLocalCtrlMessage(QByteArray::number(WM_CLOSE), processId);
-#endif
     }
 }
 
@@ -122,29 +105,11 @@ void ProcessInfo::kill()
 }
 
 
-#if QT_VERSION < 0x050000
-static BOOL CALLBACK restartProc(HWND hwnd, LPARAM procId)
-{
-    DWORD currentPid = 0;
-    GetWindowThreadProcessId(hwnd, &currentPid);
-    if (currentPid == (DWORD)procId) {
-        PostMessage(hwnd, WM_APP, 0, 0);
-        return FALSE;
-    }
-    return TRUE;
-}
-#endif
-
-
 void ProcessInfo::restart()
 {
     if (processId > 0) {
-#if QT_VERSION < 0x050000
-        EnumWindows(restartProc, processId);
-#else
         // Sends to the local socket of tfmanager
         TWebApplication::sendLocalCtrlMessage(QByteArray::number(WM_APP), processId);
-#endif
     }
 }
 

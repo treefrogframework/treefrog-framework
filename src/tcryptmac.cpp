@@ -22,11 +22,9 @@ public:
     {
         insert(TCryptMac::Hmac_Md5, 64);
         insert(TCryptMac::Hmac_Sha1, 64);
-#if QT_VERSION >= 0x050000
         insert(TCryptMac::Hmac_Sha256, 64);
         insert(TCryptMac::Hmac_Sha384, 128);
         insert(TCryptMac::Hmac_Sha512, 128);
-#endif
     }
 };
 Q_GLOBAL_STATIC(BlockSizeHash, blockSizeHash)
