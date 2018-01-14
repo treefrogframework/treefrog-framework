@@ -224,8 +224,8 @@ int main(int argc, char *argv[])
         goto finish;
     }
 
+    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=](){ server->stop(); });
     ret = webapp.exec();
-    server->stop();
 
 finish:
     // Release loggers

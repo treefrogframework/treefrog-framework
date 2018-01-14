@@ -23,8 +23,12 @@
   an web application server for thread.
 */
 
-TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject *parent)
-    : QTcpServer(parent), TApplicationServerBase(), listenSocket(listeningSocket), maxThreads(0), reloadTimer()
+TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject *parent) :
+    QTcpServer(parent),
+    TApplicationServerBase(),
+    listenSocket(listeningSocket),
+    maxThreads(0),
+    reloadTimer()
 {
     QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
     maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
@@ -92,12 +96,7 @@ void TThreadApplicationServer::stop()
 }
 
 
-void TThreadApplicationServer::incomingConnection(
-#if QT_VERSION >= 0x050000
-    qintptr socketDescriptor)
-#else
-    int socketDescriptor)
-#endif
+void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
     for (;;) {
         tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);

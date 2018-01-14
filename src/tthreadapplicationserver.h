@@ -69,6 +69,7 @@ public:
     {
         TStaticReleaseThread *releaser = new TStaticReleaseThread();
         releaser->start();
+        QThread::yieldCurrentThread();
         releaser->wait();
         delete releaser;
     }
