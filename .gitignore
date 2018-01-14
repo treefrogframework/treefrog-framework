@@ -6,6 +6,7 @@ Makefile.*
 *.bak
 .qmake.stash
 log/
+doc/
 src/trash/
 tools/tspawn/defaults/
 src/test/sharedmemorylogstream/log/
@@ -19,6 +20,11 @@ Gemfile.lock
 *.pro.user
 3rdparty/mongo-c-driver/src/*.os
 docs/_site/
+tools/tfmanager/treefrog
+tools/tfserver/tadpole
+tools/tmake/test/tmaketest
+tools/tmake/tmake
+tools/tspawn/tspawn
 
 # macOS
 *.dylib
