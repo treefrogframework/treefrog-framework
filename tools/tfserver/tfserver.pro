@@ -3,9 +3,8 @@ TEMPLATE = app
 VERSION  = 1.0.0
 CONFIG  += console c++11
 CONFIG  -= app_bundle
-QT      += network sql
+QT      += network sql qml
 QT      -= gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += qml
 DEFINES += TF_DLL
 INCLUDEPATH += $$header.path
 
@@ -32,11 +31,6 @@ windows {
   linux-*:LIBS += -lrt
   *-g++:DEFINES += _GNU_SOURCE
   freebsd-*:DEFINES += _GNU_SOURCE
-
-  # c++11
-  lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++0x
-  }
 }
 
 INSTALLS += target

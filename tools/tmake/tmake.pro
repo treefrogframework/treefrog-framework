@@ -9,13 +9,6 @@ INCLUDEPATH += ../../include
 
 include(../../tfbase.pri)
 
-unix {
-  # c++11
-  lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++0x
-  }
-}
-
 isEmpty( target.path ) {
   windows {
     target.path = C:/TreeFrog/$${TF_VERSION}/bin

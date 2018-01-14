@@ -4,17 +4,14 @@ HEADER_FILES = tabstractmodel.h tabstractuser.h tactioncontext.h tactioncontroll
 
 HEADER_FILES += tsqldatabasepool.h tkvsdatabasepool.h tstack.h thazardobject.h thazardptr.h
 
-# Qt5
-greaterThan(QT_MAJOR_VERSION, 4) {
-  HEADER_CLASSES += ../include/TJSLoader
-  HEADER_FILES   += tjsloader.h
-  HEADER_CLASSES += ../include/TJSModule
-  HEADER_FILES   += tjsmodule.h
-  HEADER_CLASSES += ../include/TJSInstance
-  HEADER_FILES   += tjsinstance.h
-  HEADER_CLASSES += ../include/TReactComponent
-  HEADER_FILES   += treactcomponent.h
-}
+HEADER_CLASSES += ../include/TJSLoader
+HEADER_FILES   += tjsloader.h
+HEADER_CLASSES += ../include/TJSModule
+HEADER_FILES   += tjsmodule.h
+HEADER_CLASSES += ../include/TJSInstance
+HEADER_FILES   += tjsinstance.h
+HEADER_CLASSES += ../include/TReactComponent
+HEADER_FILES   += treactcomponent.h
 
 unix {
   HEADER_FILES += tfcore_unix.h

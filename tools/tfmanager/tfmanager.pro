@@ -32,11 +32,6 @@ windows {
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
   linux-*:LIBS += -lrt
-
-  # c++11
-  lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++0x
-  }
 }
 
 INSTALLS += target
