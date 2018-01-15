@@ -72,7 +72,7 @@ static QMap<QString, QString> convertArgs(const QStringList &args)
 int main(int argc, char *argv[])
 {
     TWebApplication webapp(argc, argv);
-    TApplicationServerBase *server = 0;
+    TApplicationServerBase *server = nullptr;
     int ret = -1;
 
     // Setup loggers
@@ -194,6 +194,9 @@ int main(int argc, char *argv[])
     ret = webapp.exec();
 
 finish:
+    if (server) {
+        delete server;
+    }
     // Release loggers
     Tf::releaseAppLoggers();
     Tf::releaseQueryLogger();

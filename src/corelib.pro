@@ -358,8 +358,6 @@ freebsd {
 # Files for MongoDB
 INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
 windows {
-#  DEFINES += MONGO_STATIC_BUILD
-
   win32-msvc* {
     CONFIG(debug, debug|release) {
       LIBS += ..\3rdparty\mongo-c-driver\debug\mongoc.lib
@@ -376,7 +374,6 @@ windows {
 } else {
   LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
 }
-#DEFINES += MONGO_HAVE_STDINT
 
 HEADERS += tmongodriver.h
 SOURCES += tmongodriver.cpp
