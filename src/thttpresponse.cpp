@@ -25,7 +25,7 @@
   Constructor with the header \a header and the body \a body.
 */
 THttpResponse::THttpResponse(const THttpResponseHeader &header, const QByteArray &body)
-    : resHeader(header), tmpByteArray(body), bodyDevice(nullptr)
+    : resHeader(header), tmpByteArray(body)
 {
     if (!tmpByteArray.isNull()) {
         bodyDevice = new QBuffer(&tmpByteArray);
@@ -37,8 +37,9 @@ THttpResponse::THttpResponse(const THttpResponseHeader &header, const QByteArray
 */
 THttpResponse::~THttpResponse()
 {
-    if (bodyDevice)
+    if (bodyDevice) {
         delete bodyDevice;
+    }
 }
 
 /*!
@@ -54,8 +55,9 @@ bool THttpResponse::isBodyNull() const
  */
 void THttpResponse::setBody(const QByteArray &body)
 {
-    if (bodyDevice)
+    if (bodyDevice) {
         delete bodyDevice;
+    }
 
     tmpByteArray = body;
     bodyDevice = (tmpByteArray.isNull()) ? nullptr : new QBuffer(&tmpByteArray);

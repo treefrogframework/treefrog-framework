@@ -12,7 +12,7 @@ class QIODevice;
 class T_CORE_EXPORT THttpResponse
 {
 public:
-    THttpResponse();
+    THttpResponse() {}
     THttpResponse(const THttpResponseHeader &header, const QByteArray &body);
     ~THttpResponse();
 
@@ -27,14 +27,10 @@ public:
 private:
     THttpResponseHeader resHeader;
     QByteArray tmpByteArray;
-    QIODevice *bodyDevice;
+    QIODevice *bodyDevice {nullptr};
 
     T_DISABLE_COPY(THttpResponse)
     T_DISABLE_MOVE(THttpResponse)
 };
-
-
-inline THttpResponse::THttpResponse() : bodyDevice(0)
-{ }
 
 #endif // THTTPRESPONSE_H
