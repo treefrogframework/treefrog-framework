@@ -26,8 +26,8 @@
 #define DEFAULT_ACCESSLOG_LAYOUT           "%h %d \"%r\" %s %O%n"
 #define DEFAULT_ACCESSLOG_DATETIME_FORMAT  "yyyy-MM-ddThh:mm:ss"
 
-static TAccessLogStream *accesslogstrm = 0;
-static TAccessLogStream *sqllogstrm = 0;
+static TAccessLogStream *accesslogstrm = nullptr;
+static TAccessLogStream *sqllogstrm = nullptr;
 static TFileAioWriter systemLog;
 static QByteArray syslogLayout = DEFAULT_SYSTEMLOG_LAYOUT;
 static QByteArray syslogDateTimeFormat = DEFAULT_SYSTEMLOG_DATETIME_FORMAT;
@@ -83,7 +83,7 @@ void Tf::releaseAccessLogger()
 {
     if (accesslogstrm) {
         delete accesslogstrm;
-        accesslogstrm = 0;
+        accesslogstrm = nullptr;
     }
 }
 
@@ -102,7 +102,7 @@ void Tf::releaseQueryLogger()
 {
     if (sqllogstrm) {
         delete sqllogstrm;
-        sqllogstrm = 0;
+        sqllogstrm = nullptr;
     }
 }
 

@@ -194,9 +194,20 @@ int main(int argc, char *argv[])
     ret = webapp.exec();
 
 finish:
-    if (server) {
-        delete server;
+    switch (webapp.multiProcessingModule()) {
+    case TWebApplication::Thread:
+        if (server) {
+            delete server;
+        }
+        break;
+
+    case TWebApplication::Hybrid:
+        break;
+
+    default:
+        break;
     }
+
     // Release loggers
     Tf::releaseAppLoggers();
     Tf::releaseQueryLogger();
