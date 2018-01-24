@@ -58,7 +58,7 @@ static bool isNumericType(const QString &typeName)
 
 
 SqlObjGenerator::SqlObjGenerator(const QString &model, const QString &table)
-    : modelName(), tableSch(new TableSchema(table))
+    : tableSch(new TableSchema(table))
 {
     modelName = (!model.isEmpty()) ? model : fieldNameToEnumName(table);
 }

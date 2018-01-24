@@ -196,9 +196,7 @@ int main(int argc, char *argv[])
 finish:
     switch (webapp.multiProcessingModule()) {
     case TWebApplication::Thread:
-        if (server) {
-            delete server;
-        }
+        delete server;
         break;
 
     case TWebApplication::Hybrid:

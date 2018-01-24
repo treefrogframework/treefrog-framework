@@ -23,7 +23,7 @@ public:
 
 private:
     QString modelName;
-    TableSchema *tableSch;
+    TableSchema *tableSch {nullptr};
 };
 
 #endif // SQLOBJGENERATOR_H

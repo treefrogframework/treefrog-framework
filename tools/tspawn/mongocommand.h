@@ -18,7 +18,7 @@ public:
     QStringList getCollectionNames() const;
 
 private:
-    TMongoDriver *driver;
+    TMongoDriver *driver {nullptr};
     QString settingsPath;
     QString databaseName;
 

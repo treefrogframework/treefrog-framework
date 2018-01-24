@@ -12,11 +12,11 @@
 #include <TMongoCursor>
 #include "mongocommand.h"
 
-static QSettings *mongoSettings = 0;
+static QSettings *mongoSettings = nullptr;
 
 
 MongoCommand::MongoCommand(const QString &path)
-    : driver(new TMongoDriver), settingsPath(path), databaseName()
+    : driver(new TMongoDriver), settingsPath(path)
 {
     if (!mongoSettings) {
         if (!QFile::exists(settingsPath)) {
@@ -29,9 +29,9 @@ MongoCommand::MongoCommand(const QString &path)
 
 MongoCommand::~MongoCommand()
 {
-    if (driver->isOpen())
+    if (driver->isOpen()) {
         close();
-
+    }
     delete driver;
 }
 
