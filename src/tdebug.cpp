@@ -55,10 +55,8 @@ void Tf::setupAppLoggers()
 */
 void Tf::releaseAppLoggers()
 {
-    if (stream) {
-        delete stream;
-        stream = 0;
-    }
+    delete stream;
+    stream = nullptr;
 
     for (auto &logger : (const QList<TLogger*>&)loggers) {
         delete logger;

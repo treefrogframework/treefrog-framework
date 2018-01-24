@@ -17,7 +17,7 @@
 
 
 TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
-    : arrayBuffer(header), bodyFile(0), fileRemove(autoRemove), accesslogger(logger), startPos(0)
+    : arrayBuffer(header), fileRemove(autoRemove), accesslogger(logger)
 {
     if (file.exists() && file.isFile()) {
         bodyFile = new QFile(file.absoluteFilePath());
@@ -30,12 +30,11 @@ TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool a
 
 
 TSendBuffer::TSendBuffer(const QByteArray &header)
-    : arrayBuffer(header), bodyFile(0), fileRemove(false), accesslogger(), startPos(0)
+    : arrayBuffer(header)
 { }
 
 
 TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
-    : arrayBuffer(), bodyFile(0), fileRemove(false), accesslogger(), startPos(0)
 {
     accesslogger.open();
     accesslogger.setStatusCode(statusCode);
@@ -65,7 +64,7 @@ void TSendBuffer::release()
             bodyFile->remove();
         }
         delete bodyFile;
-        bodyFile = 0;
+        bodyFile = nullptr;
     }
 }
 

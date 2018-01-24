@@ -16,7 +16,7 @@ extern "C" {
 
 
 TMongoDriver::TMongoDriver()
-    : mongoClient(nullptr), dbName(), mongoCursor(new TMongoCursor()), lastStatus(nullptr), errorCode(0), errorString()
+    : mongoCursor(new TMongoCursor())
 {
     mongoc_init();
 }
@@ -26,10 +26,7 @@ TMongoDriver::~TMongoDriver()
 {
     close();
     delete mongoCursor;
-
-    if (lastStatus) {
-        delete lastStatus;
-    }
+    delete lastStatus;
 }
 
 
@@ -279,8 +276,6 @@ QVariantMap TMongoDriver::getLastCommandStatus() const
 
 void TMongoDriver::setLastCommandStatus(const void *bson)
 {
-    if (lastStatus) {
-        delete lastStatus;
-    }
+    delete lastStatus;
     lastStatus = new TBson((const TBsonObject *)bson);
 }

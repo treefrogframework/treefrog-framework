@@ -15,12 +15,11 @@
 */
 
 TAccessLog::TAccessLog()
-    : timestamp(), remoteHost(), request(), statusCode(0), responseBytes(0)
 { }
 
 
 TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req)
-    : timestamp(), remoteHost(host), request(req), statusCode(0), responseBytes(0)
+    : remoteHost(host), request(req)
 { }
 
 
@@ -104,12 +103,12 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
 
 
 TAccessLogger::TAccessLogger()
-    : accessLog(0)
+    : accessLog(nullptr)
 { }
 
 
 TAccessLogger::TAccessLogger(const TAccessLogger &other)
-    : accessLog(0)
+    : accessLog(nullptr)
 {
     if (other.accessLog) {
         open();
@@ -136,8 +135,9 @@ TAccessLogger &TAccessLogger::operator=(const TAccessLogger &other)
 
 void TAccessLogger::open()
 {
-    if (!accessLog)
+    if (!accessLog) {
         accessLog = new TAccessLog();
+    }
 }
 
 
@@ -152,8 +152,6 @@ void TAccessLogger::write()
 
 void TAccessLogger::close()
 {
-    if (accessLog) {
-        delete accessLog;
-        accessLog = 0;
-    }
+    delete accessLog;
+    accessLog = nullptr;
 }

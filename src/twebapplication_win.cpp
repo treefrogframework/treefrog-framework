@@ -136,4 +136,3 @@ bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg,  int targetPro
     delete socket;
     return ret;
 }
-

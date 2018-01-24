@@ -81,10 +81,8 @@ void Tf::setupAccessLogger()
 
 void Tf::releaseAccessLogger()
 {
-    if (accesslogstrm) {
-        delete accesslogstrm;
-        accesslogstrm = nullptr;
-    }
+    delete accesslogstrm;
+    accesslogstrm = nullptr;
 }
 
 
@@ -100,10 +98,8 @@ void Tf::setupQueryLogger()
 
 void Tf::releaseQueryLogger()
 {
-    if (sqllogstrm) {
-        delete sqllogstrm;
-        sqllogstrm = nullptr;
-    }
+    delete sqllogstrm;
+    sqllogstrm = nullptr;
 }
 
 

@@ -22,13 +22,17 @@
   emails by POP.
 */
 
-TPopMailer::TPopMailer(QObject *parent)
-    : QObject(parent), socket(new QTcpSocket), popPort(0), apopEnabled(false)
+TPopMailer::TPopMailer(QObject *parent) :
+    QObject(parent),
+    socket(new QTcpSocket)
 { }
 
 
-TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QTcpSocket), popHostName(hostName), popPort(port), apopEnabled(false)
+TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent) :
+    QObject(parent),
+    socket(new QTcpSocket),
+    popHostName(hostName),
+    popPort(port)
 { }
 
 

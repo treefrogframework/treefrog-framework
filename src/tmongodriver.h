@@ -43,11 +43,11 @@ private:
     void setLastCommandStatus(const void *bson);
 
     typedef struct _mongoc_client_t mongoc_client_t;
-    mongoc_client_t *mongoClient;
+    mongoc_client_t *mongoClient {nullptr};
     QString dbName;
-    TMongoCursor *mongoCursor;
-    TBson *lastStatus;
-    int errorCode;
+    TMongoCursor *mongoCursor {nullptr};
+    TBson *lastStatus {nullptr};
+    int errorCode {0};
     QString errorString;
 
     T_DISABLE_COPY(TMongoDriver)

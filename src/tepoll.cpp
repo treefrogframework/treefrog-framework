@@ -242,9 +242,7 @@ void TEpoll::dispatchSendData()
 
         default:
             tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
-            if (sd->buffer) {
-                delete sd->buffer;
-            }
+            delete sd->buffer;
             break;
         }
 

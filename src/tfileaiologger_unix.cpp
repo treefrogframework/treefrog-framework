@@ -27,9 +27,7 @@ public:
 void TFileAioLoggerData::clearSyncBuffer()
 {
     for (auto cb : (const List<struct aiocb*> &)syncBuffer) {
-        if (cb->aio_buf) {
-            delete (char *)cb->aio_buf;
-        }
+        delete (char *)cb->aio_buf;
         delete cb;
     }
     syncBuffer.clear();

@@ -31,10 +31,8 @@ static TMultiplexingServer *multiplexingServer = 0;
 
 static void cleanup()
 {
-    if (multiplexingServer) {
-        delete multiplexingServer;
-        multiplexingServer = 0;
-    }
+    delete multiplexingServer;
+    multiplexingServer = nullptr;
 }
 
 

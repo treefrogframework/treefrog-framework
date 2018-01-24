@@ -21,8 +21,8 @@ public:
         Plain,
     };
 
-    TSmtpMailer(QObject *parent = 0);
-    TSmtpMailer(const QString &hostName, quint16 port, QObject *parent = 0);
+    TSmtpMailer(QObject *parent = nullptr);
+    TSmtpMailer(const QString &hostName, quint16 port, QObject *parent = nullptr);
     ~TSmtpMailer();
 
     QString key() const { return "smtp"; }
@@ -58,26 +58,26 @@ protected:
     bool cmdData(const QByteArray &message);
     bool cmdQuit();
 
-    int  cmd(const QByteArray &command, QList<QByteArray> *reply = 0);
-    int  read(QList<QByteArray> *reply = 0);
+    int  cmd(const QByteArray &command, QList<QByteArray> *reply = nullptr);
+    int  read(QList<QByteArray> *reply = nullptr);
     bool write(const QByteArray &command);
 
 private:
     T_DISABLE_COPY(TSmtpMailer)
     T_DISABLE_MOVE(TSmtpMailer)
 
-    QSslSocket *socket;
+    QSslSocket *socket {nullptr};
     QMutex sendMutex;
     QString smtpHostName;
-    quint16 smtpPort;
+    quint16 smtpPort {0};
     TMailMessage mailMessage;
     QStringList  svrAuthMethods;
-    bool authEnable;
-    bool tlsEnable;
-    bool tlsAvailable;
+    bool authEnable {false};
+    bool tlsEnable {false};
+    bool tlsAvailable {false};
     QByteArray userName;
     QByteArray password;
-    TPopMailer *pop;
+    TPopMailer *pop {nullptr};
     QByteArray lastResponse;
 };
 

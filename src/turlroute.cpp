@@ -45,11 +45,9 @@ void TUrlRoute::instantiate()
         urlRoute = new TUrlRoute();
         urlRoute->parseConfigFile();
 
-        qAddPostRoutine([] {
-            if (urlRoute) {
-                delete urlRoute;
-                urlRoute = nullptr;
-            }
+        qAddPostRoutine([]{
+            delete urlRoute;
+            urlRoute = nullptr;
         });
     }
 }

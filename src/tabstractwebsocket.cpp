@@ -36,9 +36,7 @@ TAbstractWebSocket::~TAbstractWebSocket()
         tSystemWarn("Logic warning  [%s:%d]", __FILE__, __LINE__);
     }
 
-    if (keepAliveTimer) {
-        delete keepAliveTimer;
-    }
+    delete keepAliveTimer;
 }
 
 

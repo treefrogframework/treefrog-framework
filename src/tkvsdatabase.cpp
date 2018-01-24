@@ -82,9 +82,7 @@ TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &con
     // Removes it if exists
     if (dict->contains(connectionName)) {
         auto data = dict->take(connectionName);
-        if (data.driver) {
-            delete data.driver;
-        }
+        delete data.driver;
     }
 
     TKvsDatabaseData data;
@@ -103,9 +101,7 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
     TKvsDatabase db(dict->take(connectionName));
 
     db.close();
-    if (db.drv) {
-        delete db.drv;
-    }
+    delete db.drv;
 }
 
 

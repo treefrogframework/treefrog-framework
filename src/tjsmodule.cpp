@@ -39,9 +39,7 @@ TJSModule::TJSModule(QObject *parent)
 
 TJSModule::~TJSModule()
 {
-    if (funcObj) {
-        delete funcObj;
-    }
+    delete funcObj;
     delete jsEngine;
 }
 

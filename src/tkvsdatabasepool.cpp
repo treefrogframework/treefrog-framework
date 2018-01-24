@@ -38,10 +38,8 @@ Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 static void cleanup()
 {
-    if (databasePool) {
-        delete databasePool;
-        databasePool = 0;
-    }
+    delete databasePool;
+    databasePool = nullptr;
 }
 
 

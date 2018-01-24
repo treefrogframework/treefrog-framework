@@ -17,7 +17,7 @@ public:
     void flush();
 
 private:
-    TLogger *logger;
+    TLogger *logger {nullptr};
 
     // Disable
     TAccessLogStream();

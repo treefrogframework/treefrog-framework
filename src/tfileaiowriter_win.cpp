@@ -36,9 +36,7 @@ public:
 void TFileAioWriterData::clearSyncBuffer()
 {
     for (auto ab : (const QList<aiobuf_t *> &)syncBuffer) {
-        if (ab->aio_buf) {
-            delete (char *)ab->aio_buf;
-        }
+        delete (char *)ab->aio_buf;
         delete ab;
     }
     syncBuffer.clear();

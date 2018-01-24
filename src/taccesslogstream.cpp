@@ -15,7 +15,6 @@
 
 
 TAccessLogStream::TAccessLogStream(const QString &fileName)
-    : logger(0)
 {
     TFileAioLogger *aioLogger = new TFileAioLogger();
     aioLogger->setFileName(fileName);

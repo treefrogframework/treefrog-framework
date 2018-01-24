@@ -29,15 +29,17 @@
   emails by SMTP.
 */
 
-TSmtpMailer::TSmtpMailer(QObject *parent)
-    : QObject(parent), socket(new QSslSocket()), sendMutex(), smtpPort(0), authEnable(false),
-      tlsEnable(false), tlsAvailable(false), pop(nullptr)
+TSmtpMailer::TSmtpMailer(QObject *parent) :
+    QObject(parent),
+    socket(new QSslSocket())
 { }
 
 
-TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QSslSocket()), sendMutex(), smtpHostName(hostName), smtpPort(port),
-      authEnable(false), tlsEnable(false), tlsAvailable(false), pop(nullptr)
+TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent) :
+    QObject(parent),
+    socket(new QSslSocket()),
+    smtpHostName(hostName),
+    smtpPort(port)
 { }
 
 
@@ -48,9 +50,7 @@ TSmtpMailer::~TSmtpMailer()
 //        tSystemWarn("Mail not sent. Deleted it.");
     }
 
-    if (pop) {
-        delete pop;
-    }
+    delete pop;
     delete socket;
 }
 
@@ -89,10 +89,8 @@ void TSmtpMailer::setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 
         pop->setApopEnabled(apop);
 
     } else {
-        if (pop) {
-            delete pop;
-        }
-        pop = NULL;
+        delete pop;
+        pop = nullptr;
     }
 }
 

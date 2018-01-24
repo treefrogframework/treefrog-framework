@@ -18,15 +18,13 @@
 
 #define CONN_NAME_FORMAT  "rdb%02d_%d"
 
-static TSqlDatabasePool *databasePool = 0;
+static TSqlDatabasePool *databasePool = nullptr;
 
 
 static void cleanup()
 {
-    if (databasePool) {
-        delete databasePool;
-        databasePool = 0;
-    }
+    delete databasePool;
+    databasePool = nullptr;
 }
 
 

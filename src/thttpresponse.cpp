@@ -37,9 +37,7 @@ THttpResponse::THttpResponse(const THttpResponseHeader &header, const QByteArray
 */
 THttpResponse::~THttpResponse()
 {
-    if (bodyDevice) {
-        delete bodyDevice;
-    }
+    delete bodyDevice;
 }
 
 /*!
@@ -55,10 +53,7 @@ bool THttpResponse::isBodyNull() const
  */
 void THttpResponse::setBody(const QByteArray &body)
 {
-    if (bodyDevice) {
-        delete bodyDevice;
-    }
-
+    delete bodyDevice;
     tmpByteArray = body;
     bodyDevice = (tmpByteArray.isNull()) ? nullptr : new QBuffer(&tmpByteArray);
 }
@@ -68,10 +63,8 @@ void THttpResponse::setBody(const QByteArray &body)
 */
 void THttpResponse::setBodyFile(const QString &filePath)
 {
-    if (bodyDevice) {
-        delete bodyDevice;
-        bodyDevice = nullptr;
-    }
+    delete bodyDevice;
+    bodyDevice = nullptr;
 
     QFile *fp = new QFile(filePath);
     if (fp->exists()) {

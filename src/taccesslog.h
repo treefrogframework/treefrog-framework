@@ -16,8 +16,8 @@ public:
     QDateTime timestamp;
     QByteArray remoteHost;
     QByteArray request;
-    int statusCode;
-    int responseBytes;
+    int statusCode {0};
+    int responseBytes {0};
 };
 
 
@@ -41,7 +41,7 @@ public:
     void setResponseBytes(int bytes) { if (accessLog) accessLog->responseBytes = bytes; }
 
 private:
-    TAccessLog *accessLog;
+    TAccessLog *accessLog {nullptr};
 };
 
 #endif // TACCESSLOG_H

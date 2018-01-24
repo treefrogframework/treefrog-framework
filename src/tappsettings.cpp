@@ -12,7 +12,7 @@
 #include <QMutexLocker>
 #include <cstdio>
 
-static TAppSettings *appSettings = 0;
+static TAppSettings *appSettings = nullptr;
 
 
 class AttributeMap : public QMap<int, QString>
@@ -118,10 +118,8 @@ TAppSettings *TAppSettings::instance()
 
 static void cleanup()
 {
-    if (appSettings) {
-        delete appSettings;
-        appSettings = 0;
-    }
+    delete appSettings;
+    appSettings = nullptr;
 }
 
 

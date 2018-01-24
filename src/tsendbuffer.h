@@ -26,10 +26,10 @@ public:
 
 private:
     QByteArray arrayBuffer;
-    QFile* bodyFile;
-    bool fileRemove;
+    QFile* bodyFile {nullptr};
+    bool fileRemove {false};
     TAccessLogger accesslogger;
-    int startPos;
+    int startPos {0};
 
     TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     TSendBuffer(const QByteArray &header);

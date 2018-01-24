@@ -27,9 +27,7 @@ TRedisDriver::TRedisDriver()
 TRedisDriver::~TRedisDriver()
 {
     close();
-    if (client) {
-        delete client;
-    }
+    delete client;
 }
 
 

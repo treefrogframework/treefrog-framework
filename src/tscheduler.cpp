@@ -18,7 +18,7 @@
 */
 
 TScheduler::TScheduler(QObject *parent)
-    : TDatabaseContextThread(parent), timer(new QTimer()), rollback(false)
+    : TDatabaseContextThread(parent), timer(new QTimer())
 {
     moveToThread(Tf::app()->thread());
     timer->moveToThread(Tf::app()->thread());

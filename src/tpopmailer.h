@@ -46,12 +46,12 @@ private:
     T_DISABLE_COPY(TPopMailer)
     T_DISABLE_MOVE(TPopMailer)
 
-    QTcpSocket *socket;
+    QTcpSocket *socket {nullptr};
     QString popHostName;
-    quint16 popPort;
+    quint16 popPort {0};
     QByteArray userName;
     QByteArray password;
-    bool apopEnabled;
+    bool apopEnabled {false};
 };
 
 
