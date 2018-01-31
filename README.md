@@ -42,7 +42,7 @@ Documents
 
 API Reference
 -------------
- http://treefrogframework.org/tf_doxygen/classes.html
+ http://api-reference.treefrogframework.org/annotated.html
 
 Forum
 -----

@@ -45,4 +45,5 @@ tools/tspawn/tspawn
 *.wixpdb
 *.wixobj
 installer/msi/TreeFrogFiles.wxs
+installer/**/*.msi
 
