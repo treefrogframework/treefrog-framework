@@ -48,7 +48,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  - Ubuntu 17.10とmacOSでのコンパイルエラー解消
  - Qt 5.10でのコンパイルエラー解消
 
- [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/dｗwnload/)
+ [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース
 
