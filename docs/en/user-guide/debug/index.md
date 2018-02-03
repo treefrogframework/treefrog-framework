@@ -107,3 +107,41 @@ That is all about the configuration settings.<br>
 When adding a breakpoint to the source code, always try to access it from your Web browser.
 
 Now check out whether the browser stops at the previously placed breakpoint. Does it stop at the there?
+
+## Debugging WebSocket with Qt Creator
+
+To debug TreeFrog application containing WebSocket, modify Run Configuration of your project:
+
+<div class="center aligned" markdown="1">
+
+**In the case of Linux/macOS:**
+
+</div>
+<div class="table-div" markdown="1">
+
+| Option             | Value                                       |
+|--------------------|---------------------------------------------|
+| Command            | treefrog                                    |
+| Command argument   | -e dev (Absolute path of the app root)      |
+| Working directory  | %{buildDir}                                 |
+
+</div><br>
+
+<div class="center aligned" markdown="1">
+
+**In the case of Windows:**
+
+</div>
+<div class="table-div" markdown="1">
+
+| Option             | Value                                       |
+|--------------------|---------------------------------------------|
+| Command            | treefrog**d**.exe                           |
+| Command argument   | -e dev (Absolute path of the app root)      |
+| Working directory  | %{buildDir}                                 |
+
+</div><br>
+
+Now run the application *[Build] – [Run]* and then attach to tadpole process (tadpole**d** on Windows)
+
+To attach to tadpole process in QtCreator click *[Debug] – [Start Debugging] - [Attach to Running Application...]*. It is possible to create a keyboard shortcut for this operation.
