@@ -108,9 +108,9 @@ When adding a breakpoint to the source code, always try to access it from your W
 
 Now check out whether the browser stops at the previously placed breakpoint. Does it stop at the there?
 
-## Debugging WebSockets with Qt Creator
+## Debugging WebSocket with Qt Creator
 
-To debug TreeFrog application containing WebSockets, modify Run Configuration of your project:
+To debug TreeFrog application containing WebSocket, modify Run Configuration of your project:
 
 <div class="center aligned" markdown="1">
 
@@ -121,7 +121,7 @@ To debug TreeFrog application containing WebSockets, modify Run Configuration of
 
 | Option             | Value                                       |
 |--------------------|---------------------------------------------|
-| Command            | treefrog.exe                                |
+| Command            | treefrog                                    |
 | Command argument   | -e dev (Absolute path of the app root)      |
 | Working directory  | %{buildDir}                                 |
 
