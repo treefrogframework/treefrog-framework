@@ -38,15 +38,13 @@ bool TApplicationServerBase::loadLibraries()
     if (libsLoaded.isEmpty()) {
         // Sets work directory
         QString libPath = Tf::app()->libPath();
-        if (QDir(libPath).exists()) {
-            // To resolve the symbols in the app libraries
-            QDir::setCurrent(libPath);
-        } else {
+        if (! QDir(libPath).exists()) {
             tSystemError("lib directory not found");
             return false;
         }
 
-        loadedTimestamp = latestLibraryTimestamp();
+        // To resolve the symbols in the app libraries
+        QDir::setCurrent(libPath);
 
 #if defined(Q_OS_WIN)
         const QStringList libs = { "controller", "view" };
@@ -73,6 +71,10 @@ bool TApplicationServerBase::loadLibraries()
 
         QStringList controllers = TActionController::availableControllers();
         tSystemDebug("Available controllers: %s", qPrintable(controllers.join(" ")));
+
+        if (ret) {
+            loadedTimestamp = latestLibraryTimestamp();
+        }
     }
     QDir::setCurrent(Tf::app()->webRootPath());
 
