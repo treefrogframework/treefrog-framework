@@ -1,4 +1,10 @@
 # ChangeLog
+## 1.21.0
+ - Added the option of linking the shared mongoc library.
+ - Fix a bug of line endings of HTTP headers on Windows.
+ - Fix a bug of reloading app libraries.
+ - Fix to return 404 when the action is not found.
+
 ## 1.20.0
  - Implemented rawBody() function in THttpRequest class.
  - Added some functions for getting query string.
