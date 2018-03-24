@@ -13,6 +13,7 @@ Configuration:
   -h, --help          display this help and exit
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
+  --enable-shared-mongoc  link the mongoc shared library
 
 Installation directories:
   --prefix=PREFIX     install files in PREFIX [$PREFIX]
@@ -125,6 +126,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
       ;;
     --enable-gui-mod | --enable-gui-mod=*)
       ENABLE_GUI="use_gui=1"
+      ;;
+    --enable-shared-mongoc | --enable-shared-mongoc=*)
+      ENABLE_SHARED_MONGOC="shared_mongoc=1"
       ;;
     --help | -help | -h | *)
       usage

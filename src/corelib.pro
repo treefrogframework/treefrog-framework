@@ -356,8 +356,8 @@ freebsd {
 
 
 # Files for MongoDB
-INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
 windows {
+  INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
   win32-msvc* {
     CONFIG(debug, debug|release) {
       LIBS += ..\3rdparty\mongo-c-driver\debug\mongoc.lib
@@ -372,7 +372,13 @@ windows {
     }
   }
 } else {
-  LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
+  isEmpty( shared_mongoc ) {
+    INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
+    LIBS += -lmongoc-1.0 -lbson-1.0
+  } else {
+    INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
+    LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
+  }
 }
 
 HEADERS += tmongodriver.h
