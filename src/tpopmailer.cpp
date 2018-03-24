@@ -9,12 +9,7 @@
 #include <QCryptographicHash>
 #include "tpopmailer.h"
 #include "tsystemglobal.h"
-
-#if defined(Q_OS_WIN)
-#  define CRLF "\n"
-#else
-#  define CRLF "\r\n"
-#endif
+using namespace Tf;
 
 /*!
   \class TPopMailer
@@ -161,7 +156,7 @@ bool TPopMailer::cmdRetr(int index, QByteArray &message)
     if (res) {
         while (socket->waitForReadyRead(5000)) {
             message += socket->readAll();
-            if (message.endsWith("." CRLF)) {
+            if (message.endsWith(QByteArray(".") + CRLF)) {
                 break;
             }
         }

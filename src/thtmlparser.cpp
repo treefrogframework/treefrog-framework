@@ -7,6 +7,7 @@
 
 #include <THtmlParser>
 #include <THttpUtility>
+using namespace Tf;
 
 // Regular expression of an HTML tag
 const QRegExp htmlTagReg("<([a-zA-Z0-9]+\\s+(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*|/?[a-zA-Z0-9]+/?\\s*)>", Qt::CaseSensitive, QRegExp::RegExp2);
@@ -375,7 +376,7 @@ QList<QPair<QString, QString>> THtmlParser::parseAttributes()
 
         // Newline
         if (lf > 0) {
-            newline = (lf == cr) ? QLatin1String("\r\n") : QLatin1String("\n");
+            newline = (lf == cr) ? QLatin1String(CRLF) : QLatin1String(LF);
             attrs << qMakePair(newline, QString());  // Appends the newline as a attribute
         }
 

@@ -185,6 +185,10 @@ namespace Tf
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
     T_CORE_EXPORT QMap<QByteArray, std::function<QObject*()>> *objectFactories();
+
+    static constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
+    static constexpr auto CRLF     = "\x0d\x0a";
+    static constexpr auto LF       = "\x0a";
 }
 
 #endif // TGLOBAL_H

@@ -13,12 +13,7 @@
 #include <TPopMailer>
 #include "tsmtpmailer.h"
 #include "tsystemglobal.h"
-
-#if defined(Q_OS_WIN)
-#  define CRLF "\n"
-#else
-#  define CRLF "\r\n"
-#endif
+using namespace Tf;
 
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 //#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)

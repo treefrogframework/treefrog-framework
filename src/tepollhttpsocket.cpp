@@ -15,6 +15,7 @@
 #include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocket.h"
+using namespace Tf;
 
 const int BUFFER_RESERVE_SIZE = 1023;
 static int limitBodyBytes = -1;
@@ -164,7 +165,7 @@ void TEpollHttpSocket::parse()
     }
 
     if (Q_LIKELY(lengthToRead < 0)) {
-        int idx = httpBuffer.indexOf("\r\n\r\n");
+        int idx = httpBuffer.indexOf(CRLFCRLF);
         if (idx > 0) {
             THttpRequestHeader header(httpBuffer);
             tSystemDebug("content-length: %d", header.contentLength());
