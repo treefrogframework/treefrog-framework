@@ -373,11 +373,11 @@ windows {
   }
 } else {
   isEmpty( shared_mongoc ) {
-    INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
-    LIBS += -lmongoc-1.0 -lbson-1.0
-  } else {
     INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
     LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
+  } else {
+    INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
+    LIBS += -lmongoc-1.0 -lbson-1.0
   }
 }
 
