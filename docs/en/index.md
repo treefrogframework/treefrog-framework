@@ -12,7 +12,7 @@ Web applications can run faster than that of scripting language because the serv
 
 ## <i class="fa fa-flag" aria-hidden="true"></i> Features
 
-  1. High performance - Highly optimized Application server engine of C++.  [Benckmarks by 3rd party](http://www.techempower.com/benchmarks/){:target="_blank"}
+  1. High performance - Highly optimized Application server engine of C++.
   2. O/R mapping  - Conceals complex and troublesome database accesses
   3. Template system  - ERB-like template engine
   4. Support for many DB - MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
@@ -37,18 +37,26 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Mar. 25, 2018
+
+### TreeFrog Framework version 1.21.0 (stable) release <span style="color: red;">New!</span>
+
+  - Added the option of linking the shared mongoc library.
+  - Fix a bug of line endings of HTTP headers on Windows.
+  - Fix a bug of reloading app libraries.
+  - Fix to return 404 when the action is not found.
+
+  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
+
 Dec. 9, 2017
 
-### TreeFrog Framework version 1.20.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.20.0 (stable) release
 
   - Implemented rawBody() function in THttpRequest class.
   - Added some functions for getting query string.
   - Added sql statements to PostOpenStatements in database.ini.
   - Fix compilation error on Ubuntu 17.10 and macOS.
   - Fix compilation error on Qt 5.10.
-
-
-  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
 
 Sep. 20, 2017
 
@@ -61,16 +69,6 @@ Sep. 20, 2017
   - Fix compilation error on FreeBSD.
   - Other bugfixes.
 
-Jul. 1, 2017
-
-### TreeFrog Framework version 1.18.0 (stable) release
-
-  - Implemented a session store for MongoDB.
-  - Fix a bug of file session store.
-  - Fix a bug of generator of controllers.
-  - Fix a bug of parsing arguments when running as Windows service.
-  - Fix leak of db connections.
-
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
@@ -81,9 +79,10 @@ Jul. 1, 2017
 Since this site is built with [GitHub Pages](https://pages.github.com/), translations can also be sent by a pull-request.
 Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Welcome!
 
-
 ## <i class="fa fa-info-circle" aria-hidden="true"></i> Information
 
 [TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
 
 Twitter [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
+
+Benchmarks [(external link)](https://www.techempower.com/benchmarks/#section=data-r15){:target="_blank"}

@@ -14,7 +14,7 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 
 TreeFrog Framework には次のような特徴があります。
 
-  1. 高パフォーマンス ： 高度に最適化されたアプリケーションサーバエンジン  [外部のベンチマークサイト](http://www.techempower.com/benchmarks/){:target="_blank"}
+  1. 高パフォーマンス ： 高度に最適化されたアプリケーションサーバエンジン
   2. O/R マッピング ： 複雑で面倒なデータベースコーディングを隠蔽
   3. テンプレートシステム ： ERBライクなテンプレートエンジン
   4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
@@ -40,7 +40,16 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2017/12/9  TreeFrog Framework バージョン1.20.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2018/3/25  TreeFrog Framework バージョン1.21.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - Mongoc共有ライブラリとのリンクオプションを追加
+ - WindowsでHTTPヘッダの改行不具合の修正
+ - アプリ更新時におけるリローディングの不具合修正
+ - アクションが存在しないときに404コードを返すよう修正
+
+ [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2017/12/9  TreeFrog Framework バージョン1.20.0 （安定版）リリース
 
  - THttpRequestクラスへrawBody()を実装
  - クエリ文字列を取得する関数を追加
@@ -48,24 +57,14 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  - Ubuntu 17.10とmacOSでのコンパイルエラー解消
  - Qt 5.10でのコンパイルエラー解消
 
- [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
-
 ### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース
 
-  - Upsert文のためにTSqlDriverExtensionクラスを追加
-  - QStringタイプの引数を持つSQLソート関数を追加
-  - URLパスへリダイレクトできる仕組みをroutes.cfgへ追加
-  - ステータスコードが304の場合に空ボディのメッセージを送信するよう変更
-  - FreeBSDでのコンパイルエラーの解消
-  - その他バグフィックス
-
-### 2017/7/1  TreeFrog Framework バージョン1.18.0 （安定版）リリース
-
- - MongoDBへのセッションストアを実装.
- - ファイルセッションストアの不具合修正.
- - コントローラジェネレータの不具合修正.
- - Windows サービスとして起動したときに引数解析の不具合修正.
- - DB接続オブジェクトがリークする可能性がある不具合修正.
+ - Upsert文のためにTSqlDriverExtensionクラスを追加
+ - QStringタイプの引数を持つSQLソート関数を追加
+ - URLパスへリダイレクトできる仕組みをroutes.cfgへ追加
+ - ステータスコードが304の場合に空ボディのメッセージを送信するよう変更
+ - FreeBSDでのコンパイルエラーの解消
+ - その他バグフィックス
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
@@ -86,3 +85,5 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 ときどき つぶやきます [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
 
 企業向け有償サポートは[イディ株式会社](http://www.ideeinc.co.jp/){:target="_blank"}にお問い合わせください。
+
+ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/#section=data-r15){:target="_blank"}
