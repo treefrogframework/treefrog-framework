@@ -51,10 +51,10 @@ Forum
 
 Docker Images
 -------------
-  https://hub.docker.com/r/treefrogframework/treefrog-docker/
+  https://hub.docker.com/r/treefrogframework/treefrog/
 
 ```
-  $ docker pull treefrogframework/treefrog-docker
+  $ docker pull treefrogframework/treefrog
 ```
 
 MongoDB communication
