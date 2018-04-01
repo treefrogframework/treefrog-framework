@@ -150,7 +150,6 @@ fi
 
 # search qmake command
 if [ -z "$QMAKE" ]; then
-  which qmake-qt4 >/dev/null 2>&1 && QMAKE=qmake-qt4
   which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
   which qmake     >/dev/null 2>&1 && QMAKE=qmake
 

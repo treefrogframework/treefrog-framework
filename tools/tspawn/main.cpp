@@ -130,6 +130,7 @@ public:
         append(L("sql"));
         append(L("test"));
         append(L("tmp"));
+        append(L("cmake"));
     }
 };
 Q_GLOBAL_STATIC(SubDirs, subDirs)
@@ -174,6 +175,13 @@ public:
         append(L("script") + SEP + "react.js");             // React
         append(L("script") + SEP + "react-with-addons.js"); // React
         append(L("script") + SEP + "react-dom-server.js");  // React
+        // CMake
+        append(L("cmake") + SEP + "FindTreeFrog.cmake");
+        append(L("CMakeLists.txt"));
+        append(L("controllers") + SEP + "CMakeLists.txt");
+        append(L("models") + SEP + "CMakeLists.txt");
+        append(L("views") + SEP + "CMakeLists.txt");
+        append(L("helpers") + SEP + "CMakeLists.txt");
     }
 };
 Q_GLOBAL_STATIC(FilePaths, filePaths)
@@ -328,8 +336,7 @@ static bool createNewApplication(const QString &name)
     printf("  created   %s\n", qPrintable(name));
 
     // Creates sub-directories
-    for (QStringListIterator i(*subDirs()); i.hasNext(); ) {
-        const QString &str = i.next();
+    for (const QString &str : *subDirs()) {
         QString d = name + SEP + str;
         if (!mkpath(dir, d)) {
             return false;
@@ -339,11 +346,15 @@ static bool createNewApplication(const QString &name)
     // Copies files
     copy(dataDirPath + "app.pro", name + SEP + name + ".pro");
 
-    for (QStringListIterator it(*filePaths()); it.hasNext(); ) {
-        const QString &path = it.next();
+    for (auto &path : *filePaths()) {
         QString filename = QFileInfo(path).fileName();
         QString dst = name + SEP + path;
-        copy(dataDirPath + filename, dst);
+
+        if (filename == "CMakeLists.txt") {
+            copy(dataDirPath + path, dst);
+        } else {
+            copy(dataDirPath + filename, dst);
+        }
 
         // Replaces a string in application.ini file
         if (filename == "application.ini") {

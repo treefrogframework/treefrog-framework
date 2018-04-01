@@ -72,12 +72,25 @@ defaults.files += defaults/JSXTransformer.js
 defaults.files += defaults/react.js
 defaults.files += defaults/react-with-addons.js
 defaults.files += defaults/react-dom-server.js
+# CMake
+defaults.files += defaults/FindTreeFrog.cmake
+defaults.files += defaults/CMakeLists.txt
+defaults.path   = $${datadir}/defaults
+
+defaults_controllers.files += defaults/controllers/CMakeLists.txt
+defaults_controllers.path   = $${datadir}/defaults/controllers
+defaults_models.files += defaults/models/CMakeLists.txt
+defaults_models.path   = $${datadir}/defaults/models
+defaults_views.files += defaults/views/CMakeLists.txt
+defaults_views.path   = $${datadir}/defaults/views
+defaults_helpers.files += defaults/helpers/CMakeLists.txt
+defaults_helpers.path   = $${datadir}/defaults/helpers
+
 windows {
   defaults.files += defaults/_dummymodel.h
   defaults.files += defaults/_dummymodel.cpp
 }
-defaults.path = $${datadir}/defaults
-INSTALLS += target defaults
+INSTALLS += target defaults defaults_controllers defaults_models defaults_views defaults_helpers
 
 windows {
   contains(QMAKE_TARGET.arch, x86_64) {
@@ -104,6 +117,11 @@ windows {
 
 # Erases CR codes on UNIX
 !exists(defaults) : system( mkdir defaults )
+!exists(defaults/controllers) : system( mkdir defaults/controllers )
+!exists(defaults/models) : system( mkdir defaults/models )
+!exists(defaults/views) : system( mkdir defaults/views )
+!exists(defaults/helpers) : system( mkdir defaults/helpers )
+
 for(F, defaults.files) {
   windows {
     F = $$replace(F, /, \\)
