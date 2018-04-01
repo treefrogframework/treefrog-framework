@@ -65,7 +65,7 @@ testcase()
 
   # update check
   wget http://localhost:$PORT/blog/show/1 -O show1 || exit
-  if ! grep "$RANDOMTXT" show1 >/dev/null 2>&1; then exit; fi
+  if ! grep "$RANDOMTXT" show1 >/dev/null 2>&1; then exit 1; fi
 
   # delete
   curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/1  > remove1 || exit
