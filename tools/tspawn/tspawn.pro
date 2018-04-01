@@ -122,12 +122,15 @@ windows {
 !exists(defaults/views) : system( mkdir defaults/views )
 !exists(defaults/helpers) : system( mkdir defaults/helpers )
 
-for(F, defaults.files) {
-  windows {
-    F = $$replace(F, /, \\)
-    system( COPY /Y ..\\..\\$${F} $${F} > nul )
+INS_LIST = defaults.files defaults_controllers.files defaults_models.files defaults_views.files defaults_helpers.files
+for(T, INS_LIST) {
+  for(F, $${T}) {
+    windows {
+      F = $$replace($${F}, /, \\)
+      system( COPY /Y ..\\..\\$${F} $${F} > nul )
+    }
+    unix : system( tr -d "\\\\r" < ../../$${F} > $${F} )
   }
-  unix : system( tr -d "\\\\r" < ../../$${F} > $${F} )
 }
 
 unix {
