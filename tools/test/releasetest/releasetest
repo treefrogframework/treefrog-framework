@@ -29,6 +29,56 @@ cleanup()
   rm -rf $APPNAME
 }
 
+testcase()
+{
+  # Start Check
+  cd $APPROOT
+  $TREEFROG -e dev -p $PORT -d || exit
+  sleep 1
+  $TREEFROG -k stop || exit
+  sleep 1
+  $TREEFROG -e dev -p $PORT -d || exit
+  sleep 1
+
+  # GET method
+  mkdir -p $WORKDIR
+  cd $WORKDIR
+  wget http://localhost:$PORT/blog/index || exit
+  wget http://localhost:$PORT/blog/create || exit
+
+  # POST method
+  # create1
+  curl --data-urlencode 'blog[title]=hello' --data-urlencode 'blog[body]=Hello world.' http://localhost:$PORT/blog/create > create1 || exit
+  [ `row_count` = "1" ] || exit
+
+  wget http://localhost:$PORT/blog/show/1 || exit
+
+  # create2
+  curl --data-urlencode 'blog[title]=Hi!' --data-urlencode 'blog[body]=Hi, all' http://localhost:$PORT/blog/create > create2 || exit
+  [ `row_count` = "2" ] || exit
+
+  wget http://localhost:$PORT/blog/show/2 || exit
+
+  # update
+  curl --data-urlencode 'blog[id]=1' --data-urlencode 'blog[title]=Hi!' --data-urlencode "blog[body]=$RANDOMTXT" http://localhost:$PORT/blog/save/1 > save1 || exit
+  [ `row_count` = "2" ] || exit
+
+  # update check
+  wget http://localhost:$PORT/blog/show/1 -O show1 || exit
+  if ! grep "$RANDOMTXT" show1 >/dev/null 2>&1; then exit; fi
+
+  # delete
+  curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/1  > remove1 || exit
+  [ `row_count` = "1" ] || exit
+
+  curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/2  > remove2 || exit
+  [ `row_count` = "0" ] || exit
+
+  # Stop app
+  cd $APPROOT
+  $TREEFROG -k stop || exit
+}
+
 ## Main ##
 trap 'cleanup' 2 3 15 EXIT
 
@@ -42,7 +92,7 @@ fi
 $TSPAWN new $APPNAME
 sqlite3 $DBFILE < create_blog_table.sql || exit
 
-# Build
+# QMake Build
 cd $APPROOT
 $TSPAWN s blog || exit
 $TSPAWN ms fuga || exit
@@ -51,51 +101,22 @@ qmake -r || exit
 make -j4
 make || exit
 
-# Start Check
-$TREEFROG -e dev -p $PORT -d || exit
-sleep 1
-$TREEFROG -k stop || exit
-sleep 1
-$TREEFROG -e dev -p $PORT -d || exit
-sleep 1
-
-# GET method
-mkdir -p $WORKDIR
-cd $WORKDIR
-wget http://localhost:$PORT/blog/index || exit
-wget http://localhost:$PORT/blog/create || exit
-
-# POST method
-# create1
-curl --data-urlencode 'blog[title]=hello' --data-urlencode 'blog[body]=Hello world.' http://localhost:$PORT/blog/create > create1 || exit
-[ `row_count` = "1" ] || exit
-
-wget http://localhost:$PORT/blog/show/1 || exit
-
-# create2
-curl --data-urlencode 'blog[title]=Hi!' --data-urlencode 'blog[body]=Hi, all' http://localhost:$PORT/blog/create > create2 || exit
-[ `row_count` = "2" ] || exit
-
-wget http://localhost:$PORT/blog/show/2 || exit
-
-# update
-curl --data-urlencode 'blog[id]=1' --data-urlencode 'blog[title]=Hi!' --data-urlencode "blog[body]=$RANDOMTXT" http://localhost:$PORT/blog/save/1 > save1 || exit
-[ `row_count` = "2" ] || exit
-
-# update check
-wget http://localhost:$PORT/blog/show/1 -O show1 || exit
-if ! grep "$RANDOMTXT" show1 >/dev/null 2>&1; then exit; fi
-
-# delete
-curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/1  > remove1 || exit
-[ `row_count` = "1" ] || exit
-
-curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/2  > remove2 || exit
-[ `row_count` = "0" ] || exit
-
-# Stop app
+testcase
 cd $APPROOT
-$TREEFROG -k stop || exit
+rm -f lib/*
+make distclean
+
+# CMake Build
+mkdir build
+cd build
+cmake ..
+make -j4
+make || exit
+
+cd $BASEDIR
+sqlite3 $DBFILE < create_blog_table.sql || exit
+testcase
+
 echo
 echo "Test completed."
 echo "Congratulations!"
