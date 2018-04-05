@@ -292,10 +292,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         Tf::HttpStatusCode statusCode = Tf::OK;
                         if(range != QByteArray()){
                             statusCode = Tf::PartialContent;//Note:If Range is not NULL,statusCode will be 206
-                            qint64 size = reqPath.size();
                             range.replace("="," ");
                             range = range.endsWith("-") ? range.append(QByteArray::number(reqPath.size() - 1)) : range;
-                            QByteArray content_range = QString("%0/%1").arg(QString(range)).arg(size).toUtf8();
+                            QByteArray content_range =  range.append("/").append(QByteArray::number(reqPath.size()));
                             responseHeader.setRawHeader("Content-Range", content_range);
                             responseHeader.setRawHeader("Accept-Ranges", "bytes");
                         }
