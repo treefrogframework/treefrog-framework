@@ -288,7 +288,19 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         // Sends a request file
                         responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
                         QByteArray type = Tf::app()->internetMediaType(fi.suffix());
-                        int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
+                        QByteArray range = reqHeader.rawHeader("Range");
+                        Tf::HttpStatusCode statusCode = Tf::OK;
+                        if(range != QByteArray()){
+                            statusCode = Tf::PartialContent;//Note:If Range is not NULL,statusCode will be 206
+                            qint64 size = reqPath.size();
+                            range.replace("="," ");
+                            range = range.endsWith("-") ? range.append(QByteArray::number(reqPath.size() - 1)) : range;
+                            QByteArray content_range = QString("%0/%1").arg(QString(range)).arg(size).toUtf8();
+                            responseHeader.setRawHeader("Content-Range", content_range);
+                            responseHeader.setRawHeader("Accept-Ranges", "bytes");
+                        }
+
+                        int bytes = writeResponse(statusCode, responseHeader, type, &reqPath, reqPath.size());
                         accessLogger.setResponseBytes( bytes );
                     } else {
                         // Not send the data

@@ -20,7 +20,7 @@ public:
 
     QList<THttpRequest> read();
     bool canReadRequest() const;
-    qint64 write(const THttpHeader *header, QIODevice *body);
+    qint64 write(THttpHeader *header, QIODevice *body);
     int idleTime() const;
     int socketId() const { return sid; }
     void deleteLater();
