@@ -79,7 +79,7 @@ QList<THttpRequest> THttpSocket::read()
 }
 
 
-qint64 THttpSocket::write(THttpHeader *header, QIODevice *body)
+qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 {
     T_TRACEFUNC("");
 
@@ -91,29 +91,21 @@ qint64 THttpSocket::write(THttpHeader *header, QIODevice *body)
     }
 
     qint64 pos_begin = 0;
-    qint64 pos_end = -1;
-    qint64 content_length = header->rawHeader("Content-Length").toLongLong();
+    qint64 content_length = header->rawHeader("Content-Length").toLongLong();//Gain the Content-Length
 
-    if(body){
-        pos_end = body->size() - 1;
-        QByteArray content_range = header->rawHeader("Content-Range");
-        if(content_range != QByteArray()){
-            QStringList content_range_parts = QString(content_range).split(" ");
-            if(content_range_parts.count() >= 2){
-                QStringList range_parts =  content_range_parts.at(1).split("/");
-                if(range_parts.count() >= 2){
-                    QStringList begin_end_parts = range_parts.at(0).split("-");
-                    if(begin_end_parts.count() >= 2){
-                        pos_begin = begin_end_parts.at(0).toLongLong();
-                        pos_end = begin_end_parts.at(1).toLongLong();
-                        content_length = pos_end - pos_begin + 1;
-                    }
+    QByteArray content_range = header->rawHeader("Content-Range");
+    if(content_range != QByteArray()){
+        QStringList content_range_parts = QString(content_range).split(" ");
+        if(content_range_parts.count() >= 2){
+            QStringList range_parts =  content_range_parts.at(1).split("/");
+            if(range_parts.count() >= 2){
+                QStringList begin_end_parts = range_parts.at(0).split("-");
+                if(begin_end_parts.count() >= 2){
+                    pos_begin = begin_end_parts.at(0).toLongLong();//Gain the Position Begin
                 }
             }
         }
     }
-
-    header->setContentLength(content_length);
 
     // Writes HTTP header
     QByteArray hdata = header->toByteArray();
