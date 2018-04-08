@@ -287,8 +287,19 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     if (sendfile) {
                         // Sends a request file
                         responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
+                        responseHeader.setRawHeader("Accept-Ranges", "bytes");
                         QByteArray type = Tf::app()->internetMediaType(fi.suffix());
-                        int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
+                        QByteArray range = reqHeader.rawHeader("Range");
+                        Tf::HttpStatusCode statusCode = Tf::OK;
+                        if(range != QByteArray()){
+                            statusCode = Tf::PartialContent;//Note:If Range is not NULL,statusCode will be 206
+                            range.replace("="," ");
+                            range = range.endsWith("-") ? range.append(QByteArray::number(reqPath.size() - 1)) : range;
+                            QByteArray content_range =  range.append("/").append(QByteArray::number(reqPath.size()));
+                            responseHeader.setRawHeader("Content-Range", content_range);
+                        }
+
+                        int bytes = writeResponse(statusCode, responseHeader, type, &reqPath, reqPath.size());
                         accessLogger.setResponseBytes( bytes );
                     } else {
                         // Not send the data
@@ -412,8 +423,21 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length)
 {
     T_TRACEFUNC("length:%s", qPrintable(QString::number(length)));
-
-    header.setContentLength(length);
+    qint64 content_length = length;//default content length
+    QByteArray content_range = header.rawHeader("Content-Range");
+    if(content_range != QByteArray()){
+        QStringList content_range_parts = QString(content_range).split(" ");
+        if(content_range_parts.count() >= 2){
+            QStringList range_parts =  content_range_parts.at(1).split("/");
+            if(range_parts.count() >= 2){
+                QStringList begin_end_parts = range_parts.at(0).split("-");
+                if(begin_end_parts.count() >= 2){
+                    content_length = begin_end_parts.at(1).toLongLong() - begin_end_parts.at(0).toLongLong() + 1;
+                }
+            }
+        }
+    }
+    header.setContentLength(content_length);
     header.setRawHeader("Server", "TreeFrog server");
     header.setCurrentDate();
 
