@@ -109,7 +109,7 @@ make distclean
 # CMake Build
 mkdir build
 cd build
-cmake ..
+Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake ..
 make -j4
 make || exit
 
