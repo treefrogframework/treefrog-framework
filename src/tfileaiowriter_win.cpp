@@ -135,8 +135,8 @@ int TFileAioWriter::write(const char *data, int length)
         ab->aio_buf[len - 1] = '\n';
     }
 
-    WriteFile(d->fileHandle, ab->aio_buf, (DWORD)len, NULL, &ab->aio_overlap);
-    if (GetLastError() != ERROR_IO_PENDING) {
+    BOOL res = WriteFile(d->fileHandle, ab->aio_buf, (DWORD)len, NULL, &ab->aio_overlap);
+    if (!res && GetLastError() != ERROR_IO_PENDING) {
         //fprintf(stderr, "WriteFile error str: %s\n", data);
         delete (char *)ab->aio_buf;
         delete ab;
