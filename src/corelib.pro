@@ -376,6 +376,11 @@ windows {
     INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
     LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
   } else {
+    macx {
+      BREW_PREFIX = $$system("which brew >/dev/null && brew --prefix 2>/dev/null")
+      INCLUDEPATH += $$BREW_PREFIX/Cellar/mongo-c-driver/1.9.3/include/libmongoc-1.0 $$BREW_PREFIX/Cellar/mongo-c-driver/1.9.3/include/libbson-1.0
+      LIBS += -L$$BREW_PREFIX/Cellar/mongo-c-driver/1.9.3/lib
+    }
     INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
     LIBS += -lmongoc-1.0 -lbson-1.0
   }
