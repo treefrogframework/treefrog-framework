@@ -1,32 +1,20 @@
 # Search paths
-if(NOT WIN32)
-  set(TreeFrog_INCLUDE_SEARCH_PATHS
-    $ENV{TFDIR}/include/treefrog
-    /usr/include/treefrog
-    /usr/local/include/treefrog
-  )
+set(TFDIR $ENV{TFDIR})
 
-  set(TreeFrog_LIB_SEARCH_PATHS
-    $ENV{TFDIR}/lib
-    /usr/lib
-    /usr/local/lib
-  )
+set(TreeFrog_INCLUDE_SEARCH_PATHS
+  /usr/include/treefrog
+  /usr/local/include/treefrog
+)
 
-  set(TreeFrog_BIN_SEARCH_PATHS
-    $ENV{TFDIR}/bin
-    /usr/bin
-    /usr/local/bin
-  )
-  find_library(TreeFrog_LIB NAMES treefrog PATHS ${TreeFrog_LIB_SEARCH_PATHS})
+if(TFDIR)
+  find_path(TreeFrog_INCLUDE_DIR TGlobal PATHS ${TFDIR}/include/treefrog NO_DEFAULT_PATH)
+  find_library(TreeFrog_LIB treefrog PATHS ${TFDIR}/lib NO_DEFAULT_PATH)
+  find_program(TreeFrog_TMAKE_CMD tmake PATHS ${TFDIR}/bin NO_DEFAULT_PATH)
 else()
-  set(TreeFrog_INCLUDE_SEARCH_PATHS $ENV{TFDIR}/include)
-  set(TreeFrog_LIB_SEARCH_PATHS $ENV{TFDIR}/bin)
-  set(TreeFrog_BIN_SEARCH_PATHS $ENV{TFDIR}/bin)
-  find_library(TreeFrog_LIB NAMES treefrog1 PATHS ${TreeFrog_LIB_SEARCH_PATHS})
+  find_path(TreeFrog_INCLUDE_DIR TGlobal PATHS ${TreeFrog_INCLUDE_SEARCH_PATHS})
+  find_library(TreeFrog_LIB treefrog)
+  find_program(TreeFrog_TMAKE_CMD tmake)
 endif()
-
-find_path(TreeFrog_INCLUDE_DIR NAMES TGlobal PATHS ${TreeFrog_INCLUDE_SEARCH_PATHS})
-find_program(TreeFrog_TMAKE_CMD tmake PATHS ${TreeFrog_BIN_SEARCH_PATHS})
 
 set(TreeFrog_FOUND ON)
 
@@ -49,11 +37,11 @@ if(NOT TreeFrog_TMAKE_CMD)
 endif()
 
 if(TreeFrog_FOUND)
-  message(STATUS "Found TreeFrog libraries: ${TreeFrog_LIB}")
   message(STATUS "Found TreeFrog include: ${TreeFrog_INCLUDE_DIR}")
+  message(STATUS "Found TreeFrog libraries: ${TreeFrog_LIB}")
   message(STATUS "Found TreeFrog tmake command: ${TreeFrog_TMAKE_CMD}")
 else(TreeFrog_FOUND)
-  message(FATAL_ERROR "Could not find TreeFrog. Set the path to TFDIR environment variable.")
+  message(FATAL_ERROR "Could not find TreeFrog. Set the path prefix to TFDIR environment variable.")
 endif(TreeFrog_FOUND)
 
 mark_as_advanced(
