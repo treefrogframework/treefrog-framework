@@ -1,5 +1,5 @@
 # Search paths
-file(TO_CMAKE_PATH $ENV{TFDIR} TFDIR)
+file(TO_CMAKE_PATH "$ENV{TFDIR}" TFDIR)
 
 set(TreeFrog_INCLUDE_SEARCH_PATHS
   /usr/include/treefrog
