@@ -10,9 +10,15 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 
+# cxx options
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0 -Wall -W -D_REENTRANT")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -W -D_REENTRANT -DQT_NO_DEBUG")
+if(MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG   "/DEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DQT_NO_DEBUG /DTF_NO_DEBUG")
+else()
+  set(CMAKE_CXX_FLAGS_DEBUG   "-g -Wall -W -D_REENTRANT")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -W -D_REENTRANT -DQT_NO_DEBUG -DTF_NO_DEBUG")
+endif()
 
 include(cmake/FindTreeFrog.cmake)
 add_subdirectory(helpers)
