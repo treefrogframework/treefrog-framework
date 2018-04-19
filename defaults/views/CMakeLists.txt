@@ -6,10 +6,10 @@ if(NOT Qt5_FOUND)
   message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
-execute_process(COMMAND ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR}/gen -P)
-add_custom_target(gen_view ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR}/gen -P)
+execute_process(COMMAND ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR}/_src -P)
+add_custom_target(gen_view ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR}/_src -P)
 
-file(GLOB view_srcs ${CMAKE_CURRENT_BINARY_DIR}/gen/*.cpp)
+file(GLOB view_srcs ${CMAKE_CURRENT_BINARY_DIR}/_src/*.cpp)
 
 unset(view_mocs)
 foreach(_view_src ${view_srcs})
