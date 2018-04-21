@@ -1,7 +1,7 @@
 add_definitions(-DTF_DLL)
 
 find_package(Qt5 COMPONENTS Core Network Xml Sql Concurrent REQUIRED)
-if(NOT Qt5_FOUND)
+if (NOT Qt5_FOUND)
   message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
@@ -10,15 +10,11 @@ file(GLOB model_srcs    ${PROJECT_SOURCE_DIR}/models/*.cpp)
 file(GLOB model_sqlobjects_headers   ${PROJECT_SOURCE_DIR}/models/sqlobjects/*.h)
 file(GLOB model_mongoobjects_headers ${PROJECT_SOURCE_DIR}/models/mongoobjects/*.h)
 
-qt5_wrap_cpp(model_mocs ${model_headers})
-qt5_wrap_cpp(model_sqlobjects_mocs ${model_sqlobjects_headers})
-qt5_wrap_cpp(model_mongoobjects_mocs ${model_mongoobjects_headers})
-
 add_library(model SHARED
+  ${model_headers}
   ${model_srcs}
-  ${model_mocs}
-  ${model_sqlobjects_mocs}
-  ${model_mongoobjects_mocs}
+  ${model_sqlobjects_headers}
+  ${model_mongoobjects_headers}
 )
 target_include_directories(model PUBLIC
   ${Qt5Core_INCLUDE_DIRS}

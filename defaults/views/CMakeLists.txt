@@ -2,7 +2,7 @@ add_definitions(-DTF_DLL)
 
 find_package(Qt5 COMPONENTS Core Network Xml REQUIRED)
 
-if(NOT Qt5_FOUND)
+if (NOT Qt5_FOUND)
   message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
@@ -11,16 +11,8 @@ add_custom_target(gen_view ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config
 
 file(GLOB view_srcs ${CMAKE_CURRENT_BINARY_DIR}/_src/*.cpp)
 
-unset(view_mocs)
-foreach(_view_src ${view_srcs})
-  string(REPLACE ".cpp" ".moc" _view_moc ${_view_src})
-  qt5_generate_moc(${_view_src} ${_view_moc})
-  list(APPEND view_mocs ${_view_moc})
-endforeach()
-
 add_library(view SHARED
   ${view_srcs}
-  ${view_mocs}
 )
 target_include_directories(view PUBLIC
   ${Qt5Core_INCLUDE_DIRS}

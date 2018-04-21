@@ -2,17 +2,16 @@ add_definitions(-DTF_DLL)
 
 find_package(Qt5 COMPONENTS Core Network Xml Sql REQUIRED)
 
-if(NOT Qt5_FOUND)
+if (NOT Qt5_FOUND)
   message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
-file(GLOB controller_srcs ${PROJECT_SOURCE_DIR}/controllers/*.cpp)
 file(GLOB controller_headers ${PROJECT_SOURCE_DIR}/controllers/*.h)
-qt5_wrap_cpp(controller_mocs ${controller_headers})
+file(GLOB controller_srcs ${PROJECT_SOURCE_DIR}/controllers/*.cpp)
 
 add_library(controller SHARED
+  ${controller_headers}
   ${controller_srcs}
-  ${controller_mocs}
 )
 target_include_directories(controller PUBLIC
   ${Qt5Core_INCLUDE_DIRS}
