@@ -21,7 +21,9 @@ else()
 endif()
 
 # Auto generate moc files
-cmake_policy(SET CMP0071 NEW)
+if (POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 set(CMAKE_AUTOMOC ON)
 
 include(cmake/FindTreeFrog.cmake)
