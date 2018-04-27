@@ -2,7 +2,7 @@ add_definitions(-DTF_DLL)
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
-if(NOT Qt5_FOUND)
+if (NOT Qt5_FOUND)
   message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
