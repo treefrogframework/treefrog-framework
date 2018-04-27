@@ -30,14 +30,16 @@ static void messageOutput(QtMsgType type, const QMessageLogContext &context, con
     QByteArray msg = message.toLocal8Bit();
     switch (type) {
     case QtFatalMsg:
+        tFatal("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        break;
     case QtCriticalMsg:
-        tSystemError("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        tError("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
         break;
     case QtWarningMsg:
-        tSystemWarn("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        tWarn("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
         break;
     case QtDebugMsg:
-        tSystemDebug("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        tDebug("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
         break;
     default:
         break;
