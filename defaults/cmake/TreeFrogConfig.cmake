@@ -6,7 +6,7 @@ set(TreeFrog_INCLUDE_SEARCH_PATHS
   /usr/local/include/treefrog
 )
 
-if(TFDIR)
+if (TFDIR)
   find_path(TreeFrog_INCLUDE_DIR TGlobal PATHS
     ${TFDIR}/include/treefrog
     ${TFDIR}/include
@@ -29,24 +29,24 @@ endif()
 set(TreeFrog_FOUND ON)
 
 # Check include files
-if(NOT TreeFrog_INCLUDE_DIR)
+if (NOT TreeFrog_INCLUDE_DIR)
   set(TreeFrog_FOUND OFF)
   message(STATUS "Could not find TreeFrog include file.")
 endif()
 
 # Check libraries
-if(NOT TreeFrog_LIB)
+if (NOT TreeFrog_LIB)
   set(TreeFrog_FOUND OFF)
   message(STATUS "Could not find TreeFrog library.")
 endif()
 
 # Check tmake command
-if(NOT TreeFrog_TMAKE_CMD)
+if (NOT TreeFrog_TMAKE_CMD)
   set(TreeFrog_FOUND OFF)
   message(STATUS "Could not find tmake command.")
 endif()
 
-if(TreeFrog_FOUND)
+if (TreeFrog_FOUND)
   message(STATUS "Found TreeFrog include: ${TreeFrog_INCLUDE_DIR}")
   message(STATUS "Found TreeFrog library: ${TreeFrog_LIB}")
   message(STATUS "Found TreeFrog tmake command: ${TreeFrog_TMAKE_CMD}")

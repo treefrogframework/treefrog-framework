@@ -26,7 +26,7 @@ if (POLICY CMP0071)
 endif()
 set(CMAKE_AUTOMOC ON)
 
-include(cmake/FindTreeFrog.cmake)
+find_package(TreeFrog REQUIRED)
 add_subdirectory(helpers)
 add_subdirectory(models)
 add_subdirectory(views)

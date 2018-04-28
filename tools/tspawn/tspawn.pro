@@ -90,7 +90,11 @@ windows {
   defaults.files += defaults/_dummymodel.h
   defaults.files += defaults/_dummymodel.cpp
 }
-INSTALLS += target defaults defaults_controllers defaults_models defaults_views defaults_helpers
+
+cmake.files += defaults/cmake/TreeFrogConfig.cmake
+cmake.path   = $${datadir}/cmake
+
+INSTALLS += target defaults defaults_controllers defaults_models defaults_views defaults_helpers cmake
 
 windows {
   contains(QMAKE_TARGET.arch, x86_64) {
@@ -118,7 +122,7 @@ windows {
 # Erases CR codes on UNIX
 !exists(defaults) : system( mkdir defaults )
 
-INS_LIST = defaults.files defaults_controllers.files defaults_models.files defaults_views.files defaults_helpers.files
+INS_LIST = defaults.files defaults_controllers.files defaults_models.files defaults_views.files defaults_helpers.files cmake.files
 for(T, INS_LIST) {
   for(F, $${T}) {
     windows {

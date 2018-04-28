@@ -130,7 +130,6 @@ public:
         append(L("sql"));
         append(L("test"));
         append(L("tmp"));
-        append(L("cmake"));
     }
 };
 Q_GLOBAL_STATIC(SubDirs, subDirs)
@@ -176,7 +175,6 @@ public:
         append(L("script") + SEP + "react-with-addons.js"); // React
         append(L("script") + SEP + "react-dom-server.js");  // React
         // CMake
-        append(L("cmake") + SEP + "FindTreeFrog.cmake");
         append(L("CMakeLists.txt"));
         append(L("controllers") + SEP + "CMakeLists.txt");
         append(L("models") + SEP + "CMakeLists.txt");
