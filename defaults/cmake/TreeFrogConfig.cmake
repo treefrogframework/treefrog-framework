@@ -13,7 +13,16 @@ if (TFDIR)
     NO_DEFAULT_PATH
   )
 
-  find_library(TreeFrog_LIB NAMES treefrog treefrog1 PATHS
+  set(TreeFrog_LIBNAME treefrog)
+  if (MSVC)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(TreeFrog_LIBNAME treefrogd1)
+    else ()
+      set(TreeFrog_LIBNAME treefrog1)
+    endif()
+  endif(MSVC)
+
+  find_library(TreeFrog_LIB NAMES ${TreeFrog_LIBNAME} PATHS
     ${TFDIR}/lib
     ${TFDIR}/bin
     NO_DEFAULT_PATH
