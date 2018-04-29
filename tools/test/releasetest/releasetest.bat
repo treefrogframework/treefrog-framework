@@ -1,11 +1,12 @@
 @ECHO OFF
 @setlocal
 
-::call "C:\TreeFrog\1.15.0\bin\tfenv.bat"
-
+set BASEDIR=%~dp0
 set APPNAME=blogapp
 set DBFILE=%APPNAME%\db\dbfile
 
+cd /D %BASEDIR%
+call "..\..\..\tfenv.bat"
 
 if "%Platform%" == "X64" (
   set MAKE=nmake
@@ -17,7 +18,8 @@ if "%Platform%" == "X64" (
   set CL=/MP
 )
 
-cd /D %~dp0
+cd /D %BASEDIR%
+rd /Q /S %APPNAME%
 tspawn new %APPNAME%
 sqlite3.exe %DBFILE% < create_blog_table.sql
 
@@ -25,6 +27,17 @@ cd %APPNAME%
 tspawn s blog
 tspawn w foo
 qmake -r CONFIG+=release
+%MAKE%
+if ERRORLEVEL 1 (
+  echo.
+  echo Build Error!
+  call ::CleanUp
+  exit /B 1
+)
+
+mkdir build
+cd build
+cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 %MAKE%
 if ERRORLEVEL 1 (
   echo.
@@ -43,7 +56,6 @@ exit /B
 :: CleanUp Subroutine
 ::
 :CleanUp
-  del /F /Q /S *.* >NUL
-  cd ..
+  cd /D %BASEDIR%
   rd /Q /S %APPNAME%
 exit /B 0
