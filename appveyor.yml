@@ -25,6 +25,9 @@ image: Visual Studio 2015
 init:
   - git config --global core.autocrlf false
 
+install:
+  - vcpkg install sqlite3
+
 # to disable automatic builds
 build: off
 
