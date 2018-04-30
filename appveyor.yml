@@ -39,3 +39,5 @@ build_script:
   - cmd: nmake install
   - cmd: cd ..\tools
   - cmd: nmake install
+  - cmd: cd test
+  - cmd: releasetest\releasetest.bat
