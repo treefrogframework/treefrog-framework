@@ -5,6 +5,7 @@ set BASEDIR=%~dp0
 set APPNAME=blogapp
 set APPDIR=%BASEDIR%\%APPNAME%
 set DBFILE=%APPDIR%\db\dbfile
+set PORT=8800
 
 cd /D %BASEDIR%
 call "..\..\..\tfenv.bat"
@@ -36,7 +37,14 @@ if ERRORLEVEL 1 (
   exit /B 1
 )
 call ::CheckWebApp
-%MAKE% distclean >nul
+if ERRORLEVEL 1 (
+  echo.
+  echo App Test Error!
+  call ::CleanUp
+  exit /B 1
+)
+
+%MAKE% distclean >nul 2>nul
 
 cd /D %APPDIR%
 mkdir build
@@ -50,6 +58,12 @@ if ERRORLEVEL 1 (
   exit /B 1
 )
 call ::CheckWebApp
+if ERRORLEVEL 1 (
+  echo.
+  echo App Test Error!
+  call ::CleanUp
+  exit /B 1
+)
 
 echo.
 echo Test OK
@@ -60,18 +74,25 @@ exit /B
 :: Check WebApp
 ::
 :CheckWebApp
-cd /D %APPDIR%
 echo Starting webapp..
-treefrog -e dev -d
+set RES=1
+treefrog -e dev -d -p %PORT% %APPDIR%
 if ERRORLEVEL 1 (
-  echo.
   echo App Start Error!
-  call ::CleanUp
-  exit /B 1
 )
-timeout 3 /nobreak >nul
-treefrog -k abort
-exit /B 0
+
+timeout 1 /nobreak >nul
+set URL=http://localhost:%PORT%/blog
+set CMD=curl -s "%URL%" -w "%%{http_code}" -o nul
+for /f "usebackq delims=" %%a in (`%CMD%`) do set RESCODE=%%a
+if "%RESCODE%"=="200" (
+  echo HTTP request success "%URL%"
+  set RES=0
+) else (
+  echo HTTP request failed
+)
+treefrog -k stop %APPDIR%
+exit /B %RES%
 
 ::
 :: CleanUp Subroutine
