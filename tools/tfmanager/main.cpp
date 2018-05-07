@@ -52,6 +52,48 @@ enum CommandOption {
 };
 
 
+#if QT_VERSION < 0x050400
+#ifdef Q_OS_WIN
+class WinVersion : public  QHash<int, QString>
+{
+public:
+    WinVersion() : QHash<int, QString>()
+    {
+        insert(QSysInfo::WV_XP,         "Windows XP");
+        insert(QSysInfo::WV_2003,       "Windows Server 2003");
+        insert(QSysInfo::WV_VISTA,      "Windows Vista or Windows Server 2008");
+        insert(QSysInfo::WV_WINDOWS7,   "Windows 7 or Windows Server 2008 R2");
+        insert(QSysInfo::WV_WINDOWS8,   "Windows 8 or Windows Server 2012");
+# if QT_VERSION >= 0x050200
+        insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
+# endif
+    }
+};
+Q_GLOBAL_STATIC(WinVersion, winVersion)
+#endif
+
+#ifdef Q_OS_DARWIN
+class MacxVersion : public QHash<int, QString>
+{
+public:
+    MacxVersion() : QHash<int, QString>()
+    {
+        insert(QSysInfo::MV_10_3, "Mac OS X 10.3 Panther");
+        insert(QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger");
+        insert(QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard");
+        insert(QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard");
+        insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
+        insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
+# if QT_VERSION >= 0x050100
+        insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
+# endif
+    }
+};
+Q_GLOBAL_STATIC(MacxVersion, macxVersion)
+#endif
+#endif
+
+
 class OptionHash : public QHash<QString, int>
 {
 public:
@@ -149,7 +191,20 @@ static void writeStartupLog()
     tSystemInfo("TreeFrog Framework version " TF_VERSION_STR);
 
     QString qtversion = QLatin1String("Qt ") + qVersion();
+#if QT_VERSION >= 0x050400
     qtversion += QLatin1String(" / ") + QSysInfo::prettyProductName();
+#else
+# if defined(Q_OS_WIN)
+    qtversion += QLatin1String(" / ") + winVersion()->value(QSysInfo::WindowsVersion, "Windows");
+# elif defined(Q_OS_DARWIN)
+    qtversion += QLatin1String(" / ") + macxVersion()->value(QSysInfo::MacintoshVersion, "Mac OS X");
+# elif defined(Q_OS_UNIX)
+    struct utsname uts;
+    if (uname(&uts) == 0) {
+        qtversion += QString(" / %1 %2").arg(uts.sysname).arg(uts.release);
+    }
+# endif
+#endif
     tSystemInfo("%s", qtversion.toLatin1().data());
 }
 
