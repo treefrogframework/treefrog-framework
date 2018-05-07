@@ -73,7 +73,6 @@ defaults.files += defaults/react.js
 defaults.files += defaults/react-with-addons.js
 defaults.files += defaults/react-dom-server.js
 # CMake
-defaults.files += defaults/FindTreeFrog.cmake
 defaults.files += defaults/CMakeLists.txt
 defaults.path   = $${datadir}/defaults
 
