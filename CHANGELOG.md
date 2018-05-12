@@ -1,4 +1,8 @@
 # ChangeLog
+## 1.22.0
+ - Support for CMake build.
+ - Modified log messages.
+
 ## 1.21.0
  - Added the option of linking the shared mongoc library.
  - Fix a bug of line endings of HTTP headers on Windows.
