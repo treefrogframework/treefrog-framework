@@ -190,7 +190,7 @@ static void writeStartupLog()
 {
     tSystemInfo("TreeFrog Framework version " TF_VERSION_STR);
 
-    QString qtversion = QLatin1String("Qt ") + qVersion();
+    QString qtversion = QLatin1String("Execution environment: Qt ") + qVersion();
 #if QT_VERSION >= 0x050400
     qtversion += QLatin1String(" / ") + QSysInfo::prettyProductName();
 #else
