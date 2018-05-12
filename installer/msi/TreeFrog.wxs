@@ -5,11 +5,11 @@
   <!-- *** 基本的に 9行目,10行目,42行目,54行目も修正する (guidgen使用) *** -->
 
   <!-- プロダクト情報 -->
-  <Product Name='TreeFrog Framework 1.21.0'
-           Id="25600E41-A4B7-4454-9EF2-6AAEDD056D0C"
-           UpgradeCode="E5A55000-D0F9-4D3A-90B4-C2496F70177E"
+  <Product Name='TreeFrog Framework 1.22.0'
+           Id="9CA055D2-4E8C-4352-8025-9995074CCEE0"
+           UpgradeCode="AF34058A-D931-4867-9752-2FC937835126"
            Language='1041' Codepage='932'
-           Version='1.21.0' Manufacturer='TreeFrog Framework Project'>
+           Version='1.22.0' Manufacturer='TreeFrog Framework Project'>
 
     <!-- パッケージ情報 -->
     <Package Id='*' Keywords='Installer'
@@ -27,21 +27,21 @@
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='WINDOWSVOLUME'>
         <Directory Id='INSTALLDIR' Name='TreeFrog'>
-          <Directory Id='VERSIONDIR' Name='1.21.0'>
+          <Directory Id='VERSIONDIR' Name='1.22.0'>
           </Directory>
         </Directory>
       </Directory>
       <Directory Id="DesktopFolder"  SourceName="Desktop"/>
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.21.0"/>
+        <Directory Id="ApplicationProgramsFolder" Name="TreeFrog Framework 1.22.0"/>
       </Directory>
     </Directory>
 
     <!-- デスクトップショートカット -->
     <DirectoryRef Id="DesktopFolder">
-      <Component Id="DesktopShortcut" Guid="ADC6690D-3230-4AFB-ABA5-FDCD490D71DD">
+      <Component Id="DesktopShortcut" Guid="6176E56A-C607-4587-9829-A367D59688DD">
         <Shortcut Id="PromptDesktopShortcut"
-                  Name="TreeFrog Prompt 1.21.0"
+                  Name="TreeFrog Prompt 1.22.0"
                   Description="TreeFrog Framework Prompt"
                   Target="[SystemFolder]cmd.exe" Arguments="/K [VERSIONDIR]bin\\tfenv.bat"
                   WorkingDirectory="PersonalFolder"/>
@@ -51,12 +51,12 @@
 
     <!-- プログラムメニューショートカット -->
     <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcut" Guid="0F10775A-30A9-4A8E-AC23-8A68891AB60B">
+      <Component Id="ApplicationShortcut" Guid="EE1C326F-E294-42AF-8131-96C5E0DD7EF9">
         <CreateFolder Directory="ApplicationProgramsFolder"/>
 
         <!-- Shortcut to TF prompt-->
         <Shortcut Id="PromptProgramMenuShortcut"
-                  Name="TreeFrog Prompt 1.21.0"
+                  Name="TreeFrog Prompt 1.22.0"
                   Description="TreeFrog Framework Prompt"
                   Target="[SystemFolder]cmd.exe" Arguments="/K [VERSIONDIR]bin\\tfenv.bat"
                   WorkingDirectory="PersonalFolder"/>

@@ -4,7 +4,7 @@
 :: Edit this line to run the batch file for Qt environment.
 ::
 
-set VERSION=1.21.0
+set VERSION=1.22.0
 set QTBASE=D:\Qt
 set TFDIR=C:\TreeFrog\%VERSION%
 
