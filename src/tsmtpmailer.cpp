@@ -171,9 +171,11 @@ bool TSmtpMailer::send()
     }
 
     if (!cmdEhlo()) {
-        tSystemError("SMTP: EHLO Command Failed");
-        cmdQuit();
-        return false;
+        if (!cmdHelo()) {
+            tSystemError("SMTP: HELO/EHLO Command Failed");
+            cmdQuit();
+            return false;
+        }
     }
 
     if (tlsEnable && tlsAvailable) {
@@ -263,6 +265,24 @@ bool TSmtpMailer::cmdEhlo()
             tlsAvailable = true;
         }
     }
+    return true;
+}
+
+
+bool TSmtpMailer::cmdHelo()
+{
+    QByteArray helo;
+    helo.append("HELO [");
+    helo.append(qPrintable(socket->localAddress().toString()));
+    helo.append("]");
+
+    QList<QByteArray> reply;
+    if (cmd(helo, &reply) != 250) {
+        return false;
+    }
+
+    tlsAvailable = false;
+    authEnable = false;
     return true;
 }
 

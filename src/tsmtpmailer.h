@@ -50,6 +50,7 @@ protected:
     bool send();
     bool connectToHost(const QString &hostName, quint16 port);
     bool cmdEhlo();
+    bool cmdHelo();
     bool cmdStartTls();
     bool cmdAuth();
     bool cmdRset();
