@@ -1,14 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(appname CXX)
-set(default_build_type "Release")
-
-if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
-  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
-endif()
 
 # cxx options
 set(CMAKE_CXX_STANDARD 11)
@@ -31,3 +23,9 @@ add_subdirectory(helpers)
 add_subdirectory(models)
 add_subdirectory(views)
 add_subdirectory(controllers)
+
+# Cutom target - cmake
+include(${PROJECT_SOURCE_DIR}/cmake/TargetCmake.cmake)
+
+message(STATUS "CMAKE_GENERATOR: ${CMAKE_GENERATOR}")
+message(STATUS "Set CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")

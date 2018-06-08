@@ -74,6 +74,8 @@ defaults.files += defaults/react-with-addons.js
 defaults.files += defaults/react-dom-server.js
 # CMake
 defaults.files += defaults/CMakeLists.txt
+defaults.files += defaults/CacheClean.cmake
+defaults.files += defaults/TargetCmake.cmake
 defaults.path   = $${datadir}/defaults
 
 defaults_controllers.files += defaults/controllers/CMakeLists.txt

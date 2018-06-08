@@ -130,6 +130,7 @@ public:
         append(L("sql"));
         append(L("test"));
         append(L("tmp"));
+        append(L("cmake"));
     }
 };
 Q_GLOBAL_STATIC(SubDirs, subDirs)
@@ -176,6 +177,8 @@ public:
         append(L("script") + SEP + "react-dom-server.js");  // React
         // CMake
         append(L("CMakeLists.txt"));
+        append(L("cmake") + SEP +"CacheClean.cmake");
+        append(L("cmake") + SEP +"TargetCmake.cmake");
         append(L("controllers") + SEP + "CMakeLists.txt");
         append(L("models") + SEP + "CMakeLists.txt");
         append(L("views") + SEP + "CMakeLists.txt");

@@ -6,8 +6,12 @@ if (NOT Qt5_FOUND)
   message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
-execute_process(COMMAND ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR} -P)
-add_custom_target(gen_view ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR} -P)
+execute_process(COMMAND
+  ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR} -P
+)
+add_custom_target(genview ALL
+  ${TreeFrog_TMAKE_CMD} -f ${PROJECT_SOURCE_DIR}/config/application.ini -v ${PROJECT_SOURCE_DIR}/views -d ${CMAKE_CURRENT_BINARY_DIR} -P
+)
 
 file(GLOB view_srcs ${CMAKE_CURRENT_BINARY_DIR}/*.cpp)
 
@@ -41,5 +45,5 @@ set_target_properties(view PROPERTIES
 add_dependencies(view
   helper
   model
-  gen_view
+  genview
 )
