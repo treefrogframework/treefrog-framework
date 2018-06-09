@@ -24,8 +24,9 @@ add_subdirectory(models)
 add_subdirectory(views)
 add_subdirectory(controllers)
 
+message(STATUS "Set CMAKE_GENERATOR: ${CMAKE_GENERATOR}")
+message(STATUS "Set CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+
 # Cutom target - cmake
 include(${PROJECT_SOURCE_DIR}/cmake/TargetCmake.cmake)
 
-message(STATUS "CMAKE_GENERATOR: ${CMAKE_GENERATOR}")
-message(STATUS "Set CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
