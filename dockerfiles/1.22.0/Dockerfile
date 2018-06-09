@@ -1,6 +1,7 @@
 FROM buildpack-deps:xenial
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
+ENV TREEFROG_VERSION 1.22.0
 ENV LANG C.UTF-8
 
 RUN apt-get update && apt-get install -y \
@@ -23,15 +24,14 @@ RUN apt-get update && apt-get install -y \
         libbson-dev \
         gcc \
         g++ \
-        git \
         make && \
 	cmake && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/src/treefrog && \
     cd /usr/src/treefrog && \
-    git clone https://github.com/treefrogframework/treefrog-framework.git && \
-    cd treefrog-framework && \
+    curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
+    cd treefrog-framework-${TREEFROG_VERSION} && \
     ./configure --enable-shared-mongoc && \
     make -j"$(nproc)" -C src && \
     make -C src install && \
