@@ -37,16 +37,24 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Jun. 10, 2018
+
+### TreeFrog Framework version 1.22.0 (stable) release <span style="color: red;">New!</span>
+
+  - Support for CMake build of Web application.
+  - Support SMTP connections to older servers not supporting ESMTP.
+  - Fix bugs of tspawn.pro file.
+
+  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
+
 Mar. 25, 2018
 
-### TreeFrog Framework version 1.21.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.21.0 (stable) release
 
   - Added the option of linking the shared mongoc library.
   - Fix a bug of line endings of HTTP headers on Windows.
   - Fix a bug of reloading app libraries.
   - Fix to return 404 when the action is not found.
-
-  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
 
 Dec. 9, 2017
 
