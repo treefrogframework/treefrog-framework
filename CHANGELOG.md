@@ -1,7 +1,9 @@
 # ChangeLog
 ## 1.22.0
  - Support for CMake build.
+ - Support SMTP connections to older servers. #207
  - Modified log messages.
+ - Fix bugs of tspawn.pro file.
 
 ## 1.21.0
  - Added the option of linking the shared mongoc library.
