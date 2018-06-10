@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
         libbson-dev \
         gcc \
         g++ \
-        make && \
+        make \
 	cmake && \
     rm -rf /var/lib/apt/lists/*
 
