@@ -58,7 +58,7 @@ unix {
              stacktrace_x86-inl.h \
              stacktrace_x86_64-inl.h
 }
-win {
+windows {
   SOURCES += affinity_win.cpp
 }
 macx {
