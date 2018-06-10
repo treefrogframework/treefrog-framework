@@ -18,6 +18,7 @@
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
 #include "signalhandler.h"
+#include "affinity.h"
 using namespace TreeFrog;
 
 #define DEBUG_MODE_OPTION  "--debug"
@@ -76,6 +77,11 @@ int main(int argc, char *argv[])
     TWebApplication webapp(argc, argv);
     TApplicationServerBase *server = nullptr;
     int ret = -1;
+
+    int sid = webapp.applicationServerId();
+    if (sid >= 0) {
+        Tf::setCpuAffinity(sid);
+    }
 
     // Setup loggers
     Tf::setupSystemLogger();

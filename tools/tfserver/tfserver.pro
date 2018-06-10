@@ -40,6 +40,7 @@ INSTALLS += target
 }
 
 SOURCES += main.cpp
+HEADERS += affinity.h
 
 unix {
   HEADERS += signalhandler.h
@@ -56,4 +57,13 @@ unix {
              stacktrace_powerpc-inl.h \
              stacktrace_x86-inl.h \
              stacktrace_x86_64-inl.h
+}
+win {
+  SOURCES += affinity_win.cpp
+}
+macx {
+  SOURCES += affinity_macx.cpp
+}
+linux {
+  SOURCES += affinity_linux.cpp
 }
