@@ -106,7 +106,7 @@ void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
             thread->start();
             break;
         }
-        Tf::msleep(1);
+        //Tf::msleep(1);
         qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
     }
 }

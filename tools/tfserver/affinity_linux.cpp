@@ -10,12 +10,12 @@
 void Tf::setCpuAffinity(int cpu)
 {
     cpu_set_t mask;
+    int cpunum = qMax(std::thread::hardware_concurrency(), (uint)1);
 
-    if (cpu < 0) {
+    if (cpu < 0 || cpunum == 1) {
         return;
     }
 
-    int cpunum = qMax(std::thread::hardware_concurrency(), (uint)1);
     cpu %= cpunum;
     CPU_ZERO(&mask);
     CPU_SET(cpu, &mask);
