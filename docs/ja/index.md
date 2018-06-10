@@ -40,14 +40,20 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2018/3/25  TreeFrog Framework バージョン1.21.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2018/6/10  TreeFrog Framework バージョン1.22.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - WebアプリのCMakeビルドをサポート
+ - ESMTPをサポートしていない古いタイプのSMTPサーバへの送信をサポート
+ - tspawn.proファイルの不具合修正
+
+ [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2018/3/25  TreeFrog Framework バージョン1.21.0 （安定版）リリース
 
  - Mongoc共有ライブラリとのリンクオプションを追加
  - WindowsでHTTPヘッダの改行不具合の修正
  - アプリ更新時におけるリローディングの不具合修正
  - アクションが存在しないときに404コードを返すよう修正
-
- [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2017/12/9  TreeFrog Framework バージョン1.20.0 （安定版）リリース
 
@@ -86,4 +92,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 企業向け有償サポートは[イディ株式会社](http://www.ideeinc.co.jp/){:target="_blank"}にお問い合わせください。
 
-ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/#section=data-r15){:target="_blank"}
+Dockerイメージ[(外部リンク)](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}
+
+ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/#section=data-r16){:target="_blank"}

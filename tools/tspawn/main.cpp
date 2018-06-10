@@ -480,9 +480,9 @@ static void printSuccessMessage(const QString &model)
 #else
         msg = msg.arg("");
 #endif
-	msg += "\n or\n\ncmake:\n";
-	msg += " Run `mkdir build; cd build; cmake ..` to generate a Makefile.\n";
-	msg += " Run `cd build; make cmake` to regenerate the Makefile.";
+        msg += "\n or\n\ncmake:\n";
+        msg += " Run `mkdir build; cd build; cmake ..` to generate a Makefile.\n";
+        msg += " Run `cd build; make cmake` to regenerate the Makefile.";
     }
 
     putchar('\n');
