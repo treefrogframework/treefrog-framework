@@ -14,7 +14,7 @@ TreeFrog Installer for Qt 5 has been released. If installing it, the development
 | Version                           | File                                   |
 |-------------------------------------|--------------------------------------|
 | 1.22.0 for MinGW (Qt 5.11 or 5.10)    | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.22.0-mingw-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.22.0/treefrog-1.22.0-mingw-setup.exe)   |
-| 1.22.0 for MSVC 2015 (Qt 5.11 or 5.10)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.22.0-msvc2015_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.22.0/treefrog-1.22.0-msvc2015_64-setup.exe) |
+| 1.22.0 for Visual Studio 2017 (Qt 5.11 or 5.10)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.22.0-msvc2017_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.22.0/treefrog-1.22.0-msvc2017_64-setup.exe) |
 
 </div>
 
