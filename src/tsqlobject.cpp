@@ -145,6 +145,7 @@ bool TSqlObject::create()
 
     QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
     QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
+    ins += " RETURNING *";
     if (Q_UNLIKELY(ins.isEmpty())) {
         sqlError = QSqlError(QLatin1String("No fields to insert"),
                              QString(), QSqlError::StatementError);
@@ -155,30 +156,12 @@ bool TSqlObject::create()
     TSqlQuery query(database);
     bool ret = query.exec(ins);
     sqlError = query.lastError();
-    if (Q_LIKELY(ret)) {
-        // Gets the last inserted value of auto-value field
-        if (autoValueIndex() >= 0) {
-            QVariant lastid = query.lastInsertId();
 
-#if QT_VERSION >= 0x050400
-            if (!lastid.isValid() && database.driver()->dbmsType() == QSqlDriver::PostgreSQL) {
-#else
-            if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
-#endif
-                // For PostgreSQL without OIDS
-                ret = query.exec("SELECT LASTVAL()");
-                sqlError = query.lastError();
-                if (Q_LIKELY(ret)) {
-                    lastid = query.getNextValue();
-                }
-            }
-
-            if (lastid.isValid()) {
-                QObject::setProperty(autoValName.toLatin1().constData(), lastid);
-                QSqlRecord::setValue(autoValueIndex(), lastid);
-            }
-        }
+    if (ret && query.next()) {
+        setRecord(query.record(), sqlError);
+        syncToObject();
     }
+
     return ret;
 }
 
