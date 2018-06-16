@@ -1,0 +1,13 @@
+<%#include <TPaginator> %>
+<% tfetch(TPaginator, pager); %>
+
+<div class="pagination">
+  <%== linkToIf(pager.hasPrevious(), "Prev", urlq("page=" + QString::number( pager.previousPage() ))) %>
+
+  <% for (QListIterator<int> i(pager.range()); i.hasNext(); ) {
+      int page = i.next(); %>
+      <%== linkToIf((page != pager.currentPage()), QString::number(page), urlq("page=" + QString::number(page))); %>
+  <% } %>
+
+  <%== linkToIf(pager.hasNext(), "Next", urlq("page=" + QString::number( pager.nextPage() ))) %>
+</div>
