@@ -261,6 +261,12 @@ QStringList TableSchema::tables(const QString &env)
                 set << t.tableName(); // If value already exists, the set is left unchanged
             }
         }
+        for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Views)); i.hasNext(); ) {
+            TableSchema t(i.next());
+            if (t.exists()) {
+                set << t.tableName(); // If value already exists, the set is left unchanged
+            }
+        }
     }
 
     QStringList ret = set.toList();
