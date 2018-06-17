@@ -9,6 +9,7 @@
 #include <QtSql>
 #include "tableschema.h"
 #include "global.h"
+#include <iostream>
 
 QSettings *dbSettings = 0;
 
@@ -85,7 +86,8 @@ int TableSchema::primaryKeyIndex() const
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
     if (index.isEmpty()) {
-        return -1;
+        return 0;
+//        return -1;
     }
 
     QSqlField fi = index.field(0);
@@ -99,7 +101,8 @@ QString TableSchema::primaryKeyFieldName() const
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
     if (index.isEmpty()) {
-        return QString();
+        return QString("Id");
+//        return QString();
     }
 
     QSqlField fi = index.field(0);
