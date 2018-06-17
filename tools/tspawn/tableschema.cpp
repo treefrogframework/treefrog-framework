@@ -38,6 +38,10 @@ TableSchema::TableSchema(const QString &table, const QString &env)
                         f.setAutoValue(true);
                         tableFields.replace(i, f);
                     }
+                    if (f.defaultValue().toString().startsWith(QLatin1String("uuid_generate_v4"))) {
+                        f.setAutoValue(true);
+                        tableFields.replace(i, f);
+                    }
                 }
             }
         } else {
