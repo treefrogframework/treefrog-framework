@@ -9,6 +9,7 @@
 #include <QtSql>
 #include "tableschema.h"
 #include "global.h"
+#include <iostream>
 
 QSettings *dbSettings = 0;
 
@@ -35,6 +36,10 @@ TableSchema::TableSchema(const QString &table, const QString &env)
                 for (int i = 0; i < tableFields.count(); ++i) {
                     QSqlField f = tableFields.field(i);
                     if (f.defaultValue().toString().startsWith(QLatin1String("nextval"))) {
+                        f.setAutoValue(true);
+                        tableFields.replace(i, f);
+                    }
+                    if (f.defaultValue().toString().startsWith(QLatin1String("uuid_generate_v4"))) {
                         f.setAutoValue(true);
                         tableFields.replace(i, f);
                     }
@@ -81,7 +86,8 @@ int TableSchema::primaryKeyIndex() const
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
     if (index.isEmpty()) {
-        return -1;
+        return 0;
+//        return -1;
     }
 
     QSqlField fi = index.field(0);
@@ -95,7 +101,8 @@ QString TableSchema::primaryKeyFieldName() const
     model.setTable(tablename);
     QSqlIndex index = model.primaryKey();
     if (index.isEmpty()) {
-        return QString();
+        return QString("Id");
+//        return QString();
     }
 
     QSqlField fi = index.field(0);
@@ -256,6 +263,12 @@ QStringList TableSchema::tables(const QString &env)
 
     if (QSqlDatabase::database().isOpen()) {
         for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Tables)); i.hasNext(); ) {
+            TableSchema t(i.next());
+            if (t.exists()) {
+                set << t.tableName(); // If value already exists, the set is left unchanged
+            }
+        }
+        for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Views)); i.hasNext(); ) {
             TableSchema t(i.next());
             if (t.exists()) {
                 set << t.tableName(); // If value already exists, the set is left unchanged

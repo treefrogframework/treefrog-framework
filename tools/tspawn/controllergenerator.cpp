@@ -36,12 +36,19 @@
 
 
 #define CONTROLLER_SOURCE_FILE_TEMPLATE                        \
+    "#include <TPaginator>\n"                                  \
     "#include \"%1controller.h\"\n"                            \
     "#include \"%1.h\"\n"                                      \
     "\n\n"                                                     \
     "void %2Controller::index()\n"                             \
     "{\n"                                                      \
-    "    auto %3List = %2::getAll();\n"                        \
+    "    int current = httpRequest().queryItemValue(\"page\", \"1\").toInt();\n"    \
+    "    int totalCount = %2::count();\n"    \
+    "    TPaginator pager(totalCount, 25, 5);\n"    \
+    "    pager.setCurrentPage(current);\n"    \
+    "    texport(pager);\n"    \
+    "\n"                                                       \
+    "    auto %3List = %2::getAll(pager.itemCountPerPage(), pager.offset());\n"    \
     "    texport(%3List);\n"                                   \
     "    render();\n"                                          \
     "}\n"                                                      \

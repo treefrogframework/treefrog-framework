@@ -67,6 +67,7 @@ defaults.files += defaults/redis.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
 defaults.files += defaults/views.pro
+defaults.files += defaults/pagination.erb
 # React scripts
 defaults.files += defaults/JSXTransformer.js
 defaults.files += defaults/react.js

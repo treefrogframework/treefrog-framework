@@ -54,6 +54,7 @@
     "%6%"                                                \
     "    static int count();\n"                          \
     "    static QList<%model%> getAll();\n"              \
+    "    static QList<%model%> getAll(const int limit,const int offset);\n"              \
     "%8%"                                                \
     "\n"                                                 \
     "private:\n"                                         \
@@ -131,6 +132,11 @@
     "QList<%model%> %model%::getAll()\n"                      \
     "{\n"                                                     \
     "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(TCriteria());\n" \
+    "}\n"                                                     \
+    "\n"                                                      \
+    "QList<%model%> %model%::getAll(const int limit,const int offset)\n"                      \
+    "{\n"                                                     \
+    "    return tfGetModelListBy%11%Criteria<%model%, %model%Object>(TCriteria(), limit, offset);\n" \
     "}\n"                                                     \
     "\n"                                                      \
     "%12%"                                                    \

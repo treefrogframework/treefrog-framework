@@ -11,6 +11,7 @@ src/trash/
 tools/tspawn/defaults/
 src/test/sharedmemorylogstream/log/
 Gemfile.lock
+.idea
 
 # Linux
 *.o

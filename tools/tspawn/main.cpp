@@ -155,6 +155,7 @@ public:
         append(L("views") + SEP + "layouts" + SEP + ".trim_mode");
         append(L("views") + SEP + "mailer"  + SEP + ".trim_mode");
         append(L("views") + SEP + "partial" + SEP + ".trim_mode");
+        append(L("views") + SEP + "partial" + SEP + "pagination.erb");
         append(L("helpers") + SEP + "helpers.pro");
         append(L("helpers") + SEP + "applicationhelper.h");
         append(L("helpers") + SEP + "applicationhelper.cpp");
