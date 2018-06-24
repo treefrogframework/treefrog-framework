@@ -4,6 +4,7 @@ MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 ENV LANG C.UTF-8
 
 RUN apt-get update && apt-get install -y \
+        tzdata \
         qt5-default \
         qt5-qmake \
         qtbase5-dev \
