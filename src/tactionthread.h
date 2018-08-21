@@ -15,7 +15,7 @@ class T_CORE_EXPORT TActionThread : public QThread, public TActionContext
 {
     Q_OBJECT
 public:
-    TActionThread(int socket);
+    TActionThread(int socket, int maxThreads = 0);
     virtual ~TActionThread();
 
     static int threadCount();
@@ -33,7 +33,8 @@ signals:
     void error(int socketError);
 
 private:
-    THttpSocket *httpSocket;
+    THttpSocket *_httpSocket {nullptr};
+    int _maxThreads {0};
 
     T_DISABLE_COPY(TActionThread)
     T_DISABLE_MOVE(TActionThread)

@@ -101,7 +101,7 @@ void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
     for (;;) {
         tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
         if (TActionThread::threadCount() < maxThreads) {
-            TActionThread *thread = new TActionThread(socketDescriptor);
+            TActionThread *thread = new TActionThread(socketDescriptor, maxThreads);
             connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
             thread->start();
             break;

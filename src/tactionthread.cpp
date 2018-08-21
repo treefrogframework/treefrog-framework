@@ -52,8 +52,8 @@ bool TActionThread::waitForAllDone(int msec)
   \brief The TActionThread class provides a thread context.
 */
 
-TActionThread::TActionThread(int socket)
-    : QThread(), TActionContext(), httpSocket(nullptr)
+TActionThread::TActionThread(int socket, int maxThreads)
+    : QThread(), TActionContext(), _maxThreads(maxThreads)
 {
     ++threadCounter;
     TActionContext::socketDesc = socket;
@@ -67,8 +67,8 @@ TActionThread::TActionThread(int socket)
 
 TActionThread::~TActionThread()
 {
-    if (httpSocket) {
-        httpSocket->deleteLater();
+    if (_httpSocket) {
+        _httpSocket->deleteLater();
     }
 
     if (TActionContext::socketDesc > 0)
@@ -82,16 +82,16 @@ void TActionThread::run()
 {
     QList<THttpRequest> reqs;
     QEventLoop eventLoop;
-    httpSocket = new THttpSocket();
+    _httpSocket = new THttpSocket();
 
-    if (Q_UNLIKELY(!httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
-        emitError(httpSocket->error());
+    if (Q_UNLIKELY(!_httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
+        emitError(_httpSocket->error());
         goto socket_error;
     }
     TActionContext::socketDesc = 0;
 
     for (;;) {
-        reqs = readRequest(httpSocket);
+        reqs = readRequest(_httpSocket);
         tSystemDebug("HTTP request count: %d", reqs.count());
 
         if (Q_UNLIKELY(reqs.isEmpty())) {
@@ -114,9 +114,9 @@ void TActionThread::run()
                 goto socket_cleanup;
             }
 
-            TActionContext::execute(req, httpSocket->socketId());
+            TActionContext::execute(req, _httpSocket->socketId());
 
-            httpSocket->flush();  // Flush socket
+            _httpSocket->flush();  // Flush socket
             TActionContext::release();
         }
 
@@ -124,17 +124,22 @@ void TActionThread::run()
             break;
         }
 
+        if (threadCount() >= _maxThreads && _maxThreads > 0) {
+            // Do not keep-alive
+            break;
+        }
+
         // Next request
-        while (!httpSocket->waitForReadyRead(100)) {
-            if (httpSocket->state() != QAbstractSocket::ConnectedState) {
-                if (httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
-                    tSystemWarn("Error occurred : error:%d  socket:%d", httpSocket->error(), httpSocket->socketId());
+        while (!_httpSocket->waitForReadyRead(100)) {
+            if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
+                if (_httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
+                    tSystemWarn("Error occurred : error:%d  socket:%d", _httpSocket->error(), _httpSocket->socketId());
                 }
                 goto receive_end;
             }
 
-            if (httpSocket->idleTime() >= keepAliveTimeout) {
-                tSystemDebug("KeepAlive timeout : socket:%d", httpSocket->socketId());
+            if (_httpSocket->idleTime() >= keepAliveTimeout) {
+                tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
                 goto receive_end;
             }
 
@@ -150,8 +155,8 @@ socket_cleanup:
     while (eventLoop.processEvents()) {}
 
 socket_error:
-    httpSocket->deleteLater();
-    httpSocket = nullptr;
+    _httpSocket->deleteLater();
+    _httpSocket = nullptr;
 }
 
 
@@ -194,13 +199,13 @@ qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body
     if (keepAliveTimeout > 0) {
         header.setRawHeader("Connection", "Keep-Alive");
     }
-    return httpSocket->write(static_cast<THttpHeader*>(&header), body);
+    return _httpSocket->write(static_cast<THttpHeader*>(&header), body);
 }
 
 
 void TActionThread::closeHttpSocket()
 {
-    httpSocket->close();
+    _httpSocket->close();
 }
 
 
@@ -211,8 +216,8 @@ bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
     }
 
     // Switch to WebSocket
-    int sd = TApplicationServerBase::duplicateSocket(httpSocket->socketDescriptor());
-    TWebSocket *ws = new TWebSocket(sd, httpSocket->peerAddress(), header);
+    int sd = TApplicationServerBase::duplicateSocket(_httpSocket->socketDescriptor());
+    TWebSocket *ws = new TWebSocket(sd, _httpSocket->peerAddress(), header);
     connect(ws, SIGNAL(disconnected()), ws, SLOT(deleteLater()));
     ws->moveToThread(Tf::app()->thread());
 
