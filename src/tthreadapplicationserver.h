@@ -54,6 +54,7 @@ protected:
     void run() override
     {
         TApplicationServerBase::invokeStaticInitialize();
+        commitTransactions();
     }
 };
 
@@ -76,6 +77,7 @@ protected:
     void run() override
     {
         TApplicationServerBase::invokeStaticRelease();
+        commitTransactions();
     }
 };
 
