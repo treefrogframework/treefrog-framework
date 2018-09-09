@@ -90,6 +90,23 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
         }
     }
 
+    qint64 pos_begin = 0;
+    qint64 content_length = header->rawHeader("Content-Length").toLongLong();//Gain the Content-Length
+
+    QByteArray content_range = header->rawHeader("Content-Range");
+    if(content_range != QByteArray()){
+        QStringList content_range_parts = QString(content_range).split(" ");
+        if(content_range_parts.count() >= 2){
+            QStringList range_parts =  content_range_parts.at(1).split("/");
+            if(range_parts.count() >= 2){
+                QStringList begin_end_parts = range_parts.at(0).split("-");
+                if(begin_end_parts.count() >= 2){
+                    pos_begin = begin_end_parts.at(0).toLongLong();//Gain the Position Begin
+                }
+            }
+        }
+    }
+
     // Writes HTTP header
     QByteArray hdata = header->toByteArray();
     qint64 total = writeRawData(hdata.data(), hdata.size());
@@ -100,18 +117,23 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
     if (body) {
         QBuffer *buffer = qobject_cast<QBuffer *>(body);
         if (buffer) {
-            if (writeRawData(buffer->data().data(), buffer->size()) != buffer->size()) {
+            if (writeRawData(buffer->data().data() + pos_begin,content_length) != content_length) {
                 return -1;
             }
-            total += buffer->size();
+            total += content_length;
         } else {
             QByteArray buf(WRITE_BUFFER_LENGTH, 0);
             qint64 readLen = 0;
-            while ((readLen = body->read(buf.data(), buf.size())) > 0) {
-                if (writeRawData(buf.data(), readLen) != readLen) {
+            body->seek(pos_begin);//seek
+            qint64 alreadyWrite = 0;
+            while ((readLen = body->read(buf.data(),buf.size())) > 0) {
+                qint64 raw_readLen = readLen > (content_length - alreadyWrite ) ? (alreadyWrite - content_length) : readLen;
+                if (writeRawData(buf.data(), raw_readLen ) != raw_readLen) {
                     return -1;
                 }
-                total += readLen;
+                total += raw_readLen;
+                alreadyWrite += raw_readLen;
+                if(alreadyWrite == content_length) break;
             }
         }
     }
