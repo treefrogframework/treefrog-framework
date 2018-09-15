@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) \
             TestObject obj; \
             returnCode = QTest::qExec(&obj, QCoreApplication::arguments()); \
             commitTransactions(); \
-            for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) { \
-                it.value().close(); /* close SQL database */ \
+            for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) { \
+                it.value().database().close(); /* close SQL database */  \
             } \
             for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) { \
                 it.value().close(); /* close KVS database */ \

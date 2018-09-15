@@ -8,6 +8,7 @@
 #include <TSqlTransaction>
 #include <TWebApplication>
 #include <TSystemGlobal>
+#include <QSqlDriver>
 #include "tsqldatabasepool.h"
 
 /*!
@@ -17,13 +18,28 @@
 
 
 TSqlTransaction::TSqlTransaction()
-    : enabled(true), databases(Tf::app()->sqlDatabaseSettingsCount())
+{ }
+
+
+TSqlTransaction::TSqlTransaction(const TSqlTransaction &other) :
+    _enabled(other._enabled),
+    _database(other._database),
+    _active(other._active)
 { }
 
 
 TSqlTransaction::~TSqlTransaction()
 {
-    rollbackAll();
+    rollback();
+}
+
+
+TSqlTransaction &TSqlTransaction::operator=(const TSqlTransaction &other)
+{
+    _enabled = other._enabled;
+    _database = other._database;
+    _active = other._active;
+    return *this;
 }
 
 
@@ -34,83 +50,77 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
         return false;
     }
 
-    if (!enabled)
-        return true;
-
-    int id = TSqlDatabasePool::getDatabaseId(database);
-
-    if (id < 0 || id >= databases.count()) {
-        tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
+    if (_database.isValid() && _database.connectionName() != database.connectionName()) {
+        tSystemError("Another database set already: %s", qPrintable(database.connectionName()));
         return false;
     }
 
-    if (databases[id].isValid()) {
-        tSystemWarn("Has begun transaction already. database:%s", qPrintable(database.connectionName()));
+    if (!_enabled) {
+        _database = database;
         return true;
     }
 
-    if (database.transaction()) {
-        Tf::traceQueryLog("[BEGIN] [databaseId:%d]", id);
+    if (_active) {
+        tSystemDebug("Has begun transaction already. database:%s", qPrintable(database.connectionName()));
+        return true;
     }
 
-    databases[id] = database;
-    return true;
+    if (database.driver()->hasFeature(QSqlDriver::Transactions)) {
+        _active = database.transaction();
+        int id = TSqlDatabasePool::getDatabaseId(_database);
+        if (_active) {
+            Tf::traceQueryLog("[BEGIN] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
+        } else {
+            Tf::traceQueryLog("[BEGIN Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
+        }
+    }
+
+    _database = database;
+    return _active;
 }
 
 
-bool TSqlTransaction::commit(int id)
+bool TSqlTransaction::rebegin()
+{
+    return begin(_database);
+}
+
+
+bool TSqlTransaction::commit()
 {
     bool res = false;
 
-    if (id >= 0 && id < databases.count()) {
-        QSqlDatabase &db = databases[id];
-        if (db.isValid()) {
-            res = db.commit();
-            if (res) {
-                Tf::traceQueryLog("[COMMIT] [databaseId:%d]", id);
-            } else {
-                Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d]", id);
-            }
+    if (_active && _database.isValid()) {
+        res = _database.commit();
 
-            db = QSqlDatabase();
+        int id = TSqlDatabasePool::getDatabaseId(_database);
+        if (res) {
+            Tf::traceQueryLog("[COMMIT] [databaseId:%d]", id);
+        } else {
+            Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d]", id);
         }
     }
+
+    _active = false;
     return res;
 }
 
 
-void TSqlTransaction::commitAll()
-{
-    for (int i = 0; i < databases.count(); ++i) {
-        commit(i);
-    }
-}
-
-
-bool TSqlTransaction::rollback(int id)
+bool TSqlTransaction::rollback()
 {
     bool res = false;
 
-    if (id >= 0 && id < databases.count()) {
-        QSqlDatabase &db = databases[id];
-        if (db.isValid()) {
-            res = db.rollback();
-            if (res) {
-                Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", id);
-            } else {
-                Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d]", id);
-            }
+    if (_active && _database.isValid()) {
+        res = _database.rollback();
 
-            db = QSqlDatabase();
+        int id = TSqlDatabasePool::getDatabaseId(_database);
+        if (res) {
+            Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", id);
+        } else {
+            Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d]", id);
         }
     }
+
+    _active = false;
     return res;
-}
-
-
-void TSqlTransaction::rollbackAll()
-{
-    for (int i = 0; i < databases.count(); ++i) {
-        rollback(i);
-    }
 }

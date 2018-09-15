@@ -7,7 +7,6 @@
 
 #include <QtCore>
 #include <QSqlDatabase>
-#include <QSqlDriver>
 #include <TWebApplication>
 #include <TKvsDriver>
 #include <ctime>
@@ -24,8 +23,7 @@
 
 TDatabaseContext::TDatabaseContext()
     : sqlDatabases(),
-      kvsDatabases(),
-      transactions()
+      kvsDatabases()
 { }
 
 
@@ -40,17 +38,22 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
     T_TRACEFUNC("id:%d", id);
 
     if (!Tf::app()->isSqlDatabaseAvailable()) {
-        return sqlDatabases[0];  // invalid database
+        return sqlDatabases[0].database();  // invalid database
     }
 
     if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
         throw RuntimeException("error database id", __FILE__, __LINE__);
     }
 
-    QSqlDatabase &db = sqlDatabases[id];
-    if (!db.isValid()) {
+    TSqlTransaction &tx = sqlDatabases[id];
+    QSqlDatabase &db = tx.database();
+    if (! tx.isValid()) {
         db = TSqlDatabasePool::instance()->database(id);
-        beginTransaction(db);
+        beginTransaction(db, id);
+    } else {
+        if (! tx.isActive()) {
+            tx.rebegin();
+        }
     }
 
     idleElapsed = (uint)std::time(nullptr);
@@ -62,8 +65,8 @@ void TDatabaseContext::releaseSqlDatabases()
 {
     rollbackTransactions();
 
-    for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlDatabasePool::instance()->pool(it.value());
+    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        TSqlDatabasePool::instance()->pool(it.value().database());
     }
     sqlDatabases.clear();
 }
@@ -108,43 +111,62 @@ void TDatabaseContext::release()
 }
 
 
-void TDatabaseContext::setTransactionEnabled(bool enable)
+void TDatabaseContext::setTransactionEnabled(bool enable, int id)
 {
-    transactions.setEnabled(enable);
+    if (id < 0) {
+        tError("Invalid database ID: %d", id);
+        return;
+    }
+    return sqlDatabases[id].setEnabled(enable);
+}
+
+// Obsoleted function
+bool TDatabaseContext::beginTransaction(QSqlDatabase &database)
+{
+    int id = TSqlDatabasePool::getDatabaseId(database);
+    return beginTransaction(database, id);
 }
 
 
-bool TDatabaseContext::beginTransaction(QSqlDatabase &database)
+bool TDatabaseContext::beginTransaction(QSqlDatabase &database, int id)
 {
-    bool ret = true;
-    if (database.driver()->hasFeature(QSqlDriver::Transactions)) {
-        ret = transactions.begin(database);
-    }
-    return ret;
+    return sqlDatabases[id].begin(database);
 }
 
 
 void TDatabaseContext::commitTransactions()
 {
-    transactions.commitAll();
+    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        it.value().commit();
+    }
 }
 
 
 bool TDatabaseContext::commitTransaction(int id)
 {
-    return transactions.commit(id);
+    if (id < 0 || id >= sqlDatabases.count()) {
+        tError("Failed to commit transaction. Invalid database ID: %d", id);
+        return false;
+    }
+    return sqlDatabases[id].commit();
 }
 
 
 void TDatabaseContext::rollbackTransactions()
 {
-    transactions.rollbackAll();
+    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        it.value().rollback();
+    }
 }
 
 
 bool TDatabaseContext::rollbackTransaction(int id)
 {
-    return transactions.rollback(id);
+    if (id < 0 || id >= sqlDatabases.count()) {
+        tError("Failed to rollback transaction. Invalid database ID: %d", id);
+        return false;
+    }
+    return sqlDatabases[id].rollback();
 }
 
 

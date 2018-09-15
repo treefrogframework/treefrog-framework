@@ -17,9 +17,9 @@ public:
     QSqlDatabase &getSqlDatabase(int id = 0);
     TKvsDatabase &getKvsDatabase(TKvsDatabase::Type type);
 
-    void setTransactionEnabled(bool enable);
+    void setTransactionEnabled(bool enable, int id = 0);
     void release();
-    bool beginTransaction(QSqlDatabase &database);
+    bool beginTransaction(QSqlDatabase &database);  // Obsoleted
     void commitTransactions();
     bool commitTransaction(int id = 0);
     void rollbackTransactions();
@@ -27,14 +27,14 @@ public:
     int idleTime() const;
 
 protected:
+    bool beginTransaction(QSqlDatabase &database, int id);
     void releaseKvsDatabases();
     void releaseSqlDatabases();
 
-    QMap<int, QSqlDatabase> sqlDatabases;
+    QMap<int, TSqlTransaction> sqlDatabases;
     QMap<int, TKvsDatabase> kvsDatabases;
 
 private:
-    TSqlTransaction transactions;
     uint idleElapsed {0};
 
     T_DISABLE_COPY(TDatabaseContext)

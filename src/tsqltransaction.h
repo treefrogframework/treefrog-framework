@@ -1,7 +1,6 @@
 #ifndef TSQLTRANSACTION_H
 #define TSQLTRANSACTION_H
 
-#include <QVector>
 #include <QSqlDatabase>
 #include <TGlobal>
 
@@ -14,30 +13,36 @@ class T_CORE_EXPORT TSqlTransaction
 {
 public:
     TSqlTransaction();
+    TSqlTransaction(const TSqlTransaction &other);
     ~TSqlTransaction();
+
+    QSqlDatabase &database() { return _database; }
+    TSqlTransaction &operator=(const TSqlTransaction &);
     bool begin(QSqlDatabase &database);
-    void commitAll();
-    bool commit(int id);
-    void rollbackAll();
-    bool rollback(int id);
+    bool rebegin();
+    bool commit();
+    bool rollback();
+    bool isValid() const { return _database.isValid(); }
+    bool isActive() const { return _active; }
     void setEnabled(bool enable);
     void setDisabled(bool disable);
 
 private:
-    bool enabled;
-    QVector<QSqlDatabase> databases;
+    bool _enabled {true};
+    QSqlDatabase _database;
+    bool _active {false};
 };
 
 
 inline void TSqlTransaction::setEnabled(bool enable)
 {
-    enabled = enable;
+    _enabled = enable;
 }
 
 
 inline void TSqlTransaction::setDisabled(bool disable)
 {
-    enabled = !disable;
+    _enabled = !disable;
 }
 
 #endif // TSQLTRANSACTION_H
