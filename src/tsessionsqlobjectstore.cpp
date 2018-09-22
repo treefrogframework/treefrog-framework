@@ -40,8 +40,10 @@ bool TSessionSqlObjectStore::store(TSession &session)
     }
 #endif
 
-    QDataStream ds(&so.data, QIODevice::WriteOnly);
+    QByteArray data;
+    QDataStream ds(&data, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
+    so.data = qCompress(data, 1).toHex();
 
     if (ds.status() != QDataStream::Ok) {
         tSystemError("Failed to store session. Must set objects that can be serialized.");
@@ -70,7 +72,8 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     }
 
     TSession session(id);
-    QDataStream ds(&so.data, QIODevice::ReadOnly);
+    QByteArray data = qUncompress(QByteArray::fromHex(so.data));
+    QDataStream ds(&data, QIODevice::ReadOnly);
     ds >> *static_cast<QVariantMap *>(&session);
 
     if (ds.status() != QDataStream::Ok) {

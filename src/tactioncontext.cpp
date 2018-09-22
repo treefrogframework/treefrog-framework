@@ -188,6 +188,10 @@ void TActionContext::execute(THttpRequest &request, int sid)
                             // Sets the path in the session cookie
                             QString cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
                             currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath, QString(), false, true);
+
+                            // Commits a transaction for session
+                            commitTransactions();
+
                         } else {
                             tSystemError("Failed to store a session");
                         }
@@ -257,8 +261,14 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
             accessLogger.setResponseBytes(bytes);
 
-            // Session GC
-            TSessionManager::instance().collectGarbage();
+            // Session
+            if (currController->sessionEnabled()) {
+                // Session GC
+                TSessionManager::instance().collectGarbage();
+
+                // Commits a transaction for session
+                commitTransactions();
+            }
 
         } else {
             accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
