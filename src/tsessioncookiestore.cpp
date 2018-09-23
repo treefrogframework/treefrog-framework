@@ -47,7 +47,7 @@ bool TSessionCookieStore::store(TSession &session)
 
     QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
                                                  QCryptographicHash::Sha1);
-    session.sessionId = ba.toHex() + "_" + digest.toHex();
+    session.sessionId = ba.toBase64() + "_" + digest.toBase64();
     return true;
 }
 
@@ -61,11 +61,11 @@ TSession TSessionCookieStore::find(const QByteArray &id)
 
     QList<QByteArray> balst = id.split('_');
     if (balst.count() == 2 && !balst.value(0).isEmpty() && !balst.value(1).isEmpty()) {
-        QByteArray ba = QByteArray::fromHex(balst.value(0));
+        QByteArray ba = QByteArray::fromBase64(balst.value(0));
         QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
                                                      QCryptographicHash::Sha1);
 
-        if (digest != QByteArray::fromHex(balst.value(1))) {
+        if (digest != QByteArray::fromBase64(balst.value(1))) {
             tSystemWarn("Recieved a tampered cookie or that of other web application.");
             //throw SecurityException("Tampered with cookie", __FILE__, __LINE__);
             return session;
