@@ -179,9 +179,7 @@ bool TableSchema::openDatabase(const QString &env) const
         return false;
     }
 
-    dbSettings->beginGroup(env);
-
-    QString driverType = dbSettings->value("DriverType").toString().trimmed();
+    QString driverType = dbSettings->value(env + "/DriverType").toString().trimmed();
     if (driverType.isEmpty()) {
         qWarning("Parameter 'DriverType' is empty");
     }
@@ -193,39 +191,37 @@ bool TableSchema::openDatabase(const QString &env) const
         return false;
     }
 
-    QString databaseName = dbSettings->value("DatabaseName").toString().trimmed();
+    QString databaseName = dbSettings->value(env + "/DatabaseName").toString().trimmed();
     printf("DatabaseName: %s\n", qPrintable(databaseName));
     if (!databaseName.isEmpty()) {
         db.setDatabaseName(databaseName);
     }
 
-    QString hostName = dbSettings->value("HostName").toString().trimmed();
+    QString hostName = dbSettings->value(env + "/HostName").toString().trimmed();
     printf("HostName:     %s\n", qPrintable(hostName));
     if (!hostName.isEmpty()) {
         db.setHostName(hostName);
     }
 
-    int port = dbSettings->value("Port").toInt();
+    int port = dbSettings->value(env + "/Port").toInt();
     if (port > 0) {
         db.setPort(port);
     }
 
-    QString userName = dbSettings->value("UserName").toString().trimmed();
+    QString userName = dbSettings->value(env + "/UserName").toString().trimmed();
     if (!userName.isEmpty()) {
         db.setUserName(userName);
     }
 
-    QString password = dbSettings->value("Password").toString().trimmed();
+    QString password = dbSettings->value(env + "/Password").toString().trimmed();
     if (!password.isEmpty()) {
         db.setPassword(password);
     }
 
-    QString connectOptions = dbSettings->value("ConnectOptions").toString().trimmed();
+    QString connectOptions = dbSettings->value(env + "/ConnectOptions").toString().trimmed();
     if (!connectOptions.isEmpty()) {
         db.setConnectOptions(connectOptions);
     }
-
-    dbSettings->endGroup();
 
     if (!db.open()) {
         qWarning("Database open error");

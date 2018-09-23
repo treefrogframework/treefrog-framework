@@ -230,14 +230,12 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
 bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const
 {
     // Initiates database
-    QSettings &settings = kvsSettings(type);
-    settings.beginGroup(env);
+    const QSettings &settings = kvsSettings(type);
+    QString databaseName = settings.value(env + "/DatabaseName").toString().trimmed();
 
-    QString databaseName = settings.value("DatabaseName").toString().trimmed();
     if (databaseName.isEmpty()) {
         if (type != TKvsDatabase::Redis) {
             tWarn("KVS Database name empty string");
-            settings.endGroup();
             return false;
         }
     } else {
@@ -245,37 +243,36 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
         database.setDatabaseName(databaseName);
     }
 
-    QString hostName = settings.value("HostName").toString().trimmed();
+    QString hostName = settings.value(env + "/HostName").toString().trimmed();
     tSystemDebug("KVS HostName: %s", qPrintable(hostName));
     if (!hostName.isEmpty()) {
         database.setHostName(hostName);
     }
 
-    int port = settings.value("Port").toInt();
+    int port = settings.value(env + "/Port").toInt();
     tSystemDebug("KVS Port: %d", port);
     if (port > 0) {
         database.setPort(port);
     }
 
-    QString userName = settings.value("UserName").toString().trimmed();
+    QString userName = settings.value(env + "/UserName").toString().trimmed();
     tSystemDebug("KVS UserName: %s", qPrintable(userName));
     if (!userName.isEmpty()) {
         database.setUserName(userName);
     }
 
-    QString password = settings.value("Password").toString().trimmed();
+    QString password = settings.value(env + "/Password").toString().trimmed();
     tSystemDebug("KVS Password: %s", qPrintable(password));
     if (!password.isEmpty()) {
         database.setPassword(password);
     }
 
-    QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
+    QString connectOptions = settings.value(env + "/ConnectOptions").toString().trimmed();
     tSystemDebug("KVS ConnectOptions: %s", qPrintable(connectOptions));
     if (!connectOptions.isEmpty()) {
         database.setConnectOptions(connectOptions);
     }
 
-    settings.endGroup();
     return true;
 }
 

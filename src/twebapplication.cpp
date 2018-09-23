@@ -308,10 +308,7 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
 */
 QString TWebApplication::validationErrorMessage(int rule) const
 {
-    validationSetting->beginGroup("ErrorMessage");
-    QString msg = validationSetting->value(QString::number(rule)).toString();
-    validationSetting->endGroup();
-    return msg;
+    return validationSetting->value("ErrorMessage/" + QString::number(rule)).toString();
 }
 
 /*!
