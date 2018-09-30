@@ -192,20 +192,38 @@ TActionContext *Tf::currentContext()
 
 TDatabaseContext *Tf::currentDatabaseContext()
 {
+#if 1
+    TDatabaseContext *context;
+
+    context = TDatabaseContext::currentDatabaseContext();
+    if (context) {
+        return context;
+    }
+
+    context = dynamic_cast<TDatabaseContext*>(QThread::currentThread());
+    if (context) {
+        return context;
+    }
+
+    throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
+#else
+
     TDatabaseContext *context = nullptr;
 
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Thread:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
-        if (Q_LIKELY(context))
+        if (Q_LIKELY(context)) {
             return context;
+        }
         break;
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
         context = qobject_cast<TActionWorker *>(QThread::currentThread());
-        if (Q_LIKELY(context))
+        if (Q_LIKELY(context)) {
             return context;
+        }
         break;
 #else
         tFatal("Unsupported MPM: hybrid");
@@ -223,6 +241,7 @@ TDatabaseContext *Tf::currentDatabaseContext()
     }
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
+#endif
 }
 
 

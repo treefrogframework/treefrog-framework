@@ -25,6 +25,8 @@ public:
     void rollbackTransactions();
     bool rollbackTransaction(int id = 0);
     int idleTime() const;
+    static TDatabaseContext *currentDatabaseContext();
+    static void setCurrentDatabaseContext(TDatabaseContext *context);
 
 protected:
     bool beginTransaction(QSqlDatabase &database, int id);

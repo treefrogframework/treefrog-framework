@@ -89,6 +89,7 @@ void TActionThread::run()
         goto socket_error;
     }
     TActionContext::socketDesc = 0;
+    TDatabaseContext::setCurrentDatabaseContext(this);
 
     for (;;) {
         reqs = readRequest(_httpSocket);
@@ -155,6 +156,7 @@ socket_cleanup:
     while (eventLoop.processEvents()) {}
 
 socket_error:
+    TDatabaseContext::setCurrentDatabaseContext(nullptr);
     _httpSocket->deleteLater();
     _httpSocket = nullptr;
 }

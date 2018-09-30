@@ -17,23 +17,24 @@
   process.
 */
 
-TScheduler::TScheduler(QObject *parent)
-    : TDatabaseContextThread(parent), timer(new QTimer())
+TScheduler::TScheduler() :
+    TDatabaseContextThread(),
+    _timer(new QTimer())
 {
     moveToThread(Tf::app()->thread());
-    timer->moveToThread(Tf::app()->thread());
-    timer->setSingleShot(false);
+    _timer->moveToThread(Tf::app()->thread());
+    _timer->setSingleShot(false);
 
-    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(start()));
-    QObject::connect(this, SIGNAL(startTimer(int)), timer, SLOT(start(int)));
-    QObject::connect(this, SIGNAL(startTimer()), timer, SLOT(start()));
-    QObject::connect(this, SIGNAL(stopTimer()), timer, SLOT(stop()));
+    QObject::connect(_timer, SIGNAL(timeout()), this, SLOT(start()));
+    QObject::connect(this, SIGNAL(startTimer(int)), _timer, SLOT(start(int)));
+    QObject::connect(this, SIGNAL(startTimer()), _timer, SLOT(start()));
+    QObject::connect(this, SIGNAL(stopTimer()), _timer, SLOT(stop()));
 }
 
 
 TScheduler::~TScheduler()
 {
-    delete timer;
+    delete _timer;
 }
 
 
@@ -57,25 +58,25 @@ void TScheduler::stop()
 
 int TScheduler::interval() const
 {
-    return timer->interval();
+    return _timer->interval();
 }
 
 
 bool TScheduler::isSingleShot() const
 {
-    return timer->isSingleShot();
+    return _timer->isSingleShot();
 }
 
 
 void TScheduler::setSingleShot(bool singleShot)
 {
-    timer->setSingleShot(singleShot);
+    _timer->setSingleShot(singleShot);
 }
 
 
 void TScheduler::rollbackTransaction()
 {
-    rollback = true;
+    _rollback = true;
 }
 
 
@@ -91,24 +92,24 @@ void TScheduler::publish(const QString &topic, const QByteArray &binary)
 }
 
 
-void TScheduler::start(Priority priority)
-{
-    QThread::start(priority);
-}
-
-
 void TScheduler::run()
 {
-    rollback = false;
+    _rollback = false;
+    TDatabaseContext::setCurrentDatabaseContext(this);
 
     // Executes the job
     job();
 
-    if (rollback) {
+    if (_rollback) {
         TDatabaseContext::rollbackTransactions();
     } else {
         TDatabaseContext::commitTransactions();
     }
 
     TDatabaseContext::release();
+    TDatabaseContext::setCurrentDatabaseContext(nullptr);
+
+    if (_autoDelete && !_timer->isActive()) {
+        connect(this, &TScheduler::finished, this, &QObject::deleteLater);
+    }
 }

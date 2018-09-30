@@ -7,6 +7,7 @@
 
 #include <QtCore>
 #include <QSqlDatabase>
+#include <QThreadStorage>
 #include <TWebApplication>
 #include <TKvsDriver>
 #include <ctime>
@@ -15,15 +16,19 @@
 #include "tkvsdatabasepool.h"
 #include "tsystemglobal.h"
 
+// Stores a pointer to current database context into TLS
+//  - qulonglong type to prevent qThreadStorage_deleteData() function to work
+static QThreadStorage<qulonglong> databaseContextPtrTls;
+
 /*!
   \class TDatabaseContext
   \brief The TDatabaseContext class is the base class of contexts for
   database access.
 */
 
-TDatabaseContext::TDatabaseContext()
-    : sqlDatabases(),
-      kvsDatabases()
+TDatabaseContext::TDatabaseContext() :
+    sqlDatabases(),
+    kvsDatabases()
 { }
 
 
@@ -173,4 +178,19 @@ bool TDatabaseContext::rollbackTransaction(int id)
 int TDatabaseContext::idleTime() const
 {
     return (idleElapsed > 0) ? (uint)std::time(nullptr) - idleElapsed : -1;
+}
+
+
+TDatabaseContext *TDatabaseContext::currentDatabaseContext()
+{
+    return reinterpret_cast<TDatabaseContext*>(databaseContextPtrTls.localData());
+}
+
+
+void TDatabaseContext::setCurrentDatabaseContext(TDatabaseContext *context)
+{
+    if (context && databaseContextPtrTls.hasLocalData()) {
+        tSystemWarn("Duplicate set : setCurrentDatabaseContext()");
+    }
+    databaseContextPtrTls.setLocalData((qulonglong)context);
 }

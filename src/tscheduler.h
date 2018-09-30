@@ -10,7 +10,7 @@ class T_CORE_EXPORT TScheduler : public TDatabaseContextThread
 {
     Q_OBJECT
 public:
-    TScheduler(QObject *parent = nullptr);
+    TScheduler();
     virtual ~TScheduler();
 
     void start(int msec);
@@ -19,15 +19,14 @@ public:
     int	interval() const;
     bool isSingleShot() const;
     void setSingleShot(bool singleShot);
+    bool autoDelete() const { return _autoDelete; }
+    void setAutoDelete(bool autoDelete) { _autoDelete = autoDelete; }
 
 protected:
     virtual void job() = 0;
     void rollbackTransaction();
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
-
-private slots:
-    void start(Priority priority = InheritPriority);
 
 signals:
     void startTimer(int msec);
@@ -37,8 +36,9 @@ signals:
 private:
     void run() override;
 
-    QTimer *timer {nullptr};
-    bool rollback {false};
+    QTimer *_timer {nullptr};
+    bool _rollback {false};
+    bool _autoDelete {false};
 
     T_DISABLE_COPY(TScheduler)
     T_DISABLE_MOVE(TScheduler)

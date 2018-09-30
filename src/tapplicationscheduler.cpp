@@ -20,8 +20,7 @@
 /*!
   Constructor.
 */
-TApplicationScheduler::TApplicationScheduler(QObject *parent)
-    : TScheduler(parent)
+TApplicationScheduler::TApplicationScheduler() : TScheduler()
 { }
 
 
