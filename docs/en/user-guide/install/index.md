@@ -27,7 +27,7 @@ Now install the DB client libraries:
 
 ### Installation Instructions
 
-1. Extract the file you just have [downloaded](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}.
+1. Extract the file you just have [downloaded](http://www.treefrogframework.org/en/download/){:target="_blank"}.
 
    The following command applies to version 'x.x.x'. Please update it appropriately.
 
@@ -85,10 +85,10 @@ Now install the DB client libraries:
    ```
 
 3. Create a shortcut of TreeFrog Command Prompt (Windows only).
-   Right-click on the folder on which you want to create a shortcut and select ⋅⋅⋅"New" – and then click the "shortcut". Set the links as follows:
+   Right-click on the folder on which you want to create a shortcut and select "New" and then click the "Shortcut". Set the links as follows:
 
    ```
-C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
+   C:\Windows\System32\cmd.exe /K  C:\TreeFrog\x.x.x\bin\tfenv.bat
    ```
 
    ('x.x.x' represents the current version you use)
