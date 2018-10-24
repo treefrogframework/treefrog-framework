@@ -97,13 +97,37 @@ void TScheduler::run()
     _rollback = false;
     TDatabaseContext::setCurrentDatabaseContext(this);
 
-    // Executes the job
-    job();
+    try {
+        // Executes the job
+        job();
 
-    if (_rollback) {
-        TDatabaseContext::rollbackTransactions();
-    } else {
-        TDatabaseContext::commitTransactions();
+        if (_rollback) {
+            TDatabaseContext::rollbackTransactions();
+        } else {
+            TDatabaseContext::commitTransactions();
+        }
+
+    } catch (ClientErrorException &e) {
+        tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+        tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+    } catch (SqlException &e) {
+        tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (KvsException &e) {
+        tError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (SecurityException &e) {
+        tError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (RuntimeException &e) {
+        tError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (StandardException &e) {
+        tError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (...) {
+        tError("Caught Exception");
+        tSystemError("Caught Exception");
     }
 
     TDatabaseContext::release();
