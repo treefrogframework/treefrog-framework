@@ -21,7 +21,7 @@ class T_CORE_EXPORT TSqlDatabasePool : public QObject
 public:
     ~TSqlDatabasePool();
     QSqlDatabase database(int databaseId = 0);
-    void pool(QSqlDatabase &database);
+    void pool(QSqlDatabase &database, bool forceClose = false);
 
     static void instantiate();
     static TSqlDatabasePool *instance();
@@ -33,6 +33,7 @@ public:
 protected:
     void init();
     void timerEvent(QTimerEvent *event);
+    void closeDatabase(QSqlDatabase &database);
 
 private:
     T_DISABLE_COPY(TSqlDatabasePool)

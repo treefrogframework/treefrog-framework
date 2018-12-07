@@ -52,14 +52,22 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 
     TSqlTransaction &tx = sqlDatabases[id];
     QSqlDatabase &db = tx.database();
-    if (! tx.isValid()) {
-        db = TSqlDatabasePool::instance()->database(id);
-        beginTransaction(db, id);
-    } else {
-        if (! tx.isActive()) {
-            tx.rebegin();
-        }
+
+    if (db.isValid() && tx.isActive()) {
+        return db;
     }
+
+    int n = 0;
+    do {
+        if (! db.isValid()) {
+            db = TSqlDatabasePool::instance()->database(id);
+        }
+
+        if (tx.begin()) {
+            break;
+        }
+        TSqlDatabasePool::instance()->pool(db, true);
+    } while (++n < 2);  // try two times
 
     idleElapsed = (uint)std::time(nullptr);
     return db;
@@ -123,19 +131,6 @@ void TDatabaseContext::setTransactionEnabled(bool enable, int id)
         return;
     }
     return sqlDatabases[id].setEnabled(enable);
-}
-
-// Obsoleted function
-bool TDatabaseContext::beginTransaction(QSqlDatabase &database)
-{
-    int id = TSqlDatabasePool::getDatabaseId(database);
-    return beginTransaction(database, id);
-}
-
-
-bool TDatabaseContext::beginTransaction(QSqlDatabase &database, int id)
-{
-    return sqlDatabases[id].begin(database);
 }
 
 

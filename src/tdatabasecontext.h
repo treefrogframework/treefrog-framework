@@ -19,7 +19,6 @@ public:
 
     void setTransactionEnabled(bool enable, int id = 0);
     void release();
-    bool beginTransaction(QSqlDatabase &database);  // Obsoleted
     void commitTransactions();
     bool commitTransaction(int id = 0);
     void rollbackTransactions();
@@ -29,7 +28,6 @@ public:
     static void setCurrentDatabaseContext(TDatabaseContext *context);
 
 protected:
-    bool beginTransaction(QSqlDatabase &database, int id);
     void releaseKvsDatabases();
     void releaseSqlDatabases();
 

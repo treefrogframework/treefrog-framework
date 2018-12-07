@@ -42,7 +42,7 @@ TSqlTransaction &TSqlTransaction::operator=(const TSqlTransaction &other)
     return *this;
 }
 
-
+/*
 bool TSqlTransaction::begin(QSqlDatabase &database)
 {
     if (Q_UNLIKELY(!database.isValid())) {
@@ -66,15 +66,7 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
     }
 
     if (database.driver()->hasFeature(QSqlDriver::Transactions)) {
-        int i = 0;
-        do {
-            _active = database.transaction();
-            if (Q_LIKELY(_active)) {
-                break;
-            }
-            database.rollback();
-        } while (++i < 2); // try two times
-
+        _active = database.transaction();
         int id = TSqlDatabasePool::getDatabaseId(_database);
         if (Q_LIKELY(_active)) {
             Tf::traceQueryLog("[BEGIN] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
@@ -86,11 +78,36 @@ bool TSqlTransaction::begin(QSqlDatabase &database)
     _database = database;
     return _active;
 }
+*/
 
-
-bool TSqlTransaction::rebegin()
+bool TSqlTransaction::begin()
 {
-    return begin(_database);
+    if (Q_UNLIKELY(!_database.isValid())) {
+        tSystemError("Can not begin transaction. Invalid database: %s", qPrintable(_database.connectionName()));
+        return false;
+    }
+
+    if (!_enabled) {
+        return true;
+    }
+
+    if (_database.driver()->hasFeature(QSqlDriver::Transactions)) {
+        if (_active) {
+            tSystemDebug("Has begun transaction already. database:%s", qPrintable(_database.connectionName()));
+            return true;
+        }
+
+        _active = _database.transaction();
+        int id = TSqlDatabasePool::getDatabaseId(_database);
+        if (Q_LIKELY(_active)) {
+            Tf::traceQueryLog("[BEGIN] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
+        } else {
+            Tf::traceQueryLog("[BEGIN Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
+        }
+    } else {
+        return true;
+    }
+    return _active;
 }
 
 

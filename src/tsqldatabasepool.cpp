@@ -227,7 +227,7 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, const QString
 }
 
 
-void TSqlDatabasePool::pool(QSqlDatabase &database)
+void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
 {
     T_TRACEFUNC("");
 
@@ -235,10 +235,14 @@ void TSqlDatabasePool::pool(QSqlDatabase &database)
         int databaseId = getDatabaseId(database);
 
         if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
-            // pool
-            cachedDatabase[databaseId].push(database.connectionName());
-            lastCachedTime[databaseId].store((uint)std::time(nullptr));
-            tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
+            if (forceClose) {
+                closeDatabase(database);
+            } else {
+                // pool
+                cachedDatabase[databaseId].push(database.connectionName());
+                lastCachedTime[databaseId].store((uint)std::time(nullptr));
+                tSystemDebug("Pooled database: %s", qPrintable(database.connectionName()));
+            }
         } else {
             tSystemError("Pooled invalid database  [%s:%d]", __FILE__, __LINE__);
         }
@@ -264,9 +268,7 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
             while (lastCachedTime[i].load() < (uint)std::time(nullptr) - 30
                    && cache.pop(name)) {
                 QSqlDatabase db = TSqlDatabase::database(name).sqlDatabase();
-                db.close();
-                tSystemDebug("Closed database connection, name: %s", qPrintable(name));
-                availableNames[i].push(name);
+                closeDatabase(db);
             }
         }
     } else {
@@ -274,6 +276,15 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
     }
 }
 
+
+void TSqlDatabasePool::closeDatabase(QSqlDatabase &database)
+{
+    int id = getDatabaseId(database);
+    QString name = database.connectionName();
+    database.close();
+    tSystemDebug("Closed database connection, name: %s", qPrintable(name));
+    availableNames[id].push(name);
+}
 
 /*!
  * Initializes.

@@ -18,11 +18,9 @@ public:
 
     QSqlDatabase &database() { return _database; }
     TSqlTransaction &operator=(const TSqlTransaction &);
-    bool begin(QSqlDatabase &database);
-    bool rebegin();
+    bool begin();
     bool commit();
     bool rollback();
-    bool isValid() const { return _database.isValid(); }
     bool isActive() const { return _active; }
     void setEnabled(bool enable);
     void setDisabled(bool disable);
