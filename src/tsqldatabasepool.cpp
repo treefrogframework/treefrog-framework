@@ -236,6 +236,7 @@ void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
 
         if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
             if (forceClose) {
+                tSystemWarn("Force close database: %s", qPrintable(database.connectionName()));
                 closeDatabase(database);
             } else {
                 // pool
