@@ -127,7 +127,7 @@ int TFileAioWriter::write(const char *data, int length)
     if (ret < 0) {
         //fprintf(stderr, "aio_write error fd:%d (pid:%d tid:%d) ret:%d errno:%d\n", d->fileDescriptor, getpid(), gettid(), ret, err);
         //fprintf(stderr, "aio_write str: %s\n", data);
-        delete (char *)cb->aio_buf;
+        delete[] (char *)cb->aio_buf;
         delete cb;
 
         if (err != EAGAIN) {
