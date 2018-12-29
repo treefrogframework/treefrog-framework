@@ -1,6 +1,58 @@
 #include "tfexception.h"
 
 /*!
+  \class TfException
+  \brief The TfException class is a base class for all TreeFrog exception classes.
+*/
+
+/*!
+  \fn TfException::TfException(const TfException &e)
+  \brief Copy constructor.
+*/
+
+/*!
+  \fn TfException::TfException(const QString &message, const char *fileName, int lineNumber)
+  \brief Constructor.
+*/
+
+/*!
+  \fn virtual TfException::~TfException() throw()
+  \brief Destructor.
+*/
+
+/*!
+  \fn QString TfException::message() const
+  \brief Returns the message.
+*/
+
+/*!
+  \fn QString TfException::fileName() const
+  \brief Returns the file name.
+*/
+
+/*!
+  \fn int TfException::lineNumber() const
+  \brief Return the line number.
+*/
+
+/*!
+  \fn virtual void TfException::raise() const
+  \brief Raises the exception.
+*/
+
+/*!
+  \fn virtual Exception *TfException::clone() const
+  \brief Creates and returns a deep copy of the current data.
+*/
+
+/*!
+  \fn virtual QString TfException::className() const
+  \brief Returns exception class name.
+*/
+
+
+
+/*!
   \class RuntimeException
   \brief The RuntimeException class represents an exception that
   can be thrown when runtime error occurs.
@@ -22,28 +74,18 @@
 */
 
 /*!
-  \fn QString RuntimeException::message() const
-  \brief Returns the message.
-*/
-
-/*!
-  \fn QString RuntimeException::fileName() const
-  \brief Returns the file name.
-*/
-
-/*!
-  \fn int RuntimeException::lineNumber() const
-  \brief Return the line number.
-*/
-
-/*!
-  \fn virtual void RuntimeException::raise() const
+  \fn void RuntimeException::raise() const override
   \brief Raises the exception.
 */
 
 /*!
-  \fn virtual Exception *RuntimeException::clone() const
+  \fn Exception *RuntimeException::clone() const override
   \brief Creates and returns a deep copy of the current data.
+*/
+
+/*!
+  \fn QString RuntimeException::className() const override
+  \brief Returns exception class name.
 */
 
 
@@ -70,28 +112,18 @@
 */
 
 /*!
-  \fn QString SecurityException::message() const
-  \brief Returns the message.
-*/
-
-/*!
-  \fn QString SecurityException::fileName() const
-  \brief Returns the file name.
-*/
-
-/*!
-  \fn int SecurityException::lineNumber() const
-  \brief Return the line number.
-*/
-
-/*!
-  \fn virtual void SecurityException::raise() const
+  \fn void SecurityException::raise() const override
   \brief Raises the exception.
 */
 
 /*!
-  \fn virtual Exception *SecurityException::clone() const
+  \fn Exception *SecurityException::clone() const override
   \brief Creates and returns a deep copy of the current data.
+*/
+
+/*!
+  \fn QString SecurityException::className() const override
+  \brief Returns exception class name.
 */
 
 
@@ -118,28 +150,18 @@
 */
 
 /*!
-  \fn QString SqlException::message() const
-  \brief Returns the message.
-*/
-
-/*!
-  \fn QString SqlException::fileName() const
-  \brief Returns the file name.
-*/
-
-/*!
-  \fn int SqlException::lineNumber() const
-  \brief Return the line number.
-*/
-
-/*!
-  \fn virtual void SqlException::raise() const
+  \fn void SqlException::raise() const override
   \brief Raises the exception.
 */
 
 /*!
-  \fn virtual Exception *SqlException::clone() const
+  \fn Exception *SqlException::clone() const override
   \brief Creates and returns a deep copy of the current data.
+*/
+
+/*!
+  \fn QString SqlException::className() const override
+  \brief Returns exception class name.
 */
 
 
@@ -157,7 +179,7 @@
 */
 
 /*!
-  \fn ClientErrorException::ClientErrorException(int statusCode)
+  \fn ClientErrorException::ClientErrorException(int statusCode, const char *fileName, int lineNumber)
   \brief Constructor.
 */
 
@@ -172,14 +194,20 @@
 */
 
 /*!
-  \fn virtual void ClientErrorException::raise() const
+  \fn void ClientErrorException::raise() const override
   \brief Raises the exception.
 */
 
 /*!
-  \fn virtual Exception *ClientErrorException::clone() const
+  \fn Exception *ClientErrorException::clone() const override
   \brief Creates and returns a deep copy of the current data.
 */
+
+/*!
+  \fn QString ClientErrorException::className() const override
+  \brief Returns exception class name.
+*/
+
 
 
 /*!
@@ -204,29 +232,20 @@
 */
 
 /*!
-  \fn QString KvsException::message() const
-  \brief Returns the message.
-*/
-
-/*!
-  \fn QString KvsException::fileName() const
-  \brief Returns the file name.
-*/
-
-/*!
-  \fn int KvsException::lineNumber() const
-  \brief Return the line number.
-*/
-
-/*!
-  \fn virtual void KvsException::raise() const
+  \fn void KvsException::raise() const override
   \brief Raises the exception.
 */
 
 /*!
-  \fn virtual Exception *KvsException::clone() const
+  \fn Exception *KvsException::clone() const override
   \brief Creates and returns a deep copy of the current data.
 */
+
+/*!
+  \fn QString KvsException::className() const override
+  \brief Returns exception class name.
+*/
+
 
 
 /*!
@@ -252,26 +271,16 @@
 */
 
 /*!
-  \fn QString StandardException::message() const
-  \brief Returns the message.
-*/
-
-/*!
-  \fn QString StandardException::fileName() const
-  \brief Returns the file name.
-*/
-
-/*!
-  \fn int StandardException::lineNumber() const
-  \brief Return the line number.
-*/
-
-/*!
-  \fn virtual void StandardException::raise() const
+  \fn void StandardException::raise() const override
   \brief Raises the exception.
 */
 
 /*!
-  \fn virtual Exception *StandardException::clone() const
+  \fn Exception *StandardException::clone() const override
   \brief Creates and returns a deep copy of the current data.
+*/
+
+/*!
+  \fn QString StandardException::className() const override
+  \brief Returns exception class name.
 */

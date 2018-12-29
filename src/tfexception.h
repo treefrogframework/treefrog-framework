@@ -6,125 +6,103 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT RuntimeException : public std::exception
+class T_CORE_EXPORT TfException : public std::exception
 {
 public:
-    RuntimeException(const RuntimeException &e)
+    TfException(const QString &message, const char *fileName = "", int lineNumber = 0)
+        : msg(message), file(fileName), line(lineNumber) { }
+    TfException(const TfException &e)
         : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
+    virtual ~TfException() throw() { }
+    QString message() const { return msg; }
+    QString fileName() const { return file; }
+    int lineNumber() const { return line; }
+
+    virtual void raise() const { throw *this; }
+    virtual std::exception *clone() const { return new TfException(*this); }
+    virtual QString className() const { return QLatin1String("TfException"); }
+
+private:
+    QString msg;
+    QString file;
+    int line;
+};
+
+
+class T_CORE_EXPORT RuntimeException : public TfException
+{
+public:
     RuntimeException(const QString &message, const char *fileName = "", int lineNumber = 0)
-        : msg(message), file(fileName), line(lineNumber) { }
-    virtual ~RuntimeException() throw() { }
-    QString message() const { return msg; }
-    QString fileName() const { return file; }
-    int lineNumber() const { return line; }
-    virtual void raise() const { throw *this; }
-    virtual std::exception *clone() const { return new RuntimeException(*this); }
+        : TfException(message, fileName, lineNumber) { }
 
-private:
-    QString msg;
-    QString file;
-    int line;
+    void raise() const override { throw *this; }
+    std::exception *clone() const override { return new RuntimeException(*this); }
+    QString className() const override { return QLatin1String("RuntimeException"); }
 };
 
 
-class T_CORE_EXPORT SecurityException : public std::exception
+class T_CORE_EXPORT SecurityException : public TfException
 {
 public:
-    SecurityException(const SecurityException &e)
-        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
     SecurityException(const QString &message, const char *fileName = "", int lineNumber = 0)
-        : msg(message), file(fileName), line(lineNumber) { }
-    virtual ~SecurityException() throw() { }
-    QString message() const { return msg; }
-    QString fileName() const { return file; }
-    int lineNumber() const { return line; }
-    virtual void raise() const { throw *this; }
-    virtual std::exception *clone() const { return new SecurityException(*this); }
+        : TfException(message, fileName, lineNumber) { }
 
-private:
-    QString msg;
-    QString file;
-    int line;
+    void raise() const override { throw *this; }
+    std::exception *clone() const override { return new SecurityException(*this); }
+    QString className() const override { return QLatin1String("SecurityException"); }
 };
 
 
-class T_CORE_EXPORT SqlException : public std::exception
+class T_CORE_EXPORT SqlException : public TfException
 {
 public:
-    SqlException(const SqlException &e)
-        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
     SqlException(const QString &message, const char *fileName = "", int lineNumber = 0)
-        : msg(message), file(fileName), line(lineNumber) { }
-    virtual ~SqlException() throw() { }
-    QString message() const { return msg; }
-    QString fileName() const { return file; }
-    int lineNumber() const { return line; }
-    virtual void raise() const { throw *this; }
-    virtual std::exception *clone() const { return new SqlException(*this); }
+        : TfException(message, fileName, lineNumber) { }
 
-private:
-    QString msg;
-    QString file;
-    int line;
+    void raise() const override { throw *this; }
+    std::exception *clone() const override { return new SqlException(*this); }
+    QString className() const override { return QLatin1String("SqlException"); }
 };
 
 
-class T_CORE_EXPORT KvsException : public std::exception
+class T_CORE_EXPORT KvsException : public TfException
 {
 public:
-    KvsException(const KvsException &e)
-        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
     KvsException(const QString &message, const char *fileName = "", int lineNumber = 0)
-        : msg(message), file(fileName), line(lineNumber) { }
-    virtual ~KvsException() throw() { }
-    QString message() const { return msg; }
-    QString fileName() const { return file; }
-    int lineNumber() const { return line; }
-    virtual void raise() const { throw *this; }
-    virtual std::exception *clone() const { return new KvsException(*this); }
+        : TfException(message, fileName, lineNumber) { }
 
-private:
-    QString msg;
-    QString file;
-    int line;
+    void raise() const override { throw *this; }
+    std::exception *clone() const override { return new KvsException(*this); }
+    QString className() const override { return QLatin1String("KvsException"); }
 };
 
 
-class T_CORE_EXPORT ClientErrorException : public std::exception
+class T_CORE_EXPORT ClientErrorException : public TfException
 {
 public:
-    ClientErrorException(const ClientErrorException &e)
-        : std::exception(e), code(e.code) { }
-    ClientErrorException(int statusCode)
-        : code(statusCode) { }
-    virtual ~ClientErrorException() throw() { }
+    ClientErrorException(int statusCode, const char *fileName = "", int lineNumber = 0)
+        : TfException(QString("HTTP status code: %1").arg(statusCode), fileName, lineNumber),
+          code(statusCode) { }
+
     int statusCode() const { return code; }
-    virtual void raise() const { throw *this; }
-    virtual std::exception *clone() const { return new ClientErrorException(*this); }
+    void raise() const override { throw *this; }
+    std::exception *clone() const override { return new ClientErrorException(*this); }
+    QString className() const override { return QLatin1String("ClientErrorException"); }
 
 private:
     int code;
 };
 
 
-class T_CORE_EXPORT StandardException : public std::exception
+class T_CORE_EXPORT StandardException : public TfException
 {
 public:
-    StandardException(const StandardException &e)
-        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
     StandardException(const QString &message, const char *fileName = "", int lineNumber = 0)
-        : msg(message), file(fileName), line(lineNumber) { }
-    virtual ~StandardException() throw() { }
-    QString message() const { return msg; }
-    QString fileName() const { return file; }
-    int lineNumber() const { return line; }
-    virtual void raise() const { throw *this; }
-    virtual std::exception *clone() const { return new StandardException(*this); }
+        : TfException(message, fileName, lineNumber) { }
 
-private:
-    QString msg;
-    QString file;
-    int line;
+    void raise() const override { throw *this; }
+    std::exception *clone() const override { return new StandardException(*this); }
+    QString className() const override { return QLatin1String("StandardException"); }
 };
 
 #endif // TFEXCEPTION_H
