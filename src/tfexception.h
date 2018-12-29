@@ -4,15 +4,15 @@
 #include <exception>
 #include <QString>
 #include <TGlobal>
-
+#include <QByteArray>
 
 class T_CORE_EXPORT TfException : public std::exception
 {
 public:
     TfException(const QString &message, const char *fileName = "", int lineNumber = 0)
-        : msg(message), file(fileName), line(lineNumber) { }
+        : msg(message), file(fileName), line(lineNumber), msgLocal8Bit(message.toLocal8Bit()) { }
     TfException(const TfException &e)
-        : std::exception(e), msg(e.msg), file(e.file), line(e.line) { }
+        : std::exception(e), msg(e.msg), file(e.file), line(e.line), msgLocal8Bit(e.msgLocal8Bit) { }
     virtual ~TfException() throw() { }
     QString message() const { return msg; }
     QString fileName() const { return file; }
@@ -22,10 +22,13 @@ public:
     virtual std::exception *clone() const { return new TfException(*this); }
     virtual QString className() const { return QLatin1String("TfException"); }
 
+    const char *what() const override { return msgLocal8Bit.constData(); }
+
 private:
     QString msg;
     QString file;
     int line;
+    QByteArray msgLocal8Bit;
 };
 
 
