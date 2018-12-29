@@ -35,15 +35,6 @@ public:
 
 
 /*!
-  Prepares the SQL query \a query for execution.
-*/
-inline TSqlQuery &TSqlQuery::prepare(const QString &query)
-{
-    QSqlQuery::prepare(query);
-    return *this;
-}
-
-/*!
   Set the placeholder \a placeholder to be bound to value \a val in the
   prepared statement.
 */
