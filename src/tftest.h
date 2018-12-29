@@ -14,8 +14,9 @@
 # include "tsqldatabasepool.h"
 #endif
 
+#define TF_TEST_MAIN(TestObject) TF_TEST_SQL_MAIN(TestObject, true);
 
-#define TF_TEST_MAIN(TestObject) \
+#define TF_TEST_SQL_MAIN(TestObject, EnableTransactions) \
 int main(int argc, char *argv[]) \
 { \
     class Thread : public TActionThread { \
@@ -25,6 +26,7 @@ int main(int argc, char *argv[]) \
     protected: \
         virtual void run() \
         { \
+            setTransactionEnabled(EnableTransactions); \
             TestObject obj; \
             returnCode = QTest::qExec(&obj, QCoreApplication::arguments()); \
             commitTransactions(); \
