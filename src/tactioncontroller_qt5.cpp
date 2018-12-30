@@ -98,7 +98,6 @@ bool TActionController::renderCbor(const QCborMap &map)
 
 bool TActionController::renderCbor(const QCborArray &array)
 {
-
     return renderCbor(array.toCborValue());
 }
 
