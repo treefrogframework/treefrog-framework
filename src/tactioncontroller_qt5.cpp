@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QtCore>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <TActionController>
-
 
 /*!
   Renders the JSON document \a document as HTTP response.
@@ -68,3 +68,38 @@ bool TActionController::renderJson(const QStringList &list)
 {
     return renderJson(QJsonArray::fromStringList(list));
 }
+
+#if QT_VERSION >= 0x050c00  // 5.12.0
+bool TActionController::renderCbor(const QVariant &variant)
+{
+    return renderCbor(QCborValue::fromVariant(variant));
+}
+
+bool TActionController::renderCbor(const QVariantMap &map)
+{
+    return renderCbor(QCborMap::fromVariantMap(map));
+}
+
+bool TActionController::renderCbor(const QVariantHash &hash)
+{
+    return renderCbor(QCborMap::fromVariantHash(hash));
+}
+
+bool TActionController::renderCbor(const QCborValue &value)
+{
+    QCborValue val = value;
+    return sendData(val.toCbor(), "application/cbor");
+}
+
+bool TActionController::renderCbor(const QCborMap &map)
+{
+    return renderCbor(map.toCborValue());
+}
+
+bool TActionController::renderCbor(const QCborArray &array)
+{
+
+    return renderCbor(array.toCborValue());
+}
+
+#endif

@@ -79,7 +79,7 @@ QJSValue TJSModule::call(const QString &func, const QJSValueList &args)
         }
         argstr.chop(1);
 
-        QString defFunc = QString("function(%1){return(%2(%1));}").arg(argstr, func);
+        QString defFunc = QString("(function(%1){return(%2(%1));})").arg(argstr, func);
 
         if (!funcObj) {
             funcObj = new QJSValue();
