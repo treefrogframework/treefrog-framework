@@ -125,9 +125,9 @@ void TScheduler::run()
     } catch (StandardException &e) {
         tError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         tSystemError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-    } catch (...) {
-        tError("Caught Exception");
-        tSystemError("Caught Exception");
+    } catch (std::exception &e) {
+        tError("Caught Exception: %s", e.what());
+        tSystemError("Caught Exception: %s", e.what());
     }
 
     TDatabaseContext::release();
