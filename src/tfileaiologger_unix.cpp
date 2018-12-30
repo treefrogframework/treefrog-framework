@@ -27,7 +27,7 @@ public:
 void TFileAioLoggerData::clearSyncBuffer()
 {
     for (auto cb : (const List<struct aiocb*> &)syncBuffer) {
-        delete (char *)cb->aio_buf;
+        delete[] (char *)cb->aio_buf;
         delete cb;
     }
     syncBuffer.clear();
@@ -119,7 +119,7 @@ void TFileAioLogger::log(const QByteArray &msg)
 
     if (tf_aio_write(cb) < 0) {
         tSystemError("log write failed");
-        delete (char *)cb->aio_buf;
+        delete[] (char *)cb->aio_buf;
         delete cb;
 
         close();
