@@ -352,9 +352,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
         tError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         tSystemError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
-    } catch (...) {
-        tError("Caught Exception");
-        tSystemError("Caught Exception");
+    } catch (std::exception &e) {
+        tError("Caught Exception: %s", e.what());
+        tSystemError("Caught Exception: %s", e.what());
         closeHttpSocket();
     }
 
