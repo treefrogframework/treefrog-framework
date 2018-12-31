@@ -227,7 +227,7 @@ int TEpollSocket::send()
             case EAGAIN:
                 break;
 
-            case EPIPE:   // FALL THROUGH
+            case EPIPE:   // FALLTHRU
             case ECONNRESET:
                 tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
                 logger.setResponseBytes(-1);

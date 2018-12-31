@@ -542,7 +542,7 @@ int managerMain(int argc, char *argv[])
     for (;;) {
         ServerManager *manager = nullptr;
         switch ( app.multiProcessingModule() ) {
-        case TWebApplication::Thread:  // FALL THROUGH
+        case TWebApplication::Thread:  // FALLTHRU
         case TWebApplication::Hybrid: {
             int num = app.maxNumberOfAppServers();
             if (autoReloadMode && num > 1) {

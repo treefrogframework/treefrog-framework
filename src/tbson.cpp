@@ -166,8 +166,8 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             ret[key] = (qint64)bson_iter_int64(&it);
             break;
 
-        case BSON_TYPE_CODEWSCOPE: // FALL THROUGH
-        case BSON_TYPE_TIMESTAMP:  // FALL THROUGH (internal use)
+        case BSON_TYPE_CODEWSCOPE: // FALLTHRU
+        case BSON_TYPE_TIMESTAMP:  // FALLTHRU (internal use)
             // do nothing
             break;
 
@@ -250,7 +250,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         BSON_APPEND_BINARY(bson, qPrintable(key), BSON_SUBTYPE_BINARY, (uint8_t *)ba.constData(), ba.length());
         break; }
 
-    case QVariant::List:  // FALL THROUGH
+    case QVariant::List:  // FALLTHRU
     case QVariant::StringList: {
         bson_t child;
         BSON_APPEND_ARRAY_BEGIN(bson, qPrintable(key), &child);

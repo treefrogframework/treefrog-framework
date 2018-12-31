@@ -509,7 +509,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         } else {
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
         }
-        /* FALL THROUGH */ }
+        /* FALLTHRU */ }
 
     case Tf::Get: {
         // query parameter
