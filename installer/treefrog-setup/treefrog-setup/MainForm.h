@@ -379,9 +379,14 @@ namespace treefrogsetup {
             }
 
             // Get msi file from resource
-            int rcid = IDR_TREEFROG_QT512_MSI;
-            if (version->IndexOf("Qt version 5.11", StringComparison::OrdinalIgnoreCase) > 0) {
+            int rcid = 0;
+            if (version->IndexOf("Qt version 5.12", StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT512_MSI;
+            } else if (version->IndexOf("Qt version 5.11", StringComparison::OrdinalIgnoreCase) > 0) {
                 rcid = IDR_TREEFROG_QT511_MSI;
+            } else {
+                abort("Not found Qt version 5.12 or 5.11.", "Abort");
+                return;
             }
 
             System::Reflection::Module^ mod = System::Reflection::Assembly::GetExecutingAssembly()->GetModules()[0];
