@@ -80,7 +80,7 @@
     "{%initParams%}\n"                                        \
     "\n"                                                      \
     "%model%::%model%(const %model% &other)\n"                \
-    "    : TAbstractModel(), d(new %model%Object(*other.d))\n" \
+    "    : TAbstractModel(), d(other.d)\n"                    \
     "{ }\n"                                                   \
     "\n"                                                      \
     "%model%::%model%(const %model%Object &object)\n"         \
