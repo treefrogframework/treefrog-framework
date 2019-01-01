@@ -13,8 +13,7 @@ public:
     TfException(const QString &message, const char *fileName = "", int lineNumber = 0) noexcept
         : msg(message), file(fileName), line(lineNumber)
     {
-        whatmsg  = className().toLocal8Bit() + ": ";
-        whatmsg += message.toLocal8Bit();
+        whatmsg = message.toLocal8Bit();
         if (lineNumber > 0) {
             whatmsg += " [";
             whatmsg += fileName;
