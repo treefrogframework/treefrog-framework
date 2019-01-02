@@ -66,11 +66,15 @@ void TActionContext::execute(THttpRequest &request, int sid)
         const THttpRequestHeader &reqHeader = httpReq->header();
 
         // Access log
+        QByteArray firstLine;
+        firstLine.reserve(200);
+        firstLine += reqHeader.method();
+        firstLine += ' ';
+        firstLine += reqHeader.path();
+        firstLine += QStringLiteral(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
         accessLogger.setTimestamp(QDateTime::currentDateTime());
-        QByteArray firstLine = reqHeader.method() + ' ' + reqHeader.path();
-        firstLine += QString(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
         accessLogger.setRequest(firstLine);
-        accessLogger.setRemoteHost( (Tf::appSettings()->value(Tf::ListenPort).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArray("(unix)") );
+        accessLogger.setRemoteHost( (Tf::appSettings()->value(Tf::ListenPort).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)") );
 
         tSystemDebug("method : %s", reqHeader.method().data());
         tSystemDebug("path : %s", reqHeader.path().data());

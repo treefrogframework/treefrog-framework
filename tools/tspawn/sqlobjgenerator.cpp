@@ -124,7 +124,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     }
 
     // tableName() method
-    output += QLatin1String("    QString tableName() const override { return QLatin1String(\"");
+    output += QLatin1String("    QString tableName() const override { return QStringLiteral(\"");
     output += tableSch->tableName();
     output += QLatin1String("\"); }\n\n");
 
