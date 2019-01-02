@@ -60,7 +60,7 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
     int n = 0;
     do {
         if (! db.isValid()) {
-            tx.setDatabase(TSqlDatabasePool::instance()->database(id));
+            db = TSqlDatabasePool::instance()->database(id);
         }
 
         if (tx.begin()) {

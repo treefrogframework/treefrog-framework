@@ -46,14 +46,10 @@ bool TFileAioWriter::open()
 {
     QMutexLocker locker(&d->mutex);
 
-    if (d->fileName.isEmpty()) {
-        tSystemWarn("Empty file name for log.");
-        return false;
-    }
-
     if (d->fileDescriptor <= 0) {
-        if (d->fileName.isEmpty())
+        if (d->fileName.isEmpty()) {
             return false;
+        }
 
         d->fileDescriptor = ::open(qPrintable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
         if (d->fileDescriptor < 0) {

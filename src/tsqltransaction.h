@@ -17,7 +17,6 @@ public:
     ~TSqlTransaction();
 
     QSqlDatabase &database() { return _database; }
-    void setDatabase(QSqlDatabase database);
     TSqlTransaction &operator=(const TSqlTransaction &);
     bool begin();
     bool commit();

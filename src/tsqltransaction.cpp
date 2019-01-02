@@ -34,13 +34,6 @@ TSqlTransaction::~TSqlTransaction()
 }
 
 
-void TSqlTransaction::setDatabase(QSqlDatabase database)
-{
-    _database = database;
-    _enabled = _database.driver()->hasFeature(QSqlDriver::Transactions);
-}
-
-
 TSqlTransaction &TSqlTransaction::operator=(const TSqlTransaction &other)
 {
     _enabled = other._enabled;
@@ -58,6 +51,10 @@ bool TSqlTransaction::begin()
     }
 
     if (!_enabled) {
+        return true;
+    }
+
+    if (! _database.driver()->hasFeature(QSqlDriver::Transactions)) {
         return true;
     }
 
