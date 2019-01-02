@@ -13,8 +13,7 @@ public:
     TfException(const QString &message, const char *fileName = "", int lineNumber = 0) noexcept
         : msg(message), file(fileName), line(lineNumber)
     {
-        whatmsg  = className().toLocal8Bit() + ": ";
-        whatmsg += message.toLocal8Bit();
+        whatmsg = message.toLocal8Bit();
         if (lineNumber > 0) {
             whatmsg += " [";
             whatmsg += fileName;
@@ -31,7 +30,7 @@ public:
 
     virtual void raise() const { throw *this; }
     virtual std::exception *clone() const { return new TfException(*this); }
-    virtual QString className() const { return QLatin1String("TfException"); }
+    virtual QString className() const { return QStringLiteral("TfException"); }
     virtual const char *what() const noexcept override { return whatmsg.constData(); }
 
 protected:
@@ -50,7 +49,7 @@ public:
 
     void raise() const override { throw *this; }
     std::exception *clone() const override { return new RuntimeException(*this); }
-    QString className() const override { return QLatin1String("RuntimeException"); }
+    QString className() const override { return QStringLiteral("RuntimeException"); }
 };
 
 
@@ -62,7 +61,7 @@ public:
 
     void raise() const override { throw *this; }
     std::exception *clone() const override { return new SecurityException(*this); }
-    QString className() const override { return QLatin1String("SecurityException"); }
+    QString className() const override { return QStringLiteral("SecurityException"); }
 };
 
 
@@ -74,7 +73,7 @@ public:
 
     void raise() const override { throw *this; }
     std::exception *clone() const override { return new SqlException(*this); }
-    QString className() const override { return QLatin1String("SqlException"); }
+    QString className() const override { return QStringLiteral("SqlException"); }
 };
 
 
@@ -86,7 +85,7 @@ public:
 
     void raise() const override { throw *this; }
     std::exception *clone() const override { return new KvsException(*this); }
-    QString className() const override { return QLatin1String("KvsException"); }
+    QString className() const override { return QStringLiteral("KvsException"); }
 };
 
 
@@ -94,13 +93,14 @@ class T_CORE_EXPORT ClientErrorException : public TfException
 {
 public:
     ClientErrorException(int statusCode, const char *fileName = "", int lineNumber = 0)
-        : TfException(QString("HTTP status code: %1").arg(statusCode), fileName, lineNumber),
+        : TfException(QStringLiteral("HTTP status code: %1").arg(statusCode), fileName, lineNumber),
           code(statusCode) { }
 
     int statusCode() const { return code; }
+
     void raise() const override { throw *this; }
     std::exception *clone() const override { return new ClientErrorException(*this); }
-    QString className() const override { return QLatin1String("ClientErrorException"); }
+    QString className() const override { return QStringLiteral("ClientErrorException"); }
 
 private:
     int code;
@@ -115,7 +115,7 @@ public:
 
     void raise() const override { throw *this; }
     std::exception *clone() const override { return new StandardException(*this); }
-    QString className() const override { return QLatin1String("StandardException"); }
+    QString className() const override { return QStringLiteral("StandardException"); }
 };
 
 #endif // TFEXCEPTION_H
