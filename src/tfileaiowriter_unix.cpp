@@ -46,6 +46,11 @@ bool TFileAioWriter::open()
 {
     QMutexLocker locker(&d->mutex);
 
+    if (d->fileName.isEmpty()) {
+        tSystemWarn("Empty file name for log.");
+        return false;
+    }
+
     if (d->fileDescriptor <= 0) {
         if (d->fileName.isEmpty())
             return false;

@@ -31,6 +31,11 @@ TFileLogger::~TFileLogger()
 bool TFileLogger::open()
 {
     QMutexLocker locker(&mutex);
+
+    if (logFile.fileName().isEmpty()) {
+        return false;
+    }
+
     bool res = true;
     if (!logFile.isOpen()) {
         res = logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
@@ -45,8 +50,10 @@ bool TFileLogger::open()
 void TFileLogger::close()
 {
     QMutexLocker locker(&mutex);
-    if (logFile.isOpen())
+
+    if (logFile.isOpen()) {
         logFile.flush();
+    }
     logFile.close();
 }
 
@@ -65,7 +72,12 @@ void TFileLogger::log(const TLog &tlog)
 
 void TFileLogger::log(const QByteArray &msg)
 {
+    if (! isOpen()) {
+        return;
+    }
+
     QMutexLocker locker(&mutex);
+
     int len = logFile.write(msg);
     if (len < 0) {
         tSystemError("log write failed");
@@ -78,8 +90,10 @@ void TFileLogger::log(const QByteArray &msg)
 void TFileLogger::flush()
 {
     QMutexLocker locker(&mutex);
-    if (logFile.isOpen())
+
+    if (logFile.isOpen()) {
         logFile.flush();
+    }
 }
 
 

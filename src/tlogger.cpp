@@ -188,13 +188,18 @@ void TLogger::readSettings()
     QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
     threshold_ = priorityHash()->key(pri, Tf::TraceLevel);
 
-    QFileInfo fi(settingsValue("Target", "log/app.log").toString());
-    target_ = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
+    QString logtarget = settingsValue("Target", "log/app.log").toString().trimmed();
+    if (! logtarget.isEmpty()) {
+        QFileInfo fi(logtarget);
+        target_ = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
 
-    QDir dir = QFileInfo(target_).dir();
-    if (!dir.exists()) {
-        // Created a directory
-        dir.mkpath(".");
+        QDir dir = QFileInfo(target_).dir();
+        if (!dir.exists()) {
+            // Created a directory
+            dir.mkpath(".");
+        }
+    } else {
+        tSystemWarn("Empty file name for application log.");
     }
 }
 
