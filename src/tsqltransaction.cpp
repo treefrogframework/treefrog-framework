@@ -34,6 +34,13 @@ TSqlTransaction::~TSqlTransaction()
 }
 
 
+void TSqlTransaction::setDatabase(QSqlDatabase database)
+{
+    _database = database;
+    _enabled = _database.driver()->hasFeature(QSqlDriver::Transactions);
+}
+
+
 TSqlTransaction &TSqlTransaction::operator=(const TSqlTransaction &other)
 {
     _enabled = other._enabled;
@@ -42,43 +49,6 @@ TSqlTransaction &TSqlTransaction::operator=(const TSqlTransaction &other)
     return *this;
 }
 
-/*
-bool TSqlTransaction::begin(QSqlDatabase &database)
-{
-    if (Q_UNLIKELY(!database.isValid())) {
-        tSystemError("Can not begin transaction. Invalid database: %s", qPrintable(database.connectionName()));
-        return false;
-    }
-
-    if (_database.isValid() && _database.connectionName() != database.connectionName()) {
-        tSystemError("Another database set already: %s", qPrintable(database.connectionName()));
-        return false;
-    }
-
-    if (!_enabled) {
-        _database = database;
-        return true;
-    }
-
-    if (_active) {
-        tSystemDebug("Has begun transaction already. database:%s", qPrintable(database.connectionName()));
-        return true;
-    }
-
-    if (database.driver()->hasFeature(QSqlDriver::Transactions)) {
-        _active = database.transaction();
-        int id = TSqlDatabasePool::getDatabaseId(_database);
-        if (Q_LIKELY(_active)) {
-            Tf::traceQueryLog("[BEGIN] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
-        } else {
-            Tf::traceQueryLog("[BEGIN Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
-        }
-    }
-
-    _database = database;
-    return _active;
-}
-*/
 
 bool TSqlTransaction::begin()
 {
@@ -91,21 +61,17 @@ bool TSqlTransaction::begin()
         return true;
     }
 
-    if (_database.driver()->hasFeature(QSqlDriver::Transactions)) {
-        if (_active) {
-            tSystemDebug("Has begun transaction already. database:%s", qPrintable(_database.connectionName()));
-            return true;
-        }
-
-        _active = _database.transaction();
-        int id = TSqlDatabasePool::getDatabaseId(_database);
-        if (Q_LIKELY(_active)) {
-            Tf::traceQueryLog("[BEGIN] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
-        } else {
-            Tf::traceQueryLog("[BEGIN Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
-        }
-    } else {
+    if (_active) {
+        tSystemDebug("Has begun transaction already. database:%s", qPrintable(_database.connectionName()));
         return true;
+    }
+
+    _active = _database.transaction();
+    int id = TSqlDatabasePool::getDatabaseId(_database);
+    if (Q_LIKELY(_active)) {
+        Tf::traceQueryLog("[BEGIN] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
+    } else {
+        Tf::traceQueryLog("[BEGIN Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
     }
     return _active;
 }
@@ -113,7 +79,11 @@ bool TSqlTransaction::begin()
 
 bool TSqlTransaction::commit()
 {
-    bool res = false;
+    bool res = true;
+
+    if (!_enabled) {
+        return res;
+    }
 
     if (_active && _database.isValid()) {
         res = _database.commit();
@@ -133,7 +103,11 @@ bool TSqlTransaction::commit()
 
 bool TSqlTransaction::rollback()
 {
-    bool res = false;
+    bool res = true;
+
+    if (!_enabled) {
+        return res;
+    }
 
     if (_active && _database.isValid()) {
         res = _database.rollback();
