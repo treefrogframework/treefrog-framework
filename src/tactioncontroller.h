@@ -2,6 +2,8 @@
 #define TACTIONCONTROLLER_H
 
 #include <QtCore>
+#include <QHostAddress>
+#include <QDomDocument>
 #include <TGlobal>
 #include <TAbstractController>
 #include <TActionHelper>
