@@ -31,7 +31,7 @@
     "%4"                                                                \
     "    };\n"                                                          \
     "\n"                                                                \
-    "    virtual QString collectionName() const override { return QLatin1String(\"%5\"); }\n" \
+    "    virtual QString collectionName() const override { return QStringLiteral(\"%5\"); }\n" \
     "    virtual QString objectId() const override { return _id; }\n"   \
     "    virtual QString &objectId() override { return _id; }\n"        \
     "\n"                                                                \
@@ -50,7 +50,7 @@
     "%5"                                                                \
     "    };\n"                                                          \
     "\n"                                                                \
-    "    virtual QString collectionName() const override { return QLatin1String(\"%2\"); }\n" \
+    "    virtual QString collectionName() const override { return QStringLiteral(\"%2\"); }\n" \
     "    virtual QString objectId() const override { return _id; }\n"   \
     "    virtual QString &objectId() override { return _id; }\n"        \
     "\n"                                                                \

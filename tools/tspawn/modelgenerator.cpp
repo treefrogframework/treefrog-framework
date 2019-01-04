@@ -229,7 +229,7 @@
     "{%initParams%}\n"                                        \
     "\n"                                                      \
     "%model%::%model%(const %model% &other)\n"                \
-    "    : TAbstractUser(), TAbstractModel(), d(new %model%Object(*other.d))\n" \
+    "    : TAbstractUser(), TAbstractModel(), d(other.d)\n"   \
     "{ }\n"                                                   \
     "\n"                                                      \
     "%model%::%model%(const %model%Object &object)\n"         \
