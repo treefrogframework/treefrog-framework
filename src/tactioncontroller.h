@@ -1,8 +1,7 @@
 #ifndef TACTIONCONTROLLER_H
 #define TACTIONCONTROLLER_H
 
-#include <QHostAddress>
-#include <QDomDocument>
+#include <QtCore>
 #include <TGlobal>
 #include <TAbstractController>
 #include <TActionHelper>
@@ -15,8 +14,6 @@
 class TActionView;
 class TAbstractUser;
 class TFormValidator;
-class QCborMap;
-class QCborValue;
 
 
 class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator
