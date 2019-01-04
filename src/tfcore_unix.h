@@ -7,6 +7,9 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <aio.h>
+#ifdef Q_OS_DARWIN
+#include <pthread.h>
+#endif
 #include "tfcore.h"
 
 #ifndef Q_OS_UNIX
@@ -25,7 +28,10 @@ static inline pid_t gettid()
 #if defined(Q_OS_LINUX)
     return syscall(SYS_gettid);
 #elif defined(Q_OS_DARWIN)
-    return syscall(SYS_thread_selfid);
+    uint64_t tid;
+    pthread_threadid_np(NULL, &tid);
+    return tid;
+    //return syscall(SYS_thread_selfid);
 #else
     return 0;
 #endif
