@@ -40,13 +40,21 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2018/6/10  TreeFrog Framework バージョン1.22.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2019/1/6  TreeFrog Framework バージョン1.23.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - BEGEN/COMMIT/ROLLBACK 失敗時のファールセーフ追加
+  - セッションストアの不具合修正
+  - 例外クラスの微修正
+  - クエリーログにログメッセージ追加
+  - その他不具合修正
+
+ [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2018/6/10  TreeFrog Framework バージョン1.22.0 （安定版）リリース
 
  - WebアプリのCMakeビルドをサポート
  - ESMTPをサポートしていない古いタイプのSMTPサーバへの送信をサポート
  - tspawn.proファイルの不具合修正
-
- [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2018/3/25  TreeFrog Framework バージョン1.21.0 （安定版）リリース
 

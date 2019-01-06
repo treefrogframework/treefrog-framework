@@ -37,15 +37,25 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Jan. 6, 2019
+
+### TreeFrog Framework version 1.23.0 (stable) release <span style="color: red;">New!</span>
+
+  - Added failsafe of SQL when BEGEN/COMMIT/ROLLBACK failed.
+  - Fix a bug of sqlobject for session store.
+  - Minor changes of exception classes.
+  - Added log messages for query log.
+  - Other bugfixes.
+
+  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
+
 Jun. 10, 2018
 
-### TreeFrog Framework version 1.22.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.22.0 (stable) release
 
   - Support for CMake build of Web application.
   - Support SMTP connections to older servers not supporting ESMTP.
   - Fix bugs of tspawn.pro file.
-
-  [<i class="fa fa-hand-o-right" aria-hidden="true"></i> Download this version](/en/download/)
 
 Mar. 25, 2018
 
