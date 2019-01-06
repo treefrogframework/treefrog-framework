@@ -1,4 +1,18 @@
 # ChangeLog
+## 1.23.0
+ - Added failsafe of SQL when BEGEN/COMMIT/ROLLBACK failed.
+ - Modified to replace QLatin1String with QStringLiteral for view codes.
+ - Model optimalizations. #231 #230
+ - Minor changes of exception classes. #229
+ - Added log messages for query log. #227
+ - Added possibility to disable sql transactions in unit test. #226
+ - Use delete[] to free aio_buf in aiocb struct. #225
+ - Minor changes of testcases for Qt 5.12.
+ - Fix a bug of sqlobject for session store.
+ - Fix a bug of invoking StaticInitialize() function.
+ - Modified not to do keep-alive when action threads equals or more than max
+   thread value of config.
+
 ## 1.22.0
  - Support for CMake build.
  - Support SMTP connections to older servers. #207
