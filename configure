@@ -14,6 +14,7 @@ Configuration:
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
   --enable-shared-mongoc  link the mongoc shared library
+  --spec=SPEC         Use SPEC as QMAKESPEC
 
 Installation directories:
   --prefix=PREFIX     install files in PREFIX [$PREFIX]
@@ -35,53 +36,16 @@ replace()
 }
 
 # check the platform
-if which uname >/dev/null 2>&1; then
-  KERNEL=`uname -s`
-  MACHINE=`uname -m`
-  RELEASE=`uname -r`
-
-  if [ "$QMAKESPEC" != "" ]; then
-    OPT="-spec $QMAKESPEC"
-
-    if [ "$MACHINE" = "x86_64" ]; then
-      OPT="$OPT CONFIG+=x86_64"
-    fi
-
-  elif [ "$KERNEL" = "Darwin" ]; then
-    QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
-    QT_MAJOR=${QT_VERSION:0:1}
-    if [ "$QT_MAJOR" -ge 5 ]; then
-      OPT="-spec macx-clang"
-    else
-      OPT="-spec macx-g++"
-    fi
-
-    REL=`echo $RELEASE | tr -d '.'`
-    if [ "$REL" -ge  1050 ]; then
-      OPT="$OPT CONFIG+=x86_64"
-    fi
-
-    if [ "$MACHINE" = "ppc" ]; then
-      OPT="$OPT CONFIG+=ppc"
-    fi
-  else
-    if [ "$KERNEL" = "Linux" ]; then
-      OPT="-spec linux-g++"
-    elif [ "$KERNEL" = "FreeBSD" ]; then
-      OPT="-spec freebsd-clang"
-    fi
-
-    if [ "$MACHINE" = "x86_64" ]; then
-      OPT="$OPT CONFIG+=x86_64"
-    fi
-  fi
-else
+if ! which uname >/dev/null 2>&1; then
   echo "uname: command not found"
   exit
 fi
 
 # default values
 BASEDIR=`pwd`/`dirname $0`
+KERNEL=`uname -s`
+MACHINE=`uname -m`
+RELEASE=`uname -r`
 
 if [ "$KERNEL" = "Darwin" ]; then
   PREFIX=/usr/local
@@ -130,6 +94,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
     --enable-shared-mongoc | --enable-shared-mongoc=*)
       ENABLE_SHARED_MONGOC="shared_mongoc=1"
       ;;
+    --spec=*)
+      SPEC=$optarg
+      ;;
     --help | -help | -h | *)
       usage
       exit
@@ -137,6 +104,42 @@ while [ -n "`echo $1 | grep '-'`" ]; do
   esac
   shift
 done
+
+# spec
+if [ "$SPEC" != "" ]; then
+  OPT="-spec $SPEC"
+elif [ "$QMAKESPEC" != "" ]; then
+  OPT="-spec $QMAKESPEC"
+elif [ "$KERNEL" = "Darwin" ]; then  # macOS
+  QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
+  QT_MAJOR=${QT_VERSION:0:1}
+
+  if [ "$QT_MAJOR" -ge 5 ]; then
+    OPT="-spec macx-clang"
+  else
+    OPT="-spec macx-g++"
+  fi
+elif [ "$KERNEL" = "Linux" ]; then
+  OPT="-spec linux-g++"
+elif [ "$KERNEL" = "FreeBSD" ]; then
+  OPT="-spec freebsd-clang"
+fi
+
+# x64 config
+if [ "$KERNEL" = "Darwin" ]; then  # macOS
+  REL=`echo $RELEASE | tr -d '.'`
+  if [ "$REL" -ge  1050 ]; then
+    OPT="$OPT CONFIG+=x86_64"
+  fi
+
+  if [ "$MACHINE" = "ppc" ]; then
+    OPT="$OPT CONFIG+=ppc"
+  fi
+else
+  if [ "$MACHINE" = "x86_64" ]; then
+    OPT="$OPT CONFIG+=x86_64"
+  fi
+fi
 
 cd "$BASEDIR"
 replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
