@@ -159,19 +159,43 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
 
             case TSql::In:
             case TSql::NotIn: {
-                QString str;
-                const QList<QVariant> lst = cri.val1.toList();
-                for (auto &v : lst) {
-                    QString s = TSqlQuery::formatValue(v, cri.varType, database);
-                    if (!s.isEmpty()) {
-                        str.append(s).append(',');
+                auto inclause = [&](const QList<QVariant> &lst, int pos, int length) {
+                    QString str;
+                    length = qMin(length, lst.count() - pos);
+                    for (int i = 0; i < length; i++) {
+                        auto &v = lst[pos + i];
+                        QString s = TSqlQuery::formatValue(v, cri.varType, database);
+                        if (!s.isEmpty()) {
+                            str.append(s).append(',');
+                        }
                     }
+                    str.chop(1);
+                    return str;
+                };
+
+                const int LIMIT_WORDS_IN_CLAUSE = 1000;
+                const QList<QVariant> lst = cri.val1.toList();
+
+                if (lst.isEmpty()) {
+                    tWarn("error parameter");
+                    break;
                 }
-                str.chop(1);
-                if (!str.isEmpty()) {
+
+                if (lst.count() <= LIMIT_WORDS_IN_CLAUSE || database.driver()->dbmsType() == QSqlDriver::MySqlServer) {
+                    QString str = inclause(lst, 0, lst.count());
                     sqlString += name + TSql::formatArg(cri.op1, str);
                 } else {
-                    tWarn("error parameter");
+                    QString clause;
+                    for (int i = 0; i < (lst.count() / LIMIT_WORDS_IN_CLAUSE) + 1; i++) {
+                        QString str = inclause(lst, LIMIT_WORDS_IN_CLAUSE * i, LIMIT_WORDS_IN_CLAUSE);
+                        clause += name + TSql::formatArg(cri.op1, str);
+                        clause += " OR ";
+                    }
+                    clause.chop(4);
+
+                    sqlString += '(';
+                    sqlString += clause;
+                    sqlString += ')';
                 }
                 break; }
 
