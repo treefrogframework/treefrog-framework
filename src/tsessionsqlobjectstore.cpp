@@ -14,10 +14,10 @@
   \class TSessionSqlObjectStore
   \brief The TSessionSqlObjectStore class stores HTTP sessions into database
          system using object-relational mapping tool.
+  \details Table schema: 'CREATE TABLE session (id VARCHAR(50) PRIMARY KEY, data TEXT, updated_at TIMESTAMP);'
   \sa TSessionObject
 */
 
-/* create table session ( id varchar(50) primary key, data blob, updated_at datetime ); */
 
 bool TSessionSqlObjectStore::store(TSession &session)
 {
@@ -43,7 +43,7 @@ bool TSessionSqlObjectStore::store(TSession &session)
     QByteArray data;
     QDataStream ds(&data, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
-    so.data = data.toBase64();
+    so.data = qCompress(data, 1).toBase64();
 
     if (ds.status() != QDataStream::Ok) {
         tSystemError("Failed to store session. Must set objects that can be serialized.");
@@ -72,7 +72,7 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     }
 
     TSession session(id);
-    QByteArray data = QByteArray::fromBase64(so.data);
+    QByteArray data = qUncompress(QByteArray::fromBase64(so.data));
     QDataStream ds(&data, QIODevice::ReadOnly);
     ds >> *static_cast<QVariantMap *>(&session);
 

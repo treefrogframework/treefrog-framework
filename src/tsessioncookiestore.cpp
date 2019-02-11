@@ -19,8 +19,10 @@
 
 bool TSessionCookieStore::store(TSession &session)
 {
-    if (session.isEmpty())
+    if (session.isEmpty()) {
+        session.sessionId = "";
         return true;
+    }
 
 #ifndef TF_NO_DEBUG
     {
@@ -45,6 +47,7 @@ bool TSessionCookieStore::store(TSession &session)
         return false;
     }
 
+    ba = qCompress(ba, 1);
     QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
                                                  QCryptographicHash::Sha1);
     session.sessionId = ba.toBase64() + "_" + digest.toBase64();
@@ -71,6 +74,7 @@ TSession TSessionCookieStore::find(const QByteArray &id)
             return session;
         }
 
+        ba = qUncompress(ba);
         QDataStream ds(&ba, QIODevice::ReadOnly);
         ds >> *static_cast<QVariantMap *>(&session);
 

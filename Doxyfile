@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrogFramework
-PROJECT_NUMBER         = 1.20
+PROJECT_NUMBER         = 1.24
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -135,7 +135,6 @@ EXCLUDE                = src/test \
                          src/thttpsocket.h \
                          src/tsessioncookiestore.h \
                          src/tsessionfilestore.h \
-                         src/tsessionsqlobjectstore.h \
                          src/tsessionmongoobject.h \
                          src/tlazyloader.h \
                          src/tdispatcher.h \
