@@ -181,7 +181,11 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                     break;
                 }
 
+#if QT_VERSION >= 0x050400
                 if (lst.count() <= LIMIT_WORDS_IN_CLAUSE || database.driver()->dbmsType() == QSqlDriver::MySqlServer) {
+#else
+                if (lst.count() <= LIMIT_WORDS_IN_CLAUSE || database.driverName().toUpper() == QLatin1String("QMYSQL")) {
+#endif
                     QString str = inclause(lst, 0, lst.count());
                     sqlString += name + TSql::formatArg(cri.op1, str);
                 } else {
