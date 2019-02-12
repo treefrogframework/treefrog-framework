@@ -14,7 +14,7 @@ Configuration:
   --enable-debug      compile with debugging information
   --enable-gui-mod    compile and link with QtGui module
   --enable-shared-mongoc  link the mongoc shared library
-  --spec=SPEC         Use SPEC as QMAKESPEC
+  --spec=SPEC         use SPEC as QMAKESPEC
 
 Installation directories:
   --prefix=PREFIX     install files in PREFIX [$PREFIX]
