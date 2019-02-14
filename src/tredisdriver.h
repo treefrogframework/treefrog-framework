@@ -43,9 +43,9 @@ protected:
     static QByteArray toMultiBulk(const QList<QByteArray> &data);
 
 private:
-    QTcpSocket *client;
+    QTcpSocket *client {nullptr};
     QByteArray buffer;
-    int pos;
+    int pos {0};
 
     T_DISABLE_COPY(TRedisDriver)
     T_DISABLE_MOVE(TRedisDriver)

@@ -16,8 +16,7 @@ using namespace Tf;
 const int DEFAULT_PORT = 6379;
 
 
-TRedisDriver::TRedisDriver()
-    : TKvsDriver(), client(nullptr), buffer(), pos(0)
+TRedisDriver::TRedisDriver() : TKvsDriver()
 {
     buffer.reserve(1023);
 }
