@@ -90,7 +90,7 @@ int TEpoll::wait(int timeout)
 
 TEpollSocket *TEpoll::next()
 {
-    return (eventIterator < numEvents) ? (TEpollSocket *)events[eventIterator++].data.ptr : 0;
+    return (eventIterator < numEvents) ? (TEpollSocket *)events[eventIterator++].data.ptr : nullptr;
 }
 
 bool TEpoll::canReceive() const
