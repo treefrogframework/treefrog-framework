@@ -170,19 +170,19 @@ Tf::HttpMethod THttpRequest::realMethod() const
 Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
 {
     Tf::HttpMethod method;
-    QString str = d->header.rawHeader("X-HTTP-Method-Override").toLower();
+    QString str = d->header.rawHeader(QByteArrayLiteral("X-HTTP-Method-Override")).toLower();
     method = methodHash()->value(str, Tf::Invalid);
     if (method != Tf::Invalid) {
         return method;
     }
 
-    str = d->header.rawHeader("X-HTTP-Method").toLower();
+    str = d->header.rawHeader(QByteArrayLiteral("X-HTTP-Method")).toLower();
     method = methodHash()->value(str, Tf::Invalid);
     if (method != Tf::Invalid) {
         return method;
     }
 
-    str = d->header.rawHeader("X-METHOD-OVERRIDE").toLower();
+    str = d->header.rawHeader(QByteArrayLiteral("X-METHOD-OVERRIDE")).toLower();
     method = methodHash()->value(str, Tf::Invalid);
     return method;
 }
@@ -193,7 +193,7 @@ Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
 */
 Tf::HttpMethod THttpRequest::queryItemMethod() const
 {
-    QString queryMethod = queryItemValue("_method");
+    QString queryMethod = queryItemValue(QStringLiteral("_method"));
     return methodHash()->value(queryMethod, Tf::Invalid);
 }
 
@@ -210,7 +210,7 @@ QString THttpRequest::parameter(const QString &name) const
 
 bool THttpRequest::hasItem(const QString &name, const QList<QPair<QString, QString>> &items)
 {
-    const QRegExp rx(QRegExp::escape(name) + "(\\[[^\\[\\]]*\\]){0,2}");
+    const QRegExp rx(QRegExp::escape(name) + QLatin1String("(\\[[^\\[\\]]*\\]){0,2}"));
 
     for (auto &p : items) {
         if (rx.exactMatch(p.first)) {
@@ -289,7 +289,7 @@ QStringList THttpRequest::allQueryItemValues(const QString &name) const
 QStringList THttpRequest::queryItemList(const QString &key) const
 {
     QString k = key;
-    if (!k.endsWith("[]")) {
+    if (!k.endsWith(QLatin1String("[]"))) {
         k += QLatin1String("[]");
     }
     return allQueryItemValues(k);
@@ -385,7 +385,7 @@ QStringList THttpRequest::allFormItemValues(const QString &name) const
 QStringList THttpRequest::formItemList(const QString &key) const
 {
     QString k = key;
-    if (!k.endsWith("[]")) {
+    if (!k.endsWith(QLatin1String("[]"))) {
         k += QLatin1String("[]");
     }
     return allFormItemValues(k);
@@ -396,7 +396,7 @@ QVariantList THttpRequest::itemVariantList(const QString &key, const QList<QPair
 {
     // format of key: hoge[][foo] or hoge[][]
     QVariantList lst;
-    const QRegExp rx(QRegExp::escape(key) + "\\[\\]\\[([^\\[\\]]*)\\]");
+    const QRegExp rx(QRegExp::escape(key) + QLatin1String("\\[\\]\\[([^\\[\\]]*)\\]"));
 
     for (auto &p : items) {
         if (rx.exactMatch(p.first)) {
@@ -425,8 +425,8 @@ QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString,
 {
     // format of key: hoge[foo], hoge[foo][] or hoge[foo][fuga]
     QVariantMap map;
-    const QRegExp rx(QRegExp::escape(key) + "\\[([^\\[\\]]+)\\]");
-    const QRegExp rx2(QRegExp::escape(key) + "\\[([^\\[\\]]+)\\]\\[([^\\[\\]]*)\\]");
+    const QRegExp rx(QRegExp::escape(key) + QLatin1String("\\[([^\\[\\]]+)\\]"));
+    const QRegExp rx2(QRegExp::escape(key) + QLatin1String("\\[([^\\[\\]]+)\\]\\[([^\\[\\]]*)\\]"));
 
     for (auto &p : items) {
         if (rx.exactMatch(p.first)) {
@@ -480,19 +480,19 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
     case Tf::Put:
     case Tf::Patch: {
         QString ctype = QString::fromLatin1(header.contentType().trimmed());
-        if (ctype.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
+        if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
             // multipart/form-data
             d->multipartFormData = TMultipartFormData(body, boundary());
             d->formItems = d->multipartFormData.postParameters;
 
-        } else if (ctype.startsWith("application/json", Qt::CaseInsensitive)) {
+        } else if (ctype.startsWith(QLatin1String("application/json"), Qt::CaseInsensitive)) {
             QJsonParseError error;
             d->jsonData = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
                 tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qPrintable(error.errorString()),
                             error.offset);
             }
-        } else if (ctype.startsWith("application/x-www-form-urlencoded", Qt::CaseInsensitive)) {
+        } else if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
                 const QList<QByteArray> formdata = body.split('&');
                 for (auto &frm : formdata) {
@@ -541,13 +541,13 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 QByteArray THttpRequest::boundary() const
 {
     QByteArray boundary;
-    QString contentType = d->header.rawHeader("content-type").trimmed();
+    QString contentType = d->header.rawHeader(QByteArrayLiteral("content-type")).trimmed();
 
-    if (contentType.startsWith("multipart/form-data", Qt::CaseInsensitive)) {
+    if (contentType.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
         const QStringList lst = contentType.split(QChar(';'), QString::SkipEmptyParts, Qt::CaseSensitive);
         for (auto &bnd : lst) {
             QString string = bnd.trimmed();
-            if (string.startsWith("boundary=", Qt::CaseInsensitive)) {
+            if (string.startsWith(QLatin1String("boundary="), Qt::CaseInsensitive)) {
                 boundary = string.mid(9).toLatin1();
                 // strip optional surrounding quotes (RFC 2046 and 7578)
                 if (boundary.startsWith('"') && boundary.endsWith('"')) {
