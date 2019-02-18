@@ -110,9 +110,9 @@ THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, co
 */
 THttpRequest::~THttpRequest()
 {
-    if (bodyDevide) {
-        bodyDevide->close();
-        delete bodyDevide;
+    if (bodyDevice) {
+        bodyDevice->close();
+        delete bodyDevice;
     }
 }
 
@@ -121,10 +121,10 @@ THttpRequest::~THttpRequest()
 */
 THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 {
-    if (bodyDevide) {
-        bodyDevide->close();
-        delete bodyDevide;
-        bodyDevide = nullptr;
+    if (bodyDevice) {
+        bodyDevice->close();
+        delete bodyDevice;
+        bodyDevice = nullptr;
     }
 
     d = other.d;
@@ -613,14 +613,14 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
 
 QIODevice *THttpRequest::rawBody()
 {
-    if (! bodyDevide) {
+    if (! bodyDevice) {
         if (! d->multipartFormData.bodyFile.isEmpty()) {
-            bodyDevide = new QFile(d->multipartFormData.bodyFile);
+            bodyDevice = new QFile(d->multipartFormData.bodyFile);
         } else {
-            bodyDevide = new QBuffer(&d->bodyArray);
+            bodyDevice = new QBuffer(&d->bodyArray);
         }
     }
-    return bodyDevide;
+    return bodyDevice;
 }
 
 

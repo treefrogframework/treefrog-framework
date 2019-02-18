@@ -93,7 +93,7 @@ private:
     void parseBody(const QByteArray &body, const THttpRequestHeader &header);
 
     QSharedDataPointer<THttpRequestData> d;
-    QIODevice *bodyDevide {nullptr};
+    QIODevice *bodyDevice {nullptr};
     friend class TMultipartFormData;
 };
 
