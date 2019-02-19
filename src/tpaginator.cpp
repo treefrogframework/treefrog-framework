@@ -72,9 +72,6 @@ void TPaginator::calculateNumPages()
 
     // total number of pages
     _numPages = qMax((int)ceil(_itemsTotal / (double)_itemsPerPage), 1);
-
-    // validation of currentPage
-    _currentPage = hasPage(_currentPage) ? _currentPage : 1;
 }
 
 /*!
@@ -83,7 +80,7 @@ void TPaginator::calculateNumPages()
 */
 int TPaginator::offset() const
 {
-    return (_currentPage - 1) * _itemsPerPage;
+    return (currentPage() - 1) * _itemsPerPage;
 }
 
 /*!
@@ -121,7 +118,7 @@ void TPaginator::setMidRange(int range)
 */
 void TPaginator::setCurrentPage(int page)
 {
-    _currentPage = hasPage(page) ? page : 1;
+    _currentPage = page;
 }
 
 /*!
@@ -131,13 +128,13 @@ QList<int> TPaginator::range() const
 {
     QList<int> ret;
 
-    int start = qMax(_currentPage - _midRange / 2, 1);
+    int start = qMax(currentPage() - _midRange / 2, 1);
     int end;
 
     if (start == 1) {
         end = qMin(_midRange, _numPages);
     } else {
-        end = qMin(_currentPage + _midRange / 2, _numPages);
+        end = qMin(currentPage() + _midRange / 2, _numPages);
 
         if (end == _numPages) {
             start = qMax(end - _midRange + 1, 1);
@@ -158,6 +155,13 @@ int TPaginator::itemCountOfCurrentPage() const
     return qBound(0, _itemsTotal - offset(), _itemsPerPage);
 }
 
+/*!
+  Returns the current page number.
+*/
+int TPaginator::currentPage() const
+{
+    return hasPage(_currentPage) ? _currentPage : 1;
+}
 
 /*!
   \fn int TPaginator::itemTotalCount() const
@@ -177,11 +181,6 @@ int TPaginator::itemCountOfCurrentPage() const
 /*!
   \fn int TPaginator::midRange() const
   Returns the number of page numbers to be shown on a pagination bar.
-*/
-
-/*!
-  \fn int TPaginator::currentPage() const
-  Returns the current page number.
 */
 
 /*!

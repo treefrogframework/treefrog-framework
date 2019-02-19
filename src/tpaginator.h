@@ -28,13 +28,13 @@ public:
     int offset() const;
     int midRange() const { return _midRange; }
     virtual QList<int> range() const;
-    int currentPage() const { return _currentPage; }
+    int currentPage() const;
     int firstPage() const { return 1; }
-    int previousPage() const { return qMax(_currentPage - 1, 1); }
-    int nextPage() const { return qMin(_currentPage + 1, _numPages); }
+    int previousPage() const { return qMax(currentPage() - 1, 1); }
+    int nextPage() const { return qMin(currentPage() + 1, _numPages); }
     int lastPage() const { return _numPages; }
-    bool hasPrevious() const { return (_currentPage >= 2); }
-    bool hasNext() const { return (_currentPage < _numPages); }
+    bool hasPrevious() const { return (currentPage() >= 2); }
+    bool hasNext() const { return (currentPage() < _numPages); }
     bool hasPage(int page) const { return (page > 0 && page <= _numPages); }
 
 protected:
