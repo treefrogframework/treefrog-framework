@@ -24,6 +24,7 @@ public:
     operator T*() const;
     T *load(bool *mark = nullptr) const;
     void store(T *value);
+    T *exchange(T *value);
     bool compareExchange(T *expected, T *newValue);
     bool compareExchangeStrong(T *expected, T *newValue);
     TAtomicPtr<T> &operator=(T *value);
@@ -86,6 +87,14 @@ template <class T>
 inline void TAtomicPtr<T>::store(T *value)
 {
     atomicPtr.store((quintptr)value, std::memory_order_release);
+}
+
+
+template <class T>
+inline T *TAtomicPtr<T>::exchange(T *value)
+{
+    quintptr ptr = atomicPtr.exchange((quintptr)value);
+    return (T*)(ptr & ~MASK);
 }
 
 

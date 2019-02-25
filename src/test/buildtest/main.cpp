@@ -201,7 +201,9 @@ void atomic_ptr()
     ptr2.load();
     ptr.store(foo);
     ptr.compareExchange(foo, nullptr);
+    auto ptr3 = ptr.exchange(foo);
     ptr = ptr2;
+    ptr2 = ptr3;
     Tf::threadFence();
 }
 
