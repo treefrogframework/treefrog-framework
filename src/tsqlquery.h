@@ -24,6 +24,7 @@ public:
     int size() const;
     bool next();
     QVariant value(int index) const;
+    QVariant value(const QString &name) const;
 
     static void clearCachedQueries();
     static QString escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type = QSqlDriver::FieldName, int databaseId = 0);

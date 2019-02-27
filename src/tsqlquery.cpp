@@ -219,3 +219,12 @@ QVariant TSqlQuery::value(int index) const
 {
     return QSqlQuery::value(index);
 }
+
+/*!
+  Returns the value of the field called name in the current record.
+  If field name does not exist an invalid variant is returned.
+ */
+QVariant TSqlQuery::value(const QString &name) const
+{
+    return QSqlQuery::value(name);
+}
