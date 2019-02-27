@@ -12,7 +12,7 @@ page_id: "080.010"
   <p>
     File: <input name="picture" type="file">
   </p>
-  <p> 
+  <p>
     <input type="submit" value="Upload">
   </p>
 </form>
@@ -37,8 +37,8 @@ QString origname = formdata.originalFileName("picture");
 它可能用得不多, 不过你可以在使用uploadFile()方法后获得一个临时的文件名. 随机的文件名可以确保文件不会重叠覆盖.
 
 ```c++
-QString upfile = formdata.uploadedFile("picture");
-``` 
+QString upfile = formdata.uploadedFilePath("picture");
+```
 
 ## 上传多个文件
 
@@ -52,7 +52,7 @@ Treefrog框架同样支持上传多个文件. 你可以使用JavaScript库来上
     File1: <input name="picture[]" type="file">
     File2: <input name="picture[]" type="file">
   </p>
-  <p> 
+  <p>
     <input type="submit" value="Upload">
   </p>
 </form>

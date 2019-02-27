@@ -36,7 +36,7 @@ QString origname = formdata.originalFileName("picture");
 あまり使われないかもしれませんが、次のメソッドでアップロード直後の一時ファイル名を取得することができます。重複しないようにランダムなファイル名が付けられています。
 
 ```
-QString upfile = formdata.uploadedFile("picture");
+QString upfile = formdata.uploadedFilePath("picture");
 ```
 
 ## 可変個のファイルのアップロード
