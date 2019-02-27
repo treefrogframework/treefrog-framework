@@ -81,6 +81,7 @@ public:
     QString originalFileName(const QByteArray &dataName) const;
     qint64 size(const QByteArray &dataName) const;
     bool renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
+    QString uploadedFilePath(const QByteArray &dataName) const;
     void clear();
 
     bool hasEntity(const QByteArray &dataName) const;

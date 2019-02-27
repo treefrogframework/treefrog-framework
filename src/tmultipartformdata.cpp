@@ -270,7 +270,7 @@ bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite, QFi
 }
 
 /*!
-  Returns the name of the temporary file contained in this entity,
+  Returns the path of the temporary file contained in this entity,
   including the absolute path.
 */
 QString TMimeEntity::uploadedFilePath() const
@@ -419,6 +419,15 @@ qint64 TMultipartFormData::size(const QByteArray &dataName) const
 bool TMultipartFormData::renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite, QFile::Permissions permissions)
 {
     return entity(dataName).renameUploadedFile(newName, overwrite, permissions);
+}
+
+/*!
+  Returns the path of the temporary file contained in the MIME entity
+  associated with the name \a dataName, including the absolute path.
+ */
+QString TMultipartFormData::uploadedFilePath(const QByteArray &dataName) const
+{
+    return entity(dataName).uploadedFilePath();
 }
 
 /*!
