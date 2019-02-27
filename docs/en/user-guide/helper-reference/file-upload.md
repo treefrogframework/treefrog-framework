@@ -34,7 +34,7 @@ The original file name can be obtained using the following method:
 QString origname = formdata.originalFileName("picture");
 ```
 
-It may not be much used, but you can get a temporary file name just after uploading by using the uploadFile() method. Random file names have been attached to make sure that they do not overlap.
+It may not be much used, but you can get a temporary file name just after uploading by using the uploadedFilePath() method. Random file names have been attached to make sure that they do not overlap.
 
 ```c++
 QString upfile = formdata.uploadedFilePath("picture");
