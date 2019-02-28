@@ -34,7 +34,7 @@ formdata.renameUploadedFile("picture", "dest_path");
 QString origname = formdata.originalFileName("picture");
 ```
 
-它可能用得不多, 不过你可以在使用uploadFile()方法后获得一个临时的文件名. 随机的文件名可以确保文件不会重叠覆盖.
+它可能用得不多, 不过你可以在使用uploadedFilePath()方法后获得一个临时的文件名. 随机的文件名可以确保文件不会重叠覆盖.
 
 ```c++
 QString upfile = formdata.uploadedFilePath("picture");
@@ -73,3 +73,4 @@ for (QListIterator<TMimeEntity> it(lst); it.hasNext(); ) {
 ```
 
 别忘了在这里使用迭代器.
+
