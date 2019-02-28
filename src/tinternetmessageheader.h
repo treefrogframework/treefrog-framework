@@ -28,8 +28,8 @@ public:
 
     QByteArray contentType() const;
     void setContentType(const QByteArray &type);
-    uint contentLength() const;
-    void setContentLength(int len);
+    qint64 contentLength() const;
+    void setContentLength(qint64 len);
     QByteArray date() const;
     void setDate(const QByteArray &date);
     void setDate(const QDateTime &dateTime);
