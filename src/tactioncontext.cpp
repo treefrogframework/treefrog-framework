@@ -35,7 +35,9 @@ TActionContext::TActionContext()
       socketDesc(0),
       currController(nullptr),
       httpReq(nullptr)
-{ }
+{
+    accessLogger.open();
+}
 
 
 TActionContext::~TActionContext()
@@ -57,9 +59,8 @@ static bool directViewRenderMode()
 void TActionContext::execute(THttpRequest &request, int sid)
 {
     T_TRACEFUNC("");
-
+    static qint64 limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong();
     THttpResponseHeader responseHeader;
-    accessLogger.open();
 
     try {
         httpReq = &request;
@@ -82,6 +83,10 @@ void TActionContext::execute(THttpRequest &request, int sid)
         // HTTP method
         Tf::HttpMethod method = httpReq->method();
         QString path = THttpUtility::fromUrlEncoding(reqHeader.path().mid(0, reqHeader.path().indexOf('?')));
+
+        if (limitBodyBytes > 0 && reqHeader.contentLength() > (uint)limitBodyBytes) {
+            throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
+        }
 
         // Routing info exists?
         QStringList components = TUrlRoute::splitPath(path);

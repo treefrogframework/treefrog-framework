@@ -177,7 +177,7 @@ bool THttpSocket::canReadRequest() const
 void THttpSocket::readRequest()
 {
     T_TRACEFUNC("");
-    uint limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toUInt();
+    static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
     qint64 bytes = 0;
     QByteArray buf;
 
@@ -207,10 +207,10 @@ void THttpSocket::readRequest()
             int idx = readBuffer.indexOf("\r\n\r\n");
             if (idx > 0) {
                 THttpRequestHeader header(readBuffer);
-                tSystemDebug("content-length: %d", header.contentLength());
+                tSystemDebug("content-length: %lld", header.contentLength());
 
-                if (Q_UNLIKELY(limitBodyBytes > 0 && header.contentLength() > limitBodyBytes)) {
-                    throw ClientErrorException(413);  // Request Entity Too Large
+                if (Q_UNLIKELY(systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes)) {
+                    throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
                 }
 
                 lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - readBuffer.length(), 0LL);

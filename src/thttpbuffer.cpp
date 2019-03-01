@@ -10,7 +10,7 @@
 #include "thttpbuffer.h"
 #include "tsystemglobal.h"
 
-static int limitBodyBytes = -1;
+static qint64 systemLimitBodyBytes = -1;
 
 
 THttpBuffer::THttpBuffer()
@@ -63,8 +63,8 @@ int THttpBuffer::write(const char *data, int len)
     if (lengthToRead < 0) {
         parse();
     } else {
-        if (limitBodyBytes > 0 && httpBuffer.length() > limitBodyBytes) {
-            throw ClientErrorException(413);  // Request Entity Too Large
+        if (systemLimitBodyBytes > 0 && httpBuffer.length() > systemLimitBodyBytes) {
+            throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
         lengthToRead = qMax(lengthToRead - len, 0LL);
@@ -81,8 +81,8 @@ int THttpBuffer::write(const QByteArray &byteArray)
 
 void THttpBuffer::parse()
 {
-    if (Q_UNLIKELY(limitBodyBytes < 0)) {
-        limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toInt();
+    if (Q_UNLIKELY(systemLimitBodyBytes < 0)) {
+        systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
     }
 
     if (Q_LIKELY(lengthToRead < 0)) {
@@ -91,8 +91,8 @@ void THttpBuffer::parse()
             THttpRequestHeader header(httpBuffer);
             tSystemDebug("content-length: %d", header.contentLength());
 
-            if (limitBodyBytes > 0 && header.contentLength() > (uint)limitBodyBytes) {
-                throw ClientErrorException(413);  // Request Entity Too Large
+            if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
+                throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
             }
 
             lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);

@@ -91,61 +91,72 @@ void TActionThread::run()
     TActionContext::socketDesc = 0;
     TDatabaseContext::setCurrentDatabaseContext(this);
 
-    for (;;) {
-        reqs = readRequest(_httpSocket);
-        tSystemDebug("HTTP request count: %d", reqs.count());
+    try {
+        for (;;) {
+            reqs = readRequest(_httpSocket);
+            tSystemDebug("HTTP request count: %d", reqs.count());
 
-        if (Q_UNLIKELY(reqs.isEmpty())) {
-            break;
-        }
+            if (Q_UNLIKELY(reqs.isEmpty())) {
+                break;
+            }
 
-        for (auto &req : reqs) {
             // WebSocket?
-            QByteArray connectionHeader = req.header().rawHeader("Connection").toLower();
+            QByteArray connectionHeader = reqs[0].header().rawHeader("Connection").toLower();
             if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
-                QByteArray upgradeHeader = req.header().rawHeader("Upgrade").toLower();
+                QByteArray upgradeHeader = reqs[0].header().rawHeader("Upgrade").toLower();
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
-                    if (!handshakeForWebSocket(req.header())) {
+                    if (!handshakeForWebSocket(reqs[0].header())) {
                         goto socket_error;
                     }
                 }
-
                 goto socket_cleanup;
             }
 
-            TActionContext::execute(req, _httpSocket->socketId());
+            for (auto &req : reqs) {
+                TActionContext::execute(req, _httpSocket->socketId());
+                _httpSocket->flush();  // Flush socket
+                TActionContext::release();
+            }
 
-            _httpSocket->flush();  // Flush socket
-            TActionContext::release();
-        }
+            if (keepAliveTimeout == 0) {
+                break;
+            }
 
-        if (keepAliveTimeout == 0) {
-            break;
-        }
+            if (threadCount() >= _maxThreads && _maxThreads > 0) {
+                // Do not keep-alive
+                break;
+            }
 
-        if (threadCount() >= _maxThreads && _maxThreads > 0) {
-            // Do not keep-alive
-            break;
-        }
-
-        // Next request
-        while (!_httpSocket->waitForReadyRead(100)) {
-            if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
-                if (_httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
-                    tSystemWarn("Error occurred : error:%d  socket:%d", _httpSocket->error(), _httpSocket->socketId());
+            // Next request
+            while (!_httpSocket->waitForReadyRead(10)) {
+                if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
+                    if (_httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
+                        tSystemWarn("Error occurred : error:%d  socket:%d", _httpSocket->error(), _httpSocket->socketId());
+                    }
+                    goto receive_end;
                 }
-                goto receive_end;
-            }
 
-            if (_httpSocket->idleTime() >= keepAliveTimeout) {
-                tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
-                goto receive_end;
-            }
+                if (_httpSocket->idleTime() >= keepAliveTimeout) {
+                    tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
+                    goto receive_end;
+                }
 
-            while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {}
+                while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {}
+            }
         }
+
+    } catch (ClientErrorException &e) {
+        tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+        tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+        THttpResponseHeader header;
+        TActionContext::writeResponse(e.statusCode(), header);
+    }  catch (std::exception &e) {
+        tError("Caught Exception: %s", e.what());
+        tSystemError("Caught Exception: %s", e.what());
+        THttpResponseHeader header;
+        TActionContext::writeResponse(Tf::InternalServerError, header);
     }
 
 receive_end:

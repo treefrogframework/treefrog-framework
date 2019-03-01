@@ -18,7 +18,7 @@
 using namespace Tf;
 
 const int BUFFER_RESERVE_SIZE = 1023;
-static int limitBodyBytes = -1;
+static qint64 systemLimitBodyBytes = -1;
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
@@ -93,8 +93,9 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
     if (lengthToRead < 0) {
         parse();
     } else {
-        if (limitBodyBytes > 0 && httpBuffer.length() > limitBodyBytes) {
-            throw ClientErrorException(413);  // Request Entity Too Large
+        if (systemLimitBodyBytes > 0 && httpBuffer.length() > systemLimitBodyBytes) {
+            httpBuffer.clear();
+            throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
         lengthToRead = qMax(lengthToRead - pos, 0LL);
@@ -160,18 +161,19 @@ void TEpollHttpSocket::releaseWorker()
 
 void TEpollHttpSocket::parse()
 {
-    if (Q_UNLIKELY(limitBodyBytes < 0)) {
-        limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toInt();
+    if (Q_UNLIKELY(systemLimitBodyBytes < 0)) {
+        systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
     }
 
     if (Q_LIKELY(lengthToRead < 0)) {
         int idx = httpBuffer.indexOf(CRLFCRLF);
         if (idx > 0) {
             THttpRequestHeader header(httpBuffer);
-            tSystemDebug("content-length: %d", header.contentLength());
+            tSystemDebug("content-length: %lld", header.contentLength());
 
-            if (limitBodyBytes > 0 && header.contentLength() > (uint)limitBodyBytes) {
-                throw ClientErrorException(413);  // Request Entity Too Large
+            if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
+                httpBuffer.clear();
+                throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
             }
 
             lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);

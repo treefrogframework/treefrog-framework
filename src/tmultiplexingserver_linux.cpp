@@ -202,9 +202,19 @@ void TMultiplexingServer::run()
                         continue;
                     }
 
-                    // Receive data
-                    int len = TEpoll::instance()->recv(sock);
-                    if (Q_UNLIKELY(len < 0)) {
+                    try {
+                        // Receive data
+                        int len = TEpoll::instance()->recv(sock);
+                        if (Q_UNLIKELY(len < 0)) {
+                            TEpoll::instance()->deletePoll(sock);
+                            sock->close();
+                            sock->deleteLater();
+                            continue;
+                        }
+
+                    } catch (ClientErrorException &e) {
+                        tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+                        tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
                         TEpoll::instance()->deletePoll(sock);
                         sock->close();
                         sock->deleteLater();
