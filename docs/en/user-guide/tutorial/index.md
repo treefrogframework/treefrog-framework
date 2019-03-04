@@ -97,7 +97,7 @@ Example in MySQL:
  HostName=
  Port=
  UserName=root
- Password=root
+ Password=pass
  ConnectOptions=
 ```
 

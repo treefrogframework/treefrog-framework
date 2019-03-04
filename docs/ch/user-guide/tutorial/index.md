@@ -90,8 +90,8 @@ DriverType=QMYSQL
 DatabaseName=blogdb
 HostName=
 Port=
-UserName= root
-Password= root
+UserName=root
+Password=pass
 ConnectOptions=
 ```
 
