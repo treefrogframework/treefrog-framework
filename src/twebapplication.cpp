@@ -295,7 +295,7 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
     if (ext.isEmpty())
         return QByteArray();
 
-    QString type = mediaTypes->value(ext, DEFAULT_INTERNET_MEDIA_TYPE).toString();
+    QString type = mediaTypes->value(ext.toLower(), DEFAULT_INTERNET_MEDIA_TYPE).toString();
     if (appendCharset && type.startsWith("text", Qt::CaseInsensitive)) {
         type += "; charset=" + Tf::app()->codecForHttpOutput()->name();
     }
