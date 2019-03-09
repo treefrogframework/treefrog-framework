@@ -129,7 +129,7 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const Q
         type = val.type();
     }
 
-    QSqlField field("dummy", type);
+    QSqlField field(QStringLiteral("dummy"), type);
     field.setValue(val);
     return database.driver()->formatValue(field);
 }
