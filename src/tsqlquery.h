@@ -74,7 +74,7 @@ inline TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 */
 inline QVariant TSqlQuery::getNextValue()
 {
-    return (next()) ? record().value(0) : QVariant();
+    return next() ? record().value(0) : QVariant();
 }
 
 /*!
