@@ -118,12 +118,13 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
 
     for (;;) {
         pos = skipWhitespace(header, pos);
-        if (pos >= header.length())
+        if (pos >= header.length()) {
             return result;
-
+        }
         int semicol = header.indexOf(';', pos);
-        if (semicol < 0)
+        if (semicol < 0) {
             semicol = header.length();
+        }
 
         QByteArray key;
         int equal = header.indexOf('=', pos);
@@ -136,12 +137,13 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
             continue;
         }
 
-        key = header.mid(pos,  equal - pos).trimmed();
+        key = header.mid(pos, equal - pos).trimmed();
         pos = equal + 1;
 
         pos = skipWhitespace(header, pos);
-        if (pos >= header.length())
+        if (pos >= header.length()) {
             return result;
+        }
 
         QByteArray value;
         if (header[pos] == '"') {
@@ -151,13 +153,13 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
                 if (c == '"') {
                     // end of quoted text
                     break;
-                } else if (c == '\\') {
-                    ++pos;
-                    if (pos >= header.length()) {
-                        // broken header
-                        return result;
-                    }
-                    c = header[pos];
+                // } else if (c == '\\') {
+                //     ++pos;
+                //     if (pos >= header.length()) {
+                //         // broken header
+                //         return result;
+                //     }
+                //     c = header[pos];
                 }
 
                 value += c;
@@ -166,8 +168,7 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
         } else {
             while (pos < header.length()) {
                 char c = header.at(pos);
-                if (c == ' ' || c == '\t' || c == '\r'
-                    || c == '\n' || c == ';') {
+                if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == ';') {
                     break;
                 }
                 value += c;
