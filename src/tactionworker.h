@@ -21,9 +21,9 @@ public:
     static bool waitForAllDone(int msec);
 
 protected:
-    void run();
+    void run() override;
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
-    void closeHttpSocket();
+    void closeHttpSocket() override;
 
 private:
     QByteArray httpRequest;

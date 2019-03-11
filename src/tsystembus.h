@@ -17,7 +17,7 @@ class T_CORE_EXPORT TSystemBus : public QObject
 public:
     ~TSystemBus();
     bool send(const TSystemBusMessage &message);
-    bool send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload);
+    bool send(Tf::SystemOpCode opcode, const QString &dst, const QByteArray &payload);
     TSystemBusMessage recv();
     QList<TSystemBusMessage> recvAll();
     void connect();
@@ -52,22 +52,13 @@ private:
 class T_CORE_EXPORT TSystemBusMessage
 {
 public:
-    enum OpCode {
-        Invalid                 = 0x00,
-        WebSocketSendText       = 0x01,
-        WebSocketSendBinary     = 0x02,
-        WebSocketPublishText    = 0x03,
-        WebSocketPublishBinary  = 0x04,
-        MaxOpCode               = 0x04,
-    };
-
     TSystemBusMessage();
     TSystemBusMessage(quint8 opcode, const QByteArray &data);
     TSystemBusMessage(quint8 opcode, const QString &target, const QByteArray &data);
 
     bool firstBit() const { return firstByte_ & 0x80; }
     bool rsvBit() const { return firstByte_ & 0x40; }
-    OpCode opCode() const { return (OpCode)(firstByte_ & 0x3F); }
+    Tf::SystemOpCode opCode() const { return (Tf::SystemOpCode)(firstByte_ & 0x3F); }
     QString target() const;
     QByteArray data() const;
 

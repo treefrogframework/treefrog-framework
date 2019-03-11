@@ -65,7 +65,7 @@ TEpoll::TEpoll()
 
 TEpoll::~TEpoll()
 {
-    delete events;
+    delete[] events;
 
     if (epollFd > 0)
         tf_close(epollFd);

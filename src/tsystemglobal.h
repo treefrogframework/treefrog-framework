@@ -24,12 +24,13 @@ namespace Tf
 #endif
     ;
 
-    enum ServerOpCode {
+    enum SystemOpCode {
+        InvalidOpCode           = 0x00,
         WebSocketSendText       = 0x01,
         WebSocketSendBinary     = 0x02,
         WebSocketPublishText    = 0x03,
         WebSocketPublishBinary  = 0x04,
-        MaxServerOpCode,
+        MaxOpCode               = 0x04,
     };
 }
 

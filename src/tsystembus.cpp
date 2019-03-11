@@ -48,7 +48,7 @@ bool TSystemBus::send(const TSystemBusMessage &message)
 }
 
 
-bool TSystemBus::send(Tf::ServerOpCode opcode, const QString &dst, const QByteArray &payload)
+bool TSystemBus::send(Tf::SystemOpCode opcode, const QString &dst, const QByteArray &payload)
 {
     return send(TSystemBusMessage(opcode, dst, payload));
 }
@@ -248,7 +248,7 @@ bool TSystemBusMessage::validate()
         tSystemError("Invalid byte: 0x%x  [%s:%d]", firstByte_, __FILE__, __LINE__);
     }
 
-    valid_ &= (opCode() > 0 && opCode() <= MaxOpCode);
+    valid_ &= (opCode() > 0 && opCode() <= Tf::MaxOpCode);
     if (!valid_) {
         tSystemError("Invalid opcode: %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
     }
