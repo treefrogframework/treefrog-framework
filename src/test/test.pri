@@ -19,5 +19,5 @@ win32 {
     LIBS += -L../../release -ltreefrog$${TF_VER_MAJ}
   }
 } else:unix {
-  LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog
+  LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog -lrt
 }
