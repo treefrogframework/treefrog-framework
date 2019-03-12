@@ -14,11 +14,11 @@ Features
  * O/R mapping  - Conceals complex and troublesome database accesses
  * Template system  - Completely divided templates and presentation logic
  * Support for many DB  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
-                          InterBase, MongoDB and Redis.
+   InterBase, MongoDB and Redis.
  * Support WebSocket  - Providing full-duplex communications channels
  * Generator  - Generates scaffolds and Makefiles automatically
  * Cross-platform  - Windows, macOS, Linux, etc. Write once, compile
-                     anywhere.
+   anywhere.
  * Ajax support  - JSON, XML and Plain text available
  * Less resource  -  Stable operation even on Raspberry Pi
  * OSS  - New BSD License
