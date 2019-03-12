@@ -1,4 +1,4 @@
-FROM buildpack-deps:xenial
+FROM buildpack-deps:bionic
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV LANG C.UTF-8
