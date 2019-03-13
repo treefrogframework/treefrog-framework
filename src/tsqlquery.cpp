@@ -129,7 +129,7 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const Q
         type = val.type();
     }
 
-    QSqlField field("dummy", type);
+    QSqlField field(QStringLiteral("dummy"), type);
     field.setValue(val);
     return database.driver()->formatValue(field);
 }
@@ -175,56 +175,4 @@ bool TSqlQuery::exec()
     bool ret = QSqlQuery::exec();
     Tf::writeQueryLog(executedQuery(), ret, lastError());
     return ret;
-}
-
-/*!
-  Returns the number of rows affected by the result's SQL statement, or -1
-  if it cannot be determined. Note that for SELECT statements, the value is
-  undefined; use size() instead. If the query is not active, -1 is returned.
- */
-int TSqlQuery::numRowsAffected() const
-{
-    return QSqlQuery::numRowsAffected();
-}
-
-/*!
-  Returns the size of the result (number of rows returned), or -1 if the size
-  cannot be determined or if the database does not support reporting information
-  about query sizes. Note that for non-SELECT statements (isSelect() returns
-  false), size() will return -1. If the query is not active (isActive() returns
-  false), -1 is returned.
-  To determine the number of rows affected by a non-SELECT statement, use
-  numRowsAffected().
- */
-int TSqlQuery::size() const
-{
-    return QSqlQuery::size();
-}
-
-/*!
-  Retrieves the next record in the result, if available, and positions the
-  query on the retrieved record. Note that the result must be in the active
-  state and isSelect() must return true before calling this function or it
-  will do nothing and return false.
- */
-bool TSqlQuery::next()
-{
-    return QSqlQuery::next();
-}
-
-/*!
-  Returns the value of field index in the current record.
- */
-QVariant TSqlQuery::value(int index) const
-{
-    return QSqlQuery::value(index);
-}
-
-/*!
-  Returns the value of the field called name in the current record.
-  If field name does not exist an invalid variant is returned.
- */
-QVariant TSqlQuery::value(const QString &name) const
-{
-    return QSqlQuery::value(name);
 }
