@@ -129,7 +129,7 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const Q
         type = val.type();
     }
 
-    QSqlField field("dummy", type);
+    QSqlField field(QStringLiteral("dummy"), type);
     field.setValue(val);
     return database.driver()->formatValue(field);
 }
@@ -178,14 +178,38 @@ bool TSqlQuery::exec()
 }
 
 /*!
+  Set the placeholder \a placeholder to be bound to value \a val in the
+  prepared statement.
+  \fn TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
+*/
+
+/*!
+  Set the placeholder in position \a pos to be bound to value \a val in
+  the prepared statement. Field numbering starts at 0.
+  \fn TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
+*/
+
+/*!
+  Adds the value \a val to the list of values when using positional value
+  binding and returns the query object. The order of the addBind() calls
+  determines which placeholder a value will be bound to in the prepared
+  query.
+  \fn TSqlQuery &TSqlQuery::addBind(const QVariant &val)
+*/
+
+/*!
+  Returns the value of first field in the next object and advances the
+  internal iterator by one position. It can be used for a query returning
+  at least one result, such as 'SELECT COUNT(*)'.
+  \fn QVariant TSqlQuery::getNextValue()
+*/
+
+/*!
   Returns the number of rows affected by the result's SQL statement, or -1
   if it cannot be determined. Note that for SELECT statements, the value is
   undefined; use size() instead. If the query is not active, -1 is returned.
+  \fn int TSqlQuery::numRowsAffected() const
  */
-int TSqlQuery::numRowsAffected() const
-{
-    return QSqlQuery::numRowsAffected();
-}
 
 /*!
   Returns the size of the result (number of rows returned), or -1 if the size
@@ -195,36 +219,24 @@ int TSqlQuery::numRowsAffected() const
   false), -1 is returned.
   To determine the number of rows affected by a non-SELECT statement, use
   numRowsAffected().
+  \fn int TSqlQuery::size() const
  */
-int TSqlQuery::size() const
-{
-    return QSqlQuery::size();
-}
 
 /*!
   Retrieves the next record in the result, if available, and positions the
   query on the retrieved record. Note that the result must be in the active
   state and isSelect() must return true before calling this function or it
   will do nothing and return false.
+  \fn bool TSqlQuery::next()
  */
-bool TSqlQuery::next()
-{
-    return QSqlQuery::next();
-}
 
 /*!
   Returns the value of field index in the current record.
+  \fn QVariant TSqlQuery::value(int index) const
  */
-QVariant TSqlQuery::value(int index) const
-{
-    return QSqlQuery::value(index);
-}
 
 /*!
   Returns the value of the field called name in the current record.
   If field name does not exist an invalid variant is returned.
+  \fn QVariant TSqlQuery::value(const QString &name) const
  */
-QVariant TSqlQuery::value(const QString &name) const
-{
-    return QSqlQuery::value(name);
-}

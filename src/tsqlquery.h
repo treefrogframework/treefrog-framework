@@ -35,46 +35,60 @@ public:
 };
 
 
-/*!
-  Set the placeholder \a placeholder to be bound to value \a val in the
-  prepared statement.
-*/
 inline TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
 {
     QSqlQuery::bindValue(placeholder, val);
     return *this;
 }
 
-/*!
-  Set the placeholder in position \a pos to be bound to value \a val in
-  the prepared statement. Field numbering starts at 0.
-*/
+
 inline TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
 {
     QSqlQuery::bindValue(pos, val);
     return *this;
 }
 
-/*!
-  Adds the value \a val to the list of values when using positional value
-  binding and returns the query object. The order of the addBind() calls
-  determines which placeholder a value will be bound to in the prepared
-  query.
-*/
+
 inline TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 {
     QSqlQuery::addBindValue(val);
     return *this;
 }
 
-/*!
-  Returns the value of first field in the next object and advances the
-  internal iterator by one position. It can be used for a query returning
-  at least one result, such as 'SELECT COUNT(*)'.
-*/
+
 inline QVariant TSqlQuery::getNextValue()
 {
     return (next()) ? record().value(0) : QVariant();
+}
+
+
+inline int TSqlQuery::numRowsAffected() const
+{
+    return QSqlQuery::numRowsAffected();
+}
+
+
+inline int TSqlQuery::size() const
+{
+    return QSqlQuery::size();
+}
+
+
+inline bool TSqlQuery::next()
+{
+    return QSqlQuery::next();
+}
+
+
+inline QVariant TSqlQuery::value(int index) const
+{
+    return QSqlQuery::value(index);
+}
+
+
+inline QVariant TSqlQuery::value(const QString &name) const
+{
+    return QSqlQuery::value(name);
 }
 
 #endif // TSQLQUERY_H
