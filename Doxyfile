@@ -183,6 +183,8 @@ EXCLUDE                = src/test \
                          src/tdatabasecontextmainthread.h \
                          src/tdatabasecontextthread.h \
                          src/tconcurrentmap.h \
+                         src/tlmdbdriver.h \
+                         src/tLmdbcursor.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp
