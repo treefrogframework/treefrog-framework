@@ -277,9 +277,9 @@ void JSContext::react()
     QFETCH(QString, result);
 
     TJSModule js;
-    js.import("JSXTransformer", "JSXTransformer");
-    js.import("React", "react");
-    js.import("ReactDOMServer", "react-dom-server");
+    js.import("JSXTransformer", "JSXTransformer.js");
+    js.import("React", "react.js");
+    js.import("ReactDOMServer", "react-dom-server.js");
 
     QString output = js.evaluate(variable).toString();
     QCOMPARE(output, result);
