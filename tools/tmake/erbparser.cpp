@@ -61,7 +61,7 @@ void ErbParser::parse(const QString &erb)
         if (!text.isEmpty()) {
             // HTML output
             if (isAsciiString(text)) {
-                srcCode += QLatin1String("  responsebody += QStringLiteral(\"");
+                srcCode += QLatin1String("  responsebody += QByteArrayLiteral(\"");
             } else {
                 srcCode += QLatin1String("  responsebody += tr(\"");
             }
