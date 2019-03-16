@@ -25,6 +25,7 @@ addons:
       - libqt5sql5
       - libqt5sql5-sqlite
       - libsqlite3-dev
+      - libmongo-client-dev
       - gdb
       - ruby
       - ruby-dev
@@ -33,12 +34,12 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt remove bundler; sudo gem update; cd $CI_WORK/docs; bundle install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; brew link --force qt; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
 
 install:
   - cd $CI_WORK
   - qmake -v
-  - ./configure --prefix=/usr/local
+  - ./configure --prefix=/usr/local --enable-shared-mongoc
   - make -j4 -C src
   - sudo make -C src install
   - make -j4 -C tools
