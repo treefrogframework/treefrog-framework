@@ -25,7 +25,8 @@ addons:
       - libqt5sql5
       - libqt5sql5-sqlite
       - libsqlite3-dev
-      - libmongo-client-dev
+      - libmongoc-dev
+      - libbson-dev
       - gdb
       - ruby
       - ruby-dev
