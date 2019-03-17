@@ -29,12 +29,7 @@
   action controllers.
 */
 
-TActionContext::TActionContext()
-    : TDatabaseContext(),
-      stopped(false),
-      socketDesc(0),
-      currController(nullptr),
-      httpReq(nullptr)
+TActionContext::TActionContext() : TDatabaseContext()
 {
     accessLogger.open();
 }

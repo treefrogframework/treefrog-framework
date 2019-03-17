@@ -51,4 +51,10 @@ private:
     friend class TActionThread;
 };
 
+
+inline bool THttpSocket::canReadRequest() const
+{
+    return (lengthToRead == 0);
+}
+
 #endif // THTTPSOCKET_H

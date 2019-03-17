@@ -44,15 +44,15 @@ protected:
     virtual void closeHttpSocket() { }
     virtual void emitError(int socketError);
 
-    TAtomic<bool> stopped;
+    TAtomic<bool> stopped {false};
     QStringList autoRemoveFiles;
-    int socketDesc;
+    int socketDesc {0};
     TAccessLogger accessLogger;
 
 private:
-    TActionController *currController;
+    TActionController *currController {nullptr};
     QList<TTemporaryFile *> tempFiles;
-    THttpRequest *httpReq;
+    THttpRequest *httpReq {nullptr};
 
     T_DISABLE_COPY(TActionContext)
     T_DISABLE_MOVE(TActionContext)

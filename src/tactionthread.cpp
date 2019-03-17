@@ -7,6 +7,7 @@
 
 #include <QCoreApplication>
 #include <QEventLoop>
+#include <QElapsedTimer>
 #include <TActionThread>
 #include <TWebApplication>
 #include <THttpRequest>
@@ -33,7 +34,7 @@ int TActionThread::threadCount()
 bool TActionThread::waitForAllDone(int msec)
 {
     int cnt;
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
     while ((cnt = threadCount()) > 0) {
@@ -71,10 +72,21 @@ TActionThread::~TActionThread()
         _httpSocket->deleteLater();
     }
 
-    if (TActionContext::socketDesc > 0)
+    if (TActionContext::socketDesc > 0) {
         tf_close(TActionContext::socketDesc);
+    }
 
     --threadCounter;
+}
+
+
+void TActionThread::setSocketDescpriter(qintptr socket)
+{
+    if (TActionContext::socketDesc > 0) {
+        tSystemWarn("Socket still open : %d   [%s:%d]", TActionContext::socketDesc, __FILE__, __LINE__);
+        tf_close(TActionContext::socketDesc);
+    }
+    TActionContext::socketDesc = (int)socket;
 }
 
 
@@ -86,6 +98,7 @@ void TActionThread::run()
 
     if (Q_UNLIKELY(!_httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
         emitError(_httpSocket->error());
+        tf_close(TActionContext::socketDesc);
         goto socket_error;
     }
     TActionContext::socketDesc = 0;
@@ -167,6 +180,8 @@ socket_cleanup:
     while (eventLoop.processEvents()) {}
 
 socket_error:
+    TActionContext::socketDesc = 0;
+    TActionContext::release();
     TDatabaseContext::setCurrentDatabaseContext(nullptr);
     _httpSocket->deleteLater();
     _httpSocket = nullptr;

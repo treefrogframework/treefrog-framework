@@ -9,6 +9,7 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TActionThread>
+#include <thread>
 #include "tsqldatabasepool.h"
 #include "tkvsdatabasepool.h"
 #include "turlroute.h"
@@ -16,6 +17,14 @@
 #include "tsystembus.h"
 #include "tpublisher.h"
 #include "tsystemglobal.h"
+#include "tstack.h"
+
+
+static TStack<TActionThread *> *threadPoolPtr()
+{
+    static TStack<TActionThread *> threadPool;
+    return &threadPool;
+}
 
 /*!
   \class TThreadApplicationServer
@@ -36,6 +45,15 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
         maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
     }
     tSystemDebug("MaxThreads: %d", maxThreads);
+
+    // Thread pooling
+    for (int i = 0; i < maxThreads; i++) {
+        TActionThread *thread = new TActionThread(0);
+        connect(thread, &TActionThread::finished, [=]() {
+            threadPoolPtr()->push(thread);
+        });
+        threadPoolPtr()->push(thread);
+    }
 
     Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Thread);
 }
@@ -98,6 +116,7 @@ void TThreadApplicationServer::stop()
 
 void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
+#if 0
     for (;;) {
         tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
         if (TActionThread::threadCount() < maxThreads) {
@@ -109,6 +128,17 @@ void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
         //Tf::msleep(1);
         qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
     }
+#else
+    tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
+    TActionThread *thread;
+    while (! threadPoolPtr()->pop(thread)) {
+        std::this_thread::yield();
+        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
+    }
+    tSystemDebug("thread ptr: %lld", (quint64)thread);
+    thread->setSocketDescpriter(socketDescriptor);
+    thread->start();
+#endif
 }
 
 

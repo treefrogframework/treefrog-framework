@@ -11,6 +11,7 @@
 #include <QTcpSocket>
 #include <TApplicationServerBase>
 #include <TSystemGlobal>
+#include <thread>
 using namespace Tf;
 
 const int DEFAULT_PORT = 6379;
@@ -107,7 +108,7 @@ bool TRedisDriver::readReply()
             break;
         }
 
-        Tf::msleep(0);  // context switch
+        std::this_thread::yield();  // context switch
         while (eventLoop.processEvents()) {}
     }
 
@@ -372,7 +373,7 @@ bool TRedisDriver::waitForState(int state, int msecs)
             return false;
         }
 
-        Tf::msleep(0); // context switch
+        std::this_thread::yield();  // context switch
         while (eventLoop.processEvents()) {}
     }
     return true;

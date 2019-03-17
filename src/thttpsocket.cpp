@@ -163,16 +163,6 @@ qint64 THttpSocket::writeRawData(const QByteArray &data)
     return writeRawData(data.data(), data.size());
 }
 
-/*!
-  Returns true if a HTTP request was received entirely; otherwise
-  returns false.
-*/
-bool THttpSocket::canReadRequest() const
-{
-    T_TRACEFUNC("");
-    return (lengthToRead == 0);
-}
-
 
 void THttpSocket::readRequest()
 {
@@ -300,3 +290,9 @@ int THttpSocket::idleTime() const
 {
     return (uint)std::time(nullptr) - idleElapsed;
 }
+
+/*!
+  Returns true if a HTTP request was received entirely; otherwise
+  returns false.
+  \fn bool THttpSocket::canReadRequest() const
+*/
