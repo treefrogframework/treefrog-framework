@@ -2,6 +2,7 @@ FROM buildpack-deps:bionic
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y \
         tzdata \
@@ -29,9 +30,8 @@ RUN apt-get update && apt-get install -y \
 	cmake && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/treefrog && \
-    cd /usr/src/treefrog && \
-    git clone https://github.com/treefrogframework/treefrog-framework.git && \
+WORKDIR /usr/src/treefrog
+RUN git clone https://github.com/treefrogframework/treefrog-framework.git && \
     cd treefrog-framework && \
     ./configure --enable-shared-mongoc && \
     make -j"$(nproc)" -C src && \
@@ -40,5 +40,8 @@ RUN mkdir -p /usr/src/treefrog && \
     make -C tools install && \
     rm -rf /usr/src/treefrog
 
+VOLUME  /webapp
+WORKDIR /webapp
+EXPOSE  8800
 CMD ["treefrog", "-v"]
 
