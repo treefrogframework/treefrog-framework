@@ -23,13 +23,7 @@ static QByteArray createHash()
     QByteArray data;
     data.reserve(127);
 
-#if QT_VERSION >= 0x040700
     data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));
-#else
-    QDateTime now = QDateTime::currentDateTime();
-    data.append(QByteArray::number(now.toTime_t()));
-    data.append(QByteArray::number(now.time().msec()));
-#endif
     data.append(QHostInfo::localHostName());
     data.append(QByteArray::number(++seq));
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
@@ -130,11 +124,7 @@ QByteArray TSessionManager::generateId()
 
 void TSessionManager::collectGarbage()
 {
-    static int prob = -1;
-
-    if (prob == -1) {
-        prob = Tf::appSettings()->value(Tf::SessionGcProbability).toInt();
-    }
+    static const int prob = Tf::appSettings()->value(Tf::SessionGcProbability).toInt();
 
     if (prob > 0) {
         int r = Tf::random(0, prob - 1);

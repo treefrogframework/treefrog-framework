@@ -369,7 +369,9 @@ QList<QPair<QString, QString>> THtmlParser::parseAttributes()
 
     while (pos < txt.length()) {
         int cr = 0, lf = 0;
+        value.clear();
         skipWhiteSpace(&cr, &lf);
+
         if (txt.at(pos) == QLatin1Char('>') || txt.at(pos) == QLatin1Char('/')) {
             break;
         }
@@ -392,8 +394,6 @@ QList<QPair<QString, QString>> THtmlParser::parseAttributes()
             pos++;
             skipWhiteSpace();
             value = parseWord();
-        } else {
-            value.resize(0);
         }
 
         attrs << qMakePair(key, value);

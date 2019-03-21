@@ -257,39 +257,3 @@ QMap<QByteArray, std::function<QObject*()>> *Tf::objectFactories()
     return &objectFactoryMap;
 }
 
-/*!
-  Returns the current datetime in the local time zone.
-  It provides 1-second accuracy.
-*/
-/*
-QDateTime Tf::currentDateTimeSec()
-{
-    // QDateTime::currentDateTime() is slow.
-    // Faster function..
-
-    QDateTime current;
-
-#if defined(Q_OS_WIN)
-    SYSTEMTIME st;
-    memset(&st, 0, sizeof(SYSTEMTIME));
-    GetLocalTime(&st);
-    current.setDate(QDate(st.wYear, st.wMonth, st.wDay));
-    current.setTime(QTime(st.wHour, st.wMinute, st.wSecond));
-#elif defined(Q_OS_UNIX)
-    time_t ltime = 0;
-    tm *t = 0;
-    time(&ltime);
-# if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
-    tzset();
-    tm res;
-    t = localtime_r(&ltime, &res);
-# else
-    t = localtime(&ltime);
-# endif // _POSIX_THREAD_SAFE_FUNCTIONS
-    current.setDate(QDate(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday));
-    current.setTime(QTime(t->tm_hour, t->tm_min, t->tm_sec));
-#endif // Q_OS_UNIX
-
-    return current;
-}
-*/

@@ -112,6 +112,8 @@ template <class T>
 inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) const
 {
     QString sqlString;
+    sqlString.reserve(1024);
+
     if (var.isNull()) {
         return QString();
     }
@@ -187,19 +189,21 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                 if (lst.count() <= LIMIT_WORDS_IN_CLAUSE || database.driverName().toUpper() == QLatin1String("QMYSQL")) {
 #endif
                     QString str = inclause(lst, 0, lst.count());
-                    sqlString += name + TSql::formatArg(cri.op1, str);
+                    sqlString += name;
+                    sqlString += TSql::formatArg(cri.op1, str);
                 } else {
                     QString clause;
                     for (int i = 0; i < (lst.count() / LIMIT_WORDS_IN_CLAUSE) + 1; i++) {
                         QString str = inclause(lst, LIMIT_WORDS_IN_CLAUSE * i, LIMIT_WORDS_IN_CLAUSE);
-                        clause += name + TSql::formatArg(cri.op1, str);
-                        clause += " OR ";
+                        clause += name;
+                        clause += TSql::formatArg(cri.op1, str);
+                        clause += QLatin1String(" OR ");
                     }
                     clause.chop(4);
 
-                    sqlString += '(';
+                    sqlString += QLatin1Char('(');
                     sqlString += clause;
-                    sqlString += ')';
+                    sqlString += QLatin1Char(')');
                 }
                 break; }
 
@@ -217,7 +221,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
 
             case TSql::IsNull:
             case TSql::IsNotNull:
-                sqlString += name + TSql::formatArg(cri.op1);
+                sqlString += name;
+                sqlString += TSql::formatArg(cri.op1);
                 break;
 
             case TSql::IsEmpty:
@@ -298,7 +303,10 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
         case TSql::NotILikeEscape:
         case TSql::Between:
         case TSql::NotBetween:
-            sqlString = QLatin1Char('(') + propertyName + TSql::formatArg(op, v1, v2) + QLatin1Char(')');
+            sqlString =  QLatin1Char('(');
+            sqlString += propertyName;
+            sqlString += TSql::formatArg(op, v1, v2);
+            sqlString += QLatin1Char(')');
             break;
 
         default:
@@ -331,7 +339,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
             str.chop(1);
             str = TSql::formatArg(op2, str);
             if (!str.isEmpty()) {
-                sqlString += propertyName + TSql::formatArg(op1, str);
+                sqlString += propertyName;
+                sqlString += TSql::formatArg(op1, str);
             }
             break; }
 

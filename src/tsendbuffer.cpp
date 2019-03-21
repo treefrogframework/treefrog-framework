@@ -16,8 +16,10 @@
 #include "tsystemglobal.h"
 
 
-TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
-    : arrayBuffer(header), fileRemove(autoRemove), accesslogger(logger)
+TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger) :
+    arrayBuffer(header),
+    fileRemove(autoRemove),
+    accesslogger(logger)
 {
     if (file.exists() && file.isFile()) {
         bodyFile = new QFile(file.absoluteFilePath());

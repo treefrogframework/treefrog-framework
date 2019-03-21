@@ -393,7 +393,7 @@ template <class T>
 inline QString TSqlORMapper<T>::selectStatement() const
 {
     QString query;
-    query.reserve(256);
+    query.reserve(1024);
     bool joinFlag = !joinClauses.isEmpty();
 
     auto rec = record();
@@ -504,8 +504,8 @@ inline int TSqlORMapper<T>::findCountBy(int column, QVariant value)
 template <class T>
 int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &values)
 {
-    const QByteArray UpdatedAt("updated_at");
-    const QByteArray ModifiedAt("modified_at");
+    static const QByteArray UpdatedAt("updated_at");
+    static const QByteArray ModifiedAt("modified_at");
 
     QString upd;   // UPDATE Statement
     upd.reserve(256);
@@ -526,7 +526,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         QByteArray prop = QByteArray(propName).toLower();
         if (prop == UpdatedAt || prop == ModifiedAt) {
             upd += propName;
-            upd += '=';
+            upd += QLatin1Char('=');
             upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), QVariant::DateTime, db);
             upd += QLatin1Char(',');
             break;
@@ -537,11 +537,12 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     for (;;) {
         it.next();
         upd += conv.propertyName(it.key(), db.driver());
-        upd += '=';
+        upd += QLatin1Char('=');
         upd += TSqlQuery::formatValue(it.value(), conv.variantType(it.key()), db);
 
-        if (!it.hasNext())
+        if (!it.hasNext()) {
             break;
+        }
 
         upd += QLatin1Char(',');
     }
