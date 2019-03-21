@@ -16,10 +16,10 @@ class TFileAioLoggerData : public QSharedData
 public:
     mutable QMutex mutex;
     QString fileName;
-    int fileDescriptor;
+    int fileDescriptor {0};
     QList<struct aiocb *> syncBuffer;
 
-    TFileAioLoggerData() : mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
+    TFileAioLoggerData() : mutex(QMutex::Recursive) { }
     void clearSyncBuffer();
 };
 

@@ -150,7 +150,7 @@ bool TPopMailer::cmdRetr(int index, QByteArray &message)
 {
     QByteArray retr("RETR ");
     retr += QByteArray::number(index);
-    message.clear();
+    message.resize(0);
 
     bool res = cmd(retr);
     if (res) {
@@ -199,8 +199,9 @@ bool TPopMailer::readResponse(QByteArray *reply)
 {
     bool ret = false;
 
-    if (reply)
-        reply->clear();
+    if (reply) {
+        reply->resize(0);
+    }
 
     if (socket->waitForReadyRead(5000)) {
         QByteArray rcv = socket->readLine();

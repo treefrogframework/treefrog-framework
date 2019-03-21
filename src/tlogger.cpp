@@ -80,7 +80,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
             continue;
         }
 
-        dig.clear();
+        dig.resize(0);
         for (;;) {
             if (pos >= layout.length()) {
                 message.append('%').append(dig);
@@ -139,7 +139,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 
             case '%':
                 message.append('%').append(dig);
-                dig.clear();
+                dig.resize(0);
                 continue;
                 break;
 

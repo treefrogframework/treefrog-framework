@@ -293,5 +293,5 @@ void TMongoObject::syncToVariantMap()
 void TMongoObject::clear()
 {
     QVariantMap::clear();
-    objectId().clear();
+    objectId().resize(0);
 }

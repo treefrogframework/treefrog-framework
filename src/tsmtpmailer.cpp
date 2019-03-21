@@ -396,7 +396,7 @@ bool TSmtpMailer::cmdQuit()
 
 int TSmtpMailer::cmd(const QByteArray &command, QList<QByteArray> *reply)
 {
-    lastResponse.clear();
+    lastResponse.resize(0);
     if (!write(command))
         return -1;
 
@@ -420,8 +420,9 @@ bool TSmtpMailer::write(const QByteArray &command)
 
 int TSmtpMailer::read(QList<QByteArray> *reply)
 {
-    if (reply)
+    if (reply) {
         reply->clear();
+    }
 
     int code = 0;
     QByteArray rcv;

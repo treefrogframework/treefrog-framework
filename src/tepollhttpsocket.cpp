@@ -21,8 +21,9 @@ const int BUFFER_RESERVE_SIZE = 1023;
 static qint64 systemLimitBodyBytes = -1;
 
 
-TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address)
-    : TEpollSocket(socketDescriptor, address), lengthToRead(-1), idleElapsed()
+TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address) :
+    TEpollSocket(socketDescriptor, address),
+    idleElapsed()
 {
     httpBuffer.reserve(BUFFER_RESERVE_SIZE);
     idleElapsed = std::time(nullptr);
@@ -94,7 +95,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
         parse();
     } else {
         if (systemLimitBodyBytes > 0 && httpBuffer.length() > systemLimitBodyBytes) {
-            httpBuffer.clear();
+            httpBuffer.resize(0);
             throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
@@ -172,7 +173,7 @@ void TEpollHttpSocket::parse()
             tSystemDebug("content-length: %lld", header.contentLength());
 
             if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
-                httpBuffer.clear();
+                httpBuffer.resize(0);
                 throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
             }
 
@@ -188,8 +189,7 @@ void TEpollHttpSocket::parse()
 void TEpollHttpSocket::clear()
 {
     lengthToRead = -1;
-    httpBuffer.truncate(0);
-    httpBuffer.reserve(BUFFER_RESERVE_SIZE);
+    httpBuffer.resize(0);
 }
 
 

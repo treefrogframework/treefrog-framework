@@ -341,7 +341,7 @@ QString TMultipartFormData::formItemValue(const QString &name) const
  */
 void TMultipartFormData::clear()
 {
-    dataBoundary.clear();
+    dataBoundary.resize(0);
     postParameters.clear();
     uploadedFiles.clear();
 }

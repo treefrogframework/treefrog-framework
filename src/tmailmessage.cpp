@@ -247,7 +247,7 @@ QString TMailMessage::body() const
 void TMailMessage::setBody(const QString &body)
 {
     QByteArray ba = textCodec->fromUnicode(body);
-    mailBody.clear();
+    mailBody.resize(0);
     mailBody.reserve(ba.length() + ba.count('\n'));
 
     for (int i = 0; i < ba.length(); ++i) {

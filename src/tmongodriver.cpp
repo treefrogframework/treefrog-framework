@@ -92,7 +92,7 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
     }
 
     errorCode = 0;
-    errorString.clear();
+    errorString.resize(0);
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     mongoc_cursor_t *cursor = mongoc_collection_find(col, MONGOC_QUERY_NONE, skip, limit, 0,
@@ -137,7 +137,7 @@ bool TMongoDriver::insert(const QString &collection, const QVariantMap &object)
     }
 
     errorCode = 0;
-    errorString.clear();
+    errorString.resize(0);
     bson_error_t error;
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
@@ -162,7 +162,7 @@ bool TMongoDriver::remove(const QString &collection, const QVariantMap &object)
     }
 
     errorCode = 0;
-    errorString.clear();
+    errorString.resize(0);
     bson_error_t error;
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
@@ -189,7 +189,7 @@ bool TMongoDriver::update(const QString &collection, const QVariantMap &criteria
     }
 
     errorCode = 0;
-    errorString.clear();
+    errorString.resize(0);
     bson_error_t error;
 
     mongoc_update_flags_t flag = (upsert) ? MONGOC_UPDATE_UPSERT : MONGOC_UPDATE_NONE;
@@ -216,7 +216,7 @@ bool TMongoDriver::updateMulti(const QString &collection, const QVariantMap &cri
     }
 
     errorCode = 0;
-    errorString.clear();
+    errorString.resize(0);
     bson_error_t error;
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
@@ -243,7 +243,7 @@ int TMongoDriver::count(const QString &collection, const QVariantMap &criteria)
     }
 
     errorCode = 0;
-    errorString.clear();
+    errorString.resize(0);
     bson_error_t error;
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));

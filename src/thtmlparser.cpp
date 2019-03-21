@@ -79,10 +79,10 @@ void THtmlElement::removeAttribute(const QString &name)
 
 void THtmlElement::clear()
 {
-    tag.clear();
+    tag.resize(0);
     attributes.clear();
-    text.clear();
-    selfCloseMark.clear();
+    text.resize(0);
+    selfCloseMark.resize(0);
     tagClosed = false;
     children.clear();
 }
@@ -172,7 +172,7 @@ void THtmlParser::parse(const QString &text)
 
         // trimming strongly
     if (trimMode == StrongTrim) {
-        txt.clear();
+        txt.resize(0);
         txt.reserve(text.length());
         const auto splited = text.split('\n', QString::SkipEmptyParts);
         for (auto &line : splited) {
@@ -393,7 +393,7 @@ QList<QPair<QString, QString>> THtmlParser::parseAttributes()
             skipWhiteSpace();
             value = parseWord();
         } else {
-            value.clear();
+            value.resize(0);
         }
 
         attrs << qMakePair(key, value);
@@ -481,7 +481,7 @@ void THtmlParser::removeChildElements(int index)
 void THtmlParser::removeTag(int index)
 {
     THtmlElement &e = at(index);
-    e.tag.clear();
+    e.tag.resize(0);
 
     if (e.text.startsWith("\n"))
         e.text.remove(0, 1);  // delete a newline code

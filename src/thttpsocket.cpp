@@ -23,6 +23,7 @@ const qint64 WRITE_LENGTH = 1408;
 const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 const int    SEND_BUF_SIZE = 16 * 1024;
 const int    RECV_BUF_SIZE = 128 * 1024;
+const int    RESERVED_BUFFER_SIZE = 1024;
 
 static TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
 static std::atomic<ushort> point {0};
@@ -32,8 +33,7 @@ static std::atomic<ushort> point {0};
   \brief The THttpSocket class provides a socket for the HTTP.
 */
 
-THttpSocket::THttpSocket(QObject *parent)
-    : QTcpSocket(parent), lengthToRead(-1)
+THttpSocket::THttpSocket(QObject *parent) : QTcpSocket(parent)
 {
     T_TRACEFUNC("");
 
@@ -46,6 +46,7 @@ THttpSocket::THttpSocket(QObject *parent)
     connect(this, SIGNAL(requestWrite(const QByteArray&)), this, SLOT(writeRawData(const QByteArray&)), Qt::QueuedConnection);
 
     idleElapsed = std::time(nullptr);
+    readBuffer.reserve(RESERVED_BUFFER_SIZE);
 }
 
 
@@ -72,7 +73,7 @@ QList<THttpRequest> THttpSocket::read()
         } else {
             reqList = THttpRequest::generate(readBuffer, peerAddress());
         }
-        readBuffer.clear();
+        readBuffer.resize(0);
         lengthToRead = -1;
     }
     return reqList;
