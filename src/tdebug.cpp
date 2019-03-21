@@ -67,8 +67,8 @@ void Tf::releaseAppLoggers()
 
 static void tMessage(int priority, const char *msg, va_list ap)
 {
-    TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
     if (stream) {
+        TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
         stream->writeLog(log);
     }
 }
