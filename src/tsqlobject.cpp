@@ -55,16 +55,21 @@ TSqlObject &TSqlObject::operator=(const TSqlObject &other)
 */
 QString TSqlObject::tableName() const
 {
+    static const QString ObjectStr = "Object";
     QString tblName;
     QString clsname(metaObject()->className());
 
+    if (Q_LIKELY(clsname.endsWith(ObjectStr))) {
+        clsname.resize(clsname.length() - ObjectStr.length());
+    }
+
+    tblName.reserve(clsname.length() * 1.2);
     for (int i = 0; i < clsname.length(); ++i) {
         if (i > 0 && clsname[i].isUpper()) {
-            tblName += '_';
+            tblName += QLatin1Char('_');
         }
         tblName += clsname[i].toLower();
     }
-    tblName.remove(QRegExp("_object$"));
     return tblName;
 }
 

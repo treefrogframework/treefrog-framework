@@ -6,7 +6,6 @@
  */
 
 #include <ctime>
-#include <QTimer>
 #include <QDir>
 #include <QBuffer>
 #include <TTemporaryFile>

@@ -10,6 +10,7 @@
 #include <TAppSettings>
 #include <TMultiplexingServer>
 #include <QCoreApplication>
+#include <QElapsedTimer>
 #include <atomic>
 #include "tepollhttpsocket.h"
 #include "tsystemglobal.h"
@@ -28,7 +29,7 @@ int TActionWorker::workerCount()
 bool TActionWorker::waitForAllDone(int msec)
 {
     int cnt;
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
     while ((cnt = workerCount()) > 0) {
