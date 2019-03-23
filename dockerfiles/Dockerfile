@@ -43,5 +43,5 @@ RUN git clone https://github.com/treefrogframework/treefrog-framework.git && \
 VOLUME  /webapp
 WORKDIR /webapp
 EXPOSE  8800
-CMD ["treefrog", "-v"]
+CMD ["treefrog", "-p", "8800", "/webapp"]
 
