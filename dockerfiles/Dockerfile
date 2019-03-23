@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y \
         tzdata \
+        coreutils \
         qt5-default \
         qt5-qmake \
         qtbase5-dev \
