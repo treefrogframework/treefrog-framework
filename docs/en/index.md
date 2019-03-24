@@ -90,12 +90,23 @@ Sep. 20, 2017
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
+## Support Development
+
+TreeFrog Framework is New BSD licensed open source project and completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. We accept donations from sponsors and individual donors via the following methods:
+
+ - Support via [Patreon](https://www.patreon.com/treefrogframework)
+ - One-time donations by BTC
+
+[BTC Address]({{ site.baseurl }}/assets/images/btc_address.png "BTC Address")
+
+
 ## <i class="fa fa-user" aria-hidden="true"></i> Wanted
 
  - Developers, testers, translators.
 
 Since this site is built with [GitHub Pages](https://pages.github.com/), translations can also be sent by a pull-request.
 Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Welcome!
+
 
 ## <i class="fa fa-info-circle" aria-hidden="true"></i> Information
 
