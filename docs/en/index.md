@@ -94,7 +94,7 @@ Sep. 20, 2017
 
 TreeFrog Framework is New BSD licensed open source project and completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. We accept donations from sponsors and individual donors via the following methods:
 
- - Support via [Patreon](https://www.patreon.com/treefrogframework)
+ - Support via [Patreon](https://www.patreon.com/treefrogframework)<i class="fas fa-external-link-alt"></i>
  - One-time donations by BTC. Address: [12C69oSYQLJmA4yB5QynEAoppJpUSDdcZZ]({{ site.baseurl }}/assets/images/btc_address.png "BTC Address")
 
 
@@ -108,10 +108,10 @@ Visit [GitHub](https://github.com/treefrogframework/treefrog-framework){:target=
 
 ## <i class="fa fa-info-circle" aria-hidden="true"></i> Information
 
-[TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
+[TreeFrog forum](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}<i class="fas fa-external-link-alt"></i>
 
-Twitter [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}
+Twitter [@TreeFrog_ja](https://twitter.com/TreeFrog_ja){:target="_blank"}<i class="fas fa-external-link-alt"></i>
 
-Docker Images [(external link)](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}
+Docker Images [(external link)](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}<i class="fas fa-external-link-alt"></i>
 
-Benchmarks [(external link)](https://www.techempower.com/benchmarks/#section=data-r16){:target="_blank"}
+Benchmarks [(external link)](https://www.techempower.com/benchmarks/#section=data-r16){:target="_blank"}<i class="fas fa-external-link-alt"></i>
