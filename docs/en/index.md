@@ -90,14 +90,12 @@ Sep. 20, 2017
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
-## Support Development
+## <i class="fas fa-hand-holding-usd"></i> Support Development
 
 TreeFrog Framework is New BSD licensed open source project and completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. We accept donations from sponsors and individual donors via the following methods:
 
  - Support via [Patreon](https://www.patreon.com/treefrogframework)
- - One-time donations by BTC
-
-[BTC Address]({{ site.baseurl }}/assets/images/btc_address.png "BTC Address")
+ - One-time donations by BTC. Address: [12C69oSYQLJmA4yB5QynEAoppJpUSDdcZZ]({{ site.baseurl }}/assets/images/btc_address.png "BTC Address")
 
 
 ## <i class="fa fa-user" aria-hidden="true"></i> Wanted
