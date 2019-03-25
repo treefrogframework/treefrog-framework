@@ -2,6 +2,7 @@
 #include <QThread>
 #include <atomic>
 #include <iostream>
+#include <thread>
 #include "tstack.h"
 #ifndef Q_CC_MSVC
 # include <unistd.h>
@@ -41,6 +42,7 @@ protected:
             if (stackBox.pop(box)) {
                 Q_ASSERT(box.a + box.b == 1000);
             }
+            std::this_thread::yield();
         }
     }
 };
@@ -60,11 +62,11 @@ protected:
                 Q_ASSERT(box.a + box.b == 1000);
 
                 box.a++;
-                QThread::yieldCurrentThread();
+                std::this_thread::yield();
                 box.b--;
             } else {
                 box.a = 1000;
-                QThread::yieldCurrentThread();
+                std::this_thread::yield();
                 box.b = 0;
             }
 
