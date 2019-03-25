@@ -97,6 +97,8 @@ TreeFrog Framework is New BSD licensed open source project and completely free t
  - Support via [Patreon <i class="fas fa-external-link-alt"></i>](https://www.patreon.com/treefrogframework)
  - One-time donations by BTC. Address: [12C69oSYQLJmA4yB5QynEAoppJpUSDdcZZ]({{ site.baseurl }}/assets/images/btc_address.png "BTC Address")
 
+I would be pleased if you could consider donating. Thank you!
+
 
 ## <i class="fa fa-user" aria-hidden="true"></i> Wanted
 
