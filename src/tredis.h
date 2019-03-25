@@ -24,12 +24,14 @@ public:
     QByteArray get(const QByteArray &key);
     bool set(const QByteArray &key, const QByteArray &value);
     bool setEx(const QByteArray &key, const QByteArray &value, int seconds);
+    bool setNx(const QByteArray &key, const QByteArray &value);
     QByteArray getSet(const QByteArray &key, const QByteArray &value);
 
     // string
     QString gets(const QByteArray &key);
     bool sets(const QByteArray &key, const QString &value);
     bool setsEx(const QByteArray &key, const QString &value, int seconds);
+    bool setsNx(const QByteArray &key, const QString &value);
     QString getsSets(const QByteArray &key, const QString &value);
 
     bool del(const QByteArray &key);
@@ -46,8 +48,20 @@ public:
     int lpushs(const QByteArray &key, const QStringList &values);
     QStringList lranges(const QByteArray &key, int start, int end);
     QString lindexs(const QByteArray &key, int index);
-
     int llen(const QByteArray &key);
+
+    // hash
+    bool hset(const QByteArray &key, const QByteArray &field, const QByteArray &value);
+    bool hsetNx(const QByteArray &key, const QByteArray &field, const QByteArray &value);
+    bool hsets(const QByteArray &key, const QByteArray &field, const QString &value);
+    bool hsetsNx(const QByteArray &key, const QByteArray &field, const QString &value);
+    QByteArray hget(const QByteArray &key, const QByteArray &field);
+    QString hgets(const QByteArray &key, const QByteArray &field);
+    bool hexists(const QByteArray &key, const QByteArray &field);
+    bool hdel(const QByteArray &key, const QByteArray &field);
+    int hdel(const QByteArray &key, const QList<QByteArray> &fields);
+    int hlen(const QByteArray &key);
+    QList<QPair<QByteArray, QByteArray>> hgetAll(const QByteArray &key);
 
 private:
     TRedisDriver *driver();
@@ -75,6 +89,11 @@ inline bool TRedis::setsEx(const QByteArray &key, const QString &value, int seco
     return setEx(key, value.toUtf8(), seconds);
 }
 
+inline bool TRedis::setsNx(const QByteArray &key, const QString &value)
+{
+    return setNx(key, value.toUtf8());
+}
+
 inline QString TRedis::getsSets(const QByteArray &key, const QString &value)
 {
     return QString::fromUtf8(getSet(key, value.toUtf8()));
@@ -98,6 +117,21 @@ inline QStringList TRedis::lranges(const QByteArray &key, int start, int end = -
 inline QString TRedis::lindexs(const QByteArray &key, int index)
 {
     return QString::fromUtf8(lindex(key, index));
+}
+
+inline bool TRedis::hsets(const QByteArray &key, const QByteArray &field, const QString &value)
+{
+    return hset(key, field, value.toUtf8());
+}
+
+inline bool TRedis::hsetsNx(const QByteArray &key, const QByteArray &field, const QString &value)
+{
+    return hsetNx(key, field, value.toUtf8());
+}
+
+inline QString TRedis::hgets(const QByteArray &key, const QByteArray &field)
+{
+    return QString::fromUtf8(hget(key, field));
 }
 
 #endif // TREDIS_H
