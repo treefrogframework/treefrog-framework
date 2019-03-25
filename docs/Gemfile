@@ -3,4 +3,6 @@ gem 'github-pages', group: :jekyll_plugins
 group :jekyll_plugins do
    gem "markdown"
    gem "jekyll-theme-slate"
+   gem 'execjs'
+   gem 'therubyracer'
 end

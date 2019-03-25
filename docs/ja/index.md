@@ -48,7 +48,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - クエリーログにログメッセージ追加
   - その他不具合修正
 
- [<i class="fa fa-hand-o-right" aria-hidden="true"></i> ダウンロードはこちらから](/ja/download/)
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2018/6/10  TreeFrog Framework バージョン1.22.0 （安定版）リリース
 

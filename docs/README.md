@@ -6,7 +6,7 @@ This is the readMe. Here you can find useful links and information how to use Gi
 ```
  $ cd docs
  $ sudo apt install ruby ruby-dev ruby-all-dev make gcc gem
- $ sudo apt remove bundler
+ $ sudo apt remove bundler ruby-bundler
  $ sudo gem update
  $ bundle install
 ```

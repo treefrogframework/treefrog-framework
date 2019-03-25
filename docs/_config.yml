@@ -4,7 +4,7 @@ highlighter:  rouge
 
 github:       [metadata]
 repository:   https://github.com/treefrogframework/treefrog-framework
-plugins:      [markdown]
+plugins_dir:  [markdown]
 theme:        jekyll-theme-slate
 baseurl:      ""
 url:          https://treefrogframework.github.io
