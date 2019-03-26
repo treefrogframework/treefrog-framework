@@ -127,15 +127,15 @@ private:
     mutable QString ctrlName;
     QString actName;
     QStringList args;
-    int  statCode;
-    bool rendered;
-    bool layoutEnable;
+    int  statCode {Tf::OK};  // 200 OK
+    bool rendered {false};
+    bool layoutEnable {false};
     QString layoutName;
     THttpResponse response;
     QVariantMap flashVars;
     TSession sessionStore;
     TCookieJar cookieJar;
-    bool rollback;
+    bool rollback {false};
     QStringList autoRemoveFiles;
     QList<QPair<int, QVariant>> taskList;
     int sockId {0};

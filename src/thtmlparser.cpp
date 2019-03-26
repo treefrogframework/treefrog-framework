@@ -7,11 +7,12 @@
 
 #include <THtmlParser>
 #include <THttpUtility>
+#include <QRegularExpression>
 using namespace Tf;
 
 // Regular expression of an HTML tag
-const QRegExp htmlTagReg("<([a-zA-Z0-9]+\\s+(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*|/?[a-zA-Z0-9]+/?\\s*)>", Qt::CaseSensitive, QRegExp::RegExp2);
-const QRegExp wordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>(){};/=\\s]*)", Qt::CaseSensitive, QRegExp::RegExp2);
+const QRegularExpression HtmlTagReg("<([a-zA-Z0-9]+\\s+(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*|/?[a-zA-Z0-9]+/?\\s*)>");
+const QRegularExpression WordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>(){};/=\\s]*)");
 
 
 THtmlElement::THtmlElement()
@@ -196,7 +197,7 @@ void THtmlParser::parse(const QString &text)
 bool THtmlParser::isTag(int position) const
 {
     if (position >= 0 && position < txt.length()) {
-        return (txt.indexOf(htmlTagReg, position) == position);
+        return (txt.indexOf(HtmlTagReg, position) == position);
     }
     return false;
 }
@@ -204,7 +205,7 @@ bool THtmlParser::isTag(int position) const
 
 bool THtmlParser::isTag(const QString &tag)
 {
-    return (tag.indexOf(htmlTagReg, 0) == 0);
+    return (tag.indexOf(HtmlTagReg, 0) == 0);
 }
 
 /* Returns a string that has ascii whitespace removed from the start and the end */
@@ -309,11 +310,12 @@ void THtmlParser::parseTag()
 
     // Tag closed?
     if (txt.at(pos) == QLatin1Char('/')) {
-        const QRegExp rx("(\\s*/[^>]*)>");  // "/>" or "//-->"
-        int idx = rx.indexIn(txt, pos - 1);
+        static const QRegularExpression rx("(\\s*/[^>]*)>");  // "/>" or "//-->"
+        auto match = rx.match(txt, pos - 1);
+        int idx = match.capturedStart(1);
         if (idx == pos || idx == pos - 1) {
-            he.selfCloseMark = rx.cap(1);
-            pos = idx + rx.cap(1).length();
+            he.selfCloseMark = match.captured(1);
+            pos = idx + match.capturedLength(1);
         }
     }
 
@@ -516,11 +518,12 @@ void THtmlParser::changeParent(int index, int newParent, int newIndex)
 // Parses one word
 QString THtmlParser::parseWord()
 {
-    int idx = wordReg.indexIn(txt, pos);
+    auto match = WordReg.match(txt, pos);
+    int idx = match.capturedStart(1);
     if (idx == pos) {
-        pos += wordReg.matchedLength();
+        pos += match.capturedLength();
     }
-    return  wordReg.cap(0);
+    return match.captured();
 }
 
 

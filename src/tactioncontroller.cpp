@@ -26,8 +26,8 @@
 #include "tsessionmanager.h"
 #include "ttextview.h"
 
-#define FLASH_VARS_SESSION_KEY  "_flashVariants"
-#define LOGIN_USER_NAME_KEY     "_loginUserName"
+const QString FLASH_VARS_SESSION_KEY ("_flashVariants");
+const QString LOGIN_USER_NAME_KEY ("_loginUserName");
 
 /*!
   \class TActionController
@@ -46,16 +46,12 @@
   \~japanese
   \brief コンストラクタ
  */
-TActionController::TActionController()
-    : QObject(),
-      TAbstractController(),
-      statCode(Tf::OK),  // 200 OK
-      rendered(false),
-      layoutEnable(true),
-      rollback(false)
+TActionController::TActionController() :
+    QObject(),
+    TAbstractController()
 {
     // Default content type
-    setContentType("text/html");
+    setContentType(QByteArrayLiteral("text/html"));
 }
 
 /*!
@@ -76,8 +72,13 @@ TActionController::TActionController()
 */
 QString TActionController::name() const
 {
+    static const QString Postfix = "Controller";
+
     if (ctrlName.isEmpty()) {
-        ctrlName = className().remove(QRegExp("Controller$"));
+        ctrlName = className();
+        if (ctrlName.endsWith(Postfix)) {
+            ctrlName.resize(ctrlName.length() - Postfix.length());
+        }
     }
     return ctrlName;
 }
@@ -264,12 +265,14 @@ const QStringList &TActionController::availableControllers()
         QMutexLocker lock(&mutex);
         for (int i = QMetaType::User; ; ++i) {
             const char *name = QMetaType::typeName(i);
-            if (!name)
+            if (!name) {
                 break;
+            }
 
             QString c(name);
-            if (c.endsWith("controller"))
+            if (c.endsWith(QStringLiteral("controller"))) {
                 controllers << c;
+            }
         }
     }
     return controllers;
@@ -285,7 +288,7 @@ const QStringList &TActionController::disabledControllers()
 
 QString TActionController::loginUserNameKey()
 {
-    return QLatin1String(LOGIN_USER_NAME_KEY);
+    return LOGIN_USER_NAME_KEY;
 }
 
 /*!

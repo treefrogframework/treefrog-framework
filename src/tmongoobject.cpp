@@ -6,7 +6,6 @@
  */
 
 #include <QDateTime>
-#include <QRegExp>
 #include <QMetaProperty>
 #include <TMongoObject>
 #include <TMongoQuery>
@@ -46,6 +45,7 @@ TMongoObject &TMongoObject::operator=(const TMongoObject &other)
 */
 QString TMongoObject::collectionName() const
 {
+    static const QString Postfix = "_object";
     QString collection;
     QString clsname(metaObject()->className());
 
@@ -55,7 +55,10 @@ QString TMongoObject::collectionName() const
         }
         collection += clsname[i].toLower();
     }
-    collection.remove(QRegExp("_object$"));
+
+    if (collection.endsWith(Postfix)) {
+        collection.resize(collection.length() - Postfix.length());
+    }
     return collection;
 }
 
