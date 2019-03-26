@@ -140,6 +140,23 @@ bool TRedis::setEx(const QByteArray &key, const QByteArray &value, int seconds)
 }
 
 /*!
+  Set the \a key to hold the \a value if key does not exist. In that case,
+  it is equal to SET. When key already holds a value, no operation is
+  performed.
+ */
+bool TRedis::setNx(const QByteArray &key, const QByteArray &value)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "SETNX", key, value };
+    bool res = driver()->request(command, resp);
+    return (res && resp.value(0).toInt() == 1);
+}
+
+/*!
   Atomically sets the \a key to the \a value and returns the old value
   stored at the \a key.
  */
@@ -288,6 +305,116 @@ QStringList TRedis::toStringList(const QList<QByteArray> &values)
     return ret;
 }
 
+
+bool TRedis::hset(const QByteArray &key, const QByteArray &field, const QByteArray &value)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HSET", key, field, value };
+    bool res = driver()->request(command, resp);
+    return (res && resp.value(0).toInt() == 1);
+}
+
+
+bool TRedis::hsetNx(const QByteArray &key, const QByteArray &field, const QByteArray &value)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HSETNX", key, field, value };
+    bool res = driver()->request(command, resp);
+    return (res && resp.value(0).toInt() == 1);
+}
+
+
+QByteArray TRedis::hget(const QByteArray &key, const QByteArray &field)
+{
+    if (!driver()) {
+        return QByteArray();
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HGET", key, field };
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toByteArray() : QByteArray();
+}
+
+
+bool TRedis::hexists(const QByteArray &key, const QByteArray &field)
+{
+    if (!driver()) {
+        return false;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HEXISTS", key, field };
+    bool res = driver()->request(command, resp);
+    return (res && resp.value(0).toInt() == 1);
+}
+
+
+bool TRedis::hdel(const QByteArray &key, const QByteArray &field)
+{
+    QList<QByteArray> fields = { field };
+    int count = hdel(key, fields);
+    return (count == 1);
+}
+
+
+int TRedis::hdel(const QByteArray &key, const QList<QByteArray> &fields)
+{
+    if (!driver()) {
+        return 0;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HDEL", key };
+    command << fields;
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toInt() : 0;
+}
+
+
+int TRedis::hlen(const QByteArray &key)
+{
+    if (!driver()) {
+        return -1;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HLEN", key };
+    bool res = driver()->request(command, resp);
+    return (res) ? resp.value(0).toInt() : -1;
+}
+
+
+QList<QPair<QByteArray, QByteArray>> TRedis::hgetAll(const QByteArray &key)
+{
+    QList<QPair<QByteArray, QByteArray>> ret;
+    if (!driver()) {
+        return ret;
+    }
+
+    QVariantList resp;
+    QList<QByteArray> command = { "HGETALL", key };
+    bool res = driver()->request(command, resp);
+    if (res) {
+        for (QListIterator<QVariant> it(resp); it.hasNext(); ) {
+            QByteArray f = it.next().toByteArray();
+            if (!it.hasNext()) {
+                break;
+            }
+            QByteArray v = it.next().toByteArray();
+            ret << qMakePair(f, v);
+        }
+    }
+    return ret;
+}
 
 /*!
   \fn QString TRedis::gets(const QByteArray &key)

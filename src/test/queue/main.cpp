@@ -2,6 +2,7 @@
 #include <QThread>
 #include <atomic>
 #include <iostream>
+#include <thread>
 #include <TfTest/TfTest>
 #ifndef Q_CC_MSVC
 # include <unistd.h>
@@ -30,6 +31,7 @@ protected:
 #endif
                     QVERIFY(num == lastNum);
                     lastNum++;
+                    std::this_thread::yield();
                 }
             }
         } catch (...) {}
@@ -50,7 +52,7 @@ protected:
                     intQueue.enqueue(generator.fetch_add(1));
                     //std::cout << "queue cnt:" << intQueue.count() << std::endl;
                 } else {
-                    Tf::msleep(1);
+                    std::this_thread::yield();
                 }
             }
         } catch (...) {}
