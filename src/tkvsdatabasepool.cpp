@@ -213,7 +213,7 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
                 if (Q_UNLIKELY(!db.open())) {
                     tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
                     tSystemError("KVS database open error: %s", qPrintable(db.connectionName()));
-                    return TKvsDatabase();;
+                    return TKvsDatabase();
                 }
 
                 tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(dbEnvironment), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
