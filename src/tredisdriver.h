@@ -15,11 +15,11 @@ public:
     TRedisDriver();
     ~TRedisDriver();
 
-    QString key() const { return "REDIS"; }
-    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString & options = QString());
-    void close();
-    bool isOpen() const;
-    void moveToThread(QThread *thread);
+    QString key() const override { return "REDIS"; }
+    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString & options = QString()) override;
+    void close() override;
+    bool isOpen() const override;
+    void moveToThread(QThread *thread) override;
     bool request(const QList<QByteArray> &command, QVariantList &response);
 
 protected:
@@ -43,9 +43,9 @@ protected:
     static QByteArray toMultiBulk(const QList<QByteArray> &data);
 
 private:
-    QTcpSocket *client {nullptr};
-    QByteArray buffer;
-    int pos {0};
+    QTcpSocket *_client {nullptr};
+    QByteArray _buffer;
+    int _pos {0};
 
     T_DISABLE_COPY(TRedisDriver)
     T_DISABLE_MOVE(TRedisDriver)
