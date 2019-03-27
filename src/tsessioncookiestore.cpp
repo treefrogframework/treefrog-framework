@@ -47,7 +47,7 @@ bool TSessionCookieStore::store(TSession &session)
         return false;
     }
 
-    ba = qCompress(ba, 1);
+    ba = Tf::lz4Compress(ba);
     QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
                                                  QCryptographicHash::Sha1);
     session.sessionId = ba.toBase64() + "_" + digest.toBase64();
@@ -74,7 +74,7 @@ TSession TSessionCookieStore::find(const QByteArray &id)
             return session;
         }
 
-        ba = qUncompress(ba);
+        ba = Tf::lz4Uncompress(ba);
         QDataStream ds(&ba, QIODevice::ReadOnly);
         ds >> *static_cast<QVariantMap *>(&session);
 

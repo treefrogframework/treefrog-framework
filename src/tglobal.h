@@ -186,6 +186,12 @@ namespace Tf
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
     T_CORE_EXPORT QMap<QByteArray, std::function<QObject*()>> *objectFactories();
 
+    // LZ4 lossless compression algorithm
+    T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1);
+    T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data);
+    T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes);
+    T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data);
+
     static constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
     static constexpr auto CRLF     = "\x0d\x0a";
     static constexpr auto LF       = "\x0a";

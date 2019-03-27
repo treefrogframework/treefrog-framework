@@ -11,6 +11,8 @@
 #include <TActionContext>
 #include <TDatabaseContext>
 #include <TActionThread>
+#include <QDataStream>
+#include <QBuffer>
 #ifdef Q_OS_LINUX
 # include <TActionWorker>
 #endif
@@ -21,6 +23,9 @@
 #ifdef Q_OS_WIN
 # include <Windows.h>
 #endif
+#include "lz4.h"
+
+const int BLOCKSIZE = 1024 * 1024; // 1 MB
 
 /*!
   Returns a global pointer referring to the unique application object.
@@ -257,3 +262,107 @@ QMap<QByteArray, std::function<QObject*()>> *Tf::objectFactories()
     return &objectFactoryMap;
 }
 
+
+QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel)
+{
+    // internal compress function
+    auto compress = [](const char *src, int srclen, int level, QByteArray &buffer) {
+        const int bufsize = LZ4_compressBound(srclen);
+        buffer.reserve(bufsize);
+
+        if (srclen > 0) {
+            int rv = LZ4_compress_fast(src, buffer.data(), srclen, bufsize, level);
+            if (rv > 0) {
+                buffer.resize(rv);
+            } else {
+                tError("LZ4 compression error: %d", rv);
+                buffer.clear();
+            }
+        } else {
+            buffer.resize(0);
+        }
+    };
+
+    QByteArray ret;
+    int rsvsize = LZ4_compressBound(nbytes);
+    if (rsvsize < 1) {
+        return ret;
+    }
+
+    ret.reserve(rsvsize);
+    QDataStream dsout(&ret, QIODevice::WriteOnly);
+    dsout.setByteOrder(QDataStream::LittleEndian);
+    QByteArray buffer;
+    int readlen = 0;
+
+    while (readlen < nbytes) {
+        int datalen = qMin(nbytes - readlen, BLOCKSIZE);
+        compress(data + readlen, datalen, compressionLevel, buffer);
+        readlen += datalen;
+
+        if (buffer.isEmpty()) {
+            ret.clear();
+            break;
+        } else {
+            dsout << (int)buffer.length();
+            dsout.writeRawData(buffer.data(), buffer.length());
+        }
+    }
+
+    return ret;
+}
+
+
+QByteArray Tf::lz4Compress(const QByteArray &data)
+{
+    return Tf::lz4Compress(data.data(), data.length());
+}
+
+
+QByteArray Tf::lz4Uncompress(const char *data, int nbytes)
+{
+    QByteArray ret;
+    QBuffer srcbuf;
+    const int CompressBoundSize = LZ4_compressBound(BLOCKSIZE);
+
+    srcbuf.setData(data, nbytes);
+    srcbuf.open(QIODevice::ReadOnly);
+    QDataStream dsin(&srcbuf);
+    dsin.setByteOrder(QDataStream::LittleEndian);
+
+    QByteArray buffer;
+    buffer.reserve(BLOCKSIZE);
+
+    int readlen = 0;
+    while (readlen < nbytes) {
+        int srclen;
+        dsin >> srclen;
+        readlen += sizeof(srclen);
+
+        if (srclen <= 0 || srclen > CompressBoundSize) {
+            tError("LZ4 uncompression format error");
+            ret.clear();
+            break;
+        }
+
+        int rv = LZ4_decompress_safe(data + readlen, buffer.data(), srclen, BLOCKSIZE);
+        dsin.skipRawData(srclen);
+        readlen += srclen;
+
+        if (rv > 0) {
+            buffer.resize(rv);
+            ret += buffer;
+        } else {
+            tError("LZ4 uncompression error: %d", rv);
+            ret.clear();
+            break;
+        }
+    }
+    return ret;
+}
+
+
+QByteArray Tf::lz4Uncompress(const QByteArray &data)
+{
+    return Tf::lz4Uncompress(data.data(), data.length());
+}
