@@ -22,7 +22,7 @@ bool TSessionRedisStore::store(TSession &session)
     QByteArray data;
     QDataStream ds(&data, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
-    data = qCompress(data, 1).toBase64();
+    data = Tf::lz4Compress(data);
 
 #ifndef TF_NO_DEBUG
     {
@@ -54,7 +54,7 @@ TSession TSessionRedisStore::find(const QByteArray &id)
         return TSession();
     }
 
-    data = qUncompress(QByteArray::fromBase64(data));
+    data = Tf::lz4Uncompress(data);
     QDataStream ds(data);
     TSession session(id);
     ds >> *static_cast<QVariantMap *>(&session);
