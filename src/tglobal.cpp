@@ -313,9 +313,9 @@ QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel)
 }
 
 
-QByteArray Tf::lz4Compress(const QByteArray &data)
+QByteArray Tf::lz4Compress(const QByteArray &data, int compressionLevel)
 {
-    return Tf::lz4Compress(data.data(), data.length());
+    return Tf::lz4Compress(data.data(), data.length(), compressionLevel);
 }
 
 
