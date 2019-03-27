@@ -188,7 +188,7 @@ namespace Tf
 
     // LZ4 lossless compression algorithm
     T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1);
-    T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data);
+    T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLevel = 1);
     T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes);
     T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data);
 
