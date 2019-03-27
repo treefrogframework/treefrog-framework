@@ -30,21 +30,6 @@ bool TSessionFileStore::store(TSession &session)
         dir.mkpath(".");
     }
 
-#ifndef TF_NO_DEBUG
-    {
-        QByteArray badummy;
-        QDataStream dsdmy(&badummy, QIODevice::ReadWrite);
-        dsdmy << *static_cast<const QVariantMap *>(&session);
-
-        TSession dummy;
-        dsdmy.device()->seek(0);
-        dsdmy >> *static_cast<QVariantMap *>(&dummy);
-        if (dsdmy.status() != QDataStream::Ok) {
-            tSystemError("Failed to store a session into the cookie store. Must set objects that can be serialized.");
-        }
-    }
-#endif
-
     bool res = false;
     QWriteLocker locker(&rwLock);  // lock for threads
     QFile file(sessionDirPath() + session.id());
@@ -56,9 +41,14 @@ bool TSessionFileStore::store(TSession &session)
             tSystemWarn("flock error  errno:%d", err);
         }
 
+        QByteArray buffer;
+        QDataStream dsbuf(&buffer, QIODevice::WriteOnly);
+        dsbuf << *static_cast<const QVariantMap *>(&session);
+        buffer = Tf::lz4Compress(buffer);  // compress
+
         file.resize(0); // truncate
         QDataStream ds(&file);
-        ds << *static_cast<const QVariantMap *>(&session);
+        ds << buffer;
         file.close();
 
         res = (ds.status() == QDataStream::Ok);
@@ -87,9 +77,19 @@ TSession TSessionFileStore::find(const QByteArray &id)
             }
 
             QDataStream ds(&file);
-            TSession result(id);
-            ds >> *static_cast<QVariantMap *>(&result);
+            QByteArray buffer;
+            ds >> buffer;
             file.close();
+            buffer = Tf::lz4Uncompress(buffer);
+            TSession result(id);
+
+            if (buffer.isEmpty()) {
+                tSystemError("Failed to load a session from the file store.");
+                return result;
+            }
+
+            QDataStream dsbuf(&buffer, QIODevice::ReadOnly);
+            dsbuf >> *static_cast<QVariantMap *>(&result);
 
             if (ds.status() == QDataStream::Ok) {
                 return result;
