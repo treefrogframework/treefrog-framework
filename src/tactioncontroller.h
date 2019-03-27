@@ -129,7 +129,7 @@ private:
     QStringList args;
     int  statCode {Tf::OK};  // 200 OK
     bool rendered {false};
-    bool layoutEnable {false};
+    bool layoutEnable {true};
     QString layoutName;
     THttpResponse response;
     QVariantMap flashVars;
