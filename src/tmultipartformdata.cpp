@@ -16,6 +16,7 @@
 #include <TActionContext>
 #include <TTemporaryFile>
 #include <THttpRequest>
+using namespace Tf;
 
 const QFile::Permissions TMultipartFormData::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
 const QFile::Permissions TMimeEntity::DefaultPermissions = TMultipartFormData::DefaultPermissions;
@@ -476,7 +477,7 @@ TMimeHeader TMultipartFormData::parseMimeHeader(QIODevice *dev) const
     TMimeHeader header;
     while (!dev->atEnd()) {
         QByteArray line = dev->readLine();
-        if (line == "\r\n" || line.startsWith(dataBoundary)) {
+        if (line == CRLF || line.startsWith(dataBoundary)) {
             break;
         }
 

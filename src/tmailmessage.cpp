@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <THttpUtility>
 #include "tmailmessage.h"
+using namespace Tf;
 
 #define DEFAULT_CONTENT_TYPE  "text/plain"
 
@@ -237,9 +238,9 @@ void TMailMessage::addBcc(const QByteArray &address, const QString &friendlyName
 QString TMailMessage::body() const
 {
     QByteArray ba = mailBody;
-    if (ba.contains("\r\n"))
-        ba.replace("\r\n", "\n");
-
+    if (ba.contains(CRLF)) {
+        ba.replace(CRLF, LF);
+    }
     return textCodec->toUnicode(ba);
 }
 
@@ -252,7 +253,7 @@ void TMailMessage::setBody(const QString &body)
 
     for (int i = 0; i < ba.length(); ++i) {
         if (ba[i] == '\n' && i > 0 && ba[i - 1] != '\r') {
-            mailBody += "\r\n";
+            mailBody += CRLF;
         } else {
             mailBody += ba[i];
         }

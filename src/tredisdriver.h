@@ -37,15 +37,19 @@ protected:
     QByteArray getLine(bool *ok);
     int getNumber(bool *ok);
     void clearBuffer();
-    bool waitForState(int state, int msecs);
+//    bool waitForState(int state, int msecs);
 
     static QByteArray toBulk(const QByteArray &data);
     static QByteArray toMultiBulk(const QList<QByteArray> &data);
 
 private:
+    bool connectToRedisServer();
+
     QTcpSocket *_client {nullptr};
     QByteArray _buffer;
     int _pos {0};
+    QString _host;
+    quint16 _port {0};
 
     T_DISABLE_COPY(TRedisDriver)
     T_DISABLE_MOVE(TRedisDriver)

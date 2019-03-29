@@ -594,7 +594,7 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
     int from = 0;
     int headidx;
 
-    while ((headidx = byteArray.indexOf("\r\n\r\n", from)) > 0) {
+    while ((headidx = byteArray.indexOf(Tf::CRLFCRLF, from)) > 0) {
         headidx += 4;
         THttpRequestHeader header(byteArray.mid(from));
 

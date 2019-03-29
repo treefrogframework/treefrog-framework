@@ -17,7 +17,7 @@ class T_CORE_EXPORT TActionThread : public QThread, public TActionContext
 public:
     TActionThread(int socket, int maxThreads = 0);
     virtual ~TActionThread();
-    void setSocketDescpriter(qintptr socket);
+    void setSocketDescriptor(qintptr socket);
 
     static int threadCount();
     static bool waitForAllDone(int msec);

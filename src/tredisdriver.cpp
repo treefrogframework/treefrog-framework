@@ -11,15 +11,16 @@
 #include <QTcpSocket>
 #include <TApplicationServerBase>
 #include <TSystemGlobal>
-#include <thread>
+#include <QThread>
 using namespace Tf;
 
 const int DEFAULT_PORT = 6379;
+const int SEND_BUF_SIZE = 128 * 1024;
+const int RECV_BUF_SIZE = 128 * 1024;
 
 
 TRedisDriver::TRedisDriver() :
-    TKvsDriver(),
-    _client(new QTcpSocket())
+    TKvsDriver()
 {
     _buffer.reserve(1023);
 }
@@ -34,7 +35,7 @@ TRedisDriver::~TRedisDriver()
 
 bool TRedisDriver::isOpen() const
 {
-    return _client->state() == QAbstractSocket::ConnectedState;
+    return (_client) ? (_client->state() == QAbstractSocket::ConnectedState) : false;
 }
 
 
@@ -44,18 +45,40 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
         return true;
     }
 
+    if (! _client) {
+        _client = new QTcpSocket();
+    }
+
     if (_client->state() != QAbstractSocket::UnconnectedState) {
         return false;
     }
 
-    QString hst = (host.isEmpty()) ? "localhost" : host;
+#if QT_VERSION >= 0x050300
+    // Sets socket options
+    _client->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
-    if (port <= 0) {
-        port = DEFAULT_PORT;
+    // Sets buffer size of socket
+    int val = _client->socketOption(QAbstractSocket::SendBufferSizeSocketOption).toInt();
+    if (val < SEND_BUF_SIZE) {
+        _client->setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, SEND_BUF_SIZE);
     }
 
-    tSystemDebug("Redis open host:%s  port:%d", qPrintable(hst), port);
-    _client->connectToHost(hst, port);
+    val = _client->socketOption(QAbstractSocket::ReceiveBufferSizeSocketOption).toInt();
+    if (val < RECV_BUF_SIZE) {
+        _client->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, RECV_BUF_SIZE);
+    }
+#endif
+
+    _host = (host.isEmpty()) ? "localhost" : host;
+    _port = (port == 0) ? DEFAULT_PORT : port;
+    return connectToRedisServer();
+}
+
+
+bool TRedisDriver::connectToRedisServer()
+{
+    tSystemDebug("Redis open host:%s  port:%d", qPrintable(_host), _port);
+    _client->connectToHost(_host, _port);
 
     bool ret = _client->waitForConnected(5000);
     if (Q_LIKELY(ret)) {
@@ -65,32 +88,14 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
         close();
     }
     return ret;
-
-    // // function waitForConnected()
-    // auto waitForConnected = [=]() {
-    //     bool ret = waitForState(QAbstractSocket::ConnectedState, 5000);
-    //     if (Q_LIKELY(ret)) {
-    //         tSystemDebug("Redis open successfully");
-    //     } else {
-    //         tSystemError("Redis open failed");
-    //         close();
-    //     }
-    //     return ret;
-    // };
-
-    // // QObject::connect(_client, &QTcpSocket::disconnected, []() {
-    // //     tSystemError("Redis disconnected");
-    // //     _client->connectToHost(hst, port);
-    // //     waitForConnected();
-    // // });
-
-    // return waitForConnected();
 }
 
 
 void TRedisDriver::close()
 {
-    _client->close();
+    if (_client) {
+        _client->close();
+    }
 }
 
 
@@ -101,42 +106,15 @@ bool TRedisDriver::readReply()
         return false;
     }
 
-/*
-    if (Q_UNLIKELY(_pos > 0)) {
-        tSystemWarn("remain buffer: %d", _pos);
-        _buffer.remove(0, _pos);
-    //    _buffer.resize(0);
-        _pos = 0;
-    }
-*/
-
-    // QEventLoop eventLoop;
-    // QElapsedTimer timer;
-    // timer.start();
-
-    // int startlen = _buffer.length();
-    // tSystemWarn("## startlen: %d", startlen);
-
     bool ret = _client->waitForReadyRead(5000);
     if (ret) {
         _buffer += _client->readAll();
-        // if (_buffer.length() > startlen) {
-        //     break;
-        // }
-
-        // if (timer.elapsed() >= 10000) {
-        //     tSystemWarn("Read timeout");
-        //     break;
-        // }
-
-        //std::this_thread::yield();  // context switch
-        //Tf::msleep(5);
-        //tSystemWarn("## evetloop");
-        //while (eventLoop.processEvents()) {}
+    } else {
+        tSystemWarn("Redis response timeout");
     }
 
-    tSystemDebug("#Redis response length: %d", _buffer.length());
-    tSystemDebug("#Redis response data: %s", _buffer.data());
+    //tSystemDebug("#Redis response length: %d", _buffer.length());
+    //tSystemDebug("#Redis response data: %s", _buffer.data());
     return ret;
 }
 
@@ -149,20 +127,17 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &respo
     }
 
     bool ret = true;
-    QByteArray str;
     bool ok = false;
-    int startpos = _pos;
+    QByteArray str;
 
     QByteArray cmd = toMultiBulk(command);
     tSystemDebug("Redis command: %s", cmd.data());
     _client->write(cmd);
-    //_client->waitForBytesWritten();
-    //_client->flush();
-    //clearBuffer();
+    clearBuffer();
 
     for (;;) {
         if (! readReply()) {
-            clearBuffer();
+            tSystemError("Redis read error   pos:%d  buflen:%d", _pos, _buffer.length());
             break;
         }
 
@@ -209,13 +184,15 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &respo
         }
 
         if (ok) {
-            _buffer.remove(0, _pos);
-            _pos = _buffer.length();
+            if (_pos < _buffer.length()) {
+                tSystemWarn("!!#### pos : %d  buf:%d", _pos, _buffer.length());
+            }
+            clearBuffer();
             break;
-        } else {
-            _pos = startpos;
-            tSystemWarn("## repeat!!!");
         }
+
+        _pos = 0;
+        // retry to read..
     }
 
 parse_done:
@@ -331,40 +308,16 @@ int TRedisDriver::getNumber(bool *ok)
         return 0;
     }
 
-#if 0
-    int num = 0;
-    int c = 1;
-    char d = _buffer[_pos++];
-
-    if (d == '-') {
-        c = -1;
-        d = _buffer[_pos++];
-    }
-
-    while (d >= '0' && d <= '9') {
-        num *= 10;
-        num += d - '0';
-        d = _buffer[_pos++];
-    }
-
-    _pos = idx + 2;
-    *ok = true;
-    return num * c;
-#else
     int num = _buffer.mid(_pos, idx - _pos).toInt();
     _pos = idx + 2;
     *ok = true;
     tSystemDebug("getNumber: %d", num);
     return num;
-#endif
 }
 
 
 void TRedisDriver::clearBuffer()
 {
-    if (_pos > 0) {
-        tSystemWarn("!!#### pos : %d", _pos);
-    }
     _buffer.resize(0);
     _pos = 0;
 }
@@ -383,8 +336,7 @@ QByteArray TRedisDriver::toBulk(const QByteArray &data)
 
 QByteArray TRedisDriver::toMultiBulk(const QList<QByteArray> &data)
 {
-    QByteArray mbulk;
-    mbulk += "*";
+    QByteArray mbulk("*");
     mbulk += QByteArray::number(data.count());
     mbulk += CRLF;
     for (auto &d : data) {
@@ -394,44 +346,25 @@ QByteArray TRedisDriver::toMultiBulk(const QList<QByteArray> &data)
 }
 
 
-bool TRedisDriver::waitForState(int state, int msecs)
-{
-    QEventLoop eventLoop;
-    QElapsedTimer timer;
-    timer.start();
-
-    while (_client->state() != state) {
-        if (timer.elapsed() >= msecs) {
-            tSystemWarn("waitForState timeout.  current state:%d  timeout:%d", _client->state(), msecs);
-            return false;
-        }
-
-        if (_client->error() >= 0) {
-            tSystemWarn("waitForState : Error detected.  current state:%d  error:%d", _client->state(), _client->error());
-            return false;
-        }
-
-        std::this_thread::yield();  // context switch
-        while (eventLoop.processEvents()) {}
-    }
-    return true;
-}
-
-
 void TRedisDriver::moveToThread(QThread *thread)
 {
-    if (_client->thread() == thread) {
+    if (!_client || _client->thread() == thread) {
         return;
     }
-//return;  // ###################TODO
 
-    // if (_client->isOpen()) {
-    //     int socket = TApplicationServerBase::duplicateSocket(_client->socketDescriptor());
-    //     delete _client;
-    //     _client = new QTcpSocket();
-    //     _client->setSocketDescriptor(socket);
-    // }
+    int socket = 0;
+    QAbstractSocket::SocketState state = QAbstractSocket::ConnectedState;
 
-    TKvsDriver::moveToThread(thread);
+    if (_client->socketDescriptor() > 0) {
+        socket = TApplicationServerBase::duplicateSocket(_client->socketDescriptor());
+        state = _client->state();
+        delete _client;
+        _client = new QTcpSocket();
+    }
+
+    if (socket > 0) {
+        _client->setSocketDescriptor(socket, state);
+    }
     _client->moveToThread(thread);
+
 }
