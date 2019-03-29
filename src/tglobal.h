@@ -192,9 +192,9 @@ namespace Tf
     T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes);
     T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data);
 
-    static constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
-    static constexpr auto CRLF     = "\x0d\x0a";
-    static constexpr auto LF       = "\x0a";
+    static const QByteArray CRLFCRLF = "\x0d\x0a\x0d\x0a";
+    static const QByteArray CRLF     = "\x0d\x0a";
+    static const QByteArray LF       = "\x0a";
 }
 
 #endif // TGLOBAL_H

@@ -194,7 +194,7 @@ void THttpSocket::readRequest()
 
         } else if (lengthToRead < 0) {
             readBuffer.append(buf);
-            int idx = readBuffer.indexOf("\r\n\r\n");
+            int idx = readBuffer.indexOf(Tf::CRLFCRLF);
             if (idx > 0) {
                 THttpRequestHeader header(readBuffer);
                 tSystemDebug("content-length: %lld", header.contentLength());

@@ -80,7 +80,7 @@ TActionThread::~TActionThread()
 }
 
 
-void TActionThread::setSocketDescpriter(qintptr socket)
+void TActionThread::setSocketDescriptor(qintptr socket)
 {
     if (TActionContext::socketDesc > 0) {
         tSystemWarn("Socket still open : %d   [%s:%d]", TActionContext::socketDesc, __FILE__, __LINE__);
@@ -97,6 +97,7 @@ void TActionThread::run()
     _httpSocket = new THttpSocket();
 
     if (Q_UNLIKELY(!_httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
+        tSystemError("Failed setSocketDescriptor  sd:%d", TActionContext::socketDesc);
         emitError(_httpSocket->error());
         tf_close(TActionContext::socketDesc);
         goto socket_error;
@@ -205,7 +206,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
         }
 
         if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
-            tSystemWarn("Invalid descriptor (disconnected) : %d", (int)socket->socketDescriptor());
+            tSystemWarn("Invalid descriptor (state:%d) sd:%d", (int)socket->state(), (int)socket->socketDescriptor());
             break;
         }
 

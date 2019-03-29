@@ -6,6 +6,7 @@
  */
 
 #include <THttpHeader>
+using namespace Tf;
 
 /*!
   \class THttpHeader
@@ -173,11 +174,14 @@ QList<TCookie> THttpRequestHeader::cookies() const
 QByteArray THttpRequestHeader::toByteArray() const
 {
     QByteArray ba;
-    ba += reqMethod + ' ' + reqUri + " HTTP/";
+    ba += reqMethod;
+    ba += ' ';
+    ba += reqUri;
+    ba += QByteArrayLiteral(" HTTP/");
     ba += QByteArray::number(majorVersion());
     ba += '.';
     ba += QByteArray::number(minorVersion());
-    ba += "\r\n";
+    ba += CRLF;
     ba += THttpHeader::toByteArray();
     return ba;
 }
@@ -281,7 +285,7 @@ QByteArray THttpResponseHeader::toByteArray() const
     ba += QByteArray::number(statCode);
     ba += ' ';
     ba += reasonPhr;
-    ba += "\r\n";
+    ba += CRLF;
     ba += THttpHeader::toByteArray();
     return ba;
 }
