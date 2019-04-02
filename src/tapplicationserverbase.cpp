@@ -8,6 +8,8 @@
 #include <QLibrary>
 #include <QList>
 #include <QDir>
+#include <QString>
+#include <QStringBuilder>
 #include <QDateTime>
 #include <TWebApplication>
 #include <TActionContext>
@@ -57,7 +59,7 @@ bool TApplicationServerBase::loadLibraries()
 #endif
 
         for (auto &libname : libs) {
-            auto lib = new QLibrary(libname);
+            auto lib = new QLibrary(libPath % "/" % libname);
             if (lib->load()) {
                 tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
                 libsLoaded << lib;
