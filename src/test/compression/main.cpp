@@ -80,7 +80,8 @@ void LZ4Compress::bench_lz4()
     dummy.resize(512 * 1024);
 
     QBENCHMARK {
-       Tf::lz4Uncompress( Tf::lz4Compress(dummy));
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummy) );
+        Q_UNUSED(cmp);
     }
 }
 
@@ -90,7 +91,8 @@ void LZ4Compress::bench_qcompress()
     dummy.resize(512 * 1024);
 
     QBENCHMARK {
-        qUncompress( qCompress(dummy) );
+        auto cmp = qUncompress( qCompress(dummy) );
+        Q_UNUSED(cmp);
     }
 }
 
@@ -100,7 +102,8 @@ void LZ4Compress::bench_base64()
     dummy.resize(512 * 1024);
 
     QBENCHMARK {
-        QByteArray::fromBase64( dummy.toBase64() );
+        auto cmp = QByteArray::fromBase64( dummy.toBase64() );
+        Q_UNUSED(cmp);
     }
 }
 
