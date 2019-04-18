@@ -48,16 +48,12 @@ bool TApplicationServerBase::loadLibraries()
 
 #if defined(Q_OS_WIN)
         const QStringList libs = { "controller", "view" };
-#elif defined(Q_OS_LINUX)
-        const QStringList libs = { "libcontroller.so", "libview.so" };
-#elif defined(Q_OS_DARWIN)
-        const QStringList libs = { "libcontroller.dylib", "libview.dylib" };
 #else
-        const QStringList libs = { "libcontroller.so", "libview.so" };
+        const QStringList libs = { "libcontroller", "libview" };
 #endif
 
         for (auto &libname : libs) {
-            auto lib = new QLibrary(libname);
+            auto lib = new QLibrary(libPath + libname);
             if (lib->load()) {
                 tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
                 libsLoaded << lib;
