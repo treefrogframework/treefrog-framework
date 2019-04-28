@@ -47,7 +47,7 @@ BUILD_STATIC:=yes
 
 OS ?= $(shell uname)
 CPPFLAGS+= -DXXH_NAMESPACE=LZ4_
-CFLAGS  ?= -O3
+CFLAGS  ?= -O3 -fPIC
 DEBUGFLAGS:= -Wall -Wextra -Wcast-qual -Wcast-align -Wshadow \
              -Wswitch-enum -Wdeclaration-after-statement -Wstrict-prototypes \
              -Wundef -Wpointer-arith -Wstrict-aliasing=1
