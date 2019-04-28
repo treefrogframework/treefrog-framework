@@ -134,7 +134,7 @@ if ERRORLEVEL 1 (
 )
 
 :: Builds LZ4
-cd ..\lz4-1.9.1\visual\VS2017\liblz4
+cd ..\lz4\visual\VS2017\liblz4
 msbuild /t:rebuild  /p:Configuration=Release liblz4.vcxproj
 cd ..\..\..\..\..
 
