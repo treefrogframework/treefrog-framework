@@ -3,6 +3,7 @@
 
 set VERSION=1.24.0
 set TFDIR=C:\TreeFrog\%VERSION%
+set LZ4_VERSION=1.9.1
 
 :parse_loop
 if "%1" == "" goto :start
@@ -134,7 +135,10 @@ if ERRORLEVEL 1 (
 )
 
 :: Builds LZ4
-cd ..\lz4\visual\VS2017\liblz4
+cd ..
+rd /Q lz4
+mklink /d lz4 lz4-%LZ4_VERSION%
+cd lz4\visual\VS2017\liblz4
 msbuild /t:rebuild  /p:Configuration=Release liblz4.vcxproj
 cd ..\..\..\..\..
 
