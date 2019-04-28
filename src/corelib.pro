@@ -28,7 +28,8 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  LIBS += -lws2_32 -lpsapi
+  LIBS += -lws2_32 -lpsapi ../3rdparty/lz4/visual/VS2017/liblz4/bin/x64_Release/liblz4_static.lib
+  INCLUDEPATH += ../3rdparty/lz4/lib/
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
   win32-msvc* {
@@ -44,8 +45,8 @@ windows {
   test.path = $$header.path/TfTest
   INSTALLS += header script test
 } else:unix {
-  LIBS += ../3rdparty/lz4-1.8.3/lib/liblz4.a
-  INCLUDEPATH += ../3rdparty/lz4-1.8.3/lib
+  LIBS += ../3rdparty/lz4/lib/liblz4.a
+  INCLUDEPATH += ../3rdparty/lz4/lib
   macx:QMAKE_SONAME_PREFIX=@rpath
 
   header.files = $$HEADER_FILES $$HEADER_CLASSES
@@ -368,9 +369,9 @@ windows {
     }
   } else {
     CONFIG(debug, debug|release) {
-      LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a -lws2_32
+      LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a
     } else {
-      LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a -lws2_32
+      LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a
     }
   }
 } else {

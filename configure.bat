@@ -132,7 +132,11 @@ if ERRORLEVEL 1 (
   echo MongoDB driver not available.
   exit /b
 )
-cd ..\..
+
+:: Builds LZ4
+cd ..\lz4-1.9.1\visual\VS2017\liblz4
+msbuild /t:rebuild  /p:Configuration=Release liblz4.vcxproj
+cd ..\..\..\..\..
 
 cd src
 if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
