@@ -1,0 +1,19 @@
+
+# build artefacts
+datagen
+frametest
+frametest32
+fullbench
+fullbench32
+fuzzer
+fuzzer32
+fasttest
+roundTripTest
+checkTag
+
+# test artefacts
+tmp*
+versionsTest
+
+# local tests
+afl
