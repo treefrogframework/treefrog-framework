@@ -137,7 +137,8 @@ if ERRORLEVEL 1 (
 :: Builds LZ4
 cd ..
 del /f /q lz4 >nul 2>&1
-mklink /d lz4 lz4-%LZ4_VERSION% >nul 2>&1
+::mklink /d lz4 lz4-%LZ4_VERSION% >nul 2>&1
+xcopy lz4-%LZ4_VERSION% lz4 /Q /D /E /Y /I /K
 devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
 cd ..
 
