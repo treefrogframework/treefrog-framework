@@ -189,7 +189,7 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
 fi
 
 # compile LZ4
-cd "$BASEDIR/3rdparty/lz4-1.8.3"
+cd "$BASEDIR/3rdparty/lz4"
 echo
 echo -n "Compiling LZ4 ... "
 make clean >/dev/null 2>&1
