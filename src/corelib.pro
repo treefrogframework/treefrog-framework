@@ -28,7 +28,7 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  LIBS += -lws2_32 -lpsapi ../3rdparty/lz4/visual/VS2017/liblz4/bin/x64_Release/liblz4_static.lib
+  LIBS += -lws2_32 -lpsapi ../3rdparty/lz4/visual/VS2017/bin/x64_Release/liblz4_static.lib
   INCLUDEPATH += ../3rdparty/lz4/lib/
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES

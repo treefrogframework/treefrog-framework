@@ -138,9 +138,8 @@ if ERRORLEVEL 1 (
 cd ..
 del /f /q lz4 >nul 2>&1
 mklink /d lz4 lz4-%LZ4_VERSION% >nul 2>&1
-cd lz4\visual\VS2017\liblz4
-msbuild /t:rebuild  /p:Configuration=Release liblz4.vcxproj
-cd ..\..\..\..\..
+devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
+cd ..
 
 cd src
 if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
