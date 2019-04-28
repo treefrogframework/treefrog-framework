@@ -33,7 +33,6 @@ build: off
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cmd: call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
   - cmd: set PATH=C:\Qt\5.12.2\msvc2017_64\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
   - cmd: echo %PATH%
