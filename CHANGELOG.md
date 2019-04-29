@@ -1,6 +1,6 @@
 # ChangeLog
 ## 1.24.0
- - Mofified to use LZ4 compression algorithm.
+ - Modified to use LZ4 compression algorithm.
  - Modified to use QLatin1String(), QStringLiteral() and QByteArrayLiteral()
    where possible.
  - Fix a bug of incorrect Content-Type returned for files with uppercase

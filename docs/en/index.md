@@ -41,7 +41,7 @@ Apr. 29, 2019
 
 ### TreeFrog Framework version 1.24.0 (stable) release <span style="color: red;">New!</span>
 
-  - Mofified to use LZ4 compression algorithm.
+  - Modified to use LZ4 compression algorithm.
   - Implemented functions storing data of hash type for Redis.
   - Fix a bug of incorrect Content-Type returned for files with uppercase extension.
   - Fix a bug of parsing form-data values included backslashes.
