@@ -1,4 +1,18 @@
 # ChangeLog
+## 1.24.0
+ - Mofified to use LZ4 compression algorithm.
+ - Modified to use QLatin1String(), QStringLiteral() and QByteArrayLiteral()
+   where possible.
+ - Fix a bug of incorrect Content-Type returned for files with uppercase
+   extension.
+ - Fix a bug of parsing form-data values included backslashes.
+ - Implemented a function, TMultipartFormData::uploadedFilePath().
+ - Implemented a function, TSqlQuery::value(const QString &name).
+ - Implemented functions storing data of hash type for Redis.
+ - Brushed up THttpRequest class. #234
+ - Improved functions of TSqlQuery class. #243
+ - Performance improvement.
+
 ## 1.23.0
  - Added failsafe of SQL when BEGEN/COMMIT/ROLLBACK failed.
  - Modified to replace QLatin1String with QStringLiteral for view codes.
