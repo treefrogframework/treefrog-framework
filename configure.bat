@@ -144,6 +144,7 @@ if not "%MSCOMPILER%" == "" (
 ) else (
   cd lz4\lib
   qmake -o makefile.liblz4
+  %MAKE% -f makefile.liblz4 clean
   %MAKE% -f makefile.liblz4
   cd ..\..
 )
