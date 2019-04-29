@@ -143,8 +143,8 @@ if not "%MSCOMPILER%" == "" (
   devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
 ) else (
   cd lz4\lib
-  qmake
-  %MAKE%
+  qmake -o makefile.liblz4
+  %MAKE% -f makefile.liblz4
   cd ..\..
 )
 cd ..
