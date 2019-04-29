@@ -76,26 +76,6 @@ Mar. 25, 2018
   - Fix a bug of reloading app libraries.
   - Fix to return 404 when the action is not found.
 
-Dec. 9, 2017
-
-### TreeFrog Framework version 1.20.0 (stable) release
-
-  - Implemented rawBody() function in THttpRequest class.
-  - Added some functions for getting query string.
-  - Added sql statements to PostOpenStatements in database.ini.
-  - Fix compilation error on Ubuntu 17.10 and macOS.
-  - Fix compilation error on Qt 5.10.
-
-Sep. 20, 2017
-
-### TreeFrog Framework version 1.19.0 (stable) release
-
-  - Added TSqlDriverExtension class for upsert statement.
-  - Added QString arguments to sort columns function.
-  - Added routes.cfg settings by which redirecting to URL path.
-  - Modified to send a message of empty body when the status code is 304.
-  - Fix compilation error on FreeBSD.
-  - Other bugfixes.
 
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 

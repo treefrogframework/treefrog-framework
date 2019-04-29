@@ -71,22 +71,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  - アプリ更新時におけるリローディングの不具合修正
  - アクションが存在しないときに404コードを返すよう修正
 
-### 2017/12/9  TreeFrog Framework バージョン1.20.0 （安定版）リリース
-
- - THttpRequestクラスへrawBody()を実装
- - クエリ文字列を取得する関数を追加
- - database.iniにあるPostOpenStatementsにSQL文を設定することで、オープン直後に実行される仕組みを追加
- - Ubuntu 17.10とmacOSでのコンパイルエラー解消
- - Qt 5.10でのコンパイルエラー解消
-
-### 2017/9/20  TreeFrog Framework バージョン1.19.0 （安定版）リリース
-
- - Upsert文のためにTSqlDriverExtensionクラスを追加
- - QStringタイプの引数を持つSQLソート関数を追加
- - URLパスへリダイレクトできる仕組みをroutes.cfgへ追加
- - ステータスコードが304の場合に空ボディのメッセージを送信するよう変更
- - FreeBSDでのコンパイルエラーの解消
- - その他バグフィックス
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
