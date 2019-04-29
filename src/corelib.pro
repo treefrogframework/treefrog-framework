@@ -28,8 +28,13 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  LIBS += -lws2_32 -lpsapi ../3rdparty/lz4/visual/VS2017/bin/x64_Release/liblz4_static.lib
   INCLUDEPATH += ../3rdparty/lz4/lib/
+  win32-msvc* {
+    LIBS += ../3rdparty/lz4/visual/VS2017/bin/x64_Release/liblz4_static.lib
+  } else {
+    LIBS += ../3rdparty/lz4/lib/release/liblz4.a
+  }
+
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
   win32-msvc* {
@@ -374,6 +379,7 @@ windows {
       LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a
     }
   }
+  LIBS += -lws2_32 -lpsapi
 } else {
   isEmpty( shared_mongoc ) {
     INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson

@@ -81,7 +81,7 @@ if not "%MSCOMPILER%" == "" (
     set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
   )
 ) else (
-  set MAKE=mingw32-make
+  set MAKE=mingw32-make -j%NUMBER_OF_PROCESSORS%
   set ENVSTR=Environment to build for 32-bit executable  MinGW / Qt
 )
 SET /P X="%ENVSTR%"<NUL
@@ -136,11 +136,17 @@ if ERRORLEVEL 1 (
 
 :: Builds LZ4
 cd ..
-del /f /q /s lz4 >nul 2>&1
 rd /s /q lz4 >nul 2>&1
+del /f /q lz4 >nul 2>&1
 mklink /d lz4 lz4-%LZ4_VERSION% >nul 2>&1
-::xcopy lz4-%LZ4_VERSION% lz4 /Q /D /E /Y /I /K
-devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
+if not "%MSCOMPILER%" == "" (
+  devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
+) else (
+  cd lz4\lib
+  qmake
+  %MAKE%
+  cd ..\..
+)
 cd ..
 
 cd src
