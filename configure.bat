@@ -82,7 +82,7 @@ if not "%MSCOMPILER%" == "" (
   )
 ) else (
   set MAKE=mingw32-make -j%NUMBER_OF_PROCESSORS%
-  set ENVSTR=Environment to build for 32-bit executable  MinGW / Qt
+  set ENVSTR=Environment to build for executable MinGW / Qt
 )
 SET /P X="%ENVSTR%"<NUL
 qtpaths.exe --qt-version
