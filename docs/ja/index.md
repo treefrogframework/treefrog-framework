@@ -40,15 +40,23 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2019/1/6  TreeFrog Framework バージョン1.23.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2019/4/29  TreeFrog Framework バージョン1.24.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - LZ4圧縮アルゴリズムを使用するよう修正
+  - Redisハッシュ型データ向けの関数を実装
+  - 大文字を使った拡張子のファイルで戻されるコンテントタイプの不具合修正
+  - バックスラッシュを含んだform-dataの解析の不具合修正
+  - その他不具合修正と改善
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2019/1/6  TreeFrog Framework バージョン1.23.0 （安定版）リリース
 
   - BEGEN/COMMIT/ROLLBACK 失敗時のファールセーフ追加
   - セッションストアの不具合修正
   - 例外クラスの微修正
   - クエリーログにログメッセージ追加
   - その他不具合修正
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2018/6/10  TreeFrog Framework バージョン1.22.0 （安定版）リリース
 

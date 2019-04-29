@@ -37,17 +37,27 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Apr. 29, 2019
+
+### TreeFrog Framework version 1.24.0 (stable) release <span style="color: red;">New!</span>
+
+  - Mofified to use LZ4 compression algorithm.
+  - Implemented functions storing data of hash type for Redis.
+  - Fix a bug of incorrect Content-Type returned for files with uppercase extension.
+  - Fix a bug of parsing form-data values included backslashes.
+  - Other bugfixes and improvements.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Jan. 6, 2019
 
-### TreeFrog Framework version 1.23.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.23.0 (stable) release
 
   - Added failsafe of SQL when BEGEN/COMMIT/ROLLBACK failed.
   - Fix a bug of sqlobject for session store.
   - Minor changes of exception classes.
   - Added log messages for query log.
   - Other bugfixes.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Jun. 10, 2018
 
