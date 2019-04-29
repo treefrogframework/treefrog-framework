@@ -94,10 +94,6 @@ TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
         db = TKvsDatabasePool::instance()->database(type);
     }
 
-    if (db.driver()) {
-        db.driver()->moveToThread(QThread::currentThread());
-    }
-
     idleElapsed = (uint)std::time(nullptr);
     return db;
 }

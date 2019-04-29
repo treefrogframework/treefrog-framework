@@ -12,6 +12,7 @@
 #include <TApplicationServerBase>
 #include <TSystemGlobal>
 #include <QThread>
+#include "tsystemglobal.h"
 using namespace Tf;
 
 const int DEFAULT_PORT = 6379;
@@ -185,7 +186,7 @@ bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &respo
 
         if (ok) {
             if (_pos < _buffer.length()) {
-                tSystemWarn("!!#### pos : %d  buf:%d", _pos, _buffer.length());
+                tSystemError("Invalid format  [%s:%d]", __FILE__, __LINE__);
             }
             clearBuffer();
             break;
@@ -352,19 +353,19 @@ void TRedisDriver::moveToThread(QThread *thread)
         return;
     }
 
-    int socket = 0;
+    int socket = _client->socketDescriptor();
     QAbstractSocket::SocketState state = QAbstractSocket::ConnectedState;
 
-    if (_client->socketDescriptor() > 0) {
-        socket = TApplicationServerBase::duplicateSocket(_client->socketDescriptor());
+    if (socket > 0) {
+        socket = TApplicationServerBase::duplicateSocket(socket);
         state = _client->state();
-        delete _client;
-        _client = new QTcpSocket();
     }
+
+    delete _client;
+    _client = new QTcpSocket();
 
     if (socket > 0) {
         _client->setSocketDescriptor(socket, state);
     }
     _client->moveToThread(thread);
-
 }

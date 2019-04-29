@@ -43,6 +43,7 @@ public:
     bool isValid() const;
     TKvsDriver *driver() { return drv; }
     const TKvsDriver *driver() const { return drv; }
+    void moveToThread(QThread *targetThread);
 
     static const char *const defaultConnection;
     static TKvsDatabase database(const QString &connectionName = QLatin1String(defaultConnection));

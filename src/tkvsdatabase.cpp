@@ -281,3 +281,11 @@ void TKvsDatabase::setConnectOptions(const QString &options)
         (*dict)[connectName].connectOptions = options;
     }
 }
+
+
+void TKvsDatabase::moveToThread(QThread *targetThread)
+{
+    if (driver()) {
+        driver()->moveToThread(targetThread);
+    }
+}

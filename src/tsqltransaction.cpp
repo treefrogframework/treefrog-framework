@@ -87,9 +87,9 @@ bool TSqlTransaction::commit()
 
         int id = TSqlDatabasePool::getDatabaseId(_database);
         if (Q_LIKELY(res)) {
-            Tf::traceQueryLog("[COMMIT] [databaseId:%d]", id);
+            Tf::traceQueryLog("[COMMIT] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
         } else {
-            Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d]", id);
+            Tf::traceQueryLog("[COMMIT Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
         }
     }
 
@@ -111,9 +111,9 @@ bool TSqlTransaction::rollback()
 
         int id = TSqlDatabasePool::getDatabaseId(_database);
         if (Q_LIKELY(res)) {
-            Tf::traceQueryLog("[ROLLBACK] [databaseId:%d]", id);
+            Tf::traceQueryLog("[ROLLBACK] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
         } else {
-            Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d]", id);
+            Tf::traceQueryLog("[ROLLBACK Failed] [databaseId:%d] %s", id, qPrintable(_database.connectionName()));
         }
     }
 

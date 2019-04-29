@@ -113,13 +113,13 @@ void TActionWorker::run()
 
         // Executes a action context
         TActionContext::execute(req, socket->socketId());
-        TActionContext::release();
 
         if (TActionContext::stopped.load()) {
             break;
         }
     }
 
+    TActionContext::release();
     httpRequest.clear();
     clientAddr.clear();
 }

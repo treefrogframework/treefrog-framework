@@ -53,8 +53,10 @@ bool TActionThread::waitForAllDone(int msec)
   \brief The TActionThread class provides a thread context.
 */
 
-TActionThread::TActionThread(int socket, int maxThreads)
-    : QThread(), TActionContext(), _maxThreads(maxThreads)
+TActionThread::TActionThread(int socket, int maxThreads) :
+    QThread(),
+    TActionContext(),
+    _maxThreads(maxThreads)
 {
     ++threadCounter;
     TActionContext::socketDesc = socket;
@@ -130,8 +132,6 @@ void TActionThread::run()
 
             for (auto &req : reqs) {
                 TActionContext::execute(req, _httpSocket->socketId());
-                _httpSocket->flush();  // Flush socket
-                TActionContext::release();
             }
 
             if (keepAliveTimeout == 0) {

@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QMap>
+#include <QThread>
 #include <TWebApplication>
 #include <ctime>
 #include "tkvsdatabasepool.h"
@@ -210,6 +211,8 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
                 tSystemWarn("Gets a opend KVS database: %s", qPrintable(db.connectionName()));
                 return db;
             } else {
+                db.moveToThread(QThread::currentThread());  // move to thread
+
                 if (Q_UNLIKELY(!db.open())) {
                     tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
                     tSystemError("KVS database open error: %s", qPrintable(db.connectionName()));
