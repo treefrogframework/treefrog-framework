@@ -1,9 +1,9 @@
 @echo OFF
 @setlocal
 
-set VERSION=1.24.0
+set VERSION=1.25.0
 set TFDIR=C:\TreeFrog\%VERSION%
-set LZ4_VERSION=1.8.3
+set LZ4_VERSION=1.9.1
 
 :parse_loop
 if "%1" == "" goto :start

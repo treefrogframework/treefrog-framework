@@ -185,6 +185,7 @@ EXCLUDE                = src/test \
                          src/tconcurrentmap.h \
                          src/tlmdbdriver.h \
                          src/tLmdbcursor.h \
+                         src/tscheduler2.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp
