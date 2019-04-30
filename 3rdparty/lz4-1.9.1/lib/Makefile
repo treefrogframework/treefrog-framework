@@ -46,7 +46,7 @@ BUILD_SHARED:=yes
 BUILD_STATIC:=yes
 
 CPPFLAGS+= -DXXH_NAMESPACE=LZ4_
-CFLAGS  ?= -O3 -fPIC
+CFLAGS  ?= -O3
 DEBUGFLAGS:= -Wall -Wextra -Wcast-qual -Wcast-align -Wshadow \
              -Wswitch-enum -Wdeclaration-after-statement -Wstrict-prototypes \
              -Wundef -Wpointer-arith -Wstrict-aliasing=1
@@ -88,7 +88,7 @@ all32: all
 liblz4.a: $(SRCFILES)
 ifeq ($(BUILD_STATIC),yes)  # can be disabled on command line
 	@echo compiling static library
-	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $^
+	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -c $^
 	$(Q)$(AR) rcs $@ *.o
 endif
 
