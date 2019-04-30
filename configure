@@ -193,7 +193,7 @@ cd "$BASEDIR/3rdparty/lz4"
 echo
 echo -n "Compiling LZ4 ... "
 make clean >/dev/null 2>&1
-make >/dev/null 2>&1
+make liblz4.a >/dev/null 2>&1
 RET=$?
 if [ $RET != 0 ]; then
   echo "failed"
