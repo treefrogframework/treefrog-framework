@@ -1,6 +1,7 @@
 FROM buildpack-deps:bionic
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
+ENV TREEFROG_VERSION 1.24.0
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -32,8 +33,8 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/treefrog
-RUN git clone https://github.com/treefrogframework/treefrog-framework.git && \
-    cd treefrog-framework && \
+RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
+    cd treefrog-framework-${TREEFROG_VERSION} && \
     ./configure --enable-shared-mongoc && \
     make -j"$(nproc)" -C src && \
     make -C src install && \
