@@ -21,7 +21,7 @@ Ubuntu の例：
 DBクライアントライブラリもインストールします。
 
 ```
- $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
+ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1 libmongoc-dev libbson-dev
 ```
 
 ## インストール手順
@@ -129,6 +129,7 @@ Linux, UNIX系OSで指定可能なオプション：
    --enable-debug      compile with debugging information
    --enable-gui-mod    compile and link with QtGui module
    --enable-mongo      compile with MongoDB driver library
+   --spec=SPEC         use SPEC as QMAKESPEC
 
  Installation directories:
    --prefix=PREFIX     install files in PREFIX [/usr]

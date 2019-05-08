@@ -22,7 +22,7 @@ Install the Qt libraries and dev tools:
 Now install the DB client libraries:
 
 ```
- $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
+ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1 libmongoc-dev libbson-dev
 ```
 
 ### Installation Instructions
@@ -136,6 +136,7 @@ Options available on Linux, and UNIX-like OS:
    --enable-debug      compile with debugging information
    --enable-gui-mod    compile and link with QtGui module
    --enable-mongo      compile with MongoDB driver library
+   --spec=SPEC         use SPEC as QMAKESPEC
 
  Installation directories:
    --prefix=PREFIX     install files in PREFIX [/usr]
