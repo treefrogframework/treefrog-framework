@@ -186,7 +186,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                             // init once
                             static std::once_flag once;
                             std::call_once(once, [&](){
-                                QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString();
+                                QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
                                 if (! maxagestr.isEmpty()) {
                                     maxage = maxagestr.toInt();
                                 } else {
@@ -194,9 +194,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 }
 
                                 // Sets path in the session cookie
-                                cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
+                                cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
                                 // Sets domain in the session cookie
-                                cookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString();
+                                cookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
                             });
 
                             QDateTime expire;
