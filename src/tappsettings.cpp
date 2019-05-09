@@ -44,7 +44,9 @@ public:
         insert(Tf::SessionName, "Session.Name");
         insert(Tf::SessionStoreType, "Session.StoreType");
         insert(Tf::SessionAutoIdRegeneration, "Session.AutoIdRegeneration");
-        insert(Tf::SessionLifeTime, "Session.LifeTime");
+        insert(Tf::SessionLifeTime, "Session.LifeTime");  // Deprecated
+        insert(Tf::SessionCookieMaxAge, "Session.CookieMaxAge");
+        insert(Tf::SessionCookieDomain, "Session.CookieDomain");
         insert(Tf::SessionCookiePath, "Session.CookiePath");
         insert(Tf::SessionGcProbability, "Session.GcProbability");
         insert(Tf::SessionGcMaxLifeTime, "Session.GcMaxLifeTime");

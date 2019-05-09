@@ -22,6 +22,7 @@
 #include "tsessionmanager.h"
 #include "turlroute.h"
 #include "tabstractwebsocket.h"
+#include <mutex>
 
 /*!
   \class TActionContext
@@ -179,19 +180,31 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     if (currController->sessionEnabled()) {
                         bool stored = TSessionManager::instance().store(currController->session());
                         if (Q_LIKELY(stored)) {
-                            static int cookielifetime = -1;
+                            static int maxage;
+                            static QString cookiePath, cookieDomain;
+
+                            // init once
+                            static std::once_flag once;
+                            std::call_once(once, [&](){
+                                QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString();
+                                if (! maxagestr.isEmpty()) {
+                                    maxage = maxagestr.toInt();
+                                } else {
+                                    maxage = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
+                                }
+
+                                // Sets path in the session cookie
+                                cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
+                                // Sets domain in the session cookie
+                                cookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString();
+                            });
+
                             QDateTime expire;
-
-                            if (cookielifetime < 0) {
-                                cookielifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
-                            }
-                            if (cookielifetime > 0) {
-                                expire = QDateTime::currentDateTime().addSecs(cookielifetime);
+                            if (maxage > 0) {
+                                expire = QDateTime::currentDateTime().addSecs(maxage);
                             }
 
-                            // Sets the path in the session cookie
-                            QString cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString();
-                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath, QString(), false, true);
+                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath, cookieDomain, false, true);
 
                             // Commits a transaction for session
                             commitTransactions();

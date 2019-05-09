@@ -157,7 +157,7 @@ namespace Tf
         SessionName,
         SessionStoreType,
         SessionAutoIdRegeneration,
-        SessionLifeTime,
+        SessionLifeTime,      // obsolete
         SessionCookiePath,
         SessionGcProbability,
         SessionGcMaxLifeTime,
@@ -196,6 +196,9 @@ namespace Tf
         JavaScriptPath,
         ActionMailerSmtpEnableSTARTTLS,
         ListenAddress,
+        //
+        SessionCookieMaxAge,
+        SessionCookieDomain,
     };
 
     // Reason codes why a web socket has been closed
