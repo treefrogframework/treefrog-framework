@@ -44,18 +44,21 @@ TActionContext::~TActionContext()
 
 static bool directViewRenderMode()
 {
-    static int mode = -1;
-    if (mode < 0) {
-        mode = (int)Tf::appSettings()->value(Tf::DirectViewRenderMode).toBool();
-    }
+    static const int mode = (int)Tf::appSettings()->value(Tf::DirectViewRenderMode).toBool();
     return (bool)mode;
 }
 
 
 void TActionContext::execute(THttpRequest &request, int sid)
 {
-    T_TRACEFUNC("");
-    static qint64 limitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong();
+    // App parameters
+    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong();
+    static const uint ListenPort = Tf::appSettings()->value(Tf::ListenPort).toUInt();
+    static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool();
+    static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
+    static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
+    static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
+
     THttpResponseHeader responseHeader;
 
     try {
@@ -71,7 +74,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         firstLine += QStringLiteral(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
         accessLogger.setTimestamp(QDateTime::currentDateTime());
         accessLogger.setRequest(firstLine);
-        accessLogger.setRemoteHost( (Tf::appSettings()->value(Tf::ListenPort).toUInt() > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)") );
+        accessLogger.setRemoteHost( (ListenPort > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)") );
 
         tSystemDebug("method : %s", reqHeader.method().data());
         tSystemDebug("path : %s", reqHeader.path().data());
@@ -80,7 +83,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         Tf::HttpMethod method = httpReq->method();
         QString path = THttpUtility::fromUrlEncoding(reqHeader.path().mid(0, reqHeader.path().indexOf('?')));
 
-        if (limitBodyBytes > 0 && reqHeader.contentLength() > (uint)limitBodyBytes) {
+        if (LimitRequestBodyBytes > 0 && reqHeader.contentLength() > (uint)LimitRequestBodyBytes) {
             throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
         }
 
@@ -133,9 +136,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
 
             // Verify authenticity token
-            if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool()
-                && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(route.action)) {
-
+            if (EnableCsrfProtectionModuleFlag && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(route.action)) {
                 if (method == Tf::Post || method == Tf::Put || method == Tf::Patch || method == Tf::Delete) {
                     if (!currController->verifyRequest(*httpReq)) {
                         throw SecurityException("Invalid authenticity token", __FILE__, __LINE__);
@@ -144,7 +145,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
 
             if (currController->sessionEnabled()) {
-                if (currController->session().id().isEmpty() || Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool()) {
+                if (SessionAutoIdRegeneration || currController->session().id().isEmpty()) {
                     TSessionManager::instance().remove(currController->session().sessionId); // Removes the old session
                     // Re-generate session ID
                     currController->session().sessionId = TSessionManager::instance().generateId();
@@ -180,31 +181,24 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     if (currController->sessionEnabled()) {
                         bool stored = TSessionManager::instance().store(currController->session());
                         if (Q_LIKELY(stored)) {
-                            static int maxage;
-                            static QString cookiePath, cookieDomain;
-
+                            static int SessionCookieMaxAge;
                             // init once
                             static std::once_flag once;
                             std::call_once(once, [&](){
                                 QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
                                 if (! maxagestr.isEmpty()) {
-                                    maxage = maxagestr.toInt();
+                                    SessionCookieMaxAge = maxagestr.toInt();
                                 } else {
-                                    maxage = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
+                                    SessionCookieMaxAge = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
                                 }
-
-                                // Sets path in the session cookie
-                                cookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
-                                // Sets domain in the session cookie
-                                cookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
                             });
 
                             QDateTime expire;
-                            if (maxage > 0) {
-                                expire = QDateTime::currentDateTime().addSecs(maxage);
+                            if (SessionCookieMaxAge > 0) {
+                                expire = QDateTime::currentDateTime().addSecs(SessionCookieMaxAge);
                             }
 
-                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, cookiePath, cookieDomain, false, true);
+                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, SessionCookiePath, SessionCookieDomain, false, true);
 
                             // Commits a transaction for session
                             commitTransactions();
@@ -397,7 +391,6 @@ void TActionContext::release()
 
 qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header)
 {
-    T_TRACEFUNC("statusCode:%d", statusCode);
     QByteArray body;
 
     if (statusCode == Tf::NotModified) {
@@ -425,7 +418,6 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 
 qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length)
 {
-    T_TRACEFUNC("statusCode:%d  contentType:%s  length:%s", statusCode, contentType.data(), qPrintable(QString::number(length)));
 
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
     if (!contentType.isEmpty()) {
@@ -438,7 +430,6 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 
 qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length)
 {
-    T_TRACEFUNC("length:%s", qPrintable(QString::number(length)));
 
     header.setContentLength(length);
     header.setRawHeader("Server", "TreeFrog server");

@@ -70,8 +70,6 @@ QStringList TSessionStoreFactory::keys()
 */
 TSessionStore *TSessionStoreFactory::create(const QString &key)
 {
-    T_TRACEFUNC("key: %s", qPrintable(key));
-
     static const QString COOKIE_KEY = TSessionCookieStore().key().toLower();
     static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
     static const QString FILE_KEY = TSessionFileStore().key().toLower();

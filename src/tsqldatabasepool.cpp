@@ -102,7 +102,6 @@ void TSqlDatabasePool::init()
 
 QSqlDatabase TSqlDatabasePool::database(int databaseId)
 {
-    T_TRACEFUNC("");
     TSqlDatabase tdb;
 
     if (Q_UNLIKELY(!Tf::app()->isSqlDatabaseAvailable())) {
@@ -229,8 +228,6 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, const QString
 
 void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
 {
-    T_TRACEFUNC("");
-
     if (database.isValid()) {
         int databaseId = getDatabaseId(database);
 
@@ -254,8 +251,6 @@ void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
 
 void TSqlDatabasePool::timerEvent(QTimerEvent *event)
 {
-    T_TRACEFUNC("");
-
     if (event->timerId() == timer.timerId()) {
         QString name;
 

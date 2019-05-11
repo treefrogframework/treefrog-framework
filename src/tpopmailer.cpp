@@ -33,7 +33,6 @@ TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent) :
 
 TPopMailer::~TPopMailer()
 {
-    T_TRACEFUNC("");
     delete socket;
 }
 

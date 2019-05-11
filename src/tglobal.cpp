@@ -25,7 +25,7 @@
 #endif
 #include "lz4.h"
 
-const int BLOCKSIZE = 1024 * 1024; // 1 MB
+const int LZ4_BLOCKSIZE = 1024 * 1024; // 1 MB
 
 /*!
   Returns a global pointer referring to the unique application object.
@@ -197,7 +197,6 @@ TActionContext *Tf::currentContext()
 
 TDatabaseContext *Tf::currentDatabaseContext()
 {
-#if 1
     TDatabaseContext *context;
 
     context = TDatabaseContext::currentDatabaseContext();
@@ -211,42 +210,6 @@ TDatabaseContext *Tf::currentDatabaseContext()
     }
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
-#else
-
-    TDatabaseContext *context = nullptr;
-
-    switch ( Tf::app()->multiProcessingModule() ) {
-    case TWebApplication::Thread:
-        context = qobject_cast<TActionThread *>(QThread::currentThread());
-        if (Q_LIKELY(context)) {
-            return context;
-        }
-        break;
-
-    case TWebApplication::Hybrid:
-#ifdef Q_OS_LINUX
-        context = qobject_cast<TActionWorker *>(QThread::currentThread());
-        if (Q_LIKELY(context)) {
-            return context;
-        }
-        break;
-#else
-        tFatal("Unsupported MPM: hybrid");
-#endif
-        break;
-
-    default:
-        break;
-    }
-
-    // TDatabaseContextThread
-    context = dynamic_cast<TDatabaseContextThread *>(QThread::currentThread());
-    if (context) {
-        return context;
-    }
-
-    throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -296,7 +259,7 @@ QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel)
     int readlen = 0;
 
     while (readlen < nbytes) {
-        int datalen = qMin(nbytes - readlen, BLOCKSIZE);
+        int datalen = qMin(nbytes - readlen, LZ4_BLOCKSIZE);
         compress(data + readlen, datalen, compressionLevel, buffer);
         readlen += datalen;
 
@@ -323,7 +286,7 @@ QByteArray Tf::lz4Uncompress(const char *data, int nbytes)
 {
     QByteArray ret;
     QBuffer srcbuf;
-    const int CompressBoundSize = LZ4_compressBound(BLOCKSIZE);
+    const int CompressBoundSize = LZ4_compressBound(LZ4_BLOCKSIZE);
 
     srcbuf.setData(data, nbytes);
     srcbuf.open(QIODevice::ReadOnly);
@@ -331,7 +294,7 @@ QByteArray Tf::lz4Uncompress(const char *data, int nbytes)
     dsin.setByteOrder(QDataStream::LittleEndian);
 
     QByteArray buffer;
-    buffer.reserve(BLOCKSIZE);
+    buffer.reserve(LZ4_BLOCKSIZE);
 
     int readlen = 0;
     while (readlen < nbytes) {
@@ -345,7 +308,7 @@ QByteArray Tf::lz4Uncompress(const char *data, int nbytes)
             break;
         }
 
-        int rv = LZ4_decompress_safe(data + readlen, buffer.data(), srclen, BLOCKSIZE);
+        int rv = LZ4_decompress_safe(data + readlen, buffer.data(), srclen, LZ4_BLOCKSIZE);
         dsin.skipRawData(srclen);
         readlen += srclen;
 

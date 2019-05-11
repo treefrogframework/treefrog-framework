@@ -19,7 +19,6 @@ private:
 template <typename T, typename Key>
 inline void TLazyLoader<T, Key>::loadObject()
 {
-    T_TRACEFUNC();
     if (lazyObject()->isEmpty()) {
         TSqlORMapper<T> mapper;
         //*lazyObject() = mapper.findByPrimaryKey(pkey);

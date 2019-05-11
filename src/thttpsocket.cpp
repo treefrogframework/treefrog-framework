@@ -34,8 +34,6 @@ static std::atomic<ushort> point {0};
 
 THttpSocket::THttpSocket(QObject *parent) : QTcpSocket(parent)
 {
-    T_TRACEFUNC("");
-
     do {
         sid = point.fetch_add(1);
     } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
@@ -51,7 +49,6 @@ THttpSocket::THttpSocket(QObject *parent) : QTcpSocket(parent)
 
 THttpSocket::~THttpSocket()
 {
-    T_TRACEFUNC("");
     socketManager[sid].compareExchangeStrong(this, nullptr); // clear
     tSystemDebug("THttpSocket deleted  sid:%d", sid);
 }
@@ -59,8 +56,6 @@ THttpSocket::~THttpSocket()
 
 QList<THttpRequest> THttpSocket::read()
 {
-    T_TRACEFUNC("");
-
     QList<THttpRequest> reqList;
 
     if (canReadRequest()) {
@@ -81,8 +76,6 @@ QList<THttpRequest> THttpSocket::read()
 
 qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 {
-    T_TRACEFUNC("");
-
     if (body && !body->isOpen()) {
         if (!body->open(QIODevice::ReadOnly)) {
             tWarn("open failed");
@@ -166,7 +159,6 @@ qint64 THttpSocket::writeRawData(const QByteArray &data)
 
 void THttpSocket::readRequest()
 {
-    T_TRACEFUNC("");
     static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
     qint64 bytes = 0;
     QByteArray buf;

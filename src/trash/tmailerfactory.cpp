@@ -48,10 +48,8 @@ QStringList TMailerFactory::keys()
 
 TMailer *TMailerFactory::create(const QString &key)
 {
-    T_TRACEFUNC("key: %s", qPrintable(key));
-
     QMutexLocker locker(&mutex);
- 
+
     loadPlugins();
     TMailer *ret = 0;
     QString k = key.toLower();
@@ -85,7 +83,7 @@ void TMailerFactory::loadPlugins()
     if (!ssifs) {
         ssifs = new QList<TMailerInterface *>();
         qAddPostRoutine(cleanup);
-        
+
         // Init hash
         hash.insert(TSmtpMailer().key().toLower(), Smtp);
 
@@ -100,7 +98,7 @@ void TMailerFactory::loadPlugins()
                 for (QStringListIterator j(keys); j.hasNext(); ) {
                     hash.insert(j.next(), Plugin);
                 }
-            }   
+            }
         }
     }
 }

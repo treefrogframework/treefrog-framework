@@ -167,8 +167,6 @@ QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
 
 TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
 {
-    T_TRACEFUNC("");
-
     TKvsDatabase db;
 
     if (!isKvsAvailable(type)) {
@@ -282,7 +280,6 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
 
 void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
-    T_TRACEFUNC("");
 
     if (Q_LIKELY(database.isValid())) {
         int type = kvsTypeHash()->value(database.driverName(), -1);
@@ -300,7 +297,6 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 
 void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 {
-    T_TRACEFUNC("");
 
     if (event->timerId() == timer.timerId()) {
         QString name;

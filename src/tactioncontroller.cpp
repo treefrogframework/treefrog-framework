@@ -234,7 +234,6 @@ QByteArray TActionController::authenticityToken() const
  */
 void TActionController::setSession(const TSession &session)
 {
-    T_TRACEFUNC("");
     sessionStore = session;
 }
 
@@ -328,8 +327,6 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
  */
 bool TActionController::render(const QString &action, const QString &layout)
 {
-    T_TRACEFUNC("");
-
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
         return false;
@@ -352,7 +349,6 @@ bool TActionController::render(const QString &action, const QString &layout)
 */
 bool TActionController::renderTemplate(const QString &templateName, const QString &layout)
 {
-    T_TRACEFUNC("");
 
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
@@ -381,7 +377,6 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 */
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
-    T_TRACEFUNC("");
 
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
@@ -484,7 +479,6 @@ bool TActionController::renderXml(const QStringList &list)
 */
 QString TActionController::getRenderingData(const QString &templateName, const QVariantMap &vars)
 {
-    T_TRACEFUNC("templateName: %s", qPrintable(templateName));
 
     // Creates view-object
     QStringList names = templateName.split("/");
@@ -519,7 +513,6 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
 */
 QByteArray TActionController::renderView(TActionView *view)
 {
-    T_TRACEFUNC("view: %p  layout: %s", view, qPrintable(layout()));
 
     if (!view) {
         tSystemError("view null pointer.  action:%s", qPrintable(activeAction()));

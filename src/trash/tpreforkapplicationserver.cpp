@@ -69,7 +69,6 @@ bool TPreforkApplicationServer::start()
 
 void TPreforkApplicationServer::stop()
 {
-    T_TRACEFUNC("");
     QTcpServer::close();
 
     TStaticReleaser *releaser = new TStaticReleaser();
@@ -85,8 +84,6 @@ void TPreforkApplicationServer::incomingConnection(
     int socketDescriptor)
 #endif
 {
-    T_TRACEFUNC("socketDescriptor: %d", socketDescriptor);
-
     close();  // Closes the listening port
     TActionForkProcess *process = new TActionForkProcess(socketDescriptor);
     connect(process, SIGNAL(finished()), process, SLOT(deleteLater()));

@@ -40,7 +40,6 @@ TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
 
 TSmtpMailer::~TSmtpMailer()
 {
-    T_TRACEFUNC("");
     if (!mailMessage.isEmpty()) {
 //        tSystemWarn("Mail not sent. Deleted it.");
     }
@@ -98,8 +97,6 @@ QString TSmtpMailer::lastServerResponse() const
 
 bool TSmtpMailer::send(const TMailMessage &message)
 {
-    T_TRACEFUNC("");
-
     mailMessage = message;
     bool res = send();
     mailMessage.clear();
@@ -109,8 +106,6 @@ bool TSmtpMailer::send(const TMailMessage &message)
 
 void TSmtpMailer::sendLater(const TMailMessage &message)
 {
-    T_TRACEFUNC("");
-
     mailMessage = message;
     QMetaObject::invokeMethod(this, "sendAndDeleteLater", Qt::QueuedConnection);
 }
@@ -118,7 +113,6 @@ void TSmtpMailer::sendLater(const TMailMessage &message)
 
 void TSmtpMailer::sendAndDeleteLater()
 {
-    T_TRACEFUNC("");
     send();
     mailMessage.clear();
     deleteLater();

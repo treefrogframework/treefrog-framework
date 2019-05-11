@@ -78,11 +78,6 @@ int main(int argc, char *argv[])
     TApplicationServerBase *server = nullptr;
     int ret = -1;
 
-    //int sid = webapp.applicationServerId();
-    //if (sid >= 0) {
-    //    Tf::setCpuAffinity(sid);
-    //}
-
     // Setup loggers
     Tf::setupSystemLogger();
     Tf::setupAccessLogger();

@@ -40,8 +40,6 @@ TDatabaseContext::~TDatabaseContext()
 
 QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
-    T_TRACEFUNC("id:%d", id);
-
     if (!Tf::app()->isSqlDatabaseAvailable()) {
         return sqlDatabases[0].database();  // invalid database
     }
@@ -87,8 +85,6 @@ void TDatabaseContext::releaseSqlDatabases()
 
 TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
 {
-    T_TRACEFUNC("type:%d", (int)type);
-
     TKvsDatabase &db = kvsDatabases[(int)type];
     if (!db.isValid()) {
         db = TKvsDatabasePool::instance()->database(type);

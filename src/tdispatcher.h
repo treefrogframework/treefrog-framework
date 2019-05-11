@@ -50,7 +50,6 @@ inline TDispatcher<T>::~TDispatcher()
 template <class T>
 inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &args, Qt::ConnectionType connectionType)
 {
-    T_TRACEFUNC("");
     const int NUM_PARAMS = 11;
     static const char *const params[NUM_PARAMS] = { "()", "(QString)",
                                                     "(QString,QString)",
@@ -165,7 +164,6 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
 template <class T>
 inline T *TDispatcher<T>::object()
 {
-    T_TRACEFUNC("");
 
     if (!ptr) {
         auto factory = Tf::objectFactories()->value(metaType.toLatin1().toLower());

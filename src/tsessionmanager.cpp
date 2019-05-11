@@ -44,8 +44,6 @@ TSessionManager::~TSessionManager()
 
 TSession TSessionManager::findSession(const QByteArray &id)
 {
-    T_TRACEFUNC("");
-
     TSession session;
 
     if (!id.isEmpty()) {
@@ -63,8 +61,6 @@ TSession TSessionManager::findSession(const QByteArray &id)
 
 bool TSessionManager::store(TSession &session)
 {
-    T_TRACEFUNC("");
-
     if (session.id().isEmpty()) {
         tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
         return false;

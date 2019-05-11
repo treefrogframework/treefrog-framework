@@ -31,7 +31,6 @@ static QDateTime loadedTimestamp;
 
 bool TApplicationServerBase::loadLibraries()
 {
-    T_TRACEFUNC("");
     bool ret = true;
 
     // Loads libraries
