@@ -329,3 +329,48 @@ QByteArray Tf::lz4Uncompress(const QByteArray &data)
 {
     return Tf::lz4Uncompress(data.data(), data.length());
 }
+
+
+/*!
+  \def T_EXPORT(VAR)
+  Exports the current value of a local variable named \a VAR from the
+  controller context to view contexts.
+  \see T_FETCH(TYPE,VAR)
+ */
+
+/*!
+  \def texport(VAR)
+  Exports the current value of a local variable named \a VAR from the
+  controller context to view contexts.
+  \see tfetch(TYPE,VAR)
+ */
+
+/*!
+  \def T_EXPORT_UNLESS(VAR)
+  Exports the current value of a local variable named \a VAR from the
+  controller context to view contexts only if a local variable named
+  \a VAR isn't exported.
+  \see T_EXPORT(VAR)
+ */
+
+/*!
+  \def texportUnless(VAR)
+  Exports the current value of a local variable named \a VAR from the
+  controller context to view contexts only if a local variable named
+  \a VAR isn't exported.
+  \see texport(VAR)
+ */
+
+/*!
+  \def T_FETCH(TYPE,VAR)
+  Creates a local variable named \a VAR with the type \a TYPE on the view and
+  fetches the value of a variable named \a VAR exported in a controller context.
+  \see T_EXPORT(VAR)
+ */
+
+/*!
+  \def tfetch(TYPE,VAR)
+  Creates a local variable named \a VAR with the type \a TYPE on the view and
+  fetches the value of a variable named \a VAR exported in a controller context.
+  \see texport(VAR)
+ */

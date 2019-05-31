@@ -149,7 +149,9 @@ QString TAbstractModel::fieldNameToVariableName(const QString &name)
     return ret;
 }
 
-
+/*!
+  Converts the model to a QJsonObject.
+ */
 QJsonObject TAbstractModel::toJsonObject() const
 {
     return QJsonObject::fromVariantMap(toVariantMap());
@@ -157,6 +159,11 @@ QJsonObject TAbstractModel::toJsonObject() const
 
 
 #if QT_VERSION >= 0x050c00  // 5.12.0
+
+/*!
+  Converts all the properies to CBOR using QCborValue::fromVariant() and
+  returns the map composed of those elements.
+ */
 QCborMap TAbstractModel::toCborMap() const
 {
     return QCborMap::fromVariantMap(toVariantMap());
