@@ -79,12 +79,12 @@ protected:
     bool renderJson(const QVariantList &list);
     bool renderJson(const QStringList &list);
 #if QT_VERSION >= 0x050c00  // 5.12.0
-    bool renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt = NoTransformation);
-    bool renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt = NoTransformation);
-    bool renderCbor(const QVariantHash &hash, QCborValue::EncodingOptions opt = NoTransformation);
-    bool renderCbor(const QCborValue &value, QCborValue::EncodingOptions opt = NoTransformation);
-    bool renderCbor(const QCborMap &map, QCborValue::EncodingOptions opt = NoTransformation);
-    bool renderCbor(const QCborArray &array, QCborValue::EncodingOptions opt = NoTransformation);
+    bool renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
+    bool renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
+    bool renderCbor(const QVariantHash &hash, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
+    bool renderCbor(const QCborValue &value, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
+    bool renderCbor(const QCborMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
+    bool renderCbor(const QCborArray &array, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
 #endif
     bool renderErrorResponse(int statusCode);
     void redirect(const QUrl &url, int statusCode = Tf::Found);
