@@ -17,11 +17,7 @@
 */
 bool TActionController::renderJson(const QJsonDocument &document)
 {
-    return sendData(document.toJson(
-#if QT_VERSION >= 0x050100
-                        QJsonDocument::Compact
-#endif
-                        ), "application/json; charset=utf-8");
+    return sendData(document.toJson(QJsonDocument::Compact), "application/json; charset=utf-8");
 }
 
 /*!
@@ -70,35 +66,35 @@ bool TActionController::renderJson(const QStringList &list)
 }
 
 #if QT_VERSION >= 0x050c00  // 5.12.0
-bool TActionController::renderCbor(const QVariant &variant)
+bool TActionController::renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt)
 {
-    return renderCbor(QCborValue::fromVariant(variant));
+    return renderCbor(QCborValue::fromVariant(variant), opt);
 }
 
-bool TActionController::renderCbor(const QVariantMap &map)
+bool TActionController::renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt)
 {
-    return renderCbor(QCborMap::fromVariantMap(map));
+    return renderCbor(QCborMap::fromVariantMap(map), opt);
 }
 
-bool TActionController::renderCbor(const QVariantHash &hash)
+bool TActionController::renderCbor(const QVariantHash &hash, QCborValue::EncodingOptions opt)
 {
-    return renderCbor(QCborMap::fromVariantHash(hash));
+    return renderCbor(QCborMap::fromVariantHash(hash), opt);
 }
 
-bool TActionController::renderCbor(const QCborValue &value)
+bool TActionController::renderCbor(const QCborValue &value, QCborValue::EncodingOptions opt)
 {
     QCborValue val = value;
-    return sendData(val.toCbor(), "application/cbor");
+    return sendData(val.toCbor(opt), "application/cbor");
 }
 
-bool TActionController::renderCbor(const QCborMap &map)
+bool TActionController::renderCbor(const QCborMap &map, QCborValue::EncodingOptions opt)
 {
-    return renderCbor(map.toCborValue());
+    return renderCbor(map.toCborValue(), opt);
 }
 
-bool TActionController::renderCbor(const QCborArray &array)
+bool TActionController::renderCbor(const QCborArray &array, QCborValue::EncodingOptions opt)
 {
-    return renderCbor(array.toCborValue());
+    return renderCbor(array.toCborValue(), opt);
 }
 
 #endif

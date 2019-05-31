@@ -91,4 +91,28 @@ inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri, int limit = 
     return list;
 }
 
+
+template <class T>
+inline QJsonArray tfConvertToJsonArray(const QList<T> &list)
+{
+    QJsonArray array;
+    for (auto &it : list) {
+        array.append(it.toJsonObject());
+    }
+    return array;
+}
+
+
+#if QT_VERSION >= 0x050c00  // 5.12.0
+template <class T>
+inline QCborArray tfConvertToCborArray(const QList<T> &list)
+{
+    QCborArray array;
+    for (auto &it : list) {
+        array.append(QCborValue(it.toCborMap()));
+    }
+    return array;
+}
+#endif
+
 #endif // TMODELUTIL_H

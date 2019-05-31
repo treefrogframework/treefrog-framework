@@ -182,6 +182,12 @@ void build_check_TModelUtil()
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, Tf::DescendingOrder, 0, 0);
     tfGetModelListByCriteria<Blog, BlogObject>(crt, 0, 0);
     tfGetModelListByMongoCriteria<Foo, FooObject>(crt, 0, 0);
+
+    QList<Blog> list;
+    tfConvertToJsonArray(list);
+#if QT_VERSION >= 0x050c00  // 5.12.0
+    tfConvertToCborArray(list);
+#endif
 }
 
 #if QT_VERSION >= 0x050000

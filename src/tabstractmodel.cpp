@@ -150,6 +150,20 @@ QString TAbstractModel::fieldNameToVariableName(const QString &name)
 }
 
 
+QJsonObject TAbstractModel::toJsonObject() const
+{
+    return QJsonObject::fromVariantMap(toVariantMap());
+}
+
+
+#if QT_VERSION >= 0x050c00  // 5.12.0
+QCborMap TAbstractModel::toCborMap() const
+{
+    return QCborMap::fromVariantMap(toVariantMap());
+}
+#endif
+
+
 /*!
   \fn virtual TModelObject *TAbstractModel::modelData()
 

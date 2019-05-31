@@ -26,6 +26,7 @@ public:
     QString authenticityToken() const;
     QVariant variant(const QString &name) const;
     bool hasVariant(const QString &name) const;
+    const QVariantMap &allVariants() const;
     const TActionController *controller() const;
     const THttpRequest &httpRequest() const;
 
@@ -39,6 +40,9 @@ protected:
     QString echo(qlonglong n, int base = 10);
     QString echo(qulonglong n, int base = 10);
     QString echo(double d, char format = 'g', int precision = 6);
+    QString echo(const QJsonObject &object);
+    QString echo(const QJsonArray &array);
+    QString echo(const QJsonDocument &doc);
     QString echo(const THtmlAttribute &attr);
     QString echo(const QVariant &var);
     QString eh(const QString &str);
@@ -50,6 +54,9 @@ protected:
     QString eh(qlonglong n, int base = 10);
     QString eh(qulonglong n, int base = 10);
     QString eh(double d, char format = 'g', int precision = 6);
+    QString eh(const QJsonObject &object);
+    QString eh(const QJsonArray &array);
+    QString eh(const QJsonDocument &doc);
     QString eh(const THtmlAttribute &attr);
     QString eh(const QVariant &var);
     QString renderReact(const QString &component);
@@ -97,6 +104,11 @@ inline QVariant TActionView::variant(const QString &name) const
 inline bool TActionView::hasVariant(const QString &name) const
 {
     return variantMap.contains(name);
+}
+
+inline const QVariantMap &TActionView::allVariants() const
+{
+    return variantMap;
 }
 
 inline QString TActionView::echo(const QString &str)
@@ -153,6 +165,22 @@ inline QString TActionView::echo(double d, char format, int precision)
     return QString();
 }
 
+inline QString TActionView::echo(const QJsonObject &object)
+{
+    return echo(QJsonDocument(object));
+}
+
+inline QString TActionView::echo(const QJsonArray &array)
+{
+    return echo(QJsonDocument(array));
+}
+
+inline QString TActionView::echo(const QJsonDocument &doc)
+{
+    responsebody += doc.toJson(QJsonDocument::Compact);
+    return QString();
+}
+
 inline QString TActionView::eh(const QString &str)
 {
     return echo(THttpUtility::htmlEscape(str));
@@ -196,6 +224,21 @@ inline QString TActionView::eh(qulonglong n, int base)
 inline QString TActionView::eh(double d, char format, int precision)
 {
     return echo(THttpUtility::htmlEscape(QString::number(d, format, precision)));
+}
+
+inline QString TActionView::eh(const QJsonObject &object)
+{
+    return eh(QJsonDocument(object));
+}
+
+inline QString TActionView::eh(const QJsonArray &array)
+{
+    return eh(QJsonDocument(array));
+}
+
+inline QString TActionView::eh(const QJsonDocument &doc)
+{
+    return echo(THttpUtility::htmlEscape(doc.toJson(QJsonDocument::Compact)));
 }
 
 inline void TActionView::setController(TActionController *controller)

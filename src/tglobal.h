@@ -109,24 +109,66 @@
 #define T_FETCH_V(TYPE,VAR,DEFAULT)  TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
 #define tfetchv(TYPE,VAR,DEFAULT)  T_FETCH_V(TYPE,VAR,DEFAULT)
 
-#define T_EHEX(VAR)  eh(variant(QLatin1String(#VAR)))
+#define T_EHEX(VAR)  \
+    do { \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
+        int ___##VAR##_type = (___##VAR##_).type(); \
+        switch(___##VAR##_type) { \
+        case QMetaType::QJsonValue: \
+            eh((___##VAR##_).toJsonValue()); \
+            break; \
+        case QMetaType::QJsonObject: \
+            eh((___##VAR##_).toJsonObject()); \
+            break; \
+        case QMetaType::QJsonArray: \
+            eh((___##VAR##_).toJsonArray()); \
+            break; \
+        case QMetaType::QJsonDocument: \
+            eh((___##VAR##_).toJsonDocument()); \
+            break; \
+        default: \
+            eh( ___##VAR##_); \
+        } \
+    } while(0)
+
 #define tehex(VAR)  T_EHEX(VAR)
 
-#define T_EHEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) eh(DEFAULT); else eh(___##VAR##_); } while(0)
+#define T_EHEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if ((___##VAR##_).isEmpty()) eh(DEFAULT); else T_EHEX(VAR); } while(0)
 #define tehexv(VAR,DEFAULT)  T_EHEX_V(VAR,DEFAULT)
 
 // alias of tehexv
-#define T_EHEX2(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) eh(DEFAULT); else eh(___##VAR##_); } while(0)
+#define T_EHEX2(VAR,DEFAULT) T_EHEX_V(VAR,DEFAULT)
 #define tehex2(VAR,DEFAULT)  T_EHEX2(VAR,DEFAULT)
 
-#define T_ECHOEX(VAR)  echo(variant(QLatin1String(#VAR)))
+#define T_ECHOEX(VAR) \
+    do { \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
+        int ___##VAR##_type = (___##VAR##_).type(); \
+        switch(___##VAR##_type) { \
+        case QMetaType::QJsonValue: \
+            echo((___##VAR##_).toJsonValue()); \
+            break; \
+        case QMetaType::QJsonObject: \
+            echo((___##VAR##_).toJsonObject()); \
+            break; \
+        case QMetaType::QJsonArray: \
+            echo((___##VAR##_).toJsonArray()); \
+            break; \
+        case QMetaType::QJsonDocument: \
+            echo((___##VAR##_).toJsonDocument()); \
+            break; \
+        default: \
+            echo( ___##VAR##_); \
+        } \
+    } while(0)
+
 #define techoex(VAR)  T_ECHOEX(VAR)
 
-#define T_ECHOEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) echo(DEFAULT); else echo(___##VAR##_); } while(0)
+#define T_ECHOEX_V(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if ((___##VAR##_).isEmpty()) echo(DEFAULT); else T_ECHOEX(VAR); } while(0)
 #define techoexv(VAR,DEFAULT)  T_ECHOEX_V(VAR,DEFAULT)
 
 // alias of techoexv
-#define T_ECHOEX2(VAR,DEFAULT) do { QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); if (___##VAR##_.isEmpty()) echo(DEFAULT); else echo(___##VAR##_); } while(0)
+#define T_ECHOEX2(VAR,DEFAULT) T_ECHOEX_V(VAR,DEFAULT)
 #define techoex2(VAR,DEFAULT)  T_ECHOEX2(VAR,DEFAULT)
 
 #define T_FLASH(VAR)  do { QVariant ___##VAR##_; ___##VAR##_.setValue(VAR); setFlash(QLatin1String(#VAR), (___##VAR##_)); } while(0)

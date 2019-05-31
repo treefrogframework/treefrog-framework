@@ -1,10 +1,10 @@
 #ifndef TABSTRACTMODEL_H
 #define TABSTRACTMODEL_H
 
+#include <QtCore>
 #include <QVariant>
 #include <TGlobal>
 
-class TSqlObject;
 class TModelObject;
 
 
@@ -21,6 +21,10 @@ public:
     virtual bool isSaved() const;
     virtual void setProperties(const QVariantMap &properties);
     virtual QVariantMap toVariantMap() const;
+    virtual QJsonObject toJsonObject() const;
+#if QT_VERSION >= 0x050c00  // 5.12.0
+    virtual QCborMap toCborMap() const;
+#endif
 
     QString variableNameToFieldName(const QString &name) const;
     static QString fieldNameToVariableName(const QString &name);
