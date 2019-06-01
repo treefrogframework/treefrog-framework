@@ -140,7 +140,12 @@ rd /s /q lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /d lz4 lz4-%LZ4_VERSION% >nul 2>&1
 if not "%MSCOMPILER%" == "" (
-  devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
+  for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
+  if not ERRORLEVEL 1 (
+    devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|x64"
+  ) else (
+    devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|x64"
+  )
 ) else (
   cd lz4\lib
   qmake -o makefile.liblz4
