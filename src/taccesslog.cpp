@@ -146,7 +146,6 @@ void TAccessLogger::write()
     if (accessLog) {
         Tf::writeAccessLog(*accessLog);
     }
-    close();
 }
 
 
