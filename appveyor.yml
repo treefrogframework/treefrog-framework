@@ -36,6 +36,12 @@ build_script:
   - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
   - cmd: set PATH=C:\Qt\5.12.2\msvc2017_64\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
   - cmd: echo %PATH%
+  - cmd: configure.bat --enable-debug
+  - cmd: cd src
+  - cmd: nmake install
+  - cmd: cd ..\tools
+  - cmd: nmake install
+  - cmd: cd ..
   - cmd: configure.bat
   - cmd: cd src
   - cmd: nmake install
