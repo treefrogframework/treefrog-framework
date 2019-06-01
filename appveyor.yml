@@ -35,8 +35,6 @@ environment:
 # scripts that are called at very beginning, before repo cloning
 init:
   - git config --global core.autocrlf false
-  - "%INIT_BAT%" amd64
-  - set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
 
 install:
   - vcpkg install --recurse sqlite3[tool] curl[tool]
@@ -46,6 +44,8 @@ build: off
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
+  - cmd: "%INIT_BAT%" amd64
+  - cmd: set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
   - cmd: echo %PATH%
   - cmd: configure.bat --enable-debug
   - cmd: cd src
