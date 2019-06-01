@@ -19,11 +19,24 @@ skip_commits:
 #---------------------------------#
 
 # Build worker image (VM template)
-image: Visual Studio 2017
+image:
+  - Visual Studio 2015
+  - Visual Studio 2017
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+      QT_PATH: C:\Qt\5.12.2\msvc2015_64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat
+      QT_PATH: C:\Qt\5.12.2\msvc2017_64
 
 # scripts that are called at very beginning, before repo cloning
 init:
   - git config --global core.autocrlf false
+  - cmd: "%INIT_BAT%" amd64
+  - set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
 
 install:
   - vcpkg install --recurse sqlite3[tool] curl[tool]
@@ -33,8 +46,6 @@ build: off
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-  - cmd: set PATH=C:\Qt\5.12.2\msvc2017_64\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
   - cmd: echo %PATH%
   - cmd: configure.bat --enable-debug
   - cmd: cd src
