@@ -52,7 +52,7 @@ static bool directViewRenderMode()
 void TActionContext::execute(THttpRequest &request, int sid)
 {
     // App parameters
-    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong();
+    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, 0).toLongLong();
     static const uint ListenPort = Tf::appSettings()->value(Tf::ListenPort).toUInt();
     static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool();
     static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
@@ -99,14 +99,14 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
             if (Q_UNLIKELY(directViewRenderMode())) { // Direct view render mode?
                 // Direct view setting
-                route.setRouting("directcontroller", "show", components);
+                route.setRouting(QByteArrayLiteral("directcontroller"), QByteArrayLiteral("show"), components);
             } else {
                 QByteArray c = components.value(0).toLatin1().toLower();
                 if (Q_LIKELY(!c.isEmpty())) {
                     if (Q_LIKELY(!TActionController::disabledControllers().contains(c))) { // Can not call 'ApplicationController'
                         // Default action: "index"
-                        QByteArray action = components.value(1, QLatin1String("index")).toLatin1();
-                        route.setRouting(c + "controller", action, components.mid(2));
+                        QByteArray action = components.value(1, QStringLiteral("index")).toLatin1();
+                        route.setRouting(c + QByteArrayLiteral("controller"), action, components.mid(2));
                     }
                 }
                 tSystemDebug("Active Controller : %s", route.controller.data());
@@ -181,17 +181,14 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     if (currController->sessionEnabled()) {
                         bool stored = TSessionManager::instance().store(currController->session());
                         if (Q_LIKELY(stored)) {
-                            static int SessionCookieMaxAge;
-                            // init once
-                            static std::once_flag once;
-                            std::call_once(once, [&](){
+                            static const int SessionCookieMaxAge = ([]() -> int {
                                 QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
-                                if (! maxagestr.isEmpty()) {
-                                    SessionCookieMaxAge = maxagestr.toInt();
+                                if (!maxagestr.isEmpty()) {
+                                    return maxagestr.toInt();
                                 } else {
-                                    SessionCookieMaxAge = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
+                                    return Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
                                 }
-                            });
+                            }());
 
                             QDateTime expire;
                             if (SessionCookieMaxAge > 0) {
@@ -283,12 +280,12 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
         } else {
             accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
-            if (route.controller.startsWith("/")) {
+            if (route.controller.startsWith('/')) {
                 path = route.controller;
             }
 
             if (Q_LIKELY(method == Tf::Get)) {  // GET Method
-                QString canonicalPath = QUrl(".").resolved(QUrl(path)).toString().mid(1);
+                QString canonicalPath = QUrl(QStringLiteral(".")).resolved(QUrl(path)).toString().mid(1);
                 QFile reqPath(Tf::app()->publicPath() + canonicalPath);
                 QFileInfo fi(reqPath);
                 tSystemDebug("canonicalPath : %s", qPrintable(canonicalPath));
@@ -296,7 +293,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 if (fi.isFile() && fi.isReadable()) {
                     // Check "If-Modified-Since" header for caching
                     bool sendfile = true;
-                    QByteArray ifModifiedSince = reqHeader.rawHeader("If-Modified-Since");
+                    QByteArray ifModifiedSince = reqHeader.rawHeader(QByteArrayLiteral("If-Modified-Since"));
 
                     if (!ifModifiedSince.isEmpty()) {
                         QDateTime dt = THttpUtility::fromHttpDateTimeString(ifModifiedSince);
@@ -307,7 +304,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
                     if (sendfile) {
                         // Sends a request file
-                        responseHeader.setRawHeader("Last-Modified", THttpUtility::toHttpDateTimeString(fi.lastModified()));
+                        responseHeader.setRawHeader(QByteArrayLiteral("Last-Modified"), THttpUtility::toHttpDateTimeString(fi.lastModified()));
                         QByteArray type = Tf::app()->internetMediaType(fi.suffix());
                         int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
                         accessLogger.setResponseBytes( bytes );
@@ -322,8 +319,8 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         accessLogger.setResponseBytes( bytes );
                     } else {
                         // Routing not empty, redirect.
-                        responseHeader.setRawHeader("Location", QUrl(path).toEncoded());
-                        responseHeader.setContentType("text/html");
+                        responseHeader.setRawHeader(QByteArrayLiteral("Location"), QUrl(path).toEncoded());
+                        responseHeader.setContentType(QByteArrayLiteral("text/html"));
                         int bytes = writeResponse(Tf::Found, responseHeader);
                         accessLogger.setResponseBytes( bytes );
                     }
@@ -397,14 +394,15 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
         return writeResponse(statusCode, header, QByteArray(), nullptr, 0);
     }
     if (statusCode >= 400) {
-        QFile html(Tf::app()->publicPath() + QString::number(statusCode) + ".html");
+        QFile html(Tf::app()->publicPath() + QString::number(statusCode) + QLatin1String(".html"));
         if (html.exists() && html.open(QIODevice::ReadOnly)) {
             body = html.readAll();
             html.close();
         }
     }
     if (body.isEmpty()) {
-        body  = "<html><body>";
+        body.reserve(1024);
+        body += "<html><body>";
         body += THttpUtility::getResponseReasonPhrase(statusCode);
         body += " (";
         body += QByteArray::number(statusCode);
@@ -412,7 +410,7 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
     }
 
     QBuffer buf(&body);
-    return writeResponse(statusCode, header, "text/html", &buf, body.length());
+    return writeResponse(statusCode, header, QByteArrayLiteral("text/html"), &buf, body.length());
 }
 
 
@@ -432,7 +430,7 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 {
 
     header.setContentLength(length);
-    header.setRawHeader("Server", "TreeFrog server");
+    header.setRawHeader(QByteArrayLiteral("Server"), QByteArrayLiteral("TreeFrog server"));
     header.setCurrentDate();
 
     // Write data
