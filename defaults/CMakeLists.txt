@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 
 project(appname CXX)
 
-# cxx options
+# C++11
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# cxx options
 if (MSVC)
   set(CMAKE_CXX_FLAGS         "/DUNICODE /D_UNICODE")
   set(CMAKE_CXX_FLAGS_DEBUG   "/DEBUG")
@@ -31,4 +33,3 @@ message(STATUS "Set CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 # Cutom target - cmake
 include(${PROJECT_SOURCE_DIR}/cmake/TargetCmake.cmake)
-
