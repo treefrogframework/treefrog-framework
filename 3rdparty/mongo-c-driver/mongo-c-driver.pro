@@ -1,10 +1,10 @@
 #
 # MongoDB C driver project file
 #
-
 TEMPLATE = lib
-TARGET = mongoc
-CONFIG += static console
+TARGET   = mongoc
+CONFIG  += static console c11
+CONFIG  -= qt
 DEFINES += MONGOC_COMPILATION BSON_COMPILATION
 *-g++:DEFINES += _GNU_SOURCE
 DEPENDPATH += src
