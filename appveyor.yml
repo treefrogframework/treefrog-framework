@@ -20,7 +20,8 @@ skip_commits:
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvars64.bat
+      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+      VCVARARG: amd64
       QT_PATH:  C:\Qt\5.12.2\msvc2015_64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat
@@ -41,7 +42,7 @@ build: off
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cmd: call "%INIT_BAT%"
+  - cmd: call "%INIT_BAT%" %VCVARARG%
   - cmd: set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;%PATH%
   - cmd: echo %PATH%
   - cmd: configure.bat --enable-debug
