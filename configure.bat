@@ -72,12 +72,15 @@ if not "%MSCOMPILER%" == "" (
   set MAKE=nmake
   if "%Platform%" == "X64" (
     set VCVARSOPT=amd64
+    set BUILDTARGET=x64
     set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
   ) else if "%Platform%" == "x64" (
     set VCVARSOPT=amd64
+    set BUILDTARGET=x64
     set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
   ) else (
     set VCVARSOPT=x86
+    set BUILDTARGET=win32
     set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
   )
 ) else (
@@ -136,15 +139,17 @@ if ERRORLEVEL 1 (
 
 :: Builds LZ4
 cd ..
+echo Compiling LZ4 library ...
 rd /s /q lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
-mklink /d lz4 lz4-%LZ4_VERSION% >nul 2>&1
+rmdir /q lz4 >nul 2>&1
+mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
 if not "%MSCOMPILER%" == "" (
   for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
   if not ERRORLEVEL 1 (
-    devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%VCVARSOPT%"
+    devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
   ) else (
-    devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%VCVARSOPT%"
+    devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
   )
 ) else (
   cd lz4\lib
