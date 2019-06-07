@@ -45,6 +45,7 @@ bool TActionThread::waitForAllDone(int msec)
         Tf::msleep(10);
         qApp->processEvents();
     }
+    tSystemDebug("waitForAllDone : remaining:%d", cnt);
     return cnt == 0;
 }
 
@@ -58,7 +59,6 @@ TActionThread::TActionThread(int socket, int maxThreads) :
     TActionContext(),
     _maxThreads(maxThreads)
 {
-    ++threadCounter;
     TActionContext::socketDesc = socket;
 
     if (keepAliveTimeout < 0) {
@@ -77,8 +77,6 @@ TActionThread::~TActionThread()
     if (TActionContext::socketDesc > 0) {
         tf_close(TActionContext::socketDesc);
     }
-
-    --threadCounter;
 }
 
 
@@ -94,6 +92,14 @@ void TActionThread::setSocketDescriptor(qintptr socket)
 
 void TActionThread::run()
 {
+    class Counter {
+        std::atomic<int> &_num;
+    public:
+        Counter(std::atomic<int> &n) : _num(n) { _num++; }
+        ~Counter() { _num--; }
+    };
+
+    Counter counter(threadCounter);
     QList<THttpRequest> reqs;
     QEventLoop eventLoop;
     _httpSocket = new THttpSocket();

@@ -437,7 +437,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
         if (signalNumber() >= 0) {
             tSystemDebug("TWebApplication trapped signal  number:%d", signalNumber());
             //timer.stop();   /* Don't stop this timer */
-            exit(signalNumber());
+            QCoreApplication::exit(signalNumber());
         }
     } else {
 #ifdef TF_USE_GUI_MODULE
