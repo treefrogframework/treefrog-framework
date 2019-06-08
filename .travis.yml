@@ -5,9 +5,23 @@ matrix:
     - os: linux
       dist: xenial
       sudo: required
+      env:
+       - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
+    - os: linux
+      dist: xenial
+      sudo: required
+      env:
+       - CONFIG_SHARED_MONGOC=
     - os: osx
       osx_image: xcode9.4
       sudo: required
+      env:
+       - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
+    - os: osx
+      osx_image: xcode9.4
+      sudo: required
+      env:
+       - CONFIG_SHARED_MONGOC=
 
 env:
   global:
@@ -40,7 +54,7 @@ before_install:
 install:
   - cd $CI_WORK
   - qmake -v
-  - ./configure --prefix=/usr/local --enable-shared-mongoc
+  - ./configure --prefix=/usr/local $CONFIG_SHARED_MONGOC
   - make -j4 -C src
   - sudo make -C src install
   - make -j4 -C tools
