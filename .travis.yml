@@ -3,7 +3,7 @@ language: cpp
 matrix:
   include:
     - os: linux
-      dist: xenial
+      dist: bionic
       sudo: required
       env:
        - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
@@ -13,7 +13,7 @@ matrix:
       env:
        - CONFIG_SHARED_MONGOC=
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.1
       sudo: required
       env:
        - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
