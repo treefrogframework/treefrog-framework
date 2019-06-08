@@ -7,7 +7,7 @@
 class T_CORE_EXPORT TSessionFileStore : public TSessionStore
 {
 public:
-    QString key() const { return "file"; }
+    QString key() const { return QStringLiteral("file"); }
     TSession find(const QByteArray &id) override;
     bool store(TSession &session) override;
     bool remove(const QByteArray &id) override;

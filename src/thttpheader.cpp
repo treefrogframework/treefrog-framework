@@ -174,6 +174,7 @@ QList<TCookie> THttpRequestHeader::cookies() const
 QByteArray THttpRequestHeader::toByteArray() const
 {
     QByteArray ba;
+    ba.reserve(256);
     ba += reqMethod;
     ba += ' ';
     ba += reqUri;
@@ -277,6 +278,7 @@ void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int ma
 QByteArray THttpResponseHeader::toByteArray() const
 {
     QByteArray ba;
+    ba.reserve(256);
     ba += "HTTP/";
     ba += QByteArray::number(majorVersion());
     ba += '.';

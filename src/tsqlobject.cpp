@@ -14,10 +14,10 @@
 #include "tsqldatabase.h"
 #include "tsqldriverextension.h"
 
-const QByteArray LockRevision("lock_revision");
-const QByteArray CreatedAt("created_at");
-const QByteArray UpdatedAt("updated_at");
-const QByteArray ModifiedAt("modified_at");
+static const QByteArray LockRevision("lock_revision");
+static const QByteArray CreatedAt("created_at");
+static const QByteArray UpdatedAt("updated_at");
+static const QByteArray ModifiedAt("modified_at");
 
 /*!
   \class TSqlObject
@@ -65,10 +65,10 @@ QString TSqlObject::tableName() const
 
     tblName.reserve(clsname.length() * 1.2);
     for (int i = 0; i < clsname.length(); ++i) {
-        if (i > 0 && clsname[i].isUpper()) {
+        if (i > 0 && clsname.at(i).isUpper()) {
             tblName += QLatin1Char('_');
         }
-        tblName += clsname[i].toLower();
+        tblName += clsname.at(i).toLower();
     }
     return tblName;
 }
@@ -171,7 +171,7 @@ bool TSqlObject::create()
             if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
 #endif
                 // For PostgreSQL without OIDS
-                ret = query.exec("SELECT LASTVAL()");
+                ret = query.exec(QStringLiteral("SELECT LASTVAL()"));
                 sqlError = query.lastError();
                 if (Q_LIKELY(ret)) {
                     lastid = query.getNextValue();
@@ -200,7 +200,9 @@ bool TSqlObject::update()
     }
 
     QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
-    QString where(" WHERE ");
+    QString where;
+    where.reserve(255);
+    where.append(QLatin1String(" WHERE "));
 
     // Updates the value of 'updated_at' or 'modified_at' property
     bool updflag = false;
@@ -229,8 +231,8 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-            where.append('=').append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
-            where.append(" AND ");
+            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
+            where.append(QLatin1String(" AND "));
         } else {
             // continue
         }
@@ -253,7 +255,7 @@ bool TSqlObject::update()
     QVariant::Type pkType = metaProp.type();
     QVariant origpkval = value(pkName);
     where.append(QLatin1String(pkName));
-    where.append("=").append(TSqlQuery::formatValue(origpkval, pkType, database));
+    where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(origpkval, pkType, database));
     // Restore the value of primary key
     QObject::setProperty(pkName, origpkval);
 
@@ -386,7 +388,7 @@ bool TSqlObject::remove()
         return false;
     }
 
-    del.append(" WHERE ");
+    del.append(QLatin1String(" WHERE "));
     int revIndex = -1;
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
@@ -405,8 +407,8 @@ bool TSqlObject::remove()
             }
 
             del.append(QLatin1String(propName));
-            del.append('=').append(TSqlQuery::formatValue(revision, QVariant::Int, database));
-            del.append(" AND ");
+            del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(revision, QVariant::Int, database));
+            del.append(QLatin1String(" AND "));
 
             revIndex = i;
             break;
@@ -422,7 +424,7 @@ bool TSqlObject::remove()
         return false;
     }
     del.append(QLatin1String(pkName));
-    del.append('=').append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
+    del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
 
     TSqlQuery query(database);
     bool ret = query.exec(del);
