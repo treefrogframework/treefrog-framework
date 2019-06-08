@@ -382,8 +382,8 @@ windows {
   LIBS += -lws2_32 -lpsapi
 } else {
   isEmpty( shared_mongoc ) {
-    INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
-    LIBS += ../3rdparty/mongo-c-driver/libmongoc.a
+    INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
+    LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
   } else {
     macx {
       # Homebrew
