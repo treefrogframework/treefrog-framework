@@ -344,13 +344,16 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
 */
 int TWebApplication::maxNumberOfAppServers() const
 {
-    QString mpmstr = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
-    int num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
-    if (num <= 0) {
-        num = qMax(std::thread::hardware_concurrency(), (uint)1);
-        tSystemWarn("Sets max number of AP servers to %d", num);
-    }
-    return num;
+    static const int maxServers = ([]() -> int {
+        QString mpmstr = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+        int num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
+        if (num <= 0) {
+            num = qMax(std::thread::hardware_concurrency(), (uint)1);
+            tSystemWarn("Sets max number of AP servers to %d", num);
+        }
+        return num;
+    }());
+    return maxServers;
 }
 
 /*!
