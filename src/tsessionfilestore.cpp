@@ -16,7 +16,7 @@
 
 #define SESSION_DIR_NAME "session"
 
-static QReadWriteLock rwLock;  // Global read-write lock
+static QReadWriteLock rwLock(QReadWriteLock::Recursive);  // Global read-write lock
 
 /*!
   \class TSessionFileStore
@@ -30,79 +30,75 @@ bool TSessionFileStore::store(TSession &session)
         dir.mkpath(".");
     }
 
-    // perform long-lasting operations before blocking threads and proceses
-    QByteArray buffer;
-    QDataStream ds(&buffer, QIODevice::WriteOnly);
-    ds << *static_cast<const QVariantMap *>(&session);
-    if (ds.status() != QDataStream::Ok) {
-        tSystemError("Failed to store session. Must set objects that can be serialized.");
-        return false;
-    }
-    buffer = Tf::lz4Compress(buffer);  // compress
-
+    bool res = false;
     QWriteLocker locker(&rwLock);  // lock for threads
     QFile file(sessionDirPath() + session.id());
-    if (!file.open(QIODevice::ReadWrite)) {
-        tSystemError("Failed to store session. File open error.");
-        return false;
-    }
-    if (Tf::app()->maxNumberOfAppServers() > 1) {
+
+    if (file.open(QIODevice::ReadWrite)) {
         auto reslock = tf_lockfile(file.handle(), true, true);  // blocking flock for processes
+        int err = errno;
         if (reslock < 0) {
-            int err = errno;
             tSystemWarn("flock error  errno:%d", err);
         }
+
+        QByteArray buffer;
+        QDataStream dsbuf(&buffer, QIODevice::WriteOnly);
+        dsbuf << *static_cast<const QVariantMap *>(&session);
+        buffer = Tf::lz4Compress(buffer);  // compress
+
+        file.resize(0); // truncate
+        QDataStream ds(&file);
+        ds << buffer;
+        file.close();
+
+        res = (ds.status() == QDataStream::Ok);
+        if (!res) {
+            tSystemError("Failed to store session. Must set objects that can be serialized.");
+        }
     }
-    file.resize(0);  // truncate
-    if (file.write(buffer) == -1) {
-        tSystemError("Failed to store session. File write error.");
-        return false;
-    }
-    return true;
+    return res;
 }
 
 
 TSession TSessionFileStore::find(const QByteArray &id)
 {
     QFileInfo fi(sessionDirPath() + id);
-    QDateTime expire = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
+    QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
 
-    if (!fi.exists() || fi.lastModified() < expire) {
-        return TSession();
-    }
-
-    QByteArray buffer;
-    {
+    if (fi.exists() && fi.lastModified() >= modified) {
         QReadLocker locker(&rwLock);  // lock for threads
         QFile file(fi.filePath());
-        if (!file.open(QIODevice::ReadOnly)) {
-            tSystemError("Failed to load a session from the file store.");
-            return TSession();
-        }
-        if (Tf::app()->maxNumberOfAppServers() > 1) {
+
+        if (file.open(QIODevice::ReadOnly)) {
             auto reslock = tf_lockfile(file.handle(), false, true);  // blocking flock for processes
+            int err = errno;
             if (reslock < 0) {
-                int err = errno;
                 tSystemWarn("flock error  errno:%d", err);
             }
+
+            QDataStream ds(&file);
+            QByteArray buffer;
+            ds >> buffer;
+            file.close();
+            buffer = Tf::lz4Uncompress(buffer);
+            TSession result(id);
+
+            if (buffer.isEmpty()) {
+                tSystemError("Failed to load a session from the file store.");
+                return result;
+            }
+
+            QDataStream dsbuf(&buffer, QIODevice::ReadOnly);
+            dsbuf >> *static_cast<QVariantMap *>(&result);
+
+            if (ds.status() == QDataStream::Ok) {
+                return result;
+            } else {
+                tSystemError("Failed to load a session from the file store.");
+            }
         }
-        buffer = file.readAll();
-    } // release all locks
-
-    buffer = Tf::lz4Uncompress(buffer);  // uncompress
-    if (buffer.isEmpty()) {
-        tSystemError("Failed to load a session from the file store.");
-        return TSession();
     }
-
-    TSession session(id);
-    QDataStream ds(&buffer, QIODevice::ReadOnly);
-    ds >> *static_cast<QVariantMap *>(&session);
-    if (ds.status() != QDataStream::Ok) {
-        tSystemError("Failed to load a session from the file store.");
-        return TSession();
-    }
-    return session;
+    return TSession();
 }
 
 
@@ -134,10 +130,6 @@ int TSessionFileStore::gc(const QDateTime &expire)
 
 QString TSessionFileStore::sessionDirPath()
 {
-    QString path;
-    path.reserve(256);
-    path += Tf::app()->tmpPath();
-    path += QLatin1String(SESSION_DIR_NAME);
-    path += QDir::separator();
+    static const QString path = Tf::app()->tmpPath() + QLatin1String(SESSION_DIR_NAME) + QDir::separator();
     return path;
 }
