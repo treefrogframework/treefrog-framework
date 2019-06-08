@@ -338,38 +338,26 @@ void TActionContext::execute(THttpRequest &request, int sid)
         }
 
     } catch (ClientErrorException &e) {
-        tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
-        tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+        tWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
+        tSystemWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
         int bytes = writeResponse(e.statusCode(), responseHeader);
         accessLogger.setResponseBytes( bytes );
         accessLogger.setStatusCode( e.statusCode() );
-    } catch (SqlException &e) {
-        tError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught SqlException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+    } catch (TfException &e) {
+        tError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tSystemError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         closeHttpSocket();
-    } catch (KvsException &e) {
-        tError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught KvsException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        closeHttpSocket();
-    } catch (SecurityException &e) {
-        tError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught SecurityException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        closeHttpSocket();
-    } catch (RuntimeException &e) {
-        tError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught RuntimeException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        closeHttpSocket();
-    } catch (StandardException &e) {
-        tError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught StandardException: %s  [%s:%d]", qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        closeHttpSocket();
+        accessLogger.setResponseBytes(0);
+        accessLogger.setStatusCode(Tf::InternalServerError);
     } catch (std::exception &e) {
         tError("Caught Exception: %s", e.what());
         tSystemError("Caught Exception: %s", e.what());
         closeHttpSocket();
+        accessLogger.setResponseBytes(0);
+        accessLogger.setStatusCode(Tf::InternalServerError);
     }
 
-    TActionContext::accessLogger.write();  // Writes access log
+    accessLogger.write();  // Writes access log
 }
 
 
