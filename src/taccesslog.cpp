@@ -103,12 +103,10 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
 
 
 TAccessLogger::TAccessLogger()
-    : accessLog(nullptr)
 { }
 
 
 TAccessLogger::TAccessLogger(const TAccessLogger &other)
-    : accessLog(nullptr)
 {
     if (other.accessLog) {
         open();
@@ -146,7 +144,6 @@ void TAccessLogger::write()
     if (accessLog) {
         Tf::writeAccessLog(*accessLog);
     }
-    close();
 }
 
 
