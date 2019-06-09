@@ -29,7 +29,7 @@ env:
     - UBUNTU_CODENAME=$(which lsb_release >/dev/null 2>&1 && lsb_release -c | awk '{ print $2 }')
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install -y --no-install-recommends qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gdb ruby ruby-dev ruby-all-dev gem; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; sudo apt install -y --no-install-recommends qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gdb ruby ruby-dev ruby-all-dev gem; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
 
 install:
