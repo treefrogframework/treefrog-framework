@@ -3,7 +3,7 @@ language: cpp
 matrix:
   include:
     - os: linux
-      dist: bionic
+      dist: xenial
       sudo: required
       env:
        - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
