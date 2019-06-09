@@ -48,7 +48,6 @@ addons:
       - gem
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo gem install jekyll bundler; cd $CI_WORK/docs; bundle install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
 
 install:
@@ -74,5 +73,4 @@ script:
   - ./tmaketest
   - cd $CI_WORK/tools/test
   - ./releasetest/releasetest
-  - cd $CI_WORK/docs
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bundle exec jekyll build; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ] && grep -i "xenial" /etc/os-release >/dev/null 2>&1; then sudo gem install jekyll bundler; cd $CI_WORK/docs; bundle install; bundle exec jekyll build; fi
