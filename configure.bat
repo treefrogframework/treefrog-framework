@@ -1,8 +1,9 @@
 @echo OFF
-@setlocal
+@setlocal enabledelayedexpansion
 
 set VERSION=1.25.0
 set TFDIR=C:\TreeFrog\%VERSION%
+set MONBOC_VERSION=1.14.0
 set LZ4_VERSION=1.9.1
 
 :parse_loop
@@ -58,33 +59,45 @@ for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cl.exe) do if exist %%~$path:I set MSCOMPILER=%%~$path:I
 for %%I in (g++.exe) do if exist %%~$path:I set GNUCOMPILER=%%~$path:I
 
-if "%QMAKE%" == "" (
+if "!QMAKE!" == "" (
   echo Qt environment not found
   exit /b
 )
-if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
+if "!MSCOMPILER!" == "" if "!GNUCOMPILER!"  == "" (
   echo compiler not found
   exit /b
 )
 
 :: vcvarsall.bat setup
-if not "%MSCOMPILER%" == "" (
+if not "!MSCOMPILER!" == "" (
   set MAKE=nmake
-  if "%Platform%" == "X64" (
-    set VCVARSOPT=amd64
-    set BUILDTARGET=x64
-    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-  ) else if "%Platform%" == "x64" (
-    set VCVARSOPT=amd64
-    set BUILDTARGET=x64
-    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-  ) else (
+  if not "!Platform!" == "X64" if not "!Platform!" == "x64" (
     set VCVARSOPT=x86
     set BUILDTARGET=win32
     set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+  ) else (
+    set VCVARSOPT=amd64
+    set BUILDTARGET=x64
+    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  )
+
+  for /F %%i in ('qtpaths.exe --install-prefix') do set QT_INSTALL_PREFIX=%%i
+  echo !QT_INSTALL_PREFIX! | find "msvc2015" >NUL
+  if not ERRORLEVEL 1 (
+    if "!BUILDTARGET!" == "x64" (
+      set CMAKEOPT=Visual Studio 14 2015 Win64
+    ) else (
+      set CMAKEOPT=Visual Studio 14 2015
+    )
+  ) else (
+    if "!BUILDTARGET!" == "x64" (
+      set CMAKEOPT=Visual Studio 15 2017 Win64
+    ) else (
+      set CMAKEOPT=Visual Studio 15 2017
+    )
   )
 ) else (
-  set MAKE=mingw32-make -j%NUMBER_OF_PROCESSORS%
+  set MAKE=mingw32-make -j!NUMBER_OF_PROCESSORS!
   set ENVSTR=Environment to build for executable MinGW / Qt
 )
 SET /P X="%ENVSTR%"<NUL
@@ -121,16 +134,20 @@ echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
 echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
-
 set TFDIR=%TFDIR:\=/%
-del 3rdparty\mongo-c-driver\.qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
 :: Builds MongoDB driver
 echo Compiling MongoDB driver library ...
-cd 3rdparty\mongo-c-driver
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
-
-qmake -r %OPT%
-%MAKE% >nul 2>&1
+cd 3rdparty
+rd /s /q  mongo-driver >nul 2>&1
+del /f /q mongo-driver >nul 2>&1
+mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
+cd mongo-driver
+rmdir /s /q cmake-build 
+mkdir cmake-build
+cd cmake-build
+cmake -G"%CMAKEOPT%" -DCMAKE_BUILD_TYPE=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
+devenv mongo-c-driver.sln /project bson_static /rebuild Release
+devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 if ERRORLEVEL 1 (
   echo Compile failed.
   echo MongoDB driver not available.
@@ -138,11 +155,10 @@ if ERRORLEVEL 1 (
 )
 
 :: Builds LZ4
-cd ..
+cd ..\..
 echo Compiling LZ4 library ...
-rd /s /q lz4 >nul 2>&1
+rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
-rmdir /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
 if not "%MSCOMPILER%" == "" (
   for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL

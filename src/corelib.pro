@@ -365,21 +365,17 @@ freebsd {
 
 # Files for MongoDB
 windows {
-  INCLUDEPATH += ../3rdparty/mongo-c-driver/src/mongoc ../3rdparty/mongo-c-driver/src/libbson/src/bson
+  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src ../3rdparty/mongo-driver/cmake-build/src/libbson/src ../3rdparty/mongo-driver/cmake-build/src/libmongoc/src
   win32-msvc* {
-    CONFIG(debug, debug|release) {
-      LIBS += ..\3rdparty\mongo-c-driver\debug\mongoc.lib
-    } else {
-      LIBS += ..\3rdparty\mongo-c-driver\release\mongoc.lib
-    }
+    LIBS += ../3rdparty/mongo-driver/cmake-build/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/cmake-build/src/libbson/Release/bson-static-1.0.lib
   } else {
     CONFIG(debug, debug|release) {
-      LIBS += ../3rdparty/mongo-c-driver/debug/libmongoc.a
+      LIBS += ../3rdparty/mongo-driver/debug/libmongoc.a
     } else {
-      LIBS += ../3rdparty/mongo-c-driver/release/libmongoc.a
+      LIBS += ../3rdparty/mongo-driver/release/libmongoc.a
     }
   }
-  LIBS += -lws2_32 -lpsapi
+  LIBS += -lws2_32 -lpsapi -lAdvapi32
 } else {
   isEmpty( shared_mongoc ) {
     INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
