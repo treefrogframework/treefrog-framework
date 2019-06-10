@@ -238,12 +238,13 @@ int TMongoQuery::count(const QVariantMap &criteria)
 */
 int TMongoQuery::numDocsAffected() const
 {
+    // ############### TODO
     int num = 0;
-    QVariantMap status = driver()->getLastCommandStatus();
-    num += status.value(QLatin1String("nInserted"), 0).toInt();
-    num += status.value(QLatin1String("nMatched"), 0).toInt();
-    num += status.value(QLatin1String("nUpserted"), 0).toInt();
-    num += status.value(QLatin1String("nRemoved"), 0).toInt();
+    // QVariantMap status = driver()->getLastCommandStatus();
+    // num += status.value(QLatin1String("nInserted"), 0).toInt();
+    // num += status.value(QLatin1String("nMatched"), 0).toInt();
+    // num += status.value(QLatin1String("nUpserted"), 0).toInt();
+    // num += status.value(QLatin1String("nRemoved"), 0).toInt();
     return num;
 }
 

@@ -15,8 +15,8 @@ extern "C" {
 }
 
 
-TMongoDriver::TMongoDriver()
-    : mongoCursor(new TMongoCursor())
+TMongoDriver::TMongoDriver() :
+    mongoCursor(new TMongoCursor())
 {
     mongoc_init();
 }
@@ -26,7 +26,6 @@ TMongoDriver::~TMongoDriver()
 {
     close();
     delete mongoCursor;
-    delete lastStatus;
 }
 
 
@@ -36,9 +35,9 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
         return true;
     }
 
-    if (!port)
+    if (!port) {
         port = MONGOC_DEFAULT_PORT;
-
+    }
     QString uri;
     if (!user.isEmpty()) {
         uri += user;
@@ -91,24 +90,29 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
         return false;
     }
 
-    errorCode = 0;
-    errorString.resize(0);
+    bson_error_t error;
+    clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
-    mongoc_cursor_t *cursor = mongoc_collection_find(col, MONGOC_QUERY_NONE, skip, limit, 0,
-                                                     (bson_t *)TBson::toBson(criteria, orderBy).data(),
-                                                     (bson_t *)TBson::toBson(fields).data(),
-                                                     nullptr); /* Read Prefs, nullptr for default */
+    bson_t *opts = BCON_NEW("skip", BCON_INT64((skip > 0) ? skip : 0));
+    if (limit > 0) {
+        bson_append_int64(opts, "limit", 5, limit);
+    }
+    if (! fields.isEmpty()) {
+        bson_append_document(opts, "projection", 10, (bson_t *)TBson::toBson(fields).data());
+    }
+    mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(col,
+                                                               (bson_t *)TBson::toBson(criteria, orderBy).data(),
+                                                               opts, nullptr);
 
-    setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);
+    bson_destroy(opts);
     mongoCursor->setCursor(cursor);
 
     if (cursor) {
-        bson_error_t error;
         if (mongoc_cursor_error(cursor, &error)) {
-            errorCode = error.code;
-            errorString = QLatin1String(error.message);
+            tSystemError("MongoDB Find Error: %s", error.message);
+            setLastError(&error);
         }
     } else {
         tSystemError("MongoDB Cursor Error");
@@ -136,20 +140,17 @@ bool TMongoDriver::insert(const QString &collection, const QVariantMap &object)
         return false;
     }
 
-    errorCode = 0;
-    errorString.resize(0);
     bson_error_t error;
+    clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     bool res = mongoc_collection_insert(col, MONGOC_INSERT_NONE, (bson_t *)TBson::toBson(object).constData(),
                                         nullptr, &error);
 
-    setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);
     if (!res) {
         tSystemError("MongoDB Insert Error: %s", error.message);
-        errorCode = error.code;
-        errorString = QLatin1String(error.message);
+        setLastError(&error);
     }
     return res;
 }
@@ -161,21 +162,18 @@ bool TMongoDriver::remove(const QString &collection, const QVariantMap &object)
         return false;
     }
 
-    errorCode = 0;
-    errorString.resize(0);
     bson_error_t error;
+    clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     bool res = mongoc_collection_remove(col, MONGOC_REMOVE_SINGLE_REMOVE,
                                         (bson_t *)TBson::toBson(object).constData(), nullptr, &error);
 
-    setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);
 
     if (!res) {
         tSystemError("MongoDB Remove Error: %s", error.message);
-        errorCode = error.code;
-        errorString = QLatin1String(error.message);
+        setLastError(&error);
     }
     return res;
 }
@@ -188,22 +186,19 @@ bool TMongoDriver::update(const QString &collection, const QVariantMap &criteria
         return false;
     }
 
-    errorCode = 0;
-    errorString.resize(0);
     bson_error_t error;
+    clearError();
 
     mongoc_update_flags_t flag = (upsert) ? MONGOC_UPDATE_UPSERT : MONGOC_UPDATE_NONE;
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     bool res = mongoc_collection_update(col, flag, (bson_t *)TBson::toBson(criteria).data(),
                                         (bson_t *)TBson::toBson(object).data(), nullptr, &error);
 
-    setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);
 
     if (!res) {
         tSystemError("MongoDB Update Error: %s", error.message);
-        errorCode = error.code;
-        errorString = QLatin1String(error.message);
+        setLastError(&error);
     }
     return res;
 }
@@ -215,22 +210,19 @@ bool TMongoDriver::updateMulti(const QString &collection, const QVariantMap &cri
         return false;
     }
 
-    errorCode = 0;
-    errorString.resize(0);
     bson_error_t error;
+    clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     bool res = mongoc_collection_update(col, MONGOC_UPDATE_MULTI_UPDATE,
                                         (bson_t *)TBson::toBson(criteria).data(),
                                         (bson_t *)TBson::toBson(object).data(), nullptr, &error);
 
-    setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);
 
     if (!res) {
         tSystemError("MongoDB UpdateMulti Error: %s", error.message);
-        errorCode = error.code;
-        errorString = QLatin1String(error.message);
+        setLastError(&error);
     }
     return res;
 }
@@ -242,40 +234,34 @@ int TMongoDriver::count(const QString &collection, const QVariantMap &criteria)
         return false;
     }
 
-    errorCode = 0;
-    errorString.resize(0);
     bson_error_t error;
+    clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     int count = mongoc_collection_count(col, MONGOC_QUERY_NONE, (bson_t *)TBson::toBson(criteria).data(),
                                         0, 0, nullptr, &error);
 
-    setLastCommandStatus(mongoc_collection_get_last_error(col));
     mongoc_collection_destroy(col);
 
     if (count < 0) {
         tSystemError("MongoDB Count Error: %s", error.message);
-        errorCode = error.code;
-        errorString = QLatin1String(error.message);
+        setLastError(&error);
     }
     return count;
 }
 
 
-// QString TMongoDriver::lastErrorString() const
-// {
-//     return lastStatus->value("writeErrors").toStringList().value(0);
-// }
-
-
-QVariantMap TMongoDriver::getLastCommandStatus() const
+void TMongoDriver::clearError()
 {
-    return TBson::fromBson(*lastStatus);
+    errorDomain = 0;
+    errorCode = 0;
+    errorString.resize(0);
 }
 
 
-void TMongoDriver::setLastCommandStatus(const void *bson)
+void TMongoDriver::setLastError(const bson_error_t* error)
 {
-    delete lastStatus;
-    lastStatus = new TBson((const TBsonObject *)bson);
+    errorDomain = error->domain;
+    errorCode = error->code;
+    errorString = QString::fromLatin1(error->message);
 }
