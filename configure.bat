@@ -59,19 +59,19 @@ for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cl.exe) do if exist %%~$path:I set MSCOMPILER=%%~$path:I
 for %%I in (g++.exe) do if exist %%~$path:I set GNUCOMPILER=%%~$path:I
 
-if "!QMAKE!" == "" (
+if "%QMAKE%" == "" (
   echo Qt environment not found
   exit /b
 )
-if "!MSCOMPILER!" == "" if "!GNUCOMPILER!"  == "" (
+if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
   echo compiler not found
   exit /b
 )
 
 :: vcvarsall.bat setup
-if not "!MSCOMPILER!" == "" (
+if not "%MSCOMPILER%" == "" (
   set MAKE=nmake
-  if not "!Platform!" == "X64" if not "!Platform!" == "x64" (
+  if not "%Platform%" == "X64" if not "%Platform%" == "x64" (
     set VCVARSOPT=x86
     set BUILDTARGET=win32
     set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
@@ -97,7 +97,7 @@ if not "!MSCOMPILER!" == "" (
     )
   )
 ) else (
-  set MAKE=mingw32-make -j!NUMBER_OF_PROCESSORS!
+  set MAKE=mingw32-make -j%NUMBER_OF_PROCESSORS%
   set ENVSTR=Environment to build for executable MinGW / Qt
 )
 SET /P X="%ENVSTR%"<NUL
@@ -142,14 +142,14 @@ rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 cd mongo-driver
-rmdir /s /q cmake-build 
+rmdir /s /q cmake-build
 mkdir cmake-build
 cd cmake-build
 cmake -G"%CMAKEOPT%" -DCMAKE_BUILD_TYPE=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
 devenv mongo-c-driver.sln /project bson_static /rebuild Release
 devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 if ERRORLEVEL 1 (
-  echo Compile failed.
+  echo Build failed.
   echo MongoDB driver not available.
   exit /b
 )
@@ -166,6 +166,11 @@ if not "%MSCOMPILER%" == "" (
     devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
   ) else (
     devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
+  )
+  if ERRORLEVEL 1 (
+    echo Build failed.
+    echo LZ4 not available.
+    exit /b
   )
 ) else (
   cd lz4\lib
