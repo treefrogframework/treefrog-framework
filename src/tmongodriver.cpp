@@ -93,6 +93,7 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
     bson_error_t error;
     clearError();
 
+#if MONGOC_VERSION_HEX >= 0x010500
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
     bson_t *opts = BCON_NEW("skip", BCON_INT64((skip > 0) ? skip : 0));
     if (limit > 0) {
@@ -107,6 +108,15 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
 
     mongoc_collection_destroy(col);
     bson_destroy(opts);
+#else
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_cursor_t *cursor = mongoc_collection_find(col, MONGOC_QUERY_NONE, skip, limit, 0,
+                                                     (bson_t *)TBson::toBson(criteria, orderBy).data(),
+                                                     (bson_t *)TBson::toBson(fields).data(),
+                                                     nullptr); /* Read Prefs, nullptr for default */
+
+    mongoc_collection_destroy(col);
+#endif
     mongoCursor->setCursor(cursor);
 
     if (cursor) {
@@ -238,9 +248,12 @@ int TMongoDriver::count(const QString &collection, const QVariantMap &criteria)
     clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+#if MONGOC_VERSION_HEX >= 0x010b00
+    int count = mongoc_collection_count_documents(col, (bson_t *)TBson::toBson(criteria).data(), nullptr, nullptr, nullptr, &error);
+#else
     int count = mongoc_collection_count(col, MONGOC_QUERY_NONE, (bson_t *)TBson::toBson(criteria).data(),
                                         0, 0, nullptr, &error);
-
+#endif
     mongoc_collection_destroy(col);
 
     if (count < 0) {

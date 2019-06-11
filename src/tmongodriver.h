@@ -7,7 +7,6 @@
 #include <TKvsDriver>
 
 class TMongoCursor;
-typedef struct _bson_error_t bson_error_t;
 
 
 class T_CORE_EXPORT TMongoDriver : public TKvsDriver
@@ -40,13 +39,15 @@ public:
     const TMongoCursor &cursor() const { return *mongoCursor; }
 
 private:
+    typedef struct _bson_error_t bson_error_t;
+    typedef struct _mongoc_client_t mongoc_client_t;
+
     void clearError();
     void setLastError(const bson_error_t* error);
 
-    typedef struct _mongoc_client_t mongoc_client_t;
     mongoc_client_t *mongoClient {nullptr};
-    QString dbName;
     TMongoCursor *mongoCursor {nullptr};
+    QString dbName;
     int errorDomain {0};
     int errorCode {0};
     QString errorString;
