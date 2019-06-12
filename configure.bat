@@ -142,10 +142,10 @@ rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 cd mongo-driver
-rmdir /s /q cmake-build
+rmdir /s /q cmake-build >nul 2>&1
 mkdir cmake-build
 cd cmake-build
-cmake -G"%CMAKEOPT%" -DCMAKE_BUILD_TYPE=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
+cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
 devenv mongo-c-driver.sln /project bson_static /rebuild Release
 devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 if ERRORLEVEL 1 (
