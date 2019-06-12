@@ -145,6 +145,7 @@ cd mongo-driver
 rmdir /s /q cmake-build >nul 2>&1
 mkdir cmake-build
 cd cmake-build
+echo cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
 cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
 devenv mongo-c-driver.sln /project bson_static /rebuild Release
 devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
