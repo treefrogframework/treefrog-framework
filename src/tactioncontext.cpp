@@ -38,6 +38,7 @@ TActionContext::TActionContext() : TDatabaseContext()
 TActionContext::~TActionContext()
 {
     release();
+    accessLogger.close();
 }
 
 
@@ -354,7 +355,6 @@ void TActionContext::execute(THttpRequest &request, int sid)
     }
 
     accessLogger.write();  // Writes access log
-    accessLogger.close();  // Writes once
 }
 
 
