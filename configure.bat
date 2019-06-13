@@ -1,5 +1,5 @@
 @echo OFF
-@setlocal enabledelayedexpansion
+@setlocal
 
 set VERSION=1.25.0
 set TFDIR=C:\TreeFrog\%VERSION%
@@ -68,29 +68,35 @@ if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
   exit /b
 )
 
+:: get qt install prefix
+for %%I in ('qtpaths.exe --install-prefix') do (
+  set QT_INSTALL_PREFIX=%%I
+  goto :break
+)
+:break
+
 :: vcvarsall.bat setup
 if not "%MSCOMPILER%" == "" (
   set MAKE=nmake
-  if not "%Platform%" == "X64" if not "%Platform%" == "x64" (
-    set VCVARSOPT=x86
-    set BUILDTARGET=win32
-    set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
-  ) else (
+  if /i "%Platform%" == "x64" (
     set VCVARSOPT=amd64
     set BUILDTARGET=x64
     set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  ) else (
+    set VCVARSOPT=x86
+    set BUILDTARGET=win32
+    set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
   )
 
-  for /F %%i in ('qtpaths.exe --install-prefix') do set QT_INSTALL_PREFIX=%%i
-  echo !QT_INSTALL_PREFIX! | find "msvc2015" >NUL
+  echo %QT_INSTALL_PREFIX% | find "msvc2015" >NUL
   if not ERRORLEVEL 1 (
-    if "!BUILDTARGET!" == "x64" (
+    if /i "%Platform%" == "x64" (
       set CMAKEOPT=Visual Studio 14 2015 Win64
     ) else (
       set CMAKEOPT=Visual Studio 14 2015
     )
   ) else (
-    if "!BUILDTARGET!" == "x64" (
+    if /i "%Platform%" == "x64" (
       set CMAKEOPT=Visual Studio 15 2017 Win64
     ) else (
       set CMAKEOPT=Visual Studio 15 2017
