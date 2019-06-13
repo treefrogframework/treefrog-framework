@@ -69,7 +69,7 @@ if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
 )
 
 :: get qt install prefix
-for %%I in ('qtpaths.exe --install-prefix') do (
+for /f usebackq %%I in (`qtpaths.exe --install-prefix`) do (
   set QT_INSTALL_PREFIX=%%I
   goto :break
 )
