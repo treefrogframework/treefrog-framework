@@ -56,11 +56,16 @@ if "%DEBUG%" == "yes" (
 :: Generates tfenv.bat
 ::
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
-for %%I in (cl.exe) do if exist %%~$path:I set MSCOMPILER=%%~$path:I
-for %%I in (g++.exe) do if exist %%~$path:I set GNUCOMPILER=%%~$path:I
+for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
+for %%I in (cl.exe)    do if exist %%~$path:I set MSCOMPILER=%%~$path:I
+for %%I in (g++.exe)   do if exist %%~$path:I set GNUCOMPILER=%%~$path:I
 
 if "%QMAKE%" == "" (
   echo Qt environment not found
+  exit /b
+)
+if "%CMAKE%" == "" (
+  echo CMake not found
   exit /b
 )
 if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
