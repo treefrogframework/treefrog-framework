@@ -3,6 +3,7 @@
 
 set VERSION=1.25.0
 set TFDIR=C:\TreeFrog\%VERSION%
+set MONBOC_VERSION=1.14.0
 set LZ4_VERSION=1.9.1
 
 :parse_loop
@@ -67,14 +68,17 @@ if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
   exit /b
 )
 
+:: get qt install prefix
+for /f usebackq %%I in (`qtpaths.exe --install-prefix`) do (
+  set QT_INSTALL_PREFIX=%%I
+  goto :break
+)
+:break
+
 :: vcvarsall.bat setup
 if not "%MSCOMPILER%" == "" (
   set MAKE=nmake
-  if "%Platform%" == "X64" (
-    set VCVARSOPT=amd64
-    set BUILDTARGET=x64
-    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-  ) else if "%Platform%" == "x64" (
+  if /i "%Platform%" == "x64" (
     set VCVARSOPT=amd64
     set BUILDTARGET=x64
     set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
@@ -82,6 +86,21 @@ if not "%MSCOMPILER%" == "" (
     set VCVARSOPT=x86
     set BUILDTARGET=win32
     set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+  )
+
+  echo %QT_INSTALL_PREFIX% | find "msvc2015" >NUL
+  if not ERRORLEVEL 1 (
+    if /i "%Platform%" == "x64" (
+      set CMAKEOPT=Visual Studio 14 2015 Win64
+    ) else (
+      set CMAKEOPT=Visual Studio 14 2015
+    )
+  ) else (
+    if /i "%Platform%" == "x64" (
+      set CMAKEOPT=Visual Studio 15 2017 Win64
+    ) else (
+      set CMAKEOPT=Visual Studio 15 2017
+    )
   )
 ) else (
   set MAKE=mingw32-make -j%NUMBER_OF_PROCESSORS%
@@ -121,28 +140,32 @@ echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
 echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
-
 set TFDIR=%TFDIR:\=/%
-del 3rdparty\mongo-c-driver\.qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
 :: Builds MongoDB driver
 echo Compiling MongoDB driver library ...
-cd 3rdparty\mongo-c-driver
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
-
-qmake -r %OPT%
-%MAKE% >nul 2>&1
+cd 3rdparty
+rd /s /q  mongo-driver >nul 2>&1
+del /f /q mongo-driver >nul 2>&1
+mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
+cd mongo-driver
+rmdir /s /q cmake-build >nul 2>&1
+mkdir cmake-build
+cd cmake-build
+echo cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
+cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
+devenv mongo-c-driver.sln /project bson_static /rebuild Release
+devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 if ERRORLEVEL 1 (
-  echo Compile failed.
+  echo Build failed.
   echo MongoDB driver not available.
   exit /b
 )
 
 :: Builds LZ4
-cd ..
+cd ..\..
 echo Compiling LZ4 library ...
-rd /s /q lz4 >nul 2>&1
+rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
-rmdir /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
 if not "%MSCOMPILER%" == "" (
   for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
@@ -150,6 +173,11 @@ if not "%MSCOMPILER%" == "" (
     devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
   ) else (
     devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
+  )
+  if ERRORLEVEL 1 (
+    echo Build failed.
+    echo LZ4 not available.
+    exit /b
   )
 ) else (
   cd lz4\lib

@@ -11,9 +11,9 @@ matrix:
       dist: xenial
       sudo: required
       env:
-       - CONFIG_SHARED_MONGOC=
+       - CONFIG_SHARED_MONGOC=""
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.1
       sudo: required
       env:
        - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
@@ -21,40 +21,21 @@ matrix:
       osx_image: xcode9.4
       sudo: required
       env:
-       - CONFIG_SHARED_MONGOC=
+       - CONFIG_SHARED_MONGOC=""
 
 env:
   global:
-    - CI_WORK=`pwd`
-
-addons:
-  apt:
-    packages:
-      - qtbase5-dev
-      - qt5-default
-      - qt5-qmake
-      - qttools5-dev-tools
-      - qtdeclarative5-dev
-      - qtdeclarative5-dev-tools
-      - libqt5sql5
-      - libqt5sql5-sqlite
-      - libsqlite3-dev
-      - libmongoc-dev
-      - libbson-dev
-      - gdb
-      - ruby
-      - ruby-dev
-      - ruby-all-dev
-      - gem
+    - CI_WORK=$(pwd)
+    - UBUNTU_CODENAME=$(which lsb_release >/dev/null 2>&1 && lsb_release -c | awk '{ print $2 }')
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo gem install jekyll bundler; cd $CI_WORK/docs; bundle install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; sudo apt install -y --no-install-recommends qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gdb ruby ruby-dev ruby-all-dev gem; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
 
 install:
-  - cd $CI_WORK
+  - cd ${CI_WORK}
   - qmake -v
-  - ./configure --prefix=/usr/local $CONFIG_SHARED_MONGOC
+  - ./configure --prefix=/usr/local ${CONFIG_SHARED_MONGOC}
   - make -j4 -C src
   - sudo make -C src install
   - make -j4 -C tools
@@ -62,17 +43,16 @@ install:
   - treefrog -v
 
 before_script:
-  - cd $CI_WORK
+  - cd ${CI_WORK}
   - cd tools/tmake/test
   - qmake tmaketest.pro
   - make
 
 script:
-  - cd $CI_WORK
+  - cd ${CI_WORK}
   - ./src/test/testall.sh
-  - cd $CI_WORK/tools/tmake/test
+  - cd ${CI_WORK}/tools/tmake/test
   - ./tmaketest
-  - cd $CI_WORK/tools/test
+  - cd ${CI_WORK}/tools/test
   - ./releasetest/releasetest
-  - cd $CI_WORK/docs
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bundle exec jekyll build; fi
+  - if [ "$UBUNTU_CODENAME" == "xenial" ]; then cd ${CI_WORK}/docs; sudo gem install jekyll bundler; bundle install; bundle exec jekyll build; fi

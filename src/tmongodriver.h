@@ -7,7 +7,6 @@
 #include <TKvsDriver>
 
 class TMongoCursor;
-class TBson;
 
 
 class T_CORE_EXPORT TMongoDriver : public TKvsDriver
@@ -24,7 +23,7 @@ public:
     bool find(const QString &collection, const QVariantMap &criteria, const QVariantMap &orderBy,
               const QStringList &fields, int limit, int skip, int options);
     QVariantMap findOne(const QString &collection, const QVariantMap &criteria,
-                        const QStringList &fields = QStringList());
+                        const QStringList &projectFields = QStringList());
     bool insert(const QString &collection, const QVariantMap &object);
     bool remove(const QString &collection, const QVariantMap &object);
     bool update(const QString &collection, const QVariantMap &criteria,
@@ -32,21 +31,24 @@ public:
     bool updateMulti(const QString &collection, const QVariantMap &criteria,
                      const QVariantMap &object);
     int count(const QString &collection, const QVariantMap &criteria);
+    int lasrErrorDomain() const { return errorDomain; }
     int lastErrorCode() const { return errorCode; }
     QString lastErrorString() const { return errorString; }
-    QVariantMap getLastCommandStatus() const;
 
     TMongoCursor &cursor() { return *mongoCursor; }
     const TMongoCursor &cursor() const { return *mongoCursor; }
 
 private:
-    void setLastCommandStatus(const void *bson);
-
+    typedef struct _bson_error_t bson_error_t;
     typedef struct _mongoc_client_t mongoc_client_t;
+
+    void clearError();
+    void setLastError(const bson_error_t* error);
+
     mongoc_client_t *mongoClient {nullptr};
-    QString dbName;
     TMongoCursor *mongoCursor {nullptr};
-    TBson *lastStatus {nullptr};
+    QString dbName;
+    int errorDomain {0};
     int errorCode {0};
     QString errorString;
 
