@@ -157,10 +157,16 @@ if [ -z "$QMAKE" ]; then
   which qmake     >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then
-    echo qmake: command not found
+    echo "qmake: command not found"
     echo 
-    exit
+    exit 1
   fi
+fi
+
+if [ -z "$ENABLE_SHARED_MONGOC" ] && ! which cmake >/dev/null 2>&1; then
+  echo "cmake: command not found"
+  echo
+  exit 1
 fi
 
 cd "$BASEDIR/src"
