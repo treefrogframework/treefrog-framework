@@ -15,8 +15,9 @@
 static QSettings *mongoSettings = nullptr;
 
 
-MongoCommand::MongoCommand(const QString &path)
-    : driver(new TMongoDriver), settingsPath(path)
+MongoCommand::MongoCommand(const QString &path) :
+    driver(new TMongoDriver),
+    settingsPath(path)
 {
     if (!mongoSettings) {
         if (!QFile::exists(settingsPath)) {
@@ -68,11 +69,12 @@ void MongoCommand::close()
 QStringList MongoCommand::getCollectionNames() const
 {
     QStringList ret;
-    if (!driver->isOpen())
+    if (!driver->isOpen()) {
         return ret;
+    }
 
-    int cnt = driver->find("system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
-    if (cnt > 0) {
+    bool ok = driver->find("system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
+    if (ok) {
         while (driver->cursor().next()) {
             QVariantMap val = driver->cursor().value();
             QString coll = val["name"].toString().mid(databaseName.length() + 1);

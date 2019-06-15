@@ -8,12 +8,11 @@
 #include <TMongoCursor>
 #include <TBson>
 extern "C" {
-#include "mongoc.h"
+#include <mongoc.h>
 }
 
 
 TMongoCursor::TMongoCursor()
-    : mongoCursor(nullptr), bsonDoc(nullptr)
 { }
 
 

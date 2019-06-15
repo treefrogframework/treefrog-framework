@@ -9,8 +9,6 @@
 class T_CORE_EXPORT TMongoCursor
 {
 public:
-    typedef void TCursorObject;
-
     ~TMongoCursor();
 
     bool next();
@@ -18,14 +16,16 @@ public:
     QVariantList toList();
 
 protected:
+    typedef void TCursorObject;
+
     void release();
     TCursorObject *cursor() { return mongoCursor; }
     void setCursor(void *cursor);
 
 private:
     typedef struct _mongoc_cursor_t mongoc_cursor_t;
-    mongoc_cursor_t *mongoCursor;
-    const TBsonObject *bsonDoc;  // pointer to a object of bson_t
+    mongoc_cursor_t *mongoCursor {nullptr};
+    const TBsonObject *bsonDoc {nullptr};  // pointer to a object of bson_t
 
     TMongoCursor();
     friend class TMongoDriver;

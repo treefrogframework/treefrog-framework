@@ -366,7 +366,7 @@ freebsd {
 # Files for MongoDB
 windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
-  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src ../3rdparty/mongo-driver/cmake-build/src/libbson/src ../3rdparty/mongo-driver/cmake-build/src/libmongoc/src
+  INCLUDEPATH += ../3rdparty/mongo-driver/src/mongoc ../3rdparty/mongo-driver/src/libbson/src/bson
   win32-msvc* {
     LIBS += ../3rdparty/mongo-driver/cmake-build/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/cmake-build/src/libbson/Release/bson-static-1.0.lib
   } else {
@@ -379,8 +379,8 @@ windows {
   LIBS += -lws2_32 -lpsapi -lAdvapi32
 } else {
   isEmpty( shared_mongoc ) {
-    INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-    LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+    INCLUDEPATH += ../3rdparty/mongo-driver/src/mongoc ../3rdparty/mongo-driver/src/libbson/src/bson
+    LIBS += ../3rdparty/mongo-driver/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
   } else {
     macx {
       # Homebrew

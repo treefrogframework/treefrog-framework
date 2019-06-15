@@ -13,7 +13,7 @@
 #include <QtEndian>
 #include <atomic>
 extern "C" {
-#include "mongoc.h"
+#include <bson.h>
 }
 
 /*!
