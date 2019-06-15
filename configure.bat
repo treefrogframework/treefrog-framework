@@ -55,6 +55,7 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
+set BASEDIR=%~dp0
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (cl.exe)    do if exist %%~$path:I set MSCOMPILER=%%~$path:I
@@ -147,19 +148,19 @@ echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 :: Builds MongoDB driver
-echo Compiling MongoDB driver library ...
-cd 3rdparty
+cd %BASEDIR%3rdparty
 rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
-cd mongo-driver
+cd %BASEDIR%3rdparty\mongo-driver
 rmdir /s /q cmake-build >nul 2>&1
 mkdir cmake-build
-cd cmake-build
+cd %BASEDIR%3rdparty\mongo-driver\cmake-build
 echo cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
 cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
-devenv mongo-c-driver.sln /project bson_static /rebuild Release
-devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
+echo Compiling MongoDB driver library ...
+devenv mongo-c-driver.sln /project bson_static /rebuild Release >nul 2>&1
+devenv mongo-c-driver.sln /project mongoc_static /rebuild Release >nul 2>&1
 if ERRORLEVEL 1 (
   echo Build failed.
   echo MongoDB driver not available.
@@ -167,7 +168,7 @@ if ERRORLEVEL 1 (
 )
 
 :: Builds LZ4
-cd ..\..
+cd %BASEDIR%3rdparty
 echo Compiling LZ4 library ...
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
@@ -175,9 +176,9 @@ mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
 if not "%MSCOMPILER%" == "" (
   for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
   if not ERRORLEVEL 1 (
-    devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
+    devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
   ) else (
-    devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
+    devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
   )
   if ERRORLEVEL 1 (
     echo Build failed.
@@ -185,23 +186,20 @@ if not "%MSCOMPILER%" == "" (
     exit /b
   )
 ) else (
-  cd lz4\lib
+  cd %BASEDIR%3rdparty\lz4\lib
   qmake -o makefile.liblz4
-  %MAKE% -f makefile.liblz4 clean
-  %MAKE% -f makefile.liblz4
-  cd ..\..
+  %MAKE% -f makefile.liblz4 clean >nul 2>&1
+  %MAKE% -f makefile.liblz4 >nul 2>&1
 )
-cd ..
 
-cd src
+cd %BASEDIR%src
 if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
-cd ..
-cd tools
+
+cd %BASEDIR%tools
 if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
 qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
 %MAKE% qmake
-cd ..
 
 echo;
 echo First, run "%MAKE% install" in src directory.
