@@ -12,6 +12,7 @@
 #include <QCoreApplication>
 #include <QtEndian>
 #include <atomic>
+#include "tsystemglobal.h"
 extern "C" {
 #include <bson.h>
 }
@@ -21,8 +22,8 @@ extern "C" {
   \brief The TBson class represents a Binary JSON for MongoDB.
 */
 
-TBson::TBson()
-    : bsonData(bson_new())
+TBson::TBson() :
+    bsonData(bson_new())
 { }
 
 
@@ -183,7 +184,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
 
 static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &value)
 {
-    const QLatin1String oidkey("_id");
+    static const QLatin1String oidkey("_id");
     bool ok = true;
     int type = value.type();
 
@@ -280,9 +281,16 @@ static void appendBson(TBsonObject *bson, const QVariantMap &map)
     for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
         const QVariant &val = it.next().value();
         bool res = appendBsonValue((bson_t *)bson, qPrintable(it.key()), val);
-        if (!res)
+        if (!res) {
             break;
+        }
     }
+}
+
+
+bool TBson::insert(const QString &key, const QVariant &value)
+{
+    return appendBsonValue(bsonData, key, value);
 }
 
 
@@ -290,6 +298,14 @@ TBson TBson::toBson(const QVariantMap &map)
 {
     TBson ret;
     appendBson(ret.data(), map);
+    return ret;
+}
+
+
+TBson TBson::toBson(const QString &op, const QVariantMap &map)
+{
+    TBson ret;
+    BSON_APPEND_DOCUMENT((bson_t *)ret.data(), qPrintable(op), (const bson_t *)TBson::toBson(map).constData());
     return ret;
 }
 

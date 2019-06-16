@@ -73,7 +73,7 @@
 #define MODEL_IMPL_TEMPLATE                                   \
     "#include <TreeFrogModel>\n"                              \
     "#include \"%inc%.h\"\n"                                  \
-    "#include \"%inc%object.h\"\n"                            \
+    "#include \"%objdir%%inc%object.h\"\n"                    \
     "\n"                                                      \
     "%model%::%model%()\n"                                    \
     "    : TAbstractModel(), d(new %model%Object())\n"        \
@@ -222,7 +222,7 @@
 #define USER_MODEL_IMPL_TEMPLATE                              \
     "#include <TreeFrogModel>\n"                              \
     "#include \"%inc%.h\"\n"                                  \
-    "#include \"%inc%object.h\"\n"                            \
+    "#include \"%objdir%%inc%object.h\"\n"                    \
     "\n"                                                      \
     "%model%::%model%()\n"                                    \
     "    : TAbstractUser(), TAbstractModel(), d(new %model%Object())\n" \
@@ -641,14 +641,17 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     switch (objectType) {
     case Sql:
         implList << pair("12", replaceholder(MODEL_IMPL_GETALLJSON, pair("model", modelName)));
+        implList << pair("objdir", "sqlobjects/");
         break;
 
     case Mongo:
         implList << pair("12", replaceholder(MODEL_IMPL_GETALLJSON_MONGO, pair("model", modelName)));
+        implList << pair("objdir", "mongoobjects/");
         break;
 
     default:
         implList << pair("12", "");
+        implList << pair("objdir", "");
         break;
     }
 

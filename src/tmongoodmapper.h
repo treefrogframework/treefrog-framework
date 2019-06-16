@@ -280,8 +280,7 @@ inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, int column, QVaria
 
     QVariantMap doc;
     doc.insert(s, value);
-    bool res = TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
-    return (res) ? numDocsAffected() : -1;
+    return TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
 }
 
 
@@ -298,8 +297,7 @@ inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QV
         }
     }
 
-    bool res = TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
-    return (res) ? numDocsAffected() : -1;
+    return TMongoQuery::updateMulti(TCriteriaMongoConverter<T>(cri).toVariantMap(), doc);
 }
 
 

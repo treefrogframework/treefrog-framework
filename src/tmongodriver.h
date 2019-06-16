@@ -24,12 +24,13 @@ public:
               const QStringList &fields, int limit, int skip, int options);
     QVariantMap findOne(const QString &collection, const QVariantMap &criteria,
                         const QStringList &projectFields = QStringList());
-    bool insert(const QString &collection, const QVariantMap &object);
-    bool remove(const QString &collection, const QVariantMap &object);
-    bool update(const QString &collection, const QVariantMap &criteria,
-                const QVariantMap &object, bool upsert = false);
-    bool updateMulti(const QString &collection, const QVariantMap &criteria,
-                     const QVariantMap &object);
+    bool insertOne(const QString &collection, const QVariantMap &object, QVariantMap *reply = nullptr);
+    bool updateOne(const QString &collection, const QVariantMap &criteria, const QVariantMap &object,
+                bool upsert = false, QVariantMap *reply = nullptr);
+    bool updateMany(const QString &collection, const QVariantMap &criteria, const QVariantMap &object,
+                    bool upsert = false, QVariantMap *reply = nullptr);
+    bool removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
+    bool removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     int count(const QString &collection, const QVariantMap &criteria);
     int lasrErrorDomain() const { return errorDomain; }
     int lastErrorCode() const { return errorCode; }

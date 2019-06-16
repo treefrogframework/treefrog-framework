@@ -27,13 +27,12 @@ public:
     QVariantMap findOne(const QVariantMap &criteria = QVariantMap(), const QStringList &fields = QStringList());
     QVariantMap findById(const QString &id, const QStringList &fields = QStringList());
     bool insert(QVariantMap &document);
-    bool update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
+    int update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
     bool updateById(const QVariantMap &document);
-    bool updateMulti(const QVariantMap &criteria, const QVariantMap &document);
-    bool remove(const QVariantMap &criteria = QVariantMap());
+    int updateMulti(const QVariantMap &criteria, const QVariantMap &document);
+    int remove(const QVariantMap &criteria);
     bool removeById(const QVariantMap &document);
     int count(const QVariantMap &criteria = QVariantMap());
-    int numDocsAffected() const;
     QString lastErrorString() const;
 
     TMongoQuery &operator=(const TMongoQuery &other);

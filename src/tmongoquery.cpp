@@ -12,7 +12,7 @@
 #include <TActionContext>
 #include <TSystemGlobal>
 
-const QLatin1String ObjectIdKey("_id");
+const QString ObjectIdKey("_id");
 
 /*!
   \class TMongoQuery
@@ -130,22 +130,35 @@ bool TMongoQuery::insert(QVariantMap &document)
         document.insert(ObjectIdKey, TBson::generateObjectId());
     }
 
-    bool ret = driver()->insert(collection, document);
-    return ret;
+    int insertedCount = -1;
+    QVariantMap reply;
+    bool ret = driver()->insertOne(collection, document, &reply);
+    if (ret) {
+        insertedCount = reply.value(QStringLiteral("insertedCount")).toInt();
+    }
+    tSystemDebug("TMongoQuery::insert insertedCount:%d", insertedCount);
+    return (insertedCount == 1);
 }
 
 /*!
   Removes documents that matches the \a criteria from the collection.
 */
-bool TMongoQuery::remove(const QVariantMap &criteria)
+int TMongoQuery::remove(const QVariantMap &criteria)
 {
+    int deletedCount = -1;
+
     if (!database.isValid()) {
         tSystemError("TMongoQuery::remove : driver not loaded");
-        return false;
+        return deletedCount;
     }
 
-    bool ret = driver()->remove(collection, criteria);
-    return ret;
+    QVariantMap reply;
+    bool res = driver()->removeMany(collection, criteria, &reply);
+    if (res) {
+        deletedCount = reply.value(QStringLiteral("deletedCount")).toInt();
+    }
+    tSystemDebug("TMongoQuery::remove deletedCount:%d", deletedCount);
+    return deletedCount;
 }
 
 /*!
@@ -162,7 +175,7 @@ bool TMongoQuery::removeById(const QVariantMap &document)
 
     QVariantMap criteria;
     criteria[ObjectIdKey] = id;
-    return remove(criteria);
+    return (remove(criteria) == 1);
 }
 
 /*!
@@ -171,38 +184,60 @@ bool TMongoQuery::removeById(const QVariantMap &document)
   When the \a upsert is true, inserts the document in the collection
   if no document matches the \a criteria.
 */
-bool TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &document, bool upsert)
+int TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &document, bool upsert)
 {
+    int modifiedCount = -1;
+    QVariantMap doc;
+    QVariantMap tmp = document;
+
     if (!database.isValid()) {
         tSystemError("TMongoQuery::update : driver not loaded");
-        return false;
+        return modifiedCount;
     }
 
-    bool ret = driver()->update(collection, criteria, document, upsert);
-    return ret;
+    tmp.remove(ObjectIdKey);
+    if (!document.contains(QStringLiteral("$set"))) {
+        doc.insert("$set", tmp);
+    } else {
+        doc = tmp;
+    }
+
+    QVariantMap reply;
+    bool res = driver()->updateOne(collection, criteria, doc, upsert, &reply);
+    if (res) {
+        modifiedCount = reply.value(QStringLiteral("modifiedCount")).toInt();
+    }
+    tSystemDebug("TMongoQuery::update modifiedCount:%d", modifiedCount);
+    return modifiedCount;
 }
 
 /*!
   Updates existing documents of the selection criteria \a criteria in
   the collection with new document \a document.
 */
-bool TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &document)
+int TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &document)
 {
+    int modifiedCount = -1;
     QVariantMap doc;
 
     if (!database.isValid()) {
         tSystemError("TMongoQuery::updateMulti : driver not loaded");
-        return false;
+        return modifiedCount;
     }
 
-    if (!document.contains(QLatin1String("$set"))) {
+    if (!document.contains(QStringLiteral("$set"))) {
         doc.insert("$set", document);
     } else {
         doc = document;
     }
 
-    bool ret = driver()->updateMulti(collection, criteria, doc);
-    return ret;
+    QVariantMap reply;
+    bool res = driver()->updateMany(collection, criteria, doc, false, &reply);
+    if (res) {
+        modifiedCount = reply.value(QStringLiteral("modifiedCount")).toInt();
+    }
+    tSystemDebug("TMongoQuery::updateMulti modifiedCount:%d", modifiedCount);
+    return modifiedCount;
 }
 
 /*!
@@ -219,7 +254,8 @@ bool TMongoQuery::updateById(const QVariantMap &document)
 
     QVariantMap criteria;
     criteria[ObjectIdKey] = id;
-    return update(criteria, document, false);
+    int modifiedCount = update(criteria, document, false);
+    return (modifiedCount == 1);
 }
 
 
@@ -236,18 +272,18 @@ int TMongoQuery::count(const QVariantMap &criteria)
   Returns the number of documents affected by the result's Mongo statement,
   or -1 if it cannot be determined.
 */
+/*
 int TMongoQuery::numDocsAffected() const
 {
-    // ############### TODO
     int num = 0;
-    // QVariantMap status = driver()->getLastCommandStatus();
-    // num += status.value(QLatin1String("nInserted"), 0).toInt();
+    QVariantMap status = driver()->getLastCommandStatus();
+    num += status.value(QLatin1String("nInserted"), 0).toInt();
     // num += status.value(QLatin1String("nMatched"), 0).toInt();
-    // num += status.value(QLatin1String("nUpserted"), 0).toInt();
-    // num += status.value(QLatin1String("nRemoved"), 0).toInt();
+    num += status.value(QLatin1String("nUpserted"), 0).toInt();
+    num += status.value(QLatin1String("nRemoved"), 0).toInt();
     return num;
 }
-
+*/
 
 /*!
   Returns the string of the most recent error with the current connection.

@@ -142,14 +142,14 @@ bool TMongoObject::update()
 
     syncToVariantMap();
     TMongoQuery mongo(collectionName());
-    bool ret = mongo.update(cri, *this);
+    int cnt = mongo.update(cri, *this);
 
     // Optimistic lock check
-    if (revIndex >= 0 && mongo.numDocsAffected() != 1) {
+    if (revIndex >= 0 && cnt == 0) {
         QString msg = QString("Doc was updated or deleted from table ") + collectionName();
         throw KvsException(msg, __FILE__, __LINE__);
     }
-    return ret;
+    return (cnt == 1);
 }
 
 
@@ -218,11 +218,11 @@ bool TMongoObject::remove()
     cri.insert("_id", objectId());
 
     TMongoQuery mongo(collectionName());
-    bool ret = mongo.remove(cri);
+    int deletedCount = mongo.remove(cri);
     QVariantMap::clear();
 
     // Optimistic lock check
-    if (mongo.numDocsAffected() != 1) {
+    if (deletedCount == 0) {
         if (revIndex >= 0) {
             QString msg = QString("Doc was updated or deleted from collection ") + collectionName();
             throw KvsException(msg, __FILE__, __LINE__);
@@ -230,7 +230,16 @@ bool TMongoObject::remove()
         tWarn("Doc was deleted by another transaction, %s", qPrintable(collectionName()));
     }
 
-    return ret;
+    // // Optimistic lock check
+    // if (mongo.numDocsAffected() != 1) {
+    //     if (revIndex >= 0) {
+    //         QString msg = QString("Doc was updated or deleted from collection ") + collectionName();
+    //         throw KvsException(msg, __FILE__, __LINE__);
+    //     }
+    //     tWarn("Doc was deleted by another transaction, %s", qPrintable(collectionName()));
+    // }
+
+    return (deletedCount == 1);
 }
 
 

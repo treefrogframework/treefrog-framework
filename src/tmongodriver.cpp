@@ -144,7 +144,7 @@ QVariantMap TMongoDriver::findOne(const QString &collection, const QVariantMap &
 }
 
 
-bool TMongoDriver::insert(const QString &collection, const QVariantMap &object)
+bool TMongoDriver::insertOne(const QString &collection, const QVariantMap &object, QVariantMap *reply)
 {
     if (!isOpen()) {
         return false;
@@ -154,11 +154,23 @@ bool TMongoDriver::insert(const QString &collection, const QVariantMap &object)
     clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+#if MONGOC_CHECK_VERSION(1,9,0)
+    bson_t rep;
+    bool res = mongoc_collection_insert_one(col, (bson_t *)TBson::toBson(object).constData(),
+                                        nullptr, &rep, &error);
+#else
     bool res = mongoc_collection_insert(col, MONGOC_INSERT_NONE, (bson_t *)TBson::toBson(object).constData(),
                                         nullptr, &error);
-
+#endif
     mongoc_collection_destroy(col);
-    if (!res) {
+
+    if (res) {
+#if MONGOC_CHECK_VERSION(1,9,0)
+        if (reply) {
+            *reply = TBson::fromBson((TBsonObject*)&rep);
+        }
+#endif
+    } else {
         tSystemError("MongoDB Insert Error: %s", error.message);
         setLastError(&error);
     }
@@ -166,7 +178,7 @@ bool TMongoDriver::insert(const QString &collection, const QVariantMap &object)
 }
 
 
-bool TMongoDriver::remove(const QString &collection, const QVariantMap &object)
+bool TMongoDriver::removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply)
 {
     if (!isOpen()) {
         return false;
@@ -176,12 +188,22 @@ bool TMongoDriver::remove(const QString &collection, const QVariantMap &object)
     clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+#if MONGOC_CHECK_VERSION(1,9,0)
+    bson_t rep;
+    bool res = mongoc_collection_delete_one(col, (bson_t *)TBson::toBson(criteria).constData(), nullptr, &rep, &error);
+#else
     bool res = mongoc_collection_remove(col, MONGOC_REMOVE_SINGLE_REMOVE,
-                                        (bson_t *)TBson::toBson(object).constData(), nullptr, &error);
-
+                                        (bson_t *)TBson::toBson(criteria).constData(), nullptr, &error);
+#endif
     mongoc_collection_destroy(col);
 
-    if (!res) {
+    if (res) {
+#if MONGOC_CHECK_VERSION(1,9,0)
+        if (reply) {
+            *reply = TBson::fromBson((TBsonObject*)&rep);
+        }
+#endif
+    } else {
         tSystemError("MongoDB Remove Error: %s", error.message);
         setLastError(&error);
     }
@@ -189,8 +211,7 @@ bool TMongoDriver::remove(const QString &collection, const QVariantMap &object)
 }
 
 
-bool TMongoDriver::update(const QString &collection, const QVariantMap &criteria, const QVariantMap &object,
-                          bool upsert)
+bool TMongoDriver::removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply)
 {
     if (!isOpen()) {
         return false;
@@ -199,14 +220,61 @@ bool TMongoDriver::update(const QString &collection, const QVariantMap &criteria
     bson_error_t error;
     clearError();
 
-    mongoc_update_flags_t flag = (upsert) ? MONGOC_UPDATE_UPSERT : MONGOC_UPDATE_NONE;
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
-    bool res = mongoc_collection_update(col, flag, (bson_t *)TBson::toBson(criteria).data(),
-                                        (bson_t *)TBson::toBson(object).data(), nullptr, &error);
-
+#if MONGOC_CHECK_VERSION(1,9,0)
+    bson_t rep;
+    bool res = mongoc_collection_delete_many(col, (bson_t *)TBson::toBson(criteria).constData(), nullptr, &rep, &error);
+#else
+    TODO
+#endif
     mongoc_collection_destroy(col);
 
-    if (!res) {
+    if (res) {
+#if MONGOC_CHECK_VERSION(1,9,0)
+        if (reply) {
+            *reply = TBson::fromBson((TBsonObject*)&rep);
+        }
+#endif
+    } else {
+        tSystemError("MongoDB Remove Error: %s", error.message);
+        setLastError(&error);
+    }
+    return res;
+}
+
+
+bool TMongoDriver::updateOne(const QString &collection, const QVariantMap &criteria, const QVariantMap &object,
+                             bool upsert, QVariantMap *reply)
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    bson_error_t error;
+    clearError();
+
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+#if MONGOC_CHECK_VERSION(1,9,0)
+    bson_t rep;
+    bson_t *opts = BCON_NEW("upsert", BCON_BOOL(upsert));
+    bool res = mongoc_collection_update_one(col, (bson_t *)TBson::toBson(criteria).data(),
+                                            (bson_t *)TBson::toBson(object).data(), opts, &rep, &error);
+    bson_free(opts);
+
+#else
+    mongoc_update_flags_t flag = (upsert) ? MONGOC_UPDATE_UPSERT : MONGOC_UPDATE_NONE;
+    bool res = mongoc_collection_update(col, flag, (bson_t *)TBson::toBson(criteria).data(),
+                                        (bson_t *)TBson::toBson(object).data(), nullptr, &error);
+#endif
+    mongoc_collection_destroy(col);
+
+    if (res) {
+#if MONGOC_CHECK_VERSION(1,9,0)
+        if (reply) {
+            *reply = TBson::fromBson((TBsonObject*)&rep);
+        }
+#endif
+    } else {
         tSystemError("MongoDB Update Error: %s", error.message);
         setLastError(&error);
     }
@@ -214,23 +282,38 @@ bool TMongoDriver::update(const QString &collection, const QVariantMap &criteria
 }
 
 
-bool TMongoDriver::updateMulti(const QString &collection, const QVariantMap &criteria, const QVariantMap &object)
+bool TMongoDriver::updateMany(const QString &collection, const QVariantMap &criteria, const QVariantMap &object, bool upsert, QVariantMap *reply)
 {
     if (!isOpen()) {
         return false;
     }
 
+    int modifiedCount = 0;
     bson_error_t error;
     clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+#if MONGOC_CHECK_VERSION(1,9,0)
+    bson_t rep;
+    bson_t *opts = BCON_NEW("upsert", BCON_BOOL(upsert));
+    bool res = mongoc_collection_update_many(col, (bson_t *)TBson::toBson(criteria).data(),
+                                            (bson_t *)TBson::toBson(object).data(), opts, &rep, &error);
+    bson_free(opts);
+#else
     bool res = mongoc_collection_update(col, MONGOC_UPDATE_MULTI_UPDATE,
                                         (bson_t *)TBson::toBson(criteria).data(),
                                         (bson_t *)TBson::toBson(object).data(), nullptr, &error);
-
+    Q_UNUSED(upsert);
+#endif
     mongoc_collection_destroy(col);
 
-    if (!res) {
+    if (res) {
+#if MONGOC_CHECK_VERSION(1,9,0)
+        if (reply) {
+            *reply = TBson::fromBson((TBsonObject*)&rep);
+        }
+#endif
+    } else {
         tSystemError("MongoDB UpdateMulti Error: %s", error.message);
         setLastError(&error);
     }
