@@ -55,6 +55,7 @@ endif()
 
 include(MaintainerFlags)
 
+if (ENABLE_BSON STREQUAL SYSTEM)
 # The input variable BSON_ROOT_DIR is respected for backwards compatibility,
 # but you should use the standard CMAKE_PREFIX_PATH instead.
 message (STATUS "Searching for libbson CMake packages")
@@ -86,6 +87,22 @@ if (ENABLE_STATIC STREQUAL ON OR ENABLE_STATIC STREQUAL AUTO)
    message ("--   libbson-static include path \"${BSON_STATIC_INCLUDE_DIRS}\"")
    message ("--   libbson-static libraries \"${BSON_STATIC_LIBRARIES}\"")
 endif ()
+endif ()
+
+if (NOT BSON_LIBRARIES)
+   message ("  -- Using bundled libbson")
+   if (ENABLE_STATIC MATCHES "ON|AUTO")
+      set (MONGOC_ENABLE_STATIC ON)
+   endif ()
+   #add_subdirectory (src/libbson)
+   # Defined in src/libbson/CMakeLists.txt
+   set (BSON_STATIC_LIBRARIES bson_static)
+   set (BSON_LIBRARIES bson_shared)
+   set (BSON_STATIC_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/libbson/src/bson" "${PROJECT_BINARY_DIR}/src/libbson/src/bson")
+   set (BSON_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/libbson/src/bson" "${PROJECT_BINARY_DIR}/src/libbson/src/bson")
+   set (BSON_STATIC_DEFINITIONS "BSON_STATIC")
+endif ()
+
 
 if (ENABLE_TESTS AND NOT MONGOC_ENABLE_STATIC)
    message (FATAL_ERROR "ENABLE_TESTS requires ENABLE_STATIC")
