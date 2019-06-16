@@ -39,6 +39,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
         port = MONGOC_DEFAULT_PORT;
     }
     QString uri;
+    uri.reserve(256);
     if (!user.isEmpty()) {
         uri += user;
         if (!password.isEmpty()) {
@@ -49,7 +50,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
     }
     uri += host;
     if (!options.isEmpty()) {
-        uri += "/?";
+        uri += QLatin1String("/?");
         uri += options;
     }
 
@@ -355,7 +356,7 @@ void TMongoDriver::clearError()
 }
 
 
-void TMongoDriver::setLastError(const bson_error_t* error)
+void TMongoDriver::setLastError(const bson_error_t *error)
 {
     errorDomain = error->domain;
     errorCode = error->code;
