@@ -32,7 +32,7 @@ public:
     bool removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     bool removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     int count(const QString &collection, const QVariantMap &criteria);
-    int lasrErrorDomain() const { return errorDomain; }
+    int lastErrorDomain() const { return errorDomain; }
     int lastErrorCode() const { return errorCode; }
     QString lastErrorString() const { return errorString; }
 
