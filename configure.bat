@@ -5,6 +5,7 @@ set VERSION=1.25.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.14.0
 set LZ4_VERSION=1.9.1
+set BASEDIR=%~dp0
 
 :parse_loop
 if "%1" == "" goto :start
@@ -55,7 +56,6 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
-set BASEDIR=%~dp0
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (cl.exe)    do if exist %%~$path:I set MSCOMPILER=%%~$path:I
