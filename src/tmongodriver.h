@@ -31,7 +31,7 @@ public:
                     bool upsert = false, QVariantMap *reply = nullptr);
     bool removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     bool removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
-    int count(const QString &collection, const QVariantMap &criteria);
+    qint64 count(const QString &collection, const QVariantMap &criteria);
     int lastErrorDomain() const { return errorDomain; }
     int lastErrorCode() const { return errorCode; }
     QString lastErrorString() const { return errorString; }
