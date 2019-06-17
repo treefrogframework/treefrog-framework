@@ -368,7 +368,7 @@ windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
   INCLUDEPATH += ../3rdparty/mongo-driver/src/mongoc ../3rdparty/mongo-driver/src/libbson/src/bson
   win32-msvc* {
-    LIBS += ../3rdparty/mongo-driver/cmake-build/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/cmake-build/src/libbson/Release/bson-static-1.0.lib
+    LIBS += ../3rdparty/mongo-driver/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
   } else {
     CONFIG(debug, debug|release) {
       LIBS += ../3rdparty/mongo-driver/debug/libmongoc.a
