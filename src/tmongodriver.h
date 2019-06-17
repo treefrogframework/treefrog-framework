@@ -15,7 +15,7 @@ public:
     TMongoDriver();
     ~TMongoDriver();
 
-    QString key() const { return "MONGODB"; }
+    QString key() const { return QStringLiteral("MONGODB"); }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString & options = QString());
     void close();
     bool isOpen() const;
@@ -32,7 +32,7 @@ public:
     bool removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     bool removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     int count(const QString &collection, const QVariantMap &criteria);
-    int lasrErrorDomain() const { return errorDomain; }
+    int lastErrorDomain() const { return errorDomain; }
     int lastErrorCode() const { return errorCode; }
     QString lastErrorString() const { return errorString; }
 
@@ -44,7 +44,7 @@ private:
     typedef struct _mongoc_client_t mongoc_client_t;
 
     void clearError();
-    void setLastError(const bson_error_t* error);
+    void setLastError(const bson_error_t *error);
 
     mongoc_client_t *mongoClient {nullptr};
     TMongoCursor *mongoCursor {nullptr};
