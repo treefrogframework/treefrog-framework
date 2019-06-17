@@ -3,7 +3,7 @@
 
 set VERSION=1.25.0
 set TFDIR=C:\TreeFrog\%VERSION%
-set MONBOC_VERSION=1.14.0
+set MONBOC_VERSION=1.9.5
 set LZ4_VERSION=1.9.1
 set BASEDIR=%~dp0
 
@@ -152,15 +152,19 @@ cd %BASEDIR%3rdparty
 rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
+
+cd %BASEDIR%3rdparty\mongo-driver\src\libbson
+del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
+cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF .
+echo Compiling BSON library ...
+devenv libbson.sln /project bson_static /rebuild Release >nul 2>&1
+
 cd %BASEDIR%3rdparty\mongo-driver
-rmdir /s /q cmake-build >nul 2>&1
-mkdir cmake-build
-cd %BASEDIR%3rdparty\mongo-driver\cmake-build
-echo cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
-cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF ..
+del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
+echo cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF .
+cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF .
 echo Compiling MongoDB driver library ...
-devenv mongo-c-driver.sln /project bson_static /rebuild Release >nul 2>&1
-devenv mongo-c-driver.sln /project mongoc_static /rebuild Release >nul 2>&1
+devenv libmongoc.sln /project mongoc_static /rebuild Release >nul 2>&1
 if ERRORLEVEL 1 (
   echo Build failed.
   echo MongoDB driver not available.

@@ -23,9 +23,9 @@
 #include <WinDNS.h>
 #include <ws2tcpip.h>
 #else
+#if defined(MONGOC_HAVE_RES_NSEARCH) || defined(MONGOC_HAVE_RES_SEARCH)
 #include <netdb.h>
 #include <netinet/tcp.h>
-#if defined(MONGOC_HAVE_RES_NSEARCH) || defined(MONGOC_HAVE_RES_SEARCH)
 #include <arpa/nameser.h>
 #include <resolv.h>
 #include <bson-string.h>
