@@ -10,6 +10,7 @@ jobs:
       - run: qmake -v
       - run: ./configure --prefix=/usr/local
       - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
+      - run: qmake tools/tmake/test/tmaketest.pro -o tools/tmake/test/Makefile && make -j4 -C tools/tmake/test
       - run: treefrog -v
       - persist_to_workspace:
           root: /
@@ -26,7 +27,6 @@ jobs:
       - run: qmake -v
       - run: ./configure --prefix=/usr/local --enable-shared-mongoc
       - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
-      - run: qmake tools/tmake/test/tmaketest.pro -o tools/tmake/test/Makefile && make -j4 -C tools/tmake/test
       - run: treefrog -v
   test:
     docker:
