@@ -1,4 +1,4 @@
-version: 2.1
+version: 2
 jobs:
   build1:
     docker:
@@ -11,31 +11,37 @@ jobs:
       - run: ./configure --prefix=/usr/local
       - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
       - run: treefrog -v
-
-  prepare_test:
+      - persist_to_workspace:
+          root: /
+          paths:
+            - /workspace
+            - /usr/local
+  test_tmake:
     docker:
       - image: buildpack-deps:bionic
     working_directory: /workspace/tools/tmake/test
     steps:
+      - attach_workspace:
+          at: /
       - run: qmake tmaketest.pro && make -j2
-
+      - run: ./tmaketest
   test:
     docker:
       - image: buildpack-deps:bionic
     working_directory: /workspace
     steps:
+      - attach_workspace:
+          at: /
       - run: src/test/testall.sh
       - run: tools/test/releasetest/releasetest
-
 workflows:
-  version: 2.1
+  version: 2
   build_test1:
     jobs:
       - build1
-      - prepare_test:
+      - test_tmake:
           requires:
             - build1
       - test:
           requires:
             - build1
-            - prepare_test
