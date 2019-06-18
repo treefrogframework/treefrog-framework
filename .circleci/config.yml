@@ -14,8 +14,8 @@ jobs:
       - persist_to_workspace:
           root: /
           paths:
-            - /workspace
-            - /usr/local
+            - workspace
+            - usr/local
   test_tmake:
     docker:
       - image: buildpack-deps:bionic
