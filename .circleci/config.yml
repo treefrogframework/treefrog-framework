@@ -16,6 +16,17 @@ jobs:
           paths:
             - workspace
             - usr/local
+  build2:
+    docker:
+      - image: buildpack-deps:bionic
+    working_directory: /workspace
+    steps:
+      - checkout
+      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev
+      - run: qmake -v
+      - run: ./configure --prefix=/usr/local --enable-shared-mongoc
+      - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
+      - run: treefrog -v
   test_tmake:
     docker:
       - image: buildpack-deps:bionic
@@ -57,6 +68,4 @@ workflows:
       - test:
           requires:
             - build1
-  docs:
-    jobs:
-      - make_docs
+      - build2
