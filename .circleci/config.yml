@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build1:
+  bionic:
     docker:
       - image: buildpack-deps:bionic
     working_directory: /workspace
@@ -16,7 +16,7 @@ jobs:
           paths:
             - workspace
             - usr/local
-  build2:
+  bionic_shared_mongoc:
     docker:
       - image: buildpack-deps:bionic
     working_directory: /workspace
@@ -26,17 +26,8 @@ jobs:
       - run: qmake -v
       - run: ./configure --prefix=/usr/local --enable-shared-mongoc
       - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
+      - run: qmake tools/tmake/test/tmaketest.pro -o tools/tmake/test/Makefile && make -j4 -C tools/tmake/test
       - run: treefrog -v
-  test_tmake:
-    docker:
-      - image: buildpack-deps:bionic
-    working_directory: /workspace/tools/tmake/test
-    steps:
-      - attach_workspace:
-          at: /
-      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev
-      - run: qmake tmaketest.pro && make -j2
-      - run: ./tmaketest
   test:
     docker:
       - image: buildpack-deps:bionic
@@ -44,28 +35,16 @@ jobs:
     steps:
       - attach_workspace:
           at: /
-      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev sqlite3
+      - run: apt-get update -qq; apt install -y --no-install-recommends qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev sqlite3
       - run: src/test/testall.sh
+      - run: tools/tmake/test/tmaketest.sh
       - run: tools/test/releasetest/releasetest
-  make_docs:
-    docker:
-      - image: buildpack-deps:bionic
-    working_directory: /workspace/docs
-    steps:
-      - attach_workspace:
-          at: /
-      - run: apt-get update -qq; apt install -y --no-install-recommends ruby ruby-dev ruby-all-dev gem
-      - run: gem install jekyll bundler; bundle install
-      - run: bundle exec jekyll build
 workflows:
   version: 2
   build_test1:
     jobs:
-      - build1
-      - test_tmake:
-          requires:
-            - build1
+      - bionic
       - test:
           requires:
-            - build1
-      - build2
+            - bionic
+      - bionic_shared_mongoc
