@@ -1,8 +1,9 @@
-version: 2
+version: 2.1
 jobs:
-  build:
+  build1:
     docker:
       - image: buildpack-deps:bionic
+    working_directory: /workspace
     steps:
       - checkout
       - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gdb ruby ruby-dev ruby-all-dev gem
@@ -11,3 +12,30 @@ jobs:
       - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
       - run: treefrog -v
 
+  prepare_test:
+    docker:
+      - image: buildpack-deps:bionic
+    working_directory: /workspace/tools/tmake/test
+    steps:
+      - run: qmake tmaketest.pro && make -j2
+
+  test:
+    docker:
+      - image: buildpack-deps:bionic
+    working_directory: /workspace
+    steps:
+      - run: src/test/testall.sh
+      - run: tools/test/releasetest/releasetest
+
+workflows:
+  version: 2.1
+  build_test1:
+    jobs:
+      - build1
+      - prepare_test:
+          requires:
+            - build1
+      - test:
+          requires:
+            - build1
+            - prepare_test
