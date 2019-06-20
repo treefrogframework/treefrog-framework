@@ -148,7 +148,7 @@ echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 :: Builds MongoDB driver
-cd %BASEDIR%3rdparty
+cd /d %BASEDIR%3rdparty
 rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1

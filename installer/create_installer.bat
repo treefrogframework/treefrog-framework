@@ -4,7 +4,7 @@
 :: Edit this line to run the batch file for Qt environment.
 ::
 
-set VERSION=1.24.0
+set VERSION=1.25.0
 set QTBASE=C:\Qt
 set TFDIR=C:\TreeFrog\%VERSION%
 
@@ -13,15 +13,15 @@ set SLNFILE=%BASEDIR%\treefrog-setup\treefrog-setup.sln
 cd %BASEDIR%
 
 :: MinGW
-call :build_msi "%QTBASE%\Qt5.12.0\5.12.0\mingw73_64\bin\qtenv2.bat"     5.12
-call :build_msi "%QTBASE%\Qt5.11.3\5.11.3\mingw53_32\bin\qtenv2.bat"     5.11
-call :build_setup treefrog-%VERSION%-mingw-setup.exe
+::call :build_msi "%QTBASE%\5.12.3\mingw73_64\bin\qtenv2.bat"     5.12
+::call :build_msi "%QTBASE%\5.11.3\mingw53_32\bin\qtenv2.bat"     5.11
+::call :build_setup treefrog-%VERSION%-mingw-setup.exe
 
 :: MSVC2017
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
-call :build_msi "%QTBASE%\Qt5.12.0\5.12.0\msvc2017_64\bin\qtenv2.bat"      5.12
-call :build_msi "%QTBASE%\Qt5.11.3\5.11.3\msvc2017_64\bin\qtenv2.bat"      5.11
+call :build_msi "%QTBASE%\5.12.3\msvc2017_64\bin\qtenv2.bat"      5.12
+call :build_msi "%QTBASE%\5.11.3\msvc2017_64\bin\qtenv2.bat"      5.11
 call :build_setup treefrog-%VERSION%-msvc2017_64-setup.exe
 
 
@@ -53,13 +53,14 @@ goto :eof
 ::===インストーラ(msi)作成
 :create_installer
 @setlocal
-set PATH="C:\Program Files (x86)\WiX Toolset v3.10\bin";%PATH%
+set PATH="C:\Program Files (x86)\WiX Toolset v3.11\bin";%PATH%
 set MSINAME=TreeFrog-SDK-Qt%1.msi
 
 cd /D msi
 
-@rd SourceDir 2>nul
-mklink /D  SourceDir %TFDIR%
+rd /s /q  SourceDir >nul 2>&1
+del /f /q SourceDir >nul 2>&1
+mklink /j SourceDir %TFDIR%
 if ERRORLEVEL 1 goto :error
 
 :: Creates Fragment file
