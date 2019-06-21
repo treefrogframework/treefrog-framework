@@ -18,7 +18,6 @@
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
 #include "signalhandler.h"
-#include "affinity.h"
 using namespace TreeFrog;
 
 #define DEBUG_MODE_OPTION  "--debug"
