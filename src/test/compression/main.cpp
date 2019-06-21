@@ -2,7 +2,12 @@
 #include <QDebug>
 #include "tglobal.h"
 
-static QByteArray dummy;
+static QByteArray dummydata;
+static const QByteArray testdata2("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
+static const QByteArray testdata3("a;lkdfj;lkjfad;lakjsdla;kj;lkajd;lakj;lkj;lkj;sl;kjs;lkj;llkj;lslkj;lslkj;slkjsl;kj;lkj;lkjkj;lkk");
+static const QByteArray testdata4("109283091823019823019283019823019823019283019831092830192830192831");
+static const QByteArray testdata5("poiterpoiterpoiterpoiterpoierteeprotipoeritepoirtperopoitepotierpoeritperoitpeorit");
+
 
 class LZ4Compress : public QObject
 {
@@ -11,19 +16,35 @@ private slots:
     void initTestCase();
     void qcompress_data();
     void qcompress();
-    void lz4_data();
-    void lz4();
-    void bench_lz4();
-    void bench_qcompress();
-    void bench_base64();
+    void lz4_l1_data();
+    void lz4_l1();
+    void lz4_l2_data();
+    void lz4_l2();
+    void lz4_l5_data();
+    void lz4_l5();
+    void bench_lz4_l1_512();
+    void bench_lz4_l2_512();
+    void bench_lz4_l5_512();
+    void bench_qcompress_512();
+    void bench_base64_512();
+    void bench_lz4_l1_128k();
+    void bench_lz4_l2_128k();
+    void bench_lz4_l5_128k();
+    void bench_qcompress_128k();
+    void bench_base64_128k();
+    void bench_lz4_l1_10m();
+    void bench_lz4_l2_10m();
+    void bench_lz4_l5_10m();
+    void bench_qcompress_10m();
+    void bench_base64_10m();
 };
 
 
 void LZ4Compress::initTestCase()
 {
-    dummy.resize(4 * 1024 * 1024);
-    for (int i = 0; i < dummy.size() - 10; i += 10) {
-        dummy.replace(i, 4, QByteArray::number((uint)Tf::random(0xFFFF), 16));
+    dummydata.resize(10 * 1024 * 1024);
+    for (int i = 0; i < dummydata.size() - 8; i += 8) {
+        dummydata.replace(i, 4, QByteArray::number((uint)Tf::random(0xFFFF), 16));
     }
 }
 
@@ -32,11 +53,13 @@ void LZ4Compress::qcompress_data()
     QTest::addColumn<QByteArray>("data");
 
     QTest::newRow("1") << QByteArray("");
-    QTest::newRow("2") << QByteArray("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
-    QTest::newRow("3") << QByteArray("a;lkdfj;lkjfad;lakjsdla;kj;lkajd;lakj;lkj;lkj;sl;kjs;lkj;llkj;lslkj;lslkj;slkjsl;kj;lkj;lkjkj;lkk");
-    QTest::newRow("4") << QByteArray("109283091823019823019283019823019823019283019831092830192830192831");
-    QTest::newRow("5") << QByteArray("poiterpoiterpoiterpoiterpoierteeprotipoeritepoirtperopoitepotierpoeritperoitpeorit");
-    QTest::newRow("6") << dummy;
+    QTest::newRow("2") << testdata2;
+    QTest::newRow("3") << testdata3;
+    QTest::newRow("4") << testdata4;
+    QTest::newRow("5") << testdata5;
+    QTest::newRow("6") << dummydata.mid(1025);
+    QTest::newRow("7") << dummydata.mid(1024 * 1021);
+    QTest::newRow("8") << dummydata;
 }
 
 
@@ -51,58 +74,200 @@ void LZ4Compress::qcompress()
 }
 
 
-void LZ4Compress::lz4_data()
+void LZ4Compress::lz4_l1_data()
 {
     QTest::addColumn<QByteArray>("data");
 
     QTest::newRow("1") << QByteArray("");
-    QTest::newRow("2") << QByteArray("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
-    QTest::newRow("3") << QByteArray("a;lkdfj;lkjfad;lakjsdla;kj;lkajd;lakj;lkj;lkj;sl;kjs;lkj;llkj;lslkj;lslkj;slkjsl;kj;lkj;lkjkj;lkk");
-    QTest::newRow("4") << QByteArray("109283091823019823019283019823019823019283019831092830192830192831");
-    QTest::newRow("5") << QByteArray("poiterpoiterpoiterpoiterpoierteeprotipoeritepoirtperopoitepotierpoeritperoitpeorit");
-    QTest::newRow("6") << dummy;
+    QTest::newRow("2") << testdata2;
+    QTest::newRow("3") << testdata3;
+    QTest::newRow("4") << testdata4;
+    QTest::newRow("5") << testdata5;
+    QTest::newRow("6") << dummydata.mid(1025);
+    QTest::newRow("7") << dummydata.mid(1024 * 1021);
+    QTest::newRow("8") << dummydata;
 }
 
 
-void LZ4Compress::lz4()
+void LZ4Compress::lz4_l1()
 {
     QFETCH(QByteArray, data);
 
-    QByteArray comp = Tf::lz4Compress(data);
+    QByteArray comp = Tf::lz4Compress(data, 1);
     qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
     QByteArray uncomp = Tf::lz4Uncompress(comp);
     QCOMPARE(data, uncomp);
 }
 
 
-void LZ4Compress::bench_lz4()
+void LZ4Compress::lz4_l2_data()
 {
-    dummy.resize(512 * 1024);
+    QTest::addColumn<QByteArray>("data");
 
+    QTest::newRow("1") << QByteArray("");
+    QTest::newRow("2") << testdata2;
+    QTest::newRow("3") << testdata3;
+    QTest::newRow("4") << testdata4;
+    QTest::newRow("5") << testdata5;
+    QTest::newRow("6") << dummydata.mid(1025);
+    QTest::newRow("7") << dummydata.mid(1024 * 1021);
+    QTest::newRow("8") << dummydata;
+}
+
+
+void LZ4Compress::lz4_l2()
+{
+    QFETCH(QByteArray, data);
+
+    QByteArray comp = Tf::lz4Compress(data, 2);
+    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
+    QByteArray uncomp = Tf::lz4Uncompress(comp);
+    QCOMPARE(data, uncomp);
+}
+
+void LZ4Compress::lz4_l5_data()
+{
+    QTest::addColumn<QByteArray>("data");
+
+    QTest::newRow("1") << QByteArray("");
+    QTest::newRow("2") << testdata2;
+    QTest::newRow("3") << testdata3;
+    QTest::newRow("4") << testdata4;
+    QTest::newRow("5") << testdata5;
+    QTest::newRow("6") << dummydata.mid(1025);
+    QTest::newRow("7") << dummydata.mid(1024 * 1021);
+    QTest::newRow("8") << dummydata;
+}
+
+
+void LZ4Compress::lz4_l5()
+{
+    QFETCH(QByteArray, data);
+
+    QByteArray comp = Tf::lz4Compress(data, 5);
+    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
+    QByteArray uncomp = Tf::lz4Uncompress(comp);
+    QCOMPARE(data, uncomp);
+}
+
+void LZ4Compress::bench_lz4_l1_512()
+{
     QBENCHMARK {
-        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummy) );
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(512)), 1 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l2_512()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(512)), 2 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l5_512()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(512)), 5 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_qcompress_512()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(512)) );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_base64_512()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(512)) );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l1_128k()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(128 * 1024)), 1 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l2_128k()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(128 * 1024)), 2 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l5_128k()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(128 * 1024)), 5 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_qcompress_128k()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(128 * 1024)) );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_base64_128k()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata.mid(128 * 1024)) );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l1_10m()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata), 1 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l2_10m()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata), 2 );
+        Q_UNUSED(cmp);
+    }
+}
+
+void LZ4Compress::bench_lz4_l5_10m()
+{
+    QBENCHMARK {
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata), 5 );
         Q_UNUSED(cmp);
     }
 }
 
 
-void LZ4Compress::bench_qcompress()
+void LZ4Compress::bench_qcompress_10m()
 {
-    dummy.resize(512 * 1024);
-
     QBENCHMARK {
-        auto cmp = qUncompress( qCompress(dummy) );
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata) );
         Q_UNUSED(cmp);
     }
 }
 
 
-void LZ4Compress::bench_base64()
+void LZ4Compress::bench_base64_10m()
 {
-    dummy.resize(512 * 1024);
-
     QBENCHMARK {
-        auto cmp = QByteArray::fromBase64( dummy.toBase64() );
+        auto cmp = Tf::lz4Uncompress( Tf::lz4Compress(dummydata) );
         Q_UNUSED(cmp);
     }
 }
