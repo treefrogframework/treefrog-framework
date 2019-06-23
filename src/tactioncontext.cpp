@@ -84,7 +84,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         QString path = THttpUtility::fromUrlEncoding(reqHeader.path().mid(0, reqHeader.path().indexOf('?')));
 
         if (LimitRequestBodyBytes > 0 && reqHeader.contentLength() > (uint)LimitRequestBodyBytes) {
-            throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
+            throw ClientErrorException(Tf::RequestEntityTooLarge, __FILE__, __LINE__);  // Request Entity Too Large
         }
 
         // Routing info exists?
@@ -96,7 +96,6 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
         if (! route.exists) {
             // Default URL routing
-
             if (Q_UNLIKELY(directViewRenderMode())) { // Direct view render mode?
                 // Direct view setting
                 route.setRouting(QByteArrayLiteral("directcontroller"), QByteArrayLiteral("show"), components);
@@ -151,7 +150,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     currController->session().sessionId = TSessionManager::instance().generateId();
                     tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
                 }
-                // Sets CSRF protection informaion
+                // Sets CSRF protection information
                 TActionController::setCsrfProtectionInto(currController->session());
             }
 
@@ -162,12 +161,12 @@ void TActionContext::execute(THttpRequest &request, int sid)
             bool dispatched = false;
             if (Q_LIKELY(currController->preFilter())) {
 
-                // Dispathes
+                // Dispatches
                 dispatched = ctlrDispatcher.invoke(route.action, route.params);
                 if (Q_LIKELY(dispatched)) {
                     autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
 
-                    // Post fileter
+                    // Post filter
                     currController->postFilter();
 
                     if (Q_UNLIKELY(currController->rollbackRequested())) {
