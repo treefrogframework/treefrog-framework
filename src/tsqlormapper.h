@@ -394,30 +394,27 @@ inline QString TSqlORMapper<T>::selectStatement() const
 {
     QString query;
     query.reserve(1024);
+    query += QLatin1String("SELECT ");
     bool joinFlag = !joinClauses.isEmpty();
 
+    QString str;
+    str.reserve(512);
     auto rec = record();
     for (int i = 0; i < rec.count(); ++i) {
         if (rec.isGenerated(i)) {
             if (joinFlag) {
-                query += QLatin1String("t0.");
+                str += QLatin1String("t0.");
             }
-            query += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
-            query += QLatin1Char(',');
+            str += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
+            str += QLatin1Char(',');
         }
     }
 
-    if (Q_UNLIKELY(query.isEmpty())) {
-        return query;
-    } else {
-        query.chop(1);
+    if (Q_UNLIKELY(str.isEmpty())) {
+        return str;
     }
 
-    if (joinFlag) {
-        query.prepend(QLatin1String("SELECT DISTINCT "));
-    } else {
-        query.prepend(QLatin1String("SELECT "));
-    }
+    query += str.midRef(0, str.length() - 1);
     query += QLatin1String(" FROM ");
     query += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database().driver());
     query += QLatin1String(" t0");  // alias needed
