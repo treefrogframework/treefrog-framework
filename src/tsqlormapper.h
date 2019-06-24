@@ -393,28 +393,29 @@ template <class T>
 inline QString TSqlORMapper<T>::selectStatement() const
 {
     QString query;
+    bool joinFlag = !joinClauses.isEmpty();
+    bool valid = false;
+    auto rec = record();
+
     query.reserve(1024);
     query += QLatin1String("SELECT ");
-    bool joinFlag = !joinClauses.isEmpty();
 
-    QString str;
-    str.reserve(512);
-    auto rec = record();
     for (int i = 0; i < rec.count(); ++i) {
         if (rec.isGenerated(i)) {
             if (joinFlag) {
-                str += QLatin1String("t0.");
+                query += QLatin1String("t0.");
             }
-            str += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
-            str += QLatin1Char(',');
+            query += TSqlQuery::escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName, database().driver());
+            query += QLatin1Char(',');
+            valid = true;
         }
     }
 
-    if (Q_UNLIKELY(str.isEmpty())) {
-        return str;
+    if (Q_UNLIKELY(!valid)) {
+        return QString();
     }
 
-    query += str.midRef(0, str.length() - 1);
+    query.chop(1);
     query += QLatin1String(" FROM ");
     query += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database().driver());
     query += QLatin1String(" t0");  // alias needed
@@ -447,6 +448,7 @@ inline QString TSqlORMapper<T>::selectStatement() const
     if (queryLimit > 0) {
         query.append(QLatin1String(" LIMIT ")).append(QString::number(queryLimit));
     }
+
     if (queryOffset > 0) {
         query.append(QLatin1String(" OFFSET ")).append(QString::number(queryOffset));
     }
