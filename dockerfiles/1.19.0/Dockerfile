@@ -1,4 +1,4 @@
-FROM buildpack-deps:xenial
+FROM buildpack-deps:bionic
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV TREEFROG_VERSION 1.19.0
@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /usr/src/treefrog
 RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
     cd treefrog-framework-${TREEFROG_VERSION} && \
-    ./configure && \
+    ./configure --enable-shared-mongoc && \
     make -j"$(nproc)" -C src && \
     make -C src install && \
     make -j"$(nproc)" -C tools && \
