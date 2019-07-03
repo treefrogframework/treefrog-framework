@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /usr/src/treefrog
 RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
     cd treefrog-framework-${TREEFROG_VERSION} && \
-    ./configure --enable-shared-mongoc && \
+    ./configure && \
     make -j"$(nproc)" -C src && \
     make -C src install && \
     make -j"$(nproc)" -C tools && \
