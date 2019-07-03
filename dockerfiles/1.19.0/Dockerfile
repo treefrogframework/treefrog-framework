@@ -1,10 +1,13 @@
-FROM buildpack-deps:jessie
+FROM buildpack-deps:bionic
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV TREEFROG_VERSION 1.19.0
 ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
+        tzdata \
+        coreutils \
         qt5-default \
         qt5-qmake \
         qtbase5-dev \
@@ -20,21 +23,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         mariadb-client \
         libpq5 \
         libodbc1 \
+        libmongoc-dev \
+        libbson-dev \
         gcc \
         g++ \
-        make && \
+        git \
+        make \
+        cmake && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/treefrog && \
-    cd /usr/src/treefrog && \
-    curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
+WORKDIR /usr/src/treefrog
+RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
     cd treefrog-framework-${TREEFROG_VERSION} && \
-    ./configure && \
+    ./configure --enable-shared-mongoc && \
     make -j"$(nproc)" -C src && \
     make -C src install && \
     make -j"$(nproc)" -C tools && \
     make -C tools install && \
     rm -rf /usr/src/treefrog
 
-CMD ["treefrog", "-v"]
-
+VOLUME  /webapp
+WORKDIR /webapp
+EXPOSE  8800
+CMD ["treefrog", "-p", "8800", "/webapp"]
