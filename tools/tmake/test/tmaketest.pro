@@ -1,6 +1,6 @@
 TARGET = tmaketest
 TEMPLATE = app
-CONFIG += console debug c++11
+CONFIG += console debug c++14
 CONFIG -= app_bundle
 QT += testlib
 QT -= gui

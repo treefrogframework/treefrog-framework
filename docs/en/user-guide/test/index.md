@@ -83,7 +83,7 @@ Next, create a project file to make the *Makefile*. The file name is *testblog.p
 ```
  TARGET = testblog
  TEMPLATE = app
- CONFIG += console debug c++11
+ CONFIG += console debug c++14
  CONFIG -= app_bundle
  QT += network sql testlib
  QT -= gui

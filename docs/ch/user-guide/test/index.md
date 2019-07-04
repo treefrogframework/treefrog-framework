@@ -79,7 +79,7 @@ TF_TEST_MAIN( TestBlog)// 指定你创建的类名
 ```
 TARGET = testblog
 TEMPLATE = app
-CONFIG += console debug c++11
+CONFIG += console debug c++14
 CONFIG -= app_bundle
 QT += network sql testlib
 QT -= gui

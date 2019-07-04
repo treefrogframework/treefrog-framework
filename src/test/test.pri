@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++11 testcase
+CONFIG += console c++14 testcase
 CONFIG -= app_bundle
 QT += network sql qml testlib
 QT -= gui
