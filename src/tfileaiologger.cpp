@@ -21,7 +21,7 @@ TFileAioLogger::TFileAioLogger()
     : TLogger(), writer(new TFileAioWriter)
 {
     readSettings();
-    writer->setFileName(target_);
+    writer->setFileName(_target);
 }
 
 

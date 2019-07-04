@@ -16,8 +16,7 @@
 #include "tsqldriverextensionfactory.h"
 #include "tsystemglobal.h"
 
-#define CONN_NAME_FORMAT  "rdb%02d_%d"
-
+constexpr auto CONN_NAME_FORMAT = "rdb%02d_%d";
 static TSqlDatabasePool *databasePool = nullptr;
 
 

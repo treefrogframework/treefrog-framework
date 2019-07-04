@@ -17,7 +17,7 @@
 #include <ctime>
 #endif
 
-#define HTTP_DATE_TIME_FORMAT "ddd, d MMM yyyy hh:mm:ss"
+constexpr auto HTTP_DATE_TIME_FORMAT = "ddd, d MMM yyyy hh:mm:ss";
 
 
 class ReasonPhrase : public QMap<int, QByteArray>

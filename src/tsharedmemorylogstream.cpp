@@ -9,7 +9,7 @@
 #include <TSystemGlobal>
 #include "tsharedmemorylogstream.h"
 
-#define CREATE_KEY  "TreeFrogLogStream"
+constexpr auto CREATE_KEY = "TreeFrogLogStream";
 
 
 class TSharedMemoryLocker

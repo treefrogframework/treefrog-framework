@@ -12,7 +12,7 @@
 #include "filewriter.h"
 #include "util.h"
 
-#define INDEX_TEMPLATE                                                  \
+constexpr auto INDEX_TEMPLATE =                                         \
     "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<html>\n"                                                          \
@@ -44,9 +44,9 @@
     "</table>\n"                                                        \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
-#define SHOW_TEMPLATE                                                   \
+constexpr auto SHOW_TEMPLATE =                                          \
     "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(%2, %3); %>\n"                                           \
@@ -66,10 +66,10 @@
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
 
-#define CREATE_TEMPLATE                                                 \
+constexpr auto CREATE_TEMPLATE =                                        \
     "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
@@ -94,9 +94,9 @@
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
-#define SAVE_TEMPLATE                                                   \
+constexpr auto SAVE_TEMPLATE =                                          \
     "<!DOCTYPE html>\n"                                                 \
     "<%#include \"%1.h\" %>\n"                                          \
     "<% tfetch(QVariantMap, %2); %>\n"                                  \
@@ -121,7 +121,7 @@
     "<%== linkTo(\"Show\", urla(\"show\", %2[\"%4\"])) %> |\n"          \
     "<%== linkTo(\"Back\", urla(\"index\")) %>\n"                       \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
 static const QStringList excludedColumn = {
     "created_at",

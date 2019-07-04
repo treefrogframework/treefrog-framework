@@ -10,7 +10,7 @@
 #include "filewriter.h"
 #include "projectfilegenerator.h"
 
-#define ENDPOINT_HEADER_TEMPLATE                                        \
+constexpr auto ENDPOINT_HEADER_TEMPLATE =                               \
     "#ifndef %1ENDPOINT_H\n"                                            \
     "#define %1ENDPOINT_H\n"                                            \
     "\n"                                                                \
@@ -30,9 +30,9 @@
     "    void onBinaryReceived(const QByteArray &binary) override;\n"   \
     "};\n"                                                              \
     "\n"                                                                \
-    "#endif // %1ENDPOINT_H\n"
+    "#endif // %1ENDPOINT_H\n";
 
-#define ENDPOINT_IMPL_TEMPLATE                                          \
+constexpr auto ENDPOINT_IMPL_TEMPLATE =                                 \
     "#include \"%1endpoint.h\"\n"                                       \
     "\n"                                                                \
     "%2Endpoint::%2Endpoint()\n"                                        \
@@ -60,7 +60,7 @@
     "{ }\n"                                                             \
     "\n\n"                                                              \
     "// Don't remove below this line\n"                                 \
-    "T_DEFINE_CONTROLLER(%2Endpoint)\n"
+    "T_DEFINE_CONTROLLER(%2Endpoint)\n";
 
 
 WebSocketGenerator::WebSocketGenerator(const QString &n)

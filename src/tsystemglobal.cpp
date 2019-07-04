@@ -21,10 +21,10 @@
 #include "taccesslogstream.h"
 #include "tfileaiowriter.h"
 
-#define DEFAULT_SYSTEMLOG_LAYOUT           "%d %5P %m%n"
-#define DEFAULT_SYSTEMLOG_DATETIME_FORMAT  "yyyy-MM-ddThh:mm:ss"
-#define DEFAULT_ACCESSLOG_LAYOUT           "%h %d \"%r\" %s %O%n"
-#define DEFAULT_ACCESSLOG_DATETIME_FORMAT  "yyyy-MM-ddThh:mm:ss"
+constexpr auto DEFAULT_SYSTEMLOG_LAYOUT          = "%d %5P %m%n";
+constexpr auto DEFAULT_SYSTEMLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
+constexpr auto DEFAULT_ACCESSLOG_LAYOUT          = "%h %d \"%r\" %s %O%n";
+constexpr auto DEFAULT_ACCESSLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
 
 static TAccessLogStream *accesslogstrm = nullptr;
 static TAccessLogStream *sqllogstrm = nullptr;

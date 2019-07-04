@@ -11,7 +11,7 @@
 #include "filewriter.h"
 #include "util.h"
 
-#define INDEX_HTML_TEMPLATE                                             \
+constexpr auto INDEX_HTML_TEMPLATE =                                    \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -40,9 +40,9 @@
     "</table>\n"                                                        \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
-#define INDEX_OTM_TEMPLATE                                              \
+constexpr auto INDEX_OTM_TEMPLATE =                                     \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
@@ -60,9 +60,9 @@
     "\n"                                                                \
     "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", i.%5()))\n"      \
     "\n"                                                                \
-    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n"
+    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n";
 
-#define SHOW_HTML_TEMPLATE                                              \
+constexpr auto SHOW_HTML_TEMPLATE =                                     \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -80,9 +80,9 @@
     "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"               \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
-#define SHOW_OTM_TEMPLATE                                               \
+constexpr auto SHOW_OTM_TEMPLATE =                                      \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -97,9 +97,9 @@
     "%4"                                                                \
     "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", %3.%5()))\n"     \
     "\n"                                                                \
-    "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n"
+    "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n";
 
-#define CREATE_HTML_TEMPLATE                                            \
+constexpr auto CREATE_HTML_TEMPLATE =                                   \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -122,9 +122,9 @@
     "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"               \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
-#define CREATE_OTM_TEMPLATE                                             \
+constexpr auto CREATE_OTM_TEMPLATE =                                    \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -139,9 +139,9 @@
     "@entry_form |== formTag(urla(\"create\"))\n"                       \
     "\n"                                                                \
     "%3"                                                                \
-    "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
+    "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n";
 
-#define SAVE_HTML_TEMPLATE                                              \
+constexpr auto SAVE_HTML_TEMPLATE =                                     \
     "<!DOCTYPE html>\n"                                                 \
     "<html>\n"                                                          \
     "<head>\n"                                                          \
@@ -165,9 +165,9 @@
     "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"               \
     "\n"                                                                \
     "</body>\n"                                                         \
-    "</html>\n"
+    "</html>\n";
 
-#define SAVE_OTM_TEMPLATE                                               \
+constexpr auto SAVE_OTM_TEMPLATE =                                      \
     "#include \"%1.h\"\n"                                               \
     "\n"                                                                \
     "#init\n"                                                           \
@@ -184,7 +184,7 @@
     "%5"                                                                \
     "@link_to_show |== linkTo(\"Show\", urla(\"show\", %2[\"%3\"]))\n"  \
     "\n"                                                                \
-    "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n"
+    "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n";
 
 
 static const QStringList excludedColumn = {

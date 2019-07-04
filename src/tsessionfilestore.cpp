@@ -14,7 +14,7 @@
 #include "tsystemglobal.h"
 #include "tfcore.h"
 
-#define SESSION_DIR_NAME "session"
+constexpr auto SESSION_DIR_NAME = "session";
 
 static QReadWriteLock rwLock(QReadWriteLock::Recursive);  // Global read-write lock
 

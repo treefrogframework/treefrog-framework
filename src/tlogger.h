@@ -26,21 +26,21 @@ public:
     virtual QByteArray logToByteArray(const TLog &log) const;
 
     void readSettings();
-    const QByteArray &layout() const { return layout_; }
-    const QByteArray &dateTimeFormat() const { return dateTimeFormat_; }
-    Tf::LogPriority threshold() const { return threshold_; }
-    const QString &target() const { return target_; }
+    const QByteArray &layout() const { return _layout; }
+    const QByteArray &dateTimeFormat() const { return _dateTimeFormat; }
+    Tf::LogPriority threshold() const { return _threshold; }
+    const QString &target() const { return _target; }
     QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
     static QByteArray logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec = 0);
     static QByteArray priorityToString(Tf::LogPriority priority);
 
 protected:
-    QByteArray layout_;
-    QByteArray dateTimeFormat_;
-    Tf::LogPriority threshold_;
-    QString  target_;
-    QTextCodec *codec_;
+    QByteArray _layout;
+    QByteArray _dateTimeFormat;
+    Tf::LogPriority _threshold {Tf::TraceLevel};
+    QString  _target;
+    QTextCodec *_codec {nullptr};
 };
 
 #endif // TLOGGER_H

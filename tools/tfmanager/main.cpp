@@ -35,7 +35,7 @@ namespace TreeFrog {
 extern void WINAPI winServiceMain(DWORD argc, LPTSTR *argv);
 #endif
 
-#define PID_FILENAME  "treefrog.pid"
+constexpr auto PID_FILENAME = "treefrog.pid";
 
 enum CommandOption {
     Invalid = 0,
@@ -116,7 +116,7 @@ Q_GLOBAL_STATIC(OptionHash, options)
 
 static void usage()
 {
-    char text[] =
+    constexpr auto text =
         "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n" \
         "Usage: %1 [-k stop|abort|restart|status] [application-directory]\n" \
         "%2"                                                            \

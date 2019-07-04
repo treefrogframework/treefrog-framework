@@ -11,7 +11,7 @@
 #include "filewriter.h"
 #include "global.h"
 
-#define MAILER_HEADER_FILE_TEMPLATE                                     \
+constexpr auto MAILER_HEADER_FILE_TEMPLATE =                            \
     "#ifndef %1MAILER_H\n"                                              \
     "#define %1MAILER_H\n"                                              \
     "\n"                                                                \
@@ -24,13 +24,13 @@
     "%3"                                                                \
     "};\n"                                                              \
     "\n"                                                                \
-    "#endif // %1MAILER_H\n"
+    "#endif // %1MAILER_H\n";
 
 
-#define MAILER_SOURCE_FILE_TEMPLATE                            \
+constexpr auto MAILER_SOURCE_FILE_TEMPLATE =                   \
     "#include \"%1mailer.h\"\n"                                \
     "\n\n"                                                     \
-    "%2\n"
+    "%2\n";
 
 
 MailerGenerator::MailerGenerator(const QString &name, const QStringList &actions)

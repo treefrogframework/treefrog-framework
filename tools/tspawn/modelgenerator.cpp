@@ -13,10 +13,10 @@
 #include "filewriter.h"
 #include "util.h"
 
-#define USER_VIRTUAL_METHOD  "identityKey"
-#define LOCK_REVISION_FIELD  "lockRevision"
+constexpr auto USER_VIRTUAL_METHOD = "identityKey";
+constexpr auto LOCK_REVISION_FIELD = "lockRevision";
 
-#define MODEL_HEADER_FILE_TEMPLATE                       \
+constexpr auto MODEL_HEADER_FILE_TEMPLATE =              \
     "#ifndef %head%_H\n"                                 \
     "#define %head%_H\n"                                 \
     "\n"                                                 \
@@ -68,9 +68,9 @@
     "Q_DECLARE_METATYPE(%model%)\n"                      \
     "Q_DECLARE_METATYPE(QList<%model%>)\n"               \
     "\n"                                                 \
-    "#endif // %head%_H\n"
+    "#endif // %head%_H\n";
 
-#define MODEL_IMPL_TEMPLATE                                   \
+constexpr auto MODEL_IMPL_TEMPLATE =                          \
     "#include <TreeFrogModel>\n"                              \
     "#include \"%inc%.h\"\n"                                  \
     "#include \"%objdir%%inc%object.h\"\n"                    \
@@ -160,9 +160,9 @@
     "}\n"                                                     \
     "\n"                                                      \
     "// Don't remove below this line\n"                       \
-    "T_REGISTER_STREAM_OPERATORS(%model%)\n"
+    "T_REGISTER_STREAM_OPERATORS(%model%)\n";
 
-#define USER_MODEL_HEADER_FILE_TEMPLATE                  \
+constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE =         \
     "#ifndef %head%_H\n"                                 \
     "#define %head%_H\n"                                 \
     "\n"                                                 \
@@ -217,9 +217,9 @@
     "Q_DECLARE_METATYPE(%model%)\n"                      \
     "Q_DECLARE_METATYPE(QList<%model%>)\n"               \
     "\n"                                                 \
-    "#endif // %head%_H\n"
+    "#endif // %head%_H\n";
 
-#define USER_MODEL_IMPL_TEMPLATE                              \
+constexpr auto USER_MODEL_IMPL_TEMPLATE =                     \
     "#include <TreeFrogModel>\n"                              \
     "#include \"%inc%.h\"\n"                                  \
     "#include \"%objdir%%inc%object.h\"\n"                    \
@@ -323,9 +323,9 @@
     "}\n"                                                     \
     "\n"                                                      \
     "// Don't remove below this line\n"                       \
-    "T_REGISTER_STREAM_OPERATORS(%model%)"
+    "T_REGISTER_STREAM_OPERATORS(%model%)";
 
-#define MODEL_IMPL_GETALLJSON                                 \
+constexpr auto MODEL_IMPL_GETALLJSON =                        \
     "QJsonArray %model%::getAllJson()\n"                      \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
@@ -338,9 +338,9 @@
     "    }\n"                                                 \
     "    return array;\n"                                     \
     "}\n"                                                     \
-    "\n"
+    "\n";
 
-#define MODEL_IMPL_GETALLJSON_MONGO                           \
+constexpr auto MODEL_IMPL_GETALLJSON_MONGO =                  \
     "QJsonArray %model%::getAllJson()\n"                      \
     "{\n"                                                     \
     "    QJsonArray array;\n"                                 \
@@ -353,7 +353,7 @@
     "    }\n"                                                 \
     "    return array;\n"                                     \
     "}\n"                                                     \
-    "\n"
+    "\n";
 
 static const QStringList excludedSetter = {
     "created_at",

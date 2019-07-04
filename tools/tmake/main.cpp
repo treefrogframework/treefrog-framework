@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include "viewconverter.h"
 
-#define DEFAULT_OUTPUT_DIR  "viewcodes"
+constexpr auto DEFAULT_OUTPUT_DIR = "viewcodes";
 
 extern QString devIni;
 extern int defaultTrimMode;

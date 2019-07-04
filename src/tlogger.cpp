@@ -12,7 +12,7 @@
 #include <TWebApplication>
 #include <TSystemGlobal>
 
-#define DEFAULT_TEXT_ENCODING "DefaultTextEncoding"
+constexpr auto DEFAULT_TEXT_ENCODING = "DefaultTextEncoding";
 
 
 class PriorityHash : public QMap<Tf::LogPriority, QByteArray>
@@ -39,7 +39,7 @@ Q_GLOBAL_STATIC(PriorityHash, priorityHash)
 /*!
   Constructor.
 */
-TLogger::TLogger() : threshold_(Tf::TraceLevel), codec_(nullptr)
+TLogger::TLogger()
 { }
 
 /*!
@@ -59,7 +59,7 @@ QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) 
 */
 QByteArray TLogger::logToByteArray(const TLog &log) const
 {
-    return logToByteArray(log, layout(), dateTimeFormat(), codec_);
+    return logToByteArray(log, layout(), dateTimeFormat(), _codec);
 }
 
 /*!
@@ -174,7 +174,7 @@ void TLogger::readSettings()
         QTextCodec *c = QTextCodec::codecForName(codecName);
         if (c) {
             if (c->name() != QTextCodec::codecForLocale()->name()) {
-                codec_ = c;
+                _codec = c;
             }
             //tSystemDebug("set log text codec: %s", c->name().data());
         } else {
@@ -182,18 +182,18 @@ void TLogger::readSettings()
         }
     }
 
-    layout_ = settingsValue("Layout", "%m%n").toByteArray();
-    dateTimeFormat_ = settingsValue("DateTimeFormat").toByteArray();
+    _layout = settingsValue("Layout", "%m%n").toByteArray();
+    _dateTimeFormat = settingsValue("DateTimeFormat").toByteArray();
 
     QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
-    threshold_ = priorityHash()->key(pri, Tf::TraceLevel);
+    _threshold = priorityHash()->key(pri, Tf::TraceLevel);
 
     QString logtarget = settingsValue("Target", "log/app.log").toString().trimmed();
     if (! logtarget.isEmpty()) {
         QFileInfo fi(logtarget);
-        target_ = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
+        _target = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
 
-        QDir dir = QFileInfo(target_).dir();
+        QDir dir = QFileInfo(_target).dir();
         if (!dir.exists()) {
             // Created a directory
             dir.mkpath(".");

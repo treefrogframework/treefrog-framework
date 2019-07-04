@@ -20,8 +20,7 @@
   \brief The TKvsDatabasePool class manages a collection of TKvsDatabase instances.
 */
 
-#define CONN_NAME_FORMAT  "kvs%02d_%d"
-
+constexpr auto CONN_NAME_FORMAT = "kvs%02d_%d";
 static TKvsDatabasePool *databasePool = 0;
 
 

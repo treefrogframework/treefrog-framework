@@ -12,7 +12,7 @@
 #include "global.h"
 #include "tableschema.h"
 
-#define CONTROLLER_HEADER_FILE_TEMPLATE                                       \
+constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE =                              \
     "#ifndef %1CONTROLLER_H\n"                                                \
     "#define %1CONTROLLER_H\n"                                                \
     "\n"                                                                      \
@@ -32,10 +32,10 @@
     "    void remove(const QString &%3);\n"                                   \
     "};\n"                                                                    \
     "\n"                                                                      \
-    "#endif // %1CONTROLLER_H\n"
+    "#endif // %1CONTROLLER_H\n";
 
 
-#define CONTROLLER_SOURCE_FILE_TEMPLATE                        \
+constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE =               \
     "#include \"%1controller.h\"\n"                            \
     "#include \"%1.h\"\n"                                      \
     "\n\n"                                                     \
@@ -140,10 +140,10 @@
     "}\n"                                                               \
     "\n\n"                                                              \
     "// Don't remove below this line\n"                                 \
-    "T_DEFINE_CONTROLLER(%2Controller)\n"
+    "T_DEFINE_CONTROLLER(%2Controller)\n";
 
 
-#define CONTROLLER_TINY_HEADER_FILE_TEMPLATE        \
+constexpr auto CONTROLLER_TINY_HEADER_FILE_TEMPLATE =                         \
     "#ifndef %1CONTROLLER_H\n"                                                \
     "#define %1CONTROLLER_H\n"                                                \
     "\n"                                                                      \
@@ -159,15 +159,15 @@
     "%3"                                                                      \
     "};\n"                                                                    \
     "\n"                                                                      \
-    "#endif // %1CONTROLLER_H\n"
+    "#endif // %1CONTROLLER_H\n";
 
 
-#define CONTROLLER_TINY_SOURCE_FILE_TEMPLATE                   \
+constexpr auto CONTROLLER_TINY_SOURCE_FILE_TEMPLATE =          \
     "#include \"%1controller.h\"\n"                            \
     "\n\n"                                                     \
     "%3"                                                       \
     "// Don't remove below this line\n"                        \
-    "T_DEFINE_CONTROLLER(%2Controller)\n"
+    "T_DEFINE_CONTROLLER(%2Controller)\n";
 
 
 class ConvMethod : public QHash<int, QString>

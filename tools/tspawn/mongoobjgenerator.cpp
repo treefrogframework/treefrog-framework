@@ -15,7 +15,7 @@
 # include <unistd.h>
 #endif
 
-#define MONGOOBJECT_HEADER_TEMPLATE                                     \
+constexpr auto MONGOOBJECT_HEADER_TEMPLATE =                            \
     "#ifndef %1OBJECT_H\n"                                              \
     "#define %1OBJECT_H\n"                                              \
     "\n"                                                                \
@@ -40,9 +40,9 @@
     "%6"                                                                \
     "};\n"                                                              \
     " \n"                                                               \
-    "#endif // %1OBJECT_H"
+    "#endif // %1OBJECT_H";
 
-#define MONGOOBJECT_HEADER_UPDATE_TEMPLATE                              \
+constexpr auto MONGOOBJECT_HEADER_UPDATE_TEMPLATE =                     \
     "%3\n"                                                              \
     "%4"                                                                \
     "\n"                                                                \
@@ -59,11 +59,11 @@
     "%6"                                                                \
     "};\n"                                                              \
     " \n"                                                               \
-    "#endif // %1OBJECT_H"
+    "#endif // %1OBJECT_H";
 
-#define MONGOOBJECT_PROPERTY_TEMPLATE                \
+constexpr auto MONGOOBJECT_PROPERTY_TEMPLATE =       \
     "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n" \
-    "    T_DEFINE_PROPERTY(%1, %2)\n"
+    "    T_DEFINE_PROPERTY(%1, %2)\n";
 
 const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2);
 

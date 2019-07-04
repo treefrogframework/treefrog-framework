@@ -11,7 +11,7 @@
 #include "tmailmessage.h"
 using namespace Tf;
 
-#define DEFAULT_CONTENT_TYPE  "text/plain"
+constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";
 
 /*!
   \class TMailMessage

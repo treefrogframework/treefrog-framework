@@ -10,7 +10,7 @@
 #include "filewriter.h"
 #include "projectfilegenerator.h"
 
-#define VALIDATOR_HEADER_TEMPLATE                                       \
+constexpr auto VALIDATOR_HEADER_TEMPLATE =                              \
     "#ifndef %1VALIDATOR_H\n"                                           \
     "#define %1VALIDATOR_H\n"                                           \
     "\n"                                                                \
@@ -25,9 +25,9 @@
     "\n"                                                                \
     "Q_DECLARE_METATYPE(%2Validator)\n"                                 \
     "\n"                                                                \
-    "#endif // %1VALIDATOR_H\n"
+    "#endif // %1VALIDATOR_H\n";
 
-#define VALIDATOR_IMPL_TEMPLATE                         \
+constexpr auto VALIDATOR_IMPL_TEMPLATE =                \
     "#include \"%1validator.h\"\n"                      \
     "\n"                                                \
     "%2Validator::%2Validator() : TFormValidator()\n"   \
@@ -35,7 +35,7 @@
     "    // Set the rules below\n"                      \
     "    //setRule(\"xxxx\", Tf::MaxLength, 20);\n"     \
     "    //  :\n"                                       \
-    "}\n"
+    "}\n";
 
 
 ValidatorGenerator::ValidatorGenerator(const QString &validator)

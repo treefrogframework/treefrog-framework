@@ -6,9 +6,9 @@
 #include <QtPlugin>
 #include <TGlobal>
 
-#define TSessionStoreInterface_iid "org.treefrogframework.TreeFrog.TSessionStoreInterface/2.0"
-
 class TSessionStore;
+
+constexpr auto TSessionStoreInterface_iid = "org.treefrogframework.TreeFrog.TSessionStoreInterface/2.0";
 
 
 class T_CORE_EXPORT TSessionStoreInterface

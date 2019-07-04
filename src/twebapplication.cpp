@@ -17,8 +17,8 @@
 #include <thread>  // for hardware_concurrency()
 #include "tdatabasecontextmainthread.h"
 
-#define DEFAULT_INTERNET_MEDIA_TYPE   "text/plain"
-#define DEFAULT_DATABASE_ENVIRONMENT  "product"
+constexpr auto DEFAULT_INTERNET_MEDIA_TYPE  = "text/plain";
+constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
 
 
 static QTextCodec *searchCodec(const char *name)

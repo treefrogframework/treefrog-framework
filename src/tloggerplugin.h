@@ -6,9 +6,9 @@
 #include <QtPlugin>
 #include <TGlobal>
 
-#define TLoggerInterface_iid "org.treefrogframework.TreeFrog.TLoggerInterface/1.0"
-
 class TLogger;
+
+constexpr auto TLoggerInterface_iid = "org.treefrogframework.TreeFrog.TLoggerInterface/1.0";
 
 
 class T_CORE_EXPORT TLoggerInterface

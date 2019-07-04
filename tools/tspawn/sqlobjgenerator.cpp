@@ -10,10 +10,10 @@
 #include "filewriter.h"
 #include "tableschema.h"
 
-#define USER_VIRTUAL_METHOD  "identityKey"
-#define LOCK_REVISION_FIELD  "lock_revision"
+constexpr auto USER_VIRTUAL_METHOD = "identityKey";
+constexpr auto LOCK_REVISION_FIELD = "lock_revision";
 
-#define SQLOBJECT_HEADER_TEMPLATE                            \
+constexpr auto SQLOBJECT_HEADER_TEMPLATE =                   \
     "#ifndef %1OBJECT_H\n"                                   \
     "#define %1OBJECT_H\n"                                   \
     "\n"                                                     \
@@ -22,16 +22,16 @@
     "\n\n"                                                   \
     "class T_MODEL_EXPORT %2Object : public TSqlObject, public QSharedData\n" \
     "{\n"                                                    \
-    "public:\n"
+    "public:\n";
 
-#define SQLOBJECT_PROPERTY_TEMPLATE                  \
+constexpr auto SQLOBJECT_PROPERTY_TEMPLATE =         \
     "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n" \
-    "    T_DEFINE_PROPERTY(%1, %2)\n"
+    "    T_DEFINE_PROPERTY(%1, %2)\n";
 
-#define SQLOBJECT_FOOTER_TEMPLATE  \
+constexpr auto SQLOBJECT_FOOTER_TEMPLATE = \
     "};\n"                         \
     "\n"                           \
-    "#endif // %1OBJECT_H\n"
+    "#endif // %1OBJECT_H\n";
 
 
 static bool isNumericType(const QString &typeName)

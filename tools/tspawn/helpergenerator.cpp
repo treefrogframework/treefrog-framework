@@ -10,7 +10,7 @@
 #include "filewriter.h"
 #include "projectfilegenerator.h"
 
-#define HELPER_HEADER_TEMPLATE                                          \
+constexpr auto HELPER_HEADER_TEMPLATE =                                 \
     "#ifndef %1_H\n"                                                    \
     "#define %1_H\n"                                                    \
     "\n"                                                                \
@@ -23,13 +23,13 @@
     "    %2();\n"                                                       \
     "};\n"                                                              \
     "\n"                                                                \
-    "#endif // %1_H\n"
+    "#endif // %1_H\n";
 
-#define HELPER_IMPL_TEMPLATE                            \
+constexpr auto HELPER_IMPL_TEMPLATE =                   \
     "#include \"%1.h\"\n"                               \
     "\n"                                                \
     "%2::%2() : ApplicationHelper()\n"                  \
-    "{ }\n"
+    "{ }\n";
 
 
 HelperGenerator::HelperGenerator(const QString &n)

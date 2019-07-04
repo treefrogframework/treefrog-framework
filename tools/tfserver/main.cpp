@@ -20,9 +20,9 @@
 #include "signalhandler.h"
 using namespace TreeFrog;
 
-#define DEBUG_MODE_OPTION  "--debug"
-#define SOCKET_OPTION      "-s"
-#define AUTO_RELOAD_OPTION "-r"
+constexpr auto DEBUG_MODE_OPTION  = "--debug";
+constexpr auto SOCKET_OPTION      = "-s";
+constexpr auto AUTO_RELOAD_OPTION = "-r";
 
 
 static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
