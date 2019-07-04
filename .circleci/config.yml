@@ -17,9 +17,9 @@ jobs:
           paths:
             - workspace
             - usr/local
-  bionic_shared_mongoc:
+  ubuntu_shared_mongoc:
     docker:
-      - image: buildpack-deps:bionic
+      - image: buildpack-deps:19.04
     working_directory: /workspace
     steps:
       - checkout
@@ -47,4 +47,4 @@ workflows:
       - test:
           requires:
             - bionic
-      - bionic_shared_mongoc
+      - ubuntu_shared_mongoc
