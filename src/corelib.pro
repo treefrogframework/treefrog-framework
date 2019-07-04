@@ -1,6 +1,6 @@
 TARGET   = treefrog
 TEMPLATE = lib
-CONFIG  += shared console c++11
+CONFIG  += shared console c++14
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
 DEFINES += TF_MAKEDLL

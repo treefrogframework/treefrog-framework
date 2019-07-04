@@ -1,7 +1,7 @@
 TARGET   = tspawn
 TEMPLATE = app
 VERSION  = 1.0.0
-CONFIG  += console c++11
+CONFIG  += console c++14
 CONFIG  -= app_bundle
 QT      += sql
 QT      -= gui
