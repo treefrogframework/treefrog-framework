@@ -1,4 +1,4 @@
-FROM buildpack-deps:bionic
+FROM buildpack-deps:xenial
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV TREEFROG_VERSION 1.19.0
