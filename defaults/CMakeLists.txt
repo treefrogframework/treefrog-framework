@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.1)
 
 project(appname CXX)
 
-# C++11
-set(CMAKE_CXX_STANDARD 11)
+# C++14
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # cxx options
 if (MSVC)
