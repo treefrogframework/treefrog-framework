@@ -31,17 +31,17 @@ public:
     TWebSocketFrame(const TWebSocketFrame &other);
     TWebSocketFrame &operator=(const TWebSocketFrame &other);
 
-    bool finBit() const { return firstByte_ & 0x80; }
-    bool rsv1Bit() const { return firstByte_ & 0x40; }
-    bool rsv2Bit() const { return firstByte_ & 0x20; }
-    bool rsv3Bit() const { return firstByte_ & 0x10; }
+    bool finBit() const { return _firstByte & 0x80; }
+    bool rsv1Bit() const { return _firstByte & 0x40; }
+    bool rsv2Bit() const { return _firstByte & 0x20; }
+    bool rsv3Bit() const { return _firstByte & 0x10; }
     bool isFinalFrame() const { return finBit(); }
-    OpCode opCode() const { return (OpCode)(firstByte_ & 0xF); }
+    OpCode opCode() const { return (OpCode)(_firstByte & 0xF); }
     bool isControlFrame() const;
-    quint32 maskKey() const { return maskKey_; }
-    quint64 payloadLength() const { return payloadLength_; }
-    const QByteArray &payload() const { return payload_; }
-    bool isValid() const { return valid_; }
+    quint32 maskKey() const { return _maskKey; }
+    quint64 payloadLength() const { return _payloadLength; }
+    const QByteArray &payload() const { return _payload; }
+    bool isValid() const { return _valid; }
     void clear();
     QByteArray toByteArray() const;
 
@@ -59,18 +59,18 @@ private:
     void setMaskKey(quint32 maskKey);
     void setPayloadLength(quint64 length);
     void setPayload(const QByteArray &payload);
-    QByteArray &payload() { return payload_; }
+    QByteArray &payload() { return _payload; }
 
     bool validate();
-    ProcessingState state() const { return state_; }
+    ProcessingState state() const { return _state; }
     void setState(ProcessingState state);
 
-    quint8 firstByte_;
-    quint32 maskKey_;
-    quint64 payloadLength_;
-    QByteArray payload_;   // unmasked data stored
-    ProcessingState state_;
-    bool valid_;
+    quint8 _firstByte {0x80};
+    quint32 _maskKey {0};
+    quint64 _payloadLength {0};
+    QByteArray _payload;   // unmasked data stored
+    ProcessingState _state {Empty};
+    bool _valid {false};
 
     friend class TAbstractWebSocket;
     friend class TWebSocket;

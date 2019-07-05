@@ -15,9 +15,9 @@
 #include "tsystemglobal.h"
 using namespace Tf;
 
-const int DEFAULT_PORT = 6379;
-const int SEND_BUF_SIZE = 128 * 1024;
-const int RECV_BUF_SIZE = 128 * 1024;
+constexpr int DEFAULT_PORT = 6379;
+constexpr int SEND_BUF_SIZE = 128 * 1024;
+constexpr int RECV_BUF_SIZE = 128 * 1024;
 
 
 TRedisDriver::TRedisDriver() :

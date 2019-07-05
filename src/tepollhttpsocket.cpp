@@ -17,7 +17,7 @@
 #include "twebsocket.h"
 using namespace Tf;
 
-const int BUFFER_RESERVE_SIZE = 1023;
+constexpr int BUFFER_RESERVE_SIZE = 1023;
 static qint64 systemLimitBodyBytes = -1;
 
 

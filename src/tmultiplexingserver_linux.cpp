@@ -24,8 +24,8 @@
 #include "tsystembus.h"
 #include "tpublisher.h"
 
-const int SEND_BUF_SIZE = 16 * 1024;
-const int RECV_BUF_SIZE = 128 * 1024;
+constexpr int SEND_BUF_SIZE = 16 * 1024;
+constexpr int RECV_BUF_SIZE = 128 * 1024;
 static TMultiplexingServer *multiplexingServer = 0;
 
 

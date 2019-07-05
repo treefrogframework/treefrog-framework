@@ -1,9 +1,9 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
-#define TF_VERSION_STR "1.25.0"
-#define TF_VERSION_NUMBER 0x012500
-#define TF_SRC_REVISION 1940
+constexpr auto TF_VERSION_STR = "1.25.0";
+constexpr auto TF_VERSION_NUMBER = 0x012500;
+constexpr auto TF_SRC_REVISION = 1961;
 
 #include <QtGlobal>
 #include <QMetaType>
@@ -234,9 +234,9 @@ namespace Tf
     T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes);
     T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data);
 
-    static const QByteArray CRLFCRLF = "\x0d\x0a\x0d\x0a";
-    static const QByteArray CRLF     = "\x0d\x0a";
-    static const QByteArray LF       = "\x0a";
+    constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
+    constexpr auto CRLF     = "\x0d\x0a";
+    constexpr auto LF       = "\x0a";
 }
 
 #endif // TGLOBAL_H

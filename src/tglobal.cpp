@@ -25,7 +25,7 @@
 #endif
 #include "lz4.h"
 
-const int LZ4_BLOCKSIZE = 1024 * 1024; // 1 MB
+constexpr int LZ4_BLOCKSIZE = 1024 * 1024; // 1 MB
 
 /*!
   Returns a global pointer referring to the unique application object.

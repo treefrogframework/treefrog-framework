@@ -22,7 +22,7 @@
 #include "tsystemglobal.h"
 #include "tfcore.h"
 
-const int MaxEvents = 128;
+constexpr int MaxEvents = 128;
 
 static TEpoll *staticInstance;
 

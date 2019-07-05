@@ -175,7 +175,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                     return str;
                 };
 
-                const int LIMIT_WORDS_IN_CLAUSE = 1000;
+                constexpr int LIMIT_WORDS_IN_CLAUSE = 1000;
                 const QList<QVariant> lst = cri.val1.toList();
 
                 if (lst.isEmpty()) {

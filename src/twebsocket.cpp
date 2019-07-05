@@ -12,8 +12,8 @@
 #include "tdispatcher.h"
 #include "tatomicptr.h"
 
-const qint64 WRITE_LENGTH = 1280;
-const int BUFFER_RESERVE_SIZE = 127;
+constexpr qint64 WRITE_LENGTH = 1280;
+constexpr int BUFFER_RESERVE_SIZE = 127;
 
 static TAtomicPtr<TWebSocket> socketManager[USHRT_MAX + 1];
 static std::atomic<ushort> point {0};

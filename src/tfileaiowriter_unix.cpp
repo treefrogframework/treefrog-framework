@@ -11,7 +11,7 @@
 #include "tqueue.h"
 #include "tfcore_unix.h"
 
-const int MAX_NUM_BUFFERING_DATA = 10000;
+constexpr int MAX_NUM_BUFFERING_DATA = 10000;
 
 
 class TFileAioWriterData

@@ -50,17 +50,20 @@ inline TDispatcher<T>::~TDispatcher()
 template <class T>
 inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &args, Qt::ConnectionType connectionType)
 {
-    const int NUM_PARAMS = 11;
-    static const char *const params[NUM_PARAMS] = { "()", "(QString)",
-                                                    "(QString,QString)",
-                                                    "(QString,QString,QString)",
-                                                    "(QString,QString,QString,QString)",
-                                                    "(QString,QString,QString,QString,QString)",
-                                                    "(QString,QString,QString,QString,QString,QString)",
-                                                    "(QString,QString,QString,QString,QString,QString,QString)",
-                                                    "(QString,QString,QString,QString,QString,QString,QString,QString)",
-                                                    "(QString,QString,QString,QString,QString,QString,QString,QString,QString)",
-                                                    "(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)" };
+    constexpr int NUM_PARAMS = 11;
+    static const QByteArray params[NUM_PARAMS] = {
+        QByteArrayLiteral("()"),
+        QByteArrayLiteral("(QString)"),
+        QByteArrayLiteral("(QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString,QString)"),
+        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)")
+    };
 
     object();
     if (Q_UNLIKELY(!ptr)) {
@@ -73,7 +76,8 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     int narg = qMin(args.count(), NUM_PARAMS - 1);
     for (int i = narg; i >= 0; i--) {
         // Find method
-        QByteArray mtd = method + params[i];
+        QByteArray mtd = method;
+        mtd += params[i];
         idx = ptr->metaObject()->indexOfSlot(mtd.constData());
         if (idx >= 0) {
             argcnt = i;
@@ -85,7 +89,8 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     if (idx < 0) {
         for (int i = narg + 1; i < NUM_PARAMS - 1; i++) {
             // Find method
-            QByteArray mtd = method + params[i];
+            QByteArray mtd = method;
+            mtd += params[i];
             idx = ptr->metaObject()->indexOfSlot(mtd.constData());
             if (idx >= 0) {
                 argcnt = i;

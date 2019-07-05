@@ -56,25 +56,25 @@ public:
     TSystemBusMessage(quint8 opcode, const QByteArray &data);
     TSystemBusMessage(quint8 opcode, const QString &target, const QByteArray &data);
 
-    bool firstBit() const { return firstByte_ & 0x80; }
-    bool rsvBit() const { return firstByte_ & 0x40; }
-    Tf::SystemOpCode opCode() const { return (Tf::SystemOpCode)(firstByte_ & 0x3F); }
+    bool firstBit() const { return _firstByte & 0x80; }
+    bool rsvBit() const { return _firstByte & 0x40; }
+    Tf::SystemOpCode opCode() const { return (Tf::SystemOpCode)(_firstByte & 0x3F); }
     QString target() const;
     QByteArray data() const;
 
-    int payloadLength() const { return payload_.length(); }
+    int payloadLength() const { return _payload.length(); }
     QByteArray toByteArray() const;
-    bool isValid() const { return valid_; }
+    bool isValid() const { return _valid; }
 
     static TSystemBusMessage parse(QByteArray &bytes);
 
 private:
-    const QByteArray &payload() const { return payload_; }
+    const QByteArray &payload() const { return _payload; }
     bool validate();
 
-    quint8 firstByte_;
-    QByteArray payload_;
-    bool valid_;
+    quint8 _firstByte {0};
+    QByteArray _payload;
+    bool _valid {false};
 
     friend class TSystemBus;
 };

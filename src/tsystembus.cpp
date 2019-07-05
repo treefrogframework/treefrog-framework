@@ -16,8 +16,8 @@
 #include "tprocessinfo.h"
 #include "tfcore.h"
 
-const int HEADER_LEN = 5;
-const QString SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";
+constexpr int  HEADER_LEN = 5;
+constexpr auto SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";
 
 static TSystemBus *systemBus = nullptr;
 
@@ -169,14 +169,14 @@ void TSystemBus::instantiate()
 QString TSystemBus::connectionName()
 {
 #if defined(Q_OS_WIN) && !defined(TF_NO_DEBUG)
-    const QString processName = "tadpoled";
+    constexpr auto PROCESS_NAME = "tadpoled";
 #else
-    const QString processName = "tadpole";
+    constexpr auto PROCESS_NAME = "tadpole";
 #endif
 
     qint64 pid = 0;
     QString cmd = TWebApplication::arguments().first();
-    if (cmd.endsWith(processName)) {
+    if (cmd.endsWith(QLatin1String(PROCESS_NAME))) {
         pid = TProcessInfo(TWebApplication::applicationPid()).ppid();
     } else {
         pid = TWebApplication::applicationPid();
@@ -194,25 +194,22 @@ QString TSystemBus::connectionName(qint64 pid)
 
 
 TSystemBusMessage::TSystemBusMessage()
-    : firstByte_(0), payload_(), valid_(false)
 { }
 
 
 TSystemBusMessage::TSystemBusMessage(quint8 op, const QByteArray &d)
-    : firstByte_(0), payload_(), valid_(false)
 {
-    firstByte_ = 0x80 | (op & 0x3F);
-    QDataStream ds(&payload_, QIODevice::WriteOnly);
+    _firstByte = 0x80 | (op & 0x3F);
+    QDataStream ds(&_payload, QIODevice::WriteOnly);
     ds.setByteOrder(QDataStream::BigEndian);
     ds << QByteArray() << d;
 }
 
 
 TSystemBusMessage::TSystemBusMessage(quint8 op, const QString &t, const QByteArray &d)
-    : firstByte_(0), payload_(), valid_(false)
 {
-    firstByte_ = 0x80 | (op & 0x3F);
-    QDataStream ds(&payload_, QIODevice::WriteOnly);
+    _firstByte = 0x80 | (op & 0x3F);
+    QDataStream ds(&_payload, QIODevice::WriteOnly);
     ds.setByteOrder(QDataStream::BigEndian);
     ds << t << d;
 }
@@ -221,7 +218,7 @@ TSystemBusMessage::TSystemBusMessage(quint8 op, const QString &t, const QByteArr
 QString TSystemBusMessage::target() const
 {
     QString ret;
-    QDataStream ds(payload_);
+    QDataStream ds(_payload);
     ds.setByteOrder(QDataStream::BigEndian);
     ds >> ret;
     return ret;
@@ -232,7 +229,7 @@ QByteArray TSystemBusMessage::data() const
 {
     QByteArray ret;
     QString target;
-    QDataStream ds(payload_);
+    QDataStream ds(_payload);
     ds.setByteOrder(QDataStream::BigEndian);
     ds >> target >> ret;
     return ret;
@@ -241,30 +238,30 @@ QByteArray TSystemBusMessage::data() const
 
 bool TSystemBusMessage::validate()
 {
-    valid_  = true;
-    valid_ &= (firstBit() == true);
-    valid_ &= (rsvBit() == false);
-    if (!valid_) {
-        tSystemError("Invalid byte: 0x%x  [%s:%d]", firstByte_, __FILE__, __LINE__);
+    _valid  = true;
+    _valid &= (firstBit() == true);
+    _valid &= (rsvBit() == false);
+    if (!_valid) {
+        tSystemError("Invalid byte: 0x%x  [%s:%d]", _firstByte, __FILE__, __LINE__);
     }
 
-    valid_ &= (opCode() > 0 && opCode() <= Tf::MaxOpCode);
-    if (!valid_) {
+    _valid &= (opCode() > 0 && opCode() <= Tf::MaxOpCode);
+    if (!_valid) {
         tSystemError("Invalid opcode: %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
     }
-    return valid_;
+    return _valid;
 }
 
 
 QByteArray TSystemBusMessage::toByteArray() const
 {
     QByteArray buf;
-    buf.reserve(HEADER_LEN + payload_.length());
+    buf.reserve(HEADER_LEN + _payload.length());
 
     QDataStream ds(&buf, QIODevice::WriteOnly);
     ds.setByteOrder(QDataStream::BigEndian);
-    ds << firstByte_ << (quint32)payload_.length();
-    ds.writeRawData(payload_.data(), payload_.length());
+    ds << _firstByte << (quint32)_payload.length();
+    ds.writeRawData(_payload.data(), _payload.length());
     return buf;
 }
 
@@ -285,8 +282,8 @@ TSystemBusMessage TSystemBusMessage::parse(QByteArray &bytes)
     }
 
     TSystemBusMessage message;
-    message.firstByte_ = opcode;
-    message.payload_ = bytes.mid(HEADER_LEN, length);
+    message._firstByte = opcode;
+    message._payload = bytes.mid(HEADER_LEN, length);
     message.validate();
     bytes.remove(0, HEADER_LEN + length);
     return message;

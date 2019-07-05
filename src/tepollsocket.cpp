@@ -74,7 +74,7 @@ TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &data)
 
 void TEpollSocket::initBuffer(int socketDescriptor)
 {
-    const int BUF_SIZE = 128 * 1024;
+    constexpr int BUF_SIZE = 128 * 1024;
 
     if (Q_UNLIKELY(sendBufSize == 0)) {
         // Creates a common buffer

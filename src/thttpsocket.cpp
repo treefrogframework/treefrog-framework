@@ -17,12 +17,12 @@
 #include "tatomicptr.h"
 #include "tsystemglobal.h"
 
-const uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
-const qint64 WRITE_LENGTH = 1408;
-const int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
-const int    SEND_BUF_SIZE = 128 * 1024;
-const int    RECV_BUF_SIZE = 128 * 1024;
-const int    RESERVED_BUFFER_SIZE = 1024;
+constexpr uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
+constexpr qint64 WRITE_LENGTH = 1408;
+constexpr int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
+constexpr int    SEND_BUF_SIZE = 128 * 1024;
+constexpr int    RECV_BUF_SIZE = 128 * 1024;
+constexpr int    RESERVED_BUFFER_SIZE = 1024;
 
 static TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
 static std::atomic<ushort> point {0};
