@@ -188,7 +188,7 @@ static bool startDaemon()
 
 static void writeStartupLog()
 {
-    tSystemInfo("TreeFrog Framework version " TF_VERSION_STR);
+    tSystemInfo("TreeFrog Framework version %s", TF_VERSION_STR);
 
     QString qtversion = QLatin1String("Execution environment: Qt ") + qVersion();
 #if QT_VERSION >= 0x050400
@@ -426,7 +426,7 @@ int managerMain(int argc, char *argv[])
         int cmd = options()->value(arg, Invalid);
         switch (cmd) {
         case PrintVersion:
-            printf("%s version " TF_VERSION_STR " (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_SRC_REVISION, __DATE__, qVersion());
+            printf("%s version %s (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_VERSION_STR, TF_SRC_REVISION, __DATE__, qVersion());
             return 0;
             break;
 
