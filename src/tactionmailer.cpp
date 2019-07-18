@@ -17,7 +17,6 @@
 
 constexpr auto CONTROLLER_NAME = "mailer";
 constexpr auto ACTIONE_NAME    = "mail";
-constexpr auto PREFIX_SMTP     = "ActionMailer.smtp.";
 
 /*!
   \class TActionMailer
