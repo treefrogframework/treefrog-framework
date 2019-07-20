@@ -5,9 +5,12 @@
 
 #undef GetTempPath
 
+//
+// リリースする際は50行目を編集！
+//
+
 
 namespace treefrogsetup {
-
     using namespace System;
     using namespace System::IO;
     using namespace System::Collections;
@@ -41,6 +44,12 @@ namespace treefrogsetup {
     private: 
         static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";  // Base Directory
 
+        //
+        // バージョン
+        //
+        static initonly String^ VERSION_STR1 = L"5.12";
+        static initonly String^ VERSION_STR2 = L"5.13";
+
     public:
         MainForm(void)
         {
@@ -52,25 +61,25 @@ namespace treefrogsetup {
             bgWorker->RunWorkerCompleted += gcnew RunWorkerCompletedEventHandler(this, &MainForm::bgWorker_RunWorkerCompleted);
 
             this->Text = "TreeFrog Framework " + VersionString() + " Setup";
-            String^ folder = "C:\\";
+            String^ folder = L"C:\\Qt";
 
-            try {
-                // Check Qt5 Folder
-                String^ fol = L"C:\\Qt";
-                array<String^>^ dir = Directory::GetDirectories(fol);
+            //try {
+            //    // Check Qt5 Folder
+            //    String^ fol = L"C:\\Qt";
+            //    array<String^>^ dir = Directory::GetDirectories(fol);
 
-                if (dir->Length > 0) {
-                    fol = dir[0];
-                    for (int i = 1; i < dir->Length; ++i) {
-                        if (dir[i]->IndexOf("creator", StringComparison::OrdinalIgnoreCase) < 0) {
-                            fol = (String::Compare(fol, dir[i]) >= 0) ? fol : dir[i];
-                        }
-                    }
-                    folder = fol;
-                }
-            } catch (...) {
-                //
-            }
+            //    if (dir->Length > 0) {
+            //        fol = dir[0];
+            //        for (int i = 1; i < dir->Length; ++i) {
+            //            if (dir[i]->IndexOf("creator", StringComparison::OrdinalIgnoreCase) < 0) {
+            //                fol = (String::Compare(fol, dir[i]) >= 0) ? fol : dir[i];
+            //            }
+            //        }
+            //        folder = fol;
+            //    }
+            //} catch (...) {
+            //    //
+            //}
 
             forderTextBox->Text = folder;
         }
@@ -160,7 +169,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version 5.11 or 5.12.";
+            this->label->Text = L"Specify a base folder of Qt version " + VERSION_STR1 + " or " + VERSION_STR2 + ".";
             // 
             // label1
             // 
@@ -171,7 +180,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt5.12.0\\5.12.0\\msvc2017_64";
+            this->label1->Text = L"Example:  C:\\Qt\\Qt" + VERSION_STR2 + ".0\\msvc2017_64";
             // 
             // labeltop
             // 
@@ -380,12 +389,12 @@ namespace treefrogsetup {
 
             // Get msi file from resource
             int rcid = 0;
-            if (version->IndexOf("Qt version 5.12", StringComparison::OrdinalIgnoreCase) > 0) {
+            if (version->IndexOf("Qt version " + VERSION_STR2, StringComparison::OrdinalIgnoreCase) > 0) {
                 rcid = IDR_TREEFROG_QT512_MSI;
-            } else if (version->IndexOf("Qt version 5.11", StringComparison::OrdinalIgnoreCase) > 0) {
+            } else if (version->IndexOf("Qt version " + VERSION_STR1, StringComparison::OrdinalIgnoreCase) > 0) {
                 rcid = IDR_TREEFROG_QT511_MSI;
             } else {
-                abort("Not found Qt version 5.12 or 5.11.", "Abort");
+                abort("Not found Qt version " + VERSION_STR2 + " or " + VERSION_STR1 + ".", "Abort");
                 return;
             }
 

@@ -13,15 +13,15 @@ set SLNFILE=%BASEDIR%\treefrog-setup\treefrog-setup.sln
 cd %BASEDIR%
 
 :: MinGW
+::call :build_msi "%QTBASE%\5.13.0\mingw73_64\bin\qtenv2.bat"     5.13
 ::call :build_msi "%QTBASE%\5.12.3\mingw73_64\bin\qtenv2.bat"     5.12
-::call :build_msi "%QTBASE%\5.11.3\mingw53_32\bin\qtenv2.bat"     5.11
-::call :build_setup treefrog-%VERSION%-mingw-setup.exe
+::call :build_setup treefrog-%VERSION%-mingw73_64-setup.exe
 
 :: MSVC2017
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
+call :build_msi "%QTBASE%\5.13.0\msvc2017_64\bin\qtenv2.bat"      5.13
 call :build_msi "%QTBASE%\5.12.3\msvc2017_64\bin\qtenv2.bat"      5.12
-call :build_msi "%QTBASE%\5.11.3\msvc2017_64\bin\qtenv2.bat"      5.11
 call :build_setup treefrog-%VERSION%-msvc2017_64-setup.exe
 
 
