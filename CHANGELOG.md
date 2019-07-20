@@ -1,12 +1,12 @@
 # ChangeLog
 ## 1.25.0
- - Updated mongo c driver to v1.9.5.
- - Update LZ4 compression algorithom to v1.9.1.
+ - Updated Mongo C driver to v1.9.5.
+ - Updated LZ4 compression algorithm to v1.9.1.
  - Modified to set a domain in session cookie. #245
  - Changed the default C++ config from c++11 to c++14.
  - Erased 'DISTINCT' from SELECT statement.
  - Fix a bug of stopping tadpole.
- - Fix a bug of outputing accesslog.
+ - Fix a bug of outputting accesslog.
  - Modified for MSVC2015.
  - Performance improvement.
 

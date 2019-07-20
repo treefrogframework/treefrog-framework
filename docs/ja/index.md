@@ -40,15 +40,23 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2019/4/29  TreeFrog Framework バージョン1.24.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2019/4/29  TreeFrog Framework バージョン1.25.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - Mongo Cドライバをv1.9.5に更新
+  - LZ4圧縮アルゴリズムをv1.9.1に更新
+  - セッションクッキーにドメイン値を設定できるよう修正
+  - コンフィグをC++11からC++14に変更
+  - その他不具合修正と改善
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2019/4/29  TreeFrog Framework バージョン1.24.0 （安定版）リリース
 
   - LZ4圧縮アルゴリズムを使用するよう修正
   - Redisハッシュ型データ向けの関数を実装
   - 大文字を使った拡張子のファイルで戻されるコンテントタイプの不具合修正
   - バックスラッシュを含んだform-dataの解析の不具合修正
   - その他不具合修正と改善
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2019/1/6  TreeFrog Framework バージョン1.23.0 （安定版）リリース
 
