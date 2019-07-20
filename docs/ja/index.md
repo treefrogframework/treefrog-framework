@@ -40,7 +40,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2019/4/29  TreeFrog Framework バージョン1.25.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2019/7/20  TreeFrog Framework バージョン1.25.0 （安定版）リリース <span style="color: red;">New!</span>
 
   - Mongo Cドライバをv1.9.5に更新
   - LZ4圧縮アルゴリズムをv1.9.1に更新
