@@ -1,9 +1,9 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
-constexpr auto TF_VERSION_STR = "1.25.0";
-constexpr auto TF_VERSION_NUMBER = 0x012500;
-constexpr auto TF_SRC_REVISION = 1963;
+constexpr auto TF_VERSION_STR = "1.26.0";
+constexpr auto TF_VERSION_NUMBER = 0x012600;
+constexpr auto TF_SRC_REVISION = 1967;
 
 #include <QtGlobal>
 #include <QMetaType>
