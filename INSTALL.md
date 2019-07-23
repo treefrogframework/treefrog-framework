@@ -2,8 +2,8 @@
 Requirements
 ------------
  - Windows, Linux, macOS, or POSIX compliant Unix-like OS
- - Qt Toolkit version 5.2 or later
- - C compiler and C++11 compiler
+ - Qt Toolkit version 5.4 or later
+ - C compiler and C++14 compiler
  - Make utility
 
 On Linux, you can install by 'apt-get' or 'yum'.

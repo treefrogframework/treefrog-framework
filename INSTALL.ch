@@ -2,8 +2,8 @@
 安装需求
 ------------
  - Windows, Linux, macOS, 或符合POSIX的Unix-like OS
- - Qt 5.2或更高版本
- - C 编译器和C++11编译器
+ - Qt 5.4或更高版本
+ - C 编译器和C++14编译器
  - Make工具
 
 在Linux上, 你可以通过'apt-get'或'yum'安装.
