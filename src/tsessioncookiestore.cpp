@@ -62,7 +62,7 @@ TSession TSessionCookieStore::find(const QByteArray &id)
         return session;
     }
 
-    QList<QByteArray> balst = id.split('_');
+    QByteArrayList balst = id.split('_');
     if (balst.count() == 2 && !balst.value(0).isEmpty() && !balst.value(1).isEmpty()) {
         QByteArray ba = QByteArray::fromBase64(balst.value(0));
         QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),

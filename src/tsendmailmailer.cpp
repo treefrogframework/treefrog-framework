@@ -64,7 +64,7 @@ bool TSendmailMailer::send()
 
     QStringList args;
     QByteArray rawmail = mailMessage.toByteArray();
-    const QList<QByteArray> recipients = mailMessage.recipients();
+    const QByteArrayList recipients = mailMessage.recipients();
 
     for (auto &recipt : recipients) {
         args.clear();

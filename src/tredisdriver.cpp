@@ -120,7 +120,7 @@ bool TRedisDriver::readReply()
 }
 
 
-bool TRedisDriver::request(const QList<QByteArray> &command, QVariantList &response)
+bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response)
 {
     if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
@@ -335,7 +335,7 @@ QByteArray TRedisDriver::toBulk(const QByteArray &data)
 }
 
 
-QByteArray TRedisDriver::toMultiBulk(const QList<QByteArray> &data)
+QByteArray TRedisDriver::toMultiBulk(const QByteArrayList &data)
 {
     QByteArray mbulk("*");
     mbulk += QByteArray::number(data.count());

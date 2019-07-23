@@ -30,22 +30,22 @@ public:
     QString body() const;
     void setBody(const QString &body);
     QByteArray toByteArray() const;
-    QList<QByteArray> recipients() const { return recipientList; }
+    QByteArrayList recipients() const { return recipientList; }
     TMailMessage &operator=(const TMailMessage &other);
 
 protected:
     void parse(const QString &str);
-    QList<QByteArray> addresses(const QByteArray &field) const;
+    QByteArrayList addresses(const QByteArray &field) const;
     void addAddress(const QByteArray &field, const QByteArray &address, const QString &friendlyName);
     void addRecipient(const QByteArray &address);
-    void addRecipients(const QList<QByteArray> &addresses);
+    void addRecipients(const QByteArrayList &addresses);
 
 private:
     void init(const QByteArray &encoding);
     
     QByteArray mailBody;
     QTextCodec *textCodec;
-    QList<QByteArray> recipientList;
+    QByteArrayList recipientList;
 };
 
 #endif // TMAILMESSAGE_H

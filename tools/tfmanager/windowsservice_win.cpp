@@ -111,11 +111,11 @@ static void WINAPI serviceHandler(DWORD ctrl)
 }
 
 
-static QList<QByteArray> parseArguments(const QString &str)
+static QByteArrayList parseArguments(const QString &str)
 {
     const QRegExp rx("(\"([^\"]*)\"|([^ ]+))", Qt::CaseSensitive, QRegExp::RegExp2);
 
-    QList<QByteArray> res;
+    QByteArrayList res;
     int pos = 0;
     while ((pos = rx.indexIn(str, pos)) >= 0) {
         auto cap2 = rx.cap(2);

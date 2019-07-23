@@ -284,7 +284,7 @@ static QStringList runningApplicationPathList()
 
     if (file.open(QIODevice::ReadOnly)) {
         TF_FLOCK(file.handle(), LOCK_SH); // lock
-        QList<QByteArray> lst = file.readAll().split('\n');
+        QByteArrayList lst = file.readAll().split('\n');
         TF_FLOCK(file.handle(), LOCK_UN); // unlock
         file.close();
 

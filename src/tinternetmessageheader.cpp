@@ -61,9 +61,9 @@ QByteArray TInternetMessageHeader::rawHeader(const QByteArray &key) const
 /*!
   Returns a list of all raw headers.
 */
-QList<QByteArray> TInternetMessageHeader::rawHeaderList() const
+QByteArrayList TInternetMessageHeader::rawHeaderList() const
 {
-    QList<QByteArray> list;
+    QByteArrayList list;
     for (const auto &p : headerPairList) {
         list << p.first;
     }

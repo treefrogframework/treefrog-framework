@@ -236,13 +236,13 @@ bool TSmtpMailer::cmdEhlo()
     ehlo.append(qPrintable(socket->localAddress().toString()));
     ehlo.append("]");
 
-    QList<QByteArray> reply;
+    QByteArrayList reply;
     if (cmd(ehlo, &reply) != 250) {
         return false;
     }
 
     // Gets AUTH methods
-    for (auto &s : (const QList<QByteArray>&)reply) {
+    for (auto &s : (const QByteArrayList&)reply) {
         QString str(s);
         if (str.startsWith("AUTH ", Qt::CaseInsensitive)) {
             svrAuthMethods = str.mid(5).split(' ', QString::SkipEmptyParts);
@@ -263,7 +263,7 @@ bool TSmtpMailer::cmdHelo()
     helo.append(qPrintable(socket->localAddress().toString()));
     helo.append("]");
 
-    QList<QByteArray> reply;
+    QByteArrayList reply;
     if (cmd(helo, &reply) != 250) {
         return false;
     }
@@ -307,7 +307,7 @@ bool TSmtpMailer::cmdAuth()
         return false;
     }
 
-    QList<QByteArray> reply;
+    QByteArrayList reply;
     QByteArray auth;
     bool res = false;
 
@@ -356,7 +356,7 @@ bool TSmtpMailer::cmdMail(const QByteArray &from)
 }
 
 
-bool TSmtpMailer::cmdRcpt(const QList<QByteArray> &to)
+bool TSmtpMailer::cmdRcpt(const QByteArrayList &to)
 {
     if (to.isEmpty())
         return false;
@@ -388,7 +388,7 @@ bool TSmtpMailer::cmdQuit()
 }
 
 
-int TSmtpMailer::cmd(const QByteArray &command, QList<QByteArray> *reply)
+int TSmtpMailer::cmd(const QByteArray &command, QByteArrayList *reply)
 {
     lastResponse.resize(0);
     if (!write(command))
@@ -412,7 +412,7 @@ bool TSmtpMailer::write(const QByteArray &command)
 }
 
 
-int TSmtpMailer::read(QList<QByteArray> *reply)
+int TSmtpMailer::read(QByteArrayList *reply)
 {
     if (reply) {
         reply->clear();

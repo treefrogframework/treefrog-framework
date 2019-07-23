@@ -35,12 +35,12 @@ public:
     QString getsSets(const QByteArray &key, const QString &value);
 
     bool del(const QByteArray &key);
-    int del(const QList<QByteArray> &keys);
+    int del(const QByteArrayList &keys);
 
     // binary list
-    int rpush(const QByteArray &key, const QList<QByteArray> &values);
-    int lpush(const QByteArray &key, const QList<QByteArray> &values);
-    QList<QByteArray> lrange(const QByteArray &key, int start, int end);
+    int rpush(const QByteArray &key, const QByteArrayList &values);
+    int lpush(const QByteArray &key, const QByteArrayList &values);
+    QByteArrayList lrange(const QByteArray &key, int start, int end);
     QByteArray lindex(const QByteArray &key, int index);
 
     // string list
@@ -59,7 +59,7 @@ public:
     QString hgets(const QByteArray &key, const QByteArray &field);
     bool hexists(const QByteArray &key, const QByteArray &field);
     bool hdel(const QByteArray &key, const QByteArray &field);
-    int hdel(const QByteArray &key, const QList<QByteArray> &fields);
+    int hdel(const QByteArray &key, const QByteArrayList &fields);
     int hlen(const QByteArray &key);
     QList<QPair<QByteArray, QByteArray>> hgetAll(const QByteArray &key);
 
@@ -67,8 +67,8 @@ private:
     TRedisDriver *driver();
     const TRedisDriver *driver() const;
 
-    static QList<QByteArray> toByteArrayList(const QStringList &values);
-    static QStringList toStringList(const QList<QByteArray> &values);
+    static QByteArrayList toByteArrayList(const QStringList &values);
+    static QStringList toStringList(const QByteArrayList &values);
 
     TKvsDatabase database;
 };

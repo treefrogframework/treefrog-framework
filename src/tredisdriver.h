@@ -20,7 +20,7 @@ public:
     void close() override;
     bool isOpen() const override;
     void moveToThread(QThread *thread) override;
-    bool request(const QList<QByteArray> &command, QVariantList &response);
+    bool request(const QByteArrayList &command, QVariantList &response);
 
 protected:
     enum DataType {
@@ -40,7 +40,7 @@ protected:
 //    bool waitForState(int state, int msecs);
 
     static QByteArray toBulk(const QByteArray &data);
-    static QByteArray toMultiBulk(const QList<QByteArray> &data);
+    static QByteArray toMultiBulk(const QByteArrayList &data);
 
 private:
     bool connectToRedisServer();

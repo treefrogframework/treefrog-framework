@@ -112,7 +112,7 @@ bool TActionMailer::deliver(const QString &templateName)
         if (!cmd.isEmpty()) {
             TSendmailMailer *mailer = new TSendmailMailer(cmd);
             QByteArray rawmail = mail.toByteArray();
-            QList<QByteArray> recipients = mail.recipients();
+            QByteArrayList recipients = mail.recipients();
 
             if (delay) {
                 mailer->moveToThread(Tf::app()->databaseContextMainThread());

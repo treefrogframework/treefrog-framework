@@ -157,7 +157,7 @@ QByteArray THttpRequestHeader::cookie(const QString &name) const
 QList<TCookie> THttpRequestHeader::cookies() const
 {
     QList<TCookie> result;
-    const QList<QByteArray> cookieStrings = rawHeader("Cookie").split(';');
+    const QByteArrayList cookieStrings = rawHeader("Cookie").split(';');
 
     for (auto &ck : cookieStrings) {
         QByteArray ba = ck.trimmed();

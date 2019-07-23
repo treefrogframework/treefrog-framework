@@ -18,7 +18,7 @@ public:
 
     bool hasRawHeader(const QByteArray &key) const;
     QByteArray rawHeader(const QByteArray &key) const;
-    QList<QByteArray> rawHeaderList() const;
+    QByteArrayList rawHeaderList() const;
     void setRawHeader(const QByteArray &key, const QByteArray &value);
     void addRawHeader(const QByteArray &key, const QByteArray &value);
     void removeAllRawHeaders(const QByteArray &key);

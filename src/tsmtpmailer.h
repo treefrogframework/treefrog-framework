@@ -55,12 +55,12 @@ protected:
     bool cmdAuth();
     bool cmdRset();
     bool cmdMail(const QByteArray &from);
-    bool cmdRcpt(const QList<QByteArray> &to);
+    bool cmdRcpt(const QByteArrayList &to);
     bool cmdData(const QByteArray &message);
     bool cmdQuit();
 
-    int  cmd(const QByteArray &command, QList<QByteArray> *reply = nullptr);
-    int  read(QList<QByteArray> *reply = nullptr);
+    int  cmd(const QByteArray &command, QByteArrayList *reply = nullptr);
+    int  read(QByteArrayList *reply = nullptr);
     bool write(const QByteArray &command);
 
 private:

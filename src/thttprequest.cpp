@@ -494,9 +494,9 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             }
         } else if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
-                const QList<QByteArray> formdata = body.split('&');
+                const QByteArrayList formdata = body.split('&');
                 for (auto &frm : formdata) {
-                    QList<QByteArray> nameval = frm.split('=');
+                    QByteArrayList nameval = frm.split('=');
                     if (!nameval.value(0).isEmpty()) {
                         // URL decode
                         QString key = THttpUtility::fromUrlEncoding(nameval.value(0));
@@ -513,7 +513,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
 
     case Tf::Get: {
         // query parameter
-        QList<QByteArray> data = header.path().split('?');
+        QByteArrayList data = header.path().split('?');
         QString getdata = data.value(1);
         if (!getdata.isEmpty()) {
             const QStringList pairs = getdata.split('&', QString::SkipEmptyParts);

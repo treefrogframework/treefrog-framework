@@ -141,7 +141,7 @@ void TestMailMessage::addAddress()
     msg.addTo(to, name);
     msg.addCc(cc, name);
     msg.addBcc(bcc, name);
-    QList<QByteArray> lst;
+    QByteArrayList lst;
     lst << "aol2@aol.com" << "aol3@aol.com" << "aol4@aol.com";
     QCOMPARE(msg.recipients(), lst);
     //qDebug("%s", msg.toByteArray().data());
