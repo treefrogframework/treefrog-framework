@@ -4,7 +4,7 @@ CONFIG  += shared console c++14
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
 DEFINES += TF_MAKEDLL
-INCLUDEPATH += ../include
+INCLUDEPATH += ../include ../3rdparty/lz4/lib ../3rdparty/sqlite
 DEPENDPATH  += ../include
 MOC_DIR = .obj/
 OBJECTS_DIR = .obj/
@@ -28,7 +28,6 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  INCLUDEPATH += ../3rdparty/lz4/lib/
   win32-msvc* {
     LIBS += ../3rdparty/lz4/visual/liblz4_static.lib
   } else {
@@ -50,8 +49,7 @@ windows {
   test.path = $$header.path/TfTest
   INSTALLS += header script test
 } else:unix {
-  LIBS += ../3rdparty/lz4/lib/liblz4.a
-  INCLUDEPATH += ../3rdparty/lz4/lib
+  LIBS += ../3rdparty/lz4/lib/liblz4.a ../3rdparty/sqlite/.libs/libsqlite3.a
   macx:QMAKE_SONAME_PREFIX=@rpath
 
   header.files = $$HEADER_FILES $$HEADER_CLASSES
