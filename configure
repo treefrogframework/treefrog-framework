@@ -170,9 +170,11 @@ if [ -z "$ENABLE_SHARED_MONGOC" ] && ! which cmake >/dev/null 2>&1; then
 fi
 
 cd "$BASEDIR/src"
+rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_SHARED_MONGOC
 cd "$BASEDIR/tools"
+rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
 make qmake
@@ -213,6 +215,22 @@ if [ $RET != 0 ]; then
   echo "LZ4 not available."
   exit $RET
 fi
+echo "OK"
+
+# compile sqlite
+cd "$BASEDIR/3rdparty/sqlite"
+echo
+echo -n "Compiling SQLite ... "
+[ -f Makefile ] && make distclean
+./configure --with-pic >/dev/null 2>&1
+make -j$(nproc) >/dev/null 2>&1
+RET=$?
+if [ $RET != 0 ]; then
+  echo "failed"
+  echo "SQLite not available."
+  exit $RET
+fi
+echo "OK"
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
