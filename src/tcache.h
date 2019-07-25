@@ -9,7 +9,7 @@ class TSQLiteBlobStore;
 
 class T_CORE_EXPORT TCache {
 public:
-    TCache(qint64 thresholdFileSize, int gcDivisor = 100);
+    TCache(qint64 thresholdFileSize = 0, int gcDivisor = 100);
     ~TCache();
 
     bool insert(const QByteArray &key, const QByteArray &value, int seconds);

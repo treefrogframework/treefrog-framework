@@ -14,7 +14,7 @@ constexpr auto CACHE_FILE = "cache_db";
 
 
 TCache::TCache(qint64 thresholdFileSize, int gcDivisor) :
-    _thresholdFileSize(qMax(1LL, thresholdFileSize)),
+    _thresholdFileSize(thresholdFileSize),
     _gcDivisor(qMax(1, gcDivisor)),
     _blobStore(new TSQLiteBlobStore())
 {
@@ -43,7 +43,7 @@ bool TCache::insert(const QByteArray &key, const QByteArray &value, int seconds)
     // GC
     if (Tf::random(1, _gcDivisor) == 1) {
         int removed = 0;
-        if (fileSize() > _thresholdFileSize) {
+        if (_thresholdFileSize > 0 && fileSize() > _thresholdFileSize) {
             for (int i = 0; i < 8; i++) {
                 removed += _blobStore->removeOlder(count() * 0.3);
                 _blobStore->vacuum();
