@@ -4,6 +4,7 @@ Makefile
 *~
 *.bak
 .qmake.stash
+.vscode
 log/
 doc/
 src/trash/

@@ -143,6 +143,21 @@ bool TSQLiteBlobStore::open(const QByteArray &fileName)
          tSystemError("Failed to open database file for sqlite3 : %s", sqlite3_errmsg(_db));
     }
 
+    char *errmsg = nullptr;
+	rc = sqlite3_exec(_db,
+        "PRAGMA journal_mode=WAL;" \
+        "PRAGMA foreign_keys=ON;" \
+        "PRAGMA busy_timeout=5000;" \
+        "PRAGMA synchronous=NORMAL;",
+	    nullptr,
+	    nullptr,
+	    &errmsg
+    );
+    if (rc != SQLITE_OK) {
+        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    }
+    sqlite3_free(errmsg);
+
     return (rc == SQLITE_OK);
 }
 
