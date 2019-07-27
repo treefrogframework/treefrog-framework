@@ -23,6 +23,7 @@ public:
 
 private:
     qint64 fileSize() const;
+    void gc();
 
     qint64 _thresholdFileSize {0};
     int _gcDivisor {0};

@@ -34,30 +34,15 @@ bool TCache::insert(const QByteArray &key, const QByteArray &value, int seconds)
         return false;
     }
 
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
-    qint64 expire = current + seconds * 1000;
-
+    qint64 expire = QDateTime::currentMSecsSinceEpoch() + seconds * 1000;
     _blobStore->remove(key);
     bool ret = _blobStore->write(key, value, expire);
 
     // GC
     if (Tf::random(1, _gcDivisor) == 1) {
-        int removed = 0;
-        if (_thresholdFileSize > 0 && fileSize() > _thresholdFileSize) {
-            for (int i = 0; i < 8; i++) {
-                removed += _blobStore->removeOlder(count() * 0.3);
-                _blobStore->vacuum();
-                if (fileSize() < _thresholdFileSize * 0.8) {
-                    break;
-                }
-            }
-            tSystemDebug("removeOlder: %d\n", removed);
-        } else {
-            removed = _blobStore->removeOlderThan(current);
-            _blobStore->vacuum();
-            tSystemDebug("removeOlderThan: %d\n", removed);
-        }
+        gc();
     }
+
     return ret;
 }
 
@@ -117,4 +102,26 @@ bool TCache::setup()
 qint64 TCache::fileSize() const
 {
     return QFileInfo(CACHE_FILE).size();
+}
+
+
+void TCache::gc()
+{
+    int removed = 0;
+    qint64 current = QDateTime::currentMSecsSinceEpoch();
+
+    if (_thresholdFileSize > 0 && fileSize() > _thresholdFileSize) {
+        for (int i = 0; i < 8; i++) {
+            removed += _blobStore->removeOlder(count() * 0.3);
+            _blobStore->vacuum();
+            if (fileSize() < _thresholdFileSize * 0.8) {
+                break;
+            }
+        }
+        tSystemDebug("removeOlder: %d\n", removed);
+    } else {
+        removed = _blobStore->removeOlderThan(current);
+        _blobStore->vacuum();
+        tSystemDebug("removeOlderThan: %d\n", removed);
+    }
 }
