@@ -14,10 +14,14 @@ private slots:
     void initTestCase();
     void insert_data();
     void insert();
-    void bench_insert();
-    void bench_value();
-    void bench_insert_lz4();
-    void bench_value_lz4();
+    void bench_insert_binary();
+    void bench_value_binary();
+    void bench_insert_binary_lz4();
+    void bench_value_binary_lz4();
+    void bench_insert_text();
+    void bench_value_text();
+    void bench_insert_text_lz4();
+    void bench_value_text_lz4();
 };
 
 static QByteArray genval(const QByteArray &key)
@@ -45,23 +49,9 @@ void Cache::insert_data()
     QTest::addColumn<QByteArray>("val");
 
     qint64 n = FirstKey;
-    QTest::newRow("1") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("2") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("3") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("4") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("5") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("6") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("7") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("8") << QByteArray::number(n) << genval(QByteArray::number(n));
-    ++n;
-    QTest::newRow("9") << QByteArray::number(n) << genval(QByteArray::number(n));
+    for (int i = 0; i < 20; i++) {
+        QTest::newRow(QByteArray::number(i).data()) << QByteArray::number(n+i) << genval(QByteArray::number(n+i));
+    }
 }
 
 void Cache::insert()
@@ -78,7 +68,7 @@ void Cache::insert()
 }
 
 
-void Cache::bench_insert()
+void Cache::bench_insert_binary()
 {
     static TCache cache;
     cache.clear();
@@ -96,7 +86,7 @@ void Cache::bench_insert()
 }
 
 
-void Cache::bench_value()
+void Cache::bench_value_binary()
 {
     static TCache cache;
     QBENCHMARK {
@@ -108,7 +98,7 @@ void Cache::bench_value()
     }
 }
 
-void Cache::bench_insert_lz4()
+void Cache::bench_insert_binary_lz4()
 {
     static TCache cache;
     cache.clear();
@@ -128,7 +118,70 @@ void Cache::bench_insert_lz4()
 }
 
 
-void Cache::bench_value_lz4()
+void Cache::bench_value_binary_lz4()
+{
+    static TCache cache;
+    QBENCHMARK {
+        for (int i = 0; i < 100; i++) {
+            int r = Tf::random(FirstKey, FirstKey + NUM - 1);
+            auto val = Tf::lz4Uncompress(cache.value(QByteArray::number(r)));
+            Q_UNUSED(val);
+        }
+    }
+}
+
+
+void Cache::bench_insert_text()
+{
+    static TCache cache;
+    cache.clear();
+
+    for (int i = 0; i < 200; i++) {
+        cache.insert(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
+    }
+
+    QBENCHMARK {
+        for (int i = 0; i < 100; i++) {
+            int r = Tf::random(FirstKey, FirstKey + NUM - 1);
+            cache.insert(QByteArray::number(r), genval(QByteArray::number(r).toHex()), 60);
+        }
+    }
+}
+
+
+void Cache::bench_value_text()
+{
+    static TCache cache;
+    QBENCHMARK {
+        for (int i = 0; i < 100; i++) {
+            int r = Tf::random(FirstKey, FirstKey + NUM - 1);
+            auto val = cache.value(QByteArray::number(r));
+            Q_UNUSED(val);
+        }
+    }
+}
+
+void Cache::bench_insert_text_lz4()
+{
+    static TCache cache;
+    cache.clear();
+
+    for (int i = 0; i < 200; i++) {
+        cache.insert(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
+    }
+
+    QBENCHMARK {
+        for (int i = 0; i < 100; i++) {
+            int r = Tf::random(FirstKey, FirstKey + NUM - 1);
+            auto key = QByteArray::number(r);
+            auto val = Tf::lz4Compress(genval(key).toHex());
+            cache.insert(key, val, 60);
+        }
+    }
+}
+
+
+void Cache::bench_value_text_lz4()
 {
     static TCache cache;
     QBENCHMARK {
