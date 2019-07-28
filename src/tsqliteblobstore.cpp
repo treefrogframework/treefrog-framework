@@ -7,224 +7,104 @@
 
 #include "tsqliteblobstore.h"
 #include "tsystemglobal.h"
+#include "tsqlquery.h"
 #include <QByteArray>
 #include <QDateTime>
 #include <QFileInfo>
-#include <sqlite3.h>
 
 constexpr auto TABLE_NAME = "kb";
 constexpr auto KEY_COLUMN  = "k";
 constexpr auto BLOB_COLUMN = "b";
 constexpr auto TIMESTAMP_COLUMN = "t";
-
-
-class TSQLiteBlob {
-public:
-    TSQLiteBlob() {}
-    ~TSQLiteBlob() { close(); }
-
-    bool open(sqlite3 *db, const char *table, const char *column, sqlite3_int64 rowid);
-    void close();
-    bool isOpen() const { return (bool)_handle; }
-    bool read(QByteArray &data);
-    bool write(const QByteArray &data);
-    qint64 length() const;
-
-private:
-    sqlite3_blob *_handle {nullptr};
-};
-
-
-bool TSQLiteBlob::open(sqlite3 *db, const char *table, const char *column, sqlite3_int64 rowid)
-{
-    if (isOpen()) {
-        close();
-    }
-
-    int rc = sqlite3_blob_open(db, "main", table, column, rowid, 1, &_handle);
-    if (rc != SQLITE_OK) {
-        _handle = nullptr;
-        tSystemError("Failed to open blob of sqlite3 : %s [%d] ROWID:%lld\n", sqlite3_errmsg(db), rc, rowid);
-    }
-    return (rc == SQLITE_OK);
-}
-
-
-void TSQLiteBlob::close()
-{
-    if (isOpen()) {
-        sqlite3_blob_close(_handle);
-        _handle = nullptr;
-    }
-}
-
-
-bool TSQLiteBlob::read(QByteArray &data)
-{
-    auto len = length();
-    if (len < 1) {
-        return false;
-    }
-
-    // Read
-    data.reserve(len);
-    int rc = sqlite3_blob_read(_handle, data.data(), (int)len, 0);
-    if (rc != SQLITE_OK) {
-        tSystemError("Failed to read blob. Return code : %d", rc);
-        return false;
-    }
-
-    data.resize(len);
-    return true;
-}
-
-
-qint64 TSQLiteBlob::length() const
-{
-    return (isOpen()) ? sqlite3_blob_bytes(_handle) : -1;
-}
-
-
-bool TSQLiteBlob::write(const QByteArray &data)
-{
-    if (! isOpen()) {
-        return false;
-    }
-
-    int rc = sqlite3_blob_write(_handle, data.data(), (int)data.length(), 0);
-    if (rc != SQLITE_OK) {
-        tSystemError("Failed to write blob. Return code : %d", rc);
-        return false;
-    }
-    return true;
-}
+constexpr int  PAGESIZE = 4096;
 
 
 bool TSQLiteBlobStore::setup(const QByteArray &fileName)
 {
-    constexpr int PAGESIZE = 4096;
-    TSQLiteBlobStore store;
+    TSQLiteBlobStore sqlite(fileName);
 
-    if (! store.open(fileName)) {
+    if (! sqlite.open()) {
         return false;
     }
 
-    char *sql = sqlite3_mprintf(
-        "pragma page_size=%d;\n"
-        "vacuum;\n"
-        "begin;\n"
-        "create table if not exists %s (%s text primary key, %s blob, %s integer);\n"
-        "commit;\n",
-        PAGESIZE, TABLE_NAME, KEY_COLUMN, BLOB_COLUMN, TIMESTAMP_COLUMN
-    );
-
-    char *errmsg = nullptr;
-    int rc = sqlite3_exec(store._db, sql, nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("Failed to create a database : %s  [%s:%d]", sqlite3_errmsg(store._db), __FILE__, __LINE__);
-    }
-
-    sqlite3_free(errmsg);
-    sqlite3_free(sql);
-    store.close();
-    return true;
+    sqlite.exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
+    sqlite.exec(QStringLiteral("vacuum"));
+    sqlite.exec(QStringLiteral("begin"));
+    sqlite.exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    //sqlite.exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %4 blob, %3 integer)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    return sqlite.exec(QStringLiteral("commit"));
 }
 
 
-bool TSQLiteBlobStore::open(const QByteArray &fileName)
+TSQLiteBlobStore::TSQLiteBlobStore(const QString &fileName) :
+    _dbFile(fileName),
+    _connectionName(QString::number(QDateTime::currentMSecsSinceEpoch()))
+{}
+
+
+bool TSQLiteBlobStore::open()
 {
     if (isOpen()) {
-        close();
+        return true;
     }
 
-    int rc = sqlite3_open(fileName.data(), &_db);
-    if (rc != SQLITE_OK) {
-         _db = nullptr;
-         tSystemError("Failed to open database file for sqlite3 : %s", sqlite3_errmsg(_db));
-    }
+    _db = QSqlDatabase::addDatabase("QSQLITE", _connectionName);
+    _db.setDatabaseName(_dbFile);
 
-    char *errmsg = nullptr;
-	rc = sqlite3_exec(_db,
-        "PRAGMA journal_mode=WAL;" \
-        "PRAGMA foreign_keys=ON;" \
-        "PRAGMA busy_timeout=5000;" \
-        "PRAGMA synchronous=NORMAL;",
-	    nullptr,
-	    nullptr,
-	    &errmsg
-    );
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    bool ok = _db.open();
+    if  (ok) {
+        exec(QStringLiteral("pragma journal_mode=WAL"));
+        exec(QStringLiteral("pragma foreign_keys=ON"));
+        exec(QStringLiteral("pragma synchronous=NORMAL"));
+        exec(QStringLiteral("pragma busy_timeout=5000"));
+    } else {
+        printf("failed !!!!!!!!!!!!!\n");
     }
-    sqlite3_free(errmsg);
-
-    return (rc == SQLITE_OK);
+    return ok;
 }
 
 
 void TSQLiteBlobStore::close()
 {
     if (isOpen()) {
-        sqlite3_close(_db);
-        _db = nullptr;
+        _db.close();
     }
 }
 
 
 int TSQLiteBlobStore::count() const
 {
-    int cnt = -1;
-    auto sql = sqlite3_mprintf(
-	    "select count(1) from %s",
-	    TABLE_NAME
-	);
+    int cnt = 0;
 
-	sqlite3_stmt *stmt = nullptr;
-    int rc = sqlite3_prepare_v2(_db, sql, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_prepare_v2 failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-    } else {
-        if (sqlite3_step(stmt) != SQLITE_ROW) {
-            tSystemError("sqlite3_step failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-        } else {
-            cnt = sqlite3_column_int(stmt, 0);
-        }
+    if (! isOpen()) {
+        return cnt;
     }
 
-    sqlite3_free(sql);
-    sqlite3_finalize(stmt);
+    TSqlQuery query(_db);
+    QString sql = QStringLiteral("select count(1) from %1").arg(TABLE_NAME);
+
+    if (query.exec(sql) && query.next()) {
+        cnt = query.value(0).toInt();
+    }
     return cnt;
 }
 
 
 bool TSQLiteBlobStore::exists(const QByteArray &name) const
 {
-    if (name.isEmpty()) {
+    if (! isOpen()) {
         return false;
     }
 
-    auto sql = sqlite3_mprintf(
-        "select exists(select 1 from %s where %s=%Q limit 1)",
-        TABLE_NAME,
-        KEY_COLUMN,
-        name.data()
-    );
-
+    TSqlQuery query(_db);
     int exist = 0;
-	sqlite3_stmt *stmt = nullptr;
-    int rc = sqlite3_prepare_v2(_db, sql, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_prepare_v2 failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-    } else {
-        if (sqlite3_step(stmt) != SQLITE_ROW) {
-            tSystemError("sqlite3_step failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-        } else {
-            exist = sqlite3_column_int(stmt, 0);
-        }
-    }
+    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:val limit 1)").arg(TABLE_NAME).arg(KEY_COLUMN);
 
-    sqlite3_free(sql);
-    sqlite3_finalize(stmt);
+    query.prepare(sql);
+    query.bind(":val", name);
+    if (query.exec() && query.next()) {
+        exist = query.value(0).toInt();
+    }
     return (exist > 0);
 }
 
@@ -233,39 +113,27 @@ bool TSQLiteBlobStore::read(const QByteArray &name, QByteArray &blob, qint64 &ti
 {
     bool ret = false;
 
-    if (name.isEmpty()) {
+    if (! isOpen() || name.isEmpty()) {
         return ret;
     }
 
-    auto sql = sqlite3_mprintf(
-	    "select ROWID,%s from %s where %s=%Q",
-        TIMESTAMP_COLUMN,
-	    TABLE_NAME,
-        KEY_COLUMN,
-		name.data()
-	);
+    TSqlQuery query(_db);
 
-	sqlite3_stmt *stmt = nullptr;
-    int rc = sqlite3_prepare_v2(_db, sql, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_prepare_v2 failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-    } else {
-        if (sqlite3_step(stmt) != SQLITE_ROW) {
-            tSystemError("sqlite3_step failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+//    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:name").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
+    query.prepare(QStringLiteral("select t,b from kb where k=:name"));
+    query.bind(":name", name);
+    ret = query.exec();
+    if (ret) {
+        if (query.next()) {
+            timestamp = query.value(0).toLongLong();
+            blob = query.value(1).toByteArray();
         } else {
-            qint64 rowid = sqlite3_column_int64(stmt, 0);
-            timestamp = sqlite3_column_int64(stmt, 1);
-
-            TSQLiteBlob sqblob;
-            ret = sqblob.open(_db, TABLE_NAME, BLOB_COLUMN, rowid);
-            if (ret) {
-                ret = sqblob.read(blob);
-            }
+            timestamp = 0;
+            blob.resize(0);
         }
+    } else {
+        printf("read error: %s\n", qPrintable(_db.lastError().text()));
     }
-
-    sqlite3_free(sql);
-    sqlite3_finalize(stmt);
     return ret;
 }
 
@@ -274,142 +142,118 @@ bool TSQLiteBlobStore::write(const QByteArray &name, const QByteArray &blob, qin
 {
     bool ret = false;
 
-    if (name.isEmpty() || blob.isEmpty()) {
+    if (! isOpen() || name.isEmpty()) {
+        printf("##0 error:: %s\n", qPrintable(name));
         return ret;
     }
 
-    char *errmsg = nullptr;
-    int rc = sqlite3_exec(_db, "begin", nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("Failed to begin transaction : %s", errmsg);
-    }
-    sqlite3_free(errmsg);
+    TSqlQuery query(_db);
+    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:name,:ts,:blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
 
-    auto sql = sqlite3_mprintf(
-	    "insert into %s (%s,%s,%s) values (%Q,?1,%lld)",
-	    TABLE_NAME,
-        KEY_COLUMN,
-        BLOB_COLUMN,
-        TIMESTAMP_COLUMN,
-        name.data(),
-        timestamp
-	);
-
-	sqlite3_stmt *stmt = nullptr;
-    rc = sqlite3_prepare_v2(_db, sql, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_prepare_v2 failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-    } else {
-        rc = sqlite3_bind_blob(stmt, 1, blob.data(), blob.length(), SQLITE_STATIC);
-        if (rc != SQLITE_OK) {
-            tSystemError("sqlite3_bind_blob failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-        } else {
-            rc = sqlite3_step(stmt);
-            if (rc != SQLITE_DONE) {
-                tSystemError("sqlite3_step failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
-            } else {
-                ret = true;
-            }
-        }
+    query.prepare(sql);
+    query.bind(":name", name).bind(":ts", timestamp).bind(":blob", blob);
+    ret = query.exec();
+    if (! ret) {
+        printf("##2 error: %s\n", qPrintable(_db.lastError().text()));
     }
-
-    errmsg = nullptr;
-    rc = sqlite3_exec(_db, "commit", nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("Failed to commit transaction : %s", errmsg);
-    }
-    sqlite3_free(errmsg);
-    sqlite3_free(sql);
-    sqlite3_finalize(stmt);
     return ret;
 }
 
 
 int TSQLiteBlobStore::remove(const QByteArray &name)
 {
-    auto sql = sqlite3_mprintf(
-	    "delete from %s where %s=%Q",
-	    TABLE_NAME,
-        KEY_COLUMN,
-		name.data()
-	);
+    int cnt = -1;
 
-	char *errmsg = nullptr;
-	int rc = sqlite3_exec(_db, sql, nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    if (! isOpen() || name.isEmpty()) {
+        return cnt;
     }
-    sqlite3_free(errmsg);
-    sqlite3_free(sql);
-    return (rc != SQLITE_OK) ? -1 : sqlite3_changes(_db);
+
+    TSqlQuery query(_db);
+    QString sql = QStringLiteral("delete from %1 where %2=:name").arg(TABLE_NAME, KEY_COLUMN);
+
+    query.prepare(sql);
+    query.bind(":name", name);
+    if (query.exec()) {
+        cnt = query.numRowsAffected();
+    }
+    return cnt;
 }
 
 
 int TSQLiteBlobStore::removeOlder(int num)
 {
-    auto sql = sqlite3_mprintf(
-        "delete from %s where ROWID in (select ROWID from %s order by t asc limit %d)",
-        TABLE_NAME,
-        TABLE_NAME,
-        num
-	);
+    bool cnt = -1;
 
- 	char *errmsg = nullptr;
-	int rc = sqlite3_exec(_db, sql, nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    if (! isOpen() || num < 1) {
+        return cnt;
     }
-    sqlite3_free(errmsg);
-    sqlite3_free(sql);
-    return (rc != SQLITE_OK) ? -1 : sqlite3_changes(_db);
+
+    TSqlQuery query(_db);
+    QString sql = QStringLiteral("delete from %1 where ROWID in (select ROWID from %1 order by t asc limit :num)").arg(TABLE_NAME);
+
+    query.prepare(sql);
+    query.bind(":num", num);
+    if (query.exec()) {
+        cnt = query.numRowsAffected();
+    }
+    return cnt;
 }
 
 
 int TSQLiteBlobStore::removeOlderThan(qint64 timestamp)
 {
-    auto sql = sqlite3_mprintf(
-	    "delete from %s where %s<%lld",
-	    TABLE_NAME,
-        TIMESTAMP_COLUMN,
-		timestamp
-	);
+    bool cnt = -1;
 
-	char *errmsg = nullptr;
-	int rc = sqlite3_exec(_db, sql, nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    if (! isOpen()) {
+        return cnt;
     }
-    sqlite3_free(errmsg);
-    sqlite3_free(sql);
-    return (rc != SQLITE_OK) ? -1 : sqlite3_changes(_db);
+
+    TSqlQuery query(_db);
+    QString sql = QStringLiteral("delete from %1 where %2<:ts").arg(TABLE_NAME, TIMESTAMP_COLUMN);
+
+    query.prepare(sql);
+    query.bind(":ts", timestamp);
+    if (query.exec()) {
+        cnt = query.numRowsAffected();
+    }
+    return cnt;
 }
 
 
 int TSQLiteBlobStore::removeAll()
 {
-    auto sql = sqlite3_mprintf(
-	    "delete from %s",
-	    TABLE_NAME
-	);
+    bool cnt = -1;
 
-	char *errmsg = nullptr;
-	int rc = sqlite3_exec(_db, sql, nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    if (! isOpen()) {
+        return cnt;
     }
-    sqlite3_free(errmsg);
-    sqlite3_free(sql);
-    return (rc != SQLITE_OK) ? -1 : sqlite3_changes(_db);
+
+    TSqlQuery query(_db);
+    QString sql = QStringLiteral("delete from %1").arg(TABLE_NAME);
+
+    if (query.exec(sql)) {
+        cnt = query.numRowsAffected();
+    }
+    return cnt;
 }
 
 
 bool TSQLiteBlobStore::vacuum()
 {
-    char *errmsg = nullptr;
-	int rc = sqlite3_exec(_db, "vacuum", nullptr, nullptr, &errmsg);
-    if (rc != SQLITE_OK) {
-        tSystemError("sqlite3_exec failed: %s  [%s:%d]", sqlite3_errmsg(_db), __FILE__, __LINE__);
+    return exec(QStringLiteral("vacuum"));
+}
+
+
+bool TSQLiteBlobStore::exec(const QString &sql)
+{
+    if (! isOpen()) {
+        return false;
     }
-    sqlite3_free(errmsg);
-    return (rc == SQLITE_OK);
+
+    TSqlQuery query(_db);
+    bool ret = query.exec(sql);
+    if (! ret) {
+        printf("error: %s\n", qPrintable(_db.lastError().text()));
+    }
+    return ret;
 }

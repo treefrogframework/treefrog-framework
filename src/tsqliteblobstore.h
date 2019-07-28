@@ -3,19 +3,18 @@
 
 #include <TGlobal>
 #include <QByteArray>
-
-typedef struct sqlite3 sqlite3;
+#include <QSqlDatabase>
 
 
 class T_CORE_EXPORT TSQLiteBlobStore
 {
 public:
-    TSQLiteBlobStore() {}
+    TSQLiteBlobStore(const QString &fileName);
     ~TSQLiteBlobStore() { close(); }
 
-    bool open(const QByteArray &fileName);
+    bool open();
     void close();
-    bool isOpen() const { return (bool)_db; }
+    bool isOpen() const { return _db.isOpen(); }
 
     int count() const;
     bool exists(const QByteArray &name) const;
@@ -30,7 +29,11 @@ public:
     static bool setup(const QByteArray &fileName);
 
 private:
-    sqlite3 *_db  {nullptr};
+    bool exec(const QString &sql);
+
+    QString _dbFile;
+    QString _connectionName;
+    QSqlDatabase _db;
 };
 
 #endif // TSQLITEBLOBSTORE_H

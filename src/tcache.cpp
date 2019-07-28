@@ -16,9 +16,9 @@ constexpr auto CACHE_FILE = "cache_db";
 TCache::TCache(qint64 thresholdFileSize, int gcDivisor) :
     _thresholdFileSize(thresholdFileSize),
     _gcDivisor(qMax(1, gcDivisor)),
-    _blobStore(new TSQLiteBlobStore())
+    _blobStore(new TSQLiteBlobStore(CACHE_FILE))
 {
-    _blobStore->open(CACHE_FILE);
+    _blobStore->open();
 }
 
 
