@@ -7,11 +7,13 @@ static qint64 FirstKey;
 const int NUM = 500;
 
 
-class Cache : public QObject
+class TestCache : public QObject
 {
     Q_OBJECT
 private slots:
     void initTestCase();
+    void cleanupTestCase();
+    void test();
     void insert_data();
     void insert();
     void bench_insert_binary();
@@ -37,13 +39,58 @@ static QByteArray genval(const QByteArray &key)
     return ret;
 }
 
-void Cache::initTestCase()
+void TestCache::initTestCase()
 {
     TCache::setup();
     FirstKey = QDateTime::currentDateTime().toMSecsSinceEpoch();
 }
 
-void Cache::insert_data()
+void TestCache::cleanupTestCase()
+{ }
+
+void TestCache::test()
+{
+    TCache cache;
+    QByteArray buf;
+    cache.clear();
+
+    QVERIFY(cache.count() == 0);
+    QVERIFY(cache.value("hoge") == QByteArray());
+    QVERIFY(cache.insert("hoge", "value", 1) == true);
+    QVERIFY(cache.value("hoge") == "value");
+    QVERIFY(cache.count() == 1);
+    QVERIFY(cache.take("hoge") == "value");
+    QVERIFY(cache.count() == 0);
+
+    QVERIFY(cache.insert("hoge", "value", 1) == true);
+    QVERIFY(cache.insert("hoge", "value2", 1) == true);
+    QVERIFY(cache.value("hoge") == "value2");
+    QVERIFY(cache.count() == 1);
+    cache.remove("hoge");
+    QVERIFY(cache.value("hoge") == QByteArray());
+    QVERIFY(cache.count() == 0);
+
+    QVERIFY(cache.insert("hoge", "value", 1) == true);
+    QVERIFY(cache.count() == 1);
+    Tf::msleep(1100);
+    QVERIFY(cache.count() == 1);
+    QVERIFY(cache.value("hoge") == QByteArray());
+    cache.clear();
+    QVERIFY(cache.count() == 0);
+
+    for (int i = 0; i < 1000; i++) {
+        QByteArray key = "foo";
+        key += QByteArray::number(i);
+        QVERIFY(cache.insert(key, QByteArray::number(Tf::rand32_r()), 5) == true);
+    }
+    QVERIFY(cache.count() == 1000);
+    Tf::msleep(5000);
+    QVERIFY(cache.value("foo1") == QByteArray());
+    cache.clear();
+    QVERIFY(cache.count() == 0);
+}
+
+void TestCache::insert_data()
 {
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("val");
@@ -54,7 +101,7 @@ void Cache::insert_data()
     }
 }
 
-void Cache::insert()
+void TestCache::insert()
 {
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, val);
@@ -68,7 +115,7 @@ void Cache::insert()
 }
 
 
-void Cache::bench_insert_binary()
+void TestCache::bench_insert_binary()
 {
     static TCache cache;
     cache.clear();
@@ -86,7 +133,7 @@ void Cache::bench_insert_binary()
 }
 
 
-void Cache::bench_value_binary()
+void TestCache::bench_value_binary()
 {
     static TCache cache;
     QBENCHMARK {
@@ -98,7 +145,7 @@ void Cache::bench_value_binary()
     }
 }
 
-void Cache::bench_insert_binary_lz4()
+void TestCache::bench_insert_binary_lz4()
 {
     static TCache cache;
     cache.clear();
@@ -118,7 +165,7 @@ void Cache::bench_insert_binary_lz4()
 }
 
 
-void Cache::bench_value_binary_lz4()
+void TestCache::bench_value_binary_lz4()
 {
     static TCache cache;
     QBENCHMARK {
@@ -131,7 +178,7 @@ void Cache::bench_value_binary_lz4()
 }
 
 
-void Cache::bench_insert_text()
+void TestCache::bench_insert_text()
 {
     static TCache cache;
     cache.clear();
@@ -149,7 +196,7 @@ void Cache::bench_insert_text()
 }
 
 
-void Cache::bench_value_text()
+void TestCache::bench_value_text()
 {
     static TCache cache;
     QBENCHMARK {
@@ -161,7 +208,7 @@ void Cache::bench_value_text()
     }
 }
 
-void Cache::bench_insert_text_lz4()
+void TestCache::bench_insert_text_lz4()
 {
     static TCache cache;
     cache.clear();
@@ -181,7 +228,7 @@ void Cache::bench_insert_text_lz4()
 }
 
 
-void Cache::bench_value_text_lz4()
+void TestCache::bench_value_text_lz4()
 {
     static TCache cache;
     QBENCHMARK {
@@ -193,5 +240,5 @@ void Cache::bench_value_text_lz4()
     }
 }
 
-QTEST_APPLESS_MAIN(Cache)
+QTEST_APPLESS_MAIN(TestCache)
 #include "main.moc"

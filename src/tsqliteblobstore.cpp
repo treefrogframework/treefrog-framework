@@ -31,7 +31,6 @@ bool TSQLiteBlobStore::setup(const QByteArray &fileName)
     sqlite.exec(QStringLiteral("vacuum"));
     sqlite.exec(QStringLiteral("begin"));
     sqlite.exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
-    //sqlite.exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %4 blob, %3 integer)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
     return sqlite.exec(QStringLiteral("commit"));
 }
 
@@ -58,7 +57,7 @@ bool TSQLiteBlobStore::open()
         exec(QStringLiteral("pragma synchronous=NORMAL"));
         exec(QStringLiteral("pragma busy_timeout=5000"));
     } else {
-        printf("failed !!!!!!!!!!!!!\n");
+        tSystemError("SQLite open failed : %s", qPrintable(_dbFile));
     }
     return ok;
 }
@@ -74,7 +73,7 @@ void TSQLiteBlobStore::close()
 
 int TSQLiteBlobStore::count() const
 {
-    int cnt = 0;
+    int cnt = -1;
 
     if (! isOpen()) {
         return cnt;
@@ -98,10 +97,10 @@ bool TSQLiteBlobStore::exists(const QByteArray &name) const
 
     TSqlQuery query(_db);
     int exist = 0;
-    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:val limit 1)").arg(TABLE_NAME).arg(KEY_COLUMN);
+    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name limit 1)").arg(TABLE_NAME).arg(KEY_COLUMN);
 
     query.prepare(sql);
-    query.bind(":val", name);
+    query.bind(":name", name);
     if (query.exec() && query.next()) {
         exist = query.value(0).toInt();
     }
@@ -119,8 +118,7 @@ bool TSQLiteBlobStore::read(const QByteArray &name, QByteArray &blob, qint64 &ti
 
     TSqlQuery query(_db);
 
-//    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:name").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
-    query.prepare(QStringLiteral("select t,b from kb where k=:name"));
+    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:name").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
     query.bind(":name", name);
     ret = query.exec();
     if (ret) {
@@ -132,7 +130,7 @@ bool TSQLiteBlobStore::read(const QByteArray &name, QByteArray &blob, qint64 &ti
             blob.resize(0);
         }
     } else {
-        printf("read error: %s\n", qPrintable(_db.lastError().text()));
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -143,7 +141,6 @@ bool TSQLiteBlobStore::write(const QByteArray &name, const QByteArray &blob, qin
     bool ret = false;
 
     if (! isOpen() || name.isEmpty()) {
-        printf("##0 error:: %s\n", qPrintable(name));
         return ret;
     }
 
@@ -153,8 +150,8 @@ bool TSQLiteBlobStore::write(const QByteArray &name, const QByteArray &blob, qin
     query.prepare(sql);
     query.bind(":name", name).bind(":ts", timestamp).bind(":blob", blob);
     ret = query.exec();
-    if (! ret) {
-        printf("##2 error: %s\n", qPrintable(_db.lastError().text()));
+    if (!ret && _db.lastError().isValid()) {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -175,6 +172,8 @@ int TSQLiteBlobStore::remove(const QByteArray &name)
     query.bind(":name", name);
     if (query.exec()) {
         cnt = query.numRowsAffected();
+    } else {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -195,6 +194,8 @@ int TSQLiteBlobStore::removeOlder(int num)
     query.bind(":num", num);
     if (query.exec()) {
         cnt = query.numRowsAffected();
+    } else {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -215,6 +216,8 @@ int TSQLiteBlobStore::removeOlderThan(qint64 timestamp)
     query.bind(":ts", timestamp);
     if (query.exec()) {
         cnt = query.numRowsAffected();
+    } else {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -233,6 +236,8 @@ int TSQLiteBlobStore::removeAll()
 
     if (query.exec(sql)) {
         cnt = query.numRowsAffected();
+    } else {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -253,7 +258,7 @@ bool TSQLiteBlobStore::exec(const QString &sql)
     TSqlQuery query(_db);
     bool ret = query.exec(sql);
     if (! ret) {
-        printf("error: %s\n", qPrintable(_db.lastError().text()));
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return ret;
 }

@@ -305,10 +305,12 @@ HEADERS += tjsinstance.h
 SOURCES += tjsinstance.cpp
 HEADERS += treactcomponent.h
 SOURCES += treactcomponent.cpp
-HEADERS += tsqliteblobstore.h
-SOURCES += tsqliteblobstore.cpp
 HEADERS += tcache.h
 SOURCES += tcache.cpp
+HEADERS += tcachestore.h
+SOURCES += tcachestore.cpp
+HEADERS += tsqliteblobstore.h
+SOURCES += tsqliteblobstore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 
 HEADERS += \

@@ -4,7 +4,7 @@ SUBDIRS  = htmlescape httpheader hmac htmlparser
 SUBDIRS += mailmessage multipartformdata  smtpmailer viewhelper paginator
 SUBDIRS += fieldnametovariablename rand urlrouter urlrouter2
 SUBDIRS += sharedmemorylogstream buildtest stack queue forlist
-SUBDIRS += jscontext compression
+SUBDIRS += jscontext compression cache
 
 fwtests.target = test
 fwtests.commands = make check

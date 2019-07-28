@@ -9,6 +9,10 @@ class TSQLiteBlobStore;
 
 class T_CORE_EXPORT TCache {
 public:
+    enum CacheType {
+        FILE = 0,
+    };
+
     TCache(qint64 thresholdFileSize = 0, int gcDivisor = 100);
     ~TCache();
 

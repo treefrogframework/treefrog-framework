@@ -2,28 +2,28 @@
 #define TSQLITEBLOBSTORE_H
 
 #include <TGlobal>
-#include <QByteArray>
 #include <QSqlDatabase>
+#include "tcachestore.h"
 
 
-class T_CORE_EXPORT TSQLiteBlobStore
+class T_CORE_EXPORT TSQLiteBlobStore : public TCacheStore
 {
 public:
     TSQLiteBlobStore(const QString &fileName);
     ~TSQLiteBlobStore() { close(); }
 
-    bool open();
-    void close();
-    bool isOpen() const { return _db.isOpen(); }
+    bool open() override;
+    void close() override;
+    bool isOpen() const override { return _db.isOpen(); }
 
-    int count() const;
-    bool exists(const QByteArray &name) const;
-    bool read(const QByteArray &name, QByteArray &blob, qint64 &timestamp);
-    bool write(const QByteArray &name, const QByteArray &blob, qint64 timestamp);
-    int remove(const QByteArray &name);
+    int count() const override;
+    bool exists(const QByteArray &name) const override;
+    bool read(const QByteArray &name, QByteArray &blob, qint64 &timestamp) override;
+    bool write(const QByteArray &name, const QByteArray &blob, qint64 timestamp) override;
+    int remove(const QByteArray &name) override;
     int removeOlder(int itemCount);
     int removeOlderThan(qint64 timestamp);
-    int removeAll();
+    int removeAll() override;
     bool vacuum();
 
     static bool setup(const QByteArray &fileName);
