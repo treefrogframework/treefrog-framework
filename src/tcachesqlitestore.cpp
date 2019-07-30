@@ -5,7 +5,7 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "tsqliteblobstore.h"
+#include "tcachesqlitestore.h"
 #include "tsystemglobal.h"
 #include "tsqlquery.h"
 #include <QByteArray>
@@ -19,29 +19,14 @@ constexpr auto TIMESTAMP_COLUMN = "t";
 constexpr int  PAGESIZE = 4096;
 
 
-bool TSQLiteBlobStore::setup(const QByteArray &fileName)
-{
-    TSQLiteBlobStore sqlite(fileName);
-
-    if (! sqlite.open()) {
-        return false;
-    }
-
-    sqlite.exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
-    sqlite.exec(QStringLiteral("vacuum"));
-    sqlite.exec(QStringLiteral("begin"));
-    sqlite.exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
-    return sqlite.exec(QStringLiteral("commit"));
-}
-
-
-TSQLiteBlobStore::TSQLiteBlobStore(const QString &fileName) :
+TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, qint64 thresholdFileSize) :
     _dbFile(fileName),
+    _thresholdFileSize(thresholdFileSize),
     _connectionName(QString::number(QDateTime::currentMSecsSinceEpoch()))
 {}
 
 
-bool TSQLiteBlobStore::open()
+bool TCacheSQLiteStore::open()
 {
     if (isOpen()) {
         return true;
@@ -52,6 +37,12 @@ bool TSQLiteBlobStore::open()
 
     bool ok = _db.open();
     if  (ok) {
+        exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
+        exec(QStringLiteral("vacuum"));
+        exec(QStringLiteral("begin"));
+        exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+        exec(QStringLiteral("commit"));
+        //
         exec(QStringLiteral("pragma journal_mode=WAL"));
         exec(QStringLiteral("pragma foreign_keys=ON"));
         exec(QStringLiteral("pragma synchronous=NORMAL"));
@@ -63,7 +54,7 @@ bool TSQLiteBlobStore::open()
 }
 
 
-void TSQLiteBlobStore::close()
+void TCacheSQLiteStore::close()
 {
     if (isOpen()) {
         _db.close();
@@ -71,7 +62,7 @@ void TSQLiteBlobStore::close()
 }
 
 
-int TSQLiteBlobStore::count() const
+int TCacheSQLiteStore::count() const
 {
     int cnt = -1;
 
@@ -89,7 +80,7 @@ int TSQLiteBlobStore::count() const
 }
 
 
-bool TSQLiteBlobStore::exists(const QByteArray &name) const
+bool TCacheSQLiteStore::exists(const QByteArray &key) const
 {
     if (! isOpen()) {
         return false;
@@ -100,7 +91,7 @@ bool TSQLiteBlobStore::exists(const QByteArray &name) const
     QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name limit 1)").arg(TABLE_NAME).arg(KEY_COLUMN);
 
     query.prepare(sql);
-    query.bind(":name", name);
+    query.bind(":name", key);
     if (query.exec() && query.next()) {
         exist = query.value(0).toInt();
     }
@@ -108,26 +99,51 @@ bool TSQLiteBlobStore::exists(const QByteArray &name) const
 }
 
 
-bool TSQLiteBlobStore::read(const QByteArray &name, QByteArray &blob, qint64 &timestamp)
+QByteArray TCacheSQLiteStore::get(const QByteArray &key)
+{
+    QByteArray value;
+    qint64 expire = 0;
+    qint64 current = QDateTime::currentMSecsSinceEpoch();
+
+    if (read(key, value, expire)) {
+        if (expire < current) {
+            value.clear();
+            remove(key);
+        }
+    }
+    return value;
+}
+
+
+bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
+{
+    if (key.isEmpty() || msecs <= 0) {
+        return false;
+    }
+
+    remove(key);
+    qint64 expire = QDateTime::currentMSecsSinceEpoch() + msecs;
+    return write(key, value, expire);
+}
+
+
+bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &timestamp)
 {
     bool ret = false;
 
-    if (! isOpen() || name.isEmpty()) {
+    if (! isOpen() || key.isEmpty()) {
         return ret;
     }
 
     TSqlQuery query(_db);
 
-    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:name").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
-    query.bind(":name", name);
+    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:key").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
+    query.bind(":key", key);
     ret = query.exec();
     if (ret) {
         if (query.next()) {
             timestamp = query.value(0).toLongLong();
             blob = query.value(1).toByteArray();
-        } else {
-            timestamp = 0;
-            blob.resize(0);
         }
     } else {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
@@ -136,19 +152,19 @@ bool TSQLiteBlobStore::read(const QByteArray &name, QByteArray &blob, qint64 &ti
 }
 
 
-bool TSQLiteBlobStore::write(const QByteArray &name, const QByteArray &blob, qint64 timestamp)
+bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qint64 timestamp)
 {
     bool ret = false;
 
-    if (! isOpen() || name.isEmpty()) {
+    if (! isOpen() || key.isEmpty()) {
         return ret;
     }
 
     TSqlQuery query(_db);
-    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:name,:ts,:blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
+    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
 
     query.prepare(sql);
-    query.bind(":name", name).bind(":ts", timestamp).bind(":blob", blob);
+    query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
     ret = query.exec();
     if (!ret && _db.lastError().isValid()) {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
@@ -157,29 +173,35 @@ bool TSQLiteBlobStore::write(const QByteArray &name, const QByteArray &blob, qin
 }
 
 
-int TSQLiteBlobStore::remove(const QByteArray &name)
+bool TCacheSQLiteStore::remove(const QByteArray &key)
 {
-    int cnt = -1;
+    bool ret = false;
 
-    if (! isOpen() || name.isEmpty()) {
-        return cnt;
+    if (! isOpen() || key.isEmpty()) {
+        return ret;
     }
 
     TSqlQuery query(_db);
-    QString sql = QStringLiteral("delete from %1 where %2=:name").arg(TABLE_NAME, KEY_COLUMN);
+    QString sql = QStringLiteral("delete from %1 where %2=:key").arg(TABLE_NAME, KEY_COLUMN);
 
     query.prepare(sql);
-    query.bind(":name", name);
-    if (query.exec()) {
-        cnt = query.numRowsAffected();
-    } else {
+    query.bind(":key", key);
+    ret = query.exec();
+    if (! ret) {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    return cnt;
+    return ret;
 }
 
 
-int TSQLiteBlobStore::removeOlder(int num)
+void TCacheSQLiteStore::clear()
+{
+    removeAll();
+    vacuum();
+}
+
+
+int TCacheSQLiteStore::removeOlder(int num)
 {
     bool cnt = -1;
 
@@ -201,7 +223,7 @@ int TSQLiteBlobStore::removeOlder(int num)
 }
 
 
-int TSQLiteBlobStore::removeOlderThan(qint64 timestamp)
+int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
 {
     bool cnt = -1;
 
@@ -223,7 +245,7 @@ int TSQLiteBlobStore::removeOlderThan(qint64 timestamp)
 }
 
 
-int TSQLiteBlobStore::removeAll()
+int TCacheSQLiteStore::removeAll()
 {
     bool cnt = -1;
 
@@ -243,13 +265,13 @@ int TSQLiteBlobStore::removeAll()
 }
 
 
-bool TSQLiteBlobStore::vacuum()
+bool TCacheSQLiteStore::vacuum()
 {
     return exec(QStringLiteral("vacuum"));
 }
 
 
-bool TSQLiteBlobStore::exec(const QString &sql)
+bool TCacheSQLiteStore::exec(const QString &sql)
 {
     if (! isOpen()) {
         return false;
@@ -261,4 +283,29 @@ bool TSQLiteBlobStore::exec(const QString &sql)
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
     return ret;
+}
+
+
+qint64 TCacheSQLiteStore::fileSize() const
+{
+    return QFileInfo(_dbFile).size();
+}
+
+
+void TCacheSQLiteStore::gc()
+{
+    int removed = removeOlderThan(QDateTime::currentMSecsSinceEpoch());
+    tSystemDebug("removeOlderThan: %d\n", removed);
+    vacuum();
+
+    if (_thresholdFileSize > 0 && fileSize() > _thresholdFileSize) {
+        for (int i = 0; i < 3; i++) {
+            removed += removeOlder(count() * 0.3);
+            vacuum();
+            if (fileSize() < _thresholdFileSize * 0.8) {
+                break;
+            }
+        }
+        tSystemDebug("removeOlder: %d\n", removed);
+    }
 }

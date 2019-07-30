@@ -11,14 +11,10 @@ public:
     virtual ~TCacheStore() {}
     virtual bool open() = 0;
     virtual void close() = 0;
-    virtual bool isOpen() const = 0;
-
-    virtual int count() const = 0;
-    virtual bool exists(const QByteArray &name) const = 0;
-    virtual bool read(const QByteArray &name, QByteArray &blob, qint64 &timestamp) = 0;
-    virtual bool write(const QByteArray &name, const QByteArray &blob, qint64 timestamp) = 0;
-    virtual int remove(const QByteArray &name) = 0;
-    virtual int removeAll() = 0;
+    virtual QByteArray get(const QByteArray &key) = 0;
+    virtual bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) = 0;
+    virtual bool remove(const QByteArray &key) = 0;
+    virtual void clear() = 0;
     virtual void gc() = 0;
 };
 

@@ -11,6 +11,8 @@ src/trash/
 tools/tspawn/defaults/
 src/test/sharedmemorylogstream/log/
 Gemfile.lock
+3rdparty/**/*.cmake
+3rdparty/**/*.pc
 
 # Linux
 *.o

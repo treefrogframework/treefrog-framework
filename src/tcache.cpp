@@ -6,122 +6,64 @@
  */
 
 #include "tcache.h"
-#include "tsqliteblobstore.h"
+#include "tcachesqlitestore.h"
 #include "tsystemglobal.h"
 #include <QtCore>
 
 constexpr auto CACHE_FILE = "cache_db";
 
 
-TCache::TCache(qint64 thresholdFileSize, int gcDivisor) :
-    _thresholdFileSize(thresholdFileSize),
+TCache::TCache(CacheType, bool lz4Compression, int gcDivisor) :
+    _compression(lz4Compression),
     _gcDivisor(qMax(1, gcDivisor)),
-    _blobStore(new TSQLiteBlobStore(CACHE_FILE))
+    _cacheStore(new TCacheSQLiteStore(CACHE_FILE))
 {
-    _blobStore->open();
+    _cacheStore->open();
 }
 
 
 TCache::~TCache()
 {
-    delete _blobStore;
+    _cacheStore->close();
+    delete _cacheStore;
 }
 
 
-bool TCache::insert(const QByteArray &key, const QByteArray &value, int seconds)
+bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
 {
-    if (key.isEmpty() || value.isEmpty() || seconds <= 0) {
-        return false;
-    }
+    bool ret = false;
 
-    qint64 expire = QDateTime::currentMSecsSinceEpoch() + seconds * 1000;
-    _blobStore->remove(key);
-    bool ret = _blobStore->write(key, value, expire);
+    if (_compression) {
+        ret = _cacheStore->set(key, Tf::lz4Compress(value), msecs);
+    } else {
+        ret = _cacheStore->set(key, value, msecs);
+    }
 
     // GC
     if (Tf::random(1, _gcDivisor) == 1) {
-        gc();
+        _cacheStore->gc();
     }
-
     return ret;
 }
 
 
-QByteArray TCache::value(const QByteArray &key, const QByteArray &defaultValue)
+QByteArray TCache::get(const QByteArray &key)
 {
-    QByteArray blob;
-    qint64 expire = 0;
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
-
-    if (_blobStore->read(key, blob, expire)) {
-        if (expire > current) {
-            return blob;
-        } else {
-            remove(key);
-        }
+    QByteArray value = _cacheStore->get(key);
+    if (_compression) {
+        value = Tf::lz4Uncompress(value);
     }
-    return defaultValue;
-}
-
-
-QByteArray TCache::take(const QByteArray &key)
-{
-    QByteArray val = value(key);
-    if (! val.isNull()) {
-        remove(key);
-    }
-    return val;
+    return value;
 }
 
 
 void TCache::remove(const QByteArray &key)
 {
-    _blobStore->remove(key);
+    _cacheStore->remove(key);
 }
 
 
 void TCache::clear()
 {
-    _blobStore->removeAll();
-    _blobStore->vacuum();
-}
-
-
-int TCache::count() const
-{
-    return _blobStore->count();
-}
-
-
-bool TCache::setup()
-{
-    return TSQLiteBlobStore::setup(CACHE_FILE);
-}
-
-
-qint64 TCache::fileSize() const
-{
-    return QFileInfo(CACHE_FILE).size();
-}
-
-
-void TCache::gc()
-{
-    int removed = 0;
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
-
-    if (_thresholdFileSize > 0 && fileSize() > _thresholdFileSize) {
-        for (int i = 0; i < 8; i++) {
-            removed += _blobStore->removeOlder(count() * 0.3);
-            _blobStore->vacuum();
-            if (fileSize() < _thresholdFileSize * 0.8) {
-                break;
-            }
-        }
-        tSystemDebug("removeOlder: %d\n", removed);
-    } else {
-        removed = _blobStore->removeOlderThan(current);
-        _blobStore->vacuum();
-        tSystemDebug("removeOlderThan: %d\n", removed);
-    }
+    _cacheStore->clear();
 }

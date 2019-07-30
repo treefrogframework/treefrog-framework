@@ -4,34 +4,28 @@
 #include <TGlobal>
 #include <QByteArray>
 
-class TSQLiteBlobStore;
+class TCacheStore;
 
 
 class T_CORE_EXPORT TCache {
 public:
     enum CacheType {
-        FILE = 0,
+        File = 0,
+        Redis,
     };
 
-    TCache(qint64 thresholdFileSize = 0, int gcDivisor = 100);
+    TCache(CacheType type, bool lz4Compression = true, int gcDivisor = 100);
     ~TCache();
 
-    bool insert(const QByteArray &key, const QByteArray &value, int seconds);
-    QByteArray value(const QByteArray &key, const QByteArray &defaultValue = QByteArray());
-    QByteArray take(const QByteArray &key);
+    bool set(const QByteArray &key, const QByteArray &value, qint64 msecs);
+    QByteArray get(const QByteArray &key);
     void remove(const QByteArray &key);
-    int count() const;
     void clear();
 
-    static bool setup();
-
 private:
-    qint64 fileSize() const;
-    void gc();
-
-    qint64 _thresholdFileSize {0};
+    bool _compression {true};
     int _gcDivisor {0};
-    TSQLiteBlobStore *_blobStore {nullptr};
+    TCacheStore *_cacheStore {nullptr};
 };
 
 #endif // TCACHE_H

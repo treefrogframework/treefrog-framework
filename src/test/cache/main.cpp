@@ -41,7 +41,6 @@ static QByteArray genval(const QByteArray &key)
 
 void TestCache::initTestCase()
 {
-    TCache::setup();
     FirstKey = QDateTime::currentDateTime().toMSecsSinceEpoch();
 }
 
@@ -50,44 +49,34 @@ void TestCache::cleanupTestCase()
 
 void TestCache::test()
 {
-    TCache cache;
+    TCache cache(TCache::File);
     QByteArray buf;
     cache.clear();
 
-    QVERIFY(cache.count() == 0);
-    QVERIFY(cache.value("hoge") == QByteArray());
-    QVERIFY(cache.insert("hoge", "value", 1) == true);
-    QVERIFY(cache.value("hoge") == "value");
-    QVERIFY(cache.count() == 1);
-    QVERIFY(cache.take("hoge") == "value");
-    QVERIFY(cache.count() == 0);
+    QVERIFY(cache.get("hoge") == QByteArray());
+    QVERIFY(cache.set("hoge", "value", 1000) == true);
+    QVERIFY(cache.get("hoge") == "value");
 
-    QVERIFY(cache.insert("hoge", "value", 1) == true);
-    QVERIFY(cache.insert("hoge", "value2", 1) == true);
-    QVERIFY(cache.value("hoge") == "value2");
-    QVERIFY(cache.count() == 1);
+    QVERIFY(cache.set("hoge", "value", 1000) == true);
+    QVERIFY(cache.set("hoge", "value2", 1000) == true);
+    QVERIFY(cache.get("hoge") == "value2");
     cache.remove("hoge");
-    QVERIFY(cache.value("hoge") == QByteArray());
-    QVERIFY(cache.count() == 0);
+    QVERIFY(cache.get("hoge") == QByteArray());
 
-    QVERIFY(cache.insert("hoge", "value", 1) == true);
-    QVERIFY(cache.count() == 1);
+    QVERIFY(cache.set("hoge", "value", 1000) == true);
     Tf::msleep(1100);
-    QVERIFY(cache.count() == 1);
-    QVERIFY(cache.value("hoge") == QByteArray());
+    QVERIFY(cache.get("hoge") == QByteArray());
     cache.clear();
-    QVERIFY(cache.count() == 0);
 
     for (int i = 0; i < 1000; i++) {
         QByteArray key = "foo";
         key += QByteArray::number(i);
-        QVERIFY(cache.insert(key, QByteArray::number(Tf::rand32_r()), 5) == true);
+        QVERIFY(cache.set(key, QByteArray::number(Tf::rand32_r()), 5000) == true);
     }
-    QVERIFY(cache.count() == 1000);
+    QVERIFY(! cache.get("foo1").isEmpty());
     Tf::msleep(5000);
-    QVERIFY(cache.value("foo1") == QByteArray());
+    QVERIFY(cache.get("foo1") == QByteArray());
     cache.clear();
-    QVERIFY(cache.count() == 0);
 }
 
 void TestCache::insert_data()
@@ -106,10 +95,10 @@ void TestCache::insert()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, val);
 
-    static TCache cache;
+    static TCache cache(TCache::File);
 
-    cache.insert(key, val, 1000);
-    QByteArray res = cache.value(key);
+    cache.set(key, val, 1000);
+    QByteArray res = cache.get(key);
     QCOMPARE(res, val);
     qDebug() << "length of value: " << val.size();
 }
@@ -117,17 +106,17 @@ void TestCache::insert()
 
 void TestCache::bench_insert_binary()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, false);
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
-        cache.insert(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
+        cache.set(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
     }
 
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            cache.insert(QByteArray::number(r), genval(QByteArray::number(r)), 60);
+            cache.set(QByteArray::number(r), genval(QByteArray::number(r)), 60);
         }
     }
 }
@@ -135,11 +124,11 @@ void TestCache::bench_insert_binary()
 
 void TestCache::bench_value_binary()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, false);
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            auto val = cache.value(QByteArray::number(r));
+            auto val = cache.get(QByteArray::number(r));
             Q_UNUSED(val);
         }
     }
@@ -147,19 +136,19 @@ void TestCache::bench_value_binary()
 
 void TestCache::bench_insert_binary_lz4()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, true);
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
-        cache.insert(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
+        cache.set(QByteArray::number(FirstKey + i), (genval(QByteArray::number(FirstKey + i))), 60);
     }
 
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
             auto key = QByteArray::number(r);
-            auto val = Tf::lz4Compress(genval(key));
-            cache.insert(key, val, 60);
+            auto val = (genval(key));
+            cache.set(key, val, 60);
         }
     }
 }
@@ -167,11 +156,11 @@ void TestCache::bench_insert_binary_lz4()
 
 void TestCache::bench_value_binary_lz4()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, true);
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            auto val = Tf::lz4Uncompress(cache.value(QByteArray::number(r)));
+            auto val = (cache.get(QByteArray::number(r)));
             Q_UNUSED(val);
         }
     }
@@ -180,17 +169,17 @@ void TestCache::bench_value_binary_lz4()
 
 void TestCache::bench_insert_text()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, false);
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
-        cache.insert(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
+        cache.set(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
     }
 
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            cache.insert(QByteArray::number(r), genval(QByteArray::number(r).toHex()), 60);
+            cache.set(QByteArray::number(r), genval(QByteArray::number(r).toHex()), 60);
         }
     }
 }
@@ -198,11 +187,11 @@ void TestCache::bench_insert_text()
 
 void TestCache::bench_value_text()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, false);
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            auto val = cache.value(QByteArray::number(r));
+            auto val = cache.get(QByteArray::number(r));
             Q_UNUSED(val);
         }
     }
@@ -210,19 +199,19 @@ void TestCache::bench_value_text()
 
 void TestCache::bench_insert_text_lz4()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, true);
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
-        cache.insert(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
+        cache.set(QByteArray::number(FirstKey + i), (genval(QByteArray::number(FirstKey + i))), 60);
     }
 
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
             auto key = QByteArray::number(r);
-            auto val = Tf::lz4Compress(genval(key).toHex());
-            cache.insert(key, val, 60);
+            auto val = (genval(key).toHex());
+            cache.set(key, val, 60);
         }
     }
 }
@@ -230,11 +219,11 @@ void TestCache::bench_insert_text_lz4()
 
 void TestCache::bench_value_text_lz4()
 {
-    static TCache cache;
+    static TCache cache(TCache::File, true);
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            auto val = Tf::lz4Uncompress(cache.value(QByteArray::number(r)));
+            auto val = (cache.get(QByteArray::number(r)));
             Q_UNUSED(val);
         }
     }
