@@ -15,7 +15,7 @@ constexpr auto CACHE_FILE = "cache_db";
 
 TCache::TCache(CacheType, bool lz4Compression, int gcDivisor) :
     _compression(lz4Compression),
-    _gcDivisor(qMax(1, gcDivisor)),
+    _gcDivisor(gcDivisor),
     _cacheStore(new TCacheSQLiteStore(CACHE_FILE))
 {
     _cacheStore->open();
@@ -40,7 +40,7 @@ bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
     }
 
     // GC
-    if (Tf::random(1, _gcDivisor) == 1) {
+    if (_gcDivisor > 0 && Tf::random(1, _gcDivisor) == 1) {
         _cacheStore->gc();
     }
     return ret;
