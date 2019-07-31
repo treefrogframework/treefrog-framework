@@ -6,32 +6,48 @@
  */
 
 #include "tcache.h"
+#include "tcachefactory.h"
 #include "tcachesqlitestore.h"
 #include "tsystemglobal.h"
+#include <TAppSettings>
 #include <QtCore>
 
-constexpr auto CACHE_FILE = "cache_db";
 
-
-TCache::TCache(CacheType, bool lz4Compression, int gcDivisor) :
-    _compression(lz4Compression),
-    _gcDivisor(gcDivisor),
-    _cacheStore(new TCacheSQLiteStore(CACHE_FILE))
+TCache::TCache(BackEnd backend, bool lz4Compression) :
+    _compression(lz4Compression)
 {
-    _cacheStore->open();
+    _gcDivisor = TAppSettings::instance()->value(Tf::CacheGcProbability).toInt();
+    _cacheStore = TCacheFactory::create("singlefile");
 }
 
 
 TCache::~TCache()
 {
-    _cacheStore->close();
-    delete _cacheStore;
+    TCacheFactory::destroy("singlefile", _cacheStore);
+}
+
+
+bool TCache::open()
+{
+    return  (_cacheStore) ? _cacheStore->open() : false;
+}
+
+
+void TCache::close()
+{
+    if (_cacheStore) {
+        _cacheStore->close();
+    }
 }
 
 
 bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
 {
     bool ret = false;
+
+    if (! _cacheStore) {
+        return ret;
+    }
 
     if (_compression) {
         ret = _cacheStore->set(key, Tf::lz4Compress(value), msecs);
@@ -49,7 +65,13 @@ bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
 
 QByteArray TCache::get(const QByteArray &key)
 {
-    QByteArray value = _cacheStore->get(key);
+    QByteArray value;
+
+    if (! _cacheStore) {
+        return value;
+    }
+
+    value = _cacheStore->get(key);
     if (_compression) {
         value = Tf::lz4Uncompress(value);
     }
@@ -59,11 +81,15 @@ QByteArray TCache::get(const QByteArray &key)
 
 void TCache::remove(const QByteArray &key)
 {
-    _cacheStore->remove(key);
+    if (_cacheStore) {
+        _cacheStore->remove(key);
+    }
 }
 
 
 void TCache::clear()
 {
-    _cacheStore->clear();
+    if (_cacheStore) {
+        _cacheStore->clear();
+    }
 }

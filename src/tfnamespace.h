@@ -199,6 +199,10 @@ namespace Tf
         //
         SessionCookieMaxAge,
         SessionCookieDomain,
+        //
+        CacheGcProbability,
+        CacheSingleFileFilePath,
+        CacheSingleFileFileSizeThreshold,
     };
 
     // Reason codes why a web socket has been closed

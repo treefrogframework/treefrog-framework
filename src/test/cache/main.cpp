@@ -1,10 +1,11 @@
-#include <QTest>
+#include <TfTest/TfTest>
 #include <QtCore>
 #include <QDebug>
-#include "tcache.h"
+#include "tcachesqlitestore.h"
 
 static qint64 FirstKey;
 const int NUM = 500;
+constexpr auto CACHE_FILE = "cachedb";
 
 
 class TestCache : public QObject
@@ -49,7 +50,8 @@ void TestCache::cleanupTestCase()
 
 void TestCache::test()
 {
-    TCache cache(TCache::File);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
     QByteArray buf;
     cache.clear();
 
@@ -77,6 +79,8 @@ void TestCache::test()
     Tf::msleep(5000);
     QVERIFY(cache.get("foo1") == QByteArray());
     cache.clear();
+
+    cache.close();
 }
 
 void TestCache::insert_data()
@@ -95,18 +99,21 @@ void TestCache::insert()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, val);
 
-    static TCache cache(TCache::File);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
 
     cache.set(key, val, 1000);
     QByteArray res = cache.get(key);
     QCOMPARE(res, val);
     qDebug() << "length of value: " << val.size();
+    cache.close();
 }
 
 
 void TestCache::bench_insert_binary()
 {
-    static TCache cache(TCache::File, false);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
@@ -119,12 +126,15 @@ void TestCache::bench_insert_binary()
             cache.set(QByteArray::number(r), genval(QByteArray::number(r)), 60);
         }
     }
+    cache.close();
 }
 
 
 void TestCache::bench_value_binary()
 {
-    static TCache cache(TCache::File, false);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
+
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
@@ -132,15 +142,17 @@ void TestCache::bench_value_binary()
             Q_UNUSED(val);
         }
     }
+    cache.close();
 }
 
 void TestCache::bench_insert_binary_lz4()
 {
-    static TCache cache(TCache::File, true);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
-        cache.set(QByteArray::number(FirstKey + i), (genval(QByteArray::number(FirstKey + i))), 60);
+        cache.set(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
     }
 
     QBENCHMARK {
@@ -151,25 +163,30 @@ void TestCache::bench_insert_binary_lz4()
             cache.set(key, val, 60);
         }
     }
+    cache.close();
 }
 
 
 void TestCache::bench_value_binary_lz4()
 {
-    static TCache cache(TCache::File, true);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
+
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            auto val = (cache.get(QByteArray::number(r)));
+            auto val = Tf::lz4Uncompress(cache.get(QByteArray::number(r)));
             Q_UNUSED(val);
         }
     }
+    cache.close();
 }
 
 
 void TestCache::bench_insert_text()
 {
-    static TCache cache(TCache::File, false);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
@@ -182,12 +199,15 @@ void TestCache::bench_insert_text()
             cache.set(QByteArray::number(r), genval(QByteArray::number(r).toHex()), 60);
         }
     }
+    cache.close();
 }
 
 
 void TestCache::bench_value_text()
 {
-    static TCache cache(TCache::File, false);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
+
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
@@ -199,11 +219,12 @@ void TestCache::bench_value_text()
 
 void TestCache::bench_insert_text_lz4()
 {
-    static TCache cache(TCache::File, true);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
     cache.clear();
 
     for (int i = 0; i < 200; i++) {
-        cache.set(QByteArray::number(FirstKey + i), (genval(QByteArray::number(FirstKey + i))), 60);
+        cache.set(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
     }
 
     QBENCHMARK {
@@ -219,15 +240,17 @@ void TestCache::bench_insert_text_lz4()
 
 void TestCache::bench_value_text_lz4()
 {
-    static TCache cache(TCache::File, true);
+    TCacheSQLiteStore cache(CACHE_FILE);
+    cache.open();
+
     QBENCHMARK {
         for (int i = 0; i < 100; i++) {
             int r = Tf::random(FirstKey, FirstKey + NUM - 1);
-            auto val = (cache.get(QByteArray::number(r)));
+            auto val = Tf::lz4Uncompress(cache.get(QByteArray::number(r)));
             Q_UNUSED(val);
         }
     }
 }
 
-QTEST_APPLESS_MAIN(TestCache)
+TF_TEST_SQLLESS_MAIN(TestCache)
 #include "main.moc"

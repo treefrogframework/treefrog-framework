@@ -32,9 +32,14 @@ bool TCacheSQLiteStore::open()
         return true;
     }
 
-    _db = QSqlDatabase::addDatabase("QSQLITE", _connectionName);
-    _db.setDatabaseName(_dbFile);
+    static bool init = [&]() {
+        auto db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(_dbFile);
+        return db.open();
+    }();
+    Q_UNUSED(init);
 
+    _db = QSqlDatabase::database();
     bool ok = _db.open();
     if  (ok) {
         exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
@@ -56,9 +61,13 @@ bool TCacheSQLiteStore::open()
 
 void TCacheSQLiteStore::close()
 {
-    if (isOpen()) {
-        _db.close();
-    }
+    _db.close();
+}
+
+
+bool TCacheSQLiteStore::isOpen() const
+{
+    return _db.isOpen();
 }
 
 

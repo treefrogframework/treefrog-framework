@@ -9,12 +9,14 @@
 class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore
 {
 public:
+    TCacheSQLiteStore() {}
     TCacheSQLiteStore(const QString &fileName, qint64 thresholdFileSize = 0);
     ~TCacheSQLiteStore() { close(); }
 
+    QString key() const { return "singlefile"; }
     bool open() override;
     void close() override;
-    bool isOpen() const { return _db.isOpen(); }
+    bool isOpen() const;
 
     QByteArray get(const QByteArray &key) override;
     bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) override;
@@ -24,8 +26,8 @@ public:
 
     bool exists(const QByteArray &key) const;
     int count() const;
-    bool read(const QByteArray &name, QByteArray &blob, qint64 &timestamp);
-    bool write(const QByteArray &name, const QByteArray &blob, qint64 timestamp);
+    bool read(const QByteArray &key, QByteArray &blob, qint64 &timestamp);
+    bool write(const QByteArray &key, const QByteArray &blob, qint64 timestamp);
     int removeOlder(int itemCount);
     int removeOlderThan(qint64 timestamp);
     int removeAll();

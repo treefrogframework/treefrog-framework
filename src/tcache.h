@@ -9,14 +9,17 @@ class TCacheStore;
 
 class T_CORE_EXPORT TCache {
 public:
-    enum CacheType {
-        File = 0,
+    enum BackEnd {
+        SingleFile = 0,
         Redis,
+        MongoDB,
     };
 
-    TCache(CacheType type, bool lz4Compression = true, int gcDivisor = 100);
+    TCache(BackEnd backend, bool lz4Compression = true);
     ~TCache();
 
+    bool open();
+    void close();
     bool set(const QByteArray &key, const QByteArray &value, qint64 msecs);
     QByteArray get(const QByteArray &key);
     void remove(const QByteArray &key);
