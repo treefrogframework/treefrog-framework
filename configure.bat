@@ -56,10 +56,10 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
-for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
-for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
-for %%I in (cl.exe)    do if exist %%~$path:I set MSCOMPILER=%%~$path:I
-for %%I in (g++.exe)   do if exist %%~$path:I set GNUCOMPILER=%%~$path:I
+for %%I in (qmake.exe)  do if exist %%~$path:I set QMAKE=%%~$path:I
+for %%I in (cmake.exe)  do if exist %%~$path:I set CMAKE=%%~$path:I
+for %%I in (cl.exe)     do if exist %%~$path:I set MSCOMPILER=%%~$path:I
+for %%I in (devenv.exe) do if exist %%~$path:I set DEVENV=%%~$path:I
 
 if "%QMAKE%" == "" (
   echo Qt environment not found
@@ -69,8 +69,8 @@ if "%CMAKE%" == "" (
   echo CMake not found
   exit /b
 )
-if "%MSCOMPILER%" == "" if "%GNUCOMPILER%"  == "" (
-  echo compiler not found
+if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
+  echo MSVC Compiler not found
   exit /b
 )
 
@@ -82,39 +82,34 @@ for /f usebackq %%I in (`qtpaths.exe --install-prefix`) do (
 :break
 
 :: vcvarsall.bat setup
-if not "%MSCOMPILER%" == "" (
-  set MAKE=nmake
-  if /i "%Platform%" == "x64" (
-    set VCVARSOPT=amd64
-    set BUILDTARGET=x64
-    set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-  ) else (
-    set VCVARSOPT=x86
-    set BUILDTARGET=win32
-    set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
-  )
+set MAKE=nmake
+if /i "%Platform%" == "x64" (
+  set VCVARSOPT=amd64
+  set BUILDTARGET=x64
+  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+) else (
+  set VCVARSOPT=x86
+  set BUILDTARGET=win32
+  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+)
 
-  echo %QT_INSTALL_PREFIX% | find "msvc2015" >NUL
-  if not ERRORLEVEL 1 (
-    if /i "%Platform%" == "x64" (
-      set CMAKEOPT=Visual Studio 14 2015 Win64
-    ) else (
-      set CMAKEOPT=Visual Studio 14 2015
-    )
+echo %QT_INSTALL_PREFIX% | find "msvc2015" >NUL
+if not ERRORLEVEL 1 (
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=Visual Studio 14 2015 Win64
   ) else (
-    if /i "%Platform%" == "x64" (
-      set CMAKEOPT=Visual Studio 15 2017 Win64
-    ) else (
-      set CMAKEOPT=Visual Studio 15 2017
-    )
+    set CMAKEOPT=Visual Studio 14 2015
   )
 ) else (
-  set MAKE=mingw32-make -j%NUMBER_OF_PROCESSORS%
-  set ENVSTR=Environment to build for executable MinGW / Qt
+   if /i "%Platform%" == "x64" (
+    set CMAKEOPT=Visual Studio 15 2017 Win64
+  ) else (
+    set CMAKEOPT=Visual Studio 15 2017
+  )
 )
+
 SET /P X="%ENVSTR%"<NUL
 qtpaths.exe --qt-version
-
 
 for %%I in (qtenv2.bat) do if exist %%~$path:I set QTENV=%%~$path:I
 set TFENV=tfenv.bat
@@ -160,6 +155,14 @@ del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
 cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF .
 echo Compiling BSON library ...
 devenv libbson.sln /project bson_static /rebuild Release >nul 2>&1
+if ERRORLEVEL 1 (
+  :: Shows error
+  devenv libbson.sln /project bson_static /build Release
+  echo;
+  echo Build failed.
+  echo MongoDB driver not available.
+  exit /b
+)
 
 cd %BASEDIR%3rdparty\mongo-driver
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
@@ -168,6 +171,9 @@ cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DEN
 echo Compiling MongoDB driver library ...
 devenv libmongoc.sln /project mongoc_static /rebuild Release >nul 2>&1
 if ERRORLEVEL 1 (
+  :: Shows error
+  devenv libmongoc.sln /project mongoc_static /build Release
+  echo;
   echo Build failed.
   echo MongoDB driver not available.
   exit /b
@@ -179,23 +185,20 @@ echo Compiling LZ4 library ...
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-if not "%MSCOMPILER%" == "" (
-  for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
-  if not ERRORLEVEL 1 (
-    devenv lz4\visual\VS2015\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
-  ) else (
-    devenv lz4\visual\VS2017\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
-  )
-  if ERRORLEVEL 1 (
-    echo Build failed.
-    echo LZ4 not available.
-    exit /b
-  )
+for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
+if not ERRORLEVEL 1 (
+  set VS=VS2015
 ) else (
-  cd %BASEDIR%3rdparty\lz4\lib
-  qmake -o makefile.liblz4
-  %MAKE% -f makefile.liblz4 clean >nul 2>&1
-  %MAKE% -f makefile.liblz4 >nul 2>&1
+  set VS=VS2017
+)
+devenv lz4\visual\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
+if ERRORLEVEL 1 (
+  :: Shows error
+  devenv lz4\visual\%VS%\lz4.sln /project liblz4 /build "Release|%BUILDTARGET%"
+  echo;
+  echo Build failed.
+  echo LZ4 not available.
+  exit /b
 )
 
 cd %BASEDIR%src
