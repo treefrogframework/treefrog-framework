@@ -200,6 +200,7 @@ namespace Tf
         SessionCookieMaxAge,
         SessionCookieDomain,
         //
+        CacheBackend,
         CacheGcProbability,
         CacheSingleFileFilePath,
         CacheSingleFileFileSizeThreshold,
