@@ -4,14 +4,14 @@
 #include <TAppSettings>
 #include <QDir>
 
-static const QString SINGLEFILE_KEY = TCacheSQLiteStore().key().toLower();
+const QString SINGLEFILE_CACHE_KEY = TCacheSQLiteStore().key().toLower();
 
 
 QStringList TCacheFactory::keys()
 {
     QStringList ret;
 
-    ret << SINGLEFILE_KEY;
+    ret << SINGLEFILE_CACHE_KEY;
     return ret;
 }
 
@@ -21,7 +21,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
     TCacheStore *ptr = nullptr;
 
     QString k = key.toLower();
-    if (k == SINGLEFILE_KEY) {
+    if (k == SINGLEFILE_CACHE_KEY) {
         static const int FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileFileSizeThreshold).toInt();
         static const QString filepath = [] {
             QString path = TAppSettings::instance()->value(Tf::CacheSingleFileFilePath).toString().trimmed();
@@ -44,7 +44,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
 void TCacheFactory::destroy(const QString &key, TCacheStore *store)
 {
     QString k = key.toLower();
-    if (k == SINGLEFILE_KEY) {
+    if (k == SINGLEFILE_CACHE_KEY) {
         delete store;
     }
 }

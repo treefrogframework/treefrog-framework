@@ -23,6 +23,12 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+const QString COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
+const QString SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
+const QString FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
+const QString REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
+const QString MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
+
 static QMutex mutex;
 static QMap<QString, TSessionStoreInterface*> *sessIfMap = nullptr;
 
@@ -54,11 +60,11 @@ QStringList TSessionStoreFactory::keys()
     QStringList ret;
 
     loadPlugins();
-    ret << TSessionSqlObjectStore().key().toLower()
-        << TSessionCookieStore().key().toLower()
-        << TSessionFileStore().key().toLower()
-        << TSessionRedisStore().key().toLower()
-        << TSessionMongoStore().key().toLower()
+    ret << COOKIE_SESSION_KEY
+        << SQLOBJECT_SESSION_KEY
+        << FILE_SESSION_KEY
+        << REDIS_SESSION_KEY
+        << MONGODB_SESSION_KEY
         << sessIfMap->keys();
 
     return ret;
@@ -70,29 +76,23 @@ QStringList TSessionStoreFactory::keys()
 */
 TSessionStore *TSessionStoreFactory::create(const QString &key)
 {
-    static const QString COOKIE_KEY = TSessionCookieStore().key().toLower();
-    static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
-    static const QString FILE_KEY = TSessionFileStore().key().toLower();
-    static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
-    static const QString MONGODB_KEY = TSessionMongoStore().key().toLower();
-
     loadPlugins();
     TSessionStore *ret = nullptr;
 
     QString k = key.toLower();
-    if (k == COOKIE_KEY) {
+    if (k == COOKIE_SESSION_KEY) {
         static TSessionCookieStore cookieStore;
         ret = &cookieStore;
-    } else if (k == SQLOBJECT_KEY) {
+    } else if (k == SQLOBJECT_SESSION_KEY) {
         static TSessionSqlObjectStore sqlObjectStore;
         ret = &sqlObjectStore;
-    } else if (k == FILE_KEY) {
+    } else if (k == FILE_SESSION_KEY) {
         static TSessionFileStore fileStore;
         ret = &fileStore;
-    } else if (k == REDIS_KEY) {
+    } else if (k == REDIS_SESSION_KEY) {
         static TSessionRedisStore redisStore;
         ret = &redisStore;
-    } else if (k == MONGODB_KEY) {
+    } else if (k == MONGODB_SESSION_KEY) {
         static TSessionMongoStore mongoStore;
         ret = &mongoStore;
     } else {
@@ -110,26 +110,20 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
  */
 void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
 {
-    static const QString COOKIE_KEY = TSessionCookieStore().key().toLower();
-    static const QString SQLOBJECT_KEY = TSessionSqlObjectStore().key().toLower();
-    static const QString FILE_KEY = TSessionFileStore().key().toLower();
-    static const QString REDIS_KEY = TSessionRedisStore().key().toLower();
-    static const QString MONGODB_KEY = TSessionMongoStore().key().toLower();
-
     if (!store) {
         return;
     }
 
     QString k = key.toLower();
-    if (k == COOKIE_KEY) {
+    if (k == COOKIE_SESSION_KEY) {
         // do nothing
-    } else if (k == SQLOBJECT_KEY) {
+    } else if (k == SQLOBJECT_SESSION_KEY) {
         // do nothing
-    } else if (k == FILE_KEY) {
+    } else if (k == FILE_SESSION_KEY) {
         // do nothing
-    } else if (k == REDIS_KEY) {
+    } else if (k == REDIS_SESSION_KEY) {
         // do nothing
-    } else if (k == MONGODB_KEY) {
+    } else if (k == MONGODB_SESSION_KEY) {
         // do nothing
     } else {
         TSessionStoreInterface *ssif = sessIfMap->value(k);
