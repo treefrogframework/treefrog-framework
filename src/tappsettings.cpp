@@ -78,8 +78,8 @@ public:
         insert(Tf::ActionMailerSendmailCommandLocation, "ActionMailer.sendmail.CommandLocation");
         insert(Tf::CacheBackend, "Cache.Backend");
         insert(Tf::CacheGcProbability, "Cache.GcProbability");
-        insert(Tf::CacheSingleFileFilePath, "Cache.singlefile.FilePath");
-        insert(Tf::CacheSingleFileFileSizeThreshold, "Cache.singlefile.FileSizeThreshold");
+        insert(Tf::CacheSingleFileDbFilePath, "Cache.singlefiledb.FilePath");
+        insert(Tf::CacheSingleFileDbFileSizeThreshold, "Cache.singlefiledb.FileSizeThreshold");
     }
 };
 Q_GLOBAL_STATIC(AttributeMap, attributeMap)

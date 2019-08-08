@@ -202,8 +202,8 @@ namespace Tf
         //
         CacheBackend,
         CacheGcProbability,
-        CacheSingleFileFilePath,
-        CacheSingleFileFileSizeThreshold,
+        CacheSingleFileDbFilePath,
+        CacheSingleFileDbFileSizeThreshold,
     };
 
     // Reason codes why a web socket has been closed
