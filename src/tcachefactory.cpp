@@ -4,13 +4,24 @@
 #include <TAppSettings>
 #include <QDir>
 
-const QString SINGLEFILE_CACHE_KEY = TCacheSQLiteStore().key().toLower();
+static QString SINGLEFILE_CACHE_KEY;
+
+
+static void loadCacheKeys()
+{
+    static bool done = []() {
+        SINGLEFILE_CACHE_KEY = TCacheSQLiteStore().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
 
 
 QStringList TCacheFactory::keys()
 {
-    QStringList ret;
+    loadCacheKeys();
 
+    QStringList ret;
     ret << SINGLEFILE_CACHE_KEY;
     return ret;
 }
@@ -19,6 +30,7 @@ QStringList TCacheFactory::keys()
 TCacheStore *TCacheFactory::create(const QString &key)
 {
     TCacheStore *ptr = nullptr;
+    loadCacheKeys();
 
     QString k = key.toLower();
     if (k == SINGLEFILE_CACHE_KEY) {
@@ -43,6 +55,8 @@ TCacheStore *TCacheFactory::create(const QString &key)
 
 void TCacheFactory::destroy(const QString &key, TCacheStore *store)
 {
+    loadCacheKeys();
+
     QString k = key.toLower();
     if (k == SINGLEFILE_CACHE_KEY) {
         delete store;

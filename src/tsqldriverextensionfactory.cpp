@@ -162,8 +162,20 @@ QString TPostgreSQLDriverExtension::upsertStatement(const QString &tableName, co
 }
 
 // Extension Keys
-const QString MYSQL_KEY = TMySQLDriverExtension().key().toLower();
-const QString PSQL_KEY  = TPostgreSQLDriverExtension().key().toLower();
+static QString MYSQL_KEY;
+static QString PSQL_KEY;
+
+
+static void loadKeys()
+{
+    static bool done = []() {
+        // Constants
+        MYSQL_KEY = TMySQLDriverExtension().key().toLower();
+        PSQL_KEY  = TPostgreSQLDriverExtension().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
 
 /*!
   TSqlDriverExtensionFactory class
@@ -171,6 +183,8 @@ const QString PSQL_KEY  = TPostgreSQLDriverExtension().key().toLower();
 QStringList TSqlDriverExtensionFactory::keys()
 {
     QStringList ret;
+
+    loadKeys();
     ret << TMySQLDriverExtension().key().toLower();
     return ret;
 }
@@ -178,6 +192,8 @@ QStringList TSqlDriverExtensionFactory::keys()
 TSqlDriverExtension *TSqlDriverExtensionFactory::create(const QString &key, const QSqlDriver *driver)
 {
     TSqlDriverExtension *extension = nullptr;
+
+    loadKeys();
     QString k = key.toLower();
     if (k == MYSQL_KEY) {
         extension = new TMySQLDriverExtension(driver);
@@ -194,6 +210,7 @@ void TSqlDriverExtensionFactory::destroy(const QString &key, TSqlDriverExtension
         return;
     }
 
+    loadKeys();
     QString k = key.toLower();
     if (k == MYSQL_KEY) {
         delete extension;

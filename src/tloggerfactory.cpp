@@ -18,10 +18,21 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-const QString FILE_LOGGER_KEY = TFileLogger().key().toLower();
-
+static QString FILE_LOGGER_KEY;
 static QMutex mutex;
 static QMap<QString, TLoggerInterface *> *lggIfMap = 0;
+
+
+static void loadKeys()
+{
+    static bool done = []() {
+        // Constants
+        FILE_LOGGER_KEY = TFileLogger().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
+
 
 /*!
   \class TLoggerFactory
@@ -50,6 +61,7 @@ QStringList TLoggerFactory::keys()
     QMutexLocker locker(&mutex);
     QStringList ret;
 
+    loadKeys();
     loadPlugins();
     ret << FILE_LOGGER_KEY
         << lggIfMap->keys();
@@ -65,6 +77,7 @@ TLogger *TLoggerFactory::create(const QString &key)
 {
     QMutexLocker locker(&mutex);
 
+    loadKeys();
     loadPlugins();
     TLogger *logger = 0;
 

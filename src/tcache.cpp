@@ -5,25 +5,25 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "tcachemanager.h"
+#include "tcache.h"
 #include "tcachefactory.h"
 #include "tcachestore.h"
 #include <TAppSettings>
 
-bool TCacheManager::compression = true;
+bool TCache::compression = true;
 
 
-TCacheManager::TCacheManager()
+TCache::TCache()
 {
     _gcDivisor = TAppSettings::instance()->value(Tf::CacheGcProbability).toInt();
 }
 
 
-TCacheManager::~TCacheManager()
+TCache::~TCache()
 { }
 
 
-bool TCacheManager::open()
+bool TCache::open()
 {
     bool ret = false;
     TCacheStore *store = TCacheFactory::create(backend());
@@ -36,7 +36,7 @@ bool TCacheManager::open()
 }
 
 
-void TCacheManager::close()
+void TCache::close()
 {
     TCacheStore *store = TCacheFactory::create(backend());
 
@@ -47,7 +47,7 @@ void TCacheManager::close()
 }
 
 
-bool TCacheManager::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
+bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
 {
     bool ret = false;
     TCacheStore *store = TCacheFactory::create(backend());
@@ -72,7 +72,7 @@ bool TCacheManager::set(const QByteArray &key, const QByteArray &value, qint64 m
 }
 
 
-QByteArray TCacheManager::get(const QByteArray &key)
+QByteArray TCache::get(const QByteArray &key)
 {
     QByteArray value;
     TCacheStore *store = TCacheFactory::create(backend());
@@ -88,7 +88,7 @@ QByteArray TCacheManager::get(const QByteArray &key)
 }
 
 
-void TCacheManager::remove(const QByteArray &key)
+void TCache::remove(const QByteArray &key)
 {
     TCacheStore *store = TCacheFactory::create(backend());
 
@@ -99,7 +99,7 @@ void TCacheManager::remove(const QByteArray &key)
 }
 
 
-void TCacheManager::clear()
+void TCache::clear()
 {
     TCacheStore *store = TCacheFactory::create(backend());
 
@@ -110,15 +110,15 @@ void TCacheManager::clear()
 }
 
 
-QString TCacheManager::backend() const
+QString TCache::backend() const
 {
     static QString cacheBackend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
     return cacheBackend;
 }
 
 
-TCacheManager &TCacheManager::instance()
+TCache &TCache::instance()
 {
-    static TCacheManager manager;
+    static TCache manager;
     return manager;
 }

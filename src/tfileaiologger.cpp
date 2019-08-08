@@ -17,11 +17,11 @@
 /*!
   Constructor.
  */
-TFileAioLogger::TFileAioLogger()
-    : TLogger(), writer(new TFileAioWriter)
+TFileAioLogger::TFileAioLogger() :
+    TLogger(),
+    writer(new TFileAioWriter)
 {
-    readSettings();
-    writer->setFileName(_target);
+    writer->setFileName(target());
 }
 
 

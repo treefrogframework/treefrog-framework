@@ -23,14 +23,29 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-const QString COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
-const QString SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
-const QString FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
-const QString REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
-const QString MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
+static QString COOKIE_SESSION_KEY;
+static QString SQLOBJECT_SESSION_KEY;
+static QString FILE_SESSION_KEY;
+static QString REDIS_SESSION_KEY;
+static QString MONGODB_SESSION_KEY;
 
 static QMutex mutex;
 static QMap<QString, TSessionStoreInterface*> *sessIfMap = nullptr;
+
+
+static void loadKeys()
+{
+    static bool done = []() {
+        // Constants
+        QString COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
+        QString SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
+        QString FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
+        QString REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
+        QString MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
 
 
 /*!
@@ -59,6 +74,7 @@ QStringList TSessionStoreFactory::keys()
 {
     QStringList ret;
 
+    loadKeys();
     loadPlugins();
     ret << COOKIE_SESSION_KEY
         << SQLOBJECT_SESSION_KEY
@@ -76,6 +92,7 @@ QStringList TSessionStoreFactory::keys()
 */
 TSessionStore *TSessionStoreFactory::create(const QString &key)
 {
+    loadKeys();
     loadPlugins();
     TSessionStore *ret = nullptr;
 
@@ -114,6 +131,7 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
         return;
     }
 
+    loadKeys();
     QString k = key.toLower();
     if (k == COOKIE_SESSION_KEY) {
         // do nothing

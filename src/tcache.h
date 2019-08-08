@@ -1,13 +1,13 @@
-#ifndef TCACHEMANAGER_H
-#define TCACHEMANAGER_H
+#ifndef TCACHE_H
+#define TCACHE_H
 
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TCacheManager
+class T_CORE_EXPORT TCache
 {
 public:
-    ~TCacheManager();
+    ~TCache();
 
     bool open();
     void close();
@@ -17,16 +17,16 @@ public:
     void clear();
 
     QString backend() const;
-    static TCacheManager &instance();
+    static TCache &instance();
     static void setCompressionEnabled(bool enable) { compression = enable; }
 
 private:
     static bool compression;
     int _gcDivisor {0};
 
-    T_DISABLE_COPY(TCacheManager)
-    T_DISABLE_MOVE(TCacheManager)
-    TCacheManager();
+    T_DISABLE_COPY(TCache)
+    T_DISABLE_MOVE(TCache)
+    TCache();
 };
 
-#endif // TCACHEMANAGER_H
+#endif // TCACHE_H

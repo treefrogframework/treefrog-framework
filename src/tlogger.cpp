@@ -59,7 +59,7 @@ QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) 
 */
 QByteArray TLogger::logToByteArray(const TLog &log) const
 {
-    return logToByteArray(log, layout(), dateTimeFormat(), _codec);
+    return logToByteArray(log, layout(), dateTimeFormat(), codec());
 }
 
 /*!
@@ -163,44 +163,84 @@ QByteArray TLogger::priorityToString(Tf::LogPriority priority)
 }
 
 /*!
-  Reads the settings stored in the file \a logger.ini.
-*/
-void TLogger::readSettings()
+  Returns a pointer to QTextCodec of the default text encoding.
+ */
+QTextCodec *TLogger::codec() const
 {
-    // Sets the codec
-    QSettings &settings = Tf::app()->loggerSettings();
-    QByteArray codecName = settings.value(DEFAULT_TEXT_ENCODING).toByteArray().trimmed();
-    if (!codecName.isEmpty()) {
-        QTextCodec *c = QTextCodec::codecForName(codecName);
-        if (c) {
-            if (c->name() != QTextCodec::codecForLocale()->name()) {
-                _codec = c;
+    if (! _codec) {
+        // Sets the codec
+        QSettings &settings = Tf::app()->loggerSettings();
+        QByteArray codecName = settings.value(DEFAULT_TEXT_ENCODING).toByteArray().trimmed();
+        if (!codecName.isEmpty()) {
+            QTextCodec *c = QTextCodec::codecForName(codecName);
+            if (c) {
+                if (c->name() != QTextCodec::codecForLocale()->name()) {
+                    _codec = c;
+                }
+                //tSystemDebug("set log text codec: %s", c->name().data());
+            } else {
+                tSystemError("log text codec matching the name could be not found: %s", codecName.data());
             }
-            //tSystemDebug("set log text codec: %s", c->name().data());
+        }
+    }
+    return _codec;
+}
+
+/*!
+  Returns a reference to the value for the setting layout.
+*/
+const QByteArray &TLogger::layout() const
+{
+    if (_layout.isEmpty()) {
+        _layout = settingsValue("Layout", "%m%n").toByteArray();
+    }
+    return _layout;
+}
+
+/*!
+  Returns a reference to the value for the setting datetime format.
+*/
+const QByteArray &TLogger::dateTimeFormat() const
+{
+    if (_dateTimeFormat.isEmpty()) {
+        _dateTimeFormat = settingsValue("DateTimeFormat").toByteArray();
+    }
+    return _dateTimeFormat;
+}
+
+/*!
+  Returns the value for the setting priority threshold.
+*/
+Tf::LogPriority TLogger::threshold() const
+{
+    if ((int)_threshold < 0) {
+        QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
+        _threshold = priorityHash()->key(pri, Tf::TraceLevel);
+    }
+    return _threshold;
+}
+
+/*!
+  Returns a reference to the value for the setting target device.
+*/
+const QString &TLogger::target() const
+{
+    if (_target.isEmpty()) {
+        QString logtarget = settingsValue("Target", "log/app.log").toString().trimmed();
+        if (! logtarget.isEmpty()) {
+            QFileInfo fi(logtarget);
+            _target = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
+
+            QDir dir = QFileInfo(_target).dir();
+            if (!dir.exists()) {
+                // Created a directory
+                dir.mkpath(".");
+            }
         } else {
-            tSystemError("log text codec matching the name could be not found: %s", codecName.data());
+            tSystemWarn("Empty file name for application log.");
         }
     }
-
-    _layout = settingsValue("Layout", "%m%n").toByteArray();
-    _dateTimeFormat = settingsValue("DateTimeFormat").toByteArray();
-
-    QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
-    _threshold = priorityHash()->key(pri, Tf::TraceLevel);
-
-    QString logtarget = settingsValue("Target", "log/app.log").toString().trimmed();
-    if (! logtarget.isEmpty()) {
-        QFileInfo fi(logtarget);
-        _target = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
-
-        QDir dir = QFileInfo(_target).dir();
-        if (!dir.exists()) {
-            // Created a directory
-            dir.mkpath(".");
-        }
-    } else {
-        tSystemWarn("Empty file name for application log.");
-    }
+    return _target;
 }
 
 
@@ -244,24 +284,4 @@ void TLogger::readSettings()
   \fn virtual void TLogger::flush()
   Flushes any buffered data to the device.
   This function should be called from any reimplementations of flush().
-*/
-
-/*!
-  \fn const QByteArray &TLogger::layout() const
-  Returns a reference to the value for the setting layout.
-*/
-
-/*!
-  \fn const QByteArray &TLogger::dateTimeFormat() const
-  Returns a reference to the value for the setting datetime format.
-*/
-
-/*!
-  \fn Priority TLogger::threshold() const
-  Returns the value for the setting priority threshold.
-*/
-
-/*!
-  \fn const QString &TLogger::target() const
-  Returns a reference to the value for the setting target device.
 */

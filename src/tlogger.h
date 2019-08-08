@@ -25,22 +25,24 @@ public:
     virtual void flush() { }
     virtual QByteArray logToByteArray(const TLog &log) const;
 
-    void readSettings();
-    const QByteArray &layout() const { return _layout; }
-    const QByteArray &dateTimeFormat() const { return _dateTimeFormat; }
-    Tf::LogPriority threshold() const { return _threshold; }
-    const QString &target() const { return _target; }
-    QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    const QByteArray &layout() const;
+    const QByteArray &dateTimeFormat() const;
+    Tf::LogPriority threshold() const;
+    const QString &target() const;
 
     static QByteArray logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec = 0);
     static QByteArray priorityToString(Tf::LogPriority priority);
 
 protected:
-    QByteArray _layout;
-    QByteArray _dateTimeFormat;
-    Tf::LogPriority _threshold {Tf::TraceLevel};
-    QString  _target;
-    QTextCodec *_codec {nullptr};
+    QTextCodec *codec() const;
+    QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
+
+private:
+    mutable QByteArray _layout;
+    mutable QByteArray _dateTimeFormat;
+    mutable Tf::LogPriority _threshold {(Tf::LogPriority)-1};
+    mutable QString  _target;
+    mutable QTextCodec *_codec {nullptr};
 };
 
 #endif // TLOGGER_H
