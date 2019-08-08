@@ -23,25 +23,24 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+static void cleanup();
+
 static QString COOKIE_SESSION_KEY;
 static QString SQLOBJECT_SESSION_KEY;
 static QString FILE_SESSION_KEY;
 static QString REDIS_SESSION_KEY;
 static QString MONGODB_SESSION_KEY;
 
-static QMutex mutex;
-static QMap<QString, TSessionStoreInterface*> *sessIfMap = nullptr;
-
 
 static void loadKeys()
 {
     static bool done = []() {
         // Constants
-        QString COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
-        QString SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
-        QString FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
-        QString REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
-        QString MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
+        COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
+        SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
+        FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
+        REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
+        MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
         return true;
     }();
     Q_UNUSED(done);
@@ -53,17 +52,51 @@ static void loadKeys()
   \brief The TSessionStoreFactory class creates TSessionStore objects.
 */
 
+/*!
+  Loads session store plugins in the plugin directory and returns a pointer to QMap instance.
+*/
+static QMap<QString, TSessionStoreInterface*> *sessionStoreIfMap()
+{
+    static QMap<QString, TSessionStoreInterface*> *sessIfMap = []() {
+        auto sessIfMap = new QMap<QString, TSessionStoreInterface*>();
+        qAddPostRoutine(cleanup);
+
+        QDir dir(Tf::app()->pluginPath());
+        const QStringList list = dir.entryList(QDir::Files);
+        for (auto &file : list) {
+            QPluginLoader loader(dir.absoluteFilePath(file));
+
+            tSystemDebug("plugin library for session store: %s", qPrintable(loader.fileName()));
+            if (!loader.load()) {
+                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
+                continue;
+            }
+
+            TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
+            if ( iface ) {
+                const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
+                for (auto &k : array) {
+                    QString key = k.toString().toLower();
+                    tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
+                    sessIfMap->insert(key, iface);
+                }
+            }
+        }
+        return sessIfMap;
+    }();
+    return sessIfMap;
+}
+
+
 static void cleanup()
 {
-    QMutexLocker locker(&mutex);
-
+    auto sessIfMap = sessionStoreIfMap();
     if (sessIfMap) {
         for (QMapIterator<QString, TSessionStoreInterface*> it(*sessIfMap); it.hasNext(); )  {
             it.next();
             delete it.value();
         }
         delete sessIfMap;
-        sessIfMap = nullptr;
     }
 }
 
@@ -75,13 +108,12 @@ QStringList TSessionStoreFactory::keys()
     QStringList ret;
 
     loadKeys();
-    loadPlugins();
     ret << COOKIE_SESSION_KEY
         << SQLOBJECT_SESSION_KEY
         << FILE_SESSION_KEY
         << REDIS_SESSION_KEY
         << MONGODB_SESSION_KEY
-        << sessIfMap->keys();
+        << sessionStoreIfMap()->keys();
 
     return ret;
 }
@@ -92,9 +124,8 @@ QStringList TSessionStoreFactory::keys()
 */
 TSessionStore *TSessionStoreFactory::create(const QString &key)
 {
-    loadKeys();
-    loadPlugins();
     TSessionStore *ret = nullptr;
+    loadKeys();
 
     QString k = key.toLower();
     if (k == COOKIE_SESSION_KEY) {
@@ -113,7 +144,7 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
         static TSessionMongoStore mongoStore;
         ret = &mongoStore;
     } else {
-        TSessionStoreInterface *ssif = sessIfMap->value(k);
+        TSessionStoreInterface *ssif = sessionStoreIfMap()->value(k);
         if (ssif) {
             ret = ssif->create(key);
         }
@@ -144,48 +175,9 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
     } else if (k == MONGODB_SESSION_KEY) {
         // do nothing
     } else {
-        TSessionStoreInterface *ssif = sessIfMap->value(k);
+        TSessionStoreInterface *ssif = sessionStoreIfMap()->value(k);
         if (ssif) {
             ssif->destroy(key, store);
-        }
-    }
-}
-
-
-/*!
-  Loads session store plugins in the plugin directory.
-*/
-void TSessionStoreFactory::loadPlugins()
-{
-    if (!sessIfMap) {
-        QMutexLocker locker(&mutex);
-        if (sessIfMap) {
-            return;
-        }
-
-        sessIfMap = new QMap<QString, TSessionStoreInterface*>();
-        qAddPostRoutine(cleanup);
-
-        QDir dir(Tf::app()->pluginPath());
-        const QStringList list = dir.entryList(QDir::Files);
-        for (auto &file : list) {
-            QPluginLoader loader(dir.absoluteFilePath(file));
-
-            tSystemDebug("plugin library for session store: %s", qPrintable(loader.fileName()));
-            if (!loader.load()) {
-                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
-                continue;
-            }
-
-            TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
-            if ( iface ) {
-                const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
-                for (auto &k : array) {
-                    QString key = k.toString().toLower();
-                    tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
-                    sessIfMap->insert(key, iface);
-                }
-            }
         }
     }
 }

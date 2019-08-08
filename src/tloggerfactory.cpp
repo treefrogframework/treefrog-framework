@@ -18,9 +18,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+static void cleanup();
 static QString FILE_LOGGER_KEY;
-static QMutex mutex;
-static QMap<QString, TLoggerInterface *> *lggIfMap = 0;
 
 
 static void loadKeys()
@@ -39,66 +38,11 @@ static void loadKeys()
   \brief The TLoggerFactory class creates TLogger objects.
 */
 
-static void cleanup()
+
+static QMap<QString, TLoggerInterface*> *loggerIfMap()
 {
-    QMutexLocker locker(&mutex);
-
-    if (lggIfMap) {
-        for (QMapIterator<QString, TLoggerInterface*> it(*lggIfMap); it.hasNext(); )  {
-            it.next();
-            delete it.value();
-        }
-        delete lggIfMap;
-        lggIfMap = 0;
-    }
-}
-
-/*!
-  Returns the list of valid keys, i.e.\ the available loggers.
-*/
-QStringList TLoggerFactory::keys()
-{
-    QMutexLocker locker(&mutex);
-    QStringList ret;
-
-    loadKeys();
-    loadPlugins();
-    ret << FILE_LOGGER_KEY
-        << lggIfMap->keys();
-
-    return ret;
-}
-
-/*!
-  Creates and returns a TLogger object that matches the given key,
-  or returns 0 if no matching logger is found.
-*/
-TLogger *TLoggerFactory::create(const QString &key)
-{
-    QMutexLocker locker(&mutex);
-
-    loadKeys();
-    loadPlugins();
-    TLogger *logger = 0;
-
-    QString k = key.toLower();
-    if (k == FILE_LOGGER_KEY) {
-        logger = new TFileLogger();
-    } else {
-        TLoggerInterface *lggif = lggIfMap->value(k);
-        if (lggif) {
-            logger = lggif->create(key);
-        }
-    }
-
-    return logger;
-}
-
-
-void TLoggerFactory::loadPlugins()
-{
-    if (!lggIfMap) {
-        lggIfMap = new QMap<QString, TLoggerInterface *>();
+    static QMap<QString, TLoggerInterface*> *lggIfMap = []() {
+        auto lggIfMap = new QMap<QString, TLoggerInterface*>();
         qAddPostRoutine(::cleanup);
 
         QDir dir(Tf::app()->pluginPath());
@@ -121,7 +65,57 @@ void TLoggerFactory::loadPlugins()
                 }
             }
         }
+        return lggIfMap;
+    }();
+    return lggIfMap;
+}
+
+
+static void cleanup()
+{
+    auto lggIfMap = loggerIfMap();
+    if (lggIfMap) {
+        for (QMapIterator<QString, TLoggerInterface*> it(*lggIfMap); it.hasNext(); )  {
+            it.next();
+            delete it.value();
+        }
+        delete lggIfMap;
     }
+}
+
+/*!
+  Returns the list of valid keys, i.e.\ the available loggers.
+*/
+QStringList TLoggerFactory::keys()
+{
+    QStringList ret;
+
+    loadKeys();
+    ret << FILE_LOGGER_KEY
+        << loggerIfMap()->keys();
+
+    return ret;
+}
+
+/*!
+  Creates and returns a TLogger object that matches the given key,
+  or returns 0 if no matching logger is found.
+*/
+TLogger *TLoggerFactory::create(const QString &key)
+{
+    TLogger *logger = nullptr;
+
+    loadKeys();
+    QString k = key.toLower();
+    if (k == FILE_LOGGER_KEY) {
+        logger = new TFileLogger();
+    } else {
+        TLoggerInterface *lggif = loggerIfMap()->value(k);
+        if (lggif) {
+            logger = lggif->create(key);
+        }
+    }
+    return logger;
 }
 
 
