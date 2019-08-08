@@ -185,7 +185,8 @@ QStringList TSqlDriverExtensionFactory::keys()
     QStringList ret;
 
     loadKeys();
-    ret << TMySQLDriverExtension().key().toLower();
+    ret << MYSQL_KEY
+        << PSQL_KEY;
     return ret;
 }
 
