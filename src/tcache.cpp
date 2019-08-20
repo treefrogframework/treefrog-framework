@@ -10,8 +10,6 @@
 #include "tcachestore.h"
 #include <TAppSettings>
 
-bool TCache::compression = true;
-
 
 TCache::TCache()
 {
@@ -55,7 +53,7 @@ bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
     if (store) {
         ret = store->set(key, value, msecs);
 
-        if (compression) {
+        if (compressionEnabled()) {
             ret = store->set(key, Tf::lz4Compress(value), msecs);
         } else {
             ret = store->set(key, value, msecs);
@@ -79,7 +77,7 @@ QByteArray TCache::get(const QByteArray &key)
 
     if (store) {
         value = store->get(key);
-        if (compression) {
+        if (compressionEnabled()) {
             value = Tf::lz4Uncompress(value);
         }
         TCacheFactory::destroy(backend(), store);
@@ -119,6 +117,13 @@ QString TCache::backend() const
 
 TCache &TCache::instance()
 {
-    static TCache manager;
-    return manager;
+    static TCache globalInstance;
+    return globalInstance;
+}
+
+
+bool TCache::compressionEnabled()
+{
+    static bool compression = Tf::appSettings()->value(Tf::CacheEnableCompression).toBool();
+    return compression;
 }

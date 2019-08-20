@@ -18,10 +18,9 @@ public:
 
     QString backend() const;
     static TCache &instance();
-    static void setCompressionEnabled(bool enable) { compression = enable; }
+    static bool compressionEnabled();
 
 private:
-    static bool compression;
     int _gcDivisor {0};
 
     T_DISABLE_COPY(TCache)

@@ -78,6 +78,7 @@ public:
         insert(Tf::ActionMailerSendmailCommandLocation, "ActionMailer.sendmail.CommandLocation");
         insert(Tf::CacheBackend, "Cache.Backend");
         insert(Tf::CacheGcProbability, "Cache.GcProbability");
+        insert(Tf::CacheEnableCompression, "Cache.EnableCompression");
         insert(Tf::CacheSingleFileDbFilePath, "Cache.singlefiledb.FilePath");
         insert(Tf::CacheSingleFileDbFileSizeThreshold, "Cache.singlefiledb.FileSizeThreshold");
     }

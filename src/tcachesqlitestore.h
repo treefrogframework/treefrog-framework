@@ -13,7 +13,7 @@ public:
     TCacheSQLiteStore(const QString &fileName, qint64 thresholdFileSize = 0);
     ~TCacheSQLiteStore() { close(); }
 
-    QString key() const { return "singlefiledb"; }
+    QString key() const { return QStringLiteral("singlefiledb"); }
     bool open() override;
     void close() override;
     bool isOpen() const;
