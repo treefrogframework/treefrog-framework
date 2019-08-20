@@ -1,3 +1,3 @@
 include(../test.pri)
-TARGET = cache
+TARGET = singlefiledb
 SOURCES = main.cpp
