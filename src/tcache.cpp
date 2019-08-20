@@ -13,34 +13,28 @@
 
 TCache::TCache()
 {
+    _cache = TCacheFactory::create(backend());
     _gcDivisor = TAppSettings::instance()->value(Tf::CacheGcProbability).toInt();
 }
 
 
 TCache::~TCache()
-{ }
+{
+    TCacheFactory::destroy(backend(), _cache);
+}
 
 
 bool TCache::open()
 {
-    bool ret = false;
-    TCacheStore *store = TCacheFactory::create(backend());
-
-    if (store) {
-        ret = store->open();
-        TCacheFactory::destroy(backend(), store);
-    }
+    bool ret = (_cache) ? _cache->open() : false;
     return ret;
 }
 
 
 void TCache::close()
 {
-    TCacheStore *store = TCacheFactory::create(backend());
-
-    if (store) {
-        store->close();
-        TCacheFactory::destroy(backend(), store);
+    if (_cache) {
+        _cache->close();
     }
 }
 
@@ -48,23 +42,18 @@ void TCache::close()
 bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
 {
     bool ret = false;
-    TCacheStore *store = TCacheFactory::create(backend());
 
-    if (store) {
-        ret = store->set(key, value, msecs);
-
+    if (_cache) {
         if (compressionEnabled()) {
-            ret = store->set(key, Tf::lz4Compress(value), msecs);
+            ret = _cache->set(key, Tf::lz4Compress(value), msecs);
         } else {
-            ret = store->set(key, value, msecs);
+            ret = _cache->set(key, value, msecs);
         }
 
         // GC
         if (_gcDivisor > 0 && Tf::random(1, _gcDivisor) == 1) {
-            store->gc();
+            _cache->gc();
         }
-
-        TCacheFactory::destroy(backend(), store);
     }
     return ret;
 }
@@ -73,14 +62,12 @@ bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
 QByteArray TCache::get(const QByteArray &key)
 {
     QByteArray value;
-    TCacheStore *store = TCacheFactory::create(backend());
 
-    if (store) {
-        value = store->get(key);
+    if (_cache) {
+        value = _cache->get(key);
         if (compressionEnabled()) {
             value = Tf::lz4Uncompress(value);
         }
-        TCacheFactory::destroy(backend(), store);
     }
     return value;
 }
@@ -88,30 +75,17 @@ QByteArray TCache::get(const QByteArray &key)
 
 void TCache::remove(const QByteArray &key)
 {
-    TCacheStore *store = TCacheFactory::create(backend());
-
-    if (store) {
-        store->remove(key);
-        TCacheFactory::destroy(backend(), store);
+    if (_cache) {
+        _cache->remove(key);
     }
 }
 
 
 void TCache::clear()
 {
-    TCacheStore *store = TCacheFactory::create(backend());
-
-    if (store) {
-        store->clear();
-        TCacheFactory::destroy(backend(), store);
+    if (_cache) {
+        _cache->clear();
     }
-}
-
-
-QString TCache::backend() const
-{
-    static QString cacheBackend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
-    return cacheBackend;
 }
 
 
@@ -119,6 +93,13 @@ TCache &TCache::instance()
 {
     static TCache globalInstance;
     return globalInstance;
+}
+
+
+QString TCache::backend()
+{
+    static QString cacheBackend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
+    return cacheBackend;
 }
 
 
