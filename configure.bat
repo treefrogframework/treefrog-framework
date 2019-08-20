@@ -4,7 +4,7 @@
 set VERSION=1.26.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.9.5
-set LZ4_VERSION=1.9.1
+set LZ4_VERSION=1.9.2
 set BASEDIR=%~dp0
 
 :parse_loop
