@@ -215,7 +215,7 @@ void TCacheSQLiteStore::clear()
 
 int TCacheSQLiteStore::removeOlder(int num)
 {
-    bool cnt = -1;
+    int cnt = -1;
 
     if (! isOpen() || num < 1) {
         return cnt;
@@ -237,7 +237,7 @@ int TCacheSQLiteStore::removeOlder(int num)
 
 int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
 {
-    bool cnt = -1;
+    int cnt = -1;
 
     if (! isOpen()) {
         return cnt;
@@ -259,7 +259,7 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
 
 int TCacheSQLiteStore::removeAll()
 {
-    bool cnt = -1;
+    int cnt = -1;
 
     if (! isOpen()) {
         return cnt;

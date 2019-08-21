@@ -142,7 +142,7 @@ echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
 echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
-del /f /q .qmake.stash >nul 2>&1
+del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
 
 :: Builds MongoDB driver
 cd /d %BASEDIR%3rdparty
