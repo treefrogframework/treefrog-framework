@@ -19,8 +19,9 @@ constexpr auto TIMESTAMP_COLUMN = "t";
 constexpr int  PAGESIZE = 4096;
 
 
-TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, qint64 thresholdFileSize) :
+TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &connectOptions, qint64 thresholdFileSize) :
     _dbFile(fileName),
+    _connectOptions(connectOptions),
     _thresholdFileSize(thresholdFileSize),
     _connectionName(QString::number(QDateTime::currentMSecsSinceEpoch()))
 {}
@@ -35,6 +36,9 @@ bool TCacheSQLiteStore::open()
     static bool init = [&]() {
         auto db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(_dbFile);
+        if (! _connectOptions.isEmpty()) {
+            db.setConnectOptions(_connectOptions);
+        }
         return db.open();
     }();
     Q_UNUSED(init);

@@ -1,15 +1,18 @@
 #include "tcachefactory.h"
+#include "tcacheinmemorystore.h"
 #include "tcachesqlitestore.h"
 #include "tsystemglobal.h"
 #include <TAppSettings>
 #include <QDir>
 
+static QString INMEMORY_CACHE_KEY;
 static QString SINGLEFILEDB_CACHE_KEY;
 
 
 static void loadCacheKeys()
 {
     static bool done = []() {
+        INMEMORY_CACHE_KEY = TCacheInMemoryStore().key().toLower();
         SINGLEFILEDB_CACHE_KEY = TCacheSQLiteStore().key().toLower();
         return true;
     }();
@@ -22,7 +25,8 @@ QStringList TCacheFactory::keys()
     loadCacheKeys();
 
     QStringList ret;
-    ret << SINGLEFILEDB_CACHE_KEY;
+    ret << INMEMORY_CACHE_KEY
+        << SINGLEFILEDB_CACHE_KEY;
     return ret;
 }
 
@@ -33,7 +37,9 @@ TCacheStore *TCacheFactory::create(const QString &key)
     loadCacheKeys();
 
     QString k = key.toLower();
-    if (k == SINGLEFILEDB_CACHE_KEY) {
+    if (k == INMEMORY_CACHE_KEY) {
+        ptr = new TCacheInMemoryStore();
+    } else if (k == SINGLEFILEDB_CACHE_KEY) {
         static const int FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold).toInt();
         static const QString filepath = [] {
             QString path = TAppSettings::instance()->value(Tf::CacheSingleFileDbFilePath).toString().trimmed();
@@ -43,7 +49,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
             return path;
         }();
 
-        ptr = new TCacheSQLiteStore(filepath, FileSizeThreshold);
+        ptr = new TCacheSQLiteStore(filepath, QString(), FileSizeThreshold);
 
     } else {
         tSystemError("Not found cache store: %s", qPrintable(key));
@@ -58,7 +64,11 @@ void TCacheFactory::destroy(const QString &key, TCacheStore *store)
     loadCacheKeys();
 
     QString k = key.toLower();
-    if (k == SINGLEFILEDB_CACHE_KEY) {
+    if (k == INMEMORY_CACHE_KEY) {
+        delete store;
+    } else if (k == SINGLEFILEDB_CACHE_KEY) {
+        delete store;
+    } else {
         delete store;
     }
 }

@@ -11,6 +11,7 @@
 #include <TActionContext>
 #include <TDatabaseContext>
 #include <TActionThread>
+#include <TCache>
 #include <QDataStream>
 #include <QBuffer>
 #ifdef Q_OS_LINUX
@@ -50,6 +51,14 @@ TAppSettings *Tf::appSettings()
 const QVariantMap &Tf::conf(const QString &configName)
 {
     return Tf::app()->getConfig(configName);
+}
+
+/*!
+  Returns a global refernce to the unique cache object.
+ */
+TCache &Tf::cache()
+{
+    return TCache::instance();
 }
 
 /*!
