@@ -76,13 +76,19 @@ public:
         insert(Tf::ActionMailerSmtpPopServerPort, "ActionMailer.smtp.PopServer.Port");
         insert(Tf::ActionMailerSmtpPopServerEnableApop, "ActionMailer.smtp.PopServer.EnableApop");
         insert(Tf::ActionMailerSendmailCommandLocation, "ActionMailer.sendmail.CommandLocation");
+        insert(Tf::CacheBackend, "Cache.Backend");
+        insert(Tf::CacheGcProbability, "Cache.GcProbability");
+        insert(Tf::CacheEnableCompression, "Cache.EnableCompression");
+        insert(Tf::CacheMemoryDbSizeThreshold, "Cache.memory.DbSizeThreshold");
+        insert(Tf::CacheSingleFileDbFilePath, "Cache.singlefiledb.FilePath");
+        insert(Tf::CacheSingleFileDbFileSizeThreshold, "Cache.singlefiledb.FileSizeThreshold");
     }
 };
 Q_GLOBAL_STATIC(AttributeMap, attributeMap)
 
 
-TAppSettings::TAppSettings(const QString &path)
-    : appIniSettings(new QSettings(path, QSettings::IniFormat))
+TAppSettings::TAppSettings(const QString &path) :
+    appIniSettings(new QSettings(path, QSettings::IniFormat))
 { }
 
 

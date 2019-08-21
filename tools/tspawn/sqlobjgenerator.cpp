@@ -10,9 +10,6 @@
 #include "filewriter.h"
 #include "tableschema.h"
 
-constexpr auto USER_VIRTUAL_METHOD = "identityKey";
-constexpr auto LOCK_REVISION_FIELD = "lock_revision";
-
 constexpr auto SQLOBJECT_HEADER_TEMPLATE =                   \
     "#ifndef %1OBJECT_H\n"                                   \
     "#define %1OBJECT_H\n"                                   \

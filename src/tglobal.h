@@ -204,6 +204,7 @@ constexpr auto TF_SRC_REVISION = 1967;
 class TAppSettings;
 class TActionContext;
 class TDatabaseContext;
+class TCache;
 class QSqlDatabase;
 
 namespace Tf
@@ -211,6 +212,7 @@ namespace Tf
     T_CORE_EXPORT TWebApplication *app();
     T_CORE_EXPORT TAppSettings *appSettings();
     T_CORE_EXPORT const QVariantMap &conf(const QString &configName);
+    T_CORE_EXPORT TCache &cache();
     T_CORE_EXPORT void msleep(unsigned long msecs);
 
     // Xorshift random number generator

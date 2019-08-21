@@ -22,8 +22,6 @@ private:
         File,
         Plugin,
     };
-
-    static void loadPlugins();
 };
 
 #endif // TSESSIONSTOREFACTORY_H

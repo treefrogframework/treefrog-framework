@@ -4,7 +4,7 @@ CONFIG  += shared console c++14
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
 DEFINES += TF_MAKEDLL
-INCLUDEPATH += ../include
+INCLUDEPATH += ../include ../3rdparty/lz4/lib
 DEPENDPATH  += ../include
 MOC_DIR = .obj/
 OBJECTS_DIR = .obj/
@@ -28,7 +28,6 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  INCLUDEPATH += ../3rdparty/lz4/lib/
   win32-msvc* {
     LIBS += ../3rdparty/lz4/visual/liblz4_static.lib
   } else {
@@ -51,7 +50,6 @@ windows {
   INSTALLS += header script test
 } else:unix {
   LIBS += ../3rdparty/lz4/lib/liblz4.a
-  INCLUDEPATH += ../3rdparty/lz4/lib
   macx:QMAKE_SONAME_PREFIX=@rpath
 
   header.files = $$HEADER_FILES $$HEADER_CLASSES
@@ -307,7 +305,16 @@ HEADERS += tjsinstance.h
 SOURCES += tjsinstance.cpp
 HEADERS += treactcomponent.h
 SOURCES += treactcomponent.cpp
-
+HEADERS += tcache.h
+SOURCES += tcache.cpp
+HEADERS += tcachefactory.h
+SOURCES += tcachefactory.cpp
+HEADERS += tcachestore.h
+SOURCES += tcachestore.cpp
+HEADERS += tcachesqlitestore.h
+SOURCES += tcachesqlitestore.cpp
+HEADERS += tcacheinmemorystore.h
+SOURCES += tcacheinmemorystore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 
 HEADERS += \

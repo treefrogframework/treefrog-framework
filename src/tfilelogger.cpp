@@ -17,7 +17,6 @@
 TFileLogger::TFileLogger()
     : TLogger()
 {
-    readSettings();
     logFile.setFileName(target());
 }
 
