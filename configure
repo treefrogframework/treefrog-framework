@@ -209,9 +209,10 @@ cd "$BASEDIR/3rdparty/lz4"
 echo
 echo -n "Compiling LZ4 ... "
 make clean >/dev/null 2>&1
-CPPFLAGS="-fPIC" make -j${NPROC} liblz4.a >/dev/null 2>&1
+CPPFLAGS="-fPIC" make -j${NPROC} lib >/dev/null 2>&1
 RET=$?
 if [ $RET != 0 ]; then
+  CPPFLAGS="-fPIC" make SHELL='bash -x' lib
   echo "failed"
   echo "LZ4 not available."
   exit $RET
