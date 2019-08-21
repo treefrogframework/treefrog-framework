@@ -10,7 +10,6 @@
 #include "tsqlquery.h"
 #include <QByteArray>
 #include <QDateTime>
-#include <QFileInfo>
 
 constexpr auto TABLE_NAME = "kb";
 constexpr auto KEY_COLUMN  = "k";
@@ -284,7 +283,7 @@ bool TCacheSQLiteStore::vacuum()
 }
 
 
-bool TCacheSQLiteStore::exec(const QString &sql)
+bool TCacheSQLiteStore::exec(const QString &sql) const
 {
     if (! isOpen()) {
         return false;
@@ -299,9 +298,20 @@ bool TCacheSQLiteStore::exec(const QString &sql)
 }
 
 
-qint64 TCacheSQLiteStore::fileSize() const
+qint64 TCacheSQLiteStore::dbSize() const
 {
-    return QFileInfo(_dbFile).size();
+    qint64 sz = -1;
+
+    if (! isOpen()) {
+        return sz;
+    }
+
+    TSqlQuery query(_db);
+    bool ok = query.exec(QStringLiteral("select (page_count * page_size) from pragma_page_count(), pragma_page_size()"));
+    if (ok && query.next()) {
+        sz = query.value(0).toLongLong();
+    }
+    return sz;
 }
 
 
@@ -311,11 +321,11 @@ void TCacheSQLiteStore::gc()
     tSystemDebug("removeOlderThan: %d\n", removed);
     vacuum();
 
-    if (_thresholdFileSize > 0 && fileSize() > _thresholdFileSize) {
+    if (_thresholdFileSize > 0 && dbSize() > _thresholdFileSize) {
         for (int i = 0; i < 3; i++) {
             removed += removeOlder(count() * 0.3);
             vacuum();
-            if (fileSize() < _thresholdFileSize * 0.8) {
+            if (dbSize() < _thresholdFileSize * 0.8) {
                 break;
             }
         }

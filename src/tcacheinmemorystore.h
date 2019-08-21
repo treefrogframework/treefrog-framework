@@ -7,7 +7,7 @@
 class T_CORE_EXPORT TCacheInMemoryStore : public TCacheSQLiteStore
 {
 public:
-    TCacheInMemoryStore();
+    TCacheInMemoryStore(qint64 thresholdDbSize = 0);
     ~TCacheInMemoryStore() {}
 
     QString key() const { return QLatin1String("memory"); }

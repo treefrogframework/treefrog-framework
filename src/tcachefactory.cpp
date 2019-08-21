@@ -38,9 +38,10 @@ TCacheStore *TCacheFactory::create(const QString &key)
 
     QString k = key.toLower();
     if (k == INMEMORY_CACHE_KEY) {
-        ptr = new TCacheInMemoryStore();
+        static const qint64 DbSizeThreshold = TAppSettings::instance()->value(Tf::CacheMemoryDbSizeThreshold).toLongLong();
+        ptr = new TCacheInMemoryStore(DbSizeThreshold);
     } else if (k == SINGLEFILEDB_CACHE_KEY) {
-        static const int FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold).toInt();
+        static const qint64 FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold).toLongLong();
         static const QString filepath = [] {
             QString path = TAppSettings::instance()->value(Tf::CacheSingleFileDbFilePath).toString().trimmed();
             if (!path.isEmpty() && QDir::isRelativePath(path)) {

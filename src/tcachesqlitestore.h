@@ -32,10 +32,10 @@ public:
     int removeOlderThan(qint64 timestamp);
     int removeAll();
     bool vacuum();
+    qint64 dbSize() const;
 
 protected:
-    qint64 fileSize() const;
-    bool exec(const QString &sql);
+    bool exec(const QString &sql) const;
 
     QString _dbFile;
     QString _connectOptions;

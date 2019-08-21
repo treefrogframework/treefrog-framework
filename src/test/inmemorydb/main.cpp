@@ -67,6 +67,8 @@ void TestCache::test()
     QVERIFY(cache.set("hoge", "value", 1000) == true);
     Tf::msleep(1100);
     QVERIFY(cache.get("hoge") == QByteArray());
+    QVERIFY(cache.dbSize() > 0);
+    qDebug() << "db size: " << cache.dbSize();
     cache.clear();
 
     for (int i = 0; i < 1000; i++) {
