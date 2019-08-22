@@ -41,6 +41,7 @@ init:
   - git config --global core.autocrlf false
 
 install:
+  - bootstrap-vcpkg.bat
   - vcpkg install --recurse sqlite3[tool] curl[tool]
 
 # to disable automatic builds
