@@ -40,7 +40,6 @@ protected:
     QString _dbFile;
     QString _connectOptions;
     qint64 _thresholdFileSize {0};
-    QString _connectionName;
     QSqlDatabase _db;
 };
 

@@ -21,8 +21,7 @@ constexpr int  PAGESIZE = 4096;
 TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &connectOptions, qint64 thresholdFileSize) :
     _dbFile(fileName),
     _connectOptions(connectOptions),
-    _thresholdFileSize(thresholdFileSize),
-    _connectionName(QString::number(QDateTime::currentMSecsSinceEpoch()))
+    _thresholdFileSize(thresholdFileSize)
 {}
 
 
