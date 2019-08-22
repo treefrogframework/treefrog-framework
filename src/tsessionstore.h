@@ -17,7 +17,7 @@ public:
     virtual bool remove(const QByteArray &id) = 0;
     virtual int gc(const QDateTime &expire) = 0;
 
-    static int lifeTimeSecs();
+    static qint64 lifeTimeSecs();
 };
 
 #endif // TSESSIONSTORE_H

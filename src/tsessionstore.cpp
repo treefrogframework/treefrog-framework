@@ -9,16 +9,15 @@
 #include <TAppSettings>
 
 
-int TSessionStore::lifeTimeSecs()
+qint64 TSessionStore::lifeTimeSecs()
 {
-    static int lifetime = -1;
-
-    if (Q_UNLIKELY(lifetime < 0)) {
-        lifetime = Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
-        if (lifetime == 0) {
-            lifetime = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toInt();
+    static qint64 lifetime = []() {
+        qint64 time = Tf::appSettings()->value(Tf::SessionLifeTime).toLongLong();
+        if (time == 0) {
+            time = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toLongLong();
         }
-    }
+        return time;
+    }();
     return lifetime;
 }
 

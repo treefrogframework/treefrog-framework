@@ -17,6 +17,7 @@
 #include "tsessionsqlobjectstore.h"
 #include "tsessioncookiestore.h"
 #include "tsessionfilestore.h"
+#include "tsessionfiledbstore.h"
 #include "tsessionredisstore.h"
 #include "tsessionmongostore.h"
 #include "tsystemglobal.h"
@@ -28,6 +29,7 @@ static void cleanup();
 static QString COOKIE_SESSION_KEY;
 static QString SQLOBJECT_SESSION_KEY;
 static QString FILE_SESSION_KEY;
+static QString FILEDB_SESSION_KEY;
 static QString REDIS_SESSION_KEY;
 static QString MONGODB_SESSION_KEY;
 
@@ -39,6 +41,7 @@ static void loadKeys()
         COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
         SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
         FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
+        FILEDB_SESSION_KEY    = TSessionFileDbStore().key().toLower();
         REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
         MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
         return true;
@@ -111,6 +114,7 @@ QStringList TSessionStoreFactory::keys()
     ret << COOKIE_SESSION_KEY
         << SQLOBJECT_SESSION_KEY
         << FILE_SESSION_KEY
+        << FILEDB_SESSION_KEY
         << REDIS_SESSION_KEY
         << MONGODB_SESSION_KEY
         << sessionStoreIfMap()->keys();
@@ -137,6 +141,9 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     } else if (k == FILE_SESSION_KEY) {
         static TSessionFileStore fileStore;
         ret = &fileStore;
+    } else if (k == FILEDB_SESSION_KEY) {
+        static TSessionFileDbStore fileDbStore;
+        ret = &fileDbStore;
     } else if (k == REDIS_SESSION_KEY) {
         static TSessionRedisStore redisStore;
         ret = &redisStore;
@@ -169,6 +176,8 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
     } else if (k == SQLOBJECT_SESSION_KEY) {
         // do nothing
     } else if (k == FILE_SESSION_KEY) {
+        // do nothing
+    } else if (k == FILEDB_SESSION_KEY) {
         // do nothing
     } else if (k == REDIS_SESSION_KEY) {
         // do nothing

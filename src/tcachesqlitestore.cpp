@@ -292,7 +292,7 @@ bool TCacheSQLiteStore::exec(const QString &sql) const
     TSqlQuery query(_db);
     bool ret = query.exec(sql);
     if (! ret) {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(_db.lastError().text()), qPrintable(sql), __FILE__, __LINE__);
     }
     return ret;
 }
