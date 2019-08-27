@@ -41,8 +41,11 @@ init:
   - git config --global core.autocrlf false
 
 install:
-  - bootstrap-vcpkg.bat
-  - vcpkg install --recurse sqlite3[tool] curl[tool]
+  - cd C:\Tools\vcpkg
+  - git pull
+  - .\bootstrap-vcpkg.bat
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - vcpkg install --recurse sqlite3 curl
 
 # to disable automatic builds
 build: off
