@@ -45,7 +45,7 @@ install:
   - git pull
   - .\bootstrap-vcpkg.bat
   - cd %APPVEYOR_BUILD_FOLDER%
-  - vcpkg install --recurse sqlite3 curl
+  - vcpkg install --recurse sqlite3[tool] curl[tool]
 
 # to disable automatic builds
 build: off
