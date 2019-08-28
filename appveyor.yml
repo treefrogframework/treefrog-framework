@@ -44,6 +44,7 @@ install:
   - cd C:\Tools\vcpkg
   - git pull
   - .\bootstrap-vcpkg.bat
+  - vcpkg integrate install
   - cd %APPVEYOR_BUILD_FOLDER%
   - vcpkg install --recurse sqlite3[tool] curl[tool]
 
