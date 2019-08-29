@@ -94,7 +94,6 @@ exit /B 0
 :: Check WebApp
 ::
 :CheckWebApp
-echo on
 cd /D %APPDIR%
 echo;
 echo Starting webapp..
