@@ -1,11 +1,15 @@
-@ECHO OFF
+@echo off
 @setlocal
 
 set BASEDIR=%~dp0
 set APPNAME=blogapp
-set APPDIR=%BASEDIR%\%APPNAME%
+set APPDIR=%BASEDIR%%APPNAME%
 set DBFILE=%APPDIR%\db\dbfile
 set PORT=8800
+set MAKE=nmake VERBOSE=1
+
+for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
+if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 
 cd /D %BASEDIR%
 call :Which tfenv.bat
@@ -14,20 +18,18 @@ if not "%TFENV%" == "" (
 ) else (
   call "..\..\..\tfenv.bat"
 )
-if "%Platform%" == "X64" (
-  set MAKE=nmake VERBOSE=1
-  set CL=/MP
-) else if "%DevEnvDir%" == "" (
-  set MAKE=mingw32-make -j4
-) else (
-  set MAKE=nmake
-  set CL=/MP
-)
 
 cd /D %BASEDIR%
 rd /Q /S %APPNAME%
 tspawn new %APPNAME%
-sqlite3.exe %DBFILE% < create_blog_table.sql
+if "%SQLITE%" == "" (
+  echo;
+  echo sqlite.exe command not found.
+  call :CleanUp
+  pause
+  exit /B 1
+)
+"%SQLITE%" %DBFILE% < create_blog_table.sql
 
 cd %APPNAME%
 tspawn s blog
@@ -50,11 +52,10 @@ call :QMakeBuild release
 call :CheckWebApp treefrog
 %MAKE% distclean >nul 2>nul
 
-echo.
+echo;
 echo Test OK
 call :CleanUp
 exit /B 0
-
 
 ::
 :: Build by cmake
@@ -67,13 +68,12 @@ cd build
 cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
 %MAKE%
 if ERRORLEVEL 1 (
-  echo.
+  echo;
   echo Build Error!
-  call ::CleanUp
-  exit/ B 1
+  call :CleanUp
+  exit /B 1
 )
 exit /B 0
-
 
 ::
 :: Build by qmake
@@ -83,9 +83,9 @@ cd /D %APPDIR%
 qmake -r CONFIG+=%1
 %MAKE%
 if ERRORLEVEL 1 (
-  echo.
+  echo;
   echo Build Error!
-  call ::CleanUp
+  call :CleanUp
   exit /B 1
 )
 exit /B 0
@@ -94,8 +94,9 @@ exit /B 0
 :: Check WebApp
 ::
 :CheckWebApp
+echo on
 cd /D %APPDIR%
-echo.
+echo;
 echo Starting webapp..
 set RES=1
 "%1" -e dev -d -p %PORT% %APPDIR%
@@ -115,9 +116,9 @@ if ERRORLEVEL 1 (
 timeout 1 /nobreak >nul
 if not "%RESCODE%"=="200" (
   echo HTTP request failed
-  echo.
+  echo;
   echo App Test Error!
-  call ::CleanUp
+  call :CleanUp
   exit /B 1
 )
 echo HTTP request success "%URL%"
