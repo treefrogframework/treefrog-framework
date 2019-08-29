@@ -8,6 +8,8 @@ set DBFILE=%APPDIR%\db\dbfile
 set PORT=8800
 set MAKE=nmake VERBOSE=1
 
+for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
+for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 
@@ -31,22 +33,25 @@ if "%SQLITE%" == "" (
 )
 "%SQLITE%" %DBFILE% < create_blog_table.sql
 
-cd %APPNAME%
+cd %APPDIR%
 tspawn s blog
 tspawn w foo
 
 :: Test in debug mode
-call :CMakeBuild Debug
-call :CheckWebApp treefrogd
+if not "%CMAKE%" == "" (
+  call :CMakeBuild Debug
+  call :CheckWebApp treefrogd
+)
 
 call :QMakeBuild debug
 call :CheckWebApp treefrogd
 %MAKE% distclean >nul 2>nul
 
 :: Test in release mode
-call :CMakeBuild Release
-call :CheckWebApp treefrog
-%MAKE% clean  >nul 2>nul
+if not "%CMAKE%" == "" (
+  call :CMakeBuild Release
+  call :CheckWebApp treefrog
+)
 
 call :QMakeBuild release
 call :CheckWebApp treefrog
@@ -65,7 +70,7 @@ cd /D %APPDIR%
 if exist build rd /Q /S build
 mkdir build >nul 2>nul
 cd build
-cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
+"%CMAKE%" -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
 %MAKE%
 if ERRORLEVEL 1 (
   echo;
@@ -80,7 +85,7 @@ exit /B 0
 ::
 :QMakeBuild
 cd /D %APPDIR%
-qmake -r CONFIG+=%1
+%QMAKE% -r CONFIG+=%1
 %MAKE%
 if ERRORLEVEL 1 (
   echo;
