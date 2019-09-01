@@ -59,6 +59,20 @@ void THttpResponse::setBody(const QByteArray &body)
 }
 
 /*!
+  Returns the body.
+ */
+QByteArray THttpResponse::body() const
+{
+    if (bodyDevice) {
+        QBuffer *buf = qobject_cast<QBuffer*>(bodyDevice);
+        if (buf) {
+            return buf->buffer();
+        }
+    }
+    return QByteArray();
+}
+
+/*!
   Sets the file to read the content from the given \a filePath.
 */
 void THttpResponse::setBodyFile(const QString &filePath)

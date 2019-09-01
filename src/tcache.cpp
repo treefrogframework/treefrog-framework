@@ -20,6 +20,7 @@ TCache::TCache()
 
 TCache::~TCache()
 {
+    close();
     TCacheFactory::destroy(backend(), _cache);
 }
 
@@ -89,11 +90,11 @@ void TCache::clear()
 }
 
 
-TCache &TCache::instance()
-{
-    static TCache globalInstance;
-    return globalInstance;
-}
+// TCache &TCache::instance()
+// {
+//     static TCache globalInstance;
+//     return globalInstance;
+// }
 
 
 QString TCache::backend()

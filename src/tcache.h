@@ -9,6 +9,7 @@ class TCacheStore;
 class T_CORE_EXPORT TCache
 {
 public:
+    TCache();
     ~TCache();
 
     bool open();
@@ -18,7 +19,6 @@ public:
     void remove(const QByteArray &key);
     void clear();
 
-    static TCache &instance();
     static QString backend();
     static bool compressionEnabled();
 
@@ -26,7 +26,6 @@ private:
     TCacheStore *_cache {nullptr};
     int _gcDivisor {0};
 
-    TCache();
     T_DISABLE_COPY(TCache)
     T_DISABLE_MOVE(TCache)
 };

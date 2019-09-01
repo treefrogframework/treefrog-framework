@@ -54,14 +54,6 @@ const QVariantMap &Tf::conf(const QString &configName)
 }
 
 /*!
-  Returns a global refernce to the unique cache object.
- */
-TCache &Tf::cache()
-{
-    return TCache::instance();
-}
-
-/*!
   Causes the current thread to sleep for \a msecs milliseconds.
 */
 void Tf::msleep(unsigned long msecs)

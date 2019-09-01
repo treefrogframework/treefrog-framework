@@ -20,6 +20,7 @@ public:
     const THttpResponseHeader &header() const { return resHeader; }
     bool isBodyNull() const;
     void setBody(const QByteArray &body);
+    QByteArray body() const;
     void setBodyFile(const QString &filePath);
     QIODevice *bodyIODevice() { return bodyDevice; }
     qint64 bodyLength() const { return (bodyDevice) ? bodyDevice->size() : 0; }
