@@ -19,8 +19,7 @@ constexpr auto BLOB_COLUMN = "b";
 constexpr auto TIMESTAMP_COLUMN = "t";
 constexpr int  PAGESIZE = 4096;
 
-static std::atomic_ullong id {0};
-static QReadWriteLock mutex(QReadWriteLock::Recursive);
+static std::atomic_ullong suffix {0};
 
 
 static bool exec(const QSqlDatabase &db, const QString &sql)
@@ -40,7 +39,7 @@ static bool exec(const QSqlDatabase &db, const QString &sql)
 
 TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &connectOptions, qint64 thresholdFileSize) :
     _dbFile(fileName),
-    _connectName(QLatin1String("TCacheSQLiteStore") + QString::number(id.fetch_add(1))),
+    _connectName(QLatin1String("TCacheSQLiteStore") + QString::number(suffix.fetch_add(1))),
     _connectOptions(connectOptions),
     _thresholdFileSize(thresholdFileSize)
 {}
@@ -49,35 +48,35 @@ TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &con
 TCacheSQLiteStore::~TCacheSQLiteStore()
 {
     close();
-    //QSqlDatabase::removeDatabase(_connectName);
+    QSqlDatabase::removeDatabase(_connectName);
 }
 
 
-bool TCacheSQLiteStore::openInternal()
+bool TCacheSQLiteStore::open()
 {
-    QWriteLocker lock(&mutex);
-
-    if (_db.isOpen()) {
-        return true;
-    }
-
-    static bool created = [=]() {
+    static bool created = [&]() {
         // Creates a table
         auto db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(_dbFile);
         if (! _connectOptions.isEmpty()) {
             db.setConnectOptions(_connectOptions);
         }
+
         bool ok = db.open();
         if (ok) {
             exec(db, QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
             exec(db, QStringLiteral("begin"));
             exec(db, QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
             exec(db, QStringLiteral("commit"));
+            db.close();
         }
         return ok;
     }();
     Q_UNUSED(created);
+
+    if (isOpen()) {
+        return true;
+    }
 
     if (! _db.isValid()) {
         _db = QSqlDatabase::addDatabase("QSQLITE", _connectName);
@@ -89,12 +88,6 @@ bool TCacheSQLiteStore::openInternal()
 
     bool ok = _db.open();
     if  (ok) {
-        // exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
-        // exec(QStringLiteral("vacuum"));
-        // exec(QStringLiteral("begin"));
-        // exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
-        // exec(QStringLiteral("commit"));
-        //
         exec(_db, QStringLiteral("pragma journal_mode=WAL"));
         exec(_db, QStringLiteral("pragma foreign_keys=ON"));
         exec(_db, QStringLiteral("pragma synchronous=NORMAL"));
@@ -108,47 +101,33 @@ bool TCacheSQLiteStore::openInternal()
 
 void TCacheSQLiteStore::close()
 {
-    QWriteLocker lock(&mutex);
     _db.close();
 }
-
-
-// bool TCacheSQLiteStore::isOpen() const
-// {
-//     return _db.isOpen();
-// }
 
 
 int TCacheSQLiteStore::count()
 {
     int cnt = -1;
-    openInternal();
 
-    if (! _db.isOpen()) {
+    if (! isOpen()) {
         return cnt;
     }
 
-    QWriteLocker lock(&mutex);
     TSqlQuery query(_db);
     QString sql = QStringLiteral("select count(1) from %1").arg(TABLE_NAME);
 
     if (query.exec(sql) && query.next()) {
         cnt = query.value(0).toInt();
     }
-    close();
     return cnt;
 }
 
 
 bool TCacheSQLiteStore::exists(const QByteArray &key)
 {
-    openInternal();
-
-    if (! _db.isOpen()) {
+    if (! isOpen()) {
         return false;
     }
-
-    QWriteLocker lock(&mutex);
 
     TSqlQuery query(_db);
     int exist = 0;
@@ -159,7 +138,6 @@ bool TCacheSQLiteStore::exists(const QByteArray &key)
     if (query.exec() && query.next()) {
         exist = query.value(0).toInt();
     }
-    close();
     return (exist > 0);
 }
 
@@ -194,19 +172,17 @@ bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, qint
 
 bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &timestamp)
 {
-    if (key.isEmpty()) {
-        return false;
-    }
-
-    openInternal();
-    if (! _db.isOpen()) {
-        return false;
-    }
-
-    QWriteLocker lock(&mutex);
     bool ret = false;
-    TSqlQuery query(_db);
 
+    if (key.isEmpty()) {
+        return ret;
+    }
+
+    if (! isOpen()) {
+        return ret;
+    }
+
+    TSqlQuery query(_db);
     query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:key").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
     query.bind(":key", key);
     ret = query.exec();
@@ -218,24 +194,21 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
     } else {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    close();
     return ret;
 }
 
 
 bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qint64 timestamp)
 {
-    if (key.isEmpty()) {
-        return false;
-    }
-
-    openInternal();
-    if (! _db.isOpen()) {
-        return false;
-    }
-
-    QWriteLocker lock(&mutex);
     bool ret = false;
+
+    if (key.isEmpty()) {
+        return ret;
+    }
+
+    if (! isOpen()) {
+        return ret;
+    }
 
     TSqlQuery query(_db);
     QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
@@ -246,24 +219,22 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
     if (!ret && _db.lastError().isValid()) {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    close();
     return ret;
 }
 
 
 bool TCacheSQLiteStore::remove(const QByteArray &key)
 {
-    if (key.isEmpty()) {
-        return false;
-    }
-
-    openInternal();
-    if (! _db.isOpen()) {
-        return false;
-    }
-
-    QWriteLocker lock(&mutex);
     bool ret = false;
+
+    if (key.isEmpty()) {
+        return ret;
+    }
+
+    if (! isOpen()) {
+        return ret;
+    }
+
     TSqlQuery query(_db);
     QString sql = QStringLiteral("delete from %1 where %2=:key").arg(TABLE_NAME, KEY_COLUMN);
 
@@ -273,7 +244,6 @@ bool TCacheSQLiteStore::remove(const QByteArray &key)
     if (! ret) {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    close();
     return ret;
 }
 
@@ -293,12 +263,10 @@ int TCacheSQLiteStore::removeOlder(int num)
         return cnt;
     }
 
-    openInternal();
-    if (! _db.isOpen()) {
-        return false;
+    if (! isOpen()) {
+        return cnt;
     }
 
-    QWriteLocker lock(&mutex);
     TSqlQuery query(_db);
     QString sql = QStringLiteral("delete from %1 where ROWID in (select ROWID from %1 order by t asc limit :num)").arg(TABLE_NAME);
 
@@ -309,7 +277,6 @@ int TCacheSQLiteStore::removeOlder(int num)
     } else {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    close();
     return cnt;
 }
 
@@ -318,12 +285,10 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
 {
     int cnt = -1;
 
-    openInternal();
-    if (! _db.isOpen()) {
+    if (! isOpen()) {
         return cnt;
     }
 
-    QWriteLocker lock(&mutex);
     TSqlQuery query(_db);
     QString sql = QStringLiteral("delete from %1 where %2<:ts").arg(TABLE_NAME, TIMESTAMP_COLUMN);
 
@@ -334,7 +299,6 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
     } else {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    close();
     return cnt;
 }
 
@@ -343,12 +307,10 @@ int TCacheSQLiteStore::removeAll()
 {
     int cnt = -1;
 
-    openInternal();
-    if (! _db.isOpen()) {
+    if (! isOpen()) {
         return cnt;
     }
 
-    QWriteLocker lock(&mutex);
     TSqlQuery query(_db);
     QString sql = QStringLiteral("delete from %1").arg(TABLE_NAME);
 
@@ -357,21 +319,19 @@ int TCacheSQLiteStore::removeAll()
     } else {
         tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
     }
-    close();
     return cnt;
 }
 
 
 bool TCacheSQLiteStore::vacuum()
 {
-    openInternal();
-    if (! _db.isOpen()) {
-        return false;
+    bool ret = false;
+
+    if (! isOpen()) {
+        return ret;
     }
 
-    QWriteLocker lock(&mutex);
-    bool ret = exec(_db, QStringLiteral("vacuum"));
-    close();
+    ret = exec(_db, QStringLiteral("vacuum"));
     return ret;
 }
 
@@ -380,25 +340,21 @@ qint64 TCacheSQLiteStore::dbSize()
 {
     qint64 sz = -1;
 
-    openInternal();
-    if (! _db.isOpen()) {
+    if (! isOpen()) {
         return sz;
     }
 
-    QWriteLocker lock(&mutex);
     TSqlQuery query(_db);
     bool ok = query.exec(QStringLiteral("select (page_count * page_size) from pragma_page_count(), pragma_page_size()"));
     if (ok && query.next()) {
         sz = query.value(0).toLongLong();
     }
-    close();
     return sz;
 }
 
 
 void TCacheSQLiteStore::gc()
 {
-    QWriteLocker lock(&mutex);
     int removed = removeOlderThan(QDateTime::currentMSecsSinceEpoch());
     tSystemDebug("removeOlderThan: %d\n", removed);
     vacuum();

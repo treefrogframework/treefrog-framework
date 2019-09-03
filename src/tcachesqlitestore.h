@@ -13,10 +13,10 @@ public:
     TCacheSQLiteStore(const QString &fileName, const QString &connectOptions = QString(), qint64 thresholdFileSize = 0);
     virtual ~TCacheSQLiteStore();
 
-    QString key() const { return QStringLiteral("singlefiledb"); }
-    bool open() override { return true; }
+    QString key() const { return QLatin1String("singlefiledb"); }
+    bool open() override;
     void close() override;
-    bool isOpen() const { return true; }
+    bool isOpen() const { return _db.isOpen(); }
 
     QByteArray get(const QByteArray &key) override;
     bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) override;
@@ -35,9 +35,6 @@ public:
     qint64 dbSize();
 
 protected:
-    bool openInternal();
-    //bool exec(const QString &sql) const;
-
     QString _dbFile;
     QString _connectName;
     QString _connectOptions;
