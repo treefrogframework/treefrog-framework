@@ -16,6 +16,9 @@ static void loadCacheKeys()
         SINGLEFILEDB_CACHE_KEY = TCacheSQLiteStore().key().toLower();
         return true;
     }();
+
+    Q_ASSERT(!INMEMORY_CACHE_KEY.isEmpty());
+    Q_ASSERT(!SINGLEFILEDB_CACHE_KEY.isEmpty());
     Q_UNUSED(done);
 }
 

@@ -362,29 +362,32 @@ int TWebApplication::maxNumberOfAppServers() const
 */
 int TWebApplication::maxNumberOfThreadsPerAppServer() const
 {
-    int maxNum = 0;
-    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+    static int maxNumber = []() {
+        int maxNum = 0;
+        QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
 
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
-        maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-        if (maxNum <= 0) {
-            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+        switch (Tf::app()->multiProcessingModule()) {
+        case TWebApplication::Thread:
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+            if (maxNum <= 0) {
+                maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+            }
+            break;
+
+        case TWebApplication::Hybrid:
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+            if (maxNum <= 0) {
+                maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+            }
+            break;
+
+        default:
+            break;
         }
-        break;
+        return maxNum;
+    }();
 
-    case TWebApplication::Hybrid:
-        maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
-        if (maxNum <= 0) {
-            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
-        }
-        break;
-
-    default:
-        break;
-    }
-
-    return maxNum;
+    return maxNumber;
 }
 
 /*!

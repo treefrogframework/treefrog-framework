@@ -90,13 +90,6 @@ void TCache::clear()
 }
 
 
-// TCache &TCache::instance()
-// {
-//     static TCache globalInstance;
-//     return globalInstance;
-// }
-
-
 QString TCache::backend()
 {
     static QString cacheBackend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();

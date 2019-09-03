@@ -11,6 +11,7 @@
 #include <QByteArray>
 #include <QDateTime>
 #include <QReadWriteLock>
+#include <TAtomicPtr>
 #include <atomic>
 
 constexpr auto TABLE_NAME = "kb";
@@ -29,17 +30,22 @@ static bool exec(const QSqlDatabase &db, const QString &sql)
     }
 
     TSqlQuery query(db);
-    bool ret = query.exec(sql);
+    query.prepare(sql);
+    bool ret = query.exec();
     if (! ret) {
         tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(db.lastError().text()), qPrintable(sql), __FILE__, __LINE__);
     }
     return ret;
 }
 
+static QString createConnectName()
+{
+    return QLatin1String("TCacheSQLiteStore") + QString::number(suffix.fetch_add(1));
+}
+
 
 TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &connectOptions, qint64 thresholdFileSize) :
     _dbFile(fileName),
-    _connectName(QLatin1String("TCacheSQLiteStore") + QString::number(suffix.fetch_add(1))),
     _connectOptions(connectOptions),
     _thresholdFileSize(thresholdFileSize)
 {}
@@ -48,7 +54,10 @@ TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &con
 TCacheSQLiteStore::~TCacheSQLiteStore()
 {
     close();
-    QSqlDatabase::removeDatabase(_connectName);
+    _db = QSqlDatabase(); // to call removeDatabase()
+    if (! _connectName.isEmpty()) {
+        QSqlDatabase::removeDatabase(_connectName);
+    }
 }
 
 
@@ -73,12 +82,14 @@ bool TCacheSQLiteStore::open()
         return ok;
     }();
     Q_UNUSED(created);
+    Tf::threadFence();
 
     if (isOpen()) {
         return true;
     }
 
     if (! _db.isValid()) {
+        _connectName = createConnectName();
         _db = QSqlDatabase::addDatabase("QSQLITE", _connectName);
         _db.setDatabaseName(_dbFile);
         if (! _connectOptions.isEmpty()) {
