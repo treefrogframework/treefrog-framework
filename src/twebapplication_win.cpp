@@ -6,11 +6,11 @@
  */
 
 #include <TWebApplication>
+#include "tsystemglobal.h"
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <windows.h>
 #include <winuser.h>
-#include "tsystemglobal.h"
 
 const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
 static volatile int ctrlSignal = -1;

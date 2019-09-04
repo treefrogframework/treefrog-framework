@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtSql>
-#include <QCoreApplication>
-#include <QMetaObject>
 #include <TSqlObject>
 #include <TSqlQuery>
 #include <TSystemGlobal>
 #include "tsqldatabase.h"
 #include "tsqldriverextension.h"
+#include <QtSql>
+#include <QCoreApplication>
+#include <QMetaObject>
 
 static const QByteArray LockRevision("lock_revision");
 static const QByteArray CreatedAt("created_at");

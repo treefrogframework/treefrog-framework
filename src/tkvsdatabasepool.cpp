@@ -5,15 +5,15 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tkvsdatabasepool.h"
+#include "tsqldatabasepool.h"
+#include "tsystemglobal.h"
+#include <TWebApplication>
 #include <QStringList>
 #include <QDateTime>
 #include <QMap>
 #include <QThread>
-#include <TWebApplication>
 #include <ctime>
-#include "tkvsdatabasepool.h"
-#include "tsqldatabasepool.h"
-#include "tsystemglobal.h"
 
 /*!
   \class TKvsDatabasePool

@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QFile>
-#include <QBuffer>
 #include <THttpResponse>
 #include <THttpUtility>
 #include <TSystemGlobal>
+#include <QFile>
+#include <QBuffer>
 
 /*!
   \class THttpResponse

@@ -12,19 +12,19 @@
 #include <TDatabaseContext>
 #include <TActionThread>
 #include <TCache>
+#include "tdatabasecontextthread.h"
 #include <QDataStream>
 #include <QBuffer>
+#include "lz4.h"
 #ifdef Q_OS_LINUX
 # include <TActionWorker>
+#endif
+#ifdef Q_OS_WIN
+# include <Windows.h>
 #endif
 #include <cstdlib>
 #include <climits>
 #include <random>
-#include "tdatabasecontextthread.h"
-#ifdef Q_OS_WIN
-# include <Windows.h>
-#endif
-#include "lz4.h"
 
 constexpr int LZ4_BLOCKSIZE = 1024 * 1024; // 1 MB
 
@@ -58,29 +58,7 @@ const QVariantMap &Tf::conf(const QString &configName)
 */
 void Tf::msleep(unsigned long msecs)
 {
-#if defined(Q_OS_WIN)
-    ::Sleep(msecs);
-#else
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    struct timespec ti;
-    ti.tv_nsec = (tv.tv_usec + (msecs % 1000) * 1000) * 1000;
-    ti.tv_sec = tv.tv_sec + (msecs / 1000) + (ti.tv_nsec / 1000000000);
-    ti.tv_nsec %= 1000000000;
-
-    pthread_mutex_t mtx;
-    pthread_cond_t cnd;
-
-    pthread_mutex_init(&mtx, 0);
-    pthread_cond_init(&cnd, 0);
-
-    pthread_mutex_lock(&mtx);
-    pthread_cond_timedwait(&cnd, &mtx, &ti);
-    pthread_mutex_unlock(&mtx);
-
-    pthread_cond_destroy(&cnd);
-    pthread_mutex_destroy(&mtx);
-#endif
+    QThread::msleep(msecs);
 }
 
 /*

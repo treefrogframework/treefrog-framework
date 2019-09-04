@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QByteArray>
-#include <QDataStream>
+#include "tsessionredisstore.h"
 #include <TAppSettings>
 #include <TRedis>
 #include <TSystemGlobal>
-#include "tsessionredisstore.h"
+#include <QByteArray>
+#include <QDataStream>
 
 /*!
   \class TSessionRedisStore

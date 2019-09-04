@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDataStream>
-#include <QIODevice>
 #include <TSystemGlobal>
 #include "twebsocketframe.h"
+#include <QDataStream>
+#include <QIODevice>
 
 
 TWebSocketFrame::TWebSocketFrame()

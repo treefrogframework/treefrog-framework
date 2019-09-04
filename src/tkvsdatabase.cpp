@@ -8,11 +8,11 @@
 #include <TKvsDatabase>
 #include <TKvsDriver>
 #include <TSystemGlobal>
+#include "tmongodriver.h"
+#include "tredisdriver.h"
 #include <QMap>
 #include <QString>
 #include <QReadWriteLock>
-#include "tmongodriver.h"
-#include "tredisdriver.h"
 
 class TKvsDatabaseData
 {

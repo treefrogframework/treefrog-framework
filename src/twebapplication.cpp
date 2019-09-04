@@ -5,17 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <TWebApplication>
+#include <TSystemGlobal>
+#include <TAppSettings>
+#include "tdatabasecontextmainthread.h"
 #include <QDir>
 #include <QTextCodec>
 #include <QDateTime>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <TAppSettings>
 #include <cstdlib>
 #include <thread>  // for hardware_concurrency()
-#include "tdatabasecontextmainthread.h"
 
 constexpr auto DEFAULT_INTERNET_MEDIA_TYPE  = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";

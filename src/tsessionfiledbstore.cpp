@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDataStream>
-#include <TWebApplication>
 #include "tsessionfiledbstore.h"
 #include "tsystemglobal.h"
 #include "tcachesqlitestore.h"
+#include <TWebApplication>
+#include <QDataStream>
 
 constexpr auto SESSION_DB_FILE = "sessiondb";
 

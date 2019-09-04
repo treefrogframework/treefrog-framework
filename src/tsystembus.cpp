@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMutex>
-#include <QDataStream>
-#include <QLocalSocket>
-#include <QStringList>
-#include <TWebApplication>
-#include <TApplicationServerBase>
 #include "tsystembus.h"
 #include "tsystemglobal.h"
 #include "tprocessinfo.h"
 #include "tfcore.h"
+#include <TWebApplication>
+#include <TApplicationServerBase>
+#include <QMutex>
+#include <QDataStream>
+#include <QLocalSocket>
+#include <QStringList>
 
 constexpr int  HEADER_LEN = 5;
 constexpr auto SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";

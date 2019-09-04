@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsqldatabasepool.h"
+#include "tsqldatabase.h"
+#include "tsqldriverextensionfactory.h"
+#include "tsystemglobal.h"
+#include <TWebApplication>
+#include <TSqlQuery>
 #include <QMutexLocker>
 #include <QFileInfo>
 #include <QDir>
-#include <TWebApplication>
-#include <TSqlQuery>
 #include <ctime>
-#include "tsqldatabase.h"
-#include "tsqldatabasepool.h"
-#include "tsqldriverextensionfactory.h"
-#include "tsystemglobal.h"
 
 constexpr auto CONN_NAME_FORMAT = "rdb%02d_%d";
 static TSqlDatabasePool *databasePool = nullptr;

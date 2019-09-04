@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSqlORMapper>
-#include <TCriteria>
 #include "tsessionsqlobjectstore.h"
 #include "tsessionobject.h"
+#include <TSqlORMapper>
+#include <TCriteria>
 
 /*!
   \class TSessionSqlObjectStore

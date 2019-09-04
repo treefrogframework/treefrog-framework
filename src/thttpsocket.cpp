@@ -5,17 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <ctime>
-#include <QDir>
-#include <QBuffer>
+#include "thttpsocket.h"
+#include "tatomicptr.h"
+#include "tsystemglobal.h"
 #include <TTemporaryFile>
 #include <TAppSettings>
 #include <THttpResponse>
 #include <THttpHeader>
 #include <TMultipartFormData>
-#include "thttpsocket.h"
-#include "tatomicptr.h"
-#include "tsystemglobal.h"
+#include <QDir>
+#include <QBuffer>
+#include <ctime>
 
 constexpr uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
 constexpr qint64 WRITE_LENGTH = 1408;

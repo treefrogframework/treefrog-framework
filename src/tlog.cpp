@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QThread>
 #include "TLog"
 #include "tfcore.h"
+#include <QThread>
 
 /*!
   \class TLog

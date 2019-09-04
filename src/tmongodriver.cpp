@@ -9,13 +9,13 @@
 #include <TMongoCursor>
 #include <TBson>
 #include <TSystemGlobal>
-#include <QDateTime>
 extern "C" {
 #include "mongoc.h"
 #if !MONGOC_CHECK_VERSION(1,9,0)
 #error Supports for MongoDB C driver version 1.9.0 or later.
 #endif
 }
+#include <QDateTime>
 
 
 TMongoDriver::TMongoDriver() :

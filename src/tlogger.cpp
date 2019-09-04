@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QFileInfo>
-#include <QDir>
-#include <QTextCodec>
 #include <TLogger>
 #include <TWebApplication>
 #include <TSystemGlobal>
+#include <QFileInfo>
+#include <QDir>
+#include <QTextCodec>
 
 constexpr auto DEFAULT_TEXT_ENCODING = "DefaultTextEncoding";
 

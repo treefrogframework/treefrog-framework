@@ -6,13 +6,12 @@
  */
 
 #include "tredisdriver.h"
+#include "tsystemglobal.h"
+#include <TApplicationServerBase>
 #include <QEventLoop>
 #include <QElapsedTimer>
 #include <QTcpSocket>
-#include <TApplicationServerBase>
-#include <TSystemGlobal>
 #include <QThread>
-#include "tsystemglobal.h"
 using namespace Tf;
 
 constexpr int DEFAULT_PORT = 6379;

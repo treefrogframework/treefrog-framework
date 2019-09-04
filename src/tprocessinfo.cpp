@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include <TGlobal>
 #include "tprocessinfo.h"
+#include <TGlobal>
+#include <QtCore>
 
 
 TProcessInfo::TProcessInfo(qint64 pid)

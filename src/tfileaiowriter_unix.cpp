@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QList>
-#include <QMutexLocker>
 #include "tfileaiowriter.h"
 #include "tqueue.h"
 #include "tfcore_unix.h"
+#include <QList>
+#include <QMutexLocker>
 
 constexpr int MAX_NUM_BUFFERING_DATA = 10000;
 

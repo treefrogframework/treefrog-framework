@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QUrl>
-#include <QLocale>
-#include <QDateTime>
 #include <TFormValidator>
 #include <TWebApplication>
 #include "tsystemglobal.h"
+#include <QUrl>
+#include <QLocale>
+#include <QDateTime>
 
 #define ATOM       "[a-zA-Z0-9_!#\\$\\%&'*+/=?\\^`{}~|\\-]+"
 #define DOT_ATOM   ATOM "(?:\\." ATOM ")*"

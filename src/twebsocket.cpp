@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
 #include "twebsocket.h"
 #include "twebsocketworker.h"
 #include "turlroute.h"
 #include "tdispatcher.h"
 #include "tatomicptr.h"
+#include <TWebApplication>
 
 constexpr qint64 WRITE_LENGTH = 1280;
 constexpr int BUFFER_RESERVE_SIZE = 127;

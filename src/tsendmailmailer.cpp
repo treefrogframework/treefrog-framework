@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMutex>
-#include <TWebApplication>
 #include "tsendmailmailer.h"
 #include "tsystemglobal.h"
+#include <TWebApplication>
+#include <QMutex>
 
 static QMutex sendMutex;
 

@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDateTime>
-#include <QMetaProperty>
 #include <TMongoObject>
 #include <TMongoQuery>
 #include <TAbstractModel>
+#include <QDateTime>
+#include <QMetaProperty>
 
 const QByteArray LockRevision("lockRevision");
 const QByteArray CreatedAt("createdAt");

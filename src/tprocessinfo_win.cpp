@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
+#include "tprocessinfo.h"
 #include <TWebApplication>
+#include <QtCore>
 #include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
-#include "tprocessinfo.h"
 
 
 bool TProcessInfo::exists() const

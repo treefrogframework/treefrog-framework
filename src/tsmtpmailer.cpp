@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsmtpmailer.h"
+#include "tsystemglobal.h"
+#include <TCryptMac>
+#include <TPopMailer>
 #include <QSslSocket>
 #include <QHostAddress>
 #include <QDateTime>
 #include <QCoreApplication>
-#include <TCryptMac>
-#include <TPopMailer>
-#include "tsmtpmailer.h"
-#include "tsystemglobal.h"
 using namespace Tf;
 
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)

@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMutexLocker>
-#include <TSystemGlobal>
 #include "tfilelogger.h"
+#include <TSystemGlobal>
+#include <QMutexLocker>
 
 /*!
   \class TFileLogger

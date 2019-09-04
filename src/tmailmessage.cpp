@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tmailmessage.h"
+#include <THttpUtility>
 #include <QTextCodec>
 #include <QDateTime>
-#include <THttpUtility>
-#include "tmailmessage.h"
 using namespace Tf;
 
 constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";

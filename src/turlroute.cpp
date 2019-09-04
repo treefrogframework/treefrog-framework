@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "turlroute.h"
+#include <TWebApplication>
+#include <TSystemGlobal>
+#include <THttpUtility>
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
 #include <QMap>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <THttpUtility>
-#include "turlroute.h"
 
 
 class RouteDirectiveHash : public QMap<QString, int>

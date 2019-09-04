@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMutex>
-#include <QSet>
-#include <TWebApplication>
-#include "tsystemglobal.h"
 #include "tpublisher.h"
+#include "tsystemglobal.h"
 #include "twebsocket.h"
 #include "tsystembus.h"
+#include <TWebApplication>
 #ifdef Q_OS_LINUX
 # include "tepollwebsocket.h"
 #endif
+#include <QMutex>
+#include <QSet>
 
 static QMutex mutex(QMutex::NonRecursive);
 static TPublisher *globalInstance = nullptr;

@@ -8,8 +8,8 @@
 #include <TSqlTransaction>
 #include <TWebApplication>
 #include <TSystemGlobal>
-#include <QSqlDriver>
 #include "tsqldatabasepool.h"
+#include <QSqlDriver>
 
 /*!
   \class TSqlTransaction
