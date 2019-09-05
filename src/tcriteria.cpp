@@ -20,15 +20,16 @@
 /*!
   Constructor.
 */
-TCriteria::TCriteria()
-    : logiOp(None)
+TCriteria::TCriteria() : logiOp(None)
 { }
 
 /*!
   Copy constructor.
 */
-TCriteria::TCriteria(const TCriteria &other)
-    : cri1(other.cri1), cri2(other.cri2), logiOp(other.logiOp)
+TCriteria::TCriteria(const TCriteria &other) :
+    cri1(other.cri1),
+    cri2(other.cri2),
+    logiOp(other.logiOp)
 { }
 
 /*!
@@ -38,8 +39,8 @@ TCriteria::TCriteria(const TCriteria &other)
 
   @sa TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op)
 */
-TCriteria::TCriteria(int property, TSql::ComparisonOperator op)
-    : logiOp(None)
+TCriteria::TCriteria(int property, TSql::ComparisonOperator op) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op));
 }
@@ -51,8 +52,8 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op)
 
   @sa TCriteria &TCriteria::add(int property, const QVariant &val)
 */
-TCriteria::TCriteria(int property, const QVariant &val)
-    : logiOp(None)
+TCriteria::TCriteria(int property, const QVariant &val) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, TSql::Equal, val));
 }
@@ -64,8 +65,8 @@ TCriteria::TCriteria(int property, const QVariant &val)
 
   @sa TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op, const QVariant &val)
 */
-TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &val)
-    : logiOp(None)
+TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &val) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op, val));
 }
@@ -78,8 +79,8 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &
 
   @sa TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2)
 */
-TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2)
-    : logiOp(None)
+TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op, val1, val2));
 }
@@ -92,22 +93,22 @@ TCriteria::TCriteria(int property, TSql::ComparisonOperator op, const QVariant &
 
   @sa TCriteria &TCriteria::add(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val)
 */
-TCriteria::TCriteria(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val)
-    : logiOp(None)
+TCriteria::TCriteria(int property, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op1, op2, val));
 }
 
 
-TCriteria::TCriteria(int property, TMongo::ComparisonOperator op)
-    : logiOp(None)
+TCriteria::TCriteria(int property, TMongo::ComparisonOperator op) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op));
 }
 
 
-TCriteria::TCriteria(int property, TMongo::ComparisonOperator op, const QVariant &val)
-    : logiOp(None)
+TCriteria::TCriteria(int property, TMongo::ComparisonOperator op, const QVariant &val) :
+    logiOp(None)
 {
     cri1 = QVariant::fromValue(TCriteriaData(property, op, val));
 }

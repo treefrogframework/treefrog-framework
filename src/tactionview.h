@@ -71,8 +71,8 @@ private:
     void setSubActionView(TActionView *actionView);
     virtual const TActionView *actionView() const { return this; }
 
-    TActionController *actionController;
-    TActionView *subView;
+    TActionController *actionController {nullptr};
+    TActionView *subView {nullptr};
     QVariantMap variantMap;
 
     friend class TActionController;

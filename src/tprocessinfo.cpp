@@ -10,8 +10,7 @@
 #include <QtCore>
 
 
-TProcessInfo::TProcessInfo(qint64 pid)
-    : processId(pid)
+TProcessInfo::TProcessInfo(qint64 pid) : processId(pid)
 { }
 
 

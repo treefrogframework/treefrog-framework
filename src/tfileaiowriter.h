@@ -22,7 +22,7 @@ public:
     QString fileName() const;
 
 private:
-    TFileAioWriterData *d;
+    TFileAioWriterData *d {nullptr};
 
     T_DISABLE_COPY(TFileAioWriter)
     T_DISABLE_MOVE(TFileAioWriter)

@@ -1,9 +1,6 @@
 #ifndef TACTIONCONTROLLER_H
 #define TACTIONCONTROLLER_H
 
-#include <QtCore>
-#include <QHostAddress>
-#include <QDomDocument>
 #include <TGlobal>
 #include <TAbstractController>
 #include <TActionHelper>
@@ -12,6 +9,9 @@
 #include <TSession>
 #include <TCookieJar>
 #include <TAccessValidator>
+#include <QtCore>
+#include <QHostAddress>
+#include <QDomDocument>
 
 class TActionView;
 class TAbstractUser;

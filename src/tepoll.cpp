@@ -36,25 +36,25 @@ public:
         SwitchToWebSocket,
     };
 
-    int method;
-    TEpollSocket *socket;
-    TSendBuffer *buffer;
+    int method {Disconnect};
+    TEpollSocket *socket {nullptr};
+    TSendBuffer *buffer {nullptr};
     THttpRequestHeader header;
 
-    TSendData(Method m, TEpollSocket *s, TSendBuffer *buf = 0)
-        : method(m), socket(s), buffer(buf), header()
+    TSendData(Method m, TEpollSocket *s, TSendBuffer *buf = 0) :
+        method(m), socket(s), buffer(buf), header()
     { }
 
-    TSendData(Method m, TEpollSocket *s, const THttpRequestHeader &h)
-        : method(m), socket(s), buffer(0), header(h)
+    TSendData(Method m, TEpollSocket *s, const THttpRequestHeader &h) :
+        method(m), socket(s), buffer(0), header(h)
     { }
 };
 
 
 
-TEpoll::TEpoll()
-    : epollFd(0), events(new struct epoll_event[MaxEvents]),
-      polling(false), numEvents(0), eventIterator(0), pollingSockets()
+TEpoll::TEpoll() :
+    events(new struct epoll_event[MaxEvents]),
+    pollingSockets()
 {
     epollFd = epoll_create(1);
     if (epollFd < 0) {

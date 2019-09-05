@@ -16,8 +16,10 @@
 */
 
 
-TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers, QObject *parent)
-    : QObject(parent), loggerList(loggers), nonBuffering(false)
+TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers, QObject *parent) :
+    QObject(parent),
+    loggerList(loggers),
+    nonBuffering(false)
 {
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(setNonBufferingMode()));
 }

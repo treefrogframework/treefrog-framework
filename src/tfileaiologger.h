@@ -24,7 +24,7 @@ public:
     void setFileName(const QString &name);
 
 private:
-    TFileAioWriter *writer;
+    TFileAioWriter *writer {nullptr};
 
     T_DISABLE_COPY(TFileAioLogger)
     T_DISABLE_MOVE(TFileAioLogger)

@@ -117,18 +117,21 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 // }
 
 
-TKvsDatabase::TKvsDatabase(const TKvsDatabase &other)
-    : connectName(other.connectName), drv(other.drv)
+TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
+    connectName(other.connectName),
+    drv(other.drv)
 { }
 
 
-TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver)
-    : connectName(connectionName), drv(driver)
+TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver) :
+    connectName(connectionName),
+    drv(driver)
 { }
 
 
-TKvsDatabase::TKvsDatabase(const TKvsDatabaseData &data)
-    : connectName(data.connectionName), drv(data.driver)
+TKvsDatabase::TKvsDatabase(const TKvsDatabaseData &data) :
+    connectName(data.connectionName),
+    drv(data.driver)
 { }
 
 

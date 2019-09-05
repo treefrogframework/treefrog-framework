@@ -28,7 +28,7 @@ protected:
 private:
     QByteArray httpRequest;
     QString clientAddr;
-    TEpollHttpSocket *socket;
+    TEpollHttpSocket *socket {nullptr};
 
     T_DISABLE_COPY(TActionWorker)
     T_DISABLE_MOVE(TActionWorker)

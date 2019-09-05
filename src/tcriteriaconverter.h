@@ -1,12 +1,12 @@
 #ifndef TCRITERIACONVERTER_H
 #define TCRITERIACONVERTER_H
 
-#include <QMetaObject>
-#include <QVariant>
+#include <TGlobal>
 #include <TCriteria>
 #include <TSqlQuery>
-#include <TGlobal>
 #include "tsystemglobal.h"
+#include <QMetaObject>
+#include <QVariant>
 
 namespace TSql
 {

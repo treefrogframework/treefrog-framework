@@ -1,12 +1,12 @@
 #ifndef TDISPATCHER_H
 #define TDISPATCHER_H
 
+#include <TGlobal>
+#include "tsystemglobal.h"
 #include <QMetaType>
 #include <QMetaMethod>
 #include <QMetaObject>
 #include <QStringList>
-#include <TGlobal>
-#include "tsystemglobal.h"
 
 
 template <class T>

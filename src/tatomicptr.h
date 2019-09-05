@@ -40,7 +40,7 @@ private:
     };
 
     T *raw() const;
-    std::atomic<quintptr> atomicPtr {0};
+    std::atomic<quintptr> atomicPtr {nullptr};
 
     T_DISABLE_MOVE(TAtomicPtr)
 };

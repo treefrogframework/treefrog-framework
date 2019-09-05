@@ -5,18 +5,18 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <sys/types.h>
-#include <atomic>
-#include <QFileInfo>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <THttpHeader>
 #include "tepollsocket.h"
 #include "tepollhttpsocket.h"
 #include "tepoll.h"
 #include "tsendbuffer.h"
 #include "tfcore.h"
 #include "tatomicptr.h"
+#include <TWebApplication>
+#include <TSystemGlobal>
+#include <THttpHeader>
+#include <QFileInfo>
+#include <atomic>
+#include <sys/types.h>
 
 class SendData;
 
@@ -47,7 +47,7 @@ TEpollSocket *TEpollSocket::accept(int listeningSocket)
 
 TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &address)
 {
-    TEpollSocket *sock = 0;
+    TEpollSocket *sock = nullptr;
 
     if (Q_LIKELY(socketDescriptor > 0)) {
         sock  = new TEpollHttpSocket(socketDescriptor, address);
@@ -95,8 +95,9 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 }
 
 
-TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address)
-    : sd(socketDescriptor), clientAddr(address)
+TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
+    sd(socketDescriptor),
+    clientAddr(address)
 {
     do {
         sid = point.fetch_add(1);

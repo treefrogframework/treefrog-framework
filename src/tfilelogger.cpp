@@ -14,8 +14,7 @@
   \brief The TFileLogger class provides logging functionality to a log file.
 */
 
-TFileLogger::TFileLogger()
-    : TLogger()
+TFileLogger::TFileLogger() : TLogger()
 {
     logFile.setFileName(target());
 }

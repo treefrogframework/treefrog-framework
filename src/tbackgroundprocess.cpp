@@ -10,8 +10,7 @@
 */
 
 
-TBackgroundProcess::TBackgroundProcess(QObject *parent)
-    : QProcess(parent)
+TBackgroundProcess::TBackgroundProcess(QObject *parent) : QProcess(parent)
 {
     moveToThread(Tf::app()->databaseContextMainThread());
 }

@@ -1,10 +1,10 @@
 #ifndef TAPPSETTINGS_H
 #define TAPPSETTINGS_H
 
+#include <TGlobal>
 #include <QMap>
 #include <QVariant>
 #include <QMutex>
-#include <TGlobal>
 
 class QSettings;
 
@@ -22,7 +22,7 @@ private:
 
     mutable QMutex mutex;
     mutable QMap<int, QVariant> settingsCache;
-    QSettings *appIniSettings;
+    QSettings *appIniSettings {nullptr};
 
     friend class TWebApplication;
     T_DISABLE_COPY(TAppSettings)

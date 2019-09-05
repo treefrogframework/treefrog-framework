@@ -29,8 +29,8 @@ const QFile::Permissions TMimeEntity::DefaultPermissions = TMultipartFormData::D
 /*!
   Copy constructor.
 */
-TMimeHeader::TMimeHeader(const TMimeHeader &other)
-    : headers(other.headers)
+TMimeHeader::TMimeHeader(const TMimeHeader &other) :
+    headers(other.headers)
 { }
 
 /*!

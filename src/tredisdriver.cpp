@@ -53,7 +53,6 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
         return false;
     }
 
-#if QT_VERSION >= 0x050300
     // Sets socket options
     _client->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
@@ -67,7 +66,6 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     if (val < RECV_BUF_SIZE) {
         _client->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, RECV_BUF_SIZE);
     }
-#endif
 
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;

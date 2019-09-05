@@ -22,7 +22,6 @@
   Constructor.
 */
 TAccessValidator::TAccessValidator()
-    : allowDefault(true)
 { }
 
 /*!

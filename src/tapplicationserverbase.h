@@ -1,8 +1,8 @@
 #ifndef TAPPLICATIONSERVERBASE_H
 #define TAPPLICATIONSERVERBASE_H
 
-#include <QHostAddress>
 #include <TGlobal>
+#include <QHostAddress>
 
 #ifdef Q_OS_UNIX
 # include <tfcore_unix.h>

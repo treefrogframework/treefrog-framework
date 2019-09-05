@@ -20,15 +20,17 @@ const QByteArray ModifiedAt("modifiedAt");
 /*!
   Constructor.
 */
-TMongoObject::TMongoObject()
-    : TModelObject(), QVariantMap()
+TMongoObject::TMongoObject() :
+    TModelObject(),
+    QVariantMap()
 { }
 
 /*!
   Copy constructor.
 */
-TMongoObject::TMongoObject(const TMongoObject &other)
-    : TModelObject(), QVariantMap(other)
+TMongoObject::TMongoObject(const TMongoObject &other) :
+    TModelObject(),
+    QVariantMap(other)
 { }
 
 /*!

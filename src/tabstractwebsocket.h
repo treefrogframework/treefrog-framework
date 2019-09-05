@@ -45,11 +45,11 @@ protected:
     int parse(QByteArray &recvData);
 
     THttpRequestHeader reqHeader;
-    TAtomic<bool> closing;
-    TAtomic<bool> closeSent;
+    TAtomic<bool> closing {false};
+    TAtomic<bool> closeSent {false};
     mutable QMutex mutexData;
     TWebSocketSession sessionStore;
-    TBasicTimer *keepAliveTimer;
+    TBasicTimer *keepAliveTimer {nullptr};
 
     friend class TWebSocketWorker;
     T_DISABLE_COPY(TAbstractWebSocket)

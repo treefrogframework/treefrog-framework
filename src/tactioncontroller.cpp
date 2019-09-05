@@ -5,15 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDir>
-#include <QFile>
-#include <QTextStream>
-#include <QMetaMethod>
-#include <QMetaType>
-#include <QTextCodec>
-#include <QCryptographicHash>
-#include <QMutexLocker>
-#include <QDomDocument>
 #include <TActionController>
 #include <TWebApplication>
 #include <TAppSettings>
@@ -26,6 +17,15 @@
 #include "tsessionmanager.h"
 #include "ttextview.h"
 #include "tcache.h"
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QMetaMethod>
+#include <QMetaType>
+#include <QTextCodec>
+#include <QCryptographicHash>
+#include <QMutexLocker>
+#include <QDomDocument>
 
 const QString FLASH_VARS_SESSION_KEY ("_flashVariants");
 const QString LOGIN_USER_NAME_KEY ("_loginUserName");

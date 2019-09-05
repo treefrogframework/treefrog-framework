@@ -11,10 +11,10 @@
 #include <THttpUtility>
 #include <THtmlAttribute>
 #include <TReactComponent>
+#include "tsystemglobal.h"
 #include <QDir>
 #include <QMutex>
 #include <QMutexLocker>
-#include "tsystemglobal.h"
 
 /*!
   \class TActionView
@@ -26,8 +26,10 @@
 /*!
   Constructor.
 */
-TActionView::TActionView()
-    : QObject(), TViewHelper(), TPrototypeAjaxHelper(), actionController(0), subView(0)
+TActionView::TActionView() :
+    QObject(),
+    TViewHelper(),
+    TPrototypeAjaxHelper()
 { }
 
 /*!

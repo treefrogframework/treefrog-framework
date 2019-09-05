@@ -48,8 +48,12 @@ bool TActionWorker::waitForAllDone(int msec)
   \brief The TActionWorker class provides a thread context.
 */
 
-TActionWorker::TActionWorker(TEpollHttpSocket *sock, QObject *parent)
-    : QThread(parent), TActionContext(), httpRequest(), clientAddr(), socket(sock)
+TActionWorker::TActionWorker(TEpollHttpSocket *sock, QObject *parent) :
+    QThread(parent),
+    TActionContext(),
+    httpRequest(),
+    clientAddr(),
+    socket(sock)
 {
     ++workerCounter;
     httpRequest = socket->readRequest();

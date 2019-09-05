@@ -26,8 +26,7 @@ constexpr auto ACTIONE_NAME    = "mail";
 /*!
   Constructor.
 */
-TActionMailer::TActionMailer()
-    : TAbstractController()
+TActionMailer::TActionMailer() : TAbstractController()
 { }
 
 /*!

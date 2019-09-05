@@ -27,8 +27,10 @@
   \a midRange specifies the number of pages to show ‘around’ the
   current page on a pagination bar, and should be an odd number.
 */
-TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange)
-    : _itemsTotal(itemsTotal), _itemsPerPage(itemsPerPage), _midRange(midRange)
+TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange) :
+    _itemsTotal(itemsTotal),
+    _itemsPerPage(itemsPerPage),
+    _midRange(midRange)
 {
     calculateNumPages();
 }
@@ -36,12 +38,12 @@ TPaginator::TPaginator(int itemsTotal, int itemsPerPage, int midRange)
 /*!
   Copy constructor.
 */
-TPaginator::TPaginator(const TPaginator &other)
-    : _itemsTotal(other._itemsTotal),
-      _itemsPerPage(other._itemsPerPage),
-      _midRange(other._midRange),
-      _numPages(other._numPages),
-      _currentPage(other._currentPage)
+TPaginator::TPaginator(const TPaginator &other) :
+    _itemsTotal(other._itemsTotal),
+    _itemsPerPage(other._itemsPerPage),
+    _midRange(other._midRange),
+    _numPages(other._numPages),
+    _currentPage(other._currentPage)
 { }
 
 /*!

@@ -68,12 +68,13 @@ TKvsDatabasePool::~TKvsDatabasePool()
     delete[] cachedDatabase;
     delete[] lastCachedTime;
     delete[] availableNames;
-
 }
 
 
-TKvsDatabasePool::TKvsDatabasePool(const QString &environment)
-    : QObject(), maxConnects(0), dbEnvironment(environment)
+TKvsDatabasePool::TKvsDatabasePool(const QString &environment) :
+    QObject(),
+    maxConnects(0),
+    dbEnvironment(environment)
 { }
 
 
@@ -279,7 +280,6 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
 
 void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
-
     if (Q_LIKELY(database.isValid())) {
         int type = kvsTypeHash()->value(database.driverName(), -1);
         if (Q_UNLIKELY(type < 0)) {
@@ -296,7 +296,6 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 
 void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 {
-
     if (event->timerId() == timer.timerId()) {
         QString name;
 

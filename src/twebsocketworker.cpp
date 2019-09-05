@@ -22,9 +22,13 @@
 #include <QDataStream>
 
 
-TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
-    : TDatabaseContextThread(parent), _mode(m), _socket(s), _httpSession(),
-      _requestPath(path), _payloads()
+TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent) :
+    TDatabaseContextThread(parent),
+    _mode(m),
+    _socket(s),
+    _httpSession(),
+    _requestPath(path),
+    _payloads()
 { }
 
 
