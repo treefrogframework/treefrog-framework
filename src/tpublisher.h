@@ -1,10 +1,10 @@
 #ifndef TPUBLISHER_H
 #define TPUBLISHER_H
 
+#include <TGlobal>
 #include <QObject>
 #include <QString>
 #include <QMap>
-#include <TGlobal>
 
 class TAbstractWebSocket;
 class Pub;
@@ -20,7 +20,6 @@ public:
     void publish(const QString &topic, const QString &text, TAbstractWebSocket *socket);
     void publish(const QString &topic, const QByteArray &binary, TAbstractWebSocket *socket);
     static TPublisher *instance();
-    static void instantiate();
 
 protected:
     Pub *create(const QString &topic);

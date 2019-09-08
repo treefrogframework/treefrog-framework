@@ -51,6 +51,7 @@ public:
     QSettings &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
     bool isSqlDatabaseAvailable() const;
+    int databaseIdForInternalUse() const;
     QSettings &mongoDbSettings() const;
     bool isMongoDbAvailable() const;
     QSettings &redisSettings() const;

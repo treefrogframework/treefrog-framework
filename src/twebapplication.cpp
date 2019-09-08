@@ -232,7 +232,29 @@ QString TWebApplication::appSettingsFilePath() const
 */
 QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    return *sqlSettings[databaseId];
+    static QSettings *internalSettings = [&]() {
+        auto *set = new QSettings();
+        set->setValue("DriverType", "QSQLITE");
+
+        QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
+        QString dbpath, opt;
+        if (backend == "memory") {
+          dbpath = "file:memorydb?mode=memory&cache=shared";
+          opt = "QSQLITE_OPEN_URI";
+        } else {
+            dbpath = Tf::appSettings()->value(Tf::CacheSingleFileDbFilePath).toString().trimmed();
+            if (!dbpath.isEmpty() && QDir::isRelativePath(dbpath)) {
+                dbpath = Tf::app()->webRootPath() + dbpath;
+            }
+        }
+        set->setValue("DatabaseName", dbpath);
+        set->setValue("ConnectOptions", opt);
+        set->setValue("PostOpenStatements", "PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA synchronous=NORMAL;");
+        set->setValue("EnableUpsert", false);
+        return set;
+    }();
+
+    return (databaseId == databaseIdForInternalUse()) ? *internalSettings : *sqlSettings[databaseId];
 }
 
 /*!
@@ -241,7 +263,11 @@ QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 */
 int TWebApplication::sqlDatabaseSettingsCount() const
 {
-    return sqlSettings.count();
+    static int count = [&]() {
+        int num = sqlSettings.count();
+        return (num > 0) ? num + 1 : num; // added 1 for internal use of DB
+    }();
+    return count;
 }
 
 /*!
@@ -249,7 +275,18 @@ int TWebApplication::sqlDatabaseSettingsCount() const
 */
 bool TWebApplication::isSqlDatabaseAvailable() const
 {
-    return sqlSettings.count() > 0;
+    return sqlDatabaseSettingsCount() > 0;
+}
+
+/*!
+ */
+int TWebApplication::databaseIdForInternalUse() const
+{
+    static int id = [&]() {
+        int cnt = sqlDatabaseSettingsCount();
+        return (cnt > 0) ? cnt - 1 : 0;
+    }();
+    return id;
 }
 
 /*!
@@ -457,9 +494,12 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 
 QThread *TWebApplication::databaseContextMainThread() const
 {
-    static TDatabaseContextMainThread databaseThread;
-    databaseThread.start();
-    return &databaseThread;
+    static TDatabaseContextMainThread *databaseThread = []() {
+        auto *thread = new TDatabaseContextMainThread;
+        thread->start();
+        return thread;
+    }();
+    return databaseThread;
 }
 
 

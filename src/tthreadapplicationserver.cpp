@@ -84,15 +84,6 @@ bool TThreadApplicationServer::start(bool debugMode)
         return false;
     }
 
-    // instantiate
-    if (!debugMode) {
-        TSystemBus::instantiate();
-        TPublisher::instantiate();
-    }
-    TUrlRoute::instantiate();
-    TSqlDatabasePool::instantiate();
-    TKvsDatabasePool::instantiate();
-
     TStaticInitializeThread::exec();
     return true;
 }

@@ -16,7 +16,7 @@ public:
     QString key() const { return QLatin1String("singlefiledb"); }
     bool open() override;
     void close() override;
-    bool isOpen() const { return _db.isOpen(); }
+    bool isOpen() const { return true; }
 
     QByteArray get(const QByteArray &key) override;
     bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) override;

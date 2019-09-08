@@ -21,7 +21,6 @@
 */
 
 constexpr auto CONN_NAME_FORMAT = "kvs%02d_%d";
-static TKvsDatabasePool *databasePool = 0;
 
 
 class KvsTypeHash : public QMap<QString, int>
@@ -36,11 +35,22 @@ public:
 Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 
-static void cleanup()
+TKvsDatabasePool *TKvsDatabasePool::instance()
 {
-    delete databasePool;
-    databasePool = nullptr;
+    static TKvsDatabasePool *databasePool = []() {
+        auto *pool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
+        pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
+        pool->init();
+        return pool;
+    }();
+    return databasePool;
 }
+
+
+TKvsDatabasePool::TKvsDatabasePool(const QString &environment) :
+    QObject(),
+    dbEnvironment(environment)
+{ }
 
 
 TKvsDatabasePool::~TKvsDatabasePool()
@@ -69,13 +79,6 @@ TKvsDatabasePool::~TKvsDatabasePool()
     delete[] lastCachedTime;
     delete[] availableNames;
 }
-
-
-TKvsDatabasePool::TKvsDatabasePool(const QString &environment) :
-    QObject(),
-    maxConnects(0),
-    dbEnvironment(environment)
-{ }
 
 
 void TKvsDatabasePool::init()
@@ -316,30 +319,6 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
     } else {
         QObject::timerEvent(event);
     }
-}
-
-
-/*!
- * Initializes.
- * Call this in main thread.
- */
-void TKvsDatabasePool::instantiate()
-{
-    if (!databasePool) {
-        databasePool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
-        databasePool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
-        databasePool->init();
-        qAddPostRoutine(::cleanup);
-    }
-}
-
-
-TKvsDatabasePool *TKvsDatabasePool::instance()
-{
-    if (Q_UNLIKELY(!databasePool)) {
-        tFatal("Call TKvsDatabasePool::initialize() function first");
-    }
-    return databasePool;
 }
 
 

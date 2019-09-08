@@ -113,15 +113,6 @@ bool TMultiplexingServer::start(bool debugMode)
         }
     }
 
-    // instantiate
-    if (!debugMode) {
-        TSystemBus::instantiate();
-        TPublisher::instantiate();
-    }
-    TUrlRoute::instantiate();
-    TSqlDatabasePool::instantiate();
-    TKvsDatabasePool::instantiate();
-
     TStaticInitializeThread::exec();
     QThread::start();
     return true;

@@ -17,7 +17,6 @@
 #include <QSet>
 
 static QMutex mutex(QMutex::NonRecursive);
-static TPublisher *globalInstance = nullptr;
 
 
 class Pub : public QObject
@@ -106,8 +105,18 @@ void Pub::publish(const QByteArray &binary, const QObject *sender)
   \brief The TPublisher class provides a means of publish subscribe messaging for websocket.
 */
 
+TPublisher *TPublisher::instance()
+{
+    static TPublisher *globalInstance = []() {
+        auto *pub = new TPublisher();
+        connect(TSystemBus::instance(), SIGNAL(readyReceive()), pub, SLOT(receiveSystemBus()));
+        return pub;
+    }();
+    return globalInstance;
+}
+
+
 TPublisher::TPublisher()
-    : pubobj()
 { }
 
 
@@ -210,21 +219,6 @@ void TPublisher::publish(const QString &topic, const QByteArray &binary, TAbstra
     Pub *pub = get(topic);
     if (pub) {
         pub->publish(binary, castToObject(socket));
-    }
-}
-
-
-TPublisher *TPublisher::instance()
-{
-    return globalInstance;
-}
-
-
-void TPublisher::instantiate()
-{
-    if (!globalInstance) {
-        globalInstance = new TPublisher();
-        connect(TSystemBus::instance(), SIGNAL(readyReceive()), globalInstance, SLOT(receiveSystemBus()));
     }
 }
 

@@ -22,7 +22,6 @@ public:
     TKvsDatabase database(TKvsDatabase::Type type);
     void pool(TKvsDatabase &database);
 
-    static void instantiate();
     static TKvsDatabasePool *instance();
 
 protected:
@@ -42,7 +41,7 @@ private:
     TStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
-    int maxConnects;
+    int maxConnects {0};
     QString dbEnvironment;
     QBasicTimer timer;
 };

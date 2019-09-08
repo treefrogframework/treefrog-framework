@@ -124,17 +124,9 @@ TAppSettings *TAppSettings::instance()
 }
 
 
-static void cleanup()
-{
-    delete appSettings;
-    appSettings = nullptr;
-}
-
-
 void TAppSettings::instantiate(const QString &path)
 {
     if (!appSettings) {
         appSettings = new TAppSettings(path);
-        qAddPostRoutine(::cleanup);
     }
 }

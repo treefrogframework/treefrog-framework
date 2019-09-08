@@ -33,29 +33,14 @@ public:
 };
 Q_GLOBAL_STATIC(RouteDirectiveHash, directiveHash)
 
-static TUrlRoute *urlRoute = nullptr;
-
-/*!
- * Initializes.
- * Call this in main thread.
- */
-void TUrlRoute::instantiate()
-{
-    if (!urlRoute) {
-        urlRoute = new TUrlRoute();
-        urlRoute->parseConfigFile();
-
-        qAddPostRoutine([]{
-            delete urlRoute;
-            urlRoute = nullptr;
-        });
-    }
-}
-
 
 const TUrlRoute &TUrlRoute::instance()
 {
-    Q_CHECK_PTR(urlRoute);
+    static TUrlRoute *urlRoute = []() {
+        auto *route = new TUrlRoute();
+        route->parseConfigFile();
+        return route;
+    }();
     return *urlRoute;
 }
 

@@ -23,9 +23,7 @@ public:
     QSqlDatabase database(int databaseId = 0);
     void pool(QSqlDatabase &database, bool forceClose = false);
 
-    static void instantiate();
     static TSqlDatabasePool *instance();
-
     static QString driverType(const QString &env, int databaseId);
     static bool setDatabaseSettings(TSqlDatabase &database, const QString &env, int databaseId);
     static int getDatabaseId(const QSqlDatabase &database);
@@ -43,7 +41,7 @@ private:
     TStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
-    int maxConnects;
+    int maxConnects {0};
     QString dbEnvironment;
     QBasicTimer timer;
 };

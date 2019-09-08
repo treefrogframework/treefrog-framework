@@ -45,8 +45,6 @@ int main(int argc, char *argv[]) \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
     app.setDatabaseEnvironment("test"); \
-    TSqlDatabasePool::instantiate(); \
-    TKvsDatabasePool::instantiate(); \
     Thread thread; \
     thread.start(); \
     thread.wait(); \
