@@ -167,6 +167,7 @@ public:
         append(L("config") + SEP + "redis.ini");
         append(L("config") + SEP + "routes.cfg");
         append(L("config") + SEP + "validation.ini");
+        append(L("config") + SEP + "cache.ini");
         append(L("public") + SEP + "403.html");
         append(L("public") + SEP + "404.html");
         append(L("public") + SEP + "413.html");

@@ -26,13 +26,13 @@ static QMutex cacheMutex;
 /*!
   Constructs a TSqlQuery object using the database \a databaseId.
 */
-TSqlQuery::TSqlQuery(int databaseId)
-    : QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
+TSqlQuery::TSqlQuery(int databaseId) :
+    QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
 { }
 
 
-TSqlQuery::TSqlQuery(QSqlDatabase db)
-    : QSqlQuery(db)
+TSqlQuery::TSqlQuery(QSqlDatabase db) :
+    QSqlQuery(db)
 { }
 
 

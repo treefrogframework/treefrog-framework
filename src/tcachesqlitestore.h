@@ -9,14 +9,13 @@
 class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore
 {
 public:
-    TCacheSQLiteStore() {}
-    TCacheSQLiteStore(const QString &fileName, const QString &connectOptions = QString(), qint64 thresholdFileSize = 0);
+    TCacheSQLiteStore(qint64 thresholdFileSize = 0, const QByteArray &table = QByteArray());
     virtual ~TCacheSQLiteStore();
 
     QString key() const { return QLatin1String("singlefiledb"); }
     bool open() override;
     void close() override;
-    bool isOpen() const { return true; }
+    bool isOpen() const;
 
     QByteArray get(const QByteArray &key) override;
     bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) override;
@@ -34,12 +33,11 @@ public:
     bool vacuum();
     qint64 dbSize();
 
+    static bool createTable(const QString &table);
+
 protected:
-    QString _dbFile;
-    QString _connectName;
-    QString _connectOptions;
     qint64 _thresholdFileSize {0};
-    QSqlDatabase _db;
+    QString _table;
 };
 
 #endif // TCACHESQLITESTORE_H

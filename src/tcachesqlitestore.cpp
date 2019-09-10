@@ -20,7 +20,11 @@ constexpr auto BLOB_COLUMN = "b";
 constexpr auto TIMESTAMP_COLUMN = "t";
 constexpr int  PAGESIZE = 4096;
 
-static std::atomic_ullong suffix {0};
+
+inline QString lastError()
+{
+    return Tf::currentSqlDatabase(Tf::app()->databaseIdForInternalUse()).lastError().text();
+}
 
 
 static bool exec(const QString &sql)
@@ -29,88 +33,45 @@ static bool exec(const QString &sql)
     query.prepare(sql);
     bool ret = query.exec();
     if (! ret) {
-        //tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(db.lastError().text()), qPrintable(sql), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastError()), qPrintable(sql), __FILE__, __LINE__);
     }
     return ret;
 }
 
-static QString createConnectName()
+
+bool TCacheSQLiteStore::createTable(const QString &table)
 {
-    return QLatin1String("TCacheSQLiteStore") + QString::number(suffix.fetch_add(1));
+    exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
+    return exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
 }
 
 
-TCacheSQLiteStore::TCacheSQLiteStore(const QString &fileName, const QString &connectOptions, qint64 thresholdFileSize) :
-    _dbFile(fileName),
-    _connectOptions(connectOptions),
-    _thresholdFileSize(thresholdFileSize)
-{}
+TCacheSQLiteStore::TCacheSQLiteStore(qint64 thresholdFileSize, const QByteArray &table) :
+    _thresholdFileSize(thresholdFileSize),
+    _table(table.isEmpty() ? QString(TABLE_NAME) : QString(table))
+{ }
 
 
 TCacheSQLiteStore::~TCacheSQLiteStore()
 {
     close();
-    _db = QSqlDatabase(); // to call removeDatabase()
-    if (! _connectName.isEmpty()) {
-        QSqlDatabase::removeDatabase(_connectName);
-    }
 }
 
 
 bool TCacheSQLiteStore::open()
 {
-    if (1) return true;
-
-    static bool created = [&]() {
-        // Creates a table
-        auto db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(_dbFile);
-        if (! _connectOptions.isEmpty()) {
-            db.setConnectOptions(_connectOptions);
-        }
-
-        bool ok = db.open();
-        if (ok) {
-            exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
-            exec(QStringLiteral("begin"));
-            exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
-            exec(QStringLiteral("commit"));
-            db.close();
-        }
-        return ok;
-    }();
-    Q_UNUSED(created);
-    Tf::threadFence();
-
-    if (isOpen()) {
-        return true;
-    }
-
-    if (! _db.isValid()) {
-        _connectName = createConnectName();
-        _db = QSqlDatabase::addDatabase("QSQLITE", _connectName);
-        _db.setDatabaseName(_dbFile);
-        if (! _connectOptions.isEmpty()) {
-            _db.setConnectOptions(_connectOptions);
-        }
-    }
-
-    bool ok = _db.open();
-    if  (ok) {
-        exec(QStringLiteral("pragma journal_mode=WAL"));
-        exec(QStringLiteral("pragma foreign_keys=ON"));
-        exec(QStringLiteral("pragma synchronous=NORMAL"));
-        exec(QStringLiteral("pragma busy_timeout=5000"));
-    } else {
-        //tSystemError("SQLite open failed : %s", qPrintable(_dbFile));
-    }
-    return ok;
+    T_ONCE(createTable(TABLE_NAME));
+    return true;
 }
 
 
 void TCacheSQLiteStore::close()
+{ }
+
+
+bool TCacheSQLiteStore::isOpen() const
 {
-    //_db.close();
+    return true;
 }
 
 
@@ -118,12 +79,8 @@ int TCacheSQLiteStore::count()
 {
     int cnt = -1;
 
-    if (! isOpen()) {
-        return cnt;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("select count(1) from %1").arg(TABLE_NAME);
+    QString sql = QStringLiteral("select count(1) from %1").arg(_table);
 
     if (query.exec(sql) && query.next()) {
         cnt = query.value(0).toInt();
@@ -134,13 +91,9 @@ int TCacheSQLiteStore::count()
 
 bool TCacheSQLiteStore::exists(const QByteArray &key)
 {
-    if (! isOpen()) {
-        return false;
-    }
-
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
     int exist = 0;
-    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name limit 1)").arg(TABLE_NAME).arg(KEY_COLUMN);
+    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name limit 1)").arg(_table).arg(KEY_COLUMN);
 
     query.prepare(sql);
     query.bind(":name", key);
@@ -187,12 +140,8 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
         return ret;
     }
 
-    if (! isOpen()) {
-        return ret;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:key").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, TABLE_NAME, KEY_COLUMN));
+    query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:key").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, _table, KEY_COLUMN));
     query.bind(":key", key);
     ret = query.exec();
     if (ret) {
@@ -201,7 +150,7 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
             blob = query.value(1).toByteArray();
         }
     } else {
-        //tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -215,18 +164,14 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
         return ret;
     }
 
-    if (! isOpen()) {
-        return ret;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(TABLE_NAME, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
+    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
 
     query.prepare(sql);
     query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
     ret = query.exec();
-    if (!ret && _db.lastError().isValid()) {
-        //tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+    if (! ret) {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -240,18 +185,14 @@ bool TCacheSQLiteStore::remove(const QByteArray &key)
         return ret;
     }
 
-    if (! isOpen()) {
-        return ret;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("delete from %1 where %2=:key").arg(TABLE_NAME, KEY_COLUMN);
+    QString sql = QStringLiteral("delete from %1 where %2=:key").arg(_table, KEY_COLUMN);
 
     query.prepare(sql);
     query.bind(":key", key);
     ret = query.exec();
     if (! ret) {
-        //tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -272,19 +213,15 @@ int TCacheSQLiteStore::removeOlder(int num)
         return cnt;
     }
 
-    if (! isOpen()) {
-        return cnt;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("delete from %1 where ROWID in (select ROWID from %1 order by t asc limit :num)").arg(TABLE_NAME);
+    QString sql = QStringLiteral("delete from %1 where ROWID in (select ROWID from %1 order by t asc limit :num)").arg(_table);
 
     query.prepare(sql);
     query.bind(":num", num);
     if (query.exec()) {
         cnt = query.numRowsAffected();
     } else {
-        //tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -294,19 +231,15 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
 {
     int cnt = -1;
 
-    if (! isOpen()) {
-        return cnt;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("delete from %1 where %2<:ts").arg(TABLE_NAME, TIMESTAMP_COLUMN);
+    QString sql = QStringLiteral("delete from %1 where %2<:ts").arg(_table, TIMESTAMP_COLUMN);
 
     query.prepare(sql);
     query.bind(":ts", timestamp);
     if (query.exec()) {
         cnt = query.numRowsAffected();
     } else {
-        //tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -316,17 +249,13 @@ int TCacheSQLiteStore::removeAll()
 {
     int cnt = -1;
 
-    if (! isOpen()) {
-        return cnt;
-    }
-
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("delete from %1").arg(TABLE_NAME);
+    QString sql = QStringLiteral("delete from %1").arg(_table);
 
     if (query.exec(sql)) {
         cnt = query.numRowsAffected();
     } else {
-        //tSystemError("SQLite error : %s [%s:%d]", qPrintable(_db.lastError().text()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -336,10 +265,6 @@ bool TCacheSQLiteStore::vacuum()
 {
     bool ret = false;
 
-    if (! isOpen()) {
-        return ret;
-    }
-
     ret = exec(QStringLiteral("vacuum"));
     return ret;
 }
@@ -348,10 +273,6 @@ bool TCacheSQLiteStore::vacuum()
 qint64 TCacheSQLiteStore::dbSize()
 {
     qint64 sz = -1;
-
-    if (! isOpen()) {
-        return sz;
-    }
 
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
     bool ok = query.exec(QStringLiteral("select (page_count * page_size) from pragma_page_count(), pragma_page_size()"));

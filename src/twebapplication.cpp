@@ -233,24 +233,10 @@ QString TWebApplication::appSettingsFilePath() const
 QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
     static QSettings *internalSettings = [&]() {
-        auto *set = new QSettings();
-        set->setValue("DriverType", "QSQLITE");
-
-        QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
-        QString dbpath, opt;
-        if (backend == "memory") {
-          dbpath = "file:memorydb?mode=memory&cache=shared";
-          opt = "QSQLITE_OPEN_URI";
-        } else {
-            dbpath = Tf::appSettings()->value(Tf::CacheSingleFileDbFilePath).toString().trimmed();
-            if (!dbpath.isEmpty() && QDir::isRelativePath(dbpath)) {
-                dbpath = Tf::app()->webRootPath() + dbpath;
-            }
-        }
-        set->setValue("DatabaseName", dbpath);
-        set->setValue("ConnectOptions", opt);
-        set->setValue("PostOpenStatements", "PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA synchronous=NORMAL;");
-        set->setValue("EnableUpsert", false);
+        QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
+        QSettings *set = new QSettings(configPath() + path, QSettings::IniFormat);
+        QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
+        set->beginGroup(backend);
         return set;
     }();
 

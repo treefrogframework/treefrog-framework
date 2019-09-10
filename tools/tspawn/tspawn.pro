@@ -66,6 +66,7 @@ defaults.files += defaults/mongodb.ini
 defaults.files += defaults/redis.ini
 defaults.files += defaults/routes.cfg
 defaults.files += defaults/validation.ini
+defaults.files += defaults/cache.ini
 defaults.files += defaults/views.pro
 # React scripts
 defaults.files += defaults/JSXTransformer.js
