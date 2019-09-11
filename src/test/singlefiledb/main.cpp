@@ -45,11 +45,7 @@ void TestCache::initTestCase()
 }
 
 void TestCache::cleanupTestCase()
-{
-    TCacheSQLiteStore cache;
-    cache.open();
-    qDebug() << "db size: " << cache.dbSize();
-}
+{ }
 
 void TestCache::test()
 {
