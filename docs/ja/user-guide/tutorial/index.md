@@ -37,7 +37,7 @@ blogapp という名でスケルトン（ディレクトリツリーと各種設
  $ mysql -u root -p
  Enter password:
 
- mysql> CREATE DATABASE blogdb DEFAULT CHARACTER SET utf8;
+ mysql> CREATE DATABASE blogdb DEFAULT CHARACTER SET utf8mb4;
  Query OK, 1 row affected (0.01 sec)
 
  mysql> USE blogdb;
@@ -718,6 +718,6 @@ Q_DECLARE_METATYPE(QList<Blog>)
 
 <div class="img-center" markdown="1">
 
-[![Video Demo – Sample blog Application Creation](http://img.youtube.com/vi/M_ZUPZzi9V8/0.jpg)](https://www.youtube.com/watch?v=M_ZUPZzi9V8)
+[![Video Demo - Sample blog Application Creation](http://img.youtube.com/vi/M_ZUPZzi9V8/0.jpg)](https://www.youtube.com/watch?v=M_ZUPZzi9V8)
 
 </div>

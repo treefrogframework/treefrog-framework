@@ -36,7 +36,7 @@ Set the character set to UTF-8. You can also specify this when generating the da
  $ mysql -u root -p
  Enter password:
 
- mysql> CREATE DATABASE blogdb DEFAULT CHARACTER SET utf8;
+ mysql> CREATE DATABASE blogdb DEFAULT CHARACTER SET utf8mb4;
  Query OK, 1 row affected (0.01 sec)
 
  mysql> USE blogdb;
@@ -713,6 +713,6 @@ In the background, the code as described above also functions to provide; CSRF m
 
 <div class="img-center" markdown="1">
 
-[![Video Demo – Sample blog Application Creation](http://img.youtube.com/vi/M_ZUPZzi9V8/0.jpg)](https://www.youtube.com/watch?v=M_ZUPZzi9V8)
+[![Video Demo - Sample blog Application Creation](http://img.youtube.com/vi/M_ZUPZzi9V8/0.jpg)](https://www.youtube.com/watch?v=M_ZUPZzi9V8)
 
 </div>

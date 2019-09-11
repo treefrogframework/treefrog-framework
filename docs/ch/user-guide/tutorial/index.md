@@ -35,7 +35,7 @@ MySQL范例:<br>
 ```
 $ mysql -u root -p
 Enter password:
-mysql> CREATE DATABASE blogdb DEFAULT CHARACTER SET utf8;
+mysql> CREATE DATABASE blogdb DEFAULT CHARACTER SET utf8mb4;
 Query OK, 1 row affected (0.01 sec)
 mysql> USE blogdb;
 Database changed
