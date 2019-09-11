@@ -5,7 +5,6 @@
 
 static qint64 FirstKey;
 const int NUM = 500;
-constexpr auto CACHE_FILE = "cachedb";
 
 
 class TestCache : public QObject
@@ -47,14 +46,14 @@ void TestCache::initTestCase()
 
 void TestCache::cleanupTestCase()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
     qDebug() << "db size: " << cache.dbSize();
 }
 
 void TestCache::test()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
     QByteArray buf;
     cache.clear();
@@ -72,8 +71,9 @@ void TestCache::test()
     QVERIFY(cache.set("hoge", "value", 1000) == true);
     Tf::msleep(1100);
     QVERIFY(cache.get("hoge") == QByteArray());
+
+    cache.set("hoge", "dummy", 1000);
     QVERIFY(cache.dbSize() > 0);
-    qDebug() << "db size: " << cache.dbSize();
     cache.clear();
 
     for (int i = 0; i < 1000; i++) {
@@ -105,7 +105,7 @@ void TestCache::insert()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, val);
 
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
 
     cache.set(key, val, 1000);
@@ -118,7 +118,7 @@ void TestCache::insert()
 
 void TestCache::bench_insert_binary()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
     cache.clear();
 
@@ -138,7 +138,7 @@ void TestCache::bench_insert_binary()
 
 void TestCache::bench_value_binary()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
 
     QBENCHMARK {
@@ -153,7 +153,7 @@ void TestCache::bench_value_binary()
 
 void TestCache::bench_insert_binary_lz4()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
     cache.clear();
 
@@ -175,7 +175,7 @@ void TestCache::bench_insert_binary_lz4()
 
 void TestCache::bench_value_binary_lz4()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
 
     QBENCHMARK {
@@ -191,7 +191,7 @@ void TestCache::bench_value_binary_lz4()
 
 void TestCache::bench_insert_text()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
     cache.clear();
 
@@ -211,7 +211,7 @@ void TestCache::bench_insert_text()
 
 void TestCache::bench_value_text()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
 
     QBENCHMARK {
@@ -225,7 +225,7 @@ void TestCache::bench_value_text()
 
 void TestCache::bench_insert_text_lz4()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
     cache.clear();
 
@@ -246,7 +246,7 @@ void TestCache::bench_insert_text_lz4()
 
 void TestCache::bench_value_text_lz4()
 {
-    TCacheSQLiteStore cache(CACHE_FILE);
+    TCacheSQLiteStore cache;
     cache.open();
 
     QBENCHMARK {
@@ -258,5 +258,5 @@ void TestCache::bench_value_text_lz4()
     }
 }
 
-TF_TEST_SQLLESS_MAIN(TestCache)
+TF_TEST_MAIN(TestCache)
 #include "main.moc"

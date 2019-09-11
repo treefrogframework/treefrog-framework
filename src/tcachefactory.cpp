@@ -67,3 +67,20 @@ void TCacheFactory::destroy(const QString &key, TCacheStore *store)
         delete store;
     }
 }
+
+
+QMap<QString, QVariant> TCacheFactory::defaultSettings(const QString &key)
+{
+    QMap<QString, QVariant> settings;
+    loadCacheKeys();
+
+    QString k = key.toLower();
+    if (k == INMEMORY_CACHE_KEY) {
+        settings = TCacheInMemoryStore().defaultSettings();
+    } else if (k == SINGLEFILEDB_CACHE_KEY) {
+        settings = TCacheSQLiteStore().defaultSettings();
+    } else {
+        // Invalid key
+    }
+    return settings;
+}

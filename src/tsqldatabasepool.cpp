@@ -11,6 +11,7 @@
 #include "tsystemglobal.h"
 #include <TWebApplication>
 #include <TSqlQuery>
+#include <TAppSettings>
 #include <QMutexLocker>
 #include <QFileInfo>
 #include <QDir>
@@ -165,7 +166,8 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
 
 inline QString envName(const QString &env, int databaseId)
 {
-    return (databaseId == Tf::app()->databaseIdForInternalUse()) ? QString() : env + "/";
+    static QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
+    return (databaseId == Tf::app()->databaseIdForInternalUse()) ? (backend + "/") : (env + "/");
 }
 
 
@@ -181,10 +183,12 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, const QString
     }
     tSystemDebug("SQL driver name:%s  dbname:%s", qPrintable(database.sqlDatabase().driverName()), qPrintable(databaseName));
     if (database.dbmsType() == TSqlDatabase::SQLite) {
-        QFileInfo fi(databaseName);
-        if (fi.isRelative()) {
-            // For SQLite
-            databaseName = Tf::app()->webRootPath() + databaseName;
+        if (!databaseName.contains(':')) {
+            QFileInfo fi(databaseName);
+            if (fi.isRelative()) {
+                // For SQLite
+                databaseName = Tf::app()->webRootPath() + databaseName;
+            }
         }
     }
     database.sqlDatabase().setDatabaseName(databaseName);

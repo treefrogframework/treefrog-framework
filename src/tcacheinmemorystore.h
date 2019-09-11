@@ -11,6 +11,7 @@ public:
     ~TCacheInMemoryStore() {}
 
     QString key() const { return QLatin1String("memory"); }
+    QMap<QString, QVariant> defaultSettings() const override;
 };
 
 #endif // TCACHEINMEMORYSTORE_H

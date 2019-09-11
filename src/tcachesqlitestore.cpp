@@ -263,9 +263,7 @@ int TCacheSQLiteStore::removeAll()
 
 bool TCacheSQLiteStore::vacuum()
 {
-    bool ret = false;
-
-    ret = exec(QStringLiteral("vacuum"));
+    bool ret = exec(QStringLiteral("vacuum"));
     return ret;
 }
 
@@ -275,9 +273,15 @@ qint64 TCacheSQLiteStore::dbSize()
     qint64 sz = -1;
 
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    bool ok = query.exec(QStringLiteral("select (page_count * page_size) from pragma_page_count(), pragma_page_size()"));
+    bool ok = query.exec(QStringLiteral("pragma page_size"));
     if (ok && query.next()) {
-        sz = query.value(0).toLongLong();
+        qint64 size = query.value(0).toLongLong();
+
+        ok = query.exec(QStringLiteral("pragma page_count"));
+        if (ok && query.next()) {
+            qint64 count = query.value(0).toLongLong();
+            sz = size * count;
+        }
     }
     return sz;
 }
@@ -299,4 +303,15 @@ void TCacheSQLiteStore::gc()
         }
         tSystemDebug("removeOlder: %d\n", removed);
     }
+}
+
+
+QMap<QString, QVariant> TCacheSQLiteStore::defaultSettings() const
+{
+    QMap<QString, QVariant> settings {
+        {"DriverType", "QSQLITE"},
+        {"DatabaseName", "cachedb"},
+        {"PostOpenStatements", "PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA synchronous=NORMAL;"},
+    };
+    return settings;
 }

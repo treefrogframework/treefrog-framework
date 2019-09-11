@@ -22,6 +22,7 @@ public:
     bool remove(const QByteArray &key) override;
     void clear() override;
     void gc() override;
+    QMap<QString, QVariant> defaultSettings() const override;
 
     bool exists(const QByteArray &key);
     int count();

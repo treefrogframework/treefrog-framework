@@ -9,6 +9,7 @@
 #include <TSystemGlobal>
 #include <TAppSettings>
 #include "tdatabasecontextmainthread.h"
+#include "tcachefactory.h"
 #include <QDir>
 #include <QTextCodec>
 #include <QDateTime>
@@ -233,11 +234,26 @@ QString TWebApplication::appSettingsFilePath() const
 QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
     static QSettings *internalSettings = [&]() {
+        // Settings of internal use databases
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
-        QSettings *set = new QSettings(configPath() + path, QSettings::IniFormat);
-        QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
-        set->beginGroup(backend);
-        return set;
+        QSettings iniset(configPath() + path, QSettings::IniFormat);
+        const QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
+
+        // Copy settrings
+        QSettings *settings = new QSettings();
+        for (auto &k : iniset.allKeys()) {
+            settings->setValue(k, iniset.value(k));
+        }
+
+        QMap<QString, QVariant> defaultSettings = TCacheFactory::defaultSettings(backend);
+        for (auto &k : defaultSettings.keys()) {
+            auto val = settings->value(backend + "/" + k);
+            auto defval = defaultSettings.value(k);
+            if (val.toString().trimmed().isEmpty() && !defval.toString().trimmed().isEmpty()) {
+                settings->setValue(backend + "/" + k, defval);
+            }
+        }
+        return settings;
     }();
 
     return (databaseId == databaseIdForInternalUse()) ? *internalSettings : *sqlSettings[databaseId];
