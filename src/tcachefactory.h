@@ -22,6 +22,8 @@ private:
         Redis,
         MongoDB,
     };
+
+    static bool loadCacheKeys();
 };
 
 #endif // TCACHEFACTORY_H

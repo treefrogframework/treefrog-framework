@@ -204,7 +204,6 @@ namespace Tf
         CacheGcProbability,
         CacheEnableCompression,
         CacheSettingsFile,
-        CacheMemoryDbSizeThreshold,
         CacheSingleFileDbFileSizeThreshold,
     };
 

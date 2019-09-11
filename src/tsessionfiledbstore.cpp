@@ -11,31 +11,27 @@
 #include <TWebApplication>
 #include <QDataStream>
 
-constexpr auto SESSION_DB_FILE = "sess";
-
-
-class Store {
-public:
-    Store();
-    ~Store() { _store->close(); delete _store; }
-    TCacheSQLiteStore &operator()() const { return *_store; }
-
-private:
-    TCacheSQLiteStore *_store {nullptr};
-};
-
-Store::Store()
-{
-    T_ONCE(TCacheSQLiteStore::createTable(SESSION_DB_FILE));
-    _store = new TCacheSQLiteStore(0, SESSION_DB_FILE);
-    _store->open();
-}
-
+constexpr auto SESSION_TABLE = "sess";
 
 /*!
   \class TSessionFileDbStore
   \brief The TSessionFileDbStore class stores HTTP sessions to files.
 */
+
+TSessionFileDbStore::TSessionFileDbStore() :
+    _store(new TCacheSQLiteStore(0, SESSION_TABLE))
+{
+    T_ONCE(TCacheSQLiteStore::createTable(SESSION_TABLE));
+    _store->open();
+}
+
+
+TSessionFileDbStore::~TSessionFileDbStore()
+{
+    _store->close();
+    delete _store;
+}
+
 
 bool TSessionFileDbStore::store(TSession &session)
 {
@@ -43,17 +39,15 @@ bool TSessionFileDbStore::store(TSession &session)
     QDataStream dsbuf(&buffer, QIODevice::WriteOnly);
     dsbuf << *static_cast<const QVariantMap *>(&session);
     buffer = Tf::lz4Compress(buffer);  // compress
-
-    Store store;
-    return store().set(session.id(), buffer, lifeTimeSecs() * 1000);
+    return _store->set(session.id(), buffer, lifeTimeSecs() * 1000);
 }
 
 
 TSession TSessionFileDbStore::find(const QByteArray &id)
 {
     TSession result(id);
-    Store store;
-    QByteArray buffer = store().get(id);
+
+    QByteArray buffer = _store->get(id);
     buffer = Tf::lz4Uncompress(buffer);
 
     if (buffer.isEmpty()) {
@@ -72,14 +66,12 @@ TSession TSessionFileDbStore::find(const QByteArray &id)
 
 bool TSessionFileDbStore::remove(const QByteArray &id)
 {
-    Store store;
-    return store().remove(id);
+    return _store->remove(id);
 }
 
 
 int TSessionFileDbStore::gc(const QDateTime &)
 {
-    Store store;
-    store().gc();
+    _store->gc();
     return 0;
 }

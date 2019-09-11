@@ -9,7 +9,6 @@
 class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore
 {
 public:
-    TCacheSQLiteStore(qint64 thresholdFileSize = 0, const QByteArray &table = QByteArray());
     virtual ~TCacheSQLiteStore();
 
     QString key() const { return QLatin1String("singlefiledb"); }
@@ -37,8 +36,13 @@ public:
     static bool createTable(const QString &table);
 
 protected:
+    TCacheSQLiteStore(qint64 thresholdFileSize = 0, const QByteArray &table = QByteArray());
+
     qint64 _thresholdFileSize {0};
     QString _table;
+
+    friend class TCacheFactory;
+    friend class TSessionFileDbStore;
 };
 
 #endif // TCACHESQLITESTORE_H
