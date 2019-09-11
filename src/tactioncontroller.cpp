@@ -475,17 +475,17 @@ bool TActionController::renderXml(const QStringList &list)
 }
 
 
-bool TActionController::renderAndCache(const QByteArray &key, int timeout, const QString &action, const QString &layout)
+bool TActionController::renderAndCache(const QByteArray &key, int msecs, const QString &action, const QString &layout)
 {
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
         return false;
     }
 
-    rendered = render(action, layout);
+    render(action, layout);
     if (rendered) {
         QByteArray responseMsg = response.body();
-        cache()->set(key, responseMsg, timeout * 1000);
+        cache()->set(key, responseMsg, msecs);
     }
     return rendered;
 }
