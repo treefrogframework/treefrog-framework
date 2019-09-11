@@ -9,24 +9,25 @@
 #include "tsystemglobal.h"
 
 
-TBasicTimer::TBasicTimer(QObject *parent)
-    : QObject(parent), QBasicTimer(), interval_(0), receiver_(nullptr)
+TBasicTimer::TBasicTimer(QObject *parent) :
+    QObject(parent),
+    QBasicTimer()
 { }
 
 
 void TBasicTimer::start()
 {
     tSystemDebug("TBasicTimer::start");
-    if (receiver_ && interval_ > 0) {
-        QBasicTimer::start(interval_, receiver_);
+    if (_receiver && _interval > 0) {
+        QBasicTimer::start(_interval, _receiver);
     }
 }
 
 
 void TBasicTimer::start(int msec)
 {
-    if (receiver_ && msec > 0) {
-        interval_ = msec;
-        QBasicTimer::start(interval_, receiver_);
+    if (_receiver && msec > 0) {
+        _interval = msec;
+        QBasicTimer::start(_interval, _receiver);
     }
 }

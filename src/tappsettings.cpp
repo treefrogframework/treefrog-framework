@@ -79,8 +79,8 @@ public:
         insert(Tf::CacheBackend, "Cache.Backend");
         insert(Tf::CacheGcProbability, "Cache.GcProbability");
         insert(Tf::CacheEnableCompression, "Cache.EnableCompression");
+        insert(Tf::CacheSettingsFile, "Cache.SettingsFile");
         insert(Tf::CacheMemoryDbSizeThreshold, "Cache.memory.DbSizeThreshold");
-        insert(Tf::CacheSingleFileDbFilePath, "Cache.singlefiledb.FilePath");
         insert(Tf::CacheSingleFileDbFileSizeThreshold, "Cache.singlefiledb.FileSizeThreshold");
     }
 };
@@ -124,17 +124,9 @@ TAppSettings *TAppSettings::instance()
 }
 
 
-static void cleanup()
-{
-    delete appSettings;
-    appSettings = nullptr;
-}
-
-
 void TAppSettings::instantiate(const QString &path)
 {
     if (!appSettings) {
         appSettings = new TAppSettings(path);
-        qAddPostRoutine(::cleanup);
     }
 }

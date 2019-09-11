@@ -5,9 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include <QHostAddress>
-#include <QSet>
 #include <TActionContext>
 #include <TWebApplication>
 #include <TAppSettings>
@@ -22,6 +19,9 @@
 #include "tsessionmanager.h"
 #include "turlroute.h"
 #include "tabstractwebsocket.h"
+#include <QtCore>
+#include <QHostAddress>
+#include <QSet>
 
 /*!
   \class TActionContext

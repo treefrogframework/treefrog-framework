@@ -25,10 +25,6 @@ public:
 };
 
 
-inline TCookieJar::TCookieJar(const TCookieJar &jar)
-    : QList<TCookie>(*static_cast<const QList<TCookie> *>(&jar))
-{ }
-
 inline TCookieJar &TCookieJar::operator=(const TCookieJar &jar)
 {
     QList<TCookie>::operator=(*static_cast<const QList<TCookie> *>(&jar));

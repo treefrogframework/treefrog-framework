@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QThread>
 #include "TLog"
 #include "tfcore.h"
+#include <QThread>
 
 /*!
   \class TLog
@@ -22,16 +22,16 @@
 /*!
   Constructor.
 */
-TLog::TLog(int pri, const QByteArray &msg)
-    : timestamp(QDateTime::currentDateTime()),
-      priority(pri),
-      pid(QCoreApplication::applicationPid()),
+TLog::TLog(int pri, const QByteArray &msg) :
+    timestamp(QDateTime::currentDateTime()),
+    priority(pri),
+    pid(QCoreApplication::applicationPid()),
 #ifdef Q_OS_UNIX
-      threadId(gettid()),
+    threadId(gettid()),
 #else
-      threadId((qulonglong)QThread::currentThreadId()),
+    threadId((qulonglong)QThread::currentThreadId()),
 #endif
-      message(msg)
+    message(msg)
 { }
 
 

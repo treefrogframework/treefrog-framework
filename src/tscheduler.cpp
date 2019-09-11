@@ -6,9 +6,9 @@
  */
 
 #include "tscheduler.h"
-#include <TWebApplication>
 #include "tpublisher.h"
 #include "tsystemglobal.h"
+#include <TWebApplication>
 
 /*!
   \class TScheduler

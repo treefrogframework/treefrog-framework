@@ -47,12 +47,12 @@ protected:
     bool modifyPoll(int fd, int events);
 
 private:
-    int epollFd;
-    int listenSocket;
-    struct epoll_event *events;
-    volatile bool polling;
-    int numEvents;
-    int eventIterator;
+    int epollFd {0};
+    int listenSocket {0};
+    struct epoll_event *events {nullptr};
+    volatile bool polling {false};
+    int numEvents {0};
+    int eventIterator {0};
     QMap<TEpollSocket*, int> pollingSockets;
     TQueue<TSendData *> sendRequests;
 

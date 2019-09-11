@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tmailmessage.h"
+#include <THttpUtility>
 #include <QTextCodec>
 #include <QDateTime>
-#include <THttpUtility>
-#include "tmailmessage.h"
 using namespace Tf;
 
 constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";
@@ -18,30 +18,33 @@ constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";
   \brief The TMailMessage class represents one email message.
 */
 
-TMailMessage::TMailMessage(const TMailMessage &other)
-    : TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
-      mailBody(other.mailBody),
-      textCodec(other.textCodec),
-      recipientList(other.recipientList)
+TMailMessage::TMailMessage(const TMailMessage &other) :
+    TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
+    mailBody(other.mailBody),
+    textCodec(other.textCodec),
+    recipientList(other.recipientList)
 { }
 
 
-TMailMessage::TMailMessage(const QByteArray &encoding)
-    : TInternetMessageHeader(), textCodec(0)
+TMailMessage::TMailMessage(const QByteArray &encoding) :
+    TInternetMessageHeader(),
+    textCodec(0)
 {
     init(encoding);
 }
 
 
-TMailMessage::TMailMessage(const char *encoding)
-    : TInternetMessageHeader(), textCodec(0)
+TMailMessage::TMailMessage(const char *encoding) :
+    TInternetMessageHeader(),
+    textCodec(0)
 {
     init(encoding);
 }
 
 
-TMailMessage::TMailMessage(const QString &str, const QByteArray &encoding)
-    : TInternetMessageHeader(), textCodec(0)
+TMailMessage::TMailMessage(const QString &str, const QByteArray &encoding) :
+    TInternetMessageHeader(),
+    textCodec(0)
 {
     init(encoding);
     parse(str);

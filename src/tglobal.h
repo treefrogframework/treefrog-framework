@@ -185,6 +185,14 @@ constexpr auto TF_SRC_REVISION = 2004;
     Class(Class &&) = delete;                 \
     Class &operator=(Class &&) = delete;
 
+#define T_ONCE(Func) \
+    do { \
+        static bool once = []() { \
+            Func; \
+            return true; \
+        }(); \
+        Q_UNUSED(once); \
+    } while(0)
 
 #define tFatal TDebug(Tf::FatalLevel).fatal
 #define tError TDebug(Tf::ErrorLevel).error
@@ -212,7 +220,6 @@ namespace Tf
     T_CORE_EXPORT TWebApplication *app();
     T_CORE_EXPORT TAppSettings *appSettings();
     T_CORE_EXPORT const QVariantMap &conf(const QString &configName);
-    T_CORE_EXPORT TCache &cache();
     T_CORE_EXPORT void msleep(unsigned long msecs);
 
     // Xorshift random number generator

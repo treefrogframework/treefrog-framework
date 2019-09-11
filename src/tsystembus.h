@@ -23,7 +23,6 @@ public:
     void connect();
 
     static TSystemBus *instance();
-    static void instantiate();
     static QString connectionName();
     static QString connectionName(qint64 pid);
 
@@ -37,11 +36,11 @@ protected slots:
     void handleError(QLocalSocket::LocalSocketError error);
 
 private:
-    QLocalSocket *busSocket;
+    QLocalSocket *busSocket {nullptr};
     QByteArray readBuffer;
     QByteArray sendBuffer;
-    QMutex mutexRead;
-    QMutex mutexWrite;
+    QMutex mutexRead {QMutex::NonRecursive};
+    QMutex mutexWrite {QMutex::NonRecursive};
 
     TSystemBus();
     T_DISABLE_COPY(TSystemBus)

@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDateTime>
-#include <QMetaProperty>
 #include <TMongoObject>
 #include <TMongoQuery>
 #include <TAbstractModel>
+#include <QDateTime>
+#include <QMetaProperty>
 
 const QByteArray LockRevision("lockRevision");
 const QByteArray CreatedAt("createdAt");
@@ -20,15 +20,17 @@ const QByteArray ModifiedAt("modifiedAt");
 /*!
   Constructor.
 */
-TMongoObject::TMongoObject()
-    : TModelObject(), QVariantMap()
+TMongoObject::TMongoObject() :
+    TModelObject(),
+    QVariantMap()
 { }
 
 /*!
   Copy constructor.
 */
-TMongoObject::TMongoObject(const TMongoObject &other)
-    : TModelObject(), QVariantMap(other)
+TMongoObject::TMongoObject(const TMongoObject &other) :
+    TModelObject(),
+    QVariantMap(other)
 { }
 
 /*!

@@ -5,15 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDir>
-#include <QFile>
-#include <QTextStream>
-#include <QMetaMethod>
-#include <QMetaType>
-#include <QTextCodec>
-#include <QCryptographicHash>
-#include <QMutexLocker>
-#include <QDomDocument>
 #include <TActionController>
 #include <TWebApplication>
 #include <TAppSettings>
@@ -25,6 +16,16 @@
 #include <TFormValidator>
 #include "tsessionmanager.h"
 #include "ttextview.h"
+#include "tcache.h"
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QMetaMethod>
+#include <QMetaType>
+#include <QTextCodec>
+#include <QCryptographicHash>
+#include <QMutexLocker>
+#include <QDomDocument>
 
 const QString FLASH_VARS_SESSION_KEY ("_flashVariants");
 const QString LOGIN_USER_NAME_KEY ("_loginUserName");
@@ -55,13 +56,16 @@ TActionController::TActionController() :
 }
 
 /*!
-  \fn TActionController::~TActionController();
   \~english
   \brief Destructor.
 
   \~japanese
   \brief デストラクタ
 */
+TActionController::~TActionController()
+{
+    delete _cache;
+}
 
 /*!
   \~english
@@ -470,6 +474,40 @@ bool TActionController::renderXml(const QStringList &list)
     return renderXml(doc);
 }
 
+
+bool TActionController::renderAndCache(const QByteArray &key, int msecs, const QString &action, const QString &layout)
+{
+    if (rendered) {
+        tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
+        return false;
+    }
+
+    render(action, layout);
+    if (rendered) {
+        QByteArray responseMsg = response.body();
+        cache()->set(key, responseMsg, msecs);
+    }
+    return rendered;
+}
+
+
+bool TActionController::renderFromCache(const QByteArray &key)
+{
+    if (rendered) {
+        tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
+        return false;
+    }
+
+    auto responseMsg = cache()->get(key);
+    if (responseMsg.isEmpty()) {
+        return false;
+    }
+
+    response.setBody(responseMsg);
+    rendered = true;
+    return rendered;
+}
+
 /*!
   \~english
   Returns the rendering data of the partial template given by \a templateName.
@@ -875,6 +913,16 @@ void TActionController::closeWebSokcet(int sid, int closeCode)
     QVariantList info;
     info << sid << closeCode;
     taskList << qMakePair((int)SendCloseTo, QVariant(info));
+}
+
+
+TCache *TActionController::cache()
+{
+    if (! _cache) {
+        _cache = new TCache;
+        _cache->open();
+    }
+    return _cache;
 }
 
 /*!

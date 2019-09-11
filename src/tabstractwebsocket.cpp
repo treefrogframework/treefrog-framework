@@ -24,9 +24,10 @@
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
-TAbstractWebSocket::TAbstractWebSocket(const THttpRequestHeader &header)
-    : reqHeader(header), closing(false), closeSent(false), mutexData(QMutex::NonRecursive),
-      sessionStore(), keepAliveTimer(nullptr)
+TAbstractWebSocket::TAbstractWebSocket(const THttpRequestHeader &header) :
+    reqHeader(header),
+    mutexData(QMutex::NonRecursive),
+    sessionStore()
 { }
 
 

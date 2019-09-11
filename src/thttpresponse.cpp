@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QFile>
-#include <QBuffer>
 #include <THttpResponse>
 #include <THttpUtility>
 #include <TSystemGlobal>
+#include <QFile>
+#include <QBuffer>
 
 /*!
   \class THttpResponse
@@ -56,6 +56,20 @@ void THttpResponse::setBody(const QByteArray &body)
     delete bodyDevice;
     tmpByteArray = body;
     bodyDevice = (tmpByteArray.isNull()) ? nullptr : new QBuffer(&tmpByteArray);
+}
+
+/*!
+  Returns the body.
+ */
+QByteArray THttpResponse::body() const
+{
+    if (bodyDevice) {
+        QBuffer *buf = qobject_cast<QBuffer*>(bodyDevice);
+        if (buf) {
+            return buf->buffer();
+        }
+    }
+    return QByteArray();
 }
 
 /*!

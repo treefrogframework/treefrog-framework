@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMap>
 #include <TPrototypeAjaxHelper>
 #include <TActionView>
+#include <QMap>
 
 /*!
   \class TPrototypeAjaxHelper

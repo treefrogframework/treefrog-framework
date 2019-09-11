@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "turlroute.h"
+#include <TWebApplication>
+#include <TSystemGlobal>
+#include <THttpUtility>
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
 #include <QMap>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <THttpUtility>
-#include "turlroute.h"
 
 
 class RouteDirectiveHash : public QMap<QString, int>
@@ -33,29 +33,14 @@ public:
 };
 Q_GLOBAL_STATIC(RouteDirectiveHash, directiveHash)
 
-static TUrlRoute *urlRoute = nullptr;
-
-/*!
- * Initializes.
- * Call this in main thread.
- */
-void TUrlRoute::instantiate()
-{
-    if (!urlRoute) {
-        urlRoute = new TUrlRoute();
-        urlRoute->parseConfigFile();
-
-        qAddPostRoutine([]{
-            delete urlRoute;
-            urlRoute = nullptr;
-        });
-    }
-}
-
 
 const TUrlRoute &TUrlRoute::instance()
 {
-    Q_CHECK_PTR(urlRoute);
+    static TUrlRoute *urlRoute = []() {
+        auto *route = new TUrlRoute();
+        route->parseConfigFile();
+        return route;
+    }();
     return *urlRoute;
 }
 

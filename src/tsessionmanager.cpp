@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsessionmanager.h"
+#include "tsystemglobal.h"
+#include "tsessionstorefactory.h"
+#include <TAppSettings>
+#include <TSessionStore>
+#include <TAtomic>
 #include <QHostInfo>
 #include <QCryptographicHash>
 #include <QThread>
 #include <QCoreApplication>
-#include <TAppSettings>
-#include <TSessionStore>
-#include <TAtomic>
-#include "tsystemglobal.h"
-#include "tsessionmanager.h"
-#include "tsessionstorefactory.h"
 
 
 static QByteArray createHash()

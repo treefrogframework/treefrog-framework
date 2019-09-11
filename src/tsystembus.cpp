@@ -5,27 +5,35 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMutex>
-#include <QDataStream>
-#include <QLocalSocket>
-#include <QStringList>
-#include <TWebApplication>
-#include <TApplicationServerBase>
 #include "tsystembus.h"
 #include "tsystemglobal.h"
 #include "tprocessinfo.h"
 #include "tfcore.h"
+#include <TWebApplication>
+#include <TApplicationServerBase>
+#include <QMutex>
+#include <QDataStream>
+#include <QLocalSocket>
+#include <QStringList>
 
 constexpr int  HEADER_LEN = 5;
 constexpr auto SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";
 
-static TSystemBus *systemBus = nullptr;
 
-
-TSystemBus::TSystemBus()
-    : readBuffer(), sendBuffer(), mutexRead(QMutex::NonRecursive), mutexWrite(QMutex::NonRecursive)
+TSystemBus *TSystemBus::instance()
 {
-    busSocket = new QLocalSocket();
+    static TSystemBus *systemBus = []() {
+        auto *bus = new TSystemBus();
+        bus->connect();
+        return bus;
+    }();
+    return systemBus;
+}
+
+
+TSystemBus::TSystemBus() :
+    busSocket(new QLocalSocket)
+{
     QObject::connect(busSocket, SIGNAL(readyRead()), this, SLOT(readBus()));
     QObject::connect(busSocket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
     QObject::connect(busSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(handleError(QLocalSocket::LocalSocketError)));
@@ -147,21 +155,6 @@ void TSystemBus::handleError(QLocalSocket::LocalSocketError error)
     default:
         tSystemError("Local socket error : %d", (int)error);
         break;
-    }
-}
-
-
-TSystemBus *TSystemBus::instance()
-{
-    return systemBus;
-}
-
-
-void TSystemBus::instantiate()
-{
-    if (!systemBus) {
-        systemBus = new TSystemBus();
-        systemBus->connect();
     }
 }
 

@@ -1,10 +1,10 @@
 #ifndef TACCESSVALIDATOR_H
 #define TACCESSVALIDATOR_H
 
+#include <TGlobal>
 #include <QString>
 #include <QStringList>
 #include <QList>
-#include <TGlobal>
 
 class TAbstractUser;
 
@@ -44,16 +44,17 @@ protected:
             UnauthenticatedUser,
         };
 
-        AccessRule(int t, const QString &k, const QString &act, bool alw)
-            : type(t), key(k), action(act), allow(alw) { }
+        AccessRule(int t, const QString &k, const QString &act, bool alw) :
+            type(t), key(k), action(act), allow(alw)
+        { }
 
-        int type;
+        int type {0};
         QString key;
         QString action;
-        bool allow;
+        bool allow {true};
     };
 
-    bool allowDefault;
+    bool allowDefault {true};
     QList<AccessRule> accessRules;
 };
 

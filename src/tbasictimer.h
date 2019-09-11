@@ -11,9 +11,9 @@ class T_CORE_EXPORT TBasicTimer : public QObject, public QBasicTimer
     Q_OBJECT
 public:
     TBasicTimer(QObject *parent = 0);
-    int interval() const { return interval_; }
-    void setInterval(int interval) { interval_ = interval; }
-    void setReceiver(QObject *receiver) { receiver_ = receiver; }
+    int interval() const { return _interval; }
+    void setInterval(int interval) { _interval = interval; }
+    void setReceiver(QObject *receiver) { _receiver = receiver; }
 
 public slots:
     void start();
@@ -21,8 +21,8 @@ public slots:
     void stop() { QBasicTimer::stop(); }
 
 private:
-    int interval_;
-    QObject *receiver_;
+    int _interval {0};
+    QObject *_receiver {nullptr};
 
     T_DISABLE_COPY(TBasicTimer)
     T_DISABLE_MOVE(TBasicTimer)

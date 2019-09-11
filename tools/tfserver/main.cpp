@@ -23,6 +23,7 @@ using namespace TreeFrog;
 constexpr auto DEBUG_MODE_OPTION  = "--debug";
 constexpr auto SOCKET_OPTION      = "-s";
 constexpr auto AUTO_RELOAD_OPTION = "-r";
+constexpr auto PORT_OPTION        = "-p";
 
 
 static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
@@ -91,6 +92,7 @@ int main(int argc, char *argv[])
     int sock = args.value(SOCKET_OPTION).toInt();
     bool reload = args.contains(AUTO_RELOAD_OPTION);
     bool debug = args.contains(DEBUG_MODE_OPTION);
+    ushort portNumber = args.value(PORT_OPTION).toUShort();
 
 #if defined(Q_OS_UNIX)
     webapp.watchUnixSignal(SIGTERM);
@@ -143,7 +145,7 @@ int main(int argc, char *argv[])
     if (sock <= 0 && debug)
 #endif
     {
-        int port = Tf::appSettings()->value(Tf::ListenPort).toInt();
+        int port = (portNumber > 0) ? portNumber : Tf::appSettings()->value(Tf::ListenPort).toInt();
         if (port <= 0 || port > USHRT_MAX) {
             tSystemError("Invalid port number: %d", port);
             fprintf(stderr, "Invalid port number: %d\n", port);

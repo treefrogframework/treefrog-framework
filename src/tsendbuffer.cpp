@@ -5,15 +5,15 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsendbuffer.h"
+#include "tsystemglobal.h"
+#include <TWebApplication>
+#include <THttpResponseHeader>
+#include <THttpUtility>
 #include <QFile>
 #include <QFileInfo>
 #include <QLocale>
 #include <QHostAddress>
-#include <TWebApplication>
-#include <THttpResponseHeader>
-#include <THttpUtility>
-#include "tsendbuffer.h"
-#include "tsystemglobal.h"
 
 
 TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger) :

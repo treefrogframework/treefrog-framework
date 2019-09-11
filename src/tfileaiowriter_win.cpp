@@ -44,8 +44,8 @@ void TFileAioWriterData::clearSyncBuffer()
 /*!
   Constructor.
  */
-TFileAioWriter::TFileAioWriter(const QString &name)
-    : d(new TFileAioWriterData)
+TFileAioWriter::TFileAioWriter(const QString &name) :
+    d(new TFileAioWriterData)
 {
     d->fileName = name;
 }

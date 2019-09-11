@@ -5,14 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDir>
-#include <QList>
-#include <QMapIterator>
-#include <QPluginLoader>
-#include <QMutex>
-#include <QMutexLocker>
-#include <TWebApplication>
-#include <TSessionStorePlugin>
 #include "tsessionstorefactory.h"
 #include "tsessionsqlobjectstore.h"
 #include "tsessioncookiestore.h"
@@ -21,6 +13,14 @@
 #include "tsessionredisstore.h"
 #include "tsessionmongostore.h"
 #include "tsystemglobal.h"
+#include <TWebApplication>
+#include <TSessionStorePlugin>
+#include <QDir>
+#include <QList>
+#include <QMapIterator>
+#include <QPluginLoader>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QJsonArray>
 #include <QJsonObject>
 

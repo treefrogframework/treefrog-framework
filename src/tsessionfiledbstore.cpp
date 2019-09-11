@@ -5,13 +5,13 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDataStream>
-#include <TWebApplication>
 #include "tsessionfiledbstore.h"
 #include "tsystemglobal.h"
 #include "tcachesqlitestore.h"
+#include <TWebApplication>
+#include <QDataStream>
 
-constexpr auto SESSION_DB_FILE = "sessiondb";
+constexpr auto SESSION_DB_FILE = "sess";
 
 
 class Store {
@@ -26,8 +26,8 @@ private:
 
 Store::Store()
 {
-    static QString path = Tf::app()->tmpPath() + QLatin1String(SESSION_DB_FILE);
-    _store = new TCacheSQLiteStore(path);
+    T_ONCE(TCacheSQLiteStore::createTable(SESSION_DB_FILE));
+    _store = new TCacheSQLiteStore(0, SESSION_DB_FILE);
     _store->open();
 }
 

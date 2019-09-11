@@ -1,10 +1,10 @@
 #ifndef TFEXCEPTION_H
 #define TFEXCEPTION_H
 
-#include <exception>
+#include <TGlobal>
 #include <QString>
 #include <QByteArray>
-#include <TGlobal>
+#include <exception>
 
 
 class T_CORE_EXPORT TfException : public std::exception

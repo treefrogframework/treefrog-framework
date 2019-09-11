@@ -5,17 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <TWebApplication>
+#include <TSystemGlobal>
+#include <TAppSettings>
+#include "tdatabasecontextmainthread.h"
 #include <QDir>
 #include <QTextCodec>
 #include <QDateTime>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <TAppSettings>
 #include <cstdlib>
 #include <thread>  // for hardware_concurrency()
-#include "tdatabasecontextmainthread.h"
 
 constexpr auto DEFAULT_INTERNET_MEDIA_TYPE  = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
@@ -232,7 +232,15 @@ QString TWebApplication::appSettingsFilePath() const
 */
 QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    return *sqlSettings[databaseId];
+    static QSettings *internalSettings = [&]() {
+        QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
+        QSettings *set = new QSettings(configPath() + path, QSettings::IniFormat);
+        QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
+        set->beginGroup(backend);
+        return set;
+    }();
+
+    return (databaseId == databaseIdForInternalUse()) ? *internalSettings : *sqlSettings[databaseId];
 }
 
 /*!
@@ -241,7 +249,11 @@ QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 */
 int TWebApplication::sqlDatabaseSettingsCount() const
 {
-    return sqlSettings.count();
+    static int count = [&]() {
+        int num = sqlSettings.count();
+        return (num > 0) ? num + 1 : num; // added 1 for internal use of DB
+    }();
+    return count;
 }
 
 /*!
@@ -249,7 +261,18 @@ int TWebApplication::sqlDatabaseSettingsCount() const
 */
 bool TWebApplication::isSqlDatabaseAvailable() const
 {
-    return sqlSettings.count() > 0;
+    return sqlDatabaseSettingsCount() > 0;
+}
+
+/*!
+ */
+int TWebApplication::databaseIdForInternalUse() const
+{
+    static int id = [&]() {
+        int cnt = sqlDatabaseSettingsCount();
+        return (cnt > 0) ? cnt - 1 : 0;
+    }();
+    return id;
 }
 
 /*!
@@ -362,29 +385,32 @@ int TWebApplication::maxNumberOfAppServers() const
 */
 int TWebApplication::maxNumberOfThreadsPerAppServer() const
 {
-    int maxNum = 0;
-    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+    static int maxNumber = []() {
+        int maxNum = 0;
+        QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
 
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
-        maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-        if (maxNum <= 0) {
-            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+        switch (Tf::app()->multiProcessingModule()) {
+        case TWebApplication::Thread:
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
+            if (maxNum <= 0) {
+                maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
+            }
+            break;
+
+        case TWebApplication::Hybrid:
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
+            if (maxNum <= 0) {
+                maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
+            }
+            break;
+
+        default:
+            break;
         }
-        break;
+        return maxNum;
+    }();
 
-    case TWebApplication::Hybrid:
-        maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
-        if (maxNum <= 0) {
-            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
-        }
-        break;
-
-    default:
-        break;
-    }
-
-    return maxNum;
+    return maxNumber;
 }
 
 /*!
@@ -454,9 +480,12 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 
 QThread *TWebApplication::databaseContextMainThread() const
 {
-    static TDatabaseContextMainThread databaseThread;
-    databaseThread.start();
-    return &databaseThread;
+    static TDatabaseContextMainThread *databaseThread = []() {
+        auto *thread = new TDatabaseContextMainThread;
+        thread->start();
+        return thread;
+    }();
+    return databaseThread;
 }
 
 

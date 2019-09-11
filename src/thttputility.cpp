@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "thttputility.h"
+#include "tsystemglobal.h"
 #include <QMap>
 #include <QTextCodec>
 #include <QLocale>
 #include <QUrl>
-#include "tsystemglobal.h"
-#include "thttputility.h"
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
 #else

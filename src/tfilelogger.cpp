@@ -5,17 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMutexLocker>
-#include <TSystemGlobal>
 #include "tfilelogger.h"
+#include <TSystemGlobal>
+#include <QMutexLocker>
 
 /*!
   \class TFileLogger
   \brief The TFileLogger class provides logging functionality to a log file.
 */
 
-TFileLogger::TFileLogger()
-    : TLogger()
+TFileLogger::TFileLogger() : TLogger()
 {
     logFile.setFileName(target());
 }

@@ -13,6 +13,9 @@ src/test/sharedmemorylogstream/log/
 Gemfile.lock
 3rdparty/**/*.cmake
 3rdparty/**/*.pc
+**/CMakeCache.txt
+**/moc_predefs.h
+**/CMakeFiles/
 
 # Linux
 *.o

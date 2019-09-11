@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QTcpSocket>
-#include <QCryptographicHash>
 #include "tpopmailer.h"
 #include "tsystemglobal.h"
+#include <QTcpSocket>
+#include <QCryptographicHash>
 using namespace Tf;
 
 /*!

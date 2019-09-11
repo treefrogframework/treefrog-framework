@@ -5,6 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsystemglobal.h"
+#include "taccesslogstream.h"
+#include "tfileaiowriter.h"
+#include <TWebApplication>
+#include <TAppSettings>
+#include <TLogger>
+#include <TLog>
+#include <TAccessLog>
 #include <QString>
 #include <QByteArray>
 #include <QDateTime>
@@ -12,14 +20,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QSqlError>
-#include <TWebApplication>
-#include <TAppSettings>
-#include <TLogger>
-#include <TLog>
-#include <TAccessLog>
-#include "tsystemglobal.h"
-#include "taccesslogstream.h"
-#include "tfileaiowriter.h"
 
 constexpr auto DEFAULT_SYSTEMLOG_LAYOUT          = "%d %5P %m%n";
 constexpr auto DEFAULT_SYSTEMLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";

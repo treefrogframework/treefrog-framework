@@ -5,14 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <netinet/tcp.h>
-#include <QElapsedTimer>
+#include <TMultiplexingServer>
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TApplicationServerBase>
-#include <TMultiplexingServer>
 #include <TThreadApplicationServer>
-#include <TSystemGlobal>
 #include <TActionWorker>
 #include "tepoll.h"
 #include "tepollsocket.h"
@@ -23,6 +20,8 @@
 #include "tsystemglobal.h"
 #include "tsystembus.h"
 #include "tpublisher.h"
+#include <QElapsedTimer>
+#include <netinet/tcp.h>
 
 constexpr int SEND_BUF_SIZE = 16 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
@@ -113,15 +112,6 @@ bool TMultiplexingServer::start(bool debugMode)
             tSystemWarn("Failed to load application libraries.");
         }
     }
-
-    // instantiate
-    if (!debugMode) {
-        TSystemBus::instantiate();
-        TPublisher::instantiate();
-    }
-    TUrlRoute::instantiate();
-    TSqlDatabasePool::instantiate();
-    TKvsDatabasePool::instantiate();
 
     TStaticInitializeThread::exec();
     QThread::start();

@@ -16,8 +16,8 @@
 */
 
 
-TBasicLogStream::TBasicLogStream(const QList<TLogger *> loggers, QObject *parent)
-    : TAbstractLogStream(loggers, parent)
+TBasicLogStream::TBasicLogStream(const QList<TLogger *> loggers, QObject *parent) :
+    TAbstractLogStream(loggers, parent)
 {
     loggerOpen();
 }

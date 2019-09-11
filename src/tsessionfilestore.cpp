@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsessionfilestore.h"
+#include "tsystemglobal.h"
+#include "tfcore.h"
+#include <TWebApplication>
 #include <QFile>
 #include <QDir>
 #include <QDataStream>
 #include <QReadWriteLock>
-#include <TWebApplication>
-#include "tsessionfilestore.h"
-#include "tsystemglobal.h"
-#include "tfcore.h"
 
 constexpr auto SESSION_DIR_NAME = "session";
 

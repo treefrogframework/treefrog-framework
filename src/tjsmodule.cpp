@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QJSEngine>
-#include <QJSValue>
 #include <TJSModule>
 #include <TJSLoader>
 #include <TJSInstance>
 #include "tsystemglobal.h"
+#include <QJSEngine>
+#include <QJSValue>
 
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 //#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)

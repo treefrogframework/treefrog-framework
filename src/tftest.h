@@ -1,14 +1,14 @@
 #ifndef TFTEST_H
 #define TFTEST_H
 
+#include <TWebApplication>
+#include <TAppSettings>
+#include "tkvsdatabasepool.h"
 #include <QtTest/QtTest>
 #include <QObject>
 #include <QTextCodec>
 #include <QByteArray>
 #include <QEventLoop>
-#include <TWebApplication>
-#include <TAppSettings>
-#include "tkvsdatabasepool.h"
 #ifdef QT_SQL_LIB
 # include <TActionThread>
 # include "tsqldatabasepool.h"
@@ -45,8 +45,6 @@ int main(int argc, char *argv[]) \
     QTextCodec *codec = QTextCodec::codecForName(codecName); \
     QTextCodec::setCodecForLocale(codec); \
     app.setDatabaseEnvironment("test"); \
-    TSqlDatabasePool::instantiate(); \
-    TKvsDatabasePool::instantiate(); \
     Thread thread; \
     thread.start(); \
     thread.wait(); \

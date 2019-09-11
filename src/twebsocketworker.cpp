@@ -5,26 +5,30 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDataStream>
-#include <TWebApplication>
-#include <TDispatcher>
-#include <TWebSocketEndpoint>
-#include <THttpRequestHeader>
-#include <TApplicationServerBase>
 #include "twebsocketworker.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
 #include "tabstractwebsocket.h"
 #include "tpublisher.h"
 #include "thttpsocket.h"
+#include <TWebApplication>
+#include <TDispatcher>
+#include <TWebSocketEndpoint>
+#include <THttpRequestHeader>
+#include <TApplicationServerBase>
 #ifdef Q_OS_LINUX
 # include "tepollhttpsocket.h"
 #endif
+#include <QDataStream>
 
 
-TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent)
-    : TDatabaseContextThread(parent), _mode(m), _socket(s), _httpSession(),
-      _requestPath(path), _payloads()
+TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSocket *s, const QByteArray &path, QObject *parent) :
+    TDatabaseContextThread(parent),
+    _mode(m),
+    _socket(s),
+    _httpSession(),
+    _requestPath(path),
+    _payloads()
 { }
 
 

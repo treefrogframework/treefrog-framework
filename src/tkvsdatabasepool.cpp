@@ -5,15 +5,15 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tkvsdatabasepool.h"
+#include "tsqldatabasepool.h"
+#include "tsystemglobal.h"
+#include <TWebApplication>
 #include <QStringList>
 #include <QDateTime>
 #include <QMap>
 #include <QThread>
-#include <TWebApplication>
 #include <ctime>
-#include "tkvsdatabasepool.h"
-#include "tsqldatabasepool.h"
-#include "tsystemglobal.h"
 
 /*!
   \class TKvsDatabasePool
@@ -21,7 +21,6 @@
 */
 
 constexpr auto CONN_NAME_FORMAT = "kvs%02d_%d";
-static TKvsDatabasePool *databasePool = 0;
 
 
 class KvsTypeHash : public QMap<QString, int>
@@ -36,11 +35,22 @@ public:
 Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 
 
-static void cleanup()
+TKvsDatabasePool *TKvsDatabasePool::instance()
 {
-    delete databasePool;
-    databasePool = nullptr;
+    static TKvsDatabasePool *databasePool = []() {
+        auto *pool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
+        pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
+        pool->init();
+        return pool;
+    }();
+    return databasePool;
 }
+
+
+TKvsDatabasePool::TKvsDatabasePool(const QString &environment) :
+    QObject(),
+    dbEnvironment(environment)
+{ }
 
 
 TKvsDatabasePool::~TKvsDatabasePool()
@@ -68,13 +78,7 @@ TKvsDatabasePool::~TKvsDatabasePool()
     delete[] cachedDatabase;
     delete[] lastCachedTime;
     delete[] availableNames;
-
 }
-
-
-TKvsDatabasePool::TKvsDatabasePool(const QString &environment)
-    : QObject(), maxConnects(0), dbEnvironment(environment)
-{ }
 
 
 void TKvsDatabasePool::init()
@@ -279,7 +283,6 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase:
 
 void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
-
     if (Q_LIKELY(database.isValid())) {
         int type = kvsTypeHash()->value(database.driverName(), -1);
         if (Q_UNLIKELY(type < 0)) {
@@ -296,7 +299,6 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 
 void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 {
-
     if (event->timerId() == timer.timerId()) {
         QString name;
 
@@ -317,30 +319,6 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
     } else {
         QObject::timerEvent(event);
     }
-}
-
-
-/*!
- * Initializes.
- * Call this in main thread.
- */
-void TKvsDatabasePool::instantiate()
-{
-    if (!databasePool) {
-        databasePool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
-        databasePool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
-        databasePool->init();
-        qAddPostRoutine(::cleanup);
-    }
-}
-
-
-TKvsDatabasePool *TKvsDatabasePool::instance()
-{
-    if (Q_UNLIKELY(!databasePool)) {
-        tFatal("Call TKvsDatabasePool::initialize() function first");
-    }
-    return databasePool;
 }
 
 

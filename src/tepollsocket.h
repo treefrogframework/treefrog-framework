@@ -1,12 +1,12 @@
 #ifndef TEPOLLSOCKET_H
 #define TEPOLLSOCKET_H
 
-#include <QObject>
-#include <QByteArray>
-#include <QHostAddress>
 #include <TGlobal>
 #include "tatomic.h"
 #include "tqueue.h"
+#include <QObject>
+#include <QByteArray>
+#include <QHostAddress>
 
 class QHostAddress;
 class QThread;

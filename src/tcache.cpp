@@ -20,6 +20,7 @@ TCache::TCache()
 
 TCache::~TCache()
 {
+    close();
     TCacheFactory::destroy(backend(), _cache);
 }
 
@@ -86,13 +87,6 @@ void TCache::clear()
     if (_cache) {
         _cache->clear();
     }
-}
-
-
-TCache &TCache::instance()
-{
-    static TCache globalInstance;
-    return globalInstance;
 }
 
 

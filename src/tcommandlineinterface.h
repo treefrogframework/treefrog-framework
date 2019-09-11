@@ -42,8 +42,6 @@
      int idx = QCoreApplication::arguments().indexOf("-e"); \
      QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product"); \
      app.setDatabaseEnvironment(env); \
-     TSqlDatabasePool::instantiate(1); \
-     TKvsDatabasePool::instantiate(1); \
      Thread thread; \
      QObject::connect(&thread, SIGNAL(finished()), &app, SLOT(quit())); \
      thread.start(); \

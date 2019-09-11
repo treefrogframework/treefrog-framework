@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tloggerfactory.h"
+#include "tfilelogger.h"
+#include "tsystemglobal.h"
+#include <TWebApplication>
+#include <TLoggerPlugin>
 #include <QDir>
 #include <QList>
 #include <QPluginLoader>
 #include <QMutex>
 #include <QMutexLocker>
-#include <TWebApplication>
-#include <TLoggerPlugin>
-#include "tloggerfactory.h"
-#include "tfilelogger.h"
-#include "tsystemglobal.h"
 #include <QJsonArray>
 #include <QJsonObject>
 

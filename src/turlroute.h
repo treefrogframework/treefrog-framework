@@ -61,7 +61,6 @@ inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, 
 class T_CORE_EXPORT TUrlRoute
 {
 public:
-    static void instantiate();
     static const TUrlRoute &instance();
     static QStringList splitPath(const QString &path);
     TRouting findRouting(Tf::HttpMethod method, const QStringList &components) const;

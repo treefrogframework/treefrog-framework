@@ -5,13 +5,13 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QMap>
-#include <QMutex>
-#include <QMutexLocker>
 #include <TSqlQuery>
 #include <TWebApplication>
 #include <TAppSettings>
 #include "tsystemglobal.h"
+#include <QMap>
+#include <QMutex>
+#include <QMutexLocker>
 
 static QMap<QString, QString> queryCache;
 static QMutex cacheMutex;
@@ -26,13 +26,13 @@ static QMutex cacheMutex;
 /*!
   Constructs a TSqlQuery object using the database \a databaseId.
 */
-TSqlQuery::TSqlQuery(int databaseId)
-    : QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
+TSqlQuery::TSqlQuery(int databaseId) :
+    QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
 { }
 
 
-TSqlQuery::TSqlQuery(QSqlDatabase db)
-    : QSqlQuery(db)
+TSqlQuery::TSqlQuery(QSqlDatabase db) :
+    QSqlQuery(db)
 { }
 
 

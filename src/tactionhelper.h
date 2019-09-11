@@ -1,12 +1,12 @@
 #ifndef TACTIONHELPER_H
 #define TACTIONHELPER_H
 
+#include <TGlobal>
 #include <QStringList>
 #include <QByteArray>
 #include <QUrl>
 #include <QPair>
 #include <QVariant>
-#include <TGlobal>
 
 class TActionController;
 

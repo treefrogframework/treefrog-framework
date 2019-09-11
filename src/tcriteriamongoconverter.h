@@ -1,14 +1,14 @@
 #ifndef TCRITERIAMONGOCONVERTER_H
 #define TCRITERIAMONGOCONVERTER_H
 
+#include <TGlobal>
+#include <TCriteria>
+#include <TCriteriaConverter>
+#include "tsystemglobal.h"
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QVariant>
 #include <QMap>
-#include <TCriteria>
-#include <TCriteriaConverter>
-#include <TGlobal>
-#include "tsystemglobal.h"
 
 
 template <class T>

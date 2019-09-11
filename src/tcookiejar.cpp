@@ -21,6 +21,13 @@ uint qHash(const TCookie &key)
 */
 
 /*!
+  Copy constructor.
+*/
+TCookieJar::TCookieJar(const TCookieJar &jar) : QList<TCookie>(*static_cast<const QList<TCookie> *>(&jar))
+{ }
+
+
+/*!
   Adds the cookie \a cookie to the cookie jar.
 */
 void TCookieJar::addCookie(const TCookie &cookie)
@@ -38,11 +45,6 @@ void TCookieJar::addCookie(const TCookie &cookie)
 /*!
   \fn TCookieJar::TCookieJar()
   Constructor.
-*/
-
-/*!
-  \fn TCookieJar::TCookieJar(const TCookieJar &jar)
-  Copy constructor.
 */
 
 /*!

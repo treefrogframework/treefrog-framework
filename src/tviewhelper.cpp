@@ -5,13 +5,13 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QFileInfo>
-#include <QRegExp>
 #include <TViewHelper>
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TActionView>
 #include <THttpUtility>
+#include <QFileInfo>
+#include <QRegExp>
 
 
 /*!

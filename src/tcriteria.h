@@ -1,8 +1,8 @@
 #ifndef TCRITERIA_H
 #define TCRITERIA_H
 
-#include <QVariant>
 #include <TGlobal>
+#include <QVariant>
 
 
 class T_CORE_EXPORT TCriteria
@@ -63,7 +63,7 @@ protected:
 private:
     QVariant cri1;
     QVariant cri2;
-    int logiOp;
+    int logiOp {None};
 
     template<class T> friend class TCriteriaConverter;
     template<class T> friend class TCriteriaMongoConverter;

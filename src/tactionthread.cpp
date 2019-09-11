@@ -5,21 +5,21 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QCoreApplication>
-#include <QEventLoop>
-#include <QElapsedTimer>
 #include <TActionThread>
 #include <TWebApplication>
 #include <THttpRequest>
 #include <TSession>
 #include <TApplicationServerBase>
 #include <TAppSettings>
-#include <atomic>
 #include "thttpsocket.h"
 #include "twebsocket.h"
 #include "tsystemglobal.h"
 #include "tsessionmanager.h"
 #include "tfcore.h"
+#include <QCoreApplication>
+#include <QEventLoop>
+#include <QElapsedTimer>
+#include <atomic>
 
 static std::atomic<int> threadCounter(0);
 static int keepAliveTimeout = -1;

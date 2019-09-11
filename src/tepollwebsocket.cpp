@@ -5,26 +5,28 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QDataStream>
-#include <QCryptographicHash>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <TAppSettings>
-#include <THttpRequestHeader>
-#include <THttpUtility>
 #include "tepollwebsocket.h"
 #include "tepoll.h"
 #include "twebsocketframe.h"
 #include "twebsocketworker.h"
 #include "turlroute.h"
 #include "tdispatcher.h"
+#include <TWebApplication>
+#include <TSystemGlobal>
+#include <TAppSettings>
+#include <THttpRequestHeader>
+#include <THttpUtility>
+#include <QDataStream>
+#include <QCryptographicHash>
 
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
 
-TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header)
-    : TEpollSocket(socketDescriptor, address), TAbstractWebSocket(header),
-      recvBuffer(), frames()
+TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header) :
+    TEpollSocket(socketDescriptor, address),
+    TAbstractWebSocket(header),
+    recvBuffer(),
+    frames()
 {
     tSystemDebug("TEpollWebSocket  [%p]", this);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);

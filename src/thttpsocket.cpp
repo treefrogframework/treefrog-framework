@@ -5,17 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <ctime>
-#include <QDir>
-#include <QBuffer>
+#include "thttpsocket.h"
+#include "tatomicptr.h"
+#include "tsystemglobal.h"
 #include <TTemporaryFile>
 #include <TAppSettings>
 #include <THttpResponse>
 #include <THttpHeader>
 #include <TMultipartFormData>
-#include "thttpsocket.h"
-#include "tatomicptr.h"
-#include "tsystemglobal.h"
+#include <QDir>
+#include <QBuffer>
+#include <ctime>
 
 constexpr uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
 constexpr qint64 WRITE_LENGTH = 1408;
@@ -231,7 +231,6 @@ bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState sock
         QTcpSocket::setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
         // Sets buffer size of socket
-#if QT_VERSION >= 0x050300
         int val = QTcpSocket::socketOption(QAbstractSocket::SendBufferSizeSocketOption).toInt();
         if (val < SEND_BUF_SIZE) {
             QTcpSocket::setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, SEND_BUF_SIZE);
@@ -241,12 +240,10 @@ bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState sock
         if (val < RECV_BUF_SIZE) {
             QTcpSocket::setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, RECV_BUF_SIZE);
         }
-#else
-# ifdef Q_OS_UNIX
-        int res, bufsize;
+#ifdef Q_OS_UNIX
+        int bufsize = SEND_BUF_SIZE;
+        int res = setsockopt((int)socketDescriptor, SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
 
-        bufsize = SEND_BUF_SIZE;
-        res = setsockopt((int)socketDescriptor, SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
         if (res < 0) {
             tSystemWarn("setsockopt error [SO_SNDBUF] fd:%d", (int)socketDescriptor);
         }
@@ -256,7 +253,6 @@ bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState sock
         if (res < 0) {
             tSystemWarn("setsockopt error [SO_RCVBUF] fd:%d", (int)socketDescriptor);
         }
-# endif
 #endif
     }
     return ret;

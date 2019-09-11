@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TMongoODMapper>
-#include <TCriteria>
 #include "tsessionmongostore.h"
 #include "tsessionmongoobject.h"
+#include <TMongoODMapper>
+#include <TCriteria>
 
 /*!
   \class TSessionMongoStore

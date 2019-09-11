@@ -23,17 +23,21 @@ const QString ObjectIdKey("_id");
 /*!
   Constructs a TMongoQuery object using the collection \a collection.
 */
-TMongoQuery::TMongoQuery(const QString &collection)
-    : database(Tf::currentDatabaseContext()->getKvsDatabase(TKvsDatabase::MongoDB)),
-      collection(collection.trimmed()), queryLimit(0), queryOffset(0)
+TMongoQuery::TMongoQuery(const QString &collection) :
+    database(Tf::currentDatabaseContext()->getKvsDatabase(TKvsDatabase::MongoDB)),
+    collection(collection.trimmed()),
+    queryLimit(0),
+    queryOffset(0)
 { }
 
 /*!
   Copy constructor.
 */
-TMongoQuery::TMongoQuery(const TMongoQuery &other)
-    : database(other.database), collection(other.collection),
-      queryLimit(other.queryLimit), queryOffset(other.queryOffset)
+TMongoQuery::TMongoQuery(const TMongoQuery &other) :
+    database(other.database),
+    collection(other.collection),
+    queryLimit(other.queryLimit),
+    queryOffset(other.queryOffset)
 { }
 
 /*!

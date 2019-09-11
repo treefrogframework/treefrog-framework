@@ -9,11 +9,10 @@
 class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore
 {
 public:
-    TCacheSQLiteStore() {}
-    TCacheSQLiteStore(const QString &fileName, const QString &connectOptions = QString(), qint64 thresholdFileSize = 0);
-    virtual ~TCacheSQLiteStore() { close(); }
+    TCacheSQLiteStore(qint64 thresholdFileSize = 0, const QByteArray &table = QByteArray());
+    virtual ~TCacheSQLiteStore();
 
-    QString key() const { return QStringLiteral("singlefiledb"); }
+    QString key() const { return QLatin1String("singlefiledb"); }
     bool open() override;
     void close() override;
     bool isOpen() const;
@@ -24,23 +23,21 @@ public:
     void clear() override;
     void gc() override;
 
-    bool exists(const QByteArray &key) const;
-    int count() const;
+    bool exists(const QByteArray &key);
+    int count();
     bool read(const QByteArray &key, QByteArray &blob, qint64 &timestamp);
     bool write(const QByteArray &key, const QByteArray &blob, qint64 timestamp);
     int removeOlder(int itemCount);
     int removeOlderThan(qint64 timestamp);
     int removeAll();
     bool vacuum();
-    qint64 dbSize() const;
+    qint64 dbSize();
+
+    static bool createTable(const QString &table);
 
 protected:
-    bool exec(const QString &sql) const;
-
-    QString _dbFile;
-    QString _connectOptions;
     qint64 _thresholdFileSize {0};
-    QSqlDatabase _db;
+    QString _table;
 };
 
 #endif // TCACHESQLITESTORE_H

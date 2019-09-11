@@ -1,6 +1,7 @@
 #ifndef TFCORE_UNIX_H
 #define TFCORE_UNIX_H
 
+#include "tfcore.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
@@ -10,7 +11,6 @@
 #ifdef Q_OS_DARWIN
 #include <pthread.h>
 #endif
-#include "tfcore.h"
 
 #ifndef Q_OS_UNIX
 # error "tfcore_unix.h included on a non-Unix system"

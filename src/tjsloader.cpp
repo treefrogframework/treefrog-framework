@@ -6,6 +6,7 @@
  */
 
 #include "tjsloader.h"
+#include "tsystemglobal.h"
 #include <TWebApplication>
 #include <QDir>
 #include <QFile>
@@ -13,7 +14,6 @@
 #include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include "tsystemglobal.h"
 
 // #define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)

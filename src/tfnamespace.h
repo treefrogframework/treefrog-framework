@@ -203,8 +203,8 @@ namespace Tf
         CacheBackend,
         CacheGcProbability,
         CacheEnableCompression,
+        CacheSettingsFile,
         CacheMemoryDbSizeThreshold,
-        CacheSingleFileDbFilePath,
         CacheSingleFileDbFileSizeThreshold,
     };
 

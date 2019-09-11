@@ -18,8 +18,9 @@ TAccessLog::TAccessLog()
 { }
 
 
-TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req)
-    : remoteHost(host), request(req)
+TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req) :
+    remoteHost(host),
+    request(req)
 { }
 
 

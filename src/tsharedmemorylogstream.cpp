@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QSharedMemory>
-#include <TSystemGlobal>
 #include "tsharedmemorylogstream.h"
+#include <TSystemGlobal>
+#include <QSharedMemory>
 
 constexpr auto CREATE_KEY = "TreeFrogLogStream";
 

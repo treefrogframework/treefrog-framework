@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsessioncookiestore.h"
+#include <TAppSettings>
+#include <TSystemGlobal>
 #include <QByteArray>
 #include <QDataStream>
 #include <QCryptographicHash>
-#include <TAppSettings>
-#include <TSystemGlobal>
-#include "tsessioncookiestore.h"
 
 /*!
   \class TSessionCookieStore

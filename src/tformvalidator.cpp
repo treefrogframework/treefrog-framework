@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QUrl>
-#include <QLocale>
-#include <QDateTime>
 #include <TFormValidator>
 #include <TWebApplication>
 #include "tsystemglobal.h"
+#include <QUrl>
+#include <QLocale>
+#include <QDateTime>
 
 #define ATOM       "[a-zA-Z0-9_!#\\$\\%&'*+/=?\\^`{}~|\\-]+"
 #define DOT_ATOM   ATOM "(?:\\." ATOM ")*"
@@ -23,23 +23,35 @@
   \brief The RuleEntry class is for internal use only.
 */
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, bool enable, const QString &msg)
-    : key(k), rule(r), value(enable), message(msg)
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, bool enable, const QString &msg) :
+    key(k),
+    rule(r),
+    value(enable),
+    message(msg)
 { }
 
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, qint64 v, const QString &msg)
-    : key(k), rule(r), value(v), message(msg)
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, qint64 v, const QString &msg) :
+    key(k),
+    rule(r),
+    value(v),
+    message(msg)
 { }
 
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, double v, const QString &msg)
-    : key(k), rule(r), value(v), message(msg)
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, double v, const QString &msg) :
+    key(k),
+    rule(r),
+    value(v),
+    message(msg)
 { }
 
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx, const QString &msg)
-    : key(k), rule(r), value(rx), message(msg)
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx, const QString &msg) :
+    key(k),
+    rule(r),
+    value(rx),
+    message(msg)
 { }
 
 
@@ -52,9 +64,13 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx,
 /*!
   Copy constructor.
  */
-TFormValidator::TFormValidator(const TFormValidator &other)
-    : rules(other.rules), errors(other.errors), dateFmt(other.dateFmt), timeFmt(other.timeFmt),
-      dateTimeFmt(other.dateTimeFmt), values(other.values)
+TFormValidator::TFormValidator(const TFormValidator &other) :
+    rules(other.rules),
+    errors(other.errors),
+    dateFmt(other.dateFmt),
+    timeFmt(other.timeFmt),
+    dateTimeFmt(other.dateTimeFmt),
+    values(other.values)
 { }
 
 /*!

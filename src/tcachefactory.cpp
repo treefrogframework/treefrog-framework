@@ -16,6 +16,9 @@ static void loadCacheKeys()
         SINGLEFILEDB_CACHE_KEY = TCacheSQLiteStore().key().toLower();
         return true;
     }();
+
+    Q_ASSERT(!INMEMORY_CACHE_KEY.isEmpty());
+    Q_ASSERT(!SINGLEFILEDB_CACHE_KEY.isEmpty());
     Q_UNUSED(done);
 }
 
@@ -42,16 +45,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
         ptr = new TCacheInMemoryStore(DbSizeThreshold);
     } else if (k == SINGLEFILEDB_CACHE_KEY) {
         static const qint64 FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold).toLongLong();
-        static const QString filepath = [] {
-            QString path = TAppSettings::instance()->value(Tf::CacheSingleFileDbFilePath).toString().trimmed();
-            if (!path.isEmpty() && QDir::isRelativePath(path)) {
-                path = Tf::app()->webRootPath() + path;
-            }
-            return path;
-        }();
-
-        ptr = new TCacheSQLiteStore(filepath, QString(), FileSizeThreshold);
-
+        ptr = new TCacheSQLiteStore(FileSizeThreshold);
     } else {
         tSystemError("Not found cache store: %s", qPrintable(key));
     }
