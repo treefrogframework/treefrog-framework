@@ -10,6 +10,20 @@
 #include <TSqlORMapper>
 #include <TCriteria>
 
+
+static void createSessionTable()
+{
+    struct Table {
+        static void create()
+        {
+            TSqlQuery query;
+            query.exec("CREATE TABLE IF NOT EXISTS session (id VARCHAR(50) PRIMARY KEY, data TEXT, updated_at TIMESTAMP)");
+        }
+    };
+
+    T_ONCE(Table::create());
+}
+
 /*!
   \class TSessionSqlObjectStore
   \brief The TSessionSqlObjectStore class stores HTTP sessions into database
@@ -21,6 +35,8 @@
 
 bool TSessionSqlObjectStore::store(TSession &session)
 {
+    createSessionTable();
+
     TSqlORMapper<TSessionObject> mapper;
     TCriteria cri(TSessionObject::Id, TSql::Equal, session.id());
     TSessionObject so = mapper.findFirst(cri);
@@ -60,6 +76,8 @@ bool TSessionSqlObjectStore::store(TSession &session)
 
 TSession TSessionSqlObjectStore::find(const QByteArray &id)
 {
+    createSessionTable();
+
     QDateTime modified = QDateTime::currentDateTime().addSecs(-lifeTimeSecs());
     TSqlORMapper<TSessionObject> mapper;
     TCriteria cri;

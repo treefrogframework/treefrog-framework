@@ -24,8 +24,6 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-static void cleanup();
-
 static QString COOKIE_SESSION_KEY;
 static QString SQLOBJECT_SESSION_KEY;
 static QString FILE_SESSION_KEY;
@@ -61,8 +59,7 @@ static void loadKeys()
 static QMap<QString, TSessionStoreInterface*> *sessionStoreIfMap()
 {
     static QMap<QString, TSessionStoreInterface*> *sessIfMap = []() {
-        auto sessIfMap = new QMap<QString, TSessionStoreInterface*>();
-        qAddPostRoutine(cleanup);
+        auto ifMap = new QMap<QString, TSessionStoreInterface*>();
 
         QDir dir(Tf::app()->pluginPath());
         const QStringList list = dir.entryList(QDir::Files);
@@ -81,26 +78,13 @@ static QMap<QString, TSessionStoreInterface*> *sessionStoreIfMap()
                 for (auto &k : array) {
                     QString key = k.toString().toLower();
                     tSystemInfo("Loaded session store plugin: %s", qPrintable(key));
-                    sessIfMap->insert(key, iface);
+                    ifMap->insert(key, iface);
                 }
             }
         }
-        return sessIfMap;
+        return ifMap;
     }();
     return sessIfMap;
-}
-
-
-static void cleanup()
-{
-    auto sessIfMap = sessionStoreIfMap();
-    if (sessIfMap) {
-        for (QMapIterator<QString, TSessionStoreInterface*> it(*sessIfMap); it.hasNext(); )  {
-            it.next();
-            delete it.value();
-        }
-        delete sessIfMap;
-    }
 }
 
 /*!
