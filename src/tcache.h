@@ -19,7 +19,6 @@ public:
     void remove(const QByteArray &key);
     void clear();
 
-    static QString backend();
     static bool compressionEnabled();
 
 private:

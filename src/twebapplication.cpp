@@ -235,22 +235,23 @@ const QMap<QString, QVariant> &TWebApplication::sqlDatabaseSettings(int database
 {
     static QMap<QString, QVariant> internalSettings = [&]() {
         // Settings of internal use databases
-        QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
-        QSettings iniset(configPath() + path, QSettings::IniFormat);
-        const QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
-
-        // Copy settrings
         QMap<QString, QVariant> settings;
-        for (auto &k : iniset.allKeys()) {
-            settings.insert(k, iniset.value(k));
+        QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
+
+        if (! path.isEmpty()) {
+            // Copy settrings
+            QSettings iniset(configPath() + path, QSettings::IniFormat);
+            for (auto &k : iniset.allKeys()) {
+                settings.insert(k, iniset.value(k));
+            }
         }
 
-        QMap<QString, QVariant> defaultSettings = TCacheFactory::defaultSettings(backend);
+        QMap<QString, QVariant> defaultSettings = TCacheFactory::defaultSettings(cacheBackend());
         for (auto &k : defaultSettings.keys()) {
-            auto val = settings.value(backend + "/" + k);
+            auto val = settings.value(cacheBackend() + "/" + k);
             auto defval = defaultSettings.value(k);
             if (val.toString().trimmed().isEmpty() && !defval.toString().trimmed().isEmpty()) {
-                settings.insert(backend + "/" + k, defval);
+                settings.insert(cacheBackend() + "/" + k, defval);
             }
         }
         return settings;
@@ -552,6 +553,13 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
 QVariant TWebApplication::getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue)
 {
     return getConfig(configName).value(key, defaultValue);
+}
+
+
+QString TWebApplication::cacheBackend() const
+{
+    static QString backend = Tf::appSettings()->value(Tf::CacheBackend, "singlefiledb").toString().toLower();
+    return backend;
 }
 
 

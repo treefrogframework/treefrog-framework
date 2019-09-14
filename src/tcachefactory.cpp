@@ -24,7 +24,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
 
     QString k = key.toLower();
     if (k == SINGLEFILEDB_CACHE_KEY) {
-        static const qint64 FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold).toLongLong();
+        static const qint64 FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold, 0).toLongLong();
         ptr = new TCacheSQLiteStore(FileSizeThreshold);
     } else {
         tSystemError("Not found cache store: %s", qPrintable(key));

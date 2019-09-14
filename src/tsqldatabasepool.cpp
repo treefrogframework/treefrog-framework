@@ -166,8 +166,7 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
 
 inline QString envName(const QString &env, int databaseId)
 {
-    static QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
-    return (databaseId == Tf::app()->databaseIdForInternalUse()) ? (backend + "/") : (env + "/");
+    return (databaseId == Tf::app()->databaseIdForInternalUse()) ? (Tf::app()->cacheBackend() + "/") : (env + "/");
 }
 
 

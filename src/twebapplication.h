@@ -73,6 +73,7 @@ public:
     QThread *databaseContextMainThread() const;
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
+    QString cacheBackend() const;
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);

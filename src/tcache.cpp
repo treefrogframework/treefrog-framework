@@ -8,20 +8,21 @@
 #include "tcache.h"
 #include "tcachefactory.h"
 #include "tcachestore.h"
+#include <TWebApplication>
 #include <TAppSettings>
 
 
 TCache::TCache()
 {
-    _cache = TCacheFactory::create(backend());
-    _gcDivisor = TAppSettings::instance()->value(Tf::CacheGcProbability).toInt();
+    _cache = TCacheFactory::create(Tf::app()->cacheBackend());
+    _gcDivisor = TAppSettings::instance()->value(Tf::CacheGcProbability, 0).toInt();
 }
 
 
 TCache::~TCache()
 {
     close();
-    TCacheFactory::destroy(backend(), _cache);
+    TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
 }
 
 
@@ -90,15 +91,8 @@ void TCache::clear()
 }
 
 
-QString TCache::backend()
-{
-    static QString cacheBackend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
-    return cacheBackend;
-}
-
-
 bool TCache::compressionEnabled()
 {
-    static bool compression = Tf::appSettings()->value(Tf::CacheEnableCompression).toBool();
+    static bool compression = Tf::appSettings()->value(Tf::CacheEnableCompression, true).toBool();
     return compression;
 }
