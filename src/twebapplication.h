@@ -48,7 +48,7 @@ public:
 
     bool appSettingsFileExists() const;
     QString appSettingsFilePath() const;
-    QSettings &sqlDatabaseSettings(int databaseId) const;
+    const QMap<QString, QVariant> &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
     bool isSqlDatabaseAvailable() const;
     int databaseIdForInternalUse() const;
@@ -96,7 +96,7 @@ protected:
 private:
     QString webRootAbsolutePath;
     QString dbEnvironment;
-    QVector<QSettings *> sqlSettings;
+    QVector<QMap<QString, QVariant>> sqlSettings;
     QSettings *mongoSetting  {nullptr};
     QSettings *redisSetting  {nullptr};
     QSettings *loggerSetting  {nullptr};

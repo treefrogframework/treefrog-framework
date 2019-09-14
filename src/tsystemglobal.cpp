@@ -190,3 +190,14 @@ void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &erro
     }
     Tf::traceQueryLog("%s", qPrintable(q));
 }
+
+
+QMap<QString, QVariant> Tf::settingsToMap(const QSettings &settings)
+{
+    QMap<QString, QVariant> map;
+
+    for (auto &k : settings.allKeys()) {
+        map.insert(k, settings.value(k));
+    }
+    return map;
+}

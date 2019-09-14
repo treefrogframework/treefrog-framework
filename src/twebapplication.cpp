@@ -111,7 +111,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     for (auto &f : files) {
         QSettings *set = new QSettings(configPath() + f, QSettings::IniFormat, this);
         set->setIniCodec(codecInternal);
-        sqlSettings.append(set);
+        sqlSettings.append(Tf::settingsToMap(*set));
     }
 
     // MongoDB settings
@@ -231,32 +231,32 @@ QString TWebApplication::appSettingsFilePath() const
   Returns a reference to the QSettings object for settings of the
   SQL database \a databaseId.
 */
-QSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
+const QMap<QString, QVariant> &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    static QSettings *internalSettings = [&]() {
+    static QMap<QString, QVariant> internalSettings = [&]() {
         // Settings of internal use databases
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
         QSettings iniset(configPath() + path, QSettings::IniFormat);
         const QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().trimmed().toLower();
 
         // Copy settrings
-        QSettings *settings = new QSettings();
+        QMap<QString, QVariant> settings;
         for (auto &k : iniset.allKeys()) {
-            settings->setValue(k, iniset.value(k));
+            settings.insert(k, iniset.value(k));
         }
 
         QMap<QString, QVariant> defaultSettings = TCacheFactory::defaultSettings(backend);
         for (auto &k : defaultSettings.keys()) {
-            auto val = settings->value(backend + "/" + k);
+            auto val = settings.value(backend + "/" + k);
             auto defval = defaultSettings.value(k);
             if (val.toString().trimmed().isEmpty() && !defval.toString().trimmed().isEmpty()) {
-                settings->setValue(backend + "/" + k, defval);
+                settings.insert(backend + "/" + k, defval);
             }
         }
         return settings;
     }();
 
-    return (databaseId == databaseIdForInternalUse()) ? *internalSettings : *sqlSettings[databaseId];
+    return (databaseId == databaseIdForInternalUse()) ? internalSettings : sqlSettings[databaseId];
 }
 
 /*!

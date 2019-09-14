@@ -2,6 +2,9 @@
 #define TSYSTEMGLOBAL_H
 
 #include <TGlobal>
+#include <QMap>
+#include <QVariant>
+#include <QSettings>
 
 #define ENABLE_TO_TRACE_FUNCTION  0
 
@@ -32,6 +35,8 @@ namespace Tf
         WebSocketPublishBinary  = 0x04,
         MaxOpCode               = 0x04,
     };
+
+    T_CORE_EXPORT QMap<QString, QVariant> settingsToMap(const QSettings &settings);
 }
 
 T_CORE_EXPORT void tSystemError(const char *, ...) // system error message

@@ -174,7 +174,7 @@ inline QString envName(const QString &env, int databaseId)
 bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, const QString &env, int databaseId)
 {
     // Initiates database
-    const QSettings &settings = Tf::app()->sqlDatabaseSettings(databaseId);
+    auto settings = Tf::app()->sqlDatabaseSettings(databaseId);
 
     QString databaseName = settings.value(envName(env, databaseId) + "DatabaseName").toString().trimmed();
     if (databaseName.isEmpty()) {
@@ -299,11 +299,12 @@ void TSqlDatabasePool::closeDatabase(QSqlDatabase &database)
 
 QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
 {
-    const QSettings &settings = Tf::app()->sqlDatabaseSettings(databaseId);
-    QString type = settings.value(envName(env, databaseId) + "DriverType").toString().trimmed();
+    auto settings = Tf::app()->sqlDatabaseSettings(databaseId);
+    auto key = envName(env, databaseId) + "DriverType";
+    QString type = settings.value(key).toString().trimmed();
 
     if (type.isEmpty()) {
-        tDebug("Parameter 'DriverType' is empty");
+        tWarn() << "Empty parameter: " << key;
     }
     return type;
 }
