@@ -10,7 +10,7 @@
 #include <QtGlobal>
 
 
-#if Q_OS_WIN
+#if defined(Q_OS_WIN) || defined(Q_OS_DARWIN)
 class T_CORE_EXPORT TThreadApplicationServer : public QTcpServer, public TApplicationServerBase
 {
     Q_OBJECT
