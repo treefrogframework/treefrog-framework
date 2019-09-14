@@ -59,6 +59,12 @@ static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrl
     TF_EINTR_LOOP(::accept4(sockfd, addr, addrlen, flags));
 }
 
+
+static inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
+{
+    TF_EINTR_LOOP(::poll(fds, nfds, timeout));
+}
+
 #endif // Q_OS_LINUX
 
 #endif // TFCORE_UNIX_H

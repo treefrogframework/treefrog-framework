@@ -1,23 +1,24 @@
 #ifndef TTHREADAPPLICATIONSERVER_H
 #define TTHREADAPPLICATIONSERVER_H
 
-#include <QTcpServer>
-#include <QBasicTimer>
 #include <TGlobal>
 #include <TApplicationServerBase>
 #include <TActionThread>
+#include "tstack.h"
+#include <QTcpServer>
+#include <QBasicTimer>
 
 
+#if Q_OS_WIN
 class T_CORE_EXPORT TThreadApplicationServer : public QTcpServer, public TApplicationServerBase
 {
     Q_OBJECT
 public:
     TThreadApplicationServer(int listeningSocket, QObject *parent = 0);
-    ~TThreadApplicationServer();
+    ~TThreadApplicationServer() { }
 
     bool start(bool debugMode) override;
     void stop() override;
-    bool isSocketOpen() const;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
 
@@ -26,13 +27,46 @@ protected:
     void timerEvent(QTimerEvent *event) override;
 
 private:
-    int listenSocket;
-    int maxThreads;
+    static TStack<TActionThread *> *threadPoolPtr();
+
+    int listenSocket {0};
+    int maxThreads {0};
     QBasicTimer reloadTimer;
 
     T_DISABLE_COPY(TThreadApplicationServer)
     T_DISABLE_MOVE(TThreadApplicationServer)
 };
+#else
+class T_CORE_EXPORT TThreadApplicationServer : public QThread, public TApplicationServerBase
+{
+    Q_OBJECT
+public:
+    TThreadApplicationServer(int listeningSocket, QObject *parent = 0);
+    ~TThreadApplicationServer() { }
+
+    bool start(bool debugMode) override;
+    void stop() override;
+    void setAutoReloadingEnabled(bool enable) override;
+    bool isAutoReloadingEnabled() override;
+    //bool isListening() const;
+
+protected:
+    void incomingConnection(qintptr socketDescriptor);
+    void timerEvent(QTimerEvent *event) override;
+    void run() override;
+
+private:
+    static TStack<TActionThread *> *threadPoolPtr();
+
+    int listenSocket {0};
+    int maxThreads {0};
+    QBasicTimer reloadTimer;
+    bool stopFlag {false};
+
+    T_DISABLE_COPY(TThreadApplicationServer)
+    T_DISABLE_MOVE(TThreadApplicationServer)
+};
+#endif
 
 
 class TStaticInitializeThread : public TActionThread

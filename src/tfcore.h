@@ -12,7 +12,9 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/file.h>
+# include <sys/types.h>
 # include <sys/socket.h>
+# include <poll.h>
 #endif
 
 #define TF_EINTR_LOOP(func)                       \

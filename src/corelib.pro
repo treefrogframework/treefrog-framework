@@ -339,12 +339,14 @@ windows {
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
+  SOURCES += tthreadapplicationserver_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
+  SOURCES += tthreadapplicationserver_unix.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h
