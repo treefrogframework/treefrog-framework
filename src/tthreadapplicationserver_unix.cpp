@@ -10,6 +10,7 @@
 #include <TAppSettings>
 #include <TActionThread>
 #include "tsystemglobal.h"
+#include "tfcore_unix.h"
 #include <thread>
 
 

@@ -80,7 +80,7 @@ QList<qint64> TProcessInfo::allConcurrentPids()
     }
     procstat_close(prstat);
 
-    qSort(pidList.begin(), pidList.end());  // Sorts the items
+    std::sort(pidList.begin(), pidList.end());  // Sorts the items
     return pidList;
 }
 

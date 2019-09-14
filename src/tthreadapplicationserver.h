@@ -7,6 +7,7 @@
 #include "tstack.h"
 #include <QTcpServer>
 #include <QBasicTimer>
+#include <QtGlobal>
 
 
 #if Q_OS_WIN
@@ -48,7 +49,6 @@ public:
     void stop() override;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
-    //bool isListening() const;
 
 protected:
     void incomingConnection(qintptr socketDescriptor);

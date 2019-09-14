@@ -62,7 +62,7 @@ QList<qint64> TProcessInfo::allConcurrentPids()
         }
     }
 
-    qSort(ret.begin(), ret.end());  // Sorts the items
+    std::sort(ret.begin(), ret.end());  // Sorts the items
     return ret;
 }
 
