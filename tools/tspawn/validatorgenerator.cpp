@@ -32,7 +32,7 @@ constexpr auto VALIDATOR_IMPL_TEMPLATE =                \
     "\n"                                                \
     "%2Validator::%2Validator() : TFormValidator()\n"   \
     "{\n"                                               \
-    "    // Set the rules below\n"                      \
+    "    //Set the rules below\n"                       \
     "    //setRule(\"xxxx\", Tf::MaxLength, 20);\n"     \
     "    //  :\n"                                       \
     "}\n";

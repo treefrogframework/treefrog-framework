@@ -12,8 +12,8 @@ class AbstractObjGenerator;
 class ModelGenerator
 {
 public:
-    typedef QList<QPair<QString, QVariant::Type>>  FieldList;
-    typedef QList<QPair<QString, QString>>  PlaceholderList;
+    using FieldList = QList<QPair<QString, QVariant::Type>>;
+    using PlaceholderList = QList<QPair<QString, QString>>;
 
     enum ObjectType {
         Sql,
@@ -41,7 +41,7 @@ protected:
     static QString createParam(QVariant::Type type, const QString &name);
 
 private:
-    ObjectType objectType;
+    ObjectType objectType {Sql};
     QString modelName;
     QString tableName;
     AbstractObjGenerator *objGen;

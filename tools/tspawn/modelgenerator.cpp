@@ -75,16 +75,19 @@ constexpr auto MODEL_IMPL_TEMPLATE =                          \
     "#include \"%inc%.h\"\n"                                  \
     "#include \"%objdir%%inc%object.h\"\n"                    \
     "\n"                                                      \
-    "%model%::%model%()\n"                                    \
-    "    : TAbstractModel(), d(new %model%Object())\n"        \
+    "%model%::%model%() :\n"                                  \
+    "    TAbstractModel(),\n"                                 \
+    "    d(new %model%Object())\n"                            \
     "{%initParams%}\n"                                        \
     "\n"                                                      \
-    "%model%::%model%(const %model% &other)\n"                \
-    "    : TAbstractModel(), d(other.d)\n"                    \
+    "%model%::%model%(const %model% &other) :\n"              \
+    "    TAbstractModel(),\n"                                 \
+    "    d(other.d)\n"                                        \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%model%::%model%(const %model%Object &object)\n"         \
-    "    : TAbstractModel(), d(new %model%Object(object))\n"  \
+    "%model%::%model%(const %model%Object &object) :\n"       \
+    "    TAbstractModel(),\n"                                 \
+    "    d(new %model%Object(object))\n"                      \
     "{ }\n"                                                   \
     "\n"                                                      \
     "%model%::~%model%()\n"                                   \
@@ -224,16 +227,22 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE =                     \
     "#include \"%inc%.h\"\n"                                  \
     "#include \"%objdir%%inc%object.h\"\n"                    \
     "\n"                                                      \
-    "%model%::%model%()\n"                                    \
-    "    : TAbstractUser(), TAbstractModel(), d(new %model%Object())\n" \
+    "%model%::%model%() :\n"                                  \
+    "    TAbstractUser(),\n"                                  \
+    "    TAbstractModel(),\n"                                 \
+    "    d(new %model%Object())\n"                            \
     "{%initParams%}\n"                                        \
     "\n"                                                      \
-    "%model%::%model%(const %model% &other)\n"                \
-    "    : TAbstractUser(), TAbstractModel(), d(other.d)\n"   \
+    "%model%::%model%(const %model% &other) :\n"              \
+    "    TAbstractUser(),\n"                                  \
+    "    TAbstractModel(),\n"                                 \
+    "    d(other.d)\n"                                        \
     "{ }\n"                                                   \
     "\n"                                                      \
-    "%model%::%model%(const %model%Object &object)\n"         \
-    "    : TAbstractUser(), TAbstractModel(), d(new %model%Object(object))\n" \
+    "%model%::%model%(const %model%Object &object) :\n"       \
+    "    TAbstractUser(),\n"                                  \
+    "    TAbstractModel(),\n"                                 \
+    "    d(new %model%Object(object))\n"                      \
     "{ }\n"                                                   \
     "\n"                                                      \
     "\n"                                                      \

@@ -35,12 +35,12 @@ constexpr auto ENDPOINT_HEADER_TEMPLATE =                               \
 constexpr auto ENDPOINT_IMPL_TEMPLATE =                                 \
     "#include \"%1endpoint.h\"\n"                                       \
     "\n"                                                                \
-    "%2Endpoint::%2Endpoint()\n"                                        \
-    "    : ApplicationEndpoint()\n"                                     \
+    "%2Endpoint::%2Endpoint() :\n"                                      \
+    "    ApplicationEndpoint()\n"                                       \
     "{ }\n"                                                             \
     "\n"                                                                \
-    "%2Endpoint::%2Endpoint(const %2Endpoint &)\n"                      \
-    "    : ApplicationEndpoint()\n"                                     \
+    "%2Endpoint::%2Endpoint(const %2Endpoint &) :\n"                    \
+    "    ApplicationEndpoint()\n"                                       \
     "{ }\n"                                                             \
     "\n"                                                                \
     "bool %2Endpoint::onOpen(const TSession &)\n"                       \
