@@ -9,7 +9,7 @@
 class T_CORE_EXPORT TMongoCursor
 {
     using TCursorObject = void;
-    using mongoc_cursor_t = struct _mongoc_cursor_t;
+    typedef struct _mongoc_cursor_t mongoc_cursor_t;
 public:
     ~TMongoCursor();
 

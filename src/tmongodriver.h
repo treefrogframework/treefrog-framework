@@ -40,7 +40,7 @@ public:
     const TMongoCursor &cursor() const { return *mongoCursor; }
 
 private:
-    using bson_error_t = struct _bson_error_t;
+    typedef struct _bson_error_t bson_error_t;
     typedef struct _mongoc_client_t mongoc_client_t;
 
     void clearError();
