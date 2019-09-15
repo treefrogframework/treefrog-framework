@@ -41,8 +41,8 @@ public:
 protected:
     void parse(const QByteArray &header);
 
-    typedef QPair<QByteArray, QByteArray> RawHeaderPair;
-    typedef QList<RawHeaderPair> RawHeaderPairList;
+    using RawHeaderPair = QPair<QByteArray, QByteArray>;
+    using RawHeaderPairList = QList<RawHeaderPair>;
     RawHeaderPairList headerPairList;
 };
 

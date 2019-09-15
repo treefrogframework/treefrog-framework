@@ -24,6 +24,7 @@ class T_CORE_EXPORT TWebApplication
 #endif
 {
     Q_OBJECT
+    using TSetting = QMap<QString, QVariant>;
 public:
     enum MultiProcessingModule {
         Invalid = 0,

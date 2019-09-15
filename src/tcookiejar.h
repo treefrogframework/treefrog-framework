@@ -6,7 +6,7 @@
 #include <QNetworkCookie>
 #include <TGlobal>
 
-typedef QNetworkCookie TCookie;
+using TCookie = QNetworkCookie;
 
 #ifdef Q_CC_MSVC
 extern uint qHash(const TCookie &key);

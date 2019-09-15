@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <TGlobal>
 
-typedef void TBsonObject;
+using TBsonObject = void;
 
 
 class T_CORE_EXPORT TBson
@@ -31,7 +31,7 @@ protected:
     static QVariantMap fromBson(const TBsonObject *obj);
 
 private:
-    typedef struct _bson_t bson_t;
+    using bson_t = struct _bson_t;
     bson_t *bsonData {nullptr};   // pointer to object of bson_t
 
     friend class TMongoDriver;

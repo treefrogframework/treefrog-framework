@@ -9,7 +9,7 @@ constexpr auto TF_SRC_REVISION = 2004;
 #include <QMetaType>
 
 #define T_DECLARE_CONTROLLER(TYPE,NAME)  \
-    typedef TYPE NAME;                   \
+    using NAME = TYPE;                   \
     Q_DECLARE_METATYPE(NAME)
 
 // Deprecated
