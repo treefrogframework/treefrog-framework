@@ -53,14 +53,14 @@ void TWebApplication::resetSignalNumber()
 void TWebApplication::watchConsoleSignal()
 {
     SetConsoleCtrlHandler(signalHandler, TRUE);
-    timer.start(500, this);
+    _timer.start(500, this);
 }
 
 
 void TWebApplication::ignoreConsoleSignal()
 {
     SetConsoleCtrlHandler(NULL, TRUE);
-    timer.stop();
+    _timer.stop();
 }
 
 

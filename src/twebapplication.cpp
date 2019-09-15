@@ -44,63 +44,71 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 #else
     : QCoreApplication(argc, argv),
 #endif
-      dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
+      _dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
 {
 #if defined(Q_OS_WIN)
     installNativeEventFilter(new TNativeEventFilter);
 #endif
 
     // parse command-line args
-    webRootAbsolutePath = ".";
+    _webRootAbsolutePath = ".";
     QStringList args = arguments();
     args.removeFirst();
     for (QStringListIterator i(args); i.hasNext(); ) {
         const QString &arg = i.next();
         if (arg.startsWith('-')) {
             if (arg == "-e" && i.hasNext()) {
-                dbEnvironment = i.next();
+                _dbEnvironment = i.next();
             }
             if (arg == "-i" && i.hasNext()) {
-                appServerId = i.next().toInt();
+                _appServerId = i.next().toInt();
             }
         } else {
             if (QDir(arg).exists()) {
-                webRootAbsolutePath = arg;
-                if (!webRootAbsolutePath.endsWith(QDir::separator()))
-                    webRootAbsolutePath += QDir::separator();
+                _webRootAbsolutePath = arg;
+                if (!_webRootAbsolutePath.endsWith(QDir::separator())) {
+                    _webRootAbsolutePath += QDir::separator();
+                }
             }
         }
     }
 
-    QDir webRoot(webRootAbsolutePath);
+    QDir webRoot(_webRootAbsolutePath);
     if (webRoot.exists()) {
-        webRootAbsolutePath = webRoot.absolutePath() + QDir::separator();
+        _webRootAbsolutePath = webRoot.absolutePath() + QDir::separator();
     }
 
     // Sets application name
-    QString appName = QDir(webRootAbsolutePath).dirName();
+    QString appName = QDir(_webRootAbsolutePath).dirName();
     if (!appName.isEmpty()) {
         setApplicationName(appName);
     }
 
     // Creates settings objects
     TAppSettings::instantiate(appSettingsFilePath());
-    loggerSetting = new QSettings(configPath() + "logger.ini", QSettings::IniFormat, this);
-    validationSetting = new QSettings(configPath() + "validation.ini", QSettings::IniFormat, this);
+    QSettings loggerSetting(configPath() + "logger.ini", QSettings::IniFormat, this);
+    QSettings validationSetting(configPath() + "validation.ini", QSettings::IniFormat, this);
     // Internet media types
+    QSettings *mediaTypes;
     if (QFileInfo(configPath() + "internet_media_types.ini").exists()) {
         mediaTypes = new QSettings(configPath() + "internet_media_types.ini", QSettings::IniFormat, this);
     } else {
         mediaTypes = new QSettings(configPath() + "initializers" + QDir::separator() + "internet_media_types.ini", QSettings::IniFormat, this);
     }
     // Gets codecs
-    codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
-    codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
+    _codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
+    _codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
 
     // Sets codecs for INI files
-    loggerSetting->setIniCodec(codecInternal);
-    validationSetting->setIniCodec(codecInternal);
-    mediaTypes->setIniCodec(codecInternal);
+    loggerSetting.setIniCodec(_codecInternal);
+    _loggerSetting = Tf::settingsToMap(loggerSetting);
+
+    validationSetting.setIniCodec(_codecInternal);
+    _validationSetting = Tf::settingsToMap(validationSetting);
+
+    mediaTypes->setIniCodec(_codecInternal);
+    _mediaTypes = Tf::settingsToMap(*mediaTypes);
+    delete mediaTypes;
 
     // SQL DB settings
     QString dbsets = Tf::appSettings()->value(Tf::SqlDatabaseSettingsFiles).toString().trimmed();
@@ -109,25 +117,29 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
     const QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
     for (auto &f : files) {
-        QSettings *set = new QSettings(configPath() + f, QSettings::IniFormat, this);
-        set->setIniCodec(codecInternal);
-        sqlSettings.append(Tf::settingsToMap(*set));
+        QSettings set(configPath() + f, QSettings::IniFormat, this);
+        set.setIniCodec(_codecInternal);
+        _sqlSettings.append(Tf::settingsToMap(set));
     }
 
     // MongoDB settings
     QString mongoini = Tf::appSettings()->value(Tf::MongoDbSettingsFile).toString().trimmed();
     if (!mongoini.isEmpty()) {
         QString mnginipath = configPath() + mongoini;
-        if (QFile(mnginipath).exists())
-            mongoSetting = new QSettings(mnginipath, QSettings::IniFormat, this);
+        if (QFile(mnginipath).exists()) {
+            QSettings mongoSetting(mnginipath, QSettings::IniFormat, this);
+            _mongoSetting = Tf::settingsToMap(mongoSetting);
+        }
     }
 
     // Redis settings
     QString redisini = Tf::appSettings()->value(Tf::RedisSettingsFile).toString().trimmed();
     if (!redisini.isEmpty()) {
         QString redisinipath = configPath() + redisini;
-        if (QFile(redisinipath).exists())
-            redisSetting = new QSettings(redisinipath, QSettings::IniFormat, this);
+        if (QFile(redisinipath).exists()) {
+            QSettings redisSetting(redisinipath, QSettings::IniFormat, this);
+            _redisSetting = Tf::settingsToMap(redisSetting);
+        }
     }
 }
 
@@ -159,7 +171,7 @@ int TWebApplication::exec()
 */
 bool TWebApplication::webRootExists() const
 {
-    return !webRootAbsolutePath.isEmpty() && QDir(webRootAbsolutePath).exists();
+    return !_webRootAbsolutePath.isEmpty() && QDir(_webRootAbsolutePath).exists();
 }
 
 /*!
@@ -231,11 +243,11 @@ QString TWebApplication::appSettingsFilePath() const
   Returns a reference to the QSettings object for settings of the
   SQL database \a databaseId.
 */
-const QMap<QString, QVariant> &TWebApplication::sqlDatabaseSettings(int databaseId) const
+const TSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    static QMap<QString, QVariant> internalSettings = [&]() {
+    static TSettings internalSettings = [&]() {
         // Settings of internal use databases
-        QMap<QString, QVariant> settings;
+        TSettings settings;
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
 
         if (! path.isEmpty()) {
@@ -246,7 +258,7 @@ const QMap<QString, QVariant> &TWebApplication::sqlDatabaseSettings(int database
             }
         }
 
-        QMap<QString, QVariant> defaultSettings = TCacheFactory::defaultSettings(cacheBackend());
+        TSettings defaultSettings = TCacheFactory::defaultSettings(cacheBackend());
         for (auto &k : defaultSettings.keys()) {
             auto val = settings.value(cacheBackend() + "/" + k);
             auto defval = defaultSettings.value(k);
@@ -257,7 +269,7 @@ const QMap<QString, QVariant> &TWebApplication::sqlDatabaseSettings(int database
         return settings;
     }();
 
-    return (databaseId == databaseIdForInternalUse()) ? internalSettings : sqlSettings[databaseId];
+    return (databaseId == databaseIdForInternalUse()) ? internalSettings : _sqlSettings[databaseId];
 }
 
 /*!
@@ -267,7 +279,7 @@ const QMap<QString, QVariant> &TWebApplication::sqlDatabaseSettings(int database
 int TWebApplication::sqlDatabaseSettingsCount() const
 {
     static int count = [&]() {
-        int num = sqlSettings.count();
+        int num = _sqlSettings.count();
         return (num > 0) ? num + 1 : num; // added 1 for internal use of DB
     }();
     return count;
@@ -296,9 +308,9 @@ int TWebApplication::databaseIdForInternalUse() const
   Returns a reference to the QSettings object for settings of the
   MongoDB system.
 */
-QSettings &TWebApplication::mongoDbSettings() const
+const TSettings &TWebApplication::mongoDbSettings() const
 {
-    return *mongoSetting;
+    return _mongoSetting;
 }
 
 /*!
@@ -306,16 +318,16 @@ QSettings &TWebApplication::mongoDbSettings() const
 */
 bool TWebApplication::isMongoDbAvailable() const
 {
-    return (bool)mongoSetting;
+    return !_mongoSetting.isEmpty();
 }
 
 /*!
   Returns a reference to the QSettings object for settings of the
   Redis system.
 */
-QSettings &TWebApplication::redisSettings() const
+const TSettings &TWebApplication::redisSettings() const
 {
-    return *redisSetting;
+    return _redisSetting;
 }
 
 /*!
@@ -323,7 +335,7 @@ QSettings &TWebApplication::redisSettings() const
 */
 bool TWebApplication::isRedisAvailable() const
 {
-    return (bool)redisSetting;
+    return !_redisSetting.isEmpty();
 }
 
 /*!
@@ -332,10 +344,11 @@ bool TWebApplication::isRedisAvailable() const
 */
 QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCharset)
 {
-    if (ext.isEmpty())
+    if (ext.isEmpty()) {
         return QByteArray();
+    }
 
-    QString type = mediaTypes->value(ext.toLower(), DEFAULT_INTERNET_MEDIA_TYPE).toString();
+    QString type = _mediaTypes.value(ext.toLower(), DEFAULT_INTERNET_MEDIA_TYPE).toString();
     if (appendCharset && type.startsWith("text", Qt::CaseInsensitive)) {
         type += "; charset=" + Tf::app()->codecForHttpOutput()->name();
     }
@@ -348,7 +361,7 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
 */
 QString TWebApplication::validationErrorMessage(int rule) const
 {
-    return validationSetting->value("ErrorMessage/" + QString::number(rule)).toString();
+    return _validationSetting.value("ErrorMessage/" + QString::number(rule)).toString();
 }
 
 /*!
@@ -357,25 +370,25 @@ QString TWebApplication::validationErrorMessage(int rule) const
 */
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
-    if (mpm == Invalid) {
+    if (_mpm == Invalid) {
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
-            mpm = Thread;
+            _mpm = Thread;
         } else if (str == "hybrid") {
 #ifdef Q_OS_LINUX
-            mpm = Hybrid;
+            _mpm = Hybrid;
 #else
             tSystemWarn("Unsupported MPM: hybrid  (Linux only)");
             tWarn("Unsupported MPM: hybrid  (Linux only)");
-            mpm = Thread;
+            _mpm = Thread;
 #endif
         } else {
             tSystemWarn("Unsupported MPM: %s", qPrintable(str));
             tWarn("Unsupported MPM: %s", qPrintable(str));
-            mpm = Thread;
+            _mpm = Thread;
         }
     }
-    return mpm;
+    return _mpm;
 }
 
 /*!
@@ -479,7 +492,7 @@ QString TWebApplication::sqlQueryLogFilePath() const
 
 void TWebApplication::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == timer.timerId()) {
+    if (event->timerId() == _timer.timerId()) {
         if (signalNumber() >= 0) {
             tSystemDebug("TWebApplication trapped signal  number:%d", signalNumber());
             //timer.stop();   /* Don't stop this timer */
@@ -510,7 +523,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
 {
     auto cnf = configName.toLower();
 
-    if (!configMap.contains(cnf)) {
+    if (!_configMap.contains(cnf)) {
         QDir dir(configPath());
         QStringList filters = { configName + ".*", configName };
         const auto filist = dir.entryInfoList(filters);
@@ -527,7 +540,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     for (auto &k : (const QStringList &)settings.allKeys()) {
                         map.insert(k, settings.value(k));
                     }
-                    configMap.insert(cnf, map);
+                    _configMap.insert(cnf, map);
                     break;
 
                 } else if (suffix == "json") {
@@ -536,7 +549,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     if (jsonFile.open(QIODevice::ReadOnly)) {
                         auto json = QJsonDocument::fromJson(jsonFile.readAll()).object();
                         jsonFile.close();
-                        configMap.insert(cnf, json.toVariantMap());
+                        _configMap.insert(cnf, json.toVariantMap());
                         break;
                     }
 
@@ -546,7 +559,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
             }
         }
     }
-    return configMap[cnf];
+    return _configMap[cnf];
 }
 
 
@@ -569,19 +582,19 @@ QString TWebApplication::cacheBackend() const
 */
 
 /*!
-  \fn QSettings &TWebApplication::appSettings() const
+  \fn const TSettings &TWebApplication::appSettings() const
   Returns a reference to the QSettings object for settings of the
   web application, which file is the application.ini.
 */
 
 /*!
-  \fn QSettings &TWebApplication::loggerSettings () const
+  \fn const TSettings &TWebApplication::loggerSettings () const
   Returns a reference to the QSettings object for settings of the
   logger, which file is logger.ini.
 */
 
 /*!
-  \fn QSettings &TWebApplication::validationSettings () const
+  \fn const TSettings &TWebApplication::validationSettings () const
   Returns a reference to the QSettings object for settings of the
   validation, which file is validation.ini.
 */

@@ -48,7 +48,7 @@ TLogger::TLogger()
 */
 QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) const
 {
-    const QSettings &settings = Tf::app()->loggerSettings();
+    const auto &settings = Tf::app()->loggerSettings();
     //tSystemDebug("settingsValue: %s", qPrintable(key() + "." + k));
     return settings.value(key() + "." + k, defaultValue);
 }
@@ -169,7 +169,7 @@ QTextCodec *TLogger::codec() const
 {
     if (! _codec) {
         // Sets the codec
-        QSettings &settings = Tf::app()->loggerSettings();
+        auto &settings = Tf::app()->loggerSettings();
         QByteArray codecName = settings.value(DEFAULT_TEXT_ENCODING).toByteArray().trimmed();
         if (!codecName.isEmpty()) {
             QTextCodec *c = QTextCodec::codecForName(codecName);

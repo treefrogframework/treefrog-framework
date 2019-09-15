@@ -31,7 +31,7 @@ protected:
     static QVariantMap fromBson(const TBsonObject *obj);
 
 private:
-    using bson_t = struct _bson_t;
+    typedef struct _bson_t bson_t;
     bson_t *bsonData {nullptr};   // pointer to object of bson_t
 
     friend class TMongoDriver;

@@ -7,13 +7,14 @@
 # include <QCoreApplication>
 #endif
 
-#include <QVector>
-#include <QSettings>
-#include <QBasicTimer>
 #include <TGlobal>
 #include "qplatformdefs.h"
+#include <QVector>
+#include <QBasicTimer>
+#include <QVariant>
 
 class QTextCodec;
+using TSettings = QMap<QString, QVariant>;
 
 
 class T_CORE_EXPORT TWebApplication
@@ -24,7 +25,6 @@ class T_CORE_EXPORT TWebApplication
 #endif
 {
     Q_OBJECT
-    using TSetting = QMap<QString, QVariant>;
 public:
     enum MultiProcessingModule {
         Invalid = 0,
@@ -36,7 +36,7 @@ public:
     ~TWebApplication();
 
     int exec();
-    QString webRootPath() const { return webRootAbsolutePath; }
+    QString webRootPath() const { return _webRootAbsolutePath; }
     bool webRootExists() const;
     QString publicPath() const;
     QString configPath() const;
@@ -44,21 +44,21 @@ public:
     QString logPath() const;
     QString pluginPath() const;
     QString tmpPath() const;
-    QString databaseEnvironment() const { return dbEnvironment; }
+    QString databaseEnvironment() const { return _dbEnvironment; }
     void setDatabaseEnvironment(const QString &environment);
 
     bool appSettingsFileExists() const;
     QString appSettingsFilePath() const;
-    const QMap<QString, QVariant> &sqlDatabaseSettings(int databaseId) const;
+    const TSettings &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
     bool isSqlDatabaseAvailable() const;
     int databaseIdForInternalUse() const;
-    QSettings &mongoDbSettings() const;
+    const TSettings &mongoDbSettings() const;
     bool isMongoDbAvailable() const;
-    QSettings &redisSettings() const;
+    const TSettings &redisSettings() const;
     bool isRedisAvailable() const;
-    QSettings &loggerSettings() const { return *loggerSetting; }
-    QSettings &validationSettings() const { return *validationSetting; }
+    const TSettings &loggerSettings() const { return _loggerSetting; }
+    const TSettings &validationSettings() const { return _validationSetting; }
     QString validationErrorMessage(int rule) const;
     QByteArray internetMediaType(const QString &ext, bool appendCharset = false);
     MultiProcessingModule multiProcessingModule() const;
@@ -68,9 +68,9 @@ public:
     QString systemLogFilePath() const;
     QString accessLogFilePath() const;
     QString sqlQueryLogFilePath() const;
-    QTextCodec *codecForInternal() const { return codecInternal; }
-    QTextCodec *codecForHttpOutput() const { return codecHttp; }
-    int applicationServerId() const { return appServerId; }
+    QTextCodec *codecForInternal() const { return _codecInternal; }
+    QTextCodec *codecForHttpOutput() const { return _codecHttp; }
+    int applicationServerId() const { return _appServerId; }
     QThread *databaseContextMainThread() const;
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
@@ -96,20 +96,20 @@ protected:
     static int signalNumber();
 
 private:
-    QString webRootAbsolutePath;
-    QString dbEnvironment;
-    QVector<QMap<QString, QVariant>> sqlSettings;
-    QSettings *mongoSetting  {nullptr};
-    QSettings *redisSetting  {nullptr};
-    QSettings *loggerSetting  {nullptr};
-    QSettings *validationSetting  {nullptr};
-    QSettings *mediaTypes  {nullptr};
-    QTextCodec *codecInternal  {nullptr};
-    QTextCodec *codecHttp  {nullptr};
-    int appServerId  {-1};
-    QBasicTimer timer;
-    mutable MultiProcessingModule mpm  {Invalid};
-    QMap<QString, QVariantMap> configMap;
+    QString _webRootAbsolutePath;
+    QString _dbEnvironment;
+    QVector<TSettings> _sqlSettings;
+    TSettings _mongoSetting;
+    TSettings _redisSetting;
+    TSettings _loggerSetting;
+    TSettings _validationSetting;
+    TSettings _mediaTypes;
+    QTextCodec *_codecInternal  {nullptr};
+    QTextCodec *_codecHttp  {nullptr};
+    int _appServerId  {-1};
+    QBasicTimer _timer;
+    mutable MultiProcessingModule _mpm  {Invalid};
+    QMap<QString, QVariantMap> _configMap;
 
     static void resetSignalNumber();
 
@@ -124,7 +124,7 @@ private:
 */
 inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 {
-    dbEnvironment = environment;
+    _dbEnvironment = environment;
 }
 
 

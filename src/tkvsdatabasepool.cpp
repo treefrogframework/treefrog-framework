@@ -144,7 +144,7 @@ bool TKvsDatabasePool::isKvsAvailable(TKvsDatabase::Type type) const
 }
 
 
-QSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
+const TSettings &TKvsDatabasePool::kvsSettings(TKvsDatabase::Type type) const
 {
     switch (type) {
     case TKvsDatabase::MongoDB:
@@ -234,7 +234,7 @@ TKvsDatabase TKvsDatabasePool::database(TKvsDatabase::Type type)
 bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const
 {
     // Initiates database
-    const QSettings &settings = kvsSettings(type);
+    const TSettings &settings = kvsSettings(type);
     QString databaseName = settings.value(env + "/DatabaseName").toString().trimmed();
 
     if (databaseName.isEmpty()) {
