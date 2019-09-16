@@ -173,7 +173,7 @@ MongoDB还提供了更多的运算符. 要更深入的了解请查看[MongoDB文
 TMongoQuery mongo("blog");
 QVariantMap criteria;
 criteria["title"] = "foo"; // 设置查询条件
-QVariantMap doc = findOne(criteria);   // 获得一个文档
+QVariantMap doc = mongo.findOne(criteria);   // 获得一个文档
 doc["body"] = "bar baz";               // 更改文档的内容
 
 criteria["_id"] = doc["_id"];          // 设置ObjectID为查询条件

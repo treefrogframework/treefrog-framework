@@ -172,7 +172,7 @@ We will read a document from the MongoDB server and then update it. As indicated
 TMongoQuery mongo("blog");
 QVariantMap criteria;
 criteria["title"] = "foo";             // Set the search criteria
-QVariantMap doc = findOne(criteria);   // Get one
+QVariantMap doc = mongo.findOne(criteria);   // Get one
 doc["body"] = "bar baz";               // Change the contents of the document
 
 criteria["_id"] = doc["_id"];          // Set ObjectID to the search criteria

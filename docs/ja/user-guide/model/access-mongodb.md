@@ -153,7 +153,7 @@ MongoDB サーバから読み込んだドキュメントを更新してみます
 TMongoQuery mongo("blog");
 QVariantMap criteria;
 criteria["title"] = "foo";             // 検索条件を設定
-QVariantMap doc = findOne(criteria);   // 1件取得
+QVariantMap doc = mongo.findOne(criteria);   // 1件取得
 doc["body"] = "bar baz";               // ドキュメントの内容を変更
 
 criteria["_id"] = doc["_id"];          // 検索条件にObjectIDを追加
