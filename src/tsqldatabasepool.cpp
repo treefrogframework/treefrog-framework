@@ -63,6 +63,25 @@ TSqlDatabasePool::~TSqlDatabasePool()
 }
 
 
+inline QString envName(const QString &env, int databaseId)
+{
+    return (databaseId == Tf::app()->databaseIdForInternalUse()) ? QString("singlefiledb/") : (env + "/");
+}
+
+
+QString driverType(const QString &env, int databaseId)
+{
+    auto settings = Tf::app()->sqlDatabaseSettings(databaseId);
+    auto key = envName(env, databaseId) + "DriverType";
+    QString type = settings.value(key).toString().trimmed();
+
+    if (type.isEmpty()) {
+        tWarn() << "Empty parameter: " << key;
+    }
+    return type;
+}
+
+
 void TSqlDatabasePool::init()
 {
     if (!Tf::app()->isSqlDatabaseAvailable()) {
@@ -161,12 +180,6 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
         }
     }
     throw RuntimeException("No pooled connection", __FILE__, __LINE__);
-}
-
-
-inline QString envName(const QString &env, int databaseId)
-{
-    return (databaseId == Tf::app()->databaseIdForInternalUse()) ? (Tf::app()->cacheBackend() + "/") : (env + "/");
 }
 
 
@@ -293,19 +306,6 @@ void TSqlDatabasePool::closeDatabase(QSqlDatabase &database)
     database.close();
     tSystemDebug("Closed database connection, name: %s", qPrintable(name));
     availableNames[id].push(name);
-}
-
-
-QString TSqlDatabasePool::driverType(const QString &env, int databaseId)
-{
-    auto settings = Tf::app()->sqlDatabaseSettings(databaseId);
-    auto key = envName(env, databaseId) + "DriverType";
-    QString type = settings.value(key).toString().trimmed();
-
-    if (type.isEmpty()) {
-        tWarn() << "Empty parameter: " << key;
-    }
-    return type;
 }
 
 

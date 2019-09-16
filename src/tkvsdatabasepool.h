@@ -27,7 +27,7 @@ public:
 protected:
     void init();
     bool isKvsAvailable(TKvsDatabase::Type type) const;
-    const TSettings &kvsSettings(TKvsDatabase::Type type) const;
+    const QVariantMap &kvsSettings(TKvsDatabase::Type type) const;
     bool setDatabaseSettings(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const;
     void timerEvent(QTimerEvent *event);
 

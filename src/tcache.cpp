@@ -14,8 +14,9 @@
 
 TCache::TCache()
 {
+    static int CacheGcProbability = TAppSettings::instance()->value(Tf::CacheGcProbability, 0).toInt();
     _cache = TCacheFactory::create(Tf::app()->cacheBackend());
-    _gcDivisor = TAppSettings::instance()->value(Tf::CacheGcProbability, 0).toInt();
+    _gcDivisor = CacheGcProbability;
 }
 
 

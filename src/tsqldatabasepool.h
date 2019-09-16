@@ -24,7 +24,7 @@ public:
     void pool(QSqlDatabase &database, bool forceClose = false);
 
     static TSqlDatabasePool *instance();
-    static QString driverType(const QString &env, int databaseId);
+    //static QString driverType(const QString &env, int databaseId);
     static bool setDatabaseSettings(TSqlDatabase &database, const QString &env, int databaseId);
     static int getDatabaseId(const QSqlDatabase &database);
 

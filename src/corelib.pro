@@ -315,6 +315,8 @@ HEADERS += tcachestore.h
 SOURCES += tcachestore.cpp
 HEADERS += tcachesqlitestore.h
 SOURCES += tcachesqlitestore.cpp
+HEADERS += tcachemongostore.h
+SOURCES += tcachemongostore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 
 HEADERS += \

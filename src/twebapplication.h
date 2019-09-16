@@ -14,7 +14,6 @@
 #include <QVariant>
 
 class QTextCodec;
-using TSettings = QMap<QString, QVariant>;
 
 
 class T_CORE_EXPORT TWebApplication
@@ -49,16 +48,16 @@ public:
 
     bool appSettingsFileExists() const;
     QString appSettingsFilePath() const;
-    const TSettings &sqlDatabaseSettings(int databaseId) const;
+    const QVariantMap &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
     bool isSqlDatabaseAvailable() const;
     int databaseIdForInternalUse() const;
-    const TSettings &mongoDbSettings() const;
+    const QVariantMap &mongoDbSettings() const;
     bool isMongoDbAvailable() const;
-    const TSettings &redisSettings() const;
+    const QVariantMap &redisSettings() const;
     bool isRedisAvailable() const;
-    const TSettings &loggerSettings() const { return _loggerSetting; }
-    const TSettings &validationSettings() const { return _validationSetting; }
+    const QVariantMap &loggerSettings() const { return _loggerSetting; }
+    const QVariantMap &validationSettings() const { return _validationSetting; }
     QString validationErrorMessage(int rule) const;
     QByteArray internetMediaType(const QString &ext, bool appendCharset = false);
     MultiProcessingModule multiProcessingModule() const;
@@ -98,12 +97,12 @@ protected:
 private:
     QString _webRootAbsolutePath;
     QString _dbEnvironment;
-    QVector<TSettings> _sqlSettings;
-    TSettings _mongoSetting;
-    TSettings _redisSetting;
-    TSettings _loggerSetting;
-    TSettings _validationSetting;
-    TSettings _mediaTypes;
+    QVector<QVariantMap> _sqlSettings;
+    QVariantMap _mongoSetting;
+    QVariantMap _redisSetting;
+    QVariantMap _loggerSetting;
+    QVariantMap _validationSetting;
+    QVariantMap _mediaTypes;
     QTextCodec *_codecInternal  {nullptr};
     QTextCodec *_codecHttp  {nullptr};
     int _appServerId  {-1};

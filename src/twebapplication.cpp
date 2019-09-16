@@ -117,9 +117,9 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     }
     const QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
     for (auto &f : files) {
-        QSettings set(configPath() + f, QSettings::IniFormat, this);
-        set.setIniCodec(_codecInternal);
-        _sqlSettings.append(Tf::settingsToMap(set));
+        QSettings settings(configPath() + f, QSettings::IniFormat);
+        settings.setIniCodec(_codecInternal);
+        _sqlSettings.append(Tf::settingsToMap(settings));
     }
 
     // MongoDB settings
@@ -127,8 +127,9 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     if (!mongoini.isEmpty()) {
         QString mnginipath = configPath() + mongoini;
         if (QFile(mnginipath).exists()) {
-            QSettings mongoSetting(mnginipath, QSettings::IniFormat, this);
-            _mongoSetting = Tf::settingsToMap(mongoSetting);
+            QSettings settings(mnginipath, QSettings::IniFormat);
+            settings.setIniCodec(_codecInternal);
+            _mongoSetting = Tf::settingsToMap(settings);
         }
     }
 
@@ -137,8 +138,9 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     if (!redisini.isEmpty()) {
         QString redisinipath = configPath() + redisini;
         if (QFile(redisinipath).exists()) {
-            QSettings redisSetting(redisinipath, QSettings::IniFormat, this);
-            _redisSetting = Tf::settingsToMap(redisSetting);
+            QSettings settings(redisinipath, QSettings::IniFormat);
+            settings.setIniCodec(_codecInternal);
+            _redisSetting = Tf::settingsToMap(settings);
         }
     }
 }
@@ -243,11 +245,11 @@ QString TWebApplication::appSettingsFilePath() const
   Returns a reference to the QSettings object for settings of the
   SQL database \a databaseId.
 */
-const TSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
+const QVariantMap &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    static TSettings internalSettings = [&]() {
+    static QVariantMap internalSettings = [&]() {
         // Settings of internal use databases
-        TSettings settings;
+        QVariantMap settings;
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
 
         if (! path.isEmpty()) {
@@ -258,12 +260,13 @@ const TSettings &TWebApplication::sqlDatabaseSettings(int databaseId) const
             }
         }
 
-        TSettings defaultSettings = TCacheFactory::defaultSettings(cacheBackend());
+        const QLatin1String singlefiledb("singlefiledb");
+        QVariantMap defaultSettings = TCacheFactory::defaultSettings(singlefiledb);
         for (auto &k : defaultSettings.keys()) {
-            auto val = settings.value(cacheBackend() + "/" + k);
+            auto val = settings.value(singlefiledb + "/" + k);
             auto defval = defaultSettings.value(k);
             if (val.toString().trimmed().isEmpty() && !defval.toString().trimmed().isEmpty()) {
-                settings.insert(cacheBackend() + "/" + k, defval);
+                settings.insert(singlefiledb + "/" + k, defval);
             }
         }
         return settings;
@@ -308,7 +311,7 @@ int TWebApplication::databaseIdForInternalUse() const
   Returns a reference to the QSettings object for settings of the
   MongoDB system.
 */
-const TSettings &TWebApplication::mongoDbSettings() const
+const QVariantMap &TWebApplication::mongoDbSettings() const
 {
     return _mongoSetting;
 }
@@ -325,7 +328,7 @@ bool TWebApplication::isMongoDbAvailable() const
   Returns a reference to the QSettings object for settings of the
   Redis system.
 */
-const TSettings &TWebApplication::redisSettings() const
+const QVariantMap &TWebApplication::redisSettings() const
 {
     return _redisSetting;
 }
@@ -582,19 +585,19 @@ QString TWebApplication::cacheBackend() const
 */
 
 /*!
-  \fn const TSettings &TWebApplication::appSettings() const
+  \fn const QVariantMap &TWebApplication::appSettings() const
   Returns a reference to the QSettings object for settings of the
   web application, which file is the application.ini.
 */
 
 /*!
-  \fn const TSettings &TWebApplication::loggerSettings () const
+  \fn const QVariantMap &TWebApplication::loggerSettings () const
   Returns a reference to the QSettings object for settings of the
   logger, which file is logger.ini.
 */
 
 /*!
-  \fn const TSettings &TWebApplication::validationSettings () const
+  \fn const QVariantMap &TWebApplication::validationSettings () const
   Returns a reference to the QSettings object for settings of the
   validation, which file is validation.ini.
 */
