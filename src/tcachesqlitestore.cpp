@@ -21,9 +21,15 @@ constexpr auto TIMESTAMP_COLUMN = "t";
 constexpr int  PAGESIZE = 4096;
 
 
-inline QString lastError()
+inline QSqlError lastError()
 {
-    return Tf::currentSqlDatabase(Tf::app()->databaseIdForInternalUse()).lastError().text();
+    return Tf::currentSqlDatabase(Tf::app()->databaseIdForInternalUse()).lastError();
+}
+
+
+inline QString lastErrorString()
+{
+    return lastError().text();
 }
 
 
@@ -33,7 +39,7 @@ static bool exec(const QString &sql)
     query.prepare(sql);
     bool ret = query.exec();
     if (! ret) {
-        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastError()), qPrintable(sql), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastErrorString()), qPrintable(sql), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -150,7 +156,7 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
             blob = query.value(1).toByteArray();
         }
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -170,8 +176,8 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
     query.prepare(sql);
     query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
     ret = query.exec();
-    if (! ret) {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
+    if (!ret && lastError().isValid()) {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -191,8 +197,8 @@ bool TCacheSQLiteStore::remove(const QByteArray &key)
     query.prepare(sql);
     query.bind(":key", key);
     ret = query.exec();
-    if (! ret) {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
+    if (!ret && lastError().isValid()) {
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -221,7 +227,7 @@ int TCacheSQLiteStore::removeOlder(int num)
     if (query.exec()) {
         cnt = query.numRowsAffected();
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -239,7 +245,9 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
     if (query.exec()) {
         cnt = query.numRowsAffected();
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
+        if (lastError().isValid()) {
+            tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+        }
     }
     return cnt;
 }
@@ -255,7 +263,7 @@ int TCacheSQLiteStore::removeAll()
     if (query.exec(sql)) {
         cnt = query.numRowsAffected();
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastError()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
     }
     return cnt;
 }
