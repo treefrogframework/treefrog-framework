@@ -57,22 +57,22 @@ void TestCache::test()
     cache->clear();
 
     QVERIFY(cache->get("hoge") == QByteArray());
-    QVERIFY(cache->set("hoge", "value", 1000) == true);
+    QVERIFY(cache->set("hoge", "value", 1) == true);
     QVERIFY(cache->get("hoge") == "value");
 
-    QVERIFY(cache->set("hoge", "value", 1000) == true);
-    QVERIFY(cache->set("hoge", "value2", 1000) == true);
+    QVERIFY(cache->set("hoge", "value", 1) == true);
+    QVERIFY(cache->set("hoge", "value2", 1) == true);
     QVERIFY(cache->get("hoge") == "value2");
     cache->remove("hoge");
     QVERIFY(cache->get("hoge") == QByteArray());
 
-    QVERIFY(cache->set("hoge", "value", 1000) == true);
+    QVERIFY(cache->set("hoge", "value", 1) == true);
     Tf::msleep(1100);
     QVERIFY(cache->get("hoge") == QByteArray());
 
     TCacheSQLiteStore *p = dynamic_cast<TCacheSQLiteStore*>(cache);
     if (p) {
-        p->set("hoge", "dummy", 1000);
+        p->set("hoge", "dummy", 1);
         QVERIFY(p->dbSize() > 0);
     }
     cache->clear();
@@ -80,7 +80,7 @@ void TestCache::test()
     for (int i = 0; i < 1000; i++) {
         QByteArray key = "foo";
         key += QByteArray::number(i);
-        QVERIFY(cache->set(key, QByteArray::number(Tf::rand32_r()), 5000) == true);
+        QVERIFY(cache->set(key, QByteArray::number(Tf::rand32_r()), 5) == true);
     }
     QVERIFY(! cache->get("foo1").isEmpty());
     Tf::msleep(5000);
@@ -108,7 +108,7 @@ void TestCache::insert()
     TCacheStore *cache = TCacheFactory::create("singlefiledb");
     cache->open();
 
-    cache->set(key, val, 1000);
+    cache->set(key, val, 1);
     QByteArray res = cache->get(key);
     QCOMPARE(res, val);
     qDebug() << "length of value: " << val.size();
