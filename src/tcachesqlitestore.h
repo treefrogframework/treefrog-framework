@@ -17,7 +17,7 @@ public:
     bool isOpen() const;
 
     QByteArray get(const QByteArray &key) override;
-    bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) override;
+    bool set(const QByteArray &key, const QByteArray &value, int seconds) override;
     bool remove(const QByteArray &key) override;
     void clear() override;
     void gc() override;

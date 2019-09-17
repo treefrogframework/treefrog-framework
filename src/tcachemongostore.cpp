@@ -27,13 +27,13 @@ void TCacheMongoStore::close()
 QByteArray TCacheMongoStore::get(const QByteArray &key)
 {
     TMongoQuery mongo("cache");
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
+    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     QVariantMap cri {{"k", QString(key)}};
     QVariantMap doc = mongo.findOne(cri);
     qint64 expire = doc.value("t").toLongLong();
 
-    if (expire < current) {
+    if (expire <= current) {
         remove(key);
         return QByteArray();
     }
@@ -41,11 +41,11 @@ QByteArray TCacheMongoStore::get(const QByteArray &key)
 }
 
 
-bool TCacheMongoStore::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
+bool TCacheMongoStore::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
     TMongoQuery mongo("cache");
 
-    qint64 expire = QDateTime::currentMSecsSinceEpoch() + msecs;
+    qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
     QVariantMap doc {{"k", QString(key)}, {"v", value}, {"t", expire}};
     QVariantMap cri {{"k", QString(key)}};
     return mongo.update(cri, doc, true);
@@ -71,10 +71,10 @@ void TCacheMongoStore::clear()
 void TCacheMongoStore::gc()
 {
     TMongoQuery mongo("cache");
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
+    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
-    QVariantMap lt {{"$lt", current}};
-    QVariantMap cri {{"t", lt}};
+    QVariantMap lte {{"$lte", current}};
+    QVariantMap cri {{"t", lte}};
     mongo.remove(cri);
 }
 

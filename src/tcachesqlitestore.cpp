@@ -99,10 +99,12 @@ bool TCacheSQLiteStore::exists(const QByteArray &key)
 {
     int exist = 0;
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name limit 1)").arg(_table).arg(KEY_COLUMN);
+    QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name and %3>:ts limit 1)").arg(_table).arg(KEY_COLUMN).arg(TIMESTAMP_COLUMN);
+    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     query.prepare(sql);
     query.bind(":name", key);
+    query.bind(":ts", current);
     if (query.exec() && query.next()) {
         exist = query.value(0).toInt();
     }
@@ -114,10 +116,10 @@ QByteArray TCacheSQLiteStore::get(const QByteArray &key)
 {
     QByteArray value;
     qint64 expire = 0;
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
+    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     if (read(key, value, expire)) {
-        if (expire < current) {
+        if (expire <= current) {
             value.clear();
             remove(key);
         }
@@ -126,14 +128,14 @@ QByteArray TCacheSQLiteStore::get(const QByteArray &key)
 }
 
 
-bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
+bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
-    if (key.isEmpty() || msecs <= 0) {
+    if (key.isEmpty() || seconds <= 0) {
         return false;
     }
 
     remove(key);
-    qint64 expire = QDateTime::currentMSecsSinceEpoch() + msecs;
+    qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
     return write(key, value, expire);
 }
 
@@ -297,7 +299,7 @@ qint64 TCacheSQLiteStore::dbSize()
 
 void TCacheSQLiteStore::gc()
 {
-    int removed = removeOlderThan(QDateTime::currentMSecsSinceEpoch());
+    int removed = removeOlderThan(1 + QDateTime::currentMSecsSinceEpoch() / 1000);
     tSystemDebug("removeOlderThan: %d\n", removed);
     vacuum();
 

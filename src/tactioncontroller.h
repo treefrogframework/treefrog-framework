@@ -79,7 +79,7 @@ protected:
     bool renderJson(const QVariantMap &map);
     bool renderJson(const QVariantList &list);
     bool renderJson(const QStringList &list);
-    bool renderAndCache(const QByteArray &key, int msecs, const QString &action = QString(), const QString &layout = QString());
+    bool renderAndCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
     bool renderFromCache(const QByteArray &key);
 #if QT_VERSION >= 0x050c00  // 5.12.0
     bool renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);

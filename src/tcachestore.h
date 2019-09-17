@@ -14,7 +14,7 @@ public:
     virtual bool open() = 0;
     virtual void close() = 0;
     virtual QByteArray get(const QByteArray &key) = 0;
-    virtual bool set(const QByteArray &key, const QByteArray &value, qint64 msecs) = 0;
+    virtual bool set(const QByteArray &key, const QByteArray &value, int seconds) = 0;
     virtual bool remove(const QByteArray &key) = 0;
     virtual void clear() = 0;
     virtual void gc() = 0;
