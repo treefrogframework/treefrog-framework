@@ -23,8 +23,8 @@ using namespace Tf;
 /*!
   Copy constructor.
 */
-TInternetMessageHeader::TInternetMessageHeader(const TInternetMessageHeader &other)
-    : headerPairList(other.headerPairList)
+TInternetMessageHeader::TInternetMessageHeader(const TInternetMessageHeader &other) :
+    headerPairList(other.headerPairList)
 { }
 
 /*!

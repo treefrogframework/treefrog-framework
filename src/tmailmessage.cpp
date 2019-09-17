@@ -27,24 +27,21 @@ TMailMessage::TMailMessage(const TMailMessage &other) :
 
 
 TMailMessage::TMailMessage(const QByteArray &encoding) :
-    TInternetMessageHeader(),
-    textCodec(0)
+    TInternetMessageHeader()
 {
     init(encoding);
 }
 
 
 TMailMessage::TMailMessage(const char *encoding) :
-    TInternetMessageHeader(),
-    textCodec(0)
+    TInternetMessageHeader()
 {
     init(encoding);
 }
 
 
 TMailMessage::TMailMessage(const QString &str, const QByteArray &encoding) :
-    TInternetMessageHeader(),
-    textCodec(0)
+    TInternetMessageHeader()
 {
     init(encoding);
     parse(str);

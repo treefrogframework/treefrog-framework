@@ -15,7 +15,7 @@ public:
     TMailMessage(const QByteArray &encoding = "UTF-8");
     TMailMessage(const char *encoding);
     TMailMessage(const QString &str, const QByteArray &encoding = "UTF-8");
-    
+
     QString subject() const;
     void setSubject(const QString &subject);
     QByteArray from() const;
@@ -42,9 +42,9 @@ protected:
 
 private:
     void init(const QByteArray &encoding);
-    
+
     QByteArray mailBody;
-    QTextCodec *textCodec;
+    QTextCodec *textCodec {nullptr};
     QByteArrayList recipientList;
 };
 

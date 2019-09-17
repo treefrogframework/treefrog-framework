@@ -15,12 +15,12 @@ public:
 
     THttpHeader &operator=(const THttpHeader &other);
     virtual QByteArray toByteArray() const;
-    virtual int majorVersion() const { return majVersion; }
-    virtual int minorVersion() const { return minVersion; }
+    virtual int majorVersion() const { return _majorVersion; }
+    virtual int minorVersion() const { return _minorVersion; }
 
 protected:
-    int majVersion;
-    int minVersion;
+    int _majorVersion {1};
+    int _minorVersion {1};
 };
 
 
@@ -32,16 +32,16 @@ public:
     THttpRequestHeader(const QByteArray &str);
     THttpRequestHeader &operator=(const THttpRequestHeader &other);
 
-    const QByteArray &method() const { return reqMethod; }
-    const QByteArray &path() const { return reqUri; }
+    const QByteArray &method() const { return _reqMethod; }
+    const QByteArray &path() const { return _reqUri; }
     void setRequest(const QByteArray &method, const QByteArray &path, int majorVer = 1, int minorVer = 1);
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
     virtual QByteArray toByteArray() const;
 
 private:
-    QByteArray reqMethod;
-    QByteArray reqUri;
+    QByteArray _reqMethod;
+    QByteArray _reqUri;
 };
 
 
@@ -52,14 +52,14 @@ public:
     THttpResponseHeader(const THttpResponseHeader &other);
     THttpResponseHeader(const QByteArray &str);
 
-    int statusCode() const { return statCode; }
+    int statusCode() const { return _statusCode; }
     void setStatusLine(int code, const QByteArray &text = QByteArray(), int majorVer = 1, int minorVer = 1);
     virtual QByteArray toByteArray() const;
     THttpResponseHeader &operator=(const THttpResponseHeader &other);
 
 private:
-    int statCode;
-    QByteArray reasonPhr;
+    int _statusCode {0};
+    QByteArray _reasonPhrase;
 };
 
 #endif // THTTPHEADER_H

@@ -26,8 +26,8 @@ public:
     QList<QPair<QString, QString>> attributes;
     QString selfCloseMark;
     QString text;
-    bool tagClosed;
-    int parent;
+    bool tagClosed {false};
+    int parent {0};
     QVector<int> children;
 };
 

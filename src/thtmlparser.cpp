@@ -16,7 +16,6 @@ const QRegularExpression WordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>(){};/=\\s]*)");
 
 
 THtmlElement::THtmlElement()
-    :  tagClosed(false), parent(0)
 { }
 
 

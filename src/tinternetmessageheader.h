@@ -1,11 +1,11 @@
 #ifndef TINTERNETMESSAGEHEADER_H
 #define TINTERNETMESSAGEHEADER_H
 
+#include <TGlobal>
 #include <QList>
 #include <QPair>
 #include <QByteArray>
 #include <QDateTime>
-#include <TGlobal>
 
 
 class T_CORE_EXPORT TInternetMessageHeader
@@ -33,7 +33,6 @@ public:
     QByteArray date() const;
     void setDate(const QByteArray &date);
     void setDate(const QDateTime &dateTime);
-    //void setDateUTC(const QDateTime &utc);
     void setCurrentDate();
     virtual QByteArray toByteArray() const;
     TInternetMessageHeader &operator=(const TInternetMessageHeader &other);
