@@ -24,7 +24,7 @@ const QString ObjectIdKey("_id");
   Constructs a TMongoQuery object using the collection \a collection.
 */
 TMongoQuery::TMongoQuery(const QString &collection) :
-    database(Tf::currentDatabaseContext()->getKvsDatabase(TKvsDatabase::MongoDB)),
+    database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::MongoDB)),
     collection(collection.trimmed()),
     queryLimit(0),
     queryOffset(0)

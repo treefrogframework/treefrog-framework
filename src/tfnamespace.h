@@ -234,6 +234,13 @@ namespace Tf
         DebugLevel,     //!< Informational events that are most useful to debug the app.
         TraceLevel,     //!< Finer-grained informational events than the DEBUG.
     };
+
+    enum class KvsEngine {
+        MongoDB = 0,
+        Redis,
+        CacheKvs,     // For internal use
+        Num // = 3
+    };
 }
 
 

@@ -17,12 +17,12 @@ public:
         UnknownDbms = QSqlDriver::UnknownDbms,
         MSSqlServer = QSqlDriver::MSSqlServer,
         MySqlServer = QSqlDriver::MySqlServer,
-        PostgreSQL = QSqlDriver::PostgreSQL,
-        Oracle = QSqlDriver::Oracle,
-        Sybase = QSqlDriver::Sybase,
-        SQLite = QSqlDriver::SQLite,
-        Interbase = QSqlDriver::Interbase,
-        DB2 = QSqlDriver::DB2
+        PostgreSQL  = QSqlDriver::PostgreSQL,
+        Oracle      = QSqlDriver::Oracle,
+        Sybase      = QSqlDriver::Sybase,
+        SQLite      = QSqlDriver::SQLite,
+        Interbase   = QSqlDriver::Interbase,
+        DB2         = QSqlDriver::DB2
     };
 #else
     enum DbmsType {
@@ -70,13 +70,15 @@ private:
 };
 
 
-inline TSqlDatabase::TSqlDatabase(const QSqlDatabase &database)
-    : _sqlDatabase(database)
+inline TSqlDatabase::TSqlDatabase(const QSqlDatabase &database) :
+    _sqlDatabase(database)
 {}
 
-inline TSqlDatabase::TSqlDatabase(const TSqlDatabase &other)
-    : _sqlDatabase(other._sqlDatabase), _postOpenStatements(other._postOpenStatements),
-      _enableUpsert(other._enableUpsert), _driverExtension(other._driverExtension)
+inline TSqlDatabase::TSqlDatabase(const TSqlDatabase &other) :
+    _sqlDatabase(other._sqlDatabase),
+    _postOpenStatements(other._postOpenStatements),
+    _enableUpsert(other._enableUpsert),
+    _driverExtension(other._driverExtension)
 {}
 
 inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)

@@ -56,9 +56,13 @@ void TestCache::test()
     QByteArray buf;
     cache->clear();
 
+    TCacheSQLiteStore *sqlite = dynamic_cast<TCacheSQLiteStore*>(cache);
+
     QVERIFY(cache->get("hoge") == QByteArray());
     QVERIFY(cache->set("hoge", "value", 1) == true);
     QVERIFY(cache->get("hoge") == "value");
+    QVERIFY(sqlite->exists("hoge"));
+    QVERIFY(!sqlite->exists("foo"));
 
     QVERIFY(cache->set("hoge", "value", 1) == true);
     QVERIFY(cache->set("hoge", "value2", 1) == true);
@@ -69,12 +73,11 @@ void TestCache::test()
     QVERIFY(cache->set("hoge", "value", 1) == true);
     Tf::msleep(1100);
     QVERIFY(cache->get("hoge") == QByteArray());
+    QVERIFY(!sqlite->exists("hoge"));
 
-    TCacheSQLiteStore *p = dynamic_cast<TCacheSQLiteStore*>(cache);
-    if (p) {
-        p->set("hoge", "dummy", 1);
-        QVERIFY(p->dbSize() > 0);
-    }
+    sqlite->set("hoge", "dummy", 1);
+    QVERIFY(sqlite->dbSize() > 0);
+
     cache->clear();
 
     for (int i = 0; i < 1000; i++) {

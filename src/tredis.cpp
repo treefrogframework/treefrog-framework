@@ -18,15 +18,15 @@
 /*!
   Constructs a TRedis object.
 */
-TRedis::TRedis()
-    : database(Tf::currentDatabaseContext()->getKvsDatabase(TKvsDatabase::Redis))
+TRedis::TRedis() :
+    database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::Redis))
 { }
 
 /*!
   Copy constructor.
 */
-TRedis::TRedis(const TRedis &other)
-    : database(other.database)
+TRedis::TRedis(const TRedis &other) :
+    database(other.database)
 { }
 
 /*!

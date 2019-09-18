@@ -71,6 +71,20 @@ QMap<QString, QVariant> TCacheFactory::defaultSettings(const QString &key)
 }
 
 
+TCacheStore::DbType TCacheFactory::dbType(const QString &key)
+{
+    TCacheStore::DbType type = TCacheStore::Invalid;
+    loadCacheKeys();
+
+    TCacheStore *store = create(key);
+    if (store) {
+        type = store->dbType();
+        destroy(key, store);
+    }
+    return type;
+}
+
+
 bool TCacheFactory::loadCacheKeys()
 {
     static bool done = []() {

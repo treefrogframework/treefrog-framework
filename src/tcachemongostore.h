@@ -10,7 +10,8 @@ class T_CORE_EXPORT TCacheMongoStore : public TCacheStore
 public:
     virtual ~TCacheMongoStore() {}
 
-    QString key() const { return QLatin1String("mongodb"); }
+    QString key() const override { return QLatin1String("mongodb"); }
+    DbType dbType() const override { return KVS; }
     bool open() override;
     void close() override;
 
