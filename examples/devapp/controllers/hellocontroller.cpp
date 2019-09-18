@@ -177,7 +177,7 @@ void HelloController::upload()
 {
     T_TRACEFUNC();
     
-    httpRequest().multipartFormData().renameUploadedFile("FiletoUpload", Tf::app()->webRootPath() + "tmp" + QDir::separator() + "hogehoge.tmp", true);
+    httpRequest().multipartFormData().renameUploadedFile("FiletoUpload", Tf::app()->webRootPath() + "tmp/hogehoge.tmp", true);
 }
 
 

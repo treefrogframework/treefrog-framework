@@ -52,9 +52,9 @@ int main(int argc, char *argv[])
 
     if (!args.value("-f").isEmpty()) {
         appIni = args.value("-f");
-        devIni = QFileInfo(appIni).dir().path() + QDir::separator() + "development.ini";
+        devIni = QFileInfo(appIni).dir().path() + "/development.ini";
     } else {
-        QString dir = QLatin1String("..") + QDir::separator() + QLatin1String("..") + QDir::separator() + "config" +  QDir::separator();
+        const QString dir("../../config/");
         appIni = dir + "application.ini";
         devIni = dir + "development.ini";
     }

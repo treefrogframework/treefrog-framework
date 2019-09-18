@@ -212,7 +212,7 @@ static void writeStartupLog()
 static QString pidFilePath(const QString &appRoot = QString())
 {
     return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
-        : appRoot + QDir::separator() + "tmp" + QDir::separator() +  PID_FILENAME;
+        : appRoot + "/tmp/" +  PID_FILENAME;
 }
 
 
@@ -249,7 +249,7 @@ static QString runningApplicationsFilePath()
         home = QLatin1String("/root");
     }
 #endif
-    return home + QDir::separator() + ".treefrog" + QDir::separator() + "runnings";
+    return home + "/.treefrog/runnings";
 }
 
 
@@ -324,7 +324,7 @@ static void cleanupRunningApplicationList()
 
 static QVariant applicationSettingValue(const QString &appRoot, const QString &key)
 {
-    QString appIni = appRoot + QDir::separator() + QLatin1String("config") + QDir::separator() + "application.ini";
+    QString appIni = appRoot + QLatin1String("/config/application.ini");
     return QSettings(appIni, QSettings::IniFormat).value(key);
 }
 

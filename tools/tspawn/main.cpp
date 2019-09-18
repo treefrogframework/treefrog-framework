@@ -27,11 +27,11 @@
 #include <ctime>
 
 #define L(str)  QLatin1String(str)
-#define SEP   QDir::separator()
-#define D_CTRLS   (QLatin1String("controllers") + SEP)
-#define D_MODELS  (QLatin1String("models") + SEP)
-#define D_VIEWS   (QLatin1String("views") + SEP)
-#define D_HELPERS (QLatin1String("helpers") + SEP)
+#define SEP   "/"
+#define D_CTRLS   (QLatin1String("controllers/") + SEP)
+#define D_MODELS  (QLatin1String("models/") + SEP)
+#define D_VIEWS   (QLatin1String("views/") + SEP)
+#define D_HELPERS (QLatin1String("helpers/") + SEP)
 
 enum SubCommand {
     Invalid = 0,
