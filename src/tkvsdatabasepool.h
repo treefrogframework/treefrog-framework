@@ -26,7 +26,7 @@ public:
 
 protected:
     void init();
-    bool setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine engine, const QString &env) const;
+    bool setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine engine) const;
     void timerEvent(QTimerEvent *event);
 
     static QString driverName(Tf::KvsEngine engine);
@@ -34,13 +34,12 @@ protected:
 private:
     T_DISABLE_COPY(TKvsDatabasePool)
     T_DISABLE_MOVE(TKvsDatabasePool)
-    TKvsDatabasePool(const QString &environment);
+    TKvsDatabasePool();
 
     TStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
     int maxConnects {0};
-    QString dbEnvironment;
     QBasicTimer timer;
 };
 

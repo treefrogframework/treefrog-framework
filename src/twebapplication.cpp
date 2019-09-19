@@ -119,7 +119,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     for (auto &f : files) {
         QSettings settings(configPath() + f, QSettings::IniFormat);
         settings.setIniCodec(_codecInternal);
-        _sqlSettings.append(Tf::settingsToMap(settings));
+        _sqlSettings.append(Tf::settingsToMap(settings, _dbEnvironment));
     }
 
     // MongoDB settings
@@ -129,7 +129,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         if (QFile(mnginipath).exists()) {
             QSettings settings(mnginipath, QSettings::IniFormat);
             settings.setIniCodec(_codecInternal);
-            _kvsSettings[(int)Tf::KvsEngine::MongoDB] = Tf::settingsToMap(settings);
+            _kvsSettings[(int)Tf::KvsEngine::MongoDB] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
 
@@ -140,7 +140,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         if (QFile(redisinipath).exists()) {
             QSettings settings(redisinipath, QSettings::IniFormat);
             settings.setIniCodec(_codecInternal);
-            _kvsSettings[(int)Tf::KvsEngine::Redis] = Tf::settingsToMap(settings);
+            _kvsSettings[(int)Tf::KvsEngine::Redis] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
 
@@ -153,6 +153,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         if (! path.isEmpty()) {
             // Copy settings
             QSettings iniset(configPath() + path, QSettings::IniFormat);
+            iniset.beginGroup(backend);
             for (auto &k : iniset.allKeys()) {
                 settings.insert(k, iniset.value(k));
             }
@@ -265,24 +266,19 @@ const QVariantMap &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
     static QVariantMap internalSettings = [&]() {
         // Settings of internal use databases
-        QVariantMap settings;
+        const QLatin1String singlefiledb("singlefiledb");
+        QVariantMap settings = TCacheFactory::defaultSettings(singlefiledb);
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
 
         if (! path.isEmpty()) {
             // Copy settings
             QSettings iniset(configPath() + path, QSettings::IniFormat);
+            iniset.beginGroup(singlefiledb);
             for (auto &k : iniset.allKeys()) {
-                settings.insert(k, iniset.value(k));
-            }
-        }
-
-        const QLatin1String singlefiledb("singlefiledb");
-        QVariantMap defaultSettings = TCacheFactory::defaultSettings(singlefiledb);
-        for (auto &k : defaultSettings.keys()) {
-            auto val = settings.value(singlefiledb + "/" + k);
-            auto defval = defaultSettings.value(k);
-            if (val.toString().trimmed().isEmpty() && !defval.toString().trimmed().isEmpty()) {
-                settings.insert(singlefiledb + "/" + k, defval);
+                auto val = iniset.value(k).toString().trimmed();
+                if (! val.isEmpty()) {
+                    settings.insert(k, iniset.value(k));
+                }
             }
         }
         return settings;

@@ -36,7 +36,7 @@ namespace Tf
         MaxOpCode               = 0x04,
     };
 
-    T_CORE_EXPORT QMap<QString, QVariant> settingsToMap(const QSettings &settings);
+    T_CORE_EXPORT QMap<QString, QVariant> settingsToMap(QSettings &settings, const QString &env = QString());
 }
 
 T_CORE_EXPORT void tSystemError(const char *, ...) // system error message

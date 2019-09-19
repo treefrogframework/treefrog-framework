@@ -192,12 +192,16 @@ void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &erro
 }
 
 
-QMap<QString, QVariant> Tf::settingsToMap(const QSettings &settings)
+QMap<QString, QVariant> Tf::settingsToMap(QSettings &settings, const QString &env)
 {
     QMap<QString, QVariant> map;
 
+    if (! env.isEmpty()) {
+        settings.beginGroup(env);
+    }
     for (auto &k : settings.allKeys()) {
         map.insert(k, settings.value(k));
     }
+    settings.endGroup();
     return map;
 }

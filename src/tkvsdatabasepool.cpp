@@ -39,7 +39,7 @@ Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
 TKvsDatabasePool *TKvsDatabasePool::instance()
 {
     static TKvsDatabasePool *databasePool = []() {
-        auto *pool = new TKvsDatabasePool(Tf::app()->databaseEnvironment());
+        auto *pool = new TKvsDatabasePool;
         pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         pool->init();
         return pool;
@@ -48,9 +48,7 @@ TKvsDatabasePool *TKvsDatabasePool::instance()
 }
 
 
-TKvsDatabasePool::TKvsDatabasePool(const QString &environment) :
-    QObject(),
-    dbEnvironment(environment)
+TKvsDatabasePool::TKvsDatabasePool() : QObject()
 { }
 
 
@@ -114,7 +112,7 @@ void TKvsDatabasePool::init()
                 break;
             }
 
-            setDatabaseSettings(db, engine, dbEnvironment);
+            setDatabaseSettings(db, engine);
             stack.push(db.connectionName());  // push onto stack
             tSystemDebug("Add KVS successfully. name:%s", qPrintable(db.connectionName()));
         }
@@ -179,7 +177,7 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
                     return TKvsDatabase();
                 }
 
-                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(dbEnvironment), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
+                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(Tf::app()->databaseEnvironment()), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
                 tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
 
                 // Executes post-open statements
@@ -200,11 +198,11 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 }
 
 
-bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine engine, const QString &env) const
+bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine engine) const
 {
     // Initiates database
     const QVariantMap &settings = Tf::app()->kvsSettings(engine);
-    QString databaseName = settings.value(env + "/DatabaseName").toString().trimmed();
+    QString databaseName = settings.value("DatabaseName").toString().trimmed();
 
     if (databaseName.isEmpty()) {
         if (engine != Tf::KvsEngine::Redis) {
@@ -216,37 +214,37 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
         database.setDatabaseName(databaseName);
     }
 
-    QString hostName = settings.value(env + "/HostName").toString().trimmed();
+    QString hostName = settings.value("HostName").toString().trimmed();
     tSystemDebug("KVS HostName: %s", qPrintable(hostName));
     if (!hostName.isEmpty()) {
         database.setHostName(hostName);
     }
 
-    int port = settings.value(env + "/Port").toInt();
+    int port = settings.value("Port").toInt();
     tSystemDebug("KVS Port: %d", port);
     if (port > 0) {
         database.setPort(port);
     }
 
-    QString userName = settings.value(env + "/UserName").toString().trimmed();
+    QString userName = settings.value("UserName").toString().trimmed();
     tSystemDebug("KVS UserName: %s", qPrintable(userName));
     if (!userName.isEmpty()) {
         database.setUserName(userName);
     }
 
-    QString password = settings.value(env + "/Password").toString().trimmed();
+    QString password = settings.value("Password").toString().trimmed();
     tSystemDebug("KVS Password: %s", qPrintable(password));
     if (!password.isEmpty()) {
         database.setPassword(password);
     }
 
-    QString connectOptions = settings.value(env + "/ConnectOptions").toString().trimmed();
+    QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
     tSystemDebug("KVS ConnectOptions: %s", qPrintable(connectOptions));
     if (!connectOptions.isEmpty()) {
         database.setConnectOptions(connectOptions);
     }
 
-    QStringList postOpenStatements = settings.value(env + "/PostOpenStatements").toString().trimmed().split(";", QString::SkipEmptyParts);
+    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", QString::SkipEmptyParts);
     tSystemDebug("KVS postOpenStatements: %s", qPrintable(postOpenStatements.join(";")));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);
