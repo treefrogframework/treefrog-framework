@@ -146,8 +146,8 @@ public:
         append(L("controllers/applicationcontroller.cpp"));
         append(L("models/models.pro"));
 #ifdef Q_OS_WIN
-        append(L("models/_dummymodel.h");
-        append(L("models/_dummymodel.cpp");
+        append(L("models/_dummymodel.h"));
+        append(L("models/_dummymodel.cpp"));
 #endif
         append(L("views/views.pro"));
         append(L("views/_src/_src.pro"));
