@@ -27,11 +27,10 @@
 #include <ctime>
 
 #define L(str)  QLatin1String(str)
-#define SEP   "/"
-#define D_CTRLS   (QLatin1String("controllers/") + SEP)
-#define D_MODELS  (QLatin1String("models/") + SEP)
-#define D_VIEWS   (QLatin1String("views/") + SEP)
-#define D_HELPERS (QLatin1String("helpers/") + SEP)
+#define D_CTRLS   QLatin1String("controllers/")
+#define D_MODELS  QLatin1String("models/")
+#define D_VIEWS   QLatin1String("views/")
+#define D_HELPERS QLatin1String("helpers/")
 
 enum SubCommand {
     Invalid = 0,
@@ -109,19 +108,19 @@ public:
     {
         append(L("controllers"));
         append(L("models"));
-        append(L("models") + SEP + "sqlobjects");
-        append(L("models") + SEP + "mongoobjects");
+        append(L("models/sqlobjects"));
+        append(L("models/mongoobjects"));
         append(L("views"));
-        append(L("views") + SEP + "layouts");
-        append(L("views") + SEP + "mailer");
-        append(L("views") + SEP + "partial");
-        append(L("views") + SEP + "_src");
+        append(L("views/layouts"));
+        append(L("views/mailer"));
+        append(L("views/partial"));
+        append(L("views/_src"));
         append(L("helpers"));
         append(L("config"));
         append(L("public"));
-        append(L("public") + SEP + "images");
-        append(L("public") + SEP + "js");
-        append(L("public") + SEP + "css");
+        append(L("public/images"));
+        append(L("public/js"));
+        append(L("public/css"));
         append(L("db"));
         append(L("lib"));
         append(L("log"));
@@ -142,55 +141,55 @@ public:
     FilePaths() : QStringList()
     {
         append(L("appbase.pri"));
-        append(L("controllers") + SEP + "controllers.pro");
-        append(L("controllers") + SEP + "applicationcontroller.h");
-        append(L("controllers") + SEP + "applicationcontroller.cpp");
-        append(L("models") + SEP + "models.pro");
+        append(L("controllers/controllers.pro"));
+        append(L("controllers/applicationcontroller.h"));
+        append(L("controllers/applicationcontroller.cpp"));
+        append(L("models/models.pro"));
 #ifdef Q_OS_WIN
-        append(L("models") + SEP + "_dummymodel.h");
-        append(L("models") + SEP + "_dummymodel.cpp");
+        append(L("models/_dummymodel.h");
+        append(L("models/_dummymodel.cpp");
 #endif
-        append(L("views") + SEP + "views.pro");
-        append(L("views") + SEP + "_src" + SEP + "_src.pro");
-        append(L("views") + SEP + "layouts" + SEP + ".trim_mode");
-        append(L("views") + SEP + "mailer"  + SEP + ".trim_mode");
-        append(L("views") + SEP + "partial" + SEP + ".trim_mode");
-        append(L("helpers") + SEP + "helpers.pro");
-        append(L("helpers") + SEP + "applicationhelper.h");
-        append(L("helpers") + SEP + "applicationhelper.cpp");
-        append(L("config") + SEP + "application.ini");
-        append(L("config") + SEP + "database.ini");
-        append(L("config") + SEP + "development.ini");
-        append(L("config") + SEP + "internet_media_types.ini");
-        append(L("config") + SEP + "logger.ini");
-        append(L("config") + SEP + "mongodb.ini");
-        append(L("config") + SEP + "redis.ini");
-        append(L("config") + SEP + "routes.cfg");
-        append(L("config") + SEP + "validation.ini");
-        append(L("config") + SEP + "cache.ini");
-        append(L("public") + SEP + "403.html");
-        append(L("public") + SEP + "404.html");
-        append(L("public") + SEP + "413.html");
-        append(L("public") + SEP + "500.html");
-        append(L("script") + SEP + "JSXTransformer.js");
-        append(L("script") + SEP + "react.js");             // React
-        append(L("script") + SEP + "react-with-addons.js"); // React
-        append(L("script") + SEP + "react-dom-server.js");  // React
+        append(L("views/views.pro"));
+        append(L("views/_src/_src.pro"));
+        append(L("views/layouts/.trim_mode"));
+        append(L("views/mailer/.trim_mode"));
+        append(L("views/partial/.trim_mode"));
+        append(L("helpers/helpers.pro"));
+        append(L("helpers/applicationhelper.h"));
+        append(L("helpers/applicationhelper.cpp"));
+        append(L("config/application.ini"));
+        append(L("config/database.ini"));
+        append(L("config/development.ini"));
+        append(L("config/internet_media_types.ini"));
+        append(L("config/logger.ini"));
+        append(L("config/mongodb.ini"));
+        append(L("config/redis.ini"));
+        append(L("config/routes.cfg"));
+        append(L("config/validation.ini"));
+        append(L("config/cache.ini"));
+        append(L("public/403.html"));
+        append(L("public/404.html"));
+        append(L("public/413.html"));
+        append(L("public/500.html"));
+        append(L("script/JSXTransformer.js"));
+        append(L("script/react.js"));             // React
+        append(L("script/react-with-addons.js")); // React
+        append(L("script/react-dom-server.js"));  // React
         // CMake
         append(L("CMakeLists.txt"));
-        append(L("cmake") + SEP +"CacheClean.cmake");
-        append(L("cmake") + SEP +"TargetCmake.cmake");
-        append(L("controllers") + SEP + "CMakeLists.txt");
-        append(L("models") + SEP + "CMakeLists.txt");
-        append(L("views") + SEP + "CMakeLists.txt");
-        append(L("helpers") + SEP + "CMakeLists.txt");
+        append(L("cmake/CacheClean.cmake"));
+        append(L("cmake/TargetCmake.cmake"));
+        append(L("controllers/CMakeLists.txt"));
+        append(L("models/CMakeLists.txt"));
+        append(L("views/CMakeLists.txt"));
+        append(L("helpers/CMakeLists.txt"));
     }
 };
 Q_GLOBAL_STATIC(FilePaths, filePaths)
 
 
-const QString appIni = QLatin1String("config") + SEP + "application.ini";
-const QString devIni = QLatin1String("config") + SEP + "development.ini";
+const QString appIni = QLatin1String("config/application.ini");
+const QString devIni = QLatin1String("config/development.ini");
 static QSettings appSettings(appIni, QSettings::IniFormat);
 static QSettings devSettings(devIni, QSettings::IniFormat);
 static QString templateSystem;
@@ -230,7 +229,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
             break;
 
         const QString &fname = i.next();
-        QFile file(baseDir + SEP + fname);
+        QFile file(baseDir + "/" + fname);
         if (!file.exists())
             continue;
 
@@ -285,7 +284,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
 
     if (!proj.isEmpty()) {
         // Updates the project file
-        ProjectFileGenerator(baseDir + SEP + proj).remove(rmd);
+        ProjectFileGenerator(baseDir + "/" + proj).remove(rmd);
     }
 
     return rmd;
@@ -339,18 +338,18 @@ static bool createNewApplication(const QString &name)
 
     // Creates sub-directories
     for (const QString &str : *subDirs()) {
-        QString d = name + SEP + str;
+        QString d = name + "/" + str;
         if (!mkpath(dir, d)) {
             return false;
         }
     }
 
     // Copies files
-    copy(dataDirPath + "app.pro", name + SEP + name + ".pro");
+    copy(dataDirPath + "app.pro", name + "/" + name + ".pro");
 
     for (auto &path : *filePaths()) {
         QString filename = QFileInfo(path).fileName();
-        QString dst = name + SEP + path;
+        QString dst = name + "/" + path;
 
         if (filename == "CMakeLists.txt") {
             copy(dataDirPath + path, dst);
@@ -366,7 +365,7 @@ static bool createNewApplication(const QString &name)
 
 #ifdef Q_OS_WIN
     // Add dummy model files
-    ProjectFileGenerator progen(name + SEP + D_MODELS + "models.pro");
+    ProjectFileGenerator progen(name + "/" + D_MODELS + "models.pro");
     QStringList dummy = { "_dummymodel.h", "_dummymodel.cpp" };
     progen.add(dummy);
 #endif
@@ -400,26 +399,26 @@ static int deleteScaffold(const QString &name)
         ctrls << str + "controller.h"
               << str + "controller.cpp";
 
-        models << QLatin1String("sqlobjects") + SEP + str + "object.h"
-               << QLatin1String("mongoobjects") + SEP + str + "object.h"
+        models << QLatin1String("sqlobjects/") + str + "object.h"
+               << QLatin1String("mongoobjects/") + str + "object.h"
                << str + ".h"
                << str + ".cpp";
 
         // Template system
         if (templateSystem == "otama") {
-            views << str + SEP + "index.html"
-                  << str + SEP + "index.otm"
-                  << str + SEP + "show.html"
-                  << str + SEP + "show.otm"
-                  << str + SEP + "create.html"
-                  << str + SEP + "create.otm"
-                  << str + SEP + "save.html"
-                  << str + SEP + "save.otm";
+            views << str + "/index.html"
+                  << str + "/index.otm"
+                  << str + "/show.html"
+                  << str + "/show.otm"
+                  << str + "/create.html"
+                  << str + "/create.otm"
+                  << str + "/save.html"
+                  << str + "/save.otm";
         } else if (templateSystem == "erb") {
-            views << str + SEP + "index.erb"
-                  << str + SEP + "show.erb"
-                  << str + SEP + "create.erb"
-                  << str + SEP + "save.erb";
+            views << str + "/index.erb"
+                  << str + "/show.erb"
+                  << str + "/create.erb"
+                  << str + "/save.erb";
         } else {
             qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
             return 2;
@@ -445,7 +444,7 @@ static int deleteScaffold(const QString &name)
         // Removes views
         QStringList rmd = rmfiles(views, allRemove, quit, D_VIEWS);
         if (!rmd.isEmpty()) {
-            QString path = D_VIEWS + "_src" + SEP + str;
+            QString path = D_VIEWS + "_src/" + str;
             QFile::remove(path + "_indexView.cpp");
             QFile::remove(path + "_showView.cpp");
             QFile::remove(path + "_entryView.cpp");
@@ -474,7 +473,7 @@ static bool checkIniFile()
 static void printSuccessMessage(const QString &model)
 {
     QString msg;
-    if (!QFile("Makefile").exists() && !QFile(L("build") + SEP + "Makefile").exists()) {
+    if (!QFile("Makefile").exists() && !QFile(L("build/Makefile")).exists()) {
         msg = "qmake:\n Run `qmake -r%0 CONFIG+=debug` to generate a Makefile for debug mode.\n Run `qmake -r%0 CONFIG+=release` to generate a Makefile for release mode.\n";
 #ifdef Q_OS_DARWIN
         msg = msg.arg(" -spec macx-clang");
@@ -529,7 +528,7 @@ int main(int argc, char *argv[])
         break;
 
     case ShowDriverPath: {
-        QString path = QLibraryInfo::location(QLibraryInfo::PluginsPath) + SEP + "sqldrivers";
+        QString path = QLibraryInfo::location(QLibraryInfo::PluginsPath) + "/sqldrivers";
         QFileInfo fi(path);
         if (!fi.exists() || !fi.isDir()) {
             qCritical("Error: database driver's directory not found");
@@ -557,7 +556,7 @@ int main(int argc, char *argv[])
         if (checkIniFile()) {
             // MongoDB settings
             QString mongoini = appSettings.value("MongoDbSettingsFile").toString().trimmed();
-            QString mnginipath = QLatin1String("config") + SEP + mongoini;
+            QString mnginipath = QLatin1String("config/") + mongoini;
 
             if (mongoini.isEmpty() || !QFile(mnginipath).exists()) {
                 qCritical("MongoDB settings file not found");
@@ -665,8 +664,8 @@ int main(int argc, char *argv[])
             break; }
 
         case WebSocketEndpoint: {
-            const QString appendpointfiles[] = { L("controllers") + SEP + "applicationendpoint.h",
-                                                 L("controllers") + SEP + "applicationendpoint.cpp" };
+            const QString appendpointfiles[] = { L("controllers/applicationendpoint.h"),
+                                                 L("controllers/applicationendpoint.cpp") };
 
             ProjectFileGenerator progen(D_CTRLS + "controllers.pro");
 
@@ -690,7 +689,7 @@ int main(int argc, char *argv[])
         case Mailer: {
             MailerGenerator mailgen(args.value(2), args.mid(3));
             mailgen.generate(D_CTRLS);
-            copy(dataDirPath + "mail.erb", D_VIEWS + "mailer" + SEP +"mail.erb");
+            copy(dataDirPath + "mail.erb", D_VIEWS + "mailer/mail.erb");
             break; }
 
         case Scaffold: {
