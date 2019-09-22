@@ -355,23 +355,23 @@ QByteArray TRedisDriver::toMultiBulk(const QByteArrayList &data)
 
 void TRedisDriver::moveToThread(QThread *thread)
 {
-    if (!_client || _client->thread() == thread) {
-        return;
-    }
-
-    int socket = _client->socketDescriptor();
+    int socket = 0;
     QAbstractSocket::SocketState state = QAbstractSocket::ConnectedState;
 
-    if (socket > 0) {
-        socket = TApplicationServerBase::duplicateSocket(socket);
-        state = _client->state();
+    if (_client) {
+        socket = _client->socketDescriptor();
+
+        if (socket > 0) {
+            socket = TApplicationServerBase::duplicateSocket(socket);
+            state = _client->state();
+        }
+        delete _client;
     }
 
-    delete _client;
-    _client = new QTcpSocket();
+    _client = new QTcpSocket;
+    _client->moveToThread(thread);
 
     if (socket > 0) {
         _client->setSocketDescriptor(socket, state);
     }
-    _client->moveToThread(thread);
 }
