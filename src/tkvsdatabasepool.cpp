@@ -169,6 +169,7 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             db = TKvsDatabase::database(name);
             if (Q_LIKELY(db.isOpen())) {
                 tSystemDebug("Gets cached KVS database: %s", qPrintable(db.connectionName()));
+                db.moveToThread(QThread::currentThread());  // move to thread
                 return db;
             } else {
                 tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);

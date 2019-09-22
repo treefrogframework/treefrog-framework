@@ -38,7 +38,6 @@ protected:
     QByteArray getLine(bool *ok);
     int getNumber(bool *ok);
     void clearBuffer();
-//    bool waitForState(int state, int msecs);
 
     static QByteArray toBulk(const QByteArray &data);
     static QByteArray toMultiBulk(const QByteArrayList &data);
