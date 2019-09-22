@@ -344,6 +344,7 @@ windows {
   SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tredisdriver_qt5.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
@@ -366,10 +367,12 @@ linux-* {
   SOURCES += tepollwebsocket.cpp
   SOURCES += tprocessinfo_linux.cpp
   SOURCES += tthreadapplicationserver_linux.cpp
+  SOURCES += tredisdriver_linux.cpp
 }
 macx {
   SOURCES += tprocessinfo_macx.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tredisdriver_qt5.cpp
 }
 freebsd {
   SOURCES += tprocessinfo_freebsd.cpp

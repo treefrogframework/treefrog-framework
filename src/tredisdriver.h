@@ -1,10 +1,11 @@
 #ifndef TREDISDRIVER_H
 #define TREDISDRIVER_H
 
-#include <QString>
-#include <QVariant>
 #include <TGlobal>
 #include <TKvsDriver>
+#include <QString>
+#include <QVariant>
+#include <QtGlobal>
 
 class QTcpSocket;
 
@@ -32,6 +33,7 @@ protected:
         Array        = '*',
     };
 
+    bool writeCommand(const QByteArray &command);
     bool readReply();
     QByteArray parseBulkString(bool *ok);
     QVariantList parseArray(bool *ok);
@@ -43,9 +45,11 @@ protected:
     static QByteArray toMultiBulk(const QByteArrayList &data);
 
 private:
-    bool connectToRedisServer();
-
+#ifdef Q_OS_LINUX
+    int _socket {0};
+#else
     QTcpSocket *_client {nullptr};
+#endif
     QByteArray _buffer;
     int _pos {0};
     QString _host;
