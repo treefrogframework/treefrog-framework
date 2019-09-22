@@ -44,7 +44,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 #else
     : QCoreApplication(argc, argv),
 #endif
-      _dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
+    _dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
 {
 #if defined(Q_OS_WIN)
     installNativeEventFilter(new TNativeEventFilter);

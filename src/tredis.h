@@ -1,11 +1,12 @@
 #ifndef TREDIS_H
 #define TREDIS_H
 
+#include <TGlobal>
+#include <TKvsDatabase>
+#include <TfNamespace>
 #include <QVariant>
 #include <QByteArray>
 #include <QStringList>
-#include <TGlobal>
-#include <TKvsDatabase>
 
 class TRedisDriver;
 
@@ -63,7 +64,10 @@ public:
     int hlen(const QByteArray &key);
     QList<QPair<QByteArray, QByteArray>> hgetAll(const QByteArray &key);
 
+    void flushDb();
+
 private:
+    TRedis(Tf::KvsEngine engine);
     TRedisDriver *driver();
     const TRedisDriver *driver() const;
 
@@ -71,6 +75,8 @@ private:
     static QStringList toStringList(const QByteArrayList &values);
 
     TKvsDatabase database;
+
+    friend class TCacheRedisStore;
 };
 
 

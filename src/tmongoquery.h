@@ -42,34 +42,38 @@ private:
     const TMongoDriver *driver() const;
 
 private:
-    TKvsDatabase database;
-    QString collection;
-    int queryLimit;
-    int queryOffset;
+    TMongoQuery(Tf::KvsEngine engine, const QString &collection);
+
+    TKvsDatabase _database;
+    QString _collection;
+    int _queryLimit {0};
+    int _queryOffset {0};
+
+    friend class TCacheMongoStore;
 };
 
 
 inline int TMongoQuery::limit() const
 {
-    return queryLimit;
+    return _queryLimit;
 }
 
 
 inline void TMongoQuery::setLimit(int limit)
 {
-    queryLimit = limit;
+    _queryLimit = limit;
 }
 
 
 inline int TMongoQuery::offset() const
 {
-    return queryOffset;
+    return _queryOffset;
 }
 
 
 inline void TMongoQuery::setOffset(int offset)
 {
-    queryOffset = offset;
+    _queryOffset = offset;
 }
 
 #endif // TMONGOQUERY_H

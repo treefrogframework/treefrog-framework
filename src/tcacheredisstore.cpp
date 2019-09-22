@@ -7,7 +7,6 @@
 
 #include "tcacheredisstore.h"
 #include <TRedis>
-#include <QDateTime>
 
 
 TCacheRedisStore::TCacheRedisStore()
@@ -26,46 +25,40 @@ void TCacheRedisStore::close()
 
 QByteArray TCacheRedisStore::get(const QByteArray &key)
 {
-    TRedis redis;
-    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
-
-return QByteArray();
+    TRedis redis(Tf::KvsEngine::CacheKvs);
+    return redis.get(key);
 }
 
 
 bool TCacheRedisStore::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
-    TRedis redis;
-
-    qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
-
-    return true;
+    TRedis redis(Tf::KvsEngine::CacheKvs);
+    return redis.setEx(key, value, seconds);
 }
 
 
 bool TCacheRedisStore::remove(const QByteArray &key)
 {
-    TRedis redis;
-return true;
+    TRedis redis(Tf::KvsEngine::CacheKvs);
+    return redis.del(key);
 }
 
 
 void TCacheRedisStore::clear()
 {
-
+    TRedis redis(Tf::KvsEngine::CacheKvs);
+    return redis.flushDb();
 }
 
 
 void TCacheRedisStore::gc()
-{
-    TRedis redis;
-    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
-
-
-}
+{ }
 
 
 QMap<QString, QVariant> TCacheRedisStore::defaultSettings() const
 {
-    return QMap<QString, QVariant>();
+    QMap<QString, QVariant> settings {
+        {"HostName", "localhost"},
+    };
+    return settings;
 }

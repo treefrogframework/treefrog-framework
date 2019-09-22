@@ -273,7 +273,7 @@ int TCacheSQLiteStore::removeAll()
 
 bool TCacheSQLiteStore::vacuum()
 {
-    bool ret = exec(QStringLiteral("vacuum"));
+    bool ret = query(QStringLiteral("vacuum"));
     return ret;
 }
 

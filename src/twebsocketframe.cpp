@@ -176,25 +176,3 @@ bool TWebSocketFrame::validate()
     }
     return _valid;
 }
-
-
-// void TWebSocketFrame::checkRsv() const
-// {
-//     bool valid  = true;
-//     valid &= (rsv1Bit() == false);
-//     if (!valid) {
-//         tSystemError("##checkRsv frame validation error : Incorrect RSV1 bit  [%s:%d]", __FILE__, __LINE__);
-//     }
-
-
-//     valid &= (rsv2Bit() == false);
-//     if (!valid) {
-//         tSystemError("##checkRsv frame validation error : Incorrect RSV2 bit  [%s:%d]", __FILE__, __LINE__);
-//     }
-
-
-//     valid &= (rsv3Bit() == false);
-//     if (!valid) {
-//         tSystemError("##checkRsv frame validation error : Incorrect RSV3 bit  [%s:%d]", __FILE__, __LINE__);
-//     }
-// }

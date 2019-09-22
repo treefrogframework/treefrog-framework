@@ -194,6 +194,9 @@ void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &erro
 
 QMap<QString, QVariant> Tf::settingsToMap(QSettings &settings, const QString &env)
 {
+    // QSettings not thread-safe
+    // May crash in endGroup() if used on multi-threading. #215
+
     QMap<QString, QVariant> map;
 
     if (! env.isEmpty()) {
@@ -202,6 +205,8 @@ QMap<QString, QVariant> Tf::settingsToMap(QSettings &settings, const QString &en
     for (auto &k : settings.allKeys()) {
         map.insert(k, settings.value(k));
     }
-    settings.endGroup();
+    if (! env.isEmpty()) {
+        settings.endGroup();
+    }
     return map;
 }

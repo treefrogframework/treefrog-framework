@@ -26,7 +26,6 @@ public:
     virtual bool remove(const QByteArray &key) = 0;
     virtual void clear() = 0;
     virtual void gc() = 0;
-    virtual bool exec(const QString &) { return false; }
     virtual QMap<QString, QVariant> defaultSettings() const { return QMap<QString, QVariant>(); }
 };
 

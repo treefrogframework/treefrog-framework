@@ -117,6 +117,15 @@ bool TRedisDriver::readReply()
 }
 
 
+bool TRedisDriver::command(const QString &cmd)
+{
+    QByteArrayList reqcmd = cmd.trimmed().toUtf8().split(' ');
+    reqcmd.removeAll("");
+    QVariantList response;
+    return request(reqcmd, response);
+}
+
+
 bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response)
 {
     if (Q_UNLIKELY(!isOpen())) {

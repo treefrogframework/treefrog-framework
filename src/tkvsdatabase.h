@@ -34,8 +34,9 @@ public:
     void setPostOpenStatements(const QStringList &statements);
 
     bool open();
-    bool isOpen() const;
     void close();
+    bool command(const QString &cmd);
+    bool isOpen() const;
     bool isValid() const;
     TKvsDriver *driver() { return drv; }
     const TKvsDriver *driver() const { return drv; }

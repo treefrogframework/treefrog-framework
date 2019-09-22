@@ -18,6 +18,7 @@ public:
     QString key() const override { return "REDIS"; }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString & options = QString()) override;
     void close() override;
+    bool command(const QString &cmd) override;
     bool isOpen() const override;
     void moveToThread(QThread *thread) override;
     bool request(const QByteArrayList &command, QVariantList &response);

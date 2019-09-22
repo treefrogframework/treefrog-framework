@@ -40,6 +40,7 @@ public:
 const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 
+// Map of connection name and database data
 class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData>
 {
 public:
@@ -57,10 +58,11 @@ static TKvsDatabaseDict *databaseDict()
 static TKvsDriver *createDriver(const QString &driverName)
 {
     TKvsDriver *driver = nullptr;
+    QString name = driverName.toLower();
 
-    if (driverName == QLatin1String("MONGODB")) {
+    if (name == QLatin1String("mongodb")) {
         driver = new TMongoDriver();
-    } else if (driverName == QLatin1String("REDIS")) {
+    } else if (name == QLatin1String("redis")) {
         driver = new TRedisDriver();
     }
 
@@ -112,18 +114,6 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 }
 
 
-// void TKvsDatabase::removeAllDatabases()
-// {
-//     QMutexLocker lock(&mutex);
-//     const QStringList keys = databaseDict()->keys();
-
-//     for (auto &key : keys) {
-//         removeDatabase(key);
-//     }
-//     databaseDict()->clear();
-// }
-
-
 TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
     connectName(other.connectName),
     drv(other.drv)
@@ -170,6 +160,12 @@ void TKvsDatabase::close()
     if (driver()) {
         driver()->close();
     }
+}
+
+
+bool TKvsDatabase::command(const QString &cmd)
+{
+    return (driver()) ? driver()->command(cmd) : false;
 }
 
 

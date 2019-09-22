@@ -21,19 +21,30 @@
   \brief The TKvsDatabasePool class manages a collection of TKvsDatabase instances.
 */
 
-constexpr auto CONN_NAME_FORMAT = "kvs%02d_%d";
+constexpr auto CONN_NAME_FORMAT = "%02dkvs_%d";
 
 
-class KvsTypeHash : public QMap<QString, Tf::KvsEngine>
+class KvsEngineHash : public QMap<Tf::KvsEngine, QString>
 {
 public:
-    KvsTypeHash() : QMap<QString, Tf::KvsEngine>()
+    KvsEngineHash() : QMap<Tf::KvsEngine, QString>()
     {
-        insert("MONGODB", Tf::KvsEngine::MongoDB);
-        insert("REDIS", Tf::KvsEngine::Redis);
+        // DriverName, Engine
+        insert(Tf::KvsEngine::MongoDB, "mongodb");
+        insert(Tf::KvsEngine::Redis,   "redis");
+
+        if (Tf::app()->isKvsAvailable(Tf::KvsEngine::CacheKvs)) {
+            auto backend = Tf::app()->cacheBackend();
+            insert(Tf::KvsEngine::CacheKvs, backend);
+        }
     }
 };
-Q_GLOBAL_STATIC(KvsTypeHash, kvsTypeHash)
+
+static KvsEngineHash *kvsEngineHash()
+{
+    static auto *hash = new KvsEngineHash;
+    return hash;
+}
 
 
 TKvsDatabasePool *TKvsDatabasePool::instance()
@@ -86,15 +97,15 @@ void TKvsDatabasePool::init()
         return;
     }
 
-    cachedDatabase = new TStack<QString>[kvsTypeHash()->count()];
-    lastCachedTime = new TAtomic<uint>[kvsTypeHash()->count()];
-    availableNames = new TStack<QString>[kvsTypeHash()->count()];
+    cachedDatabase = new TStack<QString>[kvsEngineHash()->count()];
+    lastCachedTime = new TAtomic<uint>[kvsEngineHash()->count()];
+    availableNames = new TStack<QString>[kvsEngineHash()->count()];
     bool aval = false;
 
     // Adds databases previously
-    for (QMapIterator<QString, Tf::KvsEngine> it(*kvsTypeHash()); it.hasNext(); ) {
-        const QString &drv = it.next().key();
-        Tf::KvsEngine engine = it.value();
+    for (QMapIterator<Tf::KvsEngine, QString> it(*kvsEngineHash()); it.hasNext(); ) {
+        Tf::KvsEngine engine = it.next().key();
+        const QString &drv = it.value();
 
         if (!Tf::app()->isKvsAvailable(engine)) {
             tSystemDebug("KVS database not available. engine:%d", (int)engine);
@@ -129,7 +140,7 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 {
     TKvsDatabase db;
 
-    if (!Tf::app()->isKvsAvailable(engine)) {
+    if (! Tf::app()->isKvsAvailable(engine)) {
         switch (engine) {
         case Tf::KvsEngine::MongoDB:
             tSystemError("MongoDB not available. Check the settings file.");
@@ -139,6 +150,9 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             tSystemError("Redis not available. Check the settings file.");
             break;
 
+        case Tf::KvsEngine::CacheKvs:
+            tSystemError("CacheKvs not available. Check the settings file.");
+            break;
         default:
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
             break;
@@ -179,16 +193,14 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 
                 tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(Tf::app()->databaseEnvironment()), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
                 tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
-
                 // Executes post-open statements
-                // if (! db.postOpenStatements().isEmpty()) {
-                //     for (QString st : tdb.postOpenStatements()) {
-                //         st = st.trimmed();
-                //         query.exec(st);
-                //     }
-                // }
+                if (! db.postOpenStatements().isEmpty()) {
+                    for (QString st : db.postOpenStatements()) {
+                        st = st.trimmed();
+                        db.command(st);
+                    }
+                }
 
-                // TODO###################################################
                 return db;
             }
         }
@@ -204,12 +216,7 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
     const QVariantMap &settings = Tf::app()->kvsSettings(engine);
     QString databaseName = settings.value("DatabaseName").toString().trimmed();
 
-    if (databaseName.isEmpty()) {
-        if (engine != Tf::KvsEngine::Redis) {
-            tWarn("KVS Database name empty string");
-            return false;
-        }
-    } else {
+    if (!databaseName.isEmpty()) {
         tSystemDebug("KVS db name:%s  driver name:%s", qPrintable(databaseName), qPrintable(database.driverName()));
         database.setDatabaseName(databaseName);
     }
@@ -257,13 +264,14 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
 void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
     if (Q_LIKELY(database.isValid())) {
-        auto engine = kvsTypeHash()->value(database.driverName(), Tf::KvsEngine::Num);
-        if (Q_UNLIKELY(engine == Tf::KvsEngine::Num)) {
+        bool ok;
+        int engine = database.connectionName().left(2).toInt(&ok);
+        if (Q_UNLIKELY(!ok)) {
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
         }
 
-        cachedDatabase[(int)engine].push(database.connectionName());
-        lastCachedTime[(int)engine].store((uint)std::time(nullptr));
+        cachedDatabase[engine].push(database.connectionName());
+        lastCachedTime[engine].store((uint)std::time(nullptr));
         tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
     }
     database = TKvsDatabase();  // Sets an invalid object
@@ -276,7 +284,7 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
         QString name;
 
         // Closes extra-connection
-        for (int e = 0; e < kvsTypeHash()->count(); e++) {
+        for (int e = 0; e < kvsEngineHash()->count(); e++) {
             if (!Tf::app()->isKvsAvailable((Tf::KvsEngine)e)) {
                 continue;
             }
@@ -297,5 +305,5 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 
 QString TKvsDatabasePool::driverName(Tf::KvsEngine engine)
 {
-    return kvsTypeHash()->key(engine);
+    return kvsEngineHash()->value(engine);
 }

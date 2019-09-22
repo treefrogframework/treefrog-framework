@@ -9,6 +9,8 @@
 #include <TMongoQuery>
 #include <QDateTime>
 
+constexpr auto COL = "cache";
+
 
 TCacheMongoStore::TCacheMongoStore()
 { }
@@ -26,14 +28,14 @@ void TCacheMongoStore::close()
 
 QByteArray TCacheMongoStore::get(const QByteArray &key)
 {
-    TMongoQuery mongo("cache");
+    TMongoQuery mongo(Tf::KvsEngine::CacheKvs, COL);
     qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     QVariantMap cri {{"k", QString(key)}};
     QVariantMap doc = mongo.findOne(cri);
     qint64 expire = doc.value("t").toLongLong();
 
-    if (expire <= current) {
+    if (!doc.isEmpty() && expire <= current) {
         remove(key);
         return QByteArray();
     }
@@ -43,7 +45,7 @@ QByteArray TCacheMongoStore::get(const QByteArray &key)
 
 bool TCacheMongoStore::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
-    TMongoQuery mongo("cache");
+    TMongoQuery mongo(Tf::KvsEngine::CacheKvs, COL);
 
     qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
     QVariantMap doc {{"k", QString(key)}, {"v", value}, {"t", expire}};
@@ -54,7 +56,7 @@ bool TCacheMongoStore::set(const QByteArray &key, const QByteArray &value, int s
 
 bool TCacheMongoStore::remove(const QByteArray &key)
 {
-    TMongoQuery mongo("cache");
+    TMongoQuery mongo(Tf::KvsEngine::CacheKvs, COL);
     QVariantMap cri {{"k", QString(key)}};
     return mongo.remove(cri);
 }
@@ -62,7 +64,7 @@ bool TCacheMongoStore::remove(const QByteArray &key)
 
 void TCacheMongoStore::clear()
 {
-    TMongoQuery mongo("cache");
+    TMongoQuery mongo(Tf::KvsEngine::CacheKvs, COL);
     QVariantMap cri;
     mongo.remove(cri);
 }
@@ -70,7 +72,7 @@ void TCacheMongoStore::clear()
 
 void TCacheMongoStore::gc()
 {
-    TMongoQuery mongo("cache");
+    TMongoQuery mongo(Tf::KvsEngine::CacheKvs, COL);
     qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     QVariantMap lte {{"$lte", current}};
@@ -81,5 +83,9 @@ void TCacheMongoStore::gc()
 
 QMap<QString, QVariant> TCacheMongoStore::defaultSettings() const
 {
-    return QMap<QString, QVariant>();
+    QMap<QString, QVariant> settings {
+        {"DatabaseName", "mdb"},
+        {"HostName", "localhost"},
+    };
+    return settings;
 }
