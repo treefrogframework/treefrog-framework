@@ -38,28 +38,6 @@ static inline pid_t gettid()
 }
 
 
-#ifdef Q_OS_LINUX
-#include <sys/epoll.h>
-
-static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
-                                int maxevents, int timeout)
-{
-    TF_EINTR_LOOP(::epoll_wait(epfd, events, maxevents, timeout));
-}
-
-
-static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
-{
-    TF_EINTR_LOOP(::epoll_ctl(epfd, op, fd, event));
-}
-
-
-static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
-{
-    TF_EINTR_LOOP(::accept4(sockfd, addr, addrlen, flags));
-}
-
-
 static inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
     TF_EINTR_LOOP(::poll(fds, nfds, timeout));
@@ -88,6 +66,28 @@ static inline int tf_poll_send(int socket, int timeout)
     }
 
     return (pfd.revents & (POLLOUT | POLLERR)) ? 0 : 1;
+}
+
+
+#ifdef Q_OS_LINUX
+#include <sys/epoll.h>
+
+static inline int tf_epoll_wait(int epfd, struct epoll_event *events,
+                                int maxevents, int timeout)
+{
+    TF_EINTR_LOOP(::epoll_wait(epfd, events, maxevents, timeout));
+}
+
+
+static inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
+{
+    TF_EINTR_LOOP(::epoll_ctl(epfd, op, fd, event));
+}
+
+
+static inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
+{
+    TF_EINTR_LOOP(::accept4(sockfd, addr, addrlen, flags));
 }
 
 #endif // Q_OS_LINUX
