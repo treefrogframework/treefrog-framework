@@ -152,8 +152,6 @@ void TWebSocket::startWorkerForClosing()
     if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
-    } else {
-        deleteLater();
     }
 }
 

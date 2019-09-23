@@ -157,10 +157,7 @@ TActionContext *Tf::currentContext()
 
     case TWebApplication::Hybrid:
 #ifdef Q_OS_LINUX
-        context = qobject_cast<TActionWorker *>(QThread::currentThread());
-        if (Q_LIKELY(context))
-            return context;
-        break;
+        return TActionWorker::instance();
 #else
         tFatal("Unsupported MPM: hybrid");
 #endif

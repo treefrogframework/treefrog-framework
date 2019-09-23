@@ -34,8 +34,8 @@ protected:
     void execute(int opcode = 0, const QByteArray &payload = QByteArray());
 
 private:
-    RunMode _mode;
-    TAbstractWebSocket *_socket;
+    RunMode _mode {Opening};
+    TAbstractWebSocket *_socket {nullptr};
     TSession _httpSession;
     QByteArray _requestPath;
     QList<QPair<int, QByteArray>> _payloads;

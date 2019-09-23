@@ -24,9 +24,7 @@ constexpr int BUFFER_RESERVE_SIZE = 127;
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header) :
     TEpollSocket(socketDescriptor, address),
-    TAbstractWebSocket(header),
-    recvBuffer(),
-    frames()
+    TAbstractWebSocket(header)
 {
     tSystemDebug("TEpollWebSocket  [%p]", this);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
@@ -157,6 +155,8 @@ void TEpollWebSocket::startWorker()
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
         worker->setPayloads(payloads);
         startWorker(worker);
+        releaseWorker();
+        delete worker;
     }
 }
 
@@ -164,42 +164,19 @@ void TEpollWebSocket::startWorker()
 void TEpollWebSocket::startWorker(TWebSocketWorker *worker)
 {
     worker->moveToThread(thread());
-    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    ++myWorkerCounter; // count-up
     worker->start();
+    worker->wait();
 }
 
 
 void TEpollWebSocket::releaseWorker()
 {
     tSystemDebug("TEpollWebSocket::releaseWorker");
-    TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
-    if (worker) {
-        worker->deleteLater();
-        --myWorkerCounter;  // count-down
 
-        if (deleting.load()) {
-            TEpollWebSocket::deleteLater();
-        } else {
-            if (pollIn.exchange(false)) {
-                TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-            }
+    if (! deleting.load()) {
+        if (pollIn.exchange(false)) {
+            TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
         }
-    }
-}
-
-
-void TEpollWebSocket::deleteLater()
-{
-    tSystemDebug("TEpollWebSocket::deleteLater  countWorkers:%d  deleting:%d", (int)myWorkerCounter, (bool)deleting);
-
-    if (!deleting.exchange(true)) {
-        startWorkerForClosing();
-        return;
-    }
-
-    if ((int)myWorkerCounter == 0) {
-        QObject::deleteLater();
     }
 }
 
@@ -209,6 +186,9 @@ void TEpollWebSocket::startWorkerForOpening(const TSession &session)
     TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Opening, this, reqHeader.path());
     worker->setSession(session);
     startWorker(worker);
+
+    releaseWorker();
+    delete worker;
 }
 
 
@@ -217,8 +197,9 @@ void TEpollWebSocket::startWorkerForClosing()
     if (!closing.load()) {
         TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
         startWorker(worker);
-    } else {
-        deleteLater();
+
+        releaseWorker();
+        delete worker;
     }
 }
 

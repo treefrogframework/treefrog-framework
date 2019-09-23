@@ -15,66 +15,27 @@
 #include "tepollhttpsocket.h"
 #include "tsystemglobal.h"
 
-// Counter of action workers  (Note: workerCount != contextCount)
-static std::atomic<int> workerCounter(0);
-static int keepAliveTimeout = -1;
-
-
-int TActionWorker::workerCount()
-{
-    return workerCounter.load();
-}
-
-
-bool TActionWorker::waitForAllDone(int msec)
-{
-    int cnt;
-    QElapsedTimer time;
-    time.start();
-
-    while ((cnt = workerCount()) > 0) {
-        if (time.elapsed() > msec) {
-            break;
-        }
-
-        Tf::msleep(10);
-        qApp->processEvents();
-    }
-    return cnt == 0;
-}
 
 /*!
   \class TActionWorker
-  \brief The TActionWorker class provides a thread context.
+  \brief
 */
 
-TActionWorker::TActionWorker(TEpollHttpSocket *sock, QObject *parent) :
-    QThread(parent),
-    TActionContext(),
-    httpRequest(),
-    clientAddr(),
-    socket(sock)
+
+TActionWorker *TActionWorker::instance()
 {
-    ++workerCounter;
-    httpRequest = socket->readRequest();
-    clientAddr = socket->peerAddress().toString();
-
-    if (keepAliveTimeout < 0) {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
-        keepAliveTimeout = qMax(timeout, 0);
-    }
-}
-
-
-TActionWorker::~TActionWorker()
-{
-    tSystemDebug("TActionWorker::~TActionWorker");
-    --workerCounter;
+    static TActionWorker globalInstance;
+    return &globalInstance;
 }
 
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
+    static int keepAliveTimeout = []() {
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        return qMax(timeout, 0);
+    }();
+
     if (keepAliveTimeout > 0) {
         header.setRawHeader("Connection", "Keep-Alive");
     }
@@ -107,8 +68,11 @@ void TActionWorker::closeHttpSocket()
 }
 
 
-void TActionWorker::run()
+void TActionWorker::start(TEpollHttpSocket *sock)
 {
+    socket = sock;
+    httpRequest = socket->readRequest();
+    clientAddr = socket->peerAddress().toString();
     QList<THttpRequest> reqs = THttpRequest::generate(httpRequest, QHostAddress(clientAddr));
 
     // Loop for HTTP-pipeline requests

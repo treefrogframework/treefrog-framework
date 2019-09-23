@@ -131,12 +131,8 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
 void TEpollHttpSocket::startWorker()
 {
     tSystemDebug("TEpollHttpSocket::startWorker");
-
-    TActionWorker *worker = new TActionWorker(this);
-    worker->moveToThread(Tf::app()->thread());
-    connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    ++myWorkerCounter; // count-up
-    worker->start();
+    TActionWorker::instance()->start(this);
+    releaseWorker();
 }
 
 
@@ -144,18 +140,8 @@ void TEpollHttpSocket::releaseWorker()
 {
     tSystemDebug("TEpollHttpSocket::releaseWorker");
 
-    TActionWorker *worker = qobject_cast<TActionWorker *>(sender());
-    if (worker) {
-        worker->deleteLater();
-        --myWorkerCounter;  // count-down
-
-        if (deleting.load()) {
-            TEpollSocket::deleteLater();
-        } else {
-            if (pollIn.exchange(false)) {
-                TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-            }
-        }
+    if (pollIn.exchange(false)) {
+        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
     }
 }
 
@@ -190,16 +176,6 @@ void TEpollHttpSocket::clear()
 {
     lengthToRead = -1;
     httpBuffer.resize(0);
-}
-
-
-void TEpollHttpSocket::deleteLater()
-{
-    tSystemDebug("TEpollHttpSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
-    deleting = true;
-    if ((int)myWorkerCounter == 0) {
-        QObject::deleteLater();
-    }
 }
 
 

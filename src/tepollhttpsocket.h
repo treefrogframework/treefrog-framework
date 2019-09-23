@@ -18,12 +18,9 @@ public:
     QByteArray readRequest();
     int idleTime() const;
     virtual void startWorker();
-    virtual void deleteLater();
+    void releaseWorker();
     static TEpollHttpSocket *searchSocket(int sid);
     static QList<TEpollHttpSocket*> allSockets();
-
-public slots:
-    void releaseWorker();
 
 protected:
     virtual int send();
@@ -41,7 +38,6 @@ private:
     TEpollHttpSocket(int socketDescriptor, const QHostAddress &address);
 
     friend class TEpollSocket;
-    friend class TActionWorker;
     T_DISABLE_COPY(TEpollHttpSocket)
     T_DISABLE_MOVE(TEpollHttpSocket)
 };

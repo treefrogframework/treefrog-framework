@@ -113,8 +113,8 @@ TEpollSocket::~TEpollSocket()
 
     close();
 
-    TSendBuffer *buf;
-    if (sendBuf.dequeue(buf)) {
+    while (!sendBuf.isEmpty()) {
+        TSendBuffer *buf = sendBuf.dequeue();
         delete buf;
     }
 
@@ -177,25 +177,20 @@ int TEpollSocket::recv()
  */
 int TEpollSocket::send()
 {
-    if (sendBuf.count() == 0) {
+    int ret = 0;
+
+    if (sendBuf.isEmpty()) {
         pollOut = true;
-        return 0;
+        return ret;
     }
     pollOut = false;
 
-    if (deleting.load()) {
-        return 0;
-    }
-
-    int ret = 0;
-    int err = 0;
-    int len;
-    TSendBuffer *buf;
-
-    while (sendBuf.head(buf)) {
+    while (!sendBuf.isEmpty()) {
+        TSendBuffer *buf = sendBuf.head();
         TAccessLogger &logger = buf->accessLogger();
 
-        err = 0;
+        int len = 0;
+        int err = 0;
         for (;;) {
             len = sendBufSize;
             void *data = buf->getData(len);
@@ -218,9 +213,7 @@ int TEpollSocket::send()
 
         if (buf->atEnd()) {
             logger.write();  // Writes access log
-            if (sendBuf.dequeue(buf)) {
-                delete buf;  // delete send-buffer obj
-            }
+            delete sendBuf.dequeue();  // delete send-buffer obj
         }
 
         if (len < 0) {
@@ -272,31 +265,25 @@ void TEpollSocket::close()
 
 void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
 {
-    if (!deleting.load()) {
-        TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
-    }
+    TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
 }
 
 
 void TEpollSocket::sendData(const QByteArray &data)
 {
-    if (!deleting.load()) {
-        TEpoll::instance()->setSendData(this, data);
-    }
+    TEpoll::instance()->setSendData(this, data);
 }
 
 
 void TEpollSocket::disconnect()
 {
-    if (!deleting.load())
-        TEpoll::instance()->setDisconnect(this);
+    TEpoll::instance()->setDisconnect(this);
 }
 
 
 void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 {
-    if (!deleting.load())
-        TEpoll::instance()->setSwitchToWebSocket(this, header);
+    TEpoll::instance()->setSwitchToWebSocket(this, header);
 }
 
 
@@ -319,17 +306,6 @@ int TEpollSocket::bufferedListCount() const
 }
 
 
-void TEpollSocket::deleteLater()
-{
-    tSystemDebug("TEpollSocket::deleteLater  countWorker:%d", (int)myWorkerCounter);
-    deleting = true;
-    if ((int)myWorkerCounter == 0) {
-        socketManager[sid].compareExchange(this, nullptr); //clear
-        QObject::deleteLater();
-    }
-}
-
-
 TEpollSocket *TEpollSocket::searchSocket(int sid)
 {
     return socketManager[sid & 0xffff].load();
@@ -349,7 +325,5 @@ QList<TEpollSocket*> TEpollSocket::allSockets()
             }
         }
     }
-
-    //tSystemDebug("TEpollSocket::allSockets  count:%d", lst.count());
     return lst;
 }

@@ -24,8 +24,6 @@
 
 constexpr int MaxEvents = 128;
 
-static TEpoll *staticInstance;
-
 
 class TSendData
 {
@@ -67,8 +65,9 @@ TEpoll::~TEpoll()
 {
     delete[] events;
 
-    if (epollFd > 0)
+    if (epollFd > 0) {
         tf_close(epollFd);
+    }
 }
 
 
@@ -104,9 +103,9 @@ bool TEpoll::canReceive() const
 
 bool TEpoll::canSend() const
 {
-    if (Q_UNLIKELY(eventIterator <= 0))
+    if (Q_UNLIKELY(eventIterator <= 0)) {
         return false;
-
+    }
     return (events[eventIterator - 1].events & EPOLLOUT);
 }
 
@@ -125,10 +124,8 @@ int TEpoll::send(TEpollSocket *socket) const
 
 TEpoll *TEpoll::instance()
 {
-    if (Q_UNLIKELY(!staticInstance)) {
-        staticInstance = new TEpoll();
-    }
-    return staticInstance;
+    static TEpoll staticInstance;
+    return &staticInstance;
 }
 
 
@@ -210,7 +207,7 @@ void TEpoll::dispatchSendData()
         case TSendData::Disconnect:
             deletePoll(sock);
             sock->close();
-            sock->deleteLater();
+            delete sock;
             break;
 
         case TSendData::SwitchToWebSocket: {
@@ -228,7 +225,7 @@ void TEpoll::dispatchSendData()
 
             // Stop polling and delete
             deletePoll(sock);
-            sock->deleteLater();
+            delete sock;
 
             // WebSocket opening
             TSession session;

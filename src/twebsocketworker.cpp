@@ -26,9 +26,7 @@ TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSock
     TDatabaseContextThread(parent),
     _mode(m),
     _socket(s),
-    _httpSession(),
-    _requestPath(path),
-    _payloads()
+    _requestPath(path)
 { }
 
 
