@@ -52,7 +52,6 @@ protected:
     static TEpollSocket *searchSocket(int sid);
     static QList<TEpollSocket*> allSockets();
 
-    TAtomic<bool> deleting {false};
     TAtomic<bool> pollIn {false};
     TAtomic<bool> pollOut {false};
 

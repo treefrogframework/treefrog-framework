@@ -19,9 +19,9 @@ static TAtomicPtr<TWebSocket> socketManager[USHRT_MAX + 1];
 static std::atomic<ushort> point {0};
 
 
-TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent)
-    : QTcpSocket(parent), TAbstractWebSocket(header), frames(),
-      recvBuffer(), myWorkerCounter(0), deleting(false)
+TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent) :
+    QTcpSocket(parent),
+    TAbstractWebSocket(header)
 {
     setSocketDescriptor(socketDescriptor);
     setPeerAddress(address);
@@ -206,8 +206,9 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
     qint64 total = 0;
     for (;;) {
-        if (deleting.load())
+        if (deleting.load()) {
             return;
+        }
 
         if (QTcpSocket::bytesToWrite() > 0) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {
