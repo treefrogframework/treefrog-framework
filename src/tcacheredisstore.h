@@ -1,16 +1,16 @@
-#ifndef TCACHEMONGOSTORE_H
-#define TCACHEMONGOSTORE_H
+#ifndef TCACHEREDISSTORE_H
+#define TCACHEREDISSTORE_H
 
 #include <TGlobal>
 #include "tcachestore.h"
 
 
-class T_CORE_EXPORT TCacheMongoStore : public TCacheStore
+class T_CORE_EXPORT TCacheRedisStore : public TCacheStore
 {
 public:
-    virtual ~TCacheMongoStore() {}
+    virtual ~TCacheRedisStore() {}
 
-    QString key() const override { return QLatin1String("mongodb"); }
+    QString key() const override { return QLatin1String("redis"); }
     DbType dbType() const override { return KVS; }
     bool open() override;
     void close() override;
@@ -23,9 +23,9 @@ public:
     QMap<QString, QVariant> defaultSettings() const override;
 
 protected:
-    TCacheMongoStore();
+    TCacheRedisStore();
 
     friend class TCacheFactory;
 };
 
-#endif // TCACHEMONGOSTORE_H
+#endif // TCACHEREDISSTORE_H

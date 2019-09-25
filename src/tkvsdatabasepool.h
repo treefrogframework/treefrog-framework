@@ -19,30 +19,27 @@ class T_CORE_EXPORT TKvsDatabasePool : public QObject
     Q_OBJECT
 public:
     ~TKvsDatabasePool();
-    TKvsDatabase database(TKvsDatabase::Type type);
+    TKvsDatabase database(Tf::KvsEngine engine);
     void pool(TKvsDatabase &database);
 
     static TKvsDatabasePool *instance();
 
 protected:
     void init();
-    bool isKvsAvailable(TKvsDatabase::Type type) const;
-    const QVariantMap &kvsSettings(TKvsDatabase::Type type) const;
-    bool setDatabaseSettings(TKvsDatabase &database, TKvsDatabase::Type type, const QString &env) const;
+    bool setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine engine) const;
     void timerEvent(QTimerEvent *event);
 
-    static QString driverName(TKvsDatabase::Type type);
+    static QString driverName(Tf::KvsEngine engine);
 
 private:
     T_DISABLE_COPY(TKvsDatabasePool)
     T_DISABLE_MOVE(TKvsDatabasePool)
-    TKvsDatabasePool(const QString &environment);
+    TKvsDatabasePool();
 
     TStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
     int maxConnects {0};
-    QString dbEnvironment;
     QBasicTimer timer;
 };
 

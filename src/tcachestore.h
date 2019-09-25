@@ -10,7 +10,15 @@
 class T_CORE_EXPORT TCacheStore
 {
 public:
+    enum DbType {
+        SQL,
+        KVS,
+        Invalid,
+    };
+
     virtual ~TCacheStore() {}
+    virtual QString key() const = 0;
+    virtual DbType dbType() const = 0;
     virtual bool open() = 0;
     virtual void close() = 0;
     virtual QByteArray get(const QByteArray &key) = 0;

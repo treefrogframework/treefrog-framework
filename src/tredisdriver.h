@@ -1,10 +1,11 @@
 #ifndef TREDISDRIVER_H
 #define TREDISDRIVER_H
 
-#include <QString>
-#include <QVariant>
 #include <TGlobal>
 #include <TKvsDriver>
+#include <QString>
+#include <QVariant>
+#include <QtGlobal>
 
 class QTcpSocket;
 
@@ -18,6 +19,7 @@ public:
     QString key() const override { return "REDIS"; }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString & options = QString()) override;
     void close() override;
+    bool command(const QString &cmd) override;
     bool isOpen() const override;
     void moveToThread(QThread *thread) override;
     bool request(const QByteArrayList &command, QVariantList &response);
@@ -31,21 +33,23 @@ protected:
         Array        = '*',
     };
 
+    bool writeCommand(const QByteArray &command);
     bool readReply();
     QByteArray parseBulkString(bool *ok);
     QVariantList parseArray(bool *ok);
     QByteArray getLine(bool *ok);
     int getNumber(bool *ok);
     void clearBuffer();
-//    bool waitForState(int state, int msecs);
 
     static QByteArray toBulk(const QByteArray &data);
     static QByteArray toMultiBulk(const QByteArrayList &data);
 
 private:
-    bool connectToRedisServer();
-
+#ifdef Q_OS_UNIX
+    int _socket {0};
+#else
     QTcpSocket *_client {nullptr};
+#endif
     QByteArray _buffer;
     int _pos {0};
     QString _host;

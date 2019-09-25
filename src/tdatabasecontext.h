@@ -15,7 +15,7 @@ public:
     virtual ~TDatabaseContext();
 
     QSqlDatabase &getSqlDatabase(int id = 0);
-    TKvsDatabase &getKvsDatabase(TKvsDatabase::Type type);
+    TKvsDatabase &getKvsDatabase(Tf::KvsEngine engine);
 
     void setTransactionEnabled(bool enable, int id = 0);
     void release();

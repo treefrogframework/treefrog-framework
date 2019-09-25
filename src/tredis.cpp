@@ -18,15 +18,19 @@
 /*!
   Constructs a TRedis object.
 */
-TRedis::TRedis()
-    : database(Tf::currentDatabaseContext()->getKvsDatabase(TKvsDatabase::Redis))
+TRedis::TRedis() :
+    database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::Redis))
+{ }
+
+TRedis::TRedis(Tf::KvsEngine engine) :
+    database(Tf::currentDatabaseContext()->getKvsDatabase(engine))
 { }
 
 /*!
   Copy constructor.
 */
-TRedis::TRedis(const TRedis &other)
-    : database(other.database)
+TRedis::TRedis(const TRedis &other) :
+    database(other.database)
 { }
 
 /*!
@@ -414,6 +418,18 @@ QList<QPair<QByteArray, QByteArray>> TRedis::hgetAll(const QByteArray &key)
         }
     }
     return ret;
+}
+
+
+void TRedis::flushDb()
+{
+    if (!driver()) {
+        return;
+    }
+
+    QVariantList resp;
+    QByteArrayList command = { "FLUSHDB" };
+    driver()->request(command, resp);
 }
 
 /*!

@@ -42,15 +42,15 @@ void TCache::close()
 }
 
 
-bool TCache::set(const QByteArray &key, const QByteArray &value, qint64 msecs)
+bool TCache::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
     bool ret = false;
 
     if (_cache) {
         if (compressionEnabled()) {
-            ret = _cache->set(key, Tf::lz4Compress(value), msecs);
+            ret = _cache->set(key, Tf::lz4Compress(value), seconds);
         } else {
-            ret = _cache->set(key, value, msecs);
+            ret = _cache->set(key, value, seconds);
         }
 
         // GC

@@ -10,22 +10,24 @@ class TEpollHttpSocket;
 class QIODevice;
 
 
-class T_CORE_EXPORT TActionWorker : public QThread, public TActionContext
+class T_CORE_EXPORT TActionWorker : public QObject, public TActionContext
 {
     Q_OBJECT
 public:
-    TActionWorker(TEpollHttpSocket *socket, QObject *parent = 0);
-    virtual ~TActionWorker();
+    virtual ~TActionWorker() {}
+    void start(TEpollHttpSocket *socket);
 
-    static int workerCount();
-    static bool waitForAllDone(int msec);
+    static TActionWorker *instance();
+    static int workerCount() { return 0; }
 
 protected:
-    void run() override;
+    void run();
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
     void closeHttpSocket() override;
 
 private:
+    TActionWorker() {}
+
     QByteArray httpRequest;
     QString clientAddr;
     TEpollHttpSocket *socket {nullptr};

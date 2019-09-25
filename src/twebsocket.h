@@ -53,10 +53,10 @@ signals:
 private:
     void startWorker(TWebSocketWorker *worker);
 
-    int sid;
+    int sid {0};
     QByteArray recvBuffer;
-    TAtomic<int> myWorkerCounter;
-    TAtomic<bool> deleting;
+    TAtomic<int> myWorkerCounter {0};
+    TAtomic<bool> deleting {false};
 
     friend class TActionThread;
     T_DISABLE_COPY(TWebSocket)

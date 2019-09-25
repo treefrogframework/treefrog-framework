@@ -26,7 +26,6 @@ public:
     QList<QPair<int, QByteArray>> readAllBinaryRequest();
     virtual bool canReadRequest() override;
     virtual void startWorker() override;
-    virtual void deleteLater() override;
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() override;

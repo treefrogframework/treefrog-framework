@@ -83,11 +83,11 @@ void TDatabaseContext::releaseSqlDatabases()
 }
 
 
-TKvsDatabase &TDatabaseContext::getKvsDatabase(TKvsDatabase::Type type)
+TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 {
-    TKvsDatabase &db = kvsDatabases[(int)type];
+    TKvsDatabase &db = kvsDatabases[(int)engine];
     if (!db.isValid()) {
-        db = TKvsDatabasePool::instance()->database(type);
+        db = TKvsDatabasePool::instance()->database(engine);
     }
 
     idleElapsed = (uint)std::time(nullptr);

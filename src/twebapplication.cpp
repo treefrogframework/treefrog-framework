@@ -44,7 +44,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 #else
     : QCoreApplication(argc, argv),
 #endif
-      _dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
+    _dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
 {
 #if defined(Q_OS_WIN)
     installNativeEventFilter(new TNativeEventFilter);
@@ -119,7 +119,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     for (auto &f : files) {
         QSettings settings(configPath() + f, QSettings::IniFormat);
         settings.setIniCodec(_codecInternal);
-        _sqlSettings.append(Tf::settingsToMap(settings));
+        _sqlSettings.append(Tf::settingsToMap(settings, _dbEnvironment));
     }
 
     // MongoDB settings
@@ -129,7 +129,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         if (QFile(mnginipath).exists()) {
             QSettings settings(mnginipath, QSettings::IniFormat);
             settings.setIniCodec(_codecInternal);
-            _mongoSetting = Tf::settingsToMap(settings);
+            _kvsSettings[(int)Tf::KvsEngine::MongoDB] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
 
@@ -140,8 +140,25 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         if (QFile(redisinipath).exists()) {
             QSettings settings(redisinipath, QSettings::IniFormat);
             settings.setIniCodec(_codecInternal);
-            _redisSetting = Tf::settingsToMap(settings);
+            _kvsSettings[(int)Tf::KvsEngine::Redis] = Tf::settingsToMap(settings, _dbEnvironment);
         }
+    }
+
+    // Cache KVS settings
+    auto backend = cacheBackend();
+    if (TCacheFactory::dbType(backend) == TCacheStore::KVS) {
+        QVariantMap settings = TCacheFactory::defaultSettings(backend);
+        QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
+
+        if (! path.isEmpty()) {
+            // Copy settings
+            QSettings iniset(configPath() + path, QSettings::IniFormat);
+            iniset.beginGroup(backend);
+            for (auto &k : iniset.allKeys()) {
+                settings.insert(k, iniset.value(k));
+            }
+        }
+        _kvsSettings[(int)Tf::KvsEngine::CacheKvs] = settings;
     }
 }
 
@@ -249,24 +266,19 @@ const QVariantMap &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
     static QVariantMap internalSettings = [&]() {
         // Settings of internal use databases
-        QVariantMap settings;
+        const QLatin1String singlefiledb("singlefiledb");
+        QVariantMap settings = TCacheFactory::defaultSettings(singlefiledb);
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
 
         if (! path.isEmpty()) {
-            // Copy settrings
+            // Copy settings
             QSettings iniset(configPath() + path, QSettings::IniFormat);
+            iniset.beginGroup(singlefiledb);
             for (auto &k : iniset.allKeys()) {
-                settings.insert(k, iniset.value(k));
-            }
-        }
-
-        const QLatin1String singlefiledb("singlefiledb");
-        QVariantMap defaultSettings = TCacheFactory::defaultSettings(singlefiledb);
-        for (auto &k : defaultSettings.keys()) {
-            auto val = settings.value(singlefiledb + "/" + k);
-            auto defval = defaultSettings.value(k);
-            if (val.toString().trimmed().isEmpty() && !defval.toString().trimmed().isEmpty()) {
-                settings.insert(singlefiledb + "/" + k, defval);
+                auto val = iniset.value(k).toString().trimmed();
+                if (! val.isEmpty()) {
+                    settings.insert(k, iniset.value(k));
+                }
             }
         }
         return settings;
@@ -283,7 +295,7 @@ int TWebApplication::sqlDatabaseSettingsCount() const
 {
     static int count = [&]() {
         int num = _sqlSettings.count();
-        return (num > 0) ? num + 1 : num; // added 1 for internal use of DB
+        return (num > 0) ? num + 1 : num; // added 1 for internal use of cache DB
     }();
     return count;
 }
@@ -308,38 +320,22 @@ int TWebApplication::databaseIdForInternalUse() const
 }
 
 /*!
-  Returns a reference to the QSettings object for settings of the
-  MongoDB system.
+  Returns a reference to the settings object for the specified engine.
 */
-const QVariantMap &TWebApplication::mongoDbSettings() const
+const QVariantMap &TWebApplication::kvsSettings(Tf::KvsEngine engine) const
 {
-    return _mongoSetting;
+    return _kvsSettings[(int)engine];
 }
 
 /*!
-  Returns true if MongoDB settings is available; otherwise returns false.
+  Returns true if the settings of the specified engine is available;
+  otherwise returns false.
 */
-bool TWebApplication::isMongoDbAvailable() const
+bool TWebApplication::isKvsAvailable(Tf::KvsEngine engine) const
 {
-    return !_mongoSetting.isEmpty();
+    return !_kvsSettings[(int)engine].isEmpty();
 }
 
-/*!
-  Returns a reference to the QSettings object for settings of the
-  Redis system.
-*/
-const QVariantMap &TWebApplication::redisSettings() const
-{
-    return _redisSetting;
-}
-
-/*!
-  Returns true if Redis settings is available; otherwise returns false.
-*/
-bool TWebApplication::isRedisAvailable() const
-{
-    return !_redisSetting.isEmpty();
-}
 
 /*!
   Returns the internet media type associated with the file extension

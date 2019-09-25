@@ -11,12 +11,6 @@ class TKvsDatabaseData;
 class T_CORE_EXPORT TKvsDatabase
 {
 public:
-    enum Type {
-        MongoDB = 0,
-        Redis,
-        TypeNum // = 2
-    };
-
     TKvsDatabase() {}
     TKvsDatabase(const TKvsDatabase &other);
     ~TKvsDatabase() {}
@@ -36,10 +30,13 @@ public:
     void setPassword(const QString &password);
     QString connectOptions() const;
     void setConnectOptions(const QString &options = QString());
+    QStringList postOpenStatements() const;
+    void setPostOpenStatements(const QStringList &statements);
 
     bool open();
-    bool isOpen() const;
     void close();
+    bool command(const QString &cmd);
+    bool isOpen() const;
     bool isValid() const;
     TKvsDriver *driver() { return drv; }
     const TKvsDriver *driver() const { return drv; }

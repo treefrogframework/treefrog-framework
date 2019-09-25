@@ -3,18 +3,18 @@
 
 #include <TGlobal>
 #include "tatomic.h"
-#include "tqueue.h"
 #include <QObject>
 #include <QByteArray>
 #include <QHostAddress>
+#include <QQueue>
 
-class QHostAddress;
-class QThread;
-class QFileInfo;
 class TSendBuffer;
 class THttpHeader;
 class TAccessLogger;
 class THttpRequestHeader;
+class QHostAddress;
+class QThread;
+class QFileInfo;
 
 
 class T_CORE_EXPORT TEpollSocket : public QObject
@@ -32,12 +32,10 @@ public:
     void sendData(const QByteArray &data);
     void disconnect();
     void switchToWebSocket(const THttpRequestHeader &header);
-    int countWorker() const { return myWorkerCounter; }
     int bufferedListCount() const;
 
     virtual bool canReadRequest() { return false; }
     virtual void startWorker() { }
-    virtual void deleteLater();
 
     static TEpollSocket *accept(int listeningSocket);
     static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
@@ -54,8 +52,6 @@ protected:
     static TEpollSocket *searchSocket(int sid);
     static QList<TEpollSocket*> allSockets();
 
-    TAtomic<bool> deleting {false};
-    TAtomic<int> myWorkerCounter {0};
     TAtomic<bool> pollIn {false};
     TAtomic<bool> pollOut {false};
 
@@ -63,7 +59,7 @@ private:
     int sd {0};  // socket descriptor
     int sid {0};
     QHostAddress clientAddr;
-    TQueue<TSendBuffer*> sendBuf;
+    QQueue<TSendBuffer*> sendBuf;
 
     static void initBuffer(int socketDescriptor);
 

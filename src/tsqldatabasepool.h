@@ -24,8 +24,7 @@ public:
     void pool(QSqlDatabase &database, bool forceClose = false);
 
     static TSqlDatabasePool *instance();
-    //static QString driverType(const QString &env, int databaseId);
-    static bool setDatabaseSettings(TSqlDatabase &database, const QString &env, int databaseId);
+    static bool setDatabaseSettings(TSqlDatabase &database, int databaseId);
     static int getDatabaseId(const QSqlDatabase &database);
 
 protected:
@@ -36,13 +35,12 @@ protected:
 private:
     T_DISABLE_COPY(TSqlDatabasePool)
     T_DISABLE_MOVE(TSqlDatabasePool)
-    TSqlDatabasePool(const QString &environment);
+    TSqlDatabasePool();
 
     TStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
     TStack<QString> *availableNames {nullptr};
     int maxConnects {0};
-    QString dbEnvironment;
     QBasicTimer timer;
 };
 

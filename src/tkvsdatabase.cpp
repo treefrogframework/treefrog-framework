@@ -24,6 +24,7 @@ public:
     QString userName;
     QString password;
     QString connectOptions;
+    QStringList postOpenStatements;
     TKvsDriver *driver {nullptr};  // pointer to a singleton object
 
     TKvsDatabaseData() {}
@@ -39,28 +40,36 @@ public:
 const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 
+// Map of connection name and database data
 class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData>
 {
 public:
     mutable QReadWriteLock lock;
 };
-Q_GLOBAL_STATIC(TKvsDatabaseDict, databaseDict)
+
+
+static TKvsDatabaseDict *databaseDict()
+{
+    static TKvsDatabaseDict *dict = new TKvsDatabaseDict;
+    return dict;
+}
 
 
 static TKvsDriver *createDriver(const QString &driverName)
 {
-    TKvsDriver *ret = nullptr;
+    TKvsDriver *driver = nullptr;
+    QString name = driverName.toLower();
 
-    if (driverName == QLatin1String("MONGODB")) {
-        ret = new TMongoDriver();
-    } else if (driverName == QLatin1String("REDIS")) {
-        ret = new TRedisDriver();
+    if (name == QLatin1String("mongodb")) {
+        driver = new TMongoDriver();
+    } else if (name == QLatin1String("redis")) {
+        driver = new TRedisDriver();
     }
 
-    if (!ret) {
+    if (!driver) {
         tWarn("TKvsDatabase: %s driver not loaded", qPrintable(driverName));
     }
-    return ret;
+    return driver;
 }
 
 
@@ -103,18 +112,6 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
     db.close();
     delete db.drv;
 }
-
-
-// void TKvsDatabase::removeAllDatabases()
-// {
-//     QMutexLocker lock(&mutex);
-//     const QStringList keys = databaseDict()->keys();
-
-//     for (auto &key : keys) {
-//         removeDatabase(key);
-//     }
-//     databaseDict()->clear();
-// }
 
 
 TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
@@ -163,6 +160,12 @@ void TKvsDatabase::close()
     if (driver()) {
         driver()->close();
     }
+}
+
+
+bool TKvsDatabase::command(const QString &cmd)
+{
+    return (driver()) ? driver()->command(cmd) : false;
 }
 
 
@@ -282,6 +285,24 @@ void TKvsDatabase::setConnectOptions(const QString &options)
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
         (*dict)[connectName].connectOptions = options;
+    }
+}
+
+
+QStringList TKvsDatabase::postOpenStatements() const
+{
+    auto *dict = databaseDict();
+    QReadLocker locker(&dict->lock);
+    return (*dict)[connectName].postOpenStatements;
+}
+
+
+void TKvsDatabase::setPostOpenStatements(const QStringList &statements)
+{
+    if (!connectName.isEmpty()) {
+        auto *dict = databaseDict();
+        QWriteLocker locker(&dict->lock);
+        (*dict)[connectName].postOpenStatements = statements;
     }
 }
 

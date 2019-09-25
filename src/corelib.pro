@@ -317,6 +317,8 @@ HEADERS += tcachesqlitestore.h
 SOURCES += tcachesqlitestore.cpp
 HEADERS += tcachemongostore.h
 SOURCES += tcachemongostore.cpp
+HEADERS += tcacheredisstore.h
+SOURCES += tcacheredisstore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 
 HEADERS += \
@@ -341,6 +343,7 @@ windows {
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
+  SOURCES += tredisdriver_win.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
 }
 unix {
@@ -348,6 +351,7 @@ unix {
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
+  SOURCES += tredisdriver_unix.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h

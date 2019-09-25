@@ -33,11 +33,11 @@ inline QString lastErrorString()
 }
 
 
-static bool exec(const QString &sql)
+static bool query(const QString &sql)
 {
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    query.prepare(sql);
-    bool ret = query.exec();
+    TSqlQuery qry(Tf::app()->databaseIdForInternalUse());
+    qry.prepare(sql);
+    bool ret = qry.exec();
     if (! ret) {
         tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastErrorString()), qPrintable(sql), __FILE__, __LINE__);
     }
@@ -47,8 +47,8 @@ static bool exec(const QString &sql)
 
 bool TCacheSQLiteStore::createTable(const QString &table)
 {
-    exec(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
-    return exec(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    query(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
+    return query(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
 }
 
 
@@ -273,7 +273,7 @@ int TCacheSQLiteStore::removeAll()
 
 bool TCacheSQLiteStore::vacuum()
 {
-    bool ret = exec(QStringLiteral("vacuum"));
+    bool ret = query(QStringLiteral("vacuum"));
     return ret;
 }
 

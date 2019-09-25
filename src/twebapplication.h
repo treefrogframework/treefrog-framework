@@ -52,10 +52,8 @@ public:
     int sqlDatabaseSettingsCount() const;
     bool isSqlDatabaseAvailable() const;
     int databaseIdForInternalUse() const;
-    const QVariantMap &mongoDbSettings() const;
-    bool isMongoDbAvailable() const;
-    const QVariantMap &redisSettings() const;
-    bool isRedisAvailable() const;
+    const QVariantMap &kvsSettings(Tf::KvsEngine engine) const;
+    bool isKvsAvailable(Tf::KvsEngine engine) const;
     const QVariantMap &loggerSettings() const { return _loggerSetting; }
     const QVariantMap &validationSettings() const { return _validationSetting; }
     QString validationErrorMessage(int rule) const;
@@ -98,8 +96,7 @@ private:
     QString _webRootAbsolutePath;
     QString _dbEnvironment;
     QVector<QVariantMap> _sqlSettings;
-    QVariantMap _mongoSetting;
-    QVariantMap _redisSetting;
+    QVector<QVariantMap> _kvsSettings {(int)Tf::KvsEngine::Num};
     QVariantMap _loggerSetting;
     QVariantMap _validationSetting;
     QVariantMap _mediaTypes;

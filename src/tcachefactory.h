@@ -1,10 +1,9 @@
 #ifndef TCACHEFACTORY_H
 #define TCACHEFACTORY_H
 
-#include <QStringList>
 #include <TGlobal>
-
-class TCacheStore;
+#include "tcachestore.h"
+#include <QStringList>
 
 
 class T_CORE_EXPORT TCacheFactory
@@ -14,15 +13,9 @@ public:
     static TCacheStore *create(const QString &key);
     static void destroy(const QString &key, TCacheStore *store);
     static QMap<QString, QVariant> defaultSettings(const QString &key);
+    static TCacheStore::DbType dbType(const QString &key);
 
 private:
-    enum Backend {
-        Invalid = 0,
-        SQLite,
-        Redis,
-        MongoDB,
-    };
-
     static bool loadCacheKeys();
 };
 
