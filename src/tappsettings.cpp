@@ -80,7 +80,6 @@ public:
         insert(Tf::CacheGcProbability, "Cache.GcProbability");
         insert(Tf::CacheEnableCompression, "Cache.EnableCompression");
         insert(Tf::CacheSettingsFile, "Cache.SettingsFile");
-        insert(Tf::CacheSingleFileDbFileSizeThreshold, "Cache.singlefiledb.FileSizeThreshold");
     }
 };
 Q_GLOBAL_STATIC(AttributeMap, attributeMap)

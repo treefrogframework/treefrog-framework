@@ -31,15 +31,14 @@ public:
     int removeOlder(int itemCount);
     int removeOlderThan(qint64 timestamp);
     int removeAll();
-    bool vacuum();
+    //bool vacuum();  // called outside of a transaction
     qint64 dbSize();
 
     static bool createTable(const QString &table);
 
 protected:
-    TCacheSQLiteStore(qint64 thresholdFileSize = 0, const QByteArray &table = QByteArray());
+    TCacheSQLiteStore(const QByteArray &table = QByteArray());
 
-    qint64 _thresholdFileSize {0};
     QString _table;
 
     friend class TCacheFactory;

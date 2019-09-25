@@ -204,7 +204,6 @@ namespace Tf
         CacheGcProbability,
         CacheEnableCompression,
         CacheSettingsFile,
-        CacheSingleFileDbFileSizeThreshold,
     };
 
     // Reason codes why a web socket has been closed

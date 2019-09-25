@@ -36,8 +36,7 @@ inline QString lastErrorString()
 static bool query(const QString &sql)
 {
     TSqlQuery qry(Tf::app()->databaseIdForInternalUse());
-    qry.prepare(sql);
-    bool ret = qry.exec();
+    bool ret = qry.exec(sql);
     if (! ret) {
         tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastErrorString()), qPrintable(sql), __FILE__, __LINE__);
     }
@@ -52,8 +51,7 @@ bool TCacheSQLiteStore::createTable(const QString &table)
 }
 
 
-TCacheSQLiteStore::TCacheSQLiteStore(qint64 thresholdFileSize, const QByteArray &table) :
-    _thresholdFileSize(thresholdFileSize),
+TCacheSQLiteStore::TCacheSQLiteStore(const QByteArray &table) :
     _table(table.isEmpty() ? QString(TABLE_NAME) : QString(table))
 { }
 
@@ -209,7 +207,6 @@ bool TCacheSQLiteStore::remove(const QByteArray &key)
 void TCacheSQLiteStore::clear()
 {
     removeAll();
-    vacuum();
 }
 
 
@@ -271,13 +268,6 @@ int TCacheSQLiteStore::removeAll()
 }
 
 
-bool TCacheSQLiteStore::vacuum()
-{
-    bool ret = query(QStringLiteral("vacuum"));
-    return ret;
-}
-
-
 qint64 TCacheSQLiteStore::dbSize()
 {
     qint64 sz = -1;
@@ -301,18 +291,6 @@ void TCacheSQLiteStore::gc()
 {
     int removed = removeOlderThan(1 + QDateTime::currentMSecsSinceEpoch() / 1000);
     tSystemDebug("removeOlderThan: %d\n", removed);
-    vacuum();
-
-    if (_thresholdFileSize > 0 && dbSize() > _thresholdFileSize) {
-        for (int i = 0; i < 3; i++) {
-            removed += removeOlder(count() * 0.3);
-            vacuum();
-            if (dbSize() < _thresholdFileSize * 0.8) {
-                break;
-            }
-        }
-        tSystemDebug("removeOlder: %d\n", removed);
-    }
 }
 
 

@@ -19,7 +19,7 @@ constexpr auto SESSION_TABLE = "sess";
 */
 
 TSessionFileDbStore::TSessionFileDbStore() :
-    _store(new TCacheSQLiteStore(0, SESSION_TABLE))
+    _store(new TCacheSQLiteStore(SESSION_TABLE))
 {
     T_ONCE(TCacheSQLiteStore::createTable(SESSION_TABLE));
     _store->open();

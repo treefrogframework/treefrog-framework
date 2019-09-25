@@ -30,8 +30,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
 
     QString k = key.toLower();
     if (k == SINGLEFILEDB_CACHE_KEY) {
-        static const qint64 FileSizeThreshold = TAppSettings::instance()->value(Tf::CacheSingleFileDbFileSizeThreshold, 0).toLongLong();
-        ptr = new TCacheSQLiteStore(FileSizeThreshold);
+        ptr = new TCacheSQLiteStore;
     } else if (k == MONGODB_CACHE_KEY) {
         ptr = new TCacheMongoStore;
     } else if (k == REDIS_CACHE_KEY) {
