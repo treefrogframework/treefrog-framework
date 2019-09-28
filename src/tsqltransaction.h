@@ -17,14 +17,13 @@ public:
     ~TSqlTransaction();
 
     TSqlTransaction &operator=(const TSqlTransaction &) = default;
-    const QSqlDatabase &database() const { return _database; }
+    QSqlDatabase &database() { return _database; }
     bool begin();
     bool commit();
     bool rollback();
     bool isActive() const { return _active; }
     void setEnabled(bool enable);
     void setDisabled(bool disable);
-    void setDatabase(QSqlDatabase database) { _database = database; }
 
 private:
     QSqlDatabase _database;

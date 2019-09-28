@@ -20,6 +20,8 @@
 //  - qulonglong type to prevent qThreadStorage_deleteData() function to work
 static QThreadStorage<qulonglong> databaseContextPtrTls;
 
+static QSqlDatabase invalidDb;
+
 /*!
   \class TDatabaseContext
   \brief The TDatabaseContext class is the base class of contexts for
@@ -41,7 +43,7 @@ TDatabaseContext::~TDatabaseContext()
 QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
     if (!Tf::app()->isSqlDatabaseAvailable()) {
-        return sqlDatabases[0].database();  // invalid database
+        return invalidDb;  // invalid database
     }
 
     if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
@@ -75,10 +77,6 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 void TDatabaseContext::releaseSqlDatabases()
 {
     rollbackTransactions();
-
-    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlDatabasePool::instance()->pool(it.value().database());
-    }
     sqlDatabases.clear();
 }
 
@@ -130,9 +128,8 @@ void TDatabaseContext::commitTransactions()
 {
     for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
         TSqlTransaction &tx = it.value();
-        if (! tx.commit()) {
-            TSqlDatabasePool::instance()->pool(tx.database(), true);
-        }
+        tx.commit();
+        TSqlDatabasePool::instance()->pool(tx.database());
     }
 }
 
@@ -146,10 +143,9 @@ bool TDatabaseContext::commitTransaction(int id)
         return res;
     }
 
-    res = sqlDatabases[id].commit();
-    if (! res) {
-        TSqlDatabasePool::instance()->pool(sqlDatabases[id].database(), true);
-    }
+    TSqlTransaction &tx = sqlDatabases[id];
+    res = tx.commit();
+    TSqlDatabasePool::instance()->pool(sqlDatabases[id].database());
     return res;
 }
 
@@ -158,9 +154,8 @@ void TDatabaseContext::rollbackTransactions()
 {
     for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
         TSqlTransaction &tx = it.value();
-        if (! tx.rollback()) {
-            TSqlDatabasePool::instance()->pool(tx.database(), true);
-        }
+        tx.rollback();
+        TSqlDatabasePool::instance()->pool(tx.database(), true);
     }
 }
 
@@ -174,9 +169,7 @@ bool TDatabaseContext::rollbackTransaction(int id)
         return res;
     }
     res = sqlDatabases[id].rollback();
-    if (! res) {
-        TSqlDatabasePool::instance()->pool(sqlDatabases[id].database(), true);
-    }
+    TSqlDatabasePool::instance()->pool(sqlDatabases[id].database(), true);
     return res;
 }
 
@@ -195,7 +188,7 @@ TDatabaseContext *TDatabaseContext::currentDatabaseContext()
 
 void TDatabaseContext::setCurrentDatabaseContext(TDatabaseContext *context)
 {
-    if (context && databaseContextPtrTls.hasLocalData()) {
+    if (context && databaseContextPtrTls.localData()) {
         tSystemWarn("Duplicate set : setCurrentDatabaseContext()");
     }
     databaseContextPtrTls.setLocalData((qulonglong)context);
