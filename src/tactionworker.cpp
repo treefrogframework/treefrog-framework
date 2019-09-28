@@ -70,15 +70,14 @@ void TActionWorker::closeHttpSocket()
 
 void TActionWorker::start(TEpollHttpSocket *sock)
 {
+    TDatabaseContext::setCurrentDatabaseContext(this);
     socket = sock;
     httpRequest = socket->readRequest();
     clientAddr = socket->peerAddress().toString();
     QList<THttpRequest> reqs = THttpRequest::generate(httpRequest, QHostAddress(clientAddr));
 
     // Loop for HTTP-pipeline requests
-    for (QMutableListIterator<THttpRequest> it(reqs); it.hasNext(); ) {
-        THttpRequest &req = it.next();
-
+    for (THttpRequest &req : reqs) {
         // Executes a action context
         TActionContext::execute(req, socket->socketId());
 
@@ -90,4 +89,5 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     TActionContext::release();
     httpRequest.clear();
     clientAddr.clear();
+    TDatabaseContext::setCurrentDatabaseContext(nullptr);
 }

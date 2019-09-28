@@ -8,11 +8,9 @@
 #include "tcachesqlitestore.h"
 #include "tsystemglobal.h"
 #include "tsqlquery.h"
+#include <TDatabaseContext>
 #include <QByteArray>
 #include <QDateTime>
-#include <QReadWriteLock>
-#include <TAtomicPtr>
-#include <atomic>
 
 constexpr auto TABLE_NAME = "kb";
 constexpr auto KEY_COLUMN  = "k";
@@ -47,7 +45,9 @@ static bool query(const QString &sql)
 bool TCacheSQLiteStore::createTable(const QString &table)
 {
     query(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
-    return query(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    bool ret = query(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    Tf::currentDatabaseContext()->commitTransaction(Tf::app()->databaseIdForInternalUse());
+    return ret;
 }
 
 

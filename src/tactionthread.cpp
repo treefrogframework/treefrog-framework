@@ -42,7 +42,7 @@ bool TActionThread::waitForAllDone(int msec)
             break;
         }
 
-        Tf::msleep(10);
+        Tf::msleep(5);
         qApp->processEvents();
     }
     tSystemDebug("waitForAllDone : remaining:%d", cnt);
@@ -150,7 +150,7 @@ void TActionThread::run()
             }
 
             // Next request
-            while (!_httpSocket->waitForReadyRead(10)) {
+            while (!_httpSocket->waitForReadyRead(5)) {
                 if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
                     if (_httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
                         tSystemWarn("Error occurred : error:%d  socket:%d", _httpSocket->error(), _httpSocket->socketId());

@@ -82,11 +82,11 @@ void TInternetMessageHeader::setRawHeader(const QByteArray &key, const QByteArra
     }
 
     QByteArray val = value;
-    for (QMutableListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        RawHeaderPair &p = i.next();
+    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext(); ) {
+        RawHeaderPair &p = it.next();
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
             if (val.isNull()) {
-                i.remove();
+                it.remove();
             } else {
                 p.second = val;
                 val.clear();
@@ -245,10 +245,10 @@ void TInternetMessageHeader::parse(const QByteArray &header)
 */
 void TInternetMessageHeader::removeAllRawHeaders(const QByteArray &key)
 {
-    for (QMutableListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        RawHeaderPair &p = i.next();
+    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext(); ) {
+        RawHeaderPair &p = it.next();
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
-            i.remove();
+            it.remove();
         }
     }
 }
@@ -258,10 +258,10 @@ void TInternetMessageHeader::removeAllRawHeaders(const QByteArray &key)
 */
 void TInternetMessageHeader::removeRawHeader(const QByteArray &key)
 {
-    for (QMutableListIterator<RawHeaderPair> i(headerPairList); i.hasNext(); ) {
-        RawHeaderPair &p = i.next();
+    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext(); ) {
+        RawHeaderPair &p = it.next();
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
-            i.remove();
+            it.remove();
             break;
         }
     }

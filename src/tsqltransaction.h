@@ -13,22 +13,24 @@ class T_CORE_EXPORT TSqlTransaction
 {
 public:
     TSqlTransaction();
-    TSqlTransaction(const TSqlTransaction &other);
+    TSqlTransaction(const TSqlTransaction &other) = default;
     ~TSqlTransaction();
 
-    QSqlDatabase &database() { return _database; }
-    TSqlTransaction &operator=(const TSqlTransaction &);
+    TSqlTransaction &operator=(const TSqlTransaction &) = default;
+    const QSqlDatabase &database() const { return _database; }
     bool begin();
     bool commit();
     bool rollback();
     bool isActive() const { return _active; }
     void setEnabled(bool enable);
     void setDisabled(bool disable);
+    void setDatabase(QSqlDatabase database) { _database = database; }
 
 private:
-    bool _enabled {true};
     QSqlDatabase _database;
+    bool _enabled {true};
     bool _active {false};
+    QString _connectionName;
 };
 
 
