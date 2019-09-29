@@ -17,6 +17,14 @@
   \brief The TSessionCookieStore class stores HTTP sessions into a cookie.
 */
 
+
+static const QByteArray &sessionSecret()
+{
+    static QByteArray secret = Tf::appSettings()->value(Tf::SessionSecret).toByteArray();
+    return secret;
+}
+
+
 bool TSessionCookieStore::store(TSession &session)
 {
     if (session.isEmpty()) {
@@ -48,8 +56,7 @@ bool TSessionCookieStore::store(TSession &session)
     }
 
     ba = Tf::lz4Compress(ba);
-    QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
-                                                 QCryptographicHash::Sha1);
+    QByteArray digest = QCryptographicHash::hash(ba + sessionSecret(), QCryptographicHash::Sha1);
     session.sessionId = ba.toBase64() + "_" + digest.toBase64();
     return true;
 }
@@ -63,24 +70,29 @@ TSession TSessionCookieStore::find(const QByteArray &id)
     }
 
     QByteArrayList balst = id.split('_');
-    if (balst.count() == 2 && !balst.value(0).isEmpty() && !balst.value(1).isEmpty()) {
-        QByteArray ba = QByteArray::fromBase64(balst.value(0));
-        QByteArray digest = QCryptographicHash::hash(ba + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(),
-                                                     QCryptographicHash::Sha1);
 
-        if (digest != QByteArray::fromBase64(balst.value(1))) {
-            tSystemWarn("Recieved a tampered cookie or that of other web application.");
-            //throw SecurityException("Tampered with cookie", __FILE__, __LINE__);
-            return session;
-        }
+    if (balst.count() == 2) {
+        const auto &data = balst[0];
+        const auto &dgstr = balst[1];
 
-        ba = Tf::lz4Uncompress(ba);
-        QDataStream ds(&ba, QIODevice::ReadOnly);
-        ds >> *static_cast<QVariantMap *>(&session);
+        if (!data.isEmpty() && !dgstr.isEmpty()) {
+            QByteArray ba = QByteArray::fromBase64(data);
+            QByteArray digest = QCryptographicHash::hash(ba + sessionSecret(), QCryptographicHash::Sha1);
 
-        if (ds.status() != QDataStream::Ok) {
-            tSystemError("Failed to load a session from the cookie store.");
-            session.reset();
+            if (digest != QByteArray::fromBase64(dgstr)) {
+                tSystemWarn("Recieved a tampered cookie or that of other web application.");
+                //throw SecurityException("Tampered with cookie", __FILE__, __LINE__);
+                return session;
+            }
+
+            ba = Tf::lz4Uncompress(ba);
+            QDataStream ds(&ba, QIODevice::ReadOnly);
+            ds >> *static_cast<QVariantMap *>(&session);
+
+            if (ds.status() != QDataStream::Ok) {
+                tSystemError("Failed to load a session from the cookie store.");
+                session.reset();
+            }
         }
     }
     return session;

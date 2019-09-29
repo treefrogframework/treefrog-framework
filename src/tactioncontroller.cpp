@@ -381,7 +381,6 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 */
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
-
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
         return false;
@@ -551,7 +550,6 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
 */
 QByteArray TActionController::renderView(TActionView *view)
 {
-
     if (!view) {
         tSystemError("view null pointer.  action:%s", qPrintable(activeAction()));
         return QByteArray();
