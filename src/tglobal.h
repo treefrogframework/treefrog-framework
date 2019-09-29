@@ -187,7 +187,7 @@ constexpr auto TF_SRC_REVISION = 2004;
 
 #define T_ONCE(Func) \
     do { \
-        static bool once = []() { \
+        static volatile bool once = []() { \
             Func; \
             return true; \
         }(); \
