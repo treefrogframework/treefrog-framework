@@ -17,7 +17,9 @@ static void createSessionTable()
         static void create()
         {
             TSqlQuery query;
-            query.exec("CREATE TABLE IF NOT EXISTS session (id VARCHAR(50) PRIMARY KEY, data TEXT, updated_at TIMESTAMP)");
+            QString create = "CREATE TABLE IF NOT EXISTS %1 (id VARCHAR(50) PRIMARY KEY, data TEXT, updated_at TIMESTAMP)";
+            create = create.arg(TSessionObject().tableName());
+            query.exec(create);
         }
     };
 
@@ -59,7 +61,7 @@ bool TSessionSqlObjectStore::store(TSession &session)
     QByteArray data;
     QDataStream ds(&data, QIODevice::WriteOnly);
     ds << *static_cast<const QVariantMap *>(&session);
-    so.data = Tf::lz4Compress(data).toBase64();
+    so.data = QString::fromLatin1(Tf::lz4Compress(data).toBase64());
 
     if (ds.status() != QDataStream::Ok) {
         tSystemError("Failed to store session. Must set objects that can be serialized.");
@@ -90,7 +92,7 @@ TSession TSessionSqlObjectStore::find(const QByteArray &id)
     }
 
     TSession session(id);
-    QByteArray data = Tf::lz4Uncompress(QByteArray::fromBase64(so.data));
+    QByteArray data = Tf::lz4Uncompress(QByteArray::fromBase64(so.data.toLatin1()));
     QDataStream ds(&data, QIODevice::ReadOnly);
     ds >> *static_cast<QVariantMap *>(&session);
 

@@ -8,7 +8,7 @@ class TSessionObject : public TSqlObject
 {
 public:
     QString id;
-    QByteArray data;
+    QString data;
     QDateTime updated_at;
 
     enum PropertyIndex {
@@ -25,8 +25,8 @@ private:    /*** Don't modify below this line ***/
     Q_OBJECT
     Q_PROPERTY(QString id READ getid WRITE setid)
     T_DEFINE_PROPERTY(QString, id)
-    Q_PROPERTY(QByteArray data READ getdata WRITE setdata)
-    T_DEFINE_PROPERTY(QByteArray, data)
+    Q_PROPERTY(QString data READ getdata WRITE setdata)
+    T_DEFINE_PROPERTY(QString, data)
     Q_PROPERTY(QDateTime updated_at READ getupdated_at WRITE setupdated_at)
     T_DEFINE_PROPERTY(QDateTime, updated_at)
 };
