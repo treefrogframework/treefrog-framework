@@ -75,8 +75,7 @@ static void cleanup()
 {
     auto lggIfMap = loggerIfMap();
     if (lggIfMap) {
-        for (QMapIterator<QString, TLoggerInterface*> it(*lggIfMap); it.hasNext(); )  {
-            it.next();
+        for (auto it = lggIfMap->begin(); it != lggIfMap->end(); ++it) {
             delete it.value();
         }
         delete lggIfMap;

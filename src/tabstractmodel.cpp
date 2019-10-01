@@ -80,9 +80,8 @@ QVariantMap TAbstractModel::toVariantMap() const
 {
     QVariantMap ret;
 
-    QVariantMap map = modelData()->toVariantMap();
-    for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
-        it.next();
+    const QVariantMap map = modelData()->toVariantMap();
+    for (auto it = map.begin(); it != map.end(); ++it) {
         ret.insert(fieldNameToVariableName(it.key()), it.value());
     }
     return ret;
@@ -101,8 +100,7 @@ void TAbstractModel::setProperties(const QVariantMap &properties)
     }
 
     QVariantMap props;
-    for (QMapIterator<QString, QVariant> it(properties); it.hasNext(); ) {
-        it.next();
+    for (auto it = properties.begin(); it != properties.end(); ++it) {
         const QString &p = mopropMap[it.key()];
         if (!p.isEmpty()) {
             props.insert(p, it.value());

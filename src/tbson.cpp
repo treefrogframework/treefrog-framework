@@ -278,9 +278,8 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
 
 static void appendBson(TBsonObject *bson, const QVariantMap &map)
 {
-    for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
-        const QVariant &val = it.next().value();
-        bool res = appendBsonValue((bson_t *)bson, qPrintable(it.key()), val);
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        bool res = appendBsonValue((bson_t *)bson, qPrintable(it.key()), it.value());
         if (!res) {
             break;
         }

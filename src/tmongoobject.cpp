@@ -254,8 +254,7 @@ bool TMongoObject::isModified() const
 
     int offset = metaObject()->propertyOffset();
 
-    for (QMapIterator<QString, QVariant> it(*this); it.hasNext(); ) {
-        it.next();
+    for (auto it = QVariantMap::begin(); it != QVariantMap::end(); ++it) {
         QByteArray name = it.key().toLatin1();
         int index = metaObject()->indexOfProperty(name.constData());
         if (index >= offset) {
@@ -272,8 +271,7 @@ void TMongoObject::syncToObject()
 {
     int offset = metaObject()->propertyOffset();
 
-    for (QMapIterator<QString, QVariant> it(*this); it.hasNext(); ) {
-        it.next();
+    for (auto it = QVariantMap::begin(); it != QVariantMap::end(); ++it) {
         QByteArray name = it.key().toLatin1();
         int index = metaObject()->indexOfProperty(name.constData());
         if (index >= offset) {

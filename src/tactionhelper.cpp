@@ -28,8 +28,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
                         const QStringList &args, const QVariantMap &query) const
 {
     QString querystr;
-    for (QMapIterator<QString, QVariant> it(query); it.hasNext(); ) {
-        it.next();
+    for (auto it = query.begin(); it != query.end(); ++it) {
         if (!it.key().isEmpty()) {
             querystr += it.key();
             querystr += QLatin1Char('=');

@@ -11,9 +11,8 @@
 TOption operator|(const TOption &o1, const TOption &o2)
 {
     TOption options(o1);
-    for (QMapIterator<int, QVariant> i(o2); i.hasNext(); ) {
-        i.next();
-        options.insert(i.key(), i.value());
+    for (auto it = o2.begin(); it != o2.end(); ++it) {
+        options.insert(it.key(), it.value());
     }
     return options;
 }

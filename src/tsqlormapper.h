@@ -532,17 +532,15 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         }
     }
 
-    QMapIterator<int, QVariant> it(values);
-    for (;;) {
-        it.next();
+    auto it = values.begin();
+    while (true) {
         upd += conv.propertyName(it.key(), db.driver());
         upd += QLatin1Char('=');
         upd += TSqlQuery::formatValue(it.value(), conv.variantType(it.key()), db);
 
-        if (!it.hasNext()) {
+        if (++it == values.end()) {
             break;
         }
-
         upd += QLatin1Char(',');
     }
 

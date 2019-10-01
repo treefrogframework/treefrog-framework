@@ -44,8 +44,8 @@ static bool query(const QString &sql)
 
 bool TCacheSQLiteStore::createTable(const QString &table)
 {
-    query(QStringLiteral("pragma page_size=%1").arg(PAGESIZE));
-    bool ret = query(QStringLiteral("create table if not exists %1 (%2 text primary key, %3 integer, %4 blob)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    query(QStringLiteral("PRAGMA page_size=%1").arg(PAGESIZE));
+    bool ret = query(QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
     return ret;
 }
 
@@ -272,11 +272,11 @@ qint64 TCacheSQLiteStore::dbSize()
     qint64 sz = -1;
 
     TSqlQuery query(Tf::app()->databaseIdForInternalUse());
-    bool ok = query.exec(QStringLiteral("pragma page_size"));
+    bool ok = query.exec(QStringLiteral("PRAGMA page_size"));
     if (ok && query.next()) {
         qint64 size = query.value(0).toLongLong();
 
-        ok = query.exec(QStringLiteral("pragma page_count"));
+        ok = query.exec(QStringLiteral("PRAGMA page_count"));
         if (ok && query.next()) {
             qint64 count = query.value(0).toLongLong();
             sz = size * count;

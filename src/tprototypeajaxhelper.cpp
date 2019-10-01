@@ -240,9 +240,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
     map.insert("authenticity_token", actionView()->authenticityToken());
     opt.insert(Tf::Parameters, map);
 
-    for (QMapIterator<int, QVariant> i(opt); i.hasNext(); ) {
-        i.next();
-
+    for (auto i = opt.begin(); i != opt.end(); ++i) {
         // Appends ajax option
         QString s = stringOptionHash()->value(i.key());
         if (!s.isEmpty() && i.value().canConvert(QVariant::String)) {
@@ -271,9 +269,8 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
         if (i.key() == Tf::Parameters) {
             QString val;
             if (i.value().canConvert(QVariant::Map)) {
-                QVariantMap m = i.value().toMap();
-                for (QMapIterator<QString, QVariant> it(m); it.hasNext(); ) {
-                    it.next();
+                const QVariantMap m = i.value().toMap();
+                for (auto it = m.begin(); it != m.end(); ++it) {
                     if (it.value().canConvert<TJavaScriptObject>()) {
                         val += it.key();
                         val += QLatin1String(":");

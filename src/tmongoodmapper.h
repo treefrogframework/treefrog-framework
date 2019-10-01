@@ -289,8 +289,7 @@ inline int TMongoODMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QV
 {
     QVariantMap doc;
 
-    for (QMapIterator<int, QVariant> it(values); it.hasNext(); ) {
-        it.next();
+    for (auto it = values.begin(); it != values.end(); ++it) {
         QString s = TCriteriaMongoConverter<T>::propertyName(it.key());
         if (!s.isEmpty()) {
             doc.insert(s, it.value());

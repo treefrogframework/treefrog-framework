@@ -401,8 +401,7 @@ static QDomElement createDomElement(const QString &name, const QVariantMap &map,
 {
     QDomElement element = document.createElement(name);
 
-    for (QMapIterator<QString, QVariant> it(map); it.hasNext(); ) {
-        it.next();
+    for (auto it = map.begin(); it != map.end(); ++it) {
         QDomElement tag = document.createElement(it.key());
         element.appendChild(tag);
 
@@ -531,9 +530,8 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
     }
 
     QVariantMap map = allVariants();
-    for (QMapIterator<QString, QVariant> i(vars); i.hasNext(); ) {
-        i.next();
-        map.insert(i.key(), i.value()); // item's value of same key is replaced
+    for (auto it = vars.begin(); it != vars.end(); ++it) {
+        map.insert(it.key(), it.value()); // item's value of same key is replaced
     }
 
     view->setController(this);

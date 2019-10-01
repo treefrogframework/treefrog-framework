@@ -250,8 +250,7 @@ void TEpoll::dispatchSendData()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (QMapIterator<TEpollSocket *, int> it(pollingSockets); it.hasNext(); ) {
-        it.next();
+    for (auto it = pollingSockets.begin(); it != pollingSockets.end(); ++it) {
         it.key()->deleteLater();
     }
     pollingSockets.clear();

@@ -17,7 +17,6 @@
 #include <TSessionStorePlugin>
 #include <QDir>
 #include <QList>
-#include <QMapIterator>
 #include <QPluginLoader>
 #include <QMutex>
 #include <QMutexLocker>

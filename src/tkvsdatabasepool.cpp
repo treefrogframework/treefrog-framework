@@ -103,8 +103,8 @@ void TKvsDatabasePool::init()
     bool aval = false;
 
     // Adds databases previously
-    for (QMapIterator<Tf::KvsEngine, QString> it(*kvsEngineHash()); it.hasNext(); ) {
-        Tf::KvsEngine engine = it.next().key();
+    for (auto it = kvsEngineHash()->begin(); it != kvsEngineHash()->end(); ++it) {
+        Tf::KvsEngine engine = it.key();
         const QString &drv = it.value();
 
         if (!Tf::app()->isKvsAvailable(engine)) {
