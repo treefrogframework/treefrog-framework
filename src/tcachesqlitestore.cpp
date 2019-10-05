@@ -21,7 +21,7 @@ constexpr int  PAGESIZE = 4096;
 
 inline QSqlError lastError()
 {
-    return Tf::currentSqlDatabase(Tf::app()->databaseIdForInternalUse()).lastError();
+    return Tf::currentSqlDatabase(Tf::app()->databaseIdForCache()).lastError();
 }
 
 
@@ -33,7 +33,7 @@ inline QString lastErrorString()
 
 static bool query(const QString &sql)
 {
-    TSqlQuery qry(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery qry(Tf::app()->databaseIdForCache());
     bool ret = qry.exec(sql);
     if (! ret) {
         tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastErrorString()), qPrintable(sql), __FILE__, __LINE__);
@@ -82,7 +82,7 @@ int TCacheSQLiteStore::count()
 {
     int cnt = -1;
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("select count(1) from %1").arg(_table);
 
     if (query.exec(sql) && query.next()) {
@@ -95,7 +95,7 @@ int TCacheSQLiteStore::count()
 bool TCacheSQLiteStore::exists(const QByteArray &key)
 {
     int exist = 0;
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name and %3>:ts limit 1)").arg(_table).arg(KEY_COLUMN).arg(TIMESTAMP_COLUMN);
     qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
@@ -145,7 +145,7 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
         return ret;
     }
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     query.prepare(QStringLiteral("select %1,%2 from %3 where %4=:key").arg(TIMESTAMP_COLUMN, BLOB_COLUMN, _table, KEY_COLUMN));
     query.bind(":key", key);
     ret = query.exec();
@@ -169,7 +169,7 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
         return ret;
     }
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
 
     query.prepare(sql);
@@ -190,7 +190,7 @@ bool TCacheSQLiteStore::remove(const QByteArray &key)
         return ret;
     }
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("delete from %1 where %2=:key").arg(_table, KEY_COLUMN);
 
     query.prepare(sql);
@@ -217,7 +217,7 @@ int TCacheSQLiteStore::removeOlder(int num)
         return cnt;
     }
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("delete from %1 where ROWID in (select ROWID from %1 order by t asc limit :num)").arg(_table);
 
     query.prepare(sql);
@@ -235,7 +235,7 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
 {
     int cnt = -1;
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("delete from %1 where %2<:ts").arg(_table, TIMESTAMP_COLUMN);
 
     query.prepare(sql);
@@ -255,7 +255,7 @@ int TCacheSQLiteStore::removeAll()
 {
     int cnt = -1;
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("delete from %1").arg(_table);
 
     if (query.exec(sql)) {
@@ -271,7 +271,7 @@ qint64 TCacheSQLiteStore::dbSize()
 {
     qint64 sz = -1;
 
-    TSqlQuery query(Tf::app()->databaseIdForInternalUse());
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     bool ok = query.exec(QStringLiteral("PRAGMA page_size"));
     if (ok && query.next()) {
         qint64 size = query.value(0).toLongLong();

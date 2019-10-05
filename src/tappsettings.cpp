@@ -76,10 +76,10 @@ public:
         insert(Tf::ActionMailerSmtpPopServerPort, "ActionMailer.smtp.PopServer.Port");
         insert(Tf::ActionMailerSmtpPopServerEnableApop, "ActionMailer.smtp.PopServer.EnableApop");
         insert(Tf::ActionMailerSendmailCommandLocation, "ActionMailer.sendmail.CommandLocation");
+        insert(Tf::CacheSettingsFile, "Cache.SettingsFile");
         insert(Tf::CacheBackend, "Cache.Backend");
         insert(Tf::CacheGcProbability, "Cache.GcProbability");
         insert(Tf::CacheEnableCompression, "Cache.EnableCompression");
-        insert(Tf::CacheSettingsFile, "Cache.SettingsFile");
     }
 };
 Q_GLOBAL_STATIC(AttributeMap, attributeMap)

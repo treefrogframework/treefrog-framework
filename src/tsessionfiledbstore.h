@@ -12,7 +12,7 @@ public:
     TSessionFileDbStore();
     ~TSessionFileDbStore();
 
-    QString key() const { return QStringLiteral("filedb"); }
+    QString key() const { return QStringLiteral("cachedb"); }
     TSession find(const QByteArray &id) override;
     bool store(TSession &session) override;
     bool remove(const QByteArray &id) override;

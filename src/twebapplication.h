@@ -50,10 +50,11 @@ public:
     QString appSettingsFilePath() const;
     const QVariantMap &sqlDatabaseSettings(int databaseId) const;
     int sqlDatabaseSettingsCount() const;
-    bool isSqlDatabaseAvailable() const;
-    int databaseIdForInternalUse() const;
     const QVariantMap &kvsSettings(Tf::KvsEngine engine) const;
     bool isKvsAvailable(Tf::KvsEngine engine) const;
+    bool cacheEnabled() const;
+    QString cacheBackend() const;
+    int databaseIdForCache() const;
     const QVariantMap &loggerSettings() const { return _loggerSetting; }
     const QVariantMap &validationSettings() const { return _validationSetting; }
     QString validationErrorMessage(int rule) const;
@@ -71,7 +72,6 @@ public:
     QThread *databaseContextMainThread() const;
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
-    QString cacheBackend() const;
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
@@ -106,6 +106,7 @@ private:
     QBasicTimer _timer;
     mutable MultiProcessingModule _mpm  {Invalid};
     QMap<QString, QVariantMap> _configMap;
+    int _cacheSqlDbIndex {-1};
 
     static void resetSignalNumber();
 

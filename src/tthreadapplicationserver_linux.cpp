@@ -86,7 +86,7 @@ void TThreadApplicationServer::stop()
 
 void TThreadApplicationServer::run()
 {
-    const int timeout = 500;  // msec
+    constexpr int timeout = 500;  // msec
 
     while (listenSocket > 0 && !stopFlag) {
         struct pollfd pfd = { listenSocket, POLLIN, 0 };

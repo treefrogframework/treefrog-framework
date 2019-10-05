@@ -22,11 +22,12 @@
 #include <QMutexLocker>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QRegularExpression>
 
 static QString COOKIE_SESSION_KEY;
 static QString SQLOBJECT_SESSION_KEY;
 static QString FILE_SESSION_KEY;
-static QString FILEDB_SESSION_KEY;
+static QString CACHEDB_SESSION_KEY;
 static QString REDIS_SESSION_KEY;
 static QString MONGODB_SESSION_KEY;
 
@@ -38,7 +39,7 @@ static void loadKeys()
         COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
         SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
         FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
-        FILEDB_SESSION_KEY    = TSessionFileDbStore().key().toLower();
+        CACHEDB_SESSION_KEY   = TSessionFileDbStore().key().toLower();
         REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
         MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
         return true;
@@ -97,11 +98,12 @@ QStringList TSessionStoreFactory::keys()
     ret << COOKIE_SESSION_KEY
         << SQLOBJECT_SESSION_KEY
         << FILE_SESSION_KEY
-        << FILEDB_SESSION_KEY
+        << CACHEDB_SESSION_KEY
         << REDIS_SESSION_KEY
         << MONGODB_SESSION_KEY
         << sessionStoreIfMap()->keys();
 
+    ret = ret.filter(QRegularExpression("\\S"));
     return ret;
 }
 
@@ -114,6 +116,10 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     TSessionStore *ret = nullptr;
     loadKeys();
 
+    if (key.isEmpty()) {
+        return ret;
+    }
+
     QString k = key.toLower();
     if (k == COOKIE_SESSION_KEY) {
         static TSessionCookieStore cookieStore;
@@ -124,7 +130,7 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     } else if (k == FILE_SESSION_KEY) {
         static TSessionFileStore fileStore;
         ret = &fileStore;
-    } else if (k == FILEDB_SESSION_KEY) {
+    } else if (k == CACHEDB_SESSION_KEY) {
         static TSessionFileDbStore fileDbStore;
         ret = &fileDbStore;
     } else if (k == REDIS_SESSION_KEY) {
@@ -148,7 +154,7 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
  */
 void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
 {
-    if (!store) {
+    if (!store || key.isEmpty()) {
         return;
     }
 
@@ -160,7 +166,7 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
         // do nothing
     } else if (k == FILE_SESSION_KEY) {
         // do nothing
-    } else if (k == FILEDB_SESSION_KEY) {
+    } else if (k == CACHEDB_SESSION_KEY) {
         // do nothing
     } else if (k == REDIS_SESSION_KEY) {
         // do nothing

@@ -160,8 +160,8 @@ qint64 THttpSocket::writeRawData(const QByteArray &data)
 void THttpSocket::readRequest()
 {
     static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
-    qint64 bytes = 0;
     QByteArray buf;
+    qint64 bytes;
 
     while ((bytes = bytesAvailable()) > 0) {
         buf.resize(bytes);
@@ -216,9 +216,9 @@ void THttpSocket::readRequest()
             break;
         }
 
-        if (lengthToRead == 0) {
-            emit newRequest();
-        }
+        // if (lengthToRead == 0) {
+        //     emit newRequest();
+        // }
     }
 }
 

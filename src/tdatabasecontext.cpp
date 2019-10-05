@@ -42,11 +42,11 @@ TDatabaseContext::~TDatabaseContext()
 
 QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
-    if (!Tf::app()->isSqlDatabaseAvailable()) {
+    if (id < 0) {
         return invalidDb;  // invalid database
     }
 
-    if (id < 0 || id >= Tf::app()->sqlDatabaseSettingsCount()) {
+    if (id >= Tf::app()->sqlDatabaseSettingsCount()) {
         throw RuntimeException("error database id", __FILE__, __LINE__);
     }
 

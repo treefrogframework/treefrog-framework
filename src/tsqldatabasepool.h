@@ -33,8 +33,6 @@ protected:
     void closeDatabase(QSqlDatabase &database);
 
 private:
-    T_DISABLE_COPY(TSqlDatabasePool)
-    T_DISABLE_MOVE(TSqlDatabasePool)
     TSqlDatabasePool();
 
     TStack<QString> *cachedDatabase {nullptr};
@@ -42,6 +40,9 @@ private:
     TStack<QString> *availableNames {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
+
+    T_DISABLE_COPY(TSqlDatabasePool)
+    T_DISABLE_MOVE(TSqlDatabasePool)
 };
 
 #endif // TSQLDATABASEPOOL_H

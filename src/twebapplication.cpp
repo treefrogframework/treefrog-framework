@@ -144,21 +144,29 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         }
     }
 
-    // Cache KVS settings
-    auto backend = cacheBackend();
-    if (TCacheFactory::dbType(backend) == TCacheStore::KVS) {
-        QVariantMap settings = TCacheFactory::defaultSettings(backend);
+    // Cache settings
+    if (cacheEnabled()) {
+        auto backend = cacheBackend();
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
-
         if (! path.isEmpty()) {
+            QVariantMap settings = TCacheFactory::defaultSettings(backend);
             // Copy settings
             QSettings iniset(configPath() + path, QSettings::IniFormat);
             iniset.beginGroup(backend);
             for (auto &k : iniset.allKeys()) {
-                settings.insert(k, iniset.value(k));
+                auto val = iniset.value(k).toString().trimmed();
+                if (! val.isEmpty()) {
+                    settings.insert(k, iniset.value(k));
+                }
+            }
+
+            if (TCacheFactory::dbType(backend) == TCacheStore::SQL) {
+                _sqlSettings.append(settings);
+                _cacheSqlDbIndex = _sqlSettings.count() - 1;
+            } else if (TCacheFactory::dbType(backend) == TCacheStore::KVS) {
+                _kvsSettings[(int)Tf::KvsEngine::CacheKvs] = settings;
             }
         }
-        _kvsSettings[(int)Tf::KvsEngine::CacheKvs] = settings;
     }
 }
 
@@ -264,27 +272,8 @@ QString TWebApplication::appSettingsFilePath() const
 */
 const QVariantMap &TWebApplication::sqlDatabaseSettings(int databaseId) const
 {
-    static QVariantMap internalSettings = [&]() {
-        // Settings of internal use databases
-        const QLatin1String singlefiledb("singlefiledb");
-        QVariantMap settings = TCacheFactory::defaultSettings(singlefiledb);
-        QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
-
-        if (! path.isEmpty()) {
-            // Copy settings
-            QSettings iniset(configPath() + path, QSettings::IniFormat);
-            iniset.beginGroup(singlefiledb);
-            for (auto &k : iniset.allKeys()) {
-                auto val = iniset.value(k).toString().trimmed();
-                if (! val.isEmpty()) {
-                    settings.insert(k, iniset.value(k));
-                }
-            }
-        }
-        return settings;
-    }();
-
-    return (databaseId == databaseIdForInternalUse()) ? internalSettings : _sqlSettings[databaseId];
+    static QVariantMap invalidSettings;
+    return (databaseId >= 0 && databaseId < _sqlSettings.count()) ? _sqlSettings[databaseId] : invalidSettings;
 }
 
 /*!
@@ -293,30 +282,14 @@ const QVariantMap &TWebApplication::sqlDatabaseSettings(int databaseId) const
 */
 int TWebApplication::sqlDatabaseSettingsCount() const
 {
-    static int count = [&]() {
-        int num = _sqlSettings.count();
-        return (num > 0) ? num + 1 : num; // added 1 for internal use of cache DB
-    }();
-    return count;
-}
-
-/*!
-  Returns true if SQL database is available; otherwise returns false.
-*/
-bool TWebApplication::isSqlDatabaseAvailable() const
-{
-    return sqlDatabaseSettingsCount() > 0;
+    return _sqlSettings.count();
 }
 
 /*!
  */
-int TWebApplication::databaseIdForInternalUse() const
+int TWebApplication::databaseIdForCache() const
 {
-    static int id = [&]() {
-        int cnt = sqlDatabaseSettingsCount();
-        return (cnt > 0) ? cnt - 1 : 0;
-    }();
-    return id;
+    return _cacheSqlDbIndex;
 }
 
 /*!
@@ -568,9 +541,16 @@ QVariant TWebApplication::getConfigValue(const QString &configName, const QStrin
 }
 
 
+bool TWebApplication::cacheEnabled() const
+{
+    static bool enable = !Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed().isEmpty();
+    return enable;
+}
+
+
 QString TWebApplication::cacheBackend() const
 {
-    static QString backend = Tf::appSettings()->value(Tf::CacheBackend, "singlefiledb").toString().toLower();
+    static QString backend = Tf::appSettings()->value(Tf::CacheBackend).toString().toLower();
     return backend;
 }
 

@@ -76,7 +76,7 @@ static QString driverType(int databaseId)
 
 void TSqlDatabasePool::init()
 {
-    if (!Tf::app()->isSqlDatabaseAvailable()) {
+    if (Tf::app()->sqlDatabaseSettingsCount() == 0) {
         tSystemWarn("SQL database not available");
         return;
     }
@@ -119,10 +119,6 @@ void TSqlDatabasePool::init()
 QSqlDatabase TSqlDatabasePool::database(int databaseId)
 {
     TSqlDatabase tdb;
-
-    if (Q_UNLIKELY(!Tf::app()->isSqlDatabaseAvailable())) {
-        return tdb.sqlDatabase();
-    }
 
     if (Q_LIKELY(databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount())) {
         auto &cache = cachedDatabase[databaseId];

@@ -11,7 +11,7 @@ class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore
 public:
     virtual ~TCacheSQLiteStore();
 
-    QString key() const override { return QLatin1String("singlefiledb"); }
+    QString key() const override { return QLatin1String("sqlite"); }
     DbType dbType() const override { return SQL; }
     bool open() override;
     void close() override;
