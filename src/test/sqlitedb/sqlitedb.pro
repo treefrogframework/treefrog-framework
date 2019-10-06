@@ -1,3 +1,3 @@
 include(../test.pri)
-TARGET = singlefiledb
+TARGET = sqlitedb
 SOURCES = main.cpp
