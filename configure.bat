@@ -95,12 +95,14 @@ if /i "%Platform%" == "x64" (
 
 echo %QT_INSTALL_PREFIX% | find "msvc2015" >NUL
 if not ERRORLEVEL 1 (
+  set VSVER=2015
   if /i "%Platform%" == "x64" (
     set CMAKEOPT=Visual Studio 14 2015 Win64
   ) else (
     set CMAKEOPT=Visual Studio 14 2015
   )
 ) else (
+  set VSVER=2017
    if /i "%Platform%" == "x64" (
     set CMAKEOPT=Visual Studio 15 2017 Win64
   ) else (
@@ -124,12 +126,26 @@ echo set QTENV="%QTENV%">> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo if exist %%QTENV%% ( call %%QTENV%% )>> %TFENV%
 if not "%VCVARSOPT%" == "" (
-  echo if not "%%VS140COMNTOOLS%%" == "" ^(>> %TFENV%
-  echo   set VCVARSBAT="%%VS140COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
-  echo ^) else if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
-  echo   set VCVARSBAT="%%VS120COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
-  echo ^) else ^(>> %TFENV%
-  echo   set VCVARSBAT="">> %TFENV%
+  echo set VSVER=%VSVER%>> %TFENV%
+  echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
+  echo if exist %%VSWHERE%% ^(>> %TFENV%
+  echo   for /f "usebackq tokens=*" %%%%i in ^(`%%VSWHERE%% -find  **\vcvarsall.bat`^) do ^(>> %TFENV%
+  echo     echo %%%%i ^| find "%%VSVER%%" ^>NUL>> %TFENV%
+  echo     if not ERRORLEVEL 1 ^(>> %TFENV%
+  echo       set VCVARSBAT="%%%%i">> %TFENV%
+  echo       goto :break>> %TFENV%
+  echo     ^)>> %TFENV%
+  echo   ^)>> %TFENV%
+  echo ^)>> %TFENV%
+  echo :break>> %TFENV%
+  echo if not exist %%VCVARSBAT%% ^(>> %TFENV%
+  echo   if not "%%VS140COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo     set VCVARSBAT="%%VS140COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
+  echo   ^) else if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
+  echo     set VCVARSBAT="%%VS120COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
+  echo   ^) else ^(>> %TFENV%
+  echo     set VCVARSBAT="">> %TFENV%
+  echo   ^)>> %TFENV%
   echo ^)>> %TFENV%
   echo if exist %%VCVARSBAT%% ^(>> %TFENV%
   echo   echo Setting up environment for MSVC usage...>> %TFENV%
