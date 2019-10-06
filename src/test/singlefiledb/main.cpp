@@ -51,7 +51,7 @@ void TestCache::cleanupTestCase()
 
 void TestCache::test()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
     QByteArray buf;
     cache->clear();
@@ -89,7 +89,7 @@ void TestCache::test()
     Tf::msleep(5000);
     QVERIFY(cache->get("foo1") == QByteArray());
     cache->clear();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 void TestCache::insert_data()
@@ -108,7 +108,7 @@ void TestCache::insert()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, val);
 
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
 
     cache->set(key, val, 1);
@@ -116,13 +116,13 @@ void TestCache::insert()
     QCOMPARE(res, val);
     qDebug() << "length of value: " << val.size();
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 
 void TestCache::bench_insert_binary()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
     cache->clear();
 
@@ -137,13 +137,13 @@ void TestCache::bench_insert_binary()
         }
     }
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 
 void TestCache::bench_value_binary()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
 
     QBENCHMARK {
@@ -154,12 +154,12 @@ void TestCache::bench_value_binary()
         }
     }
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 void TestCache::bench_insert_binary_lz4()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
     cache->clear();
 
@@ -176,13 +176,13 @@ void TestCache::bench_insert_binary_lz4()
         }
     }
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 
 void TestCache::bench_value_binary_lz4()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
 
     QBENCHMARK {
@@ -193,13 +193,13 @@ void TestCache::bench_value_binary_lz4()
         }
     }
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 
 void TestCache::bench_insert_text()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
     cache->clear();
 
@@ -214,13 +214,13 @@ void TestCache::bench_insert_text()
         }
     }
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 
 void TestCache::bench_value_text()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
 
     QBENCHMARK {
@@ -232,12 +232,12 @@ void TestCache::bench_value_text()
     }
 
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 void TestCache::bench_insert_text_lz4()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
     cache->clear();
 
@@ -254,13 +254,13 @@ void TestCache::bench_insert_text_lz4()
         }
     }
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 
 void TestCache::bench_value_text_lz4()
 {
-    TCacheStore *cache = TCacheFactory::create("singlefiledb");
+    TCacheStore *cache = TCacheFactory::create("sqlite");
     cache->open();
 
     QBENCHMARK {
@@ -272,7 +272,7 @@ void TestCache::bench_value_text_lz4()
     }
 
     cache->close();
-    TCacheFactory::destroy("singlefiledb", cache);
+    TCacheFactory::destroy("sqlite", cache);
 }
 
 TF_TEST_MAIN(TestCache)
