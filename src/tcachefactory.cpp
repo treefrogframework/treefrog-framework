@@ -6,8 +6,8 @@
 #include <TAppSettings>
 #include <QDir>
 
-static QString SINGLEFILEDB_CACHE_KEY;
-static QString MONGODB_CACHE_KEY;
+static QString SQLITE_CACHE_KEY;
+static QString MONGO_CACHE_KEY;
 static QString REDIS_CACHE_KEY;
 
 
@@ -16,8 +16,8 @@ QStringList TCacheFactory::keys()
     loadCacheKeys();
 
     QStringList ret;
-    ret << SINGLEFILEDB_CACHE_KEY
-        << MONGODB_CACHE_KEY
+    ret << SQLITE_CACHE_KEY
+        << MONGO_CACHE_KEY
         << REDIS_CACHE_KEY;
     return ret;
 }
@@ -29,9 +29,9 @@ TCacheStore *TCacheFactory::create(const QString &key)
     loadCacheKeys();
 
     QString k = key.toLower();
-    if (k == SINGLEFILEDB_CACHE_KEY) {
+    if (k == SQLITE_CACHE_KEY) {
         ptr = new TCacheSQLiteStore;
-    } else if (k == MONGODB_CACHE_KEY) {
+    } else if (k == MONGO_CACHE_KEY) {
         ptr = new TCacheMongoStore;
     } else if (k == REDIS_CACHE_KEY) {
         ptr = new TCacheRedisStore;
@@ -48,9 +48,9 @@ void TCacheFactory::destroy(const QString &key, TCacheStore *store)
     loadCacheKeys();
 
     QString k = key.toLower();
-    if (k == SINGLEFILEDB_CACHE_KEY) {
+    if (k == SQLITE_CACHE_KEY) {
         delete store;
-    } else if (k == MONGODB_CACHE_KEY) {
+    } else if (k == MONGO_CACHE_KEY) {
         delete store;
     } else if (k == REDIS_CACHE_KEY) {
         delete store;
@@ -66,9 +66,9 @@ QMap<QString, QVariant> TCacheFactory::defaultSettings(const QString &key)
     loadCacheKeys();
 
     QString k = key.toLower();
-    if (k == SINGLEFILEDB_CACHE_KEY) {
+    if (k == SQLITE_CACHE_KEY) {
         settings = TCacheSQLiteStore().defaultSettings();
-    } else if (k == MONGODB_CACHE_KEY) {
+    } else if (k == MONGO_CACHE_KEY) {
         settings = TCacheMongoStore().defaultSettings();
     } else if (k == REDIS_CACHE_KEY) {
         settings = TCacheRedisStore().defaultSettings();
@@ -96,8 +96,8 @@ TCacheStore::DbType TCacheFactory::dbType(const QString &key)
 bool TCacheFactory::loadCacheKeys()
 {
     static bool done = []() {
-        SINGLEFILEDB_CACHE_KEY = TCacheSQLiteStore().key().toLower();
-        MONGODB_CACHE_KEY = TCacheMongoStore().key().toLower();
+        SQLITE_CACHE_KEY = TCacheSQLiteStore().key().toLower();
+        MONGO_CACHE_KEY = TCacheMongoStore().key().toLower();
         REDIS_CACHE_KEY = TCacheRedisStore().key().toLower();
         return true;
     }();

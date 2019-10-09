@@ -31,7 +31,7 @@ public:
     int removeOlder(int itemCount);
     int removeOlderThan(qint64 timestamp);
     int removeAll();
-    //bool vacuum();  // called outside of a transaction
+    //bool vacuum();  // call outside of a transaction
     qint64 dbSize();
 
     static bool createTable(const QString &table);

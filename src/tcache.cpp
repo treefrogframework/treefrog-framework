@@ -15,15 +15,19 @@
 TCache::TCache()
 {
     static int CacheGcProbability = TAppSettings::instance()->value(Tf::CacheGcProbability, 0).toInt();
-    _cache = TCacheFactory::create(Tf::app()->cacheBackend());
     _gcDivisor = CacheGcProbability;
+    if (Tf::app()->cacheEnabled()) {
+        _cache = TCacheFactory::create(Tf::app()->cacheBackend());
+    }
 }
 
 
 TCache::~TCache()
 {
     close();
-    TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
+    if (_cache) {
+        TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
+    }
 }
 
 
