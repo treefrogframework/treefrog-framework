@@ -8,17 +8,25 @@ set DBFILE=%APPDIR%\db\dbfile
 set PORT=8800
 set MAKE=nmake VERBOSE=1
 
-for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
-for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
-for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
-if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
-
 cd /D %BASEDIR%
 call :Which tfenv.bat
 if not "%TFENV%" == "" (
   call "%TFENV%"
 ) else (
   call "..\..\..\tfenv.bat"
+)
+
+for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
+for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
+for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
+if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
+
+if "%QMAKE%" == "" (
+  echo;
+  echo qmake.exe command not found.
+  call :CleanUp
+  pause
+  exit /B 1
 )
 
 cd /D %BASEDIR%
