@@ -72,13 +72,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
  - ESMTPをサポートしていない古いタイプのSMTPサーバへの送信をサポート
  - tspawn.proファイルの不具合修正
 
-### 2018/3/25  TreeFrog Framework バージョン1.21.0 （安定版）リリース
-
- - Mongoc共有ライブラリとのリンクオプションを追加
- - WindowsでHTTPヘッダの改行不具合の修正
- - アプリ更新時におけるリローディングの不具合修正
- - アクションが存在しないときに404コードを返すよう修正
-
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
