@@ -12,3 +12,9 @@ url:          https://treefrogframework.github.io
 # Server
 port: 		  4000
 encoding: 	  utf-8
+
+# Bug?
+# https://github.com/jekyll/jekyll/issues/7858#event-2707074897
+kramdown:
+  syntax_highlighter_opts:
+    default_lang: plaintext
