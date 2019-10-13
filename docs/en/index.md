@@ -77,15 +77,6 @@ Jun. 10, 2018
   - Support SMTP connections to older servers not supporting ESMTP.
   - Fix bugs of tspawn.pro file.
 
-Mar. 25, 2018
-
-### TreeFrog Framework version 1.21.0 (stable) release
-
-  - Added the option of linking the shared mongoc library.
-  - Fix a bug of line endings of HTTP headers on Windows.
-  - Fix a bug of reloading app libraries.
-  - Fix to return 404 when the action is not found.
-
 
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
