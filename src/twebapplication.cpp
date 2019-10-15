@@ -346,12 +346,12 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             _mpm = Thread;
-        } else if (str == "hybrid") {
+        } else if (str == "epoll" || str == "hybrid") {
 #ifdef Q_OS_LINUX
-            _mpm = Hybrid;
+            _mpm = Epoll;
 #else
-            tSystemWarn("Unsupported MPM: hybrid  (Linux only)");
-            tWarn("Unsupported MPM: hybrid  (Linux only)");
+            tSystemWarn("Unsupported MPM: epoll  (Linux only)");
+            tWarn("Unsupported MPM: epoll  (Linux only)");
             _mpm = Thread;
 #endif
         } else {
@@ -399,7 +399,7 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
             }
             break;
 
-        case TWebApplication::Hybrid:
+        case TWebApplication::Epoll:
             maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
             if (maxNum <= 0) {
                 maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();

@@ -155,11 +155,11 @@ TActionContext *Tf::currentContext()
             return context;
         break;
 
-    case TWebApplication::Hybrid:
+    case TWebApplication::Epoll:
 #ifdef Q_OS_LINUX
         return TActionWorker::instance();
 #else
-        tFatal("Unsupported MPM: hybrid");
+        tFatal("Unsupported MPM: epoll");
 #endif
         break;
 

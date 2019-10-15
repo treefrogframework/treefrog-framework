@@ -23,6 +23,7 @@ constexpr int BUFFER_RESERVE_SIZE = 127;
 
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header) :
+    QObject(),
     TEpollSocket(socketDescriptor, address),
     TAbstractWebSocket(header)
 {
@@ -230,7 +231,7 @@ void TEpollWebSocket::timerEvent(QTimerEvent *event)
     if (event->timerId() == keepAliveTimer->timerId()) {
         sendPing();
     } else {
-        TEpollSocket::timerEvent(event);
+        QObject::timerEvent(event);
     }
 }
 

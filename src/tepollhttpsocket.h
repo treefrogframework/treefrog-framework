@@ -10,7 +10,6 @@ class TActionWorker;
 
 class T_CORE_EXPORT TEpollHttpSocket : public TEpollSocket
 {
-    Q_OBJECT
 public:
     ~TEpollHttpSocket();
 

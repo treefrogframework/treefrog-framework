@@ -27,8 +27,8 @@ class T_CORE_EXPORT TWebApplication
 public:
     enum MultiProcessingModule {
         Invalid = 0,
-        Thread,
-        Hybrid,
+        Thread  = 1,
+        Epoll   = 2,
     };
 
     TWebApplication(int &argc, char **argv);

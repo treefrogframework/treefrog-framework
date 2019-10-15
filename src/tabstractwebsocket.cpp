@@ -383,11 +383,11 @@ TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(int sid)
         sock = TWebSocket::searchSocket(sid);
         break;
 
-    case TWebApplication::Hybrid: {
+    case TWebApplication::Epoll: {
 #ifdef Q_OS_LINUX
         sock = TEpollWebSocket::searchSocket(sid);
 #else
-        tFatal("Unsupported MPM: hybrid");
+        tFatal("Unsupported MPM: epoll");
 #endif
         break; }
 

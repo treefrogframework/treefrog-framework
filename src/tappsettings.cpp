@@ -54,8 +54,7 @@ public:
         insert(Tf::SessionCsrfProtectionKey, "Session.CsrfProtectionKey");
         insert(Tf::MPMThreadMaxAppServers, "MPM.thread.MaxAppServers");
         insert(Tf::MPMThreadMaxThreadsPerAppServer, "MPM.thread.MaxThreadsPerAppServer");
-        insert(Tf::MPMHybridMaxAppServers, "MPM.hybrid.MaxAppServers");
-        insert(Tf::MPMHybridMaxWorkersPerAppServer, "MPM.hybrid.MaxWorkersPerAppServer");
+        insert(Tf::MPMEpollMaxAppServers, "MPM.epoll.MaxAppServers");
         insert(Tf::SystemLogFilePath, "SystemLog.FilePath");
         insert(Tf::SystemLogLayout, "SystemLog.Layout");
         insert(Tf::SystemLogDateTimeFormat, "SystemLog.DateTimeFormat");

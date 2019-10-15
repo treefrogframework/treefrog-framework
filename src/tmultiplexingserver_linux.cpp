@@ -91,7 +91,7 @@ TMultiplexingServer::TMultiplexingServer(int listeningSocket, QObject *parent) :
     listenSocket(listeningSocket),
     reloadTimer()
 {
-    Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Hybrid);
+    Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Epoll);
 }
 
 

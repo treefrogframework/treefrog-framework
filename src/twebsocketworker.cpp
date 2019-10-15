@@ -273,14 +273,14 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                     }
                     break; }
 
-                case TWebApplication::Hybrid: {
+                case TWebApplication::Epoll: {
 #ifdef Q_OS_LINUX
                     auto *sock = TEpollHttpSocket::searchSocket(id);
                     if (sock) {
                         sock->sendData(lst[1].toByteArray());
                     }
 #else
-                    tFatal("Unsupported MPM: hybrid");
+                    tFatal("Unsupported MPM: epoll");
 #endif
                     break; }
 

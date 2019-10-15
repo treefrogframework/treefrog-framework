@@ -251,7 +251,7 @@ void TEpoll::dispatchSendData()
 void TEpoll::releaseAllPollingSockets()
 {
     for (auto it = pollingSockets.begin(); it != pollingSockets.end(); ++it) {
-        it.key()->deleteLater();
+        delete it.key();
     }
     pollingSockets.clear();
 }

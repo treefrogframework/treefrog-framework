@@ -179,7 +179,7 @@ void ServerManager::startServer(int id) const
     }
 
     TWebApplication::MultiProcessingModule mpm = Tf::app()->multiProcessingModule();
-    if (mpm == TWebApplication::Hybrid || mpm == TWebApplication::Thread) {
+    if (mpm == TWebApplication::Epoll || mpm == TWebApplication::Thread) {
         if (id < maxServers) {
             args.prepend(QString::number(id));
             args.prepend("-i");  // give ID for app server

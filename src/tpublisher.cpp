@@ -179,16 +179,16 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
         obj = dynamic_cast<TWebSocket*>(socket);
         break;
 
-    case TWebApplication::Hybrid:
+    case TWebApplication::Epoll:
 #ifdef Q_OS_LINUX
         obj = dynamic_cast<TEpollWebSocket*>(socket);
 #else
-        tFatal("Unsupported MPM: hybrid");
+        tFatal("Unsupported MPM: epoll");
 #endif
         break;
 
     default:
-        tFatal("Unsupported MPM: hybrid");
+        tFatal("Unsupported MPM: epoll");
         break;
     }
     return obj;

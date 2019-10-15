@@ -51,8 +51,6 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
 
     if (Q_LIKELY(socketDescriptor > 0)) {
         sock  = new TEpollHttpSocket(socketDescriptor, address);
-        sock->moveToThread(Tf::app()->thread());
-
         initBuffer(socketDescriptor);
     }
 

@@ -165,11 +165,7 @@ namespace Tf
         SessionCsrfProtectionKey,
         MPMThreadMaxAppServers,
         MPMThreadMaxThreadsPerAppServer,
-        MPMPreforkMaxAppServers,   // obsolete
-        MPMPreforkMinAppServers,   // obsolete
-        MPMPreforkSpareAppServers, // obsolete
-        MPMHybridMaxAppServers,
-        MPMHybridMaxWorkersPerAppServer,
+        MPMEpollMaxAppServers,
         SystemLogFilePath,
         SystemLogLayout,
         SystemLogDateTimeFormat,

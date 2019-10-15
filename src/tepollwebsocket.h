@@ -1,12 +1,13 @@
 #ifndef TEPOLLWEBSOCKET_H
 #define TEPOLLWEBSOCKET_H
 
-#include <QList>
-#include <QPair>
 #include <TGlobal>
 #include <THttpResponseHeader>
 #include "tepollsocket.h"
 #include "tabstractwebsocket.h"
+#include <QList>
+#include <QPair>
+#include <QObject>
 
 class QHostAddress;
 class TWebSocketWorker;
@@ -15,7 +16,7 @@ class TSession;
 class THttpRequestHeader;
 
 
-class T_CORE_EXPORT TEpollWebSocket : public TEpollSocket, public TAbstractWebSocket
+class T_CORE_EXPORT TEpollWebSocket : public QObject, public TEpollSocket, public TAbstractWebSocket
 {
     Q_OBJECT
 public:

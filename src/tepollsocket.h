@@ -17,9 +17,8 @@ class QThread;
 class QFileInfo;
 
 
-class T_CORE_EXPORT TEpollSocket : public QObject
+class T_CORE_EXPORT TEpollSocket
 {
-    Q_OBJECT
 public:
     TEpollSocket(int socketDescriptor, const QHostAddress &address);
     virtual ~TEpollSocket();

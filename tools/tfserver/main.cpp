@@ -172,14 +172,14 @@ int main(int argc, char *argv[])
         server = new TThreadApplicationServer(sock, &webapp);
         break;
 
-    case TWebApplication::Hybrid:
+    case TWebApplication::Epoll:
 #ifdef Q_OS_LINUX
         // Sets a listening socket descriptor
         TMultiplexingServer::instantiate(sock);
         tSystemDebug("Set socket descriptor: %d", sock);
         server = TMultiplexingServer::instance();
 #else
-        tFatal("Unsupported MPM: hybrid");
+        tFatal("Unsupported MPM: epoll");
 #endif
         break;
 
@@ -203,7 +203,7 @@ finish:
         delete server;
         break;
 
-    case TWebApplication::Hybrid:
+    case TWebApplication::Epoll:
         break;
 
     default:
