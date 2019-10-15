@@ -372,6 +372,12 @@ int TWebApplication::maxNumberOfAppServers() const
     static const int maxServers = ([]() -> int {
         QString mpmstr = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         int num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
+
+        // Temporary workaround
+        if (num <= 0 && mpmstr == "hybrid") {
+            num = Tf::appSettings()->readValue(QLatin1String("MPM.hybrid.MaxAppServers")).toInt();
+        }
+
         if (num <= 0) {
             num = qMax(std::thread::hardware_concurrency(), (uint)1);
             tSystemWarn("Sets max number of AP servers to %d", num);
@@ -400,10 +406,8 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
             break;
 
         case TWebApplication::Epoll:
-            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
-            if (maxNum <= 0) {
-                maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
-            }
+            // This parameter obsoluted but maxNum is needed..
+            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer", 16).toInt();
             break;
 
         default:
