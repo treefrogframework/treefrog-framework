@@ -18,7 +18,8 @@ env:
     - CI_WORK=$(pwd)
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
 
 install:
   - cd ${CI_WORK}
