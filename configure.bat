@@ -128,7 +128,7 @@ echo set VCVARSBAT="">> %TFENV%
 echo set VSVER=%VSVER%>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
-echo if exist %%QTENV%% ( call %%QTENV%% )>> %TFENV%
+echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
 echo if exist %%VSWHERE%% ^(>> %TFENV%
 echo   for /f "usebackq tokens=*" %%%%i in ^(`%%VSWHERE%% -find  **\vcvarsall.bat`^) do ^(>> %TFENV%
 echo     echo %%%%i ^| find "%%VSVER%%" ^>NUL>> %TFENV%
