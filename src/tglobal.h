@@ -232,6 +232,7 @@ namespace Tf
     T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max);
     T_CORE_EXPORT uint64_t random(uint64_t max);
 
+    T_CORE_EXPORT TCache *cache();
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
     T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);

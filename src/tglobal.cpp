@@ -144,6 +144,12 @@ uint64_t Tf::random(uint64_t max)
 }
 
 
+TCache *Tf::cache()
+{
+    return Tf::currentContext()->cache();
+}
+
+
 TActionContext *Tf::currentContext()
 {
     TActionContext *context = nullptr;

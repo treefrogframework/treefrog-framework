@@ -14,9 +14,9 @@
 #include <TAbstractUser>
 #include <TActionContext>
 #include <TFormValidator>
+#include <TCache>
 #include "tsessionmanager.h"
 #include "ttextview.h"
-#include "tcache.h"
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
@@ -63,9 +63,7 @@ TActionController::TActionController() :
   \brief デストラクタ
 */
 TActionController::~TActionController()
-{
-    delete _cache;
-}
+{ }
 
 /*!
   \~english
@@ -473,7 +471,7 @@ bool TActionController::renderXml(const QStringList &list)
 }
 
 
-bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
+bool TActionController::renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
@@ -483,7 +481,7 @@ bool TActionController::renderAndCache(const QByteArray &key, int seconds, const
     render(action, layout);
     if (rendered) {
         QByteArray responseMsg = response.body();
-        cache()->set(key, responseMsg, seconds);
+        Tf::cache()->set(key, responseMsg, seconds);
     }
     return rendered;
 }
@@ -496,7 +494,7 @@ bool TActionController::renderFromCache(const QByteArray &key)
         return false;
     }
 
-    auto responseMsg = cache()->get(key);
+    auto responseMsg = Tf::cache()->get(key);
     if (responseMsg.isEmpty()) {
         return false;
     }
@@ -504,6 +502,12 @@ bool TActionController::renderFromCache(const QByteArray &key)
     response.setBody(responseMsg);
     rendered = true;
     return rendered;
+}
+
+
+void TActionController::removeFromCache(const QByteArray &key)
+{
+    Tf::cache()->remove(key);
 }
 
 /*!
@@ -911,15 +915,6 @@ void TActionController::closeWebSokcet(int sid, int closeCode)
     taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
-
-TCache *TActionController::cache()
-{
-    if (! _cache) {
-        _cache = new TCache;
-        _cache->open();
-    }
-    return _cache;
-}
 
 /*!
   \fn const TSession &TActionController::session() const;

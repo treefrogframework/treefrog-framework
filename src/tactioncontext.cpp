@@ -14,6 +14,7 @@
 #include <TDispatcher>
 #include <TActionController>
 #include <TSessionStore>
+#include <TCache>
 #include "tsystemglobal.h"
 #include "thttpsocket.h"
 #include "tsessionmanager.h"
@@ -39,6 +40,7 @@ TActionContext::~TActionContext()
 {
     release();
     accessLogger.close();
+    delete cachep;
 }
 
 
@@ -440,4 +442,13 @@ TTemporaryFile &TActionContext::createTemporaryFile()
 QHostAddress TActionContext::clientAddress() const
 {
     return httpReq->clientAddress();
+}
+
+
+TCache *TActionContext::cache()
+{
+    if (! cachep) {
+        cachep = new TCache;
+    }
+    return cachep;
 }

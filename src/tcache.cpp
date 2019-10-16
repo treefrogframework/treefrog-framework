@@ -5,43 +5,38 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "tcache.h"
-#include "tcachefactory.h"
-#include "tcachestore.h"
+#include <TCache>
 #include <TWebApplication>
 #include <TAppSettings>
+#include "tcachefactory.h"
+#include "tcachestore.h"
 
 
 TCache::TCache()
 {
     static int CacheGcProbability = TAppSettings::instance()->value(Tf::CacheGcProbability, 0).toInt();
     _gcDivisor = CacheGcProbability;
+
     if (Tf::app()->cacheEnabled()) {
         _cache = TCacheFactory::create(Tf::app()->cacheBackend());
+        if (_cache) {
+            if (! _cache->open()) {
+                tError() << "Failed to open cache. Check the settings of cache.ini.";
+                TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
+                _cache = nullptr;
+            }
+        }
+    } else {
+        tWarn() << "Cache not available. Check the settings of application.ini.";
     }
 }
 
 
 TCache::~TCache()
 {
-    close();
-    if (_cache) {
-        TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
-    }
-}
-
-
-bool TCache::open()
-{
-    bool ret = (_cache) ? _cache->open() : false;
-    return ret;
-}
-
-
-void TCache::close()
-{
     if (_cache) {
         _cache->close();
+        TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
     }
 }
 

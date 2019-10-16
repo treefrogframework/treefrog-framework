@@ -31,6 +31,7 @@ public:
     const TActionController *currentController() const { return currController; }
     THttpRequest &httpRequest() { return *httpReq; }
     const THttpRequest &httpRequest() const { return *httpReq; }
+    TCache *cache();
 
 protected:
     void execute(THttpRequest &request, int sid);
@@ -53,6 +54,7 @@ private:
     TActionController *currController {nullptr};
     QList<TTemporaryFile *> tempFiles;
     THttpRequest *httpReq {nullptr};
+    TCache *cachep {nullptr};
 
     T_DISABLE_COPY(TActionContext)
     T_DISABLE_MOVE(TActionContext)

@@ -12,8 +12,6 @@ public:
     TCache();
     ~TCache();
 
-    bool open();
-    void close();
     bool set(const QByteArray &key, const QByteArray &value, int seconds);
     QByteArray get(const QByteArray &key);
     void remove(const QByteArray &key);

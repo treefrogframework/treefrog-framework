@@ -79,8 +79,9 @@ protected:
     bool renderJson(const QVariantMap &map);
     bool renderJson(const QVariantList &list);
     bool renderJson(const QStringList &list);
-    bool renderAndCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
+    bool renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
     bool renderFromCache(const QByteArray &key);
+    void removeFromCache(const QByteArray &key);
 #if QT_VERSION >= 0x050c00  // 5.12.0
     bool renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
@@ -124,7 +125,6 @@ private:
     void exportAllFlashVariants();
     const TActionController *controller() const { return this; }
     bool rollbackRequested() const { return rollback; }
-    TCache *cache();
     static QString layoutClassName(const QString &layout);
     static QString partialViewClassName(const QString &partial);
 
@@ -143,7 +143,6 @@ private:
     QStringList autoRemoveFiles;
     QList<QPair<int, QVariant>> taskList;
     int sockId {0};
-    TCache *_cache {nullptr};
 
     friend class TActionContext;
     friend class TSessionCookieStore;
