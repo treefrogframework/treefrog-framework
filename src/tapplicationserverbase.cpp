@@ -64,7 +64,7 @@ bool TApplicationServerBase::loadLibraries()
             } else {
                 tSystemWarn("%s", qPrintable(lib->errorString()));
                 ret = false;
-                TApplicationServerBase::unloadLibraries();
+                unloadLibraries();
                 break;
             }
         }
@@ -73,7 +73,7 @@ bool TApplicationServerBase::loadLibraries()
         tSystemDebug("Available controllers: %s", qPrintable(controllers.join(" ")));
 
         if (ret) {
-            loadedTimestamp = TApplicationServerBase::latestLibraryTimestamp();
+            loadedTimestamp = latestLibraryTimestamp();
         }
     }
     QDir::setCurrent(Tf::app()->webRootPath());
@@ -119,7 +119,7 @@ QDateTime TApplicationServerBase::latestLibraryTimestamp()
 
 bool TApplicationServerBase::newerLibraryExists()
 {
-    return (TApplicationServerBase::latestLibraryTimestamp() > loadedTimestamp);
+    return (latestLibraryTimestamp() > loadedTimestamp);
 }
 
 

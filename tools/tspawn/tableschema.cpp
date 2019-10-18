@@ -10,7 +10,9 @@
 #include "tableschema.h"
 #include "global.h"
 
-QSettings *dbSettings = 0;
+namespace {
+    QSettings *dbSettings = nullptr;
+}
 
 
 TableSchema::TableSchema(const QString &table, const QString &env)
@@ -260,6 +262,6 @@ QStringList TableSchema::tables(const QString &env)
     }
 
     QStringList ret = set.toList();
-    qSort(ret);
+    std::sort(ret.begin(), ret.end());
     return ret;
 }

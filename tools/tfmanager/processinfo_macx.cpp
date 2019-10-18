@@ -57,7 +57,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
 
     if (sysctl(mib, 3, NULL, &bufSize, NULL, 0) == 0) {
         kp = (struct kinfo_proc *) new char[bufSize];
-        if (sysctl(mib, 3, kp, &bufSize, NULL, 0) == 0) {    
+        if (sysctl(mib, 3, kp, &bufSize, NULL, 0) == 0) {
             for (size_t i = 0; i < (bufSize / sizeof(struct kinfo_proc)); ++i) {
                 qint64 pid = kp[i].kp_proc.p_pid;
                 if (pid > 0)
@@ -67,7 +67,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
         delete[] kp;
     }
 
-    qSort(ret.begin(), ret.end());  // Sorts the items
+    std::sort(ret.begin(), ret.end());  // Sorts the items
     return ret;
 }
 

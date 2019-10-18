@@ -85,6 +85,6 @@ QStringList MongoCommand::getCollectionNames() const
         }
     }
 
-    qSort(ret);
+    std::sort(ret.begin(), ret.end());
     return ret;
 }
