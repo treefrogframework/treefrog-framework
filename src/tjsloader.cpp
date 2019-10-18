@@ -24,10 +24,11 @@
   \brief The TJSLoader class loads a JavaScript module at run-time.
 */
 
-
-static QMap<QString, TJSModule*> jsContexts;
-static QStringList defaultPaths;
-static QMutex gMutex(QMutex::Recursive);
+namespace {
+    QMap<QString, TJSModule*> jsContexts;
+    QStringList defaultPaths;
+    QMutex gMutex(QMutex::Recursive);
+}
 
 
 class SuffixMap : public QMap<int, QString>

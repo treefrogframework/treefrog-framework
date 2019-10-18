@@ -16,6 +16,9 @@
 #include <QDir>
 #include <QBuffer>
 #include <ctime>
+#ifdef Q_OS_UNIX
+# include "tfcore_unix.h"
+#endif
 
 constexpr uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
 constexpr qint64 WRITE_LENGTH = 1408;

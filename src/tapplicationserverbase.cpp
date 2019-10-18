@@ -18,6 +18,9 @@
 # include <winsock2.h>
 # include <ws2tcpip.h>
 #endif
+#ifdef Q_OS_UNIX
+# include <tfcore_unix.h>
+#endif
 
 /*!
   \class TApplicationServerBase
@@ -25,8 +28,10 @@
   an web application server.
 */
 
-static QList<QLibrary*> libsLoaded;
-static QDateTime loadedTimestamp;
+namespace {
+    QList<QLibrary*> libsLoaded;
+    QDateTime loadedTimestamp;
+}
 
 
 bool TApplicationServerBase::loadLibraries()

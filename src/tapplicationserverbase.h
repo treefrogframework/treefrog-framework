@@ -4,10 +4,6 @@
 #include <TGlobal>
 #include <QHostAddress>
 
-#ifdef Q_OS_UNIX
-# include <tfcore_unix.h>
-#endif
-
 
 class T_CORE_EXPORT TApplicationServerBase
 {

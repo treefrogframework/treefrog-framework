@@ -12,30 +12,31 @@
 #include <windows.h>
 #include <winuser.h>
 
-const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
-static volatile int ctrlSignal = -1;
+namespace {
+    const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
+    volatile int ctrlSignal = -1;
 
 
-static BOOL WINAPI signalHandler(DWORD ctrlType)
-{
-    switch (ctrlType) {
-    case CTRL_C_EVENT:
-    case CTRL_BREAK_EVENT:
-    case CTRL_CLOSE_EVENT:
-    case CTRL_LOGOFF_EVENT:
-    case CTRL_SHUTDOWN_EVENT:
-        ctrlSignal = ctrlType;
-        break;
-    default:
-        return FALSE;
+    BOOL WINAPI signalHandler(DWORD ctrlType)
+    {
+        switch (ctrlType) {
+        case CTRL_C_EVENT:
+        case CTRL_BREAK_EVENT:
+        case CTRL_CLOSE_EVENT:
+        case CTRL_LOGOFF_EVENT:
+        case CTRL_SHUTDOWN_EVENT:
+            ctrlSignal = ctrlType;
+            break;
+        default:
+            return FALSE;
+        }
+
+        while (true)
+            Sleep(1);
+
+        return TRUE;
     }
-
-    while (true)
-        Sleep(1);
-
-    return TRUE;
 }
-
 
 
 int TWebApplication::signalNumber()

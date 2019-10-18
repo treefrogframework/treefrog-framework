@@ -26,7 +26,9 @@
     return ret;
 
 
-static inline int tf_close(int fd)
+namespace {
+
+inline int tf_close(int fd)
 {
 #ifdef Q_OS_WIN
     return ::_close(fd);
@@ -36,7 +38,7 @@ static inline int tf_close(int fd)
 }
 
 
-static inline int tf_read(int fd, void *buf, size_t count)
+inline int tf_read(int fd, void *buf, size_t count)
 {
 #ifdef Q_OS_WIN
     return ::_read(fd, buf, (uint)count);
@@ -46,7 +48,7 @@ static inline int tf_read(int fd, void *buf, size_t count)
 }
 
 
-static inline int tf_write(int fd, const void *buf, size_t count)
+inline int tf_write(int fd, const void *buf, size_t count)
 {
 #ifdef Q_OS_WIN
     return ::_write(fd, buf, (uint)count);
@@ -56,7 +58,7 @@ static inline int tf_write(int fd, const void *buf, size_t count)
 }
 
 
-static inline int tf_send(int sockfd, const void *buf, size_t len, int flags)
+inline int tf_send(int sockfd, const void *buf, size_t len, int flags)
 {
 #ifdef Q_OS_WIN
     Q_ASSERT(0);
@@ -71,7 +73,7 @@ static inline int tf_send(int sockfd, const void *buf, size_t len, int flags)
 }
 
 
-static inline int tf_recv(int sockfd, void *buf, size_t len, int flags)
+inline int tf_recv(int sockfd, void *buf, size_t len, int flags)
 {
 #ifdef Q_OS_WIN
     Q_ASSERT(0);
@@ -86,7 +88,7 @@ static inline int tf_recv(int sockfd, void *buf, size_t len, int flags)
 }
 
 
-static inline int tf_dup(int fd)
+inline int tf_dup(int fd)
 {
 #ifdef Q_OS_WIN
     return ::_dup(fd);
@@ -96,7 +98,7 @@ static inline int tf_dup(int fd)
 }
 
 
-static inline int tf_flock(int fd, int op)
+inline int tf_flock(int fd, int op)
 {
 #ifdef Q_OS_WIN
     Q_UNUSED(fd);
@@ -108,7 +110,7 @@ static inline int tf_flock(int fd, int op)
 }
 
 // advisory lock. exclusive:true=exclusive lock, false=shared lock
-static inline int tf_lockfile(int fd, bool exclusive, bool blocking)
+inline int tf_lockfile(int fd, bool exclusive, bool blocking)
 {
 #ifdef Q_OS_WIN
     auto handle = reinterpret_cast<HANDLE>(_get_osfhandle(fd));
@@ -130,7 +132,7 @@ static inline int tf_lockfile(int fd, bool exclusive, bool blocking)
 }
 
 
-static inline int tf_unlink(const char *pathname)
+inline int tf_unlink(const char *pathname)
 {
 #ifdef Q_OS_WIN
     return ::_unlink(pathname);
@@ -140,7 +142,7 @@ static inline int tf_unlink(const char *pathname)
 }
 
 
-static inline int tf_fileno(FILE *stream)
+inline int tf_fileno(FILE *stream)
 {
 #ifdef Q_OS_WIN
     return ::_fileno(stream);
@@ -148,6 +150,8 @@ static inline int tf_fileno(FILE *stream)
     return ::fileno(stream);
 #endif
 }
+
+} // namespace
 
 
 #ifdef Q_OS_UNIX

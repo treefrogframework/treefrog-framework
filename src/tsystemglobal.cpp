@@ -26,13 +26,23 @@ constexpr auto DEFAULT_SYSTEMLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
 constexpr auto DEFAULT_ACCESSLOG_LAYOUT          = "%h %d \"%r\" %s %O%n";
 constexpr auto DEFAULT_ACCESSLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
 
-static TAccessLogStream *accesslogstrm = nullptr;
-static TAccessLogStream *sqllogstrm = nullptr;
-static TFileAioWriter systemLog;
-static QByteArray syslogLayout = DEFAULT_SYSTEMLOG_LAYOUT;
-static QByteArray syslogDateTimeFormat = DEFAULT_SYSTEMLOG_DATETIME_FORMAT;
-static QByteArray accessLogLayout = DEFAULT_ACCESSLOG_LAYOUT;
-static QByteArray accessLogDateTimeFormat;
+namespace {
+    TAccessLogStream *accesslogstrm = nullptr;
+    TAccessLogStream *sqllogstrm = nullptr;
+    TFileAioWriter systemLog;
+    QByteArray syslogLayout = DEFAULT_SYSTEMLOG_LAYOUT;
+    QByteArray syslogDateTimeFormat = DEFAULT_SYSTEMLOG_DATETIME_FORMAT;
+    QByteArray accessLogLayout = DEFAULT_ACCESSLOG_LAYOUT;
+    QByteArray accessLogDateTimeFormat;
+
+
+    void tSystemMessage(int priority, const char *msg, va_list ap)
+    {
+        TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
+        QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
+        systemLog.write(buf.data(), buf.length());
+    }
+}
 
 
 void Tf::writeAccessLog(const TAccessLog &log)
@@ -100,14 +110,6 @@ void Tf::releaseQueryLogger()
 {
     delete sqllogstrm;
     sqllogstrm = nullptr;
-}
-
-
-static void tSystemMessage(int priority, const char *msg, va_list ap)
-{
-    TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
-    QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
-    systemLog.write(buf.data(), buf.length());
 }
 
 

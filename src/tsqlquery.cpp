@@ -13,8 +13,10 @@
 #include <QMutex>
 #include <QMutexLocker>
 
-static QMap<QString, QString> queryCache;
-static QMutex cacheMutex;
+namespace {
+    QMap<QString, QString> queryCache;
+    QMutex cacheMutex;
+}
 
 /*!
   \class TSqlQuery

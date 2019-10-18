@@ -6,9 +6,11 @@
 #include <TAppSettings>
 #include <QDir>
 
-static QString SQLITE_CACHE_KEY;
-static QString MONGO_CACHE_KEY;
-static QString REDIS_CACHE_KEY;
+namespace {
+    QString SQLITE_CACHE_KEY;
+    QString MONGO_CACHE_KEY;
+    QString REDIS_CACHE_KEY;
+}
 
 
 QStringList TCacheFactory::keys()

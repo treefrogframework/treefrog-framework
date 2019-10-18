@@ -25,8 +25,10 @@
   \brief The TDebug class provides a file output stream for debugging information.
 */
 
-static TAbstractLogStream *stream = nullptr;
-static QList<TLogger *> loggers;
+namespace {
+    TAbstractLogStream *stream = nullptr;
+    QList<TLogger *> loggers;
+}
 
 /*!
   Sets up all the loggers set in the logger.ini.

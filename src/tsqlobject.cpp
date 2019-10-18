@@ -14,10 +14,10 @@
 #include <QCoreApplication>
 #include <QMetaObject>
 
-static const QByteArray LockRevision("lock_revision");
-static const QByteArray CreatedAt("created_at");
-static const QByteArray UpdatedAt("updated_at");
-static const QByteArray ModifiedAt("modified_at");
+const QByteArray LockRevision("lock_revision");
+const QByteArray CreatedAt("created_at");
+const QByteArray UpdatedAt("updated_at");
+const QByteArray ModifiedAt("modified_at");
 
 /*!
   \class TSqlObject

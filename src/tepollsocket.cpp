@@ -20,11 +20,13 @@
 
 class SendData;
 
-static int sendBufSize = 0;
-static int recvBufSize = 0;
-static std::atomic<int> socketCounter {0};
-static TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
-static std::atomic<ushort> point {0};
+namespace {
+    int sendBufSize = 0;
+    int recvBufSize = 0;
+    std::atomic<int> socketCounter {0};
+    TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
+    std::atomic<ushort> point {0};
+}
 
 
 TEpollSocket *TEpollSocket::accept(int listeningSocket)

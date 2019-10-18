@@ -27,7 +27,7 @@ TLog::TLog(int pri, const QByteArray &msg) :
     priority(pri),
     pid(QCoreApplication::applicationPid()),
 #ifdef Q_OS_UNIX
-    threadId(gettid()),
+    threadId(tf_gettid()),
 #else
     threadId((qulonglong)QThread::currentThreadId()),
 #endif

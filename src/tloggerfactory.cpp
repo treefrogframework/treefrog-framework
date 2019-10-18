@@ -18,69 +18,70 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-static void cleanup();
-static QString FILE_LOGGER_KEY;
+namespace {
+    void cleanup();
+    QString FILE_LOGGER_KEY;
 
 
-static void loadKeys()
-{
-    static bool done = []() {
-        // Constants
-        FILE_LOGGER_KEY = TFileLogger().key().toLower();
-        return true;
-    }();
-    Q_UNUSED(done);
+    void loadKeys()
+    {
+        static bool done = []() {
+            // Constants
+            FILE_LOGGER_KEY = TFileLogger().key().toLower();
+            return true;
+        }();
+        Q_UNUSED(done);
+    }
+
+
+    QMap<QString, TLoggerInterface*> *loggerIfMap()
+    {
+        static QMap<QString, TLoggerInterface*> *lggIfMap = []() {
+            auto lggIfMap = new QMap<QString, TLoggerInterface*>();
+            qAddPostRoutine(cleanup);
+
+            QDir dir(Tf::app()->pluginPath());
+            const QStringList lst = dir.entryList(QDir::Files);
+            for (auto &plg : lst) {
+                QPluginLoader loader(dir.absoluteFilePath(plg));
+                tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
+                if (!loader.load()) {
+                    tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
+                    continue;
+                }
+
+                TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
+                if ( iface ) {
+                    const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
+                    for (auto &k : array) {
+                        QString key = k.toString().toLower();
+                        tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
+                        lggIfMap->insert(key, iface);
+                    }
+                }
+            }
+            return lggIfMap;
+        }();
+        return lggIfMap;
+    }
+
+
+    void cleanup()
+    {
+        auto lggIfMap = loggerIfMap();
+        if (lggIfMap) {
+            for (auto it = lggIfMap->begin(); it != lggIfMap->end(); ++it) {
+                delete it.value();
+            }
+            delete lggIfMap;
+        }
+    }
 }
-
 
 /*!
   \class TLoggerFactory
   \brief The TLoggerFactory class creates TLogger objects.
 */
-
-
-static QMap<QString, TLoggerInterface*> *loggerIfMap()
-{
-    static QMap<QString, TLoggerInterface*> *lggIfMap = []() {
-        auto lggIfMap = new QMap<QString, TLoggerInterface*>();
-        qAddPostRoutine(::cleanup);
-
-        QDir dir(Tf::app()->pluginPath());
-        const QStringList lst = dir.entryList(QDir::Files);
-        for (auto &plg : lst) {
-            QPluginLoader loader(dir.absoluteFilePath(plg));
-            tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
-            if (!loader.load()) {
-                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
-                continue;
-            }
-
-            TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
-            if ( iface ) {
-                const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
-                for (auto &k : array) {
-                    QString key = k.toString().toLower();
-                    tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
-                    lggIfMap->insert(key, iface);
-                }
-            }
-        }
-        return lggIfMap;
-    }();
-    return lggIfMap;
-}
-
-
-static void cleanup()
-{
-    auto lggIfMap = loggerIfMap();
-    if (lggIfMap) {
-        for (auto it = lggIfMap->begin(); it != lggIfMap->end(); ++it) {
-            delete it.value();
-        }
-        delete lggIfMap;
-    }
-}
 
 /*!
   Returns the list of valid keys, i.e.\ the available loggers.

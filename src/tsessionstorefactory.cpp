@@ -23,27 +23,28 @@
 #include <QJsonObject>
 #include <QRegularExpression>
 
-static QString COOKIE_SESSION_KEY;
-static QString SQLOBJECT_SESSION_KEY;
-static QString FILE_SESSION_KEY;
-static QString REDIS_SESSION_KEY;
-static QString MONGODB_SESSION_KEY;
+namespace {
+    QString COOKIE_SESSION_KEY;
+    QString SQLOBJECT_SESSION_KEY;
+    QString FILE_SESSION_KEY;
+    QString REDIS_SESSION_KEY;
+    QString MONGODB_SESSION_KEY;
 
 
-static void loadKeys()
-{
-    static bool done = []() {
-        // Constants
-        COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
-        SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
-        FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
-        REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
-        MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
-        return true;
-    }();
-    Q_UNUSED(done);
+    void loadKeys()
+    {
+        static bool done = []() {
+            // Constants
+            COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
+            SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
+            FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
+            REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
+            MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
+            return true;
+        }();
+        Q_UNUSED(done);
+    }
 }
-
 
 /*!
   \class TSessionStoreFactory

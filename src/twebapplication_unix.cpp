@@ -10,12 +10,13 @@
 #include <csignal>
 #include <cerrno>
 
-static volatile sig_atomic_t unixSignal = -1;
+namespace {
+    volatile sig_atomic_t unixSignal = -1;
 
-
-static void signalHandler(int signum)
-{
-    unixSignal = signum;
+    void signalHandler(int signum)
+    {
+        unixSignal = signum;
+    }
 }
 
 

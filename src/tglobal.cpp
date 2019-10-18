@@ -64,11 +64,13 @@ void Tf::msleep(unsigned long msecs)
 /*
   Xorshift random number generator implement
 */
-static QMutex randMutex;
-static quint32 x = 123456789;
-static quint32 y = 362436069;
-static quint32 z = 987654321;
-static quint32 w = 1;
+namespace {
+    QMutex randMutex;
+    quint32 x = 123456789;
+    quint32 y = 362436069;
+    quint32 z = 987654321;
+    quint32 w = 1;
+}
 
 /*!
   Sets the argument \a seed to be used to generate a new random number sequence
@@ -100,11 +102,13 @@ quint32 Tf::randXor128()
     return w;
 }
 
-static std::random_device randev;
-static std::mt19937     mt(randev());
-static QMutex           mtmtx;
-static std::mt19937_64  mt64(randev());
-static QMutex           mt64mtx;
+namespace {
+    std::random_device randev;
+    std::mt19937     mt(randev());
+    QMutex           mtmtx;
+    std::mt19937_64  mt64(randev());
+    QMutex           mt64mtx;
+}
 
 uint32_t Tf::rand32_r()
 {

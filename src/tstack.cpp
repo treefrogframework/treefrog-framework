@@ -1,7 +1,10 @@
 #include "tstack.h"
 #include <QThreadStorage>
 
-static QThreadStorage<THazardPtr> hzptrTls;
+
+namespace {
+    QThreadStorage<THazardPtr> hzptrTls;
+}
 
 
 THazardPtr &Tf::hazardPtrForStack()

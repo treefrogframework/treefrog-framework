@@ -21,13 +21,13 @@
 constexpr auto DEFAULT_INTERNET_MEDIA_TYPE  = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
 
-
-static QTextCodec *searchCodec(const char *name)
-{
-    QTextCodec *c = QTextCodec::codecForName(name);
-    return (c) ? c : QTextCodec::codecForLocale();
+namespace {
+    QTextCodec *searchCodec(const char *name)
+    {
+        QTextCodec *c = QTextCodec::codecForName(name);
+        return (c) ? c : QTextCodec::codecForLocale();
+    }
 }
-
 
 /*!
   \class TWebApplication

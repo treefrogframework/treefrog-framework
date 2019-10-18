@@ -25,13 +25,16 @@
 
 constexpr int SEND_BUF_SIZE = 16 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
-static TMultiplexingServer *multiplexingServer = 0;
+
+namespace {
+    TMultiplexingServer *multiplexingServer = nullptr;
 
 
-static void cleanup()
-{
-    delete multiplexingServer;
-    multiplexingServer = nullptr;
+    void cleanup()
+    {
+        delete multiplexingServer;
+        multiplexingServer = nullptr;
+    }
 }
 
 

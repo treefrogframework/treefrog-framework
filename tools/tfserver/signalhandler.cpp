@@ -197,7 +197,7 @@ class MinimalFormatter {
 
 // Writes the given data with the size to the standard error.
 static void WriteToStderr(const void *data, int size) {
-  // Standard error output 
+  // Standard error output
   ssize_t dummy = write(STDERR_FILENO, data, size);
   if (dummy <= 0) {
     // ..
@@ -247,7 +247,7 @@ static int DumpSignalInfo(int signal_number, siginfo_t *siginfo, char *buf, size
   formatter.AppendString(" received by PID ");
   formatter.AppendUint64(getpid(), 10);
   formatter.AppendString(" (TID ");
-  formatter.AppendUint64(gettid(), 10);
+  formatter.AppendUint64(tf_gettid(), 10);
   formatter.AppendString(") ");
   // Only linux has the PID of the signal sender in si_pid.
 #if 0  // Unused in TreeFrog

@@ -21,8 +21,10 @@
 #include <QElapsedTimer>
 #include <atomic>
 
-static std::atomic<int> threadCounter(0);
-static int keepAliveTimeout = -1;
+namespace {
+    std::atomic<int> threadCounter(0);
+    int keepAliveTimeout = -1;
+}
 
 
 int TActionThread::threadCount()
