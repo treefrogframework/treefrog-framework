@@ -44,6 +44,7 @@ inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     TF_EINTR_LOOP(::poll(fds, nfds, timeout));
 }
 
+
 inline int tf_poll_recv(int socket, int timeout)
 {
     struct pollfd pfd = { socket, POLLIN, 0 };
@@ -69,9 +70,13 @@ inline int tf_poll_send(int socket, int timeout)
     return (pfd.revents & (POLLOUT | POLLERR)) ? 0 : 1;
 }
 
+} // namespace
+
 
 #ifdef Q_OS_LINUX
 #include <sys/epoll.h>
+
+namespace {
 
 inline int tf_epoll_wait(int epfd, struct epoll_event *events,
                          int maxevents, int timeout)
