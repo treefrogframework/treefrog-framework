@@ -19,7 +19,7 @@ jobs:
             - usr/local
   ubuntu_shared_mongoc:
     docker:
-      - image: buildpack-deps:19.04
+      - image: buildpack-deps:19.10
     working_directory: /workspace
     steps:
       - checkout
