@@ -11,6 +11,10 @@
 #include "tcachefactory.h"
 #include "tcachestore.h"
 
+/*!
+  \class TCache
+  \brief The TCache class stores items so that can be served faster.
+*/
 
 TCache::TCache()
 {
@@ -40,7 +44,10 @@ TCache::~TCache()
     }
 }
 
-
+/*!
+  Stores a new item with the \a key and a \a value in the cache and sets the
+  timeout after a given number of \a seconds.
+ */
 bool TCache::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
     bool ret = false;
@@ -60,7 +67,9 @@ bool TCache::set(const QByteArray &key, const QByteArray &value, int seconds)
     return ret;
 }
 
-
+/*!
+  Returns the value associated with the \a key.
+ */
 QByteArray TCache::get(const QByteArray &key)
 {
     QByteArray value;
@@ -74,7 +83,9 @@ QByteArray TCache::get(const QByteArray &key)
     return value;
 }
 
-
+/*!
+  Removes the item that have the \a key from the cache.
+ */
 void TCache::remove(const QByteArray &key)
 {
     if (_cache) {
@@ -82,7 +93,9 @@ void TCache::remove(const QByteArray &key)
     }
 }
 
-
+/*!
+  Removes all items from the cache.
+ */
 void TCache::clear()
 {
     if (_cache) {
