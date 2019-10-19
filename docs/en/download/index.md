@@ -13,7 +13,7 @@ TreeFrog Installer for Qt 5 has been released. If installing it, the development
 
 | Version                           | File                                   |
 |-------------------------------------|--------------------------------------|
-| 1.25.0 for Visual Studio 2017 (Qt 5.12 or 5.13)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.25.0-msvc2017_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.25.0/treefrog-1.25.0-msvc2017_64-setup.exe) |
+| 1.26.0 for Visual Studio 2017 (Qt 5.12 or 5.13)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.26.0-msvc2017_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.26.0/treefrog-1.26.0-msvc2017_64-setup.exe) |
 
 </div>
 
@@ -26,7 +26,7 @@ The source code packages of TreeFrog Framework are available.
 
 | Source         | File                             |
 |----------------|----------------------------------|
-| version 1.25.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.25.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.25.0.tar.gz) |
+| version 1.26.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.26.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.26.0.tar.gz) |
 
  </div>
 

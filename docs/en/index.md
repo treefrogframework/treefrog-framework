@@ -37,17 +37,27 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Oct. 19, 2019
+
+### TreeFrog Framework version 1.26.0 (stable) release <span style="color: red;">New!</span>
+
+  - Added cache modules by SQLite, MongoDB and Redis.
+  - Updated LZ4 compression algorithm to 1.9.2.
+  - Fix a compilation error on Ubuntu 19.10.
+  - Changed the epoll MPM from multi-thread to single thread architecture.
+  - Performance improvement.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 July 20, 2019
 
-### TreeFrog Framework version 1.25.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.25.0 (stable) release
 
   - Updated Mongo C driver to v1.9.5.
   - Updated LZ4 compression algorithm to v1.9.1.
   - Modified to set a domain in session cookie.
   - Changed the default C++ config from c++11 to c++14.
   - Other bugfixes and improvements.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Apr. 29, 2019
 
