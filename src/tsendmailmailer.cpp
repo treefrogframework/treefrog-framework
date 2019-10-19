@@ -10,7 +10,9 @@
 #include <TWebApplication>
 #include <QMutex>
 
-static QMutex sendMutex;
+namespace {
+    QMutex sendMutex;
+}
 
 /*!
   \class TSendmailMailer
@@ -18,8 +20,10 @@ static QMutex sendMutex;
   emails by sendmail command.
 */
 
-TSendmailMailer::TSendmailMailer(const QString &command, QObject *parent)
-    : QObject(parent), sendmailCmd(command), mailMessage()
+TSendmailMailer::TSendmailMailer(const QString &command, QObject *parent) :
+    QObject(parent),
+    sendmailCmd(command),
+    mailMessage()
 { }
 
 

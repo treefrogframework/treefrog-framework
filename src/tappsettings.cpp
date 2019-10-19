@@ -12,7 +12,9 @@
 #include <QMutexLocker>
 #include <cstdio>
 
-static TAppSettings *appSettings = nullptr;
+namespace {
+    TAppSettings *appSettings = nullptr;
+}
 
 
 class AttributeMap : public QMap<int, QString>

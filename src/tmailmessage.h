@@ -11,10 +11,10 @@ class QTextCodec;
 class T_CORE_EXPORT TMailMessage : public TInternetMessageHeader
 {
 public:
-    TMailMessage(const TMailMessage &other);
     TMailMessage(const QByteArray &encoding = "UTF-8");
     TMailMessage(const char *encoding);
     TMailMessage(const QString &str, const QByteArray &encoding = "UTF-8");
+    TMailMessage(const TMailMessage &other);
 
     QString subject() const;
     void setSubject(const QString &subject);

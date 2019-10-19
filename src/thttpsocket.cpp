@@ -27,8 +27,10 @@ constexpr int    SEND_BUF_SIZE = 128 * 1024;
 constexpr int    RECV_BUF_SIZE = 128 * 1024;
 constexpr int    RESERVED_BUFFER_SIZE = 1024;
 
-static TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
-static std::atomic<ushort> point {0};
+namespace {
+    TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
+    std::atomic<ushort> point {0};
+}
 
 /*!
   \class THttpSocket

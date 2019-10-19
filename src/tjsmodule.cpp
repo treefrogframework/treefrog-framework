@@ -15,12 +15,11 @@
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 //#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
-static QStringList searchPaths = { "." };
-
-
-inline const char *prop(const QJSValue &val, const QString &name = QString())
-{
-    return (name.isEmpty()) ? qPrintable(val.toString()) : qPrintable(val.property(name).toString());
+namespace {
+    inline const char *prop(const QJSValue &val, const QString &name = QString())
+    {
+        return (name.isEmpty()) ? qPrintable(val.toString()) : qPrintable(val.property(name).toString());
+    }
 }
 
 /*!

@@ -16,11 +16,12 @@
 #include <QThreadStorage>
 #include <ctime>
 
-// Stores a pointer to current database context into TLS
-//  - qulonglong type to prevent qThreadStorage_deleteData() function to work
-static QThreadStorage<qulonglong> databaseContextPtrTls;
-
-static QSqlDatabase invalidDb;
+namespace {
+    // Stores a pointer to current database context into TLS
+    //  - qulonglong type to prevent qThreadStorage_deleteData() function to work
+    QThreadStorage<qulonglong> databaseContextPtrTls;
+    QSqlDatabase invalidDb;
+}
 
 /*!
   \class TDatabaseContext

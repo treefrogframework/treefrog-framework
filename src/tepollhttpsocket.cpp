@@ -18,7 +18,10 @@
 using namespace Tf;
 
 constexpr int BUFFER_RESERVE_SIZE = 1023;
-static qint64 systemLimitBodyBytes = -1;
+
+namespace {
+    qint64 systemLimitBodyBytes = -1;
+}
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address) :
