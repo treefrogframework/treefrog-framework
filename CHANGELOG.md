@@ -1,4 +1,11 @@
 # ChangeLog
+## 1.26.0
+ - Added cache modules by SQLite, MongoDB and Redis.
+ - Updated LZ4 compression algorithm to 1.9.2.
+ - Fix a compilation error on Ubuntu 19.10.
+ - Changed the epoll module from multi-thread to single thread architecture.
+ - Performance improvement.
+
 ## 1.25.0
  - Updated Mongo C driver to v1.9.5.
  - Updated LZ4 compression algorithm to v1.9.1.
