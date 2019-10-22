@@ -45,10 +45,11 @@ PostOpenStatements=PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000; PRAGMA syn
 ## ページのキャッシュ
 
 生成されたHTMLデータをキャッシュすることできます。
-これまでHTMLデータを生成するには、render()関数に対しアクション名を指定（省略も可能）していましたが、キャッシュするには renderFromCache(..) を使いさらにキーと保存する時間を指定します。
+
+HTMLデータを生成するには、render()関数に対しアクション名を指定（省略も可能）していましたが、キャッシュするには renderFromCache(..) を使いさらにキーと保存する時間を指定します。
 キャッシュされたHTMLデータを送信するには、renderFromCache(..) を使います。
 
-例えば、"index"ビューのHTMLデータを"index"というキーで10秒間キャッシュするには次のようにします。
+例として "index"ビューのHTMLデータを"index"というキーで10秒間キャッシュし、かつキャッシュされたHTMLデータをするには次のようにします。
 ```
     if (! renderFromCache("index")) {
         renderAndStoreInCache("index", 10, "index");
