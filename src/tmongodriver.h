@@ -21,7 +21,7 @@ public:
     bool isOpen() const;
 
     bool find(const QString &collection, const QVariantMap &criteria, const QVariantMap &orderBy,
-              const QStringList &fields, int limit, int skip, int options);
+              const QStringList &fields, int limit, int skip);
     QVariantMap findOne(const QString &collection, const QVariantMap &criteria,
                         const QStringList &projectFields = QStringList());
     bool insertOne(const QString &collection, const QVariantMap &object, QVariantMap *reply = nullptr);
@@ -35,6 +35,9 @@ public:
     int lastErrorDomain() const { return errorDomain; }
     int lastErrorCode() const { return errorCode; }
     QString lastErrorString() const { return errorString; }
+    QStringList getCollectionNames();
+    QString serverVersion();
+    int serverVersionNumber();
 
     TMongoCursor &cursor() { return *mongoCursor; }
     const TMongoCursor &cursor() const { return *mongoCursor; }
@@ -49,6 +52,7 @@ private:
     mongoc_client_t *mongoClient {nullptr};
     TMongoCursor *mongoCursor {nullptr};
     QString dbName;
+    int serverVerionNumber {0};
     int errorDomain {0};
     int errorCode {0};
     QString errorString;

@@ -7,6 +7,7 @@
 
 #include <TMongoCursor>
 #include <TBson>
+#include "tsystemglobal.h"
 extern "C" {
 #include <mongoc.h>
 }
@@ -24,8 +25,19 @@ TMongoCursor::~TMongoCursor()
 
 bool TMongoCursor::next()
 {
+    bool ret = false;
+    bson_error_t error;
     bsonDoc = nullptr;
-    return (mongoCursor) ? mongoc_cursor_next(mongoCursor, (const bson_t **)&bsonDoc) : false;
+
+    if (mongoCursor) {
+        ret = mongoc_cursor_next(mongoCursor, (const bson_t **)&bsonDoc);
+        if (!ret) {
+            if (mongoc_cursor_error(mongoCursor, &error)) {
+                tSystemError("MongoDB Cursor Error: %s", error.message);
+            }
+        }
+    }
+    return ret;
 }
 
 

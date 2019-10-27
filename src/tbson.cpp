@@ -296,7 +296,9 @@ bool TBson::insert(const QString &key, const QVariant &value)
 TBson TBson::toBson(const QVariantMap &map)
 {
     TBson ret;
-    appendBson(ret.data(), map);
+    if (!map.isEmpty()) {
+        appendBson(ret.data(), map);
+    }
     return ret;
 }
 
@@ -304,7 +306,9 @@ TBson TBson::toBson(const QVariantMap &map)
 TBson TBson::toBson(const QString &op, const QVariantMap &map)
 {
     TBson ret;
-    BSON_APPEND_DOCUMENT((bson_t *)ret.data(), qPrintable(op), (const bson_t *)TBson::toBson(map).constData());
+    if (!op.isEmpty()) {
+        BSON_APPEND_DOCUMENT((bson_t *)ret.data(), qPrintable(op), (const bson_t *)TBson::toBson(map).constData());
+    }
     return ret;
 }
 
@@ -325,6 +329,7 @@ TBson TBson::toBson(const QVariantMap &query, const QVariantMap &orderBy)
         appendBson(&child, orderBy);
         bson_append_document_end((bson_t *)ret.data(), &child);
     }
+
     return ret;
 }
 

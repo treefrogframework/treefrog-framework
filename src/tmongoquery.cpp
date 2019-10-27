@@ -68,7 +68,7 @@ bool TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, 
         tSystemError("TMongoQuery::find : driver not loaded");
         return false;
     }
-    return driver()->find(_collection, criteria, orderBy, fields, _queryLimit, _queryOffset, 0);
+    return driver()->find(_collection, criteria, orderBy, fields, _queryLimit, _queryOffset);
 }
 
 /*!

@@ -19,7 +19,7 @@ extern "C" {
 
 
 TMongoDriver::TMongoDriver() :
-    mongoCursor(new TMongoCursor())
+    mongoCursor(new TMongoCursor)
 {
     mongoc_init();
 }
@@ -65,6 +65,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
     mongoClient = mongoc_client_new(qPrintable(uri));
     if (mongoClient) {
         dbName = db;
+        serverVersionNumber(); // Gets server version
     } else {
         tSystemError("MongoDB client create error");
     }
@@ -88,7 +89,7 @@ bool TMongoDriver::isOpen() const
 
 
 bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, const QVariantMap &orderBy,
-                        const QStringList &fields, int limit, int skip, int )
+                        const QStringList &fields, int limit, int skip)
 {
     if (!isOpen()) {
         return false;
@@ -98,18 +99,33 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
     clearError();
 
     mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    if (!col) {
+        tSystemError("MongoDB GetCollection Error");
+        return false;
+    }
+
     bson_t *opts = BCON_NEW("skip", BCON_INT64((skip > 0) ? skip : 0));
     if (limit > 0) {
         bson_append_int64(opts, "limit", 5, limit);
     }
+
     if (! fields.isEmpty()) {
         bson_append_document(opts, "projection", 10, (bson_t *)TBson::toBson(fields).data());
     }
-    mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(col,
-                                                               (bson_t *)TBson::toBson(criteria, orderBy).data(),
-                                                               opts, nullptr);
 
-    mongoc_collection_destroy(col);
+    mongoc_cursor_t *cursor = nullptr;
+    if (serverVersionNumber() < 0x030200) {
+        cursor = mongoc_collection_find_with_opts(col,
+                                                  (bson_t *)TBson::toBson(criteria, orderBy).data(),
+                                                  opts, nullptr);
+    } else {
+        if (!orderBy.isEmpty()) {
+            bson_append_document(opts, "sort", 4, (bson_t *)TBson::toBson(orderBy).data());
+        }
+        cursor = mongoc_collection_find_with_opts(col,
+                                                  (bson_t *)TBson::toBson(criteria).data(),
+                                                  opts, nullptr);
+    }
     bson_destroy(opts);
     mongoCursor->setCursor(cursor);
 
@@ -121,6 +137,8 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
     } else {
         tSystemError("MongoDB Cursor Error");
     }
+
+    mongoc_collection_destroy(col);
     return (bool)cursor;
 }
 
@@ -130,7 +148,7 @@ QVariantMap TMongoDriver::findOne(const QString &collection, const QVariantMap &
 {
     QVariantMap ret;
 
-    bool res = find(collection, criteria, QVariantMap(), fields, 1, 0, 0);
+    bool res = find(collection, criteria, QVariantMap(), fields, 1, 0);
     if (res && mongoCursor->next()) {
         ret = mongoCursor->value();
     }
@@ -316,4 +334,79 @@ void TMongoDriver::setLastError(const bson_error_t *error)
     errorDomain = error->domain;
     errorCode = error->code;
     errorString = QString::fromLatin1(error->message);
+}
+
+
+QStringList TMongoDriver::getCollectionNames()
+{
+    QStringList names;
+    bson_t opts = BSON_INITIALIZER;
+    bson_error_t error;
+    char **strv = nullptr;
+
+    if (!isOpen()) {
+        return names;
+    }
+
+    auto *database = mongoc_client_get_database(mongoClient, qPrintable(dbName));
+    auto *rc = mongoc_read_concern_new();
+    mongoc_read_concern_set_level(rc, MONGOC_READ_CONCERN_LEVEL_LOCAL);
+    mongoc_read_concern_append(rc, &opts);
+    strv = mongoc_database_get_collection_names_with_opts(database, &opts, &error);
+
+    if (strv) {
+        for (int i = 0; strv[i]; i++) {
+            names << QString::fromUtf8(strv[i]);
+        }
+        bson_strfreev (strv);
+    } else {
+        tSystemError("MongoDB get_collection_names error: %s", error.message);
+        setLastError(&error);
+    }
+
+    mongoc_read_concern_destroy(rc);
+    bson_destroy(&opts);
+    mongoc_database_destroy(database);
+    return names;
+}
+
+
+QString TMongoDriver::serverVersion()
+{
+    if (!isOpen()) {
+        return QString();
+    }
+
+    bson_t rep;
+    bson_error_t error;
+
+    TBson bson = TBson::toBson(QVariantMap({{"buildinfo", 1}}));
+    mongoc_client_command_simple(mongoClient, "admin", (bson_t*)bson.data(), nullptr, &rep, &error);
+    auto map = TBson::fromBson((TBsonObject*)&rep);
+    bson_destroy (&rep);
+
+    QString version = map.value("version").toString();
+    tSystemInfo("MongoDB server version: %s", qPrintable(version));
+    return version;
+}
+
+
+int TMongoDriver::serverVersionNumber()
+{
+    if (! serverVerionNumber) {
+        int number = 0;
+        QString version = serverVersion();
+
+        if (! version.isEmpty()) {
+            auto vers = version.split('.', QString::SkipEmptyParts);
+            for (auto &v : vers) {
+                number <<= 8;
+                number |= v.toInt() & 0xFF;
+            }
+
+            serverVerionNumber = number;
+            tSystemDebug("MongoDB server version number: %x", number);
+        }
+    }
+    return serverVerionNumber;
 }
