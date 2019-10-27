@@ -44,7 +44,7 @@ private:
     ObjectType objectType {Sql};
     QString modelName;
     QString tableName;
-    AbstractObjGenerator *objGen;
+    AbstractObjGenerator *objGen = nullptr;
     QStringList userFields;
 };
 

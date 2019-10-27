@@ -11,38 +11,38 @@
 # include <unistd.h>
 #endif
 
-static bool gOverwrite = false;
+namespace {
+    bool gOverwrite = false;
 
+    QString diff(const QString &data1, const QString &data2)
+    {
+        QTemporaryFile f1, f2;
+        if (!f1.open() || f1.write(data1.toUtf8()) < 0) {
+            return QString();
+        }
 
-static QString diff(const QString &data1, const QString &data2)
-{
-    QTemporaryFile f1, f2;
-    if (!f1.open() || f1.write(data1.toUtf8()) < 0)
-        return QString();
+        if (!f2.open() || f2.write(data2.toUtf8()) < 0) {
+            return QString();
+        }
 
-    if (!f2.open() || f2.write(data2.toUtf8()) < 0)
-        return QString();
+        f1.close();
+        f2.close();
 
-    f1.close();
-    f2.close();
+        if (!QFileInfo(f1).exists() || !QFileInfo(f2).exists()) {
+            qCritical("Intarnal error [%s:%d]", __FILE__, __LINE__);
+            return QString();
+        }
 
-    if (!f1.exists() || !f2.exists()) {
-        qCritical("Intarnal error [%s:%d]", __FILE__, __LINE__);
-        return QString();
+        QProcess df;
+        QStringList args;
+        args << "-u" << f1.fileName() << f2.fileName();
+        df.start("diff", args);
+
+        if (!df.waitForStarted() || !df.waitForFinished()) {
+            return QString();
+        }
+        return QString::fromUtf8(df.readAll().data());
     }
-    
-    QProcess df;
-    QStringList args;
-    args << "-u" << f1.fileName() << f2.fileName();
-    df.start("diff", args);
-    
-    if (!df.waitForStarted())
-        return QString();
-
-    if (!df.waitForFinished())
-        return QString();
-    
-    return QString::fromUtf8(df.readAll().data());
 }
 
 
@@ -59,7 +59,7 @@ static QString readFile(const QString &fileName)
         qCritical("failed to create file: %s", qPrintable(fileName));
         return ret;
     }
-    
+
     ret = file.readAll(); // Use the codec of QTextCodec::codecForCStrings()
     file.close();
     return ret;
@@ -92,13 +92,15 @@ bool FileWriter::write(const QString &data, bool overwrite) const
             QTextStream stream(stdin);
             for (;;) {
                 printf("  overwrite %s? [ynaqdh] ", qPrintable(QDir::cleanPath(fi.filePath())));
-                
-                QString line = stream.readLine();
-                if (line.isNull())
-                    break;
 
-                if (line.isEmpty())
+                QString line = stream.readLine();
+                if (line.isNull()) {
+                    break;
+                }
+
+                if (line.isEmpty()) {
                     continue;
+                }
 
                 QCharRef c = line[0];
                 if (c == 'Y' || c == 'y') {
@@ -116,7 +118,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     res = write(data);
                     act = (res) ? "updated " : "error   ";
                     break;
-                    
+
                 } else if (c == 'Q' || c == 'q') {
                     ::_exit(1);
                     return false;
@@ -126,7 +128,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     orig = readFile(filepath);  // Re-read
                     QString df = diff(orig, data);
                     if (df.isEmpty()) {
-                        qCritical("Error: diff command not found");
+                        qCritical("Error: diff command failed");
                     } else {
                         printf("%s", qPrintable(df));
                         printf("-----------------------------------------------------------\n");

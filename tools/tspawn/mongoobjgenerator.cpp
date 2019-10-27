@@ -68,8 +68,8 @@ constexpr auto MONGOOBJECT_PROPERTY_TEMPLATE =       \
 const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2);
 
 
-MongoObjGenerator::MongoObjGenerator(const QString &model)
-    : modelName(), collectionName(model), fields()
+MongoObjGenerator::MongoObjGenerator(const QString &model) :
+    collectionName(model)
 {
     modelName = fieldNameToEnumName(model);
 }

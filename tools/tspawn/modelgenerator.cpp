@@ -364,16 +364,19 @@ constexpr auto MODEL_IMPL_GETALLJSON_MONGO =                  \
     "}\n"                                                     \
     "\n";
 
-static const QStringList excludedSetter = {
-    "created_at",
-    "updated_at",
-    "modified_at",
-    "lock_revision",
-    "createdAt",
-    "updatedAt",
-    "modifiedAt",
-    LOCK_REVISION_FIELD,
-};
+
+namespace {
+    const QStringList excludedSetter = {
+        "created_at",
+        "updated_at",
+        "modified_at",
+        "lock_revision",
+        "createdAt",
+        "updatedAt",
+        "modifiedAt",
+        LOCK_REVISION_FIELD,
+    };
+}
 
 
 inline QPair<QString, QString> pair(const char *first, const QString &second)
@@ -382,8 +385,10 @@ inline QPair<QString, QString> pair(const char *first, const QString &second)
 }
 
 
-ModelGenerator::ModelGenerator(ModelGenerator::ObjectType type, const QString &model, const QString &table, const QStringList &userModelFields)
-    : objectType(type), modelName(), tableName(table), userFields(userModelFields)
+ModelGenerator::ModelGenerator(ModelGenerator::ObjectType type, const QString &model, const QString &table, const QStringList &userModelFields) :
+    objectType(type),
+    tableName(table),
+    userFields(userModelFields)
 {
     modelName = (!model.isEmpty()) ? fieldNameToEnumName(model) : fieldNameToEnumName(table);
     switch (type) {

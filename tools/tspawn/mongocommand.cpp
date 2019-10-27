@@ -68,23 +68,5 @@ void MongoCommand::close()
 
 QStringList MongoCommand::getCollectionNames() const
 {
-    QStringList ret;
-    if (!driver->isOpen()) {
-        return ret;
-    }
-
-    bool ok = driver->find("system.namespaces", QVariantMap(), QVariantMap(), QStringList(), 0, 0, 0);
-    if (ok) {
-        while (driver->cursor().next()) {
-            QVariantMap val = driver->cursor().value();
-            QString coll = val["name"].toString().mid(databaseName.length() + 1);
-
-            if (!coll.contains('$')) {
-                ret.prepend(coll);
-            }
-        }
-    }
-
-    std::sort(ret.begin(), ret.end());
-    return ret;
+    return (driver->isOpen()) ? driver->getCollectionNames() : QStringList();
 }
