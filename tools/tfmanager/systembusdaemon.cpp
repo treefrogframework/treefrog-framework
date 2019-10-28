@@ -21,7 +21,7 @@ static int maxServers = 0;
 #ifdef Q_OS_UNIX
 static QString unixDomainServerDir()
 {
-    return QDir::cleanPath(QDir::tempPath()) + QDir::separator();
+    return QDir::cleanPath(QDir::tempPath()) + "/";
 }
 #endif
 

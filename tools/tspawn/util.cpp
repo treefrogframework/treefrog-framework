@@ -10,7 +10,7 @@
 #include <cstdio>
 #include "util.h"
 
-QString dataDirPath = QLatin1String(TREEFROG_DATA_DIR) + QDir::separator() + "defaults" + QDir::separator();
+QString dataDirPath = QLatin1String(TREEFROG_DATA_DIR) + "/defaults/";
 
 
 void copy(const QString &src, const QString &dst)

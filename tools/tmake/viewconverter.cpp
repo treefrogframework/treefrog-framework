@@ -197,5 +197,5 @@ QString ViewConverter::getViewClassName(const QFileInfo &fileInfo)
 QString ViewConverter::changeFileExtension(const QString &filePath, const QString &ext)
 {
     QFileInfo fileInfo(filePath);
-    return fileInfo.absolutePath() + QDir::separator() + fileInfo.completeBaseName() + QLatin1Char('.') + ext;
+    return fileInfo.absolutePath() + "/" + fileInfo.completeBaseName() + QLatin1Char('.') + ext;
 }

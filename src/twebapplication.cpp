@@ -66,8 +66,8 @@ TWebApplication::TWebApplication(int &argc, char **argv)
         } else {
             if (QDir(arg).exists()) {
                 _webRootAbsolutePath = arg;
-                if (!_webRootAbsolutePath.endsWith(QDir::separator())) {
-                    _webRootAbsolutePath += QDir::separator();
+                if (!_webRootAbsolutePath.endsWith("/")) {
+                    _webRootAbsolutePath += "/";
                 }
             }
         }
@@ -75,7 +75,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
 
     QDir webRoot(_webRootAbsolutePath);
     if (webRoot.exists()) {
-        _webRootAbsolutePath = webRoot.absolutePath() + QDir::separator();
+        _webRootAbsolutePath = webRoot.absolutePath() + "/";
     }
 
     // Sets application name
@@ -93,7 +93,7 @@ TWebApplication::TWebApplication(int &argc, char **argv)
     if (QFileInfo(configPath() + "internet_media_types.ini").exists()) {
         mediaTypes = new QSettings(configPath() + "internet_media_types.ini", QSettings::IniFormat, this);
     } else {
-        mediaTypes = new QSettings(configPath() + "initializers" + QDir::separator() + "internet_media_types.ini", QSettings::IniFormat, this);
+        mediaTypes = new QSettings(configPath() + "initializers/internet_media_types.ini", QSettings::IniFormat, this);
     }
     // Gets codecs
     _codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
@@ -206,7 +206,7 @@ bool TWebApplication::webRootExists() const
 */
 QString TWebApplication::publicPath() const
 {
-    return webRootPath() + "public" + QDir::separator();
+    return webRootPath() + "public/";
 }
 
 /*!
@@ -214,7 +214,7 @@ QString TWebApplication::publicPath() const
 */
 QString TWebApplication::configPath() const
 {
-    return webRootPath() + "config" + QDir::separator();
+    return webRootPath() + "config/";
 }
 
 /*!
@@ -222,7 +222,7 @@ QString TWebApplication::configPath() const
 */
 QString TWebApplication::libPath() const
 {
-    return webRootPath()+ "lib" + QDir::separator();
+    return webRootPath()+ "lib/";
 }
 
 /*!
@@ -230,7 +230,7 @@ QString TWebApplication::libPath() const
 */
 QString TWebApplication::logPath() const
 {
-    return webRootPath() + "log" + QDir::separator();
+    return webRootPath() + "log/";
 }
 
 /*!
@@ -238,7 +238,7 @@ QString TWebApplication::logPath() const
 */
 QString TWebApplication::pluginPath() const
 {
-    return webRootPath() + "plugin" + QDir::separator();
+    return webRootPath() + "plugin/";
 }
 
 /*!
@@ -246,7 +246,7 @@ QString TWebApplication::pluginPath() const
 */
 QString TWebApplication::tmpPath() const
 {
-    return webRootPath() + "tmp" + QDir::separator();
+    return webRootPath() + "tmp/";
 }
 
 /*!

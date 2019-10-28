@@ -75,8 +75,7 @@ bool TSqlQuery::load(const QString &filename)
 */
 QString TSqlQuery::queryDirPath() const
 {
-    QString dir = Tf::app()->webRootPath() + Tf::appSettings()->value(Tf::SqlQueriesStoredDirectory).toString();
-    dir.replace(QChar('/'), QDir::separator());
+    const QString dir = Tf::app()->webRootPath() + Tf::appSettings()->value(Tf::SqlQueriesStoredDirectory).toString();
     return dir;
 }
 

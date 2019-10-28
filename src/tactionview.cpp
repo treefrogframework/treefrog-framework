@@ -58,7 +58,7 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
 */
 QString TActionView::renderReact(const QString &component)
 {
-    QStringList path = { (Tf::app()->publicPath() + "js" + QDir::separator() + "components"),
+    QStringList path = { (Tf::app()->publicPath() + "js/components"),
                          (Tf::app()->publicPath() + "js")
     };
     return TReactComponent(component, path).renderToString(component);

@@ -130,6 +130,6 @@ int TSessionFileStore::gc(const QDateTime &expire)
 
 QString TSessionFileStore::sessionDirPath()
 {
-    static const QString path = Tf::app()->tmpPath() + QLatin1String(SESSION_DIR_NAME) + QDir::separator();
+    static const QString path = Tf::app()->tmpPath() + QLatin1String(SESSION_DIR_NAME) + "/";
     return path;
 }

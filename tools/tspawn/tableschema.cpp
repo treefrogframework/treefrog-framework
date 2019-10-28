@@ -19,7 +19,7 @@ TableSchema::TableSchema(const QString &table, const QString &env)
     : tablename(table)
 {
     if (!dbSettings) {
-        QString path = QLatin1String("config") + QDir::separator() + "database.ini";
+        QString path = QLatin1String("config/database.ini");
         if (!QFile::exists(path)) {
             qCritical("not found, %s", qPrintable(path));
         }
