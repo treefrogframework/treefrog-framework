@@ -250,4 +250,3 @@ QByteArray TRedisDriver::toMultiBulk(const QByteArrayList &data)
     }
     return mbulk;
 }
-

@@ -1,0 +1,32 @@
+#ifndef THTTPCLIENT_H
+#define THTTPCLIENT_H
+
+#include <TGlobal>
+
+class QNetworkAccessManager;
+class QNetworkReply;
+class QNetworkRequest;
+
+
+class T_CORE_EXPORT THttpClient
+{
+public:
+    THttpClient();
+    ~THttpClient();
+
+    QNetworkReply *get(const QUrl &url, int msecs = 5000);
+    QNetworkReply *get(const QNetworkRequest &request, int msecs = 5000);
+    QNetworkReply *post(const QUrl &url, const QByteArray &data, int msecs = 5000);
+    QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data, int msecs = 5000);
+    QNetworkReply *put(const QUrl &url, const QByteArray &data, int msecs = 5000);
+    QNetworkReply *put(const QNetworkRequest &request, const QByteArray &data, int msecs = 5000);
+    QNetworkReply *deleteResource(const QUrl &url, int msecs = 5000);
+    QNetworkReply *deleteResource(const QNetworkRequest &request, int msecs = 5000);
+
+    QNetworkAccessManager *manager() { return _manager; }
+
+private:
+    QNetworkAccessManager *_manager {nullptr};
+};
+
+#endif // THTTPCLIENT_H

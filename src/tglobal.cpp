@@ -161,8 +161,9 @@ TActionContext *Tf::currentContext()
     switch ( Tf::app()->multiProcessingModule() ) {
     case TWebApplication::Thread:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
-        if (Q_LIKELY(context))
+        if (Q_LIKELY(context)) {
             return context;
+        }
         break;
 
     case TWebApplication::Epoll:
