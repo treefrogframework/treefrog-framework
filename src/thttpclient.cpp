@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QJsonDocument>
 #include <QElapsedTimer>
 
 
@@ -66,9 +67,9 @@ QNetworkReply *THttpClient::get(const QNetworkRequest &request, int msecs)
 }
 
 
-QNetworkReply *THttpClient::post(const QUrl &url, const QByteArray &data, int msecs)
+QNetworkReply *THttpClient::post(const QUrl &url, const QJsonDocument &json, int msecs)
 {
-    return post(QNetworkRequest(url), data, msecs);
+    return post(QNetworkRequest(url), json.toJson(QJsonDocument::Compact), msecs);
 }
 
 
@@ -83,9 +84,9 @@ QNetworkReply *THttpClient::post(const QNetworkRequest &request, const QByteArra
 }
 
 
-QNetworkReply *THttpClient::put(const QUrl &url, const QByteArray &data, int msecs)
+QNetworkReply *THttpClient::put(const QUrl &url, const QJsonDocument &json, int msecs)
 {
-    return put(QNetworkRequest(url), data, msecs);
+    return put(QNetworkRequest(url), json.toJson(QJsonDocument::Compact), msecs);
 }
 
 

@@ -52,7 +52,7 @@ private:
     mongoc_client_t *mongoClient {nullptr};
     TMongoCursor *mongoCursor {nullptr};
     QString dbName;
-    int serverVerionNumber {0};
+    int serverVerionNumber {-1};
     int errorDomain {0};
     int errorCode {0};
     QString errorString;

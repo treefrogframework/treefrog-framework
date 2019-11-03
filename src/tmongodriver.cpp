@@ -393,7 +393,7 @@ QString TMongoDriver::serverVersion()
 
 int TMongoDriver::serverVersionNumber()
 {
-    if (! serverVerionNumber) {
+    if (serverVerionNumber < 0) {
         int number = 0;
         QString version = serverVersion();
 
