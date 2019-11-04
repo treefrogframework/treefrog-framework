@@ -51,13 +51,13 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
             uri += '@';
         }
     }
-    uri += host;
+    uri += (host.isEmpty()) ? QStringLiteral("127.0.0.1") : host;
     if (!options.isEmpty()) {
         uri += QLatin1String("/?");
         uri += options;
     }
 
-    if (!uri.isEmpty()) {
+    if (!uri.startsWith("mongodb://") && !uri.startsWith("mongodb+srv://")) {
         uri.prepend(QLatin1String("mongodb://"));
     }
 
@@ -67,7 +67,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
         dbName = db;
         serverVersionNumber(); // Gets server version
     } else {
-        tSystemError("MongoDB client create error");
+        tSystemError("MongoDB client create error. Connection URI: %s", qPrintable(uri));
     }
     return (bool)mongoClient;
 }
