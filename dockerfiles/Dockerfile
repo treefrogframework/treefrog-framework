@@ -1,10 +1,10 @@
-FROM buildpack-deps:bionic
+FROM buildpack-deps:bionic-curl
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         tzdata \
         coreutils \
         qt5-default \
@@ -19,21 +19,19 @@ RUN apt-get update && apt-get install -y \
         libqt5core5a \
         libqt5qml5 \
         libqt5xml5 \
-        mariadb-client \
         libpq5 \
         libodbc1 \
         libmongoc-dev \
         libbson-dev \
         gcc \
         g++ \
-        git \
         make \
-        cmake && \
+        cmake ; \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/treefrog
-RUN git clone https://github.com/treefrogframework/treefrog-framework.git && \
-    cd treefrog-framework && \
+RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/master.tar.gz | tar xz && \
+    cd treefrog-framework-master && \
     ./configure --enable-shared-mongoc && \
     make -j"$(nproc)" -C src && \
     make -C src install && \

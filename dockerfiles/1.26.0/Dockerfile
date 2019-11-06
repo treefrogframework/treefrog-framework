@@ -1,11 +1,11 @@
-FROM buildpack-deps:bionic
+FROM buildpack-deps:bionic-curl
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV TREEFROG_VERSION 1.26.0
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         tzdata \
         coreutils \
         qt5-default \
@@ -20,16 +20,14 @@ RUN apt-get update && apt-get install -y \
         libqt5core5a \
         libqt5qml5 \
         libqt5xml5 \
-        mariadb-client \
         libpq5 \
         libodbc1 \
         libmongoc-dev \
         libbson-dev \
         gcc \
         g++ \
-        git \
         make \
-        cmake && \
+        cmake ; \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/treefrog
