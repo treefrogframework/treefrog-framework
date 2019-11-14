@@ -320,6 +320,8 @@ SOURCES += tcachemongostore.cpp
 HEADERS += tcacheredisstore.h
 SOURCES += tcacheredisstore.cpp
 SOURCES += tactioncontroller_qt5.cpp
+HEADERS += toauth2client.h
+SOURCES += toauth2client.cpp
 
 HEADERS += \
            tfnamespace.h \
