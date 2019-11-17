@@ -39,27 +39,23 @@ public:
         UnknownError,
     };
 
-    TOAuth2Client(const QString &clientId, const QString &clientSecret);
+    TOAuth2Client(const QString &clientId, const QString &clientSecret = QString());
     TOAuth2Client(const TOAuth2Client &other) = default;
     TOAuth2Client &operator=(const TOAuth2Client &other) = default;
 
-    bool requestAccessToken(const QUrl &authorizeUrl, const QString &code, const QStringList &scopes, const QUrl &redirect, int msecs);
+    QUrl startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, int msecs = 5000);
+    QString requestAccessToken(const QUrl &requestUrl, const QString &code, int msecs = 5000);
     QString accessToken() const { return _accessToken; }
     int tokenExpires() const { return _expires; }
-    QStringList scopes() const { return _scopes; }
+    //QStringList scopes() const { return _scopes; }
     Error errorCode() { return _error; }
     QNetworkReply::NetworkError networkError() const { return _networkError; }
 
 private:
     QString _clientId;
     QString _clientSecret;
-    QUrl _authorizeUrl;
-    QStringList _scopes;
-    QString _code;
-    QUrl _redirect;
     QString _accessToken;
     int _expires {0};
-    QString _refreshToken;
     Error _error {NoError};
     QNetworkReply::NetworkError _networkError {QNetworkReply::NoError};
 };

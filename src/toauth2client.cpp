@@ -1,5 +1,7 @@
 #include "toauth2client.h"
 #include "thttpclient.h"
+#include "thttputility.h"
+#include <THttpRequest>
 #include <QMap>
 
 
@@ -29,31 +31,56 @@ TOAuth2Client::TOAuth2Client(const QString &clientId, const QString &clientSecre
 { }
 
 
-bool TOAuth2Client::requestAccessToken(const QUrl &authorizeUrl, const QString &code, const QStringList &scopes, const QUrl &redirect, int msecs)
+QUrl TOAuth2Client::startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, int msecs)
 {
-    _authorizeUrl = authorizeUrl;
-    _code = code;
-    _scopes = scopes;
-    _redirect = redirect;
-
     THttpClient client;
-    QUrl url = authorizeUrl;
+    QUrl url = requestUrl;
     QString querystr;
 
-    querystr  = "client_id=" + _clientId;
-    querystr += "&scope=" + scopes.join(" ");
-    querystr += "&redirect_uri=" + redirect.toString(QUrl::None);
-    querystr += "&response_type=code";
+    querystr += "response_type=code";
+    if (!_clientId.isEmpty()) {
+        querystr  = "&client_id=" + _clientId;
+    }
+    if (!scopes.isEmpty()) {
+        querystr += "&scope=" + scopes.join(" ");
+    }
+    if (!redirect.isEmpty()) {
+        querystr += "&redirect_uri=" + redirect.toString(QUrl::None);
+    }
+    if (!state.isEmpty()) {
+        querystr += "&state=" + state;
+    }
     url.setQuery(querystr);
     tInfo() << "query:" << url.toEncoded();
 
     auto *reply = client.get(url, msecs);
     _networkError = reply->error();
-    auto location = reply->rawHeader("Location");
-    if (location.isEmpty()) {
-        // error
-        return false;
+    QByteArray location = reply->rawHeader("Location");
+    return QUrl(THttpUtility::fromUrlEncoding(location));
+}
+
+
+QString TOAuth2Client::requestAccessToken(const QUrl &requestUrl, const QString &code, int msecs)
+{
+    QString token;
+    THttpClient client;
+    QByteArray query;
+    QNetworkRequest request(requestUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    query  = "client_id=" + THttpUtility::toUrlEncoding(_clientId);
+    query += "&client_secret=" + THttpUtility::toUrlEncoding(_clientSecret);
+    query += "&code=" + THttpUtility::toUrlEncoding(code);
+
+    auto *reply = client.post(request, query, msecs);
+    _networkError = reply->error();
+    QByteArray body = reply->readAll();
+    auto params = THttpUtility::fromFormUrlEncoded(body);
+    for (auto &p : params) {
+        tInfo() << p.first << ":" << p.second;
+        if (p.first == "access_token") {
+            token = p.second;
+        }
     }
-    tInfo() << location;
-    return true;
+    return token;
 }
