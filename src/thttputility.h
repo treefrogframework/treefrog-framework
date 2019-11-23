@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QVariant>
+#include <QPair>
 #include <TGlobal>
 
 class QTextCodec;
@@ -15,6 +16,7 @@ class T_CORE_EXPORT THttpUtility
 public:
     static QString fromUrlEncoding(const QByteArray &enc);
     static QByteArray toUrlEncoding(const QString &input, const QByteArray &exclude = "-._");
+    static QList<QPair<QString, QString>> fromFormUrlEncoded(const QByteArray &enc);
     static QString htmlEscape(const QString &input, Tf::EscapeFlag flag = Tf::Quotes);
     static QString htmlEscape(int n);
     static QString htmlEscape(uint n);

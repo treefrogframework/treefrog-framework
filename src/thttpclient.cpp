@@ -16,25 +16,21 @@
 namespace {
     bool waitForReadyRead(QNetworkReply *reply, int msecs)
     {
-        bool ret = true;
         QEventLoop eventLoop;
         QElapsedTimer idleTimer;
         int bytes = 0;
 
         idleTimer.start();
-        while (!reply->isFinished()) {
+        do {
             if (bytes != reply->bytesAvailable()) {
                 idleTimer.restart();
                 bytes = reply->bytesAvailable();
             }
 
-            if (idleTimer.elapsed() >= msecs) {
-                ret = false;
-                break;
-            }
             eventLoop.processEvents();
-        }
-        return ret;
+        } while (!reply->isFinished() && idleTimer.elapsed() < msecs);
+
+        return reply->isFinished();
     }
 }
 

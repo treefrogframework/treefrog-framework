@@ -103,6 +103,25 @@ QByteArray THttpUtility::toUrlEncoding(const QString &input, const QByteArray &e
     return input.toUtf8().toPercentEncoding(exclude, "~").replace("%20", "+");
 }
 
+
+QList<QPair<QString, QString>> THttpUtility::fromFormUrlEncoded(const QByteArray &enc)
+{
+    QList<QPair<QString, QString>> items;
+
+    if (!enc.isEmpty()) {
+        const QByteArrayList formdata = enc.split('&');
+        for (auto &f : formdata) {
+            QByteArrayList kv = f.split('=');
+            if (!kv.value(0).isEmpty()) {
+                QString key = THttpUtility::fromUrlEncoding(kv.value(0));
+                QString val = THttpUtility::fromUrlEncoding(kv.value(1));
+                items << QPair<QString, QString>(key, val);
+            }
+        }
+    }
+    return items;
+}
+
 /*!
   Returns a converted copy of \a input. All applicable characters in \a input
   are converted to HTML entities. The conversions performed are:

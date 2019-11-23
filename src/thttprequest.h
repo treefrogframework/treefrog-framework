@@ -78,6 +78,7 @@ public:
     const QJsonDocument &jsonData() const { return d->jsonData; }
 
     static QList<THttpRequest> generate(const QByteArray &byteArray, const QHostAddress &address);
+    static QList<QPair<QString, QString>> fromQuery(const QString &query);
 
 protected:
     QByteArray boundary() const;
