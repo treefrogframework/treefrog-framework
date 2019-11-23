@@ -5,26 +5,13 @@
 #include <QStringList>
 #include <QUrl>
 #include <QNetworkReply>
-
-
-// class T_CORE_EXPORT TOAuth2AccessToken
-// {
-// public:
-//     QString token;
-//     int expires {0};
-//     QString refreshToken;
-//     QStringList scopes;
-
-//     TOAuth2AccessToken() {}
-//     TOAuth2AccessToken(const TOAuth2AccessToken &other) = default;
-//     TOAuth2AccessToken &operator=(const TOAuth2AccessToken &other) = default;
-// };
+#include <QVariantMap>
 
 
 class T_CORE_EXPORT TOAuth2Client
 {
 public:
-    enum Error {
+    enum ErrorCode {
         NoError = 0,
         InvalidRequest,
         InvalidClient,
@@ -43,20 +30,15 @@ public:
     TOAuth2Client(const TOAuth2Client &other) = default;
     TOAuth2Client &operator=(const TOAuth2Client &other) = default;
 
-    QUrl startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, int msecs = 5000);
-    QString requestAccessToken(const QUrl &requestUrl, const QString &code, int msecs = 5000);
-    QString accessToken() const { return _accessToken; }
-    int tokenExpires() const { return _expires; }
-    //QStringList scopes() const { return _scopes; }
-    Error errorCode() { return _error; }
+    QUrl startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, const QVariantMap &parameters = QVariantMap(), int msecs = 5000);
+    QString requestAccessToken(const QUrl &requestUrl, const QString &code, const QVariantMap &parameters = QVariantMap(), int msecs = 5000);
+    ErrorCode errorCode() { return _errorCode; }
     QNetworkReply::NetworkError networkError() const { return _networkError; }
 
 private:
     QString _clientId;
     QString _clientSecret;
-    QString _accessToken;
-    int _expires {0};
-    Error _error {NoError};
+    ErrorCode _errorCode {NoError};
     QNetworkReply::NetworkError _networkError {QNetworkReply::NoError};
 };
 

@@ -31,36 +31,59 @@ TOAuth2Client::TOAuth2Client(const QString &clientId, const QString &clientSecre
 { }
 
 
-QUrl TOAuth2Client::startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, int msecs)
+QUrl TOAuth2Client::startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, const QVariantMap &parameters, int msecs)
 {
     THttpClient client;
-    QUrl url = requestUrl;
     QString querystr;
+    QUrl url = requestUrl;
 
-    querystr += "response_type=code";
-    if (!_clientId.isEmpty()) {
-        querystr  = "&client_id=" + _clientId;
-    }
+    querystr += QLatin1String("response_type=code");
+    querystr += QLatin1String("&client_id=");
+    querystr += _clientId;
+
     if (!scopes.isEmpty()) {
-        querystr += "&scope=" + scopes.join(" ");
+        querystr += QLatin1String("&scope=");
+        querystr += scopes.join(" ");
     }
+
     if (!redirect.isEmpty()) {
-        querystr += "&redirect_uri=" + redirect.toString(QUrl::None);
+        querystr += QLatin1String("&redirect_uri=");
+        querystr += redirect.toString(QUrl::None);
     }
+
     if (!state.isEmpty()) {
-        querystr += "&state=" + state;
+        querystr += QLatin1String("&state=");
+        querystr += state;
+    }
+
+    for (auto it = parameters.begin(); it != parameters.end(); ++it) {
+        querystr += QLatin1Char('&');
+        querystr += it.key();
+        querystr += QLatin1Char('=');
+        querystr += it.value().toString();
     }
     url.setQuery(querystr);
-    tInfo() << "query:" << url.toEncoded();
 
     auto *reply = client.get(url, msecs);
     _networkError = reply->error();
     QByteArray location = reply->rawHeader("Location");
+
+    auto query = QUrl(location).query(QUrl::FullyDecoded).toLatin1();
+    auto params = THttpUtility::fromFormUrlEncoded(query);
+    for (auto &p : params) {
+        if (p.first == QStringLiteral("error")) {
+            _errorCode = (ErrorCode)oauth2ErrorCode()->value(p.second, TOAuth2Client::UnknownError);
+        }
+
+        if (p.first == QStringLiteral("error_description")) {
+            tError() << "OAuth2 error response. error_description:" << p.second;
+        }
+    }
     return QUrl(THttpUtility::fromUrlEncoding(location));
 }
 
 
-QString TOAuth2Client::requestAccessToken(const QUrl &requestUrl, const QString &code, int msecs)
+QString TOAuth2Client::requestAccessToken(const QUrl &requestUrl, const QString &code, const QVariantMap &parameters, int msecs)
 {
     QString token;
     THttpClient client;
@@ -68,18 +91,40 @@ QString TOAuth2Client::requestAccessToken(const QUrl &requestUrl, const QString 
     QNetworkRequest request(requestUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    query  = "client_id=" + THttpUtility::toUrlEncoding(_clientId);
-    query += "&client_secret=" + THttpUtility::toUrlEncoding(_clientSecret);
-    query += "&code=" + THttpUtility::toUrlEncoding(code);
+    query += "grant_type=authorization_code";
+    query += "&code=";
+    query += THttpUtility::toUrlEncoding(code);
+    query += "&client_id=";
+    query += THttpUtility::toUrlEncoding(_clientId);
+
+    if (!_clientSecret.isEmpty()) {
+        query += "&client_secret=";
+        query += THttpUtility::toUrlEncoding(_clientSecret);
+    }
+
+    for (auto it = parameters.begin(); it != parameters.end(); ++it) {
+        query += '&';
+        query += it.key().toLatin1();
+        query += '=';
+        query += THttpUtility::toUrlEncoding(it.value().toString());
+    }
 
     auto *reply = client.post(request, query, msecs);
     _networkError = reply->error();
     QByteArray body = reply->readAll();
+
     auto params = THttpUtility::fromFormUrlEncoded(body);
     for (auto &p : params) {
-        tInfo() << p.first << ":" << p.second;
-        if (p.first == "access_token") {
+        if (p.first == QStringLiteral("access_token")) {
             token = p.second;
+        }
+
+        if (p.first == QStringLiteral("error")) {
+            _errorCode = (ErrorCode)oauth2ErrorCode()->value(p.second, TOAuth2Client::UnknownError);
+        }
+
+        if (p.first == QStringLiteral("error_description")) {
+            tError() << "OAuth2 error response. error_description:" << p.second;
         }
     }
     return token;
