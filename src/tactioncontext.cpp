@@ -157,7 +157,8 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
 
             // Database Transaction
-            setTransactionEnabled(currController->transactionEnabled());
+            for (int databaseId = 0; databaseId < Tf::app()->sqlDatabaseSettingsCount(); ++databaseId)
+                setTransactionEnabled(currController->transactionEnabled(), databaseId);
 
             // Do filters
             bool dispatched = false;
