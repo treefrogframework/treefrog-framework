@@ -88,8 +88,9 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         endpoint->peerAddr = peerInfo.first;
         endpoint->peerPortNumber = peerInfo.second;
         // Database Transaction
-        for (int databaseId = 0; databaseId < Tf::app()->sqlDatabaseSettingsCount(); ++databaseId)
+        for (int databaseId = 0; databaseId < Tf::app()->sqlDatabaseSettingsCount(); ++databaseId) {
             setTransactionEnabled(endpoint->transactionEnabled(), databaseId);
+        }
 
         switch (_mode) {
         case Opening: {
