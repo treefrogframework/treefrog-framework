@@ -4,6 +4,12 @@
 #include <THttpRequest>
 #include <QMap>
 
+/*!
+  \class TOAuth2Client
+  \brief The TOAuth2Client class provides an implementation of the
+  Authorization Code Grant flow in OAuth2 authentication methods.
+  \sa https://tools.ietf.org/html/rfc6749
+*/
 
 class OAuth2ErrorCode : public QMap<QString, int>
 {
@@ -30,7 +36,11 @@ TOAuth2Client::TOAuth2Client(const QString &clientId, const QString &clientSecre
     _clientSecret(clientSecret)
 { }
 
-
+/*!
+  Initiates the flow by directing the resource owner's user-agent to the
+  authorization endpoint of \a requestUrl and returns a QURL object to
+  redirect the user-agent.
+ */
 QUrl TOAuth2Client::startAuthorization(const QUrl &requestUrl, const QStringList &scopes, const QString &state, const QUrl &redirect, const QVariantMap &parameters, int msecs)
 {
     THttpClient client;
@@ -82,7 +92,10 @@ QUrl TOAuth2Client::startAuthorization(const QUrl &requestUrl, const QStringList
     return QUrl(THttpUtility::fromUrlEncoding(location));
 }
 
-
+/*!
+  Requests an access token from the authorization server's token endpoint of
+  \a requestUrl by including the authorization \a code received.
+ */
 QString TOAuth2Client::requestAccessToken(const QUrl &requestUrl, const QString &code, const QVariantMap &parameters, int msecs)
 {
     QString token;

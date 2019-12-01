@@ -12,18 +12,18 @@ class T_CORE_EXPORT TOAuth2Client
 {
 public:
     enum ErrorCode {
-        NoError = 0,
-        InvalidRequest,
-        InvalidClient,
-        InvalidGrant,
-        UnauthorizedClient,
-        UnsupportedGrantType,
-        AccessDenied,
-        UnsupportedResponseType,
-        InvalidScope,
-        ServerError,
-        TemporarilyUnavailable,
-        UnknownError,
+        NoError = 0,      ///< no error
+        InvalidRequest,   ///< invalid request
+        InvalidClient,    ///< invalid client
+        InvalidGrant,     ///< invalid grant
+        UnauthorizedClient,      ///< unauthorized_client
+        UnsupportedGrantType,    ///< unsupported grant type
+        AccessDenied,            ///< access_denied
+        UnsupportedResponseType, ///<unsupported_response_type
+        InvalidScope,            ///< invalid scope
+        ServerError,             ///< server_error
+        TemporarilyUnavailable,  ///< temporarily_unavailable
+        UnknownError,            ///< unknown error
     };
 
     TOAuth2Client(const QString &clientId, const QString &clientSecret = QString());
