@@ -1,4 +1,13 @@
 # ChangeLog
+## 1.27.0
+ - Implemented OAuth2 client.  [Experimental]
+ - Supports for MongoDB version 3.2 and later.
+ - Fix a bug that timer for TSqlDatabasePool stops. #279
+ - Fix a bug not to set all databases to transaction state value.
+ - Fix a bug of execution of diff in tspawn command.
+ - Replaced QDir::separator() by "/". #264
+ - Added a value, svg:image/svg+xml.
+
 ## 1.26.0
  - Added cache modules by SQLite, MongoDB and Redis.
  - Updated LZ4 compression algorithm to 1.9.2.
