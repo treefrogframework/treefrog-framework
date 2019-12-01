@@ -118,6 +118,10 @@ bool TMultiplexingServer::start(bool debugMode)
         }
     }
 
+    // To work a timer in main thread
+    TSqlDatabasePool::instance();
+    TKvsDatabasePool::instance();
+
     TStaticInitializeThread::exec();
     QThread::start();
     return true;

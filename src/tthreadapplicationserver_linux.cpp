@@ -9,6 +9,8 @@
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TActionThread>
+#include "tsqldatabasepool.h"
+#include "tkvsdatabasepool.h"
 #include "tsystemglobal.h"
 #include "tfcore_unix.h"
 #include <thread>
@@ -60,6 +62,10 @@ bool TThreadApplicationServer::start(bool debugMode)
         tSystemError("Failed to set socket descriptor: %d", listenSocket);
         return false;
     }
+
+    // To work a timer in main thread
+    TSqlDatabasePool::instance();
+    TKvsDatabasePool::instance();
 
     TStaticInitializeThread::exec();
     QThread::start();

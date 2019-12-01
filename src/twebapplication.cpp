@@ -38,11 +38,11 @@ namespace {
 /*!
   Constructor.
 */
-TWebApplication::TWebApplication(int &argc, char **argv)
+TWebApplication::TWebApplication(int &argc, char **argv) :
 #ifdef TF_USE_GUI_MODULE
-    : QApplication(argc, argv),
+    QApplication(argc, argv),
 #else
-    : QCoreApplication(argc, argv),
+    QCoreApplication(argc, argv),
 #endif
     _dbEnvironment(DEFAULT_DATABASE_ENVIRONMENT)
 {
