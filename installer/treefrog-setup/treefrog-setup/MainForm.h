@@ -47,8 +47,8 @@ namespace treefrogsetup {
         //
         // ƒo[ƒWƒ‡ƒ“
         //
-        static initonly String^ VERSION_STR1 = L"5.12";
-        static initonly String^ VERSION_STR2 = L"5.13";
+        static initonly String^ VERSION_STR512 = L"5.12";
+        static initonly String^ VERSION_STR513 = L"5.13";
 
     public:
         MainForm(void)
@@ -169,7 +169,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version " + VERSION_STR1 + " or " + VERSION_STR2 + ".";
+            this->label->Text = L"Specify a base folder of Qt version " + VERSION_STR512 + " or " + VERSION_STR513 + ".";
             // 
             // label1
             // 
@@ -180,7 +180,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\Qt" + VERSION_STR2 + ".0\\msvc2017_64";
+            this->label1->Text = L"Example:  C:\\Qt\\" + VERSION_STR513 + ".0\\msvc2017_64";
             // 
             // labeltop
             // 
@@ -389,12 +389,12 @@ namespace treefrogsetup {
 
             // Get msi file from resource
             int rcid = 0;
-            if (version->IndexOf("Qt version " + VERSION_STR2, StringComparison::OrdinalIgnoreCase) > 0) {
+            if (version->IndexOf("Qt version " + VERSION_STR513, StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT513_MSI;
+            } else if (version->IndexOf("Qt version " + VERSION_STR512, StringComparison::OrdinalIgnoreCase) > 0) {
                 rcid = IDR_TREEFROG_QT512_MSI;
-            } else if (version->IndexOf("Qt version " + VERSION_STR1, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT511_MSI;
             } else {
-                abort("Not found Qt version " + VERSION_STR2 + " or " + VERSION_STR1 + ".", "Abort");
+                abort("Not found Qt version " + VERSION_STR513 + " or " + VERSION_STR512 + ".", "Abort");
                 return;
             }
 

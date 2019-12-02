@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A9BABE2B-85A5-45EF-8950-1A5A68E55B36}</ProjectGuid>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>treefrogsetup</RootNamespace>
   </PropertyGroup>
@@ -22,13 +22,14 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CLRSupport>Pure</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v90</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>Pure</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
