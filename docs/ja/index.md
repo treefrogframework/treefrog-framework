@@ -40,6 +40,16 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
+### 2019/12/5  TreeFrog Framework バージョン1.27.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - OAuth2クライアントの実装 [実験的]
+  - MongoDBバージョン3.2以降のサポート.
+  - TSqlDatabasePoolのタイマーが停止する不具合修正 #279
+  - トランザクション有効/無効の設定が反映されない不具合の修正
+  - tspawnコマンドにおけるdiff実行の不具合修正
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
 ### 2019/10/19  TreeFrog Framework バージョン1.26.0 （安定版）リリース <span style="color: red;">New!</span>
 
   - SQLite, MongoDB, Redis向けキャッシュモジュールを追加
@@ -47,8 +57,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - Ubuntu 19.10でのコンパイルエラー解消
   - epoll MPMをマルチスレッドからシングルスレッドアーキテクチャに変更
   - パフォーマンス改善
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2019/7/20  TreeFrog Framework バージョン1.25.0 （安定版）リリース
 

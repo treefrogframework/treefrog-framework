@@ -37,6 +37,18 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Dec. 5, 2019
+
+### TreeFrog Framework version 1.27.0 (stable) release <span style="color: red;">New!</span>
+
+  - Implemented OAuth2 client.  [Experimental]
+  - Supports for MongoDB version 3.2 and later.
+  - Fix a bug that timer for TSqlDatabasePool stops. #279
+  - Fix a bug not to set all databases to transaction state value.
+  - Fix a bug of execution of diff in tspawn command.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Oct. 19, 2019
 
 ### TreeFrog Framework version 1.26.0 (stable) release <span style="color: red;">New!</span>
@@ -46,8 +58,6 @@ Oct. 19, 2019
   - Fix a compilation error on Ubuntu 19.10.
   - Changed the epoll MPM from multi-thread to single thread architecture.
   - Performance improvement.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 July 20, 2019
 

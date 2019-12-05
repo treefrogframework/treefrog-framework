@@ -13,7 +13,7 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 | バージョン                                       | ファイル                                  |
 |------------------------------------------------|---------------------------------------|
-| 1.26.0 for Visual Studio 2017 64bit (Qt5.12 or 5.13) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.26.0-msvc2017_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.26.0/treefrog-1.26.0-msvc2017_64-setup.exe) |
+| 1.27.0 for Visual Studio 2017 64bit (Qt5.12 or 5.13) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-1.27.0-msvc2017_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v1.27.0/treefrog-1.27.0-msvc2017_64-setup.exe) |
 
 </div>
 
@@ -29,7 +29,7 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 | ソースパッケージ  | ファイル                         |
 |-------------------|----------------------------------|
-| バージョン 1.26.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.26.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.26.0.tar.gz) |
+| バージョン 1.27.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-1.27.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v1.27.0.tar.gz) |
 
 </div>
 
