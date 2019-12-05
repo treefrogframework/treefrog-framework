@@ -9,7 +9,7 @@
  - Added a value, svg:image/svg+xml.
 
 ## 1.26.0
- - Added cache modules by SQLite, MongoDB and Redis.
+ - Added cache modules of SQLite, MongoDB and Redis.
  - Updated LZ4 compression algorithm to 1.9.2.
  - Fix a compilation error on Ubuntu 19.10.
  - Changed the epoll module from multi-thread to single thread architecture.
