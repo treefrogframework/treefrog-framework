@@ -93,7 +93,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     file.setPermissions((QFile::Permissions)0x777);
 
     // Listen
-    if (::listen(sd, 50) < 0) {
+    if (::listen(sd, SOMAXCONN) < 0) {
         tSystemError("Listen failed  [%s:%d]", __FILE__, __LINE__);
         goto socket_error;
     }

@@ -82,7 +82,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
         goto error_socket;
     }
 
-    if (::listen(sock, 50) != 0) {
+    if (::listen(sock, SOMAXCONN) != 0) {
         tSystemError("listen error: %d", WSAGetLastError());
         goto error_socket;
     }
