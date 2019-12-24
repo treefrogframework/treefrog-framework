@@ -29,6 +29,7 @@
 
 const QString FLASH_VARS_SESSION_KEY ("_flashVariants");
 const QString LOGIN_USER_NAME_KEY ("_loginUserName");
+const QByteArray DEFAULT_CONTENT_TYPE ("text/html");
 
 /*!
   \class TActionController
@@ -52,7 +53,7 @@ TActionController::TActionController() :
     TAbstractController()
 {
     // Default content type
-    setContentType(QByteArrayLiteral("text/html"));
+    setContentType(DEFAULT_CONTENT_TYPE);
 }
 
 /*!
@@ -385,6 +386,10 @@ bool TActionController::renderText(const QString &text, bool layoutEnable, const
     }
     rendered = true;
 
+    if (contentType() == DEFAULT_CONTENT_TYPE) {
+        setContentType(QByteArrayLiteral("text/plain"));
+    }
+
     // Creates TTextView object and displays it
     setLayout(layout);
     setLayoutEnabled(layoutEnable);
@@ -658,7 +663,7 @@ void TActionController::redirect(const QUrl &url, int statusCode)
     setStatusCode(statusCode);
     response.header().setRawHeader("Location", url.toEncoded());
     response.setBody(QByteArray("<html><body>redirected.</body></html>"));
-    response.header().setContentType("text/html");
+    setContentType("text/html");
 
     // Enable flash-variants
     QVariant var;
@@ -690,7 +695,7 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
     }
 
     response.setBodyFile(filePath);
-    response.header().setContentType(contentType);
+    setContentType(contentType);
 
     if (autoRemove) {
         setAutoRemove(filePath);
@@ -722,7 +727,7 @@ bool TActionController::sendData(const QByteArray &data, const QByteArray &conte
     }
 
     response.setBody(data);
-    response.header().setContentType(contentType);
+    setContentType(contentType);
     return true;
 }
 
