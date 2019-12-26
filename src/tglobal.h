@@ -19,7 +19,7 @@ constexpr auto TF_SRC_REVISION = 2123;
     class Static##TYPE##Instance                                \
     {                                                           \
     public:                                                     \
-        Static##TYPE##Instance()                                \
+        Static##TYPE##Instance() noexcept                       \
         {                                                       \
             qRegisterMetaType<TYPE>();                          \
         }                                                       \
@@ -32,7 +32,7 @@ constexpr auto TF_SRC_REVISION = 2123;
     class Static##TYPE##Definition                              \
     {                                                           \
     public:                                                     \
-        Static##TYPE##Definition()                              \
+        Static##TYPE##Definition() noexcept                     \
         {                                                       \
             Tf::objectFactories()->insert(QByteArray(#TYPE).toLower(), [](){ return new TYPE(); }); \
         }                                                       \
@@ -43,7 +43,7 @@ constexpr auto TF_SRC_REVISION = 2123;
     class Static##TYPE##Instance                                \
     {                                                           \
     public:                                                     \
-        Static##TYPE##Instance()                                \
+        Static##TYPE##Instance() noexcept                       \
         {                                                       \
             qRegisterMetaTypeStreamOperators<TYPE>(#TYPE);      \
         }                                                       \
@@ -51,8 +51,8 @@ constexpr auto TF_SRC_REVISION = 2123;
     static Static##TYPE##Instance _static##TYPE##Instance;
 
 #define T_DEFINE_PROPERTY(TYPE,PROPERTY)                           \
-    inline void set##PROPERTY(const TYPE &v__) { PROPERTY = v__; } \
-    inline TYPE get##PROPERTY() const { return PROPERTY; }
+    inline void set##PROPERTY(const TYPE &v__) noexcept { PROPERTY = v__; } \
+    inline TYPE get##PROPERTY() const noexcept { return PROPERTY; }
 
 
 //
@@ -217,32 +217,32 @@ class QSqlDatabase;
 
 namespace Tf
 {
-    T_CORE_EXPORT TWebApplication *app();
-    T_CORE_EXPORT TAppSettings *appSettings();
-    T_CORE_EXPORT const QVariantMap &conf(const QString &configName);
-    T_CORE_EXPORT void msleep(unsigned long msecs);
+    T_CORE_EXPORT TWebApplication *app() noexcept;
+    T_CORE_EXPORT TAppSettings *appSettings() noexcept;
+    T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
+    T_CORE_EXPORT void msleep(unsigned long msecs) noexcept;
 
     // Xorshift random number generator
-    T_CORE_EXPORT void srandXor128(quint32 seed);  // obsolete
-    T_CORE_EXPORT quint32 randXor128();            // obsolete
+    T_CORE_EXPORT void srandXor128(quint32 seed) noexcept;  // obsolete
+    T_CORE_EXPORT quint32 randXor128() noexcept;            // obsolete
 
     // Thread-safe std::random number generator
-    T_CORE_EXPORT uint32_t rand32_r();
-    T_CORE_EXPORT uint64_t rand64_r();
-    T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max);
-    T_CORE_EXPORT uint64_t random(uint64_t max);
+    T_CORE_EXPORT uint32_t rand32_r() noexcept;
+    T_CORE_EXPORT uint64_t rand64_r() noexcept;
+    T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max) noexcept;
+    T_CORE_EXPORT uint64_t random(uint64_t max) noexcept;
 
-    T_CORE_EXPORT TCache *cache();
+    T_CORE_EXPORT TCache *cache() noexcept;
     T_CORE_EXPORT TActionContext *currentContext();
     T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
-    T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id);
-    T_CORE_EXPORT QMap<QByteArray, std::function<QObject*()>> *objectFactories();
+    T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
+    T_CORE_EXPORT QMap<QByteArray, std::function<QObject*()>> *objectFactories() noexcept;
 
     // LZ4 lossless compression algorithm
-    T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1);
-    T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLevel = 1);
-    T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes);
-    T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data);
+    T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1) noexcept;
+    T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLevel = 1) noexcept;
+    T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes) noexcept;
+    T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 
     constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
     constexpr auto CRLF     = "\x0d\x0a";

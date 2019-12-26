@@ -31,7 +31,7 @@ constexpr int LZ4_BLOCKSIZE = 1024 * 1024; // 1 MB
 /*!
   Returns a global pointer referring to the unique application object.
 */
-TWebApplication *Tf::app()
+TWebApplication *Tf::app() noexcept
 {
     return static_cast<TWebApplication *>(qApp);
 }
@@ -39,7 +39,7 @@ TWebApplication *Tf::app()
 /*!
   Returns a global pointer referring to the unique application settings object.
 */
-TAppSettings *Tf::appSettings()
+TAppSettings *Tf::appSettings() noexcept
 {
     return TAppSettings::instance();
 }
@@ -48,7 +48,7 @@ TAppSettings *Tf::appSettings()
   Returns the map associated with config file \a configName in 'conf'
   directory.
 */
-const QVariantMap &Tf::conf(const QString &configName)
+const QVariantMap &Tf::conf(const QString &configName) noexcept
 {
     return Tf::app()->getConfig(configName);
 }
@@ -56,7 +56,7 @@ const QVariantMap &Tf::conf(const QString &configName)
 /*!
   Causes the current thread to sleep for \a msecs milliseconds.
 */
-void Tf::msleep(unsigned long msecs)
+void Tf::msleep(unsigned long msecs) noexcept
 {
     QThread::msleep(msecs);
 }
@@ -77,7 +77,7 @@ namespace {
   of xorshift random integers to be returned by randXor128().
   This function is thread-safe.
 */
-void Tf::srandXor128(quint32 seed)
+void Tf::srandXor128(quint32 seed) noexcept
 {
     randMutex.lock();
     w = seed;
@@ -90,7 +90,7 @@ void Tf::srandXor128(quint32 seed)
   sequence of xorshift random integers.
   This function is thread-safe.
 */
-quint32 Tf::randXor128()
+quint32 Tf::randXor128() noexcept
 {
     QMutexLocker lock(&randMutex);
     quint32 t;
@@ -110,7 +110,7 @@ namespace {
     QMutex           mt64mtx;
 }
 
-uint32_t Tf::rand32_r()
+uint32_t Tf::rand32_r() noexcept
 {
     mtmtx.lock();
     uint32_t ret = mt();
@@ -119,7 +119,7 @@ uint32_t Tf::rand32_r()
 }
 
 
-uint64_t Tf::rand64_r()
+uint64_t Tf::rand64_r() noexcept
 {
     mt64mtx.lock();
     uint64_t ret = mt64();
@@ -130,7 +130,7 @@ uint64_t Tf::rand64_r()
 /*!
   Random number generator in the range from \a min to \a max.
 */
-uint64_t Tf::random(uint64_t min, uint64_t max)
+uint64_t Tf::random(uint64_t min, uint64_t max) noexcept
 {
     std::uniform_int_distribution<uint64_t> uniform(min, max);
     mt64mtx.lock();
@@ -142,13 +142,13 @@ uint64_t Tf::random(uint64_t min, uint64_t max)
 /*!
   Random number generator in the range from 0 to \a max.
 */
-uint64_t Tf::random(uint64_t max)
+uint64_t Tf::random(uint64_t max) noexcept
 {
     return random(0, max);
 }
 
 
-TCache *Tf::cache()
+TCache *Tf::cache() noexcept
 {
     return Tf::currentContext()->cache();
 }
@@ -200,20 +200,20 @@ TDatabaseContext *Tf::currentDatabaseContext()
 }
 
 
-QSqlDatabase &Tf::currentSqlDatabase(int id)
+QSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
 {
     return currentDatabaseContext()->getSqlDatabase(id);
 }
 
 
-QMap<QByteArray, std::function<QObject*()>> *Tf::objectFactories()
+QMap<QByteArray, std::function<QObject*()>> *Tf::objectFactories() noexcept
 {
     static QMap<QByteArray, std::function<QObject*()>> objectFactoryMap;
     return &objectFactoryMap;
 }
 
 
-QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel)
+QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel) noexcept
 {
     // internal compress function
     auto compress = [](const char *src, int srclen, int level, QByteArray &buffer) {
@@ -263,13 +263,13 @@ QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel)
 }
 
 
-QByteArray Tf::lz4Compress(const QByteArray &data, int compressionLevel)
+QByteArray Tf::lz4Compress(const QByteArray &data, int compressionLevel) noexcept
 {
     return Tf::lz4Compress(data.data(), data.length(), compressionLevel);
 }
 
 
-QByteArray Tf::lz4Uncompress(const char *data, int nbytes)
+QByteArray Tf::lz4Uncompress(const char *data, int nbytes) noexcept
 {
     QByteArray ret;
     QBuffer srcbuf;
@@ -312,7 +312,7 @@ QByteArray Tf::lz4Uncompress(const char *data, int nbytes)
 }
 
 
-QByteArray Tf::lz4Uncompress(const QByteArray &data)
+QByteArray Tf::lz4Uncompress(const QByteArray &data) noexcept
 {
     return Tf::lz4Uncompress(data.data(), data.length());
 }
