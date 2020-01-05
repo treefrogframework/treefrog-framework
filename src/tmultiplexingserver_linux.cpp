@@ -130,14 +130,6 @@ bool TMultiplexingServer::start(bool debugMode)
 
 void TMultiplexingServer::run()
 {
-    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
-    maxWorkers = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer").toInt();
-    if (maxWorkers <= 0) {
-        maxWorkers = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerServer", "128").toInt();
-    }
-    tSystemDebug("MaxWorkers: %d", maxWorkers);
-
-    int appsvrnum = qMax(Tf::app()->maxNumberOfAppServers(), 1);
     setNoDeleyOption(listenSocket);
 
     TEpollSocket *lsn = TEpollSocket::create(listenSocket, QHostAddress());
@@ -164,16 +156,10 @@ void TMultiplexingServer::run()
 
             int cltfd = sock->socketDescriptor();
             if (cltfd == listenSocket) {
-                for (;;) {
-                    TEpollSocket *acceptedSock = TEpollSocket::accept(listenSocket);
-                    if (Q_UNLIKELY(!acceptedSock)) {
-                        break;
-                    }
-
-                    TEpoll::instance()->addPoll(acceptedSock, (EPOLLIN | EPOLLOUT | EPOLLET));
-
-                    if (appsvrnum > 1) {
-                        break;  // Load smoothing
+                TEpollSocket *acceptedSock = TEpollSocket::accept(listenSocket);
+                if (Q_LIKELY(acceptedSock)) {
+                    if (!TEpoll::instance()->addPoll(acceptedSock, (EPOLLIN | EPOLLOUT | EPOLLET))) {
+                        delete acceptedSock;
                     }
                 }
                 continue;
@@ -191,12 +177,6 @@ void TMultiplexingServer::run()
                 }
 
                 if ( TEpoll::instance()->canReceive() ) {
-                    if (TActionWorker::workerCount() >= maxWorkers) {
-                        // not receive
-                        TEpoll::instance()->modifyPoll(sock, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
-                        continue;
-                    }
-
                     try {
                         // Receive data
                         int len = TEpoll::instance()->recv(sock);

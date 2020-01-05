@@ -52,7 +52,7 @@ qint64 TProcessInfo::ppid() const
 //     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
 //     if (hProcess) {
 //         PROCESS_BASIC_INFORMATION basicInfo;
-//         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
+//         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), nullptr) == STATUS_SUCCESS) {
 //             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
 //         }
 //     }
@@ -66,7 +66,7 @@ QString TProcessInfo::processName() const
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
     if (hProcess) {
         WCHAR fileName[512];
-        DWORD len = GetModuleFileNameEx(hProcess, NULL, (LPWSTR)fileName, 512);
+        DWORD len = GetModuleFileNameEx(hProcess, nullptr, (LPWSTR)fileName, 512);
         if (len > 0) {
             QString path = QString::fromUtf16((ushort*)fileName);
             ret = QFileInfo(path).baseName();

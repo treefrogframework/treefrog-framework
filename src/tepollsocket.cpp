@@ -40,7 +40,7 @@ TEpollSocket *TEpollSocket::accept(int listeningSocket)
         if (err != EAGAIN) {
             tSystemWarn("Failed accept.  errno:%d", err);
         }
-        return NULL;
+        return nullptr;
     }
 
     return create(actfd, QHostAddress((sockaddr *)&addr));

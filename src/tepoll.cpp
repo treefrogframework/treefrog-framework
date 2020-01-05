@@ -135,7 +135,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         return false;
     }
     struct epoll_event ev;
-    ev.events  = events;
+    ev.events = events;
     ev.data.ptr = socket;
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, socket->socketDescriptor(), &ev);

@@ -31,7 +31,7 @@ void TApplicationServerBase::nativeSocketCleanup()
 int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 port, OpenFlag)
 {
     int protocol = (address.protocol() == QAbstractSocket::IPv6Protocol) ? AF_INET6 : AF_INET;
-    SOCKET sock = ::WSASocket(protocol, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+    SOCKET sock = ::WSASocket(protocol, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
     if (sock == INVALID_SOCKET) {
         tSystemError("WSASocket Error: %d", WSAGetLastError());
         return -1;

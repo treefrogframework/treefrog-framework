@@ -386,7 +386,7 @@ QString TMongoDriver::serverVersion()
     bson_destroy (&rep);
 
     QString version = map.value("version").toString();
-    tSystemInfo("MongoDB server version: %s", qPrintable(version));
+    tSystemDebug("MongoDB server version: %s", qPrintable(version));
     return version;
 }
 

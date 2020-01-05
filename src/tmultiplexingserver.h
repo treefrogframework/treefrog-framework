@@ -41,7 +41,6 @@ signals:
     bool incomingRequest(TEpollSocket *socket);
 
 private:
-    int maxWorkers {0};
     TAtomic<bool> stopped {false};
     int listenSocket {0};
     QBasicTimer reloadTimer;

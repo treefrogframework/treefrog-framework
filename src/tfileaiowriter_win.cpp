@@ -66,7 +66,7 @@ bool TFileAioWriter::open()
         if (d->fileName.isEmpty())
             return false;
 
-        d->fileHandle = CreateFile((const wchar_t*)d->fileName.utf16(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_OVERLAPPED, NULL);
+        d->fileHandle = CreateFile((const wchar_t*)d->fileName.utf16(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_FLAG_OVERLAPPED, nullptr);
         if (d->fileHandle == INVALID_HANDLE_VALUE) {
             //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
         }
@@ -134,7 +134,7 @@ int TFileAioWriter::write(const char *data, int length)
         ab->aio_buf[len - 1] = '\n';
     }
 
-    BOOL res = WriteFile(d->fileHandle, ab->aio_buf, (DWORD)len, NULL, &ab->aio_overlap);
+    BOOL res = WriteFile(d->fileHandle, ab->aio_buf, (DWORD)len, nullptr, &ab->aio_overlap);
     if (!res && GetLastError() != ERROR_IO_PENDING) {
         //fprintf(stderr, "WriteFile error str: %s\n", data);
         delete[] (char *)ab->aio_buf;
