@@ -5,9 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include <QSysInfo>
-#include <QHostInfo>
 #include <TWebApplication>
 #include <TAppSettings>
 #include <TSystemGlobal>
@@ -15,6 +12,10 @@
 #include <tfcore.h>
 #include "servermanager.h"
 #include "systembusdaemon.h"
+#include <QtCore>
+#include <QSysInfo>
+#include <QHostInfo>
+#include <QJsonDocument>
 
 #ifdef Q_OS_UNIX
 # include <sys/utsname.h>
@@ -35,7 +36,11 @@ namespace TreeFrog {
 extern void WINAPI winServiceMain(DWORD argc, LPTSTR *argv);
 #endif
 
-constexpr auto PID_FILENAME = "treefrog.pid";
+constexpr auto OLD_PID_FILENAME  = "treefrog.pid";
+constexpr auto PID_FILENAME  = "treefrog.inf";
+constexpr auto JSON_PID_KEY  = "pid";
+constexpr auto JSON_PORT_KEY = "port";
+constexpr auto JSON_UNIX_KEY = "unixDomain";
 
 enum CommandOption {
     Invalid = 0,
@@ -212,30 +217,42 @@ static void writeStartupLog()
 static QString pidFilePath(const QString &appRoot = QString())
 {
     return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
-        : appRoot + "/tmp/" +  PID_FILENAME;
+        : appRoot + QLatin1String("/tmp/") + PID_FILENAME;
 }
 
 
-static qint64 readPidFileOfApplication(const QString &appRoot = QString())
+static QString oldPidFilePath(const QString &appRoot = QString())
+{
+    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + OLD_PID_FILENAME
+        : appRoot + QLatin1String("/tmp/") + OLD_PID_FILENAME;
+}
+
+
+static QJsonObject readJsonOfApplication(const QString &appRoot = QString())
 {
     QFile pidf(pidFilePath(appRoot));
     if (pidf.open(QIODevice::ReadOnly)) {
-        qint64 pid = pidf.readLine(100).toLongLong();
-        if (pid > 0) {
-            return pid;
-        }
+        return QJsonDocument::fromJson(pidf.readAll()).object();
     }
-    return -1;
+    return QJsonObject();
+}
+
+
+static qint64 readPidOfApplication(const QString &appRoot = QString())
+{
+    int pid = readJsonOfApplication(appRoot)[JSON_PID_KEY].toInt();
+    return (pid > 0) ? pid : -1;
 }
 
 
 static qint64 runningApplicationPid(const QString &appRoot = QString())
 {
-    qint64 pid = readPidFileOfApplication(appRoot);
+    qint64 pid = readPidOfApplication(appRoot);
     if (pid > 0) {
         QString name = TProcessInfo(pid).processName().toLower();
-        if (name == "treefrog" || name == "treefrogd")
+        if (name == QLatin1String("treefrog") || name == QLatin1String("treefrogd")) {
             return pid;
+        }
     }
     return -1;
 }
@@ -249,7 +266,7 @@ static QString runningApplicationsFilePath()
         home = QLatin1String("/root");
     }
 #endif
-    return home + "/.treefrog/runnings";
+    return home + QLatin1String("/.treefrog/runnings");
 }
 
 
@@ -264,13 +281,16 @@ static bool addRunningApplication(const QString &rootPath)
         QFile(dir.absolutePath()).setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser);
     }
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+    if (!file.open(QIODevice::ReadWrite)) {
         return false;
     }
 
     TF_FLOCK(file.handle(), LOCK_EX); // lock
-    file.write(rootPath.toLatin1());
-    file.write("\n");
+    QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, QString::SkipEmptyParts);
+    paths << rootPath;
+    paths.removeDuplicates();
+    file.resize(0);
+    file.write(paths.join(Tf::LF).toUtf8());
     TF_FLOCK(file.handle(), LOCK_UN); // unlock
     file.close();
     return true;
@@ -279,26 +299,23 @@ static bool addRunningApplication(const QString &rootPath)
 
 static QStringList runningApplicationPathList()
 {
-    QStringList paths;
+    QStringList ret;
     QFile file(runningApplicationsFilePath());
 
     if (file.open(QIODevice::ReadOnly)) {
         TF_FLOCK(file.handle(), LOCK_SH); // lock
-        QByteArrayList lst = file.readAll().split('\n');
+        QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, QString::SkipEmptyParts);
         TF_FLOCK(file.handle(), LOCK_UN); // unlock
         file.close();
+        paths.removeDuplicates();
 
-        for (QListIterator<QByteArray> it(lst); it.hasNext(); ) {
-            // Checks the running
-            const QByteArray &approot = it.next().trimmed();
-            if (!approot.isEmpty()) {
-                if (!paths.contains(approot) && runningApplicationPid(approot) > 0) {
-                    paths << approot;
-                }
+        for (const auto &approot : paths) {
+            if (!ret.contains(approot) && runningApplicationPid(approot) > 0) {
+                ret << approot;
             }
         }
     }
-    return paths;
+    return ret;
 }
 
 
@@ -314,37 +331,33 @@ static void cleanupRunningApplicationList()
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         TF_FLOCK(file.handle(), LOCK_EX); // lock
-        file.write(runapps.join("\n").toLatin1());
-        file.write("\n");
+        file.write(runapps.join(Tf::LF).toUtf8());
         TF_FLOCK(file.handle(), LOCK_UN); // unlock
         file.close();
     }
 }
 
 
-static QVariant applicationSettingValue(const QString &appRoot, const QString &key)
-{
-    QString appIni = appRoot + QLatin1String("/config/application.ini");
-    return QSettings(appIni, QSettings::IniFormat).value(key);
-}
-
-
 static void showRunningAppList()
 {
-    QStringList apps = runningApplicationPathList();
-    if (apps.isEmpty()) {
+    QStringList approots = runningApplicationPathList();
+    if (approots.isEmpty()) {
         printf("no running application\n");
     } else {
-        int cnt = apps.count();
+        int cnt = approots.count();
         printf(" %d application%s running:\n", cnt, (cnt > 1 ? "s" : ""));
 
-        foreach (const QString &s, apps) {
-            QString url = applicationSettingValue(s, "ListenPort").toString().trimmed();
-            if (!url.startsWith("unix:", Qt::CaseInsensitive)) {
-                QString port = (url == "80") ? QString("") : (QString(":") + url);
-                url = QString("http://%1%2/").arg(QHostInfo::localHostName()).arg(port);
+        for (const QString &path : approots) {
+            QString url;
+            int port = readJsonOfApplication(path)[JSON_PORT_KEY].toInt();
+            if (port > 0) {
+                url = QString("http://%1:%2/").arg(QHostInfo::localHostName()).arg(port);
+            } else {
+                url  = QLatin1String("unix:");
+                url += readJsonOfApplication(path)[JSON_UNIX_KEY].toString();
             }
-            printf(" * %s\n    %s\n\n", qPrintable(s), qPrintable(url));
+
+            printf(" * %s\n    %s\n\n", qPrintable(path), qPrintable(url));
         }
     }
 }
@@ -374,6 +387,7 @@ static int killTreeFrogProcess(const QString &cmd)
         pi.terminate();
         if (pi.waitForTerminated()) {
             printf("TreeFrog application servers shutdown completed\n");
+            tf_unlink(oldPidFilePath().toLatin1().data());
         } else {
             fprintf(stderr, "TreeFrog application servers shutdown failed\n");
         }
@@ -384,6 +398,7 @@ static int killTreeFrogProcess(const QString &cmd)
         pi.kill();  // kills the manager process
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
+        tf_unlink(oldPidFilePath().toLatin1().data());
         tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
@@ -591,7 +606,8 @@ int managerMain(int argc, char *argv[])
         pidfile.setFileName(pidFilePath());
         if (pidfile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
             pid = QCoreApplication::applicationPid();
-            pidfile.write( QString::number(pid).toLatin1() );
+            QJsonObject json{{JSON_PID_KEY, pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
+            pidfile.write( QJsonDocument(json).toJson(QJsonDocument::Indented) );
             pidfile.close();
         } else {
             tSystemError("File open failed: %s", qPrintable(pidfile.fileName()));

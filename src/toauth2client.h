@@ -16,13 +16,13 @@ public:
         InvalidRequest,   ///< invalid request
         InvalidClient,    ///< invalid client
         InvalidGrant,     ///< invalid grant
-        UnauthorizedClient,      ///< unauthorized_client
+        UnauthorizedClient,      ///< unauthorized client
         UnsupportedGrantType,    ///< unsupported grant type
-        AccessDenied,            ///< access_denied
-        UnsupportedResponseType, ///<unsupported_response_type
+        AccessDenied,            ///< access denied
+        UnsupportedResponseType, ///< unsupported response type
         InvalidScope,            ///< invalid scope
-        ServerError,             ///< server_error
-        TemporarilyUnavailable,  ///< temporarily_unavailable
+        ServerError,             ///< server error
+        TemporarilyUnavailable,  ///< temporarily unavailable
         UnknownError,            ///< unknown error
     };
 
