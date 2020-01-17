@@ -42,7 +42,7 @@ Similarly, if you specify a post directive, it is only valid for POST method req
 The following is about how to pass arguments to the action. Suppose you have defined the following entries as routing rules:
 
 ```
- get  /search/:params  Searcher#search
+ get  /search/:params  Searcher.search
 ```
 
 It's important to use the keyword ':params'.<br>
