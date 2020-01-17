@@ -14,13 +14,13 @@ URLルーティングとは、リクエストされた URL に対して呼び出
 ```
 
 では、ルーティングルールをカスタマイズしてみましょう。<br>
-ルーティングの定義は config/routes.cfg に記述します。１つのエントリは、１行でディレクティブ、パス、アクションを並べて書きます。 ディレクティブは match, get, post の中から1つ選択 します。<br>
+ルーティングの定義は config/routes.cfg に記述します。１つのエントリは、１行でディレクティブ、パス、アクションを並べて書きます。 ディレクティブは *match*, *get*, *post*, *put*, *delete* の中から1つ選択 します。<br>
 なお、# ではじまる行はコメント行と見なされます。
 
 例えば、次のように書きます。
 
 ```
- match  "/index"  "Merge#index"
+ match  /index  Merge.index
 ```
 
 この場合には、ブラウザから /index とリクエストされたら、POSTメソッドかGETメソッドか関係なしにMerge コントローラの index アクションに受け渡します。
@@ -28,7 +28,7 @@ URLルーティングとは、リクエストされた URL に対して呼び出
 次に、get ディレクティブを定義した場合です。
 
 ```
- get  "/index"  "Merge#index"
+ get  /index  Merge.index
 ```
 
 この場合では、GET メソッドで /index がリクエストされた時だけ、ルーティングを実施します。 POST メソッドでリクエストされた場合は拒否されます（アクションに受け渡しません）。
@@ -36,13 +36,13 @@ URLルーティングとは、リクエストされた URL に対して呼び出
 同様に、post ディレクティブを指定した場合は、POST メソッドのリクエストのみ有効です。GETメソッドのリクエストは拒否されます。
 
 ```
- post  "/index"  "Merge#index"
+ post  /index  Merge.index
 ```
 
 次は、アクションに引数を渡す方法についてです。ルーティングルールとして次のエントリを定義したとします。":params"というキーワードがポイントです。
 
 ```
- get  "/search/:params"  "Searcher#search"
+ get  /search/:params  Searcher.search
 ```
 
 この場合には、GETメソッドで /search/foo がリクエストされたら、Searcher コントローラの引数を１つ持つ search アクションが呼び出されます。その引数には "foo" が渡されます。<br>

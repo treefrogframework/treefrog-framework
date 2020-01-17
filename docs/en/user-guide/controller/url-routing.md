@@ -14,13 +14,13 @@ Here is a little reminder of those default rules:
 ```
 
 Let's look at customizing the routing rules.<br>
-The routing definition is written in the *config/routes.cfg* file. For each entry, the directives, path and an action are written side by side on a single line. The directive is to select *match*, *get*, or *post*.
+The routing definition is written in the *config/routes.cfg* file. For each entry, the directives, path and an action are written side by side on a single line. The directive is to select *match*, *get*, *post*, *put* or *delete*.
 In addition, a line that begins with '#' is considered to be a comment line.
 
 Here's an example:
 
 ```
- match  "/index"  "Merge#index"
+ match  /index  Merge.index
 ```
 
 In this case, if the browser requests '/index' either by POST method or GET method, the controller will respond with the *index* action of the *Merge* controller.
@@ -28,7 +28,7 @@ In this case, if the browser requests '/index' either by POST method or GET meth
 The next case is where the get directives have been defined:
 
 ```
- get  "/index"  "Merge#index"
+ get  /index  Merge.index
 ```
 
 In this case, routing will be carried out only when the '/index' is requested with the GET method. If the request is made by the POST method, it will be rejected.
@@ -36,13 +36,13 @@ In this case, routing will be carried out only when the '/index' is requested wi
 Similarly, if you specify a post directive, it is only valid for POST method requests. Request in GET method will be rejected.
 
 ```
- post  "/index"  "Merge#index"
+ post  /index  Merge.index
 ```
 
 The following is about how to pass arguments to the action. Suppose you have defined the following entries as routing rules:
 
 ```
- get  "/search/:params"  "Searcher#search"
+ get  /search/:params  Searcher#search
 ```
 
 It's important to use the keyword ':params'.<br>
