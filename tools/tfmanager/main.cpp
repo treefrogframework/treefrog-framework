@@ -54,6 +54,7 @@ enum CommandOption {
     SendSignal,
     AutoReload,
     Port,
+    ShowPid
 };
 
 
@@ -114,6 +115,7 @@ public:
         insert("-k", SendSignal);
         insert("-r", AutoReload);
         insert("-p", Port);
+        insert("-m", ShowPid);
     }
 };
 Q_GLOBAL_STATIC(OptionHash, options)
@@ -123,13 +125,15 @@ static void usage()
 {
     constexpr auto text =
         "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n" \
-        "Usage: %1 [-k stop|abort|restart|status] [application-directory]\n" \
+        "Usage: %1 -k [stop|abort|restart|status] [application-directory]\n" \
+        "Usage: %1 -m [application-directory]\n"                        \
         "%2"                                                            \
         "Options:\n"                                                    \
         "  -d              : run as a daemon process\n"                 \
         "  -p port         : run server on specified port\n"            \
         "  -e environment  : specify an environment of the database settings\n" \
         "  -k              : send signal to a manager process\n"        \
+        "  -m              : show the process ID of a running main program\n" \
         "%4"                                                            \
         "%3\n"                                                          \
         "Type '%1 -l' to show your running applications.\n"             \
@@ -151,8 +155,7 @@ static void usage()
 
 static bool checkArguments()
 {
-    for (QStringListIterator i(QCoreApplication::arguments()); i.hasNext(); ) {
-        const QString &arg = i.next();
+    for (const auto &arg : QCoreApplication::arguments()) {
         if (arg.startsWith('-') && options()->value(arg, Invalid) == Invalid) {
             fprintf(stderr, "invalid argument\n");
             return false;
@@ -417,6 +420,15 @@ static int killTreeFrogProcess(const QString &cmd)
 }
 
 
+static void showProcessId()
+{
+    qint64 pid = readPidOfApplication();
+    if (pid > 0) {
+        printf("%lld\n", pid);
+    }
+}
+
+
 int managerMain(int argc, char *argv[])
 {
     TWebApplication app(argc, argv);
@@ -481,6 +493,13 @@ int managerMain(int argc, char *argv[])
                 return 1;
             }
             listenPort = i.next().toInt();
+            break;
+
+        case ShowPid:
+            if (app.appSettingsFileExists()) {
+                showProcessId();
+                return 0;
+            }
             break;
 
         default:
