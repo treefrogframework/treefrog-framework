@@ -23,6 +23,7 @@ Gemfile.lock
 *.so
 *.so.*
 *.pro.user
+*.filters
 3rdparty/mongo-c-driver/src/*.os
 docs/_site/
 tools/tfmanager/treefrog
