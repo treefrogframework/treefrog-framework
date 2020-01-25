@@ -195,23 +195,15 @@ void TActionController::setCsrfProtectionInto(TSession &session)
 */
 const QStringList &TActionController::availableControllers()
 {
-    static QStringList controllers;
-    static QMutex mutex;
-
-    if (controllers.isEmpty()) {
-        QMutexLocker lock(&mutex);
-        for (int i = QMetaType::User; ; ++i) {
-            const char *name = QMetaType::typeName(i);
-            if (!name) {
-                break;
-            }
-
-            QString c(name);
-            if (c.endsWith(QStringLiteral("controller"))) {
-                controllers << c;
+    static QStringList controllers = []() {
+        QStringList controllers;
+        for (auto it = Tf::objectFactories()->cbegin(); it != Tf::objectFactories()->cend(); ++it) {
+            if (it.key().endsWith("controller")) {
+                controllers << QString::fromLatin1(it.key());
             }
         }
-    }
+        return controllers;
+    }();
     return controllers;
 }
 

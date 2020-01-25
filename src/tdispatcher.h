@@ -31,8 +31,7 @@ private:
 
 
 template <class T>
-inline TDispatcher<T>::TDispatcher(const QString &metaTypeName)
-    : metaType(metaTypeName)
+inline TDispatcher<T>::TDispatcher(const QString &metaTypeName) : metaType(metaTypeName)
 { }
 
 template <class T>
@@ -169,7 +168,6 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
 template <class T>
 inline T *TDispatcher<T>::object()
 {
-
     if (!ptr) {
         auto factory = Tf::objectFactories()->value(metaType.toLatin1().toLower());
         if (Q_LIKELY(factory)) {
