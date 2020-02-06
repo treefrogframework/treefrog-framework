@@ -3,6 +3,7 @@
 
 #include <TGlobal>
 #include <QNetworkCookie>
+#include <QByteArray>
 
 
 class TCookie : public QNetworkCookie
