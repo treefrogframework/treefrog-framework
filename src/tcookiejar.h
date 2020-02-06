@@ -3,10 +3,8 @@
 
 #include <QList>
 #include <QString>
-#include <QNetworkCookie>
+#include <TCookie>
 #include <TGlobal>
-
-using TCookie = QNetworkCookie;
 
 #ifdef Q_CC_MSVC
 extern uint qHash(const TCookie &key);

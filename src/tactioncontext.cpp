@@ -60,6 +60,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
     static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
     static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
     static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
+    static const QByteArray SessionCookieSameSite = Tf::appSettings()->value(Tf::SessionCookieSameSite).toByteArray().trimmed();
 
     THttpResponseHeader responseHeader;
 
@@ -193,12 +194,8 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 }
                             }());
 
-                            QDateTime expire;
-                            if (SessionCookieMaxAge > 0) {
-                                expire = QDateTime::currentDateTime().addSecs(SessionCookieMaxAge);
-                            }
-
-                            currController->addCookie(TSession::sessionName(), currController->session().id(), expire, SessionCookiePath, SessionCookieDomain, false, true);
+                            currController->addCookie(TSession::sessionName(), currController->session().id(), SessionCookieMaxAge,
+                                                      SessionCookiePath, SessionCookieDomain, false, true, SessionCookieSameSite);
 
                             // Commits a transaction for session
                             commitTransactions();

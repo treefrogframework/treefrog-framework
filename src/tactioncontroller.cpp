@@ -133,7 +133,7 @@ bool TActionController::addCookie(const TCookie &cookie)
     cookieJar.addCookie(cookie);
     response.header().removeAllRawHeaders("Set-Cookie");
     for (auto &ck : (const QList<TCookie>&)cookieJar.allCookies()) {
-        response.header().addRawHeader("Set-Cookie", ck.toRawForm());
+        response.header().addRawHeader("Set-Cookie", ck.toRawForm(QNetworkCookie::Full));
     }
     return true;
 }
@@ -142,7 +142,8 @@ bool TActionController::addCookie(const TCookie &cookie)
   Adds the cookie to the internal list of cookies.
  */
 bool TActionController::addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire,
-                                  const QString &path, const QString &domain, bool secure, bool httpOnly)
+                                  const QString &path, const QString &domain, bool secure, bool httpOnly,
+                                  const QByteArray &sameSite)
 {
     TCookie cookie(name, value);
     cookie.setExpirationDate(expire);
@@ -150,6 +151,22 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
     cookie.setDomain(domain);
     cookie.setSecure(secure);
     cookie.setHttpOnly(httpOnly);
+    cookie.setSameSite(sameSite);
+    return addCookie(cookie);
+}
+
+
+bool TActionController::addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path,
+                                  const QString &domain, bool secure, bool httpOnly, const QByteArray &sameSite)
+{
+    TCookie cookie(name, value);
+    cookie.setMaxAge(maxAge);
+    cookie.setExpirationDate(QDateTime::currentDateTime().addSecs(maxAge));  // For IE11
+    cookie.setPath(path);
+    cookie.setDomain(domain);
+    cookie.setSecure(secure);
+    cookie.setHttpOnly(httpOnly);
+    cookie.setSameSite(sameSite);
     return addCookie(cookie);
 }
 

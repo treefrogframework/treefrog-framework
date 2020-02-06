@@ -50,6 +50,7 @@ public:
         insert(Tf::SessionCookieMaxAge, "Session.CookieMaxAge");
         insert(Tf::SessionCookieDomain, "Session.CookieDomain");
         insert(Tf::SessionCookiePath, "Session.CookiePath");
+        insert(Tf::SessionCookieSameSite, "Session.CookieSameSite");
         insert(Tf::SessionGcProbability, "Session.GcProbability");
         insert(Tf::SessionGcMaxLifeTime, "Session.GcMaxLifeTime");
         insert(Tf::SessionSecret, "Session.Secret");

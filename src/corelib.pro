@@ -155,6 +155,8 @@ HEADERS += toption.h
 SOURCES += toption.cpp
 HEADERS += ttemporaryfile.h
 SOURCES += ttemporaryfile.cpp
+HEADERS += tcookie.h
+SOURCES += tcookie.cpp
 HEADERS += tcookiejar.h
 SOURCES += tcookiejar.cpp
 HEADERS += tsession.h
@@ -327,7 +329,6 @@ HEADERS += \
            tfnamespace.h \
            tfcore.h \
            tfexception.h \
-           tcookie.h \
            tdispatcher.h \
            tloggerplugin.h \
            tsessionobject.h \

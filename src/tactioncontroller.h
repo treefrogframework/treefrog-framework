@@ -63,7 +63,8 @@ protected:
     TSession &session() { return sessionStore; }
     void setSession(const TSession &session);
     bool addCookie(const TCookie &cookie);
-    bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false);
+    bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
+    bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
     QByteArray contentType() const;
     void setContentType(const QByteArray &type);
     bool render(const QString &action = QString(), const QString &layout = QString());

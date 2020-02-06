@@ -200,6 +200,8 @@ namespace Tf
         CacheBackend,
         CacheGcProbability,
         CacheEnableCompression,
+        //
+        SessionCookieSameSite,
     };
 
     // Reason codes why a web socket has been closed
