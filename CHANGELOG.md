@@ -1,4 +1,11 @@
 # ChangeLog
+## 1.28.0
+ - Implemented to add a same-site value to cookie.
+ - Modified to add a max-age value to cookie.
+ - Fix a bug of listing available controllers.
+ - Fix a bug of showing a port number when specified.
+ - Fix a bug of content type in renderText() function.
+
 ## 1.27.0
  - Implemented OAuth2 client.  [Experimental]
  - Supports for MongoDB version 3.2 and later.
