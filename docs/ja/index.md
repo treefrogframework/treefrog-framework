@@ -40,7 +40,17 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2019/12/5  TreeFrog Framework バージョン1.27.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2020/2/11  TreeFrog Framework バージョン1.28.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - CookieへSameSite属性を追加できるよう実装
+  - MaxAge属性を設定するよう修正
+  - 利用可能なコントローラの表示に関するバグを修正
+  - -lオプションで表示した時のポート表示の不具合を修正
+  - renderText()関数で設定されるコンテントタイプの不具合修正
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2019/12/5  TreeFrog Framework バージョン1.27.0 （安定版）リリース
 
   - OAuth2クライアントの実装 [実験的]
   - MongoDBバージョン3.2以降のサポート.
@@ -48,9 +58,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - トランザクション有効/無効の設定が反映されない不具合の修正
   - tspawnコマンドにおけるdiff実行の不具合修正
 
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
-
-### 2019/10/19  TreeFrog Framework バージョン1.26.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2019/10/19  TreeFrog Framework バージョン1.26.0 （安定版）リリース
 
   - SQLite, MongoDB, Redis向けキャッシュモジュールを追加
   - LZ4圧縮アルゴリズムをv1.9.2に更新

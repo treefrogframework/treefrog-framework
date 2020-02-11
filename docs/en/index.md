@@ -37,9 +37,21 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Feb. 11, 2020
+
+### TreeFrog Framework version 1.28.0 (stable) release <span style="color: red;">New!</span>
+
+  - Implemented to add a SameSite attribute to cookie.
+  - Modified to add a max-age value to cookie.
+  - Fix a bug of listing available controllers.
+  - Fix a bug of showing a port number by -l option.
+  - Fix a bug of content type in renderText() function.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Dec. 5, 2019
 
-### TreeFrog Framework version 1.27.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.27.0 (stable) release
 
   - Implemented OAuth2 client.  [Experimental]
   - Supports for MongoDB version 3.2 and later.
@@ -47,11 +59,9 @@ Dec. 5, 2019
   - Fix a bug not to set all databases to transaction state value.
   - Fix a bug of execution of diff in tspawn command.
 
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
-
 Oct. 19, 2019
 
-### TreeFrog Framework version 1.26.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.26.0 (stable) release
 
   - Added cache modules by SQLite, MongoDB and Redis.
   - Updated LZ4 compression algorithm to 1.9.2.
