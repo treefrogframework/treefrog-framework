@@ -390,9 +390,9 @@ namespace treefrogsetup {
             // Get msi file from resource
             int rcid = 0;
             if (version->IndexOf("Qt version " + VERSION_STR514, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT513_MSI;
+                rcid = IDR_TREEFROG_QT514_MSI;
             } else if (version->IndexOf("Qt version " + VERSION_STR513, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT512_MSI;
+                rcid = IDR_TREEFROG_QT513_MSI;
             } else {
                 abort("Not found Qt version " + VERSION_STR514 + " or " + VERSION_STR513 + ".", "Abort");
                 return;
