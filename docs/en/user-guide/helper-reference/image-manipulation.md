@@ -59,7 +59,7 @@ img.save("qvga.jpg");
 
 - In reality, use the absolute path as a the file path.
 
-Using this QImage class, you can convert while ignoring aspect ratio. Also you can convert to a different image format. Please see [Qt Document](http://qt-project.org/doc/qt-4.8/){:target="_blank"} for detail.
+Using this QImage class, you can convert while ignoring aspect ratio. Also you can convert to a different image format. Please see [Qt Document](https://doc.qt.io/qt-5/){:target="_blank"} for detail.
 
 ## Rotation of the Image
 

@@ -54,7 +54,7 @@ render();
 <%== renderPartial("pagination") %>
 ```
 
-传递的参数"pageination"是你想要包含的模版的名字. 还有, 这个模版绘制了从控制器(controller)传递过来的模型(model)列表. 关于渲染模版的更多详细信息, 请参考[生成器](/user-guide/ch/generator/index.html){:target="_blank"}, 生成器生成了*index*, *show*等模版.
+传递的参数"pageination"是你想要包含的模版的名字. 还有, 这个模版绘制了从控制器(controller)传递过来的模型(model)列表. 关于渲染模版的更多详细信息, 请参考[生成器](/ch/user-guide/generator/index.html){:target="_blank"}, 生成器生成了*index*, *show*等模版.
 接下来是获得模型(model).<br>
 要获得应用模型(model)的清单, 可以在数据库中执行一个带有LIMIT和OFFSET参数的查询. 取决于你的要求, 你可以定义一个WHERE或者排序获得的模型(models).
 

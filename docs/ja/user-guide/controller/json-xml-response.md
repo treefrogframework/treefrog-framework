@@ -50,7 +50,7 @@ bool renderXml(const QVariantList &list);
 bool renderXml(const QStringList &list);
 ```
 
-もしこれらの出力する内容が要件と合わない場合は、新たにテンプレートを使って実装するようにしてください。実装方法については[ビューの章]({{ site.baseurl }}/user-guide/ja/view/index.html){:target="_blank"}で説明されるとおりですが、コントローラの中でレスポンスのコンテントタイプを設定することだけは忘れないでください。
+もしこれらの出力する内容が要件と合わない場合は、新たにテンプレートを使って実装するようにしてください。実装方法については[ビューの章]({{ site.baseurl }}/ja/user-guide/view/index.html){:target="_blank"}で説明されるとおりですが、コントローラの中でレスポンスのコンテントタイプを設定することだけは忘れないでください。
 
 ```c++
 setContentType("text/xml")

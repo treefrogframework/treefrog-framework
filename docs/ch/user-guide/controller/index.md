@@ -133,7 +133,7 @@ QString val = httpRequest().queryItemValue("mode");  //val ="narmal"
 
 同时, 如果你想获得不是URL参数和post数据的数据, 你可以使用allParameters()和methods().
 
-为了在应用服务器端检查请求的数据是否是要求的形式, 还提供了验证器功能. 更多信息请参见[验证器](/user-guide/ch/helper-reference/validation.html){:target="_blank"}章节.
+为了在应用服务器端检查请求的数据是否是要求的形式, 还提供了验证器功能. 更多信息请参见[验证器](/ch/user-guide/helper-reference/validation.html){:target="_blank"}章节.
 
 ## 传递变量到视图(view)
 
@@ -150,13 +150,13 @@ QString val = httpRequest().queryItemValue("mode");  //val ="narmal"
 
 **说明:**texport的参数必须指定为变量. 你不能直接指定一个字符串("Hello world")或者数字(例如100).
 
-在视图(view)内要使用变量, 你必须首先用*tfetch(Type,variable)*声明变量. 更多详细内容请参见[视图(view)]({{ site.baseurl }}/user-guide/ch/view/index.html){:target="_blank"}章节.
+在视图(view)内要使用变量, 你必须首先用*tfetch(Type,variable)*声明变量. 更多详细内容请参见[视图(view)]({{ site.baseurl }}/ch/user-guide/view/index.html){:target="_blank"}章节.
 
 ##### 概要: 使用tfetch()传递一个对象到视图(view).
 
 ** 用户自定义的类的情况**
 
-当你需要传递一个新的类(自定义的类)到视图(view), 请件下面的宏增加到头文件的尾部. 更多详细的信息请参见 ["新建原始模型(original model)"](/user-guide/en/model/index/html){:target="_blank"}节.
+当你需要传递一个新的类(自定义的类)到视图(view), 请件下面的宏增加到头文件的尾部. 更多详细的信息请参见 ["新建原始模型(original model)"](/ch/user-guide/model/index/html){:target="_blank"}节.
 
 ```c++
  Q_DECLARE_METATYPE(ClassName)     // 请更换类名
@@ -221,7 +221,7 @@ TreeFrog目前为止采用了两种模版系统:**Otama**和**ERB**. 在ERB内, 
  renderText("Hello world", true);
 ```
 
-关于布局(layout)的更多详细的信息请参见 [视图(view)](/user-guide/ch/view/index/html){:target="_blank"} 章节.
+关于布局(layout)的更多详细的信息请参见 [视图(view)](/ch/user-guide/view/index/html){:target="_blank"} 章节.
 
 ## 重定向
 
@@ -272,7 +272,7 @@ Treefrog框架有一种机制(通过变量)可以实现传递信息到重定向�
 我个人认为保持每个操作(action)完全对立, 减少各个操作(action)之间的依赖是比较好的也比更容易理解. 我建议不要在单个请求上调用超过一个以上的操作(action). 尽可能的保存一个请求一个操作(action)的关系.
 
 使用瞬时对象(flash object)时, 如果为几乎相同的内容建立独立分离的显示, 代码可以变得简单些. 
-*blogapp* ([教程](/user-guide/ch/tutorial/index/html){:target="_blank"})使用*create* 和 *show* 操作(action)的方式就是一个好的例子. 虽然这些操作(action)的处理是不一样的, 但都是仅仅显示一条blog的处理结果. 在create操作, 成功完成录入后, 这个结果将显示在重定向的show操作上. 同时, 这个信息"Created successfully." 通过使用瞬时对象(flash object)显示.
+*blogapp* ([教程](/ch/user-guide/tutorial/index/html){:target="_blank"})使用*create* 和 *show* 操作(action)的方式就是一个好的例子. 虽然这些操作(action)的处理是不一样的, 但都是仅仅显示一条blog的处理结果. 在create操作, 成功完成录入后, 这个结果将显示在重定向的show操作上. 同时, 这个信息"Created successfully." 通过使用瞬时对象(flash object)显示.
 
 事实上, 一个应用不会都是这么简单的, 因为不是经常需要获取和使用瞬时对象(flash object). 因此, 适度地使用它好了.
 
@@ -294,7 +294,7 @@ Treefrog框架有一种机制(通过变量)可以实现传递信息到重定向�
  }
 ```
 
-当服务器进程启动后, staticInitialize()方法只会调用一次. 然而, 当你选择在[MPM](/user-guide/en/performance/index/html){:target="_blank"})中描述的PreFork后, 你必须要关注它, 不要让每次进程启动时建立太多的加载功能.
+当服务器进程启动后, staticInitialize()方法只会调用一次. 然而, 当你选择在[MPM](/ch/user-guide/performance/index/html){:target="_blank"})中描述的PreFork后, 你必须要关注它, 不要让每次进程启动时建立太多的加载功能.
 
 ## 控制器(controller)实例的生命周期
 

@@ -37,11 +37,11 @@ while (query.next()) {
 }
 ```
 
-TSqlQuery类也可以同样的方法, 因为它继承于Qt的[QSqlQuery类](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"}.
+TSqlQuery类也可以同样的方法, 因为它继承于Qt的[QSqlQuery类](https://doc.qt.io/qt-5/qsqlquery.html){:target="_blank"}.
 
 ##### 概要: 任何情况下都可以使用占位符创建查询.
 
-事实上, 可以在[查询记录]({{ site.baseurl }}/user-guide/en/helper-reference/logging.html){:target="_blank"}中查看已经被执行的任何查询.
+事实上, 可以在[查询记录]({{ site.baseurl }}/ch/user-guide/helper-reference/logging.html){:target="_blank"}中查看已经被执行的任何查询.
 
 ## 从文件中读取一个查询
 
@@ -62,7 +62,7 @@ query. addBind( 100). addBind( tr(" Hello")). addBind( tr(" Hello world"));
 query. exec(); // 执行查询
 ```
 
-缓存工作在load()方法的内部(但是仅在线程使用 [MPM]({{ site.baseurl }}/user-guide/ch/performance/index.html){:target="_blank"}模式时. 只有第一次使用时从文件中读取查询, 然后将使用缓存, 所以它运行得非常快.
+缓存工作在load()方法的内部(但是仅在线程使用 [MPM]({{ site.baseurl }}/ch/user-guide/performance/index.html){:target="_blank"}模式时. 只有第一次使用时从文件中读取查询, 然后将使用缓存, 所以它运行得非常快.
 文件完成更新后, 为了读取查询语句,我们需要重启服务器.
 
 ```

@@ -15,5 +15,5 @@ Otama是一种完全分离界面逻辑和模版的一种模版系统. 好处是�
 
 两者的性能是相同的.要代码被构建时, 在模版转换成C++代码后, 模版被编译. 共享库(动态连接库)会被创建, 所以它们都运行得比较快. 然后, 它取决与用户的代码的内容.
 
-* [链接到ERB模版系统>>]({{ site.baseurl }}/user-guide/ch/view/erb.html){:target="_blank"}
-* [链接到Otama模版系统>>]({{ site.baseurl }}/user-guide/ch/view/otama-template-system.html){:target="_blank"}
+* [链接到ERB模版系统>>]({{ site.baseurl }}/ch/user-guide/view/erb.html){:target="_blank"}
+* [链接到Otama模版系统>>]({{ site.baseurl }}/ch/user-guide/view/otama-template-system.html){:target="_blank"}

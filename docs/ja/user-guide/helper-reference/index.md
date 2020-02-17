@@ -16,4 +16,4 @@ page_id: "080.0"
 
 クラスとしてヘルパーを作る場合は、基本的に（オブジェクト指向で言うところの）状態を持たないクラスになります。状態を持つクラスの場合は、それをDBに永続化するケースが多いのでモデルとして定義するのが一般的です。
 
-また、コントローラやビューの中に同じようなロジックが何度か現れたら、ヘルパーとして切り出すべきか検討しましょう。独自にヘルパーを作成する場合には[こちらの章]({{ site.baseurl }}/user-guide/ja/helper-reference/making-original-helper.html){:target="_blank"}をご覧ください。
+また、コントローラやビューの中に同じようなロジックが何度か現れたら、ヘルパーとして切り出すべきか検討しましょう。独自にヘルパーを作成する場合には[こちらの章]({{ site.baseurl }}/ja/user-guide/helper-reference/making-original-helper.html){:target="_blank"}をご覧ください。

@@ -54,7 +54,7 @@ The model class that is created in the generator is inherited from the TAbstract
 
 ##### In brief: if you want to use an ORM object, you should inherit from the TAbstractModel class regardlessly.
 
-When the model is created by the generator, the getter/setter of each property and the class methods, that are equivalent to "create" and "read", are defined. The following example is an excerpt of the Blog class which we made in the [tutorial chapter]({{ site.baseurl }}/user-guide/en/tutorial/index.html){:target="_blank"}.
+When the model is created by the generator, the getter/setter of each property and the class methods, that are equivalent to "create" and "read", are defined. The following example is an excerpt of the Blog class which we made in the [tutorial chapter]({{ site.baseurl }}/en/user-guide/tutorial/index.html){:target="_blank"}.
 
 ```c++
 static Blog create(const QString &title, const QString &body);

@@ -81,7 +81,7 @@ created_at と updated_at のフィールドがあると、TreeFrog はそれぞ
 
 ### 楽観的ロック (Optimistic Lock)
 
-楽観的ロックとは、更新の時に行ロックをかけず、他から更新されていないことを検証しつつデータを保存することです。実際のロックはかけないので、処理速度の向上がちょっとだけ期待できます。詳細は[O/Rマッピングの章]({{ site.baseurl }}/user-guide/ja/model/or-mapping.html){:target="_blank"}をご覧ください。
+楽観的ロックとは、更新の時に行ロックをかけず、他から更新されていないことを検証しつつデータを保存することです。実際のロックはかけないので、処理速度の向上がちょっとだけ期待できます。詳細は[O/Rマッピングの章]({{ site.baseurl }}/ja/user-guide/model/or-mapping.html){:target="_blank"}をご覧ください。
 
 ## データベースの情報を設定
 

@@ -134,7 +134,7 @@ You can use the following method to the value named *mode* here in the *index* a
 
 By the way, if you want to get the data without specifying the URL argument and post data, you can use the methods allParameters() and methods().
 
-In order to verify whether requested data is in the form required by the application side, a validation function is provided, too. For more information, visit the chapter on [validation](/user-guide/en/helper-reference/validation.html){:target="_blank"}.
+In order to verify whether requested data is in the form required by the application side, a validation function is provided, too. For more information, visit the chapter on [validation](/en/user-guide/helper-reference/validation.html){:target="_blank"}.
 
 ## Passing Variables to a View
 
@@ -153,13 +153,13 @@ To pass variables to a view, use the macros* texport(variable)* or *T_EXPORT(var
 
 **Note:** the variable must be specified as an argument to texport. You can't directly specify a string ("Hello world") or numbers (such as 100).
 
-To use a variable inside a view, you must first declare the variable in *tfetch (Type, variable)*. Please see the [view]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"} chapter for more information.
+To use a variable inside a view, you must first declare the variable in *tfetch (Type, variable)*. Please see the [view]({{ site.baseurl }}/en/user-guide/view/index.html){:target="_blank"} chapter for more information.
 
 ##### In brief: Pass the object to the view by using tfetch().
 
 **In case of an user-defined class:**
 
-When you make the new class passing to the view (user-defined class), please add the following charm at the end of the header class. For more information about this, see the section on ["Creating original model"](/user-guide/en/model/index/html){:target="_blank"}.
+When you make the new class passing to the view (user-defined class), please add the following charm at the end of the header class. For more information about this, see the section on ["Creating original model"](/en/user-guide/model/index/html){:target="_blank"}.
 
 ```c++
  Q_DECLARE_METATYPE(ClassName)     // ← Please replace the class name
@@ -224,7 +224,7 @@ By default, the layout is not applied. If you want to apply a layout, you must s
  renderText("Hello world", true);
 ```
 
-For more information about layouts, please refer to the [view](/user-guide/en/view/index/html){:target="_blank"} chapter.
+For more information about layouts, please refer to the [view](/en/user-guide/view/index/html){:target="_blank"} chapter.
 
 ## Redirect
 
@@ -277,7 +277,7 @@ Personally, I think it's better and easier to understand, to have each action co
 
 If the action creates separate independent displays of almost the same content, the code becomes simpler when using the flash object.
 
-The way the *blogapp* (the subject of the [tutorial chapter](/user-guide/en/tutorial/index/html){:target="_blank"}) uses the *create* and *show* action are good examples. But processing of these actions is different, but both only display the contents of the blog 1 as a result of this processing. In the create action, after the successful data registration, the data will be displayed by redirecting to the show action. At the same time, the message "Created successfully." is displayed by using the flash object.
+The way the *blogapp* (the subject of the [tutorial chapter](/en/user-guide/tutorial/index/html){:target="_blank"}) uses the *create* and *show* action are good examples. But processing of these actions is different, but both only display the contents of the blog 1 as a result of this processing. In the create action, after the successful data registration, the data will be displayed by redirecting to the show action. At the same time, the message "Created successfully." is displayed by using the flash object.
 
 Actually, an application is not always this simple, because it isn't always necessarily possible to capture and use the flash object. Therefore, please try to use it to strike a balance.
 
@@ -299,7 +299,7 @@ In this case, write the processing as *ApplicationController#staticInitialize()*
  }
 ```
 
-This staticInitialize() method, is called only once when the server process is started. However, care must be taken so that it does not create an extra load function by being called every time the process starts when you select the PreFork as described in [MPM](/user-guide/en/performance/index/html){:target="_blank"}).
+This staticInitialize() method, is called only once when the server process is started. However, care must be taken so that it does not create an extra load function by being called every time the process starts when you select the PreFork as described in [MPM](/en/user-guide/performance/index/html){:target="_blank"}).
 
 ## Lifespan of a controller instance
 

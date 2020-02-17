@@ -7,7 +7,7 @@ page_id: "060.060"
 
 MongoDB用类似于JSON格式来保存数据, 并将数据保存为一个文档. 在编程语言中, 和文档对象相关的功能被称之为**对象-文档映射(O/D 映射)**.
 
-像在[O/R 映射](/user-guide/ch/model/or-mapping.html){:target="_blank"}中描述的一样, 在O/D 映射中这里的一个文档也与一个对象相关.
+像在[O/R 映射](/ch/user-guide/model/or-mapping.html){:target="_blank"}中描述的一样, 在O/D 映射中这里的一个文档也与一个对象相关.
 
 因为MongoDB文档是类似JSON格式的, JSON可能有层级结构, 但是在O/D 映射中, 一个对象不会对应文档的两层或者更多的层级. 例如, 下面的例子显示了O/D 映射中唯一支持的简单形式:
 
@@ -21,7 +21,7 @@ MongoDB用类似于JSON格式来保存数据, 并将数据保存为一个文档.
 
 ## 设置
 
-如果你完全不知道如何正确设置MongoDB连接, 请参考[访问MongoDB](/user-guide/ch/model/access-mongodb.html){:target="_blank"}章节.
+如果你完全不知道如何正确设置MongoDB连接, 请参考[访问MongoDB](/ch/user-guide/model/access-mongodb.html){:target="_blank"}章节.
 
 要生成O/D 映射的类, 在应用程序的根目录下执行下面的命令. 在这个例子中, 我们建立一个叫*foo*的集合. 模型(model)的名字将会是*Foo*.
 

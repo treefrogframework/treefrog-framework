@@ -67,7 +67,7 @@ page_id: "060.010"
 
 在数据库创建一个表后, 在配置文件的dev节设置连接信息.
 
-下面的节将使用[教程]({{ site.baseurl }}/user-guide/en/tutorial/index.html){:target="_blank"}中创建的*BlogObject*类作为例子.
+下面的节将使用[教程]({{ site.baseurl }}/ch/user-guide/tutorial/index.html){:target="_blank"}中创建的*BlogObject*类作为例子.
 
 ## 读取ORM对象
 
@@ -89,7 +89,7 @@ QList<BlogObject> list = mapper.findAll();
 
 你必须特别小心, 有这种可能性:当记录数量特别大时, 读取所有记录可能消耗内存. 你可以用setLimit()方法设置一个数组的上限.
 
-ORM内部会生成SQL语句. 要查看执行了什么样的查询语句, 请查看[查询记录]({{ site.baseurl }}/user-guide/ch/helper-reference/logging/html){:target="_blank"}.
+ORM内部会生成SQL语句. 要查看执行了什么样的查询语句, 请查看[查询记录]({{ site.baseurl }}/ch/user-guide/helper-reference/logging/html){:target="_blank"}.
 
 ## 迭代器
 

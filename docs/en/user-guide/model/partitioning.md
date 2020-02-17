@@ -62,7 +62,7 @@ Thus, partitioning can be applied without changing the logic of the model and co
 
 ## Querying Partitioned Tables
 
-As discussed in the [SQL query]({{ site.baseurl }}/user-guide/en/model/sql-query.html){:target="_blank"}, the TSqlQuery is not only used to issue a query on its own, or it doesn't need to extract all values, but you can use it to apply to the partitioning.
+As discussed in the [SQL query]({{ site.baseurl }}/en/user-guide/model/sql-query.html){:target="_blank"}, the TSqlQuery is not only used to issue a query on its own, or it doesn't need to extract all values, but you can use it to apply to the partitioning.
 
 As follows, the database ID is specified in the second argument to the constructor:
 

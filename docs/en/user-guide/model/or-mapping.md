@@ -68,7 +68,7 @@ In this way, when you start a Web application, the system will manage the databa
 
 After you create a table in the database, set the connection information in the dev section of the configuration file.
 
-The following sections will be using the *BlogObject* class as an example which I made in the [tutorial chapter]({{ site.baseurl }}/user-guide/en/tutorial/index.html){:target="_blank"}.
+The following sections will be using the *BlogObject* class as an example which I made in the [tutorial chapter]({{ site.baseurl }}/en/user-guide/tutorial/index.html){:target="_blank"}.
 
 ## Reading ORM Object
 
@@ -90,7 +90,7 @@ QList<BlogObject> list = mapper.findAll();
 
 You must be careful with this; there is a possibility when the number of record is large, using read all would consume the memory. You can set an upper boundary using the setLimit() method.
 
-The SQL statement is generated inside the ORM. To see what query was issued, please check the [query log]({{ site.baseurl }}/user-guide/en/helper-reference/logging/html){:target="_blank"}.
+The SQL statement is generated inside the ORM. To see what query was issued, please check the [query log]({{ site.baseurl }}/en/user-guide/helper-reference/logging/html){:target="_blank"}.
 
 ## Iterator
 

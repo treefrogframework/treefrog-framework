@@ -42,7 +42,7 @@ page_id: "110.0"
 ## Qt Creator によるデバッグ
 
 ここでは、Qt Creator を使ったデバッグを紹介します。他のデバッガでもやり方は基本的に変わらないと思います。
-まず、アプリケーション設定ファイルにある [MPM]({{ site.baseurl }}/user-guide/ja/performance/index.html){:target="_blank"} には thread を設定しておいてください。
+まず、アプリケーション設定ファイルにある [MPM]({{ site.baseurl }}/ja/user-guide/performance/index.html){:target="_blank"} には thread を設定しておいてください。
 
 ```
  MultiProcessingModule=thread

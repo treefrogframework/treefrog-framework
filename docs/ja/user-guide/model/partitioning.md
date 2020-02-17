@@ -64,7 +64,7 @@ class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData
 
 ## パーティショニングされたテーブルへのクエリ発行
 
-[SQLクエリ]({{ site.baseurl }}/user-guide/ja/model/sql-query.html){:target="_blank"}の章で説明したとおり、独自にクエリを発行するには TSqlQuery オブジェクトを使用するわけですが、これにもパーティショニングを適用することができます。
+[SQLクエリ]({{ site.baseurl }}/ja/user-guide/model/sql-query.html){:target="_blank"}の章で説明したとおり、独自にクエリを発行するには TSqlQuery オブジェクトを使用するわけですが、これにもパーティショニングを適用することができます。
 
 次のように、コンストラクタの第２引数でデータベースIDを指定します。
 

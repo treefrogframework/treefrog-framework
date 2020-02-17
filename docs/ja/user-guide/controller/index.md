@@ -66,7 +66,7 @@ public slots:   // この下にアクションを定義する！
 
 プログラマの中は、アクションにたくさん処理を詰め込んで、その結果コントローラを大きくて複雑にしてしまう人がいます。あくまでビジネスロジックはモデル側に実装するようにし、コントローラはできる限り小さくてシンプルになるように心がけましょう。
 
-アクションが呼び出されるメカニズムについて説明しましたが、URL によって決定されるアクションはカスタマイズすることが可能です。後述の[URLルーティングの章](/user-guide/ja/controller/url-routing.html){:target="_target"}をご覧ください。
+アクションが呼び出されるメカニズムについて説明しましたが、URL によって決定されるアクションはカスタマイズすることが可能です。後述の[URLルーティングの章](/ja/user-guide/controller/url-routing.html){:target="_target"}をご覧ください。
 
 ## リクエストの取得
 
@@ -135,7 +135,7 @@ QString val = httpRequest().queryItemValue("mode");
 
 ちなみに、ポストデータと URL 引数を区別しないでデータを取得したい場合は、parameter()メソッドや allParameters()メソッドを使うことができます。
 
-リクエストデータがアプリ側の望む形式であるかどうかを検証する仕組みとして、バリデーション機能が提供されています。詳細は、[バリデーションの章]({{ site.baseurl }}/user-guide/ja/helper-reference/validation.html){:target="_blank"}をご覧ください。
+リクエストデータがアプリ側の望む形式であるかどうかを検証する仕組みとして、バリデーション機能が提供されています。詳細は、[バリデーションの章]({{ site.baseurl }}/ja/user-guide/helper-reference/validation.html){:target="_blank"}をご覧ください。
 
 ## 変数をビューへ渡す
 
@@ -154,13 +154,13 @@ texport(bar);
 
 **注意：** texport の引数には必ず**変数**を指定してください。文字列("Hello world")や数値(100) などを直接指定することはできません。
 
-その後、ビューでこの変数を使う場合、まず tfetch( Type, variable ) で宣言する必要があります。詳細は[ビューの章]({{ site.baseurl }}/user-guide/ja/view/index/html){:target="_blank"}をご覧ください。
+その後、ビューでこの変数を使う場合、まず tfetch( Type, variable ) で宣言する必要があります。詳細は[ビューの章]({{ site.baseurl }}/ja/user-guide/view/index/html){:target="_blank"}をご覧ください。
 
 ##### 結論： オブジェクトは tfetch() でビューへ渡せ。
 
 **ユーザ定義クラスの場合：**
 
-ビューに渡すクラスを新規に実装した場合（ユーザ定義クラス）、そのクラスのヘッダークラスの末尾に、クラス名を引数とした次のおまじないを追加してください。「[独自モデルの作成]({{ site.baseurl }}/user-guide/ja/model/index.html){:target="_blank"}」の節をご覧ください。
+ビューに渡すクラスを新規に実装した場合（ユーザ定義クラス）、そのクラスのヘッダークラスの末尾に、クラス名を引数とした次のおまじないを追加してください。「[独自モデルの作成]({{ site.baseurl }}/ja/user-guide/model/index.html){:target="_blank"}」の節をご覧ください。
 
 ```c++
 Q_DECLARE_METATYPE(ClassName)     // ← クラス名で置き換えてください
@@ -224,7 +224,7 @@ renderText("Hello world");
 renderText("Hello world", true);
 ```
 
-レイアウトの詳細については、「[ビュー]({{ site.baseurl }}/user-guide/ja/view/index.html){:target="_blank"}」の章をご覧ください。
+レイアウトの詳細については、「[ビュー]({{ site.baseurl }}/ja/user-guide/view/index.html){:target="_blank"}」の章をご覧ください。
 
 ## リダイレクトする
 
@@ -277,7 +277,7 @@ tflash( foo );
 
 もし、独立した別々のアクションがほぼ同じ内容を表示する場合、フラッシュオブジェクトを使うことでコードがシンプルになるのです。
 
-[チュートリアルの章]({{ site.baseurl }}/user-guide/ja/tutorial/index.html){:target="_blank"}で紹介した blogapp の show アクションと create アクションがいい例になります。これらのアクションの処理は異なっていますが、処理の結果としてどちらも1件のブログ内容を表示するだけです。create アクションでは、データの登録が成功したら show アクションへリダイレクトさせてデータを表示していますが、同時にフラッシュオブジェクトを使い「登録が成功した」というメッセージを表示しているのです。<br>
+[チュートリアルの章]({{ site.baseurl }}/ja/user-guide/tutorial/index.html){:target="_blank"}で紹介した blogapp の show アクションと create アクションがいい例になります。これらのアクションの処理は異なっていますが、処理の結果としてどちらも1件のブログ内容を表示するだけです。create アクションでは、データの登録が成功したら show アクションへリダイレクトさせてデータを表示していますが、同時にフラッシュオブジェクトを使い「登録が成功した」というメッセージを表示しているのです。<br>
 実際のアプリケーションはこんな単純ではないので、必ずしもフラッシュオブジェクトが使えるとは限りません。バランスを考えて利用してみてください。
 
 **ということで、** <br>
@@ -299,7 +299,7 @@ void ApplicationController::staticInitialize()
 }
 ```
 
-この staticInitialize() メソッドは、サーバプロセスが起動した時に、一度だけ呼ばれることが約束されます。ただし、[MPM]({{ site.baseurl }}/user-guide/ja/performance/index.html){:target="_blank"} として PreFork を選択した場合はプロセスが起動するたびに関数が呼ばれてしまうので余計な負荷を与えないよう注意が必要です。
+この staticInitialize() メソッドは、サーバプロセスが起動した時に、一度だけ呼ばれることが約束されます。ただし、[MPM]({{ site.baseurl }}/ja/user-guide/performance/index.html){:target="_blank"} として PreFork を選択した場合はプロセスが起動するたびに関数が呼ばれてしまうので余計な負荷を与えないよう注意が必要です。
 
 ## コントローラのインスタンスの寿命
 

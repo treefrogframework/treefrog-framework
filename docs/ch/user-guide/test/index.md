@@ -11,7 +11,7 @@ page_id: "120.0"
 
 在这一节总, 我们将尝试检查模型(model)是否工作在正确的方式. 测试框架使用了Qt的TestLib(更多详细信息,请查看[文档](http://qt-project.org/doc/qt-5.0/qttestlib/qtest-overview.html){:target="_blank"}).
 
-让我们测试[教程](/user-guide/en/tutorial/index.html){:target="_blank"}中生成的Blog模型(model)的代码. 先提前为模型(model)生成一个共享库. 首先, 我们在*test*目录下创建工作目录.
+让我们测试[教程](/ch/user-guide/tutorial/index.html){:target="_blank"}中生成的Blog模型(model)的代码. 先提前为模型(model)生成一个共享库. 首先, 我们在*test*目录下创建工作目录.
 
 ```
 $ cd test

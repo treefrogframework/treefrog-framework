@@ -49,7 +49,7 @@ page_id: "050.050"
  bool renderXml(const QStringList &list);
 ```
 
-如果这些输出不符合你的需求, 你可以实现一个新的模版. 如何实现它在[视图(view)]({{ site.baseurl }}/user-guide/en/view/index.html){:target="_blank"}章节中有描述, 但是不要忘记了在仅在控制器中设置content type.
+如果这些输出不符合你的需求, 你可以实现一个新的模版. 如何实现它在[视图(view)]({{ site.baseurl }}/ch/user-guide/view/index.html){:target="_blank"}章节中有描述, 但是不要忘记了在仅在控制器中设置content type.
 
 ```c++
  setContentType("text/xml")

@@ -11,7 +11,7 @@ In the process of application development, testing is very important. Testing re
 
 In this session, we will try to check if the model works the right way. The test framework follows TestLib attached by Qt (please check out the [documentation](http://qt-project.org/doc/qt-5.0/qttestlib/qtest-overview.html){:target="_blank"} for more details).
 
-Let's test the Blog model code that we made in the [tutorial](/user-guide/en/tutorial/index.html){:target="_blank"}. Make a common library for the model in advance. At first, we will create a working directory in the *test* directory.
+Let's test the Blog model code that we made in the [tutorial](/en/user-guide/tutorial/index.html){:target="_blank"}. Make a common library for the model in advance. At first, we will create a working directory in the *test* directory.
 
 ```
  $ cd test

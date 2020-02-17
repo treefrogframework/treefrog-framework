@@ -311,7 +311,7 @@ linkTo メソッドは a タグを生成するので、このような結果に�
 
 これで正常にデータをPOSTすることができるでしょう。
 
-CSRF 対策について、もう少し詳細を知りたい方は[セキュリティの章](/user-guide/ja/security/index.html){:target="_blank"}をご覧ください。
+CSRF 対策について、もう少し詳細を知りたい方は[セキュリティの章](/ja/user-guide/security/index.html){:target="_blank"}をご覧ください。
 
 ## 要素を消す
 

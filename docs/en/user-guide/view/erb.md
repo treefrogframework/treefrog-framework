@@ -252,7 +252,7 @@ You may think that you can do the same thing by describing the form tag, rather 
 
 This framework makes it illegal to guard post data. However, following various repeated tests during development, of course you can disable the protection temporarily.
 
-For more information on CSRF measures, see also the chapter [security]({{ site.baseurl }}/user-guide/en/security/index.html){:target="_blank"}.
+For more information on CSRF measures, see also the chapter [security]({{ site.baseurl }}/en/user-guide/security/index.html){:target="_blank"}.
 
 ## Layout
 

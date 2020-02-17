@@ -18,7 +18,7 @@ page_id: "050.040"
 
 在一些网站上, 有一些网页是任何人都可以访问的, 而一些网页是只能特定的用户访问. 例如, 管理页面只能有特定授权的人才能访问. 这样的例子, 你可以按如下方法禁止访问:
 
-首先, 参考[授权(authentication)]({{ site.baseurl }}/user-guide/ch/helper-reference/authentication.html){:target="_blank"} 并建立一个用户模型(user model)类.<br>
+首先, 参考[授权(authentication)]({{ site.baseurl }}/ch/user-guide/helper-reference/authentication.html){:target="_blank"} 并建立一个用户模型(user model)类.<br>
 你希望限制访问的页面,  登录授权(login authentication)是需要的.通过这样, 获得一个用户模型(user model)的实例.
 
 然后重写controller()的setAccessRules方法. 通过组(Group)或用户(User ID)设置任意的操作(action)为*allow*或者*deny*.*User ID*和Group*都指向用户模型(user model)类.当用户执行一个操作(action)时,模型类中的identityKey()和groupKey()方法返回当前允许或禁止.

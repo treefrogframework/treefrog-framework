@@ -7,7 +7,7 @@ page_id: "080.030"
 
 有时, 请求发送的数据可能不是开发者定义的格式. 例如, 一些用户可能在需要数字的地方输入了字母. 即使客户端用脚本实现了数据验证, 篡改请求的内容并不复杂, 因此服务端进行内容验证是必须的.
 
-如[控制器(controller)]({{ site.baseurl }}/user-guide/ch/controller/index.html){:target="_blank"}中提到的, 接收的请求的数据是Hash格式.通常在发送请求数据给模型(model)前, 每个值都应该验证值的格式.
+如[控制器(controller)]({{ site.baseurl }}/ch/user-guide/controller/index.html){:target="_blank"}中提到的, 接收的请求的数据是Hash格式.通常在发送请求数据给模型(model)前, 每个值都应该验证值的格式.
 
 首先, 我们将为验证*blog*的请求数据(hash)生成一个validation类骨架. 进入应用程序根目录, 然后执行下面的命令.
 

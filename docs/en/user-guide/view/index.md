@@ -15,5 +15,5 @@ Otama is a template system that completely separates the presentation logic and 
 
 Performance is the same in either. When the codes are built, the templates are compiled after it is converted to C++ code. One shared library (dynamic link library) is created, so both run faster. After that, it depends on user's description of the code.
 
-* [To the chapter of ERB template system >>]({{ site.baseurl }}/user-guide/en/view/erb.html){:target="_blank"}
-* [To the chapter of Otama template system >>]({{ site.baseurl }}/user-guide/en/view/otama-template-system.html){:target="_blank"}
+* [To the chapter of ERB template system >>]({{ site.baseurl }}/en/user-guide/view/erb.html){:target="_blank"}
+* [To the chapter of Otama template system >>]({{ site.baseurl }}/en/user-guide/view/otama-template-system.html){:target="_blank"}

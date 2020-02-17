@@ -55,7 +55,7 @@ Rendering a partial template is rather simple. Use the following *renderPartial(
 <%== renderPartial("pagination") %>
 ```
 
-The passing argument "pagination" is the name of the template you want to include. Furthermore, this template draws a list of models passed from the controller. For more details about rendering templates, please refer to the [generator](/user-guide/en/generator/index.html){:target="_blank"} which generates templates such as *index*, *show* etc.
+The passing argument "pagination" is the name of the template you want to include. Furthermore, this template draws a list of models passed from the controller. For more details about rendering templates, please refer to the [generator](/en//user-guide/generator/index.html){:target="_blank"} which generates templates such as *index*, *show* etc.
 
 Next is the acquisition of the model.<br>
 To obtain a list of applicable models, you can issue a query with the LIMIT and OFFSET parameters from the database. Depending on your requirements, you may need to specify a WHERE or to sort the obtaining models.

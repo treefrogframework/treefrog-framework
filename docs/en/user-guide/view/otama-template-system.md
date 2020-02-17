@@ -308,7 +308,7 @@ Presentation logic:
 
 You'll be able to POST the data normally.
 
-For those who have enabled CSRF measures and want to have more details about security, please check out the chapter [security]({{ site.baseurl }}/user-guide/en/security/index.html){:target="_blank"}.
+For those who have enabled CSRF measures and want to have more details about security, please check out the chapter [security]({{ site.baseurl }}/en/user-guide/security/index.html){:target="_blank"}.
 
 ## Erasing the Element
 

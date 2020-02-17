@@ -18,7 +18,7 @@ First of all, we will talk about how to control user access for Web sites.
 
 On some Web sites, there is a fixed amount pages that anyone can access, and also pages that can only be accessed by users. For example an Admin page would only be accessible to persons with the right authority. In such cases, you can deny access in the following ways:
 
-First, refer to the section on [authentication]({{ site.baseurl }}/user-guide/en/helper-reference/authentication.html){:target="_blank"} and create a user model class.<br>
+First, refer to the section on [authentication]({{ site.baseurl }}/en/user-guide/helper-reference/authentication.html){:target="_blank"} and create a user model class.<br>
 For the page to which you want to restrict access, login authentication should be required. By doing so, an instance of the user model will be obtained.
 
 Then override setAccessRules of the controller() method. Set the access rules for any the action by group or user ID to *allow* or *deny*. Both *User ID* and *Group* point to the user model class. The identityKey() method and the groupKey() method in the model class each return the value that represents granted or denied access when the user is performing an action.

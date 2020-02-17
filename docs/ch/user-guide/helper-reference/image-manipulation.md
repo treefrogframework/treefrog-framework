@@ -58,7 +58,7 @@ $ sudo make install
 ```
 - 在实际中, 使用绝对路径作为文件的路径.
 
-使用QImage类, 你可以忽略长宽比进行转换. 你也可以转换成不同的图像格式. 详细信息请看[Qt 文档](http://qt-project.org/doc/qt-4.8/){:target="_blank"}.
+使用QImage类, 你可以忽略长宽比进行转换. 你也可以转换成不同的图像格式. 详细信息请看[Qt 文档](https://doc.qt.io/qt-5/){:target="_blank"}.
 
 ## 选择图像
 

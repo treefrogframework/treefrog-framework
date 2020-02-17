@@ -7,7 +7,7 @@ page_id: "080.030"
 
 Sometimes, data that is sent as a request may not have the format that the developer has specified. For example, some users might put letters where numbers are required. Even if you have implemented Javascript to validate on the client side, tampering with the content of a request is not complicated, so a server side system for validating content is essential.
 
-As mentioned in the [controller chapter]({{ site.baseurl }}/user-guide/en/controller/index.html){:target="_blank"}, data in received requests is expressed as hash format. Usually before sending the request data to the model, each value should be validated the value's format.
+As mentioned in the [controller chapter]({{ site.baseurl }}/en/user-guide/controller/index.html){:target="_blank"}, data in received requests is expressed as hash format. Usually before sending the request data to the model, each value should be validated the value's format.
 
 First, we will generate a validation class skeleton for validating request data (hash) for *blog*. Navigate to the application root directory and then execute the following commands.
 

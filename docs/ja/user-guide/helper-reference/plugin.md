@@ -112,7 +112,7 @@ SOURCES = sampleplugin.cpp \
 * log() ： ログを出力するメソッド。このメソッドは複数のスレッドから呼ばれるので、必ず**スレッドセーフ**にします。
 * isMultiProcessSafe() ： open() メソッドを呼んだままマルチプロセスでログを出力しても安全かどうかを示すもので、安全である場合 true を返します。そうでない場合 false を返します。
 
-isMultiProcessSafe()  メソッドについて、これが false を返し（安全でない）、かつアプリケーションサーバがマルチプロセスモードで起動している場合（[MPM]({{ site.baseurl }}/user-guide/ja/performance/index.html){:target="_blank"} が prefork の場合）、ログ出力の前後で毎回 open / close メソッドを呼ぶようになります（オーバヘッドが大きくなる）。ちなみに、システムはこの前後でセマフォによるロック／アンロックをかけているので、競合は発生しません。また true を返す場合、システムは open() メソッドを最初の１度しか呼ばなくなります。
+isMultiProcessSafe()  メソッドについて、これが false を返し（安全でない）、かつアプリケーションサーバがマルチプロセスモードで起動している場合（[MPM]({{ site.baseurl }}/ja/user-guide/performance/index.html){:target="_blank"} が prefork の場合）、ログ出力の前後で毎回 open / close メソッドを呼ぶようになります（オーバヘッドが大きくなる）。ちなみに、システムはこの前後でセマフォによるロック／アンロックをかけているので、競合は発生しません。また true を返す場合、システムは open() メソッドを最初の１度しか呼ばなくなります。
 
 ## セッションストアプラグイン
 

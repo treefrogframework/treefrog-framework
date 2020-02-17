@@ -16,4 +16,4 @@ page_id: "080.0"
 
 如果你想创建一个工具助手类, 它可以是没有状态的一个类(按照面向对象).至于有状态的类, 通常的例子是作为一个模型(model)定义, 因为它保存在数据库中.
 
-此外, 对于出现在控制器(controller)和视图(view)中出现了多次的类似的逻辑代码段, 你应该考虑是否值得将它们剪切下来通过工具助手实现. 如果你想创建自己的工具助手,请看[本章](/user-guide/ch/helper-reference/making-original-helper.html){:target="_target"}
+此外, 对于出现在控制器(controller)和视图(view)中出现了多次的类似的逻辑代码段, 你应该考虑是否值得将它们剪切下来通过工具助手实现. 如果你想创建自己的工具助手,请看[本章](/ch/user-guide/helper-reference/making-original-helper.html){:target="_target"}

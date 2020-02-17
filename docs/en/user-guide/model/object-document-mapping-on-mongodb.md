@@ -7,7 +7,7 @@ page_id: "060.060"
 
 MongoDB expresses data to be saved in a JSON-like format and saves it as a document. The function of associating such a document with an object in a programming language is called **object-document mapping (O/D mapping)**.
 
-As in the [O/R mapping](/user-guide/en/model/or-mapping.html){:target="_blank"} chapter described, one document here is also associated with one object in the O/D mapping.
+As in the [O/R mapping](/en/user-guide/model/or-mapping.html){:target="_blank"} chapter described, one document here is also associated with one object in the O/D mapping.
 
 Since MongoDB documents are JSON-like formats, it is possible to have a hierarchical (nested) structure, but in O/D mapping, an object doesn't correspond to two or more levels of documents. For example, the following example shows the only supported simple form in O/D mapping:
 
@@ -21,7 +21,7 @@ Since MongoDB documents are JSON-like formats, it is possible to have a hierarch
 
 ## Setup
 
-If you are not sure anymore how to setup a MongoDB connection properly, please refer to the [Access MongoDB](/user-guide/en/model/access-mongodb.html){:target="_blank"} chapter.
+If you are not sure anymore how to setup a MongoDB connection properly, please refer to the [Access MongoDB](/en/user-guide/model/access-mongodb.html){:target="_blank"} chapter.
 
 For generating the class for O/D mapping, execute the following command in the application root directory. In this example, we create a collection named *foo*. The name of the model will be *Foo*.
 

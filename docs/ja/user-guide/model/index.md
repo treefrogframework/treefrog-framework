@@ -54,7 +54,7 @@ texport メソッドでエクスポート可能にする （ビューへ受け�
 
 ##### 結論： ORM オブジェクトを使うなら TAbstractModel クラスを継承せよ。
 
-ジェネレータでモデルを生成すると、各プロパティのゲッター・セッターに加え、生成(C) および読込(R) に相当するクラスメソッド（静的メソッド）が定義されます。次の例は[チュートリアルの章](/user-guide/ja/tutorial/index.html){:target="_target"}で作った Blog クラスの抜粋です。
+ジェネレータでモデルを生成すると、各プロパティのゲッター・セッターに加え、生成(C) および読込(R) に相当するクラスメソッド（静的メソッド）が定義されます。次の例は[チュートリアルの章](/ja/user-guide/tutorial/index.html){:target="_target"}で作った Blog クラスの抜粋です。
 
 ```c++
 static Blog create(const QString &title, const QString &body);

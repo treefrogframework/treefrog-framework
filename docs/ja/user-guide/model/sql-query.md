@@ -37,11 +37,11 @@ int id = query.value(0).toInt(); // 最初のフィールドをint型へ変換
 }
 ```
 
-TSqlQueryクラスは Qt の[QSqlQuery クラス](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"}を継承しているので、同じメソッドが使用できます。詳しくは、Qtドキュメントを参照ください。
+TSqlQueryクラスは Qt の[QSqlQuery クラス](https://doc.qt.io/qt-5/qsqlquery.html){:target="_blank"}を継承しているので、同じメソッドが使用できます。詳しくは、Qtドキュメントを参照ください。
 
 ##### 結論： プレースホルダを使ってクエリを生成せよ。
 
-実際に、どんなクエリが実行されたのかを[クエリログ]({{ site.baseurl }}/user-guide/ja/helper-reference/logging.html){:target="_blank"}で確認することができます。
+実際に、どんなクエリが実行されたのかを[クエリログ]({{ site.baseurl }}/ja/user-guide/helper-reference/logging.html){:target="_blank"}で確認することができます。
 
 ## クエリをファイルから読み込む
 
@@ -62,7 +62,7 @@ query.addBind(100).addBind(tr("Hello")).addBind(tr("Hello world"));
 query.exec();  // クエリ実行
 ```
 
-load メソッドの内部ではキャッシュが働きます（ただし [MPM]({{ site.baseurl }}/user-guide/ja/performance/index.html){:target="_blank"} に thread モジュールを適用した場合のみ）。最初の1回だけファイルからクエリ文を読み込むと、これ以降メモリ上のキャッシュを使うようになるので高速に動作します。
+load メソッドの内部ではキャッシュが働きます（ただし [MPM]({{ site.baseurl }}/ja/user-guide/performance/index.html){:target="_blank"} に thread モジュールを適用した場合のみ）。最初の1回だけファイルからクエリ文を読み込むと、これ以降メモリ上のキャッシュを使うようになるので高速に動作します。
 
 ファイルを修正したら、クエリ文を読み込ませるためにサーバを再起動しましょう。
 

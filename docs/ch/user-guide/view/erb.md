@@ -251,7 +251,7 @@ EnableCsrfProtectionModule=true
 
 Treefrog框架将视跨域的post请求为非法. 然而, 在开发中有各种重复的测试, 你可以临时关闭这个保护.
 
-关键跨域访问伪造(CSRF)监测的更多信息, 请查看[安全]({{ site.baseurl }}/user-guide/ch/security/index.html){:target="_blank"}
+关键跨域访问伪造(CSRF)监测的更多信息, 请查看[安全]({{ site.baseurl }}/ch/user-guide/security/index.html){:target="_blank"}
 
 ## 布局(Layout)
 

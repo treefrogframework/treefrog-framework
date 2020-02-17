@@ -62,7 +62,7 @@ class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData
 
 ## 查询分区的表
 
-像在[SQL查询]({{ site.baseurl }}/user-guide/ch/model/sql-query.html){:target="_blank"}中讨论的一样, TSqlQuery不仅仅是用来执行一条查询, 或者不需要提取所有的值, 你在它上面使用分区.
+像在[SQL查询]({{ site.baseurl }}/ch/user-guide/model/sql-query.html){:target="_blank"}中讨论的一样, TSqlQuery不仅仅是用来执行一条查询, 或者不需要提取所有的值, 你在它上面使用分区.
 
 接下来, 在创建器的第二个参数指定服务器ID:
 

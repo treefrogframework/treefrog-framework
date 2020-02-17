@@ -37,11 +37,11 @@ while (query.next()) {
 }
 ```
 
-The same method can be used for the TSqlQuery class, because it inherits the [QSqlQuery class](http://doc.qt.io/qt-4.8/qsqlquery.html){:target="_blank"} of Qt.
+The same method can be used for the TSqlQuery class, because it inherits the [QSqlQuery class](https://doc.qt.io/qt-5/qsqlquery.html){:target="_blank"} of Qt.
 
 ##### In brief: queries can be created using placeholders in all cases.
 
-In fact, you can see any query that has been executed in the [query log]({{ site.baseurl }}/user-guide/en/helper-reference/logging.html){:target="_blank"} file.
+In fact, you can see any query that has been executed in the [query log]({{ site.baseurl }}/en/user-guide/helper-reference/logging.html){:target="_blank"} file.
 
 ## Reading a Query From a File
 
@@ -62,7 +62,7 @@ query.addBind(100).addBind(tr("Hello")).addBind(tr("Hello world"));
 query.exec();  // Query execution
 ```
 
-The cache works inside the load() method (but only when thread module is applied in [MPM]({{ site.baseurl }}/user-guide/en/performance/index.html){:target="_blank"}. The query is read from the file only on the first occasion, after that it is used from the cache memory, so it then works at high speed.<br>
+The cache works inside the load() method (but only when thread module is applied in [MPM]({{ site.baseurl }}/en/user-guide/performance/index.html){:target="_blank"}. The query is read from the file only on the first occasion, after that it is used from the cache memory, so it then works at high speed.<br>
 After the file has been updated, we need to restart the server in order to read the query statement.
 
 ```

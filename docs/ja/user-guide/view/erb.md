@@ -251,7 +251,7 @@ JavaScript の確認ダイアログつきのリンクは、次のように書け
 
 これで、不正なポストデータはフレームワーク がガードしてくれます。ただし、開発中は様々なテストを繰り返し行うので、その間は無効にしておいて良いでしょうね。
 
-CSRF 対策の詳細については、[セキュリティの章](/user-guide/ja/security/index.html){:target="_blank"}も参照して下さい。
+CSRF 対策の詳細については、[セキュリティの章](/ja/user-guide/security/index.html){:target="_blank"}も参照して下さい。
 
 ## レイアウト
 

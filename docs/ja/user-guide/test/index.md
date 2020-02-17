@@ -11,7 +11,7 @@ page_id: "120.0"
 
 本節では、モデルが正しく動作するかチェックしてみます。テストフレームワークは Qt 付属の TestLib を踏襲しているので、[そちらのドキュメント](http://doc.qt.io/qt-5/qtest-overview.html){:target="_target"}も一度ご覧ください。
 
-[チュートリアル]({{ site.baseurl }}/user-guide/ja/tutorial/index.html){:target="_blank"}で作成した Blog モデルのテストコードを作ってみましょう。あらかじめ、モデルの共有ライブラリは作成しておいてください。<br>
+[チュートリアル]({{ site.baseurl }}/ja/user-guide/tutorial/index.html){:target="_blank"}で作成した Blog モデルのテストコードを作ってみましょう。あらかじめ、モデルの共有ライブラリは作成しておいてください。<br>
 まず、test ディレクトリに作業ディレクトリを作成します。
 
 ```
