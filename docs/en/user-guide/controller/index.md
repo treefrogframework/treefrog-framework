@@ -299,7 +299,7 @@ In this case, write the processing as *ApplicationController#staticInitialize()*
  }
 ```
 
-This staticInitialize() method, is called only once when the server process is started. However, care must be taken so that it does not create an extra load function by being called every time the process starts when you select the PreFork as described in [MPM](/en/user-guide/performance/index/html){:target="_blank"}).
+This staticInitialize() method, is called only once when the server process is started.
 
 ## Lifespan of a controller instance
 

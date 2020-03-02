@@ -294,7 +294,7 @@ Treefrog框架有一种机制(通过变量)可以实现传递信息到重定向�
  }
 ```
 
-当服务器进程启动后, staticInitialize()方法只会调用一次. 然而, 当你选择在[MPM](/ch/user-guide/performance/index/html){:target="_blank"})中描述的PreFork后, 你必须要关注它, 不要让每次进程启动时建立太多的加载功能.
+当服务器进程启动后, staticInitialize()方法只会调用一次.
 
 ## 控制器(controller)实例的生命周期
 

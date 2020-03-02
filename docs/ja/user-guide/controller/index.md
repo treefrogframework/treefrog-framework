@@ -290,7 +290,7 @@ tflash( foo );
 
 開発を進めていると、起動時に一度だけ行いたい処理というのが出てきます。例えば、あらかじめDBから初期データを読み込んでおきたいケースです。
 
-この場合は、ApplicationController#staticInitialize() に処理を書きます。
+この場合は、ApplicationController の staticInitialize() に処理を書きます。
 
 ```c++
 void ApplicationController::staticInitialize()
@@ -299,7 +299,7 @@ void ApplicationController::staticInitialize()
 }
 ```
 
-この staticInitialize() メソッドは、サーバプロセスが起動した時に、一度だけ呼ばれることが約束されます。ただし、[MPM]({{ site.baseurl }}/ja/user-guide/performance/index.html){:target="_blank"} として PreFork を選択した場合はプロセスが起動するたびに関数が呼ばれてしまうので余計な負荷を与えないよう注意が必要です。
+この staticInitialize() メソッドは、サーバプロセスが起動した時に一度だけ呼ばれることが約束されます。
 
 ## コントローラのインスタンスの寿命
 
