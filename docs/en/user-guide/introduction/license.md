@@ -9,7 +9,7 @@ page_id: "010.020"
 
 Modification, distribution or copying of source code is allowed in accordance with the license conditions below. If you modify the source code, you don't need to publish it; you can select "not publish" if you wish.
 
-Copyright (c) 2010-2017, AOYAMA Kazuharu
+Copyright (c) 2010-2020, AOYAMA Kazuharu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

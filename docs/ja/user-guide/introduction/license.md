@@ -9,7 +9,7 @@ page_id: "010.020"
 
 この条件に従って、ソースコードの改変・複製・頒布が可能です。改変したソースコードは非公開にしても構いません。
 
-Copyright (c) 2010-2017, AOYAMA Kazuharu
+Copyright (c) 2010-2020, AOYAMA Kazuharu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

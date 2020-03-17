@@ -1,6 +1,9 @@
 Small but Powerful and Efficient
 ================================
 
+[![Build Status](https://travis-ci.org/treefrogframework/treefrog-framework.svg?branch=master)](https://travis-ci.org/treefrogframework/treefrog-framework)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 TreeFrog Framework is a high-speed and full-stack web application framework
 based on C++ and Qt, which supports HTTP and WebSocket protocol. Web
 applications can run faster than that of lightweight programming language.
