@@ -1,20 +1,19 @@
 # EditorConfig is awesome: http://EditorConfig.org
 
-# top-most EditorConfig file
 root = true
 
 [*]
+charset = utf-8
 end_of_line = lf
 indent_style = space
-indent_size = 4
+trim_trailing_whitespace = true
 
 [*.{h,cpp}]
-trim_trailing_whitespace = true
+indent_size = 4
 insert_final_newline = true
 
 [*.pro]
 indent_size = 2
-trim_trailing_whitespace = true
 
 [Makefile]
 indent_style = tab
@@ -25,11 +24,10 @@ insert_final_newline = false
 
 [*.ini]
 end_of_line = crlf
-trim_trailing_whitespace = true
 
 [*.bat]
+charset = Shift_JIS
 end_of_line = crlf
-trim_trailing_whitespace = true
 
 [*.md]
 indent_size = 2
