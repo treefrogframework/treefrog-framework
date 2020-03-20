@@ -1,0 +1,11 @@
+# Like Qt style
+BasedOnStyle: WebKit
+IndentWidth: 4
+ColumnLimit: 0
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Right
+Cpp11BracedListStyle: true
+AllowShortFunctionsOnASingleLine: Inline
+AlignEscapedNewlinesLeft: true
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
