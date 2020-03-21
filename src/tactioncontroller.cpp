@@ -784,6 +784,22 @@ void TActionController::closeWebSokcet(int sid, int closeCode)
 }
 
 
+void TActionController::publish(const QString &topic, const QString &text)
+{
+    QVariantList info;
+    info << topic << text;
+    taskList << qMakePair((int)PublishText, QVariant(info));
+}
+
+
+void TActionController::publish(const QString &topic, const QByteArray &binary)
+{
+    QVariantList info;
+    info << topic << binary;
+    taskList << qMakePair((int)PublishBinary, QVariant(info));
+}
+
+
 /*!
   \fn const TSession &TActionController::session() const;
 

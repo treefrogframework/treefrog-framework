@@ -20,6 +20,7 @@
 #include "tsessionmanager.h"
 #include "turlroute.h"
 #include "tabstractwebsocket.h"
+#include "tpublisher.h"
 #include <QtCore>
 #include <QHostAddress>
 #include <QSet>
@@ -218,7 +219,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 if (websocket) {
                                     websocket->sendText(lst[1].toString());
                                 }
-                                break; }
+                            } break;
 
                             case TActionController::SendBinaryTo: {
                                 lst = taskData.toList();
@@ -226,7 +227,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 if (websocket) {
                                     websocket->sendBinary(lst[1].toByteArray());
                                 }
-                                break; }
+                            } break;
 
                             case TActionController::SendCloseTo: {
                                 lst = taskData.toList();
@@ -234,7 +235,21 @@ void TActionContext::execute(THttpRequest &request, int sid)
                                 if (websocket) {
                                     websocket->sendClose(lst[1].toInt());
                                 }
-                                break; }
+                            } break;
+
+                            case TActionController::PublishText: {
+                                lst = taskData.toList();
+                                QString topic = lst[0].toString();
+                                QString text = lst[1].toString();
+                                TPublisher::instance()->publish(topic, text, nullptr);
+                            } break;
+
+                            case TActionController::PublishBinary: {
+                                lst = taskData.toList();
+                                QString topic = lst[0].toString();
+                                QString binary = lst[1].toByteArray();
+                                TPublisher::instance()->publish(topic, binary, nullptr);
+                            } break;
 
                             default:
                                 tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);

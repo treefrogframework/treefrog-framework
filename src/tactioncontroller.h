@@ -100,9 +100,11 @@ protected:
     bool validateAccess(const TAbstractUser *user);
     int socketId() const { return sockId; }
     // For WebSocket
-    void sendTextToWebSocket(int sid, const QString &text);
-    void sendBinaryToWebSocket(int sid, const QByteArray &binary);
-    void closeWebSokcet(int sid, int closeCode = Tf::NormalClosure);
+    void sendTextToWebSocket(int socketId, const QString &text);
+    void sendBinaryToWebSocket(int socketId, const QByteArray &binary);
+    void closeWebSokcet(int socketId, int closeCode = Tf::NormalClosure);
+    void publish(const QString &topic, const QString &text);
+    void publish(const QString &topic, const QByteArray &binary);
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
@@ -116,11 +118,13 @@ private:
         SendTextTo,
         SendBinaryTo,
         SendCloseTo,
+        PublishText,
+        PublishBinary,
     };
 
     void setActionName(const QString &name);
     void setArguments(const QStringList &arguments) { args = arguments; }
-    void setSocketId(int sid) { sockId = sid; }
+    void setSocketId(int socketId) { sockId = socketId; }
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
     void exportAllFlashVariants();
