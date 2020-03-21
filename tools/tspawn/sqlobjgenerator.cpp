@@ -54,6 +54,12 @@ static bool isNumericType(const QString &typeName)
 }
 
 
+inline bool isBoolType(const QString &typeName)
+{
+    return (QMetaType::type(typeName.toLatin1()) == QMetaType::Bool);
+}
+
+
 SqlObjGenerator::SqlObjGenerator(const QString &model, const QString &table)
     : tableSch(new TableSchema(table))
 {
@@ -84,6 +90,8 @@ QString SqlObjGenerator::generate(const QString &dstDir)
         const QPair<QString, QString> &p = it.next();
         if (isNumericType(p.second)) {
             output += QString("    %1 %2 {0};\n").arg(p.second, p.first);
+        } else if (isBoolType(p.second)) {
+            output += QString("    %1 %2 {false};\n").arg(p.second, p.first);
         } else {
             output += QString("    %1 %2;\n").arg(p.second, p.first);
         }

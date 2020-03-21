@@ -78,7 +78,9 @@ constexpr auto MODEL_IMPL_TEMPLATE =                          \
     "%model%::%model%() :\n"                                  \
     "    TAbstractModel(),\n"                                 \
     "    d(new %model%Object())\n"                            \
-    "{%initParams%}\n"                                        \
+    "{\n"                                                     \
+    "    // set the initial parameters\n"                     \
+    "}\n"                                                     \
     "\n"                                                      \
     "%model%::%model%(const %model% &other) :\n"              \
     "    TAbstractModel(),\n"                                 \
@@ -231,7 +233,9 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE =                     \
     "    TAbstractUser(),\n"                                  \
     "    TAbstractModel(),\n"                                 \
     "    d(new %model%Object())\n"                            \
-    "{%initParams%}\n"                                        \
+    "{\n"                                                     \
+    "    // set the initial parameters\n"                     \
+    "}\n"                                                     \
     "\n"                                                      \
     "%model%::%model%(const %model% &other) :\n"              \
     "    TAbstractUser(),\n"                                  \
@@ -499,7 +503,7 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
 
 QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGenerator::createModelParams()
 {
-    QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl, initParams;
+    QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl;
     QList<QPair<QString, QString>> writableFields;
     bool optlockMethod = false;
     FieldList fields = objGen->fieldList();
@@ -532,17 +536,6 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
             writableFields << QPair<QString, QString>(p.first, type);
         }
 
-        // Initial value in the default constructor
-        switch ((int)p.second) {
-        case QVariant::Int:
-        case QVariant::UInt:
-        case QVariant::LongLong:
-        case QVariant::ULongLong:
-        case QVariant::Double:
-            initParams += QString("\n    d->") + p.first + " = 0;";
-            break;
-        }
-
         if (var == LOCK_REVISION_FIELD) {
             optlockMethod = true;
         }
@@ -552,8 +545,6 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     if (crtparams.isEmpty()) {
         crtparams += "const QString &";
     }
-
-    initParams += (initParams.isEmpty()) ? ' ' : '\n';
 
     // Creates parameters of get() method
     QString getparams;
@@ -640,7 +631,6 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
 
     implList << pair("inc", modelName.toLower())
              << pair("model", modelName)
-             << pair("initParams", initParams)
              << pair("4", setgetImpl)
              << pair("5", crtparams)
              << pair("6", createImpl)
@@ -705,12 +695,22 @@ QString ModelGenerator::createParam(QVariant::Type type, const QString &name)
 {
     QString string;
     QString var = fieldNameToVariableName(name);
-    if (type == QVariant::Int || type == QVariant::UInt || type == QVariant::ULongLong || type == QVariant::Double) {
+
+    switch (type) {
+    case QVariant::Bool:
+    case QVariant::Int:
+    case QVariant::UInt:
+    case QVariant::LongLong:
+    case QVariant::ULongLong:
+    case QVariant::Double:
         string += QVariant::typeToName(type);
         string += ' ';
         string += var;
-    } else {
+        break;
+
+    default:
         string += QString("const %1 &%2").arg(QVariant::typeToName(type), var);
+        break;
     }
     return string;
 }
