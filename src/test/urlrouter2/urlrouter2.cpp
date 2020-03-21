@@ -30,6 +30,7 @@ void TestUrlRouter2::initTestCase()
     addRouteFromString("GET   /hoge/:param/fuga  'dummy8.fuga5'");
     addRouteFromString("GET   /hoge              'dummy9.hoge6'");
     addRouteFromString("GET   /hoge/foo/fuga     'dummy9.function'");
+    addRouteFromString("GET   /hoge/:param       'dummy11.fuga8'");
     addRouteFromString("POST  /foo               'dummy10.hoge7'");
     addRouteFromString("POST  /hoge              'dummy1.foo'");  // same to top item
     addRouteFromString("MATCH /foo/foo           '/index2.html'");  // redirect to the file
@@ -76,23 +77,26 @@ void TestUrlRouter2::should_route_get_correctly_data()
                        << true << QString("dummy9controller") << QString("hoge6") << QStringList();
     QTest::newRow("10") << (int)Tf::Post << QString("/foo/")
                         << true << QString("dummy10controller") << QString("hoge7") << QStringList();
+    QTest::newRow("11") << (int)Tf::Get << QString("/hoge/1")
+                        << true << QString("dummy11controller") << QString("fuga8") << QStringList("1");
+
     // No entry
-    QTest::newRow("11") << (int)Tf::Put << QString("/foo/")
+    QTest::newRow("30") << (int)Tf::Put << QString("/foo/")
                         << false << QString() << QString() << QStringList();
-    QTest::newRow("12") << (int)Tf::Post << QString("/")
+    QTest::newRow("31") << (int)Tf::Post << QString("/")
                         << false << QString() << QString() << QStringList();
-    QTest::newRow("13") << (int)Tf::Delete << QString("/fuga")
+    QTest::newRow("32") << (int)Tf::Delete << QString("/fuga")
                         << false << QString() << QString() << QStringList();
-    QTest::newRow("14") << (int)Tf::Get << QString("/foo/fuga")
+    QTest::newRow("33") << (int)Tf::Get << QString("/foo/fuga")
                         << false << QString() << QString() << QStringList();
-    QTest::newRow("15") << (int)Tf::Get << QString("/foo/fuga/hoge")
+    QTest::newRow("34") << (int)Tf::Get << QString("/foo/fuga/hoge")
                         << false << QString() << QString() << QStringList();
     // Redirect
-    QTest::newRow("20") << (int)Tf::Get << QString("/foo/foo")
+    QTest::newRow("50") << (int)Tf::Get << QString("/foo/foo")
                         << true << QString("/index2.html") << QString() << QStringList();
-    QTest::newRow("21") << (int)Tf::Get << QString("/foo/foo/")
+    QTest::newRow("51") << (int)Tf::Get << QString("/foo/foo/")
                         << true << QString("/index2.html") << QString() << QStringList();
-    QTest::newRow("22") << (int)Tf::Put << QString("/foo/foo")
+    QTest::newRow("52") << (int)Tf::Put << QString("/foo/foo")
                         << true << QString("/index2.html") << QString() << QStringList();
 }
 

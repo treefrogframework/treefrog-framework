@@ -63,7 +63,7 @@ void TestUrlRouter::cleanup()
 
 void TestUrlRouter::should_route_get_correctly()
 {
-    addRouteFromString("GET / 'dummy#hoge'");
+    addRouteFromString("GET / 'dummy.hoge'");
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
@@ -75,7 +75,7 @@ void TestUrlRouter::should_route_get_correctly()
 
 void TestUrlRouter::should_route_post_correctly()
 {
-    addRouteFromString("POST / 'dummy#foo'");
+    addRouteFromString("POST / 'dummy.foo'");
 
     TRouting r = findRouting(Tf::Post, TUrlRoute::splitPath("/"));
 
@@ -87,7 +87,7 @@ void TestUrlRouter::should_route_post_correctly()
 
 void TestUrlRouter::should_route_put_correctly()
 {
-    addRouteFromString("PUT / 'dummy#fuga'");
+    addRouteFromString("PUT / 'dummy.fuga'");
 
     TRouting r = findRouting(Tf::Put, TUrlRoute::splitPath("/"));
 
@@ -99,7 +99,7 @@ void TestUrlRouter::should_route_put_correctly()
 
 void TestUrlRouter::should_route_patch_correctly()
 {
-    addRouteFromString("PATCH / 'dummy#hoge'");
+    addRouteFromString("PATCH / 'dummy.hoge'");
 
     TRouting r = findRouting(Tf::Patch, TUrlRoute::splitPath("/"));
 
@@ -111,7 +111,7 @@ void TestUrlRouter::should_route_patch_correctly()
 
 void TestUrlRouter::should_not_route_get()
 {
-    addRouteFromString("POST / 'dummy#hoge'");
+    addRouteFromString("POST / 'dummy.hoge'");
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
@@ -120,7 +120,7 @@ void TestUrlRouter::should_not_route_get()
 
 void TestUrlRouter::should_not_route_post()
 {
-    addRouteFromString("GET / 'dummy#hoge'");
+    addRouteFromString("GET / 'dummy.hoge'");
 
     TRouting r = findRouting(Tf::Post, TUrlRoute::splitPath("/"));
 
@@ -129,7 +129,7 @@ void TestUrlRouter::should_not_route_post()
 
 void TestUrlRouter::should_route_delete_correctly()
 {
-    addRouteFromString("DELETE / 'dummy#foo'");
+    addRouteFromString("DELETE / 'dummy.foo'");
 
     TRouting r = findRouting(Tf::Delete, TUrlRoute::splitPath("/"));
 
@@ -148,10 +148,10 @@ void TestUrlRouter::should_route_to_empty_if_no_route_present()
 
 void TestUrlRouter::should_route_to_empty_if_no_method_matches()
 {
-    addRouteFromString("POST   / 'dummy#index'");
-    addRouteFromString("PUT    / 'dummy#index'");
-    addRouteFromString("PATCH  / 'dummy#index'");
-    addRouteFromString("DELETE / 'dummy#index'");
+    addRouteFromString("POST   / 'dummy.index'");
+    addRouteFromString("PUT    / 'dummy.index'");
+    addRouteFromString("PATCH  / 'dummy.index'");
+    addRouteFromString("DELETE / 'dummy.index'");
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
@@ -160,7 +160,7 @@ void TestUrlRouter::should_route_to_empty_if_no_method_matches()
 
 void TestUrlRouter::should_route_urls_with_parameters()
 {
-    addRouteFromString("GET  /:params 'dummy#index'");
+    addRouteFromString("GET  /:params 'dummy.index'");
 
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/p1/p2/p3/"));
 
@@ -172,7 +172,7 @@ void TestUrlRouter::should_route_urls_with_parameters()
 
 void TestUrlRouter::should_route_urls_with_empty_parameters()
 {
-    addRouteFromString("GET  /:params 'dummy#index'");
+    addRouteFromString("GET  /:params 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/p1//p3/"));
 
     QCOMPARE(r.exists, true);
@@ -183,7 +183,7 @@ void TestUrlRouter::should_route_urls_with_empty_parameters()
 
 void TestUrlRouter::should_route_urls_with_no_parameters()
 {
-    addRouteFromString("GET  /:params 'dummy#index'");
+    addRouteFromString("GET  /:params 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/"));
 
     QCOMPARE(r.exists, true);
@@ -194,7 +194,7 @@ void TestUrlRouter::should_route_urls_with_no_parameters()
 
 void TestUrlRouter::should_route_urls_with_single_parameters_correctly()
 {
-    addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/bar 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/bar/"));
 
     QCOMPARE(r.exists, true);
@@ -205,7 +205,7 @@ void TestUrlRouter::should_route_urls_with_single_parameters_correctly()
 
 void TestUrlRouter::should_not_route_urls_with_multiple_parameters_instead_of_single()
 {
-    addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/bar 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/p2/bar/"));
 
     QCOMPARE(r.exists, false);
@@ -213,7 +213,7 @@ void TestUrlRouter::should_not_route_urls_with_multiple_parameters_instead_of_si
 
 void TestUrlRouter::should_route_urls_with_empty_single_parameters_correctly()
 {
-    addRouteFromString("GET  /foo/:param/bar 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/bar 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo//bar/"));
 
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
@@ -223,7 +223,7 @@ void TestUrlRouter::should_route_urls_with_empty_single_parameters_correctly()
 
 void TestUrlRouter::should_route_urls_with_multiple_single_parameters_correctly()
 {
-    addRouteFromString("GET  /foo/:param/bar/:param/baz/:param 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/bar/:param/baz/:param 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/bar/p2/baz/p3/"));
 
     QCOMPARE(r.exists, true);
@@ -234,7 +234,7 @@ void TestUrlRouter::should_route_urls_with_multiple_single_parameters_correctly(
 
 void TestUrlRouter::should_not_route_urls_with_missing_single_parameters()
 {
-    addRouteFromString("GET  /foo/:param/bar/ 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/bar/ 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/bar/"));
 
     QCOMPARE(r.exists, false);
@@ -242,7 +242,7 @@ void TestUrlRouter::should_not_route_urls_with_missing_single_parameters()
 
 void TestUrlRouter::should_not_route_urls_if_static_part_is_not_matching()
 {
-    addRouteFromString("GET  /foo/:param/bar/ 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/bar/ 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/"));
 
     QCOMPARE(r.exists, false);
@@ -250,7 +250,7 @@ void TestUrlRouter::should_not_route_urls_if_static_part_is_not_matching()
 
 void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_is_empty()
 {
-    addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/baz/:params 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/"));
 
     QCOMPARE(r.exists, true);
@@ -261,7 +261,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
 
 void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_is_not_empty()
 {
-    addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/baz/:params 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/p2/"));
 
     QCOMPARE(QString(r.controller), QString("dummycontroller"));
@@ -271,7 +271,7 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
 
 void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_correctly_when_multiple_params_has_multiple_items()
 {
-    addRouteFromString("GET  /foo/:param/baz/:params 'dummy#index'");
+    addRouteFromString("GET  /foo/:param/baz/:params 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/p2/p3"));
 
     QCOMPARE(r.exists, true);
@@ -282,13 +282,13 @@ void TestUrlRouter::should_route_urls_with_both_single_and_multiple_parameters_c
 
 void TestUrlRouter::should_not_accept_routes_with_params_in_middle()
 {
-    bool result = addRouteFromString("GET /foo/:params/bar 'dummy#index'");
+    bool result = addRouteFromString("GET /foo/:params/bar 'dummy.index'");
     QCOMPARE(result, false);
 }
 
 void TestUrlRouter::should_not_accept_a_route_if_request_has_surplus_parameters()
 {
-    addRouteFromString("GET  / 'dummy#index'");
+    addRouteFromString("GET  / 'dummy.index'");
     TRouting r = findRouting(Tf::Get, TUrlRoute::splitPath("/foo/p1/baz/p2/p3/"));
 
     QCOMPARE(r.exists, false);
@@ -304,7 +304,7 @@ void TestUrlRouter::should_not_create_route_if_destination_empty_and_route_does_
 
 void TestUrlRouter::should_not_create_route_if_bad_param()
 {
-    QString route = "GET /foo/:cont 'dummy#index'";
+    QString route = "GET /foo/:cont 'dummy.index'";
     bool result = addRouteFromString(route);
 
     QCOMPARE(result, false);
@@ -344,7 +344,7 @@ void TestUrlRouter::should_not_create_route_if_bad_param()
 
 // void TestUrlRouter::should_create_route_if_only_accepts_action()
 // {
-//     QString route = "GET /:action 'dummy#default' ";
+//     QString route = "GET /:action 'dummy.default' ";
 //     bool result = addRouteFromString(route);
 
 //     QCOMPARE(result, true);
