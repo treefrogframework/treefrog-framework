@@ -58,10 +58,10 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
 
     if (path.isEmpty()) {
         path.append('/').append(ctrl).append('/').append(act);
-    }
 
-    for (auto &a : args) {
-        path.append('/').append(a);
+        for (auto &a : args) {
+            path.append('/').append(a);
+        }
     }
 
     // appends query items
