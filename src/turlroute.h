@@ -46,8 +46,11 @@ public:
 };
 
 
-inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
-    : controller(ctrl), action(act), params(p){ }
+inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p) :
+    controller(ctrl),
+    action(act),
+    params(p)
+{ }
 
 
 inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
