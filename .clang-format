@@ -3,6 +3,8 @@ BasedOnStyle: WebKit
 IndentWidth: 4
 ColumnLimit: 0
 MaxEmptyLinesToKeep: 2
+SpacesBeforeTrailingComments: 2
+PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Right
 Cpp11BracedListStyle: true
 AllowShortFunctionsOnASingleLine: Inline
