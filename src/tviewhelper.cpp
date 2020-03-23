@@ -290,7 +290,7 @@ QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, 
 /*!
   Creates a select tag with name=\a "name".
  */
-QString TViewHelper::selectTag(const QString &name, int size, bool multiple, const THtmlAttribute &attributes) const
+QString TViewHelper::selectTag(const QString &name, int size, bool multiple, const THtmlAttribute &attributes)
 {
     THtmlAttribute attr = attributes;
     attr.prepend("size", QString::number(size));
@@ -299,7 +299,7 @@ QString TViewHelper::selectTag(const QString &name, int size, bool multiple, con
     if (multiple)
         attr.prepend("multiple", QString());
 
-    return tag("select", attr, QString());
+    return tag("select", attr);
 }
 
 /*!
@@ -588,7 +588,7 @@ THtmlAttribute TViewHelper::a(const QString &key, const QString &value) const
 */
 QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes)
 {
-    QString string = "<";
+    QString string = QLatin1String("<");
     string += name;
     string += attributes.toString();
     string += QLatin1Char('>');
@@ -610,7 +610,7 @@ QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, 
  */
 QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, const QString &content) const
 {
-    QString string = "<";
+    QString string = QLatin1String("<");
     string += name;
     string += attributes.toString();
     string += QLatin1Char('>');
@@ -625,7 +625,7 @@ QString TViewHelper::tag(const QString &name, const THtmlAttribute &attributes, 
 */
 QString TViewHelper::selfClosingTag(const QString &name, const THtmlAttribute &attributes) const
 {
-    QString string = "<";
+    QString string = QLatin1String("<");
     string += name;
     string += attributes.toString();
     string += QLatin1String(" />");

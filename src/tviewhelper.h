@@ -117,7 +117,7 @@ public:
                            const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString selectTag(const QString &name, int size = 1, bool multiple = false,
-                      const THtmlAttribute &attributes = THtmlAttribute()) const;
+                      const THtmlAttribute &attributes = THtmlAttribute());
 
     QString optionTag(const QString &text, const QVariant &value, bool selected = false,
                       const THtmlAttribute &attributes = THtmlAttribute()) const;
