@@ -22,6 +22,7 @@ private slots:
     void resetTag();
     void imageTag();
     void stylesheetTag();
+    void selectTag();
 };
 
 
@@ -95,7 +96,7 @@ void TestViewHelper::textAreaTag()
 
     ViewHelper view;
     QString actual = view.textAreaTag(name, rows, columns, content, attr);
-    QCOMPARE(actual, result); 
+    QCOMPARE(actual, result);
 }
 
 
@@ -119,7 +120,7 @@ void TestViewHelper::submitImageTag()
     attr.append("style", "none");
     QString actual = view.submitImageTag("hoge.png", attr);
     QString result = "<input type=\"image\" src=\"/images/hoge.png\" onclick=\"return 0;\" style=\"none\" />";
-    QCOMPARE(actual, result);   
+    QCOMPARE(actual, result);
 }
 
 
@@ -131,7 +132,7 @@ void TestViewHelper::resetTag()
     attr.append("style", "none");
     QString actual = view.resetTag("hoge", attr);
     QString result = "<input type=\"reset\" value=\"hoge\" onclick=\"return 0;\" style=\"none\" />";
-    QCOMPARE(actual, result);  
+    QCOMPARE(actual, result);
 }
 
 void TestViewHelper::imageTag()
@@ -142,7 +143,7 @@ void TestViewHelper::imageTag()
     attr.append("style", "none");
     QString actual = view.imageTag("hoge.png", QSize(100, 200), "stop", attr);
     QString result = "<img src=\"/images/hoge.png\" width=\"100\" height=\"200\" alt=\"stop\" onclick=\"return 0;\" style=\"none\" />";
-    QCOMPARE(actual, result); 
+    QCOMPARE(actual, result);
 }
 
 void TestViewHelper::stylesheetTag()
@@ -154,6 +155,17 @@ void TestViewHelper::stylesheetTag()
     QString actual = view.styleSheetTag("hoge.png", attr);
     QString result = "<link href=\"/css/hoge.png\" rel=\"stylesheet\" type=\"text/css\" onclick=\"return 0;\" style=\"none\" />";
     QCOMPARE(actual, result);
+}
+
+void TestViewHelper::selectTag()
+{
+    ViewHelper view;
+    QString actual1 = view.selectTag("book", 5);
+    QString actual2 = view.endTag();
+    QString result1 = "<select name=\"book\" size=\"5\">";
+    QString result2 = "</select>";
+    QCOMPARE(actual1, result1);
+    QCOMPARE(actual2, result2);
 }
 
 //TF_TEST_SQLLESS_MAIN(TestViewHelper)
