@@ -1,4 +1,4 @@
-FROM buildpack-deps:bionic-curl
+FROM buildpack-deps:focal-curl
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV LANG C.UTF-8
