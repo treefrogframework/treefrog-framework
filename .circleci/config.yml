@@ -3,6 +3,8 @@ jobs:
   bionic:
     docker:
       - image: buildpack-deps:bionic-curl
+        environment:
+          DEBIAN_FRONTEND: noninteractive
     working_directory: /workspace
     steps:
       - checkout
@@ -20,6 +22,8 @@ jobs:
   ubuntu_shared_mongoc:
     docker:
       - image: buildpack-deps:focal-curl
+        environment:
+          DEBIAN_FRONTEND: noninteractive
     working_directory: /workspace
     steps:
       - checkout
@@ -31,6 +35,8 @@ jobs:
   test:
     docker:
       - image: buildpack-deps:bionic-curl
+        environment:
+          DEBIAN_FRONTEND: noninteractive
     working_directory: /workspace
     steps:
       - attach_workspace:
