@@ -80,9 +80,12 @@ protected:
     bool renderJson(const QVariantMap &map);
     bool renderJson(const QVariantList &list);
     bool renderJson(const QStringList &list);
-    bool renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
-    bool renderFromCache(const QByteArray &key);
-    void removeFromCache(const QByteArray &key);
+    bool renderAndCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
+    bool renderOnCache(const QByteArray &key);
+    void removeCache(const QByteArray &key);
+    bool renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString()) { return renderAndCache(key, seconds, action, layout); } // TO DELETE
+    bool renderFromCache(const QByteArray &key) { return renderOnCache(key); }  // TO DELETE
+    void removeFromCache(const QByteArray &key) { return removeCache(key); }  // TO DELETE
 #if QT_VERSION >= 0x050c00  // 5.12.0
     bool renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);

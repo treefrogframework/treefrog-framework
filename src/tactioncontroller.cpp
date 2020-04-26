@@ -404,7 +404,7 @@ bool TActionController::renderXml(const QStringList &list)
 }
 
 
-bool TActionController::renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
+bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
@@ -420,7 +420,7 @@ bool TActionController::renderAndStoreInCache(const QByteArray &key, int seconds
 }
 
 
-bool TActionController::renderFromCache(const QByteArray &key)
+bool TActionController::renderOnCache(const QByteArray &key)
 {
     if (rendered) {
         tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
@@ -438,7 +438,7 @@ bool TActionController::renderFromCache(const QByteArray &key)
 }
 
 
-void TActionController::removeFromCache(const QByteArray &key)
+void TActionController::removeCache(const QByteArray &key)
 {
     Tf::cache()->remove(key);
 }
