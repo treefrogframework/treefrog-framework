@@ -161,7 +161,9 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
 {
     TCookie cookie(name, value);
     cookie.setMaxAge(maxAge);
-    cookie.setExpirationDate(QDateTime::currentDateTime().addSecs(maxAge));  // For IE11
+    if (maxAge > 0) {
+        cookie.setExpirationDate(QDateTime::currentDateTime().addSecs(maxAge));  // For IE11
+    }
     cookie.setPath(path);
     cookie.setDomain(domain);
     cookie.setSecure(secure);

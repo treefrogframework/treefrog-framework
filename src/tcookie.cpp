@@ -58,7 +58,7 @@ QByteArray TCookie::toRawForm(QNetworkCookie::RawForm form) const
 {
     QByteArray raw = QNetworkCookie::toRawForm(form);
 
-    if (_maxAge != INT64_MIN) {
+    if (_maxAge > 0) {
         raw += "; Max-Age=";
         raw += QByteArray::number(_maxAge);
     }
