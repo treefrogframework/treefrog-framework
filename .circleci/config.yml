@@ -2,7 +2,7 @@ version: 2
 jobs:
   bionic:
     docker:
-      - image: buildpack-deps:bionic
+      - image: buildpack-deps:bionic-curl
     working_directory: /workspace
     steps:
       - checkout
@@ -19,7 +19,7 @@ jobs:
             - usr/local
   ubuntu_shared_mongoc:
     docker:
-      - image: buildpack-deps:19.10
+      - image: buildpack-deps:focal-curl
     working_directory: /workspace
     steps:
       - checkout
@@ -30,7 +30,7 @@ jobs:
       - run: treefrog -v
   test:
     docker:
-      - image: buildpack-deps:bionic
+      - image: buildpack-deps:bionic-curl
     working_directory: /workspace
     steps:
       - attach_workspace:
