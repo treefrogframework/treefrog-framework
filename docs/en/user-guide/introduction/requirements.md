@@ -14,7 +14,7 @@ page_id: "010.010"
 
 In order to develop a Web application in TreeFrog Framework, you must have C++ development tools appropriate to the execution environment as lsited above. For the time being, development is possible using the g++ compiler to make and edit commands.
 
-Visual Studio or MinGW is available for Windows. Using the Qt Creator IDE is also a good idea.
+Visual Studio is available for Windows but MinGW is not supported. Using the Qt Creator IDE is also a good idea.
 
 On maxOS, if you install Xcode, various commands such as a compiler are installed. For Linux, I recommend installing the packages that are provided with the distribution.
 

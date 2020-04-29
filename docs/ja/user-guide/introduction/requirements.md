@@ -14,7 +14,7 @@ page_id: "010.010"
 
 TreeFrog Framework で Webアプリを開発するには、上記の実行環境の他に一般的なC++開発ツールが必要です。コンパイラ(g++)、make コマンド、エディタがあれば、ひとまず開発は可能です。
 
-Windows の場合は VisualStudio か MinGW が必要です。IDEである Qt Creator でも良いでしょう。
+Windows の場合は VisualStudio が必要です。MinGWには対応していません。IDEである Qt Creator でも良いでしょう。
 
 macOS では、Xcode をインストールすれば、コンパイラなど各種コマンドがインストールされます。
 Linux の場合、ディストリビューションで用意されているパッケージをインストールします。

@@ -14,7 +14,7 @@ page_id: "010.010"
 
 为了使用Treefrog框架开发网页应用, 必须有一个适合在上述执行环境运行的C++开发工具. 当前, 开发可以使用g++编译器来make和编辑命令.
 
-Windows可使用MinGW. 使用Qt Creator也是个不错的主意. 我现在正在等待更多的信息, 不过应该也可以使用Visual Studio和Eclipse(虽然我还没有去尝试).
+Visual Studio可用于Windows，但不支持MinGW. 使用Qt Creator IDE也是一个好主意.
 
 在macOS上, 如果你安装了Xcode, 各种命令如编译器就已经安装好了. 对于Linux, 我建议安装发布的安装包.
 
