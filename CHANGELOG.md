@@ -1,4 +1,12 @@
 # ChangeLog
+## 1.29.0
+ - Fix a bug of max-age of cookie.
+ - Fix a bug of generating select-tag.
+ - Modified to initialize boolean fields in classes generated.
+ - Implemented publish() function in TActionController class.
+ - Rename functions; renderAndStoreInCache() to renderAndCache(),
+   renderFromCache() to renderOnCache(), removeFromCache() to removeCache().
+
 ## 1.28.0
  - Implemented to add a SameSite attribute to cookie.
  - Modified to add a max-age value to cookie.
