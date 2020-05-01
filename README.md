@@ -5,6 +5,7 @@ Small but Powerful and Efficient
 [![TravisCI](https://travis-ci.org/treefrogframework/treefrog-framework.svg?branch=master)](https://travis-ci.org/treefrogframework/treefrog-framework)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Release](https://img.shields.io/github/v/release/treefrogframework/treefrog-framework.svg)](https://github.com/treefrogframework/treefrog-framework/releases)
+[![Docker image](https://img.shields.io/badge/Docker-image-blue.svg)](https://hub.docker.com/r/treefrogframework/treefrog/)
 
 TreeFrog Framework is a high-speed and full-stack web application framework
 based on C++ and Qt, which supports HTTP and WebSocket protocol. Web
