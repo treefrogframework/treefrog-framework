@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
 #include "projectfilegenerator.h"
 #include "filewriter.h"
+#include <QtCore>
 
 
 bool ProjectFileGenerator::exists() const
@@ -35,19 +35,19 @@ bool ProjectFileGenerator::add(const QStringList &files) const
     }
     pro.close();
 
-    for (QStringListIterator i(files); i.hasNext(); ) {
+    for (QStringListIterator i(files); i.hasNext();) {
         const QString &f = i.next();
         QString str;
         QRegExp rx("*.h");
         rx.setPatternSyntax(QRegExp::Wildcard);
         if (rx.exactMatch(f)) {
-            str  = "HEADERS += ";
+            str = "HEADERS += ";
             str += f;
             str += '\n';
         } else {
             rx.setPattern("*.cpp");
             if (rx.exactMatch(f)) {
-                str  = "SOURCES += ";
+                str = "SOURCES += ";
                 str += f;
                 str += '\n';
             }
@@ -91,12 +91,12 @@ bool ProjectFileGenerator::remove(const QStringList &files) const
         QRegExp rx("*.h");
         rx.setPatternSyntax(QRegExp::Wildcard);
         if (rx.exactMatch(f)) {
-            str  = "HEADERS += ";
+            str = "HEADERS += ";
             str += f;
         } else {
             rx.setPattern("*.cpp");
             if (rx.exactMatch(f)) {
-                str  = "SOURCES += ";
+                str = "SOURCES += ";
                 str += f;
             }
         }
@@ -106,7 +106,7 @@ bool ProjectFileGenerator::remove(const QStringList &files) const
 #endif
 
         int idx = 0;
-        if (!str.isEmpty() && (idx = output.indexOf(str)) >= 0 ) {
+        if (!str.isEmpty() && (idx = output.indexOf(str)) >= 0) {
             output.remove(idx, str.length());
             if (idx < output.length() && output.at(idx) == '\n') {
                 output.remove(idx, 1);

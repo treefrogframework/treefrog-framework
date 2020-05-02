@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TActionController>
-#include <QtCore>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
+#include <QtCore>
+#include <TActionController>
 
 /*!
   Renders the JSON document \a document as HTTP response.

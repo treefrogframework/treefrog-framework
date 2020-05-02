@@ -5,50 +5,51 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
 #include "filewriter.h"
+#include <QtCore>
 #ifndef Q_CC_MSVC
-# include <unistd.h>
+#include <unistd.h>
 #endif
 
 namespace {
-    bool gOverwrite = false;
+bool gOverwrite = false;
 
-    QString diff(const QString &data1, const QString &data2)
-    {
-        QTemporaryFile f1, f2;
-        if (!f1.open() || f1.write(data1.toUtf8()) < 0) {
-            return QString();
-        }
-
-        if (!f2.open() || f2.write(data2.toUtf8()) < 0) {
-            return QString();
-        }
-
-        f1.close();
-        f2.close();
-
-        if (!QFileInfo(f1).exists() || !QFileInfo(f2).exists()) {
-            qCritical("Intarnal error [%s:%d]", __FILE__, __LINE__);
-            return QString();
-        }
-
-        QProcess df;
-        QStringList args;
-        args << "-u" << f1.fileName() << f2.fileName();
-        df.start("diff", args);
-
-        if (!df.waitForStarted() || !df.waitForFinished()) {
-            return QString();
-        }
-        return QString::fromUtf8(df.readAll().data());
+QString diff(const QString &data1, const QString &data2)
+{
+    QTemporaryFile f1, f2;
+    if (!f1.open() || f1.write(data1.toUtf8()) < 0) {
+        return QString();
     }
+
+    if (!f2.open() || f2.write(data2.toUtf8()) < 0) {
+        return QString();
+    }
+
+    f1.close();
+    f2.close();
+
+    if (!QFileInfo(f1).exists() || !QFileInfo(f2).exists()) {
+        qCritical("Intarnal error [%s:%d]", __FILE__, __LINE__);
+        return QString();
+    }
+
+    QProcess df;
+    QStringList args;
+    args << "-u" << f1.fileName() << f2.fileName();
+    df.start("diff", args);
+
+    if (!df.waitForStarted() || !df.waitForFinished()) {
+        return QString();
+    }
+    return QString::fromUtf8(df.readAll().data());
+}
 }
 
 
-FileWriter::FileWriter(const QString &filePath)
-    : filepath(filePath)
-{ }
+FileWriter::FileWriter(const QString &filePath) :
+    filepath(filePath)
+{
+}
 
 
 static QString readFile(const QString &fileName)
@@ -60,7 +61,7 @@ static QString readFile(const QString &fileName)
         return ret;
     }
 
-    ret = file.readAll(); // Use the codec of QTextCodec::codecForCStrings()
+    ret = file.readAll();  // Use the codec of QTextCodec::codecForCStrings()
     file.close();
     return ret;
 }

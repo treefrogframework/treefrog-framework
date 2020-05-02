@@ -5,36 +5,36 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TMultiplexingServer>
-#include <TWebApplication>
+#include "tepoll.h"
+#include "tepollhttpsocket.h"
+#include "tepollsocket.h"
+#include "tkvsdatabasepool.h"
+#include "tpublisher.h"
+#include "tsqldatabasepool.h"
+#include "tsystembus.h"
+#include "tsystemglobal.h"
+#include "turlroute.h"
+#include <QElapsedTimer>
+#include <TActionWorker>
 #include <TAppSettings>
 #include <TApplicationServerBase>
+#include <TMultiplexingServer>
 #include <TThreadApplicationServer>
-#include <TActionWorker>
-#include "tepoll.h"
-#include "tepollsocket.h"
-#include "tepollhttpsocket.h"
-#include "tsqldatabasepool.h"
-#include "tkvsdatabasepool.h"
-#include "turlroute.h"
-#include "tsystemglobal.h"
-#include "tsystembus.h"
-#include "tpublisher.h"
-#include <QElapsedTimer>
+#include <TWebApplication>
 #include <netinet/tcp.h>
 
 constexpr int SEND_BUF_SIZE = 16 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
 
 namespace {
-    TMultiplexingServer *multiplexingServer = nullptr;
+TMultiplexingServer *multiplexingServer = nullptr;
 
 
-    void cleanup()
-    {
-        delete multiplexingServer;
-        multiplexingServer = nullptr;
-    }
+void cleanup()
+{
+    delete multiplexingServer;
+    multiplexingServer = nullptr;
+}
 }
 
 
@@ -99,7 +99,8 @@ TMultiplexingServer::TMultiplexingServer(int listeningSocket, QObject *parent) :
 
 
 TMultiplexingServer::~TMultiplexingServer()
-{ }
+{
+}
 
 
 bool TMultiplexingServer::start(bool debugMode)
@@ -111,7 +112,7 @@ bool TMultiplexingServer::start(bool debugMode)
     bool res = loadLibraries();
     if (!res) {
         if (debugMode) {
-           tSystemError("Failed to load application libraries.");
+            tSystemError("Failed to load application libraries.");
             return false;
         } else {
             tSystemWarn("Failed to load application libraries.");
@@ -152,7 +153,7 @@ void TMultiplexingServer::run()
         }
 
         TEpollSocket *sock;
-        while ( (sock = TEpoll::instance()->next()) ) {
+        while ((sock = TEpoll::instance()->next())) {
 
             int cltfd = sock->socketDescriptor();
             if (cltfd == listenSocket) {
@@ -165,7 +166,7 @@ void TMultiplexingServer::run()
                 continue;
 
             } else {
-                if ( TEpoll::instance()->canSend() ) {
+                if (TEpoll::instance()->canSend()) {
                     // Send data
                     int len = TEpoll::instance()->send(sock);
                     if (Q_UNLIKELY(len < 0)) {
@@ -176,7 +177,7 @@ void TMultiplexingServer::run()
                     }
                 }
 
-                if ( TEpoll::instance()->canReceive() ) {
+                if (TEpoll::instance()->canReceive()) {
                     try {
                         // Receive data
                         int len = TEpoll::instance()->recv(sock);
@@ -204,7 +205,7 @@ void TMultiplexingServer::run()
 
         // Check keep-alive timeout for HTTP sockets
         if (Q_UNLIKELY(keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000)) {
-            for (auto *http : (const QList<TEpollHttpSocket*>&)TEpollHttpSocket::allSockets()) {
+            for (auto *http : (const QList<TEpollHttpSocket *> &)TEpollHttpSocket::allSockets()) {
                 if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
                     tSystemDebug("KeepAlive timeout: sid:%d", http->socketId());
                     TEpoll::instance()->deletePoll(http);

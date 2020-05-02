@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TInternetMessageHeader>
-#include "tsystemglobal.h"
 #include "thttputility.h"
+#include "tsystemglobal.h"
+#include <TInternetMessageHeader>
 using namespace Tf;
 
 /*!
@@ -25,7 +25,8 @@ using namespace Tf;
 */
 TInternetMessageHeader::TInternetMessageHeader(const TInternetMessageHeader &other) :
     headerPairList(other.headerPairList)
-{ }
+{
+}
 
 /*!
   Constructs an Internet message header by parsing \a str.
@@ -82,7 +83,7 @@ void TInternetMessageHeader::setRawHeader(const QByteArray &key, const QByteArra
     }
 
     QByteArray val = value;
-    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext(); ) {
+    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext();) {
         RawHeaderPair &p = it.next();
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
             if (val.isNull()) {
@@ -214,7 +215,7 @@ void TInternetMessageHeader::parse(const QByteArray &header)
         headerlen = header.length();
 
     while (i < headerlen) {
-        int j = header.indexOf(':', i); // field-name
+        int j = header.indexOf(':', i);  // field-name
         if (j < 0)
             break;
 
@@ -245,7 +246,7 @@ void TInternetMessageHeader::parse(const QByteArray &header)
 */
 void TInternetMessageHeader::removeAllRawHeaders(const QByteArray &key)
 {
-    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext(); ) {
+    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext();) {
         RawHeaderPair &p = it.next();
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
             it.remove();
@@ -258,7 +259,7 @@ void TInternetMessageHeader::removeAllRawHeaders(const QByteArray &key)
 */
 void TInternetMessageHeader::removeRawHeader(const QByteArray &key)
 {
-    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext(); ) {
+    for (QMutableListIterator<RawHeaderPair> it(headerPairList); it.hasNext();) {
         RawHeaderPair &p = it.next();
         if (qstricmp(p.first.constData(), key.constData()) == 0) {
             it.remove();

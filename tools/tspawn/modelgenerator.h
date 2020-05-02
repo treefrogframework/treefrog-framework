@@ -1,16 +1,15 @@
 #ifndef MODELGENERATOR_H
 #define MODELGENERATOR_H
 
-#include <QStringList>
 #include <QDir>
 #include <QPair>
+#include <QStringList>
 #include <QVariant>
 
 class AbstractObjGenerator;
 
 
-class ModelGenerator
-{
+class ModelGenerator {
 public:
     using FieldList = QList<QPair<QString, QVariant::Type>>;
     using PlaceholderList = QList<QPair<QString, QString>>;
@@ -48,4 +47,4 @@ private:
     QStringList userFields;
 };
 
-#endif // MODELGENERATOR_H
+#endif  // MODELGENERATOR_H

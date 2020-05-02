@@ -10,8 +10,7 @@ class TLog;
 class QTextCodec;
 
 
-class T_CORE_EXPORT TLogger
-{
+class T_CORE_EXPORT TLogger {
 public:
     TLogger();
     virtual ~TLogger() { }
@@ -20,8 +19,8 @@ public:
     virtual bool open() = 0;
     virtual void close() = 0;
     virtual bool isOpen() const = 0;
-    virtual void log(const TLog &log) = 0; // thread safe log output
-    virtual void log(const QByteArray &) { } // thread safe log output
+    virtual void log(const TLog &log) = 0;  // thread safe log output
+    virtual void log(const QByteArray &) { }  // thread safe log output
     virtual void flush() { }
     virtual QByteArray logToByteArray(const TLog &log) const;
 
@@ -41,8 +40,8 @@ private:
     mutable QByteArray _layout;
     mutable QByteArray _dateTimeFormat;
     mutable Tf::LogPriority _threshold {(Tf::LogPriority)-1};
-    mutable QString  _target;
+    mutable QString _target;
     mutable QTextCodec *_codec {nullptr};
 };
 
-#endif // TLOGGER_H
+#endif  // TLOGGER_H

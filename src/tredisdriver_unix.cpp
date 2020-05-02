@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tfcore_unix.h"
 #include "tredisdriver.h"
 #include "tsystemglobal.h"
-#include "tfcore_unix.h"
-#include <TApplicationServerBase>
 #include <QTcpSocket>
+#include <TApplicationServerBase>
 using namespace Tf;
 
 constexpr int DEFAULT_PORT = 6379;
@@ -89,7 +89,7 @@ void TRedisDriver::close()
 
 bool TRedisDriver::writeCommand(const QByteArray &command)
 {
-    if (Q_UNLIKELY(! isOpen())) {
+    if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
@@ -112,7 +112,7 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
 
 bool TRedisDriver::readReply()
 {
-    if (Q_UNLIKELY(! isOpen())) {
+    if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
@@ -141,4 +141,5 @@ bool TRedisDriver::readReply()
 
 
 void TRedisDriver::moveToThread(QThread *)
-{ }
+{
+}

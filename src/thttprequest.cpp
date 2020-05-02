@@ -5,29 +5,29 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <THttpRequest>
-#include <TMultipartFormData>
-#include <THttpUtility>
-#include <TAppSettings>
 #include "tsystemglobal.h"
 #include <QBuffer>
 #include <QJsonDocument>
+#include <TAppSettings>
+#include <THttpRequest>
+#include <THttpUtility>
+#include <TMultipartFormData>
 
 
-class MethodHash : public QMap<QString, Tf::HttpMethod>
-{
+class MethodHash : public QMap<QString, Tf::HttpMethod> {
 public:
-    MethodHash() : QMap<QString, Tf::HttpMethod>()
+    MethodHash() :
+        QMap<QString, Tf::HttpMethod>()
     {
-        insert("get",     Tf::Get);
-        insert("head",    Tf::Head);
-        insert("post",    Tf::Post);
+        insert("get", Tf::Get);
+        insert("head", Tf::Head);
+        insert("post", Tf::Post);
         insert("options", Tf::Options);
-        insert("put",     Tf::Put);
-        insert("delete",  Tf::Delete);
-        insert("trace",   Tf::Trace);
+        insert("put", Tf::Put);
+        insert("delete", Tf::Delete);
+        insert("trace", Tf::Trace);
         insert("connect", Tf::Connect);
-        insert("patch",   Tf::Patch);
+        insert("patch", Tf::Patch);
     }
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
@@ -48,16 +48,17 @@ static bool httpMethodOverride()
   \brief The THttpRequestData class is for shared THttpRequest data objects.
 */
 
-THttpRequestData::THttpRequestData(const THttpRequestData &other)
-    : QSharedData(other),
-      header(other.header),
-      bodyArray(other.bodyArray),
-      queryItems(other.queryItems),
-      formItems(other.formItems),
-      multipartFormData(other.multipartFormData),
-      jsonData(other.jsonData),
-      clientAddress(other.clientAddress)
-{ }
+THttpRequestData::THttpRequestData(const THttpRequestData &other) :
+    QSharedData(other),
+    header(other.header),
+    bodyArray(other.bodyArray),
+    queryItems(other.queryItems),
+    formItems(other.formItems),
+    multipartFormData(other.multipartFormData),
+    jsonData(other.jsonData),
+    clientAddress(other.clientAddress)
+{
+}
 
 /*!
   \class THttpRequest
@@ -70,7 +71,8 @@ THttpRequestData::THttpRequestData(const THttpRequestData &other)
 */
 THttpRequest::THttpRequest() :
     d(new THttpRequestData)
-{ }
+{
+}
 
 /*!
   \fn THttpRequest::THttpRequest(const THttpRequest &other)
@@ -78,7 +80,8 @@ THttpRequest::THttpRequest() :
 */
 THttpRequest::THttpRequest(const THttpRequest &other) :
     d(other.d)
-{ }
+{
+}
 
 /*!
   Constructor with the header \a header and the body \a body.
@@ -141,7 +144,7 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
 Tf::HttpMethod THttpRequest::method() const
 {
     Tf::HttpMethod method = Tf::Invalid;
-    if ( httpMethodOverride() ) {
+    if (httpMethodOverride()) {
         method = queryItemMethod();  // query parameter named '_method'
         if (method == Tf::Invalid) {
             method = getHttpMethodOverride();  // X-HTTP-* methods override
@@ -490,7 +493,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->jsonData = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
                 tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qPrintable(error.errorString()),
-                            error.offset);
+                    error.offset);
             }
         } else if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
@@ -499,7 +502,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         } else {
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
         }
-        } /* FALLTHRU */
+    } /* FALLTHRU */
 
     case Tf::Get: {
         // query parameter
@@ -509,7 +512,8 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         if (!query.isEmpty()) {
             d->queryItems = THttpRequest::fromQuery(query);
         }
-        break; }
+        break;
+    }
 
     default:
         // do nothing
@@ -602,8 +606,8 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
 
 QIODevice *THttpRequest::rawBody()
 {
-    if (! bodyDevice) {
-        if (! d->multipartFormData.bodyFile.isEmpty()) {
+    if (!bodyDevice) {
+        if (!d->multipartFormData.bodyFile.isEmpty()) {
             bodyDevice = new QFile(d->multipartFormData.bodyFile);
         } else {
             bodyDevice = new QBuffer(&d->bodyArray);

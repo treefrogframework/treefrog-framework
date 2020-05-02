@@ -12,7 +12,8 @@
 TBasicTimer::TBasicTimer(QObject *parent) :
     QObject(parent),
     QBasicTimer()
-{ }
+{
+}
 
 
 void TBasicTimer::start()

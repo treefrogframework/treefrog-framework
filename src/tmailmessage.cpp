@@ -6,9 +6,9 @@
  */
 
 #include "tmailmessage.h"
-#include <THttpUtility>
-#include <QTextCodec>
 #include <QDateTime>
+#include <QTextCodec>
+#include <THttpUtility>
 using namespace Tf;
 
 constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";
@@ -23,7 +23,8 @@ TMailMessage::TMailMessage(const TMailMessage &other) :
     mailBody(other.mailBody),
     textCodec(other.textCodec),
     recipientList(other.recipientList)
-{ }
+{
+}
 
 
 TMailMessage::TMailMessage(const QByteArray &encoding) :
@@ -176,7 +177,7 @@ QByteArrayList TMailMessage::addresses(const QByteArray &field) const
         if (i >= 0) {
             int j = ba.indexOf('>', ++i);
             if (j > i) {
-                addr =  ba.mid(i, j - i);
+                addr = ba.mid(i, j - i);
             }
         } else {
             addr = ba.trimmed();
@@ -270,7 +271,7 @@ QByteArray TMailMessage::toByteArray() const
 void TMailMessage::addRecipient(const QByteArray &address)
 {
     // Duplication check
-    for (const auto &recp : (const QByteArrayList&)recipientList) {
+    for (const auto &recp : (const QByteArrayList &)recipientList) {
         if (recp == address)
             return;
     }
@@ -280,7 +281,7 @@ void TMailMessage::addRecipient(const QByteArray &address)
 
 void TMailMessage::addRecipients(const QByteArrayList &addresses)
 {
-    for (const auto &addr : (const QByteArrayList&)addresses) {
+    for (const auto &addr : (const QByteArrayList &)addresses) {
         addRecipient(addr);
     }
 }

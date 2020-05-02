@@ -10,8 +10,8 @@
  * Modified by AOYAMA Kazuharu
  */
 
-#include <TPaginator>
 #include <QtCore>
+#include <TPaginator>
 #include <cmath>
 
 /*!
@@ -44,7 +44,8 @@ TPaginator::TPaginator(const TPaginator &other) :
     _midRange(other._midRange),
     _numPages(other._numPages),
     _currentPage(other._currentPage)
-{ }
+{
+}
 
 /*!
   Assignment operator

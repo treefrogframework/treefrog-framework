@@ -8,28 +8,28 @@
 #include "thttpsocket.h"
 #include "tatomicptr.h"
 #include "tsystemglobal.h"
-#include <TTemporaryFile>
-#include <TAppSettings>
-#include <THttpResponse>
-#include <THttpHeader>
-#include <TMultipartFormData>
-#include <QDir>
 #include <QBuffer>
+#include <QDir>
+#include <TAppSettings>
+#include <THttpHeader>
+#include <THttpResponse>
+#include <TMultipartFormData>
+#include <TTemporaryFile>
 #include <ctime>
 #ifdef Q_OS_UNIX
-# include "tfcore_unix.h"
+#include "tfcore_unix.h"
 #endif
 
-constexpr uint   READ_THRESHOLD_LENGTH = 2 * 1024 * 1024; // bytes
+constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
 constexpr qint64 WRITE_LENGTH = 1408;
-constexpr int    WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
-constexpr int    SEND_BUF_SIZE = 128 * 1024;
-constexpr int    RECV_BUF_SIZE = 128 * 1024;
-constexpr int    RESERVED_BUFFER_SIZE = 1024;
+constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
+constexpr int SEND_BUF_SIZE = 128 * 1024;
+constexpr int RECV_BUF_SIZE = 128 * 1024;
+constexpr int RESERVED_BUFFER_SIZE = 1024;
 
 namespace {
-    TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
-    std::atomic<ushort> point {0};
+TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
+std::atomic<ushort> point {0};
 }
 
 /*!
@@ -37,15 +37,16 @@ namespace {
   \brief The THttpSocket class provides a socket for the HTTP.
 */
 
-THttpSocket::THttpSocket(QObject *parent) : QTcpSocket(parent)
+THttpSocket::THttpSocket(QObject *parent) :
+    QTcpSocket(parent)
 {
     do {
         sid = point.fetch_add(1);
-    } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
+    } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
     tSystemDebug("THttpSocket  sid:%d", sid);
 
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
-    connect(this, SIGNAL(requestWrite(const QByteArray&)), this, SLOT(writeRawData(const QByteArray&)), Qt::QueuedConnection);
+    connect(this, SIGNAL(requestWrite(const QByteArray &)), this, SLOT(writeRawData(const QByteArray &)), Qt::QueuedConnection);
 
     idleElapsed = std::time(nullptr);
     readBuffer.reserve(RESERVED_BUFFER_SIZE);
@@ -54,7 +55,7 @@ THttpSocket::THttpSocket(QObject *parent) : QTcpSocket(parent)
 
 THttpSocket::~THttpSocket()
 {
-    socketManager[sid].compareExchangeStrong(this, nullptr); // clear
+    socketManager[sid].compareExchangeStrong(this, nullptr);  // clear
     tSystemDebug("THttpSocket deleted  sid:%d", sid);
 }
 
@@ -230,7 +231,7 @@ void THttpSocket::readRequest()
 
 bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState socketState, OpenMode openMode)
 {
-    bool ret  = QTcpSocket::setSocketDescriptor(socketDescriptor, socketState, openMode);
+    bool ret = QTcpSocket::setSocketDescriptor(socketDescriptor, socketState, openMode);
     if (ret) {
         // Sets socket options
         QTcpSocket::setSocketOption(QAbstractSocket::LowDelayOption, 1);
@@ -266,7 +267,7 @@ bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState sock
 
 void THttpSocket::deleteLater()
 {
-    socketManager[sid].compareExchange(this, nullptr); // clear
+    socketManager[sid].compareExchange(this, nullptr);  // clear
     QObject::deleteLater();
 }
 

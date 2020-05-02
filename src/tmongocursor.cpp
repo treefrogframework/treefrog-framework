@@ -5,16 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TMongoCursor>
-#include <TBson>
 #include "tsystemglobal.h"
+#include <TBson>
+#include <TMongoCursor>
 extern "C" {
 #include <mongoc.h>
 }
 
 
 TMongoCursor::TMongoCursor()
-{ }
+{
+}
 
 
 TMongoCursor::~TMongoCursor()

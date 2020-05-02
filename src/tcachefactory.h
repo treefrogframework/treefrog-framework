@@ -1,13 +1,12 @@
 #ifndef TCACHEFACTORY_H
 #define TCACHEFACTORY_H
 
-#include <TGlobal>
 #include "tcachestore.h"
 #include <QStringList>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TCacheFactory
-{
+class T_CORE_EXPORT TCacheFactory {
 public:
     static QStringList keys();
     static TCacheStore *create(const QString &key);
@@ -19,4 +18,4 @@ private:
     static bool loadCacheKeys();
 };
 
-#endif // TCACHEFACTORY_H
+#endif  // TCACHEFACTORY_H

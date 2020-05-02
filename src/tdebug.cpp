@@ -5,13 +5,13 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TDebug>
-#include <TLogger>
-#include <TLog>
-#include <TAppSettings>
-#include "tloggerfactory.h"
 #include "tbasiclogstream.h"
+#include "tloggerfactory.h"
 #include "tsystemglobal.h"
+#include <TAppSettings>
+#include <TDebug>
+#include <TLog>
+#include <TLogger>
 
 #undef tFatal
 #undef tError
@@ -26,8 +26,8 @@
 */
 
 namespace {
-    TAbstractLogStream *stream = nullptr;
-    QList<TLogger *> loggers;
+TAbstractLogStream *stream = nullptr;
+QList<TLogger *> loggers;
 }
 
 /*!
@@ -60,7 +60,7 @@ void Tf::releaseAppLoggers()
     delete stream;
     stream = nullptr;
 
-    for (auto &logger : (const QList<TLogger*>&)loggers) {
+    for (auto &logger : (const QList<TLogger *> &)loggers) {
         delete logger;
     }
     loggers.clear();
@@ -96,9 +96,10 @@ TDebug::~TDebug()
 }
 
 
-TDebug::TDebug(const TDebug &other)
-    :  buffer(other.buffer), ts(&buffer, QIODevice::WriteOnly), msgPriority(other.msgPriority)
-{ }
+TDebug::TDebug(const TDebug &other) :
+    buffer(other.buffer), ts(&buffer, QIODevice::WriteOnly), msgPriority(other.msgPriority)
+{
+}
 
 
 TDebug &TDebug::operator=(const TDebug &other)
@@ -122,7 +123,7 @@ void TDebug::fatal(const char *fmt, ...) const
 
     if (Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool()) {
 #if (defined(Q_OS_UNIX) || defined(Q_CC_MINGW))
-        abort(); // trap; generates core dump
+        abort();  // trap; generates core dump
 #else
         _exit(-1);
 #endif

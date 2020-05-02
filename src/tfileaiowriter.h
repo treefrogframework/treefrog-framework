@@ -7,8 +7,7 @@
 class TFileAioWriterData;
 
 
-class T_CORE_EXPORT TFileAioWriter
-{
+class T_CORE_EXPORT TFileAioWriter {
 public:
     TFileAioWriter(const QString &name = QString());
     ~TFileAioWriter();
@@ -28,4 +27,4 @@ private:
     T_DISABLE_MOVE(TFileAioWriter)
 };
 
-#endif // TFILEAIOWRITER_H
+#endif  // TFILEAIOWRITER_H

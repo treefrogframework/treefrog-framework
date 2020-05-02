@@ -6,11 +6,11 @@
  */
 
 #include "tsessionredisstore.h"
+#include <QByteArray>
+#include <QDataStream>
 #include <TAppSettings>
 #include <TRedis>
 #include <TSystemGlobal>
-#include <QByteArray>
-#include <QDataStream>
 
 /*!
   \class TSessionRedisStore

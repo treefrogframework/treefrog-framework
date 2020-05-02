@@ -37,10 +37,10 @@
 // Note: this file is included into stacktrace.cc more than once.
 // Anything that should only be defined once should be here:
 
-#include <stdint.h>   // for uintptr_t
-#include <stdlib.h>
-#include <stacktrace.h>
 #include "gconfig.h"
+#include <stacktrace.h>
+#include <stdint.h>  // for uintptr_t
+#include <stdlib.h>
 
 _START_GOOGLE_NAMESPACE_
 
@@ -57,36 +57,45 @@ _START_GOOGLE_NAMESPACE_
 // stackframe, or return NULL if no stackframe can be found. Perform sanity
 // checks (the strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
-template<bool STRICT_UNWINDING>
-static void **NextStackFrame(void **old_sp) {
-  void **new_sp = (void**) old_sp[-1];
+template <bool STRICT_UNWINDING>
+static void **NextStackFrame(void **old_sp)
+{
+    void **new_sp = (void **)old_sp[-1];
 
-  // Check that the transition from frame pointer old_sp to frame
-  // pointer new_sp isn't clearly bogus
-  if (STRICT_UNWINDING) {
-    // With the stack growing downwards, older stack frame must be
-    // at a greater address that the current one.
-    if (new_sp <= old_sp) return NULL;
-    // Assume stack frames larger than 100,000 bytes are bogus.
-    if ((uintptr_t)new_sp - (uintptr_t)old_sp > 100000) return NULL;
-  } else {
-    // In the non-strict mode, allow discontiguous stack frames.
-    // (alternate-signal-stacks for example).
-    if (new_sp == old_sp) return NULL;
-    // And allow frames upto about 1MB.
-    if ((new_sp > old_sp)
-        && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000)) return NULL;
-  }
-  if ((uintptr_t)new_sp & (sizeof(void *) - 1)) return NULL;
-  return new_sp;
+    // Check that the transition from frame pointer old_sp to frame
+    // pointer new_sp isn't clearly bogus
+    if (STRICT_UNWINDING) {
+        // With the stack growing downwards, older stack frame must be
+        // at a greater address that the current one.
+        if (new_sp <= old_sp)
+            return NULL;
+        // Assume stack frames larger than 100,000 bytes are bogus.
+        if ((uintptr_t)new_sp - (uintptr_t)old_sp > 100000)
+            return NULL;
+    } else {
+        // In the non-strict mode, allow discontiguous stack frames.
+        // (alternate-signal-stacks for example).
+        if (new_sp == old_sp)
+            return NULL;
+        // And allow frames upto about 1MB.
+        if ((new_sp > old_sp)
+            && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000))
+            return NULL;
+    }
+    if ((uintptr_t)new_sp & (sizeof(void *) - 1))
+        return NULL;
+    return new_sp;
 }
 
 // This ensures that GetStackTrace stes up the Link Register properly.
 #ifdef __GNUC__
 void StacktraceArmDummyFunction() __attribute__((noinline));
-void StacktraceArmDummyFunction() { __asm__ volatile(""); }
+void StacktraceArmDummyFunction()
+{
+    __asm__ volatile("");
+}
 #else
-# error StacktraceArmDummyFunction() needs to be ported to this platform.
+#error StacktraceArmDummyFunction() needs to be ported to this platform.
 #endif
 #endif  // BASE_STACKTRACE_ARM_INL_H_
 
@@ -104,40 +113,41 @@ void StacktraceArmDummyFunction() { __asm__ volatile(""); }
 //   int max_depth: the size of the result (and sizes) array(s)
 //   int skip_count: how many stack pointers to skip before storing in result
 //   void* ucp: a ucontext_t* (GetStack{Trace,Frames}WithContext only)
-int GetStackTrace(void ** result, int max_depth, int skip_count) {
+int GetStackTrace(void **result, int max_depth, int skip_count)
+{
 #ifdef __GNUC__
-  void **sp = reinterpret_cast<void**>(__builtin_frame_address(0));
+    void **sp = reinterpret_cast<void **>(__builtin_frame_address(0));
 #else
-# error reading stack point not yet supported on this platform.
+#error reading stack point not yet supported on this platform.
 #endif
 
 
-  // On ARM, the return address is stored in the link register (r14).
-  // This is not saved on the stack frame of a leaf function.  To
-  // simplify code that reads return addresses, we call a dummy
-  // function so that the return address of this function is also
-  // stored in the stack frame.  This works at least for gcc.
-  StacktraceArmDummyFunction();
+    // On ARM, the return address is stored in the link register (r14).
+    // This is not saved on the stack frame of a leaf function.  To
+    // simplify code that reads return addresses, we call a dummy
+    // function so that the return address of this function is also
+    // stored in the stack frame.  This works at least for gcc.
+    StacktraceArmDummyFunction();
 
-  int n = 0;
-  while (sp && n < max_depth) {
-    // The GetStackFrames routine is called when we are in some
-    // informational context (the failure signal handler for example).
-    // Use the non-strict unwinding rules to produce a stack trace
-    // that is as complete as possible (even if it contains a few bogus
-    // entries in some rare cases).
-    void **next_sp = NextStackFrame<true>(sp);
+    int n = 0;
+    while (sp && n < max_depth) {
+        // The GetStackFrames routine is called when we are in some
+        // informational context (the failure signal handler for example).
+        // Use the non-strict unwinding rules to produce a stack trace
+        // that is as complete as possible (even if it contains a few bogus
+        // entries in some rare cases).
+        void **next_sp = NextStackFrame<true>(sp);
 
-    if (skip_count > 0) {
-      skip_count--;
-    } else {
-      result[n] = *sp;
+        if (skip_count > 0) {
+            skip_count--;
+        } else {
+            result[n] = *sp;
 
-      n++;
+            n++;
+        }
+        sp = next_sp;
     }
-    sp = next_sp;
-  }
-  return n;
+    return n;
 }
 
 _END_GOOGLE_NAMESPACE_

@@ -5,17 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TMultipartFormData>
-#include <TWebApplication>
-#include <THttpUtility>
-#include <TActionContext>
-#include <TTemporaryFile>
-#include <THttpRequest>
+#include <QBuffer>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QDir>
-#include <QBuffer>
 #include <QTextCodec>
+#include <TActionContext>
+#include <THttpRequest>
+#include <THttpUtility>
+#include <TMultipartFormData>
+#include <TTemporaryFile>
+#include <TWebApplication>
 using namespace Tf;
 
 const QFile::Permissions TMultipartFormData::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
@@ -31,7 +31,8 @@ const QFile::Permissions TMimeEntity::DefaultPermissions = TMultipartFormData::D
 */
 TMimeHeader::TMimeHeader(const TMimeHeader &other) :
     headers(other.headers)
-{ }
+{
+}
 
 /*!
   Assignment operator.
@@ -154,13 +155,13 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
                 if (c == '"') {
                     // end of quoted text
                     break;
-                // } else if (c == '\\') {
-                //     ++pos;
-                //     if (pos >= header.length()) {
-                //         // broken header
-                //         return result;
-                //     }
-                //     c = header[pos];
+                    // } else if (c == '\\') {
+                    //     ++pos;
+                    //     if (pos >= header.length()) {
+                    //         // broken header
+                    //         return result;
+                    //     }
+                    //     c = header[pos];
                 }
 
                 value += c;
@@ -190,9 +191,10 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
 /*!
   Copy constructor.
 */
-TMimeEntity::TMimeEntity(const TMimeEntity &other)
-    : entity(other.entity)
-{ }
+TMimeEntity::TMimeEntity(const TMimeEntity &other) :
+    entity(other.entity)
+{
+}
 
 /*!
   Assignment operator.
@@ -264,7 +266,7 @@ bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite, QFi
     file.setPermissions(permissions);
 #ifdef Q_OS_WIN
     bool ret = file.copy(newpath);
-    file.remove(); // maybe fail here, but will be removed after.
+    file.remove();  // maybe fail here, but will be removed after.
     return ret;
 #else
     return file.rename(newpath);
@@ -291,16 +293,17 @@ QString TMimeEntity::uploadedFilePath() const
   Constructs a empty multipart/form-data object with the boundary
   \a boundary.
 */
-TMultipartFormData::TMultipartFormData(const QByteArray &boundary)
-    : dataBoundary(boundary)
-{ }
+TMultipartFormData::TMultipartFormData(const QByteArray &boundary) :
+    dataBoundary(boundary)
+{
+}
 
 /*!
   Constructs a multipart/form-data object by parsing \a formData with
   the boundary \a boundary.
 */
-TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteArray &boundary)
-    : dataBoundary(boundary)
+TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteArray &boundary) :
+    dataBoundary(boundary)
 {
     QByteArray data(formData);
     QBuffer buffer(&data);
@@ -311,8 +314,8 @@ TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteAr
   Constructs a multipart/form-data object by parsing the content of
   the file with the given \a bodyFilePath.
 */
-TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary)
-    : dataBoundary(boundary), bodyFile(bodyFilePath)
+TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary) :
+    dataBoundary(boundary), bodyFile(bodyFilePath)
 {
     QFile file(bodyFilePath);
     parse(&file);

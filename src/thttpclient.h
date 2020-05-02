@@ -9,8 +9,7 @@ class QNetworkRequest;
 class QJsonDocument;
 
 
-class T_CORE_EXPORT THttpClient
-{
+class T_CORE_EXPORT THttpClient {
 public:
     THttpClient();
     ~THttpClient();
@@ -30,4 +29,4 @@ private:
     QNetworkAccessManager *_manager {nullptr};
 };
 
-#endif // THTTPCLIENT_H
+#endif  // THTTPCLIENT_H

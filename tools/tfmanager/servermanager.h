@@ -1,16 +1,15 @@
 #ifndef SERVERMANAGER_H
 #define SERVERMANAGER_H
 
-#include <QObject>
 #include <QHostAddress>
+#include <QObject>
 #include <QProcess>
 #include <TGlobal>
 
 namespace TreeFrog {
 
 
-class ServerManager : public QObject
-{
+class ServerManager : public QObject {
     Q_OBJECT
 public:
     enum ManagerState {
@@ -53,4 +52,4 @@ private:
 };
 
 }
-#endif // SERVERMANAGER_H
+#endif  // SERVERMANAGER_H

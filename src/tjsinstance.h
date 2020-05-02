@@ -6,8 +6,7 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TJSInstance : public QJSValue
-{
+class T_CORE_EXPORT TJSInstance : public QJSValue {
 public:
     TJSInstance();
     TJSInstance(const TJSInstance &other);
@@ -18,4 +17,4 @@ public:
     QJSValue call(const QString &method, const QJSValueList &args = QJSValueList());
 };
 
-#endif // TJSINSTANCE_H
+#endif  // TJSINSTANCE_H

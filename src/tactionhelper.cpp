@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TActionHelper>
+#include "turlroute.h"
 #include <TActionController>
+#include <TActionHelper>
 #include <THttpUtility>
 #include <TSystemGlobal>
-#include "turlroute.h"
 
 /*!
   \class TActionHelper
@@ -25,7 +25,7 @@
   of \a query.
 */
 QUrl TActionHelper::url(const QString &controller, const QString &action,
-                        const QStringList &args, const QVariantMap &query) const
+    const QStringList &args, const QVariantMap &query) const
 {
     QString querystr;
     for (auto it = query.begin(); it != query.end(); ++it) {
@@ -48,7 +48,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
   If \a query is not empty, sets the query string to \a query.
 */
 QUrl TActionHelper::url(const QString &controller, const QString &action,
-                        const QStringList &arguments, const QString &query) const
+    const QStringList &arguments, const QString &query) const
 {
     Q_ASSERT(this->controller());
     const QString ctrl = (controller.isEmpty()) ? this->controller()->name() : controller;

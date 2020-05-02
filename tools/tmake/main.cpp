@@ -5,13 +5,13 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QString>
-#include <QMap>
-#include <QCoreApplication>
-#include <QTextCodec>
-#include <QSettings>
-#include <QFileInfo>
 #include "viewconverter.h"
+#include <QCoreApplication>
+#include <QFileInfo>
+#include <QMap>
+#include <QSettings>
+#include <QString>
+#include <QTextCodec>
 
 constexpr auto DEFAULT_OUTPUT_DIR = "viewcodes";
 

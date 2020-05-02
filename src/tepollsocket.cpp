@@ -6,26 +6,26 @@
  */
 
 #include "tepollsocket.h"
-#include "tepollhttpsocket.h"
-#include "tepoll.h"
-#include "tsendbuffer.h"
-#include "tfcore.h"
 #include "tatomicptr.h"
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <THttpHeader>
+#include "tepoll.h"
+#include "tepollhttpsocket.h"
+#include "tfcore.h"
+#include "tsendbuffer.h"
 #include <QFileInfo>
+#include <THttpHeader>
+#include <TSystemGlobal>
+#include <TWebApplication>
 #include <atomic>
 #include <sys/types.h>
 
 class SendData;
 
 namespace {
-    int sendBufSize = 0;
-    int recvBufSize = 0;
-    std::atomic<int> socketCounter {0};
-    TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
-    std::atomic<ushort> point {0};
+int sendBufSize = 0;
+int recvBufSize = 0;
+std::atomic<int> socketCounter {0};
+TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
+std::atomic<ushort> point {0};
 }
 
 
@@ -52,7 +52,7 @@ TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &add
     TEpollSocket *sock = nullptr;
 
     if (Q_LIKELY(socketDescriptor > 0)) {
-        sock  = new TEpollHttpSocket(socketDescriptor, address);
+        sock = new TEpollHttpSocket(socketDescriptor, address);
         initBuffer(socketDescriptor);
     }
 
@@ -101,7 +101,7 @@ TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
 {
     do {
         sid = point.fetch_add(1);
-    } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
+    } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
     tSystemDebug("TEpollSocket  sid:%d", sid);
     socketCounter++;
 }
@@ -118,7 +118,7 @@ TEpollSocket::~TEpollSocket()
         delete buf;
     }
 
-    socketManager[sid].compareExchangeStrong(this, nullptr); //clear
+    socketManager[sid].compareExchangeStrong(this, nullptr);  //clear
     socketCounter--;
 }
 
@@ -221,7 +221,7 @@ int TEpollSocket::send()
             case EAGAIN:
                 break;
 
-            case EPIPE:   // FALLTHRU
+            case EPIPE:  // FALLTHRU
             case ECONNRESET:
                 tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
                 logger.setResponseBytes(-1);
@@ -312,9 +312,9 @@ TEpollSocket *TEpollSocket::searchSocket(int sid)
 }
 
 
-QList<TEpollSocket*> TEpollSocket::allSockets()
+QList<TEpollSocket *> TEpollSocket::allSockets()
 {
-    QList<TEpollSocket*> lst;
+    QList<TEpollSocket *> lst;
     for (int i = 0; i <= USHRT_MAX; i++) {
         TEpollSocket *p = socketManager[i].load();
         if (p) {

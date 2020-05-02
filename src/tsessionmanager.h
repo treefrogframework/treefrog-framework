@@ -6,8 +6,7 @@
 #include <TSession>
 
 
-class T_CORE_EXPORT TSessionManager
-{
+class T_CORE_EXPORT TSessionManager {
 public:
     ~TSessionManager();
 
@@ -27,4 +26,4 @@ private:
     TSessionManager();
 };
 
-#endif // TSESSIONMANAGER_H
+#endif  // TSESSIONMANAGER_H

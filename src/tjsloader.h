@@ -3,12 +3,11 @@
 
 #include <QJSValue>
 #include <TGlobal>
-#include <TJSModule>
 #include <TJSInstance>
+#include <TJSModule>
 
 
-class T_CORE_EXPORT TJSLoader
-{
+class T_CORE_EXPORT TJSLoader {
 public:
     enum AltJS {
         Default = 0,  // JavaScript (ES5)
@@ -45,4 +44,4 @@ private:
     friend class TJSModule;
 };
 
-#endif // TJSLOADER_H
+#endif  // TJSLOADER_H

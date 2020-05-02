@@ -10,11 +10,10 @@ class TEpollHttpSocket;
 class QIODevice;
 
 
-class T_CORE_EXPORT TActionWorker : public QObject, public TActionContext
-{
+class T_CORE_EXPORT TActionWorker : public QObject, public TActionContext {
     Q_OBJECT
 public:
-    virtual ~TActionWorker() {}
+    virtual ~TActionWorker() { }
     void start(TEpollHttpSocket *socket);
 
     static TActionWorker *instance();
@@ -26,7 +25,7 @@ protected:
     void closeHttpSocket() override;
 
 private:
-    TActionWorker() {}
+    TActionWorker() { }
 
     QByteArray httpRequest;
     QString clientAddr;
@@ -36,4 +35,4 @@ private:
     T_DISABLE_MOVE(TActionWorker)
 };
 
-#endif // TACTIONWORKER_H
+#endif  // TACTIONWORKER_H

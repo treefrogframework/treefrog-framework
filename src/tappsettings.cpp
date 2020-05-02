@@ -5,22 +5,22 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TAppSettings>
-#include <TSystemGlobal>
-#include <QSettings>
 #include <QCoreApplication>
 #include <QMutexLocker>
+#include <QSettings>
+#include <TAppSettings>
+#include <TSystemGlobal>
 #include <cstdio>
 
 namespace {
-    TAppSettings *appSettings = nullptr;
+TAppSettings *appSettings = nullptr;
 }
 
 
-class AttributeMap : public QMap<int, QString>
-{
+class AttributeMap : public QMap<int, QString> {
 public:
-    AttributeMap() : QMap<int, QString>()
+    AttributeMap() :
+        QMap<int, QString>()
     {
         insert(Tf::ListenPort, "ListenPort");
         insert(Tf::ListenAddress, "ListenAddress");
@@ -89,7 +89,8 @@ Q_GLOBAL_STATIC(AttributeMap, attributeMap)
 
 TAppSettings::TAppSettings(const QString &path) :
     appIniSettings(new QSettings(path, QSettings::IniFormat))
-{ }
+{
+}
 
 
 QVariant TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue) const

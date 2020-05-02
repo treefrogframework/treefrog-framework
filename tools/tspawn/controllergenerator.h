@@ -1,12 +1,13 @@
 #ifndef CONTROLLERGENERATOR_H
 #define CONTROLLERGENERATOR_H
 
-#include <QString>
 #include <QDir>
+#include <QPair>
+#include <QString>
+#include <QVariant>
 
 
-class ControllerGenerator
-{
+class ControllerGenerator {
 public:
     ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int lockRevIdx);
     ControllerGenerator(const QString &controller, const QStringList &actions);
@@ -18,8 +19,8 @@ private:
     QString tableName;
     QStringList actionList;
     QList<QPair<QString, QVariant::Type>> fieldList;
-    int primaryKeyIndex;
-    int lockRevIndex;
+    int primaryKeyIndex {0};
+    int lockRevIndex {0};
 };
 
-#endif // CONTROLLERGENERATOR_H
+#endif  // CONTROLLERGENERATOR_H

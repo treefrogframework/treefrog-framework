@@ -9,10 +9,9 @@
 class QIODevice;
 
 
-class T_CORE_EXPORT THttpResponse
-{
+class T_CORE_EXPORT THttpResponse {
 public:
-    THttpResponse() {}
+    THttpResponse() { }
     THttpResponse(const THttpResponseHeader &header, const QByteArray &body);
     ~THttpResponse();
 
@@ -34,4 +33,4 @@ private:
     T_DISABLE_MOVE(THttpResponse)
 };
 
-#endif // THTTPRESPONSE_H
+#endif  // THTTPRESPONSE_H

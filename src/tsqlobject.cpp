@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsqldatabase.h"
+#include "tsqldriverextension.h"
+#include <QCoreApplication>
+#include <QMetaObject>
+#include <QtSql>
 #include <TSqlObject>
 #include <TSqlQuery>
 #include <TSystemGlobal>
-#include "tsqldatabase.h"
-#include "tsqldriverextension.h"
-#include <QtSql>
-#include <QCoreApplication>
-#include <QMetaObject>
 
 const QByteArray LockRevision("lock_revision");
 const QByteArray CreatedAt("created_at");
@@ -28,17 +28,19 @@ const QByteArray ModifiedAt("modified_at");
 /*!
   Constructor.
  */
-TSqlObject::TSqlObject()
-    : TModelObject(), QSqlRecord(), sqlError()
-{ }
+TSqlObject::TSqlObject() :
+    TModelObject(), QSqlRecord(), sqlError()
+{
+}
 
 /*!
   Copy constructor.
  */
-TSqlObject::TSqlObject(const TSqlObject &other)
-    : TModelObject(), QSqlRecord(*static_cast<const QSqlRecord *>(&other)),
-      sqlError(other.sqlError)
-{ }
+TSqlObject::TSqlObject(const TSqlObject &other) :
+    TModelObject(), QSqlRecord(*static_cast<const QSqlRecord *>(&other)),
+    sqlError(other.sqlError)
+{
+}
 
 /*!
   Assignment operator.
@@ -145,14 +147,14 @@ bool TSqlObject::create()
     QSqlRecord record = *this;
     if (autoValueIndex() >= 0) {
         autoValName = field(autoValueIndex()).name();
-        record.remove(autoValueIndex()); // not insert the value of auto-value field
+        record.remove(autoValueIndex());  // not insert the value of auto-value field
     }
 
     QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
     QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
     if (Q_UNLIKELY(ins.isEmpty())) {
         sqlError = QSqlError(QLatin1String("No fields to insert"),
-                             QString(), QSqlError::StatementError);
+            QString(), QSqlError::StatementError);
         tWarn("SQL statement error, no fields to insert");
         return false;
     }
@@ -194,7 +196,7 @@ bool TSqlObject::update()
 {
     if (isNew()) {
         sqlError = QSqlError(QLatin1String("No record to update"),
-                             QString(), QSqlError::UnknownError);
+            QString(), QSqlError::UnknownError);
         tWarn("Unable to update the '%s' object. Create it before!", metaObject()->className());
         return false;
     }
@@ -222,7 +224,7 @@ bool TSqlObject::update()
 
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
-                                     QString(), QSqlError::UnknownError);
+                    QString(), QSqlError::UnknownError);
                 tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
                 return false;
             }
@@ -238,7 +240,7 @@ bool TSqlObject::update()
         }
     }
 
-    QString upd;   // UPDATE Statement
+    QString upd;  // UPDATE Statement
     upd.reserve(255);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
@@ -306,7 +308,7 @@ bool TSqlObject::save()
     auto &db = TSqlDatabase::database(sqldb.connectionName());
     QString lockrev;
 
-    if (! db.isUpsertSupported() || ! db.isUpsertEnabled()) {
+    if (!db.isUpsertSupported() || !db.isUpsertEnabled()) {
         return (isNew()) ? create() : update();
     }
 
@@ -335,7 +337,7 @@ bool TSqlObject::save()
 
     if (autoValueIndex() >= 0 && autoValueIndex() != primaryKeyIndex()) {
         autoValName = field(autoValueIndex()).name();
-        recordToInsert.remove(autoValueIndex()); // not insert the value of auto-value field
+        recordToInsert.remove(autoValueIndex());  // not insert the value of auto-value field
     }
 
     int idxtmp;
@@ -375,7 +377,7 @@ bool TSqlObject::remove()
 {
     if (isNew()) {
         sqlError = QSqlError(QLatin1String("No record to remove"),
-                             QString(), QSqlError::UnknownError);
+            QString(), QSqlError::UnknownError);
         tWarn("Unable to remove the '%s' object. Create it before!", metaObject()->className());
         return false;
     }
@@ -384,7 +386,7 @@ bool TSqlObject::remove()
     QString del = database.driver()->sqlStatement(QSqlDriver::DeleteStatement, tableName(), *static_cast<QSqlRecord *>(this), false);
     if (del.isEmpty()) {
         sqlError = QSqlError(QLatin1String("Unable to delete row"),
-                             QString(), QSqlError::StatementError);
+            QString(), QSqlError::StatementError);
         return false;
     }
 
@@ -401,7 +403,7 @@ bool TSqlObject::remove()
 
             if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
-                                     QString(), QSqlError::UnknownError);
+                    QString(), QSqlError::UnknownError);
                 tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
                 return false;
             }

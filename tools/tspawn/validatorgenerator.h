@@ -4,8 +4,7 @@
 #include <QtCore>
 
 
-class ValidatorGenerator
-{
+class ValidatorGenerator {
 public:
     ValidatorGenerator(const QString &validator);
     bool generate(const QString &dst) const;
@@ -14,5 +13,4 @@ private:
     QString name;
 };
 
-#endif // VALIDATORGENERATOR_H
-
+#endif  // VALIDATORGENERATOR_H

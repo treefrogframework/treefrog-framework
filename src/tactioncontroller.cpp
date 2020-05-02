@@ -5,31 +5,31 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TActionController>
-#include <TWebApplication>
-#include <TAppSettings>
-#include <TDispatcher>
-#include <TActionView>
-#include <TSession>
-#include <TAbstractUser>
-#include <TActionContext>
-#include <TFormValidator>
-#include <TCache>
 #include "tsessionmanager.h"
 #include "ttextview.h"
+#include <QCryptographicHash>
 #include <QDir>
+#include <QDomDocument>
 #include <QFile>
-#include <QTextStream>
 #include <QMetaMethod>
 #include <QMetaType>
-#include <QTextCodec>
-#include <QCryptographicHash>
 #include <QMutexLocker>
-#include <QDomDocument>
+#include <QTextCodec>
+#include <QTextStream>
+#include <TAbstractUser>
+#include <TActionContext>
+#include <TActionController>
+#include <TActionView>
+#include <TAppSettings>
+#include <TCache>
+#include <TDispatcher>
+#include <TFormValidator>
+#include <TSession>
+#include <TWebApplication>
 
-const QString FLASH_VARS_SESSION_KEY ("_flashVariants");
-const QString LOGIN_USER_NAME_KEY ("_loginUserName");
-const QByteArray DEFAULT_CONTENT_TYPE ("text/html");
+const QString FLASH_VARS_SESSION_KEY("_flashVariants");
+const QString LOGIN_USER_NAME_KEY("_loginUserName");
+const QByteArray DEFAULT_CONTENT_TYPE("text/html");
 
 /*!
   \class TActionController
@@ -52,7 +52,8 @@ TActionController::TActionController() :
   \brief Destructor.
 */
 TActionController::~TActionController()
-{ }
+{
+}
 
 /*!
   Returns the controller name.
@@ -132,7 +133,7 @@ bool TActionController::addCookie(const TCookie &cookie)
 
     cookieJar.addCookie(cookie);
     response.header().removeAllRawHeaders("Set-Cookie");
-    for (auto &ck : (const QList<TCookie>&)cookieJar.allCookies()) {
+    for (auto &ck : (const QList<TCookie> &)cookieJar.allCookies()) {
         response.header().addRawHeader("Set-Cookie", ck.toRawForm(QNetworkCookie::Full));
     }
     return true;
@@ -142,8 +143,8 @@ bool TActionController::addCookie(const TCookie &cookie)
   Adds the cookie to the internal list of cookies.
  */
 bool TActionController::addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire,
-                                  const QString &path, const QString &domain, bool secure, bool httpOnly,
-                                  const QByteArray &sameSite)
+    const QString &path, const QString &domain, bool secure, bool httpOnly,
+    const QByteArray &sameSite)
 {
     TCookie cookie(name, value);
     cookie.setExpirationDate(expire);
@@ -157,7 +158,7 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
 
 
 bool TActionController::addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path,
-                                  const QString &domain, bool secure, bool httpOnly, const QByteArray &sameSite)
+    const QString &domain, bool secure, bool httpOnly, const QByteArray &sameSite)
 {
     TCookie cookie(name, value);
     cookie.setMaxAge(maxAge);
@@ -229,7 +230,7 @@ const QStringList &TActionController::availableControllers()
 
 const QStringList &TActionController::disabledControllers()
 {
-    static const QStringList disabledNames = { "application" };
+    static const QStringList disabledNames = {"application"};
     return disabledNames;
 }
 
@@ -466,7 +467,7 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
 
     QVariantMap map = allVariants();
     for (auto it = vars.begin(); it != vars.end(); ++it) {
-        map.insert(it.key(), it.value()); // item's value of same key is replaced
+        map.insert(it.key(), it.value());  // item's value of same key is replaced
     }
 
     view->setController(this);
@@ -533,7 +534,7 @@ bool TActionController::renderErrorResponse(int statusCode)
     }
 
     QString file = Tf::app()->publicPath() + QString::number(statusCode) + QLatin1String(".html");
-    if (QFileInfo(file).exists())  {
+    if (QFileInfo(file).exists()) {
         ret = sendFile(file, "text/html", "", false);
     } else {
         response.setBody("");

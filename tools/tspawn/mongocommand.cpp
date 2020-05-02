@@ -5,12 +5,12 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "mongocommand.h"
 #include <QFile>
 #include <QSettings>
 #include <QVariant>
-#include <TMongoDriver>
 #include <TMongoCursor>
-#include "mongocommand.h"
+#include <TMongoDriver>
 
 static QSettings *mongoSettings = nullptr;
 
@@ -42,13 +42,13 @@ bool MongoCommand::open(const QString &env)
     databaseName = mongoSettings->value(env + "/DatabaseName").toString().trimmed();
     printf("DatabaseName: %s\n", qPrintable(databaseName));
 
-    QString host = mongoSettings->value(env +"/HostName").toString().trimmed();
+    QString host = mongoSettings->value(env + "/HostName").toString().trimmed();
     printf("HostName:     %s\n", qPrintable(host));
 
-    int port = mongoSettings->value(env +"/Port").toInt();
-    QString user = mongoSettings->value(env +"/UserName").toString().trimmed();
-    QString pass = mongoSettings->value(env +"/Password").toString().trimmed();
-    QString opts = mongoSettings->value(env +"/ConnectOptions").toString().trimmed();
+    int port = mongoSettings->value(env + "/Port").toInt();
+    QString user = mongoSettings->value(env + "/UserName").toString().trimmed();
+    QString pass = mongoSettings->value(env + "/Password").toString().trimmed();
+    QString opts = mongoSettings->value(env + "/ConnectOptions").toString().trimmed();
 
     bool status = driver->open(databaseName, user, pass, host, port, opts);
     if (!status) {

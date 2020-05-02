@@ -7,13 +7,13 @@
 
 #include "tjsloader.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextStream>
+#include <TWebApplication>
 
 // #define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
@@ -25,16 +25,16 @@
 */
 
 namespace {
-    QMap<QString, TJSModule*> jsContexts;
-    QStringList defaultPaths;
-    QMutex gMutex(QMutex::Recursive);
+QMap<QString, TJSModule *> jsContexts;
+QStringList defaultPaths;
+QMutex gMutex(QMutex::Recursive);
 }
 
 
-class SuffixMap : public QMap<int, QString>
-{
+class SuffixMap : public QMap<int, QString> {
 public:
-    SuffixMap() : QMap<int, QString>()
+    SuffixMap() :
+        QMap<int, QString>()
     {
         insert(TJSLoader::Default, "js");
         insert(TJSLoader::Jsx, "jsx");
@@ -112,16 +112,18 @@ static bool isCommentPosition(const QString &content, int pos)
 /*!
   Constructor.
  */
-TJSLoader::TJSLoader(const QString &moduleName, AltJS alt)
-    : module(moduleName), altJs(alt), member(), searchPaths(defaultPaths)
-{ }
+TJSLoader::TJSLoader(const QString &moduleName, AltJS alt) :
+    module(moduleName), altJs(alt), member(), searchPaths(defaultPaths)
+{
+}
 
 /*!
   Constructor.
  */
-TJSLoader::TJSLoader(const QString &defaultMember, const QString &moduleName, AltJS alt)
-    : module(moduleName), altJs(alt), member(defaultMember), searchPaths(defaultPaths)
-{ }
+TJSLoader::TJSLoader(const QString &defaultMember, const QString &moduleName, AltJS alt) :
+    module(moduleName), altJs(alt), member(defaultMember), searchPaths(defaultPaths)
+{
+}
 
 /*!
   Loads the JavaScript module and returns the JavaScript context
@@ -279,7 +281,7 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
         // requires module
         program = QString("var %1 = require('%2');").arg(member).arg(module);
         replaceRequire(context, program, QDir("."));
-        filePath = absolutePath(module,  QDir("."), altJs);
+        filePath = absolutePath(module, QDir("."), altJs);
     }
 
     if (program.isEmpty()) {
@@ -301,7 +303,7 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 
 TJSInstance TJSLoader::loadAsConstructor(const QJSValue &arg) const
 {
-    QJSValueList args = { arg };
+    QJSValueList args = {arg};
     return loadAsConstructor(args);
 }
 

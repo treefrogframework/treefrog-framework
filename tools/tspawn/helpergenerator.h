@@ -4,8 +4,7 @@
 #include <QtCore>
 
 
-class HelperGenerator
-{
+class HelperGenerator {
 public:
     HelperGenerator(const QString &name);
     bool generate(const QString &dst) const;
@@ -14,4 +13,4 @@ private:
     QString name;
 };
 
-#endif // HELPERGENERATOR_H
+#endif  // HELPERGENERATOR_H

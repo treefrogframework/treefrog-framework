@@ -5,8 +5,7 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TPaginator
-{
+class T_CORE_EXPORT TPaginator {
 public:
     TPaginator(int itemsTotal = 0, int itemsPerPage = 10, int midRange = 5);
     TPaginator(const TPaginator &other);
@@ -50,4 +49,4 @@ private:
 
 Q_DECLARE_METATYPE(TPaginator)
 
-#endif // TPAGINATOR_H
+#endif  // TPAGINATOR_H

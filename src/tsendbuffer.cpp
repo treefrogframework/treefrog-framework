@@ -7,13 +7,13 @@
 
 #include "tsendbuffer.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
-#include <THttpResponseHeader>
-#include <THttpUtility>
 #include <QFile>
 #include <QFileInfo>
-#include <QLocale>
 #include <QHostAddress>
+#include <QLocale>
+#include <THttpResponseHeader>
+#include <THttpUtility>
+#include <TWebApplication>
 
 
 TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger) :
@@ -31,9 +31,10 @@ TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool a
 }
 
 
-TSendBuffer::TSendBuffer(const QByteArray &header)
-    : arrayBuffer(header)
-{ }
+TSendBuffer::TSendBuffer(const QByteArray &header) :
+    arrayBuffer(header)
+{
+}
 
 
 TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)

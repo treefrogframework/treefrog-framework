@@ -6,12 +6,12 @@
  */
 
 #include "tpublisher.h"
+#include "tsystembus.h"
 #include "tsystemglobal.h"
 #include "twebsocket.h"
-#include "tsystembus.h"
 #include <TWebApplication>
 #ifdef Q_OS_LINUX
-# include "tepollwebsocket.h"
+#include "tepollwebsocket.h"
 #endif
 #include <QMutex>
 #include <QSet>
@@ -19,11 +19,11 @@
 static QMutex mutex(QMutex::NonRecursive);
 
 
-class Pub : public QObject
-{
+class Pub : public QObject {
     Q_OBJECT
 public:
-    Pub(const QString &t) : topic(t), subscribers() { }
+    Pub(const QString &t) :
+        topic(t), subscribers() { }
     bool subscribe(const QObject *receiver, bool local);
     bool unsubscribe(const QObject *receiver);
     void publish(const QString &message, const QObject *sender);
@@ -32,9 +32,10 @@ public:
 signals:
     void textPublished(const QString &, const QObject *sender);
     void binaryPublished(const QByteArray &, const QObject *sender);
+
 private:
     QString topic;
-    QMap<const QObject*, bool> subscribers;
+    QMap<const QObject *, bool> subscribers;
 };
 #include "tpublisher.moc"
 
@@ -52,10 +53,10 @@ bool Pub::subscribe(const QObject *receiver, bool local)
         return true;
     }
 
-    connect(this, SIGNAL(textPublished(const QString&, const QObject*)),
-            receiver, SLOT(sendTextForPublish(const QString&, const QObject*)), Qt::QueuedConnection);
-    connect(this, SIGNAL(binaryPublished(const QByteArray&, const QObject*)),
-            receiver, SLOT(sendBinaryForPublish(const QByteArray&, const QObject*)), Qt::QueuedConnection);
+    connect(this, SIGNAL(textPublished(const QString &, const QObject *)),
+        receiver, SLOT(sendTextForPublish(const QString &, const QObject *)), Qt::QueuedConnection);
+    connect(this, SIGNAL(binaryPublished(const QByteArray &, const QObject *)),
+        receiver, SLOT(sendBinaryForPublish(const QByteArray &, const QObject *)), Qt::QueuedConnection);
 
     subscribers.insert(receiver, local);
     tSystemDebug("subscriber counter: %d", subscriberCounter());
@@ -117,7 +118,8 @@ TPublisher *TPublisher::instance()
 
 
 TPublisher::TPublisher()
-{ }
+{
+}
 
 
 void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket *socket)
@@ -154,7 +156,7 @@ void TPublisher::unsubscribeFromAll(TAbstractWebSocket *socket)
     tSystemDebug("TPublisher::unsubscribeFromAll");
     QMutexLocker locker(&mutex);
 
-    for (QMutableMapIterator<QString, Pub*> it(pubobj); it.hasNext(); ) {
+    for (QMutableMapIterator<QString, Pub *> it(pubobj); it.hasNext();) {
         it.next();
         Pub *pub = it.value();
         pub->unsubscribe(castToObject(socket));
@@ -174,14 +176,14 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
 {
     QObject *obj = nullptr;
 
-    switch ( Tf::app()->multiProcessingModule() ) {
+    switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread:
-        obj = dynamic_cast<TWebSocket*>(socket);
+        obj = dynamic_cast<TWebSocket *>(socket);
         break;
 
     case TWebApplication::Epoll:
 #ifdef Q_OS_LINUX
-        obj = dynamic_cast<TEpollWebSocket*>(socket);
+        obj = dynamic_cast<TEpollWebSocket *>(socket);
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
@@ -240,14 +242,16 @@ void TPublisher::receiveSystemBus()
             if (pub) {
                 pub->publish(QString::fromUtf8(msg.data()), nullptr);
             }
-            break; }
+            break;
+        }
 
         case Tf::WebSocketPublishBinary: {
             Pub *pub = get(msg.target());
             if (pub) {
                 pub->publish(msg.data(), nullptr);
             }
-            break; }
+            break;
+        }
 
         default:
             tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);

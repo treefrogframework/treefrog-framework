@@ -1,8 +1,8 @@
 #ifndef TSQLJOIN_H
 #define TSQLJOIN_H
 
-#include <TGlobal>
 #include <TCriteria>
+#include <TGlobal>
 
 /*!
   \class TSqlJoin
@@ -13,8 +13,7 @@
 
 
 template <class T>
-class TSqlJoin
-{
+class TSqlJoin {
 public:
     TSqlJoin();
     TSqlJoin(int joinColumn, const TCriteria &criteria);
@@ -34,26 +33,30 @@ private:
 
 
 template <class T>
-inline TSqlJoin<T>::TSqlJoin()
-    : _mode(TSql::InnerJoin), _joinColumn(-1), _criteria()
-{ }
+inline TSqlJoin<T>::TSqlJoin() :
+    _mode(TSql::InnerJoin), _joinColumn(-1), _criteria()
+{
+}
 
 template <class T>
-inline TSqlJoin<T>::TSqlJoin(int joinColumn, const TCriteria &criteria)
-    : _mode(TSql::InnerJoin), _joinColumn(joinColumn), _criteria(criteria)
-{ }
+inline TSqlJoin<T>::TSqlJoin(int joinColumn, const TCriteria &criteria) :
+    _mode(TSql::InnerJoin), _joinColumn(joinColumn), _criteria(criteria)
+{
+}
 
 template <class T>
-inline TSqlJoin<T>::TSqlJoin(TSql::JoinMode joinMode, int joinColumn, const TCriteria &criteria)
-    : _mode(joinMode), _joinColumn(joinColumn), _criteria(criteria)
-{ }
+inline TSqlJoin<T>::TSqlJoin(TSql::JoinMode joinMode, int joinColumn, const TCriteria &criteria) :
+    _mode(joinMode), _joinColumn(joinColumn), _criteria(criteria)
+{
+}
 
-template<class T>
-inline TSqlJoin<T>::TSqlJoin(const TSqlJoin &other)
-    : _mode(other.mode), _joinColumn(other._joinColumn), _criteria(other._criteria)
-{ }
+template <class T>
+inline TSqlJoin<T>::TSqlJoin(const TSqlJoin &other) :
+    _mode(other.mode), _joinColumn(other._joinColumn), _criteria(other._criteria)
+{
+}
 
-template<class T>
+template <class T>
 inline TSqlJoin<T> &TSqlJoin<T>::operator=(const TSqlJoin &other)
 {
     _mode = other._mode;
@@ -61,4 +64,4 @@ inline TSqlJoin<T> &TSqlJoin<T>::operator=(const TSqlJoin &other)
     _criteria = other._criteria;
 }
 
-#endif // TSQLJOIN_H
+#endif  // TSQLJOIN_H

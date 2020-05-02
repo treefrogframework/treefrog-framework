@@ -4,14 +4,14 @@
 #include <TActionController>
 
 
-class DirectController : public TActionController
-{
+class DirectController : public TActionController {
     Q_OBJECT
 public:
-    DirectController() : TActionController() { }
+    DirectController() :
+        TActionController() { }
 
 public slots:
     void show(const QString &view);
 };
 
-#endif // DIRECTCONTROLLER_H
+#endif  // DIRECTCONTROLLER_H

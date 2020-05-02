@@ -1,12 +1,11 @@
 #ifndef MAILERGENERATOR_H
 #define MAILERGENERATOR_H
 
-#include <QString>
 #include <QDir>
+#include <QString>
 
 
-class MailerGenerator
-{
+class MailerGenerator {
 public:
     MailerGenerator(const QString &name, const QStringList &actions);
     bool generate(const QString &dst) const;
@@ -16,4 +15,4 @@ private:
     QStringList actionList;
 };
 
-#endif // MAILERGENERATOR_H
+#endif  // MAILERGENERATOR_H

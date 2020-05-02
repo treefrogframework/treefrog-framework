@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TThreadApplicationServer>
-#include <TActionThread>
 #include "tsystemglobal.h"
+#include <TActionThread>
+#include <TThreadApplicationServer>
 
 /*!
   \class TThreadApplicationServer

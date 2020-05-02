@@ -7,8 +7,8 @@
 
 #include "tsessionsqlobjectstore.h"
 #include "tsessionobject.h"
-#include <TSqlORMapper>
 #include <TCriteria>
+#include <TSqlORMapper>
 
 
 static void createSessionTable()

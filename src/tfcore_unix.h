@@ -2,18 +2,18 @@
 #define TFCORE_UNIX_H
 
 #include "tfcore.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/wait.h>
-#include <fcntl.h>
 #include <aio.h>
+#include <fcntl.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #ifdef Q_OS_DARWIN
 #include <pthread.h>
 #endif
 
 #ifndef Q_OS_UNIX
-# error "tfcore_unix.h included on a non-Unix system"
+#error "tfcore_unix.h included on a non-Unix system"
 #endif
 
 namespace {
@@ -47,7 +47,7 @@ inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 
 inline int tf_poll_recv(int socket, int timeout)
 {
-    struct pollfd pfd = { socket, POLLIN, 0 };
+    struct pollfd pfd = {socket, POLLIN, 0};
     int ret = tf_poll(&pfd, 1, timeout);
 
     if (ret < 0) {
@@ -60,7 +60,7 @@ inline int tf_poll_recv(int socket, int timeout)
 
 inline int tf_poll_send(int socket, int timeout)
 {
-    struct pollfd pfd = { socket, POLLOUT, 0 };
+    struct pollfd pfd = {socket, POLLOUT, 0};
     int ret = tf_poll(&pfd, 1, timeout);
 
     if (ret < 0) {
@@ -70,7 +70,7 @@ inline int tf_poll_send(int socket, int timeout)
     return (pfd.revents & (POLLOUT | POLLERR)) ? 0 : 1;
 }
 
-} // namespace
+}  // namespace
 
 
 #ifdef Q_OS_LINUX
@@ -79,7 +79,7 @@ inline int tf_poll_send(int socket, int timeout)
 namespace {
 
 inline int tf_epoll_wait(int epfd, struct epoll_event *events,
-                         int maxevents, int timeout)
+    int maxevents, int timeout)
 {
     TF_EINTR_LOOP(::epoll_wait(epfd, events, maxevents, timeout));
 }
@@ -96,7 +96,7 @@ inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int
     TF_EINTR_LOOP(::accept4(sockfd, addr, addrlen, flags));
 }
 
-} // namespace
+}  // namespace
 
-#endif // Q_OS_LINUX
-#endif // TFCORE_UNIX_H
+#endif  // Q_OS_LINUX
+#endif  // TFCORE_UNIX_H

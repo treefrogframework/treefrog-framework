@@ -1,13 +1,14 @@
 #include "thazardptrmanager.h"
-#include "thazardptr.h"
 #include "thazardobject.h"
+#include "thazardptr.h"
 #include <QThread>
 
 
-class THazardRemoverThread : public QThread
-{
+class THazardRemoverThread : public QThread {
 public:
-    THazardRemoverThread() : QThread() { }
+    THazardRemoverThread() :
+        QThread() { }
+
 protected:
     void run();
 };
@@ -45,7 +46,7 @@ void THazardRemoverThread::run()
                     break;
                 }
                 prevHpr = hpr;
-                hpr = hpr->next; // to next
+                hpr = hpr->next;  // to next
             }
 
             if (crtObj != guardp && hpm.pop(crtObj, prevObj)) {
@@ -65,9 +66,10 @@ void THazardRemoverThread::run()
 }
 
 
-THazardPtrManager::THazardPtrManager()
-    : removerThread(new THazardRemoverThread())
-{ }
+THazardPtrManager::THazardPtrManager() :
+    removerThread(new THazardRemoverThread())
+{
+}
 
 
 THazardPtrManager::~THazardPtrManager()
@@ -103,7 +105,7 @@ bool THazardPtrManager::pop(THazardPtrRecord *ptr, THazardPtrRecord *prev)
 }
 
 
-void THazardPtrManager::push(THazardObject* obj)
+void THazardPtrManager::push(THazardObject *obj)
 {
     do {
         obj->next = objHead.load();

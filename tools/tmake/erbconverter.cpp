@@ -5,44 +5,45 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QFileInfo>
-#include <QDateTime>
-#include <QTextStream>
 #include "erbconverter.h"
 #include "erbparser.h"
 #include "viewconverter.h"
+#include <QDateTime>
+#include <QFileInfo>
+#include <QTextStream>
 
-#define VIEW_SOURCE_TEMPLATE                                    \
-    "#include <QtCore>\n"                                       \
-    "#include <TreeFrogView>\n"                                 \
-    "%4"                                                        \
-    "\n"                                                        \
-    "class T_VIEW_EXPORT %1 : public TActionView\n"             \
-    "{\n"                                                       \
-    "  Q_OBJECT\n"                                              \
-    "public:\n"                                                 \
-    "  %1() : TActionView() { }\n"                              \
-    "  QString toString();\n"                                   \
-    "};\n"                                                      \
-    "\n"                                                        \
-    "QString %1::toString()\n"                                  \
-    "{\n"                                                       \
-    "  responsebody.reserve(%3);\n"                             \
-    "%2\n"                                                      \
-    "  return responsebody;\n"                                  \
-    "}\n"                                                       \
-    "\n"                                                        \
-    "T_DEFINE_VIEW(%1)\n"                                       \
-    "\n"                                                        \
+#define VIEW_SOURCE_TEMPLATE                        \
+    "#include <QtCore>\n"                           \
+    "#include <TreeFrogView>\n"                     \
+    "%4"                                            \
+    "\n"                                            \
+    "class T_VIEW_EXPORT %1 : public TActionView\n" \
+    "{\n"                                           \
+    "  Q_OBJECT\n"                                  \
+    "public:\n"                                     \
+    "  %1() : TActionView() { }\n"                  \
+    "  QString toString();\n"                       \
+    "};\n"                                          \
+    "\n"                                            \
+    "QString %1::toString()\n"                      \
+    "{\n"                                           \
+    "  responsebody.reserve(%3);\n"                 \
+    "%2\n"                                          \
+    "  return responsebody;\n"                      \
+    "}\n"                                           \
+    "\n"                                            \
+    "T_DEFINE_VIEW(%1)\n"                           \
+    "\n"                                            \
     "#include \"%1.moc\"\n"
 
 
 const QRegExp RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
 
 
-ErbConverter::ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial)
-    : outputDirectory(output), helpersDirectory(helpers), partialDirectory(partial)
-{ }
+ErbConverter::ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial) :
+    outputDirectory(output), helpersDirectory(helpers), partialDirectory(partial)
+{
+}
 
 
 bool ErbConverter::convert(const QString &erbPath, int trimMode) const
@@ -147,7 +148,10 @@ QString ErbConverter::generateIncludeCode(const ErbParser &parser) const
 {
     QString code = parser.includeCode();
     QStringList filter;
-    filter << "*.h" << "*.hh" << "*.hpp" << "*.hxx";
+    filter << "*.h"
+           << "*.hh"
+           << "*.hpp"
+           << "*.hxx";
     foreach (QString f, helpersDirectory.entryList(filter, QDir::Files)) {
         code += "#include \"";
         code += f;

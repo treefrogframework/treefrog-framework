@@ -1,15 +1,14 @@
 #ifndef TSENDMAILMAILER_H
 #define TSENDMAILMAILER_H
 
-#include <QObject>
-#include <QStringList>
 #include <QByteArray>
+#include <QObject>
 #include <QProcess>
+#include <QStringList>
 #include <TMailMessage>
 
 
-class T_CORE_EXPORT TSendmailMailer : public QObject
-{
+class T_CORE_EXPORT TSendmailMailer : public QObject {
     Q_OBJECT
 public:
     TSendmailMailer(const QString &command, QObject *parent = 0);
@@ -33,4 +32,4 @@ private:
     T_DISABLE_MOVE(TSendmailMailer)
 };
 
-#endif // TSENDMAILMAILER_H
+#endif  // TSENDMAILMAILER_H

@@ -6,18 +6,18 @@
  */
 
 #include "twebsocket.h"
-#include "twebsocketworker.h"
-#include "turlroute.h"
-#include "tdispatcher.h"
 #include "tatomicptr.h"
+#include "tdispatcher.h"
+#include "turlroute.h"
+#include "twebsocketworker.h"
 #include <TWebApplication>
 
 constexpr qint64 WRITE_LENGTH = 1280;
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
 namespace {
-    TAtomicPtr<TWebSocket> socketManager[USHRT_MAX + 1];
-    std::atomic<ushort> point {0};
+TAtomicPtr<TWebSocket> socketManager[USHRT_MAX + 1];
+std::atomic<ushort> point {0};
 }
 
 
@@ -32,7 +32,7 @@ TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const 
 
     do {
         sid = point.fetch_add(1);
-    } while (!socketManager[sid].compareExchange(nullptr, this)); // store a socket
+    } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
 
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
@@ -43,7 +43,7 @@ TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const 
 TWebSocket::~TWebSocket()
 {
     tSystemDebug("~TWebSocket");
-    socketManager[sid].compareExchangeStrong(this, nullptr); // clear
+    socketManager[sid].compareExchangeStrong(this, nullptr);  // clear
 }
 
 
@@ -162,7 +162,7 @@ void TWebSocket::startWorker(TWebSocketWorker *worker)
 {
     worker->moveToThread(Tf::app()->thread());
     connect(worker, SIGNAL(finished()), this, SLOT(releaseWorker()));
-    ++myWorkerCounter; // count-up
+    ++myWorkerCounter;  // count-up
     worker->start();
 }
 
@@ -195,7 +195,7 @@ void TWebSocket::deleteLater()
     }
 
     if ((int)myWorkerCounter == 0) {
-        socketManager[sid].compareExchange(this, nullptr); // clear
+        socketManager[sid].compareExchange(this, nullptr);  // clear
         QTcpSocket::deleteLater();
     }
 }

@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TDirectView>
 #include <TActionController>
+#include <TDirectView>
 
 
 const TSession &TDirectView::session() const

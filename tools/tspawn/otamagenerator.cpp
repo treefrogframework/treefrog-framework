@@ -6,185 +6,177 @@
  */
 
 #include "otamagenerator.h"
+#include "filewriter.h"
 #include "global.h"
 #include "projectfilegenerator.h"
-#include "filewriter.h"
 #include "util.h"
 
-constexpr auto INDEX_HTML_TEMPLATE =                                    \
-    "<!DOCTYPE html>\n"                                                 \
-    "<html>\n"                                                          \
-    "<head>\n"                                                          \
-    "  <meta charset=\"UTF-8\">\n"                                      \
-    "  <title data-tf=\"@head_title\"></title>\n"                       \
-    "</head>\n"                                                         \
-    "<body>\n"                                                          \
-    "\n"                                                                \
-    "<h1>Listing %1</h1>\n"                                             \
-    "\n"                                                                \
-    "<a href=\"#\" data-tf=\"@link_to_entry\">Create a new %1</a><br />\n" \
-    "<br />\n"                                                          \
-    "<table border=\"1\" cellpadding=\"5\" style=\"border: 1px #d0d0d0 solid; border-collapse: collapse;\">\n" \
-    "  <tr>\n"                                                          \
-    "%2"                                                                \
-    "    <th></th>\n"                                                   \
-    "  </tr>\n"                                                         \
-    "  <tr data-tf=\"@for\">\n"                                         \
-    "%3"                                                                \
-    "    <td>\n"                                                        \
-    "      <a href=\"#\" data-tf=\"@link_to_show\">Show</a>\n"          \
-    "      <a href=\"#\" data-tf=\"@link_to_edit\">Edit</a>\n"          \
-    "      <a href=\"#\" data-tf=\"@link_to_remove\">Remove</a>\n"      \
-    "    </td>\n"                                                       \
-    "  </tr>\n"                                                         \
-    "</table>\n"                                                        \
-    "\n"                                                                \
-    "</body>\n"                                                         \
-    "</html>\n";
+constexpr auto INDEX_HTML_TEMPLATE = "<!DOCTYPE html>\n"
+                                     "<html>\n"
+                                     "<head>\n"
+                                     "  <meta charset=\"UTF-8\">\n"
+                                     "  <title data-tf=\"@head_title\"></title>\n"
+                                     "</head>\n"
+                                     "<body>\n"
+                                     "\n"
+                                     "<h1>Listing %1</h1>\n"
+                                     "\n"
+                                     "<a href=\"#\" data-tf=\"@link_to_entry\">Create a new %1</a><br />\n"
+                                     "<br />\n"
+                                     "<table border=\"1\" cellpadding=\"5\" style=\"border: 1px #d0d0d0 solid; border-collapse: collapse;\">\n"
+                                     "  <tr>\n"
+                                     "%2"
+                                     "    <th></th>\n"
+                                     "  </tr>\n"
+                                     "  <tr data-tf=\"@for\">\n"
+                                     "%3"
+                                     "    <td>\n"
+                                     "      <a href=\"#\" data-tf=\"@link_to_show\">Show</a>\n"
+                                     "      <a href=\"#\" data-tf=\"@link_to_edit\">Edit</a>\n"
+                                     "      <a href=\"#\" data-tf=\"@link_to_remove\">Remove</a>\n"
+                                     "    </td>\n"
+                                     "  </tr>\n"
+                                     "</table>\n"
+                                     "\n"
+                                     "</body>\n"
+                                     "</html>\n";
 
-constexpr auto INDEX_OTM_TEMPLATE =                                     \
-    "#include \"%1.h\"\n"                                               \
-    "\n"                                                                \
-    "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
-    "\n"                                                                \
-    "@for :\n"                                                          \
-    "tfetch(QList<%2>, %3List);\n"                                      \
-    "for (const auto &i : %3List) {\n"                                  \
-    "    %%\n"                                                          \
-    "}\n"                                                               \
-    "\n"                                                                \
-    "%4"                                                                \
-    "@link_to_entry :== linkTo(\"Create a new %6\", urla(\"create\"))\n" \
-    "\n"                                                                \
-    "@link_to_show :== linkTo(\"Show\", urla(\"show\", i.%5()))\n"      \
-    "\n"                                                                \
-    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", i.%5()))\n"      \
-    "\n"                                                                \
-    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n";
+constexpr auto INDEX_OTM_TEMPLATE = "#include \"%1.h\"\n"
+                                    "\n"
+                                    "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n"
+                                    "\n"
+                                    "@for :\n"
+                                    "tfetch(QList<%2>, %3List);\n"
+                                    "for (const auto &i : %3List) {\n"
+                                    "    %%\n"
+                                    "}\n"
+                                    "\n"
+                                    "%4"
+                                    "@link_to_entry :== linkTo(\"Create a new %6\", urla(\"create\"))\n"
+                                    "\n"
+                                    "@link_to_show :== linkTo(\"Show\", urla(\"show\", i.%5()))\n"
+                                    "\n"
+                                    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", i.%5()))\n"
+                                    "\n"
+                                    "@link_to_remove :== linkTo(\"Remove\", urla(\"remove\", i.%5()), Tf::Post, \"confirm('Are you sure?')\")\n";
 
-constexpr auto SHOW_HTML_TEMPLATE =                                     \
-    "<!DOCTYPE html>\n"                                                 \
-    "<html>\n"                                                          \
-    "<head>\n"                                                          \
-    "  <meta charset=\"UTF-8\">\n"                                      \
-    "  <title data-tf=\"@head_title\"></title>\n"                       \
-    "</head>\n"                                                         \
-    "<body>\n"                                                          \
-    "<p style=\"color: red\" data-tf=\"@error_msg\"></p>\n"             \
-    "<p style=\"color: green\" data-tf=\"@notice_msg\"></p>\n"          \
-    "\n"                                                                \
-    "<h1>Showing %1</h1>\n"                                             \
-    "%2"                                                                \
-    "\n"                                                                \
-    "<a href=\"#\" data-tf=\"@link_to_edit\">Edit</a> |\n"              \
-    "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"               \
-    "\n"                                                                \
-    "</body>\n"                                                         \
-    "</html>\n";
+constexpr auto SHOW_HTML_TEMPLATE = "<!DOCTYPE html>\n"
+                                    "<html>\n"
+                                    "<head>\n"
+                                    "  <meta charset=\"UTF-8\">\n"
+                                    "  <title data-tf=\"@head_title\"></title>\n"
+                                    "</head>\n"
+                                    "<body>\n"
+                                    "<p style=\"color: red\" data-tf=\"@error_msg\"></p>\n"
+                                    "<p style=\"color: green\" data-tf=\"@notice_msg\"></p>\n"
+                                    "\n"
+                                    "<h1>Showing %1</h1>\n"
+                                    "%2"
+                                    "\n"
+                                    "<a href=\"#\" data-tf=\"@link_to_edit\">Edit</a> |\n"
+                                    "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"
+                                    "\n"
+                                    "</body>\n"
+                                    "</html>\n";
 
-constexpr auto SHOW_OTM_TEMPLATE =                                      \
-    "#include \"%1.h\"\n"                                               \
-    "\n"                                                                \
-    "#init\n"                                                           \
-    " tfetch(%2, %3);\n"                                                \
-    "\n"                                                                \
-    "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
-    "\n"                                                                \
-    "@error_msg ~=$ error\n"                                            \
-    "\n"                                                                \
-    "@notice_msg ~=$ notice\n"                                          \
-    "\n"                                                                \
-    "%4"                                                                \
-    "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", %3.%5()))\n"     \
-    "\n"                                                                \
-    "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n";
+constexpr auto SHOW_OTM_TEMPLATE = "#include \"%1.h\"\n"
+                                   "\n"
+                                   "#init\n"
+                                   " tfetch(%2, %3);\n"
+                                   "\n"
+                                   "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n"
+                                   "\n"
+                                   "@error_msg ~=$ error\n"
+                                   "\n"
+                                   "@notice_msg ~=$ notice\n"
+                                   "\n"
+                                   "%4"
+                                   "@link_to_edit :== linkTo(\"Edit\", urla(\"save\", %3.%5()))\n"
+                                   "\n"
+                                   "@link_to_index :== linkTo(\"Back\", urla(\"index\"))\n";
 
-constexpr auto CREATE_HTML_TEMPLATE =                                   \
-    "<!DOCTYPE html>\n"                                                 \
-    "<html>\n"                                                          \
-    "<head>\n"                                                          \
-    "  <meta charset=\"UTF-8\">\n"                                      \
-    "  <title data-tf=\"@head_title\"></title>\n"                       \
-    "</head>\n"                                                         \
-    "<body>\n"                                                          \
-    "<p style=\"color: red\" data-tf=\"@error_msg\"></p>\n"             \
-    "<p style=\"color: green\" data-tf=\"@notice_msg\"></p>\n"          \
-    "\n"                                                                \
-    "<h1>New %1</h1>\n"                                                 \
-    "\n"                                                                \
-    "<form method=\"post\" data-tf=\"@entry_form\">\n"                  \
-    "%2"                                                                \
-    "  <p>\n"                                                           \
-    "    <input type=\"submit\" value=\"Create\" />\n"                  \
-    "  </p>\n"                                                          \
-    "</form>\n"                                                         \
-    "\n"                                                                \
-    "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"               \
-    "\n"                                                                \
-    "</body>\n"                                                         \
-    "</html>\n";
+constexpr auto CREATE_HTML_TEMPLATE = "<!DOCTYPE html>\n"
+                                      "<html>\n"
+                                      "<head>\n"
+                                      "  <meta charset=\"UTF-8\">\n"
+                                      "  <title data-tf=\"@head_title\"></title>\n"
+                                      "</head>\n"
+                                      "<body>\n"
+                                      "<p style=\"color: red\" data-tf=\"@error_msg\"></p>\n"
+                                      "<p style=\"color: green\" data-tf=\"@notice_msg\"></p>\n"
+                                      "\n"
+                                      "<h1>New %1</h1>\n"
+                                      "\n"
+                                      "<form method=\"post\" data-tf=\"@entry_form\">\n"
+                                      "%2"
+                                      "  <p>\n"
+                                      "    <input type=\"submit\" value=\"Create\" />\n"
+                                      "  </p>\n"
+                                      "</form>\n"
+                                      "\n"
+                                      "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"
+                                      "\n"
+                                      "</body>\n"
+                                      "</html>\n";
 
-constexpr auto CREATE_OTM_TEMPLATE =                                    \
-    "#include \"%1.h\"\n"                                               \
-    "\n"                                                                \
-    "#init\n"                                                           \
-    " tfetch(QVariantMap, %2);\n"                                       \
-    "\n"                                                                \
-    "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
-    "\n"                                                                \
-    "@error_msg ~=$ error\n"                                            \
-    "\n"                                                                \
-    "@notice_msg ~=$ notice\n"                                          \
-    "\n"                                                                \
-    "@entry_form |== formTag(urla(\"create\"))\n"                       \
-    "\n"                                                                \
-    "%3"                                                                \
-    "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n";
+constexpr auto CREATE_OTM_TEMPLATE = "#include \"%1.h\"\n"
+                                     "\n"
+                                     "#init\n"
+                                     " tfetch(QVariantMap, %2);\n"
+                                     "\n"
+                                     "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n"
+                                     "\n"
+                                     "@error_msg ~=$ error\n"
+                                     "\n"
+                                     "@notice_msg ~=$ notice\n"
+                                     "\n"
+                                     "@entry_form |== formTag(urla(\"create\"))\n"
+                                     "\n"
+                                     "%3"
+                                     "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n";
 
-constexpr auto SAVE_HTML_TEMPLATE =                                     \
-    "<!DOCTYPE html>\n"                                                 \
-    "<html>\n"                                                          \
-    "<head>\n"                                                          \
-    "  <meta charset=\"UTF-8\">\n"                                      \
-    "  <title data-tf=\"@head_title\"></title>\n"                       \
-    "</head>\n"                                                         \
-    "<body>\n"                                                          \
-    "<p style=\"color: red\" data-tf=\"@error_msg\"></p>\n"             \
-    "<p style=\"color: green\" data-tf=\"@notice_msg\"></p>\n"          \
-    "\n"                                                                \
-    "<h1>Editing %1</h1>\n"                                             \
-    "\n"                                                                \
-    "<form method=\"post\" data-tf=\"@edit_form\">\n"                   \
-    "%2"                                                                \
-    "  <p>\n"                                                           \
-    "    <input type=\"submit\" value=\"Save\" />\n"                    \
-    "  </p>\n"                                                          \
-    "</form>\n"                                                         \
-    "\n"                                                                \
-    "<a href=\"#\" data-tf=\"@link_to_show\">Show</a> |\n"              \
-    "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"               \
-    "\n"                                                                \
-    "</body>\n"                                                         \
-    "</html>\n";
+constexpr auto SAVE_HTML_TEMPLATE = "<!DOCTYPE html>\n"
+                                    "<html>\n"
+                                    "<head>\n"
+                                    "  <meta charset=\"UTF-8\">\n"
+                                    "  <title data-tf=\"@head_title\"></title>\n"
+                                    "</head>\n"
+                                    "<body>\n"
+                                    "<p style=\"color: red\" data-tf=\"@error_msg\"></p>\n"
+                                    "<p style=\"color: green\" data-tf=\"@notice_msg\"></p>\n"
+                                    "\n"
+                                    "<h1>Editing %1</h1>\n"
+                                    "\n"
+                                    "<form method=\"post\" data-tf=\"@edit_form\">\n"
+                                    "%2"
+                                    "  <p>\n"
+                                    "    <input type=\"submit\" value=\"Save\" />\n"
+                                    "  </p>\n"
+                                    "</form>\n"
+                                    "\n"
+                                    "<a href=\"#\" data-tf=\"@link_to_show\">Show</a> |\n"
+                                    "<a href=\"#\" data-tf=\"@link_to_index\">Back</a>\n"
+                                    "\n"
+                                    "</body>\n"
+                                    "</html>\n";
 
-constexpr auto SAVE_OTM_TEMPLATE =                                      \
-    "#include \"%1.h\"\n"                                               \
-    "\n"                                                                \
-    "#init\n"                                                           \
-    " tfetch(QVariantMap, %2);\n"                                       \
-    "\n"                                                                \
-    "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n" \
-    "\n"                                                                \
-    "@error_msg ~=$ error\n"                                            \
-    "\n"                                                                \
-    "@notice_msg ~=$ notice\n"                                          \
-    "\n"                                                                \
-    "@edit_form |== formTag(urla(\"save\", %2[\"%3\"]))\n"              \
-    "\n"                                                                \
-    "%5"                                                                \
-    "@link_to_show |== linkTo(\"Show\", urla(\"show\", %2[\"%3\"]))\n"  \
-    "\n"                                                                \
-    "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n";
+constexpr auto SAVE_OTM_TEMPLATE = "#include \"%1.h\"\n"
+                                   "\n"
+                                   "#init\n"
+                                   " tfetch(QVariantMap, %2);\n"
+                                   "\n"
+                                   "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n"
+                                   "\n"
+                                   "@error_msg ~=$ error\n"
+                                   "\n"
+                                   "@notice_msg ~=$ notice\n"
+                                   "\n"
+                                   "@edit_form |== formTag(urla(\"save\", %2[\"%3\"]))\n"
+                                   "\n"
+                                   "%5"
+                                   "@link_to_show |== linkTo(\"Show\", urla(\"show\", %2[\"%3\"]))\n"
+                                   "\n"
+                                   "@link_to_index |== linkTo(\"Back\", urla(\"index\"))\n";
 
 
 static const QStringList excludedColumn = {
@@ -208,9 +200,10 @@ static const QStringList excludedDirName = {
 };
 
 
-OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx)
-    : viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
-{ }
+OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx) :
+    viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
+{
+}
 
 
 bool OtamaGenerator::generate(const QString &dstDir) const
@@ -249,7 +242,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
 
     // Generates index.html
-    QString th ,td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
+    QString th, td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
     for (int i = 0; i < fieldList.count(); ++i) {
         const QPair<QString, QVariant::Type> &p = fieldList[i];
         QString cap = fieldNameToCaption(p.first);
@@ -274,7 +267,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
             }
 
             editColumn += QString("  <p>\n    <label>%1<br /><input data-tf=\"@%2\" /></label>\n  </p>\n").arg(cap, mrk);
-            if  (p.first == pkFld.first) {
+            if (p.first == pkFld.first) {
                 readonly = QLatin1String(", a(\"readonly\", \"readonly\")");
             }
             editOtm += QString("@%1 |== inputTextTag(\"%2[%3]\", %2[\"%3\"].toString()%4);\n\n").arg(mrk, varName, var, readonly);

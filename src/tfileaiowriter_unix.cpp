@@ -5,31 +5,31 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tfcore_unix.h"
 #include "tfileaiowriter.h"
 #include "tqueue.h"
-#include "tfcore_unix.h"
 #include <QList>
 #include <QMutexLocker>
 
 constexpr int MAX_NUM_BUFFERING_DATA = 10000;
 
 
-class TFileAioWriterData
-{
+class TFileAioWriterData {
 public:
     mutable QMutex mutex;
     QString fileName;
     int fileDescriptor;
-    TQueue<struct aiocb*> syncBuffer;
+    TQueue<struct aiocb *> syncBuffer;
 
-    TFileAioWriterData() : mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
+    TFileAioWriterData() :
+        mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
 };
 
 /*!
   Constructor.
  */
-TFileAioWriter::TFileAioWriter(const QString &name)
-    : d(new TFileAioWriterData())
+TFileAioWriter::TFileAioWriter(const QString &name) :
+    d(new TFileAioWriterData())
 {
     d->fileName = name;
 }
@@ -100,7 +100,7 @@ int TFileAioWriter::write(const char *data, int length)
                 }
 
                 if (d->syncBuffer.dequeue(headcb)) {
-                    delete[] (char *)headcb->aio_buf;
+                    delete[](char *) headcb->aio_buf;
                     delete headcb;
                 } else {
                     break;
@@ -128,7 +128,7 @@ int TFileAioWriter::write(const char *data, int length)
     if (ret < 0) {
         //fprintf(stderr, "aio_write error fd:%d (pid:%d tid:%d) ret:%d errno:%d\n", d->fileDescriptor, getpid(), gettid(), ret, err);
         //fprintf(stderr, "aio_write str: %s\n", data);
-        delete[] (char *)cb->aio_buf;
+        delete[](char *) cb->aio_buf;
         delete cb;
 
         if (err != EAGAIN) {
@@ -164,7 +164,7 @@ void TFileAioWriter::flush()
         if (d->syncBuffer.head(headcb) && aio_error(headcb) != EINPROGRESS) {
             // Dequeue
             if (d->syncBuffer.dequeue(headcb)) {
-                delete[] (char *)headcb->aio_buf;
+                delete[](char *) headcb->aio_buf;
                 delete headcb;
             }
         }

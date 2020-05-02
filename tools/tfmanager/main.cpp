@@ -5,29 +5,29 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
-#include <TAppSettings>
-#include <TSystemGlobal>
-#include <tprocessinfo.h>
-#include <tfcore.h>
 #include "servermanager.h"
 #include "systembusdaemon.h"
-#include <QtCore>
-#include <QSysInfo>
 #include <QHostInfo>
 #include <QJsonDocument>
+#include <QSysInfo>
+#include <QtCore>
+#include <TAppSettings>
+#include <TSystemGlobal>
+#include <TWebApplication>
+#include <tfcore.h>
+#include <tprocessinfo.h>
 
 #ifdef Q_OS_UNIX
-# include <sys/utsname.h>
+#include <sys/utsname.h>
 #endif
 #ifdef Q_OS_WIN
-# include <windows.h>
+#include <windows.h>
 #endif
 
 #ifdef Q_OS_WIN
-# define TF_FLOCK(fd,op)
+#define TF_FLOCK(fd, op)
 #else
-# define TF_FLOCK(fd,op)  tf_flock((fd),(op))
+#define TF_FLOCK(fd, op) tf_flock((fd), (op))
 #endif
 
 namespace TreeFrog {
@@ -36,9 +36,9 @@ namespace TreeFrog {
 extern void WINAPI winServiceMain(DWORD argc, LPTSTR *argv);
 #endif
 
-constexpr auto OLD_PID_FILENAME  = "treefrog.pid";
-constexpr auto PID_FILENAME  = "treefrog.inf";
-constexpr auto JSON_PID_KEY  = "pid";
+constexpr auto OLD_PID_FILENAME = "treefrog.pid";
+constexpr auto PID_FILENAME = "treefrog.inf";
+constexpr auto JSON_PID_KEY = "pid";
 constexpr auto JSON_PORT_KEY = "port";
 constexpr auto JSON_UNIX_KEY = "unixDomain";
 
@@ -60,29 +60,29 @@ enum CommandOption {
 
 #if QT_VERSION < 0x050400
 #ifdef Q_OS_WIN
-class WinVersion : public  QHash<int, QString>
-{
+class WinVersion : public QHash<int, QString> {
 public:
-    WinVersion() : QHash<int, QString>()
+    WinVersion() :
+        QHash<int, QString>()
     {
-        insert(QSysInfo::WV_XP,         "Windows XP");
-        insert(QSysInfo::WV_2003,       "Windows Server 2003");
-        insert(QSysInfo::WV_VISTA,      "Windows Vista or Windows Server 2008");
-        insert(QSysInfo::WV_WINDOWS7,   "Windows 7 or Windows Server 2008 R2");
-        insert(QSysInfo::WV_WINDOWS8,   "Windows 8 or Windows Server 2012");
-# if QT_VERSION >= 0x050200
+        insert(QSysInfo::WV_XP, "Windows XP");
+        insert(QSysInfo::WV_2003, "Windows Server 2003");
+        insert(QSysInfo::WV_VISTA, "Windows Vista or Windows Server 2008");
+        insert(QSysInfo::WV_WINDOWS7, "Windows 7 or Windows Server 2008 R2");
+        insert(QSysInfo::WV_WINDOWS8, "Windows 8 or Windows Server 2012");
+#if QT_VERSION >= 0x050200
         insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
-# endif
+#endif
     }
 };
 Q_GLOBAL_STATIC(WinVersion, winVersion)
 #endif
 
 #ifdef Q_OS_DARWIN
-class MacxVersion : public QHash<int, QString>
-{
+class MacxVersion : public QHash<int, QString> {
 public:
-    MacxVersion() : QHash<int, QString>()
+    MacxVersion() :
+        QHash<int, QString>()
     {
         insert(QSysInfo::MV_10_3, "Mac OS X 10.3 Panther");
         insert(QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger");
@@ -90,9 +90,9 @@ public:
         insert(QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard");
         insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
         insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
-# if QT_VERSION >= 0x050100
+#if QT_VERSION >= 0x050100
         insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
-# endif
+#endif
     }
 };
 Q_GLOBAL_STATIC(MacxVersion, macxVersion)
@@ -100,10 +100,10 @@ Q_GLOBAL_STATIC(MacxVersion, macxVersion)
 #endif
 
 
-class OptionHash : public QHash<QString, int>
-{
+class OptionHash : public QHash<QString, int> {
 public:
-    OptionHash() : QHash<QString, int>()
+    OptionHash() :
+        QHash<QString, int>()
     {
         insert("-e", EnvironmentSpecified);
         insert("-s", SocketSpecified);
@@ -123,22 +123,21 @@ Q_GLOBAL_STATIC(OptionHash, options)
 
 static void usage()
 {
-    constexpr auto text =
-        "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n" \
-        "Usage: %1 -k [stop|abort|restart|status] [application-directory]\n" \
-        "Usage: %1 -m [application-directory]\n"                        \
-        "%2"                                                            \
-        "Options:\n"                                                    \
-        "  -d              : run as a daemon process\n"                 \
-        "  -p port         : run server on specified port\n"            \
-        "  -e environment  : specify an environment of the database settings\n" \
-        "  -k              : send signal to a manager process\n"        \
-        "  -m              : show the process ID of a running main program\n" \
-        "%4"                                                            \
-        "%3\n"                                                          \
-        "Type '%1 -l' to show your running applications.\n"             \
-        "Type '%1 -h' to show this information.\n"                      \
-        "Type '%1 -v' to show the program version.";
+    constexpr auto text = "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n"
+                          "Usage: %1 -k [stop|abort|restart|status] [application-directory]\n"
+                          "Usage: %1 -m [application-directory]\n"
+                          "%2"
+                          "Options:\n"
+                          "  -d              : run as a daemon process\n"
+                          "  -p port         : run server on specified port\n"
+                          "  -e environment  : specify an environment of the database settings\n"
+                          "  -k              : send signal to a manager process\n"
+                          "  -m              : show the process ID of a running main program\n"
+                          "%4"
+                          "%3\n"
+                          "Type '%1 -l' to show your running applications.\n"
+                          "Type '%1 -h' to show this information.\n"
+                          "Type '%1 -v' to show the program version.";
 
     QString cmd = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
     QString text2, text3, text4;
@@ -172,15 +171,14 @@ static bool startDaemon()
     args.removeAll("-d");
 #ifdef Q_OS_WIN
     PROCESS_INFORMATION pinfo;
-    STARTUPINFOW startupInfo = { sizeof(STARTUPINFO), 0, 0, 0,
-                                 (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
-                                 (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-    success = CreateProcess(0, (wchar_t*)args.join(" ").utf16(),
-                            0, 0, FALSE, CREATE_UNICODE_ENVIRONMENT, 0,
-                            (wchar_t*)QDir::currentPath().utf16(),
-                            &startupInfo, &pinfo);
+    STARTUPINFOW startupInfo = {sizeof(STARTUPINFO), 0, 0, 0,
+        (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
+        (ulong)CW_USEDEFAULT, (ulong)CW_USEDEFAULT,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    success = CreateProcess(0, (wchar_t *)args.join(" ").utf16(),
+        0, 0, FALSE, CREATE_UNICODE_ENVIRONMENT, 0,
+        (wchar_t *)QDir::currentPath().utf16(),
+        &startupInfo, &pinfo);
     if (success) {
         CloseHandle(pinfo.hThread);
         CloseHandle(pinfo.hProcess);
@@ -202,16 +200,16 @@ static void writeStartupLog()
 #if QT_VERSION >= 0x050400
     qtversion += QLatin1String(" / ") + QSysInfo::prettyProductName();
 #else
-# if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN)
     qtversion += QLatin1String(" / ") + winVersion()->value(QSysInfo::WindowsVersion, "Windows");
-# elif defined(Q_OS_DARWIN)
+#elif defined(Q_OS_DARWIN)
     qtversion += QLatin1String(" / ") + macxVersion()->value(QSysInfo::MacintoshVersion, "Mac OS X");
-# elif defined(Q_OS_UNIX)
+#elif defined(Q_OS_UNIX)
     struct utsname uts;
     if (uname(&uts) == 0) {
         qtversion += QString(" / %1 %2").arg(uts.sysname).arg(uts.release);
     }
-# endif
+#endif
 #endif
     tSystemInfo("%s", qtversion.toLatin1().data());
 }
@@ -220,14 +218,14 @@ static void writeStartupLog()
 static QString pidFilePath(const QString &appRoot = QString())
 {
     return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
-        : appRoot + QLatin1String("/tmp/") + PID_FILENAME;
+                               : appRoot + QLatin1String("/tmp/") + PID_FILENAME;
 }
 
 
 static QString oldPidFilePath(const QString &appRoot = QString())
 {
     return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + OLD_PID_FILENAME
-        : appRoot + QLatin1String("/tmp/") + OLD_PID_FILENAME;
+                               : appRoot + QLatin1String("/tmp/") + OLD_PID_FILENAME;
 }
 
 
@@ -288,13 +286,13 @@ static bool addRunningApplication(const QString &rootPath)
         return false;
     }
 
-    TF_FLOCK(file.handle(), LOCK_EX); // lock
+    TF_FLOCK(file.handle(), LOCK_EX);  // lock
     QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, QString::SkipEmptyParts);
     paths << rootPath;
     paths.removeDuplicates();
     file.resize(0);
     file.write(paths.join(Tf::LF).toUtf8());
-    TF_FLOCK(file.handle(), LOCK_UN); // unlock
+    TF_FLOCK(file.handle(), LOCK_UN);  // unlock
     file.close();
     return true;
 }
@@ -306,9 +304,9 @@ static QStringList runningApplicationPathList()
     QFile file(runningApplicationsFilePath());
 
     if (file.open(QIODevice::ReadOnly)) {
-        TF_FLOCK(file.handle(), LOCK_SH); // lock
+        TF_FLOCK(file.handle(), LOCK_SH);  // lock
         QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, QString::SkipEmptyParts);
-        TF_FLOCK(file.handle(), LOCK_UN); // unlock
+        TF_FLOCK(file.handle(), LOCK_UN);  // unlock
         file.close();
         paths.removeDuplicates();
 
@@ -333,9 +331,9 @@ static void cleanupRunningApplicationList()
     }
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        TF_FLOCK(file.handle(), LOCK_EX); // lock
+        TF_FLOCK(file.handle(), LOCK_EX);  // lock
         file.write(runapps.join(Tf::LF).toUtf8());
-        TF_FLOCK(file.handle(), LOCK_UN); // unlock
+        TF_FLOCK(file.handle(), LOCK_UN);  // unlock
         file.close();
     }
 }
@@ -356,7 +354,7 @@ static void showRunningAppList()
             if (port > 0) {
                 url = QString("http://%1:%2/").arg(QHostInfo::localHostName()).arg(port);
             } else {
-                url  = QLatin1String("unix:");
+                url = QLatin1String("unix:");
                 url += readJsonOfApplication(path)[JSON_UNIX_KEY].toString();
             }
 
@@ -448,7 +446,7 @@ int managerMain(int argc, char *argv[])
 
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
-    for (QStringListIterator i(args); i.hasNext(); ) {
+    for (QStringListIterator i(args); i.hasNext();) {
         const QString &arg = i.next();
         int cmd = options()->value(arg, Invalid);
         switch (cmd) {
@@ -480,7 +478,7 @@ int managerMain(int argc, char *argv[])
                 fprintf(stderr, "Missing signal name\n");
                 return 1;
             }
-            signalCmd = i.next(); // assign a command
+            signalCmd = i.next();  // assign a command
             break;
 
         case AutoReload:
@@ -563,7 +561,7 @@ int managerMain(int argc, char *argv[])
 
     // start daemon process
     if (daemonMode) {
-        if ( !startDaemon() ) {
+        if (!startDaemon()) {
             fprintf(stderr, "Failed to create process\n\n");
             return 1;
         }
@@ -575,7 +573,7 @@ int managerMain(int argc, char *argv[])
 
     for (;;) {
         ServerManager *manager = nullptr;
-        switch ( app.multiProcessingModule() ) {
+        switch (app.multiProcessingModule()) {
         case TWebApplication::Thread:  // FALLTHRU
         case TWebApplication::Epoll: {
             int num = app.maxNumberOfAppServers();
@@ -586,7 +584,8 @@ int managerMain(int argc, char *argv[])
                 tSystemDebug("Max number of app servers: %d", num);
             }
             manager = new ServerManager(num, num, 0, &app);
-            break; }
+            break;
+        }
 
         default:
             tSystemError("Invalid MPM specified");
@@ -625,8 +624,8 @@ int managerMain(int argc, char *argv[])
         pidfile.setFileName(pidFilePath());
         if (pidfile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
             pid = QCoreApplication::applicationPid();
-            QJsonObject json{{JSON_PID_KEY, pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
-            pidfile.write( QJsonDocument(json).toJson(QJsonDocument::Indented) );
+            QJsonObject json {{JSON_PID_KEY, pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
+            pidfile.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
             pidfile.close();
         } else {
             tSystemError("File open failed: %s", qPrintable(pidfile.fileName()));
@@ -656,7 +655,7 @@ int managerMain(int argc, char *argv[])
     return 0;
 }
 
-} // namespace TreeFrog
+}  // namespace TreeFrog
 
 
 int main(int argc, char *argv[])
@@ -665,8 +664,8 @@ int main(int argc, char *argv[])
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-w") == 0) {
             // Windows service mode
-            SERVICE_TABLE_ENTRY entry[] = { { (LPTSTR)TEXT(""), (LPSERVICE_MAIN_FUNCTION)TreeFrog::winServiceMain },
-                                            { nullptr, nullptr } };
+            SERVICE_TABLE_ENTRY entry[] = {{(LPTSTR)TEXT(""), (LPSERVICE_MAIN_FUNCTION)TreeFrog::winServiceMain},
+                {nullptr, nullptr}};
             StartServiceCtrlDispatcher(entry);
             return 0;
         }

@@ -5,21 +5,21 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
-#include <TActionContext>
-#include <TDispatcher>
-#include <TActionController>
 #include "tapplicationserverbase.h"
+#include <QDateTime>
+#include <QDir>
 #include <QLibrary>
 #include <QList>
-#include <QDir>
-#include <QDateTime>
+#include <TActionContext>
+#include <TActionController>
+#include <TDispatcher>
+#include <TWebApplication>
 #ifdef Q_OS_WIN
-# include <winsock2.h>
-# include <ws2tcpip.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 #ifdef Q_OS_UNIX
-# include <tfcore_unix.h>
+#include <tfcore_unix.h>
 #endif
 
 /*!
@@ -29,8 +29,8 @@
 */
 
 namespace {
-    QList<QLibrary*> libsLoaded;
-    QDateTime loadedTimestamp;
+QList<QLibrary *> libsLoaded;
+QDateTime loadedTimestamp;
 }
 
 
@@ -42,7 +42,7 @@ bool TApplicationServerBase::loadLibraries()
     if (libsLoaded.isEmpty()) {
         // Sets work directory
         QString libPath = Tf::app()->libPath();
-        if (! QDir(libPath).exists()) {
+        if (!QDir(libPath).exists()) {
             tSystemError("lib directory not found");
             return false;
         }
@@ -51,9 +51,9 @@ bool TApplicationServerBase::loadLibraries()
         QDir::setCurrent(libPath);
 
 #if defined(Q_OS_WIN)
-        const QStringList libs = { "controller", "view" };
+        const QStringList libs = {"controller", "view"};
 #else
-        const QStringList libs = { "libcontroller", "libview" };
+        const QStringList libs = {"libcontroller", "libview"};
 #endif
 
         for (auto &libname : libs) {
@@ -95,13 +95,13 @@ void TApplicationServerBase::unloadLibraries()
 QDateTime TApplicationServerBase::latestLibraryTimestamp()
 {
 #if defined(Q_OS_WIN)
-    const QStringList libs = { "controller", "model", "view", "helper" };
+    const QStringList libs = {"controller", "model", "view", "helper"};
 #elif defined(Q_OS_LINUX)
-    const QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
+    const QStringList libs = {"libcontroller.so", "libmodel.so", "libview.so", "libhelper.so"};
 #elif defined(Q_OS_DARWIN)
-    const QStringList libs = { "libcontroller.dylib", "libmodel.dylib", "libview.dylib", "libhelper.dylib" };
+    const QStringList libs = {"libcontroller.dylib", "libmodel.dylib", "libview.dylib", "libhelper.dylib"};
 #else
-    const QStringList libs = { "libcontroller.so", "libmodel.so", "libview.so", "libhelper.so" };
+    const QStringList libs = {"libcontroller.so", "libmodel.so", "libview.so", "libhelper.so"};
 #endif
 
     QDateTime ret = QDateTime::fromTime_t(0);
@@ -177,7 +177,8 @@ void TApplicationServerBase::invokeStaticRelease()
 
 
 TApplicationServerBase::TApplicationServerBase()
-{ }
+{
+}
 
 
 TApplicationServerBase::~TApplicationServerBase()

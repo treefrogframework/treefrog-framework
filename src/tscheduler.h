@@ -1,13 +1,12 @@
 #ifndef TSCHEDULER_H
 #define TSCHEDULER_H
 
-#include <TGlobal>
-#include <TDatabaseContextThread>
 #include <QTimer>
+#include <TDatabaseContextThread>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TScheduler : public TDatabaseContextThread
-{
+class T_CORE_EXPORT TScheduler : public TDatabaseContextThread {
     Q_OBJECT
 public:
     TScheduler();
@@ -16,7 +15,7 @@ public:
     void start(int msec);
     void restart();
     void stop();
-    int	interval() const;
+    int interval() const;
     bool isSingleShot() const;
     void setSingleShot(bool singleShot);
     bool autoDelete() const { return _autoDelete; }
@@ -44,4 +43,4 @@ private:
     T_DISABLE_MOVE(TScheduler)
 };
 
-#endif // TSCHEDULER_H
+#endif  // TSCHEDULER_H

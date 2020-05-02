@@ -7,9 +7,9 @@
 
 #include "tredisdriver.h"
 #include "tsystemglobal.h"
-#include <TApplicationServerBase>
 #include <QTcpSocket>
 #include <QThread>
+#include <TApplicationServerBase>
 using namespace Tf;
 
 constexpr int DEFAULT_PORT = 6379;
@@ -43,7 +43,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
         return true;
     }
 
-    if (! _client) {
+    if (!_client) {
         _client = new QTcpSocket();
     }
 

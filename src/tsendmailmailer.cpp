@@ -7,11 +7,11 @@
 
 #include "tsendmailmailer.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
 #include <QMutex>
+#include <TWebApplication>
 
 namespace {
-    QMutex sendMutex;
+QMutex sendMutex;
 }
 
 /*!
@@ -24,7 +24,8 @@ TSendmailMailer::TSendmailMailer(const QString &command, QObject *parent) :
     QObject(parent),
     sendmailCmd(command),
     mailMessage()
-{ }
+{
+}
 
 
 TSendmailMailer::~TSendmailMailer()
@@ -61,7 +62,7 @@ void TSendmailMailer::sendAndDeleteLater()
 
 bool TSendmailMailer::send()
 {
-    QMutexLocker locker(&sendMutex); // Global lock for load reduction of mail server
+    QMutexLocker locker(&sendMutex);  // Global lock for load reduction of mail server
     if (sendmailCmd.isEmpty()) {
         return false;
     }

@@ -7,8 +7,7 @@
 class TSession;
 
 
-class T_CORE_EXPORT TWebSocketSession : public QVariantMap
-{
+class T_CORE_EXPORT TWebSocketSession : public QVariantMap {
 public:
     TWebSocketSession();
     TWebSocketSession(const TWebSocketSession &);
@@ -21,18 +20,19 @@ public:
     void reset();
 
 private:
-    void clear() {} // disabled
+    void clear() { }  // disabled
 };
 
 
+inline TWebSocketSession::TWebSocketSession() :
+    QVariantMap()
+{
+}
 
-inline TWebSocketSession::TWebSocketSession()
-    : QVariantMap()
-{ }
-
-inline TWebSocketSession::TWebSocketSession(const TWebSocketSession &other)
-    : QVariantMap(*static_cast<const QVariantMap *>(&other))
-{ }
+inline TWebSocketSession::TWebSocketSession(const TWebSocketSession &other) :
+    QVariantMap(*static_cast<const QVariantMap *>(&other))
+{
+}
 
 inline TWebSocketSession &TWebSocketSession::operator=(const TWebSocketSession &other)
 {
@@ -60,4 +60,4 @@ inline void TWebSocketSession::reset()
     QVariantMap::clear();
 }
 
-#endif // TWEBSOCKETSESSION_H
+#endif  // TWEBSOCKETSESSION_H

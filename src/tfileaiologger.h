@@ -7,8 +7,7 @@
 class TFileAioWriter;
 
 
-class T_CORE_EXPORT TFileAioLogger : public TLogger
-{
+class T_CORE_EXPORT TFileAioLogger : public TLogger {
 public:
     TFileAioLogger();
     ~TFileAioLogger();
@@ -30,4 +29,4 @@ private:
     T_DISABLE_MOVE(TFileAioLogger)
 };
 
-#endif // TFILEAIOLOGGER_H
+#endif  // TFILEAIOLOGGER_H

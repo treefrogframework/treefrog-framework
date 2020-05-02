@@ -5,22 +5,22 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QTextStream>
-#include <QFile>
-#include <QFileInfo>
-#include <QSettings>
-#include <QDateTime>
-#include <THtmlParser>
 #include "otamaconverter.h"
 #include "otmparser.h"
 #include "viewconverter.h"
+#include <QDateTime>
+#include <QFile>
+#include <QFileInfo>
+#include <QSettings>
+#include <QTextStream>
+#include <THtmlParser>
 
-#define TF_ATTRIBUTE_NAME  QLatin1String("data-tf")
-#define LEFT_DELIM   QString("<% ")
-#define RIGHT_DELIM  QString(" %>")
+#define TF_ATTRIBUTE_NAME QLatin1String("data-tf")
+#define LEFT_DELIM QString("<% ")
+#define RIGHT_DELIM QString(" %>")
 #define RIGHT_DELIM_NO_TRIM QString(" +%>")
-#define DUMMY_LABEL  QLatin1String("@dummy")
-#define DUMMYTAG_LABEL  QLatin1String("@dummytag")
+#define DUMMY_LABEL QLatin1String("@dummy")
+#define DUMMYTAG_LABEL QLatin1String("@dummytag")
 
 QString devIni;
 static QString replaceMarker;
@@ -68,13 +68,15 @@ QString generateErbPhrase(const QString &str, int echoOption)
 }
 
 
-OtamaConverter::OtamaConverter(const QDir &output, const QDir &helpers, const QDir &partial)
-    : erbConverter(output, helpers, partial)
-{ }
+OtamaConverter::OtamaConverter(const QDir &output, const QDir &helpers, const QDir &partial) :
+    erbConverter(output, helpers, partial)
+{
+}
 
 
 OtamaConverter::~OtamaConverter()
-{ }
+{
+}
 
 
 bool OtamaConverter::convert(const QString &filePath, int trimMode) const
@@ -90,7 +92,7 @@ bool OtamaConverter::convert(const QString &filePath, int trimMode) const
     QFileInfo outFileInfo(outFile);
     if (htmlFileInfo.exists() && outFileInfo.exists()) {
         if (outFileInfo.lastModified() > htmlFileInfo.lastModified()
-             && (!otmFileInfo.exists() || outFileInfo.lastModified() > otmFileInfo.lastModified())) {
+            && (!otmFileInfo.exists() || outFileInfo.lastModified() > otmFileInfo.lastModified())) {
             //printf("done    %s\n", qPrintable(outFile.fileName()));
             return true;
         } else {
@@ -133,9 +135,9 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
 
     // Inserts include-header
     QStringList inc = otmParser.includeStrings();
-    for (QListIterator<QString> it(inc); it.hasNext(); ) {
+    for (QListIterator<QString> it(inc); it.hasNext();) {
         THtmlElement &e = htmlParser.insertNewElement(0, 0);
-        e.text  = LEFT_DELIM.trimmed();
+        e.text = LEFT_DELIM.trimmed();
         e.text += it.next();
         e.text += RIGHT_DELIM;
     }
@@ -170,7 +172,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         bool scriptArea = htmlParser.parentExists(i, "script");
 
         // Content assignment
-        val = otmParser.getSrcCode(label, OtmParser::ContentAssignment, &ech); // ~ operator
+        val = otmParser.getSrcCode(label, OtmParser::ContentAssignment, &ech);  // ~ operator
         if (!val.isEmpty()) {
             htmlParser.removeChildElements(i);
             e.text = generateErbPhrase(val, ech);
@@ -179,14 +181,14 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
             if (!vals.isEmpty()) {
                 // Adds block codes
                 QString bak = e.text;
-                e.text  = LEFT_DELIM;
+                e.text = LEFT_DELIM;
                 e.text += vals[0].trimmed();
                 e.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
                 e.text += bak;
                 QString s = vals.value(1).trimmed();
                 if (!s.isEmpty()) {
                     THtmlElement &child = htmlParser.appendNewElement(i);
-                    child.text  = LEFT_DELIM;
+                    child.text = LEFT_DELIM;
                     child.text += s;
                     child.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
                 }
@@ -194,12 +196,12 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         }
 
         // Tag merging
-        val = otmParser.getSrcCode(label, OtmParser::TagMerging, &ech); // |== operator
+        val = otmParser.getSrcCode(label, OtmParser::TagMerging, &ech);  // |== operator
         if (!val.isEmpty()) {
             val.remove(QRegExp(";+$"));
 
             QString attr;
-            attr  = LEFT_DELIM;
+            attr = LEFT_DELIM;
             attr += QLatin1String("do { THtmlParser ___pr = THtmlParser::mergeElements(tr(\"");
             attr += ErbConverter::escapeNewline(e.toString());
             attr += QLatin1String("\"), (");
@@ -216,21 +218,21 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
             attr += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
             e.attributes.clear();
             e.attributes << qMakePair(attr, QString());
-            e.text  = LEFT_DELIM;
+            e.text = LEFT_DELIM;
             e.text += QLatin1String("eh(___pr.at(1).text); ");
             e.text += QLatin1String("echo(___pr.childElementsToString(1)); } while (0);");
             e.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
         }
 
         // Sets attributes
-        val = otmParser.getSrcCode(label, OtmParser::AttributeSet, &ech); // + operator
+        val = otmParser.getSrcCode(label, OtmParser::AttributeSet, &ech);  // + operator
         if (!val.isEmpty()) {
             QString s = generateErbPhrase(val, ech);
             e.setAttribute(s, QString());
         }
 
         // Replaces the element
-        val = otmParser.getSrcCode(label, OtmParser::TagReplacement, &ech); // : operator
+        val = otmParser.getSrcCode(label, OtmParser::TagReplacement, &ech);  // : operator
         if (!val.isEmpty()) {
             // Sets the variable
             htmlParser.removeElementTree(i);
@@ -241,14 +243,14 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
                 // Adds block codes
                 int idx = htmlParser.at(e.parent).children.indexOf(i);
                 THtmlElement &he1 = htmlParser.insertNewElement(e.parent, idx);
-                he1.text  = LEFT_DELIM;
+                he1.text = LEFT_DELIM;
                 he1.text += vals[0].trimmed();
                 he1.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
 
                 QString s = vals.value(1).trimmed();
                 if (!s.isEmpty()) {
                     THtmlElement &he2 = htmlParser.insertNewElement(e.parent, idx + 2);
-                    he2.text  = LEFT_DELIM;
+                    he2.text = LEFT_DELIM;
                     he2.text += s;
                     he2.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
                 }

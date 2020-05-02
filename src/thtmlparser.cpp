@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QRegularExpression>
 #include <THtmlParser>
 #include <THttpUtility>
-#include <QRegularExpression>
 using namespace Tf;
 
 // Regular expression of an HTML tag
@@ -16,7 +16,8 @@ const QRegularExpression WordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>(){};/=\\s]*)");
 
 
 THtmlElement::THtmlElement()
-{ }
+{
+}
 
 
 bool THtmlElement::isEmpty() const
@@ -69,7 +70,7 @@ void THtmlElement::setAttribute(const QString &name, const QString &value)
 
 void THtmlElement::removeAttribute(const QString &name)
 {
-    for (QMutableListIterator<QPair<QString, QString>> i(attributes); i.hasNext(); ) {
+    for (QMutableListIterator<QPair<QString, QString>> i(attributes); i.hasNext();) {
         if (i.next().first == name) {
             i.remove();
         }
@@ -94,8 +95,7 @@ QString THtmlElement::attributesString() const
     if (!tag.isEmpty()) {
         for (int i = 0; i < attributes.count(); ++i) {
             const QPair<QString, QString> &attr = attributes.at(i);
-            if (!attr.first[0].isSpace() && !string.isEmpty() &&
-                !string[string.length() - 1].isSpace()) {
+            if (!attr.first[0].isSpace() && !string.isEmpty() && !string[string.length() - 1].isSpace()) {
                 string += QLatin1Char(' ');
             }
             string += attr.first;
@@ -131,8 +131,8 @@ QString THtmlElement::toString() const
 }
 
 
-THtmlParser::THtmlParser(TrimMode mode)
-    : trimMode(mode), pos(0)
+THtmlParser::THtmlParser(TrimMode mode) :
+    trimMode(mode), pos(0)
 {
     elements.resize(1);
 }
@@ -141,7 +141,7 @@ THtmlParser::THtmlParser(TrimMode mode)
 bool THtmlParser::hasPrefix(const QString &str, int offset) const
 {
     return (pos + offset >= 0 && pos + offset + str.length() - 1 < txt.length()
-            && txt.midRef(pos + offset, str.length()) == str);
+        && txt.midRef(pos + offset, str.length()) == str);
 }
 
 
@@ -158,7 +158,7 @@ bool THtmlParser::isElementClosed(int i) const
     QString tag = n.tag.toLower();
     if (tag == QLatin1String("img") || tag == QLatin1String("hr")
         || tag == QLatin1String("br") || tag == QLatin1String("meta")) {
-        return  true;
+        return true;
     }
 
     return false;
@@ -170,7 +170,7 @@ void THtmlParser::parse(const QString &text)
     elements.clear();
     elements.resize(1);
 
-        // trimming strongly
+    // trimming strongly
     if (trimMode == StrongTrim) {
         txt.resize(0);
         txt.reserve(text.length());
@@ -260,7 +260,7 @@ void THtmlParser::skipWhiteSpace(int *crCount, int *lfCount)
         *lfCount = 0;
 
     QChar c;
-    for ( ; pos < txt.length(); ++pos) {
+    for (; pos < txt.length(); ++pos) {
         c = txt.at(pos);
         if (!c.isSpace()) {
             break;

@@ -11,8 +11,7 @@ extern uint qHash(const TCookie &key);
 #endif
 
 
-class T_CORE_EXPORT TCookieJar : protected QList<TCookie>
-{
+class T_CORE_EXPORT TCookieJar : protected QList<TCookie> {
 public:
     TCookieJar() { }
     TCookieJar(const TCookieJar &jar);
@@ -34,4 +33,4 @@ inline QList<TCookie> TCookieJar::allCookies() const
     return *static_cast<const QList<TCookie> *>(this);
 }
 
-#endif // TCOOKIEJAR_H
+#endif  // TCOOKIEJAR_H

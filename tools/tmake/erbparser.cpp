@@ -42,7 +42,7 @@ void ErbParser::parse(const QString &erb)
     // trimming strongly
     if (trimMode == StrongTrim) {
         erbData.clear();
-        for (auto &line : (const QStringList&)erb.split('\n', QString::SkipEmptyParts)) {
+        for (auto &line : (const QStringList &)erb.split('\n', QString::SkipEmptyParts)) {
             QString trm = THtmlParser::trim(line);
             if (!trm.isEmpty()) {
                 erbData += trm;
@@ -82,7 +82,7 @@ void ErbParser::parse(const QString &erb)
 bool ErbParser::posMatchWith(const QString &str, int offset) const
 {
     return (pos + offset >= 0 && pos + offset + str.length() - 1 < erbData.length()
-            && erbData.midRef(pos + offset, str.length()) == str);
+        && erbData.midRef(pos + offset, str.length()) == str);
 }
 
 
@@ -225,12 +225,12 @@ QPair<QString, QString> ErbParser::parseEndPercentTag()
                 if (c == QLatin1Char('-'))
                     skipWhiteSpacesAndNewLineCode();
 
-            } else if (trimMode == NormalTrim || trimMode == StrongTrim) { // NormalTrim:1
+            } else if (trimMode == NormalTrim || trimMode == StrongTrim) {  // NormalTrim:1
                 if (startTag == QLatin1String("<%") || startTag.startsWith("<%#")) {
                     skipWhiteSpacesAndNewLineCode();
                 }
 
-            } else if (trimMode == TrimOff) { // TrimOff:0
+            } else if (trimMode == TrimOff) {  // TrimOff:0
                 // do not skip whitespaces
             } else {
                 qCritical("Invalid arguments: trim mode: %d", trimMode);

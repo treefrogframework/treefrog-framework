@@ -5,24 +5,27 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <QTcpServer>
-#include <QFile>
-#include <TSystemGlobal>
 #include "tapplicationserverbase.h"
 #include "tfcore_unix.h"
+#include <QFile>
+#include <QTcpServer>
+#include <TSystemGlobal>
+#include <cstring>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/un.h>
+#include <unistd.h>
 
 
 void TApplicationServerBase::nativeSocketInit()
-{ }
+{
+}
 
 
 void TApplicationServerBase::nativeSocketCleanup()
-{ }
+{
+}
 
 /*!
   Listen a port for connections on a socket.
@@ -38,7 +41,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
         return sd;
     }
 
-    sd = duplicateSocket(server.socketDescriptor()); // duplicate
+    sd = duplicateSocket(server.socketDescriptor());  // duplicate
 
     if (flag == CloseOnExec) {
         ::fcntl(sd, F_SETFD, ::fcntl(sd, F_GETFD) | FD_CLOEXEC);
@@ -65,7 +68,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
         tSystemError("too long name for UNIX domain socket  [%s:%d]", __FILE__, __LINE__);
         return sd;
     }
-    strncpy(addr.sun_path, fileDomain.toLatin1().data(), sizeof(addr.sun_path));
+    std::strncpy(addr.sun_path, fileDomain.toLatin1().data(), sizeof(addr.sun_path) - 1);
 
     // create unix domain socket
     sd = ::socket(PF_UNIX, SOCK_STREAM, 0);
@@ -75,7 +78,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     }
 
     if (flag == CloseOnExec) {
-        ::fcntl(sd, F_SETFD, FD_CLOEXEC); // set close-on-exec flag
+        ::fcntl(sd, F_SETFD, FD_CLOEXEC);  // set close-on-exec flag
     }
     ::fcntl(sd, F_SETFL, ::fcntl(sd, F_GETFL) | O_NONBLOCK);  // non-block
 

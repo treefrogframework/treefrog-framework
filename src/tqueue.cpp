@@ -2,7 +2,7 @@
 #include <QThreadStorage>
 
 namespace {
-    QThreadStorage<THazardPtr> hzptrTls;
+QThreadStorage<THazardPtr> hzptrTls;
 }
 
 

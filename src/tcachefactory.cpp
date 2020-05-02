@@ -1,15 +1,15 @@
 #include "tcachefactory.h"
-#include "tcachesqlitestore.h"
 #include "tcachemongostore.h"
 #include "tcacheredisstore.h"
+#include "tcachesqlitestore.h"
 #include "tsystemglobal.h"
-#include <TAppSettings>
 #include <QDir>
+#include <TAppSettings>
 
 namespace {
-    QString SQLITE_CACHE_KEY;
-    QString MONGO_CACHE_KEY;
-    QString REDIS_CACHE_KEY;
+QString SQLITE_CACHE_KEY;
+QString MONGO_CACHE_KEY;
+QString REDIS_CACHE_KEY;
 }
 
 

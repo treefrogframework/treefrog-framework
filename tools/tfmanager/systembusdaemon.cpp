@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "systembusdaemon.h"
+#include <QDataStream>
+#include <QDir>
+#include <QFile>
 #include <QLocalServer>
 #include <QLocalSocket>
-#include <QFile>
-#include <QDir>
-#include <QDataStream>
 #include <TWebApplication>
 #include <tsystembus.h>
-#include "systembusdaemon.h"
 
 static SystemBusDaemon *systemBusDaemon = nullptr;
 static int maxServers = 0;
@@ -25,8 +25,8 @@ static QString unixDomainServerDir()
 }
 #endif
 
-SystemBusDaemon::SystemBusDaemon()
-    : QObject(), localServer(new QLocalServer), socketSet()
+SystemBusDaemon::SystemBusDaemon() :
+    QObject(), localServer(new QLocalServer), socketSet()
 {
     connect(localServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
 }
@@ -77,7 +77,7 @@ void SystemBusDaemon::close()
 void SystemBusDaemon::acceptConnection()
 {
     QLocalSocket *socket;
-    while ( (socket = localServer->nextPendingConnection()) ) {
+    while ((socket = localServer->nextPendingConnection())) {
         tSystemDebug("acceptConnection");
         connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
         connect(socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
@@ -129,7 +129,7 @@ void SystemBusDaemon::readSocket()
                 for (;;) {
                     int len = tfserver->write(buf.data() + wrotelen, length - wrotelen);
                     if (len <= 0) {
-                        tSystemError("PIPE write error  len:%d [%s:%d]", len,  __FILE__, __LINE__);
+                        tSystemError("PIPE write error  len:%d [%s:%d]", len, __FILE__, __LINE__);
                         break;
                     }
 

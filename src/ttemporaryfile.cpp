@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QDir>
+#include <TAppSettings>
 #include <TTemporaryFile>
 #include <TWebApplication>
-#include <TAppSettings>
-#include <QDir>
 
 /*!
   \class TTemporaryFile

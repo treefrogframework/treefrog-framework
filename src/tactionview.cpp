@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TActionView>
-#include <TWebApplication>
-#include <TActionController>
-#include <THttpUtility>
-#include <THtmlAttribute>
-#include <TReactComponent>
 #include "tsystemglobal.h"
 #include <QDir>
 #include <QMutex>
 #include <QMutexLocker>
+#include <TActionController>
+#include <TActionView>
+#include <THtmlAttribute>
+#include <THttpUtility>
+#include <TReactComponent>
+#include <TWebApplication>
 
 /*!
   \class TActionView
@@ -30,7 +30,8 @@ TActionView::TActionView() :
     QObject(),
     TViewHelper(),
     TPrototypeAjaxHelper()
-{ }
+{
+}
 
 /*!
   Returns a content processed by a action.
@@ -58,9 +59,8 @@ QString TActionView::renderPartial(const QString &templateName, const QVariantMa
 */
 QString TActionView::renderReact(const QString &component)
 {
-    QStringList path = { (Tf::app()->publicPath() + "js/components"),
-                         (Tf::app()->publicPath() + "js")
-    };
+    QStringList path = {(Tf::app()->publicPath() + "js/components"),
+        (Tf::app()->publicPath() + "js")};
     return TReactComponent(component, path).renderToString(component);
 }
 

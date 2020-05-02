@@ -1,17 +1,16 @@
 #ifndef TSMTPMAILER_H
 #define TSMTPMAILER_H
 
-#include <QObject>
-#include <QMutex>
-#include <QStringList>
 #include <QByteArray>
+#include <QMutex>
+#include <QObject>
+#include <QStringList>
 #include <TMailMessage>
 
 class QSslSocket;
 class TPopMailer;
 
-class T_CORE_EXPORT TSmtpMailer : public QObject
-{
+class T_CORE_EXPORT TSmtpMailer : public QObject {
     Q_OBJECT
 public:
     enum AuthenticationType {
@@ -59,8 +58,8 @@ protected:
     bool cmdData(const QByteArray &message);
     bool cmdQuit();
 
-    int  cmd(const QByteArray &command, QByteArrayList *reply = nullptr);
-    int  read(QByteArrayList *reply = nullptr);
+    int cmd(const QByteArray &command, QByteArrayList *reply = nullptr);
+    int read(QByteArrayList *reply = nullptr);
     bool write(const QByteArray &command);
 
 private:
@@ -72,7 +71,7 @@ private:
     QString smtpHostName;
     quint16 smtpPort {0};
     TMailMessage mailMessage;
-    QStringList  svrAuthMethods;
+    QStringList svrAuthMethods;
     bool authEnable {false};
     bool tlsEnable {false};
     bool tlsAvailable {false};
@@ -106,4 +105,4 @@ inline void TSmtpMailer::setPassword(const QByteArray &pass)
     password = pass;
 }
 
-#endif // TSMTPMAILER_H
+#endif  // TSMTPMAILER_H

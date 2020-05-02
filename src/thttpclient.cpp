@@ -6,11 +6,11 @@
  */
 
 #include "thttpclient.h"
-#include <QThread>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QJsonDocument>
 #include <QElapsedTimer>
+#include <QJsonDocument>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QThread>
 
 /*!
   \class THttpClient
@@ -20,30 +20,31 @@
 */
 
 namespace {
-    bool waitForReadyRead(QNetworkReply *reply, int msecs)
-    {
-        QEventLoop eventLoop;
-        QElapsedTimer idleTimer;
-        int bytes = 0;
+bool waitForReadyRead(QNetworkReply *reply, int msecs)
+{
+    QEventLoop eventLoop;
+    QElapsedTimer idleTimer;
+    int bytes = 0;
 
-        idleTimer.start();
-        do {
-            if (bytes != reply->bytesAvailable()) {
-                idleTimer.restart();
-                bytes = reply->bytesAvailable();
-            }
+    idleTimer.start();
+    do {
+        if (bytes != reply->bytesAvailable()) {
+            idleTimer.restart();
+            bytes = reply->bytesAvailable();
+        }
 
-            eventLoop.processEvents();
-        } while (!reply->isFinished() && idleTimer.elapsed() < msecs);
+        eventLoop.processEvents();
+    } while (!reply->isFinished() && idleTimer.elapsed() < msecs);
 
-        return reply->isFinished();
-    }
+    return reply->isFinished();
+}
 }
 
 
 THttpClient::THttpClient() :
     _manager(new QNetworkAccessManager(QThread::currentThread()->parent()))
-{ }
+{
+}
 
 
 THttpClient::~THttpClient()
@@ -68,7 +69,7 @@ QNetworkReply *THttpClient::get(const QNetworkRequest &request, int msecs)
 {
     QNetworkReply *reply = _manager->get(request);
 
-    if (! waitForReadyRead(reply, msecs)) {
+    if (!waitForReadyRead(reply, msecs)) {
         reply->readAll();  // clear data
     }
     return reply;
@@ -93,7 +94,7 @@ QNetworkReply *THttpClient::post(const QNetworkRequest &request, const QByteArra
 {
     QNetworkReply *reply = _manager->post(request, data);
 
-    if (! waitForReadyRead(reply, msecs)) {
+    if (!waitForReadyRead(reply, msecs)) {
         reply->readAll();  // clear data
     }
     return reply;
@@ -118,7 +119,7 @@ QNetworkReply *THttpClient::put(const QNetworkRequest &request, const QByteArray
 {
     QNetworkReply *reply = _manager->put(request, data);
 
-    if (! waitForReadyRead(reply, msecs)) {
+    if (!waitForReadyRead(reply, msecs)) {
         reply->readAll();  // clear data
     }
     return reply;
@@ -139,7 +140,7 @@ QNetworkReply *THttpClient::deleteResource(const QNetworkRequest &request, int m
 {
     QNetworkReply *reply = _manager->deleteResource(request);
 
-    if (! waitForReadyRead(reply, msecs)) {
+    if (!waitForReadyRead(reply, msecs)) {
         reply->readAll();  // clear data
     }
     return reply;

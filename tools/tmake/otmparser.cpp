@@ -5,36 +5,37 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QTextStream>
-#include <QRegExp>
-#include <QHash>
 #include "otmparser.h"
+#include <QHash>
+#include <QRegExp>
+#include <QTextStream>
 
-#define INCLUDE_LABEL     QLatin1String("#include")
-#define INIT_LABEL        QLatin1String("#init")
-#define NORMAL_ECHO       QString("==")
-#define ESCAPE_ECHO       QString("=")
-#define EXVAR_ECHO        QString("==$")
+#define INCLUDE_LABEL QLatin1String("#include")
+#define INIT_LABEL QLatin1String("#init")
+#define NORMAL_ECHO QString("==")
+#define ESCAPE_ECHO QString("=")
+#define EXVAR_ECHO QString("==$")
 #define EXVAR_ESCAPE_ECHO QString("=$")
 
 
-class OperatorHash : public QHash<int, QString>
-{
+class OperatorHash : public QHash<int, QString> {
 public:
-    OperatorHash() : QHash<int, QString>()
+    OperatorHash() :
+        QHash<int, QString>()
     {
-        insert(OtmParser::TagReplacement,    ":");
+        insert(OtmParser::TagReplacement, ":");
         insert(OtmParser::ContentAssignment, "~");
-        insert(OtmParser::AttributeSet,      "+");
-        insert(OtmParser::TagMerging,        "|==");
+        insert(OtmParser::AttributeSet, "+");
+        insert(OtmParser::TagMerging, "|==");
     }
 };
 Q_GLOBAL_STATIC(OperatorHash, opHash)
 
 
-OtmParser::OtmParser(const QString &replaceMarker)
-    : repMarker(replaceMarker)
-{ }
+OtmParser::OtmParser(const QString &replaceMarker) :
+    repMarker(replaceMarker)
+{
+}
 
 
 void OtmParser::parse(const QString &text)
@@ -52,7 +53,7 @@ void OtmParser::parse(const QString &text)
             lineCont = false;
             if (!label.isEmpty()) {
                 QString str = value.trimmed();
-                QRegExp rx("[^:~\\+\\|].*"); // anything but ':', '~', '+', '|'
+                QRegExp rx("[^:~\\+\\|].*");  // anything but ':', '~', '+', '|'
                 if (rx.indexIn(str) == 0) {
                     // Regard empty Otama operator as the ':' operator
                     str = QLatin1Char(':') + str;
@@ -69,7 +70,7 @@ void OtmParser::parse(const QString &text)
             value += line;
 
         } else if ((line.startsWith('#') || line.startsWith('@')) && line.length() > 1
-                   && !line.at(1).isSpace()) {
+            && !line.at(1).isSpace()) {
             // search the end of label
             int i = line.indexOf(QRegExp("[^a-zA-Z0-9_]"), 1);
 
@@ -104,9 +105,9 @@ QString OtmParser::getSrcCode(const QString &label, OperatorType op, EchoOption 
     EchoOption opt = None;
 
     QStringList lst = entries.values(label);
-    for (QListIterator<QString> i(lst); i.hasNext(); ) {
+    for (QListIterator<QString> i(lst); i.hasNext();) {
         const QString &s = i.next();
-        QString opstr = opHash()->value(op); // Gets operator string
+        QString opstr = opHash()->value(op);  // Gets operator string
 
         if (!opstr.isEmpty() && s.startsWith(opstr) && !s.contains(repMarker)) {
             code = s.mid(opstr.length());
@@ -129,7 +130,7 @@ QString OtmParser::getSrcCode(const QString &label, OperatorType op, EchoOption 
                     code.remove(0, ESCAPE_ECHO.length());
                 }
             } else {
-                if (code.startsWith('$')) { // |==$ operator
+                if (code.startsWith('$')) {  // |==$ operator
                     opt = ExportVarEcho;
                     code.remove(0, 1);
                 }

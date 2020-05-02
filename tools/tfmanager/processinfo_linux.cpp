@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include <sys/types.h>
-#include <signal.h>
 #include "processinfo.h"
+#include <QtCore>
+#include <signal.h>
+#include <sys/types.h>
 
 namespace TreeFrog {
 
@@ -57,7 +57,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
     QDir proc("/proc");
     QStringList dirs = proc.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
 
-    for (QStringListIterator it(dirs); it.hasNext(); ) {
+    for (QStringListIterator it(dirs); it.hasNext();) {
         const QString &s = it.next();
         qint64 pid = s.toLongLong();
         if (pid > 0) {
@@ -94,4 +94,4 @@ void ProcessInfo::restart()
     }
 }
 
-} // namespace TreeFrog
+}  // namespace TreeFrog

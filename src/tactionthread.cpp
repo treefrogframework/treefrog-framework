@@ -5,25 +5,25 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tfcore.h"
+#include "thttpsocket.h"
+#include "tsessionmanager.h"
+#include "tsystemglobal.h"
+#include "twebsocket.h"
+#include <QCoreApplication>
+#include <QElapsedTimer>
+#include <QEventLoop>
 #include <TActionThread>
-#include <TWebApplication>
+#include <TAppSettings>
+#include <TApplicationServerBase>
 #include <THttpRequest>
 #include <TSession>
-#include <TApplicationServerBase>
-#include <TAppSettings>
-#include "thttpsocket.h"
-#include "twebsocket.h"
-#include "tsystemglobal.h"
-#include "tsessionmanager.h"
-#include "tfcore.h"
-#include <QCoreApplication>
-#include <QEventLoop>
-#include <QElapsedTimer>
+#include <TWebApplication>
 #include <atomic>
 
 namespace {
-    std::atomic<int> threadCounter(0);
-    int keepAliveTimeout = -1;
+std::atomic<int> threadCounter(0);
+int keepAliveTimeout = -1;
 }
 
 
@@ -96,8 +96,10 @@ void TActionThread::run()
 {
     class Counter {
         std::atomic<int> &_num;
+
     public:
-        Counter(std::atomic<int> &n) : _num(n) { _num++; }
+        Counter(std::atomic<int> &n) :
+            _num(n) { _num++; }
         ~Counter() { _num--; }
     };
 
@@ -165,7 +167,7 @@ void TActionThread::run()
                     goto receive_end;
                 }
 
-                while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {}
+                while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) { }
             }
         }
 
@@ -174,7 +176,7 @@ void TActionThread::run()
         tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
         THttpResponseHeader header;
         TActionContext::writeResponse(e.statusCode(), header);
-    }  catch (std::exception &e) {
+    } catch (std::exception &e) {
         tError("Caught Exception: %s", e.what());
         tSystemError("Caught Exception: %s", e.what());
         THttpResponseHeader header;
@@ -186,7 +188,7 @@ receive_end:
 
 socket_cleanup:
     // For cleanup
-    while (eventLoop.processEvents()) {}
+    while (eventLoop.processEvents()) { }
 
 socket_error:
     TActionContext::socketDesc = 0;
@@ -236,7 +238,7 @@ qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body
     if (keepAliveTimeout > 0) {
         header.setRawHeader("Connection", "Keep-Alive");
     }
-    return _httpSocket->write(static_cast<THttpHeader*>(&header), body);
+    return _httpSocket->write(static_cast<THttpHeader *>(&header), body);
 }
 
 

@@ -4,8 +4,7 @@
 #include <TSessionStore>
 
 
-class TSessionSqlObjectStore : public TSessionStore
-{
+class TSessionSqlObjectStore : public TSessionStore {
 public:
     QString key() const { return "sqlobject"; }
     TSession find(const QByteArray &id) override;
@@ -14,4 +13,4 @@ public:
     int gc(const QDateTime &expire) override;
 };
 
-#endif // TSESSIONSQLOBJECTSTORE_H
+#endif  // TSESSIONSQLOBJECTSTORE_H

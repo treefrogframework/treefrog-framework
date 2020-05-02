@@ -7,12 +7,12 @@
 
 #include "tsmtpmailer.h"
 #include "tsystemglobal.h"
+#include <QCoreApplication>
+#include <QDateTime>
+#include <QHostAddress>
+#include <QSslSocket>
 #include <TCryptMac>
 #include <TPopMailer>
-#include <QSslSocket>
-#include <QHostAddress>
-#include <QDateTime>
-#include <QCoreApplication>
 using namespace Tf;
 
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
@@ -27,7 +27,8 @@ using namespace Tf;
 TSmtpMailer::TSmtpMailer(QObject *parent) :
     QObject(parent),
     socket(new QSslSocket())
-{ }
+{
+}
 
 
 TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent) :
@@ -35,13 +36,14 @@ TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent)
     socket(new QSslSocket()),
     smtpHostName(hostName),
     smtpPort(port)
-{ }
+{
+}
 
 
 TSmtpMailer::~TSmtpMailer()
 {
     if (!mailMessage.isEmpty()) {
-//        tSystemWarn("Mail not sent. Deleted it.");
+        //        tSystemWarn("Mail not sent. Deleted it.");
     }
 
     delete pop;
@@ -121,7 +123,7 @@ void TSmtpMailer::sendAndDeleteLater()
 
 bool TSmtpMailer::send()
 {
-    QMutexLocker locker(&sendMutex); // Lock for load reduction of mail server
+    QMutexLocker locker(&sendMutex);  // Lock for load reduction of mail server
 
     if (pop) {
         // POP before SMTP
@@ -130,7 +132,7 @@ bool TSmtpMailer::send()
         pop->connectToHost();
         pop->quit();
 
-        Tf::msleep(100); // sleep
+        Tf::msleep(100);  // sleep
     }
 
     if (smtpHostName.isEmpty() || smtpPort <= 0) {
@@ -242,7 +244,7 @@ bool TSmtpMailer::cmdEhlo()
     }
 
     // Gets AUTH methods
-    for (auto &s : (const QByteArrayList&)reply) {
+    for (auto &s : (const QByteArrayList &)reply) {
         QString str(s);
         if (str.startsWith("AUTH ", Qt::CaseInsensitive)) {
             svrAuthMethods = str.mid(5).split(' ', QString::SkipEmptyParts);

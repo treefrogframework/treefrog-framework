@@ -65,13 +65,13 @@
 
 // If there is no ElfW macro, let's define it by ourself.
 #ifndef ElfW
-# if SIZEOF_VOID_P == 4
-#  define ElfW(type) Elf32_##type
-# elif SIZEOF_VOID_P == 8
-#  define ElfW(type) Elf64_##type
-# else
-#  error "Unknown sizeof(void *)"
-# endif
+#if SIZEOF_VOID_P == 4
+#define ElfW(type) Elf32_##type
+#elif SIZEOF_VOID_P == 8
+#define ElfW(type) Elf64_##type
+#else
+#error "Unknown sizeof(void *)"
+#endif
 #endif
 
 _START_GOOGLE_NAMESPACE_
@@ -79,11 +79,11 @@ _START_GOOGLE_NAMESPACE_
 // Gets the section header for the given name, if it exists. Returns true on
 // success. Otherwise, returns false.
 bool GetSectionHeaderByName(int fd, const char *name, size_t name_len,
-                            ElfW(Shdr) *out);
+    ElfW(Shdr) * out);
 
 _END_GOOGLE_NAMESPACE_
 
-#endif  /* __ELF__ */
+#endif /* __ELF__ */
 
 _START_GOOGLE_NAMESPACE_
 
@@ -95,7 +95,7 @@ _START_GOOGLE_NAMESPACE_
 // and return the size of the output written. On error, the callback
 // function should return -1.
 typedef int (*SymbolizeCallback)(int fd, void *pc, char *out, size_t out_size,
-                                 uint64_t relocation);
+    uint64_t relocation);
 void InstallSymbolizeCallback(SymbolizeCallback callback);
 
 _END_GOOGLE_NAMESPACE_

@@ -5,42 +5,43 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QTextStream>
-#include <QDateTime>
-#include <QFileInfo>
-#include <QSet>
 #include "viewconverter.h"
 #include "erbconverter.h"
 #include "otamaconverter.h"
+#include <QDateTime>
+#include <QFileInfo>
+#include <QSet>
+#include <QTextStream>
 
-#define PROJECT_TEMPLATE                                                \
-    "TARGET = view\n"                                                   \
-    "TEMPLATE = lib\n"                                                  \
-    "CONFIG += shared debug\n"                                          \
-    "QT += network\n"                                                   \
-    "QT -= gui\n"                                                       \
-    "DEFINES += TF_DLL\n"                                               \
-    "INCLUDEPATH += ../../helpers ../../models\n"                       \
-    "DEPENDPATH  += ../../helpers ../../models\n"                       \
-    "DESTDIR = ../../../lib\n"                                          \
-    "LIBS += -L../../../lib -lhelper -lmodel\n"                         \
-    "QMAKE_CLEAN = *.cpp source.list\n\n"                               \
-    "tmake.target = source.list\n"                                      \
+#define PROJECT_TEMPLATE                                                        \
+    "TARGET = view\n"                                                           \
+    "TEMPLATE = lib\n"                                                          \
+    "CONFIG += shared debug\n"                                                  \
+    "QT += network\n"                                                           \
+    "QT -= gui\n"                                                               \
+    "DEFINES += TF_DLL\n"                                                       \
+    "INCLUDEPATH += ../../helpers ../../models\n"                               \
+    "DEPENDPATH  += ../../helpers ../../models\n"                               \
+    "DESTDIR = ../../../lib\n"                                                  \
+    "LIBS += -L../../../lib -lhelper -lmodel\n"                                 \
+    "QMAKE_CLEAN = *.cpp source.list\n\n"                                       \
+    "tmake.target = source.list\n"                                              \
     "tmake.commands = tmake -f ../../../config/application.ini -v .. -d . -P\n" \
-    "tmake.depends = qmake\n"                                           \
-    "QMAKE_EXTRA_TARGETS = tmake\n\n"                                   \
-    "include(../../appbase.pri)\n"                                      \
-    "!exists(source.list) {\n"                                          \
-    "  system( $$tmake.commands )\n"                                    \
-    "}\n"                                                               \
+    "tmake.depends = qmake\n"                                                   \
+    "QMAKE_EXTRA_TARGETS = tmake\n\n"                                           \
+    "include(../../appbase.pri)\n"                                              \
+    "!exists(source.list) {\n"                                                  \
+    "  system( $$tmake.commands )\n"                                            \
+    "}\n"                                                                       \
     "include(source.list)\n"
 
 int defaultTrimMode;
 
 
-ViewConverter::ViewConverter(const QDir &view, const QDir &output, bool projectFile)
-    : viewDir(view), outputDir(output), createProFile(projectFile)
-{ }
+ViewConverter::ViewConverter(const QDir &view, const QDir &output, bool projectFile) :
+    viewDir(view), outputDir(output), createProFile(projectFile)
+{
+}
 
 
 int ViewConverter::convertView(const QString &templateSystem) const
@@ -135,7 +136,7 @@ bool ViewConverter::createSourceList(const QStringList &classNameList, const QSt
         string += QLatin1String(".cpp\n");
     }
 
-    if (! viewFileList.isEmpty()) {
+    if (!viewFileList.isEmpty()) {
         string += QLatin1String("\n# include view files in the project\n");
         for (const auto &v : viewFileList) {
             string += QLatin1String("views.files += ");

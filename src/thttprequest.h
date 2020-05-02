@@ -2,22 +2,21 @@
 #define THTTPREQUEST_H
 
 #include <QByteArray>
-#include <QVariant>
+#include <QHostAddress>
+#include <QJsonDocument>
 #include <QList>
 #include <QPair>
-#include <QHostAddress>
 #include <QSharedData>
-#include <TGlobal>
-#include <TMultipartFormData>
+#include <QVariant>
 #include <TCookieJar>
+#include <TGlobal>
 #include <THttpRequestHeader>
-#include <QJsonDocument>
+#include <TMultipartFormData>
 
 class QIODevice;
 
 
-class T_CORE_EXPORT THttpRequestData : public QSharedData
-{
+class T_CORE_EXPORT THttpRequestData : public QSharedData {
 public:
     THttpRequestData() { }
     THttpRequestData(const THttpRequestData &other);
@@ -33,8 +32,7 @@ public:
 };
 
 
-class T_CORE_EXPORT THttpRequest
-{
+class T_CORE_EXPORT THttpRequest {
 public:
     THttpRequest();
     THttpRequest(const THttpRequest &other);
@@ -100,4 +98,4 @@ private:
 
 Q_DECLARE_METATYPE(THttpRequest)
 
-#endif // THTTPREQUEST_H
+#endif  // THTTPREQUEST_H

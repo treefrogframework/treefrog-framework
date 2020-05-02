@@ -1,15 +1,14 @@
 #ifndef TACCESSLOGSTREAM_H
 #define TACCESSLOGSTREAM_H
 
-#include <QString>
 #include <QByteArray>
+#include <QString>
 #include <TGlobal>
 
 class TLogger;
 
 
-class T_CORE_EXPORT TAccessLogStream
-{
+class T_CORE_EXPORT TAccessLogStream {
 public:
     TAccessLogStream(const QString &fileName);
     ~TAccessLogStream();
@@ -25,4 +24,4 @@ private:
     T_DISABLE_MOVE(TAccessLogStream)
 };
 
-#endif // TACCESSLOGSTREAM_H
+#endif  // TACCESSLOGSTREAM_H

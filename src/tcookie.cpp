@@ -12,19 +12,22 @@ static const QByteArrayList SameSiteValidations = {"strict", "lax", "none"};
 
 TCookie::TCookie(const QByteArray &name, const QByteArray &value) :
     QNetworkCookie(name, value)
-{}
+{
+}
 
 
 TCookie::TCookie(const TCookie &other) :
     QNetworkCookie(other),
     _maxAge(other._maxAge),
     _sameSite(other._sameSite)
-{}
+{
+}
 
 
 TCookie::TCookie(const QNetworkCookie &other) :
     QNetworkCookie(other)
-{}
+{
+}
 
 
 TCookie &TCookie::operator=(const TCookie &other)

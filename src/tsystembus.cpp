@@ -6,17 +6,17 @@
  */
 
 #include "tsystembus.h"
-#include "tsystemglobal.h"
-#include "tprocessinfo.h"
 #include "tfcore.h"
-#include <TWebApplication>
-#include <TApplicationServerBase>
-#include <QMutex>
+#include "tprocessinfo.h"
+#include "tsystemglobal.h"
 #include <QDataStream>
 #include <QLocalSocket>
+#include <QMutex>
 #include <QStringList>
+#include <TApplicationServerBase>
+#include <TWebApplication>
 
-constexpr int  HEADER_LEN = 5;
+constexpr int HEADER_LEN = 5;
 constexpr auto SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";
 
 
@@ -51,7 +51,7 @@ bool TSystemBus::send(const TSystemBusMessage &message)
 {
     QMutexLocker locker(&mutexWrite);
     sendBuffer += message.toByteArray();
-    QMetaObject::invokeMethod(this, "writeBus", Qt::QueuedConnection); // Writes in main thread
+    QMetaObject::invokeMethod(this, "writeBus", Qt::QueuedConnection);  // Writes in main thread
     return true;
 }
 
@@ -185,9 +185,9 @@ QString TSystemBus::connectionName(qint64 pid)
 }
 
 
-
 TSystemBusMessage::TSystemBusMessage()
-{ }
+{
+}
 
 
 TSystemBusMessage::TSystemBusMessage(quint8 op, const QByteArray &d)
@@ -231,7 +231,7 @@ QByteArray TSystemBusMessage::data() const
 
 bool TSystemBusMessage::validate()
 {
-    _valid  = true;
+    _valid = true;
     _valid &= (firstBit() == true);
     _valid &= (rsvBit() == false);
     if (!_valid) {

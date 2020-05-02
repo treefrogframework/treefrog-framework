@@ -6,16 +6,16 @@
  */
 
 #include "tsharedmemorylogstream.h"
-#include <TSystemGlobal>
 #include <QSharedMemory>
+#include <TSystemGlobal>
 
 constexpr auto CREATE_KEY = "TreeFrogLogStream";
 
 
-class TSharedMemoryLocker
-{
+class TSharedMemoryLocker {
 public:
-    TSharedMemoryLocker(QSharedMemory *memory) : sm(memory) { sm->lock(); }
+    TSharedMemoryLocker(QSharedMemory *memory) :
+        sm(memory) { sm->lock(); }
     ~TSharedMemoryLocker() { sm->unlock(); }
 
 private:
@@ -23,9 +23,9 @@ private:
 };
 
 
-TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, int size, QObject *parent)
-    : TAbstractLogStream(loggers, parent),
-      shareMem(new QSharedMemory(CREATE_KEY))
+TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, int size, QObject *parent) :
+    TAbstractLogStream(loggers, parent),
+    shareMem(new QSharedMemory(CREATE_KEY))
 {
     if (size < dataSizeOf(QList<TLog>())) {
         tSystemError("Shared memory size not enough: %d (bytes)", shareMem->size());

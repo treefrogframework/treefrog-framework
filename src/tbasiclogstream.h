@@ -1,13 +1,12 @@
 #ifndef TBASICLOGSTREAM_H
 #define TBASICLOGSTREAM_H
 
-#include <QMutex>
-#include <QBasicTimer>
 #include "tabstractlogstream.h"
+#include <QBasicTimer>
+#include <QMutex>
 
 
-class T_CORE_EXPORT TBasicLogStream : public TAbstractLogStream
-{
+class T_CORE_EXPORT TBasicLogStream : public TAbstractLogStream {
 public:
     TBasicLogStream(const QList<TLogger *> loggers, QObject *parent = 0);
     ~TBasicLogStream();
@@ -27,4 +26,4 @@ private:
     T_DISABLE_MOVE(TBasicLogStream)
 };
 
-#endif // TBASICLOGSTREAM_H
+#endif  // TBASICLOGSTREAM_H

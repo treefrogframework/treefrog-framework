@@ -1,34 +1,33 @@
 #ifndef TSTACK_H
 #define TSTACK_H
 
-#include <TGlobal>
-#include "thazardobject.h"
-#include "thazardptr.h"
 #include "tatomic.h"
 #include "tatomicptr.h"
+#include "thazardobject.h"
+#include "thazardptr.h"
+#include <TGlobal>
 
 
-namespace Tf
-{
-    T_CORE_EXPORT THazardPtr &hazardPtrForStack();
+namespace Tf {
+T_CORE_EXPORT THazardPtr &hazardPtrForStack();
 }
 
 
-template <class T> class TStack
-{
+template <class T>
+class TStack {
 private:
-    struct Node : public THazardObject
-    {
+    struct Node : public THazardObject {
         T value;
         Node *next {nullptr};
-        Node(const T &v) : value(v) { }
+        Node(const T &v) :
+            value(v) { }
     };
 
     TAtomicPtr<Node> stkHead {nullptr};
     TAtomic<int> counter {0};
 
 public:
-    TStack() {}
+    TStack() { }
     void push(const T &val);
     bool pop(T &val);
     bool top(T &val);
@@ -84,4 +83,4 @@ inline bool TStack<T>::top(T &val)
     return (bool)pnode;
 }
 
-#endif // TSTACK_H
+#endif  // TSTACK_H

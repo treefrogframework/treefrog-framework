@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TMongoQuery>
-#include <TMongoDriver>
-#include <TMongoCursor>
-#include <TBson>
 #include <TActionContext>
+#include <TBson>
+#include <TMongoCursor>
+#include <TMongoDriver>
+#include <TMongoQuery>
 #include <TSystemGlobal>
 
 const QString ObjectIdKey("_id");
@@ -26,13 +26,15 @@ const QString ObjectIdKey("_id");
 TMongoQuery::TMongoQuery(const QString &collection) :
     _database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::MongoDB)),
     _collection(collection.trimmed())
-{ }
+{
+}
 
 
 TMongoQuery::TMongoQuery(Tf::KvsEngine engine, const QString &collection) :
     _database(Tf::currentDatabaseContext()->getKvsDatabase(engine)),
     _collection(collection.trimmed())
-{ }
+{
+}
 
 /*!
   Copy constructor.
@@ -42,7 +44,8 @@ TMongoQuery::TMongoQuery(const TMongoQuery &other) :
     _collection(other._collection),
     _queryLimit(other._queryLimit),
     _queryOffset(other._queryOffset)
-{ }
+{
+}
 
 /*!
   Assignment operator.

@@ -2,17 +2,16 @@
 #define THTTPUTILITY_H
 
 #include <QByteArray>
-#include <QStringList>
 #include <QDateTime>
-#include <QVariant>
 #include <QPair>
+#include <QStringList>
+#include <QVariant>
 #include <TGlobal>
 
 class QTextCodec;
 
 
-class T_CORE_EXPORT THttpUtility
-{
+class T_CORE_EXPORT THttpUtility {
 public:
     static QString fromUrlEncoding(const QByteArray &enc);
     static QByteArray toUrlEncoding(const QString &input, const QByteArray &exclude = "-._");
@@ -123,4 +122,4 @@ inline QString THttpUtility::trimmedQuotes(const QString &string)
     return s;
 }
 
-#endif // THTTPUTILITY_H
+#endif  // THTTPUTILITY_H

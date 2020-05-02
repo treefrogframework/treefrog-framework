@@ -4,8 +4,7 @@
 #include <TSqlObject>
 
 
-class TSessionObject : public TSqlObject
-{
+class TSessionObject : public TSqlObject {
 public:
     QString id;
     QString data;
@@ -21,7 +20,7 @@ public:
     int autoValueIndex() const override { return -1; }
     QString tableName() const override { return QLatin1String("session"); }
 
-private:    /*** Don't modify below this line ***/
+private: /*** Don't modify below this line ***/
     Q_OBJECT
     Q_PROPERTY(QString id READ getid WRITE setid)
     T_DEFINE_PROPERTY(QString, id)
@@ -31,4 +30,4 @@ private:    /*** Don't modify below this line ***/
     T_DEFINE_PROPERTY(QDateTime, updated_at)
 };
 
-#endif // TSESSIONOBJECT_H
+#endif  // TSESSIONOBJECT_H

@@ -6,17 +6,17 @@
  */
 
 #include "tcachesqlitestore.h"
-#include "tsystemglobal.h"
 #include "tsqlquery.h"
-#include <TDatabaseContext>
+#include "tsystemglobal.h"
 #include <QByteArray>
 #include <QDateTime>
+#include <TDatabaseContext>
 
 constexpr auto TABLE_NAME = "kb";
-constexpr auto KEY_COLUMN  = "k";
+constexpr auto KEY_COLUMN = "k";
 constexpr auto BLOB_COLUMN = "b";
 constexpr auto TIMESTAMP_COLUMN = "t";
-constexpr int  PAGESIZE = 4096;
+constexpr int PAGESIZE = 4096;
 
 
 inline QSqlError lastError()
@@ -35,7 +35,7 @@ static bool query(const QString &sql)
 {
     TSqlQuery qry(Tf::app()->databaseIdForCache());
     bool ret = qry.exec(sql);
-    if (! ret) {
+    if (!ret) {
         tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastErrorString()), qPrintable(sql), __FILE__, __LINE__);
     }
     return ret;
@@ -52,7 +52,8 @@ bool TCacheSQLiteStore::createTable(const QString &table)
 
 TCacheSQLiteStore::TCacheSQLiteStore(const QByteArray &table) :
     _table(table.isEmpty() ? QString(TABLE_NAME) : QString(table))
-{ }
+{
+}
 
 
 TCacheSQLiteStore::~TCacheSQLiteStore()
@@ -69,7 +70,8 @@ bool TCacheSQLiteStore::open()
 
 
 void TCacheSQLiteStore::close()
-{ }
+{
+}
 
 
 bool TCacheSQLiteStore::isOpen() const

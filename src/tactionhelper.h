@@ -1,24 +1,23 @@
 #ifndef TACTIONHELPER_H
 #define TACTIONHELPER_H
 
-#include <TGlobal>
-#include <QStringList>
 #include <QByteArray>
-#include <QUrl>
 #include <QPair>
+#include <QStringList>
+#include <QUrl>
 #include <QVariant>
+#include <TGlobal>
 
 class TActionController;
 
 
-class T_CORE_EXPORT TActionHelper
-{
+class T_CORE_EXPORT TActionHelper {
 public:
     virtual ~TActionHelper() { }
     QUrl url(const QString &controller = QString(), const QString &action = QString(),
-             const QStringList &args = QStringList(), const QVariantMap &query = QVariantMap()) const;
+        const QStringList &args = QStringList(), const QVariantMap &query = QVariantMap()) const;
     QUrl url(const QString &controller, const QString &action, const QStringList &args,
-             const QString &query) const;
+        const QString &query) const;
     QUrl url(const QString &controller, const QString &action, int arg) const;
     QUrl url(const QString &controller, const QString &action, uint arg) const;
     QUrl url(const QString &controller, const QString &action, qint64 arg) const;
@@ -28,7 +27,7 @@ public:
     QUrl url(const QString &controller, const QString &action, const QVariantMap &query) const;
 
     QUrl urla(const QString &action = QString(), const QStringList &args = QStringList(),
-              const QVariantMap &query = QVariantMap()) const;
+        const QVariantMap &query = QVariantMap()) const;
     QUrl urla(const QString &action, const QStringList &args, const QString &query) const;
     QUrl urla(const QString &action, int arg) const;
     QUrl urla(const QString &action, uint arg) const;
@@ -126,4 +125,4 @@ inline QUrl TActionHelper::urlq(const QString &query) const
     return url(QString(), QString(), QStringList(), query);
 }
 
-#endif // TACTIONHELPER_H
+#endif  // TACTIONHELPER_H

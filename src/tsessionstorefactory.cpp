@@ -6,44 +6,44 @@
  */
 
 #include "tsessionstorefactory.h"
-#include "tsessionsqlobjectstore.h"
 #include "tsessioncookiestore.h"
 #include "tsessionfilestore.h"
-#include "tsessionredisstore.h"
 #include "tsessionmongostore.h"
+#include "tsessionredisstore.h"
+#include "tsessionsqlobjectstore.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
-#include <TSessionStorePlugin>
 #include <QDir>
-#include <QList>
-#include <QPluginLoader>
-#include <QMutex>
-#include <QMutexLocker>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QList>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QPluginLoader>
 #include <QRegularExpression>
+#include <TSessionStorePlugin>
+#include <TWebApplication>
 
 namespace {
-    QString COOKIE_SESSION_KEY;
-    QString SQLOBJECT_SESSION_KEY;
-    QString FILE_SESSION_KEY;
-    QString REDIS_SESSION_KEY;
-    QString MONGODB_SESSION_KEY;
+QString COOKIE_SESSION_KEY;
+QString SQLOBJECT_SESSION_KEY;
+QString FILE_SESSION_KEY;
+QString REDIS_SESSION_KEY;
+QString MONGODB_SESSION_KEY;
 
 
-    void loadKeys()
-    {
-        static bool done = []() {
-            // Constants
-            COOKIE_SESSION_KEY    = TSessionCookieStore().key().toLower();
-            SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
-            FILE_SESSION_KEY      = TSessionFileStore().key().toLower();
-            REDIS_SESSION_KEY     = TSessionRedisStore().key().toLower();
-            MONGODB_SESSION_KEY   = TSessionMongoStore().key().toLower();
-            return true;
-        }();
-        Q_UNUSED(done);
-    }
+void loadKeys()
+{
+    static bool done = []() {
+        // Constants
+        COOKIE_SESSION_KEY = TSessionCookieStore().key().toLower();
+        SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
+        FILE_SESSION_KEY = TSessionFileStore().key().toLower();
+        REDIS_SESSION_KEY = TSessionRedisStore().key().toLower();
+        MONGODB_SESSION_KEY = TSessionMongoStore().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
 }
 
 /*!
@@ -54,10 +54,10 @@ namespace {
 /*!
   Loads session store plugins in the plugin directory and returns a pointer to QMap instance.
 */
-static QMap<QString, TSessionStoreInterface*> *sessionStoreIfMap()
+static QMap<QString, TSessionStoreInterface *> *sessionStoreIfMap()
 {
-    static QMap<QString, TSessionStoreInterface*> *sessIfMap = []() {
-        auto ifMap = new QMap<QString, TSessionStoreInterface*>();
+    static QMap<QString, TSessionStoreInterface *> *sessIfMap = []() {
+        auto ifMap = new QMap<QString, TSessionStoreInterface *>();
 
         QDir dir(Tf::app()->pluginPath());
         const QStringList list = dir.entryList(QDir::Files);
@@ -71,7 +71,7 @@ static QMap<QString, TSessionStoreInterface*> *sessionStoreIfMap()
             }
 
             TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
-            if ( iface ) {
+            if (iface) {
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {
                     QString key = k.toString().toLower();

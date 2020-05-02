@@ -6,14 +6,14 @@
  */
 
 #include "tkvsdatabasepool.h"
+#include "tfnamespace.h"
 #include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
-#include "tfnamespace.h"
-#include <TWebApplication>
-#include <QStringList>
 #include <QDateTime>
 #include <QMap>
+#include <QStringList>
 #include <QThread>
+#include <TWebApplication>
 #include <ctime>
 
 /*!
@@ -24,14 +24,14 @@
 constexpr auto CONN_NAME_FORMAT = "%02dkvs_%d";
 
 
-class KvsEngineHash : public QMap<Tf::KvsEngine, QString>
-{
+class KvsEngineHash : public QMap<Tf::KvsEngine, QString> {
 public:
-    KvsEngineHash() : QMap<Tf::KvsEngine, QString>()
+    KvsEngineHash() :
+        QMap<Tf::KvsEngine, QString>()
     {
         // DriverName, Engine
         insert(Tf::KvsEngine::MongoDB, "mongodb");
-        insert(Tf::KvsEngine::Redis,   "redis");
+        insert(Tf::KvsEngine::Redis, "redis");
 
         if (Tf::app()->isKvsAvailable(Tf::KvsEngine::CacheKvs)) {
             auto backend = Tf::app()->cacheBackend();
@@ -59,8 +59,10 @@ TKvsDatabasePool *TKvsDatabasePool::instance()
 }
 
 
-TKvsDatabasePool::TKvsDatabasePool() : QObject()
-{ }
+TKvsDatabasePool::TKvsDatabasePool() :
+    QObject()
+{
+}
 
 
 TKvsDatabasePool::~TKvsDatabasePool()
@@ -140,7 +142,7 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 {
     TKvsDatabase db;
 
-    if (! Tf::app()->isKvsAvailable(engine)) {
+    if (!Tf::app()->isKvsAvailable(engine)) {
         switch (engine) {
         case Tf::KvsEngine::MongoDB:
             tSystemError("MongoDB not available. Check the settings file.");
@@ -195,7 +197,7 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
                 tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(Tf::app()->databaseEnvironment()), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
                 tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
                 // Executes post-open statements
-                if (! db.postOpenStatements().isEmpty()) {
+                if (!db.postOpenStatements().isEmpty()) {
                     for (QString st : db.postOpenStatements()) {
                         st = st.trimmed();
                         db.command(st);
@@ -292,7 +294,7 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 
             auto &cache = cachedDatabase[e];
             while (lastCachedTime[e].load() < (uint)std::time(nullptr) - 30
-                   && cache.pop(name)) {
+                && cache.pop(name)) {
                 TKvsDatabase::database(name).close();
                 tSystemDebug("Closed KVS database connection, name: %s", qPrintable(name));
                 availableNames[e].push(name);

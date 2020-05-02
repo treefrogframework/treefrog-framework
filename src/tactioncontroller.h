@@ -1,17 +1,17 @@
 #ifndef TACTIONCONTROLLER_H
 #define TACTIONCONTROLLER_H
 
-#include <TGlobal>
+#include <QDomDocument>
+#include <QHostAddress>
+#include <QtCore>
 #include <TAbstractController>
+#include <TAccessValidator>
 #include <TActionHelper>
+#include <TCookieJar>
+#include <TGlobal>
 #include <THttpRequest>
 #include <THttpResponse>
 #include <TSession>
-#include <TCookieJar>
-#include <TAccessValidator>
-#include <QtCore>
-#include <QHostAddress>
-#include <QDomDocument>
 
 class TActionView;
 class TAbstractUser;
@@ -19,8 +19,7 @@ class TFormValidator;
 class TCache;
 
 
-class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator
-{
+class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator {
 public:
     TActionController();
     virtual ~TActionController();
@@ -83,7 +82,7 @@ protected:
     bool renderAndCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
     bool renderOnCache(const QByteArray &key);
     void removeCache(const QByteArray &key);
-    bool renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString()) { return renderAndCache(key, seconds, action, layout); } // TO DELETE
+    bool renderAndStoreInCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString()) { return renderAndCache(key, seconds, action, layout); }  // TO DELETE
     bool renderFromCache(const QByteArray &key) { return renderOnCache(key); }  // TO DELETE
     void removeFromCache(const QByteArray &key) { return removeCache(key); }  // TO DELETE
 #if QT_VERSION >= 0x050c00  // 5.12.0
@@ -139,7 +138,7 @@ private:
     mutable QString ctrlName;
     QString actName;
     QStringList args;
-    int  statCode {Tf::OK};  // 200 OK
+    int statCode {Tf::OK};  // 200 OK
     bool rendered {false};
     bool layoutEnable {true};
     QString layoutName;
@@ -220,4 +219,4 @@ inline void TActionController::setContentType(const QByteArray &type)
     response.header().setContentType(type);
 }
 
-#endif // TACTIONCONTROLLER_H
+#endif  // TACTIONCONTROLLER_H

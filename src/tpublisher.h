@@ -1,17 +1,16 @@
 #ifndef TPUBLISHER_H
 #define TPUBLISHER_H
 
-#include <TGlobal>
+#include <QMap>
 #include <QObject>
 #include <QString>
-#include <QMap>
+#include <TGlobal>
 
 class TAbstractWebSocket;
 class Pub;
 
 
-class T_CORE_EXPORT TPublisher : public QObject
-{
+class T_CORE_EXPORT TPublisher : public QObject {
     Q_OBJECT
 public:
     void subscribe(const QString &topic, bool local, TAbstractWebSocket *socket);
@@ -32,10 +31,10 @@ protected slots:
 
 private:
     TPublisher();
-    QMap<QString, Pub*> pubobj;
+    QMap<QString, Pub *> pubobj;
 
     T_DISABLE_COPY(TPublisher)
     T_DISABLE_MOVE(TPublisher)
 };
 
-#endif // TPUBLISHER_H
+#endif  // TPUBLISHER_H

@@ -20,8 +20,10 @@
 /*!
   Constructor.
 */
-TCriteria::TCriteria() : logiOp(None)
-{ }
+TCriteria::TCriteria() :
+    logiOp(None)
+{
+}
 
 /*!
   Copy constructor.
@@ -30,7 +32,8 @@ TCriteria::TCriteria(const TCriteria &other) :
     cri1(other.cri1),
     cri2(other.cri2),
     logiOp(other.logiOp)
-{ }
+{
+}
 
 /*!
   Constructs a criteria initialized with a WHERE clause to

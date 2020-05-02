@@ -44,26 +44,27 @@ _START_GOOGLE_NAMESPACE_
 // defined, we try the CPU specific logics (we only support x86 and
 // x86_64 for now) first, then use a naive implementation, which has a
 // race condition.
-template<typename T>
-inline T sync_val_compare_and_swap(T* ptr, T oldval, T newval) {
+template <typename T>
+inline T sync_val_compare_and_swap(T *ptr, T oldval, T newval)
+{
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-  T ret;
-  __asm__ __volatile__("lock; cmpxchg %1, (%2);"
-                       :"=a"(ret)
-                        // GCC may produces %sil or %dil for
-                        // constraint "r", but some of apple's gas
-                        // dosn't know the 8 bit registers.
-                        // We use "q" to avoid these registers.
-                       :"q"(newval), "q"(ptr), "a"(oldval)
-                       :"memory", "cc");
-  return ret;
+    T ret;
+    __asm__ __volatile__("lock; cmpxchg %1, (%2);"
+                         : "=a"(ret)
+                         // GCC may produces %sil or %dil for
+                         // constraint "r", but some of apple's gas
+                         // dosn't know the 8 bit registers.
+                         // We use "q" to avoid these registers.
+                         : "q"(newval), "q"(ptr), "a"(oldval)
+                         : "memory", "cc");
+    return ret;
 #else
-  // This has a race condition...
-  T ret = *ptr;
-  if (ret == oldval) {
-    *ptr = newval;
-  }
-  return ret;
+    // This has a race condition...
+    T ret = *ptr;
+    if (ret == oldval) {
+        *ptr = newval;
+    }
+    return ret;
 #endif
 }
 
@@ -84,7 +85,7 @@ inline T sync_val_compare_and_swap(T* ptr, T oldval, T newval) {
 //           ....       ...
 //
 // "result" must not be NULL.
-extern int GetStackTrace(void** result, int max_depth, int skip_count);
+extern int GetStackTrace(void **result, int max_depth, int skip_count);
 
 _END_GOOGLE_NAMESPACE_
 

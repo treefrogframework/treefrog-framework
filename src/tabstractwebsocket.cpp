@@ -5,20 +5,20 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QObject>
-#include <QDataStream>
+#include "tabstractwebsocket.h"
+#include "tdispatcher.h"
+#include "turlroute.h"
+#include "twebsocket.h"
+#include "twebsocketendpoint.h"
+#include "twebsocketframe.h"
 #include <QCryptographicHash>
-#include <TWebApplication>
+#include <QDataStream>
+#include <QObject>
 #include <THttpRequestHeader>
 #include <THttpUtility>
-#include "tabstractwebsocket.h"
-#include "twebsocketframe.h"
-#include "twebsocketendpoint.h"
-#include "turlroute.h"
-#include "tdispatcher.h"
-#include "twebsocket.h"
+#include <TWebApplication>
 #ifdef Q_OS_LINUX
-# include "tepollwebsocket.h"
+#include "tepollwebsocket.h"
 #endif
 
 const QByteArray saltToken = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
@@ -28,7 +28,8 @@ TAbstractWebSocket::TAbstractWebSocket(const THttpRequestHeader &header) :
     reqHeader(header),
     mutexData(QMutex::NonRecursive),
     sessionStore()
-{ }
+{
+}
 
 
 TAbstractWebSocket::~TAbstractWebSocket()
@@ -177,7 +178,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
     }
 
     TWebSocketFrame *pfrm = &websocketFrames().last();
-    quint8  b;
+    quint8 b;
     quint16 w;
     quint32 n;
     quint64 d;
@@ -216,7 +217,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     tSystemError("WebSocket protocol error  [%s:%d]", __FILE__, __LINE__);
                     return -1;
                 }
-                pfrm->setPayloadLength( w );
+                pfrm->setPayloadLength(w);
                 break;
 
             case 127:
@@ -228,11 +229,11 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     tSystemError("WebSocket protocol error  [%s:%d]", __FILE__, __LINE__);
                     return -1;
                 }
-                pfrm->setPayloadLength( d );
+                pfrm->setPayloadLength(d);
                 break;
 
             default:
-                pfrm->setPayloadLength( len );
+                pfrm->setPayloadLength(len);
                 break;
             }
 
@@ -242,7 +243,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     goto parse_end;
                 }
                 dshdr >> n;
-                pfrm->setMaskKey( n );
+                pfrm->setMaskKey(n);
             }
 
             if (pfrm->payloadLength() == 0) {
@@ -262,7 +263,8 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
 
             int hdrlen = hdr.length() - devhdr->bytesAvailable();
             ds.skipRawData(hdrlen);  // Forwards the pos
-            break; }
+            break;
+        }
 
         case TWebSocketFrame::HeaderParsed:  // fall through
         case TWebSocketFrame::MoreData: {
@@ -279,10 +281,10 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
 
             if (pfrm->maskKey()) {
                 // Unmask
-                const quint8 mask[4] = { quint8((pfrm->maskKey() & 0xFF000000) >> 24),
-                                         quint8((pfrm->maskKey() & 0x00FF0000) >> 16),
-                                         quint8((pfrm->maskKey() & 0x0000FF00) >> 8),
-                                         quint8((pfrm->maskKey() & 0x000000FF)) };
+                const quint8 mask[4] = {quint8((pfrm->maskKey() & 0xFF000000) >> 24),
+                    quint8((pfrm->maskKey() & 0x00FF0000) >> 16),
+                    quint8((pfrm->maskKey() & 0x0000FF00) >> 8),
+                    quint8((pfrm->maskKey() & 0x000000FF))};
 
                 int i = pfrm->payload().size();
                 const char *end = p + size;
@@ -290,7 +292,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                     *p++ ^= mask[i++ % 4];
                 }
             }
-            pfrm->payload().resize( pfrm->payload().size() + size );
+            pfrm->payload().resize(pfrm->payload().size() + size);
             tSystemDebug("WebSocket payload curent buf len: %d", pfrm->payload().length());
 
             if ((quint64)pfrm->payload().size() == pfrm->payloadLength()) {
@@ -300,7 +302,8 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                 pfrm->setState(TWebSocketFrame::MoreData);
                 tSystemDebug("Parse MoreData   payload len: %d", pfrm->payload().size());
             }
-            break; }
+            break;
+        }
 
         case TWebSocketFrame::Completed:  // fall through
         default:
@@ -367,7 +370,8 @@ void TAbstractWebSocket::sendHandshakeResponse()
     response.setRawHeader("Connection", "Upgrade");
 
     QByteArray secAccept = QCryptographicHash::hash(reqHeader.rawHeader("Sec-WebSocket-Key").trimmed() + saltToken,
-                                                    QCryptographicHash::Sha1).toBase64();
+        QCryptographicHash::Sha1)
+                               .toBase64();
     response.setRawHeader("Sec-WebSocket-Accept", secAccept);
 
     writeRawData(response.toByteArray());
@@ -378,7 +382,7 @@ TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(int sid)
 {
     TAbstractWebSocket *sock = nullptr;
 
-    switch ( Tf::app()->multiProcessingModule() ) {
+    switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread:
         sock = TWebSocket::searchSocket(sid);
         break;
@@ -389,7 +393,8 @@ TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(int sid)
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
-        break; }
+        break;
+    }
 
     default:
         break;

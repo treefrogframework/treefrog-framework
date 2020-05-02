@@ -5,13 +5,13 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TViewHelper>
-#include <TWebApplication>
-#include <TAppSettings>
-#include <TActionView>
-#include <THttpUtility>
 #include <QFileInfo>
 #include <QRegExp>
+#include <TActionView>
+#include <TAppSettings>
+#include <THttpUtility>
+#include <TViewHelper>
+#include <TWebApplication>
 
 
 /*!
@@ -78,8 +78,8 @@ QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod
   \a url in a popup window  with the name \a windowName.
 */
 QString TViewHelper::linkToPopup(const QString &text, const QUrl &url, const QString &windowName,
-                                 const QSize &size, const QPoint &topLeft, const QString &windowStyle,
-                                 const QString &jsCondition, const THtmlAttribute &attributes) const
+    const QSize &size, const QPoint &topLeft, const QString &windowStyle,
+    const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     QString string("<a href=\"");
     string.append(url.toString()).append("\"");
@@ -125,7 +125,7 @@ QString TViewHelper::linkToPopup(const QString &text, const QUrl &url, const QSt
   Creates a \<a\> link tag whose onclick handler triggers the passed JavaScript.
 */
 QString TViewHelper::linkToFunction(const QString &text, const QString &function,
-                                    const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     QString string("<a href=\"#\" onclick=\"");
     QString func = function.trimmed();
@@ -146,7 +146,7 @@ QString TViewHelper::linkToFunction(const QString &text, const QString &function
   the passed JavaScript.
 */
 QString TViewHelper::buttonToFunction(const QString &text, const QString &function,
-                                      const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     QString onclick = function.trimmed();
     if (!onclick.isEmpty() && !onclick.endsWith(";")) {
@@ -166,7 +166,7 @@ QString TViewHelper::buttonToFunction(const QString &text, const QString &functi
   this function creates a form tag of multipart/form-data.
 */
 QString TViewHelper::formTag(const QUrl &url, Tf::HttpMethod method, bool multipart,
-                             const THtmlAttribute &attributes)
+    const THtmlAttribute &attributes)
 {
     QString string;
     string.append("<form action=\"").append(url.toString()).append("\"");
@@ -217,7 +217,7 @@ QString TViewHelper::allEndTags()
   value=\a "value".
 */
 QString TViewHelper::inputTag(const QString &type, const QString &name, const QVariant &value,
-                              const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (!value.isNull()) {
@@ -282,7 +282,7 @@ QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, 
   If the \a checkedValue parameter is equal to the \a value parameter, this radio button is checked.
 */
 QString TViewHelper::radioButtonTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
-                                    const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return radioButtonTag(name, value, (!value.toString().isEmpty() && value == checkedValue), attributes);
 }
@@ -306,7 +306,7 @@ QString TViewHelper::selectTag(const QString &name, int size, bool multiple, con
   Creates a option tag for a select tag;
  */
 QString TViewHelper::optionTag(const QString &text, const QVariant &value, bool selected,
-                               const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     QString ret;
     THtmlAttribute attr = attributes;
@@ -445,8 +445,8 @@ QString TViewHelper::resetTag(const QString &value, const THtmlAttribute &attrib
   it must exist in the public/images directory.
 */
 QString TViewHelper::imageTag(const QString &src, const QSize &size,
-                              const QString &alt,
-                              const THtmlAttribute &attributes) const
+    const QString &alt,
+    const THtmlAttribute &attributes) const
 {
     return imageTag(src, false, size, alt, attributes);
 }
@@ -459,8 +459,8 @@ QString TViewHelper::imageTag(const QString &src, const QSize &size,
   parameter.
 */
 QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
-                              const QSize &size, const QString &alt,
-                              const THtmlAttribute &attributes) const
+    const QSize &size, const QString &alt,
+    const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (!alt.isEmpty()) {
@@ -482,8 +482,8 @@ QString TViewHelper::imageTag(const QString &src, bool withTimestamp,
 
 
 QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString &mediaType,
-                                    const QSize &size, const QString &alt,
-                                    const THtmlAttribute &attributes) const
+    const QSize &size, const QString &alt,
+    const THtmlAttribute &attributes) const
 {
     QByteArray data;
     QFile img(file.absoluteFilePath());
@@ -496,8 +496,8 @@ QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString &mediaT
 
 
 QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &mediaType,
-                                    const QSize &size, const QString &alt,
-                                    const THtmlAttribute &attributes) const
+    const QSize &size, const QString &alt,
+    const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
     if (!alt.isEmpty()) {

@@ -7,9 +7,9 @@
 
 #include "thttputility.h"
 #include "tsystemglobal.h"
+#include <QLocale>
 #include <QMap>
 #include <QTextCodec>
-#include <QLocale>
 #include <QUrl>
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
@@ -20,10 +20,10 @@
 constexpr auto HTTP_DATE_TIME_FORMAT = "ddd, d MMM yyyy hh:mm:ss";
 
 
-class ReasonPhrase : public QMap<int, QByteArray>
-{
+class ReasonPhrase : public QMap<int, QByteArray> {
 public:
-    ReasonPhrase() : QMap<int, QByteArray>()
+    ReasonPhrase() :
+        QMap<int, QByteArray>()
     {
         // Informational 1xx
         insert(Tf::Continue, "Continue");
@@ -348,15 +348,15 @@ QByteArray THttpUtility::timeZone()
 #elif defined(Q_OS_UNIX)
     time_t ltime = 0;
     tm *t = 0;
-# if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
+#if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
     tzset();
     tm res;
     t = localtime_r(&ltime, &res);
-# else
+#else
     t = localtime(&ltime);
-# endif // _POSIX_THREAD_SAFE_FUNCTIONS
+#endif  // _POSIX_THREAD_SAFE_FUNCTIONS
     offset = t->tm_gmtoff / 60;
-#endif // Q_OS_UNIX
+#endif  // Q_OS_UNIX
 
     QByteArray tz;
     tz += (offset > 0) ? '+' : '-';
@@ -430,8 +430,8 @@ QDateTime THttpUtility::fromHttpDateTimeUTCString(const QByteArray &utc)
 
 QByteArray THttpUtility::getUTCTimeString()
 {
-    static const char *DAY[] = { "Sun, ", "Mon, ", "Tue, ", "Wed, ", "Thu, ", "Fri, ", "Sat, " };
-    static const char *MONTH[] = { "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec " };
+    static const char *DAY[] = {"Sun, ", "Mon, ", "Tue, ", "Wed, ", "Thu, ", "Fri, ", "Sat, "};
+    static const char *MONTH[] = {"Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec "};
 
     QByteArray utcTime;
 
@@ -455,13 +455,13 @@ QByteArray THttpUtility::getUTCTimeString()
     time_t gtime = 0;
     tm *t = 0;
     time(&gtime);
-# if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
+#if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
     tzset();
     tm res;
     t = gmtime_r(&gtime, &res);
-# else
+#else
     t = gmtime(&gtime);
-# endif // _POSIX_THREAD_SAFE_FUNCTIONS
+#endif  // _POSIX_THREAD_SAFE_FUNCTIONS
     utcTime += DAY[t->tm_wday];
     utcTime += QByteArray::number(t->tm_mday).rightJustified(2, '0');
     utcTime += ' ';
@@ -474,8 +474,7 @@ QByteArray THttpUtility::getUTCTimeString()
     utcTime += ':';
     utcTime += QByteArray::number(t->tm_sec).rightJustified(2, '0');
     utcTime += " GMT";
-#endif // Q_OS_UNIX
+#endif  // Q_OS_UNIX
 
     return utcTime;
 }
-

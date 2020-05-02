@@ -2,27 +2,28 @@
 #define TFCORE_H
 
 #include <QtGlobal>
-#include <cstdio>
+#include <cstring>
 #include <cerrno>
+#include <cstdio>
 #ifdef Q_OS_WIN
-# include <windows.h>
-# include <io.h>
-# include <winbase.h>
+#include <io.h>
+#include <winbase.h>
+#include <windows.h>
 #else
-# include <unistd.h>
-# include <fcntl.h>
-# include <sys/file.h>
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <poll.h>
+#include <fcntl.h>
+#include <poll.h>
+#include <sys/file.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
-#define TF_EINTR_LOOP(func)                       \
-    int ret;                                      \
-    do {                                          \
-        errno = 0;                                \
-        ret = (func);                             \
-    } while (ret < 0 && errno == EINTR);          \
+#define TF_EINTR_LOOP(func)              \
+    int ret;                             \
+    do {                                 \
+        errno = 0;                       \
+        ret = (func);                    \
+    } while (ret < 0 && errno == EINTR); \
     return ret;
 
 
@@ -151,11 +152,11 @@ inline int tf_fileno(FILE *stream)
 #endif
 }
 
-} // namespace
+}  // namespace
 
 
 #ifdef Q_OS_UNIX
-# include "tfcore_unix.h"
+#include "tfcore_unix.h"
 #endif
 
-#endif // TFCORE_H
+#endif  // TFCORE_H

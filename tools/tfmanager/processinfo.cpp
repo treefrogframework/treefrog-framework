@@ -5,16 +5,17 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "processinfo.h"
 #include <QtCore>
 #include <TGlobal>
-#include "processinfo.h"
 
 namespace TreeFrog {
 
 
-ProcessInfo::ProcessInfo(qint64 pid)
-    : processId(pid)
-{ }
+ProcessInfo::ProcessInfo(qint64 pid) :
+    processId(pid)
+{
+}
 
 
 bool ProcessInfo::waitForTerminated(int msecs)
@@ -85,4 +86,4 @@ QList<qint64> ProcessInfo::pidsOf(const QString &processName)
 }
 
 
-} // namespace TreeFrog
+}  // namespace TreeFrog

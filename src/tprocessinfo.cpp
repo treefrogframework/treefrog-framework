@@ -6,12 +6,14 @@
  */
 
 #include "tprocessinfo.h"
-#include <TGlobal>
 #include <QtCore>
+#include <TGlobal>
 
 
-TProcessInfo::TProcessInfo(qint64 pid) : processId(pid)
-{ }
+TProcessInfo::TProcessInfo(qint64 pid) :
+    processId(pid)
+{
+}
 
 
 bool TProcessInfo::waitForTerminated(int msecs)
@@ -61,7 +63,7 @@ void TProcessInfo::kill(qint64 ppid)
 
 void TProcessInfo::kill(QList<qint64> pids)
 {
-    for (qint64 pid : (const QList<qint64>&)pids) {
+    for (qint64 pid : (const QList<qint64> &)pids) {
         TProcessInfo(pid).kill();
     }
 }

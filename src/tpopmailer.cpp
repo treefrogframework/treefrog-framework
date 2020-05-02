@@ -7,8 +7,8 @@
 
 #include "tpopmailer.h"
 #include "tsystemglobal.h"
-#include <QTcpSocket>
 #include <QCryptographicHash>
+#include <QTcpSocket>
 using namespace Tf;
 
 /*!
@@ -20,7 +20,8 @@ using namespace Tf;
 TPopMailer::TPopMailer(QObject *parent) :
     QObject(parent),
     socket(new QTcpSocket)
-{ }
+{
+}
 
 
 TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent) :
@@ -28,7 +29,8 @@ TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent) :
     socket(new QTcpSocket),
     popHostName(hostName),
     popPort(port)
-{ }
+{
+}
 
 
 TPopMailer::~TPopMailer()
@@ -69,7 +71,8 @@ bool TPopMailer::connectToHost()
         tSystemError("POP server connect error: %s", qPrintable(socket->errorString()));
         return ret;
     }
-    tSystemDebug("POP server connected: %s:%d", qPrintable(popHostName), popPort);;
+    tSystemDebug("POP server connected: %s:%d", qPrintable(popHostName), popPort);
+    ;
 
     QByteArray response;
     readResponse(&response);
@@ -221,4 +224,3 @@ bool TPopMailer::readResponse(QByteArray *reply)
     }
     return ret;
 }
-

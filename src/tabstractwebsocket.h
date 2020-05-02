@@ -1,22 +1,21 @@
 #ifndef TABSTRACTWEBSOCKET_H
 #define TABSTRACTWEBSOCKET_H
 
-#include <QList>
-#include <QByteArray>
-#include <QMutex>
-#include <TGlobal>
-#include <TWebSocketSession>
-#include <THttpRequestHeader>
 #include "tatomic.h"
 #include "tbasictimer.h"
+#include <QByteArray>
+#include <QList>
+#include <QMutex>
+#include <TGlobal>
+#include <THttpRequestHeader>
+#include <TWebSocketSession>
 
 class QObject;
 class THttpResponseHeader;
 class TWebSocketFrame;
 
 
-class T_CORE_EXPORT TAbstractWebSocket
-{
+class T_CORE_EXPORT TAbstractWebSocket {
 public:
     TAbstractWebSocket(const THttpRequestHeader &header);
     virtual ~TAbstractWebSocket();
@@ -56,4 +55,4 @@ protected:
     T_DISABLE_MOVE(TAbstractWebSocket)
 };
 
-#endif // TABSTRACTWEBSOCKET_H
+#endif  // TABSTRACTWEBSOCKET_H

@@ -1,16 +1,15 @@
 #ifndef TMONGOQUERY_H
 #define TMONGOQUERY_H
 
-#include <QVariant>
 #include <QStringList>
+#include <QVariant>
 #include <TGlobal>
 #include <TKvsDatabase>
 
 class TMongoDriver;
 
 
-class T_CORE_EXPORT TMongoQuery
-{
+class T_CORE_EXPORT TMongoQuery {
 public:
     TMongoQuery(const QString &collection);
     TMongoQuery(const TMongoQuery &other);
@@ -76,4 +75,4 @@ inline void TMongoQuery::setOffset(int offset)
     _queryOffset = offset;
 }
 
-#endif // TMONGOQUERY_H
+#endif  // TMONGOQUERY_H

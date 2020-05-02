@@ -1,14 +1,13 @@
 #ifndef TCACHEREDISSTORE_H
 #define TCACHEREDISSTORE_H
 
-#include <TGlobal>
 #include "tcachestore.h"
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TCacheRedisStore : public TCacheStore
-{
+class T_CORE_EXPORT TCacheRedisStore : public TCacheStore {
 public:
-    virtual ~TCacheRedisStore() {}
+    virtual ~TCacheRedisStore() { }
 
     QString key() const override { return QLatin1String("redis"); }
     DbType dbType() const override { return KVS; }
@@ -28,4 +27,4 @@ protected:
     friend class TCacheFactory;
 };
 
-#endif // TCACHEREDISSTORE_H
+#endif  // TCACHEREDISSTORE_H

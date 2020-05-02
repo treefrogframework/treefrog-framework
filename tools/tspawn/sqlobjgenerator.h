@@ -1,16 +1,15 @@
 #ifndef SQLOBJGENERATOR_H
 #define SQLOBJGENERATOR_H
 
-#include <QStringList>
+#include "abstractobjgenerator.h"
 #include <QDir>
 #include <QPair>
-#include "abstractobjgenerator.h"
+#include <QStringList>
 
 class TableSchema;
 
 
-class SqlObjGenerator : public AbstractObjGenerator
-{
+class SqlObjGenerator : public AbstractObjGenerator {
 public:
     SqlObjGenerator(const QString &model, const QString &table);
     ~SqlObjGenerator();
@@ -26,4 +25,4 @@ private:
     TableSchema *tableSch {nullptr};
 };
 
-#endif // SQLOBJGENERATOR_H
+#endif  // SQLOBJGENERATOR_H

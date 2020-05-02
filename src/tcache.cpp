@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TCache>
-#include <TWebApplication>
-#include <TAppSettings>
 #include "tcachefactory.h"
 #include "tcachestore.h"
+#include <TAppSettings>
+#include <TCache>
+#include <TWebApplication>
 
 /*!
   \class TCache
@@ -24,7 +24,7 @@ TCache::TCache()
     if (Tf::app()->cacheEnabled()) {
         _cache = TCacheFactory::create(Tf::app()->cacheBackend());
         if (_cache) {
-            if (! _cache->open()) {
+            if (!_cache->open()) {
                 tError() << "Failed to open cache. Check the settings of cache.ini.";
                 TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
                 _cache = nullptr;

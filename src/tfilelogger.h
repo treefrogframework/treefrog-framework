@@ -6,8 +6,7 @@
 #include <TLogger>
 
 
-class T_CORE_EXPORT TFileLogger : public TLogger
-{
+class T_CORE_EXPORT TFileLogger : public TLogger {
 public:
     TFileLogger();
     ~TFileLogger();
@@ -27,4 +26,4 @@ private:
     QMutex mutex;
 };
 
-#endif // TFILELOGGER_H
+#endif  // TFILELOGGER_H

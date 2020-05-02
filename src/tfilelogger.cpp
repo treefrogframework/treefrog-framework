@@ -6,15 +6,16 @@
  */
 
 #include "tfilelogger.h"
-#include <TSystemGlobal>
 #include <QMutexLocker>
+#include <TSystemGlobal>
 
 /*!
   \class TFileLogger
   \brief The TFileLogger class provides logging functionality to a log file.
 */
 
-TFileLogger::TFileLogger() : TLogger()
+TFileLogger::TFileLogger() :
+    TLogger()
 {
     logFile.setFileName(target());
 }
@@ -70,7 +71,7 @@ void TFileLogger::log(const TLog &tlog)
 
 void TFileLogger::log(const QByteArray &msg)
 {
-    if (! isOpen()) {
+    if (!isOpen()) {
         return;
     }
 

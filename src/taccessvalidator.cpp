@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TAccessValidator>
 #include <TAbstractUser>
+#include <TAccessValidator>
 #include <TActionContext>
 #include <TActionController>
 #include <TSystemGlobal>
@@ -22,7 +22,8 @@
   Constructor.
 */
 TAccessValidator::TAccessValidator()
-{ }
+{
+}
 
 /*!
   Sets to allow a group with \a groupKey to access to the action \a action.

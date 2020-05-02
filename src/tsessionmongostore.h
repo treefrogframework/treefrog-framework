@@ -4,8 +4,7 @@
 #include <TSessionStore>
 
 
-class TSessionMongoStore : public TSessionStore
-{
+class TSessionMongoStore : public TSessionStore {
 public:
     QString key() const { return "mongodb"; }
     TSession find(const QByteArray &id) override;
@@ -14,4 +13,4 @@ public:
     int gc(const QDateTime &expire) override;
 };
 
-#endif // TSESSIONMONGOSTORE_H
+#endif  // TSESSIONMONGOSTORE_H

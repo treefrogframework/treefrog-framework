@@ -8,74 +8,74 @@
 #include "tloggerfactory.h"
 #include "tfilelogger.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
-#include <TLoggerPlugin>
 #include <QDir>
-#include <QList>
-#include <QPluginLoader>
-#include <QMutex>
-#include <QMutexLocker>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QList>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QPluginLoader>
+#include <TLoggerPlugin>
+#include <TWebApplication>
 
 namespace {
-    void cleanup();
-    QString FILE_LOGGER_KEY;
+void cleanup();
+QString FILE_LOGGER_KEY;
 
 
-    void loadKeys()
-    {
-        static bool done = []() {
-            // Constants
-            FILE_LOGGER_KEY = TFileLogger().key().toLower();
-            return true;
-        }();
-        Q_UNUSED(done);
-    }
+void loadKeys()
+{
+    static bool done = []() {
+        // Constants
+        FILE_LOGGER_KEY = TFileLogger().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
 
 
-    QMap<QString, TLoggerInterface*> *loggerIfMap()
-    {
-        static QMap<QString, TLoggerInterface*> *lggIfMap = []() {
-            auto lggIfMap = new QMap<QString, TLoggerInterface*>();
-            qAddPostRoutine(cleanup);
+QMap<QString, TLoggerInterface *> *loggerIfMap()
+{
+    static QMap<QString, TLoggerInterface *> *lggIfMap = []() {
+        auto lggIfMap = new QMap<QString, TLoggerInterface *>();
+        qAddPostRoutine(cleanup);
 
-            QDir dir(Tf::app()->pluginPath());
-            const QStringList lst = dir.entryList(QDir::Files);
-            for (auto &plg : lst) {
-                QPluginLoader loader(dir.absoluteFilePath(plg));
-                tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
-                if (!loader.load()) {
-                    tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
-                    continue;
-                }
+        QDir dir(Tf::app()->pluginPath());
+        const QStringList lst = dir.entryList(QDir::Files);
+        for (auto &plg : lst) {
+            QPluginLoader loader(dir.absoluteFilePath(plg));
+            tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
+            if (!loader.load()) {
+                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
+                continue;
+            }
 
-                TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
-                if ( iface ) {
-                    const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
-                    for (auto &k : array) {
-                        QString key = k.toString().toLower();
-                        tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
-                        lggIfMap->insert(key, iface);
-                    }
+            TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
+            if (iface) {
+                const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
+                for (auto &k : array) {
+                    QString key = k.toString().toLower();
+                    tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
+                    lggIfMap->insert(key, iface);
                 }
             }
-            return lggIfMap;
-        }();
-        return lggIfMap;
-    }
-
-
-    void cleanup()
-    {
-        auto lggIfMap = loggerIfMap();
-        if (lggIfMap) {
-            for (auto it = lggIfMap->begin(); it != lggIfMap->end(); ++it) {
-                delete it.value();
-            }
-            delete lggIfMap;
         }
+        return lggIfMap;
+    }();
+    return lggIfMap;
+}
+
+
+void cleanup()
+{
+    auto lggIfMap = loggerIfMap();
+    if (lggIfMap) {
+        for (auto it = lggIfMap->begin(); it != lggIfMap->end(); ++it) {
+            delete it.value();
+        }
+        delete lggIfMap;
     }
+}
 }
 
 /*!

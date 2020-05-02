@@ -20,22 +20,22 @@ typedef struct
 } aiobuf_t;
 
 
-class TFileAioWriterData
-{
+class TFileAioWriterData {
 public:
     mutable QMutex mutex;
     QString fileName;
     HANDLE fileHandle;
     QList<aiobuf_t *> syncBuffer;
 
-    TFileAioWriterData() : mutex(QMutex::Recursive), fileName(), fileHandle(INVALID_HANDLE_VALUE), syncBuffer() { }
+    TFileAioWriterData() :
+        mutex(QMutex::Recursive), fileName(), fileHandle(INVALID_HANDLE_VALUE), syncBuffer() { }
     void clearSyncBuffer();
 };
 
 void TFileAioWriterData::clearSyncBuffer()
 {
     for (auto ab : (const QList<aiobuf_t *> &)syncBuffer) {
-        delete[] (char *)ab->aio_buf;
+        delete[](char *) ab->aio_buf;
         delete ab;
     }
     syncBuffer.clear();
@@ -66,7 +66,7 @@ bool TFileAioWriter::open()
         if (d->fileName.isEmpty())
             return false;
 
-        d->fileHandle = CreateFile((const wchar_t*)d->fileName.utf16(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_FLAG_OVERLAPPED, nullptr);
+        d->fileHandle = CreateFile((const wchar_t *)d->fileName.utf16(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_FLAG_OVERLAPPED, nullptr);
         if (d->fileHandle == INVALID_HANDLE_VALUE) {
             //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
         }
@@ -137,7 +137,7 @@ int TFileAioWriter::write(const char *data, int length)
     BOOL res = WriteFile(d->fileHandle, ab->aio_buf, (DWORD)len, nullptr, &ab->aio_overlap);
     if (!res && GetLastError() != ERROR_IO_PENDING) {
         //fprintf(stderr, "WriteFile error str: %s\n", data);
-        delete[] (char *)ab->aio_buf;
+        delete[](char *) ab->aio_buf;
         delete ab;
 
         close();

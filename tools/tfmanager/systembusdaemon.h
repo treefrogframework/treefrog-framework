@@ -9,8 +9,7 @@ class QLocalServer;
 class QLocalSocket;
 
 
-class SystemBusDaemon : QObject
-{
+class SystemBusDaemon : QObject {
     Q_OBJECT
 public:
     ~SystemBusDaemon();
@@ -36,4 +35,4 @@ private:
     T_DISABLE_MOVE(SystemBusDaemon)
 };
 
-#endif // SYSTEMBUSDAEMON_H
+#endif  // SYSTEMBUSDAEMON_H

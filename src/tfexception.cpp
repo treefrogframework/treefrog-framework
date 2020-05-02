@@ -51,7 +51,6 @@
 */
 
 
-
 /*!
   \class RuntimeException
   \brief The RuntimeException class represents an exception that
@@ -87,7 +86,6 @@
   \fn QString RuntimeException::className() const override
   \brief Returns exception class name.
 */
-
 
 
 /*!
@@ -127,7 +125,6 @@
 */
 
 
-
 /*!
   \class SqlException
   \brief The SqlException class represents an exception that
@@ -163,7 +160,6 @@
   \fn QString SqlException::className() const override
   \brief Returns exception class name.
 */
-
 
 
 /*!
@@ -209,7 +205,6 @@
 */
 
 
-
 /*!
   \class KvsException
   \brief The KvsException class represents an exception that
@@ -245,7 +240,6 @@
   \fn QString KvsException::className() const override
   \brief Returns exception class name.
 */
-
 
 
 /*!

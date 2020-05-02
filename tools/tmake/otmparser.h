@@ -5,8 +5,7 @@
 #include <QStringList>
 
 
-class OtmParser
-{
+class OtmParser {
 public:
     enum OperatorType {
         TagReplacement = 0,
@@ -39,4 +38,4 @@ private:
     QString repMarker;
 };
 
-#endif // OTMPARSER_H
+#endif  // OTMPARSER_H

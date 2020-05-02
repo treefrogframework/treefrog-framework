@@ -5,31 +5,31 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include "global.h"
 #include "controllergenerator.h"
-#include "modelgenerator.h"
-#include "helpergenerator.h"
-#include "sqlobjgenerator.h"
-#include "mongoobjgenerator.h"
-#include "websocketgenerator.h"
-#include "validatorgenerator.h"
-#include "otamagenerator.h"
 #include "erbgenerator.h"
+#include "global.h"
+#include "helpergenerator.h"
 #include "mailergenerator.h"
-#include "projectfilegenerator.h"
-#include "tableschema.h"
+#include "modelgenerator.h"
 #include "mongocommand.h"
+#include "mongoobjgenerator.h"
+#include "otamagenerator.h"
+#include "projectfilegenerator.h"
+#include "sqlobjgenerator.h"
+#include "tableschema.h"
 #include "util.h"
+#include "validatorgenerator.h"
+#include "websocketgenerator.h"
+#include <QtCore>
 #ifndef Q_CC_MSVC
-# include <unistd.h>
+#include <unistd.h>
 #endif
 #include <ctime>
 
-#define L(str)  QLatin1String(str)
-#define D_CTRLS   QLatin1String("controllers/")
-#define D_MODELS  QLatin1String("models/")
-#define D_VIEWS   QLatin1String("views/")
+#define L(str) QLatin1String(str)
+#define D_CTRLS QLatin1String("controllers/")
+#define D_MODELS QLatin1String("models/")
+#define D_VIEWS QLatin1String("views/")
 #define D_HELPERS QLatin1String("helpers/")
 
 enum SubCommand {
@@ -55,10 +55,10 @@ enum SubCommand {
     ShowCollections,
 };
 
-class SubCommands : public QHash<QString, int>
-{
+class SubCommands : public QHash<QString, int> {
 public:
-    SubCommands() : QHash<QString, int>()
+    SubCommands() :
+        QHash<QString, int>()
     {
         insert("-h", Help);
         insert("--help", Help);
@@ -101,10 +101,10 @@ public:
 Q_GLOBAL_STATIC(SubCommands, subCommands)
 
 
-class SubDirs : public QStringList
-{
+class SubDirs : public QStringList {
 public:
-    SubDirs() : QStringList()
+    SubDirs() :
+        QStringList()
     {
         append(L("controllers"));
         append(L("models"));
@@ -135,10 +135,10 @@ public:
 Q_GLOBAL_STATIC(SubDirs, subDirs)
 
 
-class FilePaths : public QStringList
-{
+class FilePaths : public QStringList {
 public:
-    FilePaths() : QStringList()
+    FilePaths() :
+        QStringList()
     {
         append(L("appbase.pri"));
         append(L("controllers/controllers.pro"));
@@ -172,8 +172,8 @@ public:
         append(L("public/413.html"));
         append(L("public/500.html"));
         append(L("script/JSXTransformer.js"));
-        append(L("script/react.js"));             // React
-        append(L("script/react-with-addons.js")); // React
+        append(L("script/react.js"));  // React
+        append(L("script/react-with-addons.js"));  // React
         append(L("script/react-dom-server.js"));  // React
         // CMake
         append(L("CMakeLists.txt"));
@@ -197,24 +197,24 @@ static QString templateSystem;
 
 static void usage()
 {
-    printf("usage: tspawn <subcommand> [args]\n\n" \
-           "Type 'tspawn --show-drivers' to show all the available database drivers for Qt.\n" \
-           "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n" \
-           "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n" \
-           "Type 'tspawn --show-collections' to show all collections in the MongoDB.\n\n" \
-           "Available subcommands:\n" \
-           "  new (n)         <application-name>\n" \
-           "  scaffold (s)    <table-name> [model-name]\n" \
-           "  controller (c)  <controller-name> action [action ...]\n" \
-           "  model (m)       <table-name> [model-name]\n" \
-           "  helper (h)      <name>\n" \
-           "  usermodel (u)   <table-name> [username password [model-name]]\n" \
-           "  sqlobject (o)   <table-name> [model-name]\n"         \
-           "  mongoscaffold (ms) <model-name>\n"                   \
-           "  mongomodel (mm) <model-name>\n"                      \
-           "  websocket (w)   <endpoint-name>\n"                   \
-           "  validator (v)   <name>\n"                            \
-           "  mailer (l)      <mailer-name> action [action ...]\n" \
+    printf("usage: tspawn <subcommand> [args]\n\n"
+           "Type 'tspawn --show-drivers' to show all the available database drivers for Qt.\n"
+           "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n"
+           "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n"
+           "Type 'tspawn --show-collections' to show all collections in the MongoDB.\n\n"
+           "Available subcommands:\n"
+           "  new (n)         <application-name>\n"
+           "  scaffold (s)    <table-name> [model-name]\n"
+           "  controller (c)  <controller-name> action [action ...]\n"
+           "  model (m)       <table-name> [model-name]\n"
+           "  helper (h)      <name>\n"
+           "  usermodel (u)   <table-name> [username password [model-name]]\n"
+           "  sqlobject (o)   <table-name> [model-name]\n"
+           "  mongoscaffold (ms) <model-name>\n"
+           "  mongomodel (mm) <model-name>\n"
+           "  websocket (w)   <endpoint-name>\n"
+           "  validator (v)   <name>\n"
+           "  mailer (l)      <mailer-name> action [action ...]\n"
            "  delete (d)      <table-name, helper-name or validator-name>\n");
 }
 
@@ -224,7 +224,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
     QStringList rmd;
 
     // Removes files
-    for (QStringListIterator i(files); i.hasNext(); ) {
+    for (QStringListIterator i(files); i.hasNext();) {
         if (quit)
             break;
 
@@ -321,7 +321,7 @@ static QByteArray randomString(int length)
 static bool createNewApplication(const QString &name)
 {
     if (name.isEmpty()) {
-         qCritical("invalid argument");
+        qCritical("invalid argument");
         return false;
     }
 
@@ -366,7 +366,7 @@ static bool createNewApplication(const QString &name)
 #ifdef Q_OS_WIN
     // Add dummy model files
     ProjectFileGenerator progen(name + "/" + D_MODELS + "models.pro");
-    QStringList dummy = { "_dummymodel.h", "_dummymodel.cpp" };
+    QStringList dummy = {"_dummymodel.h", "_dummymodel.cpp"};
     progen.add(dummy);
 #endif
 
@@ -522,7 +522,7 @@ int main(int argc, char *argv[])
 
     case ShowDrivers:
         printf("Available database drivers for Qt:\n");
-        for (QStringListIterator i(TableSchema::databaseDrivers()); i.hasNext(); ) {
+        for (QStringListIterator i(TableSchema::databaseDrivers()); i.hasNext();) {
             printf("  %s\n", qPrintable(i.next()));
         }
         break;
@@ -535,14 +535,15 @@ int main(int argc, char *argv[])
             return 1;
         }
         printf("%s\n", qPrintable(fi.canonicalFilePath()));
-        break; }
+        break;
+    }
 
     case ShowTables:
         if (checkIniFile()) {
             QStringList tables = TableSchema::tables();
             if (!tables.isEmpty()) {
                 printf("-----------------\nAvailable tables:\n");
-                for (QStringListIterator i(tables); i.hasNext(); ) {
+                for (QStringListIterator i(tables); i.hasNext();) {
                     printf("  %s\n", qPrintable(i.next()));
                 }
                 putchar('\n');
@@ -608,22 +609,26 @@ int main(int argc, char *argv[])
             QDir dir(D_VIEWS + ((ctrl.contains('_')) ? ctrl.toLower() : fieldNameToVariableName(ctrl).toLower()));
             mkpath(dir, ".");
             copy(dataDirPath + ".trim_mode", dir);
-            break; }
+            break;
+        }
 
         case Model: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             modelgen.generate(D_MODELS);
-            break; }
+            break;
+        }
 
         case Helper: {
             HelperGenerator helpergen(args.value(2));
             helpergen.generate(D_HELPERS);
-            break; }
+            break;
+        }
 
         case UserModel: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(5), args.value(2), args.mid(3, 2));
             modelgen.generate(D_MODELS, true);
-            break; }
+            break;
+        }
 
         case SqlObject: {
             SqlObjGenerator sqlgen(args.value(3), args.value(2));
@@ -632,7 +637,8 @@ int main(int argc, char *argv[])
             // Generates a project file
             ProjectFileGenerator progen(D_MODELS + "models.pro");
             progen.add(QStringList(path));
-            break; }
+            break;
+        }
 
         case MongoScaffold: {
             ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
@@ -656,16 +662,18 @@ int main(int argc, char *argv[])
             if (success) {
                 printSuccessMessage(modelgen.model());
             }
-            break; }
+            break;
+        }
 
         case MongoModel: {
             ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
             modelgen.generate(D_MODELS);
-            break; }
+            break;
+        }
 
         case WebSocketEndpoint: {
-            const QString appendpointfiles[] = { L("controllers/applicationendpoint.h"),
-                                                 L("controllers/applicationendpoint.cpp") };
+            const QString appendpointfiles[] = {L("controllers/applicationendpoint.h"),
+                L("controllers/applicationendpoint.cpp")};
 
             ProjectFileGenerator progen(D_CTRLS + "controllers.pro");
 
@@ -679,18 +687,21 @@ int main(int argc, char *argv[])
 
             WebSocketGenerator wsgen(args.value(2));
             wsgen.generate(D_CTRLS);
-            break; }
+            break;
+        }
 
         case Validator: {
             ValidatorGenerator validgen(args.value(2));
             validgen.generate(D_HELPERS);
-            break; }
+            break;
+        }
 
         case Mailer: {
             MailerGenerator mailgen(args.value(2), args.mid(3));
             mailgen.generate(D_CTRLS);
             copy(dataDirPath + "mail.erb", D_VIEWS + "mailer/mail.erb");
-            break; }
+            break;
+        }
 
         case Scaffold: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
@@ -723,7 +734,8 @@ int main(int argc, char *argv[])
             if (success) {
                 printSuccessMessage(modelgen.model());
             }
-            break; }
+            break;
+        }
 
         case Delete: {
             // Removes files
@@ -731,13 +743,15 @@ int main(int argc, char *argv[])
             if (ret) {
                 return ret;
             }
-            break; }
+            break;
+        }
 
         default:
             qCritical("internal error");
             return 1;
         }
-        break; }
+        break;
+    }
     }
     return 0;
 }

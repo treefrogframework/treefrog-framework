@@ -1,22 +1,21 @@
 #ifndef TSQLDATABASEPOOL_H
 #define TSQLDATABASEPOOL_H
 
-#include <QObject>
-#include <QSqlDatabase>
-#include <QVector>
-#include <QMap>
-#include <QString>
-#include <QDateTime>
-#include <QBasicTimer>
-#include <TGlobal>
 #include "tatomic.h"
 #include "tstack.h"
+#include <QBasicTimer>
+#include <QDateTime>
+#include <QMap>
+#include <QObject>
+#include <QSqlDatabase>
+#include <QString>
+#include <QVector>
+#include <TGlobal>
 
 class TSqlDatabase;
 
 
-class T_CORE_EXPORT TSqlDatabasePool : public QObject
-{
+class T_CORE_EXPORT TSqlDatabasePool : public QObject {
     Q_OBJECT
 public:
     ~TSqlDatabasePool();
@@ -45,4 +44,4 @@ private:
     T_DISABLE_MOVE(TSqlDatabasePool)
 };
 
-#endif // TSQLDATABASEPOOL_H
+#endif  // TSQLDATABASEPOOL_H

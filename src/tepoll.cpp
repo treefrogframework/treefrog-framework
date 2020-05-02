@@ -5,28 +5,27 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QByteArray>
-#include <QFileInfo>
-#include <QBuffer>
-#include <sys/types.h>
-#include <sys/epoll.h>
-#include <TWebApplication>
-#include <THttpRequestHeader>
-#include <TApplicationServerBase>
-#include <TSession>
 #include "tepoll.h"
 #include "tepollsocket.h"
-#include "tsendbuffer.h"
 #include "tepollwebsocket.h"
+#include "tfcore.h"
+#include "tsendbuffer.h"
 #include "tsessionmanager.h"
 #include "tsystemglobal.h"
-#include "tfcore.h"
+#include <QBuffer>
+#include <QByteArray>
+#include <QFileInfo>
+#include <TApplicationServerBase>
+#include <THttpRequestHeader>
+#include <TSession>
+#include <TWebApplication>
+#include <sys/epoll.h>
+#include <sys/types.h>
 
 constexpr int MaxEvents = 128;
 
 
-class TSendData
-{
+class TSendData {
 public:
     enum Method {
         Disconnect,
@@ -41,13 +40,14 @@ public:
 
     TSendData(Method m, TEpollSocket *s, TSendBuffer *buf = 0) :
         method(m), socket(s), buffer(buf), header()
-    { }
+    {
+    }
 
     TSendData(Method m, TEpollSocket *s, const THttpRequestHeader &h) :
         method(m), socket(s), buffer(0), header(h)
-    { }
+    {
+    }
 };
-
 
 
 TEpoll::TEpoll() :
@@ -140,7 +140,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
 
     int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, socket->socketDescriptor(), &ev);
     int err = errno;
-    if (Q_UNLIKELY(ret < 0)){
+    if (Q_UNLIKELY(ret < 0)) {
         if (err != EEXIST) {
             tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  sd:%d errno:%d", socket->socketDescriptor(), err);
         }
@@ -169,7 +169,6 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_MOD)  sd:%d", socket->socketDescriptor());
     }
     return !ret;
-
 }
 
 
@@ -235,7 +234,8 @@ void TEpoll::dispatchSendData()
                 session = TSessionManager::instance().findSession(sessionId);
             }
             ws->startWorkerForOpening(session);
-            break; }
+            break;
+        }
 
         default:
             tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);

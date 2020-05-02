@@ -1,18 +1,17 @@
 #ifndef TSYSTEMBUS_H
 #define TSYSTEMBUS_H
 
-#include <QObject>
-#include <QList>
-#include <QMutex>
-#include <QLocalSocket>
-#include <TGlobal>
 #include "tsystemglobal.h"
+#include <QList>
+#include <QLocalSocket>
+#include <QMutex>
+#include <QObject>
+#include <TGlobal>
 
 class TSystemBusMessage;
 
 
-class T_CORE_EXPORT TSystemBus : public QObject
-{
+class T_CORE_EXPORT TSystemBus : public QObject {
     Q_OBJECT
 public:
     ~TSystemBus();
@@ -48,8 +47,7 @@ private:
 };
 
 
-class T_CORE_EXPORT TSystemBusMessage
-{
+class T_CORE_EXPORT TSystemBusMessage {
 public:
     TSystemBusMessage();
     TSystemBusMessage(quint8 opcode, const QByteArray &data);
@@ -78,4 +76,4 @@ private:
     friend class TSystemBus;
 };
 
-#endif // TSYSTEMBUS_H
+#endif  // TSYSTEMBUS_H

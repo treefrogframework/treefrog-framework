@@ -1,18 +1,17 @@
 #ifndef TCOOKIE_H
 #define TCOOKIE_H
 
-#include <TGlobal>
-#include <QNetworkCookie>
 #include <QByteArray>
+#include <QNetworkCookie>
+#include <TGlobal>
 
 
-class TCookie : public QNetworkCookie
-{
+class TCookie : public QNetworkCookie {
 public:
     TCookie(const QByteArray &name = QByteArray(), const QByteArray &value = QByteArray());
     TCookie(const TCookie &other);
     TCookie(const QNetworkCookie &other);
-    ~TCookie() {}
+    ~TCookie() { }
 
     TCookie &operator=(const TCookie &other);
     qint64 maxAge() const { return _maxAge; }
@@ -32,4 +31,4 @@ private:
     QByteArray _sameSite;
 };
 
-#endif // TCOOKIE_H
+#endif  // TCOOKIE_H

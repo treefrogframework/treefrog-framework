@@ -1,12 +1,12 @@
 #ifndef TWEBSOCKET_H
 #define TWEBSOCKET_H
 
-#include <QTcpSocket>
-#include <QList>
-#include <QByteArray>
-#include <TGlobal>
-#include "tatomic.h"
 #include "tabstractwebsocket.h"
+#include "tatomic.h"
+#include <QByteArray>
+#include <QList>
+#include <QTcpSocket>
+#include <TGlobal>
 
 class TWebSocketFrame;
 class TWebSocketWorker;
@@ -14,8 +14,7 @@ class TSession;
 class THttpRequestHeader;
 
 
-class T_CORE_EXPORT TWebSocket : public QTcpSocket, public TAbstractWebSocket
-{
+class T_CORE_EXPORT TWebSocket : public QTcpSocket, public TAbstractWebSocket {
     Q_OBJECT
 public:
     TWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header, QObject *parent = 0);
@@ -63,4 +62,4 @@ private:
     T_DISABLE_MOVE(TWebSocket)
 };
 
-#endif // TWEBSOCKET_H
+#endif  // TWEBSOCKET_H

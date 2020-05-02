@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tbasiclogstream.h"
 #include <QMutexLocker>
 #include <QThread>
 #include <TSystemGlobal>
-#include "tbasiclogstream.h"
 
 /*!
   \class TBasicLogStream

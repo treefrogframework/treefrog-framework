@@ -1,10 +1,10 @@
 #ifndef TSQLQUERYORMAPPER_H
 #define TSQLQUERYORMAPPER_H
 
-#include <QtSql>
 #include <QList>
-#include <TSqlQuery>
+#include <QtSql>
 #include <TCriteriaConverter>
+#include <TSqlQuery>
 #include <TSystemGlobal>
 
 /*!
@@ -17,8 +17,7 @@
 */
 
 template <class T>
-class TSqlQueryORMapper : public TSqlQuery
-{
+class TSqlQueryORMapper : public TSqlQuery {
 public:
     TSqlQueryORMapper(int databaseId = 0);
 
@@ -49,25 +48,43 @@ public:
         TSqlQueryORMapper<T> *m {nullptr};
         int it {0};
 
-        inline ConstIterator() {}
-        inline ConstIterator(const ConstIterator &o) : m(o.m), it(o.it) {}
-        inline ConstIterator &operator=(const ConstIterator &o) { m = o.m; it = o.it; return *this; }
-        inline const T operator*() const { if (it == 0) m->first(); return m->value(); }
+        inline ConstIterator() { }
+        inline ConstIterator(const ConstIterator &o) :
+            m(o.m), it(o.it) { }
+        inline ConstIterator &operator=(const ConstIterator &o)
+        {
+            m = o.m;
+            it = o.it;
+            return *this;
+        }
+        inline const T operator*() const
+        {
+            if (it == 0)
+                m->first();
+            return m->value();
+        }
         inline bool operator==(const ConstIterator &o) const { return m == o.m && it == o.it; }
         inline bool operator!=(const ConstIterator &o) const { return m != o.m || it != o.it; }
-        inline ConstIterator &operator++() { it = qMin(it + 1, m->size()); m->next(); return *this; }
+        inline ConstIterator &operator++()
+        {
+            it = qMin(it + 1, m->size());
+            m->next();
+            return *this;
+        }
 
     private:
-        inline ConstIterator(TSqlQueryORMapper<T> *mapper, int i) : m(mapper), it(i) {}
+        inline ConstIterator(TSqlQueryORMapper<T> *mapper, int i) :
+            m(mapper), it(i) { }
         friend class TSqlQueryORMapper;
     };
 };
 
 
 template <class T>
-inline TSqlQueryORMapper<T>::TSqlQueryORMapper(int databaseId)
-    : TSqlQuery(databaseId)
-{ }
+inline TSqlQueryORMapper<T>::TSqlQueryORMapper(int databaseId) :
+    TSqlQuery(databaseId)
+{
+}
 
 
 template <class T>
@@ -174,4 +191,4 @@ inline QString TSqlQueryORMapper<T>::fieldName(int index) const
     return TCriteriaConverter<T>::getPropertyName(index, driver());
 }
 
-#endif // TSQLQUERYORMAPPER_H
+#endif  // TSQLQUERYORMAPPER_H

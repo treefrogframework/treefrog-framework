@@ -6,18 +6,18 @@
  */
 
 #include "twebsocketworker.h"
+#include "tabstractwebsocket.h"
+#include "thttpsocket.h"
+#include "tpublisher.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"
-#include "tabstractwebsocket.h"
-#include "tpublisher.h"
-#include "thttpsocket.h"
-#include <TWebApplication>
-#include <TDispatcher>
-#include <TWebSocketEndpoint>
-#include <THttpRequestHeader>
 #include <TApplicationServerBase>
+#include <TDispatcher>
+#include <THttpRequestHeader>
+#include <TWebApplication>
+#include <TWebSocketEndpoint>
 #ifdef Q_OS_LINUX
-# include "tepollhttpsocket.h"
+#include "tepollhttpsocket.h"
 #endif
 #include <QDataStream>
 
@@ -27,7 +27,8 @@ TWebSocketWorker::TWebSocketWorker(TWebSocketWorker::RunMode m, TAbstractWebSock
     _mode(m),
     _socket(s),
     _requestPath(path)
-{ }
+{
+}
 
 
 TWebSocketWorker::~TWebSocketWorker()
@@ -82,7 +83,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         tSystemDebug("Found endpoint: %s", qPrintable(es));
         tSystemDebug("TWebSocketWorker opcode: %d", opcode);
 
-        endpoint->sessionStore = _socket->session(); // Sets websocket session
+        endpoint->sessionStore = _socket->session();  // Sets websocket session
         endpoint->sid = _socket->socketId();
         auto peerInfo = TApplicationServerBase::getPeerInfo(_socket->socketDescriptor());
         endpoint->peerAddr = peerInfo.first;
@@ -105,7 +106,8 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             } else {
                 endpoint->taskList.prepend(qMakePair((int)TWebSocketEndpoint::OpenError, QVariant()));
             }
-            break; }
+            break;
+        }
 
         case Closing:
             if (!_socket->closing.exchange(true)) {
@@ -138,7 +140,8 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                     endpoint->unsubscribeFromAll();
                 }
                 endpoint->close(closeCode);  // close response or disconnect
-                break; }
+                break;
+            }
 
             case TWebSocketFrame::Ping:
                 endpoint->onPing(payload);
@@ -152,7 +155,8 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 tSystemWarn("Invalid opcode: 0x%x  [%s:%d]", (int)opcode, __FILE__, __LINE__);
                 break;
             }
-            break; }
+            break;
+        }
 
         default:
             break;
@@ -214,7 +218,8 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 if (websocket) {
                     websocket->sendText(lst[1].toString());
                 }
-                break; }
+                break;
+            }
 
             case TWebSocketEndpoint::SendBinaryTo: {
                 QVariantList lst = taskData.toList();
@@ -222,7 +227,8 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 if (websocket) {
                     websocket->sendBinary(lst[1].toByteArray());
                 }
-                break; }
+                break;
+            }
 
             case TWebSocketEndpoint::SendCloseTo: {
                 QVariantList lst = taskData.toList();
@@ -230,12 +236,14 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 if (websocket) {
                     websocket->sendClose(lst[1].toInt());
                 }
-                break; }
+                break;
+            }
 
             case TWebSocketEndpoint::Subscribe: {
                 QVariantList lst = taskData.toList();
                 TPublisher::instance()->subscribe(lst[0].toString(), lst[1].toBool(), _socket);
-                break; }
+                break;
+            }
 
             case TWebSocketEndpoint::Unsubscribe:
                 TPublisher::instance()->unsubscribe(taskData.toString(), _socket);
@@ -248,12 +256,14 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             case TWebSocketEndpoint::PublishText: {
                 QVariantList lst = taskData.toList();
                 TPublisher::instance()->publish(lst[0].toString(), lst[1].toString(), _socket);
-                break; }
+                break;
+            }
 
             case TWebSocketEndpoint::PublishBinary: {
                 QVariantList lst = taskData.toList();
                 TPublisher::instance()->publish(lst[0].toString(), lst[1].toByteArray(), _socket);
-                break; }
+                break;
+            }
 
             case TWebSocketEndpoint::StartKeepAlive:
                 _socket->startKeepAlive(taskData.toInt());
@@ -267,13 +277,14 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 QVariantList lst = taskData.toList();
                 auto id = lst[0].toInt();
 
-                switch ( Tf::app()->multiProcessingModule() ) {
+                switch (Tf::app()->multiProcessingModule()) {
                 case TWebApplication::Thread: {
                     auto *sock = THttpSocket::searchSocket(id);
                     if (sock) {
                         sock->writeRawDataFromWebSocket(lst[1].toByteArray());
                     }
-                    break; }
+                    break;
+                }
 
                 case TWebApplication::Epoll: {
 #ifdef Q_OS_LINUX
@@ -284,15 +295,17 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
 #else
                     tFatal("Unsupported MPM: epoll");
 #endif
-                    break; }
+                    break;
+                }
 
                 default:
                     break;
                 }
-                break; }
+                break;
+            }
 
             default:
-                tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                tSystemError("Invalid logic  [%s:%d]", __FILE__, __LINE__);
                 break;
             }
         }

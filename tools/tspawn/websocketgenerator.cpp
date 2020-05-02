@@ -6,61 +6,59 @@
  */
 
 #include "websocketgenerator.h"
-#include "global.h"
 #include "filewriter.h"
+#include "global.h"
 #include "projectfilegenerator.h"
 
-constexpr auto ENDPOINT_HEADER_TEMPLATE =                               \
-    "#ifndef %1ENDPOINT_H\n"                                            \
-    "#define %1ENDPOINT_H\n"                                            \
-    "\n"                                                                \
-    "#include \"applicationendpoint.h\"\n"                              \
-    "\n"                                                                \
-    "class T_CONTROLLER_EXPORT %2Endpoint : public ApplicationEndpoint\n" \
-    "{\n"                                                               \
-    "    Q_OBJECT\n"                                                    \
-    "public:\n"                                                         \
-    "    %2Endpoint();\n"                                               \
-    "    %2Endpoint(const %2Endpoint &other);\n"                        \
-    "\n"                                                                \
-    "protected:\n"                                                      \
-    "    bool onOpen(const TSession &httpSession) override;\n"          \
-    "    void onClose(int closeCode) override;\n"                       \
-    "    void onTextReceived(const QString &text) override;\n"          \
-    "    void onBinaryReceived(const QByteArray &binary) override;\n"   \
-    "};\n"                                                              \
-    "\n"                                                                \
-    "#endif // %1ENDPOINT_H\n";
+constexpr auto ENDPOINT_HEADER_TEMPLATE = "#ifndef %1ENDPOINT_H\n"
+                                          "#define %1ENDPOINT_H\n"
+                                          "\n"
+                                          "#include \"applicationendpoint.h\"\n"
+                                          "\n"
+                                          "class T_CONTROLLER_EXPORT %2Endpoint : public ApplicationEndpoint\n"
+                                          "{\n"
+                                          "    Q_OBJECT\n"
+                                          "public:\n"
+                                          "    %2Endpoint();\n"
+                                          "    %2Endpoint(const %2Endpoint &other);\n"
+                                          "\n"
+                                          "protected:\n"
+                                          "    bool onOpen(const TSession &httpSession) override;\n"
+                                          "    void onClose(int closeCode) override;\n"
+                                          "    void onTextReceived(const QString &text) override;\n"
+                                          "    void onBinaryReceived(const QByteArray &binary) override;\n"
+                                          "};\n"
+                                          "\n"
+                                          "#endif // %1ENDPOINT_H\n";
 
-constexpr auto ENDPOINT_IMPL_TEMPLATE =                                 \
-    "#include \"%1endpoint.h\"\n"                                       \
-    "\n"                                                                \
-    "%2Endpoint::%2Endpoint() :\n"                                      \
-    "    ApplicationEndpoint()\n"                                       \
-    "{ }\n"                                                             \
-    "\n"                                                                \
-    "%2Endpoint::%2Endpoint(const %2Endpoint &) :\n"                    \
-    "    ApplicationEndpoint()\n"                                       \
-    "{ }\n"                                                             \
-    "\n"                                                                \
-    "bool %2Endpoint::onOpen(const TSession &)\n"                       \
-    "{\n"                                                               \
-    "    return true;\n"                                                \
-    "}\n"                                                               \
-    "\n"                                                                \
-    "void %2Endpoint::onClose(int)\n"                                   \
-    "{ }\n"                                                             \
-    "\n"                                                                \
-    "void %2Endpoint::onTextReceived(const QString &)\n"                \
-    "{\n"                                                               \
-    "    // write code\n"                                               \
-    "}\n"                                                               \
-    "\n"                                                                \
-    "void %2Endpoint::onBinaryReceived(const QByteArray &)\n"           \
-    "{ }\n"                                                             \
-    "\n\n"                                                              \
-    "// Don't remove below this line\n"                                 \
-    "T_DEFINE_CONTROLLER(%2Endpoint)\n";
+constexpr auto ENDPOINT_IMPL_TEMPLATE = "#include \"%1endpoint.h\"\n"
+                                        "\n"
+                                        "%2Endpoint::%2Endpoint() :\n"
+                                        "    ApplicationEndpoint()\n"
+                                        "{ }\n"
+                                        "\n"
+                                        "%2Endpoint::%2Endpoint(const %2Endpoint &) :\n"
+                                        "    ApplicationEndpoint()\n"
+                                        "{ }\n"
+                                        "\n"
+                                        "bool %2Endpoint::onOpen(const TSession &)\n"
+                                        "{\n"
+                                        "    return true;\n"
+                                        "}\n"
+                                        "\n"
+                                        "void %2Endpoint::onClose(int)\n"
+                                        "{ }\n"
+                                        "\n"
+                                        "void %2Endpoint::onTextReceived(const QString &)\n"
+                                        "{\n"
+                                        "    // write code\n"
+                                        "}\n"
+                                        "\n"
+                                        "void %2Endpoint::onBinaryReceived(const QByteArray &)\n"
+                                        "{ }\n"
+                                        "\n\n"
+                                        "// Don't remove below this line\n"
+                                        "T_DEFINE_CONTROLLER(%2Endpoint)\n";
 
 
 WebSocketGenerator::WebSocketGenerator(const QString &n)

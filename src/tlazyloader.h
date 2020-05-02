@@ -28,4 +28,4 @@ inline void TLazyLoader<T, Key>::loadObject()
     }
 }
 
-#endif // TLAZYLOADER_H
+#endif  // TLAZYLOADER_H

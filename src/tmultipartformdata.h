@@ -1,17 +1,16 @@
 #ifndef TMULTIPARTFORMDATA_H
 #define TMULTIPARTFORMDATA_H
 
-#include <QStringList>
+#include <QFile>
 #include <QMap>
 #include <QPair>
-#include <QFile>
+#include <QStringList>
 #include <TGlobal>
 
 class QIODevice;
 
 
-class T_CORE_EXPORT TMimeHeader
-{
+class T_CORE_EXPORT TMimeHeader {
 public:
     TMimeHeader() { }
     TMimeHeader(const TMimeHeader &other);
@@ -33,8 +32,7 @@ private:
 };
 
 
-class T_CORE_EXPORT TMimeEntity
-{
+class T_CORE_EXPORT TMimeEntity {
 public:
     static const QFile::Permissions DefaultPermissions;
 
@@ -59,8 +57,7 @@ private:
 };
 
 
-class T_CORE_EXPORT TMultipartFormData
-{
+class T_CORE_EXPORT TMultipartFormData {
 public:
     static const QFile::Permissions DefaultPermissions;
 
@@ -109,4 +106,4 @@ Q_DECLARE_METATYPE(TMimeHeader)
 Q_DECLARE_METATYPE(TMimeEntity)
 Q_DECLARE_METATYPE(TMultipartFormData)
 
-#endif // TMULTIPARTFORMDATA_H
+#endif  // TMULTIPARTFORMDATA_H

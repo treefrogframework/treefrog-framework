@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TAccessLog>
 #include "tsystemglobal.h"
+#include <TAccessLog>
 
 /*!
   \class TAccessLog
@@ -15,13 +15,15 @@
 */
 
 TAccessLog::TAccessLog()
-{ }
+{
+}
 
 
 TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req) :
     remoteHost(host),
     request(req)
-{ }
+{
+}
 
 
 QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &dateTimeFormat) const
@@ -56,7 +58,7 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 message.append(remoteHost);
                 break;
 
-            case 'd': // %d : timestamp
+            case 'd':  // %d : timestamp
                 if (!dateTimeFormat.isEmpty()) {
                     message.append(timestamp.toString(dateTimeFormat).toLocal8Bit());
                 } else {
@@ -81,7 +83,7 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 }
                 break;
 
-            case 'n': // %n : newline
+            case 'n':  // %n : newline
                 message.append('\n');
                 break;
 
@@ -102,9 +104,9 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
 }
 
 
-
 TAccessLogger::TAccessLogger()
-{ }
+{
+}
 
 
 TAccessLogger::TAccessLogger(const TAccessLogger &other)

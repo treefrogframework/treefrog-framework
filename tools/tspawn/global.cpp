@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QSet>
+#include "global.h"
 #include <QRegExp>
+#include <QSet>
 #include <QStringList>
 #include <tabstractmodel.h>
-#include "global.h"
 
-class UpperWords : public QSet<QString>
-{
+class UpperWords : public QSet<QString> {
 public:
-    UpperWords() : QSet<QString>()
+    UpperWords() :
+        QSet<QString>()
     {
         insert("id");
     }
@@ -22,10 +22,10 @@ public:
 Q_GLOBAL_STATIC(UpperWords, upperWords)
 
 
-class LowerWords : public QSet<QString>
-{
+class LowerWords : public QSet<QString> {
 public:
-    LowerWords() : QSet<QString>()
+    LowerWords() :
+        QSet<QString>()
     {
         insert("about");
         insert("above");
@@ -138,7 +138,7 @@ QString fieldNameToCaption(const QString &name)
 
     // Upper-case/lower-case words
     QStringList caplist = cap.split(QRegExp("\\W+"), QString::SkipEmptyParts);
-    for (QMutableStringListIterator i(caplist); i.hasNext(); ) {
+    for (QMutableStringListIterator i(caplist); i.hasNext();) {
         QString &s = i.next();
         QString slow = s.toLower();
         if (upperWords()->contains(slow)) {

@@ -1,18 +1,17 @@
 #ifndef TWEBSOCKETENDPOINT_H
 #define TWEBSOCKETENDPOINT_H
 
-#include <QObject>
-#include <QStringList>
-#include <QPair>
-#include <QVariant>
 #include <QHostAddress>
+#include <QObject>
+#include <QPair>
+#include <QStringList>
+#include <QVariant>
 #include <TGlobal>
 #include <TSession>
 #include <TWebSocketSession>
 
 
-class T_CORE_EXPORT TWebSocketEndpoint : public QObject
-{
+class T_CORE_EXPORT TWebSocketEndpoint : public QObject {
 public:
     TWebSocketEndpoint();
     virtual ~TWebSocketEndpoint() { }
@@ -113,4 +112,4 @@ inline bool TWebSocketEndpoint::transactionEnabled() const
     return false;
 }
 
-#endif // TWEBSOCKETENDPOINT_H
+#endif  // TWEBSOCKETENDPOINT_H

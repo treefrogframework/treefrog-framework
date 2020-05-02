@@ -2,16 +2,16 @@
 #define TWEBAPPLICATION_H
 
 #ifdef TF_USE_GUI_MODULE
-# include <QApplication>
+#include <QApplication>
 #else
-# include <QCoreApplication>
+#include <QCoreApplication>
 #endif
 
-#include <TGlobal>
 #include "qplatformdefs.h"
-#include <QVector>
 #include <QBasicTimer>
 #include <QVariant>
+#include <QVector>
+#include <TGlobal>
 
 class QTextCodec;
 
@@ -27,8 +27,8 @@ class T_CORE_EXPORT TWebApplication
 public:
     enum MultiProcessingModule {
         Invalid = 0,
-        Thread  = 1,
-        Epoll   = 2,
+        Thread = 1,
+        Epoll = 2,
     };
 
     TWebApplication(int &argc, char **argv);
@@ -82,11 +82,11 @@ public:
     void watchConsoleSignal();
     void ignoreConsoleSignal();
     void watchLocalSocket();
-    static bool sendLocalCtrlMessage(const QByteArray &msg,  int targetProcess);
+    static bool sendLocalCtrlMessage(const QByteArray &msg, int targetProcess);
 
 private slots:
     void recvLocalSocket();
-#endif // Q_OS_WIN
+#endif  // Q_OS_WIN
 
 protected:
     void timerEvent(QTimerEvent *event);
@@ -100,11 +100,11 @@ private:
     QVariantMap _loggerSetting;
     QVariantMap _validationSetting;
     QVariantMap _mediaTypes;
-    QTextCodec *_codecInternal  {nullptr};
-    QTextCodec *_codecHttp  {nullptr};
-    int _appServerId  {-1};
+    QTextCodec *_codecInternal {nullptr};
+    QTextCodec *_codecHttp {nullptr};
+    int _appServerId {-1};
     QBasicTimer _timer;
-    mutable MultiProcessingModule _mpm  {Invalid};
+    mutable MultiProcessingModule _mpm {Invalid};
     QMap<QString, QVariantMap> _configMap;
     int _cacheSqlDbIndex {-1};
 
@@ -128,12 +128,11 @@ inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 #if defined(Q_OS_WIN)
 #include <QAbstractNativeEventFilter>
 
-class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter
-{
+class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter {
 public:
     virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *);
 };
 
-#endif // Q_OS_WIN
+#endif  // Q_OS_WIN
 
-#endif // TWEBAPPLICATION_H
+#endif  // TWEBAPPLICATION_H

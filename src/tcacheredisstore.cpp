@@ -10,7 +10,8 @@
 
 
 TCacheRedisStore::TCacheRedisStore()
-{ }
+{
+}
 
 
 bool TCacheRedisStore::open()
@@ -20,7 +21,8 @@ bool TCacheRedisStore::open()
 
 
 void TCacheRedisStore::close()
-{ }
+{
+}
 
 
 QByteArray TCacheRedisStore::get(const QByteArray &key)
@@ -52,7 +54,8 @@ void TCacheRedisStore::clear()
 
 
 void TCacheRedisStore::gc()
-{ }
+{
+}
 
 
 QMap<QString, QVariant> TCacheRedisStore::defaultSettings() const

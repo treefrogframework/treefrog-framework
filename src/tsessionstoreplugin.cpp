@@ -33,7 +33,6 @@
 */
 
 
-
 /*!
   \class TSessionStoreInterface
   \brief The TSessionStoreInterface class provides an interface to implement

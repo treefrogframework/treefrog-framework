@@ -4,8 +4,7 @@
 #include <TMongoObject>
 
 
-class T_MODEL_EXPORT TSessionMongoObject : public TMongoObject
-{
+class T_MODEL_EXPORT TSessionMongoObject : public TMongoObject {
 public:
     QString _id;
     QString sessionId;
@@ -35,4 +34,4 @@ private:
     T_DEFINE_PROPERTY(QDateTime, updatedAt)
 };
 
-#endif // TSESSIONMONGOOBJECT_H
+#endif  // TSESSIONMONGOOBJECT_H

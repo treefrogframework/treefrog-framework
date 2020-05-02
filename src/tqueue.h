@@ -1,27 +1,26 @@
 #ifndef TQUEUE_H
 #define TQUEUE_H
 
-#include <TGlobal>
-#include "thazardobject.h"
-#include "thazardptr.h"
 #include "tatomic.h"
 #include "tatomicptr.h"
+#include "thazardobject.h"
+#include "thazardptr.h"
+#include <TGlobal>
 
 
-namespace Tf
-{
-    T_CORE_EXPORT THazardPtr &hazardPtrForQueue();
+namespace Tf {
+T_CORE_EXPORT THazardPtr &hazardPtrForQueue();
 }
 
 
-template <class T> class TQueue
-{
+template <class T>
+class TQueue {
 private:
-    struct Node : public THazardObject
-    {
+    struct Node : public THazardObject {
         T value;
         TAtomicPtr<Node> next;
-        Node(const T &v) : value(v) { }
+        Node(const T &v) :
+            value(v) { }
     };
 
     TAtomicPtr<Node> queHead {nullptr};
@@ -43,7 +42,7 @@ public:
 template <class T>
 inline TQueue<T>::TQueue()
 {
-    auto dummy = new Node(T()); // dummy node
+    auto dummy = new Node(T());  // dummy node
     queHead.store(dummy);
     queTail.store(dummy);
 }
@@ -132,4 +131,4 @@ inline bool TQueue<T>::head(T &val)
     return (bool)next;
 }
 
-#endif // TQUEUE_H
+#endif  // TQUEUE_H

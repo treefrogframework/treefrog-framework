@@ -11,8 +11,7 @@ class THttpResponseHeader;
 class QIODevice;
 
 
-class T_CORE_EXPORT TActionThread : public QThread, public TActionContext
-{
+class T_CORE_EXPORT TActionThread : public QThread, public TActionContext {
     Q_OBJECT
 public:
     TActionThread(int socket, int maxThreads = 0);
@@ -41,4 +40,4 @@ private:
     T_DISABLE_MOVE(TActionThread)
 };
 
-#endif // TACTIONTHREAD_H
+#endif  // TACTIONTHREAD_H

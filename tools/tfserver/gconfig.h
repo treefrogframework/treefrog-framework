@@ -10,4 +10,4 @@
 /* Puts following code inside the Google namespace */
 #define _START_GOOGLE_NAMESPACE_ namespace google {
 
-#endif // GCONFIG
+#endif  // GCONFIG

@@ -16,20 +16,26 @@
 /*!
   Constructor.
 */
-TContentHeader::TContentHeader() : TInternetMessageHeader()
-{ }
+TContentHeader::TContentHeader() :
+    TInternetMessageHeader()
+{
+}
 
 /*!
   Copy constructor.
 */
-TContentHeader::TContentHeader(const TContentHeader &other) : TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other))
-{ }
+TContentHeader::TContentHeader(const TContentHeader &other) :
+    TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other))
+{
+}
 
 /*!
   Constructor.
 */
-TContentHeader::TContentHeader(const QByteArray &str) : TInternetMessageHeader(str)
-{ }
+TContentHeader::TContentHeader(const QByteArray &str) :
+    TInternetMessageHeader(str)
+{
+}
 
 /*!
   Assigns \a other to this content header and returns a reference

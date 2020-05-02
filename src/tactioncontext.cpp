@@ -5,25 +5,25 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tabstractwebsocket.h"
+#include "thttpsocket.h"
+#include "tpublisher.h"
+#include "tsessionmanager.h"
+#include "tsystemglobal.h"
+#include "turlroute.h"
+#include <QHostAddress>
+#include <QSet>
+#include <QtCore>
 #include <TActionContext>
-#include <TWebApplication>
+#include <TActionController>
 #include <TAppSettings>
+#include <TCache>
+#include <TDispatcher>
 #include <THttpRequest>
 #include <THttpResponse>
 #include <THttpUtility>
-#include <TDispatcher>
-#include <TActionController>
 #include <TSessionStore>
-#include <TCache>
-#include "tsystemglobal.h"
-#include "thttpsocket.h"
-#include "tsessionmanager.h"
-#include "turlroute.h"
-#include "tabstractwebsocket.h"
-#include "tpublisher.h"
-#include <QtCore>
-#include <QHostAddress>
-#include <QSet>
+#include <TWebApplication>
 
 /*!
   \class TActionContext
@@ -31,7 +31,8 @@
   action controllers.
 */
 
-TActionContext::TActionContext() : TDatabaseContext()
+TActionContext::TActionContext() :
+    TDatabaseContext()
 {
     accessLogger.open();
 }
@@ -78,7 +79,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         firstLine += QStringLiteral(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
         accessLogger.setTimestamp(QDateTime::currentDateTime());
         accessLogger.setRequest(firstLine);
-        accessLogger.setRemoteHost( (ListenPort > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)") );
+        accessLogger.setRemoteHost((ListenPort > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
 
         tSystemDebug("method : %s", reqHeader.method().data());
         tSystemDebug("path : %s", reqHeader.path().data());
@@ -96,17 +97,17 @@ void TActionContext::execute(THttpRequest &request, int sid)
         TRouting route = TUrlRoute::instance().findRouting(method, components);
 
         tSystemDebug("Routing: controller:%s  action:%s", route.controller.data(),
-                     route.action.data());
+            route.action.data());
 
-        if (! route.exists) {
+        if (!route.exists) {
             // Default URL routing
-            if (Q_UNLIKELY(directViewRenderMode())) { // Direct view render mode?
+            if (Q_UNLIKELY(directViewRenderMode())) {  // Direct view render mode?
                 // Direct view setting
                 route.setRouting(QByteArrayLiteral("directcontroller"), QByteArrayLiteral("show"), components);
             } else {
                 QByteArray c = components.value(0).toLatin1().toLower();
                 if (Q_LIKELY(!c.isEmpty())) {
-                    if (Q_LIKELY(!TActionController::disabledControllers().contains(c))) { // Can not call 'ApplicationController'
+                    if (Q_LIKELY(!TActionController::disabledControllers().contains(c))) {  // Can not call 'ApplicationController'
                         // Default action: "index"
                         QByteArray action = components.value(1, QStringLiteral("index")).toLatin1();
                         route.setRouting(c + QByteArrayLiteral("controller"), action, components.mid(2));
@@ -149,7 +150,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
 
             if (currController->sessionEnabled()) {
                 if (SessionAutoIdRegeneration || currController->session().id().isEmpty()) {
-                    TSessionManager::instance().remove(currController->session().sessionId); // Removes the old session
+                    TSessionManager::instance().remove(currController->session().sessionId);  // Removes the old session
                     // Re-generate session ID
                     currController->session().sessionId = TSessionManager::instance().generateId();
                     tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
@@ -196,7 +197,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                             }());
 
                             currController->addCookie(TSession::sessionName(), currController->session().id(), SessionCookieMaxAge,
-                                                      SessionCookiePath, SessionCookieDomain, false, true, SessionCookieSameSite);
+                                SessionCookiePath, SessionCookieDomain, false, true, SessionCookieSameSite);
 
                             // Commits a transaction for session
                             commitTransactions();
@@ -209,7 +210,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     // WebSocket tasks
                     if (!currController->taskList.isEmpty()) {
                         QVariantList lst;
-                        for (auto &task : (const QList<QPair<int, QVariant>>&)currController->taskList) {
+                        for (auto &task : (const QList<QPair<int, QVariant>> &)currController->taskList) {
                             const QVariant &taskData = task.second;
 
                             switch (task.first) {
@@ -252,7 +253,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                             } break;
 
                             default:
-                                tSystemError("Invalid logic  [%s:%d]",  __FILE__, __LINE__);
+                                tSystemError("Invalid logic  [%s:%d]", __FILE__, __LINE__);
                                 break;
                             }
                         }
@@ -280,7 +281,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 // Writes a response and access log
                 qint64 bodyLength = (currController->response.header().contentLength() > 0) ? currController->response.header().contentLength() : currController->response.bodyLength();
                 bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
-                                      bodyLength);
+                    bodyLength);
             }
             accessLogger.setResponseBytes(bytes);
 
@@ -294,7 +295,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
 
         } else {
-            accessLogger.setStatusCode( Tf::BadRequest );  // Set a default status code
+            accessLogger.setStatusCode(Tf::BadRequest);  // Set a default status code
             if (route.controller.startsWith('/')) {
                 path = route.controller;
             }
@@ -322,25 +323,25 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         responseHeader.setRawHeader(QByteArrayLiteral("Last-Modified"), THttpUtility::toHttpDateTimeString(fi.lastModified()));
                         QByteArray type = Tf::app()->internetMediaType(fi.suffix());
                         int bytes = writeResponse(Tf::OK, responseHeader, type, &reqPath, reqPath.size());
-                        accessLogger.setResponseBytes( bytes );
+                        accessLogger.setResponseBytes(bytes);
                     } else {
                         // Not send the data
                         int bytes = writeResponse(Tf::NotModified, responseHeader);
-                        accessLogger.setResponseBytes( bytes );
+                        accessLogger.setResponseBytes(bytes);
                     }
                 } else {
-                    if (! route.exists) {
+                    if (!route.exists) {
                         int bytes = writeResponse(Tf::NotFound, responseHeader);
-                        accessLogger.setResponseBytes( bytes );
+                        accessLogger.setResponseBytes(bytes);
                     } else {
                         // Routing not empty, redirect.
                         responseHeader.setRawHeader(QByteArrayLiteral("Location"), QUrl(path).toEncoded());
                         responseHeader.setContentType(QByteArrayLiteral("text/html"));
                         int bytes = writeResponse(Tf::Found, responseHeader);
-                        accessLogger.setResponseBytes( bytes );
+                        accessLogger.setResponseBytes(bytes);
                     }
                 }
-                accessLogger.setStatusCode( responseHeader.statusCode() );
+                accessLogger.setStatusCode(responseHeader.statusCode());
 
             } else if (method == Tf::Post) {
                 // file upload?
@@ -353,8 +354,8 @@ void TActionContext::execute(THttpRequest &request, int sid)
         tWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
         tSystemWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
         int bytes = writeResponse(e.statusCode(), responseHeader);
-        accessLogger.setResponseBytes( bytes );
-        accessLogger.setStatusCode( e.statusCode() );
+        accessLogger.setResponseBytes(bytes);
+        accessLogger.setStatusCode(e.statusCode());
     } catch (TfException &e) {
         tError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
         tSystemError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
@@ -377,12 +378,12 @@ void TActionContext::release()
 {
     TDatabaseContext::release();
 
-    for (auto temp : (const QList<TTemporaryFile*> &)tempFiles) {
+    for (auto temp : (const QList<TTemporaryFile *> &)tempFiles) {
         delete temp;
     }
     tempFiles.clear();
 
-    for (auto &file : (const QStringList&)autoRemoveFiles) {
+    for (auto &file : (const QStringList &)autoRemoveFiles) {
         QFile(file).remove();
     }
     autoRemoveFiles.clear();
@@ -441,8 +442,9 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 }
 
 
-void TActionContext::emitError(int )
-{ }
+void TActionContext::emitError(int)
+{
+}
 
 
 TTemporaryFile &TActionContext::createTemporaryFile()
@@ -461,7 +463,7 @@ QHostAddress TActionContext::clientAddress() const
 
 TCache *TActionContext::cache()
 {
-    if (! cachep) {
+    if (!cachep) {
         cachep = new TCache;
     }
     return cachep;

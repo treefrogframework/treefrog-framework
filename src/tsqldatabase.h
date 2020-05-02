@@ -1,28 +1,27 @@
 #ifndef TSQLDATABASE_H
 #define TSQLDATABASE_H
 
-#include <QStringList>
 #include <QSqlDatabase>
 #include <QSqlDriver>
+#include <QStringList>
 #include <TGlobal>
 
 class TSqlDriverExtension;
 
 
-class T_CORE_EXPORT TSqlDatabase
-{
+class T_CORE_EXPORT TSqlDatabase {
 public:
 #if QT_VERSION >= 0x050400
     enum DbmsType {
         UnknownDbms = QSqlDriver::UnknownDbms,
         MSSqlServer = QSqlDriver::MSSqlServer,
         MySqlServer = QSqlDriver::MySqlServer,
-        PostgreSQL  = QSqlDriver::PostgreSQL,
-        Oracle      = QSqlDriver::Oracle,
-        Sybase      = QSqlDriver::Sybase,
-        SQLite      = QSqlDriver::SQLite,
-        Interbase   = QSqlDriver::Interbase,
-        DB2         = QSqlDriver::DB2
+        PostgreSQL = QSqlDriver::PostgreSQL,
+        Oracle = QSqlDriver::Oracle,
+        Sybase = QSqlDriver::Sybase,
+        SQLite = QSqlDriver::SQLite,
+        Interbase = QSqlDriver::Interbase,
+        DB2 = QSqlDriver::DB2
     };
 #else
     enum DbmsType {
@@ -72,14 +71,16 @@ private:
 
 inline TSqlDatabase::TSqlDatabase(const QSqlDatabase &database) :
     _sqlDatabase(database)
-{}
+{
+}
 
 inline TSqlDatabase::TSqlDatabase(const TSqlDatabase &other) :
     _sqlDatabase(other._sqlDatabase),
     _postOpenStatements(other._postOpenStatements),
     _enableUpsert(other._enableUpsert),
     _driverExtension(other._driverExtension)
-{}
+{
+}
 
 inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)
 {
@@ -90,4 +91,4 @@ inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)
     return *this;
 }
 
-#endif // TSQLDATABASE_H
+#endif  // TSQLDATABASE_H

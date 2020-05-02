@@ -10,17 +10,17 @@
 #include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocket.h"
-#include <TWebApplication>
-#include <TSystemGlobal>
 #include <TAppSettings>
 #include <THttpRequestHeader>
+#include <TSystemGlobal>
+#include <TWebApplication>
 #include <ctime>
 using namespace Tf;
 
 constexpr int BUFFER_RESERVE_SIZE = 1023;
 
 namespace {
-    qint64 systemLimitBodyBytes = -1;
+qint64 systemLimitBodyBytes = -1;
 }
 
 
@@ -185,15 +185,15 @@ void TEpollHttpSocket::clear()
 TEpollHttpSocket *TEpollHttpSocket::searchSocket(int sid)
 {
     TEpollSocket *sock = TEpollSocket::searchSocket(sid);
-    return dynamic_cast<TEpollHttpSocket*>(sock);
+    return dynamic_cast<TEpollHttpSocket *>(sock);
 }
 
 
-QList<TEpollHttpSocket*> TEpollHttpSocket::allSockets()
+QList<TEpollHttpSocket *> TEpollHttpSocket::allSockets()
 {
-    QList<TEpollHttpSocket*> lst;
-    for (auto sock : (const QList<TEpollSocket*>&)TEpollSocket::allSockets()) {
-        auto p = dynamic_cast<TEpollHttpSocket*>(sock);
+    QList<TEpollHttpSocket *> lst;
+    for (auto sock : (const QList<TEpollSocket *> &)TEpollSocket::allSockets()) {
+        auto p = dynamic_cast<TEpollHttpSocket *>(sock);
         if (p) {
             lst.append(p);
         }

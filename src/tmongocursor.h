@@ -2,14 +2,14 @@
 #define TMONGOCURSOR_H
 
 #include <QVariant>
-#include <TGlobal>
 #include <TBson>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TMongoCursor
-{
+class T_CORE_EXPORT TMongoCursor {
     using TCursorObject = void;
     typedef struct _mongoc_cursor_t mongoc_cursor_t;
+
 public:
     ~TMongoCursor();
 
@@ -32,4 +32,4 @@ private:
     T_DISABLE_MOVE(TMongoCursor)
 };
 
-#endif // TMONGOCURSOR_H
+#endif  // TMONGOCURSOR_H

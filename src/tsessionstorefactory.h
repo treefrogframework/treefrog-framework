@@ -7,8 +7,7 @@
 class TSessionStore;
 
 
-class T_CORE_EXPORT TSessionStoreFactory
-{
+class T_CORE_EXPORT TSessionStoreFactory {
 public:
     static QStringList keys();
     static TSessionStore *create(const QString &key);
@@ -24,4 +23,4 @@ private:
     };
 };
 
-#endif // TSESSIONSTOREFACTORY_H
+#endif  // TSESSIONSTOREFACTORY_H

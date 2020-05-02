@@ -5,8 +5,7 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TSqlQuery : public QSqlQuery
-{
+class T_CORE_EXPORT TSqlQuery : public QSqlQuery {
 public:
     TSqlQuery(int databaseId = 0);
     TSqlQuery(QSqlDatabase db);
@@ -91,4 +90,4 @@ inline QVariant TSqlQuery::value(const QString &name) const
     return QSqlQuery::value(name);
 }
 
-#endif // TSQLQUERY_H
+#endif  // TSQLQUERY_H

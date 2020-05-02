@@ -1,16 +1,16 @@
 #ifndef TSQLORMAPPER_H
 #define TSQLORMAPPER_H
 
-#include <QtSql>
+#include "tsystemglobal.h"
 #include <QList>
 #include <QMap>
-#include <TGlobal>
-#include <TSqlObject>
+#include <QtSql>
 #include <TCriteria>
 #include <TCriteriaConverter>
-#include <TSqlQuery>
+#include <TGlobal>
 #include <TSqlJoin>
-#include "tsystemglobal.h"
+#include <TSqlObject>
+#include <TSqlQuery>
 
 /*!
   \class TSqlORMapper
@@ -23,8 +23,7 @@
 
 
 template <class T>
-class TSqlORMapper : public QSqlTableModel
-{
+class TSqlORMapper : public QSqlTableModel {
 public:
     TSqlORMapper();
     virtual ~TSqlORMapper();
@@ -34,13 +33,15 @@ public:
     TSqlORMapper<T> &offset(int offset);
     TSqlORMapper<T> &orderBy(int column, Tf::SortOrder order = Tf::AscendingOrder);
     TSqlORMapper<T> &orderBy(const QString &column, Tf::SortOrder order = Tf::AscendingOrder);
-    template <class C> TSqlORMapper<T> &join(int column, const TSqlJoin<C> &join);
+    template <class C>
+    TSqlORMapper<T> &join(int column, const TSqlJoin<C> &join);
 
     void setLimit(int limit);
     void setOffset(int offset);
     void setSortOrder(int column, Tf::SortOrder order = Tf::AscendingOrder);
     void setSortOrder(const QString &column, Tf::SortOrder order = Tf::AscendingOrder);
-    template <class C> void setJoin(int column, const TSqlJoin<C> &join);
+    template <class C>
+    void setJoin(int column, const TSqlJoin<C> &join);
     void reset();
 
     T findFirst(const TCriteria &cri = TCriteria());
@@ -72,19 +73,43 @@ public:
         const TSqlORMapper<T> *m {nullptr};
         int it {0};
 
-        inline ConstIterator() {}
-        inline ConstIterator(const ConstIterator &o) : m(o.m), it(o.it) {}
-        inline ConstIterator &operator=(const ConstIterator &o) { m = o.m; it = o.it; return *this; }
+        inline ConstIterator() { }
+        inline ConstIterator(const ConstIterator &o) :
+            m(o.m), it(o.it) { }
+        inline ConstIterator &operator=(const ConstIterator &o)
+        {
+            m = o.m;
+            it = o.it;
+            return *this;
+        }
         inline const T operator*() const { return m->value(it); }
         inline bool operator==(const ConstIterator &o) const { return m == o.m && it == o.it; }
         inline bool operator!=(const ConstIterator &o) const { return m != o.m || it != o.it; }
-        inline ConstIterator &operator++() { it = qMin(it + 1, m->rowCount()); return *this; }
-        inline ConstIterator operator++(int) { int i = it; it = qMin(it + 1, m->rowCount()); return ConstIterator(m, i); }
-        inline ConstIterator &operator--() { --it; return *this; }
-        inline ConstIterator operator--(int) { int i = it++; return ConstIterator(m, i); }
+        inline ConstIterator &operator++()
+        {
+            it = qMin(it + 1, m->rowCount());
+            return *this;
+        }
+        inline ConstIterator operator++(int)
+        {
+            int i = it;
+            it = qMin(it + 1, m->rowCount());
+            return ConstIterator(m, i);
+        }
+        inline ConstIterator &operator--()
+        {
+            --it;
+            return *this;
+        }
+        inline ConstIterator operator--(int)
+        {
+            int i = it++;
+            return ConstIterator(m, i);
+        }
 
     private:
-        inline ConstIterator(const TSqlORMapper<T> *mapper, int i) : m(mapper), it(i) {}
+        inline ConstIterator(const TSqlORMapper<T> *mapper, int i) :
+            m(mapper), it(i) { }
         friend class TSqlORMapper;
     };
 
@@ -113,8 +138,8 @@ private:
   Constructor.
 */
 template <class T>
-inline TSqlORMapper<T>::TSqlORMapper()
-    : QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId()))
+inline TSqlORMapper<T>::TSqlORMapper() :
+    QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId()))
 {
     setTable(T().tableName());
 }
@@ -124,7 +149,8 @@ inline TSqlORMapper<T>::TSqlORMapper()
 */
 template <class T>
 inline TSqlORMapper<T>::~TSqlORMapper()
-{ }
+{
+}
 
 /*!
   Returns the first ORM object retrieved with the criteria \a cri from
@@ -193,7 +219,7 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
     }
 
     bool ret = select();
-    while (canFetchMore()) { // For SQLite, not report back the size of a query
+    while (canFetchMore()) {  // For SQLite, not report back the size of a query
         fetchMore();
     }
     Tf::writeQueryLog(query().lastQuery(), ret, lastError());
@@ -326,7 +352,7 @@ inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder o
             sortColumns << qMakePair(column, order);
         } else {
             tWarn("Unable to set sort order : '%s' column not found in '%s' table",
-                  qPrintable(column), qPrintable(obj.tableName()));
+                qPrintable(column), qPrintable(obj.tableName()));
         }
     }
 }
@@ -421,14 +447,14 @@ inline QString TSqlORMapper<T>::selectStatement() const
     query += QLatin1String(" t0");  // alias needed
 
     if (joinFlag) {
-        for (auto &join : (const QStringList&)joinClauses) {
+        for (auto &join : (const QStringList &)joinClauses) {
             query += join;
         }
     }
 
     QString filter = queryFilter;
     if (!joinWhereClauses.isEmpty()) {
-        for (auto &wh : (const QStringList&)joinWhereClauses) {
+        for (auto &wh : (const QStringList &)joinWhereClauses) {
             if (!filter.isEmpty()) {
                 filter += QLatin1String(" AND ");
             }
@@ -506,7 +532,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     static const QByteArray UpdatedAt("updated_at");
     static const QByteArray ModifiedAt("modified_at");
 
-    QString upd;   // UPDATE Statement
+    QString upd;  // UPDATE Statement
     upd.reserve(256);
     upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
 
@@ -574,7 +600,7 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
 {
     QSqlDatabase db = database();
     QString del = db.driver()->sqlStatement(QSqlDriver::DeleteStatement,
-                                                    T().tableName(), QSqlRecord(), false);
+        T().tableName(), QSqlRecord(), false);
     TCriteriaConverter<T> conv(cri, db);
     QString where = conv.toString();
 
@@ -595,7 +621,8 @@ inline int TSqlORMapper<T>::removeAll(const TCriteria &cri)
   Sets a JOIN clause for \a column to \a join.
  */
 template <class T>
-template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
+template <class C>
+inline void TSqlORMapper<T>::setJoin(int column, const TSqlJoin<C> &join)
 {
     if (column < 0 || join.joinColumn() < 0) {
         return;
@@ -608,7 +635,7 @@ template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJo
         clause = QLatin1String(" INNER JOIN ");
         break;
 
-    case  TSql::LeftJoin:
+    case TSql::LeftJoin:
         clause = QLatin1String(" LEFT OUTER JOIN ");
         break;
 
@@ -640,7 +667,8 @@ template <class C> inline void TSqlORMapper<T>::setJoin(int column, const TSqlJo
 }
 
 template <class T>
-template <class C> inline TSqlORMapper<T> &TSqlORMapper<T>::join(int column, const TSqlJoin<C> &j)
+template <class C>
+inline TSqlORMapper<T> &TSqlORMapper<T>::join(int column, const TSqlJoin<C> &j)
 {
     setJoin(column, j);
     return *this;
@@ -694,4 +722,4 @@ inline QString TSqlORMapper<T>::orderBy() const
     return str;
 }
 
-#endif // TSQLORMAPPER_H
+#endif  // TSQLORMAPPER_H

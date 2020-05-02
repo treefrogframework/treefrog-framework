@@ -7,8 +7,7 @@
 class QThread;
 
 
-class T_CORE_EXPORT TKvsDriver
-{
+class T_CORE_EXPORT TKvsDriver {
 public:
     virtual ~TKvsDriver() { }
     virtual QString key() const = 0;
@@ -19,4 +18,4 @@ public:
     virtual void moveToThread(QThread *) { }
 };
 
-#endif // TKVSDRIVER_H
+#endif  // TKVSDRIVER_H

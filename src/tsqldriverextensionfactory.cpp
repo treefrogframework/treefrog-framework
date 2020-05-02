@@ -8,77 +8,77 @@
 #include "tsqldriverextensionfactory.h"
 #include "tsqldriverextension.h"
 #include "tsystemglobal.h"
-#include <QSqlRecord>
-#include <QSqlField>
 #include <QSqlDriver>
+#include <QSqlField>
+#include <QSqlRecord>
 
 
 namespace {
-    QString prepareIdentifier(const QString &identifier, QSqlDriver::IdentifierType type,
-                                    const QSqlDriver *driver)
-    {
-        QString ret = identifier;
-        if (! driver->isIdentifierEscaped(identifier, type)) {
-            ret = driver->escapeIdentifier(identifier, type);
-        }
-        return ret;
+QString prepareIdentifier(const QString &identifier, QSqlDriver::IdentifierType type,
+    const QSqlDriver *driver)
+{
+    QString ret = identifier;
+    if (!driver->isIdentifierEscaped(identifier, type)) {
+        ret = driver->escapeIdentifier(identifier, type);
     }
-
-
-    QString generateInsertValues(const QSqlRecord &record, const QSqlDriver *driver, QString &statement)
-    {
-        QString state, vals;
-        for (int i = 0; i < record.count(); ++i) {
-            if (!record.isGenerated(i)) {
-                continue;
-            }
-            state.append(prepareIdentifier(record.fieldName(i), QSqlDriver::FieldName, driver)).append(QLatin1String(", "));
-            vals.append(driver->formatValue(record.field(i)));
-            vals.append(QLatin1String(", "));
-        }
-
-        state.chop(2);
-        statement += state;
-        vals.chop(2);
-        return vals;
-    }
-
-
-    QString generateUpdateValues(const QString &table, const QSqlRecord &record, const QString &lockRevisionField, const QSqlDriver *driver)
-    {
-        QString vals;
-        for (int i = 0; i < record.count(); ++i) {
-            if (!record.isGenerated(i)) {
-                continue;
-            }
-            vals.append(prepareIdentifier(record.fieldName(i), QSqlDriver::FieldName, driver));
-            vals.append(QLatin1Char('='));
-            vals.append(driver->formatValue(record.field(i)));
-            vals.append(QLatin1String(", "));
-        }
-
-        if (! lockRevisionField.isEmpty()) {
-            auto str = prepareIdentifier(lockRevisionField, QSqlDriver::FieldName, driver);
-            vals.append(str).append(QLatin1String("=1+"));
-            if (! table.isEmpty()) {
-                vals.append(table).append(QLatin1Char('.'));
-            }
-            vals.append(str).append(QLatin1String(", "));
-        }
-
-        vals.chop(2); // remove trailing comma
-        return vals;
-    }
+    return ret;
 }
 
-class TMySQLDriverExtension : public TSqlDriverExtension
+
+QString generateInsertValues(const QSqlRecord &record, const QSqlDriver *driver, QString &statement)
 {
+    QString state, vals;
+    for (int i = 0; i < record.count(); ++i) {
+        if (!record.isGenerated(i)) {
+            continue;
+        }
+        state.append(prepareIdentifier(record.fieldName(i), QSqlDriver::FieldName, driver)).append(QLatin1String(", "));
+        vals.append(driver->formatValue(record.field(i)));
+        vals.append(QLatin1String(", "));
+    }
+
+    state.chop(2);
+    statement += state;
+    vals.chop(2);
+    return vals;
+}
+
+
+QString generateUpdateValues(const QString &table, const QSqlRecord &record, const QString &lockRevisionField, const QSqlDriver *driver)
+{
+    QString vals;
+    for (int i = 0; i < record.count(); ++i) {
+        if (!record.isGenerated(i)) {
+            continue;
+        }
+        vals.append(prepareIdentifier(record.fieldName(i), QSqlDriver::FieldName, driver));
+        vals.append(QLatin1Char('='));
+        vals.append(driver->formatValue(record.field(i)));
+        vals.append(QLatin1String(", "));
+    }
+
+    if (!lockRevisionField.isEmpty()) {
+        auto str = prepareIdentifier(lockRevisionField, QSqlDriver::FieldName, driver);
+        vals.append(str).append(QLatin1String("=1+"));
+        if (!table.isEmpty()) {
+            vals.append(table).append(QLatin1Char('.'));
+        }
+        vals.append(str).append(QLatin1String(", "));
+    }
+
+    vals.chop(2);  // remove trailing comma
+    return vals;
+}
+}
+
+class TMySQLDriverExtension : public TSqlDriverExtension {
 public:
-    TMySQLDriverExtension(const QSqlDriver *drv = nullptr) : driver(drv) {}
+    TMySQLDriverExtension(const QSqlDriver *drv = nullptr) :
+        driver(drv) { }
     QString key() const override { return QLatin1String("QMYSQL"); }
     bool isUpsertSupported() const override { return true; }
     QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert, const QSqlRecord &recordToUpdate,
-                            const QString &pkField, const QString &lockRevisionField) const override;
+        const QString &pkField, const QString &lockRevisionField) const override;
 
 private:
     const QSqlDriver *driver {nullptr};
@@ -86,7 +86,7 @@ private:
 
 
 QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert,
-                                               const QSqlRecord &recordToUpdate, const QString &, const QString &lockRevisionField) const
+    const QSqlRecord &recordToUpdate, const QString &, const QString &lockRevisionField) const
 {
     QString statement;
     QString vals;
@@ -116,14 +116,14 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
 }
 
 
-class TPostgreSQLDriverExtension : public TSqlDriverExtension
-{
+class TPostgreSQLDriverExtension : public TSqlDriverExtension {
 public:
-    TPostgreSQLDriverExtension(const QSqlDriver *drv = nullptr) : driver(drv) {}
+    TPostgreSQLDriverExtension(const QSqlDriver *drv = nullptr) :
+        driver(drv) { }
     QString key() const override { return QLatin1String("QPSQL"); }
     bool isUpsertSupported() const override { return true; }
     QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert, const QSqlRecord &recordToUpdate,
-                            const QString &pkField, const QString &lockRevisionField) const override;
+        const QString &pkField, const QString &lockRevisionField) const override;
 
 private:
     const QSqlDriver *driver {nullptr};
@@ -131,7 +131,7 @@ private:
 
 
 QString TPostgreSQLDriverExtension::upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert,
-                                                    const QSqlRecord &recordToUpdate, const QString &pkField, const QString &lockRevisionField) const
+    const QSqlRecord &recordToUpdate, const QString &pkField, const QString &lockRevisionField) const
 {
     QString statement;
     QString vals;
@@ -163,21 +163,21 @@ QString TPostgreSQLDriverExtension::upsertStatement(const QString &tableName, co
 }
 
 namespace {
-    // Extension Keys
-    QString MYSQL_KEY;
-    QString PSQL_KEY;
+// Extension Keys
+QString MYSQL_KEY;
+QString PSQL_KEY;
 
 
-    void loadKeys()
-    {
-        static bool done = []() {
-            // Constants
-            MYSQL_KEY = TMySQLDriverExtension().key().toLower();
-            PSQL_KEY  = TPostgreSQLDriverExtension().key().toLower();
-            return true;
-        }();
-        Q_UNUSED(done);
-    }
+void loadKeys()
+{
+    static bool done = []() {
+        // Constants
+        MYSQL_KEY = TMySQLDriverExtension().key().toLower();
+        PSQL_KEY = TPostgreSQLDriverExtension().key().toLower();
+        return true;
+    }();
+    Q_UNUSED(done);
+}
 }
 
 /*!
@@ -210,7 +210,7 @@ TSqlDriverExtension *TSqlDriverExtensionFactory::create(const QString &key, cons
 
 void TSqlDriverExtensionFactory::destroy(const QString &key, TSqlDriverExtension *extension)
 {
-    if (! extension) {
+    if (!extension) {
         return;
     }
 

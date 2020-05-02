@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TMongoObject>
-#include <TMongoQuery>
-#include <TAbstractModel>
 #include <QDateTime>
 #include <QMetaProperty>
+#include <TAbstractModel>
+#include <TMongoObject>
+#include <TMongoQuery>
 
 const QByteArray LockRevision("lockRevision");
 const QByteArray CreatedAt("createdAt");
@@ -23,7 +23,8 @@ const QByteArray ModifiedAt("modifiedAt");
 TMongoObject::TMongoObject() :
     TModelObject(),
     QVariantMap()
-{ }
+{
+}
 
 /*!
   Copy constructor.
@@ -31,7 +32,8 @@ TMongoObject::TMongoObject() :
 TMongoObject::TMongoObject(const TMongoObject &other) :
     TModelObject(),
     QVariantMap(other)
-{ }
+{
+}
 
 /*!
   Assignment operator.
@@ -90,7 +92,7 @@ bool TMongoObject::create()
     }
 
     syncToVariantMap();
-    QVariantMap::remove("_id"); // remove _id to generate internally
+    QVariantMap::remove("_id");  // remove _id to generate internally
 
     TMongoQuery mongo(collectionName());
     bool ret = mongo.insert(*this);

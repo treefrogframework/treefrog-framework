@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSystemGlobal>
-#include <TLogger>
 #include "tabstractlogstream.h"
+#include <TLogger>
+#include <TSystemGlobal>
 
 /*!
   \class TAbstractLogStream
@@ -28,7 +28,7 @@ TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers, QObject 
 bool TAbstractLogStream::loggerOpen(LoggerType type)
 {
     bool res = true;
-    for (auto logger : (const QList<TLogger*>&)loggerList) {
+    for (auto logger : (const QList<TLogger *> &)loggerList) {
         if (logger) {
             if (type == All
                 || (type == MultiProcessSafe && logger->isMultiProcessSafe())
@@ -43,7 +43,7 @@ bool TAbstractLogStream::loggerOpen(LoggerType type)
 
 void TAbstractLogStream::loggerClose(LoggerType type)
 {
-    for (auto logger : (const QList<TLogger*>&)loggerList) {
+    for (auto logger : (const QList<TLogger *> &)loggerList) {
         if (logger) {
             if (type == All
                 || (type == MultiProcessSafe && logger->isMultiProcessSafe())
@@ -57,7 +57,7 @@ void TAbstractLogStream::loggerClose(LoggerType type)
 
 void TAbstractLogStream::loggerWrite(const TLog &log)
 {
-    for (auto logger : (const QList<TLogger*>&)loggerList) {
+    for (auto logger : (const QList<TLogger *> &)loggerList) {
         if (logger && logger->isOpen() && log.priority <= logger->threshold()) {
             logger->log(log);
             if (nonBuffering)
@@ -69,7 +69,7 @@ void TAbstractLogStream::loggerWrite(const TLog &log)
 
 void TAbstractLogStream::loggerWrite(const QList<TLog> &logs)
 {
-    for (auto logger : (const QList<TLog>&)logs) {
+    for (auto logger : (const QList<TLog> &)logs) {
         loggerWrite(logger);
     }
 }
@@ -77,7 +77,7 @@ void TAbstractLogStream::loggerWrite(const QList<TLog> &logs)
 
 void TAbstractLogStream::loggerFlush()
 {
-    for (auto logger : (const QList<TLogger*>&)loggerList) {
+    for (auto logger : (const QList<TLogger *> &)loggerList) {
         if (logger && logger->isOpen())
             logger->flush();
     }

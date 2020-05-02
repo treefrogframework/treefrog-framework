@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TCriteriaConverter>
 #include <QMap>
+#include <TCriteriaConverter>
 
 /*!
  * \class TCriteriaConverter<>
@@ -16,10 +16,10 @@
  * \sa TCriteria
  */
 
-class FormatHash : public QMap<int, QString>
-{
+class FormatHash : public QMap<int, QString> {
 public:
-    FormatHash() : QMap<int, QString>()
+    FormatHash() :
+        QMap<int, QString>()
     {
         insert(TSql::Equal, "=%1");
         insert(TSql::NotEqual, "<>%1");

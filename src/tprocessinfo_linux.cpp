@@ -7,8 +7,8 @@
 
 #include "tprocessinfo.h"
 #include <QtCore>
-#include <sys/types.h>
 #include <signal.h>
+#include <sys/types.h>
 
 
 bool TProcessInfo::exists() const

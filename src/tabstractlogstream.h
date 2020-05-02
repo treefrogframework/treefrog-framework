@@ -1,15 +1,14 @@
 #ifndef TABSTRACTLOGSTREAM_H
 #define TABSTRACTLOGSTREAM_H
 
-#include <QObject>
 #include <QList>
+#include <QObject>
 #include <TLog>
 
 class TLogger;
 
 
-class TAbstractLogStream : public QObject
-{
+class TAbstractLogStream : public QObject {
     Q_OBJECT
 public:
     TAbstractLogStream(const QList<TLogger *> &loggers, QObject *parent);
@@ -34,7 +33,7 @@ protected:
     void loggerWrite(const TLog &log);
     void loggerWrite(const QList<TLog> &logs);
     void loggerFlush();
-    
+
 private:
     QList<TLogger *> loggerList;
     bool nonBuffering;
@@ -43,4 +42,4 @@ private:
     T_DISABLE_MOVE(TAbstractLogStream)
 };
 
-#endif // TABSTRACTLOGSTREAM_H
+#endif  // TABSTRACTLOGSTREAM_H

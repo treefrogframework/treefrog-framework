@@ -7,11 +7,10 @@
 class TLogger;
 
 
-class T_CORE_EXPORT TLoggerFactory
-{
+class T_CORE_EXPORT TLoggerFactory {
 public:
     static QStringList keys();
     static TLogger *create(const QString &key);
 };
 
-#endif // TLOGGERFACTORY_H
+#endif  // TLOGGERFACTORY_H

@@ -6,8 +6,7 @@
 class TCacheStore;
 
 
-class T_CORE_EXPORT TCache
-{
+class T_CORE_EXPORT TCache {
 public:
     TCache();
     ~TCache();
@@ -27,4 +26,4 @@ private:
     T_DISABLE_MOVE(TCache)
 };
 
-#endif // TCACHE_H
+#endif  // TCACHE_H

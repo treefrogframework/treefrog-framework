@@ -5,18 +5,18 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include <QtSql>
 #include "tableschema.h"
 #include "global.h"
+#include <QtCore>
+#include <QtSql>
 
 namespace {
-    QSettings *dbSettings = nullptr;
+QSettings *dbSettings = nullptr;
 }
 
 
-TableSchema::TableSchema(const QString &table, const QString &env)
-    : tablename(table)
+TableSchema::TableSchema(const QString &table, const QString &env) :
+    tablename(table)
 {
     if (!dbSettings) {
         QString path = QLatin1String("config/database.ini");
@@ -253,10 +253,10 @@ QStringList TableSchema::tables(const QString &env)
     TableSchema dummy("dummy", env);  // to open database
 
     if (QSqlDatabase::database().isOpen()) {
-        for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Tables)); i.hasNext(); ) {
+        for (QStringListIterator i(QSqlDatabase::database().tables(QSql::Tables)); i.hasNext();) {
             TableSchema t(i.next());
             if (t.exists()) {
-                set << t.tableName(); // If value already exists, the set is left unchanged
+                set << t.tableName();  // If value already exists, the set is left unchanged
             }
         }
     }

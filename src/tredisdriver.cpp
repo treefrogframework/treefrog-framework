@@ -32,7 +32,7 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
 
     QByteArray cmd = toMultiBulk(command);
     tSystemDebug("Redis command: %s", cmd.data());
-    if (! writeCommand(cmd)) {
+    if (!writeCommand(cmd)) {
         tSystemError("Redis write error  [%s:%d]", __FILE__, __LINE__);
         close();
         return false;
@@ -40,7 +40,7 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
     clearBuffer();
 
     for (;;) {
-        if (! readReply()) {
+        if (!readReply()) {
             tSystemError("Redis read error   pos:%d  buflen:%d", _pos, _buffer.length());
             close();
             break;
@@ -64,7 +64,8 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
             if (ok) {
                 response << num;
             }
-            break; }
+            break;
+        }
 
         case BulkString:
             str = parseBulkString(&ok);
@@ -147,7 +148,7 @@ QByteArray TRedisDriver::parseBulkString(bool *ok)
         }
     }
 
-    if (! *ok) {
+    if (!*ok) {
         _pos = startpos;
     }
     return str;
@@ -171,7 +172,8 @@ QVariantList TRedisDriver::parseArray(bool *ok)
             if (*ok) {
                 lst << str;
             }
-            break; }
+            break;
+        }
 
         case Integer: {
             _pos++;
@@ -179,14 +181,16 @@ QVariantList TRedisDriver::parseArray(bool *ok)
             if (*ok) {
                 lst << num;
             }
-            break; }
+            break;
+        }
 
         case Array: {
             auto var = parseArray(ok);
             if (*ok) {
                 lst << QVariant(var);
             }
-            break; }
+            break;
+        }
 
         default:
             tSystemError("Bad logic  [%s:%d]", __FILE__, __LINE__);
@@ -199,7 +203,7 @@ QVariantList TRedisDriver::parseArray(bool *ok)
         }
     }
 
-    if (! *ok) {
+    if (!*ok) {
         _pos = startpos;
     }
     return lst;

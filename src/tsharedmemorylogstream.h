@@ -1,14 +1,13 @@
 #ifndef TSHAREDMEMORYLOGSTREAM_H
 #define TSHAREDMEMORYLOGSTREAM_H
 
-#include <QBasicTimer>
 #include "tabstractlogstream.h"
+#include <QBasicTimer>
 
 class QSharedMemory;
 
 
-class T_CORE_EXPORT TSharedMemoryLogStream : public TAbstractLogStream
-{
+class T_CORE_EXPORT TSharedMemoryLogStream : public TAbstractLogStream {
 public:
     TSharedMemoryLogStream(const QList<TLogger *> loggers, int size = 4096, QObject *parent = 0);
     ~TSharedMemoryLogStream();
@@ -34,5 +33,4 @@ private:
     T_DISABLE_MOVE(TSharedMemoryLogStream)
 };
 
-#endif // TSHAREDMEMORYLOGSTREAM_H
-
+#endif  // TSHAREDMEMORYLOGSTREAM_H

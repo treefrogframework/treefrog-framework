@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tfcore_unix.h"
+#include "tkvsdatabasepool.h"
+#include "tsqldatabasepool.h"
+#include "tsystemglobal.h"
+#include <TActionThread>
+#include <TAppSettings>
 #include <TThreadApplicationServer>
 #include <TWebApplication>
-#include <TAppSettings>
-#include <TActionThread>
-#include "tsqldatabasepool.h"
-#include "tkvsdatabasepool.h"
-#include "tsystemglobal.h"
-#include "tfcore_unix.h"
 #include <thread>
 
 
@@ -75,7 +75,7 @@ bool TThreadApplicationServer::start(bool debugMode)
 
 void TThreadApplicationServer::stop()
 {
-    if (! QThread::isRunning()) {
+    if (!QThread::isRunning()) {
         return;
     }
 
@@ -95,7 +95,7 @@ void TThreadApplicationServer::run()
     constexpr int timeout = 500;  // msec
 
     while (listenSocket > 0 && !stopFlag) {
-        struct pollfd pfd = { listenSocket, POLLIN, 0 };
+        struct pollfd pfd = {listenSocket, POLLIN, 0};
         int ret = tf_poll(&pfd, 1, timeout);
 
         if (ret < 0) {
@@ -109,7 +109,7 @@ void TThreadApplicationServer::run()
                 tSystemDebug("incomingConnection  sd:%d  thread count:%d  max:%d", socketDescriptor, TActionThread::threadCount(), maxThreads);
                 TActionThread *thread;
 
-                while (! threadPoolPtr()->pop(thread)) {
+                while (!threadPoolPtr()->pop(thread)) {
                     std::this_thread::yield();
                     Tf::msleep(1);
                 }

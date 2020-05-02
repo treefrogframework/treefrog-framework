@@ -6,36 +6,34 @@
  */
 
 #include "validatorgenerator.h"
-#include "global.h"
 #include "filewriter.h"
+#include "global.h"
 #include "projectfilegenerator.h"
 
-constexpr auto VALIDATOR_HEADER_TEMPLATE =                              \
-    "#ifndef %1VALIDATOR_H\n"                                           \
-    "#define %1VALIDATOR_H\n"                                           \
-    "\n"                                                                \
-    "#include <TGlobal>\n"                                              \
-    "#include <TFormValidator>\n"                                       \
-    "\n"                                                                \
-    "class T_HELPER_EXPORT %2Validator : public TFormValidator\n"       \
-    "{\n"                                                               \
-    "public:\n"                                                         \
-    "    %2Validator();\n"                                              \
-    "};\n"                                                              \
-    "\n"                                                                \
-    "Q_DECLARE_METATYPE(%2Validator)\n"                                 \
-    "\n"                                                                \
-    "#endif // %1VALIDATOR_H\n";
+constexpr auto VALIDATOR_HEADER_TEMPLATE = "#ifndef %1VALIDATOR_H\n"
+                                           "#define %1VALIDATOR_H\n"
+                                           "\n"
+                                           "#include <TGlobal>\n"
+                                           "#include <TFormValidator>\n"
+                                           "\n"
+                                           "class T_HELPER_EXPORT %2Validator : public TFormValidator\n"
+                                           "{\n"
+                                           "public:\n"
+                                           "    %2Validator();\n"
+                                           "};\n"
+                                           "\n"
+                                           "Q_DECLARE_METATYPE(%2Validator)\n"
+                                           "\n"
+                                           "#endif // %1VALIDATOR_H\n";
 
-constexpr auto VALIDATOR_IMPL_TEMPLATE =                \
-    "#include \"%1validator.h\"\n"                      \
-    "\n"                                                \
-    "%2Validator::%2Validator() : TFormValidator()\n"   \
-    "{\n"                                               \
-    "    //Set the rules below\n"                       \
-    "    //setRule(\"xxxx\", Tf::MaxLength, 20);\n"     \
-    "    //  :\n"                                       \
-    "}\n";
+constexpr auto VALIDATOR_IMPL_TEMPLATE = "#include \"%1validator.h\"\n"
+                                         "\n"
+                                         "%2Validator::%2Validator() : TFormValidator()\n"
+                                         "{\n"
+                                         "    //Set the rules below\n"
+                                         "    //setRule(\"xxxx\", Tf::MaxLength, 20);\n"
+                                         "    //  :\n"
+                                         "}\n";
 
 
 ValidatorGenerator::ValidatorGenerator(const QString &validator)

@@ -5,28 +5,28 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "lz4.h"
+#include "tdatabasecontextthread.h"
+#include <QBuffer>
+#include <QDataStream>
+#include <TActionContext>
+#include <TActionThread>
+#include <TAppSettings>
+#include <TCache>
+#include <TDatabaseContext>
 #include <TGlobal>
 #include <TWebApplication>
-#include <TAppSettings>
-#include <TActionContext>
-#include <TDatabaseContext>
-#include <TActionThread>
-#include <TCache>
-#include "tdatabasecontextthread.h"
-#include <QDataStream>
-#include <QBuffer>
-#include "lz4.h"
 #ifdef Q_OS_LINUX
-# include <TActionWorker>
+#include <TActionWorker>
 #endif
 #ifdef Q_OS_WIN
-# include <Windows.h>
+#include <Windows.h>
 #endif
-#include <cstdlib>
 #include <climits>
+#include <cstdlib>
 #include <random>
 
-constexpr int LZ4_BLOCKSIZE = 1024 * 1024; // 1 MB
+constexpr int LZ4_BLOCKSIZE = 1024 * 1024;  // 1 MB
 
 /*!
   Returns a global pointer referring to the unique application object.
@@ -65,11 +65,11 @@ void Tf::msleep(unsigned long msecs) noexcept
   Xorshift random number generator implement
 */
 namespace {
-    QMutex randMutex;
-    quint32 x = 123456789;
-    quint32 y = 362436069;
-    quint32 z = 987654321;
-    quint32 w = 1;
+QMutex randMutex;
+quint32 x = 123456789;
+quint32 y = 362436069;
+quint32 z = 987654321;
+quint32 w = 1;
 }
 
 /*!
@@ -103,11 +103,11 @@ quint32 Tf::randXor128() noexcept
 }
 
 namespace {
-    std::random_device randev;
-    std::mt19937     mt(randev());
-    QMutex           mtmtx;
-    std::mt19937_64  mt64(randev());
-    QMutex           mt64mtx;
+std::random_device randev;
+std::mt19937 mt(randev());
+QMutex mtmtx;
+std::mt19937_64 mt64(randev());
+QMutex mt64mtx;
 }
 
 uint32_t Tf::rand32_r() noexcept
@@ -158,7 +158,7 @@ TActionContext *Tf::currentContext()
 {
     TActionContext *context = nullptr;
 
-    switch ( Tf::app()->multiProcessingModule() ) {
+    switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread:
         context = qobject_cast<TActionThread *>(QThread::currentThread());
         if (Q_LIKELY(context)) {
@@ -191,7 +191,7 @@ TDatabaseContext *Tf::currentDatabaseContext()
         return context;
     }
 
-    context = dynamic_cast<TDatabaseContext*>(QThread::currentThread());
+    context = dynamic_cast<TDatabaseContext *>(QThread::currentThread());
     if (context) {
         return context;
     }
@@ -206,9 +206,9 @@ QSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
 }
 
 
-QMap<QByteArray, std::function<QObject*()>> *Tf::objectFactories() noexcept
+QMap<QByteArray, std::function<QObject *()>> *Tf::objectFactories() noexcept
 {
-    static QMap<QByteArray, std::function<QObject*()>> objectFactoryMap;
+    static QMap<QByteArray, std::function<QObject *()>> objectFactoryMap;
     return &objectFactoryMap;
 }
 

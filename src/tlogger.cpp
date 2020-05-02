@@ -5,25 +5,25 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TLogger>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <QFileInfo>
 #include <QDir>
+#include <QFileInfo>
 #include <QTextCodec>
+#include <TLogger>
+#include <TSystemGlobal>
+#include <TWebApplication>
 
 constexpr auto DEFAULT_TEXT_ENCODING = "DefaultTextEncoding";
 
 
-class PriorityHash : public QMap<Tf::LogPriority, QByteArray>
-{
+class PriorityHash : public QMap<Tf::LogPriority, QByteArray> {
 public:
-    PriorityHash() : QMap<Tf::LogPriority, QByteArray>()
+    PriorityHash() :
+        QMap<Tf::LogPriority, QByteArray>()
     {
         insert(Tf::FatalLevel, "FATAL");
         insert(Tf::ErrorLevel, "ERROR");
-        insert(Tf::WarnLevel,  "WARN");
-        insert(Tf::InfoLevel,  "INFO");
+        insert(Tf::WarnLevel, "WARN");
+        insert(Tf::InfoLevel, "INFO");
         insert(Tf::DebugLevel, "DEBUG");
         insert(Tf::TraceLevel, "TRACE");
     }
@@ -40,7 +40,8 @@ Q_GLOBAL_STATIC(PriorityHash, priorityHash)
   Constructor.
 */
 TLogger::TLogger()
-{ }
+{
+}
 
 /*!
   Returns the value for logger setting \a key. If the setting doesn't exist,
@@ -115,19 +116,22 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
                         message.append(QByteArray(d, ' '));
                     }
                 }
-                break; }
+                break;
+            }
 
             case 't':
-            case 'T': { // %t or %T : thread ID (dec or hex)
+            case 'T': {  // %t or %T : thread ID (dec or hex)
                 const QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                 message.append(QString("%1").arg((qulonglong)log.threadId, dig.toInt(), ((c == 't') ? 10 : 16), fillChar).toLatin1());
-                break; }
+                break;
+            }
 
             case 'i':
             case 'I': {  // %i or %I : PID (dec or hex)
                 const QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                 message.append(QString("%1").arg(log.pid, dig.toInt(), ((c == 'i') ? 10 : 16), fillChar).toLatin1());
-                break; }
+                break;
+            }
 
             case 'n':  // %n : newline
                 message.append('\n');
@@ -167,7 +171,7 @@ QByteArray TLogger::priorityToString(Tf::LogPriority priority)
  */
 QTextCodec *TLogger::codec() const
 {
-    if (! _codec) {
+    if (!_codec) {
         // Sets the codec
         auto &settings = Tf::app()->loggerSettings();
         QByteArray codecName = settings.value(DEFAULT_TEXT_ENCODING).toByteArray().trimmed();
@@ -227,7 +231,7 @@ const QString &TLogger::target() const
 {
     if (_target.isEmpty()) {
         QString logtarget = settingsValue("Target", "log/app.log").toString().trimmed();
-        if (! logtarget.isEmpty()) {
+        if (!logtarget.isEmpty()) {
             QFileInfo fi(logtarget);
             _target = (fi.isAbsolute()) ? fi.absoluteFilePath() : Tf::app()->webRootPath() + fi.filePath();
 

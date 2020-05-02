@@ -6,29 +6,29 @@
  */
 
 #include "turlroute.h"
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <THttpUtility>
 #include <QFile>
-#include <QTextStream>
-#include <QRegExp>
 #include <QMap>
+#include <QRegExp>
+#include <QTextStream>
+#include <THttpUtility>
+#include <TSystemGlobal>
+#include <TWebApplication>
 
 
-class RouteDirectiveHash : public QMap<QString, int>
-{
+class RouteDirectiveHash : public QMap<QString, int> {
 public:
-    RouteDirectiveHash() : QMap<QString, int>()
+    RouteDirectiveHash() :
+        QMap<QString, int>()
     {
-        insert("match",    TRoute::Match);
-        insert("get",      TRoute::Get);
-        insert("post",     TRoute::Post);
-        insert("put",      TRoute::Put);
-        insert("patch",    TRoute::Patch);
-        insert("delete",   TRoute::Delete);
-        insert("trace",    TRoute::Trace);
-        insert("connect",  TRoute::Connect);
-        insert("patch",    TRoute::Patch);
+        insert("match", TRoute::Match);
+        insert("get", TRoute::Get);
+        insert("post", TRoute::Post);
+        insert("put", TRoute::Put);
+        insert("patch", TRoute::Patch);
+        insert("delete", TRoute::Delete);
+        insert("trace", TRoute::Trace);
+        insert("connect", TRoute::Connect);
+        insert("patch", TRoute::Patch);
     }
 };
 Q_GLOBAL_STATIC(RouteDirectiveHash, directiveHash)
@@ -73,8 +73,8 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 {
     QStringList items = line.simplified().split(' ');
     if (items.count() != 3) {
-       tError("Invalid directive, '%s'", qPrintable(line));
-       return false;
+        tError("Invalid directive, '%s'", qPrintable(line));
+        return false;
     }
 
     // Trimm quotes
@@ -83,8 +83,8 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     const QString &path = items[1];
 
     if (path.contains(":params") && !path.endsWith(":params")) {
-       tError(":params must be specified as last directive.");
-       return false;
+        tError(":params must be specified as last directive.");
+        return false;
     }
 
     TRoute rt;
@@ -153,7 +153,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
             }
         }
 
-        for (int idx : (const QList<int>&)rt.keywordIndexes) {
+        for (int idx : (const QList<int> &)rt.keywordIndexes) {
             if (components.value(idx) != rt.componentList[idx]) {
                 goto continue_next;
             }
@@ -179,11 +179,11 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
             routing.exists = true;
             return routing;
         }
-continue_next:
+    continue_next:
         continue;
     }
 
-    return TRouting() /* Not found routing info */ ;
+    return TRouting() /* Not found routing info */;
 }
 
 

@@ -2,10 +2,10 @@
 #define TMONGOODMAPPER_H
 
 #include <QVariant>
-#include <TMongoQuery>
-#include <TMongoObject>
-#include <TCriteriaMongoConverter>
 #include <TCriteria>
+#include <TCriteriaMongoConverter>
+#include <TMongoObject>
+#include <TMongoQuery>
 
 /*!
   \class TMongoODMapper
@@ -16,8 +16,7 @@
 
 
 template <class T>
-class TMongoODMapper : protected TMongoQuery
-{
+class TMongoODMapper : protected TMongoQuery {
 public:
     TMongoODMapper();
     virtual ~TMongoODMapper();
@@ -62,16 +61,18 @@ private:
   Constructor.
 */
 template <class T>
-inline TMongoODMapper<T>::TMongoODMapper()
-    : TMongoQuery(T().collectionName()), sortColumn(), sortOrder(Tf::AscendingOrder)
-{ }
+inline TMongoODMapper<T>::TMongoODMapper() :
+    TMongoQuery(T().collectionName()), sortColumn(), sortOrder(Tf::AscendingOrder)
+{
+}
 
 /*!
   Destructor.
 */
 template <class T>
 inline TMongoODMapper<T>::~TMongoODMapper()
-{ }
+{
+}
 
 template <class T>
 inline void TMongoODMapper<T>::setLimit(int limit)
@@ -107,7 +108,7 @@ inline void TMongoODMapper<T>::setSortOrder(const QString &column, Tf::SortOrder
             sortOrder = order;
         } else {
             tWarn("Unable to set sort order : '%s' field not found in '%s' collection",
-                  qPrintable(column), qPrintable(obj.collectionName()));
+                qPrintable(column), qPrintable(obj.collectionName()));
         }
     }
 }
@@ -306,4 +307,4 @@ inline int TMongoODMapper<T>::removeAll(const TCriteria &criteria)
     return TMongoQuery::remove(TCriteriaMongoConverter<T>(criteria).toVariantMap());
 }
 
-#endif // TMONGOODMAPPER_H
+#endif  // TMONGOODMAPPER_H

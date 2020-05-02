@@ -1,17 +1,16 @@
 #ifndef TMONGOOBJECT_H
 #define TMONGOOBJECT_H
 
+#include <QDateTime>
 #include <QObject>
 #include <QString>
-#include <QDateTime>
-#include <QVariantMap>
 #include <QStringList>
+#include <QVariantMap>
 #include <TGlobal>
 #include <TModelObject>
 
 
-class T_CORE_EXPORT TMongoObject : public TModelObject, protected QVariantMap
-{
+class T_CORE_EXPORT TMongoObject : public TModelObject, protected QVariantMap {
 public:
     TMongoObject();
     TMongoObject(const TMongoObject &other);
@@ -38,4 +37,4 @@ protected:
     virtual QString &objectId() = 0;
 };
 
-#endif // TMONGOOBJECT_H
+#endif  // TMONGOOBJECT_H

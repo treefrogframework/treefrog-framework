@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSession>
-#include <TAppSettings>
-#include <TActionController>
 #include "tsystemglobal.h"
+#include <TActionController>
+#include <TAppSettings>
+#include <TSession>
 
 /*!
   \class TSession

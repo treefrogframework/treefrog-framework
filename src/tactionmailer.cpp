@@ -5,18 +5,18 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include <QProcess>
 #include <TActionMailer>
-#include <TWebApplication>
+#include <TActionView>
 #include <TAppSettings>
 #include <TDispatcher>
-#include <TActionView>
 #include <TMailMessage>
-#include <TSmtpMailer>
 #include <TSendmailMailer>
-#include <QProcess>
+#include <TSmtpMailer>
+#include <TWebApplication>
 
 constexpr auto CONTROLLER_NAME = "mailer";
-constexpr auto ACTIONE_NAME    = "mail";
+constexpr auto ACTIONE_NAME = "mail";
 
 /*!
   \class TActionMailer
@@ -26,8 +26,10 @@ constexpr auto ACTIONE_NAME    = "mail";
 /*!
   Constructor.
 */
-TActionMailer::TActionMailer() : TAbstractController()
-{ }
+TActionMailer::TActionMailer() :
+    TAbstractController()
+{
+}
 
 /*!
   Returns the controller name, "mailer".
@@ -83,7 +85,7 @@ bool TActionMailer::deliver(const QString &templateName)
         tSystemDebug("%s", mail.toByteArray().data());
 
         // POP before SMTP
-        if ( Tf::appSettings()->value(Tf::ActionMailerSmtpEnablePopBeforeSmtp, false).toBool() ) {
+        if (Tf::appSettings()->value(Tf::ActionMailerSmtpEnablePopBeforeSmtp, false).toBool()) {
             QByteArray popSvr = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerHostName).toByteArray();
             quint16 popPort = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerPort).toInt();
             bool apop = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerEnableApop, false).toBool();

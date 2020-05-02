@@ -5,17 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TKvsDatabase>
-#include <TKvsDriver>
-#include <TSystemGlobal>
 #include "tmongodriver.h"
 #include "tredisdriver.h"
 #include <QMap>
-#include <QString>
 #include <QReadWriteLock>
+#include <QString>
+#include <TKvsDatabase>
+#include <TKvsDriver>
+#include <TSystemGlobal>
 
-class TKvsDatabaseData
-{
+class TKvsDatabaseData {
 public:
     QString connectionName;
     QString databaseName;
@@ -27,7 +26,7 @@ public:
     QStringList postOpenStatements;
     TKvsDriver *driver {nullptr};  // pointer to a singleton object
 
-    TKvsDatabaseData() {}
+    TKvsDatabaseData() { }
 };
 
 
@@ -41,8 +40,7 @@ const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 
 // Map of connection name and database data
-class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData>
-{
+class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData> {
 public:
     mutable QReadWriteLock lock;
 };
@@ -117,19 +115,22 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
     connectName(other.connectName),
     drv(other.drv)
-{ }
+{
+}
 
 
 TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver) :
     connectName(connectionName),
     drv(driver)
-{ }
+{
+}
 
 
 TKvsDatabase::TKvsDatabase(const TKvsDatabaseData &data) :
     connectName(data.connectionName),
     drv(data.driver)
-{ }
+{
+}
 
 
 TKvsDatabase &TKvsDatabase::operator=(const TKvsDatabase &other)

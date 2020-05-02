@@ -4,8 +4,7 @@
 #include <TScheduler>
 
 
-class T_CORE_EXPORT TApplicationScheduler : public TScheduler
-{
+class T_CORE_EXPORT TApplicationScheduler : public TScheduler {
     Q_OBJECT
 public:
     TApplicationScheduler();
@@ -13,7 +12,7 @@ public:
 
     void start(int msec);
     void stop();
-    int	interval() const;
+    int interval() const;
     bool isSingleShot() const;
     void setSingleShot(bool singleShot);
 
@@ -26,4 +25,4 @@ private:
     T_DISABLE_MOVE(TApplicationScheduler)
 };
 
-#endif // TAPPLICATIONSCHEDULER_H
+#endif  // TAPPLICATIONSCHEDULER_H

@@ -1,21 +1,20 @@
 #ifndef TJSMODULE_H
 #define TJSMODULE_H
 
-#include <QString>
-#include <QObject>
-#include <QStringList>
-#include <QJSValue>
 #include <QDir>
+#include <QJSValue>
 #include <QMap>
 #include <QMutex>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 #include <TGlobal>
 
 class QJSEngine;
 class TJSInstance;
 
 
-class T_CORE_EXPORT TJSModule : public QObject
-{
+class T_CORE_EXPORT TJSModule : public QObject {
 public:
     TJSModule(QObject *parent = nullptr);
     virtual ~TJSModule();
@@ -45,4 +44,4 @@ private:
     friend class TReactComponent;
 };
 
-#endif // TJSMODULE_H
+#endif  // TJSMODULE_H

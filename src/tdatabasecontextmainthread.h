@@ -4,8 +4,7 @@
 #include "tdatabasecontextthread.h"
 
 
-class T_CORE_EXPORT TDatabaseContextMainThread : public TDatabaseContextThread
-{
+class T_CORE_EXPORT TDatabaseContextMainThread : public TDatabaseContextThread {
 public:
     TDatabaseContextMainThread(QObject *parent = nullptr);
     ~TDatabaseContextMainThread() = default;
@@ -14,4 +13,4 @@ public:
     T_DISABLE_MOVE(TDatabaseContextMainThread)
 };
 
-#endif // TDATABASECONTEXTMAINTHREAD_H
+#endif  // TDATABASECONTEXTMAINTHREAD_H

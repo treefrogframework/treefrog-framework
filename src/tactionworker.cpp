@@ -5,15 +5,15 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TActionWorker>
-#include <THttpRequest>
-#include <TAppSettings>
-#include <TMultiplexingServer>
-#include <QCoreApplication>
-#include <QElapsedTimer>
-#include <atomic>
 #include "tepollhttpsocket.h"
 #include "tsystemglobal.h"
+#include <QCoreApplication>
+#include <QElapsedTimer>
+#include <TActionWorker>
+#include <TAppSettings>
+#include <THttpRequest>
+#include <TMultiplexingServer>
+#include <atomic>
 
 
 /*!

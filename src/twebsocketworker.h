@@ -1,19 +1,18 @@
 #ifndef TWEBSOCKETWORKER_H
 #define TWEBSOCKETWORKER_H
 
-#include <QThread>
-#include <QList>
-#include <QPair>
-#include <TGlobal>
-#include <TSession>
 #include "tdatabasecontextthread.h"
 #include "twebsocketframe.h"
+#include <QList>
+#include <QPair>
+#include <QThread>
+#include <TGlobal>
+#include <TSession>
 
 class TAbstractWebSocket;
 
 
-class T_CORE_EXPORT TWebSocketWorker : public TDatabaseContextThread
-{
+class T_CORE_EXPORT TWebSocketWorker : public TDatabaseContextThread {
     Q_OBJECT
 public:
     enum RunMode {
@@ -41,4 +40,4 @@ private:
     QList<QPair<int, QByteArray>> _payloads;
 };
 
-#endif // TWEBSOCKETWORKER_H
+#endif  // TWEBSOCKETWORKER_H

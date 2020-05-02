@@ -4,8 +4,7 @@
 #include <QString>
 
 
-class FileWriter
-{
+class FileWriter {
 public:
     FileWriter(const QString &filePath = QString());
     bool write(const QString &data, bool overwrite) const;
@@ -18,4 +17,4 @@ private:
     QString filepath;
 };
 
-#endif // FILEWRITER_H
+#endif  // FILEWRITER_H

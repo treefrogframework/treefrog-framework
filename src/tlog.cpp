@@ -32,7 +32,8 @@ TLog::TLog(int pri, const QByteArray &msg) :
     threadId((qulonglong)QThread::currentThreadId()),
 #endif
     message(msg)
-{ }
+{
+}
 
 
 QDataStream &operator<<(QDataStream &out, const TLog &log)

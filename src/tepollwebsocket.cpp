@@ -6,18 +6,18 @@
  */
 
 #include "tepollwebsocket.h"
+#include "tdispatcher.h"
 #include "tepoll.h"
+#include "turlroute.h"
 #include "twebsocketframe.h"
 #include "twebsocketworker.h"
-#include "turlroute.h"
-#include "tdispatcher.h"
-#include <TWebApplication>
-#include <TSystemGlobal>
+#include <QCryptographicHash>
+#include <QDataStream>
 #include <TAppSettings>
 #include <THttpRequestHeader>
 #include <THttpUtility>
-#include <QDataStream>
-#include <QCryptographicHash>
+#include <TSystemGlobal>
+#include <TWebApplication>
 
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
@@ -40,7 +40,7 @@ TEpollWebSocket::~TEpollWebSocket()
 
 bool TEpollWebSocket::canReadRequest()
 {
-    for (auto &frm : (const QList<TWebSocketFrame>&)frames) {
+    for (auto &frm : (const QList<TWebSocketFrame> &)frames) {
         if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
             return true;
         }
@@ -239,5 +239,5 @@ void TEpollWebSocket::timerEvent(QTimerEvent *event)
 TEpollWebSocket *TEpollWebSocket::searchSocket(int sid)
 {
     TEpollSocket *sock = TEpollSocket::searchSocket(sid);
-    return dynamic_cast<TEpollWebSocket*>(sock);
+    return dynamic_cast<TEpollWebSocket *>(sock);
 }

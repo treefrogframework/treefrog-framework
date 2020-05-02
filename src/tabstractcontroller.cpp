@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsystemglobal.h"
 #include <TAbstractController>
 #include <TFormValidator>
-#include "tsystemglobal.h"
 
 /*!
   \class TAbstractController
@@ -19,7 +19,8 @@
   Constructor.
 */
 TAbstractController::TAbstractController()
-{ }
+{
+}
 
 /*!
   Exports a new variable with the name \a name and a value of \a value for views.
@@ -55,7 +56,7 @@ void TAbstractController::exportVariants(const QVariantMap &map)
  */
 void TAbstractController::exportValidationErrors(const TFormValidator &v, const QString &prefix)
 {
-    for (auto &key : (const QStringList&)v.validationErrorKeys()) {
+    for (auto &key : (const QStringList &)v.validationErrorKeys()) {
         QString msg = v.errorMessage(key);
         exportVariant(prefix + key, QVariant(msg));
     }

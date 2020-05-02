@@ -2,8 +2,8 @@
 #define THTTPBUFFER_H
 
 #include <QByteArray>
-#include <TGlobal>
 #include <TAccessLog>
+#include <TGlobal>
 
 class QFile;
 class QFileInfo;
@@ -11,8 +11,7 @@ class QHostAddress;
 class THttpHeader;
 
 
-class T_CORE_EXPORT TSendBuffer
-{
+class T_CORE_EXPORT TSendBuffer {
 public:
     ~TSendBuffer();
 
@@ -26,7 +25,7 @@ public:
 
 private:
     QByteArray arrayBuffer;
-    QFile* bodyFile {nullptr};
+    QFile *bodyFile {nullptr};
     bool fileRemove {false};
     TAccessLogger accesslogger;
     int startPos {0};
@@ -41,4 +40,4 @@ private:
     T_DISABLE_MOVE(TSendBuffer)
 };
 
-#endif // THTTPBUFFER_H
+#endif  // THTTPBUFFER_H

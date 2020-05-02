@@ -2,8 +2,8 @@
 #include "thazardptrmanager.h"
 
 
-THazardPtr::THazardPtr()
-    : rec(new THazardPtrRecord())
+THazardPtr::THazardPtr() :
+    rec(new THazardPtrRecord())
 {
     THazardPtrManager::instance().push(rec);
     THazardPtrManager::instance().gc();
@@ -12,7 +12,7 @@ THazardPtr::THazardPtr()
 
 THazardPtr::~THazardPtr()
 {
-    rec->hazptr.store((THazardObject*)0x01);
+    rec->hazptr.store((THazardObject *)0x01);
     THazardPtrManager::instance().gc();
 }
 

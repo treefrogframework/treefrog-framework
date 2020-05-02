@@ -1,21 +1,21 @@
 #ifndef TCRITERIAMONGOCONVERTER_H
 #define TCRITERIAMONGOCONVERTER_H
 
-#include <TGlobal>
-#include <TCriteria>
-#include <TCriteriaConverter>
 #include "tsystemglobal.h"
+#include <QMap>
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QVariant>
-#include <QMap>
+#include <TCriteria>
+#include <TCriteriaConverter>
+#include <TGlobal>
 
 
 template <class T>
-class TCriteriaMongoConverter
-{
+class TCriteriaMongoConverter {
 public:
-    TCriteriaMongoConverter(const TCriteria &cri) : criteria(cri) { }
+    TCriteriaMongoConverter(const TCriteria &cri) :
+        criteria(cri) { }
     QVariantMap toVariantMap() const;
     static QString propertyName(int property);
 
@@ -66,79 +66,92 @@ inline QVariantMap TCriteriaMongoConverter<T>::criteriaToVariantMap(const QVaria
             QVariantMap ne;
             ne.insert("$ne", cri.val1);
             ret.insert(name, QVariant(ne));
-            break; }
+            break;
+        }
 
         case TMongo::LessThan: {
             QVariantMap lt;
             lt.insert("$lt", cri.val1);
             ret.insert(name, QVariant(lt));
-            break; }
+            break;
+        }
 
         case TMongo::GreaterThan: {
             QVariantMap gt;
             gt.insert("$gt", cri.val1);
             ret.insert(name, QVariant(gt));
-            break; }
+            break;
+        }
 
         case TMongo::LessEqual: {
             QVariantMap le;
             le.insert("$lte", cri.val1);
             ret.insert(name, QVariant(le));
-            break; }
+            break;
+        }
 
         case TMongo::GreaterEqual: {
             QVariantMap ge;
             ge.insert("$gte", cri.val1);
             ret.insert(name, QVariant(ge));
-            break; }
+            break;
+        }
 
         case TMongo::Exists: {
             QVariantMap ex;
             ex.insert("$exists", true);
             ret.insert(name, ex);
-            break; }
+            break;
+        }
 
         case TMongo::NotExists: {
             QVariantMap nex;
             nex.insert("$exists", false);
             ret.insert(name, nex);
-            break; }
+            break;
+        }
 
         case TMongo::All: {
             QVariantMap all;
             all.insert("$all", cri.val1);
             ret.insert(name, all);
-            break; }
+            break;
+        }
 
         case TMongo::In: {
             QVariantMap in;
             in.insert("$in", cri.val1);
             ret.insert(name, in);
-            break; }
+            break;
+        }
 
         case TMongo::NotIn: {
             QVariantMap nin;
             nin.insert("$nin", cri.val1);
             ret.insert(name, nin);
-            break; }
+            break;
+        }
 
         case TMongo::Mod: {
             QVariantMap mod;
             mod.insert("$mod", cri.val1);
             ret.insert(name, mod);
-            break; }
+            break;
+        }
 
         case TMongo::Size: {
             QVariantMap sz;
             sz.insert("$size", cri.val1);
             ret.insert(name, sz);
-            break; }
+            break;
+        }
 
         case TMongo::Type: {
             QVariantMap ty;
             ty.insert("$type", cri.val1);
             ret.insert(name, ty);
-            break; }
+            break;
+        }
 
         default:
             tWarn("error parameter: %d", cri.op1);
@@ -181,4 +194,4 @@ inline QVariantMap TCriteriaMongoConverter<T>::join(const QVariantMap &v1, TCrit
     return ret;
 }
 
-#endif // TCRITERIAMONGOCONVERTER_H
+#endif  // TCRITERIAMONGOCONVERTER_H

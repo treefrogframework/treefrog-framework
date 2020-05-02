@@ -5,18 +5,18 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
 #include <TSystemGlobal>
-#include <csignal>
+#include <TWebApplication>
 #include <cerrno>
+#include <csignal>
 
 namespace {
-    volatile sig_atomic_t unixSignal = -1;
+volatile sig_atomic_t unixSignal = -1;
 
-    void signalHandler(int signum)
-    {
-        unixSignal = signum;
-    }
+void signalHandler(int signum)
+{
+    unixSignal = signum;
+}
 }
 
 

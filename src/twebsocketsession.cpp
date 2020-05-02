@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebSocketSession>
 #include <TSession>
+#include <TWebSocketSession>
 
 /*!
   \class TWebSocketSession
@@ -19,7 +19,7 @@
 
 TWebSocketSession &TWebSocketSession::unite(const TSession &session)
 {
-    QVariantMap::unite(*static_cast<const QVariantMap*>(&session));
+    QVariantMap::unite(*static_cast<const QVariantMap *>(&session));
     return *this;
 }
 

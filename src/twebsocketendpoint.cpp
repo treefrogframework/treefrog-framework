@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebSocketEndpoint>
-#include <TActionController>
 #include "twebsocketframe.h"
+#include <TActionController>
+#include <TWebSocketEndpoint>
 
 
 /*!
@@ -16,9 +16,10 @@
   WebSocket communication.
  */
 
-TWebSocketEndpoint::TWebSocketEndpoint()
-    : taskList(), rollback(false)
-{ }
+TWebSocketEndpoint::TWebSocketEndpoint() :
+    taskList(), rollback(false)
+{
+}
 
 /*!
   This handler is called immediately after the WebSocket connection is
@@ -183,7 +184,7 @@ QString TWebSocketEndpoint::identityKeyOfLoginUser(const TSession &session)
 
 const QStringList &TWebSocketEndpoint::disabledEndpoints()
 {
-    static const QStringList disabledNames = { "application" };
+    static const QStringList disabledNames = {"application"};
     return disabledNames;
 }
 
@@ -261,7 +262,6 @@ void TWebSocketEndpoint::sendHttp(int id, const QByteArray &data)
     info << id << data;
     taskList << qMakePair((int)HttpSend, QVariant(info));
 }
-
 
 
 /*!

@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <THtmlAttribute>
 #include <TActionView>
+#include <THtmlAttribute>
 
 /*!
   \class THtmlAttribute
@@ -25,16 +25,18 @@ THtmlAttribute::THtmlAttribute(const QString &key, const QString &value)
 /*!
   Copy constructor.
 */
-THtmlAttribute::THtmlAttribute(const THtmlAttribute &other)
-    : QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString>> *>(&other))
-{ }
+THtmlAttribute::THtmlAttribute(const THtmlAttribute &other) :
+    QList<QPair<QString, QString>>(*static_cast<const QList<QPair<QString, QString>> *>(&other))
+{
+}
 
 /*!
   Copy constructor.
 */
-THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString>> &list)
-    : QList<QPair<QString, QString>>(list)
-{ }
+THtmlAttribute::THtmlAttribute(const QList<QPair<QString, QString>> &list) :
+    QList<QPair<QString, QString>>(list)
+{
+}
 
 /*!
   Returns true if the HTML attributes contains an item with key \a key;

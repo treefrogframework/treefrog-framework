@@ -5,16 +5,16 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsystemglobal.h"
 #include <TJSLoader>
 #include <TReactComponent>
-#include "tsystemglobal.h"
 
 //#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 //#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
 
-TReactComponent::TReactComponent(const QString &moduleName, const QStringList &searchPaths)
-    : jsLoader(new TJSLoader(moduleName, TJSLoader::Jsx)), loadedTime()
+TReactComponent::TReactComponent(const QString &moduleName, const QStringList &searchPaths) :
+    jsLoader(new TJSLoader(moduleName, TJSLoader::Jsx)), loadedTime()
 {
     QStringList paths = searchPaths;
     paths << TJSLoader::defaultSearchPaths();

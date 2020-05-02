@@ -6,8 +6,7 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TProcessInfo
-{
+class T_CORE_EXPORT TProcessInfo {
 public:
     TProcessInfo(qint64 pid);
 
@@ -17,8 +16,8 @@ public:
     bool exists() const;
 
     void terminate();  // SIGTERM
-    void kill();       // SIGKILL
-    void restart();    // SIGHUP
+    void kill();  // SIGKILL
+    void restart();  // SIGHUP
     bool waitForTerminated(int msecs = 10000);
     QList<qint64> childProcessIds() const;
 
@@ -31,4 +30,4 @@ private:
     qint64 processId;
 };
 
-#endif // TPROCESSINFO_H
+#endif  // TPROCESSINFO_H

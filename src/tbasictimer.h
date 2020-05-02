@@ -1,13 +1,12 @@
 #ifndef TBASICTIMER_H
 #define TBASICTIMER_H
 
-#include <QObject>
 #include <QBasicTimer>
+#include <QObject>
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TBasicTimer : public QObject, public QBasicTimer
-{
+class T_CORE_EXPORT TBasicTimer : public QObject, public QBasicTimer {
     Q_OBJECT
 public:
     TBasicTimer(QObject *parent = 0);
@@ -28,4 +27,4 @@ private:
     T_DISABLE_MOVE(TBasicTimer)
 };
 
-#endif // TBASICTIMER_H
+#endif  // TBASICTIMER_H

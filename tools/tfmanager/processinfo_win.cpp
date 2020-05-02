@@ -5,14 +5,14 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "processinfo.h"
 #include <QtCore>
 #include <TWebApplication>
-#include <windows.h>
-#include <tlhelp32.h>
-#include <psapi.h>
-#include <winternl.h>
 #include <ntstatus.h>
-#include "processinfo.h"
+#include <psapi.h>
+#include <tlhelp32.h>
+#include <windows.h>
+#include <winternl.h>
 
 namespace TreeFrog {
 
@@ -72,14 +72,13 @@ QString ProcessInfo::processName() const
         WCHAR fileName[512];
         DWORD len = GetModuleFileNameEx(hProcess, NULL, (LPWSTR)fileName, 512);
         if (len > 0) {
-            QString path = QString::fromUtf16((ushort*)fileName);
+            QString path = QString::fromUtf16((ushort *)fileName);
             ret = QFileInfo(path).baseName();
         }
         CloseHandle(hProcess);
     }
     return ret;
 }
-
 
 
 void ProcessInfo::terminate()
@@ -95,7 +94,7 @@ void ProcessInfo::kill()
 {
     if (processId > 0) {
         HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)processId);
-        if (hProcess){
+        if (hProcess) {
             TerminateProcess(hProcess, 0);
             WaitForSingleObject(hProcess, 500);
             CloseHandle(hProcess);
@@ -124,7 +123,7 @@ QList<qint64> ProcessInfo::allConcurrentPids()
     if (Process32First(hSnapshot, &entry)) {
         do {
             ret << (qint64)entry.th32ProcessID;
-        } while(Process32Next(hSnapshot, &entry));
+        } while (Process32Next(hSnapshot, &entry));
     }
     CloseHandle(hSnapshot);
 
@@ -132,4 +131,4 @@ QList<qint64> ProcessInfo::allConcurrentPids()
     return ret;
 }
 
-} // namespace TreeFrog
+}  // namespace TreeFrog

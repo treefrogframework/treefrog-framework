@@ -18,4 +18,4 @@ inline QJsonArray tfModelListToJsonArray(const QList<T> &models)
     return array;
 }
 
-#endif // TJSONUTIL_H
+#endif  // TJSONUTIL_H

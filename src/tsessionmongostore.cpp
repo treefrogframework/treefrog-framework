@@ -7,8 +7,8 @@
 
 #include "tsessionmongostore.h"
 #include "tsessionmongoobject.h"
-#include <TMongoODMapper>
 #include <TCriteria>
+#include <TMongoODMapper>
 
 /*!
   \class TSessionMongoStore

@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSessionStore>
 #include <TAppSettings>
+#include <TSessionStore>
 
 
 qint64 TSessionStore::lifeTimeSecs()

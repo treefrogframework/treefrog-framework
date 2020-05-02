@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsystemglobal.h"
+#include <TActionThread>
+#include <TAppSettings>
 #include <TThreadApplicationServer>
 #include <TWebApplication>
-#include <TAppSettings>
-#include <TActionThread>
-#include "tsystemglobal.h"
 #include <thread>
 
 
@@ -85,7 +85,7 @@ void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
     tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
     TActionThread *thread;
-    while (! threadPoolPtr()->pop(thread)) {
+    while (!threadPoolPtr()->pop(thread)) {
         std::this_thread::yield();
         //qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
         Tf::msleep(1);

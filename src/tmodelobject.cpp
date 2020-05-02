@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TModelObject>
 #include <QMetaProperty>
+#include <TModelObject>
 
 /*!
   \class TModelObject
@@ -49,7 +49,8 @@ void TModelObject::setProperties(const QVariantMap &values)
   Clears the contents of the object.
 */
 void TModelObject::clear()
-{ }
+{
+}
 
 /*!
   Returns a list of the property names.

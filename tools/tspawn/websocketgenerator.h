@@ -4,8 +4,7 @@
 #include <QtCore>
 
 
-class WebSocketGenerator
-{
+class WebSocketGenerator {
 public:
     WebSocketGenerator(const QString &name);
     bool generate(const QString &dst) const;
@@ -14,5 +13,4 @@ private:
     QString name;
 };
 
-#endif // WEBSOCKETGENERATOR_H
-
+#endif  // WEBSOCKETGENERATOR_H

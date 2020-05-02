@@ -1,13 +1,12 @@
 #ifndef TCACHESQLITESTORE_H
 #define TCACHESQLITESTORE_H
 
-#include <TGlobal>
-#include <QSqlDatabase>
 #include "tcachestore.h"
+#include <QSqlDatabase>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore
-{
+class T_CORE_EXPORT TCacheSQLiteStore : public TCacheStore {
 public:
     virtual ~TCacheSQLiteStore();
 
@@ -45,4 +44,4 @@ protected:
     friend class TSessionFileDbStore;
 };
 
-#endif // TCACHESQLITESTORE_H
+#endif  // TCACHESQLITESTORE_H

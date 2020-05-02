@@ -13,7 +13,7 @@
     Destroys the user object.
 */
 
-    
+
 /*!
    \fn virtual QString TAbstractUser::identityKey() const = 0
    Returns the identity key, such as a user name.

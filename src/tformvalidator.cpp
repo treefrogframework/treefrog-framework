@@ -5,18 +5,18 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsystemglobal.h"
+#include <QDateTime>
+#include <QLocale>
+#include <QUrl>
 #include <TFormValidator>
 #include <TWebApplication>
-#include "tsystemglobal.h"
-#include <QUrl>
-#include <QLocale>
-#include <QDateTime>
 
-#define ATOM       "[a-zA-Z0-9_!#\\$\\%&'*+/=?\\^`{}~|\\-]+"
-#define DOT_ATOM   ATOM "(?:\\." ATOM ")*"
-#define QUOTED     "\\\"(?:[\\x20\\x23-\\x5b\\x5d-\\x7e]|\\\\[\\x20-\\x7e])*\\\""
-#define LOCAL      "(?:" DOT_ATOM "|" QUOTED ")"
-#define ADDR_SPEC  LOCAL "@" DOT_ATOM
+#define ATOM "[a-zA-Z0-9_!#\\$\\%&'*+/=?\\^`{}~|\\-]+"
+#define DOT_ATOM ATOM "(?:\\." ATOM ")*"
+#define QUOTED "\\\"(?:[\\x20\\x23-\\x5b\\x5d-\\x7e]|\\\\[\\x20-\\x7e])*\\\""
+#define LOCAL "(?:" DOT_ATOM "|" QUOTED ")"
+#define ADDR_SPEC LOCAL "@" DOT_ATOM
 
 /*!
   \class TFormValidator::RuleEntry
@@ -28,7 +28,8 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, bool enable, const
     rule(r),
     value(enable),
     message(msg)
-{ }
+{
+}
 
 
 TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, qint64 v, const QString &msg) :
@@ -36,7 +37,8 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, qint64 v, const QS
     rule(r),
     value(v),
     message(msg)
-{ }
+{
+}
 
 
 TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, double v, const QString &msg) :
@@ -44,7 +46,8 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, double v, const QS
     rule(r),
     value(v),
     message(msg)
-{ }
+{
+}
 
 
 TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx, const QString &msg) :
@@ -52,7 +55,8 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx,
     rule(r),
     value(rx),
     message(msg)
-{ }
+{
+}
 
 
 /*!
@@ -71,7 +75,8 @@ TFormValidator::TFormValidator(const TFormValidator &other) :
     timeFmt(other.timeFmt),
     dateTimeFmt(other.dateTimeFmt),
     values(other.values)
-{ }
+{
+}
 
 /*!
   Assignment operator.
@@ -256,13 +261,13 @@ bool TFormValidator::validate(const QVariantMap &map)
 
     // Add default rules, Tf::Required.
     QString msg = Tf::app()->validationErrorMessage(Tf::Required);
-    for (auto &k : (const QStringList&)map.keys()) {
+    for (auto &k : (const QStringList &)map.keys()) {
         if (!containsRule(k, Tf::Required)) {
             rules.append(RuleEntry(k, (int)Tf::Required, true, msg));
         }
     }
 
-    for (auto &r : (const QList<RuleEntry>&)rules) {
+    for (auto &r : (const QList<RuleEntry> &)rules) {
         QString str = map.value(r.key).toString();  // value string
 
         if (str.isEmpty()) {
@@ -283,14 +288,16 @@ bool TFormValidator::validate(const QVariantMap &map)
                 if (!ok2 || str.length() > max) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
             case Tf::MinLength: {
                 int min = r.value.toInt(&ok2);
                 if (!ok2 || str.length() < min) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
             case Tf::IntMax: {
                 qint64 n = str.toLongLong(&ok1);
@@ -298,15 +305,17 @@ bool TFormValidator::validate(const QVariantMap &map)
                 if (!ok1 || !ok2 || n > max) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
             case Tf::IntMin: {
                 qint64 n = str.toLongLong(&ok1);
                 qint64 min = r.value.toLongLong(&ok2);
-                if (!ok1 || !ok2  || n < min) {
+                if (!ok1 || !ok2 || n < min) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
             case Tf::DoubleMax: {
                 double n = str.toDouble(&ok1);
@@ -314,7 +323,8 @@ bool TFormValidator::validate(const QVariantMap &map)
                 if (!ok1 || !ok2 || n > max) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
             case Tf::DoubleMin: {
                 double n = str.toDouble(&ok1);
@@ -322,62 +332,69 @@ bool TFormValidator::validate(const QVariantMap &map)
                 if (!ok1 || !ok2 || n < min) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
-            case Tf::EmailAddress: { // refer to RFC5321
-                if ( r.value.toBool() ) {
+            case Tf::EmailAddress: {  // refer to RFC5321
+                if (r.value.toBool()) {
                     QRegExp reg("^" ADDR_SPEC "$");
                     if (!reg.exactMatch(str)) {
                         errors << qMakePair(r.key, r.rule);
                     }
                 }
-                break; }
+                break;
+            }
 
             case Tf::Url: {
-                if ( r.value.toBool() ) {
+                if (r.value.toBool()) {
                     QUrl url(str, QUrl::StrictMode);
                     if (!url.isValid()) {
                         errors << qMakePair(r.key, r.rule);
                     }
                 }
-                break; }
+                break;
+            }
 
             case Tf::Date: {
-                if ( r.value.toBool() ) {
+                if (r.value.toBool()) {
                     QDate date = QLocale().toDate(str, dateFormat());
                     if (!date.isValid()) {
                         errors << qMakePair(r.key, r.rule);
                         tSystemDebug("Validation error: Date format: %s", qPrintable(dateFormat()));
                     }
                 }
-                break; }
+                break;
+            }
 
             case Tf::Time: {
-                if ( r.value.toBool() ) {
+                if (r.value.toBool()) {
                     QTime time = QLocale().toTime(str, timeFormat());
                     if (!time.isValid()) {
                         errors << qMakePair(r.key, r.rule);
                         tSystemDebug("Validation error: Time format: %s", qPrintable(timeFormat()));
                     }
                 }
-                break; }
+                break;
+            }
 
             case Tf::DateTime: {
-                if ( r.value.toBool() ) {
+                if (r.value.toBool()) {
                     QDateTime dt = QLocale().toDateTime(str, dateTimeFormat());
                     if (!dt.isValid()) {
                         errors << qMakePair(r.key, r.rule);
                         tSystemDebug("Validation error: DateTime format: %s", qPrintable(dateTimeFormat()));
                     }
                 }
-                break; }
+                break;
+            }
 
             case Tf::Pattern: {
                 QRegExp rx = r.value.toRegExp();
                 if (rx.isEmpty() || !rx.exactMatch(str)) {
                     errors << qMakePair(r.key, r.rule);
                 }
-                break; }
+                break;
+            }
 
             default:
                 tSystemError("Internal Error, invalid rule: %d  [%s:%d]", r.rule, __FILE__, __LINE__);
@@ -502,7 +519,7 @@ bool TFormValidator::containsRule(const QString &key, Tf::ValidationRule rule) c
 */
 void TFormValidator::removeRule(const QString &key, Tf::ValidationRule rule)
 {
-    for (QMutableListIterator<RuleEntry> i(rules); i.hasNext(); ) {
+    for (QMutableListIterator<RuleEntry> i(rules); i.hasNext();) {
         const RuleEntry &r = i.next();
         if (r.key == key && r.rule == rule) {
             i.remove();

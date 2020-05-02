@@ -1,13 +1,13 @@
 #ifndef TEPOLLWEBSOCKET_H
 #define TEPOLLWEBSOCKET_H
 
+#include "tabstractwebsocket.h"
+#include "tepollsocket.h"
+#include <QList>
+#include <QObject>
+#include <QPair>
 #include <TGlobal>
 #include <THttpResponseHeader>
-#include "tepollsocket.h"
-#include "tabstractwebsocket.h"
-#include <QList>
-#include <QPair>
-#include <QObject>
 
 class QHostAddress;
 class TWebSocketWorker;
@@ -16,8 +16,7 @@ class TSession;
 class THttpRequestHeader;
 
 
-class T_CORE_EXPORT TEpollWebSocket : public QObject, public TEpollSocket, public TAbstractWebSocket
-{
+class T_CORE_EXPORT TEpollWebSocket : public QObject, public TEpollSocket, public TAbstractWebSocket {
     Q_OBJECT
 public:
     virtual ~TEpollWebSocket();
@@ -62,4 +61,4 @@ private:
     T_DISABLE_MOVE(TEpollWebSocket)
 };
 
-#endif // TEPOLLWEBSOCKET_H
+#endif  // TEPOLLWEBSOCKET_H

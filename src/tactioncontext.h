@@ -1,12 +1,12 @@
 #ifndef TACTIONCONTEXT_H
 #define TACTIONCONTEXT_H
 
-#include <QStringList>
-#include <QMap>
-#include <TGlobal>
-#include <TAccessLog>
 #include "tatomic.h"
 #include "tdatabasecontext.h"
+#include <QMap>
+#include <QStringList>
+#include <TAccessLog>
+#include <TGlobal>
 
 class QIODevice;
 class QHostAddress;
@@ -19,8 +19,7 @@ class TTemporaryFile;
 class TActionController;
 
 
-class T_CORE_EXPORT TActionContext : public TDatabaseContext
-{
+class T_CORE_EXPORT TActionContext : public TDatabaseContext {
 public:
     TActionContext();
     virtual ~TActionContext();
@@ -60,4 +59,4 @@ private:
     T_DISABLE_MOVE(TActionContext)
 };
 
-#endif // TACTIONCONTEXT_H
+#endif  // TACTIONCONTEXT_H

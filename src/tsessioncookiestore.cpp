@@ -6,11 +6,11 @@
  */
 
 #include "tsessioncookiestore.h"
+#include <QByteArray>
+#include <QCryptographicHash>
+#include <QDataStream>
 #include <TAppSettings>
 #include <TSystemGlobal>
-#include <QByteArray>
-#include <QDataStream>
-#include <QCryptographicHash>
 
 /*!
   \class TSessionCookieStore

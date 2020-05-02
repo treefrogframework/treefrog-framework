@@ -5,10 +5,10 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "util.h"
 #include <QDir>
 #include <QFileInfo>
 #include <cstdio>
-#include "util.h"
 
 QString dataDirPath = QLatin1String(TREEFROG_DATA_DIR) + "/defaults/";
 

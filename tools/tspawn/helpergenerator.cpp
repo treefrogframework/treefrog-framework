@@ -6,30 +6,28 @@
  */
 
 #include "helpergenerator.h"
-#include "global.h"
 #include "filewriter.h"
+#include "global.h"
 #include "projectfilegenerator.h"
 
-constexpr auto HELPER_HEADER_TEMPLATE =                                 \
-    "#ifndef %1_H\n"                                                    \
-    "#define %1_H\n"                                                    \
-    "\n"                                                                \
-    "#include <TGlobal>\n"                                              \
-    "#include \"applicationhelper.h\"\n"                                \
-    "\n"                                                                \
-    "class T_HELPER_EXPORT %2 : public ApplicationHelper\n"             \
-    "{\n"                                                               \
-    "public:\n"                                                         \
-    "    %2();\n"                                                       \
-    "};\n"                                                              \
-    "\n"                                                                \
-    "#endif // %1_H\n";
+constexpr auto HELPER_HEADER_TEMPLATE = "#ifndef %1_H\n"
+                                        "#define %1_H\n"
+                                        "\n"
+                                        "#include <TGlobal>\n"
+                                        "#include \"applicationhelper.h\"\n"
+                                        "\n"
+                                        "class T_HELPER_EXPORT %2 : public ApplicationHelper\n"
+                                        "{\n"
+                                        "public:\n"
+                                        "    %2();\n"
+                                        "};\n"
+                                        "\n"
+                                        "#endif // %1_H\n";
 
-constexpr auto HELPER_IMPL_TEMPLATE =                   \
-    "#include \"%1.h\"\n"                               \
-    "\n"                                                \
-    "%2::%2() : ApplicationHelper()\n"                  \
-    "{ }\n";
+constexpr auto HELPER_IMPL_TEMPLATE = "#include \"%1.h\"\n"
+                                      "\n"
+                                      "%2::%2() : ApplicationHelper()\n"
+                                      "{ }\n";
 
 
 HelperGenerator::HelperGenerator(const QString &n)

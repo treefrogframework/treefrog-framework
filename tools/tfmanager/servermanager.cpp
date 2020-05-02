@@ -5,34 +5,34 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QtCore>
-#include <QtNetwork>
-#include <TGlobal>
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <TApplicationServerBase>
-#include <TAppSettings>
-#include <TLog>
-#include "qplatformdefs.h"
 #include "servermanager.h"
+#include "qplatformdefs.h"
 #include "systembusdaemon.h"
 #include "tfcore.h"
+#include <QtCore>
+#include <QtNetwork>
+#include <TAppSettings>
+#include <TApplicationServerBase>
+#include <TGlobal>
+#include <TLog>
+#include <TSystemGlobal>
+#include <TWebApplication>
 
 namespace TreeFrog {
 
 #if defined(Q_OS_WIN) && !defined(TF_NO_DEBUG)
-#  define TFSERVER_CMD  INSTALL_PATH "/tadpoled"
+#define TFSERVER_CMD INSTALL_PATH "/tadpoled"
 #else
-#  define TFSERVER_CMD  INSTALL_PATH "/tadpole"
+#define TFSERVER_CMD INSTALL_PATH "/tadpole"
 #endif
 
 static QMap<QProcess *, int> serversStatus;
 static uint startCounter = 0;  // start-counter of treefrog servers
 
 
-ServerManager::ServerManager(int max, int min, int spare, QObject *parent)
-    : QObject(parent), listeningSocket(0), maxServers(max), minServers(min),
-      spareServers(spare), managerState(NotRunning)
+ServerManager::ServerManager(int max, int min, int spare, QObject *parent) :
+    QObject(parent), listeningSocket(0), maxServers(max), minServers(min),
+    spareServers(spare), managerState(NotRunning)
 {
     spareServers = qMax(spareServers, 0);
     minServers = qMax(minServers, 1);
@@ -119,7 +119,7 @@ void ServerManager::stop()
     if (serverCount() > 0) {
         tSystemInfo("TreeFrog application servers shutting down");
 
-        for (QMapIterator<QProcess *, int> i(serversStatus); i.hasNext(); ) {
+        for (QMapIterator<QProcess *, int> i(serversStatus); i.hasNext();) {
             QProcess *tfserver = i.next().key();
             disconnect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), 0, 0);
             disconnect(tfserver, SIGNAL(readyReadStandardError()), 0, 0);
@@ -127,7 +127,7 @@ void ServerManager::stop()
             tfserver->terminate();
         }
 
-        for (QMapIterator<QProcess *, int> i(serversStatus); i.hasNext(); ) {
+        for (QMapIterator<QProcess *, int> i(serversStatus); i.hasNext();) {
             QProcess *tfserver = i.next().key();
             tfserver->waitForFinished(-1);
             delete tfserver;
@@ -197,7 +197,7 @@ void ServerManager::startServer(int id) const
     connect(tfserver, SIGNAL(started()), this, SLOT(updateServerStatus()));
     connect(tfserver, SIGNAL(error(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
     connect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(serverFinish(int, QProcess::ExitStatus)));
-    connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));    // For error notification
+    connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));  // For error notification
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
     // Sets LD_LIBRARY_PATH environment variable
@@ -282,4 +282,4 @@ void ServerManager::readStandardError() const
     }
 }
 
-} // namespace TreeFrog
+}  // namespace TreeFrog

@@ -1,16 +1,15 @@
 #ifndef TPOPMAILER_H
 #define TPOPMAILER_H
 
+#include <QByteArray>
 #include <QObject>
 #include <QString>
-#include <QByteArray>
 #include <TGlobal>
 
 class QTcpSocket;
 
 
-class T_CORE_EXPORT TPopMailer : public QObject
-{
+class T_CORE_EXPORT TPopMailer : public QObject {
     Q_OBJECT
 public:
     TPopMailer(QObject *parent = 0);
@@ -66,4 +65,4 @@ inline void TPopMailer::setPassword(const QByteArray &pass)
     password = pass;
 }
 
-#endif // TPOPMAILER_H
+#endif  // TPOPMAILER_H

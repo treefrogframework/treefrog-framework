@@ -5,37 +5,37 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
 #include "tsystemglobal.h"
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <TWebApplication>
 #include <windows.h>
 #include <winuser.h>
 
 namespace {
-    const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
-    volatile int ctrlSignal = -1;
+const QString LOCAL_SERVER_PREFIX = "treefrog_control_";
+volatile int ctrlSignal = -1;
 
 
-    BOOL WINAPI signalHandler(DWORD ctrlType)
-    {
-        switch (ctrlType) {
-        case CTRL_C_EVENT:
-        case CTRL_BREAK_EVENT:
-        case CTRL_CLOSE_EVENT:
-        case CTRL_LOGOFF_EVENT:
-        case CTRL_SHUTDOWN_EVENT:
-            ctrlSignal = ctrlType;
-            break;
-        default:
-            return FALSE;
-        }
-
-        while (true)
-            Sleep(1);
-
-        return TRUE;
+BOOL WINAPI signalHandler(DWORD ctrlType)
+{
+    switch (ctrlType) {
+    case CTRL_C_EVENT:
+    case CTRL_BREAK_EVENT:
+    case CTRL_CLOSE_EVENT:
+    case CTRL_LOGOFF_EVENT:
+    case CTRL_SHUTDOWN_EVENT:
+        ctrlSignal = ctrlType;
+        break;
+    default:
+        return FALSE;
     }
+
+    while (true)
+        Sleep(1);
+
+    return TRUE;
+}
 }
 
 
@@ -104,7 +104,7 @@ void TWebApplication::recvLocalSocket()
                     quit();
                     break;
 
-                case  WM_APP:
+                case WM_APP:
                     exit(1);
                     break;
 
@@ -117,7 +117,7 @@ void TWebApplication::recvLocalSocket()
 }
 
 
-bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg,  int targetProcess)
+bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg, int targetProcess)
 {
     // Sends to the local socket
     bool ret = false;

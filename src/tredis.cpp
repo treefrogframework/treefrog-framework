@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TRedis>
-#include <TActionContext>
 #include "tredisdriver.h"
+#include <TActionContext>
+#include <TRedis>
 
 /*!
   \class TRedis
@@ -20,18 +20,21 @@
 */
 TRedis::TRedis() :
     database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::Redis))
-{ }
+{
+}
 
 TRedis::TRedis(Tf::KvsEngine engine) :
     database(Tf::currentDatabaseContext()->getKvsDatabase(engine))
-{ }
+{
+}
 
 /*!
   Copy constructor.
 */
 TRedis::TRedis(const TRedis &other) :
     database(other.database)
-{ }
+{
+}
 
 /*!
   Returns the MongoDB driver associated with the TRedis object.
@@ -92,7 +95,7 @@ bool TRedis::exists(const QByteArray &key)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "EXISTS", key };
+    QByteArrayList command = {"EXISTS", key};
     bool res = driver()->request(command, resp);
     return (res && resp.value(0).toInt() == 1);
 }
@@ -108,7 +111,7 @@ QByteArray TRedis::get(const QByteArray &key)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "GET", key };
+    QByteArrayList command = {"GET", key};
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toByteArray() : QByteArray();
 }
@@ -124,7 +127,7 @@ bool TRedis::set(const QByteArray &key, const QByteArray &value)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "SET", key, value };
+    QByteArrayList command = {"SET", key, value};
     return driver()->request(command, resp);
 }
 
@@ -139,7 +142,7 @@ bool TRedis::setEx(const QByteArray &key, const QByteArray &value, int seconds)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "SETEX", key, QByteArray::number(seconds), value };
+    QByteArrayList command = {"SETEX", key, QByteArray::number(seconds), value};
     return driver()->request(command, resp);
 }
 
@@ -155,7 +158,7 @@ bool TRedis::setNx(const QByteArray &key, const QByteArray &value)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "SETNX", key, value };
+    QByteArrayList command = {"SETNX", key, value};
     bool res = driver()->request(command, resp);
     return (res && resp.value(0).toInt() == 1);
 }
@@ -171,7 +174,7 @@ QByteArray TRedis::getSet(const QByteArray &key, const QByteArray &value)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "GETSET", key, value };
+    QByteArrayList command = {"GETSET", key, value};
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toByteArray() : QByteArray();
 }
@@ -182,7 +185,7 @@ QByteArray TRedis::getSet(const QByteArray &key, const QByteArray &value)
  */
 bool TRedis::del(const QByteArray &key)
 {
-    QByteArrayList keys = { key };
+    QByteArrayList keys = {key};
     int count = del(keys);
     return (count == 1);
 }
@@ -198,7 +201,7 @@ int TRedis::del(const QByteArrayList &keys)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "DEL" };
+    QByteArrayList command = {"DEL"};
     command << keys;
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toInt() : 0;
@@ -215,7 +218,7 @@ int TRedis::rpush(const QByteArray &key, const QByteArrayList &values)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "RPUSH", key };
+    QByteArrayList command = {"RPUSH", key};
     command << values;
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toInt() : 0;
@@ -232,7 +235,7 @@ int TRedis::lpush(const QByteArray &key, const QByteArrayList &values)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "LPUSH", key };
+    QByteArrayList command = {"LPUSH", key};
     command << values;
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toInt() : 0;
@@ -249,10 +252,10 @@ QByteArrayList TRedis::lrange(const QByteArray &key, int start, int end = -1)
 
     QByteArrayList ret;
     QVariantList resp;
-    QByteArrayList command = { "LRANGE", key, QByteArray::number(start), QByteArray::number(end) };
+    QByteArrayList command = {"LRANGE", key, QByteArray::number(start), QByteArray::number(end)};
     bool res = driver()->request(command, resp);
     if (res) {
-        for (auto &var : (const QVariantList&)resp) {
+        for (auto &var : (const QVariantList &)resp) {
             ret << var.toByteArray();
         }
     }
@@ -269,7 +272,7 @@ QByteArray TRedis::lindex(const QByteArray &key, int index)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "LINDEX", key, QByteArray::number(index) };
+    QByteArrayList command = {"LINDEX", key, QByteArray::number(index)};
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toByteArray() : QByteArray();
 }
@@ -284,7 +287,7 @@ int TRedis::llen(const QByteArray &key)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "LLEN", key };
+    QByteArrayList command = {"LLEN", key};
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toInt() : -1;
 }
@@ -317,7 +320,7 @@ bool TRedis::hset(const QByteArray &key, const QByteArray &field, const QByteArr
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HSET", key, field, value };
+    QByteArrayList command = {"HSET", key, field, value};
     bool res = driver()->request(command, resp);
     return (res && resp.value(0).toInt() == 1);
 }
@@ -330,7 +333,7 @@ bool TRedis::hsetNx(const QByteArray &key, const QByteArray &field, const QByteA
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HSETNX", key, field, value };
+    QByteArrayList command = {"HSETNX", key, field, value};
     bool res = driver()->request(command, resp);
     return (res && resp.value(0).toInt() == 1);
 }
@@ -343,7 +346,7 @@ QByteArray TRedis::hget(const QByteArray &key, const QByteArray &field)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HGET", key, field };
+    QByteArrayList command = {"HGET", key, field};
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toByteArray() : QByteArray();
 }
@@ -356,7 +359,7 @@ bool TRedis::hexists(const QByteArray &key, const QByteArray &field)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HEXISTS", key, field };
+    QByteArrayList command = {"HEXISTS", key, field};
     bool res = driver()->request(command, resp);
     return (res && resp.value(0).toInt() == 1);
 }
@@ -364,7 +367,7 @@ bool TRedis::hexists(const QByteArray &key, const QByteArray &field)
 
 bool TRedis::hdel(const QByteArray &key, const QByteArray &field)
 {
-    QByteArrayList fields = { field };
+    QByteArrayList fields = {field};
     int count = hdel(key, fields);
     return (count == 1);
 }
@@ -377,7 +380,7 @@ int TRedis::hdel(const QByteArray &key, const QByteArrayList &fields)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HDEL", key };
+    QByteArrayList command = {"HDEL", key};
     command << fields;
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toInt() : 0;
@@ -391,7 +394,7 @@ int TRedis::hlen(const QByteArray &key)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HLEN", key };
+    QByteArrayList command = {"HLEN", key};
     bool res = driver()->request(command, resp);
     return (res) ? resp.value(0).toInt() : -1;
 }
@@ -405,10 +408,10 @@ QList<QPair<QByteArray, QByteArray>> TRedis::hgetAll(const QByteArray &key)
     }
 
     QVariantList resp;
-    QByteArrayList command = { "HGETALL", key };
+    QByteArrayList command = {"HGETALL", key};
     bool res = driver()->request(command, resp);
     if (res) {
-        for (QListIterator<QVariant> it(resp); it.hasNext(); ) {
+        for (QListIterator<QVariant> it(resp); it.hasNext();) {
             QByteArray f = it.next().toByteArray();
             if (!it.hasNext()) {
                 break;
@@ -428,7 +431,7 @@ void TRedis::flushDb()
     }
 
     QVariantList resp;
-    QByteArrayList command = { "FLUSHDB" };
+    QByteArrayList command = {"FLUSHDB"};
     driver()->request(command, resp);
 }
 

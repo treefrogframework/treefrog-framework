@@ -8,13 +8,12 @@
 #include "tsqldatabase.h"
 #include "tsqldriverextension.h"
 #include "tsystemglobal.h"
-#include <QMap>
 #include <QFileInfo>
+#include <QMap>
 #include <QReadWriteLock>
 
 
-class TDatabaseDict : public QMap<QString, TSqlDatabase>
-{
+class TDatabaseDict : public QMap<QString, TSqlDatabase> {
 public:
     mutable QReadWriteLock lock;
 };

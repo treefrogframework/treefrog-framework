@@ -1,26 +1,24 @@
 #ifndef TCRITERIACONVERTER_H
 #define TCRITERIACONVERTER_H
 
-#include <TGlobal>
-#include <TCriteria>
-#include <TSqlQuery>
 #include "tsystemglobal.h"
 #include <QMetaObject>
 #include <QVariant>
+#include <TCriteria>
+#include <TGlobal>
+#include <TSqlQuery>
 
-namespace TSql
-{
-    T_CORE_EXPORT QString formatArg(int op);
-    T_CORE_EXPORT QString formatArg(int op, const QString &a);
-    T_CORE_EXPORT QString formatArg(int op, const QString &a1, const QString &a2);
+namespace TSql {
+T_CORE_EXPORT QString formatArg(int op);
+T_CORE_EXPORT QString formatArg(int op, const QString &a);
+T_CORE_EXPORT QString formatArg(int op, const QString &a1, const QString &a2);
 }
 
 /*!
   TCriteriaData class is a class for criteria data objects.
   \sa TCriteria
  */
-class T_CORE_EXPORT TCriteriaData
-{
+class T_CORE_EXPORT TCriteriaData {
 public:
     TCriteriaData();
     TCriteriaData(const TCriteriaData &other);
@@ -40,32 +38,38 @@ public:
 
 
 inline TCriteriaData::TCriteriaData()
-{ }
+{
+}
 
 
-inline TCriteriaData::TCriteriaData(const TCriteriaData &other)
-    :  property(other.property), op1(other.op1), op2(other.op2), val1(other.val1), val2(other.val2)
-{ }
+inline TCriteriaData::TCriteriaData(const TCriteriaData &other) :
+    property(other.property), op1(other.op1), op2(other.op2), val1(other.val1), val2(other.val2)
+{
+}
 
 
-inline TCriteriaData::TCriteriaData(int property, int op)
-    : property(property), op1(op), op2(TSql::Invalid)
-{ }
+inline TCriteriaData::TCriteriaData(int property, int op) :
+    property(property), op1(op), op2(TSql::Invalid)
+{
+}
 
 
-inline TCriteriaData::TCriteriaData(int property, int op, const QVariant &val)
-    : property(property), op1(op), op2(TSql::Invalid), val1(val)
-{ }
+inline TCriteriaData::TCriteriaData(int property, int op, const QVariant &val) :
+    property(property), op1(op), op2(TSql::Invalid), val1(val)
+{
+}
 
 
-inline TCriteriaData::TCriteriaData(int property, int op, const QVariant &val1, const QVariant &val2)
-    : property(property), op1(op), op2(TSql::Invalid), val1(val1), val2(val2)
-{ }
+inline TCriteriaData::TCriteriaData(int property, int op, const QVariant &val1, const QVariant &val2) :
+    property(property), op1(op), op2(TSql::Invalid), val1(val1), val2(val2)
+{
+}
 
 
-inline TCriteriaData::TCriteriaData(int property, int op1, int op2, const QVariant &val)
-    : property(property), op1(op1), op2(op2), val1(val)
-{ }
+inline TCriteriaData::TCriteriaData(int property, int op1, int op2, const QVariant &val) :
+    property(property), op1(op1), op2(op2), val1(val)
+{
+}
 
 
 inline bool TCriteriaData::isEmpty() const
@@ -77,10 +81,10 @@ Q_DECLARE_METATYPE(TCriteriaData)
 
 
 template <class T>
-class TCriteriaConverter
-{
+class TCriteriaConverter {
 public:
-    TCriteriaConverter(const TCriteria &cri, const QSqlDatabase &db, const QString &aliasTableName = QString()) : criteria(cri), database(db), tableAlias(aliasTableName) { }
+    TCriteriaConverter(const TCriteria &cri, const QSqlDatabase &db, const QString &aliasTableName = QString()) :
+        criteria(cri), database(db), tableAlias(aliasTableName) { }
     QString toString() const;
     QVariant::Type variantType(int property) const;
     QString propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString()) const;
@@ -124,7 +128,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             return QString();
         }
         sqlString = concat(criteriaToString(cri.first()), cri.logicalOperator(),
-                           criteriaToString(cri.second()));
+            criteriaToString(cri.second()));
 
     } else if (var.canConvert<TCriteriaData>()) {
         TCriteriaData cri = var.value<TCriteriaData>();
@@ -145,7 +149,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             sqlString += criteriaToString(name, cri.varType, (TSql::ComparisonOperator)cri.op1, cri.val1, cri.val2, database);
 
         } else if (cri.op1 != TSql::Invalid) {
-            switch(cri.op1) {
+            switch (cri.op1) {
             case TSql::Equal:
             case TSql::NotEqual:
             case TSql::LessThan:
@@ -205,7 +209,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                     sqlString += clause;
                     sqlString += QLatin1Char(')');
                 }
-                break; }
+                break;
+            }
 
             case TSql::LikeEscape:
             case TSql::NotLikeEscape:
@@ -217,7 +222,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                 if (lst.count() == 2) {
                     sqlString += criteriaToString(name, cri.varType, (TSql::ComparisonOperator)cri.op1, lst[0], lst[1], database);
                 }
-                break; }
+                break;
+            }
 
             case TSql::IsNull:
             case TSql::IsNotNull:
@@ -296,14 +302,14 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
     QString v2 = TSqlQuery::formatValue(val2, (QVariant::Type)varType, database);
 
     if (!v1.isEmpty() && !v2.isEmpty()) {
-        switch(op) {
+        switch (op) {
         case TSql::LikeEscape:
         case TSql::NotLikeEscape:
         case TSql::ILikeEscape:
         case TSql::NotILikeEscape:
         case TSql::Between:
         case TSql::NotBetween:
-            sqlString =  QLatin1Char('(');
+            sqlString = QLatin1Char('(');
             sqlString += propertyName;
             sqlString += TSql::formatArg(op, v1, v2);
             sqlString += QLatin1Char(')');
@@ -325,7 +331,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
 {
     QString sqlString;
     if (op1 != TSql::Invalid && op2 != TSql::Invalid && !val.isNull()) {
-        switch(op2) {
+        switch (op2) {
         case TSql::Any:
         case TSql::All: {
             QString str;
@@ -342,7 +348,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
                 sqlString += propertyName;
                 sqlString += TSql::formatArg(op1, str);
             }
-            break; }
+            break;
+        }
 
         default:
             tWarn("Invalid parameters  [%s:%d]", __FILE__, __LINE__);
@@ -383,4 +390,4 @@ inline QString TCriteriaConverter<T>::concat(const QString &s1, TCriteria::Logic
     return string;
 }
 
-#endif // TCRITERIACONVERTER_H
+#endif  // TCRITERIACONVERTER_H

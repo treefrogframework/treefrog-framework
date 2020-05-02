@@ -6,21 +6,21 @@
  */
 
 #include "tdatabasecontext.h"
-#include "tsqldatabasepool.h"
 #include "tkvsdatabasepool.h"
+#include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
-#include <TKvsDriver>
-#include <QtCore>
 #include <QSqlDatabase>
 #include <QThreadStorage>
+#include <QtCore>
+#include <TKvsDriver>
+#include <TWebApplication>
 #include <ctime>
 
 namespace {
-    // Stores a pointer to current database context into TLS
-    //  - qulonglong type to prevent qThreadStorage_deleteData() function to work
-    QThreadStorage<qulonglong> databaseContextPtrTls;
-    QSqlDatabase invalidDb;
+// Stores a pointer to current database context into TLS
+//  - qulonglong type to prevent qThreadStorage_deleteData() function to work
+QThreadStorage<qulonglong> databaseContextPtrTls;
+QSqlDatabase invalidDb;
 }
 
 /*!
@@ -32,7 +32,8 @@ namespace {
 TDatabaseContext::TDatabaseContext() :
     sqlDatabases(),
     kvsDatabases()
-{ }
+{
+}
 
 
 TDatabaseContext::~TDatabaseContext()
@@ -60,7 +61,7 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 
     int n = 0;
     do {
-        if (! db.isValid()) {
+        if (!db.isValid()) {
             db = TSqlDatabasePool::instance()->database(id);
         }
 
@@ -183,7 +184,7 @@ int TDatabaseContext::idleTime() const
 
 TDatabaseContext *TDatabaseContext::currentDatabaseContext()
 {
-    return reinterpret_cast<TDatabaseContext*>(databaseContextPtrTls.localData());
+    return reinterpret_cast<TDatabaseContext *>(databaseContextPtrTls.localData());
 }
 
 

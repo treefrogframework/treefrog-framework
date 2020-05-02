@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TPrototypeAjaxHelper>
-#include <TActionView>
 #include <QMap>
+#include <TActionView>
+#include <TPrototypeAjaxHelper>
 
 /*!
   \class TPrototypeAjaxHelper
@@ -16,78 +16,78 @@
 */
 
 
-class BehaviorHash : public QMap<int, QString>
-{
+class BehaviorHash : public QMap<int, QString> {
 public:
-    BehaviorHash() : QMap<int, QString>()
+    BehaviorHash() :
+        QMap<int, QString>()
     {
-        insert(TPrototypeAjaxHelper::InsertBefore,            QLatin1String("insertion:'before', "));
-        insert(TPrototypeAjaxHelper::InsertAfter,             QLatin1String("insertion:'after', "));
-        insert(TPrototypeAjaxHelper::InsertAtTopOfContent,    QLatin1String("insertion:'top', "));
+        insert(TPrototypeAjaxHelper::InsertBefore, QLatin1String("insertion:'before', "));
+        insert(TPrototypeAjaxHelper::InsertAfter, QLatin1String("insertion:'after', "));
+        insert(TPrototypeAjaxHelper::InsertAtTopOfContent, QLatin1String("insertion:'top', "));
         insert(TPrototypeAjaxHelper::InsertAtBottomOfContent, QLatin1String("insertion:'bottom', "));
     }
 };
 Q_GLOBAL_STATIC(BehaviorHash, behaviorHash)
 
 
-class EventStringHash : public QMap<int, QString>
-{
+class EventStringHash : public QMap<int, QString> {
 public:
-    EventStringHash() : QMap<int, QString>()
+    EventStringHash() :
+        QMap<int, QString>()
     {
-        insert(Tf::Create,        QLatin1String("onCreate:"));
+        insert(Tf::Create, QLatin1String("onCreate:"));
         insert(Tf::Uninitialized, QLatin1String("onUninitialized:"));
-        insert(Tf::Loading,       QLatin1String("onLoading:"));
-        insert(Tf::Loaded,        QLatin1String("onLoaded:"));
-        insert(Tf::Interactive,   QLatin1String("onInteractive:"));
-        insert(Tf::Success,       QLatin1String("onSuccess:"));
-        insert(Tf::Failure,       QLatin1String("onFailure:"));
-        insert(Tf::Complete,      QLatin1String("onComplete:"));
+        insert(Tf::Loading, QLatin1String("onLoading:"));
+        insert(Tf::Loaded, QLatin1String("onLoaded:"));
+        insert(Tf::Interactive, QLatin1String("onInteractive:"));
+        insert(Tf::Success, QLatin1String("onSuccess:"));
+        insert(Tf::Failure, QLatin1String("onFailure:"));
+        insert(Tf::Complete, QLatin1String("onComplete:"));
     }
 };
 Q_GLOBAL_STATIC(EventStringHash, eventStringHash)
 
 
-class StringOptionHash : public QMap<int, QString>
-{
+class StringOptionHash : public QMap<int, QString> {
 public:
-    StringOptionHash() : QMap<int, QString>()
+    StringOptionHash() :
+        QMap<int, QString>()
     {
-        insert(Tf::ContentType,    QLatin1String("contentType:"));
-        insert(Tf::Encoding,       QLatin1String("encoding:"));
-        insert(Tf::PostBody,       QLatin1String("postBody:"));
+        insert(Tf::ContentType, QLatin1String("contentType:"));
+        insert(Tf::Encoding, QLatin1String("encoding:"));
+        insert(Tf::PostBody, QLatin1String("postBody:"));
         insert(Tf::RequestHeaders, QLatin1String("requestHeaders:"));
     }
 };
 Q_GLOBAL_STATIC(StringOptionHash, stringOptionHash)
 
 
-class BoolOptionHash : public QMap<int, QString>
-{
+class BoolOptionHash : public QMap<int, QString> {
 public:
-    BoolOptionHash() : QMap<int, QString>()
+    BoolOptionHash() :
+        QMap<int, QString>()
     {
         insert(Tf::Asynchronous, QLatin1String("asynchronous:"));
-        insert(Tf::EvalJS,       QLatin1String("evalJS:"));
-        insert(Tf::EvalJSON,     QLatin1String("evalJSON:"));
+        insert(Tf::EvalJS, QLatin1String("evalJS:"));
+        insert(Tf::EvalJSON, QLatin1String("evalJSON:"));
         insert(Tf::SanitizeJSON, QLatin1String("sanitizeJSON:"));
     }
 };
 Q_GLOBAL_STATIC(BoolOptionHash, boolOptionHash)
 
 
-class MethodHash : public QMap<int, QString>
-{
+class MethodHash : public QMap<int, QString> {
 public:
-    MethodHash() : QMap<int, QString>()
+    MethodHash() :
+        QMap<int, QString>()
     {
-        insert(Tf::Get,     QLatin1String("get"));
-        insert(Tf::Head,    QLatin1String("head"));
-        insert(Tf::Post,    QLatin1String("post"));
+        insert(Tf::Get, QLatin1String("get"));
+        insert(Tf::Head, QLatin1String("head"));
+        insert(Tf::Post, QLatin1String("post"));
         insert(Tf::Options, QLatin1String("options"));
-        insert(Tf::Put,     QLatin1String("put"));
-        insert(Tf::Delete,  QLatin1String("delete"));
-        insert(Tf::Trace,   QLatin1String("trace"));
+        insert(Tf::Put, QLatin1String("put"));
+        insert(Tf::Delete, QLatin1String("delete"));
+        insert(Tf::Trace, QLatin1String("trace"));
     }
 };
 Q_GLOBAL_STATIC(MethodHash, methodHash)
@@ -214,7 +214,7 @@ QString TPrototypeAjaxHelper::linkToUpdate(const QString &text, const QUrl &url,
 
 QString TPrototypeAjaxHelper::linkToPeriodicalUpdate(const QString &text, const QUrl &url, const QString &id, UpdateBehavior behavior, const TOption &options, bool evalScripts, int frequency, int decay, const QString &jsCondition, const THtmlAttribute &attributes) const
 {
-   QString string;
+    QString string;
     string += QLatin1String("<a href=\"#\" onclick=\"");
     string += periodicalUpdateFunction(url, id, behavior, options, evalScripts, frequency, decay, jsCondition);
     string += QLatin1String(" return false;\"");

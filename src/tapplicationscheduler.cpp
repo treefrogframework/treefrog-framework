@@ -5,9 +5,9 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tsystemglobal.h"
 #include <TApplicationScheduler>
 #include <TWebApplication>
-#include "tsystemglobal.h"
 
 /*!
   \class TApplicationScheduler
@@ -20,12 +20,15 @@
 /*!
   Constructor.
 */
-TApplicationScheduler::TApplicationScheduler() : TScheduler()
-{ }
+TApplicationScheduler::TApplicationScheduler() :
+    TScheduler()
+{
+}
 
 
 TApplicationScheduler::~TApplicationScheduler()
-{ }
+{
+}
 
 
 void TApplicationScheduler::start(int msec)

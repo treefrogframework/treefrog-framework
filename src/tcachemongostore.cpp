@@ -6,14 +6,15 @@
  */
 
 #include "tcachemongostore.h"
-#include <TMongoQuery>
 #include <QDateTime>
+#include <TMongoQuery>
 
 constexpr auto COL = "cache";
 
 
 TCacheMongoStore::TCacheMongoStore()
-{ }
+{
+}
 
 
 bool TCacheMongoStore::open()
@@ -23,7 +24,8 @@ bool TCacheMongoStore::open()
 
 
 void TCacheMongoStore::close()
-{ }
+{
+}
 
 
 QByteArray TCacheMongoStore::get(const QByteArray &key)

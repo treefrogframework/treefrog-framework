@@ -9,12 +9,12 @@
 #include "tsqldatabase.h"
 #include "tsqldriverextensionfactory.h"
 #include "tsystemglobal.h"
-#include <TWebApplication>
-#include <TSqlQuery>
-#include <TAppSettings>
-#include <QMutexLocker>
-#include <QFileInfo>
 #include <QDir>
+#include <QFileInfo>
+#include <QMutexLocker>
+#include <TAppSettings>
+#include <TSqlQuery>
+#include <TWebApplication>
 #include <ctime>
 
 constexpr auto CONN_NAME_FORMAT = "rdb%02d_%d";
@@ -32,8 +32,10 @@ TSqlDatabasePool *TSqlDatabasePool::instance()
 }
 
 
-TSqlDatabasePool::TSqlDatabasePool() : QObject()
-{ }
+TSqlDatabasePool::TSqlDatabasePool() :
+    QObject()
+{
+}
 
 
 TSqlDatabasePool::~TSqlDatabasePool()
@@ -155,7 +157,7 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
                     tSystemDebug("Gets database: %s", qPrintable(tdb.sqlDatabase().connectionName()));
 
                     // Executes setup-queries
-                    if (! tdb.postOpenStatements().isEmpty()) {
+                    if (!tdb.postOpenStatements().isEmpty()) {
                         TSqlQuery query(tdb.sqlDatabase());
                         for (QString st : tdb.postOpenStatements()) {
                             st = st.trimmed();
@@ -276,7 +278,7 @@ void TSqlDatabasePool::timerEvent(QTimerEvent *event)
             }
 
             while (lastCachedTime[i].load() < (uint)std::time(nullptr) - 30
-                   && cache.pop(name)) {
+                && cache.pop(name)) {
                 QSqlDatabase db = TSqlDatabase::database(name).sqlDatabase();
                 closeDatabase(db);
             }
@@ -300,7 +302,7 @@ void TSqlDatabasePool::closeDatabase(QSqlDatabase &database)
 int TSqlDatabasePool::getDatabaseId(const QSqlDatabase &database)
 {
     bool ok;
-    int id = database.connectionName().mid(3,2).toInt(&ok);
+    int id = database.connectionName().mid(3, 2).toInt(&ok);
 
     if (Q_LIKELY(ok && id >= 0)) {
         return id;

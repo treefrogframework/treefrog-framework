@@ -1,14 +1,13 @@
 #ifndef TCACHEMONGOSTORE_H
 #define TCACHEMONGOSTORE_H
 
-#include <TGlobal>
 #include "tcachestore.h"
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TCacheMongoStore : public TCacheStore
-{
+class T_CORE_EXPORT TCacheMongoStore : public TCacheStore {
 public:
-    virtual ~TCacheMongoStore() {}
+    virtual ~TCacheMongoStore() { }
 
     QString key() const override { return QLatin1String("mongodb"); }
     DbType dbType() const override { return KVS; }
@@ -28,4 +27,4 @@ protected:
     friend class TCacheFactory;
 };
 
-#endif // TCACHEMONGOSTORE_H
+#endif  // TCACHEMONGOSTORE_H

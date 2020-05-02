@@ -1,14 +1,13 @@
 #ifndef TCACHESTORE_H
 #define TCACHESTORE_H
 
-#include <TGlobal>
-#include <QMap>
 #include <QByteArray>
+#include <QMap>
 #include <QVariant>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TCacheStore
-{
+class T_CORE_EXPORT TCacheStore {
 public:
     enum DbType {
         SQL,
@@ -16,7 +15,7 @@ public:
         Invalid,
     };
 
-    virtual ~TCacheStore() {}
+    virtual ~TCacheStore() { }
     virtual QString key() const = 0;
     virtual DbType dbType() const = 0;
     virtual bool open() = 0;
@@ -29,4 +28,4 @@ public:
     virtual QMap<QString, QVariant> defaultSettings() const { return QMap<QString, QVariant>(); }
 };
 
-#endif // TCACHESTORE_H
+#endif  // TCACHESTORE_H

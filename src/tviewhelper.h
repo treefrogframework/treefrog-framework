@@ -1,140 +1,139 @@
 #ifndef TVIEWHELPER_H
 #define TVIEWHELPER_H
 
-#include <QStringList>
-#include <QVariant>
-#include <QUrl>
+#include <QFileInfo>
+#include <QPair>
 #include <QPoint>
 #include <QSize>
-#include <QPair>
-#include <QFileInfo>
+#include <QStringList>
+#include <QUrl>
+#include <QVariant>
 #include <TGlobal>
 #include <THtmlAttribute>
 
 class TActionView;
 
 
-class T_CORE_EXPORT TViewHelper
-{
+class T_CORE_EXPORT TViewHelper {
 public:
     virtual ~TViewHelper() { }
 
     QString linkTo(const QString &text, const QUrl &url,
-                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method,
-                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkTo(const QString &text, const QUrl &url, Tf::HttpMethod method,
-                   const QString &jsCondition, const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QString &jsCondition, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToPopup(const QString &text, const QUrl &url,
-                        const QString &windowTitle = QString(),
-                        const QSize &size = QSize(), const QPoint &topLeft = QPoint(),
-                        const QString &windowStyle = QString(),
-                        const QString &jsCondition = QString(),
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QString &windowTitle = QString(),
+        const QSize &size = QSize(), const QPoint &topLeft = QPoint(),
+        const QString &windowStyle = QString(),
+        const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToIf(bool condition, const QString &text, const QUrl &url,
-                     Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
-                     const THtmlAttribute &attributes = THtmlAttribute()) const;
+        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToUnless(bool condition, const QString &text, const QUrl &url,
-                         Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
-                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToFunction(const QString &text, const QString &function,
-                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString buttonToFunction(const QString &text, const QString &function,
-                             const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchor(const QString &text, const QUrl &url,
-                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
-                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method = Tf::Get,
-                   const QString &jsCondition = QString(),
-                   const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorPopup(const QString &text, const QUrl &url,
-                        const QString &windowTitle = QString(),
-                        const QSize &size = QSize(), const QPoint &topLeft = QPoint(),
-                        const QString &windowStyle = QString(),
-                        const QString &jsCondition = QString(),
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QString &windowTitle = QString(),
+        const QSize &size = QSize(), const QPoint &topLeft = QPoint(),
+        const QString &windowStyle = QString(),
+        const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorIf(bool condition, const QString &text, const QUrl &url,
-                     Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
-                     const THtmlAttribute &attributes = THtmlAttribute()) const;
+        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorUnless(bool condition, const QString &text, const QUrl &url,
-                         Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
-                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorFunction(const QString &text, const QString &function,
-                             const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString formTag(const QUrl &url, Tf::HttpMethod method = Tf::Post, bool multipart = false,
-                    const THtmlAttribute &attributes = THtmlAttribute());
+        const THtmlAttribute &attributes = THtmlAttribute());
 
     QString inputTag(const QString &type, const QString &name, const QVariant &value,
-                     const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputTextTag(const QString &name, const QVariant &value,
-                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString inputFileTag(const QString &name, const QVariant &value,   // obsolete
-                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+    QString inputFileTag(const QString &name, const QVariant &value,  // obsolete
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputFileTag(const QString &name,
-                         const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputPasswordTag(const QString &name, const QVariant &value,
-                             const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputHiddenTag(const QString &name, const QVariant &value,
-                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString checkBoxTag(const QString &name, const QVariant &value, bool checked = false,
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString checkBoxTag(const QString &name, const QString &value, const QStringList &checkedValues,
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString checkBoxTag(const QString &name, const QVariant &value, const QVariantList &checkedValues,
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString checkBoxTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString radioButtonTag(const QString &name, const QVariant &value, bool checked = false,
-                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString radioButtonTag(const QString &name, const QVariant &value, const QVariant &checkedValue,
-                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString selectTag(const QString &name, int size = 1, bool multiple = false,
-                      const THtmlAttribute &attributes = THtmlAttribute());
+        const THtmlAttribute &attributes = THtmlAttribute());
 
     QString optionTag(const QString &text, const QVariant &value, bool selected = false,
-                      const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString optionTags(const QStringList &valueList, const QVariant &selectedValue = QVariant(),
-                       const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString optionTags(const QVariantList &valueList, const QVariant &selectedValue = QVariant(),
-                       const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString optionTags(const QList<QPair<QString, QVariant>> &valueList, const QVariant &selectedValue = QVariant(),
-                       const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inputAuthenticityTag() const;
 
     QString textAreaTag(const QString &name, int rows, int cols, const QString &content = QString(),
-                        const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString submitTag(const QString &value, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
@@ -143,31 +142,31 @@ public:
     QString resetTag(const QString &value, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString imageTag(const QString &src, const QSize &size = QSize(),
-                     const QString &alt = QString(),
-                     const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QString &alt = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString imageTag(const QString &src, bool withTimestamp,
-                     const QSize &size = QSize(), const QString &alt = QString(),
-                     const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QSize &size = QSize(), const QString &alt = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString imageTag(const QString &src, const THtmlAttribute &attributes) const;
 
     QString inlineImageTag(const QFileInfo &file, const QString &mediaType,
-                           const QSize &size = QSize(), const QString &alt = QString(),
-                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QSize &size = QSize(), const QString &alt = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inlineImageTag(const QFileInfo &file, const QString &mediaType,
-                           const THtmlAttribute &attributes) const;
+        const THtmlAttribute &attributes) const;
 
     QString inlineImageTag(const QByteArray &data, const QString &mediaType,
-                           const QSize &size = QSize(), const QString &alt = QString(),
-                           const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QSize &size = QSize(), const QString &alt = QString(),
+        const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString inlineImageTag(const QByteArray &data, const QString &mediaType,
-                           const THtmlAttribute &attributes) const;
+        const THtmlAttribute &attributes) const;
 
     QString imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
-                        const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
+        const QString &alt = QString(), const THtmlAttribute &attributes = THtmlAttribute()) const;
     QString imageLinkTo(const QUrl &url, const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString styleSheetTag(const QString &src, const THtmlAttribute &attributes) const;
@@ -226,7 +225,7 @@ inline QString TViewHelper::linkTo(const QString &text, const QUrl &url, const T
   otherwise returns a null string.
 */
 inline QString TViewHelper::linkToIf(bool condition, const QString &text, const QUrl &url, Tf::HttpMethod method,
-                                     const QString &jsCondition, const THtmlAttribute &attributes) const
+    const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return condition ? linkTo(text, url, method, jsCondition, attributes) : text;
 }
@@ -237,7 +236,7 @@ inline QString TViewHelper::linkToIf(bool condition, const QString &text, const 
   otherwise returns a null string.
 */
 inline QString TViewHelper::linkToUnless(bool condition, const QString &text, const QUrl &url, Tf::HttpMethod method,
-                                         const QString &jsCondition, const THtmlAttribute &attributes) const
+    const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return linkToIf(!condition, text, url, method, jsCondition, attributes);
 }
@@ -254,7 +253,7 @@ inline QString TViewHelper::anchor(const QString &text, const QUrl &url, const T
   Creates a \<a\> link tag with the given arguments. Equivalent to linkTo().
 */
 inline QString TViewHelper::anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
-                                   const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return linkTo(text, url, method, attributes);
 }
@@ -263,7 +262,7 @@ inline QString TViewHelper::anchor(const QString &text, const QUrl &url, Tf::Htt
   Creates a \<a\> link tag with the given arguments. Equivalent to linkTo().
 */
 inline QString TViewHelper::anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
-                                   const QString &jsCondition, const THtmlAttribute &attributes) const
+    const QString &jsCondition, const THtmlAttribute &attributes) const
 {
     return linkTo(text, url, method, jsCondition, attributes);
 }
@@ -272,11 +271,11 @@ inline QString TViewHelper::anchor(const QString &text, const QUrl &url, Tf::Htt
   Creates a \<a\> link tag with the given arguments. Equivalent to linkToPopup().
 */
 inline QString TViewHelper::anchorPopup(const QString &text, const QUrl &url,
-                                        const QString &windowTitle,
-                                        const QSize &size, const QPoint &topLeft,
-                                        const QString &windowStyle,
-                                        const QString &jsCondition,
-                                        const THtmlAttribute &attributes) const
+    const QString &windowTitle,
+    const QSize &size, const QPoint &topLeft,
+    const QString &windowStyle,
+    const QString &jsCondition,
+    const THtmlAttribute &attributes) const
 {
     return linkToPopup(text, url, windowTitle, size, topLeft, windowStyle, jsCondition, attributes);
 }
@@ -285,9 +284,9 @@ inline QString TViewHelper::anchorPopup(const QString &text, const QUrl &url,
   Creates a \<a\> link tag with the given arguments. Equivalent to linkToIf().
 */
 inline QString TViewHelper::anchorIf(bool condition, const QString &text,
-                                     const QUrl &url, Tf::HttpMethod method,
-                                     const QString &jsCondition,
-                                     const THtmlAttribute &attributes) const
+    const QUrl &url, Tf::HttpMethod method,
+    const QString &jsCondition,
+    const THtmlAttribute &attributes) const
 {
     return linkToIf(condition, text, url, method, jsCondition, attributes);
 }
@@ -297,9 +296,9 @@ inline QString TViewHelper::anchorIf(bool condition, const QString &text,
   Creates a \<a\> link tag with the given arguments. Equivalent to linkToUnless().
 */
 inline QString TViewHelper::anchorUnless(bool condition, const QString &text,
-                                         const QUrl &url, Tf::HttpMethod method,
-                                         const QString &jsCondition,
-                                         const THtmlAttribute &attributes) const
+    const QUrl &url, Tf::HttpMethod method,
+    const QString &jsCondition,
+    const THtmlAttribute &attributes) const
 {
     return linkToUnless(condition, text, url, method, jsCondition, attributes);
 }
@@ -308,8 +307,8 @@ inline QString TViewHelper::anchorUnless(bool condition, const QString &text,
   Creates a \<a\> link tag with the given arguments. Equivalent to linkToFunction().
 */
 inline QString TViewHelper::anchorFunction(const QString &text,
-                                           const QString &function,
-                                           const THtmlAttribute &attributes) const
+    const QString &function,
+    const THtmlAttribute &attributes) const
 {
     return linkToFunction(text, function, attributes);
 }
@@ -319,14 +318,14 @@ inline QString TViewHelper::anchorFunction(const QString &text,
   This function overloads inputTag().
 */
 inline QString TViewHelper::inputTextTag(const QString &name, const QVariant &value,
-                                         const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inputTag("text", name, value, attributes);
 }
 
 // obsolete  'value is disabled at input type=file tag.'
 inline QString TViewHelper::inputFileTag(const QString &name, const QVariant &value,
-                                         const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inputTag("file", name, value, attributes);
 }
@@ -336,7 +335,7 @@ inline QString TViewHelper::inputFileTag(const QString &name, const QVariant &va
   This function overloads inputTag().
 */
 inline QString TViewHelper::inputFileTag(const QString &name,
-                                         const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inputTag("file", name, QVariant(), attributes);
 }
@@ -346,7 +345,7 @@ inline QString TViewHelper::inputFileTag(const QString &name,
   This function overloads inputTag().
 */
 inline QString TViewHelper::inputPasswordTag(const QString &name, const QVariant &value,
-                                             const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inputTag("password", name, value, attributes);
 }
@@ -356,7 +355,7 @@ inline QString TViewHelper::inputPasswordTag(const QString &name, const QVariant
   This function overloads inputTag().
 */
 inline QString TViewHelper::inputHiddenTag(const QString &name, const QVariant &value,
-                                           const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inputTag("hidden", name, value, attributes);
 }
@@ -375,7 +374,7 @@ inline QString TViewHelper::imageTag(const QString &src, const THtmlAttribute &a
   src=\a "src".
 */
 inline QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, bool withTimestamp,
-                                        const QString &alt, const THtmlAttribute &attributes) const
+    const QString &alt, const THtmlAttribute &attributes) const
 {
     return linkTo(imageTag(src, withTimestamp, QSize(), alt, attributes), url);
 }
@@ -395,7 +394,7 @@ inline QString TViewHelper::imageLinkTo(const QUrl &url, const QString &src, con
   Creates a inline image tag with data of \a filePath and \a mediaType.
  */
 inline QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString &mediaType,
-                                           const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inlineImageTag(file, mediaType, QSize(), QString(), attributes);
 }
@@ -405,9 +404,9 @@ inline QString TViewHelper::inlineImageTag(const QFileInfo &file, const QString 
   Creates a inline image tag with \a data and \a mediaType.
  */
 inline QString TViewHelper::inlineImageTag(const QByteArray &data, const QString &mediaType,
-                                           const THtmlAttribute &attributes) const
+    const THtmlAttribute &attributes) const
 {
     return inlineImageTag(data, mediaType, QSize(), QString(), attributes);
 }
 
-#endif // TVIEWHELPER_H
+#endif  // TVIEWHELPER_H

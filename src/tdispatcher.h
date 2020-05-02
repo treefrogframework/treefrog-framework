@@ -1,17 +1,16 @@
 #ifndef TDISPATCHER_H
 #define TDISPATCHER_H
 
-#include <TGlobal>
 #include "tsystemglobal.h"
-#include <QMetaType>
 #include <QMetaMethod>
 #include <QMetaObject>
+#include <QMetaType>
 #include <QStringList>
+#include <TGlobal>
 
 
 template <class T>
-class TDispatcher
-{
+class TDispatcher {
 public:
     TDispatcher(const QString &metaTypeName);
     ~TDispatcher();
@@ -31,8 +30,10 @@ private:
 
 
 template <class T>
-inline TDispatcher<T>::TDispatcher(const QString &metaTypeName) : metaType(metaTypeName)
-{ }
+inline TDispatcher<T>::TDispatcher(const QString &metaTypeName) :
+    metaType(metaTypeName)
+{
+}
 
 template <class T>
 inline TDispatcher<T>::~TDispatcher()
@@ -61,8 +62,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
         QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString)"),
         QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString)"),
         QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString,QString)"),
-        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)")
-    };
+        QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)")};
 
     object();
     if (Q_UNLIKELY(!ptr)) {
@@ -118,47 +118,47 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
             break;
         case 3:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)));
             break;
         case 4:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)));
             break;
         case 5:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)));
             break;
         case 6:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)));
             break;
         case 7:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
-                            Q_ARG(QString, args.value(6)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
+                Q_ARG(QString, args.value(6)));
             break;
         case 8:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
-                            Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
+                Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)));
             break;
         case 9:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
-                            Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)), Q_ARG(QString, args.value(8)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
+                Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)), Q_ARG(QString, args.value(8)));
             break;
         default:
             res = mm.invoke(ptr, connectionType,
-                            Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
-                            Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
-                            Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)), Q_ARG(QString, args.value(8)),
-                            Q_ARG(QString, args.value(9)));
+                Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
+                Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
+                Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)), Q_ARG(QString, args.value(8)),
+                Q_ARG(QString, args.value(9)));
             break;
         }
     }
@@ -171,7 +171,7 @@ inline T *TDispatcher<T>::object()
     if (!ptr) {
         auto factory = Tf::objectFactories()->value(metaType.toLatin1().toLower());
         if (Q_LIKELY(factory)) {
-            ptr = dynamic_cast<T*>(factory());
+            ptr = dynamic_cast<T *>(factory());
             if (ptr) {
                 typeId = 0;
             }
@@ -193,4 +193,4 @@ inline T *TDispatcher<T>::object()
     return ptr;
 }
 
-#endif // TDISPATCHER_H
+#endif  // TDISPATCHER_H

@@ -5,28 +5,28 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TWebApplication>
-#include <TSystemGlobal>
-#include <TAppSettings>
-#include "tdatabasecontextmainthread.h"
 #include "tcachefactory.h"
-#include <QDir>
-#include <QTextCodec>
+#include "tdatabasecontextmainthread.h"
 #include <QDateTime>
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextCodec>
+#include <TAppSettings>
+#include <TSystemGlobal>
+#include <TWebApplication>
 #include <cstdlib>
 #include <thread>  // for hardware_concurrency()
 
-constexpr auto DEFAULT_INTERNET_MEDIA_TYPE  = "text/plain";
+constexpr auto DEFAULT_INTERNET_MEDIA_TYPE = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
 
 namespace {
-    QTextCodec *searchCodec(const char *name)
-    {
-        QTextCodec *c = QTextCodec::codecForName(name);
-        return (c) ? c : QTextCodec::codecForLocale();
-    }
+QTextCodec *searchCodec(const char *name)
+{
+    QTextCodec *c = QTextCodec::codecForName(name);
+    return (c) ? c : QTextCodec::codecForLocale();
+}
 }
 
 /*!
@@ -54,7 +54,7 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
     _webRootAbsolutePath = ".";
     QStringList args = arguments();
     args.removeFirst();
-    for (QStringListIterator i(args); i.hasNext(); ) {
+    for (QStringListIterator i(args); i.hasNext();) {
         const QString &arg = i.next();
         if (arg.startsWith('-')) {
             if (arg == "-e" && i.hasNext()) {
@@ -148,14 +148,14 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
     if (cacheEnabled()) {
         auto backend = cacheBackend();
         QString path = Tf::appSettings()->value(Tf::CacheSettingsFile).toString().trimmed();
-        if (! path.isEmpty()) {
+        if (!path.isEmpty()) {
             QVariantMap settings = TCacheFactory::defaultSettings(backend);
             // Copy settings
             QSettings iniset(configPath() + path, QSettings::IniFormat);
             iniset.beginGroup(backend);
             for (auto &k : iniset.allKeys()) {
                 auto val = iniset.value(k).toString().trimmed();
-                if (! val.isEmpty()) {
+                if (!val.isEmpty()) {
                     settings.insert(k, iniset.value(k));
                 }
             }
@@ -172,7 +172,8 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
 
 
 TWebApplication::~TWebApplication()
-{ }
+{
+}
 
 /*!
   Enters the main event loop and waits until exit() is called. Returns the
@@ -222,7 +223,7 @@ QString TWebApplication::configPath() const
 */
 QString TWebApplication::libPath() const
 {
-    return webRootPath()+ "lib/";
+    return webRootPath() + "lib/";
 }
 
 /*!
@@ -501,7 +502,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
 
     if (!_configMap.contains(cnf)) {
         QDir dir(configPath());
-        QStringList filters = { configName + ".*", configName };
+        QStringList filters = {configName + ".*", configName};
         const auto filist = dir.entryInfoList(filters);
 
         if (filist.isEmpty()) {

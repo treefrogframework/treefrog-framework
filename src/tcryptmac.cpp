@@ -5,8 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TCryptMac>
 #include <QMessageAuthenticationCode>
+#include <TCryptMac>
 
 /*!
   \class TCryptMac

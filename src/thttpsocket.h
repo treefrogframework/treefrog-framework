@@ -1,15 +1,14 @@
 #ifndef THTTPSOCKET_H
 #define THTTPSOCKET_H
 
-#include <QTcpSocket>
 #include <QByteArray>
+#include <QTcpSocket>
+#include <TGlobal>
 #include <THttpRequest>
 #include <TTemporaryFile>
-#include <TGlobal>
 
 
-class T_CORE_EXPORT THttpSocket : public QTcpSocket
-{
+class T_CORE_EXPORT THttpSocket : public QTcpSocket {
     Q_OBJECT
 public:
     THttpSocket(QObject *parent = 0);
@@ -53,4 +52,4 @@ inline bool THttpSocket::canReadRequest() const
     return (lengthToRead == 0);
 }
 
-#endif // THTTPSOCKET_H
+#endif  // THTTPSOCKET_H

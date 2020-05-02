@@ -5,14 +5,15 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSystemGlobal>
 #include "twebsocketframe.h"
 #include <QDataStream>
 #include <QIODevice>
+#include <TSystemGlobal>
 
 
 TWebSocketFrame::TWebSocketFrame()
-{ }
+{
+}
 
 
 TWebSocketFrame::TWebSocketFrame(const TWebSocketFrame &other) :
@@ -22,7 +23,8 @@ TWebSocketFrame::TWebSocketFrame(const TWebSocketFrame &other) :
     _payload(other._payload),
     _state(other._state),
     _valid(other._valid)
-{ }
+{
+}
 
 
 TWebSocketFrame &TWebSocketFrame::operator=(const TWebSocketFrame &other)
@@ -150,7 +152,7 @@ bool TWebSocketFrame::validate()
         return false;
     }
 
-    _valid  = true;
+    _valid = true;
     _valid &= (rsv1Bit() == false);
     _valid &= (rsv2Bit() == false);
     _valid &= (rsv3Bit() == false);
@@ -160,14 +162,14 @@ bool TWebSocketFrame::validate()
     }
 
     _valid &= ((opCode() >= TWebSocketFrame::Continuation && opCode() <= TWebSocketFrame::BinaryFrame)
-               || (opCode() >= TWebSocketFrame::Close && opCode() <= TWebSocketFrame::Pong));
+        || (opCode() >= TWebSocketFrame::Close && opCode() <= TWebSocketFrame::Pong));
     if (!_valid) {
         tSystemError("WebSocket frame validation error : Incorrect opcode : %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
         return _valid;
     }
 
     if (isControlFrame()) {
-        _valid &= (payloadLength() <= 125); // MUST have a payload length of 125 bytes or less
+        _valid &= (payloadLength() <= 125);  // MUST have a payload length of 125 bytes or less
         _valid &= (finBit() == true);  // MUST NOT be fragmented
     }
 

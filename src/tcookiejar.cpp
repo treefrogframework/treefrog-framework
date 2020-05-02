@@ -23,8 +23,10 @@ uint qHash(const TCookie &key)
 /*!
   Copy constructor.
 */
-TCookieJar::TCookieJar(const TCookieJar &jar) : QList<TCookie>(*static_cast<const QList<TCookie> *>(&jar))
-{ }
+TCookieJar::TCookieJar(const TCookieJar &jar) :
+    QList<TCookie>(*static_cast<const QList<TCookie> *>(&jar))
+{
+}
 
 
 /*!
@@ -32,7 +34,7 @@ TCookieJar::TCookieJar(const TCookieJar &jar) : QList<TCookie>(*static_cast<cons
 */
 void TCookieJar::addCookie(const TCookie &cookie)
 {
-    for (QMutableListIterator<TCookie> it(*this); it.hasNext(); ) {
+    for (QMutableListIterator<TCookie> it(*this); it.hasNext();) {
         if (it.next().name() == cookie.name()) {
             it.remove();
             break;

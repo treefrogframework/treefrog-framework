@@ -9,26 +9,26 @@
 class TRoute {
 public:
     enum RouteDirective {
-        Match   = 0,
-        Get     = Tf::Get,
-        Head    = Tf::Head,
-        Post    = Tf::Post,
+        Match = 0,
+        Get = Tf::Get,
+        Head = Tf::Head,
+        Post = Tf::Post,
         Options = Tf::Options,
-        Put     = Tf::Put,
-        Delete  = Tf::Delete,
-        Trace   = Tf::Trace,
+        Put = Tf::Put,
+        Delete = Tf::Delete,
+        Trace = Tf::Trace,
         Connect = Tf::Connect,
-        Patch   = Tf::Patch,
+        Patch = Tf::Patch,
         Invalid = 0xff,
     };
 
-    int     method {Invalid};
+    int method {Invalid};
     QStringList componentList;
-    QList<int>  keywordIndexes;
+    QList<int> keywordIndexes;
     QByteArray controller;
     QByteArray action;
-    int     paramNum {0};
-    bool    hasVariableParams {false};
+    int paramNum {0};
+    bool hasVariableParams {false};
 };
 
 
@@ -50,7 +50,8 @@ inline TRouting::TRouting(const QByteArray &ctrl, const QByteArray &act, const Q
     controller(ctrl),
     action(act),
     params(p)
-{ }
+{
+}
 
 
 inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, const QStringList &p)
@@ -61,8 +62,7 @@ inline void TRouting::setRouting(const QByteArray &ctrl, const QByteArray &act, 
 }
 
 
-class T_CORE_EXPORT TUrlRoute
-{
+class T_CORE_EXPORT TUrlRoute {
 public:
     static const TUrlRoute &instance();
     static QStringList splitPath(const QString &path);
@@ -79,4 +79,4 @@ private:
     QList<TRoute> _routes;
 };
 
-#endif // TURLROUTE_H
+#endif  // TURLROUTE_H

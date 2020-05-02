@@ -5,8 +5,7 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TTemporaryFile : public QTemporaryFile
-{
+class T_CORE_EXPORT TTemporaryFile : public QTemporaryFile {
 public:
     TTemporaryFile();
     bool open();
@@ -20,4 +19,4 @@ private:
     T_DISABLE_MOVE(TTemporaryFile)
 };
 
-#endif // TTEMPORARYFILE_H
+#endif  // TTEMPORARYFILE_H

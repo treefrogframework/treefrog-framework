@@ -1,12 +1,11 @@
 #ifndef TCRITERIA_H
 #define TCRITERIA_H
 
-#include <TGlobal>
 #include <QVariant>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TCriteria
-{
+class T_CORE_EXPORT TCriteria {
 public:
     TCriteria();
     TCriteria(const TCriteria &other);
@@ -65,10 +64,12 @@ private:
     QVariant cri2;
     int logiOp {None};
 
-    template<class T> friend class TCriteriaConverter;
-    template<class T> friend class TCriteriaMongoConverter;
+    template <class T>
+    friend class TCriteriaConverter;
+    template <class T>
+    friend class TCriteriaMongoConverter;
 };
 
 Q_DECLARE_METATYPE(TCriteria)
 
-#endif // TCRITERIA_H
+#endif  // TCRITERIA_H

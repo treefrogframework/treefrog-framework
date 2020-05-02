@@ -6,64 +6,61 @@
  */
 
 #include "mongoobjgenerator.h"
+#include "filewriter.h"
 #include "global.h"
 #include "projectfilegenerator.h"
-#include "filewriter.h"
 #include <QPair>
 #include <QRegExp>
 #ifndef Q_CC_MSVC
-# include <unistd.h>
+#include <unistd.h>
 #endif
 
-constexpr auto MONGOOBJECT_HEADER_TEMPLATE =                            \
-    "#ifndef %1OBJECT_H\n"                                              \
-    "#define %1OBJECT_H\n"                                              \
-    "\n"                                                                \
-    "#include <TMongoObject>\n"                                         \
-    "#include <QSharedData>\n"                                          \
-    "\n\n"                                                              \
-    "class T_MODEL_EXPORT %2Object : public TMongoObject, public QSharedData\n" \
-    "{\n"                                                               \
-    "public:\n"                                                         \
-    "%3"                                                                \
-    "\n"                                                                \
-    "    enum PropertyIndex {\n"                                        \
-    "%4"                                                                \
-    "    };\n"                                                          \
-    "\n"                                                                \
-    "    virtual QString collectionName() const override { return QStringLiteral(\"%5\"); }\n" \
-    "    virtual QString objectId() const override { return _id; }\n"   \
-    "    virtual QString &objectId() override { return _id; }\n"        \
-    "\n"                                                                \
-    "private:\n"                                                        \
-    "    Q_OBJECT\n"                                                    \
-    "%6"                                                                \
-    "};\n"                                                              \
-    " \n"                                                               \
-    "#endif // %1OBJECT_H";
+constexpr auto MONGOOBJECT_HEADER_TEMPLATE = "#ifndef %1OBJECT_H\n"
+                                             "#define %1OBJECT_H\n"
+                                             "\n"
+                                             "#include <TMongoObject>\n"
+                                             "#include <QSharedData>\n"
+                                             "\n\n"
+                                             "class T_MODEL_EXPORT %2Object : public TMongoObject, public QSharedData\n"
+                                             "{\n"
+                                             "public:\n"
+                                             "%3"
+                                             "\n"
+                                             "    enum PropertyIndex {\n"
+                                             "%4"
+                                             "    };\n"
+                                             "\n"
+                                             "    virtual QString collectionName() const override { return QStringLiteral(\"%5\"); }\n"
+                                             "    virtual QString objectId() const override { return _id; }\n"
+                                             "    virtual QString &objectId() override { return _id; }\n"
+                                             "\n"
+                                             "private:\n"
+                                             "    Q_OBJECT\n"
+                                             "%6"
+                                             "};\n"
+                                             " \n"
+                                             "#endif // %1OBJECT_H";
 
-constexpr auto MONGOOBJECT_HEADER_UPDATE_TEMPLATE =                     \
-    "%3\n"                                                              \
-    "%4"                                                                \
-    "\n"                                                                \
-    "    enum PropertyIndex {\n"                                        \
-    "%5"                                                                \
-    "    };\n"                                                          \
-    "\n"                                                                \
-    "    virtual QString collectionName() const override { return QStringLiteral(\"%2\"); }\n" \
-    "    virtual QString objectId() const override { return _id; }\n"   \
-    "    virtual QString &objectId() override { return _id; }\n"        \
-    "\n"                                                                \
-    "private:\n"                                                        \
-    "    Q_OBJECT\n"                                                    \
-    "%6"                                                                \
-    "};\n"                                                              \
-    " \n"                                                               \
-    "#endif // %1OBJECT_H";
+constexpr auto MONGOOBJECT_HEADER_UPDATE_TEMPLATE = "%3\n"
+                                                    "%4"
+                                                    "\n"
+                                                    "    enum PropertyIndex {\n"
+                                                    "%5"
+                                                    "    };\n"
+                                                    "\n"
+                                                    "    virtual QString collectionName() const override { return QStringLiteral(\"%2\"); }\n"
+                                                    "    virtual QString objectId() const override { return _id; }\n"
+                                                    "    virtual QString &objectId() override { return _id; }\n"
+                                                    "\n"
+                                                    "private:\n"
+                                                    "    Q_OBJECT\n"
+                                                    "%6"
+                                                    "};\n"
+                                                    " \n"
+                                                    "#endif // %1OBJECT_H";
 
-constexpr auto MONGOOBJECT_PROPERTY_TEMPLATE =       \
-    "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n" \
-    "    T_DEFINE_PROPERTY(%1, %2)\n";
+constexpr auto MONGOOBJECT_PROPERTY_TEMPLATE = "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n"
+                                               "    T_DEFINE_PROPERTY(%1, %2)\n";
 
 const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2);
 
@@ -104,13 +101,13 @@ static QStringList generateCode(const QList<QPair<QString, QVariant::Type>> &fie
 {
     QString params, enums, macros;
 
-    for (QListIterator<QPair<QString, QVariant::Type>> it(fieldList); it.hasNext(); ) {
+    for (QListIterator<QPair<QString, QVariant::Type>> it(fieldList); it.hasNext();) {
         const QPair<QString, QVariant::Type> &p = it.next();
         QString typeName = QVariant::typeToName(p.second);
         params += QString("    %1 %2;\n").arg(typeName, p.first);
         macros += QString(MONGOOBJECT_PROPERTY_TEMPLATE).arg(typeName, p.first);
         QString estr = fieldNameToEnumName(p.first);
-        enums  += (enums.isEmpty()) ? QString("        %1 = 0,\n").arg(estr) : QString("        %1,\n").arg(estr);
+        enums += (enums.isEmpty()) ? QString("        %1 = 0,\n").arg(estr) : QString("        %1,\n").arg(estr);
     }
 
     return QStringList() << params << enums << macros;
@@ -223,5 +220,4 @@ int MongoObjGenerator::lockRevisionIndex() const
             return i;
     }
     return -1;
-
 }

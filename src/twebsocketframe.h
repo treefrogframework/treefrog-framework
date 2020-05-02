@@ -5,26 +5,25 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TWebSocketFrame
-{
+class T_CORE_EXPORT TWebSocketFrame {
 public:
     enum OpCode {
         Continuation = 0x0,
-        TextFrame    = 0x1,
-        BinaryFrame  = 0x2,
-        Reserve3     = 0x3,
-        Reserve4     = 0x4,
-        Reserve5     = 0x5,
-        Reserve6     = 0x6,
-        Reserve7     = 0x7,
-        Close        = 0x8,
-        Ping         = 0x9,
-        Pong         = 0xA,
-        ReserveB     = 0xB,
-        ReserveC     = 0xC,
-        ReserveD     = 0xD,
-        ReserveE     = 0xE,
-        ReserveF     = 0xF,
+        TextFrame = 0x1,
+        BinaryFrame = 0x2,
+        Reserve3 = 0x3,
+        Reserve4 = 0x4,
+        Reserve5 = 0x5,
+        Reserve6 = 0x6,
+        Reserve7 = 0x7,
+        Close = 0x8,
+        Ping = 0x9,
+        Pong = 0xA,
+        ReserveB = 0xB,
+        ReserveC = 0xC,
+        ReserveD = 0xD,
+        ReserveE = 0xE,
+        ReserveF = 0xF,
     };
 
     TWebSocketFrame();
@@ -68,7 +67,7 @@ private:
     quint8 _firstByte {0x80};
     quint32 _maskKey {0};
     quint64 _payloadLength {0};
-    QByteArray _payload;   // unmasked data stored
+    QByteArray _payload;  // unmasked data stored
     ProcessingState _state {Empty};
     bool _valid {false};
 
@@ -78,4 +77,4 @@ private:
     friend class TWebSocketController;
 };
 
-#endif // TWEBSOCKETFRAME_H
+#endif  // TWEBSOCKETFRAME_H

@@ -7,8 +7,7 @@
 using TBsonObject = void;
 
 
-class T_CORE_EXPORT TBson
-{
+class T_CORE_EXPORT TBson {
 public:
     TBson();
     ~TBson();
@@ -32,11 +31,11 @@ protected:
 
 private:
     typedef struct _bson_t bson_t;
-    bson_t *bsonData {nullptr};   // pointer to object of bson_t
+    bson_t *bsonData {nullptr};  // pointer to object of bson_t
 
     friend class TMongoDriver;
     friend class TMongoCursor;
     TBson &operator=(const TBson &other);
 };
 
-#endif // TBSON_H
+#endif  // TBSON_H

@@ -1,15 +1,14 @@
 #ifndef ERBCONVERTER_H
 #define ERBCONVERTER_H
 
-#include <QString>
-#include <QFile>
 #include <QDir>
+#include <QFile>
+#include <QString>
 
 class ErbParser;
 
 
-class ErbConverter
-{
+class ErbConverter {
 public:
     ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial);
     bool convert(const QString &erbPath, int trimMode) const;
@@ -28,4 +27,4 @@ private:
     QDir partialDirectory;
 };
 
-#endif // ERBCONVERTER_H
+#endif  // ERBCONVERTER_H

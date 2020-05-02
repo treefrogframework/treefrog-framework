@@ -7,14 +7,14 @@
 
 #include "tprocessinfo.h"
 #include <QtCore>
+#include <libprocstat.h>
+#include <libutil.h>
+#include <signal.h>
 #include <sys/param.h>
+#include <sys/queue.h>
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #include <sys/user.h>
-#include <sys/queue.h>
-#include <libutil.h>
-#include <libprocstat.h>
-#include <signal.h>
 
 
 bool TProcessInfo::exists() const
@@ -36,13 +36,13 @@ qint64 TProcessInfo::ppid() const
     auto *procs = procstat_getprocs(prstat, KERN_PROC_PROC, 0, &cnt);
 
     if (procs) {
-	for (uint i = 0; i < cnt; i++) {
-	    if (procs[i].ki_pid == processId) {
-	        parentpid = procs[i].ki_ppid;
-		break;
-	    }
-	}
-	procstat_freeprocs(prstat, procs);
+        for (uint i = 0; i < cnt; i++) {
+            if (procs[i].ki_pid == processId) {
+                parentpid = procs[i].ki_ppid;
+                break;
+            }
+        }
+        procstat_freeprocs(prstat, procs);
     }
     procstat_close(prstat);
     return parentpid;
@@ -70,13 +70,13 @@ QList<qint64> TProcessInfo::allConcurrentPids()
     auto *procs = procstat_getprocs(prstat, KERN_PROC_PROC, 0, &cnt);
 
     if (procs) {
-	for (uint i = 0; i < cnt; i++) {
-	    qint64 pid = procs[i].ki_pid;
-	    if (pid > 0) {
-	        pidList << pid;
-	    }
-	}
-	procstat_freeprocs(prstat, procs);
+        for (uint i = 0; i < cnt; i++) {
+            qint64 pid = procs[i].ki_pid;
+            if (pid > 0) {
+                pidList << pid;
+            }
+        }
+        procstat_freeprocs(prstat, procs);
     }
     procstat_close(prstat);
 

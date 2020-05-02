@@ -5,11 +5,11 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <TSqlTransaction>
-#include <TWebApplication>
-#include <TSystemGlobal>
 #include "tsqldatabasepool.h"
 #include <QSqlDriver>
+#include <TSqlTransaction>
+#include <TSystemGlobal>
+#include <TWebApplication>
 
 /*!
   \class TSqlTransaction
@@ -18,7 +18,8 @@
 
 
 TSqlTransaction::TSqlTransaction()
-{ }
+{
+}
 
 
 TSqlTransaction::~TSqlTransaction()
@@ -38,7 +39,7 @@ bool TSqlTransaction::begin()
         return true;
     }
 
-    if (! _database.driver()->hasFeature(QSqlDriver::Transactions)) {
+    if (!_database.driver()->hasFeature(QSqlDriver::Transactions)) {
         return true;
     }
 

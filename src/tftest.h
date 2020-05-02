@@ -22,7 +22,7 @@
     {                                                                                                                  \
         class Thread : public TActionThread {                                                                          \
         public:                                                                                                        \
-            Thread() : TActionThread(0), returnCode(0) {}                                                              \
+            Thread() : TActionThread(0), returnCode(0) { }                                                             \
             volatile int returnCode;                                                                                   \
                                                                                                                        \
         protected:                                                                                                     \

@@ -1,29 +1,28 @@
 #ifndef TOAUTH2CLIENT_H
 #define TOAUTH2CLIENT_H
 
-#include <TGlobal>
+#include <QNetworkReply>
 #include <QStringList>
 #include <QUrl>
-#include <QNetworkReply>
 #include <QVariantMap>
+#include <TGlobal>
 
 
-class T_CORE_EXPORT TOAuth2Client
-{
+class T_CORE_EXPORT TOAuth2Client {
 public:
     enum ErrorCode {
-        NoError = 0,      ///< no error
-        InvalidRequest,   ///< invalid request
-        InvalidClient,    ///< invalid client
-        InvalidGrant,     ///< invalid grant
-        UnauthorizedClient,      ///< unauthorized client
-        UnsupportedGrantType,    ///< unsupported grant type
-        AccessDenied,            ///< access denied
-        UnsupportedResponseType, ///< unsupported response type
-        InvalidScope,            ///< invalid scope
-        ServerError,             ///< server error
+        NoError = 0,  ///< no error
+        InvalidRequest,  ///< invalid request
+        InvalidClient,  ///< invalid client
+        InvalidGrant,  ///< invalid grant
+        UnauthorizedClient,  ///< unauthorized client
+        UnsupportedGrantType,  ///< unsupported grant type
+        AccessDenied,  ///< access denied
+        UnsupportedResponseType,  ///< unsupported response type
+        InvalidScope,  ///< invalid scope
+        ServerError,  ///< server error
         TemporarilyUnavailable,  ///< temporarily unavailable
-        UnknownError,            ///< unknown error
+        UnknownError,  ///< unknown error
     };
 
     TOAuth2Client(const QString &clientId, const QString &clientSecret = QString());
@@ -42,4 +41,4 @@ private:
     QNetworkReply::NetworkError _networkError {QNetworkReply::NoError};
 };
 
-#endif // TOAUTH2CLIENT_H
+#endif  // TOAUTH2CLIENT_H

@@ -6,15 +6,15 @@
  */
 
 #include "tsessionmanager.h"
-#include "tsystemglobal.h"
 #include "tsessionstorefactory.h"
-#include <TAppSettings>
-#include <TSessionStore>
-#include <TAtomic>
-#include <QHostInfo>
-#include <QCryptographicHash>
-#include <QThread>
+#include "tsystemglobal.h"
 #include <QCoreApplication>
+#include <QCryptographicHash>
+#include <QHostInfo>
+#include <QThread>
+#include <TAppSettings>
+#include <TAtomic>
+#include <TSessionStore>
 
 
 static QByteArray createHash()
@@ -35,11 +35,13 @@ static QByteArray createHash()
 
 
 TSessionManager::TSessionManager()
-{ }
+{
+}
 
 
 TSessionManager::~TSessionManager()
-{ }
+{
+}
 
 
 TSession TSessionManager::findSession(const QByteArray &id)
@@ -106,7 +108,7 @@ QByteArray TSessionManager::generateId()
     QByteArray id;
     int i;
     for (i = 0; i < 3; ++i) {
-        id = createHash();   // Hash algorithm is important!
+        id = createHash();  // Hash algorithm is important!
         if (findSession(id).isEmpty())
             break;
     }

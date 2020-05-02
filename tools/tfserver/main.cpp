@@ -5,25 +5,25 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include <QTextCodec>
-#include <QStringList>
-#include <QMap>
-#include <TWebApplication>
-#include <TAppSettings>
-#include <TThreadApplicationServer>
-#include <TMultiplexingServer>
-#include <TJSLoader>
-#include <TSystemGlobal>
-#include <cstdlib>
+#include "signalhandler.h"
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
-#include "signalhandler.h"
+#include <QMap>
+#include <QStringList>
+#include <QTextCodec>
+#include <TAppSettings>
+#include <TJSLoader>
+#include <TMultiplexingServer>
+#include <TSystemGlobal>
+#include <TThreadApplicationServer>
+#include <TWebApplication>
+#include <cstdlib>
 using namespace TreeFrog;
 
-constexpr auto DEBUG_MODE_OPTION  = "--debug";
-constexpr auto SOCKET_OPTION      = "-s";
+constexpr auto DEBUG_MODE_OPTION = "--debug";
+constexpr auto SOCKET_OPTION = "-s";
 constexpr auto AUTO_RELOAD_OPTION = "-r";
-constexpr auto PORT_OPTION        = "-p";
+constexpr auto PORT_OPTION = "-p";
 
 
 static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
         goto finish;
     }
 
-    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=](){ server->stop(); });
+    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=]() { server->stop(); });
     ret = webapp.exec();
 
 finish:
