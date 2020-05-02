@@ -10,7 +10,7 @@ page_id: "development.00"
 
 TreeFrog Framework は GitHub でリポジトリを公開しています。
 
-  [<i class="fa fa-github" aria-hidden="true"></i> https://github.com/treefrogframework/](https://github.com/treefrogframework/){:target="_blank"}
+  [<i class="fab fa-github"></i> https://github.com/treefrogframework/](https://github.com/treefrogframework/){:target="_blank"}
 
 
 ### フォーラム
