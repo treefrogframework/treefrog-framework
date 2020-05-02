@@ -40,15 +40,22 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2020/2/11  TreeFrog Framework バージョン1.28.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2020/5/2  TreeFrog Framework バージョン1.29.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - Cookieへmax-ageを指定した時の不具合修正
+  - selectタグ生成時の不具合修正
+  - クラス生成時のboolフィールドの初期化コードを変更
+  - publish()関数をTActionControllerクラスに実装
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2020/2/11  TreeFrog Framework バージョン1.28.0 （安定版）リリース
 
   - CookieへSameSite属性を追加できるよう実装
   - MaxAge属性を設定するよう修正
   - 利用可能なコントローラの表示に関するバグを修正
   - -lオプションで表示した時のポート表示の不具合を修正
   - renderText()関数で設定されるコンテントタイプの不具合修正
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2019/12/5  TreeFrog Framework バージョン1.27.0 （安定版）リリース
 

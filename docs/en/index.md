@@ -37,17 +37,26 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+May. 5, 2020
+
+### TreeFrog Framework version 1.29.0 (stable) release <span style="color: red;">New!</span>
+
+  - Fix a bug of max-age of cookie.
+  - Fix a bug of generating select-tag.
+  - Modified to initialize boolean fields in classes generated.
+  - Implemented publish() function in TActionController class.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Feb. 11, 2020
 
-### TreeFrog Framework version 1.28.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.28.0 (stable) release
 
   - Implemented to add a SameSite attribute to cookie.
   - Modified to add a max-age value to cookie.
   - Fix a bug of listing available controllers.
   - Fix a bug of showing a port number by -l option.
   - Fix a bug of content type in renderText() function.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Dec. 5, 2019
 
