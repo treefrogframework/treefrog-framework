@@ -27,7 +27,7 @@ public:
     static QList<qint64> allConcurrentPids();
 
 private:
-    qint64 processId;
+    qint64 processId {0};
 };
 
 #endif  // TPROCESSINFO_H

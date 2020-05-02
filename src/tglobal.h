@@ -228,8 +228,8 @@ constexpr auto TF_SRC_REVISION = 2193;
 #define tTrace TDebug(Tf::TraceLevel).trace
 
 
-#include "tfnamespace.h"
 #include "tfexception.h"
+#include "tfnamespace.h"
 #include <TDebug>
 #include <TWebApplication>
 #include <cstdint>

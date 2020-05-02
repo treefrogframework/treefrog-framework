@@ -10,7 +10,7 @@
 #include <TSystemGlobal>
 #include <TWebApplication>
 #include <vector>
-#include <windows.h>
+#include <Windows.h>
 namespace TreeFrog {
 
 extern int managerMain(int argc, char *argv[]);

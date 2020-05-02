@@ -21,7 +21,7 @@
 #include <sys/utsname.h>
 #endif
 #ifdef Q_OS_WIN
-#include <windows.h>
+#include <Windows.h>
 #endif
 
 #ifdef Q_OS_WIN

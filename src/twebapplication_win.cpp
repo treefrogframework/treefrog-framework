@@ -9,7 +9,7 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <TWebApplication>
-#include <windows.h>
+#include <Windows.h>
 #include <winuser.h>
 
 namespace {

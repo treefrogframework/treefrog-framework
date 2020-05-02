@@ -9,8 +9,7 @@
 
 class T_CORE_EXPORT TfException : public std::exception {
 public:
-    TfException(const QString &message, const char *fileName = "", int lineNumber = 0) noexcept
-        :
+    TfException(const QString &message, const char *fileName = "", int lineNumber = 0) noexcept :
         msg(message),
         file(fileName), line(lineNumber)
     {
@@ -21,8 +20,7 @@ public:
             whatmsg += ":" + QByteArray::number(lineNumber) + "]";
         }
     }
-    TfException(const TfException &e) noexcept
-        :
+    TfException(const TfException &e) noexcept :
         std::exception(e),
         msg(e.msg), file(e.file), line(e.line), whatmsg(e.whatmsg) { }
     virtual ~TfException() throw() { }

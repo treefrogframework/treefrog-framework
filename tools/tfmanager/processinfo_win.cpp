@@ -8,10 +8,10 @@
 #include "processinfo.h"
 #include <QtCore>
 #include <TWebApplication>
+#include <Windows.h>
 #include <ntstatus.h>
 #include <psapi.h>
 #include <tlhelp32.h>
-#include <windows.h>
 #include <winternl.h>
 
 namespace TreeFrog {

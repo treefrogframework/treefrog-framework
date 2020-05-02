@@ -2,13 +2,13 @@
 #define TFCORE_H
 
 #include <QtGlobal>
-#include <cstring>
 #include <cerrno>
 #include <cstdio>
+#include <cstring>
 #ifdef Q_OS_WIN
+#include <Windows.h>
 #include <io.h>
 #include <winbase.h>
-#include <windows.h>
 #else
 #include <fcntl.h>
 #include <poll.h>

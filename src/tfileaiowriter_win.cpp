@@ -9,7 +9,7 @@
 #include <QList>
 #include <QMutex>
 #include <QMutexLocker>
-#include <windows.h>
+#include <Windows.h>
 
 
 typedef struct

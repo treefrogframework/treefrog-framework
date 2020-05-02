@@ -8,9 +8,9 @@
 #include "tprocessinfo.h"
 #include <QtCore>
 #include <TWebApplication>
+#include <Windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
-#include <windows.h>
 
 
 bool TProcessInfo::exists() const
