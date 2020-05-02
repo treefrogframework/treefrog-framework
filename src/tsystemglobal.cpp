@@ -96,6 +96,12 @@ void Tf::releaseAccessLogger()
 }
 
 
+bool Tf::isAccessLoggerAvailable()
+{
+    return (bool)accesslogstrm;
+}
+
+
 void Tf::setupQueryLogger()
 {
     // sql query log

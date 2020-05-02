@@ -64,6 +64,7 @@ public:
         insert(Tf::AccessLogFilePath, "AccessLog.FilePath");
         insert(Tf::AccessLogLayout, "AccessLog.Layout");
         insert(Tf::AccessLogDateTimeFormat, "AccessLog.DateTimeFormat");
+        insert(Tf::AccessLogEnableXForwardedForHeader, "AccessLog.EnableXForwardedForHeader");
         insert(Tf::ActionMailerDeliveryMethod, "ActionMailer.DeliveryMethod");
         insert(Tf::ActionMailerCharacterSet, "ActionMailer.CharacterSet");
         insert(Tf::ActionMailerDelayedDelivery, "ActionMailer.DelayedDelivery");

@@ -16,6 +16,7 @@ T_CORE_EXPORT void setupSystemLogger();  // internal use
 T_CORE_EXPORT void releaseSystemLogger();  // internal use
 T_CORE_EXPORT void setupAccessLogger();  // internal use
 T_CORE_EXPORT void releaseAccessLogger();  // internal use
+T_CORE_EXPORT bool isAccessLoggerAvailable();  // internal use
 T_CORE_EXPORT void setupQueryLogger();  // internal use
 T_CORE_EXPORT void releaseQueryLogger();  // internal use
 T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log

@@ -201,6 +201,8 @@ enum AppAttribute {
     CacheEnableCompression,
     //
     SessionCookieSameSite,
+    //
+    AccessLogEnableXForwardedForHeader,
 };
 
 // Reason codes why a web socket has been closed

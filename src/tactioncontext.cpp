@@ -63,6 +63,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
     static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
     static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
     static const QByteArray SessionCookieSameSite = Tf::appSettings()->value(Tf::SessionCookieSameSite).toByteArray().trimmed();
+    static const bool EnableXForwardedForHeader = Tf::appSettings()->value(Tf::AccessLogEnableXForwardedForHeader, false).toBool();
 
     THttpResponseHeader responseHeader;
 
@@ -71,15 +72,28 @@ void TActionContext::execute(THttpRequest &request, int sid)
         const THttpRequestHeader &reqHeader = httpReq->header();
 
         // Access log
-        QByteArray firstLine;
-        firstLine.reserve(200);
-        firstLine += reqHeader.method();
-        firstLine += ' ';
-        firstLine += reqHeader.path();
-        firstLine += QStringLiteral(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
-        accessLogger.setTimestamp(QDateTime::currentDateTime());
-        accessLogger.setRequest(firstLine);
-        accessLogger.setRemoteHost((ListenPort > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
+        if (Tf::isAccessLoggerAvailable()) {
+            QByteArray firstLine;
+            firstLine.reserve(200);
+            firstLine += reqHeader.method();
+            firstLine += ' ';
+            firstLine += reqHeader.path();
+            firstLine += QStringLiteral(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
+            accessLogger.setTimestamp(QDateTime::currentDateTime());
+            accessLogger.setRequest(firstLine);
+
+            QByteArray remoteHost;
+            if (EnableXForwardedForHeader) {
+                remoteHost = reqHeader.rawHeader(QByteArrayLiteral("X-Forwarded-For"));
+                remoteHost = remoteHost.split(',').value(0).trimmed();
+            }
+
+            if (remoteHost.isEmpty()) {
+                accessLogger.setRemoteHost((ListenPort > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
+            } else {
+                accessLogger.setRemoteHost(remoteHost);
+            }
+        }
 
         tSystemDebug("method : %s", reqHeader.method().data());
         tSystemDebug("path : %s", reqHeader.path().data());
