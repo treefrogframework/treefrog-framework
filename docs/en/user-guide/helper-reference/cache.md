@@ -40,15 +40,15 @@ If you set up MongoDB or Redis on the backend, set the connection information as
 
 Generated HTML data can be cached.
 
-To generate HTML data, the action name was specified for the render () function. To use the page cache, specify two parameters of a key and a time for the renderFromCache () function. To send cached HTML data, use the renderFromCache () function.
+To generate HTML data, the action name was specified for the render () function. To use the page cache, specify two parameters of a key and a time for the renderOnCache () function. To send cached HTML data, use the renderOnCache () function.
 
 As an example, to cache the HTML data of the "index" view with the key "index" for 10 seconds, and to do the cached HTML data, do the following:
 ```
-    if (! renderFromCache("index")) {
+    if (! renderOnCache("index")) {
           :
           :   // get data..
           :
-        renderAndStoreInCache("index", 10, "index");
+        renderAndCache("index", 10, "index");
     }
 ```
 
