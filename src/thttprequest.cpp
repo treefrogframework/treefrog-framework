@@ -35,10 +35,7 @@ Q_GLOBAL_STATIC(MethodHash, methodHash)
 
 static bool httpMethodOverride()
 {
-    static int method = -1;
-    if (method < 0) {
-        method = (int)Tf::appSettings()->value(Tf::EnableHttpMethodOverride, false).toBool();
-    }
+    static bool method = Tf::appSettings()->value(Tf::EnableHttpMethodOverride, false).toBool();
     return (bool)method;
 }
 
@@ -601,6 +598,20 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
     }
 
     return reqList;
+}
+
+
+QHostAddress THttpRequest::originatingClientAddress() const
+{
+    static const bool EnableForwardedForHeader = Tf::appSettings()->value(Tf::EnableForwardedForHeader, false).toBool();
+
+    QString remoteHost;
+    if (EnableForwardedForHeader) {
+        remoteHost = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For")));
+        remoteHost = remoteHost.split(QChar(',')).value(0).trimmed();
+    }
+
+    return (remoteHost.isEmpty()) ? clientAddress() : QHostAddress(remoteHost);
 }
 
 

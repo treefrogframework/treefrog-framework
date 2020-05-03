@@ -71,6 +71,7 @@ public:
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
     QHostAddress clientAddress() const { return d->clientAddress; }
+    QHostAddress originatingClientAddress() const;
     QIODevice *rawBody();
     bool hasJson() const { return !d->jsonData.isNull(); }
     const QJsonDocument &jsonData() const { return d->jsonData; }

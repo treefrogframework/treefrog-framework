@@ -27,6 +27,7 @@ public:
     TTemporaryFile &createTemporaryFile();
     void stop() { stopped = true; }
     QHostAddress clientAddress() const;
+    QHostAddress originatingClientAddress() const;
     const TActionController *currentController() const { return currController; }
     THttpRequest &httpRequest() { return *httpReq; }
     const THttpRequest &httpRequest() const { return *httpReq; }

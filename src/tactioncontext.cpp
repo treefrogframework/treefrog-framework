@@ -63,7 +63,6 @@ void TActionContext::execute(THttpRequest &request, int sid)
     static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
     static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
     static const QByteArray SessionCookieSameSite = Tf::appSettings()->value(Tf::SessionCookieSameSite).toByteArray().trimmed();
-    static const bool EnableXForwardedForHeader = Tf::appSettings()->value(Tf::AccessLogEnableXForwardedForHeader, false).toBool();
 
     THttpResponseHeader responseHeader;
 
@@ -81,18 +80,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             firstLine += QStringLiteral(" HTTP/%1.%2").arg(reqHeader.majorVersion()).arg(reqHeader.minorVersion()).toLatin1();
             accessLogger.setTimestamp(QDateTime::currentDateTime());
             accessLogger.setRequest(firstLine);
-
-            QByteArray remoteHost;
-            if (EnableXForwardedForHeader) {
-                remoteHost = reqHeader.rawHeader(QByteArrayLiteral("X-Forwarded-For"));
-                remoteHost = remoteHost.split(',').value(0).trimmed();
-            }
-
-            if (remoteHost.isEmpty()) {
-                accessLogger.setRemoteHost((ListenPort > 0) ? clientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
-            } else {
-                accessLogger.setRemoteHost(remoteHost);
-            }
+            accessLogger.setRemoteHost((ListenPort > 0) ? originatingClientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
         }
 
         tSystemDebug("method : %s", reqHeader.method().data());
@@ -472,6 +460,12 @@ TTemporaryFile &TActionContext::createTemporaryFile()
 QHostAddress TActionContext::clientAddress() const
 {
     return httpReq->clientAddress();
+}
+
+
+QHostAddress TActionContext::originatingClientAddress() const
+{
+    return httpReq->originatingClientAddress();
 }
 
 
