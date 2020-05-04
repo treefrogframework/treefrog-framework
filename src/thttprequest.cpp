@@ -7,6 +7,7 @@
 
 #include "tsystemglobal.h"
 #include <QBuffer>
+#include <QHostAddress>
 #include <QJsonDocument>
 #include <QRegularExpression>
 #include <TAppSettings>
@@ -614,6 +615,14 @@ QHostAddress THttpRequest::originatingClientAddress() const
         QStringList servers;
         for (auto &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toStringList()) {
             servers << s.simplified().split(QLatin1Char(' '));
+        }
+
+        QHostAddress ip;
+        for (QMutableListIterator<QString> it(servers); it.hasNext();) {
+            auto &s = it.next();
+            if (!ip.setAddress(s)) {  // check IP address
+                it.remove();
+            }
         }
         return servers;
     }();
