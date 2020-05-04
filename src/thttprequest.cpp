@@ -8,6 +8,7 @@
 #include "tsystemglobal.h"
 #include <QBuffer>
 #include <QJsonDocument>
+#include <QRegularExpression>
 #include <TAppSettings>
 #include <THttpRequest>
 #include <THttpUtility>
@@ -569,7 +570,7 @@ QList<TCookie> THttpRequest::cookies() const
 
 /*!
   Returns a map of all form data.
-*/
+ */
 QVariantMap THttpRequest::allParameters() const
 {
     auto params = d->queryItems;
@@ -600,17 +601,47 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
     return reqList;
 }
 
-
+/*!
+ Returns a originating IP address of the client by parsing the 'X-Forwarded-For'
+ header of the request. To enable this feature, edit application.ini and
+ set the 'EnableForwardedForHeader' parameter to true and the 'TrustedProxyServers'
+ parameter to IP addresses of the proxy servers.
+ */
 QHostAddress THttpRequest::originatingClientAddress() const
 {
     static const bool EnableForwardedForHeader = Tf::appSettings()->value(Tf::EnableForwardedForHeader, false).toBool();
+    static const QStringList TrustedProxyServers = []() {  // delimiter: comma or space
+        QStringList servers;
+        for (auto &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toStringList()) {
+            servers << s.simplified().split(QLatin1Char(' '));
+        }
+        return servers;
+    }();
 
     QString remoteHost;
     if (EnableForwardedForHeader) {
-        remoteHost = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For")));
-        remoteHost = remoteHost.split(QChar(',')).value(0).trimmed();
-    }
+        if (TrustedProxyServers.isEmpty()) {
+            T_ONCE(tWarn("TrustedProxyServers parameter of config is empty!"));
+        } else {
+            auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), QString::SkipEmptyParts);
+            if (hosts.isEmpty()) {
+                tWarn("'X-Forwarded-For' header is empty");
+            } else {
+                int removed = 0;
+                for (auto &proxy : TrustedProxyServers) {
+                    removed += hosts.removeAll(proxy);
+                }
 
+                if (removed > 0) {
+                    if (!hosts.isEmpty()) {
+                        remoteHost = hosts.last();
+                    }
+                } else {
+                    tWarn() << "Not found a trusted proxy in the value of 'X-Forwarded-For':" << hosts << "  proxy:" << TrustedProxyServers;
+                }
+            }
+        }
+    }
     return (remoteHost.isEmpty()) ? clientAddress() : QHostAddress(remoteHost);
 }
 

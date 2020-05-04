@@ -203,6 +203,7 @@ enum AppAttribute {
     SessionCookieSameSite,
     //
     EnableForwardedForHeader,
+    TrustedProxyServers,
 };
 
 // Reason codes why a web socket has been closed

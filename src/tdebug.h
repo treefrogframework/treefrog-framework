@@ -15,7 +15,7 @@ T_CORE_EXPORT void releaseAppLoggers();  // internal use
 class T_CORE_EXPORT TDebug {
 public:
     TDebug(int priority) :
-        msgPriority(priority) { }
+        msgPriority(priority) {}
     TDebug(const TDebug &other);
     ~TDebug();
     TDebug &operator=(const TDebug &other);
@@ -119,9 +119,33 @@ public:
         ts << t;
         return *this;
     }
+    inline TDebug &operator<<(const QStringList &t)
+    {
+        QString str;
+        for (auto &s : t) {
+            str += "\"";
+            str += s;
+            str += "\", ";
+        }
+        str.chop(2);
+        ts << "[" << str << "]";
+        return *this;
+    }
     inline TDebug &operator<<(const QByteArray &t)
     {
         ts << t;
+        return *this;
+    }
+    inline TDebug &operator<<(const QByteArrayList &t)
+    {
+        QByteArray str;
+        for (auto &s : t) {
+            str += "\"";
+            str += s;
+            str += "\", ";
+        }
+        str.chop(2);
+        ts << '[' << str << ']';
         return *this;
     }
     inline TDebug &operator<<(const QVariant &t)

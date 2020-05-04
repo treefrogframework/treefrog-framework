@@ -111,11 +111,19 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
     delete mediaTypes;
 
     // SQL DB settings
-    QString dbsets = Tf::appSettings()->value(Tf::SqlDatabaseSettingsFiles).toString().trimmed();
-    if (dbsets.isEmpty()) {
-        dbsets = Tf::appSettings()->readValue("DatabaseSettingsFiles").toString().trimmed();
-    }
-    const QStringList files = dbsets.split(QLatin1Char(' '), QString::SkipEmptyParts);
+    const QStringList files = []() {
+        // delimiter: comma or space
+        QStringList files;
+        QStringList dbsets = Tf::appSettings()->value(Tf::SqlDatabaseSettingsFiles).toStringList();
+        if (dbsets.isEmpty()) {
+            dbsets = Tf::appSettings()->readValue("DatabaseSettingsFiles").toStringList();
+        }
+        for (auto &s : dbsets) {
+            files << s.simplified().split(QLatin1Char(' '));
+        }
+        return files;
+    }();
+
     for (auto &f : files) {
         QSettings settings(configPath() + f, QSettings::IniFormat);
         settings.setIniCodec(_codecInternal);
@@ -190,7 +198,8 @@ int TWebApplication::exec()
 #endif
 
     QEventLoop eventLoop;
-    while (eventLoop.processEvents()) { }
+    while (eventLoop.processEvents()) {
+    }
     return ret;
 }
 

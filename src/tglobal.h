@@ -148,6 +148,7 @@ constexpr auto TF_SRC_REVISION = 2193;
         else                                                           \
             T_EHEX(VAR);                                               \
     } while (0)
+
 #define tehexv(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
 
 // alias of tehexv
@@ -186,6 +187,7 @@ constexpr auto TF_SRC_REVISION = 2193;
         else                                                           \
             T_ECHOEX(VAR);                                             \
     } while (0)
+
 #define techoexv(VAR, DEFAULT) T_ECHOEX_V(VAR, DEFAULT)
 
 // alias of techoexv
@@ -198,6 +200,7 @@ constexpr auto TF_SRC_REVISION = 2193;
         ___##VAR##_.setValue(VAR);                    \
         setFlash(QLatin1String(#VAR), (___##VAR##_)); \
     } while (0)
+
 #define tflash(VAR) T_FLASH(VAR)
 
 #define T_VARIANT(VAR) (variant(QLatin1String(#VAR)).toString())

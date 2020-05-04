@@ -6,8 +6,6 @@
 #include <QVariant>
 #include <TGlobal>
 
-#define ENABLE_TO_TRACE_FUNCTION 0
-
 class TAccessLog;
 class QSqlError;
 
