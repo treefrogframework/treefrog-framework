@@ -631,23 +631,18 @@ QHostAddress THttpRequest::originatingClientAddress() const
     if (EnableForwardedForHeader) {
         if (TrustedProxyServers.isEmpty()) {
             T_ONCE(tWarn("TrustedProxyServers parameter of config is empty!"));
-        } else {
-            auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), QString::SkipEmptyParts);
-            if (hosts.isEmpty()) {
-                tWarn("'X-Forwarded-For' header is empty");
-            } else {
-                int removed = 0;
-                for (auto &proxy : TrustedProxyServers) {
-                    removed += hosts.removeAll(proxy);
-                }
+        }
 
-                if (removed > 0) {
-                    if (!hosts.isEmpty()) {
-                        remoteHost = hosts.last();
-                    }
-                } else {
-                    tWarn() << "Not found a trusted proxy in the value of 'X-Forwarded-For':" << hosts << "  proxy:" << TrustedProxyServers;
-                }
+        auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), QString::SkipEmptyParts);
+        if (hosts.isEmpty()) {
+            tWarn("'X-Forwarded-For' header is empty");
+        } else {
+            for (auto &proxy : TrustedProxyServers) {
+                hosts.removeAll(proxy);
+            }
+
+            if (!hosts.isEmpty()) {
+                remoteHost = hosts.last();
             }
         }
     }
