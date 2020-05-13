@@ -71,6 +71,9 @@ isEmpty( use_gui ) {
   DEFINES += TF_USE_GUI_MODULE
 }
 
+CONFIG *= precompile_header
+PRECOMPILED_HEADER = precompile.h
+
 HEADERS += twebapplication.h
 SOURCES += twebapplication.cpp
 HEADERS += tapplicationserverbase.h
