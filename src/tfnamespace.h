@@ -189,7 +189,7 @@ enum AppAttribute {
     RedisSettingsFile,
     LDPreload,
     JavaScriptPath,
-    ActionMailerSmtpEnableSTARTTLS,
+    ActionMailerSmtpEnableSTARTTLS,  // obsolete
     ListenAddress,
     //
     SessionCookieMaxAge,
@@ -204,6 +204,7 @@ enum AppAttribute {
     //
     EnableForwardedForHeader,
     TrustedProxyServers,
+    ActionMailerSmtpRequireTLS,
 };
 
 // Reason codes why a web socket has been closed

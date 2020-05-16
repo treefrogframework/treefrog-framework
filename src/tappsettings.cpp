@@ -71,7 +71,7 @@ public:
         insert(Tf::ActionMailerDelayedDelivery, "ActionMailer.DelayedDelivery");
         insert(Tf::ActionMailerSmtpHostName, "ActionMailer.smtp.HostName");
         insert(Tf::ActionMailerSmtpPort, "ActionMailer.smtp.Port");
-        insert(Tf::ActionMailerSmtpEnableSTARTTLS, "ActionMailer.smtp.EnableSTARTTLS");
+        insert(Tf::ActionMailerSmtpRequireTLS, "ActionMailer.smtp.RequireTLS");
         insert(Tf::ActionMailerSmtpAuthentication, "ActionMailer.smtp.Authentication");
         insert(Tf::ActionMailerSmtpUserName, "ActionMailer.smtp.UserName");
         insert(Tf::ActionMailerSmtpPassword, "ActionMailer.smtp.Password");

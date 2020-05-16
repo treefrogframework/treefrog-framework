@@ -167,7 +167,13 @@ bool TSmtpMailer::send()
         }
     }
 
-    if (tlsEnable && tlsAvailable) {
+    if (tlsRequire && !tlsAvailable) {
+        tSystemError("SMTP: STARTTLS not supported");
+        cmdQuit();
+        return false;
+    }
+
+    if (tlsAvailable) {
         if (!cmdStartTls()) {
             cmdQuit();
             return false;

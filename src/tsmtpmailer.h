@@ -30,7 +30,7 @@ public:
     quint16 port() const { return smtpPort; }
     void setPort(quint16 port);
     void setAuthenticationEnabled(bool enable);
-    void setStartTlsEnabled(bool enable);
+    void setTlsRequired(bool require);
     void setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
@@ -73,7 +73,7 @@ private:
     TMailMessage mailMessage;
     QStringList svrAuthMethods;
     bool authEnable {false};
-    bool tlsEnable {false};
+    bool tlsRequire {false};
     bool tlsAvailable {false};
     QByteArray userName;
     QByteArray password;
@@ -88,9 +88,9 @@ inline void TSmtpMailer::setAuthenticationEnabled(bool enable)
 }
 
 
-inline void TSmtpMailer::setStartTlsEnabled(bool enable)
+inline void TSmtpMailer::setTlsRequired(bool require)
 {
-    tlsEnable = enable;
+    tlsRequire = require;
 }
 
 
