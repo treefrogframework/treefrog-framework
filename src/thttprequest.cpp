@@ -602,6 +602,18 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
     return reqList;
 }
 
+typedef QPair<QHostAddress, int> NetworkSubnet;
+
+static bool isInAnySubnet(const QHostAddress &ip, const QList<NetworkSubnet> &subnets)
+{
+    for (const auto &subnet : subnets) {
+        if (ip.isInSubnet(subnet.first, subnet.second)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /*!
  Returns a originating IP address of the client by parsing the 'X-Forwarded-For'
  header of the request. To enable this feature, edit application.ini and
@@ -611,44 +623,46 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
 QHostAddress THttpRequest::originatingClientAddress() const
 {
     static const bool EnableForwardedForHeader = Tf::appSettings()->value(Tf::EnableForwardedForHeader, false).toBool();
-    static const QStringList TrustedProxyServers = []() {  // delimiter: comma or space
-        QStringList servers;
-        for (auto &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toStringList()) {
-            servers << s.simplified().split(QLatin1Char(' '));
-        }
-
-        QHostAddress ip;
-        for (QMutableListIterator<QString> it(servers); it.hasNext();) {
-            auto &s = it.next();
-            if (!ip.setAddress(s)) {  // check IP address
-                it.remove();
+    static const bool ParseForwardedForHeaderRecursively = Tf::appSettings()->value(Tf::ParseForwardedForHeaderRecursively, false).toBool();
+    static const bool ListenOnUnixDomainSocket = Tf::appSettings()->value(Tf::ListenPort).toString().trimmed().startsWith(QStringLiteral("unix:"));
+    static const bool TrustUnixDomainSocketProxy = Tf::appSettings()->value(Tf::TrustedProxyServers).toString().split(QRegularExpression(QStringLiteral("\\s*;\\s*"))).contains(QStringLiteral("unix:"));
+    static const QList<NetworkSubnet> TrustProxyServersInSubnets = []() {
+        QList<NetworkSubnet> subnets;
+        for (const auto &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toString().split(QRegularExpression(QStringLiteral("\\s*;\\s*")), QString::SkipEmptyParts)) {
+            if (s != QStringLiteral("unix:")) {
+                NetworkSubnet subnet = QHostAddress::parseSubnet(s);
+                if (subnet.first.protocol() != QAbstractSocket::UnknownNetworkLayerProtocol) {
+                    subnets.append(subnet);
+                } else {
+                    tSystemWarn("Invalid IP address or subnet '%s' in TrustedProxyServers parameter", qPrintable(s));
+                }
             }
         }
-        return servers;
+        return subnets;
     }();
 
-    QString remoteHost;
+    QHostAddress remoteAddress = clientAddress();
+
     if (EnableForwardedForHeader) {
-        if (TrustedProxyServers.isEmpty()) {
-            T_ONCE(tWarn("TrustedProxyServers parameter of config is empty!"));
-        }
+        const QByteArray forwardedForHeader = header().rawHeader(QByteArrayLiteral("X-Forwarded-For"));
+        if (!forwardedForHeader.isEmpty()) {
+            QStringList hosts = QString::fromLatin1(forwardedForHeader).trimmed().split(QRegularExpression(QStringLiteral("\\s*,\\s*")));
 
-        auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), QString::SkipEmptyParts);
-        if (hosts.isEmpty()) {
-            tWarn("'X-Forwarded-For' header is empty");
-        } else {
-            for (auto &proxy : TrustedProxyServers) {
-                hosts.removeAll(proxy);
-            }
-
-            if (!hosts.isEmpty()) {
-                remoteHost = hosts.last();
+            bool trustProxy = (ListenOnUnixDomainSocket && TrustUnixDomainSocketProxy) || isInAnySubnet(remoteAddress, TrustProxyServersInSubnets);
+            while (trustProxy && !hosts.isEmpty()) {
+                QHostAddress host;
+                if (!host.setAddress(hosts.takeLast()))
+                    break;
+                remoteAddress = host;
+                if (!ParseForwardedForHeaderRecursively)
+                    break;
+                trustProxy = isInAnySubnet(remoteAddress, TrustProxyServersInSubnets);
             }
         }
     }
-    return (remoteHost.isEmpty()) ? clientAddress() : QHostAddress(remoteHost);
-}
 
+    return remoteAddress;
+}
 
 QIODevice *THttpRequest::rawBody()
 {
