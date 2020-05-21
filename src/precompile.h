@@ -12,6 +12,5 @@
 #include <QString>
 #include <QStringList>
 #include <QUrl>
-#include <QVariant>
 #include <QVector>
 #endif
