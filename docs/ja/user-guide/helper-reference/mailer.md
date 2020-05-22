@@ -67,6 +67,12 @@ ActionMailer.smtp.HostName=smtp.example.com
 # Specify the connection's port number.  （ポート番号）
 ActionMailer.smtp.Port=25
 
+# Enables SSL/TLS connection if true.
+ActionMailer.smtp.EnableSSL=false
+
+# Enables STARTTLS extension if true.
+ActionMailer.smtp.EnableSTARTTLS=false
+
 # Enables SMTP authentication if true; disables SMTP
 # authentication if false.
 ActionMailer.smtp.Authentication=false
@@ -84,8 +90,6 @@ ActionMailer.smtp.DelayedDelivery=false
 
 SMTP 認証を行う場合、ActionMailer.smtp.Authentication=**true** を指定します。<br>
 認証方式には CRAM-MD5, LOGIN, PLAIN が実装されており、この優先度で自動的に認証処理が行われます。
-
-本フレームワークでは、SMTPSによるメール送信はサポートしていません。
 
 ## メールの遅延送信
 

@@ -167,14 +167,19 @@ bool TSmtpMailer::send()
         }
     }
 
-    if (tlsEnable && tlsAvailable) {
+    if (!sslEnabled && startTlsEnabled) {
+        if (!startTlsAvailable) {
+            tSystemError("SMTP: Server does not support STARTTLS");
+            cmdQuit();
+            return false;
+        }
         if (!cmdStartTls()) {
             cmdQuit();
             return false;
         }
     }
 
-    if (authEnable) {
+    if (authEnabled) {
         if (!cmdAuth()) {
             tSystemError("SMTP: User Authentication Failed: username:%s : [%s]", userName.data(), qPrintable(lastServerResponse()));
             cmdQuit();
@@ -222,11 +227,23 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 
 bool TSmtpMailer::connectToHost(const QString &hostName, quint16 port)
 {
-    socket->connectToHost(hostName, port);
-    if (!socket->waitForConnected(5000)) {
-        tSystemError("SMTP server connect error: %s", qPrintable(socket->errorString()));
-        return false;
+    if (sslEnabled) {
+        socket->connectToHostEncrypted(hostName, port);
+        if (!socket->waitForEncrypted(5000)) {
+            tSystemError("SMTP server connect error: %s", qPrintable(socket->errorString()));
+            for (const auto &err : socket->sslErrors()) {
+                tSystemError("SMTP SSL error %d: %s", int(err.error()), qPrintable(err.errorString()));
+            }
+            return false;
+        }
+    } else {
+        socket->connectToHost(hostName, port);
+        if (!socket->waitForConnected(5000)) {
+            tSystemError("SMTP server connect error: %s", qPrintable(socket->errorString()));
+            return false;
+        }
     }
+
     return (read() == 220);
 }
 
@@ -251,7 +268,7 @@ bool TSmtpMailer::cmdEhlo()
             tSystemDebug("AUTH: %s", qPrintable(svrAuthMethods.join(",")));
         }
         if (str.startsWith("STARTTLS", Qt::CaseInsensitive)) {
-            tlsAvailable = true;
+            startTlsAvailable = true;
         }
     }
     return true;
@@ -270,8 +287,8 @@ bool TSmtpMailer::cmdHelo()
         return false;
     }
 
-    tlsAvailable = false;
-    authEnable = false;
+    startTlsAvailable = false;
+    authEnabled = false;
     return true;
 }
 
@@ -287,6 +304,9 @@ bool TSmtpMailer::cmdStartTls()
     socket->startClientEncryption();
     if (!socket->waitForEncrypted(5000)) {
         tSystemError("SMTP STARTTLS negotiation timeout: %s", qPrintable(socket->errorString()));
+        for (const auto &err : socket->sslErrors()) {
+            tSystemError("SMTP SSL error %d: %s", int(err.error()), qPrintable(err.errorString()));
+        }
         return false;
     }
 

@@ -64,6 +64,10 @@ void InformationMailer::send()
 ActionMailer.smtp.HostName=smtp.example.com
 # 指定连接的端口
 ActionMailer.smtp.Port=25
+# 如果为true，则启用SSL/TLS连接.
+ActionMailer.smtp.EnableSSL=false
+# 如果为true，则启用STARTTLS扩展.
+ActionMailer.smtp.EnableSTARTTLS=false
 # 如果true, 打开SMTP授权, 如果false, 关闭SMTP授权.
 ActionMailer.smtp.Authentication=false
 # 指定SMTP授权的用户名
@@ -81,8 +85,6 @@ ActionMailer.smtp.Authentication=true
 ```
 
 因为授权的方法, CRAM-MD5, LOGIN,和PLAIN(使用这个级别)是一起安装的, 所以授权处理是自动进行的.
-
-在这个框架中, SMTPS邮件发送是不支持的.
 
 ## 延时发送邮件
 

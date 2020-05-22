@@ -66,6 +66,12 @@ ActionMailer.smtp.HostName=smtp.example.com
 # Specify the connection's port number.
 ActionMailer.smtp.Port=25
 
+# Enables SSL/TLS connection if true.
+ActionMailer.smtp.EnableSSL=false
+
+# Enables STARTTLS extension if true.
+ActionMailer.smtp.EnableSTARTTLS=false
+
 # Enables SMTP authentication if true; disables SMTP
 # authentication if false.
 ActionMailer.smtp.Authentication=false
@@ -88,8 +94,6 @@ ActionMailer.smtp.Authentication=true
 ```
 
 As for the authentication method, CRAM-MD5, LOGIN and PLAIN (using this priority) are mounted in a way, so that the authentication process is performed automatically.
-
-In this framework, SMTPS email sending is not supported.
 
 ## Delay sending the mail
 

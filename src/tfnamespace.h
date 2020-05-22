@@ -189,6 +189,7 @@ enum AppAttribute {
     RedisSettingsFile,
     LDPreload,
     JavaScriptPath,
+    ActionMailerSmtpEnableSSL,
     ActionMailerSmtpEnableSTARTTLS,
     ListenAddress,
     //

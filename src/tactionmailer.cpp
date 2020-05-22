@@ -78,6 +78,7 @@ bool TActionMailer::deliver(const QString &templateName)
         TSmtpMailer *mailer = new TSmtpMailer();
         mailer->setHostName(Tf::appSettings()->value(Tf::ActionMailerSmtpHostName).toByteArray());
         mailer->setPort(Tf::appSettings()->value(Tf::ActionMailerSmtpPort).toUInt());
+        mailer->setSslEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpEnableSSL).toBool());
         mailer->setStartTlsEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpEnableSTARTTLS).toBool());
         mailer->setAuthenticationEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpAuthentication).toBool());
         mailer->setUserName(Tf::appSettings()->value(Tf::ActionMailerSmtpUserName).toByteArray());
