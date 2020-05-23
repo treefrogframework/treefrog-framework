@@ -119,7 +119,7 @@ void Tf::releaseQueryLogger()
 }
 
 
-void tSystemError(const char *msg, ...)
+void Tf::logSystemError(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
@@ -128,7 +128,7 @@ void tSystemError(const char *msg, ...)
 }
 
 
-void tSystemWarn(const char *msg, ...)
+void Tf::logSystemWarn(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
@@ -137,7 +137,7 @@ void tSystemWarn(const char *msg, ...)
 }
 
 
-void tSystemInfo(const char *msg, ...)
+void Tf::logSystemInfo(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
@@ -145,9 +145,9 @@ void tSystemInfo(const char *msg, ...)
     va_end(ap);
 }
 
-#ifndef TF_NO_DEBUG
+#ifdef QT_DEBUG
 
-void tSystemDebug(const char *msg, ...)
+void Tf::logSystemDebug(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
@@ -156,7 +156,7 @@ void tSystemDebug(const char *msg, ...)
 }
 
 
-void tSystemTrace(const char *msg, ...)
+void Tf::logSystemTrace(const char *msg, ...)
 {
     va_list ap;
     va_start(ap, msg);
@@ -166,13 +166,10 @@ void tSystemTrace(const char *msg, ...)
 
 #else
 
-void tSystemDebug(const char *, ...)
-{
-}
-void tSystemTrace(const char *, ...) { }
+void Tf::logSystemDebug(const char *, ...) {}
+void Tf::logSystemTrace(const char *, ...) {}
 
 #endif
-
 
 void Tf::traceQueryLog(const char *msg, ...)
 {
