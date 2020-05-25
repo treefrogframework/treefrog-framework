@@ -43,8 +43,8 @@ void TestSmtpMailer::sendMailTls()
         "Hello.\nGoodbye.\nこんにちは。\nさようなら。");
 
     TSmtpMailer mailer("smtp.example.com", 587);
-    mailer.setStartTlsEnabled(true);
     mailer.setAuthenticationEnabled(true);
+    mailer.setTlsRequired(true);
     mailer.setUserName("a.kazuharu@gmail.com");
     mailer.setPassword("");
 #if 0
