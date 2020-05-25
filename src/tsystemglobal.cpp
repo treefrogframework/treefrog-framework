@@ -189,16 +189,18 @@ void Tf::traceQueryLog(const char *msg, ...)
 
 void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &error)
 {
-    QString q = query;
+    if (sqllogstrm) {
+        QString q = query;
 
-    if (!success) {
-        QString err = (!error.databaseText().isEmpty()) ? error.databaseText() : error.text().trimmed();
-        if (!err.isEmpty()) {
-            err = QLatin1Char('[') + err + QLatin1String("] ");
+        if (!success) {
+            QString err = (!error.databaseText().isEmpty()) ? error.databaseText() : error.text().trimmed();
+            if (!err.isEmpty()) {
+                err = QLatin1Char('[') + err + QLatin1String("] ");
+            }
+            q = QLatin1String("(Query failed) ") + err + query;
         }
-        q = QLatin1String("(Query failed) ") + err + query;
+        Tf::traceQueryLog("%s", qPrintable(q));
     }
-    Tf::traceQueryLog("%s", qPrintable(q));
 }
 
 
