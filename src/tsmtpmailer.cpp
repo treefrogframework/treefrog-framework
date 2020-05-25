@@ -26,89 +26,77 @@ using namespace Tf;
 
 TSmtpMailer::TSmtpMailer(QObject *parent) :
     QObject(parent),
-    socket(new QSslSocket())
+    _socket(new QSslSocket())
 {
 }
 
 
 TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent) :
     QObject(parent),
-    socket(new QSslSocket()),
-    smtpHostName(hostName),
-    smtpPort(port)
+    _socket(new QSslSocket()),
+    _smtpHostName(hostName),
+    _smtpPort(port)
 {
 }
 
 
 TSmtpMailer::~TSmtpMailer()
 {
-    if (!mailMessage.isEmpty()) {
-        //        tSystemWarn("Mail not sent. Deleted it.");
+    if (!_mailMessage.isEmpty()) {
+        // tSystemWarn("Mail not sent. Deleted it.");
     }
 
-    delete pop;
-    delete socket;
+    delete _pop;
+    delete _socket;
 }
 
 
 void TSmtpMailer::moveToThread(QThread *targetThread)
 {
     QObject::moveToThread(targetThread);
-    socket->moveToThread(targetThread);
-    if (pop) {
-        pop->moveToThread(targetThread);
+    _socket->moveToThread(targetThread);
+    if (_pop) {
+        _pop->moveToThread(targetThread);
     }
-}
-
-
-void TSmtpMailer::setHostName(const QString &hostName)
-{
-    smtpHostName = hostName;
-}
-
-
-void TSmtpMailer::setPort(quint16 port)
-{
-    smtpPort = port;
 }
 
 
 void TSmtpMailer::setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable)
 {
     if (enable) {
-        if (!pop) {
-            pop = new TPopMailer();
+        if (!_pop) {
+            _pop = new TPopMailer();
         }
 
-        pop->setHostName(popServer);
-        pop->setPort(port);
-        pop->setApopEnabled(apop);
+        _pop->setHostName(popServer);
+        _pop->setPort(port);
+        _pop->setApopEnabled(apop);
 
     } else {
-        delete pop;
-        pop = nullptr;
+        delete _pop;
+        _pop = nullptr;
     }
 }
 
 
 QString TSmtpMailer::lastServerResponse() const
 {
-    return QString(lastResponse);
+    return QString(_lastResponse);
 }
 
 
 bool TSmtpMailer::send(const TMailMessage &message)
 {
-    mailMessage = message;
+    _mailMessage = message;
     bool res = send();
-    mailMessage.clear();
+    _mailMessage.clear();
     return res;
 }
 
 
 void TSmtpMailer::sendLater(const TMailMessage &message)
 {
-    mailMessage = message;
+    _mailMessage = message;
     QMetaObject::invokeMethod(this, "sendAndDeleteLater", Qt::QueuedConnection);
 }
 
@@ -116,47 +104,47 @@ void TSmtpMailer::sendLater(const TMailMessage &message)
 void TSmtpMailer::sendAndDeleteLater()
 {
     send();
-    mailMessage.clear();
+    _mailMessage.clear();
     deleteLater();
 }
 
 
 bool TSmtpMailer::send()
 {
-    QMutexLocker locker(&sendMutex);  // Lock for load reduction of mail server
+    QMutexLocker locker(&_sendMutex);  // Lock for load reduction of mail server
 
-    if (pop) {
+    if (_pop) {
         // POP before SMTP
-        pop->setUserName(userName);
-        pop->setPassword(password);
-        pop->connectToHost();
-        pop->quit();
+        _pop->setUserName(_username);
+        _pop->setPassword(_password);
+        _pop->connectToHost();
+        _pop->quit();
 
         Tf::msleep(100);  // sleep
     }
 
-    if (smtpHostName.isEmpty() || smtpPort <= 0) {
-        tSystemError("SMTP: Bad Argument: hostname:%s port:%d", qPrintable(smtpHostName), smtpPort);
+    if (_smtpHostName.isEmpty() || _smtpPort <= 0) {
+        tSystemError("SMTP: Bad Argument: hostname:%s port:%d", qPrintable(_smtpHostName), _smtpPort);
         return false;
     }
 
-    if (mailMessage.fromAddress().trimmed().isEmpty()) {
+    if (_mailMessage.fromAddress().trimmed().isEmpty()) {
         tSystemError("SMTP: Bad Argument: From-address empty");
         return false;
     }
 
-    if (mailMessage.recipients().isEmpty()) {
+    if (_mailMessage.recipients().isEmpty()) {
         tSystemError("SMTP: Bad Argument: Recipients empty");
         return false;
     }
 
-    if (!connectToHost(smtpHostName, smtpPort)) {
-        tSystemError("SMTP: Connect Error: hostname:%s port:%d", qPrintable(smtpHostName), smtpPort);
+    if (!connectToHost(_smtpHostName, _smtpPort)) {
+        tSystemError("SMTP: Connect Error: hostname:%s port:%d", qPrintable(_smtpHostName), _smtpPort);
         return false;
     }
 
-    if (mailMessage.date().isEmpty()) {
-        mailMessage.setCurrentDate();
+    if (_mailMessage.date().isEmpty()) {
+        _mailMessage.setCurrentDate();
     }
 
     if (!cmdEhlo()) {
@@ -167,22 +155,22 @@ bool TSmtpMailer::send()
         }
     }
 
-    if (tlsRequire && !tlsAvailable) {
+    if (_tlsRequire && !_tlsAvailable) {
         tSystemError("SMTP: STARTTLS not supported");
         cmdQuit();
         return false;
     }
 
-    if (tlsAvailable) {
+    if (_tlsAvailable) {
         if (!cmdStartTls()) {
             cmdQuit();
             return false;
         }
     }
 
-    if (authEnable) {
+    if (_authEnable) {
         if (!cmdAuth()) {
-            tSystemError("SMTP: User Authentication Failed: username:%s : [%s]", userName.data(), qPrintable(lastServerResponse()));
+            tSystemError("SMTP: User Authentication Failed: username:%s : [%s]", _username.data(), qPrintable(lastServerResponse()));
             cmdQuit();
             return false;
         }
@@ -194,19 +182,19 @@ bool TSmtpMailer::send()
         return false;
     }
 
-    if (!cmdMail(mailMessage.fromAddress())) {
+    if (!cmdMail(_mailMessage.fromAddress())) {
         tSystemError("SMTP: MAIL Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
-    if (!cmdRcpt(mailMessage.recipients())) {
+    if (!cmdRcpt(_mailMessage.recipients())) {
         tSystemError("SMTP: RCPT Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
-    if (!cmdData(mailMessage.toByteArray())) {
+    if (!cmdData(_mailMessage.toByteArray())) {
         tSystemError("SMTP: DATA Command Failed: [%s]", qPrintable(lastServerResponse()));
         cmdQuit();
         return false;
@@ -228,9 +216,9 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 
 bool TSmtpMailer::connectToHost(const QString &hostName, quint16 port)
 {
-    socket->connectToHost(hostName, port);
-    if (!socket->waitForConnected(5000)) {
-        tSystemError("SMTP server connect error: %s", qPrintable(socket->errorString()));
+    _socket->connectToHost(hostName, port);
+    if (!_socket->waitForConnected(5000)) {
+        tSystemError("SMTP server connect error: %s", qPrintable(_socket->errorString()));
         return false;
     }
     return (read() == 220);
@@ -241,7 +229,7 @@ bool TSmtpMailer::cmdEhlo()
 {
     QByteArray ehlo;
     ehlo.append("EHLO [");
-    ehlo.append(qPrintable(socket->localAddress().toString()));
+    ehlo.append(qPrintable(_socket->localAddress().toString()));
     ehlo.append("]");
 
     QByteArrayList reply;
@@ -253,11 +241,11 @@ bool TSmtpMailer::cmdEhlo()
     for (auto &s : (const QByteArrayList &)reply) {
         QString str(s);
         if (str.startsWith("AUTH ", Qt::CaseInsensitive)) {
-            svrAuthMethods = str.mid(5).split(' ', QString::SkipEmptyParts);
-            tSystemDebug("AUTH: %s", qPrintable(svrAuthMethods.join(",")));
+            _svrAuthMethods = str.mid(5).split(' ', QString::SkipEmptyParts);
+            tSystemDebug("AUTH: %s", qPrintable(_svrAuthMethods.join(",")));
         }
         if (str.startsWith("STARTTLS", Qt::CaseInsensitive)) {
-            tlsAvailable = true;
+            _tlsAvailable = true;
         }
     }
     return true;
@@ -268,7 +256,7 @@ bool TSmtpMailer::cmdHelo()
 {
     QByteArray helo;
     helo.append("HELO [");
-    helo.append(qPrintable(socket->localAddress().toString()));
+    helo.append(qPrintable(_socket->localAddress().toString()));
     helo.append("]");
 
     QByteArrayList reply;
@@ -276,8 +264,8 @@ bool TSmtpMailer::cmdHelo()
         return false;
     }
 
-    tlsAvailable = false;
-    authEnable = false;
+    _tlsAvailable = false;
+    _authEnable = false;
     return true;
 }
 
@@ -290,9 +278,9 @@ bool TSmtpMailer::cmdStartTls()
         return false;
     }
 
-    socket->startClientEncryption();
-    if (!socket->waitForEncrypted(5000)) {
-        tSystemError("SMTP STARTTLS negotiation timeout: %s", qPrintable(socket->errorString()));
+    _socket->startClientEncryption();
+    if (!_socket->waitForEncrypted(5000)) {
+        tSystemError("SMTP STARTTLS negotiation timeout: %s", qPrintable(_socket->errorString()));
         return false;
     }
 
@@ -307,10 +295,10 @@ bool TSmtpMailer::cmdStartTls()
 
 bool TSmtpMailer::cmdAuth()
 {
-    if (svrAuthMethods.isEmpty())
+    if (_svrAuthMethods.isEmpty())
         return true;
 
-    if (userName.isEmpty() || password.isEmpty()) {
+    if (_username.isEmpty() || _password.isEmpty()) {
         tSystemError("SMTP: AUTH Bad Argument: No username or password");
         return false;
     }
@@ -320,26 +308,26 @@ bool TSmtpMailer::cmdAuth()
     bool res = false;
 
     // Try CRAM-MD5
-    if (svrAuthMethods.contains("CRAM-MD5", Qt::CaseInsensitive)) {
+    if (_svrAuthMethods.contains("CRAM-MD5", Qt::CaseInsensitive)) {
         auth = "AUTH CRAM-MD5";
         if (cmd(auth, &reply) == 334 && !reply.isEmpty()) {
-            QByteArray md5 = authCramMd5(reply.first(), userName, password);
+            QByteArray md5 = authCramMd5(reply.first(), _username, _password);
             res = (cmd(md5) == 235);
         }
     }
 
     // Try LOGIN
-    if (!res && svrAuthMethods.contains("LOGIN", Qt::CaseInsensitive)) {
+    if (!res && _svrAuthMethods.contains("LOGIN", Qt::CaseInsensitive)) {
         auth = "AUTH LOGIN";
-        if (cmd(auth) == 334 && cmd(userName.toBase64()) == 334 && cmd(password.toBase64()) == 235) {
+        if (cmd(auth) == 334 && cmd(_username.toBase64()) == 334 && cmd(_password.toBase64()) == 235) {
             res = true;
         }
     }
 
     // Try PLAIN
-    if (!res && svrAuthMethods.contains("PLAIN", Qt::CaseInsensitive)) {
+    if (!res && _svrAuthMethods.contains("PLAIN", Qt::CaseInsensitive)) {
         auth = "AUTH PLAIN ";
-        auth += QByteArray().append(userName).append('\0').append(userName).append('\0').append(password).toBase64();
+        auth += QByteArray().append(_username).append('\0').append(_username).append('\0').append(_password).toBase64();
         res = (cmd(auth) == 235);
     }
 
@@ -398,7 +386,7 @@ bool TSmtpMailer::cmdQuit()
 
 int TSmtpMailer::cmd(const QByteArray &command, QByteArrayList *reply)
 {
-    lastResponse.resize(0);
+    _lastResponse.resize(0);
     if (!write(command))
         return -1;
 
@@ -413,8 +401,8 @@ bool TSmtpMailer::write(const QByteArray &command)
         cmd += CRLF;
     }
 
-    int len = socket->write(cmd);
-    socket->flush();
+    int len = _socket->write(cmd);
+    _socket->flush();
     tSystemDebug("C: %s", cmd.trimmed().data());
     return (len == cmd.length());
 }
@@ -429,9 +417,9 @@ int TSmtpMailer::read(QByteArrayList *reply)
     int code = 0;
     QByteArray rcv;
     for (;;) {
-        rcv = socket->readLine().trimmed();
+        rcv = _socket->readLine().trimmed();
         if (rcv.isEmpty()) {
-            if (socket->waitForReadyRead(5000)) {
+            if (_socket->waitForReadyRead(5000)) {
                 continue;
             } else {
                 break;
@@ -454,7 +442,7 @@ int TSmtpMailer::read(QByteArrayList *reply)
         if (code > 0 && rcv.at(3) == ' ')
             break;
     }
-    lastResponse = rcv;
+    _lastResponse = rcv;
     return code;
 }
 
