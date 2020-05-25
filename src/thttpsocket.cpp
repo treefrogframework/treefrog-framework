@@ -45,8 +45,10 @@ THttpSocket::THttpSocket(QObject *parent) :
     } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
     tSystemDebug("THttpSocket  sid:%d", sid);
 
-    connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
-    connect(this, SIGNAL(requestWrite(const QByteArray &)), this, SLOT(writeRawData(const QByteArray &)), Qt::QueuedConnection);
+    qint64 (THttpSocket::*writeRawDataOverload)(const QByteArray &data) = &THttpSocket::writeRawData;
+
+    connect(this, &THttpSocket::readyRead, this, &THttpSocket::readRequest);
+    connect(this, &THttpSocket::requestWrite, this, writeRawDataOverload, Qt::QueuedConnection);
 
     idleElapsed = std::time(nullptr);
     readBuffer.reserve(RESERVED_BUFFER_SIZE);

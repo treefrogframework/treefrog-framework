@@ -259,7 +259,7 @@ bool TActionThread::handshakeForWebSocket(const THttpRequestHeader &header)
     // Switch to WebSocket
     int sd = TApplicationServerBase::duplicateSocket(_httpSocket->socketDescriptor());
     TWebSocket *ws = new TWebSocket(sd, _httpSocket->peerAddress(), header);
-    connect(ws, SIGNAL(disconnected()), ws, SLOT(deleteLater()));
+    connect(ws, &TWebSocket::disconnected, ws, &TWebSocket::deleteLater);
     ws->moveToThread(Tf::app()->thread());
 
     // WebSocket opening
