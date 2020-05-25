@@ -216,7 +216,9 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
         }
 
         if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
-            tSystemWarn("Invalid descriptor (state:%d) sd:%d", (int)socket->state(), (int)socket->socketDescriptor());
+            if (socket->error() != QAbstractSocket::RemoteHostClosedError) {
+                tSystemWarn("Socket error:%d. Descriptor:%d", socket->error(), (int)socket->socketDescriptor());
+            }
             break;
         }
 
