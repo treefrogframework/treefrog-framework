@@ -93,7 +93,7 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 
     // Writes HTTP header
     QByteArray hdata = header->toByteArray();
-    qint64 total = writeRawData(hdata.data(), hdata.size());
+    qint64 total = writeRawData(hdata.constData(), hdata.size());
     if (total < 0) {
         return -1;
     }
@@ -101,7 +101,7 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
     if (body) {
         QBuffer *buffer = qobject_cast<QBuffer *>(body);
         if (buffer) {
-            if (writeRawData(buffer->data().data(), buffer->size()) != buffer->size()) {
+            if (writeRawData(buffer->data().constData(), buffer->size()) != buffer->size()) {
                 return -1;
             }
             total += buffer->size();
@@ -109,7 +109,7 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
             QByteArray buf(WRITE_BUFFER_LENGTH, 0);
             qint64 readLen = 0;
             while ((readLen = body->read(buf.data(), buf.size())) > 0) {
-                if (writeRawData(buf.data(), readLen) != readLen) {
+                if (writeRawData(buf.constData(), readLen) != readLen) {
                     return -1;
                 }
                 total += readLen;
@@ -161,7 +161,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 
 qint64 THttpSocket::writeRawData(const QByteArray &data)
 {
-    return writeRawData(data.data(), data.size());
+    return writeRawData(data.constData(), data.size());
 }
 
 
@@ -184,11 +184,11 @@ void THttpSocket::readRequest()
         if (lengthToRead > 0) {
             // Writes to buffer
             if (fileBuffer.isOpen()) {
-                if (fileBuffer.write(buf.data(), bytes) < 0) {
+                if (fileBuffer.write(buf.constData(), bytes) < 0) {
                     throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
                 }
             } else {
-                readBuffer.append(buf.data(), bytes);
+                readBuffer.append(buf.constData(), bytes);
             }
             lengthToRead = qMax(lengthToRead - bytes, 0LL);
 
@@ -213,7 +213,7 @@ void THttpSocket::readRequest()
                     }
                     if (readBuffer.length() > idx + 4) {
                         tSystemDebug("fileBuffer name: %s", qPrintable(fileBuffer.fileName()));
-                        if (fileBuffer.write(readBuffer.data() + idx + 4, readBuffer.length() - (idx + 4)) < 0) {
+                        if (fileBuffer.write(readBuffer.constData() + idx + 4, readBuffer.length() - (idx + 4)) < 0) {
                             throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
                         }
                     }

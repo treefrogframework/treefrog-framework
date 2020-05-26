@@ -100,7 +100,7 @@ QString THttpUtility::fromUrlEncoding(const QByteArray &enc)
 */
 QByteArray THttpUtility::toUrlEncoding(const QString &input, const QByteArray &exclude)
 {
-    return input.toUtf8().toPercentEncoding(exclude, "~").replace("%20", "+");
+    return input.toUtf8().toPercentEncoding(exclude, QByteArrayLiteral("~")).replace("%20", "+");
 }
 
 
@@ -361,7 +361,7 @@ QByteArray THttpUtility::timeZone()
     QByteArray tz;
     tz += (offset > 0) ? '+' : '-';
     offset = qAbs(offset);
-    tz += QString("%1%2").arg(offset / 60, 2, 10, QLatin1Char('0')).arg(offset % 60, 2, 10, QLatin1Char('0')).toLatin1();
+    tz += QStringLiteral("%1%2").arg(offset / 60, 2, 10, QLatin1Char('0')).arg(offset % 60, 2, 10, QLatin1Char('0')).toLatin1();
     tSystemDebug("tz: %s", tz.data());
     return tz;
 }

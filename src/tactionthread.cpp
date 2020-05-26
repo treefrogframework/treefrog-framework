@@ -104,7 +104,6 @@ void TActionThread::run()
     };
 
     Counter counter(threadCounter);
-    QList<THttpRequest> reqs;
     QEventLoop eventLoop;
     _httpSocket = new THttpSocket();
 
@@ -119,7 +118,7 @@ void TActionThread::run()
 
     try {
         for (;;) {
-            reqs = readRequest(_httpSocket);
+            QList<THttpRequest> reqs = readRequest(_httpSocket);
             tSystemDebug("HTTP request count: %d", reqs.count());
 
             if (Q_UNLIKELY(reqs.isEmpty())) {
@@ -127,10 +126,10 @@ void TActionThread::run()
             }
 
             // WebSocket?
-            QByteArray connectionHeader = reqs[0].header().rawHeader("Connection").toLower();
+            QByteArray connectionHeader = reqs[0].header().rawHeader(QByteArrayLiteral("Connection")).toLower();
             if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
-                QByteArray upgradeHeader = reqs[0].header().rawHeader("Upgrade").toLower();
-                tSystemDebug("Upgrade: %s", upgradeHeader.data());
+                QByteArray upgradeHeader = reqs[0].header().rawHeader(QByteArrayLiteral("Upgrade")).toLower();
+                tSystemDebug("Upgrade: %s", upgradeHeader.constData());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
                     if (!handshakeForWebSocket(reqs[0].header())) {
@@ -238,9 +237,9 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
     if (keepAliveTimeout > 0) {
-        header.setRawHeader("Connection", "Keep-Alive");
+        header.setRawHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("Keep-Alive"));
     }
-    return _httpSocket->write(static_cast<THttpHeader *>(&header), body);
+    return _httpSocket->write(&header, body);
 }
 
 
