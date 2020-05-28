@@ -430,30 +430,63 @@ QDateTime THttpUtility::fromHttpDateTimeUTCString(const QByteArray &utc)
 
 QByteArray THttpUtility::getUTCTimeString()
 {
-    static const char *DAY[] = {"Sun, ", "Mon, ", "Tue, ", "Wed, ", "Thu, ", "Fri, ", "Sat, "};
-    static const char *MONTH[] = {"Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec "};
+    static const QByteArray MONTH[] = {
+        "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec "
+    };
+    static const QByteArray DAY_OF_WEEK[] = {
+        "Sun, ", "Mon, ", "Tue, ", "Wed, ", "Thu, ", "Fri, ", "Sat, "
+    };
+    static const QByteArray DAY_OF_MONTH[] = {
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+        "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+        "31"
+    };
+    static const QByteArray HOUR[] = {
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24"
+    };
+    static const QByteArray MINUTE[] = {
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"
+    };
+    static const QByteArray SECOND[] = {
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+        "60", "61"  // 0-61 - extra range for leap seconds
+    };
 
     QByteArray utcTime;
+    utcTime.reserve(50);
 
 #if defined(Q_OS_WIN)
     SYSTEMTIME st;
     memset(&st, 0, sizeof(SYSTEMTIME));
     GetSystemTime(&st);
-    utcTime += DAY[st.wDayOfWeek];
-    utcTime += QByteArray::number(st.wDay).rightJustified(2, '0');
+    utcTime += DAY_OF_WEEK[st.wDayOfWeek];
+    utcTime += DAY_OF_MONTH[st.wDay - 1];
     utcTime += ' ';
     utcTime += MONTH[st.wMonth - 1];
     utcTime += QByteArray::number(st.wYear);
     utcTime += ' ';
-    utcTime += QByteArray::number(st.wHour).rightJustified(2, '0');
+    utcTime += HOUR[st.wHour];
     utcTime += ':';
-    utcTime += QByteArray::number(st.wMinute).rightJustified(2, '0');
+    utcTime += MINUTE[st.wMinute];
     utcTime += ':';
-    utcTime += QByteArray::number(st.wSecond).rightJustified(2, '0');
+    utcTime += SECOND[st.wSecond];
     utcTime += " GMT";
 #elif defined(Q_OS_UNIX)
     time_t gtime = 0;
-    tm *t = 0;
+    tm *t = nullptr;
     time(&gtime);
 #if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
     tzset();
@@ -462,17 +495,17 @@ QByteArray THttpUtility::getUTCTimeString()
 #else
     t = gmtime(&gtime);
 #endif  // _POSIX_THREAD_SAFE_FUNCTIONS
-    utcTime += DAY[t->tm_wday];
-    utcTime += QByteArray::number(t->tm_mday).rightJustified(2, '0');
+    utcTime += DAY_OF_WEEK[t->tm_wday];
+    utcTime += DAY_OF_MONTH[t->tm_mday - 1];
     utcTime += ' ';
     utcTime += MONTH[t->tm_mon];
     utcTime += QByteArray::number(t->tm_year + 1900);
     utcTime += ' ';
-    utcTime += QByteArray::number(t->tm_hour).rightJustified(2, '0');
+    utcTime += HOUR[t->tm_hour];
     utcTime += ':';
-    utcTime += QByteArray::number(t->tm_min).rightJustified(2, '0');
+    utcTime += MINUTE[t->tm_min];
     utcTime += ':';
-    utcTime += QByteArray::number(t->tm_sec).rightJustified(2, '0');
+    utcTime += SECOND[t->tm_sec];
     utcTime += " GMT";
 #endif  // Q_OS_UNIX
 
