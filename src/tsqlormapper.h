@@ -45,10 +45,10 @@ public:
     void reset();
 
     T findFirst(const TCriteria &cri = TCriteria());
-    T findFirstBy(int column, QVariant value);
-    T findByPrimaryKey(QVariant pk);
+    T findFirstBy(int column, const QVariant &value);
+    T findByPrimaryKey(const QVariant &pk);
     int find(const TCriteria &cri = TCriteria());
-    int findBy(int column, QVariant value);
+    int findBy(int column, const QVariant &value);
     int findIn(int column, const QVariantList &values);
     int rowCount() const;
     T first() const;
@@ -56,8 +56,8 @@ public:
     T value(int i) const;
 
     int findCount(const TCriteria &cri = TCriteria());
-    int findCountBy(int column, QVariant value);
-    int updateAll(const TCriteria &cri, int column, QVariant value);
+    int findCountBy(int column, const QVariant &value);
+    int updateAll(const TCriteria &cri, int column, const QVariant &value);
     int updateAll(const TCriteria &cri, const QMap<int, QVariant> &values);
     int removeAll(const TCriteria &cri = TCriteria());
 
@@ -160,7 +160,7 @@ template <class T>
 inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
 {
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database(), "t0");
+        TCriteriaConverter<T> conv(cri, database(), QStringLiteral("t0"));
         setFilter(conv.toString());
     } else {
         setFilter(QString());
@@ -181,7 +181,7 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
   \a column as the \a value in the table.
 */
 template <class T>
-inline T TSqlORMapper<T>::findFirstBy(int column, QVariant value)
+inline T TSqlORMapper<T>::findFirstBy(int column, const QVariant &value)
 {
     return findFirst(TCriteria(column, value));
 }
@@ -191,7 +191,7 @@ inline T TSqlORMapper<T>::findFirstBy(int column, QVariant value)
   the table.
 */
 template <class T>
-inline T TSqlORMapper<T>::findByPrimaryKey(QVariant pk)
+inline T TSqlORMapper<T>::findByPrimaryKey(const QVariant &pk)
 {
     int idx = T().primaryKeyIndex();
     if (idx < 0) {
@@ -212,7 +212,7 @@ template <class T>
 inline int TSqlORMapper<T>::find(const TCriteria &cri)
 {
     if (!cri.isEmpty()) {
-        TCriteriaConverter<T> conv(cri, database(), "t0");
+        TCriteriaConverter<T> conv(cri, database(), QStringLiteral("t0"));
         setFilter(conv.toString());
     } else {
         setFilter(QString());
@@ -234,7 +234,7 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
   \sa TSqlORMapperIterator
 */
 template <class T>
-inline int TSqlORMapper<T>::findBy(int column, QVariant value)
+inline int TSqlORMapper<T>::findBy(int column, const QVariant &value)
 {
     return find(TCriteria(column, value));
 }
@@ -497,6 +497,7 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
     }
 
     QString query;
+    query.reserve(1024);
     query += QLatin1String("SELECT COUNT(*) FROM (");
     query += selectStatement();
     query += QLatin1String(") t");
@@ -516,7 +517,7 @@ inline int TSqlORMapper<T>::findCount(const TCriteria &cri)
   \a column as the \a value from the table.
 */
 template <class T>
-inline int TSqlORMapper<T>::findCountBy(int column, QVariant value)
+inline int TSqlORMapper<T>::findCountBy(int column, const QVariant &value)
 {
     return findCount(TCriteria(column, value));
 }
@@ -584,7 +585,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
   \a cri and returns the number of the rows affected by the query executed.
 */
 template <class T>
-inline int TSqlORMapper<T>::updateAll(const TCriteria &cri, int column, QVariant value)
+inline int TSqlORMapper<T>::updateAll(const TCriteria &cri, int column, const QVariant &value)
 {
     QMap<int, QVariant> map;
     map.insert(column, value);
@@ -711,6 +712,7 @@ inline QString TSqlORMapper<T>::orderBy() const
     QString str;
 
     if (!sortColumns.isEmpty()) {
+        str.reserve(50);
         str += QLatin1String(" ORDER BY ");
         for (auto &p : sortColumns) {
             str += QLatin1String("t0.");
