@@ -510,7 +510,7 @@ void TSqlObject::syncToSqlRecord()
         if (idx >= 0) {
             QSqlRecord::setValue(idx, metaObj->property(i).read(this));
         } else {
-            tWarn("invalid name: %s", propName);
+            tWarn("invalid name: %s", qPrintable(propName));
         }
     }
 }
