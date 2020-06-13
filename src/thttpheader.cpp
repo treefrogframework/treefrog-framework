@@ -110,7 +110,7 @@ THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
         // Parses the string
         parse(str.mid(i + 1));
 
-        QByteArray line = str.left(i).trimmed();
+        const QByteArray line = str.left(i).trimmed();
         i = line.indexOf(' ');
         if (i > 0) {
             _reqMethod = line.left(i);
@@ -160,9 +160,10 @@ QByteArray THttpRequestHeader::cookie(const QString &name) const
  */
 QList<TCookie> THttpRequestHeader::cookies() const
 {
-    QList<TCookie> result;
-    const QByteArrayList cookieStrings = rawHeader("Cookie").split(';');
+    const QByteArrayList cookieStrings = rawHeader(QByteArrayLiteral("Cookie")).split(';');
 
+    QList<TCookie> result;
+    result.reserve(cookieStrings.size());
     for (auto &ck : cookieStrings) {
         QByteArray ba = ck.trimmed();
         if (!ba.isEmpty()) {
@@ -177,8 +178,9 @@ QList<TCookie> THttpRequestHeader::cookies() const
 */
 QByteArray THttpRequestHeader::toByteArray() const
 {
+    QByteArray hdr = THttpHeader::toByteArray();
     QByteArray ba;
-    ba.reserve(256);
+    ba.reserve(256 + hdr.size());
     ba += _reqMethod;
     ba += ' ';
     ba += _reqUri;
@@ -187,7 +189,7 @@ QByteArray THttpRequestHeader::toByteArray() const
     ba += '.';
     ba += QByteArray::number(minorVersion());
     ba += CRLF;
-    ba += THttpHeader::toByteArray();
+    ba += hdr;
     return ba;
 }
 
@@ -249,7 +251,7 @@ THttpResponseHeader::THttpResponseHeader(const QByteArray &str) :
         // Parses the string
         parse(str.mid(i + 1));
 
-        QByteArray line = str.left(i).trimmed();
+        const QByteArray line = str.left(i).trimmed();
         i = line.indexOf("HTTP/");
         if (i == 0 && line.length() >= 12) {
             THttpHeader::_majorVersion = line.mid(5, 1).toInt();
@@ -282,8 +284,9 @@ void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int ma
 */
 QByteArray THttpResponseHeader::toByteArray() const
 {
+    QByteArray hdr = THttpHeader::toByteArray();
     QByteArray ba;
-    ba.reserve(256);
+    ba.reserve(256 + hdr.size());
     ba += "HTTP/";
     ba += QByteArray::number(majorVersion());
     ba += '.';
@@ -293,7 +296,7 @@ QByteArray THttpResponseHeader::toByteArray() const
     ba += ' ';
     ba += _reasonPhrase;
     ba += CRLF;
-    ba += THttpHeader::toByteArray();
+    ba += hdr;
     return ba;
 }
 
