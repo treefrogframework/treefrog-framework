@@ -161,8 +161,9 @@ QByteArray THttpRequestHeader::cookie(const QString &name) const
 QList<TCookie> THttpRequestHeader::cookies() const
 {
     QList<TCookie> result;
-    const QByteArrayList cookieStrings = rawHeader("Cookie").split(';');
+    const QByteArrayList cookieStrings = rawHeader(QByteArrayLiteral("Cookie")).split(';');
 
+    result.reserve(cookieStrings.size());
     for (auto &ck : cookieStrings) {
         QByteArray ba = ck.trimmed();
         if (!ba.isEmpty()) {
@@ -178,7 +179,8 @@ QList<TCookie> THttpRequestHeader::cookies() const
 QByteArray THttpRequestHeader::toByteArray() const
 {
     QByteArray ba;
-    ba.reserve(256);
+    QByteArray hdr = THttpHeader::toByteArray();
+    ba.reserve(256 + hdr.size());
     ba += _reqMethod;
     ba += ' ';
     ba += _reqUri;
@@ -187,7 +189,7 @@ QByteArray THttpRequestHeader::toByteArray() const
     ba += '.';
     ba += QByteArray::number(minorVersion());
     ba += CRLF;
-    ba += THttpHeader::toByteArray();
+    ba += hdr;
     return ba;
 }
 
@@ -283,7 +285,8 @@ void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int ma
 QByteArray THttpResponseHeader::toByteArray() const
 {
     QByteArray ba;
-    ba.reserve(256);
+    QByteArray hdr = THttpHeader::toByteArray();
+    ba.reserve(256 + hdr.size());
     ba += "HTTP/";
     ba += QByteArray::number(majorVersion());
     ba += '.';
@@ -293,7 +296,7 @@ QByteArray THttpResponseHeader::toByteArray() const
     ba += ' ';
     ba += _reasonPhrase;
     ba += CRLF;
-    ba += THttpHeader::toByteArray();
+    ba += hdr;
     return ba;
 }
 

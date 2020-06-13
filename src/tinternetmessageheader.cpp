@@ -65,6 +65,7 @@ QByteArray TInternetMessageHeader::rawHeader(const QByteArray &key) const
 QByteArrayList TInternetMessageHeader::rawHeaderList() const
 {
     QByteArrayList list;
+    list.reserve(headerPairList.size());
     for (const auto &p : headerPairList) {
         list << p.first;
     }
@@ -113,7 +114,7 @@ void TInternetMessageHeader::addRawHeader(const QByteArray &key, const QByteArra
 */
 QByteArray TInternetMessageHeader::contentType() const
 {
-    return rawHeader("Content-Type");
+    return rawHeader(QByteArrayLiteral("Content-Type"));
 }
 
 /*!
@@ -121,7 +122,7 @@ QByteArray TInternetMessageHeader::contentType() const
 */
 void TInternetMessageHeader::setContentType(const QByteArray &type)
 {
-    setRawHeader("Content-Type", type);
+    setRawHeader(QByteArrayLiteral("Content-Type"), type);
 }
 
 /*!
@@ -129,7 +130,7 @@ void TInternetMessageHeader::setContentType(const QByteArray &type)
 */
 qint64 TInternetMessageHeader::contentLength() const
 {
-    return rawHeader("Content-Length").toLongLong();
+    return rawHeader(QByteArrayLiteral("Content-Length")).toLongLong();
 }
 
 /*!
@@ -137,7 +138,7 @@ qint64 TInternetMessageHeader::contentLength() const
 */
 void TInternetMessageHeader::setContentLength(qint64 len)
 {
-    setRawHeader("Content-Length", QByteArray::number(len));
+    setRawHeader(QByteArrayLiteral("Content-Length"), QByteArray::number(len));
 }
 
 /*!
@@ -145,7 +146,7 @@ void TInternetMessageHeader::setContentLength(qint64 len)
 */
 QByteArray TInternetMessageHeader::date() const
 {
-    return rawHeader("Date");
+    return rawHeader(QByteArrayLiteral("Date"));
 }
 
 /*!
@@ -153,7 +154,7 @@ QByteArray TInternetMessageHeader::date() const
 */
 void TInternetMessageHeader::setDate(const QByteArray &date)
 {
-    setRawHeader("Date", date);
+    setRawHeader(QByteArrayLiteral("Date"), date);
 }
 
 /*!
@@ -170,7 +171,7 @@ void TInternetMessageHeader::setCurrentDate()
 */
 void TInternetMessageHeader::setDate(const QDateTime &dateTime)
 {
-    setRawHeader("Date", THttpUtility::toHttpDateTimeString(dateTime));
+    setRawHeader(QByteArrayLiteral("Date"), THttpUtility::toHttpDateTimeString(dateTime));
 }
 
 /*!
@@ -188,6 +189,7 @@ void TInternetMessageHeader::setDate(const QDateTime &dateTime)
 QByteArray TInternetMessageHeader::toByteArray() const
 {
     QByteArray res;
+    res.reserve(headerPairList.size() * 64);
     for (const auto &p : headerPairList) {
         res += p.first;
         res += ": ";

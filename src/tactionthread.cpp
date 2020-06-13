@@ -127,9 +127,9 @@ void TActionThread::run()
             }
 
             // WebSocket?
-            QByteArray connectionHeader = reqs[0].header().rawHeader("Connection").toLower();
+            QByteArray connectionHeader = reqs[0].header().rawHeader(QByteArrayLiteral("Connection")).toLower();
             if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
-                QByteArray upgradeHeader = reqs[0].header().rawHeader("Upgrade").toLower();
+                QByteArray upgradeHeader = reqs[0].header().rawHeader(QByteArrayLiteral("Upgrade")).toLower();
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
@@ -167,7 +167,8 @@ void TActionThread::run()
                     goto receive_end;
                 }
 
-                while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) { }
+                while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {
+                }
             }
         }
 
@@ -188,7 +189,8 @@ receive_end:
 
 socket_cleanup:
     // For cleanup
-    while (eventLoop.processEvents()) { }
+    while (eventLoop.processEvents()) {
+    }
 
 socket_error:
     TActionContext::socketDesc = 0;
@@ -236,7 +238,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
     if (keepAliveTimeout > 0) {
-        header.setRawHeader("Connection", "Keep-Alive");
+        header.setRawHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("Keep-Alive"));
     }
     return _httpSocket->write(static_cast<THttpHeader *>(&header), body);
 }

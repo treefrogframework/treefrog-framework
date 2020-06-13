@@ -467,12 +467,11 @@ bool TSqlObject::isModified() const
     if (isNew())
         return false;
 
-    const QMetaObject *metaObj = metaObject();
-    for (int i = 0, count = QSqlRecord::count(); i < count; ++i) {
-        const QString name = field(i).name();
-        int index = metaObj->indexOfProperty(name.toLatin1().constData());
+    for (int i = 0; i < QSqlRecord::count(); ++i) {
+        QString name = field(i).name();
+        int index = metaObject()->indexOfProperty(name.toLatin1().constData());
         if (index >= 0) {
-            if (value(i) != metaObj->property(index).read(this)) {
+            if (value(name) != property(name.toLatin1().constData())) {
                 return true;
             }
         }
@@ -486,12 +485,13 @@ bool TSqlObject::isModified() const
 */
 void TSqlObject::syncToObject()
 {
-    const QMetaObject *metaObj = metaObject();
-    for (int i = 0, count = QSqlRecord::count(); i < count; ++i) {
-        const QString name = field(i).name();
-        int index = metaObj->indexOfProperty(name.toLatin1().constData());
-        if (index >= 0) {
-            metaObj->property(index).write(this, value(i));
+    int offset = metaObject()->propertyOffset();
+    for (int i = 0; i < QSqlRecord::count(); ++i) {
+        QString propertyName = field(i).name();
+        QByteArray name = propertyName.toLatin1();
+        int index = metaObject()->indexOfProperty(name.constData());
+        if (index >= offset) {
+            QObject::setProperty(name.constData(), value(propertyName));
         }
     }
 }
@@ -505,12 +505,12 @@ void TSqlObject::syncToSqlRecord()
     QSqlRecord::operator=(Tf::currentSqlDatabase(databaseId()).record(tableName()));
     const QMetaObject *metaObj = metaObject();
     for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
-        const QString propName = QString::fromLatin1(metaObj->property(i).name());
+        const char *propName = metaObj->property(i).name();
         int idx = indexOf(propName);
         if (idx >= 0) {
-            QSqlRecord::setValue(idx, metaObj->property(i).read(this));
+            QSqlRecord::setValue(idx, QObject::property(propName));
         } else {
-            tWarn("invalid name: %s", qPrintable(propName));
+            tWarn("invalid name: %s", propName);
         }
     }
 }
