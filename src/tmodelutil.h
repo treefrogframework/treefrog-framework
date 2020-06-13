@@ -27,7 +27,9 @@ inline QList<T> tfGetModelListByCriteria(const TCriteria &cri, const QList<QPair
         mapper.setOffset(offset);
     }
     QList<T> list;
-    if (mapper.find(cri) > 0) {
+    int count = mapper.find(cri);
+    if (count > 0) {
+        list.reserve(count);
         for (auto &o : mapper) {
             list << T(o);
         }
