@@ -66,32 +66,51 @@ bool TActionController::renderJson(const QStringList &list)
 }
 
 #if QT_VERSION >= 0x050c00  // 5.12.0
+
+/*!
+  Renders a CBOR object \a variant as HTTP response.
+*/
 bool TActionController::renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt)
 {
     return renderCbor(QCborValue::fromVariant(variant), opt);
 }
 
+/*!
+  Renders a CBOR object \a map as HTTP response.
+*/
 bool TActionController::renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt)
 {
     return renderCbor(QCborMap::fromVariantMap(map), opt);
 }
 
+/*!
+  Renders a CBOR object \a hash as HTTP response.
+*/
 bool TActionController::renderCbor(const QVariantHash &hash, QCborValue::EncodingOptions opt)
 {
     return renderCbor(QCborMap::fromVariantHash(hash), opt);
 }
 
+/*!
+  Renders a CBOR \a value as HTTP response.
+*/
 bool TActionController::renderCbor(const QCborValue &value, QCborValue::EncodingOptions opt)
 {
     QCborValue val = value;
     return sendData(val.toCbor(opt), "application/cbor");
 }
 
+/*!
+  Renders a CBOR \a map as HTTP response.
+*/
 bool TActionController::renderCbor(const QCborMap &map, QCborValue::EncodingOptions opt)
 {
     return renderCbor(map.toCborValue(), opt);
 }
 
+/*!
+  Renders a CBOR \a array as HTTP response.
+*/
 bool TActionController::renderCbor(const QCborArray &array, QCborValue::EncodingOptions opt)
 {
     return renderCbor(array.toCborValue(), opt);
