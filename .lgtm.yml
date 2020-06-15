@@ -19,9 +19,13 @@ extraction:
         - libqt5core5a
         - libqt5qml5
         - libqt5xml5
+        - gcc
+        - g++
+        - make
     configure:
       command:
         - ./configure
     index:
       build_command:
-        - make -j2 -C src
+        - cd src
+        - make -j2
