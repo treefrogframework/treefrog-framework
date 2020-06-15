@@ -15,6 +15,7 @@ Configuration:
   --enable-gui-mod    compile and link with QtGui module
   --enable-shared-mongoc  link the mongoc shared library
   --spec=SPEC         use SPEC as QMAKESPEC
+  --qmake-path=QMAKE_PATH         use customized path to qmake
 
 Installation directories:
   --prefix=PREFIX     install files in PREFIX [$PREFIX]
@@ -98,6 +99,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
     --spec=*)
       SPEC=$optarg
       ;;
+    --qmake-path=*)
+      QMAKE_PATH=$optarg
+      ;;
     --help | -help | -h | *)
       usage
       exit
@@ -143,8 +147,10 @@ else
 fi
 
 cd "$BASEDIR"
-replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-replace "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
+replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog
+|" defaults/appbase.pri
+replace "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR
+|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
@@ -154,9 +160,13 @@ fi
 
 # search qmake command
 if [ -z "$QMAKE" ]; then
-  which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
-  which qmake     >/dev/null 2>&1 && QMAKE=qmake
-
+	# customized qmake path
+	if [ "$QMAKE_PATH" != "" ]; then
+	  QMAK=$QMAKE_PATH
+	else
+	  which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
+	  which qmake     >/dev/null 2>&1 && QMAKE=qmake
+	fi
   if [ -z "$QMAKE" ]; then
     echo "qmake: command not found"
     echo 
