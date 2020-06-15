@@ -1,9 +1,8 @@
 path_classifiers:
   test:
-    - src/*.cpp
-    - tools/**/*.cpp
-queries:
-  - exclude: **/test/*.cpp
+    - test
+    - "**/*.js"
+    - "**/*.html"
 extraction:
   cpp:
     prepare:
@@ -26,6 +25,3 @@ extraction:
     index:
       build_command:
         - make -j2 -C src
-        - make install -C src
-        - make -j2 -C tools
-        - make install -C tools
