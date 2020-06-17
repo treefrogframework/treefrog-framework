@@ -31,12 +31,8 @@ extraction:
         - gcc
         - g++
         - make
-    configure:
-      command:
-        - touch Makefile
-        - mkdir build
-        - ./configure
     index:
       build_command:
+        - ./configure
         - cd src
         - make -j2
