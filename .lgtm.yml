@@ -1,7 +1,15 @@
 path_classifiers:
   test:
-    - test
-    - "3rdparty/"
+    - src/test
+    - tools/test
+    - 3rdparty
+    - defaults
+    - installer
+  generated:
+    - src/.obj
+  docs:
+    - doc
+    - docs
     - "**/*.js"
     - "**/*.html"
 extraction:
@@ -26,8 +34,6 @@ extraction:
     configure:
       command:
         - ./configure
-    before_index:
-      - cd src
     index:
       build_command:
-        - make -j2
+        - "cd src; make -j2"
