@@ -1,17 +1,18 @@
 path_classifiers:
+  library:
+    - 3rdparty
   test:
     - src/test
     - tools/test
-    - 3rdparty
+  docs:
     - defaults
+    - doc
+    - docs
+  tools:
+    - tools
     - installer
   generated:
     - src/.obj
-  docs:
-    - doc
-    - docs
-    - "**/*.js"
-    - "**/*.html"
 extraction:
   cpp:
     prepare:
@@ -31,8 +32,11 @@ extraction:
         - gcc
         - g++
         - make
+    configure:
+      command:
+        - ./configure
+        - touch Makefile
     index:
       build_command:
-        - ./configure
         - cd src
         - make -j2
