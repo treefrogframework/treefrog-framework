@@ -1,7 +1,7 @@
 path_classifiers:
   test:
     - test
-    - "3rdparty/**"
+    - "3rdparty/"
     - "**/*.js"
     - "**/*.html"
 extraction:

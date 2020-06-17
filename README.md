@@ -18,15 +18,13 @@ Features
 --------
  * High performance  - Highly optimized Application server engine of C++
  * O/R mapping  - Conceals complex and troublesome database accesses
- * Template system  - Completely divided templates and presentation logic
- * Support for many DB  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
+ * Template system  - ERB template engine adopted
+ * Supports for many DB  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
    InterBase, MongoDB and Redis.
- * Support WebSocket  - Providing full-duplex communications channels
+ * WebSocket support  - Providing full-duplex communications channels
  * Generator  - Generates scaffolds and Makefiles automatically
- * Cross-platform  - Windows, macOS, Linux, etc. Write once, compile
-   anywhere.
- * Ajax support  - JSON, XML and Plain text available
- * Less resource  -  Stable operation even on Raspberry Pi
+ * Supports various response types  - JSON, XML and CBOR
+ * Cross-platform  - Windows, macOS, Linux, etc. Write once, compile anywhere.
  * OSS  - New BSD License
 
 Requirements
