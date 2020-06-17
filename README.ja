@@ -14,12 +14,12 @@ C++/Qt で作られたサーバサイドのフレームワークであるので�
 ----
  * 高いパフォーマンス ： 高度に最適化されたC++アプリケーションサーバエンジン
  * O/R マッピング ： 複雑で面倒なデータベースアクセスを隠蔽
- * テンプレートシステム ： ERBテンプレートエンジンを採用
- * DB　サポート ：　MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
+ * テンプレートシステム ： ERBライクなテンプレートエンジンの採用
+ * 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
                　 InterBase,  MongoDB
  * WebSocket サポート ： アプリケーションサーバとの全二重通信を提供
  * ジェネレータ ： 「足場」となるソースコードや Makefile を自動で生成
- * 様々な応答タイプに対応 ： JSON, XML, CBOR
+ * 様々なレスポンスタイプに対応 ： JSON, XML, CBOR
  * クロスプラットフォーム ： Windows, macOS, Linux で同じコードが動作
  * オープンソースソフトウェア ： New BSD License
 

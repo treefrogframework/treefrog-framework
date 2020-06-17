@@ -9,7 +9,7 @@ Treefrog框架是一个基于C++和Qt的高速全栈的网页应用框架, 支�
 --------
  * 高性能  - C++引擎的高速优化的应用服务器
  * O/R 映射  - 隐藏了复杂的和麻烦的数据库访问
- * 模版系统  - 采用了ERB模板引擎
+ * 模版系统  - 采用类似ERP的模板引擎
  * 支持多种数据库  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
                      InterBase, MongoDB和Redis
  * 支持WebSocket  - 提供双向通信通道

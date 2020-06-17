@@ -18,7 +18,7 @@ Features
 --------
  * High performance  - Highly optimized Application server engine of C++
  * O/R mapping  - Conceals complex and troublesome database accesses
- * Template system  - ERB template engine adopted
+ * Template system  - ERB-like template engine adopted
  * Supports for many DB  - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
    InterBase, MongoDB and Redis.
  * WebSocket support  - Providing full-duplex communications channels
