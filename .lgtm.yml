@@ -11,8 +11,6 @@ path_classifiers:
   tools:
     - tools
     - installer
-  generated:
-    - src/.obj
 extraction:
   cpp:
     prepare:
