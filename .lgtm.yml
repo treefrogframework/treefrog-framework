@@ -34,6 +34,8 @@ extraction:
     configure:
       command:
         - ./configure
+        - ln -sf src _lgtm_build_dir
     index:
       build_command:
-        - "cd src; make -j2"
+        - cd src
+        - make -j2
