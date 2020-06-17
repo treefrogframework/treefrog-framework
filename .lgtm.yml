@@ -34,7 +34,7 @@ extraction:
     configure:
       command:
         - ./configure
-        - ln -sf src _lgtm_build_dir
+        - touch Makefile
     index:
       build_command:
         - cd src
