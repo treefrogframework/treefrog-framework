@@ -33,8 +33,9 @@ extraction:
         - make
     configure:
       command:
-        - ./configure
         - touch Makefile
+        - mkdir build
+        - ./configure
     index:
       build_command:
         - cd src
