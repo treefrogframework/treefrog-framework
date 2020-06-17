@@ -26,7 +26,8 @@ extraction:
     configure:
       command:
         - ./configure
+    before_index:
+      - cd src
     index:
       build_command:
-        - cd src
         - make -j2
