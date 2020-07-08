@@ -1,20 +1,7 @@
-path_classifiers:
-  library:
-    - 3rdparty
-  test:
-    - src/test
-    - tools/test
-  docs:
-    - defaults
-    - doc
-    - docs
-  tools:
-    - tools
-    - installer
 extraction:
   cpp:
     prepare:
-      packages: 
+      packages:
         - qt5-default
         - qt5-qmake
         - qtbase5-dev
