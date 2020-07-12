@@ -17,12 +17,12 @@ public:
 
     bool invoke(const QByteArray &method, const QStringList &args = QStringList(), Qt::ConnectionType connectionType = Qt::AutoConnection);
     T *object();
-    QString typeName() const { return metaType; }
+    QString typeName() const { return _metaType; }
 
 private:
-    QString metaType;
-    int typeId {0};
-    T *ptr {nullptr};
+    QString _metaType;
+    int _typeId {0};
+    T *_ptr {nullptr};
 
     T_DISABLE_COPY(TDispatcher)
     T_DISABLE_MOVE(TDispatcher)
@@ -31,18 +31,18 @@ private:
 
 template <class T>
 inline TDispatcher<T>::TDispatcher(const QString &metaTypeName) :
-    metaType(metaTypeName)
+    _metaType(metaTypeName)
 {
 }
 
 template <class T>
 inline TDispatcher<T>::~TDispatcher()
 {
-    if (ptr) {
-        if (typeId > 0) {
-            QMetaType::destroy(typeId, ptr);
+    if (_ptr) {
+        if (_typeId > 0) {
+            QMetaType::destroy(_typeId, _ptr);
         } else {
-            delete ptr;
+            delete _ptr;
         }
     }
 }
@@ -65,8 +65,8 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
         QByteArrayLiteral("(QString,QString,QString,QString,QString,QString,QString,QString,QString,QString)")};
 
     object();
-    if (Q_UNLIKELY(!ptr)) {
-        tSystemDebug("Failed to invoke, no such class: %s", qPrintable(metaType));
+    if (Q_UNLIKELY(!_ptr)) {
+        tSystemDebug("Failed to invoke, no such class: %s", qPrintable(_metaType));
         return false;
     }
 
@@ -77,7 +77,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
         // Find method
         QByteArray mtd = method;
         mtd += params[i];
-        idx = ptr->metaObject()->indexOfSlot(mtd.constData());
+        idx = _ptr->metaObject()->indexOfSlot(mtd.constData());
         if (idx >= 0) {
             argcnt = i;
             tSystemDebug("Found method: %s", mtd.constData());
@@ -90,7 +90,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
             // Find method
             QByteArray mtd = method;
             mtd += params[i];
-            idx = ptr->metaObject()->indexOfSlot(mtd.constData());
+            idx = _ptr->metaObject()->indexOfSlot(mtd.constData());
             if (idx >= 0) {
                 argcnt = i;
                 tSystemDebug("Found method: %s", mtd.constData());
@@ -104,57 +104,57 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
         tSystemDebug("No such method: %s", qPrintable(method));
         return res;
     } else {
-        QMetaMethod mm = ptr->metaObject()->method(idx);
-        tSystemDebug("Invoke method: %s", qPrintable(metaType + "." + method));
+        QMetaMethod mm = _ptr->metaObject()->method(idx);
+        tSystemDebug("Invoke method: %s", qPrintable(_metaType + "." + method));
         switch (argcnt) {
         case 0:
-            res = mm.invoke(ptr, connectionType);
+            res = mm.invoke(_ptr, connectionType);
             break;
         case 1:
-            res = mm.invoke(ptr, connectionType, Q_ARG(QString, args.value(0)));
+            res = mm.invoke(_ptr, connectionType, Q_ARG(QString, args.value(0)));
             break;
         case 2:
-            res = mm.invoke(ptr, connectionType, Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)));
+            res = mm.invoke(_ptr, connectionType, Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)));
             break;
         case 3:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)));
             break;
         case 4:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)));
             break;
         case 5:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)));
             break;
         case 6:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)));
             break;
         case 7:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
                 Q_ARG(QString, args.value(6)));
             break;
         case 8:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
                 Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)));
             break;
         case 9:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
                 Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)), Q_ARG(QString, args.value(8)));
             break;
         default:
-            res = mm.invoke(ptr, connectionType,
+            res = mm.invoke(_ptr, connectionType,
                 Q_ARG(QString, args.value(0)), Q_ARG(QString, args.value(1)), Q_ARG(QString, args.value(2)),
                 Q_ARG(QString, args.value(3)), Q_ARG(QString, args.value(4)), Q_ARG(QString, args.value(5)),
                 Q_ARG(QString, args.value(6)), Q_ARG(QString, args.value(7)), Q_ARG(QString, args.value(8)),
@@ -168,29 +168,29 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
 template <class T>
 inline T *TDispatcher<T>::object()
 {
-    if (!ptr) {
-        auto factory = Tf::objectFactories()->value(metaType.toLatin1().toLower());
+    if (!_ptr) {
+        auto factory = Tf::objectFactories()->value(_metaType.toLatin1().toLower());
         if (Q_LIKELY(factory)) {
-            ptr = dynamic_cast<T *>(factory());
-            if (ptr) {
-                typeId = 0;
+            _ptr = dynamic_cast<T *>(factory());
+            if (_ptr) {
+                _typeId = 0;
             }
         }
     }
 
-    if (Q_UNLIKELY(!ptr)) {
-        if (typeId <= 0 && !metaType.isEmpty()) {
-            typeId = QMetaType::type(metaType.toLatin1().constData());
-            if (Q_LIKELY(typeId > 0)) {
-                ptr = static_cast<T *>(QMetaType::create(typeId));
-                Q_CHECK_PTR(ptr);
-                tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(metaType), typeId);
+    if (Q_UNLIKELY(!_ptr)) {
+        if (_typeId <= 0 && !_metaType.isEmpty()) {
+            _typeId = QMetaType::type(_metaType.toLatin1().constData());
+            if (Q_LIKELY(_typeId > 0)) {
+                _ptr = static_cast<T *>(QMetaType::create(_typeId));
+                Q_CHECK_PTR(_ptr);
+                tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(_metaType), _typeId);
             } else {
-                tSystemDebug("No such object class : %s", qPrintable(metaType));
+                tSystemDebug("No such object class : %s", qPrintable(_metaType));
             }
         }
     }
-    return ptr;
+    return _ptr;
 }
 
 #endif  // TDISPATCHER_H
