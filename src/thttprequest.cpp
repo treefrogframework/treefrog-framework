@@ -624,18 +624,16 @@ QHostAddress THttpRequest::originatingClientAddress() const
 {
     static const bool EnableForwardedForHeader = Tf::appSettings()->value(Tf::EnableForwardedForHeader, false).toBool();
     static const bool ParseForwardedForHeaderRecursively = Tf::appSettings()->value(Tf::ParseForwardedForHeaderRecursively, false).toBool();
-    static const bool ListenOnUnixDomainSocket = Tf::appSettings()->value(Tf::ListenPort).toString().trimmed().startsWith(QStringLiteral("unix:"));
-    static const bool TrustUnixDomainSocketProxy = Tf::appSettings()->value(Tf::TrustedProxyServers).toString().split(QRegularExpression(QStringLiteral("\\s*;\\s*"))).contains(QStringLiteral("unix:"));
+    static const bool ListeningOnUnixDomainSocket = Tf::appSettings()->value(Tf::ListenPort).toString().trimmed().startsWith(QStringLiteral("unix:"));
+    static const bool TrustUnixDomainSocketProxy = true;
     static const QList<NetworkSubnet> TrustProxyServersInSubnets = []() {
         QList<NetworkSubnet> subnets;
-        for (const auto &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toString().split(QRegularExpression(QStringLiteral("\\s*;\\s*")), QString::SkipEmptyParts)) {
-            if (s != QStringLiteral("unix:")) {
-                NetworkSubnet subnet = QHostAddress::parseSubnet(s);
-                if (subnet.first.protocol() != QAbstractSocket::UnknownNetworkLayerProtocol) {
-                    subnets.append(subnet);
-                } else {
-                    tSystemWarn("Invalid IP address or subnet '%s' in TrustedProxyServers parameter", qPrintable(s));
-                }
+        for (const QString &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toString().split(QRegularExpression(QStringLiteral("\\s*,\\s*")), QString::SkipEmptyParts)) {
+            NetworkSubnet subnet = QHostAddress::parseSubnet(s);
+            if (subnet.first.protocol() != QAbstractSocket::UnknownNetworkLayerProtocol) {
+                subnets.append(subnet);
+            } else {
+                tSystemWarn("Invalid IP address or subnet '%s' in TrustedProxyServers parameter", qPrintable(s));
             }
         }
         return subnets;
@@ -648,7 +646,7 @@ QHostAddress THttpRequest::originatingClientAddress() const
         if (!forwardedForHeader.isEmpty()) {
             QStringList hosts = QString::fromLatin1(forwardedForHeader).trimmed().split(QRegularExpression(QStringLiteral("\\s*,\\s*")));
 
-            bool trustProxy = (ListenOnUnixDomainSocket && TrustUnixDomainSocketProxy) || isInAnySubnet(remoteAddress, TrustProxyServersInSubnets);
+            bool trustProxy = (ListeningOnUnixDomainSocket && TrustUnixDomainSocketProxy) || isInAnySubnet(remoteAddress, TrustProxyServersInSubnets);
             while (trustProxy && !hosts.isEmpty()) {
                 QHostAddress host;
                 if (!host.setAddress(hosts.takeLast()))
