@@ -39,6 +39,7 @@ inline pid_t tf_gettid()
 #endif
 }
 
+#ifdef Q_OS_LINUX
 
 inline int tf_ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *ts)
 {
@@ -51,6 +52,17 @@ inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     struct timespec ts = {timeout / 1000, (timeout % 1000) * 1000000L};
     return tf_ppoll(fds, nfds, &ts);
 }
+
+#endif
+
+#ifdef Q_OS_DARWIN
+
+inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
+{
+    TF_EAGAIN_LOOP(::poll(fds, nfds, timeout));
+}
+
+#endif
 
 /*!
   Waits for receive-event on a descriptor.
