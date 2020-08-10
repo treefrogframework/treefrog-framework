@@ -69,12 +69,8 @@ inline int tf_write(int fd, const void *buf, size_t count)
 inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 {
 #ifdef Q_OS_WIN
-    Q_ASSERT(0);
-    Q_UNUSED(sockfd);
-    Q_UNUSED(buf);
-    Q_UNUSED(len);
     Q_UNUSED(flags);
-    return 0;
+    return ::send((SOCKET)sockfd, (const char *)buf, (int)len, 0);
 #else
     TF_EINTR_LOOP(::send(sockfd, buf, len, flags));
 #endif
@@ -84,14 +80,19 @@ inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 inline int tf_recv(int sockfd, void *buf, size_t len, int flags = 0)
 {
 #ifdef Q_OS_WIN
-    Q_ASSERT(0);
-    Q_UNUSED(sockfd);
-    Q_UNUSED(buf);
-    Q_UNUSED(len);
     Q_UNUSED(flags);
-    return 0;
+    return ::recv((SOCKET)sockfd, (char *)buf, (int)len, 0);
 #else
     TF_EINTR_LOOP(::recv(sockfd, buf, len, flags));
+#endif
+}
+
+inline int tf_close_socket(int sockfd)
+{
+#ifdef Q_OS_WIN
+    return ::closesocket((SOCKET)sockfd);
+#else
+    TF_EINTR_LOOP(::close(sockfd));
 #endif
 }
 

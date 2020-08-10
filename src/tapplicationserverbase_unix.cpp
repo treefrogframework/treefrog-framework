@@ -115,8 +115,9 @@ socket_error:
 
 void TApplicationServerBase::nativeClose(int socket)
 {
-    if (socket > 0)
-        tf_close(socket);
+    if (socket > 0) {
+        tf_close_socket(socket);
+    }
 }
 
 

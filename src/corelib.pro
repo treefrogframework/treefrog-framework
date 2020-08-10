@@ -345,6 +345,7 @@ HEADERS += \
            tcommandlineinterface.h
 
 windows {
+  HEADERS += tfcore_win.h
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp

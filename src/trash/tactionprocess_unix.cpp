@@ -38,7 +38,7 @@ void TActionProcessManager::timerEvent(QTimerEvent *event)
             } else {
                 tError("wait4 pid:%d, not found such TActionProcess object", pid);
             }
-            
+
         } else {
             break;
         }
@@ -75,7 +75,7 @@ void TActionProcess::start()
         // parent process
         tSystemDebug("fork succeeded. pid: %d", childPid);
         TActionProcessManager::instance()->insert(childPid, this);
-        tf_close(TActionContext::socketDescriptor());
+        tf_close_socket(TActionContext::socketDescriptor());
         emit started();
     } else {
         tFatal("fork failed: %s", qPrintable(qt_error_string(lastForkErrno)));

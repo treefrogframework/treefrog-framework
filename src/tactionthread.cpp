@@ -77,7 +77,7 @@ TActionThread::~TActionThread()
     }
 
     if (TActionContext::socketDesc > 0) {
-        tf_close(TActionContext::socketDesc);
+        tf_close_socket(TActionContext::socketDesc);
     }
 }
 
@@ -86,7 +86,7 @@ void TActionThread::setSocketDescriptor(qintptr socket)
 {
     if (TActionContext::socketDesc > 0) {
         tSystemWarn("Socket still open : %d   [%s:%d]", TActionContext::socketDesc, __FILE__, __LINE__);
-        tf_close(TActionContext::socketDesc);
+        tf_close_socket(TActionContext::socketDesc);
     }
     TActionContext::socketDesc = (int)socket;
 }

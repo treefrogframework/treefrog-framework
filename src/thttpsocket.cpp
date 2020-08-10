@@ -18,10 +18,13 @@
 #include <TTemporaryFile>
 #include <chrono>
 #include <ctime>
-#include <netinet/tcp.h>
 #include <thread>
 #ifdef Q_OS_UNIX
+#include <netinet/tcp.h>
 #include "tfcore_unix.h"
+#endif
+#ifdef Q_OS_WINDOWS
+#include "tfcore_win.h"
 #endif
 
 constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
@@ -213,7 +216,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
             abort();
             break;
         } else {
-            qint64 written = tf_write(_socket, data + total, qMin(size - total, WRITE_LENGTH));
+            qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
             if (Q_UNLIKELY(written <= 0)) {
                 tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
                 return -1;
@@ -304,7 +307,7 @@ void THttpSocket::setSocketDescriptor(int socketDescriptor, QAbstractSocket::Soc
 void THttpSocket::abort()
 {
     if (_socket > 0) {
-        tf_close(_socket);
+        tf_close_socket(_socket);
         tSystemDebug("Closed socket : %d", _socket);
         _state = QAbstractSocket::ClosingState;
         _socket = 0;
