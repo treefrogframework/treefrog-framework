@@ -37,8 +37,6 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
         });
         threadPoolPtr()->push(thread);
     }
-
-    Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Thread);
 }
 
 
