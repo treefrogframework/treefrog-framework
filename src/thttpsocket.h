@@ -10,7 +10,6 @@
 #include <TTemporaryFile>
 
 
-//class T_CORE_EXPORT THttpSocket : public QTcpSocket {
 class T_CORE_EXPORT THttpSocket : public QObject {
     Q_OBJECT
 public:

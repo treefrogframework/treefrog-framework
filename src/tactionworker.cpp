@@ -53,7 +53,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     }
 
     if (!TActionContext::stopped.load()) {
-        socket->sendData(header.toByteArray(), body, autoRemove, accessLogger);
+        _socket->sendData(header.toByteArray(), body, autoRemove, accessLogger);
     }
     accessLogger.close();  // not write in this thread
     return 0;
@@ -63,7 +63,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 void TActionWorker::closeHttpSocket()
 {
     if (!TActionContext::stopped.load()) {
-        socket->disconnect();
+        _socket->disconnect();
     }
 }
 
@@ -71,15 +71,15 @@ void TActionWorker::closeHttpSocket()
 void TActionWorker::start(TEpollHttpSocket *sock)
 {
     TDatabaseContext::setCurrentDatabaseContext(this);
-    socket = sock;
-    httpRequest += socket->readRequest();
-    clientAddr = socket->peerAddress().toString();
-    QList<THttpRequest> requests = THttpRequest::generate(httpRequest, QHostAddress(clientAddr));
+    _socket = sock;
+    _httpRequest += _socket->readRequest();
+    _clientAddr = _socket->peerAddress();
+    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr);
 
     // Loop for HTTP-pipeline requests
     for (THttpRequest &req : requests) {
         // Executes a action context
-        TActionContext::execute(req, socket->socketId());
+        TActionContext::execute(req, _socket->socketId());
 
         if (TActionContext::stopped.load()) {
             break;
@@ -87,7 +87,7 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     }
 
     TActionContext::release();
-    //httpRequest.clear();
-    clientAddr.clear();
+    _httpRequest.clear();
+    _clientAddr.clear();
     TDatabaseContext::setCurrentDatabaseContext(nullptr);
 }

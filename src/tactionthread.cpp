@@ -104,7 +104,6 @@ void TActionThread::run()
     };
 
     Counter counter(threadCounter);
-    //QList<THttpRequest> requests;
     QEventLoop eventLoop;
     _httpSocket = new THttpSocket();
     _httpSocket->setSocketDescriptor(TActionContext::socketDesc);
@@ -147,25 +146,6 @@ void TActionThread::run()
                 break;
             }
 
-#if 0
-            // Next request
-            while (!_httpSocket->waitForReadyRead(5)) {
-                if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
-                    if (_httpSocket->error() != QAbstractSocket::RemoteHostClosedError) {
-                        tSystemWarn("Error occurred : error:%d  socket:%d", _httpSocket->error(), _httpSocket->socketId());
-                    }
-                    goto receive_end;
-                }
-
-                if (_httpSocket->idleTime() >= keepAliveTimeout) {
-                    tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
-                    goto receive_end;
-                }
-
-                while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {
-                }
-            }
-#else
             if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
                 goto receive_end;
             }
@@ -174,7 +154,6 @@ void TActionThread::run()
                 tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
                 goto receive_end;
             }
-#endif
         }
 
     } catch (ClientErrorException &e) {
@@ -215,7 +194,6 @@ void TActionThread::emitError(int socketError)
 QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 {
     QList<THttpRequest> reqs;
-    QEventLoop eventLoop;
 
     for (;;) {
         if (socket->waitForReadyReadRequest(500)) {

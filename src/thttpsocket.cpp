@@ -208,7 +208,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
     }
 
     for (;;) {
-        int res = tf_poll_send(_socket, 1000);
+        int res = tf_poll_send(_socket, 5000);
         if (res <= 0) {
             abort();
             break;
