@@ -43,12 +43,6 @@ inline pid_t tf_gettid()
 inline int tf_ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *ts)
 {
     TF_EAGAIN_LOOP(::ppoll(fds, nfds, ts, nullptr));
-    // int ret = ::ppoll(fds, nfds, ts, nullptr);
-    // int err = errno;
-    // if (err > 0 && err != EAGAIN) {
-    //     return ret;
-    // }
-    // return ret;
 }
 
 
@@ -78,11 +72,6 @@ inline int tf_poll_send(int socket, int timeout)
     struct pollfd pfd = {socket, POLLOUT, 0};
     int ret = tf_poll(&pfd, 1, timeout);
     return ret;
-
-    // if (ret < 0) {
-    //     return ret;
-    // }
-    // return (pfd.revents & (POLLOUT | POLLERR)) ? 0 : 1;
 }
 
 }  // namespace

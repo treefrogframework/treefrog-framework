@@ -11,12 +11,14 @@
 #include <QBuffer>
 #include <QDir>
 #include <TAppSettings>
+#include <TApplicationServerBase>
 #include <THttpHeader>
 #include <THttpResponse>
 #include <TMultipartFormData>
 #include <TTemporaryFile>
 #include <chrono>
 #include <ctime>
+#include <netinet/tcp.h>
 #include <thread>
 #ifdef Q_OS_UNIX
 #include "tfcore_unix.h"
@@ -25,7 +27,6 @@
 constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
 constexpr qint64 WRITE_LENGTH = 1408;
 constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
-//constexpr int SEND_BUF_SIZE = 64 * 1024;
 constexpr int RECV_BUF_SIZE = 64 * 1024;
 constexpr int RESERVED_BUFFER_SIZE = 1024;
 
@@ -124,11 +125,14 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 QByteArray THttpSocket::readRawData(int msecs)
 {
     int total = 0;
-    int timeout = 0;
     QByteArray buffer;
     buffer.reserve(RECV_BUF_SIZE);
 
-    int res = tf_poll_recv(socketDescriptor(), msecs);
+    if (Q_UNLIKELY(_socket <= 0)) {
+        throw StandardException("Logic error", __FILE__, __LINE__);
+    }
+
+    int res = tf_poll_recv(_socket, msecs);
     if (res < 0) {
         tSystemError("socket poll error");
         abort();
@@ -140,13 +144,13 @@ QByteArray THttpSocket::readRawData(int msecs)
         return buffer;
     }
 
+    int timeout = 0;
     qint64 startidle = Tf::getMSecsSinceEpoch();
 
     do {
         int buflen = RECV_BUF_SIZE - total;
-        int len = tf_recv(socketDescriptor(), buffer.data() + total, buflen);
+        int len = tf_recv(_socket, buffer.data() + total, buflen);
         int error = errno;
-        tSystemInfo("len: %d", len);
 
         if (len < 0) {
             if (error == EAGAIN) {
@@ -161,7 +165,7 @@ QByteArray THttpSocket::readRawData(int msecs)
             break;
 
         } else if (len == 0) {
-            tSystemError("#### Remote disconected");
+            tSystemDebug("Disconnected from remote host  [socket:%d]", _socket);
             abort();
             break;
 
@@ -179,8 +183,7 @@ QByteArray THttpSocket::readRawData(int msecs)
                 break;
             }
         }
-
-    } while (tf_poll_recv(socketDescriptor(), timeout) > 0);
+    } while (tf_poll_recv(_socket, timeout) > 0);
 
     return buffer;
 }
@@ -196,8 +199,8 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 {
     qint64 total = 0;
 
-    if (_socketDescriptor <= 0) {
-        return -1;
+    if (Q_UNLIKELY(_socket <= 0)) {
+        throw StandardException("Logic error", __FILE__, __LINE__);
     }
 
     if (Q_UNLIKELY(!data || size == 0)) {
@@ -205,13 +208,12 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
     }
 
     for (;;) {
-        int res = tf_poll_send(_socketDescriptor, 1000);
-        //int res = 1;
+        int res = tf_poll_send(_socket, 1000);
         if (res <= 0) {
             abort();
             break;
         } else {
-            qint64 written = tf_write(_socketDescriptor, data + total, qMin(size - total, WRITE_LENGTH));
+            qint64 written = tf_write(_socket, data + total, qMin(size - total, WRITE_LENGTH));
             if (Q_UNLIKELY(written <= 0)) {
                 tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
                 return -1;
@@ -238,51 +240,6 @@ qint64 THttpSocket::writeRawData(const QByteArray &data)
 bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
     static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
-
-    // int res = tf_poll_recv(socketDescriptor(), msecs);
-    // if (res < 0) {
-    //     tSystemWarn("socket poll error");
-    //     abort();
-    //     return false;
-    // }
-
-    // if (!res) {
-    //     // timeout
-    //     return canReadRequest();
-    // }
-
-    // QByteArray buf;
-    // QByteArray buffer;
-    // buffer.reserve(RECV_BUF_SIZE);
-    // qint64 startidle = Tf::getMSecsSinceEpoch();
-    // do {
-    //     int len = tf_recv(socketDescriptor(), buffer.data(), RECV_BUF_SIZE, 0);
-    //     int error = errno;
-    //     if (len < 0) {
-    //         if (error == EAGAIN) {
-    //             if (Tf::getMSecsSinceEpoch() - startidle < 1000) {
-    //                 std::this_thread::yield();
-    //                 continue;
-    //             } else {
-    //                 return canReadRequest();
-    //             }
-    //         }
-    //         abort();
-    //         break;
-    //     }
-
-    //     if (len == 0) {
-    //         abort();
-    //         break;
-    //     }
-
-    //     buffer.resize(len);
-    //     buf += buffer;
-    //     if (len < RECV_BUF_SIZE) {
-    //         break;
-    //     }
-    //     //timeout = 1;
-    // } while (tf_poll_recv(socketDescriptor(), 1) > 0);
 
     auto buf = readRawData(msecs);
     if (!buf.isEmpty()) {
@@ -331,56 +288,26 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
 }
 
 
-// qint64 THttpSocket::getContentLength()
-// {
-//     return 0;
-// }
+void THttpSocket::setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState)
+{
+    _socket = socketDescriptor;
+    _state = socketState;
 
-// bool THttpSocket::setSocketDescriptor(qintptr socketDescriptor, SocketState socketState, OpenMode openMode)
-// {
-//     bool ret = QTcpSocket::setSocketDescriptor(socketDescriptor, socketState, openMode);
-//     if (ret) {
-//         // Sets socket options
-//         QTcpSocket::setSocketOption(QAbstractSocket::LowDelayOption, 1);
-
-//         // Sets buffer size of socket
-//         int val = QTcpSocket::socketOption(QAbstractSocket::SendBufferSizeSocketOption).toInt();
-//         if (val < SEND_BUF_SIZE) {
-//             QTcpSocket::setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, SEND_BUF_SIZE);
-//         }
-
-//         val = QTcpSocket::socketOption(QAbstractSocket::ReceiveBufferSizeSocketOption).toInt();
-//         if (val < RECV_BUF_SIZE) {
-//             QTcpSocket::setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, RECV_BUF_SIZE);
-//         }
-// #ifdef Q_OS_UNIX
-//         int bufsize = SEND_BUF_SIZE;
-//         int res = setsockopt((int)socketDescriptor, SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
-
-//         if (res < 0) {
-//             tSystemWarn("setsockopt error [SO_SNDBUF] fd:%d", (int)socketDescriptor);
-//         }
-
-//         bufsize = RECV_BUF_SIZE;
-//         res = setsockopt((int)socketDescriptor, SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
-//         if (res < 0) {
-//             tSystemWarn("setsockopt error [SO_RCVBUF] fd:%d", (int)socketDescriptor);
-//         }
-// #endif
-//     } else {
-//         tSystemWarn("Error setSocketDescriptor: %lld", socketDescriptor);
-//     }
-//     return ret;
-// }
+    if (_socket > 0) {
+        auto peerInfo = TApplicationServerBase::getPeerInfo(_socket);
+        _peerAddr = peerInfo.first;
+        _peerPort = peerInfo.second;
+    }
+}
 
 
 void THttpSocket::abort()
 {
-    if (_socketDescriptor > 0) {
-        tf_close(_socketDescriptor);
-        tSystemWarn("close: %d", _socketDescriptor);
+    if (_socket > 0) {
+        tf_close(_socket);
+        tSystemDebug("Closed socket : %d", _socket);
         _state = QAbstractSocket::ClosingState;
-        _socketDescriptor = 0;
+        _socket = 0;
     } else {
         _state = QAbstractSocket::UnconnectedState;
     }
@@ -404,13 +331,6 @@ THttpSocket *THttpSocket::searchSocket(int sid)
 int THttpSocket::idleTime() const
 {
     return (Tf::getMSecsSinceEpoch() - _idleElapsed) / 1000;
-}
-
-
-void THttpSocket::setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState)
-{
-    _socketDescriptor = socketDescriptor;
-    _state = socketState;
 }
 
 /*!

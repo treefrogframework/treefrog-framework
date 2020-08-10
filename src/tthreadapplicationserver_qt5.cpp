@@ -90,7 +90,6 @@ void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
         //qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
         Tf::msleep(1);
     }
-
     tSystemDebug("thread ptr: %lld", (quint64)thread);
     thread->setSocketDescriptor(socketDescriptor);
     thread->start();

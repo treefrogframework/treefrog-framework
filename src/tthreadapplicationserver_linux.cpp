@@ -109,7 +109,7 @@ void TThreadApplicationServer::run()
         if (ret > 0 && (pfd.revents & POLLIN)) {
             int socketDescriptor = tf_accept4(listenSocket, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK));
             if (socketDescriptor > 0) {
-                tSystemInfo("incomingConnection  sd:%d  thread count:%d  max:%d", socketDescriptor, TActionThread::threadCount(), maxThreads);
+                tSystemDebug("incomingConnection  sd:%d  thread count:%d  max:%d", socketDescriptor, TActionThread::threadCount(), maxThreads);
                 TActionThread *thread;
 
                 while (!threadPoolPtr()->pop(thread)) {

@@ -287,7 +287,7 @@ bool TSmtpMailer::cmdStartTls()
         auto errors = _socket->sslErrors();
 #endif
         for (const auto &err : errors) {
-           tSystemError("SMTP SSL error : %s [%d]", qPrintable(err.errorString()), (int)err.error());
+            tSystemError("SMTP SSL error : %s [%d]", qPrintable(err.errorString()), (int)err.error());
         }
         return false;
     }

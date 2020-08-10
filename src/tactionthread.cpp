@@ -107,13 +107,6 @@ void TActionThread::run()
     //QList<THttpRequest> requests;
     QEventLoop eventLoop;
     _httpSocket = new THttpSocket();
-
-    // if (Q_UNLIKELY(!_httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
-    //     tSystemError("Failed setSocketDescriptor  sd:%d", TActionContext::socketDesc);
-    //     emitError(_httpSocket->error());
-    //     tf_close(TActionContext::socketDesc);
-    //     goto socket_error;
-    // }
     _httpSocket->setSocketDescriptor(TActionContext::socketDesc);
     TActionContext::socketDesc = 0;
     TDatabaseContext::setCurrentDatabaseContext(this);
@@ -141,9 +134,7 @@ void TActionThread::run()
                 goto socket_cleanup;
             }
 
-            tSystemWarn("##### 0");
             for (auto &req : requests) {
-                tSystemWarn("##### 1");
                 TActionContext::execute(req, _httpSocket->socketId());
             }
 
@@ -183,8 +174,6 @@ void TActionThread::run()
                 tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
                 goto receive_end;
             }
-
-            tSystemWarn("##### end");
 #endif
         }
 
@@ -231,7 +220,6 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
     for (;;) {
         if (socket->waitForReadyReadRequest(500)) {
             reqs = socket->read();
-            tSystemInfo("reqs: %d", reqs.count());
             if (!reqs.isEmpty()) {
                 return reqs;
             } else {
@@ -245,17 +233,10 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
             break;
         }
 
-        while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {
-        }
-
         if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
             tSystemWarn("Invalid descriptor (state:%d) sd:%d", (int)socket->state(), socket->socketDescriptor());
             break;
         }
-
-        //socket->waitForReadyRead(200);  // Repeats per 200 msecs
-        //socket->readRequest();
-        tSystemWarn("## action thread ");
     }
 
     socket->abort();

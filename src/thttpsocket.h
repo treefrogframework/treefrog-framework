@@ -26,10 +26,10 @@ public:
     void abort();
     void deleteLater();
 
-    int socketDescriptor() const { return _socketDescriptor;}
-    //bool setSocketDescriptor(qintptr socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
+    int socketDescriptor() const { return _socket; }
     void setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState = QAbstractSocket::ConnectedState);
-    QHostAddress peerAddress() const { return QHostAddress(); }
+    QHostAddress peerAddress() const { return _peerAddr; }
+    ushort peerPort() const { return _peerPort; }
     QAbstractSocket::SocketState state() const { return _state; }
 
     static THttpSocket *searchSocket(int id);
@@ -50,8 +50,10 @@ private:
     T_DISABLE_MOVE(THttpSocket)
 
     int _sid {0};
-    int _socketDescriptor {0};
+    int _socket {0};
     QAbstractSocket::SocketState _state {QAbstractSocket::UnconnectedState};
+    QHostAddress _peerAddr;
+    ushort _peerPort {0};
     qint64 _lengthToRead {-1};
     QByteArray _readBuffer;
     TTemporaryFile _fileBuffer;
