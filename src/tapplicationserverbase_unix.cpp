@@ -48,8 +48,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
     } else {
         ::fcntl(sd, F_SETFD, 0);  // clear
     }
-    ::fcntl(sd, F_SETFL, ::fcntl(sd, F_GETFL) | O_NONBLOCK);  // non-block
-
+    //::fcntl(sd, F_SETFL, ::fcntl(sd, F_GETFL) | O_NONBLOCK);  // non-block
     server.close();
     return sd;
 }

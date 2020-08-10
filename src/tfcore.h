@@ -26,6 +26,13 @@
     } while (ret < 0 && errno == EINTR); \
     return ret;
 
+#define TF_EAGAIN_LOOP(func)                                  \
+    int ret;                                                  \
+    do {                                                      \
+        errno = 0;                                            \
+        ret = (func);                                         \
+    } while (ret < 0 && (errno == EINTR || errno == EAGAIN)); \
+    return ret;
 
 namespace {
 
@@ -59,7 +66,7 @@ inline int tf_write(int fd, const void *buf, size_t count)
 }
 
 
-inline int tf_send(int sockfd, const void *buf, size_t len, int flags)
+inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 {
 #ifdef Q_OS_WIN
     Q_ASSERT(0);
@@ -74,7 +81,7 @@ inline int tf_send(int sockfd, const void *buf, size_t len, int flags)
 }
 
 
-inline int tf_recv(int sockfd, void *buf, size_t len, int flags)
+inline int tf_recv(int sockfd, void *buf, size_t len, int flags = 0)
 {
 #ifdef Q_OS_WIN
     Q_ASSERT(0);

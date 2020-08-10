@@ -104,43 +104,46 @@ void TActionThread::run()
     };
 
     Counter counter(threadCounter);
-    QList<THttpRequest> reqs;
+    //QList<THttpRequest> requests;
     QEventLoop eventLoop;
     _httpSocket = new THttpSocket();
 
-    if (Q_UNLIKELY(!_httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
-        tSystemError("Failed setSocketDescriptor  sd:%d", TActionContext::socketDesc);
-        emitError(_httpSocket->error());
-        tf_close(TActionContext::socketDesc);
-        goto socket_error;
-    }
+    // if (Q_UNLIKELY(!_httpSocket->setSocketDescriptor(TActionContext::socketDesc))) {
+    //     tSystemError("Failed setSocketDescriptor  sd:%d", TActionContext::socketDesc);
+    //     emitError(_httpSocket->error());
+    //     tf_close(TActionContext::socketDesc);
+    //     goto socket_error;
+    // }
+    _httpSocket->setSocketDescriptor(TActionContext::socketDesc);
     TActionContext::socketDesc = 0;
     TDatabaseContext::setCurrentDatabaseContext(this);
 
     try {
         for (;;) {
-            reqs = readRequest(_httpSocket);
-            tSystemDebug("HTTP request count: %d", reqs.count());
+            QList<THttpRequest> requests = readRequest(_httpSocket);
+            tSystemDebug("HTTP request count: %d", requests.count());
 
-            if (Q_UNLIKELY(reqs.isEmpty())) {
+            if (requests.isEmpty()) {
                 break;
             }
 
             // WebSocket?
-            QByteArray connectionHeader = reqs[0].header().rawHeader(QByteArrayLiteral("Connection")).toLower();
+            QByteArray connectionHeader = requests[0].header().rawHeader(QByteArrayLiteral("Connection")).toLower();
             if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
-                QByteArray upgradeHeader = reqs[0].header().rawHeader(QByteArrayLiteral("Upgrade")).toLower();
+                QByteArray upgradeHeader = requests[0].header().rawHeader(QByteArrayLiteral("Upgrade")).toLower();
                 tSystemDebug("Upgrade: %s", upgradeHeader.data());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
-                    if (!handshakeForWebSocket(reqs[0].header())) {
+                    if (!handshakeForWebSocket(requests[0].header())) {
                         goto socket_error;
                     }
                 }
                 goto socket_cleanup;
             }
 
-            for (auto &req : reqs) {
+            tSystemWarn("##### 0");
+            for (auto &req : requests) {
+                tSystemWarn("##### 1");
                 TActionContext::execute(req, _httpSocket->socketId());
             }
 
@@ -153,6 +156,7 @@ void TActionThread::run()
                 break;
             }
 
+#if 0
             // Next request
             while (!_httpSocket->waitForReadyRead(5)) {
                 if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
@@ -170,6 +174,18 @@ void TActionThread::run()
                 while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {
                 }
             }
+#else
+            if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
+                goto receive_end;
+            }
+
+            if (_httpSocket->idleTime() >= keepAliveTimeout) {
+                tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
+                goto receive_end;
+            }
+
+            tSystemWarn("##### end");
+#endif
         }
 
     } catch (ClientErrorException &e) {
@@ -210,28 +226,40 @@ void TActionThread::emitError(int socketError)
 QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 {
     QList<THttpRequest> reqs;
-    while (!socket->canReadRequest()) {
+    QEventLoop eventLoop;
+
+    for (;;) {
+        if (socket->waitForReadyReadRequest(500)) {
+            reqs = socket->read();
+            tSystemInfo("reqs: %d", reqs.count());
+            if (!reqs.isEmpty()) {
+                return reqs;
+            } else {
+                break;
+            }
+        }
+
         // Check idle timeout
         if (Q_UNLIKELY(keepAliveTimeout > 0 && socket->idleTime() >= keepAliveTimeout)) {
             tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout, (int)socket->socketDescriptor());
             break;
         }
 
+        while (eventLoop.processEvents(QEventLoop::ExcludeSocketNotifiers)) {
+        }
+
         if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
-            tSystemWarn("Invalid descriptor (state:%d) sd:%d", (int)socket->state(), (int)socket->socketDescriptor());
+            tSystemWarn("Invalid descriptor (state:%d) sd:%d", (int)socket->state(), socket->socketDescriptor());
             break;
         }
 
-        socket->waitForReadyRead(200);  // Repeats per 200 msecs
+        //socket->waitForReadyRead(200);  // Repeats per 200 msecs
+        //socket->readRequest();
+        tSystemWarn("## action thread ");
     }
 
-    if (Q_UNLIKELY(!socket->canReadRequest())) {
-        socket->abort();
-    } else {
-        reqs = socket->read();
-    }
-
-    return reqs;
+    socket->abort();
+    return QList<THttpRequest>();
 }
 
 
@@ -246,7 +274,7 @@ qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body
 
 void TActionThread::closeHttpSocket()
 {
-    _httpSocket->close();
+    _httpSocket->abort();
 }
 
 

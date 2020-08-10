@@ -93,9 +93,12 @@ void TThreadApplicationServer::stop()
 void TThreadApplicationServer::run()
 {
     constexpr int timeout = 500;  // msec
+    struct pollfd pfd;
 
     while (listenSocket > 0 && !stopFlag) {
-        struct pollfd pfd = {listenSocket, POLLIN, 0};
+        pfd.fd = listenSocket;
+        pfd.events = POLLIN;
+        pfd.revents = 0;
         int ret = tf_poll(&pfd, 1, timeout);
 
         if (ret < 0) {
@@ -103,10 +106,10 @@ void TThreadApplicationServer::run()
             break;
         }
 
-        if (pfd.revents & POLLIN) {
+        if (ret > 0 && (pfd.revents & POLLIN)) {
             int socketDescriptor = tf_accept4(listenSocket, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK));
             if (socketDescriptor > 0) {
-                tSystemDebug("incomingConnection  sd:%d  thread count:%d  max:%d", socketDescriptor, TActionThread::threadCount(), maxThreads);
+                tSystemInfo("incomingConnection  sd:%d  thread count:%d  max:%d", socketDescriptor, TActionThread::threadCount(), maxThreads);
                 TActionThread *thread;
 
                 while (!threadPoolPtr()->pop(thread)) {

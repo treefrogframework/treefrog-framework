@@ -41,7 +41,8 @@ protected:
 
     using RawHeaderPair = QPair<QByteArray, QByteArray>;
     using RawHeaderPairList = QList<RawHeaderPair>;
-    RawHeaderPairList headerPairList;
+    RawHeaderPairList _headerPairList;
+    mutable qint64 _contentLength {-1};
 };
 
 #endif  // TINTERNETMESSAGEHEADER_H
