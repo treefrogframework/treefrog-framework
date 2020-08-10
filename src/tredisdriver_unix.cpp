@@ -81,7 +81,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 void TRedisDriver::close()
 {
     if (_socket > 0) {
-        tf_close(_socket);
+        tf_close_socket(_socket);
         _socket = 0;
     }
 }

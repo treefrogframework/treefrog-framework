@@ -12,6 +12,7 @@
 #include <TSystemGlobal>
 #include <cstring>
 #include <fcntl.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
@@ -49,6 +50,9 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
         ::fcntl(sd, F_SETFD, 0);  // clear
     }
     ::fcntl(sd, F_SETFL, ::fcntl(sd, F_GETFL) | O_NONBLOCK);  // non-block
+
+    int on = 1;
+    ::setsockopt(sd, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));  // TCP_NODELAY
 
     server.close();
     return sd;
@@ -111,8 +115,9 @@ socket_error:
 
 void TApplicationServerBase::nativeClose(int socket)
 {
-    if (socket > 0)
-        tf_close(socket);
+    if (socket > 0) {
+        tf_close_socket(socket);
+    }
 }
 
 

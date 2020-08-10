@@ -4,6 +4,7 @@
 #include "tfcore.h"
 #include <aio.h>
 #include <fcntl.h>
+#include <poll.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -39,35 +40,38 @@ inline pid_t tf_gettid()
 }
 
 
-inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
+inline int tf_ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *ts)
 {
-    TF_EINTR_LOOP(::poll(fds, nfds, timeout));
+    TF_EAGAIN_LOOP(::ppoll(fds, nfds, ts, nullptr));
 }
 
 
+inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
+{
+    struct timespec ts = {timeout / 1000, (timeout % 1000) * 1000000L};
+    return tf_ppoll(fds, nfds, &ts);
+}
+
+/*!
+  Waits for receive-event on a descriptor.
+  Return: 0:timeout  1:event  -1:error
+ */
 inline int tf_poll_recv(int socket, int timeout)
 {
     struct pollfd pfd = {socket, POLLIN, 0};
     int ret = tf_poll(&pfd, 1, timeout);
-
-    if (ret < 0) {
-        return ret;
-    }
-
-    return (pfd.revents & (POLLIN | POLLHUP | POLLERR)) ? 0 : 1;
+    return ret;
 }
 
-
+/*!
+  Waits for write-event on a descriptor.
+  Return: 0:timeout  1:event  -1:error
+ */
 inline int tf_poll_send(int socket, int timeout)
 {
     struct pollfd pfd = {socket, POLLOUT, 0};
     int ret = tf_poll(&pfd, 1, timeout);
-
-    if (ret < 0) {
-        return ret;
-    }
-
-    return (pfd.revents & (POLLOUT | POLLERR)) ? 0 : 1;
+    return ret;
 }
 
 }  // namespace

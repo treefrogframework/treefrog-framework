@@ -249,6 +249,7 @@ T_CORE_EXPORT TWebApplication *app() noexcept;
 T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
 T_CORE_EXPORT void msleep(unsigned long msecs) noexcept;
+T_CORE_EXPORT qint64 getMSecsSinceEpoch();
 
 // Xorshift random number generator
 T_CORE_EXPORT void srandXor128(quint32 seed) noexcept;  // obsolete

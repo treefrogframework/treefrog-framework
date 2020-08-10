@@ -1,6 +1,7 @@
 #ifndef TACTIONWORKER_H
 #define TACTIONWORKER_H
 
+#include <QHostAddress>
 #include <QThread>
 #include <TActionContext>
 
@@ -27,9 +28,9 @@ protected:
 private:
     TActionWorker() { }
 
-    QByteArray httpRequest;
-    QString clientAddr;
-    TEpollHttpSocket *socket {nullptr};
+    QByteArray _httpRequest;
+    QHostAddress _clientAddr;
+    TEpollHttpSocket *_socket {nullptr};
 
     T_DISABLE_COPY(TActionWorker)
     T_DISABLE_MOVE(TActionWorker)

@@ -54,9 +54,9 @@ TEpoll::TEpoll() :
     events(new struct epoll_event[MaxEvents]),
     pollingSockets()
 {
-    epollFd = epoll_create(1);
+    epollFd = epoll_create1(EPOLL_CLOEXEC);
     if (epollFd < 0) {
-        tSystemError("Failed epoll_create()");
+        tSystemError("Failed epoll_create1()");
     }
 }
 
@@ -66,7 +66,7 @@ TEpoll::~TEpoll()
     delete[] events;
 
     if (epollFd > 0) {
-        tf_close(epollFd);
+        tf_close_socket(epollFd);
     }
 }
 

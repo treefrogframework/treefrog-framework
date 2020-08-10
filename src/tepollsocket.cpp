@@ -257,7 +257,7 @@ void TEpollSocket::setSocketDescpriter(int socketDescriptor)
 void TEpollSocket::close()
 {
     if (sd > 0) {
-        tf_close(sd);
+        tf_close_socket(sd);
         sd = 0;
     }
 }

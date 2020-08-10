@@ -580,7 +580,7 @@ QVariantMap THttpRequest::allParameters() const
 }
 
 
-QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QHostAddress &address)
+QList<THttpRequest> THttpRequest::generate(QByteArray &byteArray, const QHostAddress &address)
 {
     QList<THttpRequest> reqList;
     int from = 0;
@@ -599,6 +599,11 @@ QList<THttpRequest> THttpRequest::generate(const QByteArray &byteArray, const QH
         from = headidx + contlen;
     }
 
+    if (from >= byteArray.length()) {
+        byteArray.resize(0);
+    } else {
+        byteArray.remove(0, from);
+    }
     return reqList;
 }
 

@@ -222,6 +222,7 @@ const QStringList &TActionController::availableControllers()
                 controllers << QString::fromLatin1(it.key());
             }
         }
+        std::sort(controllers.begin(), controllers.end());
         return controllers;
     }();
     return controllers;

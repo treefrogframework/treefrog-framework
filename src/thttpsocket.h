@@ -1,32 +1,43 @@
 #ifndef THTTPSOCKET_H
 #define THTTPSOCKET_H
 
+#include <QAbstractSocket>
 #include <QByteArray>
-#include <QTcpSocket>
+#include <QHostAddress>
+#include <QObject>
 #include <TGlobal>
 #include <THttpRequest>
 #include <TTemporaryFile>
 
 
-class T_CORE_EXPORT THttpSocket : public QTcpSocket {
+class T_CORE_EXPORT THttpSocket : public QObject {
     Q_OBJECT
 public:
     THttpSocket(QObject *parent = 0);
     virtual ~THttpSocket();
 
     QList<THttpRequest> read();
+    bool waitForReadyReadRequest(int msecs = 5000);
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
     int idleTime() const;
-    int socketId() const { return sid; }
+    int socketId() const { return _sid; }
+    void abort();
     void deleteLater();
-    bool setSocketDescriptor(qintptr socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
+
+    int socketDescriptor() const { return _socket; }
+    void setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState = QAbstractSocket::ConnectedState);
+    QHostAddress peerAddress() const { return _peerAddr; }
+    ushort peerPort() const { return _peerPort; }
+    QAbstractSocket::SocketState state() const { return _state; }
 
     static THttpSocket *searchSocket(int id);
     void writeRawDataFromWebSocket(const QByteArray &data);
 
+protected:
+    QByteArray readRawData(int msecs);
+
 protected slots:
-    void readRequest();
     qint64 writeRawData(const char *data, qint64 size);
     qint64 writeRawData(const QByteArray &data);
 
@@ -37,11 +48,15 @@ private:
     T_DISABLE_COPY(THttpSocket)
     T_DISABLE_MOVE(THttpSocket)
 
-    int sid {0};
-    qint64 lengthToRead {-1};
-    QByteArray readBuffer;
-    TTemporaryFile fileBuffer;
-    uint idleElapsed {0};
+    int _sid {0};
+    int _socket {0};
+    QAbstractSocket::SocketState _state {QAbstractSocket::UnconnectedState};
+    QHostAddress _peerAddr;
+    ushort _peerPort {0};
+    qint64 _lengthToRead {-1};
+    QByteArray _readBuffer;
+    TTemporaryFile _fileBuffer;
+    quint64 _idleElapsed {0};
 
     friend class TActionThread;
 };
@@ -49,7 +64,7 @@ private:
 
 inline bool THttpSocket::canReadRequest() const
 {
-    return (lengthToRead == 0);
+    return (_lengthToRead == 0);
 }
 
 #endif  // THTTPSOCKET_H
