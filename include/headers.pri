@@ -16,6 +16,9 @@ HEADER_FILES   += treactcomponent.h
 unix {
   HEADER_FILES += tfcore_unix.h
 }
+windows {
+  HEADER_FILES += tfcore_win.h
+}
 
 MONGODB_CLASSES = ../include/TMongoCursor ../include/TBson ../include/TMongoDriver ../include/TMongoQuery ../include/TMongoObject ../include/TMongoODMapper ../include/TCriteriaMongoConverter
 
