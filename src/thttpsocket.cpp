@@ -8,6 +8,7 @@
 #include "thttpsocket.h"
 #include "tatomicptr.h"
 #include "tsystemglobal.h"
+#include "tfcore.h"
 #include <QBuffer>
 #include <QDir>
 #include <TAppSettings>
@@ -19,13 +20,6 @@
 #include <chrono>
 #include <ctime>
 #include <thread>
-#ifdef Q_OS_UNIX
-#include <netinet/tcp.h>
-#include "tfcore_unix.h"
-#endif
-#ifdef Q_OS_WINDOWS
-#include "tfcore_win.h"
-#endif
 
 constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
 constexpr qint64 WRITE_LENGTH = 1408;

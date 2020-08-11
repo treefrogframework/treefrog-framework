@@ -1,14 +1,18 @@
-#ifndef TFCORE_UNIX_H
-#define TFCORE_UNIX_H
-
+#pragma once
 #include "tfcore.h"
 #include <aio.h>
 #include <fcntl.h>
 #include <poll.h>
+#include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
+#include <sys/file.h>
+#include <sys/socket.h>
+
+#ifdef Q_OS_LINUX
+#include <sys/epoll.h>
+#endif
 #ifdef Q_OS_DARWIN
 #include <pthread.h>
 #endif
@@ -18,26 +22,6 @@
 #endif
 
 namespace {
-
-inline int tf_aio_write(struct aiocb *aiocbp)
-{
-    TF_EINTR_LOOP(::aio_write(aiocbp));
-}
-
-
-inline pid_t tf_gettid()
-{
-#if defined(Q_OS_LINUX)
-    return syscall(SYS_gettid);
-#elif defined(Q_OS_DARWIN)
-    uint64_t tid;
-    pthread_threadid_np(NULL, &tid);
-    return tid;
-    //return syscall(SYS_thread_selfid);
-#else
-    return 0;
-#endif
-}
 
 #ifdef Q_OS_LINUX
 
@@ -53,7 +37,32 @@ inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     return tf_ppoll(fds, nfds, &ts);
 }
 
-#endif
+
+inline int tf_epoll_wait(int epfd, struct epoll_event *events,
+    int maxevents, int timeout)
+{
+    TF_EINTR_LOOP(::epoll_wait(epfd, events, maxevents, timeout));
+}
+
+
+inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
+{
+    TF_EINTR_LOOP(::epoll_ctl(epfd, op, fd, event));
+}
+
+
+inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
+{
+    TF_EINTR_LOOP(::accept4(sockfd, addr, addrlen, flags));
+}
+
+
+inline pid_t tf_gettid()
+{
+    return syscall(SYS_gettid);
+}
+
+#endif // Q_OS_LINUX
 
 #ifdef Q_OS_DARWIN
 
@@ -62,7 +71,92 @@ inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     TF_EAGAIN_LOOP(::poll(fds, nfds, timeout));
 }
 
-#endif
+
+inline pid_t tf_gettid()
+{
+    uint64_t tid;
+    pthread_threadid_np(NULL, &tid);
+    return tid;
+}
+
+#endif // Q_OS_DARWIN
+
+inline int tf_aio_write(struct aiocb *aiocbp)
+{
+    TF_EINTR_LOOP(::aio_write(aiocbp));
+}
+
+
+inline int tf_close(int fd)
+{
+    TF_EINTR_LOOP(::close(fd));
+}
+
+
+inline int tf_read(int fd, void *buf, size_t count)
+{
+    TF_EINTR_LOOP(::read(fd, buf, count));
+}
+
+
+inline int tf_write(int fd, const void *buf, size_t count)
+{
+    TF_EINTR_LOOP(::write(fd, buf, count));
+}
+
+
+inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
+{
+    TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
+}
+
+
+inline int tf_recv(int sockfd, void *buf, size_t len, int flags = 0)
+{
+    TF_EAGAIN_LOOP(::recv(sockfd, buf, len, flags));
+}
+
+
+inline int tf_close_socket(int sockfd)
+{
+    TF_EINTR_LOOP(::close(sockfd));
+}
+
+
+inline int tf_dup(int fd)
+{
+    return ::fcntl(fd, F_DUPFD, 0);
+}
+
+
+inline int tf_flock(int fd, int op)
+{
+    TF_EINTR_LOOP(::flock(fd, op));
+}
+
+// advisory lock. exclusive:true=exclusive lock, false=shared lock
+inline int tf_lockfile(int fd, bool exclusive, bool blocking)
+{
+    struct flock lck;
+
+    memset(&lck, 0, sizeof(struct flock));
+    lck.l_type = (exclusive) ? F_WRLCK : F_RDLCK;
+    lck.l_whence = SEEK_SET;
+    auto cmd = (blocking) ? F_SETLKW : F_SETLK;
+    TF_EINTR_LOOP(::fcntl(fd, cmd, &lck));
+}
+
+
+inline int tf_unlink(const char *pathname)
+{
+    return ::unlink(pathname);
+}
+
+
+inline int tf_fileno(FILE *stream)
+{
+    return ::fileno(stream);
+}
 
 /*!
   Waits for receive-event on a descriptor.
@@ -87,32 +181,3 @@ inline int tf_poll_send(int socket, int timeout)
 }
 
 }  // namespace
-
-
-#ifdef Q_OS_LINUX
-#include <sys/epoll.h>
-
-namespace {
-
-inline int tf_epoll_wait(int epfd, struct epoll_event *events,
-    int maxevents, int timeout)
-{
-    TF_EINTR_LOOP(::epoll_wait(epfd, events, maxevents, timeout));
-}
-
-
-inline int tf_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
-{
-    TF_EINTR_LOOP(::epoll_ctl(epfd, op, fd, event));
-}
-
-
-inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags)
-{
-    TF_EINTR_LOOP(::accept4(sockfd, addr, addrlen, flags));
-}
-
-}  // namespace
-
-#endif  // Q_OS_LINUX
-#endif  // TFCORE_UNIX_H
