@@ -1,6 +1,4 @@
-#ifndef THTMLATTRIBUTE_H
-#define THTMLATTRIBUTE_H
-
+#pragma once
 #include <QPair>
 #include <QStringList>
 #include <TGlobal>
@@ -24,4 +22,3 @@ public:
 
 Q_DECLARE_METATYPE(THtmlAttribute)
 
-#endif  // TVIEWHELPER_H

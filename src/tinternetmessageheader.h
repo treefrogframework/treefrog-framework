@@ -1,6 +1,4 @@
-#ifndef TINTERNETMESSAGEHEADER_H
-#define TINTERNETMESSAGEHEADER_H
-
+#pragma once
 #include <QByteArray>
 #include <QDateTime>
 #include <QList>
@@ -45,4 +43,3 @@ protected:
     mutable qint64 _contentLength {-1};
 };
 
-#endif  // TINTERNETMESSAGEHEADER_H

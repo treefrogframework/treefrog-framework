@@ -1,6 +1,4 @@
-#ifndef THTMLPARSER_H
-#define THTMLPARSER_H
-
+#pragma once
 #include <QList>
 #include <QPair>
 #include <QString>
@@ -89,4 +87,3 @@ private:
     int pos;
 };
 
-#endif  // THTMLPARSER_H

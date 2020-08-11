@@ -1,6 +1,4 @@
-#ifndef TACTIONMAILER_H
-#define TACTIONMAILER_H
-
+#pragma once
 #include <TAbstractController>
 
 
@@ -19,4 +17,3 @@ private:
     T_DISABLE_MOVE(TActionMailer)
 };
 
-#endif  // TACTIONMAILER_H

@@ -1,6 +1,4 @@
-#ifndef TBASICLOGSTREAM_H
-#define TBASICLOGSTREAM_H
-
+#pragma once
 #include "tabstractlogstream.h"
 #include <QBasicTimer>
 #include <QMutex>
@@ -26,4 +24,3 @@ private:
     T_DISABLE_MOVE(TBasicLogStream)
 };
 
-#endif  // TBASICLOGSTREAM_H

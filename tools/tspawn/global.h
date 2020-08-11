@@ -1,6 +1,4 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
-
+#pragma once
 #include <QDir>
 #include <QString>
 
@@ -13,4 +11,3 @@ extern QString enumNameToCaption(const QString &name);
 
 extern bool mkpath(const QDir &dir, const QString &dirPath = ".");
 
-#endif  // GLOBAL_H

@@ -1,6 +1,4 @@
-#ifndef TBACKGROUNDPROCESSHANDLER_H
-#define TBACKGROUNDPROCESSHANDLER_H
-
+#pragma once
 #include <QProcess>
 #include <TDatabaseContext>
 #include <TGlobal>
@@ -42,4 +40,3 @@ private:
     T_DISABLE_MOVE(TBackgroundProcessHandler)
 };
 
-#endif  // BACKGROUNDPROCESSHANDLER_H

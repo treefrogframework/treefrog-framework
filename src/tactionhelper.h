@@ -1,6 +1,4 @@
-#ifndef TACTIONHELPER_H
-#define TACTIONHELPER_H
-
+#pragma once
 #include <QByteArray>
 #include <QPair>
 #include <QStringList>
@@ -125,4 +123,3 @@ inline QUrl TActionHelper::urlq(const QString &query) const
     return url(QString(), QString(), QStringList(), query);
 }
 
-#endif  // TACTIONHELPER_H

@@ -1,6 +1,4 @@
-#ifndef TSQLORMAPPERITERATOR_H
-#define TSQLORMAPPERITERATOR_H
-
+#pragma once
 #include <TSqlORMapper>
 
 
@@ -38,4 +36,3 @@ private:
     int i, n;
 };
 
-#endif  // TSQLORMAPPERITERATOR_H

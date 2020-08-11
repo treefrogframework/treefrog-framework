@@ -1,6 +1,4 @@
-#ifndef THTTPUTILITY_H
-#define THTTPUTILITY_H
-
+#pragma once
 #include <QByteArray>
 #include <QDateTime>
 #include <QPair>
@@ -122,4 +120,3 @@ inline QString THttpUtility::trimmedQuotes(const QString &string)
     return s;
 }
 
-#endif  // THTTPUTILITY_H

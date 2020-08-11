@@ -1,6 +1,4 @@
-#ifndef TSQLOBJECT_H
-#define TSQLOBJECT_H
-
+#pragma once
 #include <QDateTime>
 #include <QObject>
 #include <QSqlError>
@@ -41,4 +39,3 @@ protected:
     QSqlError sqlError;
 };
 
-#endif  // TSQLOBJECT_H

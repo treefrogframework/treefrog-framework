@@ -1,6 +1,4 @@
-#ifndef VIEWCONVERTER_H
-#define VIEWCONVERTER_H
-
+#pragma once
 #include <QDir>
 #include <QFileInfo>
 #include <QString>
@@ -29,4 +27,3 @@ private:
     bool createProFile;
 };
 
-#endif  // VIEWCONVERTER_H

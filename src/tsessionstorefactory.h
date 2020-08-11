@@ -1,6 +1,4 @@
-#ifndef TSESSIONSTOREFACTORY_H
-#define TSESSIONSTOREFACTORY_H
-
+#pragma once
 #include <QStringList>
 #include <TGlobal>
 
@@ -23,4 +21,3 @@ private:
     };
 };
 
-#endif  // TSESSIONSTOREFACTORY_H

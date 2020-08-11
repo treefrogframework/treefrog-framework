@@ -1,6 +1,4 @@
-#ifndef TREACTCOMPONENT_H
-#define TREACTCOMPONENT_H
-
+#pragma once
 #include <QDateTime>
 #include <QStringList>
 #include <TGlobal>
@@ -26,4 +24,3 @@ private:
     T_DISABLE_MOVE(TReactComponent)
 };
 
-#endif  // TREACTCOMPONENT_H

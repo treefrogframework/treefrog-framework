@@ -1,6 +1,4 @@
-#ifndef TVIEWHELPER_H
-#define TVIEWHELPER_H
-
+#pragma once
 #include <QFileInfo>
 #include <QPair>
 #include <QPoint>
@@ -409,4 +407,3 @@ inline QString TViewHelper::inlineImageTag(const QByteArray &data, const QString
     return inlineImageTag(data, mediaType, QSize(), QString(), attributes);
 }
 
-#endif  // TVIEWHELPER_H

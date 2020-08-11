@@ -1,6 +1,4 @@
-#ifndef TJSINSTANCE_H
-#define TJSINSTANCE_H
-
+#pragma once
 #include <QJSValue>
 #include <QMutex>
 #include <TGlobal>
@@ -17,4 +15,3 @@ public:
     QJSValue call(const QString &method, const QJSValueList &args = QJSValueList());
 };
 
-#endif  // TJSINSTANCE_H

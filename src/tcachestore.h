@@ -1,6 +1,4 @@
-#ifndef TCACHESTORE_H
-#define TCACHESTORE_H
-
+#pragma once
 #include <QByteArray>
 #include <QMap>
 #include <QVariant>
@@ -28,4 +26,3 @@ public:
     virtual QMap<QString, QVariant> defaultSettings() const { return QMap<QString, QVariant>(); }
 };
 
-#endif  // TCACHESTORE_H

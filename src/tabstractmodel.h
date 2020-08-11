@@ -1,6 +1,4 @@
-#ifndef TABSTRACTMODEL_H
-#define TABSTRACTMODEL_H
-
+#pragma once
 #include <QVariant>
 #include <QtCore>
 #include <TGlobal>
@@ -33,4 +31,3 @@ protected:
     virtual const TModelObject *modelData() const { return nullptr; }
 };
 
-#endif  // TABSTRACTMODEL_H

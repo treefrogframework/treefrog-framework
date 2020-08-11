@@ -1,6 +1,4 @@
-#ifndef TMONGOQUERY_H
-#define TMONGOQUERY_H
-
+#pragma once
 #include <QStringList>
 #include <QVariant>
 #include <TGlobal>
@@ -75,4 +73,3 @@ inline void TMongoQuery::setOffset(int offset)
     _queryOffset = offset;
 }
 
-#endif  // TMONGOQUERY_H

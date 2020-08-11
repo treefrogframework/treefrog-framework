@@ -1,6 +1,4 @@
-#ifndef THTTPREQUEST_H
-#define THTTPREQUEST_H
-
+#pragma once
 #include <QByteArray>
 #include <QHostAddress>
 #include <QJsonDocument>
@@ -99,4 +97,3 @@ private:
 
 Q_DECLARE_METATYPE(THttpRequest)
 
-#endif  // THTTPREQUEST_H

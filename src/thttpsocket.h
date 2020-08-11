@@ -1,6 +1,4 @@
-#ifndef THTTPSOCKET_H
-#define THTTPSOCKET_H
-
+#pragma once
 #include <QAbstractSocket>
 #include <QByteArray>
 #include <QHostAddress>
@@ -67,4 +65,3 @@ inline bool THttpSocket::canReadRequest() const
     return (_lengthToRead == 0);
 }
 
-#endif  // THTTPSOCKET_H

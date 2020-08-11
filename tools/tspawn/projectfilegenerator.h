@@ -1,6 +1,4 @@
-#ifndef PROJECTFILEGENERATOR_H
-#define PROJECTFILEGENERATOR_H
-
+#pragma once
 #include <QStringList>
 
 
@@ -17,4 +15,3 @@ private:
     QString filePath;
 };
 
-#endif  // PROJECTFILEGENERATOR_H

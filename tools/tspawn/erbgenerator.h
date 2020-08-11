@@ -1,6 +1,4 @@
-#ifndef ERBGENERATOR_H
-#define ERBGENERATOR_H
-
+#pragma once
 #include <QDir>
 #include <QPair>
 #include <QStringList>
@@ -19,4 +17,3 @@ private:
     int autoValueIndex {0};
 };
 
-#endif  // ERBGENERATOR_H

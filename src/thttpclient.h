@@ -1,6 +1,4 @@
-#ifndef THTTPCLIENT_H
-#define THTTPCLIENT_H
-
+#pragma once
 #include <TGlobal>
 
 class QNetworkAccessManager;
@@ -29,4 +27,3 @@ private:
     QNetworkAccessManager *_manager {nullptr};
 };
 
-#endif  // THTTPCLIENT_H

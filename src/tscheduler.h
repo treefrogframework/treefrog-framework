@@ -1,6 +1,4 @@
-#ifndef TSCHEDULER_H
-#define TSCHEDULER_H
-
+#pragma once
 #include <QTimer>
 #include <TDatabaseContextThread>
 #include <TGlobal>
@@ -43,4 +41,3 @@ private:
     T_DISABLE_MOVE(TScheduler)
 };
 
-#endif  // TSCHEDULER_H

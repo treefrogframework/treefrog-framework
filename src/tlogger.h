@@ -1,6 +1,4 @@
-#ifndef TLOGGER_H
-#define TLOGGER_H
-
+#pragma once
 #include <QString>
 #include <QVariant>
 #include <TGlobal>
@@ -44,4 +42,3 @@ private:
     mutable QTextCodec *_codec {nullptr};
 };
 
-#endif  // TLOGGER_H

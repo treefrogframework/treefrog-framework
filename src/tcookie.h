@@ -1,6 +1,4 @@
-#ifndef TCOOKIE_H
-#define TCOOKIE_H
-
+#pragma once
 #include <QByteArray>
 #include <QNetworkCookie>
 #include <TGlobal>
@@ -31,4 +29,3 @@ private:
     QByteArray _sameSite;
 };
 
-#endif  // TCOOKIE_H

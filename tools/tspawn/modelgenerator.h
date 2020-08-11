@@ -1,6 +1,4 @@
-#ifndef MODELGENERATOR_H
-#define MODELGENERATOR_H
-
+#pragma once
 #include <QDir>
 #include <QPair>
 #include <QStringList>
@@ -47,4 +45,3 @@ private:
     QStringList userFields;
 };
 
-#endif  // MODELGENERATOR_H

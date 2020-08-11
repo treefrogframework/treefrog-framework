@@ -1,6 +1,4 @@
-#ifndef TURLROUTE_H
-#define TURLROUTE_H
-
+#pragma once
 #include <QByteArray>
 #include <QStringList>
 #include <TGlobal>
@@ -79,4 +77,3 @@ private:
     QList<TRoute> _routes;
 };
 
-#endif  // TURLROUTE_H

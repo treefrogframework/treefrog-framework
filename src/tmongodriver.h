@@ -1,6 +1,4 @@
-#ifndef TMONGODRIVER_H
-#define TMONGODRIVER_H
-
+#pragma once
 #include <QStringList>
 #include <QVariant>
 #include <TGlobal>
@@ -60,4 +58,3 @@ private:
     T_DISABLE_MOVE(TMongoDriver)
 };
 
-#endif  // TMONGODRIVER_H

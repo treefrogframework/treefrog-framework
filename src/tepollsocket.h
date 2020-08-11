@@ -1,6 +1,4 @@
-#ifndef TEPOLLSOCKET_H
-#define TEPOLLSOCKET_H
-
+#pragma once
 #include "tatomic.h"
 #include <QByteArray>
 #include <QHostAddress>
@@ -67,4 +65,3 @@ private:
     T_DISABLE_MOVE(TEpollSocket)
 };
 
-#endif  // TEPOLLSOCKET_H

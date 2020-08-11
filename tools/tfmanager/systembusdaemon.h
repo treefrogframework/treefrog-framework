@@ -1,6 +1,4 @@
-#ifndef SYSTEMBUSDAEMON_H
-#define SYSTEMBUSDAEMON_H
-
+#pragma once
 #include <QObject>
 #include <QSet>
 #include <TGlobal>
@@ -35,4 +33,3 @@ private:
     T_DISABLE_MOVE(SystemBusDaemon)
 };
 
-#endif  // SYSTEMBUSDAEMON_H

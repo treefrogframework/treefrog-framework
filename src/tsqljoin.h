@@ -1,6 +1,4 @@
-#ifndef TSQLJOIN_H
-#define TSQLJOIN_H
-
+#pragma once
 #include <TCriteria>
 #include <TGlobal>
 
@@ -64,4 +62,3 @@ inline TSqlJoin<T> &TSqlJoin<T>::operator=(const TSqlJoin &other)
     _criteria = other._criteria;
 }
 
-#endif  // TSQLJOIN_H

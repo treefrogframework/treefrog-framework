@@ -1,6 +1,4 @@
-#ifndef TJSONUTIL_H
-#define TJSONUTIL_H
-
+#pragma once
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QList>
@@ -18,4 +16,3 @@ inline QJsonArray tfModelListToJsonArray(const QList<T> &models)
     return array;
 }
 
-#endif  // TJSONUTIL_H

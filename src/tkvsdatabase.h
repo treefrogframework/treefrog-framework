@@ -1,6 +1,4 @@
-#ifndef TKVSDATABASE_H
-#define TKVSDATABASE_H
-
+#pragma once
 #include <QString>
 #include <TGlobal>
 
@@ -55,4 +53,3 @@ private:
     TKvsDatabase(const TKvsDatabaseData &data);
 };
 
-#endif  // TKVSDATABASE_H

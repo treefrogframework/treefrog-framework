@@ -1,6 +1,4 @@
-#ifndef TAPPLICATIONSERVERBASE_H
-#define TAPPLICATIONSERVERBASE_H
-
+#pragma once
 #include <QHostAddress>
 #include <TGlobal>
 
@@ -41,4 +39,3 @@ private:
     T_DISABLE_MOVE(TApplicationServerBase)
 };
 
-#endif  // TAPPLICATIONSERVERBASE_H

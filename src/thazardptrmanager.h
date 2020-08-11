@@ -1,6 +1,4 @@
-#ifndef THAZARDPTRMANAGER_H
-#define THAZARDPTRMANAGER_H
-
+#pragma once
 #include "tatomic.h"
 #include "tatomicptr.h"
 #include <TGlobal>
@@ -41,4 +39,3 @@ private:
     T_DISABLE_MOVE(THazardPtrManager)
 };
 
-#endif  // THAZARDPTRMANAGER_H

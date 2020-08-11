@@ -1,6 +1,4 @@
-#ifndef TTEMPORARYFILE_H
-#define TTEMPORARYFILE_H
-
+#pragma once
 #include <QTemporaryFile>
 #include <TGlobal>
 
@@ -19,4 +17,3 @@ private:
     T_DISABLE_MOVE(TTemporaryFile)
 };
 
-#endif  // TTEMPORARYFILE_H

@@ -1,6 +1,4 @@
-#ifndef TSQLTRANSACTION_H
-#define TSQLTRANSACTION_H
-
+#pragma once
 #include <QSqlDatabase>
 #include <TGlobal>
 
@@ -43,4 +41,3 @@ inline void TSqlTransaction::setDisabled(bool disable)
     _enabled = !disable;
 }
 
-#endif  // TSQLTRANSACTION_H

@@ -1,6 +1,4 @@
-#ifndef TREDIS_H
-#define TREDIS_H
-
+#pragma once
 #include <QByteArray>
 #include <QStringList>
 #include <QVariant>
@@ -139,4 +137,3 @@ inline QString TRedis::hgets(const QByteArray &key, const QByteArray &field)
     return QString::fromUtf8(hget(key, field));
 }
 
-#endif  // TREDIS_H

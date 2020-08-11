@@ -1,6 +1,4 @@
-#ifndef TACTIONWORKER_H
-#define TACTIONWORKER_H
-
+#pragma once
 #include <QHostAddress>
 #include <QThread>
 #include <TActionContext>
@@ -36,4 +34,3 @@ private:
     T_DISABLE_MOVE(TActionWorker)
 };
 
-#endif  // TACTIONWORKER_H

@@ -1,6 +1,4 @@
-#ifndef TSESSIONSTORE_H
-#define TSESSIONSTORE_H
-
+#pragma once
 #include <QByteArray>
 #include <QDateTime>
 #include <QString>
@@ -19,4 +17,3 @@ public:
     static qint64 lifeTimeSecs();
 };
 
-#endif  // TSESSIONSTORE_H

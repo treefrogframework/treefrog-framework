@@ -1,6 +1,4 @@
-#ifndef TQUEUE_H
-#define TQUEUE_H
-
+#pragma once
 #include "tatomic.h"
 #include "tatomicptr.h"
 #include "thazardobject.h"
@@ -131,4 +129,3 @@ inline bool TQueue<T>::head(T &val)
     return (bool)next;
 }
 
-#endif  // TQUEUE_H

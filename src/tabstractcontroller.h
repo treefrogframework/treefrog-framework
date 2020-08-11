@@ -1,6 +1,4 @@
-#ifndef TABSTRACTCONTROLLER_H
-#define TABSTRACTCONTROLLER_H
-
+#pragma once
 #include <QVariant>
 #include <TGlobal>
 
@@ -41,4 +39,3 @@ inline bool TAbstractController::hasVariant(const QString &name) const
     return exportVars.contains(name);
 }
 
-#endif  // TABSTRACTCONTROLLER_H

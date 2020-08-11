@@ -1,6 +1,4 @@
-#ifndef OTAMAGENERATOR_H
-#define OTAMAGENERATOR_H
-
+#pragma once
 #include <QDir>
 #include <QPair>
 #include <QStringList>
@@ -22,4 +20,3 @@ private:
     int autoValueIndex {0};
 };
 
-#endif  // OTAMAGENERATOR_H

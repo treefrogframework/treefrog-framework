@@ -1,6 +1,4 @@
-#ifndef TBSON_H
-#define TBSON_H
-
+#pragma once
 #include <QVariant>
 #include <TGlobal>
 
@@ -38,4 +36,3 @@ private:
     TBson &operator=(const TBson &other);
 };
 
-#endif  // TBSON_H

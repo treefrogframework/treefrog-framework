@@ -1,6 +1,4 @@
-#ifndef TFILEAIOLOGGER_H
-#define TFILEAIOLOGGER_H
-
+#pragma once
 #include <QString>
 #include <TLogger>
 
@@ -29,4 +27,3 @@ private:
     T_DISABLE_MOVE(TFileAioLogger)
 };
 
-#endif  // TFILEAIOLOGGER_H

@@ -1,6 +1,4 @@
-#ifndef TKVSDATABASEPOOL_H
-#define TKVSDATABASEPOOL_H
-
+#pragma once
 #include "tatomic.h"
 #include "tstack.h"
 #include <QBasicTimer>
@@ -42,4 +40,3 @@ private:
     QBasicTimer timer;
 };
 
-#endif  // TKVSDATABASEPOOL_H

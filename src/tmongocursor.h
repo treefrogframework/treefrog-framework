@@ -1,6 +1,4 @@
-#ifndef TMONGOCURSOR_H
-#define TMONGOCURSOR_H
-
+#pragma once
 #include <QVariant>
 #include <TBson>
 #include <TGlobal>
@@ -32,4 +30,3 @@ private:
     T_DISABLE_MOVE(TMongoCursor)
 };
 
-#endif  // TMONGOCURSOR_H

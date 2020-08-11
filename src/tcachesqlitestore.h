@@ -1,6 +1,4 @@
-#ifndef TCACHESQLITESTORE_H
-#define TCACHESQLITESTORE_H
-
+#pragma once
 #include "tcachestore.h"
 #include <QSqlDatabase>
 #include <TGlobal>
@@ -44,4 +42,3 @@ protected:
     friend class TSessionFileDbStore;
 };
 
-#endif  // TCACHESQLITESTORE_H

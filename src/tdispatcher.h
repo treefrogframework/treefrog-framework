@@ -1,6 +1,4 @@
-#ifndef TDISPATCHER_H
-#define TDISPATCHER_H
-
+#pragma once
 #include "tsystemglobal.h"
 #include <QMetaMethod>
 #include <QMetaObject>
@@ -193,4 +191,3 @@ inline T *TDispatcher<T>::object()
     return _ptr;
 }
 
-#endif  // TDISPATCHER_H

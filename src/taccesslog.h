@@ -1,6 +1,4 @@
-#ifndef TACCESSLOG_H
-#define TACCESSLOG_H
-
+#pragma once
 #include <QByteArray>
 #include <QDateTime>
 #include <TGlobal>
@@ -62,4 +60,3 @@ private:
     TAccessLog *accessLog {nullptr};
 };
 
-#endif  // TACCESSLOG_H

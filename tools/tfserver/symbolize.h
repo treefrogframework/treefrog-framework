@@ -52,9 +52,7 @@
 // malloc() and other unsafe operations.  It should be both
 // thread-safe and async-signal-safe.
 
-#ifndef SYMBOLIZE_H
-#define SYMBOLIZE_H
-
+#pragma once
 #include "gconfig.h"
 
 #ifdef HAVE_SYMBOLIZE
@@ -112,4 +110,3 @@ bool Symbolize(void *pc, char *out, int out_size);
 
 _END_GOOGLE_NAMESPACE_
 
-#endif  // SYMBOLIZE_H

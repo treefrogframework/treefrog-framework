@@ -1,6 +1,4 @@
-#ifndef TPROTOTYPEAJAXHELPER_H
-#define TPROTOTYPEAJAXHELPER_H
-
+#pragma once
 #include <QStringList>
 #include <QUrl>
 #include <QVariant>
@@ -91,4 +89,3 @@ inline QVariantMap TPrototypeAjaxHelper::o(const QString &key, const QVariant &v
     return map;
 }
 
-#endif  // TAJAXHELPER_H

@@ -1,6 +1,4 @@
-#ifndef TWEBSOCKETFRAME_H
-#define TWEBSOCKETFRAME_H
-
+#pragma once
 #include <QByteArray>
 #include <TGlobal>
 
@@ -77,4 +75,3 @@ private:
     friend class TWebSocketController;
 };
 
-#endif  // TWEBSOCKETFRAME_H

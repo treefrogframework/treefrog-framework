@@ -1,6 +1,4 @@
-#ifndef TBASICTIMER_H
-#define TBASICTIMER_H
-
+#pragma once
 #include <QBasicTimer>
 #include <QObject>
 #include <TGlobal>
@@ -27,4 +25,3 @@ private:
     T_DISABLE_MOVE(TBasicTimer)
 };
 
-#endif  // TBASICTIMER_H

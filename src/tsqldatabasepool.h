@@ -1,6 +1,4 @@
-#ifndef TSQLDATABASEPOOL_H
-#define TSQLDATABASEPOOL_H
-
+#pragma once
 #include "tatomic.h"
 #include "tstack.h"
 #include <QBasicTimer>
@@ -44,4 +42,3 @@ private:
     T_DISABLE_MOVE(TSqlDatabasePool)
 };
 
-#endif  // TSQLDATABASEPOOL_H

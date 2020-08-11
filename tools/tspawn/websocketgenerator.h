@@ -1,6 +1,4 @@
-#ifndef WEBSOCKETGENERATOR_H
-#define WEBSOCKETGENERATOR_H
-
+#pragma once
 #include <QtCore>
 
 
@@ -13,4 +11,3 @@ private:
     QString name;
 };
 
-#endif  // WEBSOCKETGENERATOR_H

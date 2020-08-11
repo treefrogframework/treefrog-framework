@@ -1,6 +1,4 @@
-#ifndef TSQLQUERYORMAPPER_H
-#define TSQLQUERYORMAPPER_H
-
+#pragma once
 #include <QList>
 #include <QtSql>
 #include <TCriteriaConverter>
@@ -191,4 +189,3 @@ inline QString TSqlQueryORMapper<T>::fieldName(int index) const
     return TCriteriaConverter<T>::getPropertyName(index, driver());
 }
 
-#endif  // TSQLQUERYORMAPPER_H

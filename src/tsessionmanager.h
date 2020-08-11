@@ -1,6 +1,4 @@
-#ifndef TSESSIONMANAGER_H
-#define TSESSIONMANAGER_H
-
+#pragma once
 #include <QDateTime>
 #include <TGlobal>
 #include <TSession>
@@ -26,4 +24,3 @@ private:
     TSessionManager();
 };
 
-#endif  // TSESSIONMANAGER_H

@@ -1,6 +1,4 @@
-#ifndef TSQLQUERY_H
-#define TSQLQUERY_H
-
+#pragma once
 #include <QtSql>
 #include <TGlobal>
 
@@ -90,4 +88,3 @@ inline QVariant TSqlQuery::value(const QString &name) const
     return QSqlQuery::value(name);
 }
 
-#endif  // TSQLQUERY_H

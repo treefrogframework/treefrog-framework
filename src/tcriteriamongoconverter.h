@@ -1,6 +1,4 @@
-#ifndef TCRITERIAMONGOCONVERTER_H
-#define TCRITERIAMONGOCONVERTER_H
-
+#pragma once
 #include "tsystemglobal.h"
 #include <QMap>
 #include <QMetaObject>
@@ -194,4 +192,3 @@ inline QVariantMap TCriteriaMongoConverter<T>::join(const QVariantMap &v1, TCrit
     return ret;
 }
 
-#endif  // TCRITERIAMONGOCONVERTER_H

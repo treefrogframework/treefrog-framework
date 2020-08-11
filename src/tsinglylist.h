@@ -1,6 +1,4 @@
-#ifndef TSINGLYLIST_H
-#define TSINGLYLIST_H
-
+#pragma once
 #include "thazardobject.h"
 #include "thazardptr.h"
 
@@ -92,4 +90,3 @@ inline T TSinglyList<T>::take(const QString &key)
     return T();
 }
 
-#endif  // TSINGLYLIST_H

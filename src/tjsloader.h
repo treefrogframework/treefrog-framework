@@ -1,6 +1,4 @@
-#ifndef TJSLOADER_H
-#define TJSLOADER_H
-
+#pragma once
 #include <QJSValue>
 #include <TGlobal>
 #include <TJSInstance>
@@ -44,4 +42,3 @@ private:
     friend class TJSModule;
 };
 
-#endif  // TJSLOADER_H

@@ -1,6 +1,4 @@
-#ifndef DIRECTCONTROLLER_H
-#define DIRECTCONTROLLER_H
-
+#pragma once
 #include <TActionController>
 
 
@@ -14,4 +12,3 @@ public slots:
     void show(const QString &view);
 };
 
-#endif  // DIRECTCONTROLLER_H

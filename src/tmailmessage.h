@@ -1,6 +1,4 @@
-#ifndef TMAILMESSAGE_H
-#define TMAILMESSAGE_H
-
+#pragma once
 #include <QString>
 #include <TGlobal>
 #include <TInternetMessageHeader>
@@ -47,4 +45,3 @@ private:
     QByteArrayList recipientList;
 };
 
-#endif  // TMAILMESSAGE_H

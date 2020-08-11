@@ -1,6 +1,4 @@
-#ifndef TSESSIONFILESTORE_H
-#define TSESSIONFILESTORE_H
-
+#pragma once
 #include <TSessionStore>
 
 
@@ -15,4 +13,3 @@ public:
     static QString sessionDirPath();
 };
 
-#endif  // TSESSIONFILESTORE_H

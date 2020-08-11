@@ -1,6 +1,4 @@
-#ifndef TCACHEREDISSTORE_H
-#define TCACHEREDISSTORE_H
-
+#pragma once
 #include "tcachestore.h"
 #include <TGlobal>
 
@@ -27,4 +25,3 @@ protected:
     friend class TCacheFactory;
 };
 
-#endif  // TCACHEREDISSTORE_H

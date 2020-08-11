@@ -1,6 +1,4 @@
-#ifndef TFTEST_H
-#define TFTEST_H
-
+#pragma once
 #include "tkvsdatabasepool.h"
 #include "turlroute.h"
 #include <QByteArray>
@@ -68,4 +66,3 @@
         return QTest::qExec(&tc, argc, argv);                                                         \
     }
 
-#endif  // TFTEST_H

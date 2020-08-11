@@ -1,6 +1,4 @@
-#ifndef TCRITERIA_H
-#define TCRITERIA_H
-
+#pragma once
 #include <QVariant>
 #include <TGlobal>
 
@@ -72,4 +70,3 @@ private:
 
 Q_DECLARE_METATYPE(TCriteria)
 
-#endif  // TCRITERIA_H

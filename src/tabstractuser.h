@@ -1,6 +1,4 @@
-#ifndef TABSTRACTUSER_H
-#define TABSTRACTUSER_H
-
+#pragma once
 #include <QString>
 #include <TGlobal>
 
@@ -12,4 +10,3 @@ public:
     virtual QString groupKey() const { return QString(); }
 };
 
-#endif  // TABSTRACTUSER_H

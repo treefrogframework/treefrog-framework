@@ -1,6 +1,4 @@
-#ifndef GCONFIG_H
-#define GCONFIG_H
-
+#pragma once
 /* Namespace for Google classes */
 #define GOOGLE_NAMESPACE google
 
@@ -10,4 +8,3 @@
 /* Puts following code inside the Google namespace */
 #define _START_GOOGLE_NAMESPACE_ namespace google {
 
-#endif  // GCONFIG

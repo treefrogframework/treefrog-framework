@@ -1,6 +1,4 @@
-#ifndef TSESSIONREDISSTORE_H
-#define TSESSIONREDISSTORE_H
-
+#pragma once
 #include <TSessionStore>
 
 
@@ -13,4 +11,3 @@ public:
     int gc(const QDateTime &expire) override;
 };
 
-#endif  // TSESSIONREDISSTORE_H

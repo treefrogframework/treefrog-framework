@@ -1,6 +1,4 @@
-#ifndef TLAZYLOADER_H
-#define TLAZYLOADER_H
-
+#pragma once
 #include <TGlobal>
 
 
@@ -28,4 +26,3 @@ inline void TLazyLoader<T, Key>::loadObject()
     }
 }
 
-#endif  // TLAZYLOADER_H

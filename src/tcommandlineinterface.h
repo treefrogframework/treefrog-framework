@@ -1,6 +1,4 @@
-#ifndef TCOMMANDLINEINTERFACE_H
-#define TCOMMANDLINEINTERFACE_H
-
+#pragma once
 #include <QtCore>
 #include <TActionThread>
 #include <TGlobal>
@@ -53,4 +51,3 @@
         return thread.returnCode;                                                                                   \
     }
 
-#endif  // TCOMMANDLINEINTERFACE_H

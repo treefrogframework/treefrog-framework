@@ -1,6 +1,4 @@
-#ifndef TGLOBAL_H
-#define TGLOBAL_H
-
+#pragma once
 constexpr auto TF_VERSION_STR = "1.29.0";
 constexpr auto TF_VERSION_NUMBER = 0x012900;
 constexpr auto TF_SRC_REVISION = 2193;
@@ -278,4 +276,3 @@ constexpr auto CRLF = "\x0d\x0a";
 constexpr auto LF = "\x0a";
 }
 
-#endif  // TGLOBAL_H

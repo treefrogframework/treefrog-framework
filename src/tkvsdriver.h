@@ -1,6 +1,4 @@
-#ifndef TKVSDRIVER_H
-#define TKVSDRIVER_H
-
+#pragma once
 #include <QString>
 #include <TGlobal>
 
@@ -18,4 +16,3 @@ public:
     virtual void moveToThread(QThread *) { }
 };
 
-#endif  // TKVSDRIVER_H

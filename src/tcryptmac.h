@@ -1,6 +1,4 @@
-#ifndef TCRYPTMAC_H
-#define TCRYPTMAC_H
-
+#pragma once
 #include <QByteArray>
 #include <QCryptographicHash>
 #include <TGlobal>
@@ -23,4 +21,3 @@ public:
     static QByteArray hash(const QByteArray &data, const QByteArray &key, Algorithm method);
 };
 
-#endif  // TCRYPTMAC_H

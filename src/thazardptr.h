@@ -1,6 +1,4 @@
-#ifndef THAZARDPTR_H
-#define THAZARDPTR_H
-
+#pragma once
 #include "tatomicptr.h"
 #include <TGlobal>
 
@@ -43,4 +41,3 @@ inline T *THazardPtr::guard(TAtomicPtr<T> *src, bool *mark)
     return ptr;
 }
 
-#endif  // THAZARDPTR_H

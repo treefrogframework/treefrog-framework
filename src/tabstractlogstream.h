@@ -1,6 +1,4 @@
-#ifndef TABSTRACTLOGSTREAM_H
-#define TABSTRACTLOGSTREAM_H
-
+#pragma once
 #include <QList>
 #include <QObject>
 #include <TLog>
@@ -42,4 +40,3 @@ private:
     T_DISABLE_MOVE(TAbstractLogStream)
 };
 
-#endif  // TABSTRACTLOGSTREAM_H

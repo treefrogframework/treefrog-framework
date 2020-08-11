@@ -1,6 +1,4 @@
-#ifndef THTTPHEADER_H
-#define THTTPHEADER_H
-
+#pragma once
 #include <TCookie>
 #include <TInternetMessageHeader>
 
@@ -59,4 +57,3 @@ private:
     QByteArray _reasonPhrase;
 };
 
-#endif  // THTTPHEADER_H

@@ -1,6 +1,4 @@
-#ifndef TDEBUG_H
-#define TDEBUG_H
-
+#pragma once
 #include "tfnamespace.h"
 #include <QString>
 #include <QTextStream>
@@ -170,4 +168,3 @@ private:
     int msgPriority {0};
 };
 
-#endif  // TDEBUG_H

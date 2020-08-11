@@ -32,8 +32,7 @@
 // This is inspired by Craig Silverstein's PowerPC stacktrace code.
 //
 
-#ifndef BASE_STACKTRACE_ARM_INL_H
-#define BASE_STACKTRACE_ARM_INL_H
+#pragma once
 // Note: this file is included into stacktrace.cc more than once.
 // Anything that should only be defined once should be here:
 

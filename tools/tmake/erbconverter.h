@@ -1,6 +1,4 @@
-#ifndef ERBCONVERTER_H
-#define ERBCONVERTER_H
-
+#pragma once
 #include <QDir>
 #include <QFile>
 #include <QString>
@@ -27,4 +25,3 @@ private:
     QDir partialDirectory;
 };
 
-#endif  // ERBCONVERTER_H

@@ -1,6 +1,4 @@
-#ifndef TCONTENTHEADER_H
-#define TCONTENTHEADER_H
-
+#pragma once
 #include <TInternetMessageHeader>
 
 
@@ -16,4 +14,3 @@ public:
 
 Q_DECLARE_METATYPE(TContentHeader)
 
-#endif  // TCONTENTHEADER_H

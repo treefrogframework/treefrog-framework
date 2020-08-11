@@ -1,6 +1,4 @@
-#ifndef TTHREADAPPLICATIONSERVER_H
-#define TTHREADAPPLICATIONSERVER_H
-
+#pragma once
 #include "tstack.h"
 #include <QBasicTimer>
 #include <QTcpServer>
@@ -112,4 +110,3 @@ protected:
     }
 };
 
-#endif  // TTHREADAPPLICATIONSERVER_H

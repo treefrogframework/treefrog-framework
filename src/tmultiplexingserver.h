@@ -1,6 +1,4 @@
-#ifndef TMULTIPLEXINGSERVER_H
-#define TMULTIPLEXINGSERVER_H
-
+#pragma once
 #include "tatomic.h"
 #include <QBasicTimer>
 #include <QByteArray>
@@ -67,4 +65,3 @@ public slots:
 };
 */
 
-#endif  // TMULTIPLEXINGSERVER_H

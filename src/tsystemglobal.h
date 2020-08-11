@@ -1,6 +1,4 @@
-#ifndef TSYSTEMGLOBAL_H
-#define TSYSTEMGLOBAL_H
-
+#pragma once
 #include <QMap>
 #include <QSettings>
 #include <QVariant>
@@ -67,4 +65,3 @@ T_CORE_EXPORT void tSystemTrace(const char *, ...)  // system trace message
 #endif
     ;
 
-#endif  // TSYSTEMGLOBAL_H

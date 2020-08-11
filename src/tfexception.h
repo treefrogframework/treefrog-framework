@@ -1,6 +1,4 @@
-#ifndef TFEXCEPTION_H
-#define TFEXCEPTION_H
-
+#pragma once
 #include <QByteArray>
 #include <QString>
 #include <TGlobal>
@@ -113,4 +111,3 @@ public:
     QString className() const override { return QStringLiteral("StandardException"); }
 };
 
-#endif  // TFEXCEPTION_H

@@ -1,6 +1,4 @@
-#ifndef THAZARDOBJECT_H
-#define THAZARDOBJECT_H
-
+#pragma once
 #include <TAtomic>
 #include <TGlobal>
 
@@ -24,4 +22,3 @@ private:
     friend class THazardRemoverThread;
 };
 
-#endif  // THAZARDOBJECT_H

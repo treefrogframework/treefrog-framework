@@ -1,6 +1,4 @@
-#ifndef TWEBSOCKETSESSION_H
-#define TWEBSOCKETSESSION_H
-
+#pragma once
 #include <QVariant>
 #include <TGlobal>
 
@@ -60,4 +58,3 @@ inline void TWebSocketSession::reset()
     QVariantMap::clear();
 }
 
-#endif  // TWEBSOCKETSESSION_H

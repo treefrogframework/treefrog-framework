@@ -1,6 +1,4 @@
-#ifndef TACTIONCONTROLLER_H
-#define TACTIONCONTROLLER_H
-
+#pragma once
 #include <QDomDocument>
 #include <QHostAddress>
 #include <QtCore>
@@ -216,4 +214,3 @@ inline void TActionController::setContentType(const QByteArray &type)
     response.header().setContentType(type);
 }
 
-#endif  // TACTIONCONTROLLER_H

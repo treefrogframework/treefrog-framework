@@ -1,6 +1,4 @@
-#ifndef TJSMODULE_H
-#define TJSMODULE_H
-
+#pragma once
 #include <QDir>
 #include <QJSValue>
 #include <QMap>
@@ -44,4 +42,3 @@ private:
     friend class TReactComponent;
 };
 
-#endif  // TJSMODULE_H

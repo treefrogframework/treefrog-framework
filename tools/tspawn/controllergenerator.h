@@ -1,6 +1,4 @@
-#ifndef CONTROLLERGENERATOR_H
-#define CONTROLLERGENERATOR_H
-
+#pragma once
 #include <QDir>
 #include <QPair>
 #include <QString>
@@ -23,4 +21,3 @@ private:
     int lockRevIndex {0};
 };
 
-#endif  // CONTROLLERGENERATOR_H

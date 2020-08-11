@@ -1,6 +1,4 @@
-#ifndef TWEBAPPLICATION_H
-#define TWEBAPPLICATION_H
-
+#pragma once
 #ifdef TF_USE_GUI_MODULE
 #include <QApplication>
 #else
@@ -135,4 +133,3 @@ public:
 
 #endif  // Q_OS_WIN
 
-#endif  // TWEBAPPLICATION_H

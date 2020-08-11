@@ -1,6 +1,4 @@
-#ifndef TSESSIONSQLOBJECTSTORE_H
-#define TSESSIONSQLOBJECTSTORE_H
-
+#pragma once
 #include <TSessionStore>
 
 
@@ -13,4 +11,3 @@ public:
     int gc(const QDateTime &expire) override;
 };
 
-#endif  // TSESSIONSQLOBJECTSTORE_H

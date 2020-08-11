@@ -1,6 +1,4 @@
-#ifndef TFILELOGGER_H
-#define TFILELOGGER_H
-
+#pragma once
 #include <QFile>
 #include <QMutex>
 #include <TLogger>
@@ -26,4 +24,3 @@ private:
     QMutex mutex;
 };
 
-#endif  // TFILELOGGER_H

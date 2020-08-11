@@ -1,6 +1,4 @@
-#ifndef TSESSIONMONGOOBJECT_H
-#define TSESSIONMONGOOBJECT_H
-
+#pragma once
 #include <TMongoObject>
 
 
@@ -34,4 +32,3 @@ private:
     T_DEFINE_PROPERTY(QDateTime, updatedAt)
 };
 
-#endif  // TSESSIONMONGOOBJECT_H

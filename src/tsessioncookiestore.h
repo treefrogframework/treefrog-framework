@@ -1,6 +1,4 @@
-#ifndef TSESSIONCOOKIESTORE_H
-#define TSESSIONCOOKIESTORE_H
-
+#pragma once
 #include <TSessionStore>
 
 
@@ -13,4 +11,3 @@ public:
     int gc(const QDateTime &expire) override;
 };
 
-#endif  // TSESSIONCOOKIESTORE_H

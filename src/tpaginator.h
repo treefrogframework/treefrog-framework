@@ -1,6 +1,4 @@
-#ifndef TPAGINATOR_H
-#define TPAGINATOR_H
-
+#pragma once
 #include <QList>
 #include <TGlobal>
 
@@ -49,4 +47,3 @@ private:
 
 Q_DECLARE_METATYPE(TPaginator)
 
-#endif  // TPAGINATOR_H

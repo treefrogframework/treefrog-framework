@@ -1,6 +1,4 @@
-#ifndef TFILEAIOWRITER_H
-#define TFILEAIOWRITER_H
-
+#pragma once
 #include <QString>
 #include <TGlobal>
 
@@ -27,4 +25,3 @@ private:
     T_DISABLE_MOVE(TFileAioWriter)
 };
 
-#endif  // TFILEAIOWRITER_H

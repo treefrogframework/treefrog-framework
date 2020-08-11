@@ -1,6 +1,4 @@
-#ifndef TMODELUTIL_H
-#define TMODELUTIL_H
-
+#pragma once
 #include <QList>
 #include <TCriteria>
 #include <TCriteriaConverter>
@@ -127,4 +125,3 @@ inline QCborArray tfConvertToCborArray(const QList<T> &list)
 }
 #endif
 
-#endif  // TMODELUTIL_H

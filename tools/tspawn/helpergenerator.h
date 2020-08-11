@@ -1,6 +1,4 @@
-#ifndef HELPERGENERATOR_H
-#define HELPERGENERATOR_H
-
+#pragma once
 #include <QtCore>
 
 
@@ -13,4 +11,3 @@ private:
     QString name;
 };
 
-#endif  // HELPERGENERATOR_H

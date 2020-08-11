@@ -68,9 +68,7 @@
 // C++ ABI in the future.
 //
 
-#ifndef DEMANGLE_H
-#define DEMANGLE_H
-
+#pragma once
 #include "gconfig.h"
 
 _START_GOOGLE_NAMESPACE_
@@ -82,4 +80,3 @@ bool Demangle(const char *mangled, char *out, int out_size);
 
 _END_GOOGLE_NAMESPACE_
 
-#endif  // DEMANGLE_H

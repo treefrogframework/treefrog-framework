@@ -1,6 +1,4 @@
-#ifndef MONGOOBJGENERATOR_H
-#define MONGOOBJGENERATOR_H
-
+#pragma once
 #include "abstractobjgenerator.h"
 #include <QDir>
 #include <QList>
@@ -31,4 +29,3 @@ private:
     QList<QPair<QString, QVariant::Type>> fields;
 };
 
-#endif  // MONGOOBJGENERATOR_H

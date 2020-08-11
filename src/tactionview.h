@@ -1,6 +1,4 @@
-#ifndef TACTIONVIEW_H
-#define TACTIONVIEW_H
-
+#pragma once
 #include <QObject>
 #include <QTextStream>
 #include <QVariant>
@@ -245,4 +243,3 @@ inline void TActionView::setController(TActionController *controller)
     actionController = controller;
 }
 
-#endif  // TACTIONVIEW_H

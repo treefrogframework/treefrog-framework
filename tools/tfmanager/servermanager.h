@@ -1,6 +1,4 @@
-#ifndef SERVERMANAGER_H
-#define SERVERMANAGER_H
-
+#pragma once
 #include <QHostAddress>
 #include <QObject>
 #include <QProcess>
@@ -52,4 +50,3 @@ private:
 };
 
 }
-#endif  // SERVERMANAGER_H

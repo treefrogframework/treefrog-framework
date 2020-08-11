@@ -1,6 +1,4 @@
-#ifndef MAILERGENERATOR_H
-#define MAILERGENERATOR_H
-
+#pragma once
 #include <QDir>
 #include <QString>
 
@@ -15,4 +13,3 @@ private:
     QStringList actionList;
 };
 
-#endif  // MAILERGENERATOR_H

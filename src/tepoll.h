@@ -1,6 +1,4 @@
-#ifndef TEPOLL_H
-#define TEPOLL_H
-
+#pragma once
 #include "tqueue.h"
 #include <QMap>
 #include <TGlobal>
@@ -60,4 +58,3 @@ private:
     T_DISABLE_MOVE(TEpoll);
 };
 
-#endif  // TEPOLL_H

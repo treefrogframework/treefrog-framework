@@ -1,6 +1,4 @@
-#ifndef TDATABASECONTEXTTHREAD_H
-#define TDATABASECONTEXTTHREAD_H
-
+#pragma once
 #include <QThread>
 #include <TDatabaseContext>
 #include <TGlobal>
@@ -17,4 +15,3 @@ public:
     T_DISABLE_MOVE(TDatabaseContextThread)
 };
 
-#endif  // TDATABASECONTEXTTHREAD_H

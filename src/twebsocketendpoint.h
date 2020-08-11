@@ -1,6 +1,4 @@
-#ifndef TWEBSOCKETENDPOINT_H
-#define TWEBSOCKETENDPOINT_H
-
+#pragma once
 #include <QHostAddress>
 #include <QObject>
 #include <QPair>
@@ -112,4 +110,3 @@ inline bool TWebSocketEndpoint::transactionEnabled() const
     return false;
 }
 
-#endif  // TWEBSOCKETENDPOINT_H

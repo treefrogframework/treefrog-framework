@@ -1,6 +1,4 @@
-#ifndef TSENDMAILMAILER_H
-#define TSENDMAILMAILER_H
-
+#pragma once
 #include <QByteArray>
 #include <QObject>
 #include <QProcess>
@@ -32,4 +30,3 @@ private:
     T_DISABLE_MOVE(TSendmailMailer)
 };
 
-#endif  // TSENDMAILMAILER_H

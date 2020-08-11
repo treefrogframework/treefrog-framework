@@ -1,6 +1,4 @@
-#ifndef FILEWRITER_H
-#define FILEWRITER_H
-
+#pragma once
 #include <QString>
 
 
@@ -17,4 +15,3 @@ private:
     QString filepath;
 };
 
-#endif  // FILEWRITER_H

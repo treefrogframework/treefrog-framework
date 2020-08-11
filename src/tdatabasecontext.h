@@ -1,6 +1,4 @@
-#ifndef TDATABASECONTEXT_H
-#define TDATABASECONTEXT_H
-
+#pragma once
 #include <QMap>
 #include <QSqlDatabase>
 #include <TGlobal>
@@ -40,4 +38,3 @@ private:
     T_DISABLE_MOVE(TDatabaseContext)
 };
 
-#endif  // TDATABASECONTEXT_H

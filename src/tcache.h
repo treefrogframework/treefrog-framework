@@ -1,6 +1,4 @@
-#ifndef TCACHE_H
-#define TCACHE_H
-
+#pragma once
 #include <TGlobal>
 
 class TCacheStore;
@@ -26,4 +24,3 @@ private:
     T_DISABLE_MOVE(TCache)
 };
 
-#endif  // TCACHE_H

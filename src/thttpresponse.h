@@ -1,6 +1,4 @@
-#ifndef THTTPRESPONSE_H
-#define THTTPRESPONSE_H
-
+#pragma once
 #include <QByteArray>
 #include <QDateTime>
 #include <TGlobal>
@@ -33,4 +31,3 @@ private:
     T_DISABLE_MOVE(THttpResponse)
 };
 
-#endif  // THTTPRESPONSE_H

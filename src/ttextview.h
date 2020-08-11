@@ -1,6 +1,4 @@
-#ifndef TTEXTVIEW_H
-#define TTEXTVIEW_H
-
+#pragma once
 #include <TActionView>
 
 
@@ -36,4 +34,3 @@ inline QString TTextView::toString()
     return viewText;
 }
 
-#endif  // TTEXTVIEW_H

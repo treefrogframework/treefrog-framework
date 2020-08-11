@@ -1,6 +1,4 @@
-#ifndef TAPPLICATIONSCHEDULER_H
-#define TAPPLICATIONSCHEDULER_H
-
+#pragma once
 #include <TScheduler>
 
 
@@ -25,4 +23,3 @@ private:
     T_DISABLE_MOVE(TApplicationScheduler)
 };
 
-#endif  // TAPPLICATIONSCHEDULER_H

@@ -1,6 +1,4 @@
-#ifndef TWEBSOCKETWORKER_H
-#define TWEBSOCKETWORKER_H
-
+#pragma once
 #include "tdatabasecontextthread.h"
 #include "twebsocketframe.h"
 #include <QList>
@@ -40,4 +38,3 @@ private:
     QList<QPair<int, QByteArray>> _payloads;
 };
 
-#endif  // TWEBSOCKETWORKER_H

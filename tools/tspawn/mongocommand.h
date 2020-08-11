@@ -1,6 +1,4 @@
-#ifndef MONGOCOMMAND_H
-#define MONGOCOMMAND_H
-
+#pragma once
 #include <QStringList>
 #include <TGlobal>
 
@@ -25,4 +23,3 @@ private:
     T_DISABLE_MOVE(MongoCommand)
 };
 
-#endif  // MONGOCOMMAND_H

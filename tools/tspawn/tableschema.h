@@ -1,6 +1,4 @@
-#ifndef TABLESCHEMA_H
-#define TABLESCHEMA_H
-
+#pragma once
 #include <QList>
 #include <QPair>
 #include <QSqlRecord>
@@ -35,4 +33,3 @@ private:
     QSqlRecord tableFields;
 };
 
-#endif  // TABLESCHEMA_H

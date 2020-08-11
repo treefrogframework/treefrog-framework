@@ -1,6 +1,4 @@
-#ifndef TSESSIONSTOREPLUGIN_H
-#define TSESSIONSTOREPLUGIN_H
-
+#pragma once
 #include <QObject>
 #include <QStringList>
 #include <QtPlugin>
@@ -34,4 +32,3 @@ public:
     virtual void destroy(const QString &key, TSessionStore *store) = 0;
 };
 
-#endif  // TSESSIONSTOREPLUGIN_H

@@ -1,6 +1,4 @@
-#ifndef TACCESSLOGSTREAM_H
-#define TACCESSLOGSTREAM_H
-
+#pragma once
 #include <QByteArray>
 #include <QString>
 #include <TGlobal>
@@ -24,4 +22,3 @@ private:
     T_DISABLE_MOVE(TAccessLogStream)
 };
 
-#endif  // TACCESSLOGSTREAM_H

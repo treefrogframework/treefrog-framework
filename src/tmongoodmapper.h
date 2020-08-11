@@ -1,6 +1,4 @@
-#ifndef TMONGOODMAPPER_H
-#define TMONGOODMAPPER_H
-
+#pragma once
 #include <QVariant>
 #include <TCriteria>
 #include <TCriteriaMongoConverter>
@@ -307,4 +305,3 @@ inline int TMongoODMapper<T>::removeAll(const TCriteria &criteria)
     return TMongoQuery::remove(TCriteriaMongoConverter<T>(criteria).toVariantMap());
 }
 
-#endif  // TMONGOODMAPPER_H

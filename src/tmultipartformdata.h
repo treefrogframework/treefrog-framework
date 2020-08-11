@@ -1,6 +1,4 @@
-#ifndef TMULTIPARTFORMDATA_H
-#define TMULTIPARTFORMDATA_H
-
+#pragma once
 #include <QFile>
 #include <QMap>
 #include <QPair>
@@ -106,4 +104,3 @@ Q_DECLARE_METATYPE(TMimeHeader)
 Q_DECLARE_METATYPE(TMimeEntity)
 Q_DECLARE_METATYPE(TMultipartFormData)
 
-#endif  // TMULTIPARTFORMDATA_H

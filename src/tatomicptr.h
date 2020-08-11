@@ -1,6 +1,4 @@
-#ifndef TATOMICPTR_H
-#define TATOMICPTR_H
-
+#pragma once
 #include <TGlobal>
 #include <atomic>
 
@@ -160,4 +158,3 @@ inline bool TAtomicPtr<T>::isMarked() const
     return load() & 0x1;
 }
 
-#endif  // TATOMICPTR_H

@@ -1,6 +1,4 @@
-#ifndef TACCESSVALIDATOR_H
-#define TACCESSVALIDATOR_H
-
+#pragma once
 #include <QList>
 #include <QString>
 #include <QStringList>
@@ -57,4 +55,3 @@ protected:
     QList<AccessRule> accessRules;
 };
 
-#endif  // TACCESSVALIDATOR_H

@@ -1,6 +1,4 @@
-#ifndef TABSTRACTWEBSOCKET_H
-#define TABSTRACTWEBSOCKET_H
-
+#pragma once
 #include "tatomic.h"
 #include "tbasictimer.h"
 #include <QByteArray>
@@ -55,4 +53,3 @@ protected:
     T_DISABLE_MOVE(TAbstractWebSocket)
 };
 
-#endif  // TABSTRACTWEBSOCKET_H

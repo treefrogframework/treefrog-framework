@@ -1,6 +1,4 @@
-#ifndef TPUBLISHER_H
-#define TPUBLISHER_H
-
+#pragma once
 #include <QMap>
 #include <QObject>
 #include <QString>
@@ -37,4 +35,3 @@ private:
     T_DISABLE_MOVE(TPublisher)
 };
 
-#endif  // TPUBLISHER_H

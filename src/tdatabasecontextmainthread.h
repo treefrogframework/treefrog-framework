@@ -1,6 +1,4 @@
-#ifndef TDATABASECONTEXTMAINTHREAD_H
-#define TDATABASECONTEXTMAINTHREAD_H
-
+#pragma once
 #include "tdatabasecontextthread.h"
 
 
@@ -13,4 +11,3 @@ public:
     T_DISABLE_MOVE(TDatabaseContextMainThread)
 };
 
-#endif  // TDATABASECONTEXTMAINTHREAD_H

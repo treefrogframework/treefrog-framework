@@ -1,6 +1,4 @@
-#ifndef TSYSTEMBUS_H
-#define TSYSTEMBUS_H
-
+#pragma once
 #include "tsystemglobal.h"
 #include <QList>
 #include <QLocalSocket>
@@ -76,4 +74,3 @@ private:
     friend class TSystemBus;
 };
 
-#endif  // TSYSTEMBUS_H

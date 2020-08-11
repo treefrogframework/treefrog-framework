@@ -1,6 +1,4 @@
-#ifndef TFORMVALIDATOR_H
-#define TFORMVALIDATOR_H
-
+#pragma once
 #include <QPair>
 #include <QRegExp>
 #include <QStringList>
@@ -86,4 +84,3 @@ inline void TFormValidator::setDateTimeFormat(const QString &format)
     dateTimeFmt = format;
 }
 
-#endif  // TFORMVALIDATOR_H

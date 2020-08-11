@@ -1,6 +1,4 @@
-#ifndef TSMTPMAILER_H
-#define TSMTPMAILER_H
-
+#pragma once
 #include <QByteArray>
 #include <QMutex>
 #include <QObject>
@@ -117,4 +115,3 @@ inline void TSmtpMailer::setPort(quint16 port)
     _smtpPort = port;
 }
 
-#endif  // TSMTPMAILER_H

@@ -1,6 +1,4 @@
-#ifndef TEPOLLHTTPSOCKET_H
-#define TEPOLLHTTPSOCKET_H
-
+#pragma once
 #include "tepollsocket.h"
 #include <TGlobal>
 
@@ -40,4 +38,3 @@ private:
     T_DISABLE_MOVE(TEpollHttpSocket)
 };
 
-#endif  // TEPOLLHTTPSOCKET_H

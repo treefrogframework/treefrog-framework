@@ -1,6 +1,4 @@
-#ifndef ERBPARSER_H
-#define ERBPARSER_H
-
+#pragma once
 #include <QPair>
 #include <QString>
 
@@ -34,4 +32,3 @@ private:
     QString startTag;
 };
 
-#endif  // ERBPARSER_H

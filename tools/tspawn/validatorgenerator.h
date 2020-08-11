@@ -1,6 +1,4 @@
-#ifndef VALIDATORGENERATOR_H
-#define VALIDATORGENERATOR_H
-
+#pragma once
 #include <QtCore>
 
 
@@ -13,4 +11,3 @@ private:
     QString name;
 };
 
-#endif  // VALIDATORGENERATOR_H

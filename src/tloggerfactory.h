@@ -1,6 +1,4 @@
-#ifndef TLOGGERFACTORY_H
-#define TLOGGERFACTORY_H
-
+#pragma once
 #include <QStringList>
 #include <TGlobal>
 
@@ -13,4 +11,3 @@ public:
     static TLogger *create(const QString &key);
 };
 
-#endif  // TLOGGERFACTORY_H

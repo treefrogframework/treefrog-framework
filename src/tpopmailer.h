@@ -1,6 +1,4 @@
-#ifndef TPOPMAILER_H
-#define TPOPMAILER_H
-
+#pragma once
 #include <QByteArray>
 #include <QObject>
 #include <QString>
@@ -65,4 +63,3 @@ inline void TPopMailer::setPassword(const QByteArray &pass)
     password = pass;
 }
 
-#endif  // TPOPMAILER_H

@@ -32,9 +32,7 @@
 // Routines to extract the current stack trace.  These functions are
 // thread-safe.
 
-#ifndef STACKTRACE_H
-#define STACKTRACE_H
-
+#pragma once
 #include "gconfig.h"
 
 _START_GOOGLE_NAMESPACE_
@@ -89,4 +87,3 @@ extern int GetStackTrace(void **result, int max_depth, int skip_count);
 
 _END_GOOGLE_NAMESPACE_
 
-#endif  // STACKTRACE_H

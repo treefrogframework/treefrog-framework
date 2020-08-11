@@ -1,6 +1,4 @@
-#ifndef TSESSION_H
-#define TSESSION_H
-
+#pragma once
 #include <QByteArray>
 #include <QVariant>
 #include <TGlobal>
@@ -72,4 +70,3 @@ inline const QVariant TSession::value(const QString &key, const QVariant &defaul
     return QVariantMap::value(key, defaultValue);
 }
 
-#endif  // TSESSION_H

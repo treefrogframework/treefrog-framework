@@ -1,6 +1,4 @@
-#ifndef TEPOLLWEBSOCKET_H
-#define TEPOLLWEBSOCKET_H
-
+#pragma once
 #include "tabstractwebsocket.h"
 #include "tepollsocket.h"
 #include <QList>
@@ -61,4 +59,3 @@ private:
     T_DISABLE_MOVE(TEpollWebSocket)
 };
 
-#endif  // TEPOLLWEBSOCKET_H

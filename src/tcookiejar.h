@@ -1,6 +1,4 @@
-#ifndef TCOOKIEJAR_H
-#define TCOOKIEJAR_H
-
+#pragma once
 #include <QList>
 #include <QString>
 #include <TCookie>
@@ -33,4 +31,3 @@ inline QList<TCookie> TCookieJar::allCookies() const
     return *static_cast<const QList<TCookie> *>(this);
 }
 
-#endif  // TCOOKIEJAR_H

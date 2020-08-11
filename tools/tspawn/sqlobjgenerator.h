@@ -1,6 +1,4 @@
-#ifndef SQLOBJGENERATOR_H
-#define SQLOBJGENERATOR_H
-
+#pragma once
 #include "abstractobjgenerator.h"
 #include <QDir>
 #include <QPair>
@@ -25,4 +23,3 @@ private:
     TableSchema *tableSch {nullptr};
 };
 
-#endif  // SQLOBJGENERATOR_H

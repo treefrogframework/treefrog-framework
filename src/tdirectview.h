@@ -1,6 +1,4 @@
-#ifndef TDIRECTVIEW_H
-#define TDIRECTVIEW_H
-
+#pragma once
 #include <TActionView>
 #include <TSession>
 
@@ -22,4 +20,3 @@ private:
     T_DISABLE_MOVE(TDirectView)
 };
 
-#endif  // TDIRECTVIEW_H

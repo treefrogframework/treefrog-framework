@@ -1,6 +1,4 @@
-#ifndef TREDISDRIVER_H
-#define TREDISDRIVER_H
-
+#pragma once
 #include <QString>
 #include <QVariant>
 #include <QtGlobal>
@@ -58,4 +56,3 @@ private:
     T_DISABLE_MOVE(TRedisDriver)
 };
 
-#endif  // TREDISDRIVER_H

@@ -1,6 +1,4 @@
-#ifndef THTTPBUFFER_H
-#define THTTPBUFFER_H
-
+#pragma once
 #include <QByteArray>
 #include <TAccessLog>
 #include <TGlobal>
@@ -40,4 +38,3 @@ private:
     T_DISABLE_MOVE(TSendBuffer)
 };
 
-#endif  // THTTPBUFFER_H

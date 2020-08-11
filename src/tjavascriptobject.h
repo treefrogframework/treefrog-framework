@@ -1,6 +1,4 @@
-#ifndef TJAVASCRIPTOBJECT_H
-#define TJAVASCRIPTOBJECT_H
-
+#pragma once
 #include <QLatin1String>
 
 
@@ -29,4 +27,3 @@ inline QString TJavaScriptObject::toString() const
 
 Q_DECLARE_METATYPE(TJavaScriptObject)
 
-#endif  // TJAVASCRIPTOBJECT_H

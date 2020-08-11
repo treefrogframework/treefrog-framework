@@ -1,6 +1,4 @@
-#ifndef TATOMIC_H
-#define TATOMIC_H
-
+#pragma once
 #include <TGlobal>
 #include <atomic>
 
@@ -44,4 +42,3 @@ public:
     T_DISABLE_MOVE(TAtomic)
 };
 
-#endif  // TATOMIC_H

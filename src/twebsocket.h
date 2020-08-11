@@ -1,6 +1,4 @@
-#ifndef TWEBSOCKET_H
-#define TWEBSOCKET_H
-
+#pragma once
 #include "tabstractwebsocket.h"
 #include "tatomic.h"
 #include <QByteArray>
@@ -62,4 +60,3 @@ private:
     T_DISABLE_MOVE(TWebSocket)
 };
 
-#endif  // TWEBSOCKET_H

@@ -1,6 +1,4 @@
-#ifndef PROCESSINFO_H
-#define PROCESSINFO_H
-
+#pragma once
 #include <QList>
 #include <QString>
 
@@ -32,4 +30,3 @@ private:
 };
 
 }
-#endif  // PROCESSINFO_H

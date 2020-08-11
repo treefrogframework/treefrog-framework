@@ -1,6 +1,4 @@
-#ifndef TACTIONCONTEXT_H
-#define TACTIONCONTEXT_H
-
+#pragma once
 #include "tatomic.h"
 #include "tdatabasecontext.h"
 #include <QMap>
@@ -60,4 +58,3 @@ private:
     T_DISABLE_MOVE(TActionContext)
 };
 
-#endif  // TACTIONCONTEXT_H

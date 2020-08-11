@@ -1,6 +1,4 @@
-#ifndef APPLICATIONENDPOINT_H
-#define APPLICATIONENDPOINT_H
-
+#pragma once
 #include "TWebSocketEndpoint"
 
 
@@ -21,4 +19,3 @@ protected:
     virtual bool transactionEnabled() const override;
 };
 
-#endif // APPLICATIONENDPOINT_H

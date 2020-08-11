@@ -1,6 +1,4 @@
-#ifndef TMONGOOBJECT_H
-#define TMONGOOBJECT_H
-
+#pragma once
 #include <QDateTime>
 #include <QObject>
 #include <QString>
@@ -37,4 +35,3 @@ protected:
     virtual QString &objectId() = 0;
 };
 
-#endif  // TMONGOOBJECT_H

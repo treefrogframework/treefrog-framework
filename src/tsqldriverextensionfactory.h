@@ -1,6 +1,4 @@
-#ifndef TSQLDRIVEREXTENSIONFACTORY_H
-#define TSQLDRIVEREXTENSIONFACTORY_H
-
+#pragma once
 #include <QStringList>
 #include <TGlobal>
 
@@ -15,4 +13,3 @@ public:
     static void destroy(const QString &key, TSqlDriverExtension *extension);
 };
 
-#endif  // TSQLDRIVEREXTENSIONFACTORY_H

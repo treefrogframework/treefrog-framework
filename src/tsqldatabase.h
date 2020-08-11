@@ -1,6 +1,4 @@
-#ifndef TSQLDATABASE_H
-#define TSQLDATABASE_H
-
+#pragma once
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QStringList>
@@ -91,4 +89,3 @@ inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)
     return *this;
 }
 
-#endif  // TSQLDATABASE_H

@@ -1,6 +1,4 @@
-#ifndef TCRITERIACONVERTER_H
-#define TCRITERIACONVERTER_H
-
+#pragma once
 #include "tsystemglobal.h"
 #include <QMetaObject>
 #include <QVariant>
@@ -390,4 +388,3 @@ inline QString TCriteriaConverter<T>::concat(const QString &s1, TCriteria::Logic
     return string;
 }
 
-#endif  // TCRITERIACONVERTER_H

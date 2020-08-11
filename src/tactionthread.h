@@ -1,6 +1,4 @@
-#ifndef TACTIONTHREAD_H
-#define TACTIONTHREAD_H
-
+#pragma once
 #include <QThread>
 #include <TActionContext>
 
@@ -40,4 +38,3 @@ private:
     T_DISABLE_MOVE(TActionThread)
 };
 
-#endif  // TACTIONTHREAD_H

@@ -1,6 +1,4 @@
-#ifndef TOAUTH2CLIENT_H
-#define TOAUTH2CLIENT_H
-
+#pragma once
 #include <QNetworkReply>
 #include <QStringList>
 #include <QUrl>
@@ -41,4 +39,3 @@ private:
     QNetworkReply::NetworkError _networkError {QNetworkReply::NoError};
 };
 
-#endif  // TOAUTH2CLIENT_H

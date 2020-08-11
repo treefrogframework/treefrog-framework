@@ -1,6 +1,4 @@
-#ifndef TLOGGERPLUGIN_H
-#define TLOGGERPLUGIN_H
-
+#pragma once
 #include <QObject>
 #include <QStringList>
 #include <QtPlugin>
@@ -32,4 +30,3 @@ public:
     virtual TLogger *create(const QString &key) = 0;
 };
 
-#endif  // TLOGGERPLUGIN_H

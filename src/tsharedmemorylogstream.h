@@ -1,6 +1,4 @@
-#ifndef TSHAREDMEMORYLOGSTREAM_H
-#define TSHAREDMEMORYLOGSTREAM_H
-
+#pragma once
 #include "tabstractlogstream.h"
 #include <QBasicTimer>
 
@@ -33,4 +31,3 @@ private:
     T_DISABLE_MOVE(TSharedMemoryLogStream)
 };
 
-#endif  // TSHAREDMEMORYLOGSTREAM_H

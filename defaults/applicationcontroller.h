@@ -1,6 +1,4 @@
-#ifndef APPLICATIONCONTROLLER_H
-#define APPLICATIONCONTROLLER_H
-
+#pragma once
 #include <TActionController>
 #include "applicationhelper.h"
 
@@ -20,4 +18,3 @@ protected:
     virtual bool preFilter();
 };
 
-#endif // APPLICATIONCONTROLLER_H

@@ -1,6 +1,4 @@
-#ifndef TSTACK_H
-#define TSTACK_H
-
+#pragma once
 #include "tatomic.h"
 #include "tatomicptr.h"
 #include "thazardobject.h"
@@ -83,4 +81,3 @@ inline bool TStack<T>::top(T &val)
     return (bool)pnode;
 }
 
-#endif  // TSTACK_H

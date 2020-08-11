@@ -1,6 +1,4 @@
-#ifndef TLOG_H
-#define TLOG_H
-
+#pragma once
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QDataStream>
@@ -23,4 +21,3 @@ public:
     QByteArray message;  //!< Message.
 };
 
-#endif  // TLOG_H

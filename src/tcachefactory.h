@@ -1,6 +1,4 @@
-#ifndef TCACHEFACTORY_H
-#define TCACHEFACTORY_H
-
+#pragma once
 #include "tcachestore.h"
 #include <QStringList>
 #include <TGlobal>
@@ -18,4 +16,3 @@ private:
     static bool loadCacheKeys();
 };
 
-#endif  // TCACHEFACTORY_H

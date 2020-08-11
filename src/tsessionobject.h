@@ -1,6 +1,4 @@
-#ifndef TSESSIONOBJECT_H
-#define TSESSIONOBJECT_H
-
+#pragma once
 #include <TSqlObject>
 
 
@@ -30,4 +28,3 @@ private: /*** Don't modify below this line ***/
     T_DEFINE_PROPERTY(QDateTime, updated_at)
 };
 
-#endif  // TSESSIONOBJECT_H

@@ -1,6 +1,4 @@
-#ifndef TSQLORMAPPER_H
-#define TSQLORMAPPER_H
-
+#pragma once
 #include "tsystemglobal.h"
 #include <QList>
 #include <QMap>
@@ -724,4 +722,3 @@ inline QString TSqlORMapper<T>::orderBy() const
     return str;
 }
 
-#endif  // TSQLORMAPPER_H

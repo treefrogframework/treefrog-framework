@@ -1,6 +1,4 @@
-#ifndef TFNAMESPACE_H
-#define TFNAMESPACE_H
-
+#pragma once
 class TWebApplication;
 
 /*!
@@ -310,4 +308,3 @@ enum ComparisonOperator {
 };
 }
 
-#endif  // TFNAMESPACE_H

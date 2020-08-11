@@ -1,6 +1,4 @@
-#ifndef TCACHEMONGOSTORE_H
-#define TCACHEMONGOSTORE_H
-
+#pragma once
 #include "tcachestore.h"
 #include <TGlobal>
 
@@ -27,4 +25,3 @@ protected:
     friend class TCacheFactory;
 };
 
-#endif  // TCACHEMONGOSTORE_H

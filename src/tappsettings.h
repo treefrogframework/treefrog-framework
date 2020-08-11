@@ -1,6 +1,4 @@
-#ifndef TAPPSETTINGS_H
-#define TAPPSETTINGS_H
-
+#pragma once
 #include <QMap>
 #include <QMutex>
 #include <QVariant>
@@ -27,4 +25,3 @@ private:
     T_DISABLE_COPY(TAppSettings)
     T_DISABLE_MOVE(TAppSettings)
 };
-#endif  // TAPPSETTINGS_H

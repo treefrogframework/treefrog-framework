@@ -1,6 +1,4 @@
-#ifndef OTAMACONVERTER_H
-#define OTAMACONVERTER_H
-
+#pragma once
 #include "erbconverter.h"
 #include <QDir>
 #include <QString>
@@ -24,4 +22,3 @@ private:
     T_DISABLE_MOVE(OtamaConverter)
 };
 
-#endif  // OTAMACONVERTER_H

@@ -1,6 +1,4 @@
-#ifndef TSQLQUERYORMAPPERITERATOR_H
-#define TSQLQUERYORMAPPERITERATOR_H
-
+#pragma once
 #include <TSqlQueryORMapper>
 
 
@@ -60,4 +58,3 @@ inline T TSqlQueryORMapperIterator<T>::previous()
     return m->value();
 }
 
-#endif  // TSQLQUERYORMAPPERITERATOR_H

@@ -1,6 +1,4 @@
-#ifndef TMODELOBJECT_H
-#define TMODELOBJECT_H
-
+#pragma once
 #include <QMap>
 #include <QObject>
 #include <QStringList>
@@ -24,4 +22,3 @@ public:
     virtual QStringList propertyNames() const;
 };
 
-#endif  // TMODELOBJECT_H

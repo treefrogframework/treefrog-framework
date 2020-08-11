@@ -1,6 +1,4 @@
-#ifndef TPROCESSINFO_H
-#define TPROCESSINFO_H
-
+#pragma once
 #include <QList>
 #include <QString>
 #include <TGlobal>
@@ -30,4 +28,3 @@ private:
     qint64 processId {0};
 };
 
-#endif  // TPROCESSINFO_H

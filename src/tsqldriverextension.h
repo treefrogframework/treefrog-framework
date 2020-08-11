@@ -1,6 +1,4 @@
-#ifndef TSQLDRIVEREXTENSION_H
-#define TSQLDRIVEREXTENSION_H
-
+#pragma once
 #include <QString>
 #include <TGlobal>
 
@@ -28,4 +26,3 @@ inline QString TSqlDriverExtension::upsertStatement(const QString &tableName, co
     return QString();
 }
 
-#endif  // TSQLDRIVEREXTENSION_H
