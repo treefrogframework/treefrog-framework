@@ -7,8 +7,8 @@
 
 #include "thttpsocket.h"
 #include "tatomicptr.h"
-#include "tsystemglobal.h"
 #include "tfcore.h"
+#include "tsystemglobal.h"
 #include <QBuffer>
 #include <QDir>
 #include <TAppSettings>
@@ -210,7 +210,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
             abort();
             break;
         } else {
-            qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
+            qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH), MSG_NOSIGNAL);
             if (Q_UNLIKELY(written <= 0)) {
                 tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
                 return -1;
@@ -303,8 +303,7 @@ void THttpSocket::abort()
     if (_socket > 0) {
         tf_close_socket(_socket);
         tSystemDebug("Closed socket : %d", _socket);
-        _state = QAbstractSocket::ClosingState;
-        _socket = 0;
+        setSocketDescriptor(0, QAbstractSocket::ClosingState);
     } else {
         _state = QAbstractSocket::UnconnectedState;
     }

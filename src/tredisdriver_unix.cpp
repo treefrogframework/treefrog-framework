@@ -97,7 +97,7 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
     qint64 total = 0;
     while (total < command.length()) {
         if (tf_poll_send(_socket, 5000) == 0) {
-            qint64 len = tf_send(_socket, command.data() + total, command.length() - total, 0);
+            qint64 len = tf_send(_socket, command.data() + total, command.length() - total, MSG_NOSIGNAL);
             if (len < 0) {
                 break;
             }

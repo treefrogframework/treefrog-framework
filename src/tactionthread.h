@@ -37,4 +37,3 @@ private:
     T_DISABLE_COPY(TActionThread)
     T_DISABLE_MOVE(TActionThread)
 };
-

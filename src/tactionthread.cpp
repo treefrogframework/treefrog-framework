@@ -205,14 +205,13 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
             }
         }
 
-        // Check idle timeout
-        if (Q_UNLIKELY(keepAliveTimeout > 0 && socket->idleTime() >= keepAliveTimeout)) {
-            tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout, (int)socket->socketDescriptor());
+        if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
             break;
         }
 
-        if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {
-            tSystemWarn("Invalid descriptor (state:%d) sd:%d", (int)socket->state(), socket->socketDescriptor());
+        // Check idle timeout
+        if (Q_UNLIKELY(keepAliveTimeout > 0 && socket->idleTime() >= keepAliveTimeout)) {
+            tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout, (int)socket->socketDescriptor());
             break;
         }
     }
