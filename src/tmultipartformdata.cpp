@@ -480,7 +480,7 @@ TMimeHeader TMultipartFormData::parseMimeHeader(QIODevice *dev) const
     TMimeHeader header;
     while (!dev->atEnd()) {
         QByteArray line = dev->readLine();
-        if (line == CRLF || line.startsWith(dataBoundary)) {
+        if (line == CRLF || (!dataBoundary.isEmpty() && line.startsWith(dataBoundary))) {
             break;
         }
 

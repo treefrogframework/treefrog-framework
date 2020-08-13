@@ -89,9 +89,9 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
     d(new THttpRequestData)
 {
     d->header = header;
-    d->bodyArray = body;
     d->clientAddress = clientAddress;
-    parseBody(body, header);
+    d->bodyArray = body;
+    parseBody(d->bodyArray, d->header);
 }
 
 /*!
@@ -103,8 +103,17 @@ THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, co
 {
     d->header = THttpRequestHeader(header);
     d->clientAddress = clientAddress;
-    d->multipartFormData = TMultipartFormData(filePath, boundary());
-    d->formItems = d->multipartFormData.postParameters;
+
+    if (d->header.contentType().trimmed().toLower().startsWith(QByteArrayLiteral("multipart/form-data"))) {
+        d->multipartFormData = TMultipartFormData(filePath, boundary());
+        d->formItems = d->multipartFormData.postParameters;
+    } else {
+        QFile file(filePath);
+        if (file.open(QIODevice::ReadOnly)) {
+            d->bodyArray = file.readAll();
+            parseBody(d->bodyArray, d->header);
+        }
+    }
 }
 
 /*!
@@ -482,11 +491,10 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
     case Tf::Put:
     case Tf::Patch: {
         QString ctype = QString::fromLatin1(header.contentType().trimmed());
-        if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
-            // multipart/form-data
-            d->multipartFormData = TMultipartFormData(body, boundary());
-            d->formItems = d->multipartFormData.postParameters;
-
+        if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
+            if (!body.isEmpty()) {
+                d->formItems = THttpUtility::fromFormUrlEncoded(body);
+            }
         } else if (ctype.startsWith(QLatin1String("application/json"), Qt::CaseInsensitive)) {
             QJsonParseError error;
             d->jsonData = QJsonDocument::fromJson(body, &error);
@@ -494,10 +502,10 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
                 tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qPrintable(error.errorString()),
                     error.offset);
             }
-        } else if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
-            if (!body.isEmpty()) {
-                d->formItems = THttpUtility::fromFormUrlEncoded(body);
-            }
+        } else if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
+            // multipart/form-data
+            d->multipartFormData = TMultipartFormData(body, boundary());
+            d->formItems = d->multipartFormData.postParameters;
         } else {
             tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
         }

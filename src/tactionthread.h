@@ -33,6 +33,7 @@ signals:
 private:
     THttpSocket *_httpSocket {nullptr};
     int _maxThreads {0};
+    QByteArray _readBuffer;
 
     T_DISABLE_COPY(TActionThread)
     T_DISABLE_MOVE(TActionThread)

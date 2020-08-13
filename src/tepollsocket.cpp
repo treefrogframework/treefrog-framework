@@ -199,7 +199,7 @@ int TEpollSocket::send()
             }
 
             errno = 0;
-            len = tf_send(sd, data, len, MSG_NOSIGNAL);
+            len = tf_send(sd, data, len);
             err = errno;
 
             if (len <= 0) {

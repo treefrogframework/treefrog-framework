@@ -21,9 +21,19 @@
 #include <TWebApplication>
 #include <atomic>
 
+constexpr int RECV_BUF_SIZE = 8 * 1024;
+
 namespace {
 std::atomic<int> threadCounter(0);
-int keepAliveTimeout = -1;
+
+int keepAliveTimeout()
+{
+    static int timeout = []() {
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        return qMax(timeout, 0);
+    }();
+    return timeout;
+}
 }
 
 
@@ -62,11 +72,7 @@ TActionThread::TActionThread(int socket, int maxThreads) :
     _maxThreads(maxThreads)
 {
     TActionContext::socketDesc = socket;
-
-    if (keepAliveTimeout < 0) {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
-        keepAliveTimeout = qMax(timeout, 0);
-    }
+    _readBuffer.reserve(RECV_BUF_SIZE);
 }
 
 
@@ -105,8 +111,10 @@ void TActionThread::run()
 
     Counter counter(threadCounter);
     QEventLoop eventLoop;
-    _httpSocket = new THttpSocket();
-    _httpSocket->setSocketDescriptor(TActionContext::socketDesc);
+    _httpSocket = new THttpSocket(_readBuffer);
+    if (TActionContext::socketDesc > 0) {
+        _httpSocket->setSocketDescriptor(TActionContext::socketDesc, QAbstractSocket::ConnectedState);
+    }
     TActionContext::socketDesc = 0;
     TDatabaseContext::setCurrentDatabaseContext(this);
 
@@ -137,7 +145,7 @@ void TActionThread::run()
                 TActionContext::execute(req, _httpSocket->socketId());
             }
 
-            if (keepAliveTimeout == 0) {
+            if (keepAliveTimeout() == 0) {
                 break;
             }
 
@@ -147,11 +155,6 @@ void TActionThread::run()
             }
 
             if (_httpSocket->state() != QAbstractSocket::ConnectedState) {
-                goto receive_end;
-            }
-
-            if (_httpSocket->idleTime() >= keepAliveTimeout) {
-                tSystemDebug("KeepAlive timeout : socket:%d", _httpSocket->socketId());
                 goto receive_end;
             }
         }
@@ -210,8 +213,8 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
         }
 
         // Check idle timeout
-        if (Q_UNLIKELY(keepAliveTimeout > 0 && socket->idleTime() >= keepAliveTimeout)) {
-            tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout, (int)socket->socketDescriptor());
+        if (Q_UNLIKELY(keepAliveTimeout() > 0 && socket->idleTime() >= keepAliveTimeout())) {
+            tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout(), (int)socket->socketDescriptor());
             break;
         }
     }
@@ -223,7 +226,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 
 qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
-    if (keepAliveTimeout > 0) {
+    if (keepAliveTimeout() > 0) {
         header.setRawHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("Keep-Alive"));
     }
     return _httpSocket->write(static_cast<THttpHeader *>(&header), body);

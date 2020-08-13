@@ -11,7 +11,7 @@
 class T_CORE_EXPORT THttpSocket : public QObject {
     Q_OBJECT
 public:
-    THttpSocket(QObject *parent = 0);
+    THttpSocket(QByteArray &readBuffer, QObject *parent = 0);
     virtual ~THttpSocket();
 
     QList<THttpRequest> read();
@@ -24,7 +24,7 @@ public:
     void deleteLater();
 
     int socketDescriptor() const { return _socket; }
-    void setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState = QAbstractSocket::ConnectedState);
+    void setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState);
     QHostAddress peerAddress() const { return _peerAddr; }
     ushort peerPort() const { return _peerPort; }
     QAbstractSocket::SocketState state() const { return _state; }
@@ -33,7 +33,7 @@ public:
     void writeRawDataFromWebSocket(const QByteArray &data);
 
 protected:
-    QByteArray readRawData(int msecs);
+    int readRawData(char *data, int size, int msecs);
 
 protected slots:
     qint64 writeRawData(const char *data, qint64 size);
@@ -52,7 +52,8 @@ private:
     QHostAddress _peerAddr;
     ushort _peerPort {0};
     qint64 _lengthToRead {-1};
-    QByteArray _readBuffer;
+    QByteArray &_readBuffer;
+    QByteArray _headerBuffer;
     TTemporaryFile _fileBuffer;
     quint64 _idleElapsed {0};
 
@@ -64,4 +65,3 @@ inline bool THttpSocket::canReadRequest() const
 {
     return (_lengthToRead == 0);
 }
-

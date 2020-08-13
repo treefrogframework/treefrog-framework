@@ -3,12 +3,12 @@
 #include <aio.h>
 #include <fcntl.h>
 #include <poll.h>
-#include <unistd.h>
+#include <sys/file.h>
+#include <sys/socket.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/file.h>
-#include <sys/socket.h>
+#include <unistd.h>
 
 #ifdef Q_OS_LINUX
 #include <sys/epoll.h>
@@ -62,7 +62,7 @@ inline pid_t tf_gettid()
     return syscall(SYS_gettid);
 }
 
-#endif // Q_OS_LINUX
+#endif  // Q_OS_LINUX
 
 #ifdef Q_OS_DARWIN
 
@@ -79,7 +79,7 @@ inline pid_t tf_gettid()
     return tid;
 }
 
-#endif // Q_OS_DARWIN
+#endif  // Q_OS_DARWIN
 
 inline int tf_aio_write(struct aiocb *aiocbp)
 {
@@ -107,6 +107,7 @@ inline int tf_write(int fd, const void *buf, size_t count)
 
 inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 {
+    flags |= MSG_NOSIGNAL;
     TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
 }
 

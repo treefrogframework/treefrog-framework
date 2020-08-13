@@ -24,8 +24,6 @@
 constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
 constexpr qint64 WRITE_LENGTH = 1408;
 constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
-constexpr int RECV_BUF_SIZE = 64 * 1024;
-constexpr int RESERVED_BUFFER_SIZE = 1024;
 
 namespace {
 TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
@@ -37,8 +35,9 @@ std::atomic<ushort> point {0};
   \brief The THttpSocket class provides a socket for the HTTP.
 */
 
-THttpSocket::THttpSocket(QObject *parent) :
-    QObject(parent)
+THttpSocket::THttpSocket(QByteArray &readBuffer, QObject *parent) :
+    QObject(parent),
+    _readBuffer(readBuffer)
 {
     do {
         _sid = point.fetch_add(1);
@@ -48,7 +47,6 @@ THttpSocket::THttpSocket(QObject *parent) :
     connect(this, SIGNAL(requestWrite(const QByteArray &)), this, SLOT(writeRawData(const QByteArray &)), Qt::QueuedConnection);
 
     _idleElapsed = Tf::getMSecsSinceEpoch();
-    _readBuffer.reserve(RESERVED_BUFFER_SIZE);
 }
 
 
@@ -67,10 +65,8 @@ QList<THttpRequest> THttpSocket::read()
     if (canReadRequest()) {
         if (_fileBuffer.isOpen()) {
             _fileBuffer.close();
-            THttpRequest req(_readBuffer, _fileBuffer.fileName(), peerAddress());
-            reqList << req;
-            _readBuffer.resize(0);
-            _fileBuffer.resize(0);
+            reqList << THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress());
+            _headerBuffer.resize(0);
         } else {
             reqList = THttpRequest::generate(_readBuffer, peerAddress());
         }
@@ -119,12 +115,8 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 }
 
 
-QByteArray THttpSocket::readRawData(int msecs)
+int THttpSocket::readRawData(char *data, int size, int msecs)
 {
-    int total = 0;
-    QByteArray buffer;
-    buffer.reserve(RECV_BUF_SIZE);
-
     if (Q_UNLIKELY(_socket <= 0)) {
         throw StandardException("Logic error", __FILE__, __LINE__);
     }
@@ -133,56 +125,28 @@ QByteArray THttpSocket::readRawData(int msecs)
     if (res < 0) {
         tSystemError("socket poll error");
         abort();
-        return buffer;
+        return -1;
     }
 
     if (!res) {
         // timeout
-        return buffer;
+        return 0;
     }
 
-    int timeout = 0;
-    qint64 startidle = Tf::getMSecsSinceEpoch();
+    int len = tf_recv(_socket, data, size);
+    if (len < 0) {
+        abort();
+        return -1;
+    }
 
-    do {
-        int buflen = RECV_BUF_SIZE - total;
-        int len = tf_recv(_socket, buffer.data() + total, buflen);
-        int error = errno;
+    if (len == 0) {
+        tSystemDebug("Disconnected from remote host  [socket:%d]", _socket);
+        abort();
+        return 0;
+    }
 
-        if (len < 0) {
-            if (error == EAGAIN) {
-                if (Tf::getMSecsSinceEpoch() - startidle < msecs) {
-                    std::this_thread::yield();
-                    continue;
-                } else {
-                    break;
-                }
-            }
-            abort();
-            break;
-
-        } else if (len == 0) {
-            tSystemDebug("Disconnected from remote host  [socket:%d]", _socket);
-            abort();
-            break;
-
-        } else {
-            _idleElapsed = Tf::getMSecsSinceEpoch();
-            total += len;
-            buffer.resize(total);
-
-            if (len < buflen || total == RECV_BUF_SIZE) {
-                break;
-            }
-
-            timeout = Tf::getMSecsSinceEpoch() - startidle - msecs;
-            if (timeout <= 0) {
-                break;
-            }
-        }
-    } while (tf_poll_recv(_socket, timeout) > 0);
-
-    return buffer;
+    _idleElapsed = Tf::getMSecsSinceEpoch();
+    return len;
 }
 
 
@@ -210,7 +174,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
             abort();
             break;
         } else {
-            qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH), MSG_NOSIGNAL);
+            qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
             if (Q_UNLIKELY(written <= 0)) {
                 tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
                 return -1;
@@ -238,21 +202,25 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
     static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
 
-    auto buf = readRawData(msecs);
-    if (!buf.isEmpty()) {
+    int buflen = _readBuffer.capacity() - _readBuffer.size();
+    int len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
+
+    if (len > 0) {
+        _readBuffer.resize(_readBuffer.size() + len);
+
         if (_lengthToRead > 0) {
             // Writes to buffer
             if (_fileBuffer.isOpen()) {
-                if (_fileBuffer.write(buf.data(), buf.size()) < 0) {
+                if (_fileBuffer.write(_readBuffer.data(), _readBuffer.size()) < 0) {
                     throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                 }
+                _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0LL);
+                _readBuffer.resize(0);
             } else {
-                _readBuffer.append(buf);
+                _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0LL);
             }
-            _lengthToRead = qMax(_lengthToRead - buf.size(), 0LL);
 
         } else if (_lengthToRead < 0) {
-            _readBuffer.append(buf);
             int idx = _readBuffer.indexOf(Tf::CRLFCRLF);
             if (idx > 0) {
                 THttpRequestHeader header(_readBuffer);
@@ -262,19 +230,30 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
                 }
 
-                _lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - _readBuffer.length(), 0LL);
+                _lengthToRead = qMax(idx + 4 + header.contentLength() - _readBuffer.length(), 0LL);
 
                 if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
+                    _headerBuffer = _readBuffer.mid(0, idx + 4);
                     // Writes to file buffer
                     if (Q_UNLIKELY(!_fileBuffer.open())) {
                         throw RuntimeException(QLatin1String("temporary file open error: ") + _fileBuffer.fileTemplate(), __FILE__, __LINE__);
                     }
+                    _fileBuffer.resize(0);  // truncate
                     if (_readBuffer.length() > idx + 4) {
                         tSystemDebug("fileBuffer name: %s", qPrintable(_fileBuffer.fileName()));
                         if (_fileBuffer.write(_readBuffer.data() + idx + 4, _readBuffer.length() - (idx + 4)) < 0) {
                             throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                         }
                     }
+                    _readBuffer.resize(0);
+                } else {
+                    if (_lengthToRead > 0) {
+                        _readBuffer.reserve((idx + 4 + header.contentLength()) * 1.1);
+                    }
+                }
+            } else {
+                if (_readBuffer.size() > _readBuffer.capacity() * 0.8) {
+                    _readBuffer.reserve(_readBuffer.capacity() * 2);
                 }
             }
         } else {
@@ -308,6 +287,7 @@ void THttpSocket::abort()
         _state = QAbstractSocket::UnconnectedState;
     }
 }
+
 
 void THttpSocket::deleteLater()
 {
