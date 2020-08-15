@@ -66,6 +66,7 @@ public:
     static QStringList splitPath(const QString &path);
     TRouting findRouting(Tf::HttpMethod method, const QStringList &components) const;
     QString findUrl(const QString &controller, const QString &action, const QStringList &params = QStringList()) const;
+    QList<TRoute> allRoutes() const { return _routes; }
 
 protected:
     TUrlRoute() { }
@@ -76,4 +77,3 @@ protected:
 private:
     QList<TRoute> _routes;
 };
-
