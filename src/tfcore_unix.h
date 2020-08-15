@@ -62,6 +62,13 @@ inline pid_t tf_gettid()
     return syscall(SYS_gettid);
 }
 
+
+inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
+{
+    flags |= MSG_NOSIGNAL;
+    TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
+}
+
 #endif  // Q_OS_LINUX
 
 #ifdef Q_OS_DARWIN
@@ -77,6 +84,12 @@ inline pid_t tf_gettid()
     uint64_t tid;
     pthread_threadid_np(NULL, &tid);
     return tid;
+}
+
+
+inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
+{
+    TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
 }
 
 #endif  // Q_OS_DARWIN
@@ -102,13 +115,6 @@ inline int tf_read(int fd, void *buf, size_t count)
 inline int tf_write(int fd, const void *buf, size_t count)
 {
     TF_EINTR_LOOP(::write(fd, buf, count));
-}
-
-
-inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
-{
-    flags |= MSG_NOSIGNAL;
-    TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
 }
 
 
