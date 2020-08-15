@@ -7,6 +7,10 @@
 
 #include "servermanager.h"
 #include "systembusdaemon.h"
+#include "tappsettings.h"
+#include "tthreadapplicationserver.h"
+#include "tdispatcher.h"
+#include "tactioncontroller.h"
 #include <QHostInfo>
 #include <QJsonDocument>
 #include <QSysInfo>
@@ -14,6 +18,7 @@
 #include <TAppSettings>
 #include <TSystemGlobal>
 #include <TWebApplication>
+#include <TUrlRoute>
 #include <tfcore.h>
 #include <tprocessinfo.h>
 
@@ -54,7 +59,8 @@ enum CommandOption {
     SendSignal,
     AutoReload,
     Port,
-    ShowPid
+    ShowPid,
+    ShowRoutes
 };
 
 
@@ -116,12 +122,14 @@ public:
         insert("-r", AutoReload);
         insert("-p", Port);
         insert("-m", ShowPid);
+        insert("--show-routes", ShowRoutes);
     }
 };
 Q_GLOBAL_STATIC(OptionHash, options)
 
+namespace {
 
-static void usage()
+void usage()
 {
     constexpr auto text = "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n"
                           "Usage: %1 -k [stop|abort|restart|status] [application-directory]\n"
@@ -135,6 +143,7 @@ static void usage()
                           "  -m              : show the process ID of a running main program\n"
                           "%4"
                           "%3\n"
+                          "Type '%1 --show-routes' to show routes.\n"
                           "Type '%1 -l' to show your running applications.\n"
                           "Type '%1 -h' to show this information.\n"
                           "Type '%1 -v' to show the program version.";
@@ -152,7 +161,7 @@ static void usage()
 }
 
 
-static bool checkArguments()
+bool checkArguments()
 {
     for (const auto &arg : QCoreApplication::arguments()) {
         if (arg.startsWith('-') && options()->value(arg, Invalid) == Invalid) {
@@ -164,7 +173,7 @@ static bool checkArguments()
 }
 
 
-static bool startDaemon()
+bool startDaemon()
 {
     bool success;
     QStringList args = QCoreApplication::arguments();
@@ -192,7 +201,7 @@ static bool startDaemon()
 }
 
 
-static void writeStartupLog()
+void writeStartupLog()
 {
     tSystemInfo("TreeFrog Framework version %s", TF_VERSION_STR);
 
@@ -215,21 +224,21 @@ static void writeStartupLog()
 }
 
 
-static QString pidFilePath(const QString &appRoot = QString())
+QString pidFilePath(const QString &appRoot = QString())
 {
     return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
                                : appRoot + QLatin1String("/tmp/") + PID_FILENAME;
 }
 
 
-static QString oldPidFilePath(const QString &appRoot = QString())
+QString oldPidFilePath(const QString &appRoot = QString())
 {
     return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + OLD_PID_FILENAME
                                : appRoot + QLatin1String("/tmp/") + OLD_PID_FILENAME;
 }
 
 
-static QJsonObject readJsonOfApplication(const QString &appRoot = QString())
+QJsonObject readJsonOfApplication(const QString &appRoot = QString())
 {
     QFile pidf(pidFilePath(appRoot));
     if (pidf.open(QIODevice::ReadOnly)) {
@@ -239,14 +248,14 @@ static QJsonObject readJsonOfApplication(const QString &appRoot = QString())
 }
 
 
-static qint64 readPidOfApplication(const QString &appRoot = QString())
+qint64 readPidOfApplication(const QString &appRoot = QString())
 {
     int pid = readJsonOfApplication(appRoot)[JSON_PID_KEY].toInt();
     return (pid > 0) ? pid : -1;
 }
 
 
-static qint64 runningApplicationPid(const QString &appRoot = QString())
+qint64 runningApplicationPid(const QString &appRoot = QString())
 {
     qint64 pid = readPidOfApplication(appRoot);
     if (pid > 0) {
@@ -259,7 +268,7 @@ static qint64 runningApplicationPid(const QString &appRoot = QString())
 }
 
 
-static QString runningApplicationsFilePath()
+QString runningApplicationsFilePath()
 {
     QString home = QDir::homePath();
 #ifdef Q_OS_LINUX
@@ -271,7 +280,7 @@ static QString runningApplicationsFilePath()
 }
 
 
-static bool addRunningApplication(const QString &rootPath)
+bool addRunningApplication(const QString &rootPath)
 {
     QFile file(runningApplicationsFilePath());
     QDir dir = QFileInfo(file).dir();
@@ -298,7 +307,7 @@ static bool addRunningApplication(const QString &rootPath)
 }
 
 
-static QStringList runningApplicationPathList()
+QStringList runningApplicationPathList()
 {
     QStringList ret;
     QFile file(runningApplicationsFilePath());
@@ -320,7 +329,7 @@ static QStringList runningApplicationPathList()
 }
 
 
-static void cleanupRunningApplicationList()
+void cleanupRunningApplicationList()
 {
     QStringList runapps = runningApplicationPathList();
     QFile file(runningApplicationsFilePath());
@@ -339,7 +348,7 @@ static void cleanupRunningApplicationList()
 }
 
 
-static void showRunningAppList()
+void showRunningAppList()
 {
     QStringList approots = runningApplicationPathList();
     if (approots.isEmpty()) {
@@ -364,7 +373,107 @@ static void showRunningAppList()
 }
 
 
-static int killTreeFrogProcess(const QString &cmd)
+class MethodDefinition : public QMap<int, QByteArray> {
+public:
+    MethodDefinition() :
+        QMap<int, QByteArray>()
+    {
+        insert(TRoute::Match,   QByteArray("match   "));
+        insert(TRoute::Get,     QByteArray("get     "));
+        insert(TRoute::Head,    QByteArray("head    "));
+        insert(TRoute::Post,    QByteArray("post    "));
+        insert(TRoute::Options, QByteArray("options "));
+        insert(TRoute::Put,     QByteArray("put     "));
+        insert(TRoute::Delete,  QByteArray("delete  "));
+        insert(TRoute::Trace,   QByteArray("trace   "));
+    }
+};
+Q_GLOBAL_STATIC(MethodDefinition, methodDef)
+
+
+QString createMethodString(const QString &controllerName, const QMetaMethod &method)
+{
+    QString str;
+
+    if (method.isValid()) {
+        str = controllerName;
+        str += ".";
+        str += method.name();
+        str += "(";
+        if (method.parameterCount() > 0) {
+            for (auto &param : method.parameterNames()) {
+                str += param;
+                str += ",";
+            }
+            str.chop(1);
+        }
+        str += ")";
+    }
+    return str;
+}
+
+
+void showRoutes()
+{
+    static QStringList excludes = {"applicationcontroller", "directcontroller"};
+
+    bool res = TApplicationServerBase::loadLibraries();
+    if (!res) {
+        return;
+    }
+
+    auto routes = TUrlRoute::instance().allRoutes();
+    if (!routes.isEmpty()) {
+        printf("Available routes:\n");
+
+        for (auto &route : routes) {
+            QString path = QLatin1String("/") + route.componentList.join("/");
+            auto routing = TUrlRoute::instance().findRouting((Tf::HttpMethod)route.method, route.componentList);
+
+            TDispatcher<TActionController> ctlrDispatcher(routing.controller);
+            auto method = ctlrDispatcher.method(routing.action, 0);
+            if (method.isValid()) {
+                QString ctrl = createMethodString(ctlrDispatcher.typeName(), method);
+                printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(ctrl));
+            } else {
+                if (route.hasVariableParams) {
+                    QByteArray action = routing.controller + "." + routing.action + "(...)";
+                    printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), action.data());
+                }
+            }
+        }
+        printf("\n");
+    }
+
+    printf("Available controllers:\n");
+    auto keys = Tf::objectFactories()->keys();
+    std::sort(keys.begin(), keys.end());
+
+    for (const auto &key : keys) {
+        if (key.endsWith("controller") && !excludes.contains(key)) {
+            auto ctrl = key.mid(0, key.length() - 10);
+            TDispatcher<TActionController> ctlrDispatcher(key);
+            const QMetaObject *metaObject = ctlrDispatcher.object()->metaObject();
+
+            for (int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i) {
+                auto metaMethod = metaObject->method(i);
+                QByteArray api = "match   /";
+                api += ctrl;
+                api += "/";
+                api += metaMethod.name();
+                for (int i = 0; i < metaMethod.parameterCount(); i++) {
+                    api += "/:param";
+                }
+
+                QString ctrl = createMethodString(ctlrDispatcher.typeName(), metaMethod);
+                printf("  %s  ->  %s\n", api.data(), qPrintable(ctrl));
+            }
+        }
+    }
+}
+
+
+int killTreeFrogProcess(const QString &cmd)
 {
     qint64 pid = runningApplicationPid();
 
@@ -418,7 +527,7 @@ static int killTreeFrogProcess(const QString &cmd)
 }
 
 
-static void showProcessId()
+void showProcessId()
 {
     qint64 pid = readPidOfApplication();
     if (pid > 0) {
@@ -426,6 +535,7 @@ static void showProcessId()
     }
 }
 
+} // namespace
 
 int managerMain(int argc, char *argv[])
 {
@@ -498,6 +608,11 @@ int managerMain(int argc, char *argv[])
                 showProcessId();
                 return 0;
             }
+            break;
+
+        case ShowRoutes:
+            showRoutes();
+            return 0;
             break;
 
         default:
