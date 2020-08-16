@@ -1,7 +1,7 @@
 #pragma once
 constexpr auto TF_VERSION_STR = "1.30.0";
 constexpr auto TF_VERSION_NUMBER = 0x013000;
-constexpr auto TF_SRC_REVISION = 2255;
+constexpr auto TF_SRC_REVISION = 2261;
 
 #include <QMetaType>
 #include <QtGlobal>

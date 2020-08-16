@@ -126,9 +126,9 @@ namespace {
 
 void usage()
 {
-    constexpr auto text = "Usage: %1 [-d] [-p port] [-e environment] [-r] [application-directory]\n"
-                          "Usage: %1 -k [stop|abort|restart|status] [application-directory]\n"
-                          "Usage: %1 -m [application-directory]\n"
+    constexpr auto text = "Usage: %1 [-d] [-p port] [-e environment] [-r] [app-directory]\n"
+                          "Usage: %1 -k [stop|abort|restart|status] [app-directory]\n"
+                          "Usage: %1 -m [app-directory]\n"
                           "%2"
                           "Options:\n"
                           "  -d              : run as a daemon process\n"
@@ -138,7 +138,7 @@ void usage()
                           "  -m              : show the process ID of a running main program\n"
                           "%4"
                           "%3\n"
-                          "Type '%1 --show-routes' to show routes.\n"
+                          "Type '%1 --show-routes [app-directory]' to show routing information.\n"
                           "Type '%1 -l' to show your running applications.\n"
                           "Type '%1 -h' to show this information.\n"
                           "Type '%1 -v' to show the program version.";
@@ -146,7 +146,7 @@ void usage()
     QString cmd = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
     QString text2, text3, text4;
 #ifdef Q_OS_WIN
-    text2 = QString("Usage: %1 -w [-e environment] application-directory\n").arg(cmd);
+    text2 = QString("Usage: %1 -w [-e environment] app-directory\n").arg(cmd);
     text3 = "  -w              : run as Windows service mode\n";
 #else
     text4 = "  -r              : reload app automatically when updated (for development)\n";
