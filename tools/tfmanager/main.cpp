@@ -7,10 +7,6 @@
 
 #include "servermanager.h"
 #include "systembusdaemon.h"
-#include "tappsettings.h"
-#include "tthreadapplicationserver.h"
-#include "tdispatcher.h"
-#include "tactioncontroller.h"
 #include <QHostInfo>
 #include <QJsonDocument>
 #include <QSysInfo>
@@ -18,7 +14,6 @@
 #include <TAppSettings>
 #include <TSystemGlobal>
 #include <TWebApplication>
-#include <TUrlRoute>
 #include <tfcore.h>
 #include <tprocessinfo.h>
 
@@ -60,7 +55,7 @@ enum CommandOption {
     AutoReload,
     Port,
     ShowPid,
-    ShowRoutes
+    ShowRoutes,
 };
 
 
@@ -373,103 +368,20 @@ void showRunningAppList()
 }
 
 
-class MethodDefinition : public QMap<int, QByteArray> {
-public:
-    MethodDefinition() :
-        QMap<int, QByteArray>()
-    {
-        insert(TRoute::Match,   QByteArray("match   "));
-        insert(TRoute::Get,     QByteArray("get     "));
-        insert(TRoute::Head,    QByteArray("head    "));
-        insert(TRoute::Post,    QByteArray("post    "));
-        insert(TRoute::Options, QByteArray("options "));
-        insert(TRoute::Put,     QByteArray("put     "));
-        insert(TRoute::Delete,  QByteArray("delete  "));
-        insert(TRoute::Trace,   QByteArray("trace   "));
-    }
-};
-Q_GLOBAL_STATIC(MethodDefinition, methodDef)
-
-
-QString createMethodString(const QString &controllerName, const QMetaMethod &method)
+void showRoutes(const QString &path)
 {
-    QString str;
+    QProcess *process = new QProcess;
+    process->setProcessChannelMode(QProcess::MergedChannels);
+    ServerManager::setupEnvironment(process);
 
-    if (method.isValid()) {
-        str = controllerName;
-        str += ".";
-        str += method.name();
-        str += "(";
-        if (method.parameterCount() > 0) {
-            for (auto &param : method.parameterNames()) {
-                str += param;
-                str += ",";
-            }
-            str.chop(1);
-        }
-        str += ")";
+    QStringList args = {"--show-routes", path};
+    process->start(ServerManager::tfserverProgramPath(), args);
+    if (process->waitForStarted(1000)) {
+        process->waitForFinished(1000);
+        auto str = process->readAll();
+        printf("%s", str.data());
     }
-    return str;
-}
-
-
-void showRoutes()
-{
-    static QStringList excludes = {"applicationcontroller", "directcontroller"};
-
-    bool res = TApplicationServerBase::loadLibraries();
-    if (!res) {
-        return;
-    }
-
-    auto routes = TUrlRoute::instance().allRoutes();
-    if (!routes.isEmpty()) {
-        printf("Available routes:\n");
-
-        for (auto &route : routes) {
-            QString path = QLatin1String("/") + route.componentList.join("/");
-            auto routing = TUrlRoute::instance().findRouting((Tf::HttpMethod)route.method, route.componentList);
-
-            TDispatcher<TActionController> ctlrDispatcher(routing.controller);
-            auto method = ctlrDispatcher.method(routing.action, 0);
-            if (method.isValid()) {
-                QString ctrl = createMethodString(ctlrDispatcher.typeName(), method);
-                printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(ctrl));
-            } else {
-                if (route.hasVariableParams) {
-                    QByteArray action = routing.controller + "." + routing.action + "(...)";
-                    printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), action.data());
-                }
-            }
-        }
-        printf("\n");
-    }
-
-    printf("Available controllers:\n");
-    auto keys = Tf::objectFactories()->keys();
-    std::sort(keys.begin(), keys.end());
-
-    for (const auto &key : keys) {
-        if (key.endsWith("controller") && !excludes.contains(key)) {
-            auto ctrl = key.mid(0, key.length() - 10);
-            TDispatcher<TActionController> ctlrDispatcher(key);
-            const QMetaObject *metaObject = ctlrDispatcher.object()->metaObject();
-
-            for (int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i) {
-                auto metaMethod = metaObject->method(i);
-                QByteArray api = "match   /";
-                api += ctrl;
-                api += "/";
-                api += metaMethod.name();
-                for (int i = 0; i < metaMethod.parameterCount(); i++) {
-                    api += "/:param";
-                }
-
-                QString ctrl = createMethodString(ctlrDispatcher.typeName(), metaMethod);
-                printf("  %s  ->  %s\n", api.data(), qPrintable(ctrl));
-            }
-        }
-    }
+    delete process;
 }
 
 
@@ -535,7 +447,7 @@ void showProcessId()
     }
 }
 
-} // namespace
+}  // namespace
 
 int managerMain(int argc, char *argv[])
 {
@@ -611,7 +523,7 @@ int managerMain(int argc, char *argv[])
             break;
 
         case ShowRoutes:
-            showRoutes();
+            showRoutes(app.webRootPath());
             return 0;
             break;
 

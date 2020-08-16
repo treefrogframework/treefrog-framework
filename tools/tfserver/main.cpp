@@ -6,16 +6,19 @@
  */
 
 #include "signalhandler.h"
+#include "tdispatcher.h"
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
 #include <QMap>
 #include <QStringList>
 #include <QTextCodec>
+#include <TActionController>
 #include <TAppSettings>
 #include <TJSLoader>
 #include <TMultiplexingServer>
 #include <TSystemGlobal>
 #include <TThreadApplicationServer>
+#include <TUrlRoute>
 #include <TWebApplication>
 #include <cstdlib>
 using namespace TreeFrog;
@@ -24,9 +27,11 @@ constexpr auto DEBUG_MODE_OPTION = "--debug";
 constexpr auto SOCKET_OPTION = "-s";
 constexpr auto AUTO_RELOAD_OPTION = "-r";
 constexpr auto PORT_OPTION = "-p";
+constexpr auto SHOW_ROUTES_OPTION = "--show-routes";
 
+namespace {
 
-static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
+void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &message)
 {
     QByteArray msg = message.toLocal8Bit();
     switch (type) {
@@ -49,13 +54,13 @@ static void messageOutput(QtMsgType type, const QMessageLogContext &context, con
 
 
 #if defined(Q_OS_UNIX)
-static void writeFailure(const void *data, int size)
+void writeFailure(const void *data, int size)
 {
     tSystemError("%s", QByteArray((const char *)data, size).data());
 }
 #endif
 
-static QMap<QString, QString> convertArgs(const QStringList &args)
+QMap<QString, QString> convertArgs(const QStringList &args)
 {
     QMap<QString, QString> map;
     for (int i = 1; i < args.count(); ++i) {
@@ -71,6 +76,106 @@ static QMap<QString, QString> convertArgs(const QStringList &args)
     return map;
 }
 
+class MethodDefinition : public QMap<int, QByteArray> {
+public:
+    MethodDefinition() :
+        QMap<int, QByteArray>()
+    {
+        insert(TRoute::Match, QByteArray("match   "));
+        insert(TRoute::Get, QByteArray("get     "));
+        insert(TRoute::Head, QByteArray("head    "));
+        insert(TRoute::Post, QByteArray("post    "));
+        insert(TRoute::Options, QByteArray("options "));
+        insert(TRoute::Put, QByteArray("put     "));
+        insert(TRoute::Delete, QByteArray("delete  "));
+        insert(TRoute::Trace, QByteArray("trace   "));
+    }
+};
+Q_GLOBAL_STATIC(MethodDefinition, methodDef)
+
+
+QString createMethodString(const QString &controllerName, const QMetaMethod &method)
+{
+    QString str;
+
+    if (method.isValid()) {
+        str = controllerName;
+        str += ".";
+        str += method.name();
+        str += "(";
+        if (method.parameterCount() > 0) {
+            for (auto &param : method.parameterNames()) {
+                str += param;
+                str += ",";
+            }
+            str.chop(1);
+        }
+        str += ")";
+    }
+    return str;
+}
+
+
+void showRoutes()
+{
+    static QStringList excludes = {"applicationcontroller", "directcontroller"};
+
+    bool res = TApplicationServerBase::loadLibraries();
+    if (!res) {
+        return;
+    }
+
+    auto routes = TUrlRoute::instance().allRoutes();
+    if (!routes.isEmpty()) {
+        printf("Available routes:\n");
+
+        for (auto &route : routes) {
+            QString path = QLatin1String("/") + route.componentList.join("/");
+            auto routing = TUrlRoute::instance().findRouting((Tf::HttpMethod)route.method, route.componentList);
+
+            TDispatcher<TActionController> ctlrDispatcher(routing.controller);
+            auto method = ctlrDispatcher.method(routing.action, 0);
+            if (method.isValid()) {
+                QString ctrl = createMethodString(ctlrDispatcher.typeName(), method);
+                printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(ctrl));
+            } else {
+                if (route.hasVariableParams) {
+                    QByteArray action = routing.controller + "." + routing.action + "(...)";
+                    printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), action.data());
+                }
+            }
+        }
+        printf("\n");
+    }
+
+    printf("Available controllers:\n");
+    auto keys = Tf::objectFactories()->keys();
+    std::sort(keys.begin(), keys.end());
+
+    for (const auto &key : keys) {
+        if (key.endsWith("controller") && !excludes.contains(key)) {
+            auto ctrl = key.mid(0, key.length() - 10);
+            TDispatcher<TActionController> ctlrDispatcher(key);
+            const QMetaObject *metaObject = ctlrDispatcher.object()->metaObject();
+
+            for (int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i) {
+                auto metaMethod = metaObject->method(i);
+                QByteArray api = "match   /";
+                api += ctrl;
+                api += "/";
+                api += metaMethod.name();
+                for (int i = 0; i < metaMethod.parameterCount(); i++) {
+                    api += "/:param";
+                }
+
+                QString ctrl = createMethodString(ctlrDispatcher.typeName(), metaMethod);
+                printf("  %s  ->  %s\n", api.data(), qPrintable(ctrl));
+            }
+        }
+    }
+}
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -92,6 +197,7 @@ int main(int argc, char *argv[])
     int sock = args.value(SOCKET_OPTION).toInt();
     bool reload = args.contains(AUTO_RELOAD_OPTION);
     bool debug = args.contains(DEBUG_MODE_OPTION);
+    bool showRoutesOption = args.contains(SHOW_ROUTES_OPTION);
     ushort portNumber = args.value(PORT_OPTION).toUShort();
 
 #if defined(Q_OS_UNIX)
@@ -137,6 +243,12 @@ int main(int argc, char *argv[])
         // Sets search paths for JavaScript
         QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath, "script;node_modules").toString().split(';');
         TJSLoader::setDefaultSearchPaths(jpaths);
+    }
+
+    if (showRoutesOption) {
+        showRoutes();
+        ret = 0;
+        goto end;
     }
 
 #ifdef Q_OS_WIN
@@ -216,6 +328,9 @@ finish:
     Tf::releaseAccessLogger();
     Tf::releaseSystemLogger();
 
+end:
+    fflush(stderr);
+    fflush(stdout);
     _exit(ret);
     return ret;
 }

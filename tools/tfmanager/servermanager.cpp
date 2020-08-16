@@ -21,9 +21,9 @@
 namespace TreeFrog {
 
 #if defined(Q_OS_WIN) && !defined(TF_NO_DEBUG)
-#define TFSERVER_CMD INSTALL_PATH "/tadpoled"
+constexpr auto TFSERVER_CMD = INSTALL_PATH "/tadpoled";
 #else
-#define TFSERVER_CMD INSTALL_PATH "/tadpole"
+constexpr auto TFSERVER_CMD = INSTALL_PATH "/tadpole";
 #endif
 
 static QMap<QProcess *, int> serversStatus;
@@ -47,6 +47,12 @@ ServerManager::~ServerManager()
     stop();
 
     TApplicationServerBase::nativeSocketCleanup();
+}
+
+
+QString ServerManager::tfserverProgramPath()
+{
+    return QLatin1String(TFSERVER_CMD);
 }
 
 
@@ -169,6 +175,31 @@ void ServerManager::ajustServers()
 }
 
 
+void ServerManager::setupEnvironment(QProcess *process)
+{
+#if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
+    // Sets LD_LIBRARY_PATH environment variable
+    QString ldpath = ".";  // means the lib dir
+    QString sysldpath = QProcess::systemEnvironment().filter("LD_LIBRARY_PATH=", Qt::CaseSensitive).value(0).mid(16);
+    if (!sysldpath.isEmpty()) {
+        ldpath += ":";
+        ldpath += sysldpath;
+    }
+
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("LD_LIBRARY_PATH", ldpath);
+    tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qPrintable(ldpath));
+
+    QString preload = Tf::appSettings()->value(Tf::LDPreload).toString();
+    if (!preload.isEmpty()) {
+        env.insert("LD_PRELOAD", preload);
+        tSystemDebug("export %s=%s", "LD_PRELOAD", qPrintable(preload));
+    }
+    process->setProcessEnvironment(env);
+#endif
+}
+
+
 void ServerManager::startServer(int id) const
 {
     QStringList args = QCoreApplication::arguments();
@@ -199,29 +230,9 @@ void ServerManager::startServer(int id) const
     connect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(serverFinish(int, QProcess::ExitStatus)));
     connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));  // For error notification
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
-    // Sets LD_LIBRARY_PATH environment variable
-    QString ldpath = ".";  // means the lib dir
-    QString sysldpath = QProcess::systemEnvironment().filter("LD_LIBRARY_PATH=", Qt::CaseSensitive).value(0).mid(16);
-    if (!sysldpath.isEmpty()) {
-        ldpath += ":";
-        ldpath += sysldpath;
-    }
-
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("LD_LIBRARY_PATH", ldpath);
-    tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qPrintable(ldpath));
-
-    QString preload = Tf::appSettings()->value(Tf::LDPreload).toString();
-    if (!preload.isEmpty()) {
-        env.insert("LD_PRELOAD", preload);
-        tSystemDebug("export %s=%s", "LD_PRELOAD", qPrintable(preload));
-    }
-    tfserver->setProcessEnvironment(env);
-#endif
-
     // Executes treefrog server
-    tfserver->start(TFSERVER_CMD, args, QIODevice::ReadOnly);
+    setupEnvironment(tfserver);
+    tfserver->start(tfserverProgramPath(), args, QIODevice::ReadOnly);
     tfserver->closeReadChannel(QProcess::StandardOutput);
     tfserver->closeWriteChannel();
     tSystemDebug("tfserver started");
@@ -242,7 +253,7 @@ void ServerManager::errorDetect(QProcess::ProcessError error)
 {
     QProcess *server = qobject_cast<QProcess *>(sender());
     if (server) {
-        tSystemError("tfserver error detected(%d). [%s]", error, TFSERVER_CMD);
+        tSystemError("tfserver error detected(%d). [%s]", error, qPrintable(tfserverProgramPath()));
         //server->close();  // long blocking..
         server->kill();
     }

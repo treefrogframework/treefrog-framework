@@ -27,6 +27,8 @@ public:
     ManagerState state() const { return managerState; }
     int serverCount() const;
     int spareServerCount() const;
+    static QString tfserverProgramPath();
+    static void setupEnvironment(QProcess *process);
 
 protected:
     void ajustServers();
