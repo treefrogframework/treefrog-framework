@@ -94,7 +94,7 @@ public:
 Q_GLOBAL_STATIC(MethodDefinition, methodDef)
 
 
-QString createMethodString(const QString &controllerName, const QMetaMethod &method)
+QByteArray createMethodString(const QString &controllerName, const QMetaMethod &method)
 {
     QString str;
 
@@ -112,7 +112,7 @@ QString createMethodString(const QString &controllerName, const QMetaMethod &met
         }
         str += ")";
     }
-    return str;
+    return str.toLatin1();
 }
 
 
@@ -130,20 +130,22 @@ void showRoutes()
         printf("Available routes:\n");
 
         for (auto &route : routes) {
+            QByteArray action;
             QString path = QLatin1String("/") + route.componentList.join("/");
             auto routing = TUrlRoute::instance().findRouting((Tf::HttpMethod)route.method, route.componentList);
 
             TDispatcher<TActionController> ctlrDispatcher(routing.controller);
             auto method = ctlrDispatcher.method(routing.action, 0);
             if (method.isValid()) {
-                QString ctrl = createMethodString(ctlrDispatcher.typeName(), method);
-                printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(ctrl));
+                action = createMethodString(ctlrDispatcher.typeName(), method);
+            } else if (routing.controller.startsWith("/")) {
+                action = routing.controller;
+            } else if (route.hasVariableParams) {
+                action = routing.controller + "." + routing.action + "(...)";
             } else {
-                if (route.hasVariableParams) {
-                    QByteArray action = routing.controller + "." + routing.action + "(...)";
-                    printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), action.data());
-                }
+                action = QByteArrayLiteral("(not found)");
             }
+            printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(action));
         }
         printf("\n");
     }
@@ -168,8 +170,8 @@ void showRoutes()
                     api += "/:param";
                 }
 
-                QString ctrl = createMethodString(ctlrDispatcher.typeName(), metaMethod);
-                printf("  %s  ->  %s\n", api.data(), qPrintable(ctrl));
+                QByteArray action = createMethodString(ctlrDispatcher.typeName(), metaMethod);
+                printf("  %s  ->  %s\n", api.data(), action.data());
             }
         }
     }
