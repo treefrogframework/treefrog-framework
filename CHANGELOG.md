@@ -1,4 +1,11 @@
 # ChangeLog
+## 1.30.0
+ - Implemented logics for X-Forwarded-For Header.
+ - Implemented ActionMailer.smtp.RequireTLS parameter in application.ini.
+ - Added a option for showing URL routing to treefrog command.
+ - Updated I/F of ORM functions.
+ - Performance improvement.
+
 ## 1.29.0
  - Fix a bug of max-age of cookie.
  - Fix a bug of generating select-tag.
