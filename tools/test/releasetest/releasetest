@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 
+#
 APPNAME=blogapp
 BASEDIR=`pwd`/`dirname $0`
 APPROOT=$BASEDIR/$APPNAME
@@ -100,6 +100,7 @@ $TSPAWN w foo || exit
 qmake -r || exit
 make -j4
 make || exit
+$TREEFROG --show-routes || exit
 
 testcase
 cd $APPROOT
@@ -112,6 +113,8 @@ cd build
 Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake ..
 make -j4
 make || exit
+cd $APPROOT
+$TREEFROG --show-routes || exit
 
 cd $BASEDIR
 sqlite3 $DBFILE < create_blog_table.sql || exit

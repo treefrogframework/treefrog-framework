@@ -108,12 +108,18 @@ exit /B 0
 ::
 :CheckWebApp
 cd /D %APPDIR%
+"%1" --show-routes
+if ERRORLEVEL 1 (
+  echo App Error!
+  exit /B 1
+)
 echo;
 echo Starting webapp..
 set RES=1
 "%1" -e dev -d -p %PORT% %APPDIR%
 if ERRORLEVEL 1 (
   echo App Start Error!
+  exit /B 1
 )
 
 timeout 1 /nobreak >nul
