@@ -134,13 +134,13 @@ void showRoutes()
             QString path = QLatin1String("/") + route.componentList.join("/");
             auto routing = TUrlRoute::instance().findRouting((Tf::HttpMethod)route.method, route.componentList);
 
-            TDispatcher<TActionController> ctlrDispatcher(routing.controller);
-            auto method = ctlrDispatcher.method(routing.action, 0);
+            TDispatcher<TActionController> dispatcher(routing.controller);
+            auto method = dispatcher.method(routing.action, 0);
             if (method.isValid()) {
-                action = createMethodString(ctlrDispatcher.typeName(), method);
+                action = createMethodString(dispatcher.typeName(), method);
             } else if (routing.controller.startsWith("/")) {
                 action = routing.controller;
-            } else if (route.hasVariableParams) {
+            } else if (route.hasVariableParams && dispatcher.hasMethod(routing.action)) {
                 action = routing.controller + "." + routing.action + "(...)";
             } else {
                 action = QByteArrayLiteral("(not found)");

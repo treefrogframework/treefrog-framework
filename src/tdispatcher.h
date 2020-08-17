@@ -6,6 +6,8 @@
 #include <QStringList>
 #include <TGlobal>
 
+constexpr int NUM_METHOD_PARAMS = 11;
+
 
 template <class T>
 class TDispatcher {
@@ -17,6 +19,7 @@ public:
     T *object();
     QString typeName() const { return _metaType; }
     QMetaMethod method(const QByteArray &methodName, int argCount);
+    bool hasMethod(const QByteArray &methodName);
 
 private:
     QString _metaType;
@@ -50,8 +53,7 @@ inline TDispatcher<T>::~TDispatcher()
 template <class T>
 inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argCount)
 {
-    constexpr int NUM_PARAMS = 11;
-    static const QByteArray params[NUM_PARAMS] = {
+    static const QByteArray params[NUM_METHOD_PARAMS] = {
         QByteArrayLiteral("()"),
         QByteArrayLiteral("(QString)"),
         QByteArrayLiteral("(QString,QString)"),
@@ -72,7 +74,7 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
 
     int argcnt = 0;
     int idx = -1;
-    int narg = qMin(argCount, NUM_PARAMS - 1);
+    int narg = qMin(argCount, NUM_METHOD_PARAMS - 1);
     for (int i = narg; i >= 0; i--) {
         // Find method
         QByteArray mtd = methodName;
@@ -86,7 +88,7 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
     }
 
     if (idx < 0) {
-        for (int i = narg + 1; i < NUM_PARAMS - 1; i++) {
+        for (int i = narg + 1; i < NUM_METHOD_PARAMS - 1; i++) {
             // Find method
             QByteArray mtd = methodName;
             mtd += params[i];
@@ -105,6 +107,18 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
     }
 
     return _ptr->metaObject()->method(idx);
+}
+
+
+template <class T>
+inline bool TDispatcher<T>::hasMethod(const QByteArray &methodName)
+{
+    for (int i = 0; i < NUM_METHOD_PARAMS; i++) {
+        if (method(methodName, i).isValid()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 
