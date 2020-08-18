@@ -93,13 +93,13 @@ if /i "%Platform%" == "x64" (
   set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
 )
 
-echo %QT_INSTALL_PREFIX% | find "msvc2015" >NUL
+echo %QT_INSTALL_PREFIX% | find "msvc2019" >NUL
 if not ERRORLEVEL 1 (
-  set VSVER=2015
+  set VSVER=2019
   if /i "%Platform%" == "x64" (
-    set CMAKEOPT=Visual Studio 14 2015 Win64
+    set CMAKEOPT=Visual Studio 16 2019
   ) else (
-    set CMAKEOPT=Visual Studio 14 2015
+    set CMAKEOPT=Visual Studio 16 2019
   )
 ) else (
   set VSVER=2017

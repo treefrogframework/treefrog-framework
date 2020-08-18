@@ -7,15 +7,11 @@ rem
 
 set BASEDIR=%~dp0
 
-call "C:\Qt\5.13.2\msvc2017_64\bin\qtenv2.bat"
+call "C:\Qt\5.15.0\msvc2019_64\bin\qtenv2.bat"
 rem call "C:\Qt\5.13.0\msvc2017\bin\qtenv2.bat"
-rem call "C:\Qt\5.13.0\msvc2015_64\bin\qtenv2.bat"
-rem call "C:\Qt\5.12.4\msvc2017_64\bin\qtenv2.bat"
-rem call "C:\Qt\5.12.4\msvc2017\bin\qtenv2.bat"
-rem call "C:\Qt\5.12.4\msvc2015_64\bin\qtenv2.bat"
 
 
-set VSVER=2017
+set VSVER=2019
 set ARCH=amd64
 set VSWHERE="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 set VCVARSBAT=""
@@ -35,8 +31,9 @@ if exist %VCVARSBAT% (
   echo %VCVARSBAT% %ARCH%
   call %VCVARSBAT% %ARCH%
 ) else (
-  call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %ARCH%
-  rem call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
+  echo Error!  Compiler not found.
+  pause
+  exit /b
 )
 
 cd /D %BASEDIR%
