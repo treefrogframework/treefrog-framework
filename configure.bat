@@ -139,15 +139,6 @@ echo     ^)>> %TFENV%
 echo   ^)>> %TFENV%
 echo ^)>> %TFENV%
 echo :break>> %TFENV%
-echo if not exist %%VCVARSBAT%% ^(>> %TFENV%
-echo   if not "%%VS140COMNTOOLS%%" == "" ^(>> %TFENV%
-echo     set VCVARSBAT="%%VS140COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
-echo   ^) else if not "%%VS120COMNTOOLS%%" == "" ^(>> %TFENV%
-echo     set VCVARSBAT="%%VS120COMNTOOLS%%..\..\VC\vcvarsall.bat">> %TFENV%
-echo   ^) else ^(>> %TFENV%
-echo     set VCVARSBAT="">> %TFENV%
-echo   ^)>> %TFENV%
-echo ^)>> %TFENV%
 echo if exist %%VCVARSBAT%% ^(>> %TFENV%
 echo   echo Setting up environment for MSVC usage...>> %TFENV%
 echo   call %%VCVARSBAT%% %VCVARSOPT%>> %TFENV%
