@@ -70,7 +70,7 @@ bool ServerManager::start(const QHostAddress &address, quint16 port)
     int sd = TApplicationServerBase::nativeListen(address, port, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("Failed to create listening socket");
-        fprintf(stderr, "Failed to create listening socket\n");
+        std::fprintf(stderr, "Failed to create listening socket\n");
         return false;
     }
     listeningSocket = sd;
@@ -98,7 +98,7 @@ bool ServerManager::start(const QString &fileDomain)
     int sd = TApplicationServerBase::nativeListen(fileDomain, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
         tSystemError("listening socket create failed  [%s:%d]", __FILE__, __LINE__);
-        fprintf(stderr, "Failed to create listening socket of UNIX domain\n");
+        std::fprintf(stderr, "Failed to create listening socket of UNIX domain\n");
         return false;
     }
 
@@ -289,7 +289,7 @@ void ServerManager::readStandardError() const
     if (server) {
         QByteArray buf = server->readAllStandardError();
         tSystemWarn("treefrog stderr: %s", buf.constData());
-        fprintf(stderr, "treefrog stderr: %s", buf.constData());
+        std::fprintf(stderr, "treefrog stderr: %s", buf.constData());
     }
 }
 

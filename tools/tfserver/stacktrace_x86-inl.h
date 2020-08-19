@@ -32,7 +32,7 @@
 // Produce stack trace
 
 #include <QtGlobal>
-#include <stdint.h>  // for uintptr_t
+#include <cstdint>  // for uintptr_t
 
 #if !defined(Q_OS_WIN32)
 #include <sys/mman.h>
@@ -41,12 +41,11 @@
 
 #include "gconfig.h"
 #include "stacktrace.h"
-#include <stdio.h>  // for NULL
 
 _START_GOOGLE_NAMESPACE_
 
 // Given a pointer to a stack frame, locate and return the calling
-// stackframe, or return NULL if no stackframe can be found. Perform sanity
+// stackframe, or return nullptr if no stackframe can be found. Perform sanity
 // checks (the strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
 template <bool STRICT_UNWINDING>
@@ -60,28 +59,28 @@ static void **NextStackFrame(void **old_sp)
         // With the stack growing downwards, older stack frame must be
         // at a greater address that the current one.
         if (new_sp <= old_sp)
-            return NULL;
+            return nullptr;
         // Assume stack frames larger than 100,000 bytes are bogus.
         if ((uintptr_t)new_sp - (uintptr_t)old_sp > 100000)
-            return NULL;
+            return nullptr;
     } else {
         // In the non-strict mode, allow discontiguous stack frames.
         // (alternate-signal-stacks for example).
         if (new_sp == old_sp)
-            return NULL;
+            return nullptr;
         // And allow frames upto about 1MB.
         if ((new_sp > old_sp)
             && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000))
-            return NULL;
+            return nullptr;
     }
     if ((uintptr_t)new_sp & (sizeof(void *) - 1))
-        return NULL;
+        return nullptr;
 #ifdef __i386__
     // On 64-bit machines, the stack pointer can be very close to
     // 0xffffffff, so we explicitly check for a pointer into the
     // last two pages in the address space
     if ((uintptr_t)new_sp >= 0xffffe000)
-        return NULL;
+        return nullptr;
 #endif
 #if !defined(Q_OS_WIN32)
     if (!STRICT_UNWINDING) {
@@ -93,7 +92,7 @@ static void **NextStackFrame(void **old_sp)
         static int page_size = getpagesize();
         void *new_sp_aligned = (void *)((uintptr_t)new_sp & ~(page_size - 1));
         if (msync(new_sp_aligned, page_size, MS_ASYNC) == -1)
-            return NULL;
+            return nullptr;
     }
 #endif
     return new_sp;

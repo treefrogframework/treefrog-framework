@@ -21,6 +21,7 @@
 #include <TUrlRoute>
 #include <TWebApplication>
 #include <cstdlib>
+#include <cstdio>
 using namespace TreeFrog;
 
 constexpr auto DEBUG_MODE_OPTION = "--debug";
@@ -127,7 +128,7 @@ void showRoutes()
 
     auto routes = TUrlRoute::instance().allRoutes();
     if (!routes.isEmpty()) {
-        printf("Available routes:\n");
+        std::printf("Available routes:\n");
 
         for (auto &route : routes) {
             QByteArray action;
@@ -145,12 +146,12 @@ void showRoutes()
             } else {
                 action = QByteArrayLiteral("(not found)");
             }
-            printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(action));
+            std::printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(action));
         }
-        printf("\n");
+        std::printf("\n");
     }
 
-    printf("Available controllers:\n");
+    std::printf("Available controllers:\n");
     auto keys = Tf::objectFactories()->keys();
     std::sort(keys.begin(), keys.end());
 
@@ -171,7 +172,7 @@ void showRoutes()
                 }
 
                 QByteArray action = createMethodString(ctlrDispatcher.typeName(), metaMethod);
-                printf("  %s  ->  %s\n", api.data(), action.data());
+                std::printf("  %s  ->  %s\n", api.data(), action.data());
             }
         }
     }
@@ -184,6 +185,9 @@ int main(int argc, char *argv[])
     TWebApplication webapp(argc, argv);
     TApplicationServerBase *server = nullptr;
     int ret = -1;
+
+    // No stdout buffering
+    std::setvbuf(stdout, nullptr, _IONBF, 0);
 
     // Setup loggers
     Tf::setupSystemLogger();
@@ -232,14 +236,14 @@ int main(int argc, char *argv[])
 
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");
-        fprintf(stderr, "No such directory\n");
+        std::fprintf(stderr, "No such directory\n");
         goto finish;
     }
     tSystemDebug("Web Root: %s", qPrintable(webapp.webRootPath()));
 
     if (!webapp.appSettingsFileExists()) {
         tSystemError("Settings file not found");
-        fprintf(stderr, "Settings file not found\n");
+        std::fprintf(stderr, "Settings file not found\n");
         goto finish;
     } else {
         // Sets search paths for JavaScript
@@ -262,7 +266,7 @@ int main(int argc, char *argv[])
         int port = (portNumber > 0) ? portNumber : Tf::appSettings()->value(Tf::ListenPort).toInt();
         if (port <= 0 || port > USHRT_MAX) {
             tSystemError("Invalid port number: %d", port);
-            fprintf(stderr, "Invalid port number: %d\n", port);
+            std::fprintf(stderr, "Invalid port number: %d\n", port);
             goto finish;
         }
         // Listen address
@@ -277,7 +281,7 @@ int main(int argc, char *argv[])
 
     if (sock <= 0) {
         tSystemError("Invalid socket descriptor: %d", sock);
-        fprintf(stderr, "Invalid option\n");
+        std::fprintf(stderr, "Invalid option\n");
         goto finish;
     }
 
@@ -304,7 +308,7 @@ int main(int argc, char *argv[])
     server->setAutoReloadingEnabled(reload);
     if (!server->start(debug)) {
         tSystemError("Server open failed");
-        fprintf(stderr, "Server open failed\n");
+        std::fprintf(stderr, "Server open failed\n");
         goto finish;
     }
 
@@ -331,8 +335,6 @@ finish:
     Tf::releaseSystemLogger();
 
 end:
-    fflush(stderr);
-    fflush(stdout);
     _exit(ret);
     return ret;
 }
