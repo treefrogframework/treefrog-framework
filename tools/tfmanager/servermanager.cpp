@@ -196,6 +196,8 @@ void ServerManager::setupEnvironment(QProcess *process)
         tSystemDebug("export %s=%s", "LD_PRELOAD", qPrintable(preload));
     }
     process->setProcessEnvironment(env);
+#else
+    Q_UNUSED(process);
 #endif
 }
 
