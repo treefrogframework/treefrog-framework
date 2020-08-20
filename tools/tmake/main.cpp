@@ -21,7 +21,7 @@ extern int defaultTrimMode;
 
 static int usage()
 {
-    printf("usage: tmake [-f config-file] [-v view-dir] [-d output-dir] [-p|-P]\n");
+    std::printf("usage: tmake [-f config-file] [-v view-dir] [-d output-dir] [-p|-P]\n");
     return 0;
 }
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(codec);
 
     defaultTrimMode = devSetting.value("Erb.DefaultTrimMode", "1").toInt();
-    printf("Erb.DefaultTrimMode: %d\n", defaultTrimMode);
+    std::printf("Erb.DefaultTrimMode: %d\n", defaultTrimMode);
 
     QDir viewDir(".");
     if (!args.value("-v").isEmpty()) {
@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
 
     if (outputDir.exists()) {
         if (outputDir.path() != ".") {
-            printf("  exists   %s\n", qPrintable(outputDir.path()));
+            std::printf("  exists   %s\n", qPrintable(outputDir.path()));
         }
     } else {
         if (outputDir.mkpath(".")) {
-            printf("  created  %s\n", qPrintable(outputDir.path()));
+            std::printf("  created  %s\n", qPrintable(outputDir.path()));
         } else {
             usage();
             return 1;

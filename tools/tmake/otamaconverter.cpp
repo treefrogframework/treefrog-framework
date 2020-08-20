@@ -93,11 +93,11 @@ bool OtamaConverter::convert(const QString &filePath, int trimMode) const
     if (htmlFileInfo.exists() && outFileInfo.exists()) {
         if (outFileInfo.lastModified() > htmlFileInfo.lastModified()
             && (!otmFileInfo.exists() || outFileInfo.lastModified() > otmFileInfo.lastModified())) {
-            //printf("done    %s\n", qPrintable(outFile.fileName()));
+            //std::printf("done    %s\n", qPrintable(outFile.fileName()));
             return true;
         } else {
             if (outFile.remove()) {
-                printf("  removed  %s\n", qPrintable(outFile.fileName()));
+                std::printf("  removed  %s\n", qPrintable(outFile.fileName()));
             }
         }
     }

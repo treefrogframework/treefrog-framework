@@ -102,11 +102,21 @@ if not ERRORLEVEL 1 (
     set CMAKEOPT=Visual Studio 16 2019
   )
 ) else (
-  set VSVER=2017
-   if /i "%Platform%" == "x64" (
-    set CMAKEOPT=Visual Studio 15 2017 Win64
+  echo %QT_INSTALL_PREFIX% | find "msvc2017" >NUL
+  if not ERRORLEVEL 1 (
+    set VSVER=2017
+    if /i "%Platform%" == "x64" (
+      set CMAKEOPT=Visual Studio 15 2017 Win64
+    ) else (
+      set CMAKEOPT=Visual Studio 15 2017
+    )
   ) else (
-    set CMAKEOPT=Visual Studio 15 2017
+    set VSVER=2015
+    if /i "%Platform%" == "x64" (
+      set CMAKEOPT=Visual Studio 14 2015 Win64
+    ) else (
+      set CMAKEOPT=Visual Studio 14 2015
+    )
   )
 )
 

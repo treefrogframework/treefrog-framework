@@ -197,25 +197,25 @@ static QString templateSystem;
 
 static void usage()
 {
-    printf("usage: tspawn <subcommand> [args]\n\n"
-           "Type 'tspawn --show-drivers' to show all the available database drivers for Qt.\n"
-           "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n"
-           "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n"
-           "Type 'tspawn --show-collections' to show all collections in the MongoDB.\n\n"
-           "Available subcommands:\n"
-           "  new (n)         <application-name>\n"
-           "  scaffold (s)    <table-name> [model-name]\n"
-           "  controller (c)  <controller-name> action [action ...]\n"
-           "  model (m)       <table-name> [model-name]\n"
-           "  helper (h)      <name>\n"
-           "  usermodel (u)   <table-name> [username password [model-name]]\n"
-           "  sqlobject (o)   <table-name> [model-name]\n"
-           "  mongoscaffold (ms) <model-name>\n"
-           "  mongomodel (mm) <model-name>\n"
-           "  websocket (w)   <endpoint-name>\n"
-           "  validator (v)   <name>\n"
-           "  mailer (l)      <mailer-name> action [action ...]\n"
-           "  delete (d)      <table-name, helper-name or validator-name>\n");
+    std::printf("usage: tspawn <subcommand> [args]\n\n"
+                "Type 'tspawn --show-drivers' to show all the available database drivers for Qt.\n"
+                "Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.\n"
+                "Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.\n"
+                "Type 'tspawn --show-collections' to show all collections in the MongoDB.\n\n"
+                "Available subcommands:\n"
+                "  new (n)         <application-name>\n"
+                "  scaffold (s)    <table-name> [model-name]\n"
+                "  controller (c)  <controller-name> action [action ...]\n"
+                "  model (m)       <table-name> [model-name]\n"
+                "  helper (h)      <name>\n"
+                "  usermodel (u)   <table-name> [username password [model-name]]\n"
+                "  sqlobject (o)   <table-name> [model-name]\n"
+                "  mongoscaffold (ms) <model-name>\n"
+                "  mongomodel (mm) <model-name>\n"
+                "  websocket (w)   <endpoint-name>\n"
+                "  validator (v)   <name>\n"
+                "  mailer (l)      <mailer-name> action [action ...]\n"
+                "  delete (d)      <table-name, helper-name or validator-name>\n");
 }
 
 
@@ -241,7 +241,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
 
         QTextStream stream(stdin);
         for (;;) {
-            printf("  remove  %s? [ynaqh] ", qPrintable(QDir::cleanPath(file.fileName())));
+            std::printf("  remove  %s? [ynaqh] ", qPrintable(QDir::cleanPath(file.fileName())));
 
             QString line = stream.readLine();
             if (line.isNull())
@@ -270,11 +270,11 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
                 break;
 
             } else if (c == 'H' || c == 'h') {
-                printf("   y - yes, remove\n");
-                printf("   n - no, do not remove\n");
-                printf("   a - all, remove this and all others\n");
-                printf("   q - quit, abort\n");
-                printf("   h - help, show this help\n\n");
+                std::printf("   y - yes, remove\n");
+                std::printf("   n - no, do not remove\n");
+                std::printf("   a - all, remove this and all others\n");
+                std::printf("   q - quit, abort\n");
+                std::printf("   h - help, show this help\n\n");
 
             } else {
                 // one more
@@ -334,7 +334,7 @@ static bool createNewApplication(const QString &name)
         qCritical("failed to create a directory %s", qPrintable(name));
         return false;
     }
-    printf("  created   %s\n", qPrintable(name));
+    std::printf("  created   %s\n", qPrintable(name));
 
     // Creates sub-directories
     for (const QString &str : *subDirs()) {
@@ -488,7 +488,7 @@ static void printSuccessMessage(const QString &model)
     putchar('\n');
     int port = appSettings.value("ListenPort").toInt();
     if (port > 0 && port <= USHRT_MAX)
-        printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(model));
+        std::printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(model));
 
     if (!msg.isEmpty()) {
         puts(qPrintable(msg));
@@ -521,9 +521,9 @@ int main(int argc, char *argv[])
         break;
 
     case ShowDrivers:
-        printf("Available database drivers for Qt:\n");
+        std::printf("Available database drivers for Qt:\n");
         for (QStringListIterator i(TableSchema::databaseDrivers()); i.hasNext();) {
-            printf("  %s\n", qPrintable(i.next()));
+            std::printf("  %s\n", qPrintable(i.next()));
         }
         break;
 
@@ -534,7 +534,7 @@ int main(int argc, char *argv[])
             qCritical("Error: database driver's directory not found");
             return 1;
         }
-        printf("%s\n", qPrintable(fi.canonicalFilePath()));
+        std::printf("%s\n", qPrintable(fi.canonicalFilePath()));
         break;
     }
 
@@ -542,9 +542,9 @@ int main(int argc, char *argv[])
         if (checkIniFile()) {
             QStringList tables = TableSchema::tables();
             if (!tables.isEmpty()) {
-                printf("-----------------\nAvailable tables:\n");
+                std::printf("-----------------\nAvailable tables:\n");
                 for (QStringListIterator i(tables); i.hasNext();) {
-                    printf("  %s\n", qPrintable(i.next()));
+                    std::printf("  %s\n", qPrintable(i.next()));
                 }
                 putchar('\n');
             }
@@ -570,9 +570,9 @@ int main(int argc, char *argv[])
             }
 
             QStringList colls = mongo.getCollectionNames();
-            printf("-----------------\nExisting collections:\n");
+            std::printf("-----------------\nExisting collections:\n");
             for (auto &col : colls) {
-                printf("  %s\n", qPrintable(col));
+                std::printf("  %s\n", qPrintable(col));
             }
             putchar('\n');
         }

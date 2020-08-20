@@ -160,7 +160,7 @@ bool checkArguments()
 {
     for (const auto &arg : QCoreApplication::arguments()) {
         if (arg.startsWith('-') && options()->value(arg, Invalid) == Invalid) {
-            fprintf(stderr, "invalid argument\n");
+            std::fprintf(stderr, "invalid argument\n");
             return false;
         }
     }
@@ -347,10 +347,10 @@ void showRunningAppList()
 {
     QStringList approots = runningApplicationPathList();
     if (approots.isEmpty()) {
-        printf("no running application\n");
+        std::printf("no running application\n");
     } else {
         int cnt = approots.count();
-        printf(" %d application%s running:\n", cnt, (cnt > 1 ? "s" : ""));
+        std::printf(" %d application%s running:\n", cnt, (cnt > 1 ? "s" : ""));
 
         for (const QString &path : approots) {
             QString url;
@@ -362,7 +362,7 @@ void showRunningAppList()
                 url += readJsonOfApplication(path)[JSON_UNIX_KEY].toString();
             }
 
-            printf(" * %s\n    %s\n\n", qPrintable(path), qPrintable(url));
+            std::printf(" * %s\n    %s\n\n", qPrintable(path), qPrintable(url));
         }
     }
 }
@@ -379,7 +379,7 @@ void showRoutes(const QString &path)
     if (process->waitForStarted(1000)) {
         process->waitForFinished(1000);
         auto str = process->readAll();
-        printf("%s", str.data());
+        std::printf("%s", str.data());
     }
     delete process;
 }
@@ -391,15 +391,15 @@ int killTreeFrogProcess(const QString &cmd)
 
     if (cmd == "status") {  // status command
         if (pid > 0) {
-            printf("TreeFrog server is running.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+            std::printf("TreeFrog server is running.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
         } else {
-            printf("TreeFrog server is stopped.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+            std::printf("TreeFrog server is stopped.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
         }
         return (pid > 0) ? 0 : 1;
     }
 
     if (pid < 0) {
-        printf("TreeFrog server not running\n");
+        std::printf("TreeFrog server not running\n");
         return 1;
     }
 
@@ -408,10 +408,10 @@ int killTreeFrogProcess(const QString &cmd)
     if (cmd == "stop") {  // stop command
         pi.terminate();
         if (pi.waitForTerminated()) {
-            printf("TreeFrog application servers shutdown completed\n");
+            std::printf("TreeFrog application servers shutdown completed\n");
             tf_unlink(oldPidFilePath().toLatin1().data());
         } else {
-            fprintf(stderr, "TreeFrog application servers shutdown failed\n");
+            std::fprintf(stderr, "TreeFrog application servers shutdown failed\n");
         }
 
     } else if (cmd == "abort") {  // abort command
@@ -425,11 +425,11 @@ int killTreeFrogProcess(const QString &cmd)
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
-        printf("Killed TreeFrog application server processes\n");
+        std::printf("Killed TreeFrog application server processes\n");
 
     } else if (cmd == "restart") {  // restart command
         pi.restart();
-        printf("Sent a restart request\n");
+        std::printf("Sent a restart request\n");
 
     } else {
         usage();
@@ -443,7 +443,7 @@ void showProcessId()
 {
     qint64 pid = readPidOfApplication();
     if (pid > 0) {
-        printf("%lld\n", pid);
+        std::printf("%lld\n", pid);
     }
 }
 
@@ -473,7 +473,7 @@ int managerMain(int argc, char *argv[])
         int cmd = options()->value(arg, Invalid);
         switch (cmd) {
         case PrintVersion:
-            printf("%s version %s (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_VERSION_STR, TF_SRC_REVISION, __DATE__, qVersion());
+            std::printf("%s version %s (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_VERSION_STR, TF_SRC_REVISION, __DATE__, qVersion());
             return 0;
             break;
 
@@ -497,7 +497,7 @@ int managerMain(int argc, char *argv[])
 
         case SendSignal:
             if (!i.hasNext()) {
-                fprintf(stderr, "Missing signal name\n");
+                std::fprintf(stderr, "Missing signal name\n");
                 return 1;
             }
             signalCmd = i.next();  // assign a command
@@ -509,7 +509,7 @@ int managerMain(int argc, char *argv[])
 
         case Port:
             if (!i.hasNext()) {
-                fprintf(stderr, "Missing port number\n");
+                std::fprintf(stderr, "Missing port number\n");
                 return 1;
             }
             listenPort = i.next().toInt();
@@ -534,7 +534,7 @@ int managerMain(int argc, char *argv[])
     }
 
     if (!app.appSettingsFileExists()) {
-        fprintf(stderr, "INI file not found [%s]\n\n", qPrintable(app.appSettingsFilePath()));
+        std::fprintf(stderr, "INI file not found [%s]\n\n", qPrintable(app.appSettingsFilePath()));
         return 1;
     }
 
@@ -558,7 +558,7 @@ int managerMain(int argc, char *argv[])
     // Check TreeFrog processes are running
     qint64 pid = runningApplicationPid();
     if (pid > 0) {
-        fprintf(stderr, "Already running  pid:%ld\n", (long)pid);
+        std::fprintf(stderr, "Already running  pid:%ld\n", (long)pid);
         return 1;
     }
 
@@ -589,7 +589,7 @@ int managerMain(int argc, char *argv[])
     // start daemon process
     if (daemonMode) {
         if (!startDaemon()) {
-            fprintf(stderr, "Failed to create process\n\n");
+            std::fprintf(stderr, "Failed to create process\n\n");
             return 1;
         }
         return 0;
@@ -634,7 +634,7 @@ int managerMain(int argc, char *argv[])
 
         if (!started) {
             tSystemError("TreeFrog application server startup failed");
-            fprintf(stderr, "TreeFrog application server startup failed\n\n");
+            std::fprintf(stderr, "TreeFrog application server startup failed\n\n");
             return 1;
         }
 

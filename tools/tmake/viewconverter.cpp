@@ -174,7 +174,7 @@ bool ViewConverter::write(const QString &filePath, const QString &data) const
         QTextStream ts(&outFile);
         ts << data;
         if (ts.status() == QTextStream::Ok) {
-            printf("  created  %s\n", qPrintable(outFile.fileName()));
+            std::printf("  created  %s\n", qPrintable(outFile.fileName()));
         } else {
             return false;
         }

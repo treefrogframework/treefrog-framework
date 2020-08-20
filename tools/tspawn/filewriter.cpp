@@ -80,7 +80,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
     if (fi.exists()) {
         QString orig = readFile(filepath);
         if (orig == data) {
-            printf("  unchanged %s\n", qPrintable(QDir::cleanPath(fi.filePath())));
+            std::printf("  unchanged %s\n", qPrintable(QDir::cleanPath(fi.filePath())));
             return true;
         }
 
@@ -92,7 +92,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
         } else {
             QTextStream stream(stdin);
             for (;;) {
-                printf("  overwrite %s? [ynaqdh] ", qPrintable(QDir::cleanPath(fi.filePath())));
+                std::printf("  overwrite %s? [ynaqdh] ", qPrintable(QDir::cleanPath(fi.filePath())));
 
                 QString line = stream.readLine();
                 if (line.isNull()) {
@@ -125,23 +125,23 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     return false;
 
                 } else if (c == 'D' || c == 'd') {
-                    printf("-----------------------------------------------------------\n");
+                    std::printf("-----------------------------------------------------------\n");
                     orig = readFile(filepath);  // Re-read
                     QString df = diff(orig, data);
                     if (df.isEmpty()) {
                         qCritical("Error: diff command failed");
                     } else {
-                        printf("%s", qPrintable(df));
-                        printf("-----------------------------------------------------------\n");
+                        std::printf("%s", qPrintable(df));
+                        std::printf("-----------------------------------------------------------\n");
                     }
 
                 } else if (c == 'H' || c == 'h') {
-                    printf("   y - yes, overwrite\n");
-                    printf("   n - no, do not overwrite\n");
-                    printf("   a - all, overwrite this and all others\n");
-                    printf("   q - quit, abort\n");
-                    printf("   d - diff, show the differences between the old and the new\n");
-                    printf("   h - help, show this help\n\n");
+                    std::printf("   y - yes, overwrite\n");
+                    std::printf("   n - no, do not overwrite\n");
+                    std::printf("   a - all, overwrite this and all others\n");
+                    std::printf("   q - quit, abort\n");
+                    std::printf("   d - diff, show the differences between the old and the new\n");
+                    std::printf("   h - help, show this help\n\n");
 
                 } else {
                     // one more
@@ -153,7 +153,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
         act = (res) ? "created " : "error   ";
     }
 
-    printf("  %s  %s\n", act.data(), qPrintable(QDir::cleanPath(fi.filePath())));
+    std::printf("  %s  %s\n", act.data(), qPrintable(QDir::cleanPath(fi.filePath())));
     return res;
 }
 

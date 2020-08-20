@@ -77,10 +77,10 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
         if ((latestPartialTs.isValid() && latestPartialTs >= outFileInfo.lastModified())
             || erbFileInfo.lastModified() >= outFileInfo.lastModified()) {
             if (outFile.remove()) {
-                printf("  removed  %s\n", qPrintable(outFile.fileName()));
+                std::printf("  removed  %s\n", qPrintable(outFile.fileName()));
             }
         } else {
-            //printf("  done    %s\n", qPrintable(outFile.fileName()));
+            //std::printf("  done    %s\n", qPrintable(outFile.fileName()));
             return true;
         }
     }
@@ -96,7 +96,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
+        std::printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
     }
     return true;
 }
@@ -116,7 +116,7 @@ bool ErbConverter::convert(const QString &className, const QString &erb, int tri
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
+        std::printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
     }
     return true;
 }

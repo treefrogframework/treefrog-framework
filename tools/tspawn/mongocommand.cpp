@@ -40,10 +40,10 @@ MongoCommand::~MongoCommand()
 bool MongoCommand::open(const QString &env)
 {
     databaseName = mongoSettings->value(env + "/DatabaseName").toString().trimmed();
-    printf("DatabaseName: %s\n", qPrintable(databaseName));
+    std::printf("DatabaseName: %s\n", qPrintable(databaseName));
 
     QString host = mongoSettings->value(env + "/HostName").toString().trimmed();
-    printf("HostName:     %s\n", qPrintable(host));
+    std::printf("HostName:     %s\n", qPrintable(host));
 
     int port = mongoSettings->value(env + "/Port").toInt();
     QString user = mongoSettings->value(env + "/UserName").toString().trimmed();
@@ -52,9 +52,9 @@ bool MongoCommand::open(const QString &env)
 
     bool status = driver->open(databaseName, user, pass, host, port, opts);
     if (!status) {
-        fprintf(stderr, "MongoDB open error\n");
+        std::fprintf(stderr, "MongoDB open error\n");
     } else {
-        printf("MongoDB opened successfully\n");
+        std::printf("MongoDB opened successfully\n");
     }
     return status;
 }

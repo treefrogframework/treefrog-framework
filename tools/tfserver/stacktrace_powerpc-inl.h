@@ -36,8 +36,8 @@
 // Linux has similar code: http://patchwork.ozlabs.org/linuxppc/patch?id=8882
 
 #include "stacktrace.h"
-#include <stdint.h>  // for uintptr_t
-#include <stdio.h>
+#include <cstdint>  // for uintptr_t
+#include <cstdio>
 
 _START_GOOGLE_NAMESPACE_
 

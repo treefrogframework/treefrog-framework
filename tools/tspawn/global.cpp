@@ -169,7 +169,7 @@ bool mkpath(const QDir &dir, const QString &dirPath)
             qCritical("failed to create a directory %s", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
             return false;
         }
-        printf("  created   %s\n", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
+        std::printf("  created   %s\n", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
     }
     return true;
 }
