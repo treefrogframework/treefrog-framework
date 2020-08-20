@@ -70,4 +70,5 @@ build_script:
   - cmd: nmake install
   - cmd: cd test
   - cmd: set PATH=C:\tools\vcpkg\installed\x86-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools\curl;C:\Windows\System32;C:\Windows
+  - cmd: call "%INIT_BAT%" %VCVARARG%
   - cmd: releasetest\releasetest.bat
