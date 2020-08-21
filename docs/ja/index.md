@@ -40,14 +40,22 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2020/5/2  TreeFrog Framework バージョン1.29.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2020/8/21  TreeFrog Framework バージョン1.30.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - X-Forwarded-Forヘッダの対応
+  - ActionMailer.smtp.RequireTLSパタメータをapplication.iniへ追加
+  - URLルーティング情報を表示するオプションをtreefrogコマンドへ追加
+  - ORM関数のI/F更新
+  - パフォマンス改善
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2020/5/2  TreeFrog Framework バージョン1.29.0 （安定版）リリース
 
   - Cookieへmax-ageを指定した時の不具合修正
   - selectタグ生成時の不具合修正
   - クラス生成時のboolフィールドの初期化コードを変更
   - publish()関数をTActionControllerクラスに実装
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2020/2/11  TreeFrog Framework バージョン1.28.0 （安定版）リリース
 

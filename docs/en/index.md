@@ -37,16 +37,26 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Aug. 21, 2020
+
+### TreeFrog Framework version 1.30.0 (stable) release <span style="color: red;">New!</span>
+
+  - Implemented logics for X-Forwarded-For Header.
+  - Implemented ActionMailer.smtp.RequireTLS parameter in application.ini.
+  - Added a option for showing URL routing to treefrog command.
+  - Updated I/F of ORM functions.
+  - Performance improvement.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 May. 5, 2020
 
-### TreeFrog Framework version 1.29.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.29.0 (stable) release
 
   - Fix a bug of max-age of cookie.
   - Fix a bug of generating select-tag.
   - Modified to initialize boolean fields in classes generated.
   - Implemented publish() function in TActionController class.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Feb. 11, 2020
 
