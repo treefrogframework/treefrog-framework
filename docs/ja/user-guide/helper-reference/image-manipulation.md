@@ -27,15 +27,15 @@ Windows の場合：
 ```
  > configure --enable-debug --enable-gui-mod
  > cd src
- > mingw32-make install
+ > nmake install
  > cd ..\tools
- > mingw32-make instal
+ > nmake instal
  > cd ..
  > configure --enable-gui-mod
  > cd src
- > mingw32-make install
+ > nmake install
  > cd ..\tools
- > mingw32-make install
+ > nmake install
 ```
 
 次に、Web アプリケーション側にも設定が必要です。プロジェクトファイル(.pro)を編集し、変数QTに "gui" を追加します。

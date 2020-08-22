@@ -44,15 +44,15 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
    > cd treefrog-x.x.x
    > configure --enable-debug
    > cd src
-   > mingw32-make install
+   > nmake install
    > cd ..\tools
-   > mingw32-make install
+   > nmake install
    > cd ..
    > configure
    > cd src
-   > mingw32-make install
+   > nmake install
    > cd ..\tools
-   > mingw32-make install
+   > nmake install
    ```
 
    在基于UNIX的操作系统Linux和macOS:

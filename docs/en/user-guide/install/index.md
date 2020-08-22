@@ -45,15 +45,15 @@ Now install the DB client libraries:
   > cd treefrog-x.x.x
   > configure --enable-debug
   > cd src
-  > mingw32-make install
+  > nmake install
   > cd ..\tools
-  > mingw32-make install
+  > nmake install
   > cd ..
   > configure
   > cd src
-  > mingw32-make install
+  > nmake install
   > cd ..\tools
-  > mingw32-make install
+  > nmake install
    ```
 
    In UNIX-based OS Linux, and macOS:

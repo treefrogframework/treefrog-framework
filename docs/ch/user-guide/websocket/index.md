@@ -202,7 +202,7 @@ SUBDIRS = helpers models controllers
 
 ```
 $ qmake -r
-$ make   (nmake or mingw32-make on Windows)
+$ make   (nmake on Windows)
 $ treefrog -d
  (停止命令)
 $ treefrog- k stop

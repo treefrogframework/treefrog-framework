@@ -219,7 +219,7 @@ To start the build process, run the following command only once; it will generat
 A WARNING message will be displayed, but there is actually no problem. Next, run the make command to compile the controller, model, view, and helper.
 
 ```
- $ make     (On MinGW run 'mingw32-make', on MSVC run 'nmake' command instead)
+ $ make     (On MSVC run 'nmake' command instead)
 ```
 
 If the build succeeds, four shared libraries (controller, model, view, helper) will be created in the lib directory. By default, the library is generated in debug mode; however, you can regenerate the Makefile, using the following command, to create a library in release mode.

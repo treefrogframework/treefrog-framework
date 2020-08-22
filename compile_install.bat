@@ -5,15 +5,8 @@ cd /D %~dp0
 
 :: Requires Qt environment.
 
-if not "%Platform%" == "" (
-  set MAKE=nmake
-  set CL=/MP
-) else if not "%DevEnvDir%" == "" (
-  set MAKE=nmake
-  set CL=/MP
-) else (
-  set MAKE=mingw32-make -j8
-)
+set MAKE=nmake
+set CL=/MP
 
 ::
 :: Compile and Install

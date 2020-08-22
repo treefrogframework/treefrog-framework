@@ -213,7 +213,7 @@ $ qmake -r "CONFIG+=debug"
 一个WARNING信息将会显示,不过事实上没有影响. 接下来, 执行make命令来编译控制器(controller), 模型(model), 视图(view)和工具助手(helper).
 
 ```
-$ make     (MinGW 执行'mingw32-make'命令代替'make', MSVC 执行'nmake' 命令代替'make')
+$ make     (MSVC 执行'nmake' 命令代替'make')
 ```
 
 如果构建成功, 4个共享库(controller, model, view, helper)将出现在lib文件夹. 默认情况下,这些生成的库的debug模式的, 不过, 你可以重新生成Makefile文件, 使用下面的命令来生成release模式的库.

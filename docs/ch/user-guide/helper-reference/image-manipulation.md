@@ -27,15 +27,15 @@ $ sudo make install
 ```
 > configure --enable-debug --enable-gui-mod
 > cd src
-> mingw32-make install
+> nmake install
 > cd ..\tools
-> mingw32-make install
+> nmake install
 > cd ..
 > configure --enable-gui-mod
 > cd src
-> mingw32-make install
+> nmake install
 > cd ..\tools
-> mingw32-make install
+> nmake install
 ```
 
 接下来, 网页应用端的这个设置也是需要的. 编辑项目文件(.pro), 增加"gui"到变量*QT*中.

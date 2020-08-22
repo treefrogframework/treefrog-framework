@@ -204,7 +204,7 @@ void ChatEndpoint::onBinaryReceived(const QByteArray &)
 
 ```
  $ qmake -r
- $ make   (Windowsの場合は nmake か mingw32-make)
+ $ make   (Windowsの場合は nmake)
  $ treefrog -d
  (停止コマンド)
  $ treefrog -k stop

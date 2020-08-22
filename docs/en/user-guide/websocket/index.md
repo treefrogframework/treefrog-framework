@@ -203,7 +203,7 @@ Build command:
 
 ```
  $ qmake -r
- $ make   (nmake or mingw32-make on Windows)
+ $ make   (nmake on Windows)
  $ treefrog -d
 
  (stop command)

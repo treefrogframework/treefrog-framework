@@ -27,15 +27,15 @@ In the case of Windows :
 ```
  > configure --enable-debug --enable-gui-mod
  > cd src
- > mingw32-make install
+ > nmake install
  > cd ..\tools
- > mingw32-make install
+ > nmake install
  > cd ..
  > configure --enable-gui-mod
  > cd src
- > mingw32-make install
+ > nmake install
  > cd ..\tools
- > mingw32-make install
+ > nmake install
 ```
 
 Next, this setting is also required for the Web application side. Edit the project file (.pro), add "gui" in the variable with the name *QT*.

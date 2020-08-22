@@ -220,7 +220,7 @@ make する前に、一度だけ次のコマンドを実行し、Makefile を生
 WARNING メッセージが表示されますが、問題はありません。その後、make コマンドを実行すると、コントローラ、モデル、ビュー、ヘルパの全てをコンパイルします。
 
 ```
- $ make     （MinGWの場合は mingw32-make, MSVCの場合は nmake）
+ $ make     （MSVCの場合は nmake）
 ```
 
 ビルドが成功すると、４つの共有ライブラリ（controller, model, view, helper）が lib ディレクトリに作られます。<br>

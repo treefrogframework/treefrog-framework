@@ -41,15 +41,15 @@ DBクライアントライブラリもインストールします。
   > cd treefrog-x.x.x
   > configure --enable-debug
   > cd src
-  > mingw32-make install
+  > nmake install
   > cd ..\tools
-  > mingw32-make install
+  > nmake install
   > cd ..
   > configure
   > cd src
-  > mingw32-make install
+  > nmake install
   > cd ..\tools
-  > mingw32-make install
+  > nmake install
    ```
 
    Linux, macOS など UNIX 系 OS の場合：  コマンドラインから次を入力します。
