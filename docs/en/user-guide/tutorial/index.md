@@ -288,6 +288,17 @@ Restart command:
 
 If the firewall is in place, make sure that the correct port is open (the default is port 8800).
 
+For reference, the following command shows the current URL routing information.
+```
+ $ treefrog --show-routes
+ Available controllers:
+   match   /blog/index  ->  blogcontroller.index()
+   match   /blog/show/:param  ->  blogcontroller.show(id)
+   match   /blog/create  ->  blogcontroller.create()
+   match   /blog/save/:param  ->  blogcontroller.save(id)
+   match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```
+
 ## Browser Access
 
 We will now use your web browser to access http://localhost:8800/Blog. A list screen, such as the following should be displayed.

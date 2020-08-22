@@ -53,3 +53,16 @@ Similarly with /search/foo/bar. Following this request, a search action with two
  /search/foo    ->   Call search("foo") of SearcherController
  /search/foo/bar ->  Call search("foo", "bar") of SearcherController
 ```
+
+## Show Routing
+
+After building the app, the following command shows the current routing information.
+```
+ $ treefrog --show-routes
+ Available controllers:
+   match   /blog/index  ->  blogcontroller.index()
+   match   /blog/show/:param  ->  blogcontroller.show(id)
+   match   /blog/create  ->  blogcontroller.create()
+   match   /blog/save/:param  ->  blogcontroller.save(id)
+   match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```

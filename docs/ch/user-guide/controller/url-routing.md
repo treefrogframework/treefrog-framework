@@ -54,3 +54,16 @@ URL路由是一种决定请求的URL如何调用操作(action)的一种机制. �
  /search/foo     ->   调用SearcherController的search("foo")
  /search/foo/bar ->   调用SearcherController的search("foo", "bar") of 
 ```
+
+## 显示路由
+
+构建应用程序后，以下命令将显示当前的路由信息​​。
+```
+ $ treefrog --show-routes
+ Available controllers:
+   match   /blog/index  ->  blogcontroller.index()
+   match   /blog/show/:param  ->  blogcontroller.show(id)
+   match   /blog/create  ->  blogcontroller.create()
+   match   /blog/save/:param  ->  blogcontroller.save(id)
+   match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```

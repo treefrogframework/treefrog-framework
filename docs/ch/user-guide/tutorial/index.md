@@ -278,6 +278,17 @@ $ treefrog- k restart
 
 如果有防火墙, 确保使用的端口是允许的(默认的端口号是8800).
 
+作为参考，以下命令显示了当前的URL路由信息.
+```
+ $ treefrog --show-routes
+ Available controllers:
+   match   /blog/index  ->  blogcontroller.index()
+   match   /blog/show/:param  ->  blogcontroller.show(id)
+   match   /blog/create  ->  blogcontroller.create()
+   match   /blog/save/:param  ->  blogcontroller.save(id)
+   match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```
+
 ## 浏览器访问
 
 我们将使用浏览器访问http://localhost:8800/Blog. 一个列表界面, 如下图将会显示.

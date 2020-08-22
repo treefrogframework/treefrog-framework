@@ -52,3 +52,16 @@ URLルーティングとは、リクエストされた URL に対して呼び出
  /search/foo     ->  SearcherController の search("foo");
  /search/foo/bar ->  SearcherController の search("foo", "bar");
 ```
+
+## ルーティングの表示
+
+アプリをビルドした後に次のコマンドを実行することで、現在のルーティング情報を確認できます。
+```
+ $ treefrog --show-routes
+ Available controllers:
+   match   /blog/index  ->  blogcontroller.index()
+   match   /blog/show/:param  ->  blogcontroller.show(id)
+   match   /blog/create  ->  blogcontroller.create()
+   match   /blog/save/:param  ->  blogcontroller.save(id)
+   match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```

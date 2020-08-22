@@ -291,6 +291,17 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 
 ★ もしファイヤーウォールが設定されている場合は、ポート（デフォルト：8800）を開けてください。
 
+参考までに、次のコマンドでURLルーティングを確認できます。
+```
+ $ treefrog --show-routes
+ Available controllers:
+   match   /blog/index  ->  blogcontroller.index()
+   match   /blog/show/:param  ->  blogcontroller.show(id)
+   match   /blog/create  ->  blogcontroller.create()
+   match   /blog/save/:param  ->  blogcontroller.save(id)
+   match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```
+
 ## ブラウザでアクセス
 
 ブラウザで http://localhost:8800/Blog にアクセスしてみましょう。<br>
