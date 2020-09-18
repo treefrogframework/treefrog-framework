@@ -136,7 +136,8 @@ SQLite の例：
  QSqlDatabase: QMYSQL driver not loaded
 ```
 
-この場合、[ダウンロードのページ](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}でSQLデータベースドライバをダウンロードして、インストールしてください。<br>
+QtのSQLドライバがインストールされていない可能性があります。RDBMのQtドライバをインストールしてください。
+
 組み込まれたSQLドライバは次のコマンドで確認することができます。
 
 ```

@@ -135,7 +135,7 @@ If a required SQL driver is not included in the Qt SDK, the following error mess
  QSqlDatabase: QMYSQL driver not loaded
 ```
 
-If you receive this message, download the SQL database driver from the [download page](http://www.treefrogframework.org/download){:target="_blank"}, and install it.
+If you receive this message, the Qt SQL driver may not be installed. Install the driver for the RDBM.
 
 You can check which SQL drivers are installed with the following command;
 

@@ -129,7 +129,8 @@ Available tables:
 QSqlDatabase: QMYSQL driver not loaded
 ```
 
-如果收到这条信息,从[下载页面](http://www.treefrogframework.org/download){:target="_blank"}下载SQL驱动, 并安装它.
+如果收到此消息，则可能未安装Qt SQL驱动程序. 安装RDBM的驱动程序.
+
 可以通过下面的命令检查哪些SQL驱动已经安装;
 
 ```
