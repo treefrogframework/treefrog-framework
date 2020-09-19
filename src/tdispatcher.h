@@ -72,7 +72,6 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
         return QMetaMethod();
     }
 
-    int argcnt = 0;
     int idx = -1;
     int narg = qMin(argCount, NUM_METHOD_PARAMS - 1);
     for (int i = narg; i >= 0; i--) {
@@ -81,7 +80,6 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
         mtd += params[i];
         idx = _ptr->metaObject()->indexOfSlot(mtd.constData());
         if (idx >= 0) {
-            argcnt = i;
             tSystemDebug("Found method: %s", mtd.constData());
             break;
         }
@@ -94,7 +92,6 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
             mtd += params[i];
             idx = _ptr->metaObject()->indexOfSlot(mtd.constData());
             if (idx >= 0) {
-                argcnt = i;
                 tSystemDebug("Found method: %s", mtd.constData());
                 break;
             }
