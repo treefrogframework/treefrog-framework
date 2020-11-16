@@ -201,6 +201,7 @@ enum AppAttribute {
     SessionCookieSameSite,
     //
     EnableForwardedForHeader,
+    ParseForwardedForHeaderRecursively,
     TrustedProxyServers,
     ActionMailerSmtpRequireTLS,
 };

@@ -41,6 +41,7 @@ public:
         insert(Tf::EnableCsrfProtectionModule, "EnableCsrfProtectionModule");
         insert(Tf::EnableHttpMethodOverride, "EnableHttpMethodOverride");
         insert(Tf::EnableForwardedForHeader, "EnableForwardedForHeader");
+        insert(Tf::ParseForwardedForHeaderRecursively, "ParseForwardedForHeaderRecursively");
         insert(Tf::TrustedProxyServers, "TrustedProxyServers");
         insert(Tf::HttpKeepAliveTimeout, "HttpKeepAliveTimeout");
         insert(Tf::LDPreload, "LDPreload");
