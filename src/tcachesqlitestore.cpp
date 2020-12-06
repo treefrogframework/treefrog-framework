@@ -64,7 +64,8 @@ TCacheSQLiteStore::~TCacheSQLiteStore()
 
 bool TCacheSQLiteStore::open()
 {
-    T_ONCE(createTable(TABLE_NAME));
+    static std::once_flag once;
+    std::call_once(once, []() { createTable(TABLE_NAME); });
     return true;
 }
 

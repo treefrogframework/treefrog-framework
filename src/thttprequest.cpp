@@ -14,6 +14,7 @@
 #include <THttpRequest>
 #include <THttpUtility>
 #include <TMultipartFormData>
+#include <mutex>
 
 
 class MethodHash : public QMap<QString, Tf::HttpMethod> {
@@ -643,7 +644,8 @@ QHostAddress THttpRequest::originatingClientAddress() const
     QString remoteHost;
     if (EnableForwardedForHeader) {
         if (TrustedProxyServers.isEmpty()) {
-            T_ONCE(tWarn("TrustedProxyServers parameter of config is empty!"));
+            static std::once_flag once;
+            std::call_once(once, []() { tWarn("TrustedProxyServers parameter of config is empty!"); });
         }
 
         auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), QString::SkipEmptyParts);

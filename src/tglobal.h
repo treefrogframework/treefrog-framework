@@ -212,15 +212,6 @@ constexpr auto TF_SRC_REVISION = 2274;
     Class(Class &&) = delete; \
     Class &operator=(Class &&) = delete;
 
-#define T_ONCE(Func)                       \
-    do {                                   \
-        static volatile bool once = []() { \
-            Func;                          \
-            return true;                   \
-        }();                               \
-        Q_UNUSED(once);                    \
-    } while (0)
-
 #define tFatal TDebug(Tf::FatalLevel).fatal
 #define tError TDebug(Tf::ErrorLevel).error
 #define tWarn TDebug(Tf::WarnLevel).warn
