@@ -11,6 +11,7 @@
 #include <QByteArray>
 #include <QDateTime>
 #include <TDatabaseContext>
+#include <mutex>
 
 constexpr auto TABLE_NAME = "kb";
 constexpr auto KEY_COLUMN = "k";
