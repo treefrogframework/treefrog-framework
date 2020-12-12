@@ -9,6 +9,7 @@
 #include "tsessionobject.h"
 #include <TCriteria>
 #include <TSqlORMapper>
+#include <mutex>
 
 
 static void createSessionTable()
