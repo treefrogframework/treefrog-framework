@@ -13,6 +13,21 @@
   \class TRedis
   \brief The TRedis class provides a means of operating a Redis
   system.
+
+  Edit conf/redis.ini and conf/application.ini to use this class.
+
+  redis.ini:
+  \code
+    HostName=xxx.xxx.xxx.xxx
+    UserName=your_username
+    Password=your_password
+  \endcode
+
+  application.ini:
+  \code
+    RedisSettingsFile=redis.ini
+  \endcode
+  <a href="https://redis.io/documentation">See also Redis documentation.</a>
 */
 
 /*!
