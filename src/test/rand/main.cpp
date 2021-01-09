@@ -20,7 +20,7 @@ static QByteArray randomString()
     data.append(QByteArray::number(now.toTime_t()));
     data.append(QByteArray::number(now.time().msec()));
 #endif
-    data.append(QHostInfo::localHostName());
+    data.append(QHostInfo::localHostName().toLatin1());
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
@@ -76,6 +76,8 @@ private slots:
     void minstd_rand();
     void ranlux24_base();
     void ranlux48_base();
+    void rand_QRandomGenerator_global();
+    void rand_QRandomGenerator_system();
     void randomstring1();
     void randomstring2();
 
@@ -228,6 +230,27 @@ void TestRand::ranlux48_base()
         mutex.unlock();
     }
 }
+
+
+void TestRand::rand_QRandomGenerator_global()
+{
+    QBENCHMARK {
+        mutex.lock();
+        QRandomGenerator::global()->generate();
+        mutex.unlock();
+    }
+}
+
+
+void TestRand::rand_QRandomGenerator_system()
+{
+    QBENCHMARK {
+        mutex.lock();
+        QRandomGenerator::system()->generate();
+        mutex.unlock();
+    }
+}
+
 
 void TestRand::randomstring1()
 {
