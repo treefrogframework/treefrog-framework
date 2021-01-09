@@ -15,9 +15,9 @@ public:
 protected:
     QVariant variant(const QString &name) const;
     void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
+    void exportVariants(const QVariantMap &map);
     void exportValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
     bool hasVariant(const QString &name) const;
-    void exportVariants(const QVariantMap &map);
     const QVariantMap &allVariants() const { return exportVars; }
     QString viewClassName(const QString &action = QString()) const;
     QString viewClassName(const QString &contoller, const QString &action) const;

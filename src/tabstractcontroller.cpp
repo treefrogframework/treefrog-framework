@@ -47,7 +47,13 @@ void TAbstractController::exportVariants(const QVariantMap &map)
     if (exportVars.isEmpty()) {
         exportVars = map;
     } else {
+#if QT_VERSION >= 0x050f00  // 5.15.0
+        auto tmp = exportVars;
+        exportVars = map;
+        exportVars.insert(tmp);
+#else
         exportVars.unite(map);
+#endif
     }
 }
 

@@ -19,7 +19,13 @@
 
 TWebSocketSession &TWebSocketSession::unite(const TSession &session)
 {
-    QVariantMap::unite(*static_cast<const QVariantMap *>(&session));
+#if QT_VERSION >= 0x050f00  // 5.15.0
+    insert(session);
+#else
+    for (auto it = session.begin(); it != session.end(); ++it) {
+        insert(it.key(), it.value());
+    }
+#endif
     return *this;
 }
 
@@ -61,8 +67,8 @@ TWebSocketSession &TWebSocketSession::unite(const TSession &session)
 /*!
   \fn TWebSocketSession &TWebSocketSession::unite(const TSession &session);
   Inserts all the items in the other session into this session. If a key is
-  common to both sessions, the resulting session will contain the key multiple
-  times.
+  common to both sessions, its value will be replaced with the value stored
+  in \a session.
 */
 
 /*!
