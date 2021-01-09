@@ -4,6 +4,7 @@ CONFIG  += shared console c++14
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
 DEFINES += TF_MAKEDLL
+DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += ../include ../3rdparty/lz4/lib
 DEPENDPATH  += ../include
 MOC_DIR = .obj/

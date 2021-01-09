@@ -24,7 +24,7 @@ static QByteArray createHash()
     data.reserve(127);
 
     data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));
-    data.append(QHostInfo::localHostName());
+    data.append(QHostInfo::localHostName().toLatin1());
     data.append(QByteArray::number(++seq));
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));

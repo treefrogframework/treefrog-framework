@@ -36,7 +36,7 @@ QList<TLogger *> loggers;
 */
 void Tf::setupAppLoggers()
 {
-    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', QString::SkipEmptyParts);
+    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', Qt::SkipEmptyParts);
 
     for (auto &lg : loggerList) {
         TLogger *lgr = TLoggerFactory::create(lg);
@@ -70,7 +70,7 @@ void Tf::releaseAppLoggers()
 static void tMessage(int priority, const char *msg, va_list ap)
 {
     if (stream) {
-        TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
+        TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
         stream->writeLog(log);
     }
 }

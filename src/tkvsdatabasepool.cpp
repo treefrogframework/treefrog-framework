@@ -119,7 +119,7 @@ void TKvsDatabasePool::init()
 
         auto &stack = availableNames[(int)engine];
         for (int i = 0; i < maxConnects; ++i) {
-            TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString().sprintf(CONN_NAME_FORMAT, (int)engine, i));
+            TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString::asprintf(CONN_NAME_FORMAT, (int)engine, i));
             if (!db.isValid()) {
                 tWarn("KVS init parameter is invalid");
                 break;
@@ -254,7 +254,7 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
         database.setConnectOptions(connectOptions);
     }
 
-    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", QString::SkipEmptyParts);
+    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Qt::SkipEmptyParts);
     tSystemDebug("KVS postOpenStatements: %s", qPrintable(postOpenStatements.join(";")));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);

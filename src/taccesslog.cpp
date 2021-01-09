@@ -71,12 +71,12 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 break;
 
             case 's':
-                message.append(QString::number(statusCode));
+                message.append(QString::number(statusCode).toLatin1());
                 break;
 
             case 'O':
                 if (dig.isEmpty()) {
-                    message.append(QString::number(responseBytes));
+                    message.append(QString::number(responseBytes).toLatin1());
                 } else {
                     const QChar fillChar = (dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
                     message.append(QString("%1").arg(responseBytes, dig.toInt(), 10, fillChar).toLatin1());

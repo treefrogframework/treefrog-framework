@@ -398,7 +398,7 @@ int TMongoDriver::serverVersionNumber()
         QString version = serverVersion();
 
         if (!version.isEmpty()) {
-            auto vers = version.split('.', QString::SkipEmptyParts);
+            auto vers = version.split('.', Qt::SkipEmptyParts);
             for (auto &v : vers) {
                 number <<= 8;
                 number |= v.toInt() & 0xFF;

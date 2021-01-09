@@ -22,7 +22,7 @@ bool TProcessInfo::waitForTerminated(int msecs)
         return false;
 
     bool ext;
-    QTime t;
+    QElapsedTimer t;
     t.start();
 
     for (;;) {

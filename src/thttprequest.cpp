@@ -330,7 +330,11 @@ QVariantMap THttpRequest::itemMap(const QList<QPair<QString, QString>> &items)
 {
     QVariantMap map;
     for (auto &p : items) {
+#if QT_VERSION >= 0x050f00
+        map.insert(p.first, p.second);
+#else
         map.insertMulti(p.first, p.second);
+#endif
     }
     return map;
 }
@@ -457,7 +461,7 @@ QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString,
             } else {
                 // QMap<QString, QVariantMap>
                 auto vmap = v.toMap();
-                vmap.insertMulti(k2, p.second);
+                vmap.insert(k2, p.second);
                 map.insert(k1, QVariant(vmap));
             }
         } else {
@@ -545,7 +549,7 @@ QByteArray THttpRequest::boundary() const
     QString contentType = d->header.rawHeader(QByteArrayLiteral("content-type")).trimmed();
 
     if (contentType.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
-        const QStringList lst = contentType.split(QChar(';'), QString::SkipEmptyParts, Qt::CaseSensitive);
+        const QStringList lst = contentType.split(QChar(';'), Qt::SkipEmptyParts, Qt::CaseSensitive);
         for (auto &bnd : lst) {
             QString string = bnd.trimmed();
             if (string.startsWith(QLatin1String("boundary="), Qt::CaseInsensitive)) {
@@ -648,7 +652,7 @@ QHostAddress THttpRequest::originatingClientAddress() const
             std::call_once(once, []() { tWarn("TrustedProxyServers parameter of config is empty!"); });
         }
 
-        auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), QString::SkipEmptyParts);
+        auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), Qt::SkipEmptyParts);
         if (hosts.isEmpty()) {
             tWarn("'X-Forwarded-For' header is empty");
         } else {

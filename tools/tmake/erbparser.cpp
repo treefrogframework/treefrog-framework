@@ -42,7 +42,7 @@ void ErbParser::parse(const QString &erb)
     // trimming strongly
     if (trimMode == StrongTrim) {
         erbData.clear();
-        for (auto &line : (const QStringList &)erb.split('\n', QString::SkipEmptyParts)) {
+        for (auto &line : (const QStringList &)erb.split('\n', Qt::SkipEmptyParts)) {
             QString trm = THtmlParser::trim(line);
             if (!trm.isEmpty()) {
                 erbData += trm;

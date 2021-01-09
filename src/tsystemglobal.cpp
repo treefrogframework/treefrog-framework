@@ -38,7 +38,7 @@ QByteArray accessLogDateTimeFormat;
 
 void tSystemMessage(int priority, const char *msg, va_list ap)
 {
-    TLog log(priority, QString().vsprintf(msg, ap).toLocal8Bit());
+    TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
     systemLog.write(buf.data(), buf.length());
 }
@@ -179,7 +179,7 @@ void Tf::traceQueryLog(const char *msg, ...)
     if (sqllogstrm) {
         va_list ap;
         va_start(ap, msg);
-        TLog log(-1, QString().vsprintf(msg, ap).toLocal8Bit());
+        TLog log(-1, QString::vasprintf(msg, ap).toLocal8Bit());
         QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
         sqllogstrm->writeLog(buf);
         va_end(ap);

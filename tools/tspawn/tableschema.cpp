@@ -261,7 +261,7 @@ QStringList TableSchema::tables(const QString &env)
         }
     }
 
-    QStringList ret = set.toList();
+    QStringList ret = set.values();
     std::sort(ret.begin(), ret.end());
     return ret;
 }

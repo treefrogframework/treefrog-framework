@@ -99,7 +99,7 @@ void TSqlDatabasePool::init()
 
         auto &stack = availableNames[j];
         for (int i = 0; i < maxConnects; ++i) {
-            TSqlDatabase &db = TSqlDatabase::addDatabase(type, QString().sprintf(CONN_NAME_FORMAT, j, i));
+            TSqlDatabase &db = TSqlDatabase::addDatabase(type, QString::asprintf(CONN_NAME_FORMAT, j, i));
             if (!db.isValid()) {
                 tWarn("Parameter 'DriverType' is invalid");
                 break;
@@ -225,7 +225,7 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, int databaseI
         database.sqlDatabase().setConnectOptions(connectOptions);
     }
 
-    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", QString::SkipEmptyParts);
+    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Qt::SkipEmptyParts);
     tSystemDebug("Database postOpenStatements: %s", qPrintable(postOpenStatements.join(";")));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);

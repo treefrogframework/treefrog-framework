@@ -90,8 +90,6 @@ void TBackgroundProcess::callStart(const QString &program, const QStringList &ar
 {
     if (program.isEmpty()) {
         QProcess::start((OpenMode)mode);
-    } else if (arguments.isEmpty()) {
-        QProcess::start(program, (OpenMode)mode);
     } else {
         QProcess::start(program, arguments, (OpenMode)mode);
     }

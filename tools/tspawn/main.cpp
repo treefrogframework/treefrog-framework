@@ -299,9 +299,13 @@ static QStringList rmfiles(const QStringList &files, const QString &baseDir, con
 }
 
 
-static int random(int max)
+static uint random(uint max)
 {
+#if QT_VERSION >= 0x050a00  // 5.10.0
+    return QRandomGenerator::global()->bounded(max + 1);
+#else
     return (int)((double)qrand() * (1.0 + max) / (1.0 + RAND_MAX));
+#endif
 }
 
 
@@ -499,7 +503,11 @@ static void printSuccessMessage(const QString &model)
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+#if QT_VERSION >= 0x050a00  // 5.10.0
+    QRandomGenerator::global()->seed(time(NULL));
+#else
     qsrand(time(NULL));
+#endif
     QStringList args = QCoreApplication::arguments();
     int subcmd = subCommands()->value(args.value(1), Invalid);
 

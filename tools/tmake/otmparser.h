@@ -1,5 +1,5 @@
 #pragma once
-#include <QMap>
+#include <QMultiMap>
 #include <QStringList>
 
 
@@ -32,7 +32,7 @@ protected:
     void parse();
 
 private:
-    QMap<QString, QString> entries;
+    QMultiMap<QString, QString> entries;
     QString repMarker;
 };
 

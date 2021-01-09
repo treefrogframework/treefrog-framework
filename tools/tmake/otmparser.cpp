@@ -59,7 +59,7 @@ void OtmParser::parse(const QString &text)
                     str = QLatin1Char(':') + str;
                 }
 
-                entries.insertMulti(label, str);
+                entries.insert(label, str);
                 label.clear();
                 value.clear();
             }
@@ -75,7 +75,7 @@ void OtmParser::parse(const QString &text)
             int i = line.indexOf(QRegExp("[^a-zA-Z0-9_]"), 1);
 
             if (line.startsWith(INCLUDE_LABEL + QLatin1Char(' '))) {
-                entries.insertMulti(line.left(i), line.mid(i).trimmed());
+                entries.insert(line.left(i), line.mid(i).trimmed());
             } else {
                 // New label
                 lineCont = true;
@@ -157,7 +157,7 @@ QStringList OtmParser::getWrapSrcCode(const QString &label, OperatorType op) con
             QString opstr = opHash()->value(op);
 
             if (!opstr.isEmpty() && s.startsWith(opstr) && s.contains(repMarker)) {
-                return s.mid(opstr.length()).trimmed().split(repMarker, QString::SkipEmptyParts, Qt::CaseSensitive);
+                return s.mid(opstr.length()).trimmed().split(repMarker, Qt::SkipEmptyParts, Qt::CaseSensitive);
             }
         }
     }

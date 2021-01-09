@@ -580,7 +580,7 @@ QList<TMimeEntity> TMultipartFormData::entityList(const QByteArray &dataName) co
 
     QByteArray k = dataName;
     if (!k.endsWith("[]")) {
-        k += QLatin1String("[]");
+        k += QByteArrayLiteral("[]");
     }
 
     for (auto &p : uploadedFiles) {
