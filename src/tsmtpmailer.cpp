@@ -241,7 +241,7 @@ bool TSmtpMailer::cmdEhlo()
     for (auto &s : (const QByteArrayList &)reply) {
         QString str(s);
         if (str.startsWith("AUTH ", Qt::CaseInsensitive)) {
-            _svrAuthMethods = str.mid(5).split(' ', Qt::SkipEmptyParts);
+            _svrAuthMethods = str.mid(5).split(' ', Tf::SkipEmptyParts);
             tSystemDebug("AUTH: %s", qPrintable(_svrAuthMethods.join(",")));
         }
         if (str.startsWith("STARTTLS", Qt::CaseInsensitive)) {

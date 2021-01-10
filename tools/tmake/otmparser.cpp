@@ -6,6 +6,7 @@
  */
 
 #include "otmparser.h"
+#include <TGlobal>
 #include <QHash>
 #include <QRegExp>
 #include <QTextStream>
@@ -157,7 +158,7 @@ QStringList OtmParser::getWrapSrcCode(const QString &label, OperatorType op) con
             QString opstr = opHash()->value(op);
 
             if (!opstr.isEmpty() && s.startsWith(opstr) && s.contains(repMarker)) {
-                return s.mid(opstr.length()).trimmed().split(repMarker, Qt::SkipEmptyParts, Qt::CaseSensitive);
+                return s.mid(opstr.length()).trimmed().split(repMarker, Tf::SkipEmptyParts, Qt::CaseSensitive);
             }
         }
     }

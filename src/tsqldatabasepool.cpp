@@ -225,7 +225,7 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, int databaseI
         database.sqlDatabase().setConnectOptions(connectOptions);
     }
 
-    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Qt::SkipEmptyParts);
+    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Tf::SkipEmptyParts);
     tSystemDebug("Database postOpenStatements: %s", qPrintable(postOpenStatements.join(";")));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);

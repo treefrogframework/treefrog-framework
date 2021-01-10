@@ -254,7 +254,7 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
         database.setConnectOptions(connectOptions);
     }
 
-    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Qt::SkipEmptyParts);
+    QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Tf::SkipEmptyParts);
     tSystemDebug("KVS postOpenStatements: %s", qPrintable(postOpenStatements.join(";")));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);

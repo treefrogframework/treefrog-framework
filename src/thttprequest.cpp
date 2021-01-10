@@ -549,7 +549,7 @@ QByteArray THttpRequest::boundary() const
     QString contentType = d->header.rawHeader(QByteArrayLiteral("content-type")).trimmed();
 
     if (contentType.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
-        const QStringList lst = contentType.split(QChar(';'), Qt::SkipEmptyParts, Qt::CaseSensitive);
+        const QStringList lst = contentType.split(QChar(';'), Tf::SkipEmptyParts, Qt::CaseSensitive);
         for (auto &bnd : lst) {
             QString string = bnd.trimmed();
             if (string.startsWith(QLatin1String("boundary="), Qt::CaseInsensitive)) {
@@ -652,7 +652,7 @@ QHostAddress THttpRequest::originatingClientAddress() const
             std::call_once(once, []() { tWarn("TrustedProxyServers parameter of config is empty!"); });
         }
 
-        auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), Qt::SkipEmptyParts);
+        auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), Tf::SkipEmptyParts);
         if (hosts.isEmpty()) {
             tWarn("'X-Forwarded-For' header is empty");
         } else {

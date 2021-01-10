@@ -291,7 +291,7 @@ bool addRunningApplication(const QString &rootPath)
     }
 
     TF_FLOCK(file.handle(), LOCK_EX);  // lock
-    QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, Qt::SkipEmptyParts);
+    QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, Tf::SkipEmptyParts);
     paths << rootPath;
     paths.removeDuplicates();
     file.resize(0);
@@ -309,7 +309,7 @@ QStringList runningApplicationPathList()
 
     if (file.open(QIODevice::ReadOnly)) {
         TF_FLOCK(file.handle(), LOCK_SH);  // lock
-        QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, Qt::SkipEmptyParts);
+        QStringList paths = QString::fromUtf8(file.readAll()).split(Tf::LF, Tf::SkipEmptyParts);
         TF_FLOCK(file.handle(), LOCK_UN);  // unlock
         file.close();
         paths.removeDuplicates();

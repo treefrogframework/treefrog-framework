@@ -36,7 +36,7 @@ QList<TLogger *> loggers;
 */
 void Tf::setupAppLoggers()
 {
-    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', Qt::SkipEmptyParts);
+    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', Tf::SkipEmptyParts);
 
     for (auto &lg : loggerList) {
         TLogger *lgr = TLoggerFactory::create(lg);

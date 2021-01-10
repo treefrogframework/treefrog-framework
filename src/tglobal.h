@@ -265,5 +265,12 @@ T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
 constexpr auto CRLF = "\x0d\x0a";
 constexpr auto LF = "\x0a";
-}
 
+#if QT_VERSION >= 0x050e00  // 5.14.0
+constexpr auto KeepEmptyParts = Qt::KeepEmptyParts;
+constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
+#else
+constexpr auto KeepEmptyParts = QString::KeepEmptyParts;
+constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
+#endif
+}
