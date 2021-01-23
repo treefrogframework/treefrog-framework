@@ -1,6 +1,7 @@
 #include <QTest>
 #include <QtCore>
 #include <QHostInfo>
+#include <QRandomGenerator>
 #include <tglobal.h>
 #include <stdio.h>
 #include <random>
