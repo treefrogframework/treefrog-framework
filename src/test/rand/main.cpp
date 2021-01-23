@@ -1,6 +1,9 @@
 #include <QTest>
 #include <QtCore>
 #include <QHostInfo>
+#if QT_VERSION >= 0x050a00
+#include <QRandomGenerator>
+#endif
 #include <tglobal.h>
 #include <stdio.h>
 #include <random>
@@ -13,13 +16,7 @@ static QByteArray randomString()
     QByteArray data;
     data.reserve(128);
 
-#if QT_VERSION >= 0x040700
     data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));
-#else
-    QDateTime now = QDateTime::currentDateTime();
-    data.append(QByteArray::number(now.toTime_t()));
-    data.append(QByteArray::number(now.time().msec()));
-#endif
     data.append(QHostInfo::localHostName().toLatin1());
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
@@ -76,8 +73,10 @@ private slots:
     void minstd_rand();
     void ranlux24_base();
     void ranlux48_base();
+#if QT_VERSION >= 0x050a00
     void rand_QRandomGenerator_global();
     void rand_QRandomGenerator_system();
+#endif
     void randomstring1();
     void randomstring2();
 
@@ -231,7 +230,7 @@ void TestRand::ranlux48_base()
     }
 }
 
-
+#if QT_VERSION >= 0x050a00
 void TestRand::rand_QRandomGenerator_global()
 {
     QBENCHMARK {
@@ -250,7 +249,7 @@ void TestRand::rand_QRandomGenerator_system()
         mutex.unlock();
     }
 }
-
+#endif
 
 void TestRand::randomstring1()
 {

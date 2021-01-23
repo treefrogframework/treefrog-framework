@@ -21,6 +21,7 @@
 #include "validatorgenerator.h"
 #include "websocketgenerator.h"
 #include <QtCore>
+#include <random>
 #ifndef Q_CC_MSVC
 #include <unistd.h>
 #endif
