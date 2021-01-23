@@ -8,7 +8,8 @@ jobs:
     working_directory: /workspace
     steps:
       - checkout
-      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++-8 make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev
+      - run: apt-get update -qq; apt install -y --no-install-recommends gcc make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev
+      - run: apt install -y g++-8
       - run: update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 8
       - run: qmake -v
       - run: ./configure --prefix=/usr/local
