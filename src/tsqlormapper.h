@@ -10,6 +10,31 @@
 #include <TSqlObject>
 #include <TSqlQuery>
 
+
+class TAbstractSqlORMapper : public QSqlTableModel {
+public:
+    TAbstractSqlORMapper(const QSqlDatabase &db) : QSqlTableModel(nullptr, db) {}
+    virtual ~TAbstractSqlORMapper() {}
+
+    virtual void setLimit(int limit) = 0;
+    virtual void setOffset(int offset) = 0;
+    virtual void setSortOrder(int column, Tf::SortOrder order = Tf::AscendingOrder) = 0;
+    virtual void setSortOrder(const QString &column, Tf::SortOrder order = Tf::AscendingOrder) = 0;
+    virtual void reset() = 0;
+
+    virtual int find(const TCriteria &cri = TCriteria()) = 0;
+    virtual int findBy(int column, const QVariant &value) = 0;
+    virtual int findIn(int column, const QVariantList &values) = 0;
+    virtual int rowCount() const = 0;
+
+    virtual int findCount(const TCriteria &cri = TCriteria()) = 0;
+    virtual int findCountBy(int column, const QVariant &value) = 0;
+    virtual int updateAll(const TCriteria &cri, int column, const QVariant &value) = 0;
+    virtual int updateAll(const TCriteria &cri, const QMap<int, QVariant> &values) = 0;
+    virtual int removeAll(const TCriteria &cri = TCriteria()) = 0;
+};
+
+
 /*!
   \class TSqlORMapper
   \brief The TSqlORMapper class is a template class that provides
@@ -21,7 +46,7 @@
 
 
 template <class T>
-class TSqlORMapper : public QSqlTableModel {
+class TSqlORMapper : public TAbstractSqlORMapper {
 public:
     TSqlORMapper();
     virtual ~TSqlORMapper();
@@ -137,7 +162,7 @@ private:
 */
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper() :
-    QSqlTableModel(0, Tf::currentSqlDatabase(T().databaseId()))
+    TAbstractSqlORMapper(Tf::currentSqlDatabase(T().databaseId()))
 {
     setTable(T().tableName());
 }
