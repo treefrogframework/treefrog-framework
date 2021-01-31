@@ -120,7 +120,7 @@ inline int tf_write(int fd, const void *buf, size_t count)
 
 inline int tf_recv(int sockfd, void *buf, size_t len, int flags = 0)
 {
-    TF_EAGAIN_LOOP(::recv(sockfd, buf, len, flags));
+    TF_EINTR_LOOP(::recv(sockfd, buf, len, flags));
 }
 
 

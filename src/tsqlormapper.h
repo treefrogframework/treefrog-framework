@@ -25,7 +25,6 @@ public:
     virtual int find(const TCriteria &cri = TCriteria()) = 0;
     virtual int findBy(int column, const QVariant &value) = 0;
     virtual int findIn(int column, const QVariantList &values) = 0;
-    virtual int rowCount() const = 0;
 
     virtual int findCount(const TCriteria &cri = TCriteria()) = 0;
     virtual int findCountBy(int column, const QVariant &value) = 0;
