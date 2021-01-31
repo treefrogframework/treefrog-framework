@@ -66,7 +66,7 @@ inline pid_t tf_gettid()
 inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 {
     flags |= MSG_NOSIGNAL;
-    TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
+    TF_EINTR_LOOP(::send(sockfd, buf, len, flags));
 }
 
 #endif  // Q_OS_LINUX
@@ -89,7 +89,7 @@ inline pid_t tf_gettid()
 
 inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 {
-    TF_EAGAIN_LOOP(::send(sockfd, buf, len, flags));
+    TF_EINTR_LOOP(::send(sockfd, buf, len, flags));
 }
 
 #endif  // Q_OS_DARWIN
