@@ -34,7 +34,7 @@ TSqlQuery::TSqlQuery(int databaseId) :
 }
 
 
-TSqlQuery::TSqlQuery(QSqlDatabase db) :
+TSqlQuery::TSqlQuery(const QSqlDatabase &db) :
     QSqlQuery(db)
 {
 }

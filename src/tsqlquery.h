@@ -6,7 +6,7 @@
 class T_CORE_EXPORT TSqlQuery : public QSqlQuery {
 public:
     TSqlQuery(int databaseId = 0);
-    TSqlQuery(QSqlDatabase db);
+    TSqlQuery(const QSqlDatabase &db);
 
     TSqlQuery &prepare(const QString &query);
     bool load(const QString &filename);
