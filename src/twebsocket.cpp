@@ -169,7 +169,7 @@ void TWebSocket::startWorker(TWebSocketWorker *worker)
 
 void TWebSocket::releaseWorker()
 {
-    TWebSocketWorker *worker = qobject_cast<TWebSocketWorker *>(sender());
+    TWebSocketWorker *worker = dynamic_cast<TWebSocketWorker *>(sender());
     if (worker) {
         worker->deleteLater();
         --myWorkerCounter;  // count-down

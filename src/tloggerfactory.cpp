@@ -50,7 +50,7 @@ QMap<QString, TLoggerInterface *> *loggerIfMap()
                 continue;
             }
 
-            TLoggerInterface *iface = qobject_cast<TLoggerInterface *>(loader.instance());
+            TLoggerInterface *iface = dynamic_cast<TLoggerInterface *>(loader.instance());
             if (iface) {
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {

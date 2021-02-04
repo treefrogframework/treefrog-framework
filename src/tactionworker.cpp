@@ -43,7 +43,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
 
     // Check auto-remove
     bool autoRemove = false;
-    QFile *f = qobject_cast<QFile *>(body);
+    QFile *f = dynamic_cast<QFile *>(body);
     if (f) {
         QString filePath = f->fileName();
         if (TActionContext::autoRemoveFiles.contains(filePath)) {

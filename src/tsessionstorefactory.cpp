@@ -70,7 +70,7 @@ static QMap<QString, TSessionStoreInterface *> *sessionStoreIfMap()
                 continue;
             }
 
-            TSessionStoreInterface *iface = qobject_cast<TSessionStoreInterface *>(loader.instance());
+            TSessionStoreInterface *iface = dynamic_cast<TSessionStoreInterface *>(loader.instance());
             if (iface) {
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {

@@ -94,7 +94,7 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
     }
 
     if (body) {
-        QBuffer *buffer = qobject_cast<QBuffer *>(body);
+        QBuffer *buffer = dynamic_cast<QBuffer *>(body);
         if (buffer) {
             if (writeRawData(buffer->data().data(), buffer->size()) != buffer->size()) {
                 return -1;

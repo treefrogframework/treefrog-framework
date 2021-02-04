@@ -244,7 +244,7 @@ void ServerManager::startServer(int id) const
 
 void ServerManager::updateServerStatus()
 {
-    QProcess *server = qobject_cast<QProcess *>(sender());
+    QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
         ajustServers();
     }
@@ -253,7 +253,7 @@ void ServerManager::updateServerStatus()
 
 void ServerManager::errorDetect(QProcess::ProcessError error)
 {
-    QProcess *server = qobject_cast<QProcess *>(sender());
+    QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
         tSystemError("tfserver error detected(%d). [%s]", error, qPrintable(tfserverProgramPath()));
         //server->close();  // long blocking..
@@ -264,7 +264,7 @@ void ServerManager::errorDetect(QProcess::ProcessError error)
 
 void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    QProcess *server = qobject_cast<QProcess *>(sender());
+    QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
         //server->close();  // long blocking..
         server->deleteLater();
@@ -287,7 +287,7 @@ void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus)
 
 void ServerManager::readStandardError() const
 {
-    QProcess *server = qobject_cast<QProcess *>(sender());
+    QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
         QByteArray buf = server->readAllStandardError();
         tSystemWarn("treefrog stderr: %s", buf.constData());

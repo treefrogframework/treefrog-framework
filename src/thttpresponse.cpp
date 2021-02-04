@@ -64,7 +64,7 @@ void THttpResponse::setBody(const QByteArray &body)
 QByteArray THttpResponse::body() const
 {
     if (bodyDevice) {
-        QBuffer *buf = qobject_cast<QBuffer *>(bodyDevice);
+        QBuffer *buf = dynamic_cast<QBuffer *>(bodyDevice);
         if (buf) {
             return buf->buffer();
         }

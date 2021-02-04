@@ -263,11 +263,11 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevi
     QFileInfo fi;
 
     if (Q_LIKELY(body)) {
-        QBuffer *buffer = qobject_cast<QBuffer *>(body);
+        QBuffer *buffer = dynamic_cast<QBuffer *>(body);
         if (buffer) {
             response += buffer->data();
         } else {
-            fi.setFile(*qobject_cast<QFile *>(body));
+            fi.setFile(*dynamic_cast<QFile *>(body));
         }
     }
 

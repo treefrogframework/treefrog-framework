@@ -91,7 +91,7 @@ void SystemBusDaemon::readSocket()
     const int HEADER_LEN = 5;
     tSystemDebug("SystemBusDaemon::readSocket");
 
-    QLocalSocket *socket = qobject_cast<QLocalSocket *>(sender());
+    QLocalSocket *socket = dynamic_cast<QLocalSocket *>(sender());
     if (!socket) {
         return;
     }
@@ -156,7 +156,7 @@ void SystemBusDaemon::readSocket()
 
 void SystemBusDaemon::handleDisconnect()
 {
-    QLocalSocket *socket = qobject_cast<QLocalSocket *>(sender());
+    QLocalSocket *socket = dynamic_cast<QLocalSocket *>(sender());
     if (socket) {
         socketSet.remove(socket);
         disconnect(socket, nullptr, nullptr, nullptr);
