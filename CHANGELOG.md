@@ -1,4 +1,12 @@
 # ChangeLog
+
+## 1.31.0
+ - Fix a bug of TMultiplexingServer (epoll server).
+ - Modified not to use obsolete functions of Qt.
+ - Modified to use std::call_once() function.
+ - Added TAbstractSqlORMapper class.
+ - Performance improvement.
+
 ## 1.30.0
  - Implemented logics for X-Forwarded-For Header.
  - Implemented ActionMailer.smtp.RequireTLS parameter in application.ini.
