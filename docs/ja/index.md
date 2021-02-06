@@ -40,15 +40,22 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2020/8/21  TreeFrog Framework バージョン1.30.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2021/2/6  TreeFrog Framework バージョン1.31.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - TMultiplexingServerの不具合修正
+  - Qtの陳腐化した関数を使用しないよう修正
+  - TAbstractSqlORMapperクラス追加
+  - パフォマンス改善
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2020/8/21  TreeFrog Framework バージョン1.30.0 （安定版）リリース
 
   - X-Forwarded-Forヘッダの対応
   - ActionMailer.smtp.RequireTLSパタメータをapplication.iniへ追加
   - URLルーティング情報を表示するオプションをtreefrogコマンドへ追加
   - ORM関数のI/F更新
   - パフォマンス改善
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2020/5/2  TreeFrog Framework バージョン1.29.0 （安定版）リリース
 

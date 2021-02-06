@@ -37,17 +37,26 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Feb. 6, 2021
+
+### TreeFrog Framework version 1.31.0 (stable) release <span style="color: red;">New!</span>
+
+ - Fix a bug of TMultiplexingServer (epoll server).
+ - Modified not to use obsolete functions of Qt.
+ - Added TAbstractSqlORMapper class.
+ - Performance improvement.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Aug. 21, 2020
 
-### TreeFrog Framework version 1.30.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.30.0 (stable) release
 
   - Implemented logics for X-Forwarded-For Header.
   - Implemented ActionMailer.smtp.RequireTLS parameter in application.ini.
   - Added a option for showing URL routing to treefrog command.
   - Updated I/F of ORM functions.
   - Performance improvement.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 May. 5, 2020
 
