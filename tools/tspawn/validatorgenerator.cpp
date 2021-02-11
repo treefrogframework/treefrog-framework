@@ -10,21 +10,19 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 
-constexpr auto VALIDATOR_HEADER_TEMPLATE = "#ifndef %1VALIDATOR_H\n"
-                                           "#define %1VALIDATOR_H\n"
+constexpr auto VALIDATOR_HEADER_TEMPLATE = "#pragma once\n"
                                            "\n"
                                            "#include <TGlobal>\n"
                                            "#include <TFormValidator>\n"
                                            "\n"
-                                           "class T_HELPER_EXPORT %2Validator : public TFormValidator\n"
+                                           "class T_HELPER_EXPORT %1Validator : public TFormValidator\n"
                                            "{\n"
                                            "public:\n"
-                                           "    %2Validator();\n"
+                                           "    %1Validator();\n"
                                            "};\n"
                                            "\n"
-                                           "Q_DECLARE_METATYPE(%2Validator)\n"
-                                           "\n"
-                                           "#endif // %1VALIDATOR_H\n";
+                                           "Q_DECLARE_METATYPE(%1Validator)\n"
+                                           "\n";
 
 constexpr auto VALIDATOR_IMPL_TEMPLATE = "#include \"%1validator.h\"\n"
                                          "\n"
@@ -47,7 +45,7 @@ bool ValidatorGenerator::generate(const QString &dst) const
 {
     // Writes each files
     QDir dstDir(dst);
-    QString output = QString(VALIDATOR_HEADER_TEMPLATE).arg(name.toUpper()).arg(name);
+    QString output = QString(VALIDATOR_HEADER_TEMPLATE).arg(name);
     FileWriter(dstDir.filePath(name.toLower() + "validator.h")).write(output, false);
 
     output = QString(VALIDATOR_IMPL_TEMPLATE).arg(name.toLower()).arg(name);

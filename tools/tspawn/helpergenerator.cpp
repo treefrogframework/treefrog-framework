@@ -10,19 +10,17 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 
-constexpr auto HELPER_HEADER_TEMPLATE = "#ifndef %1_H\n"
-                                        "#define %1_H\n"
+constexpr auto HELPER_HEADER_TEMPLATE = "#pragma once\n"
                                         "\n"
                                         "#include <TGlobal>\n"
                                         "#include \"applicationhelper.h\"\n"
                                         "\n"
-                                        "class T_HELPER_EXPORT %2 : public ApplicationHelper\n"
+                                        "class T_HELPER_EXPORT %1 : public ApplicationHelper\n"
                                         "{\n"
                                         "public:\n"
-                                        "    %2();\n"
+                                        "    %1();\n"
                                         "};\n"
-                                        "\n"
-                                        "#endif // %1_H\n";
+                                        "\n";
 
 constexpr auto HELPER_IMPL_TEMPLATE = "#include \"%1.h\"\n"
                                       "\n"
@@ -40,7 +38,7 @@ bool HelperGenerator::generate(const QString &dst) const
 {
     // Writes each files
     QDir dstDir(dst);
-    QString output = QString(HELPER_HEADER_TEMPLATE).arg(name.toUpper()).arg(name);
+    QString output = QString(HELPER_HEADER_TEMPLATE).arg(name);
     FileWriter(dstDir.filePath(name.toLower() + ".h")).write(output, false);
 
     output = QString(HELPER_IMPL_TEMPLATE).arg(name.toLower()).arg(name);

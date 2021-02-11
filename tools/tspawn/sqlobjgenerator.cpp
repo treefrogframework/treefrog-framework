@@ -10,13 +10,12 @@
 #include "global.h"
 #include "tableschema.h"
 
-constexpr auto SQLOBJECT_HEADER_TEMPLATE = "#ifndef %1OBJECT_H\n"
-                                           "#define %1OBJECT_H\n"
+constexpr auto SQLOBJECT_HEADER_TEMPLATE = "#pragma once\n"
                                            "\n"
                                            "#include <TSqlObject>\n"
                                            "#include <QSharedData>\n"
                                            "\n\n"
-                                           "class T_MODEL_EXPORT %2Object : public TSqlObject, public QSharedData\n"
+                                           "class T_MODEL_EXPORT %1Object : public TSqlObject, public QSharedData\n"
                                            "{\n"
                                            "public:\n";
 
@@ -24,8 +23,7 @@ constexpr auto SQLOBJECT_PROPERTY_TEMPLATE = "    Q_PROPERTY(%1 %2 READ get%2 WR
                                              "    T_DEFINE_PROPERTY(%1, %2)\n";
 
 constexpr auto SQLOBJECT_FOOTER_TEMPLATE = "};\n"
-                                           "\n"
-                                           "#endif // %1OBJECT_H\n";
+                                           "\n";
 
 
 static bool isNumericType(const QString &typeName)
@@ -81,7 +79,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     QString output;
 
     // Header part
-    output += QString(SQLOBJECT_HEADER_TEMPLATE).arg(modelName.toUpper(), modelName);
+    output += QString(SQLOBJECT_HEADER_TEMPLATE).arg(modelName);
     QListIterator<QPair<QString, QString>> it(fieldList);
     while (it.hasNext()) {
         const QPair<QString, QString> &p = it.next();
@@ -139,7 +137,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
     }
 
     // Footer part
-    output += QString(SQLOBJECT_FOOTER_TEMPLATE).arg(modelName.toUpper());
+    output += SQLOBJECT_FOOTER_TEMPLATE;
 
     // Writes to a file
     QDir dst = QDir(dstDir).filePath("sqlobjects");

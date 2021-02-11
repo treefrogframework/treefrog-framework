@@ -11,19 +11,17 @@
 #include "projectfilegenerator.h"
 #include <QtCore>
 
-constexpr auto MAILER_HEADER_FILE_TEMPLATE = "#ifndef %1MAILER_H\n"
-                                             "#define %1MAILER_H\n"
+constexpr auto MAILER_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                              "\n"
                                              "#include <TActionMailer>\n"
                                              "\n\n"
-                                             "class %2Mailer : public TActionMailer\n"
+                                             "class %1Mailer : public TActionMailer\n"
                                              "{\n"
                                              "public:\n"
-                                             "    %2Mailer() { }\n"
-                                             "%3"
+                                             "    %1Mailer() { }\n"
+                                             "%2"
                                              "};\n"
-                                             "\n"
-                                             "#endif // %1MAILER_H\n";
+                                             "\n";
 
 
 constexpr auto MAILER_SOURCE_FILE_TEMPLATE = "#include \"%1mailer.h\"\n"
@@ -56,7 +54,7 @@ bool MailerGenerator::generate(const QString &dst) const
         act.append("    void ").append(i.next()).append("();\n");
     }
 
-    QString code = QString(MAILER_HEADER_FILE_TEMPLATE).arg(mailerName.toUpper(), mailerName, act);
+    QString code = QString(MAILER_HEADER_FILE_TEMPLATE).arg(mailerName, act);
     fwh.write(code, false);
     files << fwh.fileName();
 
