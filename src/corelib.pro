@@ -30,7 +30,7 @@ INSTALLS += target
 
 windows {
   win32-msvc* {
-    LIBS += ../3rdparty/lz4/visual/liblz4_static.lib
+    LIBS += ../3rdparty/lz4/build/liblz4_static.lib
   } else {
     LIBS += ../3rdparty/lz4/lib/release/liblz4.a
   }

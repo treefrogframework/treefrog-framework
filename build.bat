@@ -7,7 +7,7 @@ rem
 
 set BASEDIR=%~dp0
 
-call "C:\Qt\5.15.0\msvc2019_64\bin\qtenv2.bat"
+call "C:\Qt\5.15.2\msvc2019_64\bin\qtenv2.bat"
 rem call "C:\Qt\5.13.0\msvc2017\bin\qtenv2.bat"
 
 set VSVER=2019

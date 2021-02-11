@@ -4,7 +4,7 @@
 set VERSION=1.32.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.9.5
-set LZ4_VERSION=1.9.2
+set LZ4_VERSION=1.9.3
 set BASEDIR=%~dp0
 
 :parse_loop
@@ -208,10 +208,10 @@ if not ERRORLEVEL 1 (
 ) else (
   set VS=VS2017
 )
-devenv lz4\visual\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
+devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  devenv lz4\visual\%VS%\lz4.sln /project liblz4 /build "Release|%BUILDTARGET%"
+  devenv lz4\build\%VS%\lz4.sln /project liblz4 /build "Release|%BUILDTARGET%"
   echo;
   echo Build failed.
   echo LZ4 not available.
