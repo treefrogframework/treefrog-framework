@@ -12,26 +12,24 @@
 #include "tableschema.h"
 #include <QtCore>
 
-constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE = "#ifndef %1CONTROLLER_H\n"
-                                                 "#define %1CONTROLLER_H\n"
+constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "\n"
                                                  "#include \"applicationcontroller.h\"\n"
                                                  "\n\n"
-                                                 "class T_CONTROLLER_EXPORT %2Controller : public ApplicationController\n"
+                                                 "class T_CONTROLLER_EXPORT %1Controller : public ApplicationController\n"
                                                  "{\n"
                                                  "    Q_OBJECT\n"
                                                  "public:\n"
-                                                 "    %2Controller() : ApplicationController() {}\n"
+                                                 "    %1Controller() : ApplicationController() {}\n"
                                                  "\n"
                                                  "public slots:\n"
                                                  "    void index();\n"
-                                                 "    void show(const QString &%3);\n"
+                                                 "    void show(const QString &%2);\n"
                                                  "    void create();\n"
-                                                 "    void save(const QString &%3);\n"
-                                                 "    void remove(const QString &%3);\n"
+                                                 "    void save(const QString &%2);\n"
+                                                 "    void remove(const QString &%2);\n"
                                                  "};\n"
-                                                 "\n"
-                                                 "#endif // %1CONTROLLER_H\n";
+                                                 "\n";
 
 
 constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
@@ -141,22 +139,20 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
                                                  "T_DEFINE_CONTROLLER(%2Controller)\n";
 
 
-constexpr auto CONTROLLER_TINY_HEADER_FILE_TEMPLATE = "#ifndef %1CONTROLLER_H\n"
-                                                      "#define %1CONTROLLER_H\n"
+constexpr auto CONTROLLER_TINY_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                       "\n"
                                                       "#include \"applicationcontroller.h\"\n"
                                                       "\n\n"
-                                                      "class T_CONTROLLER_EXPORT %2Controller : public ApplicationController\n"
+                                                      "class T_CONTROLLER_EXPORT %1Controller : public ApplicationController\n"
                                                       "{\n"
                                                       "    Q_OBJECT\n"
                                                       "public:\n"
-                                                      "    %2Controller() : ApplicationController() { }\n"
+                                                      "    %1Controller() : ApplicationController() { }\n"
                                                       "\n"
                                                       "public slots:\n"
-                                                      "%3"
+                                                      "%2"
                                                       "};\n"
-                                                      "\n"
-                                                      "#endif // %1CONTROLLER_H\n";
+                                                      "\n";
 
 
 constexpr auto CONTROLLER_TINY_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
@@ -242,7 +238,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString varName = enumNameToVariableName(controllerName);
 
         // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, fieldNameToVariableName(pair.first));
+        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName, fieldNameToVariableName(pair.first));
         fwh.write(code, false);
         files << fwh.fileName();
 
@@ -263,7 +259,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             actions.append("    void ").append(i.next()).append("();\n");
         }
 
-        QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, actions);
+        QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName, actions);
         fwh.write(code, false);
         files << fwh.fileName();
 

@@ -16,8 +16,7 @@
 constexpr auto USER_VIRTUAL_METHOD = "identityKey";
 constexpr auto LOCK_REVISION_FIELD = "lockRevision";
 
-constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
-                                            "#define %head%_H\n"
+constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                             "\n"
                                             "#include <QStringList>\n"
                                             "#include <QDateTime>\n"
@@ -66,8 +65,7 @@ constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
                                             "\n"
                                             "Q_DECLARE_METATYPE(%model%)\n"
                                             "Q_DECLARE_METATYPE(QList<%model%>)\n"
-                                            "\n"
-                                            "#endif // %head%_H\n";
+                                            "\n";
 
 constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "#include \"%inc%.h\"\n"
@@ -165,8 +163,7 @@ constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "// Don't remove below this line\n"
                                      "T_REGISTER_STREAM_OPERATORS(%model%)\n";
 
-constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
-                                                 "#define %head%_H\n"
+constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "\n"
                                                  "#include <QStringList>\n"
                                                  "#include <QDateTime>\n"
@@ -218,8 +215,7 @@ constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
                                                  "\n"
                                                  "Q_DECLARE_METATYPE(%model%)\n"
                                                  "Q_DECLARE_METATYPE(QList<%model%>)\n"
-                                                 "\n"
-                                                 "#endif // %head%_H\n";
+                                                 "\n";
 
 constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "#include \"%inc%.h\"\n"
@@ -567,8 +563,7 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
 
     PlaceholderList headerList, implList;
 
-    headerList << pair("head", modelName.toUpper())
-               << pair("model", modelName)
+    headerList << pair("model", modelName)
                << pair("setgetDecl", setgetDecl)
                << pair("4", crtparams)
                << pair("5", getparams)
