@@ -29,12 +29,12 @@ environment:
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat
       QT_PATH:  C:\Qt\5.12\msvc2017
 
-    # Qt5.12 / VisualStudio 2019 64bit
+    # Qt5.15 / VisualStudio 2019 64bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
       QT_PATH:  C:\Qt\5.15\msvc2019_64
 
-    # Qt5.12 / VisualStudio 2019 32bit
+    # Qt5.15 / VisualStudio 2019 32bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat
       QT_PATH:  C:\Qt\5.15\msvc2019
