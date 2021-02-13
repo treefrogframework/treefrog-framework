@@ -97,25 +97,25 @@ echo %QT_INSTALL_PREFIX% | find "msvc2019" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2019
   if /i "%Platform%" == "x64" (
-    set CMAKEOPT=Visual Studio 16 2019
+    set CMAKEOPT=-G"Visual Studio 16 2019" -A x64
   ) else (
-    set CMAKEOPT=Visual Studio 16 2019
+    set CMAKEOPT=-G"Visual Studio 16 2019" -A Win32
   )
 ) else (
   echo %QT_INSTALL_PREFIX% | find "msvc2017" >NUL
   if not ERRORLEVEL 1 (
     set VSVER=2017
     if /i "%Platform%" == "x64" (
-      set CMAKEOPT=Visual Studio 15 2017 Win64
+      set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
     ) else (
-      set CMAKEOPT=Visual Studio 15 2017
+      set CMAKEOPT=-G"Visual Studio 15 2017"
     )
   ) else (
     set VSVER=2015
     if /i "%Platform%" == "x64" (
-      set CMAKEOPT=Visual Studio 14 2015 Win64
+      set CMAKEOPT=-G"Visual Studio 14 2015 Win64"
     ) else (
-      set CMAKEOPT=Visual Studio 14 2015
+      set CMAKEOPT=-G"Visual Studio 14 2015"
     )
   )
 )
@@ -169,7 +169,7 @@ mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 
 cd %BASEDIR%3rdparty\mongo-driver\src\libbson
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
-cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF .
+cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF .
 echo Compiling BSON library ...
 devenv libbson.sln /project bson_static /rebuild Release >nul 2>&1
 if ERRORLEVEL 1 (
@@ -183,10 +183,14 @@ if ERRORLEVEL 1 (
 
 cd %BASEDIR%3rdparty\mongo-driver
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
-echo cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF .
-cmake -G"%CMAKEOPT%" -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF .
+set CMAKECMD=cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF .
+echo %CMAKECMD%
+%CMAKECMD%
+
 echo Compiling MongoDB driver library ...
-devenv libmongoc.sln /project mongoc_static /rebuild Release >nul 2>&1
+set DEVENVCMD=devenv libmongoc.sln /project mongoc_static /rebuild Release >nul 2>&1
+echo %DEVENVCMD%
+%DEVENVCMD%
 if ERRORLEVEL 1 (
   :: Shows error
   devenv libmongoc.sln /project mongoc_static /build Release
@@ -208,7 +212,9 @@ if not ERRORLEVEL 1 (
 ) else (
   set VS=VS2017
 )
-devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
+set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
+echo %DEVENVCMD%
+%DEVENVCMD%
 if ERRORLEVEL 1 (
   :: Shows error
   devenv lz4\build\%VS%\lz4.sln /project liblz4 /build "Release|%BUILDTARGET%"
