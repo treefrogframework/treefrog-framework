@@ -67,3 +67,71 @@ The next statement shows the Stop Command for stopping the TreeFrog service.
 ```
  $ sudo treefrog -k stop [application_root_path]
 ```
+
+### Release Mode Building on CI tools
+Using CI tools to build the source code on release mode or test as close to the production environment as possible is one of the most effective ways to do.
+
+An example usage:
+```yaml
+# GitHub Action
+# .github/workflows/c-cpp.yml
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # build treefrog
+    - name: dependency install
+      run: sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev qtdeclarative5-dev qtbase5-dev-tools gcc g++ make cmake
+    - name: dependency db install
+      run: sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1 libmongoc-dev libbson-dev
+    - name: download treefrog source archive
+      run: wget https://github.com/treefrogframework/treefrog-framework/archive/v1.30.0.tar.gz
+    - name: expand treefrog archive 
+      run: tar zxvf v*.*.*.tar.gz
+    - name: configure treefrog
+      run: cd treefrog-framework-*.* && ./configure --prefix=/usr/local
+    - name: make treefrog
+      run: cd treefrog-framework-*.* && make -j4 -C src
+    - name: make install treefrog
+      run: cd treefrog-framework-*.* && sudo make install -C src
+    - name: make treefrog tools
+      run: cd treefrog-framework-*.* && make -j4 -C tools
+    - name: make install treefrog tools
+      run: cd treefrog-framework-*.* && sudo make install -C tools
+    - name: update share library dependency info
+      run: sudo ldconfig
+    - name: check treefrog version
+      run: treefrog -v
+    
+    # build project files
+    - name: execute qmake.
+      run: qmake -r "CONFIG+=release"
+    - name: makeing directory for build
+      run: mkdir build
+    - name: cmake 
+      run: cd build && cmake ../
+    - name: execute make
+      run: cd build && make
+
+    # package project files.
+    - name: compressive archive
+      run: tar cvfz app.tar.gz  config/  db/  lib/  plugin/  public/  sql/
+    - name: staging
+      run: mkdir staging && mv app.tar.gz staging/
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Package
+        path: staging
+```
