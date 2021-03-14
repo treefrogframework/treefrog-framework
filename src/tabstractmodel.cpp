@@ -76,13 +76,16 @@ bool TAbstractModel::remove()
 /*!
   Returns a map with all properties of this text format.
  */
-QVariantMap TAbstractModel::toVariantMap() const
+QVariantMap TAbstractModel::toVariantMap(const QStringList &properties) const
 {
     QVariantMap ret;
 
     const QVariantMap map = modelData()->toVariantMap();
     for (auto it = map.begin(); it != map.end(); ++it) {
-        ret.insert(fieldNameToVariableName(it.key()), it.value());
+        auto name = fieldNameToVariableName(it.key());
+        if (properties.isEmpty() || properties.contains(name)) {
+            ret.insert(name, it.value());
+        }
     }
     return ret;
 }
@@ -150,9 +153,9 @@ QString TAbstractModel::fieldNameToVariableName(const QString &name)
 /*!
   Converts the model to a QJsonObject.
  */
-QJsonObject TAbstractModel::toJsonObject() const
+QJsonObject TAbstractModel::toJsonObject(const QStringList &properties) const
 {
-    return QJsonObject::fromVariantMap(toVariantMap());
+    return QJsonObject::fromVariantMap(toVariantMap(properties));
 }
 
 
@@ -162,9 +165,9 @@ QJsonObject TAbstractModel::toJsonObject() const
   Converts all the properies to CBOR using QCborValue::fromVariant() and
   returns the map composed of those elements.
  */
-QCborMap TAbstractModel::toCborMap() const
+QCborMap TAbstractModel::toCborMap(const QStringList &properties) const
 {
-    return QCborMap::fromVariantMap(toVariantMap());
+    return QCborMap::fromVariantMap(toVariantMap(properties));
 }
 #endif
 
