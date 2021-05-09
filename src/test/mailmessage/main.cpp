@@ -196,10 +196,10 @@ void TestMailMessage::parse()
     //     qDebug("recpt: %s", ba.data());
     // }
     QCOMPARE(mail.recipients().count(), 3);
-    QCOMPARE(mail.from(), QString::fromUtf8("hoge <test@example.com>"));
-    QCOMPARE(mail.to(), QString::fromUtf8("<test1@example.jp>"));
-    QCOMPARE(mail.cc(), QString::fromUtf8("aoyama <test3@example.jp>"));
-    QCOMPARE(mail.bcc(), QString::fromUtf8("<test3@example.jp>, <test4@example.jp>"));
+    QCOMPARE(mail.from(), QByteArray("hoge <test@example.com>"));
+    QCOMPARE(mail.to(), QByteArray("<test1@example.jp>"));
+    QCOMPARE(mail.cc(), QByteArray("aoyama <test3@example.jp>"));
+    QCOMPARE(mail.bcc(), QByteArray("<test3@example.jp>, <test4@example.jp>"));
     QCOMPARE(mail.body(), QString::fromUtf8("こんにちは,世界"));
 }
 
