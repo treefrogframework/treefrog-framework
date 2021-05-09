@@ -21,7 +21,6 @@ static QByteArray randomString()
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
-    data.append(QByteArray::number(Tf::randXor128()));
     return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }
 
@@ -40,31 +39,12 @@ static QByteArray randomString(int length)
 }
 
 
-
-class Thread : public QThread
-{
-    void run()
-    {
-        for (;;) {
-            for (int i = 0; i < 1000; ++i) {
-                Tf::randXor128();
-            }
-            usleep(1);
-        }
-    }
-};
-
-
 class TestRand : public QObject
 {
     Q_OBJECT
 private slots:
     void initTestCase();
     void cleanupTestCase();
-    void tf_randXor128_data();
-    void tf_randXor128();
-    void tf_randXor128_bench_data();
-    void tf_randXor128_bench();
     void tf_rand_r();
     void random_device();
     void mt19937();
@@ -88,64 +68,15 @@ private:
         THREADS_NUM = 64,
 #endif
     };
-
-    Thread *thread[THREADS_NUM];
 };
 
 
 void TestRand::initTestCase()
 {
-    // put load for benchmarks
-    for (int i = 0; i < THREADS_NUM; ++i) {
-        thread[i] = new Thread;
-        thread[i]->start();
-    }
-    Tf::msleep(100);
 }
-
 
 void TestRand::cleanupTestCase()
 {
-    for (int i = 0; i < THREADS_NUM; ++i) {
-        thread[i]->terminate();
-    }
-
-    for (int i = 0; i < THREADS_NUM; ++i) {
-        thread[i]->wait();
-        delete thread[i];
-    }
-}
-
-
-void TestRand::tf_randXor128_data()
-{
-    QTest::addColumn<int>("seed");
-    QTest::newRow("1") << 1;
-    QTest::newRow("2") << 10;
-    QTest::newRow("3") << 100;
-}
-
-
-void TestRand::tf_randXor128()
-{
-    QFETCH(int, seed);
-    Tf::srandXor128(seed);
-    for (int i = 0; i < 10; ++i)
-        printf("rand: %u\n", Tf::randXor128());
-}
-
-
-void TestRand::tf_randXor128_bench_data()
-{
-    Tf::srandXor128(1222);
-}
-
-
-void TestRand::tf_randXor128_bench()
-{
-    QBENCHMARK {
-        Tf::randXor128();
-     }
 }
 
 void TestRand::tf_rand_r()
