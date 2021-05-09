@@ -187,7 +187,7 @@ void TestMailMessage::parse()
         "Bcc: <test3@example.jp>, <test4@example.jp>\n" \
         "Date: Wed, 30 Mar 2011 19:53:04 +0900\n"       \
         "\n"                                            \
-        "こんにちは");
+        "こんにちは,世界");
 
     TMailMessage mail(msg);
     //qDebug("%s", mail.toByteArray().data());
@@ -196,6 +196,11 @@ void TestMailMessage::parse()
     //     qDebug("recpt: %s", ba.data());
     // }
     QCOMPARE(mail.recipients().count(), 3);
+    QCOMPARE(mail.from(), QString::fromUtf8("hoge <test@example.com>"));
+    QCOMPARE(mail.to(), QString::fromUtf8("<test1@example.jp>"));
+    QCOMPARE(mail.cc(), QString::fromUtf8("aoyama <test3@example.jp>"));
+    QCOMPARE(mail.bcc(), QString::fromUtf8("<test3@example.jp>, <test4@example.jp>"));
+    QCOMPARE(mail.body(), QString::fromUtf8("こんにちは,世界"));
 }
 
 TF_TEST_MAIN(TestMailMessage)
