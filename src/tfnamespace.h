@@ -154,7 +154,6 @@ enum AppAttribute {
     SessionName,
     SessionStoreType,
     SessionAutoIdRegeneration,
-    SessionLifeTime,  // obsolete
     SessionCookiePath,
     SessionGcProbability,
     SessionGcMaxLifeTime,
@@ -187,7 +186,6 @@ enum AppAttribute {
     RedisSettingsFile,
     LDPreload,
     JavaScriptPath,
-    ActionMailerSmtpEnableSTARTTLS,  // obsolete
     ListenAddress,
     //
     SessionCookieMaxAge,

@@ -62,7 +62,7 @@ constexpr auto ENDPOINT_IMPL_TEMPLATE = "#include \"%1endpoint.h\"\n"
 WebSocketGenerator::WebSocketGenerator(const QString &n)
 {
     name = fieldNameToEnumName(n);
-    name.remove(QRegExp("endpoint$", Qt::CaseInsensitive));
+    name.remove(QRegularExpression("endpoint$", QRegularExpression::CaseInsensitiveOption));
 }
 
 

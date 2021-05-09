@@ -104,7 +104,7 @@ QDateTime TApplicationServerBase::latestLibraryTimestamp()
     const QStringList libs = {"libcontroller.so", "libmodel.so", "libview.so", "libhelper.so"};
 #endif
 
-    QDateTime ret = QDateTime::fromTime_t(0);
+    QDateTime ret = QDateTime::fromSecsSinceEpoch(0);
 
     QString libPath = Tf::app()->libPath();
     for (auto &lib : libs) {

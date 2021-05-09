@@ -5,7 +5,7 @@
 class TJavaScriptObject : public QLatin1String {
 public:
     explicit TJavaScriptObject(const char *str = "");
-    TJavaScriptObject(const TJavaScriptObject &other);
+    TJavaScriptObject(const TJavaScriptObject &other) = default;
     QString toString() const;
 };
 
@@ -15,10 +15,6 @@ inline TJavaScriptObject::TJavaScriptObject(const char *str) :
 {
 }
 
-inline TJavaScriptObject::TJavaScriptObject(const TJavaScriptObject &other) :
-    QLatin1String(other)
-{
-}
 
 inline QString TJavaScriptObject::toString() const
 {

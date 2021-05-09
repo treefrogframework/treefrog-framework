@@ -33,7 +33,11 @@ private:
     QJSValue *funcObj;
     QString lastFunc;
     QString moduleFilePath;
-    QMutex mutex;
+#if QT_VERSION < 0x060000
+    QMutex mutex {QMutex::Recursive};
+#else
+    QRecursiveMutex mutex;
+#endif
 
     T_DISABLE_COPY(TJSModule)
     T_DISABLE_MOVE(TJSModule);

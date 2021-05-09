@@ -21,6 +21,7 @@
 #include "validatorgenerator.h"
 #include "websocketgenerator.h"
 #include <QtCore>
+#include <QTextCodec>
 #include <random>
 #ifndef Q_CC_MSVC
 #include <unistd.h>
@@ -251,7 +252,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
             if (line.isEmpty())
                 continue;
 
-            QCharRef c = line[0];
+            const QChar c = line[0];
             if (c == 'Y' || c == 'y') {
                 remove(file);
                 rmd << fname;

@@ -1,27 +1,12 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "1.32.0";
-constexpr auto TF_VERSION_NUMBER = 0x013200;
-constexpr auto TF_SRC_REVISION = 2308;
+constexpr auto TF_VERSION_STR = "2.0.1";
+constexpr auto TF_VERSION_NUMBER = 0x020001;
+constexpr auto TF_SRC_REVISION = 2321;
 
 #include <QMetaType>
+#include <QIODevice>
 #include <QtGlobal>
 
-#define T_DECLARE_CONTROLLER(TYPE, NAME) \
-    using NAME = TYPE;                   \
-    Q_DECLARE_METATYPE(NAME)
-
-// Deprecated
-#define T_REGISTER_CONTROLLER(TYPE) T_REGISTER_METATYPE(TYPE)
-#define T_REGISTER_VIEW(TYPE) T_REGISTER_METATYPE(TYPE)
-#define T_REGISTER_METATYPE(TYPE)         \
-    class Static##TYPE##Instance {        \
-    public:                               \
-        Static##TYPE##Instance() noexcept \
-        {                                 \
-            qRegisterMetaType<TYPE>();    \
-        }                                 \
-    };                                    \
-    static Static##TYPE##Instance _static##TYPE##Instance;
 
 #define T_DEFINE_CONTROLLER(TYPE) T_DEFINE_TYPE(TYPE)
 #define T_DEFINE_VIEW(TYPE) T_DEFINE_TYPE(TYPE)
@@ -35,6 +20,7 @@ constexpr auto TF_SRC_REVISION = 2308;
     };                                                                                               \
     static Static##TYPE##Definition _static##TYPE##Definition;
 
+#if QT_VERSION < 0x060000
 #define T_REGISTER_STREAM_OPERATORS(TYPE)                  \
     class Static##TYPE##Instance {                         \
     public:                                                \
@@ -44,6 +30,10 @@ constexpr auto TF_SRC_REVISION = 2308;
         }                                                  \
     };                                                     \
     static Static##TYPE##Instance _static##TYPE##Instance;
+#else
+// do no longer exist in qt6, qRegisterMetaTypeStreamOperators().
+#define T_REGISTER_STREAM_OPERATORS(TYPE)
+#endif
 
 #define T_DEFINE_PROPERTY(TYPE, PROPERTY)                                   \
     inline void set##PROPERTY(const TYPE &v__) noexcept { PROPERTY = v__; } \
@@ -114,6 +104,7 @@ constexpr auto TF_SRC_REVISION = 2308;
 #define T_FETCH_V(TYPE, VAR, DEFAULT) TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
 #define tfetchv(TYPE, VAR, DEFAULT) T_FETCH_V(TYPE, VAR, DEFAULT)
 
+#if QT_VERSION < 0x060000
 #define T_EHEX(VAR)                                      \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -136,6 +127,31 @@ constexpr auto TF_SRC_REVISION = 2308;
         }                                                \
     } while (0)
 
+#else
+#define T_EHEX(VAR)                                      \
+    do {                                                 \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
+        int ___##VAR##_type = (___##VAR##_).typeId();    \
+        switch (___##VAR##_type) {                       \
+        case QMetaType::QJsonValue:                      \
+            eh((___##VAR##_).toJsonValue());             \
+            break;                                       \
+        case QMetaType::QJsonObject:                     \
+            eh((___##VAR##_).toJsonObject());            \
+            break;                                       \
+        case QMetaType::QJsonArray:                      \
+            eh((___##VAR##_).toJsonArray());             \
+            break;                                       \
+        case QMetaType::QJsonDocument:                   \
+            eh((___##VAR##_).toJsonDocument());          \
+            break;                                       \
+        default:                                         \
+            eh(___##VAR##_);                             \
+        }                                                \
+    } while (0)
+
+#endif
+
 #define tehex(VAR) T_EHEX(VAR)
 
 #define T_EHEX_V(VAR, DEFAULT)                                         \
@@ -153,6 +169,7 @@ constexpr auto TF_SRC_REVISION = 2308;
 #define T_EHEX2(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
 #define tehex2(VAR, DEFAULT) T_EHEX2(VAR, DEFAULT)
 
+#if QT_VERSION < 0x060000
 #define T_ECHOEX(VAR)                                    \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -174,6 +191,32 @@ constexpr auto TF_SRC_REVISION = 2308;
             echo(___##VAR##_);                           \
         }                                                \
     } while (0)
+
+#else
+#define T_ECHOEX(VAR)                                    \
+    do {                                                 \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
+        int ___##VAR##_type = (___##VAR##_).typeId();    \
+        switch (___##VAR##_type) {                       \
+        case QMetaType::QJsonValue:                      \
+            echo((___##VAR##_).toJsonValue());           \
+            break;                                       \
+        case QMetaType::QJsonObject:                     \
+            echo((___##VAR##_).toJsonObject());          \
+            break;                                       \
+        case QMetaType::QJsonArray:                      \
+            echo((___##VAR##_).toJsonArray());           \
+            break;                                       \
+        case QMetaType::QJsonDocument:                   \
+            echo((___##VAR##_).toJsonDocument());        \
+            break;                                       \
+        default:                                         \
+            echo(___##VAR##_);                           \
+        }                                                \
+    } while (0)
+
+#endif
+
 
 #define techoex(VAR) T_ECHOEX(VAR)
 
@@ -219,6 +262,15 @@ constexpr auto TF_SRC_REVISION = 2308;
 #define tDebug TDebug(Tf::DebugLevel).debug
 #define tTrace TDebug(Tf::TraceLevel).trace
 
+namespace Tf {
+#if QT_VERSION < 0x060000  // 6.0.0
+constexpr auto ReadOnly = QIODevice::ReadOnly;
+constexpr auto WriteOnly = QIODevice::WriteOnly;
+#else
+constexpr auto ReadOnly = QIODeviceBase::ReadOnly;
+constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
+#endif
+}
 
 #include "tfexception.h"
 #include "tfnamespace.h"
@@ -239,10 +291,6 @@ T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
 T_CORE_EXPORT void msleep(unsigned long msecs) noexcept;
 T_CORE_EXPORT qint64 getMSecsSinceEpoch();
-
-// Xorshift random number generator
-T_CORE_EXPORT void srandXor128(quint32 seed) noexcept;  // obsolete
-T_CORE_EXPORT quint32 randXor128() noexcept;  // obsolete
 
 // Thread-safe std::random number generator
 T_CORE_EXPORT uint32_t rand32_r() noexcept;

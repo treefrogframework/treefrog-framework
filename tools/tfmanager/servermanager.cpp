@@ -228,7 +228,7 @@ void ServerManager::startServer(int id) const
     serversStatus.insert(tfserver, id);
 
     connect(tfserver, SIGNAL(started()), this, SLOT(updateServerStatus()));
-    connect(tfserver, SIGNAL(error(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
+    connect(tfserver, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
     connect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(serverFinish(int, QProcess::ExitStatus)));
     connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));  // For error notification
 

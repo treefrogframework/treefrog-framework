@@ -1,8 +1,15 @@
 TARGET   = treefrog
 TEMPLATE = lib
-CONFIG  += shared console c++14
+CONFIG  += shared console
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
+lessThan(QT_MAJOR_VERSION, 6) {
+  CONFIG += c++14
+} else {
+  CONFIG += c++17
+  QT += core5compat
+}
+
 DEFINES += TF_MAKEDLL
 DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += ../include ../3rdparty/lz4/lib

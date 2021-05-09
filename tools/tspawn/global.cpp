@@ -137,7 +137,7 @@ QString fieldNameToCaption(const QString &name)
     }
 
     // Upper-case/lower-case words
-    QStringList caplist = cap.split(QRegExp("\\W+"), Tf::SkipEmptyParts);
+    QStringList caplist = cap.split(QRegularExpression("\\W+"), Tf::SkipEmptyParts);
     for (QMutableStringListIterator i(caplist); i.hasNext();) {
         QString &s = i.next();
         QString slow = s.toLower();

@@ -16,7 +16,7 @@
 #include <QMutex>
 #include <QSet>
 
-static QMutex mutex(QMutex::NonRecursive);
+static QMutex mutex;
 
 
 class Pub : public QObject {

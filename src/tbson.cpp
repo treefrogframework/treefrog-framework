@@ -8,7 +8,7 @@
 #include "tsystemglobal.h"
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QtEndian>
 #include <TBson>
@@ -154,7 +154,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             break;
 
         case BSON_TYPE_REGEX:
-            ret[key] = QRegExp(QLatin1String(bson_iter_regex(&it, nullptr)));
+            ret[key] = QRegularExpression(QLatin1String(bson_iter_regex(&it, nullptr)));
             break;
 
         case BSON_TYPE_CODE:

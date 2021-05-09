@@ -153,8 +153,8 @@ void TestMailMessage::dateTime_data()
     QTest::addColumn<QString>("result");
 
     // Timezone
-    uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::UTC).toTime_t();
-    uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::LocalTime).toTime_t();
+    uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::UTC).toSecsSinceEpoch();
+    uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::LocalTime).toSecsSinceEpoch();
     int offset = (utc - local) / 60;
     QString offsetStr = QString("%1%2%3")
         .arg(offset > 0 ? '+' : '-')

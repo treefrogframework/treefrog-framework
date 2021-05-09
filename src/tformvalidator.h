@@ -1,6 +1,6 @@
 #pragma once
 #include <QPair>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QVariant>
 #include <TGlobal>
@@ -20,7 +20,7 @@ public:
     void setRule(const QString &key, Tf::ValidationRule rule, double val, const QString &errorMessage = QString());
     void setRule(const QString &key, Tf::ValidationRule rule, int val, const QString &errorMessage = QString());
     void setRule(const QString &key, Tf::ValidationRule rule, qint64 val, const QString &errorMessage = QString());
-    void setPatternRule(const QString &key, const QRegExp &rx, const QString &errorMessage = QString());
+    void setPatternRule(const QString &key, const QRegularExpression &rx, const QString &errorMessage = QString());
     QString message(const QString &key, Tf::ValidationRule rule) const;
 
     void setDateFormat(const QString &format);
@@ -51,12 +51,11 @@ protected:
         RuleEntry(const QString &key, int rule, bool enable, const QString &errorMessage);
         RuleEntry(const QString &key, int rule, qint64 val, const QString &errorMessage);
         RuleEntry(const QString &key, int rule, double val, const QString &errorMessage);
-        RuleEntry(const QString &key, int rule, const QRegExp &rx, const QString &errorMessage);
+        RuleEntry(const QString &key, int rule, const QRegularExpression &rx, const QString &errorMessage);
     };
 
     bool containsRule(const QString &key, Tf::ValidationRule rule) const;
     void removeRule(const QString &key, Tf::ValidationRule rule);
-    void setValidationError(const QString &errorMessage);
 
     QList<RuleEntry> rules;
     QList<QPair<QString, int>> errors;

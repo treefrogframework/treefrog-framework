@@ -8,6 +8,7 @@
 #include "tmailmessage.h"
 #include <QDateTime>
 #include <QTextCodec>
+#include <QRegularExpression>
 #include <THttpUtility>
 using namespace Tf;
 
@@ -75,9 +76,11 @@ inline int indexOfUsAscii(const QString &str, int from)
 
 void TMailMessage::parse(const QString &str)
 {
-    QRegExp rx("(\\n\\n|\\r\\n\\r\\n)", Qt::CaseSensitive, QRegExp::RegExp2);
-    int idx = rx.indexIn(str, 0);
-    int bdidx = idx + rx.matchedLength();
+    QRegularExpression rx("(\\n\\n|\\r\\n\\r\\n)");
+
+    auto match = rx.match(str);
+    int idx = match.capturedStart();
+    int bdidx = idx + match.capturedLength();
 
     if (idx < 0) {
         tError("Not found mail headers");

@@ -35,3 +35,7 @@ trim_trailing_whitespace = false
 
 [*.wxs]
 end_of_line = crlf
+
+[CMakeLists.txt]
+end_of_line = crlf
+
