@@ -192,7 +192,12 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
 {
     static const QLatin1String oidkey("_id");
     bool ok = true;
+
+#if QT_VERSION < 0x060000
     int type = value.type();
+#else
+    auto type = value.typeId();
+#endif
 
     // _id
     if (key == oidkey) {
@@ -214,31 +219,31 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     }
 
     switch (type) {
-    case QVariant::Int:
+    case Tf::QMetaTypeInt:
         BSON_APPEND_INT32(bson, qPrintable(key), value.toInt(&ok));
         break;
 
-    case QVariant::String:
+    case Tf::QMetaTypeQString:
         BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
         break;
 
-    case QVariant::LongLong:
+    case Tf::QMetaTypeLongLong:
         BSON_APPEND_INT64(bson, qPrintable(key), value.toLongLong(&ok));
         break;
 
-    case QVariant::Map:
+    case Tf::QMetaTypeQVariantMap:
         BSON_APPEND_DOCUMENT(bson, qPrintable(key), (const bson_t *)TBson::toBson(value.toMap()).constData());
         break;
 
-    case QVariant::Double:
+    case Tf::QMetaTypeDouble:
         BSON_APPEND_DOUBLE(bson, qPrintable(key), value.toDouble(&ok));
         break;
 
-    case QVariant::Bool:
+    case Tf::QMetaTypeBool:
         BSON_APPEND_BOOL(bson, qPrintable(key), value.toBool());
         break;
 
-    case QVariant::DateTime: {
+    case Tf::QMetaTypeQDateTime: {
 #if QT_VERSION >= 0x040700
         BSON_APPEND_DATE_TIME(bson, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
 #else
@@ -253,14 +258,14 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
     }
 
-    case QVariant::ByteArray: {
+    case Tf::QMetaTypeQByteArray: {
         QByteArray ba = value.toByteArray();
         BSON_APPEND_BINARY(bson, qPrintable(key), BSON_SUBTYPE_BINARY, (uint8_t *)ba.constData(), ba.length());
         break;
     }
 
-    case QVariant::List:  // FALLTHRU
-    case QVariant::StringList: {
+    case Tf::QMetaTypeQVariantList:  // FALLTHRU
+    case Tf::QMetaTypeQStringList: {
         bson_t child;
         BSON_APPEND_ARRAY_BEGIN(bson, qPrintable(key), &child);
 
@@ -272,7 +277,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
     }
 
-    case QVariant::Invalid:
+    case Tf::QMetaTypeUnknownType:
         BSON_APPEND_UNDEFINED(bson, qPrintable(key));
         break;
 

@@ -9,6 +9,7 @@
 #include "filewriter.h"
 #include "global.h"
 #include "projectfilegenerator.h"
+#include <tfnamespace.h>
 #include <QPair>
 #include <QRegExp>
 #ifndef Q_CC_MSVC
@@ -94,13 +95,17 @@ QString MongoObjGenerator::generate(const QString &dstDir)
 }
 
 
-static QStringList generateCode(const QList<QPair<QString, QVariant::Type>> &fieldList)
+static QStringList generateCode(const QList<QPair<QString, QMetaType::Type>> &fieldList)
 {
     QString params, enums, macros;
 
-    for (QListIterator<QPair<QString, QVariant::Type>> it(fieldList); it.hasNext();) {
-        const QPair<QString, QVariant::Type> &p = it.next();
+    for (QListIterator<QPair<QString, QMetaType::Type>> it(fieldList); it.hasNext();) {
+        const QPair<QString, QMetaType::Type> &p = it.next();
+#if QT_VERSION < 0x060000
         QString typeName = QVariant::typeToName(p.second);
+#else
+        QString typeName = QString::fromLatin1(QMetaType(p.second).name());
+#endif
         params += QString("    %1 %2;\n").arg(typeName, p.first);
         macros += QString(MONGOOBJECT_PROPERTY_TEMPLATE).arg(typeName, p.first);
         QString estr = fieldNameToEnumName(p.first);
@@ -113,10 +118,10 @@ static QStringList generateCode(const QList<QPair<QString, QVariant::Type>> &fie
 
 bool MongoObjGenerator::createMongoObject(const QString &path)
 {
-    fields << qMakePair(QString("_id"), QVariant::String)
-           << qMakePair(QString("createdAt"), QVariant::DateTime)
-           << qMakePair(QString("updatedAt"), QVariant::DateTime)
-           << qMakePair(QString("lockRevision"), QVariant::Int);
+    fields << qMakePair(QString("_id"), Tf::QMetaTypeQString)
+           << qMakePair(QString("createdAt"), Tf::QMetaTypeQDateTime)
+           << qMakePair(QString("updatedAt"), Tf::QMetaTypeQDateTime)
+           << qMakePair(QString("lockRevision"), Tf::QMetaTypeInt);
 
     QStringList code = generateCode(fields);
     QString output = QString(MONGOOBJECT_HEADER_TEMPLATE).arg(modelName, code[0], code[1], collectionName, code[2]);
@@ -125,9 +130,9 @@ bool MongoObjGenerator::createMongoObject(const QString &path)
 }
 
 
-static QList<QPair<QString, QVariant::Type>> getFieldList(const QString &filePath)
+static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePath)
 {
-    QList<QPair<QString, QVariant::Type>> ret;
+    QList<QPair<QString, QMetaType::Type>> ret;
     QRegExp rxend("(\\n[\\t\\r ]*\\n|\\senum\\s)", Qt::CaseSensitive, QRegExp::RegExp2);
     QRegExp rx("\\s([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
 
@@ -147,10 +152,14 @@ static QList<QPair<QString, QVariant::Type>> getFieldList(const QString &filePat
 
     int end = rxend.indexIn(src, pos);
     while ((pos = rx.indexIn(src, pos)) > 0 && pos < end) {
-        QVariant::Type type = QVariant::nameToType(rx.cap(1).toLatin1().data());
+#if QT_VERSION < 0x060000
+        QMetaType::Type type = (QMetaType::Type)QVariant::nameToType(rx.cap(1).toLatin1().data());
+#else
+        int type = QMetaType::fromName(rx.cap(1).toLatin1()).id();
+#endif
         QString var = rx.cap(2);
-        if (type != QVariant::Invalid && var.toLower() != "id")
-            ret << QPair<QString, QVariant::Type>(var, type);
+        if (type != Tf::QMetaTypeUnknownType && var.toLower() != "id")
+            ret << QPair<QString, QMetaType::Type>(var, (QMetaType::Type)type);
         pos += rx.matchedLength();
     }
     return ret;

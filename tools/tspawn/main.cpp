@@ -532,7 +532,11 @@ int main(int argc, char *argv[])
         break;
 
     case ShowDriverPath: {
+#if QT_VERSION < 0x060000
         QString path = QLibraryInfo::location(QLibraryInfo::PluginsPath) + "/sqldrivers";
+#else
+        QString path = QLibraryInfo::path(QLibraryInfo::PluginsPath) + "/sqldrivers";
+#endif
         QFileInfo fi(path);
         if (!fi.exists() || !fi.isDir()) {
             qCritical("Error: database driver's directory not found");

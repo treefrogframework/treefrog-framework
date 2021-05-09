@@ -237,6 +237,65 @@ enum class KvsEngine {
     CacheKvs,  // For internal use
     Num  // = 3
 };
+
+
+#if QT_VERSION >= 0x050e00  // 5.14.0
+constexpr auto KeepEmptyParts = Qt::KeepEmptyParts;
+constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
+#else
+constexpr auto KeepEmptyParts = QString::KeepEmptyParts;
+constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
+#endif
+
+#if QT_VERSION < 0x050800
+constexpr auto QMetaTypeInt = QVariant::Int;
+constexpr auto QMetaTypeUInt = QVariant::UInt;
+constexpr auto QMetaTypeLong = QVariant::Long;
+constexpr auto QMetaTypeULong = QVariant::ULong;
+constexpr auto QMetaTypeLongLong = QVariant::LongLong;
+constexpr auto QMetaTypeULongLong = QVariant::ULongLong;
+constexpr auto QMetaTypeChar = QVariant::Char;
+constexpr auto QMetaTypeUChar = QVariant::UChar;
+constexpr auto QMetaTypeSChar = QVariant::SChar;
+constexpr auto QMetaTypeShort = QVariant::Short;
+constexpr auto QMetaTypeUShort = QVariant::UShort;
+constexpr auto QMetaTypeFloat = QVariant::Float;
+constexpr auto QMetaTypeDouble = QVariant::Double;
+constexpr auto QMetaTypeBool = QVariant::Bool;
+constexpr auto QMetaTypeQString = QVariant::String;
+constexpr auto QMetaTypeQStringList = QVariant::StringList;
+constexpr auto QMetaTypeQByteArray = QVariant::ByteArray;
+constexpr auto QMetaTypeQDateTime = QVariant::DateTime;
+constexpr auto QMetaTypeQDate = QVariant::Date;
+constexpr auto QMetaTypeQTime = QVariant::Time;
+constexpr auto QMetaTypeQVariantList = QVariant::List;
+constexpr auto QMetaTypeQVariantMap = QVariant::Map;
+constexpr auto QMetaTypeUnknownType = QVariant::Invalid;
+#else
+constexpr auto QMetaTypeInt = QMetaType::Int;
+constexpr auto QMetaTypeUInt = QMetaType::UInt;
+constexpr auto QMetaTypeLong = QMetaType::Long;
+constexpr auto QMetaTypeULong = QMetaType::ULong;
+constexpr auto QMetaTypeLongLong = QMetaType::LongLong;
+constexpr auto QMetaTypeULongLong = QMetaType::ULongLong;
+constexpr auto QMetaTypeChar = QMetaType::Char;
+constexpr auto QMetaTypeUChar = QMetaType::UChar;
+constexpr auto QMetaTypeSChar = QMetaType::SChar;
+constexpr auto QMetaTypeShort = QMetaType::Short;
+constexpr auto QMetaTypeUShort = QMetaType::UShort;
+constexpr auto QMetaTypeFloat = QMetaType::Float;
+constexpr auto QMetaTypeDouble = QMetaType::Double;
+constexpr auto QMetaTypeBool = QMetaType::Bool;
+constexpr auto QMetaTypeQString = QMetaType::QString;
+constexpr auto QMetaTypeQStringList = QMetaType::QStringList;
+constexpr auto QMetaTypeQByteArray = QMetaType::QByteArray;
+constexpr auto QMetaTypeQDateTime = QMetaType::QDateTime;
+constexpr auto QMetaTypeQDate = QMetaType::QDate;
+constexpr auto QMetaTypeQTime = QMetaType::QTime;
+constexpr auto QMetaTypeQVariantList = QMetaType::QVariantList;
+constexpr auto QMetaTypeQVariantMap = QMetaType::QVariantMap;
+constexpr auto QMetaTypeUnknownType = QMetaType::UnknownType;
+#endif
 }
 
 
