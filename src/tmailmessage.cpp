@@ -76,7 +76,7 @@ inline int indexOfUsAscii(const QString &str, int from)
 
 void TMailMessage::parse(const QString &str)
 {
-    QRegularExpression rx("(\\n\\n|\\r\\n\\r\\n)");
+    static const QRegularExpression rx("(\\n\\n|\\r\\n\\r\\n)");
 
     auto match = rx.match(str);
     int idx = match.capturedStart();

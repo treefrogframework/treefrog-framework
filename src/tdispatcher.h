@@ -199,35 +199,13 @@ inline T *TDispatcher<T>::object()
     if (!_ptr) {
         auto factory = Tf::objectFactories()->value(_metaType.toLatin1().toLower());
         if (Q_LIKELY(factory)) {
-            _ptr = dynamic_cast<T *>(factory());
-            if (_ptr) {
+            auto p = factory();
+            _ptr = dynamic_cast<T *>(p);
+            if (!_ptr) {
+                delete p;
                 _typeId = 0;
             }
         }
     }
-
-//     if (Q_UNLIKELY(!_ptr)) {
-//         if (_typeId <= 0 && !_metaType.isEmpty()) {
-// #if QT_VERSION < 0x060000
-//             _typeId = QMetaType::type(_metaType.toLatin1().constData());
-//             if (Q_LIKELY(_typeId > 0)) {
-//                 _ptr = static_cast<T *>(QMetaType::create(_typeId));
-//                 Q_CHECK_PTR(_ptr);
-//                 tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(_metaType), _typeId);
-//             } else {
-//                 tSystemDebug("No such object class : %s", qPrintable(_metaType));
-//             }
-// #else
-//             QMetaType type = QMetaType::fromName(_metaType.toLatin1());
-//             if (type.isValid()) {
-//                 _typeId = type.id();
-//                 _ptr = static_cast<T *>(type.create());
-//             } else {
-//                 tSystemDebug("No such object class : %s", qPrintable(_metaType));
-//             }
-// #endif
-
-//         }
-//     }
     return _ptr;
 }

@@ -247,31 +247,6 @@ constexpr auto KeepEmptyParts = QString::KeepEmptyParts;
 constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
 #endif
 
-#if QT_VERSION < 0x050800
-constexpr auto QMetaTypeInt = QVariant::Int;
-constexpr auto QMetaTypeUInt = QVariant::UInt;
-constexpr auto QMetaTypeLong = QVariant::Long;
-constexpr auto QMetaTypeULong = QVariant::ULong;
-constexpr auto QMetaTypeLongLong = QVariant::LongLong;
-constexpr auto QMetaTypeULongLong = QVariant::ULongLong;
-constexpr auto QMetaTypeChar = QVariant::Char;
-constexpr auto QMetaTypeUChar = QVariant::UChar;
-constexpr auto QMetaTypeSChar = QVariant::SChar;
-constexpr auto QMetaTypeShort = QVariant::Short;
-constexpr auto QMetaTypeUShort = QVariant::UShort;
-constexpr auto QMetaTypeFloat = QVariant::Float;
-constexpr auto QMetaTypeDouble = QVariant::Double;
-constexpr auto QMetaTypeBool = QVariant::Bool;
-constexpr auto QMetaTypeQString = QVariant::String;
-constexpr auto QMetaTypeQStringList = QVariant::StringList;
-constexpr auto QMetaTypeQByteArray = QVariant::ByteArray;
-constexpr auto QMetaTypeQDateTime = QVariant::DateTime;
-constexpr auto QMetaTypeQDate = QVariant::Date;
-constexpr auto QMetaTypeQTime = QVariant::Time;
-constexpr auto QMetaTypeQVariantList = QVariant::List;
-constexpr auto QMetaTypeQVariantMap = QVariant::Map;
-constexpr auto QMetaTypeUnknownType = QVariant::Invalid;
-#else
 constexpr auto QMetaTypeInt = QMetaType::Int;
 constexpr auto QMetaTypeUInt = QMetaType::UInt;
 constexpr auto QMetaTypeLong = QMetaType::Long;
@@ -295,7 +270,6 @@ constexpr auto QMetaTypeQTime = QMetaType::QTime;
 constexpr auto QMetaTypeQVariantList = QMetaType::QVariantList;
 constexpr auto QMetaTypeQVariantMap = QMetaType::QVariantMap;
 constexpr auto QMetaTypeUnknownType = QMetaType::UnknownType;
-#endif
 }
 
 
