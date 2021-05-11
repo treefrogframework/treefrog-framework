@@ -160,9 +160,11 @@ constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "    model.setProperties(varmap);\n"
                                      "    return ds;\n"
                                      "}\n"
+#if QT_VERSION < 0x060000
                                      "\n"
                                      "// Don't remove below this line\n"
                                      "T_REGISTER_STREAM_OPERATORS(%model%)\n";
+#endif
 
 constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "\n"
@@ -327,9 +329,11 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "    model.setProperties(varmap);\n"
                                           "    return ds;\n"
                                           "}\n"
+#if QT_VERSION < 0x060000
                                           "\n"
                                           "// Don't remove below this line\n"
                                           "T_REGISTER_STREAM_OPERATORS(%model%)";
+#endif
 
 constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson()\n"
                                        "{\n"
@@ -693,12 +697,12 @@ QString ModelGenerator::createParam(QMetaType::Type type, const QString &name)
     QString var = fieldNameToVariableName(name);
 
     switch (type) {
-    case Tf::QMetaTypeBool:
-    case Tf::QMetaTypeInt:
-    case Tf::QMetaTypeUInt:
-    case Tf::QMetaTypeLongLong:
-    case Tf::QMetaTypeULongLong:
-    case Tf::QMetaTypeDouble:
+    case QMetaType::Bool:
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::LongLong:
+    case QMetaType::ULongLong:
+    case QMetaType::Double:
 #if QT_VERSION < 0x060000
         string += QVariant::typeToName(type);
 #else

@@ -35,19 +35,19 @@ static bool isNumericType(const QString &typeName)
     int typeId = QMetaType::fromName(typeName.toLatin1()).id();
 #endif
     switch (typeId) {
-    case Tf::QMetaTypeInt:
-    case Tf::QMetaTypeUInt:
-    case Tf::QMetaTypeLong:
-    case Tf::QMetaTypeLongLong:
-    case Tf::QMetaTypeShort:
-    case Tf::QMetaTypeChar:
-    case Tf::QMetaTypeUChar:
-    case Tf::QMetaTypeSChar:
-    case Tf::QMetaTypeULong:
-    case Tf::QMetaTypeULongLong:
-    case Tf::QMetaTypeUShort:
-    case Tf::QMetaTypeDouble:
-    case Tf::QMetaTypeFloat:
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::Long:
+    case QMetaType::LongLong:
+    case QMetaType::Short:
+    case QMetaType::Char:
+    case QMetaType::UChar:
+    case QMetaType::SChar:
+    case QMetaType::ULong:
+    case QMetaType::ULongLong:
+    case QMetaType::UShort:
+    case QMetaType::Double:
+    case QMetaType::Float:
         return true;
     default:
         return false;
@@ -58,9 +58,9 @@ static bool isNumericType(const QString &typeName)
 inline bool isBoolType(const QString &typeName)
 {
 #if QT_VERSION < 0x060000
-    return (QMetaType::type(typeName.toLatin1()) == Tf::QMetaTypeBool);
+    return (QMetaType::type(typeName.toLatin1()) == QMetaType::Bool);
 #else
-    return (QMetaType::fromName(typeName.toLatin1()).id() == Tf::QMetaTypeBool);
+    return (QMetaType::fromName(typeName.toLatin1()).id() == QMetaType::Bool);
 #endif
 }
 

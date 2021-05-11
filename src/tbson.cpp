@@ -219,31 +219,31 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     }
 
     switch (type) {
-    case Tf::QMetaTypeInt:
+    case QMetaType::Int:
         BSON_APPEND_INT32(bson, qPrintable(key), value.toInt(&ok));
         break;
 
-    case Tf::QMetaTypeQString:
+    case QMetaType::QString:
         BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
         break;
 
-    case Tf::QMetaTypeLongLong:
+    case QMetaType::LongLong:
         BSON_APPEND_INT64(bson, qPrintable(key), value.toLongLong(&ok));
         break;
 
-    case Tf::QMetaTypeQVariantMap:
+    case QMetaType::QVariantMap:
         BSON_APPEND_DOCUMENT(bson, qPrintable(key), (const bson_t *)TBson::toBson(value.toMap()).constData());
         break;
 
-    case Tf::QMetaTypeDouble:
+    case QMetaType::Double:
         BSON_APPEND_DOUBLE(bson, qPrintable(key), value.toDouble(&ok));
         break;
 
-    case Tf::QMetaTypeBool:
+    case QMetaType::Bool:
         BSON_APPEND_BOOL(bson, qPrintable(key), value.toBool());
         break;
 
-    case Tf::QMetaTypeQDateTime: {
+    case QMetaType::QDateTime: {
 #if QT_VERSION >= 0x040700
         BSON_APPEND_DATE_TIME(bson, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
 #else
@@ -258,14 +258,14 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
     }
 
-    case Tf::QMetaTypeQByteArray: {
+    case QMetaType::QByteArray: {
         QByteArray ba = value.toByteArray();
         BSON_APPEND_BINARY(bson, qPrintable(key), BSON_SUBTYPE_BINARY, (uint8_t *)ba.constData(), ba.length());
         break;
     }
 
-    case Tf::QMetaTypeQVariantList:  // FALLTHRU
-    case Tf::QMetaTypeQStringList: {
+    case QMetaType::QVariantList:  // FALLTHRU
+    case QMetaType::QStringList: {
         bson_t child;
         BSON_APPEND_ARRAY_BEGIN(bson, qPrintable(key), &child);
 
@@ -277,7 +277,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
     }
 
-    case Tf::QMetaTypeUnknownType:
+    case QMetaType::UnknownType:
         BSON_APPEND_UNDEFINED(bson, qPrintable(key));
         break;
 

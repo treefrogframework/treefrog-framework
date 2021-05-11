@@ -118,10 +118,10 @@ static QStringList generateCode(const QList<QPair<QString, QMetaType::Type>> &fi
 
 bool MongoObjGenerator::createMongoObject(const QString &path)
 {
-    fields << qMakePair(QString("_id"), Tf::QMetaTypeQString)
-           << qMakePair(QString("createdAt"), Tf::QMetaTypeQDateTime)
-           << qMakePair(QString("updatedAt"), Tf::QMetaTypeQDateTime)
-           << qMakePair(QString("lockRevision"), Tf::QMetaTypeInt);
+    fields << qMakePair(QString("_id"), QMetaType::QString)
+           << qMakePair(QString("createdAt"), QMetaType::QDateTime)
+           << qMakePair(QString("updatedAt"), QMetaType::QDateTime)
+           << qMakePair(QString("lockRevision"), QMetaType::Int);
 
     QStringList code = generateCode(fields);
     QString output = QString(MONGOOBJECT_HEADER_TEMPLATE).arg(modelName, code[0], code[1], collectionName, code[2]);
@@ -158,7 +158,7 @@ static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePa
         int type = QMetaType::fromName(rx.cap(1).toLatin1()).id();
 #endif
         QString var = rx.cap(2);
-        if (type != Tf::QMetaTypeUnknownType && var.toLower() != "id")
+        if (type != QMetaType::UnknownType && var.toLower() != "id")
             ret << QPair<QString, QMetaType::Type>(var, (QMetaType::Type)type);
         pos += rx.matchedLength();
     }

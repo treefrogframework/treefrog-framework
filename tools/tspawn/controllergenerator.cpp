@@ -168,16 +168,16 @@ public:
     ConvMethod() :
         QHash<int, QString>()
     {
-        insert(Tf::QMetaTypeInt, "%1.toInt()");
-        insert(Tf::QMetaTypeUInt, "%1.toUInt()");
-        insert(Tf::QMetaTypeLongLong, "%1.toLongLong()");
-        insert(Tf::QMetaTypeULongLong, "%1.toULongLong()");
-        insert(Tf::QMetaTypeDouble, "%1.toDouble()");
-        insert(Tf::QMetaTypeQByteArray, "%1.toByteArray()");
-        insert(Tf::QMetaTypeQString, "%1");
-        insert(Tf::QMetaTypeQDate, "QDate::fromString(%1)");
-        insert(Tf::QMetaTypeQTime, "QTime::fromString(%1)");
-        insert(Tf::QMetaTypeQDateTime, "QDateTime::fromString(%1)");
+        insert(QMetaType::Int, "%1.toInt()");
+        insert(QMetaType::UInt, "%1.toUInt()");
+        insert(QMetaType::LongLong, "%1.toLongLong()");
+        insert(QMetaType::ULongLong, "%1.toULongLong()");
+        insert(QMetaType::Double, "%1.toDouble()");
+        insert(QMetaType::QByteArray, "%1.toByteArray()");
+        insert(QMetaType::QString, "%1");
+        insert(QMetaType::QDate, "QDate::fromString(%1)");
+        insert(QMetaType::QTime, "QTime::fromString(%1)");
+        insert(QMetaType::QDateTime, "QDateTime::fromString(%1)");
     }
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
