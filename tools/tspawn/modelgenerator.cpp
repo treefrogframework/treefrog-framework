@@ -164,6 +164,8 @@ constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "\n"
                                      "// Don't remove below this line\n"
                                      "T_REGISTER_STREAM_OPERATORS(%model%)\n";
+#else
+                                     "";
 #endif
 
 constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
@@ -333,6 +335,8 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "\n"
                                           "// Don't remove below this line\n"
                                           "T_REGISTER_STREAM_OPERATORS(%model%)";
+#else
+                                          "";
 #endif
 
 constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson()\n"
