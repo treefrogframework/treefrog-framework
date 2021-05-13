@@ -17,7 +17,7 @@ matrix:
       osx_image: xcode10.3
       sudo: required
       env:
-       - CONFIG_SHARED_MONGOC=""
+        - CONFIG_SHARED_MONGOC=""
        addons:
          homebrew:
            update: true
