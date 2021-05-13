@@ -55,7 +55,7 @@ void TWebSocket::close()
 
 void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
-    tSystemDebug("sendText  text len:%d  (pid:%d)", text.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendText  text len:%lld  (pid:%d)", text.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendText(text);
     }
@@ -64,7 +64,7 @@ void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 
 void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
-    tSystemDebug("sendBinary  binary len:%d  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendBinary  binary len:%lld  (pid:%d)", binary.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendBinary(binary);
     }
@@ -73,7 +73,7 @@ void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *e
 
 void TWebSocket::sendPong(const QByteArray &data)
 {
-    tSystemDebug("sendPong  data len:%d  (pid:%d)", data.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendPong  data len:%lld  (pid:%d)", data.length(), (int)QCoreApplication::applicationPid());
     TAbstractWebSocket::sendPong(data);
 }
 

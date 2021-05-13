@@ -8,7 +8,7 @@
 #include "turlroute.h"
 #include <QFile>
 #include <QMap>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextStream>
 #include <THttpUtility>
 #include <TSystemGlobal>
@@ -117,7 +117,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
         rt.controller = items[2].toUtf8();
     } else {
         // parse controller and action
-        QStringList list = items[2].split(QRegExp("[#\\.]"));
+        QStringList list = items[2].split(QRegularExpression("[#\\.]"));
         if (list.count() == 2) {
             rt.controller = list[0].toLower().toLatin1() + "controller";
             rt.action = list[1].toLatin1();

@@ -9,6 +9,7 @@
 #include "tsqldriverextension.h"
 #include <QCoreApplication>
 #include <QMetaObject>
+#include <QMetaType>
 #include <QtSql>
 #include <TSqlObject>
 #include <TSqlQuery>
@@ -233,7 +234,12 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, QVariant::Int, database));
+#if QT_VERSION < 0x060000
+            constexpr auto metaType = QVariant::Int;
+#else
+            static const QMetaType metaType(QMetaType::Int);
+#endif
+            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, metaType, database));
             where.append(QLatin1String(" AND "));
         } else {
             // continue
@@ -254,7 +260,11 @@ bool TSqlObject::update()
         return false;
     }
 
-    QVariant::Type pkType = metaProp.type();
+#if QT_VERSION < 0x060000
+    auto pkType = metaProp.type();
+#else
+    auto pkType = metaProp.metaType();
+#endif
     QVariant origpkval = value(pkName);
     where.append(QLatin1String(pkName));
     where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(origpkval, pkType, database));
@@ -269,7 +279,11 @@ bool TSqlObject::update()
         if (i != pkidx && recval.isValid() && recval != newval) {
             upd.append(QLatin1String(propName));
             upd.append(QLatin1Char('='));
+#if QT_VERSION < 0x060000
             upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
+#else
+            upd.append(TSqlQuery::formatValue(newval, metaProp.metaType(), database));
+#endif
             upd.append(QLatin1Char(','));
         }
     }
@@ -409,7 +423,12 @@ bool TSqlObject::remove()
             }
 
             del.append(QLatin1String(propName));
-            del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(revision, QVariant::Int, database));
+#if QT_VERSION < 0x060000
+            constexpr auto intid = QVariant::Int;
+#else
+            static const QMetaType intid(QMetaType::Int);
+#endif
+            del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(revision, intid, database));
             del.append(QLatin1String(" AND "));
 
             revIndex = i;
@@ -426,7 +445,12 @@ bool TSqlObject::remove()
         return false;
     }
     del.append(QLatin1String(pkName));
-    del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(value(pkName), metaProp.type(), database));
+#if QT_VERSION < 0x060000
+    auto metaType = metaProp.type();
+#else
+    auto metaType = metaProp.metaType();
+#endif
+    del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(value(pkName), metaType, database));
 
     TSqlQuery query(database);
     bool ret = query.exec(del);

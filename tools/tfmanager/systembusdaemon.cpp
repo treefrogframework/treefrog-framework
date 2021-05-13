@@ -97,7 +97,7 @@ void SystemBusDaemon::readSocket()
     }
 
     QByteArray buf = socket->readAll();
-    tSystemDebug("SystemBusDaemon::read len : %d", buf.size());
+    tSystemDebug("SystemBusDaemon::read len : %lld", buf.size());
     if (maxServers <= 1) {
         // do nothing
         return;

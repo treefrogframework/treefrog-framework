@@ -21,6 +21,7 @@
 #include "validatorgenerator.h"
 #include "websocketgenerator.h"
 #include <QtCore>
+#include <QTextCodec>
 #include <random>
 #ifndef Q_CC_MSVC
 #include <unistd.h>
@@ -251,7 +252,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
             if (line.isEmpty())
                 continue;
 
-            QCharRef c = line[0];
+            const QChar c = line[0];
             if (c == 'Y' || c == 'y') {
                 remove(file);
                 rmd << fname;
@@ -531,7 +532,11 @@ int main(int argc, char *argv[])
         break;
 
     case ShowDriverPath: {
+#if QT_VERSION < 0x060000
         QString path = QLibraryInfo::location(QLibraryInfo::PluginsPath) + "/sqldrivers";
+#else
+        QString path = QLibraryInfo::path(QLibraryInfo::PluginsPath) + "/sqldrivers";
+#endif
         QFileInfo fi(path);
         if (!fi.exists() || !fi.isDir()) {
             qCritical("Error: database driver's directory not found");

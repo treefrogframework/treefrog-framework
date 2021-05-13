@@ -42,7 +42,11 @@ inline TDispatcher<T>::~TDispatcher()
 {
     if (_ptr) {
         if (_typeId > 0) {
+#if QT_VERSION < 0x060000
             QMetaType::destroy(_typeId, _ptr);
+#else
+            QMetaType(_typeId).destroy(_ptr);
+#endif
         } else {
             delete _ptr;
         }
@@ -195,22 +199,11 @@ inline T *TDispatcher<T>::object()
     if (!_ptr) {
         auto factory = Tf::objectFactories()->value(_metaType.toLatin1().toLower());
         if (Q_LIKELY(factory)) {
-            _ptr = dynamic_cast<T *>(factory());
-            if (_ptr) {
+            auto p = factory();
+            _ptr = dynamic_cast<T *>(p);
+            if (!_ptr) {
+                delete p;
                 _typeId = 0;
-            }
-        }
-    }
-
-    if (Q_UNLIKELY(!_ptr)) {
-        if (_typeId <= 0 && !_metaType.isEmpty()) {
-            _typeId = QMetaType::type(_metaType.toLatin1().constData());
-            if (Q_LIKELY(_typeId > 0)) {
-                _ptr = static_cast<T *>(QMetaType::create(_typeId));
-                Q_CHECK_PTR(_ptr);
-                tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(_metaType), _typeId);
-            } else {
-                tSystemDebug("No such object class : %s", qPrintable(_metaType));
             }
         }
     }

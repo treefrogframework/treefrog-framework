@@ -30,7 +30,7 @@ inline const char *prop(const QJSValue &val, const QString &name = QString())
 
 TJSModule::TJSModule(QObject *parent) :
     QObject(parent), jsEngine(new QJSEngine()), loadedFiles(), funcObj(nullptr),
-    lastFunc(), mutex(QMutex::Recursive)
+    lastFunc()
 {
     jsEngine->evaluate("exports={};module={};module.exports={};");
 }

@@ -73,7 +73,7 @@ void OtmParser::parse(const QString &text)
         } else if ((line.startsWith('#') || line.startsWith('@')) && line.length() > 1
             && !line.at(1).isSpace()) {
             // search the end of label
-            int i = line.indexOf(QRegExp("[^a-zA-Z0-9_]"), 1);
+            int i = line.indexOf(QRegularExpression("[^a-zA-Z0-9_]"), 1);
 
             if (line.startsWith(INCLUDE_LABEL + QLatin1Char(' '))) {
                 entries.insert(line.left(i), line.mid(i).trimmed());
@@ -184,7 +184,7 @@ QString OtmParser::getInitSrcCode() const
     QString code = entries.value(INIT_LABEL);
 
     if (!code.isEmpty()) {
-        QRegExp rx(QLatin1String("^[") + opHash()->value(TagReplacement) + opHash()->value(ContentAssignment) + opHash()->value(AttributeSet) + "]={0,2}");
+        QRegularExpression rx(QLatin1String("^[") + opHash()->value(TagReplacement) + opHash()->value(ContentAssignment) + opHash()->value(AttributeSet) + "]={0,2}");
 
         if (code.contains(rx)) {
             code.remove(rx);

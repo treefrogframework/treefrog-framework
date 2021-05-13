@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QRegularExpression>
 
 #define VIEW_SOURCE_TEMPLATE                        \
     "#include <QtCore>\n"                           \
@@ -37,7 +38,7 @@
     "#include \"%1.moc\"\n"
 
 
-const QRegExp RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
+const QRegularExpression RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
 
 
 ErbConverter::ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial) :
@@ -168,13 +169,14 @@ QStringList ErbConverter::replacePartialTag(QString &erbSrc, int depth) const
     int pos = 0;
 
     while (pos < erbSrc.length()) {
-        int idx;
-        if ((idx = RxPartialTag.indexIn(erbSrc, pos)) < 0) {
+        auto match = RxPartialTag.match(erbSrc, pos);
+        if (!match.hasMatch()) {
             erbReplaced += erbSrc.mid(pos);
             break;
         }
 
-        QString partialFile = RxPartialTag.cap(1);
+        int idx = match.capturedStart();
+        QString partialFile = match.captured(1);
         if (QFileInfo(partialFile).suffix().toLower() != "erb") {
             partialFile += ".erb";
         }
@@ -186,7 +188,7 @@ QStringList ErbConverter::replacePartialTag(QString &erbSrc, int depth) const
         }
 
         erbReplaced += erbSrc.mid(pos, idx - pos);
-        pos = idx + RxPartialTag.matchedLength();
+        pos = idx + match.capturedLength();
 
         // Includes the partial
         QFile partErb(partialDirectory.filePath(partialFile));

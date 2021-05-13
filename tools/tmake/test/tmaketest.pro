@@ -1,9 +1,16 @@
 TARGET = tmaketest
 TEMPLATE = app
-CONFIG += console debug c++14
+CONFIG += console debug
 CONFIG -= app_bundle
 QT += testlib
 QT -= gui
+lessThan(QT_MAJOR_VERSION, 6) {
+  CONFIG += c++14
+} else {
+  CONFIG += c++17
+  QT += core5compat
+}
+
 INCLUDEPATH += .. ../../../include
 
 SOURCES = tmaketest.cpp \

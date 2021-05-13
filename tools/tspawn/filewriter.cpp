@@ -103,7 +103,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     continue;
                 }
 
-                QCharRef c = line[0];
+                const QChar c = line[0];
                 if (c == 'Y' || c == 'y') {
                     QFile::remove(filepath);
                     res = write(data);

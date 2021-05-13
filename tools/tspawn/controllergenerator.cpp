@@ -10,6 +10,7 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "tableschema.h"
+#include <tfnamespace.h>
 #include <QtCore>
 
 constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE = "#pragma once\n"
@@ -167,16 +168,16 @@ public:
     ConvMethod() :
         QHash<int, QString>()
     {
-        insert(QVariant::Int, "%1.toInt()");
-        insert(QVariant::UInt, "%1.toUInt()");
-        insert(QVariant::LongLong, "%1.toLongLong()");
-        insert(QVariant::ULongLong, "%1.toULongLong()");
-        insert(QVariant::Double, "%1.toDouble()");
-        insert(QVariant::ByteArray, "%1.toByteArray()");
-        insert(QVariant::String, "%1");
-        insert(QVariant::Date, "QDate::fromString(%1)");
-        insert(QVariant::Time, "QTime::fromString(%1)");
-        insert(QVariant::DateTime, "QDateTime::fromString(%1)");
+        insert(QMetaType::Int, "%1.toInt()");
+        insert(QMetaType::UInt, "%1.toUInt()");
+        insert(QMetaType::LongLong, "%1.toLongLong()");
+        insert(QMetaType::ULongLong, "%1.toULongLong()");
+        insert(QMetaType::Double, "%1.toDouble()");
+        insert(QMetaType::QByteArray, "%1.toByteArray()");
+        insert(QMetaType::QString, "%1");
+        insert(QMetaType::QDate, "QDate::fromString(%1)");
+        insert(QMetaType::QTime, "QTime::fromString(%1)");
+        insert(QMetaType::QDateTime, "QDateTime::fromString(%1)");
     }
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
@@ -196,7 +197,7 @@ public:
 Q_GLOBAL_STATIC(NGCtlrName, ngCtlrName)
 
 
-ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int lockRevIdx) :
+ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int lockRevIdx) :
     controllerName(controller), fieldList(fields), primaryKeyIndex(pkIdx), lockRevIndex(lockRevIdx)
 {
 }
@@ -227,7 +228,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             return false;
         }
 
-        QPair<QString, QVariant::Type> pair;
+        QPair<QString, QMetaType::Type> pair;
         if (primaryKeyIndex >= 0)
             pair = fieldList[primaryKeyIndex];
 

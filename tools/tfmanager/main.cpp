@@ -10,6 +10,7 @@
 #include <QHostInfo>
 #include <QJsonDocument>
 #include <QSysInfo>
+#include <QTextCodec>
 #include <QtCore>
 #include <TAppSettings>
 #include <TSystemGlobal>

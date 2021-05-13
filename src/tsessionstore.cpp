@@ -12,10 +12,7 @@
 qint64 TSessionStore::lifeTimeSecs()
 {
     static qint64 lifetime = []() {
-        qint64 time = Tf::appSettings()->value(Tf::SessionLifeTime).toLongLong();
-        if (time == 0) {
-            time = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toLongLong();
-        }
+        qint64 time = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toLongLong();
         return time;
     }();
     return lifetime;
