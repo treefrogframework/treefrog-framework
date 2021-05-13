@@ -50,7 +50,7 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, double v, const QS
 }
 
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx, const QString &msg) :
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegularExpression &rx, const QString &msg) :
     key(k),
     rule(r),
     value(rx),
@@ -241,7 +241,7 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, const 
   Sets the user-defined validaton rule for the key \a key and sets
   the error message of it to \a errorMessage.
  */
-void TFormValidator::setPatternRule(const QString &key, const QRegExp &rx, const QString &errorMessage)
+void TFormValidator::setPatternRule(const QString &key, const QRegularExpression &rx, const QString &errorMessage)
 {
     removeRule(key, Tf::Pattern);
     rules.prepend(RuleEntry(key, Tf::Pattern, rx, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage(Tf::Pattern) : errorMessage)));
@@ -337,8 +337,9 @@ bool TFormValidator::validate(const QVariantMap &map)
 
             case Tf::EmailAddress: {  // refer to RFC5321
                 if (r.value.toBool()) {
-                    QRegExp reg("^" ADDR_SPEC "$");
-                    if (!reg.exactMatch(str)) {
+                    QRegularExpression re("^" ADDR_SPEC "$");
+                    auto match = re.match(str);
+                    if (!match.hasMatch()) {
                         errors << qMakePair(r.key, r.rule);
                     }
                 }
@@ -389,8 +390,9 @@ bool TFormValidator::validate(const QVariantMap &map)
             }
 
             case Tf::Pattern: {
-                QRegExp rx = r.value.toRegExp();
-                if (rx.isEmpty() || !rx.exactMatch(str)) {
+                QRegularExpression rx = r.value.toRegularExpression();
+                auto match = rx.match(str);
+                if (!rx.isValid() || !(match.hasMatch() && !match.hasPartialMatch())) {
                     errors << qMakePair(r.key, r.rule);
                 }
                 break;
@@ -525,15 +527,6 @@ void TFormValidator::removeRule(const QString &key, Tf::ValidationRule rule)
             i.remove();
         }
     }
-}
-
-/*!
-  Sets the message of custom validation error to \a errorMessage.
-  [obsolete]
-*/
-void TFormValidator::setValidationError(const QString &errorMessage)
-{
-    setValidationError(QLatin1String("_CustomValidationError"), errorMessage);
 }
 
 /*!

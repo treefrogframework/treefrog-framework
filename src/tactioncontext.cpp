@@ -13,6 +13,7 @@
 #include "turlroute.h"
 #include <QHostAddress>
 #include <QSet>
+#include <QTextCodec>
 #include <QtCore>
 #include <TActionContext>
 #include <TActionController>
@@ -191,11 +192,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         if (Q_LIKELY(stored)) {
                             static const int SessionCookieMaxAge = ([]() -> int {
                                 QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
-                                if (!maxagestr.isEmpty()) {
-                                    return maxagestr.toInt();
-                                } else {
-                                    return Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
-                                }
+                                return maxagestr.toInt();
                             }());
 
                             currController->addCookie(TSession::sessionName(), currController->session().id(), SessionCookieMaxAge,

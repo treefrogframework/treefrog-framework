@@ -37,7 +37,7 @@ constexpr auto VALIDATOR_IMPL_TEMPLATE = "#include \"%1validator.h\"\n"
 ValidatorGenerator::ValidatorGenerator(const QString &validator)
 {
     name = fieldNameToEnumName(validator);
-    name.remove(QRegExp("validator$", Qt::CaseInsensitive));
+    name.remove(QRegularExpression("validator$", QRegularExpression::CaseInsensitiveOption));
 }
 
 

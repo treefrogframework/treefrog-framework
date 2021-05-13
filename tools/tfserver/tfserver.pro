@@ -1,10 +1,17 @@
 TARGET   = tadpole
 TEMPLATE = app
-VERSION  = 1.0.0
-CONFIG  += console c++14
+VERSION  = 2.0.0
+CONFIG  += console
 CONFIG  -= app_bundle
 QT      += network sql xml qml
 QT      -= gui
+lessThan(QT_MAJOR_VERSION, 6) {
+  CONFIG += c++14
+} else {
+  CONFIG += c++17
+  QT += core5compat
+}
+
 DEFINES += TF_DLL
 INCLUDEPATH += $$header.path
 

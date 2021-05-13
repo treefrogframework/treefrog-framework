@@ -83,9 +83,6 @@ public:
     QString inputTextTag(const QString &name, const QVariant &value,
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString inputFileTag(const QString &name, const QVariant &value,  // obsolete
-        const THtmlAttribute &attributes = THtmlAttribute()) const;
-
     QString inputFileTag(const QString &name,
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
@@ -319,13 +316,6 @@ inline QString TViewHelper::inputTextTag(const QString &name, const QVariant &va
     const THtmlAttribute &attributes) const
 {
     return inputTag("text", name, value, attributes);
-}
-
-// obsolete  'value is disabled at input type=file tag.'
-inline QString TViewHelper::inputFileTag(const QString &name, const QVariant &value,
-    const THtmlAttribute &attributes) const
-{
-    return inputTag("file", name, value, attributes);
 }
 
 /*!

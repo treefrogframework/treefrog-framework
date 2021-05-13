@@ -200,7 +200,7 @@ static const QStringList excludedDirName = {
 };
 
 
-OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx) :
+OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int autoValIdx) :
     viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
 {
 }
@@ -239,12 +239,12 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
+    const QPair<QString, QMetaType::Type> &pkFld = fieldList[primaryKeyIndex];
 
     // Generates index.html
     QString th, td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
     for (int i = 0; i < fieldList.count(); ++i) {
-        const QPair<QString, QVariant::Type> &p = fieldList[i];
+        const QPair<QString, QMetaType::Type> &p = fieldList[i];
         QString cap = fieldNameToCaption(p.first);
         QString var = fieldNameToVariableName(p.first);
         QString mrk = p.first.toLower();

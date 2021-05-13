@@ -81,7 +81,7 @@ void TWebSocketEndpoint::onPong(const QByteArray &payload)
 */
 QString TWebSocketEndpoint::name() const
 {
-    return className().remove(QRegExp("Endpoint$"));
+    return className().remove(QRegularExpression("Endpoint$"));
 }
 
 /*!

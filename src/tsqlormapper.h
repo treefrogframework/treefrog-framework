@@ -575,7 +575,12 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         if (prop == UpdatedAt || prop == ModifiedAt) {
             upd += propName;
             upd += QLatin1Char('=');
-            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), QVariant::DateTime, db);
+#if QT_VERSION < 0x060000
+            constexpr auto metaType = QVariant::DateTime;
+#else
+            static const QMetaType metaType(QMetaType::QDateTime);
+#endif
+            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), metaType, db);
             upd += QLatin1Char(',');
             break;
         }

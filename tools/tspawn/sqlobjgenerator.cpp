@@ -9,6 +9,7 @@
 #include "filewriter.h"
 #include "global.h"
 #include "tableschema.h"
+#include <tfnamespace.h>
 
 constexpr auto SQLOBJECT_HEADER_TEMPLATE = "#pragma once\n"
                                            "\n"
@@ -28,7 +29,12 @@ constexpr auto SQLOBJECT_FOOTER_TEMPLATE = "};\n"
 
 static bool isNumericType(const QString &typeName)
 {
-    switch (QMetaType::type(typeName.toLatin1())) {
+#if QT_VERSION < 0x060000
+    int typeId = QMetaType::type(typeName.toLatin1());
+#else
+    int typeId = QMetaType::fromName(typeName.toLatin1()).id();
+#endif
+    switch (typeId) {
     case QMetaType::Int:
     case QMetaType::UInt:
     case QMetaType::Long:
@@ -36,12 +42,12 @@ static bool isNumericType(const QString &typeName)
     case QMetaType::Short:
     case QMetaType::Char:
     case QMetaType::UChar:
+    case QMetaType::SChar:
     case QMetaType::ULong:
     case QMetaType::ULongLong:
     case QMetaType::UShort:
     case QMetaType::Double:
     case QMetaType::Float:
-    case QMetaType::SChar:
         return true;
     default:
         return false;
@@ -51,7 +57,11 @@ static bool isNumericType(const QString &typeName)
 
 inline bool isBoolType(const QString &typeName)
 {
+#if QT_VERSION < 0x060000
     return (QMetaType::type(typeName.toLatin1()) == QMetaType::Bool);
+#else
+    return (QMetaType::fromName(typeName.toLatin1()).id() == QMetaType::Bool);
+#endif
 }
 
 
@@ -147,7 +157,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
 }
 
 
-QList<QPair<QString, QVariant::Type>> SqlObjGenerator::fieldList() const
+QList<QPair<QString, QMetaType::Type>> SqlObjGenerator::fieldList() const
 {
     return tableSch->getFieldTypeList();
 }

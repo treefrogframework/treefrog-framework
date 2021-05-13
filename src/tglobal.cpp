@@ -61,47 +61,6 @@ void Tf::msleep(unsigned long msecs) noexcept
     QThread::msleep(msecs);
 }
 
-/*
-  Xorshift random number generator implement
-*/
-namespace {
-QMutex randMutex;
-quint32 x = 123456789;
-quint32 y = 362436069;
-quint32 z = 987654321;
-quint32 w = 1;
-}
-
-/*!
-  Sets the argument \a seed to be used to generate a new random number sequence
-  of xorshift random integers to be returned by randXor128().
-  This function is thread-safe.
-*/
-void Tf::srandXor128(quint32 seed) noexcept
-{
-    randMutex.lock();
-    w = seed;
-    z = w ^ (w >> 8) ^ (w << 5);
-    randMutex.unlock();
-}
-
-/*!
-  Returns a value between 0 and UINT_MAX, the next number in the current
-  sequence of xorshift random integers.
-  This function is thread-safe.
-*/
-quint32 Tf::randXor128() noexcept
-{
-    QMutexLocker lock(&randMutex);
-    quint32 t;
-    t = x ^ (x << 11);
-    x = y;
-    y = z;
-    z = w;
-    w = w ^ (w >> 19) ^ (t ^ (t >> 8));
-    return w;
-}
-
 namespace {
 std::random_device randev;
 std::mt19937 mt(randev());

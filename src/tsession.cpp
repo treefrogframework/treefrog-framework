@@ -32,7 +32,7 @@ void TSession::reset()
 
 void TSession::clear()
 {
-    tSystemWarn("TSession::clear()  obsoleted");
+    tSystemWarn("TSession::clear()  disabled");
 }
 
 /*!

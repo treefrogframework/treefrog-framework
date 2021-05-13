@@ -18,7 +18,6 @@
 // #define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
-
 /*!
   \class TJSLoader
   \brief The TJSLoader class loads a JavaScript module at run-time.
@@ -27,7 +26,11 @@
 namespace {
 QMap<QString, TJSModule *> jsContexts;
 QStringList defaultPaths;
+#if QT_VERSION < 0x060000
 QMutex gMutex(QMutex::Recursive);
+#else
+QRecursiveMutex gMutex;
+#endif
 }
 
 
@@ -339,7 +342,7 @@ QStringList TJSLoader::defaultSearchPaths()
 
 void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir &dir) const
 {
-    const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ,]+)[\"']\\s*\\)");
+    const QRegularExpression rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ,]+)[\"']\\s*\\)");
 
     if (!context || content.isEmpty()) {
         return;
@@ -347,15 +350,26 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
     int pos = 0;
     auto crc = content.toLatin1();
+#if QT_VERSION < 0x060000
     const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc.data(), crc.length()), 36) + "_%2";
-    while ((pos = rx.indexIn(content, pos)) != -1) {
+#else
+    const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc), 36) + "_%2";
+#endif
+
+    for (;;) {
+        auto match = rx.match(content, pos);
+        if (!match.hasMatch()) {
+            break;
+        }
+
+        pos = match.capturedStart();
         if (isCommentPosition(content, pos)) {
-            pos += rx.matchedLength();
+            pos += match.capturedLength();
             continue;
         }
 
         QString varName;
-        auto module = rx.cap(1);
+        auto module = match.captured(1);
         auto filePath = absolutePath(module, dir, Default);
 
         if (!module.isEmpty() && !filePath.isEmpty()) {
@@ -384,7 +398,7 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
                 }
             }
 
-            content.replace(pos, rx.matchedLength(), varName);
+            content.replace(pos, match.capturedLength(), varName);
             pos += varName.length();
         } else {
             pos++;

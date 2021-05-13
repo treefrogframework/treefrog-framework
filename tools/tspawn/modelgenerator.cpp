@@ -12,6 +12,7 @@
 #include "projectfilegenerator.h"
 #include "sqlobjgenerator.h"
 #include "util.h"
+#include <tfnamespace.h>
 
 constexpr auto USER_VIRTUAL_METHOD = "identityKey";
 constexpr auto LOCK_REVISION_FIELD = "lockRevision";
@@ -159,9 +160,13 @@ constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "    model.setProperties(varmap);\n"
                                      "    return ds;\n"
                                      "}\n"
+#if QT_VERSION < 0x060000
                                      "\n"
                                      "// Don't remove below this line\n"
                                      "T_REGISTER_STREAM_OPERATORS(%model%)\n";
+#else
+                                     "";
+#endif
 
 constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "\n"
@@ -326,9 +331,13 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "    model.setProperties(varmap);\n"
                                           "    return ds;\n"
                                           "}\n"
+#if QT_VERSION < 0x060000
                                           "\n"
                                           "// Don't remove below this line\n"
                                           "T_REGISTER_STREAM_OPERATORS(%model%)";
+#else
+                                          "";
+#endif
 
 constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson()\n"
                                        "{\n"
@@ -502,10 +511,14 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     QString autoFieldName = (autoIndex >= 0) ? fields[autoIndex].first : QString();
     QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
 
-    for (QListIterator<QPair<QString, QVariant::Type>> it(fields); it.hasNext();) {
-        const QPair<QString, QVariant::Type> &p = it.next();
+    for (QListIterator<QPair<QString, QMetaType::Type>> it(fields); it.hasNext();) {
+        const QPair<QString, QMetaType::Type> &p = it.next();
         QString var = fieldNameToVariableName(p.first);
-        QString type = QVariant::typeToName(p.second);
+#if QT_VERSION < 0x060000
+        QString type = QString::fromLatin1(QVariant::typeToName(p.second));
+#else
+        QString type = QString::fromLatin1(QMetaType(p.second).name());
+#endif
         if (type.isEmpty())
             continue;
 
@@ -541,13 +554,13 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     if (pkidx < 0) {
         getparams = crtparams;
     } else {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        const QPair<QString, QMetaType::Type> &pair = fields[pkidx];
         getparams = createParam(pair.second, pair.first);
     }
 
     // Creates a declaration and a implementation of 'get' method for optimistic lock
     if (pkidx >= 0 && optlockMethod) {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        const QPair<QString, QMetaType::Type> &pair = fields[pkidx];
         getOptDecl = QString("    static %1 get(%2, int lockRevision);\n").arg(modelName, createParam(pair.second, pair.first));
 
         getOptImpl = QString("%1 %1::get(%2, int lockRevision)\n"
@@ -614,7 +627,7 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     if (pkidx < 0) {
         getImpl += "findFirst(cri));\n";
     } else {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        const QPair<QString, QMetaType::Type> &pair = fields[pkidx];
         getImpl += (objectType == Sql) ? "findByPrimaryKey(" : "findByObjectId(";
         getImpl += fieldNameToVariableName(pair.first);
         getImpl += QString("));\n");
@@ -682,25 +695,33 @@ void ModelGenerator::gen(const QString &fileName, const QString &format, const Q
 }
 
 
-QString ModelGenerator::createParam(QVariant::Type type, const QString &name)
+QString ModelGenerator::createParam(QMetaType::Type type, const QString &name)
 {
     QString string;
     QString var = fieldNameToVariableName(name);
 
     switch (type) {
-    case QVariant::Bool:
-    case QVariant::Int:
-    case QVariant::UInt:
-    case QVariant::LongLong:
-    case QVariant::ULongLong:
-    case QVariant::Double:
+    case QMetaType::Bool:
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::LongLong:
+    case QMetaType::ULongLong:
+    case QMetaType::Double:
+#if QT_VERSION < 0x060000
         string += QVariant::typeToName(type);
+#else
+        string += QString::fromLatin1(QMetaType(type).name());
+#endif
         string += ' ';
         string += var;
         break;
 
     default:
+#if QT_VERSION < 0x060000
         string += QString("const %1 &%2").arg(QVariant::typeToName(type), var);
+#else
+        string += QString("const %1 &%2").arg(QMetaType(type).name(), var);
+#endif
         break;
     }
     return string;

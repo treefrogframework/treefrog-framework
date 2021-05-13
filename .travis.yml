@@ -6,20 +6,27 @@ matrix:
       osx_image: xcode12.2
       sudo: required
       env:
-       - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
+        - CONFIG_SHARED_MONGOC="--enable-shared-mongoc"
+      addons:
+        homebrew:
+          update: true
+          packages:
+            - qt
+            - mongo-c-driver
     - os: osx
       osx_image: xcode10.3
       sudo: required
       env:
-       - CONFIG_SHARED_MONGOC=""
-
+        - CONFIG_SHARED_MONGOC=""
+       addons:
+         homebrew:
+           update: true
+           packages:
+             - qt
+             - mongo-c-driver
 env:
   global:
     - CI_WORK=$(pwd)
-
-before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install qt mongo-c-driver; brew link --force qt; brew link mongo-c-driver; fi
 
 install:
   - cd ${CI_WORK}
