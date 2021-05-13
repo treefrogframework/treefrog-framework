@@ -100,13 +100,13 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
     _codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
 
     // Sets codecs for INI files
+#if QT_VERSION < 0x060000
     loggerSetting.setIniCodec(_codecInternal);
-    _loggerSetting = Tf::settingsToMap(loggerSetting);
-
     validationSetting.setIniCodec(_codecInternal);
-    _validationSetting = Tf::settingsToMap(validationSetting);
-
     mediaTypes->setIniCodec(_codecInternal);
+#endif
+    _loggerSetting = Tf::settingsToMap(loggerSetting);
+    _validationSetting = Tf::settingsToMap(validationSetting);
     _mediaTypes = Tf::settingsToMap(*mediaTypes);
     delete mediaTypes;
 
@@ -126,7 +126,9 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
 
     for (auto &f : files) {
         QSettings settings(configPath() + f, QSettings::IniFormat);
+#if QT_VERSION < 0x060000
         settings.setIniCodec(_codecInternal);
+#endif
         _sqlSettings.append(Tf::settingsToMap(settings, _dbEnvironment));
     }
 
@@ -136,7 +138,9 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         QString mnginipath = configPath() + mongoini;
         if (QFile(mnginipath).exists()) {
             QSettings settings(mnginipath, QSettings::IniFormat);
+#if QT_VERSION < 0x060000
             settings.setIniCodec(_codecInternal);
+#endif
             _kvsSettings[(int)Tf::KvsEngine::MongoDB] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
@@ -147,7 +151,9 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         QString redisinipath = configPath() + redisini;
         if (QFile(redisinipath).exists()) {
             QSettings settings(redisinipath, QSettings::IniFormat);
+#if QT_VERSION < 0x060000
             settings.setIniCodec(_codecInternal);
+#endif
             _kvsSettings[(int)Tf::KvsEngine::Redis] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
@@ -356,7 +362,7 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             _mpm = Thread;
-        } else if (str == "epoll" || str == "hybrid") {
+        } else if (str == "epoll") {
 #ifdef Q_OS_LINUX
             _mpm = Epoll;
 #else
@@ -383,11 +389,6 @@ int TWebApplication::maxNumberOfAppServers() const
         QString mpmstr = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         int num = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpmstr + ".MaxAppServers").toInt();
 
-        // Temporary workaround
-        if (num <= 0 && mpmstr == "hybrid") {
-            num = Tf::appSettings()->readValue(QLatin1String("MPM.hybrid.MaxAppServers")).toInt();
-        }
-
         if (num <= 0) {
             num = qMax(std::thread::hardware_concurrency(), (uint)1);
             tSystemWarn("Sets max number of AP servers to %d", num);
@@ -410,14 +411,11 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
         switch (Tf::app()->multiProcessingModule()) {
         case TWebApplication::Thread:
             maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-            if (maxNum <= 0) {
-                maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
-            }
+            maxNum = (maxNum > 0) ? maxNum : 128;
             break;
 
         case TWebApplication::Epoll:
-            // This parameter obsoluted but maxNum is needed..
-            maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxWorkersPerAppServer", 16).toInt();
+            maxNum = 128;
             break;
 
         default:

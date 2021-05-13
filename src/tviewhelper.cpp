@@ -6,7 +6,7 @@
  */
 
 #include <QFileInfo>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <TActionView>
 #include <TAppSettings>
 #include <THttpUtility>
@@ -669,7 +669,7 @@ QString TViewHelper::jsPath(const QString &src, bool withTimestamp) const
 */
 QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTimestamp) const
 {
-    if (src.contains(QRegExp("^[a-z]+://"))) {
+    if (src.contains(QRegularExpression("^[a-z]+://"))) {
         return src;
     }
 
@@ -679,7 +679,7 @@ QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTi
         QFileInfo fi(Tf::app()->publicPath() + ret);
         if (fi.exists()) {
             ret += QLatin1Char('?');
-            ret += QString::number(fi.lastModified().toTime_t());
+            ret += QString::number(fi.lastModified().toSecsSinceEpoch());
         }
     }
     return ret;

@@ -29,7 +29,7 @@ static QString replaceMarker;
 QString generateErbPhrase(const QString &str, int echoOption)
 {
     QString s = str;
-    s.remove(QRegExp(";+$"));
+    s.remove(QRegularExpression(";+$"));
     QString res = LEFT_DELIM;
 
     if (echoOption == OtmParser::None) {
@@ -198,7 +198,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         // Tag merging
         val = otmParser.getSrcCode(label, OtmParser::TagMerging, &ech);  // |== operator
         if (!val.isEmpty()) {
-            val.remove(QRegExp(";+$"));
+            val.remove(QRegularExpression(";+$"));
 
             QString attr;
             attr = LEFT_DELIM;

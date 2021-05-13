@@ -16,13 +16,16 @@ constexpr int MAX_NUM_BUFFERING_DATA = 10000;
 
 class TFileAioWriterData {
 public:
-    mutable QMutex mutex;
+#if QT_VERSION < 0x060000
+    mutable QMutex mutex {QMutex::Recursive};
+#else
+    mutable QRecursiveMutex mutex;
+#endif
     QString fileName;
-    int fileDescriptor;
+    int fileDescriptor {0};
     TQueue<struct aiocb *> syncBuffer;
 
-    TFileAioWriterData() :
-        mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
+    TFileAioWriterData() {}
 };
 
 /*!

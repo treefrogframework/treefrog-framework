@@ -1,9 +1,9 @@
 add_definitions(-DTF_DLL)
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
-if (NOT Qt6_FOUND)
-  message(FATAL_ERROR "Qt6 was not found.")
+if (NOT Qt5_FOUND)
+  message(FATAL_ERROR "Qt5 was not found. Consider setting QT5_CMAKE_PATH to the Qt5Config.cmake directory.")
 endif()
 
 file(GLOB helper_srcs    ${PROJECT_SOURCE_DIR}/helpers/*.cpp)
@@ -13,11 +13,11 @@ add_library(helper SHARED
   ${helper_srcs}
 )
 target_include_directories(helper PUBLIC
-  ${Qt6Core_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS}
   ${TreeFrog_INCLUDE_DIR}
 )
-target_link_libraries(helper PRIVATE
-  Qt6::Core
+target_link_libraries(helper
+  Qt5::Core
   ${TreeFrog_LIB}
 )
 set_target_properties(helper PROPERTIES

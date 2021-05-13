@@ -234,7 +234,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
     TOption opt(options);
     QVariantMap map;
     QVariant v = opt[Tf::Parameters];
-    if (v.isValid() && v.canConvert(QVariant::Map)) {
+    if (v.isValid() && v.canConvert<QVariantMap>()) {
         map = v.toMap();
     }
     map.insert("authenticity_token", actionView()->authenticityToken());
@@ -243,7 +243,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
     for (auto i = opt.begin(); i != opt.end(); ++i) {
         // Appends ajax option
         QString s = stringOptionHash()->value(i.key());
-        if (!s.isEmpty() && i.value().canConvert(QVariant::String)) {
+        if (!s.isEmpty() && i.value().canConvert<QString>()) {
             string += s;
             string += QLatin1Char('\'');
             string += i.value().toString();
@@ -252,13 +252,13 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
         }
 
         s = boolOptionHash()->value(i.key());
-        if (!s.isEmpty() && i.value().canConvert(QVariant::Bool)) {
+        if (!s.isEmpty() && i.value().canConvert<bool>()) {
             string += s;
             string += (i.value().toBool()) ? QLatin1String("true, ") : QLatin1String("false, ");
             continue;
         }
 
-        if (i.key() == Tf::Method && i.value().canConvert(QVariant::Int)) {
+        if (i.key() == Tf::Method && i.value().canConvert<int>()) {
             string += QLatin1String("method:'");
             string += methodHash()->value(i.value().toInt());
             string += QLatin1String("', ");
@@ -268,7 +268,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
         // Appends 'parameters' option
         if (i.key() == Tf::Parameters) {
             QString val;
-            if (i.value().canConvert(QVariant::Map)) {
+            if (i.value().canConvert<QVariantMap>()) {
                 const QVariantMap m = i.value().toMap();
                 for (auto it = m.begin(); it != m.end(); ++it) {
                     if (it.value().canConvert<TJavaScriptObject>()) {
@@ -276,7 +276,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
                         val += QLatin1String(":");
                         val += it.value().value<TJavaScriptObject>().toString();
                         val += QLatin1String(", ");
-                    } else if (it.value().canConvert(QVariant::String)) {
+                    } else if (it.value().canConvert<QString>()) {
                         val += it.key();
                         val += QLatin1String(":'");
                         val += THttpUtility::toUrlEncoding(it.value().toString());
@@ -296,7 +296,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
 
         // Appends ajax callbacks
         s = eventStringHash()->value(i.key());
-        if (!s.isEmpty() && i.value().canConvert(QVariant::String)) {
+        if (!s.isEmpty() && i.value().canConvert<QString>()) {
             string += s;
             string += i.value().toString();
             string += QLatin1String(", ");

@@ -354,7 +354,11 @@ bool TActionController::renderXml(const QDomDocument &document)
     QByteArray xml;
     QTextStream ts(&xml);
 
+#if QT_VERSION < 0x060000
     ts.setCodec("UTF-8");
+#else
+    ts.setEncoding(QStringConverter::Utf8);
+#endif
     document.save(ts, 1, QDomNode::EncodingFromTextStream);
     return sendData(xml, "text/xml");
 }

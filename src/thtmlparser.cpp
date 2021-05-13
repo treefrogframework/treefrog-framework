@@ -141,7 +141,7 @@ THtmlParser::THtmlParser(TrimMode mode) :
 bool THtmlParser::hasPrefix(const QString &str, int offset) const
 {
     return (pos + offset >= 0 && pos + offset + str.length() - 1 < txt.length()
-        && txt.midRef(pos + offset, str.length()) == str);
+        && txt.mid(pos + offset, str.length()) == str);
 }
 
 
@@ -408,10 +408,10 @@ void THtmlParser::appendTextToLastElement(const QString &upto)
 {
     int end = txt.indexOf(upto, pos);
     if (end >= 0) {
-        last().text += txt.midRef(pos, end + upto.length() - pos);
+        last().text += txt.mid(pos, end + upto.length() - pos);
         pos = end + upto.length();
     } else {
-        last().text += txt.midRef(pos);
+        last().text += txt.mid(pos);
         pos = txt.length();
     }
 }

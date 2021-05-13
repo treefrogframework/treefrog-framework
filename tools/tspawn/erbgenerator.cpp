@@ -140,7 +140,7 @@ static const QStringList excludedDirName = {
 };
 
 
-ErbGenerator::ErbGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx) :
+ErbGenerator::ErbGenerator(const QString &view, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int autoValIdx) :
     viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
 {
 }
@@ -167,13 +167,13 @@ bool ErbGenerator::generate(const QString &dstDir) const
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
+    const QPair<QString, QMetaType::Type> &pkFld = fieldList[primaryKeyIndex];
     QString pkVarName = fieldNameToVariableName(pkFld.first);
 
     // Generates index.html.erb
     QString th, td, showitems, entryitems, edititems;
     for (int i = 0; i < fieldList.count(); ++i) {
-        const QPair<QString, QVariant::Type> &p = fieldList[i];
+        const QPair<QString, QMetaType::Type> &p = fieldList[i];
 
         QString icap = fieldNameToCaption(p.first);
         QString ivar = fieldNameToVariableName(p.first);
