@@ -22,13 +22,16 @@ typedef struct
 
 class TFileAioWriterData {
 public:
-    mutable QMutex mutex;
+#if QT_VERSION < 0x060000
+    mutable QMutex mutex {QMutex::Recursive};
+#else
+    mutable QRecursiveMutex mutex;
+#endif
     QString fileName;
-    HANDLE fileHandle;
+    HANDLE fileHandle {INVALID_HANDLE_VALUE};
     QList<aiobuf_t *> syncBuffer;
 
-    TFileAioWriterData() :
-        mutex(QMutex::Recursive), fileName(), fileHandle(INVALID_HANDLE_VALUE), syncBuffer() { }
+    TFileAioWriterData() { }
     void clearSyncBuffer();
 };
 
