@@ -1,10 +1,10 @@
-win32 {
+windows {
   INCLUDEPATH += $$quote($$(TFDIR)\\include)
   LIBS += -L$$quote($$(TFDIR)\\bin)
   CONFIG(debug, debug|release) {
-    LIBS += -ltreefrogd1
+    LIBS += -ltreefrogd2
   } else {
-    LIBS += -ltreefrog1
+    LIBS += -ltreefrog2
   }
 } else {
   unix:LIBS += -Wl,-rpath,. -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
