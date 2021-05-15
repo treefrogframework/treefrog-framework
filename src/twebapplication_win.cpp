@@ -65,7 +65,11 @@ void TWebApplication::ignoreConsoleSignal()
 }
 
 
+#if QT_VERSION < 0x060000
 bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
+#else
+bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, qintptr *)
+#endif
 {
     if (eventType == "windows_generic_MSG" || eventType == "windows_dispatcher_MSG") {
         MSG *msg = static_cast<MSG *>(message);
