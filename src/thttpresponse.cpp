@@ -87,10 +87,10 @@ void THttpResponse::setBodyFile(const QString &filePath)
             bodyDevice = fp;
             return;
         } else {
-            tSystemError("faild to open file: %s", qPrintable(filePath));
+            tSystemError("faild to open file: %s", qUtf8Printable(filePath));
         }
     } else {
-        tSystemError("file not found: %s", qPrintable(filePath));
+        tSystemError("file not found: %s", qUtf8Printable(filePath));
     }
 
     // Error

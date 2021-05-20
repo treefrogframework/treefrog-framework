@@ -150,7 +150,7 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
     Q_ASSERT(controller);
 
     if (accessRules.isEmpty()) {
-        tWarn("No rule for access validation: %s", qPrintable(controller->className()));
+        tWarn("No rule for access validation: %s", qUtf8Printable(controller->className()));
         return ret;
     }
 
@@ -164,9 +164,9 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
             }
         }
         if (ret) {
-            tSystemDebug("Access '%s' action by an unauthenticated user : Allow", qPrintable(controller->activeAction()));
+            tSystemDebug("Access '%s' action by an unauthenticated user : Allow", qUtf8Printable(controller->activeAction()));
         } else {
-            tSystemWarn("Access '%s' action by an unauthenticated user : Deny", qPrintable(controller->activeAction()));
+            tSystemWarn("Access '%s' action by an unauthenticated user : Deny", qUtf8Printable(controller->activeAction()));
         }
 
     } else {
@@ -179,9 +179,9 @@ bool TAccessValidator::validate(const TAbstractUser *user) const
             }
         }
         if (ret) {
-            tSystemDebug("Access '%s' action by '%s' user : Allow", qPrintable(controller->activeAction()), qPrintable(user->identityKey()));
+            tSystemDebug("Access '%s' action by '%s' user : Allow", qUtf8Printable(controller->activeAction()), qUtf8Printable(user->identityKey()));
         } else {
-            tSystemWarn("Access '%s' action by '%s' user : Deny", qPrintable(controller->activeAction()), qPrintable(user->identityKey()));
+            tSystemWarn("Access '%s' action by '%s' user : Deny", qUtf8Printable(controller->activeAction()), qUtf8Printable(user->identityKey()));
         }
     }
 

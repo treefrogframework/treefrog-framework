@@ -71,7 +71,7 @@ bool TFileAioWriter::open()
 
         d->fileHandle = CreateFile((const wchar_t *)d->fileName.utf16(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_FLAG_OVERLAPPED, nullptr);
         if (d->fileHandle == INVALID_HANDLE_VALUE) {
-            //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
+            //fprintf(stderr, "file open failed: %s\n", qUtf8Printable(d->fileName));
         }
     }
 

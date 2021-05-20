@@ -58,7 +58,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QFileInfo outFileInfo(outFile);
 
     if (!erbFile.open(QIODevice::ReadOnly)) {
-        qCritical("failed to read template.erb file : %s", qPrintable(erbFile.fileName()));
+        qCritical("failed to read template.erb file : %s", qUtf8Printable(erbFile.fileName()));
         return false;
     }
 
@@ -78,10 +78,10 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
         if ((latestPartialTs.isValid() && latestPartialTs >= outFileInfo.lastModified())
             || erbFileInfo.lastModified() >= outFileInfo.lastModified()) {
             if (outFile.remove()) {
-                std::printf("  removed  %s\n", qPrintable(outFile.fileName()));
+                std::printf("  removed  %s\n", qUtf8Printable(outFile.fileName()));
             }
         } else {
-            //std::printf("  done    %s\n", qPrintable(outFile.fileName()));
+            //std::printf("  done    %s\n", qUtf8Printable(outFile.fileName()));
             return true;
         }
     }
@@ -97,7 +97,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        std::printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
+        std::printf("  created  %s  (trim:%d)\n", qUtf8Printable(outFile.fileName()), trimMode);
     }
     return true;
 }
@@ -117,7 +117,7 @@ bool ErbConverter::convert(const QString &className, const QString &erb, int tri
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        std::printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
+        std::printf("  created  %s  (trim:%d)\n", qUtf8Printable(outFile.fileName()), trimMode);
     }
     return true;
 }

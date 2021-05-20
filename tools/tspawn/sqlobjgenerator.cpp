@@ -82,7 +82,7 @@ QString SqlObjGenerator::generate(const QString &dstDir)
 {
     QList<QPair<QString, QString>> fieldList = tableSch->getFieldList();
     if (fieldList.isEmpty()) {
-        qCritical("table not found, %s", qPrintable(tableSch->tableName()));
+        qCritical("table not found, %s", qUtf8Printable(tableSch->tableName()));
         return QString();
     }
 

@@ -261,7 +261,7 @@ void TestHttpHeader::parseHttpRequestHeader()
     QFETCH(QString, data);
     QHttpRequestHeader qhttp(data);
     THttpRequestHeader thttp(data.toLatin1());
-//     qDebug("Qt: %s", qPrintable(qhttp.toString()));
+//     qDebug("Qt: %s", qUtf8Printable(qhttp.toString()));
 //     qDebug("Tf: %s", thttp.toByteArray().data());
 
     QCOMPARE(qhttp.toString().toLatin1(), thttp.toByteArray());
@@ -318,7 +318,7 @@ void TestHttpHeader::parseHttpResponseHeader()
     QFETCH(QString, data);
     QHttpResponseHeader qhttp(data);
     THttpResponseHeader thttp(data.toLatin1());
-//     qDebug("Qt: %s", qPrintable(qhttp.toString()));
+//     qDebug("Qt: %s", qUtf8Printable(qhttp.toString()));
 //     qDebug("Tf: %s", thttp.toByteArray().data());
     QCOMPARE(qhttp.toString().toLatin1(), thttp.toByteArray());
     QCOMPARE(qhttp.majorVersion(), thttp.majorVersion());

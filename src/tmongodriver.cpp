@@ -62,12 +62,12 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
     }
 
     // connect
-    mongoClient = mongoc_client_new(qPrintable(uri));
+    mongoClient = mongoc_client_new(qUtf8Printable(uri));
     if (mongoClient) {
         dbName = db;
         serverVersionNumber();  // Gets server version
     } else {
-        tSystemError("MongoDB client create error. Connection URI: %s", qPrintable(uri));
+        tSystemError("MongoDB client create error. Connection URI: %s", qUtf8Printable(uri));
     }
     return (bool)mongoClient;
 }
@@ -98,7 +98,7 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
     if (!col) {
         tSystemError("MongoDB GetCollection Error");
         return false;
@@ -165,7 +165,7 @@ bool TMongoDriver::insertOne(const QString &collection, const QVariantMap &objec
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
     bson_t rep;
     bool res = mongoc_collection_insert_one(col, (bson_t *)TBson::toBson(object).constData(),
         nullptr, &rep, &error);
@@ -192,7 +192,7 @@ bool TMongoDriver::removeOne(const QString &collection, const QVariantMap &crite
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
     bson_t rep;
     bool res = mongoc_collection_delete_one(col, (bson_t *)TBson::toBson(criteria).constData(), nullptr, &rep, &error);
     mongoc_collection_destroy(col);
@@ -218,7 +218,7 @@ bool TMongoDriver::removeMany(const QString &collection, const QVariantMap &crit
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
     bson_t rep;
     bool res = mongoc_collection_delete_many(col, (bson_t *)TBson::toBson(criteria).constData(), nullptr, &rep, &error);
     mongoc_collection_destroy(col);
@@ -245,7 +245,7 @@ bool TMongoDriver::updateOne(const QString &collection, const QVariantMap &crite
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
     bson_t rep;
     bson_t *opts = BCON_NEW("upsert", BCON_BOOL(upsert));
     bool res = mongoc_collection_update_one(col, (bson_t *)TBson::toBson(criteria).data(),
@@ -274,7 +274,7 @@ bool TMongoDriver::updateMany(const QString &collection, const QVariantMap &crit
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
     bson_t rep;
     bson_t *opts = BCON_NEW("upsert", BCON_BOOL(upsert));
     bool res = mongoc_collection_update_many(col, (bson_t *)TBson::toBson(criteria).data(),
@@ -305,7 +305,7 @@ qint64 TMongoDriver::count(const QString &collection, const QVariantMap &criteri
     bson_error_t error;
     clearError();
 
-    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qPrintable(dbName), qPrintable(collection));
+    mongoc_collection_t *col = mongoc_client_get_collection(mongoClient, qUtf8Printable(dbName), qUtf8Printable(collection));
 #if MONGOC_CHECK_VERSION(1, 11, 0)
     count = mongoc_collection_count_documents(col, (bson_t *)TBson::toBson(criteria).data(), nullptr, nullptr, nullptr, &error);
 #else
@@ -348,7 +348,7 @@ QStringList TMongoDriver::getCollectionNames()
         return names;
     }
 
-    auto *database = mongoc_client_get_database(mongoClient, qPrintable(dbName));
+    auto *database = mongoc_client_get_database(mongoClient, qUtf8Printable(dbName));
     auto *rc = mongoc_read_concern_new();
     mongoc_read_concern_set_level(rc, MONGOC_READ_CONCERN_LEVEL_LOCAL);
     mongoc_read_concern_append(rc, &opts);
@@ -386,7 +386,7 @@ QString TMongoDriver::serverVersion()
     bson_destroy(&rep);
 
     QString version = map.value("version").toString();
-    tSystemDebug("MongoDB server version: %s", qPrintable(version));
+    tSystemDebug("MongoDB server version: %s", qUtf8Printable(version));
     return version;
 }
 

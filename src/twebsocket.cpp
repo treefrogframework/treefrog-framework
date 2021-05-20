@@ -214,7 +214,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
         if (QTcpSocket::bytesToWrite() > 0) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {
-                tWarn("websocket error: waitForBytesWritten function [%s]", qPrintable(errorString()));
+                tWarn("websocket error: waitForBytesWritten function [%s]", qUtf8Printable(errorString()));
                 break;
             }
         }

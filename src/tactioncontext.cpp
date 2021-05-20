@@ -303,7 +303,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 QString canonicalPath = QUrl(QStringLiteral(".")).resolved(QUrl(path)).toString().mid(1);
                 QFile reqPath(Tf::app()->publicPath() + canonicalPath);
                 QFileInfo fi(reqPath);
-                tSystemDebug("canonicalPath : %s", qPrintable(canonicalPath));
+                tSystemDebug("canonicalPath : %s", qUtf8Printable(canonicalPath));
 
                 if (fi.isFile() && fi.isReadable()) {
                     // Check "If-Modified-Since" header for caching
@@ -350,14 +350,14 @@ void TActionContext::execute(THttpRequest &request, int sid)
         }
 
     } catch (ClientErrorException &e) {
-        tWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
-        tSystemWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
+        tWarn("Caught %s: status code:%d", qUtf8Printable(e.className()), e.statusCode());
+        tSystemWarn("Caught %s: status code:%d", qUtf8Printable(e.className()), e.statusCode());
         int bytes = writeResponse(e.statusCode(), responseHeader);
         accessLogger.setResponseBytes(bytes);
         accessLogger.setStatusCode(e.statusCode());
     } catch (TfException &e) {
-        tError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tError("Caught %s: %s  [%s:%d]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        tSystemError("Caught %s: %s  [%s:%d]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
         closeHttpSocket();
         accessLogger.setResponseBytes(0);
         accessLogger.setStatusCode(Tf::InternalServerError);

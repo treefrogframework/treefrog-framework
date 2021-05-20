@@ -243,7 +243,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
 
         QTextStream stream(stdin);
         for (;;) {
-            std::printf("  remove  %s? [ynaqh] ", qPrintable(QDir::cleanPath(file.fileName())));
+            std::printf("  remove  %s? [ynaqh] ", qUtf8Printable(QDir::cleanPath(file.fileName())));
 
             QString line = stream.readLine();
             if (line.isNull())
@@ -336,10 +336,10 @@ static bool createNewApplication(const QString &name)
         return false;
     }
     if (!dir.mkdir(name)) {
-        qCritical("failed to create a directory %s", qPrintable(name));
+        qCritical("failed to create a directory %s", qUtf8Printable(name));
         return false;
     }
-    std::printf("  created   %s\n", qPrintable(name));
+    std::printf("  created   %s\n", qUtf8Printable(name));
 
     // Creates sub-directories
     for (const QString &str : *subDirs()) {
@@ -425,7 +425,7 @@ static int deleteScaffold(const QString &name)
                   << str + "/create.erb"
                   << str + "/save.erb";
         } else {
-            qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
+            qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
             return 2;
         }
 
@@ -467,8 +467,8 @@ static bool checkIniFile()
 {
     // Checking INI file
     if (!QFile::exists(appIni)) {
-        qCritical("INI file not found, %s", qPrintable(appIni));
-        qCritical("Execute %s command in application root directory!", qPrintable(QCoreApplication::arguments().value(0)));
+        qCritical("INI file not found, %s", qUtf8Printable(appIni));
+        qCritical("Execute %s command in application root directory!", qUtf8Printable(QCoreApplication::arguments().value(0)));
         return false;
     }
     return true;
@@ -493,10 +493,10 @@ static void printSuccessMessage(const QString &model)
     putchar('\n');
     int port = appSettings.value("ListenPort").toInt();
     if (port > 0 && port <= USHRT_MAX)
-        std::printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(model));
+        std::printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qUtf8Printable(model));
 
     if (!msg.isEmpty()) {
-        puts(qPrintable(msg));
+        puts(qUtf8Printable(msg));
     }
 }
 
@@ -527,7 +527,7 @@ int main(int argc, char *argv[])
     case ShowDrivers:
         std::printf("Available database drivers for Qt:\n");
         for (QStringListIterator i(TableSchema::databaseDrivers()); i.hasNext();) {
-            std::printf("  %s\n", qPrintable(i.next()));
+            std::printf("  %s\n", qUtf8Printable(i.next()));
         }
         break;
 
@@ -542,7 +542,7 @@ int main(int argc, char *argv[])
             qCritical("Error: database driver's directory not found");
             return 1;
         }
-        std::printf("%s\n", qPrintable(fi.canonicalFilePath()));
+        std::printf("%s\n", qUtf8Printable(fi.canonicalFilePath()));
         break;
     }
 
@@ -552,7 +552,7 @@ int main(int argc, char *argv[])
             if (!tables.isEmpty()) {
                 std::printf("-----------------\nAvailable tables:\n");
                 for (QStringListIterator i(tables); i.hasNext();) {
-                    std::printf("  %s\n", qPrintable(i.next()));
+                    std::printf("  %s\n", qUtf8Printable(i.next()));
                 }
                 putchar('\n');
             }
@@ -580,7 +580,7 @@ int main(int argc, char *argv[])
             QStringList colls = mongo.getCollectionNames();
             std::printf("-----------------\nExisting collections:\n");
             for (auto &col : colls) {
-                std::printf("  %s\n", qPrintable(col));
+                std::printf("  %s\n", qUtf8Printable(col));
             }
             putchar('\n');
         }
@@ -663,7 +663,7 @@ int main(int argc, char *argv[])
                 ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.autoValueIndex());
                 viewgen.generate(D_VIEWS);
             } else {
-                qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
+                qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
                 return 2;
             }
 
@@ -720,7 +720,7 @@ int main(int argc, char *argv[])
 
             int pkidx = modelgen.primaryKeyIndex();
             if (pkidx < 0) {
-                qWarning("Primary key not found. [table name: %s]", qPrintable(args.value(2)));
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
                 return 2;
             }
 
@@ -735,7 +735,7 @@ int main(int argc, char *argv[])
                 ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
                 viewgen.generate(D_VIEWS);
             } else {
-                qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
+                qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
                 return 2;
             }
 

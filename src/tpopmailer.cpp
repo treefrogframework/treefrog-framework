@@ -62,16 +62,16 @@ bool TPopMailer::connectToHost()
     bool ret = false;
 
     if (popHostName.isEmpty() || popPort <= 0) {
-        tSystemError("POP: Bad Argument: hostname:%s port:%d", qPrintable(popHostName), popPort);
+        tSystemError("POP: Bad Argument: hostname:%s port:%d", qUtf8Printable(popHostName), popPort);
         return ret;
     }
 
     socket->connectToHost(popHostName, popPort);
     if (!socket->waitForConnected(5000)) {
-        tSystemError("POP server connect error: %s", qPrintable(socket->errorString()));
+        tSystemError("POP server connect error: %s", qUtf8Printable(socket->errorString()));
         return ret;
     }
-    tSystemDebug("POP server connected: %s:%d", qPrintable(popHostName), popPort);
+    tSystemDebug("POP server connected: %s:%d", qUtf8Printable(popHostName), popPort);
     ;
 
     QByteArray response;

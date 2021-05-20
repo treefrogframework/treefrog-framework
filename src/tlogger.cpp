@@ -50,7 +50,7 @@ TLogger::TLogger()
 QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) const
 {
     const auto &settings = Tf::app()->loggerSettings();
-    //tSystemDebug("settingsValue: %s", qPrintable(key() + "." + k));
+    //tSystemDebug("settingsValue: %s", qUtf8Printable(key() + "." + k));
     return settings.value(key() + "." + k, defaultValue);
 }
 

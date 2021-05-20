@@ -26,13 +26,13 @@ bool ProjectFileGenerator::add(const QStringList &files) const
 
     QFile pro(filePath);
     if (!pro.exists()) {
-        qCritical("Project file not found: %s", qPrintable(pro.fileName()));
+        qCritical("Project file not found: %s", qUtf8Printable(pro.fileName()));
         return false;
     } else {
         if (pro.open(QIODevice::ReadOnly | QIODevice::Text)) {
             output = pro.readAll();
         } else {
-            qCritical("failed to open file: %s", qPrintable(pro.fileName()));
+            qCritical("failed to open file: %s", qUtf8Printable(pro.fileName()));
             return false;
         }
     }
@@ -81,11 +81,11 @@ bool ProjectFileGenerator::remove(const QStringList &files) const
             output = pro.readAll();
             pro.close();
         } else {
-            qCritical("failed to open file: %s", qPrintable(pro.fileName()));
+            qCritical("failed to open file: %s", qUtf8Printable(pro.fileName()));
             return false;
         }
     } else {
-        qCritical("Project file not found: %s", qPrintable(pro.fileName()));
+        qCritical("Project file not found: %s", qUtf8Printable(pro.fileName()));
         return false;
     }
 

@@ -248,7 +248,7 @@ void JSContext::load()
 
     TJSModule *js = TJSLoader(file).load();
     QString output = js->evaluate(variable).toString();
-    //qDebug() << qPrintable(output);
+    //qDebug() << qUtf8Printable(output);
     QCOMPARE(output, result);
 }
 
@@ -452,7 +452,7 @@ QString JSContext::jsxTransformFile(const QString &file)
     QFile script(file);
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
-        printf("open error: %s\n", qPrintable(file));
+        printf("open error: %s\n", qUtf8Printable(file));
         return QString();
     }
 

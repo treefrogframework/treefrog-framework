@@ -72,7 +72,7 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
 
     object();
     if (Q_UNLIKELY(!_ptr)) {
-        tSystemDebug("Failed to invoke, no such class: %s", qPrintable(_metaType));
+        tSystemDebug("Failed to invoke, no such class: %s", qUtf8Printable(_metaType));
         return QMetaMethod();
     }
 
@@ -103,7 +103,7 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
     }
 
     if (Q_UNLIKELY(idx < 0)) {
-        tSystemDebug("No such method: %s", qPrintable(methodName));
+        tSystemDebug("No such method: %s", qUtf8Printable(methodName));
         return QMetaMethod();
     }
 
@@ -130,9 +130,9 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     QMetaMethod mm = this->method(method, args.count());
 
     if (Q_UNLIKELY(!mm.isValid())) {
-        tSystemDebug("No such method: %s", qPrintable(method));
+        tSystemDebug("No such method: %s", qUtf8Printable(method));
     } else {
-        tSystemDebug("Invoke method: %s", qPrintable(_metaType + "." + method));
+        tSystemDebug("Invoke method: %s", qUtf8Printable(_metaType + "." + method));
         switch (args.count()) {
         case 0:
             ret = mm.invoke(_ptr, connectionType);

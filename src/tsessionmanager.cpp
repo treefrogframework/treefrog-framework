@@ -54,7 +54,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
             session = store->find(id);
             TSessionStoreFactory::destroy(storeType(), store);
         } else {
-            tSystemError("Session store not found: %s", qPrintable(storeType()));
+            tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
         }
     }
     return session;
@@ -74,7 +74,7 @@ bool TSessionManager::store(TSession &session)
         res = store->store(session);
         TSessionStoreFactory::destroy(storeType(), store);
     } else {
-        tSystemError("Session store not found: %s", qPrintable(storeType()));
+        tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
     }
     return res;
 }
@@ -89,7 +89,7 @@ bool TSessionManager::remove(const QByteArray &id)
             TSessionStoreFactory::destroy(storeType(), store);
             return ret;
         } else {
-            tSystemError("Session store not found: %s", qPrintable(storeType()));
+            tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
         }
     }
     return false;

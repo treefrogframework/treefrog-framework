@@ -15,11 +15,12 @@ if (TFDIR)
 
   set(TreeFrog_LIBNAME treefrog)
   if (MSVC)
-    set(CMAKE_CXX_FLAGS "/EHsc")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
       set(TreeFrog_LIBNAME treefrogd2)
+      set(CMAKE_CXX_FLAGS "/EHsc /MDd")
     else ()
       set(TreeFrog_LIBNAME treefrog2)
+      set(CMAKE_CXX_FLAGS "/EHsc /MD")
     endif()
   endif(MSVC)
 

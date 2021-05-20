@@ -38,7 +38,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
     } else if (k == REDIS_CACHE_KEY) {
         ptr = new TCacheRedisStore;
     } else {
-        tSystemError("Not found cache store: %s", qPrintable(key));
+        tSystemError("Not found cache store: %s", qUtf8Printable(key));
     }
 
     return ptr;

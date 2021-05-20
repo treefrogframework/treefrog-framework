@@ -50,12 +50,12 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
         case Error:
             ret = false;
             str = getLine(&ok);
-            tSystemError("Redis error response: %s", qPrintable(str));
+            tSystemError("Redis error response: %s", qUtf8Printable(str));
             break;
 
         case SimpleString:
             str = getLine(&ok);
-            tSystemDebug("Redis response: %s", qPrintable(str));
+            tSystemDebug("Redis response: %s", qUtf8Printable(str));
             break;
 
         case Integer: {

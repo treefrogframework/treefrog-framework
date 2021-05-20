@@ -12,7 +12,7 @@ TLogFileWriter::TLogFileWriter(const QString &logFileName)
     : logFile(logFileName)
 {
     if (!logFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        fprintf(stderr, "file open failed: %s\n", qPrintable(logFile.fileName()));
+        fprintf(stderr, "file open failed: %s\n", qUtf8Printable(logFile.fileName()));
     }
 }
 
@@ -27,7 +27,7 @@ void TLogFileWriter::writeLog(const char *msg)
 {
     QMutexLocker locker(&mutex);
     if (logFile.isOpen()) {
-        int len = logFile.write(msg); 
+        int len = logFile.write(msg);
         if (len < 0) {
             fprintf(stderr, "log write failed\n");
             return;

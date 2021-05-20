@@ -166,10 +166,10 @@ bool mkpath(const QDir &dir, const QString &dirPath)
 {
     if (!dir.exists(dirPath)) {
         if (!dir.mkpath(dirPath)) {
-            qCritical("failed to create a directory %s", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
+            qCritical("failed to create a directory %s", qUtf8Printable(QDir::cleanPath(dir.filePath(dirPath))));
             return false;
         }
-        std::printf("  created   %s\n", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
+        std::printf("  created   %s\n", qUtf8Printable(QDir::cleanPath(dir.filePath(dirPath))));
     }
     return true;
 }
