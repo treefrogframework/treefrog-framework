@@ -161,7 +161,7 @@ bool ViewConverter::write(const QString &filePath, const QString &data) const
             orig = file.readAll();
             file.close();
         } else {
-            qCritical("failed to open file: %s", qPrintable(file.fileName()));
+            qCritical("failed to open file: %s", qUtf8Printable(file.fileName()));
             return false;
         }
     }
@@ -174,7 +174,7 @@ bool ViewConverter::write(const QString &filePath, const QString &data) const
         QTextStream ts(&outFile);
         ts << data;
         if (ts.status() == QTextStream::Ok) {
-            std::printf("  created  %s\n", qPrintable(outFile.fileName()));
+            std::printf("  created  %s\n", qUtf8Printable(outFile.fileName()));
         } else {
             return false;
         }

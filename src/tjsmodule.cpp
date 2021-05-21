@@ -18,7 +18,7 @@
 namespace {
 inline const char *prop(const QJSValue &val, const QString &name = QString())
 {
-    return (name.isEmpty()) ? qPrintable(val.toString()) : qPrintable(val.property(name).toString());
+    return (name.isEmpty()) ? qUtf8Printable(val.toString()) : qUtf8Printable(val.property(name).toString());
 }
 }
 
@@ -118,7 +118,7 @@ TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const Q
     QMutexLocker locker(&mutex);
 
     QJSValue construct = evaluate(constructorName);
-    tSystemDebug("construct: %s", qPrintable(construct.toString()));
+    tSystemDebug("construct: %s", qUtf8Printable(construct.toString()));
     QJSValue res = construct.callAsConstructor(args);
     if (res.isError()) {
         tSystemError("JS uncaught exception at %s:%s : %s", prop(res, "fileName"),

@@ -592,7 +592,7 @@ bool THtmlParser::parentExists(int i, const QString &tag) const
 // void THtmlParser::dumpHtml() const
 // {
 //     for (int i = 0; i < elements.count(); ++i) {
-//         ("%s:%s:%d:%s", qPrintable(QString(depth(i) * 4, QLatin1Char(' '))), qPrintable(at(i).tag), at(i).children.count(), qPrintable(at(i).text));
+//         ("%s:%s:%d:%s", qUtf8Printable(QString(depth(i) * 4, QLatin1Char(' '))), qUtf8Printable(at(i).tag), at(i).children.count(), qUtf8Printable(at(i).text));
 //     }
 // }
 

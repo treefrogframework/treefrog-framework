@@ -213,7 +213,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
 {
     // Reserved word check
     if (ngCtlrName()->contains(tableName.toLower())) {
-        qCritical("Reserved word error. Please use another word.  Controller name: %s", qPrintable(tableName));
+        qCritical("Reserved word error. Please use another word.  Controller name: %s", qUtf8Printable(tableName));
         return false;
     }
 

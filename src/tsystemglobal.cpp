@@ -199,7 +199,7 @@ void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &erro
             }
             q = QLatin1String("(Query failed) ") + err + query;
         }
-        Tf::traceQueryLog("%s", qPrintable(q));
+        Tf::traceQueryLog("%s", qUtf8Printable(q));
     }
 }
 

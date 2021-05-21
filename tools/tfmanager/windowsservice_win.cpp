@@ -113,14 +113,19 @@ static void WINAPI serviceHandler(DWORD ctrl)
 
 static QByteArrayList parseArguments(const QString &str)
 {
-    const QRegExp rx("(\"([^\"]*)\"|([^ ]+))", Qt::CaseSensitive, QRegExp::RegExp2);
+    const QRegularExpression re("(\"([^\"]*)\"|([^ ]+))", QRegularExpression::CaseInsensitiveOption);
 
     QByteArrayList res;
     int pos = 0;
-    while ((pos = rx.indexIn(str, pos)) >= 0) {
-        auto cap2 = rx.cap(2);
-        res << ((cap2.isEmpty()) ? rx.cap(3) : cap2).toLocal8Bit();
-        pos += rx.matchedLength();
+
+    for (;;) {
+        auto match = re.match(str, pos);
+        if (!match.hasMatch()) {
+            break;
+        }
+        QString cap2 = match.captured(2);
+        res << ((cap2.isEmpty()) ? match.captured(3) : cap2).toLocal8Bit();
+        pos += match.capturedLength();
     }
     return res;
 }

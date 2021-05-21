@@ -138,7 +138,7 @@ static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePa
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical("file open error: %s", qPrintable(filePath));
+        qCritical("file open error: %s", qUtf8Printable(filePath));
         _exit(1);
     }
 
@@ -171,7 +171,7 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
     QFile file(path);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical("file open error: %s", qPrintable(path));
+        qCritical("file open error: %s", qUtf8Printable(path));
         _exit(1);
     }
 

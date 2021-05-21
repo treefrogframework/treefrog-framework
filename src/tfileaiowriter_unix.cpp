@@ -54,9 +54,9 @@ bool TFileAioWriter::open()
             return false;
         }
 
-        d->fileDescriptor = ::open(qPrintable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
+        d->fileDescriptor = ::open(qUtf8Printable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
         if (d->fileDescriptor < 0) {
-            //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
+            //fprintf(stderr, "file open failed: %s\n", qUtf8Printable(d->fileName));
         }
     }
 

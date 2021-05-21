@@ -271,7 +271,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
 bool TActionController::render(const QString &action, const QString &layout)
 {
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
     rendered = true;
@@ -290,7 +290,7 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 {
 
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
     rendered = true;
@@ -298,7 +298,7 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
     // Creates view-object and displays it
     QStringList names = templateName.split("/");
     if (names.count() != 2) {
-        tError("Invalid patameter: %s", qPrintable(templateName));
+        tError("Invalid patameter: %s", qUtf8Printable(templateName));
         return false;
     }
     TDispatcher<TActionView> viewDispatcher(viewClassName(names[0], names[1]));
@@ -313,7 +313,7 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
     rendered = true;
@@ -419,7 +419,7 @@ bool TActionController::renderXml(const QStringList &list)
 bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
 
@@ -439,7 +439,7 @@ bool TActionController::renderAndCache(const QByteArray &key, int seconds, const
 bool TActionController::renderOnCache(const QByteArray &key)
 {
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '.' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
 
@@ -470,7 +470,7 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
     // Creates view-object
     QStringList names = templateName.split("/");
     if (names.count() != 2) {
-        tError("Invalid patameter: %s", qPrintable(templateName));
+        tError("Invalid patameter: %s", qUtf8Printable(templateName));
         return QString();
     }
 
@@ -496,7 +496,7 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
 QByteArray TActionController::renderView(TActionView *view)
 {
     if (!view) {
-        tSystemError("view null pointer.  action:%s", qPrintable(activeAction()));
+        tSystemError("view null pointer.  action:%s", qUtf8Printable(activeAction()));
         return QByteArray();
     }
     view->setController(this);
@@ -516,7 +516,7 @@ QByteArray TActionController::renderView(TActionView *view)
     TDispatcher<TActionView> defLayoutDispatcher(layoutClassName(QLatin1String("application")));
     if (!layoutView) {
         if (!layout().isNull()) {
-            tSystemDebug("Not found layout: %s", qPrintable(layout()));
+            tSystemDebug("Not found layout: %s", qUtf8Printable(layout()));
             return QByteArray();
         } else {
             // Use default layout
@@ -544,7 +544,7 @@ bool TActionController::renderErrorResponse(int statusCode)
     bool ret = false;
 
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return ret;
     }
 
@@ -581,7 +581,7 @@ QString TActionController::partialViewClassName(const QString &partial)
 void TActionController::redirect(const QUrl &url, int statusCode)
 {
     if (rendered) {
-        tError("Unable to redirect. Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tError("Unable to redirect. Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return;
     }
     rendered = true;
@@ -603,7 +603,7 @@ void TActionController::redirect(const QUrl &url, int statusCode)
 bool TActionController::sendFile(const QString &filePath, const QByteArray &contentType, const QString &name, bool autoRemove)
 {
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
     rendered = true;
@@ -631,7 +631,7 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
 bool TActionController::sendData(const QByteArray &data, const QByteArray &contentType, const QString &name)
 {
     if (rendered) {
-        tWarn("Has rendered already: %s", qPrintable(className() + '#' + activeAction()));
+        tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
     rendered = true;
@@ -692,7 +692,7 @@ bool TActionController::userLogin(const TAbstractUser *user)
     }
 
     if (isUserLoggedIn()) {
-        tSystemWarn("userLogin: Duplicate login detected. Force logout [user:%s]", qPrintable(identityKeyOfLoginUser()));
+        tSystemWarn("userLogin: Duplicate login detected. Force logout [user:%s]", qUtf8Printable(identityKeyOfLoginUser()));
     }
 
     session().insert(LOGIN_USER_NAME_KEY, user->identityKey());
@@ -762,7 +762,7 @@ void TActionController::setFlash(const QString &name, const QVariant &value)
     if (value.isValid()) {
         flashVars.insert(name, value);
     } else {
-        tSystemWarn("An invalid QVariant object for setFlash(), name:%s", qPrintable(name));
+        tSystemWarn("An invalid QVariant object for setFlash(), name:%s", qUtf8Printable(name));
     }
 }
 

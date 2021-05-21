@@ -226,7 +226,7 @@ bool TSqlObject::update()
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
+                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -256,7 +256,7 @@ bool TSqlObject::update()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qPrintable(msg));
+        tError("%s", qUtf8Printable(msg));
         return false;
     }
 
@@ -418,7 +418,7 @@ bool TSqlObject::remove()
             if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
+                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -441,7 +441,7 @@ bool TSqlObject::remove()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qPrintable(msg));
+        tError("%s", qUtf8Printable(msg));
         return false;
     }
     del.append(QLatin1String(pkName));
@@ -463,7 +463,7 @@ bool TSqlObject::remove()
                 sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
                 throw SqlException(msg, __FILE__, __LINE__);
             }
-            tWarn("Row was deleted by another transaction, %s", qPrintable(tableName()));
+            tWarn("Row was deleted by another transaction, %s", qUtf8Printable(tableName()));
         }
         clear();
     }

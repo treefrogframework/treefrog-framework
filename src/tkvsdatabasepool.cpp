@@ -127,7 +127,7 @@ void TKvsDatabasePool::init()
 
             setDatabaseSettings(db, engine);
             stack.push(db.connectionName());  // push onto stack
-            tSystemDebug("Add KVS successfully. name:%s", qPrintable(db.connectionName()));
+            tSystemDebug("Add KVS successfully. name:%s", qUtf8Printable(db.connectionName()));
         }
     }
 
@@ -170,11 +170,11 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
         if (cache.pop(name)) {
             db = TKvsDatabase::database(name);
             if (Q_LIKELY(db.isOpen())) {
-                tSystemDebug("Gets cached KVS database: %s", qPrintable(db.connectionName()));
+                tSystemDebug("Gets cached KVS database: %s", qUtf8Printable(db.connectionName()));
                 db.moveToThread(QThread::currentThread());  // move to thread
                 return db;
             } else {
-                tSystemError("Pooled database is not open: %s  [%s:%d]", qPrintable(db.connectionName()), __FILE__, __LINE__);
+                tSystemError("Pooled database is not open: %s  [%s:%d]", qUtf8Printable(db.connectionName()), __FILE__, __LINE__);
                 stack.push(name);
                 continue;
             }
@@ -183,19 +183,19 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
         if (Q_LIKELY(stack.pop(name))) {
             db = TKvsDatabase::database(name);
             if (Q_UNLIKELY(db.isOpen())) {
-                tSystemWarn("Gets a opend KVS database: %s", qPrintable(db.connectionName()));
+                tSystemWarn("Gets a opend KVS database: %s", qUtf8Printable(db.connectionName()));
                 return db;
             } else {
                 db.moveToThread(QThread::currentThread());  // move to thread
 
                 if (Q_UNLIKELY(!db.open())) {
                     tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
-                    tSystemError("KVS database open error: %s", qPrintable(db.connectionName()));
+                    tSystemError("KVS database open error: %s", qUtf8Printable(db.connectionName()));
                     return TKvsDatabase();
                 }
 
-                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qPrintable(Tf::app()->databaseEnvironment()), qPrintable(db.connectionName()), qPrintable(db.databaseName()));
-                tSystemDebug("Gets KVS database: %s", qPrintable(db.connectionName()));
+                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qUtf8Printable(Tf::app()->databaseEnvironment()), qUtf8Printable(db.connectionName()), qUtf8Printable(db.databaseName()));
+                tSystemDebug("Gets KVS database: %s", qUtf8Printable(db.connectionName()));
                 // Executes post-open statements
                 if (!db.postOpenStatements().isEmpty()) {
                     for (QString st : db.postOpenStatements()) {
@@ -220,12 +220,12 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
     QString databaseName = settings.value("DatabaseName").toString().trimmed();
 
     if (!databaseName.isEmpty()) {
-        tSystemDebug("KVS db name:%s  driver name:%s", qPrintable(databaseName), qPrintable(database.driverName()));
+        tSystemDebug("KVS db name:%s  driver name:%s", qUtf8Printable(databaseName), qUtf8Printable(database.driverName()));
         database.setDatabaseName(databaseName);
     }
 
     QString hostName = settings.value("HostName").toString().trimmed();
-    tSystemDebug("KVS HostName: %s", qPrintable(hostName));
+    tSystemDebug("KVS HostName: %s", qUtf8Printable(hostName));
     if (!hostName.isEmpty()) {
         database.setHostName(hostName);
     }
@@ -237,25 +237,25 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
     }
 
     QString userName = settings.value("UserName").toString().trimmed();
-    tSystemDebug("KVS UserName: %s", qPrintable(userName));
+    tSystemDebug("KVS UserName: %s", qUtf8Printable(userName));
     if (!userName.isEmpty()) {
         database.setUserName(userName);
     }
 
     QString password = settings.value("Password").toString().trimmed();
-    tSystemDebug("KVS Password: %s", qPrintable(password));
+    tSystemDebug("KVS Password: %s", qUtf8Printable(password));
     if (!password.isEmpty()) {
         database.setPassword(password);
     }
 
     QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
-    tSystemDebug("KVS ConnectOptions: %s", qPrintable(connectOptions));
+    tSystemDebug("KVS ConnectOptions: %s", qUtf8Printable(connectOptions));
     if (!connectOptions.isEmpty()) {
         database.setConnectOptions(connectOptions);
     }
 
     QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Tf::SkipEmptyParts);
-    tSystemDebug("KVS postOpenStatements: %s", qPrintable(postOpenStatements.join(";")));
+    tSystemDebug("KVS postOpenStatements: %s", qUtf8Printable(postOpenStatements.join(";")));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);
     }
@@ -275,7 +275,7 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 
         cachedDatabase[engine].push(database.connectionName());
         lastCachedTime[engine].store((uint)std::time(nullptr));
-        tSystemDebug("Pooled KVS database: %s", qPrintable(database.connectionName()));
+        tSystemDebug("Pooled KVS database: %s", qUtf8Printable(database.connectionName()));
     }
     database = TKvsDatabase();  // Sets an invalid object
 }
@@ -296,7 +296,7 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
             while (lastCachedTime[e].load() < (uint)std::time(nullptr) - 30
                 && cache.pop(name)) {
                 TKvsDatabase::database(name).close();
-                tSystemDebug("Closed KVS database connection, name: %s", qPrintable(name));
+                tSystemDebug("Closed KVS database connection, name: %s", qUtf8Printable(name));
                 availableNames[e].push(name);
             }
         }

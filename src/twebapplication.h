@@ -128,7 +128,11 @@ inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 
 class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter {
 public:
+#if QT_VERSION < 0x060000
     virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *);
+#else
+    virtual bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *);
+#endif
 };
 
 #endif  // Q_OS_WIN

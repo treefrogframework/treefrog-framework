@@ -5,9 +5,11 @@ CONFIG  -= lib_bundle
 QT      += sql network xml qml
 lessThan(QT_MAJOR_VERSION, 6) {
   CONFIG += c++14
+  windows:QMAKE_CXXFLAGS += /std:c++14
 } else {
   CONFIG += c++17
   QT += core5compat
+  windows:QMAKE_CXXFLAGS += /std:c++17
 }
 
 DEFINES += TF_MAKEDLL
@@ -85,8 +87,10 @@ isEmpty( use_gui ) {
   DEFINES += TF_USE_GUI_MODULE
 }
 
-CONFIG *= precompile_header
-PRECOMPILED_HEADER = precompile.h
+!windows {
+  CONFIG += precompile_header
+  PRECOMPILED_HEADER = precompile.h
+}
 
 HEADERS += twebapplication.h
 SOURCES += twebapplication.cpp

@@ -37,7 +37,7 @@ static bool query(const QString &sql)
     TSqlQuery qry(Tf::app()->databaseIdForCache());
     bool ret = qry.exec(sql);
     if (!ret) {
-        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qPrintable(lastErrorString()), qPrintable(sql), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qUtf8Printable(lastErrorString()), qUtf8Printable(sql), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -159,7 +159,7 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
             blob = query.value(1).toByteArray();
         }
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -180,7 +180,7 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
     query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
     ret = query.exec();
     if (!ret && lastError().isValid()) {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -201,7 +201,7 @@ bool TCacheSQLiteStore::remove(const QByteArray &key)
     query.bind(":key", key);
     ret = query.exec();
     if (!ret && lastError().isValid()) {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
     }
     return ret;
 }
@@ -229,7 +229,7 @@ int TCacheSQLiteStore::removeOlder(int num)
     if (query.exec()) {
         cnt = query.numRowsAffected();
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
     }
     return cnt;
 }
@@ -248,7 +248,7 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
         cnt = query.numRowsAffected();
     } else {
         if (lastError().isValid()) {
-            tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+            tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
         }
     }
     return cnt;
@@ -265,7 +265,7 @@ int TCacheSQLiteStore::removeAll()
     if (query.exec(sql)) {
         cnt = query.numRowsAffected();
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qPrintable(lastErrorString()), __FILE__, __LINE__);
+        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
     }
     return cnt;
 }

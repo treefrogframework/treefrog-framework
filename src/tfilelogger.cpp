@@ -39,7 +39,7 @@ bool TFileLogger::open()
     if (!logFile.isOpen()) {
         res = logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
         if (!res) {
-            tSystemError("file open failed: %s", qPrintable(logFile.fileName()));
+            tSystemError("file open failed: %s", qUtf8Printable(logFile.fileName()));
         }
     }
     return res;

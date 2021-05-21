@@ -78,7 +78,7 @@ bool TSendmailMailer::send()
         QProcess sendmail;
         sendmail.start(sendmailCmd, args);
         if (!sendmail.waitForStarted(5000)) {
-            tSystemError("Sendmail error. CMD: %s", qPrintable(sendmailCmd));
+            tSystemError("Sendmail error. CMD: %s", qUtf8Printable(sendmailCmd));
             return false;
         }
 

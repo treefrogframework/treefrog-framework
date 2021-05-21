@@ -106,7 +106,7 @@ inline void TMongoODMapper<T>::setSortOrder(const QString &column, Tf::SortOrder
             sortOrder = order;
         } else {
             tWarn("Unable to set sort order : '%s' field not found in '%s' collection",
-                qPrintable(column), qPrintable(obj.collectionName()));
+                qUtf8Printable(column), qUtf8Printable(obj.collectionName()));
         }
     }
 }

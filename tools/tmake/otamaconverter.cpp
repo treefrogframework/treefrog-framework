@@ -93,17 +93,17 @@ bool OtamaConverter::convert(const QString &filePath, int trimMode) const
     if (htmlFileInfo.exists() && outFileInfo.exists()) {
         if (outFileInfo.lastModified() > htmlFileInfo.lastModified()
             && (!otmFileInfo.exists() || outFileInfo.lastModified() > otmFileInfo.lastModified())) {
-            //std::printf("done    %s\n", qPrintable(outFile.fileName()));
+            //std::printf("done    %s\n", qUtf8Printable(outFile.fileName()));
             return true;
         } else {
             if (outFile.remove()) {
-                std::printf("  removed  %s\n", qPrintable(outFile.fileName()));
+                std::printf("  removed  %s\n", qUtf8Printable(outFile.fileName()));
             }
         }
     }
 
     if (!htmlFile.open(QIODevice::ReadOnly)) {
-        qCritical("failed to read phtm file : %s", qPrintable(htmlFile.fileName()));
+        qCritical("failed to read phtm file : %s", qUtf8Printable(htmlFile.fileName()));
         return false;
     }
 

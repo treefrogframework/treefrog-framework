@@ -212,7 +212,7 @@ bool OtamaGenerator::generate(const QString &dstDir) const
 
     // Reserved word check
     if (excludedDirName.contains(dir.dirName())) {
-        qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dir.dirName()));
+        qCritical("Reserved word error. Please use another word.  View name: %s", qUtf8Printable(dir.dirName()));
         return false;
     }
 
@@ -230,7 +230,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     QStringList files;
 
     if (primaryKeyIndex < 0) {
-        qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));
+        qWarning("Primary key not found. [view name: %s]", qUtf8Printable(viewName));
         return files;
     }
 

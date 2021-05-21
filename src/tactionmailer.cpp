@@ -56,14 +56,14 @@ bool TActionMailer::deliver(const QString &templateName)
     TDispatcher<TActionView> viewDispatcher(viewClassName(CONTROLLER_NAME, templateName));
     TActionView *view = viewDispatcher.object();
     if (!view) {
-        tSystemError("no such template : %s", qPrintable(templateName));
+        tSystemError("no such template : %s", qUtf8Printable(templateName));
         return false;
     }
 
     view->setVariantMap(allVariants());
     QString msg = view->toString();
     if (msg.isEmpty()) {
-        tSystemError("Mail Message Empty: template name:%s", qPrintable(templateName));
+        tSystemError("Mail Message Empty: template name:%s", qUtf8Printable(templateName));
         return false;
     }
 

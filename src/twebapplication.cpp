@@ -371,8 +371,8 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
             _mpm = Thread;
 #endif
         } else {
-            tSystemWarn("Unsupported MPM: %s", qPrintable(str));
-            tWarn("Unsupported MPM: %s", qPrintable(str));
+            tSystemWarn("Unsupported MPM: %s", qUtf8Printable(str));
+            tWarn("Unsupported MPM: %s", qUtf8Printable(str));
             _mpm = Thread;
         }
     }
@@ -513,7 +513,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
         const auto filist = dir.entryInfoList(filters);
 
         if (filist.isEmpty()) {
-            tSystemWarn("No such config, %s", qPrintable(configName));
+            tSystemWarn("No such config, %s", qUtf8Printable(configName));
         } else {
             for (auto &fi : filist) {
                 auto suffix = fi.completeSuffix().toLower();
@@ -538,7 +538,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     }
 
                 } else {
-                    tSystemWarn("Invalid format config, %s", qPrintable(fi.fileName()));
+                    tSystemWarn("Invalid format config, %s", qUtf8Printable(fi.fileName()));
                 }
             }
         }

@@ -21,7 +21,7 @@ TableSchema::TableSchema(const QString &table, const QString &env) :
     if (!dbSettings) {
         QString path = QLatin1String("config/database.ini");
         if (!QFile::exists(path)) {
-            qCritical("not found, %s", qPrintable(path));
+            qCritical("not found, %s", qUtf8Printable(path));
         }
         dbSettings = new QSettings(path, QSettings::IniFormat);
     }
@@ -193,7 +193,7 @@ bool TableSchema::openDatabase(const QString &env) const
         return true;
 
     if (!dbSettings->childGroups().contains(env)) {
-        qCritical("invalid environment: %s", qPrintable(env));
+        qCritical("invalid environment: %s", qUtf8Printable(env));
         return false;
     }
 
@@ -201,7 +201,7 @@ bool TableSchema::openDatabase(const QString &env) const
     if (driverType.isEmpty()) {
         qWarning("Parameter 'DriverType' is empty");
     }
-    std::printf("DriverType:   %s\n", qPrintable(driverType));
+    std::printf("DriverType:   %s\n", qUtf8Printable(driverType));
 
     QSqlDatabase db = QSqlDatabase::addDatabase(driverType);
     if (!db.isValid()) {
@@ -210,13 +210,13 @@ bool TableSchema::openDatabase(const QString &env) const
     }
 
     QString databaseName = dbSettings->value(env + "/DatabaseName").toString().trimmed();
-    std::printf("DatabaseName: %s\n", qPrintable(databaseName));
+    std::printf("DatabaseName: %s\n", qUtf8Printable(databaseName));
     if (!databaseName.isEmpty()) {
         db.setDatabaseName(databaseName);
     }
 
     QString hostName = dbSettings->value(env + "/HostName").toString().trimmed();
-    std::printf("HostName:     %s\n", qPrintable(hostName));
+    std::printf("HostName:     %s\n", qUtf8Printable(hostName));
     if (!hostName.isEmpty()) {
         db.setHostName(hostName);
     }

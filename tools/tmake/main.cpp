@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
 
     if (outputDir.exists()) {
         if (outputDir.path() != ".") {
-            std::printf("  exists   %s\n", qPrintable(outputDir.path()));
+            std::printf("  exists   %s\n", qUtf8Printable(outputDir.path()));
         }
     } else {
         if (outputDir.mkpath(".")) {
-            std::printf("  created  %s\n", qPrintable(outputDir.path()));
+            std::printf("  created  %s\n", qUtf8Printable(outputDir.path()));
         } else {
             usage();
             return 1;

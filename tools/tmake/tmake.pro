@@ -6,9 +6,11 @@ CONFIG  -= app_bundle
 QT      -= gui
 lessThan(QT_MAJOR_VERSION, 6) {
   CONFIG += c++14
+  windows:QMAKE_CXXFLAGS += /std:c++14
 } else {
   CONFIG += c++17
   QT += core5compat
+  windows:QMAKE_CXXFLAGS += /std:c++17
 }
 
 INCLUDEPATH += ../../include
