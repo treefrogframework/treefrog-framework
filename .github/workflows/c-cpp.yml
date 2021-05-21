@@ -1,0 +1,29 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Show Xcode version
+      run: xcodebuild -version
+    - name: configure
+      run: ./configure --prefix=/usr/local
+    - name: make
+      run: make -j4 -C src
+    - name: make insall
+      run: sudo make -C src install
+    - name: make
+      run: make -j4 -C tools
+    - name: make install
+      run: sudo make -C tools install
+    - name: version
+      run: treefrog -v
