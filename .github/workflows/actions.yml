@@ -17,8 +17,8 @@ jobs:
       run: brew install qt mongo-c-driver
 
   build:
-    runs-on: macos-latest
     needs: envbuild
+    runs-on: macos-latest
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: make
@@ -33,8 +33,8 @@ jobs:
       run: treefrog -v
 
   build-mongoc:
-    runs-on: macos-latest
     needs: envbuild
+    runs-on: macos-latest
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc
     - name: make
@@ -49,8 +49,8 @@ jobs:
       run: treefrog -v
 
   test:
-    runs-on: macos-latest
     needs: build-mongoc
+    runs-on: macos-latest
     - name: testall.sh
       run: ./src/test/testall.sh
     - name: tmake-test
