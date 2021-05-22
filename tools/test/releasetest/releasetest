@@ -108,10 +108,7 @@ rm -f lib/*
 make distclean
 
 # CMake Build
-#Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake -S . -B build
-#export CMAKE_PREFIX_PATH=$(qmake -query QT_INSTALL_LIBS)
-#export Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
-#export Qt6_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
+which cmake
 mkdir build
 cd build
 cmake ..
