@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #
 APPNAME=blogapp
@@ -110,8 +110,8 @@ make distclean
 # CMake Build
 #Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake -S . -B build
 #export CMAKE_PREFIX_PATH=$(qmake -query QT_INSTALL_LIBS)
-export Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
-export Qt6_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
+#export Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
+#export Qt6_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
 cmake -S . -B build
 make -j4 -C build
 make -C build || exit
