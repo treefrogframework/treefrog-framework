@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Actions CI macOS
 
 on:
   push:
