@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  envbuild:
+  env-build:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -15,43 +15,50 @@ jobs:
       run: xcodebuild -version
     - name: Homebrew
       run: brew install qt mongo-c-driver
+
   build:
-    needs: envbuild
     runs-on: macos-latest
+    needs: env-build
+    steps:
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: make
-      run: make -j4 -C src
-    - name: make insall
-      run: sudo make -C src install
-    - name: make
-      run: make -j4 -C tools
-    - name: make install
-      run: sudo make -C tools install
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
     - name: version
       run: treefrog -v
+
   build-mongoc:
-    needs: envbuild
     runs-on: macos-latest
+    needs: [env-build, build]
+    steps:
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc
     - name: make
-      run: make -j4 -C src
-    - name: make insall
-      run: sudo make -C src install
-    - name: make
-      run: make -j4 -C tools
-    - name: make install
-      run: sudo make -C tools install
+      run: |
+        make -j4 -C src
+        make insall
+        make -j4 -C tools
+        sudo make -C tools install
     - name: version
       run: treefrog -v
 
   test:
-    needs: build-mongoc
     runs-on: macos-latest
+    needs: [build, build-mongoc]
+    steps:
     - name: testall.sh
       run: ./src/test/testall.sh
     - name: tmake-test
-      run: cd ./tools/tmake/test && qmake tmaketest.pro && make && ./tmaketest
+      run: |
+        cd ./tools/tmake/test
+        qmake tmaketest.pro
+        make
+        ./tmaketest
     - name: releasetest
-      run: cd $GITHUB_WORKSPACE; ./tools/test/releasetest/releasetest
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./tools/test/releasetest/releasetest
