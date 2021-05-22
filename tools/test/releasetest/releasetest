@@ -108,7 +108,7 @@ rm -f lib/*
 make distclean
 
 # CMake Build
-which cmake
+cmake --version
 mkdir build
 cd build
 cmake ..
