@@ -7,23 +7,15 @@ on:
     branches: [ master ]
 
 jobs:
-  env-build:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@main
-    - name: Show Xcode version
-      run: xcodebuild -version
-    - name: Homebrew
-      run: brew install qt mongo-c-driver
-
   build:
     runs-on: macos-latest
-    needs: env-build
     steps:
     - uses: actions/checkout@main
+    - name: Homebrew
+      run: brew install qt mongo-c-driver
     - name: configure
       run: ./configure --prefix=/usr/local
-    - name: make
+    - name: build
       run: |
         make -j4 -C src
         sudo make -C src install
@@ -34,12 +26,13 @@ jobs:
 
   build-mongoc:
     runs-on: macos-latest
-    needs: [env-build, build]
     steps:
     - uses: actions/checkout@main
+    - name: Homebrew
+      run: brew install qt mongo-c-driver
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc
-    - name: make
+    - name: build
       run: |
         make -j4 -C src
         make insall
@@ -47,21 +40,17 @@ jobs:
         sudo make -C tools install
     - name: version
       run: treefrog -v
-
-  test:
-    runs-on: macos-latest
-    needs: [build, build-mongoc]
-    steps:
-    - uses: actions/checkout@main
     - name: testall.sh
-      run: ./src/test/testall.sh
-    - name: tmake-test
       run: |
-        cd ./tools/tmake/test
+        cd $GITHUB_WORKSPACE/src/test
+        ./testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
         qmake tmaketest.pro
         make
         ./tmaketest
     - name: releasetest
       run: |
-        cd $GITHUB_WORKSPACE
-        ./tools/test/releasetest/releasetest
+        cd $GITHUB_WORKSPACE/tools/test/releasetest
+        ./releasetest
