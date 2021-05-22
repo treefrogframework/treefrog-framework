@@ -10,7 +10,7 @@ jobs:
   env-build:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@main
     - name: Show Xcode version
       run: xcodebuild -version
     - name: Homebrew
@@ -20,6 +20,7 @@ jobs:
     runs-on: macos-latest
     needs: env-build
     steps:
+    - uses: actions/checkout@main
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: make
@@ -35,6 +36,7 @@ jobs:
     runs-on: macos-latest
     needs: [env-build, build]
     steps:
+    - uses: actions/checkout@main
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc
     - name: make
@@ -50,6 +52,7 @@ jobs:
     runs-on: macos-latest
     needs: [build, build-mongoc]
     steps:
+    - uses: actions/checkout@main
     - name: testall.sh
       run: ./src/test/testall.sh
     - name: tmake-test
