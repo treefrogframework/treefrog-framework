@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
-      run: brew install qt mongo-c-driver
+      run: brew install qt6
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: build
@@ -29,13 +29,13 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
-      run: brew install qt mongo-c-driver
+      run: brew install qt6 mongo-c-driver
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc
     - name: build
       run: |
         make -j4 -C src
-        make insall
+        sudo make -C src install
         make -j4 -C tools
         sudo make -C tools install
     - name: version
