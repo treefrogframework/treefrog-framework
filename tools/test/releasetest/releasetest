@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #
 APPNAME=blogapp
@@ -108,11 +108,13 @@ rm -f lib/*
 make distclean
 
 # CMake Build
+cmake --version
 mkdir build
 cd build
-Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake ..
-make -j4
-make || exit
+cmake ..
+cd ..
+make -j4 -C build
+make -C build || exit
 cd $APPROOT
 $TREEFROG --show-routes || exit
 
