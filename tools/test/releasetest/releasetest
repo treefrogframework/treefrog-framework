@@ -113,7 +113,9 @@ make distclean
 #export Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
 #export Qt6_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake
 mkdir build
-cmake -S . -B build
+cd build
+cmake ..
+cd ..
 make -j4 -C build
 make -C build || exit
 cd $APPROOT
