@@ -15,7 +15,6 @@ jobs:
       run: xcodebuild -version
     - name: Homebrew
       run: brew install qt mongo-c-driver
-
   build:
     needs: envbuild
     runs-on: macos-latest
@@ -31,7 +30,6 @@ jobs:
       run: sudo make -C tools install
     - name: version
       run: treefrog -v
-
   build-mongoc:
     needs: envbuild
     runs-on: macos-latest
