@@ -108,11 +108,10 @@ rm -f lib/*
 make distclean
 
 # CMake Build
-mkdir build
-cd build
-Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake ..
-make -j4
-make || exit
+#Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake -S . -B build
+cmake -S . -B build
+make -j4 -C build
+make -C build || exit
 cd $APPROOT
 $TREEFROG --show-routes || exit
 
