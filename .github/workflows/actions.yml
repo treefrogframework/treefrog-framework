@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  env-build:
+  envbuild:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -18,7 +18,7 @@ jobs:
 
   build:
     runs-on: macos-latest
-    needs: env-build
+    needs: envbuild
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: make
@@ -34,7 +34,7 @@ jobs:
 
   build-mongoc:
     runs-on: macos-latest
-    needs: env-build
+    needs: envbuild
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc
     - name: make
