@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.0.1
+ - Support for Qt version 6.
+ - Modified not to use obsolete functions of Qt.
+
 ## 1.31.0
  - Fix a bug of TMultiplexingServer (epoll server).
  - Modified not to use obsolete functions of Qt.
