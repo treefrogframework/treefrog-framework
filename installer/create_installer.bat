@@ -36,7 +36,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\5.15.2\msvc2019_64\bin\qtenv2.bat"      5.15
+call :build_msi "%QTBASE%\6.0.4\msvc2019_64\bin\qtenv2.bat"      6.0
 
 call :build_setup treefrog-%VERSION%-msvc_64-setup.exe
 
