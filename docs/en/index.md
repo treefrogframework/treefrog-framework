@@ -37,16 +37,23 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+May 23, 2021
+
+### TreeFrog Framework version 2.0 (beta) release <span style="color: red;">New!</span>
+
+ - Support for Qt version 5 and version 6.
+ - Modified not to use obsolete functions of Qt.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Feb. 6, 2021
 
-### TreeFrog Framework version 1.31.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.31.0 (stable) release
 
  - Fix a bug of TMultiplexingServer (epoll server).
  - Modified not to use obsolete functions of Qt.
  - Added TAbstractSqlORMapper class.
  - Performance improvement.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Aug. 21, 2020
 
