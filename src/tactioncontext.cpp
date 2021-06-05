@@ -16,6 +16,7 @@
 #include <QTextCodec>
 #include <QtCore>
 #include <TActionContext>
+#include <TfCore>
 #include <TActionController>
 #include <TAppSettings>
 #include <TCache>

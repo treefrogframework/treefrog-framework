@@ -6,10 +6,11 @@
 #include <TAccessValidator>
 #include <TActionHelper>
 #include <TCookieJar>
-#include <TGlobal>
 #include <THttpRequest>
 #include <THttpResponse>
+#include <TActionContext>
 #include <TSession>
+#include <TGlobal>
 
 class TActionView;
 class TAbstractUser;
@@ -22,23 +23,24 @@ public:
     TActionController();
     virtual ~TActionController();
 
-    QString className() const;
-    QString name() const;
-    QString activeAction() const;
-    QStringList arguments() const;
+    QString className() const override;
+    QString name() const override;
+    QString activeAction() const override;
+    QStringList arguments() const override;
     const THttpRequest &httpRequest() const;
     const THttpResponse &httpResponse() const { return response; }
-    QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
-    const TSession &session() const { return sessionStore; }
+    const TSession &session() const override { return sessionStore; }
+    QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap()) override;
     virtual bool sessionEnabled() const { return true; }
     virtual bool csrfProtectionEnabled() const { return true; }
     virtual QStringList exceptionActionsOfCsrfProtection() const { return QStringList(); }
     virtual bool transactionEnabled() const { return true; }
-    QByteArray authenticityToken() const;
+    QByteArray authenticityToken() const override;
     QString flash(const QString &name) const;
     QHostAddress clientAddress() const;
     virtual bool isUserLoggedIn() const;
     virtual QString identityKeyOfLoginUser() const;
+    void setFlash(const QString &name, const QVariant &value);
 
     static void setCsrfProtectionInto(TSession &session);
     static const QStringList &availableControllers();
@@ -55,13 +57,12 @@ protected:
     QString layout() const;
     void setStatusCode(int code);
     int statusCode() const { return statCode; }
-    void setFlash(const QString &name, const QVariant &value);
     void setFlashValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
-    TSession &session() { return sessionStore; }
+    TSession &session() override { return sessionStore; }
     void setSession(const TSession &session);
-    bool addCookie(const TCookie &cookie);
-    bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
-    bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
+    bool addCookie(const TCookie &cookie) override;
+    bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
+    bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
     QByteArray contentType() const;
     void setContentType(const QByteArray &type);
     bool render(const QString &action = QString(), const QString &layout = QString());
@@ -148,7 +149,6 @@ private:
 
     friend class TActionContext;
     friend class TSessionCookieStore;
-    friend class TDirectView;
     T_DISABLE_COPY(TActionController)
     T_DISABLE_MOVE(TActionController)
 };

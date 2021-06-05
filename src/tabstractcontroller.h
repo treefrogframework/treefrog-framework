@@ -2,6 +2,9 @@
 #include <QVariant>
 #include <TGlobal>
 
+class THttpRequest;
+class TSession;
+class TCookie;
 class TFormValidator;
 
 
@@ -9,12 +12,23 @@ class T_CORE_EXPORT TAbstractController {
 public:
     TAbstractController();
     virtual ~TAbstractController() { }
+    virtual QString className() const = 0;
     virtual QString name() const = 0;
     virtual QString activeAction() const = 0;
+    virtual QStringList arguments() const = 0;
+    virtual const THttpRequest &httpRequest() const = 0;
+    virtual const TSession &session() const = 0;
+    virtual QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap()) = 0;
+    virtual QByteArray authenticityToken() const = 0;
+    void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
 
 protected:
+    virtual TSession &session() = 0;
+    virtual bool addCookie(const TCookie &cookie) = 0;
+    virtual bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") = 0;
+    virtual bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") = 0;
+
     QVariant variant(const QString &name) const;
-    void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
     void exportVariants(const QVariantMap &map);
     void exportValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
     bool hasVariant(const QString &name) const;
@@ -24,8 +38,10 @@ protected:
 
 private:
     QVariantMap exportVars;
+
     T_DISABLE_COPY(TAbstractController)
     T_DISABLE_MOVE(TAbstractController)
+    friend class TDirectView;
 };
 
 

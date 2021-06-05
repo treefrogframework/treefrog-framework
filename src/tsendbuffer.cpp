@@ -7,6 +7,7 @@
 
 #include "tsendbuffer.h"
 #include "tsystemglobal.h"
+#include <TfCore>
 #include <QFile>
 #include <QFileInfo>
 #include <QHostAddress>

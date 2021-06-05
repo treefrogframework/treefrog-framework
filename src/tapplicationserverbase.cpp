@@ -62,7 +62,7 @@ bool TApplicationServerBase::loadLibraries()
                 tSystemDebug("Library loaded: %s", qUtf8Printable(lib->fileName()));
                 libsLoaded << lib;
             } else {
-                tSystemWarn("%s (%d)", qUtf8Printable(lib->errorString()));
+                tSystemWarn("%s", qUtf8Printable(lib->errorString()));
                 ret = false;
                 unloadLibraries();
                 break;

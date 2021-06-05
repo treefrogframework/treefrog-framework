@@ -385,8 +385,9 @@ QString TViewHelper::inputAuthenticityTag() const
     QString tag;
     if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool()) {
         QString token = actionView()->authenticityToken();
-        if (!token.isEmpty())
+        if (!token.isEmpty()) {
             tag = inputTag("hidden", "authenticity_token", token, a("id", "authenticity_token"));
+        }
     }
     return tag;
 }

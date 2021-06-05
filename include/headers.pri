@@ -1,4 +1,5 @@
-HEADER_CLASSES  = ../include/TAbstractModel
+HEADER_CLASSES  = ../include/TAbstractActionContext
+HEADER_CLASSES += ../include/TAbstractModel
 HEADER_CLASSES += ../include/TAbstractUser
 HEADER_CLASSES += ../include/TActionContext
 HEADER_CLASSES += ../include/TActionController
@@ -17,6 +18,7 @@ HEADER_CLASSES += ../include/TCriteriaConverter
 HEADER_CLASSES += ../include/TCryptMac
 HEADER_CLASSES += ../include/TDirectView
 HEADER_CLASSES += ../include/TDispatcher
+HEADER_CLASSES += ../include/TfCore
 HEADER_CLASSES += ../include/TGlobal
 HEADER_CLASSES += ../include/THtmlAttribute
 HEADER_CLASSES += ../include/THtmlParser
@@ -96,7 +98,8 @@ HEADER_CLASSES += ../include/TJSModule
 HEADER_CLASSES += ../include/TJSInstance
 HEADER_CLASSES += ../include/TReactComponent
 
-HEADER_FILES  = tabstractmodel.h
+HEADER_FILES  = tabstractactioncontext.h
+HEADER_FILES += tabstractmodel.h
 HEADER_FILES += tabstractuser.h
 HEADER_FILES += tactioncontext.h
 HEADER_FILES += tactioncontroller.h

@@ -10,6 +10,7 @@
 #include "tsystemglobal.h"
 #include <QByteArray>
 #include <QDateTime>
+#include <TfCore>
 #include <TDatabaseContext>
 #include <mutex>
 

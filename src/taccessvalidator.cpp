@@ -146,7 +146,7 @@ void TAccessValidator::addRules(int type, const QString &key, const QStringList 
 bool TAccessValidator::validate(const TAbstractUser *user) const
 {
     bool ret = allowDefault;
-    const TActionController *controller = Tf::currentContext()->currentController();
+    const TActionController *controller = Tf::constCurrentContext()->currentController();
     Q_ASSERT(controller);
 
     if (accessRules.isEmpty()) {

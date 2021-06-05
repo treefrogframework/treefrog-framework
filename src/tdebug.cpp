@@ -8,8 +8,9 @@
 #include "tbasiclogstream.h"
 #include "tloggerfactory.h"
 #include "tsystemglobal.h"
-#include <TAppSettings>
 #include <TDebug>
+#include <TfCore>
+#include <TAppSettings>
 #include <TLog>
 #include <TLogger>
 

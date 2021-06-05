@@ -11,6 +11,7 @@
 #include "tsystemglobal.h"
 #include <QBuffer>
 #include <QDir>
+#include <TfCore>
 #include <TAppSettings>
 #include <TApplicationServerBase>
 #include <THttpHeader>

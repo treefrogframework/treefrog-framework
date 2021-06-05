@@ -86,7 +86,7 @@ constexpr auto TF_SRC_REVISION = 2349;
     do {                                                         \
         QVariant ___##VAR##_;                                    \
         ___##VAR##_.setValue(VAR);                               \
-        exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
+        Tf::currentContext()->currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
     } while (0)
 #define texport(VAR) T_EXPORT(VAR)
 
@@ -94,7 +94,7 @@ constexpr auto TF_SRC_REVISION = 2349;
     do {                                                          \
         QVariant ___##VAR##_;                                     \
         ___##VAR##_.setValue(VAR);                                \
-        exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
+        Tf::currentContext()->currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
     } while (0)
 #define texportUnless(VAR) T_EXPORT_UNLESS(VAR)
 
@@ -239,7 +239,7 @@ constexpr auto TF_SRC_REVISION = 2349;
     do {                                              \
         QVariant ___##VAR##_;                         \
         ___##VAR##_.setValue(VAR);                    \
-        setFlash(QLatin1String(#VAR), (___##VAR##_)); \
+        Tf::currentContext()->currentController()->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
     } while (0)
 
 #define tflash(VAR) T_FLASH(VAR)
@@ -275,12 +275,12 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include "tfexception.h"
 #include "tfnamespace.h"
 #include <TDebug>
-#include <TWebApplication>
 #include <cstdint>
 #include <functional>
 
-class TAppSettings;
+class TWebApplication;
 class TActionContext;
+class TAppSettings;
 class TDatabaseContext;
 class TCache;
 class QSqlDatabase;
@@ -301,6 +301,7 @@ T_CORE_EXPORT uint64_t random(uint64_t max) noexcept;
 T_CORE_EXPORT TCache *cache() noexcept;
 T_CORE_EXPORT TActionContext *currentContext();
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
+inline const TActionContext *constCurrentContext() { return currentContext(); }
 T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 

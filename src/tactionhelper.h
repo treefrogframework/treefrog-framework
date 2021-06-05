@@ -6,7 +6,7 @@
 #include <QVariant>
 #include <TGlobal>
 
-class TActionController;
+class TAbstractController;
 
 
 class T_CORE_EXPORT TActionHelper {
@@ -39,7 +39,7 @@ public:
     QUrl urlq(const QString &query) const;
 
 protected:
-    virtual const TActionController *controller() const = 0;
+    virtual const TAbstractController *controller() const = 0;
 };
 
 

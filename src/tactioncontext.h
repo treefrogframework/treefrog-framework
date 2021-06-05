@@ -1,10 +1,11 @@
 #pragma once
-#include "tatomic.h"
-#include "tdatabasecontext.h"
-#include <QMap>
-#include <QStringList>
+#include <TDatabaseContext>
+#include <TAbstractActionContext>
+#include <TAtomic>
 #include <TAccessLog>
 #include <TGlobal>
+#include <QMap>
+#include <QStringList>
 
 class QIODevice;
 class QHostAddress;
@@ -15,9 +16,10 @@ class THttpResponse;
 class TApplicationServer;
 class TTemporaryFile;
 class TActionController;
+class TCache;
 
 
-class T_CORE_EXPORT TActionContext : public TDatabaseContext {
+class T_CORE_EXPORT TActionContext : public TDatabaseContext, public TAbstractActionContext {
 public:
     TActionContext();
     virtual ~TActionContext();
@@ -26,9 +28,10 @@ public:
     void stop() { stopped = true; }
     QHostAddress clientAddress() const;
     QHostAddress originatingClientAddress() const;
-    const TActionController *currentController() const { return currController; }
-    THttpRequest &httpRequest() { return *httpReq; }
-    const THttpRequest &httpRequest() const { return *httpReq; }
+    const TActionController *currentController() const override { return currController; }
+    TActionController *currentController() { return currController; }
+    const THttpRequest &httpRequest() const override { return *httpReq; }
+    THttpRequest &httpRequest() override { return *httpReq; }
     TCache *cache();
 
 protected:

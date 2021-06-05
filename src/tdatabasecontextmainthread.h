@@ -1,5 +1,6 @@
 #pragma once
 #include "tdatabasecontextthread.h"
+#include <TGlobal>
 
 
 class T_CORE_EXPORT TDatabaseContextMainThread : public TDatabaseContextThread {
