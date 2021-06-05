@@ -13,6 +13,10 @@
 #include "tsqljoin.h"
 #include "tmongoodmapper.h"
 #include "twebapplication.h"
+#include "tabstractactioncontext.h"
+#include "tabstractcontroller.h"
+#include "thttprequest.h"
+#include "tsession.h"
 
 #if QT_VERSION >= 0x050000
 #include <QJsonDocument>
