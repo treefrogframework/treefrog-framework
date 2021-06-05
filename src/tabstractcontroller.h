@@ -17,9 +17,11 @@ public:
     virtual QString activeAction() const = 0;
     virtual QStringList arguments() const = 0;
     virtual const THttpRequest &httpRequest() const = 0;
+    virtual const THttpRequest &request() const = 0;
     virtual const TSession &session() const = 0;
     virtual QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap()) = 0;
     virtual QByteArray authenticityToken() const = 0;
+    virtual void setFlash(const QString &name, const QVariant &value) = 0;
     void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
 
 protected:

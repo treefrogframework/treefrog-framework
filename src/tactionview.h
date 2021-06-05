@@ -66,7 +66,7 @@ private:
     void setVariantMap(const QVariantMap &vars);
     void setController(TAbstractController *controller);
     void setSubActionView(TActionView *actionView);
-    virtual const TActionView *actionView() const { return this; }
+    virtual const TActionView *actionView() const override { return this; }
 
     TAbstractController *actionController {nullptr};
     TActionView *subView {nullptr};

@@ -86,7 +86,7 @@ constexpr auto TF_SRC_REVISION = 2349;
     do {                                                         \
         QVariant ___##VAR##_;                                    \
         ___##VAR##_.setValue(VAR);                               \
-        Tf::currentContext()->currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
+        ((TAbstractController *)((TAbstractActionContext *)Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
     } while (0)
 #define texport(VAR) T_EXPORT(VAR)
 
@@ -94,7 +94,7 @@ constexpr auto TF_SRC_REVISION = 2349;
     do {                                                          \
         QVariant ___##VAR##_;                                     \
         ___##VAR##_.setValue(VAR);                                \
-        Tf::currentContext()->currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
+        ((TAbstractController *)((TAbstractActionContext *)Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
     } while (0)
 #define texportUnless(VAR) T_EXPORT_UNLESS(VAR)
 
@@ -239,7 +239,7 @@ constexpr auto TF_SRC_REVISION = 2349;
     do {                                              \
         QVariant ___##VAR##_;                         \
         ___##VAR##_.setValue(VAR);                    \
-        Tf::currentContext()->currentController()->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
+        ((TAbstractController *)((TAbstractActionContext *)Tf::currentContext())->currentController())->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
     } while (0)
 
 #define tflash(VAR) T_FLASH(VAR)
@@ -280,6 +280,8 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 
 class TWebApplication;
 class TActionContext;
+class TAbstractController;
+class TAbstractActionContext;
 class TAppSettings;
 class TDatabaseContext;
 class TCache;

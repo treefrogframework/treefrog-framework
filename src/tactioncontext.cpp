@@ -175,7 +175,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 // Dispatches
                 dispatched = ctlrDispatcher.invoke(route.action, route.params);
                 if (Q_LIKELY(dispatched)) {
-                    autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
+                    autoRemoveFiles << currController->_autoRemoveFiles;  // Adds auto-remove files
 
                     // Post filter
                     currController->postFilter();
@@ -208,9 +208,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     }
 
                     // WebSocket tasks
-                    if (!currController->taskList.isEmpty()) {
+                    if (!currController->_taskList.isEmpty()) {
                         QVariantList lst;
-                        for (auto &task : (const QList<QPair<int, QVariant>> &)currController->taskList) {
+                        for (auto &task : (const QList<QPair<int, QVariant>> &)currController->_taskList) {
                             const QVariant &taskData = task.second;
 
                             switch (task.first) {
@@ -262,26 +262,25 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
 
             // Sets charset to the content-type
-            QByteArray ctype = currController->response.header().contentType().toLower();
+            QByteArray ctype = currController->_response.header().contentType().toLower();
             if (ctype.startsWith("text") && !ctype.contains("charset")) {
                 ctype += "; charset=";
                 ctype += Tf::app()->codecForHttpOutput()->name();
-                currController->response.header().setContentType(ctype);
+                currController->_response.header().setContentType(ctype);
             }
 
             // Sets the default status code of HTTP response
             int bytes = 0;
-            if (Q_UNLIKELY(currController->response.isBodyNull())) {
+            if (Q_UNLIKELY(currController->_response.isBodyNull())) {
                 accessLogger.setStatusCode((dispatched) ? Tf::InternalServerError : Tf::NotFound);
                 bytes = writeResponse(accessLogger.statusCode(), responseHeader);
             } else {
                 accessLogger.setStatusCode(currController->statusCode());
-                currController->response.header().setStatusLine(currController->statusCode(), THttpUtility::getResponseReasonPhrase(currController->statusCode()));
+                currController->_response.header().setStatusLine(currController->statusCode(), THttpUtility::getResponseReasonPhrase(currController->statusCode()));
 
                 // Writes a response and access log
-                qint64 bodyLength = (currController->response.header().contentLength() > 0) ? currController->response.header().contentLength() : currController->response.bodyLength();
-                bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
-                    bodyLength);
+                qint64 bodyLength = (currController->_response.header().contentLength() > 0) ? currController->_response.header().contentLength() : currController->response().bodyLength();
+                bytes = writeResponse(currController->_response.header(), currController->_response.bodyIODevice(), bodyLength);
             }
             accessLogger.setResponseBytes(bytes);
 

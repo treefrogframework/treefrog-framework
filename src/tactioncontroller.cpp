@@ -62,13 +62,13 @@ QString TActionController::name() const
 {
     static const QString Postfix = "Controller";
 
-    if (ctrlName.isEmpty()) {
-        ctrlName = className();
-        if (ctrlName.endsWith(Postfix)) {
-            ctrlName.resize(ctrlName.length() - Postfix.length());
+    if (_ctrlName.isEmpty()) {
+        _ctrlName = className();
+        if (_ctrlName.endsWith(Postfix)) {
+            _ctrlName.resize(_ctrlName.length() - Postfix.length());
         }
     }
-    return ctrlName;
+    return _ctrlName;
 }
 
 /*!
@@ -82,19 +82,17 @@ QString TActionController::name() const
 */
 
 /*!
-  \fn const THttpRequest &TActionController::httpRequest() const;
   Returns the HTTP request being executed.
 */
-const THttpRequest &TActionController::httpRequest() const
+const THttpRequest &TActionController::request() const
 {
     return Tf::currentContext()->httpRequest();
 }
 
 /*!
-  \fn THttpRequest &TActionController::httpRequest();
   Returns the HTTP request being executed.
 */
-THttpRequest &TActionController::httpRequest()
+THttpRequest &TActionController::request()
 {
     return Tf::currentContext()->httpRequest();
 }
@@ -116,7 +114,7 @@ THttpRequest &TActionController::httpRequest()
 void TActionController::setLayout(const QString &layout)
 {
     if (!layout.isNull()) {
-        layoutName = layout;
+        _layoutName = layout;
     }
 }
 
@@ -131,10 +129,10 @@ bool TActionController::addCookie(const TCookie &cookie)
         return false;
     }
 
-    cookieJar.addCookie(cookie);
-    response.header().removeAllRawHeaders("Set-Cookie");
-    for (auto &ck : (const QList<TCookie> &)cookieJar.allCookies()) {
-        response.header().addRawHeader("Set-Cookie", ck.toRawForm(QNetworkCookie::Full));
+    _cookieJar.addCookie(cookie);
+    _response.header().removeAllRawHeaders("Set-Cookie");
+    for (auto &ck : (const QList<TCookie> &)_cookieJar.allCookies()) {
+        _response.header().addRawHeader("Set-Cookie", ck.toRawForm(QNetworkCookie::Full));
     }
     return true;
 }
@@ -196,7 +194,7 @@ QByteArray TActionController::authenticityToken() const
  */
 void TActionController::setSession(const TSession &session)
 {
-    sessionStore = session;
+    _sessionStore = session;
 }
 
 /*!
@@ -270,17 +268,17 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
  */
 bool TActionController::render(const QString &action, const QString &layout)
 {
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
-    rendered = true;
+    _rendered = true;
 
     // Creates view-object and displays it
     TDispatcher<TActionView> viewDispatcher(viewClassName(action));
     setLayout(layout);
-    response.setBody(renderView(viewDispatcher.object()));
-    return !response.isBodyNull();
+    _response.setBody(renderView(viewDispatcher.object()));
+    return !response().isBodyNull();
 }
 
 /*!
@@ -288,12 +286,11 @@ bool TActionController::render(const QString &action, const QString &layout)
 */
 bool TActionController::renderTemplate(const QString &templateName, const QString &layout)
 {
-
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    rendered = true;
+    _rendered = true;
 
     // Creates view-object and displays it
     QStringList names = templateName.split("/");
@@ -303,8 +300,8 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
     }
     TDispatcher<TActionView> viewDispatcher(viewClassName(names[0], names[1]));
     setLayout(layout);
-    response.setBody(renderView(viewDispatcher.object()));
-    return (!response.isBodyNull());
+    _response.setBody(renderView(viewDispatcher.object()));
+    return (!response().isBodyNull());
 }
 
 /*!
@@ -312,11 +309,11 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 */
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    rendered = true;
+    _rendered = true;
 
     if (contentType() == DEFAULT_CONTENT_TYPE) {
         setContentType(QByteArrayLiteral("text/plain"));
@@ -326,9 +323,9 @@ bool TActionController::renderText(const QString &text, bool layoutEnable, const
     setLayout(layout);
     setLayoutEnabled(layoutEnable);
     TTextView *view = new TTextView(text);
-    response.setBody(renderView(view));
+    _response.setBody(renderView(view));
     delete view;
-    return (!response.isBodyNull());
+    return (!_response.isBodyNull());
 }
 
 
@@ -418,17 +415,17 @@ bool TActionController::renderXml(const QStringList &list)
 */
 bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
 
     render(action, layout);
-    if (rendered) {
-        QByteArray responseMsg = response.body();
+    if (_rendered) {
+        QByteArray responseMsg = response().body();
         Tf::cache()->set(key, responseMsg, seconds);
     }
-    return rendered;
+    return _rendered;
 }
 
 /*!
@@ -438,7 +435,7 @@ bool TActionController::renderAndCache(const QByteArray &key, int seconds, const
 */
 bool TActionController::renderOnCache(const QByteArray &key)
 {
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
@@ -448,9 +445,9 @@ bool TActionController::renderOnCache(const QByteArray &key)
         return false;
     }
 
-    response.setBody(responseMsg);
-    rendered = true;
-    return rendered;
+    _response.setBody(responseMsg);
+    _rendered = true;
+    return _rendered;
 }
 
 /*!
@@ -543,7 +540,7 @@ bool TActionController::renderErrorResponse(int statusCode)
 {
     bool ret = false;
 
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return ret;
     }
@@ -552,10 +549,10 @@ bool TActionController::renderErrorResponse(int statusCode)
     if (QFileInfo(file).exists()) {
         ret = sendFile(file, "text/html", "", false);
     } else {
-        response.setBody("");
+        _response.setBody("");
     }
     setStatusCode(statusCode);
-    rendered = true;
+    _rendered = true;
     return ret;
 }
 
@@ -580,21 +577,21 @@ QString TActionController::partialViewClassName(const QString &partial)
  */
 void TActionController::redirect(const QUrl &url, int statusCode)
 {
-    if (rendered) {
+    if (_rendered) {
         tError("Unable to redirect. Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return;
     }
-    rendered = true;
+    _rendered = true;
 
     setStatusCode(statusCode);
-    response.header().setRawHeader("Location", url.toEncoded());
-    response.setBody(QByteArray("<html><body>redirected.</body></html>"));
+    _response.header().setRawHeader("Location", url.toEncoded());
+    _response.setBody(QByteArray("<html><body>redirected.</body></html>"));
     setContentType("text/html");
 
     // Enable flash-variants
     QVariant var;
-    var.setValue(flashVars);
-    sessionStore.insert(FLASH_VARS_SESSION_KEY, var);
+    var.setValue(_flashVars);
+    _sessionStore.insert(FLASH_VARS_SESSION_KEY, var);
 }
 
 /*!
@@ -602,21 +599,21 @@ void TActionController::redirect(const QUrl &url, int statusCode)
 */
 bool TActionController::sendFile(const QString &filePath, const QByteArray &contentType, const QString &name, bool autoRemove)
 {
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    rendered = true;
+    _rendered = true;
 
     if (!name.isEmpty()) {
         QByteArray filename;
         filename += "attachment; filename=\"";
         filename += name.toUtf8();
         filename += '"';
-        response.header().setRawHeader("Content-Disposition", filename);
+        _response.header().setRawHeader("Content-Disposition", filename);
     }
 
-    response.setBodyFile(filePath);
+    _response.setBodyFile(filePath);
     setContentType(contentType);
 
     if (autoRemove) {
@@ -630,21 +627,21 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
 */
 bool TActionController::sendData(const QByteArray &data, const QByteArray &contentType, const QString &name)
 {
-    if (rendered) {
+    if (_rendered) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    rendered = true;
+    _rendered = true;
 
     if (!name.isEmpty()) {
         QByteArray filename;
         filename += "attachment; filename=\"";
         filename += name.toUtf8();
         filename += '"';
-        response.header().setRawHeader("Content-Disposition", filename);
+        _response.header().setRawHeader("Content-Disposition", filename);
     }
 
-    response.setBody(data);
+    _response.setBody(data);
     setContentType(contentType);
     return true;
 }
@@ -654,7 +651,7 @@ bool TActionController::sendData(const QByteArray &data, const QByteArray &conte
 */
 void TActionController::exportAllFlashVariants()
 {
-    QVariant var = sessionStore.take(FLASH_VARS_SESSION_KEY);
+    QVariant var = _sessionStore.take(FLASH_VARS_SESSION_KEY);
     if (!var.isNull()) {
         exportVariants(var.toMap());
     }
@@ -740,8 +737,8 @@ QString TActionController::identityKeyOfLoginUser() const
 */
 void TActionController::setAutoRemove(const QString &filePath)
 {
-    if (!filePath.isEmpty() && !autoRemoveFiles.contains(filePath)) {
-        autoRemoveFiles << filePath;
+    if (!filePath.isEmpty() && !_autoRemoveFiles.contains(filePath)) {
+        _autoRemoveFiles << filePath;
     }
 }
 
@@ -760,7 +757,7 @@ QHostAddress TActionController::clientAddress() const
 void TActionController::setFlash(const QString &name, const QVariant &value)
 {
     if (value.isValid()) {
-        flashVars.insert(name, value);
+        _flashVars.insert(name, value);
     } else {
         tSystemWarn("An invalid QVariant object for setFlash(), name:%s", qUtf8Printable(name));
     }
@@ -782,7 +779,7 @@ void TActionController::sendTextToWebSocket(int sid, const QString &text)
 {
     QVariantList info;
     info << sid << text;
-    taskList << qMakePair((int)SendTextTo, QVariant(info));
+    _taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 
@@ -790,7 +787,7 @@ void TActionController::sendBinaryToWebSocket(int sid, const QByteArray &binary)
 {
     QVariantList info;
     info << sid << binary;
-    taskList << qMakePair((int)SendBinaryTo, QVariant(info));
+    _taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 
@@ -798,7 +795,7 @@ void TActionController::closeWebSokcet(int sid, int closeCode)
 {
     QVariantList info;
     info << sid << closeCode;
-    taskList << qMakePair((int)SendCloseTo, QVariant(info));
+    _taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
 
@@ -806,7 +803,7 @@ void TActionController::publish(const QString &topic, const QString &text)
 {
     QVariantList info;
     info << topic << text;
-    taskList << qMakePair((int)PublishText, QVariant(info));
+    _taskList << qMakePair((int)PublishText, QVariant(info));
 }
 
 
@@ -814,7 +811,7 @@ void TActionController::publish(const QString &topic, const QByteArray &binary)
 {
     QVariantList info;
     info << topic << binary;
-    taskList << qMakePair((int)PublishBinary, QVariant(info));
+    _taskList << qMakePair((int)PublishBinary, QVariant(info));
 }
 
 
