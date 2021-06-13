@@ -25,7 +25,7 @@ constexpr auto SERVICE_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                               "public:\n"
                                               "    void index();\n"
                                               "    void show(%arg%);\n"
-                                              "    int create(THttpRequest &request);\n"
+                                              "    %type% create(THttpRequest &request);\n"
                                               "    void edit(TSession &session, %arg%);\n"
                                               "    int save(THttpRequest &request, TSession &session, %arg%);\n"
                                               "    bool remove(%arg%);\n"
@@ -49,7 +49,7 @@ constexpr auto SERVICE_SOURCE_FILE_TEMPLATE = "#include \"%name%service.h\"\n"
                                               "    texport(%varname%);\n"
                                               "}\n"
                                               "\n"
-                                              "int %clsname%Service::create(THttpRequest &request)\n"
+                                              "%type% %clsname%Service::create(THttpRequest &request)\n"
                                               "{\n"
                                               "    auto items = request.formItems(\"%varname%\");\n"
                                               "    auto model = %clsname%::create(items);\n"
@@ -57,7 +57,7 @@ constexpr auto SERVICE_SOURCE_FILE_TEMPLATE = "#include \"%name%service.h\"\n"
                                               "    if (model.isNull()) {\n"
                                               "        QString error = \"Failed to create.\";\n"
                                               "        texport(error);\n"
-                                              "        return -1;\n"
+                                              "        return %erres%;\n"
                                               "    }\n"
                                               "\n"
                                               "    QString notice = \"Created successfully.\";\n"
@@ -97,7 +97,7 @@ constexpr auto SERVICE_SOURCE_FILE_TEMPLATE = "#include \"%name%service.h\"\n"
                                               "\n"
                                               "    QString notice = \"Updated successfully.\";\n"
                                               "    tflash(notice);\n"
-                                              "    return %id%;\n"
+                                              "    return 1;\n"
                                               "}\n"
                                               "\n"
                                               "bool %clsname%Service::remove(%arg%)\n"
@@ -106,6 +106,25 @@ constexpr auto SERVICE_SOURCE_FILE_TEMPLATE = "#include \"%name%service.h\"\n"
                                               "    return %varname%.remove();\n"
                                               "}\n"
                                               "\n";
+
+class ErrorValue : public QHash<int, QString> {
+public:
+    ErrorValue() :
+        QHash<int, QString>()
+    {
+        insert(QMetaType::Int, "0");
+        insert(QMetaType::UInt, "0");
+        insert(QMetaType::LongLong, "0");
+        insert(QMetaType::ULongLong, "0");
+        insert(QMetaType::Double, "0");
+        insert(QMetaType::QByteArray, "QByteArray()");
+        insert(QMetaType::QString, "QString()");
+        insert(QMetaType::QDate, "QDate()");
+        insert(QMetaType::QTime, "QTime()");
+        insert(QMetaType::QDateTime, "QDateTime()");
+    }
+};
+Q_GLOBAL_STATIC(ErrorValue, errorValue)
 
 
 ServiceGenerator::ServiceGenerator(const QString &service, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int lockRevIdx) :
@@ -139,16 +158,6 @@ bool ServiceGenerator::generate(const QString &dstDir) const
     QString revStr;
     QString varName = enumNameToVariableName(_serviceName);
 
-    // Generates a service header file
-    PlaceholderList headerReplaceList = {
-        {"clsname", _serviceName},
-        {"arg", ModelGenerator::createParam(pair.second, pair.first)},
-        {"var", fieldNameToVariableName(pair.first)}
-    };
-    QString code = replaceholder(SERVICE_HEADER_FILE_TEMPLATE, headerReplaceList);
-    fwh.write(code, false);
-    files << fwh.fileName();
-
     if (_lockRevIndex >= 0) {
         sessInsertStr = QString("        session.insert(\"%1_lockRevision\", model.lockRevision());\n").arg(varName);
         sessGetStr = QString("    int rev = session.value(\"%1_lockRevision\").toInt();\n").arg(varName);
@@ -161,10 +170,19 @@ bool ServiceGenerator::generate(const QString &dstDir) const
         {"varname", varName},
         {"arg", ModelGenerator::createParam(pair.second, pair.first)},
         {"id", fieldNameToVariableName(pair.first)},
+        {"type", QString::fromLatin1(QMetaType::typeName(pair.second))},
         {"code1", sessInsertStr},
         {"code2", sessGetStr},
         {"rev", revStr},
+        {"erres", errorValue()->value(pair.second)},
     };
+
+    // Generates a service header file
+    QString code = replaceholder(SERVICE_HEADER_FILE_TEMPLATE, replaceList);
+    fwh.write(code, false);
+    files << fwh.fileName();
+
+    // Generates a service source file
     code = replaceholder(SERVICE_SOURCE_FILE_TEMPLATE, replaceList);
     fws.write(code, false);
     files << fws.fileName();

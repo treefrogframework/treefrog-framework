@@ -7,12 +7,16 @@ endif()
 
 file(GLOB model_headers ${PROJECT_SOURCE_DIR}/models/*.h)
 file(GLOB model_srcs    ${PROJECT_SOURCE_DIR}/models/*.cpp)
+file(GLOB model_objects_headers      ${PROJECT_SOURCE_DIR}/models/objects/*.h)
+file(GLOB model_objects_srcs         ${PROJECT_SOURCE_DIR}/models/objects/*.cpp)
 file(GLOB model_sqlobjects_headers   ${PROJECT_SOURCE_DIR}/models/sqlobjects/*.h)
 file(GLOB model_mongoobjects_headers ${PROJECT_SOURCE_DIR}/models/mongoobjects/*.h)
 
 add_library(model SHARED
   ${model_headers}
   ${model_srcs}
+  ${model_objects_headers}
+  ${model_objects_srcs}
   ${model_sqlobjects_headers}
   ${model_mongoobjects_headers}
 )
@@ -24,6 +28,7 @@ target_include_directories(model PUBLIC
   ${Qt6Concurrent_INCLUDE_DIRS}
   ${TreeFrog_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/models
+  ${PROJECT_SOURCE_DIR}/models/objects
   ${PROJECT_SOURCE_DIR}/models/sqlobjects
   ${PROJECT_SOURCE_DIR}/models/mongoobjects
 )

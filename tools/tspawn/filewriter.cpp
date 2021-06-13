@@ -77,6 +77,10 @@ bool FileWriter::write(const QString &data, bool overwrite) const
     QByteArray act;
     QFileInfo fi(filepath);
 
+    if (!fi.absoluteDir().exists()) {
+        fi.absoluteDir().mkpath(".");
+    }
+
     if (fi.exists()) {
         QString orig = readFile(filepath);
         if (orig == data) {

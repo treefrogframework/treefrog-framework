@@ -42,13 +42,13 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\
                                                  "\n"
                                                  "void %clsname%Controller::show(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    service.show(%id%.toInt());\n"
+                                                 "    service.show(%var1%);\n"
                                                  "    render();\n"
                                                  "}\n"
                                                  "\n"
                                                  "void %clsname%Controller::create()\n"
                                                  "{\n"
-                                                 "    int %id%;\n"
+                                                 "    %type% %id%;\n"
                                                  "\n"
                                                  "    switch (request().method()) {\n"
                                                  "    case Tf::Get:\n"
@@ -57,7 +57,7 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\
                                                  "\n"
                                                  "    case Tf::Post:\n"
                                                  "        %id% = service.create(request());\n"
-                                                 "        if (%id% > 0) {\n"
+                                                 "        if (%condition%) {\n"
                                                  "            redirect(urla(\"show\", %id%));\n"
                                                  "        } else {\n"
                                                  "            render();\n"
@@ -76,12 +76,12 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\
                                                  "\n"
                                                  "    switch (request().method()) {\n"
                                                  "    case Tf::Get:\n"
-                                                 "        service.edit(session(), id.toInt());\n"
+                                                 "        service.edit(session(), %var1%);\n"
                                                  "        render();\n"
                                                  "        break;\n"
                                                  "\n"
                                                  "    case Tf::Post:\n"
-                                                 "        res = service.save(request(), session(), %id%.toInt());\n"
+                                                 "        res = service.save(request(), session(), %var1%);\n"
                                                  "        if (res > 0) {\n"
                                                  "            // Save completed\n"
                                                  "            redirect(urla(\"show\", %id%));\n"
@@ -104,7 +104,7 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\
                                                  "{\n"
                                                  "    switch (request().method()) {\n"
                                                  "    case Tf::Post:\n"
-                                                 "        service.remove(%id%.toInt());\n"
+                                                 "        service.remove(%var1%);\n"
                                                  "        redirect(urla(\"index\"));\n"
                                                  "        break;\n"
                                                  "\n"
@@ -159,6 +159,25 @@ public:
     }
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
+
+class ConditionString : public QHash<int, QString> {
+public:
+    ConditionString() :
+        QHash<int, QString>()
+    {
+        insert(QMetaType::Int, "%1 > 0");
+        insert(QMetaType::UInt, "%1 > 0");
+        insert(QMetaType::LongLong, "%1 > 0");
+        insert(QMetaType::ULongLong, "%1 > 0");
+        insert(QMetaType::Double, "%1 > 0");
+        insert(QMetaType::QByteArray, "!%1.isEmpty()");
+        insert(QMetaType::QString, "!%1.isEmpty()");
+        insert(QMetaType::QDate, "!%1.isNull()");
+        insert(QMetaType::QTime, "!%1.isNull()");
+        insert(QMetaType::QDateTime, "!%1.isNull()");
+    }
+};
+Q_GLOBAL_STATIC(ConditionString, conditionString)
 
 class NGCtlrName : public QStringList {
 public:
@@ -229,8 +248,10 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             {"var1", convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
             {"code1", sessInsertStr},
             {"code2", sessGetStr},
+            {"type", QString::fromLatin1(QMetaType::typeName(pair.second))},
             {"rev", revStr},
-            {"id", fieldNameToVariableName(pair.first)}
+            {"id", fieldNameToVariableName(pair.first)},
+            {"condition", conditionString()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
         };
 
         // Generates a controller header file
