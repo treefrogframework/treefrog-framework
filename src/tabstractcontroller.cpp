@@ -18,7 +18,8 @@
 /*!
   Constructor.
 */
-TAbstractController::TAbstractController()
+TAbstractController::TAbstractController() :
+    QObject()
 {
 }
 

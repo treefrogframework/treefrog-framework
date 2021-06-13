@@ -41,7 +41,6 @@ const QByteArray DEFAULT_CONTENT_TYPE("text/html");
   \brief Constructor.
  */
 TActionController::TActionController() :
-    QObject(),
     TAbstractController()
 {
     // Default content type
@@ -71,10 +70,6 @@ QString TActionController::name() const
     return _ctrlName;
 }
 
-/*!
-  \fn QString TActionController::className() const
-  Returns the class name.
-*/
 
 /*!
   \fn QString TActionController::activeAction() const

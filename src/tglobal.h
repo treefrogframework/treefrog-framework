@@ -302,8 +302,8 @@ T_CORE_EXPORT uint64_t random(uint64_t max) noexcept;
 
 T_CORE_EXPORT TCache *cache() noexcept;
 T_CORE_EXPORT TActionContext *currentContext();
-T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 inline const TActionContext *constCurrentContext() { return currentContext(); }
+T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 

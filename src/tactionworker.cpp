@@ -31,12 +31,7 @@ TActionWorker *TActionWorker::instance()
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
-    static int keepAliveTimeout = []() {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
-        return qMax(timeout, 0);
-    }();
-
-    if (keepAliveTimeout > 0) {
+    if (keepAliveTimeout() > 0) {
         header.setRawHeader("Connection", "Keep-Alive");
     }
     accessLogger.setStatusCode(header.statusCode());

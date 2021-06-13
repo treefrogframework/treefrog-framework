@@ -206,6 +206,11 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
     int buflen = _readBuffer.capacity() - _readBuffer.size();
     int len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
 
+    if (len < 0) {
+        setSocketDescriptor(_socket, QAbstractSocket::ClosingState);
+        return false;
+    }
+
     if (len > 0) {
         _readBuffer.resize(_readBuffer.size() + len);
 

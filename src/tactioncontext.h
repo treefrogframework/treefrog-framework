@@ -33,6 +33,7 @@ public:
     const THttpRequest &httpRequest() const override { return *httpReq; }
     THttpRequest &httpRequest() override { return *httpReq; }
     TCache *cache();
+    static int keepAliveTimeout();
 
 protected:
     void execute(THttpRequest &request, int sid);

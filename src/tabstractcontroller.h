@@ -1,4 +1,5 @@
 #pragma once
+#include <QObject>
 #include <QVariant>
 #include <TGlobal>
 
@@ -8,11 +9,11 @@ class TCookie;
 class TFormValidator;
 
 
-class T_CORE_EXPORT TAbstractController {
+class T_CORE_EXPORT TAbstractController : public QObject {
 public:
     TAbstractController();
     virtual ~TAbstractController() { }
-    virtual QString className() const = 0;
+    virtual QString className() const;
     virtual QString name() const = 0;
     virtual QString activeAction() const = 0;
     virtual QStringList arguments() const = 0;
@@ -46,6 +47,15 @@ private:
     friend class TDirectView;
 };
 
+
+/*!
+  \fn QString TAbstractController::className() const
+  Returns the class name.
+*/
+inline QString TAbstractController::className() const
+{
+    return QString(metaObject()->className());
+}
 
 inline QVariant TAbstractController::variant(const QString &name) const
 {

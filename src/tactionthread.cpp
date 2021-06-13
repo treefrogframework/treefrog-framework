@@ -25,15 +25,6 @@ constexpr int RECV_BUF_SIZE = 8 * 1024;
 
 namespace {
 std::atomic<int> threadCounter(0);
-
-int keepAliveTimeout()
-{
-    static int timeout = []() {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
-        return qMax(timeout, 0);
-    }();
-    return timeout;
-}
 }
 
 

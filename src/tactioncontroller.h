@@ -1,5 +1,4 @@
 #pragma once
-#include <QDomDocument>
 #include <QHostAddress>
 #include <QtCore>
 #include <TAbstractController>
@@ -16,14 +15,14 @@ class TActionView;
 class TAbstractUser;
 class TFormValidator;
 class TCache;
+class QDomDocument;
 
 
-class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator {
+class T_CORE_EXPORT TActionController : public TAbstractController, public TActionHelper, protected TAccessValidator {
 public:
     TActionController();
     virtual ~TActionController();
 
-    QString className() const override;
     QString name() const override;
     QString activeAction() const override;
     QStringList arguments() const override;
@@ -156,11 +155,6 @@ private:
     T_DISABLE_MOVE(TActionController)
 };
 
-
-inline QString TActionController::className() const
-{
-    return QString(metaObject()->className());
-}
 
 inline QString TActionController::activeAction() const
 {

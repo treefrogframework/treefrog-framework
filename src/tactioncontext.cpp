@@ -473,3 +473,15 @@ TCache *TActionContext::cache()
     }
     return cachep;
 }
+
+/*!
+  Returns the keep-alive timeout in seconds.
+ */
+int TActionContext::keepAliveTimeout()
+{
+    static int keepAliveTimeout = []() {
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        return qMax(timeout, 0);
+    }();
+    return keepAliveTimeout;
+}
