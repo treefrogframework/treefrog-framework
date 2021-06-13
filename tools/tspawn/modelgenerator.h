@@ -1,5 +1,6 @@
 #pragma once
 #include "abstractobjgenerator.h"
+#include "global.h"
 #include <QDir>
 #include <QPair>
 #include <QStringList>
@@ -11,7 +12,6 @@ class AbstractObjGenerator;
 class ModelGenerator {
 public:
     using FieldList = QList<QPair<QString, QMetaType::Type>>;
-    using PlaceholderList = QList<QPair<QString, QString>>;
 
     enum ObjectType {
         Sql,
@@ -27,8 +27,7 @@ public:
     int autoValueIndex() const;
     int lockRevisionIndex() const;
     QString model() const { return modelName; }
-    static QString replaceholder(const QString &format, const QPair<QString, QString> &value);
-    static QString replaceholder(const QString &format, const PlaceholderList &values);
+    static QString createParam(QMetaType::Type type, const QString &name);
 
 protected:
     QStringList genModel(const QString &dstDir);
@@ -36,7 +35,6 @@ protected:
     QPair<PlaceholderList, PlaceholderList> createModelParams();
 
     static void gen(const QString &fileName, const QString &format, const QList<QPair<QString, QString>> &values);
-    static QString createParam(QMetaType::Type type, const QString &name);
 
 private:
     ObjectType objectType {Sql};

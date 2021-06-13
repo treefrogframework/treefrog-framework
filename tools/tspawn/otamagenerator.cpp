@@ -41,7 +41,7 @@ constexpr auto INDEX_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                      "</body>\n"
                                      "</html>\n";
 
-constexpr auto INDEX_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto INDEX_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                     "\n"
                                     "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n"
                                     "\n"
@@ -79,7 +79,7 @@ constexpr auto SHOW_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                     "</body>\n"
                                     "</html>\n";
 
-constexpr auto SHOW_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto SHOW_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                    "\n"
                                    "#init\n"
                                    " tfetch(%2, %3);\n"
@@ -119,7 +119,7 @@ constexpr auto CREATE_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                       "</body>\n"
                                       "</html>\n";
 
-constexpr auto CREATE_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto CREATE_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                      "\n"
                                      "#init\n"
                                      " tfetch(QVariantMap, %2);\n"
@@ -160,7 +160,7 @@ constexpr auto SAVE_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                     "</body>\n"
                                     "</html>\n";
 
-constexpr auto SAVE_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto SAVE_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                    "\n"
                                    "#init\n"
                                    " tfetch(QVariantMap, %2);\n"

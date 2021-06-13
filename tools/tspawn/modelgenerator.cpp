@@ -17,6 +17,7 @@
 constexpr auto USER_VIRTUAL_METHOD = "identityKey";
 constexpr auto LOCK_REVISION_FIELD = "lockRevision";
 
+
 constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                             "\n"
                                             "#include <QStringList>\n"
@@ -339,31 +340,15 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "";
 #endif
 
-constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson()\n"
+constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson(const QStringList &properties)\n"
                                        "{\n"
-                                       "    QJsonArray array;\n"
-                                       "    TSqlORMapper<%model%Object> mapper;\n"
-                                       "\n"
-                                       "    if (mapper.find() > 0) {\n"
-                                       "        for (TSqlORMapperIterator<%model%Object> i(mapper); i.hasNext(); ) {\n"
-                                       "            array.append(QJsonValue(QJsonObject::fromVariantMap(%model%(i.next()).toVariantMap())));\n"
-                                       "        }\n"
-                                       "    }\n"
-                                       "    return array;\n"
+                                       "    return tfConvertToJsonArray(getAll(), properties);\n"
                                        "}\n"
                                        "\n";
 
-constexpr auto MODEL_IMPL_GETALLJSON_MONGO = "QJsonArray %model%::getAllJson()\n"
+constexpr auto MODEL_IMPL_GETALLJSON_MONGO = "QJsonArray %model%::getAllJson(const QStringList &properties)\n"
                                              "{\n"
-                                             "    QJsonArray array;\n"
-                                             "    TMongoODMapper<%model%Object> mapper;\n"
-                                             "\n"
-                                             "    if (mapper.find()) {\n"
-                                             "        while (mapper.next()) {\n"
-                                             "            array.append(QJsonValue(QJsonObject::fromVariantMap(%model%(mapper.value()).toVariantMap())));\n"
-                                             "        }\n"
-                                             "    }\n"
-                                             "    return array;\n"
+                                             "    return tfConvertToJsonArray(getAll(), properties);\n"
                                              "}\n"
                                              "\n";
 
@@ -446,7 +431,7 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
         QStringList dummy = {"_dummymodel.h", "_dummymodel.cpp"};
         bool rmd = false;
         for (auto &f : dummy) {
-            rmd |= ::remove(QDir(dstDir).filePath(f));
+            rmd |= ::remove(QDir(dstDir + "/objects").filePath(f));
         }
         if (rmd) {
             progen.remove(dummy);
@@ -461,16 +446,16 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 QStringList ModelGenerator::genModel(const QString &dstDir)
 {
     QStringList ret;
-    QDir dir(dstDir);
+    QDir dir(dstDir + "/objects");
     auto p = createModelParams();
 
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
     return ret;
 }
 
@@ -478,7 +463,7 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
 QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &usernameField, const QString &passwordField)
 {
     QStringList ret;
-    QDir dir(dstDir);
+    QDir dir(dstDir + "/objects");
     auto p = createModelParams();
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     QString userVar = fieldNameToVariableName(usernameField);
@@ -487,7 +472,7 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
             << pair("11", QLatin1String("    QString ") + USER_VIRTUAL_METHOD + "() const { return " + userVar + "(); }\n");
 
     gen(fileName, USER_MODEL_HEADER_FILE_TEMPLATE, p.first);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     p.second << pair("14", fieldNameToVariableName(usernameField))
@@ -495,12 +480,12 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
              << pair("16", fieldNameToEnumName(usernameField))
              << pair("17", passwordField);
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
     return ret;
 }
 
 
-QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGenerator::createModelParams()
+QPair<PlaceholderList, PlaceholderList> ModelGenerator::createModelParams()
 {
     QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl;
     QList<QPair<QString, QString>> writableFields;
@@ -644,7 +629,7 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
              << pair("11", ((objectType == Mongo) ? "Mongo" : ""));
 
     headerList << pair("7", "class QJsonArray;\n")
-               << pair("8", "    static QJsonArray getAllJson();\n");
+               << pair("8", "    static QJsonArray getAllJson(const QStringList &properties = QStringList());\n");
 
     switch (objectType) {
     case Sql:
@@ -665,25 +650,6 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
 
     implList << pair("13", mapperstr);
     return qMakePair(headerList, implList);
-}
-
-
-QString ModelGenerator::replaceholder(const QString &format, const QPair<QString, QString> &value)
-{
-    QString out = format;
-    QString placeholder = QLatin1Char('%') + value.first + QLatin1Char('%');
-    out.replace(placeholder, value.second);
-    return out;
-}
-
-
-QString ModelGenerator::replaceholder(const QString &format, const PlaceholderList &values)
-{
-    QString out = format;
-    for (auto &p : values) {
-        out = replaceholder(out, p);
-    }
-    return out;
 }
 
 

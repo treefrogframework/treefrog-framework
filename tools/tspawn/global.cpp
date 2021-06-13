@@ -173,3 +173,22 @@ bool mkpath(const QDir &dir, const QString &dirPath)
     }
     return true;
 }
+
+
+QString replaceholder(const QString &format, const QPair<QString, QString> &value)
+{
+    QString out = format;
+    QString placeholder = QLatin1Char('%') + value.first + QLatin1Char('%');
+    out.replace(placeholder, value.second);
+    return out;
+}
+
+
+QString replaceholder(const QString &format, const PlaceholderList &values)
+{
+    QString out = format;
+    for (auto &p : values) {
+        out = replaceholder(out, p);
+    }
+    return out;
+}

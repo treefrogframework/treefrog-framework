@@ -16,8 +16,7 @@ constexpr auto SQLOBJECT_HEADER_TEMPLATE = "#pragma once\n"
                                            "#include <TSqlObject>\n"
                                            "#include <QSharedData>\n"
                                            "\n\n"
-                                           "class T_MODEL_EXPORT %1Object : public TSqlObject, public QSharedData\n"
-                                           "{\n"
+                                           "class T_MODEL_EXPORT %1Object : public TSqlObject, public QSharedData {\n"
                                            "public:\n";
 
 constexpr auto SQLOBJECT_PROPERTY_TEMPLATE = "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n"

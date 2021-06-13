@@ -10,6 +10,7 @@
 #include "global.h"
 #include "helpergenerator.h"
 #include "mailergenerator.h"
+#include "servicegenerator.h"
 #include "modelgenerator.h"
 #include "mongocommand.h"
 #include "mongoobjgenerator.h"
@@ -20,6 +21,8 @@
 #include "util.h"
 #include "validatorgenerator.h"
 #include "websocketgenerator.h"
+#include "apicontrollergenerator.h"
+#include "apiservicegenerator.h"
 #include <QtCore>
 #include <QTextCodec>
 #include <random>
@@ -47,6 +50,7 @@ enum SubCommand {
     MongoScaffold,
     MongoModel,
     WebSocketEndpoint,
+    Api,
     Validator,
     Mailer,
     Scaffold,
@@ -84,6 +88,8 @@ public:
         insert("mm", MongoModel);
         insert("websocket", WebSocketEndpoint);
         insert("w", WebSocketEndpoint);
+        insert("api", Api);
+        insert("a", Api);
         insert("validator", Validator);
         insert("v", Validator);
         insert("mailer", Mailer);
@@ -110,6 +116,7 @@ public:
     {
         append(L("controllers"));
         append(L("models"));
+        append(L("models/objects"));
         append(L("models/sqlobjects"));
         append(L("models/mongoobjects"));
         append(L("views"));
@@ -148,8 +155,8 @@ public:
         append(L("controllers/applicationcontroller.cpp"));
         append(L("models/models.pro"));
 #ifdef Q_OS_WIN
-        append(L("models/_dummymodel.h"));
-        append(L("models/_dummymodel.cpp"));
+        append(L("models/objects/_dummymodel.h"));
+        append(L("models/objects/_dummymodel.cpp"));
 #endif
         append(L("views/views.pro"));
         append(L("views/_src/_src.pro"));
@@ -215,6 +222,7 @@ static void usage()
                 "  mongoscaffold (ms) <model-name>\n"
                 "  mongomodel (mm) <model-name>\n"
                 "  websocket (w)   <endpoint-name>\n"
+                "  api (a)         <api-name>\n"
                 "  validator (v)   <name>\n"
                 "  mailer (l)      <mailer-name> action [action ...]\n"
                 "  delete (d)      <table-name, helper-name or validator-name>\n");
@@ -371,7 +379,7 @@ static bool createNewApplication(const QString &name)
 #ifdef Q_OS_WIN
     // Add dummy model files
     ProjectFileGenerator progen(name + "/" + D_MODELS + "models.pro");
-    QStringList dummy = {"_dummymodel.h", "_dummymodel.cpp"};
+    QStringList dummy = {"objects/_dummymodel.h", "objects/_dummymodel.cpp"};
     progen.add(dummy);
 #endif
 
@@ -406,8 +414,10 @@ static int deleteScaffold(const QString &name)
 
         models << QLatin1String("sqlobjects/") + str + "object.h"
                << QLatin1String("mongoobjects/") + str + "object.h"
-               << str + ".h"
-               << str + ".cpp";
+               << QLatin1String("objects/") + str + ".h"
+               << QLatin1String("objects/") + str + ".cpp"
+               << str + "service.h"
+               << str + "service.cpp";
 
         // Template system
         if (templateSystem == "otama") {
@@ -623,6 +633,15 @@ int main(int argc, char *argv[])
         case Model: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+            svrgen.generate(D_MODELS);
             break;
         }
 
@@ -635,6 +654,15 @@ int main(int argc, char *argv[])
         case UserModel: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(5), args.value(2), args.mid(3, 2));
             modelgen.generate(D_MODELS, true);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+            svrgen.generate(D_MODELS);
             break;
         }
 
@@ -651,6 +679,15 @@ int main(int argc, char *argv[])
         case MongoScaffold: {
             ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
             bool success = modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+            success &= svrgen.generate(D_MODELS);
 
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
@@ -676,6 +713,15 @@ int main(int argc, char *argv[])
         case MongoModel: {
             ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
             modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+            svrgen.generate(D_MODELS);
             break;
         }
 
@@ -698,6 +744,24 @@ int main(int argc, char *argv[])
             break;
         }
 
+        case Api: {
+            ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
+            modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            ApiServiceGenerator srvgen(modelgen.model(), modelgen.fieldList(), pkidx);
+            srvgen.generate(D_MODELS);
+
+            ApiControllerGenerator apigen(modelgen.model(), modelgen.fieldList(), pkidx);
+            apigen.generate(D_CTRLS);
+            break;
+        }
+
         case Validator: {
             ValidatorGenerator validgen(args.value(2));
             validgen.generate(D_HELPERS);
@@ -715,14 +779,18 @@ int main(int argc, char *argv[])
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             bool success = modelgen.generate(D_MODELS);
 
-            if (!success)
+            if (!success) {
                 return 2;
+            }
 
             int pkidx = modelgen.primaryKeyIndex();
             if (pkidx < 0) {
                 qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
                 return 2;
             }
+
+            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+            svrgen.generate(D_MODELS);
 
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);

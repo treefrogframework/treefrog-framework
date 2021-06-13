@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2019, AOYAMA Kazuharu
+/* Copyright (c) 2010-2021, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -14,64 +14,55 @@
 #include <QtCore>
 
 constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE = "#pragma once\n"
-                                                 "\n"
                                                  "#include \"applicationcontroller.h\"\n"
                                                  "\n\n"
-                                                 "class T_CONTROLLER_EXPORT %1Controller : public ApplicationController\n"
-                                                 "{\n"
+                                                 "class T_CONTROLLER_EXPORT %clsname%Controller : public ApplicationController {\n"
                                                  "    Q_OBJECT\n"
-                                                 "public:\n"
-                                                 "    %1Controller() : ApplicationController() {}\n"
-                                                 "\n"
                                                  "public slots:\n"
                                                  "    void index();\n"
-                                                 "    void show(const QString &%2);\n"
+                                                 "    void show(const QString &%id%);\n"
                                                  "    void create();\n"
-                                                 "    void save(const QString &%2);\n"
-                                                 "    void remove(const QString &%2);\n"
+                                                 "    void save(const QString &%id%);\n"
+                                                 "    void remove(const QString &%id%);\n"
                                                  "};\n"
                                                  "\n";
 
 
-constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
-                                                 "#include \"%1.h\"\n"
+constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\"\n"
+                                                 "#include \"%name%service.h\"\n"
+                                                 "#include <TreeFrogController>\n"
+                                                 "\n"
+                                                 "static %clsname%Service service;\n"
                                                  "\n\n"
-                                                 "void %2Controller::index()\n"
+                                                 "void %clsname%Controller::index()\n"
                                                  "{\n"
-                                                 "    auto %3List = %2::getAll();\n"
-                                                 "    texport(%3List);\n"
+                                                 "    service.index();\n"
                                                  "    render();\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::show(const QString &%8)\n"
+                                                 "void %clsname%Controller::show(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    auto %3 = %2::get(%4);\n"
-                                                 "    texport(%3);\n"
+                                                 "    service.show(%id%.toInt());\n"
                                                  "    render();\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::create()\n"
+                                                 "void %clsname%Controller::create()\n"
                                                  "{\n"
-                                                 "    switch (httpRequest().method()) {\n"
+                                                 "    int %id%;\n"
+                                                 "\n"
+                                                 "    switch (request().method()) {\n"
                                                  "    case Tf::Get:\n"
                                                  "        render();\n"
                                                  "        break;\n"
                                                  "\n"
-                                                 "    case Tf::Post: {\n"
-                                                 "        auto %3 = httpRequest().formItems(\"%3\");\n"
-                                                 "        auto model = %2::create(%3);\n"
-                                                 "\n"
-                                                 "        if (!model.isNull()) {\n"
-                                                 "            QString notice = \"Created successfully.\";\n"
-                                                 "            tflash(notice);\n"
-                                                 "            redirect(urla(\"show\", model.%8()));\n"
+                                                 "    case Tf::Post:\n"
+                                                 "        %id% = service.create(request());\n"
+                                                 "        if (%id% > 0) {\n"
+                                                 "            redirect(urla(\"show\", %id%));\n"
                                                  "        } else {\n"
-                                                 "            QString error = \"Failed to create.\";\n"
-                                                 "            texport(error);\n"
-                                                 "            texport(%3);\n"
                                                  "            render();\n"
                                                  "        }\n"
-                                                 "        break; }\n"
+                                                 "        break;\n"
                                                  "\n"
                                                  "    default:\n"
                                                  "        renderErrorResponse(Tf::NotFound);\n"
@@ -79,44 +70,29 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
                                                  "    }\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::save(const QString &%8)\n"
+                                                 "void %clsname%Controller::save(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    switch (httpRequest().method()) {\n"
-                                                 "    case Tf::Get: {\n"
-                                                 "        auto model = %2::get(%4);\n"
-                                                 "        if (!model.isNull()) {\n"
-                                                 "%5"
-                                                 "            auto %3 = model.toVariantMap();\n"
-                                                 "            texport(%3);\n"
+                                                 "    int res;\n"
+                                                 "\n"
+                                                 "    switch (request().method()) {\n"
+                                                 "    case Tf::Get:\n"
+                                                 "        service.edit(session(), id.toInt());\n"
+                                                 "        render();\n"
+                                                 "        break;\n"
+                                                 "\n"
+                                                 "    case Tf::Post:\n"
+                                                 "        res = service.save(request(), session(), %id%.toInt());\n"
+                                                 "        if (res > 0) {\n"
+                                                 "            // Save completed\n"
+                                                 "            redirect(urla(\"show\", %id%));\n"
+                                                 "        } else if (res < 0) {\n"
+                                                 "            // Failed\n"
                                                  "            render();\n"
-                                                 "        }\n"
-                                                 "        break; }\n"
-                                                 "\n"
-                                                 "    case Tf::Post: {\n"
-                                                 "        QString error;\n"
-                                                 "%6"
-                                                 "        auto model = %2::get(%4%7);\n"
-                                                 "        \n"
-                                                 "        if (model.isNull()) {\n"
-                                                 "            error = \"Original data not found. It may have been updated/removed by another transaction.\";\n"
-                                                 "            tflash(error);\n"
-                                                 "            redirect(urla(\"save\", %8));\n"
-                                                 "            break;\n"
-                                                 "        }\n"
-                                                 "\n"
-                                                 "        auto %3 = httpRequest().formItems(\"%3\");\n"
-                                                 "        model.setProperties(%3);\n"
-                                                 "        if (model.save()) {\n"
-                                                 "            QString notice = \"Updated successfully.\";\n"
-                                                 "            tflash(notice);\n"
-                                                 "            redirect(urla(\"show\", model.%8()));\n"
                                                  "        } else {\n"
-                                                 "            error = \"Failed to update.\";\n"
-                                                 "            texport(error);\n"
-                                                 "            texport(%3);\n"
-                                                 "            render();\n"
+                                                 "            // Retry\n"
+                                                 "            redirect(urla(\"save\", %id%));\n"
                                                  "        }\n"
-                                                 "        break; }\n"
+                                                 "        break;\n"
                                                  "\n"
                                                  "    default:\n"
                                                  "        renderErrorResponse(Tf::NotFound);\n"
@@ -124,20 +100,22 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
                                                  "    }\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::remove(const QString &%8)\n"
+                                                 "void %clsname%Controller::remove(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    if (httpRequest().method() != Tf::Post) {\n"
-                                                 "        renderErrorResponse(Tf::NotFound);\n"
-                                                 "        return;\n"
-                                                 "    }\n"
+                                                 "    switch (request().method()) {\n"
+                                                 "    case Tf::Post:\n"
+                                                 "        service.remove(%id%.toInt());\n"
+                                                 "        redirect(urla(\"index\"));\n"
+                                                 "        break;\n"
                                                  "\n"
-                                                 "    auto %3 = %2::get(%4);\n"
-                                                 "    %3.remove();\n"
-                                                 "    redirect(urla(\"index\"));\n"
+                                                 "    default:\n"
+                                                 "        renderErrorResponse(Tf::NotFound);\n"
+                                                 "        break;\n"
+                                                 "    }\n"
                                                  "}\n"
-                                                 "\n\n"
+                                                 "\n"
                                                  "// Don't remove below this line\n"
-                                                 "T_DEFINE_CONTROLLER(%2Controller)\n";
+                                                 "T_DEFINE_CONTROLLER(%clsname%Controller)\n";
 
 
 constexpr auto CONTROLLER_TINY_HEADER_FILE_TEMPLATE = "#pragma once\n"
@@ -238,18 +216,30 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString revStr;
         QString varName = enumNameToVariableName(controllerName);
 
-        // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName, fieldNameToVariableName(pair.first));
-        fwh.write(code, false);
-        files << fwh.fileName();
-
         if (lockRevIndex >= 0) {
             sessInsertStr = QString("            session().insert(\"%1_lockRevision\", model.lockRevision());\n").arg(varName);
             sessGetStr = QString("        int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
             revStr = QLatin1String(", rev");
         }
 
-        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first)), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
+        PlaceholderList replaceList = {
+            {"name", controllerName.toLower()},
+            {"clsname", controllerName},
+            {"varname", varName},
+            {"var1", convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
+            {"code1", sessInsertStr},
+            {"code2", sessGetStr},
+            {"rev", revStr},
+            {"id", fieldNameToVariableName(pair.first)}
+        };
+
+        // Generates a controller header file
+        QString code = replaceholder(CONTROLLER_HEADER_FILE_TEMPLATE, replaceList);
+        fwh.write(code, false);
+        files << fwh.fileName();
+
+        // Generates a controller source file
+        code = replaceholder(CONTROLLER_SOURCE_FILE_TEMPLATE, replaceList);
         fws.write(code, false);
         files << fws.fileName();
 
@@ -277,4 +267,10 @@ bool ControllerGenerator::generate(const QString &dstDir) const
     // Generates a project file
     ProjectFileGenerator progen(dir.filePath("controllers.pro"));
     return progen.add(files);
+}
+
+
+QString ControllerGenerator::generateIdString(const QString &id, int type)
+{
+    return convMethod()->value(type).arg(fieldNameToVariableName(id));
 }

@@ -13,7 +13,7 @@
 #include <QPair>
 
 constexpr auto INDEX_TEMPLATE = "<!DOCTYPE html>\n"
-                                "<%#include \"%1.h\" %>\n"
+                                "<%#include \"objects/%1.h\" %>\n"
                                 "<html>\n"
                                 "<head>\n"
                                 "  <meta charset=\"UTF-8\">\n"
@@ -46,7 +46,7 @@ constexpr auto INDEX_TEMPLATE = "<!DOCTYPE html>\n"
                                 "</html>\n";
 
 constexpr auto SHOW_TEMPLATE = "<!DOCTYPE html>\n"
-                               "<%#include \"%1.h\" %>\n"
+                               "<%#include \"objects/%1.h\" %>\n"
                                "<% tfetch(%2, %3); %>\n"
                                "<html>\n"
                                "<head>\n"
@@ -68,7 +68,7 @@ constexpr auto SHOW_TEMPLATE = "<!DOCTYPE html>\n"
 
 
 constexpr auto CREATE_TEMPLATE = "<!DOCTYPE html>\n"
-                                 "<%#include \"%1.h\" %>\n"
+                                 "<%#include \"objects/%1.h\" %>\n"
                                  "<% tfetch(QVariantMap, %2); %>\n"
                                  "<html>\n"
                                  "<head>\n"
@@ -94,7 +94,7 @@ constexpr auto CREATE_TEMPLATE = "<!DOCTYPE html>\n"
                                  "</html>\n";
 
 constexpr auto SAVE_TEMPLATE = "<!DOCTYPE html>\n"
-                               "<%#include \"%1.h\" %>\n"
+                               "<%#include \"objects/%1.h\" %>\n"
                                "<% tfetch(QVariantMap, %2); %>\n"
                                "<html>\n"
                                "<head>\n"
