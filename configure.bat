@@ -1,7 +1,7 @@
 @echo OFF
 @setlocal
 
-set VERSION=2.0.1
+set VERSION=2.0.2
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.9.5
 set LZ4_VERSION=1.9.3

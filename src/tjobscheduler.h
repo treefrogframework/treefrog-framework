@@ -4,11 +4,11 @@
 #include <TGlobal>
 
 
-class T_CORE_EXPORT TScheduler : public TDatabaseContextThread {
+class T_CORE_EXPORT TJobScheduler : public TDatabaseContextThread {
     Q_OBJECT
 public:
-    TScheduler();
-    virtual ~TScheduler();
+    TJobScheduler();
+    virtual ~TJobScheduler();
 
     void start(int msec);
     void restart();
@@ -37,7 +37,6 @@ private:
     bool _rollback {false};
     bool _autoDelete {false};
 
-    T_DISABLE_COPY(TScheduler)
-    T_DISABLE_MOVE(TScheduler)
+    T_DISABLE_COPY(TJobScheduler)
+    T_DISABLE_MOVE(TJobScheduler)
 };
-

@@ -428,10 +428,10 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 #ifdef Q_OS_WIN
     if (ret) {
         // Deletes dummy models
-        QStringList dummy = {"_dummymodel.h", "_dummymodel.cpp"};
+        QStringList dummy = {"objects/_dummymodel.h", "objects/_dummymodel.cpp"};
         bool rmd = false;
         for (auto &f : dummy) {
-            rmd |= ::remove(QDir(dstDir + "/objects").filePath(f));
+            rmd |= ::remove(QDir(dstDir).filePath(f));
         }
         if (rmd) {
             progen.remove(dummy);

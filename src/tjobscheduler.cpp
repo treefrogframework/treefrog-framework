@@ -5,19 +5,19 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "tscheduler.h"
+#include "tjobscheduler.h"
 #include "tpublisher.h"
 #include "tsystemglobal.h"
 #include <TWebApplication>
 
 /*!
-  \class TScheduler
-  \brief The TScheduler class provides functionality for job scheduler.
+  \class TJobScheduler
+  \brief The TJobScheduler class provides functionality for job scheduler.
   Jobs scheduled by this class will be executed in each application server
   process.
 */
 
-TScheduler::TScheduler() :
+TJobScheduler::TJobScheduler() :
     TDatabaseContextThread(),
     _timer(new QTimer())
 {
@@ -32,67 +32,77 @@ TScheduler::TScheduler() :
 }
 
 
-TScheduler::~TScheduler()
+TJobScheduler::~TJobScheduler()
 {
     delete _timer;
 }
 
 
-void TScheduler::start(int msec)
+void TJobScheduler::start(int msec)
 {
-    emit startTimer(msec);
+    if (Tf::app()->applicationServerId() == 0) {
+        // Starts where applicaraion server ID is 0
+        emit startTimer(msec);
+        tSystemDebug("TJobScheduler::start msec:%d", msec);
+    }
 }
 
 
-void TScheduler::restart()
+void TJobScheduler::restart()
 {
-    emit startTimer();
+    if (Tf::app()->applicationServerId() == 0) {
+        emit startTimer();
+        tSystemDebug("TJobScheduler::restart");
+    }
 }
 
 
-void TScheduler::stop()
+void TJobScheduler::stop()
 {
-    emit stopTimer();
+    if (Tf::app()->applicationServerId() == 0) {
+        emit stopTimer();
+        tSystemDebug("TJobScheduler::stop");
+    }
 }
 
 
-int TScheduler::interval() const
+int TJobScheduler::interval() const
 {
     return _timer->interval();
 }
 
 
-bool TScheduler::isSingleShot() const
+bool TJobScheduler::isSingleShot() const
 {
     return _timer->isSingleShot();
 }
 
 
-void TScheduler::setSingleShot(bool singleShot)
+void TJobScheduler::setSingleShot(bool singleShot)
 {
     _timer->setSingleShot(singleShot);
 }
 
 
-void TScheduler::rollbackTransaction()
+void TJobScheduler::rollbackTransaction()
 {
     _rollback = true;
 }
 
 
-void TScheduler::publish(const QString &topic, const QString &text)
+void TJobScheduler::publish(const QString &topic, const QString &text)
 {
     TPublisher::instance()->publish(topic, text, nullptr);
 }
 
 
-void TScheduler::publish(const QString &topic, const QByteArray &binary)
+void TJobScheduler::publish(const QString &topic, const QByteArray &binary)
 {
     TPublisher::instance()->publish(topic, binary, nullptr);
 }
 
 
-void TScheduler::run()
+void TJobScheduler::run()
 {
     _rollback = false;
     TDatabaseContext::setCurrentDatabaseContext(this);
@@ -134,6 +144,6 @@ void TScheduler::run()
     TDatabaseContext::setCurrentDatabaseContext(nullptr);
 
     if (_autoDelete && !_timer->isActive()) {
-        connect(this, &TScheduler::finished, this, &QObject::deleteLater);
+        connect(this, &TJobScheduler::finished, this, &QObject::deleteLater);
     }
 }
