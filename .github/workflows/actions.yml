@@ -1,4 +1,4 @@
-name: Actions CI macOS
+name: ActionsCI
 
 on:
   push:
