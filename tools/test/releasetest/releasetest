@@ -74,6 +74,11 @@ testcase()
   curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/2  > remove2 || exit
   [ `row_count` = "0" ] || exit
 
+  # API
+  curl -sS http://localhost:$PORT/apibook/index | jq . || exit
+  curl -sS http://localhost:$PORT/apibook/get/1 | jq . || exit
+  curl -sS -X POST http://localhost:$PORT/apibook/remove/1 | jq . || exit
+
   # Stop app
   cd $APPROOT
   $TREEFROG -k stop || exit
@@ -94,9 +99,12 @@ sqlite3 $DBFILE < create_blog_table.sql || exit
 
 # QMake Build
 cd $APPROOT
+$TSPAWN --show-tables || exit
 $TSPAWN s blog || exit
+$TSPAWN s food || exit
 $TSPAWN ms fuga || exit
 $TSPAWN w foo || exit
+$TSPAWN a book || exit
 qmake -r || exit
 make -j4
 make || exit
