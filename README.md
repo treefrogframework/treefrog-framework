@@ -2,7 +2,7 @@ Small but Powerful and Efficient
 ================================
 
 [![CircleCI](https://circleci.com/gh/treefrogframework/treefrog-framework.svg?style=shield)](https://circleci.com/gh/treefrogframework/treefrog-framework)
-[![TravisCI](https://travis-ci.org/treefrogframework/treefrog-framework.svg?branch=master)](https://travis-ci.org/treefrogframework/treefrog-framework)
+[![ActionsCI](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml/badge.svg)](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Release](https://img.shields.io/github/v/release/treefrogframework/treefrog-framework.svg)](https://github.com/treefrogframework/treefrog-framework/releases)
 [![Docker image](https://img.shields.io/badge/Docker-image-blue.svg)](https://hub.docker.com/r/treefrogframework/treefrog/)
