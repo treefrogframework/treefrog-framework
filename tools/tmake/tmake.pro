@@ -14,6 +14,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 }
 
 INCLUDEPATH += ../../include
+DEFINES *= QT_USE_QSTRINGBUILDER
 
 include(../../tfbase.pri)
 

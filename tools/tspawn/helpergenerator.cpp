@@ -11,19 +11,17 @@
 #include "projectfilegenerator.h"
 
 constexpr auto HELPER_HEADER_TEMPLATE = "#pragma once\n"
-                                        "\n"
                                         "#include <TGlobal>\n"
                                         "#include \"applicationhelper.h\"\n"
-                                        "\n"
-                                        "class T_HELPER_EXPORT %1 : public ApplicationHelper\n"
-                                        "{\n"
+                                        "\n\n"
+                                        "class T_HELPER_EXPORT %1 : public ApplicationHelper {\n"
                                         "public:\n"
                                         "    %1();\n"
                                         "};\n"
                                         "\n";
 
 constexpr auto HELPER_IMPL_TEMPLATE = "#include \"%1.h\"\n"
-                                      "\n"
+                                      "\n\n"
                                       "%2::%2() : ApplicationHelper()\n"
                                       "{ }\n";
 

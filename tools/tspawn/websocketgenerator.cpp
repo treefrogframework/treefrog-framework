@@ -11,11 +11,9 @@
 #include "projectfilegenerator.h"
 
 constexpr auto ENDPOINT_HEADER_TEMPLATE = "#pragma once\n"
-                                          "\n"
                                           "#include \"applicationendpoint.h\"\n"
-                                          "\n"
-                                          "class T_CONTROLLER_EXPORT %1Endpoint : public ApplicationEndpoint\n"
-                                          "{\n"
+                                          "\n\n"
+                                          "class T_CONTROLLER_EXPORT %1Endpoint : public ApplicationEndpoint {\n"
                                           "    Q_OBJECT\n"
                                           "public:\n"
                                           "    %1Endpoint();\n"
@@ -30,7 +28,7 @@ constexpr auto ENDPOINT_HEADER_TEMPLATE = "#pragma once\n"
                                           "\n";
 
 constexpr auto ENDPOINT_IMPL_TEMPLATE = "#include \"%1endpoint.h\"\n"
-                                        "\n"
+                                        "\n\n"
                                         "%2Endpoint::%2Endpoint() :\n"
                                         "    ApplicationEndpoint()\n"
                                         "{ }\n"

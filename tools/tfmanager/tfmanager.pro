@@ -14,6 +14,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
   windows:QMAKE_CXXFLAGS += /std:c++17
 }
 
+DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_DLL
 INCLUDEPATH += $$header.path
 

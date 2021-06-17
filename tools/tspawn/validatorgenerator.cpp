@@ -11,12 +11,10 @@
 #include "projectfilegenerator.h"
 
 constexpr auto VALIDATOR_HEADER_TEMPLATE = "#pragma once\n"
-                                           "\n"
                                            "#include <TGlobal>\n"
                                            "#include <TFormValidator>\n"
-                                           "\n"
-                                           "class T_HELPER_EXPORT %1Validator : public TFormValidator\n"
-                                           "{\n"
+                                           "\n\n"
+                                           "class T_HELPER_EXPORT %1Validator : public TFormValidator {\n"
                                            "public:\n"
                                            "    %1Validator();\n"
                                            "};\n"
@@ -25,7 +23,7 @@ constexpr auto VALIDATOR_HEADER_TEMPLATE = "#pragma once\n"
                                            "\n";
 
 constexpr auto VALIDATOR_IMPL_TEMPLATE = "#include \"%1validator.h\"\n"
-                                         "\n"
+                                         "\n\n"
                                          "%2Validator::%2Validator() : TFormValidator()\n"
                                          "{\n"
                                          "    //Set the rules below\n"

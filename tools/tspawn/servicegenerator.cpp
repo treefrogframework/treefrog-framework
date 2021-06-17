@@ -112,11 +112,11 @@ public:
     ErrorValue() :
         QHash<int, QString>()
     {
-        insert(QMetaType::Int, "0");
-        insert(QMetaType::UInt, "0");
-        insert(QMetaType::LongLong, "0");
-        insert(QMetaType::ULongLong, "0");
-        insert(QMetaType::Double, "0");
+        insert(QMetaType::Int, "-1");
+        insert(QMetaType::UInt, "-1");
+        insert(QMetaType::LongLong, "-1");
+        insert(QMetaType::ULongLong, "-1");
+        insert(QMetaType::Double, "-1");
         insert(QMetaType::QByteArray, "QByteArray()");
         insert(QMetaType::QString, "QString()");
         insert(QMetaType::QDate, "QDate()");

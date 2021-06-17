@@ -12,7 +12,6 @@
 #include <tfnamespace.h>
 
 constexpr auto SQLOBJECT_HEADER_TEMPLATE = "#pragma once\n"
-                                           "\n"
                                            "#include <TSqlObject>\n"
                                            "#include <QSharedData>\n"
                                            "\n\n"

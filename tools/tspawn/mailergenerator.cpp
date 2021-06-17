@@ -12,11 +12,9 @@
 #include <QtCore>
 
 constexpr auto MAILER_HEADER_FILE_TEMPLATE = "#pragma once\n"
-                                             "\n"
                                              "#include <TActionMailer>\n"
                                              "\n\n"
-                                             "class %1Mailer : public TActionMailer\n"
-                                             "{\n"
+                                             "class %1Mailer : public TActionMailer {\n"
                                              "public:\n"
                                              "    %1Mailer() { }\n"
                                              "%2"

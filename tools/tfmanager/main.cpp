@@ -222,15 +222,15 @@ void writeStartupLog()
 
 QString pidFilePath(const QString &appRoot = QString())
 {
-    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
-                               : appRoot + QLatin1String("/tmp/") + PID_FILENAME;
+    return (appRoot.isEmpty()) ? QString(Tf::app()->tmpPath() + PID_FILENAME)
+                               : QString(appRoot + QLatin1String("/tmp/") + QLatin1String(PID_FILENAME));
 }
 
 
 QString oldPidFilePath(const QString &appRoot = QString())
 {
-    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + OLD_PID_FILENAME
-                               : appRoot + QLatin1String("/tmp/") + OLD_PID_FILENAME;
+    return (appRoot.isEmpty()) ? QString(Tf::app()->tmpPath() + OLD_PID_FILENAME)
+                               : QString(appRoot + QLatin1String("/tmp/") + QLatin1String(OLD_PID_FILENAME));
 }
 
 

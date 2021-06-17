@@ -410,14 +410,18 @@ static int deleteScaffold(const QString &name)
     } else {
         QStringList ctrls, models, views;
         ctrls << str + "controller.h"
-              << str + "controller.cpp";
+              << str + "controller.cpp"
+              << "api" + str + "controller.h"
+              << "api" + str + "controller.cpp";
 
         models << QLatin1String("sqlobjects/") + str + "object.h"
                << QLatin1String("mongoobjects/") + str + "object.h"
                << QLatin1String("objects/") + str + ".h"
                << QLatin1String("objects/") + str + ".cpp"
                << str + "service.h"
-               << str + "service.cpp";
+               << str + "service.cpp"
+               << "api" + str + "service.h"
+               << "api" + str + "service.cpp";
 
         // Template system
         if (templateSystem == "otama") {

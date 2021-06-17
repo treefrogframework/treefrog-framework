@@ -17,12 +17,10 @@
 #endif
 
 constexpr auto MONGOOBJECT_HEADER_TEMPLATE = "#pragma once\n"
-                                             "\n"
                                              "#include <TMongoObject>\n"
                                              "#include <QSharedData>\n"
                                              "\n\n"
-                                             "class T_MODEL_EXPORT %1Object : public TMongoObject, public QSharedData\n"
-                                             "{\n"
+                                             "class T_MODEL_EXPORT %1Object : public TMongoObject, public QSharedData {\n"
                                              "public:\n"
                                              "%2"
                                              "\n"
