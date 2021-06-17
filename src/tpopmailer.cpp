@@ -72,7 +72,6 @@ bool TPopMailer::connectToHost()
         return ret;
     }
     tSystemDebug("POP server connected: %s:%d", qUtf8Printable(popHostName), popPort);
-    ;
 
     QByteArray response;
     readResponse(&response);
@@ -153,12 +152,13 @@ bool TPopMailer::cmdRetr(int index, QByteArray &message)
     QByteArray retr("RETR ");
     retr += QByteArray::number(index);
     message.resize(0);
+    const QByteArray eol = QByteArrayLiteral(".") + CRLF;
 
     bool res = cmd(retr);
     if (res) {
         while (socket->waitForReadyRead(5000)) {
             message += socket->readAll();
-            if (message.endsWith(QByteArray(".") + CRLF)) {
+            if (message.endsWith(eol)) {
                 break;
             }
         }
