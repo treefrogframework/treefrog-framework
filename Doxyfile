@@ -197,6 +197,7 @@ EXCLUDE                = src/test \
                          src/tcacheredisstore.h \
                          src/tcachesqlitestore.h \
                          src/tcachestore.h \
+                         src/tabstractactioncontext.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp

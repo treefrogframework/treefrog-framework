@@ -18,6 +18,7 @@ uint qHash(const TCookie &key)
 /*!
   \class TCookieJar
   \brief The TCookieJar class holds network cookies.
+  \sa TCookie
 */
 
 /*!

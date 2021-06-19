@@ -10,6 +10,12 @@
 #include <TSqlObject>
 #include <TSqlQuery>
 
+/*!
+  \class TAbstractSqlORMapper
+  \brief The TAbstractSqlORMapper class is the abstract base class of
+  functionality to object-relational mapping.
+  \sa TSqlORMapper
+*/
 
 class TAbstractSqlORMapper : public QSqlTableModel {
 public:
@@ -42,7 +48,6 @@ public:
   from a table.
   \sa TSqlObject, TCriteria
 */
-
 
 template <class T>
 class TSqlORMapper : public TAbstractSqlORMapper {
