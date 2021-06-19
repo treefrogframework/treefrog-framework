@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2.0.2
+ - Updated the scaffold generator to generate WebAPI codes.
+ - Modified the scaffold generator to generate service classes for the model
+   layer.
+
 ## 2.0.1
  - Support for Qt version 6.
  - Modified not to use obsolete functions of Qt.

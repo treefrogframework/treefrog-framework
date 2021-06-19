@@ -9,6 +9,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 } else {
   CONFIG += c++17
   QT += core5compat
+  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
 }
 
 INCLUDEPATH += .. ../../../include
