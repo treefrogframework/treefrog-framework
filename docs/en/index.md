@@ -37,14 +37,21 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Jun. 19, 2021
+
+### TreeFrog Framework version 2.0 (beta2) release <span style="color: red;">New!</span>
+
+ - Updated the scaffold generator to generate WebAPI codes.
+ - Modified the scaffold generator to generate service classes for the model layer.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 May 23, 2021
 
 ### TreeFrog Framework version 2.0 (beta) release <span style="color: red;">New!</span>
 
  - Support for Qt version 5 and version 6.
  - Modified not to use obsolete functions of Qt.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Feb. 6, 2021
 
