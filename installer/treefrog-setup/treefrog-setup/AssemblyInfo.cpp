@@ -31,7 +31,7 @@ using namespace System::Security::Permissions;
 // すべての値を指定するか、下のように '*' を使ってリビジョンおよびビルド番号を
 // 既定値にすることができます:
 
-[assembly:AssemblyVersionAttribute("2.0.1")];
+[assembly:AssemblyVersionAttribute("2.0.2")];
 
 [assembly:ComVisible(false)];
 
