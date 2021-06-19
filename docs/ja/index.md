@@ -40,7 +40,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/5/23  TreeFrog Framework バージョン2.0 （ベータ2）リリース <span style="color: red;">New!</span>
+### 2021/6/19  TreeFrog Framework バージョン2.0 （ベータ2）リリース <span style="color: red;">New!</span>
 
   - WebAPIを生成するようスキャフォールディング機能を更新.
   - モデル層としてサービスクラスを生成するようスキャフォールディング機能を修正
