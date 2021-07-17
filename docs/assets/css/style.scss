@@ -11,7 +11,7 @@ body {
 }
 #wrapper {
     margin: 0 auto;
-    width: 980px;
+    max-width: 1040px;
     min-width: 980px;
 }
 .header-inner {
@@ -131,7 +131,8 @@ img#logo {
 .main-content {
     display: inline-block;
     vertical-align: top;
-    width: 724px;
+    max-width: 784px;
+    min-width: 724px;
     padding-bottom: 10px;
 }
 .navigation {
