@@ -8,3 +8,5 @@ group :jekyll_plugins do
   gem "jekyll"
 end
 
+
+gem "sass", "~> 3.7"

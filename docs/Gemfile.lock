@@ -282,6 +282,7 @@ DEPENDENCIES
   jekyll
   jekyll-theme-slate
   markdown
+  sass (~> 3.7)
   therubyracer
 
 BUNDLED WITH
