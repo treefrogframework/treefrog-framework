@@ -2,7 +2,10 @@
 ---
 
 @charset "utf-8";
-@import "{{ site.theme }}";
+@import 'config';
+@import 'mixins';
+@import 'extends';
+//@import "{{ site.theme }}";
 
 body {
     font-family: helvetica, arial, "hiragino kaku gothic pron", meiryo, "ms pgothic", sans-serif;
