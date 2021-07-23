@@ -2,9 +2,8 @@
 ---
 
 @charset "utf-8";
-@import 'config';
-@import 'mixins';
-@import 'extends';
+@import "jekyll-theme-slate";
+@import "rouge-github";
 //@import "{{ site.theme }}";
 
 body {
