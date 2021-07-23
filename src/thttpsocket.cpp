@@ -22,7 +22,7 @@
 #include <ctime>
 #include <thread>
 
-constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
+constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
 constexpr qint64 WRITE_LENGTH = 1408;
 constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 
@@ -203,8 +203,8 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
     static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
 
-    int buflen = _readBuffer.capacity() - _readBuffer.size();
-    int len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
+    qint64 buflen = _readBuffer.capacity() - _readBuffer.size();
+    qint64 len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
 
     if (len < 0) {
         setSocketDescriptor(_socket, QAbstractSocket::ClosingState);
@@ -223,7 +223,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                 _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0LL);
                 _readBuffer.resize(0);
             } else {
-                _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0LL);
+                _lengthToRead = qMax(_lengthToRead - len, 0LL);
             }
 
         } else if (_lengthToRead < 0) {
