@@ -122,6 +122,9 @@ constexpr auto TF_SRC_REVISION = 2397;
         case QMetaType::QJsonDocument:                   \
             eh((___##VAR##_).toJsonDocument());          \
             break;                                       \
+        case QMetaType::QVariantMap:                     \
+            eh((___##VAR##_).toMap());                   \
+            break;                                       \
         default:                                         \
             eh(___##VAR##_);                             \
         }                                                \
@@ -145,6 +148,9 @@ constexpr auto TF_SRC_REVISION = 2397;
         case QMetaType::QJsonDocument:                   \
             eh((___##VAR##_).toJsonDocument());          \
             break;                                       \
+        case QMetaType::QVariantMap:                     \
+            eh((___##VAR##_).toMap());                   \
+            break;                                       \
         default:                                         \
             eh(___##VAR##_);                             \
         }                                                \
@@ -156,11 +162,12 @@ constexpr auto TF_SRC_REVISION = 2397;
 
 #define T_EHEX_V(VAR, DEFAULT)                                         \
     do {                                                               \
-        QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); \
-        if ((___##VAR##_).isEmpty())                                   \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR));               \
+        if ((___##VAR##_).isNull()) {                                  \
             eh(DEFAULT);                                               \
-        else                                                           \
+        } else {                                                       \
             T_EHEX(VAR);                                               \
+        }                                                              \
     } while (0)
 
 #define tehexv(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
@@ -187,6 +194,9 @@ constexpr auto TF_SRC_REVISION = 2397;
         case QMetaType::QJsonDocument:                   \
             echo((___##VAR##_).toJsonDocument());        \
             break;                                       \
+        case QMetaType::QVariantMap:                     \
+            echo((___##VAR##_).toMap());                 \
+            break;                                       \
         default:                                         \
             echo(___##VAR##_);                           \
         }                                                \
@@ -210,6 +220,9 @@ constexpr auto TF_SRC_REVISION = 2397;
         case QMetaType::QJsonDocument:                   \
             echo((___##VAR##_).toJsonDocument());        \
             break;                                       \
+        case QMetaType::QVariantMap:                     \
+            echo((___##VAR##_).toMap());                 \
+            break;                                       \
         default:                                         \
             echo(___##VAR##_);                           \
         }                                                \
@@ -222,11 +235,12 @@ constexpr auto TF_SRC_REVISION = 2397;
 
 #define T_ECHOEX_V(VAR, DEFAULT)                                       \
     do {                                                               \
-        QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); \
-        if ((___##VAR##_).isEmpty())                                   \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR));               \
+        if ((___##VAR##_).isNull()) {                                  \
             echo(DEFAULT);                                             \
-        else                                                           \
+        } else {                                                       \
             T_ECHOEX(VAR);                                             \
+        }                                                              \
     } while (0)
 
 #define techoexv(VAR, DEFAULT) T_ECHOEX_V(VAR, DEFAULT)
