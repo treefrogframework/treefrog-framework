@@ -25,7 +25,7 @@ public:
         insert(TSql::NotEqual, "<>%1");
         insert(TSql::LessThan, "<%1");
         insert(TSql::GreaterThan, ">%1");
-        insert(TSql::LessEqual, "<=%1");
+        insert(TSql::LessEqual, "<=%1");  
         insert(TSql::GreaterEqual, ">=%1");
         insert(TSql::IsNull, " IS NULL");
         insert(TSql::IsEmpty, "(%1 IS NULL OR %1='')");
@@ -33,6 +33,8 @@ public:
         insert(TSql::IsNotEmpty, "%1 IS NOT NULL AND %1<>''");
         insert(TSql::Like, " LIKE %1");
         insert(TSql::NotLike, " NOT LIKE %1");
+        insert(TSql::LikeUpper, " LIKE upper(%1)");
+        insert(TSql::NotLikeUpper, " NOT LIKE upper(%1)");
         insert(TSql::LikeEscape, " LIKE %1 ESCAPE %2");
         insert(TSql::NotLikeEscape, " NOT LIKE %1 ESCAPE %2");
         insert(TSql::ILike, " ILIKE %1");

@@ -11,7 +11,7 @@ T_CORE_EXPORT QString formatArg(int op);
 T_CORE_EXPORT QString formatArg(int op, const QString &a);
 T_CORE_EXPORT QString formatArg(int op, const QString &a1, const QString &a2);
 }
-
+ 
 /*!
   TCriteriaData class is a class for criteria data objects.
   \sa TCriteria
@@ -161,7 +161,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
 
         } else if (cri.op1 != TSql::Invalid) {
             switch (cri.op1) {
-            case TSql::Equal:
+            case TSql::Equal: 
             case TSql::NotEqual:
             case TSql::LessThan:
             case TSql::GreaterThan:
@@ -172,6 +172,11 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             case TSql::ILike:
             case TSql::NotILike:
                 sqlString += name + TSql::formatArg(cri.op1, TSqlQuery::formatValue(cri.val1, cri.varType, database));
+                break;
+
+            case TSql::LikeUpper:
+            case TSql::NotLikeUpper:
+                sqlString += QString("upper(%1)").arg(name) + TSql::formatArg(cri.op1, TSqlQuery::formatValue(cri.val1, cri.varType, database));
                 break;
 
             case TSql::In:
