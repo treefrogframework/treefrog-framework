@@ -15,6 +15,8 @@
 #include "mongocommand.h"
 #include "mongoobjgenerator.h"
 #include "otamagenerator.h"
+#include "vueservicegenerator.h"
+#include "vueerbgenerator.h"
 #include "projectfilegenerator.h"
 #include "sqlobjgenerator.h"
 #include "tableschema.h"
@@ -202,7 +204,7 @@ const QString devIni = QLatin1String("config/development.ini");
 static QSettings appSettings(appIni, QSettings::IniFormat);
 static QSettings devSettings(devIni, QSettings::IniFormat);
 static QString templateSystem;
-
+static int vueEnable = -1;
 
 static void usage()
 {
@@ -253,7 +255,7 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
         for (;;) {
             std::printf("  remove  %s? [ynaqh] ", qUtf8Printable(QDir::cleanPath(file.fileName())));
 
-            QString line = stream.readLine();
+            QString line = stream.readLine().trimmed();
             if (line.isNull())
                 break;
 
@@ -512,6 +514,29 @@ static void printSuccessMessage(const QString &model)
     if (!msg.isEmpty()) {
         puts(qUtf8Printable(msg));
     }
+}
+
+
+static bool isVueEnabled()
+{
+    if (vueEnable < 0) {
+        std::printf("\n");
+        QTextStream stream(stdin);
+        for (;;) {
+            std::printf(" Use vue.js? [y/n] ");
+            QString line = stream.readLine().trimmed();
+
+            const QChar c = line[0];
+            if (c == 'Y' || c == 'y') {
+                vueEnable = 1;
+                break;
+            } else if (c == 'N' || c == 'n') {
+                vueEnable = 0;
+                break;
+            }
+        }
+    }
+    return (bool)vueEnable;
 }
 
 
@@ -793,22 +818,36 @@ int main(int argc, char *argv[])
                 return 2;
             }
 
-            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            svrgen.generate(D_MODELS);
-
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
 
-            // Generates view files of the specified template system
-            if (templateSystem == "otama") {
-                OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-                viewgen.generate(D_VIEWS);
-            } else if (templateSystem == "erb") {
-                ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-                viewgen.generate(D_VIEWS);
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+
+                // Generates view files of the specified template system
+                if (templateSystem == "erb") {
+                    VueErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                    viewgen.generate(D_VIEWS);
+                } else {
+                    qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
+                    return 2;
+                }
             } else {
-                qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
-                return 2;
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+
+                // Generates view files of the specified template system
+                if (templateSystem == "otama") {
+                    OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                    viewgen.generate(D_VIEWS);
+                } else if (templateSystem == "erb") {
+                    ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                    viewgen.generate(D_VIEWS);
+                } else {
+                    qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
+                    return 2;
+                }
             }
 
             if (success) {
