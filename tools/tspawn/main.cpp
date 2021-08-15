@@ -204,7 +204,6 @@ const QString devIni = QLatin1String("config/development.ini");
 static QSettings appSettings(appIni, QSettings::IniFormat);
 static QSettings devSettings(devIni, QSettings::IniFormat);
 static QString templateSystem;
-static int vueEnable = -1;
 
 static void usage()
 {
@@ -519,11 +518,13 @@ static void printSuccessMessage(const QString &model)
 
 static bool isVueEnabled()
 {
+    static int vueEnable = -1;
+
     if (vueEnable < 0) {
         std::printf("\n");
         QTextStream stream(stdin);
         for (;;) {
-            std::printf(" Use vue.js? [y/n] ");
+            std::printf(" Create sources for vue.js? [y/n] ");
             QString line = stream.readLine().trimmed();
 
             const QChar c = line[0];
@@ -669,8 +670,13 @@ int main(int argc, char *argv[])
                 return 2;
             }
 
-            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            svrgen.generate(D_MODELS);
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            }
             break;
         }
 
@@ -690,8 +696,13 @@ int main(int argc, char *argv[])
                 return 2;
             }
 
-            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            svrgen.generate(D_MODELS);
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            }
             break;
         }
 
@@ -715,8 +726,13 @@ int main(int argc, char *argv[])
                 return 2;
             }
 
-            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            success &= svrgen.generate(D_MODELS);
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                success &= svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                success &= svrgen.generate(D_MODELS);
+            }
 
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
@@ -749,8 +765,13 @@ int main(int argc, char *argv[])
                 return 2;
             }
 
-            ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            svrgen.generate(D_MODELS);
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            }
             break;
         }
 
