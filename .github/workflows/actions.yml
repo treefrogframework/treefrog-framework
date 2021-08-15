@@ -52,5 +52,6 @@ jobs:
         ./tmaketest
     - name: releasetest
       run: |
+        set +o pipefail
         cd $GITHUB_WORKSPACE/tools/test/releasetest
         ./releasetest
