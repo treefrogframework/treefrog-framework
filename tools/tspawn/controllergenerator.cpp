@@ -62,7 +62,6 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\
                                                  "            render();\n"
                                                  "        }\n"
                                                  "        break;\n"
-                                                 "\n"
                                                  "    default:\n"
                                                  "        renderErrorResponse(Tf::NotFound);\n"
                                                  "        break;\n"
