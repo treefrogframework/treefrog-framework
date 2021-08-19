@@ -7,7 +7,7 @@
 :: 10行目、21行目、22行目を編集
 
 
-set VERSION=2.0.2
+set VERSION=2.1.0
 set QTBASE=C:\Qt
 set TFDIR=C:\TreeFrog\%VERSION%
 
@@ -36,7 +36,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\6.1.1\msvc2019_64\bin\qtenv2.bat"      6.1
+call :build_msi "%QTBASE%\6.1.2\msvc2019_64\bin\qtenv2.bat"      6.1
 
 call :build_setup treefrog-%VERSION%-msvc_64-setup.exe
 
