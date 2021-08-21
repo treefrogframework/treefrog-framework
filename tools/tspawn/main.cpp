@@ -10,17 +10,23 @@
 #include "global.h"
 #include "helpergenerator.h"
 #include "mailergenerator.h"
+#include "servicegenerator.h"
 #include "modelgenerator.h"
 #include "mongocommand.h"
 #include "mongoobjgenerator.h"
 #include "otamagenerator.h"
+#include "vueservicegenerator.h"
+#include "vueerbgenerator.h"
 #include "projectfilegenerator.h"
 #include "sqlobjgenerator.h"
 #include "tableschema.h"
 #include "util.h"
 #include "validatorgenerator.h"
 #include "websocketgenerator.h"
+#include "apicontrollergenerator.h"
+#include "apiservicegenerator.h"
 #include <QtCore>
+#include <QTextCodec>
 #include <random>
 #ifndef Q_CC_MSVC
 #include <unistd.h>
@@ -46,6 +52,7 @@ enum SubCommand {
     MongoScaffold,
     MongoModel,
     WebSocketEndpoint,
+    Api,
     Validator,
     Mailer,
     Scaffold,
@@ -83,6 +90,8 @@ public:
         insert("mm", MongoModel);
         insert("websocket", WebSocketEndpoint);
         insert("w", WebSocketEndpoint);
+        insert("api", Api);
+        insert("a", Api);
         insert("validator", Validator);
         insert("v", Validator);
         insert("mailer", Mailer);
@@ -109,6 +118,7 @@ public:
     {
         append(L("controllers"));
         append(L("models"));
+        append(L("models/objects"));
         append(L("models/sqlobjects"));
         append(L("models/mongoobjects"));
         append(L("views"));
@@ -147,8 +157,8 @@ public:
         append(L("controllers/applicationcontroller.cpp"));
         append(L("models/models.pro"));
 #ifdef Q_OS_WIN
-        append(L("models/_dummymodel.h"));
-        append(L("models/_dummymodel.cpp"));
+        append(L("models/objects/_dummymodel.h"));
+        append(L("models/objects/_dummymodel.cpp"));
 #endif
         append(L("views/views.pro"));
         append(L("views/_src/_src.pro"));
@@ -195,7 +205,6 @@ static QSettings appSettings(appIni, QSettings::IniFormat);
 static QSettings devSettings(devIni, QSettings::IniFormat);
 static QString templateSystem;
 
-
 static void usage()
 {
     std::printf("usage: tspawn <subcommand> [args]\n\n"
@@ -214,6 +223,7 @@ static void usage()
                 "  mongoscaffold (ms) <model-name>\n"
                 "  mongomodel (mm) <model-name>\n"
                 "  websocket (w)   <endpoint-name>\n"
+                "  api (a)         <api-name>\n"
                 "  validator (v)   <name>\n"
                 "  mailer (l)      <mailer-name> action [action ...]\n"
                 "  delete (d)      <table-name, helper-name or validator-name>\n");
@@ -242,16 +252,16 @@ static QStringList rmfiles(const QStringList &files, bool &allRemove, bool &quit
 
         QTextStream stream(stdin);
         for (;;) {
-            std::printf("  remove  %s? [ynaqh] ", qPrintable(QDir::cleanPath(file.fileName())));
+            std::printf("  remove  %s? [ynaqh] ", qUtf8Printable(QDir::cleanPath(file.fileName())));
 
-            QString line = stream.readLine();
+            QString line = stream.readLine().trimmed();
             if (line.isNull())
                 break;
 
             if (line.isEmpty())
                 continue;
 
-            QCharRef c = line[0];
+            const QChar c = line[0];
             if (c == 'Y' || c == 'y') {
                 remove(file);
                 rmd << fname;
@@ -335,10 +345,10 @@ static bool createNewApplication(const QString &name)
         return false;
     }
     if (!dir.mkdir(name)) {
-        qCritical("failed to create a directory %s", qPrintable(name));
+        qCritical("failed to create a directory %s", qUtf8Printable(name));
         return false;
     }
-    std::printf("  created   %s\n", qPrintable(name));
+    std::printf("  created   %s\n", qUtf8Printable(name));
 
     // Creates sub-directories
     for (const QString &str : *subDirs()) {
@@ -370,7 +380,7 @@ static bool createNewApplication(const QString &name)
 #ifdef Q_OS_WIN
     // Add dummy model files
     ProjectFileGenerator progen(name + "/" + D_MODELS + "models.pro");
-    QStringList dummy = {"_dummymodel.h", "_dummymodel.cpp"};
+    QStringList dummy = {"objects/_dummymodel.h", "objects/_dummymodel.cpp"};
     progen.add(dummy);
 #endif
 
@@ -401,12 +411,18 @@ static int deleteScaffold(const QString &name)
     } else {
         QStringList ctrls, models, views;
         ctrls << str + "controller.h"
-              << str + "controller.cpp";
+              << str + "controller.cpp"
+              << "api" + str + "controller.h"
+              << "api" + str + "controller.cpp";
 
         models << QLatin1String("sqlobjects/") + str + "object.h"
                << QLatin1String("mongoobjects/") + str + "object.h"
-               << str + ".h"
-               << str + ".cpp";
+               << QLatin1String("objects/") + str + ".h"
+               << QLatin1String("objects/") + str + ".cpp"
+               << str + "service.h"
+               << str + "service.cpp"
+               << "api" + str + "service.h"
+               << "api" + str + "service.cpp";
 
         // Template system
         if (templateSystem == "otama") {
@@ -424,7 +440,7 @@ static int deleteScaffold(const QString &name)
                   << str + "/create.erb"
                   << str + "/save.erb";
         } else {
-            qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
+            qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
             return 2;
         }
 
@@ -466,8 +482,8 @@ static bool checkIniFile()
 {
     // Checking INI file
     if (!QFile::exists(appIni)) {
-        qCritical("INI file not found, %s", qPrintable(appIni));
-        qCritical("Execute %s command in application root directory!", qPrintable(QCoreApplication::arguments().value(0)));
+        qCritical("INI file not found, %s", qUtf8Printable(appIni));
+        qCritical("Execute %s command in application root directory!", qUtf8Printable(QCoreApplication::arguments().value(0)));
         return false;
     }
     return true;
@@ -492,11 +508,36 @@ static void printSuccessMessage(const QString &model)
     putchar('\n');
     int port = appSettings.value("ListenPort").toInt();
     if (port > 0 && port <= USHRT_MAX)
-        std::printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qPrintable(model));
+        std::printf(" Index page URL:  http://localhost:%d/%s/index\n\n", port, qUtf8Printable(model));
 
     if (!msg.isEmpty()) {
-        puts(qPrintable(msg));
+        puts(qUtf8Printable(msg));
     }
+}
+
+
+static bool isVueEnabled()
+{
+    static int vueEnable = -1;
+
+    if (vueEnable < 0) {
+        std::printf("\n");
+        QTextStream stream(stdin);
+        for (;;) {
+            std::printf(" Create sources for vue.js? [y/n] ");
+            QString line = stream.readLine().trimmed();
+
+            const QChar c = line[0];
+            if (c == 'Y' || c == 'y') {
+                vueEnable = 1;
+                break;
+            } else if (c == 'N' || c == 'n') {
+                vueEnable = 0;
+                break;
+            }
+        }
+    }
+    return (bool)vueEnable;
 }
 
 
@@ -526,18 +567,22 @@ int main(int argc, char *argv[])
     case ShowDrivers:
         std::printf("Available database drivers for Qt:\n");
         for (QStringListIterator i(TableSchema::databaseDrivers()); i.hasNext();) {
-            std::printf("  %s\n", qPrintable(i.next()));
+            std::printf("  %s\n", qUtf8Printable(i.next()));
         }
         break;
 
     case ShowDriverPath: {
+#if QT_VERSION < 0x060000
         QString path = QLibraryInfo::location(QLibraryInfo::PluginsPath) + "/sqldrivers";
+#else
+        QString path = QLibraryInfo::path(QLibraryInfo::PluginsPath) + "/sqldrivers";
+#endif
         QFileInfo fi(path);
         if (!fi.exists() || !fi.isDir()) {
             qCritical("Error: database driver's directory not found");
             return 1;
         }
-        std::printf("%s\n", qPrintable(fi.canonicalFilePath()));
+        std::printf("%s\n", qUtf8Printable(fi.canonicalFilePath()));
         break;
     }
 
@@ -547,7 +592,7 @@ int main(int argc, char *argv[])
             if (!tables.isEmpty()) {
                 std::printf("-----------------\nAvailable tables:\n");
                 for (QStringListIterator i(tables); i.hasNext();) {
-                    std::printf("  %s\n", qPrintable(i.next()));
+                    std::printf("  %s\n", qUtf8Printable(i.next()));
                 }
                 putchar('\n');
             }
@@ -575,7 +620,7 @@ int main(int argc, char *argv[])
             QStringList colls = mongo.getCollectionNames();
             std::printf("-----------------\nExisting collections:\n");
             for (auto &col : colls) {
-                std::printf("  %s\n", qPrintable(col));
+                std::printf("  %s\n", qUtf8Printable(col));
             }
             putchar('\n');
         }
@@ -618,6 +663,20 @@ int main(int argc, char *argv[])
         case Model: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            }
             break;
         }
 
@@ -630,6 +689,20 @@ int main(int argc, char *argv[])
         case UserModel: {
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(5), args.value(2), args.mid(3, 2));
             modelgen.generate(D_MODELS, true);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            }
             break;
         }
 
@@ -647,6 +720,20 @@ int main(int argc, char *argv[])
             ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
             bool success = modelgen.generate(D_MODELS);
 
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                success &= svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                success &= svrgen.generate(D_MODELS);
+            }
+
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
 
@@ -658,7 +745,7 @@ int main(int argc, char *argv[])
                 ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.autoValueIndex());
                 viewgen.generate(D_VIEWS);
             } else {
-                qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
+                qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
                 return 2;
             }
 
@@ -671,6 +758,20 @@ int main(int argc, char *argv[])
         case MongoModel: {
             ModelGenerator modelgen(ModelGenerator::Mongo, args.value(2));
             modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            } else {
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+            }
             break;
         }
 
@@ -693,6 +794,24 @@ int main(int argc, char *argv[])
             break;
         }
 
+        case Api: {
+            ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
+            modelgen.generate(D_MODELS);
+
+            int pkidx = modelgen.primaryKeyIndex();
+            if (pkidx < 0) {
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
+                return 2;
+            }
+
+            ApiServiceGenerator srvgen(modelgen.model(), modelgen.fieldList(), pkidx);
+            srvgen.generate(D_MODELS);
+
+            ApiControllerGenerator apigen(modelgen.model(), modelgen.fieldList(), pkidx);
+            apigen.generate(D_CTRLS);
+            break;
+        }
+
         case Validator: {
             ValidatorGenerator validgen(args.value(2));
             validgen.generate(D_HELPERS);
@@ -710,28 +829,46 @@ int main(int argc, char *argv[])
             ModelGenerator modelgen(ModelGenerator::Sql, args.value(3), args.value(2));
             bool success = modelgen.generate(D_MODELS);
 
-            if (!success)
+            if (!success) {
                 return 2;
+            }
 
             int pkidx = modelgen.primaryKeyIndex();
             if (pkidx < 0) {
-                qWarning("Primary key not found. [table name: %s]", qPrintable(args.value(2)));
+                qWarning("Primary key not found. [table name: %s]", qUtf8Printable(args.value(2)));
                 return 2;
             }
 
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
 
-            // Generates view files of the specified template system
-            if (templateSystem == "otama") {
-                OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-                viewgen.generate(D_VIEWS);
-            } else if (templateSystem == "erb") {
-                ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-                viewgen.generate(D_VIEWS);
+            if (isVueEnabled()) {
+                VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+
+                // Generates view files of the specified template system
+                if (templateSystem == "erb") {
+                    VueErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                    viewgen.generate(D_VIEWS);
+                } else {
+                    qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
+                    return 2;
+                }
             } else {
-                qCritical("Invalid template system specified: %s", qPrintable(templateSystem));
-                return 2;
+                ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
+                svrgen.generate(D_MODELS);
+
+                // Generates view files of the specified template system
+                if (templateSystem == "otama") {
+                    OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                    viewgen.generate(D_VIEWS);
+                } else if (templateSystem == "erb") {
+                    ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
+                    viewgen.generate(D_VIEWS);
+                } else {
+                    qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
+                    return 2;
+                }
             }
 
             if (success) {

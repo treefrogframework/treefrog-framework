@@ -190,24 +190,27 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
 ```
  $ tspawn --help
  usage: tspawn <subcommand> [args]
-
+ 
  Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
  Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
  Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
  Type 'tspawn --show-collections' to show all collections in the MongoDB.
-
+ 
  Available subcommands:
    new (n)         <application-name>
    scaffold (s)    <table-name> [model-name]
    controller (c)  <controller-name> action [action ...]
    model (m)       <table-name> [model-name]
+   helper (h)      <name>
    usermodel (u)   <table-name> [username password [model-name]]
    sqlobject (o)   <table-name> [model-name]
    mongoscaffold (ms) <model-name>
    mongomodel (mm) <model-name>
+   websocket (w)   <endpoint-name>
+   api (a)         <api-name>
    validator (v)   <name>
    mailer (l)      <mailer-name> action [action ...]
-   delete (d)      <table-name or validator-name>
+   delete (d)      <table-name, helper-name or validator-name>
 ```
 
 ## ソースコードをビルド
@@ -306,7 +309,7 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 ## ブラウザでアクセス
 
 ブラウザで http://localhost:8800/Blog にアクセスしてみましょう。<br>
-次のような一覧画面が表示されるはずです（Railsを真似てます..）。
+次のような一覧画面が表示されるはずです。
 
 最初は１件も登録がありません。
 
@@ -333,20 +336,12 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 ## コントローラの中身　
 
 生成されたコントローラの中身を見てみましょう。<br>
-まずはヘッダファイル。おまじないコードが幾つかありますが、URLによるディスパッチングのために必要な措置なのです。
-
 *public slots* の部分に、ディスパッチさせたいアクション（メソッド）を宣言するのがポイントです。そこには [CRUD](https://ja.wikipedia.org/wiki/CRUD){:target="_blank"} に相当するアクションが定義されていますね。<br>
 ちなみに、*slots* キーワードは Qt  による機能拡張のものです。詳細は Qt ドキュメントをご覧ください。
 
 ```c++
-class T_CONTROLLER_EXPORT BlogController : public ApplicationController
-{
+class T_CONTROLLER_EXPORT BlogController : public ApplicationController {
     Q_OBJECT
-public:
-    Q_INVOKABLE
-    BlogController() { }
-    BlogController(const BlogController &other);
-
 public slots:
     void index();                     // 一覧表示
     void show(const QString &id);     // １件表示
@@ -354,107 +349,72 @@ public slots:
     void save(const QString &id);     // 保存（更新）
     void remove(const QString &id);   // １件削除
 };
-
-T_DECLARE_CONTROLLER(BlogController, blogcontroller)        // おまじない
 ```
 
-次に、ソースファイル。<br>
-ちょっと長いですが、100 行程度なのでおつきあいください。
+次はソースファイルです。コントローラはリクエストに応じてビューを呼び出す役割を担っています。サービスを呼び出し、その結果に応じてrender関数でテンプレートを呼び出したり、redirect()関数でリダイレクトさせたりします。
+主要な処理はサービスクラスで行い、コントローラのロジックはシンプルにすることが重要です。
+
 
 ```c++
-#include "blogcontroller.h"
-#include "blog.h"
-
-BlogController::BlogController(const BlogController &)
-    : ApplicationController()
-{ }
+static BlogService service;
 
 void BlogController::index()
 {
-    auto blogList = Blog::getAll(); // Blogオブジェクトの全リストを取得
-    texport(blogList);              // ビューへ値を渡す
-    render();                       // ビュー（テンプレート）を描画
+    service.index();  // サービス呼び出し
+    render();         // ビュー（index.erb）を描画
 }
 
 void BlogController::show(const QString &id)
 {
-    auto blog = Blog::get(id.toInt()); // プライマリキーでBlogモデルを取得
-    texport(blog);
-    render();
+    service.show(id.toInt());  // サービス呼び出し
+    render();                  // ビュー（show.erb）を描画
 }
 
 void BlogController::create()
 {
-    switch (httpRequest().method()) {  // httpRequestメソッドのタイプをチェック
-    case Tf::Get:
+    int id;
+
+    switch (request().method()) {  // httpRequestメソッドのタイプをチェック
+    case Tf::Get:         // GETメソッドの場合
         render();
         break;
-
-    case Tf::Post: {
-        auto blog = httpRequest().formItems("blog");  // 入って来るフォームデータを「blog」という変数
-                                                      //（QVariantMap型）保存する
-        auto model = Blog::create(blog);              // POSTされた情報からオブジェクト生成
-
-        if (!model.isNull()) {
-            QString notice = "Created successfully.";
-            tflash(notice);                      // flash メッセージを設定
-            redirect(urla("show", model.id()));  // show アクションへリダイレクト
+    case Tf::Post:        // POSTメソッドの場合
+        id = service.create(request());  // サービス呼び出し
+        if (id > 0) {
+            redirect(urla("show", id));  // リダイレクト
         } else {
-            QString error = "Failed to create."; // オブジェクト生成失敗時
-            texport(error);
-            texport(blog);
-            render();
+            render();     // ビュー（create.erb）を描画
         }
         break;
-    }
 
     default:
-        renderErrorResponse(Tf::NotFound);       // エラーページが表示される
+        renderErrorResponse(Tf::NotFound);
         break;
     }
 }
 
-void BlogController::save(const QString &pk)
+void BlogController::save(const QString &id)
 {
-    switch (httpRequest().method()) {
-    case Tf::Get: {
-        auto model = Blog::get(id.toInt()); // Get a Blog object for update
-        if (!model.isNull()) {
-            session().insert("blog_lockRevision", model.lockRevision()); // Sets the lock revision
-            auto blog = model.toVariantMap();
-            texport(blog);                  // Sends the blog-data to the view
-            render();
-        }
+    int res;
+
+    switch (request().method()) {
+    case Tf::Get:
+        service.edit(session(), id.toInt());  // サービス呼び出し
+        render();
         break;
-    }
-
-    case Tf::Post: {
-        QString error;
-        int rev = session().value("blog_lockRevision").toInt(); // ロックリビジョンを取得
-        auto model = Blog::get(id.toInt(), rev);                // データを保存するための Blog オブジェクトを取得
-
-        if (model.isNull()) {
-            error = "Original data not found. It may have been updated/removed by another transaction.";
-            tflash(error);
-            redirect(urla("save", id));
-            break;
-        }
-
-        auto blog = httpRequest().formItems("blog");
-        model.setProperties(blog);              // リクエストされたデータを設定
-        if (model.save()) {                     // オブジェクトを保存（永続化）
-            QString notice = "Updated successfully.";
-            tflash(notice);
-            redirect(urla("show", model.id())); // show アクションへリダイレクト
+    case Tf::Post:
+        res = service.save(request(), session(), id.toInt());  // サービス呼び出し
+        if (res > 0) {
+            // 保存成功
+            redirect(urla("show", id));  // /blog/show へリダイレクト
+        } else if (res < 0) {
+            // 保存失敗
+            render();     // ビュー（save.erb）を描画
         } else {
-            error = "Failed to update.";
-            texport(error);
-            texport(blog);
-            render();
+            // リトライ
+            redirect(urla("save", id));   // /blog/save へリダイレクト
         }
         break;
-    }
-
     default:
         renderErrorResponse(Tf::NotFound);
         break;
@@ -463,18 +423,93 @@ void BlogController::save(const QString &pk)
 
 void BlogController::remove(const QString &id)
 {
-    if (httpRequest().method() != Tf::Post) {
+    switch (request().method()) {
+    case Tf::Post:
+        service.remove(id.toInt());  // サービス呼び出し
+        redirect(urla("index"));     // /blog/index へリダイレクト
+        break;
+    default:
         renderErrorResponse(Tf::NotFound);
-        return;
+        break;
     }
-
-    auto blog = Blog::get(id.toInt());  // Blog オブジェクトを取得
-    blog.remove();                      // 削除
-    redirect(urla("index"));
 }
 
 // Don't remove below this line
-T_REGISTER_CONTROLLER(blogcontroller)   // おまじない
+T_DEFINE_CONTROLLER(BlogController)
+```
+
+サービスクラスではリクエストで処理すべき本来のロジック（ビジネスロジック）を記述します。
+データベースから取得したモデルオブジェクトを加工しビューへ渡したり、あるいはリクエストから取得したデータをモデルオブジェクト経由でデータベースへ保存したりします。フォームデータのバリデーションを行うこともできます。
+
+```c++
+void BlogService::index()
+{
+    auto blogList = Blog::getAll();  // Blogオブジェクトの全リストを取得
+    texport(blogList);               // ビューへ渡す
+}
+
+void BlogService::show(int id)
+{
+    auto blog = Blog::get(id);   // プライマリキーでBlogモデルを取得
+    texport(blog);               // ビューへ渡す
+}
+
+int BlogService::create(THttpRequest &request)
+{
+    auto items = request.formItems("blog");  // フォームデータを取得
+    auto model = Blog::create(items);        // Blogオブジェクトを生成
+
+    if (model.isNull()) {
+        QString error = "Failed to create.";  // 失敗時のエラーメッセージ
+        texport(error);
+        return -1;
+    }
+
+    QString notice = "Created successfully.";
+    tflash(notice);           // flashメッセージを設定
+    return model.id();
+}
+
+void BlogService::edit(TSession& session, int id)
+{
+    auto model = Blog::get(id);    // オブジェクト取得
+    if (!model.isNull()) {
+        session.insert("blog_lockRevision", model.lockRevision());  // ロックリビジョン番号をセッションに保存
+        auto blog = model.toVariantMap();
+        texport(blog);      // ビューへ渡す
+    }
+}
+
+int BlogService::save(THttpRequest &request, TSession &session, int id)
+{
+    int rev = session.value("blog_lockRevision").toInt();  // ロックリビジョン番号をセッションから取得
+    auto model = Blog::get(id, rev);  // オブジェクト取得
+
+    if (model.isNull()) {
+        QString error = "Original data not found. It may have been updated/removed by another transaction.";
+        tflash(error);
+        return 0;
+    }
+
+    auto blog = request.formItems("blog");  // フォームデータを取得
+    model.setProperties(blog);              // フォームデータを設定
+    if (!model.save()) {                    // DBに保存
+        texport(blog);                      
+        QString error = "Failed to update.";
+        texport(error);
+        return -1;
+    }
+
+    QString notice = "Updated successfully.";
+    tflash(notice);
+    return 1;
+}
+
+bool BlogService::remove(int id)
+{
+    auto blog = Blog::get(id);  // Blog オブジェクトを取得
+    return blog.remove();       // DBから削除
+}
 ```
 
 ※ ロックリビジョンは楽観的ロックを実現するために使用されます。詳細は「モデル」の章で後述します。
@@ -523,7 +558,7 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
 </table>
 ```
 
-**次は、Otamaテンプレートシステムを見てみましょう。**
+**もう１つのテンプレートシステムも見てみましょう**
 
 Otama はテンプレートとプレゼンテーションロジックを完全に分離したテンプレートシステムです。HTMLテンプレートには完全な HTML を記述し、動的に書き換えたい部分の要素（開始タグ）に「マーク」をつけます。プレゼンテーションロジックファイルには、その「マーク」に関連づけてロジック（C++コード）を記述します。
 
@@ -598,13 +633,13 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 従って、~= は右辺の結果をHTMLエスケープし、要素のコンテントに設定します。HTMLエスケープしたくなかったら、~== を使います。<br>
 また、: (コロン)は、マークされた要素および子要素をその右辺の結果で置き換えます。従って、:== はHTMLエスケープせずに要素を置き換えます。
 
-### コントローラからビューへのデータの引き渡し
+### サービスまたはコントローラからビューへのデータの引き渡し
 
-コントローラで texport されたデータ（オブジェクト）をビューで使う場合は、tfetch メソッド（実はマクロ）で宣言する必要があります。引数には、変数の型と変数名を指定します。すると、指定された変数は texport される直前の状態と同じになるので、通常の変数と全く同じように使えます。上記のプレゼンテーションロジックの中で、実際そのように使われてます。<br>
+サービスで texport されたデータ（オブジェクト）をビューで使う場合は、tfetch メソッドで宣言する必要があります。引数には、変数の型と変数名を指定します。すると、指定された変数は texport される直前の状態と同じになるので、通常の変数と全く同じように使えます。上記のプレゼンテーションロジックの中で、実際そのように使われてます。<br>
 使い方の例：
 
 ```
- コントローラ側：
+ サービス側：
    int foo;
    foo = ...
    texport(foo);
@@ -624,10 +659,10 @@ Otama システムは、これらテンプレートファイルとプレゼン�
 
 ## モデルと ORM
 
-TreeFrog では、モデルが ORM オブジェクトを含むという関係なので、has-a の関係です（ただし、２つ以上の ORM オブジェクトを持つようなモデルを作っても構いません）。他のほとんどのフレームワークでは、デフォルトで 「ORM オブジェクト＝モデル」 になっていますから、ここは違っていますね。とは言っても、できることは特に変わりません。TreeFrog では、モデルオブジェクトはORM オブジェクトの小さいラッパーであると理解してください。
+TreeFrog では、モデルオブジェクトは永続化可能な概念を表現したデータの実体であり、ORM オブジェクトの小さいラッパーです。モデルが ORM オブジェクトを含むという関係なので、has-a の関係です（ただし、２つ以上の ORM オブジェクトを持つようなモデルを作っても構いません）。他のほとんどのフレームワークでは、デフォルトで 「ORM オブジェクト＝モデル」 になっていますから、ここは少し違っていますね。
 
 TreeFrog には SqlObject という名の O/R マッパーがデフォルトで組み込まれています。<br>
-C++ は静的型付け言語なので、型の宣言が必要です。生成された SqlObject  ファイル blogobject.h を見てみましょう。
+C++ は静的型付け言語なので型の宣言が必要です。生成された SqlObject  ファイル blogobject.h を見てみましょう。
 
 半分ほどおまじないコードがありますが、テーブルのフィールドがパブリックなメンバ変数として宣言されています。構造体に近いですね。たったこれだけで、CRUD 相当のメソッド(create, findFirst, update, remove) が使えるようになります。それらのメソッドは TSqlObject  クラスと TSqlORMapper クラスに定義されています。
 

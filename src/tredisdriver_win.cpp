@@ -68,7 +68,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
 
-    tSystemDebug("Redis open host:%s  port:%d", qPrintable(_host), _port);
+    tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
     _client->connectToHost(_host, _port);
 
     bool ret = _client->waitForConnected(5000);

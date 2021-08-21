@@ -222,10 +222,11 @@ QString THttpRequest::parameter(const QString &name) const
 
 bool THttpRequest::hasItem(const QString &name, const QList<QPair<QString, QString>> &items)
 {
-    const QRegExp rx(QRegExp::escape(name) + QLatin1String("(\\[[^\\[\\]]*\\]){0,2}"));
+    const QRegularExpression rx(QLatin1String("^") + QRegularExpression::escape(name) + QLatin1String("(\\[[^\\[\\]]*\\]){0,2}$"));
 
     for (auto &p : items) {
-        if (rx.exactMatch(p.first)) {
+        auto match = rx.match(p.first);
+        if (match.hasMatch()) {
             return true;
         }
     }
@@ -412,11 +413,12 @@ QVariantList THttpRequest::itemVariantList(const QString &key, const QList<QPair
 {
     // format of key: hoge[][foo] or hoge[][]
     QVariantList lst;
-    const QRegExp rx(QRegExp::escape(key) + QLatin1String("\\[\\]\\[([^\\[\\]]*)\\]"));
+    const QRegularExpression rx(QLatin1String("^") + QRegularExpression::escape(key) + QLatin1String("\\[\\]\\[([^\\[\\]]*)\\]$"));
 
     for (auto &p : items) {
-        if (rx.exactMatch(p.first)) {
-            QString k = rx.cap(1);
+        auto match = rx.match(p.first);
+        if (match.hasMatch()) {
+            QString k = match.captured(1);
             if (k.isEmpty()) {
                 lst << p.second;
             } else {
@@ -441,31 +443,35 @@ QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString,
 {
     // format of key: hoge[foo], hoge[foo][] or hoge[foo][fuga]
     QVariantMap map;
-    const QRegExp rx(QRegExp::escape(key) + QLatin1String("\\[([^\\[\\]]+)\\]"));
-    const QRegExp rx2(QRegExp::escape(key) + QLatin1String("\\[([^\\[\\]]+)\\]\\[([^\\[\\]]*)\\]"));
+    const QRegularExpression rx(QLatin1String("^") + QRegularExpression::escape(key) + QLatin1String("\\[([^\\[\\]]+)\\]$"));
+    const QRegularExpression rx2(QLatin1String("^") + QRegularExpression::escape(key) + QLatin1String("\\[([^\\[\\]]+)\\]\\[([^\\[\\]]*)\\]$"));
 
     for (auto &p : items) {
-        if (rx.exactMatch(p.first)) {
-            map.insert(rx.cap(1), p.second);
+        auto match = rx.match(p.first);
+        if (match.hasMatch()) {
+            map.insert(match.captured(1), p.second);
 
-        } else if (rx2.exactMatch(p.first)) {
-            QString k1 = rx2.cap(1);
-            QString k2 = rx2.cap(2);
-            QVariant v = map.value(k1);
-
-            if (k2.isEmpty()) {
-                // QMap<QString, QVariantList>
-                auto vlst = v.toList();
-                vlst << p.second;
-                map.insert(k1, QVariant(vlst));
-            } else {
-                // QMap<QString, QVariantMap>
-                auto vmap = v.toMap();
-                vmap.insert(k2, p.second);
-                map.insert(k1, QVariant(vmap));
-            }
         } else {
-            // do nothing
+            auto match2 = rx2.match(p.first);
+            if (match2.hasMatch()) {
+                QString k1 = match2.captured(1);
+                QString k2 = match2.captured(2);
+                QVariant v = map.value(k1);
+
+                if (k2.isEmpty()) {
+                    // QMap<QString, QVariantList>
+                    auto vlst = v.toList();
+                    vlst << p.second;
+                    map.insert(k1, QVariant(vlst));
+                } else {
+                    // QMap<QString, QVariantMap>
+                    auto vmap = v.toMap();
+                    vmap.insert(k2, p.second);
+                    map.insert(k1, QVariant(vmap));
+                }
+            } else {
+                // do nothing
+            }
         }
     }
     return map;
@@ -504,7 +510,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             QJsonParseError error;
             d->jsonData = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
-                tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qPrintable(error.errorString()),
+                tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qUtf8Printable(error.errorString()),
                     error.offset);
             }
         } else if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
@@ -512,7 +518,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->multipartFormData = TMultipartFormData(body, boundary());
             d->formItems = d->multipartFormData.postParameters;
         } else {
-            tSystemWarn("unsupported content-type: %s", qPrintable(ctype));
+            tSystemWarn("unsupported content-type: %s", qUtf8Printable(ctype));
         }
     } /* FALLTHRU */
 

@@ -8,7 +8,7 @@
 #include "tsystemglobal.h"
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QtEndian>
 #include <TBson>
@@ -154,7 +154,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             break;
 
         case BSON_TYPE_REGEX:
-            ret[key] = QRegExp(QLatin1String(bson_iter_regex(&it, nullptr)));
+            ret[key] = QRegularExpression(QLatin1String(bson_iter_regex(&it, nullptr)));
             break;
 
         case BSON_TYPE_CODE:
@@ -182,7 +182,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             tError("fromBson() unknown type: %d", t);
             break;
         }
-        //tSystemDebug("fromBson : t:%d key:%s = %s", t, qPrintable(key), qPrintable(ret[key].toString()));
+        //tSystemDebug("fromBson : t:%d key:%s = %s", t, qUtf8Printable(key), qUtf8Printable(ret[key].toString()));
     }
     return ret;
 }
@@ -192,7 +192,12 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
 {
     static const QLatin1String oidkey("_id");
     bool ok = true;
+
+#if QT_VERSION < 0x060000
     int type = value.type();
+#else
+    auto type = value.typeId();
+#endif
 
     // _id
     if (key == oidkey) {
@@ -214,33 +219,33 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     }
 
     switch (type) {
-    case QVariant::Int:
-        BSON_APPEND_INT32(bson, qPrintable(key), value.toInt(&ok));
+    case QMetaType::Int:
+        BSON_APPEND_INT32(bson, qUtf8Printable(key), value.toInt(&ok));
         break;
 
-    case QVariant::String:
-        BSON_APPEND_UTF8(bson, qPrintable(key), value.toString().toUtf8().data());
+    case QMetaType::QString:
+        BSON_APPEND_UTF8(bson, qUtf8Printable(key), value.toString().toUtf8().data());
         break;
 
-    case QVariant::LongLong:
-        BSON_APPEND_INT64(bson, qPrintable(key), value.toLongLong(&ok));
+    case QMetaType::LongLong:
+        BSON_APPEND_INT64(bson, qUtf8Printable(key), value.toLongLong(&ok));
         break;
 
-    case QVariant::Map:
-        BSON_APPEND_DOCUMENT(bson, qPrintable(key), (const bson_t *)TBson::toBson(value.toMap()).constData());
+    case QMetaType::QVariantMap:
+        BSON_APPEND_DOCUMENT(bson, qUtf8Printable(key), (const bson_t *)TBson::toBson(value.toMap()).constData());
         break;
 
-    case QVariant::Double:
-        BSON_APPEND_DOUBLE(bson, qPrintable(key), value.toDouble(&ok));
+    case QMetaType::Double:
+        BSON_APPEND_DOUBLE(bson, qUtf8Printable(key), value.toDouble(&ok));
         break;
 
-    case QVariant::Bool:
-        BSON_APPEND_BOOL(bson, qPrintable(key), value.toBool());
+    case QMetaType::Bool:
+        BSON_APPEND_BOOL(bson, qUtf8Printable(key), value.toBool());
         break;
 
-    case QVariant::DateTime: {
+    case QMetaType::QDateTime: {
 #if QT_VERSION >= 0x040700
-        BSON_APPEND_DATE_TIME(bson, qPrintable(key), value.toDateTime().toMSecsSinceEpoch());
+        BSON_APPEND_DATE_TIME(bson, qUtf8Printable(key), value.toDateTime().toMSecsSinceEpoch());
 #else
         QDateTime utcDate = value.toDateTime().toUTC();
         qint64 ms = utcDate.time().msec();
@@ -248,21 +253,21 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         if (ms > 0) {
             tm += ms;
         }
-        BSON_APPEND_DATE_TIME(bson, qPrintable(key), tm);
+        BSON_APPEND_DATE_TIME(bson, qUtf8Printable(key), tm);
 #endif
         break;
     }
 
-    case QVariant::ByteArray: {
+    case QMetaType::QByteArray: {
         QByteArray ba = value.toByteArray();
-        BSON_APPEND_BINARY(bson, qPrintable(key), BSON_SUBTYPE_BINARY, (uint8_t *)ba.constData(), ba.length());
+        BSON_APPEND_BINARY(bson, qUtf8Printable(key), BSON_SUBTYPE_BINARY, (uint8_t *)ba.constData(), ba.length());
         break;
     }
 
-    case QVariant::List:  // FALLTHRU
-    case QVariant::StringList: {
+    case QMetaType::QVariantList:  // FALLTHRU
+    case QMetaType::QStringList: {
         bson_t child;
-        BSON_APPEND_ARRAY_BEGIN(bson, qPrintable(key), &child);
+        BSON_APPEND_ARRAY_BEGIN(bson, qUtf8Printable(key), &child);
 
         int i = 0;
         for (auto &var : (const QList<QVariant> &)value.toList()) {
@@ -272,12 +277,12 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
     }
 
-    case QVariant::Invalid:
-        BSON_APPEND_UNDEFINED(bson, qPrintable(key));
+    case QMetaType::UnknownType:
+        BSON_APPEND_UNDEFINED(bson, qUtf8Printable(key));
         break;
 
     default:
-        tError("toBson() failed to convert  name:%s  type:%d", qPrintable(key), type);
+        tError("toBson() failed to convert  name:%s  type:%d", qUtf8Printable(key), type);
         ok = false;
         break;
     }
@@ -288,7 +293,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
 static void appendBson(TBsonObject *bson, const QVariantMap &map)
 {
     for (auto it = map.begin(); it != map.end(); ++it) {
-        bool res = appendBsonValue((bson_t *)bson, qPrintable(it.key()), it.value());
+        bool res = appendBsonValue((bson_t *)bson, qUtf8Printable(it.key()), it.value());
         if (!res) {
             break;
         }
@@ -316,7 +321,7 @@ TBson TBson::toBson(const QString &op, const QVariantMap &map)
 {
     TBson ret;
     if (!op.isEmpty()) {
-        BSON_APPEND_DOCUMENT((bson_t *)ret.data(), qPrintable(op), (const bson_t *)TBson::toBson(map).constData());
+        BSON_APPEND_DOCUMENT((bson_t *)ret.data(), qUtf8Printable(op), (const bson_t *)TBson::toBson(map).constData());
     }
     return ret;
 }
@@ -347,7 +352,7 @@ TBson TBson::toBson(const QStringList &lst)
 {
     TBson ret;
     for (auto &str : lst) {
-        bool res = appendBsonValue((bson_t *)ret.data(), qPrintable(str), 1);
+        bool res = appendBsonValue((bson_t *)ret.data(), qUtf8Printable(str), 1);
         if (!res)
             break;
     }

@@ -40,14 +40,30 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/2/6  TreeFrog Framework バージョン1.31.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2021/8/21  TreeFrog Framework バージョン2.1 （安定版）リリース <span style="color: red;">New!</span>
+
+  - 受信パケットのサイズ計算ロジックの不具合修正
+  - variantmapを引数にもつecho()関数を追加
+  - Vue.js用のスキャフォールディング（足場）を作れるよう tspawn コマンドを修正
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2021/6/19  TreeFrog Framework バージョン2.0 （ベータ2）リリース
+
+  - WebAPIを生成するようスキャフォールディング機能を更新.
+  - モデル層としてサービスクラスを生成するようスキャフォールディング機能を修正
+
+### 2021/5/23  TreeFrog Framework バージョン2.0 （ベータ版）リリース
+
+  - Qt6とQt5のサポート
+  - Qtの陳腐化した関数を使用しないよう修正
+
+### 2021/2/6  TreeFrog Framework バージョン1.31.0 （安定版）リリース
 
   - TMultiplexingServerの不具合修正
   - Qtの陳腐化した関数を使用しないよう修正
   - TAbstractSqlORMapperクラス追加
   - パフォマンス改善
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2020/8/21  TreeFrog Framework バージョン1.30.0 （安定版）リリース
 
@@ -56,68 +72,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - URLルーティング情報を表示するオプションをtreefrogコマンドへ追加
   - ORM関数のI/F更新
   - パフォマンス改善
-
-### 2020/5/2  TreeFrog Framework バージョン1.29.0 （安定版）リリース
-
-  - Cookieへmax-ageを指定した時の不具合修正
-  - selectタグ生成時の不具合修正
-  - クラス生成時のboolフィールドの初期化コードを変更
-  - publish()関数をTActionControllerクラスに実装
-
-### 2020/2/11  TreeFrog Framework バージョン1.28.0 （安定版）リリース
-
-  - CookieへSameSite属性を追加できるよう実装
-  - MaxAge属性を設定するよう修正
-  - 利用可能なコントローラの表示に関するバグを修正
-  - -lオプションで表示した時のポート表示の不具合を修正
-  - renderText()関数で設定されるコンテントタイプの不具合修正
-
-### 2019/12/5  TreeFrog Framework バージョン1.27.0 （安定版）リリース
-
-  - OAuth2クライアントの実装 [実験的]
-  - MongoDBバージョン3.2以降のサポート.
-  - TSqlDatabasePoolのタイマーが停止する不具合修正 #279
-  - トランザクション有効/無効の設定が反映されない不具合の修正
-  - tspawnコマンドにおけるdiff実行の不具合修正
-
-### 2019/10/19  TreeFrog Framework バージョン1.26.0 （安定版）リリース
-
-  - SQLite, MongoDB, Redis向けキャッシュモジュールを追加
-  - LZ4圧縮アルゴリズムをv1.9.2に更新
-  - Ubuntu 19.10でのコンパイルエラー解消
-  - epoll MPMをマルチスレッドからシングルスレッドアーキテクチャに変更
-  - パフォーマンス改善
-
-### 2019/7/20  TreeFrog Framework バージョン1.25.0 （安定版）リリース
-
-  - Mongo Cドライバをv1.9.5に更新
-  - LZ4圧縮アルゴリズムをv1.9.1に更新
-  - セッションクッキーにドメイン値を設定できるよう修正
-  - コンフィグをC++11からC++14に変更
-  - その他不具合修正と改善
-
-### 2019/4/29  TreeFrog Framework バージョン1.24.0 （安定版）リリース
-
-  - LZ4圧縮アルゴリズムを使用するよう修正
-  - Redisハッシュ型データ向けの関数を実装
-  - 大文字を使った拡張子のファイルで戻されるコンテントタイプの不具合修正
-  - バックスラッシュを含んだform-dataの解析の不具合修正
-  - その他不具合修正と改善
-
-### 2019/1/6  TreeFrog Framework バージョン1.23.0 （安定版）リリース
-
-  - BEGEN/COMMIT/ROLLBACK 失敗時のファールセーフ追加
-  - セッションストアの不具合修正
-  - 例外クラスの微修正
-  - クエリーログにログメッセージ追加
-  - その他不具合修正
-
-### 2018/6/10  TreeFrog Framework バージョン1.22.0 （安定版）リリース
-
- - WebアプリのCMakeビルドをサポート
- - ESMTPをサポートしていない古いタイプのSMTPサーバへの送信をサポート
- - tspawn.proファイルの不具合修正
-
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 

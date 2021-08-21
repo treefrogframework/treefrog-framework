@@ -8,6 +8,8 @@
 #include "tsystemglobal.h"
 #include <TActionThread>
 #include <TThreadApplicationServer>
+#include <TWebApplication>
+
 
 /*!
   \class TThreadApplicationServer

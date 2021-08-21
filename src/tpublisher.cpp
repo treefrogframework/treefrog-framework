@@ -16,7 +16,7 @@
 #include <QMutex>
 #include <QSet>
 
-static QMutex mutex(QMutex::NonRecursive);
+static QMutex mutex;
 
 
 class Pub : public QObject {
@@ -124,7 +124,7 @@ TPublisher::TPublisher()
 
 void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket *socket)
 {
-    tSystemDebug("TPublisher::subscribe: %s", qPrintable(topic));
+    tSystemDebug("TPublisher::subscribe: %s", qUtf8Printable(topic));
     QMutexLocker locker(&mutex);
 
     Pub *pub = get(topic);
@@ -138,7 +138,7 @@ void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket 
 
 void TPublisher::unsubscribe(const QString &topic, TAbstractWebSocket *socket)
 {
-    tSystemDebug("TPublisher::unsubscribe: %s", qPrintable(topic));
+    tSystemDebug("TPublisher::unsubscribe: %s", qUtf8Printable(topic));
     QMutexLocker locker(&mutex);
 
     Pub *pub = get(topic);
@@ -162,13 +162,13 @@ void TPublisher::unsubscribeFromAll(TAbstractWebSocket *socket)
         pub->unsubscribe(castToObject(socket));
 
         if (pub->subscriberCounter() == 0) {
-            tSystemDebug("release topic: %s", qPrintable(it.key()));
+            tSystemDebug("release topic: %s", qUtf8Printable(it.key()));
             it.remove();
             delete pub;
         }
     }
 
-    tSystemDebug("total topics: %d", pubobj.count());
+    tSystemDebug("total topics: %lld", pubobj.count());
 }
 
 
@@ -266,7 +266,7 @@ Pub *TPublisher::create(const QString &topic)
     auto *pub = new Pub(topic);
     pub->moveToThread(Tf::app()->thread());
     pubobj.insert(topic, pub);
-    tSystemDebug("create topic: %s", qPrintable(topic));
+    tSystemDebug("create topic: %s", qUtf8Printable(topic));
     return pub;
 }
 
@@ -282,6 +282,6 @@ void TPublisher::release(const QString &topic)
     Pub *pub = pubobj.take(topic);
     if (pub) {
         delete pub;
-        tSystemDebug("release topic: %s  (total topics:%d)", qPrintable(topic), pubobj.count());
+        tSystemDebug("release topic: %s  (total topics:%lld)", qUtf8Printable(topic), pubobj.count());
     }
 }

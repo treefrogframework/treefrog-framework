@@ -188,24 +188,27 @@ Help of the tspawn command:
 ```
  $ tspawn --help
  usage: tspawn <subcommand> [args]
-
+ 
  Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
  Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
  Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
  Type 'tspawn --show-collections' to show all collections in the MongoDB.
-
+ 
  Available subcommands:
    new (n)         <application-name>
    scaffold (s)    <table-name> [model-name]
    controller (c)  <controller-name> action [action ...]
    model (m)       <table-name> [model-name]
+   helper (h)      <name>
    usermodel (u)   <table-name> [username password [model-name]]
    sqlobject (o)   <table-name> [model-name]
    mongoscaffold (ms) <model-name>
    mongomodel (mm) <model-name>
+   websocket (w)   <endpoint-name>
+   api (a)         <api-name>
    validator (v)   <name>
    mailer (l)      <mailer-name> action [action ...]
-   delete (d)      <table-name or validator-name>
+   delete (d)      <table-name, helper-name or validator-name>
 ```
 
 ## Build the Source Code
@@ -333,14 +336,7 @@ First, the header file. There are several charm codes, but these are required fo
 The purpose of public slots is to declare the actions (methods) you want to send. Actions corresponding to the [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete){:target="_blank"} are defined. Incidentally, the slots keyword is a feature of the Qt extension. Please see the Qt documentation for more details.
 
 ```c++
-class T_CONTROLLER_EXPORT BlogController : public ApplicationController
-{
-    Q_OBJECT
-public:
-    Q_INVOKABLE
-    BlogController() { }
-    BlogController(const BlogController &other);
-
+class T_CONTROLLER_EXPORT BlogController : public ApplicationController {
 public slots:
     void index();                     // Lists all entries
     void show(const QString &id);     // Shows one entry
@@ -348,127 +344,166 @@ public slots:
     void save(const QString &id);     // Updates (save)
     void remove(const QString &id);   // Deletes one entry
 };
-
-T_DECLARE_CONTROLLER(BlogController, blogcontroller)     // Charm
 ```
-　
-Next, let's look at the source file. <br>
-The source code is a bit long, but please bear with me.
+
+Next, explain the source file. The controller is responsible for invoking the view on request. Calls the service and depending on the result, it calls the template logic with the render() function or redirects with the redirect() function. 
+It is important to **write the main processing in the service class and keep the controller logic simple**.
 
 ```c++
-#include "blogcontroller.h"
-#include "blog.h"
-
-BlogController::BlogController(const BlogController &)
-    : ApplicationController()
-{ }
+static BlogService service;
 
 void BlogController::index()
 {
-    auto blogList = Blog::getAll();  // Get a list of all Blog objects
-    texport(blogList);               // Pass the value to a view
-    render();                        // Render the view (template)
+    service.index();  // Calls the service
+    render();         // Renders the view, index.erb
 }
 
 void BlogController::show(const QString &id)
 {
-    auto blog = Blog::get(id.toInt()) ;  // Gets Blog model by primary key
-    texport(blog);
-    render();
+    service.show(id.toInt());  // Calls the service
+    render();                  // Renders the view, show.erb
 }
 
 void BlogController::create()
 {
-    switch (httpRequest().method()) { // Checks the incoming httpRequest method type
-    case Tf::Get:
+    int id;
+
+    switch (request().method()) {  // Checks the incoming httpRequest method type
+    case Tf::Get:         // GET Method
         render();
         break;
-
-    case Tf::Post: {
-        auto blog = httpRequest().formItems("blog"); // Saves the incoming form-data in
-                                                     // the 'blog' variable from type 'QVariantMap'
-        auto model = Blog::create(blog);             // Creates the object from POST
-
-        if (!model.isNull()) {
-            QString notice = "Created successfully.";
-            tflash(notice);                      // Sets the flash message
-            redirect(urla("show", model.id()));  // Redirect to show action
+    case Tf::Post:        // POST Method
+        id = service.create(request());  // Calls the service
+        if (id > 0) {
+            redirect(urla("show", id));  // Redirects
         } else {
-            QString error = "Failed to create."; // Object creation failure
-            texport(error);
-            texport(blog);
-            render();
+            render();     // Renders the view, create.erb
         }
         break;
-    }
 
     default:
-        renderErrorResponse(Tf::NotFound);       // Shows an error page
+        renderErrorResponse(Tf::NotFound);
         break;
     }
 }
 
 void BlogController::save(const QString &id)
 {
-    switch (httpRequest().method()) {
-    case Tf::Get: {
-        auto model = Blog::get(id.toInt()); // Get a Blog object for update
-        if (!model.isNull()) {
-            session().insert("blog_lockRevision", model.lockRevision()); // Sets the lock revision
-            auto blog = model.toVariantMap();
-            texport(blog);                  // Sends the blog-data to the view
-            render();
-        }
+    int res;
+
+    switch (request().method()) {
+    case Tf::Get:
+        service.edit(session(), id.toInt());  // Calls the service
+        render();
         break;
-    }
-
-    case Tf::Post: {
-        QString error;
-        int rev = session().value("blog_lockRevision").toInt(); // Gets the lock revision
-        auto model = Blog::get(id.toInt(), rev);                // Obtaining blog-data by its ID
-
-        if (model.isNull()) {
-            error = "Original data not found. It may have been updated/removed by another transaction.";
-            tflash(error);
-            redirect(urla("save", id));
-            break;
-        }
-
-        auto blog = httpRequest().formItems("blog");
-        model.setProperties(blog);              // Sets the data coming from the request
-        if (model.save()) {                     // Saves the object
-            QString notice = "Updated successfully.";
-            tflash(notice);
-            redirect(urla("show", model.id())); // Redirects to show action
+    case Tf::Post:
+        res = service.save(request(), session(), id.toInt());  // Calls the service
+        if (res > 0) {
+            // Save completed 
+            redirect(urla("show", id));  // Redirects to /blog/show
+        } else if (res < 0) {
+            // Failed
+            render();     // Renders the view, save.erb
         } else {
-            error = "Failed to update.";
-            texport(error);
-            texport(blog);
-            render();
+            // Retry
+            redirect(urla("save", id));   // Redirects to /blog/save
         }
         break;
-    }
-
     default:
         renderErrorResponse(Tf::NotFound);
         break;
     }
 }
 
-void BlogController::remove(const QString &pk)
+void BlogController::remove(const QString &id)
 {
-    if (httpRequest().method() != Tf::Post) {
+    switch (request().method()) {
+    case Tf::Post:
+        service.remove(id.toInt());  // Calls the service
+        redirect(urla("index"));     // Redirects to /blog/index
+        break;
+    default:
         renderErrorResponse(Tf::NotFound);
-        return;
+        break;
     }
-
-    auto blog = Blog::get(id.toInt());   // Gets a Blog object
-    blog.remove();                       // Removes it
-    redirect(urla("index"));
 }
 
 // Don't remove below this line
-T_REGISTER_CONTROLLER(blogcontroller)    // Charm
+T_DEFINE_CONTROLLER(BlogController)
+```
+
+In the service class, write the original logic that should be processed in the request, so business logic.
+It can process the model object retrieved from the database and send it to the view, or it can save the data retrieved from the request to the database via the model object. You can also validate the form data.
+
+```c++
+void BlogService::index()
+{
+    auto blogList = Blog::getAll();  // Gets a list of all Blog objects
+    texport(blogList);               // Sends the data to the view
+}
+
+void BlogService::show(int id)
+{
+    auto blog = Blog::get(id);   // Gets the Blog object by primary key
+    texport(blog);               // Sends the data to the view
+}
+
+int BlogService::create(THttpRequest &request)
+{
+    auto items = request.formItems("blog");  // Gets the incoming form data
+    auto model = Blog::create(items);        // Creates the Blog object
+
+    if (model.isNull()) {
+        QString error = "Failed to create.";  // Error message
+        texport(error);
+        return -1;
+    }
+
+    QString notice = "Created successfully.";
+    tflash(notice);           // Sets a flash message
+    return model.id();
+}
+
+void BlogService::edit(TSession& session, int id)
+{
+    auto model = Blog::get(id);    // Gets the Blog object
+    if (!model.isNull()) {
+        session.insert("blog_lockRevision", model.lockRevision());  // Stores the lock revision to the session
+        auto blog = model.toVariantMap();
+        texport(blog);      // Sends to the view
+    }
+}
+
+int BlogService::save(THttpRequest &request, TSession &session, int id)
+{
+    int rev = session.value("blog_lockRevision").toInt();  // Gets the lock revision
+    auto model = Blog::get(id, rev);  // Gets a Blog object
+
+    if (model.isNull()) {
+        QString error = "Original data not found. It may have been updated/removed by another transaction.";
+        tflash(error);
+        return 0;
+    }
+
+    auto blog = request.formItems("blog");  // Gets the form data
+    model.setProperties(blog);              // Sets the form data
+    if (!model.save()) {                    // Saves the object to DB
+        texport(blog);
+        QString error = "Failed to update.";
+        texport(error);
+        return -1;
+    }
+
+    QString notice = "Updated successfully.";
+    tflash(notice);
+    return 1;
+}
+
+bool BlogService::remove(int id)
+{
+    auto blog = Blog::get(id);  // Gets a Blog object
+    return blog.remove();       // Removes it from DB
+}
 ```
 
 Lock revision is used to realize the optimistic locking. See "model", which comes later in this chapter, for more information.
@@ -516,7 +551,7 @@ The default view that is automatically generated by the generator is an ERB file
 </table>
 ```
 
-**Next, let's have a look at the Otama template system.**
+**Another template system**
 
 Otama is a template system that completely separates the presentation logic from the templates. The template is written in HTML and a "mark" element is inserted as the start tag of the section to be rewritten dynamically. The presentation logic file, written in C++ code, provides the logic in relation to the "mark".
 
@@ -592,14 +627,14 @@ The Otama operators, (and their combinations) are fairly simple:<br>
 
 \: (colon) replaces the result of the right-hand child elements and the elements that are marked, therefore :== replaces the element without HTML escape.
 
-### Passing Data from the Controller to the View
+### Passing Data from the Service or the Controller to the View
 
-If you want to use the textport data in view, the controller (object), must be declared in the tfetch (macro) method. For the argument, specify the variable name and type of the variable. Because it is the same state as immediately before the specified variable is texported, it can be used in exactly the same way as a normal variable. In the presentation logic above, it is used as the actual variable.
+In order to use the exported data (objects) in the view, you need to declare its variables by the tfetch() function. For the argument, specify  type of the variable and the variable name. The variables are the same state as immediately before the specified variables are exported, and can be used exactly the same way as a normal variable of C++.
 
 Here is an example in use :
 
 ```
-Controller side :
+Service side :
  int hoge;
  hoge = ...
  texport(hoge);
@@ -618,11 +653,11 @@ An HTML element consists of three components, a start tag, the content, end an t
 
 ## Model and ORM
 
-In TreeFrog, because it is based on relationships, the model will contain an ORM object, (however, you may want to create such a model with two or more ORM objects); the relationship being has-a. In this respect TreeFrog differs from other frameworks, since it uses "ORM = Object Model" by default.  You can not change this for specific cases. In TreeFrog, ORM object(s) is wrapped by Model object.
+In TreeFrog, a model object is **a data entity that can be persist and represents a concept**, and is a small wrapper around an ORM object. The model object contains the ORM object, which is a has-a relationship (naturally you can create such a model with two or more ORM objects). Since it uses "ORM = Object Model" by default in other framework, in this respect TreeFrog differs from the others.
 
 An O/R mapper named SqlObject is included by default in TreeFrog. Since C++ is a statically typed language, type declaration is required. Let's take a look at the SqlObject file generated by blogobject.h.
 
-There is a charm code half, but the field in the table is declared as a public member variable. It is close to the actual structure, but can only be used by CRUD or an equivalent method, (create, findFirst, update, remove). These methods are defined in the TSqlORMapper class and in the TSqlObject class.
+There is charm codes, but the field in the table is declared as a public member variable. It is close to the actual structure, but can be used by CRUD or an equivalent method, (create, findFirst, update, remove). These methods are defined in the TSqlORMapper class and in the TSqlObject class.
 
 ```c++
 class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData

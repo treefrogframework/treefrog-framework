@@ -5,6 +5,8 @@ group :jekyll_plugins do
   gem "jekyll-theme-slate"
   gem 'execjs'
   gem 'therubyracer'
-  gem "jekyll"
+  gem "jekyll", "3.9.1"
 end
 
+
+gem "sass", "~> 3.7"

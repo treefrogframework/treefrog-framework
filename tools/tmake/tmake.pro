@@ -1,11 +1,20 @@
 TARGET   = tmake
 TEMPLATE = app
-VERSION  = 1.0.0
-CONFIG  += console c++14
+VERSION  = 2.0.0
+CONFIG  += console
 CONFIG  -= app_bundle
-QT      +=
 QT      -= gui
+lessThan(QT_MAJOR_VERSION, 6) {
+  CONFIG += c++14
+  windows:QMAKE_CXXFLAGS += /std:c++14
+} else {
+  CONFIG += c++17
+  QT += core5compat
+  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
+}
+
 INCLUDEPATH += ../../include
+DEFINES *= QT_USE_QSTRINGBUILDER
 
 include(../../tfbase.pri)
 

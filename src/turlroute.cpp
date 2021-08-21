@@ -8,7 +8,7 @@
 #include "turlroute.h"
 #include <QFile>
 #include <QMap>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextStream>
 #include <THttpUtility>
 #include <TSystemGlobal>
@@ -49,7 +49,7 @@ bool TUrlRoute::parseConfigFile()
 {
     QFile routesFile(Tf::app()->routesConfigFilePath());
     if (!routesFile.open(QIODevice::ReadOnly)) {
-        tSystemError("failed to read file : %s", qPrintable(routesFile.fileName()));
+        tSystemError("failed to read file : %s", qUtf8Printable(routesFile.fileName()));
         return false;
     }
 
@@ -61,7 +61,7 @@ bool TUrlRoute::parseConfigFile()
 
         if (!line.isEmpty() && !line.startsWith('#')) {
             if (!addRouteFromString(line)) {
-                tError("Error parsing route %s [line: %d]", qPrintable(line), cnt);
+                tError("Error parsing route %s [line: %d]", qUtf8Printable(line), cnt);
             }
         }
     }
@@ -73,7 +73,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 {
     QStringList items = line.simplified().split(' ');
     if (items.count() != 3) {
-        tError("Invalid directive, '%s'", qPrintable(line));
+        tError("Invalid directive, '%s'", qUtf8Printable(line));
         return false;
     }
 
@@ -92,7 +92,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     // Check method
     rt.method = directiveHash()->value(items[0].toLower(), TRoute::Invalid);
     if (rt.method == TRoute::Invalid) {
-        tError("Invalid directive, '%s'", qPrintable(items[0]));
+        tError("Invalid directive, '%s'", qUtf8Printable(items[0]));
         return false;
     }
 
@@ -117,19 +117,19 @@ bool TUrlRoute::addRouteFromString(const QString &line)
         rt.controller = items[2].toUtf8();
     } else {
         // parse controller and action
-        QStringList list = items[2].split(QRegExp("[#\\.]"));
+        QStringList list = items[2].split(QRegularExpression("[#\\.]"));
         if (list.count() == 2) {
             rt.controller = list[0].toLower().toLatin1() + "controller";
             rt.action = list[1].toLatin1();
         } else {
-            tError("Invalid action, '%s'", qPrintable(items[2]));
+            tError("Invalid action, '%s'", qUtf8Printable(items[2]));
             return false;
         }
     }
 
     _routes << rt;
     tSystemDebug("route: method:%d path:%s  ctrl:%s action:%s params:%d",
-        rt.method, qPrintable(QLatin1String("/") + rt.componentList.join("/")), rt.controller.data(),
+        rt.method, qUtf8Printable(QLatin1String("/") + rt.componentList.join("/")), rt.controller.data(),
         rt.action.data(), rt.hasVariableParams);
     return true;
 }

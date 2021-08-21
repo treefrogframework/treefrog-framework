@@ -19,7 +19,7 @@
 
 static QByteArray createHash()
 {
-    static TAtomic<quint32> seq(0);
+    static TAtomic<quint64> seq(100000);
     QByteArray data;
     data.reserve(127);
 
@@ -29,7 +29,7 @@ static QByteArray createHash()
     data.append(QByteArray::number(QCoreApplication::applicationPid()));
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
-    data.append(QByteArray::number(Tf::rand32_r()));
+    data.append(QByteArray::number((qulonglong)Tf::rand64_r()));
     return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }
 
@@ -54,7 +54,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
             session = store->find(id);
             TSessionStoreFactory::destroy(storeType(), store);
         } else {
-            tSystemError("Session store not found: %s", qPrintable(storeType()));
+            tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
         }
     }
     return session;
@@ -74,7 +74,7 @@ bool TSessionManager::store(TSession &session)
         res = store->store(session);
         TSessionStoreFactory::destroy(storeType(), store);
     } else {
-        tSystemError("Session store not found: %s", qPrintable(storeType()));
+        tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
     }
     return res;
 }
@@ -89,7 +89,7 @@ bool TSessionManager::remove(const QByteArray &id)
             TSessionStoreFactory::destroy(storeType(), store);
             return ret;
         } else {
-            tSystemError("Session store not found: %s", qPrintable(storeType()));
+            tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
         }
     }
     return false;
@@ -109,12 +109,14 @@ QByteArray TSessionManager::generateId()
     int i;
     for (i = 0; i < 3; ++i) {
         id = createHash();  // Hash algorithm is important!
-        if (findSession(id).isEmpty())
+        if (findSession(id).isEmpty()) {
             break;
+        }
     }
 
-    if (i == 3)
+    if (i == 3) {
         throw RuntimeException("Unable to generate a unique session ID", __FILE__, __LINE__);
+    }
 
     return id;
 }

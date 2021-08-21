@@ -10,17 +10,14 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 
-constexpr auto ENDPOINT_HEADER_TEMPLATE = "#ifndef %1ENDPOINT_H\n"
-                                          "#define %1ENDPOINT_H\n"
-                                          "\n"
+constexpr auto ENDPOINT_HEADER_TEMPLATE = "#pragma once\n"
                                           "#include \"applicationendpoint.h\"\n"
-                                          "\n"
-                                          "class T_CONTROLLER_EXPORT %2Endpoint : public ApplicationEndpoint\n"
-                                          "{\n"
+                                          "\n\n"
+                                          "class T_CONTROLLER_EXPORT %1Endpoint : public ApplicationEndpoint {\n"
                                           "    Q_OBJECT\n"
                                           "public:\n"
-                                          "    %2Endpoint();\n"
-                                          "    %2Endpoint(const %2Endpoint &other);\n"
+                                          "    %1Endpoint();\n"
+                                          "    %1Endpoint(const %1Endpoint &other);\n"
                                           "\n"
                                           "protected:\n"
                                           "    bool onOpen(const TSession &httpSession) override;\n"
@@ -28,11 +25,10 @@ constexpr auto ENDPOINT_HEADER_TEMPLATE = "#ifndef %1ENDPOINT_H\n"
                                           "    void onTextReceived(const QString &text) override;\n"
                                           "    void onBinaryReceived(const QByteArray &binary) override;\n"
                                           "};\n"
-                                          "\n"
-                                          "#endif // %1ENDPOINT_H\n";
+                                          "\n";
 
 constexpr auto ENDPOINT_IMPL_TEMPLATE = "#include \"%1endpoint.h\"\n"
-                                        "\n"
+                                        "\n\n"
                                         "%2Endpoint::%2Endpoint() :\n"
                                         "    ApplicationEndpoint()\n"
                                         "{ }\n"
@@ -64,7 +60,7 @@ constexpr auto ENDPOINT_IMPL_TEMPLATE = "#include \"%1endpoint.h\"\n"
 WebSocketGenerator::WebSocketGenerator(const QString &n)
 {
     name = fieldNameToEnumName(n);
-    name.remove(QRegExp("endpoint$", Qt::CaseInsensitive));
+    name.remove(QRegularExpression("endpoint$", QRegularExpression::CaseInsensitiveOption));
 }
 
 
@@ -72,7 +68,7 @@ bool WebSocketGenerator::generate(const QString &dst) const
 {
     // Writes each files
     QDir dstDir(dst);
-    QString output = QString(ENDPOINT_HEADER_TEMPLATE).arg(name.toUpper()).arg(name);
+    QString output = QString(ENDPOINT_HEADER_TEMPLATE).arg(name);
     FileWriter(dstDir.filePath(name.toLower() + "endpoint.h")).write(output, false);
 
     output = QString(ENDPOINT_IMPL_TEMPLATE).arg(name.toLower()).arg(name);

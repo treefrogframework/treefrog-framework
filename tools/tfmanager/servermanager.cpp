@@ -104,7 +104,7 @@ bool ServerManager::start(const QString &fileDomain)
 
     listeningSocket = sd;
     managerState = Starting;
-    tSystemDebug("TreeFrog application servers starting up.  Domain file name:%s", qPrintable(fileDomain));
+    tSystemDebug("TreeFrog application servers starting up.  Domain file name:%s", qUtf8Printable(fileDomain));
     ajustServers();
     return true;
 }
@@ -188,12 +188,12 @@ void ServerManager::setupEnvironment(QProcess *process)
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_LIBRARY_PATH", ldpath);
-    tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qPrintable(ldpath));
+    tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qUtf8Printable(ldpath));
 
     QString preload = Tf::appSettings()->value(Tf::LDPreload).toString();
     if (!preload.isEmpty()) {
         env.insert("LD_PRELOAD", preload);
-        tSystemDebug("export %s=%s", "LD_PRELOAD", qPrintable(preload));
+        tSystemDebug("export %s=%s", "LD_PRELOAD", qUtf8Printable(preload));
     }
     process->setProcessEnvironment(env);
 #else
@@ -228,7 +228,7 @@ void ServerManager::startServer(int id) const
     serversStatus.insert(tfserver, id);
 
     connect(tfserver, SIGNAL(started()), this, SLOT(updateServerStatus()));
-    connect(tfserver, SIGNAL(error(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
+    connect(tfserver, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(errorDetect(QProcess::ProcessError)));
     connect(tfserver, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(serverFinish(int, QProcess::ExitStatus)));
     connect(tfserver, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));  // For error notification
 
@@ -255,7 +255,7 @@ void ServerManager::errorDetect(QProcess::ProcessError error)
 {
     QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
-        tSystemError("tfserver error detected(%d). [%s]", error, qPrintable(tfserverProgramPath()));
+        tSystemError("tfserver error detected(%d). [%s]", error, qUtf8Printable(tfserverProgramPath()));
         //server->close();  // long blocking..
         server->kill();
     }

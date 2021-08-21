@@ -47,8 +47,8 @@ namespace treefrogsetup {
         //
         // ƒo[ƒWƒ‡ƒ“
         //
-        static initonly String^ VERSION_STR514 = L"5.14";
-        static initonly String^ VERSION_STR515 = L"5.15";
+        static initonly String^ VERSION_STR6_NEW  = L"6.2";
+        static initonly String^ VERSION_STR6_PREV = L"6.1";
 
     public:
         MainForm(void)
@@ -169,7 +169,7 @@ namespace treefrogsetup {
             this->label->Name = L"label";
             this->label->Size = System::Drawing::Size(309, 15);
             this->label->TabIndex = 4;
-            this->label->Text = L"Specify a base folder of Qt version " + VERSION_STR515 + " or " + VERSION_STR514 + ".";
+            this->label->Text = L"Specify a base folder of Qt version " + VERSION_STR6_NEW + " or " + VERSION_STR6_PREV + ".";
             // 
             // label1
             // 
@@ -180,7 +180,7 @@ namespace treefrogsetup {
             this->label1->Name = L"label1";
             this->label1->Size = System::Drawing::Size(162, 15);
             this->label1->TabIndex = 5;
-            this->label1->Text = L"Example:  C:\\Qt\\" + VERSION_STR515 + ".0\\msvc2017_64";
+            this->label1->Text = L"Example:  C:\\Qt\\" + VERSION_STR6_NEW + ".0\\msvc2019_64";
             // 
             // labeltop
             // 
@@ -345,7 +345,7 @@ namespace treefrogsetup {
             List<String ^>^ bins = gcnew List<String ^>();
 
             if (forderTextBox->Text != L"C:\\") {
-                bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw*", forderTextBox->Text, excludes), excludes));
+                //bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"mingw*", forderTextBox->Text, excludes), excludes));
                 bins->AddRange(searchSubDirectories(L"bin", searchSubDirectories(L"msvc20*", forderTextBox->Text, excludes), excludes));
 
                 // Qt 5.9 or later
@@ -389,12 +389,12 @@ namespace treefrogsetup {
 
             // Get msi file from resource
             int rcid = 0;
-            if (version->IndexOf("Qt version " + VERSION_STR515, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT515_MSI;
-            } else if (version->IndexOf("Qt version " + VERSION_STR514, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT514_MSI;
+            if (version->IndexOf("Qt version " + VERSION_STR6_NEW, StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT602_MSI;
+            } else if (version->IndexOf("Qt version " + VERSION_STR6_PREV, StringComparison::OrdinalIgnoreCase) > 0) {
+                rcid = IDR_TREEFROG_QT601_MSI;
             } else {
-                abort("Not found Qt version " + VERSION_STR515 + " or " + VERSION_STR514 + ".", "Abort");
+                abort("Not found Qt version " + VERSION_STR6_NEW + " or " + VERSION_STR6_PREV + ".", "Abort");
                 return;
             }
 

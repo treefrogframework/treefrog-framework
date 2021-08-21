@@ -8,8 +8,9 @@
 #include "tbasiclogstream.h"
 #include "tloggerfactory.h"
 #include "tsystemglobal.h"
-#include <TAppSettings>
 #include <TDebug>
+#include <TfCore>
+#include <TAppSettings>
 #include <TLog>
 #include <TLogger>
 
@@ -42,7 +43,7 @@ void Tf::setupAppLoggers()
         TLogger *lgr = TLoggerFactory::create(lg);
         if (lgr) {
             loggers << lgr;
-            tSystemDebug("Logger added: %s", qPrintable(lgr->key()));
+            tSystemDebug("Logger added: %s", qUtf8Printable(lgr->key()));
         }
     }
 

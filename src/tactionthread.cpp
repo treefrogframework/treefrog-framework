@@ -25,15 +25,6 @@ constexpr int RECV_BUF_SIZE = 8 * 1024;
 
 namespace {
 std::atomic<int> threadCounter(0);
-
-int keepAliveTimeout()
-{
-    static int timeout = []() {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
-        return qMax(timeout, 0);
-    }();
-    return timeout;
-}
 }
 
 
@@ -121,7 +112,7 @@ void TActionThread::run()
     try {
         for (;;) {
             QList<THttpRequest> requests = readRequest(_httpSocket);
-            tSystemDebug("HTTP request count: %d", requests.count());
+            tSystemDebug("HTTP request count: %lld", (qint64)requests.count());
 
             if (requests.isEmpty()) {
                 break;

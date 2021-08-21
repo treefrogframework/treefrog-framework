@@ -430,7 +430,7 @@ void TestUrlRouter::should_not_create_route_if_bad_param()
 
 //     TRouting r = findRouting(Tf::Get, "/foo//p1/p2/p3/");
 
-//     printf("p=%s\n",qPrintable(r.params.join(",")));
+//     printf("p=%s\n",qUtf8Printable(r.params.join(",")));
 
 //     QCOMPARE(QString(r.controller), QString("default"));
 //     QCOMPARE(QString(r.action), QString("defaultaction"));

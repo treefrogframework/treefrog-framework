@@ -80,7 +80,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action,
 */
 QUrl TActionHelper::url(const QString &controller, const QString &action, const QVariant &arg) const
 {
-    if (arg.canConvert(QVariant::StringList)) {
+    if (arg.canConvert<QStringList>()) {
         return url(controller, action, arg.toStringList());
     } else {
         return url(controller, action, arg.toString());
@@ -92,7 +92,7 @@ QUrl TActionHelper::url(const QString &controller, const QString &action, const 
 */
 QUrl TActionHelper::urla(const QString &action, const QVariant &arg) const
 {
-    if (arg.canConvert(QVariant::StringList)) {
+    if (arg.canConvert<QStringList>()) {
         return urla(action, arg.toStringList());
     } else {
         return urla(action, arg.toString());

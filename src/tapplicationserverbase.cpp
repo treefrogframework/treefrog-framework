@@ -59,10 +59,10 @@ bool TApplicationServerBase::loadLibraries()
         for (auto &libname : libs) {
             auto lib = new QLibrary(libPath + libname);
             if (lib->load()) {
-                tSystemDebug("Library loaded: %s", qPrintable(lib->fileName()));
+                tSystemDebug("Library loaded: %s", qUtf8Printable(lib->fileName()));
                 libsLoaded << lib;
             } else {
-                tSystemWarn("%s", qPrintable(lib->errorString()));
+                tSystemWarn("%s", qUtf8Printable(lib->errorString()));
                 ret = false;
                 unloadLibraries();
                 break;
@@ -70,7 +70,7 @@ bool TApplicationServerBase::loadLibraries()
         }
 
         QStringList controllers = TActionController::availableControllers();
-        tSystemDebug("Available controllers: %s", qPrintable(controllers.join(" ")));
+        tSystemDebug("Available controllers: %s", qUtf8Printable(controllers.join(" ")));
 
         if (ret) {
             loadedTimestamp = latestLibraryTimestamp();
@@ -86,7 +86,7 @@ void TApplicationServerBase::unloadLibraries()
 {
     for (auto lib : libsLoaded) {
         lib->unload();
-        tSystemDebug("Library unloaded: %s", qPrintable(lib->fileName()));
+        tSystemDebug("Library unloaded: %s", qUtf8Printable(lib->fileName()));
     }
     libsLoaded.clear();
 }
@@ -104,7 +104,7 @@ QDateTime TApplicationServerBase::latestLibraryTimestamp()
     const QStringList libs = {"libcontroller.so", "libmodel.so", "libview.so", "libhelper.so"};
 #endif
 
-    QDateTime ret = QDateTime::fromTime_t(0);
+    QDateTime ret = QDateTime::fromSecsSinceEpoch(0);
 
     QString libPath = Tf::app()->libPath();
     for (auto &lib : libs) {

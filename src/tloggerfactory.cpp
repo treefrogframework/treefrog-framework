@@ -44,9 +44,9 @@ QMap<QString, TLoggerInterface *> *loggerIfMap()
         const QStringList lst = dir.entryList(QDir::Files);
         for (auto &plg : lst) {
             QPluginLoader loader(dir.absoluteFilePath(plg));
-            tSystemDebug("plugin library for logger: %s", qPrintable(loader.fileName()));
+            tSystemDebug("plugin library for logger: %s", qUtf8Printable(loader.fileName()));
             if (!loader.load()) {
-                tSystemError("plugin load error: %s", qPrintable(loader.errorString()));
+                tSystemError("plugin load error: %s", qUtf8Printable(loader.errorString()));
                 continue;
             }
 
@@ -55,7 +55,7 @@ QMap<QString, TLoggerInterface *> *loggerIfMap()
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {
                     QString key = k.toString().toLower();
-                    tSystemInfo("Loaded logger plugin: %s", qPrintable(key));
+                    tSystemInfo("Loaded logger plugin: %s", qUtf8Printable(key));
                     lggIfMap->insert(key, iface);
                 }
             }

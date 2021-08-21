@@ -128,7 +128,7 @@ bool TMongoObject::update()
             int oldRevision = property(propName).toInt(&ok);
 
             if (!ok || oldRevision <= 0) {
-                tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
+                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -207,7 +207,7 @@ bool TMongoObject::remove()
             int revision = property(propName).toInt(&ok);
 
             if (!ok || revision <= 0) {
-                tError("Unable to convert the 'revision' property to an int, %s", qPrintable(objectName()));
+                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -231,7 +231,7 @@ bool TMongoObject::remove()
             QString msg = QString("Doc was updated or deleted from collection ") + collectionName();
             throw KvsException(msg, __FILE__, __LINE__);
         }
-        tWarn("Doc was deleted by another transaction, %s", qPrintable(collectionName()));
+        tWarn("Doc was deleted by another transaction, %s", qUtf8Printable(collectionName()));
     }
 
     return (deletedCount == 1);

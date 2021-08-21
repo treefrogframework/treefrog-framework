@@ -1,27 +1,12 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "1.31.0";
-constexpr auto TF_VERSION_NUMBER = 0x013100;
-constexpr auto TF_SRC_REVISION = 2301;
+constexpr auto TF_VERSION_STR = "2.1.0";
+constexpr auto TF_VERSION_NUMBER = 0x020100;
+constexpr auto TF_SRC_REVISION = 2419;
 
 #include <QMetaType>
+#include <QIODevice>
 #include <QtGlobal>
 
-#define T_DECLARE_CONTROLLER(TYPE, NAME) \
-    using NAME = TYPE;                   \
-    Q_DECLARE_METATYPE(NAME)
-
-// Deprecated
-#define T_REGISTER_CONTROLLER(TYPE) T_REGISTER_METATYPE(TYPE)
-#define T_REGISTER_VIEW(TYPE) T_REGISTER_METATYPE(TYPE)
-#define T_REGISTER_METATYPE(TYPE)         \
-    class Static##TYPE##Instance {        \
-    public:                               \
-        Static##TYPE##Instance() noexcept \
-        {                                 \
-            qRegisterMetaType<TYPE>();    \
-        }                                 \
-    };                                    \
-    static Static##TYPE##Instance _static##TYPE##Instance;
 
 #define T_DEFINE_CONTROLLER(TYPE) T_DEFINE_TYPE(TYPE)
 #define T_DEFINE_VIEW(TYPE) T_DEFINE_TYPE(TYPE)
@@ -35,6 +20,7 @@ constexpr auto TF_SRC_REVISION = 2301;
     };                                                                                               \
     static Static##TYPE##Definition _static##TYPE##Definition;
 
+#if QT_VERSION < 0x060000
 #define T_REGISTER_STREAM_OPERATORS(TYPE)                  \
     class Static##TYPE##Instance {                         \
     public:                                                \
@@ -44,6 +30,10 @@ constexpr auto TF_SRC_REVISION = 2301;
         }                                                  \
     };                                                     \
     static Static##TYPE##Instance _static##TYPE##Instance;
+#else
+// do no longer exist in qt6, qRegisterMetaTypeStreamOperators().
+#define T_REGISTER_STREAM_OPERATORS(TYPE)
+#endif
 
 #define T_DEFINE_PROPERTY(TYPE, PROPERTY)                                   \
     inline void set##PROPERTY(const TYPE &v__) noexcept { PROPERTY = v__; } \
@@ -96,7 +86,7 @@ constexpr auto TF_SRC_REVISION = 2301;
     do {                                                         \
         QVariant ___##VAR##_;                                    \
         ___##VAR##_.setValue(VAR);                               \
-        exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
+        ((TAbstractController *)(Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
     } while (0)
 #define texport(VAR) T_EXPORT(VAR)
 
@@ -104,7 +94,7 @@ constexpr auto TF_SRC_REVISION = 2301;
     do {                                                          \
         QVariant ___##VAR##_;                                     \
         ___##VAR##_.setValue(VAR);                                \
-        exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
+        ((TAbstractController *)(Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
     } while (0)
 #define texportUnless(VAR) T_EXPORT_UNLESS(VAR)
 
@@ -114,6 +104,7 @@ constexpr auto TF_SRC_REVISION = 2301;
 #define T_FETCH_V(TYPE, VAR, DEFAULT) TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
 #define tfetchv(TYPE, VAR, DEFAULT) T_FETCH_V(TYPE, VAR, DEFAULT)
 
+#if QT_VERSION < 0x060000
 #define T_EHEX(VAR)                                      \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -131,20 +122,52 @@ constexpr auto TF_SRC_REVISION = 2301;
         case QMetaType::QJsonDocument:                   \
             eh((___##VAR##_).toJsonDocument());          \
             break;                                       \
+        case QMetaType::QVariantMap:                     \
+            eh((___##VAR##_).toMap());                   \
+            break;                                       \
         default:                                         \
             eh(___##VAR##_);                             \
         }                                                \
     } while (0)
 
+#else
+#define T_EHEX(VAR)                                      \
+    do {                                                 \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
+        int ___##VAR##_type = (___##VAR##_).typeId();    \
+        switch (___##VAR##_type) {                       \
+        case QMetaType::QJsonValue:                      \
+            eh((___##VAR##_).toJsonValue());             \
+            break;                                       \
+        case QMetaType::QJsonObject:                     \
+            eh((___##VAR##_).toJsonObject());            \
+            break;                                       \
+        case QMetaType::QJsonArray:                      \
+            eh((___##VAR##_).toJsonArray());             \
+            break;                                       \
+        case QMetaType::QJsonDocument:                   \
+            eh((___##VAR##_).toJsonDocument());          \
+            break;                                       \
+        case QMetaType::QVariantMap:                     \
+            eh((___##VAR##_).toMap());                   \
+            break;                                       \
+        default:                                         \
+            eh(___##VAR##_);                             \
+        }                                                \
+    } while (0)
+
+#endif
+
 #define tehex(VAR) T_EHEX(VAR)
 
 #define T_EHEX_V(VAR, DEFAULT)                                         \
     do {                                                               \
-        QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); \
-        if ((___##VAR##_).isEmpty())                                   \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR));               \
+        if ((___##VAR##_).isNull()) {                                  \
             eh(DEFAULT);                                               \
-        else                                                           \
+        } else {                                                       \
             T_EHEX(VAR);                                               \
+        }                                                              \
     } while (0)
 
 #define tehexv(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
@@ -153,6 +176,7 @@ constexpr auto TF_SRC_REVISION = 2301;
 #define T_EHEX2(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
 #define tehex2(VAR, DEFAULT) T_EHEX2(VAR, DEFAULT)
 
+#if QT_VERSION < 0x060000
 #define T_ECHOEX(VAR)                                    \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -170,20 +194,53 @@ constexpr auto TF_SRC_REVISION = 2301;
         case QMetaType::QJsonDocument:                   \
             echo((___##VAR##_).toJsonDocument());        \
             break;                                       \
+        case QMetaType::QVariantMap:                     \
+            echo((___##VAR##_).toMap());                 \
+            break;                                       \
         default:                                         \
             echo(___##VAR##_);                           \
         }                                                \
     } while (0)
 
+#else
+#define T_ECHOEX(VAR)                                    \
+    do {                                                 \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
+        int ___##VAR##_type = (___##VAR##_).typeId();    \
+        switch (___##VAR##_type) {                       \
+        case QMetaType::QJsonValue:                      \
+            echo((___##VAR##_).toJsonValue());           \
+            break;                                       \
+        case QMetaType::QJsonObject:                     \
+            echo((___##VAR##_).toJsonObject());          \
+            break;                                       \
+        case QMetaType::QJsonArray:                      \
+            echo((___##VAR##_).toJsonArray());           \
+            break;                                       \
+        case QMetaType::QJsonDocument:                   \
+            echo((___##VAR##_).toJsonDocument());        \
+            break;                                       \
+        case QMetaType::QVariantMap:                     \
+            echo((___##VAR##_).toMap());                 \
+            break;                                       \
+        default:                                         \
+            echo(___##VAR##_);                           \
+        }                                                \
+    } while (0)
+
+#endif
+
+
 #define techoex(VAR) T_ECHOEX(VAR)
 
 #define T_ECHOEX_V(VAR, DEFAULT)                                       \
     do {                                                               \
-        QString ___##VAR##_ = variant(QLatin1String(#VAR)).toString(); \
-        if ((___##VAR##_).isEmpty())                                   \
+        auto ___##VAR##_ = variant(QLatin1String(#VAR));               \
+        if ((___##VAR##_).isNull()) {                                  \
             echo(DEFAULT);                                             \
-        else                                                           \
+        } else {                                                       \
             T_ECHOEX(VAR);                                             \
+        }                                                              \
     } while (0)
 
 #define techoexv(VAR, DEFAULT) T_ECHOEX_V(VAR, DEFAULT)
@@ -196,7 +253,7 @@ constexpr auto TF_SRC_REVISION = 2301;
     do {                                              \
         QVariant ___##VAR##_;                         \
         ___##VAR##_.setValue(VAR);                    \
-        setFlash(QLatin1String(#VAR), (___##VAR##_)); \
+        ((TAbstractController *)(Tf::currentContext())->currentController())->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
     } while (0)
 
 #define tflash(VAR) T_FLASH(VAR)
@@ -219,16 +276,27 @@ constexpr auto TF_SRC_REVISION = 2301;
 #define tDebug TDebug(Tf::DebugLevel).debug
 #define tTrace TDebug(Tf::TraceLevel).trace
 
+namespace Tf {
+#if QT_VERSION < 0x060000  // 6.0.0
+constexpr auto ReadOnly = QIODevice::ReadOnly;
+constexpr auto WriteOnly = QIODevice::WriteOnly;
+#else
+constexpr auto ReadOnly = QIODeviceBase::ReadOnly;
+constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
+#endif
+}
 
 #include "tfexception.h"
 #include "tfnamespace.h"
 #include <TDebug>
-#include <TWebApplication>
 #include <cstdint>
 #include <functional>
 
-class TAppSettings;
+class TWebApplication;
 class TActionContext;
+class TAbstractController;
+class TAbstractActionContext;
+class TAppSettings;
 class TDatabaseContext;
 class TCache;
 class QSqlDatabase;
@@ -240,10 +308,6 @@ T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
 T_CORE_EXPORT void msleep(unsigned long msecs) noexcept;
 T_CORE_EXPORT qint64 getMSecsSinceEpoch();
 
-// Xorshift random number generator
-T_CORE_EXPORT void srandXor128(quint32 seed) noexcept;  // obsolete
-T_CORE_EXPORT quint32 randXor128() noexcept;  // obsolete
-
 // Thread-safe std::random number generator
 T_CORE_EXPORT uint32_t rand32_r() noexcept;
 T_CORE_EXPORT uint64_t rand64_r() noexcept;
@@ -252,6 +316,7 @@ T_CORE_EXPORT uint64_t random(uint64_t max) noexcept;
 
 T_CORE_EXPORT TCache *cache() noexcept;
 T_CORE_EXPORT TActionContext *currentContext();
+inline const TActionContext *constCurrentContext() { return currentContext(); }
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
@@ -265,12 +330,4 @@ T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
 constexpr auto CRLF = "\x0d\x0a";
 constexpr auto LF = "\x0a";
-
-#if QT_VERSION >= 0x050e00  // 5.14.0
-constexpr auto KeepEmptyParts = Qt::KeepEmptyParts;
-constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
-#else
-constexpr auto KeepEmptyParts = QString::KeepEmptyParts;
-constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
-#endif
 }

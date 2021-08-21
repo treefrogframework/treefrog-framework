@@ -41,7 +41,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /
-      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev sqlite3
+      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev sqlite3 jq
       - run: src/test/testall.sh
       - run: tools/tmake/test/tmaketest.sh
       - run: tools/test/releasetest/releasetest

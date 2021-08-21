@@ -29,3 +29,9 @@ private:
     QByteArray _sameSite;
 };
 
+
+/*!
+  \class TCookie
+  \brief The TCookie class holds one network cookie.
+  \sa TCookieJar
+*/

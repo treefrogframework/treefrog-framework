@@ -146,7 +146,7 @@ void showRoutes()
             } else {
                 action = QByteArrayLiteral("(not found)");
             }
-            std::printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qPrintable(path), qPrintable(action));
+            std::printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qUtf8Printable(path), qUtf8Printable(action));
         }
         std::printf("\n");
     }
@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
     if (!loc.isEmpty()) {
         QLocale locale(loc);
         QLocale::setDefault(locale);
-        tSystemInfo("Application's default locale: %s", qPrintable(locale.name()));
+        tSystemInfo("Application's default locale: %s", qUtf8Printable(locale.name()));
     }
 
     // Sets codec
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
         std::fprintf(stderr, "No such directory\n");
         goto finish;
     }
-    tSystemDebug("Web Root: %s", qPrintable(webapp.webRootPath()));
+    tSystemDebug("Web Root: %s", qUtf8Printable(webapp.webRootPath()));
 
     if (!webapp.appSettingsFileExists()) {
         tSystemError("Settings file not found");

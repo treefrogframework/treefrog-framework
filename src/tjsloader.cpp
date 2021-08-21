@@ -18,7 +18,6 @@
 // #define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 // #define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
 
-
 /*!
   \class TJSLoader
   \brief The TJSLoader class loads a JavaScript module at run-time.
@@ -27,7 +26,11 @@
 namespace {
 QMap<QString, TJSModule *> jsContexts;
 QStringList defaultPaths;
+#if QT_VERSION < 0x060000
 QMutex gMutex(QMutex::Recursive);
+#else
+QRecursiveMutex gMutex;
+#endif
 }
 
 
@@ -53,20 +56,20 @@ static QString read(const QString &filePath)
     }
 
     if (!script.exists()) {
-        tSystemError("TJSLoader file not found: %s", qPrintable(filePath));
+        tSystemError("TJSLoader file not found: %s", qUtf8Printable(filePath));
         return QString();
     }
 
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
-        tSystemError("TJSLoader file open error: %s", qPrintable(filePath));
+        tSystemError("TJSLoader file open error: %s", qUtf8Printable(filePath));
         return QString();
     }
 
     QTextStream stream(&script);
     QString program = stream.readAll();
     script.close();
-    tSystemDebug("TJSLoader file read: %s", qPrintable(script.fileName()));
+    tSystemDebug("TJSLoader file read: %s", qUtf8Printable(script.fileName()));
     return program;
 }
 
@@ -228,7 +231,7 @@ QString TJSLoader::absolutePath(const QString &moduleName, const QDir &dir, AltJ
     }
 
     if (filePath.isEmpty()) {
-        tSystemError("TJSLoader file not found: %s", qPrintable(moduleName));
+        tSystemError("TJSLoader file not found: %s", qUtf8Printable(moduleName));
     } else {
         filePath = QFileInfo(filePath).canonicalFilePath();
     }
@@ -290,11 +293,11 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 
     ret = context->evaluate(program, module);
     if (!ret.isError()) {
-        tSystemDebug("TJSLoader evaluation completed: %s", qPrintable(module));
+        tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(module));
 
         if (isMain) {
             context->moduleFilePath = filePath;
-            tSystemDebug("TJSLoader Module path: %s", qPrintable(context->moduleFilePath));
+            tSystemDebug("TJSLoader Module path: %s", qUtf8Printable(context->moduleFilePath));
         }
     }
     return ret;
@@ -339,7 +342,7 @@ QStringList TJSLoader::defaultSearchPaths()
 
 void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir &dir) const
 {
-    const QRegExp rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ,]+)[\"']\\s*\\)");
+    const QRegularExpression rx("require\\s*\\(\\s*[\"']([^\\(\\)\"' ,]+)[\"']\\s*\\)");
 
     if (!context || content.isEmpty()) {
         return;
@@ -347,15 +350,26 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
     int pos = 0;
     auto crc = content.toLatin1();
+#if QT_VERSION < 0x060000
     const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc.data(), crc.length()), 36) + "_%2";
-    while ((pos = rx.indexIn(content, pos)) != -1) {
+#else
+    const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc), 36) + "_%2";
+#endif
+
+    for (;;) {
+        auto match = rx.match(content, pos);
+        if (!match.hasMatch()) {
+            break;
+        }
+
+        pos = match.capturedStart();
         if (isCommentPosition(content, pos)) {
-            pos += rx.matchedLength();
+            pos += match.capturedLength();
             continue;
         }
 
         QString varName;
-        auto module = rx.cap(1);
+        auto module = match.captured(1);
         auto filePath = absolutePath(module, dir, Default);
 
         if (!module.isEmpty() && !filePath.isEmpty()) {
@@ -376,15 +390,15 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
                 QJSValue res = context->evaluate(require, module);
                 if (res.isError()) {
-                    tSystemError("TJSLoader evaluation error: %s", qPrintable(module));
+                    tSystemError("TJSLoader evaluation error: %s", qUtf8Printable(module));
                 } else {
-                    tSystemDebug("TJSLoader evaluation completed: %s", qPrintable(module));
+                    tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(module));
                     // Inserts the loaded file path
                     context->loadedFiles.insert(filePath, varName);
                 }
             }
 
-            content.replace(pos, rx.matchedLength(), varName);
+            content.replace(pos, match.capturedLength(), varName);
             pos += varName.length();
         } else {
             pos++;
@@ -397,6 +411,6 @@ QString TJSLoader::compileJsx(const QString &jsx)
 {
     auto *transform = TJSLoader("JSXTransformer", "JSXTransformer").load();
     QJSValue jscode = transform->call("JSXTransformer.transform", QJSValue(jsx));
-    //tSystemDebug("code:%s", qPrintable(jscode.property("code").toString()));
+    //tSystemDebug("code:%s", qUtf8Printable(jscode.property("code").toString()));
     return jscode.property("code").toString();
 }

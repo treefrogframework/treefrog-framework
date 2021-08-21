@@ -137,7 +137,7 @@ QString fieldNameToCaption(const QString &name)
     }
 
     // Upper-case/lower-case words
-    QStringList caplist = cap.split(QRegExp("\\W+"), Tf::SkipEmptyParts);
+    QStringList caplist = cap.split(QRegularExpression("\\W+"), Tf::SkipEmptyParts);
     for (QMutableStringListIterator i(caplist); i.hasNext();) {
         QString &s = i.next();
         QString slow = s.toLower();
@@ -166,10 +166,29 @@ bool mkpath(const QDir &dir, const QString &dirPath)
 {
     if (!dir.exists(dirPath)) {
         if (!dir.mkpath(dirPath)) {
-            qCritical("failed to create a directory %s", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
+            qCritical("failed to create a directory %s", qUtf8Printable(QDir::cleanPath(dir.filePath(dirPath))));
             return false;
         }
-        std::printf("  created   %s\n", qPrintable(QDir::cleanPath(dir.filePath(dirPath))));
+        std::printf("  created   %s\n", qUtf8Printable(QDir::cleanPath(dir.filePath(dirPath))));
     }
     return true;
+}
+
+
+QString replaceholder(const QString &format, const QPair<QString, QString> &value)
+{
+    QString out = format;
+    QString placeholder = QLatin1Char('%') + value.first + QLatin1Char('%');
+    out.replace(placeholder, value.second);
+    return out;
+}
+
+
+QString replaceholder(const QString &format, const PlaceholderList &values)
+{
+    QString out = format;
+    for (auto &p : values) {
+        out = replaceholder(out, p);
+    }
+    return out;
 }

@@ -82,7 +82,7 @@ void ErbParser::parse(const QString &erb)
 bool ErbParser::posMatchWith(const QString &str, int offset) const
 {
     return (pos + offset >= 0 && pos + offset + str.length() - 1 < erbData.length()
-        && erbData.midRef(pos + offset, str.length()) == str);
+        && erbData.mid(pos + offset, str.length()) == str);
 }
 
 

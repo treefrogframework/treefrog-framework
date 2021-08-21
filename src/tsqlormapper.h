@@ -10,6 +10,12 @@
 #include <TSqlObject>
 #include <TSqlQuery>
 
+/*!
+  \class TAbstractSqlORMapper
+  \brief The TAbstractSqlORMapper class is the abstract base class of
+  functionality to object-relational mapping.
+  \sa TSqlORMapper
+*/
 
 class TAbstractSqlORMapper : public QSqlTableModel {
 public:
@@ -42,7 +48,6 @@ public:
   from a table.
   \sa TSqlObject, TCriteria
 */
-
 
 template <class T>
 class TSqlORMapper : public TAbstractSqlORMapper {
@@ -217,7 +222,7 @@ inline T TSqlORMapper<T>::findByPrimaryKey(const QVariant &pk)
 {
     int idx = T().primaryKeyIndex();
     if (idx < 0) {
-        tSystemDebug("Primary key not found, table name: %s", qPrintable(T().tableName()));
+        tSystemDebug("Primary key not found, table name: %s", qUtf8Printable(T().tableName()));
         return T();
     }
 
@@ -374,7 +379,7 @@ inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder o
             sortColumns << qMakePair(column, order);
         } else {
             tWarn("Unable to set sort order : '%s' column not found in '%s' table",
-                qPrintable(column), qPrintable(obj.tableName()));
+                qUtf8Printable(column), qUtf8Printable(obj.tableName()));
         }
     }
 }
@@ -575,7 +580,12 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         if (prop == UpdatedAt || prop == ModifiedAt) {
             upd += propName;
             upd += QLatin1Char('=');
-            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), QVariant::DateTime, db);
+#if QT_VERSION < 0x060000
+            constexpr auto metaType = QVariant::DateTime;
+#else
+            static const QMetaType metaType(QMetaType::QDateTime);
+#endif
+            upd += TSqlQuery::formatValue(QDateTime::currentDateTime(), metaType, db);
             upd += QLatin1Char(',');
             break;
         }

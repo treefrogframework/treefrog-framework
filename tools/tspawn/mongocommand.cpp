@@ -21,7 +21,7 @@ MongoCommand::MongoCommand(const QString &path) :
 {
     if (!mongoSettings) {
         if (!QFile::exists(settingsPath)) {
-            qCritical("not found, %s", qPrintable(path));
+            qCritical("not found, %s", qUtf8Printable(path));
         }
         mongoSettings = new QSettings(settingsPath, QSettings::IniFormat);
     }
@@ -40,10 +40,10 @@ MongoCommand::~MongoCommand()
 bool MongoCommand::open(const QString &env)
 {
     databaseName = mongoSettings->value(env + "/DatabaseName").toString().trimmed();
-    std::printf("DatabaseName: %s\n", qPrintable(databaseName));
+    std::printf("DatabaseName: %s\n", qUtf8Printable(databaseName));
 
     QString host = mongoSettings->value(env + "/HostName").toString().trimmed();
-    std::printf("HostName:     %s\n", qPrintable(host));
+    std::printf("HostName:     %s\n", qUtf8Printable(host));
 
     int port = mongoSettings->value(env + "/Port").toInt();
     QString user = mongoSettings->value(env + "/UserName").toString().trimmed();

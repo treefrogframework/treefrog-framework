@@ -42,7 +42,11 @@ inline TDispatcher<T>::~TDispatcher()
 {
     if (_ptr) {
         if (_typeId > 0) {
+#if QT_VERSION < 0x060000
             QMetaType::destroy(_typeId, _ptr);
+#else
+            QMetaType(_typeId).destroy(_ptr);
+#endif
         } else {
             delete _ptr;
         }
@@ -68,7 +72,7 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
 
     object();
     if (Q_UNLIKELY(!_ptr)) {
-        tSystemDebug("Failed to invoke, no such class: %s", qPrintable(_metaType));
+        tSystemDebug("Failed to invoke, no such class: %s", qUtf8Printable(_metaType));
         return QMetaMethod();
     }
 
@@ -99,7 +103,7 @@ inline QMetaMethod TDispatcher<T>::method(const QByteArray &methodName, int argC
     }
 
     if (Q_UNLIKELY(idx < 0)) {
-        tSystemDebug("No such method: %s", qPrintable(methodName));
+        tSystemDebug("No such method: %s", qUtf8Printable(methodName));
         return QMetaMethod();
     }
 
@@ -126,9 +130,9 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     QMetaMethod mm = this->method(method, args.count());
 
     if (Q_UNLIKELY(!mm.isValid())) {
-        tSystemDebug("No such method: %s", qPrintable(method));
+        tSystemDebug("No such method: %s", qUtf8Printable(method));
     } else {
-        tSystemDebug("Invoke method: %s", qPrintable(_metaType + "." + method));
+        tSystemDebug("Invoke method: %s", qUtf8Printable(_metaType + "." + method));
         switch (args.count()) {
         case 0:
             ret = mm.invoke(_ptr, connectionType);
@@ -195,22 +199,11 @@ inline T *TDispatcher<T>::object()
     if (!_ptr) {
         auto factory = Tf::objectFactories()->value(_metaType.toLatin1().toLower());
         if (Q_LIKELY(factory)) {
-            _ptr = dynamic_cast<T *>(factory());
-            if (_ptr) {
+            auto p = factory();
+            _ptr = dynamic_cast<T *>(p);
+            if (!_ptr) {
+                delete p;
                 _typeId = 0;
-            }
-        }
-    }
-
-    if (Q_UNLIKELY(!_ptr)) {
-        if (_typeId <= 0 && !_metaType.isEmpty()) {
-            _typeId = QMetaType::type(_metaType.toLatin1().constData());
-            if (Q_LIKELY(_typeId > 0)) {
-                _ptr = static_cast<T *>(QMetaType::create(_typeId));
-                Q_CHECK_PTR(_ptr);
-                tSystemDebug("Constructs object, class: %s  typeId: %d", qPrintable(_metaType), _typeId);
-            } else {
-                tSystemDebug("No such object class : %s", qPrintable(_metaType));
             }
         }
     }

@@ -16,6 +16,7 @@ Gemfile.lock
 **/CMakeCache.txt
 **/moc_predefs.h
 **/CMakeFiles/
+!3rdparty/**/Makefile
 
 # Linux
 *.o

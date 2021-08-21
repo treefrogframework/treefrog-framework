@@ -153,8 +153,8 @@ void TestMailMessage::dateTime_data()
     QTest::addColumn<QString>("result");
 
     // Timezone
-    uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::UTC).toTime_t();
-    uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::LocalTime).toTime_t();
+    uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::UTC).toSecsSinceEpoch();
+    uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::LocalTime).toSecsSinceEpoch();
     int offset = (utc - local) / 60;
     QString offsetStr = QString("%1%2%3")
         .arg(offset > 0 ? '+' : '-')
@@ -187,7 +187,7 @@ void TestMailMessage::parse()
         "Bcc: <test3@example.jp>, <test4@example.jp>\n" \
         "Date: Wed, 30 Mar 2011 19:53:04 +0900\n"       \
         "\n"                                            \
-        "こんにちは");
+        "こんにちは,世界");
 
     TMailMessage mail(msg);
     //qDebug("%s", mail.toByteArray().data());
@@ -196,6 +196,11 @@ void TestMailMessage::parse()
     //     qDebug("recpt: %s", ba.data());
     // }
     QCOMPARE(mail.recipients().count(), 3);
+    QCOMPARE(mail.from(), QByteArray("hoge <test@example.com>"));
+    QCOMPARE(mail.to(), QByteArray("<test1@example.jp>"));
+    QCOMPARE(mail.cc(), QByteArray("aoyama <test3@example.jp>"));
+    QCOMPARE(mail.bcc(), QByteArray("<test3@example.jp>, <test4@example.jp>"));
+    QCOMPARE(mail.body(), QString::fromUtf8("こんにちは,世界"));
 }
 
 TF_TEST_MAIN(TestMailMessage)

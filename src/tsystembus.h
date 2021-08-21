@@ -36,8 +36,8 @@ private:
     QLocalSocket *busSocket {nullptr};
     QByteArray readBuffer;
     QByteArray sendBuffer;
-    QMutex mutexRead {QMutex::NonRecursive};
-    QMutex mutexWrite {QMutex::NonRecursive};
+    QMutex mutexRead;
+    QMutex mutexWrite;
 
     TSystemBus();
     T_DISABLE_COPY(TSystemBus)

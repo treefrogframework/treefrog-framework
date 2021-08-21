@@ -21,4 +21,3 @@ public:
     virtual QVariantMap toVariantMap() const;
     virtual QStringList propertyNames() const;
 };
-

@@ -41,7 +41,7 @@ constexpr auto INDEX_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                      "</body>\n"
                                      "</html>\n";
 
-constexpr auto INDEX_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto INDEX_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                     "\n"
                                     "@head_title ~= controller()->name() + \": \" + controller()->activeAction()\n"
                                     "\n"
@@ -79,7 +79,7 @@ constexpr auto SHOW_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                     "</body>\n"
                                     "</html>\n";
 
-constexpr auto SHOW_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto SHOW_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                    "\n"
                                    "#init\n"
                                    " tfetch(%2, %3);\n"
@@ -119,7 +119,7 @@ constexpr auto CREATE_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                       "</body>\n"
                                       "</html>\n";
 
-constexpr auto CREATE_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto CREATE_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                      "\n"
                                      "#init\n"
                                      " tfetch(QVariantMap, %2);\n"
@@ -160,7 +160,7 @@ constexpr auto SAVE_HTML_TEMPLATE = "<!DOCTYPE html>\n"
                                     "</body>\n"
                                     "</html>\n";
 
-constexpr auto SAVE_OTM_TEMPLATE = "#include \"%1.h\"\n"
+constexpr auto SAVE_OTM_TEMPLATE = "#include \"objects/%1.h\"\n"
                                    "\n"
                                    "#init\n"
                                    " tfetch(QVariantMap, %2);\n"
@@ -200,7 +200,7 @@ static const QStringList excludedDirName = {
 };
 
 
-OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx) :
+OtamaGenerator::OtamaGenerator(const QString &view, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int autoValIdx) :
     viewName(view), fieldList(fields), primaryKeyIndex(pkIdx), autoValueIndex(autoValIdx)
 {
 }
@@ -212,7 +212,7 @@ bool OtamaGenerator::generate(const QString &dstDir) const
 
     // Reserved word check
     if (excludedDirName.contains(dir.dirName())) {
-        qCritical("Reserved word error. Please use another word.  View name: %s", qPrintable(dir.dirName()));
+        qCritical("Reserved word error. Please use another word.  View name: %s", qUtf8Printable(dir.dirName()));
         return false;
     }
 
@@ -230,7 +230,7 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     QStringList files;
 
     if (primaryKeyIndex < 0) {
-        qWarning("Primary key not found. [view name: %s]", qPrintable(viewName));
+        qWarning("Primary key not found. [view name: %s]", qUtf8Printable(viewName));
         return files;
     }
 
@@ -239,12 +239,12 @@ QStringList OtamaGenerator::generateViews(const QString &dstDir) const
     QString output;
     QString caption = enumNameToCaption(viewName);
     QString varName = enumNameToVariableName(viewName);
-    const QPair<QString, QVariant::Type> &pkFld = fieldList[primaryKeyIndex];
+    const QPair<QString, QMetaType::Type> &pkFld = fieldList[primaryKeyIndex];
 
     // Generates index.html
     QString th, td, indexOtm, showColumn, showOtm, entryColumn, editColumn, entryOtm, editOtm;
     for (int i = 0; i < fieldList.count(); ++i) {
-        const QPair<QString, QVariant::Type> &p = fieldList[i];
+        const QPair<QString, QMetaType::Type> &p = fieldList[i];
         QString cap = fieldNameToCaption(p.first);
         QString var = fieldNameToVariableName(p.first);
         QString mrk = p.first.toLower();

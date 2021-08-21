@@ -112,7 +112,7 @@ void TSystemBus::readBus()
 void TSystemBus::writeBus()
 {
     QMutexLocker locker(&mutexWrite);
-    tSystemDebug("TSystemBus::writeBus  len:%d", sendBuffer.length());
+    tSystemDebug("TSystemBus::writeBus  len:%lld", sendBuffer.length());
 
     for (;;) {
         int len = busSocket->write(sendBuffer.data(), sendBuffer.length());

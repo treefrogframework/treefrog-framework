@@ -10,6 +10,7 @@
 #include <QHostInfo>
 #include <QJsonDocument>
 #include <QSysInfo>
+#include <QTextCodec>
 #include <QtCore>
 #include <TAppSettings>
 #include <TSystemGlobal>
@@ -152,7 +153,7 @@ void usage()
     text4 = "  -r              : reload app automatically when updated (for development)\n";
 #endif
 
-    puts(qPrintable(QString(text).arg(cmd).arg(text2).arg(text3).arg(text4)));
+    puts(qUtf8Printable(QString(text).arg(cmd).arg(text2).arg(text3).arg(text4)));
 }
 
 
@@ -221,15 +222,15 @@ void writeStartupLog()
 
 QString pidFilePath(const QString &appRoot = QString())
 {
-    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + PID_FILENAME
-                               : appRoot + QLatin1String("/tmp/") + PID_FILENAME;
+    return (appRoot.isEmpty()) ? QString(Tf::app()->tmpPath() + PID_FILENAME)
+                               : QString(appRoot + QLatin1String("/tmp/") + QLatin1String(PID_FILENAME));
 }
 
 
 QString oldPidFilePath(const QString &appRoot = QString())
 {
-    return (appRoot.isEmpty()) ? Tf::app()->tmpPath() + OLD_PID_FILENAME
-                               : appRoot + QLatin1String("/tmp/") + OLD_PID_FILENAME;
+    return (appRoot.isEmpty()) ? QString(Tf::app()->tmpPath() + OLD_PID_FILENAME)
+                               : QString(appRoot + QLatin1String("/tmp/") + QLatin1String(OLD_PID_FILENAME));
 }
 
 
@@ -362,7 +363,7 @@ void showRunningAppList()
                 url += readJsonOfApplication(path)[JSON_UNIX_KEY].toString();
             }
 
-            std::printf(" * %s\n    %s\n\n", qPrintable(path), qPrintable(url));
+            std::printf(" * %s\n    %s\n\n", qUtf8Printable(path), qUtf8Printable(url));
         }
     }
 }
@@ -391,9 +392,9 @@ int killTreeFrogProcess(const QString &cmd)
 
     if (cmd == "status") {  // status command
         if (pid > 0) {
-            std::printf("TreeFrog server is running.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+            std::printf("TreeFrog server is running.  ( %s )\n", qUtf8Printable(Tf::app()->webRootPath()));
         } else {
-            std::printf("TreeFrog server is stopped.  ( %s )\n", qPrintable(Tf::app()->webRootPath()));
+            std::printf("TreeFrog server is stopped.  ( %s )\n", qUtf8Printable(Tf::app()->webRootPath()));
         }
         return (pid > 0) ? 0 : 1;
     }
@@ -473,7 +474,7 @@ int managerMain(int argc, char *argv[])
         int cmd = options()->value(arg, Invalid);
         switch (cmd) {
         case PrintVersion:
-            std::printf("%s version %s (r%d) built on %s / Qt %s\n", qPrintable(QFileInfo(argv[0]).baseName()), TF_VERSION_STR, TF_SRC_REVISION, __DATE__, qVersion());
+            std::printf("%s version %s (r%d) built on %s / Qt %s\n", qUtf8Printable(QFileInfo(argv[0]).baseName()), TF_VERSION_STR, TF_SRC_REVISION, __DATE__, qVersion());
             return 0;
             break;
 
@@ -534,7 +535,7 @@ int managerMain(int argc, char *argv[])
     }
 
     if (!app.appSettingsFileExists()) {
-        std::fprintf(stderr, "INI file not found [%s]\n\n", qPrintable(app.appSettingsFilePath()));
+        std::fprintf(stderr, "INI file not found [%s]\n\n", qUtf8Printable(app.appSettingsFilePath()));
         return 1;
     }
 
@@ -655,7 +656,7 @@ int managerMain(int argc, char *argv[])
             pidfile.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
             pidfile.close();
         } else {
-            tSystemError("File open failed: %s", qPrintable(pidfile.fileName()));
+            tSystemError("File open failed: %s", qUtf8Printable(pidfile.fileName()));
         }
 
         ret = app.exec();

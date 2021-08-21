@@ -16,13 +16,16 @@ constexpr int MAX_NUM_BUFFERING_DATA = 10000;
 
 class TFileAioWriterData {
 public:
-    mutable QMutex mutex;
+#if QT_VERSION < 0x060000
+    mutable QMutex mutex {QMutex::Recursive};
+#else
+    mutable QRecursiveMutex mutex;
+#endif
     QString fileName;
-    int fileDescriptor;
+    int fileDescriptor {0};
     TQueue<struct aiocb *> syncBuffer;
 
-    TFileAioWriterData() :
-        mutex(QMutex::Recursive), fileName(), fileDescriptor(0), syncBuffer() { }
+    TFileAioWriterData() {}
 };
 
 /*!
@@ -51,9 +54,9 @@ bool TFileAioWriter::open()
             return false;
         }
 
-        d->fileDescriptor = ::open(qPrintable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
+        d->fileDescriptor = ::open(qUtf8Printable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
         if (d->fileDescriptor < 0) {
-            //fprintf(stderr, "file open failed: %s\n", qPrintable(d->fileName));
+            //fprintf(stderr, "file open failed: %s\n", qUtf8Printable(d->fileName));
         }
     }
 

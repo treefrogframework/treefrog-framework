@@ -30,33 +30,37 @@ public:
     void close();
     void setTimestamp(const QDateTime &timestamp)
     {
-        if (accessLog)
+        if (accessLog) {
             accessLog->timestamp = timestamp;
+        }
     }
     void setRemoteHost(const QByteArray &host)
     {
-        if (accessLog)
+        if (accessLog) {
             accessLog->remoteHost = host;
+        }
     }
     void setRequest(const QByteArray &request)
     {
-        if (accessLog)
+        if (accessLog) {
             accessLog->request = request;
+        }
     }
     int statusCode() const { return (accessLog) ? accessLog->statusCode : -1; }
     void setStatusCode(int statusCode)
     {
-        if (accessLog)
+        if (accessLog) {
             accessLog->statusCode = statusCode;
+        }
     }
     int responseBytes() const { return (accessLog) ? accessLog->responseBytes : -1; }
     void setResponseBytes(int bytes)
     {
-        if (accessLog)
+        if (accessLog) {
             accessLog->responseBytes = bytes;
+        }
     }
 
 private:
     TAccessLog *accessLog {nullptr};
 };
-

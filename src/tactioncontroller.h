@@ -1,44 +1,47 @@
 #pragma once
-#include <QDomDocument>
 #include <QHostAddress>
 #include <QtCore>
 #include <TAbstractController>
 #include <TAccessValidator>
 #include <TActionHelper>
 #include <TCookieJar>
-#include <TGlobal>
 #include <THttpRequest>
 #include <THttpResponse>
+#include <TActionContext>
 #include <TSession>
+#include <TGlobal>
 
 class TActionView;
 class TAbstractUser;
 class TFormValidator;
 class TCache;
+class QDomDocument;
 
 
-class T_CORE_EXPORT TActionController : public QObject, public TAbstractController, public TActionHelper, protected TAccessValidator {
+class T_CORE_EXPORT TActionController : public TAbstractController, public TActionHelper, protected TAccessValidator {
 public:
     TActionController();
     virtual ~TActionController();
 
-    QString className() const;
-    QString name() const;
-    QString activeAction() const;
-    QStringList arguments() const;
-    const THttpRequest &httpRequest() const;
-    const THttpResponse &httpResponse() const { return response; }
-    QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
-    const TSession &session() const { return sessionStore; }
+    QString name() const override;
+    QString activeAction() const override;
+    QStringList arguments() const override;
+    const THttpRequest &request() const override;
+    const THttpRequest &httpRequest() const override { return request(); }
+    const THttpResponse &response() const { return _response; }
+    const THttpResponse &httpResponse() const { return response(); }
+    const TSession &session() const override { return _sessionStore; }
+    QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap()) override;
     virtual bool sessionEnabled() const { return true; }
     virtual bool csrfProtectionEnabled() const { return true; }
     virtual QStringList exceptionActionsOfCsrfProtection() const { return QStringList(); }
     virtual bool transactionEnabled() const { return true; }
-    QByteArray authenticityToken() const;
+    QByteArray authenticityToken() const override;
     QString flash(const QString &name) const;
     QHostAddress clientAddress() const;
     virtual bool isUserLoggedIn() const;
     virtual QString identityKeyOfLoginUser() const;
+    void setFlash(const QString &name, const QVariant &value) override;
 
     static void setCsrfProtectionInto(TSession &session);
     static const QStringList &availableControllers();
@@ -54,14 +57,13 @@ protected:
     void setLayout(const QString &layout);
     QString layout() const;
     void setStatusCode(int code);
-    int statusCode() const { return statCode; }
-    void setFlash(const QString &name, const QVariant &value);
+    int statusCode() const { return _statCode; }
     void setFlashValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
-    TSession &session() { return sessionStore; }
+    TSession &session() override { return _sessionStore; }
     void setSession(const TSession &session);
-    bool addCookie(const TCookie &cookie);
-    bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
-    bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
+    bool addCookie(const TCookie &cookie) override;
+    bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
+    bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
     QByteArray contentType() const;
     void setContentType(const QByteArray &type);
     bool render(const QString &action = QString(), const QString &layout = QString());
@@ -92,10 +94,10 @@ protected:
     void redirect(const QUrl &url, int statusCode = Tf::Found);
     bool sendFile(const QString &filePath, const QByteArray &contentType, const QString &name = QString(), bool autoRemove = false);
     bool sendData(const QByteArray &data, const QByteArray &contentType, const QString &name = QString());
-    void rollbackTransaction() { rollback = true; }
+    void rollbackTransaction() { _rollback = true; }
     void setAutoRemove(const QString &filePath);
     bool validateAccess(const TAbstractUser *user);
-    int socketId() const { return sockId; }
+    int socketId() const { return _sockId; }
     // For WebSocket
     void sendTextToWebSocket(int socketId, const QString &text);
     void sendBinaryToWebSocket(int socketId, const QByteArray &binary);
@@ -107,8 +109,9 @@ protected:
     virtual void userLogout();
     virtual void setAccessRules() {}
 
-    THttpRequest &httpRequest();
-    THttpResponse &httpResponse() { return response; }
+    THttpRequest &request();
+    THttpRequest &httpRequest() { return request(); }
+    THttpResponse &httpResponse() { return _response; }
 
 private:
     enum WebSocketTaskType {
@@ -120,97 +123,91 @@ private:
     };
 
     void setActionName(const QString &name);
-    void setArguments(const QStringList &arguments) { args = arguments; }
-    void setSocketId(int socketId) { sockId = socketId; }
+    void setArguments(const QStringList &arguments) { _args = arguments; }
+    void setSocketId(int socketId) { _sockId = socketId; }
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
     void exportAllFlashVariants();
-    const TActionController *controller() const { return this; }
-    bool rollbackRequested() const { return rollback; }
+    const TActionController *controller() const override { return this; }
+    bool rollbackRequested() const { return _rollback; }
     static QString layoutClassName(const QString &layout);
     static QString partialViewClassName(const QString &partial);
 
-    mutable QString ctrlName;
-    QString actName;
-    QStringList args;
-    int statCode {Tf::OK};  // 200 OK
-    bool rendered {false};
-    bool layoutEnable {true};
-    QString layoutName;
-    THttpResponse response;
-    QVariantMap flashVars;
-    TSession sessionStore;
-    TCookieJar cookieJar;
-    bool rollback {false};
-    QStringList autoRemoveFiles;
-    QList<QPair<int, QVariant>> taskList;
-    int sockId {0};
+    mutable QString _ctrlName;
+    QString _actionName;
+    QStringList _args;
+    int _statCode {Tf::OK};  // 200 OK
+    bool _rendered {false};
+    bool _layoutEnable {true};
+    QString _layoutName;
+    THttpResponse _response;
+    QVariantMap _flashVars;
+    TSession _sessionStore;
+    TCookieJar _cookieJar;
+    bool _rollback {false};
+    QStringList _autoRemoveFiles;
+    QList<QPair<int, QVariant>> _taskList;
+    int _sockId {0};
 
     friend class TActionContext;
     friend class TSessionCookieStore;
-    friend class TDirectView;
     T_DISABLE_COPY(TActionController)
     T_DISABLE_MOVE(TActionController)
 };
 
 
-inline QString TActionController::className() const
-{
-    return QString(metaObject()->className());
-}
-
 inline QString TActionController::activeAction() const
 {
-    return actName;
+    return _actionName;
 }
 
 inline QStringList TActionController::arguments() const
 {
-    return args;
+    return _args;
 }
 
 inline void TActionController::setActionName(const QString &name)
 {
-    actName = name;
+    _actionName = name;
 }
 
 inline void TActionController::setLayoutEnabled(bool enable)
 {
-    layoutEnable = enable;
+    _layoutEnable = enable;
 }
 
 inline void TActionController::setLayoutDisabled(bool disable)
 {
-    layoutEnable = !disable;
+    _layoutEnable = !disable;
 }
 
 inline bool TActionController::layoutEnabled() const
 {
-    return layoutEnable;
+    return _layoutEnable;
 }
 
 inline QString TActionController::layout() const
 {
-    return layoutName;
+    return _layoutName;
 }
 
 inline void TActionController::setStatusCode(int code)
 {
-    statCode = code;
+    _statCode = code;
 }
 
 inline QString TActionController::flash(const QString &name) const
 {
-    return flashVars.value(name).toString();
+    return _flashVars.value(name).toString();
 }
 
 inline QByteArray TActionController::contentType() const
 {
-    return response.header().contentType();
+    return _response.header().contentType();
 }
 
 inline void TActionController::setContentType(const QByteArray &type)
 {
-    response.header().setContentType(type);
+    _response.header().setContentType(type);
 }
 

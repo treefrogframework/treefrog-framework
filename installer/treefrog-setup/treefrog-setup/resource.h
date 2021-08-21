@@ -6,22 +6,7 @@
 #define IDC_BROWSE1		                        1003
 #define IDS_APP_TITLE                           1004
 
-#define IDR_TREEFROG_QT50_MSI                   1050
-#define IDR_TREEFROG_QT51_MSI                   1051
-#define IDR_TREEFROG_QT52_MSI                   1052
-#define IDR_TREEFROG_QT53_MSI                   1053
-#define IDR_TREEFROG_QT54_MSI                   1054
-#define IDR_TREEFROG_QT55_MSI                   1055
-#define IDR_TREEFROG_QT56_MSI                   1056
-#define IDR_TREEFROG_QT57_MSI                   1057
-#define IDR_TREEFROG_QT58_MSI                   1058
-#define IDR_TREEFROG_QT59_MSI                   1059
-#define IDR_TREEFROG_QT510_MSI                  10510
-#define IDR_TREEFROG_QT511_MSI                  10511
-#define IDR_TREEFROG_QT512_MSI                  10512
-#define IDR_TREEFROG_QT513_MSI                  10513
-#define IDR_TREEFROG_QT514_MSI                  10514
-#define IDR_TREEFROG_QT515_MSI                  10515
-#define IDR_TREEFROG_QT516_MSI                  10516
-#define IDR_TREEFROG_QT517_MSI                  10517
-#define IDR_TREEFROG_QT518_MSI                  10518
+#define IDR_TREEFROG_QT601_MSI                  10601
+#define IDR_TREEFROG_QT602_MSI                  10602
+#define IDR_TREEFROG_QT603_MSI                  10603
+#define IDR_TREEFROG_QT604_MSI                  10604

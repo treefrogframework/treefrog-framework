@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #
 APPNAME=blogapp
@@ -74,6 +74,11 @@ testcase()
   curl  --data-urlencode 'dummy'  http://localhost:$PORT/blog/remove/2  > remove2 || exit
   [ `row_count` = "0" ] || exit
 
+  # API
+  curl -sS http://localhost:$PORT/apibook/index | jq . || exit
+  curl -sS http://localhost:$PORT/apibook/get/1 | jq . || exit
+  curl -sS -X POST http://localhost:$PORT/apibook/remove/1 | jq . || exit
+
   # Stop app
   cd $APPROOT
   $TREEFROG -k stop || exit
@@ -94,9 +99,12 @@ sqlite3 $DBFILE < create_blog_table.sql || exit
 
 # QMake Build
 cd $APPROOT
-$TSPAWN s blog || exit
-$TSPAWN ms fuga || exit
+$TSPAWN --show-tables || exit
+echo "n" | $TSPAWN s blog || exit
+echo "n" | $TSPAWN s food || exit
+echo "n" | $TSPAWN ms fuga || exit
 $TSPAWN w foo || exit
+$TSPAWN a book || exit
 qmake -r || exit
 make -j4
 make || exit
@@ -108,17 +116,36 @@ rm -f lib/*
 make distclean
 
 # CMake Build
+cmake --version
 mkdir build
 cd build
-Qt5_DIR=$(qmake -query QT_INSTALL_LIBS)/cmake  cmake ..
-make -j4
-make || exit
+cmake ..
+cd ..
+make -j4 -C build
+make -C build || exit
 cd $APPROOT
 $TREEFROG --show-routes || exit
 
 cd $BASEDIR
 sqlite3 $DBFILE < create_blog_table.sql || exit
+
 testcase
+cd $APPROOT
+rm -f lib/*
+make distclean
+
+# Vue.js & QMake
+cd $APPROOT
+for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN s blog || exit
+for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN s food || exit
+for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN ms fuga || exit
+qmake -r || exit
+make -j4
+make || exit
+$TREEFROG --show-routes || exit
+$TREEFROG -k abort
+rm -f lib/*
+make distclean
 
 echo
 echo "Test completed."

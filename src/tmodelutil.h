@@ -103,11 +103,11 @@ inline QList<T> tfGetModelListByMongoCriteria(const TCriteria &cri, int limit = 
 
 
 template <class T>
-inline QJsonArray tfConvertToJsonArray(const QList<T> &list)
+inline QJsonArray tfConvertToJsonArray(const QList<T> &list, const QStringList &properties = QStringList())
 {
     QJsonArray array;
     for (auto &it : list) {
-        array.append(it.toJsonObject());
+        array.append(it.toJsonObject(properties));
     }
     return array;
 }

@@ -55,3 +55,14 @@ protected:
     QList<AccessRule> accessRules;
 };
 
+
+/*!
+  \class TAccessValidator
+  \brief The TAccessValidator class provides the functionality of a validation
+  for form data.
+*/
+
+/*!
+  \class TAccessValidator::AccessRule
+  \brief The AccessRule class represents an access rule.
+*/

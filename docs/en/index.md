@@ -37,16 +37,38 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Aug. 21, 2021
+
+### TreeFrog Framework version 2.1 (stable) release <span style="color: red;">New!</span>
+
+  - Fix a bug of calculating length of receiving packets.
+  - Added echo() function with a variantmap argument.
+  - Implement the logic of the tspawn command to generate scaffolding for vue.js.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
+Jun. 19, 2021
+
+### TreeFrog Framework version 2.0 (beta2) release
+
+ - Updated the scaffold generator to generate WebAPI codes.
+ - Modified the scaffold generator to generate service classes for the model layer.
+
+May 23, 2021
+
+### TreeFrog Framework version 2.0 (beta) release
+
+ - Support for Qt version 5 and version 6.
+ - Modified not to use obsolete functions of Qt.
+
 Feb. 6, 2021
 
-### TreeFrog Framework version 1.31.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 1.31.0 (stable) release
 
  - Fix a bug of TMultiplexingServer (epoll server).
  - Modified not to use obsolete functions of Qt.
  - Added TAbstractSqlORMapper class.
  - Performance improvement.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Aug. 21, 2020
 
@@ -57,84 +79,6 @@ Aug. 21, 2020
   - Added a option for showing URL routing to treefrog command.
   - Updated I/F of ORM functions.
   - Performance improvement.
-
-May. 5, 2020
-
-### TreeFrog Framework version 1.29.0 (stable) release
-
-  - Fix a bug of max-age of cookie.
-  - Fix a bug of generating select-tag.
-  - Modified to initialize boolean fields in classes generated.
-  - Implemented publish() function in TActionController class.
-
-Feb. 11, 2020
-
-### TreeFrog Framework version 1.28.0 (stable) release
-
-  - Implemented to add a SameSite attribute to cookie.
-  - Modified to add a max-age value to cookie.
-  - Fix a bug of listing available controllers.
-  - Fix a bug of showing a port number by -l option.
-  - Fix a bug of content type in renderText() function.
-
-Dec. 5, 2019
-
-### TreeFrog Framework version 1.27.0 (stable) release
-
-  - Implemented OAuth2 client.  [Experimental]
-  - Supports for MongoDB version 3.2 and later.
-  - Fix a bug that timer for TSqlDatabasePool stops. #279
-  - Fix a bug not to set all databases to transaction state value.
-  - Fix a bug of execution of diff in tspawn command.
-
-Oct. 19, 2019
-
-### TreeFrog Framework version 1.26.0 (stable) release
-
-  - Added cache modules by SQLite, MongoDB and Redis.
-  - Updated LZ4 compression algorithm to 1.9.2.
-  - Fix a compilation error on Ubuntu 19.10.
-  - Changed the epoll MPM from multi-thread to single thread architecture.
-  - Performance improvement.
-
-July 20, 2019
-
-### TreeFrog Framework version 1.25.0 (stable) release
-
-  - Updated Mongo C driver to v1.9.5.
-  - Updated LZ4 compression algorithm to v1.9.1.
-  - Modified to set a domain in session cookie.
-  - Changed the default C++ config from c++11 to c++14.
-  - Other bugfixes and improvements.
-
-Apr. 29, 2019
-
-### TreeFrog Framework version 1.24.0 (stable) release
-
-  - Modified to use LZ4 compression algorithm.
-  - Implemented functions storing data of hash type for Redis.
-  - Fix a bug of incorrect Content-Type returned for files with uppercase extension.
-  - Fix a bug of parsing form-data values included backslashes.
-  - Other bugfixes and improvements.
-
-Jan. 6, 2019
-
-### TreeFrog Framework version 1.23.0 (stable) release
-
-  - Added failsafe of SQL when BEGEN/COMMIT/ROLLBACK failed.
-  - Fix a bug of sqlobject for session store.
-  - Minor changes of exception classes.
-  - Added log messages for query log.
-  - Other bugfixes.
-
-Jun. 10, 2018
-
-### TreeFrog Framework version 1.22.0 (stable) release
-
-  - Support for CMake build of Web application.
-  - Support SMTP connections to older servers not supporting ESMTP.
-  - Fix bugs of tspawn.pro file.
-
 
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 

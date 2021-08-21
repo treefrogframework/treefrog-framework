@@ -61,7 +61,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
 
-    tSystemDebug("Redis open host:%s  port:%d", qPrintable(_host), _port);
+    tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
     tcpSocket.connectToHost(_host, _port);
 
     bool ret = tcpSocket.waitForConnected(5000);
@@ -96,13 +96,15 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
 
     qint64 total = 0;
     while (total < command.length()) {
-        if (tf_poll_send(_socket, 5000) == 0) {
+        if (tf_poll_send(_socket, 5000) > 0) {
             qint64 len = tf_send(_socket, command.data() + total, command.length() - total);
             if (len < 0) {
+                tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
                 break;
             }
             total += len;
         } else {
+            tSystemError("Socket poll error  [%s:%d]", __FILE__, __LINE__);
             break;
         }
     }
@@ -122,9 +124,10 @@ bool TRedisDriver::readReply()
     int timeout = 5000;
     int len = 0;
 
-    while (tf_poll_recv(_socket, timeout) == 0) {
+    while (tf_poll_recv(_socket, timeout) > 0) {
         len = tf_recv(_socket, buf.data(), RECV_BUF_SIZE, 0);
         if (len <= 0) {
+            tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
             break;
         }
 

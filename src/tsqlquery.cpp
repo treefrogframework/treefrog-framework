@@ -54,11 +54,11 @@ bool TSqlQuery::load(const QString &filename)
 
     QDir dir(queryDirPath());
     QFile file(dir.filePath(filename));
-    tSystemDebug("SQL_QUERY_ROOT: %s", qPrintable(dir.dirName()));
-    tSystemDebug("filename: %s", qPrintable(file.fileName()));
+    tSystemDebug("SQL_QUERY_ROOT: %s", qUtf8Printable(dir.dirName()));
+    tSystemDebug("filename: %s", qUtf8Printable(file.fileName()));
 
     if (!file.open(QIODevice::ReadOnly)) {
-        tSystemError("Unable to open file: %s", qPrintable(file.fileName()));
+        tSystemError("Unable to open file: %s", qUtf8Printable(file.fileName()));
         return false;
     }
 
@@ -118,7 +118,11 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
   Returns a string representation of the value \a val for the database
   \a databaseId.
 */
+#if QT_VERSION < 0x060000
 QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, int databaseId)
+#else
+QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, int databaseId)
+#endif
 {
     return formatValue(val, type, Tf::currentSqlDatabase(databaseId));
 }
@@ -127,6 +131,7 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, int dat
   Returns a string representation of the value \a val for the database
   \a database.
 */
+#if QT_VERSION < 0x060000
 QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const QSqlDatabase &database)
 {
     if (Q_UNLIKELY(type == QVariant::Invalid)) {
@@ -137,6 +142,19 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const Q
     field.setValue(val);
     return database.driver()->formatValue(field);
 }
+#else
+QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, const QSqlDatabase &database)
+{
+    QMetaType metaType = type;
+    if (Q_UNLIKELY(!metaType.isValid())) {
+        metaType = val.metaType();
+    }
+
+    QSqlField field(QStringLiteral("dummy"), metaType);
+    field.setValue(val);
+    return database.driver()->formatValue(field);
+}
+#endif
 
 /*!
   Returns a string representation of the value \a val for the database
@@ -144,7 +162,11 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const Q
 */
 QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database)
 {
+#if QT_VERSION < 0x060000
     return formatValue(val, val.type(), database);
+#else
+    return formatValue(val, val.metaType(), database);
+#endif
 }
 
 /*!

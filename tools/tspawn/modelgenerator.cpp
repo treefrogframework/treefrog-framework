@@ -12,13 +12,13 @@
 #include "projectfilegenerator.h"
 #include "sqlobjgenerator.h"
 #include "util.h"
+#include <tfnamespace.h>
 
 constexpr auto USER_VIRTUAL_METHOD = "identityKey";
 constexpr auto LOCK_REVISION_FIELD = "lockRevision";
 
-constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
-                                            "#define %head%_H\n"
-                                            "\n"
+
+constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                             "#include <QStringList>\n"
                                             "#include <QDateTime>\n"
                                             "#include <QVariant>\n"
@@ -30,8 +30,7 @@ constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
                                             "class %model%Object;\n"
                                             "%7%"
                                             "\n\n"
-                                            "class T_MODEL_EXPORT %model% : public TAbstractModel\n"
-                                            "{\n"
+                                            "class T_MODEL_EXPORT %model% : public TAbstractModel {\n"
                                             "public:\n"
                                             "    %model%();\n"
                                             "    %model%(const %model% &other);\n"
@@ -60,19 +59,18 @@ constexpr auto MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
                                             "\n"
                                             "    TModelObject *modelData() override;\n"
                                             "    const TModelObject *modelData() const override;\n"
-                                            "    friend QDataStream &operator<<(QDataStream &ds, const %model% &model);\n"
-                                            "    friend QDataStream &operator>>(QDataStream &ds, %model% &model);\n"
+                                            "    friend T_MODEL_EXPORT QDataStream &operator<<(QDataStream &ds, const %model% &model);\n"
+                                            "    friend T_MODEL_EXPORT QDataStream &operator>>(QDataStream &ds, %model% &model);\n"
                                             "};\n"
                                             "\n"
                                             "Q_DECLARE_METATYPE(%model%)\n"
                                             "Q_DECLARE_METATYPE(QList<%model%>)\n"
-                                            "\n"
-                                            "#endif // %head%_H\n";
+                                            "\n";
 
 constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "#include \"%inc%.h\"\n"
                                      "#include \"%objdir%%inc%object.h\"\n"
-                                     "\n"
+                                     "\n\n"
                                      "%model%::%model%() :\n"
                                      "    TAbstractModel(),\n"
                                      "    d(new %model%Object())\n"
@@ -161,13 +159,15 @@ constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "    model.setProperties(varmap);\n"
                                      "    return ds;\n"
                                      "}\n"
+#if QT_VERSION < 0x060000
                                      "\n"
                                      "// Don't remove below this line\n"
                                      "T_REGISTER_STREAM_OPERATORS(%model%)\n";
+#else
+                                     "";
+#endif
 
-constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
-                                                 "#define %head%_H\n"
-                                                 "\n"
+constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "#include <QStringList>\n"
                                                  "#include <QDateTime>\n"
                                                  "#include <QVariant>\n"
@@ -180,8 +180,7 @@ constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
                                                  "class %model%Object;\n"
                                                  "%7%"
                                                  "\n\n"
-                                                 "class T_MODEL_EXPORT %model% : public TAbstractUser, public TAbstractModel\n"
-                                                 "{\n"
+                                                 "class T_MODEL_EXPORT %model% : public TAbstractUser, public TAbstractModel {\n"
                                                  "public:\n"
                                                  "    %model%();\n"
                                                  "    %model%(const %model% &other);\n"
@@ -218,13 +217,12 @@ constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#ifndef %head%_H\n"
                                                  "\n"
                                                  "Q_DECLARE_METATYPE(%model%)\n"
                                                  "Q_DECLARE_METATYPE(QList<%model%>)\n"
-                                                 "\n"
-                                                 "#endif // %head%_H\n";
+                                                 "\n";
 
 constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "#include \"%inc%.h\"\n"
                                           "#include \"%objdir%%inc%object.h\"\n"
-                                          "\n"
+                                          "\n\n"
                                           "%model%::%model%() :\n"
                                           "    TAbstractUser(),\n"
                                           "    TAbstractModel(),\n"
@@ -330,35 +328,23 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "    model.setProperties(varmap);\n"
                                           "    return ds;\n"
                                           "}\n"
+#if QT_VERSION < 0x060000
                                           "\n"
                                           "// Don't remove below this line\n"
                                           "T_REGISTER_STREAM_OPERATORS(%model%)";
+#else
+                                          "";
+#endif
 
-constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson()\n"
+constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson(const QStringList &properties)\n"
                                        "{\n"
-                                       "    QJsonArray array;\n"
-                                       "    TSqlORMapper<%model%Object> mapper;\n"
-                                       "\n"
-                                       "    if (mapper.find() > 0) {\n"
-                                       "        for (TSqlORMapperIterator<%model%Object> i(mapper); i.hasNext(); ) {\n"
-                                       "            array.append(QJsonValue(QJsonObject::fromVariantMap(%model%(i.next()).toVariantMap())));\n"
-                                       "        }\n"
-                                       "    }\n"
-                                       "    return array;\n"
+                                       "    return tfConvertToJsonArray(getAll(), properties);\n"
                                        "}\n"
                                        "\n";
 
-constexpr auto MODEL_IMPL_GETALLJSON_MONGO = "QJsonArray %model%::getAllJson()\n"
+constexpr auto MODEL_IMPL_GETALLJSON_MONGO = "QJsonArray %model%::getAllJson(const QStringList &properties)\n"
                                              "{\n"
-                                             "    QJsonArray array;\n"
-                                             "    TMongoODMapper<%model%Object> mapper;\n"
-                                             "\n"
-                                             "    if (mapper.find()) {\n"
-                                             "        while (mapper.next()) {\n"
-                                             "            array.append(QJsonValue(QJsonObject::fromVariantMap(%model%(mapper.value()).toVariantMap())));\n"
-                                             "        }\n"
-                                             "    }\n"
-                                             "    return array;\n"
+                                             "    return tfConvertToJsonArray(getAll(), properties);\n"
                                              "}\n"
                                              "\n";
 
@@ -438,7 +424,7 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 #ifdef Q_OS_WIN
     if (ret) {
         // Deletes dummy models
-        QStringList dummy = {"_dummymodel.h", "_dummymodel.cpp"};
+        QStringList dummy = {"objects/_dummymodel.h", "objects/_dummymodel.cpp"};
         bool rmd = false;
         for (auto &f : dummy) {
             rmd |= ::remove(QDir(dstDir).filePath(f));
@@ -456,16 +442,16 @@ bool ModelGenerator::generate(const QString &dstDir, bool userModel)
 QStringList ModelGenerator::genModel(const QString &dstDir)
 {
     QStringList ret;
-    QDir dir(dstDir);
+    QDir dir(dstDir + "/objects");
     auto p = createModelParams();
 
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     gen(fileName, MODEL_HEADER_FILE_TEMPLATE, p.first);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     gen(fileName, MODEL_IMPL_TEMPLATE, p.second);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
     return ret;
 }
 
@@ -473,7 +459,7 @@ QStringList ModelGenerator::genModel(const QString &dstDir)
 QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &usernameField, const QString &passwordField)
 {
     QStringList ret;
-    QDir dir(dstDir);
+    QDir dir(dstDir + "/objects");
     auto p = createModelParams();
     QString fileName = dir.filePath(modelName.toLower() + ".h");
     QString userVar = fieldNameToVariableName(usernameField);
@@ -482,7 +468,7 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
             << pair("11", QLatin1String("    QString ") + USER_VIRTUAL_METHOD + "() const { return " + userVar + "(); }\n");
 
     gen(fileName, USER_MODEL_HEADER_FILE_TEMPLATE, p.first);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
 
     fileName = dir.filePath(modelName.toLower() + ".cpp");
     p.second << pair("14", fieldNameToVariableName(usernameField))
@@ -490,12 +476,12 @@ QStringList ModelGenerator::genUserModel(const QString &dstDir, const QString &u
              << pair("16", fieldNameToEnumName(usernameField))
              << pair("17", passwordField);
     gen(fileName, USER_MODEL_IMPL_TEMPLATE, p.second);
-    ret << QFileInfo(fileName).fileName();
+    ret << QLatin1String("objects/") + QFileInfo(fileName).fileName();
     return ret;
 }
 
 
-QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGenerator::createModelParams()
+QPair<PlaceholderList, PlaceholderList> ModelGenerator::createModelParams()
 {
     QString setgetDecl, setgetImpl, crtparams, getOptDecl, getOptImpl;
     QList<QPair<QString, QString>> writableFields;
@@ -506,10 +492,14 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     QString autoFieldName = (autoIndex >= 0) ? fields[autoIndex].first : QString();
     QString mapperstr = (objectType == Sql) ? "TSqlORMapper" : "TMongoODMapper";
 
-    for (QListIterator<QPair<QString, QVariant::Type>> it(fields); it.hasNext();) {
-        const QPair<QString, QVariant::Type> &p = it.next();
+    for (QListIterator<QPair<QString, QMetaType::Type>> it(fields); it.hasNext();) {
+        const QPair<QString, QMetaType::Type> &p = it.next();
         QString var = fieldNameToVariableName(p.first);
-        QString type = QVariant::typeToName(p.second);
+#if QT_VERSION < 0x060000
+        QString type = QString::fromLatin1(QVariant::typeToName(p.second));
+#else
+        QString type = QString::fromLatin1(QMetaType(p.second).name());
+#endif
         if (type.isEmpty())
             continue;
 
@@ -545,13 +535,13 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     if (pkidx < 0) {
         getparams = crtparams;
     } else {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        const QPair<QString, QMetaType::Type> &pair = fields[pkidx];
         getparams = createParam(pair.second, pair.first);
     }
 
     // Creates a declaration and a implementation of 'get' method for optimistic lock
     if (pkidx >= 0 && optlockMethod) {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        const QPair<QString, QMetaType::Type> &pair = fields[pkidx];
         getOptDecl = QString("    static %1 get(%2, int lockRevision);\n").arg(modelName, createParam(pair.second, pair.first));
 
         getOptImpl = QString("%1 %1::get(%2, int lockRevision)\n"
@@ -567,8 +557,7 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
 
     PlaceholderList headerList, implList;
 
-    headerList << pair("head", modelName.toUpper())
-               << pair("model", modelName)
+    headerList << pair("model", modelName)
                << pair("setgetDecl", setgetDecl)
                << pair("4", crtparams)
                << pair("5", getparams)
@@ -619,7 +608,7 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
     if (pkidx < 0) {
         getImpl += "findFirst(cri));\n";
     } else {
-        const QPair<QString, QVariant::Type> &pair = fields[pkidx];
+        const QPair<QString, QMetaType::Type> &pair = fields[pkidx];
         getImpl += (objectType == Sql) ? "findByPrimaryKey(" : "findByObjectId(";
         getImpl += fieldNameToVariableName(pair.first);
         getImpl += QString("));\n");
@@ -636,7 +625,7 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
              << pair("11", ((objectType == Mongo) ? "Mongo" : ""));
 
     headerList << pair("7", "class QJsonArray;\n")
-               << pair("8", "    static QJsonArray getAllJson();\n");
+               << pair("8", "    static QJsonArray getAllJson(const QStringList &properties = QStringList());\n");
 
     switch (objectType) {
     case Sql:
@@ -660,25 +649,6 @@ QPair<ModelGenerator::PlaceholderList, ModelGenerator::PlaceholderList> ModelGen
 }
 
 
-QString ModelGenerator::replaceholder(const QString &format, const QPair<QString, QString> &value)
-{
-    QString out = format;
-    QString placeholder = QLatin1Char('%') + value.first + QLatin1Char('%');
-    out.replace(placeholder, value.second);
-    return out;
-}
-
-
-QString ModelGenerator::replaceholder(const QString &format, const PlaceholderList &values)
-{
-    QString out = format;
-    for (auto &p : values) {
-        out = replaceholder(out, p);
-    }
-    return out;
-}
-
-
 void ModelGenerator::gen(const QString &fileName, const QString &format, const QList<QPair<QString, QString>> &values)
 {
     QString out = replaceholder(format, values);
@@ -687,25 +657,33 @@ void ModelGenerator::gen(const QString &fileName, const QString &format, const Q
 }
 
 
-QString ModelGenerator::createParam(QVariant::Type type, const QString &name)
+QString ModelGenerator::createParam(QMetaType::Type type, const QString &name)
 {
     QString string;
     QString var = fieldNameToVariableName(name);
 
     switch (type) {
-    case QVariant::Bool:
-    case QVariant::Int:
-    case QVariant::UInt:
-    case QVariant::LongLong:
-    case QVariant::ULongLong:
-    case QVariant::Double:
+    case QMetaType::Bool:
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::LongLong:
+    case QMetaType::ULongLong:
+    case QMetaType::Double:
+#if QT_VERSION < 0x060000
         string += QVariant::typeToName(type);
+#else
+        string += QString::fromLatin1(QMetaType(type).name());
+#endif
         string += ' ';
         string += var;
         break;
 
     default:
+#if QT_VERSION < 0x060000
         string += QString("const %1 &%2").arg(QVariant::typeToName(type), var);
+#else
+        string += QString("const %1 &%2").arg(QMetaType(type).name(), var);
+#endif
         break;
     }
     return string;

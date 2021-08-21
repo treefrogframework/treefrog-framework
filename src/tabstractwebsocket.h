@@ -1,12 +1,12 @@
 #pragma once
-#include "tatomic.h"
 #include "tbasictimer.h"
+#include <TAtomic>
 #include <QByteArray>
 #include <QList>
 #include <QMutex>
-#include <TGlobal>
 #include <THttpRequestHeader>
 #include <TWebSocketSession>
+#include <TGlobal>
 
 class QObject;
 class THttpResponseHeader;

@@ -65,7 +65,7 @@ static TKvsDriver *createDriver(const QString &driverName)
     }
 
     if (!driver) {
-        tWarn("TKvsDatabase: %s driver not loaded", qPrintable(driverName));
+        tWarn("TKvsDatabase: %s driver not loaded", qUtf8Printable(driverName));
     }
     return driver;
 }

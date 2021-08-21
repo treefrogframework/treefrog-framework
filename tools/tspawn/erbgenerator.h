@@ -1,4 +1,5 @@
 #pragma once
+#include "global.h"
 #include <QDir>
 #include <QPair>
 #include <QStringList>
@@ -7,13 +8,19 @@
 
 class ErbGenerator {
 public:
-    ErbGenerator(const QString &view, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int autoValIdx);
+    ErbGenerator(const QString &view, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int autoValIdx);
+    virtual ~ErbGenerator() {}
     bool generate(const QString &dstDir) const;
 
-private:
-    QString viewName;
-    QList<QPair<QString, QVariant::Type>> fieldList;
-    int primaryKeyIndex {0};
-    int autoValueIndex {0};
-};
+protected:
+    virtual QString indexTemplate() const;
+    virtual QString showTemplate() const;
+    virtual QString createTemplate() const;
+    virtual QString saveTemplate() const;
+    virtual PlaceholderList replaceList() const;
 
+    QString _viewName;
+    QList<QPair<QString, QMetaType::Type>> _fieldList;
+    int _primaryKeyIndex {0};
+    int _autoValueIndex {0};
+};

@@ -1,8 +1,18 @@
 TARGET   = treefrog
 TEMPLATE = lib
-CONFIG  += shared console c++14
+CONFIG  += shared console
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
+lessThan(QT_MAJOR_VERSION, 6) {
+  CONFIG += c++14
+  windows:QMAKE_CXXFLAGS += /std:c++14
+} else {
+  CONFIG += c++17
+  QT += core5compat
+  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
+}
+
+DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL
 DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += ../include ../3rdparty/lz4/lib
@@ -30,15 +40,21 @@ INSTALLS += target
 
 windows {
   win32-msvc* {
-    LIBS += ../3rdparty/lz4/visual/liblz4_static.lib
+    LIBS += ../3rdparty/lz4/build/liblz4_static.lib
   } else {
     LIBS += ../3rdparty/lz4/lib/release/liblz4.a
   }
 
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
-  win32-msvc* {
-    QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
+  lessThan(QT_MAJOR_VERSION, 6) {
+    win32-msvc* {
+      QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
+    }
+  } else {
+    win32-msvc* {
+      QMAKE_CXXFLAGS += /wd 4819 /wd 4661
+    }
   }
 
   isEmpty(header.path) {
@@ -72,8 +88,10 @@ isEmpty( use_gui ) {
   DEFINES += TF_USE_GUI_MODULE
 }
 
-CONFIG *= precompile_header
-PRECOMPILED_HEADER = precompile.h
+!windows {
+  CONFIG += precompile_header
+  PRECOMPILED_HEADER = precompile.h
+}
 
 HEADERS += twebapplication.h
 SOURCES += twebapplication.cpp
@@ -251,10 +269,8 @@ HEADERS += tfileaiologger.h
 SOURCES += tfileaiologger.cpp
 HEADERS += tfileaiowriter.h
 SOURCES += tfileaiowriter.cpp
-HEADERS += tscheduler.h
-SOURCES += tscheduler.cpp
-HEADERS += tapplicationscheduler.h
-SOURCES += tapplicationscheduler.cpp
+HEADERS += tjobscheduler.h
+SOURCES += tjobscheduler.cpp
 HEADERS += tappsettings.h
 SOURCES += tappsettings.cpp
 HEADERS += tabstractwebsocket.h

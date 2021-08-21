@@ -45,13 +45,13 @@ bool SystemBusDaemon::open()
     QFile file(unixDomainServerDir() + TSystemBus::connectionName());
     if (file.exists()) {
         file.remove();
-        tSystemWarn("File removed for UNIX domain socket : %s", qPrintable(file.fileName()));
+        tSystemWarn("File removed for UNIX domain socket : %s", qUtf8Printable(file.fileName()));
     }
 #endif
 
     bool ret = localServer->listen(TSystemBus::connectionName());
     if (ret) {
-        tSystemDebug("system bus open : %s", qPrintable(localServer->fullServerName()));
+        tSystemDebug("system bus open : %s", qUtf8Printable(localServer->fullServerName()));
     } else {
         tSystemError("system bus open error  [%s:%d]", __FILE__, __LINE__);
     }
@@ -70,7 +70,7 @@ void SystemBusDaemon::close()
         delete socket;
     }
 
-    tSystemDebug("close system bus daemon : %s", qPrintable(localServer->fullServerName()));
+    tSystemDebug("close system bus daemon : %s", qUtf8Printable(localServer->fullServerName()));
 }
 
 
@@ -97,7 +97,7 @@ void SystemBusDaemon::readSocket()
     }
 
     QByteArray buf = socket->readAll();
-    tSystemDebug("SystemBusDaemon::read len : %d", buf.size());
+    tSystemDebug("SystemBusDaemon::read len : %lld", buf.size());
     if (maxServers <= 1) {
         // do nothing
         return;
@@ -190,7 +190,7 @@ void SystemBusDaemon::releaseResource(qint64 pid)
     QFile file(unixDomainServerDir() + TSystemBus::connectionName(pid));
     if (file.exists()) {
         file.remove();
-        tSystemWarn("File removed for UNIX domain socket : %s", qPrintable(file.fileName()));
+        tSystemWarn("File removed for UNIX domain socket : %s", qUtf8Printable(file.fileName()));
     }
 #else
     Q_UNUSED(pid);

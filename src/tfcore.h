@@ -1,4 +1,9 @@
 #pragma once
+#include <TWebApplication>
+#include <TAbstractController>
+#include <TAbstractActionContext>
+#include <TAtomic>
+#include <TAccessLog>
 #include <QtGlobal>
 #include <cerrno>
 #include <cstdio>

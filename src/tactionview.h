@@ -9,7 +9,7 @@
 #include <TPrototypeAjaxHelper>
 #include <TViewHelper>
 
-class TActionController;
+class TAbstractController;
 
 
 class T_CORE_EXPORT TActionView : public QObject, public TActionHelper, public TViewHelper, public TPrototypeAjaxHelper {
@@ -24,7 +24,7 @@ public:
     QVariant variant(const QString &name) const;
     bool hasVariant(const QString &name) const;
     const QVariantMap &allVariants() const;
-    const TActionController *controller() const;
+    const TAbstractController *controller() const override;
     const THttpRequest &httpRequest() const;
 
 protected:
@@ -42,6 +42,7 @@ protected:
     QString echo(const QJsonDocument &doc);
     QString echo(const THtmlAttribute &attr);
     QString echo(const QVariant &var);
+    QString echo(const QVariantMap &map);
     QString eh(const QString &str);
     QString eh(const char *str);
     QString eh(const QByteArray &str);
@@ -56,6 +57,7 @@ protected:
     QString eh(const QJsonDocument &doc);
     QString eh(const THtmlAttribute &attr);
     QString eh(const QVariant &var);
+    QString eh(const QVariantMap &map);
     QString renderReact(const QString &component);
     QString responsebody;
 
@@ -64,11 +66,11 @@ private:
     T_DISABLE_MOVE(TActionView)
 
     void setVariantMap(const QVariantMap &vars);
-    void setController(TActionController *controller);
+    void setController(TAbstractController *controller);
     void setSubActionView(TActionView *actionView);
-    virtual const TActionView *actionView() const { return this; }
+    virtual const TActionView *actionView() const override { return this; }
 
-    TActionController *actionController {nullptr};
+    TAbstractController *actionController {nullptr};
     TActionView *subView {nullptr};
     QVariantMap variantMap;
 
@@ -83,7 +85,7 @@ inline void TActionView::setSubActionView(TActionView *actionView)
     subView = actionView;
 }
 
-inline const TActionController *TActionView::controller() const
+inline const TAbstractController *TActionView::controller() const
 {
     return actionController;
 }
@@ -238,7 +240,7 @@ inline QString TActionView::eh(const QJsonDocument &doc)
     return echo(THttpUtility::htmlEscape(doc.toJson(QJsonDocument::Compact)));
 }
 
-inline void TActionView::setController(TActionController *controller)
+inline void TActionView::setController(TAbstractController *controller)
 {
     actionController = controller;
 }

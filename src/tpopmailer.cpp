@@ -62,17 +62,16 @@ bool TPopMailer::connectToHost()
     bool ret = false;
 
     if (popHostName.isEmpty() || popPort <= 0) {
-        tSystemError("POP: Bad Argument: hostname:%s port:%d", qPrintable(popHostName), popPort);
+        tSystemError("POP: Bad Argument: hostname:%s port:%d", qUtf8Printable(popHostName), popPort);
         return ret;
     }
 
     socket->connectToHost(popHostName, popPort);
     if (!socket->waitForConnected(5000)) {
-        tSystemError("POP server connect error: %s", qPrintable(socket->errorString()));
+        tSystemError("POP server connect error: %s", qUtf8Printable(socket->errorString()));
         return ret;
     }
-    tSystemDebug("POP server connected: %s:%d", qPrintable(popHostName), popPort);
-    ;
+    tSystemDebug("POP server connected: %s:%d", qUtf8Printable(popHostName), popPort);
 
     QByteArray response;
     readResponse(&response);
@@ -153,12 +152,13 @@ bool TPopMailer::cmdRetr(int index, QByteArray &message)
     QByteArray retr("RETR ");
     retr += QByteArray::number(index);
     message.resize(0);
+    const QByteArray eol = QByteArrayLiteral(".") + CRLF;
 
     bool res = cmd(retr);
     if (res) {
         while (socket->waitForReadyRead(5000)) {
             message += socket->readAll();
-            if (message.endsWith(QByteArray(".") + CRLF)) {
+            if (message.endsWith(eol)) {
                 break;
             }
         }

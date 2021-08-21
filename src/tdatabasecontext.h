@@ -1,9 +1,10 @@
 #pragma once
 #include <QMap>
-#include <QSqlDatabase>
-#include <TGlobal>
-#include <TKvsDatabase>
 #include <TSqlTransaction>
+#include <TGlobal>
+
+class QSqlDatabase;
+class TKvsDatabase;
 
 
 class T_CORE_EXPORT TDatabaseContext {

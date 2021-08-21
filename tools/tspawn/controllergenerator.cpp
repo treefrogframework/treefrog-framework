@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2019, AOYAMA Kazuharu
+/* Copyright (c) 2010-2021, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -10,153 +10,123 @@
 #include "global.h"
 #include "projectfilegenerator.h"
 #include "tableschema.h"
+#include <tfnamespace.h>
 #include <QtCore>
 
-constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE = "#ifndef %1CONTROLLER_H\n"
-                                                 "#define %1CONTROLLER_H\n"
-                                                 "\n"
+constexpr auto CONTROLLER_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "#include \"applicationcontroller.h\"\n"
                                                  "\n\n"
-                                                 "class T_CONTROLLER_EXPORT %2Controller : public ApplicationController\n"
-                                                 "{\n"
+                                                 "class T_CONTROLLER_EXPORT %clsname%Controller : public ApplicationController {\n"
                                                  "    Q_OBJECT\n"
-                                                 "public:\n"
-                                                 "    %2Controller() : ApplicationController() {}\n"
-                                                 "\n"
                                                  "public slots:\n"
                                                  "    void index();\n"
-                                                 "    void show(const QString &%3);\n"
+                                                 "    void show(const QString &%id%);\n"
                                                  "    void create();\n"
-                                                 "    void save(const QString &%3);\n"
-                                                 "    void remove(const QString &%3);\n"
+                                                 "    void save(const QString &%id%);\n"
+                                                 "    void remove(const QString &%id%);\n"
                                                  "};\n"
+                                                 "\n";
+
+
+constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%name%controller.h\"\n"
+                                                 "#include \"%name%service.h\"\n"
+                                                 "#include <TreeFrogController>\n"
                                                  "\n"
-                                                 "#endif // %1CONTROLLER_H\n";
-
-
-constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
-                                                 "#include \"%1.h\"\n"
+                                                 "static %clsname%Service service;\n"
                                                  "\n\n"
-                                                 "void %2Controller::index()\n"
+                                                 "void %clsname%Controller::index()\n"
                                                  "{\n"
-                                                 "    auto %3List = %2::getAll();\n"
-                                                 "    texport(%3List);\n"
+                                                 "    service.index();\n"
                                                  "    render();\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::show(const QString &%8)\n"
+                                                 "void %clsname%Controller::show(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    auto %3 = %2::get(%4);\n"
-                                                 "    texport(%3);\n"
+                                                 "    service.show(%var1%);\n"
                                                  "    render();\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::create()\n"
+                                                 "void %clsname%Controller::create()\n"
                                                  "{\n"
-                                                 "    switch (httpRequest().method()) {\n"
+                                                 "    %type% %id%;\n"
+                                                 "\n"
+                                                 "    switch (request().method()) {\n"
                                                  "    case Tf::Get:\n"
                                                  "        render();\n"
                                                  "        break;\n"
-                                                 "\n"
-                                                 "    case Tf::Post: {\n"
-                                                 "        auto %3 = httpRequest().formItems(\"%3\");\n"
-                                                 "        auto model = %2::create(%3);\n"
-                                                 "\n"
-                                                 "        if (!model.isNull()) {\n"
-                                                 "            QString notice = \"Created successfully.\";\n"
-                                                 "            tflash(notice);\n"
-                                                 "            redirect(urla(\"show\", model.%8()));\n"
+                                                 "    case Tf::Post:\n"
+                                                 "        %id% = service.create(request());\n"
+                                                 "        if (%condition%) {\n"
+                                                 "            redirect(urla(\"show\", %id%));\n"
                                                  "        } else {\n"
-                                                 "            QString error = \"Failed to create.\";\n"
-                                                 "            texport(error);\n"
-                                                 "            texport(%3);\n"
                                                  "            render();\n"
                                                  "        }\n"
-                                                 "        break; }\n"
-                                                 "\n"
+                                                 "        break;\n"
                                                  "    default:\n"
                                                  "        renderErrorResponse(Tf::NotFound);\n"
                                                  "        break;\n"
                                                  "    }\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::save(const QString &%8)\n"
+                                                 "void %clsname%Controller::save(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    switch (httpRequest().method()) {\n"
-                                                 "    case Tf::Get: {\n"
-                                                 "        auto model = %2::get(%4);\n"
-                                                 "        if (!model.isNull()) {\n"
-                                                 "%5"
-                                                 "            auto %3 = model.toVariantMap();\n"
-                                                 "            texport(%3);\n"
+                                                 "    int res;\n"
+                                                 "\n"
+                                                 "    switch (request().method()) {\n"
+                                                 "    case Tf::Get:\n"
+                                                 "        service.edit(session(), %var1%);\n"
+                                                 "        render();\n"
+                                                 "        break;\n"
+                                                 "    case Tf::Post:\n"
+                                                 "        res = service.save(request(), session(), %var1%);\n"
+                                                 "        if (res > 0) {\n"
+                                                 "            // Save completed\n"
+                                                 "            redirect(urla(\"show\", %id%));\n"
+                                                 "        } else if (res < 0) {\n"
+                                                 "            // Failed\n"
                                                  "            render();\n"
-                                                 "        }\n"
-                                                 "        break; }\n"
-                                                 "\n"
-                                                 "    case Tf::Post: {\n"
-                                                 "        QString error;\n"
-                                                 "%6"
-                                                 "        auto model = %2::get(%4%7);\n"
-                                                 "        \n"
-                                                 "        if (model.isNull()) {\n"
-                                                 "            error = \"Original data not found. It may have been updated/removed by another transaction.\";\n"
-                                                 "            tflash(error);\n"
-                                                 "            redirect(urla(\"save\", %8));\n"
-                                                 "            break;\n"
-                                                 "        }\n"
-                                                 "\n"
-                                                 "        auto %3 = httpRequest().formItems(\"%3\");\n"
-                                                 "        model.setProperties(%3);\n"
-                                                 "        if (model.save()) {\n"
-                                                 "            QString notice = \"Updated successfully.\";\n"
-                                                 "            tflash(notice);\n"
-                                                 "            redirect(urla(\"show\", model.%8()));\n"
                                                  "        } else {\n"
-                                                 "            error = \"Failed to update.\";\n"
-                                                 "            texport(error);\n"
-                                                 "            texport(%3);\n"
-                                                 "            render();\n"
+                                                 "            // Retry\n"
+                                                 "            redirect(urla(\"save\", %id%));\n"
                                                  "        }\n"
-                                                 "        break; }\n"
-                                                 "\n"
+                                                 "        break;\n"
                                                  "    default:\n"
                                                  "        renderErrorResponse(Tf::NotFound);\n"
                                                  "        break;\n"
                                                  "    }\n"
                                                  "}\n"
                                                  "\n"
-                                                 "void %2Controller::remove(const QString &%8)\n"
+                                                 "void %clsname%Controller::remove(const QString &%id%)\n"
                                                  "{\n"
-                                                 "    if (httpRequest().method() != Tf::Post) {\n"
+                                                 "    switch (request().method()) {\n"
+                                                 "    case Tf::Post:\n"
+                                                 "        service.remove(%var1%);\n"
+                                                 "        redirect(urla(\"index\"));\n"
+                                                 "        break;\n"
+                                                 "    default:\n"
                                                  "        renderErrorResponse(Tf::NotFound);\n"
-                                                 "        return;\n"
+                                                 "        break;\n"
                                                  "    }\n"
-                                                 "\n"
-                                                 "    auto %3 = %2::get(%4);\n"
-                                                 "    %3.remove();\n"
-                                                 "    redirect(urla(\"index\"));\n"
                                                  "}\n"
-                                                 "\n\n"
+                                                 "\n"
                                                  "// Don't remove below this line\n"
-                                                 "T_DEFINE_CONTROLLER(%2Controller)\n";
+                                                 "T_DEFINE_CONTROLLER(%clsname%Controller)\n";
 
 
-constexpr auto CONTROLLER_TINY_HEADER_FILE_TEMPLATE = "#ifndef %1CONTROLLER_H\n"
-                                                      "#define %1CONTROLLER_H\n"
+constexpr auto CONTROLLER_TINY_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                       "\n"
                                                       "#include \"applicationcontroller.h\"\n"
                                                       "\n\n"
-                                                      "class T_CONTROLLER_EXPORT %2Controller : public ApplicationController\n"
+                                                      "class T_CONTROLLER_EXPORT %1Controller : public ApplicationController\n"
                                                       "{\n"
                                                       "    Q_OBJECT\n"
                                                       "public:\n"
-                                                      "    %2Controller() : ApplicationController() { }\n"
+                                                      "    %1Controller() : ApplicationController() { }\n"
                                                       "\n"
                                                       "public slots:\n"
-                                                      "%3"
+                                                      "%2"
                                                       "};\n"
-                                                      "\n"
-                                                      "#endif // %1CONTROLLER_H\n";
+                                                      "\n";
 
 
 constexpr auto CONTROLLER_TINY_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h\"\n"
@@ -171,19 +141,38 @@ public:
     ConvMethod() :
         QHash<int, QString>()
     {
-        insert(QVariant::Int, "%1.toInt()");
-        insert(QVariant::UInt, "%1.toUInt()");
-        insert(QVariant::LongLong, "%1.toLongLong()");
-        insert(QVariant::ULongLong, "%1.toULongLong()");
-        insert(QVariant::Double, "%1.toDouble()");
-        insert(QVariant::ByteArray, "%1.toByteArray()");
-        insert(QVariant::String, "%1");
-        insert(QVariant::Date, "QDate::fromString(%1)");
-        insert(QVariant::Time, "QTime::fromString(%1)");
-        insert(QVariant::DateTime, "QDateTime::fromString(%1)");
+        insert(QMetaType::Int, "%1.toInt()");
+        insert(QMetaType::UInt, "%1.toUInt()");
+        insert(QMetaType::LongLong, "%1.toLongLong()");
+        insert(QMetaType::ULongLong, "%1.toULongLong()");
+        insert(QMetaType::Double, "%1.toDouble()");
+        insert(QMetaType::QByteArray, "%1.toByteArray()");
+        insert(QMetaType::QString, "%1");
+        insert(QMetaType::QDate, "QDate::fromString(%1)");
+        insert(QMetaType::QTime, "QTime::fromString(%1)");
+        insert(QMetaType::QDateTime, "QDateTime::fromString(%1)");
     }
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
+
+class ConditionString : public QHash<int, QString> {
+public:
+    ConditionString() :
+        QHash<int, QString>()
+    {
+        insert(QMetaType::Int, "%1 > 0");
+        insert(QMetaType::UInt, "%1 > 0");
+        insert(QMetaType::LongLong, "%1 > 0");
+        insert(QMetaType::ULongLong, "%1 > 0");
+        insert(QMetaType::Double, "%1 > 0");
+        insert(QMetaType::QByteArray, "!%1.isEmpty()");
+        insert(QMetaType::QString, "!%1.isEmpty()");
+        insert(QMetaType::QDate, "!%1.isNull()");
+        insert(QMetaType::QTime, "!%1.isNull()");
+        insert(QMetaType::QDateTime, "!%1.isNull()");
+    }
+};
+Q_GLOBAL_STATIC(ConditionString, conditionString)
 
 class NGCtlrName : public QStringList {
 public:
@@ -200,7 +189,7 @@ public:
 Q_GLOBAL_STATIC(NGCtlrName, ngCtlrName)
 
 
-ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QVariant::Type>> &fields, int pkIdx, int lockRevIdx) :
+ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int lockRevIdx) :
     controllerName(controller), fieldList(fields), primaryKeyIndex(pkIdx), lockRevIndex(lockRevIdx)
 {
 }
@@ -216,7 +205,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
 {
     // Reserved word check
     if (ngCtlrName()->contains(tableName.toLower())) {
-        qCritical("Reserved word error. Please use another word.  Controller name: %s", qPrintable(tableName));
+        qCritical("Reserved word error. Please use another word.  Controller name: %s", qUtf8Printable(tableName));
         return false;
     }
 
@@ -231,7 +220,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             return false;
         }
 
-        QPair<QString, QVariant::Type> pair;
+        QPair<QString, QMetaType::Type> pair;
         if (primaryKeyIndex >= 0)
             pair = fieldList[primaryKeyIndex];
 
@@ -241,18 +230,32 @@ bool ControllerGenerator::generate(const QString &dstDir) const
         QString revStr;
         QString varName = enumNameToVariableName(controllerName);
 
-        // Generates a controller header file
-        QString code = QString(CONTROLLER_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, fieldNameToVariableName(pair.first));
-        fwh.write(code, false);
-        files << fwh.fileName();
-
         if (lockRevIndex >= 0) {
             sessInsertStr = QString("            session().insert(\"%1_lockRevision\", model.lockRevision());\n").arg(varName);
             sessGetStr = QString("        int rev = session().value(\"%1_lockRevision\").toInt();\n").arg(varName);
             revStr = QLatin1String(", rev");
         }
 
-        code = QString(CONTROLLER_SOURCE_FILE_TEMPLATE).arg(controllerName.toLower(), controllerName, varName, convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first)), sessInsertStr, sessGetStr, revStr, fieldNameToVariableName(pair.first));
+        PlaceholderList replaceList = {
+            {"name", controllerName.toLower()},
+            {"clsname", controllerName},
+            {"varname", varName},
+            {"var1", convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
+            {"code1", sessInsertStr},
+            {"code2", sessGetStr},
+            {"type", QString::fromLatin1(QMetaType::typeName(pair.second))},
+            {"rev", revStr},
+            {"id", fieldNameToVariableName(pair.first)},
+            {"condition", conditionString()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
+        };
+
+        // Generates a controller header file
+        QString code = replaceholder(CONTROLLER_HEADER_FILE_TEMPLATE, replaceList);
+        fwh.write(code, false);
+        files << fwh.fileName();
+
+        // Generates a controller source file
+        code = replaceholder(CONTROLLER_SOURCE_FILE_TEMPLATE, replaceList);
         fws.write(code, false);
         files << fws.fileName();
 
@@ -263,7 +266,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             actions.append("    void ").append(i.next()).append("();\n");
         }
 
-        QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName.toUpper(), controllerName, actions);
+        QString code = QString(CONTROLLER_TINY_HEADER_FILE_TEMPLATE).arg(controllerName, actions);
         fwh.write(code, false);
         files << fwh.fileName();
 
@@ -280,4 +283,10 @@ bool ControllerGenerator::generate(const QString &dstDir) const
     // Generates a project file
     ProjectFileGenerator progen(dir.filePath("controllers.pro"));
     return progen.add(files);
+}
+
+
+QString ControllerGenerator::generateIdString(const QString &id, int type)
+{
+    return convMethod()->value(type).arg(fieldNameToVariableName(id));
 }

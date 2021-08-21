@@ -57,7 +57,7 @@ static QString readFile(const QString &fileName)
     QString ret;
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical("failed to create file: %s", qPrintable(fileName));
+        qCritical("failed to create file: %s", qUtf8Printable(fileName));
         return ret;
     }
 
@@ -77,10 +77,14 @@ bool FileWriter::write(const QString &data, bool overwrite) const
     QByteArray act;
     QFileInfo fi(filepath);
 
+    if (!fi.absoluteDir().exists()) {
+        fi.absoluteDir().mkpath(".");
+    }
+
     if (fi.exists()) {
         QString orig = readFile(filepath);
         if (orig == data) {
-            std::printf("  unchanged %s\n", qPrintable(QDir::cleanPath(fi.filePath())));
+            std::printf("  unchanged %s\n", qUtf8Printable(QDir::cleanPath(fi.filePath())));
             return true;
         }
 
@@ -92,7 +96,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
         } else {
             QTextStream stream(stdin);
             for (;;) {
-                std::printf("  overwrite %s? [ynaqdh] ", qPrintable(QDir::cleanPath(fi.filePath())));
+                std::printf("  overwrite %s? [ynaqdh] ", qUtf8Printable(QDir::cleanPath(fi.filePath())));
 
                 QString line = stream.readLine();
                 if (line.isNull()) {
@@ -103,7 +107,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     continue;
                 }
 
-                QCharRef c = line[0];
+                const QChar c = line[0];
                 if (c == 'Y' || c == 'y') {
                     QFile::remove(filepath);
                     res = write(data);
@@ -131,7 +135,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     if (df.isEmpty()) {
                         qCritical("Error: diff command failed");
                     } else {
-                        std::printf("%s", qPrintable(df));
+                        std::printf("%s", qUtf8Printable(df));
                         std::printf("-----------------------------------------------------------\n");
                     }
 
@@ -153,7 +157,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
         act = (res) ? "created " : "error   ";
     }
 
-    std::printf("  %s  %s\n", act.data(), qPrintable(QDir::cleanPath(fi.filePath())));
+    std::printf("  %s  %s\n", act.data(), qUtf8Printable(QDir::cleanPath(fi.filePath())));
     return res;
 }
 
@@ -166,7 +170,7 @@ bool FileWriter::write(const QString &data) const
 
     QFile file(filepath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCritical("failed to create file: %s", qPrintable(QDir::cleanPath(filepath)));
+        qCritical("failed to create file: %s", qUtf8Printable(QDir::cleanPath(filepath)));
         return false;
     }
 

@@ -21,7 +21,7 @@ TableSchema::TableSchema(const QString &table, const QString &env) :
     if (!dbSettings) {
         QString path = QLatin1String("config/database.ini");
         if (!QFile::exists(path)) {
-            qCritical("not found, %s", qPrintable(path));
+            qCritical("not found, %s", qUtf8Printable(path));
         }
         dbSettings = new QSettings(path, QSettings::IniFormat);
     }
@@ -60,18 +60,26 @@ QList<QPair<QString, QString>> TableSchema::getFieldList() const
     QList<QPair<QString, QString>> fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
+#if QT_VERSION < 0x060000
         fieldList << QPair<QString, QString>(f.name(), QString(QVariant::typeToName(f.type())));
+#else
+        fieldList << QPair<QString, QString>(f.name(), QString::fromLatin1(f.metaType().name()));
+#endif
     }
     return fieldList;
 }
 
 
-QList<QPair<QString, QVariant::Type>> TableSchema::getFieldTypeList() const
+QList<QPair<QString, QMetaType::Type>> TableSchema::getFieldTypeList() const
 {
-    QList<QPair<QString, QVariant::Type>> fieldList;
+    QList<QPair<QString, QMetaType::Type>> fieldList;
     for (int i = 0; i < tableFields.count(); ++i) {
         QSqlField f = tableFields.field(i);
-        fieldList << QPair<QString, QVariant::Type>(f.name(), f.type());
+#if QT_VERSION < 0x060000
+        fieldList << QPair<QString, QMetaType::Type>(f.name(), (QMetaType::Type)f.type());
+#else
+        fieldList << QPair<QString, QMetaType::Type>(f.name(), (QMetaType::Type)f.metaType().id());
+#endif
     }
     return fieldList;
 }
@@ -135,19 +143,27 @@ QPair<QString, QString> TableSchema::getPrimaryKeyField() const
     int index = primaryKeyIndex();
     if (index >= 0) {
         QSqlField f = tableFields.field(index);
+#if QT_VERSION < 0x060000
         pair = QPair<QString, QString>(f.name(), QString(QVariant::typeToName(f.type())));
+#else
+        pair = QPair<QString, QString>(f.name(), QString::fromLatin1(f.metaType().name()));
+#endif
     }
     return pair;
 }
 
 
-QPair<QString, QVariant::Type> TableSchema::getPrimaryKeyFieldType() const
+QPair<QString, QMetaType::Type> TableSchema::getPrimaryKeyFieldType() const
 {
-    QPair<QString, QVariant::Type> pair;
+    QPair<QString, QMetaType::Type> pair;
     int index = primaryKeyIndex();
     if (index >= 0) {
         QSqlField f = tableFields.field(index);
-        pair = QPair<QString, QVariant::Type>(f.name(), f.type());
+#if QT_VERSION < 0x060000
+        pair = QPair<QString, QMetaType::Type>(f.name(), (QMetaType::Type)f.type());
+#else
+        pair = QPair<QString, QMetaType::Type>(f.name(), (QMetaType::Type)f.metaType().id());
+#endif
     }
     return pair;
 }
@@ -177,7 +193,7 @@ bool TableSchema::openDatabase(const QString &env) const
         return true;
 
     if (!dbSettings->childGroups().contains(env)) {
-        qCritical("invalid environment: %s", qPrintable(env));
+        qCritical("invalid environment: %s", qUtf8Printable(env));
         return false;
     }
 
@@ -185,7 +201,7 @@ bool TableSchema::openDatabase(const QString &env) const
     if (driverType.isEmpty()) {
         qWarning("Parameter 'DriverType' is empty");
     }
-    std::printf("DriverType:   %s\n", qPrintable(driverType));
+    std::printf("DriverType:   %s\n", qUtf8Printable(driverType));
 
     QSqlDatabase db = QSqlDatabase::addDatabase(driverType);
     if (!db.isValid()) {
@@ -194,13 +210,13 @@ bool TableSchema::openDatabase(const QString &env) const
     }
 
     QString databaseName = dbSettings->value(env + "/DatabaseName").toString().trimmed();
-    std::printf("DatabaseName: %s\n", qPrintable(databaseName));
+    std::printf("DatabaseName: %s\n", qUtf8Printable(databaseName));
     if (!databaseName.isEmpty()) {
         db.setDatabaseName(databaseName);
     }
 
     QString hostName = dbSettings->value(env + "/HostName").toString().trimmed();
-    std::printf("HostName:     %s\n", qPrintable(hostName));
+    std::printf("HostName:     %s\n", qUtf8Printable(hostName));
     if (!hostName.isEmpty()) {
         db.setHostName(hostName);
     }

@@ -1,4 +1,5 @@
 #include "tdatabasecontextmainthread.h"
+#include <TfCore>
 
 
 TDatabaseContextMainThread::TDatabaseContextMainThread(QObject *parent) :

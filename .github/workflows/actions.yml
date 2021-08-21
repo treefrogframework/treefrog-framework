@@ -1,0 +1,56 @@
+name: ActionsCI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: brew install qt6 jq
+    - name: configure
+      run: ./configure --prefix=/usr/local
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: treefrog -v
+
+  build-mongoc:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: brew install qt6 mongo-c-driver
+    - name: configure
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: treefrog -v
+    - name: testall.sh
+      run: |
+        cd $GITHUB_WORKSPACE/src/test
+        ./testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make
+        ./tmaketest
+    - name: releasetest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/test/releasetest
+        ./releasetest

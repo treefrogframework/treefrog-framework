@@ -13,8 +13,10 @@
 #include "turlroute.h"
 #include <QHostAddress>
 #include <QSet>
+#include <QTextCodec>
 #include <QtCore>
 #include <TActionContext>
+#include <TfCore>
 #include <TActionController>
 #include <TAppSettings>
 #include <TCache>
@@ -173,7 +175,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 // Dispatches
                 dispatched = ctlrDispatcher.invoke(route.action, route.params);
                 if (Q_LIKELY(dispatched)) {
-                    autoRemoveFiles << currController->autoRemoveFiles;  // Adds auto-remove files
+                    autoRemoveFiles << currController->_autoRemoveFiles;  // Adds auto-remove files
 
                     // Post filter
                     currController->postFilter();
@@ -191,11 +193,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                         if (Q_LIKELY(stored)) {
                             static const int SessionCookieMaxAge = ([]() -> int {
                                 QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
-                                if (!maxagestr.isEmpty()) {
-                                    return maxagestr.toInt();
-                                } else {
-                                    return Tf::appSettings()->value(Tf::SessionLifeTime).toInt();
-                                }
+                                return maxagestr.toInt();
                             }());
 
                             currController->addCookie(TSession::sessionName(), currController->session().id(), SessionCookieMaxAge,
@@ -210,9 +208,9 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     }
 
                     // WebSocket tasks
-                    if (!currController->taskList.isEmpty()) {
+                    if (!currController->_taskList.isEmpty()) {
                         QVariantList lst;
-                        for (auto &task : (const QList<QPair<int, QVariant>> &)currController->taskList) {
+                        for (auto &task : (const QList<QPair<int, QVariant>> &)currController->_taskList) {
                             const QVariant &taskData = task.second;
 
                             switch (task.first) {
@@ -264,26 +262,25 @@ void TActionContext::execute(THttpRequest &request, int sid)
             }
 
             // Sets charset to the content-type
-            QByteArray ctype = currController->response.header().contentType().toLower();
+            QByteArray ctype = currController->_response.header().contentType().toLower();
             if (ctype.startsWith("text") && !ctype.contains("charset")) {
                 ctype += "; charset=";
                 ctype += Tf::app()->codecForHttpOutput()->name();
-                currController->response.header().setContentType(ctype);
+                currController->_response.header().setContentType(ctype);
             }
 
             // Sets the default status code of HTTP response
             int bytes = 0;
-            if (Q_UNLIKELY(currController->response.isBodyNull())) {
+            if (Q_UNLIKELY(currController->_response.isBodyNull())) {
                 accessLogger.setStatusCode((dispatched) ? Tf::InternalServerError : Tf::NotFound);
                 bytes = writeResponse(accessLogger.statusCode(), responseHeader);
             } else {
                 accessLogger.setStatusCode(currController->statusCode());
-                currController->response.header().setStatusLine(currController->statusCode(), THttpUtility::getResponseReasonPhrase(currController->statusCode()));
+                currController->_response.header().setStatusLine(currController->statusCode(), THttpUtility::getResponseReasonPhrase(currController->statusCode()));
 
                 // Writes a response and access log
-                qint64 bodyLength = (currController->response.header().contentLength() > 0) ? currController->response.header().contentLength() : currController->response.bodyLength();
-                bytes = writeResponse(currController->response.header(), currController->response.bodyIODevice(),
-                    bodyLength);
+                qint64 bodyLength = (currController->_response.header().contentLength() > 0) ? currController->_response.header().contentLength() : currController->response().bodyLength();
+                bytes = writeResponse(currController->_response.header(), currController->_response.bodyIODevice(), bodyLength);
             }
             accessLogger.setResponseBytes(bytes);
 
@@ -306,7 +303,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
                 QString canonicalPath = QUrl(QStringLiteral(".")).resolved(QUrl(path)).toString().mid(1);
                 QFile reqPath(Tf::app()->publicPath() + canonicalPath);
                 QFileInfo fi(reqPath);
-                tSystemDebug("canonicalPath : %s", qPrintable(canonicalPath));
+                tSystemDebug("canonicalPath : %s", qUtf8Printable(canonicalPath));
 
                 if (fi.isFile() && fi.isReadable()) {
                     // Check "If-Modified-Since" header for caching
@@ -353,14 +350,14 @@ void TActionContext::execute(THttpRequest &request, int sid)
         }
 
     } catch (ClientErrorException &e) {
-        tWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
-        tSystemWarn("Caught %s: status code:%d", qPrintable(e.className()), e.statusCode());
+        tWarn("Caught %s: status code:%d", qUtf8Printable(e.className()), e.statusCode());
+        tSystemWarn("Caught %s: status code:%d", qUtf8Printable(e.className()), e.statusCode());
         int bytes = writeResponse(e.statusCode(), responseHeader);
         accessLogger.setResponseBytes(bytes);
         accessLogger.setStatusCode(e.statusCode());
     } catch (TfException &e) {
-        tError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
-        tSystemError("Caught %s: %s  [%s:%d]", qPrintable(e.className()), qPrintable(e.message()), qPrintable(e.fileName()), e.lineNumber());
+        tError("Caught %s: %s  [%s:%d]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        tSystemError("Caught %s: %s  [%s:%d]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
         closeHttpSocket();
         accessLogger.setResponseBytes(0);
         accessLogger.setStatusCode(Tf::InternalServerError);
@@ -475,4 +472,16 @@ TCache *TActionContext::cache()
         cachep = new TCache;
     }
     return cachep;
+}
+
+/*!
+  Returns the keep-alive timeout in seconds.
+ */
+int TActionContext::keepAliveTimeout()
+{
+    static int keepAliveTimeout = []() {
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        return qMax(timeout, 0);
+    }();
+    return keepAliveTimeout;
 }

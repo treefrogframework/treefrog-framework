@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QRegularExpression>
 
 #define VIEW_SOURCE_TEMPLATE                        \
     "#include <QtCore>\n"                           \
@@ -37,7 +38,7 @@
     "#include \"%1.moc\"\n"
 
 
-const QRegExp RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
+const QRegularExpression RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
 
 
 ErbConverter::ErbConverter(const QDir &output, const QDir &helpers, const QDir &partial) :
@@ -57,7 +58,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QFileInfo outFileInfo(outFile);
 
     if (!erbFile.open(QIODevice::ReadOnly)) {
-        qCritical("failed to read template.erb file : %s", qPrintable(erbFile.fileName()));
+        qCritical("failed to read template.erb file : %s", qUtf8Printable(erbFile.fileName()));
         return false;
     }
 
@@ -77,10 +78,10 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
         if ((latestPartialTs.isValid() && latestPartialTs >= outFileInfo.lastModified())
             || erbFileInfo.lastModified() >= outFileInfo.lastModified()) {
             if (outFile.remove()) {
-                std::printf("  removed  %s\n", qPrintable(outFile.fileName()));
+                std::printf("  removed  %s\n", qUtf8Printable(outFile.fileName()));
             }
         } else {
-            //std::printf("  done    %s\n", qPrintable(outFile.fileName()));
+            //std::printf("  done    %s\n", qUtf8Printable(outFile.fileName()));
             return true;
         }
     }
@@ -96,7 +97,7 @@ bool ErbConverter::convert(const QString &erbPath, int trimMode) const
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        std::printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
+        std::printf("  created  %s  (trim:%d)\n", qUtf8Printable(outFile.fileName()), trimMode);
     }
     return true;
 }
@@ -116,7 +117,7 @@ bool ErbConverter::convert(const QString &className, const QString &erb, int tri
     QTextStream ts(&outFile);
     ts << QString(VIEW_SOURCE_TEMPLATE).arg(className, code, QString::number(code.size()), generateIncludeCode(parser));
     if (ts.status() == QTextStream::Ok) {
-        std::printf("  created  %s  (trim:%d)\n", qPrintable(outFile.fileName()), trimMode);
+        std::printf("  created  %s  (trim:%d)\n", qUtf8Printable(outFile.fileName()), trimMode);
     }
     return true;
 }
@@ -168,13 +169,14 @@ QStringList ErbConverter::replacePartialTag(QString &erbSrc, int depth) const
     int pos = 0;
 
     while (pos < erbSrc.length()) {
-        int idx;
-        if ((idx = RxPartialTag.indexIn(erbSrc, pos)) < 0) {
+        auto match = RxPartialTag.match(erbSrc, pos);
+        if (!match.hasMatch()) {
             erbReplaced += erbSrc.mid(pos);
             break;
         }
 
-        QString partialFile = RxPartialTag.cap(1);
+        int idx = match.capturedStart();
+        QString partialFile = match.captured(1);
         if (QFileInfo(partialFile).suffix().toLower() != "erb") {
             partialFile += ".erb";
         }
@@ -186,7 +188,7 @@ QStringList ErbConverter::replacePartialTag(QString &erbSrc, int depth) const
         }
 
         erbReplaced += erbSrc.mid(pos, idx - pos);
-        pos = idx + RxPartialTag.matchedLength();
+        pos = idx + match.capturedLength();
 
         // Includes the partial
         QFile partErb(partialDirectory.filePath(partialFile));

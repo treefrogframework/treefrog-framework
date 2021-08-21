@@ -19,34 +19,37 @@ bool ProjectFileGenerator::exists() const
 
 bool ProjectFileGenerator::add(const QStringList &files) const
 {
+    static const QRegularExpression reh(".+\\.h$");
+    static const QRegularExpression recpp(".+\\.cpp$");
+
     QString output;
 
     QFile pro(filePath);
     if (!pro.exists()) {
-        qCritical("Project file not found: %s", qPrintable(pro.fileName()));
+        qCritical("Project file not found: %s", qUtf8Printable(pro.fileName()));
         return false;
     } else {
         if (pro.open(QIODevice::ReadOnly | QIODevice::Text)) {
             output = pro.readAll();
         } else {
-            qCritical("failed to open file: %s", qPrintable(pro.fileName()));
+            qCritical("failed to open file: %s", qUtf8Printable(pro.fileName()));
             return false;
         }
     }
     pro.close();
 
+    QString str;
     for (QStringListIterator i(files); i.hasNext();) {
         const QString &f = i.next();
-        QString str;
-        QRegExp rx("*.h");
-        rx.setPatternSyntax(QRegExp::Wildcard);
-        if (rx.exactMatch(f)) {
+
+        auto match = reh.match(f);
+        if (match.hasMatch()) {
             str = "HEADERS += ";
             str += f;
             str += '\n';
         } else {
-            rx.setPattern("*.cpp");
-            if (rx.exactMatch(f)) {
+            match = recpp.match(f);
+            if (match.hasMatch()) {
                 str = "SOURCES += ";
                 str += f;
                 str += '\n';
@@ -67,6 +70,9 @@ bool ProjectFileGenerator::add(const QStringList &files) const
 
 bool ProjectFileGenerator::remove(const QStringList &files) const
 {
+    static const QRegularExpression reh(".+\\.h$");
+    static const QRegularExpression recpp(".+\\.cpp$");
+
     QString output;
 
     QFile pro(filePath);
@@ -75,27 +81,26 @@ bool ProjectFileGenerator::remove(const QStringList &files) const
             output = pro.readAll();
             pro.close();
         } else {
-            qCritical("failed to open file: %s", qPrintable(pro.fileName()));
+            qCritical("failed to open file: %s", qUtf8Printable(pro.fileName()));
             return false;
         }
     } else {
-        qCritical("Project file not found: %s", qPrintable(pro.fileName()));
+        qCritical("Project file not found: %s", qUtf8Printable(pro.fileName()));
         return false;
     }
 
     if (files.isEmpty())
         return true;
 
+    QString str;
     for (const QString &f : files) {
-        QString str;
-        QRegExp rx("*.h");
-        rx.setPatternSyntax(QRegExp::Wildcard);
-        if (rx.exactMatch(f)) {
+        auto match = reh.match(f);
+        if (match.hasMatch()) {
             str = "HEADERS += ";
             str += f;
         } else {
-            rx.setPattern("*.cpp");
-            if (rx.exactMatch(f)) {
+            match = recpp.match(f);
+            if (match.hasMatch()) {
                 str = "SOURCES += ";
                 str += f;
             }

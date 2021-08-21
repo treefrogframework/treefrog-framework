@@ -1,10 +1,20 @@
 TARGET   = tspawn
 TEMPLATE = app
-VERSION  = 1.0.0
-CONFIG  += console c++14
+VERSION  = 2.0.0
+CONFIG  += console
 CONFIG  -= app_bundle
 QT      += sql
 QT      -= gui
+lessThan(QT_MAJOR_VERSION, 6) {
+  CONFIG += c++14
+  windows:QMAKE_CXXFLAGS += /std:c++14
+} else {
+  CONFIG += c++17
+  QT += core5compat
+  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
+}
+
+DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_DLL
 INCLUDEPATH += $$header.path
 
@@ -78,15 +88,27 @@ defaults.files += defaults/CMakeLists.txt
 defaults.files += defaults/CacheClean.cmake
 defaults.files += defaults/TargetCmake.cmake
 defaults.path   = $${datadir}/defaults
-
-defaults_controllers.files += defaults/controllers/CMakeLists.txt
-defaults_controllers.path   = $${datadir}/defaults/controllers
-defaults_models.files += defaults/models/CMakeLists.txt
-defaults_models.path   = $${datadir}/defaults/models
-defaults_views.files += defaults/views/CMakeLists.txt
-defaults_views.path   = $${datadir}/defaults/views
-defaults_helpers.files += defaults/helpers/CMakeLists.txt
-defaults_helpers.path   = $${datadir}/defaults/helpers
+lessThan(QT_MAJOR_VERSION, 6) {
+  # Qt5
+  defaults_controllers.files += defaults/controllers_qt5/CMakeLists.txt
+  defaults_controllers.path   = $${datadir}/defaults/controllers
+  defaults_models.files += defaults/models_qt5/CMakeLists.txt
+  defaults_models.path   = $${datadir}/defaults/models
+  defaults_views.files += defaults/views_qt5/CMakeLists.txt
+  defaults_views.path   = $${datadir}/defaults/views
+  defaults_helpers.files += defaults/helpers_qt5/CMakeLists.txt
+  defaults_helpers.path   = $${datadir}/defaults/helpers
+} else {
+  # Qt6
+  defaults_controllers.files += defaults/controllers/CMakeLists.txt
+  defaults_controllers.path   = $${datadir}/defaults/controllers
+  defaults_models.files += defaults/models/CMakeLists.txt
+  defaults_models.path   = $${datadir}/defaults/models
+  defaults_views.files += defaults/views/CMakeLists.txt
+  defaults_views.path   = $${datadir}/defaults/views
+  defaults_helpers.files += defaults/helpers/CMakeLists.txt
+  defaults_helpers.path   = $${datadir}/defaults/helpers
+}
 
 windows {
   defaults.files += defaults/_dummymodel.h
@@ -165,6 +187,12 @@ HEADERS += controllergenerator.h
 SOURCES += controllergenerator.cpp
 HEADERS += modelgenerator.h
 SOURCES += modelgenerator.cpp
+HEADERS += servicegenerator.h
+SOURCES += servicegenerator.cpp
+HEADERS += vueservicegenerator.h
+SOURCES += vueservicegenerator.cpp
+HEADERS += vueerbgenerator.h
+SOURCES += vueerbgenerator.cpp
 HEADERS += abstractobjgenerator.h
 SOURCES += abstractobjgenerator.cpp
 HEADERS += sqlobjgenerator.h
@@ -185,5 +213,9 @@ HEADERS += mongocommand.h
 SOURCES += mongocommand.cpp
 HEADERS += helpergenerator.h
 SOURCES += helpergenerator.cpp
+HEADERS += apicontrollergenerator.h
+SOURCES += apicontrollergenerator.cpp
+HEADERS += apiservicegenerator.h
+SOURCES += apiservicegenerator.cpp
 HEADERS += util.h
 SOURCES += util.cpp

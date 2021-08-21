@@ -50,7 +50,7 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, double v, const QS
 }
 
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegExp &rx, const QString &msg) :
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, const QRegularExpression &rx, const QString &msg) :
     key(k),
     rule(r),
     value(rx),
@@ -133,11 +133,11 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, bool e
     case Tf::IntMin:
     case Tf::DoubleMax:
     case Tf::DoubleMin:
-        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use another setRule method.", qPrintable(key), rule);
+        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use another setRule method.", qUtf8Printable(key), rule);
         return;
 
     case Tf::Pattern:
-        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use setPatternRule method.", qPrintable(key), rule);
+        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use setPatternRule method.", qUtf8Printable(key), rule);
         return;
     }
 
@@ -168,11 +168,11 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, qint64
     case Tf::Date:
     case Tf::Time:
     case Tf::DateTime:
-        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use another setRule method.", qPrintable(key), rule);
+        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use another setRule method.", qUtf8Printable(key), rule);
         return;
 
     case Tf::Pattern:
-        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use setPatternRule method.", qPrintable(key), rule);
+        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use setPatternRule method.", qUtf8Printable(key), rule);
         return;
     }
 
@@ -207,11 +207,11 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, double
     case Tf::Date:
     case Tf::Time:
     case Tf::DateTime:
-        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use another setRule method.", qPrintable(key), rule);
+        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use another setRule method.", qUtf8Printable(key), rule);
         return;
 
     case Tf::Pattern:
-        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use setPatternRule method.", qPrintable(key), rule);
+        tWarn("Validation: Bad rule spedified [key:%s  rule:%d]. Use setPatternRule method.", qUtf8Printable(key), rule);
         return;
     }
 
@@ -241,7 +241,7 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, const 
   Sets the user-defined validaton rule for the key \a key and sets
   the error message of it to \a errorMessage.
  */
-void TFormValidator::setPatternRule(const QString &key, const QRegExp &rx, const QString &errorMessage)
+void TFormValidator::setPatternRule(const QString &key, const QRegularExpression &rx, const QString &errorMessage)
 {
     removeRule(key, Tf::Pattern);
     rules.prepend(RuleEntry(key, Tf::Pattern, rx, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage(Tf::Pattern) : errorMessage)));
@@ -273,12 +273,12 @@ bool TFormValidator::validate(const QVariantMap &map)
         if (str.isEmpty()) {
             bool req = r.value.toBool();
             if (r.rule == Tf::Required && req) {
-                tSystemDebug("validation error: required parameter is empty, key:%s", qPrintable(r.key));
+                tSystemDebug("validation error: required parameter is empty, key:%s", qUtf8Printable(r.key));
                 errors << qMakePair(r.key, r.rule);
             }
         } else {
             bool ok1, ok2;
-            tSystemDebug("validating key:%s value: %s", qPrintable(r.key), qPrintable(str));
+            tSystemDebug("validating key:%s value: %s", qUtf8Printable(r.key), qUtf8Printable(str));
             switch (r.rule) {
             case Tf::Required:
                 break;
@@ -337,8 +337,9 @@ bool TFormValidator::validate(const QVariantMap &map)
 
             case Tf::EmailAddress: {  // refer to RFC5321
                 if (r.value.toBool()) {
-                    QRegExp reg("^" ADDR_SPEC "$");
-                    if (!reg.exactMatch(str)) {
+                    QRegularExpression re("^" ADDR_SPEC "$");
+                    auto match = re.match(str);
+                    if (!match.hasMatch()) {
                         errors << qMakePair(r.key, r.rule);
                     }
                 }
@@ -360,7 +361,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                     QDate date = QLocale().toDate(str, dateFormat());
                     if (!date.isValid()) {
                         errors << qMakePair(r.key, r.rule);
-                        tSystemDebug("Validation error: Date format: %s", qPrintable(dateFormat()));
+                        tSystemDebug("Validation error: Date format: %s", qUtf8Printable(dateFormat()));
                     }
                 }
                 break;
@@ -371,7 +372,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                     QTime time = QLocale().toTime(str, timeFormat());
                     if (!time.isValid()) {
                         errors << qMakePair(r.key, r.rule);
-                        tSystemDebug("Validation error: Time format: %s", qPrintable(timeFormat()));
+                        tSystemDebug("Validation error: Time format: %s", qUtf8Printable(timeFormat()));
                     }
                 }
                 break;
@@ -382,15 +383,16 @@ bool TFormValidator::validate(const QVariantMap &map)
                     QDateTime dt = QLocale().toDateTime(str, dateTimeFormat());
                     if (!dt.isValid()) {
                         errors << qMakePair(r.key, r.rule);
-                        tSystemDebug("Validation error: DateTime format: %s", qPrintable(dateTimeFormat()));
+                        tSystemDebug("Validation error: DateTime format: %s", qUtf8Printable(dateTimeFormat()));
                     }
                 }
                 break;
             }
 
             case Tf::Pattern: {
-                QRegExp rx = r.value.toRegExp();
-                if (rx.isEmpty() || !rx.exactMatch(str)) {
+                QRegularExpression rx = r.value.toRegularExpression();
+                auto match = rx.match(str);
+                if (!rx.isValid() || !(match.hasMatch() && !match.hasPartialMatch())) {
                     errors << qMakePair(r.key, r.rule);
                 }
                 break;
@@ -525,15 +527,6 @@ void TFormValidator::removeRule(const QString &key, Tf::ValidationRule rule)
             i.remove();
         }
     }
-}
-
-/*!
-  Sets the message of custom validation error to \a errorMessage.
-  [obsolete]
-*/
-void TFormValidator::setValidationError(const QString &errorMessage)
-{
-    setValidationError(QLatin1String("_CustomValidationError"), errorMessage);
 }
 
 /*!
