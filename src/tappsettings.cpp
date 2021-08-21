@@ -34,7 +34,6 @@ public:
         insert(Tf::RedisSettingsFile, "RedisSettingsFile");
         insert(Tf::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
         insert(Tf::DirectViewRenderMode, "DirectViewRenderMode");
-        insert(Tf::SystemLogFile, "SystemLogFile");
         insert(Tf::SqlQueryLogFile, "SqlQueryLogFile");
         insert(Tf::ApplicationAbortOnFatal, "ApplicationAbortOnFatal");
         insert(Tf::LimitRequestBody, "LimitRequestBody");

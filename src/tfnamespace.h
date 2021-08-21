@@ -145,7 +145,6 @@ enum AppAttribute {
     MongoDbSettingsFile,
     SqlQueriesStoredDirectory,
     DirectViewRenderMode,
-    SystemLogFile,
     SqlQueryLogFile,
     ApplicationAbortOnFatal,
     LimitRequestBody,
