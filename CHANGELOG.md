@@ -1,9 +1,13 @@
 # ChangeLog
 
+## 2.1.0
+ - Fix a bug of calculating length of receiving packets.
+ - Added echo() function with a variantmap argument.
+ - Implement the logic of the tspawn command to generate scaffolding for vue.js.
+
 ## 2.0.2
  - Updated the scaffold generator to generate WebAPI codes.
- - Modified the scaffold generator to generate service classes for the model
-   layer.
+ - Modified the scaffold generator to generate service classes for the model layer.
 
 ## 2.0.1
  - Support for Qt version 6.
