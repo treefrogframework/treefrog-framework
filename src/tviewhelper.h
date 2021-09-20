@@ -197,6 +197,8 @@ public:
     THtmlAttribute a(const QString &key, const QString &value) const;
     THtmlAttribute a() const { return THtmlAttribute(); }
 
+    void clear();
+
 protected:
     virtual const TActionView *actionView() const = 0;
 

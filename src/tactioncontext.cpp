@@ -433,6 +433,7 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 {
 
     header.setContentLength(length);
+    tSystemDebug("content-length: %lld", header.contentLength());
     header.setRawHeader(QByteArrayLiteral("Server"), QByteArrayLiteral("TreeFrog server"));
     header.setCurrentDate();
 

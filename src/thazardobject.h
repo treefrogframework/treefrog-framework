@@ -1,6 +1,6 @@
 #pragma once
 #include <TAtomic>
-#include <TGlobal>
+#include "tdeclexport.h"
 
 
 class T_CORE_EXPORT THazardObject {

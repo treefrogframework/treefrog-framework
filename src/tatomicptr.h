@@ -1,5 +1,5 @@
 #pragma once
-#include <TGlobal>
+#include "tdeclexport.h"
 #include <atomic>
 
 namespace Tf {

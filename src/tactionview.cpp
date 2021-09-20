@@ -146,6 +146,16 @@ const THttpRequest &TActionView::httpRequest() const
 }
 
 
+void TActionView::reset()
+{
+    TViewHelper::clear();
+    responsebody.resize(0);
+    actionController = nullptr;
+    subView = nullptr;
+    variantMap.clear();
+}
+
+
 /*!
   \fn QString TActionView::echo	(const QString &str)
   Outputs the string \a str to a view template.

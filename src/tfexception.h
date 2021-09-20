@@ -1,7 +1,7 @@
 #pragma once
+#include "tdeclexport.h"
 #include <QByteArray>
 #include <QString>
-#include <TGlobal>
 #include <exception>
 
 

@@ -26,6 +26,7 @@ public:
     const QVariantMap &allVariants() const;
     const TAbstractController *controller() const override;
     const THttpRequest &httpRequest() const;
+    void reset();
 
 protected:
     QString echo(const QString &str);
@@ -59,6 +60,7 @@ protected:
     QString eh(const QVariant &var);
     QString eh(const QVariantMap &map);
     QString renderReact(const QString &component);
+
     QString responsebody;
 
 private:

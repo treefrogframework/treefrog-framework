@@ -810,6 +810,27 @@ void TActionController::publish(const QString &topic, const QByteArray &binary)
 }
 
 
+void TActionController::reset()
+{
+    TAccessValidator::clear();
+    _ctrlName.clear();
+    _actionName.clear();
+    _args.clear();
+    _statCode = Tf::OK;  // 200 OK
+    _rendered = false;
+    _layoutEnable  = true;
+    _layoutName.clear();
+    _response.clear();
+    _flashVars.clear();
+    _sessionStore.reset();
+    _cookieJar.clear();
+    _rollback = false;
+    _autoRemoveFiles.clear();
+    _taskList.clear();
+    _sockId = 0;
+}
+
+
 /*!
   \fn const TSession &TActionController::session() const;
 

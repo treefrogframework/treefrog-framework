@@ -347,6 +347,7 @@ SOURCES += toauth2client.cpp
 
 HEADERS += \
            tfnamespace.h \
+           tdeclexport.h \
            tfcore.h \
            tfexception.h \
            tdispatcher.h \
