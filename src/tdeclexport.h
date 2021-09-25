@@ -1,4 +1,5 @@
 #pragma once
+#include <QtGlobal>
 //
 // Create Treefrog DLL if TF_MAKEDLL is defined (Windows only)
 //
