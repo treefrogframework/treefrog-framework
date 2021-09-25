@@ -1,5 +1,6 @@
 #pragma once
 #include "tdeclexport.h"
+#include <QtGlobal>
 #include <atomic>
 
 namespace Tf {

@@ -33,7 +33,7 @@
     "}\n"                                           \
     "\n"                                            \
     "T_DEFINE_VIEW(%1)\n"                           \
-    "\n" 
+    "\n"
 
 
 const QRegularExpression RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
