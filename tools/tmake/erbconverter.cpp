@@ -20,7 +20,6 @@
     "\n"                                            \
     "class T_VIEW_EXPORT %1 : public TActionView\n" \
     "{\n"                                           \
-    "  Q_OBJECT\n"                                  \
     "public:\n"                                     \
     "  %1() : TActionView() { }\n"                  \
     "  QString toString();\n"                       \
@@ -34,8 +33,7 @@
     "}\n"                                           \
     "\n"                                            \
     "T_DEFINE_VIEW(%1)\n"                           \
-    "\n"                                            \
-    "#include \"%1.moc\"\n"
+    "\n" 
 
 
 const QRegularExpression RxPartialTag("<%#partial[ \t]+\"([^\"]+)\"[ \t]*%>");
