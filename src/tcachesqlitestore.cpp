@@ -136,7 +136,6 @@ bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, int 
         return false;
     }
 
-    remove(key);
     qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
     return write(key, value, expire);
 }
@@ -175,7 +174,7 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
     }
 
     TSqlQuery query(Tf::app()->databaseIdForCache());
-    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
+    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob) on conflict(k) do update set b=:blob, t=:ts").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
 
     query.prepare(sql);
     query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
