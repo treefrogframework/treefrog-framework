@@ -1,7 +1,7 @@
 #pragma once
 constexpr auto TF_VERSION_STR = "2.2.0";
 constexpr auto TF_VERSION_NUMBER = 0x020200;
-constexpr auto TF_SRC_REVISION = 2424;
+constexpr auto TF_SRC_REVISION = 2430;
 
 #include <QMetaType>
 #include <QIODevice>
