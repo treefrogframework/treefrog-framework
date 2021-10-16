@@ -19,7 +19,7 @@ TreeFrog Framework には次のような特徴があります。
   3. テンプレートシステム ： ERBライクなテンプレートエンジン
   4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
   5. WebSocket 対応 ： サーバと双方向通信が可能
-  6. ジェネレータ ： 「足場」となるソースコードや Makefile を自動で生成
+  6. ジェネレータ ： 「足場」となるソースコード, Makefile や vue.js テンプレートを生成
   7. 様々なレスポンスタイプに対応 ： JSON, XML, CBOR
   8. クロスプラットフォーム ： Windows, macOS, Linuxで同じソースコードが動作
   9. オープンソースソフトウェア ： New BSD License
