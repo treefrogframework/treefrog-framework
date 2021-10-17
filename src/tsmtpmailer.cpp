@@ -26,14 +26,14 @@ using namespace Tf;
 
 TSmtpMailer::TSmtpMailer(QObject *parent) :
     QObject(parent),
-    _socket(new QSslSocket())
+    _socket(new QSslSocket)
 {
 }
 
 
 TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent) :
     QObject(parent),
-    _socket(new QSslSocket()),
+    _socket(new QSslSocket),
     _smtpHostName(hostName),
     _smtpPort(port)
 {
