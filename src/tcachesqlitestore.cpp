@@ -84,7 +84,7 @@ TCacheSQLiteStore::~TCacheSQLiteStore()
 bool TCacheSQLiteStore::open()
 {
     static std::once_flag once;
-    std::call_once(once, [this]() {
+    std::call_once(once, []() {
         getVersion();
         createTable(TABLE_NAME);
     });

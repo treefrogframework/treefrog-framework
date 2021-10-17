@@ -28,7 +28,6 @@ void TestSmtpMailer::sendMail()
     bool res = mailer.send(TMailMessage(msg));
 #else
     bool res = 1;  // not test now
-    Tf::msleep(100);
 #endif
     QVERIFY(res);
 }
@@ -52,7 +51,6 @@ void TestSmtpMailer::sendMailTls()
     bool res = mailer.send(TMailMessage(msg));
 #else
     bool res = 1;  // not test now
-    Tf::msleep(100);
 #endif
     QVERIFY(res);
 }

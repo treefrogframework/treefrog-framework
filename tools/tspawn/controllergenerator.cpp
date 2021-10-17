@@ -243,7 +243,11 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             {"var1", convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
             {"code1", sessInsertStr},
             {"code2", sessGetStr},
+#if QT_VERSION < 0x060000
             {"type", QString::fromLatin1(QMetaType::typeName(pair.second))},
+#else
+            {"type", QString::fromLatin1(QMetaType(pair.second).name())},
+#endif
             {"rev", revStr},
             {"id", fieldNameToVariableName(pair.first)},
             {"condition", conditionString()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
