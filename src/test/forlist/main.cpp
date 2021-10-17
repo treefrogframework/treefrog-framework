@@ -1,6 +1,6 @@
 #include <QStringList>
 #include <QListIterator>
-#include <QTest>
+#include <TfTest/TfTest>
 #include <random>
 #include <iostream>
 
@@ -201,5 +201,5 @@ private slots:
 };
 
 
-QTEST_MAIN(ForList)
+TF_TEST_SQLLESS_MAIN(ForList)
 #include "main.moc"
