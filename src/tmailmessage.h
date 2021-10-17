@@ -2,8 +2,11 @@
 #include <QString>
 #include <TGlobal>
 #include <TInternetMessageHeader>
-
+#if QT_VERSION < 0x060000
 class QTextCodec;
+#else
+# include <QStringConverter>
+#endif
 
 
 class T_CORE_EXPORT TMailMessage : public TInternetMessageHeader {
@@ -27,7 +30,7 @@ public:
     QString body() const;
     void setBody(const QString &body);
     QByteArray toByteArray() const;
-    QByteArrayList recipients() const { return recipientList; }
+    QByteArrayList recipients() const { return _recipientList; }
     TMailMessage &operator=(const TMailMessage &other);
 
 protected:
@@ -40,8 +43,11 @@ protected:
 private:
     void init(const QByteArray &encoding);
 
-    QByteArray mailBody;
-    QTextCodec *textCodec {nullptr};
-    QByteArrayList recipientList;
+    QByteArray _mailBody;
+#if QT_VERSION < 0x060000
+    QTextCodec *_textCodec {nullptr};
+#else
+    QStringConverter::Encoding _encoding {QStringConverter::Utf8};
+#endif
+    QByteArrayList _recipientList;
 };
-

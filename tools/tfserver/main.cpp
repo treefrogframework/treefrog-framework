@@ -11,7 +11,6 @@
 #include "tsystemglobal.h"
 #include <QMap>
 #include <QStringList>
-#include <QTextCodec>
 #include <TActionController>
 #include <TAppSettings>
 #include <TJSLoader>
@@ -22,6 +21,9 @@
 #include <TWebApplication>
 #include <cstdlib>
 #include <cstdio>
+#if QT_VERSION < 0x060000
+# include <QTextCodec>
+#endif
 using namespace TreeFrog;
 
 constexpr auto DEBUG_MODE_OPTION = "--debug";
@@ -230,9 +232,11 @@ int main(int argc, char *argv[])
         tSystemInfo("Application's default locale: %s", qUtf8Printable(locale.name()));
     }
 
+#if QT_VERSION < 0x060000
     // Sets codec
     QTextCodec *codec = webapp.codecForInternal();
     QTextCodec::setCodecForLocale(codec);
+#endif
 
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");

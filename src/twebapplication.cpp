@@ -11,10 +11,12 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QTextCodec>
 #include <TAppSettings>
 #include <TSystemGlobal>
 #include <TWebApplication>
+#if QT_VERSION < 0x060000
+# include <QTextCodec>
+#endif
 #include <cstdlib>
 #include <thread>  // for hardware_concurrency()
 
@@ -22,11 +24,13 @@ constexpr auto DEFAULT_INTERNET_MEDIA_TYPE = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
 
 namespace {
+#if QT_VERSION < 0x060000
 QTextCodec *searchCodec(const char *name)
 {
     QTextCodec *c = QTextCodec::codecForName(name);
     return (c) ? c : QTextCodec::codecForLocale();
 }
+#endif
 }
 
 /*!
@@ -96,8 +100,20 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         mediaTypes = new QSettings(configPath() + "initializers/internet_media_types.ini", QSettings::IniFormat, this);
     }
     // Gets codecs
+#if QT_VERSION < 0x060000
     _codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
     _codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
+#else
+    auto enc = QStringConverter::encodingForName(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
+    if (enc) {
+        _encodingInternal = enc.value();
+    }
+
+    enc = QStringConverter::encodingForName(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
+    if (enc) {
+        _encodingHttp = enc.value();
+    }
+#endif
 
     // Sets codecs for INI files
 #if QT_VERSION < 0x060000
@@ -338,7 +354,11 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
 
     QString type = _mediaTypes.value(ext.toLower(), DEFAULT_INTERNET_MEDIA_TYPE).toString();
     if (appendCharset && type.startsWith("text", Qt::CaseInsensitive)) {
+#if QT_VERSION < 0x060000
         type += "; charset=" + Tf::app()->codecForHttpOutput()->name();
+#else
+        type += "; charset=" + QLatin1String(QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput()));
+#endif
     }
     return type.toLatin1();
 }

@@ -13,7 +13,6 @@
 #include "turlroute.h"
 #include <QHostAddress>
 #include <QSet>
-#include <QTextCodec>
 #include <QtCore>
 #include <TActionContext>
 #include <TfCore>
@@ -268,7 +267,11 @@ void TActionContext::execute(THttpRequest &request, int sid)
             QByteArray ctype = currController->_response.header().contentType().toLower();
             if (ctype.startsWith("text") && !ctype.contains("charset")) {
                 ctype += "; charset=";
+#if QT_VERSION < 0x060000
                 ctype += Tf::app()->codecForHttpOutput()->name();
+#else
+                ctype += QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput());
+#endif
                 currController->_response.header().setContentType(ctype);
             }
 
