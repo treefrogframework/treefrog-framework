@@ -1,6 +1,6 @@
-#include <QtTest/QtTest>
-#include <QFile>
+#include <TfTest/TfTest>
 #include <THtmlParser>
+#include <QFile>
 
 
 class HtmlParser : public QObject
@@ -262,5 +262,5 @@ void HtmlParser::tagcheck()
     QCOMPARE(result, ok);
 }
 
-QTEST_MAIN(HtmlParser)
+TF_TEST_SQLLESS_MAIN(HtmlParser)
 #include "htmlparser.moc"

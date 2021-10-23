@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2.2.0
+ - Fix a bug of cache logic for sqlite.
+ - Modified not to use core5compat module in running on Qt6.
+ - Performance improvement.
+
 ## 2.1.0
  - Fix a bug of calculating length of receiving packets.
  - Added echo() function with a variantmap argument.

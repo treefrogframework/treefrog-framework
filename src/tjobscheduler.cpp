@@ -19,7 +19,7 @@
 
 TJobScheduler::TJobScheduler() :
     TDatabaseContextThread(),
-    _timer(new QTimer())
+    _timer(new QTimer)
 {
     moveToThread(Tf::app()->thread());
     _timer->moveToThread(Tf::app()->thread());
