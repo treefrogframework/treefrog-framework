@@ -19,7 +19,7 @@ TreeFrog Framework には次のような特徴があります。
   3. テンプレートシステム ： ERBライクなテンプレートエンジン
   4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
   5. WebSocket 対応 ： サーバと双方向通信が可能
-  6. ジェネレータ ： 「足場」となるソースコードや Makefile を自動で生成
+  6. ジェネレータ ： 「足場」となるソースコード, Makefile や vue.js テンプレートを生成
   7. 様々なレスポンスタイプに対応 ： JSON, XML, CBOR
   8. クロスプラットフォーム ： Windows, macOS, Linuxで同じソースコードが動作
   9. オープンソースソフトウェア ： New BSD License
@@ -40,13 +40,19 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/8/21  TreeFrog Framework バージョン2.1 （安定版）リリース <span style="color: red;">New!</span>
+### 2021/10/23  TreeFrog Framework バージョン2.2 （安定版）リリース <span style="color: red;">New!</span>
+
+ - sqliteのキャッシュロジックの不具合修正
+ - Qt6で core5compat モジュールを使用しないよう修正
+ - パフォマンス改善
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2021/8/21  TreeFrog Framework バージョン2.1 （安定版）リリース
 
   - 受信パケットのサイズ計算ロジックの不具合修正
   - variantmapを引数にもつecho()関数を追加
   - Vue.js用のスキャフォールディング（足場）を作れるよう tspawn コマンドを修正
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2021/6/19  TreeFrog Framework バージョン2.0 （ベータ2）リリース
 
@@ -63,14 +69,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - TMultiplexingServerの不具合修正
   - Qtの陳腐化した関数を使用しないよう修正
   - TAbstractSqlORMapperクラス追加
-  - パフォマンス改善
-
-### 2020/8/21  TreeFrog Framework バージョン1.30.0 （安定版）リリース
-
-  - X-Forwarded-Forヘッダの対応
-  - ActionMailer.smtp.RequireTLSパタメータをapplication.iniへ追加
-  - URLルーティング情報を表示するオプションをtreefrogコマンドへ追加
-  - ORM関数のI/F更新
   - パフォマンス改善
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)

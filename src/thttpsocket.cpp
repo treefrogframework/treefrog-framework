@@ -230,7 +230,6 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
             int idx = _readBuffer.indexOf(Tf::CRLFCRLF);
             if (idx > 0) {
                 THttpRequestHeader header(_readBuffer);
-                tSystemDebug("content-length: %lld", header.contentLength());
 
                 if (Q_UNLIKELY(systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes)) {
                     throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large

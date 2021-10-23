@@ -23,7 +23,6 @@ public:
 
 private:
     QString _metaType;
-    int _typeId {0};
     T *_ptr {nullptr};
 
     T_DISABLE_COPY(TDispatcher)
@@ -40,17 +39,7 @@ inline TDispatcher<T>::TDispatcher(const QString &metaTypeName) :
 template <class T>
 inline TDispatcher<T>::~TDispatcher()
 {
-    if (_ptr) {
-        if (_typeId > 0) {
-#if QT_VERSION < 0x060000
-            QMetaType::destroy(_typeId, _ptr);
-#else
-            QMetaType(_typeId).destroy(_ptr);
-#endif
-        } else {
-            delete _ptr;
-        }
-    }
+    delete _ptr;
 }
 
 
@@ -197,13 +186,12 @@ template <class T>
 inline T *TDispatcher<T>::object()
 {
     if (!_ptr) {
-        auto factory = Tf::objectFactories()->value(_metaType.toLatin1().toLower());
+        auto factory = Tf::objectFactories()->value(_metaType.toLatin1().toLower(), nullptr);
         if (Q_LIKELY(factory)) {
             auto p = factory();
             _ptr = dynamic_cast<T *>(p);
             if (!_ptr) {
                 delete p;
-                _typeId = 0;
             }
         }
     }

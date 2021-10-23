@@ -171,7 +171,11 @@ bool ServiceGenerator::generate(const QString &dstDir) const
         {"varname", varName},
         {"arg", ModelGenerator::createParam(pair.second, pair.first)},
         {"id", fieldNameToVariableName(pair.first)},
+    #if QT_VERSION < 0x060000
         {"type", QString::fromLatin1(QMetaType::typeName(pair.second))},
+    #else
+        {"type", QString::fromLatin1(QMetaType(pair.second).name())},
+    #endif
         {"code1", sessInsertStr},
         {"code2", sessGetStr},
         {"rev", revStr},

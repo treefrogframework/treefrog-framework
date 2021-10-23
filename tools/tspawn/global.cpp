@@ -6,7 +6,7 @@
  */
 
 #include "global.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSet>
 #include <QStringList>
 #include <tabstractmodel.h>

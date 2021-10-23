@@ -13,7 +13,6 @@
 #include "turlroute.h"
 #include <QHostAddress>
 #include <QSet>
-#include <QTextCodec>
 #include <QtCore>
 #include <TActionContext>
 #include <TfCore>
@@ -159,8 +158,11 @@ void TActionContext::execute(THttpRequest &request, int sid)
                     currController->session().sessionId = TSessionManager::instance().generateId();
                     tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
                 }
-                // Sets CSRF protection information
-                TActionController::setCsrfProtectionInto(currController->session());
+
+                if (EnableCsrfProtectionModuleFlag && currController->csrfProtectionEnabled()) {
+                    // Sets CSRF protection information
+                    TActionController::setCsrfProtectionInto(currController->session());
+                }
             }
 
             // Database Transaction
@@ -265,7 +267,11 @@ void TActionContext::execute(THttpRequest &request, int sid)
             QByteArray ctype = currController->_response.header().contentType().toLower();
             if (ctype.startsWith("text") && !ctype.contains("charset")) {
                 ctype += "; charset=";
+#if QT_VERSION < 0x060000
                 ctype += Tf::app()->codecForHttpOutput()->name();
+#else
+                ctype += QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput());
+#endif
                 currController->_response.header().setContentType(ctype);
             }
 
@@ -433,6 +439,7 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 {
 
     header.setContentLength(length);
+    tSystemDebug("content-length: %lld", header.contentLength());
     header.setRawHeader(QByteArrayLiteral("Server"), QByteArrayLiteral("TreeFrog server"));
     header.setCurrentDate();
 

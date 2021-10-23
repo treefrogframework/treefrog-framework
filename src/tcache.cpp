@@ -31,7 +31,7 @@ TCache::TCache()
             }
         }
     } else {
-        tWarn() << "Cache not available. Check the settings of application.ini.";
+        tWarn() << "Cache not available. Check the settings of application.ini such as 'Cache.SettingsFile' and 'Cache.Backend'.";
     }
 }
 

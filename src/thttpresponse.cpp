@@ -98,6 +98,15 @@ void THttpResponse::setBodyFile(const QString &filePath)
 }
 
 
+void THttpResponse::clear()
+{
+    resHeader.clear();
+    tmpByteArray.clear();
+    delete bodyDevice;
+    bodyDevice = nullptr;
+}
+
+
 /*!
   \fn THttpResponseHeader &THttpResponse::header()
   Return the HTTP header.

@@ -115,6 +115,7 @@ HEADER_FILES += tcookiejar.h
 HEADER_FILES += tcriteria.h
 HEADER_FILES += tcriteriaconverter.h
 HEADER_FILES += tcryptmac.h
+HEADER_FILES += tdeclexport.h
 HEADER_FILES += tdirectview.h
 HEADER_FILES += tdispatcher.h
 HEADER_FILES += tfcore.h

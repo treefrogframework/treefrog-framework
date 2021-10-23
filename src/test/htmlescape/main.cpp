@@ -1,6 +1,6 @@
-#include <QtTest/QtTest>
-#include <QFile>
+#include <TfTest/TfTest>
 #include <THttpUtility>
+#include <QFile>
 
 
 class HtmlParser : public QObject
@@ -85,5 +85,5 @@ void HtmlParser::escapeNoQuotes()
     QCOMPARE(actualStr, correct);
 }
 
-QTEST_MAIN(HtmlParser)
+TF_TEST_SQLLESS_MAIN(HtmlParser)
 #include "main.moc"

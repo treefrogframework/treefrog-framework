@@ -8,7 +8,7 @@
 #include "otmparser.h"
 #include <TGlobal>
 #include <QHash>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextStream>
 
 #define INCLUDE_LABEL QLatin1String("#include")
@@ -45,6 +45,7 @@ void OtmParser::parse(const QString &text)
 
     QString txt = text;
     QTextStream ts(&txt, QIODevice::ReadOnly);
+    const QRegularExpression re(R"(^[^:~\+\|].*)");  // anything but ':', '~', '+', '|'
 
     bool lineCont = false;
     QString line, label, value;
@@ -54,8 +55,8 @@ void OtmParser::parse(const QString &text)
             lineCont = false;
             if (!label.isEmpty()) {
                 QString str = value.trimmed();
-                QRegExp rx("[^:~\\+\\|].*");  // anything but ':', '~', '+', '|'
-                if (rx.indexIn(str) == 0) {
+                auto match = re.match(str);
+                if (match.hasMatch()) {
                     // Regard empty Otama operator as the ':' operator
                     str = QLatin1Char(':') + str;
                 }

@@ -17,7 +17,7 @@ Web applications can run faster than that of scripting language because the serv
   3. Template system  - ERB-like template engine adopted
   4. Supported databases  - MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
   5. WebSocket support  - Providing full-duplex communications channels
-  6. Generator  - Automatically generates scaffolds and Makefiles
+  6. Generator  - Generates scaffolds, Makefiles and vue.js templates
   7. Various response types  - JSON, XML and CBOR
   8. Cross-platform  - Same source code can work on Windows, macOS and Linux
   9. OSS  - New BSD License
@@ -37,15 +37,23 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Oct. 23, 2021
+
+### TreeFrog Framework version 2.2 (stable) release <span style="color: red;">New!</span>
+
+ - Fix a bug of cache logic for sqlite.
+ - Modified not to use core5compat module in running on Qt6.
+ - Performance improvement.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Aug. 21, 2021
 
-### TreeFrog Framework version 2.1 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.1 (stable) release
 
   - Fix a bug of calculating length of receiving packets.
   - Added echo() function with a variantmap argument.
   - Implement the logic of the tspawn command to generate scaffolding for vue.js.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Jun. 19, 2021
 
@@ -69,16 +77,6 @@ Feb. 6, 2021
  - Modified not to use obsolete functions of Qt.
  - Added TAbstractSqlORMapper class.
  - Performance improvement.
-
-Aug. 21, 2020
-
-### TreeFrog Framework version 1.30.0 (stable) release
-
-  - Implemented logics for X-Forwarded-For Header.
-  - Implemented ActionMailer.smtp.RequireTLS parameter in application.ini.
-  - Added a option for showing URL routing to treefrog command.
-  - Updated I/F of ORM functions.
-  - Performance improvement.
 
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 

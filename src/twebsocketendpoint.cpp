@@ -264,6 +264,16 @@ void TWebSocketEndpoint::sendHttp(int id, const QByteArray &data)
 }
 
 
+void TWebSocketEndpoint::reset()
+{
+    sessionStore.reset();
+    sid = 0;
+    taskList.clear();
+    rollback = false;
+    peerAddr.clear();
+    peerPortNumber = 0;
+}
+
 /*!
   \fn const TWebSocketSession &TWebSocketEndpoint::session() const
   Returns the current WebSocket session, allows associating information

@@ -20,6 +20,9 @@ constexpr auto BLOB_COLUMN = "b";
 constexpr auto TIMESTAMP_COLUMN = "t";
 constexpr int PAGESIZE = 4096;
 
+static int sqliteMajorVersion;
+static int sqliteMinorVersion;
+
 
 inline QSqlError lastError()
 {
@@ -41,6 +44,20 @@ static bool query(const QString &sql)
         tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qUtf8Printable(lastErrorString()), qUtf8Printable(sql), __FILE__, __LINE__);
     }
     return ret;
+}
+
+
+static void getVersion()
+{
+    TSqlQuery query(Tf::app()->databaseIdForCache());
+
+    if (query.exec(QStringLiteral("select sqlite_version()")) && query.next()) {
+        auto sqliteVersion = query.value(0).toString().split(".");
+        if (sqliteVersion.count() > 1) {
+            sqliteMajorVersion = sqliteVersion[0].toInt();
+            sqliteMinorVersion = sqliteVersion[1].toInt();
+        }
+    }
 }
 
 
@@ -67,7 +84,10 @@ TCacheSQLiteStore::~TCacheSQLiteStore()
 bool TCacheSQLiteStore::open()
 {
     static std::once_flag once;
-    std::call_once(once, []() { createTable(TABLE_NAME); });
+    std::call_once(once, []() {
+        getVersion();
+        createTable(TABLE_NAME);
+    });
     return true;
 }
 
@@ -136,7 +156,6 @@ bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, int 
         return false;
     }
 
-    remove(key);
     qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
     return write(key, value, expire);
 }
@@ -174,9 +193,15 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
         return ret;
     }
 
-    TSqlQuery query(Tf::app()->databaseIdForCache());
-    QString sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
+    QString sql;
+    if (sqliteMajorVersion >= 3 && sqliteMinorVersion >= 24) {
+        // upsert-clause
+        sql = QStringLiteral("insert into %1 (%2,%3,%4) values (:key,:ts,:blob) on conflict(k) do update set b=:blob, t=:ts").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
+    } else {
+        sql = QStringLiteral("replace into %1 (%2,%3,%4) values (:key,:ts,:blob)").arg(_table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN);
+    }
 
+    TSqlQuery query(Tf::app()->databaseIdForCache());
     query.prepare(sql);
     query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
     ret = query.exec();

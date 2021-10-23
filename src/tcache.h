@@ -23,4 +23,3 @@ private:
     T_DISABLE_COPY(TCache)
     T_DISABLE_MOVE(TCache)
 };
-

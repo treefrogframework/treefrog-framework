@@ -37,6 +37,7 @@ public:
     int socketId() const { return sid; }
     QHostAddress peerAddress() const { return peerAddr; }
     quint16 peerPort() const { return peerPortNumber; }
+    void reset();
 
     static bool isUserLoggedIn(const TSession &session);
     static QString identityKeyOfLoginUser(const TSession &session);

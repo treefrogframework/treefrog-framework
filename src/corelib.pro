@@ -8,7 +8,6 @@ lessThan(QT_MAJOR_VERSION, 6) {
   windows:QMAKE_CXXFLAGS += /std:c++14
 } else {
   CONFIG += c++17
-  QT += core5compat
   windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
 }
 
@@ -347,6 +346,7 @@ SOURCES += toauth2client.cpp
 
 HEADERS += \
            tfnamespace.h \
+           tdeclexport.h \
            tfcore.h \
            tfexception.h \
            tdispatcher.h \

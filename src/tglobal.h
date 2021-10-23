@@ -1,7 +1,7 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "2.1.0";
-constexpr auto TF_VERSION_NUMBER = 0x020100;
-constexpr auto TF_SRC_REVISION = 2419;
+constexpr auto TF_VERSION_STR = "2.2.0";
+constexpr auto TF_VERSION_NUMBER = 0x020200;
+constexpr auto TF_SRC_REVISION = 2446;
 
 #include <QMetaType>
 #include <QIODevice>
@@ -39,37 +39,6 @@ constexpr auto TF_SRC_REVISION = 2419;
     inline void set##PROPERTY(const TYPE &v__) noexcept { PROPERTY = v__; } \
     inline TYPE get##PROPERTY() const noexcept { return PROPERTY; }
 
-
-//
-// Create Treefrog DLL if TF_MAKEDLL is defined (Windows only)
-//
-#if defined(Q_OS_WIN)
-#if defined(TF_MAKEDLL)  // Create a Treefrog DLL
-#define T_CORE_EXPORT Q_DECL_EXPORT
-#define T_MODEL_EXPORT
-#define T_VIEW_EXPORT
-#define T_CONTROLLER_EXPORT
-#define T_HELPER_EXPORT
-#elif defined(TF_DLL)  // Use a Treefrog DLL
-#define T_CORE_EXPORT Q_DECL_IMPORT
-#define T_MODEL_EXPORT Q_DECL_EXPORT
-#define T_VIEW_EXPORT Q_DECL_EXPORT
-#define T_CONTROLLER_EXPORT Q_DECL_EXPORT
-#define T_HELPER_EXPORT Q_DECL_EXPORT
-#else
-#define T_CORE_EXPORT
-#define T_MODEL_EXPORT
-#define T_VIEW_EXPORT
-#define T_CONTROLLER_EXPORT
-#define T_HELPER_EXPORT
-#endif
-#else
-#define T_CORE_EXPORT
-#define T_MODEL_EXPORT
-#define T_VIEW_EXPORT
-#define T_CONTROLLER_EXPORT
-#define T_HELPER_EXPORT
-#endif
 
 #if defined(Q_CC_GNU) && !defined(__INSURE__)
 #if defined(Q_CC_MINGW) && !defined(Q_CC_CLANG)
@@ -260,14 +229,6 @@ constexpr auto TF_SRC_REVISION = 2419;
 
 #define T_VARIANT(VAR) (variant(QLatin1String(#VAR)).toString())
 
-//  Some classes do not permit copies and moves to be made of an object.
-#define T_DISABLE_COPY(Class)      \
-    Class(const Class &) = delete; \
-    Class &operator=(const Class &) = delete;
-
-#define T_DISABLE_MOVE(Class) \
-    Class(Class &&) = delete; \
-    Class &operator=(Class &&) = delete;
 
 #define tFatal TDebug(Tf::FatalLevel).fatal
 #define tError TDebug(Tf::ErrorLevel).error
@@ -288,6 +249,8 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 
 #include "tfexception.h"
 #include "tfnamespace.h"
+#include "tdeclexport.h"
+#include "tstack.h"
 #include <TDebug>
 #include <cstdint>
 #include <functional>

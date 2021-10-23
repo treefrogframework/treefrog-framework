@@ -7,10 +7,12 @@
 
 #include <QDir>
 #include <QFileInfo>
-#include <QTextCodec>
 #include <TLogger>
 #include <TSystemGlobal>
 #include <TWebApplication>
+#if QT_VERSION < 0x060000
+# include <QTextCodec>
+#endif
 
 constexpr auto DEFAULT_TEXT_ENCODING = "DefaultTextEncoding";
 
@@ -60,14 +62,22 @@ QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) 
 */
 QByteArray TLogger::logToByteArray(const TLog &log) const
 {
+#if QT_VERSION < 0x060000
     return logToByteArray(log, layout(), dateTimeFormat(), codec());
+#else
+    return logToByteArray(log, layout(), dateTimeFormat(), encoding());
+#endif
 }
 
 /*!
   Converts the log \a log to its textual representation and returns
   a QByteArray containing the data.
 */
+#if QT_VERSION < 0x060000
 QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec)
+#else
+QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QStringConverter::Encoding encoding)
+#endif
 {
     QByteArray message;
     int pos = 0;
@@ -155,7 +165,11 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
         }
     }
 
+#if QT_VERSION < 0x060000
     return (codec) ? codec->fromUnicode(QString::fromLocal8Bit(message.data(), message.length())) : message;
+#else
+    return QStringEncoder(encoding).encode(QString::fromLocal8Bit(message.data(), message.length()));
+#endif
 }
 
 /*!
@@ -169,6 +183,7 @@ QByteArray TLogger::priorityToString(Tf::LogPriority priority)
 /*!
   Returns a pointer to QTextCodec of the default text encoding.
  */
+#if QT_VERSION < 0x060000
 QTextCodec *TLogger::codec() const
 {
     if (!_codec) {
@@ -189,6 +204,31 @@ QTextCodec *TLogger::codec() const
     }
     return _codec;
 }
+#endif
+
+#if QT_VERSION >= 0x060000
+QStringConverter::Encoding TLogger::encoding() const
+{
+    if (!_encoding) {
+        auto &settings = Tf::app()->loggerSettings();
+        QByteArray codecName = settings.value(DEFAULT_TEXT_ENCODING).toByteArray().trimmed();
+        if (!codecName.isEmpty()) {
+            auto enc = QStringConverter::encodingForName(codecName);
+            if (enc) {
+                _encoding = enc;
+                tSystemDebug("set log text codec: %s", QStringConverter::nameForEncoding(_encoding.value()));
+            } else {
+                tSystemError("log text codec matching the name could be not found: %s", codecName.data());
+            }
+        }
+
+        if (!_encoding) {
+            _encoding = QStringConverter::Utf8;
+        }
+    }
+    return _encoding.value();
+}
+#endif
 
 /*!
   Returns a reference to the value for the setting layout.

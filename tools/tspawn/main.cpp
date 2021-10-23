@@ -26,7 +26,9 @@
 #include "apicontrollergenerator.h"
 #include "apiservicegenerator.h"
 #include <QtCore>
-#include <QTextCodec>
+#if QT_VERSION < 0x060000
+# include <QTextCodec>
+#endif
 #include <random>
 #ifndef Q_CC_MSVC
 #include <unistd.h>
@@ -636,10 +638,12 @@ int main(int argc, char *argv[])
             return 2;
         }
 
+#if QT_VERSION < 0x060000
         // Sets codec
         QTextCodec *codec = QTextCodec::codecForName(appSettings.value("InternalEncoding").toByteArray().trimmed());
         codec = (codec) ? codec : QTextCodec::codecForLocale();
         QTextCodec::setCodecForLocale(codec);
+#endif
 
         // ERB or Otama
         templateSystem = devSettings.value("TemplateSystem").toString().toLower();

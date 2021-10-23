@@ -17,6 +17,7 @@ public:
 
     void addCookie(const TCookie &cookie);
     QList<TCookie> allCookies() const;
+    void clear() { QList<TCookie>::clear(); }
 };
 
 

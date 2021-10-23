@@ -10,13 +10,15 @@
 #include <QHostInfo>
 #include <QJsonDocument>
 #include <QSysInfo>
-#include <QTextCodec>
 #include <QtCore>
 #include <TAppSettings>
 #include <TSystemGlobal>
 #include <TWebApplication>
 #include <tfcore.h>
 #include <tprocessinfo.h>
+#if QT_VERSION < 0x060000
+# include <QTextCodec>
+#endif
 
 #ifdef Q_OS_UNIX
 #include <sys/utsname.h>
@@ -454,9 +456,11 @@ int managerMain(int argc, char *argv[])
 {
     TWebApplication app(argc, argv);
 
+#if QT_VERSION < 0x060000
     // Sets codec
     QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     QTextCodec::setCodecForLocale(codec);
+#endif
 
     if (!checkArguments()) {
         return 1;

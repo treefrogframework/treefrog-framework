@@ -89,7 +89,6 @@ void THttpBuffer::parse()
         int idx = httpBuffer.indexOf("\r\n\r\n");
         if (idx > 0) {
             THttpRequestHeader header(httpBuffer);
-            tSystemDebug("content-length: %d", header.contentLength());
 
             if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
                 throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large

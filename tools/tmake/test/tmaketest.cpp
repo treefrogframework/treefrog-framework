@@ -2,7 +2,6 @@
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
-#include <iostream>
 #include <THtmlParser>
 #include "otmparser.h"
 #include "otamaconverter.h"
