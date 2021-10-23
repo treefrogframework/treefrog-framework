@@ -13,22 +13,16 @@ private slots:
 
 void TestSmtpMailer::sendMail()
 {
-    qDebug() << "#0";
     QString msg = QString::fromUtf8(
         "From: aoyama <a.kazuharu@gmail.com>\n"       \
         "To: kazu <a.kazuharu@gmail.com>\n"           \
         "Subject: ようこそ!!!\n"                      \
         "\n"                                          \
         "Hello.\nGoodbye.\nこんにちは。\nさようなら。");
-    qDebug() << "#1";
     TSmtpMailer mailer("smtp.example.com", 25);
-    qDebug() << "#2";
     mailer.setAuthenticationEnabled(true);
-    qDebug() << "#3";
     mailer.setUserName("a.kazuharu@gmail.com");
-    qDebug() << "#4";
     mailer.setPassword("");
-    qDebug() << "#5";
 #if 0
     bool res = mailer.send(TMailMessage(msg));
 #else
