@@ -11,7 +11,7 @@
 #include "projectfilegenerator.h"
 #include <tfnamespace.h>
 #include <QPair>
-#include <QRegExp>
+#include <QRegularExpression>
 #ifndef Q_CC_MSVC
 #include <unistd.h>
 #endif
@@ -58,7 +58,7 @@ constexpr auto MONGOOBJECT_HEADER_UPDATE_TEMPLATE = "%2\n"
 constexpr auto MONGOOBJECT_PROPERTY_TEMPLATE = "    Q_PROPERTY(%1 %2 READ get%2 WRITE set%2)\n"
                                                "    T_DEFINE_PROPERTY(%1, %2)\n";
 
-const QRegExp rxstart("\\{\\s*public\\s*:", Qt::CaseSensitive, QRegExp::RegExp2);
+const QRegularExpression rxstart(R"(\{\s*public\s*:)");
 
 
 MongoObjGenerator::MongoObjGenerator(const QString &model) :
@@ -131,8 +131,8 @@ bool MongoObjGenerator::createMongoObject(const QString &path)
 static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePath)
 {
     QList<QPair<QString, QMetaType::Type>> ret;
-    QRegExp rxend("(\\n[\\t\\r ]*\\n|\\senum\\s)", Qt::CaseSensitive, QRegExp::RegExp2);
-    QRegExp rx("\\s([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;", Qt::CaseSensitive, QRegExp::RegExp2);
+    const QRegularExpression rxend("(\\n[\\t\\r ]*\\n|\\senum\\s)");
+    const QRegularExpression rx("\\s([a-zA-Z0-9_<>]+)\\s+([a-zA-Z0-9_]+)\\s*;");
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -141,24 +141,30 @@ static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePa
     }
 
     QString src = QString::fromUtf8(file.readAll().data());
-    int pos = rxstart.indexIn(src, 0);
-    if (pos < 0) {
+    auto stmatch = rxstart.match(src, 0);
+    if (!stmatch.hasMatch()) {
         qCritical("parse error");
         _exit(1);
     }
-    pos += rxstart.matchedLength();
 
-    int end = rxend.indexIn(src, pos);
-    while ((pos = rx.indexIn(src, pos)) > 0 && pos < end) {
+    int pos = stmatch.capturedEnd();
+    auto endmatch = rxend.match(src, pos);
+    int end = endmatch.capturedEnd();
+
+    while (pos < end) {
+        auto match = rx.match(src, pos);
+        if (!match.hasMatch()) {
+            break;
+        }
 #if QT_VERSION < 0x060000
-        QMetaType::Type type = (QMetaType::Type)QVariant::nameToType(rx.cap(1).toLatin1().data());
+        QMetaType::Type type = (QMetaType::Type)QVariant::nameToType(match.captured(1).toLatin1().data());
 #else
-        int type = QMetaType::fromName(rx.cap(1).toLatin1()).id();
+        int type = QMetaType::fromName(match.captured(1).toLatin1()).id();
 #endif
-        QString var = rx.cap(2);
+        QString var = match.captured(2);
         if (type != QMetaType::UnknownType && var.toLower() != "id")
             ret << QPair<QString, QMetaType::Type>(var, (QMetaType::Type)type);
-        pos += rx.matchedLength();
+        pos = match.capturedEnd();
     }
     return ret;
 }
@@ -176,9 +182,9 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
     QString src = QString::fromUtf8(file.readAll().data());
     QString headerpart;
 
-    int pos = rxstart.indexIn(src, 0);
-    if (pos > 0) {
-        pos += rxstart.matchedLength();
+    auto match = rxstart.match(src, 0);
+    if (match.hasMatch()) {
+        int pos = match.capturedEnd();
         headerpart = src.mid(0, pos);
     }
 

@@ -100,9 +100,9 @@ sqlite3 $DBFILE < create_blog_table.sql || exit
 # QMake Build
 cd $APPROOT
 $TSPAWN --show-tables || exit
-$TSPAWN s blog || exit
-$TSPAWN s food || exit
-$TSPAWN ms fuga || exit
+echo "n" | $TSPAWN s blog || exit
+echo "n" | $TSPAWN s food || exit
+echo "n" | $TSPAWN ms fuga || exit
 $TSPAWN w foo || exit
 $TSPAWN a book || exit
 qmake -r || exit
@@ -128,7 +128,24 @@ $TREEFROG --show-routes || exit
 
 cd $BASEDIR
 sqlite3 $DBFILE < create_blog_table.sql || exit
+
 testcase
+cd $APPROOT
+rm -f lib/*
+make distclean
+
+# Vue.js & QMake
+cd $APPROOT
+for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN s blog || exit
+for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN s food || exit
+for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN ms fuga || exit
+qmake -r || exit
+make -j4
+make || exit
+$TREEFROG --show-routes || exit
+$TREEFROG -k abort
+rm -f lib/*
+make distclean
 
 echo
 echo "Test completed."

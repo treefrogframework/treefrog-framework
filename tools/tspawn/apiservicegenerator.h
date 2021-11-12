@@ -16,6 +16,5 @@ private:
     QString _tableName;
     QList<QPair<QString, QMetaType::Type>> _fieldList;
     int _pkIndex {0};
-    int _lockRevIndex {0};
 };
 

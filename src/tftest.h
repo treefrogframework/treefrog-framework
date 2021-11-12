@@ -4,7 +4,6 @@
 #include <QByteArray>
 #include <QEventLoop>
 #include <QObject>
-#include <QTextCodec>
 #include <QtTest/QtTest>
 #include <TAppSettings>
 #include <TWebApplication>
@@ -14,6 +13,9 @@
 #endif
 
 #define TF_TEST_MAIN(TestObject) TF_TEST_SQL_MAIN(TestObject, true);
+
+#if QT_VERSION < 0x060000
+#include <QTextCodec>
 
 #define TF_TEST_SQL_MAIN(TestObject, EnableTransactions)                                                               \
     int main(int argc, char *argv[])                                                                                   \
@@ -54,6 +56,47 @@
         return thread.returnCode;                                                                                      \
     }
 
+#else
+
+#define TF_TEST_SQL_MAIN(TestObject, EnableTransactions)                                                               \
+    int main(int argc, char *argv[])                                                                                   \
+    {                                                                                                                  \
+        class Thread : public TActionThread {                                                                          \
+        public:                                                                                                        \
+            Thread() : TActionThread(0), returnCode(0) { }                                                             \
+            volatile int returnCode;                                                                                   \
+                                                                                                                       \
+        protected:                                                                                                     \
+            virtual void run()                                                                                         \
+            {                                                                                                          \
+                setTransactionEnabled(EnableTransactions);                                                             \
+                TestObject obj;                                                                                        \
+                returnCode = QTest::qExec(&obj, QCoreApplication::arguments());                                        \
+                commitTransactions();                                                                                  \
+                for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) { \
+                    it.value().database().close(); /* close SQL database */                                            \
+                }                                                                                                      \
+                for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {    \
+                    it.value().close(); /* close KVS database */                                                       \
+                }                                                                                                      \
+                QEventLoop eventLoop;                                                                                  \
+                while (eventLoop.processEvents()) {                                                                    \
+                }                                                                                                      \
+            }                                                                                                          \
+        };                                                                                                             \
+        TWebApplication app(argc, argv);                                                                               \
+        app.setDatabaseEnvironment("test");                                                                            \
+        TUrlRoute::instance();                                                                                         \
+        Thread thread;                                                                                                 \
+        thread.start();                                                                                                \
+        thread.wait();                                                                                                 \
+        _exit(thread.returnCode);                                                                                      \
+        return thread.returnCode;                                                                                      \
+    }
+#endif
+
+
+#if QT_VERSION < 0x060000
 
 #define TF_TEST_SQLLESS_MAIN(TestObject)                                                              \
     int main(int argc, char *argv[])                                                                  \
@@ -66,3 +109,14 @@
         return QTest::qExec(&tc, argc, argv);                                                         \
     }
 
+#else
+
+#define TF_TEST_SQLLESS_MAIN(TestObject)                                                              \
+    int main(int argc, char *argv[])                                                                  \
+    {                                                                                                 \
+        TWebApplication app(argc, argv);                                                              \
+        TestObject tc;                                                                                \
+        return QTest::qExec(&tc, argc, argv);                                                         \
+    }
+
+#endif

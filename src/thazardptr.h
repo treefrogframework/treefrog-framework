@@ -1,6 +1,6 @@
 #pragma once
+#include "tdeclexport.h"
 #include "tatomicptr.h"
-#include <TGlobal>
 
 class THazardObject;
 class THazardPtrRecord;

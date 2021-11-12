@@ -30,6 +30,7 @@ protected:
     virtual bool addCookie(const TCookie &cookie) = 0;
     virtual bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") = 0;
     virtual bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") = 0;
+    virtual void reset() = 0;
 
     QVariant variant(const QString &name) const;
     void exportVariants(const QVariantMap &map);

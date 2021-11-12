@@ -159,7 +159,6 @@ void TEpollHttpSocket::parse()
         int idx = httpBuffer.indexOf(CRLFCRLF);
         if (idx > 0) {
             THttpRequestHeader header(httpBuffer);
-            tSystemDebug("content-length: %lld", header.contentLength());
 
             if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
                 httpBuffer.resize(0);

@@ -42,7 +42,7 @@ private slots:
 
 void LZ4Compress::initTestCase()
 {
-    dummydata.resize(10 * 1024 * 1024);
+    dummydata.resize(4 * 1024 * 1024);
     for (int i = 0; i < dummydata.size() - 8; i += 8) {
         dummydata.replace(i, 4, QByteArray::number((uint)Tf::random(0xFFFF), 16));
     }

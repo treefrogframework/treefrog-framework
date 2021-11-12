@@ -1,4 +1,4 @@
-#include <QTest>
+#include <TfTest/TfTest>
 #include "tsmtpmailer.h"
 
 
@@ -19,7 +19,6 @@ void TestSmtpMailer::sendMail()
         "Subject: ようこそ!!!\n"                      \
         "\n"                                          \
         "Hello.\nGoodbye.\nこんにちは。\nさようなら。");
-
     TSmtpMailer mailer("smtp.example.com", 25);
     mailer.setAuthenticationEnabled(true);
     mailer.setUserName("a.kazuharu@gmail.com");
@@ -55,5 +54,5 @@ void TestSmtpMailer::sendMailTls()
     QVERIFY(res);
 }
 
-QTEST_MAIN(TestSmtpMailer)
+TF_TEST_MAIN(TestSmtpMailer)
 #include "main.moc"

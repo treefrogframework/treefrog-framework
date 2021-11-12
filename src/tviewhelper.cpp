@@ -687,6 +687,12 @@ QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTi
 }
 
 
+void TViewHelper::clear()
+{
+    endTags.clear();
+}
+
+
 /*!
   \fn THtmlAttribute TViewHelper::a() const
   Returns a null THtmlAttribute object.

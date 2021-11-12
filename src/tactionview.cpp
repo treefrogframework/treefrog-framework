@@ -97,6 +97,15 @@ QString TActionView::echo(const QVariant &var)
 }
 
 /*!
+  Outputs the variantmap variable \a map to a view template.
+*/
+QString TActionView::echo(const QVariantMap &map)
+{
+    responsebody += QJsonDocument::fromVariant(map).toJson(QJsonDocument::Compact);
+    return QString();
+}
+
+/*!
   Outputs a escaped string of the HTML attribute \a attr to
   a view template.
 */
@@ -120,11 +129,30 @@ QString TActionView::eh(const QVariant &var)
 }
 
 /*!
+  Outputs a escaped string of the variantmap variable \a map
+  to a view template.
+*/
+QString TActionView::eh(const QVariantMap &map)
+{
+    return echo(THttpUtility::htmlEscape(QJsonDocument::fromVariant(map).toJson(QJsonDocument::Compact)));
+}
+
+/*!
   Returns the requested HTTP message.
 */
 const THttpRequest &TActionView::httpRequest() const
 {
     return controller()->httpRequest();
+}
+
+
+void TActionView::reset()
+{
+    TViewHelper::clear();
+    responsebody.resize(0);
+    actionController = nullptr;
+    subView = nullptr;
+    variantMap.clear();
 }
 
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <TGlobal>
+#include "tdeclexport.h"
 #include <atomic>
 
 
@@ -41,4 +41,3 @@ public:
     T_DISABLE_COPY(TAtomic)
     T_DISABLE_MOVE(TAtomic)
 };
-

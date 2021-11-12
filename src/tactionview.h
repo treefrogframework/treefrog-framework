@@ -26,6 +26,7 @@ public:
     const QVariantMap &allVariants() const;
     const TAbstractController *controller() const override;
     const THttpRequest &httpRequest() const;
+    void reset();
 
 protected:
     QString echo(const QString &str);
@@ -42,6 +43,7 @@ protected:
     QString echo(const QJsonDocument &doc);
     QString echo(const THtmlAttribute &attr);
     QString echo(const QVariant &var);
+    QString echo(const QVariantMap &map);
     QString eh(const QString &str);
     QString eh(const char *str);
     QString eh(const QByteArray &str);
@@ -56,7 +58,9 @@ protected:
     QString eh(const QJsonDocument &doc);
     QString eh(const THtmlAttribute &attr);
     QString eh(const QVariant &var);
+    QString eh(const QVariantMap &map);
     QString renderReact(const QString &component);
+
     QString responsebody;
 
 private:

@@ -8,11 +8,13 @@
 class ServiceGenerator {
 public:
     ServiceGenerator(const QString &service, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int lockRevIdx);
-    //ServiceGenerator(const QString &controller, const QStringList &actions);
     ~ServiceGenerator() { }
     bool generate(const QString &dstDir) const;
 
 private:
+    virtual QString headerFileTemplate() const;
+    virtual QString sourceFileTemplate() const;
+
     QString _serviceName;
     QString _tableName;
     QList<QPair<QString, QMetaType::Type>> _fieldList;

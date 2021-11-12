@@ -289,6 +289,7 @@ bool TInternetMessageHeader::isEmpty() const
 void TInternetMessageHeader::clear()
 {
     _headerPairList.clear();
+    _contentLength = -1;
 }
 
 /*!

@@ -3,7 +3,7 @@
 #include "tatomicptr.h"
 #include "thazardobject.h"
 #include "thazardptr.h"
-#include <TGlobal>
+#include "tdeclexport.h"
 
 
 namespace Tf {

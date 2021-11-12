@@ -13,14 +13,14 @@
 using namespace Tf;
 
 constexpr int DEFAULT_PORT = 6379;
-constexpr int SEND_BUF_SIZE = 128 * 1024;
-constexpr int RECV_BUF_SIZE = 128 * 1024;
+constexpr int SEND_BUF_SIZE = 64 * 1024;
+constexpr int RECV_BUF_SIZE = 64 * 1024;
 
 
 TRedisDriver::TRedisDriver() :
     TKvsDriver()
 {
-    _buffer.reserve(1023);
+    _buffer.reserve(16 * 1024);
 }
 
 
@@ -74,6 +74,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     }
 
     _socket = TApplicationServerBase::duplicateSocket(tcpSocket.socketDescriptor());
+    tcpSocket.close();
     return _socket > 0;
 }
 

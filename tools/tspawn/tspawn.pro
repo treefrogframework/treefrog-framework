@@ -10,7 +10,6 @@ lessThan(QT_MAJOR_VERSION, 6) {
   windows:QMAKE_CXXFLAGS += /std:c++14
 } else {
   CONFIG += c++17
-  QT += core5compat
   windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
 }
 
@@ -189,6 +188,10 @@ HEADERS += modelgenerator.h
 SOURCES += modelgenerator.cpp
 HEADERS += servicegenerator.h
 SOURCES += servicegenerator.cpp
+HEADERS += vueservicegenerator.h
+SOURCES += vueservicegenerator.cpp
+HEADERS += vueerbgenerator.h
+SOURCES += vueerbgenerator.cpp
 HEADERS += abstractobjgenerator.h
 SOURCES += abstractobjgenerator.cpp
 HEADERS += sqlobjgenerator.h

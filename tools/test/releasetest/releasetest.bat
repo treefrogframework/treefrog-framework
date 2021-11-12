@@ -52,7 +52,7 @@ if "%SQLITE%" == "" (
 "%SQLITE%" %DBFILE% < create_blog_table.sql
 
 cd %APPDIR%
-tspawn s blog
+echo n | tspawn s blog
 tspawn w foo
 
 :: Test in debug mode

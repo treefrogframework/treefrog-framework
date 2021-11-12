@@ -42,6 +42,7 @@ public:
     virtual bool isUserLoggedIn() const;
     virtual QString identityKeyOfLoginUser() const;
     void setFlash(const QString &name, const QVariant &value) override;
+    void reset() override;
 
     static void setCsrfProtectionInto(TSession &session);
     static const QStringList &availableControllers();
