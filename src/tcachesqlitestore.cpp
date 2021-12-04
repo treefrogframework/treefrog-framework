@@ -179,7 +179,10 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
             blob = query.value(1).toByteArray();
         }
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
+        auto error = lastErrorString();
+        if (!error.isEmpty()) {
+            tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(error), __FILE__, __LINE__);
+        }
     }
     return ret;
 }
