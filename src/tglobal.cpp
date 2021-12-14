@@ -116,13 +116,14 @@ TCache *Tf::cache() noexcept
 TActionContext *Tf::currentContext()
 {
     TActionContext *context = nullptr;
-
+tInfo() << "#0";
     switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::Thread:
         context = dynamic_cast<TActionThread *>(QThread::currentThread());
         if (Q_LIKELY(context)) {
             return context;
         }
+tInfo() << "#1";
         break;
 
     case TWebApplication::Epoll:
@@ -131,11 +132,14 @@ TActionContext *Tf::currentContext()
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
+tInfo() << "#2";
         break;
 
     default:
+tInfo() << "#3";
         break;
     }
+tInfo() << "#4";
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
 }

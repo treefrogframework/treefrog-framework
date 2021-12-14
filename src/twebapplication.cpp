@@ -13,6 +13,7 @@
 #include <QJsonObject>
 #include <TAppSettings>
 #include <TSystemGlobal>
+#include <TCache>
 #include <TWebApplication>
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
@@ -586,6 +587,16 @@ QString TWebApplication::cacheBackend() const
     return backend;
 }
 
+
+void TWebApplication::initializeCache()
+{
+    tInfo() << "Initialize :" << _appServerId;
+    if (cacheEnabled() && _appServerId == 0) {
+        // Initialize cache
+        tInfo() << "Initialize cache";
+        //Tf::cache()->get("dummy");
+    }
+}
 
 /*!
   \fn QString TWebApplication::webRootPath() const

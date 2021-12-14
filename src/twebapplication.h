@@ -91,6 +91,9 @@ private slots:
     void recvLocalSocket();
 #endif  // Q_OS_WIN
 
+public slots:
+    void initializeCache();
+
 protected:
     void timerEvent(QTimerEvent *event);
     static int signalNumber();
