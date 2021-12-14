@@ -5,6 +5,7 @@
 #include <QSqlRecord>
 #include <QStringList>
 #include <QVariantMap>
+#include <QSqlDatabase>
 #include <TGlobal>
 #include <TModelObject>
 
@@ -36,6 +37,10 @@ public:
 protected:
     void syncToSqlRecord();
     void syncToObject();
-    QSqlError sqlError;
-};
+    QSqlDatabase &getDatabase();
 
+    QSqlError sqlError;
+
+private:
+    QSqlDatabase _database;
+};
