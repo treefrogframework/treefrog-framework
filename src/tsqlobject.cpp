@@ -152,13 +152,37 @@ bool TSqlObject::create()
     }
 
     QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
-    QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
-    if (Q_UNLIKELY(ins.isEmpty())) {
-        sqlError = QSqlError(QLatin1String("No fields to insert"),
-            QString(), QSqlError::StatementError);
-        tWarn("SQL statement error, no fields to insert");
-        return false;
+    QString ins, values;
+    ins.reserve(511);
+    values.reserve(255);
+
+    ins += QLatin1String("INSERT INTO ");
+    ins += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, databaseId());
+    ins += QLatin1String(" (");
+
+    int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
+    for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        auto metaProp = metaObject()->property(i);
+        const char *propName = metaProp.name();
+        QVariant val = QObject::property(propName);
+
+        if (i != pkidx) {
+            ins += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, databaseId());
+            ins += QLatin1Char(',');
+#if QT_VERSION < 0x060000
+            values += TSqlQuery::formatValue(val, metaProp.type(), database);
+#else
+            values += TSqlQuery::formatValue(val, metaProp.metaType(), database);
+#endif
+            values += QLatin1Char(',');
+        }
     }
+
+    ins.chop(1);
+    ins += QLatin1String(") VALUES (");
+    values.chop(1);
+    ins += values;
+    ins += QLatin1Char(')');
 
     TSqlQuery query(database);
     bool ret = query.exec(ins);
@@ -247,8 +271,10 @@ bool TSqlObject::update()
     }
 
     QString upd;  // UPDATE Statement
-    upd.reserve(255);
-    upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
+    upd.reserve(512);
+    upd.append(QLatin1String("UPDATE "));
+    upd.append(TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, databaseId()));
+    upd.append(QLatin1String(" SET "));
 
     int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
     QMetaProperty metaProp = metaObject()->property(pkidx);
