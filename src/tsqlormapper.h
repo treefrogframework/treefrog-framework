@@ -578,7 +578,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         const char *propName = obj.metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
         if (prop == UpdatedAt || prop == ModifiedAt) {
-            upd += propName;
+            upd += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, db.driver());
             upd += QLatin1Char('=');
 #if QT_VERSION < 0x060000
             constexpr auto metaType = QVariant::DateTime;

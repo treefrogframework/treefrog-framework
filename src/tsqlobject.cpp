@@ -303,7 +303,7 @@ bool TSqlObject::update()
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
         if (i != pkidx && recval.isValid() && recval != newval) {
-            upd.append(QLatin1String(propName));
+            upd.append(TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, databaseId()));
             upd.append(QLatin1Char('='));
 #if QT_VERSION < 0x060000
             upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
