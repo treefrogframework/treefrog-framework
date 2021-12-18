@@ -5,6 +5,7 @@
 
 class QSqlDatabase;
 class TKvsDatabase;
+class TCache;
 
 
 class T_CORE_EXPORT TDatabaseContext {
@@ -22,6 +23,7 @@ public:
     void rollbackTransactions();
     bool rollbackTransaction(int id = 0);
     int idleTime() const;
+    TCache *cache();
     static TDatabaseContext *currentDatabaseContext();
     static void setCurrentDatabaseContext(TDatabaseContext *context);
 
@@ -34,6 +36,7 @@ protected:
 
 private:
     uint idleElapsed {0};
+    TCache *cachep {nullptr};
 
     T_DISABLE_COPY(TDatabaseContext)
     T_DISABLE_MOVE(TDatabaseContext)

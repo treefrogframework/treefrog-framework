@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
     }
 
     // Initialize cache
-    QTimer::singleShot(1, &webapp, &TWebApplication::initializeCache);
+    webapp.initializeCache();
 
     QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=]() { server->stop(); });
     ret = webapp.exec();

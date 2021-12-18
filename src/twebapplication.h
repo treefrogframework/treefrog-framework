@@ -75,6 +75,7 @@ public:
     QThread *databaseContextMainThread() const;
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
+    void initializeCache();
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
@@ -90,9 +91,6 @@ public:
 private slots:
     void recvLocalSocket();
 #endif  // Q_OS_WIN
-
-public slots:
-    void initializeCache();
 
 protected:
     void timerEvent(QTimerEvent *event);

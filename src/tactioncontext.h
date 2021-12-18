@@ -16,7 +16,6 @@ class THttpResponse;
 class TApplicationServer;
 class TTemporaryFile;
 class TActionController;
-class TCache;
 
 
 class T_CORE_EXPORT TActionContext : public TDatabaseContext, public TAbstractActionContext {
@@ -32,7 +31,6 @@ public:
     TActionController *currentController() { return currController; }
     const THttpRequest &httpRequest() const override { return *httpReq; }
     THttpRequest &httpRequest() override { return *httpReq; }
-    TCache *cache();
     static int keepAliveTimeout();
 
 protected:
@@ -56,7 +54,6 @@ private:
     TActionController *currController {nullptr};
     QList<TTemporaryFile *> tempFiles;
     THttpRequest *httpReq {nullptr};
-    TCache *cachep {nullptr};
 
     T_DISABLE_COPY(TActionContext)
     T_DISABLE_MOVE(TActionContext)

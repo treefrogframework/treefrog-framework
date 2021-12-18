@@ -17,9 +17,12 @@ public:
     static bool compressionEnabled();
 
 private:
+    void initialize();
+
     TCacheStore *_cache {nullptr};
     int _gcDivisor {0};
 
+    friend class TWebApplication;
     T_DISABLE_COPY(TCache)
     T_DISABLE_MOVE(TCache)
 };
