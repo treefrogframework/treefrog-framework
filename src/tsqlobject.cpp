@@ -160,13 +160,13 @@ bool TSqlObject::create()
     ins += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.driver());
     ins += QLatin1String(" (");
 
-    int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
+    int autoidx = metaObject()->propertyOffset() + autoValueIndex();
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         auto metaProp = metaObject()->property(i);
         const char *propName = metaProp.name();
         QVariant val = QObject::property(propName);
 
-        if (i != pkidx) {
+        if (i != autoidx) {
             ins += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver());
             ins += QLatin1Char(',');
 #if QT_VERSION < 0x060000
