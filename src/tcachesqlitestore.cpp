@@ -8,10 +8,10 @@
 #include "tcachesqlitestore.h"
 #include "tsqlquery.h"
 #include "tsystemglobal.h"
+#include "tsqldatabasepool.h"
 #include <QByteArray>
 #include <QDateTime>
 #include <TfCore>
-#include <TDatabaseContext>
 #include <mutex>
 
 constexpr auto TABLE_NAME = "kb";
@@ -35,17 +35,6 @@ inline QString lastErrorString()
 }
 
 
-static bool query(const QString &sql)
-{
-    TSqlQuery qry(Tf::app()->databaseIdForCache());
-    bool ret = qry.exec(sql);
-    if (!ret && !lastErrorString().isEmpty()) {
-        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qUtf8Printable(lastErrorString()), qUtf8Printable(sql), __FILE__, __LINE__);
-    }
-    return ret;
-}
-
-
 static void getVersion()
 {
     TSqlQuery query(Tf::app()->databaseIdForCache());
@@ -59,11 +48,26 @@ static void getVersion()
     }
 }
 
+// Query without a transaction
+static bool queryNonTrx(const QSqlDatabase &db, const QString &sql)
+{
+    TSqlQuery qry(db);
+    bool ret = qry.exec(sql);
+    if (!ret && !lastErrorString().isEmpty()) {
+        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qUtf8Printable(lastErrorString()), qUtf8Printable(sql), __FILE__, __LINE__);
+    }
+    return ret;
+}
+
 
 bool TCacheSQLiteStore::createTable(const QString &table)
 {
-    bool ret = query(QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
-    query(QStringLiteral("VACUUM"));
+    int id = Tf::app()->databaseIdForCache();
+    auto db = TSqlDatabasePool::instance()->database(id);
+    bool ret = queryNonTrx(db, QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    queryNonTrx(db, QStringLiteral("VACUUM"));
+
+    TSqlDatabasePool::instance()->pool(db);
     return ret;
 }
 
@@ -89,6 +93,7 @@ void TCacheSQLiteStore::init()
 bool TCacheSQLiteStore::open()
 {
     static std::once_flag once;
+
     std::call_once(once, []() {
         getVersion();
     });

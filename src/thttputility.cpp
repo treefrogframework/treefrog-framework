@@ -481,6 +481,7 @@ QByteArray THttpUtility::getUTCTimeString()
     static const char *MONTH[] = {"Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec "};
 
     QByteArray utcTime;
+    utcTime.reserve(31);
 
 #if defined(Q_OS_WIN)
     SYSTEMTIME st;
