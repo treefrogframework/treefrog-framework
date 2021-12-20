@@ -10,6 +10,7 @@ public:
 
     QString key() const override { return QLatin1String("sqlite"); }
     DbType dbType() const override { return SQL; }
+    void init() override;
     bool open() override;
     void close() override;
     bool isOpen() const;

@@ -18,7 +18,6 @@
 #include <TfCore>
 #include <TActionController>
 #include <TAppSettings>
-#include <TCache>
 #include <TDispatcher>
 #include <THttpRequest>
 #include <THttpResponse>
@@ -43,7 +42,6 @@ TActionContext::~TActionContext()
 {
     release();
     accessLogger.close();
-    delete cachep;
 }
 
 
@@ -470,15 +468,6 @@ QHostAddress TActionContext::clientAddress() const
 QHostAddress TActionContext::originatingClientAddress() const
 {
     return httpReq->originatingClientAddress();
-}
-
-
-TCache *TActionContext::cache()
-{
-    if (!cachep) {
-        cachep = new TCache;
-    }
-    return cachep;
 }
 
 /*!

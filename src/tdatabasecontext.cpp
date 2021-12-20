@@ -13,6 +13,7 @@
 #include <QThreadStorage>
 #include <QtCore>
 #include <TKvsDriver>
+#include <TCache>
 #include <TWebApplication>
 #include <ctime>
 
@@ -39,6 +40,7 @@ TDatabaseContext::TDatabaseContext() :
 TDatabaseContext::~TDatabaseContext()
 {
     release();
+    delete cachep;
 }
 
 
@@ -194,4 +196,13 @@ void TDatabaseContext::setCurrentDatabaseContext(TDatabaseContext *context)
         tSystemWarn("Duplicate set : setCurrentDatabaseContext()");
     }
     databaseContextPtrTls.setLocalData((qulonglong)context);
+}
+
+
+TCache *TDatabaseContext::cache()
+{
+    if (!cachep) {
+        cachep = new TCache;
+    }
+    return cachep;
 }

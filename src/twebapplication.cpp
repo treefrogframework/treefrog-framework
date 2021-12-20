@@ -13,6 +13,8 @@
 #include <QJsonObject>
 #include <TAppSettings>
 #include <TSystemGlobal>
+#include <TCache>
+#include <TJobScheduler>
 #include <TWebApplication>
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
@@ -586,6 +588,26 @@ QString TWebApplication::cacheBackend() const
     return backend;
 }
 
+
+void TWebApplication::initializeCache()
+{
+    class CacheInitializer : public TJobScheduler {
+    protected:
+        void job() override
+        {
+            Tf::cache()->initialize();
+            tSystemInfo("Initialized cache");
+        }
+    };
+
+    if (cacheEnabled() && _appServerId == 0) {
+        // Initialize cache
+        auto initializer = new CacheInitializer;
+        initializer->setAutoDelete(true);
+        initializer->setSingleShot(true);
+        initializer->start(10);
+    }
+}
 
 /*!
   \fn QString TWebApplication::webRootPath() const

@@ -31,8 +31,10 @@ static uint startCounter = 0;  // start-counter of treefrog servers
 
 
 ServerManager::ServerManager(int max, int min, int spare, QObject *parent) :
-    QObject(parent), listeningSocket(0), maxServers(max), minServers(min),
-    spareServers(spare), managerState(NotRunning)
+    QObject(parent),
+    maxServers(max),
+    minServers(min),
+    spareServers(spare)
 {
     spareServers = qMax(spareServers, 0);
     minServers = qMax(minServers, 1);

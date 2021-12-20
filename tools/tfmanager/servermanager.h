@@ -41,11 +41,11 @@ protected slots:
     void readStandardError() const;
 
 private:
-    int listeningSocket;
-    int maxServers;
-    int minServers;
-    int spareServers;
-    volatile ManagerState managerState;
+    int listeningSocket {0};
+    int maxServers {0};
+    int minServers {0};
+    int spareServers {0};
+    volatile ManagerState managerState {NotRunning};
 
     T_DISABLE_COPY(ServerManager)
     T_DISABLE_MOVE(ServerManager)

@@ -109,7 +109,7 @@ uint64_t Tf::random(uint64_t max) noexcept
 
 TCache *Tf::cache() noexcept
 {
-    return Tf::currentContext()->cache();
+    return Tf::currentDatabaseContext()->cache();
 }
 
 

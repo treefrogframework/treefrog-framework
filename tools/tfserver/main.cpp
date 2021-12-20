@@ -316,6 +316,9 @@ int main(int argc, char *argv[])
         goto finish;
     }
 
+    // Initialize cache
+    webapp.initializeCache();
+
     QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=]() { server->stop(); });
     ret = webapp.exec();
 
