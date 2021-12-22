@@ -528,6 +528,10 @@ int managerMain(int argc, char *argv[])
             break;
 
         case ShowRoutes:
+            if (!app.appSettingsFileExists()) {
+                std::fprintf(stderr, "INI file not found [%s]\n\n", qUtf8Printable(app.appSettingsFilePath()));
+                return 1;
+            }
             showRoutes(app.webRootPath());
             return 0;
             break;

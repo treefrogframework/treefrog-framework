@@ -125,6 +125,7 @@ void showRoutes()
 
     bool res = TApplicationServerBase::loadLibraries();
     if (!res) {
+        std::printf("Cannot load library. Check the log file for more information.\n");
         return;
     }
 
