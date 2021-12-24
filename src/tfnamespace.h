@@ -200,6 +200,10 @@ enum AppAttribute {
     EnableForwardedForHeader,
     TrustedProxyServers,
     ActionMailerSmtpRequireTLS,
+    //
+    SqlQueryLogFilePath,
+    SqlQueryLogLayout,
+    SqlQueryLogDateTimeFormat,
 };
 
 // Reason codes why a web socket has been closed

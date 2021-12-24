@@ -22,9 +22,11 @@
 #include <TWebApplication>
 
 constexpr auto DEFAULT_SYSTEMLOG_LAYOUT = "%d %5P %m%n";
-constexpr auto DEFAULT_SYSTEMLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
+constexpr auto DEFAULT_SYSTEMLOG_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
 constexpr auto DEFAULT_ACCESSLOG_LAYOUT = "%h %d \"%r\" %s %O%n";
-constexpr auto DEFAULT_ACCESSLOG_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
+constexpr auto DEFAULT_ACCESSLOG_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
+constexpr auto DEFAULT_QUERYLOG_LAYOUT = "%d [%t] %m%n";
+constexpr auto DEFAULT_QUERYLOG_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
 
 namespace {
 TAccessLogStream *accesslogstrm = nullptr;
@@ -34,6 +36,8 @@ QByteArray syslogLayout = DEFAULT_SYSTEMLOG_LAYOUT;
 QByteArray syslogDateTimeFormat = DEFAULT_SYSTEMLOG_DATETIME_FORMAT;
 QByteArray accessLogLayout = DEFAULT_ACCESSLOG_LAYOUT;
 QByteArray accessLogDateTimeFormat;
+QByteArray queryLogLayout = DEFAULT_QUERYLOG_LAYOUT;
+QByteArray queryLogDateTimeFormat = DEFAULT_QUERYLOG_DATETIME_FORMAT;
 
 
 void tSystemMessage(int priority, const char *msg, va_list ap)
@@ -109,6 +113,9 @@ void Tf::setupQueryLogger()
     if (!sqllogstrm && !querylogpath.isEmpty()) {
         sqllogstrm = new TAccessLogStream(querylogpath);
     }
+
+    queryLogLayout = Tf::appSettings()->value(Tf::SqlQueryLogLayout, DEFAULT_QUERYLOG_LAYOUT).toByteArray();
+    queryLogDateTimeFormat = Tf::appSettings()->value(Tf::SqlQueryLogDateTimeFormat, DEFAULT_QUERYLOG_DATETIME_FORMAT).toByteArray();
 }
 
 
@@ -174,20 +181,20 @@ void tSystemTrace(const char *, ...) { }
 #endif
 
 
-void Tf::traceQueryLog(const char *msg, ...)
+void Tf::traceQueryLog(int duration, const char *msg, ...)
 {
     if (sqllogstrm) {
         va_list ap;
         va_start(ap, msg);
-        TLog log(-1, QString::vasprintf(msg, ap).toLocal8Bit());
-        QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
+        TLog log(-1, QString::vasprintf(msg, ap).toLocal8Bit(), duration);
+        QByteArray buf = TLogger::logToByteArray(log, queryLogLayout, queryLogDateTimeFormat);
         sqllogstrm->writeLog(buf);
         va_end(ap);
     }
 }
 
 
-void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &error)
+void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &error, int duration)
 {
     if (sqllogstrm) {
         QString q = query;
@@ -199,7 +206,7 @@ void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &erro
             }
             q = QLatin1String("(Query failed) ") + err + query;
         }
-        Tf::traceQueryLog("%s", qUtf8Printable(q));
+        Tf::traceQueryLog(duration, "%s", qUtf8Printable(q));
     }
 }
 

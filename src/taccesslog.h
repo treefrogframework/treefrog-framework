@@ -7,7 +7,7 @@
 class T_CORE_EXPORT TAccessLog {
 public:
     TAccessLog();
-    TAccessLog(const QByteArray &remoteHost, const QByteArray &request);
+    TAccessLog(const QByteArray &remoteHost, const QByteArray &request, int dur);
     QByteArray toByteArray(const QByteArray &layout, const QByteArray &dateTimeFormat) const;
 
     QDateTime timestamp;
@@ -15,6 +15,7 @@ public:
     QByteArray request;
     int statusCode {0};
     int responseBytes {0};
+    int duration {0};
 };
 
 
@@ -60,7 +61,12 @@ public:
             accessLog->responseBytes = bytes;
         }
     }
+    void startElaspedTimer()
+    {
+        timer.start();
+    }
 
 private:
     TAccessLog *accessLog {nullptr};
+    QElapsedTimer timer;
 };

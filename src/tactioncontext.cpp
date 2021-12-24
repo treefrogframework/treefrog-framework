@@ -80,6 +80,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             accessLogger.setTimestamp(QDateTime::currentDateTime());
             accessLogger.setRequest(firstLine);
             accessLogger.setRemoteHost((ListenPort > 0) ? originatingClientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
+            accessLogger.startElaspedTimer();
         }
 
         tSystemDebug("method : %s", reqHeader.method().data());

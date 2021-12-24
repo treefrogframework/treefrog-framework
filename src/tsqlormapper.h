@@ -193,10 +193,12 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
         setFilter(QString());
     }
 
+    QElapsedTimer time;
+    time.start();
     int oldLimit = queryLimit;
     queryLimit = 1;
     bool ret = select();
-    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError(), time.elapsed());
     queryLimit = oldLimit;
 
     //tSystemDebug("findFirst() rowCount: %d", rowCount());
@@ -245,11 +247,13 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
         setFilter(QString());
     }
 
+    QElapsedTimer time;
+    time.start();
     bool ret = select();
     while (canFetchMore()) {  // For SQLite, not report back the size of a query
         fetchMore();
     }
-    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError(), time.elapsed());
     //tSystemDebug("find() rowCount: %d", rowCount());
     return ret ? rowCount() : -1;
 }

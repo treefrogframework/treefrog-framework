@@ -34,7 +34,10 @@ public:
         insert(Tf::RedisSettingsFile, "RedisSettingsFile");
         insert(Tf::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
         insert(Tf::DirectViewRenderMode, "DirectViewRenderMode");
-        insert(Tf::SqlQueryLogFile, "SqlQueryLogFile");
+        insert(Tf::SqlQueryLogFile, "SqlQueryLogFile");  // Deprecated
+        insert(Tf::SqlQueryLogFilePath, "SqlQueryLog.FilePath");
+        insert(Tf::SqlQueryLogLayout, "SqlQueryLog.Layout");
+        insert(Tf::SqlQueryLogDateTimeFormat, "SqlQueryLog.DateTimeFormat");
         insert(Tf::ApplicationAbortOnFatal, "ApplicationAbortOnFatal");
         insert(Tf::LimitRequestBody, "LimitRequestBody");
         insert(Tf::EnableCsrfProtectionModule, "EnableCsrfProtectionModule");

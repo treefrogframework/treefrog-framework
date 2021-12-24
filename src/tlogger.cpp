@@ -79,6 +79,8 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QStringConverter::Encoding encoding)
 #endif
 {
+    static const QString Arg1("%1");
+
     QByteArray message;
     int pos = 0;
     QByteArray dig;
@@ -132,14 +134,14 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
             case 't':
             case 'T': {  // %t or %T : thread ID (dec or hex)
                 const QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
-                message.append(QString("%1").arg((qulonglong)log.threadId, dig.toInt(), ((c == 't') ? 10 : 16), fillChar).toLatin1());
+                message.append(Arg1.arg((qulonglong)log.threadId, dig.toInt(), ((c == 't') ? 10 : 16), fillChar).toLatin1());
                 break;
             }
 
             case 'i':
             case 'I': {  // %i or %I : PID (dec or hex)
                 const QChar fillChar = (dig.length() > 0 && dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
-                message.append(QString("%1").arg(log.pid, dig.toInt(), ((c == 'i') ? 10 : 16), fillChar).toLatin1());
+                message.append(Arg1.arg(log.pid, dig.toInt(), ((c == 'i') ? 10 : 16), fillChar).toLatin1());
                 break;
             }
 
@@ -149,6 +151,15 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 
             case 'm':  // %m : message
                 message.append(log.message);
+                break;
+
+            case 'e':
+                if (dig.isEmpty()) {
+                    message.append(QString::number(log.duration).toLatin1());
+                } else {
+                    const QChar fillChar = (dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
+                    message.append(Arg1.arg(log.duration, dig.toInt(), 10, fillChar).toLatin1());
+                }
                 break;
 
             case '%':

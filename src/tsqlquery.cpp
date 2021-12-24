@@ -174,9 +174,11 @@ QString TSqlQuery::formatValue(const QVariant &val, const QSqlDatabase &database
 */
 TSqlQuery &TSqlQuery::prepare(const QString &query)
 {
+    QElapsedTimer time;
+    time.start();
     bool ret = QSqlQuery::prepare(query);
     if (!ret) {
-        Tf::writeQueryLog(QLatin1String("(Query prepare) ") + query, ret, lastError());
+        Tf::writeQueryLog(QLatin1String("(Query prepare) ") + query, ret, lastError(), time.elapsed());
     }
     return *this;
 }
@@ -187,8 +189,10 @@ TSqlQuery &TSqlQuery::prepare(const QString &query)
 */
 bool TSqlQuery::exec(const QString &query)
 {
+    QElapsedTimer time;
+    time.start();
     bool ret = QSqlQuery::exec(query);
-    Tf::writeQueryLog(query, ret, lastError());
+    Tf::writeQueryLog(query, ret, lastError(), time.elapsed());
     return ret;
 }
 
@@ -198,8 +202,10 @@ bool TSqlQuery::exec(const QString &query)
 */
 bool TSqlQuery::exec()
 {
+    QElapsedTimer time;
+    time.start();
     bool ret = QSqlQuery::exec();
-    Tf::writeQueryLog(executedQuery(), ret, lastError());
+    Tf::writeQueryLog(executedQuery(), ret, lastError(), time.elapsed());
     return ret;
 }
 
