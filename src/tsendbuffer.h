@@ -17,16 +17,16 @@ public:
     void *getData(int &size);
     bool seekData(int pos);
     int prepend(const char *data, int maxSize);
-    TAccessLogger &accessLogger() { return accesslogger; }
-    const TAccessLogger &accessLogger() const { return accesslogger; }
+    TAccessLogger &accessLogger() { return _accesslogger; }
+    const TAccessLogger &accessLogger() const { return _accesslogger; }
     void release();
 
 private:
-    QByteArray arrayBuffer;
-    QFile *bodyFile {nullptr};
-    bool fileRemove {false};
-    TAccessLogger accesslogger;
-    int startPos {0};
+    QByteArray _arrayBuffer;
+    QFile *_bodyFile {nullptr};
+    bool _fileRemove {false};
+    TAccessLogger _accesslogger;
+    int _startPos {0};
 
     TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     TSendBuffer(const QByteArray &header);
@@ -37,4 +37,3 @@ private:
     T_DISABLE_COPY(TSendBuffer)
     T_DISABLE_MOVE(TSendBuffer)
 };
-

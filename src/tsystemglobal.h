@@ -16,10 +16,10 @@ T_CORE_EXPORT bool isAccessLoggerAvailable();  // internal use
 T_CORE_EXPORT void setupQueryLogger();  // internal use
 T_CORE_EXPORT void releaseQueryLogger();  // internal use
 T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log
-T_CORE_EXPORT void writeQueryLog(const QString &query, bool success, const QSqlError &error);
-T_CORE_EXPORT void traceQueryLog(const char *, ...)  // SQL query log
+T_CORE_EXPORT void writeQueryLog(const QString &query, bool success, const QSqlError &error, int duration);
+T_CORE_EXPORT void traceQueryLog(int duration, const char *, ...)  // SQL query log
 #if defined(Q_CC_GNU) && !defined(__INSURE__)
-    __attribute__((format(printf, 1, 2)))
+    __attribute__((format(printf, 2, 3)))
 #endif
     ;
 

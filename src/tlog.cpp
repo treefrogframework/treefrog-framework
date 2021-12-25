@@ -22,7 +22,7 @@
 /*!
   Constructor.
 */
-TLog::TLog(int pri, const QByteArray &msg) :
+TLog::TLog(int pri, const QByteArray &msg, int dur) :
     timestamp(QDateTime::currentDateTime()),
     priority(pri),
     pid(QCoreApplication::applicationPid()),
@@ -31,20 +31,21 @@ TLog::TLog(int pri, const QByteArray &msg) :
 #else
     threadId((qulonglong)QThread::currentThreadId()),
 #endif
-    message(msg)
+    message(msg),
+    duration(dur)
 {
 }
 
 
 QDataStream &operator<<(QDataStream &out, const TLog &log)
 {
-    out << log.timestamp << log.priority << log.pid << log.threadId << log.message;
+    out << log.timestamp << log.priority << log.pid << log.threadId << log.message << log.duration;
     return out;
 }
 
 
 QDataStream &operator>>(QDataStream &in, TLog &log)
 {
-    in >> log.timestamp >> log.priority >> log.pid >> log.threadId >> log.message;
+    in >> log.timestamp >> log.priority >> log.pid >> log.threadId >> log.message >> log.duration;
     return in;
 }

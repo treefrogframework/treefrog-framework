@@ -19,9 +19,10 @@ TAccessLog::TAccessLog()
 }
 
 
-TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req) :
+TAccessLog::TAccessLog(const QByteArray &host, const QByteArray &req, int dur) :
     remoteHost(host),
-    request(req)
+    request(req),
+    duration(dur)
 {
 }
 
@@ -40,7 +41,7 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
             continue;
         }
 
-        dig.clear();
+        dig.resize(0);
         for (;;) {
             if (pos >= layout.length()) {
                 message.append('%').append(dig);
@@ -83,13 +84,22 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 }
                 break;
 
+            case 'e':
+                if (dig.isEmpty()) {
+                    message.append(QString::number(duration).toLatin1());
+                } else {
+                    const QChar fillChar = (dig[0] == '0') ? QLatin1Char('0') : QLatin1Char(' ');
+                    message.append(QString("%1").arg(duration, dig.toInt(), 10, fillChar).toLatin1());
+                }
+                break;
+
             case 'n':  // %n : newline
                 message.append('\n');
                 break;
 
             case '%':
                 message.append('%').append(dig);
-                dig.clear();
+                dig.resize(0);
                 continue;
                 break;
 
@@ -145,6 +155,7 @@ void TAccessLogger::open()
 void TAccessLogger::write()
 {
     if (accessLog) {
+        accessLog->duration = timer.elapsed();
         Tf::writeAccessLog(*accessLog);
     }
 }
