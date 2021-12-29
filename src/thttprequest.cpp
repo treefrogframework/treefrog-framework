@@ -38,7 +38,7 @@ Q_GLOBAL_STATIC(MethodHash, methodHash)
 
 static bool httpMethodOverride()
 {
-    static bool method = Tf::appSettings()->value(Tf::EnableHttpMethodOverride, false).toBool();
+    static bool method = Tf::appSettings()->value(Tf::EnableHttpMethodOverride).toBool();
     return (bool)method;
 }
 
@@ -634,7 +634,7 @@ QList<THttpRequest> THttpRequest::generate(QByteArray &byteArray, const QHostAdd
  */
 QHostAddress THttpRequest::originatingClientAddress() const
 {
-    static const bool EnableForwardedForHeader = Tf::appSettings()->value(Tf::EnableForwardedForHeader, false).toBool();
+    static const bool EnableForwardedForHeader = Tf::appSettings()->value(Tf::EnableForwardedForHeader).toBool();
     static const QStringList TrustedProxyServers = []() {  // delimiter: comma or space
         QStringList servers;
         for (auto &s : Tf::appSettings()->value(Tf::TrustedProxyServers).toStringList()) {

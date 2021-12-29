@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
         goto finish;
     } else {
         // Sets search paths for JavaScript
-        QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath, "script;node_modules").toString().split(';');
+        QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath).toString().split(';');
         TJSLoader::setDefaultSearchPaths(jpaths);
     }
 

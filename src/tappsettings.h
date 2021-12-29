@@ -9,8 +9,11 @@ class QSettings;
 
 class T_CORE_EXPORT TAppSettings {
 public:
-    QVariant value(Tf::AppAttribute attr, const QVariant &defaultValue = QVariant()) const;
+    QString key(Tf::AppAttribute attr) const;
+    QVariant value(Tf::AppAttribute attr) const;
     QVariant readValue(const QString &attr, const QVariant &defaultValue = QVariant()) const;
+    QList<Tf::AppAttribute> keys() const;
+
     static TAppSettings *instance();
 
 private:

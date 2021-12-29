@@ -463,7 +463,7 @@ QString TWebApplication::routesConfigFilePath() const
 */
 QString TWebApplication::systemLogFilePath() const
 {
-    QFileInfo fi(Tf::appSettings()->value(Tf::SystemLogFilePath, "log/treefrog.log").toString());
+    QFileInfo fi(Tf::appSettings()->value(Tf::SystemLogFilePath).toString());
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
 }
 

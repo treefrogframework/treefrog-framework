@@ -17,10 +17,10 @@ TAppSettings *appSettings = nullptr;
 }
 
 
-class AttributeMap : public QMap<int, QString> {
+class AttributeMap : public QMap<Tf::AppAttribute, QString> {
 public:
     AttributeMap() :
-        QMap<int, QString>()
+        QMap<Tf::AppAttribute, QString>()
     {
         insert(Tf::ListenPort, "ListenPort");
         insert(Tf::ListenAddress, "ListenAddress");
@@ -90,20 +90,57 @@ public:
 Q_GLOBAL_STATIC(AttributeMap, attributeMap)
 
 
+class DefaultValue : public QMap<Tf::AppAttribute, QVariant> {
+public:
+    DefaultValue() :
+        QMap<Tf::AppAttribute, QVariant>()
+    {
+        insert(Tf::ListenPort, 8800);
+        insert(Tf::SystemLogFilePath, "log/treefrog.log");
+        insert(Tf::SqlQueryLogLayout, "%d [%t] %m%n");
+        insert(Tf::SqlQueryLogDateTimeFormat, "yyyy-MM-dd hh:mm:ss");
+        insert(Tf::SystemLogLayout, "%d %5P %m%n");
+        insert(Tf::SystemLogDateTimeFormat, "yyyy-MM-dd hh:mm:ss");
+        insert(Tf::AccessLogLayout, "%h %d \"%r\" %s %O%n");
+        insert(Tf::AccessLogDateTimeFormat, "yyyy-MM-dd hh:mm:ss");
+        insert(Tf::EnableCsrfProtectionModule, true);
+        insert(Tf::HttpKeepAliveTimeout, 10);
+        insert(Tf::LimitRequestBody, 0);
+        insert(Tf::ActionMailerCharacterSet, "UTF-8");
+        insert(Tf::ActionMailerSmtpEnablePopBeforeSmtp, false);
+        insert(Tf::ActionMailerSmtpPopServerEnableApop, false);
+        insert(Tf::EnableHttpMethodOverride, false);
+        insert(Tf::EnableForwardedForHeader, false);
+        insert(Tf::CacheGcProbability, 1000);
+        insert(Tf::CacheEnableCompression, true);
+        insert(Tf::JavaScriptPath, "script;node_modules");
+        insert(Tf::SessionAutoIdRegeneration, false);
+        insert(Tf::ActionMailerDelayedDelivery, false);
+    }
+};
+Q_GLOBAL_STATIC(DefaultValue, defaultValueMap)
+
+
 TAppSettings::TAppSettings(const QString &path) :
     appIniSettings(new QSettings(path, QSettings::IniFormat))
 {
 }
 
 
-QVariant TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue) const
+QString TAppSettings::key(Tf::AppAttribute attr) const
+{
+    return attributeMap()->value(attr);
+}
+
+
+QVariant TAppSettings::value(Tf::AppAttribute attr) const
 {
     QVariant ret = settingsCache.value((int)attr, QVariant());
     if (ret.isNull()) {
         QMutexLocker locker(&mutex);
         const QString &keystr = (*attributeMap())[attr];
         if (!appIniSettings->contains(keystr)) {
-            return defaultValue;
+            return defaultValueMap()->value(attr);
         }
 
         ret = readValue(keystr);
@@ -119,6 +156,13 @@ QVariant TAppSettings::value(Tf::AppAttribute attr, const QVariant &defaultValue
 QVariant TAppSettings::readValue(const QString &attr, const QVariant &defaultValue) const
 {
     return appIniSettings->value(attr, defaultValue);
+}
+
+
+QList<Tf::AppAttribute> TAppSettings::keys() const
+{
+    auto keylist = attributeMap()->keys();
+    return keylist;
 }
 
 

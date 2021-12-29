@@ -55,9 +55,9 @@ static bool directViewRenderMode()
 void TActionContext::execute(THttpRequest &request, int sid)
 {
     // App parameters
-    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, 0).toLongLong();
+    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
     static const uint ListenPort = Tf::appSettings()->value(Tf::ListenPort).toUInt();
-    static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool();
+    static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule).toBool();
     static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
     static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
     static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
@@ -477,7 +477,7 @@ QHostAddress TActionContext::originatingClientAddress() const
 int TActionContext::keepAliveTimeout()
 {
     static int keepAliveTimeout = []() {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
         return qMax(timeout, 0);
     }();
     return keepAliveTimeout;

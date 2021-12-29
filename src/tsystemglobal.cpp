@@ -21,23 +21,16 @@
 #include <TLogger>
 #include <TWebApplication>
 
-constexpr auto DEFAULT_SYSTEMLOG_LAYOUT = "%d %5P %m%n";
-constexpr auto DEFAULT_SYSTEMLOG_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
-constexpr auto DEFAULT_ACCESSLOG_LAYOUT = "%h %d \"%r\" %s %O%n";
-constexpr auto DEFAULT_ACCESSLOG_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
-constexpr auto DEFAULT_QUERYLOG_LAYOUT = "%d [%t] %m%n";
-constexpr auto DEFAULT_QUERYLOG_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
-
 namespace {
 TAccessLogStream *accesslogstrm = nullptr;
 TAccessLogStream *sqllogstrm = nullptr;
 TFileAioWriter systemLog;
-QByteArray syslogLayout = DEFAULT_SYSTEMLOG_LAYOUT;
-QByteArray syslogDateTimeFormat = DEFAULT_SYSTEMLOG_DATETIME_FORMAT;
-QByteArray accessLogLayout = DEFAULT_ACCESSLOG_LAYOUT;
+QByteArray syslogLayout;
+QByteArray syslogDateTimeFormat;
+QByteArray accessLogLayout;
 QByteArray accessLogDateTimeFormat;
-QByteArray queryLogLayout = DEFAULT_QUERYLOG_LAYOUT;
-QByteArray queryLogDateTimeFormat = DEFAULT_QUERYLOG_DATETIME_FORMAT;
+QByteArray queryLogLayout;
+QByteArray queryLogDateTimeFormat;
 
 
 void tSystemMessage(int priority, const char *msg, va_list ap)
@@ -69,8 +62,8 @@ void Tf::setupSystemLogger()
     systemLog.setFileName(Tf::app()->systemLogFilePath());
     systemLog.open();
 
-    syslogLayout = Tf::appSettings()->value(Tf::SystemLogLayout, DEFAULT_SYSTEMLOG_LAYOUT).toByteArray();
-    syslogDateTimeFormat = Tf::appSettings()->value(Tf::SystemLogDateTimeFormat, DEFAULT_SYSTEMLOG_DATETIME_FORMAT).toByteArray();
+    syslogLayout = Tf::appSettings()->value(Tf::SystemLogLayout).toByteArray();
+    syslogDateTimeFormat = Tf::appSettings()->value(Tf::SystemLogDateTimeFormat).toByteArray();
 }
 
 
@@ -88,8 +81,8 @@ void Tf::setupAccessLogger()
         accesslogstrm = new TAccessLogStream(accesslogpath);
     }
 
-    accessLogLayout = Tf::appSettings()->value(Tf::AccessLogLayout, DEFAULT_ACCESSLOG_LAYOUT).toByteArray();
-    accessLogDateTimeFormat = Tf::appSettings()->value(Tf::AccessLogDateTimeFormat, DEFAULT_ACCESSLOG_DATETIME_FORMAT).toByteArray();
+    accessLogLayout = Tf::appSettings()->value(Tf::AccessLogLayout).toByteArray();
+    accessLogDateTimeFormat = Tf::appSettings()->value(Tf::AccessLogDateTimeFormat).toByteArray();
 }
 
 
@@ -114,8 +107,8 @@ void Tf::setupQueryLogger()
         sqllogstrm = new TAccessLogStream(querylogpath);
     }
 
-    queryLogLayout = Tf::appSettings()->value(Tf::SqlQueryLogLayout, DEFAULT_QUERYLOG_LAYOUT).toByteArray();
-    queryLogDateTimeFormat = Tf::appSettings()->value(Tf::SqlQueryLogDateTimeFormat, DEFAULT_QUERYLOG_DATETIME_FORMAT).toByteArray();
+    queryLogLayout = Tf::appSettings()->value(Tf::SqlQueryLogLayout).toByteArray();
+    queryLogDateTimeFormat = Tf::appSettings()->value(Tf::SqlQueryLogDateTimeFormat).toByteArray();
 }
 
 

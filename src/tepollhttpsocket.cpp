@@ -152,7 +152,7 @@ void TEpollHttpSocket::releaseWorker()
 void TEpollHttpSocket::parse()
 {
     if (Q_UNLIKELY(systemLimitBodyBytes < 0)) {
-        systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
+        systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
     }
 
     if (Q_LIKELY(lengthToRead < 0)) {

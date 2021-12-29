@@ -145,7 +145,7 @@ enum AppAttribute {
     MongoDbSettingsFile,
     SqlQueriesStoredDirectory,
     DirectViewRenderMode,
-    SqlQueryLogFile,
+    SqlQueryLogFile,  // Deprecated
     ApplicationAbortOnFatal,
     LimitRequestBody,
     EnableCsrfProtectionModule,
