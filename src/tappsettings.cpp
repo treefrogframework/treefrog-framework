@@ -116,6 +116,7 @@ public:
         insert(Tf::JavaScriptPath, "script;node_modules");
         insert(Tf::SessionAutoIdRegeneration, false);
         insert(Tf::ActionMailerDelayedDelivery, false);
+        insert(Tf::InternalEncoding, "UTF-8");
     }
 };
 Q_GLOBAL_STATIC(DefaultValue, defaultValueMap)
