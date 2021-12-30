@@ -167,7 +167,7 @@ bool TAbstractWebSocket::searchEndpoint(const THttpRequestHeader &header)
 
 int TAbstractWebSocket::parse(QByteArray &recvData)
 {
-    tSystemDebug("parse enter  data len:%lld  sid:%d", recvData.length(), socketId());
+    tSystemDebug("parse enter  data len:%lld  sid:%d", (qint64)recvData.length(), socketId());
     if (websocketFrames().isEmpty()) {
         websocketFrames().append(TWebSocketFrame());
     } else {
@@ -269,7 +269,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
         case TWebSocketFrame::HeaderParsed:  // fall through
         case TWebSocketFrame::MoreData: {
             tSystemDebug("WebSocket reading payload:  available length:%lld", dev->bytesAvailable());
-            tSystemDebug("WebSocket parsing  length to read:%llu  current buf len:%lld", pfrm->payloadLength(), pfrm->payload().size());
+            tSystemDebug("WebSocket parsing  length to read:%llu  current buf len:%lld", pfrm->payloadLength(), (qint64)pfrm->payload().size());
             quint64 size = qMin((pfrm->payloadLength() - pfrm->payload().size()), (quint64)dev->bytesAvailable());
             if (Q_UNLIKELY(size == 0)) {
                 Q_ASSERT(0);
@@ -293,14 +293,14 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                 }
             }
             pfrm->payload().resize(pfrm->payload().size() + size);
-            tSystemDebug("WebSocket payload curent buf len: %lld", pfrm->payload().length());
+            tSystemDebug("WebSocket payload curent buf len: %lld", (qint64)pfrm->payload().length());
 
             if ((quint64)pfrm->payload().size() == pfrm->payloadLength()) {
                 pfrm->setState(TWebSocketFrame::Completed);
-                tSystemDebug("Parse Completed   payload len: %lld", pfrm->payload().size());
+                tSystemDebug("Parse Completed   payload len: %lld", (qint64)pfrm->payload().size());
             } else {
                 pfrm->setState(TWebSocketFrame::MoreData);
-                tSystemDebug("Parse MoreData   payload len: %lld", pfrm->payload().size());
+                tSystemDebug("Parse MoreData   payload len: %lld", (qint64)pfrm->payload().size());
             }
             break;
         }
