@@ -121,6 +121,7 @@ public:
         insert("-r", AutoReload);
         insert("-p", Port);
         insert("-m", ShowPid);
+        insert("--help", PrintUsage);
         insert("--show-routes", ShowRoutes);
         insert("--settings", ShowSettings);
     }
@@ -144,6 +145,7 @@ void usage()
                           "%4"
                           "%3\n"
                           "Type '%1 --show-routes [app-directory]' to show routing information.\n"
+                          "Type '%1 --settings [app-directory]' to show application settings.\n"
                           "Type '%1 -l' to show your running applications.\n"
                           "Type '%1 -h' to show this information.\n"
                           "Type '%1 -v' to show the program version.";
