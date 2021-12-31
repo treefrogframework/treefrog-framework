@@ -50,6 +50,9 @@ namespace treefrogsetup {
         static initonly String^ VERSION_STR6_NEW  = L"6.2";
         static initonly String^ VERSION_STR6_PREV = L"6.1";
 
+		static initonly int RCID_NEW  = IDR_TREEFROG_QT602_MSI;
+		static initonly int RCID_PREV = IDR_TREEFROG_QT601_MSI;
+
     public:
         MainForm(void)
         {
@@ -390,9 +393,9 @@ namespace treefrogsetup {
             // Get msi file from resource
             int rcid = 0;
             if (version->IndexOf("Qt version " + VERSION_STR6_NEW, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT602_MSI;
+                rcid = RCID_NEW;
             } else if (version->IndexOf("Qt version " + VERSION_STR6_PREV, StringComparison::OrdinalIgnoreCase) > 0) {
-                rcid = IDR_TREEFROG_QT601_MSI;
+                rcid = RCID_PREV;
             } else {
                 abort("Not found Qt version " + VERSION_STR6_NEW + " or " + VERSION_STR6_PREV + ".", "Abort");
                 return;
