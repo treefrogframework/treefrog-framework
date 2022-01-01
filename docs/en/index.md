@@ -118,4 +118,4 @@ Twitter [@TreeFrog_ja <i class="fas fa-external-link-alt"></i>](https://twitter.
 
 [Docker Images <i class="fas fa-external-link-alt"></i>](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}
 
-[Benchmarks <i class="fas fa-external-link-alt"></i>](https://www.techempower.com/benchmarks/#section=data-r16){:target="_blank"}
+[Benchmarks <i class="fas fa-external-link-alt"></i>](https://www.techempower.com/benchmarks/){:target="_blank"}
