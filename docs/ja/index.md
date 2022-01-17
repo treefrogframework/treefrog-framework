@@ -101,4 +101,4 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 Dockerイメージ[(外部リンク)](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}
 
-ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/#section=data-r16){:target="_blank"}
+ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/){:target="_blank"}
