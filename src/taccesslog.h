@@ -1,6 +1,7 @@
 #pragma once
 #include <QByteArray>
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <TGlobal>
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <TAbstractController>
+#include <TActionContext>
 
 
 class T_CORE_EXPORT TActionMailer : public TAbstractController {

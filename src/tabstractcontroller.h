@@ -16,21 +16,22 @@ public:
     virtual QString className() const;
     virtual QString name() const = 0;
     virtual QString activeAction() const = 0;
-    virtual QStringList arguments() const = 0;
-    virtual const THttpRequest &httpRequest() const = 0;
-    virtual const THttpRequest &request() const = 0;
-    virtual const TSession &session() const = 0;
-    virtual QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap()) = 0;
-    virtual QByteArray authenticityToken() const = 0;
-    virtual void setFlash(const QString &name, const QVariant &value) = 0;
+    virtual QStringList arguments() const { return QStringList(); }
+    virtual const THttpRequest &httpRequest() const;
+    virtual const THttpRequest &request() const;
+    virtual const TSession &session() const;
+    virtual QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
+    virtual QByteArray authenticityToken() const { return QByteArray(); }
+    virtual void setFlash(const QString &name, const QVariant &value);
     void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
+    virtual bool isUserLoggedIn() const;
 
 protected:
-    virtual TSession &session() = 0;
-    virtual bool addCookie(const TCookie &cookie) = 0;
-    virtual bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") = 0;
-    virtual bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") = 0;
-    virtual void reset() = 0;
+    virtual TSession &session();
+    virtual bool addCookie(const TCookie &cookie);
+    virtual bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
+    virtual bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax");
+    virtual void reset() { }
 
     QVariant variant(const QString &name) const;
     void exportVariants(const QVariantMap &map);
@@ -67,4 +68,3 @@ inline bool TAbstractController::hasVariant(const QString &name) const
 {
     return exportVars.contains(name);
 }
-

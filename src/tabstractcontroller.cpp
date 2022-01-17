@@ -89,6 +89,71 @@ QString TAbstractController::viewClassName(const QString &contoller, const QStri
     return (contoller.isEmpty() ? name().toLower() : contoller.toLower()) + '_' + (action.isEmpty() ? activeAction() : action) + QLatin1String("View");
 }
 
+
+void TAbstractController::setFlash(const QString &, const QVariant &)
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+QString TAbstractController::getRenderingData(const QString &, const QVariantMap &)
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+const THttpRequest &TAbstractController::httpRequest() const
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+const THttpRequest &TAbstractController::request() const
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+const TSession &TAbstractController::session() const
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+TSession &TAbstractController::session()
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+bool TAbstractController::addCookie(const TCookie &)
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+bool TAbstractController::addCookie(const QByteArray &, const QByteArray &, const QDateTime &, const QString &, const QString &, bool, bool, const QByteArray &)
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+bool TAbstractController::addCookie(const QByteArray &, const QByteArray &, qint64 , const QString &, const QString &, bool, bool, const QByteArray &)
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
+
+/*!
+  Returns true if a user is logged in to the system; otherwise returns false.
+  This is a virtual function.
+  \sa userLogin()
+*/
+bool TAbstractController::isUserLoggedIn() const
+{
+    throw StandardException("Not implemented error", __FILE__, __LINE__);
+}
+
 /*!
   \fn const QVariantMap &TAbstractController::allVariants() const
 
