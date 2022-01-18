@@ -916,7 +916,7 @@ jsonsl_jpr_new(const char *path, jsonsl_error_t *errp)
         JPR_BAIL(JSONSL_ERROR_ENOMEM);
     }
 
-    strcpy(my_copy, path);
+    strcpy_s(my_copy, strlen(path) + 1, path);
 
     components[0].ptype = JSONSL_PATH_ROOT;
 
