@@ -15,6 +15,7 @@ using namespace Tf;
   \class TPopMailer
   \brief The TPopMailer class provides a simple functionality to receive
   emails by POP.
+  \sa TActionMailer
 */
 
 TPopMailer::TPopMailer(QObject *parent) :

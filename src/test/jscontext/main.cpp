@@ -61,6 +61,8 @@ void JSContext::eval_data()
     QTest::newRow("02") << "'hello' + ' world!'" << "hello world!";
     QTest::newRow("03") << "(function(a){return a*a;})(5)" << "25";
     QTest::newRow("04") << "(function(s){return s+s;})('orange')" << "orangeorange";
+    QTest::newRow("05") << "(s => s + s)('orange')" << "orangeorange";
+    QTest::newRow("06") << "(s => s * s)(4)" << "16";
 }
 
 

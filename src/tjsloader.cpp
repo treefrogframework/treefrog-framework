@@ -20,7 +20,8 @@
 
 /*!
   \class TJSLoader
-  \brief The TJSLoader class loads a JavaScript module at run-time.
+  \brief The TJSLoader class loads a JavaScript module in server side.
+  \sa TJSModule, TJSInstance
 */
 
 namespace {
