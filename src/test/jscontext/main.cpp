@@ -18,7 +18,7 @@ private slots:
     void eval_data();
     void eval();
 
-#if QT_VERSION > 0x050400
+#if QT_VERSION > 0x050900
     void callAsConstructor_data();
     void callAsConstructor();
     void require_data();
@@ -76,7 +76,7 @@ void JSContext::eval()
     QCOMPARE(result, output);
 }
 
-#if QT_VERSION > 0x050400
+#if QT_VERSION > 0x050900
 
 void JSContext::callAsConstructor_data()
 {
