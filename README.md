@@ -60,6 +60,7 @@ Docker Images
 ```
   $ docker pull treefrogframework/treefrog
 ```
+  Docker files are stored in the 'dockerfiles' directory of the 'docker' branch.
 
 MongoDB communication
 ---------------------
