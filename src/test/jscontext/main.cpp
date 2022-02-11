@@ -15,10 +15,9 @@ class JSContext : public QObject
 
 private slots:
     void initTestCase();
+#if QT_VERSION > 0x050a00
     void eval_data();
     void eval();
-
-#if QT_VERSION > 0x050a00
     void callAsConstructor_data();
     void callAsConstructor();
     void require_data();
@@ -37,10 +36,8 @@ private slots:
     void reactjsx();
     void reactjsxCommonJs_data();
     void reactjsxCommonJs();
-# if QT_VERSION > 0x050600
     void reactComponent_data();
     void reactComponent();
-# endif
     void benchmark();
 #endif
 };
@@ -51,6 +48,7 @@ void JSContext::initTestCase()
     TJSLoader::setDefaultSearchPaths({"."});
 }
 
+#if QT_VERSION > 0x050a00
 
 void JSContext::eval_data()
 {
@@ -76,7 +74,6 @@ void JSContext::eval()
     QCOMPARE(result, output);
 }
 
-#if QT_VERSION > 0x050a00
 
 void JSContext::callAsConstructor_data()
 {
@@ -173,6 +170,7 @@ void JSContext::callFunc()
     auto result = js.call(func).toString();
     QCOMPARE(result, output);
 }
+
 
 void JSContext::callFunc1_data()
 {
@@ -394,8 +392,6 @@ void JSContext::reactjsxCommonJs()
 }
 
 
-# if QT_VERSION > 0x050600
-
 void JSContext::reactComponent_data()
 {
     QTest::addColumn<QString>("jsxfile");
@@ -440,7 +436,6 @@ void JSContext::reactComponent()
     QCOMPARE(output, result);
 }
 
-#endif
 #endif
 
 QString JSContext::jsxTransform(const QString &jsx)
