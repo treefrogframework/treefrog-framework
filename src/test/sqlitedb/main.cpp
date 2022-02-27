@@ -52,6 +52,7 @@ void TestCache::cleanupTestCase()
 void TestCache::test()
 {
     TCacheStore *cache = TCacheFactory::create("sqlite");
+    cache->init();
     cache->open();
     QByteArray buf;
     cache->clear();

@@ -137,7 +137,7 @@ void TMultiplexingServer::run()
     TEpoll::instance()->addPoll(lsn, EPOLLIN);
     int numEvents = 0;
 
-    int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+    int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
     QElapsedTimer idleTimer;
     if (keepAlivetimeout > 0) {
         idleTimer.start();

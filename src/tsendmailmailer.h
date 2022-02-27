@@ -29,4 +29,3 @@ private:
     T_DISABLE_COPY(TSendmailMailer)
     T_DISABLE_MOVE(TSendmailMailer)
 };
-

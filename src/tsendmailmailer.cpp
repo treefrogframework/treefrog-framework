@@ -18,6 +18,7 @@ QMutex sendMutex;
   \class TSendmailMailer
   \brief The TSendmailMailer class provides a simple functionality to send
   emails by sendmail command.
+  \sa TActionMailer
 */
 
 TSendmailMailer::TSendmailMailer(const QString &command, QObject *parent) :

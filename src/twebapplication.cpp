@@ -13,6 +13,8 @@
 #include <QJsonObject>
 #include <TAppSettings>
 #include <TSystemGlobal>
+#include <TCache>
+#include <TJobScheduler>
 #include <TWebApplication>
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
@@ -461,7 +463,7 @@ QString TWebApplication::routesConfigFilePath() const
 */
 QString TWebApplication::systemLogFilePath() const
 {
-    QFileInfo fi(Tf::appSettings()->value(Tf::SystemLogFilePath, "log/treefrog.log").toString());
+    QFileInfo fi(Tf::appSettings()->value(Tf::SystemLogFilePath).toString());
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
 }
 
@@ -485,7 +487,11 @@ QString TWebApplication::accessLogFilePath() const
 */
 QString TWebApplication::sqlQueryLogFilePath() const
 {
-    QString path = Tf::appSettings()->value(Tf::SqlQueryLogFile).toString();
+    QString path = Tf::appSettings()->value(Tf::SqlQueryLogFilePath).toString().trimmed();
+    if (path.isEmpty()) {
+        path = Tf::appSettings()->value(Tf::SqlQueryLogFile).toString().trimmed();
+    }
+
     if (!path.isEmpty()) {
         QFileInfo fi(path);
         path = (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
@@ -586,6 +592,26 @@ QString TWebApplication::cacheBackend() const
     return backend;
 }
 
+
+void TWebApplication::initializeCache()
+{
+    class CacheInitializer : public TJobScheduler {
+    protected:
+        void job() override
+        {
+            Tf::cache()->initialize();
+            tSystemInfo("Initialized cache");
+        }
+    };
+
+    if (cacheEnabled() && _appServerId == 0) {
+        // Initialize cache
+        auto initializer = new CacheInitializer;
+        initializer->setAutoDelete(true);
+        initializer->setSingleShot(true);
+        initializer->start(10);
+    }
+}
 
 /*!
   \fn QString TWebApplication::webRootPath() const

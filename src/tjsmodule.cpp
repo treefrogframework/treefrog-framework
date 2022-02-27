@@ -25,6 +25,7 @@ inline const char *prop(const QJSValue &val, const QString &name = QString())
 /*!
   \class TJSModule
   \brief The TJSModule class represents a module for evaluating JavaScript code.
+  \see https://doc.qt.io/qt-6/qjsengine.html
 */
 
 

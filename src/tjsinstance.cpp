@@ -12,6 +12,7 @@
 /*!
   \class TJSInstance
   \brief The TJSInstance class acts as a instance for JavaScript data types.
+  \see https://doc.qt.io/qt-6/qjsvalue.html
 */
 
 

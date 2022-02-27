@@ -8,4 +8,5 @@ HEADERS += blogobject.h
 HEADERS += foo.h
 SOURCES += foo.cpp
 HEADERS += fooobject.h
-
+HEADERS += emailmailer.h
+SOURCES += emailmailer.cpp

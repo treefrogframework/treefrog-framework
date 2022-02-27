@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2.3.0
+ - Fix a bug of inserting a double-type value by SqlObject.
+ - Implemented log output to calculate processing time of SQL query.
+ - Implemented logics to set the log format of the SQL query log.
+ - Implemented the treefrog command to show settings option.
+ - Modified the timing of initializing sqlite cache store.
+
 ## 2.2.0
  - Fix a bug of cache logic for sqlite.
  - Modified not to use core5compat module in running on Qt6.

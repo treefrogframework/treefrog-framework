@@ -8,17 +8,16 @@
 #include "tcachesqlitestore.h"
 #include "tsqlquery.h"
 #include "tsystemglobal.h"
+#include "tsqldatabasepool.h"
 #include <QByteArray>
 #include <QDateTime>
 #include <TfCore>
-#include <TDatabaseContext>
 #include <mutex>
 
 constexpr auto TABLE_NAME = "kb";
 constexpr auto KEY_COLUMN = "k";
 constexpr auto BLOB_COLUMN = "b";
 constexpr auto TIMESTAMP_COLUMN = "t";
-constexpr int PAGESIZE = 4096;
 
 static int sqliteMajorVersion;
 static int sqliteMinorVersion;
@@ -36,17 +35,6 @@ inline QString lastErrorString()
 }
 
 
-static bool query(const QString &sql)
-{
-    TSqlQuery qry(Tf::app()->databaseIdForCache());
-    bool ret = qry.exec(sql);
-    if (!ret) {
-        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qUtf8Printable(lastErrorString()), qUtf8Printable(sql), __FILE__, __LINE__);
-    }
-    return ret;
-}
-
-
 static void getVersion()
 {
     TSqlQuery query(Tf::app()->databaseIdForCache());
@@ -60,11 +48,26 @@ static void getVersion()
     }
 }
 
+// Query without a transaction
+static bool queryNonTrx(const QSqlDatabase &db, const QString &sql)
+{
+    TSqlQuery qry(db);
+    bool ret = qry.exec(sql);
+    if (!ret && !lastErrorString().isEmpty()) {
+        tSystemError("SQLite error : %s, query:'%s' [%s:%d]", qUtf8Printable(lastErrorString()), qUtf8Printable(sql), __FILE__, __LINE__);
+    }
+    return ret;
+}
+
 
 bool TCacheSQLiteStore::createTable(const QString &table)
 {
-    query(QStringLiteral("PRAGMA page_size=%1").arg(PAGESIZE));
-    bool ret = query(QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    int id = Tf::app()->databaseIdForCache();
+    auto db = TSqlDatabasePool::instance()->database(id);
+    bool ret = queryNonTrx(db, QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    queryNonTrx(db, QStringLiteral("VACUUM"));
+
+    TSqlDatabasePool::instance()->pool(db);
     return ret;
 }
 
@@ -81,12 +84,18 @@ TCacheSQLiteStore::~TCacheSQLiteStore()
 }
 
 
+void TCacheSQLiteStore::init()
+{
+    createTable(TABLE_NAME);
+}
+
+
 bool TCacheSQLiteStore::open()
 {
     static std::once_flag once;
+
     std::call_once(once, []() {
         getVersion();
-        createTable(TABLE_NAME);
     });
     return true;
 }
@@ -179,7 +188,10 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
             blob = query.value(1).toByteArray();
         }
     } else {
-        tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
+        auto error = lastErrorString();
+        if (!error.isEmpty()) {
+            tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(error), __FILE__, __LINE__);
+        }
     }
     return ret;
 }
@@ -328,7 +340,7 @@ QMap<QString, QVariant> TCacheSQLiteStore::defaultSettings() const
     QMap<QString, QVariant> settings {
         {"DriverType", "QSQLITE"},
         {"DatabaseName", "cachedb"},
-        {"PostOpenStatements", "PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000; PRAGMA synchronous=NORMAL;"},
+        {"PostOpenStatements", "PRAGMA journal_mode=OFF; PRAGMA busy_timeout=5; PRAGMA synchronous=OFF;"},
     };
     return settings;
 }

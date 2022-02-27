@@ -28,8 +28,7 @@
 */
 TActionView::TActionView() :
     QObject(),
-    TViewHelper(),
-    TPrototypeAjaxHelper()
+    TViewHelper()
 {
 }
 

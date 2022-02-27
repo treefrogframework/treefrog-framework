@@ -39,7 +39,7 @@ public:
     QByteArray authenticityToken() const override;
     QString flash(const QString &name) const;
     QHostAddress clientAddress() const;
-    virtual bool isUserLoggedIn() const;
+    virtual bool isUserLoggedIn() const override;
     virtual QString identityKeyOfLoginUser() const;
     void setFlash(const QString &name, const QVariant &value) override;
     void reset() override;

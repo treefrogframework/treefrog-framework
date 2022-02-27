@@ -18,13 +18,13 @@
 
 
 TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger) :
-    arrayBuffer(header),
-    fileRemove(autoRemove),
-    accesslogger(logger)
+    _arrayBuffer(header),
+    _fileRemove(autoRemove),
+    _accesslogger(logger)
 {
     if (file.exists() && file.isFile()) {
-        bodyFile = new QFile(file.absoluteFilePath());
-        if (!bodyFile->open(QIODevice::ReadOnly)) {
+        _bodyFile = new QFile(file.absoluteFilePath());
+        if (!_bodyFile->open(QIODevice::ReadOnly)) {
             tSystemWarn("file open failed: %s", qUtf8Printable(file.absoluteFilePath()));
             release();
         }
@@ -33,25 +33,26 @@ TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool a
 
 
 TSendBuffer::TSendBuffer(const QByteArray &header) :
-    arrayBuffer(header)
+    _arrayBuffer(header)
 {
 }
 
 
 TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
 {
-    accesslogger.open();
-    accesslogger.setStatusCode(statusCode);
-    accesslogger.setTimestamp(QDateTime::currentDateTime());
-    accesslogger.setRemoteHost(address.toString().toLatin1());
-    accesslogger.setRequest(method);
+    _accesslogger.open();
+    _accesslogger.setStatusCode(statusCode);
+    _accesslogger.setTimestamp(QDateTime::currentDateTime());
+    _accesslogger.setRemoteHost(address.toString().toLatin1());
+    _accesslogger.setRequest(method);
+    _accesslogger.startElaspedTimer();
 
     THttpResponseHeader header;
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
     header.setRawHeader("Server", "TreeFrog server");
     header.setCurrentDate();
 
-    arrayBuffer += header.toByteArray();
+    _arrayBuffer += header.toByteArray();
 }
 
 
@@ -63,12 +64,12 @@ TSendBuffer::~TSendBuffer()
 
 void TSendBuffer::release()
 {
-    if (bodyFile) {
-        if (fileRemove) {
-            bodyFile->remove();
+    if (_bodyFile) {
+        if (_fileRemove) {
+            _bodyFile->remove();
         }
-        delete bodyFile;
-        bodyFile = nullptr;
+        delete _bodyFile;
+        _bodyFile = nullptr;
     }
 }
 
@@ -80,28 +81,28 @@ void *TSendBuffer::getData(int &size)
         return nullptr;
     }
 
-    if (startPos < arrayBuffer.length()) {
-        size = qMin(arrayBuffer.length() - startPos, size);
-        return arrayBuffer.data() + startPos;
+    if (_startPos < _arrayBuffer.length()) {
+        size = qMin(_arrayBuffer.length() - _startPos, size);
+        return _arrayBuffer.data() + _startPos;
     }
 
-    if (!bodyFile || bodyFile->atEnd()) {
+    if (!_bodyFile || _bodyFile->atEnd()) {
         size = 0;
         return nullptr;
     }
 
-    arrayBuffer.reserve(size);
-    size = bodyFile->read(arrayBuffer.data(), size);
+    _arrayBuffer.reserve(size);
+    size = _bodyFile->read(_arrayBuffer.data(), size);
     if (Q_UNLIKELY(size < 0)) {
-        tSystemError("file read error: %s", qUtf8Printable(bodyFile->fileName()));
+        tSystemError("file read error: %s", qUtf8Printable(_bodyFile->fileName()));
         size = 0;
         release();
         return nullptr;
     }
 
-    arrayBuffer.resize(size);
-    startPos = 0;
-    return arrayBuffer.data();
+    _arrayBuffer.resize(size);
+    _startPos = 0;
+    return _arrayBuffer.data();
 }
 
 
@@ -111,11 +112,11 @@ bool TSendBuffer::seekData(int pos)
         return false;
     }
 
-    if (startPos + pos >= arrayBuffer.length()) {
-        arrayBuffer.truncate(0);
-        startPos = 0;
+    if (_startPos + pos >= _arrayBuffer.length()) {
+        _arrayBuffer.truncate(0);
+        _startPos = 0;
     } else {
-        startPos += pos;
+        _startPos += pos;
     }
     return true;
 }
@@ -123,16 +124,16 @@ bool TSendBuffer::seekData(int pos)
 
 int TSendBuffer::prepend(const char *data, int maxSize)
 {
-    if (startPos > 0) {
-        arrayBuffer.remove(0, startPos);
+    if (_startPos > 0) {
+        _arrayBuffer.remove(0, _startPos);
     }
-    arrayBuffer.prepend(data, maxSize);
-    startPos = 0;
+    _arrayBuffer.prepend(data, maxSize);
+    _startPos = 0;
     return maxSize;
 }
 
 
 bool TSendBuffer::atEnd() const
 {
-    return startPos >= arrayBuffer.length() && (!bodyFile || bodyFile->atEnd());
+    return _startPos >= _arrayBuffer.length() && (!_bodyFile || _bodyFile->atEnd());
 }

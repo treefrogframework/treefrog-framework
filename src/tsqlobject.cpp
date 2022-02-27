@@ -151,14 +151,38 @@ bool TSqlObject::create()
         record.remove(autoValueIndex());  // not insert the value of auto-value field
     }
 
-    QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
-    QString ins = database.driver()->sqlStatement(QSqlDriver::InsertStatement, tableName(), record, false);
-    if (Q_UNLIKELY(ins.isEmpty())) {
-        sqlError = QSqlError(QLatin1String("No fields to insert"),
-            QString(), QSqlError::StatementError);
-        tWarn("SQL statement error, no fields to insert");
-        return false;
+    auto &database = getDatabase();
+    QString ins, values;
+    ins.reserve(511);
+    values.reserve(255);
+
+    ins += QLatin1String("INSERT INTO ");
+    ins += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.driver());
+    ins += QLatin1String(" (");
+
+    int autoidx = metaObject()->propertyOffset() + autoValueIndex();
+    for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        auto metaProp = metaObject()->property(i);
+        const char *propName = metaProp.name();
+        QVariant val = QObject::property(propName);
+
+        if (i != autoidx) {
+            ins += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver());
+            ins += QLatin1Char(',');
+#if QT_VERSION < 0x060000
+            values += TSqlQuery::formatValue(val, metaProp.type(), database);
+#else
+            values += TSqlQuery::formatValue(val, metaProp.metaType(), database);
+#endif
+            values += QLatin1Char(',');
+        }
     }
+
+    ins.chop(1);
+    ins += QLatin1String(") VALUES (");
+    values.chop(1);
+    ins += values;
+    ins += QLatin1Char(')');
 
     TSqlQuery query(database);
     bool ret = query.exec(ins);
@@ -202,7 +226,7 @@ bool TSqlObject::update()
         return false;
     }
 
-    QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
+    auto &database = getDatabase();
     QString where;
     where.reserve(255);
     where.append(QLatin1String(" WHERE "));
@@ -247,8 +271,10 @@ bool TSqlObject::update()
     }
 
     QString upd;  // UPDATE Statement
-    upd.reserve(255);
-    upd.append(QLatin1String("UPDATE ")).append(tableName()).append(QLatin1String(" SET "));
+    upd.reserve(512);
+    upd.append(QLatin1String("UPDATE "));
+    upd.append(TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.driver()));
+    upd.append(QLatin1String(" SET "));
 
     int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
     QMetaProperty metaProp = metaObject()->property(pkidx);
@@ -277,7 +303,7 @@ bool TSqlObject::update()
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
         if (i != pkidx && recval.isValid() && recval != newval) {
-            upd.append(QLatin1String(propName));
+            upd.append(TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver()));
             upd.append(QLatin1Char('='));
 #if QT_VERSION < 0x060000
             upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
@@ -318,7 +344,7 @@ bool TSqlObject::update()
 */
 bool TSqlObject::save()
 {
-    auto &sqldb = Tf::currentSqlDatabase(databaseId());
+    auto &sqldb = getDatabase();
     auto &db = TSqlDatabase::database(sqldb.connectionName());
     QString lockrev;
 
@@ -396,7 +422,7 @@ bool TSqlObject::remove()
         return false;
     }
 
-    QSqlDatabase &database = Tf::currentSqlDatabase(databaseId());
+    QSqlDatabase &database = getDatabase();
     QString del = database.driver()->sqlStatement(QSqlDriver::DeleteStatement, tableName(), *static_cast<QSqlRecord *>(this), false);
     if (del.isEmpty()) {
         sqlError = QSqlError(QLatin1String("Unable to delete row"),
@@ -526,7 +552,8 @@ void TSqlObject::syncToObject()
 */
 void TSqlObject::syncToSqlRecord()
 {
-    QSqlRecord::operator=(Tf::currentSqlDatabase(databaseId()).record(tableName()));
+    auto &db = getDatabase();
+    QSqlRecord::operator=(db.record(tableName()));
     const QMetaObject *metaObj = metaObject();
     for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
         const char *propName = metaObj->property(i).name();
@@ -537,4 +564,13 @@ void TSqlObject::syncToSqlRecord()
             tWarn("invalid name: %s", propName);
         }
     }
+}
+
+
+QSqlDatabase &TSqlObject::getDatabase()
+{
+    if (!_database.isValid()) {
+        _database = Tf::currentSqlDatabase(databaseId());
+    }
+    return _database;
 }

@@ -125,6 +125,7 @@ void showRoutes()
 
     bool res = TApplicationServerBase::loadLibraries();
     if (!res) {
+        std::printf("Cannot load library. Check the log file for more information.\n");
         return;
     }
 
@@ -251,7 +252,7 @@ int main(int argc, char *argv[])
         goto finish;
     } else {
         // Sets search paths for JavaScript
-        QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath, "script;node_modules").toString().split(';');
+        QStringList jpaths = Tf::appSettings()->value(Tf::JavaScriptPath).toString().split(';');
         TJSLoader::setDefaultSearchPaths(jpaths);
     }
 
@@ -315,6 +316,9 @@ int main(int argc, char *argv[])
         std::fprintf(stderr, "Server open failed\n");
         goto finish;
     }
+
+    // Initialize cache
+    webapp.initializeCache();
 
     QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=]() { server->stop(); });
     ret = webapp.exec();

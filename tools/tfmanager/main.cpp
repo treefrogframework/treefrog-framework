@@ -59,6 +59,7 @@ enum CommandOption {
     Port,
     ShowPid,
     ShowRoutes,
+    ShowSettings,
 };
 
 
@@ -120,7 +121,9 @@ public:
         insert("-r", AutoReload);
         insert("-p", Port);
         insert("-m", ShowPid);
+        insert("--help", PrintUsage);
         insert("--show-routes", ShowRoutes);
+        insert("--settings", ShowSettings);
     }
 };
 Q_GLOBAL_STATIC(OptionHash, options)
@@ -142,6 +145,7 @@ void usage()
                           "%4"
                           "%3\n"
                           "Type '%1 --show-routes [app-directory]' to show routing information.\n"
+                          "Type '%1 --settings [app-directory]' to show application settings.\n"
                           "Type '%1 -l' to show your running applications.\n"
                           "Type '%1 -h' to show this information.\n"
                           "Type '%1 -v' to show the program version.";
@@ -388,6 +392,32 @@ void showRoutes(const QString &path)
 }
 
 
+void showSettings(const TWebApplication &app)
+{
+    const QList<int> Deprecated = { Tf::SqlQueryLogFile };
+    QStringList settings;
+
+    std::printf("application.ini\n----------\n");
+    for (auto key : Tf::appSettings()->keys()) {
+        if (!Deprecated.contains(key)) {
+            settings << Tf::appSettings()->key(key) + "=" + Tf::appSettings()->value(key).toString();
+        }
+    }
+
+    settings.sort();
+    for (const auto &str : settings) {
+        std::printf("%s\n", qUtf8Printable(str));
+    }
+
+    std::printf("\nlogger.ini\n----------\n");
+    auto keys = app.loggerSettings().keys();
+    keys.sort();
+    for (auto key : keys) {
+        std::printf("%s=%s\n", qUtf8Printable(key), qUtf8Printable(app.loggerSettings().value(key).toString()));
+    }
+}
+
+
 int killTreeFrogProcess(const QString &cmd)
 {
     qint64 pid = runningApplicationPid();
@@ -528,7 +558,21 @@ int managerMain(int argc, char *argv[])
             break;
 
         case ShowRoutes:
+            if (!app.appSettingsFileExists()) {
+                std::fprintf(stderr, "INI file not found [%s]\n\n", qUtf8Printable(app.appSettingsFilePath()));
+                return 1;
+            }
             showRoutes(app.webRootPath());
+            return 0;
+            break;
+
+        case ShowSettings:
+            if (!app.appSettingsFileExists()) {
+                std::fprintf(stderr, "INI file not found [%s]\n\n", qUtf8Printable(app.appSettingsFilePath()));
+                return 1;
+            }
+
+            showSettings(app);
             return 0;
             break;
 

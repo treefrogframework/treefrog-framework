@@ -201,7 +201,7 @@ qint64 THttpSocket::writeRawData(const QByteArray &data)
 
 bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
-    static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, "0").toLongLong() * 2;
+    static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
 
     qint64 buflen = _readBuffer.capacity() - _readBuffer.size();
     qint64 len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);

@@ -193,10 +193,12 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
         setFilter(QString());
     }
 
+    QElapsedTimer time;
+    time.start();
     int oldLimit = queryLimit;
     queryLimit = 1;
     bool ret = select();
-    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError(), time.elapsed());
     queryLimit = oldLimit;
 
     //tSystemDebug("findFirst() rowCount: %d", rowCount());
@@ -245,11 +247,13 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
         setFilter(QString());
     }
 
+    QElapsedTimer time;
+    time.start();
     bool ret = select();
     while (canFetchMore()) {  // For SQLite, not report back the size of a query
         fetchMore();
     }
-    Tf::writeQueryLog(query().lastQuery(), ret, lastError());
+    Tf::writeQueryLog(query().lastQuery(), ret, lastError(), time.elapsed());
     //tSystemDebug("find() rowCount: %d", rowCount());
     return ret ? rowCount() : -1;
 }
@@ -578,7 +582,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
         const char *propName = obj.metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
         if (prop == UpdatedAt || prop == ModifiedAt) {
-            upd += propName;
+            upd += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, db.driver());
             upd += QLatin1Char('=');
 #if QT_VERSION < 0x060000
             constexpr auto metaType = QVariant::DateTime;

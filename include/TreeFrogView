@@ -1,6 +1,5 @@
 #include "tactionview.h"
 #include "tabstractcontroller.h"
-#include "tprototypeajaxhelper.h"
 #include "tfnamespace.h"
 #include "tglobal.h"
 #include "thtmlattribute.h"

@@ -44,7 +44,7 @@
             }                                                                                                          \
         };                                                                                                             \
         TWebApplication app(argc, argv);                                                                               \
-        QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray();                  \
+        QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding).toByteArray();                           \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                                       \
         QTextCodec::setCodecForLocale(codec);                                                                          \
         app.setDatabaseEnvironment("test");                                                                            \
@@ -102,7 +102,7 @@
     int main(int argc, char *argv[])                                                                  \
     {                                                                                                 \
         TWebApplication app(argc, argv);                                                              \
-        QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray(); \
+        QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding).toByteArray();          \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                      \
         QTextCodec::setCodecForLocale(codec);                                                         \
         TestObject tc;                                                                                \

@@ -18,7 +18,6 @@
 #include <TfCore>
 #include <TActionController>
 #include <TAppSettings>
-#include <TCache>
 #include <TDispatcher>
 #include <THttpRequest>
 #include <THttpResponse>
@@ -43,7 +42,6 @@ TActionContext::~TActionContext()
 {
     release();
     accessLogger.close();
-    delete cachep;
 }
 
 
@@ -57,9 +55,9 @@ static bool directViewRenderMode()
 void TActionContext::execute(THttpRequest &request, int sid)
 {
     // App parameters
-    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody, 0).toLongLong();
+    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
     static const uint ListenPort = Tf::appSettings()->value(Tf::ListenPort).toUInt();
-    static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool();
+    static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule).toBool();
     static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
     static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
     static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
@@ -82,6 +80,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             accessLogger.setTimestamp(QDateTime::currentDateTime());
             accessLogger.setRequest(firstLine);
             accessLogger.setRemoteHost((ListenPort > 0) ? originatingClientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
+            accessLogger.startElaspedTimer();
         }
 
         tSystemDebug("method : %s", reqHeader.method().data());
@@ -439,7 +438,7 @@ qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *bod
 {
 
     header.setContentLength(length);
-    tSystemDebug("content-length: %lld", header.contentLength());
+    tSystemDebug("content-length: %lld", (qint64)header.contentLength());
     header.setRawHeader(QByteArrayLiteral("Server"), QByteArrayLiteral("TreeFrog server"));
     header.setCurrentDate();
 
@@ -472,22 +471,13 @@ QHostAddress TActionContext::originatingClientAddress() const
     return httpReq->originatingClientAddress();
 }
 
-
-TCache *TActionContext::cache()
-{
-    if (!cachep) {
-        cachep = new TCache;
-    }
-    return cachep;
-}
-
 /*!
   Returns the keep-alive timeout in seconds.
  */
 int TActionContext::keepAliveTimeout()
 {
     static int keepAliveTimeout = []() {
-        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout, "10").toInt();
+        int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
         return qMax(timeout, 0);
     }();
     return keepAliveTimeout;

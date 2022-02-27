@@ -1,17 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
 FILE_PATH=src/tglobal.h
 
 cd `dirname $0`
 . ./tfbase.pri
 
+function format
+{
+  if [ $1 -lt 16 ]; then
+    echo -n "0"
+  fi
+  echo "$(printf %x $1)"
+}
+
 sed -i -e "s/auto TF_VERSION_STR.*/auto TF_VERSION_STR = \"${TF_VER_MAJ}\.${TF_VER_MIN}\.${TF_VER_PAT}\";/" $FILE_PATH
-
-[ ${TF_VER_MAJ} -lt 10 ] && TF_VER_MAJ=0${TF_VER_MAJ}
-[ ${TF_VER_MIN} -lt 10 ] && TF_VER_MIN=0${TF_VER_MIN}
-[ ${TF_VER_PAT} -lt 10 ] && TF_VER_PAT=0${TF_VER_PAT}
-sed -i -e "s/auto TF_VERSION_NUMBER.*/auto TF_VERSION_NUMBER = 0x${TF_VER_MAJ}${TF_VER_MIN}${TF_VER_PAT};/" $FILE_PATH
-
+sed -i -e "s/auto TF_VERSION_NUMBER.*/auto TF_VERSION_NUMBER = 0x$(format ${TF_VER_MAJ})$(format ${TF_VER_MIN})$(format ${TF_VER_PAT});/" $FILE_PATH
 
 [ which git >/dev/null 2>&1 ] && exit 1
 

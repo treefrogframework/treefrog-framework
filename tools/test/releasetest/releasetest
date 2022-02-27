@@ -109,6 +109,7 @@ qmake -r || exit
 make -j4
 make || exit
 $TREEFROG --show-routes || exit
+$TREEFROG --settings || exit
 
 testcase
 cd $APPROOT

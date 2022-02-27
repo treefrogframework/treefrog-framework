@@ -178,7 +178,7 @@ QByteArray TActionController::authenticityToken() const
         QByteArray csrfId = session().value(key).toByteArray();
 
         if (csrfId.isEmpty()) {
-            if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule, true).toBool() && csrfProtectionEnabled()) {
+            if (Tf::appSettings()->value(Tf::EnableCsrfProtectionModule).toBool() && csrfProtectionEnabled()) {
                 // Throw an exceptioon if CSRF is enabled
                 throw RuntimeException("CSRF protectionsession value is empty", __FILE__, __LINE__);
             }

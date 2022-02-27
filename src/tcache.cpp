@@ -18,7 +18,7 @@
 
 TCache::TCache()
 {
-    static int CacheGcProbability = TAppSettings::instance()->value(Tf::CacheGcProbability, 0).toInt();
+    static int CacheGcProbability = TAppSettings::instance()->value(Tf::CacheGcProbability).toInt();
     _gcDivisor = CacheGcProbability;
 
     if (Tf::app()->cacheEnabled()) {
@@ -41,6 +41,14 @@ TCache::~TCache()
     if (_cache) {
         _cache->close();
         TCacheFactory::destroy(Tf::app()->cacheBackend(), _cache);
+    }
+}
+
+
+void TCache::initialize()
+{
+    if (_cache) {
+        _cache->init();
     }
 }
 
@@ -106,6 +114,6 @@ void TCache::clear()
 
 bool TCache::compressionEnabled()
 {
-    static bool compression = Tf::appSettings()->value(Tf::CacheEnableCompression, true).toBool();
+    static bool compression = Tf::appSettings()->value(Tf::CacheEnableCompression).toBool();
     return compression;
 }

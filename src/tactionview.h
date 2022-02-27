@@ -6,13 +6,12 @@
 #include <TGlobal>
 #include <THttpRequest>
 #include <THttpUtility>
-#include <TPrototypeAjaxHelper>
 #include <TViewHelper>
 
 class TAbstractController;
 
 
-class T_CORE_EXPORT TActionView : public QObject, public TActionHelper, public TViewHelper, public TPrototypeAjaxHelper {
+class T_CORE_EXPORT TActionView : public QObject, public TActionHelper, public TViewHelper {
 public:
     TActionView();
     virtual ~TActionView() { }

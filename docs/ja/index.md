@@ -40,13 +40,21 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/10/23  TreeFrog Framework バージョン2.2 （安定版）リリース <span style="color: red;">New!</span>
+### 2021/12/31  TreeFrog Framework バージョン2.3 （安定版）リリース <span style="color: red;">New!</span>
+
+ - SqlObjectでdouble型を保存する時の不具合修正
+ - SQLクエリの処理時間をログ出力するための実装
+ - SQLクエリログのログフォーマットを設定するロジックを実装
+ - アプリ設定情報を表示するtreefrogコマンドオプションを実装
+ - sqliteキャッシュストアの初期化タイミングを修正
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2021/10/23  TreeFrog Framework バージョン2.2 （安定版）リリース
 
  - sqliteのキャッシュロジックの不具合修正
  - Qt6で core5compat モジュールを使用しないよう修正
  - パフォマンス改善
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2021/8/21  TreeFrog Framework バージョン2.1 （安定版）リリース
 
@@ -93,4 +101,4 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 Dockerイメージ[(外部リンク)](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}
 
-ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/#section=data-r16){:target="_blank"}
+ベンチマーク[(外部リンク)](https://www.techempower.com/benchmarks/){:target="_blank"}
