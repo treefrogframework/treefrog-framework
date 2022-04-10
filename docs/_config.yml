@@ -7,7 +7,7 @@ repository:   https://github.com/treefrogframework/treefrog-framework
 plugins_dir:  [markdown]
 theme:        jekyll-theme-slate
 baseurl:      ""
-url:          https://treefrogframework.github.io
+url:          https://www.treefrogframework.org
 
 # Server
 port: 		  4000
