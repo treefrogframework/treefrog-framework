@@ -18,3 +18,11 @@ encoding: 	  utf-8
 kramdown:
   syntax_highlighter_opts:
     default_lang: plaintext
+
+# Plugins (previously gems:)
+plugins:
+  - jekyll-sitemap
+
+# mimic GitHub Pages with --safe
+whitelist:
+  - jekyll-sitemap
