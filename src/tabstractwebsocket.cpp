@@ -369,9 +369,8 @@ void TAbstractWebSocket::sendHandshakeResponse()
     response.setRawHeader("Upgrade", "websocket");
     response.setRawHeader("Connection", "Upgrade");
 
-    QByteArray secAccept = QCryptographicHash::hash(reqHeader.rawHeader("Sec-WebSocket-Key").trimmed() + saltToken,
-        QCryptographicHash::Sha1)
-                               .toBase64();
+    QByteArray data = reqHeader.rawHeader("Sec-WebSocket-Key").trimmed() + saltToken;
+    QByteArray secAccept = QCryptographicHash::hash(data, QCryptographicHash::Sha1).toBase64();
     response.setRawHeader("Sec-WebSocket-Accept", secAccept);
 
     writeRawData(response.toByteArray());
