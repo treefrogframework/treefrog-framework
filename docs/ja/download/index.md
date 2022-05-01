@@ -42,10 +42,33 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 macOS では、Homebrew からインストールすることができます。
 
 ```
- $ brew install mysql-connector-c
- $ brew install --with-mysql --with-postgresql treefrog
+ $ brew install qt qt-postgresql qt-mariadb
+ $ brew install treefrog
 ```
 
-Qt をコンパイルするので、かなり時間がかかります。
+Qt用のSQLドライバが正しくインストールされたならば、次のように表示されます。
 
-もし、SQLite にだけアクセスする（MySQL にも PostgreSQL にもアクセスしない）ならば、 "brew install treefrog" だけでインストールできます。
+```
+ $ tspawn --show-drivers
+ Available database drivers for Qt:
+   QSQLITE
+   QMARIADB
+   QMYSQL
+   QPSQL
+```
+
+`QMARIADB` や `QPSQL` が表示されない場合、ドライバが正しいディレクトリに格納されていません。次のコマンドを実行してドライバディレクトリのパスを確認し、そこにドライバを手動でコピーしてください。
+
+```
+(例)
+ $ cd $(tspawn --show-driver-path)
+ $ pwd
+ (your_brew_path)/Cellar/qt/6.2.3_1/share/qt/plugins/sqldrivers
+```
+
+ドライバをコピーした後、ls コマンドで確認すると次のような結果になります。
+
+```
+$ ls $(tspawn --show-driver-path)
+libqsqlite.dylib  libqsqlmysql.dylib  libqsqlpsql.dylib
+```
