@@ -37,7 +37,7 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
-May. 28, 2022
+May 28, 2022
 
 ### TreeFrog Framework version 2.3.1 (stable) release <span style="color: red;">New!</span>
 
