@@ -38,8 +38,32 @@ Latest source code is in [GitHub](https://github.com/treefrogframework/).
 Can install by Homebrew on macOS.
 
 ```
- $ brew install mysql-connector-c
- $ brew install --with-mysql --with-postgresql treefrog
+ $ brew install treefrog
 ```
 
-It takes too long time to compile Qt sources.
+If the SQL driver for Qt was installed correctly, the followings is displayed.
+
+```
+ $ tspawn --show-drivers
+ Available database drivers for Qt:
+   QSQLITE
+   QMARIADB
+   QMYSQL
+   QPSQL
+```
+
+If `QMARIADB` or `QPSQL` is not displayed, the driver is not stored in the correct directory. Run the following commands to check the path of the driver directory and copy the drivers there manually.
+
+```
+Example:
+ $ cd $(tspawn --show-driver-path)
+ $ pwd
+ (your_brew_path)/Cellar/qt/6.2.3_1/share/qt/plugins/sqldrivers
+```
+
+After copying the driver, the following results are obtained when checked with the `ls` command.
+
+```
+$ ls $(tspawn --show-driver-path)
+libqsqlite.dylib  libqsqlmysql.dylib  libqsqlpsql.dylib
+```

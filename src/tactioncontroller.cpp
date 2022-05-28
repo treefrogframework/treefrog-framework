@@ -185,7 +185,8 @@ QByteArray TActionController::authenticityToken() const
         }
         return csrfId;
     } else {
-        return QCryptographicHash::hash(session().id() + Tf::appSettings()->value(Tf::SessionSecret).toByteArray(), QCryptographicHash::Sha1).toHex();
+        QByteArray data = session().id() + Tf::appSettings()->value(Tf::SessionSecret).toByteArray();
+        return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
     }
 }
 

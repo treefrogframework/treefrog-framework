@@ -7,7 +7,7 @@ repository:   https://github.com/treefrogframework/treefrog-framework
 plugins_dir:  [markdown]
 theme:        jekyll-theme-slate
 baseurl:      ""
-url:          https://treefrogframework.github.io
+url:          https://www.treefrogframework.org
 
 # Server
 port: 		  4000
@@ -18,3 +18,11 @@ encoding: 	  utf-8
 kramdown:
   syntax_highlighter_opts:
     default_lang: plaintext
+
+# Plugins (previously gems:)
+plugins:
+  - jekyll-sitemap
+
+# mimic GitHub Pages with --safe
+whitelist:
+  - jekyll-sitemap

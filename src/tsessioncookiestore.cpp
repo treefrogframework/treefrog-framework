@@ -56,7 +56,8 @@ bool TSessionCookieStore::store(TSession &session)
     }
 
     ba = Tf::lz4Compress(ba);
-    QByteArray digest = QCryptographicHash::hash(ba + sessionSecret(), QCryptographicHash::Sha1);
+    QByteArray data = ba + sessionSecret();
+    QByteArray digest = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
     session.sessionId = ba.toBase64() + "_" + digest.toBase64();
     return true;
 }
@@ -77,7 +78,8 @@ TSession TSessionCookieStore::find(const QByteArray &id)
 
         if (!data.isEmpty() && !dgstr.isEmpty()) {
             QByteArray ba = QByteArray::fromBase64(data);
-            QByteArray digest = QCryptographicHash::hash(ba + sessionSecret(), QCryptographicHash::Sha1);
+            QByteArray data = ba + sessionSecret();
+            QByteArray digest = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
 
             if (digest != QByteArray::fromBase64(dgstr)) {
                 tSystemWarn("Recieved a tampered cookie or that of other web application.");

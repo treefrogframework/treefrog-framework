@@ -52,4 +52,3 @@ protected:
     T_DISABLE_COPY(TAbstractWebSocket)
     T_DISABLE_MOVE(TAbstractWebSocket)
 };
-

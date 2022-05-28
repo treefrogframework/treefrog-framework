@@ -15,9 +15,9 @@ public:
     ~TPopMailer();
 
     QString key() const { return "pop"; }
-    QString hostName() const { return popHostName; }
+    QString hostName() const { return _popHostName; }
     void setHostName(const QString &hostName);
-    quint16 port() const { return popPort; }
+    quint16 port() const { return _popPort; }
     void setPort(quint16 port);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
@@ -43,23 +43,22 @@ private:
     T_DISABLE_COPY(TPopMailer)
     T_DISABLE_MOVE(TPopMailer)
 
-    QTcpSocket *socket {nullptr};
-    QString popHostName;
-    quint16 popPort {0};
-    QByteArray userName;
-    QByteArray password;
-    bool apopEnabled {false};
+    QTcpSocket *_socket {nullptr};
+    QString _popHostName;
+    quint16 _popPort {0};
+    QByteArray _userName;
+    QByteArray _password;
+    bool _apopEnabled {false};
 };
 
 
 inline void TPopMailer::setUserName(const QByteArray &username)
 {
-    userName = username;
+    _userName = username;
 }
 
 
 inline void TPopMailer::setPassword(const QByteArray &pass)
 {
-    password = pass;
+    _password = pass;
 }
-

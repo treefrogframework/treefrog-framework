@@ -20,41 +20,41 @@ using namespace Tf;
 
 TPopMailer::TPopMailer(QObject *parent) :
     QObject(parent),
-    socket(new QTcpSocket)
+    _socket(new QTcpSocket)
 {
 }
 
 
 TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent) :
     QObject(parent),
-    socket(new QTcpSocket),
-    popHostName(hostName),
-    popPort(port)
+    _socket(new QTcpSocket),
+    _popHostName(hostName),
+    _popPort(port)
 {
 }
 
 
 TPopMailer::~TPopMailer()
 {
-    delete socket;
+    delete _socket;
 }
 
 
 void TPopMailer::setHostName(const QString &hostName)
 {
-    popHostName = hostName;
+    _popHostName = hostName;
 }
 
 
 void TPopMailer::setPort(quint16 port)
 {
-    popPort = port;
+    _popPort = port;
 }
 
 
 void TPopMailer::setApopEnabled(bool enable)
 {
-    apopEnabled = enable;
+    _apopEnabled = enable;
 }
 
 
@@ -62,17 +62,17 @@ bool TPopMailer::connectToHost()
 {
     bool ret = false;
 
-    if (popHostName.isEmpty() || popPort <= 0) {
-        tSystemError("POP: Bad Argument: hostname:%s port:%d", qUtf8Printable(popHostName), popPort);
+    if (_popHostName.isEmpty() || _popPort <= 0) {
+        tSystemError("POP: Bad Argument: hostname:%s port:%d", qUtf8Printable(_popHostName), _popPort);
         return ret;
     }
 
-    socket->connectToHost(popHostName, popPort);
-    if (!socket->waitForConnected(5000)) {
-        tSystemError("POP server connect error: %s", qUtf8Printable(socket->errorString()));
+    _socket->connectToHost(_popHostName, _popPort);
+    if (!_socket->waitForConnected(5000)) {
+        tSystemError("POP server connect error: %s", qUtf8Printable(_socket->errorString()));
         return ret;
     }
-    tSystemDebug("POP server connected: %s:%d", qUtf8Printable(popHostName), popPort);
+    tSystemDebug("POP server connected: %s:%d", qUtf8Printable(_popHostName), _popPort);
 
     QByteArray response;
     readResponse(&response);
@@ -85,7 +85,7 @@ bool TPopMailer::connectToHost()
         tSystemDebug("APOP token: %s", apopToken.data());
     }
 
-    if (apopEnabled) {
+    if (_apopEnabled) {
         // APOP authentication
         ret = cmdApop(apopToken);
     } else {
@@ -118,7 +118,7 @@ void TPopMailer::quit()
 bool TPopMailer::cmdUser()
 {
     QByteArray user("USER ");
-    user += userName;
+    user += _userName;
     return cmd(user);
 }
 
@@ -126,7 +126,7 @@ bool TPopMailer::cmdUser()
 bool TPopMailer::cmdPass()
 {
     QByteArray pass("PASS ");
-    pass += password;
+    pass += _password;
     return cmd(pass);
 }
 
@@ -134,9 +134,10 @@ bool TPopMailer::cmdPass()
 bool TPopMailer::cmdApop(const QByteArray &token)
 {
     QByteArray apop("APOP ");
-    apop += userName;
+    apop += _userName;
     apop += ' ';
-    apop += QCryptographicHash::hash(token + password, QCryptographicHash::Md5).toHex();
+    QByteArray data = token + _password;
+    apop += QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
     return cmd(apop);
 }
 
@@ -157,8 +158,8 @@ bool TPopMailer::cmdRetr(int index, QByteArray &message)
 
     bool res = cmd(retr);
     if (res) {
-        while (socket->waitForReadyRead(5000)) {
-            message += socket->readAll();
+        while (_socket->waitForReadyRead(5000)) {
+            message += _socket->readAll();
             if (message.endsWith(eol)) {
                 break;
             }
@@ -191,8 +192,8 @@ bool TPopMailer::write(const QByteArray &command)
         cmd += CRLF;
     }
 
-    int len = socket->write(cmd);
-    socket->flush();
+    int len = _socket->write(cmd);
+    _socket->flush();
     tSystemDebug("C: %s", cmd.trimmed().data());
     return (len == cmd.length());
 }
@@ -206,8 +207,8 @@ bool TPopMailer::readResponse(QByteArray *reply)
         reply->resize(0);
     }
 
-    if (socket->waitForReadyRead(5000)) {
-        QByteArray rcv = socket->readLine();
+    if (_socket->waitForReadyRead(5000)) {
+        QByteArray rcv = _socket->readLine();
         tSystemDebug("S: %s", rcv.data());
 
         if (rcv.startsWith("+OK")) {
