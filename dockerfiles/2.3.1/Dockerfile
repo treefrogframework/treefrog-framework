@@ -1,4 +1,4 @@
-FROM buildpack-deps:focal-curl
+FROM buildpack-deps:jammy-curl
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV TREEFROG_VERSION 2.3.1
@@ -8,18 +8,18 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         tzdata \
         coreutils \
-        qt5-default \
-        qt5-qmake \
-        qtbase5-dev \
-        qtdeclarative5-dev \
-        qtbase5-dev-tools \
-        libqt5sql5-mysql \
-        libqt5sql5-psql \
-        libqt5sql5-odbc \
-        libqt5sql5-sqlite \
-        libqt5core5a \
-        libqt5qml5 \
-        libqt5xml5 \
+        qmake6 \
+        qt6-base-dev \
+        qt6-base-dev-tools \
+        qt6-tools-dev-tools \
+        qt6-declarative-dev \
+        libqt6sql6-mysql \
+        libqt6sql6-psql \
+        libqt6sql6-odbc \
+        libqt6sql6-sqlite \
+        libqt6core6 \
+        libqt6qml6 \
+        libqt6xml6 \
         libpq5 \
         libodbc1 \
         libmongoc-dev \
@@ -30,6 +30,9 @@ RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         make \
         cmake ; \
     rm -rf /var/lib/apt/lists/*
+
+# Temporary..
+RUN rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake
 
 WORKDIR /usr/src/treefrog
 RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/v${TREEFROG_VERSION}.tar.gz | tar xz && \
