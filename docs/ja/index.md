@@ -40,15 +40,19 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/12/31  TreeFrog Framework バージョン2.3 （安定版）リリース <span style="color: red;">New!</span>
+### 2021/12/31  TreeFrog Framework バージョン2.3.1 （安定版）リリース <span style="color: red;">New!</span>
+
+ - Qt 6.3 でのコンパイルエラーを解消
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2021/12/31  TreeFrog Framework バージョン2.3 （安定版）リリース
 
  - SqlObjectでdouble型を保存する時の不具合修正
  - SQLクエリの処理時間をログ出力するための実装
  - SQLクエリログのログフォーマットを設定するロジックを実装
  - アプリ設定情報を表示するtreefrogコマンドオプションを実装
  - sqliteキャッシュストアの初期化タイミングを修正
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2021/10/23  TreeFrog Framework バージョン2.2 （安定版）リリース
 
