@@ -22,7 +22,9 @@ jobs:
         make -j4 -C tools
         sudo make -C tools install
     - name: version
-      run: treefrog -v
+      run: |
+        treefrog -v
+        tspawn --show-drivers
 
   build-mongoc:
     runs-on: macos-latest
