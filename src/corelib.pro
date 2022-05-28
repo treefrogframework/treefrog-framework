@@ -8,7 +8,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
   windows:QMAKE_CXXFLAGS += /std:c++14
 } else {
   CONFIG += c++17
-  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
+  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17 /permissive-
 }
 
 DEFINES *= QT_USE_QSTRINGBUILDER

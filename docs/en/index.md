@@ -37,17 +37,23 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+May 28, 2022
+
+### TreeFrog Framework version 2.3.1 (stable) release <span style="color: red;">New!</span>
+
+ - Fix compilation errors on Qt 6.3.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Dec. 31, 2021
 
-### TreeFrog Framework version 2.3 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.3 (stable) release
 
  - Fix a bug of inserting a double-type value by SqlObject.
  - Implemented log output to calculate processing time of SQL query.
  - Implemented logics to set the log format of the SQL query log.
  - Implemented the treefrog command to show settings option.
  - Modified the timing of initializing sqlite cache store.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Oct. 23, 2021
 
