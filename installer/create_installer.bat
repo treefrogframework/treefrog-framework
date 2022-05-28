@@ -61,6 +61,7 @@ call %1
 if exist "%TFDIR%" rmdir /s /q "%TFDIR%"
 cd /D %BASEDIR%
 call ..\compile_install.bat
+del /q %TFDIR%\bin\*.pdb >nul 2>&1
 call :create_installer %2
 goto :eof
 
