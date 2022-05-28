@@ -39,6 +39,7 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 ## Homebrew
 
+Homebrewの[サイト](https://formulae.brew.sh/formula/treefrog)を参考にしてください。
 macOS では、Homebrew からインストールすることができます。
 
 ```

@@ -35,6 +35,7 @@ Latest source code is in [GitHub](https://github.com/treefrogframework/).
 
 ## Homebrew
 
+See Homebrew [site](https://formulae.brew.sh/formula/treefrog) of TreeFrog.
 Can install by Homebrew on macOS.
 
 ```
