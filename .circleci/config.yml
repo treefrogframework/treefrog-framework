@@ -1,14 +1,15 @@
 version: 2
 jobs:
-  bionic:
+  jammy:
     docker:
-      - image: buildpack-deps:bionic-curl
+      - image: buildpack-deps:jammy-curl
         environment:
           DEBIAN_FRONTEND: noninteractive
     working_directory: /workspace
     steps:
       - checkout
-      - run: apt-get update -qq; apt install -y --no-install-recommends gcc g++ make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev
+      - run: apt-get update -qq; apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+      - run: rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake
       - run: qmake -v
       - run: ./configure --prefix=/usr/local
       - run: make -j4 -C src && make -C src install && make -j4 -C tools && make -C tools install
@@ -34,7 +35,7 @@ jobs:
       - run: treefrog -v
   test:
     docker:
-      - image: buildpack-deps:bionic-curl
+      - image: buildpack-deps:jammy-curl
         environment:
           DEBIAN_FRONTEND: noninteractive
     working_directory: /workspace
@@ -49,8 +50,8 @@ workflows:
   version: 2
   build_test1:
     jobs:
-      - bionic
+      - jammy
       - test:
           requires:
-            - bionic
+            - jammy
       - ubuntu_shared_mongoc
