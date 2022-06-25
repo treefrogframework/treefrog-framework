@@ -1,5 +1,5 @@
 ---
-title: WebAPI
+title: Web API
 page_id: "050.060"
 ---
 
@@ -55,7 +55,7 @@ public slots:
 };
 ```
 
-これらのエントリポイントは次のとおりです。
+これらのエントリーポイントは次のとおりです。
 
 ```
 /apiblog/index
@@ -97,12 +97,24 @@ post      /api/blog/save/:param     ApiBlog.save
 post      /api/blog/remove/:param   ApiBlog.remove
 ```
 
+正しく追加されたかをチェックします。
+
+```
+$ treefrog --show-routes
+Available routes:
+  get     /api/blog/index  ->  apiblogcontroller.index()
+  get     /api/blog/get/:param  ->  apiblogcontroller.get(id)
+  post    /api/blog/create  ->  apiblogcontroller.create()
+  post    /api/blog/save/:param  ->  apiblogcontroller.save(id)
+  post    /api/blog/remove/:param  ->  apiblogcontroller.remove(id)
+```
+
 GET や POST の他に PUT や DELETE も追加することができます。詳しくは [URL ルーティング](/ja/user-guide/controller/url-routing.html) のページを参照してください。
 
 curl コマンドで追加したエントリーポイントの動作確認してみましょう。
 
 ```
-$ curl -sS http://localhost:8800/api/blog/index    ← 追加したエントリポイント
+$ curl -sS http://localhost:8800/api/blog/index    ← 追加したエントリーポイント
 {"data":[]}
 ```
 
@@ -144,14 +156,14 @@ $ curl -sS http://localhost:8800/api/blog/get/1
 QJsonObject ApiBlogService::index()
 {
     auto blogList = Blog::getAll();
-    QJsonObject json = {{"data", tfConvertToJsonArray(blogList, {"id", "title", "body"})}};   // ← ここ
+    QJsonObject json = { {"data", tfConvertToJsonArray(blogList, {"id", "title", "body"})} };  // ←ここ
     return json;
 }
 
 QJsonObject ApiBlogService::get(int id)
 {
     auto blog = Blog::get(id);
-    QJsonObject json = {{"data", blog.toJsonObject({"id", "title", "body"})}};  // ← ここ
+    QJsonObject json = { {"data", blog.toJsonObject({"id", "title", "body"})} };  // ←ここ
     return json;
 }
 ```
@@ -168,6 +180,6 @@ $ curl -sS http://localhost:8800/api/blog/get/1
 
 ## まとめ
 
-スキャフォールディングで Web API を作成することができました。
+スキャフォールディングでシンプルな Web API を作成することができました。
 
 実際のケースでは、このスキャフォールディングで作られた実装では不十分でしょう。例えば、2 つ以上のテーブルからデータを取得し、階層化された JSON データを返すことがあります。その場合はサービスクラスなどを適宜修正して、実装してください。
