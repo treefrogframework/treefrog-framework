@@ -40,7 +40,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/12/31  TreeFrog Framework バージョン2.3.1 （安定版）リリース <span style="color: red;">New!</span>
+### 2022/5/28  TreeFrog Framework バージョン2.3.1 （安定版）リリース <span style="color: red;">New!</span>
 
  - Qt 6.3 でのコンパイルエラーを解消
 
