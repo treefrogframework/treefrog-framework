@@ -112,12 +112,27 @@ Database open successfully
 ```
 $ tspawn -h
 usage: tspawn <subcommand> [args]
+
+Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
+Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
+Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
+Type 'tspawn --show-collections' to show all collections in the MongoDB.
+
 Available subcommands:
-  new (n)  <application-name>
-  scaffold (s)  <model-name>
-  controller (c)  <controller-name>
-  model (m)  <table-name>
-  sqlobject (o)  <table-name>
+  new (n)         <application-name>
+  scaffold (s)    <table-name> [model-name]
+  controller (c)  <controller-name> action [action ...]
+  model (m)       <table-name> [model-name]
+  helper (h)      <name>
+  usermodel (u)   <table-name> [username password [model-name]]
+  sqlobject (o)   <table-name> [model-name]
+  mongoscaffold (ms) <model-name>
+  mongomodel (mm) <model-name>
+  websocket (w)   <endpoint-name>
+  api (a)         <api-name>
+  validator (v)   <name>
+  mailer (l)      <mailer-name> action [action ...]
+  delete (d)      <table-name, helper-name or validator-name>
 ```
 
 如果你使用"controller", "model", "sqlobject"作为子命令, 将只会生成"controller", "model" 和 "SqlObject".
