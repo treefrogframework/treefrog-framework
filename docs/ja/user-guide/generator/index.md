@@ -96,6 +96,79 @@ connectOptions=
 <br>
 ##### 結論：  データベースにスキーマを定義し、ジェネレータコマンドで足場を作れ。
 
+ファイルとディレクトリ構成は次のとおり。
+
+```
+$ tree
+.
+├── CMakeLists.txt
+├── appbase.pri
+├── blogapp10.pro
+├── cmake
+│   ├── CacheClean.cmake
+│   └── TargetCmake.cmake
+├── config
+│   ├── application.ini
+│   ├── cache.ini
+│   ├── database.ini
+│   ├── development.ini
+│   ├── internet_media_types.ini
+│   ├── logger.ini
+│   ├── mongodb.ini
+│   ├── redis.ini
+│   ├── routes.cfg
+│   └── validation.ini
+├── controllers
+│   ├── CMakeLists.txt
+│   ├── applicationcontroller.cpp
+│   ├── applicationcontroller.h
+│   ├── blogcontroller.cpp
+│   ├── blogcontroller.h
+│   └── controllers.pro
+├── db
+│   └── dbfile
+├── helpers
+│   ├── CMakeLists.txt
+│   ├── applicationhelper.cpp
+│   ├── applicationhelper.h
+│   └── helpers.pro
+├── lib
+├── log
+├── models
+│   ├── CMakeLists.txt
+│   ├── blogservice.cpp
+│   ├── blogservice.h
+│   ├── models.pro
+│   ├── mongoobjects
+│   ├── objects
+│   │   ├── blog.cpp
+│   │   └── blog.h
+│   └── sqlobjects
+│       └── blogobject.h
+├── plugin
+├── public
+│   ├── css
+│   ├── images
+│   └── js
+├── script
+├── sql
+├── test
+├── tmp
+└── views
+    ├── CMakeLists.txt
+    ├── _src
+    │   └── _src.pro
+    ├── blog
+    │   ├── create.erb
+    │   ├── index.erb
+    │   ├── save.erb
+    │   └── show.erb
+    ├── layouts
+    ├── mailer
+    ├── partial
+    └── views.pro
+```
+
 ### テーブル名とモデル名/コントローラ名の関係
 
 ジェネレータが生成するクラスの名前はテーブル名に基づいて決められ、次のようなルールになります。
