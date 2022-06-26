@@ -59,10 +59,10 @@ These entry points are as follows.
 
 ```
 /apiblog/index
-/apiblog/get/
+/apiblog/get/(id)
 /apiblog/create
-/apiblog/save/
-/apiblog/remove/
+/apiblog/save/(id)
+/apiblog/remove/(id)
 ```
 
 ## Check Web API

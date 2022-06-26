@@ -213,15 +213,7 @@ If you specify "controller", "model", or "sqlobject" as a sub-command, you can g
 
 ### Column
 
-TreeFrog has no migration feature or other mechanism for making changes to and differential management of the DB schema. I think this is unimportant for the following reasons:
-
-1. If I had made a migration function, users would face the extra learning cost.
-2. Those that are knowledgeable about SQL can enjoy the full functionality of DB operations.
-3. In TreeFrog, it is possible to regenerate only the ORM object classes when changing table.
-   → (Unfortunately there might be some possibilities for affecting something to the model class…)
-4. I consider that there is little merit to framework-side differential management of SQL commands.
-
-Do you agree?
+TreeFrog has no migration feature or other mechanism for making changes to and differential management of the DB schema. Therefore, using a [migration](https://en.wikipedia.org/wiki/Schema_migration) tool for DB schema is recommended if necessary.
 
 ## Naming Conventions
 

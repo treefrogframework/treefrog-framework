@@ -59,10 +59,10 @@ public slots:
 
 ```
 /apiblog/index
-/apiblog/get/
+/apiblog/get/(id)
 /apiblog/create
-/apiblog/save/
-/apiblog/remove/
+/apiblog/save/(id)
+/apiblog/remove/(id)
 ```
 
 ## Web API の動作確認
