@@ -58,6 +58,8 @@ LIBDIR=$PREFIX/lib
 INCLUDEDIR=$PREFIX/include/treefrog
 DATADIR=$PREFIX/share/treefrog
 
+find $BASEDIR/3rdparty/mongo-c-driver-1.21.2/build
+
 # parse options
 while [ -n "`echo $1 | grep '-'`" ]; do
   case $1 in
