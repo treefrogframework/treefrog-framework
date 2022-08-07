@@ -184,7 +184,7 @@ make qmake
 if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   echo
   echo -n "Compiling MongoDB driver library ... "
-  cd "$BASEDIR/3rdparty/mongo-driver"
+  cd "$BASEDIR/3rdparty/mongo-c-driver-1.21.2"
   ls -l build/cmake
   cmake .
   cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" .
