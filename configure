@@ -184,17 +184,10 @@ make qmake
 if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   echo
   echo -n "Compiling MongoDB driver library ... "
-  cd "$BASEDIR/3rdparty/mongo-driver/src/libbson"
-  rm -rf CMakeCache.txt cmake_install.cmake CMakeFiles Makefile
-  cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" . >/dev/null 2>&1
-  make clean >/dev/null 2>&1
-  make -j${NPROC} bson_static >/dev/null 2>&1
-
   cd "$BASEDIR/3rdparty/mongo-driver"
-  rm -rf CMakeCache.txt cmake_install.cmake CMakeFiles Makefile
   cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" . >/dev/null 2>&1
   make clean >/dev/null 2>&1
-  make -j${NPROC} mongoc_static >/dev/null 2>&1
+  make -j${NPROC} >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
     echo "failed"
