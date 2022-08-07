@@ -236,6 +236,7 @@ set (CMAKE_MACOSX_RPATH ON)
 # Enable a CMake 3.0+ policy that sets CMAKE_MACOSX_RPATH by default, and
 # silence a CMake 3.11 warning that the old behavior is deprecated.
 cmake_policy (SET CMP0042 NEW)
+cmake_policy (SET CMP0017 NEW)
 
 # https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
 # Enable features from POSIX.1-2008 as well as certain BSD and SVID features.
