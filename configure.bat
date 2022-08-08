@@ -174,12 +174,12 @@ echo %CMAKECMD%
 %CMAKECMD%
 
 echo Compiling MongoDB driver library ...
-set DEVENVCMD=devenv libmongoc.sln /project mongoc_static /rebuild Release >nul 2>&1
+set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release >nul 2>&1
 echo %DEVENVCMD%
-%DEVENVCMD%
+%DEVENVCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  devenv libmongoc.sln /project mongoc_static /build Release
+  %DEVENVCMD%
   echo;
   echo Build failed.
   echo MongoDB driver not available.

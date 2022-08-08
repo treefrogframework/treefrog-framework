@@ -406,15 +406,9 @@ windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
   INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
   win32-msvc* {
-    LIBS += ../3rdparty/mongo-driver/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
-  } else {
-    CONFIG(debug, debug|release) {
-      LIBS += ../3rdparty/mongo-driver/debug/libmongoc.a
-    } else {
-      LIBS += ../3rdparty/mongo-driver/release/libmongoc.a
-    }
+    LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
+    LIBS += -lws2_32 -lpsapi -lAdvapi32
   }
-  LIBS += -lws2_32 -lpsapi -lAdvapi32
 } else {
   isEmpty( shared_mongoc ) {
     INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
