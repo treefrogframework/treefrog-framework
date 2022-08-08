@@ -75,9 +75,6 @@ set (CMAKE_MODULE_PATH
    ${PROJECT_SOURCE_DIR}/build/cmake
    ${PROJECT_SOURCE_DIR}/build/cmake/make_dist
 )
-message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
-message("### ${PROJECT_SOURCE_DIR}/build/cmake")
-message("### CMAKE_MODULE_PATH:  ${CMAKE_MODULE_PATH}")
 
 include (InstallRequiredSystemLibraries)
 include (GNUInstallDirs)
