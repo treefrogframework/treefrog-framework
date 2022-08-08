@@ -404,7 +404,7 @@ freebsd {
 # Files for MongoDB
 windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
-  INCLUDEPATH += ../3rdparty/mongo-driver/src/mongoc ../3rdparty/mongo-driver/src/libbson/src/bson
+  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
   win32-msvc* {
     LIBS += ../3rdparty/mongo-driver/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
   } else {

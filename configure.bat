@@ -3,7 +3,7 @@
 
 set VERSION=2.3.1
 set TFDIR=C:\TreeFrog\%VERSION%
-set MONBOC_VERSION=1.9.5
+set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.3
 set BASEDIR=%~dp0
 
@@ -166,20 +166,6 @@ cd /d %BASEDIR%3rdparty
 rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
-
-cd %BASEDIR%3rdparty\mongo-driver\src\libbson
-del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
-cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF .
-echo Compiling BSON library ...
-devenv libbson.sln /project bson_static /rebuild Release >nul 2>&1
-if ERRORLEVEL 1 (
-  :: Shows error
-  devenv libbson.sln /project bson_static /build Release
-  echo;
-  echo Build failed.
-  echo MongoDB driver not available.
-  exit /b
-)
 
 cd %BASEDIR%3rdparty\mongo-driver
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
