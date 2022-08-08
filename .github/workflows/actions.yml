@@ -124,7 +124,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
-      run: brew install qt6 zlib zstd jq
+      run: brew install qt6 jq
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: build
