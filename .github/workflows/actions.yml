@@ -7,7 +7,55 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake; qmake -v
+    - name: configure
+      run: ./configure --prefix=/usr/local --spec=linux-g++
+    - name: make
+      run: make -j4 -C src && sudo make -C src install && make -j4 -C tools && sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: test
+      run: |
+        qmake tools/tmake/test/tmaketest.pro -o tools/tmake/test/Makefile
+        make -j4 -C tools/tmake/test
+        src/test/testall.sh
+        tools/tmake/test/tmaketest.sh
+        tools/test/releasetest/releasetest
+
+  build-ubuntu-mongoc:
+    runs-on: ubuntu-latest-mongoc
+    steps:
+    - uses: actions/checkout@main
+    - name: apt
+      run: |
+        sudo apt-get update -qq
+        sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+    - name: qmake version
+      run: rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake; qmake -v
+    - name: configure
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc --spec=linux-g++
+    - name: make
+      run: make -j4 -C src && sudo make -C src install && make -j4 -C tools && sudo make -C tools install
+    - name: test
+      run: qmake tools/tmake/test/tmaketest.pro -o tools/tmake/test/Makefile && make -j4 -C tools/tmake/test
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+
+
+  build-macos:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@main
@@ -26,7 +74,7 @@ jobs:
         treefrog -v
         tspawn --show-drivers
 
-  build-mongoc:
+  build-macos-mongoc:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@main
