@@ -174,7 +174,7 @@ echo %CMAKECMD%
 %CMAKECMD%
 
 echo Compiling MongoDB driver library ...
-set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release >nul 2>&1
+set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 echo %DEVENVCMD%
 %DEVENVCMD% >nul 2>&1
 if ERRORLEVEL 1 (
@@ -198,12 +198,12 @@ if not ERRORLEVEL 1 (
 ) else (
   set VS=VS2017
 )
-set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
+set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
 echo %DEVENVCMD%
-%DEVENVCMD%
+%DEVENVCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  devenv lz4\build\%VS%\lz4.sln /project liblz4 /build "Release|%BUILDTARGET%"
+  %DEVENVCMD%
   echo;
   echo Build failed.
   echo LZ4 not available.

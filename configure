@@ -187,7 +187,7 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   cd "$BASEDIR/3rdparty/mongo-driver"
   cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" . >/dev/null 2>&1
   make clean >/dev/null 2>&1
-  make VERBOSE=1 -j${NPROC}
+  make -j${NPROC} mongoc_static >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
     echo "failed"
