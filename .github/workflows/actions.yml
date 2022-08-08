@@ -70,6 +70,18 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: testall.sh
+      run: |
+        $GITHUB_WORKSPACE/src/test/testall.sh
+    - name: tmaketest
+      run: |
+        cd $GITHUB_WORKSPACE/tools/tmake/test
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      run: |
+        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
   build-ubuntu20:
     runs-on: ubuntu-20.04

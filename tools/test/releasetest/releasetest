@@ -2,7 +2,7 @@
 
 #
 APPNAME=blogapp
-BASEDIR=`pwd`/`dirname $0`
+BASEDIR=$(cd $(dirname $0) && pwd)
 APPROOT=$BASEDIR/$APPNAME
 WORKDIR=$APPROOT/_work.$$
 DBFILE=$APPROOT/db/dbfile
@@ -94,6 +94,7 @@ if [ -d "$APPNAME" ]; then
   rm -rf $APPNAME
 fi
 
+# SQL
 $TSPAWN new $APPNAME
 sqlite3 $DBFILE < create_blog_table.sql || exit
 
@@ -111,6 +112,7 @@ make || exit
 $TREEFROG --show-routes || exit
 $TREEFROG --settings || exit
 
+# Test
 testcase
 cd $APPROOT
 rm -f lib/*
@@ -126,10 +128,13 @@ make -j4 -C build
 make -C build || exit
 cd $APPROOT
 $TREEFROG --show-routes || exit
+$TREEFROG --settings || exit
 
+# SQL
 cd $BASEDIR
 sqlite3 $DBFILE < create_blog_table.sql || exit
 
+# Test
 testcase
 cd $APPROOT
 rm -f lib/*
@@ -144,6 +149,7 @@ qmake -r || exit
 make -j4
 make || exit
 $TREEFROG --show-routes || exit
+$TREEFROG --settings || exit
 $TREEFROG -k abort
 rm -f lib/*
 make distclean
