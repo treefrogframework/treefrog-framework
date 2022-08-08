@@ -8,12 +8,12 @@ on:
 
 jobs:
   build-ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
-        sudo apt-get update
+        sudo apt-get update -qq
         sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
     - name: qmake version
       run: rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake; qmake -v
@@ -34,12 +34,12 @@ jobs:
         tools/test/releasetest/releasetest
 
   build-ubuntu-mongoc:
-    runs-on: ubuntu-latest-mongoc
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
-        sudo apt-get update
+        sudo apt-get update -qq
         sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
     - name: qmake version
       run: rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake; qmake -v
