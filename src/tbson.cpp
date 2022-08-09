@@ -14,7 +14,7 @@
 #include <TBson>
 #include <atomic>
 extern "C" {
-#include <bson.h>
+#include <bson/bson.h>
 }
 
 /*!
