@@ -12,6 +12,13 @@
 #include <QWriteLocker>
 
 
+/*!
+  \class TCacheMemoryStore
+  \brief The TCacheMemoryStore class represents a memory store for cache on
+         the server process.
+*/
+
+
 static QMap<QByteArray, QPair<qint64, QByteArray>> memmap;
 static QReadWriteLock lock;
 
@@ -40,7 +47,7 @@ QByteArray TCacheMemoryStore::get(const QByteArray &key)
     if (val.first < QDateTime::currentDateTime().toMSecsSinceEpoch()) {
         return QByteArray();
     }
-    return Tf::lz4Uncompress(val.second);
+    return val.second;
 }
 
 
@@ -48,8 +55,7 @@ bool TCacheMemoryStore::set(const QByteArray &key, const QByteArray &value, int 
 {
     QWriteLocker locker(&lock);
     qint64 expire = QDateTime::currentDateTime().toMSecsSinceEpoch() + seconds * 1000;
-    QByteArray cmp = Tf::lz4Compress(value, 1);
-    memmap.insert(key, QPair<qint64, QByteArray>(expire, cmp));
+    memmap.insert(key, QPair<qint64, QByteArray>(expire, value));
     return true;
 }
 
