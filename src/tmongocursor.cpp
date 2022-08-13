@@ -28,12 +28,12 @@ bool TMongoCursor::next()
 {
     bool ret = false;
     bson_error_t error;
-    bsonDoc = nullptr;
+    _bsonDoc = nullptr;
 
-    if (mongoCursor) {
-        ret = mongoc_cursor_next(mongoCursor, (const bson_t **)&bsonDoc);
+    if (_mongoCursor) {
+        ret = mongoc_cursor_next(_mongoCursor, (const bson_t **)&_bsonDoc);
         if (!ret) {
-            if (mongoc_cursor_error(mongoCursor, &error)) {
+            if (mongoc_cursor_error(_mongoCursor, &error)) {
                 tSystemError("MongoDB Cursor Error: %s", error.message);
             }
         }
@@ -44,7 +44,7 @@ bool TMongoCursor::next()
 
 QVariantMap TMongoCursor::value() const
 {
-    return (mongoCursor && bsonDoc) ? TBson::fromBson(bsonDoc) : QVariantMap();
+    return (_mongoCursor && _bsonDoc) ? TBson::fromBson(_bsonDoc) : QVariantMap();
 }
 
 
@@ -60,16 +60,16 @@ QVariantList TMongoCursor::toList()
 
 void TMongoCursor::release()
 {
-    if (mongoCursor) {
-        mongoc_cursor_destroy(mongoCursor);
-        mongoCursor = nullptr;
+    if (_mongoCursor) {
+        mongoc_cursor_destroy(_mongoCursor);
+        _mongoCursor = nullptr;
     }
-    bsonDoc = nullptr;
+    _bsonDoc = nullptr;
 }
 
 
 void TMongoCursor::setCursor(void *cursor)
 {
     release();
-    mongoCursor = (mongoc_cursor_t *)cursor;
+    _mongoCursor = (mongoc_cursor_t *)cursor;
 }

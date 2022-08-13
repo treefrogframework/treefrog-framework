@@ -29,32 +29,28 @@ public:
     bool removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     bool removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     qint64 count(const QString &collection, const QVariantMap &criteria);
-    int lastErrorDomain() const { return errorDomain; }
-    int lastErrorCode() const { return errorCode; }
-    QString lastErrorString() const { return errorString; }
+    int lastErrorDomain() const { return _errorDomain; }
+    int lastErrorCode() const { return _errorCode; }
+    QString lastErrorString() const { return _errorString; }
     QStringList getCollectionNames();
     QString serverVersion();
     int serverVersionNumber();
 
-    TMongoCursor &cursor() { return *mongoCursor; }
-    const TMongoCursor &cursor() const { return *mongoCursor; }
+    TMongoCursor &cursor() { return *_mongoCursor; }
+    const TMongoCursor &cursor() const { return *_mongoCursor; }
 
 private:
-    typedef struct _bson_error_t bson_error_t;
-    typedef struct _mongoc_client_t mongoc_client_t;
-
     void clearError();
-    void setLastError(const bson_error_t *error);
+    void setLastError(const void *error);
 
-    mongoc_client_t *mongoClient {nullptr};
-    TMongoCursor *mongoCursor {nullptr};
-    QString dbName;
-    int serverVerionNumber {-1};
-    int errorDomain {0};
-    int errorCode {0};
-    QString errorString;
+    void *_mongoClient {nullptr};
+    TMongoCursor *_mongoCursor {nullptr};
+    QString _dbName;
+    int _serverVerionNumber {-1};
+    int _errorDomain {0};
+    int _errorCode {0};
+    QString _errorString;
 
     T_DISABLE_COPY(TMongoDriver)
     T_DISABLE_MOVE(TMongoDriver)
 };
-
