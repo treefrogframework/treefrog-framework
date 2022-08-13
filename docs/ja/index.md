@@ -40,11 +40,16 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2021/12/31  TreeFrog Framework バージョン2.3.1 （安定版）リリース <span style="color: red;">New!</span>
+### 2022/8/13  TreeFrog Framework バージョン2.4.0 （安定版）リリース <span style="color: red;">New!</span>
 
- - Qt 6.3 でのコンパイルエラーを解消
+ - キャッシュ用のメモリストアを実装
+ - Mongo C ドライバをバージョン1.21.2に更新
 
  [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2022/5/28  TreeFrog Framework バージョン2.3.1 （安定版）リリース
+
+ - Qt 6.3 でのコンパイルエラーを解消
 
 ### 2021/12/31  TreeFrog Framework バージョン2.3 （安定版）リリース
 

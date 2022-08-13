@@ -1,9 +1,9 @@
 @echo OFF
 @setlocal
 
-set VERSION=2.3.1
+set VERSION=2.4.0
 set TFDIR=C:\TreeFrog\%VERSION%
-set MONBOC_VERSION=1.9.5
+set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.3
 set BASEDIR=%~dp0
 
@@ -167,33 +167,19 @@ rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 
-cd %BASEDIR%3rdparty\mongo-driver\src\libbson
-del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
-cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_TESTS=OFF .
-echo Compiling BSON library ...
-devenv libbson.sln /project bson_static /rebuild Release >nul 2>&1
-if ERRORLEVEL 1 (
-  :: Shows error
-  devenv libbson.sln /project bson_static /build Release
-  echo;
-  echo Build failed.
-  echo MongoDB driver not available.
-  exit /b
-)
-
 cd %BASEDIR%3rdparty\mongo-driver
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
-set CMAKECMD=cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_TESTS=OFF .
+set CMAKECMD=cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF .
 echo %CMAKECMD%
 %CMAKECMD%
 
 echo Compiling MongoDB driver library ...
-set DEVENVCMD=devenv libmongoc.sln /project mongoc_static /rebuild Release >nul 2>&1
+set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 echo %DEVENVCMD%
-%DEVENVCMD%
+%DEVENVCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  devenv libmongoc.sln /project mongoc_static /build Release
+  %DEVENVCMD%
   echo;
   echo Build failed.
   echo MongoDB driver not available.
@@ -212,12 +198,12 @@ if not ERRORLEVEL 1 (
 ) else (
   set VS=VS2017
 )
-set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%" >nul 2>&1
+set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
 echo %DEVENVCMD%
-%DEVENVCMD%
+%DEVENVCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  devenv lz4\build\%VS%\lz4.sln /project liblz4 /build "Release|%BUILDTARGET%"
+  %DEVENVCMD%
   echo;
   echo Build failed.
   echo LZ4 not available.

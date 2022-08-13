@@ -74,7 +74,7 @@ We are going to put the database files in the DB directory.
  sqlite> .quit
 ```
 
-A blog table is created with the fields:  id, title, body, created_at, updated_at, and lock_revision.
+A blog table is created with the fields: id, title, body, created_at, updated_at, and lock_revision.
 
 With the fields updated_at and created_at, TreeFrog will automatically insert the date and time of creation and of each update. The lock_revision field, which is intended for use with optimistic locking, needs to be created as an integer type.
 
@@ -85,7 +85,7 @@ See the section on O/R mapping for more information.
 
 ## Set the Database Information
 
-Use *config/database.ini* to set information about the database.<br>
+Use _config/database.ini_ to set information about the database.<br>
 Open the file in the editor, enter the appropriate values for your environment to each item in the [dev] section, and then click Save.
 
 Example in MySQL:
@@ -153,13 +153,15 @@ The pre-built SQL driver can be used for SQLite, although the SQLite driver can 
 
 ## Specifying a Template System
 
-In TreeFrog Framework, we can specify either Otama or ERB as a template system. We will set the TemplateSystem parameter in the *development.ini* file.
+In TreeFrog Framework, we can specify either Otama or ERB as a template system. We will set the TemplateSystem parameter in the _development.ini_ file.
 
 ```
 TemplateSystem=ERB
   or
 TemplateSystem=Otama
 ```
+
+ERB is specified by default.
 
 ## Automatic Generation of Code Created from the Table
 
@@ -182,18 +184,28 @@ From the command line, run the command generator (tspawn) which will generate th
  　　:
 ```
 
-With the tspawn options you can generate/update the model/view.
+Depending on the tspawn option, only controllers or models can be generated.
 
-Help of the tspawn command:
+### Vue.js support
+
+In version 2 and later, it is possible to choose to generate views using [vue.js](https://vuejs.org/).
+
+```
+  :
+ Create sources for vue.js? [y/n] y    ← Enter 'y'
+```
+
+### Reference: Help for tspawn command
+
 ```
  $ tspawn --help
  usage: tspawn <subcommand> [args]
- 
+
  Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
  Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
  Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
  Type 'tspawn --show-collections' to show all collections in the MongoDB.
- 
+
  Available subcommands:
    new (n)         <application-name>
    scaffold (s)    <table-name> [model-name]
@@ -241,13 +253,13 @@ Change to the root directory of the application before starting the application 
  $ treefrog -e dev
 ```
 
-In Windows, start by using *treefrog**d**.exe*.
+In Windows, start by using _treefrog**d**.exe_.
 
 ```
 > treefrogd.exe -e dev
 ```
 
-In Windows, start by using treefroge**d**.exe when you build web applications in debug mode, and start by using treefrog.exe when you want to build a web application in release mode. 
+In Windows, start by using treefroge**d**.exe when you build web applications in debug mode, and start by using treefrog.exe when you want to build a web application in release mode.
 
 ##### Release and debug modes should not be mixed, as the result will not work properly.
 
@@ -257,15 +269,15 @@ If you want it to run in the background, use the option -d together with any oth
  $ treefrog -d -e dev
 ```
 
-The command option '-e'  appears in the above examples. When this is followed by a **section name** that you have specified in database.ini before, it can be used to change the database settings. If no section name is specified it is assumed that the command refers to a product (when the project is being made, the following three sections are predefined).
+The command option '-e' appears in the above examples. When this is followed by a **section name** that you have specified in database.ini before, it can be used to change the database settings. If no section name is specified it is assumed that the command refers to a product (when the project is being made, the following three sections are predefined).
 
 <div class="table-div" markdown="1">
 
-| Section | Description |
-| ------- | ------------|
-| dev	  | For generator, development |
-| test	  | For test |
-| product |	For official version, production version |
+| Section | Description                              |
+| ------- | ---------------------------------------- |
+| dev     | For generator, development               |
+| test    | For test                                 |
+| product | For official version, production version |
 
 </div>
 
@@ -291,7 +303,8 @@ Restart command:
 
 If the firewall is in place, make sure that the correct port is open (the default is port 8800).
 
-For reference, the following command shows the current URL routing information.
+The following command shows the current URL routing information.
+
 ```
  $ treefrog --show-routes
  Available controllers:
@@ -300,6 +313,28 @@ For reference, the following command shows the current URL routing information.
    match   /blog/create  ->  blogcontroller.create()
    match   /blog/save/:param  ->  blogcontroller.save(id)
    match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```
+
+### Reference: Help for treefrog command
+
+```
+$ treefrog -h
+Usage: treefrog [-d] [-p port] [-e environment] [-r] [app-directory]
+Usage: treefrog -k [stop|abort|restart|status] [app-directory]
+Usage: treefrog -m [app-directory]
+Options:
+  -d              : run as a daemon process
+  -p port         : run server on specified port
+  -e environment  : specify an environment of the database settings
+  -k              : send signal to a manager process
+  -m              : show the process ID of a running main program
+  -r              : reload app automatically when updated (for development)
+
+Type 'treefrog --show-routes [app-directory]' to show routing information.
+Type 'treefrog --settings [app-directory]' to show application settings.
+Type 'treefrog -l' to show your running applications.
+Type 'treefrog -h' to show this information.
+Type 'treefrog -v' to show the program version.
 ```
 
 ## Browser Access
@@ -325,7 +360,7 @@ When two items are registered the options show, edit, and remove become visible.
 TreeFrog is equipped with a call method mechanism (Routing system) for the appropriate controller from the requested URL to the action (as well as other frameworks).<br>
 Developed source code can work on other platforms, if it is re-built.
 
-To see a sample Web application. You can watch it [here](http://blogapp.treefrogframework.org/Blog){:target="_blank"}.<br>
+To see a sample Web application. You can watch it [here](http://blogapp.treefrogframework.org/Blog){:target="\_blank"}.<br>
 You can play with this and it will respond at the same speed as the average desktop application.
 
 ## Source Code of Controller
@@ -333,7 +368,7 @@ You can play with this and it will respond at the same speed as the average desk
 Let's take a look at the contents of the controller which is generated.<br>
 First, the header file. There are several charm codes, but these are required for sending by URL.
 
-The purpose of public slots is to declare the actions (methods) you want to send. Actions corresponding to the [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete){:target="_blank"} are defined. Incidentally, the slots keyword is a feature of the Qt extension. Please see the Qt documentation for more details.
+The purpose of public slots is to declare the actions (methods) you want to send. Actions corresponding to the [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete){:target="\_blank"} are defined. Incidentally, the slots keyword is a feature of the Qt extension. Please see the Qt documentation for more details.
 
 ```c++
 class T_CONTROLLER_EXPORT BlogController : public ApplicationController {
@@ -346,7 +381,7 @@ public slots:
 };
 ```
 
-Next, explain the source file. The controller is responsible for invoking the view on request. Calls the service and depending on the result, it calls the template logic with the render() function or redirects with the redirect() function. 
+Next, explain the source file. The controller is responsible for invoking the view on request. Calls the service and depending on the result, it calls the template logic with the render() function or redirects with the redirect() function.
 It is important to **write the main processing in the service class and keep the controller logic simple**.
 
 ```c++
@@ -399,7 +434,7 @@ void BlogController::save(const QString &id)
     case Tf::Post:
         res = service.save(request(), session(), id.toInt());  // Calls the service
         if (res > 0) {
-            // Save completed 
+            // Save completed
             redirect(urla("show", id));  // Redirects to /blog/show
         } else if (res < 0) {
             // Failed
@@ -514,7 +549,7 @@ As you can see, you can use the texport method to pass data to the view (templat
 
 Two template systems have been incorporated into TreeFrog so far. These are the proprietary system (called Otama) and ERB. As is familiar from Rails, ERB is used for embedding into HTML.
 
-The default view that is automatically generated by the generator is an ERB file. So, let's take a look at the contents of index.erb. As you can see, the C++ code is surrounded by <% … %>.  When the render method is called from the index action, the content of index.erb is returned as the response.
+The default view that is automatically generated by the generator is an ERB file. So, let's take a look at the contents of index.erb. As you can see, the C++ code is surrounded by <% … %>. When the render method is called from the index action, the content of index.erb is returned as the response.
 
 ```
 <!DOCTYPE HTML>
@@ -555,7 +590,7 @@ The default view that is automatically generated by the generator is an ERB file
 
 Otama is a template system that completely separates the presentation logic from the templates. The template is written in HTML and a "mark" element is inserted as the start tag of the section to be rewritten dynamically. The presentation logic file, written in C++ code, provides the logic in relation to the "mark".
 
-The following example is a file, *index.html*, that is generated by the generator when it is specified in the Otama template system. This can include the file data, but you will see, if you open it in your browser as it is, because it uses HTML5, the design does not collapse at all without the data.
+The following example is a file, _index.html_, that is generated by the generator when it is specified in the Otama template system. This can include the file data, but you will see, if you open it in your browser as it is, because it uses HTML5, the design does not collapse at all without the data.
 
 ```
 <!DOCTYPE HTML>
@@ -595,7 +630,7 @@ A custom attribute called 'data-tf' is used to turn on the "mark". This is a Cus
 Next, let's look at the index.otm corresponding to the presentation logic.<br>
 The mark, which links to the associated logic, is declared in the above template, and continues in effect until a blank line is encountered. The logic is contained in the C++ part of the code.
 
-Operators (such as == ~ =) are also used. The operators control different behaviors  (for more information see the following chapters).
+Operators (such as == ~ =) are also used. The operators control different behaviors (for more information see the following chapters).
 
 ```c++
 #include "blog.h"  ← This is as it is C++ code to include the blog.h
@@ -622,14 +657,14 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 ```
 
 The Otama operators, (and their combinations) are fairly simple:<br>
-\~  (tilde) sets the content of marked elements to the result of the right-hand side,
-\=  output the HTML escape, therefore ~= sets the content of the element to the results of the right-hand side then HTML-escape, if you don't want to escape HTML, you can use  ~==.
+\~ (tilde) sets the content of marked elements to the result of the right-hand side,
+\= output the HTML escape, therefore ~= sets the content of the element to the results of the right-hand side then HTML-escape, if you don't want to escape HTML, you can use ~==.
 
 \: (colon) replaces the result of the right-hand child elements and the elements that are marked, therefore :== replaces the element without HTML escape.
 
 ### Passing Data from the Service or the Controller to the View
 
-In order to use the exported data (objects) in the view, you need to declare its variables by the tfetch() function. For the argument, specify  type of the variable and the variable name. The variables are the same state as immediately before the specified variables are exported, and can be used exactly the same way as a normal variable of C++.
+In order to use the exported data (objects) in the view, you need to declare its variables by the tfetch() function. For the argument, specify type of the variable and the variable name. The variables are the same state as immediately before the specified variables are exported, and can be used exactly the same way as a normal variable of C++.
 
 Here is an example in use :
 
@@ -648,8 +683,7 @@ The Otama system, generates the C++ code based on the presentation file and the 
 #### HTML Glossary
 
 An HTML element consists of three components, a start tag, the content, end an tag. For example, in the typical HTML element,
-"\<p\>Hello\</p\>",  \<p\> is the start tag, Hello is the content, and \</p\> is the end tag.
-
+"\<p\>Hello\</p\>", \<p\> is the start tag, Hello is the content, and \</p\> is the end tag.
 
 ## Model and ORM
 
@@ -703,7 +737,7 @@ private:    /*** Don't modify below this line ***/
 There are methods to query and update the primary key in the TreeFrog's O/R mapper, but the primary key SqlObject can have only one return primaryKeyIndex() method. Therefore, any table with multiple primary keys should be corrected to return one only. It is also possible to issue more complex queries by using the TCriteria class condition. Please see following chapters for details.
 
 Next, let's look at the model.<br>
-The setter/getter for each property and static method of generation/acquisition of the object are defined.  The parent class TAbstractModel defines the methods to save and to remove, because of this, the Blog class is equipped with the CRUD methods (*create, get, save, remove*) .
+The setter/getter for each property and static method of generation/acquisition of the object are defined. The parent class TAbstractModel defines the methods to save and to remove, because of this, the Blog class is equipped with the CRUD methods (_create, get, save, remove_) .
 
 ```c++
 class T_MODEL_EXPORT Blog : public TAbstractModel
@@ -753,7 +787,6 @@ Despite the fact that the number of code steps automatically generated by the ge
 Of course, automatically generated code is not perfect. Real life applications may need to be more complex. The code may not be sufficient as generated, thus some reworking may be necessary. Nevertheless, the generator will save a little time and effort in writing code.
 
 In the background, the code as described above also functions to provide; CSRF measures with cookie tampering check, optimistic locking, and token authentication against SQL Injection. If you are interested, please look into the source.
-
 
 ## Video Demo – Sample Blog Application Creation
 

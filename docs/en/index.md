@@ -37,13 +37,20 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
-May 28, 2022
+Aug. 13, 2022
 
-### TreeFrog Framework version 2.3.1 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.4.0 (stable) release <span style="color: red;">New!</span>
 
- - Fix compilation errors on Qt 6.3.
+ - Implemented memory store for cache.
+ - Updated Mongo C driver to v1.21.2.
 
   [<i class="fas fa-download"></i> Download this version](/en/download/)
+
+May 28, 2022
+
+### TreeFrog Framework version 2.3.1 (stable) release
+
+ - Fix compilation errors on Qt 6.3.
 
 Dec. 31, 2021
 

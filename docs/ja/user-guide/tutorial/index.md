@@ -31,7 +31,7 @@ blogapp という名でスケルトン（ディレクトリツリーと各種設
 ここでは、MySQL と SQLite の例を示します。
 
 **MySQL の例：**<br>
-文字セットは UTF-8 に設定します。データベースの設定ファイルでその指定するか（正しく設定されたか確認しましょう。[FAQ 参照](http://www.treefrogframework.org/ja/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/faq){:target="_target"}）、下記のようにデータベースを生成する際に指定することもできます。また、mysql コマンドラインツールにパスを通しておいてください。
+文字セットは UTF-8 に設定します。データベースの設定ファイルでその指定するか（正しく設定されたか確認しましょう。[FAQ 参照](http://www.treefrogframework.org/ja/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/faq){:target="\_target"}）、下記のようにデータベースを生成する際に指定することもできます。また、mysql コマンドラインツールにパスを通しておいてください。
 
 ```
  $ mysql -u root -p
@@ -65,7 +65,7 @@ blogapp という名でスケルトン（ディレクトリツリーと各種設
 ```
 
 **SQLite の例：**<br>
-データベースファイルはdb ディレクトリに置くことにします。
+データベースファイルは db ディレクトリに置くことにします。
 
 ```
  $ cd blogapp
@@ -81,7 +81,7 @@ created_at と updated_at のフィールドがあると、TreeFrog はそれぞ
 
 ### 楽観的ロック (Optimistic Lock)
 
-楽観的ロックとは、更新の時に行ロックをかけず、他から更新されていないことを検証しつつデータを保存することです。実際のロックはかけないので、処理速度の向上がちょっとだけ期待できます。詳細は[O/Rマッピングの章]({{ site.baseurl }}/ja/user-guide/model/or-mapping.html){:target="_blank"}をご覧ください。
+楽観的ロックとは、更新の時に行ロックをかけず、他から更新されていないことを検証しつつデータを保存することです。実際のロックはかけないので、処理速度の向上がちょっとだけ期待できます。詳細は[O/R マッピングの章]({{ site.baseurl }}/ja/user-guide/model/or-mapping.html){:target="\_blank"}をご覧ください。
 
 ## データベースの情報を設定
 
@@ -114,7 +114,7 @@ SQLite の例：
  ConnectOptions=
 ```
 
-正しく設定されたか、DBにアクセスしてテーブルを表示してみましょう。
+正しく設定されたか、DB にアクセスしてテーブルを表示してみましょう。
 
 ```
  $ cd blogapp
@@ -130,15 +130,15 @@ SQLite の例：
 
 このように表示されれば成功です。
 
-もし 使用する SQL ドライバがQt SDK に組み込まれていないと、ここでエラーが発生します。
+もし 使用する SQL ドライバが Qt SDK に組み込まれていないと、ここでエラーが発生します。
 
 ```
  QSqlDatabase: QMYSQL driver not loaded
 ```
 
-QtのSQLドライバがインストールされていない可能性があります。RDBMのQtドライバをインストールしてください。
+Qt の SQL ドライバがインストールされていない可能性があります。RDBM の Qt ドライバをインストールしてください。
 
-組み込まれたSQLドライバは次のコマンドで確認することができます。
+組み込まれた SQL ドライバは次のコマンドで確認することができます。
 
 ```
  $ tspawn --show-drivers
@@ -155,7 +155,7 @@ SQLite の SQL ドライバはあらかじめ組み込まれているので、�
 ## テンプレートシステムの指定
 
 TreeFrog Framework では、テンプレートシステムとして ERB と Otama のどちらかを指定します。
-*development.ini* ファイルにある TemplateSystem パラメータに設定します。
+_development.ini_ ファイルにある TemplateSystem パラメータに設定します。
 
 ```
  TemplateSystem=ERB
@@ -163,9 +163,11 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
  TemplateSystem=Otama
 ```
 
+デフォルトでは ERB が指定されます。
+
 ## 作ったテーブルからコードを自動生成
 
-コマンドラインから、ジェネレータコマンド（*tspawn*）を実行し、ベースとなるコードを生成します。下記の例ではコントローラ、モデル、ビューを生成しています。引数には、テーブル名を指定します。
+コマンドラインから、ジェネレータコマンド（_tspawn_）を実行し、ベースとなるコードを生成します。下記の例ではコントローラ、モデル、ビューを生成しています。引数には、テーブル名を指定します。
 
 ```
  $ tspawn scaffold blog
@@ -184,18 +186,28 @@ TreeFrog Framework では、テンプレートシステムとして ERB と Otam
  　 　:
 ```
 
-※ tspawn の オプションによって、コントローラだけ、あるいはモデルだけ生成するように変えられます。
+tspawn の オプションによって、コントローラだけあるいはモデルだけを生成することができます。
 
-参考：tspawnコマンドのヘルプ
+### Vue.js サポート
+
+バージョン 2 以降、[vue.js](https://vuejs.org/) を使用したビューを生成することを選択することが可能です。
+
+```
+  :
+ Create sources for vue.js? [y/n] y    ← yを入力
+```
+
+### 参考：tspawn コマンドヘルプ
+
 ```
  $ tspawn --help
  usage: tspawn <subcommand> [args]
- 
+
  Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
  Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
  Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
  Type 'tspawn --show-collections' to show all collections in the MongoDB.
- 
+
  Available subcommands:
    new (n)         <application-name>
    scaffold (s)    <table-name> [model-name]
@@ -228,9 +240,9 @@ WARNING メッセージが表示されますが、問題はありません。そ
 ```
 
 ビルドが成功すると、４つの共有ライブラリ（controller, model, view, helper）が lib ディレクトリに作られます。<br>
-デフォルトでは、デバッグモードのライブラリが生成されますが、リリースモードのライブラリを作成するには次のコマンドでMakefileを再生成すればよいでしょう。
+デフォルトでは、デバッグモードのライブラリが生成されますが、リリースモードのライブラリを作成するには次のコマンドで Makefile を再生成すればよいでしょう。
 
-リリースモードのMakefile作成：
+リリースモードの Makefile 作成：
 
 ```
  $ qmake -r "CONFIG+=release"
@@ -238,20 +250,21 @@ WARNING メッセージが表示されますが、問題はありません。そ
 
 ## アプリケーションサーバを起動
 
-アプリケーションのルートディレクトリに移り、アプリケーションサーバ（APサーバ）を起動します。<br>
+アプリケーションのルートディレクトリに移り、アプリケーションサーバ（AP サーバ）を起動します。<br>
 サーバは、コマンドが実行されたディレクトリをアプリケーションルートディレクトリと見なして処理を始めます。サーバを止めるときは、Ctrl+c を押します。
 
 ```
  $ treefrog -e dev
 ```
 
-Windows では、*treefrog**d**.exe* を使って起動します。
+Windows では、_treefrog**d**.exe_ を使って起動します。
 
 ```
  > treefrogd.exe -e dev
 ```
 
-Windows では、Web アプリケーションをデバッグモードでビルドした場合は *treefrog**d**.exe* を、リリースモードでビルドした場合は *treefrog.exe* を使って起動してください。<br>
+Windows では、Web アプリケーションをデバッグモードでビルドした場合は _treefrog**d**.exe_ を、リリースモードでビルドした場合は _treefrog.exe_ を使って起動してください。<br>
+
 ##### リリースモードとデバッグモードのオブジェクトが混在すると、正常に動作しません。
 
 バックグランドで起動する場合は、-d オプションを指定します。
@@ -265,11 +278,11 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 
 <div class="table-div" markdown="1">
 
-| セクション | 説明 |
-| ------- | ------------|
-| dev	  | 開発用、ジェネレータ用 |
-| test	  | テスト用 |
-| product |	正式版用、製品版用 |
+| セクション | 説明                   |
+| ---------- | ---------------------- |
+| dev        | 開発用、ジェネレータ用 |
+| test       | テスト用               |
+| product    | 正式版用、製品版用     |
 
 </div>
 
@@ -295,7 +308,8 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 
 ★ もしファイヤーウォールが設定されている場合は、ポート（デフォルト：8800）を開けてください。
 
-参考までに、次のコマンドでURLルーティングを確認できます。
+次のコマンドで URL ルーティングを確認できます。
+
 ```
  $ treefrog --show-routes
  Available controllers:
@@ -304,6 +318,28 @@ Windows では、Web アプリケーションをデバッグモードでビル�
    match   /blog/create  ->  blogcontroller.create()
    match   /blog/save/:param  ->  blogcontroller.save(id)
    match   /blog/remove/:param  ->  blogcontroller.remove(id)
+```
+
+### 参考：treefrogコマンドのヘルプ
+
+```
+$ treefrog -h
+Usage: treefrog [-d] [-p port] [-e environment] [-r] [app-directory]
+Usage: treefrog -k [stop|abort|restart|status] [app-directory]
+Usage: treefrog -m [app-directory]
+Options:
+  -d              : run as a daemon process
+  -p port         : run server on specified port
+  -e environment  : specify an environment of the database settings
+  -k              : send signal to a manager process
+  -m              : show the process ID of a running main program
+  -r              : reload app automatically when updated (for development)
+
+Type 'treefrog --show-routes [app-directory]' to show routing information.
+Type 'treefrog --settings [app-directory]' to show application settings.
+Type 'treefrog -l' to show your running applications.
+Type 'treefrog -h' to show this information.
+Type 'treefrog -v' to show the program version.
 ```
 
 ## ブラウザでアクセス
@@ -331,13 +367,13 @@ Windows では、Web アプリケーションをデバッグモードでビル�
 他のフレームワークと同様に TreeFrog においても、リクエストされた URL から該当するコントローラのメソッド（アクション）を呼び出す仕組み（ルーティングシステム）が備わっています。<br>
 開発したソースコードはビルドしなおせば、他のプラットフォームでも動作します。
 
-このサンプルWebアプリケーションを公開してます。[ここにアクセスして](http://blogapp.treefrogframework.org/Blog){:target="_blank"}、遊んでみてください。デスクトップアプリケーション並の速さです。
+このサンプル Web アプリケーションを公開してます。[ここにアクセスして](http://blogapp.treefrogframework.org/Blog){:target="\_blank"}、遊んでみてください。デスクトップアプリケーション並の速さです。
 
 ## コントローラの中身　
 
 生成されたコントローラの中身を見てみましょう。<br>
-*public slots* の部分に、ディスパッチさせたいアクション（メソッド）を宣言するのがポイントです。そこには [CRUD](https://ja.wikipedia.org/wiki/CRUD){:target="_blank"} に相当するアクションが定義されていますね。<br>
-ちなみに、*slots* キーワードは Qt  による機能拡張のものです。詳細は Qt ドキュメントをご覧ください。
+_public slots_ の部分に、ディスパッチさせたいアクション（メソッド）を宣言するのがポイントです。そこには [CRUD](https://ja.wikipedia.org/wiki/CRUD){:target="\_blank"} に相当するアクションが定義されていますね。<br>
+ちなみに、_slots_ キーワードは Qt による機能拡張のものです。詳細は Qt ドキュメントをご覧ください。
 
 ```c++
 class T_CONTROLLER_EXPORT BlogController : public ApplicationController {
@@ -351,9 +387,8 @@ public slots:
 };
 ```
 
-次はソースファイルです。コントローラはリクエストに応じてビューを呼び出す役割を担っています。サービスを呼び出し、その結果に応じてrender関数でテンプレートを呼び出したり、redirect()関数でリダイレクトさせたりします。
+次はソースファイルです。コントローラはリクエストに応じてビューを呼び出す役割を担っています。サービスを呼び出し、その結果に応じて render 関数でテンプレートを呼び出したり、redirect()関数でリダイレクトさせたりします。
 主要な処理はサービスクラスで行い、コントローラのロジックはシンプルにすることが重要です。
-
 
 ```c++
 static BlogService service;
@@ -494,7 +529,7 @@ int BlogService::save(THttpRequest &request, TSession &session, int id)
     auto blog = request.formItems("blog");  // フォームデータを取得
     model.setProperties(blog);              // フォームデータを設定
     if (!model.save()) {                    // DBに保存
-        texport(blog);                      
+        texport(blog);
         QString error = "Failed to update.";
         texport(error);
         return -1;
@@ -514,14 +549,14 @@ bool BlogService::remove(int id)
 
 ※ ロックリビジョンは楽観的ロックを実現するために使用されます。詳細は「モデル」の章で後述します。
 
-ご覧のとおり、ビュー（テンプレート）に対してデータを渡すには  texport メソッドを使います。この texport メソッドの引数は QVariant のオブジェクトです。QVariant はあらゆる型になりえるので、int, QString, QList, QHash はもちろん任意のオブジェクトが渡せます。QVariant の詳細は Qt ドキュメントを参照ください。
+ご覧のとおり、ビュー（テンプレート）に対してデータを渡すには texport メソッドを使います。この texport メソッドの引数は QVariant のオブジェクトです。QVariant はあらゆる型になりえるので、int, QString, QList, QHash はもちろん任意のオブジェクトが渡せます。QVariant の詳細は Qt ドキュメントを参照ください。
 
 ## ビューの仕組み
 
-TreeFrog では、今のところ２つのテンプレートシステムを採用しています。ERB と 独自システム（Otama と呼んでいます）です。Rails などで知られているとおり、ERB はHTMLにコードを埋め込むものです。
+TreeFrog では、今のところ２つのテンプレートシステムを採用しています。ERB と 独自システム（Otama と呼んでいます）です。Rails などで知られているとおり、ERB は HTML にコードを埋め込むものです。
 
-ジェネレータで自動生成されるデフォルトのビューは ERBのファイルです。index.erb の中身を見てみましょう。<br>
-ご覧のように <% .. %> で囲まれた部分にC++コードを書きます。index アクションから render メソッドが呼び出されると、この index.erb の内容がレスポンスとして返されます。
+ジェネレータで自動生成されるデフォルトのビューは ERB のファイルです。index.erb の中身を見てみましょう。<br>
+ご覧のように <% .. %> で囲まれた部分に C++コードを書きます。index アクションから render メソッドが呼び出されると、この index.erb の内容がレスポンスとして返されます。
 
 ```
 <!DOCTYPE HTML>
@@ -560,9 +595,9 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
 
 **もう１つのテンプレートシステムも見てみましょう**
 
-Otama はテンプレートとプレゼンテーションロジックを完全に分離したテンプレートシステムです。HTMLテンプレートには完全な HTML を記述し、動的に書き換えたい部分の要素（開始タグ）に「マーク」をつけます。プレゼンテーションロジックファイルには、その「マーク」に関連づけてロジック（C++コード）を記述します。
+Otama はテンプレートとプレゼンテーションロジックを完全に分離したテンプレートシステムです。HTML テンプレートには完全な HTML を記述し、動的に書き換えたい部分の要素（開始タグ）に「マーク」をつけます。プレゼンテーションロジックファイルには、その「マーク」に関連づけてロジック（C++コード）を記述します。
 
-次の例は、テンプレートシステムに Otama を指定した時にジェネレータによって生成されるファイルです。ファイルを見ると分かりますが、HTML(バージョン5)に準拠しているので、今時のブラウザで開けばデザインは全く崩れません。
+次の例は、テンプレートシステムに Otama を指定した時にジェネレータによって生成されるファイルです。ファイルを見ると分かりますが、HTML(バージョン 5)に準拠しているので、今時のブラウザで開けばデザインは全く崩れません。
 
 ```
 <!DOCTYPE HTML>
@@ -598,7 +633,6 @@ Otama はテンプレートとプレゼンテーションロジックを完全�
 
 「マーク」をつけるために data-tf というカスタム属性を使っています。HTML5 でいうところの Custom Data Attribute のことです。その値の"@"で始まっている文字列が「マーク」です。
 
-
 次に、プレゼンテーションロジックに該当する index.otm を見てみましょう。<br>
 上記のテンプレートで宣言されたマークに、ロジックが関連づけられています。マークから空行までが１セットです。ロジックの部分はほぼ C++ コードです。<br>
 関連づけには演算子（~= とか :== など）も使われています。この演算子によって、振る舞いが変わります（詳細は各章で）。
@@ -629,9 +663,9 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 
 簡単に Otama 演算子を説明します。<br>
 ~ (チルダ)は、右辺の結果を、マークされた要素のコンテントに設定します。<br>
-= は、HTMLエスケープして出力します。<br>
-従って、~= は右辺の結果をHTMLエスケープし、要素のコンテントに設定します。HTMLエスケープしたくなかったら、~== を使います。<br>
-また、: (コロン)は、マークされた要素および子要素をその右辺の結果で置き換えます。従って、:== はHTMLエスケープせずに要素を置き換えます。
+= は、HTML エスケープして出力します。<br>
+従って、~= は右辺の結果を HTML エスケープし、要素のコンテントに設定します。HTML エスケープしたくなかったら、~== を使います。<br>
+また、: (コロン)は、マークされた要素および子要素をその右辺の結果で置き換えます。従って、:== は HTML エスケープせずに要素を置き換えます。
 
 ### サービスまたはコントローラからビューへのデータの引き渡し
 
@@ -652,9 +686,9 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
 
 Otama システムは、これらテンプレートファイルとプレゼンテーションファイルを元に C++ コードを生成します。内部的には、tmake がそれを処理しています。その後、コードはコンパイルされ、ビューとして１つの共有ライブラリになります。なので、動作は非常に高速です。
 
-#### HTML用語解説
+#### HTML 用語解説
 
-要素（element）は、開始タグ (Start-tag)、コンテント (Content)、終了タグ (End-tag) の3つで構成されます。例として "\<p>Hello\</p>" という要素があったとすると、\<p> が開始タグ、Hello がコンテント、\</p> が終了タグになります。<br>
+要素（element）は、開始タグ (Start-tag)、コンテント (Content)、終了タグ (End-tag) の 3 つで構成されます。例として "\<p>Hello\</p>" という要素があったとすると、\<p> が開始タグ、Hello がコンテント、\</p> が終了タグになります。<br>
 一般にコンテントのことを「内容」と呼ぶことの方が多いようですが、個人的に少々紛らわしいと思うので、ここではコンテントと書いています。
 
 ## モデルと ORM
@@ -662,9 +696,9 @@ Otama システムは、これらテンプレートファイルとプレゼン�
 TreeFrog では、モデルオブジェクトは永続化可能な概念を表現したデータの実体であり、ORM オブジェクトの小さいラッパーです。モデルが ORM オブジェクトを含むという関係なので、has-a の関係です（ただし、２つ以上の ORM オブジェクトを持つようなモデルを作っても構いません）。他のほとんどのフレームワークでは、デフォルトで 「ORM オブジェクト＝モデル」 になっていますから、ここは少し違っていますね。
 
 TreeFrog には SqlObject という名の O/R マッパーがデフォルトで組み込まれています。<br>
-C++ は静的型付け言語なので型の宣言が必要です。生成された SqlObject  ファイル blogobject.h を見てみましょう。
+C++ は静的型付け言語なので型の宣言が必要です。生成された SqlObject ファイル blogobject.h を見てみましょう。
 
-半分ほどおまじないコードがありますが、テーブルのフィールドがパブリックなメンバ変数として宣言されています。構造体に近いですね。たったこれだけで、CRUD 相当のメソッド(create, findFirst, update, remove) が使えるようになります。それらのメソッドは TSqlObject  クラスと TSqlORMapper クラスに定義されています。
+半分ほどおまじないコードがありますが、テーブルのフィールドがパブリックなメンバ変数として宣言されています。構造体に近いですね。たったこれだけで、CRUD 相当のメソッド(create, findFirst, update, remove) が使えるようになります。それらのメソッドは TSqlObject クラスと TSqlORMapper クラスに定義されています。
 
 ```c++
 class T_MODEL_EXPORT BlogObject : public TSqlObject, public QSharedData

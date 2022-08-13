@@ -2,6 +2,7 @@
 #include "tcachemongostore.h"
 #include "tcacheredisstore.h"
 #include "tcachesqlitestore.h"
+#include "tcachememorystore.h"
 #include "tsystemglobal.h"
 #include <QDir>
 #include <TAppSettings>
@@ -10,6 +11,7 @@ namespace {
 QString SQLITE_CACHE_KEY;
 QString MONGO_CACHE_KEY;
 QString REDIS_CACHE_KEY;
+QString MEMORY_CACHE_KEY;
 }
 
 
@@ -20,7 +22,8 @@ QStringList TCacheFactory::keys()
     QStringList ret;
     ret << SQLITE_CACHE_KEY
         << MONGO_CACHE_KEY
-        << REDIS_CACHE_KEY;
+        << REDIS_CACHE_KEY
+        << MEMORY_CACHE_KEY;
     return ret;
 }
 
@@ -37,6 +40,8 @@ TCacheStore *TCacheFactory::create(const QString &key)
         ptr = new TCacheMongoStore;
     } else if (k == REDIS_CACHE_KEY) {
         ptr = new TCacheRedisStore;
+    } else if (k == MEMORY_CACHE_KEY) {
+        ptr = new TCacheMemoryStore;
     } else {
         tSystemError("Not found cache store: %s", qUtf8Printable(key));
     }
@@ -56,6 +61,8 @@ void TCacheFactory::destroy(const QString &key, TCacheStore *store)
         delete store;
     } else if (k == REDIS_CACHE_KEY) {
         delete store;
+    } else if (k == MEMORY_CACHE_KEY) {
+        delete store;
     } else {
         delete store;
     }
@@ -74,6 +81,8 @@ QMap<QString, QVariant> TCacheFactory::defaultSettings(const QString &key)
         settings = TCacheMongoStore().defaultSettings();
     } else if (k == REDIS_CACHE_KEY) {
         settings = TCacheRedisStore().defaultSettings();
+    } else if (k == MEMORY_CACHE_KEY) {
+        settings = TCacheMemoryStore().defaultSettings();
     } else {
         // Invalid key
     }
@@ -101,6 +110,7 @@ bool TCacheFactory::loadCacheKeys()
         SQLITE_CACHE_KEY = TCacheSQLiteStore().key().toLower();
         MONGO_CACHE_KEY = TCacheMongoStore().key().toLower();
         REDIS_CACHE_KEY = TCacheRedisStore().key().toLower();
+        MEMORY_CACHE_KEY = TCacheMemoryStore().key().toLower();
         return true;
     }();
     return done;

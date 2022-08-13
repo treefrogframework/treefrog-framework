@@ -112,26 +112,34 @@ Database open successfully
 ```
 $ tspawn -h
 usage: tspawn <subcommand> [args]
+
+Type 'tspawn --show-drivers' to show all the available database drivers for Qt.
+Type 'tspawn --show-driver-path' to show the path of database drivers for Qt.
+Type 'tspawn --show-tables' to show all tables to user in the setting of 'dev'.
+Type 'tspawn --show-collections' to show all collections in the MongoDB.
+
 Available subcommands:
-  new (n)  <application-name>
-  scaffold (s)  <model-name>
-  controller (c)  <controller-name>
-  model (m)  <table-name>
-  sqlobject (o)  <table-name>
+  new (n)         <application-name>
+  scaffold (s)    <table-name> [model-name]
+  controller (c)  <controller-name> action [action ...]
+  model (m)       <table-name> [model-name]
+  helper (h)      <name>
+  usermodel (u)   <table-name> [username password [model-name]]
+  sqlobject (o)   <table-name> [model-name]
+  mongoscaffold (ms) <model-name>
+  mongomodel (mm) <model-name>
+  websocket (w)   <endpoint-name>
+  api (a)         <api-name>
+  validator (v)   <name>
+  mailer (l)      <mailer-name> action [action ...]
+  delete (d)      <table-name, helper-name or validator-name>
 ```
 
 如果你使用"controller", "model", "sqlobject"作为子命令, 将只会生成"controller", "model" 和 "SqlObject".
 
 ### 列
 
-Treefrog没有升级数据库的功能或者更改管理数据库表结构的机制. 基于以下原因,我认为它是不重要的:
-
-1. 如果我实现升级功能, 用户会有额外的学习成本.
-2. 这些是关于DB操作的完整功能的SQL 知识.
-3. 在Treefrog, 可以在表更改后重新生成ORM对象类.(不幸, 可能也会影响到Model类)
-4. 我认为对SQL命令进行框架差异管理是没有什么价值的。
-
-你是否同意这些观点?
+Treefrog没有升级数据库的功能或者更改管理数据库表结构的机制. 因此，如果有必要，建议使用DB模式的迁移工具.
 
 ## 名称转换
 
@@ -176,12 +184,12 @@ CRUD包括了网页应用的四个主要功能. 这个名称来自于四个单�
 
 <div class="table-div" markdown="1">
 
-|  | Action        | Model                               | ORM       | SQL       |
-|--|---------------|-------------------------------------|-----------|-----------|
-| C| create        | create() [static]<br>create()       | create()  | INSERT    |
-| R| index<br>show | get() [static]<br>getAll() [static] | find()    | SELECT    |
-| U| save          | save()<br>update()                  | update()  | UPDATE    |
-| D| remove        | remove()                            | remove()  | DELETE    |
+|   | Action        | Model                               | ORM       | SQL       |
+|---|---------------|-------------------------------------|-----------|-----------|
+| C | create        | create() [static]<br>create()       | create()  | INSERT    |
+| R | index<br>show | get() [static]<br>getAll() [static] | find()    | SELECT    |
+| U | save          | save()<br>update()                  | update()  | UPDATE    |
+| D | remove        | remove()                            | remove()  | DELETE    |
 
 </div><br>
 
