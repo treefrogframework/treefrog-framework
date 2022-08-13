@@ -15,6 +15,7 @@ function format
 
 sed -i -e "s/auto TF_VERSION_STR.*/auto TF_VERSION_STR = \"${TF_VER_MAJ}\.${TF_VER_MIN}\.${TF_VER_PAT}\";/" $FILE_PATH
 sed -i -e "s/auto TF_VERSION_NUMBER.*/auto TF_VERSION_NUMBER = 0x$(format ${TF_VER_MAJ})$(format ${TF_VER_MIN})$(format ${TF_VER_PAT});/" $FILE_PATH
+sed -i -e "s/AssemblyVersionAttribute(\".*\")/AssemblyVersionAttribute(\"${TF_VER_MAJ}\.${TF_VER_MIN}\.${TF_VER_PAT}\")/" installer/treefrog-setup/treefrog-setup/AssemblyInfo.cpp
 
 [ which git >/dev/null 2>&1 ] && exit 1
 

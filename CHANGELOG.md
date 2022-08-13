@@ -1,8 +1,8 @@
 # ChangeLog
 
 ## 2.4.0
-  - Implemented memory store for cache.
-  - Updated Mongo C driver to v1.21.2.
+ - Implemented memory store for cache.
+ - Updated Mongo C driver to v1.21.2.
 
 ## 2.3.1
  - Fix compilation errors on Qt 6.3.

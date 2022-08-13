@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrogFramework
-PROJECT_NUMBER         = 2.3
+PROJECT_NUMBER         = 2.4
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -196,7 +196,6 @@ EXCLUDE                = src/test \
                          src/tcachemongostore.h \
                          src/tcacheredisstore.h \
                          src/tcachesqlitestore.h \
-                         src/tcachestore.h \
                          src/tabstractactioncontext.h \
                          src/tviewdispatcher.h \
                          src/ttextview.h
