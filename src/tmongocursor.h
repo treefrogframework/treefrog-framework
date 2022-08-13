@@ -17,16 +17,15 @@ public:
 
 protected:
     void release();
-    TCursorObject *cursor() { return mongoCursor; }
+    TCursorObject *cursor() { return _mongoCursor; }
     void setCursor(void *cursor);
 
 private:
-    mongoc_cursor_t *mongoCursor {nullptr};
-    const TBsonObject *bsonDoc {nullptr};  // pointer to a object of bson_t
+    mongoc_cursor_t *_mongoCursor {nullptr};
+    const TBsonObject *_bsonDoc {nullptr};  // pointer to a object of bson_t
 
-    TMongoCursor();
     friend class TMongoDriver;
+    TMongoCursor();
     T_DISABLE_COPY(TMongoCursor)
     T_DISABLE_MOVE(TMongoCursor)
 };
-
