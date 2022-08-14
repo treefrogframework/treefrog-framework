@@ -41,7 +41,7 @@ environment:
 
     # Qt6.3 / VisualStudio 2022 64bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
-      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat
+      INIT_BAT: C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat
       QT_PATH:  C:\Qt\6.3\msvc2019_64
 
 # scripts that are called at very beginning, before repo cloning
