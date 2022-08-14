@@ -19,15 +19,15 @@ skip_commits:
 #---------------------------------#
 environment:
   matrix:
-    # Qt5.12 / VisualStudio 2017 64bit
+    # Qt5.13 / VisualStudio 2017 64bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat
-      QT_PATH:  C:\Qt\5.12\msvc2017_64
+      QT_PATH:  C:\Qt\5.13\msvc2017_64
 
-    # Qt5.12 / VisualStudio 2017 32bit
+    # Qt5.13 / VisualStudio 2017 32bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat
-      QT_PATH:  C:\Qt\5.12\msvc2017
+      QT_PATH:  C:\Qt\5.13\msvc2017
 
     # Qt6.3 / VisualStudio 2019 64bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
@@ -51,7 +51,7 @@ init:
 install:
   - cd C:\Tools\vcpkg
   - git pull
-  - git checkout refs/tags/2022.07.25
+  - git switch --detach tags/2022.07.25
   - .\bootstrap-vcpkg.bat
   - vcpkg integrate install
   - cd %APPVEYOR_BUILD_FOLDER%
