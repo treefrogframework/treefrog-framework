@@ -51,7 +51,7 @@ init:
 install:
   - cd C:\Tools\vcpkg
   - git pull
-  - git checkout refs/tags/2019.07
+  - git checkout refs/tags/2022.07.25
   - .\bootstrap-vcpkg.bat
   - vcpkg integrate install
   - cd %APPVEYOR_BUILD_FOLDER%
