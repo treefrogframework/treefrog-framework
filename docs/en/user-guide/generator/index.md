@@ -21,7 +21,7 @@ The following items will be generated as a directory.
 - controllers
 - models
 - views
-- heplers
+- helpers
 - config – configuration files
 - db - database file storage (SQLite)
 - lib
