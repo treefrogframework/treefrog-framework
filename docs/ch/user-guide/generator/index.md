@@ -21,7 +21,7 @@ page_id: "040.0"
 * controllers
 * models
 * views
-* heplers
+* helpers
 * config      -配置文件
 * db          - 数据库存储文件 (SQLite)
 * lib 
