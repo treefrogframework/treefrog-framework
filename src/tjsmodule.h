@@ -22,21 +22,21 @@ public:
     QJSValue call(const QString &func, const QJSValueList &args = QJSValueList());
     TJSInstance callAsConstructor(const QString &constructorName, const QJSValue &arg);
     TJSInstance callAsConstructor(const QString &constructorName, const QJSValueList &args = QJSValueList());
-    QString modulePath() const { return moduleFilePath; }
+    QString modulePath() const { return _modulePath; }
 
     QJSValue import(const QString &moduleName);
     QJSValue import(const QString &defaultMember, const QString &moduleName);
 
 private:
-    QJSEngine *jsEngine;
-    QMap<QString, QString> loadedFiles;
-    QJSValue *funcObj;
-    QString lastFunc;
-    QString moduleFilePath;
+    QJSEngine *_jsEngine;
+    QMap<QString, QString> _loadedFiles;
+    QJSValue *_funcObj;
+    QString _lastFunc;
+    QString _modulePath;
 #if QT_VERSION < 0x060000
-    QMutex mutex {QMutex::Recursive};
+    QMutex _mutex {QMutex::Recursive};
 #else
-    QRecursiveMutex mutex;
+    QRecursiveMutex _mutex;
 #endif
 
     T_DISABLE_COPY(TJSModule)

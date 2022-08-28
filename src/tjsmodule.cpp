@@ -30,25 +30,25 @@ inline const char *prop(const QJSValue &val, const QString &name = QString())
 
 
 TJSModule::TJSModule(QObject *parent) :
-    QObject(parent), jsEngine(new QJSEngine()), loadedFiles(), funcObj(nullptr),
-    lastFunc()
+    QObject(parent), _jsEngine(new QJSEngine()), _loadedFiles(), _funcObj(nullptr),
+    _lastFunc()
 {
-    jsEngine->evaluate("exports={};module={};module.exports={};");
+    _jsEngine->evaluate("exports={};module={};module.exports={};");
 }
 
 
 TJSModule::~TJSModule()
 {
-    delete funcObj;
-    delete jsEngine;
+    delete _funcObj;
+    delete _jsEngine;
 }
 
 
 QJSValue TJSModule::evaluate(const QString &program, const QString &fileName, int lineNumber)
 {
-    QMutexLocker locker(&mutex);
+    QMutexLocker locker(&_mutex);
 
-    QJSValue ret = jsEngine->evaluate(program, fileName, lineNumber);
+    QJSValue ret = _jsEngine->evaluate(program, fileName, lineNumber);
     if (ret.isError()) {
         tSystemError("JS uncaught exception at %s:%s : %s", prop(ret, "fileName"),
             prop(ret, "lineNumber"), prop(ret, "message"));
@@ -66,12 +66,12 @@ QJSValue TJSModule::call(const QString &func, const QJSValue &arg)
 
 QJSValue TJSModule::call(const QString &func, const QJSValueList &args)
 {
-    QMutexLocker locker(&mutex);
+    QMutexLocker locker(&_mutex);
     QJSValue ret;
 
     QString funcsym = QString::number(args.count()) + func;
-    if (funcsym != lastFunc || !funcObj) {
-        lastFunc = funcsym;
+    if (funcsym != _lastFunc || !_funcObj) {
+        _lastFunc = funcsym;
 
         QString argstr;
         for (int i = 0; i < args.count(); i++) {
@@ -81,17 +81,17 @@ QJSValue TJSModule::call(const QString &func, const QJSValueList &args)
 
         QString defFunc = QString("(function(%1){return(%2(%1));})").arg(argstr, func);
 
-        if (!funcObj) {
-            funcObj = new QJSValue();
+        if (!_funcObj) {
+            _funcObj = new QJSValue();
         }
 
-        *funcObj = evaluate(defFunc);
-        if (funcObj->isError()) {
+        *_funcObj = evaluate(defFunc);
+        if (_funcObj->isError()) {
             goto eval_error;
         }
     }
 
-    ret = funcObj->call(args);
+    ret = _funcObj->call(args);
     if (ret.isError()) {
         tSystemError("JS uncaught exception at %s:%s : %s", prop(ret, "fileName"),
             prop(ret, "lineNumber"), prop(ret));
@@ -101,8 +101,8 @@ QJSValue TJSModule::call(const QString &func, const QJSValueList &args)
     return ret;
 
 eval_error:
-    delete funcObj;
-    funcObj = nullptr;
+    delete _funcObj;
+    _funcObj = nullptr;
     return ret;
 }
 
@@ -116,7 +116,7 @@ TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const Q
 
 TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const QJSValueList &args)
 {
-    QMutexLocker locker(&mutex);
+    QMutexLocker locker(&_mutex);
 
     QJSValue construct = evaluate(constructorName);
     tSystemDebug("construct: %s", qUtf8Printable(construct.toString()));

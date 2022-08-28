@@ -33,11 +33,11 @@ protected:
     void replaceRequire(TJSModule *context, QString &content, const QDir &dir) const;
 
 private:
-    QString module;
-    AltJS altJs;
-    QString member;
-    QStringList searchPaths;
-    QList<QPair<QString, QString>> importFiles;
+    QString _module;
+    AltJS _altJs;
+    QString _member;
+    QStringList _searchPaths;
+    QList<QPair<QString, QString>> _importFiles;
 
     friend class TJSModule;
 };
