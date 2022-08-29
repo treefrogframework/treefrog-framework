@@ -101,10 +101,13 @@ void JSContext::callAsConstructor()
     QFETCH(QString, output);
 
     TJSModule *js = TJSLoader(module).load();
-    auto instance = js->callAsConstructor(className, arg);
-    QCOMPARE(instance.isError(), false);
-    auto result1 = instance.call(method, methodArg).toString();
-    QCOMPARE(result1, output);
+    QVERIFY(js);
+    if (js) {
+        auto instance = js->callAsConstructor(className, arg);
+        QCOMPARE(instance.isError(), false);
+        auto result1 = instance.call(method, methodArg).toString();
+        QCOMPARE(result1, output);
+    }
 }
 
 
@@ -135,11 +138,13 @@ void JSContext::require()
     { // Test 1
         TJSLoader loader(className, module);
         TJSModule *js = loader.load();
-
-        auto instance = js->callAsConstructor(className, arg);
-        QCOMPARE(instance.isError(), false);
-        auto result1 = instance.call(method, methodArg).toString();
-        QCOMPARE(result1, output);
+        QVERIFY(js);
+        if (js) {
+            auto instance = js->callAsConstructor(className, arg);
+            QCOMPARE(instance.isError(), false);
+            auto result1 = instance.call(method, methodArg).toString();
+            QCOMPARE(result1, output);
+        }
     }
     { // Test 2
         auto instance = TJSLoader(module).loadAsConstructor(arg);
@@ -212,18 +217,23 @@ void JSContext::transform()
     QFETCH(QString, output);
 
     TJSModule *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
-    auto result = js->call("JSXTransformer.transform", QJSValue(jsx)).property("code").toString();
-    QCOMPARE(result, output);
+    QVERIFY(js);
+    if (js) {
+        auto result = js->call("JSXTransformer.transform", QJSValue(jsx)).property("code").toString();
+        QCOMPARE(result, output);
+    }
 }
 
 
 void JSContext::benchmark()
 {
     TJSModule *js = TJSLoader("JSXTransformer", "JSXTransformer").load();
-
-    QBENCHMARK {
-        auto res = js->call("JSXTransformer.transform", QString("<HelloWorld />"));
-        //qDebug() << res.property("code").toString();
+    QVERIFY(js);
+    if (js) {
+        QBENCHMARK {
+            auto res = js->call("JSXTransformer.transform", QString("<HelloWorld />"));
+            //qDebug() << res.property("code").toString();
+        }
     }
 }
 
@@ -247,9 +257,12 @@ void JSContext::load()
     QFETCH(QString, result);
 
     TJSModule *js = TJSLoader(file).load();
-    QString output = js->evaluate(variable).toString();
-    //qDebug() << qUtf8Printable(output);
-    QCOMPARE(output, result);
+    QVERIFY(js);
+    if (js) {
+        QString output = js->evaluate(variable).toString();
+        //qDebug() << qUtf8Printable(output);
+        QCOMPARE(output, result);
+    }
 }
 
 
@@ -347,14 +360,16 @@ void JSContext::reactjsx()
     QFETCH(QString, result);
 
     auto *js = TJSLoader("reactmodule").load();
-
-    // Loads JSX
-    if (!jsxfile.isEmpty()) {
-        js->evaluate(jsxTransformFile(jsxfile), jsxfile);
+    QVERIFY(js);
+    if (js) {
+        // Loads JSX
+        if (!jsxfile.isEmpty()) {
+            js->evaluate(jsxTransformFile(jsxfile), jsxfile);
+        }
+        QString fn = jsxTransform(func);
+        QString output = js->evaluate(fn).toString();
+        QCOMPARE(output, result);
     }
-    QString fn = jsxTransform(func);
-    QString output = js->evaluate(fn).toString();
-    QCOMPARE(output, result);
 }
 
 
@@ -440,7 +455,8 @@ void JSContext::reactComponent()
 
 QString JSContext::jsxTransform(const QString &jsx)
 {
-    auto val = TJSLoader("Jtf", "JSXTransformer").load()->call("Jtf.transform", jsx);
+    auto module = TJSLoader("Jtf", "JSXTransformer").load();
+    auto val = module->call("Jtf.transform", jsx);
     return val.property("code").toString();
 }
 

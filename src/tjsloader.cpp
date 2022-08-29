@@ -152,14 +152,19 @@ TJSModule *TJSLoader::load(bool reload)
 
     if (!context) {
         context = new TJSModule();
+        QJSValue res;
 
         for (auto &p : (const QList<QPair<QString, QString>> &)_importFiles) {
             // Imports as JavaScript
-            TJSLoader(p.first, p.second, Default).importTo(context, false);
+            res = TJSLoader(p.first, p.second, Default).importTo(context, false);
+             if (res.isError() || res.isNull()) {
+                context->deleteLater();
+                return nullptr;
+             }
         }
 
-        QJSValue res = importTo(context, true);
-        if (res.isError()) {
+        res = importTo(context, true);
+        if (res.isError() || res.isNull()) {
             context->deleteLater();
             context = nullptr;
         } else {
@@ -259,21 +264,21 @@ void TJSLoader::import(const QString &defaultMember, const QString &moduleName)
 
 QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 {
-    if (!context) {
-        tSystemError("TJSLoader value error  [%s:%d]", __FILE__, __LINE__);
-        return false;
-    }
-
-    QJSValue ret;
+    QJSValue ret(QJSValue::NullValue);
     QString program;
     QString filePath;
+
+    if (!context) {
+        tSystemError("TJSLoader value error  [%s:%d]", __FILE__, __LINE__);
+        return ret;
+    }
 
     if (_member.isEmpty()) {
         // loads module
         filePath = search(_module, _altJs);
         if (filePath.isEmpty()) {
             tSystemError("TJSLoader: Module not found: %s", qUtf8Printable(_module));
-            return false;
+            return ret;
         }
 
         program = read(filePath);
@@ -291,11 +296,13 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
     }
 
     if (program.isEmpty()) {
-        return false;
+        return ret;
     }
 
     ret = context->evaluate(program, _module);
-    if (!ret.isError()) {
+    if (ret.isError()) {
+        tSystemError("TJSLoader evaluation: Uncaught exception at line %d : %s", ret.property("lineNumber").toInt(), qUtf8Printable(ret.toString()));
+    } else {
         tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(_module));
 
         if (isMain) {

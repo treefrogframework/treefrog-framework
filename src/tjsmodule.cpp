@@ -33,6 +33,7 @@ TJSModule::TJSModule(QObject *parent) :
     QObject(parent), _jsEngine(new QJSEngine()), _loadedFiles(), _funcObj(nullptr),
     _lastFunc()
 {
+    _jsEngine->installExtensions(QJSEngine::ConsoleExtension);
     _jsEngine->evaluate("exports={};module={};module.exports={};");
 }
 

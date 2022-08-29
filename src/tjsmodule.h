@@ -45,4 +45,3 @@ private:
     friend class TJSLoader;
     friend class TReactComponent;
 };
-
