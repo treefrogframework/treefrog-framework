@@ -23,7 +23,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       actions: read
       contents: read
@@ -64,9 +64,9 @@ jobs:
     #   If the Autobuild fails above, remove it and uncomment the following three lines. 
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
-    # - run: |
-    #   echo "Run, Build Application using script"
-    #   ./location_of_script_within_repo/buildscript.sh
+    - run: |
+      echo "Run, Build framework using script"
+      ./build.sh
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
