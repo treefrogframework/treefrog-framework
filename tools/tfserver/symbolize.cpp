@@ -246,13 +246,13 @@ bool GetSectionHeaderByName(int fd, const char *name, size_t name_len,
     }
 
     ElfW(Shdr) shstrtab;
-    off_t shstrtab_offset = (elf_header.e_shoff + elf_header.e_shentsize * elf_header.e_shstrndx);
+    off_t shstrtab_offset = (elf_header.e_shoff + (Elf64_Off)elf_header.e_shentsize * elf_header.e_shstrndx);
     if (!ReadFromOffsetExact(fd, &shstrtab, sizeof(shstrtab), shstrtab_offset)) {
         return false;
     }
 
     for (int i = 0; i < elf_header.e_shnum; ++i) {
-        off_t section_header_offset = (elf_header.e_shoff + elf_header.e_shentsize * i);
+        off_t section_header_offset = (elf_header.e_shoff + (Elf64_Off)elf_header.e_shentsize * i);
         if (!ReadFromOffsetExact(fd, out, sizeof(*out), section_header_offset)) {
             return false;
         }
