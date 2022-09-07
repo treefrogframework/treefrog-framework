@@ -156,7 +156,7 @@ fi
 if [ -z "$QMAKE" ]; then
   which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
   which qmake6    >/dev/null 2>&1 && QMAKE=qmake6
-  which qmake     >/dev/null 2>&1 && QMAKE=qmake
+  [ -z "$QMAKE" ] && which qmake >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then
     echo "qmake: command not found"
