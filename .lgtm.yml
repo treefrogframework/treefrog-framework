@@ -148,9 +148,6 @@ extraction:
       # to use instead. 
       build_command:
         - $GNU_MAKE -j2 -C src
-        - $GNU_MAKE -C src install
-        - $GNU_MAKE -j2 -C tools
-        - $GNU_MAKE -C tools install
       # Specify that all project or solution files should be used for extraction.
       # Default: false.
       all_solutions: false
