@@ -107,12 +107,21 @@ extraction:
   #####################################
   cpp:
     # The `prepare` step exists for customization on LGTM.com only.
-    # prepare:
-    #   # The `packages` section is valid for LGTM.com only. It names Ubuntu packages to
-    #   # be installed.
-    #   packages:
-    #     - libxml2-dev
-    #     - libxslt1-dev
+    prepare:
+      # The `packages` section is valid for LGTM.com only. It names Ubuntu packages to
+      # be installed.
+      packages:
+        - qtbase5-dev
+        - qt5-default
+        - qt5-qmake
+        - qttools5-dev-tools
+        - qtdeclarative5-dev
+        - qtdeclarative5-dev-tools
+        - libqt5sql5
+        - libqt5sql5-sqlite
+        - libsqlite3-dev
+        - libmongoc-dev
+        - libbson-dev
     # Add an `after-prepare` step if you need to run commands after the prepare step.
     # Each command should be listed on a separate line.
     # This step is useful for C/C++ analysis where you want to prepare the environment
@@ -124,7 +133,7 @@ extraction:
     # then uses to build the codebase.
     configure:
       command:
-        - ./prepare_deps
+        - ./configure
     # Optional step. You should add a `before_index` step if you need to run commands
     # before the `index` step.
     before_index:
@@ -138,34 +147,10 @@ extraction:
       # Override the autobuild process by specifying a list of custom build commands
       # to use instead. 
       build_command:
-        - $GNU_MAKE -j2 -s
+        - $GNU_MAKE -j2 -C src
+        - $GNU_MAKE -C src install
+        - $GNU_MAKE -j2 -C tools
+        - $GNU_MAKE -C tools install
       # Specify that all project or solution files should be used for extraction.
       # Default: false.
-      all_solutions: true
-      # Specify a list of one or more project or solution files for extraction.
-      # Default: LGTM chooses the file closest to the root of the repository (this may
-      # fail if there are multiple candidates).
-      solution: 
-        - myProject.sln
-      # Specify MSBuild settings
-      msbuild:
-        # Specify a list of additional arguments to MSBuild. Default: empty.
-        arguments: /p:Platform=x64 /p:Configuration=Release
-        # Specify the MSBuild configuration to use, for example, debug or release.
-        # Default: read from the solution file or files.
-        configuration:
-        # Specify the platform to target, for example: x86, x64, or Any CPU.
-        # Default: read from the solution file or files.
-        platform:
-        # Specify the MSBuild target. Default: rebuild.
-        target:
-      # Specify whether or not to perform a NuGet restore for extraction. Default: true.
-      nuget_restore: false
-      # Specify a version of Microsoft Visual Studio to use for MSBuild or any custom
-      # build commands (build_command). For example:
-      #    10 for Visual Studio 2010
-      #    12 for Visual Studio 2012
-      #    14 for Visual Studio 2015
-      #    15 for Visual Studio 2017
-      # Default: read from project files.
-      vstools_version: 10
+      all_solutions: false
