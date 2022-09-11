@@ -65,8 +65,9 @@ jobs:
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
     - name: Build
-      run:  echo "No build here"
-    #     ./.github/codeql_build.sh
+      run: |
+        echo "Build using script"
+        ./.github/codeql_build.sh
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
