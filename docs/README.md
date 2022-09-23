@@ -7,6 +7,7 @@ This is the readMe. Here you can find useful links and information how to use Gi
  $ cd docs
  $ sudo apt install ruby ruby-dev ruby-all-dev make gcc bundler ruby-bundler
  $ sudo gem update
+ $ bundle config set --local path '.bundle'
  $ bundle install
 ```
 
@@ -25,7 +26,7 @@ This is the readMe. Here you can find useful links and information how to use Gi
 ### Start Jekyll Server Command
 
 ```
- bundle exec jekyll serve
+ bundle exec jekyll serve --no-watch
 ```
 
 ### Start Jekyll Server and setting compiling configs

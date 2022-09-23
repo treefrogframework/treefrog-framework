@@ -3,10 +3,9 @@ gem 'github-pages', group: :jekyll_plugins
 group :jekyll_plugins do
   gem "markdown"
   gem "jekyll-theme-slate"
-  gem 'execjs'
-  gem 'therubyracer'
   gem "jekyll", "3.9.0"
 end
 
 
 gem "sass", "~> 3.7"
+gem "webrick", "~> 1.7"
