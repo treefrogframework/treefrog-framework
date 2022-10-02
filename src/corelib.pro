@@ -260,6 +260,8 @@ HEADERS += tkvsdriver.h
 SOURCES += tkvsdriver.cpp
 HEADERS += tredisdriver.h
 SOURCES += tredisdriver.cpp
+HEADERS += tmemcacheddriver.h
+SOURCES += tmemcacheddriver.cpp
 HEADERS += tredis.h
 SOURCES += tredis.cpp
 HEADERS += tfileaiologger.h
@@ -368,6 +370,7 @@ windows {
   SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
   SOURCES += tredisdriver_win.cpp
+  SOURCES += tmemcacheddriver_win.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
 }
 unix {
@@ -376,6 +379,7 @@ unix {
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
   SOURCES += tredisdriver_unix.cpp
+  SOURCES += tmemcacheddriver_unix.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h

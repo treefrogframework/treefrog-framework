@@ -18,7 +18,7 @@ public:
     ~TEpoll();
 
     int wait(int timeout);
-    bool isPolling() const { return polling; }
+    bool isPolling() const { return _polling; }
     TEpollSocket *next();
     bool canReceive() const;
     bool canSend() const;
@@ -44,14 +44,14 @@ protected:
     bool modifyPoll(int fd, int events);
 
 private:
-    int epollFd {0};
-    int listenSocket {0};
-    struct epoll_event *events {nullptr};
-    volatile bool polling {false};
-    int numEvents {0};
-    int eventIterator {0};
-    QMap<TEpollSocket *, int> pollingSockets;
-    TQueue<TSendData *> sendRequests;
+    int _epollFd {0};
+    int _listenSocket {0};
+    struct epoll_event *_events {nullptr};
+    volatile bool _polling {false};
+    int _numEvents {0};
+    int _eventIterator {0};
+    QMap<TEpollSocket *, int> _pollingSockets;
+    TQueue<TSendData *> _sendRequests;
 
     TEpoll();
     T_DISABLE_COPY(TEpoll)

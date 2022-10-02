@@ -96,13 +96,13 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 
 
 TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
-    sd(socketDescriptor),
-    clientAddr(address)
+    _sd(socketDescriptor),
+    _clientAddr(address)
 {
     do {
-        sid = point.fetch_add(1);
-    } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
-    tSystemDebug("TEpollSocket  sid:%d", sid);
+        _sid = point.fetch_add(1);
+    } while (!socketManager[_sid].compareExchange(nullptr, this));  // store a socket
+    tSystemDebug("TEpollSocket  sid:%d", _sid);
     socketCounter++;
 }
 
@@ -113,12 +113,12 @@ TEpollSocket::~TEpollSocket()
 
     close();
 
-    while (!sendBuf.isEmpty()) {
-        TSendBuffer *buf = sendBuf.dequeue();
+    while (!_sendBuf.isEmpty()) {
+        TSendBuffer *buf = _sendBuf.dequeue();
         delete buf;
     }
 
-    socketManager[sid].compareExchangeStrong(this, nullptr);  //clear
+    socketManager[_sid].compareExchangeStrong(this, nullptr);  //clear
     socketCounter--;
 }
 
@@ -136,7 +136,7 @@ int TEpollSocket::recv()
     for (;;) {
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        len = tf_recv(sd, buf, recvBufSize, 0);
+        len = tf_recv(_sd, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -148,7 +148,7 @@ int TEpollSocket::recv()
     }
 
     if (!len && !err) {
-        tSystemDebug("Socket disconnected : sd:%d", sd);
+        tSystemDebug("Socket disconnected : sd:%d", _sd);
         ret = -1;
     } else {
         if (len < 0 || err > 0) {
@@ -157,12 +157,12 @@ int TEpollSocket::recv()
                 break;
 
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _sd, err);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", sd, err, len);
+                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", _sd, err, len);
                 ret = -1;
                 break;
             }
@@ -179,14 +179,14 @@ int TEpollSocket::send()
 {
     int ret = 0;
 
-    if (sendBuf.isEmpty()) {
+    if (_sendBuf.isEmpty()) {
         pollOut = true;
         return ret;
     }
     pollOut = false;
 
-    while (!sendBuf.isEmpty()) {
-        TSendBuffer *buf = sendBuf.head();
+    while (!_sendBuf.isEmpty()) {
+        TSendBuffer *buf = _sendBuf.head();
         TAccessLogger &logger = buf->accessLogger();
 
         int len = 0;
@@ -199,7 +199,7 @@ int TEpollSocket::send()
             }
 
             errno = 0;
-            len = tf_send(sd, data, len);
+            len = tf_send(_sd, data, len);
             err = errno;
 
             if (len <= 0) {
@@ -213,7 +213,7 @@ int TEpollSocket::send()
 
         if (buf->atEnd()) {
             logger.write();  // Writes access log
-            delete sendBuf.dequeue();  // delete send-buffer obj
+            delete _sendBuf.dequeue();  // delete send-buffer obj
         }
 
         if (len < 0) {
@@ -223,13 +223,13 @@ int TEpollSocket::send()
 
             case EPIPE:  // FALLTHRU
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _sd, err);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
+                tSystemError("Failed send : sd:%d  errno:%d  len:%d", _sd, err, len);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
@@ -244,21 +244,21 @@ int TEpollSocket::send()
 
 void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 {
-    sendBuf.enqueue(buffer);
+    _sendBuf.enqueue(buffer);
 }
 
 
 void TEpollSocket::setSocketDescpriter(int socketDescriptor)
 {
-    sd = socketDescriptor;
+    _sd = socketDescriptor;
 }
 
 
 void TEpollSocket::close()
 {
-    if (sd > 0) {
-        tf_close_socket(sd);
-        sd = 0;
+    if (_sd > 0) {
+        tf_close_socket(_sd);
+        _sd = 0;
     }
 }
 
@@ -287,22 +287,9 @@ void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 }
 
 
-// qint64 TEpollSocket::bufferedBytes() const
-// {
-//     qint64 ret = 0;
-//     for (auto &d : sendBuf) {
-//         ret += d->arrayBuffer.size();
-//         if (d->bodyFile) {
-//             ret += d->bodyFile->size();
-//         }
-//     }
-//     return ret;
-// }
-
-
 int TEpollSocket::bufferedListCount() const
 {
-    return sendBuf.count();
+    return _sendBuf.count();
 }
 
 

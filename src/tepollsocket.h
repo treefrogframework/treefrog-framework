@@ -21,9 +21,9 @@ public:
     virtual ~TEpollSocket();
 
     void close();
-    int socketDescriptor() const { return sd; }
-    QHostAddress peerAddress() const { return clientAddr; }
-    int socketId() const { return sid; }
+    int socketDescriptor() const { return _sd; }
+    QHostAddress peerAddress() const { return _clientAddr; }
+    int socketId() const { return _sid; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
     void disconnect();
@@ -52,10 +52,10 @@ protected:
     TAtomic<bool> pollOut {false};
 
 private:
-    int sd {0};  // socket descriptor
-    int sid {0};
-    QHostAddress clientAddr;
-    QQueue<TSendBuffer *> sendBuf;
+    int _sd {0};  // socket descriptor
+    int _sid {0};
+    QHostAddress _clientAddr;
+    QQueue<TSendBuffer *> _sendBuf;
 
     static void initBuffer(int socketDescriptor);
 
@@ -64,4 +64,3 @@ private:
     T_DISABLE_COPY(TEpollSocket)
     T_DISABLE_MOVE(TEpollSocket)
 };
-

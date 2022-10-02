@@ -1,6 +1,5 @@
 #pragma once
 #include <QHostAddress>
-#include <QThread>
 #include <TActionContext>
 
 class THttpRequest;

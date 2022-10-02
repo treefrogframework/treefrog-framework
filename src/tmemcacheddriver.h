@@ -10,10 +10,10 @@ class QTcpSocket;
 #endif
 
 
-class T_CORE_EXPORT TRedisDriver : public TKvsDriver {
+class T_CORE_EXPORT TMemcachedDriver : public TKvsDriver {
 public:
-    TRedisDriver();
-    ~TRedisDriver();
+    TMemcachedDriver();
+    ~TMemcachedDriver();
 
     QString key() const override { return "REDIS"; }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString()) override;
@@ -54,7 +54,7 @@ private:
     QString _host;
     quint16 _port {0};
 
-    T_DISABLE_COPY(TRedisDriver)
-    T_DISABLE_MOVE(TRedisDriver)
+    T_DISABLE_COPY(TMemcachedDriver)
+    T_DISABLE_MOVE(TMemcachedDriver)
 };
 

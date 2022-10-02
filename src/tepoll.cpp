@@ -51,11 +51,11 @@ public:
 
 
 TEpoll::TEpoll() :
-    events(new struct epoll_event[MaxEvents]),
-    pollingSockets()
+    _events(new struct epoll_event[MaxEvents]),
+    _pollingSockets()
 {
-    epollFd = epoll_create1(EPOLL_CLOEXEC);
-    if (epollFd < 0) {
+    _epollFd = epoll_create1(EPOLL_CLOEXEC);
+    if (_epollFd < 0) {
         tSystemError("Failed epoll_create1()");
     }
 }
@@ -63,50 +63,50 @@ TEpoll::TEpoll() :
 
 TEpoll::~TEpoll()
 {
-    delete[] events;
+    delete[] _events;
 
-    if (epollFd > 0) {
-        tf_close_socket(epollFd);
+    if (_epollFd > 0) {
+        tf_close_socket(_epollFd);
     }
 }
 
 
 int TEpoll::wait(int timeout)
 {
-    eventIterator = 0;
-    polling = true;
-    numEvents = tf_epoll_wait(epollFd, events, MaxEvents, timeout);
+    _eventIterator = 0;
+    _polling = true;
+    _numEvents = tf_epoll_wait(_epollFd, _events, MaxEvents, timeout);
     int err = errno;
-    polling = false;
+    _polling = false;
 
-    if (Q_UNLIKELY(numEvents < 0)) {
+    if (Q_UNLIKELY(_numEvents < 0)) {
         tSystemError("Failed epoll_wait() : errno:%d", err);
     }
 
-    return numEvents;
+    return _numEvents;
 }
 
 
 TEpollSocket *TEpoll::next()
 {
-    return (eventIterator < numEvents) ? (TEpollSocket *)events[eventIterator++].data.ptr : nullptr;
+    return (_eventIterator < _numEvents) ? (TEpollSocket *)_events[_eventIterator++].data.ptr : nullptr;
 }
 
 bool TEpoll::canReceive() const
 {
-    if (Q_UNLIKELY(eventIterator <= 0))
+    if (Q_UNLIKELY(_eventIterator <= 0))
         return false;
 
-    return (events[eventIterator - 1].events & EPOLLIN);
+    return (_events[_eventIterator - 1].events & EPOLLIN);
 }
 
 
 bool TEpoll::canSend() const
 {
-    if (Q_UNLIKELY(eventIterator <= 0)) {
+    if (Q_UNLIKELY(_eventIterator <= 0)) {
         return false;
     }
-    return (events[eventIterator - 1].events & EPOLLOUT);
+    return (_events[_eventIterator - 1].events & EPOLLOUT);
 }
 
 
@@ -138,7 +138,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
     ev.events = events;
     ev.data.ptr = socket;
 
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_ADD, socket->socketDescriptor(), &ev);
+    int ret = tf_epoll_ctl(_epollFd, EPOLL_CTL_ADD, socket->socketDescriptor(), &ev);
     int err = errno;
     if (Q_UNLIKELY(ret < 0)) {
         if (err != EEXIST) {
@@ -146,7 +146,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
-        pollingSockets.insert(socket, socket->socketId());
+        _pollingSockets.insert(socket, socket->socketId());
     }
     return !ret;
 }
@@ -161,7 +161,7 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
     ev.events = events;
     ev.data.ptr = socket;
 
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_MOD, socket->socketDescriptor(), &ev);
+    int ret = tf_epoll_ctl(_epollFd, EPOLL_CTL_MOD, socket->socketDescriptor(), &ev);
     int err = errno;
     if (Q_UNLIKELY(ret < 0)) {
         tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  sd:%d errno:%d ev:0x%x", socket->socketDescriptor(), err, events);
@@ -174,11 +174,11 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    if (Q_UNLIKELY(pollingSockets.remove(socket) == 0)) {
+    if (Q_UNLIKELY(_pollingSockets.remove(socket) == 0)) {
         return false;
     }
 
-    int ret = tf_epoll_ctl(epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), nullptr);
+    int ret = tf_epoll_ctl(_epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), nullptr);
     int err = errno;
 
     if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
@@ -194,7 +194,7 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
 void TEpoll::dispatchSendData()
 {
     TSendData *sd;
-    while (sendRequests.dequeue(sd)) {
+    while (_sendRequests.dequeue(sd)) {
         TEpollSocket *sock = sd->socket;
 
         if (Q_UNLIKELY(sock->socketDescriptor() <= 0)) {
@@ -250,10 +250,10 @@ void TEpoll::dispatchSendData()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (auto it = pollingSockets.begin(); it != pollingSockets.end(); ++it) {
+    for (auto it = _pollingSockets.begin(); it != _pollingSockets.end(); ++it) {
         delete it.key();
     }
-    pollingSockets.clear();
+    _pollingSockets.clear();
 }
 
 
@@ -287,11 +287,11 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &data)
 
 void TEpoll::setDisconnect(TEpollSocket *socket)
 {
-    sendRequests.enqueue(new TSendData(TSendData::Disconnect, socket));
+    _sendRequests.enqueue(new TSendData(TSendData::Disconnect, socket));
 }
 
 
 void TEpoll::setSwitchToWebSocket(TEpollSocket *socket, const THttpRequestHeader &header)
 {
-    sendRequests.enqueue(new TSendData(TSendData::SwitchToWebSocket, socket, header));
+    _sendRequests.enqueue(new TSendData(TSendData::SwitchToWebSocket, socket, header));
 }

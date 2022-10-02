@@ -27,9 +27,9 @@ protected:
     void clear();
 
 private:
-    QByteArray httpBuffer;
-    qint64 lengthToRead {0};
-    uint idleElapsed {0};
+    QByteArray _httpBuffer;
+    qint64 _lengthToRead {0};
+    uint _idleElapsed {0};
 
     TEpollHttpSocket(int socketDescriptor, const QHostAddress &address);
 
