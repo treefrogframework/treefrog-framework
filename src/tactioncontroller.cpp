@@ -788,26 +788,26 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 }
 
 
-void TActionController::sendTextToWebSocket(int sid, const QString &text)
+void TActionController::sendTextToWebSocket(int socket, const QString &text)
 {
     QVariantList info;
-    info << sid << text;
+    info << socket << text;
     _taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 
-void TActionController::sendBinaryToWebSocket(int sid, const QByteArray &binary)
+void TActionController::sendBinaryToWebSocket(int socket, const QByteArray &binary)
 {
     QVariantList info;
-    info << sid << binary;
+    info << socket << binary;
     _taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 
-void TActionController::closeWebSokcet(int sid, int closeCode)
+void TActionController::closeWebSokcet(int socket, int closeCode)
 {
     QVariantList info;
-    info << sid << closeCode;
+    info << socket << closeCode;
     _taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
@@ -845,7 +845,7 @@ void TActionController::reset()
     _rollback = false;
     _autoRemoveFiles.clear();
     _taskList.clear();
-    _sockId = 0;
+    //_sockId = 0;
 }
 
 

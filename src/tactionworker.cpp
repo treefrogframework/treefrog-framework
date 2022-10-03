@@ -74,7 +74,7 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     // Loop for HTTP-pipeline requests
     for (THttpRequest &req : requests) {
         // Executes a action context
-        TActionContext::execute(req, _socket->socketId());
+        TActionContext::execute(req);
 
         if (TActionContext::stopped.load()) {
             break;

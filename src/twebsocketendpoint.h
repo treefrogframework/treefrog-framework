@@ -31,10 +31,10 @@ public:
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
     void startKeepAlive(int interval);
-    void sendHttp(int sid, const QByteArray &data);
+    //void sendHttp(int sid, const QByteArray &data);
     const TWebSocketSession &session() const { return sessionStore; }
     TWebSocketSession &session() { return sessionStore; }
-    int socketId() const { return sid; }
+    //int socketId() const { return sid; }
     QHostAddress peerAddress() const { return peerAddr; }
     quint16 peerPort() const { return peerPortNumber; }
     void reset();
@@ -73,13 +73,11 @@ private:
         PublishBinary,
         StartKeepAlive,
         StopKeepAlive,
-        HttpSend,
     };
 
     bool rollbackRequested() const;
 
     TWebSocketSession sessionStore;
-    int sid {0};
     QList<QPair<int, QVariant>> taskList;
     bool rollback {false};
     QHostAddress peerAddr;

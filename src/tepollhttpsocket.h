@@ -15,7 +15,6 @@ public:
     int idleTime() const;
     virtual void startWorker();
     void releaseWorker();
-    static TEpollHttpSocket *searchSocket(int sid);
     static QList<TEpollHttpSocket *> allSockets();
 
 protected:

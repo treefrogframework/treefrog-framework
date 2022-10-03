@@ -28,8 +28,8 @@ public:
     void startWorkerForClosing();
     void disconnect() override;
     qintptr socketDescriptor() const override { return TEpollSocket::socketDescriptor(); }
-    int socketId() const override { return TEpollSocket::socketId(); }
-    static TEpollWebSocket *searchSocket(int sid);
+    //int socketId() const override { return TEpollSocket::socketId(); }
+    static TEpollWebSocket *searchSocket(int socket);
 
 public slots:
     void releaseWorker();

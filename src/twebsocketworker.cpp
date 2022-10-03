@@ -84,7 +84,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         tSystemDebug("TWebSocketWorker opcode: %d", opcode);
 
         endpoint->sessionStore = _socket->session();  // Sets websocket session
-        endpoint->sid = _socket->socketId();
+        //endpoint->sid = _socket->socketId();
         auto peerInfo = TApplicationServerBase::getPeerInfo(_socket->socketDescriptor());
         endpoint->peerAddr = peerInfo.first;
         endpoint->peerPortNumber = peerInfo.second;
@@ -272,37 +272,6 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             case TWebSocketEndpoint::StopKeepAlive:
                 _socket->stopKeepAlive();
                 break;
-
-            case TWebSocketEndpoint::HttpSend: {
-                QVariantList lst = taskData.toList();
-                auto id = lst[0].toInt();
-
-                switch (Tf::app()->multiProcessingModule()) {
-                case TWebApplication::Thread: {
-                    auto *sock = THttpSocket::searchSocket(id);
-                    if (sock) {
-                        sock->writeRawDataFromWebSocket(lst[1].toByteArray());
-                    }
-                    break;
-                }
-
-                case TWebApplication::Epoll: {
-#ifdef Q_OS_LINUX
-                    auto *sock = TEpollHttpSocket::searchSocket(id);
-                    if (sock) {
-                        sock->sendData(lst[1].toByteArray());
-                    }
-#else
-                    tFatal("Unsupported MPM: epoll");
-#endif
-                    break;
-                }
-
-                default:
-                    break;
-                }
-                break;
-            }
 
             default:
                 tSystemError("Invalid logic  [%s:%d]", __FILE__, __LINE__);

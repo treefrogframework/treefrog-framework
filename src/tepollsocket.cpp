@@ -11,10 +11,11 @@
 #include "tepollhttpsocket.h"
 #include "tfcore.h"
 #include "tsendbuffer.h"
-#include <QFileInfo>
 #include <THttpHeader>
 #include <TSystemGlobal>
 #include <TWebApplication>
+#include <QFileInfo>
+#include <QSet>
 #include <atomic>
 #include <sys/types.h>
 
@@ -24,8 +25,7 @@ namespace {
 int sendBufSize = 0;
 int recvBufSize = 0;
 std::atomic<int> socketCounter {0};
-TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
-std::atomic<ushort> point {0};
+QSet<TEpollSocket *> socketManager;
 }
 
 
@@ -99,10 +99,8 @@ TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
     _sd(socketDescriptor),
     _clientAddr(address)
 {
-    do {
-        _sid = point.fetch_add(1);
-    } while (!socketManager[_sid].compareExchange(nullptr, this));  // store a socket
-    tSystemDebug("TEpollSocket  sid:%d", _sid);
+    tSystemDebug("TEpollSocket  socket:%d", _sd);
+    socketManager.insert(this);
     socketCounter++;
 }
 
@@ -111,6 +109,7 @@ TEpollSocket::~TEpollSocket()
 {
     tSystemDebug("TEpollSocket::destructor");
 
+    socketManager.remove(this);
     close();
 
     while (!_sendBuf.isEmpty()) {
@@ -118,7 +117,6 @@ TEpollSocket::~TEpollSocket()
         delete buf;
     }
 
-    socketManager[_sid].compareExchangeStrong(this, nullptr);  //clear
     socketCounter--;
 }
 
@@ -293,24 +291,7 @@ int TEpollSocket::bufferedListCount() const
 }
 
 
-TEpollSocket *TEpollSocket::searchSocket(int sid)
+QSet<TEpollSocket *> TEpollSocket::allSockets()
 {
-    return socketManager[sid & 0xffff].load();
-}
-
-
-QList<TEpollSocket *> TEpollSocket::allSockets()
-{
-    QList<TEpollSocket *> lst;
-    for (int i = 0; i <= USHRT_MAX; i++) {
-        TEpollSocket *p = socketManager[i].load();
-        if (p) {
-            lst.append(p);
-
-            if (lst.count() == socketCounter.load(std::memory_order_acquire)) {
-                break;
-            }
-        }
-    }
-    return lst;
+    return socketManager;
 }

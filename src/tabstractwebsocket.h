@@ -25,7 +25,7 @@ public:
     void sendClose(int code);
     virtual void disconnect() = 0;
     virtual qintptr socketDescriptor() const = 0;
-    virtual int socketId() const = 0;
+    //virtual int socketId() const { return 0; }
     void startKeepAlive(int interval);
     void stopKeepAlive();
     void renewKeepAlive();

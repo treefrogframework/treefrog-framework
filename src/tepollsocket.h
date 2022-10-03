@@ -23,7 +23,6 @@ public:
     void close();
     int socketDescriptor() const { return _sd; }
     QHostAddress peerAddress() const { return _clientAddr; }
-    int socketId() const { return _sid; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
     void disconnect();
@@ -45,15 +44,14 @@ protected:
     void setSocketDescpriter(int socketDescriptor);
     virtual void *getRecvBuffer(int size) = 0;
     virtual bool seekRecvBuffer(int pos) = 0;
-    static TEpollSocket *searchSocket(int sid);
-    static QList<TEpollSocket *> allSockets();
+    static QSet<TEpollSocket *> allSockets();
 
     TAtomic<bool> pollIn {false};
     TAtomic<bool> pollOut {false};
 
 private:
     int _sd {0};  // socket descriptor
-    int _sid {0};
+    //int _sid {0};
     QHostAddress _clientAddr;
     QQueue<TSendBuffer *> _sendBuf;
 

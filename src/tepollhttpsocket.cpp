@@ -181,18 +181,12 @@ void TEpollHttpSocket::clear()
 }
 
 
-TEpollHttpSocket *TEpollHttpSocket::searchSocket(int sid)
-{
-    TEpollSocket *sock = TEpollSocket::searchSocket(sid);
-    return dynamic_cast<TEpollHttpSocket *>(sock);
-}
-
-
 QList<TEpollHttpSocket *> TEpollHttpSocket::allSockets()
 {
     QList<TEpollHttpSocket *> lst;
-    for (auto sock : (const QList<TEpollSocket *> &)TEpollSocket::allSockets()) {
-        auto p = dynamic_cast<TEpollHttpSocket *>(sock);
+    auto set = TEpollSocket::allSockets();
+    for (auto it = set.constBegin(); it != set.constEnd(); ++it) {
+        auto p = dynamic_cast<TEpollHttpSocket *>(*it);
         if (p) {
             lst.append(p);
         }

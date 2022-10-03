@@ -21,6 +21,10 @@
 
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
+namespace {
+QMap<int, TEpollWebSocket *> socketManager;
+}
+
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header) :
     QObject(),
@@ -28,12 +32,14 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
     TAbstractWebSocket(header)
 {
     tSystemDebug("TEpollWebSocket  [%p]", this);
+    socketManager.insert(socketDescriptor, this);
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
 
 
 TEpollWebSocket::~TEpollWebSocket()
 {
+    socketManager.remove(socketDescriptor());
     tSystemDebug("~TEpollWebSocket  [%p]", this);
 }
 
@@ -236,8 +242,7 @@ void TEpollWebSocket::timerEvent(QTimerEvent *event)
 }
 
 
-TEpollWebSocket *TEpollWebSocket::searchSocket(int sid)
+TEpollWebSocket *TEpollWebSocket::searchSocket(int socket)
 {
-    TEpollSocket *sock = TEpollSocket::searchSocket(sid);
-    return dynamic_cast<TEpollWebSocket *>(sock);
+    return socketManager.value(socket, nullptr);
 }

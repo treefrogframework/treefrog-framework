@@ -52,7 +52,7 @@ static bool directViewRenderMode()
 }
 
 
-void TActionContext::execute(THttpRequest &request, int sid)
+void TActionContext::execute(THttpRequest &request)
 {
     // App parameters
     static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
@@ -125,7 +125,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         if (currController) {
             currController->setActionName(route.action);
             currController->setArguments(route.params);
-            currController->setSocketId(sid);
+            //currController->setSocketId(sid);
 
             // Session
             if (currController->sessionEnabled()) {

@@ -98,11 +98,10 @@ protected:
     void rollbackTransaction() { _rollback = true; }
     void setAutoRemove(const QString &filePath);
     bool validateAccess(const TAbstractUser *user);
-    int socketId() const { return _sockId; }
     // For WebSocket
-    void sendTextToWebSocket(int socketId, const QString &text);
-    void sendBinaryToWebSocket(int socketId, const QByteArray &binary);
-    void closeWebSokcet(int socketId, int closeCode = Tf::NormalClosure);
+    void sendTextToWebSocket(int socket, const QString &text);
+    void sendBinaryToWebSocket(int socket, const QByteArray &binary);
+    void closeWebSokcet(int socket, int closeCode = Tf::NormalClosure);
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
 
@@ -125,7 +124,6 @@ private:
 
     void setActionName(const QString &name);
     void setArguments(const QStringList &arguments) { _args = arguments; }
-    void setSocketId(int socketId) { _sockId = socketId; }
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
     void exportAllFlashVariants();
@@ -148,7 +146,6 @@ private:
     bool _rollback {false};
     QStringList _autoRemoveFiles;
     QList<QPair<int, QVariant>> _taskList;
-    int _sockId {0};
 
     friend class TActionContext;
     friend class TSessionCookieStore;

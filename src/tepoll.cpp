@@ -146,7 +146,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
-        _pollingSockets.insert(socket, socket->socketId());
+        _pollingSockets.removeAll(socket);
     }
     return !ret;
 }
@@ -174,9 +174,7 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    if (Q_UNLIKELY(_pollingSockets.remove(socket) == 0)) {
-        return false;
-    }
+    _pollingSockets.removeAll(socket);
 
     int ret = tf_epoll_ctl(_epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), nullptr);
     int err = errno;
@@ -198,7 +196,6 @@ void TEpoll::dispatchSendData()
         TEpollSocket *sock = sd->socket;
 
         if (Q_UNLIKELY(sock->socketDescriptor() <= 0)) {
-            tSystemDebug("already disconnected:  sid:%d", sock->socketId());
             continue;
         }
 
@@ -250,8 +247,8 @@ void TEpoll::dispatchSendData()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (auto it = _pollingSockets.begin(); it != _pollingSockets.end(); ++it) {
-        delete it.key();
+    for (auto *socket : _pollingSockets) {
+        delete socket;
     }
     _pollingSockets.clear();
 }
