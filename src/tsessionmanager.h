@@ -12,6 +12,7 @@ public:
     bool store(TSession &session);
     bool remove(const QByteArray &id);
     QString storeType() const;
+    QString csrfProtectionKey() const;
     QByteArray generateId();
     void collectGarbage();
 
@@ -23,4 +24,3 @@ private:
     T_DISABLE_MOVE(TSessionManager)
     TSessionManager();
 };
-

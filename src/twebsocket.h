@@ -19,7 +19,6 @@ public:
     virtual ~TWebSocket();
 
     qintptr socketDescriptor() const override { return QTcpSocket::socketDescriptor(); }
-    //int socketId() const override { return sid; }
     bool canReadRequest() const;
     void disconnect() override;
     static TAbstractWebSocket *searchSocket(qintptr socket);

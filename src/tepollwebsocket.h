@@ -23,12 +23,11 @@ public:
     bool isBinaryRequest() const;
     QList<QPair<int, QByteArray>> readAllBinaryRequest();
     virtual bool canReadRequest() override;
-    virtual void startWorker() override;
+    virtual void process() override;
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() override;
     qintptr socketDescriptor() const override { return TEpollSocket::socketDescriptor(); }
-    //int socketId() const override { return TEpollSocket::socketId(); }
     static TEpollWebSocket *searchSocket(int socket);
 
 public slots:
@@ -38,19 +37,19 @@ public slots:
     void sendPong(const QByteArray &data = QByteArray());
 
 protected:
-    virtual void *getRecvBuffer(int size) override;
+    //virtual void *getRecvBuffer(int size) override;
     virtual bool seekRecvBuffer(int pos) override;
     virtual QObject *thisObject() override { return this; }
     virtual qint64 writeRawData(const QByteArray &data) override;
-    virtual QList<TWebSocketFrame> &websocketFrames() override { return frames; }
+    virtual QList<TWebSocketFrame> &websocketFrames() override { return _frames; }
     void timerEvent(QTimerEvent *event) override;
     void clear();
 
 private:
     void startWorker(TWebSocketWorker *worker);
 
-    QByteArray recvBuffer;
-    QList<TWebSocketFrame> frames;
+    //QByteArray recvBuffer;
+    QList<TWebSocketFrame> _frames;
 
     TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header);
 
@@ -58,4 +57,3 @@ private:
     T_DISABLE_COPY(TEpollWebSocket)
     T_DISABLE_MOVE(TEpollWebSocket)
 };
-

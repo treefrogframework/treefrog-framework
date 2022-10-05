@@ -28,8 +28,7 @@ public:
     bool addPoll(TEpollSocket *socket, int events);
     bool modifyPoll(TEpollSocket *socket, int events);
     bool deletePoll(TEpollSocket *socket);
-    //bool waitSendData(int msec);
-    void dispatchSendData();
+    void dispatchEvents();
     void releaseAllPollingSockets();
 
     // For action workers
@@ -57,4 +56,3 @@ private:
     T_DISABLE_COPY(TEpoll)
     T_DISABLE_MOVE(TEpoll);
 };
-

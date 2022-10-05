@@ -15,7 +15,7 @@ public:
     TMemcachedDriver();
     ~TMemcachedDriver();
 
-    QString key() const override { return "REDIS"; }
+    QString key() const override { return "MEMCACHED"; }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString()) override;
     void close() override;
     bool command(const QString &cmd) override;
@@ -24,14 +24,6 @@ public:
     bool request(const QByteArrayList &command, QVariantList &response);
 
 protected:
-    enum DataType {
-        SimpleString = '+',
-        Error = '-',
-        Integer = ':',
-        BulkString = '$',
-        Array = '*',
-    };
-
     bool writeCommand(const QByteArray &command);
     bool readReply();
     QByteArray parseBulkString(bool *ok);
@@ -39,9 +31,6 @@ protected:
     QByteArray getLine(bool *ok);
     int getNumber(bool *ok);
     void clearBuffer();
-
-    static QByteArray toBulk(const QByteArray &data);
-    static QByteArray toMultiBulk(const QByteArrayList &data);
 
 private:
 #ifdef Q_OS_UNIX

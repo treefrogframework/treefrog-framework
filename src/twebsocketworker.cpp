@@ -7,7 +7,6 @@
 
 #include "twebsocketworker.h"
 #include "tabstractwebsocket.h"
-#include "thttpsocket.h"
 #include "tpublisher.h"
 #include "tsystemglobal.h"
 #include "turlroute.h"

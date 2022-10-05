@@ -55,7 +55,7 @@ constexpr auto TF_SRC_REVISION = 2549;
     do {                                                         \
         QVariant ___##VAR##_;                                    \
         ___##VAR##_.setValue(VAR);                               \
-        ((TAbstractController *)(Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
+        Tf::currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
     } while (0)
 #define texport(VAR) T_EXPORT(VAR)
 
@@ -63,7 +63,7 @@ constexpr auto TF_SRC_REVISION = 2549;
     do {                                                          \
         QVariant ___##VAR##_;                                     \
         ___##VAR##_.setValue(VAR);                                \
-        ((TAbstractController *)(Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
+        Tf::currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
     } while (0)
 #define texportUnless(VAR) T_EXPORT_UNLESS(VAR)
 
@@ -222,7 +222,7 @@ constexpr auto TF_SRC_REVISION = 2549;
     do {                                              \
         QVariant ___##VAR##_;                         \
         ___##VAR##_.setValue(VAR);                    \
-        ((TAbstractController *)(Tf::currentContext())->currentController())->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
+        Tf::currentController()->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
     } while (0)
 
 #define tflash(VAR) T_FLASH(VAR)
@@ -278,8 +278,8 @@ T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max) noexcept;
 T_CORE_EXPORT uint64_t random(uint64_t max) noexcept;
 
 T_CORE_EXPORT TCache *cache() noexcept;
-T_CORE_EXPORT TActionContext *currentContext();
-inline const TActionContext *constCurrentContext() { return currentContext(); }
+T_CORE_EXPORT TAbstractController *currentController();
+inline const TAbstractController *constCurrentController() { return currentController(); }
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;

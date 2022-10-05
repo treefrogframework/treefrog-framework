@@ -7,11 +7,13 @@
 #include <THttpRequest>
 #include <TTemporaryFile>
 
+class TActionContext;
+
 
 class T_CORE_EXPORT THttpSocket : public QObject {
     Q_OBJECT
 public:
-    THttpSocket(QByteArray &readBuffer, QObject *parent = 0);
+    THttpSocket(QByteArray &readBuffer, TActionContext *context, QObject *parent = 0);
     virtual ~THttpSocket();
 
     QList<THttpRequest> read();
@@ -49,6 +51,7 @@ private:
     QByteArray _headerBuffer;
     TTemporaryFile _fileBuffer;
     quint64 _idleElapsed {0};
+    TActionContext *_context {nullptr};
 
     friend class TActionThread;
     T_DISABLE_COPY(THttpSocket)

@@ -11,11 +11,12 @@ class QIODevice;
 class T_CORE_EXPORT TActionWorker : public QObject, public TActionContext {
     Q_OBJECT
 public:
+    TActionWorker() { }
     virtual ~TActionWorker() { }
     void start(TEpollHttpSocket *socket);
 
-    static TActionWorker *instance();
-    static int workerCount() { return 0; }
+    //static TActionWorker *instance();
+    //static int workerCount();
 
 protected:
     void run();
@@ -23,7 +24,6 @@ protected:
     void closeHttpSocket() override;
 
 private:
-    TActionWorker() { }
 
     QByteArray _httpRequest;
     QHostAddress _clientAddr;

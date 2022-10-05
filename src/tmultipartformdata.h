@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <TGlobal>
 
+class TActionContext;
 class QIODevice;
 
 
@@ -14,7 +15,7 @@ public:
     TMimeHeader(const TMimeHeader &other);
     TMimeHeader &operator=(const TMimeHeader &other);
 
-    bool isEmpty() const { return headers.isEmpty(); }
+    bool isEmpty() const { return _headers.isEmpty(); }
     QByteArray header(const QByteArray &headerName) const;
     void setHeader(const QByteArray &headerName, const QByteArray &value);
     QByteArray contentDispositionParameter(const QByteArray &name) const;
@@ -26,7 +27,7 @@ protected:
 
 private:
     static int skipWhitespace(const QByteArray &text, int pos);
-    QList<QPair<QByteArray, QByteArray>> headers;
+    QList<QPair<QByteArray, QByteArray>> _headers;
 };
 
 
@@ -38,19 +39,19 @@ public:
     TMimeEntity(const TMimeEntity &other);
     TMimeEntity &operator=(const TMimeEntity &other);
 
-    const TMimeHeader &header() const { return entity.first; }
-    TMimeHeader &header() { return entity.first; }
-    QByteArray header(const QByteArray &headerName) const { return entity.first.header(headerName); }
-    QByteArray dataName() const { return entity.first.dataName(); }
+    const TMimeHeader &header() const { return _entity.first; }
+    TMimeHeader &header() { return _entity.first; }
+    QByteArray header(const QByteArray &headerName) const { return _entity.first.header(headerName); }
+    QByteArray dataName() const { return _entity.first.dataName(); }
     QString contentType() const;
     qint64 fileSize() const;
-    QString originalFileName() const { return entity.first.originalFileName(); }
+    QString originalFileName() const { return _entity.first.originalFileName(); }
     bool renameUploadedFile(const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     QString uploadedFilePath() const;
 
 private:
     TMimeEntity(const TMimeHeader &header, const QString &body);
-    QPair<TMimeHeader, QString> entity;
+    QPair<TMimeHeader, QString> _entity;
     friend class TMultipartFormData;
 };
 
@@ -60,8 +61,8 @@ public:
     static const QFile::Permissions DefaultPermissions;
 
     TMultipartFormData(const QByteArray &boundary = QByteArray());
-    TMultipartFormData(const QByteArray &formData, const QByteArray &boundary);
-    TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary);
+    TMultipartFormData(const QByteArray &formData, const QByteArray &boundary, TActionContext *context);
+    TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary, TActionContext *context);
     ~TMultipartFormData() { }
 
     bool isEmpty() const;
@@ -84,12 +85,12 @@ public:
     QList<TMimeEntity> entityList(const QByteArray &dataName) const;
 
 protected:
-    void parse(QIODevice *dev);
+    void parse(QIODevice *dev, TActionContext *context);
 
 private:
     TMimeHeader parseMimeHeader(QIODevice *dev) const;
     QByteArray parseContent(QIODevice *dev) const;
-    QString writeContent(QIODevice *dev) const;
+    QString writeContent(QIODevice *dev, TActionContext *context) const;
 
     QByteArray dataBoundary;
     QList<QPair<QString, QString>> postParameters;

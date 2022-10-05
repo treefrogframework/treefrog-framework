@@ -7,9 +7,12 @@
 
 #include "lz4.h"
 #include "tdatabasecontextthread.h"
+#include "tmultiplexingserver.h"
+#include "tsystemglobal.h"
 #include <QBuffer>
 #include <QDataStream>
 #include <TActionContext>
+#include <TActionController>
 #include <TActionThread>
 #include <TAppSettings>
 #include <TCache>
@@ -113,6 +116,27 @@ TCache *Tf::cache() noexcept
 }
 
 
+TAbstractController *Tf::currentController()
+{
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Thread) {
+        TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
+        if (Q_LIKELY(context)) {
+            return context->currentController();
+        }
+    }
+
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
+#ifdef Q_OS_LINUX
+        return TMultiplexingServer::instance()->currentController();
+#else
+        tFatal("Unsupported MPM: epoll");
+#endif
+    }
+
+    throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
+}
+
+/*
 TActionContext *Tf::currentContext()
 {
     TActionContext *context = nullptr;
@@ -127,7 +151,7 @@ TActionContext *Tf::currentContext()
 
     case TWebApplication::Epoll:
 #ifdef Q_OS_LINUX
-        return TActionWorker::instance();
+        //return TActionWorker::instance();
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
@@ -139,11 +163,27 @@ TActionContext *Tf::currentContext()
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
 }
-
+*/
 
 TDatabaseContext *Tf::currentDatabaseContext()
 {
     TDatabaseContext *context;
+
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
+#ifdef Q_OS_LINUX
+        context = TMultiplexingServer::instance()->currentWorker();
+        if (context) {
+            return context;
+        }
+
+        context = Tf::app()->mainDatabaseContext();
+        if (context) {
+            return context;
+        }
+#else
+        tFatal("Unsupported MPM: epoll");
+#endif
+    }
 
     context = TDatabaseContext::currentDatabaseContext();
     if (context) {

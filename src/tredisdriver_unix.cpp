@@ -7,6 +7,7 @@
 
 #include "tfcore_unix.h"
 #include "tredisdriver.h"
+#include "ttcpsocket.h"
 #include "tsystemglobal.h"
 #include <QTcpSocket>
 #include <TApplicationServerBase>
@@ -27,6 +28,7 @@ TRedisDriver::TRedisDriver() :
 TRedisDriver::~TRedisDriver()
 {
     close();
+    delete _client;
 }
 
 
@@ -74,6 +76,8 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     }
 
     _socket = TApplicationServerBase::duplicateSocket(tcpSocket.socketDescriptor());
+    _client = new TTcpSocket();
+    _client->setSocketDescriptor(_socket);
     tcpSocket.close();
     return _socket > 0;
 }
@@ -85,6 +89,10 @@ void TRedisDriver::close()
         tf_close_socket(_socket);
         _socket = 0;
     }
+
+    if (isOpen()) {
+        _client->close();
+    }
 }
 
 
@@ -94,7 +102,7 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
-
+#if 0
     qint64 total = 0;
     while (total < command.length()) {
         if (tf_poll_send(_socket, 5000) > 0) {
@@ -109,6 +117,21 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
             break;
         }
     }
+#else
+    qint64 total = 0;
+    while (total < command.length()) {
+        qint64 len = _client->sendData(command.data() + total, command.length() - total);
+        if (len < 0) {
+            tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
+            break;
+        }
+        total += len;
+    }
+
+    if (total > 0) {
+        _client->waitForDataSent(5000);
+    }
+#endif
     return total == command.length();
 }
 
@@ -124,7 +147,7 @@ bool TRedisDriver::readReply()
     buf.reserve(RECV_BUF_SIZE);
     int timeout = 5000;
     int len = 0;
-
+#if 0
     while (tf_poll_recv(_socket, timeout) > 0) {
         len = tf_recv(_socket, buf.data(), RECV_BUF_SIZE, 0);
         if (len <= 0) {
@@ -139,7 +162,17 @@ bool TRedisDriver::readReply()
         }
         timeout = 1;
     }
-
+#else
+    if (_client->waitForDataReceived(timeout)) {
+        len = _client->receiveData(buf.data(), RECV_BUF_SIZE);
+        if (len <= 0) {
+            tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
+        } else {
+            buf.resize(len);
+            _buffer += buf;
+        }
+    }
+#endif
     return len > 0;
 }
 

@@ -102,7 +102,7 @@ void TActionThread::run()
 
     Counter counter(threadCounter);
     QEventLoop eventLoop;
-    _httpSocket = new THttpSocket(_readBuffer);
+    _httpSocket = new THttpSocket(_readBuffer, this);
     if (TActionContext::socketDesc > 0) {
         _httpSocket->setSocketDescriptor(TActionContext::socketDesc, QAbstractSocket::ConnectedState);
     }

@@ -83,7 +83,8 @@ QString TActionController::name() const
 */
 const THttpRequest &TActionController::request() const
 {
-    return Tf::currentContext()->httpRequest();
+    return context()->httpRequest();
+    //return Tf::currentContext()->httpRequest();
 }
 
 /*!
@@ -91,7 +92,8 @@ const THttpRequest &TActionController::request() const
 */
 THttpRequest &TActionController::request()
 {
-    return Tf::currentContext()->httpRequest();
+    return context()->httpRequest();
+    //return Tf::currentContext()->httpRequest();
 }
 
 /*!
@@ -173,8 +175,8 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
  */
 QByteArray TActionController::authenticityToken() const
 {
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
+        QString key = TSessionManager::instance().csrfProtectionKey();
         QByteArray csrfId = session().value(key).toByteArray();
 
         if (csrfId.isEmpty()) {
@@ -203,8 +205,8 @@ void TActionController::setSession(const TSession &session)
 */
 void TActionController::setCsrfProtectionInto(TSession &session)
 {
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
+        QString key = TSessionManager::instance().csrfProtectionKey();
         session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
     }
 }
@@ -249,7 +251,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
         return true;
     }
 
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() != QLatin1String("cookie")) {
+    if (TSessionManager::instance().storeType() != QLatin1String("cookie")) {
         if (session().id().isEmpty()) {
             throw SecurityException("Request Forgery Protection requires a valid session", __FILE__, __LINE__);
         }
@@ -680,7 +682,7 @@ bool TActionController::validateAccess(const TAbstractUser *user)
     if (TAccessValidator::accessRules.isEmpty()) {
         setAccessRules();
     }
-    return TAccessValidator::validate(user);
+    return TAccessValidator::validate(user, this);
 }
 
 /*!
@@ -760,7 +762,8 @@ void TActionController::setAutoRemove(const QString &filePath)
 */
 QHostAddress TActionController::clientAddress() const
 {
-    return Tf::currentContext()->clientAddress();
+    return context()->clientAddress();
+    //return Tf::currentContext()->clientAddress();
 }
 
 /*!

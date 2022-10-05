@@ -5,7 +5,9 @@
 #include <TGlobal>
 #include <TKvsDriver>
 
-#ifndef Q_OS_UNIX
+#ifdef Q_OS_UNIX
+class TTcpSocket;
+#else
 class QTcpSocket;
 #endif
 
@@ -46,6 +48,7 @@ protected:
 private:
 #ifdef Q_OS_UNIX
     int _socket {0};
+    TTcpSocket *_client {nullptr};
 #else
     QTcpSocket *_client {nullptr};
 #endif

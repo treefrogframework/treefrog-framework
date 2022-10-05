@@ -16,7 +16,6 @@
 #include <TApplicationServerBase>
 #include <THttpHeader>
 #include <THttpResponse>
-#include <TMultipartFormData>
 #include <TTemporaryFile>
 #include <chrono>
 #include <ctime>
@@ -31,9 +30,10 @@ constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
   \brief The THttpSocket class provides a socket for the HTTP.
 */
 
-THttpSocket::THttpSocket(QByteArray &readBuffer, QObject *parent) :
+THttpSocket::THttpSocket(QByteArray &readBuffer, TActionContext *context, QObject *parent) :
     QObject(parent),
-    _readBuffer(readBuffer)
+    _readBuffer(readBuffer),
+    _context(context)
 {
     connect(this, SIGNAL(requestWrite(const QByteArray &)), this, SLOT(writeRawData(const QByteArray &)), Qt::QueuedConnection);
     _idleElapsed = Tf::getMSecsSinceEpoch();
@@ -54,10 +54,10 @@ QList<THttpRequest> THttpSocket::read()
     if (canReadRequest()) {
         if (_fileBuffer.isOpen()) {
             _fileBuffer.close();
-            reqList << THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress());
+            reqList << THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress(), _context);
             _headerBuffer.resize(0);
         } else {
-            reqList = THttpRequest::generate(_readBuffer, peerAddress());
+            reqList = THttpRequest::generate(_readBuffer, peerAddress(), _context);
         }
 
         _lengthToRead = -1;

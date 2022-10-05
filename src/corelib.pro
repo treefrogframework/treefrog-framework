@@ -394,6 +394,8 @@ linux-* {
   SOURCES += tepollhttpsocket.cpp
   HEADERS += tepollwebsocket.h
   SOURCES += tepollwebsocket.cpp
+  HEADERS += ttcpsocket.h
+  SOURCES += ttcpsocket.cpp
   SOURCES += tprocessinfo_linux.cpp
   SOURCES += tthreadapplicationserver_linux.cpp
 }

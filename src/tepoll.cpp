@@ -73,6 +73,10 @@ TEpoll::~TEpoll()
 
 int TEpoll::wait(int timeout)
 {
+    if (_eventIterator < _numEvents) {
+        return _numEvents - _eventIterator;
+    }
+
     _eventIterator = 0;
     _polling = true;
     _numEvents = tf_epoll_wait(_epollFd, _events, MaxEvents, timeout);
@@ -189,7 +193,7 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
 }
 
 
-void TEpoll::dispatchSendData()
+void TEpoll::dispatchEvents()
 {
     TSendData *sd;
     while (_sendRequests.dequeue(sd)) {
@@ -203,7 +207,9 @@ void TEpoll::dispatchSendData()
         case TSendData::Disconnect:
             deletePoll(sock);
             sock->close();
-            delete sock;
+            if (sock->autoDelete()) {
+                delete sock;
+            }
             break;
 
         case TSendData::SwitchToWebSocket: {
@@ -221,7 +227,9 @@ void TEpoll::dispatchSendData()
 
             // Stop polling and delete
             deletePoll(sock);
-            delete sock;
+            if (sock->autoDelete()) {
+                delete sock;
+            }
 
             // WebSocket opening
             TSession session;
@@ -248,7 +256,9 @@ void TEpoll::dispatchSendData()
 void TEpoll::releaseAllPollingSockets()
 {
     for (auto *socket : _pollingSockets) {
-        delete socket;
+        if (socket->autoDelete()) {
+            delete socket;
+        }
     }
     _pollingSockets.clear();
 }

@@ -11,6 +11,7 @@
 #include <THttpRequestHeader>
 #include <TMultipartFormData>
 
+class TActionContext;
 class QIODevice;
 
 
@@ -34,8 +35,8 @@ class T_CORE_EXPORT THttpRequest {
 public:
     THttpRequest();
     THttpRequest(const THttpRequest &other);
-    THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress);
-    THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress);
+    THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context);
+    THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
     virtual ~THttpRequest();
     THttpRequest &operator=(const THttpRequest &other);
 
@@ -74,7 +75,7 @@ public:
     bool hasJson() const { return !d->jsonData.isNull(); }
     const QJsonDocument &jsonData() const { return d->jsonData; }
 
-    static QList<THttpRequest> generate(QByteArray &byteArray, const QHostAddress &address);
+    static QList<THttpRequest> generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context);
     static QList<QPair<QString, QString>> fromQuery(const QString &query);
 
 protected:
@@ -88,10 +89,11 @@ protected:
     static QVariantMap itemMap(const QString &key, const QList<QPair<QString, QString>> &items);
 
 private:
-    void parseBody(const QByteArray &body, const THttpRequestHeader &header);
+    void parseBody(const QByteArray &body, const THttpRequestHeader &header, TActionContext *context);
 
     QSharedDataPointer<THttpRequestData> d;
     QIODevice *bodyDevice {nullptr};
+
     friend class TMultipartFormData;
 };
 

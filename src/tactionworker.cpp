@@ -22,11 +22,11 @@
 */
 
 
-TActionWorker *TActionWorker::instance()
-{
-    static TActionWorker globalInstance;
-    return &globalInstance;
-}
+// TActionWorker *TActionWorker::instance()
+// {
+//     static TActionWorker globalInstance;
+//     return &globalInstance;
+// }
 
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
@@ -65,11 +65,11 @@ void TActionWorker::closeHttpSocket()
 
 void TActionWorker::start(TEpollHttpSocket *sock)
 {
-    TDatabaseContext::setCurrentDatabaseContext(this);
+    //TDatabaseContext::setCurrentDatabaseContext(this);
     _socket = sock;
     _httpRequest += _socket->readRequest();
     _clientAddr = _socket->peerAddress();
-    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr);
+    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr, this);
 
     // Loop for HTTP-pipeline requests
     for (THttpRequest &req : requests) {
@@ -84,5 +84,6 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     TActionContext::release();
     _httpRequest.clear();
     _clientAddr.clear();
-    TDatabaseContext::setCurrentDatabaseContext(nullptr);
+    //TDatabaseContext::setCurrentDatabaseContext(nullptr);
+    deleteLater();
 }

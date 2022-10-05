@@ -293,6 +293,7 @@ int main(int argc, char *argv[])
     switch (webapp.multiProcessingModule()) {
     case TWebApplication::Thread:
         server = new TThreadApplicationServer(sock, &webapp);
+        TMultiplexingServer::instantiate(0); // For epoll eventloop
         break;
 
     case TWebApplication::Epoll:

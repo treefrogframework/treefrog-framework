@@ -80,7 +80,7 @@ void TActionContext::execute(THttpRequest &request)
             accessLogger.setTimestamp(QDateTime::currentDateTime());
             accessLogger.setRequest(firstLine);
             accessLogger.setRemoteHost((ListenPort > 0) ? originatingClientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
-            accessLogger.startElaspedTimer();
+            accessLogger.startElapsedTimer();
         }
 
         tSystemDebug("method : %s", reqHeader.method().data());
@@ -125,7 +125,7 @@ void TActionContext::execute(THttpRequest &request)
         if (currController) {
             currController->setActionName(route.action);
             currController->setArguments(route.params);
-            //currController->setSocketId(sid);
+            currController->setContext(this);
 
             // Session
             if (currController->sessionEnabled()) {

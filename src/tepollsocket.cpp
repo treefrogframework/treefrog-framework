@@ -8,12 +8,12 @@
 #include "tepollsocket.h"
 #include "tatomicptr.h"
 #include "tepoll.h"
-#include "tepollhttpsocket.h"
 #include "tfcore.h"
 #include "tsendbuffer.h"
 #include <THttpHeader>
 #include <TSystemGlobal>
 #include <TWebApplication>
+#include <TMultiplexingServer>
 #include <QFileInfo>
 #include <QSet>
 #include <atomic>
@@ -26,37 +26,6 @@ int sendBufSize = 0;
 int recvBufSize = 0;
 std::atomic<int> socketCounter {0};
 QSet<TEpollSocket *> socketManager;
-}
-
-
-TEpollSocket *TEpollSocket::accept(int listeningSocket)
-{
-    struct sockaddr_storage addr;
-    socklen_t addrlen = sizeof(addr);
-
-    int actfd = tf_accept4(listeningSocket, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
-    int err = errno;
-    if (Q_UNLIKELY(actfd < 0)) {
-        if (err != EAGAIN) {
-            tSystemWarn("Failed accept.  errno:%d", err);
-        }
-        return nullptr;
-    }
-
-    return create(actfd, QHostAddress((sockaddr *)&addr));
-}
-
-
-TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &address)
-{
-    TEpollSocket *sock = nullptr;
-
-    if (Q_LIKELY(socketDescriptor > 0)) {
-        sock = new TEpollHttpSocket(socketDescriptor, address);
-        initBuffer(socketDescriptor);
-    }
-
-    return sock;
 }
 
 
@@ -102,6 +71,9 @@ TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
     tSystemDebug("TEpollSocket  socket:%d", _sd);
     socketManager.insert(this);
     socketCounter++;
+
+    static std::once_flag once;
+    std::call_once(once, initBuffer, socketDescriptor);
 }
 
 
@@ -112,8 +84,8 @@ TEpollSocket::~TEpollSocket()
     socketManager.remove(this);
     close();
 
-    while (!_sendBuf.isEmpty()) {
-        TSendBuffer *buf = _sendBuf.dequeue();
+    while (!_sendBuffer.isEmpty()) {
+        TSendBuffer *buf = _sendBuffer.dequeue();
         delete buf;
     }
 
@@ -177,14 +149,14 @@ int TEpollSocket::send()
 {
     int ret = 0;
 
-    if (_sendBuf.isEmpty()) {
+    if (_sendBuffer.isEmpty()) {
         pollOut = true;
         return ret;
     }
     pollOut = false;
 
-    while (!_sendBuf.isEmpty()) {
-        TSendBuffer *buf = _sendBuf.head();
+    while (!_sendBuffer.isEmpty()) {
+        TSendBuffer *buf = _sendBuffer.head();
         TAccessLogger &logger = buf->accessLogger();
 
         int len = 0;
@@ -211,7 +183,7 @@ int TEpollSocket::send()
 
         if (buf->atEnd()) {
             logger.write();  // Writes access log
-            delete _sendBuf.dequeue();  // delete send-buffer obj
+            delete _sendBuffer.dequeue();  // delete send-buffer obj
         }
 
         if (len < 0) {
@@ -240,9 +212,31 @@ int TEpollSocket::send()
 }
 
 
+void *TEpollSocket::getRecvBuffer(int size)
+{
+    int len = _recvBuffer.size();
+    _recvBuffer.reserve(len + size);
+    return _recvBuffer.data() + len;
+}
+
+
+bool TEpollSocket::seekRecvBuffer(int pos)
+{
+    int size = _recvBuffer.size();
+    if (Q_UNLIKELY(pos <= 0 || size + pos > _recvBuffer.capacity())) {
+        Q_ASSERT(0);
+        return false;
+    }
+
+    size += pos;
+    _recvBuffer.resize(size);
+    return true;
+}
+
+
 void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 {
-    _sendBuf.enqueue(buffer);
+    _sendBuffer.enqueue(buffer);
 }
 
 
@@ -273,6 +267,65 @@ void TEpollSocket::sendData(const QByteArray &data)
 }
 
 
+qint64 TEpollSocket::receiveData(char *buffer, qint64 length)
+{
+    qint64 len = std::min(length, _recvBuffer.length());
+    if (len > 0) {
+        memcpy(buffer, _recvBuffer.data(), len);
+        _recvBuffer.remove(0, len);
+    }
+    return len;
+}
+
+
+QByteArray TEpollSocket::receiveAll()
+{
+    QByteArray res = _recvBuffer;
+    _recvBuffer.clear();
+    return res;
+}
+
+
+bool TEpollSocket::waitForDataSent(int msecs)
+{
+    int ms = msecs;
+    QElapsedTimer elapsed;
+    elapsed.start();
+
+    while (!isDataSent()) {
+        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
+            break;
+        }
+
+        ms = msecs - elapsed.elapsed();
+        if (ms <= 0) {
+            break;
+        }
+    }
+    return isDataSent();
+}
+
+
+bool TEpollSocket::waitForDataReceived(int msecs)
+{
+    int ms = msecs;
+    QElapsedTimer elapsed;
+    elapsed.start();
+
+    while (!isDataReceived()) {
+        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
+            break;
+        }
+
+        ms = msecs - elapsed.elapsed();
+        if (ms <= 0) {
+            break;
+        }
+    }
+    return isDataReceived();
+}
+
+
 void TEpollSocket::disconnect()
 {
     TEpoll::instance()->setDisconnect(this);
@@ -287,7 +340,7 @@ void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 
 int TEpollSocket::bufferedListCount() const
 {
-    return _sendBuf.count();
+    return _sendBuffer.count();
 }
 
 
