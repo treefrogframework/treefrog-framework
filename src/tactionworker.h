@@ -15,9 +15,6 @@ public:
     virtual ~TActionWorker() { }
     void start(TEpollHttpSocket *socket);
 
-    //static TActionWorker *instance();
-    //static int workerCount();
-
 protected:
     void run();
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;

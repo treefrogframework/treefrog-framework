@@ -22,13 +22,6 @@
 */
 
 
-// TActionWorker *TActionWorker::instance()
-// {
-//     static TActionWorker globalInstance;
-//     return &globalInstance;
-// }
-
-
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
     if (keepAliveTimeout() > 0) {
@@ -65,7 +58,6 @@ void TActionWorker::closeHttpSocket()
 
 void TActionWorker::start(TEpollHttpSocket *sock)
 {
-    //TDatabaseContext::setCurrentDatabaseContext(this);
     _socket = sock;
     _httpRequest += _socket->readRequest();
     _clientAddr = _socket->peerAddress();
@@ -84,6 +76,5 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     TActionContext::release();
     _httpRequest.clear();
     _clientAddr.clear();
-    //TDatabaseContext::setCurrentDatabaseContext(nullptr);
     deleteLater();
 }

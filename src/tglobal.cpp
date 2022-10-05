@@ -136,34 +136,6 @@ TAbstractController *Tf::currentController()
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
 }
 
-/*
-TActionContext *Tf::currentContext()
-{
-    TActionContext *context = nullptr;
-
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
-        context = dynamic_cast<TActionThread *>(QThread::currentThread());
-        if (Q_LIKELY(context)) {
-            return context;
-        }
-        break;
-
-    case TWebApplication::Epoll:
-#ifdef Q_OS_LINUX
-        //return TActionWorker::instance();
-#else
-        tFatal("Unsupported MPM: epoll");
-#endif
-        break;
-
-    default:
-        break;
-    }
-
-    throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
-}
-*/
 
 TDatabaseContext *Tf::currentDatabaseContext()
 {

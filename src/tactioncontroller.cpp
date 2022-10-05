@@ -84,7 +84,6 @@ QString TActionController::name() const
 const THttpRequest &TActionController::request() const
 {
     return context()->httpRequest();
-    //return Tf::currentContext()->httpRequest();
 }
 
 /*!
@@ -93,7 +92,6 @@ const THttpRequest &TActionController::request() const
 THttpRequest &TActionController::request()
 {
     return context()->httpRequest();
-    //return Tf::currentContext()->httpRequest();
 }
 
 /*!
@@ -763,7 +761,6 @@ void TActionController::setAutoRemove(const QString &filePath)
 QHostAddress TActionController::clientAddress() const
 {
     return context()->clientAddress();
-    //return Tf::currentContext()->clientAddress();
 }
 
 /*!
@@ -848,7 +845,6 @@ void TActionController::reset()
     _rollback = false;
     _autoRemoveFiles.clear();
     _taskList.clear();
-    //_sockId = 0;
 }
 
 
