@@ -12,6 +12,7 @@
 #include <TActionWorker>
 #include <TAppSettings>
 #include <THttpRequest>
+#include <TWebApplication>
 #include <TMultiplexingServer>
 #include <atomic>
 
@@ -76,5 +77,7 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     TActionContext::release();
     _httpRequest.clear();
     _clientAddr.clear();
+    // Deletes this
+    moveToThread(Tf::app()->databaseContextMainThread());
     deleteLater();
 }
