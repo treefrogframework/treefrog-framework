@@ -143,6 +143,10 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
 
         int cltfd = sock->socketDescriptor();
         if (cltfd == listenSocket && cltfd > 0) {
+            if (_processingSocketStack.count() > 64) {  // Not accept in deep context
+                continue;
+            }
+
             TEpollSocket *acceptedSock = TEpollHttpSocket::accept(listenSocket);
             if (Q_LIKELY(acceptedSock)) {
                 if (!TEpoll::instance()->addPoll(acceptedSock, (EPOLLIN | EPOLLOUT | EPOLLET))) {

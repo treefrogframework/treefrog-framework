@@ -158,8 +158,23 @@ void TEpollHttpSocket::process()
     tSystemDebug("TEpollHttpSocket::process");
     _worker = new TActionWorker;
     _worker->start(this);
+    delete _worker;
     _worker = nullptr;
     releaseWorker();
+
+
+    // static QStack<TActionWorker * > workerStack;
+
+    // if (workerStack.count() == 0) {
+    //     _worker = new TActionWorker;
+    // } else {
+    //     _worker = workerStack.pop();
+    // }
+
+    // _worker->start(this);
+    // workerStack.push(_worker);
+    // _worker = nullptr;
+    // releaseWorker();
 }
 
 

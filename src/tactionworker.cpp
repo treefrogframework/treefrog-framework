@@ -77,7 +77,8 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     TActionContext::release();
     _httpRequest.clear();
     _clientAddr.clear();
+    _socket = nullptr;
     // Deletes this
-    moveToThread(Tf::app()->databaseContextMainThread());
-    deleteLater();
+    //moveToThread(Tf::app()->databaseContextMainThread());
+    //deleteLater();
 }
