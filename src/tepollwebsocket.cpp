@@ -28,7 +28,7 @@ QMap<int, TEpollWebSocket *> socketManager;
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header) :
     QObject(),
-    TEpollSocket(socketDescriptor, address),
+    TEpollSocket(socketDescriptor, Tf::SocketState::Connected, address),
     TAbstractWebSocket(header)
 {
     tSystemDebug("TEpollWebSocket  [%p]", this);

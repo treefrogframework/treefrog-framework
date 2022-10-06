@@ -1,10 +1,10 @@
 #pragma once
 #include "tatomic.h"
+#include <TGlobal>
 #include <QByteArray>
 #include <QHostAddress>
 #include <QObject>
 #include <QQueue>
-#include <TGlobal>
 
 class TSendBuffer;
 class THttpHeader;
@@ -17,16 +17,17 @@ class QFileInfo;
 
 class T_CORE_EXPORT TEpollSocket {
 public:
-    TEpollSocket(int socketDescriptor, const QHostAddress &address);
+    TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress);
     virtual ~TEpollSocket();
 
     void close();
     int socketDescriptor() const { return _sd; }
-    QHostAddress peerAddress() const { return _clientAddr; }
+    QHostAddress peerAddress() const { return _peerAddress; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
     qint64 receiveData(char *buffer, qint64 length);
     QByteArray receiveAll();
+    bool waitForConnected(int msecs = 5000);
     bool waitForDataSent(int msecs = 5000);
     bool waitForDataReceived(int msecs = 5000);
     bool isDataSent() const { return _sendBuffer.isEmpty(); }
@@ -36,6 +37,7 @@ public:
     int bufferedListCount() const;
     bool autoDelete() const { return _autoDelete; }
     void setAutoDelete(bool autoDelete) { _autoDelete = autoDelete; }
+    Tf::SocketState state() const { return _state; }
 
     virtual bool canReadRequest() { return false; }
     virtual void process() { }
@@ -59,7 +61,8 @@ protected:
 
 private:
     int _sd {0};  // socket descriptor
-    QHostAddress _clientAddr;
+    Tf::SocketState _state {Tf::SocketState::Unconnected};
+    QHostAddress _peerAddress;
     QQueue<TSendBuffer *> _sendBuffer;
     bool _autoDelete {true};
 

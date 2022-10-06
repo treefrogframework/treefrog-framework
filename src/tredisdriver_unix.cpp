@@ -11,6 +11,7 @@
 #include "tsystemglobal.h"
 #include <QTcpSocket>
 #include <TApplicationServerBase>
+#include <arpa/inet.h>
 using namespace Tf;
 
 constexpr int DEFAULT_PORT = 6379;
@@ -34,7 +35,11 @@ TRedisDriver::~TRedisDriver()
 
 bool TRedisDriver::isOpen() const
 {
+#if 0
     return _socket > 0;
+#else
+    return _client->state() == Tf::SocketState::Connected;
+#endif
 }
 
 
@@ -43,7 +48,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     if (isOpen()) {
         return true;
     }
-
+#if 0
     QTcpSocket tcpSocket;
 
     // Sets socket options
@@ -80,6 +85,16 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     _client->setSocketDescriptor(_socket);
     tcpSocket.close();
     return _socket > 0;
+#else
+    _host = (host.isEmpty()) ? "localhost" : host;
+    _port = (port == 0) ? DEFAULT_PORT : port;
+
+    tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
+
+    _client = new TTcpSocket();
+    _client->connectToHost(_host, _port);
+    return _client->waitForConnected(5000);
+#endif
 }
 
 

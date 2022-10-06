@@ -241,6 +241,12 @@ enum class KvsEngine {
     Num  // = 3
 };
 
+enum class SocketState : int {
+    Unconnected = 0,
+    Connecting,
+    Connected,
+};
+
 
 #if QT_VERSION >= 0x050e00  // 5.14.0
 constexpr auto KeepEmptyParts = Qt::KeepEmptyParts;

@@ -55,7 +55,7 @@ TEpollHttpSocket *TEpollHttpSocket::create(int socketDescriptor, const QHostAddr
 
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address) :
-    TEpollSocket(socketDescriptor, address),
+    TEpollSocket(socketDescriptor, Tf::SocketState::Connected, address),
     _idleElapsed()
 {
     _recvBuffer.reserve(BUFFER_RESERVE_SIZE);

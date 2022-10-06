@@ -64,9 +64,10 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 }
 
 
-TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
+TEpollSocket::TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress) :
     _sd(socketDescriptor),
-    _clientAddr(address)
+    _state(state),
+    _peerAddress(peerAddress)
 {
     tSystemDebug("TEpollSocket  socket:%d", _sd);
     socketManager.insert(this);
@@ -282,6 +283,28 @@ QByteArray TEpollSocket::receiveAll()
     QByteArray res = _recvBuffer;
     _recvBuffer.clear();
     return res;
+}
+
+
+bool TEpollSocket::waitForConnected(int msecs)
+{
+    int ms = msecs;
+    QElapsedTimer elapsed;
+    elapsed.start();
+
+    while (state() != Tf::SocketState::Connected) {
+        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
+            break;
+        }
+
+        ms = msecs - elapsed.elapsed();
+        if (ms <= 0) {
+            break;
+        }
+    }
+
+    tSystemDebug("TEpollSocket::waitForConnected  state:%d", _state);
+    return state() == Tf::SocketState::Connected;
 }
 
 

@@ -173,6 +173,11 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
 
             if (TEpoll::instance()->canReceive()) {
                 try {
+                    if (sock->state() == Tf::SocketState::Connecting) {
+                        sock->_state = Tf::SocketState::Connected;
+                        continue;
+                    }
+
                     // Receive data
                     int len = TEpoll::instance()->recv(sock);
                     if (Q_UNLIKELY(len < 0)) {
