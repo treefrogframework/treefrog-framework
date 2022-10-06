@@ -34,7 +34,7 @@ include (GenerateExportHeader)
 include (GetCacheVariables)
 include (GNUInstallDirs)
 
-option (BUILD_SHARED_LIBS "Build shared libraries" ON)
+option (BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option (PRINT_UNSYMBOLIZED_STACK_TRACES
   "Print file offsets in traces instead of symbolizing" OFF)
 option (WITH_CUSTOM_PREFIX "Enable support for user-generated message prefixes" ON)
