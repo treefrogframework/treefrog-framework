@@ -197,8 +197,7 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
                 if (sock->canReadRequest()) {
                     _processingSocketStack.push(sock);
                     sock->process();
-                    bool res = _processingSocketStack.pop(sock);
-                    Q_ASSERT(res);
+                    _processingSocketStack.pop();
                 }
             }
         }
@@ -283,12 +282,13 @@ bool TMultiplexingServer::isAutoReloadingEnabled()
 
 TActionWorker *TMultiplexingServer::currentWorker() const
 {
-    TEpollSocket *socket;
-
-    if (_processingSocketStack.top(socket) && socket) {
-        auto ptr = dynamic_cast<TEpollHttpSocket *>(socket);
-        if (ptr) {
-            return ptr->worker();
+    if (!_processingSocketStack.isEmpty()) {
+        TEpollSocket *socket = _processingSocketStack.top();
+        if (socket) {
+            auto ptr = dynamic_cast<TEpollHttpSocket *>(socket);
+            if (ptr) {
+                return ptr->worker();
+            }
         }
     }
     return nullptr;

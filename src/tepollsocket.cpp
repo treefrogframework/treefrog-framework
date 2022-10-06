@@ -72,8 +72,7 @@ TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
     socketManager.insert(this);
     socketCounter++;
 
-    static std::once_flag once;
-    std::call_once(once, initBuffer, socketDescriptor);
+    initBuffer(socketDescriptor);
 }
 
 
