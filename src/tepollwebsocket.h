@@ -37,7 +37,6 @@ public slots:
     void sendPong(const QByteArray &data = QByteArray());
 
 protected:
-    //virtual void *getRecvBuffer(int size) override;
     virtual bool seekRecvBuffer(int pos) override;
     virtual QObject *thisObject() override { return this; }
     virtual qint64 writeRawData(const QByteArray &data) override;
@@ -47,11 +46,9 @@ protected:
 
 private:
     void startWorker(TWebSocketWorker *worker);
-
-    //QByteArray recvBuffer;
-    QList<TWebSocketFrame> _frames;
-
     TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header);
+
+    QList<TWebSocketFrame> _frames;
 
     friend class TEpoll;
     T_DISABLE_COPY(TEpollWebSocket)

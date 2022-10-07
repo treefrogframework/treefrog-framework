@@ -21,6 +21,7 @@ public:
     virtual ~TEpollSocket();
 
     void close();
+    void dispose();
     int socketDescriptor() const { return _sd; }
     QHostAddress peerAddress() const { return _peerAddress; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
@@ -38,6 +39,8 @@ public:
     bool autoDelete() const { return _autoDelete; }
     void setAutoDelete(bool autoDelete) { _autoDelete = autoDelete; }
     Tf::SocketState state() const { return _state; }
+    void setSocketDescriptor(int socketDescriptor);
+    bool watch();
 
     virtual bool canReadRequest() { return false; }
     virtual void process() { }
@@ -49,13 +52,9 @@ protected:
     virtual int send();
     virtual int recv();
     void enqueueSendData(TSendBuffer *buffer);
-    void setSocketDescpriter(int socketDescriptor);
     virtual void *getRecvBuffer(int size);
     virtual bool seekRecvBuffer(int pos);
     static QSet<TEpollSocket *> allSockets();
-
-    TAtomic<bool> pollIn {false};
-    TAtomic<bool> pollOut {false};
 
     QByteArray _recvBuffer;  // Recieve-buffer
 

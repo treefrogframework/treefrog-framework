@@ -149,53 +149,42 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
 
             TEpollSocket *acceptedSock = TEpollHttpSocket::accept(listenSocket);
             if (Q_LIKELY(acceptedSock)) {
-                if (!TEpoll::instance()->addPoll(acceptedSock, (EPOLLIN | EPOLLOUT | EPOLLET))) {
-                    if (acceptedSock->autoDelete()) {
-                        delete acceptedSock;
-                    }
+                if (!acceptedSock->watch()) {
+                    acceptedSock->dispose();
                 }
             }
             continue;
 
         } else {
             if (TEpoll::instance()->canSend()) {
+                if (sock->state() == Tf::SocketState::Connecting) {
+                    sock->_state = Tf::SocketState::Connected;
+                    continue;
+                }
+
                 // Send data
                 int len = TEpoll::instance()->send(sock);
                 if (Q_UNLIKELY(len < 0)) {
                     TEpoll::instance()->deletePoll(sock);
-                    sock->close();
-                    if (sock->autoDelete()) {
-                        delete sock;
-                    }
+                    sock->dispose();
                     continue;
                 }
             }
 
             if (TEpoll::instance()->canReceive()) {
                 try {
-                    if (sock->state() == Tf::SocketState::Connecting) {
-                        sock->_state = Tf::SocketState::Connected;
-                        continue;
-                    }
-
                     // Receive data
                     int len = TEpoll::instance()->recv(sock);
                     if (Q_UNLIKELY(len < 0)) {
                         TEpoll::instance()->deletePoll(sock);
-                        sock->close();
-                        if (sock->autoDelete()) {
-                            delete sock;
-                        }
+                        sock->dispose();
                         continue;
                     }
                 } catch (ClientErrorException &e) {
                     tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
                     tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
                     TEpoll::instance()->deletePoll(sock);
-                    sock->close();
-                    if (sock->autoDelete()) {
-                        delete sock;
-                    }
+                    sock->dispose();
                     continue;
                 }
 
@@ -215,7 +204,7 @@ void TMultiplexingServer::run()
 {
     setNoDeleyOption(listenSocket);
 
-    TEpollSocket *epollListen = TEpollHttpSocket::create(listenSocket, QHostAddress());
+    TEpollSocket *epollListen = TEpollHttpSocket::create(listenSocket, QHostAddress(), false);
     TEpoll::instance()->addPoll(epollListen, EPOLLIN);
 
     int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
@@ -233,16 +222,21 @@ void TMultiplexingServer::run()
             break;
         }
 
+        // Garbage
+        if (!_garbageSockets.isEmpty()) {
+            for (auto *ptr : _garbageSockets) {
+                delete ptr;
+            }
+            _garbageSockets.clear();
+        }
+
         // Check keep-alive timeout for HTTP sockets
         if (keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000) {
             for (auto *http : (const QList<TEpollHttpSocket *> &)TEpollHttpSocket::allSockets()) {
                 if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
                     tSystemDebug("KeepAlive timeout: socket:%d", http->socketDescriptor());
                     TEpoll::instance()->deletePoll(http);
-                    http->close();
-                    if (http->autoDelete()) {
-                        delete http;
-                    }
+                    http->dispose();
                 }
             }
             idleTimer.start();

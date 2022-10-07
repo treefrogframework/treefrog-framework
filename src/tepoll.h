@@ -49,7 +49,6 @@ private:
     volatile bool _polling {false};
     int _numEvents {0};
     int _eventIterator {0};
-    QList<TEpollSocket *> _pollingSockets;
     TQueue<TSendData *> _sendRequests;
 
     TEpoll();

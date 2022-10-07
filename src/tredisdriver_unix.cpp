@@ -38,7 +38,7 @@ bool TRedisDriver::isOpen() const
 #if 0
     return _socket > 0;
 #else
-    return _client->state() == Tf::SocketState::Connected;
+    return (_client) ? _client->state() == Tf::SocketState::Connected : false;
 #endif
 }
 
@@ -91,7 +91,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
     tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
 
-    _client = new TTcpSocket();
+    _client = new TTcpSocket;
     _client->connectToHost(_host, _port);
     return _client->waitForConnected(5000);
 #endif

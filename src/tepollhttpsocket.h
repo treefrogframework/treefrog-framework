@@ -18,7 +18,7 @@ public:
     TActionWorker *worker() { return _worker; }
 
     static TEpollHttpSocket *accept(int listeningSocket);
-    static TEpollHttpSocket *create(int socketDescriptor, const QHostAddress &address);
+    static TEpollHttpSocket *create(int socketDescriptor, const QHostAddress &address, bool watch = true);
     static QList<TEpollHttpSocket *> allSockets();
 
 protected:

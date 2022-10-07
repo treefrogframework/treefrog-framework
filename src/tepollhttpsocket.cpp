@@ -38,16 +38,20 @@ TEpollHttpSocket *TEpollHttpSocket::accept(int listeningSocket)
         return nullptr;
     }
 
-    return create(actfd, QHostAddress((sockaddr *)&addr));
+    return create(actfd, QHostAddress((sockaddr *)&addr), true);
 }
 
 
-TEpollHttpSocket *TEpollHttpSocket::create(int socketDescriptor, const QHostAddress &address)
+TEpollHttpSocket *TEpollHttpSocket::create(int socketDescriptor, const QHostAddress &address, bool watch)
 {
     TEpollHttpSocket *sock = nullptr;
 
     if (Q_LIKELY(socketDescriptor > 0)) {
         sock = new TEpollHttpSocket(socketDescriptor, address);
+    }
+
+    if (watch) {
+        sock->watch();
     }
 
     return sock;
@@ -161,20 +165,6 @@ void TEpollHttpSocket::process()
     delete _worker;
     _worker = nullptr;
     releaseWorker();
-
-
-    // static QStack<TActionWorker * > workerStack;
-
-    // if (workerStack.count() == 0) {
-    //     _worker = new TActionWorker;
-    // } else {
-    //     _worker = workerStack.pop();
-    // }
-
-    // _worker->start(this);
-    // workerStack.push(_worker);
-    // _worker = nullptr;
-    // releaseWorker();
 }
 
 
@@ -182,8 +172,9 @@ void TEpollHttpSocket::releaseWorker()
 {
     tSystemDebug("TEpollHttpSocket::releaseWorker");
 
-    if (pollIn.exchange(false)) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    bool res = TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    if (!res) {
+        dispose();
     }
 }
 

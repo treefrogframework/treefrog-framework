@@ -51,8 +51,7 @@ public:
 
 
 TEpoll::TEpoll() :
-    _events(new struct epoll_event[MaxEvents]),
-    _pollingSockets()
+    _events(new struct epoll_event[MaxEvents])
 {
     _epollFd = epoll_create1(EPOLL_CLOEXEC);
     if (_epollFd < 0) {
@@ -135,7 +134,7 @@ TEpoll *TEpoll::instance()
 
 bool TEpoll::addPoll(TEpollSocket *socket, int events)
 {
-    if (Q_UNLIKELY(!events)) {
+    if (!events || socket->socketDescriptor() == 0) {
         return false;
     }
     struct epoll_event ev;
@@ -147,10 +146,11 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
     if (Q_UNLIKELY(ret < 0)) {
         if (err != EEXIST) {
             tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  sd:%d errno:%d", socket->socketDescriptor(), err);
+        } else {
+            ret = 0;
         }
     } else {
         tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
-        _pollingSockets.removeAll(socket);
     }
     return !ret;
 }
@@ -158,7 +158,7 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 {
-    if (Q_UNLIKELY(!events)) {
+    if (!events || socket->socketDescriptor() == 0) {
         return false;
     }
     struct epoll_event ev;
@@ -178,7 +178,9 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
 
 bool TEpoll::deletePoll(TEpollSocket *socket)
 {
-    _pollingSockets.removeAll(socket);
+    if (socket->socketDescriptor() == 0) {
+        return false;
+    }
 
     int ret = tf_epoll_ctl(_epollFd, EPOLL_CTL_DEL, socket->socketDescriptor(), nullptr);
     int err = errno;
@@ -206,10 +208,7 @@ void TEpoll::dispatchEvents()
         switch (sd->method) {
         case TSendData::Disconnect:
             deletePoll(sock);
-            sock->close();
-            if (sock->autoDelete()) {
-                delete sock;
-            }
+            sock->dispose();
             break;
 
         case TSendData::SwitchToWebSocket: {
@@ -223,13 +222,14 @@ void TEpoll::dispatchEvents()
             // Switch to WebSocket
             TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), sd->header);
             ws->moveToThread(Tf::app()->thread());
-            addPoll(ws, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+            bool res = ws->watch();
+            if (!res) {
+                sock->dispose();
+            }
 
             // Stop polling and delete
             deletePoll(sock);
-            if (sock->autoDelete()) {
-                delete sock;
-            }
+            sock->dispose();
 
             // WebSocket opening
             TSession session;
@@ -255,12 +255,12 @@ void TEpoll::dispatchEvents()
 
 void TEpoll::releaseAllPollingSockets()
 {
-    for (auto *socket : _pollingSockets) {
+    auto set = TEpollSocket::allSockets();
+    for (auto *socket : set) {
         if (socket->autoDelete()) {
             delete socket;
         }
     }
-    _pollingSockets.clear();
 }
 
 
@@ -280,7 +280,10 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevi
 
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
     socket->enqueueSendData(sendbuf);
-    modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    bool res = modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    if (!res) {
+        socket->dispose();
+    }
 }
 
 
@@ -288,7 +291,10 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &data)
 {
     TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(data);
     socket->enqueueSendData(sendbuf);
-    modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    bool res = modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    if (!res) {
+        socket->dispose();
+    }
 }
 
 

@@ -24,9 +24,9 @@ class SendData;
 namespace {
 int sendBufSize = 0;
 int recvBufSize = 0;
-std::atomic<int> socketCounter {0};
 QSet<TEpollSocket *> socketManager;
 }
+
 
 
 TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
@@ -71,8 +71,6 @@ TEpollSocket::TEpollSocket(int socketDescriptor, Tf::SocketState state, const QH
 {
     tSystemDebug("TEpollSocket  socket:%d", _sd);
     socketManager.insert(this);
-    socketCounter++;
-
     initBuffer(socketDescriptor);
 }
 
@@ -81,15 +79,55 @@ TEpollSocket::~TEpollSocket()
 {
     tSystemDebug("TEpollSocket::destructor");
 
-    socketManager.remove(this);
     close();
+    socketManager.remove(this);
 
     while (!_sendBuffer.isEmpty()) {
         TSendBuffer *buf = _sendBuffer.dequeue();
         delete buf;
     }
+}
 
-    socketCounter--;
+// Disposes for gabage collection
+void TEpollSocket::dispose()
+{
+    close();
+    if (autoDelete()) {
+        TMultiplexingServer::instance()->_garbageSockets.insert(this);
+    }
+}
+
+
+void TEpollSocket::close()
+{
+    if (_sd > 0) {
+        tf_close_socket(_sd);
+        _sd = 0;
+    }
+}
+
+
+bool TEpollSocket::watch()
+{
+    bool ret = false;
+
+    switch (state()) {
+    case Tf::SocketState::Unconnected:
+        break;
+
+    case Tf::SocketState::Connecting:  // fall through
+    case Tf::SocketState::Connected:
+        ret = TEpoll::instance()->addPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));
+        if (!ret) {
+            close();
+        }
+        break;
+
+    default:
+        tSystemError("Logic error: [%s:%d]", __FILE__, __LINE__);
+        break;
+    }
+    return ret;
 }
 
 
@@ -150,10 +188,8 @@ int TEpollSocket::send()
     int ret = 0;
 
     if (_sendBuffer.isEmpty()) {
-        pollOut = true;
         return ret;
     }
-    pollOut = false;
 
     while (!_sendBuffer.isEmpty()) {
         TSendBuffer *buf = _sendBuffer.head();
@@ -240,18 +276,9 @@ void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 }
 
 
-void TEpollSocket::setSocketDescpriter(int socketDescriptor)
+void TEpollSocket::setSocketDescriptor(int socketDescriptor)
 {
     _sd = socketDescriptor;
-}
-
-
-void TEpollSocket::close()
-{
-    if (_sd > 0) {
-        tf_close_socket(_sd);
-        _sd = 0;
-    }
 }
 
 

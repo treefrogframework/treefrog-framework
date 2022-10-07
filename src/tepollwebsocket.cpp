@@ -172,8 +172,9 @@ void TEpollWebSocket::releaseWorker()
 {
     tSystemDebug("TEpollWebSocket::releaseWorker");
 
-    if (pollIn.exchange(false)) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    bool res = TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    if (!res) {
+        dispose();
     }
 }
 

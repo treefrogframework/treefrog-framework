@@ -48,8 +48,11 @@ private:
     int listenSocket {0};
     QBasicTimer reloadTimer;
     mutable QStack<TEpollSocket *> _processingSocketStack;
+    mutable QSet<TEpollSocket *> _garbageSockets;
 
     TMultiplexingServer(int listeningSocket, QObject *parent = 0);  // Constructor
+
+    friend class TEpollSocket;
     T_DISABLE_COPY(TMultiplexingServer)
     T_DISABLE_MOVE(TMultiplexingServer)
 };
