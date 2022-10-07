@@ -36,7 +36,8 @@ windows {
   }
   LIBS += -L"$$target.path"
 } else:unix {
-  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
   linux-*:LIBS += -lrt
   *-g++:DEFINES += _GNU_SOURCE
   freebsd-*:DEFINES += _GNU_SOURCE
@@ -49,20 +50,3 @@ INSTALLS += target
 }
 
 SOURCES += main.cpp
-
-unix {
-  HEADERS += signalhandler.h
-  SOURCES += signalhandler.cpp
-  HEADERS += symbolize.h
-  SOURCES += symbolize.cpp
-  HEADERS += demangle.h
-  SOURCES += demangle.cpp
-  HEADERS += stacktrace.h
-  SOURCES += stacktrace.cpp
-  HEADERS += gconfig.h \
-             stacktrace_generic-inl.h \
-             stacktrace_libunwind-inl.h \
-             stacktrace_powerpc-inl.h \
-             stacktrace_x86-inl.h \
-             stacktrace_x86_64-inl.h
-}
