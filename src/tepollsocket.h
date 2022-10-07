@@ -17,12 +17,14 @@ class QFileInfo;
 
 class T_CORE_EXPORT TEpollSocket {
 public:
+    TEpollSocket();
     TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress);
     virtual ~TEpollSocket();
 
+    void connectToHost(const QHostAddress &address, quint16 port);
     void close();
     void dispose();
-    int socketDescriptor() const { return _sd; }
+    int socketDescriptor() const { return _socket; }
     QHostAddress peerAddress() const { return _peerAddress; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
@@ -40,6 +42,7 @@ public:
     void setAutoDelete(bool autoDelete) { _autoDelete = autoDelete; }
     Tf::SocketState state() const { return _state; }
     void setSocketDescriptor(int socketDescriptor);
+    bool setSocketOption(int level, int optname, int val);
     bool watch();
 
     virtual bool canReadRequest() { return false; }
@@ -59,7 +62,7 @@ protected:
     QByteArray _recvBuffer;  // Recieve-buffer
 
 private:
-    int _sd {0};  // socket descriptor
+    int _socket {0};  // socket descriptor
     Tf::SocketState _state {Tf::SocketState::Unconnected};
     QHostAddress _peerAddress;
     QQueue<TSendBuffer *> _sendBuffer;

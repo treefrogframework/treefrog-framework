@@ -10,6 +10,13 @@
 using namespace Tf;
 
 
+TRedisDriver::TRedisDriver() :
+    TKvsDriver()
+{
+    _buffer.reserve(16 * 1024);
+}
+
+
 bool TRedisDriver::command(const QString &cmd)
 {
     QByteArrayList reqcmd = cmd.trimmed().toUtf8().split(' ');

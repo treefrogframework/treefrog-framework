@@ -9,21 +9,10 @@
 #include "tredisdriver.h"
 #include "ttcpsocket.h"
 #include "tsystemglobal.h"
-#include <QTcpSocket>
 #include <TApplicationServerBase>
-#include <arpa/inet.h>
-using namespace Tf;
+#include <netinet/tcp.h>
 
 constexpr int DEFAULT_PORT = 6379;
-constexpr int SEND_BUF_SIZE = 64 * 1024;
-constexpr int RECV_BUF_SIZE = 64 * 1024;
-
-
-TRedisDriver::TRedisDriver() :
-    TKvsDriver()
-{
-    _buffer.reserve(16 * 1024);
-}
 
 
 TRedisDriver::~TRedisDriver()
@@ -35,11 +24,7 @@ TRedisDriver::~TRedisDriver()
 
 bool TRedisDriver::isOpen() const
 {
-#if 0
-    return _socket > 0;
-#else
     return (_client) ? _client->state() == Tf::SocketState::Connected : false;
-#endif
 }
 
 
@@ -48,63 +33,20 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     if (isOpen()) {
         return true;
     }
-#if 0
-    QTcpSocket tcpSocket;
-
-    // Sets socket options
-    tcpSocket.setSocketOption(QAbstractSocket::LowDelayOption, 1);
-
-    // Sets buffer size of socket
-    int val = tcpSocket.socketOption(QAbstractSocket::SendBufferSizeSocketOption).toInt();
-    if (val < SEND_BUF_SIZE) {
-        tcpSocket.setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, SEND_BUF_SIZE);
-    }
-
-    val = tcpSocket.socketOption(QAbstractSocket::ReceiveBufferSizeSocketOption).toInt();
-    if (val < RECV_BUF_SIZE) {
-        tcpSocket.setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, RECV_BUF_SIZE);
-    }
 
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
-
-    tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
-    tcpSocket.connectToHost(_host, _port);
-
-    bool ret = tcpSocket.waitForConnected(5000);
-    if (Q_LIKELY(ret)) {
-        tSystemDebug("Redis open successfully");
-    } else {
-        tSystemError("Redis open failed");
-        close();
-        return false;
-    }
-
-    _socket = TApplicationServerBase::duplicateSocket(tcpSocket.socketDescriptor());
-    _client = new TTcpSocket();
-    _client->setSocketDescriptor(_socket);
-    tcpSocket.close();
-    return _socket > 0;
-#else
-    _host = (host.isEmpty()) ? "localhost" : host;
-    _port = (port == 0) ? DEFAULT_PORT : port;
-
     tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
 
     _client = new TTcpSocket;
+    _client->setSocketOption(SOL_TCP, TCP_NODELAY, 1);
     _client->connectToHost(_host, _port);
     return _client->waitForConnected(5000);
-#endif
 }
 
 
 void TRedisDriver::close()
 {
-    if (_socket > 0) {
-        tf_close_socket(_socket);
-        _socket = 0;
-    }
-
     if (isOpen()) {
         _client->close();
     }
@@ -113,41 +55,20 @@ void TRedisDriver::close()
 
 bool TRedisDriver::writeCommand(const QByteArray &command)
 {
+    bool ret = false;
+
     if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
-        return false;
-    }
-#if 0
-    qint64 total = 0;
-    while (total < command.length()) {
-        if (tf_poll_send(_socket, 5000) > 0) {
-            qint64 len = tf_send(_socket, command.data() + total, command.length() - total);
-            if (len < 0) {
-                tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
-                break;
-            }
-            total += len;
-        } else {
-            tSystemError("Socket poll error  [%s:%d]", __FILE__, __LINE__);
-            break;
-        }
-    }
-#else
-    qint64 total = 0;
-    while (total < command.length()) {
-        qint64 len = _client->sendData(command.data() + total, command.length() - total);
-        if (len < 0) {
-            tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
-            break;
-        }
-        total += len;
+        return ret;
     }
 
-    if (total > 0) {
-        _client->waitForDataSent(5000);
+    qint64 len = _client->sendData(command);
+    if (len < 0) {
+        tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
+    } else {
+        ret = _client->waitForDataSent(5000);
     }
-#endif
-    return total == command.length();
+    return ret;
 }
 
 
@@ -159,36 +80,15 @@ bool TRedisDriver::readReply()
     }
 
     QByteArray buf;
-    buf.reserve(RECV_BUF_SIZE);
-    int timeout = 5000;
-    int len = 0;
-#if 0
-    while (tf_poll_recv(_socket, timeout) > 0) {
-        len = tf_recv(_socket, buf.data(), RECV_BUF_SIZE, 0);
-        if (len <= 0) {
-            tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
-            break;
-        }
-
-        buf.resize(len);
-        _buffer += buf;
-        if (len < RECV_BUF_SIZE) {
-            break;
-        }
-        timeout = 1;
-    }
-#else
-    if (_client->waitForDataReceived(timeout)) {
-        len = _client->receiveData(buf.data(), RECV_BUF_SIZE);
-        if (len <= 0) {
+    if (_client->waitForDataReceived(5000)) {
+        buf = _client->receiveAll();
+        if (buf.isEmpty()) {
             tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
         } else {
-            buf.resize(len);
             _buffer += buf;
         }
     }
-#endif
-    return len > 0;
+    return !buf.isEmpty();
 }
 
 

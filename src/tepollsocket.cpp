@@ -6,7 +6,6 @@
  */
 
 #include "tepollsocket.h"
-#include "tatomicptr.h"
 #include "tepoll.h"
 #include "tfcore.h"
 #include "tsendbuffer.h"
@@ -16,18 +15,42 @@
 #include <TMultiplexingServer>
 #include <QFileInfo>
 #include <QSet>
-#include <atomic>
-#include <sys/types.h>
 
 class SendData;
+
+union tf_sockaddr {
+    sockaddr a;
+    sockaddr_in a4;
+    sockaddr_in6 a6;
+};
+
 
 namespace {
 int sendBufSize = 0;
 int recvBufSize = 0;
 QSet<TEpollSocket *> socketManager;
+
+
+void setAddressAndPort(const QHostAddress &address, quint16 port, tf_sockaddr *aa, int &addrSize)
+{
+    if (address.protocol() == QAbstractSocket::IPv6Protocol || address.protocol() == QAbstractSocket::AnyIPProtocol) {
+        memset(&aa->a6, 0, sizeof(sockaddr_in6));
+        aa->a6.sin6_family = AF_INET6;
+        //aa->a6.sin6_scope_id = QNetworkInterface::interfaceIndexFromName(address.scopeId());
+        aa->a6.sin6_port = htons(port);
+        auto tmp = address.toIPv6Address();
+        memcpy(&aa->a6.sin6_addr, &tmp, sizeof(tmp));
+        addrSize = sizeof(sockaddr_in6);
+    } else {
+        memset(&aa->a4, 0, sizeof(sockaddr_in));
+        aa->a4.sin_family = AF_INET;
+        aa->a4.sin_port = htons(port);
+        aa->a4.sin_addr.s_addr = htonl(address.toIPv4Address());
+        addrSize = sizeof(sockaddr_in);
+    }
 }
 
-
+}
 
 TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
 {
@@ -64,14 +87,23 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 }
 
 
+TEpollSocket::TEpollSocket()
+{
+    _socket = ::socket(AF_INET, (SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK), 0);
+    tSystemDebug("TEpollSocket  socket:%d", _socket);
+    socketManager.insert(this);
+    initBuffer(_socket);
+}
+
+
 TEpollSocket::TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress) :
-    _sd(socketDescriptor),
+    _socket(socketDescriptor),
     _state(state),
     _peerAddress(peerAddress)
 {
-    tSystemDebug("TEpollSocket  socket:%d", _sd);
+    tSystemDebug("TEpollSocket  socket:%d", _socket);
     socketManager.insert(this);
-    initBuffer(socketDescriptor);
+    initBuffer(_socket);
 }
 
 
@@ -100,10 +132,30 @@ void TEpollSocket::dispose()
 
 void TEpollSocket::close()
 {
-    if (_sd > 0) {
-        tf_close_socket(_sd);
-        _sd = 0;
+    if (_socket > 0) {
+        tf_close_socket(_socket);
+        _socket = 0;
     }
+}
+
+
+void TEpollSocket::connectToHost(const QHostAddress &address, quint16 port)
+{
+    tf_sockaddr aa;
+    int addrSize;
+    setAddressAndPort(address, port, &aa, addrSize);
+
+    int res = tf_connect(_socket, (struct sockaddr *)&aa.a, addrSize);
+    if (res < 0 && errno != EINPROGRESS) {
+        tSystemError("Failed connect");
+        close();
+        return;
+    }
+
+    tSystemDebug("TCP connection state: %d", res);
+    _state = (res == 0) ? Tf::SocketState::Connected : Tf::SocketState::Connecting;
+    _peerAddress = address;
+    watch();
 }
 
 
@@ -124,7 +176,7 @@ bool TEpollSocket::watch()
         break;
 
     default:
-        tSystemError("Logic error: [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
         break;
     }
     return ret;
@@ -144,7 +196,7 @@ int TEpollSocket::recv()
     for (;;) {
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        len = tf_recv(_sd, buf, recvBufSize, 0);
+        len = tf_recv(_socket, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -156,7 +208,7 @@ int TEpollSocket::recv()
     }
 
     if (!len && !err) {
-        tSystemDebug("Socket disconnected : sd:%d", _sd);
+        tSystemDebug("Socket disconnected : sd:%d", _socket);
         ret = -1;
     } else {
         if (len < 0 || err > 0) {
@@ -165,12 +217,12 @@ int TEpollSocket::recv()
                 break;
 
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _sd, err);
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _socket, err);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", _sd, err, len);
+                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", _socket, err, len);
                 ret = -1;
                 break;
             }
@@ -205,7 +257,7 @@ int TEpollSocket::send()
             }
 
             errno = 0;
-            len = tf_send(_sd, data, len);
+            len = tf_send(_socket, data, len);
             err = errno;
 
             if (len <= 0) {
@@ -229,13 +281,13 @@ int TEpollSocket::send()
 
             case EPIPE:  // FALLTHRU
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _sd, err);
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _socket, err);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed send : sd:%d  errno:%d  len:%d", _sd, err, len);
+                tSystemError("Failed send : sd:%d  errno:%d  len:%d", _socket, err, len);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
@@ -270,6 +322,21 @@ bool TEpollSocket::seekRecvBuffer(int pos)
 }
 
 
+bool TEpollSocket::setSocketOption(int level, int optname, int val)
+{
+    if (_socket < 1) {
+        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        return false;
+    }
+
+    int res = ::setsockopt(_socket, level, optname, &val, sizeof(val));
+    if (res < 0) {
+        tSystemError("setsockopt error: %d  [%s:%d]", res, __FILE__, __LINE__);
+    }
+    return !res;
+}
+
+
 void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 {
     _sendBuffer.enqueue(buffer);
@@ -278,7 +345,7 @@ void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 
 void TEpollSocket::setSocketDescriptor(int socketDescriptor)
 {
-    _sd = socketDescriptor;
+    _socket = socketDescriptor;
 }
 
 

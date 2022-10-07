@@ -46,8 +46,7 @@ protected:
     static QByteArray toMultiBulk(const QByteArrayList &data);
 
 private:
-#ifdef Q_OS_UNIX
-    int _socket {0};
+#ifdef Q_OS_LINUX
     TTcpSocket *_client {nullptr};
 #else
     QTcpSocket *_client {nullptr};

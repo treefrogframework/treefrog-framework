@@ -253,7 +253,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             }
 
         } else {
-            tSystemError("Logic error: [%s:%d]", __FILE__, __LINE__);
+            tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
         }
 
     } else {
@@ -417,7 +417,7 @@ inline QString TCriteriaConverter<T>::concat(const QString &s1, TCriteria::Logic
         break;
 
     default:
-        tSystemError("Logic error: [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
         break;
     }
 
