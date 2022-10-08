@@ -294,7 +294,9 @@ int main(int argc, char *argv[])
     switch (webapp.multiProcessingModule()) {
     case TWebApplication::Thread:
         server = new TThreadApplicationServer(sock, &webapp);
+#ifdef Q_OS_LINUX
         TMultiplexingServer::instantiate(0); // For epoll eventloop
+#endif
         break;
 
     case TWebApplication::Epoll:

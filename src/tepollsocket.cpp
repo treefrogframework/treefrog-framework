@@ -364,7 +364,7 @@ void TEpollSocket::sendData(const QByteArray &data)
 
 qint64 TEpollSocket::receiveData(char *buffer, qint64 length)
 {
-    qint64 len = std::min(length, _recvBuffer.length());
+    qint64 len = std::min(length, (qint64)_recvBuffer.length());
     if (len > 0) {
         memcpy(buffer, _recvBuffer.data(), len);
         _recvBuffer.remove(0, len);
