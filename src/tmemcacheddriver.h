@@ -23,15 +23,12 @@ public:
     bool command(const QByteArray &cmd) override;
     bool isOpen() const override;
     void moveToThread(QThread *thread) override;
-    bool request(const QByteArrayList &command, QVariantList &response);
+    bool request(const QByteArray &command, QByteArray &response);
 
 protected:
     bool writeCommand(const QByteArray &command);
     bool readReply();
-    //QByteArray parseBulkString(bool *ok);
-    //QVariantList parseArray(bool *ok);
     QByteArray getLine(bool *ok);
-    //int getNumber(bool *ok);
     void clearBuffer();
 
 private:

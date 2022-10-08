@@ -12,14 +12,12 @@ using namespace Tf;
 
 bool TMemcachedDriver::command(const QByteArray &cmd)
 {
-    QByteArrayList reqcmd = cmd.split(' ');
-    reqcmd.removeAll("");
-    QVariantList response;
-    return request(reqcmd, response);
+    QByteArray response;
+    return request(cmd, response);
 }
 
 
-bool TMemcachedDriver::request(const QByteArrayList &command, QVariantList &response)
+bool TMemcachedDriver::request(const QByteArray &command, QByteArray &response)
 {
     if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
@@ -28,9 +26,22 @@ bool TMemcachedDriver::request(const QByteArrayList &command, QVariantList &resp
 
     bool ret = true;
     bool ok = false;
+    tSystemDebug("memcached command: %s", command.data());
 
+    if (!writeCommand(command)) {
+        tSystemError("memcached write error  [%s:%d]", __FILE__, __LINE__);
+        close();
+        return false;
+    }
 
     clearBuffer();
+    if (readReply()) {
+
+    } else {
+        tSystemError("memcached read error  [%s:%d]", __FILE__, __LINE__);
+        close();
+        return false;
+    }
 
     return ret;
 }

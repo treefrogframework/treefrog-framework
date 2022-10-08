@@ -15,6 +15,13 @@
 constexpr int DEFAULT_PORT = 11211;
 
 
+TMemcachedDriver::TMemcachedDriver() :
+    TKvsDriver()
+{
+    _buffer.reserve(1023);
+}
+
+
 TMemcachedDriver::~TMemcachedDriver()
 {
     close();

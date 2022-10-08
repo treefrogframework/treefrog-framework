@@ -235,10 +235,11 @@ enum LogPriority {
 };
 
 enum class KvsEngine {
-    MongoDB = 0,
+    CacheKvs = 0,  // For internal use
+    MongoDB,
     Redis,
-    CacheKvs,  // For internal use
-    Num  // = 3
+    Memcached,
+    Num  // = 4
 };
 
 enum class SocketState : int {

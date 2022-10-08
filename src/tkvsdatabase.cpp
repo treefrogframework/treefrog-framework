@@ -7,6 +7,7 @@
 
 #include "tmongodriver.h"
 #include "tredisdriver.h"
+#include "tmemcacheddriver.h"
 #include <QMap>
 #include <QReadWriteLock>
 #include <QString>
@@ -58,10 +59,19 @@ static TKvsDriver *createDriver(const QString &driverName)
     TKvsDriver *driver = nullptr;
     QString name = driverName.toLower();
 
+    if (name.isEmpty()) {
+        return driver;
+    }
+
     if (name == QLatin1String("mongodb")) {
         driver = new TMongoDriver();
     } else if (name == QLatin1String("redis")) {
         driver = new TRedisDriver();
+    } else if (name == QLatin1String("memcached")) {
+        driver = new TMemcachedDriver();
+    } else {
+        tWarn("TKvsDatabase: %s driver not found", qUtf8Printable(driverName));
+        return driver;
     }
 
     if (!driver) {

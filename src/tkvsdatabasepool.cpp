@@ -32,6 +32,7 @@ public:
         // DriverName, Engine
         insert(Tf::KvsEngine::MongoDB, "mongodb");
         insert(Tf::KvsEngine::Redis, "redis");
+        insert(Tf::KvsEngine::Memcached, "memcached");
 
         if (Tf::app()->isKvsAvailable(Tf::KvsEngine::CacheKvs)) {
             auto backend = Tf::app()->cacheBackend();
