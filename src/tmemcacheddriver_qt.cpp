@@ -17,12 +17,6 @@ constexpr int SEND_BUF_SIZE = 128 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
 
 
-TMemcachedDriver::TMemcachedDriver() :
-    TKvsDriver()
-{
-}
-
-
 TMemcachedDriver::~TMemcachedDriver()
 {
     close();
@@ -83,7 +77,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 
 bool TMemcachedDriver::writeCommand(const QByteArray &command)
 {
-    return (_client) ? _client->write(command) : false;
+    return (isOpen()) ? _client->write(command) : false;
 }
 
 
@@ -97,7 +91,7 @@ void TMemcachedDriver::close()
 
 QByteArray TMemcachedDriver::readReply()
 {
-    if (Q_UNLIKELY(!isOpen())) {
+    if (!isOpen()) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
         return QByteArray();
     }

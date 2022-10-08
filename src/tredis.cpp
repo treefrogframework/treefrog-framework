@@ -52,7 +52,7 @@ TRedis::TRedis(const TRedis &other) :
 }
 
 /*!
-  Returns the MongoDB driver associated with the TRedis object.
+  Returns the Redis driver associated with the TRedis object.
 */
 TRedisDriver *TRedis::driver()
 {
@@ -72,7 +72,7 @@ TRedisDriver *TRedis::driver()
 }
 
 /*!
-  Returns the MongoDB driver associated with the TRedis object.
+  Returns the Redis driver associated with the TRedis object.
 */
 const TRedisDriver *TRedis::driver() const
 {

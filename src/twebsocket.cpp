@@ -12,7 +12,7 @@
 #include "twebsocketworker.h"
 #include <TWebApplication>
 #include <QMap>
-#include <QRecursiveMutex>
+#include <QMutex>
 
 constexpr qint64 WRITE_LENGTH = 1280;
 constexpr int BUFFER_RESERVE_SIZE = 127;

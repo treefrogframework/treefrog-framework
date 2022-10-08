@@ -5,7 +5,7 @@
 #include <TGlobal>
 #include <TKvsDriver>
 
-#ifdef Q_OS_UNIX
+#ifdef Q_OS_LINUX
 class TTcpSocket;
 #else
 class QTcpSocket;

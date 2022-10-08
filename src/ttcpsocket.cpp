@@ -3,7 +3,7 @@
 #include "tepoll.h"
 #include "tsystemglobal.h"
 #include "tfcore.h"
-#include <QRecursiveMutex>
+#include <QMutex>
 #include <TWebApplication>
 
 namespace {

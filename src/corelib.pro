@@ -345,6 +345,8 @@ SOURCES += tcacheredisstore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
+HEADERS += tmemcached.h
+SOURCES += tmemcached.cpp
 
 HEADERS += \
            tfnamespace.h \

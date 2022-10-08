@@ -15,12 +15,6 @@
 constexpr int DEFAULT_PORT = 11211;
 
 
-TMemcachedDriver::TMemcachedDriver() :
-    TKvsDriver()
-{
-}
-
-
 TMemcachedDriver::~TMemcachedDriver()
 {
     close();
@@ -61,26 +55,23 @@ void TMemcachedDriver::close()
 
 bool TMemcachedDriver::writeCommand(const QByteArray &command)
 {
-    bool ret = false;
-
-    if (Q_UNLIKELY(!isOpen())) {
+    if (!isOpen()) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
-        return ret;
+        return false;
     }
 
     qint64 len = _client->sendData(command);
     if (len < 0) {
         tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
-    } else {
-        ret = _client->waitForDataSent(5000);
+        return false;
     }
-    return ret;
+    return _client->waitForDataSent(5000);
 }
 
 
 QByteArray TMemcachedDriver::readReply()
 {
-    if (Q_UNLIKELY(!isOpen())) {
+    if (!isOpen()) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
         return QByteArray();
     }

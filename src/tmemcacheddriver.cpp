@@ -7,12 +7,18 @@
 
 #include "tmemcacheddriver.h"
 #include "tsystemglobal.h"
-using namespace Tf;
+
+
+TMemcachedDriver::TMemcachedDriver() :
+    TKvsDriver()
+{
+}
 
 
 bool TMemcachedDriver::command(const QByteArray &cmd)
 {
     QByteArray response;
+    tSystemDebug("memcached command: %s", cmd.data());
     return request(cmd, response);
 }
 
@@ -24,8 +30,6 @@ bool TMemcachedDriver::request(const QByteArray &command, QByteArray &response)
         return false;
     }
 
-    tSystemDebug("memcached command: %s", command.data());
-
     if (!writeCommand(command)) {
         tSystemError("memcached write error  [%s:%d]", __FILE__, __LINE__);
         close();
@@ -35,25 +39,3 @@ bool TMemcachedDriver::request(const QByteArray &command, QByteArray &response)
     response = readReply();
     return !response.isEmpty();
 }
-
-
-// QByteArray TMemcachedDriver::getLine(bool *ok)
-// {
-//     int idx = _buffer.indexOf(CRLF, _pos);
-//     if (idx < 0) {
-//         *ok = false;
-//         return QByteArray();
-//     }
-
-//     QByteArray ret = _buffer.mid(_pos, idx);
-//     _pos = idx + 2;
-//     *ok = true;
-//     return ret;
-// }
-
-
-// void TMemcachedDriver::clearBuffer()
-// {
-//     _buffer.resize(0);
-//     _pos = 0;
-// }
