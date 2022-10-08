@@ -10,9 +10,9 @@
 using namespace Tf;
 
 
-bool TMemcachedDriver::command(const QString &cmd)
+bool TMemcachedDriver::command(const QByteArray &cmd)
 {
-    QByteArrayList reqcmd = cmd.trimmed().toUtf8().split(' ');
+    QByteArrayList reqcmd = cmd.split(' ');
     reqcmd.removeAll("");
     QVariantList response;
     return request(reqcmd, response);
@@ -51,38 +51,38 @@ QByteArray TMemcachedDriver::getLine(bool *ok)
 }
 
 
-QByteArray TMemcachedDriver::parseBulkString(bool *ok)
-{
-    QByteArray str;
+// QByteArray TMemcachedDriver::parseBulkString(bool *ok)
+// {
+//     QByteArray str;
 
-    return str;
-}
-
-
-QVariantList TMemcachedDriver::parseArray(bool *ok)
-{
-    QVariantList lst;
-    int startpos = _pos;
-    *ok = false;
-
-    return lst;
-}
+//     return str;
+// }
 
 
-int TMemcachedDriver::getNumber(bool *ok)
-{
-    int idx = _buffer.indexOf(CRLF, _pos);
-    if (idx < 0) {
-        *ok = false;
-        return 0;
-    }
+// QVariantList TMemcachedDriver::parseArray(bool *ok)
+// {
+//     QVariantList lst;
+//     int startpos = _pos;
+//     *ok = false;
 
-    int num = _buffer.mid(_pos, idx - _pos).toInt();
-    _pos = idx + 2;
-    *ok = true;
-    tSystemDebug("getNumber: %d", num);
-    return num;
-}
+//     return lst;
+// }
+
+
+// int TMemcachedDriver::getNumber(bool *ok)
+// {
+//     int idx = _buffer.indexOf(CRLF, _pos);
+//     if (idx < 0) {
+//         *ok = false;
+//         return 0;
+//     }
+
+//     int num = _buffer.mid(_pos, idx - _pos).toInt();
+//     _pos = idx + 2;
+//     *ok = true;
+//     tSystemDebug("getNumber: %d", num);
+//     return num;
+// }
 
 
 void TMemcachedDriver::clearBuffer()

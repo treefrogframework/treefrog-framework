@@ -7,7 +7,6 @@
 
 #include "tredisdriver.h"
 #include "tsystemglobal.h"
-using namespace Tf;
 
 
 TRedisDriver::TRedisDriver() :
@@ -17,9 +16,9 @@ TRedisDriver::TRedisDriver() :
 }
 
 
-bool TRedisDriver::command(const QString &cmd)
+bool TRedisDriver::command(const QByteArray &cmd)
 {
-    QByteArrayList reqcmd = cmd.trimmed().toUtf8().split(' ');
+    QByteArrayList reqcmd = cmd.split(' ');
     reqcmd.removeAll("");
     QVariantList response;
     return request(reqcmd, response);
@@ -116,7 +115,7 @@ parse_done:
 
 QByteArray TRedisDriver::getLine(bool *ok)
 {
-    int idx = _buffer.indexOf(CRLF, _pos);
+    int idx = _buffer.indexOf(Tf::CRLF, _pos);
     if (idx < 0) {
         *ok = false;
         return QByteArray();
@@ -219,7 +218,7 @@ QVariantList TRedisDriver::parseArray(bool *ok)
 
 int TRedisDriver::getNumber(bool *ok)
 {
-    int idx = _buffer.indexOf(CRLF, _pos);
+    int idx = _buffer.indexOf(Tf::CRLF, _pos);
     if (idx < 0) {
         *ok = false;
         return 0;
@@ -244,9 +243,9 @@ QByteArray TRedisDriver::toBulk(const QByteArray &data)
 {
     QByteArray bulk("$");
     bulk += QByteArray::number(data.length());
-    bulk += CRLF;
+    bulk += Tf::CRLF;
     bulk += data;
-    bulk += CRLF;
+    bulk += Tf::CRLF;
     return bulk;
 }
 
@@ -255,7 +254,7 @@ QByteArray TRedisDriver::toMultiBulk(const QByteArrayList &data)
 {
     QByteArray mbulk("*");
     mbulk += QByteArray::number(data.count());
-    mbulk += CRLF;
+    mbulk += Tf::CRLF;
     for (auto &d : data) {
         mbulk += toBulk(d);
     }

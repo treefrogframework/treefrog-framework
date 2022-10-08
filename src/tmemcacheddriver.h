@@ -5,7 +5,9 @@
 #include <TGlobal>
 #include <TKvsDriver>
 
-#ifndef Q_OS_UNIX
+#ifdef Q_OS_UNIX
+class TTcpSocket;
+#else
 class QTcpSocket;
 #endif
 
@@ -18,7 +20,7 @@ public:
     QString key() const override { return "MEMCACHED"; }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString()) override;
     void close() override;
-    bool command(const QString &cmd) override;
+    bool command(const QByteArray &cmd) override;
     bool isOpen() const override;
     void moveToThread(QThread *thread) override;
     bool request(const QByteArrayList &command, QVariantList &response);
@@ -26,15 +28,15 @@ public:
 protected:
     bool writeCommand(const QByteArray &command);
     bool readReply();
-    QByteArray parseBulkString(bool *ok);
-    QVariantList parseArray(bool *ok);
+    //QByteArray parseBulkString(bool *ok);
+    //QVariantList parseArray(bool *ok);
     QByteArray getLine(bool *ok);
-    int getNumber(bool *ok);
+    //int getNumber(bool *ok);
     void clearBuffer();
 
 private:
-#ifdef Q_OS_UNIX
-    int _socket {0};
+#ifdef Q_OS_LINUX
+    TTcpSocket *_client {nullptr};
 #else
     QTcpSocket *_client {nullptr};
 #endif

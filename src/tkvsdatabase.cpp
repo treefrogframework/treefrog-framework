@@ -166,7 +166,7 @@ void TKvsDatabase::close()
 
 bool TKvsDatabase::command(const QString &cmd)
 {
-    return (driver()) ? driver()->command(cmd) : false;
+    return (driver()) ? driver()->command(cmd.toUtf8()) : false;
 }
 
 
