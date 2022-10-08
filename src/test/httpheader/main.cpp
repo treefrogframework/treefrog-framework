@@ -56,8 +56,9 @@ void TestHttpHeader::parseParamExists()
     QFETCH(QString, key2);
     QFETCH(bool, ex2);
 
+    TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
     THttpRequestHeader h(header.toUtf8());
-    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    THttpRequest http(h, body.toUtf8(), QHostAddress(), context);
     QCOMPARE(http.hasFormItem(key1), ex1);
     QCOMPARE(http.hasFormItem(key2), ex2);
 }
@@ -101,8 +102,9 @@ void TestHttpHeader::parseHttpRequest()
     QFETCH(QString, key2);
     QFETCH(QStringList, val2);
 
+    TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
     THttpRequestHeader h(header.toUtf8());
-    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    THttpRequest http(h, body.toUtf8(), QHostAddress(), context);
     // auto map = http.formItems();
     // auto it = map.begin();
     // while (it != map.end()) {
@@ -151,8 +153,9 @@ void TestHttpHeader::parseRequestVariantList()
     QFETCH(QString, key1);
     QFETCH(QString, val1);
 
+    TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
     THttpRequestHeader h(header.toUtf8());
-    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    THttpRequest http(h, body.toUtf8(), QHostAddress(), context);
     auto vlist = http.formItemVariantList(key);
     QCOMPARE(vlist[0].toMap()[key0].toString(), val0);
     QCOMPARE(vlist[1].toMap()[key1].toString(), val1);
@@ -198,8 +201,9 @@ void TestHttpHeader::parseRequestVariantMap()
     QFETCH(QString, key1);
     QFETCH(QString, val1);
 
+    TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
     THttpRequestHeader h(header.toUtf8());
-    THttpRequest http(h, body.toUtf8(), QHostAddress());
+    THttpRequest http(h, body.toUtf8(), QHostAddress(), context);
     auto map = http.formItems(mapname);
     auto vmap = map.value(key).toMap();
     QCOMPARE(vmap[key0].toString(), val0);

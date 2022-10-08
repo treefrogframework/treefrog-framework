@@ -66,7 +66,8 @@ void MultipartFormData::parse()
     QFETCH(QString, filename);
     QFETCH(QString, contentType);
 
-    TMultipartFormData formData(data, boundary);
+    TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
+    TMultipartFormData formData(data, boundary, context);
     QCOMPARE(formData.formItemValue(name), value);
     QCOMPARE(formData.originalFileName(dataName), filename);
     QCOMPARE(formData.contentType(dataName), contentType);

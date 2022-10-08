@@ -531,7 +531,7 @@ QByteArray TMultipartFormData::parseContent(QIODevice *dev) const
  */
 QString TMultipartFormData::writeContent(QIODevice *dev, TActionContext *context) const
 {
-    if (!dev->isOpen()) {
+    if (!dev->isOpen() || !context) {
         return QString();
     }
 
