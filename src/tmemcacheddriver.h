@@ -27,9 +27,7 @@ public:
 
 protected:
     bool writeCommand(const QByteArray &command);
-    bool readReply();
-    QByteArray getLine(bool *ok);
-    void clearBuffer();
+    QByteArray readReply();
 
 private:
 #ifdef Q_OS_LINUX
@@ -37,8 +35,6 @@ private:
 #else
     QTcpSocket *_client {nullptr};
 #endif
-    QByteArray _buffer;
-    int _pos {0};
     QString _host;
     quint16 _port {0};
 

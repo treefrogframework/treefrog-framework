@@ -20,7 +20,6 @@ constexpr int RECV_BUF_SIZE = 128 * 1024;
 TMemcachedDriver::TMemcachedDriver() :
     TKvsDriver()
 {
-    _buffer.reserve(1023);
 }
 
 
@@ -96,23 +95,22 @@ void TMemcachedDriver::close()
 }
 
 
-bool TMemcachedDriver::readReply()
+QByteArray TMemcachedDriver::readReply()
 {
     if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
-        return false;
+        return QByteArray();
     }
 
     bool ret = _client->waitForReadyRead(5000);
-    if (ret) {
-        _buffer += _client->readAll();
-    } else {
+    if (!ret) {
         tSystemWarn("memcached response timeout");
+        return QByteArray();
     }
 
     //tSystemDebug("#memcached response length: %d", _buffer.length());
     //tSystemDebug("#memcached response data: %s", _buffer.data());
-    return ret;
+    return _client->readAll();
 }
 
 

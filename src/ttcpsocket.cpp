@@ -6,7 +6,13 @@
 #include <QRecursiveMutex>
 #include <TWebApplication>
 
-static QRecursiveMutex epollMutex;
+namespace {
+#if QT_VERSION < 0x060000
+QMutex epollMutex(QMutex::Recursive);
+#else
+QRecursiveMutex epollMutex;
+#endif
+}
 
 
 TTcpSocket::TTcpSocket() :

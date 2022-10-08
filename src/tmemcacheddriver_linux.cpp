@@ -18,7 +18,6 @@ constexpr int DEFAULT_PORT = 11211;
 TMemcachedDriver::TMemcachedDriver() :
     TKvsDriver()
 {
-    _buffer.reserve(1023);
 }
 
 
@@ -79,23 +78,20 @@ bool TMemcachedDriver::writeCommand(const QByteArray &command)
 }
 
 
-bool TMemcachedDriver::readReply()
+QByteArray TMemcachedDriver::readReply()
 {
     if (Q_UNLIKELY(!isOpen())) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
-        return false;
+        return QByteArray();
     }
 
-    QByteArray buf;
-    if (_client->waitForDataReceived(5000)) {
-        buf = _client->receiveAll();
-        if (buf.isEmpty()) {
-            tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
-        } else {
-            _buffer += buf;
-        }
+    bool ret = _client->waitForDataReceived(5000);
+    if (!ret) {
+        tSystemWarn("memcached response timeout");
+        return QByteArray();
     }
-    return !buf.isEmpty();
+
+    return _client->receiveAll();
 }
 
 

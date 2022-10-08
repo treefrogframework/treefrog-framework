@@ -24,8 +24,6 @@ bool TMemcachedDriver::request(const QByteArray &command, QByteArray &response)
         return false;
     }
 
-    bool ret = true;
-    bool ok = false;
     tSystemDebug("memcached command: %s", command.data());
 
     if (!writeCommand(command)) {
@@ -34,70 +32,28 @@ bool TMemcachedDriver::request(const QByteArray &command, QByteArray &response)
         return false;
     }
 
-    clearBuffer();
-    if (readReply()) {
-
-    } else {
-        tSystemError("memcached read error  [%s:%d]", __FILE__, __LINE__);
-        close();
-        return false;
-    }
-
-    return ret;
+    response = readReply();
+    return !response.isEmpty();
 }
 
 
-QByteArray TMemcachedDriver::getLine(bool *ok)
-{
-    int idx = _buffer.indexOf(CRLF, _pos);
-    if (idx < 0) {
-        *ok = false;
-        return QByteArray();
-    }
-
-    QByteArray ret = _buffer.mid(_pos, idx);
-    _pos = idx + 2;
-    *ok = true;
-    return ret;
-}
-
-
-// QByteArray TMemcachedDriver::parseBulkString(bool *ok)
-// {
-//     QByteArray str;
-
-//     return str;
-// }
-
-
-// QVariantList TMemcachedDriver::parseArray(bool *ok)
-// {
-//     QVariantList lst;
-//     int startpos = _pos;
-//     *ok = false;
-
-//     return lst;
-// }
-
-
-// int TMemcachedDriver::getNumber(bool *ok)
+// QByteArray TMemcachedDriver::getLine(bool *ok)
 // {
 //     int idx = _buffer.indexOf(CRLF, _pos);
 //     if (idx < 0) {
 //         *ok = false;
-//         return 0;
+//         return QByteArray();
 //     }
 
-//     int num = _buffer.mid(_pos, idx - _pos).toInt();
+//     QByteArray ret = _buffer.mid(_pos, idx);
 //     _pos = idx + 2;
 //     *ok = true;
-//     tSystemDebug("getNumber: %d", num);
-//     return num;
+//     return ret;
 // }
 
 
-void TMemcachedDriver::clearBuffer()
-{
-    _buffer.resize(0);
-    _pos = 0;
-}
+// void TMemcachedDriver::clearBuffer()
+// {
+//     _buffer.resize(0);
+//     _pos = 0;
+// }
