@@ -16,6 +16,7 @@ public:
     virtual void process() override;
     void releaseWorker();
     TActionWorker *worker() { return _worker; }
+    bool isProcessing() const override { return (bool)_worker; }
 
     static TEpollHttpSocket *accept(int listeningSocket);
     static TEpollHttpSocket *create(int socketDescriptor, const QHostAddress &address, bool watch = true);

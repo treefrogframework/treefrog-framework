@@ -151,11 +151,12 @@ void TEpollWebSocket::process()
 
     auto payloads = readAllBinaryRequest();
     if (!payloads.isEmpty()) {
-        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
-        worker->setPayloads(payloads);
-        startWorker(worker);
+        TWebSocketWorker *_worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
+        _worker->setPayloads(payloads);
+        startWorker(_worker);
+        delete _worker;
+        _worker = nullptr;
         releaseWorker();
-        delete worker;
     }
 }
 

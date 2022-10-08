@@ -196,6 +196,17 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
             }
         }
     }
+
+    // Garbage
+    if (!_garbageSockets.isEmpty()) {
+        auto set = _garbageSockets;
+        for (auto ptr : set) {
+            if (!ptr->isProcessing()) {
+                delete ptr;  // Remove it from garbageSockets-set in the destructor
+            }
+        }
+    }
+
     return res;
 }
 
@@ -220,14 +231,6 @@ void TMultiplexingServer::run()
         int res = processEvents(100);
         if (res < 0) {
             break;
-        }
-
-        // Garbage
-        if (!_garbageSockets.isEmpty()) {
-            for (auto *ptr : _garbageSockets) {
-                delete ptr;
-            }
-            _garbageSockets.clear();
         }
 
         // Check keep-alive timeout for HTTP sockets

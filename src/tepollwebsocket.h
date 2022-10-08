@@ -24,6 +24,7 @@ public:
     QList<QPair<int, QByteArray>> readAllBinaryRequest();
     virtual bool canReadRequest() override;
     virtual void process() override;
+    virtual bool isProcessing() const override { return (bool)_worker; }
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     void disconnect() override;
@@ -49,6 +50,7 @@ private:
     TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header);
 
     QList<TWebSocketFrame> _frames;
+    TWebSocketWorker *_worker {nullptr};
 
     friend class TEpoll;
     T_DISABLE_COPY(TEpollWebSocket)

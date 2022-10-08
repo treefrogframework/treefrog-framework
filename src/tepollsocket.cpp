@@ -113,6 +113,7 @@ TEpollSocket::~TEpollSocket()
 
     close();
     socketManager.remove(this);
+    TMultiplexingServer::instance()->_garbageSockets.remove(this);
 
     while (!_sendBuffer.isEmpty()) {
         TSendBuffer *buf = _sendBuffer.dequeue();
@@ -380,65 +381,40 @@ QByteArray TEpollSocket::receiveAll()
 }
 
 
-bool TEpollSocket::waitForConnected(int msecs)
+bool TEpollSocket::waitUntil(bool (TEpollSocket::*method)(), int msecs)
 {
-    int ms = msecs;
     QElapsedTimer elapsed;
     elapsed.start();
 
-    while (state() != Tf::SocketState::Connected) {
-        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
-            break;
-        }
-
-        ms = msecs - elapsed.elapsed();
+    while (!(this->*method)()) {
+        int ms = msecs - elapsed.elapsed();
         if (ms <= 0) {
             break;
         }
-    }
 
-    tSystemDebug("TEpollSocket::waitForConnected  state:%d", _state);
-    return state() == Tf::SocketState::Connected;
+        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
+            break;
+        }
+    }
+    return (this->*method)();
+}
+
+
+bool TEpollSocket::waitForConnected(int msecs)
+{
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isConnected, msecs);
 }
 
 
 bool TEpollSocket::waitForDataSent(int msecs)
 {
-    int ms = msecs;
-    QElapsedTimer elapsed;
-    elapsed.start();
-
-    while (!isDataSent()) {
-        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
-            break;
-        }
-
-        ms = msecs - elapsed.elapsed();
-        if (ms <= 0) {
-            break;
-        }
-    }
-    return isDataSent();
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
 }
 
 
 bool TEpollSocket::waitForDataReceived(int msecs)
 {
-    int ms = msecs;
-    QElapsedTimer elapsed;
-    elapsed.start();
-
-    while (!isDataReceived()) {
-        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
-            break;
-        }
-
-        ms = msecs - elapsed.elapsed();
-        if (ms <= 0) {
-            break;
-        }
-    }
-    return isDataReceived();
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
 }
 
 

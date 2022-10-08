@@ -3,7 +3,6 @@
 #include <TGlobal>
 #include <QByteArray>
 #include <QHostAddress>
-#include <QObject>
 #include <QQueue>
 
 class TSendBuffer;
@@ -33,6 +32,8 @@ public:
     bool waitForConnected(int msecs = 5000);
     bool waitForDataSent(int msecs = 5000);
     bool waitForDataReceived(int msecs = 5000);
+    bool waitUntil(bool (TEpollSocket::*method)(), int msecs = 5000);
+    bool isConnected() const { return state() == Tf::SocketState::Connected; }
     bool isDataSent() const { return _sendBuffer.isEmpty(); }
     bool isDataReceived() const { return !_recvBuffer.isEmpty(); }
     void disconnect();
@@ -47,6 +48,7 @@ public:
 
     virtual bool canReadRequest() { return false; }
     virtual void process() { }
+    virtual bool isProcessing() const { return false; }
 
     static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     static TSendBuffer *createSendBuffer(const QByteArray &data);
