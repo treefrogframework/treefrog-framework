@@ -55,7 +55,7 @@ TRedisDriver *TRedis::driver()
         return nullptr;
     }
 
-    TRedisDriver *driver = dynamic_cast<TRedisDriver *>(database.driver());
+    TRedisDriver *driver = dynamic_cast<TRedisDriver *>(_database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

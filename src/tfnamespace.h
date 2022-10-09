@@ -7,6 +7,7 @@ class TWebApplication;
   throughout the library of TreeFrog Framework.
 */
 namespace Tf {
+
 enum QuotedStrSplitBehavior {
     SplitWhereverSep = 0,
     SplitSkipQuotedString,
@@ -256,7 +257,7 @@ constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
 constexpr auto KeepEmptyParts = QString::KeepEmptyParts;
 constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
 #endif
-}
+} // namespace Tf
 
 
 /*!
@@ -265,6 +266,7 @@ constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
   throughout the SQL library.
 */
 namespace TSql {
+
 enum ComparisonOperator {
     Invalid = 0,
     Equal,  // = val
@@ -298,7 +300,8 @@ enum JoinMode {
     LeftJoin,
     RightJoin,
 };
-}
+
+} // namespace TSql
 
 /*!
   \namespace TMongo
@@ -306,6 +309,7 @@ enum JoinMode {
   throughout the MongoDB library.
 */
 namespace TMongo {
+
 enum ComparisonOperator {
     Invalid = 0,
     Equal = TSql::Equal,  // == val
@@ -323,5 +327,5 @@ enum ComparisonOperator {
     Size,  // $size : val
     Type,  // $type : val
 };
-}
 
+} // namespace TMongo

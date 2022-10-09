@@ -6,6 +6,7 @@
  */
 
 #include "tmemcacheddriver.h"
+#include "tsystemglobal.h"
 #include <TActionContext>
 #include <TMemcached>
 
@@ -206,6 +207,7 @@ QByteArray TMemcached::request(const QByteArray &command, const QByteArray &key,
     message += Tf::CRLF;
     message += value;
     message += Tf::CRLF;
+    tSystemDebug("memcached message: %s", message.data());
 
     int timeout = (noreply) ? 0 : 5000;
     return driver()->request(message, timeout);
@@ -236,6 +238,7 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
         message += "noreply";
     }
     message += Tf::CRLF;
+    tSystemDebug("memcached message: %s", message.data());
 
     int timeout = (noreply) ? 0 : 5000;
     return driver()->request(message, timeout);
