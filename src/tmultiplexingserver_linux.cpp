@@ -56,13 +56,6 @@ TMultiplexingServer *TMultiplexingServer::instance()
 }
 
 
-// static void setNonBlocking(int sock)
-// {
-//     int flag = fcntl(sock, F_GETFL);
-//     fcntl(sock, F_SETFL, flag | O_NONBLOCK);
-// }
-
-
 static void setNoDeleyOption(int fd)
 {
     int res, flag, bufsize;
@@ -133,6 +126,7 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
     TEpoll::instance()->dispatchEvents();
 
     // Poll Sending/Receiving/Incoming
+    maxMilliSeconds = std::max(maxMilliSeconds, 0);
     int res = TEpoll::instance()->wait(maxMilliSeconds);
     if (res < 0) {
         return res;

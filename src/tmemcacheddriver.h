@@ -23,11 +23,11 @@ public:
     bool command(const QByteArray &cmd) override;
     bool isOpen() const override;
     void moveToThread(QThread *thread) override;
-    bool request(const QByteArray &command, QByteArray &response);
+    QByteArray request(const QByteArray &command, int msecs = 5000);
 
 protected:
     bool writeCommand(const QByteArray &command);
-    QByteArray readReply();
+    QByteArray readReply(int msecs);
 
 private:
 #ifdef Q_OS_LINUX

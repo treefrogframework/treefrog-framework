@@ -290,7 +290,8 @@ T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLeve
 T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 
-constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
-constexpr auto CRLF = "\x0d\x0a";
+constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";
+constexpr auto CRLF = "\x0d\x0a";
+constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
 }

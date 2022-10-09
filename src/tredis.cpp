@@ -34,20 +34,12 @@
   Constructs a TRedis object.
 */
 TRedis::TRedis() :
-    database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::Redis))
+    _database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::Redis))
 {
 }
 
 TRedis::TRedis(Tf::KvsEngine engine) :
-    database(Tf::currentDatabaseContext()->getKvsDatabase(engine))
-{
-}
-
-/*!
-  Copy constructor.
-*/
-TRedis::TRedis(const TRedis &other) :
-    database(other.database)
+    _database(Tf::currentDatabaseContext()->getKvsDatabase(engine))
 {
 }
 
@@ -57,9 +49,9 @@ TRedis::TRedis(const TRedis &other) :
 TRedisDriver *TRedis::driver()
 {
 #ifdef TF_NO_DEBUG
-    return (TRedisDriver *)database.driver();
+    return (TRedisDriver *)_database.driver();
 #else
-    if (!database.driver()) {
+    if (!_database.driver()) {
         return nullptr;
     }
 
@@ -77,13 +69,13 @@ TRedisDriver *TRedis::driver()
 const TRedisDriver *TRedis::driver() const
 {
 #ifdef TF_NO_DEBUG
-    return (const TRedisDriver *)database.driver();
+    return (const TRedisDriver *)_database.driver();
 #else
-    if (!database.driver()) {
+    if (!_database.driver()) {
         return nullptr;
     }
 
-    const TRedisDriver *driver = dynamic_cast<const TRedisDriver *>(database.driver());
+    const TRedisDriver *driver = dynamic_cast<const TRedisDriver *>(_database.driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

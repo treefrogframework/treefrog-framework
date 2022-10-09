@@ -75,12 +75,6 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 }
 
 
-bool TMemcachedDriver::writeCommand(const QByteArray &command)
-{
-    return (isOpen()) ? _client->write(command) : false;
-}
-
-
 void TMemcachedDriver::close()
 {
     if (_client) {
@@ -89,14 +83,20 @@ void TMemcachedDriver::close()
 }
 
 
-QByteArray TMemcachedDriver::readReply()
+bool TMemcachedDriver::writeCommand(const QByteArray &command)
+{
+    return (isOpen()) ? _client->write(command) : false;
+}
+
+
+QByteArray TMemcachedDriver::readReply(int msecs)
 {
     if (!isOpen()) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
         return QByteArray();
     }
 
-    bool ret = _client->waitForReadyRead(5000);
+    bool ret = _client->waitForReadyRead(msecs);
     if (!ret) {
         tSystemWarn("memcached response timeout");
         return QByteArray();
