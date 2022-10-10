@@ -28,6 +28,8 @@
 #include <climits>
 #include <cstdlib>
 #include <random>
+#include <thread>
+#include <chrono>
 
 constexpr int LZ4_BLOCKSIZE = 1024 * 1024;  // 1 MB
 

@@ -41,4 +41,3 @@ private:
     T_DISABLE_COPY(TSqlDatabasePool)
     T_DISABLE_MOVE(TSqlDatabasePool)
 };
-

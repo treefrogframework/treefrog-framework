@@ -64,8 +64,8 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
     tSystemDebug("memcached open host:%s  port:%d", qUtf8Printable(_host), _port);
     _client->connectToHost(_host, _port);
 
-    bool ret = _client->waitForConnected(5000);
-    if (Q_LIKELY(ret)) {
+    bool ret = _client->waitForConnected(1000);
+    if (ret) {
         tSystemDebug("memcached open successfully");
     } else {
         tSystemError("memcached open failed");

@@ -62,6 +62,7 @@ TMemcached::TMemcached(Tf::KvsEngine engine) :
 QString TMemcached::get(const QByteArray &key, uint *flags)
 {
     QByteArray res = requestLine("get", key, QByteArray(), false);
+    tSystemDebug("TMemcached::get: %s", res.data());
 
     int bytes = 0;
     int pos = 0;

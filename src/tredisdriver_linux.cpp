@@ -41,7 +41,15 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     _client = new TTcpSocket;
     _client->setSocketOption(SOL_TCP, TCP_NODELAY, 1);
     _client->connectToHost(_host, _port);
-    return _client->waitForConnected(5000);
+
+    bool ret = _client->waitForConnected(1000);
+    if (ret) {
+        tSystemDebug("Redis open successfully");
+    } else {
+        tSystemError("Redis open failed");
+        close();
+    }
+    return ret;
 }
 
 
