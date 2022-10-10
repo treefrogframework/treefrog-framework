@@ -32,6 +32,7 @@ public:
         insert(Tf::SqlDatabaseSettingsFiles, "SqlDatabaseSettingsFiles");
         insert(Tf::MongoDbSettingsFile, "MongoDbSettingsFile");
         insert(Tf::RedisSettingsFile, "RedisSettingsFile");
+        insert(Tf::MemcachedSettingsFile, "MemcachedSettingsFile");
         insert(Tf::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
         insert(Tf::DirectViewRenderMode, "DirectViewRenderMode");
         insert(Tf::SqlQueryLogFile, "SqlQueryLogFile");  // Deprecated

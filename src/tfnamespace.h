@@ -144,6 +144,8 @@ enum AppAttribute {
     UploadTemporaryDirectory,
     SqlDatabaseSettingsFiles,
     MongoDbSettingsFile,
+    RedisSettingsFile,
+    MemcachedSettingsFile,
     SqlQueriesStoredDirectory,
     DirectViewRenderMode,
     SqlQueryLogFile,  // Deprecated
@@ -183,7 +185,6 @@ enum AppAttribute {
     ActionMailerSendmailCommandLocation,
     //
     HttpKeepAliveTimeout,
-    RedisSettingsFile,
     LDPreload,
     JavaScriptPath,
     ListenAddress,
@@ -235,7 +236,7 @@ enum LogPriority {
     TraceLevel,  //!< Finer-grained informational events than the DEBUG.
 };
 
-enum class KvsEngine {
+enum class KvsEngine : int {
     CacheKvs = 0,  // For internal use
     MongoDB,
     Redis,

@@ -9,6 +9,7 @@
 #include "tfnamespace.h"
 #include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
+#include "tstack.h"
 #include <QDateTime>
 #include <QMap>
 #include <QStringList>
@@ -100,9 +101,9 @@ void TKvsDatabasePool::init()
         return;
     }
 
-    cachedDatabase = new TStack<QString>[kvsEngineHash()->count()];
-    lastCachedTime = new TAtomic<uint>[kvsEngineHash()->count()];
-    availableNames = new TStack<QString>[kvsEngineHash()->count()];
+    cachedDatabase = new TStack<QString>[(int)Tf::KvsEngine::Num];
+    lastCachedTime = new TAtomic<uint>[(int)Tf::KvsEngine::Num];
+    availableNames = new TStack<QString>[(int)Tf::KvsEngine::Num];
     bool aval = false;
 
     // Adds databases previously
@@ -118,7 +119,7 @@ void TKvsDatabasePool::init()
             tSystemDebug("KVS database available. engine:%d", (int)engine);
         }
 
-        auto &stack = availableNames[(int)engine];
+        TStack<QString> &stack = availableNames[(int)engine];
         for (int i = 0; i < maxConnects; ++i) {
             TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString::asprintf(CONN_NAME_FORMAT, (int)engine, i));
             if (!db.isValid()) {

@@ -176,6 +176,19 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         }
     }
 
+    // Memcached settings
+    QString memcachedini = Tf::appSettings()->value(Tf::MemcachedSettingsFile).toString().trimmed();
+    if (!memcachedini.isEmpty()) {
+        QString memcachedinipath = configPath() + memcachedini;
+        if (QFile(memcachedinipath).exists()) {
+            QSettings settings(memcachedinipath, QSettings::IniFormat);
+#if QT_VERSION < 0x060000
+            settings.setIniCodec(_codecInternal);
+#endif
+            _kvsSettings[(int)Tf::KvsEngine::Memcached] = Tf::settingsToMap(settings, _dbEnvironment);
+        }
+    }
+
     // Cache settings
     if (cacheEnabled()) {
         auto backend = cacheBackend();

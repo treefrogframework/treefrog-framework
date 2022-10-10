@@ -59,9 +59,9 @@ const QVariantMap &Tf::conf(const QString &configName) noexcept
 /*!
   Causes the current thread to sleep for \a msecs milliseconds.
 */
-void Tf::msleep(unsigned long msecs) noexcept
+void Tf::msleep(int64_t msecs) noexcept
 {
-    QThread::msleep(msecs);
+    std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
 }
 
 namespace {

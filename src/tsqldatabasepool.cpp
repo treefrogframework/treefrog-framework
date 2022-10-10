@@ -9,6 +9,7 @@
 #include "tsqldatabase.h"
 #include "tsqldriverextensionfactory.h"
 #include "tsystemglobal.h"
+#include "tstack.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QMutexLocker>

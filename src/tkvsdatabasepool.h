@@ -1,6 +1,5 @@
 #pragma once
 #include "tatomic.h"
-#include "tstack.h"
 #include <QBasicTimer>
 #include <QMap>
 #include <QObject>
@@ -10,6 +9,7 @@
 #include <TKvsDatabase>
 
 class QSettings;
+template <class T> class TStack;
 
 
 class T_CORE_EXPORT TKvsDatabasePool : public QObject {

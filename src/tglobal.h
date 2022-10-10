@@ -250,7 +250,6 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include "tfexception.h"
 #include "tfnamespace.h"
 #include "tdeclexport.h"
-#include "tstack.h"
 #include <TDebug>
 #include <cstdint>
 #include <functional>
@@ -268,7 +267,7 @@ namespace Tf {
 T_CORE_EXPORT TWebApplication *app() noexcept;
 T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
-T_CORE_EXPORT void msleep(unsigned long msecs) noexcept;
+T_CORE_EXPORT void msleep(int64_t msecs) noexcept;
 T_CORE_EXPORT qint64 getMSecsSinceEpoch();
 
 // Thread-safe std::random number generator
