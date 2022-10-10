@@ -7,7 +7,6 @@
 
 #include "lz4.h"
 #include "tdatabasecontextthread.h"
-#include "tmultiplexingserver.h"
 #include "tsystemglobal.h"
 #include <QBuffer>
 #include <QDataStream>
@@ -20,6 +19,7 @@
 #include <TGlobal>
 #include <TWebApplication>
 #ifdef Q_OS_LINUX
+#include <TMultiplexingServer>
 #include <TActionWorker>
 #endif
 #ifdef Q_OS_WIN
