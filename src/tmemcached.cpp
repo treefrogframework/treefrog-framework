@@ -158,17 +158,29 @@ bool TMemcached::remove(const QByteArray &key)
 }
 
 
-bool TMemcached::incr(const QByteArray &key, quint64 value)
+quint64 TMemcached::incr(const QByteArray &key, quint64 value, bool *ok)
 {
     QByteArray res = requestLine("incr", key, QByteArray::number(value), false);
-    return !res.startsWith("NOT_FOUND");
+    if (res.startsWith("NOT_FOUND")) {
+        if (ok) {
+            *ok = false;
+        }
+        return 0;
+    }
+    return res.toLongLong(ok);
 }
 
 
-bool TMemcached::decr(const QByteArray &key, quint64 value)
+quint64 TMemcached::decr(const QByteArray &key, quint64 value, bool *ok)
 {
     QByteArray res = requestLine("decr", key, QByteArray::number(value), false);
-    return !res.startsWith("NOT_FOUND");
+    if (res.startsWith("NOT_FOUND")) {
+        if (ok) {
+            *ok = false;
+        }
+        return 0;
+    }
+    return res.toLongLong(ok);
 }
 
 

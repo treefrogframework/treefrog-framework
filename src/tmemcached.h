@@ -25,8 +25,8 @@ public:
     bool append(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
     bool prepend(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
     bool remove(const QByteArray &key);
-    bool incr(const QByteArray &key, quint64 value);
-    bool decr(const QByteArray &key, quint64 value);
+    quint64 incr(const QByteArray &key, quint64 value, bool *ok = nullptr);
+    quint64 decr(const QByteArray &key, quint64 value, bool *ok = nullptr);
     QByteArray version();
 
 private:
