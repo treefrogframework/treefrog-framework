@@ -202,6 +202,11 @@ QByteArray TMemcached::request(const QByteArray &command, const QByteArray &key,
         return QByteArray();
     }
 
+    if (!isOpen()) {
+        tSystemError("Not open memcached  [%s:%d]", __FILE__, __LINE__);
+        return QByteArray();
+    }
+
     message += command;
     message += " ";
     message += key;
@@ -234,6 +239,11 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
 
     if (containsWhiteSpace(key) || containsWhiteSpace(value)) {
         tError("Value error, key:%s value:%s", key.data(), value.data());
+        return QByteArray();
+    }
+
+    if (!isOpen()) {
+        tSystemError("Not open memcached  [%s:%d]", __FILE__, __LINE__);
         return QByteArray();
     }
 

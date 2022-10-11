@@ -154,9 +154,14 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             tSystemError("Redis not available. Check the settings file.");
             break;
 
+        case Tf::KvsEngine::Memcached:
+            tSystemError("Memcached not available. Check the settings file.");
+            break;
+
         case Tf::KvsEngine::CacheKvs:
             tSystemError("CacheKvs not available. Check the settings file.");
             break;
+
         default:
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
             break;
