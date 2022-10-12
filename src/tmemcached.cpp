@@ -83,16 +83,18 @@ QString TMemcached::get(const QByteArray &key, uint *flags)
 }
 
 
-qint64 TMemcached::getNumber(const QByteArray &key, uint *flags, bool *ok)
+qint64 TMemcached::getNumber(const QByteArray &key, bool *ok, uint *flags)
 {
     QString res = get(key, flags);
 
+    if (ok) {
+        *ok = false;
+    }
+
     if (res.isEmpty()) {
-        if (ok) {
-            *ok = false;
-        }
         return 0;
     }
+
     return res.toLongLong(ok);
 }
 
@@ -106,7 +108,7 @@ bool TMemcached::set(const QByteArray &key, const QString &value, int seconds, u
 
 bool TMemcached::set(const QByteArray &key, qint64 value, int seconds, uint flags)
 {
-    return set(key, QString::number(value), flags, seconds);
+    return set(key, QString::number(value), seconds, flags);
 }
 
 
@@ -181,6 +183,13 @@ quint64 TMemcached::decr(const QByteArray &key, quint64 value, bool *ok)
         return 0;
     }
     return res.toLongLong(ok);
+}
+
+
+bool TMemcached::flushAll()
+{
+    QByteArray res = requestLine("flush_all", QByteArray(), QByteArray(), false);
+    return res.startsWith("OK");
 }
 
 
