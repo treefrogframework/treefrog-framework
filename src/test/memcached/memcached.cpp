@@ -66,27 +66,27 @@ void TestMemcached::setGet_data()
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
                        << QString::fromUtf8(u8"Hello world.")
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << QString::fromUtf8(u8"こんにちは")
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
                        << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
                        << randomString(512)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("6") << QUuid::createUuid().toByteArray()
                        << randomString(1024)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
 }
 
@@ -104,7 +104,7 @@ void TestMemcached::setGet()
     QCOMPARE(res, QString());  // empty
     bool ok = memcached.set(key, value, secs, flags);
     QCOMPARE(ok, true);  // set ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     res = memcached.get(key, &flg);  // get value
     QCOMPARE(res, value);
     QCOMPARE(flg, flags);
@@ -120,23 +120,23 @@ void TestMemcached::setGetNumber_data()
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
                        << 123456789LL
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << -987654321LL
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
                        << 0LL
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << (qint64)Tf::random(1, INT64_MAX)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
                        << (qint64)-Tf::random(1, INT_MAX)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
 }
 
@@ -157,7 +157,7 @@ void TestMemcached::setGetNumber()
     ok = memcached.set(key, value, secs, flags);
     //qDebug() << "set key:" << key << "value:" << value;
     QCOMPARE(ok, true);  // set ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     res = memcached.getNumber(key, &ok, &flg);  // get value
     //qDebug() << "got key:" << key << "value:" << res;
     QCOMPARE(res, value);
@@ -209,27 +209,27 @@ void TestMemcached::addGet_data()
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
                        << QString::fromUtf8(u8"Hello world.")
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << QString::fromUtf8(u8"こんにちは")
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
                        << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
                        << randomString(512)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("6") << QUuid::createUuid().toByteArray()
                        << randomString(1024)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
 }
 
@@ -247,7 +247,7 @@ void TestMemcached::addGet()
     QCOMPARE(res, QString());  // empty
     bool ok = memcached.add(key, value, secs, flags);
     QCOMPARE(ok, true);  // add ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     res = memcached.get(key, &flg);  // get value
     QCOMPARE(res, value);
     QCOMPARE(flg, flags);
@@ -300,7 +300,7 @@ void TestMemcached::addGetNumber()
     ok = memcached.add(key, value, secs, flags);
     qDebug() << "add key:" << key << "value:" << value;
     QCOMPARE(ok, true);  // set ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     res = memcached.getNumber(key, &ok, &flg);  // get value
     qDebug() << "got key:" << key << "value:" << res;
     QCOMPARE(res, value);
@@ -357,7 +357,7 @@ void TestMemcached::replaceGet()
 
     bool ok = memcached.replace(key, value, secs, flags);
     QCOMPARE(ok, true);  // add ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     auto res = memcached.get(key, &flg);  // get value
     QCOMPARE(res, value);
     QCOMPARE(flg, flags);
@@ -373,23 +373,23 @@ void TestMemcached::replaceGetNumber_data()
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
                        << 123456789LL
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << -987654321LL
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
                        << 0LL
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << (qint64)Tf::random(1, INT64_MAX)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
                        << (qint64)-Tf::random(1, INT_MAX)
-                       << (int)Tf::random(2, 10)
+                       << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
 }
 
@@ -408,7 +408,7 @@ void TestMemcached::replaceGetNumber()
 
     bool ok = memcached.replace(key, value, secs, flags);
     QCOMPARE(ok, true);  // add ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     auto res = memcached.getNumber(key, &ok, &flg);  // get value
     QCOMPARE(res, value);
     QCOMPARE(ok, true);  // success
@@ -462,7 +462,7 @@ void TestMemcached::appendGet()
 
     bool ok = memcached.append(key, value2, secs, 11);
     QCOMPARE(ok, true);  // set ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     auto res = memcached.get(key, &flg);  // get value
     QCOMPARE(res, value1 + value2);
     QCOMPARE(flg, flags);
@@ -515,7 +515,7 @@ void TestMemcached::prependGet()
 
     bool ok = memcached.prepend(key, value2, secs, 11);
     QCOMPARE(ok, true);  // set ok
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     auto res = memcached.get(key, &flg);  // get value
     QCOMPARE(res, value2 + value1);
     QCOMPARE(flg, flags);
@@ -601,7 +601,7 @@ void TestMemcached::incr()
     QCOMPARE(ok, true);  // incr ok
     QCOMPARE(res, value + incr);
 
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     res = memcached.getNumber(key, &ok);  // get value
     QCOMPARE(ok, true);  // get ok
     QCOMPARE(res, value + incr);
@@ -656,7 +656,7 @@ void TestMemcached::decr()
         QCOMPARE(res, 0ULL);
     }
 
-    Tf::msleep(Tf::random(50, 2000));  // sleep
+    Tf::msleep(Tf::random(50, 1900));  // sleep
     res = memcached.getNumber(key, &ok);  // get value
     QCOMPARE(ok, true);  // get ok
     if (value > decr) {
