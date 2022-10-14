@@ -36,7 +36,7 @@ jobs:
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
-        sudo servide memcached start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -79,7 +79,7 @@ jobs:
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
-        sudo servide memcached start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -120,7 +120,7 @@ jobs:
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
-        sudo servide memcached start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
