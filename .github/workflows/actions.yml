@@ -32,7 +32,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-   - name: apt for test
+    - name: apt for test
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
@@ -75,7 +75,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-   - name: apt for test
+    - name: apt for test
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
@@ -116,7 +116,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-   - name: apt for test
+    - name: apt for test
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
@@ -171,7 +171,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-   - name: Homebrew for test
+    - name: Homebrew for test
       run: |
         brew install redis memcached
         brew services start redis
