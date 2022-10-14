@@ -12,8 +12,6 @@
 #include <TApplicationServerBase>
 #include <netinet/tcp.h>
 
-constexpr int DEFAULT_PORT = 11211;
-
 
 TMemcachedDriver::~TMemcachedDriver()
 {

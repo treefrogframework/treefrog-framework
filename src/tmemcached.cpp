@@ -121,7 +121,7 @@ bool TMemcached::add(const QByteArray &key, const QString &value, int seconds, u
 
 bool TMemcached::add(const QByteArray &key, qint64 value, int seconds, uint flags)
 {
-    return add(key, QString::number(value), flags, seconds);
+    return add(key, QString::number(value), seconds, flags);
 
 }
 
@@ -135,7 +135,7 @@ bool TMemcached::replace(const QByteArray &key, const QString &value, int second
 
 bool TMemcached::replace(const QByteArray &key, qint64 value, int seconds, uint flags)
 {
-    return replace(key, QString::number(value), flags, seconds);
+    return replace(key, QString::number(value), seconds, flags);
 }
 
 
@@ -206,7 +206,7 @@ QByteArray TMemcached::request(const QByteArray &command, const QByteArray &key,
     QByteArray message;
     message.reserve(key.length() + value.length() + 32);
 
-    if (containsWhiteSpace(key)) {
+    if (key.isEmpty() || containsWhiteSpace(key)) {
         tError("Value error, key: %s", key.data());
         return QByteArray();
     }
@@ -247,7 +247,7 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
     message.reserve(key.length() + value.length() + 24);
 
     if (containsWhiteSpace(key) || containsWhiteSpace(value)) {
-        tError("Value error, key:%s value:%s", key.data(), value.data());
+        tError("Key or value error, key:%s value:%s", key.data(), value.data());
         return QByteArray();
     }
 

@@ -38,7 +38,7 @@ private:
     QString _host;
     quint16 _port {0};
 
+    static constexpr int DEFAULT_PORT = 11211;
     T_DISABLE_COPY(TMemcachedDriver)
     T_DISABLE_MOVE(TMemcachedDriver)
 };
-
