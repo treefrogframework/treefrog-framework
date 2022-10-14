@@ -52,7 +52,7 @@ static bool directViewRenderMode()
 }
 
 
-void TActionContext::execute(THttpRequest &request, int sid)
+void TActionContext::execute(THttpRequest &request)
 {
     // App parameters
     static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
@@ -80,7 +80,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
             accessLogger.setTimestamp(QDateTime::currentDateTime());
             accessLogger.setRequest(firstLine);
             accessLogger.setRemoteHost((ListenPort > 0) ? originatingClientAddress().toString().toLatin1() : QByteArrayLiteral("(unix)"));
-            accessLogger.startElaspedTimer();
+            accessLogger.startElapsedTimer();
         }
 
         tSystemDebug("method : %s", reqHeader.method().data());
@@ -125,7 +125,7 @@ void TActionContext::execute(THttpRequest &request, int sid)
         if (currController) {
             currController->setActionName(route.action);
             currController->setArguments(route.params);
-            currController->setSocketId(sid);
+            currController->setContext(this);
 
             // Session
             if (currController->sessionEnabled()) {

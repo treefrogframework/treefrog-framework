@@ -34,8 +34,8 @@ void TAbstractController::exportVariant(const QString &name, const QVariant &val
         return;
     }
 
-    if (overwrite || !exportVars.contains(name)) {
-        exportVars.insert(name, value);
+    if (overwrite || !_exportVars.contains(name)) {
+        _exportVars.insert(name, value);
     }
 }
 
@@ -45,15 +45,15 @@ void TAbstractController::exportVariant(const QString &name, const QVariant &val
 */
 void TAbstractController::exportVariants(const QVariantMap &map)
 {
-    if (exportVars.isEmpty()) {
-        exportVars = map;
+    if (_exportVars.isEmpty()) {
+        _exportVars = map;
     } else {
 #if QT_VERSION >= 0x050f00  // 5.15.0
-        auto tmp = exportVars;
-        exportVars = map;
-        exportVars.insert(tmp);
+        auto tmp = _exportVars;
+        _exportVars = map;
+        _exportVars.insert(tmp);
 #else
-        exportVars.unite(map);
+        _exportVars.unite(map);
 #endif
     }
 }

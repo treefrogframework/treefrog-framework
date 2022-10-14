@@ -7,11 +7,13 @@
 #include <THttpRequest>
 #include <TTemporaryFile>
 
+class TActionContext;
+
 
 class T_CORE_EXPORT THttpSocket : public QObject {
     Q_OBJECT
 public:
-    THttpSocket(QByteArray &readBuffer, QObject *parent = 0);
+    THttpSocket(QByteArray &readBuffer, TActionContext *context, QObject *parent = 0);
     virtual ~THttpSocket();
 
     QList<THttpRequest> read();
@@ -19,17 +21,14 @@ public:
     bool canReadRequest() const;
     qint64 write(const THttpHeader *header, QIODevice *body);
     int idleTime() const;
-    int socketId() const { return _sid; }
     void abort();
     void deleteLater();
 
-    int socketDescriptor() const { return _socket; }
-    void setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState);
+    qintptr socketDescriptor() const { return _socket; }
+    void setSocketDescriptor(qintptr socketDescriptor, QAbstractSocket::SocketState socketState);
     QHostAddress peerAddress() const { return _peerAddr; }
     ushort peerPort() const { return _peerPort; }
     QAbstractSocket::SocketState state() const { return _state; }
-
-    static THttpSocket *searchSocket(int id);
     void writeRawDataFromWebSocket(const QByteArray &data);
 
 protected:
@@ -43,11 +42,7 @@ signals:
     void requestWrite(const QByteArray &data);  // internal use
 
 private:
-    T_DISABLE_COPY(THttpSocket)
-    T_DISABLE_MOVE(THttpSocket)
-
-    int _sid {0};
-    int _socket {0};
+    qintptr _socket {0};
     QAbstractSocket::SocketState _state {QAbstractSocket::UnconnectedState};
     QHostAddress _peerAddr;
     ushort _peerPort {0};
@@ -56,8 +51,11 @@ private:
     QByteArray _headerBuffer;
     TTemporaryFile _fileBuffer;
     quint64 _idleElapsed {0};
+    TActionContext *_context {nullptr};
 
     friend class TActionThread;
+    T_DISABLE_COPY(THttpSocket)
+    T_DISABLE_MOVE(THttpSocket)
 };
 
 

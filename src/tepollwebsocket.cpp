@@ -21,26 +21,32 @@
 
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
+namespace {
+QMap<int, TEpollWebSocket *> socketManager;
+}
+
 
 TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &address, const THttpRequestHeader &header) :
     QObject(),
-    TEpollSocket(socketDescriptor, address),
+    TEpollSocket(socketDescriptor, Tf::SocketState::Connected, address),
     TAbstractWebSocket(header)
 {
     tSystemDebug("TEpollWebSocket  [%p]", this);
-    recvBuffer.reserve(BUFFER_RESERVE_SIZE);
+    socketManager.insert(socketDescriptor, this);
+    _recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
 
 
 TEpollWebSocket::~TEpollWebSocket()
 {
+    socketManager.remove(socketDescriptor());
     tSystemDebug("~TEpollWebSocket  [%p]", this);
 }
 
 
 bool TEpollWebSocket::canReadRequest()
 {
-    for (auto &frm : (const QList<TWebSocketFrame> &)frames) {
+    for (auto &frm : (const QList<TWebSocketFrame> &)_frames) {
         if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
             return true;
         }
@@ -51,8 +57,8 @@ bool TEpollWebSocket::canReadRequest()
 
 bool TEpollWebSocket::isTextRequest() const
 {
-    if (!frames.isEmpty()) {
-        const TWebSocketFrame &frm = frames.first();
+    if (!_frames.isEmpty()) {
+        const TWebSocketFrame &frm = _frames.first();
         return (frm.opCode() == TWebSocketFrame::TextFrame);
     }
     return false;
@@ -61,8 +67,8 @@ bool TEpollWebSocket::isTextRequest() const
 
 bool TEpollWebSocket::isBinaryRequest() const
 {
-    if (!frames.isEmpty()) {
-        const TWebSocketFrame &frm = frames.first();
+    if (!_frames.isEmpty()) {
+        const TWebSocketFrame &frm = _frames.first();
         return (frm.opCode() == TWebSocketFrame::BinaryFrame);
     }
     return false;
@@ -101,11 +107,11 @@ QList<QPair<int, QByteArray>> TEpollWebSocket::readAllBinaryRequest()
     QByteArray payload;
 
     while (canReadRequest()) {
-        int opcode = frames.first().opCode();
+        int opcode = _frames.first().opCode();
         payload.resize(0);
 
-        while (!frames.isEmpty()) {
-            TWebSocketFrame frm = frames.takeFirst();
+        while (!_frames.isEmpty()) {
+            TWebSocketFrame frm = _frames.takeFirst();
             payload += frm.payload();
             if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
                 ret << qMakePair(opcode, payload);
@@ -117,25 +123,17 @@ QList<QPair<int, QByteArray>> TEpollWebSocket::readAllBinaryRequest()
 }
 
 
-void *TEpollWebSocket::getRecvBuffer(int size)
-{
-    int len = recvBuffer.size();
-    recvBuffer.reserve(len + size);
-    return recvBuffer.data() + len;
-}
-
-
 bool TEpollWebSocket::seekRecvBuffer(int pos)
 {
-    int size = recvBuffer.size();
-    if (Q_UNLIKELY(pos <= 0 || size + pos > recvBuffer.capacity())) {
+    int size = _recvBuffer.size();
+    if (Q_UNLIKELY(pos <= 0 || size + pos > _recvBuffer.capacity())) {
         Q_ASSERT(0);
         return false;
     }
 
     size += pos;
-    recvBuffer.resize(size);
-    int len = parse(recvBuffer);
+    _recvBuffer.resize(size);
+    int len = parse(_recvBuffer);
     tSystemDebug("WebSocket parse len : %d", len);
     if (len < 0) {
         tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
@@ -146,18 +144,19 @@ bool TEpollWebSocket::seekRecvBuffer(int pos)
 }
 
 
-void TEpollWebSocket::startWorker()
+void TEpollWebSocket::process()
 {
-    tSystemDebug("TEpollWebSocket::startWorker");
+    tSystemDebug("TEpollWebSocket::process");
     Q_ASSERT(canReadRequest());
 
     auto payloads = readAllBinaryRequest();
     if (!payloads.isEmpty()) {
-        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
-        worker->setPayloads(payloads);
-        startWorker(worker);
+        TWebSocketWorker *_worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
+        _worker->setPayloads(payloads);
+        startWorker(_worker);
+        delete _worker;
+        _worker = nullptr;
         releaseWorker();
-        delete worker;
     }
 }
 
@@ -174,8 +173,9 @@ void TEpollWebSocket::releaseWorker()
 {
     tSystemDebug("TEpollWebSocket::releaseWorker");
 
-    if (pollIn.exchange(false)) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    bool res = TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    if (!res) {
+        dispose();
     }
 }
 
@@ -205,10 +205,10 @@ void TEpollWebSocket::startWorkerForClosing()
 
 void TEpollWebSocket::clear()
 {
-    recvBuffer.resize(BUFFER_RESERVE_SIZE);
-    recvBuffer.squeeze();
-    recvBuffer.truncate(0);
-    frames.clear();
+    _recvBuffer.resize(BUFFER_RESERVE_SIZE);
+    _recvBuffer.squeeze();
+    _recvBuffer.truncate(0);
+    _frames.clear();
 }
 
 
@@ -236,8 +236,7 @@ void TEpollWebSocket::timerEvent(QTimerEvent *event)
 }
 
 
-TEpollWebSocket *TEpollWebSocket::searchSocket(int sid)
+TEpollWebSocket *TEpollWebSocket::searchSocket(int socket)
 {
-    TEpollSocket *sock = TEpollSocket::searchSocket(sid);
-    return dynamic_cast<TEpollWebSocket *>(sock);
+    return socketManager.value(socket, nullptr);
 }

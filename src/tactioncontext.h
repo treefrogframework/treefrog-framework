@@ -34,9 +34,9 @@ public:
     static int keepAliveTimeout();
 
 protected:
-    void execute(THttpRequest &request, int sid);
+    void execute(THttpRequest &request);
     void release();
-    int socketDescriptor() const { return socketDesc; }
+    qintptr socketDescriptor() const { return socketDesc; }
     qint64 writeResponse(int statusCode, THttpResponseHeader &header);
     qint64 writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length);
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length);
@@ -47,7 +47,7 @@ protected:
 
     TAtomic<bool> stopped {false};
     QStringList autoRemoveFiles;
-    int socketDesc {0};
+    qintptr socketDesc {0};
     TAccessLogger accessLogger;
 
 private:

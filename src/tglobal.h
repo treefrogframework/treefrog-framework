@@ -1,7 +1,7 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "2.4.0";
-constexpr auto TF_VERSION_NUMBER = 0x020400;
-constexpr auto TF_SRC_REVISION = 2549;
+constexpr auto TF_VERSION_STR = "2.5.0";
+constexpr auto TF_VERSION_NUMBER = 0x020500;
+constexpr auto TF_SRC_REVISION = 2627;
 
 #include <QMetaType>
 #include <QIODevice>
@@ -55,7 +55,7 @@ constexpr auto TF_SRC_REVISION = 2549;
     do {                                                         \
         QVariant ___##VAR##_;                                    \
         ___##VAR##_.setValue(VAR);                               \
-        ((TAbstractController *)(Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
+        Tf::currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), true); \
     } while (0)
 #define texport(VAR) T_EXPORT(VAR)
 
@@ -63,7 +63,7 @@ constexpr auto TF_SRC_REVISION = 2549;
     do {                                                          \
         QVariant ___##VAR##_;                                     \
         ___##VAR##_.setValue(VAR);                                \
-        ((TAbstractController *)(Tf::currentContext())->currentController())->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
+        Tf::currentController()->exportVariant(QLatin1String(#VAR), (___##VAR##_), false); \
     } while (0)
 #define texportUnless(VAR) T_EXPORT_UNLESS(VAR)
 
@@ -222,7 +222,7 @@ constexpr auto TF_SRC_REVISION = 2549;
     do {                                              \
         QVariant ___##VAR##_;                         \
         ___##VAR##_.setValue(VAR);                    \
-        ((TAbstractController *)(Tf::currentContext())->currentController())->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
+        Tf::currentController()->setFlash(QLatin1String(#VAR), (___##VAR##_)); \
     } while (0)
 
 #define tflash(VAR) T_FLASH(VAR)
@@ -250,7 +250,6 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include "tfexception.h"
 #include "tfnamespace.h"
 #include "tdeclexport.h"
-#include "tstack.h"
 #include <TDebug>
 #include <cstdint>
 #include <functional>
@@ -268,7 +267,7 @@ namespace Tf {
 T_CORE_EXPORT TWebApplication *app() noexcept;
 T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
-T_CORE_EXPORT void msleep(unsigned long msecs) noexcept;
+T_CORE_EXPORT void msleep(int64_t msecs) noexcept;
 T_CORE_EXPORT qint64 getMSecsSinceEpoch();
 
 // Thread-safe std::random number generator
@@ -278,8 +277,8 @@ T_CORE_EXPORT uint64_t random(uint64_t min, uint64_t max) noexcept;
 T_CORE_EXPORT uint64_t random(uint64_t max) noexcept;
 
 T_CORE_EXPORT TCache *cache() noexcept;
-T_CORE_EXPORT TActionContext *currentContext();
-inline const TActionContext *constCurrentContext() { return currentContext(); }
+T_CORE_EXPORT TAbstractController *currentController();
+inline const TAbstractController *constCurrentController() { return currentController(); }
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
@@ -290,7 +289,8 @@ T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLeve
 T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 
-constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
-constexpr auto CRLF = "\x0d\x0a";
+constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";
+constexpr auto CRLF = "\x0d\x0a";
+constexpr auto CRLFCRLF = "\x0d\x0a\x0d\x0a";
 }

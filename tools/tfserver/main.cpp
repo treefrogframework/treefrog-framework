@@ -5,7 +5,6 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
-#include "signalhandler.h"
 #include "tdispatcher.h"
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
@@ -21,10 +20,12 @@
 #include <TWebApplication>
 #include <cstdlib>
 #include <cstdio>
+#ifdef Q_OS_UNIX
+#include <glog/logging.h>
+#endif
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
 #endif
-using namespace TreeFrog;
 
 constexpr auto DEBUG_MODE_OPTION = "--debug";
 constexpr auto SOCKET_OPTION = "-s";
@@ -56,10 +57,10 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 }
 
 
-#if defined(Q_OS_UNIX)
-void writeFailure(const void *data, int size)
+#ifdef Q_OS_UNIX
+void writeFailure(const char *data, size_t size)
 {
-    tSystemError("%s", QByteArray((const char *)data, size).data());
+    tSystemError("%s", QByteArray(data, size).replace('\n', "").data());
 }
 #endif
 
@@ -209,15 +210,15 @@ int main(int argc, char *argv[])
     bool showRoutesOption = args.contains(SHOW_ROUTES_OPTION);
     ushort portNumber = args.value(PORT_OPTION).toUShort();
 
-#if defined(Q_OS_UNIX)
+#ifdef Q_OS_UNIX
     webapp.watchUnixSignal(SIGTERM);
     if (!debug) {
         webapp.ignoreUnixSignal(SIGINT);
     }
 
     // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
-    setupFailureWriter(writeFailure);
-    setupSignalHandler();
+    google::InstallFailureWriter(writeFailure);
+    google::InstallFailureSignalHandler();
 
 #elif defined(Q_OS_WIN)
     if (!debug) {
@@ -293,6 +294,9 @@ int main(int argc, char *argv[])
     switch (webapp.multiProcessingModule()) {
     case TWebApplication::Thread:
         server = new TThreadApplicationServer(sock, &webapp);
+#ifdef Q_OS_LINUX
+        TMultiplexingServer::instantiate(0); // For epoll eventloop
+#endif
         break;
 
     case TWebApplication::Epoll:

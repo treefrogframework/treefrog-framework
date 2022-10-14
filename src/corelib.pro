@@ -260,6 +260,8 @@ HEADERS += tkvsdriver.h
 SOURCES += tkvsdriver.cpp
 HEADERS += tredisdriver.h
 SOURCES += tredisdriver.cpp
+HEADERS += tmemcacheddriver.h
+SOURCES += tmemcacheddriver.cpp
 HEADERS += tredis.h
 SOURCES += tredis.cpp
 HEADERS += tfileaiologger.h
@@ -343,6 +345,8 @@ SOURCES += tcacheredisstore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
+HEADERS += tmemcached.h
+SOURCES += tmemcached.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -367,7 +371,8 @@ windows {
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
-  SOURCES += tredisdriver_win.cpp
+  SOURCES += tredisdriver_qt.cpp
+  SOURCES += tmemcacheddriver_qt.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
 }
 unix {
@@ -375,7 +380,6 @@ unix {
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
-  SOURCES += tredisdriver_unix.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h
@@ -390,12 +394,18 @@ linux-* {
   SOURCES += tepollhttpsocket.cpp
   HEADERS += tepollwebsocket.h
   SOURCES += tepollwebsocket.cpp
+  HEADERS += ttcpsocket.h
+  SOURCES += ttcpsocket.cpp
   SOURCES += tprocessinfo_linux.cpp
   SOURCES += tthreadapplicationserver_linux.cpp
+  SOURCES += tredisdriver_linux.cpp
+  SOURCES += tmemcacheddriver_linux.cpp
 }
 macx {
   SOURCES += tprocessinfo_macx.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tredisdriver_qt.cpp
+  SOURCES += tmemcacheddriver_qt.cpp
 }
 freebsd {
   SOURCES += tprocessinfo_freebsd.cpp

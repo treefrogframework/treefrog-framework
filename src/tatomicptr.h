@@ -22,8 +22,8 @@ public:
     T *load(bool *mark = nullptr) const;
     void store(T *value);
     T *exchange(T *value);
-    bool compareExchange(T *expected, T *newValue);
-    bool compareExchangeStrong(T *expected, T *newValue);
+    bool compareExchange(T *&expected, T *newValue);
+    bool compareExchangeStrong(T *&expected, T *newValue);
     TAtomicPtr<T> &operator=(T *value);
     TAtomicPtr<T> &operator=(const TAtomicPtr<T> &other);
 
@@ -32,13 +32,10 @@ public:
     bool isMarked() const;
 
 private:
-    enum {
-        MASK = 0x3
-    };
-
     T *raw() const;
     std::atomic<quintptr> atomicPtr {0};
 
+    static constexpr quintptr MASK = 0x3;
     T_DISABLE_MOVE(TAtomicPtr)
 };
 
@@ -78,7 +75,7 @@ inline T *TAtomicPtr<T>::load(bool *mark) const
 template <class T>
 inline T *TAtomicPtr<T>::raw() const
 {
-    return atomicPtr.load(std::memory_order_acquire);
+    return (T *)atomicPtr.load(std::memory_order_acquire);
 }
 
 
@@ -98,18 +95,16 @@ inline T *TAtomicPtr<T>::exchange(T *value)
 
 
 template <class T>
-inline bool TAtomicPtr<T>::compareExchange(T *expected, T *newValue)
+inline bool TAtomicPtr<T>::compareExchange(T *&expected, T *newValue)
 {
-    quintptr exp = (quintptr)expected;
-    return atomicPtr.compare_exchange_weak((quintptr &)exp, (quintptr)newValue);
+    return atomicPtr.compare_exchange_weak((quintptr &)expected, (quintptr)newValue);
 }
 
 
 template <class T>
-inline bool TAtomicPtr<T>::compareExchangeStrong(T *expected, T *newValue)
+inline bool TAtomicPtr<T>::compareExchangeStrong(T *&expected, T *newValue)
 {
-    quintptr exp = (quintptr)expected;
-    return atomicPtr.compare_exchange_strong((quintptr &)exp, (quintptr)newValue);
+    return atomicPtr.compare_exchange_strong((quintptr &)expected, (quintptr)newValue);
 }
 
 
@@ -158,4 +153,3 @@ inline bool TAtomicPtr<T>::isMarked() const
 {
     return load() & 0x1;
 }
-

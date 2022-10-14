@@ -7,6 +7,7 @@ class TWebApplication;
   throughout the library of TreeFrog Framework.
 */
 namespace Tf {
+
 enum QuotedStrSplitBehavior {
     SplitWhereverSep = 0,
     SplitSkipQuotedString,
@@ -143,6 +144,8 @@ enum AppAttribute {
     UploadTemporaryDirectory,
     SqlDatabaseSettingsFiles,
     MongoDbSettingsFile,
+    RedisSettingsFile,
+    MemcachedSettingsFile,
     SqlQueriesStoredDirectory,
     DirectViewRenderMode,
     SqlQueryLogFile,  // Deprecated
@@ -182,7 +185,6 @@ enum AppAttribute {
     ActionMailerSendmailCommandLocation,
     //
     HttpKeepAliveTimeout,
-    RedisSettingsFile,
     LDPreload,
     JavaScriptPath,
     ListenAddress,
@@ -234,11 +236,18 @@ enum LogPriority {
     TraceLevel,  //!< Finer-grained informational events than the DEBUG.
 };
 
-enum class KvsEngine {
-    MongoDB = 0,
+enum class KvsEngine : int {
+    CacheKvs = 0,  // For internal use
+    MongoDB,
     Redis,
-    CacheKvs,  // For internal use
-    Num  // = 3
+    Memcached,
+    Num  // = 4
+};
+
+enum class SocketState : int {
+    Unconnected = 0,
+    Connecting,
+    Connected,
 };
 
 
@@ -249,7 +258,7 @@ constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
 constexpr auto KeepEmptyParts = QString::KeepEmptyParts;
 constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
 #endif
-}
+} // namespace Tf
 
 
 /*!
@@ -258,6 +267,7 @@ constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
   throughout the SQL library.
 */
 namespace TSql {
+
 enum ComparisonOperator {
     Invalid = 0,
     Equal,  // = val
@@ -291,7 +301,8 @@ enum JoinMode {
     LeftJoin,
     RightJoin,
 };
-}
+
+} // namespace TSql
 
 /*!
   \namespace TMongo
@@ -299,6 +310,7 @@ enum JoinMode {
   throughout the MongoDB library.
 */
 namespace TMongo {
+
 enum ComparisonOperator {
     Invalid = 0,
     Equal = TSql::Equal,  // == val
@@ -316,5 +328,5 @@ enum ComparisonOperator {
     Size,  // $size : val
     Type,  // $type : val
 };
-}
 
+} // namespace TMongo

@@ -83,7 +83,7 @@ QString TActionController::name() const
 */
 const THttpRequest &TActionController::request() const
 {
-    return Tf::currentContext()->httpRequest();
+    return context()->httpRequest();
 }
 
 /*!
@@ -91,7 +91,7 @@ const THttpRequest &TActionController::request() const
 */
 THttpRequest &TActionController::request()
 {
-    return Tf::currentContext()->httpRequest();
+    return context()->httpRequest();
 }
 
 /*!
@@ -173,8 +173,8 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
  */
 QByteArray TActionController::authenticityToken() const
 {
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
+        QString key = TSessionManager::instance().csrfProtectionKey();
         QByteArray csrfId = session().value(key).toByteArray();
 
         if (csrfId.isEmpty()) {
@@ -203,8 +203,8 @@ void TActionController::setSession(const TSession &session)
 */
 void TActionController::setCsrfProtectionInto(TSession &session)
 {
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
+        QString key = TSessionManager::instance().csrfProtectionKey();
         session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
     }
 }
@@ -249,7 +249,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
         return true;
     }
 
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() != QLatin1String("cookie")) {
+    if (TSessionManager::instance().storeType() != QLatin1String("cookie")) {
         if (session().id().isEmpty()) {
             throw SecurityException("Request Forgery Protection requires a valid session", __FILE__, __LINE__);
         }
@@ -680,7 +680,7 @@ bool TActionController::validateAccess(const TAbstractUser *user)
     if (TAccessValidator::accessRules.isEmpty()) {
         setAccessRules();
     }
-    return TAccessValidator::validate(user);
+    return TAccessValidator::validate(user, this);
 }
 
 /*!
@@ -760,7 +760,7 @@ void TActionController::setAutoRemove(const QString &filePath)
 */
 QHostAddress TActionController::clientAddress() const
 {
-    return Tf::currentContext()->clientAddress();
+    return context()->clientAddress();
 }
 
 /*!
@@ -788,26 +788,26 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 }
 
 
-void TActionController::sendTextToWebSocket(int sid, const QString &text)
+void TActionController::sendTextToWebSocket(int socket, const QString &text)
 {
     QVariantList info;
-    info << sid << text;
+    info << socket << text;
     _taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 
-void TActionController::sendBinaryToWebSocket(int sid, const QByteArray &binary)
+void TActionController::sendBinaryToWebSocket(int socket, const QByteArray &binary)
 {
     QVariantList info;
-    info << sid << binary;
+    info << socket << binary;
     _taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 
-void TActionController::closeWebSokcet(int sid, int closeCode)
+void TActionController::closeWebSokcet(int socket, int closeCode)
 {
     QVariantList info;
-    info << sid << closeCode;
+    info << socket << closeCode;
     _taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
@@ -845,7 +845,6 @@ void TActionController::reset()
     _rollback = false;
     _autoRemoveFiles.clear();
     _taskList.clear();
-    _sockId = 0;
 }
 
 

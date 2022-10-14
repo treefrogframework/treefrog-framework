@@ -12,7 +12,6 @@ class TRedisDriver;
 class T_CORE_EXPORT TRedis {
 public:
     TRedis();
-    TRedis(const TRedis &other);
     virtual ~TRedis() { }
 
     bool isOpen() const;
@@ -71,9 +70,11 @@ private:
     static QByteArrayList toByteArrayList(const QStringList &values);
     static QStringList toStringList(const QByteArrayList &values);
 
-    TKvsDatabase database;
+    TKvsDatabase _database;
 
     friend class TCacheRedisStore;
+    T_DISABLE_COPY(TRedis)
+    T_DISABLE_MOVE(TRedis)
 };
 
 

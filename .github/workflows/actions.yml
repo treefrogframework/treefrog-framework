@@ -32,6 +32,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -70,6 +75,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -106,6 +116,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -156,6 +171,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: Homebrew for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh

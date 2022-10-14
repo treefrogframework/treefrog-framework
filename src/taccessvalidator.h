@@ -5,6 +5,7 @@
 #include <TGlobal>
 
 class TAbstractUser;
+class TActionController;
 
 
 class T_CORE_EXPORT TAccessValidator {
@@ -27,7 +28,7 @@ public:
     void setDenyUnauthenticatedUser(const QString &action);
     void setDenyUnauthenticatedUser(const QStringList &actions);
     void clear();
-    virtual bool validate(const TAbstractUser *user) const;
+    virtual bool validate(const TAbstractUser *user, const TActionController *controller) const;
 
 protected:
     void addRules(int type, const QString &key, const QStringList &actions, bool allow);

@@ -1,6 +1,5 @@
 #pragma once
 #include <QHostAddress>
-#include <QThread>
 #include <TActionContext>
 
 class THttpRequest;
@@ -12,11 +11,9 @@ class QIODevice;
 class T_CORE_EXPORT TActionWorker : public QObject, public TActionContext {
     Q_OBJECT
 public:
+    TActionWorker() { }
     virtual ~TActionWorker() { }
     void start(TEpollHttpSocket *socket);
-
-    static TActionWorker *instance();
-    static int workerCount() { return 0; }
 
 protected:
     void run();
@@ -24,7 +21,6 @@ protected:
     void closeHttpSocket() override;
 
 private:
-    TActionWorker() { }
 
     QByteArray _httpRequest;
     QHostAddress _clientAddr;

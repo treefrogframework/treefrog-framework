@@ -30,44 +30,52 @@ public:
     void open();
     void write();
     void close();
+
     void setTimestamp(const QDateTime &timestamp)
     {
-        if (accessLog) {
-            accessLog->timestamp = timestamp;
+        if (_accessLog) {
+            _accessLog->timestamp = timestamp;
         }
     }
+
     void setRemoteHost(const QByteArray &host)
     {
-        if (accessLog) {
-            accessLog->remoteHost = host;
+        if (_accessLog) {
+            _accessLog->remoteHost = host;
         }
     }
+
     void setRequest(const QByteArray &request)
     {
-        if (accessLog) {
-            accessLog->request = request;
+        if (_accessLog) {
+            _accessLog->request = request;
         }
     }
-    int statusCode() const { return (accessLog) ? accessLog->statusCode : -1; }
+
+    int statusCode() const { return (_accessLog) ? _accessLog->statusCode : -1; }
+
     void setStatusCode(int statusCode)
     {
-        if (accessLog) {
-            accessLog->statusCode = statusCode;
+        if (_accessLog) {
+            _accessLog->statusCode = statusCode;
         }
     }
-    int responseBytes() const { return (accessLog) ? accessLog->responseBytes : -1; }
+
+    int responseBytes() const { return (_accessLog) ? _accessLog->responseBytes : -1; }
+
     void setResponseBytes(int bytes)
     {
-        if (accessLog) {
-            accessLog->responseBytes = bytes;
+        if (_accessLog) {
+            _accessLog->responseBytes = bytes;
         }
     }
-    void startElaspedTimer()
+
+    void startElapsedTimer()
     {
-        timer.start();
+        _timer.start();
     }
 
 private:
-    TAccessLog *accessLog {nullptr};
-    QElapsedTimer timer;
+    TAccessLog *_accessLog {nullptr};
+    QElapsedTimer _timer;
 };

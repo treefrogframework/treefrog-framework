@@ -34,7 +34,7 @@ const QFile::Permissions TMimeEntity::DefaultPermissions = TMultipartFormData::D
   Copy constructor.
 */
 TMimeHeader::TMimeHeader(const TMimeHeader &other) :
-    headers(other.headers)
+    _headers(other._headers)
 {
 }
 
@@ -43,7 +43,7 @@ TMimeHeader::TMimeHeader(const TMimeHeader &other) :
  */
 TMimeHeader &TMimeHeader::operator=(const TMimeHeader &other)
 {
-    headers = other.headers;
+    _headers = other._headers;
     return *this;
 }
 
@@ -53,7 +53,7 @@ TMimeHeader &TMimeHeader::operator=(const TMimeHeader &other)
 QByteArray TMimeHeader::header(const QByteArray &headerName) const
 {
     QByteArray name = headerName.toLower();
-    for (const auto &p : headers) {
+    for (const auto &p : _headers) {
         if (p.first.toLower() == name) {
             return p.second;
         }
@@ -66,7 +66,7 @@ QByteArray TMimeHeader::header(const QByteArray &headerName) const
 */
 void TMimeHeader::setHeader(const QByteArray &headerName, const QByteArray &value)
 {
-    headers << qMakePair(headerName, value);
+    _headers << qMakePair(headerName, value);
 }
 
 /*!
@@ -196,7 +196,7 @@ QMap<QByteArray, QByteArray> TMimeHeader::parseHeaderParameter(const QByteArray 
   Copy constructor.
 */
 TMimeEntity::TMimeEntity(const TMimeEntity &other) :
-    entity(other.entity)
+    _entity(other._entity)
 {
 }
 
@@ -205,7 +205,7 @@ TMimeEntity::TMimeEntity(const TMimeEntity &other) :
  */
 TMimeEntity &TMimeEntity::operator=(const TMimeEntity &other)
 {
-    entity = other.entity;
+    _entity = other._entity;
     return *this;
 }
 
@@ -214,8 +214,8 @@ TMimeEntity &TMimeEntity::operator=(const TMimeEntity &other)
 */
 TMimeEntity::TMimeEntity(const TMimeHeader &header, const QString &body)
 {
-    entity.first = header;
-    entity.second = body;
+    _entity.first = header;
+    _entity.second = body;
 }
 
 /*!
@@ -232,7 +232,7 @@ QString TMimeEntity::contentType() const
 */
 qint64 TMimeEntity::fileSize() const
 {
-    QFileInfo fi(entity.second);
+    QFileInfo fi(_entity.second);
     if (!fi.exists()) {
         return -1;
     }
@@ -284,7 +284,7 @@ bool TMimeEntity::renameUploadedFile(const QString &newName, bool overwrite, QFi
 QString TMimeEntity::uploadedFilePath() const
 {
     // check original filename
-    return (header().isEmpty() || header().contentDispositionParameter("filename").isEmpty()) ? QString() : entity.second;
+    return (header().isEmpty() || header().contentDispositionParameter("filename").isEmpty()) ? QString() : _entity.second;
 }
 
 
@@ -306,23 +306,23 @@ TMultipartFormData::TMultipartFormData(const QByteArray &boundary) :
   Constructs a multipart/form-data object by parsing \a formData with
   the boundary \a boundary.
 */
-TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteArray &boundary) :
+TMultipartFormData::TMultipartFormData(const QByteArray &formData, const QByteArray &boundary, TActionContext *context) :
     dataBoundary(boundary)
 {
     QByteArray data(formData);
     QBuffer buffer(&data);
-    parse(&buffer);
+    parse(&buffer, context);
 }
 
 /*!
   Constructs a multipart/form-data object by parsing the content of
   the file with the given \a bodyFilePath.
 */
-TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary) :
+TMultipartFormData::TMultipartFormData(const QString &bodyFilePath, const QByteArray &boundary, TActionContext *context) :
     dataBoundary(boundary), bodyFile(bodyFilePath)
 {
     QFile file(bodyFilePath);
-    parse(&file);
+    parse(&file, context);
 }
 
 /*!
@@ -442,7 +442,7 @@ QString TMultipartFormData::uploadedFilePath(const QByteArray &dataName) const
 /*!
   Reads from the I/O device \a dev and parses it.
 */
-void TMultipartFormData::parse(QIODevice *dev)
+void TMultipartFormData::parse(QIODevice *dev, TActionContext *context)
 {
     if (!dev->isOpen()) {
         if (!dev->open(QIODevice::ReadOnly)) {
@@ -462,7 +462,7 @@ void TMultipartFormData::parse(QIODevice *dev)
             QByteArray type = header.header("content-type");
             if (!type.isEmpty()) {
                 if (!header.originalFileName().isEmpty()) {
-                    QString contFile = writeContent(dev);
+                    QString contFile = writeContent(dev, context);
                     if (!contFile.isEmpty()) {
                         uploadedFiles << TMimeEntity(header, contFile);
                     }
@@ -529,13 +529,13 @@ QByteArray TMultipartFormData::parseContent(QIODevice *dev) const
   Parses the multipart data and writes the one content to a file.
   Returns the file name.
  */
-QString TMultipartFormData::writeContent(QIODevice *dev) const
+QString TMultipartFormData::writeContent(QIODevice *dev, TActionContext *context) const
 {
-    if (!dev->isOpen()) {
+    if (!dev->isOpen() || !context) {
         return QString();
     }
 
-    TTemporaryFile &out = Tf::currentContext()->createTemporaryFile();
+    TTemporaryFile &out = context->createTemporaryFile();
     if (!out.open()) {
         return QString();
     }

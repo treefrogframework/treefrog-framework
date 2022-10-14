@@ -95,6 +95,8 @@ HEADER_CLASSES += ../include/TJSLoader
 HEADER_CLASSES += ../include/TJSModule
 HEADER_CLASSES += ../include/TJSInstance
 HEADER_CLASSES += ../include/TReactComponent
+HEADER_CLASSES += ../include/TMemcached
+HEADER_CLASSES += ../include/TMemcachedDriver
 
 HEADER_FILES  = tabstractactioncontext.h
 HEADER_FILES += tabstractmodel.h
@@ -193,6 +195,8 @@ HEADER_FILES += tjsloader.h
 HEADER_FILES += tjsmodule.h
 HEADER_FILES += tjsinstance.h
 HEADER_FILES += treactcomponent.h
+HEADER_FILES += tmemcached.h
+HEADER_FILES += tmemcacheddriver.h
 
 HEADER_FILES += tsqldatabasepool.h
 HEADER_FILES += tkvsdatabasepool.h

@@ -213,6 +213,22 @@ if [ $RET != 0 ]; then
 fi
 echo "OK"
 
+# compile glog
+cd "$BASEDIR/3rdparty/glog"
+echo
+echo -n "Compiling glog ... "
+rm -rf build
+cmake -S . -B build -G "Unix Makefiles" >/dev/null 2>&1
+make -j${NPROC} -C build >/dev/null 2>&1
+RET=$?
+if [ $RET != 0 ]; then
+  echo "failed"
+  echo "glog not available."
+  exit $RET
+fi
+echo "OK"
+
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
 echo "Next, run \"make\" and \"sudo make install\" in tools directory."
+
