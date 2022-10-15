@@ -37,7 +37,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
     tSystemDebug("memcached open host:%s  port:%d", qUtf8Printable(_host), _port);
 
     _client = new TTcpSocket;
-    _client->setSocketOption(SOL_TCP, TCP_NODELAY, 1);
+    _client->setSocketOption(IPPROTO_TCP, TCP_NODELAY, 1);
     _client->connectToHost(_host, _port);
 
     bool ret = _client->waitForConnected(1000);
