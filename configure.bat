@@ -5,6 +5,7 @@ set VERSION=2.5.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.3
+set GLOG_VERSION=0.6.0
 set BASEDIR=%~dp0
 
 :parse_loop
@@ -174,6 +175,7 @@ set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
 
 :: Builds MongoDB driver
+echo Compiling MongoDB driver library ...
 cd /d %BASEDIR%3rdparty
 rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
@@ -183,9 +185,8 @@ cd %BASEDIR%3rdparty\mongo-driver
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
 set CMAKECMD=cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF .
 echo %CMAKECMD%
-%CMAKECMD%
+%CMAKECMD% >nul 2>&1
 
-echo Compiling MongoDB driver library ...
 set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 echo %DEVENVCMD%
 %DEVENVCMD% >nul 2>&1
@@ -199,8 +200,8 @@ if ERRORLEVEL 1 (
 )
 
 :: Builds LZ4
-cd %BASEDIR%3rdparty
 echo Compiling LZ4 library ...
+cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
@@ -222,6 +223,30 @@ if ERRORLEVEL 1 (
   exit /b
 )
 
+:: Builds glog
+echo Compiling glog library ...
+cd %BASEDIR%3rdparty
+rd /s /q  glog >nul 2>&1
+del /f /q glog >nul 2>&1
+mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
+cd %BASEDIR%3rdparty\glog
+del /f /q build >nul 2>&1
+set CMAKECMD=cmake -S . -B build
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+set CMAKECMD=cmake --build build
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+if ERRORLEVEL 1 (
+  :: Shows error
+  %CMAKECMD%
+  echo;
+  echo Build failed.
+  echo glog not available.
+  exit /b
+)
+
+:: Builds TreeFrog
 cd %BASEDIR%src
 if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%

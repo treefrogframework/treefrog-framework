@@ -15,7 +15,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_DLL
-INCLUDEPATH += $$header.path
+INCLUDEPATH += $$header.path ../../3rdparty/glog/build ../../3rdparty/glog/src
 
 include(../../tfbase.pri)
 
@@ -30,17 +30,14 @@ isEmpty( target.path ) {
 windows {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
-    LIBS += -ltreefrogd$${TF_VER_MAJ}
+    LIBS += -ltreefrogd$${TF_VER_MAJ} ../../3rdparty/glog/build/Debug/glogd.lib
   } else {
     LIBS += -ltreefrog$${TF_VER_MAJ}
   }
   LIBS += -L"$$target.path"
 } else:unix {
-  INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
   linux-*:LIBS += -lrt
-  *-g++:DEFINES += _GNU_SOURCE
-  freebsd-*:DEFINES += _GNU_SOURCE
 }
 
 INSTALLS += target

@@ -20,9 +20,7 @@
 #include <TWebApplication>
 #include <cstdlib>
 #include <cstdio>
-#ifdef Q_OS_UNIX
 #include <glog/logging.h>
-#endif
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
 #endif
@@ -57,7 +55,7 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 }
 
 
-#ifdef Q_OS_UNIX
+#if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
 void writeFailure(const char *data, size_t size)
 {
     tSystemError("%s", QByteArray(data, size).replace('\n', "").data());
@@ -215,15 +213,16 @@ int main(int argc, char *argv[])
     if (!debug) {
         webapp.ignoreUnixSignal(SIGINT);
     }
-
-    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
-    google::InstallFailureWriter(writeFailure);
-    google::InstallFailureSignalHandler();
-
 #elif defined(Q_OS_WIN)
     if (!debug) {
         webapp.ignoreConsoleSignal();
     }
+#endif
+
+#if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
+    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
+    google::InstallFailureWriter(writeFailure);
+    google::InstallFailureSignalHandler();
 #endif
 
     // Sets the app locale
