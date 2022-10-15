@@ -68,7 +68,9 @@ build_script:
   - cmd: configure.bat --enable-debug
   - cmd: cd src
   - cmd: nmake install
-  - cmd: cd ..\tools
+  - cmd: cd test
+  - cmd: call testall.bat
+  - cmd: cd ..\..\tools
   - cmd: nmake install
   - cmd: cd ..
   - cmd: configure.bat

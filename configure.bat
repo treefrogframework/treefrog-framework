@@ -231,7 +231,7 @@ del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
 del /f /q build >nul 2>&1
-set CMAKECMD=cmake -S . -B build -DCMAKE_GENERATOR_PLATFORM=x64
+set CMAKECMD=cmake -S . -B build %CMAKEOPT%
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 set CMAKECMD=cmake --build build
