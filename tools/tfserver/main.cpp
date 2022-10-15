@@ -62,6 +62,7 @@ void writeFailure(const char *data, size_t size)
 }
 #endif
 
+
 QMap<QString, QString> convertArgs(const QStringList &args)
 {
     QMap<QString, QString> map;
