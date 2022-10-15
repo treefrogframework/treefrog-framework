@@ -10,6 +10,7 @@
 #include <TfTest/TfTest>
 #include <glog/logging.h>
 
+
 static std::atomic<qint64> counter {0};  // Box counter
 
 #if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
@@ -99,7 +100,7 @@ class TestStack : public QObject
     Q_OBJECT
 private slots:
     void initTestCase();
-    void cleanupTestCase() {}
+    void cleanupTestCase();
     void push_pop();
 };
 
@@ -111,6 +112,12 @@ void TestStack::initTestCase()
     google::InstallFailureWriter(writeFailure);
     google::InstallFailureSignalHandler();
 #endif
+}
+
+
+void TestStack::cleanupTestCase()
+{
+    _exit(0);
 }
 
 
@@ -139,7 +146,6 @@ void TestStack::push_pop()
 
     std::cout << "counter=" << counter.load() << std::endl;
     std::cout << "stack count=" << stackBox.count() << std::endl;
-    //_exit(0);
 }
 
 
