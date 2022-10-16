@@ -18,10 +18,10 @@ public:
 protected:
     void run();
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
-    void closeHttpSocket() override;
+    void flushSocket() override;
+    void closeSocket() override;
 
 private:
-
     QByteArray _httpRequest;
     QHostAddress _clientAddr;
     TEpollHttpSocket *_socket {nullptr};

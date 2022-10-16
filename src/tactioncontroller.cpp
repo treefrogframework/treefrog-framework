@@ -269,11 +269,11 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
  */
 bool TActionController::render(const QString &action, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     // Creates view-object and displays it
     TDispatcher<TActionView> viewDispatcher(viewClassName(action));
@@ -287,11 +287,11 @@ bool TActionController::render(const QString &action, const QString &layout)
 */
 bool TActionController::renderTemplate(const QString &templateName, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     // Creates view-object and displays it
     QStringList names = templateName.split("/");
@@ -310,11 +310,11 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 */
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     if (contentType() == DEFAULT_CONTENT_TYPE) {
         setContentType(QByteArrayLiteral("text/plain"));
@@ -416,17 +416,17 @@ bool TActionController::renderXml(const QStringList &list)
 */
 bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
 
     render(action, layout);
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         QByteArray responseMsg = response().body();
         Tf::cache()->set(key, responseMsg, seconds);
     }
-    return _rendered;
+    return (bool)_rendered;
 }
 
 /*!
@@ -436,7 +436,7 @@ bool TActionController::renderAndCache(const QByteArray &key, int seconds, const
 */
 bool TActionController::renderOnCache(const QByteArray &key)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
@@ -447,8 +447,8 @@ bool TActionController::renderOnCache(const QByteArray &key)
     }
 
     _response.setBody(responseMsg);
-    _rendered = true;
-    return _rendered;
+    _rendered = RenderState::Rendered;
+    return (bool)_rendered;
 }
 
 /*!
@@ -464,7 +464,6 @@ void TActionController::removeCache(const QByteArray &key)
 */
 QString TActionController::getRenderingData(const QString &templateName, const QVariantMap &vars)
 {
-
     // Creates view-object
     QStringList names = templateName.split("/");
     if (names.count() != 2) {
@@ -553,7 +552,7 @@ bool TActionController::renderErrorResponse(int statusCode)
 {
     bool ret = false;
 
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return ret;
     }
@@ -565,7 +564,7 @@ bool TActionController::renderErrorResponse(int statusCode)
         _response.setBody("");
     }
     setStatusCode(statusCode);
-    _rendered = true;
+    _rendered = RenderState::Rendered;
     return ret;
 }
 
@@ -590,11 +589,11 @@ QString TActionController::partialViewClassName(const QString &partial)
  */
 void TActionController::redirect(const QUrl &url, int statusCode)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tError("Unable to redirect. Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     setStatusCode(statusCode);
     _response.header().setRawHeader("Location", url.toEncoded());
@@ -612,11 +611,11 @@ void TActionController::redirect(const QUrl &url, int statusCode)
 */
 bool TActionController::sendFile(const QString &filePath, const QByteArray &contentType, const QString &name, bool autoRemove)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     if (!name.isEmpty()) {
         QByteArray filename;
@@ -640,11 +639,11 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
 */
 bool TActionController::sendData(const QByteArray &data, const QByteArray &contentType, const QString &name)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     if (!name.isEmpty()) {
         QByteArray filename;
@@ -828,6 +827,15 @@ void TActionController::publish(const QString &topic, const QByteArray &binary)
 }
 
 
+void TActionController::flushResponse()
+{
+    if (_rendered == RenderState::Rendered) {
+        context()->flushResponse(this, true);
+        _rendered = RenderState::DataSent;
+    }
+}
+
+
 void TActionController::reset()
 {
     TAccessValidator::clear();
@@ -835,7 +843,7 @@ void TActionController::reset()
     _actionName.clear();
     _args.clear();
     _statCode = Tf::OK;  // 200 OK
-    _rendered = false;
+    _rendered = RenderState::NotRendered;
     _layoutEnable  = true;
     _layoutName.clear();
     _response.clear();

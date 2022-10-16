@@ -66,8 +66,8 @@ void TActionContext::execute(THttpRequest &request)
     THttpResponseHeader responseHeader;
 
     try {
-        httpReq = &request;
-        const THttpRequestHeader &reqHeader = httpReq->header();
+        _httpRequest = &request;
+        const THttpRequestHeader &reqHeader = _httpRequest->header();
 
         // Access log
         if (Tf::isAccessLoggerAvailable()) {
@@ -87,7 +87,7 @@ void TActionContext::execute(THttpRequest &request)
         tSystemDebug("path : %s", reqHeader.path().data());
 
         // HTTP method
-        Tf::HttpMethod method = httpReq->method();
+        Tf::HttpMethod method = _httpRequest->method();
         QString path = THttpUtility::fromUrlEncoding(reqHeader.path().mid(0, reqHeader.path().indexOf('?')));
 
         if (LimitRequestBodyBytes > 0 && reqHeader.contentLength() > (uint)LimitRequestBodyBytes) {
@@ -121,67 +121,67 @@ void TActionContext::execute(THttpRequest &request)
 
         // Call controller method
         TDispatcher<TActionController> ctlrDispatcher(route.controller);
-        currController = ctlrDispatcher.object();
-        if (currController) {
-            currController->setActionName(route.action);
-            currController->setArguments(route.params);
-            currController->setContext(this);
+        _currController = ctlrDispatcher.object();
+        if (_currController) {
+            _currController->setActionName(route.action);
+            _currController->setArguments(route.params);
+            _currController->setContext(this);
 
             // Session
-            if (currController->sessionEnabled()) {
+            if (_currController->sessionEnabled()) {
                 TSession session;
-                QByteArray sessionId = httpReq->cookie(TSession::sessionName());
+                QByteArray sessionId = _httpRequest->cookie(TSession::sessionName());
                 if (!sessionId.isEmpty()) {
                     // Finds a session
                     session = TSessionManager::instance().findSession(sessionId);
                 }
-                currController->setSession(session);
+                _currController->setSession(session);
 
                 // Exports flash-variant
-                currController->exportAllFlashVariants();
+                _currController->exportAllFlashVariants();
             }
 
             // Verify authenticity token
-            if (EnableCsrfProtectionModuleFlag && currController->csrfProtectionEnabled() && !currController->exceptionActionsOfCsrfProtection().contains(route.action)) {
+            if (EnableCsrfProtectionModuleFlag && _currController->csrfProtectionEnabled() && !_currController->exceptionActionsOfCsrfProtection().contains(route.action)) {
                 if (method == Tf::Post || method == Tf::Put || method == Tf::Patch || method == Tf::Delete) {
-                    if (!currController->verifyRequest(*httpReq)) {
+                    if (!_currController->verifyRequest(*_httpRequest)) {
                         throw SecurityException("Invalid authenticity token", __FILE__, __LINE__);
                     }
                 }
             }
 
-            if (currController->sessionEnabled()) {
-                if (SessionAutoIdRegeneration || currController->session().id().isEmpty()) {
-                    TSessionManager::instance().remove(currController->session().sessionId);  // Removes the old session
+            if (_currController->sessionEnabled()) {
+                if (SessionAutoIdRegeneration || _currController->session().id().isEmpty()) {
+                    TSessionManager::instance().remove(_currController->session().sessionId);  // Removes the old session
                     // Re-generate session ID
-                    currController->session().sessionId = TSessionManager::instance().generateId();
-                    tSystemDebug("Re-generate session ID: %s", currController->session().sessionId.data());
+                    _currController->session().sessionId = TSessionManager::instance().generateId();
+                    tSystemDebug("Re-generate session ID: %s", _currController->session().sessionId.data());
                 }
 
-                if (EnableCsrfProtectionModuleFlag && currController->csrfProtectionEnabled()) {
+                if (EnableCsrfProtectionModuleFlag && _currController->csrfProtectionEnabled()) {
                     // Sets CSRF protection information
-                    TActionController::setCsrfProtectionInto(currController->session());
+                    TActionController::setCsrfProtectionInto(_currController->session());
                 }
             }
 
             // Database Transaction
             for (int databaseId = 0; databaseId < Tf::app()->sqlDatabaseSettingsCount(); ++databaseId) {
-                setTransactionEnabled(currController->transactionEnabled(), databaseId);
+                setTransactionEnabled(_currController->transactionEnabled(), databaseId);
             }
 
             // Do filters
-            bool dispatched = false;
-            if (Q_LIKELY(currController->preFilter())) {
+            _dispatched = false;
+            if (Q_LIKELY(_currController->preFilter())) {
 
                 // Dispatches
-                dispatched = ctlrDispatcher.invoke(route.action, route.params);
-                if (Q_LIKELY(dispatched)) {
-                    autoRemoveFiles << currController->_autoRemoveFiles;  // Adds auto-remove files
+                _dispatched = ctlrDispatcher.invoke(route.action, route.params);
+                if (Q_LIKELY(_dispatched)) {
+                    autoRemoveFiles << _currController->_autoRemoveFiles;  // Adds auto-remove files
 
                     // Post filter
-                    currController->postFilter();
+                    _currController->postFilter();
 
-                    if (Q_UNLIKELY(currController->rollbackRequested())) {
+                    if (Q_UNLIKELY(_currController->rollbackRequested())) {
                         rollbackTransactions();
                     } else {
                         // Commits a transaction to the database
@@ -189,15 +189,15 @@ void TActionContext::execute(THttpRequest &request)
                     }
 
                     // Session store
-                    if (currController->sessionEnabled()) {
-                        bool stored = TSessionManager::instance().store(currController->session());
+                    if (_currController->sessionEnabled()) {
+                        bool stored = TSessionManager::instance().store(_currController->session());
                         if (Q_LIKELY(stored)) {
                             static const int SessionCookieMaxAge = ([]() -> int {
                                 QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
                                 return maxagestr.toInt();
                             }());
 
-                            currController->addCookie(TSession::sessionName(), currController->session().id(), SessionCookieMaxAge,
+                            _currController->addCookie(TSession::sessionName(), _currController->session().id(), SessionCookieMaxAge,
                                 SessionCookiePath, SessionCookieDomain, false, true, SessionCookieSameSite);
 
                             // Commits a transaction for session
@@ -207,90 +207,14 @@ void TActionContext::execute(THttpRequest &request)
                             tSystemError("Failed to store a session");
                         }
                     }
-
-                    // WebSocket tasks
-                    if (!currController->_taskList.isEmpty()) {
-                        QVariantList lst;
-                        for (auto &task : (const QList<QPair<int, QVariant>> &)currController->_taskList) {
-                            const QVariant &taskData = task.second;
-
-                            switch (task.first) {
-                            case TActionController::SendTextTo: {
-                                lst = taskData.toList();
-                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
-                                if (websocket) {
-                                    websocket->sendText(lst[1].toString());
-                                }
-                            } break;
-
-                            case TActionController::SendBinaryTo: {
-                                lst = taskData.toList();
-                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
-                                if (websocket) {
-                                    websocket->sendBinary(lst[1].toByteArray());
-                                }
-                            } break;
-
-                            case TActionController::SendCloseTo: {
-                                lst = taskData.toList();
-                                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
-                                if (websocket) {
-                                    websocket->sendClose(lst[1].toInt());
-                                }
-                            } break;
-
-                            case TActionController::PublishText: {
-                                lst = taskData.toList();
-                                QString topic = lst[0].toString();
-                                QString text = lst[1].toString();
-                                TPublisher::instance()->publish(topic, text, nullptr);
-                            } break;
-
-                            case TActionController::PublishBinary: {
-                                lst = taskData.toList();
-                                QString topic = lst[0].toString();
-                                QString binary = lst[1].toByteArray();
-                                TPublisher::instance()->publish(topic, binary, nullptr);
-                            } break;
-
-                            default:
-                                tSystemError("Invalid logic  [%s:%d]", __FILE__, __LINE__);
-                                break;
-                            }
-                        }
-                    }
                 }
             }
 
-            // Sets charset to the content-type
-            QByteArray ctype = currController->_response.header().contentType().toLower();
-            if (ctype.startsWith("text") && !ctype.contains("charset")) {
-                ctype += "; charset=";
-#if QT_VERSION < 0x060000
-                ctype += Tf::app()->codecForHttpOutput()->name();
-#else
-                ctype += QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput());
-#endif
-                currController->_response.header().setContentType(ctype);
-            }
-
-            // Sets the default status code of HTTP response
-            int bytes = 0;
-            if (Q_UNLIKELY(currController->_response.isBodyNull())) {
-                accessLogger.setStatusCode((dispatched) ? Tf::InternalServerError : Tf::NotFound);
-                bytes = writeResponse(accessLogger.statusCode(), responseHeader);
-            } else {
-                accessLogger.setStatusCode(currController->statusCode());
-                currController->_response.header().setStatusLine(currController->statusCode(), THttpUtility::getResponseReasonPhrase(currController->statusCode()));
-
-                // Writes a response and access log
-                qint64 bodyLength = (currController->_response.header().contentLength() > 0) ? currController->_response.header().contentLength() : currController->response().bodyLength();
-                bytes = writeResponse(currController->_response.header(), currController->_response.bodyIODevice(), bodyLength);
-            }
-            accessLogger.setResponseBytes(bytes);
+            // Flushes response
+            flushResponse(_currController, false);
 
             // Session
-            if (currController->sessionEnabled()) {
+            if (_currController->sessionEnabled()) {
                 // Session GC
                 TSessionManager::instance().collectGarbage();
 
@@ -363,18 +287,19 @@ void TActionContext::execute(THttpRequest &request)
     } catch (TfException &e) {
         tError("Caught %s: %s  [%s:%d]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
         tSystemError("Caught %s: %s  [%s:%d]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        closeHttpSocket();
+        closeSocket();
         accessLogger.setResponseBytes(0);
         accessLogger.setStatusCode(Tf::InternalServerError);
     } catch (std::exception &e) {
         tError("Caught Exception: %s", e.what());
         tSystemError("Caught Exception: %s", e.what());
-        closeHttpSocket();
+        closeSocket();
         accessLogger.setResponseBytes(0);
         accessLogger.setStatusCode(Tf::InternalServerError);
     }
 
     accessLogger.write();  // Writes access log
+    _currController = nullptr;
 }
 
 
@@ -382,15 +307,110 @@ void TActionContext::release()
 {
     TDatabaseContext::release();
 
-    for (auto temp : (const QList<TTemporaryFile *> &)tempFiles) {
+    for (auto temp : (const QList<TTemporaryFile *> &)_tempFiles) {
         delete temp;
     }
-    tempFiles.clear();
+    _tempFiles.clear();
 
     for (auto &file : (const QStringList &)autoRemoveFiles) {
         QFile(file).remove();
     }
     autoRemoveFiles.clear();
+}
+
+
+void TActionContext::flushResponse(TActionController *controller, bool immediate)
+{
+    if (!controller || controller->_rendered != TActionController::RenderState::Rendered) {
+        return;
+    }
+
+    // WebSocket tasks
+    if (!controller->_taskList.isEmpty()) {
+        QVariantList lst;
+        for (auto &task : (const QList<QPair<int, QVariant>> &)controller->_taskList) {
+            const QVariant &taskData = task.second;
+
+            switch (task.first) {
+            case TActionController::SendTextTo: {
+                lst = taskData.toList();
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
+                if (websocket) {
+                    websocket->sendText(lst[1].toString());
+                }
+            } break;
+
+            case TActionController::SendBinaryTo: {
+                lst = taskData.toList();
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
+                if (websocket) {
+                    websocket->sendBinary(lst[1].toByteArray());
+                }
+            } break;
+
+            case TActionController::SendCloseTo: {
+                lst = taskData.toList();
+                TAbstractWebSocket *websocket = TAbstractWebSocket::searchWebSocket(lst[0].toInt());
+                if (websocket) {
+                    websocket->sendClose(lst[1].toInt());
+                }
+            } break;
+
+            case TActionController::PublishText: {
+                lst = taskData.toList();
+                QString topic = lst[0].toString();
+                QString text = lst[1].toString();
+                TPublisher::instance()->publish(topic, text, nullptr);
+            } break;
+
+            case TActionController::PublishBinary: {
+                lst = taskData.toList();
+                QString topic = lst[0].toString();
+                QString binary = lst[1].toByteArray();
+                TPublisher::instance()->publish(topic, binary, nullptr);
+            } break;
+
+            default:
+                tSystemError("Invalid logic  [%s:%d]", __FILE__, __LINE__);
+                break;
+            }
+        }
+        controller->_taskList.clear();
+    }
+
+    // Sets charset to the content-type
+    QByteArray ctype = controller->_response.header().contentType().toLower();
+    if (ctype.startsWith("text") && !ctype.contains("charset")) {
+        ctype += "; charset=";
+#if QT_VERSION < 0x060000
+        ctype += Tf::app()->codecForHttpOutput()->name();
+#else
+        ctype += QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput());
+#endif
+        controller->_response.header().setContentType(ctype);
+    }
+
+    // Sets the default status code of HTTP response
+    int bytes = 0;
+    if (Q_UNLIKELY(controller->_response.isBodyNull())) {
+        accessLogger.setStatusCode((_dispatched) ? Tf::InternalServerError : Tf::NotFound);
+        THttpResponseHeader header;
+        bytes = writeResponse(accessLogger.statusCode(), header);
+    } else {
+        accessLogger.setStatusCode(controller->statusCode());
+        controller->_response.header().setStatusLine(controller->statusCode(), THttpUtility::getResponseReasonPhrase(controller->statusCode()));
+
+        // Writes a response and access log
+        qint64 bodyLength = (controller->_response.header().contentLength() > 0) ? controller->_response.header().contentLength() : controller->response().bodyLength();
+        bytes = writeResponse(controller->_response.header(), controller->_response.bodyIODevice(), bodyLength);
+    }
+    accessLogger.setResponseBytes(bytes);
+
+    if (immediate) {
+        flushSocket();
+        closeSocket();
+        accessLogger.write();  // Writes access log
+    }
 }
 
 
@@ -455,20 +475,20 @@ void TActionContext::emitError(int)
 TTemporaryFile &TActionContext::createTemporaryFile()
 {
     TTemporaryFile *file = new TTemporaryFile();
-    tempFiles << file;
+    _tempFiles << file;
     return *file;
 }
 
 
 QHostAddress TActionContext::clientAddress() const
 {
-    return httpReq->clientAddress();
+    return _httpRequest->clientAddress();
 }
 
 
 QHostAddress TActionContext::originatingClientAddress() const
 {
-    return httpReq->originatingClientAddress();
+    return _httpRequest->originatingClientAddress();
 }
 
 /*!
