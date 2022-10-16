@@ -408,8 +408,8 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
 
     if (immediate) {
         flushSocket();
-        closeSocket();
         accessLogger.write();  // Writes access log
+        closeSocket();
     }
 }
 
