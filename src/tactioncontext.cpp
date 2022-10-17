@@ -170,12 +170,12 @@ void TActionContext::execute(THttpRequest &request)
             }
 
             // Do filters
-            _dispatched = false;
+            bool dispatched = false;
             if (Q_LIKELY(_currController->preFilter())) {
 
                 // Dispatches
-                _dispatched = ctlrDispatcher.invoke(route.action, route.params);
-                if (Q_LIKELY(_dispatched)) {
+                dispatched = ctlrDispatcher.invoke(route.action, route.params);
+                if (Q_LIKELY(dispatched)) {
                     autoRemoveFiles << _currController->_autoRemoveFiles;  // Adds auto-remove files
 
                     // Post filter
@@ -393,9 +393,9 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
     // Sets the default status code of HTTP response
     int bytes = 0;
     if (Q_UNLIKELY(controller->_response.isBodyNull())) {
-        accessLogger.setStatusCode((_dispatched) ? Tf::InternalServerError : Tf::NotFound);
+        accessLogger.setStatusCode(Tf::NotFound);
         THttpResponseHeader header;
-        bytes = writeResponse(accessLogger.statusCode(), header);
+        bytes = writeResponse(Tf::NotFound, header);
     } else {
         accessLogger.setStatusCode(controller->statusCode());
         controller->_response.header().setStatusLine(controller->statusCode(), THttpUtility::getResponseReasonPhrase(controller->statusCode()));

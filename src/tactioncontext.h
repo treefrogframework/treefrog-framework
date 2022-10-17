@@ -56,7 +56,6 @@ private:
     TActionController *_currController {nullptr};
     QList<TTemporaryFile *> _tempFiles;
     THttpRequest *_httpRequest {nullptr};
-    bool _dispatched {false};
 
     T_DISABLE_COPY(TActionContext)
     T_DISABLE_MOVE(TActionContext)
