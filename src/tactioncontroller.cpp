@@ -842,7 +842,7 @@ void TActionController::reset()
     _ctrlName.clear();
     _actionName.clear();
     _args.clear();
-    _statCode = Tf::NotFound;
+    _statCode = Tf::OK;  // 200 OK
     _rendered = RenderState::NotRendered;
     _layoutEnable  = true;
     _layoutName.clear();

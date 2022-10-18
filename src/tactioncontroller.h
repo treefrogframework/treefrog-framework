@@ -142,7 +142,7 @@ private:
     mutable QString _ctrlName;
     QString _actionName;
     QStringList _args;
-    int _statCode {Tf::NotFound};
+    int _statCode {Tf::OK};  // 200 OK
     RenderState _rendered {RenderState::NotRendered};
     bool _layoutEnable {true};
     QString _layoutName;
