@@ -37,7 +37,7 @@ windows {
   LIBS += -L"$$target.path"
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
-  linux-*:LIBS += -lrt
+  linux-*:LIBS += -lrt -lunwind
 }
 
 INSTALLS += target
