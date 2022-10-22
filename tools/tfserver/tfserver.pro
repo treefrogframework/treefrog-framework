@@ -38,9 +38,7 @@ windows {
 } else {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
   linux-* {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += libunwind
-    LIBS += -lrt
+    LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
   }
 }
 

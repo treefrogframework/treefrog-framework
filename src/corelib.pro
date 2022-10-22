@@ -430,11 +430,11 @@ windows {
     macx {
       # Homebrew
       INCLUDEPATH += /usr/local/include/libmongoc-1.0 /usr/local/include/libbson-1.0
-      LIBS += -L/usr/local/lib
+      LIBS += -L/usr/local/lib -lmongoc-1.0 -lbson-1.0
     } else {
       INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
+      LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
     }
-    LIBS += -lmongoc-1.0 -lbson-1.0
   }
 }
 
