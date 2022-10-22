@@ -35,11 +35,13 @@ windows {
     LIBS += -ltreefrog$${TF_VER_MAJ}
   }
   LIBS += -L"$$target.path"
-} else:unix {
-  CONFIG += link_pkgconfig
-  PKGCONFIG += libunwind
+} else {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
-  linux-*:LIBS += -lrt
+  linux-* {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libunwind
+    LIBS += -lrt
+  }
 }
 
 INSTALLS += target
