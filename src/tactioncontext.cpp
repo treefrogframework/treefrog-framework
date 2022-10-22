@@ -59,9 +59,6 @@ void TActionContext::execute(THttpRequest &request)
     static const uint ListenPort = Tf::appSettings()->value(Tf::ListenPort).toUInt();
     static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule).toBool();
     static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
-    static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
-    static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
-    static const QByteArray SessionCookieSameSite = Tf::appSettings()->value(Tf::SessionCookieSameSite).toByteArray().trimmed();
 
     THttpResponseHeader responseHeader;
 
@@ -170,44 +167,9 @@ void TActionContext::execute(THttpRequest &request)
             }
 
             // Do filters
-            bool dispatched = false;
             if (Q_LIKELY(_currController->preFilter())) {
-
                 // Dispatches
-                dispatched = ctlrDispatcher.invoke(route.action, route.params);
-                if (Q_LIKELY(dispatched)) {
-                    autoRemoveFiles << _currController->_autoRemoveFiles;  // Adds auto-remove files
-
-                    // Post filter
-                    _currController->postFilter();
-
-                    if (Q_UNLIKELY(_currController->rollbackRequested())) {
-                        rollbackTransactions();
-                    } else {
-                        // Commits a transaction to the database
-                        commitTransactions();
-                    }
-
-                    // Session store
-                    if (_currController->sessionEnabled()) {
-                        bool stored = TSessionManager::instance().store(_currController->session());
-                        if (Q_LIKELY(stored)) {
-                            static const int SessionCookieMaxAge = ([]() -> int {
-                                QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
-                                return maxagestr.toInt();
-                            }());
-
-                            _currController->addCookie(TSession::sessionName(), _currController->session().id(), SessionCookieMaxAge,
-                                SessionCookiePath, SessionCookieDomain, false, true, SessionCookieSameSite);
-
-                            // Commits a transaction for session
-                            commitTransactions();
-
-                        } else {
-                            tSystemError("Failed to store a session");
-                        }
-                    }
-                }
+                ctlrDispatcher.invoke(route.action, route.params);
             }
 
             // Flushes response
@@ -321,12 +283,47 @@ void TActionContext::release()
 
 void TActionContext::flushResponse(TActionController *controller, bool immediate)
 {
+    static const QString SessionCookiePath = Tf::appSettings()->value(Tf::SessionCookiePath).toString().trimmed();
+    static const QString SessionCookieDomain = Tf::appSettings()->value(Tf::SessionCookieDomain).toString().trimmed();
+    static const QByteArray SessionCookieSameSite = Tf::appSettings()->value(Tf::SessionCookieSameSite).toByteArray().trimmed();
+    static const int SessionCookieMaxAge = ([]() -> int {
+        QString maxagestr = Tf::appSettings()->value(Tf::SessionCookieMaxAge).toString().trimmed();
+        return maxagestr.toInt();
+    }());
+
     if (!controller || controller->_rendered != TActionController::RenderState::Rendered) {
         return;
     }
 
+    autoRemoveFiles << controller->_autoRemoveFiles;  // Adds auto-remove files
+
+    // Post filter
+    controller->postFilter();
+
+    if (Q_UNLIKELY(controller->rollbackRequested())) {
+        rollbackTransactions();
+    } else {
+        // Commits a transaction to the database
+        commitTransactions();
+    }
+
+    // Session store
+    if (controller->sessionEnabled()) {
+        bool stored = TSessionManager::instance().store(controller->session());
+        if (Q_LIKELY(stored)) {
+            controller->addCookie(TSession::sessionName(), controller->session().id(), SessionCookieMaxAge,
+                SessionCookiePath, SessionCookieDomain, false, true, SessionCookieSameSite);
+
+            // Commits a transaction for session
+            commitTransactions();
+
+        } else {
+            tSystemError("Failed to store a session");
+        }
+    }
+
     // WebSocket tasks
-    if (!controller->_taskList.isEmpty()) {
+    if (Q_UNLIKELY(!controller->_taskList.isEmpty())) {
         QVariantList lst;
         for (auto &task : (const QList<QPair<int, QVariant>> &)controller->_taskList) {
             const QVariant &taskData = task.second;
