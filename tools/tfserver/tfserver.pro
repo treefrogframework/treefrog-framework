@@ -36,8 +36,10 @@ windows {
   }
   LIBS += -L"$$target.path"
 } else:unix {
+  CONFIG += link_pkgconfig
+  PKGCONFIG += libunwind
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
-  linux-*:LIBS += -lrt -lunwind
+  linux-*:LIBS += -lrt
 }
 
 INSTALLS += target
