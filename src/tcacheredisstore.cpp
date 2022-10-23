@@ -49,7 +49,7 @@ bool TCacheRedisStore::remove(const QByteArray &key)
 void TCacheRedisStore::clear()
 {
     TRedis redis(Tf::KvsEngine::CacheKvs);
-    return redis.flushDb();
+    redis.flushDb();
 }
 
 

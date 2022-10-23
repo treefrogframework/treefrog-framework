@@ -30,5 +30,5 @@ win32 {
   }
 } else:unix {
   LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog ../../../3rdparty/glog/build/libglog.a
-  linux-*:LIBS += -lrt
+  linux-*:LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
 }

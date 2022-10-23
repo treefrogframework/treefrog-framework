@@ -412,7 +412,10 @@ bool TActionController::renderXml(const QStringList &list)
 /*!
   Renders the template of the \a action with the \a layout and caches it with
   the \a key for \a seconds.
+  To use this function, enable cache module in application.ini.
+  \sa render()
   \sa renderOnCache()
+  \sa removeCache()
 */
 bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
@@ -432,6 +435,7 @@ bool TActionController::renderAndCache(const QByteArray &key, int seconds, const
 /*!
   Renders the template cached with the \a key. If no item with the \a key
   found, returns false.
+  To use this function, enable cache module in application.ini.
   \sa renderAndCache()
 */
 bool TActionController::renderOnCache(const QByteArray &key)
@@ -453,6 +457,8 @@ bool TActionController::renderOnCache(const QByteArray &key)
 
 /*!
   Removes the template with the \a key from the cache.
+  \sa renderAndCache()
+  \sa renderOnCache()
 */
 void TActionController::removeCache(const QByteArray &key)
 {

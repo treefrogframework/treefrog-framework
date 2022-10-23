@@ -59,7 +59,7 @@ TMemcached::TMemcached(Tf::KvsEngine engine) :
 }
 
 
-QString TMemcached::get(const QByteArray &key, uint *flags)
+QByteArray TMemcached::get(const QByteArray &key, uint *flags)
 {
     QByteArray res = requestLine("get", key, QByteArray(), false);
     tSystemDebug("TMemcached::get: %s", res.data());
@@ -79,13 +79,13 @@ QString TMemcached::get(const QByteArray &key, uint *flags)
         res = res.remove(0, pos);
     }
     res.resize(bytes);
-    return QString::fromUtf8(res);
+    return res;
 }
 
 
 qint64 TMemcached::getNumber(const QByteArray &key, bool *ok, uint *flags)
 {
-    QString res = get(key, flags);
+    QByteArray res = get(key, flags);
 
     if (ok) {
         *ok = false;
@@ -99,56 +99,56 @@ qint64 TMemcached::getNumber(const QByteArray &key, bool *ok, uint *flags)
 }
 
 
-bool TMemcached::set(const QByteArray &key, const QString &value, int seconds, uint flags)
+bool TMemcached::set(const QByteArray &key, const QByteArray &value, int seconds, uint flags)
 {
-    QByteArray res = request("set", key, value.toUtf8(), flags, seconds, false);
+    QByteArray res = request("set", key, value, flags, seconds, false);
     return res.startsWith("STORED");
 }
 
 
 bool TMemcached::set(const QByteArray &key, qint64 value, int seconds, uint flags)
 {
-    return set(key, QString::number(value), seconds, flags);
+    return set(key, QByteArray::number(value), seconds, flags);
 }
 
 
-bool TMemcached::add(const QByteArray &key, const QString &value, int seconds, uint flags)
+bool TMemcached::add(const QByteArray &key, const QByteArray &value, int seconds, uint flags)
 {
-    QByteArray res = request("add", key, value.toUtf8(), flags, seconds, false);
+    QByteArray res = request("add", key, value, flags, seconds, false);
     return res.startsWith("STORED");
 }
 
 
 bool TMemcached::add(const QByteArray &key, qint64 value, int seconds, uint flags)
 {
-    return add(key, QString::number(value), seconds, flags);
+    return add(key, QByteArray::number(value), seconds, flags);
 
 }
 
 
-bool TMemcached::replace(const QByteArray &key, const QString &value, int seconds, uint flags)
+bool TMemcached::replace(const QByteArray &key, const QByteArray &value, int seconds, uint flags)
 {
-    QByteArray res = request("replace", key, value.toUtf8(), flags, seconds, false);
+    QByteArray res = request("replace", key, value, flags, seconds, false);
     return res.startsWith("STORED");
 }
 
 
 bool TMemcached::replace(const QByteArray &key, qint64 value, int seconds, uint flags)
 {
-    return replace(key, QString::number(value), seconds, flags);
+    return replace(key, QByteArray::number(value), seconds, flags);
 }
 
 
-bool TMemcached::append(const QByteArray &key, const QString &value, int seconds, uint flags)
+bool TMemcached::append(const QByteArray &key, const QByteArray &value, int seconds, uint flags)
 {
-    QByteArray res = request("append", key, value.toUtf8(), flags, seconds, false);
+    QByteArray res = request("append", key, value, flags, seconds, false);
     return res.startsWith("STORED");
 }
 
 
-bool TMemcached::prepend(const QByteArray &key, const QString &value, int seconds, uint flags)
+bool TMemcached::prepend(const QByteArray &key, const QByteArray &value, int seconds, uint flags)
 {
-    QByteArray res = request("prepend", key, value.toUtf8(), flags, seconds, false);
+    QByteArray res = request("prepend", key, value, flags, seconds, false);
     return res.startsWith("STORED");
 }
 
