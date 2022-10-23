@@ -3,10 +3,10 @@
 #include <QDateTime>
 
 
-static QString randomString(int length)
+static QByteArray randomString(int length)
 {
     constexpr auto ch = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-+/^=_[]@:;!#$%()~? \t\n";
-    QString ret;
+    QByteArray ret;
     int max = (int)strlen(ch) - 1;
 
     for (int i = 0; i < length; ++i) {
@@ -60,20 +60,20 @@ void TestMemcached::initTestCase()
 void TestMemcached::setGet_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QString>("value");
+    QTest::addColumn<QByteArray>("value");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QString::fromUtf8(u8"Hello world.")
+                       << QByteArray(u8"Hello world.")
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8"こんにちは")
+                       << QByteArray(u8"こんにちは")
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
@@ -94,14 +94,14 @@ void TestMemcached::setGet_data()
 void TestMemcached::setGet()
 {
     QFETCH(QByteArray, key);
-    QFETCH(QString, value);
+    QFETCH(QByteArray, value);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
     TMemcached memcached;
     uint flg;
-    QString res = memcached.get(key);
-    QCOMPARE(res, QString());  // empty
+    QByteArray res = memcached.get(key);
+    QCOMPARE(res, QByteArray());  // empty
     bool ok = memcached.set(key, value, secs, flags);
     QCOMPARE(ok, true);  // set ok
     Tf::msleep(Tf::random(50, 1900));  // sleep
@@ -196,27 +196,27 @@ void TestMemcached::getTimeout()
 
     Tf::msleep(secs * 1100);
     auto res = memcached.get(key, &flg);  // get value
-    QCOMPARE(res, QString());  // timed out
+    QCOMPARE(res, QByteArray());  // timed out
 }
 
 
 void TestMemcached::addGet_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QString>("value");
+    QTest::addColumn<QByteArray>("value");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QString::fromUtf8(u8"Hello world.")
+                       << QByteArray(u8"Hello world.")
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8"こんにちは")
+                       << QByteArray(u8"こんにちは")
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
@@ -237,14 +237,14 @@ void TestMemcached::addGet_data()
 void TestMemcached::addGet()
 {
     QFETCH(QByteArray, key);
-    QFETCH(QString, value);
+    QFETCH(QByteArray, value);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
     TMemcached memcached;
     uint flg;
-    QString res = memcached.get(key);
-    QCOMPARE(res, QString());  // empty
+    QByteArray res = memcached.get(key);
+    QCOMPARE(res, QByteArray());  // empty
     bool ok = memcached.add(key, value, secs, flags);
     QCOMPARE(ok, true);  // add ok
     Tf::msleep(Tf::random(50, 1900));  // sleep
@@ -312,20 +312,20 @@ void TestMemcached::addGetNumber()
 void TestMemcached::replaceGet_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QString>("value");
+    QTest::addColumn<QByteArray>("value");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QString::fromUtf8(u8"Hello world.")
+                       << QByteArray(u8"Hello world.")
                        << 10
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8"こんにちは")
+                       << QByteArray(u8"こんにちは")
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
                        << 30
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
@@ -346,7 +346,7 @@ void TestMemcached::replaceGet_data()
 void TestMemcached::replaceGet()
 {
     QFETCH(QByteArray, key);
-    QFETCH(QString, value);
+    QFETCH(QByteArray, value);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
@@ -419,19 +419,19 @@ void TestMemcached::replaceGetNumber()
 void TestMemcached::appendGet_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QString>("value1");
-    QTest::addColumn<QString>("value2");
+    QTest::addColumn<QByteArray>("value1");
+    QTest::addColumn<QByteArray>("value2");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QString::fromUtf8(u8"Hello world.")
-                       << QString::fromUtf8(u8"こんにちは")
+                       << QByteArray(u8"Hello world.")
+                       << QByteArray(u8"こんにちは")
                        << 10
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
-                       << QString::fromUtf8(u8"\t\r\n")
+                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(u8"\t\r\n")
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
@@ -450,8 +450,8 @@ void TestMemcached::appendGet_data()
 void TestMemcached::appendGet()
 {
     QFETCH(QByteArray, key);
-    QFETCH(QString, value1);
-    QFETCH(QString, value2);
+    QFETCH(QByteArray, value1);
+    QFETCH(QByteArray, value2);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
@@ -472,19 +472,19 @@ void TestMemcached::appendGet()
 void TestMemcached::prependGet_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QString>("value1");
-    QTest::addColumn<QString>("value2");
+    QTest::addColumn<QByteArray>("value1");
+    QTest::addColumn<QByteArray>("value2");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QString::fromUtf8(u8"Hello world.")
-                       << QString::fromUtf8(u8"こんにちは")
+                       << QByteArray(u8"Hello world.")
+                       << QByteArray(u8"こんにちは")
                        << 10
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
-                       << QString::fromUtf8(u8"\t\r\n")
+                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(u8"\t\r\n")
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
@@ -503,8 +503,8 @@ void TestMemcached::prependGet_data()
 void TestMemcached::prependGet()
 {
     QFETCH(QByteArray, key);
-    QFETCH(QString, value1);
-    QFETCH(QString, value2);
+    QFETCH(QByteArray, value1);
+    QFETCH(QByteArray, value2);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
@@ -525,14 +525,14 @@ void TestMemcached::prependGet()
 void TestMemcached::remove_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QString>("value");
+    QTest::addColumn<QByteArray>("value");
     QTest::addColumn<int>("secs");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QString::fromUtf8(u8"Hello world.")
+                       << QByteArray(u8"Hello world.")
                        << (int)Tf::random(5, 3600);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QString::fromUtf8(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
                        << (int)Tf::random(5, 3600);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
                        << randomString(256)
@@ -546,7 +546,7 @@ void TestMemcached::remove_data()
 void TestMemcached::remove()
 {
     QFETCH(QByteArray, key);
-    QFETCH(QString, value);
+    QFETCH(QByteArray, value);
     QFETCH(int, secs);
 
     TMemcached memcached;
@@ -556,7 +556,7 @@ void TestMemcached::remove()
     bool ok = memcached.remove(key);
     QCOMPARE(ok, true);  // set ok
     auto res = memcached.get(key);  // get value
-    QCOMPARE(res, QString());
+    QCOMPARE(res, QByteArray());
 }
 
 

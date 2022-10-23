@@ -402,7 +402,7 @@ void TestRedis::getSets()
 
     TRedis redis;
     auto res = redis.getsSets(key, value);
-    QCOMPARE(res, QString());
+    QCOMPARE(res, QString());  // empty
     Tf::msleep(Tf::random(50, 200));  // sleep
 
     res = redis.getsSets(key, value + value);

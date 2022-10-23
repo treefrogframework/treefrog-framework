@@ -14,16 +14,16 @@ public:
     virtual ~TMemcached() { }
 
     bool isOpen() const;
-    QString get(const QByteArray &key, uint *flags = nullptr);
+    QByteArray get(const QByteArray &key, uint *flags = nullptr);
     qint64 getNumber(const QByteArray &key, bool *ok = nullptr, uint *flags = nullptr);
-    bool set(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
+    bool set(const QByteArray &key, const QByteArray &value, int seconds, uint flags = 0);
     bool set(const QByteArray &key, qint64 value, int seconds, uint flags = 0);
-    bool add(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
+    bool add(const QByteArray &key, const QByteArray &value, int seconds, uint flags = 0);
     bool add(const QByteArray &key, qint64 value, int seconds, uint flags = 0);
-    bool replace(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
+    bool replace(const QByteArray &key, const QByteArray &value, int seconds, uint flags = 0);
     bool replace(const QByteArray &key, qint64 value, int seconds, uint flags = 0);
-    bool append(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
-    bool prepend(const QByteArray &key, const QString &value, int seconds, uint flags = 0);
+    bool append(const QByteArray &key, const QByteArray &value, int seconds, uint flags = 0);
+    bool prepend(const QByteArray &key, const QByteArray &value, int seconds, uint flags = 0);
     bool remove(const QByteArray &key);
     quint64 incr(const QByteArray &key, quint64 value, bool *ok = nullptr);
     quint64 decr(const QByteArray &key, quint64 value, bool *ok = nullptr);
@@ -40,6 +40,7 @@ private:
 
     TKvsDatabase _database;
 
+    friend class TCacheMemcachedStore;
     T_DISABLE_COPY(TMemcached)
     T_DISABLE_MOVE(TMemcached)
 };
