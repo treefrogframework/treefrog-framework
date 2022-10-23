@@ -13,10 +13,8 @@ static QString randomString(int length)
     );
 
     QString ret;
-    int max = str.length() - 1;
-
     for (int i = 0; i < length; ++i) {
-        ret += str[Tf::random(max)];
+        ret += str[(int)Tf::random(str.length() - 1)];
     }
     return ret;
 }
