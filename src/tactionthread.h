@@ -24,7 +24,8 @@ protected:
     void run() override;
     void emitError(int socketError) override;
     qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
-    void closeHttpSocket() override;
+    void flushSocket() override { }
+    void closeSocket() override;
     bool handshakeForWebSocket(const THttpRequestHeader &header);
 
 signals:

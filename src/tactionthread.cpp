@@ -163,7 +163,7 @@ void TActionThread::run()
     }
 
 receive_end:
-    closeHttpSocket();  // disconnect
+    closeSocket();  // disconnect
 
 socket_cleanup:
     // For cleanup
@@ -224,7 +224,7 @@ qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body
 }
 
 
-void TActionThread::closeHttpSocket()
+void TActionThread::closeSocket()
 {
     _httpSocket->abort();
 }

@@ -104,6 +104,7 @@ protected:
     void closeWebSokcet(int socket, int closeCode = Tf::NormalClosure);
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
+    void flushResponse();
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
@@ -115,11 +116,17 @@ protected:
 
 private:
     enum WebSocketTaskType {
-        SendTextTo,
+        SendTextTo = 0,
         SendBinaryTo,
         SendCloseTo,
         PublishText,
         PublishBinary,
+    };
+
+    enum class RenderState {
+        NotRendered = 0,
+        Rendered,
+        DataSent,
     };
 
     void setActionName(const QString &name);
@@ -136,7 +143,7 @@ private:
     QString _actionName;
     QStringList _args;
     int _statCode {Tf::OK};  // 200 OK
-    bool _rendered {false};
+    RenderState _rendered {RenderState::NotRendered};
     bool _layoutEnable {true};
     QString _layoutName;
     THttpResponse _response;

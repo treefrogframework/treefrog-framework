@@ -51,6 +51,7 @@ public:
     void setStatusLine(int code, const QByteArray &text = QByteArray(), int majorVer = 1, int minorVer = 1);
     virtual QByteArray toByteArray() const;
     THttpResponseHeader &operator=(const THttpResponseHeader &other);
+    void clear();
 
 private:
     int _statusCode {0};

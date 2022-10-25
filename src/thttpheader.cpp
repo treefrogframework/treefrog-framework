@@ -313,6 +313,14 @@ THttpResponseHeader &THttpResponseHeader::operator=(const THttpResponseHeader &o
     return *this;
 }
 
+
+void THttpResponseHeader::clear()
+{
+    THttpHeader::clear();
+    _statusCode = 0;
+    _reasonPhrase.resize(0);
+}
+
 /*!
   \fn int THttpResponseHeader::statusCode() const
   Returns the status code of the HTTP response header.

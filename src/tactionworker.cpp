@@ -44,12 +44,18 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     if (!TActionContext::stopped.load()) {
         _socket->sendData(header.toByteArray(), body, autoRemove, accessLogger);
     }
-    accessLogger.close();  // not write in this thread
+    accessLogger.close();
     return 0;
 }
 
 
-void TActionWorker::closeHttpSocket()
+void TActionWorker::flushSocket()
+{
+    _socket->waitForDataSent(1000);
+}
+
+
+void TActionWorker::closeSocket()
 {
     if (!TActionContext::stopped.load()) {
         _socket->disconnect();

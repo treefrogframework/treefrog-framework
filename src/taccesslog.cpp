@@ -157,6 +157,8 @@ void TAccessLogger::write()
     if (_accessLog) {
         _accessLog->duration = _timer.elapsed();
         Tf::writeAccessLog(*_accessLog);
+
+        close();  // write one-shot
     }
 }
 
