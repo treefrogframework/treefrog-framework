@@ -65,6 +65,7 @@ build_script:
   - cmd: call "%INIT_BAT%" %VCVARARG%
   - cmd: set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x86-windows\tools;%PATH%
   - cmd: echo %PATH%
+  - cmd: set CL=/MP
   - cmd: configure.bat --enable-debug
   - cmd: cd src
   - cmd: nmake install
