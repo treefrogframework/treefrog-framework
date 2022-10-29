@@ -61,7 +61,7 @@ if not "%CMAKE%" == "" (
   call :CheckWebApp treefrogd
 )
 
-::call :QMakeBuild debug
+call :QMakeBuild debug
 call :CheckWebApp treefrogd
 %MAKE% distclean >nul 2>nul
 
@@ -71,7 +71,7 @@ if not "%CMAKE%" == "" (
   call :CheckWebApp treefrog
 )
 
-::call :QMakeBuild release
+call :QMakeBuild release
 call :CheckWebApp treefrog
 %MAKE% distclean >nul 2>nul
 

@@ -173,6 +173,7 @@ echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
+set CL=/MP
 
 :: Builds MongoDB driver
 echo Compiling MongoDB driver library ...
@@ -234,7 +235,7 @@ del /f /q build >nul 2>&1
 set CMAKECMD=cmake -S . -B build %CMAKEOPT%
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
-set CMAKECMD=cmake --build build
+set CMAKECMD=cmake --build build -j
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 if ERRORLEVEL 1 (
