@@ -832,7 +832,10 @@ void TActionController::publish(const QString &topic, const QByteArray &binary)
     _taskList << qMakePair((int)PublishBinary, QVariant(info));
 }
 
-
+/*!
+  Sends a response immediately, and then allows time-consuming processing to
+  continue in the controller.
+*/
 void TActionController::flushResponse()
 {
     if (_rendered == RenderState::Rendered) {
