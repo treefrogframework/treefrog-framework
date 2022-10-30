@@ -87,8 +87,14 @@ exit /B 0
 :CMakeBuild
 cd /D %APPDIR%
 if exist build rd /Q /S build
-"%CMAKE%" -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1
-"%CMAKE%" --build build -j
+cmake --version
+mkdir build >nul 2>nul
+set CMD=cmake -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1
+echo %CMD%
+%CMD%
+set CMD=cmake --build build -j
+echo %CMD%
+%CMD%
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
