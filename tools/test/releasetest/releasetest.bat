@@ -64,7 +64,7 @@ if not "%CMAKE%" == "" (
 
 call :QMakeBuild debug
 call :CheckWebApp treefrogd
-%MAKE% distclean >nul 2>nul
+nmake distclean >nul 2>nul
 
 :: Test in release mode
 if not "%CMAKE%" == "" (
@@ -74,7 +74,7 @@ if not "%CMAKE%" == "" (
 
 call :QMakeBuild release
 call :CheckWebApp treefrog
-%MAKE% distclean >nul 2>nul
+nmake distclean >nul 2>nul
 
 echo;
 echo Test OK
@@ -87,14 +87,17 @@ exit /B 0
 :CMakeBuild
 cd /D %APPDIR%
 if exist build rd /Q /S build
-cmake --version
 mkdir build >nul 2>nul
-set CMD=cmake -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1
-echo %CMD%
-%CMD%
-set CMD=cmake --build build -j
-echo %CMD%
-%CMD%
+cd build
+cmake --version
+cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
+if ERRORLEVEL 1 (
+  echo;
+  echo CMake Error!
+  call :CleanUp
+  exit /B 1
+)
+nmake
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
@@ -108,8 +111,8 @@ exit /B 0
 ::
 :QMakeBuild
 cd /D %APPDIR%
-%QMAKE% -r CONFIG+=%1
-%MAKE%
+qmake -r CONFIG+=%1
+nmake
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
