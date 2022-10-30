@@ -59,21 +59,31 @@ tspawn w foo
 :: Test in debug mode
 if not "%CMAKE%" == "" (
   call :CMakeBuild Debug
+  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
   call :CheckWebApp treefrogd
+  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+  rd /Q /S build
 )
 
 call :QMakeBuild debug
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrogd
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 nmake distclean >nul 2>nul
 
 :: Test in release mode
 if not "%CMAKE%" == "" (
   call :CMakeBuild Release
+  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
   call :CheckWebApp treefrog
+  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+  rd /Q /S build
 )
 
 call :QMakeBuild release
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrog
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 nmake distclean >nul 2>nul
 
 echo;
