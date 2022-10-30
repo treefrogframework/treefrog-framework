@@ -62,7 +62,6 @@ if not "%CMAKE%" == "" (
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
   call :CheckWebApp treefrogd
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  rd /Q /S build
 )
 
 call :QMakeBuild debug
@@ -77,7 +76,6 @@ if not "%CMAKE%" == "" (
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
   call :CheckWebApp treefrog
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  rd /Q /S build
 )
 
 call :QMakeBuild release
@@ -97,17 +95,16 @@ exit /B 0
 :CMakeBuild
 cd /D %APPDIR%
 if exist build rd /Q /S build
-mkdir build >nul 2>nul
-cd build
+del /Q /F lib\*.*
 cmake --version
-cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
+cmake -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
 if ERRORLEVEL 1 (
   echo;
   echo CMake Error!
   call :CleanUp
   exit /B 1
 )
-nmake
+cmake --build build -j
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
@@ -121,6 +118,7 @@ exit /B 0
 ::
 :QMakeBuild
 cd /D %APPDIR%
+del /Q /F lib\*.*
 qmake -r CONFIG+=%1
 nmake
 if ERRORLEVEL 1 (
