@@ -7,6 +7,7 @@ set APPDIR=%BASEDIR%%APPNAME%
 set DBFILE=%APPDIR%\db\dbfile
 set PORT=8800
 set MAKE=nmake VERBOSE=1
+set CL=/MP
 
 cd /D %BASEDIR%
 call :Which tfenv.bat
@@ -86,10 +87,8 @@ exit /B 0
 :CMakeBuild
 cd /D %APPDIR%
 if exist build rd /Q /S build
-mkdir build >nul 2>nul
-cd build
-"%CMAKE%" -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
-%MAKE%
+"%CMAKE%" -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1
+"%CMAKE%" --build build -j
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!

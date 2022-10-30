@@ -7,6 +7,7 @@ set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.3
 set GLOG_VERSION=0.6.0
 set BASEDIR=%~dp0
+set CL=/MP
 
 :parse_loop
 if "%1" == "" goto :start
@@ -59,6 +60,7 @@ if "%DEBUG%" == "yes" (
 ::
 for %%I in (qmake.exe)  do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe)  do if exist %%~$path:I set CMAKE=%%~$path:I
+for %%I in (nmake.exe)  do if exist %%~$path:I set MAKE=%%~$path:I
 for %%I in (cl.exe)     do if exist %%~$path:I set MSCOMPILER=%%~$path:I
 for %%I in (devenv.com) do if exist %%~$path:I set DEVENV=%%~$path:I
 
@@ -70,13 +72,16 @@ if "%CMAKE%" == "" (
   echo CMake not found
   exit /b
 )
+if "%MAKE%" == "" (
+  echo Make not found
+  exit /b
+)
 if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
   echo Visual Studio compiler not found
   exit /b
 )
 
 :: vcvarsall.bat setup
-set MAKE=nmake
 if /i "%Platform%" == "x64" (
   set VCVARSOPT=amd64
   set BUILDTARGET=x64
@@ -87,7 +92,7 @@ if /i "%Platform%" == "x64" (
   set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
 )
 
-"%DEVENV%" /? | find "Visual Studio 2022" >NUL
+devenv /? | find "Visual Studio 2022" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2022
   if /i "%Platform%" == "x64" (
@@ -98,7 +103,7 @@ if not ERRORLEVEL 1 (
   goto :step2
 )
 
-"%DEVENV%" /? | find "Visual Studio 2019" >NUL
+devenv /? | find "Visual Studio 2019" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2019
   if /i "%Platform%" == "x64" (
@@ -109,7 +114,7 @@ if not ERRORLEVEL 1 (
   goto :step2
 )
 
-"%DEVENV%" /? | find "Visual Studio 2017" >NUL
+devenv /? | find "Visual Studio 2017" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2017
   if /i "%Platform%" == "x64" (
@@ -120,7 +125,7 @@ if not ERRORLEVEL 1 (
   goto :step2
 )
 
-"%DEVENV%" /? | find "Visual Studio 2015" >NUL
+devenv /? | find "Visual Studio 2015" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2015
   if /i "%Platform%" == "x64" (
@@ -173,7 +178,6 @@ echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
-set CL=/MP
 
 :: Builds MongoDB driver
 echo Compiling MongoDB driver library ...
@@ -249,17 +253,17 @@ if ERRORLEVEL 1 (
 
 :: Builds TreeFrog
 cd %BASEDIR%src
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+if exist Makefile ( nmake -k distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 
 cd %BASEDIR%tools
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+if exist Makefile ( nmake -k distclean >nul 2>&1 )
 qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
-%MAKE% qmake
+nmake qmake
 
 echo;
-echo First, run "%MAKE% install" in src directory.
-echo Next, run "%MAKE% install" in tools directory.
+echo First, run "nmake install" in src directory.
+echo Next, run "nmake install" in tools directory.
 
 :exit
 exit /b
