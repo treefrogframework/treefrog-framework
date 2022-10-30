@@ -495,16 +495,17 @@ static bool checkIniFile()
 static void printSuccessMessage(const QString &model)
 {
     QString msg;
+
     if (!QFile("Makefile").exists() && !QFile(L("build/Makefile")).exists()) {
-        msg = "qmake:\n Run `qmake -r%0 CONFIG+=debug` to generate a Makefile for debug mode.\n Run `qmake -r%0 CONFIG+=release` to generate a Makefile for release mode.\n";
+        msg = "qmake:\n Run `qmake -r%0 CONFIG+=debug` to generate Makefile for debug mode.\n Run `qmake -r%0 CONFIG+=release` to generate Makefile for release mode.\n";
 #ifdef Q_OS_DARWIN
         msg = msg.arg(" -spec macx-clang");
 #else
         msg = msg.arg("");
 #endif
         msg += "\n or\n\ncmake:\n";
-        msg += " Run `mkdir build; cd build; cmake ..` to generate a Makefile.\n";
-        msg += " Run `cd build; make cmake` to regenerate the Makefile.";
+        msg += " Run `cmake -S . -B build` to generate Makefile.\n";
+        msg += " Run `cd build; make cmake` to regenerate Makefile.";
     }
 
     putchar('\n');
