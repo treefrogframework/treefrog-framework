@@ -132,6 +132,14 @@ if ERRORLEVEL 1 (
   exit /B 1
 )
 echo;
+
+"%1" --settings
+if ERRORLEVEL 1 (
+  echo App Error!
+  exit /B 1
+)
+echo;
+
 echo Starting webapp..
 set RES=1
 "%1" -e dev -d -p %PORT% %APPDIR%
