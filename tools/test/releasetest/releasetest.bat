@@ -39,7 +39,41 @@ if "%QMAKE%" == "" (
   exit /B 1
 )
 
+:: cmake options
+devenv /? | find "Visual Studio 2022" >NUL
+if not ERRORLEVEL 1 (
+  set VSVER=2022
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=-G"Visual Studio 17 2022" -A x64
+  ) else (
+    set CMAKEOPT=-G"Visual Studio 17 2022" -A Win32
+  )
+  goto :step1
+)
 
+devenv /? | find "Visual Studio 2019" >NUL
+if not ERRORLEVEL 1 (
+  set VSVER=2019
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=-G"Visual Studio 16 2019" -A x64
+  ) else (
+    set CMAKEOPT=-G"Visual Studio 16 2019" -A Win32
+  )
+  goto :step1
+)
+
+devenv /? | find "Visual Studio 2017" >NUL
+if not ERRORLEVEL 1 (
+  set VSVER=2017
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
+  ) else (
+    set CMAKEOPT=-G"Visual Studio 15 2017"
+  )
+  goto :step1
+)
+
+:step1
 cd /D %BASEDIR%
 rd /Q /S %APPNAME%
 tspawn new %APPNAME%
@@ -97,7 +131,7 @@ cd /D %APPDIR%
 if exist build rd /Q /S build
 del /Q /F lib\*.*
 cmake --version
-cmake -S . -B build -DCMAKE_BUILD_TYPE=%1
+cmake %CMAKEOPT% -S . -B build -DCMAKE_BUILD_TYPE=%1
 if ERRORLEVEL 1 (
   echo;
   echo CMake Error!
