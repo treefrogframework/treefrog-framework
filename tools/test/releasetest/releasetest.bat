@@ -97,7 +97,7 @@ cd /D %APPDIR%
 if exist build rd /Q /S build
 del /Q /F lib\*.*
 cmake --version
-cmake -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1 ..
+cmake -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1
 if ERRORLEVEL 1 (
   echo;
   echo CMake Error!
