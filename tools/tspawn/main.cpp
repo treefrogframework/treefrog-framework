@@ -504,7 +504,8 @@ static void printSuccessMessage(const QString &model)
         msg = msg.arg("");
 #endif
         msg += "\n or\n\ncmake:\n";
-        msg += " Run `cmake -S . -B build` to generate Makefile.\n";
+        msg += " Run `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug` to generate Makefile for debug mode.\n";
+        msg += " Run `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release` to generate Makefile for release mode.\n";
         msg += " Run `cd build; make cmake` to regenerate Makefile.";
     }
 

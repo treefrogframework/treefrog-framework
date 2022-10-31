@@ -97,14 +97,14 @@ cd /D %APPDIR%
 if exist build rd /Q /S build
 del /Q /F lib\*.*
 cmake --version
-cmake -S . -B build -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=%1
+cmake -S . -B build -DCMAKE_BUILD_TYPE=%1
 if ERRORLEVEL 1 (
   echo;
   echo CMake Error!
   call :CleanUp
   exit /B 1
 )
-cmake --build build -j
+cmake --build build --config %1 --clean-first -j
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
