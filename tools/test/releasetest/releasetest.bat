@@ -138,7 +138,7 @@ if ERRORLEVEL 1 (
   call :CleanUp
   exit /B 1
 )
-cmake --build build --config %1 --clean-first -j
+cmake --build build --config %1 --clean-first
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
