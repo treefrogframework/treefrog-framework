@@ -19,10 +19,9 @@ public:
     virtual ~TWebSocket();
 
     qintptr socketDescriptor() const override { return QTcpSocket::socketDescriptor(); }
-    int socketId() const override { return sid; }
     bool canReadRequest() const;
     void disconnect() override;
-    static TAbstractWebSocket *searchSocket(int sid);
+    static TAbstractWebSocket *searchSocket(qintptr socket);
 
 public slots:
     void sendTextForPublish(const QString &text, const QObject *except);

@@ -38,7 +38,6 @@ for /d %%d in (*) do (
 echo.
 echo All tests passed. Congratulations!
 echo.
-pause
 exit /b
 
 
@@ -46,12 +45,10 @@ exit /b
 echo.
 echo Build error!  [ %TESTNAME% ]
 echo.
-pause
 exit /b
 
 :error
 echo.
 echo Execute error!  [ %TESTNAME% ]
 echo.
-pause
 exit /b

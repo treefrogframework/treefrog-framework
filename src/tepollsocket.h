@@ -1,10 +1,9 @@
 #pragma once
 #include "tatomic.h"
+#include <TGlobal>
 #include <QByteArray>
 #include <QHostAddress>
-#include <QObject>
 #include <QQueue>
-#include <TGlobal>
 
 class TSendBuffer;
 class THttpHeader;
@@ -17,24 +16,40 @@ class QFileInfo;
 
 class T_CORE_EXPORT TEpollSocket {
 public:
-    TEpollSocket(int socketDescriptor, const QHostAddress &address);
+    TEpollSocket();
+    TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress);
     virtual ~TEpollSocket();
 
+    void connectToHost(const QHostAddress &address, quint16 port);
     void close();
-    int socketDescriptor() const { return sd; }
-    QHostAddress peerAddress() const { return clientAddr; }
-    int socketId() const { return sid; }
+    void dispose();
+    int socketDescriptor() const { return _socket; }
+    QHostAddress peerAddress() const { return _peerAddress; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
     void sendData(const QByteArray &data);
+    qint64 receiveData(char *buffer, qint64 length);
+    QByteArray receiveAll();
+    bool waitForConnected(int msecs = 5000);
+    bool waitForDataSent(int msecs = 5000);
+    bool waitForDataReceived(int msecs = 5000);
+    bool waitUntil(bool (TEpollSocket::*method)(), int msecs = 5000);
+    bool isConnected() const { return state() == Tf::SocketState::Connected; }
+    bool isDataSent() const { return _sendBuffer.isEmpty(); }
+    bool isDataReceived() const { return !_recvBuffer.isEmpty(); }
     void disconnect();
     void switchToWebSocket(const THttpRequestHeader &header);
     int bufferedListCount() const;
+    bool autoDelete() const { return _autoDelete; }
+    void setAutoDelete(bool autoDelete) { _autoDelete = autoDelete; }
+    Tf::SocketState state() const { return _state; }
+    void setSocketDescriptor(int socketDescriptor);
+    bool setSocketOption(int level, int optname, int val);
+    bool watch();
 
     virtual bool canReadRequest() { return false; }
-    virtual void startWorker() { }
+    virtual void process() { }
+    virtual bool isProcessing() const { return false; }
 
-    static TEpollSocket *accept(int listeningSocket);
-    static TEpollSocket *create(int socketDescriptor, const QHostAddress &address);
     static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
     static TSendBuffer *createSendBuffer(const QByteArray &data);
 
@@ -42,20 +57,18 @@ protected:
     virtual int send();
     virtual int recv();
     void enqueueSendData(TSendBuffer *buffer);
-    void setSocketDescpriter(int socketDescriptor);
-    virtual void *getRecvBuffer(int size) = 0;
-    virtual bool seekRecvBuffer(int pos) = 0;
-    static TEpollSocket *searchSocket(int sid);
-    static QList<TEpollSocket *> allSockets();
+    virtual void *getRecvBuffer(int size);
+    virtual bool seekRecvBuffer(int pos);
+    static QSet<TEpollSocket *> allSockets();
 
-    TAtomic<bool> pollIn {false};
-    TAtomic<bool> pollOut {false};
+    QByteArray _recvBuffer;  // Recieve-buffer
 
 private:
-    int sd {0};  // socket descriptor
-    int sid {0};
-    QHostAddress clientAddr;
-    QQueue<TSendBuffer *> sendBuf;
+    int _socket {0};  // socket descriptor
+    Tf::SocketState _state {Tf::SocketState::Unconnected};
+    QHostAddress _peerAddress;
+    QQueue<TSendBuffer *> _sendBuffer;
+    bool _autoDelete {true};
 
     static void initBuffer(int socketDescriptor);
 
@@ -64,4 +77,3 @@ private:
     T_DISABLE_COPY(TEpollSocket)
     T_DISABLE_MOVE(TEpollSocket)
 };
-

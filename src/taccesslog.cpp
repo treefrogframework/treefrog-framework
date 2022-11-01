@@ -121,9 +121,9 @@ TAccessLogger::TAccessLogger()
 
 TAccessLogger::TAccessLogger(const TAccessLogger &other)
 {
-    if (other.accessLog) {
+    if (other._accessLog) {
         open();
-        *accessLog = *(other.accessLog);
+        *_accessLog = *(other._accessLog);
     }
 }
 
@@ -136,9 +136,9 @@ TAccessLogger::~TAccessLogger()
 
 TAccessLogger &TAccessLogger::operator=(const TAccessLogger &other)
 {
-    if (other.accessLog) {
+    if (other._accessLog) {
         open();
-        *accessLog = *(other.accessLog);
+        *_accessLog = *(other._accessLog);
     }
     return *this;
 }
@@ -146,23 +146,25 @@ TAccessLogger &TAccessLogger::operator=(const TAccessLogger &other)
 
 void TAccessLogger::open()
 {
-    if (!accessLog) {
-        accessLog = new TAccessLog();
+    if (!_accessLog) {
+        _accessLog = new TAccessLog();
     }
 }
 
 
 void TAccessLogger::write()
 {
-    if (accessLog) {
-        accessLog->duration = timer.elapsed();
-        Tf::writeAccessLog(*accessLog);
+    if (_accessLog) {
+        _accessLog->duration = _timer.elapsed();
+        Tf::writeAccessLog(*_accessLog);
+
+        close();  // write one-shot
     }
 }
 
 
 void TAccessLogger::close()
 {
-    delete accessLog;
-    accessLog = nullptr;
+    delete _accessLog;
+    _accessLog = nullptr;
 }

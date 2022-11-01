@@ -8,10 +8,18 @@
 # include <unistd.h>
 #endif
 #include "tqueue.h"
+#include <glog/logging.h>
+
 
 TQueue<quint64> intQueue;
 std::atomic<quint64> generator {0};
 
+#if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
+void writeFailure(const char *data, size_t size)
+{
+    std::cout << QByteArray(data, size).data() << std::endl;
+}
+#endif
 
 class PopThread : public QThread
 {
@@ -26,9 +34,6 @@ protected:
                 quint64 num;
                 if (intQueue.dequeue(num)) {
                     //std::cout << "pop:" << intQueue.count() << std::endl;
-#ifdef Q_OS_WIN
-                    Tf::msleep(1);
-#endif
                     QVERIFY(num == lastNum);
                     lastNum++;
                     std::this_thread::yield();
@@ -60,23 +65,48 @@ protected:
     }
 };
 
-class TestQueue : public QObject
+
+class ThreadStarter : public QObject
 {
     Q_OBJECT
 public slots:
     void startPopThread();
     void startPushThread();
+};
 
+
+class TestQueue : public QObject
+{
+    Q_OBJECT
 private slots:
+    void initTestCase();
+    void cleanupTestCase();
     void queue();
 };
+
+
+void TestQueue::initTestCase()
+{
+#if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
+    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
+    google::InstallFailureWriter(writeFailure);
+    google::InstallFailureSignalHandler();
+#endif
+}
+
+
+void TestQueue::cleanupTestCase()
+{
+    _exit(0);
+}
 
 
 void TestQueue::queue()
 {
     // Starts threads
-    startPopThread();
-    startPushThread();
+    ThreadStarter starter;
+    starter.startPopThread();
+    starter.startPushThread();
 
     QElapsedTimer timer;
     timer.start();
@@ -87,11 +117,10 @@ void TestQueue::queue()
     }
 
     std::cout << "queue count=" << intQueue.count() << std::endl;
-    _exit(0);
 }
 
 
-void TestQueue::startPopThread()
+void ThreadStarter::startPopThread()
 {
     auto *threada = new PopThread();
     //connect(threada, SIGNAL(finished()), this, SLOT(startPopThread()));
@@ -100,7 +129,7 @@ void TestQueue::startPopThread()
 }
 
 
-void TestQueue::startPushThread()
+void ThreadStarter::startPushThread()
 {
     auto *threadb = new PushThread();
     //connect(threadb, SIGNAL(finished()), this, SLOT(startPushThread()));

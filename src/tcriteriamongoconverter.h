@@ -192,7 +192,7 @@ inline QVariantMap TCriteriaMongoConverter<T>::join(const QVariantMap &v1, TCrit
         lst << v1 << v2;
         ret.insert("$or", lst);
     } else {
-        tSystemError("Logic error: [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
     }
     return ret;
 }

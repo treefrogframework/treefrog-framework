@@ -15,7 +15,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_DLL
-INCLUDEPATH += $$header.path
+INCLUDEPATH += $$header.path ../../3rdparty/glog/build ../../3rdparty/glog/src
 
 include(../../tfbase.pri)
 
@@ -30,16 +30,16 @@ isEmpty( target.path ) {
 windows {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
-    LIBS += -ltreefrogd$${TF_VER_MAJ}
+    LIBS += -ltreefrogd$${TF_VER_MAJ} ../../3rdparty/glog/build/Debug/glogd.lib
   } else {
     LIBS += -ltreefrog$${TF_VER_MAJ}
   }
   LIBS += -L"$$target.path"
-} else:unix {
-  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
-  linux-*:LIBS += -lrt
-  *-g++:DEFINES += _GNU_SOURCE
-  freebsd-*:DEFINES += _GNU_SOURCE
+} else {
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
+  linux-* {
+    LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
+  }
 }
 
 INSTALLS += target
@@ -49,20 +49,3 @@ INSTALLS += target
 }
 
 SOURCES += main.cpp
-
-unix {
-  HEADERS += signalhandler.h
-  SOURCES += signalhandler.cpp
-  HEADERS += symbolize.h
-  SOURCES += symbolize.cpp
-  HEADERS += demangle.h
-  SOURCES += demangle.cpp
-  HEADERS += stacktrace.h
-  SOURCES += stacktrace.cpp
-  HEADERS += gconfig.h \
-             stacktrace_generic-inl.h \
-             stacktrace_libunwind-inl.h \
-             stacktrace_powerpc-inl.h \
-             stacktrace_x86-inl.h \
-             stacktrace_x86_64-inl.h
-}

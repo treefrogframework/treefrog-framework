@@ -7,9 +7,11 @@
 
 #include "lz4.h"
 #include "tdatabasecontextthread.h"
+#include "tsystemglobal.h"
 #include <QBuffer>
 #include <QDataStream>
 #include <TActionContext>
+#include <TActionController>
 #include <TActionThread>
 #include <TAppSettings>
 #include <TCache>
@@ -17,6 +19,7 @@
 #include <TGlobal>
 #include <TWebApplication>
 #ifdef Q_OS_LINUX
+#include <TMultiplexingServer>
 #include <TActionWorker>
 #endif
 #ifdef Q_OS_WIN
@@ -25,6 +28,8 @@
 #include <climits>
 #include <cstdlib>
 #include <random>
+#include <thread>
+#include <chrono>
 
 constexpr int LZ4_BLOCKSIZE = 1024 * 1024;  // 1 MB
 
@@ -56,9 +61,9 @@ const QVariantMap &Tf::conf(const QString &configName) noexcept
 /*!
   Causes the current thread to sleep for \a msecs milliseconds.
 */
-void Tf::msleep(unsigned long msecs) noexcept
+void Tf::msleep(int64_t msecs) noexcept
 {
-    QThread::msleep(msecs);
+    std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
 }
 
 namespace {
@@ -113,28 +118,21 @@ TCache *Tf::cache() noexcept
 }
 
 
-TActionContext *Tf::currentContext()
+TAbstractController *Tf::currentController()
 {
-    TActionContext *context = nullptr;
-
-    switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
-        context = dynamic_cast<TActionThread *>(QThread::currentThread());
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Thread) {
+        TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
         if (Q_LIKELY(context)) {
-            return context;
+            return context->currentController();
         }
-        break;
+    }
 
-    case TWebApplication::Epoll:
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
 #ifdef Q_OS_LINUX
-        return TActionWorker::instance();
+        return TMultiplexingServer::instance()->currentController();
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
-        break;
-
-    default:
-        break;
     }
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
@@ -144,6 +142,22 @@ TActionContext *Tf::currentContext()
 TDatabaseContext *Tf::currentDatabaseContext()
 {
     TDatabaseContext *context;
+
+    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
+#ifdef Q_OS_LINUX
+        context = TMultiplexingServer::instance()->currentWorker();
+        if (context) {
+            return context;
+        }
+
+        context = Tf::app()->mainDatabaseContext();
+        if (context) {
+            return context;
+        }
+#else
+        tFatal("Unsupported MPM: epoll");
+#endif
+    }
 
     context = TDatabaseContext::currentDatabaseContext();
     if (context) {

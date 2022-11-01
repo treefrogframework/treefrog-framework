@@ -57,6 +57,12 @@ inline int tf_accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int
 }
 
 
+inline int tf_connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)
+{
+    TF_EINTR_LOOP(::connect(sockfd, addr, addrlen));
+}
+
+
 inline pid_t tf_gettid()
 {
     return syscall(SYS_gettid);

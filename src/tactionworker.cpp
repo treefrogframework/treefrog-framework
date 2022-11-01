@@ -12,6 +12,7 @@
 #include <TActionWorker>
 #include <TAppSettings>
 #include <THttpRequest>
+#include <TWebApplication>
 #include <TMultiplexingServer>
 #include <atomic>
 
@@ -20,13 +21,6 @@
   \class TActionWorker
   \brief
 */
-
-
-TActionWorker *TActionWorker::instance()
-{
-    static TActionWorker globalInstance;
-    return &globalInstance;
-}
 
 
 qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
@@ -50,12 +44,18 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     if (!TActionContext::stopped.load()) {
         _socket->sendData(header.toByteArray(), body, autoRemove, accessLogger);
     }
-    accessLogger.close();  // not write in this thread
+    accessLogger.close();
     return 0;
 }
 
 
-void TActionWorker::closeHttpSocket()
+void TActionWorker::flushSocket()
+{
+    _socket->waitForDataSent(1000);
+}
+
+
+void TActionWorker::closeSocket()
 {
     if (!TActionContext::stopped.load()) {
         _socket->disconnect();
@@ -65,16 +65,15 @@ void TActionWorker::closeHttpSocket()
 
 void TActionWorker::start(TEpollHttpSocket *sock)
 {
-    TDatabaseContext::setCurrentDatabaseContext(this);
     _socket = sock;
     _httpRequest += _socket->readRequest();
     _clientAddr = _socket->peerAddress();
-    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr);
+    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr, this);
 
     // Loop for HTTP-pipeline requests
     for (THttpRequest &req : requests) {
         // Executes a action context
-        TActionContext::execute(req, _socket->socketId());
+        TActionContext::execute(req);
 
         if (TActionContext::stopped.load()) {
             break;
@@ -84,5 +83,8 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     TActionContext::release();
     _httpRequest.clear();
     _clientAddr.clear();
-    TDatabaseContext::setCurrentDatabaseContext(nullptr);
+    _socket = nullptr;
+    // Deletes this
+    //moveToThread(Tf::app()->databaseContextMainThread());
+    //deleteLater();
 }

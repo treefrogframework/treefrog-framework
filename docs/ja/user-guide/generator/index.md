@@ -21,7 +21,7 @@ page_id: "040.0"
 - controllers &nbsp;&nbsp;コントローラ
 - models &nbsp;&nbsp;モデル
 - views &nbsp;&nbsp;ビュー
-- heplers &nbsp;&nbsp;ヘルパ
+- helpers &nbsp;&nbsp;ヘルパ
 - config &nbsp;&nbsp;設定ファイル置き場
 - db &nbsp;&nbsp;データベースファイル置き場（SQLite）
 - lib &nbsp;&nbsp;ライブラリ

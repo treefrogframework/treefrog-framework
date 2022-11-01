@@ -6,59 +6,51 @@
  */
 
 #include "tepollsocket.h"
-#include "tatomicptr.h"
 #include "tepoll.h"
-#include "tepollhttpsocket.h"
 #include "tfcore.h"
 #include "tsendbuffer.h"
-#include <QFileInfo>
 #include <THttpHeader>
 #include <TSystemGlobal>
 #include <TWebApplication>
-#include <atomic>
-#include <sys/types.h>
+#include <TMultiplexingServer>
+#include <QFileInfo>
+#include <QSet>
 
 class SendData;
+
+union tf_sockaddr {
+    sockaddr a;
+    sockaddr_in a4;
+    sockaddr_in6 a6;
+};
+
 
 namespace {
 int sendBufSize = 0;
 int recvBufSize = 0;
-std::atomic<int> socketCounter {0};
-TAtomicPtr<TEpollSocket> socketManager[USHRT_MAX + 1];
-std::atomic<ushort> point {0};
-}
+QSet<TEpollSocket *> socketManager;
 
 
-TEpollSocket *TEpollSocket::accept(int listeningSocket)
+void setAddressAndPort(const QHostAddress &address, quint16 port, tf_sockaddr *aa, int &addrSize)
 {
-    struct sockaddr_storage addr;
-    socklen_t addrlen = sizeof(addr);
-
-    int actfd = tf_accept4(listeningSocket, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
-    int err = errno;
-    if (Q_UNLIKELY(actfd < 0)) {
-        if (err != EAGAIN) {
-            tSystemWarn("Failed accept.  errno:%d", err);
-        }
-        return nullptr;
+    if (address.protocol() == QAbstractSocket::IPv6Protocol || address.protocol() == QAbstractSocket::AnyIPProtocol) {
+        memset(&aa->a6, 0, sizeof(sockaddr_in6));
+        aa->a6.sin6_family = AF_INET6;
+        //aa->a6.sin6_scope_id = QNetworkInterface::interfaceIndexFromName(address.scopeId());
+        aa->a6.sin6_port = htons(port);
+        auto tmp = address.toIPv6Address();
+        memcpy(&aa->a6.sin6_addr, &tmp, sizeof(tmp));
+        addrSize = sizeof(sockaddr_in6);
+    } else {
+        memset(&aa->a4, 0, sizeof(sockaddr_in));
+        aa->a4.sin_family = AF_INET;
+        aa->a4.sin_port = htons(port);
+        aa->a4.sin_addr.s_addr = htonl(address.toIPv4Address());
+        addrSize = sizeof(sockaddr_in);
     }
-
-    return create(actfd, QHostAddress((sockaddr *)&addr));
 }
 
-
-TEpollSocket *TEpollSocket::create(int socketDescriptor, const QHostAddress &address)
-{
-    TEpollSocket *sock = nullptr;
-
-    if (Q_LIKELY(socketDescriptor > 0)) {
-        sock = new TEpollHttpSocket(socketDescriptor, address);
-        initBuffer(socketDescriptor);
-    }
-
-    return sock;
 }
-
 
 TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
 {
@@ -95,15 +87,23 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 }
 
 
-TEpollSocket::TEpollSocket(int socketDescriptor, const QHostAddress &address) :
-    sd(socketDescriptor),
-    clientAddr(address)
+TEpollSocket::TEpollSocket()
 {
-    do {
-        sid = point.fetch_add(1);
-    } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
-    tSystemDebug("TEpollSocket  sid:%d", sid);
-    socketCounter++;
+    _socket = ::socket(AF_INET, (SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK), 0);
+    tSystemDebug("TEpollSocket  socket:%d", _socket);
+    socketManager.insert(this);
+    initBuffer(_socket);
+}
+
+
+TEpollSocket::TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress) :
+    _socket(socketDescriptor),
+    _state(state),
+    _peerAddress(peerAddress)
+{
+    tSystemDebug("TEpollSocket  socket:%d", _socket);
+    socketManager.insert(this);
+    initBuffer(_socket);
 }
 
 
@@ -112,14 +112,75 @@ TEpollSocket::~TEpollSocket()
     tSystemDebug("TEpollSocket::destructor");
 
     close();
+    socketManager.remove(this);
+    TMultiplexingServer::instance()->_garbageSockets.remove(this);
 
-    while (!sendBuf.isEmpty()) {
-        TSendBuffer *buf = sendBuf.dequeue();
+    while (!_sendBuffer.isEmpty()) {
+        TSendBuffer *buf = _sendBuffer.dequeue();
         delete buf;
     }
+}
 
-    socketManager[sid].compareExchangeStrong(this, nullptr);  //clear
-    socketCounter--;
+// Disposes for gabage collection
+void TEpollSocket::dispose()
+{
+    close();
+    if (autoDelete()) {
+        TMultiplexingServer::instance()->_garbageSockets.insert(this);
+    }
+}
+
+
+void TEpollSocket::close()
+{
+    if (_socket > 0) {
+        tf_close_socket(_socket);
+        _socket = 0;
+    }
+}
+
+
+void TEpollSocket::connectToHost(const QHostAddress &address, quint16 port)
+{
+    tf_sockaddr aa;
+    int addrSize;
+    setAddressAndPort(address, port, &aa, addrSize);
+
+    int res = tf_connect(_socket, (struct sockaddr *)&aa.a, addrSize);
+    if (res < 0 && errno != EINPROGRESS) {
+        tSystemError("Failed connect");
+        close();
+        return;
+    }
+
+    tSystemDebug("TCP connection state: %d", res);
+    _state = (res == 0) ? Tf::SocketState::Connected : Tf::SocketState::Connecting;
+    _peerAddress = address;
+    watch();
+}
+
+
+bool TEpollSocket::watch()
+{
+    bool ret = false;
+
+    switch (state()) {
+    case Tf::SocketState::Unconnected:
+        break;
+
+    case Tf::SocketState::Connecting:  // fall through
+    case Tf::SocketState::Connected:
+        ret = TEpoll::instance()->addPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));
+        if (!ret) {
+            close();
+        }
+        break;
+
+    default:
+        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        break;
+    }
+    return ret;
 }
 
 
@@ -136,7 +197,7 @@ int TEpollSocket::recv()
     for (;;) {
         void *buf = getRecvBuffer(recvBufSize);
         errno = 0;
-        len = tf_recv(sd, buf, recvBufSize, 0);
+        len = tf_recv(_socket, buf, recvBufSize, 0);
         err = errno;
 
         if (len <= 0) {
@@ -148,7 +209,7 @@ int TEpollSocket::recv()
     }
 
     if (!len && !err) {
-        tSystemDebug("Socket disconnected : sd:%d", sd);
+        tSystemDebug("Socket disconnected : sd:%d", _socket);
         ret = -1;
     } else {
         if (len < 0 || err > 0) {
@@ -157,12 +218,12 @@ int TEpollSocket::recv()
                 break;
 
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _socket, err);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", sd, err, len);
+                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", _socket, err, len);
                 ret = -1;
                 break;
             }
@@ -179,14 +240,12 @@ int TEpollSocket::send()
 {
     int ret = 0;
 
-    if (sendBuf.isEmpty()) {
-        pollOut = true;
+    if (_sendBuffer.isEmpty()) {
         return ret;
     }
-    pollOut = false;
 
-    while (!sendBuf.isEmpty()) {
-        TSendBuffer *buf = sendBuf.head();
+    while (!_sendBuffer.isEmpty()) {
+        TSendBuffer *buf = _sendBuffer.head();
         TAccessLogger &logger = buf->accessLogger();
 
         int len = 0;
@@ -199,7 +258,7 @@ int TEpollSocket::send()
             }
 
             errno = 0;
-            len = tf_send(sd, data, len);
+            len = tf_send(_socket, data, len);
             err = errno;
 
             if (len <= 0) {
@@ -213,7 +272,7 @@ int TEpollSocket::send()
 
         if (buf->atEnd()) {
             logger.write();  // Writes access log
-            delete sendBuf.dequeue();  // delete send-buffer obj
+            delete _sendBuffer.dequeue();  // delete send-buffer obj
         }
 
         if (len < 0) {
@@ -223,13 +282,13 @@ int TEpollSocket::send()
 
             case EPIPE:  // FALLTHRU
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", sd, err);
+                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _socket, err);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed send : sd:%d  errno:%d  len:%d", sd, err, len);
+                tSystemError("Failed send : sd:%d  errno:%d  len:%d", _socket, err, len);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
@@ -242,24 +301,52 @@ int TEpollSocket::send()
 }
 
 
+void *TEpollSocket::getRecvBuffer(int size)
+{
+    int len = _recvBuffer.size();
+    _recvBuffer.reserve(len + size);
+    return _recvBuffer.data() + len;
+}
+
+
+bool TEpollSocket::seekRecvBuffer(int pos)
+{
+    int size = _recvBuffer.size();
+    if (Q_UNLIKELY(pos <= 0 || size + pos > _recvBuffer.capacity())) {
+        Q_ASSERT(0);
+        return false;
+    }
+
+    size += pos;
+    _recvBuffer.resize(size);
+    return true;
+}
+
+
+bool TEpollSocket::setSocketOption(int level, int optname, int val)
+{
+    if (_socket < 1) {
+        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        return false;
+    }
+
+    int res = ::setsockopt(_socket, level, optname, &val, sizeof(val));
+    if (res < 0) {
+        tSystemError("setsockopt error: %d  [%s:%d]", res, __FILE__, __LINE__);
+    }
+    return !res;
+}
+
+
 void TEpollSocket::enqueueSendData(TSendBuffer *buffer)
 {
-    sendBuf.enqueue(buffer);
+    _sendBuffer.enqueue(buffer);
 }
 
 
-void TEpollSocket::setSocketDescpriter(int socketDescriptor)
+void TEpollSocket::setSocketDescriptor(int socketDescriptor)
 {
-    sd = socketDescriptor;
-}
-
-
-void TEpollSocket::close()
-{
-    if (sd > 0) {
-        tf_close_socket(sd);
-        sd = 0;
-    }
+    _socket = socketDescriptor;
 }
 
 
@@ -275,6 +362,62 @@ void TEpollSocket::sendData(const QByteArray &data)
 }
 
 
+qint64 TEpollSocket::receiveData(char *buffer, qint64 length)
+{
+    qint64 len = std::min(length, (qint64)_recvBuffer.length());
+    if (len > 0) {
+        memcpy(buffer, _recvBuffer.data(), len);
+        _recvBuffer.remove(0, len);
+    }
+    return len;
+}
+
+
+QByteArray TEpollSocket::receiveAll()
+{
+    QByteArray res = _recvBuffer;
+    _recvBuffer.clear();
+    return res;
+}
+
+
+bool TEpollSocket::waitUntil(bool (TEpollSocket::*method)(), int msecs)
+{
+    QElapsedTimer elapsed;
+    elapsed.start();
+
+    while (!(this->*method)()) {
+        int ms = msecs - elapsed.elapsed();
+        if (ms <= 0) {
+            break;
+        }
+
+        if (TMultiplexingServer::instance()->processEvents(ms) < 0) {
+            break;
+        }
+    }
+    return (this->*method)();
+}
+
+
+bool TEpollSocket::waitForConnected(int msecs)
+{
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isConnected, msecs);
+}
+
+
+bool TEpollSocket::waitForDataSent(int msecs)
+{
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
+}
+
+
+bool TEpollSocket::waitForDataReceived(int msecs)
+{
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
+}
+
+
 void TEpollSocket::disconnect()
 {
     TEpoll::instance()->setDisconnect(this);
@@ -287,43 +430,13 @@ void TEpollSocket::switchToWebSocket(const THttpRequestHeader &header)
 }
 
 
-// qint64 TEpollSocket::bufferedBytes() const
-// {
-//     qint64 ret = 0;
-//     for (auto &d : sendBuf) {
-//         ret += d->arrayBuffer.size();
-//         if (d->bodyFile) {
-//             ret += d->bodyFile->size();
-//         }
-//     }
-//     return ret;
-// }
-
-
 int TEpollSocket::bufferedListCount() const
 {
-    return sendBuf.count();
+    return _sendBuffer.count();
 }
 
 
-TEpollSocket *TEpollSocket::searchSocket(int sid)
+QSet<TEpollSocket *> TEpollSocket::allSockets()
 {
-    return socketManager[sid & 0xffff].load();
-}
-
-
-QList<TEpollSocket *> TEpollSocket::allSockets()
-{
-    QList<TEpollSocket *> lst;
-    for (int i = 0; i <= USHRT_MAX; i++) {
-        TEpollSocket *p = socketManager[i].load();
-        if (p) {
-            lst.append(p);
-
-            if (lst.count() == socketCounter.load(std::memory_order_acquire)) {
-                break;
-            }
-        }
-    }
-    return lst;
+    return socketManager;
 }

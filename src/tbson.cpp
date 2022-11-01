@@ -23,26 +23,20 @@ extern "C" {
 */
 
 TBson::TBson() :
-    bsonData(bson_new())
+    _bsonData(bson_new())
 {
 }
 
 
 TBson::~TBson()
 {
-    bson_destroy(bsonData);
-}
-
-
-TBson::TBson(const TBson &other)
-{
-    bsonData = bson_copy(other.bsonData);
+    bson_destroy((bson_t *)_bsonData);
 }
 
 
 TBson::TBson(const TBsonObject *bson)
 {
-    bsonData = (bson) ? bson_copy((const bson_t *)bson) : bson_new();
+    _bsonData = (bson) ? bson_copy((const bson_t *)bson) : bson_new();
 }
 
 
@@ -303,7 +297,7 @@ static void appendBson(TBsonObject *bson, const QVariantMap &map)
 
 bool TBson::insert(const QString &key, const QVariant &value)
 {
-    return appendBsonValue(bsonData, key, value);
+    return appendBsonValue((bson_t *)_bsonData, key, value);
 }
 
 

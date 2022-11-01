@@ -45,7 +45,7 @@ TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByt
     _accesslogger.setTimestamp(QDateTime::currentDateTime());
     _accesslogger.setRemoteHost(address.toString().toLatin1());
     _accesslogger.setRequest(method);
-    _accesslogger.startElaspedTimer();
+    _accesslogger.startElapsedTimer();
 
     THttpResponseHeader header;
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));

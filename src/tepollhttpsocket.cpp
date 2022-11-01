@@ -10,6 +10,7 @@
 #include "tepoll.h"
 #include "tepollwebsocket.h"
 #include "twebsocket.h"
+#include "tfcore.h"
 #include <TAppSettings>
 #include <THttpRequestHeader>
 #include <TSystemGlobal>
@@ -23,13 +24,46 @@ namespace {
 qint64 systemLimitBodyBytes = -1;
 }
 
+TEpollHttpSocket *TEpollHttpSocket::accept(int listeningSocket)
+{
+    struct sockaddr_storage addr;
+    socklen_t addrlen = sizeof(addr);
+
+    int actfd = tf_accept4(listeningSocket, (sockaddr *)&addr, &addrlen, SOCK_CLOEXEC | SOCK_NONBLOCK);
+    int err = errno;
+    if (Q_UNLIKELY(actfd < 0)) {
+        if (err != EAGAIN) {
+            tSystemWarn("Failed accept.  errno:%d", err);
+        }
+        return nullptr;
+    }
+
+    return create(actfd, QHostAddress((sockaddr *)&addr), true);
+}
+
+
+TEpollHttpSocket *TEpollHttpSocket::create(int socketDescriptor, const QHostAddress &address, bool watch)
+{
+    TEpollHttpSocket *sock = nullptr;
+
+    if (Q_LIKELY(socketDescriptor > 0)) {
+        sock = new TEpollHttpSocket(socketDescriptor, address);
+    }
+
+    if (watch) {
+        sock->watch();
+    }
+
+    return sock;
+}
+
 
 TEpollHttpSocket::TEpollHttpSocket(int socketDescriptor, const QHostAddress &address) :
-    TEpollSocket(socketDescriptor, address),
-    idleElapsed()
+    TEpollSocket(socketDescriptor, Tf::SocketState::Connected, address),
+    _idleElapsed()
 {
-    httpBuffer.reserve(BUFFER_RESERVE_SIZE);
-    idleElapsed = std::time(nullptr);
+    _recvBuffer.reserve(BUFFER_RESERVE_SIZE);
+    _idleElapsed = std::time(nullptr);
 }
 
 
@@ -41,7 +75,7 @@ TEpollHttpSocket::~TEpollHttpSocket()
 
 bool TEpollHttpSocket::canReadRequest()
 {
-    return (lengthToRead == 0);
+    return (_lengthToRead == 0);
 }
 
 
@@ -49,7 +83,7 @@ QByteArray TEpollHttpSocket::readRequest()
 {
     QByteArray ret;
     if (canReadRequest()) {
-        ret = httpBuffer;
+        ret = _recvBuffer;
         clear();
     }
     return ret;
@@ -60,7 +94,7 @@ int TEpollHttpSocket::send()
 {
     int ret = TEpollSocket::send();
     if (ret == 0) {
-        idleElapsed = std::time(nullptr);
+        _idleElapsed = std::time(nullptr);
     }
     return ret;
 }
@@ -70,45 +104,37 @@ int TEpollHttpSocket::recv()
 {
     int ret = TEpollSocket::recv();
     if (ret == 0) {
-        idleElapsed = std::time(nullptr);
+        _idleElapsed = std::time(nullptr);
     }
     return ret;
 }
 
 
-void *TEpollHttpSocket::getRecvBuffer(int size)
-{
-    int len = httpBuffer.size();
-    httpBuffer.reserve(len + size);
-    return httpBuffer.data() + len;
-}
-
-
 bool TEpollHttpSocket::seekRecvBuffer(int pos)
 {
-    int len = httpBuffer.size();
-    if (Q_UNLIKELY(pos <= 0 || len + pos > httpBuffer.capacity())) {
+    int len = _recvBuffer.size();
+    if (Q_UNLIKELY(pos <= 0 || len + pos > _recvBuffer.capacity())) {
         return false;
     }
 
     len += pos;
-    httpBuffer.resize(len);
+    _recvBuffer.resize(len);
 
-    if (lengthToRead < 0) {
+    if (_lengthToRead < 0) {
         parse();
     } else {
-        if (systemLimitBodyBytes > 0 && httpBuffer.length() > systemLimitBodyBytes) {
-            httpBuffer.resize(0);
+        if (systemLimitBodyBytes > 0 && _recvBuffer.length() > systemLimitBodyBytes) {
+            _recvBuffer.resize(0);
             throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
-        lengthToRead = qMax(lengthToRead - pos, 0LL);
+        _lengthToRead = qMax(_lengthToRead - pos, 0LL);
     }
 
     // WebSocket?
-    if (lengthToRead == 0) {
+    if (_lengthToRead == 0) {
         // Check connection header
-        THttpRequestHeader header(httpBuffer);
+        THttpRequestHeader header(_recvBuffer);
         QByteArray connectionHeader = header.rawHeader("Connection").toLower();
         if (connectionHeader.contains("upgrade")) {
             QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
@@ -131,10 +157,13 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
 }
 
 
-void TEpollHttpSocket::startWorker()
+void TEpollHttpSocket::process()
 {
-    tSystemDebug("TEpollHttpSocket::startWorker");
-    TActionWorker::instance()->start(this);
+    tSystemDebug("TEpollHttpSocket::process");
+    _worker = new TActionWorker;
+    _worker->start(this);
+    delete _worker;
+    _worker = nullptr;
     releaseWorker();
 }
 
@@ -143,8 +172,9 @@ void TEpollHttpSocket::releaseWorker()
 {
     tSystemDebug("TEpollHttpSocket::releaseWorker");
 
-    if (pollIn.exchange(false)) {
-        TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    bool res = TEpoll::instance()->modifyPoll(this, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
+    if (!res) {
+        dispose();
     }
 }
 
@@ -155,18 +185,18 @@ void TEpollHttpSocket::parse()
         systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
     }
 
-    if (Q_LIKELY(lengthToRead < 0)) {
-        int idx = httpBuffer.indexOf(CRLFCRLF);
+    if (Q_LIKELY(_lengthToRead < 0)) {
+        int idx = _recvBuffer.indexOf(CRLFCRLF);
         if (idx > 0) {
-            THttpRequestHeader header(httpBuffer);
+            THttpRequestHeader header(_recvBuffer);
 
             if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
-                httpBuffer.resize(0);
+                _recvBuffer.resize(0);
                 throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
             }
 
-            lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);
-            tSystemDebug("lengthToRead: %d", (int)lengthToRead);
+            _lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - _recvBuffer.length(), 0LL);
+            tSystemDebug("lengthToRead: %d", (int)_lengthToRead);
         }
     } else {
         tSystemWarn("Unreachable code in normal communication");
@@ -176,23 +206,17 @@ void TEpollHttpSocket::parse()
 
 void TEpollHttpSocket::clear()
 {
-    lengthToRead = -1;
-    httpBuffer.resize(0);
-}
-
-
-TEpollHttpSocket *TEpollHttpSocket::searchSocket(int sid)
-{
-    TEpollSocket *sock = TEpollSocket::searchSocket(sid);
-    return dynamic_cast<TEpollHttpSocket *>(sock);
+    _lengthToRead = -1;
+    _recvBuffer.resize(0);
 }
 
 
 QList<TEpollHttpSocket *> TEpollHttpSocket::allSockets()
 {
     QList<TEpollHttpSocket *> lst;
-    for (auto sock : (const QList<TEpollSocket *> &)TEpollSocket::allSockets()) {
-        auto p = dynamic_cast<TEpollHttpSocket *>(sock);
+    auto set = TEpollSocket::allSockets();
+    for (auto it = set.constBegin(); it != set.constEnd(); ++it) {
+        auto p = dynamic_cast<TEpollHttpSocket *>(*it);
         if (p) {
             lst.append(p);
         }
@@ -205,5 +229,5 @@ QList<TEpollHttpSocket *> TEpollHttpSocket::allSockets()
 */
 int TEpollHttpSocket::idleTime() const
 {
-    return (uint)std::time(nullptr) - idleElapsed;
+    return (uint)std::time(nullptr) - _idleElapsed;
 }

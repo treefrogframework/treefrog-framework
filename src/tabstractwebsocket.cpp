@@ -167,7 +167,7 @@ bool TAbstractWebSocket::searchEndpoint(const THttpRequestHeader &header)
 
 int TAbstractWebSocket::parse(QByteArray &recvData)
 {
-    tSystemDebug("parse enter  data len:%lld  sid:%d", (qint64)recvData.length(), socketId());
+    tSystemDebug("parse enter  data len:%lld  sid:%lld", (qint64)recvData.length(), socketDescriptor());
     if (websocketFrames().isEmpty()) {
         websocketFrames().append(TWebSocketFrame());
     } else {

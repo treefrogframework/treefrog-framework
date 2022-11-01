@@ -83,7 +83,7 @@ QString TActionController::name() const
 */
 const THttpRequest &TActionController::request() const
 {
-    return Tf::currentContext()->httpRequest();
+    return context()->httpRequest();
 }
 
 /*!
@@ -91,7 +91,7 @@ const THttpRequest &TActionController::request() const
 */
 THttpRequest &TActionController::request()
 {
-    return Tf::currentContext()->httpRequest();
+    return context()->httpRequest();
 }
 
 /*!
@@ -173,8 +173,8 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
  */
 QByteArray TActionController::authenticityToken() const
 {
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
+        QString key = TSessionManager::instance().csrfProtectionKey();
         QByteArray csrfId = session().value(key).toByteArray();
 
         if (csrfId.isEmpty()) {
@@ -203,8 +203,8 @@ void TActionController::setSession(const TSession &session)
 */
 void TActionController::setCsrfProtectionInto(TSession &session)
 {
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() == QLatin1String("cookie")) {
-        QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
+        QString key = TSessionManager::instance().csrfProtectionKey();
         session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
     }
 }
@@ -249,7 +249,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
         return true;
     }
 
-    if (Tf::appSettings()->value(Tf::SessionStoreType).toString().toLower() != QLatin1String("cookie")) {
+    if (TSessionManager::instance().storeType() != QLatin1String("cookie")) {
         if (session().id().isEmpty()) {
             throw SecurityException("Request Forgery Protection requires a valid session", __FILE__, __LINE__);
         }
@@ -269,11 +269,11 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
  */
 bool TActionController::render(const QString &action, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     // Creates view-object and displays it
     TDispatcher<TActionView> viewDispatcher(viewClassName(action));
@@ -287,11 +287,11 @@ bool TActionController::render(const QString &action, const QString &layout)
 */
 bool TActionController::renderTemplate(const QString &templateName, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     // Creates view-object and displays it
     QStringList names = templateName.split("/");
@@ -310,11 +310,11 @@ bool TActionController::renderTemplate(const QString &templateName, const QStrin
 */
 bool TActionController::renderText(const QString &text, bool layoutEnable, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     if (contentType() == DEFAULT_CONTENT_TYPE) {
         setContentType(QByteArrayLiteral("text/plain"));
@@ -412,31 +412,35 @@ bool TActionController::renderXml(const QStringList &list)
 /*!
   Renders the template of the \a action with the \a layout and caches it with
   the \a key for \a seconds.
+  To use this function, enable cache module in application.ini.
+  \sa render()
   \sa renderOnCache()
+  \sa removeCache()
 */
 bool TActionController::renderAndCache(const QByteArray &key, int seconds, const QString &action, const QString &layout)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
 
     render(action, layout);
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         QByteArray responseMsg = response().body();
         Tf::cache()->set(key, responseMsg, seconds);
     }
-    return _rendered;
+    return (bool)_rendered;
 }
 
 /*!
   Renders the template cached with the \a key. If no item with the \a key
   found, returns false.
+  To use this function, enable cache module in application.ini.
   \sa renderAndCache()
 */
 bool TActionController::renderOnCache(const QByteArray &key)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '.' + activeAction()));
         return false;
     }
@@ -447,12 +451,14 @@ bool TActionController::renderOnCache(const QByteArray &key)
     }
 
     _response.setBody(responseMsg);
-    _rendered = true;
-    return _rendered;
+    _rendered = RenderState::Rendered;
+    return (bool)_rendered;
 }
 
 /*!
   Removes the template with the \a key from the cache.
+  \sa renderAndCache()
+  \sa renderOnCache()
 */
 void TActionController::removeCache(const QByteArray &key)
 {
@@ -464,7 +470,6 @@ void TActionController::removeCache(const QByteArray &key)
 */
 QString TActionController::getRenderingData(const QString &templateName, const QVariantMap &vars)
 {
-
     // Creates view-object
     QStringList names = templateName.split("/");
     if (names.count() != 2) {
@@ -553,7 +558,7 @@ bool TActionController::renderErrorResponse(int statusCode)
 {
     bool ret = false;
 
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return ret;
     }
@@ -565,7 +570,7 @@ bool TActionController::renderErrorResponse(int statusCode)
         _response.setBody("");
     }
     setStatusCode(statusCode);
-    _rendered = true;
+    _rendered = RenderState::Rendered;
     return ret;
 }
 
@@ -590,11 +595,11 @@ QString TActionController::partialViewClassName(const QString &partial)
  */
 void TActionController::redirect(const QUrl &url, int statusCode)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tError("Unable to redirect. Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     setStatusCode(statusCode);
     _response.header().setRawHeader("Location", url.toEncoded());
@@ -612,11 +617,11 @@ void TActionController::redirect(const QUrl &url, int statusCode)
 */
 bool TActionController::sendFile(const QString &filePath, const QByteArray &contentType, const QString &name, bool autoRemove)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     if (!name.isEmpty()) {
         QByteArray filename;
@@ -640,11 +645,11 @@ bool TActionController::sendFile(const QString &filePath, const QByteArray &cont
 */
 bool TActionController::sendData(const QByteArray &data, const QByteArray &contentType, const QString &name)
 {
-    if (_rendered) {
+    if ((int)_rendered > 0) {
         tWarn("Has rendered already: %s", qUtf8Printable(className() + '#' + activeAction()));
         return false;
     }
-    _rendered = true;
+    _rendered = RenderState::Rendered;
 
     if (!name.isEmpty()) {
         QByteArray filename;
@@ -680,7 +685,7 @@ bool TActionController::validateAccess(const TAbstractUser *user)
     if (TAccessValidator::accessRules.isEmpty()) {
         setAccessRules();
     }
-    return TAccessValidator::validate(user);
+    return TAccessValidator::validate(user, this);
 }
 
 /*!
@@ -760,7 +765,7 @@ void TActionController::setAutoRemove(const QString &filePath)
 */
 QHostAddress TActionController::clientAddress() const
 {
-    return Tf::currentContext()->clientAddress();
+    return context()->clientAddress();
 }
 
 /*!
@@ -788,26 +793,26 @@ void TActionController::setFlashValidationErrors(const TFormValidator &v, const 
 }
 
 
-void TActionController::sendTextToWebSocket(int sid, const QString &text)
+void TActionController::sendTextToWebSocket(int socket, const QString &text)
 {
     QVariantList info;
-    info << sid << text;
+    info << socket << text;
     _taskList << qMakePair((int)SendTextTo, QVariant(info));
 }
 
 
-void TActionController::sendBinaryToWebSocket(int sid, const QByteArray &binary)
+void TActionController::sendBinaryToWebSocket(int socket, const QByteArray &binary)
 {
     QVariantList info;
-    info << sid << binary;
+    info << socket << binary;
     _taskList << qMakePair((int)SendBinaryTo, QVariant(info));
 }
 
 
-void TActionController::closeWebSokcet(int sid, int closeCode)
+void TActionController::closeWebSokcet(int socket, int closeCode)
 {
     QVariantList info;
-    info << sid << closeCode;
+    info << socket << closeCode;
     _taskList << qMakePair((int)SendCloseTo, QVariant(info));
 }
 
@@ -827,6 +832,18 @@ void TActionController::publish(const QString &topic, const QByteArray &binary)
     _taskList << qMakePair((int)PublishBinary, QVariant(info));
 }
 
+/*!
+  Sends a response immediately, and then allows time-consuming processing to
+  continue in the controller.
+*/
+void TActionController::flushResponse()
+{
+    if (_rendered == RenderState::Rendered) {
+        context()->flushResponse(this, true);
+        _rendered = RenderState::DataSent;
+    }
+}
+
 
 void TActionController::reset()
 {
@@ -835,7 +852,7 @@ void TActionController::reset()
     _actionName.clear();
     _args.clear();
     _statCode = Tf::OK;  // 200 OK
-    _rendered = false;
+    _rendered = RenderState::NotRendered;
     _layoutEnable  = true;
     _layoutName.clear();
     _response.clear();
@@ -845,7 +862,6 @@ void TActionController::reset()
     _rollback = false;
     _autoRemoveFiles.clear();
     _taskList.clear();
-    _sockId = 0;
 }
 
 

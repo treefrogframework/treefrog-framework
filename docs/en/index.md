@@ -37,14 +37,24 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Nov. 1, 2022
+
+### TreeFrog Framework version 2.5.0 (stable) release <span style="color: red;">New!</span>
+
+ - Implemented flushResponse() function to continue the process after sending a response.
+ - Updated glog to v0.6.0
+ - Performance improvement for redis client.
+ - Implemented memcached client. [Experimental]
+ - Implemented a cache-store for memcached, TCacheMemcachedStore class.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Aug. 13, 2022
 
-### TreeFrog Framework version 2.4.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.4.0 (stable) release
 
  - Implemented memory store for cache.
  - Updated Mongo C driver to v1.21.2.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 May 28, 2022
 

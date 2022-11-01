@@ -1,6 +1,5 @@
 #pragma once
 #include "tatomic.h"
-#include "tstack.h"
 #include <QBasicTimer>
 #include <QDateTime>
 #include <QMap>
@@ -11,6 +10,7 @@
 #include <TGlobal>
 
 class TSqlDatabase;
+template <class T> class TStack;
 
 
 class T_CORE_EXPORT TSqlDatabasePool : public QObject {
@@ -41,4 +41,3 @@ private:
     T_DISABLE_COPY(TSqlDatabasePool)
     T_DISABLE_MOVE(TSqlDatabasePool)
 };
-

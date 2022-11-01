@@ -1,11 +1,13 @@
 @echo OFF
 @setlocal
 
-set VERSION=2.4.0
+set VERSION=2.5.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.3
+set GLOG_VERSION=0.6.0
 set BASEDIR=%~dp0
+set CL=/MP
 
 :parse_loop
 if "%1" == "" goto :start
@@ -58,8 +60,9 @@ if "%DEBUG%" == "yes" (
 ::
 for %%I in (qmake.exe)  do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe)  do if exist %%~$path:I set CMAKE=%%~$path:I
+for %%I in (nmake.exe)  do if exist %%~$path:I set MAKE=%%~$path:I
 for %%I in (cl.exe)     do if exist %%~$path:I set MSCOMPILER=%%~$path:I
-for %%I in (devenv.exe) do if exist %%~$path:I set DEVENV=%%~$path:I
+for %%I in (devenv.com) do if exist %%~$path:I set DEVENV=%%~$path:I
 
 if "%QMAKE%" == "" (
   echo Qt environment not found
@@ -69,20 +72,16 @@ if "%CMAKE%" == "" (
   echo CMake not found
   exit /b
 )
+if "%MAKE%" == "" (
+  echo Make not found
+  exit /b
+)
 if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
-  echo MSVC Compiler not found
+  echo Visual Studio compiler not found
   exit /b
 )
 
-:: get qt install prefix
-for /f usebackq %%I in (`qtpaths.exe --install-prefix`) do (
-  set QT_INSTALL_PREFIX=%%I
-  goto :break
-)
-:break
-
 :: vcvarsall.bat setup
-set MAKE=nmake
 if /i "%Platform%" == "x64" (
   set VCVARSOPT=amd64
   set BUILDTARGET=x64
@@ -93,7 +92,18 @@ if /i "%Platform%" == "x64" (
   set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
 )
 
-echo %QT_INSTALL_PREFIX% | find "msvc2019" >NUL
+devenv /? | find "Visual Studio 2022" >NUL
+if not ERRORLEVEL 1 (
+  set VSVER=2022
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=-G"Visual Studio 17 2022" -A x64
+  ) else (
+    set CMAKEOPT=-G"Visual Studio 17 2022" -A Win32
+  )
+  goto :step2
+)
+
+devenv /? | find "Visual Studio 2019" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2019
   if /i "%Platform%" == "x64" (
@@ -101,25 +111,33 @@ if not ERRORLEVEL 1 (
   ) else (
     set CMAKEOPT=-G"Visual Studio 16 2019" -A Win32
   )
-) else (
-  echo %QT_INSTALL_PREFIX% | find "msvc2017" >NUL
-  if not ERRORLEVEL 1 (
-    set VSVER=2017
-    if /i "%Platform%" == "x64" (
-      set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
-    ) else (
-      set CMAKEOPT=-G"Visual Studio 15 2017"
-    )
-  ) else (
-    set VSVER=2015
-    if /i "%Platform%" == "x64" (
-      set CMAKEOPT=-G"Visual Studio 14 2015 Win64"
-    ) else (
-      set CMAKEOPT=-G"Visual Studio 14 2015"
-    )
-  )
+  goto :step2
 )
 
+devenv /? | find "Visual Studio 2017" >NUL
+if not ERRORLEVEL 1 (
+  set VSVER=2017
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
+  ) else (
+    set CMAKEOPT=-G"Visual Studio 15 2017"
+  )
+  goto :step2
+)
+
+devenv /? | find "Visual Studio 2015" >NUL
+if not ERRORLEVEL 1 (
+  set VSVER=2015
+  if /i "%Platform%" == "x64" (
+    set CMAKEOPT=-G"Visual Studio 14 2015 Win64"
+  ) else (
+    set CMAKEOPT=-G"Visual Studio 14 2015"
+  )
+  goto :step2
+)
+
+
+:step2
 SET /P X="%ENVSTR%"<NUL
 qtpaths.exe --qt-version
 
@@ -162,6 +180,7 @@ set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
 
 :: Builds MongoDB driver
+echo Compiling MongoDB driver library ...
 cd /d %BASEDIR%3rdparty
 rd /s /q  mongo-driver >nul 2>&1
 del /f /q mongo-driver >nul 2>&1
@@ -169,11 +188,10 @@ mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 
 cd %BASEDIR%3rdparty\mongo-driver
 del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
-set CMAKECMD=cmake %CMAKEOPT% -DCMAKE_CONFIGURATION_TYPES=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF .
+set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
 echo %CMAKECMD%
-%CMAKECMD%
+%CMAKECMD% >nul 2>&1
 
-echo Compiling MongoDB driver library ...
 set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
 echo %DEVENVCMD%
 %DEVENVCMD% >nul 2>&1
@@ -187,8 +205,8 @@ if ERRORLEVEL 1 (
 )
 
 :: Builds LZ4
-cd %BASEDIR%3rdparty
 echo Compiling LZ4 library ...
+cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
@@ -210,18 +228,42 @@ if ERRORLEVEL 1 (
   exit /b
 )
 
+:: Builds glog
+echo Compiling glog library ...
+cd %BASEDIR%3rdparty
+rd /s /q  glog >nul 2>&1
+del /f /q glog >nul 2>&1
+mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
+cd %BASEDIR%3rdparty\glog
+del /f /q build >nul 2>&1
+set CMAKECMD=cmake -S . -B build %CMAKEOPT%
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+set CMAKECMD=cmake --build build -j
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+if ERRORLEVEL 1 (
+  :: Shows error
+  %CMAKECMD%
+  echo;
+  echo Build failed.
+  echo glog not available.
+  exit /b
+)
+
+:: Builds TreeFrog
 cd %BASEDIR%src
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+if exist Makefile ( nmake -k distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 
 cd %BASEDIR%tools
-if exist Makefile ( %MAKE% -k distclean >nul 2>&1 )
+if exist Makefile ( nmake -k distclean >nul 2>&1 )
 qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
-%MAKE% qmake
+nmake qmake
 
 echo;
-echo First, run "%MAKE% install" in src directory.
-echo Next, run "%MAKE% install" in tools directory.
+echo First, run "nmake install" in src directory.
+echo Next, run "nmake install" in tools directory.
 
 :exit
 exit /b

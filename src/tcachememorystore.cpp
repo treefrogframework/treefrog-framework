@@ -14,7 +14,7 @@
 
 /*!
   \class TCacheMemoryStore
-  \brief The TCacheMemoryStore class represents a memory store for cache on
+  \brief The TCacheMemoryStore class represents a on-memory store for cache on
          the server process.
 */
 

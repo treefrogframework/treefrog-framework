@@ -16,7 +16,6 @@
 #include <TApplicationServerBase>
 #include <THttpHeader>
 #include <THttpResponse>
-#include <TMultipartFormData>
 #include <TTemporaryFile>
 #include <chrono>
 #include <ctime>
@@ -26,36 +25,25 @@ constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
 constexpr qint64 WRITE_LENGTH = 1408;
 constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 
-namespace {
-TAtomicPtr<THttpSocket> socketManager[USHRT_MAX + 1];
-std::atomic<ushort> point {0};
-}
-
 /*!
   \class THttpSocket
   \brief The THttpSocket class provides a socket for the HTTP.
 */
 
-THttpSocket::THttpSocket(QByteArray &readBuffer, QObject *parent) :
+THttpSocket::THttpSocket(QByteArray &readBuffer, TActionContext *context, QObject *parent) :
     QObject(parent),
-    _readBuffer(readBuffer)
+    _readBuffer(readBuffer),
+    _context(context)
 {
-    do {
-        _sid = point.fetch_add(1);
-    } while (!socketManager[_sid].compareExchange(nullptr, this));  // store a socket
-    tSystemDebug("THttpSocket  sid:%d", _sid);
-
     connect(this, SIGNAL(requestWrite(const QByteArray &)), this, SLOT(writeRawData(const QByteArray &)), Qt::QueuedConnection);
-
     _idleElapsed = Tf::getMSecsSinceEpoch();
 }
 
 
 THttpSocket::~THttpSocket()
 {
+    tSystemDebug("THttpSocket deleted  socket:%lld", _socket);
     abort();
-    socketManager[_sid].compareExchangeStrong(this, nullptr);  // clear
-    tSystemDebug("THttpSocket deleted  sid:%d", _sid);
 }
 
 
@@ -66,10 +54,10 @@ QList<THttpRequest> THttpSocket::read()
     if (canReadRequest()) {
         if (_fileBuffer.isOpen()) {
             _fileBuffer.close();
-            reqList << THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress());
+            reqList << THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress(), _context);
             _headerBuffer.resize(0);
         } else {
-            reqList = THttpRequest::generate(_readBuffer, peerAddress());
+            reqList = THttpRequest::generate(_readBuffer, peerAddress(), _context);
         }
 
         _lengthToRead = -1;
@@ -141,7 +129,7 @@ int THttpSocket::readRawData(char *data, int size, int msecs)
     }
 
     if (len == 0) {
-        tSystemDebug("Disconnected from remote host  [socket:%d]", _socket);
+        tSystemDebug("Disconnected from remote host  [socket:%lld]", _socket);
         abort();
         return 0;
     }
@@ -269,7 +257,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
 }
 
 
-void THttpSocket::setSocketDescriptor(int socketDescriptor, QAbstractSocket::SocketState socketState)
+void THttpSocket::setSocketDescriptor(qintptr socketDescriptor, QAbstractSocket::SocketState socketState)
 {
     _socket = socketDescriptor;
     _state = socketState;
@@ -286,7 +274,7 @@ void THttpSocket::abort()
 {
     if (_socket > 0) {
         tf_close_socket(_socket);
-        tSystemDebug("Closed socket : %d", _socket);
+        tSystemDebug("Closed socket : %lld", _socket);
         setSocketDescriptor(0, QAbstractSocket::ClosingState);
     } else {
         _state = QAbstractSocket::UnconnectedState;
@@ -296,14 +284,8 @@ void THttpSocket::abort()
 
 void THttpSocket::deleteLater()
 {
-    socketManager[_sid].compareExchange(this, nullptr);  // clear
+    //socketManager[_sid].compareExchange(this, nullptr);  // clear
     QObject::deleteLater();
-}
-
-
-THttpSocket *THttpSocket::searchSocket(int sid)
-{
-    return socketManager[sid & 0xffff].load();
 }
 
 /*!

@@ -7,6 +7,7 @@ class THttpRequest;
 class TSession;
 class TCookie;
 class TFormValidator;
+class TActionContext;
 
 
 class T_CORE_EXPORT TAbstractController : public QObject {
@@ -25,6 +26,9 @@ public:
     virtual void setFlash(const QString &name, const QVariant &value);
     void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
     virtual bool isUserLoggedIn() const;
+    const TActionContext *context() const { return _context; }
+    TActionContext *context() { return _context; }
+    void setContext(TActionContext *context) { _context = context; }
 
 protected:
     virtual TSession &session();
@@ -37,12 +41,13 @@ protected:
     void exportVariants(const QVariantMap &map);
     void exportValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
     bool hasVariant(const QString &name) const;
-    const QVariantMap &allVariants() const { return exportVars; }
+    const QVariantMap &allVariants() const { return _exportVars; }
     QString viewClassName(const QString &action = QString()) const;
     QString viewClassName(const QString &contoller, const QString &action) const;
 
 private:
-    QVariantMap exportVars;
+    QVariantMap _exportVars;
+    TActionContext *_context {nullptr};
 
     T_DISABLE_COPY(TAbstractController)
     T_DISABLE_MOVE(TAbstractController)
@@ -61,10 +66,10 @@ inline QString TAbstractController::className() const
 
 inline QVariant TAbstractController::variant(const QString &name) const
 {
-    return exportVars.value(name);
+    return _exportVars.value(name);
 }
 
 inline bool TAbstractController::hasVariant(const QString &name) const
 {
-    return exportVars.contains(name);
+    return _exportVars.contains(name);
 }

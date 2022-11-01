@@ -103,6 +103,13 @@ QString TSessionManager::storeType() const
 }
 
 
+QString TSessionManager::csrfProtectionKey() const
+{
+    static QString key = Tf::appSettings()->value(Tf::SessionCsrfProtectionKey).toString();
+    return key;
+}
+
+
 QByteArray TSessionManager::generateId()
 {
     QByteArray id;

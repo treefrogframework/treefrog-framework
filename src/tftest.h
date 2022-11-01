@@ -11,6 +11,10 @@
 #include "tsqldatabasepool.h"
 #include <TActionThread>
 #endif
+#ifdef Q_OS_LINUX
+#include <TMultiplexingServer>
+#endif
+
 
 #define TF_TEST_MAIN(TestObject) TF_TEST_SQL_MAIN(TestObject, true);
 
@@ -49,6 +53,9 @@
         QTextCodec::setCodecForLocale(codec);                                                                          \
         app.setDatabaseEnvironment("test");                                                                            \
         TUrlRoute::instance();                                                                                         \
+        TSqlDatabasePool::instance();                                                                                  \
+        TKvsDatabasePool::instance();                                                                                  \
+        INIT_MULTIPLEXING_SERVER();                                                                                    \
         Thread thread;                                                                                                 \
         thread.start();                                                                                                \
         thread.wait();                                                                                                 \
@@ -87,6 +94,9 @@
         TWebApplication app(argc, argv);                                                                               \
         app.setDatabaseEnvironment("test");                                                                            \
         TUrlRoute::instance();                                                                                         \
+        TSqlDatabasePool::instance();                                                                                  \
+        TKvsDatabasePool::instance();                                                                                  \
+        INIT_MULTIPLEXING_SERVER();                                                                                    \
         Thread thread;                                                                                                 \
         thread.start();                                                                                                \
         thread.wait();                                                                                                 \
@@ -119,4 +129,11 @@
         return QTest::qExec(&tc, argc, argv);                                                         \
     }
 
+#endif
+
+
+#ifdef Q_OS_LINUX
+#define INIT_MULTIPLEXING_SERVER() TMultiplexingServer::instantiate(0)
+#else
+#define INIT_MULTIPLEXING_SERVER()
 #endif

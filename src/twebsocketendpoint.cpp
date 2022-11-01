@@ -253,21 +253,10 @@ void TWebSocketEndpoint::startKeepAlive(int interval)
     }
 }
 
-/*!
-  Sends the given \a data over the HTTP socket of the \a id.
-*/
-void TWebSocketEndpoint::sendHttp(int id, const QByteArray &data)
-{
-    QVariantList info;
-    info << id << data;
-    taskList << qMakePair((int)HttpSend, QVariant(info));
-}
-
 
 void TWebSocketEndpoint::reset()
 {
     sessionStore.reset();
-    sid = 0;
     taskList.clear();
     rollback = false;
     peerAddr.clear();

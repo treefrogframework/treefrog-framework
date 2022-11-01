@@ -98,13 +98,13 @@ protected:
     void rollbackTransaction() { _rollback = true; }
     void setAutoRemove(const QString &filePath);
     bool validateAccess(const TAbstractUser *user);
-    int socketId() const { return _sockId; }
     // For WebSocket
-    void sendTextToWebSocket(int socketId, const QString &text);
-    void sendBinaryToWebSocket(int socketId, const QByteArray &binary);
-    void closeWebSokcet(int socketId, int closeCode = Tf::NormalClosure);
+    void sendTextToWebSocket(int socket, const QString &text);
+    void sendBinaryToWebSocket(int socket, const QByteArray &binary);
+    void closeWebSokcet(int socket, int closeCode = Tf::NormalClosure);
     void publish(const QString &topic, const QString &text);
     void publish(const QString &topic, const QByteArray &binary);
+    void flushResponse();
 
     virtual bool userLogin(const TAbstractUser *user);
     virtual void userLogout();
@@ -116,16 +116,21 @@ protected:
 
 private:
     enum WebSocketTaskType {
-        SendTextTo,
+        SendTextTo = 0,
         SendBinaryTo,
         SendCloseTo,
         PublishText,
         PublishBinary,
     };
 
+    enum class RenderState {
+        NotRendered = 0,
+        Rendered,
+        DataSent,
+    };
+
     void setActionName(const QString &name);
     void setArguments(const QStringList &arguments) { _args = arguments; }
-    void setSocketId(int socketId) { _sockId = socketId; }
     bool verifyRequest(const THttpRequest &request) const;
     QByteArray renderView(TActionView *view);
     void exportAllFlashVariants();
@@ -138,7 +143,7 @@ private:
     QString _actionName;
     QStringList _args;
     int _statCode {Tf::OK};  // 200 OK
-    bool _rendered {false};
+    RenderState _rendered {RenderState::NotRendered};
     bool _layoutEnable {true};
     QString _layoutName;
     THttpResponse _response;
@@ -148,7 +153,6 @@ private:
     bool _rollback {false};
     QStringList _autoRemoveFiles;
     QList<QPair<int, QVariant>> _taskList;
-    int _sockId {0};
 
     friend class TActionContext;
     friend class TSessionCookieStore;

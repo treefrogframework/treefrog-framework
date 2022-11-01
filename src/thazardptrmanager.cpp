@@ -2,6 +2,7 @@
 #include "thazardobject.h"
 #include "thazardptr.h"
 #include <QThread>
+#include <QMutex>
 
 
 class THazardRemoverThread : public QThread {
@@ -136,8 +137,13 @@ bool THazardPtrManager::pop(THazardObject *obj, THazardObject *prev)
 
 void THazardPtrManager::gc()
 {
-    if (!removerThread->isRunning()) {
-        removerThread->start(QThread::HighestPriority);
+    static QMutex mutex;
+
+    if (mutex.tryLock()) {
+        if (!removerThread->isRunning()) {
+            removerThread->start();
+        }
+        mutex.unlock();
     }
 }
 

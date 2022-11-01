@@ -73,6 +73,7 @@ public:
 #endif
     int applicationServerId() const { return _appServerId; }
     QThread *databaseContextMainThread() const;
+    TDatabaseContext *mainDatabaseContext() const;
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
     void initializeCache();
@@ -113,7 +114,6 @@ private:
 #endif
     int _appServerId {-1};
     QBasicTimer _timer;
-    mutable MultiProcessingModule _mpm {Invalid};
     QMap<QString, QVariantMap> _configMap;
     int _cacheSqlDbIndex {-1};
 

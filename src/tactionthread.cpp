@@ -82,10 +82,10 @@ TActionThread::~TActionThread()
 void TActionThread::setSocketDescriptor(qintptr socket)
 {
     if (TActionContext::socketDesc > 0) {
-        tSystemWarn("Socket still open : %d   [%s:%d]", TActionContext::socketDesc, __FILE__, __LINE__);
+        tSystemWarn("Socket still open : %lld   [%s:%d]", TActionContext::socketDesc, __FILE__, __LINE__);
         tf_close_socket(TActionContext::socketDesc);
     }
-    TActionContext::socketDesc = (int)socket;
+    TActionContext::socketDesc = socket;
 }
 
 
@@ -102,7 +102,7 @@ void TActionThread::run()
 
     Counter counter(threadCounter);
     QEventLoop eventLoop;
-    _httpSocket = new THttpSocket(_readBuffer);
+    _httpSocket = new THttpSocket(_readBuffer, this);
     if (TActionContext::socketDesc > 0) {
         _httpSocket->setSocketDescriptor(TActionContext::socketDesc, QAbstractSocket::ConnectedState);
     }
@@ -133,7 +133,7 @@ void TActionThread::run()
             }
 
             for (auto &req : requests) {
-                TActionContext::execute(req, _httpSocket->socketId());
+                TActionContext::execute(req);
             }
 
             if (keepAliveTimeout() == 0) {
@@ -163,7 +163,7 @@ void TActionThread::run()
     }
 
 receive_end:
-    closeHttpSocket();  // disconnect
+    closeSocket();  // disconnect
 
 socket_cleanup:
     // For cleanup
@@ -224,7 +224,7 @@ qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body
 }
 
 
-void TActionThread::closeHttpSocket()
+void TActionThread::closeSocket()
 {
     _httpSocket->abort();
 }

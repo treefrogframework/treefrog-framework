@@ -11,13 +11,20 @@
 #include "turlroute.h"
 #include "twebsocketworker.h"
 #include <TWebApplication>
+#include <QMap>
+#include <QMutex>
 
 constexpr qint64 WRITE_LENGTH = 1280;
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
 namespace {
-TAtomicPtr<TWebSocket> socketManager[USHRT_MAX + 1];
-std::atomic<ushort> point {0};
+QMap<qintptr, TWebSocket*> socketManager;
+
+#if QT_VERSION < 0x060000
+QMutex mutex(QMutex::Recursive);
+#else
+QRecursiveMutex mutex;
+#endif
 }
 
 
@@ -29,10 +36,8 @@ TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const 
     setPeerAddress(address);
 
     recvBuffer.reserve(BUFFER_RESERVE_SIZE);
-
-    do {
-        sid = point.fetch_add(1);
-    } while (!socketManager[sid].compareExchange(nullptr, this));  // store a socket
+    QMutexLocker locker(&mutex);
+    socketManager.insert(socketDescriptor, this);
 
     connect(this, SIGNAL(readyRead()), this, SLOT(readRequest()));
     connect(this, SIGNAL(sendByWorker(const QByteArray &)), this, SLOT(sendRawData(const QByteArray &)));
@@ -43,7 +48,8 @@ TWebSocket::TWebSocket(int socketDescriptor, const QHostAddress &address, const 
 TWebSocket::~TWebSocket()
 {
     tSystemDebug("~TWebSocket");
-    socketManager[sid].compareExchangeStrong(this, nullptr);  // clear
+    QMutexLocker locker(&mutex);
+    socketManager.remove(socketDescriptor());
 }
 
 
@@ -195,7 +201,8 @@ void TWebSocket::deleteLater()
     }
 
     if ((int)myWorkerCounter == 0) {
-        socketManager[sid].compareExchange(this, nullptr);  // clear
+        QMutexLocker locker(&mutex);
+        socketManager.remove(socketDescriptor());
         QTcpSocket::deleteLater();
     }
 }
@@ -249,9 +256,10 @@ void TWebSocket::disconnect()
 }
 
 
-TAbstractWebSocket *TWebSocket::searchSocket(int sid)
+TAbstractWebSocket *TWebSocket::searchSocket(qintptr socket)
 {
-    return socketManager[sid & 0xffff].load();
+    QMutexLocker locker(&mutex);
+    return socketManager.value(socket, nullptr);
 }
 
 

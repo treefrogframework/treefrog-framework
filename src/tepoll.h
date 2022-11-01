@@ -18,7 +18,7 @@ public:
     ~TEpoll();
 
     int wait(int timeout);
-    bool isPolling() const { return polling; }
+    bool isPolling() const { return _polling; }
     TEpollSocket *next();
     bool canReceive() const;
     bool canSend() const;
@@ -28,8 +28,7 @@ public:
     bool addPoll(TEpollSocket *socket, int events);
     bool modifyPoll(TEpollSocket *socket, int events);
     bool deletePoll(TEpollSocket *socket);
-    //bool waitSendData(int msec);
-    void dispatchSendData();
+    void dispatchEvents();
     void releaseAllPollingSockets();
 
     // For action workers
@@ -44,17 +43,15 @@ protected:
     bool modifyPoll(int fd, int events);
 
 private:
-    int epollFd {0};
-    int listenSocket {0};
-    struct epoll_event *events {nullptr};
-    volatile bool polling {false};
-    int numEvents {0};
-    int eventIterator {0};
-    QMap<TEpollSocket *, int> pollingSockets;
-    TQueue<TSendData *> sendRequests;
+    int _epollFd {0};
+    int _listenSocket {0};
+    struct epoll_event *_events {nullptr};
+    volatile bool _polling {false};
+    int _numEvents {0};
+    int _eventIterator {0};
+    TQueue<TSendData *> _sendRequests;
 
     TEpoll();
     T_DISABLE_COPY(TEpoll)
     T_DISABLE_MOVE(TEpoll);
 };
-

@@ -143,10 +143,9 @@ void TAccessValidator::addRules(int type, const QString &key, const QStringList 
   Returns true if the user \a user is allowed to access to the requested
   action; otherwise returns false.
 */
-bool TAccessValidator::validate(const TAbstractUser *user) const
+bool TAccessValidator::validate(const TAbstractUser *user, const TActionController *controller) const
 {
     bool ret = allowDefault;
-    const TActionController *controller = Tf::constCurrentContext()->currentController();
     Q_ASSERT(controller);
 
     if (accessRules.isEmpty()) {

@@ -120,10 +120,7 @@ make distclean
 
 # CMake Build
 cmake --version
-mkdir build
-cd build
-cmake ..
-cd ..
+cmake -S . -B build
 make -j4 -C build
 make -C build || exit
 cd $APPROOT

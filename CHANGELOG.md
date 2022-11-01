@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2.5.0
+ - Implemented flushResponse() function to continue the process after sending a response.
+ - Updated glog to v0.6.0
+ - Performance improvement for redis client.
+ - Implemented memcached client. [Experimental]
+ - Implemented a cache-store for memcached, TCacheMemcachedStore class.
+
 ## 2.4.0
  - Implemented memory store for cache.
  - Updated Mongo C driver to v1.21.2.

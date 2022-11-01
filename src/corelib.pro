@@ -260,6 +260,8 @@ HEADERS += tkvsdriver.h
 SOURCES += tkvsdriver.cpp
 HEADERS += tredisdriver.h
 SOURCES += tredisdriver.cpp
+HEADERS += tmemcacheddriver.h
+SOURCES += tmemcacheddriver.cpp
 HEADERS += tredis.h
 SOURCES += tredis.cpp
 HEADERS += tfileaiologger.h
@@ -340,9 +342,13 @@ HEADERS += tcachememorystore.h
 SOURCES += tcachememorystore.cpp
 HEADERS += tcacheredisstore.h
 SOURCES += tcacheredisstore.cpp
+HEADERS += tcachememcachedstore.h
+SOURCES += tcachememcachedstore.cpp
 SOURCES += tactioncontroller_qt5.cpp
 HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
+HEADERS += tmemcached.h
+SOURCES += tmemcached.cpp
 
 HEADERS += \
            tfnamespace.h \
@@ -367,7 +373,8 @@ windows {
   SOURCES += tapplicationserverbase_win.cpp
   SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
-  SOURCES += tredisdriver_win.cpp
+  SOURCES += tredisdriver_qt.cpp
+  SOURCES += tmemcacheddriver_qt.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
 }
 unix {
@@ -375,7 +382,6 @@ unix {
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
-  SOURCES += tredisdriver_unix.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h
@@ -390,12 +396,18 @@ linux-* {
   SOURCES += tepollhttpsocket.cpp
   HEADERS += tepollwebsocket.h
   SOURCES += tepollwebsocket.cpp
+  HEADERS += ttcpsocket.h
+  SOURCES += ttcpsocket.cpp
   SOURCES += tprocessinfo_linux.cpp
   SOURCES += tthreadapplicationserver_linux.cpp
+  SOURCES += tredisdriver_linux.cpp
+  SOURCES += tmemcacheddriver_linux.cpp
 }
 macx {
   SOURCES += tprocessinfo_macx.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tredisdriver_qt.cpp
+  SOURCES += tmemcacheddriver_qt.cpp
 }
 freebsd {
   SOURCES += tprocessinfo_freebsd.cpp
@@ -420,11 +432,11 @@ windows {
     macx {
       # Homebrew
       INCLUDEPATH += /usr/local/include/libmongoc-1.0 /usr/local/include/libbson-1.0
-      LIBS += -L/usr/local/lib
+      LIBS += -L/usr/local/lib -lmongoc-1.0 -lbson-1.0
     } else {
       INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
+      LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
     }
-    LIBS += -lmongoc-1.0 -lbson-1.0
   }
 }
 

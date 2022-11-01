@@ -117,7 +117,7 @@ static bool isCommentPosition(const QString &content, int pos)
   Constructor.
  */
 TJSLoader::TJSLoader(const QString &moduleName, AltJS alt) :
-    module(moduleName), altJs(alt), member(), searchPaths(defaultPaths)
+    _module(moduleName), _altJs(alt), _member(), _searchPaths(defaultPaths)
 {
 }
 
@@ -125,7 +125,7 @@ TJSLoader::TJSLoader(const QString &moduleName, AltJS alt) :
   Constructor.
  */
 TJSLoader::TJSLoader(const QString &defaultMember, const QString &moduleName, AltJS alt) :
-    module(moduleName), altJs(alt), member(defaultMember), searchPaths(defaultPaths)
+    _module(moduleName), _altJs(alt), _member(defaultMember), _searchPaths(defaultPaths)
 {
 }
 
@@ -136,12 +136,12 @@ TJSLoader::TJSLoader(const QString &defaultMember, const QString &moduleName, Al
 */
 TJSModule *TJSLoader::load(bool reload)
 {
-    if (module.isEmpty()) {
+    if (_module.isEmpty()) {
         return nullptr;
     }
 
     QMutexLocker lock(&gMutex);
-    QString key = member + QLatin1Char(';') + module;
+    QString key = _member + QLatin1Char(';') + _module;
     TJSModule *context = jsContexts.value(key);
 
     if (reload && context) {
@@ -152,14 +152,19 @@ TJSModule *TJSLoader::load(bool reload)
 
     if (!context) {
         context = new TJSModule();
+        QJSValue res;
 
-        for (auto &p : (const QList<QPair<QString, QString>> &)importFiles) {
+        for (auto &p : (const QList<QPair<QString, QString>> &)_importFiles) {
             // Imports as JavaScript
-            TJSLoader(p.first, p.second, Default).importTo(context, false);
+            res = TJSLoader(p.first, p.second, Default).importTo(context, false);
+             if (res.isError() || res.isNull()) {
+                context->deleteLater();
+                return nullptr;
+             }
         }
 
-        QJSValue res = importTo(context, true);
-        if (res.isError()) {
+        res = importTo(context, true);
+        if (res.isError() || res.isNull()) {
             context->deleteLater();
             context = nullptr;
         } else {
@@ -174,7 +179,7 @@ QString TJSLoader::search(const QString &moduleName, AltJS alt) const
 {
     QString filePath;
 
-    for (const auto &spath : searchPaths) {
+    for (const auto &spath : _searchPaths) {
         QString p = spath.trimmed();
         if (p.isEmpty()) {
             continue;
@@ -221,9 +226,9 @@ QString TJSLoader::absolutePath(const QString &moduleName, const QDir &dir, AltJ
     const QString suffix = QChar('.') + suffixMap()->value(alt);
 
     if (fi.isAbsolute()) {
-        filePath = (fi.suffix().toLower() == suffixMap()->value(altJs)) ? moduleName : (moduleName + suffix);
+        filePath = (fi.suffix().toLower() == suffixMap()->value(_altJs)) ? moduleName : (moduleName + suffix);
     } else if (moduleName.startsWith("./")) {
-        QString mod = (fi.suffix().toLower() == suffixMap()->value(altJs)) ? moduleName : (moduleName + suffix);
+        QString mod = (fi.suffix().toLower() == suffixMap()->value(_altJs)) ? moduleName : (moduleName + suffix);
         filePath = dir.absoluteFilePath(mod);
     } else if (dir.exists(moduleName + suffix)) {
         filePath = dir.absoluteFilePath(moduleName + suffix);
@@ -248,34 +253,36 @@ void TJSLoader::import(const QString &moduleName)
 
 void TJSLoader::import(const QString &defaultMember, const QString &moduleName)
 {
-    for (auto &p : (const QList<QPair<QString, QString>> &)importFiles) {
+    for (auto &p : (const QList<QPair<QString, QString>> &)_importFiles) {
         if (p.first == defaultMember && p.second == moduleName) {
             return;
         }
     }
-    importFiles << qMakePair(defaultMember, moduleName);
+    _importFiles << qMakePair(defaultMember, moduleName);
 }
 
 
 QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 {
-    if (!context) {
-        return false;
-    }
-
-    QJSValue ret;
+    QJSValue ret(QJSValue::NullValue);
     QString program;
     QString filePath;
 
-    if (member.isEmpty()) {
+    if (!context) {
+        tSystemError("TJSLoader value error  [%s:%d]", __FILE__, __LINE__);
+        return ret;
+    }
+
+    if (_member.isEmpty()) {
         // loads module
-        filePath = search(module, altJs);
+        filePath = search(_module, _altJs);
         if (filePath.isEmpty()) {
-            return false;
+            tSystemError("TJSLoader: Module not found: %s", qUtf8Printable(_module));
+            return ret;
         }
 
         program = read(filePath);
-        if (altJs == Jsx) {
+        if (_altJs == Jsx) {
             // Compiles JSX
             program = compileJsx(program);
         }
@@ -283,22 +290,24 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 
     } else {
         // requires module
-        program = QString("var %1 = require('%2');").arg(member).arg(module);
+        program = QString("var %1 = require('%2');").arg(_member).arg(_module);
         replaceRequire(context, program, QDir("."));
-        filePath = absolutePath(module, QDir("."), altJs);
+        filePath = absolutePath(_module, QDir("."), _altJs);
     }
 
     if (program.isEmpty()) {
-        return false;
+        return ret;
     }
 
-    ret = context->evaluate(program, module);
-    if (!ret.isError()) {
-        tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(module));
+    ret = context->evaluate(program, _module);
+    if (ret.isError()) {
+        tSystemError("TJSLoader evaluation: Uncaught exception at line %d : %s", ret.property("lineNumber").toInt(), qUtf8Printable(ret.toString()));
+    } else {
+        tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(_module));
 
         if (isMain) {
-            context->moduleFilePath = filePath;
-            tSystemDebug("TJSLoader Module path: %s", qUtf8Printable(context->moduleFilePath));
+            context->_modulePath = filePath;
+            tSystemDebug("TJSLoader Module path: %s", qUtf8Printable(context->_modulePath));
         }
     }
     return ret;
@@ -315,15 +324,15 @@ TJSInstance TJSLoader::loadAsConstructor(const QJSValue &arg) const
 TJSInstance TJSLoader::loadAsConstructor(const QJSValueList &args) const
 {
     QMutexLocker lock(&gMutex);
-    QString constructorName = (member.isEmpty()) ? QLatin1String("_TF_") + QFileInfo(module).baseName().replace(QChar('-'), QChar('_')) : member;
-    auto *ctx = TJSLoader(constructorName, module).load();
+    QString constructorName = (_member.isEmpty()) ? QLatin1String("_TF_") + QFileInfo(_module).baseName().replace(QChar('-'), QChar('_')) : _member;
+    auto *ctx = TJSLoader(constructorName, _module).load();
     return (ctx) ? ctx->callAsConstructor(constructorName, args) : TJSInstance();
 }
 
 
 void TJSLoader::setSearchPaths(const QStringList &paths)
 {
-    searchPaths = paths + searchPaths;
+    _searchPaths = paths + _searchPaths;
 }
 
 
@@ -375,7 +384,7 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
         if (!module.isEmpty() && !filePath.isEmpty()) {
             // Check if it's loaded file
-            varName = context->loadedFiles.value(filePath);
+            varName = context->_loadedFiles.value(filePath);
 
             if (varName.isEmpty()) {
                 auto require = read(filePath);
@@ -395,7 +404,7 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
                 } else {
                     tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(module));
                     // Inserts the loaded file path
-                    context->loadedFiles.insert(filePath, varName);
+                    context->_loadedFiles.insert(filePath, varName);
                 }
             }
 

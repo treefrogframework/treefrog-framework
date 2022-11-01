@@ -14,7 +14,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -32,6 +32,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -52,7 +57,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -70,6 +75,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -90,7 +100,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends gcc g++ clang make cmake qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev
+        sudo apt install -y --no-install-recommends pkg-config qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
         qmake -v
@@ -106,6 +116,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: apt for test
+      run: |
+        sudo apt install -y --no-install-recommends redis-server memcached
+        sudo service redis-server start
+        sudo service memcached start
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
@@ -156,6 +171,11 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: Homebrew for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh

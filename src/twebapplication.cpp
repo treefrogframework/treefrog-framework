@@ -176,6 +176,19 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         }
     }
 
+    // Memcached settings
+    QString memcachedini = Tf::appSettings()->value(Tf::MemcachedSettingsFile).toString().trimmed();
+    if (!memcachedini.isEmpty()) {
+        QString memcachedinipath = configPath() + memcachedini;
+        if (QFile(memcachedinipath).exists()) {
+            QSettings settings(memcachedinipath, QSettings::IniFormat);
+#if QT_VERSION < 0x060000
+            settings.setIniCodec(_codecInternal);
+#endif
+            _kvsSettings[(int)Tf::KvsEngine::Memcached] = Tf::settingsToMap(settings, _dbEnvironment);
+        }
+    }
+
     // Cache settings
     if (cacheEnabled()) {
         auto backend = cacheBackend();
@@ -380,25 +393,24 @@ QString TWebApplication::validationErrorMessage(int rule) const
 */
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
-    if (_mpm == Invalid) {
+    static TWebApplication::MultiProcessingModule module = []() {
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
-            _mpm = Thread;
+            return Thread;
         } else if (str == "epoll") {
 #ifdef Q_OS_LINUX
-            _mpm = Epoll;
+            return Epoll;
 #else
             tSystemWarn("Unsupported MPM: epoll  (Linux only)");
             tWarn("Unsupported MPM: epoll  (Linux only)");
-            _mpm = Thread;
+            return Thread;
 #endif
-        } else {
-            tSystemWarn("Unsupported MPM: %s", qUtf8Printable(str));
-            tWarn("Unsupported MPM: %s", qUtf8Printable(str));
-            _mpm = Thread;
         }
-    }
-    return _mpm;
+        tSystemWarn("Unsupported MPM: %s", qUtf8Printable(str));
+        tWarn("Unsupported MPM: %s", qUtf8Printable(str));
+        return Thread;
+    }();
+    return module;
 }
 
 /*!
@@ -518,7 +530,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 }
 
 
-QThread *TWebApplication::databaseContextMainThread() const
+static TDatabaseContextThread *databaseContextMain()
 {
     static TDatabaseContextMainThread *databaseThread = []() {
         auto *thread = new TDatabaseContextMainThread;
@@ -526,6 +538,18 @@ QThread *TWebApplication::databaseContextMainThread() const
         return thread;
     }();
     return databaseThread;
+}
+
+
+QThread *TWebApplication::databaseContextMainThread() const
+{
+    return databaseContextMain();
+}
+
+
+TDatabaseContext *TWebApplication::mainDatabaseContext() const
+{
+    return databaseContextMain();
 }
 
 

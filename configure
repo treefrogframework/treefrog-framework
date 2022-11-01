@@ -155,7 +155,8 @@ fi
 # search qmake command
 if [ -z "$QMAKE" ]; then
   which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
-  which qmake     >/dev/null 2>&1 && QMAKE=qmake
+  which qmake6    >/dev/null 2>&1 && QMAKE=qmake6
+  [ -z "$QMAKE" ] && which qmake >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then
     echo "qmake: command not found"
@@ -174,10 +175,20 @@ cd "$BASEDIR/src"
 rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_SHARED_MONGOC
+RET=$?
+if [ $RET != 0 ]; then
+  echo "qmake failed"
+  exit $RET
+fi
 cd "$BASEDIR/tools"
 rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
 $QMAKE -recursive $OPT target.path=\"$BINDIR\" header.path=\"$INCLUDEDIR\" datadir=\"$DATADIR\" lib.path=\"$LIBDIR\"
+RET=$?
+if [ $RET != 0 ]; then
+  echo "qmake failed"
+  exit $RET
+fi
 make qmake
 
 # compile MongoDB files
@@ -185,7 +196,7 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   echo
   echo -n "Compiling MongoDB driver library ... "
   cd "$BASEDIR/3rdparty/mongo-driver"
-  cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" . >/dev/null 2>&1
+  cmake -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" >/dev/null 2>&1
   make clean >/dev/null 2>&1
   make -j${NPROC} mongoc_static >/dev/null 2>&1
   RET=$?
@@ -212,6 +223,22 @@ if [ $RET != 0 ]; then
 fi
 echo "OK"
 
+# compile glog
+cd "$BASEDIR/3rdparty/glog"
+echo
+echo -n "Compiling glog ... "
+rm -rf build
+cmake -S . -B build -G "Unix Makefiles" >/dev/null 2>&1
+make -j${NPROC} -C build >/dev/null 2>&1
+RET=$?
+if [ $RET != 0 ]; then
+  echo "failed"
+  echo "glog not available."
+  exit $RET
+fi
+echo "OK"
+
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
 echo "Next, run \"make\" and \"sudo make install\" in tools directory."
+
