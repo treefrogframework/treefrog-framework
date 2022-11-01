@@ -82,62 +82,40 @@ if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
 )
 
 :: vcvarsall.bat setup
-if /i "%Platform%" == "x64" (
-  set VCVARSOPT=amd64
-  set BUILDTARGET=x64
-  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-) else (
-  set VCVARSOPT=x86
-  set BUILDTARGET=win32
-  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
-)
-
 devenv /? | find "Visual Studio 2022" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2022
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 17 2022" -A x64
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 17 2022" -A Win32
-  )
-  goto :step2
+  set CMAKEOPT=-G"Visual Studio 17 2022"
+  goto :step1
 )
 
 devenv /? | find "Visual Studio 2019" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2019
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 16 2019" -A x64
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 16 2019" -A Win32
-  )
-  goto :step2
+  set CMAKEOPT=-G"Visual Studio 16 2019"
+  goto :step1
 )
 
 devenv /? | find "Visual Studio 2017" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2017
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 15 2017"
-  )
-  goto :step2
+  set CMAKEOPT=-G"Visual Studio 15 2017"
+  goto :step1
 )
 
-devenv /? | find "Visual Studio 2015" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2015
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 14 2015 Win64"
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 14 2015"
-  )
-  goto :step2
+:step1
+if /i "%Platform%" == "x64" (
+  set VCVARSOPT=amd64
+  set BUILDTARGET=x64
+  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  set CMAKEOPT=%CMAKEOPT% -A x64
+) else (
+  set VCVARSOPT=x86
+  set BUILDTARGET=win32
+  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+  set CMAKEOPT=%CMAKEOPT% -A Win32
 )
 
-
-:step2
 SET /P X="%ENVSTR%"<NUL
 qtpaths.exe --qt-version
 
