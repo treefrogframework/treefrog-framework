@@ -13,7 +13,7 @@ TreeFrog Installer for Qt 6 has been released. If installing it, the development
 
 | Version                           | File                                   |
 |-------------------------------------|--------------------------------------|
-| 2.4.0 for Visual Studio 2019 (Qt 6.3 or 6.2)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.4.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.4.0/treefrog-2.4.0-msvc_64-setup.exe) |
+| 2.5.0 for Visual Studio 2019 (Qt 6.4 or 6.3)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.5.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.5.0/treefrog-2.5.0-msvc_64-setup.exe) |
 
 </div>
 
@@ -25,7 +25,7 @@ The source code packages of TreeFrog Framework are available.
 
 | Source         | File                             |
 |----------------|----------------------------------|
-| version 2.4.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.4.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.4.0.tar.gz) |
+| version 2.5.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.5.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.5.0.tar.gz) |
 
  </div>
 
