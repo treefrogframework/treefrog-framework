@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         tzdata \
         coreutils \
+        pkg-config \
         qmake6 \
         qt6-base-dev \
         qt6-base-dev-tools \
