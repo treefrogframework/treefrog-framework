@@ -4,7 +4,7 @@
 set VERSION=2.5.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.21.2
-set LZ4_VERSION=1.9.3
+set LZ4_VERSION=1.9.4
 set GLOG_VERSION=0.6.0
 set BASEDIR=%~dp0
 set CL=/MP
@@ -85,35 +85,30 @@ if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
 devenv /? | find "Visual Studio 2022" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2022
-  set CMAKEOPT=-G"Visual Studio 17 2022"
   goto :step1
 )
 
 devenv /? | find "Visual Studio 2019" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2019
-  set CMAKEOPT=-G"Visual Studio 16 2019"
   goto :step1
 )
 
 devenv /? | find "Visual Studio 2017" >NUL
 if not ERRORLEVEL 1 (
   set VSVER=2017
-  set CMAKEOPT=-G"Visual Studio 15 2017"
   goto :step1
 )
 
 :step1
 if /i "%Platform%" == "x64" (
   set VCVARSOPT=amd64
-  set BUILDTARGET=x64
   set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-  set CMAKEOPT=%CMAKEOPT% -A x64
+  set CMAKEOPT=-A x64
 ) else (
   set VCVARSOPT=x86
-  set BUILDTARGET=win32
   set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
-  set CMAKEOPT=%CMAKEOPT% -A Win32
+  set CMAKEOPT=-A Win32
 )
 
 SET /P X="%ENVSTR%"<NUL
@@ -188,18 +183,14 @@ cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
-if not ERRORLEVEL 1 (
-  set VS=VS2015
-) else (
-  set VS=VS2017
-)
-set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
-echo %DEVENVCMD%
-%DEVENVCMD% >nul 2>&1
+del /f /q lz4\build\cmake\build >nul 2>&1
+cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
+set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %DEVENVCMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo LZ4 not available.
