@@ -82,33 +82,14 @@ if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
 )
 
 :: vcvarsall.bat setup
-devenv /? | find "Visual Studio 2022" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2022
-  goto :step1
-)
-
-devenv /? | find "Visual Studio 2019" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2019
-  goto :step1
-)
-
-devenv /? | find "Visual Studio 2017" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2017
-  goto :step1
-)
-
-:step1
 if /i "%Platform%" == "x64" (
   set VCVARSOPT=amd64
-  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
   set CMAKEOPT=-A x64
+  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
 ) else (
   set VCVARSOPT=x86
-  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
   set CMAKEOPT=-A Win32
+  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
 )
 
 SET /P X="%ENVSTR%"<NUL
@@ -123,19 +104,21 @@ echo ::>> %TFENV%
 echo;>> %TFENV%
 echo set TFDIR=%TFDIR%>> %TFENV%
 echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
-echo set QTENV="%QTENV%">> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
+echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=%VSVER%>> %TFENV%
+echo set VSVER=2022 2019 2017>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
 echo if exist %%VSWHERE%% ^(>> %TFENV%
-echo   for /f "usebackq tokens=*" %%%%i in ^(`%%VSWHERE%% -find  **\vcvarsall.bat`^) do ^(>> %TFENV%
-echo     echo %%%%i ^| find "%%VSVER%%" ^>NUL>> %TFENV%
-echo     if not ERRORLEVEL 1 ^(>> %TFENV%
-echo       set VCVARSBAT="%%%%i">> %TFENV%
-echo       goto :break>> %TFENV%
+echo   for %%%%v in (%%VSVER%%) do (>> %TFENV%
+echo     for /f "usebackq tokens=*" %%%%i in ^(`%%VSWHERE%% -find **\vcvarsall.bat`^) do ^(>> %TFENV%
+echo       echo %%%%i ^| find "%%%%v" ^>NUL>> %TFENV%
+echo       if not ERRORLEVEL 1 ^(>> %TFENV%
+echo         set VCVARSBAT="%%%%i">> %TFENV%
+echo         goto :break>> %TFENV%
+echo       ^)>> %TFENV%
 echo     ^)>> %TFENV%
 echo   ^)>> %TFENV%
 echo ^)>> %TFENV%
@@ -144,6 +127,10 @@ echo if exist %%VCVARSBAT%% ^(>> %TFENV%
 echo   echo Setting up environment for MSVC usage...>> %TFENV%
 echo   call %%VCVARSBAT%% %VCVARSOPT%>> %TFENV%
 echo ^)>> %TFENV%
+echo set QTENV=>> %TFENV%
+echo set VCVARSBAT=>> %TFENV%
+echo set VSVER=>> %TFENV%
+echo set VSWHERE=>> %TFENV%
 echo set PATH=%%TFDIR^%%\bin;%%PATH%%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
