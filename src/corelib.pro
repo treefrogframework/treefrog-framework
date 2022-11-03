@@ -66,7 +66,6 @@ windows {
   INSTALLS += header script test
 } else:unix {
   LIBS += ../3rdparty/lz4/lib/liblz4.a
-  QMAKE_CXXFLAGS -= -fPIC
   macx:QMAKE_SONAME_PREFIX=@rpath
 
   header.files = $$HEADER_FILES $$HEADER_CLASSES

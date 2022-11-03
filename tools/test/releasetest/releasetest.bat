@@ -142,6 +142,8 @@ exit /B 0
 ::
 :CheckWebApp
 cd /D %APPDIR%
+"%1" -v
+"%1" -l
 "%1" --show-routes
 if ERRORLEVEL 1 (
   echo App Error!
