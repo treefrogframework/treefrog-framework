@@ -119,14 +119,14 @@ QByteArray createMethodString(const QString &controllerName, const QMetaMethod &
 }
 
 
-void showRoutes()
+int showRoutes()
 {
     static QStringList excludes = {"applicationcontroller", "directcontroller"};
 
     bool res = TApplicationServerBase::loadLibraries();
     if (!res) {
         std::printf("Cannot load library. Check the log file for more information.\n");
-        return;
+        return 1;
     }
 
     auto routes = TUrlRoute::instance().allRoutes();
@@ -179,6 +179,7 @@ void showRoutes()
             }
         }
     }
+    return 0;
 }
 
 }
@@ -258,8 +259,7 @@ int main(int argc, char *argv[])
     }
 
     if (showRoutesOption) {
-        showRoutes();
-        ret = 0;
+        ret = showRoutes();
         goto end;
     }
 

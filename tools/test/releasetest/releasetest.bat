@@ -154,6 +154,7 @@ echo;
 "%1" --settings
 if ERRORLEVEL 1 (
   echo App Error!
+  type log\treefrog.log
   exit /B 1
 )
 echo;
