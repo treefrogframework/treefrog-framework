@@ -4,7 +4,7 @@ SUBDIRS  = htmlescape httpheader hmac htmlparser
 SUBDIRS += mailmessage multipartformdata  smtpmailer viewhelper paginator
 SUBDIRS += fieldnametovariablename rand urlrouter urlrouter2
 SUBDIRS += sharedmemorylogstream buildtest stack queue forlist
-SUBDIRS += jscontext compression sqlitedb url
+SUBDIRS += jscontext compression sqlitedb url malloc
 
 unix {
   SUBDIRS += redis memcached

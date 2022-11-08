@@ -349,6 +349,8 @@ HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
 HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
+HEADERS += tmalloc.h
+SOURCES += tmalloc.cpp
 
 HEADERS += \
            tfnamespace.h \
