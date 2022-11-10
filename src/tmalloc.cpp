@@ -5,32 +5,106 @@
 #include "tmalloc.h"
 #include <cstring>
 #include <cstdio>
+#include <mutex>
 #include <errno.h>
 
-static caddr_t program_break_start = nullptr;
-static caddr_t program_break_end = nullptr;
-static caddr_t current_break = nullptr;
+struct header_t;
+
+
+static uint64_t pb_offset;
+
+// Allocation table
+struct alloc_table {
+    void *stk_head {nullptr};
+    void *stk_tail {nullptr};
+
+    header_t *head() { return stk_head ? (header_t *)((caddr_t)stk_head + pb_offset) : nullptr; }
+    header_t *tail() { return stk_tail ? (header_t *)((caddr_t)stk_tail + pb_offset) : nullptr; }
+    void set_head(header_t *p)
+    {
+        if (p) {
+            stk_head = (caddr_t)p - pb_offset;
+        } else {
+            stk_head = nullptr;
+        }
+    }
+    void set_tail(header_t *p) {
+        if (p) {
+            stk_tail = (caddr_t)p - pb_offset;
+        } else {
+            stk_tail = nullptr;
+        }
+    }
+};
+
+// Program break header
+struct program_break_header_t {
+    caddr_t start {nullptr};
+    caddr_t end {nullptr};
+    caddr_t current {nullptr};
+    uint64_t checksum {0};
+    struct alloc_table at;
+
+    caddr_t start_ptr() { return start + pb_offset; }
+    caddr_t end_ptr() { return end + pb_offset; }
+    caddr_t current_ptr() { return current + pb_offset; }
+};
+
+const program_break_header_t INIT_PB_HEADER;
+static program_break_header_t *pb_header;
 
 // Initiaize memory space
 void Tf::initbrk(void *addr, uint size)
 {
-	if (!program_break_start) {
-		program_break_start = current_break = (caddr_t)addr;
-		program_break_end = (caddr_t)program_break_start + size;
-	}
+    if (pb_header) {
+        return;
+    }
+
+    pb_header = (program_break_header_t *)addr;
+
+    printf("addr = %p\n", addr);
+    printf("checksum = %ld\n", pb_header->checksum);
+
+    // Checks checksum
+    uint64_t ck = (uint64_t)pb_header->start_ptr() + (uint64_t)pb_header->end_ptr();
+	if (pb_header->checksum == ck && ck > 0) {
+        // Already exists
+        caddr_t orig_pb = pb_header->start_ptr() - sizeof(program_break_header_t);
+        pb_offset = (uint64_t)addr - (uint64_t)orig_pb;
+        memdump();
+        // printf("--------------------------- Already exists. this addr:%ld  offset:%ld\n", addr, pb_offset);
+        // printf("--------------------------- start:   %ld\n", pb_header->start_ptr());
+        // printf("--------------------------- end:     %ld\n", pb_header->end_ptr());
+        // printf("--------------------------- current: %ld\n", pb_header->current_ptr());
+    } else {
+        // new mmap
+        memcpy(addr, &INIT_PB_HEADER, sizeof(program_break_header_t));
+        pb_header->start = pb_header->current = (caddr_t)addr + sizeof(program_break_header_t);
+        pb_header->end = (caddr_t)pb_header->start + size - sizeof(program_break_header_t);
+        pb_header->checksum = (uint64_t)pb_header->start + (uint64_t)pb_header->end;
+        // printf("---------------------==--- start:   %ld\n", pb_header->start_ptr());
+        // printf("---------------------==--- end:     %ld\n", pb_header->end_ptr());
+        // printf("---------------------==--- current: %ld\n", pb_header->current_ptr());
+    }
 }
 
 // Changed the location of the program break
-static caddr_t sbrk(int inc) {
-  if (!current_break || (inc > 0 && current_break + inc > program_break_end)
-    || (inc < 0 && current_break + inc < program_break_start)) {
-    errno = ENOMEM;
-    return nullptr;
-  }
+static caddr_t sbrk(int inc)
+{
+    if (!pb_header) {
+        errno = ENOMEM;
+        return nullptr;
+    }
 
-  caddr_t prev_break = current_break;
-  current_break += inc;
-  return prev_break;
+    if (!pb_header->current_ptr() || (inc > 0 && pb_header->current_ptr() + inc > pb_header->end_ptr())
+    || (inc < 0 && pb_header->current_ptr() + inc < pb_header->start_ptr())) {
+        errno = ENOMEM;
+        return nullptr;
+    }
+
+    caddr_t prev_break = pb_header->current_ptr();
+    pb_header->current += inc;
+    return prev_break;
 }
 
 
@@ -38,6 +112,7 @@ static caddr_t sbrk(int inc) {
 //--- Allocator
 //
 constexpr ushort CHECKDIGITS = 0x8CEF;
+
 
 struct header_t {
     ushort rsv {CHECKDIGITS};
@@ -48,14 +123,15 @@ struct header_t {
 };
 
 const header_t INIT_HEADER;
-static header_t *stk_head = nullptr;
-static header_t *stk_tail = nullptr;
-
+// static header_t *stk_head = nullptr;
+// static header_t *stk_tail = nullptr;
+inline header_t *stk_head() { return pb_header->at.head(); }
+inline header_t *stk_tail() { return pb_header->at.tail(); }
 
 static header_t *free_block(uint size)
 {
     header_t *p = nullptr;
-	header_t *cur = stk_head;
+	header_t *cur = stk_head();
 
 	while (cur) {
 		/* see if there's a free block that can accomodate requested size */
@@ -77,7 +153,7 @@ static header_t *free_block(uint size)
 void Tf::tfree(void *ptr)
 {
     while (ptr) {
-        if (ptr < program_break_start || ptr >= program_break_end) {
+        if (ptr < pb_header->start_ptr() || ptr >= pb_header->end_ptr()) {
             errno = ENOMEM;
             return;
         }
@@ -98,16 +174,19 @@ void Tf::tfree(void *ptr)
         */
         header->freed = 1;
 
-        if (header != stk_tail) {
+        if (header != stk_tail()) {
             break;
         }
 
         // header of last block
-        header_t *prev = stk_tail = header->prev;
+        header_t *prev = header->prev;
+        pb_header->at.set_tail(prev);
+
         if (prev) {
             prev->next = nullptr;
         } else {
-            stk_head = nullptr;
+            //stk_head = nullptr;
+            pb_header->at.set_head(nullptr);
         }
 
         /*
@@ -152,16 +231,18 @@ void *Tf::tmalloc(uint size)
 	header = (header_t *)block;
     memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
 	header->size = size;
-	header->prev = stk_tail;
+	header->prev = stk_tail();
 
-	if (!stk_head) {  // stack empty
-		stk_head = header;
+	if (!stk_head()) {  // stack empty
+		//stk_head = header;
+        pb_header->at.set_head(header);
 	}
 
-	if (stk_tail) {
-		stk_tail->next = header;
+	if (stk_tail()) {
+		stk_tail()->next = header;
 	}
-	stk_tail = header;
+	//stk_tail = header;
+    pb_header->at.set_tail(header);
 	return (void *)(header + 1);
 }
 
@@ -220,7 +301,7 @@ void *Tf::trealloc(void *ptr, uint size)
 // Debug function to print the entire link list
 void Tf::memdump()
 {
-	header_t *cur = stk_head;
+	header_t *cur = stk_head();
 
     std::printf("-- memory block infomarion --\n");
 	while (cur) {
@@ -228,14 +309,14 @@ void Tf::memdump()
 			(void *)cur, cur->size, cur->freed, cur->next, cur->prev);
 		cur = cur->next;
 	}
-	std::printf("head = %p, tail = %p, blocks = %d\n", (void *)stk_head, (void *)stk_tail, Tf::nblocks());
+	std::printf("head = %p, tail = %p, blocks = %d\n", (void *)stk_head(), (void *)stk_tail, Tf::nblocks());
 }
 
 
 int Tf::nblocks()
 {
     int counter = 0;
-    header_t *cur = stk_head;
+    header_t *cur = stk_head();
 
 	while (cur) {
         counter++;
