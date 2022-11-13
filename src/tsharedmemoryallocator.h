@@ -1,23 +1,24 @@
 #include "tmalloc.h"
+#include "tshm.h"
+#include <QString>
+#include <memory>
 
 
-namespace Tf {
-void initializeSharedMemory(size_t size);
-//void syncSharedMemory();
-}
 
 
-template <class T>
+template <typename T, const QString &path>
 class TSharedMemoryAllocator {
 public:
     using value_type = T;
-    //template <typename U> friend class TSharedMemoryAllocator;
+
+    //template <typename U>
+    //TSharedMemoryAllocator(const TSharedMemoryAllocator<U, path> &) {}
 
     // Constructor
-    explicit TSharedMemoryAllocator() { Tf::initializeSharedMemory(256 * 1024 * 1024); }
-
-    template <class U>
-    TSharedMemoryAllocator(const TSharedMemoryAllocator<U> &) {}
+    explicit TSharedMemoryAllocator() : _path(path)
+    {
+        //_ptr = Tf::create_shm(qPrintable(path), size, T());
+    }
 
     T *allocate(std::size_t n)
     {
@@ -30,15 +31,33 @@ public:
         Tf::tfree(p);
     }
 
-    // template <typename U>
-    // bool operator==(TSharedMemoryAllocator<U> const &) const
-    // {
-    //     return true;
-    // }
+    template <class U> struct rebind { using other = TSharedMemoryAllocator<U, path>; };
 
-    // template <typename U>
-    // bool operator!=(TSharedMemoryAllocator<U> const &) const
-    // {
-    //     return false;
-    // }
+    template <typename U>
+    bool operator==(TSharedMemoryAllocator<U, path> const &other) const
+    {
+        return typeid(T) == typeid(U) && _path == other._path;
+    }
+
+    template <typename U>
+    bool operator!=(TSharedMemoryAllocator<U, path> const &other) const
+    {
+        return typeid(T) != typeid(U) || _path != other._path;
+    }
+
+private:
+    QString _path;
 };
+
+
+namespace Tf {
+//void initializeSharedMemory(const QString &p, size_t size);
+
+template <typename Container>
+Container *createContainer(const QString &p, size_t maxSize)
+{
+    Tf::shmcreate(qPrintable(p), maxSize);
+    return nullptr;
+}
+
+}

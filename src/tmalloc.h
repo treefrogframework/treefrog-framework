@@ -3,11 +3,12 @@
 
 namespace Tf {
 
-void initbrk(void *start, uint size);
+void *setbrk(void *start, uint size, bool initial = false);
 void *tmalloc(uint size);
 void *tcalloc(uint num, uint nsize);
-void *trealloc(void *block, uint size);
-void tfree(void *block);
+void *trealloc(void *ptr, uint size);
+void tfree(void *ptr);
+uint allocsize(const void *ptr);
 
 // Internal use
 void memdump();  // For debug

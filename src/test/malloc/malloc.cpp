@@ -24,7 +24,7 @@ void TestMalloc::initTestCase()
 {
     constexpr int SIZE = 256 * 1024 * 1024;
     void *p = new char[SIZE];
-    Tf::initbrk(p, SIZE);
+    Tf::setbrk(p, SIZE, true);
     qDebug() << "init:" << p;
 }
 

@@ -351,8 +351,8 @@ HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
 HEADERS += tmalloc.h
 SOURCES += tmalloc.cpp
-HEADERS += tsharedmemoryallocator.h
-SOURCES += tsharedmemoryallocator.cpp
+HEADERS += tsharedmemoryhash.h
+SOURCES += tsharedmemoryhash.cpp
 
 HEADERS += \
            tfnamespace.h \
