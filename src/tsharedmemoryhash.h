@@ -19,15 +19,43 @@ public:
     void rehash();
 
 protected:
-    void *find(const QByteArray &key, Bucket &bucket) const;
+    int find(const QByteArray &key, Bucket &bucket) const;
+    int searchIndex(int first);
     uint index(const QByteArray &key) const;
     uint next(uint index) const;
 
 private:
     struct hash_header_t {
-        void **hashTable {nullptr};
+        uint hashtg {0};
         int tableSize {1024};
         int count {0};
+
+        uint64_t *hashg() { return (uint64_t *)((caddr_t)this + hashtg); }
+
+        void setHashg(void *p)
+        {
+            hashtg = (uint64_t)p - (uint64_t)this;
+        }
+
+        void *bucketPtr(int index)
+        {
+            if (index >= 0 && index < tableSize) {
+                uint64_t g = *(hashg() + index);
+                return (g && g != -1UL) ? (caddr_t)this + g : (void *)g;
+            } else {
+                Q_ASSERT(0);
+            }
+            return nullptr;
+        }
+
+        void setBucketPtr(int index, void *ptr)
+        {
+            if (index >= 0 && index < tableSize) {
+                *(hashg() + index) = (ptr && ptr != (void *)-1) ? (uint64_t)ptr - (uint64_t)this : (uint64_t)ptr;
+            } else {
+                Q_ASSERT(0);
+            }
+        }
     } *_h {nullptr};
 
     T_DISABLE_COPY(TSharedMemoryHash)

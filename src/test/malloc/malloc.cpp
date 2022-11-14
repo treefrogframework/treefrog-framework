@@ -1,5 +1,5 @@
 #include <TfTest/TfTest>
-#include "tmalloc.h"
+#include "tfmalloc.h"
 #include "tglobal.h"
 
 
@@ -31,70 +31,70 @@ void TestMalloc::initTestCase()
 
 void TestMalloc::testAlloc1()
 {
-    void *p1 = Tf::tmalloc(100);
+    void *p1 = Tf::smalloc(100);
     QVERIFY(p1);
 
-    Tf::tfree(p1);
+    Tf::sfree(p1);
     QCOMPARE(Tf::nblocks(), 0);
     Tf::memdump();
 }
 
 void TestMalloc::testAlloc2()
 {
-    void *p1 = Tf::tmalloc(100);
+    void *p1 = Tf::smalloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::tmalloc(200);
+    void *p2 = Tf::smalloc(200);
     QVERIFY(p2);
 
-    Tf::tfree(p2);
-    Tf::tfree(p1);
+    Tf::sfree(p2);
+    Tf::sfree(p1);
     QCOMPARE(Tf::nblocks(), 0);
     Tf::memdump();
 }
 
 void TestMalloc::testAlloc3()
 {
-    void *p1 = Tf::tmalloc(100);
+    void *p1 = Tf::smalloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::tmalloc(200);
+    void *p2 = Tf::smalloc(200);
     QVERIFY(p2);
 
-    Tf::tfree(p1);
+    Tf::sfree(p1);
     Tf::memdump();
-    Tf::tfree(p2);
+    Tf::sfree(p2);
     QCOMPARE(Tf::nblocks(), 0);
     Tf::memdump();
 }
 
 void TestMalloc::testAlloc4()
 {
-    void *p1 = Tf::tmalloc(100);
+    void *p1 = Tf::smalloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::tmalloc(200);
+    void *p2 = Tf::smalloc(200);
     QVERIFY(p2);
-    void *p3 = Tf::tmalloc(300);
+    void *p3 = Tf::smalloc(300);
     QVERIFY(p3);
 
-    Tf::tfree(p2);
-    Tf::tfree(p1);
+    Tf::sfree(p2);
+    Tf::sfree(p1);
     Tf::memdump();
-    Tf::tfree(p3);
+    Tf::sfree(p3);
     QCOMPARE(Tf::nblocks(), 0);
     Tf::memdump();
 }
 
 void TestMalloc::testAlloc5()
 {
-    void *p1 = Tf::tmalloc(100);
+    void *p1 = Tf::smalloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::tmalloc(200);
+    void *p2 = Tf::smalloc(200);
     QVERIFY(p2);
-    void *p3 = Tf::tmalloc(300);
+    void *p3 = Tf::smalloc(300);
     QVERIFY(p3);
 
-    Tf::tfree(p1);
-    Tf::tfree(p2);
-    Tf::tfree(p3);
+    Tf::sfree(p1);
+    Tf::sfree(p2);
+    Tf::sfree(p3);
     QCOMPARE(Tf::nblocks(), 0);
     Tf::memdump();
 }
@@ -102,20 +102,20 @@ void TestMalloc::testAlloc5()
 
 void TestMalloc::testReuse1()
 {
-    void *p1 = Tf::tmalloc(1000);
+    void *p1 = Tf::smalloc(1000);
     QVERIFY(p1);
-    void *p2 = Tf::tmalloc(200);
+    void *p2 = Tf::smalloc(200);
     QVERIFY(p2);
 
-    Tf::tfree(p1);
+    Tf::sfree(p1);
     QVERIFY(Tf::nblocks() > 0);
     Tf::memdump();
-    void *p3 = Tf::tmalloc(800);
+    void *p3 = Tf::smalloc(800);
     QCOMPARE(p1, p3);
     QCOMPARE(Tf::nblocks(), 2);
     Tf::memdump();
-    Tf::tfree(p3);
-    Tf::tfree(p2);
+    Tf::sfree(p3);
+    Tf::sfree(p2);
     QCOMPARE(Tf::nblocks(), 0);
 }
 
@@ -126,7 +126,7 @@ void TestMalloc::bench()
     void *ptr[NUM] = {nullptr};
 
     for (int i = 0; i < NUM / 2; i++) {
-        ptr[i * 2] = Tf::tmalloc(Tf::random(128, 1024));  // half & half
+        ptr[i * 2] = Tf::smalloc(Tf::random(128, 1024));  // half & half
         QVERIFY(ptr[i * 2]);
     }
 
@@ -134,10 +134,10 @@ void TestMalloc::bench()
         for (int i = 0; i < 10000; i++) {
             int d = Tf::random(0, NUM - 1);
             if (ptr[d]) {
-                Tf::tfree(ptr[d]);
+                Tf::sfree(ptr[d]);
                 ptr[d] = nullptr;
             } else {
-                ptr[d] = Tf::tmalloc(Tf::random(128, 1024));
+                ptr[d] = Tf::smalloc(Tf::random(128, 1024));
                 QVERIFY(ptr[d]);
             }
         }
@@ -146,7 +146,7 @@ void TestMalloc::bench()
     QVERIFY(Tf::nblocks() > 0);
     // cleanup
     for (int i = 0; i < NUM; i++) {
-        Tf::tfree(ptr[i]);
+        Tf::sfree(ptr[i]);
     }
     QCOMPARE(Tf::nblocks(), 0);
 }

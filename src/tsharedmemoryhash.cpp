@@ -1,6 +1,6 @@
 #include "tsharedmemoryhash.h"
 #include "tshm.h"
-#include "tmalloc.h"
+#include "tfmalloc.h"
 #include <QDataStream>
 
 #define FREE ((void *)-1)
@@ -14,13 +14,15 @@ struct Bucket {
     friend QDataStream &operator>>(QDataStream &ds, Bucket &bucket);
 };
 
-QDataStream &operator<<(QDataStream &ds, const Bucket &bucket)
+
+inline QDataStream &operator<<(QDataStream &ds, const Bucket &bucket)
 {
     ds << bucket.key << bucket.value;
     return ds;
 }
 
-QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
+
+inline QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
 {
     ds >> bucket.key >> bucket.value;
     return ds;
@@ -34,20 +36,16 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size)
     bool newmap;
     void *ptr = Tf::shmcreate(qUtf8Printable(name), size, &newmap);
     ptr = Tf::setbrk(ptr, size, newmap);
-    _h = (hash_header_t *)((caddr_t)ptr + 24);
-
-qDebug() << "hash_header_t *ptr:" << _h;
+    _h = (hash_header_t *)((caddr_t)ptr + sizeof(Tf::alloc_header_t));
+    qDebug() << "sizeof(Tf::alloc_header_t):" << sizeof(Tf::alloc_header_t);
 
     if (newmap) {
-        ptr = Tf::tmalloc(sizeof(INIT_HEADER));
-qDebug() << "tmalloc ptr:" << ptr;
-
+        ptr = Tf::smalloc(sizeof(INIT_HEADER));
         Q_ASSERT(ptr == _h);
         memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
-qDebug() << "_h->tableSize:" << _h->tableSize;
-        _h->hashTable = (void **)Tf::tcalloc(_h->tableSize, sizeof(void*));
+        ptr = Tf::scalloc(_h->tableSize, sizeof(int64_t));
+        _h->setHashg(ptr);
     }
-qDebug() << "---------------";
 }
 
 
@@ -58,7 +56,6 @@ void TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
     }
 
     uint idx = index(key);
-qDebug() << "--=====1"  << key << idx;
 
     QByteArray data;
     QDataStream ds(&data, QIODeviceBase::WriteOnly);
@@ -67,42 +64,37 @@ qDebug() << "--=====1"  << key << idx;
     Bucket bucket;
     QByteArray buf;
 
-qDebug() << "--=====2";
-
     for (;;) {
-qDebug() << "--=====3";
-        void **pbucket = _h->hashTable + idx;
-qDebug() << "--=====3.2" << pbucket << "*pbucket:" << *pbucket;
-        if (*pbucket && *pbucket != FREE) {
-qDebug() << "--=====4";
-
+        void *pbucket = _h->bucketPtr(idx);
+        if (pbucket && pbucket != FREE) {
             // checks key
-            int alcsize = Tf::allocsize(*pbucket);
+            int alcsize = Tf::allocsize(pbucket);
             if (alcsize <= 0) {
                 // error
                 Q_ASSERT(0);
-                break;
+                return;
             }
 
-            buf.setRawData((char *)*pbucket, alcsize);
+            buf.setRawData((char *)pbucket, alcsize);
             QDataStream dsb(buf);
-
             dsb >> bucket;
+
             if (bucket.key != key) {
-qDebug() << "--=====4.3";
                 idx = next(idx);
                 continue;
             }
+
+            Tf::sfree(pbucket);
+            (_h->count)--;
         }
 
-        *pbucket = Tf::tmalloc(data.size());
-        memcpy(*pbucket, data.data(), data.size());
-qDebug() << "--=====5   insert!!!!!!" << "*pbucket:" << *pbucket;
+        // Inserts data
+        pbucket = Tf::smalloc(data.size());
+        memcpy(pbucket, data.data(), data.size());
+        _h->setBucketPtr(idx, pbucket);
+        (_h->count)++;
         break;
     }
-
-    (_h->count)++;
-qDebug() << "--=====6";
 
     // Rehash
     if (loadFactor() > 0.8) {
@@ -111,83 +103,74 @@ qDebug() << "--=====6";
 }
 
 
-void *TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
+int TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
 {
     if (key.isEmpty()) {
-        return nullptr;
+        return -1;
     }
 
     uint idx = index(key);
-qDebug() << "find --### 0" << key << idx;
     QByteArray buf;
 
     for (;;) {
-qDebug() << "find --### 1";
-        void **pbucket = _h->hashTable + idx;
-qDebug() << "find --### 2";
-        if (!*pbucket) {
-qDebug() << "find --### 3";
+        void *pbucket = _h->bucketPtr(idx);
+        if (!pbucket) {
             break;
         }
 
-        if (*pbucket == FREE) {
-qDebug() << "find --### 4";
-            continue;
+        if (pbucket != FREE) {
+            int alcsize = Tf::allocsize(pbucket);
+            if (alcsize <= 0) {
+                Q_ASSERT(0);
+                break;
+            }
+
+            buf.setRawData((char *)pbucket, alcsize);
+            QDataStream ds(buf);
+            ds >> bucket;
+
+            if (bucket.key == key) {
+                // Found
+                return idx;
+            }
         }
-
-        int alcsize = Tf::allocsize(*pbucket);
-        if (alcsize <= 0) {
-qDebug() << "find --### 5";
-            break;
-        }
-
-qDebug() << "find --### 6";
-        buf.setRawData((char *)*pbucket, alcsize);
-        QDataStream ds(buf);
-        ds >> bucket;
-
-qDebug() << "find --### 6.5" << bucket.key;
-        if (bucket.key == key) {
-qDebug() << "find --### 7  found!!";
-            // Found
-            return *pbucket;
-        }
-
         idx = next(idx);
     }
-    return nullptr;
+    return -1;
 }
 
 
 QByteArray TSharedMemoryHash::value(const QByteArray &key, const QByteArray &defaultValue) const
 {
     Bucket bucket;
-    void *ptr = find(key, bucket);
-    return ptr ? bucket.value : defaultValue;
+    int idx = find(key, bucket);
+    return (idx >= 0) ? bucket.value : defaultValue;
 }
 
 
 QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defaultValue)
 {
     Bucket bucket;
-    void *ptr = find(key, bucket);
-    if (ptr) {
-        ptr = FREE;
+    int idx = find(key, bucket);
+    if (idx >= 0) {
+        Tf::sfree(_h->bucketPtr(idx));
+        _h->setBucketPtr(idx, FREE);
         (_h->count)--;
     }
-    return ptr ? bucket.value : defaultValue;
+    return (idx >= 0) ? bucket.value : defaultValue;
 }
 
 
 bool TSharedMemoryHash::remove(const QByteArray &key)
 {
     Bucket bucket;
-    void *ptr = find(key, bucket);
-    if (ptr) {
-        ptr = FREE;
+    int idx = find(key, bucket);
+    if (idx >= 0) {
+        Tf::sfree(_h->bucketPtr(idx));
+        _h->setBucketPtr(idx, FREE);
         (_h->count)--;
     }
-    return (bool)ptr;
+    return (idx >= 0);
 }
 
 
@@ -205,12 +188,13 @@ float TSharedMemoryHash::loadFactor() const
 
 void TSharedMemoryHash::clear()
 {
-    void **oldp = _h->hashTable;
-
     for (int i = 0; i < _h->tableSize; i++) {
-        void *bucketp = oldp[i];
-        Tf::tfree(bucketp);
-        oldp[i] = nullptr;
+        void *pbucket = _h->bucketPtr(i);
+        if (pbucket && pbucket != FREE) {
+            Tf::sfree(pbucket);
+            (_h->count)--;
+        }
+        _h->setBucketPtr(i, nullptr);
     }
 }
 
@@ -218,35 +202,45 @@ void TSharedMemoryHash::clear()
 void TSharedMemoryHash::rehash()
 {
     Bucket bucket;
-    void **oldt = _h->hashTable;
-    int oldsize = _h->tableSize;
+    QByteArray buf;
 
     if (loadFactor() < 0.4) {
         // do nothing
         return;
     }
 
+    uint64_t *const oldt = (uint64_t *)_h->hashg();
+    int oldsize = _h->tableSize;
+
+    // Creates new table
     _h->tableSize = oldsize * 4;  // new table size
-    _h->hashTable = (void **)Tf::tcalloc(_h->tableSize, sizeof(void*));
+    auto *ptr = Tf::scalloc(_h->tableSize, sizeof(int64_t));
+    _h->setHashg(ptr);
 
     for (int i = 0; i < oldsize; i++) {
-        void **pbucket = oldt + i;
-        if (!*pbucket || *pbucket == FREE) {
+        uint64_t g = *(oldt + i);
+        void *pbucket = (g && g != -1UL) ? (caddr_t)_h + g : nullptr;
+
+        if (!pbucket) {
             continue;
         }
 
-        int alcsize = Tf::allocsize(*pbucket);
+        int alcsize = Tf::allocsize(pbucket);
         if (alcsize <= 0) {
+            Q_ASSERT(0);
             continue;
         }
 
-        QByteArray buf = QByteArray::fromRawData((char *)*pbucket, alcsize);
+        buf.setRawData((char *)pbucket, alcsize);
         QDataStream ds(buf);
         ds >> bucket;
 
         int newidx = index(bucket.key);
-        (_h->hashTable)[newidx] = *pbucket;
+        while (_h->bucketPtr(newidx)) {
+            newidx = next(newidx);
+        }
+        _h->setBucketPtr(newidx, pbucket);
     }
 
-    Tf::tfree(oldt);
+    Tf::sfree(oldt);
 }
