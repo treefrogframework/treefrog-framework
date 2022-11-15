@@ -6,9 +6,11 @@
 class TestMalloc : public QObject
 {
     Q_OBJECT
+    TSharedMemoryAllocator sha {"/testallocator.shm", 24 * 1024 * 1024};
+
 private slots:
     void initTestCase();
-    void cleanupTestCase() {}
+    void cleanupTestCase() { QFile("/dev/shm/testallocator.shm").remove(); }
     void testAlloc1();
     void testAlloc2();
     void testAlloc3();
@@ -21,102 +23,97 @@ private slots:
 
 
 void TestMalloc::initTestCase()
-{
-    constexpr int SIZE = 256 * 1024 * 1024;
-    void *p = new char[SIZE];
-    Tf::setbrk(p, SIZE, true);
-    qDebug() << "init:" << p;
-}
+{}
 
 
 void TestMalloc::testAlloc1()
 {
-    void *p1 = Tf::smalloc(100);
+    void *p1 = sha.malloc(100);
     QVERIFY(p1);
 
-    Tf::sfree(p1);
-    QCOMPARE(Tf::shmblocks(), 0);
-    Tf::shmdump();
+    sha.free(p1);
+    QCOMPARE(sha.nblocks(), 0);
+    sha.dump();
 }
 
 void TestMalloc::testAlloc2()
 {
-    void *p1 = Tf::smalloc(100);
+    void *p1 = sha.malloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::smalloc(200);
+    void *p2 = sha.malloc(200);
     QVERIFY(p2);
 
-    Tf::sfree(p2);
-    Tf::sfree(p1);
-    QCOMPARE(Tf::shmblocks(), 0);
-    Tf::shmdump();
+    sha.free(p2);
+    sha.free(p1);
+    QCOMPARE(sha.nblocks(), 0);
+    sha.dump();
 }
 
 void TestMalloc::testAlloc3()
 {
-    void *p1 = Tf::smalloc(100);
+    void *p1 = sha.malloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::smalloc(200);
+    void *p2 = sha.malloc(200);
     QVERIFY(p2);
 
-    Tf::sfree(p1);
-    Tf::shmdump();
-    Tf::sfree(p2);
-    QCOMPARE(Tf::shmblocks(), 0);
-    Tf::shmdump();
+    sha.free(p1);
+    sha.dump();
+    sha.free(p2);
+    QCOMPARE(sha.nblocks(), 0);
+    sha.dump();
 }
 
 void TestMalloc::testAlloc4()
 {
-    void *p1 = Tf::smalloc(100);
+    void *p1 = sha.malloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::smalloc(200);
+    void *p2 = sha.malloc(200);
     QVERIFY(p2);
-    void *p3 = Tf::smalloc(300);
+    void *p3 = sha.malloc(300);
     QVERIFY(p3);
 
-    Tf::sfree(p2);
-    Tf::sfree(p1);
-    Tf::shmdump();
-    Tf::sfree(p3);
-    QCOMPARE(Tf::shmblocks(), 0);
-    Tf::shmdump();
+    sha.free(p2);
+    sha.free(p1);
+    sha.dump();
+    sha.free(p3);
+    QCOMPARE(sha.nblocks(), 0);
+    sha.dump();
 }
 
 void TestMalloc::testAlloc5()
 {
-    void *p1 = Tf::smalloc(100);
+    void *p1 = sha.malloc(100);
     QVERIFY(p1);
-    void *p2 = Tf::smalloc(200);
+    void *p2 = sha.malloc(200);
     QVERIFY(p2);
-    void *p3 = Tf::smalloc(300);
+    void *p3 = sha.malloc(300);
     QVERIFY(p3);
 
-    Tf::sfree(p1);
-    Tf::sfree(p2);
-    Tf::sfree(p3);
-    QCOMPARE(Tf::shmblocks(), 0);
-    Tf::shmdump();
+    sha.free(p1);
+    sha.free(p2);
+    sha.free(p3);
+    QCOMPARE(sha.nblocks(), 0);
+    sha.dump();
 }
 
 
 void TestMalloc::testReuse1()
 {
-    void *p1 = Tf::smalloc(1000);
+    void *p1 = sha.malloc(1000);
     QVERIFY(p1);
-    void *p2 = Tf::smalloc(200);
+    void *p2 = sha.malloc(200);
     QVERIFY(p2);
 
-    Tf::sfree(p1);
-    QVERIFY(Tf::shmblocks() > 0);
-    Tf::shmdump();
-    void *p3 = Tf::smalloc(800);
+    sha.free(p1);
+    QVERIFY(sha.nblocks() > 0);
+    sha.dump();
+    void *p3 = sha.malloc(800);
     QCOMPARE(p1, p3);
-    QCOMPARE(Tf::shmblocks(), 2);
-    Tf::shmdump();
-    Tf::sfree(p3);
-    Tf::sfree(p2);
-    QCOMPARE(Tf::shmblocks(), 0);
+    QCOMPARE(sha.nblocks(), 2);
+    sha.dump();
+    sha.free(p3);
+    sha.free(p2);
+    QCOMPARE(sha.nblocks(), 0);
 }
 
 
@@ -126,7 +123,7 @@ void TestMalloc::bench()
     void *ptr[NUM] = {nullptr};
 
     for (int i = 0; i < NUM / 2; i++) {
-        ptr[i * 2] = Tf::smalloc(Tf::random(128, 1024));  // half & half
+        ptr[i * 2] = sha.malloc(Tf::random(128, 1024));  // half & half
         QVERIFY(ptr[i * 2]);
     }
 
@@ -134,21 +131,21 @@ void TestMalloc::bench()
         for (int i = 0; i < 10000; i++) {
             int d = Tf::random(0, NUM - 1);
             if (ptr[d]) {
-                Tf::sfree(ptr[d]);
+                sha.free(ptr[d]);
                 ptr[d] = nullptr;
             } else {
-                ptr[d] = Tf::smalloc(Tf::random(128, 1024));
+                ptr[d] = sha.malloc(Tf::random(128, 1024));
                 QVERIFY(ptr[d]);
             }
         }
     }
 
-    QVERIFY(Tf::shmblocks() > 0);
+    QVERIFY(sha.nblocks() > 0);
     // cleanup
     for (int i = 0; i < NUM; i++) {
-        Tf::sfree(ptr[i]);
+        sha.free(ptr[i]);
     }
-    QCOMPARE(Tf::shmblocks(), 0);
+    QCOMPARE(sha.nblocks(), 0);
 }
 
 

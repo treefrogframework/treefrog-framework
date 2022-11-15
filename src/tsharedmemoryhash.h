@@ -3,6 +3,7 @@
 
 struct hash_header_t;
 struct Bucket;
+class TSharedMemoryAllocator;
 
 
 class TSharedMemoryHash {
@@ -13,7 +14,7 @@ public:
     QByteArray value(const QByteArray &key, const QByteArray &defaultValue = QByteArray()) const;
     QByteArray take(const QByteArray &key, const QByteArray &defaultValue = QByteArray());
     bool remove(const QByteArray &key);
-    int	count() const;
+    int count() const;
     void clear();
     float loadFactor() const;
     void rehash();
@@ -25,16 +26,18 @@ protected:
     uint next(uint index) const;
 
 private:
+    TSharedMemoryAllocator *_allocator {nullptr};
+
     struct hash_header_t {
-        uint hashtg {0};
+        uint64_t hashtg {0};
         int tableSize {1024};
         int count {0};
 
-        uint64_t *hashg() { return (uint64_t *)((caddr_t)this + hashtg); }
+        uint64_t *hashg() { return hashtg ? (uint64_t *)((caddr_t)this + hashtg) : nullptr; }
 
         void setHashg(void *p)
         {
-            hashtg = (uint64_t)p - (uint64_t)this;
+            hashtg = p ? (uint64_t)p - (uint64_t)this : 0;
         }
 
         void *bucketPtr(int index)

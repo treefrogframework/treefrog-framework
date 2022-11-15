@@ -122,7 +122,7 @@ void TestSharedMemoryHash::testAlloc3_data()
         if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
             break;
         }
-        std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
+        //std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
     }
 
     QTest::addColumn<QByteArray>("key");
@@ -165,7 +165,7 @@ void TestSharedMemoryHash::testAlloc4_data()
         if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
             break;
         }
-        std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
+        //std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
     }
 
     QTest::addColumn<QByteArray>("key");
@@ -269,7 +269,7 @@ void TestSharedMemoryHash::testCompareWithQMap()
     QCOMPARE(smhash.count(), qmap.count());
     qDebug() << "QMap   count:" << qmap.count();
     qDebug() << "smhash count:" << smhash.count();
-    Tf::shmsummary();
+    //Tf::shmsummary();
 
     smhash.clear();
     QCOMPARE(smhash.count(), 0);
@@ -294,7 +294,7 @@ void TestSharedMemoryHash::bench1()
 
     //qDebug() << "key range: [ 1000 -" << 1000 + d << "]";
     //qDebug() << "count:" << smhash.count() << " block num:" << Tf::nblocks();
-    Tf::shmsummary();
+    //Tf::shmsummary();
     smhash.clear();
     QCOMPARE(smhash.count(), 0);
 }
@@ -328,7 +328,7 @@ void TestSharedMemoryHash::bench2()
 
     //qDebug() << "key range: [ 1000 -" << 1000 + d << "]";
     //qDebug() << "count:" << smhash.count() << " block num:" << Tf::nblocks();
-    Tf::shmsummary();
+    //Tf::shmsummary();
     smhash.clear();
     QCOMPARE(smhash.count(), 0);
 }

@@ -29,21 +29,20 @@ inline QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
 }
 
 
-TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size)
+TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
+    _allocator(new TSharedMemoryAllocator(name, size))
 {
     static const hash_header_t INIT_HEADER;
 
-    bool newmap;
-    void *ptr = Tf::shmcreate(qUtf8Printable(name), size, &newmap);
-    ptr = Tf::setbrk(ptr, size, newmap);
-    _h = (hash_header_t *)((caddr_t)ptr + sizeof(Tf::alloc_header_t));
+    _h = (hash_header_t *)_allocator->origin();
 
-    if (newmap) {
-        ptr = Tf::smalloc(sizeof(INIT_HEADER));
+    if (_allocator->isNew()) {
+        void *ptr = _allocator->malloc(sizeof(INIT_HEADER));
         Q_ASSERT(ptr == _h);
         memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
-        ptr = Tf::scalloc(_h->tableSize, sizeof(int64_t));
+        ptr = _allocator->calloc(_h->tableSize, sizeof(uint64_t));
         _h->setHashg(ptr);
+        Q_ASSERT(ptr);
     }
 }
 
@@ -67,7 +66,7 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
         void *pbucket = _h->bucketPtr(idx);
         if (pbucket && pbucket != FREE) {
             // checks key
-            int alcsize = Tf::allocsize(pbucket);
+            int alcsize = _allocator->allocSize(pbucket);
             if (alcsize <= 0) {
                 // error
                 Q_ASSERT(0);
@@ -83,12 +82,12 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
                 continue;
             }
 
-            Tf::sfree(pbucket);
+            _allocator->free(pbucket);
             (_h->count)--;
         }
 
         // Inserts data
-        pbucket = Tf::smalloc(data.size());
+        pbucket = _allocator->malloc(data.size());
         if (!pbucket) {
             tError("Not enough space/cannot allocate memory.  errno:%d", errno);
             return false;
@@ -124,7 +123,7 @@ int TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
         }
 
         if (pbucket != FREE) {
-            int alcsize = Tf::allocsize(pbucket);
+            int alcsize = _allocator->allocSize(pbucket);
             if (alcsize <= 0) {
                 Q_ASSERT(0);
                 break;
@@ -158,7 +157,7 @@ QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defa
     Bucket bucket;
     int idx = find(key, bucket);
     if (idx >= 0) {
-        Tf::sfree(_h->bucketPtr(idx));
+        _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
         // int nx = next(idx);
         // if (!_h->bucketPtr(nx)) {
@@ -177,7 +176,7 @@ bool TSharedMemoryHash::remove(const QByteArray &key)
     Bucket bucket;
     int idx = find(key, bucket);
     if (idx >= 0) {
-        Tf::sfree(_h->bucketPtr(idx));
+        _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
         // int nx = next(idx);
         // if (!_h->bucketPtr(nx)) {
@@ -208,7 +207,7 @@ void TSharedMemoryHash::clear()
     for (int i = 0; i < _h->tableSize; i++) {
         void *pbucket = _h->bucketPtr(i);
         if (pbucket && pbucket != FREE) {
-            Tf::sfree(pbucket);
+            _allocator->free(pbucket);
             (_h->count)--;
         }
         _h->setBucketPtr(i, nullptr);
@@ -227,13 +226,14 @@ void TSharedMemoryHash::rehash()
         return;
     }
 
-    uint64_t *const oldt = (uint64_t *)_h->hashg();
+    uint64_t *const oldt = _h->hashg();
     int oldsize = _h->tableSize;
 
     // Creates new table
     _h->tableSize = oldsize * 4;  // new table size
-    auto *ptr = Tf::scalloc(_h->tableSize, sizeof(int64_t));
+    auto *ptr = _allocator->calloc(_h->tableSize, sizeof(uint64_t));
     _h->setHashg(ptr);
+    Q_ASSERT(ptr);
 
     for (int i = 0; i < oldsize; i++) {
         uint64_t g = *(oldt + i);
@@ -243,7 +243,7 @@ void TSharedMemoryHash::rehash()
             continue;
         }
 
-        int alcsize = Tf::allocsize(pbucket);
+        int alcsize = _allocator->allocSize(pbucket);
         if (alcsize <= 0) {
             Q_ASSERT(0);
             continue;
@@ -260,5 +260,6 @@ void TSharedMemoryHash::rehash()
         _h->setBucketPtr(newidx, pbucket);
     }
 
-    Tf::sfree(oldt);
+    //_allocator->dump();
+    _allocator->free(oldt);
 }

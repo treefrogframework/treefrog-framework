@@ -3,10 +3,12 @@
 // Modified by AOYAMA Kazuharu
 //
 #include "tfmalloc.h"
+#include "tshm.h"
 #include <cstring>
 #include <cstdio>
 #include <errno.h>
 
+namespace Tf {
 
 // Allocation table
 struct alloc_table {
@@ -34,12 +36,33 @@ struct program_break_header_t {
     Tf::alloc_header_t *alloc_tail() { return at.tail(); }
 };
 
-const program_break_header_t INIT_PB_HEADER;
-static program_break_header_t *pb_header;
+struct alloc_header_t {
+    ushort rsv;
+    bool freed : 1;
+    ushort padding : 15;
+    uint size {0};
+    uint64_t nextg {0};
+    uint64_t prevg {0};
+
+    alloc_header_t *next() const { return nextg ? (alloc_header_t *)((caddr_t)this + nextg) : nullptr; }
+    alloc_header_t *prev() const { return prevg ? (alloc_header_t *)((caddr_t)this + prevg) : nullptr; }
+    void set_next(alloc_header_t *p) { nextg = p ? (uint64_t)p - (uint64_t)this : 0; }
+    void set_prev(alloc_header_t *p) { prevg = p ? (uint64_t)p - (uint64_t)this : 0; }
+};
+
+}
+
+
+TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size) :
+    _name(name), _size(size)
+{
+    _shm = Tf::shmcreate(qUtf8Printable(name), size, &_newmap);
+    _origin = (caddr_t)setbrk(_shm, size, _newmap);
+}
 
 
 // Changed the location of the program break
-static caddr_t sbrk(int64_t inc)
+caddr_t TSharedMemoryAllocator::sbrk(int64_t inc)
 {
     if (!pb_header) {
         errno = ENOMEM;
@@ -59,14 +82,16 @@ static caddr_t sbrk(int64_t inc)
 
 
 // Sets memory space
-// Return: the pointer of data area
-void *Tf::setbrk(void *addr, uint size, bool initial)
+// Return: the origin pointer of data area
+void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
 {
+    static const Tf::program_break_header_t INIT_PB_HEADER;
+
     if (pb_header) {
         return nullptr;
     }
 
-    pb_header = (program_break_header_t *)addr;
+    pb_header = (Tf::program_break_header_t *)addr;
     printf("addr = %p\n", addr);
     printf("checksum = %ld\n", pb_header->checksum);
 
@@ -74,14 +99,14 @@ void *Tf::setbrk(void *addr, uint size, bool initial)
     uint64_t ck = (uint64_t)size * (uint64_t)size;
     if (initial || pb_header->checksum != ck || !ck) {
         // new mmap
-        memcpy(pb_header, &INIT_PB_HEADER, sizeof(program_break_header_t));
-        pb_header->startg = pb_header->currentg = sizeof(program_break_header_t);
+        memcpy(pb_header, &INIT_PB_HEADER, sizeof(Tf::program_break_header_t));
+        pb_header->startg = pb_header->currentg = sizeof(Tf::program_break_header_t);
         pb_header->endg = size;
         pb_header->checksum = (uint64_t)size * (uint64_t)size;
     }
 
     //memdump();
-    return pb_header->start();
+    return pb_header->start() + sizeof(Tf::alloc_header_t);
 }
 
 
@@ -89,7 +114,7 @@ constexpr ushort CHECKDIGITS = 0x08C0;
 const Tf::alloc_header_t INIT_HEADER { .rsv = CHECKDIGITS, .freed = false, .padding = 0 };
 
 
-static Tf::alloc_header_t *free_block(uint size)
+Tf::alloc_header_t *TSharedMemoryAllocator::free_block(uint size)
 {
     if (!pb_header) {
         Q_ASSERT(0);
@@ -116,7 +141,7 @@ static Tf::alloc_header_t *free_block(uint size)
 }
 
 
-uint Tf::allocsize(const void *ptr)
+uint TSharedMemoryAllocator::allocSize(const void *ptr)
 {
     if (!pb_header || !ptr) {
         return 0;
@@ -127,7 +152,7 @@ uint Tf::allocsize(const void *ptr)
         return 0;
     }
 
-    alloc_header_t *header = (alloc_header_t*)ptr - 1;
+    Tf::alloc_header_t *header = (Tf::alloc_header_t*)ptr - 1;
 
     // checks ptr
     if (header->rsv != CHECKDIGITS) {
@@ -138,7 +163,7 @@ uint Tf::allocsize(const void *ptr)
 }
 
 // Frees the memory space
-void Tf::sfree(void *ptr)
+void TSharedMemoryAllocator::free(void *ptr)
 {
     if (!pb_header || !ptr || ptr == (void *)-1) {
         return;
@@ -151,7 +176,7 @@ void Tf::sfree(void *ptr)
             return;
         }
 
-        alloc_header_t *header = (alloc_header_t*)ptr - 1;
+        Tf::alloc_header_t *header = (Tf::alloc_header_t*)ptr - 1;
 
         // checks ptr
         if (header->rsv != CHECKDIGITS) {
@@ -173,7 +198,7 @@ void Tf::sfree(void *ptr)
         }
 
         // header of last block
-        alloc_header_t *prev = header->prev();
+        Tf::alloc_header_t *prev = header->prev();
         pb_header->at.set_tail(prev);
 
         if (prev) {
@@ -186,7 +211,7 @@ void Tf::sfree(void *ptr)
         sbrk() with a negative argument decrements the program break.
         So memory is released by the program to OS.
         */
-        sbrk(-(header->size) - sizeof(alloc_header_t));
+        TSharedMemoryAllocator::sbrk(-(header->size) - sizeof(Tf::alloc_header_t));
 
         /* Frees recursively */
         if (!prev || !prev->freed) {
@@ -197,7 +222,7 @@ void Tf::sfree(void *ptr)
 }
 
 // Allocates size bytes and returns a pointer to the allocated memory
-void *Tf::smalloc(uint size)
+void *TSharedMemoryAllocator::malloc(uint size)
 {
     if (!pb_header || !size) {
         return nullptr;
@@ -206,7 +231,7 @@ void *Tf::smalloc(uint size)
     uint d = size % 16;
     size += d ? 16 - d : 0;
 
-    alloc_header_t *header = free_block(size);
+    Tf::alloc_header_t *header = free_block(size);
     if (header) {
         /* Woah, found a free block to accomodate requested memory. */
         header->freed = 0;
@@ -214,13 +239,13 @@ void *Tf::smalloc(uint size)
     }
 
     /* We need to get memory to fit in the requested block and header from OS. */
-    void *block = sbrk(sizeof(alloc_header_t) + size);
+    void *block = TSharedMemoryAllocator::sbrk(sizeof(Tf::alloc_header_t) + size);
 
     if (!block) {
         return nullptr;
     }
 
-    header = (alloc_header_t *)block;
+    header = (Tf::alloc_header_t *)block;
     memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
     header->size = size;
     header->set_prev(pb_header->alloc_tail());
@@ -239,7 +264,7 @@ void *Tf::smalloc(uint size)
 
 // Allocates memory for an array of 'num' elements of 'size' bytes
 // each and returns a pointer to the allocated memory
-void *Tf::scalloc(uint num, uint nsize)
+void *TSharedMemoryAllocator::calloc(uint num, uint nsize)
 {
     if (!num || !nsize) {
         return nullptr;
@@ -251,7 +276,7 @@ void *Tf::scalloc(uint num, uint nsize)
         return nullptr;
     }
 
-    void *ptr = smalloc(size);
+    void *ptr = TSharedMemoryAllocator::malloc(size);
     if (!ptr) {
         return nullptr;
     }
@@ -261,13 +286,13 @@ void *Tf::scalloc(uint num, uint nsize)
 }
 
 // Changes the size of the memory block pointed to by 'ptr' to 'size' bytes.
-void *Tf::srealloc(void *ptr, uint size)
+void *TSharedMemoryAllocator::realloc(void *ptr, uint size)
 {
     if (!ptr || !size) {
         return nullptr;
     }
 
-    alloc_header_t *header = (alloc_header_t*)ptr - 1;
+    Tf::alloc_header_t *header = (Tf::alloc_header_t*)ptr - 1;
 
     // checks ptr
     if (header->rsv != CHECKDIGITS) {
@@ -279,25 +304,25 @@ void *Tf::srealloc(void *ptr, uint size)
         return ptr;
     }
 
-    void *ret = smalloc(size);
+    void *ret = TSharedMemoryAllocator::malloc(size);
     if (ret) {
         /* Relocate contents to the new bigger block */
         memcpy(ret, ptr, header->size);
         /* Free the old memory block */
-        sfree(ptr);
+        TSharedMemoryAllocator::free(ptr);
     }
     return ret;
 }
 
 // Prints summary
-void Tf::shmsummary()
+void TSharedMemoryAllocator::summary()
 {
     if (!pb_header) {
         Q_ASSERT(0);
         return;
     }
 
-    alloc_header_t *cur = pb_header->alloc_head();
+    Tf::alloc_header_t *cur = pb_header->alloc_head();
     int freeblk = 0;
     int used = 0;
 
@@ -310,18 +335,18 @@ void Tf::shmsummary()
         }
         cur = cur->next();
     }
-    std::printf("blocks = %d, free = %d, used = %d\n", Tf::shmblocks(), freeblk, used);
+    std::printf("blocks = %d, free = %d, used = %d\n", nblocks(), freeblk, used);
 }
 
 // Debug function to print the entire link list
-void Tf::shmdump()
+void TSharedMemoryAllocator::dump()
 {
     if (!pb_header) {
         Q_ASSERT(0);
         return;
     }
 
-    alloc_header_t *cur = pb_header->alloc_head();
+    Tf::alloc_header_t *cur = pb_header->alloc_head();
     int freeblk = 0;
     int used = 0;
 
@@ -329,6 +354,7 @@ void Tf::shmdump()
     while (cur) {
         std::printf("addr = %p, size = %u, freed=%u, next=%p, prev=%p\n",
             (void *)cur, cur->size, cur->freed, cur->next(), cur->prev());
+
         if (cur->freed) {
             freeblk++;
         } else {
@@ -337,11 +363,11 @@ void Tf::shmdump()
         cur = cur->next();
     }
     std::printf("head = %p, tail = %p, blocks = %d, free = %d, used = %d\n", pb_header->alloc_head(),
-        pb_header->alloc_tail(), Tf::shmblocks(), freeblk, used);
+        pb_header->alloc_tail(), nblocks(), freeblk, used);
 }
 
 
-int Tf::shmblocks()
+int TSharedMemoryAllocator::nblocks()
 {
     if (!pb_header) {
         Q_ASSERT(0);
@@ -349,7 +375,7 @@ int Tf::shmblocks()
     }
 
     int counter = 0;
-    alloc_header_t *cur = pb_header->alloc_head();
+    Tf::alloc_header_t *cur = pb_header->alloc_head();
 
     while (cur) {
         counter++;
