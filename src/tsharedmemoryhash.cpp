@@ -37,7 +37,6 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size)
     void *ptr = Tf::shmcreate(qUtf8Printable(name), size, &newmap);
     ptr = Tf::setbrk(ptr, size, newmap);
     _h = (hash_header_t *)((caddr_t)ptr + sizeof(Tf::alloc_header_t));
-    qDebug() << "sizeof(Tf::alloc_header_t):" << sizeof(Tf::alloc_header_t);
 
     if (newmap) {
         ptr = Tf::smalloc(sizeof(INIT_HEADER));
@@ -49,10 +48,10 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size)
 }
 
 
-void TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
+bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
 {
     if (key.isEmpty()) {
-        return;
+        return false;
     }
 
     uint idx = index(key);
@@ -72,7 +71,7 @@ void TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
             if (alcsize <= 0) {
                 // error
                 Q_ASSERT(0);
-                return;
+                return false;
             }
 
             buf.setRawData((char *)pbucket, alcsize);
@@ -90,6 +89,11 @@ void TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
 
         // Inserts data
         pbucket = Tf::smalloc(data.size());
+        if (!pbucket) {
+            tError("Not enough space/cannot allocate memory.  errno:%d", errno);
+            return false;
+        }
+
         memcpy(pbucket, data.data(), data.size());
         _h->setBucketPtr(idx, pbucket);
         (_h->count)++;
@@ -100,6 +104,7 @@ void TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
     if (loadFactor() > 0.8) {
         rehash();
     }
+    return true;
 }
 
 
@@ -155,6 +160,12 @@ QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defa
     if (idx >= 0) {
         Tf::sfree(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
+        // int nx = next(idx);
+        // if (!_h->bucketPtr(nx)) {
+        //     _h->setBucketPtr(idx, nullptr);
+        // } else {
+        //     _h->setBucketPtr(idx, FREE);
+        // }
         (_h->count)--;
     }
     return (idx >= 0) ? bucket.value : defaultValue;
@@ -168,6 +179,12 @@ bool TSharedMemoryHash::remove(const QByteArray &key)
     if (idx >= 0) {
         Tf::sfree(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
+        // int nx = next(idx);
+        // if (!_h->bucketPtr(nx)) {
+        //     _h->setBucketPtr(idx, nullptr);
+        // } else {
+        //     _h->setBucketPtr(idx, FREE);
+        // }
         (_h->count)--;
     }
     return (idx >= 0);
@@ -196,6 +213,7 @@ void TSharedMemoryHash::clear()
         }
         _h->setBucketPtr(i, nullptr);
     }
+    Q_ASSERT(_h->count == 0);
 }
 
 
@@ -204,7 +222,7 @@ void TSharedMemoryHash::rehash()
     Bucket bucket;
     QByteArray buf;
 
-    if (loadFactor() < 0.4) {
+    if (loadFactor() < 0.2) {
         // do nothing
         return;
     }

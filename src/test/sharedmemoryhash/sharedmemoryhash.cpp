@@ -2,16 +2,11 @@
 #include "tsharedmemoryhash.h"
 #include "tfmalloc.h"
 #include "tglobal.h"
-// #include <list>
-// #include <vector>
-// #include <unordered_map>
-//#include <QByteArray>
+#include <iostream>
 
 
-const QString listpath = "/test.list";
-const QString mappath = "/test.map";
-static TSharedMemoryHash smhash("/sharedhash.shm", 1024 * 1024);
-
+static TSharedMemoryHash smhash("/sharedhash.shm", 256 * 1024 * 1024);
+const QByteArray ckey = QUuid::createUuid().toByteArray();
 
 class TestSharedMemoryHash : public QObject
 {
@@ -21,9 +16,16 @@ private slots:
     void cleanupTestCase() {}
     void testAlloc1_data();
     void testAlloc1();
+    void testAlloc2_data();
     void testAlloc2();
+    void testAlloc3_data();
+    void testAlloc3();
+    void testAlloc4_data();
+    void testAlloc4();
 
-    void bench();
+    void bench1();
+    void bench2();
+    void testCompareWithQMap();
 };
 
 
@@ -42,86 +44,293 @@ static QByteArray randomString(int length)
 
 void TestSharedMemoryHash::initTestCase()
 {
-
+    smhash.clear();
+    QCOMPARE(smhash.count(), 0);
+    smhash.insert(ckey, "value");
 }
+
 
 void TestSharedMemoryHash::testAlloc1_data()
 {
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("value");
 
-    auto key = QUuid::createUuid().toByteArray();
-    QTest::newRow("1") << key
+    QTest::newRow("1") << QUuid::createUuid().toByteArray()
                        << QByteArray(u8"こんにちは");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << randomString(256);
+                       << randomString(64);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << randomString(256);
-    QTest::newRow("4") << key
+                       << randomString(128);
+    QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256);
 }
 
+
 void TestSharedMemoryHash::testAlloc1()
 {
+    //
+    // Insert & Get
+    //
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, value);
 
-    int num = smhash.count();
-    {
-        qDebug() << "smhash count()" << num;
-        qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
-        smhash.insert(key, value);
-        auto val = smhash.value(key);
-        QCOMPARE(val, value);
-        //Tf::memdump();
-        //Tf::msleep(100000);
-    }
-    //QCOMPARE(Tf::nblocks(), num);
+    QCOMPARE(smhash.value(key).isEmpty(), true);  // empty
+    smhash.insert(key, value);
+    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
+    auto val = smhash.value(key);
+    QCOMPARE(val, value);
+}
+
+
+void TestSharedMemoryHash::testAlloc2_data()
+{
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("value");
+
+    QTest::newRow("1") << ckey
+                       << QByteArray(u8"こんにちは");
+    QTest::newRow("2") << ckey
+                       << randomString(64);
+    QTest::newRow("3") << ckey
+                       << randomString(128);
+    QTest::newRow("4") << ckey
+                       << randomString(256);
 }
 
 
 void TestSharedMemoryHash::testAlloc2()
 {
+    //
+    // Insert by same key and get
+    //
+    QFETCH(QByteArray, key);
+    QFETCH(QByteArray, value);
 
-    int num = Tf::nblocks();
-    {
-        /*
-        std::unordered_map<QByteArray, Value, std::hash<QByteArray>,
-            std::equal_to<QByteArray>, TSharedMemoryAllocator<std::pair<const QByteArray, Value>, mappath> > map;
-
-        qDebug() << "first time: map[\"hoge\"] =" << map["hoge"];
-        map.insert_or_assign("hoge", Value{1, "hogehoge"});
-        map.insert_or_assign("foo", Value{2, "foofoo"});
-        map.insert_or_assign("hoge", Value{1, "foo"});
-        qDebug() << "map[\"hoge\"] =" << map["hoge"];
-        QCOMPARE(map["hoge"].second, "foo");
-        Tf::memdump();
-        //Tf::syncSharedMemory();
-        //Tf::msleep(100000);
-        */
-    }
-    QCOMPARE(Tf::nblocks(), num);
-
+    int num = smhash.count();
+    smhash.insert(key, value);
+    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
+    auto val = smhash.value(key);
+    QCOMPARE(val, value);
+    QCOMPARE(smhash.count(), num);
 }
 
 
-void TestSharedMemoryHash::bench()
+void TestSharedMemoryHash::testAlloc3_data()
 {
-    for (int i = 1000; i < 2000; i++) {
-        smhash.insert(QByteArray::number(i), QByteArray::number(Tf::random(1000, 1999)));
+    int d = 100;
+    while (smhash.loadFactor() < 0.2) {
+        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+            break;
+        }
+        std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
     }
 
-    QBENCHMARK {
-        for (int i = 0; i < 100000; i++) {
-            int idx = Tf::random(1000, 1999);
-            smhash.insert(QByteArray::number(idx), QByteArray::number(Tf::random(1000, 1999)));
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("value");
+
+    QTest::newRow("1") << QUuid::createUuid().toByteArray()
+                       << QByteArray(u8"こんにちは");
+    QTest::newRow("2") << QUuid::createUuid().toByteArray()
+                       << randomString(64);
+    QTest::newRow("3") << QUuid::createUuid().toByteArray()
+                       << randomString(128);
+    QTest::newRow("4") << QUuid::createUuid().toByteArray()
+                       << randomString(256);
+}
+
+
+void TestSharedMemoryHash::testAlloc3()
+{
+    //
+    // Insert and Remove
+    //
+    QFETCH(QByteArray, key);
+    QFETCH(QByteArray, value);
+
+    int num = smhash.count();
+    QCOMPARE(smhash.value(key).isEmpty(), true);  // empty
+    smhash.insert(key, value);
+    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
+    smhash.remove(key);
+    auto val = smhash.value(key, QByteArray("hoge"));
+    QCOMPARE(val, QByteArray("hoge"));  // Default value
+    QCOMPARE(smhash.count(), num);
+}
+
+
+void TestSharedMemoryHash::testAlloc4_data()
+{
+    int d = 100;
+    while (smhash.loadFactor() < 0.2) {
+        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+            break;
+        }
+        std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
+    }
+
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("value");
+
+    QTest::newRow("1") << QUuid::createUuid().toByteArray()
+                       << QByteArray(u8"こんにちは");
+    QTest::newRow("2") << QUuid::createUuid().toByteArray()
+                       << randomString(64);
+    QTest::newRow("3") << QUuid::createUuid().toByteArray()
+                       << randomString(128);
+    QTest::newRow("4") << QUuid::createUuid().toByteArray()
+                       << randomString(256);
+}
+
+
+void TestSharedMemoryHash::testAlloc4()
+{
+    //
+    // Insert and Take
+    //
+    QFETCH(QByteArray, key);
+    QFETCH(QByteArray, value);
+
+    int num = smhash.count();
+    QCOMPARE(smhash.value(key).isEmpty(), true);  // empty
+    smhash.insert(key, value);
+    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
+    smhash.take(key);
+    auto val = smhash.value(key, QByteArray("hoge"));
+    QCOMPARE(val, QByteArray("hoge"));  // Default value
+    QCOMPARE(smhash.count(), num);
+}
+
+
+static void insert(QMap<QByteArray, QByteArray> &qmap, int count, float factor)
+{
+    QByteArray key, value;
+    while (smhash.count() < count || smhash.loadFactor() < factor) {
+        key = randomString(Tf::random(10, 20));
+        value = randomString(Tf::random(16, 128));
+
+        qmap.insert(key, value);
+
+        bool ok = smhash.insert(key, value);
+        QVERIFY(ok);
+        if (!ok) {
+            break;
+        }
+    }
+}
+
+
+void TestSharedMemoryHash::testCompareWithQMap()
+{
+    QMap<QByteArray, QByteArray> qmap;
+
+    // insert data
+    insert(qmap, 40000, 0.75);
+
+    // check values
+    for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
+        auto res = smhash.value(it.key());
+        QCOMPARE(res, it.value());
+    }
+
+    QCOMPARE(smhash.count(), qmap.count());
+    qDebug() << "QMap   count:" << qmap.count();
+    qDebug() << "smhash count:" << smhash.count();
+
+    // remove values
+    for (QMutableMapIterator<QByteArray, QByteArray> it(qmap); it.hasNext();) {
+        it.next();
+        smhash.remove(it.key()); // remove
+        it.remove();
+
+        if (smhash.count() < 10000) {
+            break;
         }
     }
 
-    qDebug() << "count:" << smhash.count() << "block num:" << Tf::nblocks();
-    //smhash.clear();
-    //qDebug() << "cleared. count:" << smhash.count() << "block num:" << Tf::nblocks();
-    //Tf::memdump();
+    // check values
+    for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
+        auto res = smhash.value(it.key());
+        QCOMPARE(res, it.value());
+    }
+
+    QCOMPARE(smhash.count(), qmap.count());
+    qDebug() << "QMap   count:" << qmap.count();
+    qDebug() << "smhash count:" << smhash.count();
+
+    // insert data
+    insert(qmap, 40000, 0.75);
+
+    // check values
+    for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
+        auto res = smhash.value(it.key());
+        QCOMPARE(res, it.value());
+    }
+
+    QCOMPARE(smhash.count(), qmap.count());
+    qDebug() << "QMap   count:" << qmap.count();
+    qDebug() << "smhash count:" << smhash.count();
+    Tf::shmsummary();
+
+    smhash.clear();
+    QCOMPARE(smhash.count(), 0);
+}
+
+
+void TestSharedMemoryHash::bench1()
+{
+    int d = 100;
+    while (smhash.loadFactor() < 0.75) {
+        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+            break;
+        }
+    }
+
+    QBENCHMARK {
+        for (int i = 0; i < 1000; i++) {
+            int idx = Tf::random(1000, 1000 + d);
+            smhash.value(QByteArray::number(idx));
+        }
+    }
+
+    //qDebug() << "key range: [ 1000 -" << 1000 + d << "]";
+    //qDebug() << "count:" << smhash.count() << " block num:" << Tf::nblocks();
+    Tf::shmsummary();
+    smhash.clear();
+    QCOMPARE(smhash.count(), 0);
+}
+
+
+void TestSharedMemoryHash::bench2()
+{
+    int d = 100;
+    while (smhash.loadFactor() < 0.75) {
+        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+            break;
+        }
+    }
+
+    // Insert & take
+    QByteArray res, value;
+    QBENCHMARK {
+        for (int i = 0; i < 1000; i++) {
+            int idx = Tf::random(1000, 1000 + d);
+            value =  randomString(128);
+            bool ok = smhash.insert(QByteArray::number(idx), value);
+            QVERIFY(ok);
+            if (smhash.loadFactor() > 0.75) {
+                res = smhash.take(QByteArray::number(idx));
+            } else {
+                res = smhash.value(QByteArray::number(idx));
+            }
+            QCOMPARE(res, value);
+        }
+    }
+
+    //qDebug() << "key range: [ 1000 -" << 1000 + d << "]";
+    //qDebug() << "count:" << smhash.count() << " block num:" << Tf::nblocks();
+    Tf::shmsummary();
+    smhash.clear();
+    QCOMPARE(smhash.count(), 0);
 }
 
 TF_TEST_SQLLESS_MAIN(TestSharedMemoryHash)

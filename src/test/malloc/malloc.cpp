@@ -35,8 +35,8 @@ void TestMalloc::testAlloc1()
     QVERIFY(p1);
 
     Tf::sfree(p1);
-    QCOMPARE(Tf::nblocks(), 0);
-    Tf::memdump();
+    QCOMPARE(Tf::shmblocks(), 0);
+    Tf::shmdump();
 }
 
 void TestMalloc::testAlloc2()
@@ -48,8 +48,8 @@ void TestMalloc::testAlloc2()
 
     Tf::sfree(p2);
     Tf::sfree(p1);
-    QCOMPARE(Tf::nblocks(), 0);
-    Tf::memdump();
+    QCOMPARE(Tf::shmblocks(), 0);
+    Tf::shmdump();
 }
 
 void TestMalloc::testAlloc3()
@@ -60,10 +60,10 @@ void TestMalloc::testAlloc3()
     QVERIFY(p2);
 
     Tf::sfree(p1);
-    Tf::memdump();
+    Tf::shmdump();
     Tf::sfree(p2);
-    QCOMPARE(Tf::nblocks(), 0);
-    Tf::memdump();
+    QCOMPARE(Tf::shmblocks(), 0);
+    Tf::shmdump();
 }
 
 void TestMalloc::testAlloc4()
@@ -77,10 +77,10 @@ void TestMalloc::testAlloc4()
 
     Tf::sfree(p2);
     Tf::sfree(p1);
-    Tf::memdump();
+    Tf::shmdump();
     Tf::sfree(p3);
-    QCOMPARE(Tf::nblocks(), 0);
-    Tf::memdump();
+    QCOMPARE(Tf::shmblocks(), 0);
+    Tf::shmdump();
 }
 
 void TestMalloc::testAlloc5()
@@ -95,8 +95,8 @@ void TestMalloc::testAlloc5()
     Tf::sfree(p1);
     Tf::sfree(p2);
     Tf::sfree(p3);
-    QCOMPARE(Tf::nblocks(), 0);
-    Tf::memdump();
+    QCOMPARE(Tf::shmblocks(), 0);
+    Tf::shmdump();
 }
 
 
@@ -108,15 +108,15 @@ void TestMalloc::testReuse1()
     QVERIFY(p2);
 
     Tf::sfree(p1);
-    QVERIFY(Tf::nblocks() > 0);
-    Tf::memdump();
+    QVERIFY(Tf::shmblocks() > 0);
+    Tf::shmdump();
     void *p3 = Tf::smalloc(800);
     QCOMPARE(p1, p3);
-    QCOMPARE(Tf::nblocks(), 2);
-    Tf::memdump();
+    QCOMPARE(Tf::shmblocks(), 2);
+    Tf::shmdump();
     Tf::sfree(p3);
     Tf::sfree(p2);
-    QCOMPARE(Tf::nblocks(), 0);
+    QCOMPARE(Tf::shmblocks(), 0);
 }
 
 
@@ -143,12 +143,12 @@ void TestMalloc::bench()
         }
     }
 
-    QVERIFY(Tf::nblocks() > 0);
+    QVERIFY(Tf::shmblocks() > 0);
     // cleanup
     for (int i = 0; i < NUM; i++) {
         Tf::sfree(ptr[i]);
     }
-    QCOMPARE(Tf::nblocks(), 0);
+    QCOMPARE(Tf::shmblocks(), 0);
 }
 
 

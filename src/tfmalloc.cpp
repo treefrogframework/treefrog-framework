@@ -80,12 +80,7 @@ void *Tf::setbrk(void *addr, uint size, bool initial)
         pb_header->checksum = (uint64_t)size * (uint64_t)size;
     }
 
-    memdump();
-    printf("--------------------------- addr:    %p\n", addr);
-    printf("--------------------------- start:   %p\n", pb_header->start());
-    printf("--------------------------- end:     %p\n", pb_header->end());
-    printf("--------------------------- current: %p\n", pb_header->current());
-
+    //memdump();
     return pb_header->start();
 }
 
@@ -294,8 +289,8 @@ void *Tf::srealloc(void *ptr, uint size)
     return ret;
 }
 
-// Debug function to print the entire link list
-void Tf::memdump()
+// Prints summary
+void Tf::shmsummary()
 {
     if (!pb_header) {
         Q_ASSERT(0);
@@ -304,6 +299,31 @@ void Tf::memdump()
 
     alloc_header_t *cur = pb_header->alloc_head();
     int freeblk = 0;
+    int used = 0;
+
+    std::printf("-- memory block summary --\n");
+    while (cur) {
+        if (cur->freed) {
+            freeblk++;
+        } else {
+            used += cur->size;
+        }
+        cur = cur->next();
+    }
+    std::printf("blocks = %d, free = %d, used = %d\n", Tf::shmblocks(), freeblk, used);
+}
+
+// Debug function to print the entire link list
+void Tf::shmdump()
+{
+    if (!pb_header) {
+        Q_ASSERT(0);
+        return;
+    }
+
+    alloc_header_t *cur = pb_header->alloc_head();
+    int freeblk = 0;
+    int used = 0;
 
     std::printf("-- memory block information --\n");
     while (cur) {
@@ -311,14 +331,17 @@ void Tf::memdump()
             (void *)cur, cur->size, cur->freed, cur->next(), cur->prev());
         if (cur->freed) {
             freeblk++;
+        } else {
+            used += cur->size;
         }
         cur = cur->next();
     }
-    std::printf("head = %p, tail = %p, blocks = %d, free = %d\n", (void *)pb_header->alloc_head(), (void *)pb_header->alloc_tail(), Tf::nblocks(), freeblk);
+    std::printf("head = %p, tail = %p, blocks = %d, free = %d, used = %d\n", pb_header->alloc_head(),
+        pb_header->alloc_tail(), Tf::shmblocks(), freeblk, used);
 }
 
 
-int Tf::nblocks()
+int Tf::shmblocks()
 {
     if (!pb_header) {
         Q_ASSERT(0);

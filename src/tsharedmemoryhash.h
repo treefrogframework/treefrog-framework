@@ -9,7 +9,7 @@ class TSharedMemoryHash {
 public:
     TSharedMemoryHash(const QString &name, size_t size);
 
-    void insert(const QByteArray &key, const QByteArray &value);
+    bool insert(const QByteArray &key, const QByteArray &value);
     QByteArray value(const QByteArray &key, const QByteArray &defaultValue = QByteArray()) const;
     QByteArray take(const QByteArray &key, const QByteArray &defaultValue = QByteArray());
     bool remove(const QByteArray &key);

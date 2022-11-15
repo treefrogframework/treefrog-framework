@@ -11,8 +11,9 @@ void sfree(void *ptr);
 uint allocsize(const void *ptr);
 
 // Internal use
-void memdump();  // For debug
-int nblocks();  // Counts blocks
+void shmsummary();
+void shmdump();  // For debug
+int shmblocks();  // Counts blocks
 
 
 struct alloc_header_t {
