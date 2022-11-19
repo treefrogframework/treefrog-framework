@@ -2,7 +2,7 @@
 #include <TGlobal>
 
 struct hash_header_t;
-struct Bucket;
+class Bucket;
 class TSharedMemoryAllocator;
 
 

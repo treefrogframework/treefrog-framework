@@ -6,7 +6,8 @@
 #define FREE ((void *)-1)
 
 
-struct Bucket {
+class Bucket {
+public:
     QByteArray key;
     QByteArray value;
 
@@ -159,12 +160,6 @@ QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defa
     if (idx >= 0) {
         _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
-        // int nx = next(idx);
-        // if (!_h->bucketPtr(nx)) {
-        //     _h->setBucketPtr(idx, nullptr);
-        // } else {
-        //     _h->setBucketPtr(idx, FREE);
-        // }
         (_h->count)--;
     }
     return (idx >= 0) ? bucket.value : defaultValue;
@@ -178,12 +173,6 @@ bool TSharedMemoryHash::remove(const QByteArray &key)
     if (idx >= 0) {
         _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
-        // int nx = next(idx);
-        // if (!_h->bucketPtr(nx)) {
-        //     _h->setBucketPtr(idx, nullptr);
-        // } else {
-        //     _h->setBucketPtr(idx, FREE);
-        // }
         (_h->count)--;
     }
     return (idx >= 0);

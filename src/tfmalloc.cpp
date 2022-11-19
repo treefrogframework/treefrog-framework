@@ -4,6 +4,7 @@
 //
 #include "tfmalloc.h"
 #include "tshm.h"
+#include "tsystemglobal.h"
 #include <cstring>
 #include <cstdio>
 #include <errno.h>
@@ -56,8 +57,22 @@ struct alloc_header_t {
 TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size) :
     _name(name), _size(size)
 {
-    _shm = Tf::shmcreate(qUtf8Printable(name), size, &_newmap);
+    if (_name.isEmpty()) {
+        _shm = new char[size];
+    } else {
+        _shm = Tf::shmcreate(qUtf8Printable(name), _size, &_newmap);
+    }
     _origin = (caddr_t)setbrk(_shm, size, _newmap);
+}
+
+
+TSharedMemoryAllocator::~TSharedMemoryAllocator()
+{
+    if (_name.isEmpty()) {
+        delete (char*)_shm;
+    } else {
+        munmap(_shm, _size);
+    }
 }
 
 
@@ -92,8 +107,8 @@ void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
     }
 
     pb_header = (Tf::program_break_header_t *)addr;
-    printf("addr = %p\n", addr);
-    printf("checksum = %ld\n", pb_header->checksum);
+    tSystemDebug("addr = %p\n", addr);
+    tSystemDebug("checksum = %ld\n", pb_header->checksum);
 
     // Checks checksum
     uint64_t ck = (uint64_t)size * (uint64_t)size;
@@ -326,7 +341,7 @@ void TSharedMemoryAllocator::summary()
     int freeblk = 0;
     int used = 0;
 
-    std::printf("-- memory block summary --\n");
+    tSystemDebug("-- memory block summary --\n");
     while (cur) {
         if (cur->freed) {
             freeblk++;
@@ -335,7 +350,7 @@ void TSharedMemoryAllocator::summary()
         }
         cur = cur->next();
     }
-    std::printf("blocks = %d, free = %d, used = %d\n", nblocks(), freeblk, used);
+    tSystemDebug("blocks = %d, free = %d, used = %d\n", nblocks(), freeblk, used);
 }
 
 // Debug function to print the entire link list
@@ -350,9 +365,9 @@ void TSharedMemoryAllocator::dump()
     int freeblk = 0;
     int used = 0;
 
-    std::printf("-- memory block information --\n");
+    tSystemDebug("-- memory block information --\n");
     while (cur) {
-        std::printf("addr = %p, size = %u, freed=%u, next=%p, prev=%p\n",
+        tSystemDebug("addr = %p, size = %u, freed=%u, next=%p, prev=%p\n",
             (void *)cur, cur->size, cur->freed, cur->next(), cur->prev());
 
         if (cur->freed) {
@@ -362,7 +377,7 @@ void TSharedMemoryAllocator::dump()
         }
         cur = cur->next();
     }
-    std::printf("head = %p, tail = %p, blocks = %d, free = %d, used = %d\n", pb_header->alloc_head(),
+    tSystemDebug("head = %p, tail = %p, blocks = %d, free = %d, used = %d\n", pb_header->alloc_head(),
         pb_header->alloc_tail(), nblocks(), freeblk, used);
 }
 

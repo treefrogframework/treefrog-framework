@@ -6,11 +6,11 @@
 class TestMalloc : public QObject
 {
     Q_OBJECT
-    TSharedMemoryAllocator sha {"/testallocator.shm", 24 * 1024 * 1024};
+    TSharedMemoryAllocator sha {QString(), 24 * 1024 * 1024};
 
 private slots:
     void initTestCase();
-    void cleanupTestCase() { QFile("/dev/shm/testallocator.shm").remove(); }
+    void cleanupTestCase() { }
     void testAlloc1();
     void testAlloc2();
     void testAlloc3();

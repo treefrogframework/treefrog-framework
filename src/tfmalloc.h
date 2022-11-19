@@ -1,8 +1,6 @@
 #pragma once
 #include <TGlobal>
 
-
-
 namespace Tf {
 struct program_break_header_t;
 struct alloc_header_t;
@@ -11,7 +9,8 @@ struct alloc_header_t;
 
 class T_CORE_EXPORT TSharedMemoryAllocator {
 public:
-    TSharedMemoryAllocator(const QString &name, size_t size);
+    TSharedMemoryAllocator(const QString &name, size_t size);  // Shared memory
+    virtual ~TSharedMemoryAllocator();
 
     void *malloc(uint size);
     void *calloc(uint num, uint nsize);
@@ -35,7 +34,7 @@ private:
     QString _name;
     size_t _size {0};
     void *_shm {nullptr};
-    bool _newmap {false};
+    bool _newmap {true};
     caddr_t _origin {nullptr};
     Tf::program_break_header_t *pb_header {nullptr};
 
