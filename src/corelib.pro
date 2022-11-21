@@ -349,8 +349,8 @@ HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
 HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
-HEADERS += tfmalloc.h
-SOURCES += tfmalloc.cpp
+HEADERS += tsharedmemoryallocator.h
+SOURCES += tsharedmemoryallocator.cpp
 HEADERS += tsharedmemoryhash.h
 SOURCES += tsharedmemoryhash.cpp
 

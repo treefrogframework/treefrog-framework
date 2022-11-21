@@ -1,6 +1,5 @@
 #include <TfTest/TfTest>
 #include "tsharedmemoryhash.h"
-#include "tfmalloc.h"
 #include "tglobal.h"
 #include <iostream>
 

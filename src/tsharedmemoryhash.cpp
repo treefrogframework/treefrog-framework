@@ -1,6 +1,6 @@
 #include "tsharedmemoryhash.h"
 #include "tshm.h"
-#include "tfmalloc.h"
+#include "tsharedmemoryallocator.h"
 #include <QDataStream>
 
 #define FREE ((void *)-1)
