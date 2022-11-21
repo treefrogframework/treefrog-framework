@@ -11,14 +11,9 @@ class TSharedMemoryAllocator {
 public:
     using value_type = T;
 
-    //template <typename U>
-    //TSharedMemoryAllocator(const TSharedMemoryAllocator<U, path> &) {}
-
     // Constructor
     explicit TSharedMemoryAllocator() : _path(path)
-    {
-        //_ptr = Tf::create_shm(qPrintable(path), size, T());
-    }
+    { }
 
     T *allocate(std::size_t n)
     {
@@ -51,7 +46,6 @@ private:
 
 
 namespace Tf {
-//void initializeSharedMemory(const QString &p, size_t size);
 
 template <typename Container>
 Container *createContainer(const QString &p, size_t maxSize)

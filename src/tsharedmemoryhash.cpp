@@ -16,6 +16,15 @@ public:
 };
 
 
+class Locker {
+public:
+    Locker(TSharedMemoryAllocator *allocator) : _allocator(allocator){ _allocator->lock(); }
+    ~Locker() { _allocator->unlock(); }
+private:
+    TSharedMemoryAllocator *_allocator {nullptr};
+};
+
+
 inline QDataStream &operator<<(QDataStream &ds, const Bucket &bucket)
 {
     ds << bucket.key << bucket.value;
@@ -35,6 +44,7 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
 {
     static const hash_header_t INIT_HEADER;
 
+    Locker locker(_allocator);
     _h = (hash_header_t *)_allocator->origin();
 
     if (_allocator->isNew()) {
@@ -48,22 +58,28 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
 }
 
 
+TSharedMemoryHash::~TSharedMemoryHash()
+{
+    delete _allocator;
+}
+
+
 bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
 {
     if (key.isEmpty()) {
         return false;
     }
 
-    uint idx = index(key);
-
+    Locker locker(_allocator);
     QByteArray data;
     QDataStream ds(&data, QIODeviceBase::WriteOnly);
     ds << Bucket{key, value};
 
     Bucket bucket;
     QByteArray buf;
+    uint idx = index(key);
 
-    for (;;) {
+    for (int i = 0; i < _h->tableSize; i++) {
         void *pbucket = _h->bucketPtr(idx);
         if (pbucket && pbucket != FREE) {
             // checks key
@@ -71,7 +87,7 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
             if (alcsize <= 0) {
                 // error
                 Q_ASSERT(0);
-                return false;
+                break;
             }
 
             buf.setRawData((char *)pbucket, alcsize);
@@ -88,23 +104,28 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
         }
 
         // Inserts data
-        pbucket = _allocator->malloc(data.size());
-        if (!pbucket) {
+        void *newbucket = _allocator->malloc(data.size());
+        if (!newbucket) {
             tError("Not enough space/cannot allocate memory.  errno:%d", errno);
-            return false;
+            break;
         }
 
-        memcpy(pbucket, data.data(), data.size());
-        _h->setBucketPtr(idx, pbucket);
+        memcpy(newbucket, data.data(), data.size());
+        _h->setBucketPtr(idx, newbucket);
         (_h->count)++;
-        break;
+
+        if (pbucket == FREE) {
+            (_h->freeCount)--;
+        }
+
+        // Rehash
+        if (loadFactor() > 0.8) {
+            rehash();
+        }
+        return true;
     }
 
-    // Rehash
-    if (loadFactor() > 0.8) {
-        rehash();
-    }
-    return true;
+    return false;
 }
 
 
@@ -117,7 +138,7 @@ int TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
     uint idx = index(key);
     QByteArray buf;
 
-    for (;;) {
+    for (int i = 0; i < _h->tableSize; i++) {
         void *pbucket = _h->bucketPtr(idx);
         if (!pbucket) {
             break;
@@ -141,12 +162,15 @@ int TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
         }
         idx = next(idx);
     }
+
     return -1;
 }
 
 
 QByteArray TSharedMemoryHash::value(const QByteArray &key, const QByteArray &defaultValue) const
 {
+    Locker locker(_allocator);
+
     Bucket bucket;
     int idx = find(key, bucket);
     return (idx >= 0) ? bucket.value : defaultValue;
@@ -155,12 +179,15 @@ QByteArray TSharedMemoryHash::value(const QByteArray &key, const QByteArray &def
 
 QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defaultValue)
 {
+    Locker locker(_allocator);
+
     Bucket bucket;
     int idx = find(key, bucket);
     if (idx >= 0) {
         _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
         (_h->count)--;
+        (_h->freeCount)++;
     }
     return (idx >= 0) ? bucket.value : defaultValue;
 }
@@ -168,12 +195,15 @@ QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defa
 
 bool TSharedMemoryHash::remove(const QByteArray &key)
 {
+    Locker locker(_allocator);
+
     Bucket bucket;
     int idx = find(key, bucket);
     if (idx >= 0) {
         _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
         (_h->count)--;
+        (_h->freeCount)++;
     }
     return (idx >= 0);
 }
@@ -187,21 +217,26 @@ int	TSharedMemoryHash::count() const
 
 float TSharedMemoryHash::loadFactor() const
 {
-    return count() / (float)_h->tableSize;
+    return (count() + _h->freeCount) / (float)_h->tableSize;
 }
 
 
 void TSharedMemoryHash::clear()
 {
+    Locker locker(_allocator);
+
     for (int i = 0; i < _h->tableSize; i++) {
         void *pbucket = _h->bucketPtr(i);
-        if (pbucket && pbucket != FREE) {
+        if (pbucket == FREE) {
+            (_h->freeCount)--;
+        } else if (pbucket) {
             _allocator->free(pbucket);
             (_h->count)--;
         }
         _h->setBucketPtr(i, nullptr);
     }
     Q_ASSERT(_h->count == 0);
+    Q_ASSERT(_h->freeCount == 0);
 }
 
 
@@ -214,12 +249,14 @@ void TSharedMemoryHash::rehash()
         // do nothing
         return;
     }
-
     uint64_t *const oldt = _h->hashg();
     int oldsize = _h->tableSize;
 
     // Creates new table
-    _h->tableSize = oldsize * 4;  // new table size
+    if (count() / (float)_h->tableSize > 0.5) {
+        _h->tableSize = oldsize * 2;  // new table size
+    }
+
     auto *ptr = _allocator->calloc(_h->tableSize, sizeof(uint64_t));
     _h->setHashg(ptr);
     Q_ASSERT(ptr);
@@ -249,6 +286,7 @@ void TSharedMemoryHash::rehash()
         _h->setBucketPtr(newidx, pbucket);
     }
 
+    _h->freeCount = 0;
     //_allocator->dump();
     _allocator->free(oldt);
 }

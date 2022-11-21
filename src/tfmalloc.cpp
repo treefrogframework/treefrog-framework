@@ -7,6 +7,7 @@
 #include "tsystemglobal.h"
 #include <cstring>
 #include <cstdio>
+#include <pthread.h>
 #include <errno.h>
 
 namespace Tf {
@@ -28,6 +29,7 @@ struct program_break_header_t {
     uint64_t endg {0};
     uint64_t currentg {0};
     uint64_t checksum {0};
+    pthread_mutex_t mutex;
     alloc_table at;
 
     caddr_t start() { return (caddr_t)this + startg; }
@@ -54,6 +56,25 @@ struct alloc_header_t {
 }
 
 
+class ShmLocker {
+public:
+    explicit ShmLocker(Tf::program_break_header_t *header) : _header(header)
+    {
+        if (_header) {
+            tf_pthread_mutex_lock(&_header->mutex);
+        }
+    }
+    ~ShmLocker()
+    {
+        if (_header) {
+            tf_pthread_mutex_unlock(&_header->mutex);
+        }
+    }
+private:
+    Tf::program_break_header_t *_header {nullptr};
+};
+
+
 TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size) :
     _name(name), _size(size)
 {
@@ -68,10 +89,10 @@ TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size)
 
 TSharedMemoryAllocator::~TSharedMemoryAllocator()
 {
+    ShmLocker locker(pb_header);
+
     if (_name.isEmpty()) {
         delete (char*)_shm;
-    } else {
-        munmap(_shm, _size);
     }
 }
 
@@ -83,6 +104,8 @@ caddr_t TSharedMemoryAllocator::sbrk(int64_t inc)
         errno = ENOMEM;
         return nullptr;
     }
+
+    ShmLocker locker(pb_header);
 
     if (!pb_header->current() || (inc > 0 && pb_header->current() + inc > pb_header->end())
         || (inc < 0 && pb_header->current() + inc < pb_header->start())) {
@@ -100,7 +123,16 @@ caddr_t TSharedMemoryAllocator::sbrk(int64_t inc)
 // Return: the origin pointer of data area
 void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
 {
-    static const Tf::program_break_header_t INIT_PB_HEADER;
+    static const Tf::program_break_header_t INIT_PB_HEADER = []() {
+        Tf::program_break_header_t header;
+        pthread_mutexattr_t mat;
+
+        pthread_mutexattr_init(&mat);
+        pthread_mutexattr_settype(&mat, PTHREAD_MUTEX_RECURSIVE);
+        pthread_mutexattr_setpshared(&mat, PTHREAD_PROCESS_SHARED);
+        pthread_mutex_init(&header.mutex, &mat);
+        return header;
+    }();
 
     if (pb_header) {
         return nullptr;
@@ -162,6 +194,8 @@ uint TSharedMemoryAllocator::allocSize(const void *ptr)
         return 0;
     }
 
+    ShmLocker locker(pb_header);
+
     if (ptr < pb_header->start() || ptr >= pb_header->end()) {
         Q_ASSERT(0);
         return 0;
@@ -183,6 +217,8 @@ void TSharedMemoryAllocator::free(void *ptr)
     if (!pb_header || !ptr || ptr == (void *)-1) {
         return;
     }
+
+    ShmLocker locker(pb_header);
 
     while (ptr) {
         if (ptr < pb_header->start() || ptr >= pb_header->end()) {
@@ -242,6 +278,9 @@ void *TSharedMemoryAllocator::malloc(uint size)
     if (!pb_header || !size) {
         return nullptr;
     }
+
+    ShmLocker locker(pb_header);
+
     /* Rounds up to 16bytes */
     uint d = size % 16;
     size += d ? 16 - d : 0;
@@ -285,6 +324,8 @@ void *TSharedMemoryAllocator::calloc(uint num, uint nsize)
         return nullptr;
     }
 
+    ShmLocker locker(pb_header);
+
     uint size = num * nsize;
     /* check mul overflow */
     if (nsize != size / num) {
@@ -306,6 +347,8 @@ void *TSharedMemoryAllocator::realloc(void *ptr, uint size)
     if (!ptr || !size) {
         return nullptr;
     }
+
+    ShmLocker locker(pb_header);
 
     Tf::alloc_header_t *header = (Tf::alloc_header_t*)ptr - 1;
 
@@ -337,6 +380,8 @@ void TSharedMemoryAllocator::summary()
         return;
     }
 
+    ShmLocker locker(pb_header);
+
     Tf::alloc_header_t *cur = pb_header->alloc_head();
     int freeblk = 0;
     int used = 0;
@@ -360,6 +405,8 @@ void TSharedMemoryAllocator::dump()
         Q_ASSERT(0);
         return;
     }
+
+    ShmLocker locker(pb_header);
 
     Tf::alloc_header_t *cur = pb_header->alloc_head();
     int freeblk = 0;
@@ -389,6 +436,8 @@ int TSharedMemoryAllocator::nblocks()
         return 0;
     }
 
+    ShmLocker locker(pb_header);
+
     int counter = 0;
     Tf::alloc_header_t *cur = pb_header->alloc_head();
 
@@ -397,4 +446,20 @@ int TSharedMemoryAllocator::nblocks()
         cur = cur->next();
     }
     return counter;
+}
+
+// Locks recursively
+void TSharedMemoryAllocator::lock()
+{
+    if (pb_header) {
+        tf_pthread_mutex_lock(&pb_header->mutex);
+    }
+}
+
+// Unlocks
+void TSharedMemoryAllocator::unlock()
+{
+    if (pb_header) {
+        tf_pthread_mutex_unlock(&pb_header->mutex);
+    }
 }

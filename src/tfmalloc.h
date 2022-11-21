@@ -21,6 +21,9 @@ public:
     bool isNew() const { return _newmap; }
     void *origin() const { return (void *)_origin; }
 
+    void lock();
+    void unlock();
+
     // Internal use
     void summary();
     void dump();  // For debug

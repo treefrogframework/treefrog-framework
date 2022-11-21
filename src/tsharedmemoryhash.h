@@ -9,6 +9,7 @@ class TSharedMemoryAllocator;
 class TSharedMemoryHash {
 public:
     TSharedMemoryHash(const QString &name, size_t size);
+    ~TSharedMemoryHash();
 
     bool insert(const QByteArray &key, const QByteArray &value);
     QByteArray value(const QByteArray &key, const QByteArray &defaultValue = QByteArray()) const;
@@ -32,6 +33,7 @@ private:
         uint64_t hashtg {0};
         int tableSize {1024};
         int count {0};
+        int freeCount {0};
 
         uint64_t *hashg() { return hashtg ? (uint64_t *)((caddr_t)this + hashtg) : nullptr; }
 

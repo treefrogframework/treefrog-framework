@@ -275,7 +275,6 @@ void TestSharedMemoryHash::testCompareWithQMap()
     QCOMPARE(smhash.count(), 0);
 }
 
-
 void TestSharedMemoryHash::bench1()
 {
     int d = 100;
