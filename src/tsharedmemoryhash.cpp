@@ -2,6 +2,7 @@
 #include "tshm.h"
 #include "tsharedmemoryallocator.h"
 #include <QDataStream>
+#include <ctime>
 #include <pthread.h>
 
 #define FREE ((void *)-1)
@@ -9,6 +10,7 @@
 struct hash_header_t {
     uint64_t hashtg {0};
     pthread_rwlock_t rwlock;
+    uint lockcounter {0};
     uint tableSize {1024};
     uint count {0};
     uint freeCount {0};
@@ -65,19 +67,25 @@ inline QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
 }
 
 
+static void rwlock_init(pthread_rwlock_t *rwlock)
+{
+    pthread_rwlockattr_t attr;
+
+    int res = pthread_rwlockattr_init(&attr);
+    Q_ASSERT(!res);
+    res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+    Q_ASSERT(!res);
+    res = pthread_rwlock_init(rwlock, &attr);
+    Q_ASSERT(!res);
+}
+
+
 TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
     _allocator(new TSharedMemoryAllocator(name, size))
 {
     static const hash_header_t INIT_HEADER = []() {
         hash_header_t header;
-        pthread_rwlockattr_t attr;
-
-        int res = pthread_rwlockattr_init(&attr);
-        Q_ASSERT(!res);
-        res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-        Q_ASSERT(!res);
-        res = pthread_rwlock_init(&header.rwlock, &attr);
-        Q_ASSERT(!res);
+        rwlock_init(&header.rwlock);
         return header;
     }();
 
@@ -353,13 +361,47 @@ uint TSharedMemoryHash::next(uint index) const
 
 void TSharedMemoryHash::lockForRead() const
 {
-    pthread_rwlock_rdlock(&_h->rwlock);
+    std::timespec timeout;
+
+    while (pthread_rwlock_tryrdlock(&_h->rwlock) == EBUSY) {
+        uint cnt = _h->lockcounter;
+        std::timespec_get(&timeout, TIME_UTC);
+        timeout.tv_sec += 1;  // 1sec
+
+        int res = pthread_rwlock_timedrdlock(&_h->rwlock, &timeout);
+        if (!res) {
+            break;
+        } else {
+            if (res == ETIMEDOUT && _h->lockcounter == cnt) {
+                // resets rwlock object
+                rwlock_init(&_h->rwlock);
+            }
+        }
+    }
+    _h->lockcounter++;
 }
 
 
 void TSharedMemoryHash::lockForWrite()
 {
-    pthread_rwlock_wrlock(&_h->rwlock);
+    std::timespec timeout;
+
+    while (pthread_rwlock_trywrlock(&_h->rwlock) == EBUSY) {
+        uint cnt = _h->lockcounter;
+        std::timespec_get(&timeout, TIME_UTC);
+        timeout.tv_sec += 1;  // 1sec
+
+        int res = pthread_rwlock_timedwrlock(&_h->rwlock, &timeout);
+        if (!res) {
+            break;
+        } else {
+            if (res == ETIMEDOUT && _h->lockcounter == cnt) {
+                // resets rwlock object
+                rwlock_init(&_h->rwlock);
+            }
+        }
+    }
+    _h->lockcounter++;
 }
 
 

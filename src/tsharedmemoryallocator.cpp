@@ -9,8 +9,6 @@
 #include "tshm.h"
 #include "tsystemglobal.h"
 #include <cstring>
-#include <cstdio>
-#include <pthread.h>
 #include <errno.h>
 
 namespace Tf {
