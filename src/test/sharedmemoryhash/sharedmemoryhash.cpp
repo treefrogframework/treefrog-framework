@@ -5,6 +5,7 @@
 
 
 static TSharedMemoryHash smhash("/sharedhash.shm", 256 * 1024 * 1024);
+static QMap<QByteArray, QByteArray> qmap;
 const QByteArray ckey = QUuid::createUuid().toByteArray();
 
 class TestSharedMemoryHash : public QObject
@@ -200,16 +201,16 @@ void TestSharedMemoryHash::testAlloc4()
 }
 
 
-static void insert(QMap<QByteArray, QByteArray> &qmap, uint count, float factor)
+static void insert(uint count, float factor)
 {
     QByteArray key, value;
     while (smhash.count() < count || smhash.loadFactor() < factor) {
         key = randomString(Tf::random(10, 20));
         value = randomString(Tf::random(16, 128));
 
-        qmap.insert(key, value);
+        qmap.insert(key, value);  // QMap
 
-        bool ok = smhash.insert(key, value);
+        bool ok = smhash.insert(key, value);  // TSharedMemoryHash
         QVERIFY(ok);
         if (!ok) {
             break;
@@ -220,10 +221,8 @@ static void insert(QMap<QByteArray, QByteArray> &qmap, uint count, float factor)
 
 void TestSharedMemoryHash::testCompareWithQMap()
 {
-    QMap<QByteArray, QByteArray> qmap;
-
     // insert data
-    insert(qmap, 40000, 0.75);
+    insert(40000, 0.75);
 
     // check values
     for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
@@ -257,7 +256,7 @@ void TestSharedMemoryHash::testCompareWithQMap()
     qDebug() << "smhash count:" << smhash.count();
 
     // insert data
-    insert(qmap, 40000, 0.75);
+    insert(40000, 0.75);
 
     // check values
     for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
@@ -273,6 +272,7 @@ void TestSharedMemoryHash::testCompareWithQMap()
     smhash.clear();
     QCOMPARE(smhash.count(), 0U);
 }
+
 
 void TestSharedMemoryHash::bench1()
 {

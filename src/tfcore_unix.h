@@ -193,16 +193,4 @@ inline int tf_poll_send(int socket, int timeout)
     return ret;
 }
 
-
-inline int tf_pthread_mutex_lock(pthread_mutex_t *mutex)
-{
-    TF_EAGAIN_LOOP(pthread_mutex_lock(mutex));
-}
-
-
-inline int tf_pthread_mutex_unlock(pthread_mutex_t *mutex)
-{
-    TF_EAGAIN_LOOP(pthread_mutex_unlock(mutex));
-}
-
 }  // namespace
