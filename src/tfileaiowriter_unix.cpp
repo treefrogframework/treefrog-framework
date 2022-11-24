@@ -118,12 +118,12 @@ int TFileAioWriter::write(const char *data, int length)
     }
 
     struct aiocb *cb = new struct aiocb;
-    memset(cb, 0, sizeof(struct aiocb));
+    std::memset(cb, 0, sizeof(struct aiocb));
 
     cb->aio_fildes = d->fileDescriptor;
     cb->aio_nbytes = length;
     cb->aio_buf = new char[length];
-    memcpy((void *)cb->aio_buf, data, length);
+    std::memcpy((void *)cb->aio_buf, data, length);
 
     int ret = tf_aio_write(cb);
     int err = errno;

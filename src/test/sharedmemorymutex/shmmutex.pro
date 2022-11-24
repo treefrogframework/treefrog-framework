@@ -1,3 +1,3 @@
 include(../test.pri)
-TARGET = shmmutex
+TARGET = sharedmemorymutex
 SOURCES = shmmutex.cpp

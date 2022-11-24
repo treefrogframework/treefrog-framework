@@ -94,7 +94,7 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
     if (_allocator->isNew()) {
         void *ptr = _allocator->malloc(sizeof(INIT_HEADER));
         Q_ASSERT(ptr == _h);
-        memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
+        std::memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
         ptr = _allocator->calloc(_h->tableSize, sizeof(uint64_t));
         _h->setHashg(ptr);
         Q_ASSERT(ptr);
@@ -156,7 +156,7 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
             break;
         }
 
-        memcpy(newbucket, data.data(), data.size());
+        std::memcpy(newbucket, data.data(), data.size());
         _h->setBucketPtr(idx, newbucket);
         (_h->count)++;
 

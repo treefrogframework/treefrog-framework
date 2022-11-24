@@ -156,7 +156,7 @@ bool TSharedMemoryLogStream::smWrite(const QList<TLog> &logs)
         return false;
     }
 
-    memcpy(shareMem->data(), buffer.constData(), buffer.size());
+    std::memcpy(shareMem->data(), buffer.constData(), buffer.size());
     return true;
 }
 

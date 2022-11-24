@@ -7,8 +7,8 @@
 #include "tsystemglobal.h"
 #include <cstring>
 #include <cstdio>
+#include <cerrno>
 #include <pthread.h>
-#include <errno.h>
 
 namespace Tf {
 
@@ -146,7 +146,7 @@ void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
     uint64_t ck = (uint64_t)size * (uint64_t)size;
     if (initial || pb_header->checksum != ck || !ck) {
         // new mmap
-        memcpy(pb_header, &INIT_PB_HEADER, sizeof(Tf::program_break_header_t));
+        std::memcpy(pb_header, &INIT_PB_HEADER, sizeof(Tf::program_break_header_t));
         pb_header->startg = pb_header->currentg = sizeof(Tf::program_break_header_t);
         pb_header->endg = size;
         pb_header->checksum = (uint64_t)size * (uint64_t)size;
@@ -300,7 +300,7 @@ void *TSharedMemoryAllocator::malloc(uint size)
     }
 
     header = (Tf::alloc_header_t *)block;
-    memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
+    std::memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
     header->size = size;
     header->set_prev(pb_header->alloc_tail());
 
@@ -337,7 +337,7 @@ void *TSharedMemoryAllocator::calloc(uint num, uint nsize)
         return nullptr;
     }
 
-    memset(ptr, 0, size);  // zero clear
+    std::memset(ptr, 0, size);  // zero clear
     return ptr;
 }
 
@@ -365,7 +365,7 @@ void *TSharedMemoryAllocator::realloc(void *ptr, uint size)
     void *ret = TSharedMemoryAllocator::malloc(size);
     if (ret) {
         /* Relocate contents to the new bigger block */
-        memcpy(ret, ptr, header->size);
+        std::memcpy(ret, ptr, header->size);
         /* Free the old memory block */
         TSharedMemoryAllocator::free(ptr);
     }

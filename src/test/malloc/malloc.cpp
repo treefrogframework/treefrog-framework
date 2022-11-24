@@ -1,5 +1,5 @@
 #include <TfTest/TfTest>
-#include "tfmalloc.h"
+#include "tsharedmemoryallocator.h"
 #include "tglobal.h"
 
 

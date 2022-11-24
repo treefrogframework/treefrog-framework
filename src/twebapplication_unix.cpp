@@ -24,7 +24,7 @@ void TWebApplication::watchUnixSignal(int sig, bool watch)
 {
     if (sig < NSIG) {
         struct sigaction sa;
-        memset(&sa, 0, sizeof(sa));
+        std::memset(&sa, 0, sizeof(sa));
         sa.sa_flags = SA_RESTART;
         if (watch) {
             sa.sa_handler = signalHandler;
@@ -44,7 +44,7 @@ void TWebApplication::ignoreUnixSignal(int sig, bool ignore)
 {
     if (sig < NSIG) {
         struct sigaction sa;
-        memset(&sa, 0, sizeof(sa));
+        std::memset(&sa, 0, sizeof(sa));
         sa.sa_flags = SA_RESTART;
         sa.sa_handler = (ignore) ? SIG_IGN : SIG_DFL;
         if (sigaction(sig, &sa, 0) != 0) {
