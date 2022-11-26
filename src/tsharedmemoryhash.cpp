@@ -43,29 +43,6 @@ struct hash_header_t {
     }
 };
 
-class Bucket {
-public:
-    QByteArray key;
-    QByteArray value;
-
-    friend QDataStream &operator<<(QDataStream &ds, const Bucket &bucket);
-    friend QDataStream &operator>>(QDataStream &ds, Bucket &bucket);
-};
-
-
-inline QDataStream &operator<<(QDataStream &ds, const Bucket &bucket)
-{
-    ds << bucket.key << bucket.value;
-    return ds;
-}
-
-
-inline QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
-{
-    ds >> bucket.key >> bucket.value;
-    return ds;
-}
-
 
 static void rwlock_init(pthread_rwlock_t *rwlock)
 {
@@ -476,21 +453,19 @@ TSharedMemoryHash::WriteLockingIterator::~WriteLockingIterator()
 }
 
 
-QByteArray TSharedMemoryHash::WriteLockingIterator::key() const
+const QByteArray &TSharedMemoryHash::WriteLockingIterator::key() const
 {
-    Bucket bucket;
-    return (_hash->find(_it, bucket)) ? bucket.key : QByteArray();
+    return _tmpbk.key;
 }
 
 
-QByteArray TSharedMemoryHash::WriteLockingIterator::value() const
+const QByteArray &TSharedMemoryHash::WriteLockingIterator::value() const
 {
-    Bucket bucket;
-    return (_hash->find(_it, bucket)) ? bucket.value : QByteArray();
+    return _tmpbk.value;
 }
 
 
-QByteArray TSharedMemoryHash::WriteLockingIterator::operator*() const
+const QByteArray &TSharedMemoryHash::WriteLockingIterator::operator*() const
 {
     return value();
 }
@@ -498,6 +473,8 @@ QByteArray TSharedMemoryHash::WriteLockingIterator::operator*() const
 
 void TSharedMemoryHash::WriteLockingIterator::search()
 {
+    _tmpbk.clear();
+
     if (_hash->count() == 0) {
         _it = _hash->tableSize();
         return;
@@ -508,8 +485,7 @@ void TSharedMemoryHash::WriteLockingIterator::search()
     }
 
     while (++_it < _hash->tableSize()) {
-        void *pbucket = _hash->_h->bucketPtr(_it);
-        if (pbucket && pbucket != FREE) {
+        if (_hash->find(_it, _tmpbk)) {
             break;
         }
     }
@@ -528,4 +504,5 @@ void TSharedMemoryHash::WriteLockingIterator::remove()
     if (_it < _hash->tableSize()) {
         _hash->remove(_it);
     }
+    _tmpbk.clear();
 }

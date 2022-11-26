@@ -2,18 +2,39 @@
 #include <TGlobal>
 
 struct hash_header_t;
-class Bucket;
 class TSharedMemoryAllocator;
 
 
 class TSharedMemoryHash {
 public:
+    class Bucket {
+    public:
+        QByteArray key;
+        QByteArray value;
+
+        void clear()
+        {
+            key.resize(0);
+            value.resize(0);
+        }
+        friend QDataStream &operator<<(QDataStream &ds, const Bucket &bucket)
+        {
+            ds << bucket.key << bucket.value;
+            return ds;
+        }
+        friend QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
+        {
+            ds >> bucket.key >> bucket.value;
+            return ds;
+        }
+    };
+
     class WriteLockingIterator {
     public:
         ~WriteLockingIterator();
-        QByteArray key() const;
-        QByteArray value() const;
-        QByteArray operator*() const;
+        const QByteArray &key() const;
+        const QByteArray &value() const;
+        const QByteArray &operator*() const;
         WriteLockingIterator &operator++();
         bool operator==(const WriteLockingIterator &other) const { return _hash == other._hash && _it == other._it; }
         bool operator!=(const WriteLockingIterator &other) const { return _hash != other._hash || _it != other._it; }
@@ -25,6 +46,7 @@ public:
         TSharedMemoryHash *_hash {nullptr};
         uint _it {0};
         bool _locked {false};
+        Bucket _tmpbk;
         friend class TSharedMemoryHash;
     };
 
