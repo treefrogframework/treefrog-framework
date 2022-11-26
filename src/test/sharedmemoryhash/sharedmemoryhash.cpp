@@ -26,6 +26,7 @@ private slots:
     void bench1();
     void bench2();
     void testCompareWithQMap();
+    void testCompareIterator();
 };
 
 
@@ -270,7 +271,41 @@ void TestSharedMemoryHash::testCompareWithQMap()
     //Tf::shmsummary();
 
     smhash.clear();
+    qmap.clear();
     QCOMPARE(smhash.count(), 0U);
+}
+
+
+void TestSharedMemoryHash::testCompareIterator()
+{
+    // insert data
+    insert(40000, 0.75);
+
+    int cnt = 0;
+    for (auto it = smhash.begin(); it != smhash.end(); ++it) {
+        auto val = qmap.value(it.key());
+        QCOMPARE(it.value(), val);
+        cnt++;
+    }
+    QCOMPARE(cnt, qmap.count());
+
+    for (auto it = qmap.begin(); it != qmap.end(); ++it) {
+        auto val = smhash.value(it.key());
+        QCOMPARE(it.value(), val);
+    }
+
+    // remove-check
+    cnt = 0;
+    for (auto it = smhash.begin(); it != smhash.end(); ++it) {
+        auto val = qmap.value(it.key());
+        if (val == it.value()) {
+            it.remove();
+            cnt++;
+        }
+    }
+    QCOMPARE(cnt, qmap.count());
+    QCOMPARE(smhash.count(), 0U);
+    qmap.clear();
 }
 
 

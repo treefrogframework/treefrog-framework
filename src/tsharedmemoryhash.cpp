@@ -22,9 +22,9 @@ struct hash_header_t {
         hashtg = p ? (uint64_t)p - (uint64_t)this : 0;
     }
 
-    void *bucketPtr(int index)
+    void *bucketPtr(uint index)
     {
-        if (index >= 0 && index < (int)tableSize) {
+        if (index < tableSize) {
             uint64_t g = *(hashg() + index);
             return (g && g != -1UL) ? (caddr_t)this + g : (void *)g;
         } else {
@@ -33,10 +33,10 @@ struct hash_header_t {
         return nullptr;
     }
 
-    void setBucketPtr(int index, void *ptr)
+    void setBucketPtr(uint index, void *ptr)
     {
-        if (index >= 0 && index < (int)tableSize) {
-            *(hashg() + index) = (ptr && ptr != (void *)-1) ? (uint64_t)ptr - (uint64_t)this : (uint64_t)ptr;
+        if (index < tableSize) {
+            *(hashg() + index) = (ptr && ptr != FREE) ? (uint64_t)ptr - (uint64_t)this : (uint64_t)ptr;
         } else {
             Q_ASSERT(0);
         }
@@ -178,7 +178,7 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
 }
 
 
-int TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
+uint TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
 {
     if (key.isEmpty()) {
         return -1;
@@ -216,13 +216,37 @@ int TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
 }
 
 
+bool TSharedMemoryHash::find(uint index, Bucket &bucket) const
+{
+    if (index >= tableSize()) {
+        return false;
+    }
+
+    void *pbucket = _h->bucketPtr(index);
+    if (!pbucket || pbucket == FREE) {
+        return false;
+    }
+
+    int alcsize = _allocator->allocSize(pbucket);
+    if (alcsize <= 0) {
+        Q_ASSERT(0);
+        return false;
+    }
+
+    QByteArray buf((char *)pbucket, alcsize);
+    QDataStream ds(buf);
+    ds >> bucket;
+    return true;
+}
+
+
 QByteArray TSharedMemoryHash::value(const QByteArray &key, const QByteArray &defaultValue) const
 {
     Bucket bucket;
     lockForRead();  // lock
-    int idx = find(key, bucket);
+    uint idx = find(key, bucket);
     unlock();  // unlock
-    return (idx >= 0) ? bucket.value : defaultValue;
+    return (idx < tableSize()) ? bucket.value : defaultValue;
 }
 
 
@@ -230,15 +254,15 @@ QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defa
 {
     Bucket bucket;
     lockForWrite();  // lock
-    int idx = find(key, bucket);
-    if (idx >= 0) {
+    uint idx = find(key, bucket);
+    if (idx < tableSize()) {
         _allocator->free(_h->bucketPtr(idx));
         _h->setBucketPtr(idx, FREE);
         (_h->count)--;
         (_h->freeCount)++;
     }
     unlock();  // unlock
-    return (idx >= 0) ? bucket.value : defaultValue;
+    return (idx < tableSize()) ? bucket.value : defaultValue;
 }
 
 
@@ -246,15 +270,24 @@ bool TSharedMemoryHash::remove(const QByteArray &key)
 {
     Bucket bucket;
     lockForWrite();  // lock
-    int idx = find(key, bucket);
-    if (idx >= 0) {
-        _allocator->free(_h->bucketPtr(idx));
-        _h->setBucketPtr(idx, FREE);
-        (_h->count)--;
-        (_h->freeCount)++;
-    }
+    uint idx = find(key, bucket);
+    remove(idx);
     unlock();  // unlock
-    return (idx >= 0);
+    return (idx < tableSize());
+}
+
+
+void TSharedMemoryHash::remove(uint index)
+{
+    if (index < tableSize()) {
+        void *ptr = _h->bucketPtr(index);
+        if (ptr && ptr != FREE) {
+            _allocator->free(ptr);
+            _h->setBucketPtr(index, FREE);
+            (_h->count)--;
+            (_h->freeCount)++;
+        }
+    }
 }
 
 
@@ -408,4 +441,91 @@ void TSharedMemoryHash::lockForWrite()
 void TSharedMemoryHash::unlock() const
 {
     pthread_rwlock_unlock(&_h->rwlock);
+}
+
+
+TSharedMemoryHash::WriteLockingIterator TSharedMemoryHash::begin()
+{
+    WriteLockingIterator it(this, (uint)-1);
+    it.search();
+    return it;
+}
+
+
+TSharedMemoryHash::WriteLockingIterator TSharedMemoryHash::end()
+{
+    return WriteLockingIterator(this, tableSize());
+}
+
+
+TSharedMemoryHash::WriteLockingIterator::WriteLockingIterator(TSharedMemoryHash *hash, uint it) :
+    _hash(hash), _it(it)
+{
+    if (_it < _hash->tableSize() || _it == (uint)-1) {
+        _hash->lockForWrite();
+        _locked = true;
+    }
+}
+
+
+TSharedMemoryHash::WriteLockingIterator::~WriteLockingIterator()
+{
+    if (_locked) {
+        _hash->unlock();
+    }
+}
+
+
+QByteArray TSharedMemoryHash::WriteLockingIterator::key() const
+{
+    Bucket bucket;
+    return (_hash->find(_it, bucket)) ? bucket.key : QByteArray();
+}
+
+
+QByteArray TSharedMemoryHash::WriteLockingIterator::value() const
+{
+    Bucket bucket;
+    return (_hash->find(_it, bucket)) ? bucket.value : QByteArray();
+}
+
+
+QByteArray TSharedMemoryHash::WriteLockingIterator::operator*() const
+{
+    return value();
+}
+
+
+void TSharedMemoryHash::WriteLockingIterator::search()
+{
+    if (_hash->count() == 0) {
+        _it = _hash->tableSize();
+        return;
+    }
+
+    if (_it == _hash->tableSize()) {
+        return;
+    }
+
+    while (++_it < _hash->tableSize()) {
+        void *pbucket = _hash->_h->bucketPtr(_it);
+        if (pbucket && pbucket != FREE) {
+            break;
+        }
+    }
+}
+
+
+TSharedMemoryHash::WriteLockingIterator &TSharedMemoryHash::WriteLockingIterator::operator++()
+{
+    search();
+    return *this;
+}
+
+
+void TSharedMemoryHash::WriteLockingIterator::remove()
+{
+    if (_it < _hash->tableSize()) {
+        _hash->remove(_it);
+    }
 }

@@ -8,6 +8,26 @@ class TSharedMemoryAllocator;
 
 class TSharedMemoryHash {
 public:
+    class WriteLockingIterator {
+    public:
+        ~WriteLockingIterator();
+        QByteArray key() const;
+        QByteArray value() const;
+        QByteArray operator*() const;
+        WriteLockingIterator &operator++();
+        bool operator==(const WriteLockingIterator &other) const { return _hash == other._hash && _it == other._it; }
+        bool operator!=(const WriteLockingIterator &other) const { return _hash != other._hash || _it != other._it; }
+        void remove();
+    private:
+        WriteLockingIterator(TSharedMemoryHash *hash, uint it);
+        void search();
+
+        TSharedMemoryHash *_hash {nullptr};
+        uint _it {0};
+        bool _locked {false};
+        friend class TSharedMemoryHash;
+    };
+
     TSharedMemoryHash(const QString &name, size_t size);
     ~TSharedMemoryHash();
 
@@ -21,11 +41,16 @@ public:
     float loadFactor() const;
     void rehash();
 
+    WriteLockingIterator begin();
+    WriteLockingIterator end();
+
 protected:
-    int find(const QByteArray &key, Bucket &bucket) const;
+    uint find(const QByteArray &key, Bucket &bucket) const;
+    bool find(uint index, Bucket &bucket) const;
     int searchIndex(int first);
     uint index(const QByteArray &key) const;
     uint next(uint index) const;
+    void remove(uint index);
 
     void lockForRead() const;
     void lockForWrite();
