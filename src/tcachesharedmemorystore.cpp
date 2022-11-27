@@ -1,4 +1,4 @@
-#include "tsharedmemoryhash.h"
+#include "tcachesharedmemorystore.h"
 #include "tshm.h"
 #include "tsharedmemoryallocator.h"
 #include <QDataStream>
@@ -8,24 +8,24 @@
 #define FREE ((void *)-1)
 
 struct hash_header_t {
-    uint64_t hashtg {0};
+    uintptr_t hashtg {0};
     pthread_rwlock_t rwlock;
     uint lockcounter {0};
     uint tableSize {1024};
     uint count {0};
     uint freeCount {0};
 
-    uint64_t *hashg() { return hashtg ? (uint64_t *)((caddr_t)this + hashtg) : nullptr; }
+    uintptr_t *hashg() { return hashtg ? (uintptr_t *)((uintptr_t)this + hashtg) : nullptr; }
 
     void setHashg(void *p)
     {
-        hashtg = p ? (uint64_t)p - (uint64_t)this : 0;
+        hashtg = p ? (uintptr_t)p - (uintptr_t)this : 0;
     }
 
     void *bucketPtr(uint index)
     {
         if (index < tableSize) {
-            uint64_t g = *(hashg() + index);
+            uintptr_t g = *(hashg() + index);
             return (g && g != -1UL) ? (caddr_t)this + g : (void *)g;
         } else {
             Q_ASSERT(0);
@@ -36,7 +36,7 @@ struct hash_header_t {
     void setBucketPtr(uint index, void *ptr)
     {
         if (index < tableSize) {
-            *(hashg() + index) = (ptr && ptr != FREE) ? (uint64_t)ptr - (uint64_t)this : (uint64_t)ptr;
+            *(hashg() + index) = (ptr && ptr != FREE) ? (uintptr_t)ptr - (uintptr_t)this : (uintptr_t)ptr;
         } else {
             Q_ASSERT(0);
         }
@@ -57,7 +57,7 @@ static void rwlock_init(pthread_rwlock_t *rwlock)
 }
 
 
-TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
+TCacheSharedMemoryStore::TCacheSharedMemoryStore(const QString &name, size_t size) :
     _allocator(new TSharedMemoryAllocator(name, size))
 {
     static const hash_header_t INIT_HEADER = []() {
@@ -72,28 +72,29 @@ TSharedMemoryHash::TSharedMemoryHash(const QString &name, size_t size) :
         void *ptr = _allocator->malloc(sizeof(INIT_HEADER));
         Q_ASSERT(ptr == _h);
         std::memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
-        ptr = _allocator->calloc(_h->tableSize, sizeof(uint64_t));
+        ptr = _allocator->calloc(_h->tableSize, sizeof(uintptr_t));
         _h->setHashg(ptr);
         Q_ASSERT(ptr);
     }
 }
 
 
-TSharedMemoryHash::~TSharedMemoryHash()
+TCacheSharedMemoryStore::~TCacheSharedMemoryStore()
 {
     delete _allocator;
 }
 
 
-bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
+bool TCacheSharedMemoryStore::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
-    if (key.isEmpty()) {
+    if (key.isEmpty() || seconds <= 0) {
         return false;
     }
 
     QByteArray data;
     QDataStream ds(&data, QIODeviceBase::WriteOnly);
-    ds << Bucket{key, value};
+    qint64 expires = Tf::getMSecsSinceEpoch() + seconds * 1000;
+    ds << Bucket{key, value, expires};
 
     lockForWrite();  // lock
 
@@ -117,7 +118,7 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
             QDataStream dsb(buf);
             dsb >> bucket;
 
-            if (bucket.key != key) {
+            if (bucket.expires > Tf::getMSecsSinceEpoch() && bucket.key != key) {
                 idx = next(idx);
                 continue;
             }
@@ -155,7 +156,7 @@ bool TSharedMemoryHash::insert(const QByteArray &key, const QByteArray &value)
 }
 
 
-uint TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
+uint TCacheSharedMemoryStore::find(const QByteArray &key, Bucket &bucket) const
 {
     if (key.isEmpty()) {
         return -1;
@@ -193,7 +194,7 @@ uint TSharedMemoryHash::find(const QByteArray &key, Bucket &bucket) const
 }
 
 
-bool TSharedMemoryHash::find(uint index, Bucket &bucket) const
+bool TCacheSharedMemoryStore::find(uint index, Bucket &bucket) const
 {
     if (index >= tableSize()) {
         return false;
@@ -217,17 +218,17 @@ bool TSharedMemoryHash::find(uint index, Bucket &bucket) const
 }
 
 
-QByteArray TSharedMemoryHash::value(const QByteArray &key, const QByteArray &defaultValue) const
+QByteArray TCacheSharedMemoryStore::get(const QByteArray &key)
 {
     Bucket bucket;
     lockForRead();  // lock
     uint idx = find(key, bucket);
     unlock();  // unlock
-    return (idx < tableSize()) ? bucket.value : defaultValue;
+    return (idx < tableSize() && bucket.expires > Tf::getMSecsSinceEpoch()) ? bucket.value : QByteArray();
 }
 
-
-QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defaultValue)
+/*
+QByteArray TCacheSharedMemoryStore::take(const QByteArray &key, const QByteArray &defaultValue)
 {
     Bucket bucket;
     lockForWrite();  // lock
@@ -241,9 +242,9 @@ QByteArray TSharedMemoryHash::take(const QByteArray &key, const QByteArray &defa
     unlock();  // unlock
     return (idx < tableSize()) ? bucket.value : defaultValue;
 }
+*/
 
-
-bool TSharedMemoryHash::remove(const QByteArray &key)
+bool TCacheSharedMemoryStore::remove(const QByteArray &key)
 {
     Bucket bucket;
     lockForWrite();  // lock
@@ -254,7 +255,7 @@ bool TSharedMemoryHash::remove(const QByteArray &key)
 }
 
 
-void TSharedMemoryHash::remove(uint index)
+void TCacheSharedMemoryStore::remove(uint index)
 {
     if (index < tableSize()) {
         void *ptr = _h->bucketPtr(index);
@@ -268,25 +269,25 @@ void TSharedMemoryHash::remove(uint index)
 }
 
 
-uint TSharedMemoryHash::count() const
+uint TCacheSharedMemoryStore::count() const
 {
     return _h->count;
 }
 
 
-uint TSharedMemoryHash::tableSize() const
+uint TCacheSharedMemoryStore::tableSize() const
 {
     return _h->tableSize;
 }
 
 
-float TSharedMemoryHash::loadFactor() const
+float TCacheSharedMemoryStore::loadFactor() const
 {
     return (count() + _h->freeCount) / (float)_h->tableSize;
 }
 
 
-void TSharedMemoryHash::clear()
+void TCacheSharedMemoryStore::clear()
 {
     lockForWrite();  // lock
     for (uint i = 0; i < _h->tableSize; i++) {
@@ -305,16 +306,26 @@ void TSharedMemoryHash::clear()
 }
 
 
-void TSharedMemoryHash::rehash()
+void TCacheSharedMemoryStore::gc()
 {
-    Bucket bucket;
-    QByteArray buf;
+    for (auto it = begin(); it != end(); ++it) {
+        if (it.isExpired()) {
+            it.remove();
+        }
+    }
+}
 
+
+void TCacheSharedMemoryStore::rehash()
+{
     if (loadFactor() < 0.2) {
         // do nothing
         return;
     }
-    uint64_t *const oldt = _h->hashg();
+
+    Bucket bucket;
+    QByteArray buf;
+    uintptr_t *const oldt = _h->hashg();
     int oldsize = _h->tableSize;
 
     // Creates new table
@@ -322,12 +333,12 @@ void TSharedMemoryHash::rehash()
         _h->tableSize = oldsize * 2;  // new table size
     }
 
-    auto *ptr = _allocator->calloc(_h->tableSize, sizeof(uint64_t));
+    auto *ptr = _allocator->calloc(_h->tableSize, sizeof(uintptr_t));
     _h->setHashg(ptr);
     Q_ASSERT(ptr);
 
     for (int i = 0; i < oldsize; i++) {
-        uint64_t g = *(oldt + i);
+        uintptr_t g = *(oldt + i);
         void *pbucket = (g && g != -1UL) ? (caddr_t)_h + g : nullptr;
 
         if (!pbucket) {
@@ -357,19 +368,19 @@ void TSharedMemoryHash::rehash()
 }
 
 
-uint TSharedMemoryHash::index(const QByteArray &key) const
+uint TCacheSharedMemoryStore::index(const QByteArray &key) const
 {
     return qHash(key) % _h->tableSize;
 }
 
 
-uint TSharedMemoryHash::next(uint index) const
+uint TCacheSharedMemoryStore::next(uint index) const
 {
     return (index + 1) % _h->tableSize;
 }
 
 
-void TSharedMemoryHash::lockForRead() const
+void TCacheSharedMemoryStore::lockForRead() const
 {
     std::timespec timeout;
 
@@ -392,7 +403,7 @@ void TSharedMemoryHash::lockForRead() const
 }
 
 
-void TSharedMemoryHash::lockForWrite()
+void TCacheSharedMemoryStore::lockForWrite() const
 {
     std::timespec timeout;
 
@@ -415,13 +426,13 @@ void TSharedMemoryHash::lockForWrite()
 }
 
 
-void TSharedMemoryHash::unlock() const
+void TCacheSharedMemoryStore::unlock() const
 {
     pthread_rwlock_unlock(&_h->rwlock);
 }
 
 
-TSharedMemoryHash::WriteLockingIterator TSharedMemoryHash::begin()
+TCacheSharedMemoryStore::WriteLockingIterator TCacheSharedMemoryStore::begin()
 {
     WriteLockingIterator it(this, (uint)-1);
     it.search();
@@ -429,13 +440,13 @@ TSharedMemoryHash::WriteLockingIterator TSharedMemoryHash::begin()
 }
 
 
-TSharedMemoryHash::WriteLockingIterator TSharedMemoryHash::end()
+TCacheSharedMemoryStore::WriteLockingIterator TCacheSharedMemoryStore::end()
 {
     return WriteLockingIterator(this, tableSize());
 }
 
 
-TSharedMemoryHash::WriteLockingIterator::WriteLockingIterator(TSharedMemoryHash *hash, uint it) :
+TCacheSharedMemoryStore::WriteLockingIterator::WriteLockingIterator(TCacheSharedMemoryStore *hash, uint it) :
     _hash(hash), _it(it)
 {
     if (_it < _hash->tableSize() || _it == (uint)-1) {
@@ -445,7 +456,7 @@ TSharedMemoryHash::WriteLockingIterator::WriteLockingIterator(TSharedMemoryHash 
 }
 
 
-TSharedMemoryHash::WriteLockingIterator::~WriteLockingIterator()
+TCacheSharedMemoryStore::WriteLockingIterator::~WriteLockingIterator()
 {
     if (_locked) {
         _hash->unlock();
@@ -453,25 +464,31 @@ TSharedMemoryHash::WriteLockingIterator::~WriteLockingIterator()
 }
 
 
-const QByteArray &TSharedMemoryHash::WriteLockingIterator::key() const
+const QByteArray &TCacheSharedMemoryStore::WriteLockingIterator::key() const
 {
     return _tmpbk.key;
 }
 
 
-const QByteArray &TSharedMemoryHash::WriteLockingIterator::value() const
+const QByteArray &TCacheSharedMemoryStore::WriteLockingIterator::value() const
 {
     return _tmpbk.value;
 }
 
 
-const QByteArray &TSharedMemoryHash::WriteLockingIterator::operator*() const
+bool TCacheSharedMemoryStore::WriteLockingIterator::isExpired() const
+{
+    return _tmpbk.isExpired();
+}
+
+
+const QByteArray &TCacheSharedMemoryStore::WriteLockingIterator::operator*() const
 {
     return value();
 }
 
 
-void TSharedMemoryHash::WriteLockingIterator::search()
+void TCacheSharedMemoryStore::WriteLockingIterator::search()
 {
     _tmpbk.clear();
 
@@ -492,14 +509,14 @@ void TSharedMemoryHash::WriteLockingIterator::search()
 }
 
 
-TSharedMemoryHash::WriteLockingIterator &TSharedMemoryHash::WriteLockingIterator::operator++()
+TCacheSharedMemoryStore::WriteLockingIterator &TCacheSharedMemoryStore::WriteLockingIterator::operator++()
 {
     search();
     return *this;
 }
 
 
-void TSharedMemoryHash::WriteLockingIterator::remove()
+void TCacheSharedMemoryStore::WriteLockingIterator::remove()
 {
     if (_it < _hash->tableSize()) {
         _hash->remove(_it);

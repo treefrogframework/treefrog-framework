@@ -1,10 +1,10 @@
 #include <TfTest/TfTest>
-#include "tsharedmemoryhash.h"
+#include "tcachesharedmemorystore.h"
 #include "tglobal.h"
 #include <iostream>
 
 
-static TSharedMemoryHash smhash("/sharedhash.shm", 256 * 1024 * 1024);
+static TCacheSharedMemoryStore smhash("sharedhash.shm", 256 * 1024 * 1024);
 static QMap<QByteArray, QByteArray> qmap;
 const QByteArray ckey = QUuid::createUuid().toByteArray();
 
@@ -20,7 +20,6 @@ private slots:
     void testAlloc2();
     void testAlloc3_data();
     void testAlloc3();
-    void testAlloc4_data();
     void testAlloc4();
 
     void bench1();
@@ -47,7 +46,7 @@ void TestSharedMemoryHash::initTestCase()
 {
     smhash.clear();
     QCOMPARE(smhash.count(), 0U);
-    smhash.insert(ckey, "value");
+    smhash.set(ckey, "value", 10);
 }
 
 
@@ -75,10 +74,10 @@ void TestSharedMemoryHash::testAlloc1()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, value);
 
-    QCOMPARE(smhash.value(key).isEmpty(), true);  // empty
-    smhash.insert(key, value);
-    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
-    auto val = smhash.value(key);
+    QCOMPARE(smhash.get(key).isEmpty(), true);  // empty
+    smhash.set(key, value, 10);
+    qDebug() << "smhash.get(" << key << ") =" << smhash.get(key);
+    auto val = smhash.get(key);
     QCOMPARE(val, value);
 }
 
@@ -108,9 +107,9 @@ void TestSharedMemoryHash::testAlloc2()
     QFETCH(QByteArray, value);
 
     uint num = smhash.count();
-    smhash.insert(key, value);
-    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
-    auto val = smhash.value(key);
+    smhash.set(key, value, 10);
+    qDebug() << "smhash.get(" << key << ") =" << smhash.get(key);
+    auto val = smhash.get(key);
     QCOMPARE(val, value);
     QCOMPARE(smhash.count(), num);
 }
@@ -120,7 +119,7 @@ void TestSharedMemoryHash::testAlloc3_data()
 {
     int d = 100;
     while (smhash.loadFactor() < 0.2) {
-        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+        if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 10)) {
             break;
         }
         //std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
@@ -149,56 +148,61 @@ void TestSharedMemoryHash::testAlloc3()
     QFETCH(QByteArray, value);
 
     uint num = smhash.count();
-    QCOMPARE(smhash.value(key).isEmpty(), true);  // empty
-    smhash.insert(key, value);
-    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
+    QCOMPARE(smhash.get(key).isEmpty(), true);  // empty
+    smhash.set(key, value, 10);
+    qDebug() << "smhash.get(" << key << ") =" << smhash.get(key);
     smhash.remove(key);
-    auto val = smhash.value(key, QByteArray("hoge"));
-    QCOMPARE(val, QByteArray("hoge"));  // Default value
+    // auto val = smhash.get(key, QByteArray("hoge"));
+    // QCOMPARE(val, QByteArray("hoge"));  // Default value
     QCOMPARE(smhash.count(), num);
 }
 
 
-void TestSharedMemoryHash::testAlloc4_data()
-{
-    int d = 100;
-    while (smhash.loadFactor() < 0.2) {
-        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
-            break;
-        }
-        //std::cout << smhash.loadFactor() << " " << smhash.count() << std::endl;
-    }
+// void TestSharedMemoryHash::testAlloc4_data()
+// {
+//     int d = 100;
 
-    QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<QByteArray>("value");
+//     QTest::addColumn<QByteArray>("key");
+//     QTest::addColumn<int>("seconds");
 
-    QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
-    QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << randomString(64);
-    QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << randomString(128);
-    QTest::newRow("4") << QUuid::createUuid().toByteArray()
-                       << randomString(256);
-}
+//     QTest::newRow("1") << QUuid::createUuid().toByteArray()
+//                        << 1;
+//     QTest::newRow("2") << QUuid::createUuid().toByteArray()
+//                        << 3;
+//     QTest::newRow("3") << QUuid::createUuid().toByteArray()
+//                        << 2;
+//     QTest::newRow("4") << QUuid::createUuid().toByteArray()
+//                        << 4;
+// }
 
 
 void TestSharedMemoryHash::testAlloc4()
 {
     //
-    // Insert and Take
+    // Checks timeout
     //
-    QFETCH(QByteArray, key);
-    QFETCH(QByteArray, value);
 
-    uint num = smhash.count();
-    QCOMPARE(smhash.value(key).isEmpty(), true);  // empty
-    smhash.insert(key, value);
-    qDebug() << "smhash.value(" << key << ") =" << smhash.value(key);
-    smhash.take(key);
-    auto val = smhash.value(key, QByteArray("hoge"));
-    QCOMPARE(val, QByteArray("hoge"));  // Default value
-    QCOMPARE(smhash.count(), num);
+    int d = 100;
+    while (smhash.loadFactor() < 0.2) {
+        if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 100)) {
+            break;
+        }
+    }
+
+    qDebug() << "smhash count:" << smhash.count();
+
+    for (int i = 0; i < 10; i++) {
+        auto key = QUuid::createUuid().toByteArray();
+        int seconds = Tf::random(1, 5);
+
+        QCOMPARE(smhash.get(key), QByteArray());  // empty
+        smhash.set(key, "hoge", seconds);
+        QVERIFY(!smhash.get(key).isEmpty());  // not empty
+        qDebug() << "smhash.get(" << key << ") =" << smhash.get(key);
+        Tf::msleep(seconds * 1000 + 1);
+        auto val = smhash.get(key);
+        QCOMPARE(val, QByteArray());  // timeout, empty
+    }
 }
 
 
@@ -211,7 +215,7 @@ static void insert(uint count, float factor)
 
         qmap.insert(key, value);  // QMap
 
-        bool ok = smhash.insert(key, value);  // TSharedMemoryHash
+        bool ok = smhash.set(key, value, 10);  // TSharedMemoryHash
         QVERIFY(ok);
         if (!ok) {
             break;
@@ -227,7 +231,7 @@ void TestSharedMemoryHash::testCompareWithQMap()
 
     // check values
     for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
-        auto res = smhash.value(it.key());
+        auto res = smhash.get(it.key());
         QCOMPARE(res, it.value());
     }
 
@@ -248,7 +252,7 @@ void TestSharedMemoryHash::testCompareWithQMap()
 
     // check values
     for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
-        auto res = smhash.value(it.key());
+        auto res = smhash.get(it.key());
         QCOMPARE(res, it.value());
     }
 
@@ -261,7 +265,7 @@ void TestSharedMemoryHash::testCompareWithQMap()
 
     // check values
     for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
-        auto res = smhash.value(it.key());
+        auto res = smhash.get(it.key());
         QCOMPARE(res, it.value());
     }
 
@@ -290,7 +294,7 @@ void TestSharedMemoryHash::testCompareIterator()
     QCOMPARE(cnt, qmap.count());
 
     for (auto it = qmap.begin(); it != qmap.end(); ++it) {
-        auto val = smhash.value(it.key());
+        auto val = smhash.get(it.key());
         QCOMPARE(it.value(), val);
     }
 
@@ -313,7 +317,7 @@ void TestSharedMemoryHash::bench1()
 {
     int d = 100;
     while (smhash.loadFactor() < 0.75 && smhash.tableSize() < 20000) {
-        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+        if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 10)) {
             break;
         }
     }
@@ -321,7 +325,7 @@ void TestSharedMemoryHash::bench1()
     QBENCHMARK {
         for (int i = 0; i < 1000; i++) {
             int idx = Tf::random(1000, 1000 + d);
-            smhash.value(QByteArray::number(idx));
+            smhash.get(QByteArray::number(idx));
         }
     }
 
@@ -337,25 +341,26 @@ void TestSharedMemoryHash::bench2()
 {
     int d = 100;
     while (smhash.loadFactor() < 0.75 && smhash.tableSize() < 20000) {
-        if (!smhash.insert(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128))) {
+        if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 10)) {
             break;
         }
     }
 
-    // Insert & take
+    // set & remove
     QByteArray res, value;
     QBENCHMARK {
         for (int i = 0; i < 1000; i++) {
             int idx = Tf::random(1000, 1000 + d);
-            value =  randomString(128);
-            bool ok = smhash.insert(QByteArray::number(idx), value);
+            value = randomString(128);
+            bool ok = smhash.set(QByteArray::number(idx), value, 10);
             QVERIFY(ok);
             if (smhash.loadFactor() > 0.75) {
-                res = smhash.take(QByteArray::number(idx));
+                ok = smhash.remove(QByteArray::number(idx));
+                QVERIFY(ok);
             } else {
-                res = smhash.value(QByteArray::number(idx));
+                res = smhash.get(QByteArray::number(idx));
+                QCOMPARE(res, value);
             }
-            QCOMPARE(res, value);
         }
     }
 

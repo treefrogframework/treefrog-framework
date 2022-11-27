@@ -1,10 +1,10 @@
 #include <TfTest/TfTest>
 #include <QElapsedTimer>
-#include "tsharedmemoryhash.h"
+#include "tcachesharedmemorystore.h"
 #include "tglobal.h"
 
 
-static TSharedMemoryHash smhash("/shmtext.shm", 256 * 1024 * 1024);
+static TCacheSharedMemoryStore smhash("shmtext.shm", 256 * 1024 * 1024);
 
 
 static QByteArray randomString(int length)
@@ -27,14 +27,14 @@ void insertItems()
         key = QUuid::createUuid().toByteArray();
         value = randomString(Tf::random(16, 128));
 
-        bool ok = smhash.insert(key, value);
+        bool ok = smhash.set(key, value, 100);
         assert(ok);
         if (!ok) {
             break;
         }
 
         key = QUuid::createUuid().toByteArray();
-        ok = smhash.insert(key, value);
+        ok = smhash.set(key, value, 100);
         assert(ok);
         ok = smhash.remove(key);
         assert(ok);
@@ -58,15 +58,15 @@ void test0(int d = 100000)
         key = QUuid::createUuid().toByteArray();
         value = randomString(Tf::random(16, 128));
 
-        bool ok = smhash.insert(key, value);
+        bool ok = smhash.set(key, value, 100);
         assert(ok);
         std::this_thread::yield();
-        val = smhash.value(key);
+        val = smhash.get(key);
         assert(val == value);
         std::this_thread::yield();
-        val = smhash.take(key);
-        assert(val == value);
-        val = smhash.value(key);
+        ok = smhash.remove(key);
+        assert(ok);
+        val = smhash.get(key);
         assert(val == QByteArray());
         std::this_thread::yield();
     }
@@ -90,7 +90,7 @@ void test1(int d = 5000000)
 
     for (int i = 0; i < d; i++) {
         key = QUuid::createUuid().toByteArray();
-        value = smhash.value(key);
+        value = smhash.get(key);
         assert(value == QByteArray());
     }
 

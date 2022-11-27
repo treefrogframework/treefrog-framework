@@ -15,20 +15,21 @@ namespace Tf {
 
 // Allocation table
 struct alloc_table {
-    uint64_t headg {0};
-    uint64_t tailg {0};
+    uintptr_t headg {0};
+    uintptr_t tailg {0};
+    uint64_t used {0};  // used bytes
 
-    Tf::alloc_header_t *head() const { return headg ? (Tf::alloc_header_t *)((caddr_t)this + headg) : nullptr; }
-    Tf::alloc_header_t *tail() const { return tailg ? (Tf::alloc_header_t *)((caddr_t)this + tailg) : nullptr; }
-    void set_head(Tf::alloc_header_t *p) { headg = p ? (uint64_t)p - (uint64_t)this : 0; }
-    void set_tail(Tf::alloc_header_t *p) { tailg = p ? (uint64_t)p - (uint64_t)this : 0; }
+    Tf::alloc_header_t *head() const { return headg ? (Tf::alloc_header_t *)((uintptr_t)this + headg) : nullptr; }
+    Tf::alloc_header_t *tail() const { return tailg ? (Tf::alloc_header_t *)((uintptr_t)this + tailg) : nullptr; }
+    void set_head(Tf::alloc_header_t *p) { headg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
+    void set_tail(Tf::alloc_header_t *p) { tailg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
 };
 
 // Program break header
 struct program_break_header_t {
-    uint64_t startg {0};
-    uint64_t endg {0};
-    uint64_t currentg {0};
+    uintptr_t startg {0};
+    uintptr_t endg {0};
+    uintptr_t currentg {0};
     uint64_t checksum {0};
     alloc_table at;
 
@@ -44,13 +45,13 @@ struct alloc_header_t {
     bool freed : 1;
     ushort padding : 15;
     uint size {0};
-    uint64_t nextg {0};
-    uint64_t prevg {0};
+    uintptr_t nextg {0};
+    uintptr_t prevg {0};
 
     alloc_header_t *next() const { return nextg ? (alloc_header_t *)((caddr_t)this + nextg) : nullptr; }
     alloc_header_t *prev() const { return prevg ? (alloc_header_t *)((caddr_t)this + prevg) : nullptr; }
-    void set_next(alloc_header_t *p) { nextg = p ? (uint64_t)p - (uint64_t)this : 0; }
-    void set_prev(alloc_header_t *p) { prevg = p ? (uint64_t)p - (uint64_t)this : 0; }
+    void set_next(alloc_header_t *p) { nextg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
+    void set_prev(alloc_header_t *p) { prevg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
 };
 
 }
@@ -62,7 +63,7 @@ TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size)
     if (_name.isEmpty()) {
         _shm = new char[size];
     } else {
-        _shm = Tf::shmcreate(qUtf8Printable(name), _size, &_newmap);
+        _shm = Tf::shmcreate(qUtf8Printable(_name), _size, &_newmap);
     }
     _origin = (caddr_t)setbrk(_shm, size, _newmap);
 }
@@ -199,7 +200,10 @@ void TSharedMemoryAllocator::free(void *ptr)
         }
 
         // marks as free
-        header->freed = 1;
+        if (!header->freed) {
+            header->freed = true;
+            pb_header->at.used -= sizeof(Tf::alloc_header_t) + header->size;
+        }
 
         if (header != pb_header->alloc_tail()) {
             break;
@@ -240,7 +244,8 @@ void *TSharedMemoryAllocator::malloc(uint size)
     Tf::alloc_header_t *header = free_block(size);
     if (header) {
         // found a free block
-        header->freed = 0;
+        header->freed = false;
+        pb_header->at.used += sizeof(Tf::alloc_header_t) + header->size;
         return (void *)(header + 1);
     }
 
@@ -255,6 +260,7 @@ void *TSharedMemoryAllocator::malloc(uint size)
     std::memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
     header->size = size;
     header->set_prev(pb_header->alloc_tail());
+    pb_header->at.used += sizeof(Tf::alloc_header_t) + header->size;
 
     if (!pb_header->alloc_head()) {  // stack empty
         pb_header->at.set_head(header);
@@ -332,7 +338,7 @@ void TSharedMemoryAllocator::summary()
     int freeblk = 0;
     int used = 0;
 
-    tSystemDebug("-- memory block summary --\n");
+    tSystemDebug("-- memory block summary --");
     while (cur) {
         if (cur->freed) {
             freeblk++;
@@ -341,7 +347,7 @@ void TSharedMemoryAllocator::summary()
         }
         cur = cur->next();
     }
-    tSystemDebug("blocks = %d, free = %d, used = %d\n", nblocks(), freeblk, used);
+    tSystemDebug("blocks = %d, free = %d, used = %d", nblocks(), freeblk, used);
 }
 
 // Debug function to print the entire link list
@@ -354,22 +360,19 @@ void TSharedMemoryAllocator::dump()
 
     Tf::alloc_header_t *cur = pb_header->alloc_head();
     int freeblk = 0;
-    int used = 0;
 
-    tSystemDebug("-- memory block information --\n");
+    tSystemDebug("-- memory block information --");
     while (cur) {
-        tSystemDebug("addr = %p, size = %u, freed=%u, next=%p, prev=%p\n",
+        tSystemDebug("addr = %p, size = %u, freed=%u, next=%p, prev=%p",
             (void *)cur, cur->size, cur->freed, cur->next(), cur->prev());
 
         if (cur->freed) {
             freeblk++;
-        } else {
-            used += cur->size;
         }
         cur = cur->next();
     }
-    tSystemDebug("head = %p, tail = %p, blocks = %d, free = %d, used = %d\n", pb_header->alloc_head(),
-        pb_header->alloc_tail(), nblocks(), freeblk, used);
+    tSystemDebug("head = %p, tail = %p, blocks = %d, free = %d, used = %ld", pb_header->alloc_head(),
+        pb_header->alloc_tail(), nblocks(), freeblk, pb_header->at.used);
 }
 
 

@@ -344,15 +344,17 @@ HEADERS += tcacheredisstore.h
 SOURCES += tcacheredisstore.cpp
 HEADERS += tcachememcachedstore.h
 SOURCES += tcachememcachedstore.cpp
-SOURCES += tactioncontroller_qt5.cpp
+HEADERS += tcachesharedmemorystore.h
+SOURCES += tcachesharedmemorystore.cpp
 HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
 HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
 HEADERS += tsharedmemoryallocator.h
 SOURCES += tsharedmemoryallocator.cpp
-HEADERS += tsharedmemoryhash.h
-SOURCES += tsharedmemoryhash.cpp
+HEADERS += tshm.h
+SOURCES += tshm.cpp
+SOURCES += tactioncontroller_qt5.cpp
 
 HEADERS += \
            tfnamespace.h \
