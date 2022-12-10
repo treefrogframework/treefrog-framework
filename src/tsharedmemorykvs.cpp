@@ -1,4 +1,4 @@
-#include "tcachesharedmemorystore.h"
+#include "tsharedmemorykvs.h"
 #include "tshm.h"
 #include "tsharedmemoryallocator.h"
 #include <QDataStream>
@@ -57,47 +57,40 @@ static void rwlock_init(pthread_rwlock_t *rwlock)
 }
 
 
-// TCacheSharedMemoryStore::TCacheSharedMemoryStore(const QString &name, size_t size) :
-//     _allocator(TSharedMemoryAllocator::create(name, size))
-// {
-//     static const hash_header_t INIT_HEADER = []() {
-//         hash_header_t header;
-//         rwlock_init(&header.rwlock);
-//         return header;
-//     }();
+TSharedMemoryKvs::TSharedMemoryKvs(const QString &name, size_t size)
+{
+    static const hash_header_t INIT_HEADER = []() {
+        hash_header_t header;
+        rwlock_init(&header.rwlock);
+        return header;
+    }();
 
-//     _h = (hash_header_t *)_allocator->origin();
+    if (size > 0) {
+        _allocator = TSharedMemoryAllocator::create(name, size);
+    } else {
+        _allocator = TSharedMemoryAllocator::attach(name);
+    }
 
-//     if (_allocator->isNew()) {
-//         void *ptr = _allocator->malloc(sizeof(INIT_HEADER));
-//         Q_ASSERT(ptr == _h);
-//         std::memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
-//         ptr = _allocator->calloc(_h->tableSize, sizeof(uintptr_t));
-//         _h->setHashg(ptr);
-//         Q_ASSERT(ptr);
-//     }
-// }
+    _h = (hash_header_t *)_allocator->origin();
+
+    if (size > 0) {
+        void *ptr = _allocator->malloc(sizeof(INIT_HEADER));
+        Q_ASSERT(ptr == _h);
+        std::memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
+        ptr = _allocator->calloc(_h->tableSize, sizeof(uintptr_t));
+        _h->setHashg(ptr);
+        Q_ASSERT(ptr);
+    }
+}
 
 
-TCacheSharedMemoryStore::~TCacheSharedMemoryStore()
+TSharedMemoryKvs::~TSharedMemoryKvs()
 {
     delete _allocator;
 }
 
 
-void TCacheSharedMemoryStore::init()
-{
-
-}
-
-
-void TCacheSharedMemoryStore::cleanup()
-{
-
-}
-
-
-bool TCacheSharedMemoryStore::set(const QByteArray &key, const QByteArray &value, int seconds)
+bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
     if (key.isEmpty() || seconds <= 0) {
         return false;
@@ -168,7 +161,7 @@ bool TCacheSharedMemoryStore::set(const QByteArray &key, const QByteArray &value
 }
 
 
-uint TCacheSharedMemoryStore::find(const QByteArray &key, Bucket &bucket) const
+uint TSharedMemoryKvs::find(const QByteArray &key, Bucket &bucket) const
 {
     if (key.isEmpty()) {
         return -1;
@@ -206,7 +199,7 @@ uint TCacheSharedMemoryStore::find(const QByteArray &key, Bucket &bucket) const
 }
 
 
-bool TCacheSharedMemoryStore::find(uint index, Bucket &bucket) const
+bool TSharedMemoryKvs::find(uint index, Bucket &bucket) const
 {
     if (index >= tableSize()) {
         return false;
@@ -230,7 +223,7 @@ bool TCacheSharedMemoryStore::find(uint index, Bucket &bucket) const
 }
 
 
-QByteArray TCacheSharedMemoryStore::get(const QByteArray &key)
+QByteArray TSharedMemoryKvs::get(const QByteArray &key)
 {
     Bucket bucket;
     lockForRead();  // lock
@@ -240,7 +233,7 @@ QByteArray TCacheSharedMemoryStore::get(const QByteArray &key)
 }
 
 /*
-QByteArray TCacheSharedMemoryStore::take(const QByteArray &key, const QByteArray &defaultValue)
+QByteArray TSharedMemoryKvs::take(const QByteArray &key, const QByteArray &defaultValue)
 {
     Bucket bucket;
     lockForWrite();  // lock
@@ -256,7 +249,7 @@ QByteArray TCacheSharedMemoryStore::take(const QByteArray &key, const QByteArray
 }
 */
 
-bool TCacheSharedMemoryStore::remove(const QByteArray &key)
+bool TSharedMemoryKvs::remove(const QByteArray &key)
 {
     Bucket bucket;
     lockForWrite();  // lock
@@ -267,7 +260,7 @@ bool TCacheSharedMemoryStore::remove(const QByteArray &key)
 }
 
 
-void TCacheSharedMemoryStore::remove(uint index)
+void TSharedMemoryKvs::remove(uint index)
 {
     if (index < tableSize()) {
         void *ptr = _h->bucketPtr(index);
@@ -281,25 +274,25 @@ void TCacheSharedMemoryStore::remove(uint index)
 }
 
 
-uint TCacheSharedMemoryStore::count() const
+uint TSharedMemoryKvs::count() const
 {
     return _h->count;
 }
 
 
-uint TCacheSharedMemoryStore::tableSize() const
+uint TSharedMemoryKvs::tableSize() const
 {
     return _h->tableSize;
 }
 
 
-float TCacheSharedMemoryStore::loadFactor() const
+float TSharedMemoryKvs::loadFactor() const
 {
     return (count() + _h->freeCount) / (float)_h->tableSize;
 }
 
 
-void TCacheSharedMemoryStore::clear()
+void TSharedMemoryKvs::clear()
 {
     lockForWrite();  // lock
     for (uint i = 0; i < _h->tableSize; i++) {
@@ -318,7 +311,7 @@ void TCacheSharedMemoryStore::clear()
 }
 
 
-void TCacheSharedMemoryStore::gc()
+void TSharedMemoryKvs::gc()
 {
     for (auto it = begin(); it != end(); ++it) {
         if (it.isExpired()) {
@@ -332,7 +325,7 @@ void TCacheSharedMemoryStore::gc()
 }
 
 
-void TCacheSharedMemoryStore::rehash()
+void TSharedMemoryKvs::rehash()
 {
     if (loadFactor() < 0.2) {
         // do nothing
@@ -384,19 +377,19 @@ void TCacheSharedMemoryStore::rehash()
 }
 
 
-uint TCacheSharedMemoryStore::index(const QByteArray &key) const
+uint TSharedMemoryKvs::index(const QByteArray &key) const
 {
     return qHash(key) % _h->tableSize;
 }
 
 
-uint TCacheSharedMemoryStore::next(uint index) const
+uint TSharedMemoryKvs::next(uint index) const
 {
     return (index + 1) % _h->tableSize;
 }
 
 
-void TCacheSharedMemoryStore::lockForRead() const
+void TSharedMemoryKvs::lockForRead() const
 {
     std::timespec timeout;
 
@@ -419,7 +412,7 @@ void TCacheSharedMemoryStore::lockForRead() const
 }
 
 
-void TCacheSharedMemoryStore::lockForWrite() const
+void TSharedMemoryKvs::lockForWrite() const
 {
     std::timespec timeout;
 
@@ -442,13 +435,13 @@ void TCacheSharedMemoryStore::lockForWrite() const
 }
 
 
-void TCacheSharedMemoryStore::unlock() const
+void TSharedMemoryKvs::unlock() const
 {
     pthread_rwlock_unlock(&_h->rwlock);
 }
 
 
-TCacheSharedMemoryStore::WriteLockingIterator TCacheSharedMemoryStore::begin()
+TSharedMemoryKvs::WriteLockingIterator TSharedMemoryKvs::begin()
 {
     WriteLockingIterator it(this, (uint)-1);
     it.search();
@@ -456,13 +449,13 @@ TCacheSharedMemoryStore::WriteLockingIterator TCacheSharedMemoryStore::begin()
 }
 
 
-TCacheSharedMemoryStore::WriteLockingIterator TCacheSharedMemoryStore::end()
+TSharedMemoryKvs::WriteLockingIterator TSharedMemoryKvs::end()
 {
     return WriteLockingIterator(this, tableSize());
 }
 
 
-TCacheSharedMemoryStore::WriteLockingIterator::WriteLockingIterator(TCacheSharedMemoryStore *hash, uint it) :
+TSharedMemoryKvs::WriteLockingIterator::WriteLockingIterator(TSharedMemoryKvs *hash, uint it) :
     _hash(hash), _it(it)
 {
     if (_it < _hash->tableSize() || _it == (uint)-1) {
@@ -472,7 +465,7 @@ TCacheSharedMemoryStore::WriteLockingIterator::WriteLockingIterator(TCacheShared
 }
 
 
-TCacheSharedMemoryStore::WriteLockingIterator::~WriteLockingIterator()
+TSharedMemoryKvs::WriteLockingIterator::~WriteLockingIterator()
 {
     if (_locked) {
         _hash->unlock();
@@ -480,31 +473,31 @@ TCacheSharedMemoryStore::WriteLockingIterator::~WriteLockingIterator()
 }
 
 
-const QByteArray &TCacheSharedMemoryStore::WriteLockingIterator::key() const
+const QByteArray &TSharedMemoryKvs::WriteLockingIterator::key() const
 {
     return _tmpbk.key;
 }
 
 
-const QByteArray &TCacheSharedMemoryStore::WriteLockingIterator::value() const
+const QByteArray &TSharedMemoryKvs::WriteLockingIterator::value() const
 {
     return _tmpbk.value;
 }
 
 
-bool TCacheSharedMemoryStore::WriteLockingIterator::isExpired() const
+bool TSharedMemoryKvs::WriteLockingIterator::isExpired() const
 {
     return _tmpbk.isExpired();
 }
 
 
-const QByteArray &TCacheSharedMemoryStore::WriteLockingIterator::operator*() const
+const QByteArray &TSharedMemoryKvs::WriteLockingIterator::operator*() const
 {
     return value();
 }
 
 
-void TCacheSharedMemoryStore::WriteLockingIterator::search()
+void TSharedMemoryKvs::WriteLockingIterator::search()
 {
     _tmpbk.clear();
 
@@ -525,14 +518,14 @@ void TCacheSharedMemoryStore::WriteLockingIterator::search()
 }
 
 
-TCacheSharedMemoryStore::WriteLockingIterator &TCacheSharedMemoryStore::WriteLockingIterator::operator++()
+TSharedMemoryKvs::WriteLockingIterator &TSharedMemoryKvs::WriteLockingIterator::operator++()
 {
     search();
     return *this;
 }
 
 
-void TCacheSharedMemoryStore::WriteLockingIterator::remove()
+void TSharedMemoryKvs::WriteLockingIterator::remove()
 {
     if (_it < _hash->tableSize()) {
         _hash->remove(_it);

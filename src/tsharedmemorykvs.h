@@ -1,11 +1,11 @@
 #pragma once
-#include "tcachestore.h"
+#include <TGlobal>
 
 struct hash_header_t;
 class TSharedMemoryAllocator;
 
 
-class T_CORE_EXPORT TCacheSharedMemoryStore : public TCacheStore {
+class T_CORE_EXPORT TSharedMemoryKvs {
 public:
     class Bucket {
     public:
@@ -50,32 +50,26 @@ public:
         bool operator!=(const WriteLockingIterator &other) const { return _hash != other._hash || _it != other._it; }
         void remove();
     private:
-        WriteLockingIterator(TCacheSharedMemoryStore *hash, uint it);
+        WriteLockingIterator(TSharedMemoryKvs *hash, uint it);
         void search();
 
-        TCacheSharedMemoryStore *_hash {nullptr};
+        TSharedMemoryKvs *_hash {nullptr};
         uint _it {0};
         bool _locked {false};
         Bucket _tmpbk;
-        friend class TCacheSharedMemoryStore;
+        friend class TSharedMemoryKvs;
     };
 
-    //TCacheSharedMemoryStore(const QString &name, size_t size);
-    ~TCacheSharedMemoryStore();
+    TSharedMemoryKvs(const QString &name, size_t size = 0);
+    ~TSharedMemoryKvs();
 
-    QString key() const override { return QLatin1String("memory"); }
-    DbType dbType() const override { return KVS; }
-    void init() override;
-    void cleanup() override;
-    bool open() override { return true; }
-    void close() override {}
-    QByteArray get(const QByteArray &key) override;
-    bool set(const QByteArray &key, const QByteArray &value, int seconds) override;
-    bool remove(const QByteArray &key) override;
+    QByteArray get(const QByteArray &key);
+    bool set(const QByteArray &key, const QByteArray &value, int seconds);
+    bool remove(const QByteArray &key);
     uint count() const;
     uint tableSize() const;
-    void clear() override;
-    void gc() override;
+    void clear();
+    void gc();
     float loadFactor() const;
     void rehash();
 
@@ -95,11 +89,9 @@ protected:
     void unlock() const;
 
 private:
-    TCacheSharedMemoryStore();
-
     TSharedMemoryAllocator *_allocator {nullptr};
     hash_header_t *_h {nullptr};
 
-    T_DISABLE_COPY(TCacheSharedMemoryStore)
-    T_DISABLE_MOVE(TCacheSharedMemoryStore)
+    T_DISABLE_COPY(TSharedMemoryKvs)
+    T_DISABLE_MOVE(TSharedMemoryKvs)
 };

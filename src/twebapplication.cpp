@@ -637,6 +637,28 @@ void TWebApplication::initializeCache()
     }
 }
 
+
+void TWebApplication::cleanupCache()
+{
+    class CacheCleaner : public TJobScheduler {
+    protected:
+        void job() override
+        {
+            Tf::cache()->cleanup();
+            tSystemInfo("Cleanup cache");
+        }
+    };
+
+    if (cacheEnabled()) {
+        // Initialize cache
+        auto cleaner = new CacheCleaner;
+        cleaner->setAutoDelete(true);
+        cleaner->setSingleShot(true);
+        cleaner->start(1);
+        cleaner->wait(1000);
+    }
+}
+
 /*!
   \fn QString TWebApplication::webRootPath() const
   Returns the absolute path of the web root directory.

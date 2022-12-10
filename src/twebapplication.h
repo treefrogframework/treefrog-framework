@@ -77,6 +77,7 @@ public:
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
     void initializeCache();
+    void cleanupCache();
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);

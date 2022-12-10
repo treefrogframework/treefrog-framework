@@ -350,10 +350,12 @@ HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
 HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
-HEADERS += tsharedmemoryallocator.h
-SOURCES += tsharedmemoryallocator.cpp
 HEADERS += tshm.h
 SOURCES += tshm.cpp
+HEADERS += tsharedmemoryallocator.h
+SOURCES += tsharedmemoryallocator.cpp
+HEADERS += tsharedmemorykvs.h
+SOURCES += tsharedmemorykvs.cpp
 SOURCES += tactioncontroller_qt5.cpp
 
 HEADERS += \
@@ -371,6 +373,7 @@ HEADERS += \
            tsqljoin.h \
            thttprequestheader.h \
            thttpresponseheader.h \
+           tsharedmemory.h \
            tcommandlineinterface.h
 
 windows {
@@ -382,12 +385,14 @@ windows {
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tsharedmemory_win.cpp
 }
 unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
+  SOURCES += tsharedmemory_unix.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h

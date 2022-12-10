@@ -6,7 +6,7 @@
  */
 
 #include "tsharedmemoryallocator.h"
-#include "tshm.h"
+#include "tsharedmemory.h"
 #include "tsystemglobal.h"
 #include <cstring>
 #include <cerrno>
@@ -57,23 +57,77 @@ struct alloc_header_t {
 }
 
 
-TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size) :
-    _name(name), _size(size)
+static TSharedMemoryAllocator *instance;
+
+
+TSharedMemoryAllocator *TSharedMemoryAllocator::create(const QString &name, size_t size)
 {
-    if (_name.isEmpty()) {
-        _shm = new char[size];
-    } else {
-        _shm = Tf::shmcreate(qUtf8Printable(_name), _size, &_newmap);
+    if (!instance) {
+        instance = new TSharedMemoryAllocator(name);
+        if (instance->_sharedMemory->create(size)) {
+            instance->setbrk(true);
+        } else {
+            delete instance;
+            instance = nullptr;
+        }
     }
-    _origin = (caddr_t)setbrk(_shm, size, _newmap);
+    return instance;
 }
+
+
+TSharedMemoryAllocator *TSharedMemoryAllocator::attach(const QString &name)
+{
+    if (!instance) {
+        instance = new TSharedMemoryAllocator(name);
+        if (instance->_sharedMemory->attach()) {
+            instance->setbrk(false);
+        } else {
+            delete instance;
+            instance = nullptr;
+        }
+    }
+    return instance;
+}
+
+
+void TSharedMemoryAllocator::unlink(const QString &name)
+{
+    TSharedMemory(name).unlink();
+}
+
+
+TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name) :
+    _sharedMemory(new TSharedMemory(name))
+{
+    // if (size != -1) {
+    //     _sharedMemory->create(size);
+    //     setbrk(true);
+    // } else {
+    //     _sharedMemory->attach();
+    //     setbrk(false);
+    // }
+    //_origin = (caddr_t)setbrk(_shm, size, _newmap);
+}
+
+
+// TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size) :
+//     _name(name), _size(size)
+// {
+//     if (_name.isEmpty()) {
+//         _shm = new char[size];
+//     } else {
+//         _shm = Tf::shmcreate(qUtf8Printable(_name), _size, &_newmap);
+//     }
+//     _origin = (caddr_t)setbrk(_shm, size, _newmap);
+// }
 
 
 TSharedMemoryAllocator::~TSharedMemoryAllocator()
 {
-    if (_name.isEmpty()) {
-        delete (char*)_shm;
-    }
+    // if (_name.isEmpty()) {
+    //     delete (char*)_shm;
+    // }
+    delete _sharedMemory;
 }
 
 
@@ -99,29 +153,31 @@ caddr_t TSharedMemoryAllocator::sbrk(int64_t inc)
 
 // Sets memory space
 // Return: the origin pointer of data area
-void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
+//void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
+void TSharedMemoryAllocator::setbrk(bool initial)
 {
     static const Tf::program_break_header_t INIT_PB_HEADER;
 
     if (pb_header) {
-        return nullptr;
+        return;
     }
 
-    pb_header = (Tf::program_break_header_t *)addr;
-    tSystemDebug("addr = %p\n", addr);
+    pb_header = (Tf::program_break_header_t *)_sharedMemory->data();
+    tSystemDebug("addr = %p\n", _sharedMemory->data());
     tSystemDebug("checksum = %ld\n", pb_header->checksum);
 
     // Checks checksum
-    uint64_t ck = (uint64_t)size * (uint64_t)size;
+    uint64_t ck = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
     if (initial || pb_header->checksum != ck || !ck) {
         // new mmap
         std::memcpy(pb_header, &INIT_PB_HEADER, sizeof(Tf::program_break_header_t));
         pb_header->startg = pb_header->currentg = sizeof(Tf::program_break_header_t);
-        pb_header->endg = size;
-        pb_header->checksum = (uint64_t)size * (uint64_t)size;
+        pb_header->endg = _sharedMemory->size();
+        pb_header->checksum = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
     }
 
-    return pb_header->start() + sizeof(Tf::alloc_header_t);
+    //return pb_header->start() + sizeof(Tf::alloc_header_t);
+    _origin = pb_header->start() + sizeof(Tf::alloc_header_t);
 }
 
 
@@ -325,6 +381,13 @@ void *TSharedMemoryAllocator::realloc(void *ptr, uint size)
     }
     return ret;
 }
+
+
+size_t TSharedMemoryAllocator::mapSize() const
+{
+    return _sharedMemory->size();
+}
+
 
 // Prints summary
 void TSharedMemoryAllocator::summary()

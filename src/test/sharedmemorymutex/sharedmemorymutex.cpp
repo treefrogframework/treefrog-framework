@@ -1,10 +1,10 @@
 #include <TfTest/TfTest>
 #include <QElapsedTimer>
-#include "tcachesharedmemorystore.h"
+#include "tsharedmemorykvs.h"
 #include "tglobal.h"
 
 
-static TCacheSharedMemoryStore smhash("shmtext.shm", 256 * 1024 * 1024);
+static TSharedMemoryKvs smhash("shmtext.shm", 256 * 1024 * 1024);
 
 
 static QByteArray randomString(int length)

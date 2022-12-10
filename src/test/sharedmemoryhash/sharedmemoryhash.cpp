@@ -1,10 +1,10 @@
 #include <TfTest/TfTest>
-#include "tcachesharedmemorystore.h"
+#include "tsharedmemorykvs.h"
 #include "tglobal.h"
 #include <iostream>
 
 
-static TCacheSharedMemoryStore smhash("sharedhash.shm", 256 * 1024 * 1024);
+static TSharedMemoryKvs smhash("sharedhash.shm", 256 * 1024 * 1024);
 static QMap<QByteArray, QByteArray> qmap;
 const QByteArray ckey = QUuid::createUuid().toByteArray();
 
