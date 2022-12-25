@@ -115,7 +115,7 @@ bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int s
     }
 
     QByteArray data;
-    QDataStream ds(&data, QIODeviceBase::WriteOnly);
+    QDataStream ds(&data, QIODevice::WriteOnly);
     qint64 expires = Tf::getMSecsSinceEpoch() + seconds * 1000;
     ds << Bucket{key, value, expires};
 

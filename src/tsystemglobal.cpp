@@ -63,11 +63,7 @@ void Tf::setupSystemLogger(TSystemLogger *logger)
     }
 
     // system logger
-    if (logger) {
-        systemLogger = logger;
-    } else {
-        logger = new TFileAioWriter(Tf::app()->systemLogFilePath());
-    }
+    systemLogger = (logger) ? logger : new TFileAioWriter(Tf::app()->systemLogFilePath());
     systemLogger->open();
 
     syslogLayout = Tf::appSettings()->value(Tf::SystemLogLayout).toByteArray();
