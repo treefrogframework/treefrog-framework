@@ -1,6 +1,7 @@
 #include "tsharedmemorykvs.h"
-#include "tshm.h"
-#include "tsharedmemoryallocator.h"
+#include "tsharedmemorykvsdriver.h"
+#include <TActionContext>
+#include <TSystemGlobal>
 #include <QDataStream>
 #include <ctime>
 #include <pthread.h>
@@ -56,8 +57,28 @@ static void rwlock_init(pthread_rwlock_t *rwlock)
     Q_ASSERT(!res);
 }
 
+/*!
+  Constructs a TSharedMemoryKvs object.
+*/
+TSharedMemoryKvs::TSharedMemoryKvs() :
+    _database(Tf::currentDatabaseContext()->getKvsDatabase(Tf::KvsEngine::SharedMemory))
+{
+    _h = (hash_header_t *)driver()->origin();
+}
 
-TSharedMemoryKvs::TSharedMemoryKvs(const QString &name, size_t size)
+
+TSharedMemoryKvs::TSharedMemoryKvs(Tf::KvsEngine engine) :
+    _database(Tf::currentDatabaseContext()->getKvsDatabase(engine))
+{
+    _h = (hash_header_t *)driver()->origin();
+}
+
+
+TSharedMemoryKvs::~TSharedMemoryKvs()
+{ }
+
+
+bool TSharedMemoryKvs::initialize(const QString &name, const QString &options)
 {
     static const hash_header_t INIT_HEADER = []() {
         hash_header_t header;
@@ -65,28 +86,24 @@ TSharedMemoryKvs::TSharedMemoryKvs(const QString &name, size_t size)
         return header;
     }();
 
-    if (size > 0) {
-        _allocator = TSharedMemoryAllocator::create(name, size);
-    } else {
-        _allocator = TSharedMemoryAllocator::attach(name);
-    }
+    TSharedMemoryKvsDriver::initialize(name, options);
+    TSharedMemoryKvsDriver driver;
+    driver.open(name, QString(), QString(), QString(), 0, options);
+    hash_header_t *header = (hash_header_t *)driver.origin();
 
-    _h = (hash_header_t *)_allocator->origin();
-
-    if (size > 0) {
-        void *ptr = _allocator->malloc(sizeof(INIT_HEADER));
-        Q_ASSERT(ptr == _h);
-        std::memcpy(_h, &INIT_HEADER, sizeof(INIT_HEADER));
-        ptr = _allocator->calloc(_h->tableSize, sizeof(uintptr_t));
-        _h->setHashg(ptr);
-        Q_ASSERT(ptr);
-    }
+    void *ptr = driver.malloc(sizeof(INIT_HEADER));
+    Q_ASSERT(ptr == header);
+    std::memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
+    ptr = driver.calloc(header->tableSize, sizeof(uintptr_t));
+    header->setHashg(ptr);
+    Q_ASSERT(ptr);
+    return true;
 }
 
 
-TSharedMemoryKvs::~TSharedMemoryKvs()
+void TSharedMemoryKvs::cleanup()
 {
-    delete _allocator;
+    driver()->cleanup();
 }
 
 
@@ -112,7 +129,7 @@ bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int s
         void *pbucket = _h->bucketPtr(idx);
         if (pbucket && pbucket != FREE) {
             // checks key
-            int alcsize = _allocator->allocSize(pbucket);
+            int alcsize = driver()->allocSize(pbucket);
             if (alcsize <= 0) {
                 // error
                 Q_ASSERT(0);
@@ -128,12 +145,12 @@ bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int s
                 continue;
             }
 
-            _allocator->free(pbucket);
+            driver()->free(pbucket);
             (_h->count)--;
         }
 
         // Inserts data
-        void *newbucket = _allocator->malloc(data.size());
+        void *newbucket = driver()->malloc(data.size());
         if (!newbucket) {
             tError("Not enough space/cannot allocate memory.  errno:%d", errno);
             break;
@@ -177,7 +194,7 @@ uint TSharedMemoryKvs::find(const QByteArray &key, Bucket &bucket) const
         }
 
         if (pbucket != FREE) {
-            int alcsize = _allocator->allocSize(pbucket);
+            int alcsize = driver()->allocSize(pbucket);
             if (alcsize <= 0) {
                 Q_ASSERT(0);
                 break;
@@ -210,7 +227,7 @@ bool TSharedMemoryKvs::find(uint index, Bucket &bucket) const
         return false;
     }
 
-    int alcsize = _allocator->allocSize(pbucket);
+    int alcsize = driver()->allocSize(pbucket);
     if (alcsize <= 0) {
         Q_ASSERT(0);
         return false;
@@ -232,22 +249,6 @@ QByteArray TSharedMemoryKvs::get(const QByteArray &key)
     return (idx < tableSize() && bucket.expires > Tf::getMSecsSinceEpoch()) ? bucket.value : QByteArray();
 }
 
-/*
-QByteArray TSharedMemoryKvs::take(const QByteArray &key, const QByteArray &defaultValue)
-{
-    Bucket bucket;
-    lockForWrite();  // lock
-    uint idx = find(key, bucket);
-    if (idx < tableSize()) {
-        _allocator->free(_h->bucketPtr(idx));
-        _h->setBucketPtr(idx, FREE);
-        (_h->count)--;
-        (_h->freeCount)++;
-    }
-    unlock();  // unlock
-    return (idx < tableSize()) ? bucket.value : defaultValue;
-}
-*/
 
 bool TSharedMemoryKvs::remove(const QByteArray &key)
 {
@@ -265,7 +266,7 @@ void TSharedMemoryKvs::remove(uint index)
     if (index < tableSize()) {
         void *ptr = _h->bucketPtr(index);
         if (ptr && ptr != FREE) {
-            _allocator->free(ptr);
+            driver()->free(ptr);
             _h->setBucketPtr(index, FREE);
             (_h->count)--;
             (_h->freeCount)++;
@@ -300,7 +301,7 @@ void TSharedMemoryKvs::clear()
         if (pbucket == FREE) {
             (_h->freeCount)--;
         } else if (pbucket) {
-            _allocator->free(pbucket);
+            driver()->free(pbucket);
             (_h->count)--;
         }
         _h->setBucketPtr(i, nullptr);
@@ -342,7 +343,7 @@ void TSharedMemoryKvs::rehash()
         _h->tableSize = oldsize * 2;  // new table size
     }
 
-    auto *ptr = _allocator->calloc(_h->tableSize, sizeof(uintptr_t));
+    auto *ptr = driver()->calloc(_h->tableSize, sizeof(uintptr_t));
     _h->setHashg(ptr);
     Q_ASSERT(ptr);
 
@@ -354,7 +355,7 @@ void TSharedMemoryKvs::rehash()
             continue;
         }
 
-        int alcsize = _allocator->allocSize(pbucket);
+        int alcsize = driver()->allocSize(pbucket);
         if (alcsize <= 0) {
             Q_ASSERT(0);
             continue;
@@ -372,8 +373,8 @@ void TSharedMemoryKvs::rehash()
     }
 
     _h->freeCount = 0;
-    //_allocator->dump();
-    _allocator->free(oldt);
+    //driver()->dump();
+    driver()->free(oldt);
 }
 
 
@@ -438,6 +439,47 @@ void TSharedMemoryKvs::lockForWrite() const
 void TSharedMemoryKvs::unlock() const
 {
     pthread_rwlock_unlock(&_h->rwlock);
+}
+
+
+/*!
+  Returns the Memcached driver associated with the TSharedMemoryKvs object.
+*/
+TSharedMemoryKvsDriver *TSharedMemoryKvs::driver()
+{
+#ifdef TF_NO_DEBUG
+    return (TSharedMemoryKvsDriver *)_database.driver();
+#else
+    if (!_database.driver()) {
+        return nullptr;
+    }
+
+    TSharedMemoryKvsDriver *driver = dynamic_cast<TSharedMemoryKvsDriver *>(_database.driver());
+    if (!driver) {
+        throw RuntimeException("cast error", __FILE__, __LINE__);
+    }
+    return driver;
+#endif
+}
+
+/*!
+  Returns the Memcached driver associated with the TSharedMemoryKvs object.
+*/
+const TSharedMemoryKvsDriver *TSharedMemoryKvs::driver() const
+{
+#ifdef TF_NO_DEBUG
+    return (const TSharedMemoryKvsDriver *)_database.driver();
+#else
+    if (!_database.driver()) {
+        return nullptr;
+    }
+
+    const TSharedMemoryKvsDriver *driver = dynamic_cast<const TSharedMemoryKvsDriver *>(_database.driver());
+    if (!driver) {
+        throw RuntimeException("cast error", __FILE__, __LINE__);
+    }
+    return driver;
+#endif
 }
 
 

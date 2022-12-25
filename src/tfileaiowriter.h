@@ -1,11 +1,12 @@
 #pragma once
+#include "tsystemlogger.h"
 #include <QString>
 #include <TGlobal>
 
 class TFileAioWriterData;
 
 
-class T_CORE_EXPORT TFileAioWriter {
+class T_CORE_EXPORT TFileAioWriter : public TSystemLogger {
 public:
     TFileAioWriter(const QString &name = QString());
     ~TFileAioWriter();

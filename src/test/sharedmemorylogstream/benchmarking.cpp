@@ -25,9 +25,7 @@ private slots:
 
 void BenchMark::systemDebug()
 {
-    Tf::setupSystemLogger();
-
-    QBENCHMARK {
+     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
             tSystemInfo("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
         }

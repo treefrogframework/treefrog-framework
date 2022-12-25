@@ -4,7 +4,6 @@
 #include <iostream>
 
 
-static TSharedMemoryKvs smhash("sharedhash.shm", 256 * 1024 * 1024);
 static QMap<QByteArray, QByteArray> qmap;
 const QByteArray ckey = QUuid::createUuid().toByteArray();
 
@@ -13,7 +12,7 @@ class TestSharedMemoryHash : public QObject
     Q_OBJECT
 private slots:
     void initTestCase();
-    void cleanupTestCase() {}
+    void cleanupTestCase();
     void testAlloc1_data();
     void testAlloc1();
     void testAlloc2_data();
@@ -44,11 +43,20 @@ static QByteArray randomString(int length)
 
 void TestSharedMemoryHash::initTestCase()
 {
+    TSharedMemoryKvs::initialize("tfcache.shm", "MEMORY_SIZE=256M");
+
+    TSharedMemoryKvs smhash;
     smhash.clear();
     QCOMPARE(smhash.count(), 0U);
     smhash.set(ckey, "value", 10);
 }
 
+
+void TestSharedMemoryHash::cleanupTestCase()
+{
+    TSharedMemoryKvs smhash;
+    smhash.cleanup();
+}
 
 void TestSharedMemoryHash::testAlloc1_data()
 {
@@ -74,6 +82,7 @@ void TestSharedMemoryHash::testAlloc1()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, value);
 
+    TSharedMemoryKvs smhash;
     QCOMPARE(smhash.get(key).isEmpty(), true);  // empty
     smhash.set(key, value, 10);
     qDebug() << "smhash.get(" << key << ") =" << smhash.get(key);
@@ -106,6 +115,7 @@ void TestSharedMemoryHash::testAlloc2()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, value);
 
+    TSharedMemoryKvs smhash;
     uint num = smhash.count();
     smhash.set(key, value, 10);
     qDebug() << "smhash.get(" << key << ") =" << smhash.get(key);
@@ -118,6 +128,8 @@ void TestSharedMemoryHash::testAlloc2()
 void TestSharedMemoryHash::testAlloc3_data()
 {
     int d = 100;
+    TSharedMemoryKvs smhash;
+
     while (smhash.loadFactor() < 0.2) {
         if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 10)) {
             break;
@@ -147,6 +159,7 @@ void TestSharedMemoryHash::testAlloc3()
     QFETCH(QByteArray, key);
     QFETCH(QByteArray, value);
 
+    TSharedMemoryKvs smhash;
     uint num = smhash.count();
     QCOMPARE(smhash.get(key).isEmpty(), true);  // empty
     smhash.set(key, value, 10);
@@ -158,24 +171,6 @@ void TestSharedMemoryHash::testAlloc3()
 }
 
 
-// void TestSharedMemoryHash::testAlloc4_data()
-// {
-//     int d = 100;
-
-//     QTest::addColumn<QByteArray>("key");
-//     QTest::addColumn<int>("seconds");
-
-//     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-//                        << 1;
-//     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-//                        << 3;
-//     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-//                        << 2;
-//     QTest::newRow("4") << QUuid::createUuid().toByteArray()
-//                        << 4;
-// }
-
-
 void TestSharedMemoryHash::testAlloc4()
 {
     //
@@ -183,6 +178,8 @@ void TestSharedMemoryHash::testAlloc4()
     //
 
     int d = 100;
+    TSharedMemoryKvs smhash;
+
     while (smhash.loadFactor() < 0.2) {
         if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 100)) {
             break;
@@ -209,6 +206,8 @@ void TestSharedMemoryHash::testAlloc4()
 static void insert(uint count, float factor)
 {
     QByteArray key, value;
+    TSharedMemoryKvs smhash;
+
     while (smhash.count() < count || smhash.loadFactor() < factor) {
         key = randomString(Tf::random(10, 20));
         value = randomString(Tf::random(16, 128));
@@ -228,6 +227,8 @@ void TestSharedMemoryHash::testCompareWithQMap()
 {
     // insert data
     insert(40000, 0.75);
+
+    TSharedMemoryKvs smhash;
 
     // check values
     for (auto it = qmap.constBegin(); it != qmap.constEnd(); ++it) {
@@ -285,6 +286,8 @@ void TestSharedMemoryHash::testCompareIterator()
     // insert data
     insert(40000, 0.75);
 
+    TSharedMemoryKvs smhash;
+
     int cnt = 0;
     for (auto it = smhash.begin(); it != smhash.end(); ++it) {
         auto val = qmap.value(it.key());
@@ -316,6 +319,8 @@ void TestSharedMemoryHash::testCompareIterator()
 void TestSharedMemoryHash::bench1()
 {
     int d = 100;
+    TSharedMemoryKvs smhash;
+
     while (smhash.loadFactor() < 0.75 && smhash.tableSize() < 20000) {
         if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 10)) {
             break;
@@ -340,6 +345,8 @@ void TestSharedMemoryHash::bench1()
 void TestSharedMemoryHash::bench2()
 {
     int d = 100;
+    TSharedMemoryKvs smhash;
+
     while (smhash.loadFactor() < 0.75 && smhash.tableSize() < 20000) {
         if (!smhash.set(QByteArray::number(Tf::random(1000, 1000 + d++)), randomString(128), 10)) {
             break;
@@ -371,5 +378,5 @@ void TestSharedMemoryHash::bench2()
     QCOMPARE(smhash.count(), 0U);
 }
 
-TF_TEST_SQLLESS_MAIN(TestSharedMemoryHash)
+TF_TEST_MAIN(TestSharedMemoryHash)
 #include "sharedmemoryhash.moc"

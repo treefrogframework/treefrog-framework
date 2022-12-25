@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QtTest/QtTest>
 #include <TAppSettings>
+#include <TSystemGlobal>
+#include <TStdoutSystemLogger>
 #include <TWebApplication>
 #ifdef QT_SQL_LIB
 #include "tsqldatabasepool.h"
@@ -51,6 +53,7 @@
         QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding).toByteArray();                           \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                                       \
         QTextCodec::setCodecForLocale(codec);                                                                          \
+        Tf::setupSystemLogger(new TStdoutSystemLogger);                                                                \
         app.setDatabaseEnvironment("test");                                                                            \
         TUrlRoute::instance();                                                                                         \
         TSqlDatabasePool::instance();                                                                                  \
@@ -92,6 +95,7 @@
             }                                                                                                          \
         };                                                                                                             \
         TWebApplication app(argc, argv);                                                                               \
+        Tf::setupSystemLogger(new TStdoutSystemLogger);                                                                \
         app.setDatabaseEnvironment("test");                                                                            \
         TUrlRoute::instance();                                                                                         \
         TSqlDatabasePool::instance();                                                                                  \

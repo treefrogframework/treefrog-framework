@@ -1,11 +1,13 @@
 #pragma once
-#include <QtCore>
+#include "tkvsdatabasepool.h"
+#include "tsqldatabasepool.h"
 #include <TActionThread>
-#include <TGlobal>
-#include <TKvsDatabasePool>
-#include <TSqlDatabasePool>
 #include <TSystemGlobal>
+#include <TStdoutSystemLogger>
 #include <TWebApplication>
+#include <TGlobal>
+#include <QtCore>
+
 
 #if QT_VERSION < 0x060000
 #define TF_CLI_MAIN(STATICFUNCTION)                                                                                 \
@@ -21,11 +23,11 @@
             {                                                                                                       \
                 returnCode = STATICFUNCTION();                                                                      \
                 commitTransactions();                                                                               \
-                for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) { \
-                    it.value().close(); /* close SQL database */                                                    \
+                for (auto it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {                              \
+                    it.value().database().close();  /* close SQL database */                                        \
                 }                                                                                                   \
-                for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) { \
-                    it.value().close(); /* close KVS database */                                                    \
+                for (auto it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {                              \
+                    it.value().close();  /* close KVS database */                                                   \
                 }                                                                                                   \
                 QEventLoop eventLoop;                                                                               \
                 while (eventLoop.processEvents()) { }                                                               \
@@ -35,9 +37,10 @@
         QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray();                  \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                                    \
         QTextCodec::setCodecForLocale(codec);                                                                       \
-        tSetupSystemLogger();                                                                                       \
-        tSetupQueryLogger();                                                                                        \
-        tSetupAppLoggers();                                                                                         \
+        Tf::setupSystemLogger(new TStdoutSystemLogger);                                                             \
+        Tf::setupQueryLogger();                                                                                     \
+        Tf::setupAppLoggers();                                                                                      \
+        app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \
         app.setDatabaseEnvironment(env);                                                                            \
@@ -45,9 +48,9 @@
         QObject::connect(&thread, SIGNAL(finished()), &app, SLOT(quit()));                                          \
         thread.start();                                                                                             \
         app.exec();                                                                                                 \
-        tReleaseAppLoggers();                                                                                       \
-        tReleaseQueryLogger();                                                                                      \
-        tReleaseSystemLogger();                                                                                     \
+        Tf::releaseAppLoggers();                                                                                    \
+        Tf::releaseQueryLogger();                                                                                   \
+        Tf::releaseSystemLogger();                                                                                  \
         return thread.returnCode;                                                                                   \
     }
 
@@ -66,10 +69,10 @@
             {                                                                                                       \
                 returnCode = STATICFUNCTION();                                                                      \
                 commitTransactions();                                                                               \
-                for (QMap<int, QSqlDatabase>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) { \
-                    it.value().close(); /* close SQL database */                                                    \
+                for (auto it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {                              \
+                    it.value().database().close(); /* close SQL database */                                         \
                 }                                                                                                   \
-                for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) { \
+                for (auto it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {                              \
                     it.value().close(); /* close KVS database */                                                    \
                 }                                                                                                   \
                 QEventLoop eventLoop;                                                                               \
@@ -77,9 +80,10 @@
             }                                                                                                       \
         };                                                                                                          \
         TWebApplication app(argc, argv);                                                                            \
-        tSetupSystemLogger();                                                                                       \
-        tSetupQueryLogger();                                                                                        \
-        tSetupAppLoggers();                                                                                         \
+        Tf::setupSystemLogger(new TStdoutSystemLogger);                                                             \
+        Tf::setupQueryLogger();                                                                                     \
+        Tf::setupAppLoggers();                                                                                      \
+        app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \
         app.setDatabaseEnvironment(env);                                                                            \
@@ -87,9 +91,9 @@
         QObject::connect(&thread, SIGNAL(finished()), &app, SLOT(quit()));                                          \
         thread.start();                                                                                             \
         app.exec();                                                                                                 \
-        tReleaseAppLoggers();                                                                                       \
-        tReleaseQueryLogger();                                                                                      \
-        tReleaseSystemLogger();                                                                                     \
+        Tf::releaseAppLoggers();                                                                                    \
+        Tf::releaseQueryLogger();                                                                                   \
+        Tf::releaseSystemLogger();                                                                                  \
         return thread.returnCode;                                                                                   \
     }
 #endif

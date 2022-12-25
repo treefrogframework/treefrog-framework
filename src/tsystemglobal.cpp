@@ -24,7 +24,7 @@
 namespace {
 TAccessLogStream *accesslogstrm = nullptr;
 TAccessLogStream *sqllogstrm = nullptr;
-TFileAioWriter systemLog;
+TSystemLogger *systemLogger = nullptr;
 QByteArray syslogLayout;
 QByteArray syslogDateTimeFormat;
 QByteArray accessLogLayout;
@@ -37,7 +37,7 @@ void tSystemMessage(int priority, const char *msg, va_list ap)
 {
     TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
-    systemLog.write(buf.data(), buf.length());
+    systemLogger->write(buf.data(), buf.length());
 }
 }
 
@@ -50,17 +50,25 @@ void Tf::writeAccessLog(const TAccessLog &log)
 }
 
 
-void Tf::setupSystemLogger()
+void Tf::setupSystemLogger(TSystemLogger *logger)
 {
+    if (systemLogger) {
+        return;
+    }
+
     // Log directory
     QDir logdir(Tf::app()->logPath());
     if (!logdir.exists()) {
         logdir.mkpath(".");
     }
 
-    // system log
-    systemLog.setFileName(Tf::app()->systemLogFilePath());
-    systemLog.open();
+    // system logger
+    if (logger) {
+        systemLogger = logger;
+    } else {
+        logger = new TFileAioWriter(Tf::app()->systemLogFilePath());
+    }
+    systemLogger->open();
 
     syslogLayout = Tf::appSettings()->value(Tf::SystemLogLayout).toByteArray();
     syslogDateTimeFormat = Tf::appSettings()->value(Tf::SystemLogDateTimeFormat).toByteArray();
@@ -69,7 +77,7 @@ void Tf::setupSystemLogger()
 
 void Tf::releaseSystemLogger()
 {
-    systemLog.close();
+    systemLogger->close();
 }
 
 

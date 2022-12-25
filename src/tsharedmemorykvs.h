@@ -1,8 +1,12 @@
 #pragma once
+#include <QByteArray>
+#include <QStringList>
 #include <TGlobal>
+#include <TKvsDatabase>
+#include <TfNamespace>
 
 struct hash_header_t;
-class TSharedMemoryAllocator;
+class TSharedMemoryKvsDriver;
 
 
 class T_CORE_EXPORT TSharedMemoryKvs {
@@ -60,7 +64,7 @@ public:
         friend class TSharedMemoryKvs;
     };
 
-    TSharedMemoryKvs(const QString &name, size_t size = 0);
+    TSharedMemoryKvs();
     ~TSharedMemoryKvs();
 
     QByteArray get(const QByteArray &key);
@@ -76,6 +80,9 @@ public:
     WriteLockingIterator begin();
     WriteLockingIterator end();
 
+    static bool initialize(const QString &name, const QString &options);  // only first time in system
+    void cleanup();
+
 protected:
     uint find(const QByteArray &key, Bucket &bucket) const;
     bool find(uint index, Bucket &bucket) const;
@@ -89,9 +96,14 @@ protected:
     void unlock() const;
 
 private:
-    TSharedMemoryAllocator *_allocator {nullptr};
+    TSharedMemoryKvs(Tf::KvsEngine engine);
+    TSharedMemoryKvsDriver *driver();
+    const TSharedMemoryKvsDriver *driver() const;
+
+    TKvsDatabase _database;
     hash_header_t *_h {nullptr};
 
+    friend class TCacheSharedMemoryStore;
     T_DISABLE_COPY(TSharedMemoryKvs)
     T_DISABLE_MOVE(TSharedMemoryKvs)
 };

@@ -1,10 +1,8 @@
 #include <TfTest/TfTest>
 #include <QElapsedTimer>
 #include "tsharedmemorykvs.h"
+#include "tcommandlineinterface.h"
 #include "tglobal.h"
-
-
-static TSharedMemoryKvs smhash("shmtext.shm", 256 * 1024 * 1024);
 
 
 static QByteArray randomString(int length)
@@ -22,7 +20,9 @@ static QByteArray randomString(int length)
 
 void insertItems()
 {
+    TSharedMemoryKvs smhash;
     QByteArray key, value, val;
+
     while (smhash.tableSize() < 10000 || smhash.loadFactor() < 0.75) {
         key = QUuid::createUuid().toByteArray();
         value = randomString(Tf::random(16, 128));
@@ -44,6 +44,7 @@ void insertItems()
 
 void test0(int d = 100000)
 {
+    TSharedMemoryKvs smhash;
     qDebug() << "test0 #0 smhash count:" << smhash.count() << "table size:" << smhash.tableSize();
 
     // insert data
@@ -78,6 +79,7 @@ void test0(int d = 100000)
 
 void test1(int d = 5000000)
 {
+    TSharedMemoryKvs smhash;
     qDebug() << "test1 #0 smhash count:" << smhash.count() << "table size:" << smhash.tableSize();
 
     // insert data
@@ -98,13 +100,15 @@ void test1(int d = 5000000)
 }
 
 
-int main(int argc, char *argv[])
+static int command()
 {
     int num = 0;
 
-    if (argc > 1) {
-        num = atoi(argv[1]);
+    if (QCoreApplication::arguments().count() > 1) {
+        num = QCoreApplication::arguments().at(1).toInt();
     }
+
+    TSharedMemoryKvs::initialize("tfcache.shm", "MEMORY_SIZE=256M");
 
     switch (num) {
     case 0:
@@ -115,5 +119,11 @@ int main(int argc, char *argv[])
     default:
         break;
     }
+
+    TSharedMemoryKvs smhash;
+    smhash.cleanup();
     return 0;
 }
+
+
+TF_CLI_MAIN(command)

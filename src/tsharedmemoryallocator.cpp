@@ -60,7 +60,7 @@ struct alloc_header_t {
 static TSharedMemoryAllocator *instance;
 
 
-TSharedMemoryAllocator *TSharedMemoryAllocator::create(const QString &name, size_t size)
+TSharedMemoryAllocator *TSharedMemoryAllocator::initialize(const QString &name, size_t size)
 {
     if (!instance) {
         instance = new TSharedMemoryAllocator(name);
@@ -98,35 +98,11 @@ void TSharedMemoryAllocator::unlink(const QString &name)
 
 TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name) :
     _sharedMemory(new TSharedMemory(name))
-{
-    // if (size != -1) {
-    //     _sharedMemory->create(size);
-    //     setbrk(true);
-    // } else {
-    //     _sharedMemory->attach();
-    //     setbrk(false);
-    // }
-    //_origin = (caddr_t)setbrk(_shm, size, _newmap);
-}
-
-
-// TSharedMemoryAllocator::TSharedMemoryAllocator(const QString &name, size_t size) :
-//     _name(name), _size(size)
-// {
-//     if (_name.isEmpty()) {
-//         _shm = new char[size];
-//     } else {
-//         _shm = Tf::shmcreate(qUtf8Printable(_name), _size, &_newmap);
-//     }
-//     _origin = (caddr_t)setbrk(_shm, size, _newmap);
-// }
+{ }
 
 
 TSharedMemoryAllocator::~TSharedMemoryAllocator()
 {
-    // if (_name.isEmpty()) {
-    //     delete (char*)_shm;
-    // }
     delete _sharedMemory;
 }
 
@@ -163,8 +139,8 @@ void TSharedMemoryAllocator::setbrk(bool initial)
     }
 
     pb_header = (Tf::program_break_header_t *)_sharedMemory->data();
-    tSystemDebug("addr = %p\n", _sharedMemory->data());
-    tSystemDebug("checksum = %ld\n", pb_header->checksum);
+    tSystemDebug("addr = %p", _sharedMemory->data());
+    tSystemDebug("checksum = %ld", pb_header->checksum);
 
     // Checks checksum
     uint64_t ck = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
@@ -211,7 +187,7 @@ Tf::alloc_header_t *TSharedMemoryAllocator::free_block(uint size)
 }
 
 
-uint TSharedMemoryAllocator::allocSize(const void *ptr)
+uint TSharedMemoryAllocator::allocSize(const void *ptr) const
 {
     if (!pb_header || !ptr) {
         return 0;

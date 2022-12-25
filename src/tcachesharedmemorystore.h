@@ -1,68 +1,13 @@
 #pragma once
 #include "tcachestore.h"
+#include <TGlobal>
 
-struct hash_header_t;
-class TSharedMemoryAllocator;
+class TSharedMemoryKvs;
 
 
 class T_CORE_EXPORT TCacheSharedMemoryStore : public TCacheStore {
 public:
-    class Bucket {
-    public:
-        QByteArray key;
-        QByteArray value;
-        qint64 expires {0};  // msecs since epoch
-
-        bool isExpired() const
-        {
-            return expires <= Tf::getMSecsSinceEpoch();
-        }
-
-        void clear()
-        {
-            key.resize(0);
-            value.resize(0);
-            expires = 0;
-        }
-
-        friend QDataStream &operator<<(QDataStream &ds, const Bucket &bucket)
-        {
-            ds << bucket.key << bucket.value << bucket.expires;
-            return ds;
-        }
-
-        friend QDataStream &operator>>(QDataStream &ds, Bucket &bucket)
-        {
-            ds >> bucket.key >> bucket.value >> bucket.expires;
-            return ds;
-        }
-    };
-
-    class WriteLockingIterator {
-    public:
-        ~WriteLockingIterator();
-        const QByteArray &key() const;
-        const QByteArray &value() const;
-        bool isExpired() const;
-        const QByteArray &operator*() const;
-        WriteLockingIterator &operator++();
-        bool operator==(const WriteLockingIterator &other) const { return _hash == other._hash && _it == other._it; }
-        bool operator!=(const WriteLockingIterator &other) const { return _hash != other._hash || _it != other._it; }
-        void remove();
-    private:
-        WriteLockingIterator(TCacheSharedMemoryStore *hash, uint it);
-        void search();
-
-        TCacheSharedMemoryStore *_hash {nullptr};
-        uint _it {0};
-        bool _locked {false};
-        Bucket _tmpbk;
-        friend class TCacheSharedMemoryStore;
-    };
-
-    //TCacheSharedMemoryStore(const QString &name, size_t size);
     ~TCacheSharedMemoryStore();
-
     QString key() const override { return QLatin1String("memory"); }
     DbType dbType() const override { return KVS; }
     void init() override;
@@ -72,34 +17,14 @@ public:
     QByteArray get(const QByteArray &key) override;
     bool set(const QByteArray &key, const QByteArray &value, int seconds) override;
     bool remove(const QByteArray &key) override;
-    uint count() const;
-    uint tableSize() const;
     void clear() override;
     void gc() override;
-    float loadFactor() const;
-    void rehash();
-
-    WriteLockingIterator begin();
-    WriteLockingIterator end();
-
-protected:
-    uint find(const QByteArray &key, Bucket &bucket) const;
-    bool find(uint index, Bucket &bucket) const;
-    int searchIndex(int first);
-    uint index(const QByteArray &key) const;
-    uint next(uint index) const;
-    void remove(uint index);
-
-    void lockForRead() const;
-    void lockForWrite() const;
-    void unlock() const;
+    QMap<QString, QVariant> defaultSettings() const override;
 
 private:
     TCacheSharedMemoryStore();
 
-    TSharedMemoryAllocator *_allocator {nullptr};
-    hash_header_t *_h {nullptr};
-
+    friend class TCacheFactory;
     T_DISABLE_COPY(TCacheSharedMemoryStore)
     T_DISABLE_MOVE(TCacheSharedMemoryStore)
 };

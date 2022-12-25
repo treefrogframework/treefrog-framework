@@ -1,5 +1,6 @@
 #include "tsharedmemory.h"
 #include "tfcore.h"
+#include "tsystemglobal.h"
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -24,12 +25,11 @@ TSharedMemory::~TSharedMemory()
 
 bool TSharedMemory::create(size_t size)
 {
-    if (_data || size == 0) {
+    if (_data || size == 0 || _name.isEmpty()) {
         return false;
     }
 
     struct stat st;
-    void *shmp;
 
     // Creates shared memory
     _fd = shm_open(qUtf8Printable(_name), O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR);
@@ -60,6 +60,8 @@ bool TSharedMemory::create(size_t size)
     return true;
 
 error:
+    tSystemError("SharedMemory create error  [%s:%d]", __FILE__, __LINE__);
+
     if (_fd > 0) {
         tf_close(_fd);
         _fd = 0;
@@ -79,6 +81,10 @@ void TSharedMemory::unlink()
 
 bool TSharedMemory::attach()
 {
+    if (_data || _name.isEmpty()) {
+        return false;
+    }
+
     struct stat st;
 
     _fd = shm_open(qUtf8Printable(_name), O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR);
@@ -104,6 +110,8 @@ bool TSharedMemory::attach()
     return true;
 
 error:
+    tSystemError("SharedMemory attach error  [%s:%d]", __FILE__, __LINE__);
+
     if (_fd > 0) {
         tf_close(_fd);
         _fd = 0;
@@ -136,12 +144,12 @@ bool TSharedMemory::detach()
 
 bool TSharedMemory::lock()
 {
-
+    return true;
 }
 
 
 bool TSharedMemory::unlock()
 {
-
+    return true;
 }
 

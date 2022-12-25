@@ -8,6 +8,7 @@
 #include "tmongodriver.h"
 #include "tredisdriver.h"
 #include "tmemcacheddriver.h"
+#include "tsharedmemorykvsdriver.h"
 #include <QMap>
 #include <QReadWriteLock>
 #include <QString>
@@ -15,29 +16,11 @@
 #include <TKvsDriver>
 #include <TSystemGlobal>
 
-class TKvsDatabaseData {
-public:
-    QString connectionName;
-    QString databaseName;
-    QString hostName;
-    quint16 port {0};
-    QString userName;
-    QString password;
-    QString connectOptions;
-    QStringList postOpenStatements;
-    TKvsDriver *driver {nullptr};  // pointer to a singleton object
-
-    TKvsDatabaseData() { }
-};
-
-
 /*!
   \class TKvsDatabase
   \brief The TKvsDatabase class represents a connection to a key-value
   store database.
 */
-
-const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 
 // Map of connection name and database data
@@ -69,6 +52,8 @@ static TKvsDriver *createDriver(const QString &driverName)
         driver = new TRedisDriver();
     } else if (name == QLatin1String("memcached")) {
         driver = new TMemcachedDriver();
+    } else if (name == QLatin1String("memory")) {
+        driver = new TSharedMemoryKvsDriver();
     } else {
         tWarn("TKvsDatabase: %s driver not found", qUtf8Printable(driverName));
         return driver;
@@ -119,6 +104,14 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 
     db.close();
     delete db.drv;
+}
+
+
+TKvsDatabaseData TKvsDatabase::settings(const QString &connectionName)
+{
+    auto *dict = databaseDict();
+    QReadLocker locker(&dict->lock);
+    return (*dict)[connectionName];
 }
 
 

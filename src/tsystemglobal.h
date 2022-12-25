@@ -4,11 +4,12 @@
 #include <QVariant>
 #include <TGlobal>
 
+class TSystemLogger;
 class TAccessLog;
 class QSqlError;
 
 namespace Tf {
-T_CORE_EXPORT void setupSystemLogger();  // internal use
+T_CORE_EXPORT void setupSystemLogger(TSystemLogger *logger = nullptr);  // internal use
 T_CORE_EXPORT void releaseSystemLogger();  // internal use
 T_CORE_EXPORT void setupAccessLogger();  // internal use
 T_CORE_EXPORT void releaseAccessLogger();  // internal use

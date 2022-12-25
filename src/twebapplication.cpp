@@ -189,6 +189,12 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         }
     }
 
+    // SharedMemory settings (dummy data)
+    _kvsSettings[(int)Tf::KvsEngine::SharedMemory] = QMap<QString, QVariant> {
+        {"DatabaseName", "tfcache.shm"},
+        {"ConnectOptions", "MEMORY_SIZE=1G"},
+    };
+
     // Cache settings
     if (cacheEnabled()) {
         auto backend = cacheBackend();
@@ -393,7 +399,11 @@ QString TWebApplication::validationErrorMessage(int rule) const
 */
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
-    static TWebApplication::MultiProcessingModule module = []() {
+    static TWebApplication::MultiProcessingModule module = [this]() {
+        if (_mpmTemp != Invalid) {
+            return _mpmTemp;
+        }
+
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
             return Thread;
@@ -445,7 +455,7 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
         switch (Tf::app()->multiProcessingModule()) {
         case TWebApplication::Thread:
             maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-            maxNum = (maxNum > 0) ? maxNum : 128;
+            maxNum = (maxNum > 0) ? maxNum : 16;
             break;
 
         case TWebApplication::Epoll:

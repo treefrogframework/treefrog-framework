@@ -11,21 +11,14 @@ struct alloc_header_t;
 
 class T_CORE_EXPORT TSharedMemoryAllocator {
 public:
-    //TSharedMemoryAllocator(const QString &name, size_t size);  // Shared memory
     virtual ~TSharedMemoryAllocator();
 
     void *malloc(uint size);
     void *calloc(uint num, uint nsize);
     void *realloc(void *ptr, uint size);
     void free(void *ptr);
-    uint allocSize(const void *ptr);
-#if 0
-    size_t mapSize() const { return _size; }
-    bool isNew() const { return _newmap; }
-#else
+    uint allocSize(const void *ptr) const;
     size_t mapSize() const;
-    //bool isNew() const;
-#endif
     void *origin() const { return (void *)_origin; }
 
     // Internal use
@@ -33,14 +26,13 @@ public:
     void dump();  // For debug
     int nblocks();  // Counts blocks
 
-    static TSharedMemoryAllocator *create(const QString &name, size_t size);
+    static TSharedMemoryAllocator *initialize(const QString &name, size_t size);
     static TSharedMemoryAllocator *attach(const QString &name);
     static void unlink(const QString &name);
 
 private:
     TSharedMemoryAllocator(const QString &name);  // constructor
     caddr_t sbrk(int64_t inc);
-    //void *setbrk(void *start, uint size, bool initial = false);
     void setbrk(bool initial = false);
     Tf::alloc_header_t *free_block(uint size);
 

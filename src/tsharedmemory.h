@@ -23,4 +23,7 @@ private:
     size_t _size {0};
     void *_data {nullptr};
     int _fd {0};
+
+    T_DISABLE_COPY(TSharedMemory)
+    T_DISABLE_MOVE(TSharedMemory)
 };
