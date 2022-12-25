@@ -8,6 +8,7 @@
 #include "tsharedmemorylogstream.h"
 #include <QSharedMemory>
 #include <TSystemGlobal>
+#include <cstring>
 
 constexpr auto CREATE_KEY = "TreeFrogLogStream";
 

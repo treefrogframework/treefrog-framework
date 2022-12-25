@@ -39,7 +39,7 @@ public:
     const TKvsDriver *driver() const { return drv; }
     void moveToThread(QThread *targetThread);
 
-    static constexpr QLatin1String defaultConnection {"tf_default_connection"};
+    static const char *const defaultConnection;
     static TKvsDatabase database(const QString &connectionName = defaultConnection);
     static TKvsDatabase addDatabase(const QString &driver, const QString &connectionName = defaultConnection);
     static void removeDatabase(const QString &connectionName = defaultConnection);

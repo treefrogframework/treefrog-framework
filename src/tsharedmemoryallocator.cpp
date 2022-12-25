@@ -140,7 +140,7 @@ void TSharedMemoryAllocator::setbrk(bool initial)
 
     pb_header = (Tf::program_break_header_t *)_sharedMemory->data();
     tSystemDebug("addr = %p", _sharedMemory->data());
-    tSystemDebug("checksum = %ld", pb_header->checksum);
+    tSystemDebug("checksum = %lu", pb_header->checksum);
 
     // Checks checksum
     uint64_t ck = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
@@ -410,7 +410,7 @@ void TSharedMemoryAllocator::dump()
         }
         cur = cur->next();
     }
-    tSystemDebug("head = %p, tail = %p, blocks = %d, free = %d, used = %ld", pb_header->alloc_head(),
+    tSystemDebug("head = %p, tail = %p, blocks = %d, free = %d, used = %lu", pb_header->alloc_head(),
         pb_header->alloc_tail(), nblocks(), freeblk, pb_header->at.used);
 }
 

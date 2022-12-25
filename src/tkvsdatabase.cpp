@@ -22,6 +22,8 @@
   store database.
 */
 
+const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
+
 
 // Map of connection name and database data
 class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData> {
