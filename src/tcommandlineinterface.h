@@ -5,7 +5,7 @@
 #include <TSystemGlobal>
 #include <TStdoutSystemLogger>
 #include <TWebApplication>
-#include <TGlobal>
+#include <TAppSettings>
 #include <QtCore>
 
 
@@ -34,7 +34,7 @@
             }                                                                                                       \
         };                                                                                                          \
         TWebApplication app(argc, argv);                                                                            \
-        QByteArray codecName = app.appSettings().value("InternalEncoding", "UTF-8").toByteArray();                  \
+        QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding).toByteArray();                        \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                                    \
         QTextCodec::setCodecForLocale(codec);                                                                       \
         Tf::setupSystemLogger(new TStdoutSystemLogger);                                                             \
