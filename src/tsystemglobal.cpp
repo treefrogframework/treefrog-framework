@@ -77,7 +77,11 @@ void Tf::setupSystemLogger(TSystemLogger *logger)
 
 void Tf::releaseSystemLogger()
 {
-    systemLogger->close();
+    if (systemLogger) {
+        systemLogger->close();
+        delete systemLogger;
+    }
+    systemLogger = nullptr;
 }
 
 
