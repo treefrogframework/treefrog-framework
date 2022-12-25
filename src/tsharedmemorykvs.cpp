@@ -3,8 +3,9 @@
 #include <TActionContext>
 #include <TSystemGlobal>
 #include <QDataStream>
-#include <ctime>
+#include <cstring>
 #include <pthread.h>
+#include <time.h>
 
 #define FREE ((void *)-1)
 
@@ -392,11 +393,11 @@ uint TSharedMemoryKvs::next(uint index) const
 
 void TSharedMemoryKvs::lockForRead() const
 {
-    std::timespec timeout;
+    struct timespec timeout;
 
     while (pthread_rwlock_tryrdlock(&_h->rwlock) == EBUSY) {
         uint cnt = _h->lockcounter;
-        std::timespec_get(&timeout, TIME_UTC);
+        timespec_get(&timeout, TIME_UTC);
         timeout.tv_sec += 1;  // 1sec
 
         int res = pthread_rwlock_timedrdlock(&_h->rwlock, &timeout);
@@ -415,11 +416,11 @@ void TSharedMemoryKvs::lockForRead() const
 
 void TSharedMemoryKvs::lockForWrite() const
 {
-    std::timespec timeout;
+    struct timespec timeout;
 
     while (pthread_rwlock_trywrlock(&_h->rwlock) == EBUSY) {
         uint cnt = _h->lockcounter;
-        std::timespec_get(&timeout, TIME_UTC);
+        timespec_get(&timeout, TIME_UTC);
         timeout.tv_sec += 1;  // 1sec
 
         int res = pthread_rwlock_timedwrlock(&_h->rwlock, &timeout);

@@ -14,7 +14,7 @@ TSharedMemoryKvsDriver::~TSharedMemoryKvsDriver()
 static QString parseParameter(const QString &options, const QString &key)
 {
     QString val;
-    for (QString param : options.split(";", Qt::SkipEmptyParts)) {
+    for (QString param : options.split(";", Tf::SkipEmptyParts)) {
         param = param.trimmed();
         if (param.startsWith(key + "=")) {
             val = param.mid(key.length() + 1);
