@@ -116,6 +116,7 @@
     int main(int argc, char *argv[])                                                                  \
     {                                                                                                 \
         TWebApplication app(argc, argv);                                                              \
+        Tf::setupSystemLogger(new TStdoutSystemLogger);                                               \
         QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding).toByteArray();          \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                      \
         QTextCodec::setCodecForLocale(codec);                                                         \
@@ -129,6 +130,7 @@
     int main(int argc, char *argv[])                                                                  \
     {                                                                                                 \
         TWebApplication app(argc, argv);                                                              \
+        Tf::setupSystemLogger(new TStdoutSystemLogger);                                               \
         TestObject tc;                                                                                \
         return QTest::qExec(&tc, argc, argv);                                                         \
     }
