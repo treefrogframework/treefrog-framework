@@ -214,7 +214,7 @@ static void insert(uint count, float factor)
 
         qmap.insert(key, value);  // QMap
 
-        bool ok = smhash.set(key, value, 10);  // TSharedMemoryHash
+        bool ok = smhash.set(key, value, 1200);  // TSharedMemoryHash
         QVERIFY(ok);
         if (!ok) {
             break;

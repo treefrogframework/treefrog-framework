@@ -7,6 +7,7 @@
 
 #include <TSystemGlobal>
 #include <TWebApplication>
+#include <cstring>
 #include <cerrno>
 #include <csignal>
 
