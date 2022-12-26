@@ -14,7 +14,6 @@ public:
     bool open();
     void close();
     bool isOpen() const;
-    void log(const TLog &log);
     void log(const QByteArray &msg);
     void flush();
     void setFileName(const QString &name);
@@ -23,4 +22,3 @@ private:
     QFile logFile;
     QMutex mutex;
 };
-

@@ -2,9 +2,9 @@
 #include "tsystemlogger.h"
 
 
-class T_CORE_EXPORT TStdoutSystemLogger : public TSystemLogger {
+class T_CORE_EXPORT TStdOutSystemLogger : public TSystemLogger {
 public:
-    virtual ~TStdoutSystemLogger() {}
+    virtual ~TStdOutSystemLogger() {}
     bool open() override { return true; }
     void close() override {}
     bool isOpen() const override { return true; }

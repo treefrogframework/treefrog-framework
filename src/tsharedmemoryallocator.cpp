@@ -431,3 +431,21 @@ int TSharedMemoryAllocator::nblocks()
     }
     return counter;
 }
+
+
+bool TSharedMemoryAllocator::lockForRead()
+{
+    return _sharedMemory->lockForRead();
+}
+
+
+bool TSharedMemoryAllocator::lockForWrite()
+{
+    return _sharedMemory->lockForWrite();
+}
+
+
+bool TSharedMemoryAllocator::unlock()
+{
+    return _sharedMemory->unlock();
+}

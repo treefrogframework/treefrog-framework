@@ -20,6 +20,9 @@ public:
     uint allocSize(const void *ptr) const;
     size_t mapSize() const;
     void *origin() const { return (void *)_origin; }
+    bool lockForRead();
+    bool lockForWrite();
+    bool unlock();
 
     // Internal use
     void summary();
@@ -36,14 +39,7 @@ private:
     void setbrk(bool initial = false);
     Tf::alloc_header_t *free_block(uint size);
 
-#if 0
-    QString _name;
-    size_t _size {0};
-    void *_shm {nullptr};
-    bool _newmap {true};
-#else
     TSharedMemory *_sharedMemory {nullptr};
-#endif
     caddr_t _origin {nullptr};
     Tf::program_break_header_t *pb_header {nullptr};
 

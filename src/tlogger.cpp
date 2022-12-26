@@ -33,6 +33,26 @@ public:
 Q_GLOBAL_STATIC(PriorityHash, priorityHash)
 
 
+namespace {
+
+QByteArray logLayout;  // Layout of application log
+QByteArray logDateTimeFormat;  // DateTime format of application log
+
+}
+
+
+void Tf::setAppLogLayout(const QByteArray &layout)
+{
+    logLayout = layout;
+}
+
+
+void Tf::setAppLogDateTimeFormat(const QByteArray &format)
+{
+    logDateTimeFormat = format;
+}
+
+
 /*!
   \class TLogger
   \brief The TLogger class provides an abstract base of logging functionality.
@@ -82,9 +102,9 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
     static const QString Arg1("%1");
 
     QByteArray message;
-    int pos = 0;
     QByteArray dig;
     message.reserve(layout.length() + log.message.length() + 100);
+    int pos = 0;
 
     while (pos < layout.length()) {
         char c = layout.at(pos++);
@@ -246,10 +266,10 @@ QStringConverter::Encoding TLogger::encoding() const
 */
 const QByteArray &TLogger::layout() const
 {
-    if (_layout.isEmpty()) {
-        _layout = settingsValue("Layout", "%m%n").toByteArray();
+    if (logLayout.isEmpty()) {
+        logLayout = settingsValue("Layout", "%m%n").toByteArray();
     }
-    return _layout;
+    return logLayout;
 }
 
 /*!
@@ -257,10 +277,10 @@ const QByteArray &TLogger::layout() const
 */
 const QByteArray &TLogger::dateTimeFormat() const
 {
-    if (_dateTimeFormat.isEmpty()) {
-        _dateTimeFormat = settingsValue("DateTimeFormat").toByteArray();
+    if (logDateTimeFormat.isEmpty()) {
+        logDateTimeFormat = settingsValue("DateTimeFormat", "yyyy-MM-dd hh:mm:ss").toByteArray();
     }
-    return _dateTimeFormat;
+    return logDateTimeFormat;
 }
 
 /*!

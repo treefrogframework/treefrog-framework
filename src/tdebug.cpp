@@ -27,29 +27,37 @@
 */
 
 namespace {
+
 TAbstractLogStream *stream = nullptr;
 QList<TLogger *> loggers;
+
 }
 
 /*!
   Sets up all the loggers set in the logger.ini.
   This function is for internal use only.
 */
-void Tf::setupAppLoggers()
+void Tf::setupAppLoggers(TLogger *logger)
 {
-    const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', Tf::SkipEmptyParts);
+    if (stream) {
+        return;
+    }
 
-    for (auto &lg : loggerList) {
-        TLogger *lgr = TLoggerFactory::create(lg);
-        if (lgr) {
-            loggers << lgr;
-            tSystemDebug("Logger added: %s", qUtf8Printable(lgr->key()));
+    if (logger) {
+        loggers << logger;
+    } else {
+        const QStringList loggerList = Tf::app()->loggerSettings().value("Loggers").toString().split(' ', Tf::SkipEmptyParts);
+
+        for (auto &lg : loggerList) {
+            TLogger *lgr = TLoggerFactory::create(lg);
+            if (lgr) {
+                loggers << lgr;
+                tSystemDebug("Logger added: %s", qUtf8Printable(lgr->key()));
+            }
         }
     }
 
-    if (!stream) {
-        stream = new TBasicLogStream(loggers, qApp);
-    }
+    stream = new TBasicLogStream(loggers, qApp);
 }
 
 /*!

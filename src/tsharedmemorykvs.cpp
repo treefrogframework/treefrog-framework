@@ -4,15 +4,15 @@
 #include <TSystemGlobal>
 #include <QDataStream>
 #include <cstring>
-#include <pthread.h>
-#include <time.h>
+// #include <pthread.h>
+// #include <time.h>
 
 #define FREE ((void *)-1)
 
 struct hash_header_t {
     uintptr_t hashtg {0};
-    pthread_rwlock_t rwlock;
-    uint lockcounter {0};
+    // pthread_rwlock_t rwlock;
+    // uint lockcounter {0};
     uint tableSize {1024};
     uint count {0};
     uint freeCount {0};
@@ -46,17 +46,17 @@ struct hash_header_t {
 };
 
 
-static void rwlock_init(pthread_rwlock_t *rwlock)
-{
-    pthread_rwlockattr_t attr;
+// static void rwlock_init(pthread_rwlock_t *rwlock)
+// {
+//     pthread_rwlockattr_t attr;
 
-    int res = pthread_rwlockattr_init(&attr);
-    Q_ASSERT(!res);
-    res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-    Q_ASSERT(!res);
-    res = pthread_rwlock_init(rwlock, &attr);
-    Q_ASSERT(!res);
-}
+//     int res = pthread_rwlockattr_init(&attr);
+//     Q_ASSERT(!res);
+//     res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+//     Q_ASSERT(!res);
+//     res = pthread_rwlock_init(rwlock, &attr);
+//     Q_ASSERT(!res);
+// }
 
 /*!
   Constructs a TSharedMemoryKvs object.
@@ -81,20 +81,21 @@ TSharedMemoryKvs::~TSharedMemoryKvs()
 
 bool TSharedMemoryKvs::initialize(const QString &name, const QString &options)
 {
-    static const hash_header_t INIT_HEADER = []() {
-        hash_header_t header;
-        rwlock_init(&header.rwlock);
-        return header;
-    }();
+    // static const hash_header_t INIT_HEADER = []() {
+    //     hash_header_t header;
+    //     rwlock_init(&header.rwlock);
+    //     return header;
+    // }();
+    hash_header_t hashheader;
 
     TSharedMemoryKvsDriver::initialize(name, options);
     TSharedMemoryKvsDriver driver;
     driver.open(name, QString(), QString(), QString(), 0, options);
     hash_header_t *header = (hash_header_t *)driver.origin();
 
-    void *ptr = driver.malloc(sizeof(INIT_HEADER));
+    void *ptr = driver.malloc(sizeof(hashheader));
     Q_ASSERT(ptr == header);
-    std::memcpy(header, &INIT_HEADER, sizeof(INIT_HEADER));
+    std::memcpy(header, &hashheader, sizeof(hashheader));
     ptr = driver.calloc(header->tableSize, sizeof(uintptr_t));
     header->setHashg(ptr);
     Q_ASSERT(ptr);
@@ -391,8 +392,11 @@ uint TSharedMemoryKvs::next(uint index) const
 }
 
 
-void TSharedMemoryKvs::lockForRead() const
+bool TSharedMemoryKvs::lockForRead()
 {
+#if 1
+    return driver()->lockForRead();
+#else
     struct timespec timeout;
 
     while (pthread_rwlock_tryrdlock(&_h->rwlock) == EBUSY) {
@@ -411,11 +415,15 @@ void TSharedMemoryKvs::lockForRead() const
         }
     }
     _h->lockcounter++;
+#endif
 }
 
 
-void TSharedMemoryKvs::lockForWrite() const
+bool TSharedMemoryKvs::lockForWrite()
 {
+#if 1
+    return driver()->lockForWrite();
+#else
     struct timespec timeout;
 
     while (pthread_rwlock_trywrlock(&_h->rwlock) == EBUSY) {
@@ -434,12 +442,17 @@ void TSharedMemoryKvs::lockForWrite() const
         }
     }
     _h->lockcounter++;
+#endif
 }
 
 
-void TSharedMemoryKvs::unlock() const
+bool TSharedMemoryKvs::unlock()
 {
+#if 1
+    return driver()->unlock();
+#else
     pthread_rwlock_unlock(&_h->rwlock);
+#endif
 }
 
 

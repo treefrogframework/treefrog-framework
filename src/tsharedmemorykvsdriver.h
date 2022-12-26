@@ -27,6 +27,10 @@ public:
     size_t mapSize() const;
     void *origin() const;
 
+    bool lockForRead();
+    bool lockForWrite();
+    bool unlock();
+
 private:
     static void initialize(const QString &db, const QString &options);
     void cleanup();

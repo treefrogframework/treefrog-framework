@@ -144,3 +144,21 @@ void TSharedMemoryKvsDriver::cleanup()
         TSharedMemoryAllocator::unlink(_name);
     }
 }
+
+
+bool TSharedMemoryKvsDriver::lockForRead()
+{
+    return _allocator->lockForRead();
+}
+
+
+bool TSharedMemoryKvsDriver::lockForWrite()
+{
+    return _allocator->lockForWrite();
+}
+
+
+bool TSharedMemoryKvsDriver::unlock()
+{
+    return _allocator->unlock();
+}

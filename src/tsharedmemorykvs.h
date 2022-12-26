@@ -76,6 +76,9 @@ public:
     void gc();
     float loadFactor() const;
     void rehash();
+    bool lockForRead();
+    bool lockForWrite();
+    bool unlock();
 
     WriteLockingIterator begin();
     WriteLockingIterator end();
@@ -91,9 +94,6 @@ protected:
     uint next(uint index) const;
     void remove(uint index);
 
-    void lockForRead() const;
-    void lockForWrite() const;
-    void unlock() const;
 
 private:
     TSharedMemoryKvs(Tf::KvsEngine engine);

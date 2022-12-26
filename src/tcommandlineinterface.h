@@ -3,9 +3,11 @@
 #include "tsqldatabasepool.h"
 #include <TActionThread>
 #include <TSystemGlobal>
-#include <TStdoutSystemLogger>
+#include <TStdErrSystemLogger>
+#include <TStdOutLogger>
 #include <TWebApplication>
 #include <TAppSettings>
+#include <TLogger>
 #include <QtCore>
 
 
@@ -37,9 +39,9 @@
         QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding).toByteArray();                        \
         QTextCodec *codec = QTextCodec::codecForName(codecName);                                                    \
         QTextCodec::setCodecForLocale(codec);                                                                       \
-        Tf::setupSystemLogger(new TStdoutSystemLogger);                                                             \
+        Tf::setupSystemLogger(new TStdErrSystemLogger);                                                             \
         Tf::setupQueryLogger();                                                                                     \
-        Tf::setupAppLoggers();                                                                                      \
+        Tf::setupAppLoggers(new TStdOutLogger);                                                                     \
         app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \
@@ -50,7 +52,6 @@
         app.exec();                                                                                                 \
         Tf::releaseAppLoggers();                                                                                    \
         Tf::releaseQueryLogger();                                                                                   \
-        Tf::releaseSystemLogger();                                                                                  \
         return thread.returnCode;                                                                                   \
     }
 
@@ -80,9 +81,9 @@
             }                                                                                                       \
         };                                                                                                          \
         TWebApplication app(argc, argv);                                                                            \
-        Tf::setupSystemLogger(new TStdoutSystemLogger);                                                             \
+        Tf::setupSystemLogger(new TStdErrSystemLogger);                                                             \
         Tf::setupQueryLogger();                                                                                     \
-        Tf::setupAppLoggers();                                                                                      \
+        Tf::setupAppLoggers(new TStdOutLogger);                                                                     \
         app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \
@@ -93,7 +94,6 @@
         app.exec();                                                                                                 \
         Tf::releaseAppLoggers();                                                                                    \
         Tf::releaseQueryLogger();                                                                                   \
-        Tf::releaseSystemLogger();                                                                                  \
         return thread.returnCode;                                                                                   \
     }
 #endif

@@ -5,9 +5,13 @@
 #include <QtCore>
 #include <TGlobal>
 
+class TLogger;
+
 namespace Tf {
-T_CORE_EXPORT void setupAppLoggers();  // internal use
+
+T_CORE_EXPORT void setupAppLoggers(TLogger *logger = nullptr);  // internal use
 T_CORE_EXPORT void releaseAppLoggers();  // internal use
+
 }
 
 
@@ -170,4 +174,3 @@ private:
     QTextStream ts {&buffer, Tf::WriteOnly};
     int msgPriority {0};
 };
-

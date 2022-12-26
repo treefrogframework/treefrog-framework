@@ -35,6 +35,10 @@ QByteArray queryLogDateTimeFormat;
 
 void tSystemMessage(int priority, const char *msg, va_list ap)
 {
+    if (!systemLogger) {
+        return;
+    }
+
     TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
     systemLogger->write(buf.data(), buf.length());

@@ -63,12 +63,6 @@ bool TFileLogger::isOpen() const
 }
 
 
-void TFileLogger::log(const TLog &tlog)
-{
-    log(logToByteArray(tlog));
-}
-
-
 void TFileLogger::log(const QByteArray &msg)
 {
     if (!isOpen()) {
