@@ -16,9 +16,10 @@
 
 TAccessLogStream::TAccessLogStream(const QString &fileName)
 {
-    TFileLogger *logger = new TFileLogger();
-    logger->setFileName(fileName);
-    logger->open();
+    TFileLogger *fileLogger = new TFileLogger;
+    fileLogger->setFileName(fileName);
+    fileLogger->open();
+    logger = fileLogger;
 }
 
 
