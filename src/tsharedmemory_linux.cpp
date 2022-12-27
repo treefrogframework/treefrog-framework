@@ -1,3 +1,10 @@
+/* Copyright (c) 2022, AOYAMA Kazuharu
+ * All rights reserved.
+ *
+ * This software may be used and distributed according to the terms of
+ * the New BSD License, which is incorporated herein by reference.
+ */
+
 #include "tsharedmemory.h"
 #include "tfcore.h"
 #include "tsystemglobal.h"
@@ -89,7 +96,7 @@ bool TSharedMemory::create(size_t size)
     return true;
 
 error:
-    tSystemError("SharedMemory create error  [%s:%d]", __FILE__, __LINE__);
+    tSystemError("SharedMemory create error.  name:%s size:%zu [%s:%d]", qUtf8Printable(_name), size, __FILE__, __LINE__);
 
     if (_fd > 0) {
         tf_close(_fd);
@@ -182,6 +189,18 @@ void *TSharedMemory::data()
 const void *TSharedMemory::data() const
 {
     return (caddr_t)_ptr + sizeof(header_t);
+}
+
+
+QString TSharedMemory::name() const
+{
+    return _name;
+}
+
+
+size_t TSharedMemory::size() const
+{
+    return _size;
 }
 
 

@@ -1,18 +1,22 @@
+/* Copyright (c) 2022, AOYAMA Kazuharu
+ * All rights reserved.
+ *
+ * This software may be used and distributed according to the terms of
+ * the New BSD License, which is incorporated herein by reference.
+ */
+
 #include "tsharedmemorykvs.h"
 #include "tsharedmemorykvsdriver.h"
 #include <TActionContext>
 #include <TSystemGlobal>
 #include <QDataStream>
 #include <cstring>
-// #include <pthread.h>
-// #include <time.h>
+
 
 #define FREE ((void *)-1)
 
 struct hash_header_t {
     uintptr_t hashtg {0};
-    // pthread_rwlock_t rwlock;
-    // uint lockcounter {0};
     uint tableSize {1024};
     uint count {0};
     uint freeCount {0};

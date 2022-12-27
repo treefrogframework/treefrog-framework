@@ -1,10 +1,12 @@
 #pragma once
 #include <TGlobal>
-
+#ifndef Q_OS_LINUX
+#include <QSharedMemory>
+#endif
 
 class T_CORE_EXPORT TSharedMemory
 #ifndef Q_OS_LINUX
- : public QQSharedMemory
+ : public QSharedMemory
 #endif
 {
 public:
@@ -17,8 +19,8 @@ public:
 
     void *data();
     const void *data() const;
-    QString name() const { return _name; }
-    size_t size() const { return _size; }
+    QString name() const;
+    size_t size() const;
 
     bool lockForRead();
     bool lockForWrite();

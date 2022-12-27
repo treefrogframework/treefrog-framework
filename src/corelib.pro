@@ -354,8 +354,6 @@ HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
 HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
-HEADERS += tshm.h
-SOURCES += tshm.cpp
 HEADERS += tsharedmemoryallocator.h
 SOURCES += tsharedmemoryallocator.cpp
 HEADERS += tsharedmemorykvsdriver.h
@@ -392,13 +390,7 @@ windows {
   SOURCES += tmemcacheddriver_qt.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
   SOURCES += tsharedmemory_win.cpp
-}
-unix {
-  HEADERS += tfcore_unix.h
-  SOURCES += twebapplication_unix.cpp
-  SOURCES += tapplicationserverbase_unix.cpp
-  SOURCES += tfileaiowriter_unix.cpp
-  SOURCES += tsharedmemory_unix.cpp
+  SOURCES += tsharedmemory_qt.cpp
 }
 linux-* {
   HEADERS += tmultiplexingserver.h
@@ -419,12 +411,20 @@ linux-* {
   SOURCES += tthreadapplicationserver_linux.cpp
   SOURCES += tredisdriver_linux.cpp
   SOURCES += tmemcacheddriver_linux.cpp
+  SOURCES += tsharedmemory_linux.cpp
 }
 macx {
   SOURCES += tprocessinfo_macx.cpp
   SOURCES += tthreadapplicationserver_qt5.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
+  SOURCES += tsharedmemory_qt.cpp
+}
+unix {
+  HEADERS += tfcore_unix.h
+  SOURCES += twebapplication_unix.cpp
+  SOURCES += tapplicationserverbase_unix.cpp
+  SOURCES += tfileaiowriter_unix.cpp
 }
 freebsd {
   SOURCES += tprocessinfo_freebsd.cpp
