@@ -25,7 +25,8 @@ bool TSharedMemory::create(size_t sz)
         return true;
     }
 
-    if (error() == QSharedMemory::AlreadyExists && attach()) {
+    auto err = error();
+    if (err == QSharedMemory::AlreadyExists && attach()) {
         if (size() >= sz) {
             tSystemWarn("SharedMemory already exists, attached.  name:%s size:%zu", qUtf8Printable(key()), size());
             return true;
@@ -33,7 +34,7 @@ bool TSharedMemory::create(size_t sz)
         detach();
     }
 
-    tSystemError("SharedMemory create error.  name:%s size:%zu [%s:%d]", qUtf8Printable(key()), sz, __FILE__, __LINE__);
+    tSystemError("SharedMemory create error [%d].  name:%s size:%zu [%s:%d]", (int)err, qUtf8Printable(key()), sz, __FILE__, __LINE__);
     return false;
 }
 

@@ -137,6 +137,9 @@ static int command()
 
     if (QCoreApplication::arguments().count() > 1) {
         num = QCoreApplication::arguments().at(1).toInt();
+    } else {
+        // Initialize
+        init();
     }
 
     switch (num) {
