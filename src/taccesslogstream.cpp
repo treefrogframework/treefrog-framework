@@ -6,7 +6,7 @@
  */
 
 #include "taccesslogstream.h"
-#include "tfileaiologger.h"
+#include "tfilelogger.h"
 
 /*!
   \class TAccessLogStream
@@ -16,10 +16,9 @@
 
 TAccessLogStream::TAccessLogStream(const QString &fileName)
 {
-    TFileAioLogger *aioLogger = new TFileAioLogger();
-    aioLogger->setFileName(fileName);
-    aioLogger->open();
-    logger = aioLogger;
+    TFileLogger *logger = new TFileLogger();
+    logger->setFileName(fileName);
+    logger->open();
 }
 
 

@@ -64,7 +64,7 @@ QMap<QString, QVariant> TCacheSharedMemoryStore::defaultSettings() const
 {
     QMap<QString, QVariant> settings {
         {"DatabaseName", "tfcache.shm"},
-        {"ConnectOptions", "MEMORY_SIZE=1G"},
+        {"ConnectOptions", "MEMORY_SIZE=512M"},
     };
     return settings;
 }

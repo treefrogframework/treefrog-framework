@@ -8,6 +8,7 @@
 #include "tfcore_unix.h"
 #include "tfileaiowriter.h"
 #include "tqueue.h"
+#include <QQueue>
 #include <QList>
 #include <QMutexLocker>
 
@@ -23,7 +24,11 @@ public:
 #endif
     QString fileName;
     int fileDescriptor {0};
+#if 0
     TQueue<struct aiocb *> syncBuffer;
+#else
+    QQueue<struct aiocb *> syncBuffer;
+#endif
 
     TFileAioWriterData() {}
 };
@@ -97,12 +102,20 @@ int TFileAioWriter::write(const char *data, int length)
         if (d->mutex.tryLock()) {
             // check whether head's item  writing is finished
             struct aiocb *headcb;
+    #if 0
             while (d->syncBuffer.head(headcb)) {
+    #else
+            while (d->syncBuffer.count() > 0 && (headcb = d->syncBuffer.head())) {
+    #endif
                 if (aio_error(headcb) == EINPROGRESS) {
                     break;
                 }
 
+#if 0
                 if (d->syncBuffer.dequeue(headcb)) {
+#else
+                if ((headcb = d->syncBuffer.dequeue())) {
+#endif
                     delete[](char *) headcb->aio_buf;
                     delete headcb;
                 } else {
@@ -164,9 +177,15 @@ void TFileAioWriter::flush()
     struct aiocb *headcb;
 
     while (d->syncBuffer.count() > 0) {
+#if 0
         if (d->syncBuffer.head(headcb) && aio_error(headcb) != EINPROGRESS) {
             // Dequeue
             if (d->syncBuffer.dequeue(headcb)) {
+#else
+        if ((headcb = d->syncBuffer.head()) && aio_error(headcb) != EINPROGRESS) {
+            // Dequeue
+            if ((headcb = d->syncBuffer.dequeue())) {
+#endif
                 delete[](char *) headcb->aio_buf;
                 delete headcb;
             }

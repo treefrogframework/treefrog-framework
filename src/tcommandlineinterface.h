@@ -41,7 +41,6 @@
         QTextCodec::setCodecForLocale(codec);                                                                       \
         Tf::setupSystemLogger(new TStdErrSystemLogger);                                                             \
         Tf::setupQueryLogger();                                                                                     \
-        Tf::setupAppLoggers(new TStdOutLogger);                                                                     \
         app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \
@@ -83,7 +82,6 @@
         TWebApplication app(argc, argv);                                                                            \
         Tf::setupSystemLogger(new TStdErrSystemLogger);                                                             \
         Tf::setupQueryLogger();                                                                                     \
-        Tf::setupAppLoggers(new TStdOutLogger);                                                                     \
         app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \

@@ -1,6 +1,6 @@
 #include <TfTest/TfTest>
 #include <TSystemGlobal>
-#include "tsharedmemorylogstream.h"
+//#include "tsharedmemorylogstream.h"
 #include "tbasiclogstream.h"
 #include "tfilelogger.h"
 #include "tfileaiologger.h"
@@ -11,40 +11,41 @@ class BenchMark : public QObject
 {
     Q_OBJECT
 private slots:
-    void systemDebug();
-    void smemNonBufferingWriteLog();
-    void smemWriteLog();
-    void basicNonBufferingWriteLog();
-    void basicWriteLog();
-    void rawWriteLog();
-    void aioWriteLog();
-    void aioWriter();
+    void initTestCase();
     void cleanupTestCase();
+    void systemDebug();
+    //void sharedMemoryLogStream_nonBuffer();
+    //void sharedMemoryLogStream();
+    //void basicLogStream_nonBuffer();
+    void basicLogStream();
+    void fileLogger();
+    void fileAioLogger();
+    void aioWriter();
 };
 
+
+const QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
 
 void BenchMark::systemDebug()
 {
      QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
-            tSystemInfo("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
+            tSystemInfo("%s", ba.data());
         }
     }
 }
 
-
-void BenchMark::smemNonBufferingWriteLog()
+/*
+void BenchMark::sharedMemoryLogStream_nonBuffer()
 {
     TFileLogger logger;
+    logger.setFileName("log/shm-nonbuffer-logstream.log");
     QList<TLogger *> list;
     list << &logger;
     TSharedMemoryLogStream stream(list);
     stream.setNonBufferingMode();
 
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
     TLog log(1, ba);
-    stream.writeLog(log);
-    stream.flush();
 
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
@@ -57,17 +58,15 @@ void BenchMark::smemNonBufferingWriteLog()
 }
 
 
-void BenchMark::smemWriteLog()
+void BenchMark::sharedMemoryLogStream()
 {
     TFileLogger logger;
+    logger.setFileName("log/shm-logstream.log");
     QList<TLogger *> list;
     list << &logger;
     TSharedMemoryLogStream stream(list);
 
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
     TLog log(1, ba);
-    stream.writeLog(log);
-    stream.flush();
 
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
@@ -79,44 +78,40 @@ void BenchMark::smemWriteLog()
     }
     stream.flush();
 }
+*/
+
+// void BenchMark::basicLogStream_nonBuffer()
+// {
+//     TFileLogger logger;
+//     logger.setFileName("log/basicLogStream_nonBuffer.log");
+//     QList<TLogger *> list;
+//     list << &logger;
+//     TBasicLogStream stream(list);
+//     //stream.setNonBufferingMode();
+
+//     TLog log(1, ba);
+
+//     QBENCHMARK {
+//         for (int i = 0; i < 10; ++i) {
+//             stream.writeLog(log);
+
+//             if ((i + 1) % 5 == 0)
+//                 stream.flush();
+//         }
+//     }
+//     stream.flush();
+// }
 
 
-void BenchMark::basicNonBufferingWriteLog()
+void BenchMark::basicLogStream()
 {
     TFileLogger logger;
-    QList<TLogger *> list;
-    list << &logger;
-    TBasicLogStream stream(list);
-    stream.setNonBufferingMode();
-
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
-    TLog log(1, ba);
-    stream.writeLog(log);
-    stream.flush();
-
-    QBENCHMARK {
-        for (int i = 0; i < 10; ++i) {
-            stream.writeLog(log);
-
-            if ((i + 1) % 5 == 0)
-                stream.flush();
-        }
-    }
-    stream.flush();
-}
-
-
-void BenchMark::basicWriteLog()
-{
-    TFileLogger logger;
+    logger.setFileName("log/basicLogStream.log");
     QList<TLogger *> list;
     list << &logger;
     TBasicLogStream stream(list);
 
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
     TLog log(1, ba);
-    stream.writeLog(log);
-    stream.flush();
 
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
@@ -130,12 +125,12 @@ void BenchMark::basicWriteLog()
 }
 
 
-void BenchMark::rawWriteLog()
+void BenchMark::fileLogger()
 {
     TFileLogger logger;
+    logger.setFileName("log/fileLogger.log");
     logger.open();
 
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
     TLog log(1, ba);
 
     QBENCHMARK {
@@ -149,12 +144,12 @@ void BenchMark::rawWriteLog()
 }
 
 
-void BenchMark::aioWriteLog()
+void BenchMark::fileAioLogger()
 {
     TFileAioLogger logger;
+    logger.setFileName("log/fileAioLogger.log");
     logger.open();
 
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
     TLog log(1, ba);
 
     QBENCHMARK {
@@ -170,10 +165,8 @@ void BenchMark::aioWriteLog()
 void BenchMark::aioWriter()
 {
     TFileAioWriter writer;
-    writer.setFileName("log/app.log");
+    writer.setFileName("log/aioWriter.log");
     writer.open();
-
-    QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
 
     QBENCHMARK {
         for (int i = 0; i < 10; ++i) {
@@ -186,6 +179,13 @@ void BenchMark::aioWriter()
 }
 
 
+void BenchMark::initTestCase()
+{
+    QDir logDir("log");
+    logDir.mkpath(".");
+}
+
+
 void BenchMark::cleanupTestCase()
 {
     QDir logDir("log");
@@ -195,7 +195,6 @@ void BenchMark::cleanupTestCase()
     }
     logDir.rmpath(".");
 }
-
 
 
 TF_TEST_MAIN(BenchMark)

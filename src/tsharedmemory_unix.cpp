@@ -85,6 +85,7 @@ bool TSharedMemory::create(size_t size)
 
     std::memcpy(_ptr, &INIT_HEADER, sizeof(INIT_HEADER));
     _size = size;
+    tSystemDebug("SharedMemory created.  name:%s size:%zu", qUtf8Printable(_name), _size);
     return true;
 
 error:
@@ -104,6 +105,7 @@ error:
 void TSharedMemory::unlink()
 {
     shm_unlink(qUtf8Printable(_name));
+    tSystemDebug("SharedMemory unlinked.  name:%s", qUtf8Printable(_name));
 }
 
 
@@ -135,6 +137,7 @@ bool TSharedMemory::attach()
     }
 
     _size = st.st_size;
+    tSystemDebug("SharedMemory attached.  name:%s size:%zu", qUtf8Printable(_name), _size);
     return true;
 
 error:

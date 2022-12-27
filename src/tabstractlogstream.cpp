@@ -16,13 +16,9 @@
 */
 
 
-TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers, QObject *parent) :
-    QObject(parent),
-    loggerList(loggers),
-    nonBuffering(false)
-{
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(setNonBufferingMode()));
-}
+TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers) :
+    loggerList(loggers)
+{ }
 
 
 bool TAbstractLogStream::loggerOpen(LoggerType type)
@@ -60,8 +56,6 @@ void TAbstractLogStream::loggerWrite(const TLog &log)
     for (auto *logger : (const QList<TLogger *> &)loggerList) {
         if (logger && logger->isOpen() && log.priority <= logger->threshold()) {
             logger->log(log);
-            if (nonBuffering)
-                logger->flush();
         }
     }
 }
@@ -81,10 +75,4 @@ void TAbstractLogStream::loggerFlush()
         if (logger && logger->isOpen())
             logger->flush();
     }
-}
-
-
-void TAbstractLogStream::setNonBufferingMode()
-{
-    nonBuffering = true;
 }

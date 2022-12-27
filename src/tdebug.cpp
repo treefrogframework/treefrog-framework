@@ -30,6 +30,17 @@ namespace {
 
 TAbstractLogStream *stream = nullptr;
 QList<TLogger *> loggers;
+QTimer *flushTimer = nullptr;
+
+/*!
+  Flushes all the loggers.
+*/
+void flushAppLoggers()
+{
+    if (stream) {
+        stream->flush();
+    }
+}
 
 }
 
@@ -57,7 +68,16 @@ void Tf::setupAppLoggers(TLogger *logger)
         }
     }
 
-    stream = new TBasicLogStream(loggers, qApp);
+    if (loggers.isEmpty()) {
+        return;
+    }
+
+    stream = new TBasicLogStream(loggers);
+
+    // Starts flash timer for appliation logger
+    flushTimer = new QTimer();
+    QObject::connect(flushTimer, &QTimer::timeout, flushAppLoggers);
+    flushTimer->start(2000);  // 2 seconds
 }
 
 /*!
@@ -69,7 +89,7 @@ void Tf::releaseAppLoggers()
     delete stream;
     stream = nullptr;
 
-    for (auto &logger : (const QList<TLogger *> &)loggers) {
+    for (auto *logger : (const QList<TLogger *> &)loggers) {
         delete logger;
     }
     loggers.clear();
@@ -81,14 +101,6 @@ static void tMessage(int priority, const char *msg, va_list ap)
     if (stream) {
         TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
         stream->writeLog(log);
-    }
-}
-
-
-static void tFlushMessage()
-{
-    if (stream) {
-        stream->flush();
     }
 }
 
@@ -128,7 +140,7 @@ void TDebug::fatal(const char *fmt, ...) const
     va_start(ap, fmt);
     tMessage(Tf::FatalLevel, fmt, ap);
     va_end(ap);
-    tFlushMessage();
+    flushAppLoggers();
 
     if (Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool()) {
 #if (defined(Q_OS_UNIX) || defined(Q_CC_MINGW))
@@ -148,7 +160,7 @@ void TDebug::error(const char *fmt, ...) const
     va_start(ap, fmt);
     tMessage(Tf::ErrorLevel, fmt, ap);
     va_end(ap);
-    tFlushMessage();
+    flushAppLoggers();
 }
 
 /*!
@@ -160,7 +172,7 @@ void TDebug::warn(const char *fmt, ...) const
     va_start(ap, fmt);
     tMessage(Tf::WarnLevel, fmt, ap);
     va_end(ap);
-    tFlushMessage();
+    flushAppLoggers();
 }
 
 /*!
