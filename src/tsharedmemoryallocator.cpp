@@ -33,9 +33,9 @@ struct program_break_header_t {
     uint64_t checksum {0};
     alloc_table at;
 
-    caddr_t start() { return (caddr_t)this + startg; }
-    caddr_t end() { return (caddr_t)this + endg; }
-    caddr_t current() { return (caddr_t)this + currentg; }
+    char *start() { return (char *)this + startg; }
+    char *end() { return (char *)this + endg; }
+    char *current() { return (char *)this + currentg; }
     Tf::alloc_header_t *alloc_head() { return at.head(); }
     Tf::alloc_header_t *alloc_tail() { return at.tail(); }
 };
@@ -48,8 +48,8 @@ struct alloc_header_t {
     uintptr_t nextg {0};
     uintptr_t prevg {0};
 
-    alloc_header_t *next() const { return nextg ? (alloc_header_t *)((caddr_t)this + nextg) : nullptr; }
-    alloc_header_t *prev() const { return prevg ? (alloc_header_t *)((caddr_t)this + prevg) : nullptr; }
+    alloc_header_t *next() const { return nextg ? (alloc_header_t *)((char *)this + nextg) : nullptr; }
+    alloc_header_t *prev() const { return prevg ? (alloc_header_t *)((char *)this + prevg) : nullptr; }
     void set_next(alloc_header_t *p) { nextg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
     void set_prev(alloc_header_t *p) { prevg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
 };
@@ -108,7 +108,7 @@ TSharedMemoryAllocator::~TSharedMemoryAllocator()
 
 
 // Changed the location of the program break
-caddr_t TSharedMemoryAllocator::sbrk(int64_t inc)
+char *TSharedMemoryAllocator::sbrk(int64_t inc)
 {
     if (!pb_header) {
         errno = ENOMEM;
@@ -121,7 +121,7 @@ caddr_t TSharedMemoryAllocator::sbrk(int64_t inc)
         return nullptr;
     }
 
-    caddr_t prev_break = pb_header->current();
+    char *prev_break = pb_header->current();
     pb_header->currentg += inc;
     return prev_break;
 }

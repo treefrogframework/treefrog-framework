@@ -35,12 +35,12 @@ public:
 
 private:
     TSharedMemoryAllocator(const QString &name);  // constructor
-    caddr_t sbrk(int64_t inc);
+    char *sbrk(int64_t inc);
     void setbrk(bool initial = false);
     Tf::alloc_header_t *free_block(uint size);
 
     TSharedMemory *_sharedMemory {nullptr};
-    caddr_t _origin {nullptr};
+    char *_origin {nullptr};
     Tf::program_break_header_t *pb_header {nullptr};
 
     T_DISABLE_COPY(TSharedMemoryAllocator)

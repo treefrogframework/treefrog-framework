@@ -182,13 +182,13 @@ bool TSharedMemory::detach()
 
 void *TSharedMemory::data()
 {
-    return (caddr_t)_ptr + sizeof(header_t);
+    return (char *)_ptr + sizeof(header_t);
 }
 
 
 const void *TSharedMemory::data() const
 {
-    return (caddr_t)_ptr + sizeof(header_t);
+    return (char *)_ptr + sizeof(header_t);
 }
 
 
