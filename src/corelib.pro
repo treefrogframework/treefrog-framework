@@ -360,26 +360,26 @@ HEADERS += tsharedmemorykvsdriver.h
 SOURCES += tsharedmemorykvsdriver.cpp
 HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
-SOURCES += tactioncontroller_qt5.cpp
 
-HEADERS += \
-           tfnamespace.h \
-           tdeclexport.h \
-           tfcore.h \
-           tfexception.h \
-           tdispatcher.h \
-           tloggerplugin.h \
-           tsessionobject.h \
-           tsessionmongoobject.h \
-           tsessionstoreplugin.h \
-           tjavascriptobject.h \
-           tsqlormapper.h \
-           tsqljoin.h \
-           thttprequestheader.h \
-           thttpresponseheader.h \
-           tsharedmemory.h \
-           tcommandlineinterface.h
+# Header only
+HEADERS += tfnamespace.h
+HEADERS += tdeclexport.h
+HEADERS += tfcore.h
+HEADERS += tfexception.h
+HEADERS += tdispatcher.h
+HEADERS += tloggerplugin.h
+HEADERS += tsessionobject.h
+HEADERS += tsessionmongoobject.h
+HEADERS += tsessionstoreplugin.h
+HEADERS += tjavascriptobject.h
+HEADERS += tsqlormapper.h
+HEADERS += tsqljoin.h
+HEADERS += thttprequestheader.h
+HEADERS += thttpresponseheader.h
+HEADERS += tsharedmemory.h
+HEADERS += tcommandlineinterface
 
+# For Windows
 windows {
   HEADERS += tfcore_win.h
   SOURCES += twebapplication_win.cpp
@@ -388,10 +388,11 @@ windows {
   SOURCES += tprocessinfo_win.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
-  SOURCES += tthreadapplicationserver_qt5.cpp
-  SOURCES += tsharedmemory_win.cpp
+  SOURCES += tthreadapplicationserver_qt.cpp
   SOURCES += tsharedmemory_qt.cpp
 }
+
+# For Linux
 linux-* {
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
@@ -413,19 +414,25 @@ linux-* {
   SOURCES += tmemcacheddriver_linux.cpp
   SOURCES += tsharedmemory_linux.cpp
 }
+
+# For Mac
 macx {
   SOURCES += tprocessinfo_macx.cpp
-  SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tthreadapplicationserver_qt.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
-  SOURCES += tsharedmemory_qt.cpp
+  SOURCES += tsharedmemory_linux.cpp
 }
+
+# For UNIX
 unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
   SOURCES += tfileaiowriter_unix.cpp
 }
+
+# For FreeBSD
 freebsd {
   SOURCES += tprocessinfo_freebsd.cpp
   LIBS += -lutil -lprocstat
