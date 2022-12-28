@@ -13,7 +13,7 @@ class BenchMark : public QObject
 private slots:
     void initTestCase();
     void cleanupTestCase();
-    void systemDebug();
+    //void systemDebug();
     //void sharedMemoryLogStream_nonBuffer();
     //void sharedMemoryLogStream();
     //void basicLogStream_nonBuffer();
@@ -26,14 +26,14 @@ private slots:
 
 const QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
 
-void BenchMark::systemDebug()
-{
-     QBENCHMARK {
-        for (int i = 0; i < 10; ++i) {
-            tSystemInfo("%s", ba.data());
-        }
-    }
-}
+// void BenchMark::systemDebug()
+// {
+//      QBENCHMARK {
+//         for (int i = 0; i < 10; ++i) {
+//             tSystemInfo("%s", ba.data());
+//         }
+//     }
+// }
 
 /*
 void BenchMark::sharedMemoryLogStream_nonBuffer()
