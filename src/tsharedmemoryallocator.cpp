@@ -11,6 +11,8 @@
 #include <cstring>
 #include <cerrno>
 
+constexpr ushort CHECKDIGITS = 0x08C0;
+
 namespace Tf {
 
 // Allocation table
@@ -40,10 +42,11 @@ struct program_break_header_t {
     Tf::alloc_header_t *alloc_tail() { return at.tail(); }
 };
 
+
 struct alloc_header_t {
-    ushort rsv;
-    bool freed : 1;
-    ushort padding : 15;
+    ushort rsv {CHECKDIGITS};
+    uchar freed {0};
+    uchar padding {0};
     uint size {0};
     uintptr_t nextg {0};
     uintptr_t prevg {0};
@@ -54,10 +57,9 @@ struct alloc_header_t {
     void set_prev(alloc_header_t *p) { prevg = p ? (uintptr_t)p - (uintptr_t)this : 0; }
 };
 
-}
+} // namespace Tf
 
-
-static TSharedMemoryAllocator *instance;
+static TSharedMemoryAllocator *instance = nullptr;
 
 
 TSharedMemoryAllocator *TSharedMemoryAllocator::initialize(const QString &name, size_t size)
@@ -129,7 +131,6 @@ char *TSharedMemoryAllocator::sbrk(int64_t inc)
 
 // Sets memory space
 // Return: the origin pointer of data area
-//void *TSharedMemoryAllocator::setbrk(void *addr, uint size, bool initial)
 void TSharedMemoryAllocator::setbrk(bool initial)
 {
     static const Tf::program_break_header_t INIT_PB_HEADER;
@@ -152,13 +153,8 @@ void TSharedMemoryAllocator::setbrk(bool initial)
         pb_header->checksum = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
     }
 
-    //return pb_header->start() + sizeof(Tf::alloc_header_t);
     _origin = pb_header->start() + sizeof(Tf::alloc_header_t);
 }
-
-
-constexpr ushort CHECKDIGITS = 0x08C0;
-const Tf::alloc_header_t INIT_HEADER { .rsv = CHECKDIGITS, .freed = false, .padding = 0 };
 
 
 Tf::alloc_header_t *TSharedMemoryAllocator::free_block(uint size)
@@ -233,7 +229,7 @@ void TSharedMemoryAllocator::free(void *ptr)
 
         // marks as free
         if (!header->freed) {
-            header->freed = true;
+            header->freed = 1;
             pb_header->at.used -= sizeof(Tf::alloc_header_t) + header->size;
         }
 
@@ -265,6 +261,8 @@ void TSharedMemoryAllocator::free(void *ptr)
 // Allocates size bytes and returns a pointer to the allocated memory
 void *TSharedMemoryAllocator::malloc(uint size)
 {
+    const Tf::alloc_header_t INIT_HEADER;
+
     if (!pb_header || !size) {
         return nullptr;
     }
@@ -276,7 +274,7 @@ void *TSharedMemoryAllocator::malloc(uint size)
     Tf::alloc_header_t *header = free_block(size);
     if (header) {
         // found a free block
-        header->freed = false;
+        header->freed = 0;
         pb_header->at.used += sizeof(Tf::alloc_header_t) + header->size;
         return (void *)(header + 1);
     }

@@ -155,5 +155,5 @@ void TestMalloc::bench()
 }
 
 
-TF_TEST_SQLLESS_MAIN(TestMalloc)
+TF_TEST_MAIN(TestMalloc)
 #include "malloc.moc"
