@@ -1,11 +1,11 @@
 #pragma once
 #include <TGlobal>
-#ifndef Q_OS_LINUX
+#ifdef Q_OS_WIN
 #include <QSharedMemory>
 #endif
 
 class T_CORE_EXPORT TSharedMemory
-#ifndef Q_OS_LINUX
+#ifdef Q_OS_WIN
  : public QSharedMemory
 #endif
 {
@@ -27,7 +27,7 @@ public:
     bool unlock();
 
 private:
-#ifdef Q_OS_LINUX
+#ifndef Q_OS_WIN
     QString _name;
     size_t _size {0};
     void *_ptr {nullptr};
