@@ -248,7 +248,7 @@ void TSharedMemoryAllocator::free(void *ptr)
         }
 
         // memory released
-        TSharedMemoryAllocator::sbrk(-(header->size) - sizeof(Tf::alloc_header_t));
+        TSharedMemoryAllocator::sbrk(0 - header->size - sizeof(Tf::alloc_header_t));
 
         // frees recursively
         if (!prev || !prev->freed) {

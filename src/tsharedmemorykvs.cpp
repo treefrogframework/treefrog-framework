@@ -32,7 +32,7 @@ struct hash_header_t {
     {
         if (index < tableSize) {
             uintptr_t g = *(hashg() + index);
-            return (g && g != -1UL) ? (char *)this + g : (void *)g;
+            return (g && g != (uintptr_t)-1) ? (char *)this + g : (void *)g;
         } else {
             Q_ASSERT(0);
         }
@@ -355,7 +355,7 @@ void TSharedMemoryKvs::rehash()
 
     for (int i = 0; i < oldsize; i++) {
         uintptr_t g = *(oldt + i);
-        void *pbucket = (g && g != -1UL) ? (char *)_h + g : nullptr;
+        void *pbucket = (g && g != (uintptr_t)-1) ? (char *)_h + g : nullptr;
 
         if (!pbucket) {
             continue;

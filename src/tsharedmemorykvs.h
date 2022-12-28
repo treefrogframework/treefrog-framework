@@ -42,7 +42,7 @@ public:
         }
     };
 
-    class WriteLockingIterator {
+    class T_CORE_EXPORT WriteLockingIterator {
     public:
         ~WriteLockingIterator();
         const QByteArray &key() const;
