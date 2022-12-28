@@ -206,6 +206,7 @@ size_t TSharedMemory::size() const
 
 bool TSharedMemory::lockForRead()
 {
+#ifdef Q_OS_LINUX
     struct timespec timeout;
     header_t *header = (header_t *)_ptr;
 
@@ -227,11 +228,16 @@ bool TSharedMemory::lockForRead()
     }
     header->lockcounter++;
     return true;
+#else
+    header_t *header = (header_t *)_ptr;
+    return pthread_rwlock_rdlock(&header->rwlock) == 0;
+#endif
 }
 
 
 bool TSharedMemory::lockForWrite()
 {
+#ifdef Q_OS_LINUX
     struct timespec timeout;
     header_t *header = (header_t *)_ptr;
 
@@ -242,6 +248,7 @@ bool TSharedMemory::lockForWrite()
 
         int res = pthread_rwlock_timedwrlock(&header->rwlock, &timeout);
         if (!res) {
+            // success
             break;
         } else {
             if (res == ETIMEDOUT && header->lockcounter == cnt) {
@@ -252,6 +259,10 @@ bool TSharedMemory::lockForWrite()
     }
     header->lockcounter++;
     return true;
+#else
+    header_t *header = (header_t *)_ptr;
+    return pthread_rwlock_wrlock(&header->rwlock) == 0;
+#endif
 }
 
 
