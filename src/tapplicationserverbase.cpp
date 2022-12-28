@@ -134,7 +134,7 @@ QPair<QHostAddress, quint16> TApplicationServerBase::getPeerInfo(int socketDescr
     } sa;
     socklen_t sasize = sizeof(sa);
 
-    memset(&sa, 0, sizeof(sa));
+    std::memset(&sa, 0, sizeof(sa));
     if (socketDescriptor <= 0 || ::getpeername(socketDescriptor, &sa.a, &sasize) < 0) {
         return peerInfo;
     }
@@ -142,7 +142,7 @@ QPair<QHostAddress, quint16> TApplicationServerBase::getPeerInfo(int socketDescr
     if (sa.a.sa_family == AF_INET6) {
         // IPv6
         Q_IPV6ADDR tmp;
-        memcpy(&tmp, &sa.a6.sin6_addr, sizeof(tmp));
+        std::memcpy(&tmp, &sa.a6.sin6_addr, sizeof(tmp));
         peerInfo.first.setAddress(tmp);
         peerInfo.second = ntohs(sa.a6.sin6_port);
     } else {

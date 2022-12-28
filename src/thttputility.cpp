@@ -388,7 +388,7 @@ QByteArray THttpUtility::timeZone()
 
 #if defined(Q_OS_WIN)
     TIME_ZONE_INFORMATION tzi;
-    memset(&tzi, 0, sizeof(tzi));
+    std::memset(&tzi, 0, sizeof(tzi));
     GetTimeZoneInformation(&tzi);
     offset = -tzi.Bias;
 
@@ -485,7 +485,7 @@ QByteArray THttpUtility::getUTCTimeString()
 
 #if defined(Q_OS_WIN)
     SYSTEMTIME st;
-    memset(&st, 0, sizeof(SYSTEMTIME));
+    std::memset(&st, 0, sizeof(SYSTEMTIME));
     GetSystemTime(&st);
     utcTime += DAY[st.wDayOfWeek];
     utcTime += QByteArray::number(st.wDay).rightJustified(2, '0');

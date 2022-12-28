@@ -9,18 +9,16 @@ public:
     TFileLogger();
     ~TFileLogger();
 
-    QString key() const { return "FileLogger"; }
-    bool isMultiProcessSafe() const { return false; }
-    bool open();
-    void close();
-    bool isOpen() const;
-    void log(const TLog &log);
-    void log(const QByteArray &msg);
-    void flush();
+    QString key() const override { return "FileLogger"; }
+    bool isMultiProcessSafe() const override { return false; }
+    bool open() override;
+    void close() override;
+    bool isOpen() const override;
+    void log(const QByteArray &msg) override;
+    void flush() override;
     void setFileName(const QString &name);
 
 private:
     QFile logFile;
     QMutex mutex;
 };
-

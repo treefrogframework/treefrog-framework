@@ -10,3 +10,4 @@ SOURCES += foo.cpp
 HEADERS += fooobject.h
 HEADERS += emailmailer.h
 SOURCES += emailmailer.cpp
+SOURCES += cli.cpp

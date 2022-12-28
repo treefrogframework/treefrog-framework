@@ -17,6 +17,7 @@ public:
     virtual QString key() const = 0;
     virtual DbType dbType() const = 0;
     virtual void init() {}
+    virtual void cleanup() {}
     virtual bool open() = 0;
     virtual void close() = 0;
     virtual QByteArray get(const QByteArray &key) = 0;

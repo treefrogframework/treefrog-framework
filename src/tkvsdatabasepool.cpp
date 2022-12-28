@@ -34,6 +34,7 @@ public:
         insert(Tf::KvsEngine::MongoDB, "mongodb");
         insert(Tf::KvsEngine::Redis, "redis");
         insert(Tf::KvsEngine::Memcached, "memcached");
+        insert(Tf::KvsEngine::SharedMemory, "memory");
 
         if (Tf::app()->isKvsAvailable(Tf::KvsEngine::CacheKvs)) {
             auto backend = Tf::app()->cacheBackend();
@@ -158,6 +159,10 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             tSystemError("Memcached not available. Check the settings file.");
             break;
 
+        case Tf::KvsEngine::SharedMemory:
+            tSystemWarn("SharedMemory not available. Check the settings file.");
+            break;
+
         case Tf::KvsEngine::CacheKvs:
             tSystemError("CacheKvs not available. Check the settings file.");
             break;
@@ -268,6 +273,24 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
     }
 
     return true;
+}
+
+
+TKvsDatabaseData TKvsDatabasePool::getDatabaseSettings(Tf::KvsEngine engine) const
+{
+    TKvsDatabaseData settrings;
+    auto &stack = availableNames[(int)engine];
+
+    for (;;) {
+        QString name;
+
+        if (Q_LIKELY(stack.pop(name))) {
+            return TKvsDatabase::settings(name);
+            stack.push(name);
+        }
+    }
+
+    throw RuntimeException("No pooled connection", __FILE__, __LINE__);
 }
 
 

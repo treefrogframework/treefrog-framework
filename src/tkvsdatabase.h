@@ -40,10 +40,10 @@ public:
     void moveToThread(QThread *targetThread);
 
     static const char *const defaultConnection;
-    static TKvsDatabase database(const QString &connectionName = QLatin1String(defaultConnection));
-    static TKvsDatabase addDatabase(const QString &driver, const QString &connectionName = QLatin1String(defaultConnection));
-    static void removeDatabase(const QString &connectionName = QLatin1String(defaultConnection));
-    static bool contains(const QString &connectionName = QLatin1String(defaultConnection));
+    static TKvsDatabase database(const QString &connectionName = defaultConnection);
+    static TKvsDatabase addDatabase(const QString &driver, const QString &connectionName = defaultConnection);
+    static void removeDatabase(const QString &connectionName = defaultConnection);
+    static TKvsDatabaseData settings(const QString &connectionName = defaultConnection);
 
 private:
     QString connectName;
@@ -53,3 +53,18 @@ private:
     TKvsDatabase(const TKvsDatabaseData &data);
 };
 
+
+class T_CORE_EXPORT TKvsDatabaseData {
+public:
+    QString connectionName;
+    QString databaseName;
+    QString hostName;
+    quint16 port {0};
+    QString userName;
+    QString password;
+    QString connectOptions;
+    QStringList postOpenStatements;
+    TKvsDriver *driver {nullptr};  // pointer to a singleton object
+
+    TKvsDatabaseData() { }
+};

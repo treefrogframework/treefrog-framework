@@ -58,6 +58,7 @@ public:
     QString validationErrorMessage(int rule) const;
     QByteArray internetMediaType(const QString &ext, bool appendCharset = false);
     MultiProcessingModule multiProcessingModule() const;
+    void setMultiProcessingModule(MultiProcessingModule mpm) { _mpmTemp = mpm; }
     int maxNumberOfAppServers() const;
     int maxNumberOfThreadsPerAppServer() const;
     QString routesConfigFilePath() const;
@@ -77,6 +78,7 @@ public:
     const QVariantMap &getConfig(const QString &configName);
     QVariant getConfigValue(const QString &configName, const QString &key, const QVariant &defaultValue = QVariant());
     void initializeCache();
+    void cleanupCache();
 
 #if defined(Q_OS_UNIX)
     void watchUnixSignal(int sig, bool watch = true);
@@ -116,6 +118,7 @@ private:
     QBasicTimer _timer;
     QMap<QString, QVariantMap> _configMap;
     int _cacheSqlDbIndex {-1};
+    MultiProcessingModule _mpmTemp {Invalid};
 
     static void resetSignalNumber();
 

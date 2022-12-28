@@ -52,6 +52,14 @@ void TCache::initialize()
     }
 }
 
+
+void TCache::cleanup()
+{
+    if (_cache) {
+        _cache->cleanup();
+    }
+}
+
 /*!
   Stores a new item with the \a key and a \a value in the cache and sets the
   timeout after a given number of \a seconds.

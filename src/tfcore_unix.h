@@ -152,7 +152,7 @@ inline int tf_lockfile(int fd, bool exclusive, bool blocking)
 {
     struct flock lck;
 
-    memset(&lck, 0, sizeof(struct flock));
+    std::memset(&lck, 0, sizeof(struct flock));
     lck.l_type = (exclusive) ? F_WRLCK : F_RDLCK;
     lck.l_whence = SEEK_SET;
     auto cmd = (blocking) ? F_SETLKW : F_SETLK;

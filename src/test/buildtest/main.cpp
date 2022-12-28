@@ -265,8 +265,3 @@ void queue()
     queue.head(s);
     queue.count();
 }
-
-int main()
-{
-    return 0;
-}
