@@ -13,7 +13,7 @@
 #include <cstring>
 
 
-#define FREE ((void *)-1)
+const void *FREE = (void *)-1;
 
 struct hash_header_t {
     uintptr_t hashtg {0};
@@ -39,7 +39,7 @@ struct hash_header_t {
         return nullptr;
     }
 
-    void setBucketPtr(uint index, void *ptr)
+    void setBucketPtr(uint index, const void *ptr)
     {
         if (index < tableSize) {
             *(hashg() + index) = (ptr && ptr != FREE) ? (uintptr_t)ptr - (uintptr_t)this : (uintptr_t)ptr;
@@ -49,18 +49,6 @@ struct hash_header_t {
     }
 };
 
-
-// static void rwlock_init(pthread_rwlock_t *rwlock)
-// {
-//     pthread_rwlockattr_t attr;
-
-//     int res = pthread_rwlockattr_init(&attr);
-//     Q_ASSERT(!res);
-//     res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-//     Q_ASSERT(!res);
-//     res = pthread_rwlock_init(rwlock, &attr);
-//     Q_ASSERT(!res);
-// }
 
 /*!
   Constructs a TSharedMemoryKvs object.
@@ -85,11 +73,6 @@ TSharedMemoryKvs::~TSharedMemoryKvs()
 
 bool TSharedMemoryKvs::initialize(const QString &name, const QString &options)
 {
-    // static const hash_header_t INIT_HEADER = []() {
-    //     hash_header_t header;
-    //     rwlock_init(&header.rwlock);
-    //     return header;
-    // }();
     hash_header_t hashheader;
 
     TSharedMemoryKvsDriver::initialize(name, options);
@@ -398,65 +381,19 @@ uint TSharedMemoryKvs::next(uint index) const
 
 bool TSharedMemoryKvs::lockForRead()
 {
-#if 1
     return driver()->lockForRead();
-#else
-    struct timespec timeout;
-
-    while (pthread_rwlock_tryrdlock(&_h->rwlock) == EBUSY) {
-        uint cnt = _h->lockcounter;
-        timespec_get(&timeout, TIME_UTC);
-        timeout.tv_sec += 1;  // 1sec
-
-        int res = pthread_rwlock_timedrdlock(&_h->rwlock, &timeout);
-        if (!res) {
-            break;
-        } else {
-            if (res == ETIMEDOUT && _h->lockcounter == cnt) {
-                // resets rwlock object
-                rwlock_init(&_h->rwlock);
-            }
-        }
-    }
-    _h->lockcounter++;
-#endif
 }
 
 
 bool TSharedMemoryKvs::lockForWrite()
 {
-#if 1
     return driver()->lockForWrite();
-#else
-    struct timespec timeout;
-
-    while (pthread_rwlock_trywrlock(&_h->rwlock) == EBUSY) {
-        uint cnt = _h->lockcounter;
-        timespec_get(&timeout, TIME_UTC);
-        timeout.tv_sec += 1;  // 1sec
-
-        int res = pthread_rwlock_timedwrlock(&_h->rwlock, &timeout);
-        if (!res) {
-            break;
-        } else {
-            if (res == ETIMEDOUT && _h->lockcounter == cnt) {
-                // resets rwlock object
-                rwlock_init(&_h->rwlock);
-            }
-        }
-    }
-    _h->lockcounter++;
-#endif
 }
 
 
 bool TSharedMemoryKvs::unlock()
 {
-#if 1
     return driver()->unlock();
-#else
-    pthread_rwlock_unlock(&_h->rwlock);
-#endif
 }
 
 

@@ -15,7 +15,6 @@ public:
     void close() override;
     bool isOpen() const override;
     void log(const QByteArray &msg) override;
-    void log(const TLog &tlog) override { TLogger::log(tlog); }
     void flush() override;
     void setFileName(const QString &name);
 
