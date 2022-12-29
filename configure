@@ -154,9 +154,9 @@ fi
 
 # search qmake command
 if [ -z "$QMAKE" ]; then
+  which qmake     >/dev/null 2>&1 && QMAKE=qmake
   which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
   which qmake6    >/dev/null 2>&1 && QMAKE=qmake6
-  [ -z "$QMAKE" ] && which qmake >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then
     echo "qmake: command not found"
@@ -165,8 +165,14 @@ if [ -z "$QMAKE" ]; then
   fi
 fi
 
-if [ -z "$ENABLE_SHARED_MONGOC" ] && ! which cmake >/dev/null 2>&1; then
+if ! which cmake >/dev/null 2>&1; then
   echo "cmake: command not found"
+  echo
+  exit 1
+fi
+
+if [ -n "$ENABLE_SHARED_MONGOC" ] && ! which pkg-config >/dev/null 2>&1; then
+  echo "pkg-config: command not found"
   echo
   exit 1
 fi
@@ -196,7 +202,7 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   echo
   echo -n "Compiling MongoDB driver library ... "
   cd "$BASEDIR/3rdparty/mongo-driver"
-  cmake -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF -DCMAKE_C_FLAGS="-fPIC" >/dev/null 2>&1
+  cmake -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF >/dev/null 2>&1
   make clean >/dev/null 2>&1
   make -j${NPROC} mongoc_static >/dev/null 2>&1
   RET=$?
@@ -213,10 +219,10 @@ cd "$BASEDIR/3rdparty/lz4"
 echo
 echo -n "Compiling LZ4 ... "
 make clean >/dev/null 2>&1
-CPPFLAGS="-fPIC" make -j${NPROC} lib >/dev/null 2>&1
+make -j${NPROC} lib >/dev/null 2>&1
 RET=$?
 if [ $RET != 0 ]; then
-  CPPFLAGS="-fPIC" make SHELL='bash -x' lib
+  make SHELL='bash -x' lib
   echo "failed"
   echo "LZ4 not available."
   exit $RET

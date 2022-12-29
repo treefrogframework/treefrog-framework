@@ -17,7 +17,7 @@ TreeFrog Framework には次のような特徴があります。
   1. 高パフォーマンス ： 高度に最適化されたC++アプリケーションサーバエンジン
   2. O/R マッピング ： 複雑で面倒なデータベースコーディングを隠蔽
   3. テンプレートシステム ： ERBライクなテンプレートエンジン
-  4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
+  4. 多くのDBに対応 ： MySQL, MariaDB, PostgreSQL, ODBC, MongoDB, Redis, Memcached, etc.
   5. WebSocket 対応 ： サーバと双方向通信が可能
   6. ジェネレータ ： 「足場」となるソースコード, Makefile や vue.js テンプレートを生成
   7. 様々なレスポンスタイプに対応 ： JSON, XML, CBOR
