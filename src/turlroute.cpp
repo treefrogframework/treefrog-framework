@@ -48,6 +48,11 @@ const TUrlRoute &TUrlRoute::instance()
 bool TUrlRoute::parseConfigFile()
 {
     QFile routesFile(Tf::app()->routesConfigFilePath());
+
+    if (!routesFile.exists()) {
+        return false;
+    }
+
     if (!routesFile.open(QIODevice::ReadOnly)) {
         tSystemError("failed to read file : %s", qUtf8Printable(routesFile.fileName()));
         return false;

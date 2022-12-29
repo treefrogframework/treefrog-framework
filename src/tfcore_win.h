@@ -98,7 +98,7 @@ inline int tf_lockfile(int fd, bool exclusive, bool blocking)
     DWORD dwFlags = (exclusive) ? LOCKFILE_EXCLUSIVE_LOCK : 0;
     dwFlags |= (blocking) ? 0 : LOCKFILE_FAIL_IMMEDIATELY;
     OVERLAPPED ov;
-    memset(&ov, 0, sizeof(OVERLAPPED));
+    std::memset(&ov, 0, sizeof(OVERLAPPED));
     BOOL res = LockFileEx(handle, dwFlags, 0, 0, 0, &ov);
     return (res) ? 0 : -1;
 }

@@ -24,4 +24,3 @@ protected:
 
     friend class TCacheFactory;
 };
-

@@ -56,11 +56,11 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
             quint32 sin6_scope_id; /* set of interfaces for a scope */
         } sa6;
 
-        memset(&sa6, 0, sizeof(sa6));
+        std::memset(&sa6, 0, sizeof(sa6));
         sa6.sin6_family = AF_INET6;
         WSAHtons(sock, port, &(sa6.sin6_port));
         Q_IPV6ADDR ipv6 = address.toIPv6Address();
-        memcpy(&(sa6.sin6_addr.tf_s6_addr), &ipv6, sizeof(ipv6));
+        std::memcpy(&(sa6.sin6_addr.tf_s6_addr), &ipv6, sizeof(ipv6));
         if (::bind(sock, (struct sockaddr *)&sa6, sizeof(sa6)) != 0) {
             tSystemError("bind(v6) error: %d", WSAGetLastError());
             goto error_socket;
@@ -69,7 +69,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
     } else if (address.protocol() == QAbstractSocket::IPv4Protocol
         || address.protocol() == QAbstractSocket::AnyIPProtocol) {
         struct sockaddr_in sa;
-        memset(&sa, 0, sizeof(sa));
+        std::memset(&sa, 0, sizeof(sa));
         sa.sin_family = AF_INET;
         WSAHtons(sock, port, &(sa.sin_port));
         WSAHtonl(sock, address.toIPv4Address(), &(sa.sin_addr.s_addr));

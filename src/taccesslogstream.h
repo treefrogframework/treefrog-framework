@@ -17,7 +17,7 @@ private:
     TLogger *logger {nullptr};
 
     // Disable
-    TAccessLogStream();
+    TAccessLogStream() = delete;
     T_DISABLE_COPY(TAccessLogStream)
     T_DISABLE_MOVE(TAccessLogStream)
 };

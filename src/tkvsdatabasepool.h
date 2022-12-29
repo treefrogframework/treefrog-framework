@@ -18,6 +18,7 @@ public:
     ~TKvsDatabasePool();
     TKvsDatabase database(Tf::KvsEngine engine);
     void pool(TKvsDatabase &database);
+    TKvsDatabaseData getDatabaseSettings(Tf::KvsEngine engine) const;
 
     static TKvsDatabasePool *instance();
 
@@ -29,8 +30,6 @@ protected:
     static QString driverName(Tf::KvsEngine engine);
 
 private:
-    T_DISABLE_COPY(TKvsDatabasePool)
-    T_DISABLE_MOVE(TKvsDatabasePool)
     TKvsDatabasePool();
 
     TStack<QString> *cachedDatabase {nullptr};
@@ -38,5 +37,7 @@ private:
     TStack<QString> *availableNames {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
-};
 
+    T_DISABLE_COPY(TKvsDatabasePool)
+    T_DISABLE_MOVE(TKvsDatabasePool)
+};

@@ -10,6 +10,13 @@
 class TLog;
 class QTextCodec;
 
+namespace Tf {
+
+T_CORE_EXPORT void setAppLogLayout(const QByteArray &layout);
+T_CORE_EXPORT void setAppLogDateTimeFormat(const QByteArray &format);
+
+}
+
 
 class T_CORE_EXPORT TLogger {
 public:
@@ -20,8 +27,8 @@ public:
     virtual bool open() = 0;
     virtual void close() = 0;
     virtual bool isOpen() const = 0;
-    virtual void log(const TLog &log) = 0;  // thread safe log output
-    virtual void log(const QByteArray &) { }  // thread safe log output
+    virtual void log(const QByteArray &) = 0;  // thread safe log output
+    virtual void log(const TLog &tlog) { log(logToByteArray(tlog)); }  // thread safe log output
     virtual void flush() { }
     virtual QByteArray logToByteArray(const TLog &log) const;
 
@@ -46,8 +53,6 @@ protected:
     QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
 private:
-    mutable QByteArray _layout;
-    mutable QByteArray _dateTimeFormat;
     mutable Tf::LogPriority _threshold {(Tf::LogPriority)-1};
     mutable QString _target;
 #if QT_VERSION < 0x060000
