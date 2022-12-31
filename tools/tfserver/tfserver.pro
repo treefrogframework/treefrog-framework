@@ -35,6 +35,7 @@ windows {
   } else {
     LIBS += -ltreefrog$${TF_VER_MAJ}
   }
+  INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   LIBS += -L"$$target.path"
 } else {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
