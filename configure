@@ -187,6 +187,7 @@ if [ -n "$ENABLE_SHARED_GLOG" ] && ! which pkg-config >/dev/null 2>&1; then
   exit 1
 fi
 
+# src
 cd "$BASEDIR/src"
 rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
@@ -196,6 +197,8 @@ if [ $RET != 0 ]; then
   echo "qmake failed"
   exit $RET
 fi
+
+# tools
 cd "$BASEDIR/tools"
 rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
@@ -205,7 +208,6 @@ if [ $RET != 0 ]; then
   echo "qmake failed"
   exit $RET
 fi
-make qmake
 
 # compile MongoDB files
 if [ -z "$ENABLE_SHARED_MONGOC" ]; then

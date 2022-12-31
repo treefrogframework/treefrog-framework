@@ -14,7 +14,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 }
 
 include(../../tfbase.pri)
-INCLUDEPATH += ../../../include  ../.. ../../../3rdparty/glog/build ../../../3rdparty/glog/src
+INCLUDEPATH += ../../../include
 
 win32 {
   lessThan(QT_MAJOR_VERSION, 6) {
@@ -28,7 +28,16 @@ win32 {
   } else {
     LIBS += -L../../release -ltreefrog$${TF_VER_MAJ}
   }
+  INCLUDEPATH += ../.. ../../../3rdparty/glog/build ../../../3rdparty/glog/src
 } else:unix {
-  LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog ../../../3rdparty/glog/build/libglog.a
+  LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog
+  exists(../../3rdparty/glog/build/libglog.a) {
+    # static link
+    LIBS += ../../3rdparty/glog/build/libglog.a $$system("pkg-config --libs gflags 2>/dev/null")
+    INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
+  } else {
+    # shared link '-lglog'
+    LIBS += $$system("pkg-config --libs libglog 2>/dev/null")
+  }
   linux-*:LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
 }
