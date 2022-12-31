@@ -28,6 +28,7 @@ isEmpty( target.path ) {
 }
 
 windows {
+  # for windows
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ} ../../3rdparty/glog/build/Debug/glogd.lib
@@ -36,13 +37,17 @@ windows {
   }
   LIBS += -L"$$target.path"
 } else {
+  LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
+  # glog
   isEmpty( enable_shared_glog ) {
-    LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
+    # static link
+    LIBS += ../../3rdparty/glog/build/libglog.a
     INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   } else {
-    # link -lglog
+    # shared link '-lglog'
     LIBS += $$system("pkg-config --libs libglog 2>/dev/null")
   }
+  # for linux
   linux-* {
     # -lunwind
     LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
