@@ -41,7 +41,7 @@ windows {
   # glog
   isEmpty( enable_shared_glog ) {
     # static link
-    LIBS += ../../3rdparty/glog/build/libglog.a
+    LIBS += ../../3rdparty/glog/build/libglog.a $$system("pkg-config --libs gflags 2>/dev/null")
     INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   } else {
     # shared link '-lglog'
