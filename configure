@@ -227,11 +227,11 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
 fi
 
 # compile glog
+cd "$BASEDIR/3rdparty/glog"
+rm -rf build
 if [ -z "$ENABLE_SHARED_GLOG" ]; then
-  cd "$BASEDIR/3rdparty/glog"
   echo
   echo -n "Compiling glog ... "
-  rm -rf build
   cmake -S . -B build -G "Unix Makefiles" >/dev/null 2>&1
   make -j${NPROC} -C build >/dev/null 2>&1
   RET=$?
