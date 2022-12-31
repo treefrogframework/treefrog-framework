@@ -36,7 +36,7 @@ windows {
   }
   LIBS += -L"$$target.path"
 } else {
-  isEmpty( enable_shared_mongoc ) {
+  isEmpty( enable_shared_glog ) {
     LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog ../../3rdparty/glog/build/libglog.a
     INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   } else {
