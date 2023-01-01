@@ -109,7 +109,7 @@ bool TRedis::exists(const QByteArray &key)
 
 /*!
   Returns the value associated with the \a key; otherwise
-  returns an empty bit array.
+  returns an empty byte array.
  */
 QByteArray TRedis::get(const QByteArray &key)
 {

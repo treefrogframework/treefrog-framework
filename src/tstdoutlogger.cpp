@@ -8,6 +8,11 @@
 #include "tstdoutlogger.h"
 #include <iostream>
 
+/*!
+  \class TStdOutLogger
+  \brief The TStdOutLogger class provides functionality of logging to stdout.
+*/
+
 
 TStdOutLogger::TStdOutLogger() :
     TLogger()

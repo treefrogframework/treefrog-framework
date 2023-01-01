@@ -49,6 +49,12 @@ struct hash_header_t {
     }
 };
 
+/*!
+  \class TSharedMemoryKvs
+  \brief The TSharedMemoryKvs class provides a means of operating a in-memory
+  KVS built in the server process.
+*/
+
 
 /*!
   Constructs a TSharedMemoryKvs object.
@@ -66,11 +72,15 @@ TSharedMemoryKvs::TSharedMemoryKvs(Tf::KvsEngine engine) :
     _h = (hash_header_t *)driver()->origin();
 }
 
-
+/*!
+  Destructor.
+*/
 TSharedMemoryKvs::~TSharedMemoryKvs()
 { }
 
-
+/*!
+  Initializes in-memory KVS with the given \a name and \a options.
+*/
 bool TSharedMemoryKvs::initialize(const QString &name, const QString &options)
 {
     hash_header_t hashheader;
@@ -89,13 +99,18 @@ bool TSharedMemoryKvs::initialize(const QString &name, const QString &options)
     return true;
 }
 
-
+/*!
+  Cleanup the KVS.
+*/
 void TSharedMemoryKvs::cleanup()
 {
     driver()->cleanup();
 }
 
-
+/*!
+  Sets the \a key to hold the \a value. If the key already holds a
+  value, it is overwritten, regardless of its type.
+ */
 bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
     if (key.isEmpty() || seconds <= 0) {
@@ -228,7 +243,10 @@ bool TSharedMemoryKvs::find(uint index, Bucket &bucket) const
     return true;
 }
 
-
+/*!
+  Returns the value associated with the \a key; otherwise
+  returns an empty byte array.
+ */
 QByteArray TSharedMemoryKvs::get(const QByteArray &key)
 {
     Bucket bucket;
@@ -238,7 +256,10 @@ QByteArray TSharedMemoryKvs::get(const QByteArray &key)
     return (idx < tableSize() && bucket.expires > Tf::getMSecsSinceEpoch()) ? bucket.value : QByteArray();
 }
 
-
+/*!
+  Removes the specified \a key. A key is ignored if it does
+  not exist.
+ */
 bool TSharedMemoryKvs::remove(const QByteArray &key)
 {
     Bucket bucket;
@@ -263,7 +284,9 @@ void TSharedMemoryKvs::remove(uint index)
     }
 }
 
-
+/*!
+  Returns the number of items set.
+*/
 uint TSharedMemoryKvs::count() const
 {
     return _h->count;
@@ -281,7 +304,9 @@ float TSharedMemoryKvs::loadFactor() const
     return (count() + _h->freeCount) / (float)_h->tableSize;
 }
 
-
+/*!
+  Removes all items from the KVS.
+*/
 void TSharedMemoryKvs::clear()
 {
     lockForWrite();  // lock
@@ -300,7 +325,9 @@ void TSharedMemoryKvs::clear()
     unlock();  // unlock
 }
 
-
+/*!
+  Executes garbage collection.
+*/
 void TSharedMemoryKvs::gc()
 {
     for (auto it = begin(); it != end(); ++it) {
@@ -314,7 +341,9 @@ void TSharedMemoryKvs::gc()
     unlock();  // unlock
 }
 
-
+/*!
+  Internal use.
+*/
 void TSharedMemoryKvs::rehash()
 {
     if (loadFactor() < 0.2) {
@@ -378,24 +407,29 @@ uint TSharedMemoryKvs::next(uint index) const
     return (index + 1) % _h->tableSize;
 }
 
-
+/*!
+  Locks the shared memory segment for reading by this process.
+*/
 bool TSharedMemoryKvs::lockForRead()
 {
     return driver()->lockForRead();
 }
 
-
+/*!
+  Locks the shared memory segment for writing by this process.
+*/
 bool TSharedMemoryKvs::lockForWrite()
 {
     return driver()->lockForWrite();
 }
 
-
+/*!
+  Releases the lock on the shared memory segment.
+*/
 bool TSharedMemoryKvs::unlock()
 {
     return driver()->unlock();
 }
-
 
 /*!
   Returns the Memcached driver associated with the TSharedMemoryKvs object.
@@ -437,7 +471,11 @@ const TSharedMemoryKvsDriver *TSharedMemoryKvs::driver() const
 #endif
 }
 
-
+/*!
+  Locks the attached shared-memory segment for writing by this process and
+  returns an STL-style iterator pointing to the first item in the KVS.
+  \sa class WriteLockingIterator
+*/
 TSharedMemoryKvs::WriteLockingIterator TSharedMemoryKvs::begin()
 {
     WriteLockingIterator it(this, (uint)-1);
@@ -445,11 +483,21 @@ TSharedMemoryKvs::WriteLockingIterator TSharedMemoryKvs::begin()
     return it;
 }
 
-
+/*!
+  Returns an STL-style iterator pointing just after the last item in the KVS.
+  \sa class WriteLockingIterator
+*/
 TSharedMemoryKvs::WriteLockingIterator TSharedMemoryKvs::end()
 {
     return WriteLockingIterator(this, tableSize());
 }
+
+
+/*!
+  \class TSharedMemoryKvs::WriteLockingIterator
+  \brief The WriteLockingIterator class provides an STL-style iterator with
+  write-locking for TSharedMemoryKvs.
+*/
 
 
 TSharedMemoryKvs::WriteLockingIterator::WriteLockingIterator(TSharedMemoryKvs *hash, uint it) :
@@ -461,7 +509,9 @@ TSharedMemoryKvs::WriteLockingIterator::WriteLockingIterator(TSharedMemoryKvs *h
     }
 }
 
-
+/*!
+  Destructor, releases the lock on the TSharedMemoryKvs object.
+*/
 TSharedMemoryKvs::WriteLockingIterator::~WriteLockingIterator()
 {
     if (_locked) {

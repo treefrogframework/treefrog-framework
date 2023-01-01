@@ -9,6 +9,12 @@
 #include <QByteArray>
 #include <iostream>
 
+/*!
+  \class TStdErrSystemLogger
+  \brief The TStdErrSystemLogger class provides functionality of system
+  logging to stderr.
+*/
+
 
 int TStdErrSystemLogger::write(const char *data, int length)
 {
