@@ -40,15 +40,22 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2022/11/1  TreeFrog Framework バージョン2.5.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2023/1/2  TreeFrog Framework バージョン2.6.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - キャッシュ用のインメモリKVSを実装
+ - Glogと共有リンクするオプションを追加
+ - コマンドライン向けマクロの不具合修正
+ - LZ4をv1.9.4に更新
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2022/11/1  TreeFrog Framework バージョン2.5.0 （安定版）リリース
 
  - レスポンス送信後に処理を継続するためにflushResponse()関数を実装
  - glogバージョン0.6.0に更新
  - Redisクライアントのパフォーマンス改善
  - Memcachedクライアントの実装 [実験的]
  - Memcached用のキャッシュストア（TCacheMemcachedStoreクラス）の実装
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2022/8/13  TreeFrog Framework バージョン2.4.0 （安定版）リリース
 

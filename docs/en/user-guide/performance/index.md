@@ -80,3 +80,9 @@ About 562 times requests are executed per second. This is the number when the re
 In real web applications, the logic of controller and model is more complicated, and there should would be a large number of records, so performance would be less than the above. These figures should therefore be taken as a reference.
 
 ##### In brief: Use 'thread' as your MPM. If using the WebSocket protocol, consider setting 'hybrid' as well.
+
+### Benchmarks Site
+
+This following site published benchmarks for web application frameworks.
+
+- [Web Framework Benchmarks](https://www.techempower.com/benchmarks)

@@ -37,17 +37,25 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
-Nov. 1, 2022
+Jan. 2, 2023
 
-### TreeFrog Framework version 2.5.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.6.0 (stable) release <span style="color: red;">New!</span>
+
+Nov. 1, 2022
+ - Implemented in-memory KVS for cache system.
+ - Added a link option for Glog shared library.
+ - Fix bugs of macros for command line interface.
+ - Updated LZ4 to v1.9.4.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
+### TreeFrog Framework version 2.5.0 (stable) release
 
  - Implemented flushResponse() function to continue the process after sending a response.
  - Updated glog to v0.6.0
  - Performance improvement for redis client.
  - Implemented memcached client. [Experimental]
  - Implemented a cache-store for memcached, TCacheMemcachedStore class.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Aug. 13, 2022
 

@@ -1,0 +1,420 @@
+---
+title: Configuration 
+page_id: "085.0"
+---
+
+## Configuration
+
+Here are sample files of configuration.
+
+#### application.ini
+
+```
+##
+## Application settings file
+##
+[General]
+
+# Listens for incoming connections on the specified port.
+ListenPort=8800
+
+# Listens for incoming connections on the specified IP address. If this value
+# is empty, equivalent to "0.0.0.0".
+ListenAddress=
+
+# Sets the codec used by 'QObject::tr()' and 'toLocal8Bit()' to the
+# QTextCodec for the specified encoding. See QTextCodec class reference.
+InternalEncoding=UTF-8
+
+# Sets the codec for http output stream to the QTextCodec for the
+# specified encoding. See QTextCodec class reference.
+HttpOutputEncoding=UTF-8
+
+# Sets a language/country pair, such as en_US, ja_JP, etc.
+# If this value is empty, the system's locale is used.
+Locale=
+
+# Specify the multiprocessing module, such as thread or epoll.
+#  thread: multithreading assigned to each socket, available for all platforms
+#  epoll: scalable I/O event notification (epoll) in single thread, Linux only
+MultiProcessingModule=thread
+
+# Specify the absolute or relative path of the temporary directory
+# for HTTP uploaded files. Uses system default if not specified.
+UploadTemporaryDirectory=tmp
+
+# Specify setting files for SQL databases.
+SqlDatabaseSettingsFiles=database.ini
+
+# Specify the setting file for MongoDB.
+# To access MongoDB server, uncomment the following line.
+#MongoDbSettingsFile=mongodb.ini
+
+# Specify the setting file for Redis.
+# To access Redis server, uncomment the following line.
+#RedisSettingsFile=redis.ini
+
+# Specify the setting file for Memcached.
+# To access Memcached server, uncomment the following line.
+#MemcachedSettingsFile=memcached.ini
+
+# Specify the directory path to store SQL query files.
+SqlQueriesStoredDirectory=sql/
+
+# Determines whether it renders views without controllers directly
+# like PHP or not, which views are stored in the directory of
+# app/views/direct. By default, this parameter is false.
+DirectViewRenderMode=false
+
+# Specify a file path for SQL query log.
+# If it's empty or the line is commented out, output to SQL query log
+# is disabled.
+SqlQueryLog.FilePath=log/query.log
+
+# Specify the layout of SQL query log.
+#  %d : date-time
+#  %p : priority (lowercase)
+#  %P : priority (uppercase)
+#  %t : thread ID (dec)
+#  %T : thread ID (hex)
+#  %i : PID (dec)
+#  %I : PID (hex)
+#  %e : elapsed processing time in milliseconds
+#  %m : log message
+#  %n : newline code
+SqlQueryLog.Layout="%d [%t] (%e) %m%n"
+
+# Specify the date-time format of SQL query log, see also QDateTime
+# class reference.
+SqlQueryLog.DateTimeFormat="yyyy-MM-dd hh:mm:ss"
+
+# Determines whether the application aborts (to create a core dump
+# on Unix systems) or not when it output a fatal message by tFatal()
+# method.
+ApplicationAbortOnFatal=false
+
+# This directive specifies the number of bytes that are allowed in
+# a request body. 0 means unlimited.
+LimitRequestBody=0
+
+# If false is specified, the protective function against cross-site request
+# forgery never work; otherwise it's enabled.
+EnableCsrfProtectionModule=false
+
+# Enables HTTP method override if true. The following are priorities of
+# override.
+#  - Value of query parameter named '_method'
+#  - Value of X-HTTP-Method-Override header
+#  - Value of X-HTTP-Method header
+#  - Value of X-METHOD-OVERRIDE header
+EnableHttpMethodOverride=false
+
+# Enables the value of X-Forwarded-For header as originating IP address of
+# the client, if true.
+EnableForwardedForHeader=false
+
+# Specify IP addresses of the proxy servers to work the feature of
+# X-Forwarded-For header.
+TrustedProxyServers=
+
+# Sets the timeout in seconds during which a keep-alive HTTP connection
+# will stay open on the server side. The zero value disables keep-alive
+# client connections.
+HttpKeepAliveTimeout=10
+
+# Forces some libraries to be loaded before all others. It means to set
+# the LD_PRELOAD environment variable for the application server, Linux
+# only. The paths to shared objects, jemalloc or TCMalloc, can be
+# specified.
+LDPreload=
+
+# Searches those paths for JavaScript modules if they are not found elsewhere,
+# sets to a quoted semicolon-delimited list of relative or absolute paths.
+JavaScriptPath="script;node_modules"
+
+##
+## Session section
+##
+Session.Name=TFSESSION
+
+# Specify the session store type, such as 'sqlobject', 'file', 'cookie',
+# 'mongodb', 'redis', 'cachedb' or plugin module name.
+# For 'sqlobject', the settings specified in SqlDatabaseSettingsFiles are used.
+# For 'mongodb', the settings specified in MongoDbSettingsFile are used.
+# For 'redis', the settings specified in RedisSettingsFile are used.
+# For 'memcached', the settings specified in MemcachedSettingsFile are used.
+Session.StoreType=cookie
+
+# Replaces the session ID with a new one each time one connects, and
+# keeps the current session information.
+Session.AutoIdRegeneration=false
+
+# Specifies a Max-Age attribute of the session cookie in seconds. The value 0
+# means "until the browser is closed."
+Session.CookieMaxAge=0
+
+# Specifies a domain attribute to set in the session cookie.
+Session.CookieDomain=
+
+# Specifies a path attribute to set in the session cookie. Defaults to /.
+Session.CookiePath=/
+
+# Specifies a value to assert that a cookie must not be sent with cross-origin
+# requests; Strict, Lax or None.
+Session.CookieSameSite=Lax
+
+# Probability that the garbage collection starts.
+# If 100 specified, the GC of sessions starts at the rate of once per 100
+# accesses. If 0 specified, the GC never starts.
+Session.GcProbability=100
+
+# Specifies the number of seconds after which session data will be seen as
+# 'garbage' and potentially cleaned up.
+Session.GcMaxLifeTime=1800
+
+# Secret key for verifying cookie session data integrity.
+# Enter at least 30 characters and all random.
+Session.Secret=z2tAnYAQ8Ouk9ZgLRL0THFN5hDvAXo
+
+# Specify CSRF protection key.
+# Uses it in case of cookie session.
+Session.CsrfProtectionKey=_csrfId
+
+##
+## MPM thread section
+##
+
+# Number of application server processes to be started.
+MPM.thread.MaxAppServers=1
+
+# Maximum number of action threads allowed to start simultaneously
+# per server process. Set max_connections parameter of the DBMS
+# to (MaxAppServers * MaxThreadsPerAppServer) or more.
+MPM.thread.MaxThreadsPerAppServer=128
+
+##
+## MPM epoll section
+##
+
+# Number of application server processes to be started.
+MPM.epoll.MaxAppServers=1
+
+##
+## SystemLog settings
+##
+
+# Specify the system log file name.
+SystemLog.FilePath=log/treefrog.log
+
+# Specify the layout of the system log
+#  %d : Date-time
+#  %p : Priority (lowercase)
+#  %P : Priority (uppercase)
+#  %t : Thread ID (dec)
+#  %T : Thread ID (hex)
+#  %i : PID (dec)
+#  %I : PID (hex)
+#  %m : Log message
+#  %n : Newline code
+SystemLog.Layout="%d %5P [%t] %m%n"
+
+# Specify the date-time format of the system log
+SystemLog.DateTimeFormat="yyyy-MM-dd hh:mm:ss"
+
+##
+## AccessLog settings
+##
+
+# Specify the access log file name.
+AccessLog.FilePath=log/access.log
+
+# Specify the layout of the access log.
+#  %h : Remote host
+#  %d : Date-time the request was received
+#  %r : First line of request
+#  %s : Status code
+#  %O : Bytes sent, including headers, cannot be zero
+#  %e : elapsed processing time in milliseconds
+#  %n : Newline code
+AccessLog.Layout="%h %d \"%r\" %s %O%n"
+
+# Specify the date-time format of the access log
+AccessLog.DateTimeFormat="yyyy-MM-dd hh:mm:ss"
+
+##
+## ActionMailer section
+##
+
+# Specify the delivery method such as "smtp" or "sendmail".
+# If empty, the mail is not sent.
+ActionMailer.DeliveryMethod=smtp
+
+# Specify the character set of email. The system encodes with this codec,
+# and sends the encoded mail.
+ActionMailer.CharacterSet=UTF-8
+
+# Enables the delayed delivery of email if true. If enabled, deliver() method
+# only adds the email to the queue and therefore the method doesn't block.
+ActionMailer.DelayedDelivery=false
+
+##
+## ActionMailer SMTP section
+##
+
+# Specify the connection's host name or IP address.
+ActionMailer.smtp.HostName=
+
+# Specify the connection's port number.
+ActionMailer.smtp.Port=
+
+# Enables SMTP authentication if true; disables SMTP
+# authentication if false.
+ActionMailer.smtp.Authentication=false
+
+# Requires TLS encrypted communication to SMTP server if true.
+ActionMailer.smtp.RequireTLS=false
+
+# Specify the user name for SMTP authentication.
+ActionMailer.smtp.UserName=
+
+# Specify the password for SMTP authentication.
+ActionMailer.smtp.Password=
+
+# Enables POP before SMTP authentication if true.
+ActionMailer.smtp.EnablePopBeforeSmtp=false
+
+# Specify the POP host name for POP before SMTP.
+ActionMailer.smtp.PopServer.HostName=
+
+# Specify the port number for POP.
+ActionMailer.smtp.PopServer.Port=110
+
+# Enables APOP authentication for the POP server if true.
+ActionMailer.smtp.PopServer.EnableApop=false
+
+##
+## ActionMailer Sendmail section
+##
+
+ActionMailer.sendmail.CommandLocation=/usr/sbin/sendmail
+
+##
+## Cache section
+##
+
+# Specify the settings file to enable the cache module,
+# which can be used through Tf::cache() function.
+# See https://api-reference.treefrogframework.org/classTCache.html.
+# Uncomment the following line and write connection information
+# to the file.
+#Cache.SettingsFile=cache.ini
+
+# Specify the cache backend, such as 'sqlite', 'mongodb', 'redis',
+# 'memcached' or 'memory'.
+Cache.Backend=memory
+
+# Probability of starting garbage collection (GC) for cache.
+# If 1000 is specified, GC will be started at a rate of once per 1000
+# sets. If 0 is specified, the GC never starts.
+Cache.GcProbability=1000
+
+# If true, enable LZ4 compression when storing data.
+Cache.EnableCompression=true
+```
+
+#### database.ini
+
+```
+#
+# Database settings file
+#
+
+# The currently available driver types are:
+#  [Driver Type] [Description]
+#   QDB2          IBM DB2
+#   QIBASE        Borland InterBase Driver
+#   QMYSQL        MySQL Driver
+#   QOCI          Oracle Call Interface Driver
+#   QODBC         ODBC Driver (includes Microsoft SQL Server)
+#   QPSQL         PostgreSQL Driver
+#   QSQLITE       SQLite version 3 or above
+#   QSQLITE2      SQLite version 2
+#
+# In case of SQLite, specify the DB file path to DatabaseName as follows;
+# DatabaseName=db/dbfile
+
+[dev]
+DriverType=QSQLITE
+DatabaseName=db/dbfile
+HostName=
+Port=
+UserName=
+Password=
+ConnectOptions=
+PostOpenStatements="PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA synchronous=NORMAL;"
+EnableUpsert=false
+
+[test]
+DriverType=QMYSQL
+DatabaseName=
+HostName=
+Port=
+UserName=
+Password=
+ConnectOptions=
+PostOpenStatements=
+EnableUpsert=false
+
+[product]
+DriverType=QMYSQL
+DatabaseName=
+HostName=
+Port=
+UserName=
+Password=
+ConnectOptions=
+PostOpenStatements=
+EnableUpsert=false
+```
+
+#### logger.ini
+
+```
+##
+## Logger settings file
+##
+[General]
+
+# Specify loggers
+Loggers=FileLogger
+
+# Specify the default log text encoding. If not specified,
+# the codec will be based on a system locale.
+DefaultTextEncoding=
+
+##
+## FileLogger section
+##
+
+# Specify the application log file name.
+FileLogger.Target=log/app.log
+
+# Specify the layout of FileLogger.
+#  %d : date-time
+#  %p : priority (lowercase)
+#  %P : priority (uppercase)
+#  %t : thread ID (dec)
+#  %T : thread ID (hex)
+#  %i : PID (dec)
+#  %I : PID (hex)
+#  %m : log message
+#  %n : newline code
+FileLogger.Layout="%d %5P [%t] %m%n"
+
+# Specify the date-time format of FileLogger, see also QDateTime
+# class reference.
+FileLogger.DateTimeFormat="yyyy-MM-dd hh:mm:ss"
+
+# Outputs the logs of equal or higher priority than this.
+FileLogger.Threshold=debug
+```
