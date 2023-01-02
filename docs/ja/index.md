@@ -66,43 +66,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
  - Qt 6.3 でのコンパイルエラーを解消
 
-### 2021/12/31  TreeFrog Framework バージョン2.3 （安定版）リリース
-
- - SqlObjectでdouble型を保存する時の不具合修正
- - SQLクエリの処理時間をログ出力するための実装
- - SQLクエリログのログフォーマットを設定するロジックを実装
- - アプリ設定情報を表示するtreefrogコマンドオプションを実装
- - sqliteキャッシュストアの初期化タイミングを修正
-
-### 2021/10/23  TreeFrog Framework バージョン2.2 （安定版）リリース
-
- - sqliteのキャッシュロジックの不具合修正
- - Qt6で core5compat モジュールを使用しないよう修正
- - パフォマンス改善
-
-### 2021/8/21  TreeFrog Framework バージョン2.1 （安定版）リリース
-
-  - 受信パケットのサイズ計算ロジックの不具合修正
-  - variantmapを引数にもつecho()関数を追加
-  - Vue.js用のスキャフォールディング（足場）を作れるよう tspawn コマンドを修正
-
-### 2021/6/19  TreeFrog Framework バージョン2.0 （ベータ2）リリース
-
-  - WebAPIを生成するようスキャフォールディング機能を更新.
-  - モデル層としてサービスクラスを生成するようスキャフォールディング機能を修正
-
-### 2021/5/23  TreeFrog Framework バージョン2.0 （ベータ版）リリース
-
-  - Qt6とQt5のサポート
-  - Qtの陳腐化した関数を使用しないよう修正
-
-### 2021/2/6  TreeFrog Framework バージョン1.31.0 （安定版）リリース
-
-  - TMultiplexingServerの不具合修正
-  - Qtの陳腐化した関数を使用しないよう修正
-  - TAbstractSqlORMapperクラス追加
-  - パフォマンス改善
-
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 

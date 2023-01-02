@@ -16,7 +16,7 @@ page_id: "085.0"
 [General]
 
 # Listens for incoming connections on the specified port.
-ListenPort=8800
+ListenPort=80
 
 # Listens for incoming connections on the specified IP address. If this value
 # is empty, equivalent to "0.0.0.0".

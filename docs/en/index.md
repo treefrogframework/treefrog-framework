@@ -38,10 +38,8 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
 Jan. 2, 2023
-
 ### TreeFrog Framework version 2.6.0 (stable) release <span style="color: red;">New!</span>
 
-Nov. 1, 2022
  - Implemented in-memory KVS for cache system.
  - Added a link option for Glog shared library.
  - Fix bugs of macros for command line interface.
@@ -49,6 +47,7 @@ Nov. 1, 2022
 
   [<i class="fas fa-download"></i> Download this version](/en/download/)
 
+Nov. 1, 2022
 ### TreeFrog Framework version 2.5.0 (stable) release
 
  - Implemented flushResponse() function to continue the process after sending a response.
@@ -58,66 +57,15 @@ Nov. 1, 2022
  - Implemented a cache-store for memcached, TCacheMemcachedStore class.
 
 Aug. 13, 2022
-
 ### TreeFrog Framework version 2.4.0 (stable) release
 
  - Implemented memory store for cache.
  - Updated Mongo C driver to v1.21.2.
 
 May 28, 2022
-
 ### TreeFrog Framework version 2.3.1 (stable) release
 
  - Fix compilation errors on Qt 6.3.
-
-Dec. 31, 2021
-
-### TreeFrog Framework version 2.3 (stable) release
-
- - Fix a bug of inserting a double-type value by SqlObject.
- - Implemented log output to calculate processing time of SQL query.
- - Implemented logics to set the log format of the SQL query log.
- - Implemented the treefrog command to show settings option.
- - Modified the timing of initializing sqlite cache store.
-
-Oct. 23, 2021
-
-### TreeFrog Framework version 2.2 (stable) release
-
- - Fix a bug of cache logic for sqlite.
- - Modified not to use core5compat module in running on Qt6.
- - Performance improvement.
-
-Aug. 21, 2021
-
-### TreeFrog Framework version 2.1 (stable) release
-
-  - Fix a bug of calculating length of receiving packets.
-  - Added echo() function with a variantmap argument.
-  - Implement the logic of the tspawn command to generate scaffolding for vue.js.
-
-Jun. 19, 2021
-
-### TreeFrog Framework version 2.0 (beta2) release
-
- - Updated the scaffold generator to generate WebAPI codes.
- - Modified the scaffold generator to generate service classes for the model layer.
-
-May 23, 2021
-
-### TreeFrog Framework version 2.0 (beta) release
-
- - Support for Qt version 5 and version 6.
- - Modified not to use obsolete functions of Qt.
-
-Feb. 6, 2021
-
-### TreeFrog Framework version 1.31.0 (stable) release
-
- - Fix a bug of TMultiplexingServer (epoll server).
- - Modified not to use obsolete functions of Qt.
- - Added TAbstractSqlORMapper class.
- - Performance improvement.
 
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
