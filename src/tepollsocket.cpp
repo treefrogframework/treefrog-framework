@@ -34,15 +34,15 @@ QSet<TEpollSocket *> socketManager;
 void setAddressAndPort(const QHostAddress &address, quint16 port, tf_sockaddr *aa, int &addrSize)
 {
     if (address.protocol() == QAbstractSocket::IPv6Protocol || address.protocol() == QAbstractSocket::AnyIPProtocol) {
-        memset(&aa->a6, 0, sizeof(sockaddr_in6));
+        std::memset(&aa->a6, 0, sizeof(sockaddr_in6));
         aa->a6.sin6_family = AF_INET6;
         //aa->a6.sin6_scope_id = QNetworkInterface::interfaceIndexFromName(address.scopeId());
         aa->a6.sin6_port = htons(port);
         auto tmp = address.toIPv6Address();
-        memcpy(&aa->a6.sin6_addr, &tmp, sizeof(tmp));
+        std::memcpy(&aa->a6.sin6_addr, &tmp, sizeof(tmp));
         addrSize = sizeof(sockaddr_in6);
     } else {
-        memset(&aa->a4, 0, sizeof(sockaddr_in));
+        std::memset(&aa->a4, 0, sizeof(sockaddr_in));
         aa->a4.sin_family = AF_INET;
         aa->a4.sin_port = htons(port);
         aa->a4.sin_addr.s_addr = htonl(address.toIPv4Address());
@@ -366,7 +366,7 @@ qint64 TEpollSocket::receiveData(char *buffer, qint64 length)
 {
     qint64 len = std::min(length, (qint64)_recvBuffer.length());
     if (len > 0) {
-        memcpy(buffer, _recvBuffer.data(), len);
+        std::memcpy(buffer, _recvBuffer.data(), len);
         _recvBuffer.remove(0, len);
     }
     return len;

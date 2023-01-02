@@ -71,7 +71,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     int sd = -1;
     struct sockaddr_un addr;
 
-    memset(&addr, 0, sizeof(addr));
+    std::memset(&addr, 0, sizeof(addr));
     addr.sun_family = PF_UNIX;
     if (sizeof(addr.sun_path) < (uint)fileDomain.toLatin1().size() + 1) {
         tSystemError("too long name for UNIX domain socket  [%s:%d]", __FILE__, __LINE__);

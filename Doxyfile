@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TreeFrogFramework
-PROJECT_NUMBER         = 2.5
+PROJECT_NUMBER         = 2.6
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = doc
@@ -198,6 +198,16 @@ EXCLUDE                = src/test \
                          src/tcachesqlitestore.h \
                          src/tabstractactioncontext.h \
                          src/tviewdispatcher.h \
+                         src/tcachememcachedstore.h \
+                         src/tcachesharedmemorystore.h \
+                         src/tmemcacheddriver.h \
+                         src/tsharedmemoryallocator.h \
+                         src/tsharedmemorykvsdriver.h \
+                         src/tstdoutsystemlogger.h \
+                         src/tsystemlogger.h \
+                         src/ttcpsocket.h \
+                         src/tfileaiologger.h \
+                         src/tfileaiowriter.h \
                          src/ttextview.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = src/moc_*.cpp

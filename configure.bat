@@ -1,10 +1,10 @@
 @echo OFF
 @setlocal
 
-set VERSION=2.5.0
+set VERSION=2.6.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.21.2
-set LZ4_VERSION=1.9.3
+set LZ4_VERSION=1.9.4
 set GLOG_VERSION=0.6.0
 set BASEDIR=%~dp0
 set CL=/MP
@@ -84,60 +84,14 @@ if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
 :: vcvarsall.bat setup
 if /i "%Platform%" == "x64" (
   set VCVARSOPT=amd64
-  set BUILDTARGET=x64
+  set CMAKEOPT=-A x64
   set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
 ) else (
   set VCVARSOPT=x86
-  set BUILDTARGET=win32
+  set CMAKEOPT=-A Win32
   set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
 )
 
-devenv /? | find "Visual Studio 2022" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2022
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 17 2022" -A x64
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 17 2022" -A Win32
-  )
-  goto :step2
-)
-
-devenv /? | find "Visual Studio 2019" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2019
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 16 2019" -A x64
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 16 2019" -A Win32
-  )
-  goto :step2
-)
-
-devenv /? | find "Visual Studio 2017" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2017
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 15 2017"
-  )
-  goto :step2
-)
-
-devenv /? | find "Visual Studio 2015" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2015
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 14 2015 Win64"
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 14 2015"
-  )
-  goto :step2
-)
-
-
-:step2
 SET /P X="%ENVSTR%"<NUL
 qtpaths.exe --qt-version
 
@@ -150,19 +104,21 @@ echo ::>> %TFENV%
 echo;>> %TFENV%
 echo set TFDIR=%TFDIR%>> %TFENV%
 echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
-echo set QTENV="%QTENV%">> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
+echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=%VSVER%>> %TFENV%
+echo set VSVER=2022 2019 2017>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
 echo if exist %%VSWHERE%% ^(>> %TFENV%
-echo   for /f "usebackq tokens=*" %%%%i in ^(`%%VSWHERE%% -find  **\vcvarsall.bat`^) do ^(>> %TFENV%
-echo     echo %%%%i ^| find "%%VSVER%%" ^>NUL>> %TFENV%
-echo     if not ERRORLEVEL 1 ^(>> %TFENV%
-echo       set VCVARSBAT="%%%%i">> %TFENV%
-echo       goto :break>> %TFENV%
+echo   for %%%%v in (%%VSVER%%) do (>> %TFENV%
+echo     for /f "usebackq tokens=*" %%%%i in ^(`%%VSWHERE%% -find **\vcvarsall.bat`^) do ^(>> %TFENV%
+echo       echo %%%%i ^| find "%%%%v" ^>NUL>> %TFENV%
+echo       if not ERRORLEVEL 1 ^(>> %TFENV%
+echo         set VCVARSBAT="%%%%i">> %TFENV%
+echo         goto :break>> %TFENV%
+echo       ^)>> %TFENV%
 echo     ^)>> %TFENV%
 echo   ^)>> %TFENV%
 echo ^)>> %TFENV%
@@ -171,6 +127,10 @@ echo if exist %%VCVARSBAT%% ^(>> %TFENV%
 echo   echo Setting up environment for MSVC usage...>> %TFENV%
 echo   call %%VCVARSBAT%% %VCVARSOPT%>> %TFENV%
 echo ^)>> %TFENV%
+echo set QTENV=>> %TFENV%
+echo set VCVARSBAT=>> %TFENV%
+echo set VSVER=>> %TFENV%
+echo set VSWHERE=>> %TFENV%
 echo set PATH=%%TFDIR^%%\bin;%%PATH%%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
@@ -210,18 +170,14 @@ cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-for /F %%i in ('qtpaths.exe --install-prefix') do echo %%i | find "msvc2015" >NUL
-if not ERRORLEVEL 1 (
-  set VS=VS2015
-) else (
-  set VS=VS2017
-)
-set DEVENVCMD=devenv lz4\build\%VS%\lz4.sln /project liblz4 /rebuild "Release|%BUILDTARGET%"
-echo %DEVENVCMD%
-%DEVENVCMD% >nul 2>&1
+del /f /q lz4\build\cmake\build >nul 2>&1
+cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
+set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %DEVENVCMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo LZ4 not available.

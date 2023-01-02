@@ -17,7 +17,7 @@ TreeFrog Framework には次のような特徴があります。
   1. 高パフォーマンス ： 高度に最適化されたC++アプリケーションサーバエンジン
   2. O/R マッピング ： 複雑で面倒なデータベースコーディングを隠蔽
   3. テンプレートシステム ： ERBライクなテンプレートエンジン
-  4. 多くのDBに対応 ： MySQL, PostgreSQL, ODBC, SQLite, MongoDB, Redis, etc.
+  4. 多くのDBに対応 ： MySQL, MariaDB, PostgreSQL, ODBC, MongoDB, Redis, Memcached, etc.
   5. WebSocket 対応 ： サーバと双方向通信が可能
   6. ジェネレータ ： 「足場」となるソースコード, Makefile や vue.js テンプレートを生成
   7. 様々なレスポンスタイプに対応 ： JSON, XML, CBOR
@@ -40,15 +40,22 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2022/11/1  TreeFrog Framework バージョン2.5.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2023/1/2  TreeFrog Framework バージョン2.6.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - キャッシュ用のインメモリKVSを実装
+ - Glogと共有リンクするオプションを追加
+ - コマンドライン向けマクロの不具合修正
+ - LZ4をv1.9.4に更新
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2022/11/1  TreeFrog Framework バージョン2.5.0 （安定版）リリース
 
  - レスポンス送信後に処理を継続するためにflushResponse()関数を実装
  - glogバージョン0.6.0に更新
  - Redisクライアントのパフォーマンス改善
  - Memcachedクライアントの実装 [実験的]
  - Memcached用のキャッシュストア（TCacheMemcachedStoreクラス）の実装
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2022/8/13  TreeFrog Framework バージョン2.4.0 （安定版）リリース
 
@@ -58,43 +65,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 ### 2022/5/28  TreeFrog Framework バージョン2.3.1 （安定版）リリース
 
  - Qt 6.3 でのコンパイルエラーを解消
-
-### 2021/12/31  TreeFrog Framework バージョン2.3 （安定版）リリース
-
- - SqlObjectでdouble型を保存する時の不具合修正
- - SQLクエリの処理時間をログ出力するための実装
- - SQLクエリログのログフォーマットを設定するロジックを実装
- - アプリ設定情報を表示するtreefrogコマンドオプションを実装
- - sqliteキャッシュストアの初期化タイミングを修正
-
-### 2021/10/23  TreeFrog Framework バージョン2.2 （安定版）リリース
-
- - sqliteのキャッシュロジックの不具合修正
- - Qt6で core5compat モジュールを使用しないよう修正
- - パフォマンス改善
-
-### 2021/8/21  TreeFrog Framework バージョン2.1 （安定版）リリース
-
-  - 受信パケットのサイズ計算ロジックの不具合修正
-  - variantmapを引数にもつecho()関数を追加
-  - Vue.js用のスキャフォールディング（足場）を作れるよう tspawn コマンドを修正
-
-### 2021/6/19  TreeFrog Framework バージョン2.0 （ベータ2）リリース
-
-  - WebAPIを生成するようスキャフォールディング機能を更新.
-  - モデル層としてサービスクラスを生成するようスキャフォールディング機能を修正
-
-### 2021/5/23  TreeFrog Framework バージョン2.0 （ベータ版）リリース
-
-  - Qt6とQt5のサポート
-  - Qtの陳腐化した関数を使用しないよう修正
-
-### 2021/2/6  TreeFrog Framework バージョン1.31.0 （安定版）リリース
-
-  - TMultiplexingServerの不具合修正
-  - Qtの陳腐化した関数を使用しないよう修正
-  - TAbstractSqlORMapperクラス追加
-  - パフォマンス改善
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 

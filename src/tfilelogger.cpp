@@ -48,11 +48,11 @@ bool TFileLogger::open()
 
 void TFileLogger::close()
 {
-    QMutexLocker locker(&mutex);
-
-    if (logFile.isOpen()) {
-        logFile.flush();
+    if (!isOpen()) {
+        return;
     }
+
+    QMutexLocker locker(&mutex);
     logFile.close();
 }
 
@@ -60,12 +60,6 @@ void TFileLogger::close()
 bool TFileLogger::isOpen() const
 {
     return logFile.isOpen();
-}
-
-
-void TFileLogger::log(const TLog &tlog)
-{
-    log(logToByteArray(tlog));
 }
 
 
@@ -88,11 +82,12 @@ void TFileLogger::log(const QByteArray &msg)
 
 void TFileLogger::flush()
 {
-    QMutexLocker locker(&mutex);
-
-    if (logFile.isOpen()) {
-        logFile.flush();
+    if (!isOpen()) {
+        return;
     }
+
+    QMutexLocker locker(&mutex);
+    logFile.flush();
 }
 
 

@@ -40,40 +40,12 @@ if "%QMAKE%" == "" (
 )
 
 :: cmake options
-devenv /? | find "Visual Studio 2022" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2022
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 17 2022" -A x64
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 17 2022" -A Win32
-  )
-  goto :step1
+if /i "%Platform%" == "x64" (
+  set CMAKEOPT=-A x64
+) else (
+  set CMAKEOPT=-A Win32
 )
 
-devenv /? | find "Visual Studio 2019" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2019
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 16 2019" -A x64
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 16 2019" -A Win32
-  )
-  goto :step1
-)
-
-devenv /? | find "Visual Studio 2017" >NUL
-if not ERRORLEVEL 1 (
-  set VSVER=2017
-  if /i "%Platform%" == "x64" (
-    set CMAKEOPT=-G"Visual Studio 15 2017 Win64"
-  ) else (
-    set CMAKEOPT=-G"Visual Studio 15 2017"
-  )
-  goto :step1
-)
-
-:step1
 cd /D %BASEDIR%
 rd /Q /S %APPNAME%
 tspawn new %APPNAME%
@@ -131,7 +103,9 @@ cd /D %APPDIR%
 if exist build rd /Q /S build
 del /Q /F lib\*.*
 cmake --version
-cmake %CMAKEOPT% -S . -B build -DCMAKE_BUILD_TYPE=%1
+set CMD=cmake %CMAKEOPT% -S . -B build -DCMAKE_BUILD_TYPE=%1
+echo %CMD%
+%CMD%
 if ERRORLEVEL 1 (
   echo;
   echo CMake Error!
@@ -168,6 +142,8 @@ exit /B 0
 ::
 :CheckWebApp
 cd /D %APPDIR%
+"%1" -v
+"%1" -l
 "%1" --show-routes
 if ERRORLEVEL 1 (
   echo App Error!
@@ -178,6 +154,7 @@ echo;
 "%1" --settings
 if ERRORLEVEL 1 (
   echo App Error!
+  type log\treefrog.log
   exit /B 1
 )
 echo;

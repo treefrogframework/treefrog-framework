@@ -18,6 +18,7 @@ public:
 
 private:
     void initialize();
+    void cleanup();
 
     TCacheStore *_cache {nullptr};
     int _gcDivisor {0};

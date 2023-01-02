@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 2.6.0
+  - Implemented in-memory KVS for cache system.
+  - Added a link option for Glog shared library.
+  - Fix bugs of macros for command line interface.
+  - Updated LZ4 to v1.9.4.
+
 ## 2.5.0
  - Implemented flushResponse() function to continue the process after sending a response.
  - Updated glog to v0.6.0

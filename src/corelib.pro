@@ -39,7 +39,7 @@ INSTALLS += target
 
 windows {
   win32-msvc* {
-    LIBS += ../3rdparty/lz4/build/liblz4_static.lib
+    LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
   } else {
     LIBS += ../3rdparty/lz4/lib/release/liblz4.a
   }
@@ -104,16 +104,10 @@ HEADERS += tdatabasecontext.h
 SOURCES += tdatabasecontext.cpp
 HEADERS += tactionthread.h
 SOURCES += tactionthread.cpp
-#HEADERS += tactionforkprocess.h
-#SOURCES += tactionforkprocess.cpp
 HEADERS += thttpsocket.h
 SOURCES += thttpsocket.cpp
 HEADERS += thttpclient.h
 SOURCES += thttpclient.cpp
-#HEADERS += thttp2socket.h
-#SOURCES += thttp2socket.cpp
-#HEADERS += thttpbuffer.h
-#SOURCES += thttpbuffer.cpp
 HEADERS += tsendbuffer.h
 SOURCES += tsendbuffer.cpp
 HEADERS += tabstractcontroller.h
@@ -201,7 +195,7 @@ SOURCES += thtmlparser.cpp
 HEADERS += tabstractmodel.h
 SOURCES += tabstractmodel.cpp
 HEADERS += tmodelutil.h
-#SOURCES += tmodelutil.cpp
+SOURCES += tmodelutil.cpp
 HEADERS += tmodelobject.h
 SOURCES += tmodelobject.cpp
 HEADERS += tsystemglobal.h
@@ -220,14 +214,12 @@ HEADERS += tloggerfactory.h
 SOURCES += tloggerfactory.cpp
 HEADERS += tfilelogger.h
 SOURCES += tfilelogger.cpp
+HEADERS += tstdoutlogger.h
+SOURCES += tstdoutlogger.cpp
 HEADERS += tabstractlogstream.h
 SOURCES += tabstractlogstream.cpp
-HEADERS += tsharedmemorylogstream.h
-SOURCES += tsharedmemorylogstream.cpp
 HEADERS += tbasiclogstream.h
 SOURCES += tbasiclogstream.cpp
-#HEADERS += tmailerfactory.h
-#SOURCES += tmailerfactory.cpp
 HEADERS += tmailmessage.h
 SOURCES += tmailmessage.cpp
 HEADERS += tsmtpmailer.h
@@ -266,8 +258,14 @@ HEADERS += tredis.h
 SOURCES += tredis.cpp
 HEADERS += tfileaiologger.h
 SOURCES += tfileaiologger.cpp
+HEADERS += tsystemlogger.h
+SOURCES += tsystemlogger.cpp
 HEADERS += tfileaiowriter.h
 SOURCES += tfileaiowriter.cpp
+HEADERS += tstdoutsystemlogger.h
+SOURCES += tstdoutsystemlogger.cpp
+HEADERS += tstderrsystemlogger.h
+SOURCES += tstderrsystemlogger.cpp
 HEADERS += tjobscheduler.h
 SOURCES += tjobscheduler.cpp
 HEADERS += tappsettings.h
@@ -300,8 +298,6 @@ HEADERS += thazardobject.h
 SOURCES += thazardobject.cpp
 HEADERS += thazardptrmanager.h
 SOURCES += thazardptrmanager.cpp
-#HEADERS += tsinglylist.h
-#SOURCES += tsinglylist.cpp
 HEADERS += tatomic.h
 SOURCES += tatomic.cpp
 HEADERS += tstack.h
@@ -338,35 +334,42 @@ HEADERS += tcachesqlitestore.h
 SOURCES += tcachesqlitestore.cpp
 HEADERS += tcachemongostore.h
 SOURCES += tcachemongostore.cpp
-HEADERS += tcachememorystore.h
-SOURCES += tcachememorystore.cpp
 HEADERS += tcacheredisstore.h
 SOURCES += tcacheredisstore.cpp
 HEADERS += tcachememcachedstore.h
 SOURCES += tcachememcachedstore.cpp
-SOURCES += tactioncontroller_qt5.cpp
+HEADERS += tcachesharedmemorystore.h
+SOURCES += tcachesharedmemorystore.cpp
 HEADERS += toauth2client.h
 SOURCES += toauth2client.cpp
 HEADERS += tmemcached.h
 SOURCES += tmemcached.cpp
+HEADERS += tsharedmemoryallocator.h
+SOURCES += tsharedmemoryallocator.cpp
+HEADERS += tsharedmemorykvsdriver.h
+SOURCES += tsharedmemorykvsdriver.cpp
+HEADERS += tsharedmemorykvs.h
+SOURCES += tsharedmemorykvs.cpp
 
-HEADERS += \
-           tfnamespace.h \
-           tdeclexport.h \
-           tfcore.h \
-           tfexception.h \
-           tdispatcher.h \
-           tloggerplugin.h \
-           tsessionobject.h \
-           tsessionmongoobject.h \
-           tsessionstoreplugin.h \
-           tjavascriptobject.h \
-           tsqlormapper.h \
-           tsqljoin.h \
-           thttprequestheader.h \
-           thttpresponseheader.h \
-           tcommandlineinterface.h
+# Header only
+HEADERS += tfnamespace.h
+HEADERS += tdeclexport.h
+HEADERS += tfcore.h
+HEADERS += tfexception.h
+HEADERS += tdispatcher.h
+HEADERS += tloggerplugin.h
+HEADERS += tsessionobject.h
+HEADERS += tsessionmongoobject.h
+HEADERS += tsessionstoreplugin.h
+HEADERS += tjavascriptobject.h
+HEADERS += tsqlormapper.h
+HEADERS += tsqljoin.h
+HEADERS += thttprequestheader.h
+HEADERS += thttpresponseheader.h
+HEADERS += tsharedmemory.h
+HEADERS += tcommandlineinterface.h
 
+# For Windows
 windows {
   HEADERS += tfcore_win.h
   SOURCES += twebapplication_win.cpp
@@ -375,14 +378,11 @@ windows {
   SOURCES += tprocessinfo_win.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
-  SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tthreadapplicationserver_qt.cpp
+  SOURCES += tsharedmemory_qt.cpp
 }
-unix {
-  HEADERS += tfcore_unix.h
-  SOURCES += twebapplication_unix.cpp
-  SOURCES += tapplicationserverbase_unix.cpp
-  SOURCES += tfileaiowriter_unix.cpp
-}
+
+# For Linux
 linux-* {
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
@@ -403,12 +403,25 @@ linux-* {
   SOURCES += tredisdriver_linux.cpp
   SOURCES += tmemcacheddriver_linux.cpp
 }
+
+# For Mac
 macx {
   SOURCES += tprocessinfo_macx.cpp
-  SOURCES += tthreadapplicationserver_qt5.cpp
+  SOURCES += tthreadapplicationserver_qt.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
 }
+
+# For UNIX
+unix {
+  HEADERS += tfcore_unix.h
+  SOURCES += twebapplication_unix.cpp
+  SOURCES += tapplicationserverbase_unix.cpp
+  SOURCES += tfileaiowriter_unix.cpp
+  SOURCES += tsharedmemory_unix.cpp
+}
+
+# For FreeBSD
 freebsd {
   SOURCES += tprocessinfo_freebsd.cpp
   LIBS += -lutil -lprocstat
@@ -424,7 +437,7 @@ windows {
     LIBS += -lws2_32 -lpsapi -lAdvapi32
   }
 } else {
-  isEmpty( shared_mongoc ) {
+  isEmpty( enable_shared_mongoc ) {
     # Static link
     INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
     LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a

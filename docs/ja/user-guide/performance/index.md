@@ -82,3 +82,9 @@ thread モジュールの場合：
 実際のWebアプリでは、コントローラやモデルのロジックがより複雑で、さらに DB に大量のレコードがあるでしょうから、これよりパフォーマンスは低下するでしょう。参考として考えて下さい。
 
 ##### 結論： MPM は 'thread' でいけ。WebSocket を使うなら 'hybrid' も検討せよ。
+
+### ベンチマークを掲載しているサイト
+
+Webアプリケーションフレームワークのベンチマークを計測しているサイトです。
+
+- [Web Framework Benchmarks](https://www.techempower.com/benchmarks)

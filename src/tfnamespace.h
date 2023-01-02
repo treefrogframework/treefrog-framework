@@ -241,7 +241,8 @@ enum class KvsEngine : int {
     MongoDB,
     Redis,
     Memcached,
-    Num  // = 4
+    SharedMemory,
+    Num  // = 5
 };
 
 enum class SocketState : int {

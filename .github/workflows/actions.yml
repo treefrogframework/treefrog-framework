@@ -158,9 +158,9 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
-      run: brew install qt6 mongo-c-driver
+      run: brew install qt6 mongo-c-driver gflags glog
     - name: configure
-      run: ./configure --prefix=/usr/local --enable-shared-mongoc
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog
     - name: build
       run: |
         make -j4 -C src

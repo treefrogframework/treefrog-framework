@@ -8,6 +8,7 @@
 #include "tfcore_unix.h"
 #include "tfileaiowriter.h"
 #include "tqueue.h"
+#include <QQueue>
 #include <QList>
 #include <QMutexLocker>
 
@@ -23,7 +24,11 @@ public:
 #endif
     QString fileName;
     int fileDescriptor {0};
+#if 0
     TQueue<struct aiocb *> syncBuffer;
+#else
+    QQueue<struct aiocb *> syncBuffer;
+#endif
 
     TFileAioWriterData() {}
 };
@@ -97,12 +102,20 @@ int TFileAioWriter::write(const char *data, int length)
         if (d->mutex.tryLock()) {
             // check whether head's item  writing is finished
             struct aiocb *headcb;
+    #if 0
             while (d->syncBuffer.head(headcb)) {
+    #else
+            while (d->syncBuffer.count() > 0 && (headcb = d->syncBuffer.head())) {
+    #endif
                 if (aio_error(headcb) == EINPROGRESS) {
                     break;
                 }
 
+#if 0
                 if (d->syncBuffer.dequeue(headcb)) {
+#else
+                if ((headcb = d->syncBuffer.dequeue())) {
+#endif
                     delete[](char *) headcb->aio_buf;
                     delete headcb;
                 } else {
@@ -118,12 +131,12 @@ int TFileAioWriter::write(const char *data, int length)
     }
 
     struct aiocb *cb = new struct aiocb;
-    memset(cb, 0, sizeof(struct aiocb));
+    std::memset(cb, 0, sizeof(struct aiocb));
 
     cb->aio_fildes = d->fileDescriptor;
     cb->aio_nbytes = length;
     cb->aio_buf = new char[length];
-    memcpy((void *)cb->aio_buf, data, length);
+    std::memcpy((void *)cb->aio_buf, data, length);
 
     int ret = tf_aio_write(cb);
     int err = errno;
@@ -164,9 +177,15 @@ void TFileAioWriter::flush()
     struct aiocb *headcb;
 
     while (d->syncBuffer.count() > 0) {
+#if 0
         if (d->syncBuffer.head(headcb) && aio_error(headcb) != EINPROGRESS) {
             // Dequeue
             if (d->syncBuffer.dequeue(headcb)) {
+#else
+        if ((headcb = d->syncBuffer.head()) && aio_error(headcb) != EINPROGRESS) {
+            // Dequeue
+            if ((headcb = d->syncBuffer.dequeue())) {
+#endif
                 delete[](char *) headcb->aio_buf;
                 delete headcb;
             }

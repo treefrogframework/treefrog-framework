@@ -43,12 +43,6 @@ void TFileAioLogger::close()
 }
 
 
-void TFileAioLogger::log(const TLog &tlog)
-{
-    log(logToByteArray(tlog));
-}
-
-
 void TFileAioLogger::log(const QByteArray &msg)
 {
     writer->write(msg.data(), msg.length());

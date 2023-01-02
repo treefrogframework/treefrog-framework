@@ -16,19 +16,15 @@
 */
 
 
-TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers, QObject *parent) :
-    QObject(parent),
-    loggerList(loggers),
-    nonBuffering(false)
-{
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(setNonBufferingMode()));
-}
+TAbstractLogStream::TAbstractLogStream(const QList<TLogger *> &loggers) :
+    loggerList(loggers)
+{ }
 
 
 bool TAbstractLogStream::loggerOpen(LoggerType type)
 {
     bool res = true;
-    for (auto logger : (const QList<TLogger *> &)loggerList) {
+    for (auto *logger : (const QList<TLogger *> &)loggerList) {
         if (logger) {
             if (type == All
                 || (type == MultiProcessSafe && logger->isMultiProcessSafe())
@@ -43,7 +39,7 @@ bool TAbstractLogStream::loggerOpen(LoggerType type)
 
 void TAbstractLogStream::loggerClose(LoggerType type)
 {
-    for (auto logger : (const QList<TLogger *> &)loggerList) {
+    for (auto *logger : (const QList<TLogger *> &)loggerList) {
         if (logger) {
             if (type == All
                 || (type == MultiProcessSafe && logger->isMultiProcessSafe())
@@ -57,11 +53,9 @@ void TAbstractLogStream::loggerClose(LoggerType type)
 
 void TAbstractLogStream::loggerWrite(const TLog &log)
 {
-    for (auto logger : (const QList<TLogger *> &)loggerList) {
+    for (auto *logger : (const QList<TLogger *> &)loggerList) {
         if (logger && logger->isOpen() && log.priority <= logger->threshold()) {
             logger->log(log);
-            if (nonBuffering)
-                logger->flush();
         }
     }
 }
@@ -69,22 +63,16 @@ void TAbstractLogStream::loggerWrite(const TLog &log)
 
 void TAbstractLogStream::loggerWrite(const QList<TLog> &logs)
 {
-    for (auto logger : (const QList<TLog> &)logs) {
-        loggerWrite(logger);
+    for (auto log : (const QList<TLog> &)logs) {
+        loggerWrite(log);
     }
 }
 
 
 void TAbstractLogStream::loggerFlush()
 {
-    for (auto logger : (const QList<TLogger *> &)loggerList) {
+    for (auto *logger : (const QList<TLogger *> &)loggerList) {
         if (logger && logger->isOpen())
             logger->flush();
     }
-}
-
-
-void TAbstractLogStream::setNonBufferingMode()
-{
-    nonBuffering = true;
 }

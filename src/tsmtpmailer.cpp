@@ -15,9 +15,6 @@
 #include <TPopMailer>
 using namespace Tf;
 
-//#define tSystemError(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
-//#define tSystemDebug(fmt, ...)  printf(fmt "\n", ## __VA_ARGS__)
-
 /*!
   \class TSmtpMailer
   \brief The TSmtpMailer class provides a simple functionality to send

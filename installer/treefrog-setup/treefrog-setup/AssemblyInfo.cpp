@@ -16,7 +16,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("")];
 [assembly:AssemblyProductAttribute("treefrogsetup")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) 2010-2022")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) 2010-2023")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 
@@ -31,10 +31,9 @@ using namespace System::Security::Permissions;
 // すべての値を指定するか、下のように '*' を使ってリビジョンおよびビルド番号を
 // 既定値にすることができます:
 
-[assembly:AssemblyVersionAttribute("2.5.0")];
+[assembly:AssemblyVersionAttribute("2.6.0")];
 
 [assembly:ComVisible(false)];
 
 [assembly:CLSCompliantAttribute(true)];
 
-[assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];

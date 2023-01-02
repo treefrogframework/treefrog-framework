@@ -2,8 +2,8 @@
 #include "tcachemongostore.h"
 #include "tcacheredisstore.h"
 #include "tcachesqlitestore.h"
-#include "tcachememorystore.h"
 #include "tcachememcachedstore.h"
+#include "tcachesharedmemorystore.h"
 #include "tsystemglobal.h"
 #include <QDir>
 #include <TAppSettings>
@@ -46,7 +46,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
     } else if (k == MEMCACHED_CACHE_KEY) {
         ptr = new TCacheMemcachedStore;
     } else if (k == MEMORY_CACHE_KEY) {
-        ptr = new TCacheMemoryStore;
+        ptr = new TCacheSharedMemoryStore;
     } else {
         tSystemError("Not found cache store: %s", qUtf8Printable(key));
     }
@@ -90,7 +90,7 @@ QMap<QString, QVariant> TCacheFactory::defaultSettings(const QString &key)
     } else if (k == MEMCACHED_CACHE_KEY) {
         settings = TCacheMemcachedStore().defaultSettings();
     } else if (k == MEMORY_CACHE_KEY) {
-        settings = TCacheMemoryStore().defaultSettings();
+        settings = TCacheSharedMemoryStore().defaultSettings();
     } else {
         // Invalid key
     }
@@ -119,7 +119,7 @@ bool TCacheFactory::loadCacheKeys()
         MONGO_CACHE_KEY = TCacheMongoStore().key().toLower();
         REDIS_CACHE_KEY = TCacheRedisStore().key().toLower();
         MEMCACHED_CACHE_KEY = TCacheMemcachedStore().key().toLower();
-        MEMORY_CACHE_KEY = TCacheMemoryStore().key().toLower();
+        MEMORY_CACHE_KEY = TCacheSharedMemoryStore().key().toLower();
         return true;
     }();
     return done;
