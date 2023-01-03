@@ -10,13 +10,13 @@ usage()
 Usage: $0 [OPTION]... [VAR=VALUE]...
 
 Configuration:
-  -h, --help            display this help and exit
-  --enable-debug        compile with debugging information
-  --enable-gui-mod      compile and link with QtGui module
+  -h, --help              display this help and exit
   --enable-shared-mongoc  link the mongoc shared library
-  --enable-shared-lz4   link the lz4 shared library
-  --enable-shared-glog  link the glog shared library
-  --spec=SPEC           use SPEC as QMAKESPEC
+  --enable-shared-lz4     link the lz4 shared library
+  --enable-shared-glog    link the glog shared library
+  --enable-gui-mod        compile and link with QtGui module
+  --enable-debug          compile with debugging information
+  --spec=SPEC             use SPEC as QMAKESPEC
 
 Installation directories:
   --prefix=PREFIX       install files in PREFIX [$PREFIX]
