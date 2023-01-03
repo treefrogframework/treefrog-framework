@@ -14,7 +14,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL
 DEFINES += QT_DEPRECATED_WARNINGS
-INCLUDEPATH += ../include ../3rdparty/lz4/lib
+INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 MOC_DIR = .obj/
 OBJECTS_DIR = .obj/
@@ -38,22 +38,15 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  win32-msvc* {
-    LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
-  } else {
-    LIBS += ../3rdparty/lz4/lib/release/liblz4.a
-  }
-
+  INCLUDEPATH += ../3rdparty/lz4/lib
+  LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+
   lessThan(QT_MAJOR_VERSION, 6) {
-    win32-msvc* {
-      QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
-    }
+    QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
   } else {
-    win32-msvc* {
-      QMAKE_CXXFLAGS += /wd 4819 /wd 4661
-    }
+    QMAKE_CXXFLAGS += /wd 4819 /wd 4661
   }
 
   isEmpty(header.path) {
@@ -65,12 +58,17 @@ windows {
   test.path = $$header.path/TfTest
   INSTALLS += header script test
 } else:unix {
-  LIBS += ../3rdparty/lz4/lib/liblz4.a
-  macx:QMAKE_SONAME_PREFIX=@rpath
+  isEmpty( enable_shared_lz4 ) {
+    # Static link
+    LIBS += ../3rdparty/lz4/lib/liblz4.a
+    INCLUDEPATH += ../include ../3rdparty/lz4/lib
+  } else {
+    LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")
+  }
 
+  macx:QMAKE_SONAME_PREFIX=@rpath
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
-
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header test
@@ -432,10 +430,8 @@ freebsd {
 windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
   INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-  win32-msvc* {
-    LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
-    LIBS += -lws2_32 -lpsapi -lAdvapi32
-  }
+  LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
+  LIBS += -lws2_32 -lpsapi -lAdvapi32
 } else {
   isEmpty( enable_shared_mongoc ) {
     # Static link

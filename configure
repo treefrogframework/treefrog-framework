@@ -14,6 +14,7 @@ Configuration:
   --enable-debug        compile with debugging information
   --enable-gui-mod      compile and link with QtGui module
   --enable-shared-mongoc  link the mongoc shared library
+  --enable-shared-lz4   link the lz4 shared library
   --enable-shared-glog  link the glog shared library
   --spec=SPEC           use SPEC as QMAKESPEC
 
@@ -95,6 +96,9 @@ while [ -n "`echo $1 | grep '-'`" ]; do
       ;;
     --enable-shared-mongoc | --enable-shared-mongoc=*)
       ENABLE_SHARED_MONGOC="enable_shared_mongoc=1"
+      ;;
+    --enable-shared-lz4 | --enable-shared-lz4=*)
+      ENABLE_SHARED_LZ4="enable_shared_lz4=1"
       ;;
     --enable-shared-glog | --enable-shared-glog=*)
       ENABLE_SHARED_GLOG="enable_shared_glog=1"
@@ -191,7 +195,7 @@ fi
 cd "$BASEDIR/src"
 rm -f .qmake.stash
 [ -f Makefile ] && make -k distclean >/dev/null 2>&1
-$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_SHARED_MONGOC
+$QMAKE $OPT target.path=\"$LIBDIR\" header.path=\"$INCLUDEDIR\" $ENABLE_GUI $ENABLE_SHARED_MONGOC $ENABLE_SHARED_LZ4
 RET=$?
 if [ $RET != 0 ]; then
   echo "qmake failed"
@@ -246,18 +250,20 @@ fi
 
 # compile LZ4
 cd "$BASEDIR/3rdparty/lz4"
-echo
-echo -n "Compiling LZ4 ... "
 make clean >/dev/null 2>&1
-make -j${NPROC} lib >/dev/null 2>&1
-RET=$?
-if [ $RET != 0 ]; then
-  make SHELL='bash -x' lib
-  echo "failed"
-  echo "LZ4 not available."
-  exit $RET
+if [ -z "$ENABLE_SHARED_LZ4" ]; then
+  echo
+  echo -n "Compiling LZ4 ... "
+  make -j${NPROC} lib >/dev/null 2>&1
+  RET=$?
+  if [ $RET != 0 ]; then
+    make SHELL='bash -x' lib
+    echo "failed"
+    echo "LZ4 not available."
+    exit $RET
+  fi
+  echo "OK"
 fi
-echo "OK"
 
 echo
 echo "First, run \"make\" and \"sudo make install\" in src directory."
