@@ -57,13 +57,15 @@ windows {
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header script test
-} else:unix {
+} else {
+  # UNIX
   isEmpty( enable_shared_lz4 ) {
     # Static link
     LIBS += ../3rdparty/lz4/lib/liblz4.a
     INCLUDEPATH += ../include ../3rdparty/lz4/lib
   } else {
     LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")
+    QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I liblz4 2>/dev/null")
   }
 
   macx:QMAKE_SONAME_PREFIX=@rpath
@@ -428,24 +430,21 @@ freebsd {
 
 # Files for MongoDB
 windows {
+  # Windows
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
   INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
   LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
   LIBS += -lws2_32 -lpsapi -lAdvapi32
 } else {
+  # UNIX
   isEmpty( enable_shared_mongoc ) {
     # Static link
     INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
     LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
   } else {
-    macx {
-      # Homebrew
-      INCLUDEPATH += /usr/local/include/libmongoc-1.0 /usr/local/include/libbson-1.0
-      LIBS += -L/usr/local/lib -lmongoc-1.0 -lbson-1.0
-    } else {
-      INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
-      LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
-    }
+    # Shared link
+    LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
+    QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
   }
 }
 
