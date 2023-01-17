@@ -28,7 +28,7 @@ private:
     TAccessLogger _accesslogger;
     int _startPos {0};
 
-    TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, TAccessLogger &&logger);
     TSendBuffer(const QByteArray &header);
     TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
     TSendBuffer();

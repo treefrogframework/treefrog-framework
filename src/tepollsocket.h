@@ -25,7 +25,7 @@ public:
     void dispose();
     int socketDescriptor() const { return _socket; }
     QHostAddress peerAddress() const { return _peerAddress; }
-    void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
+    void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger);
     void sendData(const QByteArray &data);
     qint64 receiveData(char *buffer, qint64 length);
     QByteArray receiveAll();
@@ -50,7 +50,7 @@ public:
     virtual void process() { }
     virtual bool isProcessing() const { return false; }
 
-    static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger);
+    static TSendBuffer *createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, TAccessLogger &&logger);
     static TSendBuffer *createSendBuffer(const QByteArray &data);
 
 protected:
