@@ -37,6 +37,14 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Jan. 21, 2023
+### TreeFrog Framework version 2.6.1 (stable) release <span style="color: red;">New!</span>
+
+ - Fix a bug of outputting access log.
+ - Added a link option for LZ4 shared library on Linux of macOS.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Jan. 2, 2023
 ### TreeFrog Framework version 2.6.0 (stable) release <span style="color: red;">New!</span>
 
@@ -44,8 +52,6 @@ Jan. 2, 2023
  - Added a link option for Glog shared library.
  - Fix bugs of macros for command line interface.
  - Updated LZ4 to v1.9.4.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Nov. 1, 2022
 ### TreeFrog Framework version 2.5.0 (stable) release
