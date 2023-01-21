@@ -23,9 +23,11 @@ public:
 class T_CORE_EXPORT TAccessLogger {
 public:
     TAccessLogger();
-    TAccessLogger(const TAccessLogger &other);
+    TAccessLogger(const TAccessLogger &other) = delete;
+    TAccessLogger(TAccessLogger &&other);
     ~TAccessLogger();
-    TAccessLogger &operator=(const TAccessLogger &other);
+    TAccessLogger &operator=(const TAccessLogger &other) = delete;
+    TAccessLogger &operator=(TAccessLogger &&other);
 
     void open();
     void write();

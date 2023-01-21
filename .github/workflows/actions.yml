@@ -50,21 +50,21 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
-  build-ubuntu-mongoc:
+  build-ubuntu-sharedlink:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
         sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
         qmake -v
     - name: configure
-      run: ./configure --prefix=/usr/local --enable-shared-mongoc --spec=linux-clang
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang
     - name: make
       run: |
         make -j4 -C src
@@ -153,14 +153,14 @@ jobs:
         treefrog -v
         tspawn --show-drivers
 
-  build-macos-mongoc:
+  build-macos-sharedlink:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
-      run: brew install qt6 mongo-c-driver gflags glog
+      run: brew install qt6 mongo-c-driver gflags glog lz4
     - name: configure
-      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog
+      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
       run: |
         make -j4 -C src

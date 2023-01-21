@@ -496,8 +496,9 @@ QString TWebApplication::systemLogFilePath() const
 QString TWebApplication::accessLogFilePath() const
 {
     QString name = Tf::appSettings()->value(Tf::AccessLogFilePath).toString().trimmed();
-    if (name.isEmpty())
+    if (name.isEmpty()) {
         return name;
+    }
 
     QFileInfo fi(name);
     return (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();

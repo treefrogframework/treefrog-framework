@@ -17,10 +17,10 @@
 #include <TWebApplication>
 
 
-TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger) :
+TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, TAccessLogger &&logger) :
     _arrayBuffer(header),
     _fileRemove(autoRemove),
-    _accesslogger(logger)
+    _accesslogger(std::move(logger))
 {
     if (file.exists() && file.isFile()) {
         _bodyFile = new QFile(file.absoluteFilePath());
@@ -71,6 +71,7 @@ void TSendBuffer::release()
         delete _bodyFile;
         _bodyFile = nullptr;
     }
+    _accesslogger.close();
 }
 
 

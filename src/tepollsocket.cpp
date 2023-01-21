@@ -52,9 +52,9 @@ void setAddressAndPort(const QHostAddress &address, quint16 port, tf_sockaddr *a
 
 }
 
-TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
+TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, TAccessLogger &&logger)
 {
-    return new TSendBuffer(header, file, autoRemove, logger);
+    return new TSendBuffer(header, file, autoRemove, std::move(logger));
 }
 
 
@@ -350,9 +350,9 @@ void TEpollSocket::setSocketDescriptor(int socketDescriptor)
 }
 
 
-void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger)
 {
-    TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
+    TEpoll::instance()->setSendData(this, header, body, autoRemove, std::move(accessLogger));
 }
 
 
