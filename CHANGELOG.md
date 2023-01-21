@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.6.1
+  - Fix a bug of outputting access log.
+  - Added a link option for LZ4 shared library on Linux of macOS.
+
 ## 2.6.0
   - Implemented in-memory KVS for cache system.
   - Added a link option for Glog shared library.
