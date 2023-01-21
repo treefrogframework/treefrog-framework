@@ -41,7 +41,7 @@ Jan. 21, 2023
 ### TreeFrog Framework version 2.6.1 (stable) release <span style="color: red;">New!</span>
 
  - Fix a bug of outputting access log.
- - Added a link option for LZ4 shared library on Linux of macOS.
+ - Added a link option for LZ4 shared library on Linux or macOS.
 
   [<i class="fas fa-download"></i> Download this version](/en/download/)
 
