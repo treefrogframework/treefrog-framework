@@ -30,7 +30,7 @@ static QByteArray createHash()
     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
     data.append(QByteArray::number((qulonglong)qApp));
     data.append(QByteArray::number((qulonglong)Tf::rand64_r()));
-    return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
+    return QCryptographicHash::hash(data, QCryptographicHash::Sha3_256).toHex();
 }
 
 
