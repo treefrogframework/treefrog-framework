@@ -143,30 +143,25 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
 
             if (Q_LIKELY(stack.pop(name))) {
                 auto tdb = TSqlDatabase::database(name);
-                if (Q_UNLIKELY(tdb.sqlDatabase().isOpen())) {
-                    tSystemWarn("Gets a opend database: %s", qUtf8Printable(tdb.connectionName()));
-                    return tdb.sqlDatabase();
-                } else {
-                    if (Q_UNLIKELY(!tdb.sqlDatabase().open())) {
-                        tError("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
-                        tSystemError("SQL database open error: %s", qUtf8Printable(tdb.sqlDatabase().connectionName()));
-                        stack.push(name);
-                        return QSqlDatabase();
-                    }
-
-                    tSystemDebug("SQL database opened successfully (env:%s)", qUtf8Printable(Tf::app()->databaseEnvironment()));
-                    tSystemDebug("Gets database: %s", qUtf8Printable(tdb.sqlDatabase().connectionName()));
-
-                    // Executes setup-queries
-                    if (!tdb.postOpenStatements().isEmpty()) {
-                        TSqlQuery query(tdb.sqlDatabase());
-                        for (QString st : tdb.postOpenStatements()) {
-                            st = st.trimmed();
-                            query.exec(st);
-                        }
-                    }
-                    return tdb.sqlDatabase();
+                if (Q_UNLIKELY(!tdb.sqlDatabase().open())) {
+                    tError("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
+                    tSystemError("SQL database open error: %s", qUtf8Printable(tdb.sqlDatabase().connectionName()));
+                    stack.push(name);
+                    return QSqlDatabase();
                 }
+
+                tSystemDebug("SQL database opened successfully (env:%s)", qUtf8Printable(Tf::app()->databaseEnvironment()));
+                tSystemDebug("Gets database: %s", qUtf8Printable(tdb.sqlDatabase().connectionName()));
+
+                // Executes setup-queries
+                if (!tdb.postOpenStatements().isEmpty()) {
+                    TSqlQuery query(tdb.sqlDatabase());
+                    for (QString st : tdb.postOpenStatements()) {
+                        st = st.trimmed();
+                        query.exec(st);
+                    }
+                }
+                return tdb.sqlDatabase();
             }
         }
     }

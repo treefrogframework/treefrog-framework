@@ -414,7 +414,7 @@ bool TEpollSocket::waitForDataSent(int msecs)
 
 bool TEpollSocket::waitForDataReceived(int msecs)
 {
-    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataReceived, msecs);
 }
 
 

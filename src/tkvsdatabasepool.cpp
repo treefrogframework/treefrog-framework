@@ -194,30 +194,25 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 
         if (Q_LIKELY(stack.pop(name))) {
             db = TKvsDatabase::database(name);
-            if (Q_UNLIKELY(db.isOpen())) {
-                tSystemWarn("Gets a opend KVS database: %s", qUtf8Printable(db.connectionName()));
-                return db;
-            } else {
-                db.moveToThread(QThread::currentThread());  // move to thread
+            db.moveToThread(QThread::currentThread());  // move to thread
 
-                if (Q_UNLIKELY(!db.open())) {
-                    tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
-                    tSystemError("KVS database open error: %s", qUtf8Printable(db.connectionName()));
-                    return TKvsDatabase();
-                }
-
-                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qUtf8Printable(Tf::app()->databaseEnvironment()), qUtf8Printable(db.connectionName()), qUtf8Printable(db.databaseName()));
-                tSystemDebug("Gets KVS database: %s", qUtf8Printable(db.connectionName()));
-                // Executes post-open statements
-                if (!db.postOpenStatements().isEmpty()) {
-                    for (QString st : db.postOpenStatements()) {
-                        st = st.trimmed();
-                        db.command(st);
-                    }
-                }
-
-                return db;
+            if (Q_UNLIKELY(!db.open())) {
+                tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
+                tSystemError("KVS database open error: %s", qUtf8Printable(db.connectionName()));
+                return TKvsDatabase();
             }
+
+            tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qUtf8Printable(Tf::app()->databaseEnvironment()), qUtf8Printable(db.connectionName()), qUtf8Printable(db.databaseName()));
+            tSystemDebug("Gets KVS database: %s", qUtf8Printable(db.connectionName()));
+            // Executes post-open statements
+            if (!db.postOpenStatements().isEmpty()) {
+                for (QString st : db.postOpenStatements()) {
+                    st = st.trimmed();
+                    db.command(st);
+                }
+            }
+
+            return db;
         }
     }
 
