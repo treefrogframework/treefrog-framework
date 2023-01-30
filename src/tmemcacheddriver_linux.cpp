@@ -42,7 +42,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 
     bool ret = _client->waitForConnected(1000);
     if (ret) {
-        tSystemDebug("Memcached open successfully");
+        tSystemDebug("Memcached open successfully. sd:%d", _client->socketDescriptor());
     } else {
         tSystemError("Memcached open failed");
         close();

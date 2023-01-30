@@ -26,6 +26,12 @@ TTcpSocket::~TTcpSocket()
 }
 
 
+int TTcpSocket::socketDescriptor() const
+{
+    return _esocket->socketDescriptor();
+}
+
+
 bool TTcpSocket::setSocketOption(int level, int optname, int val)
 {
     return _esocket->setSocketOption(level, optname, val);

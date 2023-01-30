@@ -11,6 +11,7 @@ public:
     virtual ~TTcpSocket();
 
     Tf::SocketState state() const;
+    int socketDescriptor() const;
     void close();
     bool setSocketOption(int level, int optname, int val);
     void connectToHost(const QString &hostName, quint16 port);

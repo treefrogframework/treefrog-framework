@@ -137,6 +137,7 @@ void TEpollSocket::close()
         tf_close_socket(_socket);
         _socket = 0;
     }
+    _state = Tf::SocketState::Unconnected;
 }
 
 
