@@ -42,6 +42,7 @@ private slots:
     void benchSha3_224();
     void benchSha3_256();
     void benchSha3_512();
+    void benchUuid();
 };
 
 
@@ -246,74 +247,82 @@ void TestHMAC::crammd5()
 
 void TestHMAC::benchBase64()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QByteArray::fromBase64(str.toBase64());
+        (void)QByteArray::fromBase64(str.toBase64());
     }
 }
 
 
 void TestHMAC::benchHex()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QByteArray::fromHex(str.toHex());
+        (void)QByteArray::fromHex(str.toHex());
     }
 }
 
 
 void TestHMAC::benchSha224()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QCryptographicHash::hash(str, QCryptographicHash::Sha224);
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha224);
     }
 }
 
 
 void TestHMAC::benchSha256()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QCryptographicHash::hash(str, QCryptographicHash::Sha256);
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha256);
     }
 }
 
 
 void TestHMAC::benchSha512()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QCryptographicHash::hash(str, QCryptographicHash::Sha512);
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha512);
     }
 }
 
 
 void TestHMAC::benchSha3_224()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QCryptographicHash::hash(str, QCryptographicHash::Sha3_224);
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha3_224);
     }
 }
 
 
 void TestHMAC::benchSha3_256()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QCryptographicHash::hash(str, QCryptographicHash::Sha3_256);
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha3_256);
     }
 }
 
 
 void TestHMAC::benchSha3_512()
 {
+    auto str = randomString(500);
     QBENCHMARK {
-        auto str = randomString(500);
-        str = QCryptographicHash::hash(str, QCryptographicHash::Sha3_512);
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha3_512);
     }
 }
+
+void TestHMAC::benchUuid()
+{
+    QBENCHMARK {
+        (void)QUuid::createUuid().toByteArray(QUuid::Id128);
+    }
+}
+
 
 QTEST_APPLESS_MAIN(TestHMAC)
 #include "main.moc"
