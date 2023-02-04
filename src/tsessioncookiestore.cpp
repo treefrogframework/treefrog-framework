@@ -80,7 +80,7 @@ TSession TSessionCookieStore::find(const QByteArray &id)
             QByteArray ba = QByteArray::fromBase64(data);
             QByteArray digest = QMessageAuthenticationCode::hash(ba, sessionSecret(), QCryptographicHash::Sha3_256);
 
-            if (digest != QByteArray::fromBase64(dgstr)) {
+            if (!Tf::strcmp(digest, QByteArray::fromBase64(dgstr))) {
                 tSystemWarn("Recieved a tampered cookie or that of other web application.");
                 //throw SecurityException("Tampered with cookie", __FILE__, __LINE__);
                 return session;

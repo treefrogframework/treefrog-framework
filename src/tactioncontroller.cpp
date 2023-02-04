@@ -265,7 +265,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
     }
 
     tSystemDebug("postAuthToken: %s", postAuthToken.data());
-    return (postAuthToken == authenticityToken());
+    return Tf::strcmp(postAuthToken, authenticityToken());
 }
 
 /*!

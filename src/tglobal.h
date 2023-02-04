@@ -289,6 +289,11 @@ T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLeve
 T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 
+inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
+{
+    return str1.length() == str2.length() && !strncmp(str1.data(), str2.data(), str1.length());
+}
+
 constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";
 constexpr auto CRLF = "\x0d\x0a";
