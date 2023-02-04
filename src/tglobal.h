@@ -291,7 +291,7 @@ T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
 
 inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
 {
-    return str1.length() == str2.length() && !strncmp(str1.data(), str2.data(), str1.length());
+    return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
 
 constexpr auto CR = "\x0d";
