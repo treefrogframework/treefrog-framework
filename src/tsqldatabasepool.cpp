@@ -260,10 +260,15 @@ void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
                 tSystemWarn("Force close database: %s", qUtf8Printable(database.connectionName()));
                 closeDatabase(database);
             } else {
-                // pool
-                cachedDatabase[databaseId].push(database.connectionName());
-                lastCachedTime[databaseId].store((uint)std::time(nullptr));
-                tSystemDebug("Pooled database: %s", qUtf8Printable(database.connectionName()));
+                if (database.isOpen()) {
+                    // pool
+                    cachedDatabase[databaseId].push(database.connectionName());
+                    lastCachedTime[databaseId].store((uint)std::time(nullptr));
+                    tSystemDebug("Pooled database: %s", qUtf8Printable(database.connectionName()));
+                } else {
+                    tSystemWarn("Closed SQL database connection, name: %s", qUtf8Printable(database.connectionName()));
+                    availableNames[databaseId].push(database.connectionName());
+                }
             }
         } else {
             tSystemError("Pooled invalid database  [%s:%d]", __FILE__, __LINE__);

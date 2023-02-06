@@ -82,12 +82,13 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
 
 bool TRedisDriver::readReply()
 {
-    if (Q_UNLIKELY(!isOpen())) {
+    if (!isOpen()) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
 
     if (!_client->waitForDataReceived(5000)) {
+        tSystemWarn("Redis response timeout");
         return false;
     }
 
