@@ -325,9 +325,8 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 
 void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 {
-    QMutexLocker locker(&_mutex);
-
     if (event->timerId() == timer.timerId()) {
+        QMutexLocker locker(&_mutex);
         QString name;
 
         // Closes extra-connection

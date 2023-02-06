@@ -280,9 +280,8 @@ void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
 
 void TSqlDatabasePool::timerEvent(QTimerEvent *event)
 {
-    QMutexLocker locker(&_mutex);
-
     if (event->timerId() == timer.timerId()) {
+        QMutexLocker locker(&_mutex);
         QString name;
 
         // Closes extra-connection
