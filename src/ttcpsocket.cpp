@@ -119,6 +119,12 @@ Tf::SocketState TTcpSocket::state() const
 }
 
 
+qint64 TTcpSocket::receivedSize() const
+{
+    return _esocket->receivedSize();
+}
+
+
 qint64 TTcpSocket::receiveData(char *data, qint64 maxSize)
 {
     if (state() != Tf::SocketState::Connected) {

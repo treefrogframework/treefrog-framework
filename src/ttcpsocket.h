@@ -18,6 +18,7 @@ public:
     bool waitForConnected(int msecs);
     bool waitForDataReceived(int msecs);
     bool waitForDataSent(int msecs);
+    qint64 receivedSize() const;
     qint64 receiveData(char *data, qint64 maxSize);
     QByteArray receiveAll();
     qint64 sendData(const char *data, qint64 size);
