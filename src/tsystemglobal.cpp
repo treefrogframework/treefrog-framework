@@ -7,7 +7,7 @@
 
 #include "tsystemglobal.h"
 #include "taccesslogstream.h"
-#include "tfileaiowriter.h"
+#include "tfilesystemlogger.h"
 #include <QByteArray>
 #include <QDateTime>
 #include <QDir>
@@ -67,7 +67,7 @@ void Tf::setupSystemLogger(TSystemLogger *logger)
     }
 
     // system logger
-    systemLogger = (logger) ? logger : new TFileAioWriter(Tf::app()->systemLogFilePath());
+    systemLogger = (logger) ? logger : new TFileSystemLogger(Tf::app()->systemLogFilePath());
     systemLogger->open();
 
     syslogLayout = Tf::appSettings()->value(Tf::SystemLogLayout).toByteArray();

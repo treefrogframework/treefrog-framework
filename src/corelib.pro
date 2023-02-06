@@ -350,6 +350,8 @@ HEADERS += tsharedmemorykvsdriver.h
 SOURCES += tsharedmemorykvsdriver.cpp
 HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
+HEADERS += tfilesystemlogger.h
+SOURCES += tfilesystemlogger.cpp
 
 # Header only
 HEADERS += tfnamespace.h
