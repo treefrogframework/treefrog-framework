@@ -27,6 +27,7 @@ public:
     QHostAddress peerAddress() const { return _peerAddress; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger);
     void sendData(const QByteArray &data);
+    qint64 receivedSize() const { return _recvBuffer.length(); }
     qint64 receiveData(char *buffer, qint64 length);
     QByteArray receiveAll();
     bool waitForConnected(int msecs = 5000);

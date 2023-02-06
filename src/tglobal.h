@@ -252,6 +252,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include "tdeclexport.h"
 #include <TDebug>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 
 class TWebApplication;
