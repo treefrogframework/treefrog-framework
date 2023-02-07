@@ -82,21 +82,30 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
 
 bool TRedisDriver::readReply()
 {
-    if (Q_UNLIKELY(!isOpen())) {
+    if (!isOpen()) {
         tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
         return false;
     }
 
-    QByteArray buf;
-    if (_client->waitForDataReceived(5000)) {
-        buf = _client->receiveAll();
-        if (buf.isEmpty()) {
-            tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
-        } else {
-            _buffer += buf;
-        }
+    if (!_client->waitForDataReceived(5000)) {
+        tSystemWarn("Redis response timeout");
+        return false;
     }
-    return !buf.isEmpty();
+
+    qint64 recvlen = _client->receivedSize();
+    if (recvlen <= 0) {
+        tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
+        return false;
+    }
+
+    auto len = _buffer.length();
+    _buffer.reserve(len + recvlen);
+    _client->receiveData(_buffer.data() + len, recvlen);
+    _buffer.resize(len + recvlen);
+    // Don't use _client->receiveAll() here,
+    // occur 'double free or corruption'..
+
+    return true;
 }
 
 

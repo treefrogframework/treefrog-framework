@@ -26,6 +26,12 @@ TTcpSocket::~TTcpSocket()
 }
 
 
+int TTcpSocket::socketDescriptor() const
+{
+    return _esocket->socketDescriptor();
+}
+
+
 bool TTcpSocket::setSocketOption(int level, int optname, int val)
 {
     return _esocket->setSocketOption(level, optname, val);
@@ -110,6 +116,12 @@ bool TTcpSocket::waitForDataSent(int msecs)
 Tf::SocketState TTcpSocket::state() const
 {
     return _esocket->state();
+}
+
+
+qint64 TTcpSocket::receivedSize() const
+{
+    return _esocket->receivedSize();
 }
 
 

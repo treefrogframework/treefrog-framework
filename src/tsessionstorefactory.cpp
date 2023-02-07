@@ -10,6 +10,7 @@
 #include "tsessionfilestore.h"
 #include "tsessionmongostore.h"
 #include "tsessionredisstore.h"
+#include "tsessionmemcachedstore.h"
 #include "tsessionsqlobjectstore.h"
 #include "tsystemglobal.h"
 #include <QDir>
@@ -28,6 +29,7 @@ QString COOKIE_SESSION_KEY;
 QString SQLOBJECT_SESSION_KEY;
 QString FILE_SESSION_KEY;
 QString REDIS_SESSION_KEY;
+QString MEMCACHED_SESSION_KEY;
 QString MONGODB_SESSION_KEY;
 
 
@@ -39,6 +41,7 @@ void loadKeys()
         SQLOBJECT_SESSION_KEY = TSessionSqlObjectStore().key().toLower();
         FILE_SESSION_KEY = TSessionFileStore().key().toLower();
         REDIS_SESSION_KEY = TSessionRedisStore().key().toLower();
+        MEMCACHED_SESSION_KEY = TSessionMemcachedStore().key().toLower();
         MONGODB_SESSION_KEY = TSessionMongoStore().key().toLower();
         return true;
     }();
@@ -97,6 +100,7 @@ QStringList TSessionStoreFactory::keys()
         << SQLOBJECT_SESSION_KEY
         << FILE_SESSION_KEY
         << REDIS_SESSION_KEY
+        << MEMCACHED_SESSION_KEY
         << MONGODB_SESSION_KEY
         << sessionStoreIfMap()->keys();
 
@@ -130,6 +134,9 @@ TSessionStore *TSessionStoreFactory::create(const QString &key)
     } else if (k == REDIS_SESSION_KEY) {
         static TSessionRedisStore redisStore;
         ret = &redisStore;
+    } else if (k == MEMCACHED_SESSION_KEY) {
+        static TSessionMemcachedStore memcachedStore;
+        ret = &memcachedStore;
     } else if (k == MONGODB_SESSION_KEY) {
         static TSessionMongoStore mongoStore;
         ret = &mongoStore;
@@ -161,6 +168,8 @@ void TSessionStoreFactory::destroy(const QString &key, TSessionStore *store)
     } else if (k == FILE_SESSION_KEY) {
         // do nothing
     } else if (k == REDIS_SESSION_KEY) {
+        // do nothing
+    } else if (k == MEMCACHED_SESSION_KEY) {
         // do nothing
     } else if (k == MONGODB_SESSION_KEY) {
         // do nothing

@@ -137,6 +137,7 @@ void TEpollSocket::close()
         tf_close_socket(_socket);
         _socket = 0;
     }
+    _state = Tf::SocketState::Unconnected;
 }
 
 
@@ -414,7 +415,7 @@ bool TEpollSocket::waitForDataSent(int msecs)
 
 bool TEpollSocket::waitForDataReceived(int msecs)
 {
-    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataReceived, msecs);
 }
 
 

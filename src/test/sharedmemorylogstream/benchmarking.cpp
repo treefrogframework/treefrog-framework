@@ -3,8 +3,8 @@
 //#include "tsharedmemorylogstream.h"
 #include "tbasiclogstream.h"
 #include "tfilelogger.h"
-#include "tfileaiologger.h"
-#include "tfileaiowriter.h"
+#include "trash/tfileaiologger.h"
+#include "trash/tfileaiowriter.h"
 
 
 class BenchMark : public QObject

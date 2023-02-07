@@ -190,6 +190,8 @@ HEADERS += tsessionfilestore.h
 SOURCES += tsessionfilestore.cpp
 HEADERS += tsessionredisstore.h
 SOURCES += tsessionredisstore.cpp
+HEADERS += tsessionmemcachedstore.h
+SOURCES += tsessionmemcachedstore.cpp
 HEADERS += thtmlparser.h
 SOURCES += thtmlparser.cpp
 HEADERS += tabstractmodel.h
@@ -228,8 +230,6 @@ HEADERS += tpopmailer.h
 SOURCES += tpopmailer.cpp
 HEADERS += tsendmailmailer.h
 SOURCES += tsendmailmailer.cpp
-HEADERS += tcryptmac.h
-SOURCES += tcryptmac.cpp
 HEADERS += tinternetmessageheader.h
 SOURCES += tinternetmessageheader.cpp
 HEADERS += thttpheader.h
@@ -256,12 +256,12 @@ HEADERS += tmemcacheddriver.h
 SOURCES += tmemcacheddriver.cpp
 HEADERS += tredis.h
 SOURCES += tredis.cpp
-HEADERS += tfileaiologger.h
-SOURCES += tfileaiologger.cpp
+#HEADERS += tfileaiologger.h
+#SOURCES += tfileaiologger.cpp
 HEADERS += tsystemlogger.h
 SOURCES += tsystemlogger.cpp
-HEADERS += tfileaiowriter.h
-SOURCES += tfileaiowriter.cpp
+#HEADERS += tfileaiowriter.h
+#SOURCES += tfileaiowriter.cpp
 HEADERS += tstdoutsystemlogger.h
 SOURCES += tstdoutsystemlogger.cpp
 HEADERS += tstderrsystemlogger.h
@@ -350,6 +350,8 @@ HEADERS += tsharedmemorykvsdriver.h
 SOURCES += tsharedmemorykvsdriver.cpp
 HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
+HEADERS += tfilesystemlogger.h
+SOURCES += tfilesystemlogger.cpp
 
 # Header only
 HEADERS += tfnamespace.h
@@ -374,7 +376,7 @@ windows {
   HEADERS += tfcore_win.h
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
-  SOURCES += tfileaiowriter_win.cpp
+#  SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
@@ -417,7 +419,7 @@ unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
-  SOURCES += tfileaiowriter_unix.cpp
+#  SOURCES += tfileaiowriter_unix.cpp
   SOURCES += tsharedmemory_unix.cpp
 }
 

@@ -581,7 +581,7 @@ int TSqlORMapper<T>::updateAll(const TCriteria &cri, const QMap<int, QVariant> &
     for (int i = obj.metaObject()->propertyOffset(); i < obj.metaObject()->propertyCount(); ++i) {
         const char *propName = obj.metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
-        if (prop == UpdatedAt || prop == ModifiedAt) {
+        if (Tf::strcmp(prop, UpdatedAt) || Tf::strcmp(prop, ModifiedAt)) {
             upd += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, db.driver());
             upd += QLatin1Char('=');
 #if QT_VERSION < 0x060000

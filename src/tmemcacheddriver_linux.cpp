@@ -42,7 +42,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 
     bool ret = _client->waitForConnected(1000);
     if (ret) {
-        tSystemDebug("Memcached open successfully");
+        tSystemDebug("Memcached open successfully. sd:%d", _client->socketDescriptor());
     } else {
         tSystemError("Memcached open failed");
         close();
@@ -77,18 +77,30 @@ bool TMemcachedDriver::writeCommand(const QByteArray &command)
 
 QByteArray TMemcachedDriver::readReply(int msecs)
 {
+    QByteArray buffer;
+
     if (!isOpen()) {
         tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
-        return QByteArray();
+        return buffer;
     }
 
-    bool ret = _client->waitForDataReceived(msecs);
-    if (!ret) {
+    if (!_client->waitForDataReceived(msecs)) {
         tSystemWarn("memcached response timeout");
-        return QByteArray();
+        return buffer;
     }
 
-    return _client->receiveAll();
+    qint64 recvlen = _client->receivedSize();
+    if (recvlen <= 0) {
+        tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
+        return buffer;
+    }
+
+    buffer.reserve(recvlen);
+    _client->receiveData(buffer.data(), recvlen);
+    buffer.resize(recvlen);
+    // Don't use _client->receiveAll() here,
+    // occur 'double free or corruption'..
+    return buffer;
 }
 
 

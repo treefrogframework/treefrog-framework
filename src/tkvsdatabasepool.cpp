@@ -14,6 +14,7 @@
 #include <QMap>
 #include <QStringList>
 #include <QThread>
+#include <QMutexLocker>
 #include <TWebApplication>
 #include <ctime>
 
@@ -70,6 +71,7 @@ TKvsDatabasePool::TKvsDatabasePool() :
 
 TKvsDatabasePool::~TKvsDatabasePool()
 {
+    QMutexLocker locker(&_mutex);
     timer.stop();
 
     for (int eng = 0; eng < (int)Tf::KvsEngine::Num; eng++) {
@@ -79,13 +81,15 @@ TKvsDatabasePool::~TKvsDatabasePool()
 
         auto &cache = cachedDatabase[eng];
         QString name;
-        while (cache.pop(name)) {
+        while (!cache.isEmpty()) {
+            name = cache.pop();
             TKvsDatabase::database(name).close();
             TKvsDatabase::removeDatabase(name);
         }
 
         auto &stack = availableNames[eng];
-        while (stack.pop(name)) {
+        while (!stack.isEmpty()) {
+            name = stack.pop();
             TKvsDatabase::removeDatabase(name);
         }
     }
@@ -102,9 +106,11 @@ void TKvsDatabasePool::init()
         return;
     }
 
-    cachedDatabase = new TStack<QString>[(int)Tf::KvsEngine::Num];
+    QMutexLocker locker(&_mutex);
+
+    cachedDatabase = new QStack<QString>[(int)Tf::KvsEngine::Num];
     lastCachedTime = new TAtomic<uint>[(int)Tf::KvsEngine::Num];
-    availableNames = new TStack<QString>[(int)Tf::KvsEngine::Num];
+    availableNames = new QStack<QString>[(int)Tf::KvsEngine::Num];
     bool aval = false;
 
     // Adds databases previously
@@ -120,7 +126,7 @@ void TKvsDatabasePool::init()
             tSystemDebug("KVS database available. engine:%d", (int)engine);
         }
 
-        TStack<QString> &stack = availableNames[(int)engine];
+        auto &stack = availableNames[(int)engine];
         for (int i = 0; i < maxConnects; ++i) {
             TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString::asprintf(CONN_NAME_FORMAT, (int)engine, i));
             if (!db.isValid()) {
@@ -143,7 +149,7 @@ void TKvsDatabasePool::init()
 
 TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 {
-    TKvsDatabase db;
+    QMutexLocker locker(&_mutex);
 
     if (!Tf::app()->isKvsAvailable(engine)) {
         switch (engine) {
@@ -171,7 +177,7 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
             break;
         }
-        return db;
+        return TKvsDatabase();
     }
 
     auto &cache = cachedDatabase[(int)engine];
@@ -179,8 +185,9 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
 
     for (;;) {
         QString name;
-        if (cache.pop(name)) {
-            db = TKvsDatabase::database(name);
+        if (!cache.isEmpty()) {
+            name = cache.pop();
+            auto db = TKvsDatabase::database(name);
             if (Q_LIKELY(db.isOpen())) {
                 tSystemDebug("Gets cached KVS database: %s", qUtf8Printable(db.connectionName()));
                 db.moveToThread(QThread::currentThread());  // move to thread
@@ -192,32 +199,28 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             }
         }
 
-        if (Q_LIKELY(stack.pop(name))) {
-            db = TKvsDatabase::database(name);
-            if (Q_UNLIKELY(db.isOpen())) {
-                tSystemWarn("Gets a opend KVS database: %s", qUtf8Printable(db.connectionName()));
-                return db;
-            } else {
-                db.moveToThread(QThread::currentThread());  // move to thread
+        if (Q_LIKELY(!stack.isEmpty())) {
+            name = stack.pop();
+            auto db = TKvsDatabase::database(name);
+            db.moveToThread(QThread::currentThread());  // move to thread
 
-                if (Q_UNLIKELY(!db.open())) {
-                    tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
-                    tSystemError("KVS database open error: %s", qUtf8Printable(db.connectionName()));
-                    return TKvsDatabase();
-                }
-
-                tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qUtf8Printable(Tf::app()->databaseEnvironment()), qUtf8Printable(db.connectionName()), qUtf8Printable(db.databaseName()));
-                tSystemDebug("Gets KVS database: %s", qUtf8Printable(db.connectionName()));
-                // Executes post-open statements
-                if (!db.postOpenStatements().isEmpty()) {
-                    for (QString st : db.postOpenStatements()) {
-                        st = st.trimmed();
-                        db.command(st);
-                    }
-                }
-
-                return db;
+            if (Q_UNLIKELY(!db.open())) {
+                tError("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
+                tSystemError("KVS database open error: %s", qUtf8Printable(db.connectionName()));
+                return TKvsDatabase();
             }
+
+            tSystemDebug("KVS opened successfully  env:%s connectname:%s dbname:%s", qUtf8Printable(Tf::app()->databaseEnvironment()), qUtf8Printable(db.connectionName()), qUtf8Printable(db.databaseName()));
+            tSystemDebug("Gets KVS database: %s", qUtf8Printable(db.connectionName()));
+            // Executes post-open statements
+            if (!db.postOpenStatements().isEmpty()) {
+                for (QString st : db.postOpenStatements()) {
+                    st = st.trimmed();
+                    db.command(st);
+                }
+            }
+
+            return db;
         }
     }
 
@@ -278,13 +281,15 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
 
 TKvsDatabaseData TKvsDatabasePool::getDatabaseSettings(Tf::KvsEngine engine) const
 {
+    QMutexLocker locker(&_mutex);
+
     TKvsDatabaseData settrings;
     auto &stack = availableNames[(int)engine];
 
+    QString name;
     for (;;) {
-        QString name;
-
-        if (Q_LIKELY(stack.pop(name))) {
+        if (Q_LIKELY(!stack.isEmpty())) {
+            name = stack.pop();
             return TKvsDatabase::settings(name);
             stack.push(name);
         }
@@ -296,6 +301,8 @@ TKvsDatabaseData TKvsDatabasePool::getDatabaseSettings(Tf::KvsEngine engine) con
 
 void TKvsDatabasePool::pool(TKvsDatabase &database)
 {
+    QMutexLocker locker(&_mutex);
+
     if (Q_LIKELY(database.isValid())) {
         bool ok;
         int engine = database.connectionName().left(2).toInt(&ok);
@@ -303,9 +310,14 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
         }
 
-        cachedDatabase[engine].push(database.connectionName());
-        lastCachedTime[engine].store((uint)std::time(nullptr));
-        tSystemDebug("Pooled KVS database: %s", qUtf8Printable(database.connectionName()));
+        if (database.isOpen()) {
+            cachedDatabase[engine].push(database.connectionName());
+            lastCachedTime[engine].store((uint)std::time(nullptr));
+            tSystemDebug("Pooled KVS database: %s  count:%lld", qUtf8Printable(database.connectionName()), cachedDatabase->count());
+        } else {
+            tSystemWarn("Closed KVS database connection, name: %s", qUtf8Printable(database.connectionName()));
+            availableNames[engine].push(database.connectionName());
+        }
     }
     database = TKvsDatabase();  // Sets an invalid object
 }
@@ -314,6 +326,7 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
 void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer.timerId()) {
+        QMutexLocker locker(&_mutex);
         QString name;
 
         // Closes extra-connection
@@ -324,7 +337,8 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 
             auto &cache = cachedDatabase[e];
             while (lastCachedTime[e].load() < (uint)std::time(nullptr) - 30
-                && cache.pop(name)) {
+                && !cache.isEmpty()) {
+                name = cache.pop();
                 TKvsDatabase::database(name).close();
                 tSystemDebug("Closed KVS database connection, name: %s", qUtf8Printable(name));
                 availableNames[e].push(name);

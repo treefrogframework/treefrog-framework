@@ -321,6 +321,9 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
         }
     }
 
+    // KVS pool
+    releaseKvsDatabases();
+
     // WebSocket tasks
     if (Q_UNLIKELY(!controller->_taskList.isEmpty())) {
         QVariantList lst;

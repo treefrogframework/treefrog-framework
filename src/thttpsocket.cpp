@@ -165,7 +165,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
         } else {
             qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
             if (Q_UNLIKELY(written <= 0)) {
-                tWarn("socket write error: total:%d (%d)", (int)total, (int)written);
+                tWarn("socket write error: total:%d (%d)  data length:%d", (int)total, (int)written, (int)size);
                 return -1;
             }
 
