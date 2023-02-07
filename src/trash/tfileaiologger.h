@@ -5,7 +5,7 @@
 class TFileAioWriter;
 
 
-class T_CORE_EXPORT TFileAioLogger : public TLogger {
+class TFileAioLogger : public TLogger {
 public:
     TFileAioLogger();
     ~TFileAioLogger();
