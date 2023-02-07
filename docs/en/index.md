@@ -19,7 +19,7 @@ Web applications can run faster than that of scripting language because the serv
   5. WebSocket support  - Providing full-duplex communications channels
   6. Generator  - Generates scaffolds, Makefiles and vue.js templates
   7. Various response types  - JSON, XML and CBOR
-  8. Cross-platform  - Same source code can work on Windows, macOS and Linux
+  8. Multi-platform  - Same source code can work on Windows, macOS and Linux
   9. OSS  - New BSD License
 
 

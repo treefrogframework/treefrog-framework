@@ -21,7 +21,7 @@ TreeFrog Framework には次のような特徴があります。
   5. WebSocket 対応 ： サーバと双方向通信が可能
   6. ジェネレータ ： 「足場」となるソースコード, Makefile や vue.js テンプレートを生成
   7. 様々なレスポンスタイプに対応 ： JSON, XML, CBOR
-  8. クロスプラットフォーム ： Windows, macOS, Linuxで同じソースコードが動作
+  8. マルチプラットフォーム ： Windows, macOS, Linuxで同じソースコードが動作
   9. オープンソースソフトウェア ： New BSD License
 
 

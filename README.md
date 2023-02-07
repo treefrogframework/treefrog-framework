@@ -19,11 +19,11 @@ policy of convention over configuration.
 - O/R mapping - Conceals complex and troublesome database accesses
 - Template system - ERB-like template engine adopted
 - Supports for many DB - MySQL, PostgreSQL, ODBC, SQLite, Oracle, DB2,
-  InterBase, MongoDB and Redis.
+  InterBase, MongoDB, Memcached and Redis.
 - WebSocket support - Providing full-duplex communications channels
 - Generator - Generates scaffolds and Makefiles automatically
 - Supports various response types - JSON, XML and CBOR
-- Cross-platform - Windows, macOS, Linux, etc. Write once, compile anywhere.
+- Multi-platform - Windows, macOS, Linux, etc. Write once, compile anywhere.
 - OSS - New BSD License
 
 ## Requirements
