@@ -158,7 +158,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
-      run: brew install qt6 mongo-c-driver gflags glog lz4
+      run: brew install qt6 pkg-config jq mongo-c-driver gflags glog lz4
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
