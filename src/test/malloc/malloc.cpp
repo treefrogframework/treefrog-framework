@@ -219,7 +219,7 @@ void TestMalloc::testReuse1()
     alloc->dump();
     QCOMPARE(alloc->countBlocks(), 2);
     QCOMPARE(alloc->countFreeBlocks(), 1);
-    void *p3 = alloc->malloc(800);
+    void *p3 = alloc->malloc(900);
     alloc->dump();
     QCOMPARE(p1, p3);
     QCOMPARE(alloc->countBlocks(), 2);
