@@ -120,14 +120,7 @@ if [ "$SPEC" != "" ]; then
 elif [ "$QMAKESPEC" != "" ]; then
   OPT="-spec $QMAKESPEC"
 elif [ "$KERNEL" = "Darwin" ]; then  # macOS
-  QT_VERSION=$(echo $(qmake -v) | awk '{ print $7 }')
-  QT_MAJOR=${QT_VERSION:0:1}
-
-  if [ "$QT_MAJOR" -ge 5 ]; then
-    OPT="-spec macx-clang"
-  else
-    OPT="-spec macx-g++"
-  fi
+  OPT="-spec macx-clang"
 elif [ "$KERNEL" = "Linux" ]; then
   OPT="-spec linux-g++"
 elif [ "$KERNEL" = "FreeBSD" ]; then
