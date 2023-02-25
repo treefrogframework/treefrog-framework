@@ -14,7 +14,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL
 DEFINES += QT_DEPRECATED_WARNINGS
-INCLUDEPATH += ../include ../3rdparty/lz4/lib
+INCLUDEPATH += ../include
 DEPENDPATH  += ../include
 MOC_DIR = .obj/
 OBJECTS_DIR = .obj/
@@ -38,22 +38,15 @@ isEmpty(target.path) {
 INSTALLS += target
 
 windows {
-  win32-msvc* {
-    LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
-  } else {
-    LIBS += ../3rdparty/lz4/lib/release/liblz4.a
-  }
-
+  INCLUDEPATH += ../3rdparty/lz4/lib
+  LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
+
   lessThan(QT_MAJOR_VERSION, 6) {
-    win32-msvc* {
-      QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
-    }
+    QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
   } else {
-    win32-msvc* {
-      QMAKE_CXXFLAGS += /wd 4819 /wd 4661
-    }
+    QMAKE_CXXFLAGS += /wd 4819 /wd 4661
   }
 
   isEmpty(header.path) {
@@ -64,13 +57,20 @@ windows {
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header script test
-} else:unix {
-  LIBS += ../3rdparty/lz4/lib/liblz4.a
-  macx:QMAKE_SONAME_PREFIX=@rpath
+} else {
+  # UNIX
+  isEmpty( enable_shared_lz4 ) {
+    # Static link
+    LIBS += ../3rdparty/lz4/lib/liblz4.a
+    INCLUDEPATH += ../include ../3rdparty/lz4/lib
+  } else {
+    LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")
+    QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I liblz4 2>/dev/null")
+  }
 
+  macx:QMAKE_SONAME_PREFIX=@rpath
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
-
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header test
@@ -190,6 +190,8 @@ HEADERS += tsessionfilestore.h
 SOURCES += tsessionfilestore.cpp
 HEADERS += tsessionredisstore.h
 SOURCES += tsessionredisstore.cpp
+HEADERS += tsessionmemcachedstore.h
+SOURCES += tsessionmemcachedstore.cpp
 HEADERS += thtmlparser.h
 SOURCES += thtmlparser.cpp
 HEADERS += tabstractmodel.h
@@ -228,8 +230,6 @@ HEADERS += tpopmailer.h
 SOURCES += tpopmailer.cpp
 HEADERS += tsendmailmailer.h
 SOURCES += tsendmailmailer.cpp
-HEADERS += tcryptmac.h
-SOURCES += tcryptmac.cpp
 HEADERS += tinternetmessageheader.h
 SOURCES += tinternetmessageheader.cpp
 HEADERS += thttpheader.h
@@ -256,12 +256,12 @@ HEADERS += tmemcacheddriver.h
 SOURCES += tmemcacheddriver.cpp
 HEADERS += tredis.h
 SOURCES += tredis.cpp
-HEADERS += tfileaiologger.h
-SOURCES += tfileaiologger.cpp
+#HEADERS += tfileaiologger.h
+#SOURCES += tfileaiologger.cpp
 HEADERS += tsystemlogger.h
 SOURCES += tsystemlogger.cpp
-HEADERS += tfileaiowriter.h
-SOURCES += tfileaiowriter.cpp
+#HEADERS += tfileaiowriter.h
+#SOURCES += tfileaiowriter.cpp
 HEADERS += tstdoutsystemlogger.h
 SOURCES += tstdoutsystemlogger.cpp
 HEADERS += tstderrsystemlogger.h
@@ -350,6 +350,8 @@ HEADERS += tsharedmemorykvsdriver.h
 SOURCES += tsharedmemorykvsdriver.cpp
 HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
+HEADERS += tfilesystemlogger.h
+SOURCES += tfilesystemlogger.cpp
 
 # Header only
 HEADERS += tfnamespace.h
@@ -374,7 +376,7 @@ windows {
   HEADERS += tfcore_win.h
   SOURCES += twebapplication_win.cpp
   SOURCES += tapplicationserverbase_win.cpp
-  SOURCES += tfileaiowriter_win.cpp
+#  SOURCES += tfileaiowriter_win.cpp
   SOURCES += tprocessinfo_win.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
@@ -417,7 +419,7 @@ unix {
   HEADERS += tfcore_unix.h
   SOURCES += twebapplication_unix.cpp
   SOURCES += tapplicationserverbase_unix.cpp
-  SOURCES += tfileaiowriter_unix.cpp
+#  SOURCES += tfileaiowriter_unix.cpp
   SOURCES += tsharedmemory_unix.cpp
 }
 
@@ -430,26 +432,21 @@ freebsd {
 
 # Files for MongoDB
 windows {
+  # Windows
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
   INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-  win32-msvc* {
-    LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
-    LIBS += -lws2_32 -lpsapi -lAdvapi32
-  }
+  LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
+  LIBS += -lws2_32 -lpsapi -lAdvapi32
 } else {
+  # UNIX
   isEmpty( enable_shared_mongoc ) {
     # Static link
     INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
     LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
   } else {
-    macx {
-      # Homebrew
-      INCLUDEPATH += /usr/local/include/libmongoc-1.0 /usr/local/include/libbson-1.0
-      LIBS += -L/usr/local/lib -lmongoc-1.0 -lbson-1.0
-    } else {
-      INCLUDEPATH += /usr/include/libmongoc-1.0 /usr/include/libbson-1.0
-      LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
-    }
+    # Shared link
+    LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
+    QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
   }
 }
 

@@ -52,9 +52,9 @@ void setAddressAndPort(const QHostAddress &address, quint16 port, tf_sockaddr *a
 
 }
 
-TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, const TAccessLogger &logger)
+TSendBuffer *TEpollSocket::createSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, TAccessLogger &&logger)
 {
-    return new TSendBuffer(header, file, autoRemove, logger);
+    return new TSendBuffer(header, file, autoRemove, std::move(logger));
 }
 
 
@@ -137,6 +137,7 @@ void TEpollSocket::close()
         tf_close_socket(_socket);
         _socket = 0;
     }
+    _state = Tf::SocketState::Unconnected;
 }
 
 
@@ -350,9 +351,9 @@ void TEpollSocket::setSocketDescriptor(int socketDescriptor)
 }
 
 
-void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+void TEpollSocket::sendData(const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger)
 {
-    TEpoll::instance()->setSendData(this, header, body, autoRemove, accessLogger);
+    TEpoll::instance()->setSendData(this, header, body, autoRemove, std::move(accessLogger));
 }
 
 
@@ -414,7 +415,7 @@ bool TEpollSocket::waitForDataSent(int msecs)
 
 bool TEpollSocket::waitForDataReceived(int msecs)
 {
-    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataSent, msecs);
+    return waitUntil((bool (TEpollSocket::*)())&TEpollSocket::isDataReceived, msecs);
 }
 
 

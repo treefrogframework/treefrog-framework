@@ -55,7 +55,7 @@ bool TSessionSqlObjectStore::store(TSession &session)
         dsdmy.device()->seek(0);
         dsdmy >> *static_cast<QVariantMap *>(&dummy);
         if (dsdmy.status() != QDataStream::Ok) {
-            tSystemError("Failed to store a session into the cookie store. Must set objects that can be serialized.");
+            tSystemError("Failed to store a session into the store. Must set objects that can be serialized.");
         }
     }
 #endif

@@ -17,21 +17,20 @@
 #include <TSessionStore>
 
 
-static QByteArray createHash()
-{
-    static TAtomic<quint64> seq(100000);
-    QByteArray data;
-    data.reserve(127);
-
-    data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));
-    data.append(QHostInfo::localHostName().toLatin1());
-    data.append(QByteArray::number(++seq));
-    data.append(QByteArray::number(QCoreApplication::applicationPid()));
-    data.append(QByteArray::number((qulonglong)QThread::currentThread()));
-    data.append(QByteArray::number((qulonglong)qApp));
-    data.append(QByteArray::number((qulonglong)Tf::rand64_r()));
-    return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
-}
+// static QByteArray createHash()
+// {
+//     static TAtomic<quint64> seq(100000);
+//     QByteArray data;
+//     data.reserve(127);
+//     data.append(QByteArray::number(QDateTime::currentMSecsSinceEpoch()));
+//     data.append(QHostInfo::localHostName().toLatin1());
+//     data.append(QByteArray::number(++seq));
+//     data.append(QByteArray::number(QCoreApplication::applicationPid()));
+//     data.append(QByteArray::number((qulonglong)QThread::currentThread()));
+//     data.append(QByteArray::number((qulonglong)qApp));
+//     data.append(QByteArray::number((qulonglong)Tf::rand64_r()));
+//     return QCryptographicHash::hash(data, QCryptographicHash::Sha3_224).toHex();
+// }
 
 
 TSessionManager::TSessionManager()
@@ -115,7 +114,7 @@ QByteArray TSessionManager::generateId()
     QByteArray id;
     int i;
     for (i = 0; i < 3; ++i) {
-        id = createHash();  // Hash algorithm is important!
+        id = QUuid::createUuid().toByteArray(QUuid::Id128);
         if (findSession(id).isEmpty()) {
             break;
         }

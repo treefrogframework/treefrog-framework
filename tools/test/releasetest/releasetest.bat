@@ -5,7 +5,7 @@ set BASEDIR=%~dp0
 set APPNAME=blogapp
 set APPDIR=%BASEDIR%%APPNAME%
 set DBFILE=%APPDIR%\db\dbfile
-set PORT=8800
+set PORT=18800
 set MAKE=nmake VERBOSE=1
 set CL=/MP
 

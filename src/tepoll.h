@@ -32,7 +32,7 @@ public:
     void releaseAllPollingSockets();
 
     // For action workers
-    void setSendData(TEpollSocket *socket, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger);
+    void setSendData(TEpollSocket *socket, const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger);
     void setSendData(TEpollSocket *socket, const QByteArray &data);
     void setDisconnect(TEpollSocket *socket);
     void setSwitchToWebSocket(TEpollSocket *socket, const THttpRequestHeader &header);

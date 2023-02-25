@@ -264,7 +264,7 @@ void TEpoll::releaseAllPollingSockets()
 }
 
 
-void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevice *body, bool autoRemove, const TAccessLogger &accessLogger)
+void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger)
 {
     QByteArray response = header;
     QFileInfo fi;
@@ -278,7 +278,7 @@ void TEpoll::setSendData(TEpollSocket *socket, const QByteArray &header, QIODevi
         }
     }
 
-    TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, accessLogger);
+    TSendBuffer *sendbuf = TEpollSocket::createSendBuffer(response, fi, autoRemove, std::move(accessLogger));
     socket->enqueueSendData(sendbuf);
     bool res = modifyPoll(socket, (EPOLLIN | EPOLLOUT | EPOLLET));  // reset
     if (!res) {

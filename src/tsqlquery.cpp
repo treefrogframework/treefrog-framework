@@ -151,7 +151,11 @@ QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, const
     }
 
     QSqlField field(QStringLiteral("dummy"), metaType);
-    field.setValue(val);
+    if (type.id() == QMetaType::Char || type.id() == QMetaType::UChar) {
+        field.setValue(val.toInt());  // forced cast to int
+    } else {
+        field.setValue(val);
+    }
     return database.driver()->formatValue(field);
 }
 #endif

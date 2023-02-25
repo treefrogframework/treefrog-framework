@@ -32,12 +32,11 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
         return false;
     }
 
-    bool ret = true;
-    bool ok = false;
+    bool done = false;
     QByteArray str;
-
     QByteArray cmd = toMultiBulk(command);
-    tSystemDebug("Redis command: %s", cmd.data());
+    //tSystemDebug("Redis command: %s", cmd.data());
+
     if (!writeCommand(cmd)) {
         tSystemError("Redis write error  [%s:%d]", __FILE__, __LINE__);
         close();
@@ -49,54 +48,52 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
         if (!readReply()) {
             tSystemError("Redis read error   pos:%d  buflen:%lld", _pos, (qint64)_buffer.length());
             close();
-            break;
+            return false;
         }
 
-        switch (_buffer.at(_pos)) {
+        switch (_buffer[0]) {
         case Error:
-            ret = false;
-            str = getLine(&ok);
+            str = getLine(&done);
             tSystemError("Redis error response: %s", qUtf8Printable(str));
+            return false;
             break;
 
         case SimpleString:
-            str = getLine(&ok);
+            str = getLine(&done);
             tSystemDebug("Redis response: %s", qUtf8Printable(str));
             break;
 
         case Integer: {
             _pos++;
-            int num = getNumber(&ok);
-            if (ok) {
+            int num = getNumber(&done);
+            if (done) {
                 response << num;
             }
             break;
         }
 
         case BulkString:
-            str = parseBulkString(&ok);
-            if (ok) {
+            str = parseBulkString(&done);
+            if (done) {
                 response << str;
             }
             break;
 
         case Array:
-            response = parseArray(&ok);
-            if (!ok) {
+            response = parseArray(&done);
+            if (!done) {
                 response.clear();
             }
             break;
 
         default:
-            tSystemError("Invalid protocol: %c  [%s:%d]", _buffer.at(_pos), __FILE__, __LINE__);
-            ret = false;
+            tSystemError("Invalid protocol: 0x%x  size:%lld  [%s:%d]", _buffer.at(0), _buffer.length(), __FILE__, __LINE__);
             clearBuffer();
             close();
-            goto parse_done;
-            break;
+            return false;
         }
 
-        if (ok) {
+        if (done) {
             if (_pos < _buffer.length()) {
                 tSystemError("Invalid format  [%s:%d]", __FILE__, __LINE__);
             }
@@ -107,9 +104,7 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
         _pos = 0;
         // retry to read..
     }
-
-parse_done:
-    return ret;
+    return true;
 }
 
 
@@ -144,18 +139,23 @@ QByteArray TRedisDriver::parseBulkString(bool *ok)
         } else if (len == -1) {
             // null string
             tSystemDebug("Null string parsed");
+        } else if (len == 0) {
+            // empty string
+            str = QByteArray("");
         } else {
-            if (_pos + 2 <= _buffer.length()) {
-                str = (len > 0) ? _buffer.mid(_pos, len) : QByteArray("");
-                _pos += len + 2;
+            if (_buffer.length() >= _pos + 2 + len) {
+                str = _buffer.mid(_pos, len);
+                _pos += 2 + len;
             } else {
                 *ok = false;
+                tSystemWarn("Invalid length: %d  [%s:%d]", len, __FILE__, __LINE__);
             }
         }
     }
 
     if (!*ok) {
         _pos = startpos;
+        // continue
     }
     return str;
 }

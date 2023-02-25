@@ -1,5 +1,17 @@
 # ChangeLog
 
+## 2.7.0
+  - Fix possibility of thread conflicting when receiving packets.
+  - Changed hash algorithm to HMAC of SHA3.
+  - Added Memcached as session store.
+  - Updated malloc algorithm of TSharedMemoryAllocator.
+  - Updated system logger.
+  - Performance improvement for pooling database connections.
+
+## 2.6.1
+  - Fix a bug of outputting access log.
+  - Added a link option for LZ4 shared library on Linux or macOS.
+
 ## 2.6.0
   - Implemented in-memory KVS for cache system.
   - Added a link option for Glog shared library.

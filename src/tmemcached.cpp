@@ -62,7 +62,7 @@ TMemcached::TMemcached(Tf::KvsEngine engine) :
 QByteArray TMemcached::get(const QByteArray &key, uint *flags)
 {
     QByteArray res = requestLine("get", key, QByteArray(), false);
-    tSystemDebug("TMemcached::get: %s", res.data());
+    //tSystemDebug("TMemcached::get: %s", res.data());
 
     int bytes = 0;
     int pos = 0;
@@ -234,7 +234,7 @@ QByteArray TMemcached::request(const QByteArray &command, const QByteArray &key,
     message += Tf::CRLF;
     message += value;
     message += Tf::CRLF;
-    tSystemDebug("memcached message: %s", message.data());
+    //tSystemDebug("memcached message: %s", message.data());
 
     int timeout = (noreply) ? 0 : 5000;
     return driver()->request(message, timeout);
@@ -270,7 +270,7 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
         message += "noreply";
     }
     message += Tf::CRLF;
-    tSystemDebug("memcached message: %s", message.data());
+    //tSystemDebug("memcached message: %s", message.data());
 
     int timeout = (noreply) ? 0 : 5000;
     return driver()->request(message, timeout);

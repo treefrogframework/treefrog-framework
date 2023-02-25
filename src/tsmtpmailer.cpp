@@ -7,12 +7,12 @@
 
 #include "tsmtpmailer.h"
 #include "tsystemglobal.h"
+#include <TPopMailer>
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QHostAddress>
 #include <QSslSocket>
-#include <TCryptMac>
-#include <TPopMailer>
+#include <QMessageAuthenticationCode>
 using namespace Tf;
 
 /*!
@@ -206,7 +206,7 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 {
     QByteArray out = username;
     out += " ";
-    out += TCryptMac::hash(QByteArray::fromBase64(in), password, TCryptMac::Hmac_Md5).toHex();
+    out += QMessageAuthenticationCode::hash(QByteArray::fromBase64(in), password, QCryptographicHash::Md5).toHex();
     return out.toBase64();
 }
 

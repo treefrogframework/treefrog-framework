@@ -24,6 +24,7 @@
 #include <TDispatcher>
 #include <TFormValidator>
 #include <TSession>
+#include <QMessageAuthenticationCode>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -188,8 +189,8 @@ QByteArray TActionController::authenticityToken() const
         }
         return csrfId;
     } else {
-        QByteArray data = session().id() + Tf::appSettings()->value(Tf::SessionSecret).toByteArray();
-        return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
+        QByteArray key = Tf::appSettings()->value(Tf::SessionSecret).toByteArray();
+        return QMessageAuthenticationCode::hash(session().id(), key, QCryptographicHash::Sha3_256).toHex();
     }
 }
 
@@ -264,7 +265,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
     }
 
     tSystemDebug("postAuthToken: %s", postAuthToken.data());
-    return (postAuthToken == authenticityToken());
+    return Tf::strcmp(postAuthToken, authenticityToken());
 }
 
 /*!

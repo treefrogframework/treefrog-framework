@@ -33,9 +33,7 @@
 
 TActionContext::TActionContext() :
     TDatabaseContext()
-{
-    accessLogger.open();
-}
+{ }
 
 
 TActionContext::~TActionContext()
@@ -68,6 +66,7 @@ void TActionContext::execute(THttpRequest &request)
 
         // Access log
         if (Tf::isAccessLoggerAvailable()) {
+            accessLogger.open();
             QByteArray firstLine;
             firstLine.reserve(200);
             firstLine += reqHeader.method();
@@ -322,6 +321,9 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
         }
     }
 
+    // KVS pool
+    releaseKvsDatabases();
+
     // WebSocket tasks
     if (Q_UNLIKELY(!controller->_taskList.isEmpty())) {
         QVariantList lst;
@@ -406,6 +408,7 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
     if (immediate) {
         flushSocket();
         accessLogger.write();  // Writes access log
+        accessLogger.close();
         closeSocket();
     }
 }

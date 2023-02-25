@@ -25,9 +25,12 @@ public:
     bool unlock();
 
     // Internal use
-    void summary();
-    void dump();  // For debug
-    int nblocks();  // Counts blocks
+    void summary() const;
+    void dump() const;  // For debug
+    int countBlocks() const;  // Counts blocks
+    int countFreeBlocks() const; // Counts free blocks
+    size_t sizeOfFreeBlocks() const; // Total size of free blocks
+    size_t dataSegmentSize() const;
 
     static TSharedMemoryAllocator *initialize(const QString &name, size_t size);
     static TSharedMemoryAllocator *attach(const QString &name);
@@ -38,6 +41,9 @@ private:
     char *sbrk(int64_t inc);
     void setbrk(bool initial = false);
     Tf::alloc_header_t *free_block(uint size);
+
+    static Tf::alloc_header_t *merge(Tf::alloc_header_t *block, Tf::alloc_header_t *next);
+    static Tf::alloc_header_t *divide(Tf::alloc_header_t *block, uint size);
 
     TSharedMemory *_sharedMemory {nullptr};
     char *_origin {nullptr};

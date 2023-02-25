@@ -42,7 +42,7 @@ qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body
     }
 
     if (!TActionContext::stopped.load()) {
-        _socket->sendData(header.toByteArray(), body, autoRemove, accessLogger);
+        _socket->sendData(header.toByteArray(), body, autoRemove, std::move(accessLogger));
     }
     accessLogger.close();
     return 0;

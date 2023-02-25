@@ -19,7 +19,7 @@ Web applications can run faster than that of scripting language because the serv
   5. WebSocket support  - Providing full-duplex communications channels
   6. Generator  - Generates scaffolds, Makefiles and vue.js templates
   7. Various response types  - JSON, XML and CBOR
-  8. Cross-platform  - Same source code can work on Windows, macOS and Linux
+  8. Multi-platform  - Same source code can work on Windows, macOS and Linux
   9. OSS  - New BSD License
 
 
@@ -37,15 +37,31 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Feb. 25, 2023
+### TreeFrog Framework version 2.7.0 (stable) release <span style="color: red;">New!</span>
+
+  - Fix possibility of thread conflicting when receiving packets.
+  - Changed hash algorithm to HMAC of SHA3.
+  - Added Memcached as session store.
+  - Updated malloc algorithm of TSharedMemoryAllocator.
+  - Updated system logger.
+  - Performance improvement for pooling database connections.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
+Jan. 21, 2023
+### TreeFrog Framework version 2.6.1 (stable) release
+
+ - Fix a bug of outputting access log.
+ - Added a link option for LZ4 shared library on Linux or macOS.
+
 Jan. 2, 2023
-### TreeFrog Framework version 2.6.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.6.0 (stable) release
 
  - Implemented in-memory KVS for cache system.
  - Added a link option for Glog shared library.
  - Fix bugs of macros for command line interface.
  - Updated LZ4 to v1.9.4.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Nov. 1, 2022
 ### TreeFrog Framework version 2.5.0 (stable) release

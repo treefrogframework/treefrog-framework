@@ -16,6 +16,9 @@ private slots:
     void testAlloc3();
     void testAlloc4();
     void testAlloc5();
+    void testAlloc6();
+    void testAlloc7();
+    void testAlloc8();
     void testReuse1();
 
     void bench();
@@ -38,8 +41,10 @@ void TestMalloc::testAlloc1()
     QVERIFY(p1);
 
     alloc->free(p1);
-    QCOMPARE(alloc->nblocks(), 0);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
 }
 
 void TestMalloc::testAlloc2()
@@ -49,10 +54,16 @@ void TestMalloc::testAlloc2()
     void *p2 = alloc->malloc(200);
     QVERIFY(p2);
 
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
     alloc->free(p2);
+    QCOMPARE(alloc->countBlocks(), 1);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
     alloc->free(p1);
-    QCOMPARE(alloc->nblocks(), 0);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
 }
 
 void TestMalloc::testAlloc3()
@@ -64,26 +75,43 @@ void TestMalloc::testAlloc3()
 
     alloc->free(p1);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
     alloc->free(p2);
-    QCOMPARE(alloc->nblocks(), 0);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
 }
 
 void TestMalloc::testAlloc4()
 {
-    void *p1 = alloc->malloc(100);
+    void *p1 = alloc->malloc(128);
     QVERIFY(p1);
-    void *p2 = alloc->malloc(200);
+    void *p2 = alloc->malloc(224);
     QVERIFY(p2);
-    void *p3 = alloc->malloc(300);
+    void *p3 = alloc->malloc(320);
     QVERIFY(p3);
 
     alloc->free(p2);
+    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 3);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    QCOMPARE(alloc->sizeOfFreeBlocks(), 224U);
     alloc->free(p1);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+#if defined(Q_PROCESSOR_X86_32) || defined(Q_PROCESSOR_ARM_32)
+    QCOMPARE(alloc->sizeOfFreeBlocks(), 224U + 16 + 128);
+#else
+    QCOMPARE(alloc->sizeOfFreeBlocks(), 224U + 24 + 128);
+#endif
     alloc->free(p3);
-    QCOMPARE(alloc->nblocks(), 0);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
 }
 
 void TestMalloc::testAlloc5()
@@ -96,12 +124,89 @@ void TestMalloc::testAlloc5()
     QVERIFY(p3);
 
     alloc->free(p1);
+    QCOMPARE(alloc->countBlocks(), 3);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
     alloc->free(p2);
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
     alloc->free(p3);
-    QCOMPARE(alloc->nblocks(), 0);
     alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
 }
 
+void TestMalloc::testAlloc6()
+{
+    void *p1 = alloc->malloc(1024);
+    void *p2 = alloc->malloc(64);
+    alloc->free(p1);
+    void *p3 = alloc->malloc(32);
+
+    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 3);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    alloc->free(p3);
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    alloc->free(p2);
+    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
+}
+
+void TestMalloc::testAlloc7()
+{
+    void *p1 = alloc->malloc(1024);
+    void *p2 = alloc->malloc(70);
+    void *p3 = alloc->malloc(32);
+    alloc->free(p1);
+    p1 = alloc->malloc(980);
+    QCOMPARE(alloc->countBlocks(), 3);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    alloc->free(p1);
+    QCOMPARE(alloc->countBlocks(), 3);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    alloc->free(p2);
+    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    p1 = alloc->malloc(1024 + 70 + 1);
+    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    alloc->free(p1);
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    alloc->free(p3);
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
+}
+
+void TestMalloc::testAlloc8()
+{
+    void *p1 = alloc->malloc(1024);
+    void *p2 = alloc->malloc(64);
+    void *p3 = alloc->malloc(32);
+    void *p4 = alloc->malloc(32);
+    alloc->free(p1);
+    alloc->free(p3);
+    alloc->free(p2);
+    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+#if defined(Q_PROCESSOR_X86_32) || defined(Q_PROCESSOR_ARM_32)
+    QCOMPARE(alloc->sizeOfFreeBlocks(), 1024U + 16 + 64 + 16 + 32);
+#else
+    QCOMPARE(alloc->sizeOfFreeBlocks(), 1024U + 24 + 64 + 24 + 32);
+#endif
+    alloc->free(p4);
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
+}
 
 void TestMalloc::testReuse1()
 {
@@ -111,15 +216,19 @@ void TestMalloc::testReuse1()
     QVERIFY(p2);
 
     alloc->free(p1);
-    QVERIFY(alloc->nblocks() > 0);
     alloc->dump();
-    void *p3 = alloc->malloc(800);
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 1);
+    void *p3 = alloc->malloc(900);
+    alloc->dump();
     QCOMPARE(p1, p3);
-    QCOMPARE(alloc->nblocks(), 2);
-    alloc->dump();
+    QCOMPARE(alloc->countBlocks(), 2);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
     alloc->free(p3);
     alloc->free(p2);
-    QCOMPARE(alloc->nblocks(), 0);
+    QCOMPARE(alloc->countBlocks(), 0);
+    QCOMPARE(alloc->countFreeBlocks(), 0);
+    QCOMPARE(alloc->dataSegmentSize(), 0U);
 }
 
 
@@ -146,12 +255,12 @@ void TestMalloc::bench()
         }
     }
 
-    QVERIFY(alloc->nblocks() > 0);
+    QVERIFY(alloc->countBlocks() > 0);
     // cleanup
     for (int i = 0; i < NUM; i++) {
         alloc->free(ptr[i]);
     }
-    QCOMPARE(alloc->nblocks(), 0);
+    QCOMPARE(alloc->countBlocks(), 0);
 }
 
 

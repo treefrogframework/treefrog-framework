@@ -1,7 +1,7 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "2.6.0";
-constexpr auto TF_VERSION_NUMBER = 0x020600;
-constexpr auto TF_SRC_REVISION = 2749;
+constexpr auto TF_VERSION_STR = "2.7.0";
+constexpr auto TF_VERSION_NUMBER = 0x020700;
+constexpr auto TF_SRC_REVISION = 2797;
 
 #include <QMetaType>
 #include <QIODevice>
@@ -252,6 +252,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include "tdeclexport.h"
 #include <TDebug>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 
 class TWebApplication;
@@ -288,6 +289,11 @@ T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressi
 T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLevel = 1) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
+
+inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
+{
+    return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
+}
 
 constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";

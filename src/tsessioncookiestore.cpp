@@ -6,11 +6,12 @@
  */
 
 #include "tsessioncookiestore.h"
-#include <QByteArray>
-#include <QCryptographicHash>
-#include <QDataStream>
 #include <TAppSettings>
 #include <TSystemGlobal>
+#include <QByteArray>
+#include <QDataStream>
+#include <QCryptographicHash>
+#include <QMessageAuthenticationCode>
 
 /*!
   \class TSessionCookieStore
@@ -56,8 +57,7 @@ bool TSessionCookieStore::store(TSession &session)
     }
 
     ba = Tf::lz4Compress(ba);
-    QByteArray data = ba + sessionSecret();
-    QByteArray digest = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
+    QByteArray digest = QMessageAuthenticationCode::hash(ba, sessionSecret(), QCryptographicHash::Sha3_256);
     session.sessionId = ba.toBase64() + "_" + digest.toBase64();
     return true;
 }
@@ -78,10 +78,9 @@ TSession TSessionCookieStore::find(const QByteArray &id)
 
         if (!data.isEmpty() && !dgstr.isEmpty()) {
             QByteArray ba = QByteArray::fromBase64(data);
-            QByteArray data = ba + sessionSecret();
-            QByteArray digest = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
+            QByteArray digest = QMessageAuthenticationCode::hash(ba, sessionSecret(), QCryptographicHash::Sha3_256);
 
-            if (digest != QByteArray::fromBase64(dgstr)) {
+            if (!Tf::strcmp(digest, QByteArray::fromBase64(dgstr))) {
                 tSystemWarn("Recieved a tampered cookie or that of other web application.");
                 //throw SecurityException("Tampered with cookie", __FILE__, __LINE__);
                 return session;

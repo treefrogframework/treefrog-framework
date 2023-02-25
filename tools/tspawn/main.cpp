@@ -177,6 +177,7 @@ public:
         append(L("config/logger.ini"));
         append(L("config/mongodb.ini"));
         append(L("config/redis.ini"));
+        append(L("config/memcached.ini"));
         append(L("config/routes.cfg"));
         append(L("config/validation.ini"));
         append(L("config/cache.ini"));

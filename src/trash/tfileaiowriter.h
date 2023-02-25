@@ -6,7 +6,7 @@
 class TFileAioWriterData;
 
 
-class T_CORE_EXPORT TFileAioWriter : public TSystemLogger {
+class TFileAioWriter : public TSystemLogger {
 public:
     TFileAioWriter(const QString &name = QString());
     ~TFileAioWriter();

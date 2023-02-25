@@ -1,7 +1,21 @@
 #include <QTest>
 #include <QByteArray>
+#include <QMessageAuthenticationCode>
 #include <tsmtpmailer.h>
-#include <tcryptmac.h>
+
+
+static QByteArray randomString(int length)
+{
+    static char ch[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const int num = strlen(ch) - 1;
+    QByteArray ret;
+    ret.reserve(length);
+
+    for (int i = 0; i < length; ++i) {
+        ret += ch[Tf::random(0, num)];
+    }
+    return ret;
+}
 
 
 class TestHMAC : public QObject
@@ -12,15 +26,23 @@ private slots:
     void hmacmd5();
     void hmacsha1_data();
     void hmacsha1();
-#if QT_VERSION >= 0x050000
     void hmacsha256_data();
     void hmacsha256();
     void hmacsha384_data();
     void hmacsha384();
     void hmacsha512_data();
     void hmacsha512();
-#endif
     void crammd5();
+
+    void benchBase64();
+    void benchHex();
+    void benchSha224();
+    void benchSha256();
+    void benchSha512();
+    void benchSha3_224();
+    void benchSha3_256();
+    void benchSha3_512();
+    void benchUuid();
 };
 
 
@@ -66,7 +88,7 @@ void TestHMAC::hmacmd5()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Md5);
+    QByteArray actual = QMessageAuthenticationCode::hash(text, key, QCryptographicHash::Md5);
     QCOMPARE(actual, result);
 }
 
@@ -113,11 +135,10 @@ void TestHMAC::hmacsha1()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha1);
+    QByteArray actual = QMessageAuthenticationCode::hash(text, key, QCryptographicHash::Sha1);
     QCOMPARE(actual, result);
 }
 
-#if QT_VERSION >= 0x050000
 
 void TestHMAC::hmacsha256_data()
 {
@@ -146,7 +167,7 @@ void TestHMAC::hmacsha256()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha256);
+    QByteArray actual = QMessageAuthenticationCode::hash(text, key, QCryptographicHash::Sha256);
     QCOMPARE(actual, result);
 }
 
@@ -178,7 +199,7 @@ void TestHMAC::hmacsha384()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha384);
+    QByteArray actual = QMessageAuthenticationCode::hash(text, key, QCryptographicHash::Sha384);
     QCOMPARE(actual, result);
 }
 
@@ -210,11 +231,10 @@ void TestHMAC::hmacsha512()
     QFETCH(QByteArray, text);
     QFETCH(QByteArray, result);
 
-    QByteArray actual = TCryptMac::hash(text, key, TCryptMac::Hmac_Sha512);
+    QByteArray actual = QMessageAuthenticationCode::hash(text, key, QCryptographicHash::Sha512);
     QCOMPARE(actual, result);
 }
 
-#endif
 
 void TestHMAC::crammd5()
 {
@@ -222,6 +242,85 @@ void TestHMAC::crammd5()
     QByteArray result("a2F6em5Ab3BzLmR0aS5uZS5qcCA4YTQwY2FmZmVlODRkZjMwZWI2ZWMxMjMyNmYzYWRiOA==");
     QByteArray actual = TSmtpMailer::authCramMd5(in, "kazzn@ops.dti.ne.jp", "kazu27");
     QCOMPARE(actual, result);
+}
+
+
+void TestHMAC::benchBase64()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QByteArray::fromBase64(str.toBase64());
+    }
+}
+
+
+void TestHMAC::benchHex()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QByteArray::fromHex(str.toHex());
+    }
+}
+
+
+void TestHMAC::benchSha224()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha224);
+    }
+}
+
+
+void TestHMAC::benchSha256()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha256);
+    }
+}
+
+
+void TestHMAC::benchSha512()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha512);
+    }
+}
+
+
+void TestHMAC::benchSha3_224()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha3_224);
+    }
+}
+
+
+void TestHMAC::benchSha3_256()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha3_256);
+    }
+}
+
+
+void TestHMAC::benchSha3_512()
+{
+    auto str = randomString(500);
+    QBENCHMARK {
+        (void)QCryptographicHash::hash(str, QCryptographicHash::Sha3_512);
+    }
+}
+
+void TestHMAC::benchUuid()
+{
+    QBENCHMARK {
+        (void)QUuid::createUuid().toByteArray(QUuid::Id128);
+    }
 }
 
 

@@ -1,13 +1,12 @@
 #pragma once
-#include "tatomic.h"
+#include <TAtomic>
+#include <TGlobal>
 #include <QBasicTimer>
 #include <QDateTime>
-#include <QMap>
+#include <QStack>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
-#include <QVector>
-#include <TGlobal>
 
 class TSqlDatabase;
 template <class T> class TStack;
@@ -32,9 +31,14 @@ protected:
 private:
     TSqlDatabasePool();
 
-    TStack<QString> *cachedDatabase {nullptr};
+#if QT_VERSION < 0x060000
+    mutable QMutex _mutex {QMutex::Recursive};
+#else
+    mutable QRecursiveMutex _mutex;
+#endif
+    QStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
-    TStack<QString> *availableNames {nullptr};
+    QStack<QString> *availableNames {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
 
