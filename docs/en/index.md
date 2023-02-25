@@ -37,16 +37,26 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Feb. 25, 2023
+### TreeFrog Framework version 2.7.0 (stable) release <span style="color: red;">New!</span>
+
+  - Fix possibility of thread conflicting when receiving packets.
+  - Changed hash algorithm to HMAC of SHA3.
+  - Added Memcached as session store.
+  - Updated malloc algorithm of TSharedMemoryAllocator.
+  - Updated system logger.
+  - Performance improvement for pooling database connections.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Jan. 21, 2023
-### TreeFrog Framework version 2.6.1 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.6.1 (stable) release
 
  - Fix a bug of outputting access log.
  - Added a link option for LZ4 shared library on Linux or macOS.
 
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
-
 Jan. 2, 2023
-### TreeFrog Framework version 2.6.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.6.0 (stable) release
 
  - Implemented in-memory KVS for cache system.
  - Added a link option for Glog shared library.
