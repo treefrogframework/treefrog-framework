@@ -15,7 +15,9 @@ TSharedMemoryKvsDriver::TSharedMemoryKvsDriver()
 
 
 TSharedMemoryKvsDriver::~TSharedMemoryKvsDriver()
-{}
+{
+    delete _allocator;
+}
 
 
 static QString parseParameter(const QString &options, const QString &key)
@@ -68,7 +70,7 @@ bool TSharedMemoryKvsDriver::open(const QString &db, const QString &, const QStr
     }
 
     if (_allocator) {
-        return false;
+        return true;
     }
 
     _allocator = TSharedMemoryAllocator::attach(_name);
@@ -79,6 +81,12 @@ bool TSharedMemoryKvsDriver::open(const QString &db, const QString &, const QStr
        tSystemError("SharedMemory attach error.  name:%s", qUtf8Printable(_name));
     }
     return true;
+}
+
+
+void TSharedMemoryKvsDriver::close()
+{
+    // do nothing
 }
 
 

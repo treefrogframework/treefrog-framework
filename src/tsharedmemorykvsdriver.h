@@ -14,7 +14,7 @@ public:
 
     QString key() const override { return "MEMORY"; }
     bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString()) override;
-    void close() override {}
+    void close() override;
     bool isOpen() const override { return _size > 0; }
     QString name() const { return _name; }
     size_t size() const { return _size; }
