@@ -119,7 +119,7 @@ inline bool TDispatcher<T>::invoke(const QByteArray &method, const QStringList &
     QMetaMethod mm = this->method(method, args.count());
 
     if (Q_UNLIKELY(!mm.isValid())) {
-        tSystemDebug("No such method: %s", qUtf8Printable(method));
+        tSystemDebug("Failed to invoke method: %s", qUtf8Printable(method));
     } else {
         tSystemDebug("Invoke method: %s", qUtf8Printable(_metaType + "." + method));
         switch (args.count()) {
