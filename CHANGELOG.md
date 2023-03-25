@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.7.1
+ - Fix a bug of opening shared memory KVS.
+ - Modified to reply NotFound when it can not invoke the action.
+
 ## 2.7.0
   - Fix possibility of thread conflicting when receiving packets.
   - Changed hash algorithm to HMAC of SHA3.
