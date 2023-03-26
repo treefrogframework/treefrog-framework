@@ -40,7 +40,14 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2023/2/25  TreeFrog Framework バージョン2.7.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2023/3/26  TreeFrog Framework バージョン2.7.1 （安定版）リリース <span style="color: red;">New!</span>
+
+  - 共有メモリKVSをオープンする際の不具合修正
+  - アクションを呼び出せない場合にNotFoundを返すように修正
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2023/2/25  TreeFrog Framework バージョン2.7.0 （安定版）リリース
 
   - パケット受信時にスレッド衝突の可能性がある不具合を修正
   - ハッシュアルゴリズムをSHA3-HMACへ変更
@@ -48,8 +55,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - TSharedMemoryAllocatorのmallocアルゴリズムを更新
   - システムロガーを更新
   - データベース接続プーリングのパフォーマンス改善
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2023/1/21  TreeFrog Framework バージョン2.6.1 （安定版）リリース
 

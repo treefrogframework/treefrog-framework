@@ -1,22 +1,26 @@
 # ChangeLog
 
+## 2.7.1
+ - Fix a bug of opening shared memory KVS.
+ - Modified to reply NotFound when it can not invoke the action.
+
 ## 2.7.0
-  - Fix possibility of thread conflicting when receiving packets.
-  - Changed hash algorithm to HMAC of SHA3.
-  - Added Memcached as session store.
-  - Updated malloc algorithm of TSharedMemoryAllocator.
-  - Updated system logger.
-  - Performance improvement for pooling database connections.
+ - Fix possibility of thread conflicting when receiving packets.
+ - Changed hash algorithm to HMAC of SHA3.
+ - Added Memcached as session store.
+ - Updated malloc algorithm of TSharedMemoryAllocator.
+ - Updated system logger.
+ - Performance improvement for pooling database connections.
 
 ## 2.6.1
-  - Fix a bug of outputting access log.
-  - Added a link option for LZ4 shared library on Linux or macOS.
+ - Fix a bug of outputting access log.
+ - Added a link option for LZ4 shared library on Linux or macOS.
 
 ## 2.6.0
-  - Implemented in-memory KVS for cache system.
-  - Added a link option for Glog shared library.
-  - Fix bugs of macros for command line interface.
-  - Updated LZ4 to v1.9.4.
+ - Implemented in-memory KVS for cache system.
+ - Added a link option for Glog shared library.
+ - Fix bugs of macros for command line interface.
+ - Updated LZ4 to v1.9.4.
 
 ## 2.5.0
  - Implemented flushResponse() function to continue the process after sending a response.

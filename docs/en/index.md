@@ -37,8 +37,16 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Mar. 26, 2023
+### TreeFrog Framework version 2.7.1 (stable) release <span style="color: red;">New!</span>
+
+  - Fix a bug of opening shared memory KVS.
+  - Modified to reply NotFound when it can not invoke the action.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Feb. 25, 2023
-### TreeFrog Framework version 2.7.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.7.0 (stable) release
 
   - Fix possibility of thread conflicting when receiving packets.
   - Changed hash algorithm to HMAC of SHA3.
@@ -46,8 +54,6 @@ Feb. 25, 2023
   - Updated malloc algorithm of TSharedMemoryAllocator.
   - Updated system logger.
   - Performance improvement for pooling database connections.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Jan. 21, 2023
 ### TreeFrog Framework version 2.6.1 (stable) release

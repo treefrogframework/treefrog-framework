@@ -29,6 +29,7 @@ public:
     const TActionContext *context() const { return _context; }
     TActionContext *context() { return _context; }
     void setContext(TActionContext *context) { _context = context; }
+    static QThread *currentThread() { return QThread::currentThread(); }
 
 protected:
     virtual TSession &session();

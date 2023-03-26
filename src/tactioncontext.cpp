@@ -168,7 +168,11 @@ void TActionContext::execute(THttpRequest &request)
             // Do filters
             if (Q_LIKELY(_currController->preFilter())) {
                 // Dispatches
-                ctlrDispatcher.invoke(route.action, route.params);
+                bool inv = ctlrDispatcher.invoke(route.action, route.params);
+                if (!inv) {
+                    int bytes = writeResponse(Tf::NotFound, responseHeader);
+                    accessLogger.setResponseBytes(bytes);
+                }
             }
 
             // Flushes response

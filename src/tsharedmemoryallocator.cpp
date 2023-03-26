@@ -59,20 +59,18 @@ struct alloc_header_t {
 
 } // namespace Tf
 
-static TSharedMemoryAllocator *instance = nullptr;
 const Tf::alloc_header_t INIT_HEADER;
 
 
 TSharedMemoryAllocator *TSharedMemoryAllocator::initialize(const QString &name, size_t size)
 {
-    if (!instance) {
-        instance = new TSharedMemoryAllocator(name);
-        if (instance->_sharedMemory->create(size)) {
-            instance->setbrk(true);
-        } else {
-            delete instance;
-            instance = nullptr;
-        }
+    auto *instance = new TSharedMemoryAllocator(name);
+
+    if (instance->_sharedMemory->create(size)) {
+        instance->setbrk(true);
+    } else {
+        delete instance;
+        instance = nullptr;
     }
     return instance;
 }
@@ -80,14 +78,13 @@ TSharedMemoryAllocator *TSharedMemoryAllocator::initialize(const QString &name, 
 
 TSharedMemoryAllocator *TSharedMemoryAllocator::attach(const QString &name)
 {
-    if (!instance) {
-        instance = new TSharedMemoryAllocator(name);
-        if (instance->_sharedMemory->attach()) {
-            instance->setbrk(false);
-        } else {
-            delete instance;
-            instance = nullptr;
-        }
+    auto *instance = new TSharedMemoryAllocator(name);
+
+    if (instance->_sharedMemory->attach()) {
+        instance->setbrk(false);
+    } else {
+        delete instance;
+        instance = nullptr;
     }
     return instance;
 }
