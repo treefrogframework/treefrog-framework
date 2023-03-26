@@ -7,13 +7,13 @@ page_id: "download.00"
 
 ### インストーラ for Windows
 
-Qt5 向けのインストーラを提供しています。セットアップすれば、すぐに TreeFrog Framework 開発環境ができあがります。ソースコードからビルドしてインストールする必要がなくなりますので、手っ取り早く環境を作りたい方向けです。
+Qt6 向けのインストーラを提供しています。セットアップすれば、すぐに TreeFrog Framework 開発環境ができあがります。ソースコードからビルドしてインストールする必要がなくなりますので、手っ取り早く環境を作りたい方向けです。
 
 <div class="table-div" markdown="1">
 
 | バージョン                                       | ファイル                                  |
 |------------------------------------------------|---------------------------------------|
-| 2.7.0 for Visual Studio 2019 64bit (Qt6.4 or 6.3) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.7.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.7.0/treefrog-2.7.0-msvc_64-setup.exe) |
+| 2.7.1 for Visual Studio 2019 64bit (Qt6.4 or 6.3) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.7.1-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.7.1/treefrog-2.7.1-msvc_64-setup.exe) |
 
 </div>
 
@@ -29,7 +29,7 @@ Qt5 向けのインストーラを提供しています。セットアップす�
 
 | ソースパッケージ  | ファイル                         |
 |-------------------|----------------------------------|
-| バージョン 2.7.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.7.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.7.0.tar.gz) |
+| バージョン 2.7.1 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.7.1.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.7.1.tar.gz) |
 
 </div>
 
