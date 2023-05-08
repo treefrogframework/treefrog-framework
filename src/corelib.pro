@@ -76,6 +76,11 @@ windows {
   INSTALLS += header test
 }
 
+wasm {
+  QT_WASM_PTHREAD_POOL_SIZE=32
+  QT_WASM_INITIAL_MEMORY=1000MB
+}
+
 !CONFIG(debug, debug|release) {
   DEFINES += TF_NO_DEBUG
 }

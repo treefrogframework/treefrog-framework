@@ -59,7 +59,7 @@ public:
     QString connectionName;
     QString databaseName;
     QString hostName;
-    quint16 port {0};
+    uint16_t port {0};
     QString userName;
     QString password;
     QString connectOptions;

@@ -83,14 +83,14 @@ void TThreadApplicationServer::stop()
 
 void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
-    tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
+    tSystemDebug("incomingConnection  sd:%lld  thread count:%d  max:%d", (int64_t)socketDescriptor, TActionThread::threadCount(), maxThreads);
     TActionThread *thread;
     while (!threadPoolPtr()->pop(thread)) {
         std::this_thread::yield();
         //qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
         Tf::msleep(1);
     }
-    tSystemDebug("thread ptr: %lld", (quint64)thread);
+    tSystemDebug("thread ptr: %lld", (uint64_t)thread);
     thread->setSocketDescriptor(socketDescriptor);
     thread->start();
 }

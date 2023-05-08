@@ -24,13 +24,13 @@ public:
 
     bool exists(const QByteArray &key);
     int count();
-    bool read(const QByteArray &key, QByteArray &blob, qint64 &timestamp);
-    bool write(const QByteArray &key, const QByteArray &blob, qint64 timestamp);
+    bool read(const QByteArray &key, QByteArray &blob, int64_t &timestamp);
+    bool write(const QByteArray &key, const QByteArray &blob, int64_t timestamp);
     int removeOlder(int itemCount);
-    int removeOlderThan(qint64 timestamp);
+    int removeOlderThan(int64_t timestamp);
     int removeAll();
     //bool vacuum();  // call outside of a transaction
-    qint64 dbSize();
+    int64_t dbSize();
 
     static bool createTable(const QString &table);
 

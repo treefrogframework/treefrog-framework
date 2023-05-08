@@ -19,7 +19,7 @@
 */
 
 
-static QMap<QByteArray, QPair<qint64, QByteArray>> memmap;
+static QMap<QByteArray, QPair<int64_t, QByteArray>> memmap;
 static QReadWriteLock lock;
 
 
@@ -54,8 +54,8 @@ QByteArray TCacheMemoryStore::get(const QByteArray &key)
 bool TCacheMemoryStore::set(const QByteArray &key, const QByteArray &value, int seconds)
 {
     QWriteLocker locker(&lock);
-    qint64 expire = QDateTime::currentDateTime().toMSecsSinceEpoch() + seconds * 1000;
-    memmap.insert(key, QPair<qint64, QByteArray>(expire, value));
+    int64_t expire = QDateTime::currentDateTime().toMSecsSinceEpoch() + seconds * 1000;
+    memmap.insert(key, QPair<int64_t, QByteArray>(expire, value));
     return true;
 }
 

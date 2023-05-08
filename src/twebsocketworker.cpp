@@ -127,7 +127,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                 break;
 
             case TWebSocketFrame::Close: {
-                quint16 closeCode = Tf::GoingAway;
+                uint16_t closeCode = Tf::GoingAway;
                 if (payload.length() >= 2) {
                     QDataStream ds(payload);
                     ds.setByteOrder(QDataStream::BigEndian);

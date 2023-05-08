@@ -28,7 +28,7 @@ void TApplicationServerBase::nativeSocketCleanup()
   Listen a port with SO_REUSEADDR option.
   This function must be called in a tfserver process.
  */
-int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 port, OpenFlag)
+int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t port, OpenFlag)
 {
     int protocol = (address.protocol() == QAbstractSocket::IPv6Protocol) ? AF_INET6 : AF_INET;
     SOCKET sock = ::WSASocket(protocol, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
@@ -46,14 +46,14 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 po
 
     if (address.protocol() == QAbstractSocket::IPv6Protocol) {
         struct tf_in6_addr {
-            quint8 tf_s6_addr[16];
+            uint8_t tf_s6_addr[16];
         };
         struct tf_sockaddr_in6 {
             short sin6_family; /* AF_INET6 */
-            quint16 sin6_port; /* Transport level port number */
-            quint32 sin6_flowinfo; /* IPv6 flow information */
+            uint16_t sin6_port; /* Transport level port number */
+            uint32_t sin6_flowinfo; /* IPv6 flow information */
             struct tf_in6_addr sin6_addr; /* IPv6 address */
-            quint32 sin6_scope_id; /* set of interfaces for a scope */
+            uint32_t sin6_scope_id; /* set of interfaces for a scope */
         } sa6;
 
         std::memset(&sa6, 0, sizeof(sa6));

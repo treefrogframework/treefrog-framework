@@ -36,7 +36,7 @@ public:
     TWebSocketSession &session() { return sessionStore; }
     //int socketId() const { return sid; }
     QHostAddress peerAddress() const { return peerAddr; }
-    quint16 peerPort() const { return peerPortNumber; }
+    uint16_t peerPort() const { return peerPortNumber; }
     void reset();
 
     static bool isUserLoggedIn(const TSession &session);
@@ -81,7 +81,7 @@ private:
     QList<QPair<int, QVariant>> taskList;
     bool rollback {false};
     QHostAddress peerAddr;
-    quint16 peerPortNumber {0};
+    uint16_t peerPortNumber {0};
 
     friend class TWebSocketWorker;
     T_DISABLE_COPY(TWebSocketEndpoint)

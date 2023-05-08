@@ -131,7 +131,7 @@ bool TCacheSQLiteStore::exists(const QByteArray &key)
     int exist = 0;
     TSqlQuery query(Tf::app()->databaseIdForCache());
     QString sql = QStringLiteral("select exists(select 1 from %1 where %2=:name and %3>:ts limit 1)").arg(_table).arg(KEY_COLUMN).arg(TIMESTAMP_COLUMN);
-    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
+    auto current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     query.prepare(sql);
     query.bind(":name", key);
@@ -146,8 +146,8 @@ bool TCacheSQLiteStore::exists(const QByteArray &key)
 QByteArray TCacheSQLiteStore::get(const QByteArray &key)
 {
     QByteArray value;
-    qint64 expire = 0;
-    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
+    int64_t expire = 0;
+    int64_t current = QDateTime::currentMSecsSinceEpoch() / 1000;
 
     if (read(key, value, expire)) {
         if (expire <= current) {
@@ -165,12 +165,12 @@ bool TCacheSQLiteStore::set(const QByteArray &key, const QByteArray &value, int 
         return false;
     }
 
-    qint64 expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
+    int64_t expire = QDateTime::currentMSecsSinceEpoch() / 1000 + seconds;
     return write(key, value, expire);
 }
 
 
-bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &timestamp)
+bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, int64_t &timestamp)
 {
     bool ret = false;
 
@@ -197,7 +197,7 @@ bool TCacheSQLiteStore::read(const QByteArray &key, QByteArray &blob, qint64 &ti
 }
 
 
-bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qint64 timestamp)
+bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, int64_t timestamp)
 {
     bool ret = false;
 
@@ -215,7 +215,7 @@ bool TCacheSQLiteStore::write(const QByteArray &key, const QByteArray &blob, qin
 
     TSqlQuery query(Tf::app()->databaseIdForCache());
     query.prepare(sql);
-    query.bind(":key", key).bind(":ts", timestamp).bind(":blob", blob);
+    query.bind(":key", key).bind(":ts", (qint64)timestamp).bind(":blob", blob);
     ret = query.exec();
     if (!ret && lastError().isValid()) {
         tSystemError("SQLite error : %s [%s:%d]", qUtf8Printable(lastErrorString()), __FILE__, __LINE__);
@@ -273,7 +273,7 @@ int TCacheSQLiteStore::removeOlder(int num)
 }
 
 
-int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
+int TCacheSQLiteStore::removeOlderThan(int64_t timestamp)
 {
     int cnt = -1;
 
@@ -281,7 +281,7 @@ int TCacheSQLiteStore::removeOlderThan(qint64 timestamp)
     QString sql = QStringLiteral("delete from %1 where %2<:ts").arg(_table, TIMESTAMP_COLUMN);
 
     query.prepare(sql);
-    query.bind(":ts", timestamp);
+    query.bind(":ts", (qint64)timestamp);
     if (query.exec()) {
         cnt = query.numRowsAffected();
     } else {
@@ -309,18 +309,18 @@ int TCacheSQLiteStore::removeAll()
 }
 
 
-qint64 TCacheSQLiteStore::dbSize()
+int64_t TCacheSQLiteStore::dbSize()
 {
-    qint64 sz = -1;
+    int64_t sz = -1;
 
     TSqlQuery query(Tf::app()->databaseIdForCache());
     bool ok = query.exec(QStringLiteral("PRAGMA page_size"));
     if (ok && query.next()) {
-        qint64 size = query.value(0).toLongLong();
+        int64_t size = query.value(0).toLongLong();
 
         ok = query.exec(QStringLiteral("PRAGMA page_count"));
         if (ok && query.next()) {
-            qint64 count = query.value(0).toLongLong();
+            int64_t count = query.value(0).toLongLong();
             sz = size * count;
         }
     }

@@ -46,7 +46,7 @@ bool TRedisDriver::request(const QByteArrayList &command, QVariantList &response
 
     for (;;) {
         if (!readReply()) {
-            tSystemError("Redis read error   pos:%d  buflen:%lld", _pos, (qint64)_buffer.length());
+            tSystemError("Redis read error   pos:%d  buflen:%ld", _pos, (int64_t)_buffer.length());
             close();
             return false;
         }

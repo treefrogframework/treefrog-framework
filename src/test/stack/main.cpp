@@ -11,7 +11,7 @@
 #include <glog/logging.h>
 
 
-static std::atomic<qint64> counter {0};  // Box counter
+static std::atomic<int64_t> counter {0};  // Box counter
 
 #if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
 void writeFailure(const char *data, size_t size)

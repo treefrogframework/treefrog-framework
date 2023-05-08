@@ -10,7 +10,7 @@
 #include "thttpbuffer.h"
 #include "tsystemglobal.h"
 
-static qint64 systemLimitBodyBytes = -1;
+static int64_t systemLimitBodyBytes = -1;
 
 
 THttpBuffer::THttpBuffer()
@@ -94,7 +94,7 @@ void THttpBuffer::parse()
                 throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
             }
 
-            lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - httpBuffer.length(), 0LL);
+            lengthToRead = qMax(idx + 4 + (int64_t)header.contentLength() - httpBuffer.length(), 0LL);
             tSystemDebug("lengthToRead: %d", (int)lengthToRead);
         }
     } else {

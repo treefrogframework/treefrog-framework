@@ -291,7 +291,7 @@ QByteArray Tf::lz4Uncompress(const QByteArray &data) noexcept
 }
 
 
-qint64 Tf::getMSecsSinceEpoch()
+int64_t Tf::getMSecsSinceEpoch()
 {
     auto p = std::chrono::system_clock::now();  // epoch of system_clock
     return std::chrono::duration_cast<std::chrono::milliseconds>(p.time_since_epoch()).count();

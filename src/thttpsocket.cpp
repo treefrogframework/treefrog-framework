@@ -22,7 +22,7 @@
 #include <thread>
 
 constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
-constexpr qint64 WRITE_LENGTH = 1408;
+constexpr int64_t WRITE_LENGTH = 1408;
 constexpr int WRITE_BUFFER_LENGTH = WRITE_LENGTH * 512;
 
 /*!
@@ -66,7 +66,7 @@ QList<THttpRequest> THttpSocket::read()
 }
 
 
-qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
+int64_t THttpSocket::write(const THttpHeader *header, QIODevice *body)
 {
     if (body && !body->isOpen()) {
         if (!body->open(QIODevice::ReadOnly)) {
@@ -77,7 +77,7 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
 
     // Writes HTTP header
     QByteArray hdata = header->toByteArray();
-    qint64 total = writeRawData(hdata.data(), hdata.size());
+    int64_t total = writeRawData(hdata.data(), hdata.size());
     if (total < 0) {
         return -1;
     }
@@ -91,7 +91,7 @@ qint64 THttpSocket::write(const THttpHeader *header, QIODevice *body)
             total += buffer->size();
         } else {
             QByteArray buf(WRITE_BUFFER_LENGTH, 0);
-            qint64 readLen = 0;
+            int64_t readLen = 0;
             while ((readLen = body->read(buf.data(), buf.size())) > 0) {
                 if (writeRawData(buf.data(), readLen) != readLen) {
                     return -1;
@@ -145,9 +145,9 @@ void THttpSocket::writeRawDataFromWebSocket(const QByteArray &data)
 }
 
 
-qint64 THttpSocket::writeRawData(const char *data, qint64 size)
+int64_t THttpSocket::writeRawData(const char *data, int64_t size)
 {
-    qint64 total = 0;
+    int64_t total = 0;
 
     if (Q_UNLIKELY(_socket <= 0)) {
         throw StandardException("Logic error", __FILE__, __LINE__);
@@ -163,7 +163,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
             abort();
             break;
         } else {
-            qint64 written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
+            int64_t written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
             if (Q_UNLIKELY(written <= 0)) {
                 tWarn("socket write error: total:%d (%d)  data length:%d", (int)total, (int)written, (int)size);
                 return -1;
@@ -181,7 +181,7 @@ qint64 THttpSocket::writeRawData(const char *data, qint64 size)
 }
 
 
-qint64 THttpSocket::writeRawData(const QByteArray &data)
+int64_t THttpSocket::writeRawData(const QByteArray &data)
 {
     return writeRawData(data.data(), data.size());
 }
@@ -189,10 +189,10 @@ qint64 THttpSocket::writeRawData(const QByteArray &data)
 
 bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
-    static const qint64 systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
+    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
 
-    qint64 buflen = _readBuffer.capacity() - _readBuffer.size();
-    qint64 len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
+    int64_t buflen = _readBuffer.capacity() - _readBuffer.size();
+    int64_t len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
 
     if (len < 0) {
         setSocketDescriptor(_socket, QAbstractSocket::ClosingState);

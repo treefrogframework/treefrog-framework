@@ -23,9 +23,9 @@ bool TProcessInfo::exists() const
 }
 
 
-qint64 TProcessInfo::ppid() const
+int64_t TProcessInfo::ppid() const
 {
-    qint64 parentpid = 0;
+    int64_t parentpid = 0;
 
     if (processId <= 0) {
         return parentpid;
@@ -62,16 +62,16 @@ QString TProcessInfo::processName() const
 }
 
 
-QList<qint64> TProcessInfo::allConcurrentPids()
+QList<int64_t> TProcessInfo::allConcurrentPids()
 {
-    QList<qint64> pidList;
+    QList<int64_t> pidList;
     uint cnt;
     auto *prstat = procstat_open_sysctl();
     auto *procs = procstat_getprocs(prstat, KERN_PROC_PROC, 0, &cnt);
 
     if (procs) {
         for (uint i = 0; i < cnt; i++) {
-            qint64 pid = procs[i].ki_pid;
+            int64_t pid = procs[i].ki_pid;
             if (pid > 0) {
                 pidList << pid;
             }

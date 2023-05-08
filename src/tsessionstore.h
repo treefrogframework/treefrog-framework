@@ -14,6 +14,6 @@ public:
     virtual bool remove(const QByteArray &id) = 0;
     virtual int gc(const QDateTime &expire) = 0;
 
-    static qint64 lifeTimeSecs();
+    static int64_t lifeTimeSecs();
 };
 

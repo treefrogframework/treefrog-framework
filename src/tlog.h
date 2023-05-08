@@ -16,7 +16,7 @@ public:
 
     QDateTime timestamp;  //!< Timestamp.
     int priority {0};  //!< Priority. @sa enum TLogger::Priority
-    qint64 pid {0};  //!< PID.
+    qulonglong pid {0};  //!< PID.
     qulonglong threadId {0};  //!< Thread ID.
     QByteArray message;  //!< Message.
     int duration {0};  //!< Duration (msecs).

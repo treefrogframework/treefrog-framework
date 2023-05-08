@@ -110,12 +110,12 @@ QUrl TActionHelper::urla(const QString &action, const QVariant &arg) const
 */
 
 /*!
-  \fn TActionHelper::url(const QString &controller, const QString &action, qint64 arg) const
+  \fn TActionHelper::url(const QString &controller, const QString &action, int64_t arg) const
   This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
-  \fn TActionHelper::url(const QString &controller, const QString &action, quint64 arg) const
+  \fn TActionHelper::url(const QString &controller, const QString &action, uint64_t arg) const
   This function overloads url(const QString &, const QString &, const QStringList &, const QVariantMap &) const.
 */
 
@@ -161,12 +161,12 @@ QUrl TActionHelper::urla(const QString &action, const QVariant &arg) const
 */
 
 /*!
-  \fn TActionHelper::urla(const QString &action, qint64 arg) const
+  \fn TActionHelper::urla(const QString &action, int64_t arg) const
   This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 
 /*!
-  \fn TActionHelper::urla(const QString &action, quint64 arg) const
+  \fn TActionHelper::urla(const QString &action, uint64_t arg) const
   This function overloads urla(const QString &, const QStringList &, const QVariantMap &) const.
 */
 

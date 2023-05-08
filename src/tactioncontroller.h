@@ -64,7 +64,7 @@ protected:
     void setSession(const TSession &session);
     bool addCookie(const TCookie &cookie) override;
     bool addCookie(const QByteArray &name, const QByteArray &value, const QDateTime &expire = QDateTime(), const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
-    bool addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
+    bool addCookie(const QByteArray &name, const QByteArray &value, int64_t maxAge, const QString &path = QString(), const QString &domain = QString(), bool secure = false, bool httpOnly = false, const QByteArray &sameSite = "Lax") override;
     QByteArray contentType() const;
     void setContentType(const QByteArray &type);
     bool render(const QString &action = QString(), const QString &layout = QString());

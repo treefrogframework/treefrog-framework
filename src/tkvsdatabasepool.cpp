@@ -313,7 +313,7 @@ void TKvsDatabasePool::pool(TKvsDatabase &database)
         if (database.isOpen()) {
             cachedDatabase[engine].push(database.connectionName());
             lastCachedTime[engine].store((uint)std::time(nullptr));
-            tSystemDebug("Pooled KVS database: %s  count:%lld", qUtf8Printable(database.connectionName()), cachedDatabase->count());
+            tSystemDebug("Pooled KVS database: %s  count:%ld", qUtf8Printable(database.connectionName()), (int64_t)cachedDatabase->count());
         } else {
             tSystemWarn("Closed KVS database connection, name: %s", qUtf8Printable(database.connectionName()));
             availableNames[engine].push(database.connectionName());

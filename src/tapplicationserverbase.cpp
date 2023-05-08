@@ -123,9 +123,9 @@ bool TApplicationServerBase::newerLibraryExists()
 }
 
 
-QPair<QHostAddress, quint16> TApplicationServerBase::getPeerInfo(int socketDescriptor)
+QPair<QHostAddress, uint16_t> TApplicationServerBase::getPeerInfo(int socketDescriptor)
 {
-    auto peerInfo = QPair<QHostAddress, quint16>(QHostAddress(), 0);
+    auto peerInfo = QPair<QHostAddress, uint16_t>(QHostAddress(), 0);
 
     union {
         sockaddr a;

@@ -11,8 +11,8 @@
 #include <glog/logging.h>
 
 
-TQueue<quint64> intQueue;
-std::atomic<quint64> generator {0};
+TQueue<uint64_t> intQueue;
+std::atomic<uint64_t> generator {0};
 
 #if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
 void writeFailure(const char *data, size_t size)
@@ -29,9 +29,9 @@ public:
 protected:
     void run() override {
         try {
-            quint64 lastNum = 0;
+            uint64_t lastNum = 0;
             for (;;) {
-                quint64 num;
+                uint64_t num;
                 if (intQueue.dequeue(num)) {
                     //std::cout << "pop:" << intQueue.count() << std::endl;
                     QVERIFY(num == lastNum);

@@ -5,7 +5,7 @@
 #include "tcachefactory.h"
 #include "tcachesqlitestore.h"
 
-static qint64 FirstKey;
+static int64_t FirstKey;
 const int NUM = 500;
 
 
@@ -98,7 +98,7 @@ void TestCache::insert_data()
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("val");
 
-    qint64 n = FirstKey;
+    int64_t n = FirstKey;
     for (int i = 0; i < 20; i++) {
         QTest::newRow(QByteArray::number(i).data()) << QByteArray::number(n+i) << genval(QByteArray::number(n+i));
     }

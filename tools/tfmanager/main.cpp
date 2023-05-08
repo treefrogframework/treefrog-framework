@@ -448,13 +448,13 @@ int killTreeFrogProcess(const QString &cmd)
         }
 
     } else if (cmd == "abort") {  // abort command
-        QList<qint64> pids = pi.childProcessIds();
+        auto pids = pi.childProcessIds();
 
         pi.kill();  // kills the manager process
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (int64_t)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");

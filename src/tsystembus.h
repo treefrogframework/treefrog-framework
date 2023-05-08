@@ -21,7 +21,7 @@ public:
 
     static TSystemBus *instance();
     static QString connectionName();
-    static QString connectionName(qint64 pid);
+    static QString connectionName(int64_t pid);
 
 signals:
     void readyReceive();
@@ -48,8 +48,8 @@ private:
 class T_CORE_EXPORT TSystemBusMessage {
 public:
     TSystemBusMessage();
-    TSystemBusMessage(quint8 opcode, const QByteArray &data);
-    TSystemBusMessage(quint8 opcode, const QString &target, const QByteArray &data);
+    TSystemBusMessage(uint8_t opcode, const QByteArray &data);
+    TSystemBusMessage(uint8_t opcode, const QString &target, const QByteArray &data);
 
     bool firstBit() const { return _firstByte & 0x80; }
     bool rsvBit() const { return _firstByte & 0x40; }
@@ -67,7 +67,7 @@ private:
     const QByteArray &payload() const { return _payload; }
     bool validate();
 
-    quint8 _firstByte {0};
+    uint8_t _firstByte {0};
     QByteArray _payload;
     bool _valid {false};
 
