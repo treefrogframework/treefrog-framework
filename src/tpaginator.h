@@ -27,7 +27,7 @@ public:
     virtual QList<int> range() const;
     int currentPage() const;
     int firstPage() const { return 1; }
-    int previousPage() const { return qMax(currentPage() - 1, 1); }
+    int previousPage() const { return std::max(currentPage() - 1, 1); }
     int nextPage() const { return qMin(currentPage() + 1, _numPages); }
     int lastPage() const { return _numPages; }
     bool hasPrevious() const { return (currentPage() >= 2); }

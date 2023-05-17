@@ -502,7 +502,7 @@ int TActionContext::keepAliveTimeout()
 {
     static int keepAliveTimeout = []() {
         int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
-        return qMax(timeout, 0);
+        return std::max(timeout, 0);
     }();
     return keepAliveTimeout;
 }

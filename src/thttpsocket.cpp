@@ -20,6 +20,7 @@
 #include <chrono>
 #include <ctime>
 #include <thread>
+#include <algorithm>
 
 constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
 constexpr int64_t WRITE_LENGTH = 1408;
@@ -208,10 +209,10 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                 if (_fileBuffer.write(_readBuffer.data(), _readBuffer.size()) < 0) {
                     throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                 }
-                _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0L);
+                _lengthToRead = std::max(_lengthToRead - (int64_t)_readBuffer.size(), (int64_t)0);
                 _readBuffer.resize(0);
             } else {
-                _lengthToRead = qMax(_lengthToRead - len, 0L);
+                _lengthToRead = std::max(_lengthToRead - len, (int64_t)0);
             }
 
         } else if (_lengthToRead < 0) {
@@ -223,7 +224,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
                 }
 
-                _lengthToRead = qMax(idx + 4 + header.contentLength() - _readBuffer.length(), 0L);
+                _lengthToRead = std::max(idx + 4 + header.contentLength() - (int64_t)_readBuffer.length(), (int64_t)0);
 
                 if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
                     _headerBuffer = _readBuffer.mid(0, idx + 4);

@@ -226,7 +226,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
             }
         }
 
-        int64_t written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
+        int64_t written = QTcpSocket::write(data.data() + total, std::min((int64_t)data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
             tWarn("websocket write error: total:%d (%d)", (int)total, (int)written);
             break;

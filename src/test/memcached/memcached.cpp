@@ -119,15 +119,15 @@ void TestMemcached::setGetNumber_data()
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << 123456789L
+                       << (int64_t)123456789
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << -987654321L
+                       << (int64_t)-987654321
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << 0L
+                       << (int64_t)0
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
@@ -262,15 +262,15 @@ void TestMemcached::addGetNumber_data()
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << 123456789L
+                       << (int64_t)123456789
                        << 10
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << -987654321L
+                       << (int64_t)-987654321
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << 0L
+                       << (int64_t)0
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
@@ -568,13 +568,13 @@ void TestMemcached::incr_data()
     QTest::addColumn<int>("secs");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << 0UL << 0UL
+                       << (uint64_t)0 << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << 0UL << (uint64_t)Tf::random(1, INT64_MAX)
+                       << (uint64_t)0 << (uint64_t)Tf::random(1, INT64_MAX)
                        << (int)Tf::random(5, 3600);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << (uint64_t)Tf::random(1, INT64_MAX) << 0UL
+                       << (uint64_t)Tf::random(1, INT64_MAX) << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << (uint64_t)Tf::random(0, INT64_MAX / 2) << (uint64_t)Tf::random(0, INT64_MAX / 2)
@@ -616,13 +616,13 @@ void TestMemcached::decr_data()
     QTest::addColumn<int>("secs");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << 0UL << 0UL
+                       << (uint64_t)0 << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << 0UL << (uint64_t)Tf::random(1, INT64_MAX)
+                       << (uint64_t)0 << (uint64_t)Tf::random(1, INT64_MAX)
                        << (int)Tf::random(5, 3600);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << (uint64_t)Tf::random(1, INT64_MAX) << 0UL
+                       << (uint64_t)Tf::random(1, INT64_MAX) << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << (uint64_t)Tf::random(INT64_MAX / 2, INT64_MAX) << (uint64_t)Tf::random(0, INT64_MAX / 2)

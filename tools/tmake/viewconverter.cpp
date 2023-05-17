@@ -74,7 +74,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
                 bool ok;
                 int mode = erbTrim.readLine().trimmed().toInt(&ok);
                 if (ok) {
-                    trimMode = qMin(qMax(0, mode), 2);
+                    trimMode = std::min(std::max(0, mode), 2);
                 }
                 erbTrim.close();
             }
@@ -83,7 +83,7 @@ int ViewConverter::convertView(const QString &templateSystem) const
         QStringList filter;
         if (dir.dirName() == QLatin1String("mailer")) {
             filter = ErbFilter;
-            trimMode = qMin(trimMode, 1);  // max of trim-mode of mailer is 1
+            trimMode = std::min(trimMode, 1);  // max of trim-mode of mailer is 1
         } else {
             filter = (templateSystem.toLower() == QLatin1String("otama")) ? OtamaFilter : ErbFilter;
         }

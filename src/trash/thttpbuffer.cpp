@@ -9,6 +9,7 @@
 #include <THttpRequestHeader>
 #include "thttpbuffer.h"
 #include "tsystemglobal.h"
+#include <algorithm>
 
 static int64_t systemLimitBodyBytes = -1;
 
@@ -40,7 +41,7 @@ THttpBuffer &THttpBuffer::operator=(const THttpBuffer &other)
 
 QByteArray THttpBuffer::read(int maxSize)
 {
-    int size = qMin(httpBuffer.length(), maxSize);
+    int size = std::min(httpBuffer.length(), maxSize);
     QByteArray res(size, 0);
     read(res.data(), size);
     return res;
@@ -49,7 +50,7 @@ QByteArray THttpBuffer::read(int maxSize)
 
 int THttpBuffer::read(char *data, int maxSize)
 {
-    int size = qMin(httpBuffer.length(), maxSize);
+    int size = std::min(httpBuffer.length(), maxSize);
     memcpy(data, httpBuffer.data(), size);
     httpBuffer.remove(0, size);
     return size;

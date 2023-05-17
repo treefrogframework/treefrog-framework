@@ -254,6 +254,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstdint>
 #include <cstring>
 #include <functional>
+#include <algorithm>
 
 class TWebApplication;
 class TActionContext;

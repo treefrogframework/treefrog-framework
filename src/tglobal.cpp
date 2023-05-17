@@ -219,7 +219,7 @@ QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel) n
     int readlen = 0;
 
     while (readlen < nbytes) {
-        int datalen = qMin(nbytes - readlen, LZ4_BLOCKSIZE);
+        int datalen = std::min(nbytes - readlen, LZ4_BLOCKSIZE);
         compress(data + readlen, datalen, compressionLevel, buffer);
         readlen += datalen;
 

@@ -83,7 +83,7 @@ void *TSendBuffer::getData(int &size)
     }
 
     if (_startPos < _arrayBuffer.length()) {
-        size = qMin(_arrayBuffer.length() - _startPos, size);
+        size = std::min((int)_arrayBuffer.length() - _startPos, size);
         return _arrayBuffer.data() + _startPos;
     }
 

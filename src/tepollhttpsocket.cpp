@@ -128,7 +128,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
             throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
-        _lengthToRead = qMax(_lengthToRead - pos, 0LL);
+        _lengthToRead = std::max(_lengthToRead - pos, (int64_t)0);
     }
 
     // WebSocket?
@@ -195,7 +195,7 @@ void TEpollHttpSocket::parse()
                 throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
             }
 
-            _lengthToRead = qMax(idx + 4 + (int64_t)header.contentLength() - _recvBuffer.length(), 0LL);
+            _lengthToRead = std::max(idx + 4 + (int64_t)header.contentLength() - (int64_t)_recvBuffer.length(), (int64_t)0);
             tSystemDebug("lengthToRead: %d", (int)_lengthToRead);
         }
     } else {
