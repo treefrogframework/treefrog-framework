@@ -1,6 +1,5 @@
 #pragma once
 #include "tfcore.h"
-#include <aio.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <sys/file.h>
@@ -129,10 +128,10 @@ inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 
 #endif  // Q_OS_WASM
 
-inline int tf_aio_write(struct aiocb *aiocbp)
-{
-    TF_EINTR_LOOP(::aio_write(aiocbp));
-}
+// inline int tf_aio_write(struct aiocb *aiocbp)
+// {
+//     TF_EINTR_LOOP(::aio_write(aiocbp));
+// }
 
 
 inline int tf_close(int fd)
