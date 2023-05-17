@@ -372,15 +372,15 @@ void TestMemcached::replaceGetNumber_data()
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << 123456789L
+                       << (int64_t)123456789
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << -987654321L
+                       << (int64_t)-987654321
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << 0L
+                       << (int64_t)0
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
