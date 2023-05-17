@@ -208,10 +208,10 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                 if (_fileBuffer.write(_readBuffer.data(), _readBuffer.size()) < 0) {
                     throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                 }
-                _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0LL);
+                _lengthToRead = qMax(_lengthToRead - _readBuffer.size(), 0L);
                 _readBuffer.resize(0);
             } else {
-                _lengthToRead = qMax(_lengthToRead - len, 0LL);
+                _lengthToRead = qMax(_lengthToRead - len, 0L);
             }
 
         } else if (_lengthToRead < 0) {
@@ -223,7 +223,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
                 }
 
-                _lengthToRead = qMax(idx + 4 + header.contentLength() - _readBuffer.length(), 0LL);
+                _lengthToRead = qMax(idx + 4 + header.contentLength() - _readBuffer.length(), 0L);
 
                 if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
                     _headerBuffer = _readBuffer.mid(0, idx + 4);
