@@ -8,7 +8,8 @@
 #include "tprocessinfo.h"
 #include <QtCore>
 #include <TWebApplication>
-#include <Windows.h>
+#define NOMINMAX
+#include <windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
 

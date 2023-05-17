@@ -23,7 +23,8 @@
 #include <TActionWorker>
 #endif
 #ifdef Q_OS_WIN
-#include <Windows.h>
+#define NOMINMAX
+#include <windows.h>
 #endif
 #include <climits>
 #include <cstdlib>
