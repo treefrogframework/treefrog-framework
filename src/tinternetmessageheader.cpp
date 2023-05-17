@@ -141,7 +141,7 @@ int64_t TInternetMessageHeader::contentLength() const
 */
 void TInternetMessageHeader::setContentLength(int64_t len)
 {
-    setRawHeader(QByteArrayLiteral("Content-Length"), QByteArray::number(len));
+    setRawHeader(QByteArrayLiteral("Content-Length"), QByteArray::number((qlonglong)len));
     _contentLength = len;
 }
 

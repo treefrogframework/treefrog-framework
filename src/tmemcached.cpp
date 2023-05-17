@@ -108,7 +108,7 @@ bool TMemcached::set(const QByteArray &key, const QByteArray &value, int seconds
 
 bool TMemcached::set(const QByteArray &key, int64_t value, int seconds, uint flags)
 {
-    return set(key, QByteArray::number(value), seconds, flags);
+    return set(key, QByteArray::number((qlonglong)value), seconds, flags);
 }
 
 
@@ -121,7 +121,7 @@ bool TMemcached::add(const QByteArray &key, const QByteArray &value, int seconds
 
 bool TMemcached::add(const QByteArray &key, int64_t value, int seconds, uint flags)
 {
-    return add(key, QByteArray::number(value), seconds, flags);
+    return add(key, QByteArray::number((qlonglong)value), seconds, flags);
 
 }
 
@@ -135,7 +135,7 @@ bool TMemcached::replace(const QByteArray &key, const QByteArray &value, int sec
 
 bool TMemcached::replace(const QByteArray &key, int64_t value, int seconds, uint flags)
 {
-    return replace(key, QByteArray::number(value), seconds, flags);
+    return replace(key, QByteArray::number((qlonglong)value), seconds, flags);
 }
 
 
@@ -162,7 +162,7 @@ bool TMemcached::remove(const QByteArray &key)
 
 uint64_t TMemcached::incr(const QByteArray &key, uint64_t value, bool *ok)
 {
-    QByteArray res = requestLine("incr", key, QByteArray::number(value), false);
+    QByteArray res = requestLine("incr", key, QByteArray::number((qulonglong)value), false);
     if (res.startsWith("NOT_FOUND")) {
         if (ok) {
             *ok = false;
@@ -175,7 +175,7 @@ uint64_t TMemcached::incr(const QByteArray &key, uint64_t value, bool *ok)
 
 uint64_t TMemcached::decr(const QByteArray &key, uint64_t value, bool *ok)
 {
-    QByteArray res = requestLine("decr", key, QByteArray::number(value), false);
+    QByteArray res = requestLine("decr", key, QByteArray::number((qulonglong)value), false);
     if (res.startsWith("NOT_FOUND")) {
         if (ok) {
             *ok = false;
