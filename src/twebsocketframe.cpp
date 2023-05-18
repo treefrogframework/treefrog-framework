@@ -128,7 +128,7 @@ QByteArray TWebSocketFrame::toByteArray() const
         ds << b;
     } else if (plen <= (int)0xFFFF) {
         b |= (uchar)126;
-        ds << b << (quint16)plen;
+        ds << b << (uint16_t)plen;
     } else {
         b |= (uchar)127;
         ds << b << (quint64)plen;

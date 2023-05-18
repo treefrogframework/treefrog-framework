@@ -35,7 +35,7 @@ public:
     bool isFinalFrame() const { return finBit(); }
     OpCode opCode() const { return (OpCode)(_firstByte & 0xF); }
     bool isControlFrame() const;
-    quint32 maskKey() const { return _maskKey; }
+    uint32_t maskKey() const { return _maskKey; }
     uint64_t payloadLength() const { return _payloadLength; }
     const QByteArray &payload() const { return _payload; }
     bool isValid() const { return _valid; }
@@ -53,7 +53,7 @@ private:
     void setFinBit(bool fin);
     void setOpCode(OpCode opCode);
     void setFirstByte(uint8_t byte);
-    void setMaskKey(quint32 maskKey);
+    void setMaskKey(uint32_t maskKey);
     void setPayloadLength(uint64_t length);
     void setPayload(const QByteArray &payload);
     QByteArray &payload() { return _payload; }
@@ -63,7 +63,7 @@ private:
     void setState(ProcessingState state);
 
     uint8_t _firstByte {0x80};
-    quint32 _maskKey {0};
+    uint32_t _maskKey {0};
     uint64_t _payloadLength {0};
     QByteArray _payload;  // unmasked data stored
     ProcessingState _state {Empty};

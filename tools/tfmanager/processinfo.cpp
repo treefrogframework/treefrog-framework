@@ -12,7 +12,7 @@
 namespace TreeFrog {
 
 
-ProcessInfo::ProcessInfo(qint64 pid) :
+ProcessInfo::ProcessInfo(int64_t pid) :
     processId(pid)
 {
 }
@@ -43,12 +43,12 @@ bool ProcessInfo::waitForTerminated(int msecs)
 }
 
 
-QList<qint64> ProcessInfo::childProcessIds() const
+QList<int64_t> ProcessInfo::childProcessIds() const
 {
-    QList<qint64> ids;
-    QList<qint64> allPids = allConcurrentPids();
+    QList<int64_t> ids;
+    QList<int64_t> allPids = allConcurrentPids();
 
-    for (qint64 p : allPids) {
+    for (int64_t p : allPids) {
         if (ProcessInfo(p).ppid() == pid()) {
             ids << p;
         }
@@ -57,24 +57,24 @@ QList<qint64> ProcessInfo::childProcessIds() const
 }
 
 
-void ProcessInfo::kill(qint64 ppid)
+void ProcessInfo::kill(int64_t ppid)
 {
     ProcessInfo(ppid).kill();
 }
 
 
-void ProcessInfo::kill(QList<qint64> pids)
+void ProcessInfo::kill(QList<int64_t> pids)
 {
-    for (qint64 pid : pids) {
+    for (int64_t pid : pids) {
         ProcessInfo(pid).kill();
     }
 }
 
 
-QList<qint64> ProcessInfo::pidsOf(const QString &processName)
+QList<int64_t> ProcessInfo::pidsOf(const QString &processName)
 {
-    QList<qint64> ret;
-    QList<qint64> pids = allConcurrentPids();
+    QList<int64_t> ret;
+    QList<int64_t> pids = allConcurrentPids();
 
     for (auto pid : pids) {
         ProcessInfo pi(pid);

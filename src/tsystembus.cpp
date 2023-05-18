@@ -66,7 +66,7 @@ QList<TSystemBusMessage> TSystemBus::recvAll()
 {
     QList<TSystemBusMessage> ret;
     uint8_t opcode;
-    quint32 length;
+    uint32_t length;
     QMutexLocker locker(&mutexRead);
 
     for (;;) {
@@ -97,7 +97,7 @@ void TSystemBus::readBus()
         QDataStream ds(readBuffer);
         ds.setByteOrder(QDataStream::BigEndian);
         uint8_t opcode;
-        quint32 length;
+        uint32_t length;
         ds >> opcode >> length;
 
         ready = ((uint)readBuffer.length() >= length + HEADER_LEN);
@@ -253,7 +253,7 @@ QByteArray TSystemBusMessage::toByteArray() const
 
     QDataStream ds(&buf, QIODevice::WriteOnly);
     ds.setByteOrder(QDataStream::BigEndian);
-    ds << _firstByte << (quint32)_payload.length();
+    ds << _firstByte << (uint32_t)_payload.length();
     ds.writeRawData(_payload.data(), _payload.length());
     return buf;
 }
@@ -265,7 +265,7 @@ TSystemBusMessage TSystemBusMessage::parse(QByteArray &bytes)
     ds.setByteOrder(QDataStream::BigEndian);
 
     uint8_t opcode;
-    quint32 length;
+    uint32_t length;
     ds >> opcode >> length;
 
     if ((uint)bytes.length() < HEADER_LEN || (uint)bytes.length() < HEADER_LEN + length) {

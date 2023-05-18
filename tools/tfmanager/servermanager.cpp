@@ -58,7 +58,7 @@ QString ServerManager::tfserverProgramPath()
 }
 
 
-bool ServerManager::start(const QHostAddress &address, quint16 port)
+bool ServerManager::start(const QHostAddress &address, uint16_t port)
 {
     if (isRunning())
         return true;

@@ -23,7 +23,7 @@ bool ProcessInfo::exists() const
 }
 
 
-qint64 ProcessInfo::ppid() const
+int64_t ProcessInfo::ppid() const
 {
     DWORD pidParent = 0;
     HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -50,14 +50,14 @@ qint64 ProcessInfo::ppid() const
 }
 
 
-// qint64 ProcessInfo::ppid() const
+// int64_t ProcessInfo::ppid() const
 // {
-//     qint64 ppid = 0;
+//     int64_t ppid = 0;
 //     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
 //     if (hProcess) {
 //         PROCESS_BASIC_INFORMATION basicInfo;
 //         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
-//             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
+//             ppid = (int64_t)basicInfo.InheritedFromUniqueProcessId;
 //         }
 //     }
 //     return ppid;
@@ -113,16 +113,16 @@ void ProcessInfo::restart()
 }
 
 
-QList<qint64> ProcessInfo::allConcurrentPids()
+QList<int64_t> ProcessInfo::allConcurrentPids()
 {
-    QList<qint64> ret;
+    QList<int64_t> ret;
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 entry;
 
     entry.dwSize = sizeof(PROCESSENTRY32);
     if (Process32First(hSnapshot, &entry)) {
         do {
-            ret << (qint64)entry.th32ProcessID;
+            ret << (int64_t)entry.th32ProcessID;
         } while (Process32Next(hSnapshot, &entry));
     }
     CloseHandle(hSnapshot);
