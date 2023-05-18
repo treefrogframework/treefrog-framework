@@ -19,7 +19,7 @@ bool ProcessInfo::exists() const
 }
 
 
-qint64 ProcessInfo::ppid() const
+int64_t ProcessInfo::ppid() const
 {
     const char DIRECTIVE[] = "PPid:";
     QString ppid;
@@ -51,15 +51,15 @@ QString ProcessInfo::processName() const
 }
 
 
-QList<qint64> ProcessInfo::allConcurrentPids()
+QList<int64_t> ProcessInfo::allConcurrentPids()
 {
-    QList<qint64> ret;
+    QList<int64_t> ret;
     QDir proc("/proc");
     QStringList dirs = proc.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
 
     for (QStringListIterator it(dirs); it.hasNext();) {
         const QString &s = it.next();
-        qint64 pid = s.toLongLong();
+        int64_t pid = s.toLongLong();
         if (pid > 0) {
             ret << pid;
         }

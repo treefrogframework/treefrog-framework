@@ -20,15 +20,15 @@ public:
     TEpollSocket(int socketDescriptor, Tf::SocketState state, const QHostAddress &peerAddress);
     virtual ~TEpollSocket();
 
-    void connectToHost(const QHostAddress &address, quint16 port);
+    void connectToHost(const QHostAddress &address, uint16_t port);
     void close();
     void dispose();
     int socketDescriptor() const { return _socket; }
     QHostAddress peerAddress() const { return _peerAddress; }
     void sendData(const QByteArray &header, QIODevice *body, bool autoRemove, TAccessLogger &&accessLogger);
     void sendData(const QByteArray &data);
-    qint64 receivedSize() const { return _recvBuffer.length(); }
-    qint64 receiveData(char *buffer, qint64 length);
+    int64_t receivedSize() const { return _recvBuffer.length(); }
+    int64_t receiveData(char *buffer, int64_t length);
     QByteArray receiveAll();
     bool waitForConnected(int msecs = 5000);
     bool waitForDataSent(int msecs = 5000);

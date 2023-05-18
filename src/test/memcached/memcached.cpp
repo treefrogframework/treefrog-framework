@@ -114,28 +114,28 @@ void TestMemcached::setGet()
 void TestMemcached::setGetNumber_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<qint64>("value");
+    QTest::addColumn<int64_t>("value");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << 123456789LL
+                       << (int64_t)123456789
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << -987654321LL
+                       << (int64_t)-987654321
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << 0LL
+                       << (int64_t)0
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
-                       << (qint64)Tf::random(1, INT64_MAX)
+                       << (int64_t)Tf::random(1, INT64_MAX)
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
-                       << (qint64)-Tf::random(1, INT_MAX)
+                       << (int64_t)-Tf::random(1, INT_MAX)
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(0, UINT_MAX);
 }
@@ -144,7 +144,7 @@ void TestMemcached::setGetNumber_data()
 void TestMemcached::setGetNumber()
 {
     QFETCH(QByteArray, key);
-    QFETCH(qint64, value);
+    QFETCH(int64_t, value);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
@@ -257,28 +257,28 @@ void TestMemcached::addGet()
 void TestMemcached::addGetNumber_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<qint64>("value");
+    QTest::addColumn<int64_t>("value");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << 123456789LL
+                       << (int64_t)123456789
                        << 10
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << -987654321LL
+                       << (int64_t)-987654321
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << 0LL
+                       << (int64_t)0
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
-                       << (qint64)Tf::random(1, INT64_MAX)
+                       << (int64_t)Tf::random(1, INT64_MAX)
                        << 10
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
-                       << (qint64)-Tf::random(1, INT_MAX)
+                       << (int64_t)-Tf::random(1, INT_MAX)
                        << 20
                        << (uint)Tf::random(1, UINT_MAX);
 }
@@ -287,7 +287,7 @@ void TestMemcached::addGetNumber_data()
 void TestMemcached::addGetNumber()
 {
     QFETCH(QByteArray, key);
-    QFETCH(qint64, value);
+    QFETCH(int64_t, value);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
@@ -367,28 +367,28 @@ void TestMemcached::replaceGet()
 void TestMemcached::replaceGetNumber_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<qint64>("value");
+    QTest::addColumn<int64_t>("value");
     QTest::addColumn<int>("secs");
     QTest::addColumn<uint>("flags");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << 123456789LL
+                       << (int64_t)123456789
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << -987654321LL
+                       << (int64_t)-987654321
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << 0LL
+                       << (int64_t)0
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
-                       << (qint64)Tf::random(1, INT64_MAX)
+                       << (int64_t)Tf::random(1, INT64_MAX)
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
-                       << (qint64)-Tf::random(1, INT_MAX)
+                       << (int64_t)-Tf::random(1, INT_MAX)
                        << (int)Tf::random(3, 10)
                        << (uint)Tf::random(1, UINT_MAX);
 }
@@ -397,7 +397,7 @@ void TestMemcached::replaceGetNumber_data()
 void TestMemcached::replaceGetNumber()
 {
     QFETCH(QByteArray, key);
-    QFETCH(qint64, value);
+    QFETCH(int64_t, value);
     QFETCH(int, secs);
     QFETCH(uint, flags);
 
@@ -563,21 +563,21 @@ void TestMemcached::remove()
 void TestMemcached::incr_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<quint64>("value");
-    QTest::addColumn<quint64>("incr");
+    QTest::addColumn<uint64_t>("value");
+    QTest::addColumn<uint64_t>("incr");
     QTest::addColumn<int>("secs");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << 0ULL << 0ULL
+                       << (uint64_t)0 << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << 0ULL << (quint64)Tf::random(1, INT64_MAX)
+                       << (uint64_t)0 << (uint64_t)Tf::random(1, INT64_MAX)
                        << (int)Tf::random(5, 3600);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << (quint64)Tf::random(1, INT64_MAX) << 0ULL
+                       << (uint64_t)Tf::random(1, INT64_MAX) << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
-                       << (quint64)Tf::random(0, INT64_MAX / 2) << (quint64)Tf::random(0, INT64_MAX / 2)
+                       << (uint64_t)Tf::random(0, INT64_MAX / 2) << (uint64_t)Tf::random(0, INT64_MAX / 2)
                        << (int)Tf::random(5, 3600);
 }
 
@@ -585,16 +585,16 @@ void TestMemcached::incr_data()
 void TestMemcached::incr()
 {
     QFETCH(QByteArray, key);
-    QFETCH(quint64, value);
-    QFETCH(quint64, incr);
+    QFETCH(uint64_t, value);
+    QFETCH(uint64_t, incr);
     QFETCH(int, secs);
 
     TMemcached memcached;
     bool ok;
     memcached.set(key, value, secs);
     Tf::msleep(Tf::random(50, 500));  // sleep
-    quint64 res = memcached.incr(key + "hoge", incr, &ok);
-    QCOMPARE(res, 0ULL);
+    uint64_t res = memcached.incr(key + "hoge", incr, &ok);
+    QCOMPARE(res, 0UL);
     QCOMPARE(ok, false);  // incr failure
 
     res = memcached.incr(key, incr, &ok);
@@ -611,24 +611,24 @@ void TestMemcached::incr()
 void TestMemcached::decr_data()
 {
     QTest::addColumn<QByteArray>("key");
-    QTest::addColumn<quint64>("value");
-    QTest::addColumn<quint64>("decr");
+    QTest::addColumn<uint64_t>("value");
+    QTest::addColumn<uint64_t>("decr");
     QTest::addColumn<int>("secs");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << 0ULL << 0ULL
+                       << (uint64_t)0 << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << 0ULL << (quint64)Tf::random(1, INT64_MAX)
+                       << (uint64_t)0 << (uint64_t)Tf::random(1, INT64_MAX)
                        << (int)Tf::random(5, 3600);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << (quint64)Tf::random(1, INT64_MAX) << 0ULL
+                       << (uint64_t)Tf::random(1, INT64_MAX) << (uint64_t)0
                        << (int)Tf::random(5, 3600);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
-                       << (quint64)Tf::random(INT64_MAX / 2, INT64_MAX) << (quint64)Tf::random(0, INT64_MAX / 2)
+                       << (uint64_t)Tf::random(INT64_MAX / 2, INT64_MAX) << (uint64_t)Tf::random(0, INT64_MAX / 2)
                        << (int)Tf::random(5, 3600);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
-                       << (quint64)Tf::random(0, INT64_MAX / 2) << (quint64)Tf::random(INT64_MAX / 2, INT64_MAX)
+                       << (uint64_t)Tf::random(0, INT64_MAX / 2) << (uint64_t)Tf::random(INT64_MAX / 2, INT64_MAX)
                        << (int)Tf::random(5, 3600);
 }
 
@@ -636,16 +636,16 @@ void TestMemcached::decr_data()
 void TestMemcached::decr()
 {
     QFETCH(QByteArray, key);
-    QFETCH(quint64, value);
-    QFETCH(quint64, decr);
+    QFETCH(uint64_t, value);
+    QFETCH(uint64_t, decr);
     QFETCH(int, secs);
 
     TMemcached memcached;
     bool ok;
     memcached.set(key, value, secs);
     Tf::msleep(Tf::random(50, 500));  // sleep
-    quint64 res = memcached.decr(key + "foo", decr, &ok);
-    QCOMPARE(res, 0ULL);
+    uint64_t res = memcached.decr(key + "foo", decr, &ok);
+    QCOMPARE(res, 0UL);
     QCOMPARE(ok, false);  // decr failure
 
     res = memcached.decr(key, decr, &ok);
@@ -653,7 +653,7 @@ void TestMemcached::decr()
     if (value > decr) {
         QCOMPARE(res, value - decr);
     } else {
-        QCOMPARE(res, 0ULL);
+        QCOMPARE(res, 0UL);
     }
 
     Tf::msleep(Tf::random(50, 1900));  // sleep
@@ -662,7 +662,7 @@ void TestMemcached::decr()
     if (value > decr) {
         QCOMPARE(res, value - decr);
     } else {
-        QCOMPARE(res, 0ULL);
+        QCOMPARE(res, 0UL);
     }
 }
 

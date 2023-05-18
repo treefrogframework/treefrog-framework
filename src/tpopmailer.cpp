@@ -25,7 +25,7 @@ TPopMailer::TPopMailer(QObject *parent) :
 }
 
 
-TPopMailer::TPopMailer(const QString &hostName, quint16 port, QObject *parent) :
+TPopMailer::TPopMailer(const QString &hostName, uint16_t port, QObject *parent) :
     QObject(parent),
     _socket(new QTcpSocket),
     _popHostName(hostName),
@@ -46,7 +46,7 @@ void TPopMailer::setHostName(const QString &hostName)
 }
 
 
-void TPopMailer::setPort(quint16 port)
+void TPopMailer::setPort(uint16_t port)
 {
     _popPort = port;
 }

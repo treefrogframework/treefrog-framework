@@ -36,9 +36,9 @@ ServerManager::ServerManager(int max, int min, int spare, QObject *parent) :
     minServers(min),
     spareServers(spare)
 {
-    spareServers = qMax(spareServers, 0);
-    minServers = qMax(minServers, 1);
-    maxServers = qMax(maxServers, minServers);
+    spareServers = std::max(spareServers, 0);
+    minServers = std::max(minServers, 1);
+    maxServers = std::max(maxServers, minServers);
 
     TApplicationServerBase::nativeSocketInit();
 }
@@ -58,7 +58,7 @@ QString ServerManager::tfserverProgramPath()
 }
 
 
-bool ServerManager::start(const QHostAddress &address, quint16 port)
+bool ServerManager::start(const QHostAddress &address, uint16_t port)
 {
     if (isRunning())
         return true;

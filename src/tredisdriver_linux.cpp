@@ -28,7 +28,7 @@ bool TRedisDriver::isOpen() const
 }
 
 
-bool TRedisDriver::open(const QString &, const QString &, const QString &, const QString &host, quint16 port, const QString &)
+bool TRedisDriver::open(const QString &, const QString &, const QString &, const QString &host, uint16_t port, const QString &)
 {
     if (isOpen()) {
         return true;
@@ -70,7 +70,7 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
         return ret;
     }
 
-    qint64 len = _client->sendData(command);
+    int64_t len = _client->sendData(command);
     if (len < 0) {
         tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
     } else {
@@ -92,7 +92,7 @@ bool TRedisDriver::readReply()
         return false;
     }
 
-    qint64 recvlen = _client->receivedSize();
+    int64_t recvlen = _client->receivedSize();
     if (recvlen <= 0) {
         tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
         return false;

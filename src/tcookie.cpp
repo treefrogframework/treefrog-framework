@@ -63,7 +63,7 @@ QByteArray TCookie::toRawForm(QNetworkCookie::RawForm form) const
 
     if (_maxAge > 0) {
         raw += "; Max-Age=";
-        raw += QByteArray::number(_maxAge);
+        raw += QByteArray::number((qlonglong)_maxAge);
     }
 
     if (!_sameSite.isEmpty()) {

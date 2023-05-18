@@ -9,10 +9,10 @@
 #include <TSessionStore>
 
 
-qint64 TSessionStore::lifeTimeSecs()
+int64_t TSessionStore::lifeTimeSecs()
 {
-    static qint64 lifetime = []() {
-        qint64 time = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toLongLong();
+    static int64_t lifetime = []() {
+        int64_t time = Tf::appSettings()->value(Tf::SessionGcMaxLifeTime).toLongLong();
         return time;
     }();
     return lifetime;

@@ -44,7 +44,7 @@ public:
     QByteArray header(const QByteArray &headerName) const { return _entity.first.header(headerName); }
     QByteArray dataName() const { return _entity.first.dataName(); }
     QString contentType() const;
-    qint64 fileSize() const;
+    int64_t fileSize() const;
     QString originalFileName() const { return _entity.first.originalFileName(); }
     bool renameUploadedFile(const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     QString uploadedFilePath() const;
@@ -75,7 +75,7 @@ public:
 
     QString contentType(const QByteArray &dataName) const;
     QString originalFileName(const QByteArray &dataName) const;
-    qint64 size(const QByteArray &dataName) const;
+    int64_t size(const QByteArray &dataName) const;
     bool renameUploadedFile(const QByteArray &dataName, const QString &newName, bool overwrite = false, QFile::Permissions permissions = DefaultPermissions);
     QString uploadedFilePath(const QByteArray &dataName) const;
     void clear();

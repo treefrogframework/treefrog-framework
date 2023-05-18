@@ -7,10 +7,10 @@ namespace TreeFrog {
 
 class ProcessInfo {
 public:
-    ProcessInfo(qint64 pid);
+    ProcessInfo(int64_t pid);
 
-    qint64 pid() const { return processId; }
-    qint64 ppid() const;
+    int64_t pid() const { return processId; }
+    int64_t ppid() const;
     QString processName() const;
     bool exists() const;
 
@@ -18,15 +18,15 @@ public:
     void kill();  // SIGKILL
     void restart();  // SIGHUP
     bool waitForTerminated(int msecs = 10000);
-    QList<qint64> childProcessIds() const;
+    QList<int64_t> childProcessIds() const;
 
-    static void kill(qint64 ppid);
-    static void kill(QList<qint64> pids);
-    static QList<qint64> pidsOf(const QString &processName);
-    static QList<qint64> allConcurrentPids();
+    static void kill(int64_t ppid);
+    static void kill(QList<int64_t> pids);
+    static QList<int64_t> pidsOf(const QString &processName);
+    static QList<int64_t> allConcurrentPids();
 
 private:
-    qint64 processId;
+    int64_t processId;
 };
 
 }

@@ -28,7 +28,7 @@ TSmtpMailer::TSmtpMailer(QObject *parent) :
 }
 
 
-TSmtpMailer::TSmtpMailer(const QString &hostName, quint16 port, QObject *parent) :
+TSmtpMailer::TSmtpMailer(const QString &hostName, uint16_t port, QObject *parent) :
     QObject(parent),
     _socket(new QSslSocket),
     _smtpHostName(hostName),
@@ -58,7 +58,7 @@ void TSmtpMailer::moveToThread(QThread *targetThread)
 }
 
 
-void TSmtpMailer::setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable)
+void TSmtpMailer::setPopBeforeSmtpAuthEnabled(const QString &popServer, uint16_t port, bool apop, bool enable)
 {
     if (enable) {
         if (!_pop) {
@@ -211,7 +211,7 @@ QByteArray TSmtpMailer::authCramMd5(const QByteArray &in, const QByteArray &user
 }
 
 
-bool TSmtpMailer::connectToHost(const QString &hostName, quint16 port)
+bool TSmtpMailer::connectToHost(const QString &hostName, uint16_t port)
 {
     _socket->connectToHost(hostName, port);
     if (!_socket->waitForConnected(5000)) {

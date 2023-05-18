@@ -38,11 +38,11 @@ protected:
     void execute(THttpRequest &request);
     void release();
     qintptr socketDescriptor() const { return socketDesc; }
-    qint64 writeResponse(int statusCode, THttpResponseHeader &header);
-    qint64 writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length);
-    qint64 writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length);
+    int64_t writeResponse(int statusCode, THttpResponseHeader &header);
+    int64_t writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, int64_t length);
+    int64_t writeResponse(THttpResponseHeader &header, QIODevice *body, int64_t length);
 
-    virtual qint64 writeResponse(THttpResponseHeader &, QIODevice *) { return 0; }
+    virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) { return 0; }
     virtual void flushSocket() { }
     virtual void closeSocket() { }
     virtual void emitError(int socketError);

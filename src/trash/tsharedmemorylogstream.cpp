@@ -29,7 +29,7 @@ TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, i
     shareMem(new QSharedMemory(CREATE_KEY))
 {
     if (size < dataSizeOf(QList<TLog>())) {
-        tSystemError("Shared memory size not enough: %lld (bytes)", (qint64)shareMem->size());
+        tSystemError("Shared memory size not enough: %lld (bytes)", (int64_t)shareMem->size());
         return;
     }
 

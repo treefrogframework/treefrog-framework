@@ -14,7 +14,7 @@
 #include <QMap>
 #include <QMutex>
 
-constexpr qint64 WRITE_LENGTH = 1280;
+constexpr int64_t WRITE_LENGTH = 1280;
 constexpr int BUFFER_RESERVE_SIZE = 127;
 
 namespace {
@@ -61,7 +61,7 @@ void TWebSocket::close()
 
 void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
-    tSystemDebug("sendText  text len:%lld  (pid:%d)", (qint64)text.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendText  text len:%ld  (pid:%d)", (int64_t)text.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendText(text);
     }
@@ -70,7 +70,7 @@ void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 
 void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
-    tSystemDebug("sendBinary  binary len:%lld  (pid:%d)", (qint64)binary.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendBinary  binary len:%ld  (pid:%d)", (int64_t)binary.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendBinary(binary);
     }
@@ -79,7 +79,7 @@ void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *e
 
 void TWebSocket::sendPong(const QByteArray &data)
 {
-    tSystemDebug("sendPong  data len:%lld  (pid:%d)", (qint64)data.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendPong  data len:%ld  (pid:%d)", (int64_t)data.length(), (int)QCoreApplication::applicationPid());
     TAbstractWebSocket::sendPong(data);
 }
 
@@ -98,7 +98,7 @@ bool TWebSocket::canReadRequest() const
 void TWebSocket::readRequest()
 {
     if (myWorkerCounter > 0) {
-        tSystemWarn("Worker already running  (sd:%lld)", (quint64)socketDescriptor());
+        tSystemWarn("Worker already running  (sd:%ld)", (uint64_t)socketDescriptor());
         return;
     }
 
@@ -213,7 +213,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
     if (data.isEmpty())
         return;
 
-    qint64 total = 0;
+    int64_t total = 0;
     for (;;) {
         if (deleting.load()) {
             return;
@@ -226,7 +226,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
             }
         }
 
-        qint64 written = QTcpSocket::write(data.data() + total, qMin(data.length() - total, WRITE_LENGTH));
+        int64_t written = QTcpSocket::write(data.data() + total, std::min((int64_t)data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
             tWarn("websocket write error: total:%d (%d)", (int)total, (int)written);
             break;
@@ -240,7 +240,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
 }
 
 
-qint64 TWebSocket::writeRawData(const QByteArray &data)
+int64_t TWebSocket::writeRawData(const QByteArray &data)
 {
     // Calls send-function in main thread
     emit sendByWorker(data);

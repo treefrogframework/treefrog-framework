@@ -53,7 +53,7 @@ static bool directViewRenderMode()
 void TActionContext::execute(THttpRequest &request)
 {
     // App parameters
-    static const qint64 LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
+    static const int64_t LimitRequestBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
     static const uint ListenPort = Tf::appSettings()->value(Tf::ListenPort).toUInt();
     static const bool EnableCsrfProtectionModuleFlag = Tf::appSettings()->value(Tf::EnableCsrfProtectionModule).toBool();
     static const bool SessionAutoIdRegeneration = Tf::appSettings()->value(Tf::SessionAutoIdRegeneration).toBool();
@@ -404,7 +404,7 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
         controller->_response.header().setStatusLine(controller->statusCode(), THttpUtility::getResponseReasonPhrase(controller->statusCode()));
 
         // Writes a response and access log
-        qint64 bodyLength = (controller->_response.header().contentLength() > 0) ? controller->_response.header().contentLength() : controller->response().bodyLength();
+        int64_t bodyLength = (controller->_response.header().contentLength() > 0) ? controller->_response.header().contentLength() : controller->response().bodyLength();
         bytes = writeResponse(controller->_response.header(), controller->_response.bodyIODevice(), bodyLength);
     }
     accessLogger.setResponseBytes(bytes);
@@ -418,7 +418,7 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
 }
 
 
-qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header)
+int64_t TActionContext::writeResponse(int statusCode, THttpResponseHeader &header)
 {
     QByteArray body;
 
@@ -446,7 +446,7 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 }
 
 
-qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, qint64 length)
+int64_t TActionContext::writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, int64_t length)
 {
 
     header.setStatusLine(statusCode, THttpUtility::getResponseReasonPhrase(statusCode));
@@ -458,11 +458,11 @@ qint64 TActionContext::writeResponse(int statusCode, THttpResponseHeader &header
 }
 
 
-qint64 TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *body, qint64 length)
+int64_t TActionContext::writeResponse(THttpResponseHeader &header, QIODevice *body, int64_t length)
 {
 
     header.setContentLength(length);
-    tSystemDebug("content-length: %lld", (qint64)header.contentLength());
+    tSystemDebug("content-length: %ld", (int64_t)header.contentLength());
     header.setRawHeader(QByteArrayLiteral("Server"), QByteArrayLiteral("TreeFrog server"));
     header.setCurrentDate();
 
@@ -502,7 +502,7 @@ int TActionContext::keepAliveTimeout()
 {
     static int keepAliveTimeout = []() {
         int timeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
-        return qMax(timeout, 0);
+        return std::max(timeout, 0);
     }();
     return keepAliveTimeout;
 }

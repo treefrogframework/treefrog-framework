@@ -38,7 +38,7 @@ bool TTcpSocket::setSocketOption(int level, int optname, int val)
 }
 
 
-void TTcpSocket::connectToHost(const QString &hostName, quint16 port)
+void TTcpSocket::connectToHost(const QString &hostName, uint16_t port)
 {
     if (state() != Tf::SocketState::Unconnected) {
         tSystemWarn("Invalid socket state [%s:%d]", __FILE__, __LINE__);
@@ -119,13 +119,13 @@ Tf::SocketState TTcpSocket::state() const
 }
 
 
-qint64 TTcpSocket::receivedSize() const
+int64_t TTcpSocket::receivedSize() const
 {
     return _esocket->receivedSize();
 }
 
 
-qint64 TTcpSocket::receiveData(char *data, qint64 maxSize)
+int64_t TTcpSocket::receiveData(char *data, int64_t maxSize)
 {
     if (state() != Tf::SocketState::Connected) {
         tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
@@ -147,14 +147,14 @@ QByteArray TTcpSocket::receiveAll()
 }
 
 
-qint64 TTcpSocket::sendData(const char *data, qint64 size)
+int64_t TTcpSocket::sendData(const char *data, int64_t size)
 {
     QByteArray buf(data, size);
     return sendData(buf);
 }
 
 
-qint64 TTcpSocket::sendData(const QByteArray &data)
+int64_t TTcpSocket::sendData(const QByteArray &data)
 {
     if (state() != Tf::SocketState::Connected) {
         tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);

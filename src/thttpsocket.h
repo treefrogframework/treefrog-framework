@@ -19,7 +19,7 @@ public:
     QList<THttpRequest> read();
     bool waitForReadyReadRequest(int msecs = 5000);
     bool canReadRequest() const;
-    qint64 write(const THttpHeader *header, QIODevice *body);
+    int64_t write(const THttpHeader *header, QIODevice *body);
     int idleTime() const;
     void abort();
     void deleteLater();
@@ -35,8 +35,8 @@ protected:
     int readRawData(char *data, int size, int msecs);
 
 protected slots:
-    qint64 writeRawData(const char *data, qint64 size);
-    qint64 writeRawData(const QByteArray &data);
+    int64_t writeRawData(const char *data, int64_t size);
+    int64_t writeRawData(const QByteArray &data);
 
 signals:
     void requestWrite(const QByteArray &data);  // internal use
@@ -46,11 +46,11 @@ private:
     QAbstractSocket::SocketState _state {QAbstractSocket::UnconnectedState};
     QHostAddress _peerAddr;
     ushort _peerPort {0};
-    qint64 _lengthToRead {-1};
+    int64_t _lengthToRead {-1};
     QByteArray &_readBuffer;
     QByteArray _headerBuffer;
     TTemporaryFile _fileBuffer;
-    quint64 _idleElapsed {0};
+    uint64_t _idleElapsed {0};
     TActionContext *_context {nullptr};
 
     friend class TActionThread;

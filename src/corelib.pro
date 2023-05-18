@@ -57,15 +57,28 @@ windows {
   test.files = $$TEST_FILES $$TEST_CLASSES
   test.path = $$header.path/TfTest
   INSTALLS += header script test
-} else {
-  # UNIX
-  isEmpty( enable_shared_lz4 ) {
-    # Static link
-    LIBS += ../3rdparty/lz4/lib/liblz4.a
+}
+
+unix {
+  wasm {
+    # WASM
+    CONFIG -= shared
+    CONFIG += static
     INCLUDEPATH += ../include ../3rdparty/lz4/lib
+    OBJECTS += ../3rdparty/lz4/lib/liblz4.a
+    QT_WASM_PTHREAD_POOL_SIZE=32
+    QT_WASM_INITIAL_MEMORY=1000MB
+
   } else {
-    LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")
-    QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I liblz4 2>/dev/null")
+    # UNIX
+    isEmpty( enable_shared_lz4 ) {
+      # Static link
+      LIBS += ../3rdparty/lz4/lib/liblz4.a
+      INCLUDEPATH += ../include ../3rdparty/lz4/lib
+    } else {
+      LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I liblz4 2>/dev/null")
+    }
   }
 
   macx:QMAKE_SONAME_PREFIX=@rpath
@@ -224,12 +237,8 @@ HEADERS += tbasiclogstream.h
 SOURCES += tbasiclogstream.cpp
 HEADERS += tmailmessage.h
 SOURCES += tmailmessage.cpp
-HEADERS += tsmtpmailer.h
-SOURCES += tsmtpmailer.cpp
 HEADERS += tpopmailer.h
 SOURCES += tpopmailer.cpp
-HEADERS += tsendmailmailer.h
-SOURCES += tsendmailmailer.cpp
 HEADERS += tinternetmessageheader.h
 SOURCES += tinternetmessageheader.cpp
 HEADERS += thttpheader.h
@@ -308,10 +317,6 @@ HEADERS += tdatabasecontextthread.h
 SOURCES += tdatabasecontextthread.cpp
 HEADERS += tdatabasecontextmainthread.h
 SOURCES += tdatabasecontextmainthread.cpp
-HEADERS += tbackgroundprocess.h
-SOURCES += tbackgroundprocess.cpp
-HEADERS += tbackgroundprocesshandler.h
-SOURCES += tbackgroundprocesshandler.cpp
 HEADERS += tdebug.h
 SOURCES += tdebug.cpp
 HEADERS += tjsonutil.h
@@ -352,6 +357,17 @@ HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
 HEADERS += tfilesystemlogger.h
 SOURCES += tfilesystemlogger.cpp
+
+!wasm {
+  HEADERS += tsmtpmailer.h
+  SOURCES += tsmtpmailer.cpp
+  HEADERS += tsendmailmailer.h
+  SOURCES += tsendmailmailer.cpp
+  HEADERS += tbackgroundprocess.h
+  SOURCES += tbackgroundprocess.cpp
+  HEADERS += tbackgroundprocesshandler.h
+  SOURCES += tbackgroundprocesshandler.cpp
+}
 
 # Header only
 HEADERS += tfnamespace.h
@@ -431,24 +447,34 @@ freebsd {
 
 
 # Files for MongoDB
+
 windows {
-  # Windows
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
   INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
   LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
   LIBS += -lws2_32 -lpsapi -lAdvapi32
-} else {
-  # UNIX
-  isEmpty( enable_shared_mongoc ) {
-    # Static link
+}
+
+unix {
+  wasm {
+    # WASM
     INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-    LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+    OBJECTS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+
   } else {
-    # Shared link
-    LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
-    QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
+    # UNIX
+    isEmpty( enable_shared_mongoc ) {
+      # Static link
+      INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
+      LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+    } else {
+      # Shared link
+      LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
+    }
   }
 }
+
 
 HEADERS += tmongodriver.h
 SOURCES += tmongodriver.cpp

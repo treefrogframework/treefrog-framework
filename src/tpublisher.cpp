@@ -168,7 +168,7 @@ void TPublisher::unsubscribeFromAll(TAbstractWebSocket *socket)
         }
     }
 
-    tSystemDebug("total topics: %lld", (qint64)pubobj.count());
+    tSystemDebug("total topics: %ld", (int64_t)pubobj.count());
 }
 
 
@@ -282,6 +282,6 @@ void TPublisher::release(const QString &topic)
     Pub *pub = pubobj.take(topic);
     if (pub) {
         delete pub;
-        tSystemDebug("release topic: %s  (total topics:%lld)", qUtf8Printable(topic), (qint64)pubobj.count());
+        tSystemDebug("release topic: %s  (total topics:%ld)", qUtf8Printable(topic), (int64_t)pubobj.count());
     }
 }

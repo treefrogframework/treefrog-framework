@@ -31,7 +31,7 @@ int recvBufSize = 0;
 QSet<TEpollSocket *> socketManager;
 
 
-void setAddressAndPort(const QHostAddress &address, quint16 port, tf_sockaddr *aa, int &addrSize)
+void setAddressAndPort(const QHostAddress &address, uint16_t port, tf_sockaddr *aa, int &addrSize)
 {
     if (address.protocol() == QAbstractSocket::IPv6Protocol || address.protocol() == QAbstractSocket::AnyIPProtocol) {
         std::memset(&aa->a6, 0, sizeof(sockaddr_in6));
@@ -141,7 +141,7 @@ void TEpollSocket::close()
 }
 
 
-void TEpollSocket::connectToHost(const QHostAddress &address, quint16 port)
+void TEpollSocket::connectToHost(const QHostAddress &address, uint16_t port)
 {
     tf_sockaddr aa;
     int addrSize;
@@ -363,9 +363,9 @@ void TEpollSocket::sendData(const QByteArray &data)
 }
 
 
-qint64 TEpollSocket::receiveData(char *buffer, qint64 length)
+int64_t TEpollSocket::receiveData(char *buffer, int64_t length)
 {
-    qint64 len = std::min(length, (qint64)_recvBuffer.length());
+    int64_t len = std::min(length, (int64_t)_recvBuffer.length());
     if (len > 0) {
         std::memcpy(buffer, _recvBuffer.data(), len);
         _recvBuffer.remove(0, len);

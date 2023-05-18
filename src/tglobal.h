@@ -254,6 +254,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstdint>
 #include <cstring>
 #include <functional>
+#include <algorithm>
 
 class TWebApplication;
 class TActionContext;
@@ -269,7 +270,7 @@ T_CORE_EXPORT TWebApplication *app() noexcept;
 T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
 T_CORE_EXPORT void msleep(int64_t msecs) noexcept;
-T_CORE_EXPORT qint64 getMSecsSinceEpoch();
+T_CORE_EXPORT int64_t getMSecsSinceEpoch();
 
 // Thread-safe std::random number generator
 T_CORE_EXPORT uint32_t rand32_r() noexcept;

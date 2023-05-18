@@ -17,7 +17,7 @@ public:
 
 protected:
     void run();
-    qint64 writeResponse(THttpResponseHeader &header, QIODevice *body) override;
+    int64_t writeResponse(THttpResponseHeader &header, QIODevice *body) override;
     void flushSocket() override;
     void closeSocket() override;
 

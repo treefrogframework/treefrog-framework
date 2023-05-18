@@ -20,7 +20,7 @@ public:
     ServerManager(int min = 5, int max = 10, int spare = 5, QObject *parent = 0);
     virtual ~ServerManager();
 
-    bool start(const QHostAddress &address, quint16 port);
+    bool start(const QHostAddress &address, uint16_t port);
     bool start(const QString &fileDomain);  // For UNIX domain
     void stop();
     bool isRunning() const;

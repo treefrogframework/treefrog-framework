@@ -26,7 +26,7 @@ bool TMemcachedDriver::isOpen() const
 }
 
 
-bool TMemcachedDriver::open(const QString &, const QString &, const QString &, const QString &host, quint16 port, const QString &)
+bool TMemcachedDriver::open(const QString &, const QString &, const QString &, const QString &host, uint16_t port, const QString &)
 {
     if (isOpen()) {
         return true;
@@ -66,7 +66,7 @@ bool TMemcachedDriver::writeCommand(const QByteArray &command)
         return false;
     }
 
-    qint64 len = _client->sendData(command);
+    int64_t len = _client->sendData(command);
     if (len < 0) {
         tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
         return false;
@@ -89,7 +89,7 @@ QByteArray TMemcachedDriver::readReply(int msecs)
         return buffer;
     }
 
-    qint64 recvlen = _client->receivedSize();
+    int64_t recvlen = _client->receivedSize();
     if (recvlen <= 0) {
         tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
         return buffer;

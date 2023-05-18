@@ -37,7 +37,7 @@ protected:
     void startWorkerForOpening(const TSession &session);
     void startWorkerForClosing();
     virtual QObject *thisObject() override { return this; }
-    virtual qint64 writeRawData(const QByteArray &data) override;
+    virtual int64_t writeRawData(const QByteArray &data) override;
     virtual QList<TWebSocketFrame> &websocketFrames() override { return frames; }
     void timerEvent(QTimerEvent *event) override;
     QList<TWebSocketFrame> frames;

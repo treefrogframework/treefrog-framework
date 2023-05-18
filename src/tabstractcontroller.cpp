@@ -138,7 +138,7 @@ bool TAbstractController::addCookie(const QByteArray &, const QByteArray &, cons
 }
 
 
-bool TAbstractController::addCookie(const QByteArray &, const QByteArray &, qint64 , const QString &, const QString &, bool, bool, const QByteArray &)
+bool TAbstractController::addCookie(const QByteArray &, const QByteArray &, int64_t , const QString &, const QString &, bool, bool, const QByteArray &)
 {
     throw StandardException("Not implemented error", __FILE__, __LINE__);
 }

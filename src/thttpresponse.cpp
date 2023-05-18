@@ -123,6 +123,6 @@ void THttpResponse::clear()
 */
 
 /*!
-  \fn qint64 THttpResponse::bodyLength() const
+  \fn int64_t THttpResponse::bodyLength() const
   Returns the number of bytes of the body.
 */

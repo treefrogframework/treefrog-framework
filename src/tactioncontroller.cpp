@@ -156,7 +156,7 @@ bool TActionController::addCookie(const QByteArray &name, const QByteArray &valu
 }
 
 
-bool TActionController::addCookie(const QByteArray &name, const QByteArray &value, qint64 maxAge, const QString &path,
+bool TActionController::addCookie(const QByteArray &name, const QByteArray &value, int64_t maxAge, const QString &path,
     const QString &domain, bool secure, bool httpOnly, const QByteArray &sameSite)
 {
     TCookie cookie(name, value);

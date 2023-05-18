@@ -30,7 +30,7 @@ protected:
     void clear();
 
 private:
-    qint64 _lengthToRead {0};
+    int64_t _lengthToRead {0};
     uint _idleElapsed {0};
     TActionWorker *_worker {nullptr};
 

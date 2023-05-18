@@ -9,7 +9,8 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <TWebApplication>
-#include <Windows.h>
+#define NOMINMAX
+#include <windows.h>
 #include <winuser.h>
 
 namespace {

@@ -178,7 +178,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
             case TSql::NotIn: {
                 auto inclause = [&](const QList<QVariant> &lst, int pos, int length) {
                     QString str;
-                    length = qMin(length, lst.count() - pos);
+                    length = std::min(length, (int)lst.count() - pos);
                     for (int i = 0; i < length; i++) {
                         auto &v = lst[pos + i];
                         QString s = TSqlQuery::formatValue(v, cri.varType, database);

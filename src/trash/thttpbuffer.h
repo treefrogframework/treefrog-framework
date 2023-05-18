@@ -26,7 +26,7 @@ private:
     void parse();
 
     QByteArray httpBuffer;
-    qint64 lengthToRead;
+    int64_t lengthToRead;
 };
 
 #endif // THTTPBUFFER_H

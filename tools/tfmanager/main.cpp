@@ -250,16 +250,16 @@ QJsonObject readJsonOfApplication(const QString &appRoot = QString())
 }
 
 
-qint64 readPidOfApplication(const QString &appRoot = QString())
+int64_t readPidOfApplication(const QString &appRoot = QString())
 {
-    int pid = readJsonOfApplication(appRoot)[JSON_PID_KEY].toInt();
+    int64_t pid = readJsonOfApplication(appRoot)[JSON_PID_KEY].toInt();
     return (pid > 0) ? pid : -1;
 }
 
 
-qint64 runningApplicationPid(const QString &appRoot = QString())
+int64_t runningApplicationPid(const QString &appRoot = QString())
 {
-    qint64 pid = readPidOfApplication(appRoot);
+    int64_t pid = readPidOfApplication(appRoot);
     if (pid > 0) {
         QString name = TProcessInfo(pid).processName().toLower();
         if (name == QLatin1String("treefrog") || name == QLatin1String("treefrogd")) {
@@ -420,7 +420,7 @@ void showSettings(const TWebApplication &app)
 
 int killTreeFrogProcess(const QString &cmd)
 {
-    qint64 pid = runningApplicationPid();
+    int64_t pid = runningApplicationPid();
 
     if (cmd == "status") {  // status command
         if (pid > 0) {
@@ -448,13 +448,13 @@ int killTreeFrogProcess(const QString &cmd)
         }
 
     } else if (cmd == "abort") {  // abort command
-        QList<qint64> pids = pi.childProcessIds();
+        auto pids = pi.childProcessIds();
 
         pi.kill();  // kills the manager process
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (int64_t)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
@@ -474,9 +474,9 @@ int killTreeFrogProcess(const QString &cmd)
 
 void showProcessId()
 {
-    qint64 pid = readPidOfApplication();
+    int64_t pid = readPidOfApplication();
     if (pid > 0) {
-        std::printf("%lld\n", pid);
+        std::printf("%ld\n", pid);
     }
 }
 
@@ -499,7 +499,7 @@ int managerMain(int argc, char *argv[])
     bool daemonMode = false;
     bool autoReloadMode = false;
     QString signalCmd;
-    quint16 listenPort = 0;
+    uint16_t listenPort = 0;
 
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
@@ -605,9 +605,9 @@ int managerMain(int argc, char *argv[])
     }
 
     // Check TreeFrog processes are running
-    qint64 pid = runningApplicationPid();
+    int64_t pid = runningApplicationPid();
     if (pid > 0) {
-        std::fprintf(stderr, "Already running  pid:%ld\n", (long)pid);
+        std::fprintf(stderr, "Already running  pid:%ld\n", pid);
         return 1;
     }
 
@@ -700,7 +700,7 @@ int managerMain(int argc, char *argv[])
         pidfile.setFileName(pidFilePath());
         if (pidfile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
             pid = QCoreApplication::applicationPid();
-            QJsonObject json {{JSON_PID_KEY, pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
+            QJsonObject json {{JSON_PID_KEY, (qint64)pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
             pidfile.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
             pidfile.close();
         } else {

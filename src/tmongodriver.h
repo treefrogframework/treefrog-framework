@@ -13,7 +13,7 @@ public:
     ~TMongoDriver();
 
     QString key() const { return QStringLiteral("MONGODB"); }
-    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString());
+    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), uint16_t port = 0, const QString &options = QString());
     void close();
     bool isOpen() const;
 
@@ -28,7 +28,7 @@ public:
         bool upsert = false, QVariantMap *reply = nullptr);
     bool removeOne(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
     bool removeMany(const QString &collection, const QVariantMap &criteria, QVariantMap *reply = nullptr);
-    qint64 count(const QString &collection, const QVariantMap &criteria);
+    int64_t count(const QString &collection, const QVariantMap &criteria);
     int lastErrorDomain() const { return _errorDomain; }
     int lastErrorCode() const { return _errorCode; }
     QString lastErrorString() const { return _errorString; }

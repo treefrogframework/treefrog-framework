@@ -8,7 +8,8 @@
 #include "tprocessinfo.h"
 #include <QtCore>
 #include <TWebApplication>
-#include <Windows.h>
+#define NOMINMAX
+#include <windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
 
@@ -19,7 +20,7 @@ bool TProcessInfo::exists() const
 }
 
 
-qint64 TProcessInfo::ppid() const
+int64_t TProcessInfo::ppid() const
 {
     DWORD pidParent = 0;
     HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -46,14 +47,14 @@ qint64 TProcessInfo::ppid() const
 }
 
 
-// qint64 TProcessInfo::ppid() const
+// int64_t TProcessInfo::ppid() const
 // {
-//     qint64 ppid = 0;
+//     int64_t ppid = 0;
 //     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
 //     if (hProcess) {
 //         PROCESS_BASIC_INFORMATION basicInfo;
 //         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), nullptr) == STATUS_SUCCESS) {
-//             ppid = (qint64)basicInfo.InheritedFromUniqueProcessId;
+//             ppid = (int64_t)basicInfo.InheritedFromUniqueProcessId;
 //         }
 //     }
 //     return ppid;
@@ -109,16 +110,16 @@ void TProcessInfo::restart()
 }
 
 
-QList<qint64> TProcessInfo::allConcurrentPids()
+QList<int64_t> TProcessInfo::allConcurrentPids()
 {
-    QList<qint64> ret;
+    QList<int64_t> ret;
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 entry;
 
     entry.dwSize = sizeof(PROCESSENTRY32);
     if (Process32First(hSnapshot, &entry)) {
         do {
-            ret << (qint64)entry.th32ProcessID;
+            ret << (int64_t)entry.th32ProcessID;
         } while (Process32Next(hSnapshot, &entry));
     }
     CloseHandle(hSnapshot);

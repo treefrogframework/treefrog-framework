@@ -61,7 +61,7 @@ static size_t memorySize(const QString &options)
 }
 
 
-bool TSharedMemoryKvsDriver::open(const QString &db, const QString &, const QString &, const QString &, quint16, const QString &)
+bool TSharedMemoryKvsDriver::open(const QString &db, const QString &, const QString &, const QString &, uint16_t, const QString &)
 {
     _name = db;
 

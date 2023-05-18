@@ -19,17 +19,17 @@ public:
     };
 
     TSmtpMailer(QObject *parent = nullptr);
-    TSmtpMailer(const QString &hostName, quint16 port, QObject *parent = nullptr);
+    TSmtpMailer(const QString &hostName, uint16_t port, QObject *parent = nullptr);
     ~TSmtpMailer();
 
     QString key() const { return "smtp"; }
     QString hostName() const { return _smtpHostName; }
     void setHostName(const QString &hostName);
-    quint16 port() const { return _smtpPort; }
-    void setPort(quint16 port);
+    uint16_t port() const { return _smtpPort; }
+    void setPort(uint16_t port);
     void setAuthenticationEnabled(bool enable);
     void setTlsRequired(bool require);
-    void setPopBeforeSmtpAuthEnabled(const QString &popServer, quint16 port, bool apop, bool enable);
+    void setPopBeforeSmtpAuthEnabled(const QString &popServer, uint16_t port, bool apop, bool enable);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
     QString lastServerResponse() const;
@@ -45,7 +45,7 @@ protected slots:
 
 protected:
     bool send();
-    bool connectToHost(const QString &hostName, quint16 port);
+    bool connectToHost(const QString &hostName, uint16_t port);
     bool cmdEhlo();
     bool cmdHelo();
     bool cmdStartTls();
@@ -67,7 +67,7 @@ private:
     QSslSocket *_socket {nullptr};
     QMutex _sendMutex;
     QString _smtpHostName;
-    quint16 _smtpPort {0};
+    uint16_t _smtpPort {0};
     TMailMessage _mailMessage;
     QStringList _svrAuthMethods;
     bool _authEnable {false};
@@ -110,7 +110,7 @@ inline void TSmtpMailer::setHostName(const QString &hostName)
 }
 
 
-inline void TSmtpMailer::setPort(quint16 port)
+inline void TSmtpMailer::setPort(uint16_t port)
 {
     _smtpPort = port;
 }

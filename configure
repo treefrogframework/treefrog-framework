@@ -59,6 +59,7 @@ BINDIR=$PREFIX/bin
 LIBDIR=$PREFIX/lib
 INCLUDEDIR=$PREFIX/include/treefrog
 DATADIR=$PREFIX/share/treefrog
+CMAKE=cmake
 
 # parse options
 while [ -n "`echo $1 | grep '-'`" ]; do
@@ -138,7 +139,12 @@ if [ "$KERNEL" = "Darwin" ]; then  # macOS
     OPT="$OPT CONFIG+=ppc"
   fi
 else
-  if [ "$MACHINE" = "x86_64" ]; then
+  if [[ "$SPEC" =~ "wasm" ]]; then
+    OPT=
+    CMAKE="emcmake cmake"
+    CC=emcc
+    AR=emar
+  elif [ "$MACHINE" = "x86_64" ]; then
     OPT="$OPT CONFIG+=x86_64"
   fi
 fi
@@ -155,8 +161,8 @@ fi
 
 # search qmake command
 if [ -z "$QMAKE" ]; then
-  which qmake     >/dev/null 2>&1 && QMAKE=qmake
   which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
+  which qmake     >/dev/null 2>&1 && QMAKE=qmake
   which qmake6    >/dev/null 2>&1 && QMAKE=qmake6
 
   if [ -z "$QMAKE" ]; then
@@ -211,7 +217,11 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   echo
   echo -n "Compiling MongoDB driver library ... "
   cd "$BASEDIR/3rdparty/mongo-driver"
-  cmake -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF >/dev/null 2>&1
+  find . -type d | grep CMakeFiles | xargs rm -rf
+  find . -type f | grep CMakeCache | xargs rm -f
+  find . -type f | grep Makefile | xargs rm -f
+  find . -type f | grep cmake_install | xargs rm -f
+  $CMAKE -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF >/dev/null 2>&1
   make clean >/dev/null 2>&1
   make -j${NPROC} mongoc_static >/dev/null 2>&1
   RET=$?
@@ -224,21 +234,23 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
 fi
 
 # compile glog
-cd "$BASEDIR/3rdparty/glog"
-rm -rf build
-if [ -z "$ENABLE_SHARED_GLOG" ]; then
-  echo
-  echo -n "Compiling glog ... "
-  cmake -S . -B build -G "Unix Makefiles" >/dev/null 2>&1
-  make -j${NPROC} -C build >/dev/null 2>&1
-  RET=$?
-  if [ $RET != 0 ]; then
-    make -C build
-    echo "failed"
-    echo "glog not available."
-    exit $RET
+if ! [[ "$SPEC" =~ "wasm" ]]; then
+  cd "$BASEDIR/3rdparty/glog"
+  rm -rf build
+  if [ -z "$ENABLE_SHARED_GLOG" ]; then
+    echo
+    echo -n "Compiling glog ... "
+    $CMAKE -S . -B build -G "Unix Makefiles" >/dev/null 2>&1
+    make -j${NPROC} -C build >/dev/null 2>&1
+    RET=$?
+    if [ $RET != 0 ]; then
+      make -C build
+      echo "failed"
+      echo "glog not available."
+      exit $RET
+    fi
+    echo "OK"
   fi
-  echo "OK"
 fi
 
 # compile LZ4

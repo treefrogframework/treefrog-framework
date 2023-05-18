@@ -18,7 +18,7 @@ public:
     ~TRedisDriver();
 
     QString key() const override { return "REDIS"; }
-    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString()) override;
+    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), uint16_t port = 0, const QString &options = QString()) override;
     void close() override;
     bool command(const QByteArray &cmd) override;
     bool isOpen() const override;
@@ -54,7 +54,7 @@ private:
     QByteArray _buffer;
     int _pos {0};
     QString _host;
-    quint16 _port {0};
+    uint16_t _port {0};
 
     T_DISABLE_COPY(TRedisDriver)
     T_DISABLE_MOVE(TRedisDriver)

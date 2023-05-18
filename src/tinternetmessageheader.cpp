@@ -128,7 +128,7 @@ void TInternetMessageHeader::setContentType(const QByteArray &type)
 /*!
   Returns the value of the header field content-length.
 */
-qint64 TInternetMessageHeader::contentLength() const
+int64_t TInternetMessageHeader::contentLength() const
 {
     if (_contentLength < 0) {
         _contentLength = rawHeader(QByteArrayLiteral("Content-Length")).toLongLong();
@@ -139,9 +139,9 @@ qint64 TInternetMessageHeader::contentLength() const
 /*!
   Sets the value of the header field content-length to \a len.
 */
-void TInternetMessageHeader::setContentLength(qint64 len)
+void TInternetMessageHeader::setContentLength(int64_t len)
 {
-    setRawHeader(QByteArrayLiteral("Content-Length"), QByteArray::number(len));
+    setRawHeader(QByteArrayLiteral("Content-Length"), QByteArray::number((qlonglong)len));
     _contentLength = len;
 }
 

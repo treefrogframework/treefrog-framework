@@ -21,7 +21,7 @@ using namespace Tf;
 constexpr int BUFFER_RESERVE_SIZE = 1023;
 
 namespace {
-qint64 systemLimitBodyBytes = -1;
+int64_t systemLimitBodyBytes = -1;
 }
 
 TEpollHttpSocket *TEpollHttpSocket::accept(int listeningSocket)
@@ -128,7 +128,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
             throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
-        _lengthToRead = qMax(_lengthToRead - pos, 0LL);
+        _lengthToRead = std::max(_lengthToRead - pos, (int64_t)0);
     }
 
     // WebSocket?
@@ -195,7 +195,7 @@ void TEpollHttpSocket::parse()
                 throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
             }
 
-            _lengthToRead = qMax(idx + 4 + (qint64)header.contentLength() - _recvBuffer.length(), 0LL);
+            _lengthToRead = std::max(idx + 4 + (int64_t)header.contentLength() - (int64_t)_recvBuffer.length(), (int64_t)0);
             tSystemDebug("lengthToRead: %d", (int)_lengthToRead);
         }
     } else {

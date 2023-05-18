@@ -30,7 +30,7 @@ bool TRedisDriver::isOpen() const
 }
 
 
-bool TRedisDriver::open(const QString &, const QString &, const QString &, const QString &host, quint16 port, const QString &)
+bool TRedisDriver::open(const QString &, const QString &, const QString &, const QString &host, uint16_t port, const QString &)
 {
     if (isOpen()) {
         return true;
