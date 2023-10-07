@@ -687,6 +687,14 @@ QIODevice *THttpRequest::rawBody()
     return bodyDevice;
 }
 
+/*!
+  Returns true if the request is valid.
+*/
+bool THttpRequest::isValid() const
+{
+    return !header().method().isEmpty() && !header().path().isEmpty();
+}
+
 
 /*!
   \fn const THttpRequestHeader &THttpRequest::header() const

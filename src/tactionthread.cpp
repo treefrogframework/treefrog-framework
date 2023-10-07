@@ -133,6 +133,10 @@ void TActionThread::run()
             }
 
             for (auto &req : requests) {
+                if (!req.isValid()) {
+                    tSystemWarn("Received invalid request");
+                    goto socket_cleanup;
+                }
                 TActionContext::execute(req);
             }
 

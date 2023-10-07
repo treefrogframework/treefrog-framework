@@ -48,6 +48,7 @@ public:
     QString parameter(const QString &name) const;
     QVariantMap allParameters() const;
 
+    bool isValid() const;
     bool hasQuery() const { return !d->queryItems.isEmpty(); }
     bool hasQueryItem(const QString &name) const;
     QString queryItemValue(const QString &name) const;
