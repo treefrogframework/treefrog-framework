@@ -4,6 +4,8 @@
             {% assign url = 'ja' %}
         {% elsif page.url contains '/ch/' %}
             {% assign url = 'ch' %}
+        {% elsif page.url contains '/de/' %}
+            {% assign url = 'de' %}
         {% else %}
             {% assign url = '' %}
         {% endif %}
