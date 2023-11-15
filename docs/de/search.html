@@ -1,0 +1,20 @@
+---
+title: Search
+layout: default
+---
+
+<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/tipuesearch.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+    var language = "en" // language setup for tipuesearch_set.js
+</script>
+<script src="{{ site.baseurl }}/assets/js/tipuesearch_set.js"></script>
+<script src="{{ site.baseurl }}/assets/js/tipuesearch.min.js"></script>
+
+<form action="{{ site.baseurl }}/search.html" id="search-form" method="get">
+    <input type="text" name="q" id="tipue_search_input" class="search-box" placeholder="">
+    <input type="submit" id="tipue_search_input" class="result-search-button" value="Search">
+</form>
+
+<div id="tipue_search_content"></div>
+{% include search_json.html %}
