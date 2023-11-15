@@ -17,17 +17,17 @@ Webanwendungen können schneller ausgeführt werden als Skriptsprachen, da das s
   3. Templating-System - Adapation einer ERB-ähnlichen Template-Engine
   4. Unterstützte Datenbanken - MySQL, MariaDB, PostgreSQL, ODBC, MongoDB, Redis, Memcached, etc.
   5. WebSocket-Unterstützung - stellt vollduplex Kommunikationskanäle bereit
-  6. Generatoren - generiert Codegerüste, Makefiles und vue.js - Vorlagen
+  6. Generator - generiert Codegerüst, Makefiles und vue.js - Vorlagen
   7. Unterstützung für unterschiedliches Rückgabetypen - JSON, XML und CBOR
   8. Multiplatform-Fähigkeit - derselbe Quellcode kann somit auf Windows, macOS und Linux funktionieren
   9. OSS - quelloffene Software, nun mit BSD-Lizenz
 
 
-## <i class="fa fa-comment" aria-hidden="true"></i> Selecting TreeFrog Framework
+## <i class="fa fa-comment" aria-hidden="true"></i> Auswahl des TreeFrog-Frameworks
 
-It is said that there is a trade-off relationship between development efficiency and operation speed in web application development, is it really true?
+Es wird gesagt, dass es bei der Entwicklung von Webanwendungen einen Kompromiss zwischen Entwicklungseffizienz und Betriebsgeschwindigkeit gibt. Stimmt das wirklich?
 
-There is not such a thing. it is possible to develop efficiently by providing convenient development tools and excellent libraries from the framework and by specifying specifications to minimize the configuration file.
+So etwas gibt es nicht. Durch die Bereitstellung praktischer Entwicklungswerkzeuge und hervorragender Bibliotheken aus dem Framework, sowie durch die Angabe von Spezifikationen zur Minimierung der Konfigurationsdatei, ist eine effiziente Entwicklung möglich.
 
 In recent years, cloud computing has emerged, the importance of Web applications is increasing year by year. Although it is known that the execution speed of the script language decreases as the amount of code increases, C++ language can operate at the fastest speed with a small memory footprint and does not decrease execution speed even as the amount of code increases.
 
