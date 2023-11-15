@@ -5,22 +5,22 @@ page_id: "home.00"
 
 ## <i class="fa fa-bolt" aria-hidden="true"></i> Klein, aber leistungsstark und effizient
 
-Das TreeFrog Framework ist ein high-speed und full-stack C++-Framework für die Entwicklung von Webanwendungen, welches die HTTP- und WebSocket-Protokolle unterstützt.
+Das TreeFrog Framework ist ein Hochperformanz- und Full-Stack-C++-Framework für die Entwicklung von Webanwendungen, welches die HTTP- und WebSocket-Protokolle unterstützt.
 
 Webanwendungen können schneller ausgeführt werden als Skriptsprachen, da das serverseitige Framework in C++/Qt geschrieben wurde. Bei der Anwendungsentwicklung stellt es ein objektrelationales Mapping-System und ein Templating-System auf einer MVC-Architektur bereit und zielt darauf ab höchste Produktivität, durch Konvention über Konfiguration, zu erreichen.
 
 
-## <i class="fa fa-flag" aria-hidden="true"></i> Funktionalitäten
+## <i class="fa fa-flag" aria-hidden="true"></i> Kennzeichnungsmerkmale
 
-  1. High performance - Highly optimized Application server engine of C++.
-  2. O/R mapping  - Conceals complex and troublesome database accesses
-  3. Template system  - ERB-like template engine adopted
-  4. Supported databases  - MySQL, MariaDB, PostgreSQL, ODBC, MongoDB, Redis, Memcached, etc.
-  5. WebSocket support  - Providing full-duplex communications channels
-  6. Generator  - Generates scaffolds, Makefiles and vue.js templates
-  7. Various response types  - JSON, XML and CBOR
-  8. Multi-platform  - Same source code can work on Windows, macOS and Linux
-  9. OSS  - New BSD License
+  1. Hochperformanz - hoch-optimierte Anwendungsserver-Engine auf C++-Basis.
+  2. Objektrelationales Mapping - kapselt komplexe und umständliche Datenbankzugriffe
+  3. Templating-System - Adapation einer ERB-ähnlichen Template-Engine
+  4. Unterstützte Datenbanken - MySQL, MariaDB, PostgreSQL, ODBC, MongoDB, Redis, Memcached, etc.
+  5. WebSocket-Unterstützung - stellt vollduplex Kommunikationskanäle bereit
+  6. Generatoren - generiert Codegerüste, Makefiles und vue.js - Vorlagen
+  7. Unterstützung für unterschiedliches Rückgabetypen - JSON, XML und CBOR
+  8. Multiplatform-Fähigkeit - derselbe Quellcode kann somit auf Windows, macOS und Linux funktionieren
+  9. OSS - quelloffene Software, nun mit BSD-Lizenz
 
 
 ## <i class="fa fa-comment" aria-hidden="true"></i> Selecting TreeFrog Framework
