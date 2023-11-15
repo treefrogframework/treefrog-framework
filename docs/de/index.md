@@ -1,16 +1,16 @@
 ---
-title: Home
+title: Startseite
 page_id: "home.00"
 ---
 
-## <i class="fa fa-bolt" aria-hidden="true"></i> Small but Powerful and Efficient
+## <i class="fa fa-bolt" aria-hidden="true"></i> Klein, aber leistungsstark und effizient
 
-TreeFrog Framework is a high-speed and full-stack C++ framework for developing Web applications, which supports HTTP and WebSocket protocol.
+Das TreeFrog Framework ist ein high-speed und full-stack C++-Framework für die Entwicklung von Webanwendungen, welches die HTTP- und WebSocket-Protokolle unterstützt.
 
-Web applications can run faster than that of scripting language because the server-side framework was written in C++/Qt. In application development, it provides an O/R mapping system and template systems on an MVC architecture, aims to achieve high productivity through the policy of  convention over configuration.
+Webanwendungen können schneller ausgeführt werden als Skriptsprachen, da das serverseitige Framework in C++/Qt geschrieben wurde. Bei der Anwendungsentwicklung stellt es ein objektrelationales Mapping-System und ein Templating-System auf einer MVC-Architektur bereit und zielt darauf ab höchste Produktivität, durch Konvention über Konfiguration, zu erreichen.
 
 
-## <i class="fa fa-flag" aria-hidden="true"></i> Features
+## <i class="fa fa-flag" aria-hidden="true"></i> Funktionalitäten
 
   1. High performance - Highly optimized Application server engine of C++.
   2. O/R mapping  - Conceals complex and troublesome database accesses
@@ -35,7 +35,7 @@ Multiple application servers running in scripting language can be aggregated int
 Try TreeFrog Framework which combines high productivity and high speed operation!
 
 
-## <i class="fa fa-bell" aria-hidden="true"></i> News
+## <i class="fa fa-bell" aria-hidden="true"></i> Neuigkeiten
 
 Mar. 26, 2023
 ### TreeFrog Framework version 2.7.1 (stable) release <span style="color: red;">New!</span>
