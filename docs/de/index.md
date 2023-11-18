@@ -36,40 +36,35 @@ Mehrere Anwendungsserver, die Skriptsprache ausführen, können ohne Leistungsei
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> Neuigkeiten
 
-2023-03-26
-### TreeFrog-Framework Version 2.7.1 (stable-release) <span style="color: red;">Neu!</span>
+### 2023-03-26 TreeFrog-Framework Version 2.7.1 (stable-release) <span style="color: red;">Neu!</span>
 
-  - Fix a bug of opening shared memory KVS.
-  - Modified to reply NotFound when it can not invoke the action.
+  - Behebung eines Fehlers beim Öffnen des Shared-Memory-KVS.
+  - Behebung des Fehlers, dass "NotFound" zurückgegeben wurde, wenn eine Action nicht aufgerufen werden konnte.
 
   [<i class="fas fa-download"></i> Lade diese Version herunter](/de/download/)
 
-2023-02-25
-### TreeFrog-Framework Version 2.7.0 (stable-release)
+### 2023-02-25 TreeFrog-Framework Version 2.7.0 (stable-release)
 
-  - Fix possibility of thread conflicting when receiving packets.
-  - Changed hash algorithm to HMAC of SHA3.
-  - Added Memcached as session store.
-  - Updated malloc algorithm of TSharedMemoryAllocator.
-  - Updated system logger.
-  - Performance improvement for pooling database connections.
+  - Behebung der Möglichkeit von Thread-Konflikten beim Empfang von Paketen.
+  - Änderung des Hash-Algorithmus auf SHA3-HMAC.
+  - Hinzufügen des memcached als Session-Store.
+  - Aktualisierung des malloc-Algorithmuses der TSharedMemoryAllocator-Klasse.
+  - Aktualisierung des System-Loggers.
+  - Geschwindigkeitsoptimierung des Poolingsverfahrens für Datenbankverbindungen.
 
-2023-01-21
-### TreeFrog-Framework Version 2.6.1 (stable-release)
+### 2023-01-21 TreeFrog-Framework Version 2.6.1 (stable-release)
 
  - Behebung eines Access-Log-Ausgabe-Bugs.
  - Hinzufügen einer Link-Option für die LZ4-Shared-Library auf Linux oder macOS.
 
-2023-01-02
-### TreeFrog-Framework Version 2.6.0 (stable-release)
+### 2023-01-02 TreeFrog-Framework Version 2.6.0 (stable-release)
 
  - Implementierung eines in-memory KVS für das Cache-System.
  - Hinzufügen einer Link-Option für die Glog-Shared-Library.
  - Behebung eines Makro-Fehlers für das Kommandozeileninterface.
  - Aktualisierung von LZ4 auf v1.9.4.
 
-2022-11-01
-### TreeFrog-Framework Version 2.5.0 (stable-release)
+### 2022-11-01 TreeFrog-Framework Version 2.5.0 (stable-release)
 
  - Implementierung der flushResponse()-Funktion um den Prozess nach dem Senden einer Response weiterlaufen zu lassen.
  - Aktualisierung von glog auf v0.6.0.
@@ -77,14 +72,12 @@ Mehrere Anwendungsserver, die Skriptsprache ausführen, können ohne Leistungsei
  - Implementierung eines memcached-Client. [experimentell]
  - Implementierung eines Cache-Store für memcached, die TCacheMemcachedStore-Klasse.
 
-2022-08-13
-### TreeFrog-Framework Version 2.4.0 (stable-release)
+### 2022-08-13 TreeFrog-Framework Version 2.4.0 (stable-release)
 
  - Implementierung eines Memory-Store für den Cache.
  - Aktualisierung des MongoDB C-Treibers auf v1.21.2.
 
-2022-05-28
-### TreeFrog-Framework Version 2.3.1 (stable-release)
+### 2022-05-28 TreeFrog-Framework Version 2.3.1 (stable-release)
 
  - Behebung eines Kompilierungsfehlers beim Einsatz von Qt 6.3.
 
