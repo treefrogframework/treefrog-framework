@@ -36,16 +36,16 @@ Mehrere Anwendungsserver, die Skriptsprache ausführen, können ohne Leistungsei
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> Neuigkeiten
 
-Mar. 26, 2023
-### TreeFrog Framework version 2.7.1 (stable) release <span style="color: red;">New!</span>
+2023-03-26
+### TreeFrog-Framework Version 2.7.1 (stable-release) <span style="color: red;">Neu!</span>
 
   - Fix a bug of opening shared memory KVS.
   - Modified to reply NotFound when it can not invoke the action.
 
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
+  [<i class="fas fa-download"></i> Lade diese Version herunter](/de/download/)
 
-Feb. 25, 2023
-### TreeFrog Framework version 2.7.0 (stable) release
+2023-02-25
+### TreeFrog-Framework Version 2.7.0 (stable-release)
 
   - Fix possibility of thread conflicting when receiving packets.
   - Changed hash algorithm to HMAC of SHA3.
@@ -54,41 +54,41 @@ Feb. 25, 2023
   - Updated system logger.
   - Performance improvement for pooling database connections.
 
-Jan. 21, 2023
-### TreeFrog Framework version 2.6.1 (stable) release
+2023-01-21
+### TreeFrog-Framework Version 2.6.1 (stable-release)
 
- - Fix a bug of outputting access log.
- - Added a link option for LZ4 shared library on Linux or macOS.
+ - Behebung eines Access-Log-Ausgabe-Bugs.
+ - Hinzufügen einer Link-Option für die LZ4-Shared-Library auf Linux oder macOS.
 
-Jan. 2, 2023
-### TreeFrog Framework version 2.6.0 (stable) release
+2023-01-02
+### TreeFrog-Framework Version 2.6.0 (stable-release)
 
  - Implemented in-memory KVS for cache system.
  - Added a link option for Glog shared library.
  - Fix bugs of macros for command line interface.
  - Updated LZ4 to v1.9.4.
 
-Nov. 1, 2022
-### TreeFrog Framework version 2.5.0 (stable) release
+2022-11-01
+### TreeFrog-Framework Version 2.5.0 (stable-release)
 
- - Implemented flushResponse() function to continue the process after sending a response.
- - Updated glog to v0.6.0
- - Performance improvement for redis client.
- - Implemented memcached client. [Experimental]
- - Implemented a cache-store for memcached, TCacheMemcachedStore class.
+ - Implementierung der flushResponse()-Funktion um den Prozess nach dem Senden einer Response weiterlaufen zu lassen.
+ - Aktualisierung von glog auf v0.6.0.
+ - Geschwindigkeitsverbesserungen für den Redis-Client.
+ - Implementierung eines memcached-Client. [experimentell]
+ - Implementierung eines Cache-Store für memcached, die TCacheMemcachedStore-Klasse.
 
-Aug. 13, 2022
-### TreeFrog Framework version 2.4.0 (stable) release
+2022-08-13
+### TreeFrog-Framework Version 2.4.0 (stable-release)
 
- - Implemented memory store for cache.
- - Updated Mongo C driver to v1.21.2.
+ - Implementierung eines Memory-Store für den Cache.
+ - Aktualisierung des MongoDB C-Treibers auf v1.21.2.
 
-May 28, 2022
-### TreeFrog Framework version 2.3.1 (stable) release
+2022-05-28
+### TreeFrog-Framework Version 2.3.1 (stable-release)
 
- - Fix compilation errors on Qt 6.3.
+ - Behebung eines Kompilierungsfehlers bei Qt 6.3.
 
- [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
+ [<i class="fa fa-list" aria-hidden="true"></i> Alle Änderungsprotokolle](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
 
 ## <i class="fas fa-hand-holding-usd"></i>Unterstütze die Entwicklung mit deiner Spende
@@ -112,9 +112,9 @@ Besuchen Sie [GitHub](https://github.com/treefrogframework/treefrog-framework){:
 
 ## <i class="fa fa-info-circle" aria-hidden="true"></i> Weiterführende Informationen
 
-[TreeFrog forum <i class="fas fa-external-link-alt"></i>](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
+[TreeFrog-Forum <i class="fas fa-external-link-alt"></i>](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
 
-Twitter [@TreeFrog_ja <i class="fas fa-external-link-alt"></i>](https://twitter.com/TreeFrog_ja){:target="_blank"}
+Twitter (Japanisch) [@TreeFrog_ja <i class="fas fa-external-link-alt"></i>](https://twitter.com/TreeFrog_ja){:target="_blank"}
 
 [Docker Images <i class="fas fa-external-link-alt"></i>](https://hub.docker.com/r/treefrogframework/treefrog/){:target="_blank"}
 
