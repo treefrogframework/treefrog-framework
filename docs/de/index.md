@@ -63,10 +63,10 @@ Mehrere Anwendungsserver, die Skriptsprache ausführen, können ohne Leistungsei
 2023-01-02
 ### TreeFrog-Framework Version 2.6.0 (stable-release)
 
- - Implemented in-memory KVS for cache system.
- - Added a link option for Glog shared library.
- - Fix bugs of macros for command line interface.
- - Updated LZ4 to v1.9.4.
+ - Implementierung eines in-memory KVS für das Cache-System.
+ - Hinzufügen einer Link-Option für die Glog-Shared-Library.
+ - Behebung eines Makro-Fehlers für das Kommandozeileninterface.
+ - Aktualisierung von LZ4 auf v1.9.4.
 
 2022-11-01
 ### TreeFrog-Framework Version 2.5.0 (stable-release)
@@ -86,7 +86,7 @@ Mehrere Anwendungsserver, die Skriptsprache ausführen, können ohne Leistungsei
 2022-05-28
 ### TreeFrog-Framework Version 2.3.1 (stable-release)
 
- - Behebung eines Kompilierungsfehlers bei Qt 6.3.
+ - Behebung eines Kompilierungsfehlers beim Einsatz von Qt 6.3.
 
  [<i class="fa fa-list" aria-hidden="true"></i> Alle Änderungsprotokolle](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 
