@@ -20,7 +20,7 @@ Webanwendungen können schneller ausgeführt werden als Skriptsprachen, da das s
   6. Generator - generiert Codegerüst, Makefile und vue.js - Vorlagen
   7. Unterstützung für unterschiedliches Rückgabetypen - JSON, XML und CBOR
   8. Multiplatform-Fähigkeit - derselbe Quellcode kann somit auf Windows, macOS und Linux funktionieren
-  9. OSS - quelloffene Software, nun mit BSD-Lizenz
+  9. OSS - quelloffene Software, mittels New-BSD-Lizenz
 
 
 ## <i class="fa fa-comment" aria-hidden="true"></i> Weswegen das TreeFrog-Framework?
@@ -92,7 +92,7 @@ Das TreeFrog-Framework ist ein New-BSD-lizenziertes Open-Source-Projekt und kann
  - werde ein [Sponsor in GitHub](https://github.com/sponsors/treefrogframework)
  - Bitcoin-Spendenadresse: [12C69oSYQLJmA4yB5QynEAoppJpUSDdcZZ]({{ site.baseurl }}/assets/images/btc_address.png "Bitcoin-Spendenadresse")
 
-Ich würde mich freuen, wenn du dir überlegen würdest mit deiner Spende das TreeFrog-Framework-Projekt zu unterstützen. Danke schön!
+Ich würde mich freuen, wenn Sie sich überlegen würden mit ihrer Spende das TreeFrog-Framework-Projekt zu unterstützen. Danke schön!
 
 
 ## <i class="fa fa-user" aria-hidden="true"></i>Wir suchen ...
@@ -100,7 +100,7 @@ Ich würde mich freuen, wenn du dir überlegen würdest mit deiner Spende das Tr
  - Entwickler, Tester, Übersetzer.
 
 Da diese Website mit [GitHub Pages](https://pages.github.com/) erstellt wurde, können Übersetzungen auch per Pull-Request übermittelt werden.
-Besuchen Sie [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Du bist herzlich willkommen!
+Besuchen Sie [GitHub](https://github.com/treefrogframework/treefrog-framework){:target="_blank"}. Sie sind herzlich willkommen!
 
 
 ## <i class="fa fa-info-circle" aria-hidden="true"></i> Weiterführende Informationen
