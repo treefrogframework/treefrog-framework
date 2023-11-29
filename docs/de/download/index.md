@@ -5,44 +5,43 @@ page_id: "download.00"
 
 ## Download
 
-### Installer for Windows
+### Installationsassistent für Windows
 
-TreeFrog Installer for Qt 6 has been released. If installing it, the development environment of TreeFrog Framework will be constructed immediatly. In advance, install Qt 6 for Windows.
+Wir stellen einen Installationsassistenten für Qt6 zur Verfügung. Nach der Einrichtung verfügen Sie im Handumdrehen über eine TreeFrog-Framework-Entwicklungsumgebung. Es ist nicht erforderlich, den Quellcode zu bauen und zu installieren, daher ist dieser Installationsassistent für diejenigen geeignet, die schnell eine Umgebung erstellen möchten. Vor der Ausführung des Installationsassistenten muss Qt6 für Windows installiert werden.
 
 <div class="table-div" markdown="1">
 
-| Version                           | File                                   |
+| Version                           | Datei                                  |
 |-------------------------------------|--------------------------------------|
-| 2.7.1 for Visual Studio 2019 (Qt 6.4 or 6.3)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.7.1-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.7.1/treefrog-2.7.1-msvc_64-setup.exe) |
+| 2.7.1 für Visual Studio 2019 (Qt 6.4 or 6.3)| [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.7.1-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.7.1/treefrog-2.7.1-msvc_64-setup.exe) |
 
 </div>
 
-## Source Code
+## Quellcode
 
-The source code packages of TreeFrog Framework are available.
+Das Quellcode-Paket des TreeFrog-Frameworks ist ebenfalls verfügbar.
 
 <div class="table-div" markdown="1">
 
-| Source         | File                             |
+| Source         | Datei                            |
 |----------------|----------------------------------|
-| version 2.7.1 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.7.1.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.7.1.tar.gz) |
+| Version 2.7.1 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.7.1.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.7.1.tar.gz) |
 
  </div>
 
-[All previous versions <i class="fa fa-angle-double-right" aria-hidden="true"></i>](https://github.com/treefrogframework/treefrog-framework/releases)
+[Alle vorhergehenden Versionen <i class="fa fa-angle-double-right" aria-hidden="true"></i>](https://github.com/treefrogframework/treefrog-framework/releases)
 
-Latest source code is in [GitHub](https://github.com/treefrogframework/).
+Der Letztstand des Quellcodes befindet sich auf [GitHub](https://github.com/treefrogframework/).
 
 ## Homebrew
 
-See Homebrew [site](https://formulae.brew.sh/formula/treefrog) of TreeFrog.
-Can install by Homebrew on macOS.
+Siehe die Homebrew-[Seite](https://formulae.brew.sh/formula/treefrog) von TreeFrog. Dieser kann mittels Homebrew auf macOS-basierten Geräten wie folgt installiert werden:
 
 ```
  $ brew install treefrog
 ```
 
-If the SQL driver for Qt was installed correctly, the followings is displayed.
+Wenn der SQL-Treiber für Qt korrekt installiert wurde, dann werden die folgenden Ausgaben angezeigt:
 
 ```
  $ tspawn --show-drivers
@@ -53,7 +52,7 @@ If the SQL driver for Qt was installed correctly, the followings is displayed.
    QPSQL
 ```
 
-If `QMARIADB` or `QPSQL` is not displayed, the driver is not stored in the correct directory. Run the following commands to check the path of the driver directory and copy the drivers there manually.
+Wenn `QMARIADB` oder `QPSQL` nicht angezeigt werden sollten, dann sind die jeweiligen Treiber nicht am dafür vorgesehenen Speicherort abgelegt. Führen Sie folgende Befehle aus um den entsprechenden Treiber-Pfad zu überprüfen und kopieren Sie den Treiber manuell in den dafür vorgesehenen Ordner:
 
 ```
 Example:
@@ -62,7 +61,7 @@ Example:
  (your_brew_path)/Cellar/qt/6.2.3_1/share/qt/plugins/sqldrivers
 ```
 
-After copying the driver, the following results are obtained when checked with the `ls` command.
+Nach dem Kopieren des Treibers sollten die folgenden Ausgaben mittels des `ls`-Befehls angezeigt werden:
 
 ```
 $ ls $(tspawn --show-driver-path)
