@@ -3,35 +3,35 @@ title: Blog
 page_id: "blog.00"
 ---
 
-## Web Framework Benchmarks Round 15
+## Web Framework Benchmarks - Runde 15
 
 <https://www.techempower.com/benchmarks/#section=data-r15>{:target="_blank"}
 
 
-## Web Framework Benchmarks Round 13
+## Web Framework Benchmarks - Runde 13
 
 <https://www.techempower.com/benchmarks/#section=data-r13>{:target="_blank"}
 
-Supplement of the benchmark result :
+Nach dem Hinzufügen der MongoDB-Anbindung wurde diese Kombination auf dem Prüfstand getestet. Ergänzungen zu den Benchmark-Ergebnissen:
 
-  - treefrog : TreeFrog (MPM:thread) + MySQL
-  - treefrog-postgres : TreeFrog (MPM:thread) + PostgreSQL
-  - treefrog-mongo : TreeFrog (MPM:thread) + MongoDB
-  - thread-hybrid : treefrog (MPM:hybrid) + MySQL
+  - treefrog: TreeFrog (MPM:thread) + MySQL
+  - treefrog-postgres: TreeFrog (MPM:thread) + PostgreSQL
+  - treefrog-mongo: TreeFrog (MPM:thread) + MongoDB
+  - thread-hybrid: treefrog (MPM:hybrid) + MySQL
 
 
-## Tiny C++ Interpreter
+## Minimalistischer C++-Interpreter
 
-Made a tiny c++11 interpreter.
+Ich habe einen minimalistischen C++11-Interpreter erstellt, der nützlich ist, wenn Sie Ihren C++11-Code überprüfen möchten.
 
 <http://treefrogframework.github.io/cpi/>
 
 
-## Chat of WebSocket
+## Chat-App auf WebSocket-Basis
 
-Chat sample app of WebSocket. Play it!
-I am going to upload how to create that.
+Chat-Beispielapplikation auf WebSocket-Basis. Probier es aus!
+Ich werde eine entsprechende Anleitung zum Erstellen dieser Applikation hochladen.
 
  <http://chatsample.treefrogframework.org>
 
-Server was implemented by TreeFrog.
+Der Server wurde mit dem TreeFrog-Framework erstellt.

@@ -3,15 +3,15 @@ title: development
 page_id: "development.00"
 ---
 
-## Development
+## Entwicklung
 
-TreeFrog Framework repository are available on GitHub.
+Das TreeFrog-Framework - Repository steht auf GitHub bereit:
 
  [<i class="fab fa-github"></i> https://github.com/treefrogframework](https://github.com/treefrogframework){:target="_blank"}
 
-If you have any patches, please send a pull-request to the repository with your comments.
+Falls Sie einen Patch erstellt haben, senden Sie bitte einen Pull-Request mit Ihren Kommentaren zum Repository.
 
 
 ### Forum
 
-Discussion group for TreeFrog Framework: [https://groups.google.com/forum/#!forum/treefrogframework](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
+Diskussionsgruppe für das TreeFrog-Framework: [https://groups.google.com/forum/#!forum/treefrogframework](https://groups.google.com/forum/#!forum/treefrogframework){:target="_blank"}
