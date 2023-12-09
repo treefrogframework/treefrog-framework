@@ -163,8 +163,10 @@ QString TMySQLDriverExtension::executeStatement(const QVariantList &values) cons
     statement.reserve(_name.length() + vals.length() + 20);
     statement += QLatin1String("EXECUTE ");
     statement += _name;
-    statement += QLatin1String(" USING ");
-    statement += vals;
+    if (!vals.isEmpty()) {
+        statement += QLatin1String(" USING ");
+        statement += vals;
+    }
     return statement;
 }
 
@@ -274,9 +276,11 @@ QString TPostgreSQLDriverExtension::executeStatement(const QVariantList &values)
     statement.reserve(_name.length() + vals.length() + 15);
     statement += QLatin1String("EXECUTE ");
     statement += _name;
-    statement += '(';
-    statement += vals;
-    statement += ')';
+    if (!vals.isEmpty()) {
+        statement += '(';
+        statement += vals;
+        statement += ')';
+    }
     return statement;
 }
 
