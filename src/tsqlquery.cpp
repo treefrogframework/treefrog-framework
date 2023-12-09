@@ -195,7 +195,7 @@ TSqlQuery &TSqlQuery::prepare(const QString &query)
 {
     QElapsedTimer time;
     time.start();
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
     bool res = false;
 
     if (db.isPreparedStatementSupported()) {
@@ -235,7 +235,7 @@ bool TSqlQuery::exec()
     bool ret = false;
     QElapsedTimer time;
     time.start();
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
 
     if (db.isPreparedStatementSupported()) {
         QString statement = db.driverExtension()->executeStatement(_boundValues);
@@ -260,7 +260,7 @@ bool TSqlQuery::exec()
 */
 TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
 {
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
 
     if (db.isPreparedStatementSupported()) {
         tError("Not supported colon-name placeholder of prepared statement for the database");
@@ -276,7 +276,7 @@ TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
 */
 TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
 {
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
 
     if (pos < 0) {
         return *this;
@@ -306,7 +306,7 @@ TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
 */
 TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 {
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
 
     if (db.isPreparedStatementSupported()) {
         _boundValues.append(val);
@@ -319,14 +319,14 @@ TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 
 QVariant TSqlQuery::boundValue(int pos) const
 {
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
     return (db.isPreparedStatementSupported()) ? _boundValues.value(pos) : QSqlQuery::boundValue(pos);
 }
 
 
 QVariantList TSqlQuery::boundValues() const
 {
-    auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = TSqlDatabase::database(_connectionName);
     return (db.isPreparedStatementSupported()) ? _boundValues : QSqlQuery::boundValues();
 }
 

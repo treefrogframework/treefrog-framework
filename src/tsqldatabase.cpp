@@ -90,7 +90,7 @@ void TSqlDatabase::setDriverExtension(TSqlDriverExtension *extension)
 }
 
 
-const TSqlDatabase &TSqlDatabase::database(const QString &connectionName)
+TSqlDatabase &TSqlDatabase::database(const QString &connectionName)
 {
     static TSqlDatabase defaultDatabase;
     auto *dict = dbDict();

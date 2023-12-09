@@ -81,9 +81,14 @@ public:
     bool isUpsertSupported() const override { return true; }
     QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert, const QSqlRecord &recordToUpdate,
         const QString &pkField, const QString &lockRevisionField) const override;
+    bool isPreparedStatementSupported() const override { return true; }
+    QString prepareStatement(const QString &) const override;
+    QString executeStatement(const QVariantList &) const override;
 
 private:
     const QSqlDriver *_driver {nullptr};
+    mutable QMap<QString, QString> _preparedQueryMap;  // <prepared-query, name>
+    mutable QString _name;  // name to execute
 };
 
 
@@ -114,6 +119,52 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
     }
 
     statement.append(vals);
+    return statement;
+}
+
+QString TMySQLDriverExtension::prepareStatement(const QString &query) const
+{
+    const QString PREFIX = "ps";
+    static uint32_t seq = 1;
+
+    _name = _preparedQueryMap.value(query);
+    if (!_name.isEmpty()) {
+        return QString();
+    }
+
+    _name = PREFIX + QString::number(seq++);
+    _preparedQueryMap.insert(query, _name);
+
+    QString statement;
+    statement.reserve(query.length() + 32);
+    statement += QLatin1String("PREPARE ");
+    statement += _name;
+    statement += QLatin1String(" FROM \"");
+    statement += query;
+    statement += QChar('"');
+    return statement;
+}
+
+
+QString TMySQLDriverExtension::executeStatement(const QVariantList &values) const
+{
+    if (_name.isEmpty()) {
+        return QString();
+    }
+
+    QString vals;
+    for (auto &v : values) {
+        vals += TSqlQuery::formatValue(v, _driver);
+        vals += ',';
+    }
+    vals.chop(1);
+
+    QString statement;
+    statement.reserve(_name.length() + vals.length() + 20);
+    statement += QLatin1String("EXECUTE ");
+    statement += _name;
+    statement += QLatin1String(" USING ");
+    statement += vals;
     return statement;
 }
 

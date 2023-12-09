@@ -52,19 +52,23 @@ public:
     bool isUpsertSupported() const;
     bool isPreparedStatementSupported() const;
     const TSqlDriverExtension *driverExtension() const { return _driverExtension; }
-    void setDriverExtension(TSqlDriverExtension *extension);
 
     static const char *const defaultConnection;
-    static const TSqlDatabase &database(const QString &connectionName = QLatin1String(defaultConnection));
+    static TSqlDatabase &database(const QString &connectionName = QLatin1String(defaultConnection));
     static TSqlDatabase &addDatabase(const QString &driver, const QString &connectionName = QLatin1String(defaultConnection));
     static void removeDatabase(const QString &connectionName = QLatin1String(defaultConnection));
     static bool contains(const QString &connectionName = QLatin1String(defaultConnection));
 
 private:
+    TSqlDriverExtension *driverExtension() { return _driverExtension; }
+    void setDriverExtension(TSqlDriverExtension *extension);
+
     QSqlDatabase _sqlDatabase;
     QStringList _postOpenStatements;
     bool _enableUpsert {false};
     TSqlDriverExtension *_driverExtension {nullptr};
+
+    friend class TSqlDatabasePool;
 };
 
 
