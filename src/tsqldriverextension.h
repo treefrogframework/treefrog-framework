@@ -12,6 +12,9 @@ public:
     virtual bool isUpsertSupported() const { return false; }
     virtual QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert,
         const QSqlRecord &recordToUpdate, const QString &pkField, const QString &lockRevisionField) const;
+    virtual bool isPreparedStatementSupported() const { return false; }
+    virtual QString prepareStatement(const QString &) const { return QString(); }
+    virtual QString executeStatement(const QVariantList &) const { return QString(); }
 };
 
 

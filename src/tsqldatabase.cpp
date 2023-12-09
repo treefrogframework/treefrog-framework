@@ -140,3 +140,9 @@ bool TSqlDatabase::isUpsertSupported() const
 {
     return _driverExtension && _driverExtension->isUpsertSupported();
 }
+
+
+bool TSqlDatabase::isPreparedStatementSupported() const
+{
+    return _driverExtension && _driverExtension->isPreparedStatementSupported();
+}

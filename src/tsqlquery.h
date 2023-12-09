@@ -10,9 +10,12 @@ public:
 
     TSqlQuery &prepare(const QString &query);
     bool load(const QString &filename);
+    bool loadPreparedQuery(const QString &filename) { return load(filename); }
     TSqlQuery &bind(const QString &placeholder, const QVariant &val);
     TSqlQuery &bind(int pos, const QVariant &val);
     TSqlQuery &addBind(const QVariant &val);
+    QVariant boundValue(int pos) const;
+    QVariantList boundValues() const;
     QVariant getNextValue();
     QString queryDirPath() const;
     bool exec(const QString &query);
@@ -29,33 +32,19 @@ public:
 #if QT_VERSION < 0x060000
     static QString formatValue(const QVariant &val, QVariant::Type type = QVariant::Invalid, int databaseId = 0);
     static QString formatValue(const QVariant &val, QVariant::Type type, const QSqlDatabase &database);
+    static QString formatValue(const QVariant &val, QVariant::Type type, const QSqlDriver *driver);
 #else
     static QString formatValue(const QVariant &val, const QMetaType &type, int databaseId = 0);
     static QString formatValue(const QVariant &val, const QMetaType &type, const QSqlDatabase &database);
+    static QString formatValue(const QVariant &val, const QMetaType &type, const QSqlDriver *driver);
 #endif
-    static QString formatValue(const QVariant &val, const QSqlDatabase &database);
+    static QString formatValue(const QVariant &val, const QSqlDriver *driver);
+    static QString formatValue(const QVariant &val, const QSqlDatabase &database) { return formatValue(val, database.driver()); }
+
+private:
+    QString _connectionName;
+    QVariantList _boundValues;  // For prepared query
 };
-
-
-inline TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
-{
-    QSqlQuery::bindValue(placeholder, val);
-    return *this;
-}
-
-
-inline TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
-{
-    QSqlQuery::bindValue(pos, val);
-    return *this;
-}
-
-
-inline TSqlQuery &TSqlQuery::addBind(const QVariant &val)
-{
-    QSqlQuery::addBindValue(val);
-    return *this;
-}
 
 
 inline QVariant TSqlQuery::getNextValue()

@@ -50,6 +50,7 @@ public:
     bool isUpsertEnabled() const { return _enableUpsert; }
     void setUpsertEnabled(bool enable) { _enableUpsert = enable; }
     bool isUpsertSupported() const;
+    bool isPreparedStatementSupported() const;
     const TSqlDriverExtension *driverExtension() const { return _driverExtension; }
     void setDriverExtension(TSqlDriverExtension *extension);
 
