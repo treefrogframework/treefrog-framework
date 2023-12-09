@@ -304,13 +304,16 @@ bool TSqlDatabasePool::openDatabase(TSqlDatabase &database)
 {
     bool ret = database.sqlDatabase().open();
 
-    TSqlDriverExtension *extension = database.driverExtension();
-    if (extension) {
-        TSqlDriverExtensionFactory::destroy(database.sqlDatabase().driverName(), extension);
+    if (ret) {
+        TSqlDriverExtension *extension = database.driverExtension();
+        if (extension) {
+            TSqlDriverExtensionFactory::destroy(database.sqlDatabase().driverName(), extension);
+        }
+
+        extension = TSqlDriverExtensionFactory::create(database.sqlDatabase().driverName(), database.sqlDatabase().driver());
+        database.setDriverExtension(extension);
     }
 
-    extension = TSqlDriverExtensionFactory::create(database.sqlDatabase().driverName(), database.sqlDatabase().driver());
-    database.setDriverExtension(extension);
     return ret;
 }
 

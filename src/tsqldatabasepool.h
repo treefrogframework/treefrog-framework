@@ -26,7 +26,6 @@ public:
 protected:
     void init();
     void timerEvent(QTimerEvent *event);
-    //void closeDatabase(QSqlDatabase &database);
 
 private:
     bool openDatabase(TSqlDatabase &database);

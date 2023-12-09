@@ -85,7 +85,6 @@ TSqlDatabase::DbmsType TSqlDatabase::dbmsType() const
 
 void TSqlDatabase::setDriverExtension(TSqlDriverExtension *extension)
 {
-    Q_ASSERT(!_driverExtension);
     _driverExtension = extension;
 }
 
