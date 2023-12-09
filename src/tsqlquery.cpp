@@ -327,7 +327,15 @@ QVariant TSqlQuery::boundValue(int pos) const
 QVariantList TSqlQuery::boundValues() const
 {
     const auto &db = TSqlDatabase::database(_connectionName);
-    return (db.isPreparedStatementSupported()) ? _boundValues : QSqlQuery::boundValues();
+    if (db.isPreparedStatementSupported()) {
+        return _boundValues;
+    } else {
+#if QT_VERSION < 0x060000
+        return QSqlQuery::boundValues().values();
+#else
+        return QSqlQuery::boundValues();
+#endif
+    }
 }
 
 
