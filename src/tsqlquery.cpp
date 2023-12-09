@@ -147,7 +147,7 @@ QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const Q
     return driver->formatValue(field);
 }
 
-QString formatValue(const QVariant &val, QVariant::Type type, const QSqlDatabase &database)
+QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const QSqlDatabase &database)
 {
     return formatValue(val, type, database.driver());
 }
