@@ -26,9 +26,10 @@ public:
 protected:
     void init();
     void timerEvent(QTimerEvent *event);
-    void closeDatabase(QSqlDatabase &database);
 
 private:
+    bool openDatabase(TSqlDatabase &database);
+    void closeDatabase(TSqlDatabase &database);
     TSqlDatabasePool();
 
 #if QT_VERSION < 0x060000

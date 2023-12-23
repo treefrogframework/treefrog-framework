@@ -26,7 +26,8 @@ public:
     bool insert(QVariantMap &document);
     int update(const QVariantMap &criteria, const QVariantMap &document, bool upsert = false);
     bool updateById(const QVariantMap &document);
-    int updateMulti(const QVariantMap &criteria, const QVariantMap &document);
+    int updateMany(const QVariantMap &criteria, const QVariantMap &document);
+    int updateMulti(const QVariantMap &criteria, const QVariantMap &document) { return updateMany(criteria, document); }
     int remove(const QVariantMap &criteria);
     bool removeById(const QVariantMap &document);
     int count(const QVariantMap &criteria = QVariantMap());

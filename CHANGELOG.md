@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.8.0
+ - Support prepared statements for PostgreSQL and MySQL.
+ - Fix compilation error on Emscripten.
+
 ## 2.7.1
  - Fix a bug of opening shared memory KVS.
  - Modified to reply NotFound when it can not invoke the action.
