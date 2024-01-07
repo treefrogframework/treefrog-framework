@@ -579,3 +579,9 @@ void TSharedMemoryKvs::WriteLockingIterator::remove()
     }
     _tmpbk.clear();
 }
+
+
+/*!
+  \class TSharedMemoryKvs::Bucket
+  \brief The Bucket class represents a data bucket for the in-memory KVS.
+*/
