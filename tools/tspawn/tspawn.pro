@@ -123,12 +123,10 @@ INSTALLS += target defaults defaults_controllers defaults_models defaults_views 
 windows {
   contains(QMAKE_TARGET.arch, x86_64) {
     clientlib.files += ../../3rdparty/clientlib/win64/COPYING_3RD_PARTY_DLL
-    clientlib.files += ../../3rdparty/clientlib/win64/libeay32.dll
-    clientlib.files += ../../3rdparty/clientlib/win64/libintl-8.dll
     clientlib.files += ../../3rdparty/clientlib/win64/libmariadb.dll
     clientlib.files += ../../3rdparty/clientlib/win64/libmysql.dll
     clientlib.files += ../../3rdparty/clientlib/win64/libpq.dll
-    clientlib.files += ../../3rdparty/clientlib/win64/ssleay32.dll
+    clientlib.files += ../../3rdparty/clientlib/win64/mimapi64.dll
   } else {
     clientlib.files += ../../3rdparty/clientlib/win32/COPYING_3RD_PARTY_DLL
     clientlib.files += ../../3rdparty/clientlib/win32/intl.dll
