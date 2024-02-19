@@ -6,8 +6,8 @@
 
   <!-- プロダクト情報 -->
   <Product Name='TreeFrog Framework 2.8.0'
-           Id="E97EAFE9-A79C-4FFF-8A61-2DF8987D03BA"
-           UpgradeCode="B182CC33-A14B-4B56-9C9F-1E7486A3B4CF"
+           Id="9B2CAB7C-ECF7-468A-9AE9-4E13003C83E5"
+           UpgradeCode="DFB3D407-86B9-4F17-AE38-85FD61588772"
            Language='1041' Codepage='932'
            Version='2.8.0' Manufacturer='TreeFrog Framework Project'>
 
@@ -39,7 +39,7 @@
 
     <!-- デスクトップショートカット -->
     <DirectoryRef Id="DesktopFolder">
-      <Component Id="DesktopShortcut" Guid="03CDB563-5A09-47B3-A5C5-59DA3CAB78F3">
+      <Component Id="DesktopShortcut" Guid="4F293293-9950-4927-8D88-E36FCF3D3FD9">
         <Shortcut Id="PromptDesktopShortcut"
                   Name="TreeFrog Prompt 2.8.0"
                   Description="TreeFrog Framework Prompt"
@@ -51,7 +51,7 @@
 
     <!-- プログラムメニューショートカット -->
     <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcut" Guid="97B71422-35C6-49DF-85E7-E13C7B2B1C94">
+      <Component Id="ApplicationShortcut" Guid="ACD6162C-9E89-4753-9142-D1E6F4ADF8DA">
         <CreateFolder Directory="ApplicationProgramsFolder"/>
 
         <!-- Shortcut to TF prompt-->
