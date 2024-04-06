@@ -35,7 +35,6 @@ public:
         insert(Tf::MemcachedSettingsFile, "MemcachedSettingsFile");
         insert(Tf::SqlQueriesStoredDirectory, "SqlQueriesStoredDirectory");
         insert(Tf::DirectViewRenderMode, "DirectViewRenderMode");
-        insert(Tf::SqlQueryLogFile, "SqlQueryLogFile");  // Deprecated
         insert(Tf::SqlQueryLogFilePath, "SqlQueryLog.FilePath");
         insert(Tf::SqlQueryLogLayout, "SqlQueryLog.Layout");
         insert(Tf::SqlQueryLogDateTimeFormat, "SqlQueryLog.DateTimeFormat");

@@ -393,7 +393,7 @@ void showRoutes(const QString &path)
 
 void showSettings(const TWebApplication &app)
 {
-    const QList<int> Deprecated = { Tf::SqlQueryLogFile };
+    const QList<int> Deprecated = { };
     QStringList settings;
 
     std::printf("application.ini\n----------\n");
