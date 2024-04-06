@@ -5,7 +5,7 @@ set VERSION=2.8.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.4
-set GLOG_VERSION=0.6.0
+set GLOG_VERSION=0.7.0
 set BASEDIR=%~dp0
 set CL=/MP
 
@@ -192,7 +192,7 @@ del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
 del /f /q build >nul 2>&1
-set CMAKECMD=cmake -S . -B build %CMAKEOPT%
+set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 set CMAKECMD=cmake --build build -j

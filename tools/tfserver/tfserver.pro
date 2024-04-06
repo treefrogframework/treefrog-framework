@@ -14,7 +14,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 }
 
 DEFINES *= QT_USE_QSTRINGBUILDER
-DEFINES += TF_DLL
+DEFINES += TF_DLL GLOG_USE_GLOG_EXPORT
 INCLUDEPATH += $$header.path
 
 include(../../tfbase.pri)
