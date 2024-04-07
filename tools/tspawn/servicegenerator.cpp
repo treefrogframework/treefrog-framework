@@ -108,10 +108,10 @@ constexpr auto SERVICE_SOURCE_FILE_TEMPLATE = "#include \"%name%service.h\"\n"
                                               "}\n"
                                               "\n";
 
-class ErrorValue : public QHash<int, QString> {
+class ErrorValue : public QMap<int, QString> {
 public:
     ErrorValue() :
-        QHash<int, QString>()
+        QMap<int, QString>()
     {
         insert(QMetaType::Int, "-1");
         insert(QMetaType::UInt, "-1");

@@ -65,10 +65,10 @@ enum SubCommand {
     ShowCollections,
 };
 
-class SubCommands : public QHash<QString, int> {
+class SubCommands : public QMap<QString, int> {
 public:
     SubCommands() :
-        QHash<QString, int>()
+        QMap<QString, int>()
     {
         insert("-h", Help);
         insert("--help", Help);

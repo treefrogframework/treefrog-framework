@@ -136,10 +136,10 @@ constexpr auto CONTROLLER_TINY_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h
                                                       "T_DEFINE_CONTROLLER(%2Controller)\n";
 
 
-class ConvMethod : public QHash<int, QString> {
+class ConvMethod : public QMap<int, QString> {
 public:
     ConvMethod() :
-        QHash<int, QString>()
+        QMap<int, QString>()
     {
         insert(QMetaType::Int, "%1.toInt()");
         insert(QMetaType::UInt, "%1.toUInt()");
@@ -155,10 +155,10 @@ public:
 };
 Q_GLOBAL_STATIC(ConvMethod, convMethod)
 
-class ConditionString : public QHash<int, QString> {
+class ConditionString : public QMap<int, QString> {
 public:
     ConditionString() :
-        QHash<int, QString>()
+        QMap<int, QString>()
     {
         insert(QMetaType::Int, "%1 > 0");
         insert(QMetaType::UInt, "%1 > 0");

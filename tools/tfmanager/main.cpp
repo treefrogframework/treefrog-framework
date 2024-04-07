@@ -65,10 +65,10 @@ enum CommandOption {
 
 #if QT_VERSION < 0x050400
 #ifdef Q_OS_WIN
-class WinVersion : public QHash<int, QString> {
+class WinVersion : public QMap<int, QString> {
 public:
     WinVersion() :
-        QHash<int, QString>()
+        QMap<int, QString>()
     {
         insert(QSysInfo::WV_XP, "Windows XP");
         insert(QSysInfo::WV_2003, "Windows Server 2003");
@@ -84,10 +84,10 @@ Q_GLOBAL_STATIC(WinVersion, winVersion)
 #endif
 
 #ifdef Q_OS_DARWIN
-class MacxVersion : public QHash<int, QString> {
+class MacxVersion : public QMap<int, QString> {
 public:
     MacxVersion() :
-        QHash<int, QString>()
+        QMap<int, QString>()
     {
         insert(QSysInfo::MV_10_3, "Mac OS X 10.3 Panther");
         insert(QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger");
@@ -105,10 +105,10 @@ Q_GLOBAL_STATIC(MacxVersion, macxVersion)
 #endif
 
 
-class OptionHash : public QHash<QString, int> {
+class OptionHash : public QMap<QString, int> {
 public:
     OptionHash() :
-        QHash<QString, int>()
+        QMap<QString, int>()
     {
         insert("-e", EnvironmentSpecified);
         insert("-s", SocketSpecified);
