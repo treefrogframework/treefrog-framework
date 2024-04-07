@@ -240,7 +240,7 @@ if ! [[ "$SPEC" =~ "wasm" ]]; then
   if [ -z "$ENABLE_SHARED_GLOG" ]; then
     echo
     echo -n "Compiling glog ... "
-    $CMAKE -S . -B build -G "Unix Makefiles" >/dev/null 2>&1
+    $CMAKE -S . -B build -G "Unix Makefiles" -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_STANDARD=14 >/dev/null 2>&1
     make -j${NPROC} -C build >/dev/null 2>&1
     RET=$?
     if [ $RET != 0 ]; then
