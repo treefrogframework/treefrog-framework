@@ -5,7 +5,7 @@ set VERSION=2.9.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.21.2
 set LZ4_VERSION=1.9.4
-set GLOG_VERSION=0.6.0
+set GLOG_VERSION=0.7.0
 set BASEDIR=%~dp0
 set CL=/MP
 
