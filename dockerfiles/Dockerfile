@@ -1,4 +1,4 @@
-FROM buildpack-deps:jammy-curl
+FROM buildpack-deps:noble-curl
 MAINTAINER AOYAMA Kazuharu <a.kazuharu@gmail.com>
 
 ENV LANG C.UTF-8
@@ -20,7 +20,7 @@ RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         libqt6qml6 \
         libqt6xml6 \
         libpq5 \
-        libodbc1 \
+        libodbc2 \
         libmongoc-dev \
         libbson-dev \
         gcc \
@@ -29,9 +29,6 @@ RUN apt-get update -q; apt-get install -yq --no-install-recommends \
         make \
         cmake ; \
     rm -rf /var/lib/apt/lists/*
-
-# Temporary..
-RUN rm -f /usr/bin/qmake; ln -sf /usr/bin/qmake6 /usr/bin/qmake
 
 WORKDIR /usr/src/treefrog
 RUN curl -sL https://github.com/treefrogframework/treefrog-framework/archive/master.tar.gz | tar xz && \
