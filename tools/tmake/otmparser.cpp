@@ -7,7 +7,7 @@
 
 #include "otmparser.h"
 #include <TGlobal>
-#include <QMap>
+#include <QHash>
 #include <QRegularExpression>
 #include <QTextStream>
 
@@ -19,10 +19,10 @@
 #define EXVAR_ESCAPE_ECHO QString("=$")
 
 
-class OperatorHash : public QMap<int, QString> {
+class OperatorHash : public QHash<int, QString> {
 public:
     OperatorHash() :
-        QMap<int, QString>()
+        QHash<int, QString>()
     {
         insert(OtmParser::TagReplacement, ":");
         insert(OtmParser::ContentAssignment, "~");
