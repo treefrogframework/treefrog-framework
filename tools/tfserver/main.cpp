@@ -79,22 +79,16 @@ QMap<QString, QString> convertArgs(const QStringList &args)
     return map;
 }
 
-class MethodDefinition : public QMap<int, QByteArray> {
-public:
-    MethodDefinition() :
-        QMap<int, QByteArray>()
-    {
-        insert(TRoute::Match, QByteArray("match   "));
-        insert(TRoute::Get, QByteArray("get     "));
-        insert(TRoute::Head, QByteArray("head    "));
-        insert(TRoute::Post, QByteArray("post    "));
-        insert(TRoute::Options, QByteArray("options "));
-        insert(TRoute::Put, QByteArray("put     "));
-        insert(TRoute::Delete, QByteArray("delete  "));
-        insert(TRoute::Trace, QByteArray("trace   "));
-    }
+const QMap<int, QByteArray> methodDef = {
+    {TRoute::Match, QByteArray("match   ")},
+    {TRoute::Get, QByteArray("get     ")},
+    {TRoute::Head, QByteArray("head    ")},
+    {TRoute::Post, QByteArray("post    ")},
+    {TRoute::Options, QByteArray("options ")},
+    {TRoute::Put, QByteArray("put     ")},
+    {TRoute::Delete, QByteArray("delete  ")},
+    {TRoute::Trace, QByteArray("trace   ")},
 };
-Q_GLOBAL_STATIC(MethodDefinition, methodDef)
 
 
 QByteArray createMethodString(const QString &controllerName, const QMetaMethod &method)
@@ -149,7 +143,7 @@ int showRoutes()
             } else {
                 action = QByteArrayLiteral("(not found)");
             }
-            std::printf("  %s%s  ->  %s\n", methodDef()->value(route.method).data(), qUtf8Printable(path), qUtf8Printable(action));
+            std::printf("  %s%s  ->  %s\n", methodDef.value(route.method).data(), qUtf8Printable(path), qUtf8Printable(action));
         }
         std::printf("\n");
     }

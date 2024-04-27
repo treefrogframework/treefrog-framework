@@ -11,71 +11,56 @@
 #include <QStringList>
 #include <tabstractmodel.h>
 
-class UpperWords : public QSet<QString> {
-public:
-    UpperWords() :
-        QSet<QString>()
-    {
-        insert("id");
-    }
-};
-Q_GLOBAL_STATIC(UpperWords, upperWords)
+const QSet<QString> upperWords = { "id" };
 
-
-class LowerWords : public QSet<QString> {
-public:
-    LowerWords() :
-        QSet<QString>()
-    {
-        insert("about");
-        insert("above");
-        insert("across");
-        insert("after");
-        insert("against");
-        insert("along");
-        insert("among");
-        insert("and");
-        insert("as");
-        insert("at");
-        insert("before");
-        insert("behind");
-        insert("below");
-        insert("beside");
-        insert("besides");
-        insert("between");
-        insert("beyond");
-        insert("by");
-        insert("down");
-        insert("during");
-        insert("except");
-        insert("for");
-        insert("from");
-        insert("in");
-        insert("into");
-        insert("of");
-        insert("off");
-        insert("on");
-        insert("onto");
-        insert("or");
-        insert("out");
-        insert("over");
-        insert("since");
-        insert("than");
-        insert("through");
-        insert("till");
-        insert("to");
-        insert("toward");
-        insert("under");
-        insert("until");
-        insert("up");
-        insert("upon");
-        insert("via");
-        insert("with");
-        insert("within");
-        insert("without");
-    }
+const QSet<QString> lowerWords = {
+    {"about"},
+    {"above"},
+    {"across"},
+    {"after"},
+    {"against"},
+    {"along"},
+    {"among"},
+    {"and"},
+    {"as"},
+    {"at"},
+    {"before"},
+    {"behind"},
+    {"below"},
+    {"beside"},
+    {"besides"},
+    {"between"},
+    {"beyond"},
+    {"by"},
+    {"down"},
+    {"during"},
+    {"except"},
+    {"for"},
+    {"from"},
+    {"in"},
+    {"into"},
+    {"of"},
+    {"off"},
+    {"on"},
+    {"onto"},
+    {"or"},
+    {"out"},
+    {"over"},
+    {"since"},
+    {"than"},
+    {"through"},
+    {"till"},
+    {"to"},
+    {"toward"},
+    {"under"},
+    {"until"},
+    {"up"},
+    {"upon"},
+    {"via"},
+    {"with"},
+    {"within"},
+    {"without"},
 };
-Q_GLOBAL_STATIC(LowerWords, lowerWords)
 
 
 QString fieldNameToVariableName(const QString &name)
@@ -141,9 +126,9 @@ QString fieldNameToCaption(const QString &name)
     for (QMutableStringListIterator i(caplist); i.hasNext();) {
         QString &s = i.next();
         QString slow = s.toLower();
-        if (upperWords()->contains(slow)) {
+        if (upperWords.contains(slow)) {
             s = s.toUpper();
-        } else if (lowerWords()->contains(slow)) {
+        } else if (lowerWords.contains(slow)) {
             s = slow;
         }
     }

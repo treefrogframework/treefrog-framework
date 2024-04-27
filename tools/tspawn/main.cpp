@@ -65,141 +65,121 @@ enum SubCommand {
     ShowCollections,
 };
 
-class SubCommands : public QMap<QString, int> {
-public:
-    SubCommands() :
-        QMap<QString, int>()
-    {
-        insert("-h", Help);
-        insert("--help", Help);
-        insert("new", New);
-        insert("n", New);
-        insert("controller", Controller);
-        insert("c", Controller);
-        insert("model", Model);
-        insert("m", Model);
-        insert("helper", Helper);
-        insert("h", Helper);
-        insert("usermodel", UserModel);
-        insert("u", UserModel);
-        insert("sqlobject", SqlObject);
-        insert("o", SqlObject);
-        insert("mongoscaffold", MongoScaffold);
-        insert("ms", MongoScaffold);
-        // insert("updatemodel", UpdateModel);
-        // insert("um", UpdateModel);
-        insert("mongomodel", MongoModel);
-        insert("mm", MongoModel);
-        insert("websocket", WebSocketEndpoint);
-        insert("w", WebSocketEndpoint);
-        insert("api", Api);
-        insert("a", Api);
-        insert("validator", Validator);
-        insert("v", Validator);
-        insert("mailer", Mailer);
-        insert("l", Mailer);
-        insert("scaffold", Scaffold);
-        insert("s", Scaffold);
-        insert("delete", Delete);
-        insert("d", Delete);
-        insert("remove", Delete);
-        insert("r", Delete);
-        insert("--show-drivers", ShowDrivers);
-        insert("--show-driver-path", ShowDriverPath);
-        insert("--show-tables", ShowTables);
-        insert("--show-collections", ShowCollections);
-    }
+const QMap<QString, int> subCommands = {
+    {"-h", Help},
+    {"--help", Help},
+    {"new", New},
+    {"n", New},
+    {"controller", Controller},
+    {"c", Controller},
+    {"model", Model},
+    {"m", Model},
+    {"helper", Helper},
+    {"h", Helper},
+    {"usermodel", UserModel},
+    {"u", UserModel},
+    {"sqlobject", SqlObject},
+    {"o", SqlObject},
+    {"mongoscaffold", MongoScaffold},
+    {"ms", MongoScaffold},
+    //{"updatemodel", UpdateModel},
+    //{"um", UpdateModel},
+    {"mongomodel", MongoModel},
+    {"mm", MongoModel},
+    {"websocket", WebSocketEndpoint},
+    {"w", WebSocketEndpoint},
+    {"api", Api},
+    {"a", Api},
+    {"validator", Validator},
+    {"v", Validator},
+    {"mailer", Mailer},
+    {"l", Mailer},
+    {"scaffold", Scaffold},
+    {"s", Scaffold},
+    {"delete", Delete},
+    {"d", Delete},
+    {"remove", Delete},
+    {"r", Delete},
+    {"--show-drivers", ShowDrivers},
+    {"--show-driver-path", ShowDriverPath},
+    {"--show-tables", ShowTables},
+    {"--show-collections", ShowCollections},
 };
-Q_GLOBAL_STATIC(SubCommands, subCommands)
 
-
-class SubDirs : public QStringList {
-public:
-    SubDirs() :
-        QStringList()
-    {
-        append(L("controllers"));
-        append(L("models"));
-        append(L("models/objects"));
-        append(L("models/sqlobjects"));
-        append(L("models/mongoobjects"));
-        append(L("views"));
-        append(L("views/layouts"));
-        append(L("views/mailer"));
-        append(L("views/partial"));
-        append(L("views/_src"));
-        append(L("helpers"));
-        append(L("config"));
-        append(L("public"));
-        append(L("public/images"));
-        append(L("public/js"));
-        append(L("public/css"));
-        append(L("db"));
-        append(L("lib"));
-        append(L("log"));
-        append(L("plugin"));
-        append(L("script"));
-        append(L("sql"));
-        append(L("test"));
-        append(L("tmp"));
-        append(L("cmake"));
-    }
+const QStringList subDirs = {
+    L("controllers"),
+    L("models"),
+    L("models/objects"),
+    L("models/sqlobjects"),
+    L("models/mongoobjects"),
+    L("views"),
+    L("views/layouts"),
+    L("views/mailer"),
+    L("views/partial"),
+    L("views/_src"),
+    L("helpers"),
+    L("config"),
+    L("public"),
+    L("public/images"),
+    L("public/js"),
+    L("public/css"),
+    L("db"),
+    L("lib"),
+    L("log"),
+    L("plugin"),
+    L("script"),
+    L("sql"),
+    L("test"),
+    L("tmp"),
+    L("cmake"),
 };
-Q_GLOBAL_STATIC(SubDirs, subDirs)
 
-
-class FilePaths : public QStringList {
-public:
-    FilePaths() :
-        QStringList()
-    {
-        append(L("appbase.pri"));
-        append(L("controllers/controllers.pro"));
-        append(L("controllers/applicationcontroller.h"));
-        append(L("controllers/applicationcontroller.cpp"));
-        append(L("models/models.pro"));
+const QStringList filePaths = {
+    L("appbase.pri"),
+    L("controllers/controllers.pro"),
+    L("controllers/applicationcontroller.h"),
+    L("controllers/applicationcontroller.cpp"),
+    L("models/models.pro"),
 #ifdef Q_OS_WIN
-        append(L("models/objects/_dummymodel.h"));
-        append(L("models/objects/_dummymodel.cpp"));
+    L("models/objects/_dummymodel.h"),
+    L("models/objects/_dummymodel.cpp"),
 #endif
-        append(L("views/views.pro"));
-        append(L("views/_src/_src.pro"));
-        append(L("views/layouts/.trim_mode"));
-        append(L("views/mailer/.trim_mode"));
-        append(L("views/partial/.trim_mode"));
-        append(L("helpers/helpers.pro"));
-        append(L("helpers/applicationhelper.h"));
-        append(L("helpers/applicationhelper.cpp"));
-        append(L("config/application.ini"));
-        append(L("config/database.ini"));
-        append(L("config/development.ini"));
-        append(L("config/internet_media_types.ini"));
-        append(L("config/logger.ini"));
-        append(L("config/mongodb.ini"));
-        append(L("config/redis.ini"));
-        append(L("config/memcached.ini"));
-        append(L("config/routes.cfg"));
-        append(L("config/validation.ini"));
-        append(L("config/cache.ini"));
-        append(L("public/403.html"));
-        append(L("public/404.html"));
-        append(L("public/413.html"));
-        append(L("public/500.html"));
-        append(L("script/JSXTransformer.js"));
-        append(L("script/react.js"));  // React
-        append(L("script/react-with-addons.js"));  // React
-        append(L("script/react-dom-server.js"));  // React
-        // CMake
-        append(L("CMakeLists.txt"));
-        append(L("cmake/CacheClean.cmake"));
-        append(L("cmake/TargetCmake.cmake"));
-        append(L("controllers/CMakeLists.txt"));
-        append(L("models/CMakeLists.txt"));
-        append(L("views/CMakeLists.txt"));
-        append(L("helpers/CMakeLists.txt"));
-    }
+    L("views/views.pro"),
+    L("views/_src/_src.pro"),
+    L("views/layouts/.trim_mode"),
+    L("views/mailer/.trim_mode"),
+    L("views/partial/.trim_mode"),
+    L("helpers/helpers.pro"),
+    L("helpers/applicationhelper.h"),
+    L("helpers/applicationhelper.cpp"),
+    L("config/application.ini"),
+    L("config/database.ini"),
+    L("config/development.ini"),
+    L("config/internet_media_types.ini"),
+    L("config/logger.ini"),
+    L("config/mongodb.ini"),
+    L("config/redis.ini"),
+    L("config/memcached.ini"),
+    L("config/routes.cfg"),
+    L("config/validation.ini"),
+    L("config/cache.ini"),
+    L("public/403.html"),
+    L("public/404.html"),
+    L("public/413.html"),
+    L("public/500.html"),
+    L("script/JSXTransformer.js"),
+    L("script/react.js"),  // React
+    L("script/react-with-addons.js"),  // React
+    L("script/react-dom-server.js"),  // React
+    // CMake
+    L("CMakeLists.txt"),
+    L("cmake/CacheClean.cmake"),
+    L("cmake/TargetCmake.cmake"),
+    L("controllers/CMakeLists.txt"),
+    L("models/CMakeLists.txt"),
+    L("views/CMakeLists.txt"),
+    L("helpers/CMakeLists.txt"),
 };
-Q_GLOBAL_STATIC(FilePaths, filePaths)
 
 
 const QString appIni = QLatin1String("config/application.ini");
@@ -354,7 +334,7 @@ static bool createNewApplication(const QString &name)
     std::printf("  created   %s\n", qUtf8Printable(name));
 
     // Creates sub-directories
-    for (const QString &str : *subDirs()) {
+    for (const QString &str : subDirs) {
         QString d = name + "/" + str;
         if (!mkpath(dir, d)) {
             return false;
@@ -364,7 +344,7 @@ static bool createNewApplication(const QString &name)
     // Copies files
     copy(dataDirPath + "app.pro", name + "/" + name + ".pro");
 
-    for (auto &path : *filePaths()) {
+    for (auto &path : filePaths) {
         QString filename = QFileInfo(path).fileName();
         QString dst = name + "/" + path;
 
@@ -550,7 +530,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
-    int subcmd = subCommands()->value(args.value(1), Invalid);
+    int subcmd = subCommands.value(args.value(1), Invalid);
 
     switch (subcmd) {
     case Invalid:

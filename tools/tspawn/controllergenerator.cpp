@@ -136,57 +136,39 @@ constexpr auto CONTROLLER_TINY_SOURCE_FILE_TEMPLATE = "#include \"%1controller.h
                                                       "T_DEFINE_CONTROLLER(%2Controller)\n";
 
 
-class ConvMethod : public QMap<int, QString> {
-public:
-    ConvMethod() :
-        QMap<int, QString>()
-    {
-        insert(QMetaType::Int, "%1.toInt()");
-        insert(QMetaType::UInt, "%1.toUInt()");
-        insert(QMetaType::LongLong, "%1.toLongLong()");
-        insert(QMetaType::ULongLong, "%1.toULongLong()");
-        insert(QMetaType::Double, "%1.toDouble()");
-        insert(QMetaType::QByteArray, "%1.toByteArray()");
-        insert(QMetaType::QString, "%1");
-        insert(QMetaType::QDate, "QDate::fromString(%1)");
-        insert(QMetaType::QTime, "QTime::fromString(%1)");
-        insert(QMetaType::QDateTime, "QDateTime::fromString(%1)");
-    }
+const QMap<int, QString> convMethod = {
+    {QMetaType::Int, "%1.toInt()"},
+    {QMetaType::UInt, "%1.toUInt()"},
+    {QMetaType::LongLong, "%1.toLongLong()"},
+    {QMetaType::ULongLong, "%1.toULongLong()"},
+    {QMetaType::Double, "%1.toDouble()"},
+    {QMetaType::QByteArray, "%1.toByteArray()"},
+    {QMetaType::QString, "%1"},
+    {QMetaType::QDate, "QDate::fromString(%1)"},
+    {QMetaType::QTime, "QTime::fromString(%1)"},
+    {QMetaType::QDateTime, "QDateTime::fromString(%1)"},
 };
-Q_GLOBAL_STATIC(ConvMethod, convMethod)
 
-class ConditionString : public QMap<int, QString> {
-public:
-    ConditionString() :
-        QMap<int, QString>()
-    {
-        insert(QMetaType::Int, "%1 > 0");
-        insert(QMetaType::UInt, "%1 > 0");
-        insert(QMetaType::LongLong, "%1 > 0");
-        insert(QMetaType::ULongLong, "%1 > 0");
-        insert(QMetaType::Double, "%1 > 0");
-        insert(QMetaType::QByteArray, "!%1.isEmpty()");
-        insert(QMetaType::QString, "!%1.isEmpty()");
-        insert(QMetaType::QDate, "!%1.isNull()");
-        insert(QMetaType::QTime, "!%1.isNull()");
-        insert(QMetaType::QDateTime, "!%1.isNull()");
-    }
+const QMap<int, QString> conditionString = {
+    {QMetaType::Int, "%1 > 0"},
+    {QMetaType::UInt, "%1 > 0"},
+    {QMetaType::LongLong, "%1 > 0"},
+    {QMetaType::ULongLong, "%1 > 0"},
+    {QMetaType::Double, "%1 > 0"},
+    {QMetaType::QByteArray, "!%1.isEmpty()"},
+    {QMetaType::QString, "!%1.isEmpty()"},
+    {QMetaType::QDate, "!%1.isNull()"},
+    {QMetaType::QTime, "!%1.isNull()"},
+    {QMetaType::QDateTime, "!%1.isNull()"},
 };
-Q_GLOBAL_STATIC(ConditionString, conditionString)
 
-class NGCtlrName : public QStringList {
-public:
-    NGCtlrName() :
-        QStringList()
-    {
-        append("layouts");
-        append("partial");
-        append("direct");
-        append("_src");
-        append("mailer");
-    }
+const QStringList ngCtlrName = {
+    "layouts",
+    "partial",
+    "direct",
+    "_src",
+    "mailer",
 };
-Q_GLOBAL_STATIC(NGCtlrName, ngCtlrName)
 
 
 ControllerGenerator::ControllerGenerator(const QString &controller, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int lockRevIdx) :
@@ -204,7 +186,7 @@ ControllerGenerator::ControllerGenerator(const QString &controller, const QStrin
 bool ControllerGenerator::generate(const QString &dstDir) const
 {
     // Reserved word check
-    if (ngCtlrName()->contains(tableName.toLower())) {
+    if (ngCtlrName.contains(tableName.toLower())) {
         qCritical("Reserved word error. Please use another word.  Controller name: %s", qUtf8Printable(tableName));
         return false;
     }
@@ -240,7 +222,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
             {"name", controllerName.toLower()},
             {"clsname", controllerName},
             {"varname", varName},
-            {"var1", convMethod()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
+            {"var1", convMethod.value(pair.second).arg(fieldNameToVariableName(pair.first))},
             {"code1", sessInsertStr},
             {"code2", sessGetStr},
 #if QT_VERSION < 0x060000
@@ -250,7 +232,7 @@ bool ControllerGenerator::generate(const QString &dstDir) const
 #endif
             {"rev", revStr},
             {"id", fieldNameToVariableName(pair.first)},
-            {"condition", conditionString()->value(pair.second).arg(fieldNameToVariableName(pair.first))},
+            {"condition", conditionString.value(pair.second).arg(fieldNameToVariableName(pair.first))},
         };
 
         // Generates a controller header file
@@ -292,5 +274,5 @@ bool ControllerGenerator::generate(const QString &dstDir) const
 
 QString ControllerGenerator::generateIdString(const QString &id, int type)
 {
-    return convMethod()->value(type).arg(fieldNameToVariableName(id));
+    return convMethod.value(type).arg(fieldNameToVariableName(id));
 }
