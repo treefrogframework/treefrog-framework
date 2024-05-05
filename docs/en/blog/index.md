@@ -22,7 +22,7 @@ Supplement of the benchmark result :
 
 ## Tiny C++ Interpreter
 
-Made a tiny c++11 interpreter.
+Cpi is a tiny interpreter for C++17 or C++20.
 
 <http://treefrogframework.github.io/cpi/>
 
