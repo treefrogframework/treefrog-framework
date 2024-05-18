@@ -24,7 +24,7 @@ Supplement of the benchmark result :
 
 Cpi is a tiny interpreter for C++17 or C++20.
 
-<http://treefrogframework.github.io/cpi/>
+<https://treefrogframework.github.io/cpi/>
 
 
 ## Chat of WebSocket

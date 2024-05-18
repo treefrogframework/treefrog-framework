@@ -27,7 +27,7 @@ Now install the DB client libraries:
 
 ### Installation Instructions
 
-1. Extract the file you just have [downloaded](http://www.treefrogframework.org/en/download/){:target="_blank"}.
+1. Extract the file you just have [downloaded](https://www.treefrogframework.org/en/download/){:target="_blank"}.
 
    The following command applies to version 'x.x.x'. Please update it appropriately.
 

@@ -65,7 +65,7 @@ public slots:   // 动作(action)定义在这里
 
 这些对于编程者来说, 通常意味着许多的工作和大量的代码编写. 因此, 导致的结果就是一些人编写了一些庞大而且复杂的控制器(controller). 为了防止这种情况, 请仅在模型(model)实现业务逻辑. 你应该一直保存控制器尽可能的简单.
 
-一旦你明白了操作(action)如何调用的机制, 还能够通过URL客户化操作(action). 更多信息请参见[URL 路由](http://www.treefrogframework.org/documents/controller/url-routing){:target="_blank"}.
+一旦你明白了操作(action)如何调用的机制, 还能够通过URL客户化操作(action). 更多信息请参见[URL 路由](https://www.treefrogframework.org/documents/controller/url-routing){:target="_blank"}.
 
 ## 获取请求
 

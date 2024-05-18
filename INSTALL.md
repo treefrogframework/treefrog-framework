@@ -18,7 +18,7 @@ Case of Ubuntu:
 
       $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
 
-  For more understanding see http://doc.qt.io/qt-5/sql-driver.html
+  For more understanding see https://doc.qt.io/qt-6/sql-driver.html
 
 
 Installation

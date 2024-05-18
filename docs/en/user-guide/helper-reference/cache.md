@@ -53,7 +53,7 @@ As an example, to cache the HTML data of the "index" view with the key "index" f
 ```
 
 If executed by the index action, the third argument "index" can be omitted.
-See the [API Reference](http://api-reference.treefrogframework.org/classTActionController.html){:target="_blank"} for details.
+See the [API Reference](https://api-reference.treefrogframework.org/classTActionController.html){:target="_blank"} for details.
 
 ## Data caching
 
@@ -68,4 +68,4 @@ Use the TCache class to store, retrieve, and delete data.
     :
 ```
 
-See [API Reference](http://api-reference.treefrogframework.org/classTCache.html){:target="_blank"} for other methods.
+See [API Reference](https://api-reference.treefrogframework.org/classTCache.html){:target="_blank"} for other methods.

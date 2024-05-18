@@ -84,7 +84,7 @@ SOURCES = sampleplugin.cpp \
 - 使用include()包含*appbase.pri*文件是<span style="color: red">重要的</span>.
 
 然后, 当你构建时, 你可以生成一个可加载的动态插件. 每次保存插件到plugin文件夹时, 不要有错误, 因为应用服务器(AP server)从这个目录加载插件.
-更多关于[插件系统](http://doc.qt.io/qt-5/plugins-howto.html){:target="_blank"}的详细信息请参考Qt文档.
+更多关于[插件系统](https://doc.qt.io/qt-6/plugins-howto.html){:target="_blank"}的详细信息请参考Qt文档.
 
 ## 记录器插件
 

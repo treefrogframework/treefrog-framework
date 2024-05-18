@@ -71,11 +71,11 @@ connectOptions=
 | port           | 端口           | 留空表示默认端口                                                                  |
 | userName       | 用户名         |                                                                                   |
 | password       | 密码           |                                                                                   |
-| connectOptions | 连接选项       | 更多信息参看Qt文档:<br>[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="_blank"} |
+| connectOptions | 连接选项       | 更多信息参看Qt文档:<br>[QSqlDatabase::setConnectOptions()](https://doc.qt.io/qt-6/qsqldatabase.html){:target="_blank"} |
 
 </div><br>
 
-如果Qt SDK没有包含数据库驱动, 将不能访问数据库. 如果还没有构建, 你必须设置好驱动. 作为替代, 你可以从[下载页](http://www.treefrogframework.org/download){:target="_blank"}下载数据库驱动, 然后安装它.
+如果Qt SDK没有包含数据库驱动, 将不能访问数据库. 如果还没有构建, 你必须设置好驱动. 作为替代, 你可以从[下载页](https://www.treefrogframework.org/download){:target="_blank"}下载数据库驱动, 然后安装它.
 
 当你执行完生成器命令(完成上面提到的步骤), 骨架就会生成. 每条命令都应该在应用程序的根目录下执行.
 

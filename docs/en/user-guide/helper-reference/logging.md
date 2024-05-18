@@ -62,7 +62,7 @@ FileLogger.Layout="%d %5P [%t] %m%n"
 ```
 
 When a log was generated, date and time will be inserted there and tagged with '%d' in the log layout.<br>
-The date format is specified in the FileLogger.DateTimeFormat parameter. The format that can be specified is the same value as the argument of QDateTime::toString(). Please refer to the [Qt document](http://doc.qt.io/qt-5/qdatetime.html){:target="_blank"} for further detail.
+The date format is specified in the FileLogger.DateTimeFormat parameter. The format that can be specified is the same value as the argument of QDateTime::toString(). Please refer to the [Qt document](https://doc.qt.io/qt-6/qdatetime.html){:target="_blank"} for further detail.
 
 ```ini
 # Specify the date-time format of FileLogger, see also QDateTime

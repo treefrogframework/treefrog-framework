@@ -46,7 +46,7 @@ texport メソッドでエクスポート可能にする （ビューへ受け�
    - パブリックなデストラクタがある
    - Q_DECLARE_METATYPE マクロで宣言する（ヘッダファイルの末尾あたりに）
 
-詳細を知りたい方は [Qt ドキュメント](http://doc.qt.io/qt-5/qmetatype.html){:target="_blank"}をご覧ください。
+詳細を知りたい方は [Qt ドキュメント](https://doc.qt.io/qt-6/qmetatype.html){:target="_blank"}をご覧ください。
 
 #### ジェネレータコマンドで生成されたモデルはこれらを満たしています
 

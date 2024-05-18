@@ -32,20 +32,15 @@ TreeFrog uses the qt qmake build system.
 
 ## Web Site
 
-http://www.treefrogframework.org/
+https://www.treefrogframework.org/
 
 ## Releases
 
 https://github.com/treefrogframework/treefrog-framework/releases
 
-## Documents
-
-Get additional information:
-http://treefrogframework.github.io/treefrog-framework/
-
 ## API Reference
 
-http://api-reference.treefrogframework.org/annotated.html
+https://api-reference.treefrogframework.org/annotated.html
 
 ## Forum
 

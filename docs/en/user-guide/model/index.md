@@ -46,7 +46,7 @@ This is equal to set to a variable from type QVariant (by using the setValue() m
     - public destructor
     - Declaration in Q_DECLARE_METATYPE macro (At the end of the header per file)
 
-Please read the [Qt documentation](http://doc.qt.io/qt-5/qmetatype.html){:target="_blank"} if you want to learn more about it.
+Please read the [Qt documentation](https://doc.qt.io/qt-6/qmetatype.html){:target="_blank"} if you want to learn more about it.
 
 ##### ★ A model that is created by the generator command already meets the minimum requirements to work.
 

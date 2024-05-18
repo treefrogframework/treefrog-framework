@@ -61,7 +61,7 @@ page_id: "060.010"
 | port           | ポート                                                                           |
 | userName       | ユーザ名                                                                      |
 | password       | パスワード                                                                       |
-| connectOptions | 接続オプション<br>選択肢はQt ドキュメントの[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="_blank"}を参照 |
+| connectOptions | 接続オプション<br>選択肢はQt ドキュメントの[QSqlDatabase::setConnectOptions()](https://doc.qt.io/qt-6/qsqldatabase.html){:target="_blank"}を参照 |
 
 </div><br>
 

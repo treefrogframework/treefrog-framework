@@ -72,11 +72,11 @@ connectOptions=
 | port           | Port number        | The default port if blank                                                                                                                                                                                                                        |
 | userName       | User name          |                                                                                                                                                                                                                                                  |
 | password       | Password           |                                                                                                                                                                                                                                                  |
-| connectOptions | Connection options | For more information see Qt documents:<br>[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="\_blank"}                                                                                                        |
+| connectOptions | Connection options | For more information see Qt documents:<br>[QSqlDatabase::setConnectOptions()](https://doc.qt.io/qt-6/qsqldatabase.html){:target="\_blank"}                                                                                                        |
 
 </div><br>
 
-If the database driver is not included in the Qt SDK, you won't be able to access the database. If you haven't built yet, you should setup the driver. Alternatively, you can download the database driver from the [download page](http://www.treefrogframework.org/download){:target="\_blank"}, and then install it.
+If the database driver is not included in the Qt SDK, you won't be able to access the database. If you haven't built yet, you should setup the driver. Alternatively, you can download the database driver from the [download page](https://www.treefrogframework.org/download){:target="\_blank"}, and then install it.
 
 When you run the generator command (after the above mentioned steps), the scaffolding will be generated. Every command should be running from the application root directory.
 

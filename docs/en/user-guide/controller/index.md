@@ -65,7 +65,7 @@ For each action that is called, the following process will be carried out in mos
 
 This usually means a lot of work and code to be written for the programmer. Therefore, as a result, some people may end up with a large and complex controllers. To combat this, try to keep the implementation of the model side business logic only. You should always try to keep the controller as simple and as small as possible.
 
-Once you have learned the mechanism on how an action is invoked, it is possible to customize the action that is determined by the URL. Please see the section on [URL routing](http://www.treefrogframework.org/documents/controller/url-routing){:target="_blank"} for more details.
+Once you have learned the mechanism on how an action is invoked, it is possible to customize the action that is determined by the URL. Please see the section on [URL routing](https://www.treefrogframework.org/documents/controller/url-routing){:target="_blank"} for more details.
 
 ## Acquisition of the Request
 

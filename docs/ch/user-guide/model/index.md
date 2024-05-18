@@ -45,7 +45,7 @@ page_id: "060.0"
     - public destructor
     - Q_DECLARE_METATYPE 宏声明 (在每个头文件的尾部)
 
-如果想更进一步了解它, 请阅读 [Qt文档](http://doc.qt.io/qt-5/qmetatype.html){:target="_blank"}.
+如果想更进一步了解它, 请阅读 [Qt文档](https://doc.qt.io/qt-6/qmetatype.html){:target="_blank"}.
 
 #### 通过命令行生成器生成的模型(model)已经满足了工作的最小需求.
 

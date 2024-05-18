@@ -73,11 +73,11 @@ connectOptions=
 | port           | ポート番号     | 空欄の場合は デフォルトポート                                                                                                                                                                                                                 |
 | userName       | ユーザ名       |                                                                                                                                                                                                                                               |
 | password       | パスワード     |                                                                                                                                                                                                                                               |
-| connectOptions | 接続オプション | 詳細は Qt ドキュメント参照：<br>[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="\_blank"}                                                                                                               |
+| connectOptions | 接続オプション | 詳細は Qt ドキュメント参照：<br>[QSqlDatabase::setConnectOptions()](https://doc.qt.io/qt-6/qsqldatabase.html){:target="\_blank"}                                                                                                               |
 
 </div><br>
 
-データベースドライバが Qt SDK に組み込まれていないとデータベースへアクセスできません。もし組み込まれていなければ、FAQ を参照して組み込んでください。あるいは、[ダウンロードページ](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="\_blank"}からデータベースドライバをダウンロードし、組み込んでください。
+データベースドライバが Qt SDK に組み込まれていないとデータベースへアクセスできません。もし組み込まれていなければ、FAQ を参照して組み込んでください。あるいは、[ダウンロードページ](https://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="\_blank"}からデータベースドライバをダウンロードし、組み込んでください。
 
 そうしてからジェネレータコマンドを実行すると、足場が生成されます。コマンドは必ずアプリケーションルートディレクトリで実行してください。
 
