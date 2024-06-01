@@ -161,6 +161,14 @@ QJsonObject TAbstractModel::toJsonObject(const QStringList &properties) const
 /*!
   Sets the \a properties.
  */
+void TAbstractModel::setProperties(const QJsonObject &properties)
+{
+    setProperties(properties.toVariantMap());
+}
+
+/*!
+  Sets the \a properties.
+ */
 void TAbstractModel::setProperties(const QJsonDocument &properties)
 {
     setProperties(properties.object().toVariantMap());
