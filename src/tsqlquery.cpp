@@ -163,6 +163,13 @@ QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, const
     QSqlField field(QStringLiteral("dummy"), metaType);
     if (type.id() == QMetaType::Char || type.id() == QMetaType::UChar) {
         field.setValue(val.toInt());  // forced cast to int
+    } else if (type.id() == QMetaType::QString) {
+        QString str = val.toString();
+        if (str.isNull()) {
+            field.clear();  // sets it to NULL
+        } else {
+            field.setValue(val);
+        }
     } else {
         field.setValue(val);
     }
