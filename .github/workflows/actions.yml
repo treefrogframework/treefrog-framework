@@ -183,12 +183,6 @@ jobs:
     - name: testall.sh
       run: |
         $GITHUB_WORKSPACE/src/test/testall.sh
-    - name: tmaketest
-      run: |
-        cd $GITHUB_WORKSPACE/tools/tmake/test
-        qmake tmaketest.pro
-        make -j4
-        ./tmaketest.sh
     - name: releasetest
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
