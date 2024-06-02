@@ -95,19 +95,13 @@ constexpr auto CONTROLLER_SOURCE_FILE_TEMPLATE = "#include \"api%name%controller
                                                  "T_DEFINE_CONTROLLER(Api%clsname%Controller)\n";
 
 
-class NGCtlrName : public QStringList {
-public:
-    NGCtlrName() :
-        QStringList()
-    {
-        append("layouts");
-        append("partial");
-        append("direct");
-        append("_src");
-        append("mailer");
-    }
+const QStringList ngCtlrName = {
+    "layouts",
+    "partial",
+    "direct",
+    "_src",
+    "mailer",
 };
-Q_GLOBAL_STATIC(NGCtlrName, ngCtlrName)
 
 
 ApiControllerGenerator::ApiControllerGenerator(const QString &controller, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx) :
@@ -119,7 +113,7 @@ ApiControllerGenerator::ApiControllerGenerator(const QString &controller, const 
 bool ApiControllerGenerator::generate(const QString &dstDir) const
 {
     // Reserved word check
-    if (ngCtlrName()->contains(_tableName.toLower())) {
+    if (ngCtlrName.contains(_tableName.toLower())) {
         qCritical("Reserved word error. Please use another word.  Controller name: %s", qPrintable(_tableName));
         return false;
     }

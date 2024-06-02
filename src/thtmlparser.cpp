@@ -11,8 +11,8 @@
 using namespace Tf;
 
 // Regular expression of an HTML tag
-const QRegularExpression HtmlTagReg("<([a-zA-Z0-9]+\\s+(\"[^\"]*\"|'[^']*'|[^'\"<>(){};])*|/?[a-zA-Z0-9]+/?\\s*)>");
-const QRegularExpression WordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>(){};/=\\s]*)");
+const QRegularExpression HtmlTagReg("<([a-zA-Z0-9]+\\s+(\"[^\"]*\"|'[^']*'|[^'\"<>\\(\\){};])*|/?[a-zA-Z0-9]+/?\\s*)>");
+const QRegularExpression WordReg("(\"[^\"]*\"|'[^']*'|[^'\"<>\\(\\){};/=\\s]*)");
 
 
 THtmlElement::THtmlElement()

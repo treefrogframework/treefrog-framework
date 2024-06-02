@@ -511,10 +511,6 @@ QString TWebApplication::accessLogFilePath() const
 QString TWebApplication::sqlQueryLogFilePath() const
 {
     QString path = Tf::appSettings()->value(Tf::SqlQueryLogFilePath).toString().trimmed();
-    if (path.isEmpty()) {
-        path = Tf::appSettings()->value(Tf::SqlQueryLogFile).toString().trimmed();
-    }
-
     if (!path.isEmpty()) {
         QFileInfo fi(path);
         path = (fi.isAbsolute()) ? fi.absoluteFilePath() : webRootPath() + fi.filePath();
