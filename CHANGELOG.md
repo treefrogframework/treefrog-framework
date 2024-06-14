@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2.9.0
+ - Fix a bug of access log about status-code.
+ - Modified to set NULL into DB when the value is QString() in TSqlObject.
+ - Added a function, TAbstractModel::setProperties(const QJsonObject &properties).
+ - Updated mongoc driver to v1.26.2.
+ - Updated glog to v0.7.0.
+
 ## 2.8.0
  - Support prepared statements for PostgreSQL and MySQL.
  - Fix compilation error on Emscripten.
