@@ -11,9 +11,9 @@ Qt6 向けのインストーラを提供しています。セットアップす�
 
 <div class="table-div" markdown="1">
 
-| バージョン                                       | ファイル                                  |
+| バージョン                                      | ファイル                               |
 |------------------------------------------------|---------------------------------------|
-| 2.9.0 for Visual Studio 2019 64bit (Qt6.6 or 6.5) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.9.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.9.0/treefrog-2.9.0-msvc_64-setup.exe) |
+| 2.9.0 for Visual Studio 64bit (Qt6.7 or 6.6) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.9.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.9.0/treefrog-2.9.0-msvc_64-setup.exe) |
 
 </div>
 
