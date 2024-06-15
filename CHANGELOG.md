@@ -1,7 +1,7 @@
 # ChangeLog
 
 ## 2.9.0
- - Fix a bug of access log about status-code.
+ - Fix a bug in the access log output regarding status codes.
  - Modified to set NULL into DB when the value is QString() in TSqlObject.
  - Added a function, TAbstractModel::setProperties(const QJsonObject &properties).
  - Updated mongoc driver to v1.26.2.

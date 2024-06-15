@@ -40,12 +40,20 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2023/12/10  TreeFrog Framework バージョン2.8.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2024/6/15  TreeFrog Framework バージョン2.9.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - ステータスコードに関するアクセスログ出力の不具合修正
+ - TSqlObjectで値がQString()である場合にNULLを設定するように修正
+ - TAbstractModel::setProperties(const QJsonObject &properties) 関数を追加
+ - Mongoc driver を v1.26.2 に更新
+ - glog を v0.7.0 に更新
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2023/12/10  TreeFrog Framework バージョン2.8.0 （安定版）リリース
 
   - PostgreSQL と MySQL のプリペアドステートメントを対応
   - Emscripten でのコンパイルエラーを解消
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2023/3/26  TreeFrog Framework バージョン2.7.1 （安定版）リリース
 

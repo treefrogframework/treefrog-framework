@@ -37,13 +37,22 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Jun. 16, 2024
+### TreeFrog Framework version 2.9.0 (stable) release <span style="color: red;">New!</span>
+
+ - Fix a bug in the access log output regarding status codes.
+ - Modified to set NULL into DB when the value is QString() in TSqlObject.
+ - Added a function, TAbstractModel::setProperties(const QJsonObject &properties).
+ - Updated mongoc driver to v1.26.2.
+ - Updated glog to v0.7.0.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Dec. 10, 2023
-### TreeFrog Framework version 2.8.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.8.0 (stable) release
 
  - Support prepared statements for PostgreSQL and MySQL.
  - Fix compilation error on Emscripten.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Mar. 26, 2023
 ### TreeFrog Framework version 2.7.1 (stable) release
