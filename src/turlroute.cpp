@@ -15,23 +15,17 @@
 #include <TWebApplication>
 
 
-class RouteDirectiveHash : public QMap<QString, int> {
-public:
-    RouteDirectiveHash() :
-        QMap<QString, int>()
-    {
-        insert("match", TRoute::Match);
-        insert("get", TRoute::Get);
-        insert("post", TRoute::Post);
-        insert("put", TRoute::Put);
-        insert("patch", TRoute::Patch);
-        insert("delete", TRoute::Delete);
-        insert("trace", TRoute::Trace);
-        insert("connect", TRoute::Connect);
-        insert("patch", TRoute::Patch);
-    }
+const QMap<QString, int> directiveHash = {
+    {"match", TRoute::Match},
+    {"get", TRoute::Get},
+    {"post", TRoute::Post},
+    {"put", TRoute::Put},
+    {"patch", TRoute::Patch},
+    {"delete", TRoute::Delete},
+    {"trace", TRoute::Trace},
+    {"connect", TRoute::Connect},
+    {"patch", TRoute::Patch},
 };
-Q_GLOBAL_STATIC(RouteDirectiveHash, directiveHash)
 
 
 const TUrlRoute &TUrlRoute::instance()
@@ -95,7 +89,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     TRoute rt;
 
     // Check method
-    rt.method = directiveHash()->value(items[0].toLower(), TRoute::Invalid);
+    rt.method = directiveHash.value(items[0].toLower(), TRoute::Invalid);
     if (rt.method == TRoute::Invalid) {
         tError("Invalid directive, '%s'", qUtf8Printable(items[0]));
         return false;

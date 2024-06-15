@@ -32,7 +32,7 @@ void TApplicationServerBase::nativeSocketCleanup()
   Listen a port for connections on a socket.
   This function must be called in a tfmanager process.
  */
-int TApplicationServerBase::nativeListen(const QHostAddress &address, quint16 port, OpenFlag flag)
+int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t port, OpenFlag flag)
 {
     int sd = 0;
     QTcpServer server;

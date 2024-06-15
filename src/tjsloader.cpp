@@ -35,16 +35,10 @@ QRecursiveMutex gMutex;
 }
 
 
-class SuffixMap : public QMap<int, QString> {
-public:
-    SuffixMap() :
-        QMap<int, QString>()
-    {
-        insert(TJSLoader::Default, "js");
-        insert(TJSLoader::Jsx, "jsx");
-    }
+const QMap<int, QString> suffixMap = {
+    {TJSLoader::Default, "js"},
+    {TJSLoader::Jsx, "jsx"},
 };
-Q_GLOBAL_STATIC(SuffixMap, suffixMap)
 
 
 static QString read(const QString &filePath)
@@ -190,7 +184,7 @@ QString TJSLoader::search(const QString &moduleName, AltJS alt) const
             path = QDir(Tf::app()->webRootPath() + p);
         }
 
-        const QString suffix = QChar('.') + suffixMap()->value(alt);
+        const QString suffix = QChar('.') + suffixMap.value(alt);
         QString mod = (moduleName.endsWith(suffix)) ? moduleName : (moduleName + suffix);
         QString fpath = path.absoluteFilePath(mod);
         if (QFileInfo(fpath).exists()) {
@@ -223,12 +217,12 @@ QString TJSLoader::absolutePath(const QString &moduleName, const QDir &dir, AltJ
     }
 
     QFileInfo fi(moduleName);
-    const QString suffix = QChar('.') + suffixMap()->value(alt);
+    const QString suffix = QChar('.') + suffixMap.value(alt);
 
     if (fi.isAbsolute()) {
-        filePath = (fi.suffix().toLower() == suffixMap()->value(_altJs)) ? moduleName : (moduleName + suffix);
+        filePath = (fi.suffix().toLower() == suffixMap.value(_altJs)) ? moduleName : (moduleName + suffix);
     } else if (moduleName.startsWith("./")) {
-        QString mod = (fi.suffix().toLower() == suffixMap()->value(_altJs)) ? moduleName : (moduleName + suffix);
+        QString mod = (fi.suffix().toLower() == suffixMap.value(_altJs)) ? moduleName : (moduleName + suffix);
         filePath = dir.absoluteFilePath(mod);
     } else if (dir.exists(moduleName + suffix)) {
         filePath = dir.absoluteFilePath(moduleName + suffix);

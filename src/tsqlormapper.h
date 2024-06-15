@@ -114,13 +114,13 @@ public:
         inline bool operator!=(const ConstIterator &o) const { return m != o.m || it != o.it; }
         inline ConstIterator &operator++()
         {
-            it = qMin(it + 1, m->rowCount());
+            it = std::min(it + 1, m->rowCount());
             return *this;
         }
         inline ConstIterator operator++(int)
         {
             int i = it;
-            it = qMin(it + 1, m->rowCount());
+            it = std::min(it + 1, m->rowCount());
             return ConstIterator(m, i);
         }
         inline ConstIterator &operator--()

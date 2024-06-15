@@ -7,7 +7,7 @@
 
 #include "otmparser.h"
 #include <TGlobal>
-#include <QHash>
+#include <QMap>
 #include <QRegularExpression>
 #include <QTextStream>
 
@@ -19,18 +19,12 @@
 #define EXVAR_ESCAPE_ECHO QString("=$")
 
 
-class OperatorHash : public QHash<int, QString> {
-public:
-    OperatorHash() :
-        QHash<int, QString>()
-    {
-        insert(OtmParser::TagReplacement, ":");
-        insert(OtmParser::ContentAssignment, "~");
-        insert(OtmParser::AttributeSet, "+");
-        insert(OtmParser::TagMerging, "|==");
-    }
+const QMap<int, QString> opHash = {
+    {OtmParser::TagReplacement, ":"},
+    {OtmParser::ContentAssignment, "~"},
+    {OtmParser::AttributeSet, "+"},
+    {OtmParser::TagMerging, "|=="},
 };
-Q_GLOBAL_STATIC(OperatorHash, opHash)
 
 
 OtmParser::OtmParser(const QString &replaceMarker) :
@@ -109,7 +103,7 @@ QString OtmParser::getSrcCode(const QString &label, OperatorType op, EchoOption 
     QStringList lst = entries.values(label);
     for (QListIterator<QString> i(lst); i.hasNext();) {
         const QString &s = i.next();
-        QString opstr = opHash()->value(op);  // Gets operator string
+        QString opstr = opHash.value(op);  // Gets operator string
 
         if (!opstr.isEmpty() && s.startsWith(opstr) && !s.contains(repMarker)) {
             code = s.mid(opstr.length());
@@ -156,7 +150,7 @@ QStringList OtmParser::getWrapSrcCode(const QString &label, OperatorType op) con
         QListIterator<QString> i(lst);
         while (i.hasNext()) {
             const QString &s = i.next();
-            QString opstr = opHash()->value(op);
+            QString opstr = opHash.value(op);
 
             if (!opstr.isEmpty() && s.startsWith(opstr) && s.contains(repMarker)) {
                 return s.mid(opstr.length()).trimmed().split(repMarker, Tf::SkipEmptyParts, Qt::CaseSensitive);
@@ -185,12 +179,12 @@ QString OtmParser::getInitSrcCode() const
     QString code = entries.value(INIT_LABEL);
 
     if (!code.isEmpty()) {
-        QRegularExpression rx(QLatin1String("^[") + opHash()->value(TagReplacement) + opHash()->value(ContentAssignment) + opHash()->value(AttributeSet) + "]={0,2}");
+        QRegularExpression rx(QLatin1String("^[") + opHash.value(TagReplacement) + opHash.value(ContentAssignment) + opHash.value(AttributeSet) + "]={0,2}");
 
         if (code.contains(rx)) {
             code.remove(rx);
-        } else if (code.startsWith(opHash()->value(TagMerging))) {
-            code.remove(0, opHash()->value(TagMerging).length());
+        } else if (code.startsWith(opHash.value(TagMerging))) {
+            code.remove(0, opHash.value(TagMerging).length());
         }
     }
 

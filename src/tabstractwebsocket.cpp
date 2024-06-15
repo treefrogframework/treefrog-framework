@@ -89,7 +89,7 @@ void TAbstractWebSocket::sendClose(int code)
         frame.setOpCode(TWebSocketFrame::Close);
         QDataStream ds(&frame.payload(), QIODevice::WriteOnly);
         ds.setByteOrder(QDataStream::BigEndian);
-        ds << (qint16)code;
+        ds << (int16_t)code;
         writeRawData(frame.toByteArray());
 
         stopKeepAlive();
@@ -167,7 +167,7 @@ bool TAbstractWebSocket::searchEndpoint(const THttpRequestHeader &header)
 
 int TAbstractWebSocket::parse(QByteArray &recvData)
 {
-    tSystemDebug("parse enter  data len:%lld  sid:%lld", (qint64)recvData.length(), socketDescriptor());
+    tSystemDebug("parse enter  data len:%ld  sid:%lld", (int64_t)recvData.length(), socketDescriptor());
     if (websocketFrames().isEmpty()) {
         websocketFrames().append(TWebSocketFrame());
     } else {
@@ -178,9 +178,9 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
     }
 
     TWebSocketFrame *pfrm = &websocketFrames().last();
-    quint8 b;
-    quint16 w;
-    quint32 n;
+    uint8_t b;
+    uint16_t w;
+    uint32_t n;
     quint64 d;
 
     QDataStream ds(recvData);
@@ -204,7 +204,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             pfrm->setFirstByte(b);
             dshdr >> b;
             bool maskFlag = b & 0x80;
-            quint8 len = b & 0x7f;
+            uint8_t len = b & 0x7f;
 
             // payload length
             switch (len) {
@@ -259,7 +259,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             }
 
             tSystemDebug("WebSocket parse header pos: %lld", devhdr->pos());
-            tSystemDebug("WebSocket payload length:%lld", pfrm->payloadLength());
+            tSystemDebug("WebSocket payload length:%ld", pfrm->payloadLength());
 
             int hdrlen = hdr.length() - devhdr->bytesAvailable();
             ds.skipRawData(hdrlen);  // Forwards the pos
@@ -269,8 +269,8 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
         case TWebSocketFrame::HeaderParsed:  // fall through
         case TWebSocketFrame::MoreData: {
             tSystemDebug("WebSocket reading payload:  available length:%lld", dev->bytesAvailable());
-            tSystemDebug("WebSocket parsing  length to read:%llu  current buf len:%lld", pfrm->payloadLength(), (qint64)pfrm->payload().size());
-            quint64 size = qMin((pfrm->payloadLength() - pfrm->payload().size()), (quint64)dev->bytesAvailable());
+            tSystemDebug("WebSocket parsing  length to read:%lu  current buf len:%ld", pfrm->payloadLength(), (int64_t)pfrm->payload().size());
+            uint64_t size = std::min((uint64_t)(pfrm->payloadLength() - pfrm->payload().size()), (uint64_t)dev->bytesAvailable());
             if (Q_UNLIKELY(size == 0)) {
                 Q_ASSERT(0);
                 break;
@@ -281,10 +281,10 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
 
             if (pfrm->maskKey()) {
                 // Unmask
-                const quint8 mask[4] = {quint8((pfrm->maskKey() & 0xFF000000) >> 24),
-                    quint8((pfrm->maskKey() & 0x00FF0000) >> 16),
-                    quint8((pfrm->maskKey() & 0x0000FF00) >> 8),
-                    quint8((pfrm->maskKey() & 0x000000FF))};
+                const uint8_t mask[4] = {uint8_t((pfrm->maskKey() & 0xFF000000) >> 24),
+                    uint8_t((pfrm->maskKey() & 0x00FF0000) >> 16),
+                    uint8_t((pfrm->maskKey() & 0x0000FF00) >> 8),
+                    uint8_t((pfrm->maskKey() & 0x000000FF))};
 
                 int i = pfrm->payload().size();
                 const char *end = p + size;
@@ -293,14 +293,14 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
                 }
             }
             pfrm->payload().resize(pfrm->payload().size() + size);
-            tSystemDebug("WebSocket payload curent buf len: %lld", (qint64)pfrm->payload().length());
+            tSystemDebug("WebSocket payload curent buf len: %ld", (int64_t)pfrm->payload().length());
 
-            if ((quint64)pfrm->payload().size() == pfrm->payloadLength()) {
+            if ((uint64_t)pfrm->payload().size() == pfrm->payloadLength()) {
                 pfrm->setState(TWebSocketFrame::Completed);
-                tSystemDebug("Parse Completed   payload len: %lld", (qint64)pfrm->payload().size());
+                tSystemDebug("Parse Completed   payload len: %ld", (int64_t)pfrm->payload().size());
             } else {
                 pfrm->setState(TWebSocketFrame::MoreData);
-                tSystemDebug("Parse MoreData   payload len: %lld", (qint64)pfrm->payload().size());
+                tSystemDebug("Parse MoreData   payload len: %ld", (int64_t)pfrm->payload().size());
             }
             break;
         }

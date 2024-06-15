@@ -16,21 +16,14 @@
 
 constexpr auto DEFAULT_TEXT_ENCODING = "DefaultTextEncoding";
 
-
-class PriorityHash : public QMap<Tf::LogPriority, QByteArray> {
-public:
-    PriorityHash() :
-        QMap<Tf::LogPriority, QByteArray>()
-    {
-        insert(Tf::FatalLevel, "FATAL");
-        insert(Tf::ErrorLevel, "ERROR");
-        insert(Tf::WarnLevel, "WARN");
-        insert(Tf::InfoLevel, "INFO");
-        insert(Tf::DebugLevel, "DEBUG");
-        insert(Tf::TraceLevel, "TRACE");
-    }
+const QMap<Tf::LogPriority, QByteArray> priorityHash = {
+    {Tf::FatalLevel, "FATAL"},
+    {Tf::ErrorLevel, "ERROR"},
+    {Tf::WarnLevel, "WARN"},
+    {Tf::InfoLevel, "INFO"},
+    {Tf::DebugLevel, "DEBUG"},
+    {Tf::TraceLevel, "TRACE"},
 };
-Q_GLOBAL_STATIC(PriorityHash, priorityHash)
 
 
 namespace {
@@ -208,7 +201,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
 */
 QByteArray TLogger::priorityToString(Tf::LogPriority priority)
 {
-    return priorityHash()->value(priority);
+    return priorityHash.value(priority);
 }
 
 /*!
@@ -290,7 +283,7 @@ Tf::LogPriority TLogger::threshold() const
 {
     if ((int)_threshold < 0) {
         QByteArray pri = settingsValue("Threshold", "trace").toByteArray().toUpper().trimmed();
-        _threshold = priorityHash()->key(pri, Tf::TraceLevel);
+        _threshold = priorityHash.key(pri, Tf::TraceLevel);
     }
     return _threshold;
 }

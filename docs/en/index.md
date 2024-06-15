@@ -37,13 +37,19 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Dec. 10, 2023
+### TreeFrog Framework version 2.8.0 (stable) release <span style="color: red;">New!</span>
+
+ - Support prepared statements for PostgreSQL and MySQL.
+ - Fix compilation error on Emscripten.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Mar. 26, 2023
-### TreeFrog Framework version 2.7.1 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.7.1 (stable) release
 
   - Fix a bug of opening shared memory KVS.
   - Modified to reply NotFound when it can not invoke the action.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Feb. 25, 2023
 ### TreeFrog Framework version 2.7.0 (stable) release

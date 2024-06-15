@@ -87,7 +87,7 @@ bool TActionMailer::deliver(const QString &templateName)
         // POP before SMTP
         if (Tf::appSettings()->value(Tf::ActionMailerSmtpEnablePopBeforeSmtp).toBool()) {
             QByteArray popSvr = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerHostName).toByteArray();
-            quint16 popPort = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerPort).toInt();
+            uint16_t popPort = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerPort).toInt();
             bool apop = Tf::appSettings()->value(Tf::ActionMailerSmtpPopServerEnableApop).toBool();
 
             mailer->setPopBeforeSmtpAuthEnabled(popSvr, popPort, apop, true);

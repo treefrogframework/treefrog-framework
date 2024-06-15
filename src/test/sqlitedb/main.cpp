@@ -5,7 +5,7 @@
 #include "tcachefactory.h"
 #include "tcachesqlitestore.h"
 
-static qint64 FirstKey;
+static int64_t FirstKey;
 const int NUM = 500;
 
 
@@ -98,9 +98,9 @@ void TestCache::insert_data()
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("val");
 
-    qint64 n = FirstKey;
+    int64_t n = FirstKey;
     for (int i = 0; i < 20; i++) {
-        QTest::newRow(QByteArray::number(i).data()) << QByteArray::number(n+i) << genval(QByteArray::number(n+i));
+        QTest::newRow(QByteArray::number(i).data()) << QByteArray::number((qlonglong)n + i) << genval(QByteArray::number((qlonglong)n + i));
     }
 }
 
@@ -128,7 +128,7 @@ void TestCache::bench_insert_binary()
     cache->clear();
 
     for (int i = 0; i < 200; i++) {
-        cache->set(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
+        cache->set(QByteArray::number((qlonglong)FirstKey + i), genval(QByteArray::number((qlonglong)FirstKey + i)), 60);
     }
 
     QBENCHMARK {
@@ -165,7 +165,7 @@ void TestCache::bench_insert_binary_lz4()
     cache->clear();
 
     for (int i = 0; i < 200; i++) {
-        cache->set(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
+        cache->set(QByteArray::number((qlonglong)FirstKey + i), Tf::lz4Compress(genval(QByteArray::number((qlonglong)FirstKey + i))), 60);
     }
 
     QBENCHMARK {
@@ -205,7 +205,7 @@ void TestCache::bench_insert_text()
     cache->clear();
 
     for (int i = 0; i < 200; i++) {
-        cache->set(QByteArray::number(FirstKey + i), genval(QByteArray::number(FirstKey + i)), 60);
+        cache->set(QByteArray::number((qlonglong)FirstKey + i), genval(QByteArray::number((qlonglong)FirstKey + i)), 60);
     }
 
     QBENCHMARK {
@@ -243,7 +243,7 @@ void TestCache::bench_insert_text_lz4()
     cache->clear();
 
     for (int i = 0; i < 200; i++) {
-        cache->set(QByteArray::number(FirstKey + i), Tf::lz4Compress(genval(QByteArray::number(FirstKey + i))), 60);
+        cache->set(QByteArray::number((qlonglong)FirstKey + i), Tf::lz4Compress(genval(QByteArray::number((qlonglong)FirstKey + i))), 60);
     }
 
     QBENCHMARK {

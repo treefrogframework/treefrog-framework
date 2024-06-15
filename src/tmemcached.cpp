@@ -83,7 +83,7 @@ QByteArray TMemcached::get(const QByteArray &key, uint *flags)
 }
 
 
-qint64 TMemcached::getNumber(const QByteArray &key, bool *ok, uint *flags)
+int64_t TMemcached::getNumber(const QByteArray &key, bool *ok, uint *flags)
 {
     QByteArray res = get(key, flags);
 
@@ -106,9 +106,9 @@ bool TMemcached::set(const QByteArray &key, const QByteArray &value, int seconds
 }
 
 
-bool TMemcached::set(const QByteArray &key, qint64 value, int seconds, uint flags)
+bool TMemcached::set(const QByteArray &key, int64_t value, int seconds, uint flags)
 {
-    return set(key, QByteArray::number(value), seconds, flags);
+    return set(key, QByteArray::number((qlonglong)value), seconds, flags);
 }
 
 
@@ -119,9 +119,9 @@ bool TMemcached::add(const QByteArray &key, const QByteArray &value, int seconds
 }
 
 
-bool TMemcached::add(const QByteArray &key, qint64 value, int seconds, uint flags)
+bool TMemcached::add(const QByteArray &key, int64_t value, int seconds, uint flags)
 {
-    return add(key, QByteArray::number(value), seconds, flags);
+    return add(key, QByteArray::number((qlonglong)value), seconds, flags);
 
 }
 
@@ -133,9 +133,9 @@ bool TMemcached::replace(const QByteArray &key, const QByteArray &value, int sec
 }
 
 
-bool TMemcached::replace(const QByteArray &key, qint64 value, int seconds, uint flags)
+bool TMemcached::replace(const QByteArray &key, int64_t value, int seconds, uint flags)
 {
-    return replace(key, QByteArray::number(value), seconds, flags);
+    return replace(key, QByteArray::number((qlonglong)value), seconds, flags);
 }
 
 
@@ -160,9 +160,9 @@ bool TMemcached::remove(const QByteArray &key)
 }
 
 
-quint64 TMemcached::incr(const QByteArray &key, quint64 value, bool *ok)
+uint64_t TMemcached::incr(const QByteArray &key, uint64_t value, bool *ok)
 {
-    QByteArray res = requestLine("incr", key, QByteArray::number(value), false);
+    QByteArray res = requestLine("incr", key, QByteArray::number((qulonglong)value), false);
     if (res.startsWith("NOT_FOUND")) {
         if (ok) {
             *ok = false;
@@ -173,9 +173,9 @@ quint64 TMemcached::incr(const QByteArray &key, quint64 value, bool *ok)
 }
 
 
-quint64 TMemcached::decr(const QByteArray &key, quint64 value, bool *ok)
+uint64_t TMemcached::decr(const QByteArray &key, uint64_t value, bool *ok)
 {
-    QByteArray res = requestLine("decr", key, QByteArray::number(value), false);
+    QByteArray res = requestLine("decr", key, QByteArray::number((qulonglong)value), false);
     if (res.startsWith("NOT_FOUND")) {
         if (ok) {
             *ok = false;

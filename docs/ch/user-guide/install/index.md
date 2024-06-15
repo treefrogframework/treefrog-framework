@@ -26,7 +26,7 @@ $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
 ```
 
 ### 安装说明
-1. 解压已[下载](http://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}的文件.
+1. 解压已[下载](https://www.treefrogframework.org/ja/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89){:target="_blank"}的文件.
 
    以下命令应用到版本'x.x.x'.请对于的替换.
 

@@ -8,9 +8,11 @@
 #include "tsqldriverextensionfactory.h"
 #include "tsqldriverextension.h"
 #include "tsystemglobal.h"
+#include <TSqlQuery>
 #include <QSqlDriver>
 #include <QSqlField>
 #include <QSqlRecord>
+#include <QMap>
 
 
 namespace {
@@ -74,14 +76,19 @@ QString generateUpdateValues(const QString &table, const QSqlRecord &record, con
 class TMySQLDriverExtension : public TSqlDriverExtension {
 public:
     TMySQLDriverExtension(const QSqlDriver *drv = nullptr) :
-        driver(drv) { }
+        _driver(drv) { }
     QString key() const override { return QLatin1String("QMYSQL"); }
     bool isUpsertSupported() const override { return true; }
     QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert, const QSqlRecord &recordToUpdate,
         const QString &pkField, const QString &lockRevisionField) const override;
+    bool isPreparedStatementSupported() const override { return true; }
+    QString prepareStatement(const QString &) const override;
+    QString executeStatement(const QVariantList &) const override;
 
 private:
-    const QSqlDriver *driver {nullptr};
+    const QSqlDriver *_driver {nullptr};
+    mutable QMap<QString, QString> _preparedQueryMap;  // <prepared-query, name>
+    mutable QString _name;  // name to execute
 };
 
 
@@ -98,7 +105,7 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
     statement.reserve(256);
     statement.append(QLatin1String("INSERT INTO ")).append(tableName).append(QLatin1String(" ("));
 
-    vals = generateInsertValues(recordToInsert, driver, statement);
+    vals = generateInsertValues(recordToInsert, _driver, statement);
     if (vals.isEmpty()) {
         return QString();
     }
@@ -106,7 +113,7 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
     statement.append(QLatin1String(") VALUES (")).append(vals);
     statement.append(QLatin1String(") ON DUPLICATE KEY UPDATE "));
 
-    vals = generateUpdateValues("", recordToUpdate, lockRevisionField, driver);
+    vals = generateUpdateValues("", recordToUpdate, lockRevisionField, _driver);
     if (vals.isEmpty()) {
         return QString();
     }
@@ -115,18 +122,71 @@ QString TMySQLDriverExtension::upsertStatement(const QString &tableName, const Q
     return statement;
 }
 
+QString TMySQLDriverExtension::prepareStatement(const QString &query) const
+{
+    const QString PREFIX = "ps";
+    static uint32_t seq = 1;
+
+    _name = _preparedQueryMap.value(query);
+    if (!_name.isEmpty()) {
+        return QString();
+    }
+
+    _name = PREFIX + QString::number(seq++);
+    _preparedQueryMap.insert(query, _name);
+
+    QString statement;
+    statement.reserve(query.length() + 32);
+    statement += QLatin1String("PREPARE ");
+    statement += _name;
+    statement += QLatin1String(" FROM \"");
+    statement += query;
+    statement += QChar('"');
+    return statement;
+}
+
+
+QString TMySQLDriverExtension::executeStatement(const QVariantList &values) const
+{
+    if (_name.isEmpty()) {
+        return QString();
+    }
+
+    QString vals;
+    for (auto &v : values) {
+        vals += TSqlQuery::formatValue(v, _driver);
+        vals += ',';
+    }
+    vals.chop(1);
+
+    QString statement;
+    statement.reserve(_name.length() + vals.length() + 20);
+    statement += QLatin1String("EXECUTE ");
+    statement += _name;
+    if (!vals.isEmpty()) {
+        statement += QLatin1String(" USING ");
+        statement += vals;
+    }
+    return statement;
+}
+
 
 class TPostgreSQLDriverExtension : public TSqlDriverExtension {
 public:
     TPostgreSQLDriverExtension(const QSqlDriver *drv = nullptr) :
-        driver(drv) { }
+        _driver(drv) { }
     QString key() const override { return QLatin1String("QPSQL"); }
     bool isUpsertSupported() const override { return true; }
     QString upsertStatement(const QString &tableName, const QSqlRecord &recordToInsert, const QSqlRecord &recordToUpdate,
         const QString &pkField, const QString &lockRevisionField) const override;
+    bool isPreparedStatementSupported() const override { return true; }
+    QString prepareStatement(const QString &) const override;
+    QString executeStatement(const QVariantList &) const override;
 
 private:
-    const QSqlDriver *driver {nullptr};
+    const QSqlDriver *_driver {nullptr};
+    mutable QMap<QString, QString> _preparedQueryMap;  // <prepared-query, name>
+    mutable QString _name;  // name to execute
 };
 
 
@@ -143,17 +203,17 @@ QString TPostgreSQLDriverExtension::upsertStatement(const QString &tableName, co
     statement.reserve(256);
     statement.append(QLatin1String("INSERT INTO ")).append(tableName).append(QLatin1String(" AS t0 ("));
 
-    vals = generateInsertValues(recordToInsert, driver, statement);
+    vals = generateInsertValues(recordToInsert, _driver, statement);
     if (vals.isEmpty()) {
         return QString();
     }
 
     statement.append(QLatin1String(") VALUES (")).append(vals);
     statement.append(QLatin1String(") ON CONFLICT ("));
-    statement.append(prepareIdentifier(pkField, QSqlDriver::FieldName, driver));
+    statement.append(prepareIdentifier(pkField, QSqlDriver::FieldName, _driver));
     statement.append(") DO UPDATE SET ");
 
-    vals = generateUpdateValues("t0", recordToUpdate, lockRevisionField, driver);
+    vals = generateUpdateValues("t0", recordToUpdate, lockRevisionField, _driver);
     if (vals.isEmpty()) {
         return QString();
     }
@@ -161,6 +221,69 @@ QString TPostgreSQLDriverExtension::upsertStatement(const QString &tableName, co
     statement.append(vals);
     return statement;
 }
+
+
+QString TPostgreSQLDriverExtension::prepareStatement(const QString &query) const
+{
+    const QString PREFIX = "ps";
+    static uint32_t seq = 1;
+
+    _name = _preparedQueryMap.value(query);
+    if (!_name.isEmpty()) {
+        return QString();
+    }
+
+    _name = PREFIX + QString::number(seq++);
+    _preparedQueryMap.insert(query, _name);
+
+    QString q = query;
+    int pos = q.length();
+    int cnt = q.count('?');
+
+    // replace '?' with $1, $2, ...
+    while (pos > 0) {
+        pos = q.lastIndexOf('?', pos);
+        if (pos >= 0) {
+            QString placeholder = QChar('$') + QString::number(cnt--);
+            q.replace(pos, 1, placeholder);
+        }
+    }
+
+    QString statement;
+    statement.reserve(query.length() + 32);
+    statement += QLatin1String("PREPARE ");
+    statement += _name;
+    statement += QLatin1String(" AS ");
+    statement += q;
+    return statement;
+}
+
+
+QString TPostgreSQLDriverExtension::executeStatement(const QVariantList &values) const
+{
+    if (_name.isEmpty()) {
+        return QString();
+    }
+
+    QString vals;
+    for (auto &v : values) {
+        vals += TSqlQuery::formatValue(v, _driver);
+        vals += ',';
+    }
+    vals.chop(1);
+
+    QString statement;
+    statement.reserve(_name.length() + vals.length() + 15);
+    statement += QLatin1String("EXECUTE ");
+    statement += _name;
+    if (!vals.isEmpty()) {
+        statement += '(';
+        statement += vals;
+        statement += ')';
+    }
+    return statement;
+}
+
 
 namespace {
 // Extension Keys

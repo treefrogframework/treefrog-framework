@@ -19,30 +19,25 @@ skip_commits:
 #---------------------------------#
 environment:
   matrix:
-    # Qt5.13 / VisualStudio 2017 64bit
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat
-      QT_PATH:  C:\Qt\5.13\msvc2017_64
-
-    # Qt5.13 / VisualStudio 2017 32bit
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat
-      QT_PATH:  C:\Qt\5.13\msvc2017
-
-    # Qt6.4 / VisualStudio 2019 64bit
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
-      QT_PATH:  C:\Qt\6.4\msvc2019_64
-
     # Qt5.15 / VisualStudio 2019 32bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat
       QT_PATH:  C:\Qt\5.15\msvc2019
 
-    # Qt6.4 / VisualStudio 2022 64bit
+    # Qt5.15 / VisualStudio 2019 64bit
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+      QT_PATH:  C:\Qt\5.15\msvc2019_64
+
+    # Qt6.5 / VisualStudio 2019 64bit
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      INIT_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+      QT_PATH:  C:\Qt\6.5\msvc2019_64
+
+    # Qt6.5 / VisualStudio 2022 64bit
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
       INIT_BAT: C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat
-      QT_PATH:  C:\Qt\6.4\msvc2019_64
+      QT_PATH:  C:\Qt\6.5\msvc2019_64
 
 # scripts that are called at very beginning, before repo cloning
 init:
@@ -51,7 +46,7 @@ init:
 install:
   - cd C:\Tools\vcpkg
   - git pull
-  - git switch --detach tags/2022.07.25
+  - git switch --detach tags/2023.11.20
   - .\bootstrap-vcpkg.bat
   - vcpkg integrate install
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -63,7 +58,7 @@ build: off
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cmd: call "%INIT_BAT%" %VCVARARG%
-  - cmd: set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x86-windows\tools;%PATH%
+  - cmd: set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x64-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools;%PATH%
   - cmd: echo %PATH%
   - cmd: set CL=/MP
   - cmd: configure.bat --enable-debug

@@ -11,24 +11,18 @@
   \sa https://tools.ietf.org/html/rfc6749
 */
 
-class OAuth2ErrorCode : public QMap<QString, int> {
-public:
-    OAuth2ErrorCode() :
-        QMap<QString, int>()
-    {
-        insert(QString("invalid_request"), TOAuth2Client::InvalidRequest);
-        insert(QString("invalid_client"), TOAuth2Client::InvalidClient);
-        insert(QString("invalid_grant"), TOAuth2Client::InvalidGrant);
-        insert(QString("unauthorized_client"), TOAuth2Client::UnauthorizedClient);
-        insert(QString("unsupported_grant_type"), TOAuth2Client::UnsupportedGrantType);
-        insert(QString("access_denied"), TOAuth2Client::AccessDenied);
-        insert(QString("unsupported_response_type"), TOAuth2Client::UnsupportedResponseType);
-        insert(QString("invalid_scope"), TOAuth2Client::InvalidScope);
-        insert(QString("server_error"), TOAuth2Client::ServerError);
-        insert(QString("temporarily_unavailable"), TOAuth2Client::TemporarilyUnavailable);
-    }
+const QMap<QString, int> oauth2ErrorCode = {
+    {QString("invalid_request"), TOAuth2Client::InvalidRequest},
+    {QString("invalid_client"), TOAuth2Client::InvalidClient},
+    {QString("invalid_grant"), TOAuth2Client::InvalidGrant},
+    {QString("unauthorized_client"), TOAuth2Client::UnauthorizedClient},
+    {QString("unsupported_grant_type"), TOAuth2Client::UnsupportedGrantType},
+    {QString("access_denied"), TOAuth2Client::AccessDenied},
+    {QString("unsupported_response_type"), TOAuth2Client::UnsupportedResponseType},
+    {QString("invalid_scope"), TOAuth2Client::InvalidScope},
+    {QString("server_error"), TOAuth2Client::ServerError},
+    {QString("temporarily_unavailable"), TOAuth2Client::TemporarilyUnavailable},
 };
-Q_GLOBAL_STATIC(OAuth2ErrorCode, oauth2ErrorCode);
 
 
 TOAuth2Client::TOAuth2Client(const QString &clientId, const QString &clientSecret) :
@@ -83,7 +77,7 @@ QUrl TOAuth2Client::startAuthorization(const QUrl &requestUrl, const QStringList
     auto params = THttpUtility::fromFormUrlEncoded(query);
     for (auto &p : params) {
         if (p.first == QStringLiteral("error")) {
-            _errorCode = (ErrorCode)oauth2ErrorCode()->value(p.second, TOAuth2Client::UnknownError);
+            _errorCode = (ErrorCode)oauth2ErrorCode.value(p.second, TOAuth2Client::UnknownError);
         }
 
         if (p.first == QStringLiteral("error_description")) {
@@ -134,7 +128,7 @@ QString TOAuth2Client::requestAccessToken(const QUrl &requestUrl, const QString 
         }
 
         if (p.first == QStringLiteral("error")) {
-            _errorCode = (ErrorCode)oauth2ErrorCode()->value(p.second, TOAuth2Client::UnknownError);
+            _errorCode = (ErrorCode)oauth2ErrorCode.value(p.second, TOAuth2Client::UnknownError);
         }
 
         if (p.first == QStringLiteral("error_description")) {

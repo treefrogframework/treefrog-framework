@@ -10,7 +10,7 @@
 #include <TGlobal>
 
 
-TProcessInfo::TProcessInfo(qint64 pid) :
+TProcessInfo::TProcessInfo(int64_t pid) :
     processId(pid)
 {
 }
@@ -41,12 +41,12 @@ bool TProcessInfo::waitForTerminated(int msecs)
 }
 
 
-QList<qint64> TProcessInfo::childProcessIds() const
+QList<int64_t> TProcessInfo::childProcessIds() const
 {
-    QList<qint64> ids;
-    const QList<qint64> allPids = allConcurrentPids();
+    QList<int64_t> ids;
+    const QList<int64_t> allPids = allConcurrentPids();
 
-    for (qint64 p : allPids) {
+    for (int64_t p : allPids) {
         if (TProcessInfo(p).ppid() == pid()) {
             ids << p;
         }
@@ -55,24 +55,24 @@ QList<qint64> TProcessInfo::childProcessIds() const
 }
 
 
-void TProcessInfo::kill(qint64 ppid)
+void TProcessInfo::kill(int64_t ppid)
 {
     TProcessInfo(ppid).kill();
 }
 
 
-void TProcessInfo::kill(QList<qint64> pids)
+void TProcessInfo::kill(QList<int64_t> pids)
 {
-    for (qint64 pid : (const QList<qint64> &)pids) {
+    for (int64_t pid : (const QList<int64_t> &)pids) {
         TProcessInfo(pid).kill();
     }
 }
 
 
-QList<qint64> TProcessInfo::pidsOf(const QString &processName)
+QList<int64_t> TProcessInfo::pidsOf(const QString &processName)
 {
-    QList<qint64> ret;
-    const QList<qint64> pids = allConcurrentPids();
+    QList<int64_t> ret;
+    const QList<int64_t> pids = allConcurrentPids();
 
     for (auto pid : pids) {
         TProcessInfo pi(pid);

@@ -97,14 +97,14 @@ void SystemBusDaemon::readSocket()
     }
 
     QByteArray buf = socket->readAll();
-    tSystemDebug("SystemBusDaemon::read len : %lld", (qint64)buf.size());
+    tSystemDebug("SystemBusDaemon::read len : %ld", (int64_t)buf.size());
     if (maxServers <= 1) {
         // do nothing
         return;
     }
 
-    quint8 opcode;
-    quint32 length;
+    uint8_t opcode;
+    uint32_t length;
 
     for (;;) {
         QDataStream ds(buf);
@@ -183,7 +183,7 @@ void SystemBusDaemon::instantiate()
 }
 
 
-void SystemBusDaemon::releaseResource(qint64 pid)
+void SystemBusDaemon::releaseResource(int64_t pid)
 {
 #ifdef Q_OS_UNIX
     // UNIX

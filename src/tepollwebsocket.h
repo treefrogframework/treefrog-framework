@@ -40,7 +40,7 @@ public slots:
 protected:
     virtual bool seekRecvBuffer(int pos) override;
     virtual QObject *thisObject() override { return this; }
-    virtual qint64 writeRawData(const QByteArray &data) override;
+    virtual int64_t writeRawData(const QByteArray &data) override;
     virtual QList<TWebSocketFrame> &websocketFrames() override { return _frames; }
     void timerEvent(QTimerEvent *event) override;
     void clear();

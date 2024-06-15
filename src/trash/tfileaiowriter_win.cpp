@@ -9,7 +9,8 @@
 #include <QList>
 #include <QMutex>
 #include <QMutexLocker>
-#include <Windows.h>
+#define NOMINMAX
+#include <windows.h>
 
 
 typedef struct

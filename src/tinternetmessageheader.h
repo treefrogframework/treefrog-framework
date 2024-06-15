@@ -25,8 +25,8 @@ public:
 
     QByteArray contentType() const;
     void setContentType(const QByteArray &type);
-    qint64 contentLength() const;
-    void setContentLength(qint64 len);
+    int64_t contentLength() const;
+    void setContentLength(int64_t len);
     QByteArray date() const;
     void setDate(const QByteArray &date);
     void setDate(const QDateTime &dateTime);
@@ -40,6 +40,6 @@ protected:
     using RawHeaderPair = QPair<QByteArray, QByteArray>;
     using RawHeaderPairList = QList<RawHeaderPair>;
     RawHeaderPairList _headerPairList;
-    mutable qint64 _contentLength {-1};
+    mutable int64_t _contentLength {-1};
 };
 

@@ -84,7 +84,7 @@ SOURCES = sampleplugin.cpp \
 - It is <span style="color: red">important</span> to include the *appbase.pri* file by using the include function.
 
 After this, when you build you can make plug-ins that are dynamically loadable. Save the plug-in to the plugin directory every time without fault, because the application server (AP server) loads the plug-ins from this directory.<br>
-Please see the Qt documentation for more details of the [plug-in system](http://doc.qt.io/qt-5/plugins-howto.html){:target="_blank"}.
+Please see the Qt documentation for more details of the [plug-in system](https://doc.qt.io/qt-6/plugins-howto.html){:target="_blank"}.
 
 ## Logger Plug-in
 

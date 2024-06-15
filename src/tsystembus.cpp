@@ -65,8 +65,8 @@ bool TSystemBus::send(Tf::SystemOpCode opcode, const QString &dst, const QByteAr
 QList<TSystemBusMessage> TSystemBus::recvAll()
 {
     QList<TSystemBusMessage> ret;
-    quint8 opcode;
-    quint32 length;
+    uint8_t opcode;
+    uint32_t length;
     QMutexLocker locker(&mutexRead);
 
     for (;;) {
@@ -96,8 +96,8 @@ void TSystemBus::readBus()
 
         QDataStream ds(readBuffer);
         ds.setByteOrder(QDataStream::BigEndian);
-        quint8 opcode;
-        quint32 length;
+        uint8_t opcode;
+        uint32_t length;
         ds >> opcode >> length;
 
         ready = ((uint)readBuffer.length() >= length + HEADER_LEN);
@@ -112,7 +112,7 @@ void TSystemBus::readBus()
 void TSystemBus::writeBus()
 {
     QMutexLocker locker(&mutexWrite);
-    tSystemDebug("TSystemBus::writeBus  len:%lld", (qint64)sendBuffer.length());
+    tSystemDebug("TSystemBus::writeBus  len:%ld", (int64_t)sendBuffer.length());
 
     for (;;) {
         int len = busSocket->write(sendBuffer.data(), sendBuffer.length());
@@ -167,7 +167,7 @@ QString TSystemBus::connectionName()
     constexpr auto PROCESS_NAME = "tadpole";
 #endif
 
-    qint64 pid = 0;
+    int64_t pid = 0;
     QString cmd = TWebApplication::arguments().first();
     if (cmd.endsWith(QLatin1String(PROCESS_NAME))) {
         pid = TProcessInfo(TWebApplication::applicationPid()).ppid();
@@ -179,7 +179,7 @@ QString TSystemBus::connectionName()
 }
 
 
-QString TSystemBus::connectionName(qint64 pid)
+QString TSystemBus::connectionName(int64_t pid)
 {
     return SYSTEMBUS_DOMAIN_PREFIX + QString::number(pid);
 }
@@ -190,7 +190,7 @@ TSystemBusMessage::TSystemBusMessage()
 }
 
 
-TSystemBusMessage::TSystemBusMessage(quint8 op, const QByteArray &d)
+TSystemBusMessage::TSystemBusMessage(uint8_t op, const QByteArray &d)
 {
     _firstByte = 0x80 | (op & 0x3F);
     QDataStream ds(&_payload, QIODevice::WriteOnly);
@@ -199,7 +199,7 @@ TSystemBusMessage::TSystemBusMessage(quint8 op, const QByteArray &d)
 }
 
 
-TSystemBusMessage::TSystemBusMessage(quint8 op, const QString &t, const QByteArray &d)
+TSystemBusMessage::TSystemBusMessage(uint8_t op, const QString &t, const QByteArray &d)
 {
     _firstByte = 0x80 | (op & 0x3F);
     QDataStream ds(&_payload, QIODevice::WriteOnly);
@@ -253,7 +253,7 @@ QByteArray TSystemBusMessage::toByteArray() const
 
     QDataStream ds(&buf, QIODevice::WriteOnly);
     ds.setByteOrder(QDataStream::BigEndian);
-    ds << _firstByte << (quint32)_payload.length();
+    ds << _firstByte << (uint32_t)_payload.length();
     ds.writeRawData(_payload.data(), _payload.length());
     return buf;
 }
@@ -264,8 +264,8 @@ TSystemBusMessage TSystemBusMessage::parse(QByteArray &bytes)
     QDataStream ds(bytes);
     ds.setByteOrder(QDataStream::BigEndian);
 
-    quint8 opcode;
-    quint32 length;
+    uint8_t opcode;
+    uint32_t length;
     ds >> opcode >> length;
 
     if ((uint)bytes.length() < HEADER_LEN || (uint)bytes.length() < HEADER_LEN + length) {

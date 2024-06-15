@@ -7,31 +7,31 @@ using namespace System::Runtime::InteropServices;
 using namespace System::Security::Permissions;
 
 //
-// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ‚·‚éˆê”Êî•ñ‚ÍˆÈ‰º‚Ì‘®«ƒZƒbƒg‚ğ‚Æ‚¨‚µ‚Ä§Œä‚³‚ê‚Ü‚·B
-// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ˜A•t‚¯‚ç‚ê‚Ä‚¢‚éî•ñ‚ğ•ÏX‚·‚é‚É‚ÍA
-// ‚±‚ê‚ç‚Ì‘®«’l‚ğ•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢ã™ã‚‹ä¸€èˆ¬æƒ…å ±ã¯ä»¥ä¸‹ã®å±æ€§ã‚»ãƒƒãƒˆã‚’ã¨ãŠã—ã¦åˆ¶å¾¡ã•ã‚Œã¾ã™ã€‚
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢é€£ä»˜ã‘ã‚‰ã‚Œã¦ã„ã‚‹æƒ…å ±ã‚’å¤‰æ›´ã™ã‚‹ã«ã¯ã€
+// ã“ã‚Œã‚‰ã®å±æ€§å€¤ã‚’å¤‰æ›´ã—ã¦ãã ã•ã„ã€‚
 //
 [assembly:AssemblyTitleAttribute("treefrogsetup")];
 [assembly:AssemblyDescriptionAttribute("")];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("")];
 [assembly:AssemblyProductAttribute("treefrogsetup")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) 2010-2023")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) 2010-2024")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 
 //
-// ƒAƒZƒ“ƒuƒŠ‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚ÍAˆÈ‰º‚Ì 4 ‚Â‚Ì’l‚Å\¬‚³‚ê‚Ä‚¢‚Ü‚·:
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã¯ã€ä»¥ä¸‹ã® 4 ã¤ã®å€¤ã§æ§‹æˆã•ã‚Œã¦ã„ã¾ã™:
 //
 //      Major Version
 //      Minor Version
 //      Build Number
 //      Revision
 //
-// ‚·‚×‚Ä‚Ì’l‚ğw’è‚·‚é‚©A‰º‚Ì‚æ‚¤‚É '*' ‚ğg‚Á‚ÄƒŠƒrƒWƒ‡ƒ“‚¨‚æ‚Ñƒrƒ‹ƒh”Ô†‚ğ
-// Šù’è’l‚É‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·:
+// ã™ã¹ã¦ã®å€¤ã‚’æŒ‡å®šã™ã‚‹ã‹ã€ä¸‹ã®ã‚ˆã†ã« '*' ã‚’ä½¿ã£ã¦ãƒªãƒ“ã‚¸ãƒ§ãƒ³ãŠã‚ˆã³ãƒ“ãƒ«ãƒ‰ç•ªå·ã‚’
+// æ—¢å®šå€¤ã«ã™ã‚‹ã“ã¨ãŒã§ãã¾ã™:
 
-[assembly:AssemblyVersionAttribute("2.7.1")];
+[assembly:AssemblyVersionAttribute("2.9.0")];
 
 [assembly:ComVisible(false)];
 

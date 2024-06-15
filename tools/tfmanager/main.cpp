@@ -65,68 +65,49 @@ enum CommandOption {
 
 #if QT_VERSION < 0x050400
 #ifdef Q_OS_WIN
-class WinVersion : public QHash<int, QString> {
-public:
-    WinVersion() :
-        QHash<int, QString>()
-    {
-        insert(QSysInfo::WV_XP, "Windows XP");
-        insert(QSysInfo::WV_2003, "Windows Server 2003");
-        insert(QSysInfo::WV_VISTA, "Windows Vista or Windows Server 2008");
-        insert(QSysInfo::WV_WINDOWS7, "Windows 7 or Windows Server 2008 R2");
-        insert(QSysInfo::WV_WINDOWS8, "Windows 8 or Windows Server 2012");
+const QMap<int, QString> winVersion = {
+    {QSysInfo::WV_XP, "Windows XP"},
+    {QSysInfo::WV_2003, "Windows Server 2003"},
+    {QSysInfo::WV_VISTA, "Windows Vista or Windows Server 2008"},
+    {QSysInfo::WV_WINDOWS7, "Windows 7 or Windows Server 2008 R2"},
+    {QSysInfo::WV_WINDOWS8, "Windows 8 or Windows Server 2012"},
 #if QT_VERSION >= 0x050200
-        insert(QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2");
+    {QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2"},
 #endif
-    }
 };
-Q_GLOBAL_STATIC(WinVersion, winVersion)
 #endif
 
 #ifdef Q_OS_DARWIN
-class MacxVersion : public QHash<int, QString> {
-public:
-    MacxVersion() :
-        QHash<int, QString>()
-    {
-        insert(QSysInfo::MV_10_3, "Mac OS X 10.3 Panther");
-        insert(QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger");
-        insert(QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard");
-        insert(QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard");
-        insert(QSysInfo::MV_10_7, "Mac OS X 10.7 Lion");
-        insert(QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion");
+const QMap<int, QString> macxVersion = {
+    {QSysInfo::MV_10_3, "Mac OS X 10.3 Panther"},
+    {QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger"},
+    {QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard"},
+    {QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard"},
+    {QSysInfo::MV_10_7, "Mac OS X 10.7 Lion"},
+    {QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion"},
 #if QT_VERSION >= 0x050100
-        insert(QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks");
+    {QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks"},
 #endif
-    }
 };
-Q_GLOBAL_STATIC(MacxVersion, macxVersion)
 #endif
 #endif
 
-
-class OptionHash : public QHash<QString, int> {
-public:
-    OptionHash() :
-        QHash<QString, int>()
-    {
-        insert("-e", EnvironmentSpecified);
-        insert("-s", SocketSpecified);
-        insert("-v", PrintVersion);
-        insert("-h", PrintUsage);
-        insert("-l", ShowRunningAppList);
-        insert("-d", DaemonMode);
-        insert("-w", WindowsServiceMode);
-        insert("-k", SendSignal);
-        insert("-r", AutoReload);
-        insert("-p", Port);
-        insert("-m", ShowPid);
-        insert("--help", PrintUsage);
-        insert("--show-routes", ShowRoutes);
-        insert("--settings", ShowSettings);
-    }
+const QMap<QString, int> options = {
+    {"-e", EnvironmentSpecified},
+    {"-s", SocketSpecified},
+    {"-v", PrintVersion},
+    {"-h", PrintUsage},
+    {"-l", ShowRunningAppList},
+    {"-d", DaemonMode},
+    {"-w", WindowsServiceMode},
+    {"-k", SendSignal},
+    {"-r", AutoReload},
+    {"-p", Port},
+    {"-m", ShowPid},
+    {"--help", PrintUsage},
+    {"--show-routes", ShowRoutes},
+    {"--settings", ShowSettings},
 };
-Q_GLOBAL_STATIC(OptionHash, options)
 
 namespace {
 
@@ -134,18 +115,17 @@ void usage()
 {
     constexpr auto text = "Usage: %1 [-d] [-p port] [-e environment] [-r] [app-directory]\n"
                           "Usage: %1 -k [stop|abort|restart|status] [app-directory]\n"
-                          "Usage: %1 -m [app-directory]\n"
                           "%2"
                           "Options:\n"
                           "  -d              : run as a daemon process\n"
                           "  -p port         : run server on specified port\n"
                           "  -e environment  : specify an environment of the database settings\n"
-                          "  -k              : send signal to a manager process\n"
-                          "  -m              : show the process ID of a running main program\n"
+                          "  -k              : send signal to the manager process\n"
                           "%4"
                           "%3\n"
                           "Type '%1 --show-routes [app-directory]' to show routing information.\n"
                           "Type '%1 --settings [app-directory]' to show application settings.\n"
+                          "Type '%1 -m [app-directory]' to show process ID of the running manager process.\n"
                           "Type '%1 -l' to show your running applications.\n"
                           "Type '%1 -h' to show this information.\n"
                           "Type '%1 -v' to show the program version.";
@@ -166,7 +146,7 @@ void usage()
 bool checkArguments()
 {
     for (const auto &arg : QCoreApplication::arguments()) {
-        if (arg.startsWith('-') && options()->value(arg, Invalid) == Invalid) {
+        if (arg.startsWith('-') && options.value(arg, Invalid) == Invalid) {
             std::fprintf(stderr, "invalid argument\n");
             return false;
         }
@@ -212,7 +192,7 @@ void writeStartupLog()
     qtversion += QLatin1String(" / ") + QSysInfo::prettyProductName();
 #else
 #if defined(Q_OS_WIN)
-    qtversion += QLatin1String(" / ") + winVersion()->value(QSysInfo::WindowsVersion, "Windows");
+    qtversion += QLatin1String(" / ") + winVersion.value(QSysInfo::WindowsVersion, "Windows");
 #elif defined(Q_OS_DARWIN)
     qtversion += QLatin1String(" / ") + macxVersion()->value(QSysInfo::MacintoshVersion, "Mac OS X");
 #elif defined(Q_OS_UNIX)
@@ -250,16 +230,16 @@ QJsonObject readJsonOfApplication(const QString &appRoot = QString())
 }
 
 
-qint64 readPidOfApplication(const QString &appRoot = QString())
+int64_t readPidOfApplication(const QString &appRoot = QString())
 {
-    int pid = readJsonOfApplication(appRoot)[JSON_PID_KEY].toInt();
+    int64_t pid = readJsonOfApplication(appRoot)[JSON_PID_KEY].toInt();
     return (pid > 0) ? pid : -1;
 }
 
 
-qint64 runningApplicationPid(const QString &appRoot = QString())
+int64_t runningApplicationPid(const QString &appRoot = QString())
 {
-    qint64 pid = readPidOfApplication(appRoot);
+    int64_t pid = readPidOfApplication(appRoot);
     if (pid > 0) {
         QString name = TProcessInfo(pid).processName().toLower();
         if (name == QLatin1String("treefrog") || name == QLatin1String("treefrogd")) {
@@ -394,7 +374,7 @@ void showRoutes(const QString &path)
 
 void showSettings(const TWebApplication &app)
 {
-    const QList<int> Deprecated = { Tf::SqlQueryLogFile };
+    const QList<int> Deprecated = { };
     QStringList settings;
 
     std::printf("application.ini\n----------\n");
@@ -420,7 +400,7 @@ void showSettings(const TWebApplication &app)
 
 int killTreeFrogProcess(const QString &cmd)
 {
-    qint64 pid = runningApplicationPid();
+    int64_t pid = runningApplicationPid();
 
     if (cmd == "status") {  // status command
         if (pid > 0) {
@@ -448,13 +428,13 @@ int killTreeFrogProcess(const QString &cmd)
         }
 
     } else if (cmd == "abort") {  // abort command
-        QList<qint64> pids = pi.childProcessIds();
+        auto pids = pi.childProcessIds();
 
         pi.kill();  // kills the manager process
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (long)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (int64_t)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
@@ -474,9 +454,9 @@ int killTreeFrogProcess(const QString &cmd)
 
 void showProcessId()
 {
-    qint64 pid = readPidOfApplication();
+    int64_t pid = readPidOfApplication();
     if (pid > 0) {
-        std::printf("%lld\n", pid);
+        std::printf("%ld\n", pid);
     }
 }
 
@@ -499,13 +479,13 @@ int managerMain(int argc, char *argv[])
     bool daemonMode = false;
     bool autoReloadMode = false;
     QString signalCmd;
-    quint16 listenPort = 0;
+    uint16_t listenPort = 0;
 
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
     for (QStringListIterator i(args); i.hasNext();) {
         const QString &arg = i.next();
-        int cmd = options()->value(arg, Invalid);
+        int cmd = options.value(arg, Invalid);
         switch (cmd) {
         case PrintVersion:
             std::printf("%s version %s (r%d) built on %s / Qt %s\n", qUtf8Printable(QFileInfo(argv[0]).baseName()), TF_VERSION_STR, TF_SRC_REVISION, __DATE__, qVersion());
@@ -605,9 +585,9 @@ int managerMain(int argc, char *argv[])
     }
 
     // Check TreeFrog processes are running
-    qint64 pid = runningApplicationPid();
+    int64_t pid = runningApplicationPid();
     if (pid > 0) {
-        std::fprintf(stderr, "Already running  pid:%ld\n", (long)pid);
+        std::fprintf(stderr, "Already running  pid:%ld\n", pid);
         return 1;
     }
 
@@ -700,7 +680,7 @@ int managerMain(int argc, char *argv[])
         pidfile.setFileName(pidFilePath());
         if (pidfile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
             pid = QCoreApplication::applicationPid();
-            QJsonObject json {{JSON_PID_KEY, pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
+            QJsonObject json {{JSON_PID_KEY, (qint64)pid}, {JSON_PORT_KEY, listenPort}, {JSON_UNIX_KEY, svrname}};
             pidfile.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
             pidfile.close();
         } else {

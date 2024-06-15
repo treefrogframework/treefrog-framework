@@ -18,8 +18,8 @@ public:
         const QString &query) const;
     QUrl url(const QString &controller, const QString &action, int arg) const;
     QUrl url(const QString &controller, const QString &action, uint arg) const;
-    QUrl url(const QString &controller, const QString &action, qint64 arg) const;
-    QUrl url(const QString &controller, const QString &action, quint64 arg) const;
+    QUrl url(const QString &controller, const QString &action, int64_t arg) const;
+    QUrl url(const QString &controller, const QString &action, uint64_t arg) const;
     QUrl url(const QString &controller, const QString &action, const QString &arg) const;
     QUrl url(const QString &controller, const QString &action, const QVariant &arg) const;
     QUrl url(const QString &controller, const QString &action, const QVariantMap &query) const;
@@ -29,8 +29,8 @@ public:
     QUrl urla(const QString &action, const QStringList &args, const QString &query) const;
     QUrl urla(const QString &action, int arg) const;
     QUrl urla(const QString &action, uint arg) const;
-    QUrl urla(const QString &action, qint64 arg) const;
-    QUrl urla(const QString &action, quint64 arg) const;
+    QUrl urla(const QString &action, int64_t arg) const;
+    QUrl urla(const QString &action, uint64_t arg) const;
     QUrl urla(const QString &action, const QString &arg) const;
     QUrl urla(const QString &action, const QVariant &arg) const;
     QUrl urla(const QString &action, const QVariantMap &query) const;
@@ -53,12 +53,12 @@ inline QUrl TActionHelper::url(const QString &controller, const QString &action,
     return url(controller, action, QStringList(QString::number(arg)));
 }
 
-inline QUrl TActionHelper::url(const QString &controller, const QString &action, qint64 arg) const
+inline QUrl TActionHelper::url(const QString &controller, const QString &action, int64_t arg) const
 {
     return url(controller, action, QStringList(QString::number(arg)));
 }
 
-inline QUrl TActionHelper::url(const QString &controller, const QString &action, quint64 arg) const
+inline QUrl TActionHelper::url(const QString &controller, const QString &action, uint64_t arg) const
 {
     return url(controller, action, QStringList(QString::number(arg)));
 }
@@ -98,12 +98,12 @@ inline QUrl TActionHelper::urla(const QString &action, uint arg) const
     return url(QString(), action, QStringList(QString::number(arg)));
 }
 
-inline QUrl TActionHelper::urla(const QString &action, qint64 arg) const
+inline QUrl TActionHelper::urla(const QString &action, int64_t arg) const
 {
     return url(QString(), action, QStringList(QString::number(arg)));
 }
 
-inline QUrl TActionHelper::urla(const QString &action, quint64 arg) const
+inline QUrl TActionHelper::urla(const QString &action, uint64_t arg) const
 {
     return url(QString(), action, QStringList(QString::number(arg)));
 }

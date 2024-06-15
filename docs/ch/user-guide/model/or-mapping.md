@@ -60,7 +60,7 @@ page_id: "060.010"
 | port               | 端口Port                                                                                                                                           |
 | userName           | 用户名User name                                                                                                                                    |
 | password           | 密码 Password                                                                                                                                      |
-| connectOptions     | 连接选项 <br>Referto 更多信息参看Qt文档documentation[QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="_blank"} |
+| connectOptions     | 连接选项 <br>Referto 更多信息参看Qt文档documentation[QSqlDatabase::setConnectOptions()](https://doc.qt.io/qt-6/qsqldatabase.html){:target="_blank"} |
 </div><br>
 
 这样, 当你启动网页应用时, 系统将自动管理这些数据库连接. 对于开发者来说, 不需要处理数据库的连接和关闭.

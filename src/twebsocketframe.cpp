@@ -58,11 +58,11 @@ void TWebSocketFrame::setFinBit(bool fin)
 void TWebSocketFrame::setOpCode(TWebSocketFrame::OpCode opCode)
 {
     _firstByte &= ~0xF;
-    _firstByte |= (quint8)opCode;
+    _firstByte |= (uint8_t)opCode;
 }
 
 
-void TWebSocketFrame::setFirstByte(quint8 byte)
+void TWebSocketFrame::setFirstByte(uint8_t byte)
 {
     _firstByte = byte;
 }
@@ -74,7 +74,7 @@ void TWebSocketFrame::setMaskKey(quint32 maskKey)
 }
 
 
-void TWebSocketFrame::setPayloadLength(quint64 length)
+void TWebSocketFrame::setPayloadLength(uint64_t length)
 {
     _payloadLength = length;
 }
@@ -128,7 +128,7 @@ QByteArray TWebSocketFrame::toByteArray() const
         ds << b;
     } else if (plen <= (int)0xFFFF) {
         b |= (uchar)126;
-        ds << b << (quint16)plen;
+        ds << b << (uint16_t)plen;
     } else {
         b |= (uchar)127;
         ds << b << (quint64)plen;

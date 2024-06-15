@@ -58,7 +58,7 @@ HTMLデータを生成するには render()関数に対しアクション名を�
 ```
 
 indexアクションで実行されるならば 第３引数の"index"は省略できます。
-詳しくは [APIリファレンス](http://api-reference.treefrogframework.org/classTActionController.html){:target="_blank"}を参照してください。
+詳しくは [APIリファレンス](https://api-reference.treefrogframework.org/classTActionController.html){:target="_blank"}を参照してください。
 
 
 ## データのキャッシュ
@@ -74,4 +74,4 @@ TCacheクラスを使い、データを保存、読出、削除することが�
     :
 ```
 
-他のメソッドについては [APIリファレンス](http://api-reference.treefrogframework.org/classTCache.html){:target="_blank"}を参照してください。
+他のメソッドについては [APIリファレンス](https://api-reference.treefrogframework.org/classTCache.html){:target="_blank"}を参照してください。

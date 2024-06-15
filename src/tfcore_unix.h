@@ -1,6 +1,5 @@
 #pragma once
 #include "tfcore.h"
-#include <aio.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <sys/file.h>
@@ -8,13 +7,19 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <netinet/in.h>
 #include <unistd.h>
+#include <thread>
+#include <cstdint>
 
 #ifdef Q_OS_LINUX
 #include <sys/epoll.h>
 #endif
 #ifdef Q_OS_DARWIN
 #include <pthread.h>
+#endif
+#ifdef Q_OS_WASM
+#include <sstream>
 #endif
 
 #ifndef Q_OS_UNIX
@@ -100,10 +105,33 @@ inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
 
 #endif  // Q_OS_DARWIN
 
-inline int tf_aio_write(struct aiocb *aiocbp)
+#ifdef Q_OS_WASM
+
+inline int tf_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
-    TF_EINTR_LOOP(::aio_write(aiocbp));
+    TF_EAGAIN_LOOP(::poll(fds, nfds, timeout));
 }
+
+
+inline pid_t tf_gettid()
+{
+    std::ostringstream ss;
+    ss << std::this_thread::get_id();
+    return std::stoull(ss.str());
+}
+
+
+inline int tf_send(int sockfd, const void *buf, size_t len, int flags = 0)
+{
+    TF_EINTR_LOOP(::send(sockfd, buf, len, flags));
+}
+
+#endif  // Q_OS_WASM
+
+// inline int tf_aio_write(struct aiocb *aiocbp)
+// {
+//     TF_EINTR_LOOP(::aio_write(aiocbp));
+// }
 
 
 inline int tf_close(int fd)

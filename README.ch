@@ -30,11 +30,6 @@ TreeFrog使用了Qt的qmake构建系统.
 --------
  https://github.com/treefrogframework/treefrog-framework/releases
 
-文档
----------
- 获得更多信息:
- http://treefrogframework.github.io/treefrog-framework/
-
 API参考
 -------------
  http://treefrogframework.org/tf_doxygen/classes.html

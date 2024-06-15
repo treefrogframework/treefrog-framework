@@ -226,13 +226,13 @@ int TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &document
   Updates existing documents of the selection criteria \a criteria in
   the collection with new document \a document.
 */
-int TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &document)
+int TMongoQuery::updateMany(const QVariantMap &criteria, const QVariantMap &document)
 {
     int modifiedCount = -1;
     QVariantMap doc;
 
     if (!_database.isValid()) {
-        tSystemError("TMongoQuery::updateMulti : driver not loaded");
+        tSystemError("TMongoQuery::updateMany : driver not loaded");
         return modifiedCount;
     }
 
@@ -247,7 +247,7 @@ int TMongoQuery::updateMulti(const QVariantMap &criteria, const QVariantMap &doc
     if (res) {
         modifiedCount = reply.value(QStringLiteral("modifiedCount")).toInt();
     }
-    tSystemDebug("TMongoQuery::updateMulti modifiedCount:%d", modifiedCount);
+    tSystemDebug("TMongoQuery::updateMany modifiedCount:%d", modifiedCount);
     return modifiedCount;
 }
 

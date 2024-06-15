@@ -40,12 +40,17 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2023/3/26  TreeFrog Framework バージョン2.7.1 （安定版）リリース <span style="color: red;">New!</span>
+### 2023/12/10  TreeFrog Framework バージョン2.8.0 （安定版）リリース <span style="color: red;">New!</span>
+
+  - PostgreSQL と MySQL のプリペアドステートメントを対応
+  - Emscripten でのコンパイルエラーを解消
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2023/3/26  TreeFrog Framework バージョン2.7.1 （安定版）リリース
 
   - 共有メモリKVSをオープンする際の不具合修正
   - アクションを呼び出せない場合にNotFoundを返すように修正
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2023/2/25  TreeFrog Framework バージョン2.7.0 （安定版）リリース
 

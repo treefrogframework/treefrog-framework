@@ -135,9 +135,9 @@ QList<int> TPaginator::range() const
     int end;
 
     if (start == 1) {
-        end = qMin(_midRange, _numPages);
+        end = std::min(_midRange, _numPages);
     } else {
-        end = qMin(currentPage() + _midRange / 2, _numPages);
+        end = std::min(currentPage() + _midRange / 2, _numPages);
 
         if (end == _numPages) {
             start = qMax(end - _midRange + 1, 1);

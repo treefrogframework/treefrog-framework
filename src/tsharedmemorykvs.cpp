@@ -119,7 +119,7 @@ bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int s
 
     QByteArray data;
     QDataStream ds(&data, QIODevice::WriteOnly);
-    qint64 expires = Tf::getMSecsSinceEpoch() + seconds * 1000;
+    int64_t expires = Tf::getMSecsSinceEpoch() + seconds * 1000;
     ds << Bucket{key, value, expires};
 
     lockForWrite();  // lock
@@ -579,3 +579,9 @@ void TSharedMemoryKvs::WriteLockingIterator::remove()
     }
     _tmpbk.clear();
 }
+
+
+/*!
+  \class TSharedMemoryKvs::Bucket
+  \brief The Bucket class represents a data bucket for the in-memory KVS.
+*/

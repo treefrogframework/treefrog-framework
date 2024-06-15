@@ -32,7 +32,7 @@ TMongoDriver::~TMongoDriver()
 }
 
 
-bool TMongoDriver::open(const QString &db, const QString &user, const QString &password, const QString &host, quint16 port, const QString &options)
+bool TMongoDriver::open(const QString &db, const QString &user, const QString &password, const QString &host, uint16_t port, const QString &options)
 {
     if (isOpen()) {
         return true;
@@ -294,9 +294,9 @@ bool TMongoDriver::updateMany(const QString &collection, const QVariantMap &crit
 }
 
 
-qint64 TMongoDriver::count(const QString &collection, const QVariantMap &criteria)
+int64_t TMongoDriver::count(const QString &collection, const QVariantMap &criteria)
 {
-    qint64 count = -1;
+    int64_t count = -1;
 
     if (!isOpen()) {
         return count;

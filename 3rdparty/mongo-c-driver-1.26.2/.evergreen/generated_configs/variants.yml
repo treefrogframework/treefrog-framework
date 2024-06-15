@@ -1,0 +1,109 @@
+buildvariants:
+  - name: cse-matrix-darwinssl
+    display_name: cse-matrix-darwinssl
+    expansions:
+      CLIENT_SIDE_ENCRYPTION: "on"
+      DEBUG: "ON"
+    tasks:
+      - name: .cse-matrix-darwinssl
+  - name: cse-matrix-openssl
+    display_name: cse-matrix-openssl
+    expansions:
+      CLIENT_SIDE_ENCRYPTION: "on"
+      DEBUG: "ON"
+    tasks:
+      - name: .cse-matrix-openssl
+  - name: cse-matrix-winssl
+    display_name: cse-matrix-winssl
+    expansions:
+      CLIENT_SIDE_ENCRYPTION: "on"
+      DEBUG: "ON"
+    tasks:
+      - name: .cse-matrix-winssl
+  - name: earthly-alpine3.18
+    display_name: Alpine 3.18
+    expansions:
+      MONGOC_EARTHLY_ENV: alpine3.18
+    tasks:
+      - name: .earthly-alpine3.18
+  - name: earthly-archlinux
+    display_name: Arch Linux
+    expansions:
+      MONGOC_EARTHLY_ENV: archlinux
+    tasks:
+      - name: .earthly-archlinux
+  - name: earthly-u22
+    display_name: Ubuntu 22.04
+    expansions:
+      MONGOC_EARTHLY_ENV: u22
+    tasks:
+      - name: .earthly-u22
+  - name: loadbalanced
+    display_name: loadbalanced
+    tasks:
+      - name: .loadbalanced
+  - name: mock-server-test
+    display_name: Mock Server Test
+    expansions:
+      ASAN: "on"
+      CC: gcc
+      CFLAGS: -fno-omit-frame-pointer
+      EXTRA_CONFIGURE_FLAGS: -DENABLE_EXTRA_ALIGNMENT=OFF
+      SANITIZE: address,undefined
+    tasks:
+      - name: mock-server-test
+  - name: openssl-static-matrix
+    display_name: openssl-static-matrix
+    tasks:
+      - name: .openssl-static-matrix
+  - name: sanitizers-matrix-asan
+    display_name: sanitizers-matrix-asan
+    expansions:
+      ASAN: "on"
+      CFLAGS: -fno-omit-frame-pointer
+      CHECK_LOG: "ON"
+      EXTRA_CONFIGURE_FLAGS: -DENABLE_EXTRA_ALIGNMENT=OFF
+      SANITIZE: address,undefined
+    tasks:
+      - name: .sanitizers-matrix-asan
+  - name: sanitizers-matrix-tsan
+    display_name: sanitizers-matrix-tsan
+    expansions:
+      CFLAGS: -fno-omit-frame-pointer
+      CHECK_LOG: "ON"
+      EXTRA_CONFIGURE_FLAGS: -DENABLE_EXTRA_ALIGNMENT=OFF -DENABLE_SHM_COUNTERS=OFF
+      SANITIZE: thread
+    tasks:
+      - name: .sanitizers-matrix-tsan
+  - name: sasl-matrix-darwinssl
+    display_name: sasl-matrix-darwinssl
+    expansions:
+      DEBUG: "ON"
+    tasks:
+      - name: .sasl-matrix-darwinssl
+  - name: sasl-matrix-nossl
+    display_name: sasl-matrix-nossl
+    expansions:
+      DEBUG: "ON"
+    tasks:
+      - name: .sasl-matrix-nossl
+  - name: sasl-matrix-openssl
+    display_name: sasl-matrix-openssl
+    expansions:
+      DEBUG: "ON"
+    tasks:
+      - name: .sasl-matrix-openssl
+  - name: sasl-matrix-winssl
+    display_name: sasl-matrix-winssl
+    expansions:
+      DEBUG: "ON"
+    tasks:
+      - name: .sasl-matrix-winssl
+  - name: scan-build-matrix
+    display_name: scan-build-matrix
+    tasks:
+      - name: .scan-build-matrix
+  - name: std-matrix
+    display_name: std-matrix
+    tasks:
+      - name: .std-matrix

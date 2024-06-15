@@ -18,7 +18,7 @@ public:
     ~TMemcachedDriver();
 
     QString key() const override { return "MEMCACHED"; }
-    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0, const QString &options = QString()) override;
+    bool open(const QString &db, const QString &user = QString(), const QString &password = QString(), const QString &host = QString(), uint16_t port = 0, const QString &options = QString()) override;
     void close() override;
     bool command(const QByteArray &cmd) override;
     bool isOpen() const override;
@@ -36,7 +36,7 @@ private:
     QTcpSocket *_client {nullptr};
 #endif
     QString _host;
-    quint16 _port {0};
+    uint16_t _port {0};
 
     static constexpr int DEFAULT_PORT = 11211;
     T_DISABLE_COPY(TMemcachedDriver)

@@ -345,7 +345,7 @@ bool TSqlObject::update()
 bool TSqlObject::save()
 {
     auto &sqldb = getDatabase();
-    auto &db = TSqlDatabase::database(sqldb.connectionName());
+    const auto &db = TSqlDatabase::database(sqldb.connectionName());
     QString lockrev;
 
     if (!db.isUpsertSupported() || !db.isUpsertEnabled()) {

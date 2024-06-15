@@ -11,14 +11,14 @@ class T_CORE_EXPORT TPopMailer : public QObject {
     Q_OBJECT
 public:
     TPopMailer(QObject *parent = 0);
-    TPopMailer(const QString &hostName, quint16 port, QObject *parent = 0);
+    TPopMailer(const QString &hostName, uint16_t port, QObject *parent = 0);
     ~TPopMailer();
 
     QString key() const { return "pop"; }
     QString hostName() const { return _popHostName; }
     void setHostName(const QString &hostName);
-    quint16 port() const { return _popPort; }
-    void setPort(quint16 port);
+    uint16_t port() const { return _popPort; }
+    void setPort(uint16_t port);
     void setUserName(const QByteArray &username);
     void setPassword(const QByteArray &password);
     void setApopEnabled(bool enable);
@@ -45,7 +45,7 @@ private:
 
     QTcpSocket *_socket {nullptr};
     QString _popHostName;
-    quint16 _popPort {0};
+    uint16_t _popPort {0};
     QByteArray _userName;
     QByteArray _password;
     bool _apopEnabled {false};

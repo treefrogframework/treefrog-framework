@@ -6,7 +6,7 @@
 #undef GetTempPath
 
 //
-// ƒŠƒŠ[ƒX‚·‚éÛ‚Í50s–Ú‚ğ•ÒWI
+// ãƒªãƒªãƒ¼ã‚¹ã™ã‚‹éš›ã¯50è¡Œç›®ã‚’ç·¨é›†ï¼
 //
 
 
@@ -45,13 +45,13 @@ namespace treefrogsetup {
         static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";  // Base Directory
 
         //
-        // ƒo[ƒWƒ‡ƒ“
+        // ãƒãƒ¼ã‚¸ãƒ§ãƒ³
         //
-        static initonly String^ VERSION_STR6_NEW  = L"6.4";
-        static initonly String^ VERSION_STR6_PREV = L"6.3";
+        static initonly String^ VERSION_STR6_NEW  = L"6.7";
+        static initonly String^ VERSION_STR6_PREV = L"6.6";
 
-		static initonly int RCID_NEW  = IDR_TREEFROG_QT604_MSI;
-		static initonly int RCID_PREV = IDR_TREEFROG_QT603_MSI;
+	static initonly int RCID_NEW  = IDR_TREEFROG_QT607_MSI;
+	static initonly int RCID_PREV = IDR_TREEFROG_QT606_MSI;
 
     public:
         MainForm(void)
@@ -106,8 +106,8 @@ namespace treefrogsetup {
 
 #pragma region Windows Form Designer generated code
         /// <summary>
-        /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-        /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+        /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+        /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
         /// </summary>
         void InitializeComponent(void)
         {

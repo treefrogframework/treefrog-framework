@@ -1,7 +1,7 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "2.7.1";
-constexpr auto TF_VERSION_NUMBER = 0x020701;
-constexpr auto TF_SRC_REVISION = 2806;
+constexpr auto TF_VERSION_STR = "2.9.0";
+constexpr auto TF_VERSION_NUMBER = 0x020900;
+constexpr auto TF_SRC_REVISION = 2886;
 
 #include <QMetaType>
 #include <QIODevice>
@@ -254,6 +254,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstdint>
 #include <cstring>
 #include <functional>
+#include <algorithm>
 
 class TWebApplication;
 class TActionContext;
@@ -269,7 +270,7 @@ T_CORE_EXPORT TWebApplication *app() noexcept;
 T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
 T_CORE_EXPORT void msleep(int64_t msecs) noexcept;
-T_CORE_EXPORT qint64 getMSecsSinceEpoch();
+T_CORE_EXPORT int64_t getMSecsSinceEpoch();
 
 // Thread-safe std::random number generator
 T_CORE_EXPORT uint32_t rand32_r() noexcept;

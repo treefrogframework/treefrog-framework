@@ -62,7 +62,7 @@ FileLogger.Layout="%d %5P [%t] %m%n"
 ```
 
 当记录被生成后, 日期和时间将会插入到布局中的'%d'的位置.
-日期格式在FileLogger.DateTimeFormat参数定义. 可以指定的格式和QDateTime::toString()的参数是一样的. 更详细的信息请参考[Qt文档](http://doc.qt.io/qt-5/qdatetime.html){:target="_blank"}.
+日期格式在FileLogger.DateTimeFormat参数定义. 可以指定的格式和QDateTime::toString()的参数是一样的. 更详细的信息请参考[Qt文档](https://doc.qt.io/qt-6/qdatetime.html){:target="_blank"}.
 
 ```ini
 # 指定FileLogger的日期-时间格式, 也可以参考QDateTime类参考

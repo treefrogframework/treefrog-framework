@@ -68,7 +68,7 @@ void LZ4Compress::qcompress()
     QFETCH(QByteArray, data);
 
     QByteArray comp = qCompress(data);
-    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
+    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / std::max((int64_t)data.length(), (int64_t)1);
     QByteArray uncomp = qUncompress(comp);
     QCOMPARE(data, uncomp);
 }
@@ -94,7 +94,7 @@ void LZ4Compress::lz4_l1()
     QFETCH(QByteArray, data);
 
     QByteArray comp = Tf::lz4Compress(data, 1);
-    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
+    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / std::max((int64_t)data.length(), (int64_t)1);
     QByteArray uncomp = Tf::lz4Uncompress(comp);
     QCOMPARE(data, uncomp);
 }
@@ -120,7 +120,7 @@ void LZ4Compress::lz4_l2()
     QFETCH(QByteArray, data);
 
     QByteArray comp = Tf::lz4Compress(data, 2);
-    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
+    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / std::max((int64_t)data.length(), (int64_t)1);
     QByteArray uncomp = Tf::lz4Uncompress(comp);
     QCOMPARE(data, uncomp);
 }
@@ -145,7 +145,7 @@ void LZ4Compress::lz4_l5()
     QFETCH(QByteArray, data);
 
     QByteArray comp = Tf::lz4Compress(data, 5);
-    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / qMax(data.length(), 1);
+    qDebug() << "orignal length:" << data.length() <<  " compression:" << (float)comp.length() / std::max((int64_t)data.length(), (int64_t)1);
     QByteArray uncomp = Tf::lz4Uncompress(comp);
     QCOMPARE(data, uncomp);
 }

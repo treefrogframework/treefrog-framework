@@ -23,7 +23,8 @@
 #include <TActionWorker>
 #endif
 #ifdef Q_OS_WIN
-#include <Windows.h>
+#define NOMINMAX
+#include <windows.h>
 #endif
 #include <climits>
 #include <cstdlib>
@@ -219,7 +220,7 @@ QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel) n
     int readlen = 0;
 
     while (readlen < nbytes) {
-        int datalen = qMin(nbytes - readlen, LZ4_BLOCKSIZE);
+        int datalen = std::min(nbytes - readlen, LZ4_BLOCKSIZE);
         compress(data + readlen, datalen, compressionLevel, buffer);
         readlen += datalen;
 
@@ -291,7 +292,7 @@ QByteArray Tf::lz4Uncompress(const QByteArray &data) noexcept
 }
 
 
-qint64 Tf::getMSecsSinceEpoch()
+int64_t Tf::getMSecsSinceEpoch()
 {
     auto p = std::chrono::system_clock::now();  // epoch of system_clock
     return std::chrono::duration_cast<std::chrono::milliseconds>(p.time_since_epoch()).count();

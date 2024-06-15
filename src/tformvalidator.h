@@ -19,7 +19,7 @@ public:
     void setRule(const QString &key, Tf::ValidationRule rule, float val, const QString &errorMessage = QString());
     void setRule(const QString &key, Tf::ValidationRule rule, double val, const QString &errorMessage = QString());
     void setRule(const QString &key, Tf::ValidationRule rule, int val, const QString &errorMessage = QString());
-    void setRule(const QString &key, Tf::ValidationRule rule, qint64 val, const QString &errorMessage = QString());
+    void setRule(const QString &key, Tf::ValidationRule rule, int64_t val, const QString &errorMessage = QString());
     void setPatternRule(const QString &key, const QRegularExpression &rx, const QString &errorMessage = QString());
     QString message(const QString &key, Tf::ValidationRule rule) const;
 
@@ -49,7 +49,7 @@ protected:
         QString message;
 
         RuleEntry(const QString &key, int rule, bool enable, const QString &errorMessage);
-        RuleEntry(const QString &key, int rule, qint64 val, const QString &errorMessage);
+        RuleEntry(const QString &key, int rule, int64_t val, const QString &errorMessage);
         RuleEntry(const QString &key, int rule, double val, const QString &errorMessage);
         RuleEntry(const QString &key, int rule, const QRegularExpression &rx, const QString &errorMessage);
     };

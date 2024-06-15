@@ -7,5 +7,5 @@ page_id: "api-reference.00"
 
 它是由Doxygen生成的文档。
 
-[TreeFrog Framework API Reference >>](http://api-reference.treefrogframework.org/annotated.html){:target="_blank"}
+[TreeFrog Framework API Reference >>](https://api-reference.treefrogframework.org/annotated.html){:target="_blank"}
 

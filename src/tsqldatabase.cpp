@@ -85,12 +85,11 @@ TSqlDatabase::DbmsType TSqlDatabase::dbmsType() const
 
 void TSqlDatabase::setDriverExtension(TSqlDriverExtension *extension)
 {
-    Q_ASSERT(!_driverExtension);
     _driverExtension = extension;
 }
 
 
-const TSqlDatabase &TSqlDatabase::database(const QString &connectionName)
+TSqlDatabase &TSqlDatabase::database(const QString &connectionName)
 {
     static TSqlDatabase defaultDatabase;
     auto *dict = dbDict();
@@ -139,4 +138,10 @@ bool TSqlDatabase::contains(const QString &connectionName)
 bool TSqlDatabase::isUpsertSupported() const
 {
     return _driverExtension && _driverExtension->isUpsertSupported();
+}
+
+
+bool TSqlDatabase::isPreparedStatementSupported() const
+{
+    return _driverExtension && _driverExtension->isPreparedStatementSupported();
 }

@@ -77,7 +77,7 @@ bool TEpollWebSocket::isBinaryRequest() const
 
 void TEpollWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
-    tSystemDebug("sendText  text len:%lld  (pid:%d)", (qint64)text.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendText  text len:%ld  (pid:%d)", (int64_t)text.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendText(text);
     }
@@ -86,7 +86,7 @@ void TEpollWebSocket::sendTextForPublish(const QString &text, const QObject *exc
 
 void TEpollWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
-    tSystemDebug("sendBinary  binary len:%lld  (pid:%d)", (qint64)binary.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendBinary  binary len:%ld  (pid:%d)", (int64_t)binary.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendBinary(binary);
     }
@@ -95,7 +95,7 @@ void TEpollWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObje
 
 void TEpollWebSocket::sendPong(const QByteArray &data)
 {
-    tSystemDebug("sendPong  data len:%lld  (pid:%d)", (qint64)data.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendPong  data len:%ld  (pid:%d)", (int64_t)data.length(), (int)QCoreApplication::applicationPid());
     TAbstractWebSocket::sendPong(data);
 }
 
@@ -212,7 +212,7 @@ void TEpollWebSocket::clear()
 }
 
 
-qint64 TEpollWebSocket::writeRawData(const QByteArray &data)
+int64_t TEpollWebSocket::writeRawData(const QByteArray &data)
 {
     sendData(data);
     return data.length();

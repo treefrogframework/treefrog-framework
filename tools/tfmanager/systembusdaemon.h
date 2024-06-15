@@ -16,7 +16,7 @@ public:
 
     static SystemBusDaemon *instance();
     static void instantiate();
-    static void releaseResource(qint64 pid);
+    static void releaseResource(int64_t pid);
 
 protected slots:
     void acceptConnection();

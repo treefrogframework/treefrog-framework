@@ -20,7 +20,7 @@ public:
     QByteArray body() const;
     void setBodyFile(const QString &filePath);
     QIODevice *bodyIODevice() { return bodyDevice; }
-    qint64 bodyLength() const { return (bodyDevice) ? bodyDevice->size() : 0; }
+    int64_t bodyLength() const { return (bodyDevice) ? bodyDevice->size() : 0; }
     void clear();
 
 private:

@@ -230,7 +230,7 @@ QString TMimeEntity::contentType() const
   Returns the file size in bytes. If the file does not exist,
   -1 is returned.
 */
-qint64 TMimeEntity::fileSize() const
+int64_t TMimeEntity::fileSize() const
 {
     QFileInfo fi(_entity.second);
     if (!fi.exists()) {
@@ -414,7 +414,7 @@ QString TMultipartFormData::originalFileName(const QByteArray &dataName) const
   \warning Note that this method must be called before
   renameUploadedFile() method calls.
  */
-qint64 TMultipartFormData::size(const QByteArray &dataName) const
+int64_t TMultipartFormData::size(const QByteArray &dataName) const
 {
     return entity(dataName).fileSize();
 }
@@ -543,7 +543,7 @@ QString TMultipartFormData::writeContent(QIODevice *dev, TActionContext *context
     while (!dev->atEnd()) {
         QByteArray line = dev->readLine();
         if (line.startsWith(dataBoundary)) {
-            qint64 size = qMax(out.size() - 2, Q_INT64_C(0));
+            int64_t size = qMax(out.size() - 2, Q_INT64_C(0));
             out.resize(size);  // Truncates the CR+LF
             break;
         }

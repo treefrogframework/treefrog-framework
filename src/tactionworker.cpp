@@ -23,7 +23,7 @@
 */
 
 
-qint64 TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
+int64_t TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
     if (keepAliveTimeout() > 0) {
         header.setRawHeader("Connection", "Keep-Alive");

@@ -3,9 +3,9 @@ title: ブログ
 page_id: "blog.00"
 ---
 
-## Web Framework Benchmarks Round 15
+## Web Framework Benchmarks Round 22
 
-<https://www.techempower.com/benchmarks/#section=data-r15>{:target="_blank"}
+<https://www.techempower.com/benchmarks/#section=data-r22>{:target="_blank"}
 
 
 ## Web Framework Benchmarks Round 13
@@ -24,7 +24,7 @@ MongoDB の設定を追加してプルリクエストを送ったところマー
 
 ## C++インタプリタ – cpi
 
-C++１１のコードをちょっと確認したいときに役立つインタプリタを作ってみました。
+C++17 や C++20 のコードをちょっと確認したいときに役立つインタプリタを作ってみました。
 
  <http://treefrogframework.github.io/cpi/>
 
@@ -79,5 +79,3 @@ Webサーバ（APサーバ）としては、リクエストの受信からレス
 チュートリアルで作ったやつです。ここ↓にありますので、 遊んでみて。
 
 <http://blogapp.treefrogframework.org/Blog>
-
-適当に停止します。

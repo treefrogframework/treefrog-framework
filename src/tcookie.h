@@ -12,8 +12,8 @@ public:
     ~TCookie() { }
 
     TCookie &operator=(const TCookie &other);
-    qint64 maxAge() const { return _maxAge; }
-    void setMaxAge(qint64 maxAge) { _maxAge = maxAge; }
+    int64_t maxAge() const { return _maxAge; }
+    void setMaxAge(int64_t maxAge) { _maxAge = maxAge; }
     QByteArray sameSite() const { return _sameSite; }
     bool setSameSite(const QByteArray &sameSite);
 
@@ -25,7 +25,7 @@ public:
     static QList<TCookie> parseCookies(const QByteArray &cookieString);
 
 private:
-    qint64 _maxAge {INT64_MIN};
+    int64_t _maxAge {INT64_MIN};
     QByteArray _sameSite;
 };
 

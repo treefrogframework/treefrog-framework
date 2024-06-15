@@ -60,7 +60,7 @@ Parameters that can be set are the following:
 | port           | Port                                                                           |
 | userName       | User name                                                                      |
 | password       | Password                                                                       |
-| connectOptions | Connect options<br>Refer to Qt documentation [QSqlDatabase::setConnectOptions()](http://doc.qt.io/qt-5/qsqldatabase.html){:target="_blank"} |
+| connectOptions | Connect options<br>Refer to Qt documentation [QSqlDatabase::setConnectOptions()](https://doc.qt.io/qt-6/qsqldatabase.html){:target="_blank"} |
 
 </div><br>
 

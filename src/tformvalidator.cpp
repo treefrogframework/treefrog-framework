@@ -32,10 +32,10 @@ TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, bool enable, const
 }
 
 
-TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, qint64 v, const QString &msg) :
+TFormValidator::RuleEntry::RuleEntry(const QString &k, int r, int64_t v, const QString &msg) :
     key(k),
     rule(r),
-    value(v),
+    value((qint64)v),
     message(msg)
 {
 }
@@ -151,14 +151,14 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, bool e
  */
 void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, int val, const QString &errorMessage)
 {
-    setRule(key, rule, (qint64)val, errorMessage);
+    setRule(key, rule, (int64_t)val, errorMessage);
 }
 
 /*!
   Sets the validation rule for the key \a key and sets the error
   message of it to \a errorMessage.
  */
-void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, qint64 val, const QString &errorMessage)
+void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, int64_t val, const QString &errorMessage)
 {
     // arg check
     switch ((int)rule) {
@@ -300,8 +300,8 @@ bool TFormValidator::validate(const QVariantMap &map)
             }
 
             case Tf::IntMax: {
-                qint64 n = str.toLongLong(&ok1);
-                qint64 max = r.value.toLongLong(&ok2);
+                int64_t n = str.toLongLong(&ok1);
+                int64_t max = r.value.toLongLong(&ok2);
                 if (!ok1 || !ok2 || n > max) {
                     errors << qMakePair(r.key, r.rule);
                 }
@@ -309,8 +309,8 @@ bool TFormValidator::validate(const QVariantMap &map)
             }
 
             case Tf::IntMin: {
-                qint64 n = str.toLongLong(&ok1);
-                qint64 min = r.value.toLongLong(&ok2);
+                int64_t n = str.toLongLong(&ok1);
+                int64_t min = r.value.toLongLong(&ok2);
                 if (!ok1 || !ok2 || n < min) {
                     errors << qMakePair(r.key, r.rule);
                 }

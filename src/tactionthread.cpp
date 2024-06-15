@@ -112,7 +112,7 @@ void TActionThread::run()
     try {
         for (;;) {
             QList<THttpRequest> requests = readRequest(_httpSocket);
-            tSystemDebug("HTTP request count: %lld", (qint64)requests.count());
+            tSystemDebug("HTTP request count: %ld", (int64_t)requests.count());
 
             if (requests.isEmpty()) {
                 break;
@@ -215,7 +215,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 }
 
 
-qint64 TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body)
+int64_t TActionThread::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
     if (keepAliveTimeout() > 0) {
         header.setRawHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("Keep-Alive"));
