@@ -68,14 +68,19 @@ if "%QMAKE%" == "" (
   echo Qt environment not found
   exit /b
 )
+qmake --version
+
 if "%CMAKE%" == "" (
   echo CMake not found
   exit /b
 )
+cmake --version
+
 if "%MAKE%" == "" (
   echo Make not found
   exit /b
 )
+
 if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
   echo Visual Studio compiler not found
   exit /b
@@ -170,7 +175,7 @@ cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-del /f /q lz4\build\cmake\build >nul 2>&1
+rmdir /s /q lz4\build\cmake\build >nul 2>&1
 cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
 set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
 echo %BUILDCMD%
@@ -191,10 +196,10 @@ rd /s /q  glog >nul 2>&1
 del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
-del /f /q build >nul 2>&1
+rmdir /s /q build >nul 2>&1
 set CMAKECMD=cmake -S . -B build %CMAKEOPT%
 echo %CMAKECMD%
-%CMAKECMD% >nul 2>&1
+%CMAKECMD%
 set CMAKECMD=cmake --build build -j
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
