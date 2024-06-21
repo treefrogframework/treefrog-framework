@@ -16,6 +16,14 @@
     <li><a href="{{ site.baseurl }}/ch/faq" class="{% if page.url == '/ch/faq/' %}activeMenuItem{% endif %}" title="FAQ">FAQ</a></li>
     <li><a href="{{ site.baseurl }}/ch/blog" class="{% if page.url == '/ch/blog/' %}activeMenuItem{% endif %}" title="Blog">Blog</a></li>
     <li><a href="{{ site.baseurl }}/ch/development" class="{% if page.url == '/ch/development/' %}activeMenuItem{% endif %}" title="Development">Development</a></li>
+  {% elsif page.url contains '/de/' %}
+    <li><a href="{{ site.baseurl }}/de" class="{% if page.url == '/de/' %}activeMenuItem{% endif %}" title="Home">Startseite</a></li>
+    <li><a href="{{ site.baseurl }}/de/download" class="{% if page.url == '/de/download/' %}activeMenuItem{% endif %}" title="Download">Herunterladen</a></li>
+    <li><a href="{{ site.baseurl }}/de/user-guide" class="{% if page.url == '/de/user-guide/' %}activeMenuItem{% endif %}" title="Documents">Dokumente</a></li>
+    <li><a href="{{ site.baseurl }}/de/api-reference" class="{% if page.url == '/de/api-reference/' %}activeMenuItem{% endif %}" title="API Reference">Schnittstellenreferenz (API)</a></li>
+    <li><a href="{{ site.baseurl }}/de/faq" class="{% if page.url == '/de/faq/' %}activeMenuItem{% endif %}" title="FAQ">FAQ</a></li>
+    <li><a href="{{ site.baseurl }}/de/blog" class="{% if page.url == '/de/blog/' %}activeMenuItem{% endif %}" title="Blog">Blog</a></li>
+    <li><a href="{{ site.baseurl }}/de/development" class="{% if page.url == '/de/development/' %}activeMenuItem{% endif %}" title="Development">Entwicklung</a></li>
   {% else %}
     <li><a href="{{ site.baseurl }}/" class="{% if page.url == '/' %}activeMenuItem{% endif %}" title="Home">Home</a></li>
     <li><a href="{{ site.baseurl }}/en/download" class="{% if page.url == '/en/download/' %}activeMenuItem{% endif %}" title="Download">Download</a></li>
