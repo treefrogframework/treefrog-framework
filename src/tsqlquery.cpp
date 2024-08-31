@@ -255,7 +255,18 @@ bool TSqlQuery::exec()
         }
     } else {
         ret = QSqlQuery::exec();
-        Tf::writeQueryLog(executedQuery(), ret, lastError(), time.elapsed());
+        QString msg = executedQuery();
+        QVariantList values = boundValues();
+        if (!values.isEmpty()) {
+            msg += QLatin1String("  -- ");
+            for (auto &val : values) {
+                msg += QChar('`');
+                msg += val.toString();
+                msg += QLatin1String("`, ");
+            }
+            msg.chop(2);
+        }
+        Tf::writeQueryLog(msg, ret, lastError(), time.elapsed());
     }
 
     return ret;
