@@ -5,9 +5,7 @@ SUBDIRS += mailmessage multipartformdata  smtpmailer viewhelper paginator
 SUBDIRS += fieldnametovariablename rand urlrouter urlrouter2
 SUBDIRS += buildtest stack queue forlist
 SUBDIRS += jscontext compression sqlitedb url malloc
-!mac {
-  SUBDIRS += sharedmemoryhash sharedmemorymutex
-}
+SUBDIRS += sharedmemoryhash sharedmemorymutex
 unix {
   SUBDIRS += redis memcached
 }

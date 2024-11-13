@@ -434,7 +434,7 @@ int killTreeFrogProcess(const QString &cmd)
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:%ld", (int64_t)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:%lld", (int64_t)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
@@ -456,7 +456,7 @@ void showProcessId()
 {
     int64_t pid = readPidOfApplication();
     if (pid > 0) {
-        std::printf("%ld\n", pid);
+        std::printf("%lld\n", (int64_t)pid);
     }
 }
 
@@ -587,7 +587,7 @@ int managerMain(int argc, char *argv[])
     // Check TreeFrog processes are running
     int64_t pid = runningApplicationPid();
     if (pid > 0) {
-        std::fprintf(stderr, "Already running  pid:%ld\n", pid);
+        std::fprintf(stderr, "Already running  pid:%lld\n", (int64_t)pid);
         return 1;
     }
 

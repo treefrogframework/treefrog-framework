@@ -53,7 +53,7 @@ TSharedMemory::~TSharedMemory()
 bool TSharedMemory::create(size_t size)
 {
     static const header_t INIT_HEADER = []() {
-        header_t header;
+        static header_t header;
         rwlock_init(&header.rwlock);
         return header;
     }();
