@@ -150,7 +150,7 @@ void TSharedMemoryAllocator::setbrk(bool initial)
         pb_header->endg = _sharedMemory->size();
         pb_header->checksum = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
     }
-    tSystemDebug("checksum = %lu", pb_header->checksum);
+    tSystemDebug("checksum = %llu", pb_header->checksum);
 
     _origin = pb_header->start() + sizeof(Tf::alloc_header_t);
 }
@@ -427,7 +427,7 @@ void TSharedMemoryAllocator::summary() const
     }
 
     tSystemDebug("-- memory block summary --");
-    tSystemDebug("table info: blocks = %d, free = %d, used = %lu", countBlocks(), countFreeBlocks(), pb_header->at.used);
+    tSystemDebug("table info: blocks = %d, free = %d, used = %llu", countBlocks(), countFreeBlocks(), pb_header->at.used);
 }
 
 // Debug function to print the entire link list
@@ -441,7 +441,7 @@ void TSharedMemoryAllocator::dump() const
     Tf::alloc_header_t *cur = pb_header->alloc_head();
 
     tSystemDebug("-- memory block information --");
-    tSystemDebug("table info: blocks = %d, free = %d, used = %lu, free-size = %lu, segment-size = %lu", countBlocks(), countFreeBlocks(), pb_header->at.used, sizeOfFreeBlocks(), dataSegmentSize());
+    tSystemDebug("table info: blocks = %d, free = %d, used = %llu, free-size = %lu, segment-size = %lu", countBlocks(), countFreeBlocks(), pb_header->at.used, sizeOfFreeBlocks(), dataSegmentSize());
     tSystemDebug("block info: head = %p, tail = %p", pb_header->alloc_head(), pb_header->alloc_tail());
     while (cur) {
         tSystemDebug("addr = %p, size = %u, freed = %u, next = %p, prev = %p",
