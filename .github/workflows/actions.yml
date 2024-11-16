@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ubuntu:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@main
     - name: apt
@@ -51,7 +51,7 @@ jobs:
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
   build-ubuntu-sharedlink:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@main
     - name: apt
@@ -93,8 +93,8 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
-  build-ubuntu20:
-    runs-on: ubuntu-20.04
+  build-ubuntu22:
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@main
     - name: apt
