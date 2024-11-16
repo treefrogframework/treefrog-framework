@@ -18,7 +18,7 @@ TMemcachedDriver::TMemcachedDriver() :
 bool TMemcachedDriver::command(const QByteArray &cmd)
 {
     QByteArray response;
-    tSystemDebug("memcached command: %s", cmd.data());
+    tSystemDebug("memcached command: {}", cmd.data());
     request(cmd, 0);
     return true;
 }
@@ -31,12 +31,12 @@ bool TMemcachedDriver::command(const QByteArray &cmd)
 QByteArray TMemcachedDriver::request(const QByteArray &command, int msecs)
 {
     if (Q_UNLIKELY(!isOpen())) {
-        tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open memcached session  [{}:{}]", __FILE__, __LINE__);
         return QByteArray();
     }
 
     if (!writeCommand(command)) {
-        tSystemError("memcached write error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("memcached write error  [{}:{}]", __FILE__, __LINE__);
         close();
         return QByteArray();
     }

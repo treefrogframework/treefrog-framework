@@ -59,7 +59,7 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
                 message.append(remoteHost);
                 break;
 
-            case 'd':  // %d : timestamp
+            case 'd':  // timestamp
                 if (!dateTimeFormat.isEmpty()) {
                     message.append(timestamp.toString(dateTimeFormat).toLocal8Bit());
                 } else {

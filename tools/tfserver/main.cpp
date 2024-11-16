@@ -38,16 +38,16 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
     QByteArray msg = message.toLocal8Bit();
     switch (type) {
     case QtFatalMsg:
-        tFatal("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        Tf::fatal("{} ({}:{} {})", msg.constData(), context.file, context.line, context.function);
         break;
     case QtCriticalMsg:
-        tError("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        Tf::error("{} ({}:{} {})", msg.constData(), context.file, context.line, context.function);
         break;
     case QtWarningMsg:
-        tWarn("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        Tf::warn("{} ({}:{} {})", msg.constData(), context.file, context.line, context.function);
         break;
     case QtDebugMsg:
-        tDebug("%s (%s:%u %s)", msg.constData(), context.file, context.line, context.function);
+        Tf::debug("{} ({}:{} {})", msg.constData(), context.file, context.line, context.function);
         break;
     default:
         break;
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
     {
         int port = (portNumber > 0) ? portNumber : Tf::appSettings()->value(Tf::ListenPort).toInt();
         if (port <= 0 || port > USHRT_MAX) {
-            tSystemError("Invalid port number: %d", port);
+            tSystemError("Invalid port number: {}", port);
             std::fprintf(stderr, "Invalid port number: %d\n", port);
             goto finish;
         }
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
     }
 
     if (sock <= 0) {
-        tSystemError("Invalid socket descriptor: %d", sock);
+        tSystemError("Invalid socket descriptor: {}", sock);
         std::fprintf(stderr, "Invalid option\n");
         goto finish;
     }
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_LINUX
         // Sets a listening socket descriptor
         TMultiplexingServer::instantiate(sock);
-        tSystemDebug("Set socket descriptor: %d", sock);
+        tSystemDebug("Set socket descriptor: {}", sock);
         server = TMultiplexingServer::instance();
 #else
         tFatal("Unsupported MPM: epoll");

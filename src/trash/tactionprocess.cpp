@@ -99,13 +99,13 @@ bool TActionProcess::isChildProcess()
 
 void TActionProcess::terminate(int status)
 {
-    tSystemDebug("Child process(%d) teminated. status:%d", childPid, status); 
+    tSystemDebug("Child process({}) teminated. status:{}", childPid, status); 
     emit finished();
 }
 
 
 void TActionProcess::kill(int sig)
 {
-    tSystemDebug("Child process(%d) killed. signal:%d", childPid, sig); 
+    tSystemDebug("Child process({}) killed. signal:{}", childPid, sig); 
     emit finished();
 }

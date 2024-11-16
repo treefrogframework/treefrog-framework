@@ -65,7 +65,7 @@ TLogger::TLogger()
 QVariant TLogger::settingsValue(const QString &k, const QVariant &defaultValue) const
 {
     const auto &settings = Tf::app()->loggerSettings();
-    //tSystemDebug("settingsValue: %s", qUtf8Printable(key() + "." + k));
+    //tSystemDebug("settingsValue: {}", qUtf8Printable(key() + "." + k));
     return settings.value(key() + "." + k, defaultValue);
 }
 
@@ -120,7 +120,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
             }
 
             switch (c) {
-            case 'd':  // %d : timestamp
+            case 'd':  // {} : timestamp
                 if (!dateTimeFormat.isEmpty()) {
                     message.append(log.timestamp.toString(dateTimeFormat).toLatin1());
                 } else {
@@ -129,7 +129,7 @@ QByteArray TLogger::logToByteArray(const TLog &log, const QByteArray &layout, co
                 break;
 
             case 'p':
-            case 'P': {  // %p or %P : priority
+            case 'P': {  // priority
                 QByteArray pri = priorityToString((Tf::LogPriority)log.priority);
                 if (c == 'p') {
                     pri = pri.toLower();
@@ -220,9 +220,9 @@ QTextCodec *TLogger::codec() const
                 if (c->name() != QTextCodec::codecForLocale()->name()) {
                     _codec = c;
                 }
-                //tSystemDebug("set log text codec: %s", c->name().data());
+                //tSystemDebug("set log text codec: {}", c->name().data());
             } else {
-                tSystemError("log text codec matching the name could be not found: %s", codecName.data());
+                tSystemError("log text codec matching the name could be not found: {}", codecName.data());
             }
         }
     }
@@ -240,9 +240,9 @@ QStringConverter::Encoding TLogger::encoding() const
             auto enc = QStringConverter::encodingForName(codecName);
             if (enc) {
                 _encoding = enc;
-                tSystemDebug("set log text codec: %s", QStringConverter::nameForEncoding(_encoding.value()));
+                tSystemDebug("set log text codec: {}", QStringConverter::nameForEncoding(_encoding.value()));
             } else {
-                tSystemError("log text codec matching the name could be not found: %s", codecName.data());
+                tSystemError("log text codec matching the name could be not found: {}", codecName.data());
             }
         }
 

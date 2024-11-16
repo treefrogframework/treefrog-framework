@@ -121,7 +121,7 @@ void TDatabaseContext::release()
 void TDatabaseContext::setTransactionEnabled(bool enable, int id)
 {
     if (id < 0) {
-        tError("Invalid database ID: %d", id);
+        Tf::error("Invalid database ID: {}", id);
         return;
     }
     return sqlDatabases[id].setEnabled(enable);
@@ -143,7 +143,7 @@ bool TDatabaseContext::commitTransaction(int id)
     bool res = false;
 
     if (id < 0 || id >= sqlDatabases.count()) {
-        tError("Failed to commit transaction. Invalid database ID: %d", id);
+        Tf::error("Failed to commit transaction. Invalid database ID: {}", id);
         return res;
     }
 
@@ -169,7 +169,7 @@ bool TDatabaseContext::rollbackTransaction(int id)
     bool res = false;
 
     if (id < 0 || id >= sqlDatabases.count()) {
-        tError("Failed to rollback transaction. Invalid database ID: %d", id);
+        Tf::error("Failed to rollback transaction. Invalid database ID: {}", id);
         return res;
     }
     res = sqlDatabases[id].rollback();

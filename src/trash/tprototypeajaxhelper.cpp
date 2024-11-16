@@ -302,7 +302,7 @@ QString TPrototypeAjaxHelper::optionsToString(const TOption &options) const
             string += QLatin1String(", ");
             continue;
         } else {
-            tWarn("invalid parameter: %d [%s:%d]", i.key(), __FILE__, __LINE__);
+            Tf::warn("invalid parameter: {} [{}:{}]", i.key(), __FILE__, __LINE__);
         }
     }
 

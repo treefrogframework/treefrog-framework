@@ -237,6 +237,7 @@ constexpr auto TF_SRC_REVISION = 2886;
 #define tDebug TDebug(Tf::DebugLevel).debug
 #define tTrace TDebug(Tf::TraceLevel).trace
 
+
 namespace Tf {
 #if QT_VERSION < 0x060000  // 6.0.0
 constexpr auto ReadOnly = QIODevice::ReadOnly;
@@ -255,6 +256,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
+#include <format>
 
 class TWebApplication;
 class TActionContext;
@@ -295,6 +297,50 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
 {
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
+
+// Logging for developer
+template<typename... Args>
+void fatal(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string str = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::FatalLevel, str);
+}
+
+template<typename... Args>
+void error(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string str = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::ErrorLevel, str);
+}
+
+template<typename... Args>
+void warn(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string str = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::WarnLevel, str);
+}
+
+template<typename... Args>
+void info(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string str = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::InfoLevel, str);
+}
+
+template<typename... Args>
+void debug(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string str = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::DebugLevel, str);
+}
+
+template<typename... Args>
+void trace(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string str = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::TraceLevel, str);
+}
+
 
 constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";

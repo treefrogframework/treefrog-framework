@@ -50,8 +50,8 @@ void TestMailMessage::mimeEncode()
 #else
     QByteArray actl = THttpUtility::toMimeEncoded(data, "UTF-8");
 #endif
-    // qDebug("%s", result.data());
-    // qDebug("%s", actl.data());
+    // qDebug("{}", result.data());
+    // qDebug("{}", actl.data());
     QCOMPARE(result, actl);
 }
 
@@ -79,7 +79,7 @@ void TestMailMessage::mimeDecode()
     QFETCH(QByteArray, encoding);
 
     QString result = THttpUtility::fromMimeEncoded(THttpUtility::toMimeEncoded(data, encoding).data());
-    //qDebug("%s", THttpUtility::toMimeEncoded(data, encoding).data());
+    //qDebug("{}", THttpUtility::toMimeEncoded(data, encoding).data());
     QCOMPARE(data, result);
 }
 
@@ -100,7 +100,7 @@ void TestMailMessage::subject()
 
     TMailMessage msg(encoding);
     msg.setSubject(subject);
-    //qDebug("%s", msg.toByteArray().data());
+    //qDebug("{}", msg.toByteArray().data());
     QCOMPARE(subject, msg.subject());
 }
 
@@ -144,8 +144,8 @@ void TestMailMessage::addAddress()
 
     TMailMessage msg(encoding);
     msg.setFrom(from, name);
-    // qDebug("from: %s", msg.from().data());
-    // qDebug("expt: %s", result.data());
+    // qDebug("from: {}", msg.from().data());
+    // qDebug("expt: {}", result.data());
     QCOMPARE(msg.from(), result);
     QCOMPARE(msg.fromAddress(), from);
 
@@ -155,7 +155,7 @@ void TestMailMessage::addAddress()
     QByteArrayList lst;
     lst << "aol2@aol.com" << "aol3@aol.com" << "aol4@aol.com";
     QCOMPARE(msg.recipients(), lst);
-    //qDebug("%s", msg.toByteArray().data());
+    //qDebug("{}", msg.toByteArray().data());
 }
 
 void TestMailMessage::dateTime_data()
@@ -201,10 +201,10 @@ void TestMailMessage::parse()
         "こんにちは,世界");
 
     TMailMessage mail(msg);
-    //qDebug("%s", mail.toByteArray().data());
-    //qDebug("%d", mail.recipients().count());
+    //qDebug("{}", mail.toByteArray().data());
+    //qDebug("{}", mail.recipients().count());
     // foreach(QByteArray ba, mail.recipients()) {
-    //     qDebug("recpt: %s", ba.data());
+    //     qDebug("recpt: {}", ba.data());
     // }
     QCOMPARE(mail.recipients().count(), 3);
     QCOMPARE(mail.from(), QByteArray("hoge <test@example.com>"));

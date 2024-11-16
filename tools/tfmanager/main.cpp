@@ -434,7 +434,7 @@ int killTreeFrogProcess(const QString &cmd)
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:%lld", (int64_t)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:{}", (int64_t)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
@@ -601,7 +601,7 @@ int managerMain(int argc, char *argv[])
         } else {
             int port = svrname.toInt();
             if (port <= 0 || port > USHRT_MAX) {
-                tSystemError("Invalid port number: %d", port);
+                tSystemError("Invalid port number: {}", port);
                 return 1;
             }
             listenPort = port;
@@ -637,7 +637,7 @@ int managerMain(int argc, char *argv[])
                 num = 1;
                 tSystemWarn("Fix the max number of application servers to one in auto-reload mode.");
             } else {
-                tSystemDebug("Max number of app servers: %d", num);
+                tSystemDebug("Max number of app servers: {}", num);
             }
             manager = new ServerManager(num, num, 0, &app);
             break;
@@ -688,7 +688,7 @@ int managerMain(int argc, char *argv[])
         }
 
         ret = app.exec();
-        tSystemDebug("TreeFrog manager process caught a signal [code:%d]", ret);
+        tSystemDebug("TreeFrog manager process caught a signal [code:{}]", ret);
         manager->stop();
 
         if (ret == 1) {  // means SIGHUP

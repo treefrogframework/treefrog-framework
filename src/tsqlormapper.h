@@ -201,7 +201,7 @@ inline T TSqlORMapper<T>::findFirst(const TCriteria &cri)
     Tf::writeQueryLog(query().lastQuery(), ret, lastError(), time.elapsed());
     queryLimit = oldLimit;
 
-    //tSystemDebug("findFirst() rowCount: %d", rowCount());
+    //tSystemDebug("findFirst() rowCount: {}", rowCount());
     return first();
 }
 
@@ -224,7 +224,7 @@ inline T TSqlORMapper<T>::findByPrimaryKey(const QVariant &pk)
 {
     int idx = T().primaryKeyIndex();
     if (idx < 0) {
-        tSystemDebug("Primary key not found, table name: %s", qUtf8Printable(T().tableName()));
+        tSystemDebug("Primary key not found, table name: {}", qUtf8Printable(T().tableName()));
         return T();
     }
 
@@ -254,7 +254,7 @@ inline int TSqlORMapper<T>::find(const TCriteria &cri)
         fetchMore();
     }
     Tf::writeQueryLog(query().lastQuery(), ret, lastError(), time.elapsed());
-    //tSystemDebug("find() rowCount: %d", rowCount());
+    //tSystemDebug("find() rowCount: {}", rowCount());
     return ret ? rowCount() : -1;
 }
 
@@ -332,7 +332,7 @@ inline T TSqlORMapper<T>::value(int i) const
     if (i >= 0 && i < rowCount()) {
         rec.setRecord(record(i), QSqlError());
     } else {
-        tSystemDebug("no such record, index: %d  rowCount:%d", i, rowCount());
+        tSystemDebug("no such record, index: {}  rowCount:{}", i, rowCount());
     }
     return rec;
 }
@@ -382,7 +382,7 @@ inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder o
         if (obj.propertyNames().contains(column, Qt::CaseInsensitive)) {
             sortColumns << qMakePair(column, order);
         } else {
-            tWarn("Unable to set sort order : '%s' column not found in '%s' table",
+            Tf::warn("Unable to set sort order : '{}' column not found in '{}' table",
                 qUtf8Printable(column), qUtf8Printable(obj.tableName()));
         }
     }

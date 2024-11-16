@@ -33,14 +33,14 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t p
     int protocol = (address.protocol() == QAbstractSocket::IPv6Protocol) ? AF_INET6 : AF_INET;
     SOCKET sock = ::WSASocket(protocol, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
     if (sock == INVALID_SOCKET) {
-        tSystemError("WSASocket Error: %d", WSAGetLastError());
+        tSystemError("WSASocket Error: {}", WSAGetLastError());
         return -1;
     }
 
     // ReuseAddr
     bool on = true;
     if (::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0) {
-        tSystemError("setsockopt error: %d", WSAGetLastError());
+        tSystemError("setsockopt error: {}", WSAGetLastError());
         goto error_socket;
     }
 
@@ -62,7 +62,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t p
         Q_IPV6ADDR ipv6 = address.toIPv6Address();
         std::memcpy(&(sa6.sin6_addr.tf_s6_addr), &ipv6, sizeof(ipv6));
         if (::bind(sock, (struct sockaddr *)&sa6, sizeof(sa6)) != 0) {
-            tSystemError("bind(v6) error: %d", WSAGetLastError());
+            tSystemError("bind(v6) error: {}", WSAGetLastError());
             goto error_socket;
         }
 
@@ -74,7 +74,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t p
         WSAHtons(sock, port, &(sa.sin_port));
         WSAHtonl(sock, address.toIPv4Address(), &(sa.sin_addr.s_addr));
         if (::bind(sock, (struct sockaddr *)&sa, sizeof(sa)) != 0) {
-            tSystemError("bind error: %d", WSAGetLastError());
+            tSystemError("bind error: {}", WSAGetLastError());
             goto error_socket;
         }
     } else {  // UnknownNetworkLayerProtocol
@@ -82,7 +82,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t p
     }
 
     if (::listen(sock, SOMAXCONN) != 0) {
-        tSystemError("listen error: %d", WSAGetLastError());
+        tSystemError("listen error: {}", WSAGetLastError());
         goto error_socket;
     }
     return sock;

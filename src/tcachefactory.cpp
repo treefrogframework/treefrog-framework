@@ -48,7 +48,7 @@ TCacheStore *TCacheFactory::create(const QString &key)
     } else if (k == MEMORY_CACHE_KEY) {
         ptr = new TCacheSharedMemoryStore;
     } else {
-        tSystemError("Not found cache store: %s", qUtf8Printable(key));
+        tSystemError("Not found cache store: {}", qUtf8Printable(key));
     }
     return ptr;
 }

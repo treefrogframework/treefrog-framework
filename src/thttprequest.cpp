@@ -504,7 +504,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             QJsonParseError error;
             d->jsonData = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
-                tSystemWarn("Json data: %s\n error: %s\n at: %d", body.data(), qUtf8Printable(error.errorString()),
+                tSystemWarn("Json data: {}\n error: {}\n at: {}", body.data(), qUtf8Printable(error.errorString()),
                     error.offset);
             }
         } else if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
@@ -512,7 +512,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->multipartFormData = TMultipartFormData(body, boundary(), context);
             d->formItems = d->multipartFormData.postParameters;
         } else {
-            tSystemWarn("unsupported content-type: %s", qUtf8Printable(ctype));
+            tSystemWarn("unsupported content-type: {}", qUtf8Printable(ctype));
         }
     } /* FALLTHRU */
 
@@ -649,12 +649,12 @@ QHostAddress THttpRequest::originatingClientAddress() const
     if (EnableForwardedForHeader) {
         if (TrustedProxyServers.isEmpty()) {
             static std::once_flag once;
-            std::call_once(once, []() { tWarn("TrustedProxyServers parameter of config is empty!"); });
+            std::call_once(once, []() { Tf::warn("TrustedProxyServers parameter of config is empty!"); });
         }
 
         auto hosts = QString::fromLatin1(header().rawHeader(QByteArrayLiteral("X-Forwarded-For"))).simplified().split(QRegularExpression("\\s?,\\s?"), Tf::SkipEmptyParts);
         if (hosts.isEmpty()) {
-            tWarn("'X-Forwarded-For' header is empty");
+            Tf::warn("'X-Forwarded-For' header is empty");
         } else {
             for (auto &proxy : TrustedProxyServers) {
                 hosts.removeAll(proxy);

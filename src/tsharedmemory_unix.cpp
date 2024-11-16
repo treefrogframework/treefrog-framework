@@ -92,11 +92,11 @@ bool TSharedMemory::create(size_t size)
 
     std::memcpy(_ptr, &INIT_HEADER, sizeof(INIT_HEADER));
     _size = size;
-    tSystemDebug("SharedMemory created.  name:%s size:%zu", qUtf8Printable(_name), _size);
+    tSystemDebug("SharedMemory created.  name:{} size:%zu", qUtf8Printable(_name), _size);
     return true;
 
 error:
-    tSystemError("SharedMemory create error.  name:%s size:%zu [%s:%d]", qUtf8Printable(_name), size, __FILE__, __LINE__);
+    tSystemError("SharedMemory create error.  name:{} size:%zu [{}:{}]", qUtf8Printable(_name), size, __FILE__, __LINE__);
 
     if (_fd > 0) {
         tf_close(_fd);
@@ -112,7 +112,7 @@ error:
 void TSharedMemory::unlink()
 {
     shm_unlink(qUtf8Printable(_name));
-    tSystemDebug("SharedMemory unlinked.  name:%s", qUtf8Printable(_name));
+    tSystemDebug("SharedMemory unlinked.  name:{}", qUtf8Printable(_name));
 }
 
 
@@ -144,11 +144,11 @@ bool TSharedMemory::attach()
     }
 
     _size = st.st_size;
-    tSystemDebug("SharedMemory attached.  name:%s size:%zu", qUtf8Printable(_name), _size);
+    tSystemDebug("SharedMemory attached.  name:{} size:%zu", qUtf8Printable(_name), _size);
     return true;
 
 error:
-    tSystemError("SharedMemory attach error  [%s:%d]", __FILE__, __LINE__);
+    tSystemError("SharedMemory attach error  [{}:{}]", __FILE__, __LINE__);
 
     if (_fd > 0) {
         tf_close(_fd);

@@ -51,7 +51,7 @@ QJSValue TJSModule::evaluate(const QString &program, const QString &fileName, in
 
     QJSValue ret = _jsEngine->evaluate(program, fileName, lineNumber);
     if (ret.isError()) {
-        tSystemError("JS uncaught exception at %s:%s : %s", prop(ret, "fileName"),
+        tSystemError("JS uncaught exception at {}:{} : {}", prop(ret, "fileName"),
             prop(ret, "lineNumber"), prop(ret, "message"));
     }
     return ret;
@@ -94,7 +94,7 @@ QJSValue TJSModule::call(const QString &func, const QJSValueList &args)
 
     ret = _funcObj->call(args);
     if (ret.isError()) {
-        tSystemError("JS uncaught exception at %s:%s : %s", prop(ret, "fileName"),
+        tSystemError("JS uncaught exception at {}:{} : {}", prop(ret, "fileName"),
             prop(ret, "lineNumber"), prop(ret));
         goto eval_error;
     }
@@ -120,10 +120,10 @@ TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const Q
     QMutexLocker locker(&_mutex);
 
     QJSValue construct = evaluate(constructorName);
-    tSystemDebug("construct: %s", qUtf8Printable(construct.toString()));
+    tSystemDebug("construct: {}", qUtf8Printable(construct.toString()));
     QJSValue res = construct.callAsConstructor(args);
     if (res.isError()) {
-        tSystemError("JS uncaught exception at %s:%s : %s", prop(res, "fileName"),
+        tSystemError("JS uncaught exception at {}:{} : {}", prop(res, "fileName"),
             prop(res, "lineNumber"), prop(res));
     }
     return TJSInstance(res);

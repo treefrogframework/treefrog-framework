@@ -30,7 +30,7 @@ TAbstractController::TAbstractController() :
 void TAbstractController::exportVariant(const QString &name, const QVariant &value, bool overwrite)
 {
     if (!value.isValid()) {
-        tSystemWarn("An invalid QVariant object for exportVariant(), name:%s", qUtf8Printable(name));
+        tSystemWarn("An invalid QVariant object for exportVariant(), name:{}", qUtf8Printable(name));
         return;
     }
 

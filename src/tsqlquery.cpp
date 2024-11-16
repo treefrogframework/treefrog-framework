@@ -58,11 +58,11 @@ bool TSqlQuery::load(const QString &filename)
 
     QDir dir(queryDirPath());
     QFile file(dir.filePath(filename));
-    tSystemDebug("SQL_QUERY_ROOT: %s", qUtf8Printable(dir.dirName()));
-    tSystemDebug("filename: %s", qUtf8Printable(file.fileName()));
+    tSystemDebug("SQL_QUERY_ROOT: {}", qUtf8Printable(dir.dirName()));
+    tSystemDebug("filename: {}", qUtf8Printable(file.fileName()));
 
     if (!file.open(QIODevice::ReadOnly)) {
-        tSystemError("Unable to open file: %s", qUtf8Printable(file.fileName()));
+        tSystemError("Unable to open file: {}", qUtf8Printable(file.fileName()));
         return false;
     }
 
@@ -251,7 +251,7 @@ bool TSqlQuery::exec()
             ret = QSqlQuery::exec(statement);
             Tf::writeQueryLog(executedQuery(), ret, lastError(), time.elapsed());
         } else {
-            tError("Unable to execute prepared query.");
+            Tf::error("Unable to execute prepared query.");
         }
     } else {
         ret = QSqlQuery::exec();
@@ -281,7 +281,7 @@ TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
     const auto &db = TSqlDatabase::database(_connectionName);
 
     if (db.isPreparedStatementSupported()) {
-        tError("Not supported colon-name placeholder of prepared statement for the database");
+        Tf::error("Not supported colon-name placeholder of prepared statement for the database");
     } else {
         QSqlQuery::bindValue(placeholder, val);
     }

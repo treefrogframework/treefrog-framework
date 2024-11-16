@@ -81,7 +81,7 @@ inline T TSqlQueryIterator<T>::next()
         return T();
   
     if (!sqlQuery->next()) {
-        tSystemDebug("no such record, at: %d  size: %d", sqlQuery->at(), sqlQuery->size());
+        tSystemDebug("no such record, at: {}  size: {}", sqlQuery->at(), sqlQuery->size());
         return T();
     }
     return value();
@@ -94,7 +94,7 @@ inline T TSqlQueryIterator<T>::previous()
         return T();
 
     if (!sqlQuery->previous()) {
-        tSystemDebug("no such record, at: %d  size: %d", sqlQuery->at(), sqlQuery->size());
+        tSystemDebug("no such record, at: {}  size: {}", sqlQuery->at(), sqlQuery->size());
         return T();
     }
     return value();

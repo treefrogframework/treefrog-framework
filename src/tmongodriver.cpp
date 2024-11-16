@@ -67,7 +67,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
         _dbName = db;
         serverVersionNumber();  // Gets server version
     } else {
-        tSystemError("MongoDB client create error. Connection URI: %s", qUtf8Printable(uri));
+        tSystemError("MongoDB client create error. Connection URI: {}", qUtf8Printable(uri));
     }
     return (bool)_mongoClient;
 }
@@ -131,7 +131,7 @@ bool TMongoDriver::find(const QString &collection, const QVariantMap &criteria, 
 
     if (cursor) {
         if (mongoc_cursor_error(cursor, &error)) {
-            tSystemError("MongoDB Find Error: %s", error.message);
+            tSystemError("MongoDB Find Error: {}", error.message);
             setLastError(&error);
         }
     } else {
@@ -176,7 +176,7 @@ bool TMongoDriver::insertOne(const QString &collection, const QVariantMap &objec
             *reply = TBson::fromBson((TBsonObject *)&rep);
         }
     } else {
-        tSystemError("MongoDB Insert Error: %s", error.message);
+        tSystemError("MongoDB Insert Error: {}", error.message);
         setLastError(&error);
     }
     return res;
@@ -202,7 +202,7 @@ bool TMongoDriver::removeOne(const QString &collection, const QVariantMap &crite
             *reply = TBson::fromBson((TBsonObject *)&rep);
         }
     } else {
-        tSystemError("MongoDB Remove Error: %s", error.message);
+        tSystemError("MongoDB Remove Error: {}", error.message);
         setLastError(&error);
     }
     return res;
@@ -228,7 +228,7 @@ bool TMongoDriver::removeMany(const QString &collection, const QVariantMap &crit
             *reply = TBson::fromBson((TBsonObject *)&rep);
         }
     } else {
-        tSystemError("MongoDB Remove Error: %s", error.message);
+        tSystemError("MongoDB Remove Error: {}", error.message);
         setLastError(&error);
     }
     return res;
@@ -258,7 +258,7 @@ bool TMongoDriver::updateOne(const QString &collection, const QVariantMap &crite
             *reply = TBson::fromBson((TBsonObject *)&rep);
         }
     } else {
-        tSystemError("MongoDB Update Error: %s", error.message);
+        tSystemError("MongoDB Update Error: {}", error.message);
         setLastError(&error);
     }
     return res;
@@ -287,7 +287,7 @@ bool TMongoDriver::updateMany(const QString &collection, const QVariantMap &crit
             *reply = TBson::fromBson((TBsonObject *)&rep);
         }
     } else {
-        tSystemError("MongoDB UpdateMulti Error: %s", error.message);
+        tSystemError("MongoDB UpdateMulti Error: {}", error.message);
         setLastError(&error);
     }
     return res;
@@ -314,7 +314,7 @@ int64_t TMongoDriver::count(const QString &collection, const QVariantMap &criter
     mongoc_collection_destroy(col);
 
     if (count < 0) {
-        tSystemError("MongoDB Count Error: %s", error.message);
+        tSystemError("MongoDB Count Error: {}", error.message);
         setLastError(&error);
     }
     return count;
@@ -360,7 +360,7 @@ QStringList TMongoDriver::getCollectionNames()
         }
         bson_strfreev(strv);
     } else {
-        tSystemError("MongoDB get_collection_names error: %s", error.message);
+        tSystemError("MongoDB get_collection_names error: {}", error.message);
         setLastError(&error);
     }
 
@@ -386,7 +386,7 @@ QString TMongoDriver::serverVersion()
     bson_destroy(&rep);
 
     QString version = map.value("version").toString();
-    tSystemDebug("MongoDB server version: %s", qUtf8Printable(version));
+    tSystemDebug("MongoDB server version: {}", qUtf8Printable(version));
     return version;
 }
 
@@ -405,7 +405,7 @@ int TMongoDriver::serverVersionNumber()
             }
 
             _serverVerionNumber = number;
-            tSystemDebug("MongoDB server version number: %x", number);
+            tSystemDebug("MongoDB server version number: {:#x}", number);
         }
     }
     return _serverVerionNumber;

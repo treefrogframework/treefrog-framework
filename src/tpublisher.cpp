@@ -59,7 +59,7 @@ bool Pub::subscribe(const QObject *receiver, bool local)
         receiver, SLOT(sendBinaryForPublish(const QByteArray &, const QObject *)), Qt::QueuedConnection);
 
     subscribers.insert(receiver, local);
-    tSystemDebug("subscriber counter: %d", subscriberCounter());
+    tSystemDebug("subscriber counter: {}", subscriberCounter());
     return true;
 }
 
@@ -74,7 +74,7 @@ bool Pub::unsubscribe(const QObject *receiver)
 
     disconnect(this, nullptr, receiver, nullptr);
     subscribers.remove(receiver);
-    tSystemDebug("subscriber counter: %d", subscriberCounter());
+    tSystemDebug("subscriber counter: {}", subscriberCounter());
     return true;
 }
 
@@ -124,7 +124,7 @@ TPublisher::TPublisher()
 
 void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket *socket)
 {
-    tSystemDebug("TPublisher::subscribe: %s", qUtf8Printable(topic));
+    tSystemDebug("TPublisher::subscribe: {}", qUtf8Printable(topic));
     QMutexLocker locker(&mutex);
 
     Pub *pub = get(topic);
@@ -138,7 +138,7 @@ void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket 
 
 void TPublisher::unsubscribe(const QString &topic, TAbstractWebSocket *socket)
 {
-    tSystemDebug("TPublisher::unsubscribe: %s", qUtf8Printable(topic));
+    tSystemDebug("TPublisher::unsubscribe: {}", qUtf8Printable(topic));
     QMutexLocker locker(&mutex);
 
     Pub *pub = get(topic);
@@ -162,13 +162,13 @@ void TPublisher::unsubscribeFromAll(TAbstractWebSocket *socket)
         pub->unsubscribe(castToObject(socket));
 
         if (pub->subscriberCounter() == 0) {
-            tSystemDebug("release topic: %s", qUtf8Printable(it.key()));
+            tSystemDebug("release topic: {}", qUtf8Printable(it.key()));
             it.remove();
             delete pub;
         }
     }
 
-    tSystemDebug("total topics: %lld", (int64_t)pubobj.count());
+    tSystemDebug("total topics: {}", (int64_t)pubobj.count());
 }
 
 
@@ -254,7 +254,7 @@ void TPublisher::receiveSystemBus()
         }
 
         default:
-            tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
+            tSystemError("Internal Error  [{}:{}]", __FILE__, __LINE__);
             break;
         }
     }
@@ -266,7 +266,7 @@ Pub *TPublisher::create(const QString &topic)
     auto *pub = new Pub(topic);
     pub->moveToThread(Tf::app()->thread());
     pubobj.insert(topic, pub);
-    tSystemDebug("create topic: %s", qUtf8Printable(topic));
+    tSystemDebug("create topic: {}", qUtf8Printable(topic));
     return pub;
 }
 
@@ -282,6 +282,6 @@ void TPublisher::release(const QString &topic)
     Pub *pub = pubobj.take(topic);
     if (pub) {
         delete pub;
-        tSystemDebug("release topic: %s  (total topics:%lld)", qUtf8Printable(topic), (int64_t)pubobj.count());
+        tSystemDebug("release topic: {}  (total topics:{})", qUtf8Printable(topic), (int64_t)pubobj.count());
     }
 }

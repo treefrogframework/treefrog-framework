@@ -157,14 +157,14 @@ bool TWebSocketFrame::validate()
     _valid &= (rsv2Bit() == false);
     _valid &= (rsv3Bit() == false);
     if (!_valid) {
-        tSystemError("WebSocket frame validation error : Incorrect RSV bit  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("WebSocket frame validation error : Incorrect RSV bit  [{}:{}]", __FILE__, __LINE__);
         return _valid;
     }
 
     _valid &= ((opCode() >= TWebSocketFrame::Continuation && opCode() <= TWebSocketFrame::BinaryFrame)
         || (opCode() >= TWebSocketFrame::Close && opCode() <= TWebSocketFrame::Pong));
     if (!_valid) {
-        tSystemError("WebSocket frame validation error : Incorrect opcode : %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
+        tSystemError("WebSocket frame validation error : Incorrect opcode : {}  [{}:{}]", (int)opCode(), __FILE__, __LINE__);
         return _valid;
     }
 
@@ -174,7 +174,7 @@ bool TWebSocketFrame::validate()
     }
 
     if (!_valid) {
-        tSystemError("WebSocket frame validation error : Invalid control frame  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("WebSocket frame validation error : Invalid control frame  [{}:{}]", __FILE__, __LINE__);
     }
     return _valid;
 }

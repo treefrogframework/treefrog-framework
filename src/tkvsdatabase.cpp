@@ -57,12 +57,12 @@ static TKvsDriver *createDriver(const QString &driverName)
     } else if (name == QLatin1String("memory")) {
         driver = new TSharedMemoryKvsDriver();
     } else {
-        tWarn("TKvsDatabase: %s driver not found", qUtf8Printable(driverName));
+        Tf::warn("TKvsDatabase: {} driver not found", qUtf8Printable(driverName));
         return driver;
     }
 
     if (!driver) {
-        tWarn("TKvsDatabase: %s driver not loaded", qUtf8Printable(driverName));
+        Tf::warn("TKvsDatabase: {} driver not loaded", qUtf8Printable(driverName));
     }
     return driver;
 }
