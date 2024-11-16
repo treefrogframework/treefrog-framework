@@ -100,7 +100,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc-11 g++-11 clang make cmake
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
