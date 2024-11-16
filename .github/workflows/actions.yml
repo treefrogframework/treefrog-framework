@@ -100,7 +100,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc-12 g++-12 clang-15 make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc-12 g++-12 clang-15 make cmake libstdc++-12-dev
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -108,10 +108,10 @@ jobs:
         qmake -v
     - name: configure
       run: |
-        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 100
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 100
-        clang++ --version
-        ./configure --prefix=/usr/local --spec=linux-clang
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+        g++ --version
+        ./configure --prefix=/usr/local --spec=linux-g++
     - name: make
       run: |
         make -j4 -C src
