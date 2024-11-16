@@ -256,8 +256,8 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
-#if __cplusplus >= 202002L  // C++20
-#include <format>
+#if __has_include(<format>)
+# include <format>
 #endif
 
 class TWebApplication;
@@ -300,7 +300,7 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
 
-#if __cplusplus >= 202002L  // C++20
+#if __has_include(<format>)
 
 // Logging for developer
 template<typename... Args>

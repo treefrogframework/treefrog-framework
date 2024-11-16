@@ -3,7 +3,7 @@
 #include <QSettings>
 #include <QVariant>
 #include <TGlobal>
-#if __cplusplus >= 202002L  // C++20
+#if __has_include(<format>)
 #include <format>
 #endif
 
@@ -24,7 +24,7 @@ T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log
 T_CORE_EXPORT void writeQueryLog(const QString &query, bool success, const QSqlError &error, int duration);
 T_CORE_EXPORT void traceQuery(int duration, const std::string &msg);
 
-#if __cplusplus >= 202002L  // C++20
+#if __has_include(<format>)
 
 template<typename... Args>
 void traceQueryLog(int duration, const std::format_string<Args...> &fmt, Args&&... args)
@@ -47,7 +47,7 @@ enum SystemOpCode {
 T_CORE_EXPORT QMap<QString, QVariant> settingsToMap(QSettings &settings, const QString &env = QString());
 }
 
-#if __cplusplus >= 202002L  // C++20
+#if __has_include(<format>)
 
 template<typename... Args>
 void tSystemError(const std::format_string<Args...> &fmt, Args&&... args)
@@ -72,7 +72,7 @@ void tSystemInfo(const std::format_string<Args...> &fmt, Args&&... args)
 
 #endif
 
-#if !defined(TF_NO_DEBUG) && __cplusplus >= 202002L  // C++20
+#if !defined(TF_NO_DEBUG) && __has_include(<format>)
 
 template<typename... Args>
 void tSystemDebug(const std::format_string<Args...> &fmt, Args&&... args)
