@@ -107,7 +107,10 @@ jobs:
         sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
         qmake -v
     - name: configure
-      run: ./configure --prefix=/usr/local --spec=linux-g++
+      run: |
+        update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+        g++ --version
+        ./configure --prefix=/usr/local --spec=linux-g++
     - name: make
       run: |
         make -j4 -C src
