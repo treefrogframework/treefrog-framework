@@ -108,9 +108,10 @@ jobs:
         qmake -v
     - name: configure
       run: |
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
-        g++ --version
-        ./configure --prefix=/usr/local --spec=linux-g++
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 100
+        clang++ --version
+        ./configure --prefix=/usr/local --spec=linux-clang
     - name: make
       run: |
         make -j4 -C src
