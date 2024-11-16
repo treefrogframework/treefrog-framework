@@ -108,7 +108,7 @@ jobs:
         qmake -v
     - name: configure
       run: |
-        update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
         g++ --version
         ./configure --prefix=/usr/local --spec=linux-g++
     - name: make
