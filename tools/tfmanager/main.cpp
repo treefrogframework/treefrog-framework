@@ -19,6 +19,7 @@
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
 #endif
+#include <cinttypes>
 
 #ifdef Q_OS_UNIX
 #include <sys/utsname.h>
@@ -456,7 +457,7 @@ void showProcessId()
 {
     int64_t pid = readPidOfApplication();
     if (pid > 0) {
-        std::printf("%lld\n", (int64_t)pid);
+        std::printf("%" PRId64 "\n", pid);
     }
 }
 
@@ -587,7 +588,7 @@ int managerMain(int argc, char *argv[])
     // Check TreeFrog processes are running
     int64_t pid = runningApplicationPid();
     if (pid > 0) {
-        std::fprintf(stderr, "Already running  pid:%lld\n", (int64_t)pid);
+        std::fprintf(stderr, "Already running  pid:%" PRId64 "\n", pid);
         return 1;
     }
 
