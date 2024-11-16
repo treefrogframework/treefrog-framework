@@ -256,7 +256,9 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
+#if __cplusplus >= 202002L  // C++20
 #include <format>
+#endif
 
 class TWebApplication;
 class TActionContext;
@@ -297,6 +299,8 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
 {
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
+
+#if __cplusplus >= 202002L  // C++20
 
 // Logging for developer
 template<typename... Args>
@@ -341,6 +345,7 @@ void trace(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::logging(Tf::TraceLevel, str);
 }
 
+#endif
 
 constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";
