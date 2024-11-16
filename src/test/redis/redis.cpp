@@ -59,11 +59,11 @@ void TestRedis::exists_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QByteArray(u8"Hello world.");
+                       << QByteArray("Hello world.");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
+                       << QByteArray(" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256).toLatin1();
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
@@ -96,11 +96,11 @@ void TestRedis::setGet_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QByteArray(u8"Hello world.");
+                       << QByteArray("Hello world.");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
+                       << QByteArray(" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256).toLatin1();
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
@@ -133,13 +133,13 @@ void TestRedis::setexGet_data()
     QTest::addColumn<int>("secs");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QByteArray(u8"Hello world.")
+                       << QByteArray("Hello world.")
                        << (int)Tf::random(2, 10);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは")
+                       << QByteArray("こんにちは")
                        << (int)Tf::random(2, 10);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
+                       << QByteArray(" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ")
                        << (int)Tf::random(2, 10);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256).toLatin1()
@@ -176,11 +176,11 @@ void TestRedis::setnxGet_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QByteArray(u8"Hello world.");
+                       << QByteArray("Hello world.");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
+                       << QByteArray(" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256).toLatin1();
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
@@ -218,11 +218,11 @@ void TestRedis::getSet_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << QByteArray::number(QDateTime::currentSecsSinceEpoch())
-                       << QByteArray(u8"Hello world.");
+                       << QByteArray("Hello world.");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
+                       << QByteArray(" Hello world. \r\nこんにちは、\n\"世界\"\t!!! ");
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << randomString(256).toLatin1();
     QTest::newRow("5") << QUuid::createUuid().toByteArray()

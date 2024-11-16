@@ -28,15 +28,15 @@ void TestMailMessage::mimeEncode_data()
 
     // `echo 無事？ | nkf -jM`
 #if QT_VERSION < 0x060000
-    QTest::newRow("1") << QString::fromUtf8(u8"無事？") << QByteArray(u8"=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?=");
-    QTest::newRow("2") << QString::fromUtf8(u8"田") << QByteArray(u8"=?ISO-2022-JP?B?GyRCRUQbKEI=?=");
-    QTest::newRow("3") << QString::fromUtf8(u8"あ1１aAＡい2２漢字3") << QByteArray(u8"=?ISO-2022-JP?B?GyRCJCIbKEIxGyRCIzEbKEJhQRskQiNBJCQbKEIyGyRCIzI0QTt6GyhCMw==?=");
-    QTest::newRow("4") << QString::fromUtf8(u8"1１aAＡい2２漢字3") << QByteArray(u8"=?ISO-2022-JP?B?MRskQiMxGyhCYUEbJEIjQSQkGyhCMhskQiMyNEE7ehsoQjM=?=");
+    QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?=");
+    QTest::newRow("2") << QString::fromUtf8("田") << QByteArray("=?ISO-2022-JP?B?GyRCRUQbKEI=?=");
+    QTest::newRow("3") << QString::fromUtf8("あ1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?GyRCJCIbKEIxGyRCIzEbKEJhQRskQiNBJCQbKEIyGyRCIzI0QTt6GyhCMw==?=");
+    QTest::newRow("4") << QString::fromUtf8("1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?MRskQiMxGyhCYUEbJEIjQSQkGyhCMhskQiMyNEE7ehsoQjM=?=");
 #else
-    QTest::newRow("1") << QString::fromUtf8(u8"無事？") << QByteArray(u8"=?UTF-8?B?54Sh5LqL77yf?=");
-    QTest::newRow("2") << QString::fromUtf8(u8"田") << QByteArray(u8"=?UTF-8?B?55Sw?=");
-    QTest::newRow("3") << QString::fromUtf8(u8"あ1１aAＡい2２漢字3") << QByteArray(u8"=?UTF-8?B?44GCMe+8kWFB77yh44GEMu+8kua8ouWtlzM=?=");
-    QTest::newRow("4") << QString::fromUtf8(u8"1１aAＡい2２漢字3") << QByteArray(u8"=?UTF-8?B?Me+8kWFB77yh44GEMu+8kua8ouWtlzM=?=");
+    QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("=?UTF-8?B?54Sh5LqL77yf?=");
+    QTest::newRow("2") << QString::fromUtf8("田") << QByteArray("=?UTF-8?B?55Sw?=");
+    QTest::newRow("3") << QString::fromUtf8("あ1１aAＡい2２漢字3") << QByteArray("=?UTF-8?B?44GCMe+8kWFB77yh44GEMu+8kua8ouWtlzM=?=");
+    QTest::newRow("4") << QString::fromUtf8("1１aAＡい2２漢字3") << QByteArray("=?UTF-8?B?Me+8kWFB77yh44GEMu+8kua8ouWtlzM=?=");
 #endif
 }
 
@@ -61,16 +61,16 @@ void TestMailMessage::mimeDecode_data()
     QTest::addColumn<QString>("data");
     QTest::addColumn<QByteArray>("encoding");
 
-    QTest::newRow("1") << QString::fromUtf8(u8"aaaa") << QByteArray(u8"UTF-8");
-    QTest::newRow("2") << QString::fromUtf8(u8"あいうえお") << QByteArray(u8"UTF-8");
-    QTest::newRow("3") << QString::fromUtf8(u8"あいうえお") << QByteArray(u8"EUC-JP");
-    QTest::newRow("4") << QString::fromUtf8(u8"０0１1２2３3４4５5６6７7８8９9") << QByteArray(u8"UTF-8");
-    QTest::newRow("5") << QString::fromUtf8(u8"あaaa") << QByteArray(u8"iso-2022-jp");
-    QTest::newRow("6") << QString::fromUtf8(u8"無事？") << QByteArray(u8"UTF-8");
-    QTest::newRow("7") << QString::fromUtf8(u8"無事？") << QByteArray(u8"shift-jis");
-    QTest::newRow("8") << QString::fromUtf8(u8"無a事？z") << QByteArray(u8"iso-2022-jp");
-    QTest::newRow("9") << QString::fromUtf8(u8"無a事？z") << QByteArray(u8"UTF-8");
-    QTest::newRow("10") << QString::fromUtf8(u8"無a事？z") << QByteArray(u8"shift-jis");}
+    QTest::newRow("1") << QString::fromUtf8("aaaa") << QByteArray("UTF-8");
+    QTest::newRow("2") << QString::fromUtf8("あいうえお") << QByteArray("UTF-8");
+    QTest::newRow("3") << QString::fromUtf8("あいうえお") << QByteArray("EUC-JP");
+    QTest::newRow("4") << QString::fromUtf8("０0１1２2３3４4５5６6７7８8９9") << QByteArray("UTF-8");
+    QTest::newRow("5") << QString::fromUtf8("あaaa") << QByteArray("iso-2022-jp");
+    QTest::newRow("6") << QString::fromUtf8("無事？") << QByteArray("UTF-8");
+    QTest::newRow("7") << QString::fromUtf8("無事？") << QByteArray("shift-jis");
+    QTest::newRow("8") << QString::fromUtf8("無a事？z") << QByteArray("iso-2022-jp");
+    QTest::newRow("9") << QString::fromUtf8("無a事？z") << QByteArray("UTF-8");
+    QTest::newRow("10") << QString::fromUtf8("無a事？z") << QByteArray("shift-jis");}
 
 
 void TestMailMessage::mimeDecode()
@@ -88,8 +88,8 @@ void TestMailMessage::subject_data()
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("encoding");
 
-    QTest::newRow("1") << QString::fromUtf8(u8"無事？") << QByteArray(u8"UTF-8");
-    QTest::newRow("2") << QString::fromUtf8(u8"こんにちは") << QByteArray(u8"UTF-8");
+    QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("UTF-8");
+    QTest::newRow("2") << QString::fromUtf8("こんにちは") << QByteArray("UTF-8");
 }
 
 
@@ -115,21 +115,21 @@ void TestMailMessage::addAddress_data()
     QTest::addColumn<QString>("name");
     QTest::addColumn<QByteArray>("result");
 
-    QTest::newRow("1") << QByteArray(u8"UTF-8")
-                       << QByteArray(u8"aol1@aol.com")
-                       << QByteArray(u8"aol2@aol.com")
-                       << QByteArray(u8"aol3@aol.com")
-                       << QByteArray(u8"aol4@aol.com")
-                       << QString::fromUtf8(u8"無事？")
-                       << QByteArray(u8"=?UTF-8?B?54Sh5LqL77yf?= <aol1@aol.com>");
+    QTest::newRow("1") << QByteArray("UTF-8")
+                       << QByteArray("aol1@aol.com")
+                       << QByteArray("aol2@aol.com")
+                       << QByteArray("aol3@aol.com")
+                       << QByteArray("aol4@aol.com")
+                       << QString::fromUtf8("無事？")
+                       << QByteArray("=?UTF-8?B?54Sh5LqL77yf?= <aol1@aol.com>");
 
-    QTest::newRow("2") << QByteArray(u8"UTF-8")
-                       << QByteArray(u8"aol1@aol.com")
-                       << QByteArray(u8"aol2@aol.com")
-                       << QByteArray(u8"aol3@aol.com")
-                       << QByteArray(u8"aol4@aol.com")
-                       << QString::fromUtf8(u8"aoyama kazz")
-                       << QByteArray(u8"aoyama kazz <aol1@aol.com>");
+    QTest::newRow("2") << QByteArray("UTF-8")
+                       << QByteArray("aol1@aol.com")
+                       << QByteArray("aol2@aol.com")
+                       << QByteArray("aol3@aol.com")
+                       << QByteArray("aol4@aol.com")
+                       << QString::fromUtf8("aoyama kazz")
+                       << QByteArray("aoyama kazz <aol1@aol.com>");
 }
 
 void TestMailMessage::addAddress()

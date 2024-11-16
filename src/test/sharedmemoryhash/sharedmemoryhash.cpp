@@ -64,7 +64,7 @@ void TestSharedMemoryHash::testAlloc1_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << randomString(64);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
@@ -97,7 +97,7 @@ void TestSharedMemoryHash::testAlloc2_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << ckey
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("2") << ckey
                        << randomString(64);
     QTest::newRow("3") << ckey
@@ -141,7 +141,7 @@ void TestSharedMemoryHash::testAlloc3_data()
     QTest::addColumn<QByteArray>("value");
 
     QTest::newRow("1") << QUuid::createUuid().toByteArray()
-                       << QByteArray(u8"こんにちは");
+                       << QByteArray("こんにちは");
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << randomString(64);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
