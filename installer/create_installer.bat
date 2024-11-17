@@ -7,7 +7,7 @@
 :: 10行目、28行目、39行目を編集
 
 
-set VERSION=2.9.0
+set VERSION=2.10.0
 set QTBASE=C:\Qt
 set TFDIR=C:\TreeFrog\%VERSION%
 
