@@ -7,8 +7,8 @@ QT -= gui
 lessThan(QT_MAJOR_VERSION, 6) {
   CONFIG += c++14
 } else {
-  CONFIG += c++17
-  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17
+  CONFIG += c++20
+  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20
 }
 
 INCLUDEPATH += .. ../../../include

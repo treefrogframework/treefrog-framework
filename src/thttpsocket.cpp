@@ -43,7 +43,7 @@ THttpSocket::THttpSocket(QByteArray &readBuffer, TActionContext *context, QObjec
 
 THttpSocket::~THttpSocket()
 {
-    tSystemDebug("THttpSocket deleted  socket:%lld", _socket);
+    tSystemDebug("THttpSocket deleted  socket:{}", _socket);
     abort();
 }
 
@@ -71,7 +71,7 @@ int64_t THttpSocket::write(const THttpHeader *header, QIODevice *body)
 {
     if (body && !body->isOpen()) {
         if (!body->open(QIODevice::ReadOnly)) {
-            tWarn("open failed");
+            Tf::warn("open failed");
             return -1;
         }
     }
@@ -130,7 +130,7 @@ int THttpSocket::readRawData(char *data, int size, int msecs)
     }
 
     if (len == 0) {
-        tSystemDebug("Disconnected from remote host  [socket:%lld]", _socket);
+        tSystemDebug("Disconnected from remote host  [socket:{}]", _socket);
         abort();
         return 0;
     }
@@ -166,7 +166,7 @@ int64_t THttpSocket::writeRawData(const char *data, int64_t size)
         } else {
             int64_t written = tf_send(_socket, data + total, qMin(size - total, WRITE_LENGTH));
             if (Q_UNLIKELY(written <= 0)) {
-                tWarn("socket write error: total:%d (%d)  data length:%d", (int)total, (int)written, (int)size);
+                Tf::warn("socket write error: total:{} ({})  data length:{}", (int)total, (int)written, (int)size);
                 return -1;
             }
 
@@ -234,7 +234,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     }
                     _fileBuffer.resize(0);  // truncate
                     if (_readBuffer.length() > idx + 4) {
-                        tSystemDebug("fileBuffer name: %s", qUtf8Printable(_fileBuffer.fileName()));
+                        tSystemDebug("fileBuffer name: {}", qUtf8Printable(_fileBuffer.fileName()));
                         if (_fileBuffer.write(_readBuffer.data() + idx + 4, _readBuffer.length() - (idx + 4)) < 0) {
                             throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                         }
@@ -275,7 +275,7 @@ void THttpSocket::abort()
 {
     if (_socket > 0) {
         tf_close_socket(_socket);
-        tSystemDebug("Closed socket : %lld", _socket);
+        tSystemDebug("Closed socket : {}", _socket);
         setSocketDescriptor(0, QAbstractSocket::ClosingState);
     } else {
         _state = QAbstractSocket::UnconnectedState;

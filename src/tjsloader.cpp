@@ -51,20 +51,20 @@ static QString read(const QString &filePath)
     }
 
     if (!script.exists()) {
-        tSystemError("TJSLoader file not found: %s", qUtf8Printable(filePath));
+        tSystemError("TJSLoader file not found: {}", qUtf8Printable(filePath));
         return QString();
     }
 
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
-        tSystemError("TJSLoader file open error: %s", qUtf8Printable(filePath));
+        tSystemError("TJSLoader file open error: {}", qUtf8Printable(filePath));
         return QString();
     }
 
     QTextStream stream(&script);
     QString program = stream.readAll();
     script.close();
-    tSystemDebug("TJSLoader file read: %s", qUtf8Printable(script.fileName()));
+    tSystemDebug("TJSLoader file read: {}", qUtf8Printable(script.fileName()));
     return program;
 }
 
@@ -231,7 +231,7 @@ QString TJSLoader::absolutePath(const QString &moduleName, const QDir &dir, AltJ
     }
 
     if (filePath.isEmpty()) {
-        tSystemError("TJSLoader file not found: %s", qUtf8Printable(moduleName));
+        tSystemError("TJSLoader file not found: {}", qUtf8Printable(moduleName));
     } else {
         filePath = QFileInfo(filePath).canonicalFilePath();
     }
@@ -263,7 +263,7 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
     QString filePath;
 
     if (!context) {
-        tSystemError("TJSLoader value error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("TJSLoader value error  [{}:{}]", __FILE__, __LINE__);
         return ret;
     }
 
@@ -271,7 +271,7 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
         // loads module
         filePath = search(_module, _altJs);
         if (filePath.isEmpty()) {
-            tSystemError("TJSLoader: Module not found: %s", qUtf8Printable(_module));
+            tSystemError("TJSLoader: Module not found: {}", qUtf8Printable(_module));
             return ret;
         }
 
@@ -295,13 +295,13 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 
     ret = context->evaluate(program, _module);
     if (ret.isError()) {
-        tSystemError("TJSLoader evaluation: Uncaught exception at line %d : %s", ret.property("lineNumber").toInt(), qUtf8Printable(ret.toString()));
+        tSystemError("TJSLoader evaluation: Uncaught exception at line {} : {}", ret.property("lineNumber").toInt(), qUtf8Printable(ret.toString()));
     } else {
-        tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(_module));
+        tSystemDebug("TJSLoader evaluation completed: {}", qUtf8Printable(_module));
 
         if (isMain) {
             context->_modulePath = filePath;
-            tSystemDebug("TJSLoader Module path: %s", qUtf8Printable(context->_modulePath));
+            tSystemDebug("TJSLoader Module path: {}", qUtf8Printable(context->_modulePath));
         }
     }
     return ret;
@@ -394,9 +394,9 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
                 QJSValue res = context->evaluate(require, module);
                 if (res.isError()) {
-                    tSystemError("TJSLoader evaluation error: %s", qUtf8Printable(module));
+                    tSystemError("TJSLoader evaluation error: {}", qUtf8Printable(module));
                 } else {
-                    tSystemDebug("TJSLoader evaluation completed: %s", qUtf8Printable(module));
+                    tSystemDebug("TJSLoader evaluation completed: {}", qUtf8Printable(module));
                     // Inserts the loaded file path
                     context->_loadedFiles.insert(filePath, varName);
                 }
@@ -415,6 +415,6 @@ QString TJSLoader::compileJsx(const QString &jsx)
 {
     auto *transform = TJSLoader("JSXTransformer", "JSXTransformer").load();
     QJSValue jscode = transform->call("JSXTransformer.transform", QJSValue(jsx));
-    //tSystemDebug("code:%s", qUtf8Printable(jscode.property("code").toString()));
+    //tSystemDebug("code:{}", qUtf8Printable(jscode.property("code").toString()));
     return jscode.property("code").toString();
 }

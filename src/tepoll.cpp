@@ -83,7 +83,7 @@ int TEpoll::wait(int timeout)
     _polling = false;
 
     if (Q_UNLIKELY(_numEvents < 0)) {
-        tSystemError("Failed epoll_wait() : errno:%d", err);
+        tSystemError("Failed epoll_wait() : errno:{}", err);
     }
 
     return _numEvents;
@@ -145,12 +145,12 @@ bool TEpoll::addPoll(TEpollSocket *socket, int events)
     int err = errno;
     if (Q_UNLIKELY(ret < 0)) {
         if (err != EEXIST) {
-            tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  sd:%d errno:%d", socket->socketDescriptor(), err);
+            tSystemError("Failed epoll_ctl (EPOLL_CTL_ADD)  sd:{} errno:{}", socket->socketDescriptor(), err);
         } else {
             ret = 0;
         }
     } else {
-        tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:%u)  sd:%d", events, socket->socketDescriptor());
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_ADD) (events:{})  sd:{}", events, socket->socketDescriptor());
     }
     return !ret;
 }
@@ -168,9 +168,9 @@ bool TEpoll::modifyPoll(TEpollSocket *socket, int events)
     int ret = tf_epoll_ctl(_epollFd, EPOLL_CTL_MOD, socket->socketDescriptor(), &ev);
     int err = errno;
     if (Q_UNLIKELY(ret < 0)) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  sd:%d errno:%d ev:0x%x", socket->socketDescriptor(), err, events);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_MOD)  sd:{} errno:{} ev:{:#x}", socket->socketDescriptor(), err, events);
     } else {
-        tSystemDebug("OK epoll_ctl (EPOLL_CTL_MOD)  sd:%d", socket->socketDescriptor());
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_MOD)  sd:{}", socket->socketDescriptor());
     }
     return !ret;
 }
@@ -186,9 +186,9 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
     int err = errno;
 
     if (Q_UNLIKELY(ret < 0 && err != ENOENT)) {
-        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:%d errno:%d", socket->socketDescriptor(), err);
+        tSystemError("Failed epoll_ctl (EPOLL_CTL_DEL)  sd:{} errno:{}", socket->socketDescriptor(), err);
     } else {
-        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:%d", socket->socketDescriptor());
+        tSystemDebug("OK epoll_ctl (EPOLL_CTL_DEL)  sd:{}", socket->socketDescriptor());
     }
 
     return !ret;
@@ -216,7 +216,7 @@ void TEpoll::dispatchEvents()
             Q_ASSERT(sd->buffer == nullptr);
 
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
-            tSystemDebug("secKey: %s", secKey.data());
+            tSystemDebug("secKey: {}", secKey.data());
             int newsocket = TApplicationServerBase::duplicateSocket(sock->socketDescriptor());
 
             // Switch to WebSocket
@@ -243,7 +243,7 @@ void TEpoll::dispatchEvents()
         }
 
         default:
-            tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+            tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
             delete sd->buffer;
             break;
         }

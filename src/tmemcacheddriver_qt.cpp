@@ -60,7 +60,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
 
-    tSystemDebug("memcached open host:%s  port:%d", qUtf8Printable(_host), _port);
+    tSystemDebug("memcached open host:{}  port:{}", qUtf8Printable(_host), _port);
     _client->connectToHost(_host, _port);
 
     bool ret = _client->waitForConnected(1000);
@@ -91,7 +91,7 @@ bool TMemcachedDriver::writeCommand(const QByteArray &command)
 QByteArray TMemcachedDriver::readReply(int msecs)
 {
     if (!isOpen()) {
-        tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open memcached session  [{}:{}]", __FILE__, __LINE__);
         return QByteArray();
     }
 
@@ -101,8 +101,8 @@ QByteArray TMemcachedDriver::readReply(int msecs)
         return QByteArray();
     }
 
-    //tSystemDebug("#memcached response length: %d", _buffer.length());
-    //tSystemDebug("#memcached response data: %s", _buffer.data());
+    //tSystemDebug("#memcached response length: {}", _buffer.length());
+    //tSystemDebug("#memcached response data: {}", _buffer.data());
     return _client->readAll();
 }
 

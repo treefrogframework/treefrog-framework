@@ -79,14 +79,14 @@ bool TSendmailMailer::send()
         QProcess sendmail;
         sendmail.start(sendmailCmd, args);
         if (!sendmail.waitForStarted(5000)) {
-            tSystemError("Sendmail error. CMD: %s", qUtf8Printable(sendmailCmd));
+            tSystemError("Sendmail error. CMD: {}", qUtf8Printable(sendmailCmd));
             return false;
         }
 
         sendmail.write(rawmail);
         sendmail.write("\n.\n");
         sendmail.waitForFinished();
-        tSystemDebug("Mail sent. Recipients: %s", recipt.data());
+        tSystemDebug("Mail sent. Recipients: {}", recipt.data());
     }
 
     return true;

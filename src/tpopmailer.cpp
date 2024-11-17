@@ -63,16 +63,16 @@ bool TPopMailer::connectToHost()
     bool ret = false;
 
     if (_popHostName.isEmpty() || _popPort <= 0) {
-        tSystemError("POP: Bad Argument: hostname:%s port:%d", qUtf8Printable(_popHostName), _popPort);
+        tSystemError("POP: Bad Argument: hostname:{} port:{}", qUtf8Printable(_popHostName), _popPort);
         return ret;
     }
 
     _socket->connectToHost(_popHostName, _popPort);
     if (!_socket->waitForConnected(5000)) {
-        tSystemError("POP server connect error: %s", qUtf8Printable(_socket->errorString()));
+        tSystemError("POP server connect error: {}", qUtf8Printable(_socket->errorString()));
         return ret;
     }
-    tSystemDebug("POP server connected: %s:%d", qUtf8Printable(_popHostName), _popPort);
+    tSystemDebug("POP server connected: {}:{}", qUtf8Printable(_popHostName), _popPort);
 
     QByteArray response;
     readResponse(&response);
@@ -82,7 +82,7 @@ bool TPopMailer::connectToHost()
     int j = response.indexOf('>');
     if (i >= 0 && j > i) {
         apopToken = response.mid(i, j - i + 1);
-        tSystemDebug("APOP token: %s", apopToken.data());
+        tSystemDebug("APOP token: {}", apopToken.data());
     }
 
     if (_apopEnabled) {
@@ -194,7 +194,7 @@ bool TPopMailer::write(const QByteArray &command)
 
     int len = _socket->write(cmd);
     _socket->flush();
-    tSystemDebug("C: %s", cmd.trimmed().data());
+    tSystemDebug("C: {}", cmd.trimmed().data());
     return (len == cmd.length());
 }
 
@@ -209,7 +209,7 @@ bool TPopMailer::readResponse(QByteArray *reply)
 
     if (_socket->waitForReadyRead(5000)) {
         QByteArray rcv = _socket->readLine();
-        tSystemDebug("S: %s", rcv.data());
+        tSystemDebug("S: {}", rcv.data());
 
         if (rcv.startsWith("+OK")) {
             ret = true;
@@ -221,7 +221,7 @@ bool TPopMailer::readResponse(QByteArray *reply)
                 *reply = rcv.mid(4).trimmed();
             }
         } else {
-            tSystemError("S: %s", rcv.data());
+            tSystemError("S: {}", (const char *)rcv.data());
         }
     }
     return ret;

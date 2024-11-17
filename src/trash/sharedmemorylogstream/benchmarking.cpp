@@ -30,7 +30,7 @@ const QByteArray ba("aildjfliasjdl;fijaswelirjas;l;liajds;flkjuuuuuhhujijiji");
 // {
 //      QBENCHMARK {
 //         for (int i = 0; i < 10; ++i) {
-//             tSystemInfo("%s", ba.data());
+//             tSystemInfo("{}", ba.data());
 //         }
 //     }
 // }

@@ -32,11 +32,11 @@ void TActionProcessManager::timerEvent(QTimerEvent *event)
                 } else if (WIFSIGNALED(status)) {
                     p->kill(WTERMSIG(status));
                 } else {
-                    tWarn("Invalid status infomation of child process: %d", status);
+                    Tf::warn("Invalid status infomation of child process: {}", status);
                     p->kill(-1);
                 }
             } else {
-                tError("wait4 pid:%d, not found such TActionProcess object", pid);
+                Tf::error("wait4 pid:{}, not found such TActionProcess object", pid);
             }
 
         } else {
@@ -49,12 +49,12 @@ void TActionProcessManager::timerEvent(QTimerEvent *event)
 void TActionProcess::start()
 {
     if (childPid > 0) {
-        tWarn("forked already");
+        Tf::warn("forked already");
         return;
     }
 
     if (isChildProcess()) {
-        tError("start failed, not parent process");
+        Tf::error("start failed, not parent process");
         return;
     }
 
@@ -73,12 +73,12 @@ void TActionProcess::start()
 
     } else if (childPid > 0) {
         // parent process
-        tSystemDebug("fork succeeded. pid: %d", childPid);
+        tSystemDebug("fork succeeded. pid: {}", childPid);
         TActionProcessManager::instance()->insert(childPid, this);
         tf_close_socket(TActionContext::socketDescriptor());
         emit started();
     } else {
-        tFatal("fork failed: %s", qUtf8Printable(qt_error_string(lastForkErrno)));
+        tFatal("fork failed: {}", qUtf8Printable(qt_error_string(lastForkErrno)));
         QCoreApplication::exit(-1);
     }
 }

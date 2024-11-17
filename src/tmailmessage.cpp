@@ -104,7 +104,7 @@ void TMailMessage::parse(const QString &str)
     int bdidx = idx + match.capturedLength();
 
     if (idx < 0) {
-        tError("Not found mail headers");
+        Tf::error("Not found mail headers");
         setBody(str);
     } else {
         QString header = str.left(idx);

@@ -61,7 +61,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
 
-    tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
+    tSystemDebug("Redis open host:{}  port:{}", qUtf8Printable(_host), _port);
     _client->connectToHost(_host, _port);
 
     bool ret = _client->waitForConnected(1000);
@@ -92,7 +92,7 @@ void TRedisDriver::close()
 bool TRedisDriver::readReply()
 {
     if (Q_UNLIKELY(!isOpen())) {
-        tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open Redis session  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -103,8 +103,8 @@ bool TRedisDriver::readReply()
         tSystemWarn("Redis response timeout");
     }
 
-    //tSystemDebug("#Redis response length: %d", _buffer.length());
-    //tSystemDebug("#Redis response data: %s", _buffer.data());
+    //tSystemDebug("#Redis response length: {}", _buffer.length());
+    //tSystemDebug("#Redis response data: {}", _buffer.data());
     return ret;
 }
 

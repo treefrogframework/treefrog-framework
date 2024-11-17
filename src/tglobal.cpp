@@ -199,7 +199,7 @@ QByteArray Tf::lz4Compress(const char *data, int nbytes, int compressionLevel) n
             if (rv > 0) {
                 buffer.resize(rv);
             } else {
-                tError("LZ4 compression error: %d", rv);
+                Tf::error("LZ4 compression error: {}", rv);
                 buffer.clear();
             }
         } else {
@@ -264,7 +264,7 @@ QByteArray Tf::lz4Uncompress(const char *data, int nbytes) noexcept
         readlen += sizeof(srclen);
 
         if (srclen <= 0 || srclen > CompressBoundSize) {
-            tError("LZ4 uncompression format error");
+            Tf::error("LZ4 uncompression format error");
             ret.clear();
             break;
         }
@@ -277,7 +277,7 @@ QByteArray Tf::lz4Uncompress(const char *data, int nbytes) noexcept
             buffer.resize(rv);
             ret += buffer;
         } else {
-            tError("LZ4 uncompression error: %d", rv);
+            Tf::error("LZ4 uncompression error: {}", rv);
             ret.clear();
             break;
         }

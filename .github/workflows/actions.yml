@@ -8,13 +8,13 @@ on:
 
 jobs:
   build-ubuntu:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -51,13 +51,13 @@ jobs:
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
   build-ubuntu-sharedlink:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc1 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -93,19 +93,22 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
-  build-ubuntu20:
-    runs-on: ubuntu-20.04
+  build-ubuntu22:
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qtbase5-dev qt5-default qt5-qmake qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dev-tools libqt5sql5 libqt5sql5-sqlite libsqlite3-dev libmongoc-dev libbson-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
     - name: qmake version
       run: |
+        sudo rm -f /usr/bin/qmake
+        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
         qmake -v
     - name: configure
-      run: ./configure --prefix=/usr/local --spec=linux-g++
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++
     - name: make
       run: |
         make -j4 -C src

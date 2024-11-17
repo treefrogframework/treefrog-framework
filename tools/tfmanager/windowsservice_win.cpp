@@ -100,12 +100,12 @@ static void WINAPI serviceHandler(DWORD ctrl)
     case SERVICE_CONTROL_PAUSE:
     case SERVICE_CONTROL_CONTINUE:
     case SERVICE_CONTROL_INTERROGATE:
-        tSystemWarn("Windows service: Received ctrl code: %ld ", ctrl);
+        tSystemWarn("Windows service: Received ctrl code: {}", ctrl);
         SetServiceStatus(statusHandle, &serviceStatus);
         break;
 
     default:
-        tSystemWarn("Windows service: Invalid ctrl code: %ld ", ctrl);
+        tSystemWarn("Windows service: Invalid ctrl code: {}", ctrl);
         break;
     }
 }

@@ -64,7 +64,7 @@ bool ServerManager::start(const QHostAddress &address, uint16_t port)
         return true;
 
     if (managerState == Stopping) {
-        tSystemWarn("Manager stopping  [%s:%d]", __FILE__, __LINE__);
+        tSystemWarn("Manager stopping  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -81,7 +81,7 @@ bool ServerManager::start(const QHostAddress &address, uint16_t port)
 #endif
 
     managerState = Starting;
-    tSystemDebug("TreeFrog application servers starting up.  port:%d", port);
+    tSystemDebug("TreeFrog application servers starting up.  port:{}", port);
     ajustServers();
     return true;
 }
@@ -93,20 +93,20 @@ bool ServerManager::start(const QString &fileDomain)
         return true;
 
     if (managerState == Stopping) {
-        tSystemWarn("Manager stopping  [%s:%d]", __FILE__, __LINE__);
+        tSystemWarn("Manager stopping  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
     int sd = TApplicationServerBase::nativeListen(fileDomain, TApplicationServerBase::NonCloseOnExec);
     if (sd <= 0) {
-        tSystemError("listening socket create failed  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("listening socket create failed  [{}:{}]", __FILE__, __LINE__);
         std::fprintf(stderr, "Failed to create listening socket of UNIX domain\n");
         return false;
     }
 
     listeningSocket = sd;
     managerState = Starting;
-    tSystemDebug("TreeFrog application servers starting up.  Domain file name:%s", qUtf8Printable(fileDomain));
+    tSystemDebug("TreeFrog application servers starting up.  Domain file name:{}", qUtf8Printable(fileDomain));
     ajustServers();
     return true;
 }
@@ -164,7 +164,7 @@ int ServerManager::serverCount() const
 void ServerManager::ajustServers()
 {
     if (isRunning()) {
-        tSystemDebug("serverCount: %d", serverCount());
+        tSystemDebug("serverCount: {}", serverCount());
         if (serverCount() < maxServers && serverCount() < minServers) {
             startServer();
         } else {
@@ -190,12 +190,12 @@ void ServerManager::setupEnvironment(QProcess *process)
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_LIBRARY_PATH", ldpath);
-    tSystemDebug("export %s=%s", "LD_LIBRARY_PATH", qUtf8Printable(ldpath));
+    tSystemDebug("export {}={}", "LD_LIBRARY_PATH", qUtf8Printable(ldpath));
 
     QString preload = Tf::appSettings()->value(Tf::LDPreload).toString();
     if (!preload.isEmpty()) {
         env.insert("LD_PRELOAD", preload);
-        tSystemDebug("export %s=%s", "LD_PRELOAD", qUtf8Printable(preload));
+        tSystemDebug("export {}={}", "LD_PRELOAD", qUtf8Printable(preload));
     }
     process->setProcessEnvironment(env);
 #else
@@ -257,7 +257,7 @@ void ServerManager::errorDetect(QProcess::ProcessError error)
 {
     QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
-        tSystemError("tfserver error detected(%d). [%s]", error, qUtf8Printable(tfserverProgramPath()));
+        tSystemError("tfserver error detected({}). [{}]", (int)error, qUtf8Printable(tfserverProgramPath()));
         //server->close();  // long blocking..
         server->kill();
     }
@@ -274,11 +274,11 @@ void ServerManager::serverFinish(int exitCode, QProcess::ExitStatus exitStatus)
 
         if (isRunning()) {
             if (exitCode != 127) {  // 127 : for auto reloading
-                tSystemError("Detected a server crashed. exitCode:%d  exitStatus:%d", exitCode, (int)exitStatus);
+                tSystemError("Detected a server crashed. exitCode:{}  exitStatus:{}", exitCode, (int)exitStatus);
             }
             startServer(id);
         } else {
-            tSystemDebug("Detected normal exit of server. exitCode:%d", exitCode);
+            tSystemDebug("Detected normal exit of server. exitCode:{}", exitCode);
             if (serversStatus.count() == 0) {
                 Tf::app()->exit(-1);
             }
@@ -292,7 +292,7 @@ void ServerManager::readStandardError() const
     QProcess *server = dynamic_cast<QProcess *>(sender());
     if (server) {
         QByteArray buf = server->readAllStandardError();
-        tSystemWarn("treefrog stderr: %s", buf.constData());
+        tSystemWarn("treefrog stderr: {}", buf.constData());
         std::fprintf(stderr, "treefrog stderr: %s", buf.constData());
     }
 }

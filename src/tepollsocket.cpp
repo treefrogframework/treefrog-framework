@@ -90,7 +90,7 @@ void TEpollSocket::initBuffer(int socketDescriptor)
 TEpollSocket::TEpollSocket()
 {
     _socket = ::socket(AF_INET, (SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK), 0);
-    tSystemDebug("TEpollSocket  socket:%d", _socket);
+    tSystemDebug("TEpollSocket  socket:{}", _socket);
     socketManager.insert(this);
     initBuffer(_socket);
 }
@@ -101,7 +101,7 @@ TEpollSocket::TEpollSocket(int socketDescriptor, Tf::SocketState state, const QH
     _state(state),
     _peerAddress(peerAddress)
 {
-    tSystemDebug("TEpollSocket  socket:%d", _socket);
+    tSystemDebug("TEpollSocket  socket:{}", _socket);
     socketManager.insert(this);
     initBuffer(_socket);
 }
@@ -154,7 +154,7 @@ void TEpollSocket::connectToHost(const QHostAddress &address, uint16_t port)
         return;
     }
 
-    tSystemDebug("TCP connection state: %d", res);
+    tSystemDebug("TCP connection state: {}", res);
     _state = (res == 0) ? Tf::SocketState::Connected : Tf::SocketState::Connecting;
     _peerAddress = address;
     watch();
@@ -178,7 +178,7 @@ bool TEpollSocket::watch()
         break;
 
     default:
-        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
         break;
     }
     return ret;
@@ -210,7 +210,7 @@ int TEpollSocket::recv()
     }
 
     if (!len && !err) {
-        tSystemDebug("Socket disconnected : sd:%d", _socket);
+        tSystemDebug("Socket disconnected : sd:{}", _socket);
         ret = -1;
     } else {
         if (len < 0 || err > 0) {
@@ -219,12 +219,12 @@ int TEpollSocket::recv()
                 break;
 
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _socket, err);
+                tSystemDebug("Socket disconnected : sd:{}  errno:{}", _socket, err);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed recv : sd:%d  errno:%d  len:%d", _socket, err, len);
+                tSystemError("Failed recv : sd:{}  errno:{}  len:{}", _socket, err, len);
                 ret = -1;
                 break;
             }
@@ -283,13 +283,13 @@ int TEpollSocket::send()
 
             case EPIPE:  // FALLTHRU
             case ECONNRESET:
-                tSystemDebug("Socket disconnected : sd:%d  errno:%d", _socket, err);
+                tSystemDebug("Socket disconnected : sd:{}  errno:{}", _socket, err);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
 
             default:
-                tSystemError("Failed send : sd:%d  errno:%d  len:%d", _socket, err, len);
+                tSystemError("Failed send : sd:{}  errno:{}  len:{}", _socket, err, len);
                 logger.setResponseBytes(-1);
                 ret = -1;
                 break;
@@ -327,13 +327,13 @@ bool TEpollSocket::seekRecvBuffer(int pos)
 bool TEpollSocket::setSocketOption(int level, int optname, int val)
 {
     if (_socket < 1) {
-        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
     int res = ::setsockopt(_socket, level, optname, &val, sizeof(val));
     if (res < 0) {
-        tSystemError("setsockopt error: %d  [%s:%d]", res, __FILE__, __LINE__);
+        tSystemError("setsockopt error: {}  [{}:{}]", res, __FILE__, __LINE__);
     }
     return !res;
 }

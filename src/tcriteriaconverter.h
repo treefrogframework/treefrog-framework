@@ -194,7 +194,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                 const QList<QVariant> lst = cri.val1.toList();
 
                 if (lst.isEmpty()) {
-                    tWarn("error parameter");
+                    Tf::warn("error parameter");
                     break;
                 }
 
@@ -248,16 +248,16 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                 break;
 
             default:
-                tWarn("error parameter");
+                Tf::warn("error parameter");
                 break;
             }
 
         } else {
-            tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+            tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
         }
 
     } else {
-        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
     }
     return sqlString;
 }
@@ -345,11 +345,11 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
             break;
 
         default:
-            tWarn("Invalid parameters  [%s:%d]", __FILE__, __LINE__);
+            Tf::warn("Invalid parameters  [{}:{}]", __FILE__, __LINE__);
             break;
         }
     } else {
-        tWarn("Invalid parameters  [%s:%d]", __FILE__, __LINE__);
+        Tf::warn("Invalid parameters  [{}:{}]", __FILE__, __LINE__);
     }
     return sqlString;
 }
@@ -386,10 +386,10 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
         }
 
         default:
-            tWarn("Invalid parameters  [%s:%d]", __FILE__, __LINE__);
+            Tf::warn("Invalid parameters  [{}:{}]", __FILE__, __LINE__);
         }
     } else {
-        tWarn("Invalid parameters  [%s:%d]", __FILE__, __LINE__);
+        Tf::warn("Invalid parameters  [{}:{}]", __FILE__, __LINE__);
     }
     return sqlString;
 }
@@ -417,7 +417,7 @@ inline QString TCriteriaConverter<T>::concat(const QString &s1, TCriteria::Logic
         break;
 
     default:
-        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
         break;
     }
 

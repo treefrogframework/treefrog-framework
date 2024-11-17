@@ -35,7 +35,7 @@ void TWebApplication::watchUnixSignal(int sig, bool watch)
         }
 
         if (sigaction(sig, &sa, 0) != 0) {
-            tSystemError("sigaction failed  errno:%d", errno);
+            tSystemError("sigaction failed  errno:{}", errno);
         }
     }
 }
@@ -49,7 +49,7 @@ void TWebApplication::ignoreUnixSignal(int sig, bool ignore)
         sa.sa_flags = SA_RESTART;
         sa.sa_handler = (ignore) ? SIG_IGN : SIG_DFL;
         if (sigaction(sig, &sa, 0) != 0) {
-            tSystemError("sigaction failed  errno:%d", errno);
+            tSystemError("sigaction failed  errno:{}", errno);
         }
     }
 }

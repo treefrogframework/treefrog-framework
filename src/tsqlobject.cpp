@@ -222,7 +222,7 @@ bool TSqlObject::update()
     if (isNew()) {
         sqlError = QSqlError(QLatin1String("No record to update"),
             QString(), QSqlError::UnknownError);
-        tWarn("Unable to update the '%s' object. Create it before!", metaObject()->className());
+        Tf::warn("Unable to update the '{}' object. Create it before!", metaObject()->className());
         return false;
     }
 
@@ -250,7 +250,7 @@ bool TSqlObject::update()
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -282,7 +282,7 @@ bool TSqlObject::update()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qUtf8Printable(msg));
+        Tf::error("{}", qUtf8Printable(msg));
         return false;
     }
 
@@ -418,7 +418,7 @@ bool TSqlObject::remove()
     if (isNew()) {
         sqlError = QSqlError(QLatin1String("No record to remove"),
             QString(), QSqlError::UnknownError);
-        tWarn("Unable to remove the '%s' object. Create it before!", metaObject()->className());
+        Tf::warn("Unable to remove the '{}' object. Create it before!", metaObject()->className());
         return false;
     }
 
@@ -444,7 +444,7 @@ bool TSqlObject::remove()
             if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -467,7 +467,7 @@ bool TSqlObject::remove()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qUtf8Printable(msg));
+        Tf::error("{}", qUtf8Printable(msg));
         return false;
     }
     del.append(QLatin1String(pkName));
@@ -489,7 +489,7 @@ bool TSqlObject::remove()
                 sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
                 throw SqlException(msg, __FILE__, __LINE__);
             }
-            tWarn("Row was deleted by another transaction, %s", qUtf8Printable(tableName()));
+            Tf::warn("Row was deleted by another transaction, {}", qUtf8Printable(tableName()));
         }
         clear();
     }
@@ -561,7 +561,7 @@ void TSqlObject::syncToSqlRecord()
         if (idx >= 0) {
             QSqlRecord::setValue(idx, QObject::property(propName));
         } else {
-            tWarn("invalid name: %s", propName);
+            Tf::warn("invalid name: {}", propName);
         }
     }
 }

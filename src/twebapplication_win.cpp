@@ -134,9 +134,9 @@ bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg, int targetProc
         socket->waitForBytesWritten();
         socket->close();
         ret = true;
-        tSystemDebug("Sent local message to server [pid:%d]", targetProcess);
+        tSystemDebug("Sent local message to server [pid:{}]", targetProcess);
     } else {
-        tSystemWarn("Failed to connect to server [pid:%d]", targetProcess);
+        tSystemWarn("Failed to connect to server [pid:{}]", targetProcess);
     }
 
     delete socket;

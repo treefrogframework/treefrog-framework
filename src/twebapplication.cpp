@@ -412,12 +412,12 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
             return Epoll;
 #else
             tSystemWarn("Unsupported MPM: epoll  (Linux only)");
-            tWarn("Unsupported MPM: epoll  (Linux only)");
+            Tf::warn("Unsupported MPM: epoll  (Linux only)");
             return Thread;
 #endif
         }
-        tSystemWarn("Unsupported MPM: %s", qUtf8Printable(str));
-        tWarn("Unsupported MPM: %s", qUtf8Printable(str));
+        tSystemWarn("Unsupported MPM: {}", qUtf8Printable(str));
+        Tf::warn("Unsupported MPM: {}", qUtf8Printable(str));
         return Thread;
     }();
     return module;
@@ -435,7 +435,7 @@ int TWebApplication::maxNumberOfAppServers() const
 
         if (num <= 0) {
             num = qMax(std::thread::hardware_concurrency(), (uint)1);
-            tSystemWarn("Sets max number of AP servers to %d", num);
+            tSystemWarn("Sets max number of AP servers to {}", num);
         }
         return num;
     }());
@@ -523,7 +523,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == _timer.timerId()) {
         if (signalNumber() >= 0) {
-            tSystemDebug("TWebApplication trapped signal  number:%d", signalNumber());
+            tSystemDebug("TWebApplication trapped signal  number:{}", signalNumber());
             //timer.stop();   /* Don't stop this timer */
             QCoreApplication::exit(signalNumber());
         }
@@ -570,7 +570,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
         const auto filist = dir.entryInfoList(filters);
 
         if (filist.isEmpty()) {
-            tSystemWarn("No such config, %s", qUtf8Printable(configName));
+            tSystemWarn("No such config, {}", qUtf8Printable(configName));
         } else {
             for (auto &fi : filist) {
                 auto suffix = fi.completeSuffix().toLower();
@@ -595,7 +595,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     }
 
                 } else {
-                    tSystemWarn("Invalid format config, %s", qUtf8Printable(fi.fileName()));
+                    tSystemWarn("Invalid format config, {}", qUtf8Printable(fi.fileName()));
                 }
             }
         }

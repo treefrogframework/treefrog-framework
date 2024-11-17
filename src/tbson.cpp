@@ -173,10 +173,10 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             break;
 
         default:
-            tError("fromBson() unknown type: %d", t);
+            Tf::error("fromBson() unknown type: {}", (int)t);
             break;
         }
-        //tSystemDebug("fromBson : t:%d key:%s = %s", t, qUtf8Printable(key), qUtf8Printable(ret[key].toString()));
+        //tSystemDebug("fromBson : t:{} key:{} = {}", t, qUtf8Printable(key), qUtf8Printable(ret[key].toString()));
     }
     return ret;
 }
@@ -276,7 +276,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
 
     default:
-        tError("toBson() failed to convert  name:%s  type:%d", qUtf8Printable(key), type);
+        Tf::error("toBson() failed to convert  name:{}  type:{}", qUtf8Printable(key), type);
         ok = false;
         break;
     }

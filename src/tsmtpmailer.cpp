@@ -121,7 +121,7 @@ bool TSmtpMailer::send()
     }
 
     if (_smtpHostName.isEmpty() || _smtpPort <= 0) {
-        tSystemError("SMTP: Bad Argument: hostname:%s port:%d", qUtf8Printable(_smtpHostName), _smtpPort);
+        tSystemError("SMTP: Bad Argument: hostname:{} port:{}", qUtf8Printable(_smtpHostName), _smtpPort);
         return false;
     }
 
@@ -136,7 +136,7 @@ bool TSmtpMailer::send()
     }
 
     if (!connectToHost(_smtpHostName, _smtpPort)) {
-        tSystemError("SMTP: Connect Error: hostname:%s port:%d", qUtf8Printable(_smtpHostName), _smtpPort);
+        tSystemError("SMTP: Connect Error: hostname:{} port:{}", qUtf8Printable(_smtpHostName), _smtpPort);
         return false;
     }
 
@@ -167,32 +167,32 @@ bool TSmtpMailer::send()
 
     if (_authEnable) {
         if (!cmdAuth()) {
-            tSystemError("SMTP: User Authentication Failed: username:%s : [%s]", _username.data(), qUtf8Printable(lastServerResponse()));
+            tSystemError("SMTP: User Authentication Failed: username:{} : [{}]", (const char *)_username.data(), qUtf8Printable(lastServerResponse()));
             cmdQuit();
             return false;
         }
     }
 
     if (!cmdRset()) {
-        tSystemError("SMTP: RSET Command Failed: [%s]", qUtf8Printable(lastServerResponse()));
+        tSystemError("SMTP: RSET Command Failed: [{}]", qUtf8Printable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
     if (!cmdMail(_mailMessage.fromAddress())) {
-        tSystemError("SMTP: MAIL Command Failed: [%s]", qUtf8Printable(lastServerResponse()));
+        tSystemError("SMTP: MAIL Command Failed: [{}]", qUtf8Printable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
     if (!cmdRcpt(_mailMessage.recipients())) {
-        tSystemError("SMTP: RCPT Command Failed: [%s]", qUtf8Printable(lastServerResponse()));
+        tSystemError("SMTP: RCPT Command Failed: [{}]", qUtf8Printable(lastServerResponse()));
         cmdQuit();
         return false;
     }
 
     if (!cmdData(_mailMessage.toByteArray())) {
-        tSystemError("SMTP: DATA Command Failed: [%s]", qUtf8Printable(lastServerResponse()));
+        tSystemError("SMTP: DATA Command Failed: [{}]", qUtf8Printable(lastServerResponse()));
         cmdQuit();
         return false;
     }
@@ -215,7 +215,7 @@ bool TSmtpMailer::connectToHost(const QString &hostName, uint16_t port)
 {
     _socket->connectToHost(hostName, port);
     if (!_socket->waitForConnected(5000)) {
-        tSystemError("SMTP server connect error: %s", qUtf8Printable(_socket->errorString()));
+        tSystemError("SMTP server connect error: {}", qUtf8Printable(_socket->errorString()));
         return false;
     }
     return (read() == 220);
@@ -239,7 +239,7 @@ bool TSmtpMailer::cmdEhlo()
         QString str(s);
         if (str.startsWith("AUTH ", Qt::CaseInsensitive)) {
             _svrAuthMethods = str.mid(5).split(' ', Tf::SkipEmptyParts);
-            tSystemDebug("AUTH: %s", qUtf8Printable(_svrAuthMethods.join(",")));
+            tSystemDebug("AUTH: {}", qUtf8Printable(_svrAuthMethods.join(",")));
         }
         if (str.startsWith("STARTTLS", Qt::CaseInsensitive)) {
             _tlsAvailable = true;
@@ -271,20 +271,20 @@ bool TSmtpMailer::cmdStartTls()
 {
     int code = cmd("STARTTLS");
     if (code != 220) {
-        tSystemError("SMTP: STARTTLS failed [reply:%d]", code);
+        tSystemError("SMTP: STARTTLS failed [reply:{}]", code);
         return false;
     }
 
     _socket->startClientEncryption();
     if (!_socket->waitForEncrypted(5000)) {
-        tSystemError("SMTP STARTTLS negotiation timeout: %s", qUtf8Printable(_socket->errorString()));
+        tSystemError("SMTP STARTTLS negotiation timeout: {}", qUtf8Printable(_socket->errorString()));
 #if QT_VERSION >= 0x050f00  // 5.15.0
         auto errors = _socket->sslHandshakeErrors();
 #else
         auto errors = _socket->sslErrors();
 #endif
         for (const auto &err : errors) {
-            tSystemError("SMTP SSL error : %s [%d]", qUtf8Printable(err.errorString()), (int)err.error());
+            tSystemError("SMTP SSL error : {} [{}]", qUtf8Printable(err.errorString()), (int)err.error());
         }
         return false;
     }
@@ -408,7 +408,7 @@ bool TSmtpMailer::write(const QByteArray &command)
 
     int len = _socket->write(cmd);
     _socket->flush();
-    tSystemDebug("C: %s", cmd.trimmed().data());
+    tSystemDebug("C: {}", cmd.trimmed().data());
     return (len == cmd.length());
 }
 
@@ -430,7 +430,7 @@ int TSmtpMailer::read(QByteArrayList *reply)
                 break;
             }
         }
-        tSystemDebug("S: %s", rcv.data());
+        tSystemDebug("S: {}", rcv.data());
 
         if (code == 0)
             code = rcv.left(3).toInt();

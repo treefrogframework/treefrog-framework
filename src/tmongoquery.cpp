@@ -147,7 +147,7 @@ bool TMongoQuery::insert(QVariantMap &document)
     if (ret) {
         insertedCount = reply.value(QStringLiteral("insertedCount")).toInt();
     }
-    tSystemDebug("TMongoQuery::insert insertedCount:%d", insertedCount);
+    tSystemDebug("TMongoQuery::insert insertedCount:{}", insertedCount);
     return (insertedCount == 1);
 }
 
@@ -168,7 +168,7 @@ int TMongoQuery::remove(const QVariantMap &criteria)
     if (res) {
         deletedCount = reply.value(QStringLiteral("deletedCount")).toInt();
     }
-    tSystemDebug("TMongoQuery::remove deletedCount:%d", deletedCount);
+    tSystemDebug("TMongoQuery::remove deletedCount:{}", deletedCount);
     return deletedCount;
 }
 
@@ -218,7 +218,7 @@ int TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &document
     if (res) {
         modifiedCount = reply.value(QStringLiteral("modifiedCount")).toInt();
     }
-    tSystemDebug("TMongoQuery::update modifiedCount:%d", modifiedCount);
+    tSystemDebug("TMongoQuery::update modifiedCount:{}", modifiedCount);
     return modifiedCount;
 }
 
@@ -247,7 +247,7 @@ int TMongoQuery::updateMany(const QVariantMap &criteria, const QVariantMap &docu
     if (res) {
         modifiedCount = reply.value(QStringLiteral("modifiedCount")).toInt();
     }
-    tSystemDebug("TMongoQuery::updateMany modifiedCount:%d", modifiedCount);
+    tSystemDebug("TMongoQuery::updateMany modifiedCount:{}", modifiedCount);
     return modifiedCount;
 }
 

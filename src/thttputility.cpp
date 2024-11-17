@@ -402,7 +402,7 @@ QByteArray THttpUtility::timeZone()
     tz += (offset > 0) ? '+' : '-';
     offset = qAbs(offset);
     tz += QString("%1%2").arg(offset / 60, 2, 10, QLatin1Char('0')).arg(offset % 60, 2, 10, QLatin1Char('0')).toLatin1();
-    tSystemDebug("tz: %s", tz.data());
+    tSystemDebug("tz: {}", tz.data());
     return tz;
 }
 
@@ -425,7 +425,7 @@ QByteArray THttpUtility::toHttpDateTimeString(const QDateTime &dateTime)
         break;
 
     default:
-        tWarn("Invalid time specification");
+        Tf::warn("Invalid time specification");
         break;
     }
     return d;
@@ -439,7 +439,7 @@ QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
 {
     QByteArray tz = localTime.mid(localTime.length() - 5).trimmed();
     if (!tz.contains("GMT") && tz != timeZone()) {
-        tWarn("Time zone not match: %s", tz.data());
+        Tf::warn("Time zone not match: {}", (const char *)tz.data());
     }
     return QLocale(QLocale::C).toDateTime(localTime.left(localTime.lastIndexOf(' ')), HTTP_DATE_TIME_FORMAT);
 }
@@ -462,7 +462,7 @@ QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
 QDateTime THttpUtility::fromHttpDateTimeUTCString(const QByteArray &utc)
 {
     if (!utc.endsWith(" +0000") && !utc.endsWith(" GMT")) {
-        tWarn("HTTP Date-Time format error: %s", utc.data());
+        Tf::warn("HTTP Date-Time format error: {}", utc.data());
     }
     return QLocale(QLocale::C).toDateTime(utc.left(utc.lastIndexOf(' ')), HTTP_DATE_TIME_FORMAT);
 }

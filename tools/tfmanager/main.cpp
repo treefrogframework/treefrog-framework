@@ -19,6 +19,7 @@
 #if QT_VERSION < 0x060000
 # include <QTextCodec>
 #endif
+#include <cinttypes>
 
 #ifdef Q_OS_UNIX
 #include <sys/utsname.h>
@@ -185,7 +186,7 @@ bool startDaemon()
 
 void writeStartupLog()
 {
-    tSystemInfo("TreeFrog Framework version %s", TF_VERSION_STR);
+    tSystemInfo("TreeFrog Framework version {}", TF_VERSION_STR);
 
     QString qtversion = QLatin1String("Execution environment: Qt ") + qVersion();
 #if QT_VERSION >= 0x050400
@@ -202,7 +203,7 @@ void writeStartupLog()
     }
 #endif
 #endif
-    tSystemInfo("%s", qtversion.toLatin1().data());
+    tSystemInfo("{}", (const char *)qtversion.toLatin1().data());
 }
 
 
@@ -434,7 +435,7 @@ int killTreeFrogProcess(const QString &cmd)
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:%lld", (int64_t)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:{}", (qlonglong)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");
@@ -456,7 +457,7 @@ void showProcessId()
 {
     int64_t pid = readPidOfApplication();
     if (pid > 0) {
-        std::printf("%lld\n", (int64_t)pid);
+        std::printf("%" PRId64 "\n", pid);
     }
 }
 
@@ -587,7 +588,7 @@ int managerMain(int argc, char *argv[])
     // Check TreeFrog processes are running
     int64_t pid = runningApplicationPid();
     if (pid > 0) {
-        std::fprintf(stderr, "Already running  pid:%lld\n", (int64_t)pid);
+        std::fprintf(stderr, "Already running  pid:%" PRId64 "\n", pid);
         return 1;
     }
 
@@ -601,7 +602,7 @@ int managerMain(int argc, char *argv[])
         } else {
             int port = svrname.toInt();
             if (port <= 0 || port > USHRT_MAX) {
-                tSystemError("Invalid port number: %d", port);
+                tSystemError("Invalid port number: {}", port);
                 return 1;
             }
             listenPort = port;
@@ -637,7 +638,7 @@ int managerMain(int argc, char *argv[])
                 num = 1;
                 tSystemWarn("Fix the max number of application servers to one in auto-reload mode.");
             } else {
-                tSystemDebug("Max number of app servers: %d", num);
+                tSystemDebug("Max number of app servers: {}", num);
             }
             manager = new ServerManager(num, num, 0, &app);
             break;
@@ -684,11 +685,11 @@ int managerMain(int argc, char *argv[])
             pidfile.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
             pidfile.close();
         } else {
-            tSystemError("File open failed: %s", qUtf8Printable(pidfile.fileName()));
+            tSystemError("File open failed: {}", qUtf8Printable(pidfile.fileName()));
         }
 
         ret = app.exec();
-        tSystemDebug("TreeFrog manager process caught a signal [code:%d]", ret);
+        tSystemDebug("TreeFrog manager process caught a signal [code:{}]", ret);
         manager->stop();
 
         if (ret == 1) {  // means SIGHUP
