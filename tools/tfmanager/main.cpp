@@ -203,7 +203,7 @@ void writeStartupLog()
     }
 #endif
 #endif
-    tSystemInfo("{}", qtversion.toLatin1().data());
+    tSystemInfo("{}", (const char *)qtversion.toLatin1().data());
 }
 
 
@@ -435,7 +435,7 @@ int killTreeFrogProcess(const QString &cmd)
         SystemBusDaemon::releaseResource(pid);
         tf_unlink(pidFilePath().toLatin1().data());
         tf_unlink(oldPidFilePath().toLatin1().data());
-        tSystemInfo("Killed TreeFrog manager process  pid:{}", (int64_t)pid);
+        tSystemInfo("Killed TreeFrog manager process  pid:{}", (qlonglong)pid);
 
         TProcessInfo::kill(pids);  // kills the server process
         tSystemInfo("Killed TreeFrog application server processes");

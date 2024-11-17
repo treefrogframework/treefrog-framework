@@ -439,7 +439,7 @@ QDateTime THttpUtility::fromHttpDateTimeString(const QByteArray &localTime)
 {
     QByteArray tz = localTime.mid(localTime.length() - 5).trimmed();
     if (!tz.contains("GMT") && tz != timeZone()) {
-        Tf::warn("Time zone not match: {}", tz.data());
+        Tf::warn("Time zone not match: {}", (const char *)tz.data());
     }
     return QLocale(QLocale::C).toDateTime(localTime.left(localTime.lastIndexOf(' ')), HTTP_DATE_TIME_FORMAT);
 }

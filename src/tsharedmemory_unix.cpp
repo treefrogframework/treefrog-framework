@@ -92,11 +92,11 @@ bool TSharedMemory::create(size_t size)
 
     std::memcpy(_ptr, &INIT_HEADER, sizeof(INIT_HEADER));
     _size = size;
-    tSystemDebug("SharedMemory created.  name:{} size:%zu", qUtf8Printable(_name), _size);
+    tSystemDebug("SharedMemory created.  name:{} size:{}", qUtf8Printable(_name), (qulonglong)_size);
     return true;
 
 error:
-    tSystemError("SharedMemory create error.  name:{} size:%zu [{}:{}]", qUtf8Printable(_name), size, __FILE__, __LINE__);
+    tSystemError("SharedMemory create error.  name:{} size:{} [{}:{}]", qUtf8Printable(_name), (qulonglong)size, __FILE__, __LINE__);
 
     if (_fd > 0) {
         tf_close(_fd);
@@ -144,7 +144,7 @@ bool TSharedMemory::attach()
     }
 
     _size = st.st_size;
-    tSystemDebug("SharedMemory attached.  name:{} size:%zu", qUtf8Printable(_name), _size);
+    tSystemDebug("SharedMemory attached.  name:{} size:{}", qUtf8Printable(_name), _size);
     return true;
 
 error:

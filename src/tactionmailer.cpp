@@ -127,7 +127,7 @@ bool TActionMailer::deliver(const QString &templateName)
         // not send
     } else {
         // Bad parameter
-        tSystemError("SMTP: Bad Parameter: ActionMailer.DeliveryMethod: {}", dm.data());
+        tSystemError("SMTP: Bad Parameter: ActionMailer.DeliveryMethod: {}", (const char *)dm.data());
         return false;
     }
     return true;

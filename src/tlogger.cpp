@@ -242,7 +242,7 @@ QStringConverter::Encoding TLogger::encoding() const
                 _encoding = enc;
                 tSystemDebug("set log text codec: {}", QStringConverter::nameForEncoding(_encoding.value()));
             } else {
-                tSystemError("log text codec matching the name could be not found: {}", codecName.data());
+                tSystemError("log text codec matching the name could be not found: {}", (const char *)codecName.data());
             }
         }
 

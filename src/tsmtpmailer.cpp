@@ -167,7 +167,7 @@ bool TSmtpMailer::send()
 
     if (_authEnable) {
         if (!cmdAuth()) {
-            tSystemError("SMTP: User Authentication Failed: username:{} : [{}]", _username.data(), qUtf8Printable(lastServerResponse()));
+            tSystemError("SMTP: User Authentication Failed: username:{} : [{}]", (const char *)_username.data(), qUtf8Printable(lastServerResponse()));
             cmdQuit();
             return false;
         }

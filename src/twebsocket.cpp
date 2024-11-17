@@ -98,7 +98,7 @@ bool TWebSocket::canReadRequest() const
 void TWebSocket::readRequest()
 {
     if (myWorkerCounter > 0) {
-        tSystemWarn("Worker already running  (sd:{})", (uint64_t)socketDescriptor());
+        tSystemWarn("Worker already running  (sd:{})", socketDescriptor());
         return;
     }
 

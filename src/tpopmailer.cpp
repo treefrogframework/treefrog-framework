@@ -221,7 +221,7 @@ bool TPopMailer::readResponse(QByteArray *reply)
                 *reply = rcv.mid(4).trimmed();
             }
         } else {
-            tSystemError("S: {}", rcv.data());
+            tSystemError("S: {}", (const char *)rcv.data());
         }
     }
     return ret;

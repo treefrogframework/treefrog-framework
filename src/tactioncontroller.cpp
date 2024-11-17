@@ -126,7 +126,7 @@ bool TActionController::addCookie(const TCookie &cookie)
 {
     QByteArray name = cookie.name();
     if (name.isEmpty() || name.contains(';') || name.contains(',') || name.contains(' ') || name.contains('\"')) {
-        Tf::error("Invalid cookie name: {}", name.data());
+        Tf::error("Invalid cookie name: {}", (const char *)name.data());
         return false;
     }
 
