@@ -94,8 +94,8 @@ void TActionContext::execute(THttpRequest &request)
         QStringList components = TUrlRoute::splitPath(path);
         TRouting route = TUrlRoute::instance().findRouting(method, components);
 
-        tSystemDebug("Routing: controller:{}  action:{}", route.controller.data(),
-            route.action.data());
+        tSystemDebug("Routing: controller:{}  action:{}", (char*)route.controller.data(),
+            (char*)route.action.data());
 
         if (!route.exists) {
             // Default URL routing

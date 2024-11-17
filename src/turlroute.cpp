@@ -128,8 +128,8 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 
     _routes << rt;
     tSystemDebug("route: method:{} path:{}  ctrl:{} action:{} params:{}",
-        rt.method, qUtf8Printable(QLatin1String("/") + rt.componentList.join("/")), rt.controller.data(),
-        rt.action.data(), rt.hasVariableParams);
+        rt.method, qUtf8Printable(QLatin1String("/") + rt.componentList.join("/")), (char*)rt.controller.data(),
+        (char*)rt.action.data(), rt.hasVariableParams);
     return true;
 }
 

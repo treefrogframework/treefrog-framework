@@ -264,7 +264,7 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
         throw SecurityException("Authenticity token is empty", __FILE__, __LINE__);
     }
 
-    tSystemDebug("postAuthToken: {}", postAuthToken.data());
+    tSystemDebug("postAuthToken: {}", (char*)postAuthToken.data());
     return Tf::strcmp(postAuthToken, authenticityToken());
 }
 

@@ -40,7 +40,7 @@ bool TSessionRedisStore::store(TSession &session)
 #endif
 
     TRedis redis;
-    tSystemDebug("TSessionRedisStore::store  id:{}", session.id().data());
+    tSystemDebug("TSessionRedisStore::store  id:{}", (char*)session.id().data());
     return redis.setEx('_' + session.id(), data, lifeTimeSecs());
 }
 

@@ -402,7 +402,7 @@ QByteArray THttpUtility::timeZone()
     tz += (offset > 0) ? '+' : '-';
     offset = qAbs(offset);
     tz += QString("%1%2").arg(offset / 60, 2, 10, QLatin1Char('0')).arg(offset % 60, 2, 10, QLatin1Char('0')).toLatin1();
-    tSystemDebug("tz: {}", tz.data());
+    tSystemDebug("tz: {}", (char*)tz.data());
     return tz;
 }
 
