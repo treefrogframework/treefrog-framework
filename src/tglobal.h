@@ -248,6 +248,11 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #endif
 }
 
+
+#if defined(__cpp_lib_format) || (defined(_MSC_VER) && _MSC_VER >= 1930)  // std::format
+#define TF_HAVE_STD_FORMAT
+#endif
+
 #include "tfexception.h"
 #include "tfnamespace.h"
 #include "tdeclexport.h"
@@ -256,8 +261,8 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
-#if defined(__cpp_lib_format)  // std::format
-# include <format>
+#ifdef TF_HAVE_STD_FORMAT  // std::format
+#include <format>
 #endif
 
 class TWebApplication;
@@ -300,7 +305,7 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
 
-#if defined(__cpp_lib_format)  // std::format
+#ifdef TF_HAVE_STD_FORMAT  // std::format
 
 // Logging for developer
 template<typename... Args>
