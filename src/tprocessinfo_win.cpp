@@ -69,7 +69,7 @@ QString TProcessInfo::processName() const
         WCHAR fileName[512];
         DWORD len = GetModuleFileNameEx(hProcess, nullptr, (LPWSTR)fileName, 512);
         if (len > 0) {
-            QString path = QString::fromUtf16((ushort *)fileName);
+            QString path = QString::fromUtf16((char16_t*)fileName);
             ret = QFileInfo(path).baseName();
         }
         CloseHandle(hProcess);
