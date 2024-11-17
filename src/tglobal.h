@@ -256,7 +256,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
-#if __cplusplus >= 202002L && __has_include(<format>)
+#if defined(__cpp_lib_format)  // std::format
 # include <format>
 #endif
 
@@ -300,7 +300,7 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
 
-#if __cplusplus >= 202002L && __has_include(<format>)
+#if defined(__cpp_lib_format)  // std::format
 
 // Logging for developer
 template<typename... Args>
