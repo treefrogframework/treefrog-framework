@@ -357,7 +357,9 @@ std::string simple_format(const std::string &format, Args&&... args)
 {
     QByteArray res;
     const size_t len = format.size();
+    constexpr int cnt = sizeof...(args);
     QVariantList vars = { QVariant(args)... };
+
     size_t pos = 0;
     int argidx = 0;
     res.reserve(len * 2);
@@ -365,26 +367,27 @@ std::string simple_format(const std::string &format, Args&&... args)
     while (pos < len) {
         if (format[pos] == '{') {
             if (pos + 1 < len && format[pos + 1] == '}') {
-                if (argidx < vars.count()) {
-                    res += vars.value(argidx).toByteArray();
+                if (argidx < cnt) {
+                    res += vars[argidx].toByteArray();
                     argidx++;
                     pos += 2; // Skip 2 characters, '{}'
                     continue;
                 }
             } else {
                 auto e = format.find('}', pos + 2);
-                if (e != std::string::npos) {
+                if (e != std::string::npos && argidx < cnt) {
                     auto sz = e - pos - 1;
                     auto subs = format.substr(pos + 1, sz);
                     if (subs == ":x") {
-                        auto num = vars.value(argidx).toULongLong();
+                        auto num = vars[argidx].toULongLong();
                         res += QString::number(num, 16).toLatin1();
                     } else if (subs == ":#x") {
-                        auto num = vars.value(argidx).toULongLong();
+                        auto num = vars[argidx].toULongLong();
                         res += "0x";
                         res += QString::number(num, 16).toLatin1();
                     } else {
                         // other format
+                        res += vars[argidx].toByteArray();
                     }
                     argidx++;
                     pos += sz + 2;
