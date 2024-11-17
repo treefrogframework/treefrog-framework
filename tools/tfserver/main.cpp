@@ -58,7 +58,7 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 #if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
 void writeFailure(const char *data, size_t size)
 {
-    tSystemError("%s", QByteArray(data, size).replace('\n', "").data());
+    tSystemError("{}", QByteArray(data, size).replace('\n', "").data());
 }
 #endif
 
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
     if (!loc.isEmpty()) {
         QLocale locale(loc);
         QLocale::setDefault(locale);
-        tSystemInfo("Application's default locale: %s", qUtf8Printable(locale.name()));
+        tSystemInfo("Application's default locale: {}", qUtf8Printable(locale.name()));
     }
 
 #if QT_VERSION < 0x060000
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
         std::fprintf(stderr, "No such directory\n");
         goto finish;
     }
-    tSystemDebug("Web Root: %s", qUtf8Printable(webapp.webRootPath()));
+    tSystemDebug("Web Root: {}", qUtf8Printable(webapp.webRootPath()));
 
     if (!webapp.appSettingsFileExists()) {
         tSystemError("Settings file not found");

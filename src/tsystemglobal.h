@@ -3,9 +3,10 @@
 #include <QSettings>
 #include <QVariant>
 #include <TGlobal>
-#if __has_include(<format>)
+#if __cplusplus >= 202002L && __has_include(<format>)
 #include <format>
 #endif
+#include <tuple>
 
 class TSystemLogger;
 class TAccessLog;
@@ -24,12 +25,21 @@ T_CORE_EXPORT void writeAccessLog(const TAccessLog &log);  // write access log
 T_CORE_EXPORT void writeQueryLog(const QString &query, bool success, const QSqlError &error, int duration);
 T_CORE_EXPORT void traceQuery(int duration, const std::string &msg);
 
-#if __has_include(<format>)
+#if __cplusplus >= 202002L && __has_include(<format>)
 
 template<typename... Args>
 void traceQueryLog(int duration, const std::format_string<Args...> &fmt, Args&&... args)
 {
     auto msg = std::format(fmt, std::forward<Args>(args)...);
+    traceQuery(duration, msg);
+}
+
+#else
+
+template<typename... Args>
+void traceQueryLog(int duration, const std::string &fmt, Args&&... args)
+{
+    auto msg = Tf::simple_format(std::string(fmt), std::forward<Args>(args)...);
     traceQuery(duration, msg);
 }
 
@@ -47,7 +57,7 @@ enum SystemOpCode {
 T_CORE_EXPORT QMap<QString, QVariant> settingsToMap(QSettings &settings, const QString &env = QString());
 }
 
-#if __has_include(<format>)
+#if __cplusplus >= 202002L && __has_include(<format>)
 
 template<typename... Args>
 void tSystemError(const std::format_string<Args...> &fmt, Args&&... args)
@@ -70,9 +80,33 @@ void tSystemInfo(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::tSystemMessage((int)Tf::InfoLevel, msg);
 }
 
+#else
+
+template<typename... Args>
+void tSystemError(const std::string &fmt, Args&&... args)
+{
+    std::string msg = Tf::simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::tSystemMessage((int)Tf::ErrorLevel, msg);
+}
+
+template<typename... Args>
+void tSystemWarn(const std::string &fmt, Args&&... args)
+{
+    std::string msg = Tf::simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::tSystemMessage((int)Tf::WarnLevel, msg);
+}
+
+template<typename... Args>
+void tSystemInfo(const std::string &fmt, Args&&... args)
+{
+    auto msg = Tf::simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::tSystemMessage((int)Tf::InfoLevel, msg);
+}
+
 #endif
 
-#if !defined(TF_NO_DEBUG) && __has_include(<format>)
+#if !defined(TF_NO_DEBUG)
+#if __cplusplus >= 202002L && __has_include(<format>)
 
 template<typename... Args>
 void tSystemDebug(const std::format_string<Args...> &fmt, Args&&... args)
@@ -91,13 +125,28 @@ void tSystemTrace(const std::format_string<Args...> &fmt, Args&&... args)
 #else
 
 template<typename... Args>
-void tSystemDebug(const std::format_string<Args...> &, Args&&...)
+void tSystemDebug(const std::string &fmt, Args&&... args)
 {
+    auto msg = Tf::simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::tSystemMessage((int)Tf::DebugLevel, msg);
 }
 
 template<typename... Args>
-void tSystemTrace(const std::format_string<Args...> &, Args&&...)
+void tSystemTrace(const std::string &fmt, Args&&... args)
 {
+    auto msg = Tf::simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::tSystemMessage((int)Tf::TraceLevel, msg);
 }
+
+#endif
+#else
+
+template<typename... Args>
+void tSystemDebug(Args&&...)
+{}
+
+template<typename... Args>
+void tSystemTrace(Args&&...)
+{}
 
 #endif

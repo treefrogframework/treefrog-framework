@@ -186,7 +186,7 @@ bool startDaemon()
 
 void writeStartupLog()
 {
-    tSystemInfo("TreeFrog Framework version %s", TF_VERSION_STR);
+    tSystemInfo("TreeFrog Framework version {}", TF_VERSION_STR);
 
     QString qtversion = QLatin1String("Execution environment: Qt ") + qVersion();
 #if QT_VERSION >= 0x050400
@@ -203,7 +203,7 @@ void writeStartupLog()
     }
 #endif
 #endif
-    tSystemInfo("%s", qtversion.toLatin1().data());
+    tSystemInfo("{}", qtversion.toLatin1().data());
 }
 
 
@@ -685,7 +685,7 @@ int managerMain(int argc, char *argv[])
             pidfile.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
             pidfile.close();
         } else {
-            tSystemError("File open failed: %s", qUtf8Printable(pidfile.fileName()));
+            tSystemError("File open failed: {}", qUtf8Printable(pidfile.fileName()));
         }
 
         ret = app.exec();

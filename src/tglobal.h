@@ -256,7 +256,7 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
-#if __has_include(<format>)
+#if __cplusplus >= 202002L && __has_include(<format>)
 # include <format>
 #endif
 
@@ -300,49 +300,139 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
 
-#if __has_include(<format>)
+#if __cplusplus >= 202002L && __has_include(<format>)
 
 // Logging for developer
 template<typename... Args>
 void fatal(const std::format_string<Args...> &fmt, Args&&... args)
 {
-    std::string str = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::FatalLevel, str);
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::FatalLevel, msg);
 }
 
 template<typename... Args>
 void error(const std::format_string<Args...> &fmt, Args&&... args)
 {
-    std::string str = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::ErrorLevel, str);
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::ErrorLevel, msg);
 }
 
 template<typename... Args>
 void warn(const std::format_string<Args...> &fmt, Args&&... args)
 {
-    std::string str = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::WarnLevel, str);
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::WarnLevel, msg);
 }
 
 template<typename... Args>
 void info(const std::format_string<Args...> &fmt, Args&&... args)
 {
-    std::string str = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::InfoLevel, str);
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::InfoLevel, msg);
 }
 
 template<typename... Args>
 void debug(const std::format_string<Args...> &fmt, Args&&... args)
 {
-    std::string str = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::DebugLevel, str);
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::DebugLevel, msg);
 }
 
 template<typename... Args>
 void trace(const std::format_string<Args...> &fmt, Args&&... args)
 {
-    std::string str = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::TraceLevel, str);
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::TraceLevel, msg);
+}
+
+#else
+
+template<typename... Args>
+std::string simple_format(const std::string &format, Args&&... args)
+{
+    QByteArray res;
+    const size_t len = format.size();
+    QVariantList vars = { QVariant(args)... };
+    size_t pos = 0;
+    int argidx = 0;
+    res.reserve(len * 2);
+
+    while (pos < len) {
+        if (format[pos] == '{') {
+            if (pos + 1 < len && format[pos + 1] == '}') {
+                if (argidx < vars.count()) {
+                    res += vars.value(argidx).toByteArray();
+                    argidx++;
+                    pos += 2; // Skip 2 characters, '{}'
+                    continue;
+                }
+            } else {
+                auto e = format.find('}', pos + 2);
+                if (e != std::string::npos) {
+                    auto sz = e - pos - 1;
+                    auto subs = format.substr(pos + 1, sz);
+                    if (subs == ":x") {
+                        auto num = vars.value(argidx).toULongLong();
+                        res += QString::number(num, 16).toLatin1();
+                    } else if (subs == ":#x") {
+                        auto num = vars.value(argidx).toULongLong();
+                        res += "0x";
+                        res += QString::number(num, 16).toLatin1();
+                    } else {
+                        // other format
+                    }
+                    argidx++;
+                    pos += sz + 2;
+                    continue;
+                }
+            }
+        }
+        res += format[pos++];
+    }
+    return res.toStdString();
+}
+
+// Logging for developer
+template<typename... Args>
+void fatal(const std::string &fmt, Args&&... args)
+{
+    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::FatalLevel, msg);
+}
+
+template<typename... Args>
+void error(const std::string &fmt, Args&&... args)
+{
+    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::ErrorLevel, msg);
+}
+
+template<typename... Args>
+void warn(const std::string &fmt, Args&&... args)
+{
+    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::WarnLevel, msg);
+}
+
+template<typename... Args>
+void info(const std::string &fmt, Args&&... args)
+{
+    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::InfoLevel, msg);
+}
+
+template<typename... Args>
+void debug(const std::string &fmt, Args&&... args)
+{
+    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::DebugLevel, msg);
+}
+
+template<typename... Args>
+void trace(const std::string &fmt, Args&&... args)
+{
+    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::TraceLevel, msg);
 }
 
 #endif
