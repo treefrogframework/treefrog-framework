@@ -20,7 +20,6 @@
 #include <TLog>
 #include <TLogger>
 #include <TWebApplication>
-#include <format>
 
 namespace {
 TAccessLogStream *accesslogstrm = nullptr;
