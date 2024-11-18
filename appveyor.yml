@@ -42,7 +42,6 @@ environment:
 
 # scripts that are called at very beginning, before repo cloning
 init:
-  - powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force"
   - git config --global core.autocrlf false
 
 install:
@@ -59,6 +58,7 @@ build: off
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
+  - cmd: powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force"
   - cmd: call "%INIT_BAT%" %VCVARARG%
   - cmd: set PATH=%QT_PATH%\bin;C:\tools\vcpkg\installed\x64-windows\tools;C:\tools\vcpkg\installed\x86-windows\tools;%PATH%
   - cmd: echo %PATH%
