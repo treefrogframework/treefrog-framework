@@ -24,7 +24,7 @@ win32 {
   }
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
-    LIBS += -L../../debug -ltreefrogd$${TF_VER_MAJ} ../../../3rdparty/glog/build/Debug/glogd.lib
+    LIBS += -L../../debug -ltreefrogd$${TF_VER_MAJ} ../../../3rdparty/glog/build/Debug/glogd.lib dbghelp.lib
   } else {
     LIBS += -L../../release -ltreefrog$${TF_VER_MAJ}
   }
