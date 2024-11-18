@@ -66,31 +66,46 @@ for %%I in (devenv.com) do if exist %%~$path:I set DEVENV=%%~$path:I
 
 if "%QMAKE%" == "" (
   echo Qt environment not found
-  exit /b
+  pause
+  exit
 )
 qmake --version
 
 if "%CMAKE%" == "" (
   echo CMake not found
-  exit /b
+  pause
+  exit
 )
 cmake --version
 
 if "%MAKE%" == "" (
   echo Make not found
-  exit /b
+  pause
+  exit
 )
 
 if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
   echo Visual Studio compiler not found
-  exit /b
+  pause
+  exit
 )
 
 :: vcvarsall.bat setup
 if /i "%Platform%" == "x64" (
-  set VCVARSOPT=amd64
-  set CMAKEOPT=-A x64
   set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  if "%VisualStudioVersion%" == "15.0" (
+    :: Visual Studio 2017
+    set VCVARSOPT=amd64
+    set CMAKEOPT=-A x64 -T v141
+  ) else if "%VisualStudioVersion%" == "16.0" (
+    :: Visual Studio 2019
+    set VCVARSOPT=amd64
+    set CMAKEOPT=-A x64 -T v142
+  ) else (
+    :: Visual Studio 2022
+    set VCVARSOPT=amd64
+    set CMAKEOPT=-A x64
+  )
 ) else (
   set VCVARSOPT=x86
   set CMAKEOPT=-A Win32
@@ -152,7 +167,8 @@ del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 
 cd %BASEDIR%3rdparty\mongo-driver
-del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
+rd /s /q CMakeFiles >nul 2>&1
+del /f /q CMakeCache.txt Makefile >nul 2>&1
 set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
@@ -166,7 +182,8 @@ if ERRORLEVEL 1 (
   echo;
   echo Build failed.
   echo MongoDB driver not available.
-  exit /b
+  pause
+  exit
 )
 
 :: Builds LZ4
@@ -186,7 +203,8 @@ if ERRORLEVEL 1 (
   echo;
   echo Build failed.
   echo LZ4 not available.
-  exit /b
+  pause
+  exit
 )
 
 :: Builds glog
@@ -209,7 +227,8 @@ if ERRORLEVEL 1 (
   echo;
   echo Build failed.
   echo glog not available.
-  exit /b
+  pause
+  exit
 )
 
 :: Builds TreeFrog
