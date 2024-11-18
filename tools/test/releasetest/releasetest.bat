@@ -62,6 +62,9 @@ cd %APPDIR%
 echo n | tspawn s blog
 tspawn w foo
 
+:: Set ExecutionPolicy
+powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
+
 :: Test in debug mode
 if not "%CMAKE%" == "" (
   call :CMakeBuild Debug

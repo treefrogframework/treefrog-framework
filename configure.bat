@@ -215,7 +215,7 @@ del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
 rmdir /s /q build >nul 2>&1
-set CMAKECMD=cmake -S . -B build %CMAKEOPT%
+set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
 echo %CMAKECMD%
 %CMAKECMD%
 set CMAKECMD=cmake --build build -j
