@@ -42,6 +42,7 @@ environment:
 
 # scripts that are called at very beginning, before repo cloning
 init:
+  - powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force"
   - git config --global core.autocrlf false
 
 install:
