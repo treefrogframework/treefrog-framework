@@ -122,7 +122,7 @@ void TActionThread::run()
             QByteArray connectionHeader = requests[0].header().rawHeader(QByteArrayLiteral("Connection")).toLower();
             if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
                 QByteArray upgradeHeader = requests[0].header().rawHeader(QByteArrayLiteral("Upgrade")).toLower();
-                tSystemDebug("Upgrade: {}", (char*)upgradeHeader.data());
+                tSystemDebug("Upgrade: {}", (const char*)upgradeHeader.data());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
                     if (!handshakeForWebSocket(requests[0].header())) {

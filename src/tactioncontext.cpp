@@ -94,8 +94,8 @@ void TActionContext::execute(THttpRequest &request)
         QStringList components = TUrlRoute::splitPath(path);
         TRouting route = TUrlRoute::instance().findRouting(method, components);
 
-        tSystemDebug("Routing: controller:{}  action:{}", (char*)route.controller.data(),
-            (char*)route.action.data());
+        tSystemDebug("Routing: controller:{}  action:{}", (const char*)route.controller.data(),
+            (const char*)route.action.data());
 
         if (!route.exists) {
             // Default URL routing
@@ -112,7 +112,7 @@ void TActionContext::execute(THttpRequest &request)
                         route.setRouting(c + QByteArrayLiteral("controller"), action, components.mid(2));
                     }
                 }
-                tSystemDebug("Active Controller : {}", route.controller.data());
+                tSystemDebug("Active Controller : {}", (const char*)route.controller.data());
             }
         }
 
@@ -152,7 +152,7 @@ void TActionContext::execute(THttpRequest &request)
                     TSessionManager::instance().remove(_currController->session().sessionId);  // Removes the old session
                     // Re-generate session ID
                     _currController->session().sessionId = TSessionManager::instance().generateId();
-                    tSystemDebug("Re-generate session ID: {}", _currController->session().sessionId.data());
+                    tSystemDebug("Re-generate session ID: {}", (const char*)_currController->session().sessionId.data());
                 }
 
                 if (EnableCsrfProtectionModuleFlag && _currController->csrfProtectionEnabled()) {

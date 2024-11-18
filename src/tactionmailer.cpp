@@ -82,7 +82,7 @@ bool TActionMailer::deliver(const QString &templateName)
         mailer->setAuthenticationEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpAuthentication).toBool());
         mailer->setUserName(Tf::appSettings()->value(Tf::ActionMailerSmtpUserName).toByteArray());
         mailer->setPassword(Tf::appSettings()->value(Tf::ActionMailerSmtpPassword).toByteArray());
-        tSystemDebug("{}", mail.toByteArray().data());
+        tSystemDebug("{}", (const char*)mail.toByteArray().data());
 
         // POP before SMTP
         if (Tf::appSettings()->value(Tf::ActionMailerSmtpEnablePopBeforeSmtp).toBool()) {

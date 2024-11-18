@@ -82,7 +82,7 @@ bool TPopMailer::connectToHost()
     int j = response.indexOf('>');
     if (i >= 0 && j > i) {
         apopToken = response.mid(i, j - i + 1);
-        tSystemDebug("APOP token: {}", (char*)apopToken.data());
+        tSystemDebug("APOP token: {}", (const char*)apopToken.data());
     }
 
     if (_apopEnabled) {
@@ -194,7 +194,7 @@ bool TPopMailer::write(const QByteArray &command)
 
     int len = _socket->write(cmd);
     _socket->flush();
-    tSystemDebug("C: {}", cmd.trimmed().data());
+    tSystemDebug("C: {}", (const char*)cmd.trimmed().data());
     return (len == cmd.length());
 }
 
@@ -209,7 +209,7 @@ bool TPopMailer::readResponse(QByteArray *reply)
 
     if (_socket->waitForReadyRead(5000)) {
         QByteArray rcv = _socket->readLine();
-        tSystemDebug("S: {}", rcv.data());
+        tSystemDebug("S: {}", (const char*)rcv.data());
 
         if (rcv.startsWith("+OK")) {
             ret = true;

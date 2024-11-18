@@ -408,7 +408,7 @@ bool TSmtpMailer::write(const QByteArray &command)
 
     int len = _socket->write(cmd);
     _socket->flush();
-    tSystemDebug("C: {}", (char*)cmd.trimmed().data());
+    tSystemDebug("C: {}", (const char*)cmd.trimmed().data());
     return (len == cmd.length());
 }
 
@@ -430,7 +430,7 @@ int TSmtpMailer::read(QByteArrayList *reply)
                 break;
             }
         }
-        tSystemDebug("S: {}", (char*)rcv.data());
+        tSystemDebug("S: {}", (const char*)rcv.data());
 
         if (code == 0)
             code = rcv.left(3).toInt();
