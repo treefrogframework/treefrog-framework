@@ -200,6 +200,10 @@ jobs:
         version: '6.7.3'
         host: 'windows'
         target: 'desktop'
+    - name: Install VisualStudio path
+      shell: cmd
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
     - name: Install VisualStudio tools
       run: |
         choco install visualstudio2022buildtools
@@ -210,10 +214,8 @@ jobs:
         call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         set
-        where cl
     - name: Configure for debug
       run: |
-        where cl
         qmake -version
         .\configure.bat --enable-debug
     - name: Build for debug
