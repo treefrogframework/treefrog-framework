@@ -194,7 +194,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Install Qt
-      uses: jurplel/install-qt-action@main
+      uses: jurplel/install-qt-action@v4
       with:
         version: '6.7.3'
         host: 'windows'
