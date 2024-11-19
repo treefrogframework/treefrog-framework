@@ -200,13 +200,16 @@ jobs:
         version: '6.7.3'
         host: 'windows'
         target: 'desktop'
-    - name: Set up MSVC environment
-      shell: cmd
+    - name: Install VisualStudio tools
       run: |
         choco install visualstudio2022buildtools
         choco install visualstudio2022-workload-vctools
+    - name: Set up MSVC environment
+      shell: cmd
+      run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
+        set
         where cl
     - name: Configure for debug
       run: |
