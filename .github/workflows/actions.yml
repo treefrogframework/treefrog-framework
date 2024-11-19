@@ -201,6 +201,7 @@ jobs:
         host: 'windows'
         target: 'desktop'
     - name: Set up MSVC environment
+      shell: cmd
       run: |
         choco install visualstudio2022buildtools
         choco install visualstudio2022-workload-vctools
@@ -209,6 +210,7 @@ jobs:
         where cl
     - name: Configure for debug
       run: |
+        where cl
         qmake -version
         .\configure.bat --enable-debug
     - name: Build for debug
