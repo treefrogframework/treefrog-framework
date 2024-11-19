@@ -206,10 +206,11 @@ jobs:
     #     vs-version: '[17.6,17.13)'
     - name: Install VisualStudio tools
       run: |
+        choco install visualstudio2022community
+        choco install visualstudio2022buildtools
         choco install visualstudio2022-workload-nativedesktop
-        # choco install visualstudio2022buildtools
-        # choco install visualstudio2022-workload-vctools
-        # choco install jom
+        choco install visualstudio2022-workload-vctools
+        choco install jom
     - name: Set up MSVC environment
       shell: cmd
       run: |
