@@ -62,13 +62,12 @@ cd %APPDIR%
 echo n | tspawn s blog
 tspawn w foo
 
-:: Set ExecutionPolicy
-for %%I in (tadpoled.exe) do if exist %%~$path:I set TADPOLED=%%~$path:I
-for %%I in (tadpole.exe) do if exist %%~$path:I set TADPOLE=%%~$path:I
-
-powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
-powershell -command "New-NetFirewallRule -DisplayName MyAppAccess1 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLED%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-powershell -command "New-NetFirewallRule -DisplayName MyAppAccess2 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLE%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
+@REM :: Set ExecutionPolicy
+@REM for %%I in (tadpoled.exe) do if exist %%~$path:I set TADPOLED=%%~$path:I
+@REM for %%I in (tadpole.exe) do if exist %%~$path:I set TADPOLE=%%~$path:I
+@REM powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
+@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess1 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLED%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
+@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess2 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLE%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
 
 
 :: Test in debug mode

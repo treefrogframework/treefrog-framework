@@ -189,3 +189,65 @@ jobs:
     - name: releasetest
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-windows-msvc2022-qt6.7
+    runs-on: windows-latest
+    steps:
+    - name: Install Qt
+      uses: jurplel/install-qt-action@latest
+      with:
+        version: '6.7.3'
+        host: 'windows'
+        target: 'desktop'
+    - name: Set up MSVC environment
+      run:
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+    - name: Build
+      run:
+        qmake -version
+        configure.bat --enable-debug
+        cd src
+        nmake install
+        cd test
+        call testall.bat
+        cd ..\..\tools
+        nmake install
+        cd ..
+        configure.bat
+        cd src
+        nmake install
+        cd ..\tools
+        nmake install
+    - name: Test
+        call tools\releasetest\releasetest.bat
+
+  # build-windows-msvc2019-qt6.7
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@latest
+  #     with:
+  #       version: '6.7.3'
+  #       host: 'windows'
+  #       target: 'desktop'
+
+  # build-windows-msvc2019-qt6.5
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@latest
+  #     with:
+  #       version: '6.5.2'
+  #       host: 'windows'
+  #       target: 'desktop'
+
+  # build-windows-msvc2019-qt6.2
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@latest
+  #     with:
+  #       version: '6.2.7'
+  #       host: 'windows'
+  #       target: 'desktop'
