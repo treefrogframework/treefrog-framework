@@ -193,6 +193,7 @@ jobs:
   build-windows-msvc2022-qt6_7:
     runs-on: windows-latest
     steps:
+    - uses: actions/checkout@main
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -226,6 +227,7 @@ jobs:
   # build-windows-msvc2019-qt6_7:
   #   runs-on: windows-latest
   #   steps:
+  #   - uses: actions/checkout@main
   #   - name: Install Qt
   #     uses: jurplel/install-qt-action@latest
   #     with:
@@ -236,6 +238,7 @@ jobs:
   # build-windows-msvc2019-qt6_5:
   #   runs-on: windows-latest
   #   steps:
+  #   - uses: actions/checkout@main
   #   - name: Install Qt
   #     uses: jurplel/install-qt-action@latest
   #     with:
@@ -246,6 +249,7 @@ jobs:
   # build-windows-msvc2019-qt6_2:
   #   runs-on: windows-latest
   #   steps:
+  #   - uses: actions/checkout@main
   #   - name: Install Qt
   #     uses: jurplel/install-qt-action@latest
   #     with:
