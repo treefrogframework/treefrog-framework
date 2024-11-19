@@ -202,6 +202,8 @@ jobs:
         target: 'desktop'
     - name: Set up MSVC environment
       run: |
+        choco install visualstudio2022buildtools --version=17.8.4 --params "--add Microsoft.VisualStudio.Workload.VCTools"
+        refreshenv
         "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
     - name: Configure for debug
@@ -252,6 +254,9 @@ jobs:
   #       version: '6.5.2'
   #       host: 'windows'
   #       target: 'desktop'
+
+        # choco install visualstudio2019buildtools --version=16.11.30 --params "--add Microsoft.VisualStudio.Workload.VCTools"
+        # refreshenv
 
   # build-windows-msvc2019-qt6_2:
   #   runs-on: windows-latest
