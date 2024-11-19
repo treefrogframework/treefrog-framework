@@ -206,7 +206,7 @@ jobs:
     #     vs-version: '[17.6,17.13)'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2022community
+        choco install visualstudio2022community --package-parameters "--allWorkloads --includeRecommended --includeOptional"
         choco install visualstudio2022buildtools
         choco install visualstudio2022-workload-nativedesktop
         choco install visualstudio2022-workload-vctools
@@ -226,10 +226,10 @@ jobs:
       shell: cmd
       run: |
         cd src
-        jom -j
+        jom
         jom install
         cd ..\tools
-        jom -j
+        jom
         jom install
     - name: Test modules
       shell: cmd
@@ -244,10 +244,10 @@ jobs:
       shell: cmd
       run: |
         cd src
-        jom -j
+        jom
         jom install
         cd ..\tools
-        jom -j
+        jom
         jom install
     - name: Test
       shell: cmd
