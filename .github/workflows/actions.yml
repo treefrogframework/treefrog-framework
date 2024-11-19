@@ -202,12 +202,11 @@ jobs:
         target: 'desktop'
     - name: Set up MSVC environment
       run: |
-        # choco install visualstudio2022buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools"
-        choco install visualstudio2022buildtools --include-optional
-        # powershell -Command "Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+        choco list visualstudio2022buildtools --all-versions
+        choco install visualstudio2022buildtools --version 17.9 --params "--add Microsoft.VisualStudio.Workload.VCTools"
         "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
-        where nmake
+        where cl
     - name: Configure for debug
       run: |
         qmake -version
