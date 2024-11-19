@@ -202,7 +202,7 @@ jobs:
         target: 'desktop'
     - name: Set up MSVC environment
       run: |
-        choco install visualstudio2022buildtools --version=17.8.4 --params "--add Microsoft.VisualStudio.Workload.VCTools"
+        choco install visualstudio2022buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools"
         refreshenv
         "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
