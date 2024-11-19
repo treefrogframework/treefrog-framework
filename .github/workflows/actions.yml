@@ -190,7 +190,7 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
-  build-windows-msvc2022-qt6_7:
+  build-windows-msvc2022-qt67:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
@@ -203,7 +203,7 @@ jobs:
     - name: Set up MSVC environment
       run: |
         choco install visualstudio2022buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools"
-        refreshenv
+        powershell -Command "Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
         "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
     - name: Configure for debug
@@ -233,7 +233,7 @@ jobs:
       run: |
         tools\releasetest\releasetest.bat
 
-  # build-windows-msvc2019-qt6_7:
+  # build-windows-msvc2019-qt67:
   #   runs-on: windows-latest
   #   steps:
   #   - uses: actions/checkout@main
@@ -244,7 +244,7 @@ jobs:
   #       host: 'windows'
   #       target: 'desktop'
 
-  # build-windows-msvc2019-qt6_5:
+  # build-windows-msvc2019-qt65:
   #   runs-on: windows-latest
   #   steps:
   #   - uses: actions/checkout@main
@@ -255,10 +255,10 @@ jobs:
   #       host: 'windows'
   #       target: 'desktop'
 
-        # choco install visualstudio2019buildtools --version=16.11.30 --params "--add Microsoft.VisualStudio.Workload.VCTools"
+        # choco install visualstudio2019buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools"
         # refreshenv
 
-  # build-windows-msvc2019-qt6_2:
+  # build-windows-msvc2019-qt62:
   #   runs-on: windows-latest
   #   steps:
   #   - uses: actions/checkout@main
