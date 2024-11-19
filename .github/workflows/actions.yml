@@ -204,18 +204,25 @@ jobs:
       run: |
         "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
-    - name: Build
+    - name: Configure for debug
       run: |
         qmake -version
-        configure.bat --enable-debug
+        .\configure.bat --enable-debug
+    - name: Build for debug
+      run: |
         cd src
         nmake install
+        cd ..\tools
+        nmake install
+    - name: Test modules
+      run: |
         cd test
         testall.bat
-        cd ..\..\tools
-        nmake install
-        cd ..
-        configure.bat
+    - name: Configure for release
+      run: |
+        .\configure.bat
+    - name: Build for release
+      run: |
         cd src
         nmake install
         cd ..\tools
