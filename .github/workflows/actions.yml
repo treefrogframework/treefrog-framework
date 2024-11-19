@@ -193,8 +193,8 @@ jobs:
   build-windows-msvc2022-qt6.7:
     runs-on: windows-latest
     steps:
+    - uses: jurplel/install-qt-action@latest
     - name: Install Qt
-      uses: jurplel/install-qt-action@latest
       with:
         version: '6.7.3'
         host: 'windows'
@@ -225,8 +225,8 @@ jobs:
   # build-windows-msvc2019-qt6.7:
   #   runs-on: windows-latest
   #   steps:
+  #   - uses: jurplel/install-qt-action@latest
   #   - name: Install Qt
-  #     uses: jurplel/install-qt-action@latest
   #     with:
   #       version: '6.7.3'
   #       host: 'windows'
@@ -235,8 +235,8 @@ jobs:
   # build-windows-msvc2019-qt6.5:
   #   runs-on: windows-latest
   #   steps:
+  #   - uses: jurplel/install-qt-action@latest
   #   - name: Install Qt
-  #     uses: jurplel/install-qt-action@latest
   #     with:
   #       version: '6.5.2'
   #       host: 'windows'
@@ -245,8 +245,8 @@ jobs:
   # build-windows-msvc2019-qt6.2:
   #   runs-on: windows-latest
   #   steps:
+  #   - uses: jurplel/install-qt-action@latest
   #   - name: Install Qt
-  #     uses: jurplel/install-qt-action@latest
   #     with:
   #       version: '6.2.7'
   #       host: 'windows'
