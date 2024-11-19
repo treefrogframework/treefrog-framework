@@ -206,8 +206,9 @@ jobs:
         vs-version: '[17.6,17.13)'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2022buildtools
-        choco install visualstudio2022-workload-vctools
+        # choco install visualstudio2022buildtools
+        # choco install visualstudio2022-workload-vctools
+        choco install jom
     - name: Set up MSVC environment
       shell: cmd
       run: |
@@ -223,9 +224,11 @@ jobs:
       shell: cmd
       run: |
         cd src
-        nmake install
+        jom -j
+        jom install
         cd ..\tools
-        nmake install
+        jom -j
+        jom install
     - name: Test modules
       shell: cmd
       run: |
@@ -239,9 +242,11 @@ jobs:
       shell: cmd
       run: |
         cd src
-        nmake install
+        jom -j
+        jom install
         cd ..\tools
-        nmake install
+        jom -j
+        jom install
     - name: Test
       shell: cmd
       run: |
