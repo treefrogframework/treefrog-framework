@@ -201,7 +201,7 @@ jobs:
         target: 'desktop'
     - name: Set up MSVC environment
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+        "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
     - name: Build
       run: |
@@ -210,7 +210,7 @@ jobs:
         cd src
         nmake install
         cd test
-        call testall.bat
+        testall.bat
         cd ..\..\tools
         nmake install
         cd ..
@@ -221,7 +221,7 @@ jobs:
         nmake install
     - name: Test
       run: |
-        call tools\releasetest\releasetest.bat
+        tools\releasetest\releasetest.bat
 
   # build-windows-msvc2019-qt6_7:
   #   runs-on: windows-latest
