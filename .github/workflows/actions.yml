@@ -190,7 +190,7 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
-  build-windows-msvc2022-qt6.7
+  build-windows-msvc2022-qt67
     runs-on: windows-latest
     steps:
     - name: Install Qt
@@ -222,7 +222,7 @@ jobs:
     - name: Test
         call tools\releasetest\releasetest.bat
 
-  # build-windows-msvc2019-qt6.7
+  # build-windows-msvc2019-qt67
   #   runs-on: windows-latest
   #   steps:
   #   - name: Install Qt
@@ -232,7 +232,7 @@ jobs:
   #       host: 'windows'
   #       target: 'desktop'
 
-  # build-windows-msvc2019-qt6.5
+  # build-windows-msvc2019-qt65
   #   runs-on: windows-latest
   #   steps:
   #   - name: Install Qt
@@ -242,7 +242,7 @@ jobs:
   #       host: 'windows'
   #       target: 'desktop'
 
-  # build-windows-msvc2019-qt6.2
+  # build-windows-msvc2019-qt62
   #   runs-on: windows-latest
   #   steps:
   #   - name: Install Qt
