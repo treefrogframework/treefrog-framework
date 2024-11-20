@@ -189,3 +189,123 @@ jobs:
     - name: releasetest
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+
+  build-windows-msvc2022-qt67:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.7.3'
+        host: 'windows'
+        target: 'desktop'
+    - name: Install VisualStudio tools
+      run: |
+        choco install visualstudio2022community --package-parameters "--includeRecommended --includeOptional"
+        choco install visualstudio2022buildtools
+        choco install visualstudio2022-workload-nativedesktop
+        choco install visualstudio2022-workload-vctools
+        # choco install jom
+    - name: Build for debug mode
+      shell: cmd
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        qmake -version
+        .\configure.bat --enable-debug
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+        cd test
+        testall.bat
+    - name: Build for release mode
+      shell: cmd
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+        set CL=/MP
+        .\configure.bat
+        cd src
+        nmake
+        nmake install
+        cd ..\tools
+        nmake
+        nmake install
+        tools\releasetest\releasetest.bat
+
+  build-windows-msvc2019-qt67:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.3'
+          host: 'windows'
+          target: 'desktop'
+      - name: Install VisualStudio tools
+        run: |
+          choco install visualstudio2019community --package-parameters "--includeRecommended --includeOptional"
+          # choco install visualstudio2019buildtools
+          # choco install visualstudio2019-workload-nativedesktop
+          choco install visualstudio2019-workload-vctools
+          # choco install jom
+      - name: Build for debug mode
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+          where cl
+          where nmake
+          set CL=/MP
+          qmake -version
+          .\configure.bat --enable-debug
+          cd src
+          nmake
+          nmake install
+          cd ..\tools
+          nmake
+          nmake install
+          cd test
+          testall.bat
+      - name: Build for release mode
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+          set CL=/MP
+          .\configure.bat
+          cd src
+          nmake
+          nmake install
+          cd ..\tools
+          nmake
+          nmake install
+          tools\releasetest\releasetest.bat
+
+
+  # build-windows-msvc2019-qt65:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - uses: actions/checkout@main
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@latest
+  #     with:
+  #       version: '6.5.2'
+  #       host: 'windows'
+  #       target: 'desktop'
+
+        # choco install visualstudio2019buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools"
+        # refreshenv
+
+  # build-windows-msvc2019-qt62:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - uses: actions/checkout@main
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@latest
+  #     with:
+  #       version: '6.2.7'
+  #       host: 'windows'
+  #       target: 'desktop'
