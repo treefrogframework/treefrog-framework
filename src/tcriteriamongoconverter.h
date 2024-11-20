@@ -180,13 +180,8 @@ inline QVariantMap TCriteriaMongoConverter<T>::join(const QVariantMap &v1, TCrit
 
     QVariantMap ret;
     if (op == TCriteria::And) {
-#if QT_VERSION >= 0x050f00  // 5.15.0
         ret = v2;
         ret.insert(v1);
-#else
-        ret = v1;
-        ret.unite(v2);
-#endif
     } else if (op == TCriteria::Or) {
         QVariantList lst;
         lst << v1 << v2;

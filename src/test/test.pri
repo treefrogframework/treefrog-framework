@@ -5,9 +5,10 @@ QT += network sql qml testlib
 QT -= gui
 DEFINES += TF_DLL
 
-lessThan(QT_MAJOR_VERSION, 6) {
-  CONFIG += c++14
-  windows:QMAKE_CXXFLAGS += /std:c++14
+lessThan(QT_MINOR_VERSION, 3) {
+  # Qt6.2
+  CONFIG += c++17
+  windows:QMAKE_CXXFLAGS += /std:c++17
 } else {
   CONFIG += c++20
   windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
@@ -16,12 +17,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
 include(../../tfbase.pri)
 INCLUDEPATH += ../../../include ../..
 
-win32 {
-  lessThan(QT_MAJOR_VERSION, 6) {
-    win32-msvc* {
-      QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
-    }
-  }
+windows {
   CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
     LIBS += -L../../debug -ltreefrogd$${TF_VER_MAJ} ../../../3rdparty/glog/build/Debug/glogd.lib dbghelp.lib

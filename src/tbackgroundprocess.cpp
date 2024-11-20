@@ -25,9 +25,7 @@ void TBackgroundProcess::connectToSlots(TBackgroundProcessHandler *handler)
         QObject::connect(this, SIGNAL(readyReadStandardOutput()), handler, SLOT(handleReadyReadStandardOutput()));
         QObject::connect(this, SIGNAL(started()), handler, SLOT(handleStarted()));
         QObject::connect(this, SIGNAL(stateChanged(QProcess::ProcessState)), handler, SLOT(handleStateChanged(QProcess::ProcessState)));
-#if QT_VERSION >= 0x050600
         QObject::connect(this, SIGNAL(errorOccurred(QProcess::ProcessError)), handler, SLOT(handleErrorOccurred(QProcess::ProcessError)));
-#endif
         QObject::connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), handler, SLOT(deleteAutoDeleteHandler()));
         QObject::connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(handleFinished()), Qt::QueuedConnection);
 

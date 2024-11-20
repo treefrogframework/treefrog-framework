@@ -175,8 +175,6 @@ void TAbstractModel::setProperties(const QJsonDocument &properties)
 }
 
 
-#if QT_VERSION >= 0x050c00  // 5.12.0
-
 /*!
   Converts all the properies to CBOR using QCborValue::fromVariant() and
   returns the map composed of those elements.
@@ -185,7 +183,7 @@ QCborMap TAbstractModel::toCborMap(const QStringList &properties) const
 {
     return QCborMap::fromVariantMap(toVariantMap(properties));
 }
-#endif
+
 
 
 /*!

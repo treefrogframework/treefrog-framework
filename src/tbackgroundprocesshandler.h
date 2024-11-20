@@ -22,13 +22,7 @@ protected slots:
     virtual void handleReadyReadStandardOutput() { }
     virtual void handleStarted() { }
     virtual void handleStateChanged(QProcess::ProcessState) { }
-
-#if QT_VERSION >= 0x050600
-    virtual void handleErrorOccurred(QProcess::ProcessError)
-    {
-    }
-#endif
-
+    virtual void handleErrorOccurred(QProcess::ProcessError) { }
     void deleteAutoDeleteHandler();
 
 private:

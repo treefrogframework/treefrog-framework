@@ -5,9 +5,10 @@ CONFIG  += console
 CONFIG  -= app_bundle
 QT      += network sql xml qml
 QT      -= gui
-lessThan(QT_MAJOR_VERSION, 6) {
-  CONFIG += c++14
-  windows:QMAKE_CXXFLAGS += /std:c++14
+lessThan(QT_MINOR_VERSION, 3) {
+  # Qt6.2
+  CONFIG += c++17
+  windows:QMAKE_CXXFLAGS += /std:c++17
 } else {
   CONFIG += c++20
   windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-

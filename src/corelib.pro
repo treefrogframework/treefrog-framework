@@ -3,9 +3,10 @@ TEMPLATE = lib
 CONFIG  += shared console
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
-lessThan(QT_MAJOR_VERSION, 6) {
-  CONFIG += c++14
-  windows:QMAKE_CXXFLAGS += /std:c++14
+lessThan(QT_MINOR_VERSION, 3) {
+  # Qt6.2
+  CONFIG += c++17
+  windows:QMAKE_CXXFLAGS += /std:c++17
 } else {
   CONFIG += c++20
   windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
@@ -42,12 +43,7 @@ windows {
   LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
-
-  lessThan(QT_MAJOR_VERSION, 6) {
-    QMAKE_CXXFLAGS += /source-charset:utf-8 /wd 4819 /wd 4661
-  } else {
-    QMAKE_CXXFLAGS += /wd 4819 /wd 4661
-  }
+  QMAKE_CXXFLAGS += /wd 4819 /wd 4661
 
   isEmpty(header.path) {
     header.path = C:/TreeFrog/$${VERSION}/include
