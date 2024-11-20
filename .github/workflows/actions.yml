@@ -202,10 +202,11 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2022community -y --package-parameters "--includeRecommended --includeOptional"
-        choco install visualstudio2022-workload-nativedesktop
-        choco install visualstudio2022buildtools
-        choco install visualstudio2022-workload-vctools
+        #choco install visualstudio2022community -y --package-parameters "--includeRecommended --includeOptional"
+        choco install visualstudio2022community -y
+        choco install visualstudio2022-workload-nativedesktop -y
+        #choco install visualstudio2022-workload-vctools -y
+        #choco install visualstudio2022buildtools
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -233,7 +234,8 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        tools\releasetest\releasetest.bat
+        cd test
+        releasetest\releasetest.bat
 
   build-windows-msvc2019-qt67:
     runs-on: windows-latest
@@ -248,9 +250,9 @@ jobs:
     - name: Install VisualStudio tools
       run: |
         choco install visualstudio2019community -y --package-parameters "--includeRecommended"
-        choco install visualstudio2019-workload-nativedesktop
-        choco install visualstudio2019buildtools
-        choco install visualstudio2019-workload-vctools
+        choco install visualstudio2019-workload-nativedesktop -y
+        # choco install visualstudio2019-workload-vctools -y
+        # choco install visualstudio2019buildtools
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -280,7 +282,8 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        tools\releasetest\releasetest.bat
+        cd test
+        releasetest\releasetest.bat
 
   build-windows-msvc2019-qt65:
     runs-on: windows-latest
@@ -295,9 +298,9 @@ jobs:
     - name: Install VisualStudio tools
       run: |
         choco install visualstudio2019community -y
-        choco install visualstudio2019-workload-nativedesktop
-        choco install visualstudio2019buildtools
-        choco install visualstudio2019-workload-vctools
+        choco install visualstudio2019-workload-nativedesktop -y
+        # choco install visualstudio2019-workload-vctools -y
+        # choco install visualstudio2019buildtools
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -327,7 +330,8 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        tools\releasetest\releasetest.bat
+        cd test
+        releasetest\releasetest.bat
 
   build-windows-msvc2019-qt62:
     runs-on: windows-latest
@@ -341,11 +345,13 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2019community -y --package-parameters "--includeRecommended --includeOptional"
-        choco install visualstudio2019buildtools
-        choco install visualstudio2019-workload-nativedesktop
-        #choco install visualstudio2019-workload-vctools
-        choco install jom
+        # choco install visualstudio2019community -y
+        choco install visualstudio2019-workload-nativedesktop -y
+        # choco install visualstudio2019community -y --package-parameters "--includeRecommended --includeOptional"
+        # choco install visualstudio2019-workload-vctools -y
+        # choco install visualstudio2019buildtools
+        # choco install visualstudio2019-workload-nativedesktop
+        # choco install jom
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -375,4 +381,5 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        tools\releasetest\releasetest.bat
+        cd test
+        releasetest\releasetest.bat
