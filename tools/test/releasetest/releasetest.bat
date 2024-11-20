@@ -6,7 +6,6 @@ set APPNAME=blogapp
 set APPDIR=%BASEDIR%%APPNAME%
 set DBFILE=%APPDIR%\db\dbfile
 set PORT=18800
-set MAKE=nmake VERBOSE=1
 set CL=/MP
 
 cd /D %BASEDIR%
@@ -17,15 +16,23 @@ if not "%TFENV%" == "" (
   call "..\..\..\tfenv.bat"
 )
 
-for %%I in (nmake.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+for %%I in (nmake.exe) do if exist %%~$path:I set MAKE=%%~$path:I
+if "%MAKE%" == "" (
+  for %%I in (jom.exe) do if exist %%~$path:I set MAKE=%%~$path:I
+  if not "%MAKE%" == "" (
+    set MAKE=jom
+  )
+) else (
+  set MAKE=nmake VERBOSE=1
+)
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 
-if "%NMAKE%" == "" (
+if "%MAKE%" == "" (
   echo;
-  echo nmake.exe command not found.
+  echo nmake.exe not found.
   call :CleanUp
   pause
   exit /B 1
@@ -62,14 +69,12 @@ cd %APPDIR%
 echo n | tspawn s blog
 tspawn w foo
 
-:: Set ExecutionPolicy
-for %%I in (tadpoled.exe) do if exist %%~$path:I set TADPOLED=%%~$path:I
-for %%I in (tadpole.exe) do if exist %%~$path:I set TADPOLE=%%~$path:I
-
-powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
-powershell -command "New-NetFirewallRule -DisplayName MyAppAccess1 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLED%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-powershell -command "New-NetFirewallRule -DisplayName MyAppAccess2 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLE%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-
+@REM :: Set ExecutionPolicy
+@REM for %%I in (tadpoled.exe) do if exist %%~$path:I set TADPOLED=%%~$path:I
+@REM for %%I in (tadpole.exe) do if exist %%~$path:I set TADPOLE=%%~$path:I
+@REM powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
+@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess1 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLED%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
+@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess2 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLE%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
 
 :: Test in debug mode
 if not "%CMAKE%" == "" (
@@ -83,7 +88,7 @@ call :QMakeBuild debug
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrogd
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-nmake distclean >nul 2>nul
+%MAKE% distclean >nul 2>nul
 
 :: Test in release mode
 if not "%CMAKE%" == "" (
@@ -97,7 +102,7 @@ call :QMakeBuild release
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrog
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-nmake distclean >nul 2>nul
+%MAKE% distclean >nul 2>nul
 
 echo;
 echo Test OK
@@ -137,7 +142,7 @@ exit /B 0
 cd /D %APPDIR%
 del /Q /F lib\*.*
 qmake -r CONFIG+=%1
-nmake
+%MAKE%
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
@@ -151,6 +156,13 @@ exit /B 0
 ::
 :CheckWebApp
 cd /D %APPDIR%
+
+for %%I in (%1) do if exist %%~$path:I set TREEFROG=%%~$path:I
+if "%TREEFROG%" == "" (
+  echo %1 command not found!
+  exit /B 1
+)
+
 "%1" -v
 "%1" -l
 "%1" --show-routes

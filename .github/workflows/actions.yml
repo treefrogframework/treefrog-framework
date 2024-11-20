@@ -190,7 +190,7 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
 
-  build-windows-msvc2022-qt67:
+  build-windows-qt67-msvc2022:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
@@ -202,7 +202,6 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        #choco install visualstudio2022community -y --package-parameters "--includeRecommended --includeOptional"
         choco install visualstudio2022community -y
         choco install visualstudio2022-workload-nativedesktop -y
         choco install sqlite -y
@@ -233,10 +232,13 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        cd test
-        releasetest\releasetest.bat
+    - name: Test release
+      shell: cmd
+      run: |
+        cd tools\test
+        call releasetest\releasetest.bat
 
-  build-windows-msvc2019-qt67:
+  build-windows-qt67-msvc2019:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
@@ -248,10 +250,8 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2019community -y --package-parameters "--includeRecommended"
+        choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
-        # choco install visualstudio2019-workload-vctools -y
-        # choco install visualstudio2019buildtools
         choco install sqlite -y
     - name: Build for debug mode
       shell: cmd
@@ -282,10 +282,13 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        cd test
-        releasetest\releasetest.bat
+    - name: Test release
+      shell: cmd
+      run: |
+        cd tools\test
+        call releasetest\releasetest.bat
 
-  build-windows-msvc2019-qt65:
+  build-windows-qt65-msvc2019:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
@@ -329,10 +332,13 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        cd test
-        releasetest\releasetest.bat
+    - name: Test release
+      shell: cmd
+      run: |
+        cd tools\test
+        call releasetest\releasetest.bat
 
-  build-windows-msvc2019-qt62:
+  build-windows-qt62-msvc2019:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
@@ -376,5 +382,8 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-        cd test
-        releasetest\releasetest.bat
+    - name: Test release
+      shell: cmd
+      run: |
+        cd tools\test
+        call releasetest\releasetest.bat
