@@ -215,11 +215,14 @@ jobs:
         cd src
         nmake
         nmake install
-        cd test
-        call testall.bat
-        cd ..\..\tools
+        cd ..\tools
         nmake
         nmake install
+    - name: Test modules
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
     - name: Build for release mode
       shell: cmd
       run: |
@@ -235,8 +238,8 @@ jobs:
     - name: Test release
       shell: cmd
       run: |
-        cd tools\test
-        call releasetest\releasetest.bat
+        cd tools\test\releasetest
+        .\releasetest.bat
 
   build-windows-qt67-msvc2019:
     runs-on: windows-latest
@@ -257,19 +260,20 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-        where cl
-        where nmake
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
         cd src
         nmake
         nmake install
-        cd test
-        call testall.bat
-        cd ..\..\tools
+        cd ..\tools
         nmake
         nmake install
+    - name: Test modules
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
     - name: Build for release mode
       shell: cmd
       run: |
@@ -285,8 +289,8 @@ jobs:
     - name: Test release
       shell: cmd
       run: |
-        cd tools\test
-        call releasetest\releasetest.bat
+        cd tools\test\releasetest
+        .\releasetest.bat
 
   build-windows-qt65-msvc2019:
     runs-on: windows-latest
@@ -307,19 +311,20 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-        where cl
-        where nmake
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
         cd src
         nmake
         nmake install
-        cd test
-        call testall.bat
-        cd ..\..\tools
+        cd ..\tools
         nmake
         nmake install
+    - name: Test modules
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
     - name: Build for release mode
       shell: cmd
       run: |
@@ -335,8 +340,8 @@ jobs:
     - name: Test release
       shell: cmd
       run: |
-        cd tools\test
-        call releasetest\releasetest.bat
+        cd tools\test\releasetest
+        .\releasetest.bat
 
   build-windows-qt62-msvc2019:
     runs-on: windows-latest
@@ -357,19 +362,20 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-        where cl
-        where nmake
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
         cd src
         nmake
         nmake install
-        cd test
-        call testall.bat
-        cd ..\..\tools
+        cd ..\tools
         nmake
         nmake install
+    - name: Test modules
+      shell: cmd
+      run: |
+        cd src/test
+        call testall.bat
     - name: Build for release mode
       shell: cmd
       run: |
@@ -385,5 +391,5 @@ jobs:
     - name: Test release
       shell: cmd
       run: |
-        cd tools\test
-        call releasetest\releasetest.bat
+        cd tools\test\releasetest
+        .\releasetest.bat

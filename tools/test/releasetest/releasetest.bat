@@ -80,13 +80,13 @@ tspawn w foo
 if not "%CMAKE%" == "" (
   call :CMakeBuild Debug
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrogd
+  call :CheckWebApp treefrogd.exe
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 )
 
 call :QMakeBuild debug
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-call :CheckWebApp treefrogd
+call :CheckWebApp treefrogd.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 %MAKE% distclean >nul 2>nul
 
@@ -94,13 +94,13 @@ if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 if not "%CMAKE%" == "" (
   call :CMakeBuild Release
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrog
+  call :CheckWebApp treefrog.exe
   if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 )
 
 call :QMakeBuild release
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-call :CheckWebApp treefrog
+call :CheckWebApp treefrog.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 %MAKE% distclean >nul 2>nul
 
