@@ -217,6 +217,11 @@ jobs:
         call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         set
+        where where
+        where cl
+        where devenv
+        where nmake
+        where jom
     - name: Configure for debug
       shell: cmd
       run: |
