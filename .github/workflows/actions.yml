@@ -202,7 +202,7 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2022community --package-parameters "--includeRecommended --includeOptional"
+        choco install visualstudio2022community -y --package-parameters "--includeRecommended --includeOptional"
         choco install visualstudio2022-workload-nativedesktop
         choco install visualstudio2022buildtools
         choco install visualstudio2022-workload-vctools
@@ -247,14 +247,14 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2019community --package-parameters "--includeRecommended"
+        choco install visualstudio2019community -y --package-parameters "--includeRecommended"
         choco install visualstudio2019-workload-nativedesktop
         choco install visualstudio2019buildtools
         choco install visualstudio2019-workload-vctools
     - name: Build for debug mode
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         where cl
         where nmake
         set CL=/MP
@@ -271,7 +271,7 @@ jobs:
     - name: Build for release mode
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -294,14 +294,14 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2019community
+        choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop
         choco install visualstudio2019buildtools
         choco install visualstudio2019-workload-vctools
     - name: Build for debug mode
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         where cl
         where nmake
         set CL=/MP
@@ -318,7 +318,7 @@ jobs:
     - name: Build for release mode
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -341,7 +341,7 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        choco install visualstudio2019community --package-parameters "--includeRecommended --includeOptional"
+        choco install visualstudio2019community -y --package-parameters "--includeRecommended --includeOptional"
         choco install visualstudio2019buildtools
         choco install visualstudio2019-workload-nativedesktop
         #choco install visualstudio2019-workload-vctools
@@ -349,7 +349,7 @@ jobs:
     - name: Build for debug mode
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         where cl
         where nmake
         set CL=/MP
@@ -366,7 +366,7 @@ jobs:
     - name: Build for release mode
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
