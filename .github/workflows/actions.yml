@@ -205,8 +205,7 @@ jobs:
         #choco install visualstudio2022community -y --package-parameters "--includeRecommended --includeOptional"
         choco install visualstudio2022community -y
         choco install visualstudio2022-workload-nativedesktop -y
-        #choco install visualstudio2022-workload-vctools -y
-        #choco install visualstudio2022buildtools
+        choco install sqlite -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -253,6 +252,7 @@ jobs:
         choco install visualstudio2019-workload-nativedesktop -y
         # choco install visualstudio2019-workload-vctools -y
         # choco install visualstudio2019buildtools
+        choco install sqlite -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -299,8 +299,7 @@ jobs:
       run: |
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
-        # choco install visualstudio2019-workload-vctools -y
-        # choco install visualstudio2019buildtools
+        choco install sqlite -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -345,13 +344,9 @@ jobs:
         target: 'desktop'
     - name: Install VisualStudio tools
       run: |
-        # choco install visualstudio2019community -y
+        choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
-        # choco install visualstudio2019community -y --package-parameters "--includeRecommended --includeOptional"
-        # choco install visualstudio2019-workload-vctools -y
-        # choco install visualstudio2019buildtools
-        # choco install visualstudio2019-workload-nativedesktop
-        # choco install jom
+        choco install sqlite -y
     - name: Build for debug mode
       shell: cmd
       run: |
