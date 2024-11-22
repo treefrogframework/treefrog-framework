@@ -1,6 +1,6 @@
 TARGET = model
 TEMPLATE = lib
-CONFIG += shared
+CONFIG += shared c++20
 QT += sql qml
 QT -= gui
 DEFINES += TF_DLL

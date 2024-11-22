@@ -14,6 +14,7 @@ insert_final_newline = true
 
 [*.pro]
 indent_size = 2
+end_of_line = unset
 
 [Makefile]
 indent_style = tab
