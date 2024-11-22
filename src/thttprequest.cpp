@@ -325,11 +325,7 @@ QVariantMap THttpRequest::itemMap(const QList<QPair<QString, QString>> &items)
 {
     QVariantMap map;
     for (auto &p : items) {
-#if QT_VERSION >= 0x050f00
         map.insert(p.first, p.second);
-#else
-        map.insertMulti(p.first, p.second);
-#endif
     }
     return map;
 }

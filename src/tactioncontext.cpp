@@ -385,11 +385,7 @@ void TActionContext::flushResponse(TActionController *controller, bool immediate
     QByteArray ctype = controller->_response.header().contentType().toLower();
     if (ctype.startsWith("text") && !ctype.contains("charset")) {
         ctype += "; charset=";
-#if QT_VERSION < 0x060000
-        ctype += Tf::app()->codecForHttpOutput()->name();
-#else
         ctype += QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput());
-#endif
         controller->_response.header().setContentType(ctype);
     }
 

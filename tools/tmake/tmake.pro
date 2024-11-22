@@ -4,13 +4,10 @@ VERSION  = 2.0.0
 CONFIG  += console
 CONFIG  -= app_bundle
 QT      -= gui
-lessThan(QT_MAJOR_VERSION, 6) {
-  CONFIG += c++14
-  windows:QMAKE_CXXFLAGS += /std:c++14
-} else {
-  CONFIG += c++20
-  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
-}
+
+# C++ Standards Support
+CONFIG += c++20
+windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
 
 INCLUDEPATH += ../../include
 DEFINES *= QT_USE_QSTRINGBUILDER

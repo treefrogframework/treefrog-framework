@@ -29,9 +29,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <TWebApplication>
-#if QT_VERSION >= 0x060000
-# include <QStringEncoder>
-#endif
+#include <QStringEncoder>
 
 const QString FLASH_VARS_SESSION_KEY("_flashVariants");
 const QString LOGIN_USER_NAME_KEY("_loginUserName");
@@ -356,11 +354,7 @@ bool TActionController::renderXml(const QDomDocument &document)
     QByteArray xml;
     QTextStream ts(&xml);
 
-#if QT_VERSION < 0x060000
-    ts.setCodec("UTF-8");
-#else
     ts.setEncoding(QStringConverter::Utf8);
-#endif
     document.save(ts, 1, QDomNode::EncodingFromTextStream);
     return sendData(xml, "text/xml");
 }
@@ -512,11 +506,7 @@ QByteArray TActionController::renderView(TActionView *view)
     if (!layoutEnabled()) {
         // Renders without layout
         tSystemDebug("Renders without layout");
-#if QT_VERSION < 0x060000
-        return Tf::app()->codecForHttpOutput()->fromUnicode(view->toString());
-#else
         return QStringEncoder(Tf::app()->encodingForHttpOutput()).encode(view->toString());
-#endif
     }
 
     // Displays with layout
@@ -534,11 +524,7 @@ QByteArray TActionController::renderView(TActionView *view)
             layoutView = defLayoutDispatcher.object();
             if (!layoutView) {
                 tSystemDebug("Not found default layout. Renders without layout.");
-#if QT_VERSION < 0x060000
-                return Tf::app()->codecForHttpOutput()->fromUnicode(view->toString());
-#else
                 return QStringEncoder(Tf::app()->encodingForHttpOutput()).encode(view->toString());
-#endif
             }
         }
     }
@@ -547,11 +533,7 @@ QByteArray TActionController::renderView(TActionView *view)
     layoutView->setVariantMap(allVariants());
     layoutView->setController(this);
     layoutView->setSubActionView(view);
-#if QT_VERSION < 0x060000
-    return Tf::app()->codecForHttpOutput()->fromUnicode(layoutView->toString());
-#else
     return QStringEncoder(Tf::app()->encodingForHttpOutput()).encode(layoutView->toString());
-#endif
 }
 
 /*!
@@ -916,8 +898,6 @@ bool TActionController::renderJson(const QStringList &list)
     return renderJson(QJsonArray::fromStringList(list));
 }
 
-#if QT_VERSION >= 0x050c00  // 5.12.0
-
 /*!
   Renders a CBOR object \a variant as HTTP response.
 */
@@ -966,8 +946,6 @@ bool TActionController::renderCbor(const QCborArray &array, QCborValue::Encoding
 {
     return renderCbor(array.toCborValue(), opt);
 }
-
-#endif
 
 /*!
   \fn const TSession &TActionController::session() const;

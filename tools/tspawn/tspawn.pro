@@ -5,13 +5,10 @@ CONFIG  += console
 CONFIG  -= app_bundle
 QT      += sql
 QT      -= gui
-lessThan(QT_MAJOR_VERSION, 6) {
-  CONFIG += c++14
-  windows:QMAKE_CXXFLAGS += /std:c++14
-} else {
-  CONFIG += c++20
-  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
-}
+
+# C++ Standards Support
+CONFIG += c++20
+windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_DLL
@@ -88,27 +85,14 @@ defaults.files += defaults/CMakeLists.txt
 defaults.files += defaults/CacheClean.cmake
 defaults.files += defaults/TargetCmake.cmake
 defaults.path   = $${datadir}/defaults
-lessThan(QT_MAJOR_VERSION, 6) {
-  # Qt5
-  defaults_controllers.files += defaults/controllers_qt5/CMakeLists.txt
-  defaults_controllers.path   = $${datadir}/defaults/controllers
-  defaults_models.files += defaults/models_qt5/CMakeLists.txt
-  defaults_models.path   = $${datadir}/defaults/models
-  defaults_views.files += defaults/views_qt5/CMakeLists.txt
-  defaults_views.path   = $${datadir}/defaults/views
-  defaults_helpers.files += defaults/helpers_qt5/CMakeLists.txt
-  defaults_helpers.path   = $${datadir}/defaults/helpers
-} else {
-  # Qt6
-  defaults_controllers.files += defaults/controllers/CMakeLists.txt
-  defaults_controllers.path   = $${datadir}/defaults/controllers
-  defaults_models.files += defaults/models/CMakeLists.txt
-  defaults_models.path   = $${datadir}/defaults/models
-  defaults_views.files += defaults/views/CMakeLists.txt
-  defaults_views.path   = $${datadir}/defaults/views
-  defaults_helpers.files += defaults/helpers/CMakeLists.txt
-  defaults_helpers.path   = $${datadir}/defaults/helpers
-}
+defaults_controllers.files += defaults/controllers/CMakeLists.txt
+defaults_controllers.path   = $${datadir}/defaults/controllers
+defaults_models.files += defaults/models/CMakeLists.txt
+defaults_models.path   = $${datadir}/defaults/models
+defaults_views.files += defaults/views/CMakeLists.txt
+defaults_views.path   = $${datadir}/defaults/views
+defaults_helpers.files += defaults/helpers/CMakeLists.txt
+defaults_helpers.path   = $${datadir}/defaults/helpers
 
 windows {
   defaults.files += defaults/_dummymodel.h

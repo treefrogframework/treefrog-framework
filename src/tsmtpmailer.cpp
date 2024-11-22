@@ -278,11 +278,8 @@ bool TSmtpMailer::cmdStartTls()
     _socket->startClientEncryption();
     if (!_socket->waitForEncrypted(5000)) {
         tSystemError("SMTP STARTTLS negotiation timeout: {}", qUtf8Printable(_socket->errorString()));
-#if QT_VERSION >= 0x050f00  // 5.15.0
         auto errors = _socket->sslHandshakeErrors();
-#else
-        auto errors = _socket->sslErrors();
-#endif
+
         for (const auto &err : errors) {
             tSystemError("SMTP SSL error : {} [{}]", qUtf8Printable(err.errorString()), (int)err.error());
         }

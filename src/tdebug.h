@@ -113,13 +113,6 @@ public:
         ts << t;
         return *this;
     }
-#if QT_VERSION < 0x060000
-    inline TDebug &operator<<(const QStringRef &t)
-    {
-        ts << t.toString();
-        return *this;
-    }
-#endif
     inline TDebug &operator<<(const QLatin1String &t)
     {
         ts << t;

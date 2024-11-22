@@ -83,14 +83,12 @@ protected:
     bool renderAndCache(const QByteArray &key, int seconds, const QString &action = QString(), const QString &layout = QString());
     bool renderOnCache(const QByteArray &key);
     void removeCache(const QByteArray &key);
-#if QT_VERSION >= 0x050c00  // 5.12.0
     bool renderCbor(const QVariant &variant, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QVariantMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QVariantHash &hash, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QCborValue &value, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QCborMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QCborArray &array, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
-#endif
     bool renderErrorResponse(int statusCode);
     void redirect(const QUrl &url, int statusCode = Tf::Found);
     bool sendFile(const QString &filePath, const QByteArray &contentType, const QString &name = QString(), bool autoRemove = false);

@@ -22,64 +22,7 @@ Q_GLOBAL_STATIC(TDatabaseDict, dbDict)
 
 TSqlDatabase::DbmsType TSqlDatabase::dbmsType() const
 {
-#if QT_VERSION >= 0x050400
     return (_sqlDatabase.driver()) ? (TSqlDatabase::DbmsType)_sqlDatabase.driver()->dbmsType() : UnknownDbms;
-#else
-
-    DbmsType dbms = UnknownDbms;
-    const QString type = _sqlDatabase.driverName();
-    switch (type[1].toLatin1()) {
-    case 'P':
-        if (type == QLatin1String("QPSQL") || type == QLatin1String("QPSQL7")) {
-            dbms = PostgreSQL;
-        }
-        break;
-
-    case 'M':
-        if (type == QLatin1String("QMYSQL") || type == QLatin1String("QMYSQL3")) {
-            dbms = MySqlServer;
-        }
-        break;
-
-    case 'O':
-        if (type == QLatin1String("QODBC") || type == QLatin1String("QODBC3")) {
-            dbms = MSSqlServer;
-            break;
-        }
-        if (type == QLatin1String("QOCI") || type == QLatin1String("QOCI8")) {
-            dbms = Oracle;
-        }
-        break;
-
-    case 'T':
-        if (type == QLatin1String("QTDS") || type == QLatin1String("QTDS7")) {
-            dbms = Sybase;
-        }
-        break;
-
-    case 'D':
-        if (type == QLatin1String("QDB2")) {
-            dbms = DB2;
-        }
-        break;
-
-    case 'S':
-        if (type == QLatin1String("QSQLITE") || type == QLatin1String("QSQLITE2")) {
-            dbms = SQLite;
-        }
-        break;
-
-    case 'I':
-        if (type == QLatin1String("QIBASE")) {
-            dbms = Interbase;
-        }
-        break;
-
-    default:
-        break;
-    }
-    return dbms;
-#endif
 }
 
 

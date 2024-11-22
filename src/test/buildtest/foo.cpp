@@ -127,7 +127,6 @@ QList<Foo> Foo::getAll()
     return tfGetModelListByMongoCriteria<Foo, FooObject>(TCriteria());
 }
 
-#if QT_VERSION >= 0x050000
 QJsonArray Foo::getAllJson()
 {
     QJsonArray array;
@@ -140,7 +139,6 @@ QJsonArray Foo::getAllJson()
     }
     return array;
 }
-#endif
 
 TModelObject *Foo::modelData()
 {

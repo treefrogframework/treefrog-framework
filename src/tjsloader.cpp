@@ -27,11 +27,7 @@
 namespace {
 QMap<QString, TJSModule *> jsContexts;
 QStringList defaultPaths;
-#if QT_VERSION < 0x060000
-QMutex gMutex(QMutex::Recursive);
-#else
 QRecursiveMutex gMutex;
-#endif
 }
 
 
@@ -354,11 +350,7 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
     int pos = 0;
     auto crc = content.toLatin1();
-#if QT_VERSION < 0x060000
-    const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc.data(), crc.length()), 36) + "_%2";
-#else
     const QString varprefix = QLatin1String("_tf%1_") + QString::number(qChecksum(crc), 36) + "_%2";
-#endif
 
     for (;;) {
         auto match = rx.match(content, pos);

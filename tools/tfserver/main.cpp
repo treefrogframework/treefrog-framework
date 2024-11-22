@@ -21,9 +21,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <glog/logging.h>
-#if QT_VERSION < 0x060000
-# include <QTextCodec>
-#endif
+
 
 constexpr auto DEBUG_MODE_OPTION = "--debug";
 constexpr auto SOCKET_OPTION = "-s";
@@ -228,12 +226,6 @@ int main(int argc, char *argv[])
         QLocale::setDefault(locale);
         tSystemInfo("Application's default locale: {}", qUtf8Printable(locale.name()));
     }
-
-#if QT_VERSION < 0x060000
-    // Sets codec
-    QTextCodec *codec = webapp.codecForInternal();
-    QTextCodec::setCodecForLocale(codec);
-#endif
 
     if (!webapp.webRootExists()) {
         tSystemError("No such directory");

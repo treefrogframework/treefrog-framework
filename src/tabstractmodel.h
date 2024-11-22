@@ -21,9 +21,7 @@ public:
     virtual void setProperties(const QJsonObject &properties);
     virtual QJsonObject toJsonObject(const QStringList &properties = QStringList()) const;
     virtual void setProperties(const QJsonDocument &properties);
-#if QT_VERSION >= 0x050c00  // 5.12.0
     virtual QCborMap toCborMap(const QStringList &properties = QStringList()) const;
-#endif
 
     QString variableNameToFieldName(const QString &name) const;
     static QString fieldNameToVariableName(const QString &name);

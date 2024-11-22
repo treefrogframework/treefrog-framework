@@ -16,9 +16,6 @@
 #include <TWebApplication>
 #include <tfcore.h>
 #include <tprocessinfo.h>
-#if QT_VERSION < 0x060000
-# include <QTextCodec>
-#endif
 #include <cinttypes>
 
 #ifdef Q_OS_UNIX
@@ -62,36 +59,6 @@ enum CommandOption {
     ShowRoutes,
     ShowSettings,
 };
-
-
-#if QT_VERSION < 0x050400
-#ifdef Q_OS_WIN
-const QMap<int, QString> winVersion = {
-    {QSysInfo::WV_XP, "Windows XP"},
-    {QSysInfo::WV_2003, "Windows Server 2003"},
-    {QSysInfo::WV_VISTA, "Windows Vista or Windows Server 2008"},
-    {QSysInfo::WV_WINDOWS7, "Windows 7 or Windows Server 2008 R2"},
-    {QSysInfo::WV_WINDOWS8, "Windows 8 or Windows Server 2012"},
-#if QT_VERSION >= 0x050200
-    {QSysInfo::WV_WINDOWS8_1, "Windows 8.1 or Windows Server 2012 R2"},
-#endif
-};
-#endif
-
-#ifdef Q_OS_DARWIN
-const QMap<int, QString> macxVersion = {
-    {QSysInfo::MV_10_3, "Mac OS X 10.3 Panther"},
-    {QSysInfo::MV_10_4, "Mac OS X 10.4 Tiger"},
-    {QSysInfo::MV_10_5, "Mac OS X 10.5 Leopard"},
-    {QSysInfo::MV_10_6, "Mac OS X 10.6 Snow Leopard"},
-    {QSysInfo::MV_10_7, "Mac OS X 10.7 Lion"},
-    {QSysInfo::MV_10_8, "Mac OS X 10.8 Mountain Lion"},
-#if QT_VERSION >= 0x050100
-    {QSysInfo::MV_10_9, "Mac OS X 10.9 Mavericks"},
-#endif
-};
-#endif
-#endif
 
 const QMap<QString, int> options = {
     {"-e", EnvironmentSpecified},
@@ -189,20 +156,7 @@ void writeStartupLog()
     tSystemInfo("TreeFrog Framework version {}", TF_VERSION_STR);
 
     QString qtversion = QLatin1String("Execution environment: Qt ") + qVersion();
-#if QT_VERSION >= 0x050400
     qtversion += QLatin1String(" / ") + QSysInfo::prettyProductName();
-#else
-#if defined(Q_OS_WIN)
-    qtversion += QLatin1String(" / ") + winVersion.value(QSysInfo::WindowsVersion, "Windows");
-#elif defined(Q_OS_DARWIN)
-    qtversion += QLatin1String(" / ") + macxVersion()->value(QSysInfo::MacintoshVersion, "Mac OS X");
-#elif defined(Q_OS_UNIX)
-    struct utsname uts;
-    if (uname(&uts) == 0) {
-        qtversion += QString(" / %1 %2").arg(uts.sysname).arg(uts.release);
-    }
-#endif
-#endif
     tSystemInfo("{}", (const char *)qtversion.toLatin1().data());
 }
 
@@ -466,12 +420,6 @@ void showProcessId()
 int managerMain(int argc, char *argv[])
 {
     TWebApplication app(argc, argv);
-
-#if QT_VERSION < 0x060000
-    // Sets codec
-    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-    QTextCodec::setCodecForLocale(codec);
-#endif
 
     if (!checkArguments()) {
         return 1;
