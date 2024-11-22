@@ -27,11 +27,7 @@ public:
     bool isEmpty() const;
 
     int property {-1};
-#if QT_VERSION < 0x060000
-    QVariant::Type varType {QVariant::Invalid};
-#else
     QMetaType varType {QMetaType::UnknownType};
-#endif
     int op1 {TSql::Invalid};
     int op2 {TSql::Invalid};
     QVariant val1;
@@ -88,24 +84,15 @@ public:
     TCriteriaConverter(const TCriteria &cri, const QSqlDatabase &db, const QString &aliasTableName = QString()) :
         criteria(cri), database(db), tableAlias(aliasTableName) { }
     QString toString() const;
-#if QT_VERSION < 0x060000
-    QVariant::Type variantType(int property) const;
-#else
     QMetaType variantType(int property) const;
-#endif
     QString propertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString()) const;
     static QString getPropertyName(int property, const QSqlDriver *driver, const QString &aliasTableName = QString());
 
 protected:
     static QString getPropertyName(const QMetaObject *metaObject, int property, const QSqlDriver *driver, const QString &aliasTableName);
     QString criteriaToString(const QVariant &cri) const;
-#if QT_VERSION < 0x060000
-    static QString criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database);
-    static QString criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database);
-#else
     static QString criteriaToString(const QString &propertyName, const QMetaType &varType, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database);
     static QString criteriaToString(const QString &propertyName, const QMetaType &varType, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database);
-#endif
     static QString concat(const QString &s1, TCriteria::LogicalOperator op, const QString &s2);
 
 private:
@@ -198,11 +185,7 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QVariant &var) cons
                     break;
                 }
 
-#if QT_VERSION >= 0x050400
                 if (lst.count() <= LIMIT_WORDS_IN_CLAUSE || database.driver()->dbmsType() == QSqlDriver::MySqlServer) {
-#else
-                if (lst.count() <= LIMIT_WORDS_IN_CLAUSE || database.driverName().toUpper() == QLatin1String("QMYSQL")) {
-#endif
                     QString str = inclause(lst, 0, lst.count());
                     sqlString += name;
                     sqlString += TSql::formatArg(cri.op1, str);
@@ -296,39 +279,19 @@ inline QString TCriteriaConverter<T>::getPropertyName(int property, const QSqlDr
     return getPropertyName(T().metaObject(), property, driver, aliasTableName);
 }
 
-#if QT_VERSION < 0x060000
-template <class T>
-inline QVariant::Type TCriteriaConverter<T>::variantType(int property) const
-{
-    const QMetaObject *metaObject = obj.metaObject();
-    return (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).type() : QVariant::Invalid;
-}
-#else
 template <class T>
 inline QMetaType TCriteriaConverter<T>::variantType(int property) const
 {
     const QMetaObject *metaObject = obj.metaObject();
     return (metaObject) ? metaObject->property(metaObject->propertyOffset() + property).metaType() : QMetaType(QMetaType::UnknownType);
 }
-#endif
 
-#if QT_VERSION < 0x060000
-template <class T>
-inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database)
-#else
 template <class T>
 inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, const QMetaType &varType, TSql::ComparisonOperator op, const QVariant &val1, const QVariant &val2, const QSqlDatabase &database)
-#endif
 {
     QString sqlString;
-
-#if QT_VERSION < 0x060000
-    QString v1 = TSqlQuery::formatValue(val1, (QVariant::Type)varType, database);
-    QString v2 = TSqlQuery::formatValue(val2, (QVariant::Type)varType, database);
-#else
     QString v1 = TSqlQuery::formatValue(val1, varType, database);
     QString v2 = TSqlQuery::formatValue(val2, varType, database);
-#endif
 
     if (!v1.isEmpty() && !v2.isEmpty()) {
         switch (op) {
@@ -354,14 +317,8 @@ inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyNa
     return sqlString;
 }
 
-
-#if QT_VERSION < 0x060000
-template <class T>
-inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, QVariant::Type varType, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database)
-#else
 template <class T>
 inline QString TCriteriaConverter<T>::criteriaToString(const QString &propertyName, const QMetaType &varType, TSql::ComparisonOperator op1, TSql::ComparisonOperator op2, const QVariant &val, const QSqlDatabase &database)
-#endif
 {
     QString sqlString;
     if (op1 != TSql::Invalid && op2 != TSql::Invalid && !val.isNull()) {

@@ -10,11 +10,7 @@
 #include <QLocale>
 #include <QMap>
 #include <QUrl>
-#if QT_VERSION < 0x060000
-# include <QTextCodec>
-#else
-# include <QStringEncoder>
-#endif
+#include <QStringEncoder>
 
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
@@ -251,17 +247,15 @@ QString THttpUtility::jsonEscape(const QVariant &input)
 */
 QByteArray THttpUtility::toMimeEncoded(const QString &input, const QByteArray &encoding)
 {
-#if QT_VERSION < 0x060000
-    QTextCodec *codec = QTextCodec::codecForName(encoding);
-    return toMimeEncoded(input, codec);
-#else
     auto e = QStringConverter::encodingForName(encoding.data());
     QStringConverter::Encoding enc = (e) ? e.value() : QStringConverter::Utf8;
     return toMimeEncoded(input, enc);
-#endif
 }
 
-#if QT_VERSION >= 0x060000
+/*!
+  Returns a decoded copy of the MIME-Base64 array \a mime.
+  @sa toMimeEncoded(const QString &, QTextCodec *)
+*/
 QByteArray THttpUtility::toMimeEncoded(const QString &input, QStringConverter::Encoding encoding)
 {
     QByteArray encoded;
@@ -279,40 +273,11 @@ QByteArray THttpUtility::toMimeEncoded(const QString &input, QStringConverter::E
     encoded += "?=";
     return encoded;
 }
-#endif
 
 
 /*!
   Returns a byte array copy of \a input, encoded as MIME-Base64.
   @sa fromMimeEncoded(const QByteArray &)
-*/
-#if QT_VERSION < 0x060000
-QByteArray THttpUtility::toMimeEncoded(const QString &input, QTextCodec *codec)
-{
-    QByteArray encoded;
-    if (!codec)
-        return encoded;
-
-    QByteArray array;
-    if (codec->name().toLower() == "iso-2022-jp") {
-        array = codec->fromUnicode(input + ' ');  // append dummy ascii char
-        array.chop(1);
-    } else {
-        array = codec->fromUnicode(input);
-    }
-
-    encoded += "=?";
-    encoded += codec->name();
-    encoded += "?B?";
-    encoded += array.toBase64();
-    encoded += "?=";
-    return encoded;
-}
-#endif
-
-/*!
-  Returns a decoded copy of the MIME-Base64 array \a mime.
-  @sa toMimeEncoded(const QString &, QTextCodec *)
 */
 QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
 {
@@ -325,18 +290,11 @@ QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
     int j = mime.indexOf('?', i);
     if (j > i) {
         QByteArray encoding = mime.mid(i, j - i);
-#if QT_VERSION < 0x060000
-        QTextCodec *codec = QTextCodec::codecForName(encoding);
-        if (!codec) {
-            return text;
-        }
-#else
         auto enc = QStringConverter::encodingForName(encoding);
         if (!enc) {
             return text;
         }
         QStringDecoder decoder(enc.value());
-#endif
 
         i = ++j;
         int j = mime.indexOf('?', i);
@@ -347,11 +305,7 @@ QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
             if (j > i) {
                 if (enc == "B" || enc == "b") {
                     QByteArray base = mime.mid(i, i - j);
-#if QT_VERSION < 0x060000
-                    text = codec->toUnicode(QByteArray::fromBase64(base));
-#else
                     text = decoder.decode(QByteArray::fromBase64(base));
-#endif
                 } else if (enc == "Q" || enc == "q") {
                     // no implement..
                 } else {

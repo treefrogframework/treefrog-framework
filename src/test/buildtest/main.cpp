@@ -5,9 +5,7 @@
 #include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
-#if QT_VERSION >= 0x050000
-# include <TJsonUtil>
-#endif
+#include <TJsonUtil>
 #include <tglobal.h>
 #include <tatomicptr.h>
 #include <tatomic.h>
@@ -200,18 +198,14 @@ void build_check_TModelUtil()
 
     QList<Blog> list;
     tfConvertToJsonArray(list);
-#if QT_VERSION >= 0x050c00  // 5.12.0
     tfConvertToCborArray(list);
-#endif
 }
 
-#if QT_VERSION >= 0x050000
 void build_check_TJsonUtil()
 {
     QList<Foo> fooList;
     tfModelListToJsonArray<Foo>(fooList);
 }
-#endif
 
 void atomic_ptr()
 {

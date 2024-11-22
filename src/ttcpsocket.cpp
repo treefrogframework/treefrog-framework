@@ -7,11 +7,7 @@
 #include <TWebApplication>
 
 namespace {
-#if QT_VERSION < 0x060000
-QMutex epollMutex(QMutex::Recursive);
-#else
 QRecursiveMutex epollMutex;
-#endif
 }
 
 

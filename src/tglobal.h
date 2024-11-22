@@ -20,20 +20,8 @@ constexpr auto TF_SRC_REVISION = 2915;
     };                                                                                               \
     static Static##TYPE##Definition _static##TYPE##Definition;
 
-#if QT_VERSION < 0x060000
-#define T_REGISTER_STREAM_OPERATORS(TYPE)                  \
-    class Static##TYPE##Instance {                         \
-    public:                                                \
-        Static##TYPE##Instance() noexcept                  \
-        {                                                  \
-            qRegisterMetaTypeStreamOperators<TYPE>(#TYPE); \
-        }                                                  \
-    };                                                     \
-    static Static##TYPE##Instance _static##TYPE##Instance;
-#else
 // do no longer exist in qt6, qRegisterMetaTypeStreamOperators().
 #define T_REGISTER_STREAM_OPERATORS(TYPE)
-#endif
 
 #define T_DEFINE_PROPERTY(TYPE, PROPERTY)                                   \
     inline void set##PROPERTY(const TYPE &v__) noexcept { PROPERTY = v__; } \
@@ -73,33 +61,6 @@ constexpr auto TF_SRC_REVISION = 2915;
 #define T_FETCH_V(TYPE, VAR, DEFAULT) TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
 #define tfetchv(TYPE, VAR, DEFAULT) T_FETCH_V(TYPE, VAR, DEFAULT)
 
-#if QT_VERSION < 0x060000
-#define T_EHEX(VAR)                                      \
-    do {                                                 \
-        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
-        int ___##VAR##_type = (___##VAR##_).type();      \
-        switch (___##VAR##_type) {                       \
-        case QMetaType::QJsonValue:                      \
-            eh((___##VAR##_).toJsonValue());             \
-            break;                                       \
-        case QMetaType::QJsonObject:                     \
-            eh((___##VAR##_).toJsonObject());            \
-            break;                                       \
-        case QMetaType::QJsonArray:                      \
-            eh((___##VAR##_).toJsonArray());             \
-            break;                                       \
-        case QMetaType::QJsonDocument:                   \
-            eh((___##VAR##_).toJsonDocument());          \
-            break;                                       \
-        case QMetaType::QVariantMap:                     \
-            eh((___##VAR##_).toMap());                   \
-            break;                                       \
-        default:                                         \
-            eh(___##VAR##_);                             \
-        }                                                \
-    } while (0)
-
-#else
 #define T_EHEX(VAR)                                      \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -124,8 +85,6 @@ constexpr auto TF_SRC_REVISION = 2915;
             eh(___##VAR##_);                             \
         }                                                \
     } while (0)
-
-#endif
 
 #define tehex(VAR) T_EHEX(VAR)
 
@@ -145,33 +104,6 @@ constexpr auto TF_SRC_REVISION = 2915;
 #define T_EHEX2(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
 #define tehex2(VAR, DEFAULT) T_EHEX2(VAR, DEFAULT)
 
-#if QT_VERSION < 0x060000
-#define T_ECHOEX(VAR)                                    \
-    do {                                                 \
-        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
-        int ___##VAR##_type = (___##VAR##_).type();      \
-        switch (___##VAR##_type) {                       \
-        case QMetaType::QJsonValue:                      \
-            echo((___##VAR##_).toJsonValue());           \
-            break;                                       \
-        case QMetaType::QJsonObject:                     \
-            echo((___##VAR##_).toJsonObject());          \
-            break;                                       \
-        case QMetaType::QJsonArray:                      \
-            echo((___##VAR##_).toJsonArray());           \
-            break;                                       \
-        case QMetaType::QJsonDocument:                   \
-            echo((___##VAR##_).toJsonDocument());        \
-            break;                                       \
-        case QMetaType::QVariantMap:                     \
-            echo((___##VAR##_).toMap());                 \
-            break;                                       \
-        default:                                         \
-            echo(___##VAR##_);                           \
-        }                                                \
-    } while (0)
-
-#else
 #define T_ECHOEX(VAR)                                    \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -196,8 +128,6 @@ constexpr auto TF_SRC_REVISION = 2915;
             echo(___##VAR##_);                           \
         }                                                \
     } while (0)
-
-#endif
 
 
 #define techoex(VAR) T_ECHOEX(VAR)
@@ -239,13 +169,8 @@ constexpr auto TF_SRC_REVISION = 2915;
 
 
 namespace Tf {
-#if QT_VERSION < 0x060000  // 6.0.0
-constexpr auto ReadOnly = QIODevice::ReadOnly;
-constexpr auto WriteOnly = QIODevice::WriteOnly;
-#else
 constexpr auto ReadOnly = QIODeviceBase::ReadOnly;
 constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
-#endif
 }
 
 

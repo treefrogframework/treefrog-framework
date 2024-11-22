@@ -19,12 +19,7 @@ constexpr int BUFFER_RESERVE_SIZE = 127;
 
 namespace {
 QMap<qintptr, TWebSocket*> socketManager;
-
-#if QT_VERSION < 0x060000
-QMutex mutex(QMutex::Recursive);
-#else
 QRecursiveMutex mutex;
-#endif
 }
 
 

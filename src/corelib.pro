@@ -3,14 +3,10 @@ TEMPLATE = lib
 CONFIG  += shared console
 CONFIG  -= lib_bundle
 QT      += sql network xml qml
-lessThan(QT_MINOR_VERSION, 3) {
-  # Qt6.2
-  CONFIG += c++17
-  windows:QMAKE_CXXFLAGS += /std:c++17
-} else {
-  CONFIG += c++20
-  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
-}
+
+# C++ Standards Support
+CONFIG += c++20
+windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL

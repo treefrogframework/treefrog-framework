@@ -27,17 +27,10 @@ void TestMailMessage::mimeEncode_data()
     QTest::addColumn<QByteArray>("result");
 
     // `echo 無事？ | nkf -jM`
-#if QT_VERSION < 0x060000
-    QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("=?ISO-2022-JP?B?GyRCTDU7diEpGyhC?=");
-    QTest::newRow("2") << QString::fromUtf8("田") << QByteArray("=?ISO-2022-JP?B?GyRCRUQbKEI=?=");
-    QTest::newRow("3") << QString::fromUtf8("あ1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?GyRCJCIbKEIxGyRCIzEbKEJhQRskQiNBJCQbKEIyGyRCIzI0QTt6GyhCMw==?=");
-    QTest::newRow("4") << QString::fromUtf8("1１aAＡい2２漢字3") << QByteArray("=?ISO-2022-JP?B?MRskQiMxGyhCYUEbJEIjQSQkGyhCMhskQiMyNEE7ehsoQjM=?=");
-#else
     QTest::newRow("1") << QString::fromUtf8("無事？") << QByteArray("=?UTF-8?B?54Sh5LqL77yf?=");
     QTest::newRow("2") << QString::fromUtf8("田") << QByteArray("=?UTF-8?B?55Sw?=");
     QTest::newRow("3") << QString::fromUtf8("あ1１aAＡい2２漢字3") << QByteArray("=?UTF-8?B?44GCMe+8kWFB77yh44GEMu+8kua8ouWtlzM=?=");
     QTest::newRow("4") << QString::fromUtf8("1１aAＡい2２漢字3") << QByteArray("=?UTF-8?B?Me+8kWFB77yh44GEMu+8kua8ouWtlzM=?=");
-#endif
 }
 
 
@@ -45,11 +38,8 @@ void TestMailMessage::mimeEncode()
 {
     QFETCH(QString, data);
     QFETCH(QByteArray, result);
-#if QT_VERSION < 0x060000
-    QByteArray actl = THttpUtility::toMimeEncoded(data, "ISO-2022-JP");
-#else
+
     QByteArray actl = THttpUtility::toMimeEncoded(data, "UTF-8");
-#endif
     // qDebug("{}", result.data());
     // qDebug("{}", actl.data());
     QCOMPARE(result, actl);

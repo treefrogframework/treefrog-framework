@@ -6,9 +6,6 @@
 #include <QVariant>
 #include <TGlobal>
 
-#if QT_VERSION < 0x060000
-class QTextCodec;
-#endif
 
 class T_CORE_EXPORT THttpUtility {
 public:
@@ -31,11 +28,7 @@ public:
     static QString jsonEscape(const QByteArray &input);
     static QString jsonEscape(const QVariant &input);
     static QByteArray toMimeEncoded(const QString &input, const QByteArray &encoding = "UTF-8");
-#if QT_VERSION < 0x060000
-    static QByteArray toMimeEncoded(const QString &input, QTextCodec *codec);
-#else
     static QByteArray toMimeEncoded(const QString &input, QStringConverter::Encoding encoding);
-#endif
     static QString fromMimeEncoded(const QByteArray &mime);
     static QByteArray getResponseReasonPhrase(int statusCode);
     static QString trimmedQuotes(const QString &string);

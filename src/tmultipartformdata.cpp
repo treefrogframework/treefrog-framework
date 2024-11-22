@@ -15,11 +15,7 @@
 #include <TMultipartFormData>
 #include <TTemporaryFile>
 #include <TWebApplication>
-#if QT_VERSION < 0x060000
-# include <QTextCodec>
-#else
 # include <QStringDecoder>
-#endif
 using namespace Tf;
 
 const QFile::Permissions TMultipartFormData::DefaultPermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther;
@@ -450,11 +446,7 @@ void TMultipartFormData::parse(QIODevice *dev, TActionContext *context)
         }
     }
 
-#if QT_VERSION < 0x060000
-    QTextCodec *codec = Tf::app()->codecForHttpOutput();
-#else
     QStringDecoder decoder(Tf::app()->encodingForHttpOutput());
-#endif
 
     while (!dev->atEnd()) {  // up to EOF
         TMimeHeader header = parseMimeHeader(dev);
@@ -470,12 +462,7 @@ void TMultipartFormData::parse(QIODevice *dev, TActionContext *context)
             } else {
                 QByteArray name = header.dataName();
                 QByteArray cont = parseContent(dev);
-
-#if QT_VERSION < 0x060000
-                postParameters << QPair<QString, QString>(codec->toUnicode(name), codec->toUnicode(cont));
-#else
                 postParameters << QPair<QString, QString>(decoder.decode(name), decoder.decode(cont));
-#endif
             }
         }
     }
