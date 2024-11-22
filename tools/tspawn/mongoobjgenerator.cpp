@@ -99,11 +99,7 @@ static QStringList generateCode(const QList<QPair<QString, QMetaType::Type>> &fi
 
     for (QListIterator<QPair<QString, QMetaType::Type>> it(fieldList); it.hasNext();) {
         const QPair<QString, QMetaType::Type> &p = it.next();
-#if QT_VERSION < 0x060000
-        QString typeName = QVariant::typeToName(p.second);
-#else
         QString typeName = QString::fromLatin1(QMetaType(p.second).name());
-#endif
         params += QString("    %1 %2;\n").arg(typeName, p.first);
         macros += QString(MONGOOBJECT_PROPERTY_TEMPLATE).arg(typeName, p.first);
         QString estr = fieldNameToEnumName(p.first);
@@ -156,11 +152,8 @@ static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePa
         if (!match.hasMatch()) {
             break;
         }
-#if QT_VERSION < 0x060000
-        QMetaType::Type type = (QMetaType::Type)QVariant::nameToType(match.captured(1).toLatin1().data());
-#else
+
         int type = QMetaType::fromName(match.captured(1).toLatin1()).id();
-#endif
         QString var = match.captured(2);
         if (type != QMetaType::UnknownType && var.toLower() != "id")
             ret << QPair<QString, QMetaType::Type>(var, (QMetaType::Type)type);

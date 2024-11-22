@@ -60,9 +60,6 @@ void TestTfpconverter::parse()
     QFile file(fileName);
     QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream ts(&file);
-#if QT_VERSION < 0x060000
-    ts.setCodec("UTF-8");
-#endif
     QString html = ts.readAll();
 
     THtmlParser parser;
@@ -72,9 +69,6 @@ void TestTfpconverter::parse()
     QFile res("result.phtm");
     res.open(QIODevice::WriteOnly | QIODevice::Truncate);
     QTextStream rests(&res);
-#if QT_VERSION < 0x060000
-    rests.setCodec("UTF-8");
-#endif
     rests << result;
     res.close();
 
@@ -131,23 +125,14 @@ void TestTfpconverter::otamaconvert()
     QFile htmlFile(htmlFileName);
     QVERIFY(htmlFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tshtml(&htmlFile);
-#if QT_VERSION < 0x060000
-    tshtml.setCodec("UTF-8");
-#endif
 
     QFile olgFile(olgFileName);
     QVERIFY(olgFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tsolg(&olgFile);
-#if QT_VERSION < 0x060000
-    tsolg.setCodec("UTF-8");
-#endif
 
     QFile resultFile(resultFileName);
     QVERIFY(resultFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tsres(&resultFile);
-#if QT_VERSION < 0x060000
-    tsres.setCodec("UTF-8");
-#endif
 
     QString result = OtamaConverter::convertToErb(tshtml.readAll(), tsolg.readAll(), 1);
     QString expect = tsres.readAll();
@@ -186,23 +171,14 @@ void TestTfpconverter::otamaconvertStrong()
     QFile htmlFile(htmlFileName);
     QVERIFY(htmlFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tshtml(&htmlFile);
-#if QT_VERSION < 0x060000
-    tshtml.setCodec("UTF-8");
-#endif
 
     QFile olgFile(olgFileName);
     QVERIFY(olgFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tsolg(&olgFile);
-#if QT_VERSION < 0x060000
-    tsolg.setCodec("UTF-8");
-#endif
 
     QFile resultFile(resultFileName);
     QVERIFY(resultFile.open(QIODevice::ReadOnly | QIODevice::Text));
     QTextStream tsres(&resultFile);
-#if QT_VERSION < 0x060000
-    tsres.setCodec("UTF-8");
-#endif
 
     QString result = OtamaConverter::convertToErb(tshtml.readAll(), tsolg.readAll(), 2);
     QString expect = tsres.readAll();
