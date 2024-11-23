@@ -143,8 +143,9 @@ jobs:
     - uses: actions/checkout@main
     - name: Homebrew
       run: |
-        brew install qt6 pkg-config jq
-        brew link --overwrite qt
+        brew install qt6 pkgconf jq
+        brew link --overwrite pkgconf
+        brew link qt
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: build
@@ -164,8 +165,9 @@ jobs:
     - uses: actions/checkout@main
     - name: Homebrew
       run: |
-        brew install qt6 pkg-config jq mongo-c-driver gflags glog lz4
-        brew link --overwrite qt
+        brew install qt6 pkgconf jq mongo-c-driver gflags glog lz4
+        brew link --overwrite pkgconf
+        brew link qt
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build

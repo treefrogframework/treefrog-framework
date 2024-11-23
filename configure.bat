@@ -1,4 +1,4 @@
-@echo OFF
+@echo ON
 @setlocal
 
 set VERSION=2.10.0
@@ -58,9 +58,9 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
-for %%I in (nmake.exe)  do if exist %%~$path:I set MAKE=%%~$path:I
+for %%I in (nmake.exe)  do if exist %%~$path:I set NMAKE=%%~$path:I
 if "%MAKE%" == "" (
-  for %%I in (jom.exe) do if exist %%~$path:I set MAKE=%%~$path:I
+  for %%I in (jom.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
 )
 for %%I in (qmake.exe)  do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe)  do if exist %%~$path:I set CMAKE=%%~$path:I
@@ -81,7 +81,7 @@ if "%CMAKE%" == "" (
 )
 cmake --version
 
-if "%MAKE%" == "" (
+if "%NMAKE%" == "" (
   echo Make not found
   pause
   exit
@@ -238,17 +238,17 @@ if ERRORLEVEL 1 (
 
 :: Builds TreeFrog
 cd %BASEDIR%src
-if exist Makefile ( "%MAKE%" -k distclean >nul 2>&1 )
+if exist Makefile ( nmake distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 
 cd %BASEDIR%tools
-if exist Makefile ( "%MAKE%" -k distclean >nul 2>&1 )
+if exist Makefile ( nmake distclean >nul 2>&1 )
 qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
-"%MAKE%" qmake
+nmake qmake
 
 echo;
-echo First, run "%MAKE% install" in src directory.
-echo Next, run "%MAKE% install" in tools directory.
+echo First, run "nmake install" in src directory.
+echo Next, run "nmake install" in tools directory.
 
 :exit
 exit /b

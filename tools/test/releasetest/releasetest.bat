@@ -16,21 +16,21 @@ if not "%TFENV%" == "" (
   call "..\..\..\tfenv.bat"
 )
 
-for %%I in (nmake.exe) do if exist %%~$path:I set MAKE=%%~$path:I
-if "%MAKE%" == "" (
-  for %%I in (jom.exe) do if exist %%~$path:I set MAKE=%%~$path:I
-  if not "%MAKE%" == "" (
-    set MAKE=jom
+for %%I in (nmake.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+if "%NMAKE%" == "" (
+  for %%I in (jom.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+  if not "%NMAKE%" == "" (
+    set NMAKE=jom
   )
 ) else (
-  set MAKE=nmake VERBOSE=1
+  set NMAKE=nmake VERBOSE=1
 )
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 
-if "%MAKE%" == "" (
+if "%NMAKE%" == "" (
   echo;
   echo nmake.exe not found.
   call :CleanUp
@@ -135,7 +135,7 @@ exit /B 0
 cd /D %APPDIR%
 del /Q /F lib\*.*
 "%QMAKE%" -r CONFIG+=%1
-%MAKE%
+%NMAKE%
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
@@ -177,32 +177,32 @@ if ERRORLEVEL 1 (
 )
 echo;
 
-@REM echo Starting webapp..
-@REM set RES=1
-@REM "%1" -e dev -d -p %PORT% %APPDIR%
-@REM if ERRORLEVEL 1 (
-@REM   echo App Start Error!
-@REM   exit /B 1
-@REM )
+echo Starting webapp..
+set RES=1
+"%1" -e dev -d -p %PORT% %APPDIR%
+if ERRORLEVEL 1 (
+  echo App Start Error!
+  exit /B 1
+)
 
-@REM timeout 1 /nobreak >nul
-@REM set URL=http://localhost:%PORT%/blog
-@REM set CMD=curl -s "%URL%" -w "%%{http_code}" -o nul
-@REM set RESCODE=0
-@REM for /f "usebackq delims=" %%a in (`%CMD%`) do set RESCODE=%%a
-@REM "%1" -k stop %APPDIR%
-@REM if ERRORLEVEL 1 (
-@REM   "%1" -k abort %APPDIR%
-@REM )
-@REM timeout 1 /nobreak >nul
-@REM if not "%RESCODE%"=="200" (
-@REM   echo HTTP request failed
-@REM   echo;
-@REM   echo App Test Error!
-@REM   call :CleanUp
-@REM   exit /B 1
-@REM )
-@REM echo HTTP request success "%URL%"
+timeout 1 /nobreak >nul
+set URL=http://localhost:%PORT%/blog
+set CMD=curl -s "%URL%" -w "%%{http_code}" -o nul
+set RESCODE=0
+for /f "usebackq delims=" %%a in (`%CMD%`) do set RESCODE=%%a
+"%1" -k stop %APPDIR%
+if ERRORLEVEL 1 (
+  "%1" -k abort %APPDIR%
+)
+timeout 1 /nobreak >nul
+if not "%RESCODE%"=="200" (
+  echo HTTP request failed
+  echo;
+  echo App Test Error!
+  call :CleanUp
+  exit /B 1
+)
+echo HTTP request success "%URL%"
 
 exit /B 0
 
