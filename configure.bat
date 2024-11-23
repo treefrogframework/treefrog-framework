@@ -1,4 +1,4 @@
-@echo ON
+@echo off
 @setlocal
 
 set VERSION=2.10.0
