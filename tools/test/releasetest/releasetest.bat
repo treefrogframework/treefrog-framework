@@ -157,11 +157,11 @@ if "%TREEFROG%" == "" (
 )
 
 echo "%TREEFROG%" -v
-"%TREEFROG%" -v
+"%TREEFROG%" -v 2>&1
 echo "%TREEFROG%" -l
-"%TREEFROG%" -l
+"%TREEFROG%" -l 2>&1
 echo "%TREEFROG%" --show-routes
-"%TREEFROG%" --show-routes
+"%TREEFROG%" --show-routes 2>&1
 if ERRORLEVEL 1 (
   echo App Error!
   exit /B 1
@@ -169,7 +169,7 @@ if ERRORLEVEL 1 (
 echo;
 
 echo "%TREEFROG%" --settings
-"%TREEFROG%" --settings
+"%TREEFROG%" --settings 2>&1
 if ERRORLEVEL 1 (
   echo App Error!
   type log\treefrog.log
