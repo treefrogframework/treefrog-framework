@@ -100,14 +100,17 @@ if /i "%Platform%" == "x64" (
     :: Visual Studio 2017
     set VCVARSOPT=amd64
     set CMAKEOPT=-A x64 -T v141
+    set MSVSVER=2017
   ) else if "%VisualStudioVersion%" == "16.0" (
     :: Visual Studio 2019
     set VCVARSOPT=amd64
     set CMAKEOPT=-A x64 -T v142
+    set MSVSVER=2019
   ) else (
     :: Visual Studio 2022
     set VCVARSOPT=amd64
     set CMAKEOPT=-A x64
+    set MSVSVER=2022
   )
 ) else (
   set VCVARSOPT=x86
@@ -130,7 +133,7 @@ echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=2022 2019>> %TFENV%
+echo set VSVER=%MSVSVER%>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
