@@ -16,21 +16,21 @@ if not "%TFENV%" == "" (
   call "..\..\..\tfenv.bat"
 )
 
-for %%I in (nmake.exe) do if exist %%~$path:I set MAKE=%%~$path:I
-if "%MAKE%" == "" (
-  for %%I in (jom.exe) do if exist %%~$path:I set MAKE=%%~$path:I
-  if not "%MAKE%" == "" (
-    set MAKE=jom
+for %%I in (nmake.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+if "%NMAKE%" == "" (
+  for %%I in (jom.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+  if not "%NMAKE%" == "" (
+    set NMAKE=jom
   )
 ) else (
-  set MAKE=nmake VERBOSE=1
+  set NMAKE=nmake VERBOSE=1
 )
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
 
-if "%MAKE%" == "" (
+if "%NMAKE%" == "" (
   echo;
   echo nmake.exe not found.
   call :CleanUp
@@ -59,7 +59,7 @@ if /i "%Platform%" == "x64" (
 )
 
 cd /D %BASEDIR%
-rd /Q /S %APPNAME%
+rd /Q /S %APPNAME% >nul 2>nul
 tspawn new %APPNAME%
 if "%SQLITE%" == "" (
   echo;
@@ -73,40 +73,29 @@ cd %APPDIR%
 echo n | tspawn s blog
 tspawn w foo
 
-:: Set ExecutionPolicy
-@REM for %%I in (tadpoled.exe) do if exist %%~$path:I set TADPOLED=%%~$path:I
-@REM for %%I in (tadpole.exe) do if exist %%~$path:I set TADPOLE=%%~$path:I
-powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
-@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess1 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLED%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess2 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLE%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-
 :: Test in debug mode
-if not "%CMAKE%" == "" (
-  call :CMakeBuild Debug
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrogd.exe
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-)
+call :CMakeBuild Debug
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+call :CheckWebApp treefrogd.exe
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 call :QMakeBuild debug
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrogd.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-%MAKE% distclean >nul 2>nul
+nmake distclean >nul 2>nul
 
 :: Test in release mode
-if not "%CMAKE%" == "" (
-  call :CMakeBuild Release
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrog.exe
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-)
+call :CMakeBuild Release
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+call :CheckWebApp treefrog.exe
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 call :QMakeBuild release
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrog.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-%MAKE% distclean >nul 2>nul
+nmake distclean >nul 2>nul
 
 echo;
 echo Test OK
@@ -145,8 +134,8 @@ exit /B 0
 :QMakeBuild
 cd /D %APPDIR%
 del /Q /F lib\*.*
-qmake -r CONFIG+=%1
-%MAKE%
+"%QMAKE%" -r CONFIG+=%1
+%NMAKE%
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
@@ -167,16 +156,20 @@ if "%TREEFROG%" == "" (
   exit /B 1
 )
 
-"%1" -v
-"%1" -l
-"%1" --show-routes
+echo "%TREEFROG%" -v
+"%TREEFROG%" -v 2>&1
+echo "%TREEFROG%" -l
+"%TREEFROG%" -l 2>&1
+echo "%TREEFROG%" --show-routes
+"%TREEFROG%" --show-routes 2>&1
 if ERRORLEVEL 1 (
   echo App Error!
   exit /B 1
 )
 echo;
 
-"%1" --settings
+echo "%TREEFROG%" --settings
+"%TREEFROG%" --settings 2>&1
 if ERRORLEVEL 1 (
   echo App Error!
   type log\treefrog.log
@@ -184,32 +177,32 @@ if ERRORLEVEL 1 (
 )
 echo;
 
-@REM echo Starting webapp..
-@REM set RES=1
-@REM "%1" -e dev -d -p %PORT% %APPDIR%
-@REM if ERRORLEVEL 1 (
-@REM   echo App Start Error!
-@REM   exit /B 1
-@REM )
+echo Starting webapp..
+set RES=1
+"%1" -e dev -d -p %PORT% %APPDIR%
+if ERRORLEVEL 1 (
+  echo App Start Error!
+  exit /B 1
+)
 
-@REM timeout 1 /nobreak >nul
-@REM set URL=http://localhost:%PORT%/blog
-@REM set CMD=curl -s "%URL%" -w "%%{http_code}" -o nul
-@REM set RESCODE=0
-@REM for /f "usebackq delims=" %%a in (`%CMD%`) do set RESCODE=%%a
-@REM "%1" -k stop %APPDIR%
-@REM if ERRORLEVEL 1 (
-@REM   "%1" -k abort %APPDIR%
-@REM )
-@REM timeout 1 /nobreak >nul
-@REM if not "%RESCODE%"=="200" (
-@REM   echo HTTP request failed
-@REM   echo;
-@REM   echo App Test Error!
-@REM   call :CleanUp
-@REM   exit /B 1
-@REM )
-@REM echo HTTP request success "%URL%"
+timeout 1 /nobreak >nul
+set URL=http://localhost:%PORT%/blog
+set CMD=curl -s "%URL%" -w "%%{http_code}" -o nul
+set RESCODE=0
+for /f "usebackq delims=" %%a in (`%CMD%`) do set RESCODE=%%a
+"%1" -k stop %APPDIR%
+if ERRORLEVEL 1 (
+  "%1" -k abort %APPDIR%
+)
+timeout 1 /nobreak >nul
+if not "%RESCODE%"=="200" (
+  echo HTTP request failed
+  echo;
+  echo App Test Error!
+  call :CleanUp
+  exit /B 1
+)
+echo HTTP request success "%URL%"
 
 exit /B 0
 
@@ -218,7 +211,7 @@ exit /B 0
 ::
 :CleanUp
 cd /D %BASEDIR%
-rd /Q /S %APPNAME%
+rd /Q /S %APPNAME% >nul 2>nul
 exit /B 0
 
 :: which cmd

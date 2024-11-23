@@ -1,4 +1,4 @@
-@echo OFF
+@echo off
 @setlocal
 
 set VERSION=2.10.0
@@ -58,9 +58,9 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
-for %%I in (nmake.exe)  do if exist %%~$path:I set MAKE=%%~$path:I
+for %%I in (nmake.exe)  do if exist %%~$path:I set NMAKE=%%~$path:I
 if "%MAKE%" == "" (
-  for %%I in (jom.exe) do if exist %%~$path:I set MAKE=%%~$path:I
+  for %%I in (jom.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
 )
 for %%I in (qmake.exe)  do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe)  do if exist %%~$path:I set CMAKE=%%~$path:I
@@ -81,7 +81,7 @@ if "%CMAKE%" == "" (
 )
 cmake --version
 
-if "%MAKE%" == "" (
+if "%NMAKE%" == "" (
   echo Make not found
   pause
   exit
@@ -100,14 +100,17 @@ if /i "%Platform%" == "x64" (
     :: Visual Studio 2017
     set VCVARSOPT=amd64
     set CMAKEOPT=-A x64 -T v141
+    set MSVSVER=2017
   ) else if "%VisualStudioVersion%" == "16.0" (
     :: Visual Studio 2019
     set VCVARSOPT=amd64
     set CMAKEOPT=-A x64 -T v142
+    set MSVSVER=2019
   ) else (
     :: Visual Studio 2022
     set VCVARSOPT=amd64
     set CMAKEOPT=-A x64
+    set MSVSVER=2022
   )
 ) else (
   set VCVARSOPT=x86
@@ -130,7 +133,7 @@ echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=2022 2019 2017>> %TFENV%
+echo set VSVER=%MSVSVER%>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
@@ -157,7 +160,6 @@ echo set VSWHERE=>> %TFENV%
 echo set PATH=%%TFDIR^%%\bin;%%PATH%%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
-echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
@@ -236,17 +238,17 @@ if ERRORLEVEL 1 (
 
 :: Builds TreeFrog
 cd %BASEDIR%src
-if exist Makefile ( "%MAKE%" -k distclean >nul 2>&1 )
+if exist Makefile ( nmake distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 
 cd %BASEDIR%tools
-if exist Makefile ( "%MAKE%" -k distclean >nul 2>&1 )
+if exist Makefile ( nmake distclean >nul 2>&1 )
 qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
-"%MAKE%" qmake
+nmake qmake
 
 echo;
-echo First, run "%MAKE% install" in src directory.
-echo Next, run "%MAKE% install" in tools directory.
+echo First, run "nmake install" in src directory.
+echo Next, run "nmake install" in tools directory.
 
 :exit
 exit /b

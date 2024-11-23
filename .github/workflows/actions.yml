@@ -143,8 +143,8 @@ jobs:
     - uses: actions/checkout@main
     - name: Homebrew
       run: |
+        which pkg-config || brew install pkg-config
         brew install qt6 jq
-        brew link qt
     - name: configure
       run: ./configure --prefix=/usr/local
     - name: build
@@ -164,8 +164,8 @@ jobs:
     - uses: actions/checkout@main
     - name: Homebrew
       run: |
-        brew install qt6 pkg-config jq mongo-c-driver gflags glog lz4
-        brew link qt
+        which pkg-config || brew install pkg-config
+        brew install qt6 jq mongo-c-driver gflags glog lz4
     - name: configure
       run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
@@ -205,6 +205,7 @@ jobs:
         choco install visualstudio2022community -y
         choco install visualstudio2022-workload-nativedesktop -y
         choco install sqlite -y
+        choco install cmake -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -236,9 +237,8 @@ jobs:
         nmake
         nmake install
     - name: Test release
-      shell: cmd
+      working-directory: tools\test\releasetest
       run: |
-        cd tools\test\releasetest
         .\releasetest.bat
 
   build-windows-qt67-msvc2019:
@@ -256,6 +256,7 @@ jobs:
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
+        choco install cmake -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -287,9 +288,8 @@ jobs:
         nmake
         nmake install
     - name: Test release
-      shell: cmd
+      working-directory: tools\test\releasetest
       run: |
-        cd tools\test\releasetest
         .\releasetest.bat
 
   build-windows-qt65-msvc2019:
@@ -307,6 +307,7 @@ jobs:
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
+        choco install cmake -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -338,7 +339,6 @@ jobs:
         nmake
         nmake install
     - name: Test release
-      shell: cmd
+      working-directory: tools\test\releasetest
       run: |
-        cd tools\test\releasetest
         .\releasetest.bat
