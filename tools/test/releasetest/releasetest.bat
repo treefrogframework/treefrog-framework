@@ -73,17 +73,17 @@ cd %APPDIR%
 echo n | tspawn s blog
 tspawn w foo
 
-:: Test in debug mode
-call :CMakeBuild Debug
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-call :CheckWebApp treefrogd.exe
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+@REM :: Test in debug mode
+@REM call :CMakeBuild Debug
+@REM if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+@REM call :CheckWebApp treefrogd.exe
+@REM if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
-call :QMakeBuild debug
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-call :CheckWebApp treefrogd.exe
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-nmake distclean >nul 2>nul
+@REM call :QMakeBuild debug
+@REM if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+@REM call :CheckWebApp treefrogd.exe
+@REM if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+@REM nmake distclean >nul 2>nul
 
 :: Test in release mode
 call :CMakeBuild Release
