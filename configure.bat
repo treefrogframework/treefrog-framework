@@ -130,7 +130,7 @@ echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=2022 2019 2017>> %TFENV%
+echo set VSVER=2022 2019>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
@@ -157,7 +157,6 @@ echo set VSWHERE=>> %TFENV%
 echo set PATH=%%TFDIR^%%\bin;%%PATH%%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
-echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1

@@ -59,7 +59,7 @@ if /i "%Platform%" == "x64" (
 )
 
 cd /D %BASEDIR%
-rd /Q /S %APPNAME%
+rd /Q /S %APPNAME% >nul 2>nul
 tspawn new %APPNAME%
 if "%SQLITE%" == "" (
   echo;
@@ -73,40 +73,29 @@ cd %APPDIR%
 echo n | tspawn s blog
 tspawn w foo
 
-:: Set ExecutionPolicy
-@REM for %%I in (tadpoled.exe) do if exist %%~$path:I set TADPOLED=%%~$path:I
-@REM for %%I in (tadpole.exe) do if exist %%~$path:I set TADPOLE=%%~$path:I
-powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force"
-@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess1 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLED%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-@REM powershell -command "New-NetFirewallRule -DisplayName MyAppAccess2 -Direction Inbound -Action Allow -Profile Public,Private -Program '%TADPOLE%' -Protocol TCP -LocalPort %PORT% -RemoteAddress 127.0.0.1" >nul 2>&1
-
 :: Test in debug mode
-if not "%CMAKE%" == "" (
-  call :CMakeBuild Debug
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrogd.exe
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-)
+call :CMakeBuild Debug
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+call :CheckWebApp treefrogd.exe
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 call :QMakeBuild debug
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrogd.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-%MAKE% distclean >nul 2>nul
+nmake distclean >nul 2>nul
 
 :: Test in release mode
-if not "%CMAKE%" == "" (
-  call :CMakeBuild Release
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrog.exe
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-)
+call :CMakeBuild Release
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+call :CheckWebApp treefrog.exe
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 call :QMakeBuild release
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 call :CheckWebApp treefrog.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-%MAKE% distclean >nul 2>nul
+nmake distclean >nul 2>nul
 
 echo;
 echo Test OK
@@ -145,7 +134,7 @@ exit /B 0
 :QMakeBuild
 cd /D %APPDIR%
 del /Q /F lib\*.*
-qmake -r CONFIG+=%1
+"%QMAKE%" -r CONFIG+=%1
 %MAKE%
 if ERRORLEVEL 1 (
   echo;
@@ -167,16 +156,20 @@ if "%TREEFROG%" == "" (
   exit /B 1
 )
 
-"%1" -v
-"%1" -l
-"%1" --show-routes
+echo "%TREEFROG%" -v
+"%TREEFROG%" -v
+echo "%TREEFROG%" -l
+"%TREEFROG%" -l
+echo "%TREEFROG%" --show-routes
+"%TREEFROG%" --show-routes
 if ERRORLEVEL 1 (
   echo App Error!
   exit /B 1
 )
 echo;
 
-"%1" --settings
+echo "%TREEFROG%" --settings
+"%TREEFROG%" --settings
 if ERRORLEVEL 1 (
   echo App Error!
   type log\treefrog.log
@@ -218,7 +211,7 @@ exit /B 0
 ::
 :CleanUp
 cd /D %BASEDIR%
-rd /Q /S %APPNAME%
+rd /Q /S %APPNAME% >nul 2>nul
 exit /B 0
 
 :: which cmd
