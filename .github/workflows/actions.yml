@@ -236,9 +236,9 @@ jobs:
         nmake
         nmake install
     - name: Test release
-      shell: cmd
+      shell: powershell
+      working-directory: tools\test\releasetest
       run: |
-        cd tools\test\releasetest
         .\releasetest.bat
 
   build-windows-qt67-msvc2019:
@@ -287,9 +287,9 @@ jobs:
         nmake
         nmake install
     - name: Test release
-      shell: cmd
+      shell: powershell
+      working-directory: tools\test\releasetest
       run: |
-        cd tools\test\releasetest
         .\releasetest.bat
 
   build-windows-qt65-msvc2019:
@@ -338,7 +338,7 @@ jobs:
         nmake
         nmake install
     - name: Test release
-      shell: cmd
+      shell: powershell
+      working-directory: tools\test\releasetest
       run: |
-        cd tools\test\releasetest
         .\releasetest.bat
