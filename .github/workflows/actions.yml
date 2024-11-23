@@ -205,6 +205,7 @@ jobs:
         choco install visualstudio2022community -y
         choco install visualstudio2022-workload-nativedesktop -y
         choco install sqlite -y
+        choco install cmake -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -256,6 +257,7 @@ jobs:
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
+        choco install cmake -y
     - name: Build for debug mode
       shell: cmd
       run: |
@@ -307,6 +309,7 @@ jobs:
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
+        choco install cmake -y
     - name: Build for debug mode
       shell: cmd
       run: |
