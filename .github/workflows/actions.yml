@@ -250,7 +250,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v1
       with:
         vs-version: 16.11
         msbuild-architecture: x64
@@ -270,7 +270,7 @@ jobs:
       run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
-        cl
+        cl 2>&1
         qmake -version
         call configure.bat --enable-debug
         cd src
@@ -306,7 +306,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v1
       with:
         vs-version: 16.11
         msbuild-architecture: x64
@@ -327,7 +327,6 @@ jobs:
       run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
-        cl
         qmake -version
         call configure.bat --enable-debug
         cd src
