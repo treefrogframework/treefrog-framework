@@ -214,7 +214,7 @@ jobs:
     - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        # call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -232,7 +232,7 @@ jobs:
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        # call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -265,15 +265,14 @@ jobs:
         setup-python: false
     - name: Install tools
       run: |
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -find **\vcvarsall.bat
         choco install sqlite -y
         choco install cmake -y
     - name: Debug build
       shell: cmd
       run: |
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -find **\vcvarsall.bat
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        # call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
+        cl
         qmake -version
         call configure.bat --enable-debug
         cd src
@@ -290,7 +289,7 @@ jobs:
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        # call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -328,7 +327,7 @@ jobs:
     - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        # call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -346,7 +345,7 @@ jobs:
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        # call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
