@@ -197,7 +197,7 @@ jobs:
     - name: Setup msbuild
       uses: microsoft/setup-msbuild@v2
       with:
-        vs-version: 17.12
+        vs-version: '[17,18)'  # 17.xx
         msbuild-architecture: x64
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -250,27 +250,25 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
       with:
-        vs-version: '[16.4,16.5)'
-        # msbuild-architecture: x64
-    # - name: Install Qt
-    #   uses: jurplel/install-qt-action@v4
-    #   with:
-    #     version:      6.8
-    #     host:         windows
-    #     target:       desktop
-    #     setup-python: false
-    # - name: Install tools
-    #   run: |
-    #     choco install sqlite -y
-    #     choco install cmake -y
+        vs-version: '[16,17)'  # 16.xx
+        msbuild-architecture: x86
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version:      6.8
+        host:         windows
+        target:       desktop
+        setup-python: false
+    - name: Install tools
+      run: |
+        choco install sqlite -y
+        choco install cmake -y
     - name: Debug build
       shell: cmd
       run: |
-        "C:\ProgramData\Chocolatey\bin\vswhere.exe" --find **\vcvarsall.bat
-        dir "C:\Program Files (x86)\Microsoft Visual Studio"
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         cl 2>&1
         qmake -version
@@ -308,10 +306,10 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
       with:
-        vs-version: 16.11
-        msbuild-architecture: x64
+        vs-version: '[16,17)'  # 16.xx
+        msbuild-architecture: x86
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
