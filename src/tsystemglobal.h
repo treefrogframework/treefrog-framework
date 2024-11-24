@@ -108,14 +108,14 @@ template<typename... Args>
 void tSystemDebug(const std::format_string<Args...> &fmt, Args&&... args)
 {
     auto msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::tSystemMessage((int)Tf::DebugLevel, msg);
+    Tf::tSystemMessage((int)Tf::DebugLevel, QByteArray::fromStdString(msg));
 }
 
 template<typename... Args>
 void tSystemTrace(const std::format_string<Args...> &fmt, Args&&... args)
 {
     auto msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::tSystemMessage((int)Tf::TraceLevel, msg);
+    Tf::tSystemMessage((int)Tf::TraceLevel, QByteArray::fromStdString(msg));
 }
 
 #else

@@ -13,7 +13,7 @@ rem call "C:\Qt\6.5.3\msvc2019_64\bin\qtenv2.bat"
 set ARCH=amd64
 set VSWHERE="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 set VCVARSBAT=""
-set VSVER=2019
+set VSVER=2022 2019
 set PATH=C:\Qt\Tools\CMake_64\bin;%PATH%
 
 if exist %VSWHERE% (

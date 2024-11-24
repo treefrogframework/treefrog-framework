@@ -70,52 +70,51 @@ for %%I in (devenv.com) do if exist %%~$path:I set DEVENV=%%~$path:I
 if "%QMAKE%" == "" (
   echo Qt environment not found
   pause
-  exit
+  exit /b 1
 )
 qmake --version
 
 if "%CMAKE%" == "" (
   echo CMake not found
   pause
-  exit
+  exit /b 1
 )
 cmake --version
 
 if "%NMAKE%" == "" (
   echo Make not found
   pause
-  exit
+  exit /b 1
 )
 
 if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
   echo Visual Studio compiler not found
   pause
-  exit
+  exit /b 1
+)
+
+if /i not "%Platform%" == "x64" (
+  echo Use 64-bit architecture
+  pause
+  exit /b 1
 )
 
 :: vcvarsall.bat setup
-if /i "%Platform%" == "x64" (
-  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-  if "%VisualStudioVersion%" == "15.0" (
-    :: Visual Studio 2017
-    set VCVARSOPT=amd64
-    set CMAKEOPT=-A x64 -T v141
-    set MSVSVER=2017
-  ) else if "%VisualStudioVersion%" == "16.0" (
-    :: Visual Studio 2019
-    set VCVARSOPT=amd64
-    set CMAKEOPT=-A x64 -T v142
-    set MSVSVER=2019
-  ) else (
-    :: Visual Studio 2022
-    set VCVARSOPT=amd64
-    set CMAKEOPT=-A x64
-    set MSVSVER=2022
-  )
+set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+if "%VisualStudioVersion%" == "17.0" (
+  :: Visual Studio 2022
+  set VCVARSOPT=amd64
+  set CMAKEOPT=-A x64 -T v143
+  set MSVSVER=2022
+) else if "%VisualStudioVersion%" == "16.0" (
+  :: Visual Studio 2019
+  set VCVARSOPT=amd64
+  set CMAKEOPT=-A x64 -T v142
+  set MSVSVER=2019
 ) else (
-  set VCVARSOPT=x86
-  set CMAKEOPT=-A Win32
-  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+  echo Use Visual Studio 2022 or 2019
+  pause
+  exit /b 1
 )
 
 SET /P X="%ENVSTR%"<NUL
@@ -188,7 +187,7 @@ if ERRORLEVEL 1 (
   echo Build failed.
   echo MongoDB driver not available.
   pause
-  exit
+  exit /b 1
 )
 
 :: Builds LZ4
@@ -209,7 +208,7 @@ if ERRORLEVEL 1 (
   echo Build failed.
   echo LZ4 not available.
   pause
-  exit
+  exit /b 1
 )
 
 :: Builds glog
@@ -233,7 +232,7 @@ if ERRORLEVEL 1 (
   echo Build failed.
   echo glog not available.
   pause
-  exit
+  exit /b 1
 )
 
 :: Builds TreeFrog
