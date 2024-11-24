@@ -194,6 +194,11 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: 17.12
+        msbuild-architecture: x64
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -202,16 +207,11 @@ jobs:
         target:       desktop
         arch:         win64_msvc2022_64
         setup-python: false
-    - name: Checkout msbuild
-      uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: 17.12
-        msbuild-architecture: x64
     - name: Install tools
       run: |
         choco install sqlite -y
         choco install cmake -y
-    - name: Build for debug mode
+    - name: Debug build
       shell: cmd
       run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
@@ -224,12 +224,12 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-    - name: Test modules
+    - name: Module test
       shell: cmd
       run: |
         cd src/test
         call testall.bat
-    - name: Build for release mode
+    - name: Release build
       shell: cmd
       run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
@@ -241,31 +241,36 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-    - name: Test release
+    - name: Release test
       working-directory: tools\test\releasetest
       run: |
         .\releasetest.bat
 
-  build-windows-qt67-msvc2019:
+  build-windows-qt68-msvc2019:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: 16.11
+        msbuild-architecture: x64
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.7.3'
-        host: 'windows'
-        target: 'desktop'
-    - name: Install VisualStudio tools
+        version:      6.8
+        host:         windows
+        target:       desktop
+        arch:         win64_msvc2022_64
+        setup-python: false
+    - name: Install tools
       run: |
-        choco install visualstudio2019community -y
-        choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
         choco install cmake -y
-    - name: Build for debug mode
+    - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -275,15 +280,15 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-    - name: Test modules
+    - name: Module test
       shell: cmd
       run: |
         cd src/test
         call testall.bat
-    - name: Build for release mode
+    - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -292,7 +297,7 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-    - name: Test release
+    - name: Release test
       working-directory: tools\test\releasetest
       run: |
         .\releasetest.bat
@@ -301,22 +306,27 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: 16.11
+        msbuild-architecture: x64
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.2'
-        host: 'windows'
-        target: 'desktop'
-    - name: Install VisualStudio tools
+        version:      6.5
+        host:         windows
+        target:       desktop
+        arch:         win64_msvc2022_64
+        setup-python: false
+    - name: Install tools
       run: |
-        choco install visualstudio2019community -y
-        choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
         choco install cmake -y
-    - name: Build for debug mode
+    - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -326,15 +336,15 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-    - name: Test modules
+    - name: Module test
       shell: cmd
       run: |
         cd src/test
         call testall.bat
-    - name: Build for release mode
+    - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -343,7 +353,7 @@ jobs:
         cd ..\tools
         nmake
         nmake install
-    - name: Test release
+    - name: Release test
       working-directory: tools\test\releasetest
       run: |
         .\releasetest.bat
