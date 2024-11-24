@@ -237,48 +237,48 @@ template<typename... Args>
 void fatal(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::FatalLevel, msg);
+    Tf::logging(Tf::FatalLevel, QByteArray::fromStdString(msg));
 }
 
 template<typename... Args>
 void error(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::ErrorLevel, msg);
+    Tf::logging(Tf::ErrorLevel, QByteArray::fromStdString(msg));
 }
 
 template<typename... Args>
 void warn(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::WarnLevel, msg);
+    Tf::logging(Tf::WarnLevel, QByteArray::fromStdString(msg));
 }
 
 template<typename... Args>
 void info(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::InfoLevel, msg);
+    Tf::logging(Tf::InfoLevel, QByteArray::fromStdString(msg));
 }
 
 template<typename... Args>
 void debug(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::DebugLevel, msg);
+    Tf::logging(Tf::DebugLevel, QByteArray::fromStdString(msg));
 }
 
 template<typename... Args>
 void trace(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
-    Tf::logging(Tf::TraceLevel, msg);
+    Tf::logging(Tf::TraceLevel, QByteArray::fromStdString(msg));
 }
 
 #else
 
 template<typename... Args>
-std::string simple_format(const std::string &format, Args&&... args)
+QByteArray simple_format(const std::string &format, Args&&... args)
 {
     QByteArray res;
     const size_t len = format.size();
@@ -322,49 +322,49 @@ std::string simple_format(const std::string &format, Args&&... args)
         }
         res += format[pos++];
     }
-    return res.toStdString();
+    return res;
 }
 
 // Logging for developer
 template<typename... Args>
 void fatal(const std::string &fmt, Args&&... args)
 {
-    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::FatalLevel, msg);
 }
 
 template<typename... Args>
 void error(const std::string &fmt, Args&&... args)
 {
-    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::ErrorLevel, msg);
 }
 
 template<typename... Args>
 void warn(const std::string &fmt, Args&&... args)
 {
-    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::WarnLevel, msg);
 }
 
 template<typename... Args>
 void info(const std::string &fmt, Args&&... args)
 {
-    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::InfoLevel, msg);
 }
 
 template<typename... Args>
 void debug(const std::string &fmt, Args&&... args)
 {
-    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::DebugLevel, msg);
 }
 
 template<typename... Args>
 void trace(const std::string &fmt, Args&&... args)
 {
-    std::string msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::TraceLevel, msg);
 }
 

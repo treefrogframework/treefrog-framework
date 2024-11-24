@@ -34,13 +34,13 @@ QByteArray queryLogDateTimeFormat;
 
 }
 
-void Tf::tSystemMessage(int priority, const std::string &message)
+void Tf::tSystemMessage(int priority, const QByteArray &message)
 {
     if (!systemLogger) {
         return;
     }
 
-    TLog log(priority, message.c_str());
+    TLog log(priority, message);
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
     systemLogger->write(buf.data(), buf.length());
 }
@@ -131,27 +131,14 @@ void Tf::releaseQueryLogger()
 }
 
 
-void Tf::traceQuery(int duration, const std::string &msg)
+void Tf::traceQuery(int duration, const QByteArray &msg)
 {
     if (sqllogstrm) {
-        TLog log(-1, msg.c_str(), duration);
+        TLog log(-1, msg, duration);
         QByteArray buf = TLogger::logToByteArray(log, queryLogLayout, queryLogDateTimeFormat);
         sqllogstrm->writeLog(buf);
     }
 }
-
-
-// void Tf::traceQueryLog(int duration, const char *msg, ...)
-// {
-//     if (sqllogstrm) {
-//         va_list ap;
-//         va_start(ap, msg);
-//         TLog log(-1, QString::vasprintf(msg, ap).toLocal8Bit(), duration);
-//         QByteArray buf = TLogger::logToByteArray(log, queryLogLayout, queryLogDateTimeFormat);
-//         sqllogstrm->writeLog(buf);
-//         va_end(ap);
-//     }
-// }
 
 
 void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &error, int duration)

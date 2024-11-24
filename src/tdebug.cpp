@@ -96,10 +96,10 @@ void Tf::releaseAppLoggers()
 }
 
 
-void Tf::logging(int priority, const std::string &msg)
+void Tf::logging(int priority, const QByteArray &msg)
 {
     if (stream) {
-        TLog log(priority, msg.c_str());
+        TLog log(priority, msg);
         stream->writeLog(log);
     }
 }

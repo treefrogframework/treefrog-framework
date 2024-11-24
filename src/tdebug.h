@@ -11,7 +11,7 @@ namespace Tf {
 
 T_CORE_EXPORT void setupAppLoggers(TLogger *logger = nullptr);  // internal use
 T_CORE_EXPORT void releaseAppLoggers();  // internal use
-T_CORE_EXPORT void logging(int priority, const std::string &msg);
+T_CORE_EXPORT void logging(int priority, const QByteArray &msg);
 
 }
 
