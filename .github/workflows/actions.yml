@@ -252,7 +252,7 @@ jobs:
     - name: Setup msbuild
       uses: microsoft/setup-msbuild@v1
       with:
-        vs-version: 16.11
+        vs-version: '[16.5, 16.12)'
         # msbuild-architecture: x64
     # - name: Install Qt
     #   uses: jurplel/install-qt-action@v4
@@ -268,7 +268,8 @@ jobs:
     - name: Debug build
       shell: cmd
       run: |
-        dir "C:\Program Files (x86)\Microsoft Visual Studio\2019"
+        "C:\ProgramData\Chocolatey\bin\vswhere.exe" --find **\vcvarsall.bat
+        dir "C:\Program Files (x86)\Microsoft Visual Studio"
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         cl 2>&1
