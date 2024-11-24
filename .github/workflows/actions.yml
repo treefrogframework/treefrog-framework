@@ -250,7 +250,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v1.3.3
       with:
         vs-version: '[16,17)'  # 16.xx
         msbuild-architecture: x86
@@ -306,7 +306,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v1
       with:
         vs-version: '[16,17)'  # 16.xx
         msbuild-architecture: x86
