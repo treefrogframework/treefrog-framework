@@ -265,11 +265,13 @@ jobs:
         setup-python: false
     - name: Install tools
       run: |
+        "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -find **\vcvarsall.bat
         choco install sqlite -y
         choco install cmake -y
     - name: Debug build
       shell: cmd
       run: |
+        "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -find **\vcvarsall.bat
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
@@ -314,7 +316,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version:      6.5
+        version:      6.5.2
         host:         windows
         target:       desktop
         arch:         win64_msvc2022_64
