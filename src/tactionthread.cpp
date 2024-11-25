@@ -112,7 +112,7 @@ void TActionThread::run()
     try {
         for (;;) {
             QList<THttpRequest> requests = readRequest(_httpSocket);
-            tSystemDebug("HTTP request count: {}", (int64_t)requests.count());
+            tSystemDebug("HTTP request count: {}", (qint64)requests.count());
 
             if (requests.isEmpty()) {
                 break;
