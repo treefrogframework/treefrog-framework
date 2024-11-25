@@ -75,10 +75,10 @@ bool TSharedMemoryKvsDriver::open(const QString &db, const QString &, const QStr
 
     _allocator = TSharedMemoryAllocator::attach(_name);
     if (_allocator) {
-        tSystemDebug("SharedMemory attach.  name:{}  size:{}", qUtf8Printable(_name), _allocator->mapSize());
+        tSystemDebug("SharedMemory attach.  name:{}  size:{}", qUtf8Printable(_name), (quint64)_allocator->mapSize());
         _size = _allocator->mapSize();
     } else {
-       tSystemError("SharedMemory attach error.  name:{}", qUtf8Printable(_name));
+        tSystemError("SharedMemory attach error.  name:{}", qUtf8Printable(_name));
     }
     return true;
 }

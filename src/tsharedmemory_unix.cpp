@@ -144,7 +144,7 @@ bool TSharedMemory::attach()
     }
 
     _size = st.st_size;
-    tSystemDebug("SharedMemory attached.  name:{} size:{}", qUtf8Printable(_name), _size);
+    tSystemDebug("SharedMemory attached.  name:{} size:{}", qUtf8Printable(_name), (quint64)_size);
     return true;
 
 error:

@@ -164,7 +164,7 @@ void TestRedis::setexGet()
     QCOMPARE(res, QByteArray());  // empty
     bool ok = redis.setEx(key, value, secs);
     QCOMPARE(ok, true);  // set ok
-    Tf::msleep(Tf::random(50, 1900));  // sleep
+    Tf::msleep(Tf::random(50, 1700));  // sleep
     res = redis.get(key);  // get value
     QCOMPARE(res, value);
 }

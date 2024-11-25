@@ -20,8 +20,18 @@ jobs:
         sudo rm -f /usr/bin/qmake
         sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
         qmake -v
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++ --enable-debug
+    - name: make for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
     - name: configure
-      run: ./configure --prefix=/usr/local --spec=linux-g++
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++
     - name: make
       run: |
         make -j4 -C src
@@ -63,8 +73,18 @@ jobs:
         sudo rm -f /usr/bin/qmake
         sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
         qmake -v
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang --enable-debug
+    - name: make for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
     - name: configure
-      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang
     - name: make
       run: |
         make -j4 -C src
@@ -106,6 +126,15 @@ jobs:
         sudo rm -f /usr/bin/qmake
         sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
         qmake -v
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --spec=linux-g++ --enable-debug
+    - name: make for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
     - name: configure
       run: |
         ./configure --prefix=/usr/local --spec=linux-g++
@@ -145,8 +174,18 @@ jobs:
       run: |
         which pkg-config || brew install pkg-config
         brew install qt6 jq
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-debug
+    - name: build for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
     - name: configure
-      run: ./configure --prefix=/usr/local
+      run: |
+        ./configure --prefix=/usr/local
     - name: build
       run: |
         make -j4 -C src
@@ -166,8 +205,18 @@ jobs:
       run: |
         which pkg-config || brew install pkg-config
         brew install qt6 jq mongo-c-driver gflags glog lz4
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
+    - name: build for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
     - name: configure
-      run: ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
       run: |
         make -j4 -C src

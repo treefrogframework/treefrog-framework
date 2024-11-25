@@ -254,6 +254,8 @@ enum class SocketState : int {
 
 constexpr auto KeepEmptyParts = Qt::KeepEmptyParts;
 constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
+constexpr auto ReadOnly  = QIODeviceBase::ReadOnly;
+constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 } // namespace Tf
 
 

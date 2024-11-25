@@ -138,7 +138,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
         QByteArray connectionHeader = header.rawHeader("Connection").toLower();
         if (connectionHeader.contains("upgrade")) {
             QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
-            tSystemDebug("Upgrade: {}", upgradeHeader.data());
+            tSystemDebug("Upgrade: {}", (const char*)upgradeHeader.data());
 
             if (upgradeHeader == "websocket") {
                 if (TWebSocket::searchEndpoint(header)) {

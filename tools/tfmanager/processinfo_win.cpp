@@ -50,20 +50,6 @@ int64_t ProcessInfo::ppid() const
 }
 
 
-// int64_t ProcessInfo::ppid() const
-// {
-//     int64_t ppid = 0;
-//     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
-//     if (hProcess) {
-//         PROCESS_BASIC_INFORMATION basicInfo;
-//         if (NtQueryInformationProcess(hProcess, ProcessBasicInformation, &basicInfo, sizeof(basicInfo), NULL) == STATUS_SUCCESS) {
-//             ppid = (int64_t)basicInfo.InheritedFromUniqueProcessId;
-//         }
-//     }
-//     return ppid;
-// }
-
-
 QString ProcessInfo::processName() const
 {
     QString ret;

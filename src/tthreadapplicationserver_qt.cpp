@@ -83,7 +83,7 @@ void TThreadApplicationServer::stop()
 
 void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
-    tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", (int64_t)socketDescriptor, TActionThread::threadCount(), maxThreads);
+    tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
     TActionThread *thread;
     while (!threadPoolPtr()->pop(thread)) {
         std::this_thread::yield();

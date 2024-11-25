@@ -6,7 +6,12 @@ constexpr auto TF_SRC_REVISION = 2956;
 #include <QMetaType>
 #include <QIODevice>
 #include <QtGlobal>
+#include <version>
 
+
+#if (!defined(Q_OS_WIN) && (defined(__cpp_lib_format) || __has_include(<format>))) || (defined(_MSC_VER) && _MSC_VER >= 1930)  // std::format
+#define TF_HAVE_STD_FORMAT
+#endif
 
 #define T_DEFINE_CONTROLLER(TYPE) T_DEFINE_TYPE(TYPE)
 #define T_DEFINE_VIEW(TYPE) T_DEFINE_TYPE(TYPE)
@@ -167,16 +172,6 @@ constexpr auto TF_SRC_REVISION = 2956;
 #define tDebug TDebug(Tf::DebugLevel).debug
 #define tTrace TDebug(Tf::TraceLevel).trace
 
-
-namespace Tf {
-constexpr auto ReadOnly = QIODeviceBase::ReadOnly;
-constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
-}
-
-
-#if (!defined(Q_OS_WIN) && defined(__cpp_lib_format)) || (defined(_MSC_VER) && _MSC_VER >= 1930)  // std::format
-#define TF_HAVE_STD_FORMAT
-#endif
 
 #include "tfexception.h"
 #include "tfnamespace.h"
