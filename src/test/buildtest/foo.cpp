@@ -132,7 +132,7 @@ QJsonArray Foo::getAllJson()
     QJsonArray array;
     TMongoODMapper<FooObject> mapper;
 
-    if (mapper.find() > 0) {
+    if (mapper.find()) {
         while (mapper.next()) {
             array.append(QJsonValue(QJsonObject::fromVariantMap(Foo(mapper.value()).toVariantMap())));
         }
