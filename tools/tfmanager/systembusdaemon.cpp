@@ -161,7 +161,7 @@ void SystemBusDaemon::handleDisconnect()
         socketSet.remove(socket);
         disconnect(socket, nullptr, nullptr, nullptr);
         socket->deleteLater();
-        tSystemDebug("disconnected local socket : {:#x}", (uintptr_t)socket);
+        tSystemDebug("disconnected local socket : {:#x}", (quint64)socket);
     }
 }
 

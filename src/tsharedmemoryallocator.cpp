@@ -139,7 +139,7 @@ void TSharedMemoryAllocator::setbrk(bool initial)
     }
 
     pb_header = (Tf::program_break_header_t *)_sharedMemory->data();
-    tSystemDebug("addr = {:#x}", (uintptr_t)_sharedMemory->data());
+    tSystemDebug("addr = {:#x}", (quint64)_sharedMemory->data());
 
     // Checks checksum
     uint64_t ck = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
@@ -441,11 +441,11 @@ void TSharedMemoryAllocator::dump() const
     Tf::alloc_header_t *cur = pb_header->alloc_head();
 
     tSystemDebug("-- memory block information --");
-    tSystemDebug("table info: blocks = {}, free = {}, used = {}, free-size = {}, segment-size = {}", countBlocks(), countFreeBlocks(), pb_header->at.used, sizeOfFreeBlocks(), dataSegmentSize());
-    tSystemDebug("block info: head = {:#x}, tail = {:#x}", (uintptr_t)pb_header->alloc_head(), (uintptr_t)pb_header->alloc_tail());
+    tSystemDebug("table info: blocks = {}, free = {}, used = {}, free-size = {}, segment-size = {}", countBlocks(), countFreeBlocks(), (quint64)pb_header->at.used, (quint64)sizeOfFreeBlocks(), (quint64)dataSegmentSize());
+    tSystemDebug("block info: head = {:#x}, tail = {:#x}", (quint64)pb_header->alloc_head(), (quint64)pb_header->alloc_tail());
     while (cur) {
         tSystemDebug("addr = {:#x}, size = {}, freed = {}, next = {:#x}, prev = {:#x}",
-            (uintptr_t)cur, cur->size, cur->freed, (uintptr_t)cur->next(), (uintptr_t)cur->prev());
+            (quint64)cur, cur->size, cur->freed, (quint64)cur->next(), (quint64)cur->prev());
         cur = cur->next();
     }
 }
