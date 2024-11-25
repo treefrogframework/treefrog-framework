@@ -259,7 +259,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             }
 
             tSystemDebug("WebSocket parse header pos: {}", devhdr->pos());
-            tSystemDebug("WebSocket payload length:{}", pfrm->payloadLength());
+            tSystemDebug("WebSocket payload length:{}", (quint64)pfrm->payloadLength());
 
             int hdrlen = hdr.length() - devhdr->bytesAvailable();
             ds.skipRawData(hdrlen);  // Forwards the pos
@@ -269,7 +269,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
         case TWebSocketFrame::HeaderParsed:  // fall through
         case TWebSocketFrame::MoreData: {
             tSystemDebug("WebSocket reading payload:  available length:{}", dev->bytesAvailable());
-            tSystemDebug("WebSocket parsing  length to read:{}  current buf len:{}", pfrm->payloadLength(), (qint64)pfrm->payload().size());
+            tSystemDebug("WebSocket parsing  length to read:{}  current buf len:{}", (quint64)pfrm->payloadLength(), (qint64)pfrm->payload().size());
             uint64_t size = std::min((uint64_t)(pfrm->payloadLength() - pfrm->payload().size()), (uint64_t)dev->bytesAvailable());
             if (Q_UNLIKELY(size == 0)) {
                 Q_ASSERT(0);

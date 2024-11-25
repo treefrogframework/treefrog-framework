@@ -115,7 +115,7 @@ void TThreadApplicationServer::run()
                     Tf::msleep(1);
                 }
 
-                tSystemDebug("thread ptr: {}", (uint64_t)thread);
+                tSystemDebug("thread ptr: {}", (quint64)thread);
                 thread->setSocketDescriptor(socketDescriptor);
                 thread->start();
             }

@@ -216,7 +216,7 @@ void TEpoll::dispatchEvents()
             Q_ASSERT(sd->buffer == nullptr);
 
             QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
-            tSystemDebug("secKey: {}", secKey.data());
+            tSystemDebug("secKey: {}", (const char*)secKey.data());
             int newsocket = TApplicationServerBase::duplicateSocket(sock->socketDescriptor());
 
             // Switch to WebSocket

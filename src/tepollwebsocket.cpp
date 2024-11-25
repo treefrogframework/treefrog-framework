@@ -31,7 +31,7 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
     TEpollSocket(socketDescriptor, Tf::SocketState::Connected, address),
     TAbstractWebSocket(header)
 {
-    tSystemDebug("TEpollWebSocket  [{:#x}]", (uintptr_t)this);
+    tSystemDebug("TEpollWebSocket  [{:#x}]", (quintptr)this);
     socketManager.insert(socketDescriptor, this);
     _recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
@@ -40,7 +40,7 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
 TEpollWebSocket::~TEpollWebSocket()
 {
     socketManager.remove(socketDescriptor());
-    tSystemDebug("~TEpollWebSocket  [{:#x}]", (uintptr_t)this);
+    tSystemDebug("~TEpollWebSocket  [{:#x}]", (quintptr)this);
 }
 
 
