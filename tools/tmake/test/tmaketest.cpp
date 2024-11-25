@@ -82,37 +82,37 @@ void TestTfpconverter::otamaconvert_data()
     QTest::addColumn<QString>("olgFileName");
     QTest::addColumn<QString>("resultFileName");
 
-    // QTest::newRow("1")   << "index1.html"  << "logic1.olg" << "res1.html";
-    // QTest::newRow("1-2") << "index1-2.html" << "logic1.olg" << "res1-2.html";
-    // QTest::newRow("2")  << "index2.html"  << "logic1.olg" << "res2.html";
-    // QTest::newRow("3")  << "index3.html"  << "logic1.olg" << "res3.html";
-    // QTest::newRow("4")  << "index4.html"  << "logic1.olg" << "res4.html";
-    // QTest::newRow("5")  << "index5.html"  << "logic1.olg" << "res5.html";
-    // QTest::newRow("6")  << "index6.html"  << "logic1.olg" << "res6.html";
-    // QTest::newRow("7")  << "index7.html"  << "logic1.olg" << "res7.html";
-    // QTest::newRow("8")  << "index8.html"  << "logic1.olg" << "res8.html";
-    // QTest::newRow("9")  << "index9.html"  << "logic1.olg" << "res9.html";
-    // QTest::newRow("10") << "index10.html" << "logic1.olg" << "res10.html";
-    // QTest::newRow("11") << "index11.html" << "logic1.olg" << "res11.html";
-    // QTest::newRow("12") << "index12.html" << "logic1.olg" << "res12.html";
-    // QTest::newRow("13") << "index13.html" << "logic1.olg" << "res13.html";
-    // QTest::newRow("14") << "index14.html" << "logic1.olg" << "res14.html";
-    // QTest::newRow("14-2") << "index14-2.html" << "logic1.olg" << "res14-2.html";
-    // QTest::newRow("14-3") << "index14-3.html" << "logic1.olg" << "res14-3.html";
-    // QTest::newRow("14-4") << "index14-4.html" << "logic1.olg" << "res14-4.html";
-    // QTest::newRow("15") << "index15.html" << "logic1.olg" << "res15.html";
-    // QTest::newRow("16") << "index16.html" << "logic1.olg" << "res16.html";
-    // QTest::newRow("17") << "index17.html" << "logic1.olg" << "res17.html";
-    // QTest::newRow("18") << "index18.html" << "logic1.olg" << "res18.html";
-    // QTest::newRow("19") << "index19.html" << "logic1.olg" << "res19.html";
-    // QTest::newRow("20") << "index20.html" << "logic1.olg" << "res20.html";
+    QTest::newRow("1")   << "index1.html"  << "logic1.olg" << "res1.html";
+    QTest::newRow("1-2") << "index1-2.html" << "logic1.olg" << "res1-2.html";
+    QTest::newRow("2")  << "index2.html"  << "logic1.olg" << "res2.html";
+    QTest::newRow("3")  << "index3.html"  << "logic1.olg" << "res3.html";
+    QTest::newRow("4")  << "index4.html"  << "logic1.olg" << "res4.html";
+    QTest::newRow("5")  << "index5.html"  << "logic1.olg" << "res5.html";
+    QTest::newRow("6")  << "index6.html"  << "logic1.olg" << "res6.html";
+    QTest::newRow("7")  << "index7.html"  << "logic1.olg" << "res7.html";
+    QTest::newRow("8")  << "index8.html"  << "logic1.olg" << "res8.html";
+    QTest::newRow("9")  << "index9.html"  << "logic1.olg" << "res9.html";
+    QTest::newRow("10") << "index10.html" << "logic1.olg" << "res10.html";
+    QTest::newRow("11") << "index11.html" << "logic1.olg" << "res11.html";
+    QTest::newRow("12") << "index12.html" << "logic1.olg" << "res12.html";
+    QTest::newRow("13") << "index13.html" << "logic1.olg" << "res13.html";
+    QTest::newRow("14") << "index14.html" << "logic1.olg" << "res14.html";
+    QTest::newRow("14-2") << "index14-2.html" << "logic1.olg" << "res14-2.html";
+    QTest::newRow("14-3") << "index14-3.html" << "logic1.olg" << "res14-3.html";
+    QTest::newRow("14-4") << "index14-4.html" << "logic1.olg" << "res14-4.html";
+    QTest::newRow("15") << "index15.html" << "logic1.olg" << "res15.html";
+    QTest::newRow("16") << "index16.html" << "logic1.olg" << "res16.html";
+    QTest::newRow("17") << "index17.html" << "logic1.olg" << "res17.html";
+    QTest::newRow("18") << "index18.html" << "logic1.olg" << "res18.html";
+    QTest::newRow("19") << "index19.html" << "logic1.olg" << "res19.html";
+    QTest::newRow("20") << "index20.html" << "logic1.olg" << "res20.html";
 
     QTest::newRow("c1") << "indexc1.html" << "logic1.olg" << "resc1.html";
-    // QTest::newRow("c2") << "indexc2.html" << "logic1.olg" << "resc2.html";
-    // QTest::newRow("c3") << "indexc3.html" << "logic1.olg" << "resc3.html";
-    // QTest::newRow("c4") << "indexc4.html" << "logic1.olg" << "resc4.html";
+    QTest::newRow("c2") << "indexc2.html" << "logic1.olg" << "resc2.html";
+    QTest::newRow("c3") << "indexc3.html" << "logic1.olg" << "resc3.html";
+    QTest::newRow("c4") << "indexc4.html" << "logic1.olg" << "resc4.html";
 
-    // QTest::newRow("dm") << "dummy.html"  << "logic1.olg" << "resdm.html";
+    QTest::newRow("dm") << "dummy.html"  << "logic1.olg" << "resdm.html";
 }
 
 

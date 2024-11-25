@@ -431,10 +431,11 @@ THtmlElement &THtmlParser::insertNewElement(int parent, int index)
     } else {
         elements.resize(elements.size() + 1);
         last().parent = parent;
-        if (index >= 0 && index < elements[parent].children.count()) {
-            elements[parent].children.insert(index, lastIndex());
+        auto &ele = elements[parent];
+        if (index >= 0 && index < ele.children.count()) {
+            ele.children.insert(index, lastIndex());
         } else {
-            elements[parent].children.append(lastIndex());
+            ele.children.append(lastIndex());
         }
     }
     return last();
