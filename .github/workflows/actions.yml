@@ -42,7 +42,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-    - name: apt for test
+    - name: apt install for test
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
@@ -51,8 +51,8 @@ jobs:
       working-directory: src/test
       run: |
         ./testall.sh
-    - name: tmaketest
-      working-directory: cd tools/tmake/test
+    - name: tmake test
+      working-directory: tools/tmake/test
       run: |
         qmake tmaketest.pro
         make -j4
@@ -97,7 +97,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-    - name: apt for test
+    - name: apt install for test
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
@@ -106,7 +106,7 @@ jobs:
       working-directory: src/test
       run: |
         ./testall.sh
-    - name: tmaketest
+    - name: tmake test
       working-directory: tools/tmake/test
       run: |
         qmake tmaketest.pro
@@ -152,7 +152,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-    - name: apt for test
+    - name: apt install for test
       run: |
         sudo apt install -y --no-install-recommends redis-server memcached
         sudo service redis-server start
@@ -161,7 +161,7 @@ jobs:
       working-directory: src/test
       run: |
         ./testall.sh
-    - name: tmaketest
+    - name: tmake test
       working-directory: tools/tmake/test
       run: |
         qmake tmaketest.pro
@@ -202,12 +202,21 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-    - name: tmaketest
+    - name: tmake test
       working-directory: tools/tmake/test
       run: |
         qmake tmaketest.pro
         make -j4
         ./tmaketest.sh
+    - name: brew install for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
+    - name: testall.sh
+      working-directory: src/test
+      run: |
+        ./testall.sh
     - name: releasetest
       working-directory: tools/test/releasetest
       run: |
@@ -243,7 +252,7 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
-    - name: Homebrew for test
+    - name: brew install for test
       run: |
         brew install redis memcached
         brew services start redis
