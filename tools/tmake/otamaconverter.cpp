@@ -175,6 +175,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         val = otmParser.getSrcCode(label, OtmParser::ContentAssignment, &ech);  // ~ operator
         if (!val.isEmpty()) {
             htmlParser.removeChildElements(i);
+            e = htmlParser.at(i);
             e.text = generateErbPhrase(val, ech);
         } else {
             QStringList vals = otmParser.getWrapSrcCode(label, OtmParser::ContentAssignment);
@@ -236,6 +237,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         if (!val.isEmpty()) {
             // Sets the variable
             htmlParser.removeElementTree(i);
+            e = htmlParser.at(i);
             e.text = generateErbPhrase(val, ech);
         } else {
             QStringList vals = otmParser.getWrapSrcCode(label, OtmParser::TagReplacement);

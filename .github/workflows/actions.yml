@@ -48,17 +48,19 @@ jobs:
         sudo service redis-server start
         sudo service memcached start
     - name: testall.sh
+      working-directory: src/test
       run: |
-        $GITHUB_WORKSPACE/src/test/testall.sh
+        ./testall.sh
     - name: tmaketest
+      working-directory: cd tools/tmake/test
       run: |
-        cd $GITHUB_WORKSPACE/tools/tmake/test
         qmake tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
+      working-directory: tools/test/releasetest
       run: |
-        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+        ./releasetest
 
   build-ubuntu-sharedlink:
     runs-on: ubuntu-24.04
@@ -101,17 +103,19 @@ jobs:
         sudo service redis-server start
         sudo service memcached start
     - name: testall.sh
+      working-directory: src/test
       run: |
-        $GITHUB_WORKSPACE/src/test/testall.sh
+        ./testall.sh
     - name: tmaketest
+      working-directory: tools/tmake/test
       run: |
-        cd $GITHUB_WORKSPACE/tools/tmake/test
         qmake tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
+      working-directory: tools/test/releasetest
       run: |
-        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+        ./releasetest
 
   build-ubuntu22:
     runs-on: ubuntu-22.04
@@ -154,17 +158,19 @@ jobs:
         sudo service redis-server start
         sudo service memcached start
     - name: testall.sh
+      working-directory: src/test
       run: |
-        $GITHUB_WORKSPACE/src/test/testall.sh
+        ./testall.sh
     - name: tmaketest
+      working-directory: tools/tmake/test
       run: |
-        cd $GITHUB_WORKSPACE/tools/tmake/test
         qmake tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
+      working-directory: tools/test/releasetest
       run: |
-        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+        ./releasetest
 
   build-macos:
     runs-on: macos-latest
@@ -196,6 +202,16 @@ jobs:
       run: |
         treefrog -v
         tspawn --show-drivers
+    - name: tmaketest
+      working-directory: tools/tmake/test
+      run: |
+        qmake tmaketest.pro
+        make -j4
+        ./tmaketest.sh
+    - name: releasetest
+      working-directory: tools/test/releasetest
+      run: |
+        ./releasetest
 
   build-macos-sharedlink:
     runs-on: macos-latest
@@ -233,11 +249,13 @@ jobs:
         brew services start redis
         brew services start memcached
     - name: testall.sh
+      working-directory: src/test
       run: |
-        $GITHUB_WORKSPACE/src/test/testall.sh
+        ./testall.sh
     - name: releasetest
+      working-directory: tools/test/releasetest
       run: |
-        $GITHUB_WORKSPACE/tools/test/releasetest/releasetest
+        ./releasetest
 
   build-windows-qt68-msvc2022:
     runs-on: windows-latest
@@ -274,8 +292,8 @@ jobs:
         nmake install
     - name: Module test
       shell: cmd
+      working-directory: src/test
       run: |
-        cd src/test
         call testall.bat
     - name: Release build
       shell: cmd
@@ -326,8 +344,8 @@ jobs:
         nmake install
     - name: Module test
       shell: cmd
+      working-directory: src/test
       run: |
-        cd src/test
         call testall.bat
     - name: Release build
       shell: cmd
@@ -379,8 +397,8 @@ jobs:
         nmake install
     - name: Module test
       shell: cmd
+      working-directory: src/test
       run: |
-        cd src/test
         call testall.bat
     - name: Release build
       shell: cmd
