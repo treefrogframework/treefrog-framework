@@ -32,16 +32,30 @@ Webアプリは、以下の４つのログを出力します。
 渡せる引数は printf 形式と同じで、フォーマット文字列と可変個の変数です。例えば、こんな感じに使います。
 
 ```c++
-tError("Invalid Parameter : value : %d", value);
+tError("Invalid Parameter, value : %d", value);
 ```
 
 すると、次のようなログが log/app.log ファイルに出力されるでしょう。
 
 ```
-2011-04-01 21:06:04 ERROR [12345678] Invalid Parameter : value : -1
+2011-04-01 21:06:04 ERROR [12345678] Invalid Parameter, value : -1
 ```
 
 フォーマット文字列の末尾には改行コードは不要です。
+
+TreeFrog バージョン2.10以降では、stdc++20をサポートしたコンパイラであれば、次のメソッドで std::format スタイルの書式を記述できます。
+
+* Tf::fatal()
+* Tf::error()
+* Tf::warn()
+* Tf::info()
+* Tf::debug()
+* Tf::trace()
+
+次のように記述できます。
+```c++
+Tf::error("Invalid Parameter, value : {}", value);
+```
 
 ## ログのレイアウト変更
 

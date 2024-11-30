@@ -37,16 +37,23 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Nov. 30, 2024
+### TreeFrog Framework version 2.10.0 (stable) release <span style="color: red;">New!</span>
+
+ - Supported for std::format style log output, Tf::error(), Tf::warn(), Tf::info(), etc.
+ - Fix a bug of tsharedmemory initiation.
+ - Only Qt6 supported after this version (Qt5 not supported).
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Jun. 16, 2024
-### TreeFrog Framework version 2.9.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.9.0 (stable) release
 
  - Fix a bug in the access log output regarding status codes.
  - Modified to set NULL into DB when the value is QString() in TSqlObject.
  - Added a function, TAbstractModel::setProperties(const QJsonObject &properties).
  - Updated mongoc driver to v1.26.2.
  - Updated glog to v0.7.0.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Dec. 10, 2023
 ### TreeFrog Framework version 2.8.0 (stable) release
@@ -70,42 +77,7 @@ Feb. 25, 2023
   - Updated system logger.
   - Performance improvement for pooling database connections.
 
-Jan. 21, 2023
-### TreeFrog Framework version 2.6.1 (stable) release
-
- - Fix a bug of outputting access log.
- - Added a link option for LZ4 shared library on Linux or macOS.
-
-Jan. 2, 2023
-### TreeFrog Framework version 2.6.0 (stable) release
-
- - Implemented in-memory KVS for cache system.
- - Added a link option for Glog shared library.
- - Fix bugs of macros for command line interface.
- - Updated LZ4 to v1.9.4.
-
-Nov. 1, 2022
-### TreeFrog Framework version 2.5.0 (stable) release
-
- - Implemented flushResponse() function to continue the process after sending a response.
- - Updated glog to v0.6.0
- - Performance improvement for redis client.
- - Implemented memcached client. [Experimental]
- - Implemented a cache-store for memcached, TCacheMemcachedStore class.
-
-Aug. 13, 2022
-### TreeFrog Framework version 2.4.0 (stable) release
-
- - Implemented memory store for cache.
- - Updated Mongo C driver to v1.21.2.
-
-May 28, 2022
-### TreeFrog Framework version 2.3.1 (stable) release
-
- - Fix compilation errors on Qt 6.3.
-
  [<i class="fa fa-list" aria-hidden="true"></i> All changelogs](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
-
 
 ## <i class="fas fa-hand-holding-usd"></i> Support Development
 

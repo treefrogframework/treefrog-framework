@@ -6,7 +6,7 @@
 #include <TMongoODMapper>
 #include <TModelUtil>
 #include <TJsonUtil>
-#include <tglobal.h>
+#include <TGlobal>
 #include <tatomicptr.h>
 #include <tatomic.h>
 #include <tstack.h>
@@ -258,4 +258,29 @@ void queue()
     queue.dequeue(s);
     queue.head(s);
     queue.count();
+}
+
+void debugoutput()
+{
+    char c[] = "hello";
+    std::string str = "hello";
+    size_t sz = 1;
+    uintptr_t ptr = 1;
+
+    (void)sz;
+    (void)ptr;
+
+    Tf::error("{}", (const char*)c);
+    Tf::error("{}", "hello");
+    Tf::error("{}", true);
+    Tf::error("{}{}{}{}{}", 1, 1LL, 1ULL, 1.0f, 1.0);
+
+#ifdef TF_HAVE_STD_FORMAT
+    Tf::error("{}", c);
+    Tf::error("{}", (char*)c);
+    Tf::error("{}", str);
+    Tf::error("{}{}", (long)1, (unsigned long)1);
+    Tf::error("{}", sz);
+    Tf::error("{}", ptr);
+#endif
 }

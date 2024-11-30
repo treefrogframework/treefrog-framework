@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2.10.0
+ - Supported for std::format style log output, Tf::error(), Tf::warn(), Tf::info(), etc.
+ - Fix a bug of tsharedmemory initiation.
+ - Only Qt6 supported after this version (Qt5 not supported).
+
 ## 2.9.0
  - Fix a bug in the access log output regarding status codes.
  - Modified to set NULL into DB when the value is QString() in TSqlObject.
