@@ -7,9 +7,9 @@ using namespace System::Runtime::InteropServices;
 using namespace System::Security::Permissions;
 
 //
-// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢ã™ã‚‹ä¸€èˆ¬æƒ…å ±ã¯ä»¥ä¸‹ã®å±æ€§ã‚»ãƒƒãƒˆã‚’ã¨ãŠã—ã¦åˆ¶å¾¡ã•ã‚Œã¾ã™ã€‚
-// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢é€£ä»˜ã‘ã‚‰ã‚Œã¦ã„ã‚‹æƒ…å ±ã‚’å¤‰æ›´ã™ã‚‹ã«ã¯ã€
-// ã“ã‚Œã‚‰ã®å±æ€§å€¤ã‚’å¤‰æ›´ã—ã¦ãã ã•ã„ã€‚
+// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ‚·‚éˆê”Êî•ñ‚ÍˆÈ‰º‚Ì‘®«ƒZƒbƒg‚ğ‚Æ‚¨‚µ‚Ä§Œä‚³‚ê‚Ü‚·B
+// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ˜A•t‚¯‚ç‚ê‚Ä‚¢‚éî•ñ‚ğ•ÏX‚·‚é‚É‚ÍA
+// ‚±‚ê‚ç‚Ì‘®«’l‚ğ•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
 //
 [assembly:AssemblyTitleAttribute("treefrogsetup")];
 [assembly:AssemblyDescriptionAttribute("")];
@@ -21,19 +21,18 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyCultureAttribute("")];
 
 //
-// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã¯ã€ä»¥ä¸‹ã® 4 ã¤ã®å€¤ã§æ§‹æˆã•ã‚Œã¦ã„ã¾ã™:
+// ƒAƒZƒ“ƒuƒŠ‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚ÍAˆÈ‰º‚Ì 4 ‚Â‚Ì’l‚Å\¬‚³‚ê‚Ä‚¢‚Ü‚·:
 //
 //      Major Version
 //      Minor Version
 //      Build Number
 //      Revision
 //
-// ã™ã¹ã¦ã®å€¤ã‚’æŒ‡å®šã™ã‚‹ã‹ã€ä¸‹ã®ã‚ˆã†ã« '*' ã‚’ä½¿ã£ã¦ãƒªãƒ“ã‚¸ãƒ§ãƒ³ãŠã‚ˆã³ãƒ“ãƒ«ãƒ‰ç•ªå·ã‚’
-// æ—¢å®šå€¤ã«ã™ã‚‹ã“ã¨ãŒã§ãã¾ã™:
+// ‚·‚×‚Ä‚Ì’l‚ğw’è‚·‚é‚©A‰º‚Ì‚æ‚¤‚É '*' ‚ğg‚Á‚ÄƒŠƒrƒWƒ‡ƒ“‚¨‚æ‚Ñƒrƒ‹ƒh”Ô†‚ğ
+// Šù’è’l‚É‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·:
 
 [assembly:AssemblyVersionAttribute("2.10.0")];
 
 [assembly:ComVisible(false)];
 
 [assembly:CLSCompliantAttribute(true)];
-

@@ -25,7 +25,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\6.7.1\msvc2019_64\bin\qtenv2.bat"      6.7
+call :build_msi "%QTBASE%\6.8.0\msvc2022_64\bin\qtenv2.bat"      6.8
 
 :: Clear environment variables
 set VCToolsVersion=
@@ -36,7 +36,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\6.6.3\msvc2019_64\bin\qtenv2.bat"      6.6
+call :build_msi "%QTBASE%\6.7.3\msvc2022_64\bin\qtenv2.bat"      6.7
 
 call :build_setup treefrog-%VERSION%-msvc_64-setup.exe
 
