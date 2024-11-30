@@ -13,7 +13,7 @@ Qt6 向けのインストーラを提供しています。セットアップす�
 
 | バージョン                                      | ファイル                               |
 |------------------------------------------------|---------------------------------------|
-| 2.9.0 for Visual Studio 64bit (Qt6.7 or 6.6) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.9.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.9.0/treefrog-2.9.0-msvc_64-setup.exe) |
+| 2.10.0 for Visual Studio 64bit (Qt6.8 or 6.7) | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-2.10.0-msvc_64-setup.exe](https://github.com/treefrogframework/treefrog-framework/releases/download/v2.10.0/treefrog-2.10.0-msvc_64-setup.exe) |
 
 </div>
 
@@ -29,7 +29,7 @@ Qt6 向けのインストーラを提供しています。セットアップす�
 
 | ソースパッケージ  | ファイル                         |
 |-------------------|----------------------------------|
-| バージョン 2.9.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.9.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.9.0.tar.gz) |
+| バージョン 2.10.0 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.10.0.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.10.0.tar.gz) |
 
 </div>
 
