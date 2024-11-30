@@ -48,7 +48,7 @@ bool TUrlRoute::parseConfigFile()
     }
 
     if (!routesFile.open(QIODevice::ReadOnly)) {
-        tSystemError("failed to read file : %s", qUtf8Printable(routesFile.fileName()));
+        tSystemError("failed to read file : {}", qUtf8Printable(routesFile.fileName()));
         return false;
     }
 
@@ -60,7 +60,7 @@ bool TUrlRoute::parseConfigFile()
 
         if (!line.isEmpty() && !line.startsWith('#')) {
             if (!addRouteFromString(line)) {
-                tError("Error parsing route %s [line: %d]", qUtf8Printable(line), cnt);
+                Tf::error("Error parsing route {} [line: {}]", qUtf8Printable(line), cnt);
             }
         }
     }
@@ -72,7 +72,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 {
     QStringList items = line.simplified().split(' ');
     if (items.count() != 3) {
-        tError("Invalid directive, '%s'", qUtf8Printable(line));
+        Tf::error("Invalid directive, '{}'", qUtf8Printable(line));
         return false;
     }
 
@@ -82,7 +82,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     const QString &path = items[1];
 
     if (path.contains(":params") && !path.endsWith(":params")) {
-        tError(":params must be specified as last directive.");
+        Tf::error(":params must be specified as last directive.");
         return false;
     }
 
@@ -91,7 +91,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     // Check method
     rt.method = directiveHash.value(items[0].toLower(), TRoute::Invalid);
     if (rt.method == TRoute::Invalid) {
-        tError("Invalid directive, '%s'", qUtf8Printable(items[0]));
+        Tf::error("Invalid directive, '{}'", qUtf8Printable(items[0]));
         return false;
     }
 
@@ -121,15 +121,15 @@ bool TUrlRoute::addRouteFromString(const QString &line)
             rt.controller = list[0].toLower().toLatin1() + "controller";
             rt.action = list[1].toLatin1();
         } else {
-            tError("Invalid action, '%s'", qUtf8Printable(items[2]));
+            Tf::error("Invalid action, '{}'", qUtf8Printable(items[2]));
             return false;
         }
     }
 
     _routes << rt;
-    tSystemDebug("route: method:%d path:%s  ctrl:%s action:%s params:%d",
-        rt.method, qUtf8Printable(QLatin1String("/") + rt.componentList.join("/")), rt.controller.data(),
-        rt.action.data(), rt.hasVariableParams);
+    tSystemDebug("route: method:{} path:{}  ctrl:{} action:{} params:{}",
+        rt.method, qUtf8Printable(QLatin1String("/") + rt.componentList.join("/")), (const char*)rt.controller.data(),
+        (const char*)rt.action.data(), rt.hasVariableParams);
     return true;
 }
 

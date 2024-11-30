@@ -29,7 +29,7 @@ TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, i
     shareMem(new QSharedMemory(CREATE_KEY))
 {
     if (size < dataSizeOf(QList<TLog>())) {
-        tSystemError("Shared memory size not enough: %lld (bytes)", (int64_t)shareMem->size());
+        tSystemError("Shared memory size not enough: {} (bytes)", (int64_t)shareMem->size());
         return;
     }
 
@@ -38,10 +38,10 @@ TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, i
         clearBuffer();
     } else {
         if (shareMem->error() != QSharedMemory::AlreadyExists) {
-            tSystemError("Shared memory create error: %s", qUtf8Printable(shareMem->errorString()));
+            tSystemError("Shared memory create error: {}", qUtf8Printable(shareMem->errorString()));
         } else {
             if (!shareMem->attach()) {
-                tSystemError("Shared memory attach error: %s", qUtf8Printable(shareMem->errorString()));
+                tSystemError("Shared memory attach error: {}", qUtf8Printable(shareMem->errorString()));
             }
         }
     }

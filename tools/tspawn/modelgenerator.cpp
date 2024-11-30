@@ -159,13 +159,7 @@ constexpr auto MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                      "    model.setProperties(varmap);\n"
                                      "    return ds;\n"
                                      "}\n"
-#if QT_VERSION < 0x060000
-                                     "\n"
-                                     "// Don't remove below this line\n"
-                                     "T_REGISTER_STREAM_OPERATORS(%model%)\n";
-#else
                                      "";
-#endif
 
 constexpr auto USER_MODEL_HEADER_FILE_TEMPLATE = "#pragma once\n"
                                                  "#include <QStringList>\n"
@@ -328,13 +322,7 @@ constexpr auto USER_MODEL_IMPL_TEMPLATE = "#include <TreeFrogModel>\n"
                                           "    model.setProperties(varmap);\n"
                                           "    return ds;\n"
                                           "}\n"
-#if QT_VERSION < 0x060000
-                                          "\n"
-                                          "// Don't remove below this line\n"
-                                          "T_REGISTER_STREAM_OPERATORS(%model%)";
-#else
                                           "";
-#endif
 
 constexpr auto MODEL_IMPL_GETALLJSON = "QJsonArray %model%::getAllJson(const QStringList &properties)\n"
                                        "{\n"
@@ -495,11 +483,7 @@ QPair<PlaceholderList, PlaceholderList> ModelGenerator::createModelParams()
     for (QListIterator<QPair<QString, QMetaType::Type>> it(fields); it.hasNext();) {
         const QPair<QString, QMetaType::Type> &p = it.next();
         QString var = fieldNameToVariableName(p.first);
-#if QT_VERSION < 0x060000
-        QString type = QString::fromLatin1(QVariant::typeToName(p.second));
-#else
         QString type = QString::fromLatin1(QMetaType(p.second).name());
-#endif
         if (type.isEmpty())
             continue;
 
@@ -669,21 +653,13 @@ QString ModelGenerator::createParam(QMetaType::Type type, const QString &name)
     case QMetaType::LongLong:
     case QMetaType::ULongLong:
     case QMetaType::Double:
-#if QT_VERSION < 0x060000
-        string += QVariant::typeToName(type);
-#else
         string += QString::fromLatin1(QMetaType(type).name());
-#endif
         string += ' ';
         string += var;
         break;
 
     default:
-#if QT_VERSION < 0x060000
-        string += QString("const %1 &%2").arg(QVariant::typeToName(type), var);
-#else
         string += QString("const %1 &%2").arg(QMetaType(type).name(), var);
-#endif
         break;
     }
     return string;

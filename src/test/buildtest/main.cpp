@@ -5,10 +5,8 @@
 #include <TSqlJoin>
 #include <TMongoODMapper>
 #include <TModelUtil>
-#if QT_VERSION >= 0x050000
-# include <TJsonUtil>
-#endif
-#include <tglobal.h>
+#include <TJsonUtil>
+#include <TGlobal>
 #include <tatomicptr.h>
 #include <tatomic.h>
 #include <tstack.h>
@@ -200,18 +198,14 @@ void build_check_TModelUtil()
 
     QList<Blog> list;
     tfConvertToJsonArray(list);
-#if QT_VERSION >= 0x050c00  // 5.12.0
     tfConvertToCborArray(list);
-#endif
 }
 
-#if QT_VERSION >= 0x050000
 void build_check_TJsonUtil()
 {
     QList<Foo> fooList;
     tfModelListToJsonArray<Foo>(fooList);
 }
-#endif
 
 void atomic_ptr()
 {
@@ -264,4 +258,29 @@ void queue()
     queue.dequeue(s);
     queue.head(s);
     queue.count();
+}
+
+void debugoutput()
+{
+    char c[] = "hello";
+    std::string str = "hello";
+    size_t sz = 1;
+    uintptr_t ptr = 1;
+
+    (void)sz;
+    (void)ptr;
+
+    Tf::error("{}", (const char*)c);
+    Tf::error("{}", "hello");
+    Tf::error("{}", true);
+    Tf::error("{}{}{}{}{}", 1, 1LL, 1ULL, 1.0f, 1.0);
+
+#ifdef TF_HAVE_STD_FORMAT
+    Tf::error("{}", c);
+    Tf::error("{}", (char*)c);
+    Tf::error("{}", str);
+    Tf::error("{}{}", (long)1, (unsigned long)1);
+    Tf::error("{}", sz);
+    Tf::error("{}", ptr);
+#endif
 }

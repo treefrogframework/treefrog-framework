@@ -31,7 +31,7 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
     TEpollSocket(socketDescriptor, Tf::SocketState::Connected, address),
     TAbstractWebSocket(header)
 {
-    tSystemDebug("TEpollWebSocket  [%p]", this);
+    tSystemDebug("TEpollWebSocket  [{:#x}]", (quintptr)this);
     socketManager.insert(socketDescriptor, this);
     _recvBuffer.reserve(BUFFER_RESERVE_SIZE);
 }
@@ -40,7 +40,7 @@ TEpollWebSocket::TEpollWebSocket(int socketDescriptor, const QHostAddress &addre
 TEpollWebSocket::~TEpollWebSocket()
 {
     socketManager.remove(socketDescriptor());
-    tSystemDebug("~TEpollWebSocket  [%p]", this);
+    tSystemDebug("~TEpollWebSocket  [{:#x}]", (quintptr)this);
 }
 
 
@@ -77,7 +77,7 @@ bool TEpollWebSocket::isBinaryRequest() const
 
 void TEpollWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
-    tSystemDebug("sendText  text len:%ld  (pid:%d)", (int64_t)text.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendText  text len:{}  (pid:{})", (qint64)text.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendText(text);
     }
@@ -86,7 +86,7 @@ void TEpollWebSocket::sendTextForPublish(const QString &text, const QObject *exc
 
 void TEpollWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
-    tSystemDebug("sendBinary  binary len:%ld  (pid:%d)", (int64_t)binary.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendBinary  binary len:{}  (pid:{})", (qint64)binary.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendBinary(binary);
     }
@@ -95,7 +95,7 @@ void TEpollWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObje
 
 void TEpollWebSocket::sendPong(const QByteArray &data)
 {
-    tSystemDebug("sendPong  data len:%ld  (pid:%d)", (int64_t)data.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendPong  data len:{}  (pid:{})", (qint64)data.length(), (int)QCoreApplication::applicationPid());
     TAbstractWebSocket::sendPong(data);
 }
 
@@ -134,9 +134,9 @@ bool TEpollWebSocket::seekRecvBuffer(int pos)
     size += pos;
     _recvBuffer.resize(size);
     int len = parse(_recvBuffer);
-    tSystemDebug("WebSocket parse len : %d", len);
+    tSystemDebug("WebSocket parse len : {}", len);
     if (len < 0) {
-        tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("WebSocket parse error [{}:{}]", __FILE__, __LINE__);
         close();
         return false;
     }

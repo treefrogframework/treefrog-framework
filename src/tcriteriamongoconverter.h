@@ -152,12 +152,12 @@ inline QVariantMap TCriteriaMongoConverter<T>::criteriaToVariantMap(const QVaria
         }
 
         default:
-            tWarn("error parameter: %d", cri.op1);
+            Tf::warn("error parameter: {}", cri.op1);
             break;
         }
 
     } else {
-        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
     }
     return ret;
 }
@@ -180,19 +180,14 @@ inline QVariantMap TCriteriaMongoConverter<T>::join(const QVariantMap &v1, TCrit
 
     QVariantMap ret;
     if (op == TCriteria::And) {
-#if QT_VERSION >= 0x050f00  // 5.15.0
         ret = v2;
         ret.insert(v1);
-#else
-        ret = v1;
-        ret.unite(v2);
-#endif
     } else if (op == TCriteria::Or) {
         QVariantList lst;
         lst << v1 << v2;
         ret.insert("$or", lst);
     } else {
-        tSystemError("Logic error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
     }
     return ret;
 }

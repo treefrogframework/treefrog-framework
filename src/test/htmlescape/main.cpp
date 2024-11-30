@@ -21,10 +21,10 @@ void HtmlParser::escapeCompat_data()
      QTest::addColumn<QString>("string");
      QTest::addColumn<QString>("correct");
 
-     QTest::newRow("1") << tr(u8"こんにちは")
-                        << tr(u8"こんにちは");
-     QTest::newRow("2") << tr(u8"asdfma;lsdfjine^-~][]:+_?.1")
-                        << tr(u8"asdfma;lsdfjine^-~][]:+_?.1");
+     QTest::newRow("1") << QString::fromUtf8(u8"こんにちは")
+                        << QString::fromUtf8(u8"こんにちは");
+     QTest::newRow("2") << QString::fromUtf8(u8"asdfma;lsdfjine^-~][]:+_?.1")
+                        << QString::fromUtf8(u8"asdfma;lsdfjine^-~][]:+_?.1");
      QTest::newRow("3") << "<a href=\"hoge\">a & b</a>"
                         << "&lt;a href=&quot;hoge&quot;&gt;a &amp; b&lt;/a&gt;";
      QTest::newRow("4") << "A 'quote' is <b>bold</b>"
@@ -44,10 +44,10 @@ void HtmlParser::escapeQuotes_data()
      QTest::addColumn<QString>("string");
      QTest::addColumn<QString>("correct");
 
-     QTest::newRow("1") << tr(u8"こんにちは")
-                        << tr(u8"こんにちは");
-     QTest::newRow("2") << tr(u8"asdfma;lsdfjine^-~][]:+_?.1")
-                        << tr(u8"asdfma;lsdfjine^-~][]:+_?.1");
+     QTest::newRow("1") << QString::fromUtf8(u8"こんにちは")
+                        << QString::fromUtf8(u8"こんにちは");
+     QTest::newRow("2") << QString::fromUtf8(u8"asdfma;lsdfjine^-~][]:+_?.1")
+                        << QString::fromUtf8(u8"asdfma;lsdfjine^-~][]:+_?.1");
      QTest::newRow("3") << "<a href=\"hoge\">a & b</a>"
                         << "&lt;a href=&quot;hoge&quot;&gt;a &amp; b&lt;/a&gt;";;
      QTest::newRow("4") << "A 'quote' is <b>bold</b>"
@@ -67,10 +67,10 @@ void HtmlParser::escapeNoQuotes_data()
      QTest::addColumn<QString>("string");
      QTest::addColumn<QString>("correct");
 
-     QTest::newRow("1") << tr(u8"こんにちは")
-                        << tr(u8"こんにちは");
-     QTest::newRow("2") << tr(u8"asdfma;lsdfjine^-~][]:+_?.1")
-                        << tr(u8"asdfma;lsdfjine^-~][]:+_?.1");
+     QTest::newRow("1") << QString::fromUtf8(u8"こんにちは")
+                        << QString::fromUtf8(u8"こんにちは");
+     QTest::newRow("2") << QString::fromUtf8(u8"asdfma;lsdfjine^-~][]:+_?.1")
+                        << QString::fromUtf8(u8"asdfma;lsdfjine^-~][]:+_?.1");
      QTest::newRow("3") << "<a href=\"hoge\">a & b</a>"
                         << "&lt;a href=\"hoge\"&gt;a &amp; b&lt;/a&gt;";
      QTest::newRow("4") << "A 'quote' is <b>bold</b>"

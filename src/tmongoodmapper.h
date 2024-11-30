@@ -105,7 +105,7 @@ inline void TMongoODMapper<T>::setSortOrder(const QString &column, Tf::SortOrder
             sortColumn = column;
             sortOrder = order;
         } else {
-            tWarn("Unable to set sort order : '%s' field not found in '%s' collection",
+            Tf::warn("Unable to set sort order : '{}' field not found in '{}' collection",
                 qUtf8Printable(column), qUtf8Printable(obj.collectionName()));
         }
     }
@@ -245,7 +245,7 @@ inline int TMongoODMapper<T>::findCountBy(int column, const QVariant &value)
 // {
 //     QList<T> lst;
 //     int cnt = find(cri);
-//     tSystemDebug("Mongo documents count: %d", cnt);
+//     tSystemDebug("Mongo documents count: {}", cnt);
 
 //     if (cnt > 0) {
 //         while (next()) {

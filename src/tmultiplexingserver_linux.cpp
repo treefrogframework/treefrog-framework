@@ -64,19 +64,19 @@ static void setNoDeleyOption(int fd)
     flag = 1;
     res = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(flag));
     if (res < 0) {
-        tSystemWarn("setsockopt error [TCP_NODELAY] fd:%d", fd);
+        tSystemWarn("setsockopt error [TCP_NODELAY] fd:{}", fd);
     }
 
     bufsize = SEND_BUF_SIZE;
     res = setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
     if (res < 0) {
-        tSystemWarn("setsockopt error [SO_SNDBUF] fd:%d", fd);
+        tSystemWarn("setsockopt error [SO_SNDBUF] fd:{}", fd);
     }
 
     bufsize = RECV_BUF_SIZE;
     res = setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
     if (res < 0) {
-        tSystemWarn("setsockopt error [SO_RCVBUF] fd:%d", fd);
+        tSystemWarn("setsockopt error [SO_RCVBUF] fd:{}", fd);
     }
 }
 
@@ -175,8 +175,8 @@ int TMultiplexingServer::processEvents(int maxMilliSeconds)
                         continue;
                     }
                 } catch (ClientErrorException &e) {
-                    tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
-                    tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+                    Tf::warn("Caught ClientErrorException: status code:{}", e.statusCode());
+                    tSystemWarn("Caught ClientErrorException: status code:{}", e.statusCode());
                     TEpoll::instance()->deletePoll(sock);
                     sock->dispose();
                     continue;
@@ -231,7 +231,7 @@ void TMultiplexingServer::run()
         if (keepAlivetimeout > 0 && idleTimer.elapsed() >= 1000) {
             for (auto *http : (const QList<TEpollHttpSocket *> &)TEpollHttpSocket::allSockets()) {
                 if (Q_UNLIKELY(http->socketDescriptor() != listenSocket && http->idleTime() >= keepAlivetimeout)) {
-                    tSystemDebug("KeepAlive timeout: socket:%d", http->socketDescriptor());
+                    tSystemDebug("KeepAlive timeout: socket:{}", http->socketDescriptor());
                     TEpoll::instance()->deletePoll(http);
                     http->dispose();
                 }

@@ -3,9 +3,7 @@
 #include <QVariant>
 #include <TGlobal>
 #include <TLog>
-#if QT_VERSION >= 0x060000
-# include <QStringEncoder>
-#endif
+#include <QStringEncoder>
 
 class TLog;
 class QTextCodec;
@@ -37,27 +35,15 @@ public:
     Tf::LogPriority threshold() const;
     const QString &target() const;
 
-#if QT_VERSION < 0x060000
-    static QByteArray logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QTextCodec *codec = nullptr);
-#else
     static QByteArray logToByteArray(const TLog &log, const QByteArray &layout, const QByteArray &dateTimeFormat, QStringConverter::Encoding encoding = QStringConverter::Utf8);
-#endif
     static QByteArray priorityToString(Tf::LogPriority priority);
 
 protected:
-#if QT_VERSION < 0x060000
-    QTextCodec *codec() const;
-#else
     QStringConverter::Encoding encoding() const;
-#endif
     QVariant settingsValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
 private:
     mutable Tf::LogPriority _threshold {(Tf::LogPriority)-1};
     mutable QString _target;
-#if QT_VERSION < 0x060000
-    mutable QTextCodec *_codec {nullptr};
-#else
     mutable std::optional<QStringConverter::Encoding> _encoding;
-#endif
 };

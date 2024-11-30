@@ -112,13 +112,13 @@ void TSystemBus::readBus()
 void TSystemBus::writeBus()
 {
     QMutexLocker locker(&mutexWrite);
-    tSystemDebug("TSystemBus::writeBus  len:%ld", (int64_t)sendBuffer.length());
+    tSystemDebug("TSystemBus::writeBus  len:{}", (qint64)sendBuffer.length());
 
     for (;;) {
         int len = busSocket->write(sendBuffer.data(), sendBuffer.length());
 
         if (Q_UNLIKELY(len < 0)) {
-            tSystemError("System Bus write error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
+            tSystemError("System Bus write error  res:{}  [{}:{}]", len, __FILE__, __LINE__);
             sendBuffer.resize(0);
         } else {
             if (len > 0) {
@@ -131,7 +131,7 @@ void TSystemBus::writeBus()
         }
 
         if (!busSocket->waitForBytesWritten(1000)) {
-            tSystemError("System Bus write-wait error  res:%d  [%s:%d]", len, __FILE__, __LINE__);
+            tSystemError("System Bus write-wait error  res:{}  [{}:{}]", len, __FILE__, __LINE__);
             sendBuffer.resize(0);
             break;
         }
@@ -153,7 +153,7 @@ void TSystemBus::handleError(QLocalSocket::LocalSocketError error)
         break;
 
     default:
-        tSystemError("Local socket error : %d", (int)error);
+        tSystemError("Local socket error : {}", (int)error);
         break;
     }
 }
@@ -235,12 +235,12 @@ bool TSystemBusMessage::validate()
     _valid &= (firstBit() == true);
     _valid &= (rsvBit() == false);
     if (!_valid) {
-        tSystemError("Invalid byte: 0x%x  [%s:%d]", _firstByte, __FILE__, __LINE__);
+        tSystemError("Invalid byte: {:#x}  [{}:{}]", _firstByte, __FILE__, __LINE__);
     }
 
     _valid &= (opCode() > 0 && opCode() <= Tf::MaxOpCode);
     if (!_valid) {
-        tSystemError("Invalid opcode: %d  [%s:%d]", (int)opCode(), __FILE__, __LINE__);
+        tSystemError("Invalid opcode: {}  [{}:{}]", (int)opCode(), __FILE__, __LINE__);
     }
     return _valid;
 }
@@ -269,7 +269,7 @@ TSystemBusMessage TSystemBusMessage::parse(QByteArray &bytes)
     ds >> opcode >> length;
 
     if ((uint)bytes.length() < HEADER_LEN || (uint)bytes.length() < HEADER_LEN + length) {
-        tSystemError("Invalid length: %d  [%s:%d]", length, __FILE__, __LINE__);
+        tSystemError("Invalid length: {}  [{}:{}]", length, __FILE__, __LINE__);
         bytes.resize(0);
         return TSystemBusMessage();
     }

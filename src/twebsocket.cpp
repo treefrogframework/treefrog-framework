@@ -19,12 +19,7 @@ constexpr int BUFFER_RESERVE_SIZE = 127;
 
 namespace {
 QMap<qintptr, TWebSocket*> socketManager;
-
-#if QT_VERSION < 0x060000
-QMutex mutex(QMutex::Recursive);
-#else
 QRecursiveMutex mutex;
-#endif
 }
 
 
@@ -61,7 +56,7 @@ void TWebSocket::close()
 
 void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 {
-    tSystemDebug("sendText  text len:%ld  (pid:%d)", (int64_t)text.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendText  text len:{}  (pid:{})", (qint64)text.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendText(text);
     }
@@ -70,7 +65,7 @@ void TWebSocket::sendTextForPublish(const QString &text, const QObject *except)
 
 void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *except)
 {
-    tSystemDebug("sendBinary  binary len:%ld  (pid:%d)", (int64_t)binary.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendBinary  binary len:{}  (pid:{})", (qint64)binary.length(), (int)QCoreApplication::applicationPid());
     if (except != this) {
         TAbstractWebSocket::sendBinary(binary);
     }
@@ -79,7 +74,7 @@ void TWebSocket::sendBinaryForPublish(const QByteArray &binary, const QObject *e
 
 void TWebSocket::sendPong(const QByteArray &data)
 {
-    tSystemDebug("sendPong  data len:%ld  (pid:%d)", (int64_t)data.length(), (int)QCoreApplication::applicationPid());
+    tSystemDebug("sendPong  data len:{}  (pid:{})", (qint64)data.length(), (int)QCoreApplication::applicationPid());
     TAbstractWebSocket::sendPong(data);
 }
 
@@ -98,7 +93,7 @@ bool TWebSocket::canReadRequest() const
 void TWebSocket::readRequest()
 {
     if (myWorkerCounter > 0) {
-        tSystemWarn("Worker already running  (sd:%ld)", (uint64_t)socketDescriptor());
+        tSystemWarn("Worker already running  (sd:{})", socketDescriptor());
         return;
     }
 
@@ -116,7 +111,7 @@ void TWebSocket::readRequest()
 
     int len = parse(recvBuffer);
     if (len < 0) {
-        tSystemError("WebSocket parse error [%s:%d]", __FILE__, __LINE__);
+        tSystemError("WebSocket parse error [{}:{}]", __FILE__, __LINE__);
         disconnect();
         return;
     }
@@ -193,7 +188,7 @@ void TWebSocket::releaseWorker()
 
 void TWebSocket::deleteLater()
 {
-    tSystemDebug("TWebSocket::deleteLater  countWorkers:%d  deleting:%d", (int)myWorkerCounter, (bool)deleting);
+    tSystemDebug("TWebSocket::deleteLater  countWorkers:{}  deleting:{}", (int)myWorkerCounter, (bool)deleting);
 
     if (!deleting.exchange(true)) {
         startWorkerForClosing();
@@ -221,14 +216,14 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
         if (QTcpSocket::bytesToWrite() > 0) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {
-                tWarn("websocket error: waitForBytesWritten function [%s]", qUtf8Printable(errorString()));
+                Tf::warn("websocket error: waitForBytesWritten function [{}]", qUtf8Printable(errorString()));
                 break;
             }
         }
 
         int64_t written = QTcpSocket::write(data.data() + total, std::min((int64_t)data.length() - total, WRITE_LENGTH));
         if (Q_UNLIKELY(written <= 0)) {
-            tWarn("websocket write error: total:%d (%d)", (int)total, (int)written);
+            Tf::warn("websocket write error: total:{} ({})", (int)total, (int)written);
             break;
         }
 

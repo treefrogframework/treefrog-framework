@@ -1,12 +1,17 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "2.9.0";
-constexpr auto TF_VERSION_NUMBER = 0x020900;
-constexpr auto TF_SRC_REVISION = 2886;
+constexpr auto TF_VERSION_STR = "2.10.0";
+constexpr auto TF_VERSION_NUMBER = 0x020a00;
+constexpr auto TF_SRC_REVISION = 2956;
 
 #include <QMetaType>
 #include <QIODevice>
 #include <QtGlobal>
+#include <version>
 
+
+#if (!defined(Q_OS_WIN) && (defined(__cpp_lib_format) || __has_include(<format>))) || (defined(_MSC_VER) && _MSC_VER >= 1930)  // std::format
+#define TF_HAVE_STD_FORMAT
+#endif
 
 #define T_DEFINE_CONTROLLER(TYPE) T_DEFINE_TYPE(TYPE)
 #define T_DEFINE_VIEW(TYPE) T_DEFINE_TYPE(TYPE)
@@ -20,20 +25,8 @@ constexpr auto TF_SRC_REVISION = 2886;
     };                                                                                               \
     static Static##TYPE##Definition _static##TYPE##Definition;
 
-#if QT_VERSION < 0x060000
-#define T_REGISTER_STREAM_OPERATORS(TYPE)                  \
-    class Static##TYPE##Instance {                         \
-    public:                                                \
-        Static##TYPE##Instance() noexcept                  \
-        {                                                  \
-            qRegisterMetaTypeStreamOperators<TYPE>(#TYPE); \
-        }                                                  \
-    };                                                     \
-    static Static##TYPE##Instance _static##TYPE##Instance;
-#else
 // do no longer exist in qt6, qRegisterMetaTypeStreamOperators().
 #define T_REGISTER_STREAM_OPERATORS(TYPE)
-#endif
 
 #define T_DEFINE_PROPERTY(TYPE, PROPERTY)                                   \
     inline void set##PROPERTY(const TYPE &v__) noexcept { PROPERTY = v__; } \
@@ -73,33 +66,6 @@ constexpr auto TF_SRC_REVISION = 2886;
 #define T_FETCH_V(TYPE, VAR, DEFAULT) TYPE VAR = (hasVariant(QLatin1String(#VAR))) ? (variant(QLatin1String(#VAR)).value<TYPE>()) : (DEFAULT)
 #define tfetchv(TYPE, VAR, DEFAULT) T_FETCH_V(TYPE, VAR, DEFAULT)
 
-#if QT_VERSION < 0x060000
-#define T_EHEX(VAR)                                      \
-    do {                                                 \
-        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
-        int ___##VAR##_type = (___##VAR##_).type();      \
-        switch (___##VAR##_type) {                       \
-        case QMetaType::QJsonValue:                      \
-            eh((___##VAR##_).toJsonValue());             \
-            break;                                       \
-        case QMetaType::QJsonObject:                     \
-            eh((___##VAR##_).toJsonObject());            \
-            break;                                       \
-        case QMetaType::QJsonArray:                      \
-            eh((___##VAR##_).toJsonArray());             \
-            break;                                       \
-        case QMetaType::QJsonDocument:                   \
-            eh((___##VAR##_).toJsonDocument());          \
-            break;                                       \
-        case QMetaType::QVariantMap:                     \
-            eh((___##VAR##_).toMap());                   \
-            break;                                       \
-        default:                                         \
-            eh(___##VAR##_);                             \
-        }                                                \
-    } while (0)
-
-#else
 #define T_EHEX(VAR)                                      \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -124,8 +90,6 @@ constexpr auto TF_SRC_REVISION = 2886;
             eh(___##VAR##_);                             \
         }                                                \
     } while (0)
-
-#endif
 
 #define tehex(VAR) T_EHEX(VAR)
 
@@ -145,33 +109,6 @@ constexpr auto TF_SRC_REVISION = 2886;
 #define T_EHEX2(VAR, DEFAULT) T_EHEX_V(VAR, DEFAULT)
 #define tehex2(VAR, DEFAULT) T_EHEX2(VAR, DEFAULT)
 
-#if QT_VERSION < 0x060000
-#define T_ECHOEX(VAR)                                    \
-    do {                                                 \
-        auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
-        int ___##VAR##_type = (___##VAR##_).type();      \
-        switch (___##VAR##_type) {                       \
-        case QMetaType::QJsonValue:                      \
-            echo((___##VAR##_).toJsonValue());           \
-            break;                                       \
-        case QMetaType::QJsonObject:                     \
-            echo((___##VAR##_).toJsonObject());          \
-            break;                                       \
-        case QMetaType::QJsonArray:                      \
-            echo((___##VAR##_).toJsonArray());           \
-            break;                                       \
-        case QMetaType::QJsonDocument:                   \
-            echo((___##VAR##_).toJsonDocument());        \
-            break;                                       \
-        case QMetaType::QVariantMap:                     \
-            echo((___##VAR##_).toMap());                 \
-            break;                                       \
-        default:                                         \
-            echo(___##VAR##_);                           \
-        }                                                \
-    } while (0)
-
-#else
 #define T_ECHOEX(VAR)                                    \
     do {                                                 \
         auto ___##VAR##_ = variant(QLatin1String(#VAR)); \
@@ -196,8 +133,6 @@ constexpr auto TF_SRC_REVISION = 2886;
             echo(___##VAR##_);                           \
         }                                                \
     } while (0)
-
-#endif
 
 
 #define techoex(VAR) T_ECHOEX(VAR)
@@ -237,15 +172,6 @@ constexpr auto TF_SRC_REVISION = 2886;
 #define tDebug TDebug(Tf::DebugLevel).debug
 #define tTrace TDebug(Tf::TraceLevel).trace
 
-namespace Tf {
-#if QT_VERSION < 0x060000  // 6.0.0
-constexpr auto ReadOnly = QIODevice::ReadOnly;
-constexpr auto WriteOnly = QIODevice::WriteOnly;
-#else
-constexpr auto ReadOnly = QIODeviceBase::ReadOnly;
-constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
-#endif
-}
 
 #include "tfexception.h"
 #include "tfnamespace.h"
@@ -255,6 +181,9 @@ constexpr auto WriteOnly = QIODeviceBase::WriteOnly;
 #include <cstring>
 #include <functional>
 #include <algorithm>
+#ifdef TF_HAVE_STD_FORMAT  // std::format
+#include <format>
+#endif
 
 class TWebApplication;
 class TActionContext;
@@ -295,6 +224,146 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
 {
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
+
+#ifdef TF_HAVE_STD_FORMAT  // std::format
+
+// Logging for developer
+template<typename... Args>
+void fatal(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::FatalLevel, QByteArray::fromStdString(msg));
+}
+
+template<typename... Args>
+void error(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::ErrorLevel, QByteArray::fromStdString(msg));
+}
+
+template<typename... Args>
+void warn(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::WarnLevel, QByteArray::fromStdString(msg));
+}
+
+template<typename... Args>
+void info(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::InfoLevel, QByteArray::fromStdString(msg));
+}
+
+template<typename... Args>
+void debug(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::DebugLevel, QByteArray::fromStdString(msg));
+}
+
+template<typename... Args>
+void trace(const std::format_string<Args...> &fmt, Args&&... args)
+{
+    std::string msg = std::format(fmt, std::forward<Args>(args)...);
+    Tf::logging(Tf::TraceLevel, QByteArray::fromStdString(msg));
+}
+
+#else
+
+template<typename... Args>
+QByteArray simple_format(const std::string &format, Args&&... args)
+{
+    QByteArray res;
+    const size_t len = format.size();
+    constexpr int cnt = sizeof...(args);
+    QVariantList vars = { QVariant(args)... };
+
+    size_t pos = 0;
+    int argidx = 0;
+    res.reserve(len * 2);
+
+    while (pos < len) {
+        if (format[pos] == '{') {
+            if (pos + 1 < len && format[pos + 1] == '}') {
+                if (argidx < cnt) {
+                    res += vars[argidx].toByteArray();
+                    argidx++;
+                    pos += 2; // Skip 2 characters, '{}'
+                    continue;
+                }
+            } else {
+                auto e = format.find('}', pos + 2);
+                if (e != std::string::npos && argidx < cnt) {
+                    auto sz = e - pos - 1;
+                    auto subs = format.substr(pos + 1, sz);
+                    if (subs == ":x") {
+                        auto num = vars[argidx].toULongLong();
+                        res += QString::number(num, 16).toLatin1();
+                    } else if (subs == ":#x") {
+                        auto num = vars[argidx].toULongLong();
+                        res += "0x";
+                        res += QString::number(num, 16).toLatin1();
+                    } else {
+                        // other format
+                        res += vars[argidx].toByteArray();
+                    }
+                    argidx++;
+                    pos += sz + 2;
+                    continue;
+                }
+            }
+        }
+        res += format[pos++];
+    }
+    return res;
+}
+
+// Logging for developer
+template<typename... Args>
+void fatal(const std::string &fmt, Args&&... args)
+{
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::FatalLevel, msg);
+}
+
+template<typename... Args>
+void error(const std::string &fmt, Args&&... args)
+{
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::ErrorLevel, msg);
+}
+
+template<typename... Args>
+void warn(const std::string &fmt, Args&&... args)
+{
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::WarnLevel, msg);
+}
+
+template<typename... Args>
+void info(const std::string &fmt, Args&&... args)
+{
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::InfoLevel, msg);
+}
+
+template<typename... Args>
+void debug(const std::string &fmt, Args&&... args)
+{
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::DebugLevel, msg);
+}
+
+template<typename... Args>
+void trace(const std::string &fmt, Args&&... args)
+{
+    auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
+    Tf::logging(Tf::TraceLevel, msg);
+}
+
+#endif
 
 constexpr auto CR = "\x0d";
 constexpr auto LF = "\x0a";

@@ -62,7 +62,7 @@ TMemcached::TMemcached(Tf::KvsEngine engine) :
 QByteArray TMemcached::get(const QByteArray &key, uint *flags)
 {
     QByteArray res = requestLine("get", key, QByteArray(), false);
-    //tSystemDebug("TMemcached::get: %s", res.data());
+    //tSystemDebug("TMemcached::get: {}", res.data());
 
     int bytes = 0;
     int pos = 0;
@@ -207,12 +207,12 @@ QByteArray TMemcached::request(const QByteArray &command, const QByteArray &key,
     message.reserve(key.length() + value.length() + 32);
 
     if (key.isEmpty() || containsWhiteSpace(key)) {
-        tError("Value error, key: %s", key.data());
+        Tf::error("Value error, key: {}", key.data());
         return QByteArray();
     }
 
     if (!isOpen()) {
-        tSystemError("Not open memcached  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open memcached  [{}:{}]", __FILE__, __LINE__);
         return QByteArray();
     }
 
@@ -234,7 +234,7 @@ QByteArray TMemcached::request(const QByteArray &command, const QByteArray &key,
     message += Tf::CRLF;
     message += value;
     message += Tf::CRLF;
-    //tSystemDebug("memcached message: %s", message.data());
+    //tSystemDebug("memcached message: {}", message.data());
 
     int timeout = (noreply) ? 0 : 5000;
     return driver()->request(message, timeout);
@@ -247,12 +247,12 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
     message.reserve(key.length() + value.length() + 24);
 
     if (containsWhiteSpace(key) || containsWhiteSpace(value)) {
-        tError("Key or value error, key:%s value:%s", key.data(), value.data());
+        Tf::error("Key or value error, key:{} value:{}", key.data(), value.data());
         return QByteArray();
     }
 
     if (!isOpen()) {
-        tSystemError("Not open memcached  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open memcached  [{}:{}]", __FILE__, __LINE__);
         return QByteArray();
     }
 
@@ -270,7 +270,7 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
         message += "noreply";
     }
     message += Tf::CRLF;
-    //tSystemDebug("memcached message: %s", message.data());
+    //tSystemDebug("memcached message: {}", message.data());
 
     int timeout = (noreply) ? 0 : 5000;
     return driver()->request(message, timeout);

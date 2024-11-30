@@ -38,7 +38,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t p
     QTcpServer server;
 
     if (!server.listen(address, port)) {
-        tSystemError("Listen failed  address:%s port:%d", qUtf8Printable(address.toString()), port);
+        tSystemError("Listen failed  address:{} port:{}", qUtf8Printable(address.toString()), port);
         return sd;
     }
 
@@ -74,7 +74,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     std::memset(&addr, 0, sizeof(addr));
     addr.sun_family = PF_UNIX;
     if (sizeof(addr.sun_path) < (uint)fileDomain.toLatin1().size() + 1) {
-        tSystemError("too long name for UNIX domain socket  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("too long name for UNIX domain socket  [{}:{}]", __FILE__, __LINE__);
         return sd;
     }
     std::strncpy(addr.sun_path, fileDomain.toLatin1().data(), sizeof(addr.sun_path) - 1);
@@ -82,7 +82,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     // create unix domain socket
     sd = ::socket(PF_UNIX, SOCK_STREAM, 0);
     if (sd < 0) {
-        tSystemError("Socket create failed  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Socket create failed  [{}:{}]", __FILE__, __LINE__);
         return sd;
     }
 
@@ -94,19 +94,19 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     QFile file(fileDomain);
     if (file.exists()) {
         file.remove();
-        tSystemWarn("File for UNIX domain socket removed: %s", qUtf8Printable(fileDomain));
+        tSystemWarn("File for UNIX domain socket removed: {}", qUtf8Printable(fileDomain));
     }
 
     // Bind
     if (::bind(sd, (sockaddr *)&addr, sizeof(sockaddr_un)) < 0) {
-        tSystemError("Bind failed  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Bind failed  [{}:{}]", __FILE__, __LINE__);
         goto socket_error;
     }
     file.setPermissions((QFile::Permissions)0x777);
 
     // Listen
     if (::listen(sd, SOMAXCONN) < 0) {
-        tSystemError("Listen failed  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Listen failed  [{}:{}]", __FILE__, __LINE__);
         goto socket_error;
     }
 

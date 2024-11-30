@@ -51,7 +51,7 @@ static QString getServiceName(DWORD processId)
         ENUM_SERVICE_STATUS_PROCESS service = services[i];
         if (service.ServiceStatusProcess.dwProcessId == processId) {
             // This is your service.
-            name = QString::fromUtf16((const ushort *)service.lpServiceName);
+            name = QString::fromUtf16((char16_t*)service.lpServiceName);
             break;
         }
     }
@@ -75,7 +75,7 @@ static QString getServiceFilePath(const QString &serviceName)
             char data[8 * 1024];
             if (QueryServiceConfig(schService, (LPQUERY_SERVICE_CONFIG)data, sizeof(data), &sizeNeeded)) {
                 LPQUERY_SERVICE_CONFIG config = (LPQUERY_SERVICE_CONFIG)data;
-                result = QString::fromUtf16((const ushort *)config->lpBinaryPathName);
+                result = QString::fromUtf16((char16_t*)config->lpBinaryPathName);
             }
             CloseServiceHandle(schService);
         }
@@ -100,12 +100,12 @@ static void WINAPI serviceHandler(DWORD ctrl)
     case SERVICE_CONTROL_PAUSE:
     case SERVICE_CONTROL_CONTINUE:
     case SERVICE_CONTROL_INTERROGATE:
-        tSystemWarn("Windows service: Received ctrl code: %ld ", ctrl);
+        tSystemWarn("Windows service: Received ctrl code: {}", (qulonglong)ctrl);
         SetServiceStatus(statusHandle, &serviceStatus);
         break;
 
     default:
-        tSystemWarn("Windows service: Invalid ctrl code: %ld ", ctrl);
+        tSystemWarn("Windows service: Invalid ctrl code: {}", (qulonglong)ctrl);
         break;
     }
 }

@@ -4,14 +4,14 @@
 static int command()
 {
     Tf::setupAppLoggers(new TStdOutLogger);
-    Tf::setAppLogLayout("%d %5P %m%n");
+    Tf::setAppLogLayout("{} %5P %m%n");
     Tf::setAppLogDateTimeFormat("yyyy/MM/dd hh:mm:ss");
 
-    tInfo("Start");
-    tError("Test error message");
-    tWarn("Test warning message");
+    Tf::info("Start");
+    Tf::error("Test error message");
+    Tf::warn("Test warning message");
     Tf::msleep(100);
-    tInfo("End");
+    Tf::info("End");
     return 0;
 }
 

@@ -32,11 +32,7 @@ protected:
 private:
     TKvsDatabasePool();
 
-#if QT_VERSION < 0x060000
-    mutable QMutex _mutex {QMutex::Recursive};
-#else
     mutable QRecursiveMutex _mutex;
-#endif
     QStack<QString> *cachedDatabase {nullptr};
     TAtomic<uint> *lastCachedTime {nullptr};
     QStack<QString> *availableNames {nullptr};

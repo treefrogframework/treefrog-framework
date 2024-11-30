@@ -40,7 +40,7 @@ bool TSessionMemcachedStore::store(TSession &session)
 #endif
 
     TMemcached memcached;
-    tSystemDebug("TSessionMemcachedStore::store  id:%s", session.id().data());
+    tSystemDebug("TSessionMemcachedStore::store  id:{}", (const char*)session.id().data());
     return memcached.set('_' + session.id(), data, lifeTimeSecs());
 }
 

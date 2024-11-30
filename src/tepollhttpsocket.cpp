@@ -33,7 +33,7 @@ TEpollHttpSocket *TEpollHttpSocket::accept(int listeningSocket)
     int err = errno;
     if (Q_UNLIKELY(actfd < 0)) {
         if (err != EAGAIN) {
-            tSystemWarn("Failed accept.  errno:%d", err);
+            tSystemWarn("Failed accept.  errno:{}", err);
         }
         return nullptr;
     }
@@ -138,7 +138,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
         QByteArray connectionHeader = header.rawHeader("Connection").toLower();
         if (connectionHeader.contains("upgrade")) {
             QByteArray upgradeHeader = header.rawHeader("Upgrade").toLower();
-            tSystemDebug("Upgrade: %s", upgradeHeader.data());
+            tSystemDebug("Upgrade: {}", (const char*)upgradeHeader.data());
 
             if (upgradeHeader == "websocket") {
                 if (TWebSocket::searchEndpoint(header)) {
@@ -196,7 +196,7 @@ void TEpollHttpSocket::parse()
             }
 
             _lengthToRead = std::max(idx + 4 + (int64_t)header.contentLength() - (int64_t)_recvBuffer.length(), (int64_t)0);
-            tSystemDebug("lengthToRead: %d", (int)_lengthToRead);
+            tSystemDebug("lengthToRead: {}", (int)_lengthToRead);
         }
     } else {
         tSystemWarn("Unreachable code in normal communication");

@@ -113,7 +113,6 @@ inline QJsonArray tfConvertToJsonArray(const QList<T> &list, const QStringList &
 }
 
 
-#if QT_VERSION >= 0x050c00  // 5.12.0
 template <class T>
 inline QCborArray tfConvertToCborArray(const QList<T> &list)
 {
@@ -123,5 +122,3 @@ inline QCborArray tfConvertToCborArray(const QList<T> &list)
     }
     return array;
 }
-#endif
-

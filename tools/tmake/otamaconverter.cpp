@@ -175,6 +175,7 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         val = otmParser.getSrcCode(label, OtmParser::ContentAssignment, &ech);  // ~ operator
         if (!val.isEmpty()) {
             htmlParser.removeChildElements(i);
+            e = htmlParser.at(i);
             e.text = generateErbPhrase(val, ech);
         } else {
             QStringList vals = otmParser.getWrapSrcCode(label, OtmParser::ContentAssignment);
@@ -236,20 +237,22 @@ QString OtamaConverter::convertToErb(const QString &html, const QString &otm, in
         if (!val.isEmpty()) {
             // Sets the variable
             htmlParser.removeElementTree(i);
+            e = htmlParser.at(i);
             e.text = generateErbPhrase(val, ech);
         } else {
             QStringList vals = otmParser.getWrapSrcCode(label, OtmParser::TagReplacement);
             if (!vals.isEmpty()) {
                 // Adds block codes
-                int idx = htmlParser.at(e.parent).children.indexOf(i);
-                THtmlElement &he1 = htmlParser.insertNewElement(e.parent, idx);
+                const int eparent = e.parent;
+                int idx = htmlParser.at(eparent).children.indexOf(i);
+                THtmlElement &he1 = htmlParser.insertNewElement(eparent, idx); // after this, e becomes undefined
                 he1.text = LEFT_DELIM;
                 he1.text += vals[0].trimmed();
                 he1.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);
 
                 QString s = vals.value(1).trimmed();
                 if (!s.isEmpty()) {
-                    THtmlElement &he2 = htmlParser.insertNewElement(e.parent, idx + 2);
+                    THtmlElement &he2 = htmlParser.insertNewElement(eparent, idx + 2);
                     he2.text = LEFT_DELIM;
                     he2.text += s;
                     he2.text += (scriptArea ? RIGHT_DELIM_NO_TRIM : RIGHT_DELIM);

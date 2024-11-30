@@ -8,4 +8,4 @@ group :jekyll_plugins do
   #gem "jekyll-sass-converter", "~> 1.5.0"
 end
 
-gem "webrick", "~> 1.7"
+gem "webrick", "~> 1.8"

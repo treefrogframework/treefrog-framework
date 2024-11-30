@@ -1,7 +1,7 @@
-@echo OFF
+@echo off
 @setlocal
 
-set VERSION=2.9.0
+set VERSION=2.10.0
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=1.26.2
 set LZ4_VERSION=1.9.4
@@ -58,43 +58,63 @@ if "%DEBUG%" == "yes" (
 ::
 :: Generates tfenv.bat
 ::
+for %%I in (nmake.exe)  do if exist %%~$path:I set NMAKE=%%~$path:I
+if "%MAKE%" == "" (
+  for %%I in (jom.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+)
 for %%I in (qmake.exe)  do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe)  do if exist %%~$path:I set CMAKE=%%~$path:I
-for %%I in (nmake.exe)  do if exist %%~$path:I set MAKE=%%~$path:I
 for %%I in (cl.exe)     do if exist %%~$path:I set MSCOMPILER=%%~$path:I
 for %%I in (devenv.com) do if exist %%~$path:I set DEVENV=%%~$path:I
 
 if "%QMAKE%" == "" (
   echo Qt environment not found
-  exit /b
+  pause
+  exit /b 1
 )
 qmake --version
 
 if "%CMAKE%" == "" (
   echo CMake not found
-  exit /b
+  pause
+  exit /b 1
 )
 cmake --version
 
-if "%MAKE%" == "" (
+if "%NMAKE%" == "" (
   echo Make not found
-  exit /b
+  pause
+  exit /b 1
 )
 
 if "%MSCOMPILER%" == "" if "%DEVENV%"  == "" (
   echo Visual Studio compiler not found
-  exit /b
+  pause
+  exit /b 1
+)
+
+if /i not "%Platform%" == "x64" (
+  echo Use 64-bit architecture
+  pause
+  exit /b 1
 )
 
 :: vcvarsall.bat setup
-if /i "%Platform%" == "x64" (
+set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+if "%VisualStudioVersion%" == "17.0" (
+  :: Visual Studio 2022
   set VCVARSOPT=amd64
-  set CMAKEOPT=-A x64
-  set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
+  set CMAKEOPT=-A x64 -T v143
+  set MSVSVER=2022
+) else if "%VisualStudioVersion%" == "16.0" (
+  :: Visual Studio 2019
+  set VCVARSOPT=amd64
+  set CMAKEOPT=-A x64 -T v142
+  set MSVSVER=2019
 ) else (
-  set VCVARSOPT=x86
-  set CMAKEOPT=-A Win32
-  set ENVSTR=Environment to build for 32-bit executable  MSVC / Qt
+  echo Use Visual Studio 2022 or 2019
+  pause
+  exit /b 1
 )
 
 SET /P X="%ENVSTR%"<NUL
@@ -112,7 +132,7 @@ echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=2022 2019 2017>> %TFENV%
+echo set VSVER=%MSVSVER%>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
@@ -139,7 +159,6 @@ echo set VSWHERE=>> %TFENV%
 echo set PATH=%%TFDIR^%%\bin;%%PATH%%>> %TFENV%
 echo echo Setup a TreeFrog/Qt environment.>> %TFENV%
 echo echo -- TFDIR set to %%TFDIR%%>> %TFENV%
-echo cd /D %%HOMEDRIVE%%%%HOMEPATH%%>> %TFENV%
 
 set TFDIR=%TFDIR:\=/%
 del /f /q .qmake.stash src\.qmake.stash tools\.qmake.stash >nul 2>&1
@@ -152,7 +171,8 @@ del /f /q mongo-driver >nul 2>&1
 mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 
 cd %BASEDIR%3rdparty\mongo-driver
-del /f /q CMakeCache.txt cmake_install.cmake CMakeFiles Makefile >nul 2>&1
+rd /s /q CMakeFiles >nul 2>&1
+del /f /q CMakeCache.txt Makefile >nul 2>&1
 set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
@@ -166,7 +186,8 @@ if ERRORLEVEL 1 (
   echo;
   echo Build failed.
   echo MongoDB driver not available.
-  exit /b
+  pause
+  exit /b 1
 )
 
 :: Builds LZ4
@@ -186,7 +207,8 @@ if ERRORLEVEL 1 (
   echo;
   echo Build failed.
   echo LZ4 not available.
-  exit /b
+  pause
+  exit /b 1
 )
 
 :: Builds glog
@@ -197,7 +219,7 @@ del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
 rmdir /s /q build >nul 2>&1
-set CMAKECMD=cmake -S . -B build %CMAKEOPT%
+set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
 echo %CMAKECMD%
 %CMAKECMD%
 set CMAKECMD=cmake --build build -j
@@ -209,16 +231,17 @@ if ERRORLEVEL 1 (
   echo;
   echo Build failed.
   echo glog not available.
-  exit /b
+  pause
+  exit /b 1
 )
 
 :: Builds TreeFrog
 cd %BASEDIR%src
-if exist Makefile ( nmake -k distclean >nul 2>&1 )
+if exist Makefile ( nmake distclean >nul 2>&1 )
 qmake %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' %USE_GUI%
 
 cd %BASEDIR%tools
-if exist Makefile ( nmake -k distclean >nul 2>&1 )
+if exist Makefile ( nmake distclean >nul 2>&1 )
 qmake -recursive %OPT% target.path='%TFDIR%/bin' header.path='%TFDIR%/include' datadir='%TFDIR%'
 nmake qmake
 

@@ -65,13 +65,8 @@ public:
     QString systemLogFilePath() const;
     QString accessLogFilePath() const;
     QString sqlQueryLogFilePath() const;
-#if QT_VERSION < 0x060000
-    QTextCodec *codecForInternal() const { return _codecInternal; }
-    QTextCodec *codecForHttpOutput() const { return _codecHttp; }
-#else
     QStringConverter::Encoding encodingForInternal() const { return _encodingInternal; }
     QStringConverter::Encoding encodingForHttpOutput() const { return _encodingHttp; }
-#endif
     int applicationServerId() const { return _appServerId; }
     QThread *databaseContextMainThread() const;
     TDatabaseContext *mainDatabaseContext() const;
@@ -107,13 +102,9 @@ private:
     QVariantMap _loggerSetting;
     QVariantMap _validationSetting;
     QVariantMap _mediaTypes;
-#if QT_VERSION < 0x060000
-    QTextCodec *_codecInternal {nullptr};
-    QTextCodec *_codecHttp {nullptr};
-#else
     QStringConverter::Encoding _encodingInternal {QStringConverter::Utf8};
     QStringConverter::Encoding _encodingHttp {QStringConverter::Utf8};
-#endif
+
     int _appServerId {-1};
     QBasicTimer _timer;
     QMap<QString, QVariantMap> _configMap;
@@ -142,12 +133,7 @@ inline void TWebApplication::setDatabaseEnvironment(const QString &environment)
 
 class T_CORE_EXPORT TNativeEventFilter : public QAbstractNativeEventFilter {
 public:
-#if QT_VERSION < 0x060000
-    virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *);
-#else
     virtual bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *);
-#endif
 };
 
 #endif  // Q_OS_WIN
-

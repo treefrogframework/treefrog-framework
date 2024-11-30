@@ -86,4 +86,3 @@ private:
     QString txt;
     int pos;
 };
-

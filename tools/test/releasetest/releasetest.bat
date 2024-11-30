@@ -6,7 +6,6 @@ set APPNAME=blogapp
 set APPDIR=%BASEDIR%%APPNAME%
 set DBFILE=%APPDIR%\db\dbfile
 set PORT=18800
-set MAKE=nmake VERBOSE=1
 set CL=/MP
 
 cd /D %BASEDIR%
@@ -18,6 +17,14 @@ if not "%TFENV%" == "" (
 )
 
 for %%I in (nmake.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+if "%NMAKE%" == "" (
+  for %%I in (jom.exe) do if exist %%~$path:I set NMAKE=%%~$path:I
+  if not "%NMAKE%" == "" (
+    set NMAKE=jom
+  )
+) else (
+  set NMAKE=nmake VERBOSE=1
+)
 for %%I in (qmake.exe) do if exist %%~$path:I set QMAKE=%%~$path:I
 for %%I in (cmake.exe) do if exist %%~$path:I set CMAKE=%%~$path:I
 for %%I in (sqlite3.exe) do if exist %%~$path:I set SQLITE=%%~$path:I
@@ -25,9 +32,8 @@ if "%SQLITE%" == "" for %%I in (sqlite3-bin.exe) do if exist %%~$path:I set SQLI
 
 if "%NMAKE%" == "" (
   echo;
-  echo nmake.exe command not found.
+  echo nmake.exe not found.
   call :CleanUp
-  pause
   exit /B 1
 )
 
@@ -35,7 +41,13 @@ if "%QMAKE%" == "" (
   echo;
   echo qmake.exe command not found.
   call :CleanUp
-  pause
+  exit /B 1
+)
+
+if "%CMAKE%" == "" (
+  echo;
+  echo cmake.exe command not found.
+  call :CleanUp
   exit /B 1
 )
 
@@ -47,13 +59,12 @@ if /i "%Platform%" == "x64" (
 )
 
 cd /D %BASEDIR%
-rd /Q /S %APPNAME%
+rd /Q /S %APPNAME% >nul 2>nul
 tspawn new %APPNAME%
 if "%SQLITE%" == "" (
   echo;
   echo sqlite.exe command not found.
   call :CleanUp
-  pause
   exit /B 1
 )
 "%SQLITE%" %DBFILE% < create_blog_table.sql
@@ -63,30 +74,26 @@ echo n | tspawn s blog
 tspawn w foo
 
 :: Test in debug mode
-if not "%CMAKE%" == "" (
-  call :CMakeBuild Debug
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrogd
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-)
+call :CMakeBuild Debug
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+call :CheckWebApp treefrogd.exe
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 call :QMakeBuild debug
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-call :CheckWebApp treefrogd
+call :CheckWebApp treefrogd.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 nmake distclean >nul 2>nul
 
 :: Test in release mode
-if not "%CMAKE%" == "" (
-  call :CMakeBuild Release
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-  call :CheckWebApp treefrog
-  if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-)
+call :CMakeBuild Release
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+call :CheckWebApp treefrog.exe
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 call :QMakeBuild release
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-call :CheckWebApp treefrog
+call :CheckWebApp treefrog.exe
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 nmake distclean >nul 2>nul
 
@@ -127,8 +134,8 @@ exit /B 0
 :QMakeBuild
 cd /D %APPDIR%
 del /Q /F lib\*.*
-qmake -r CONFIG+=%1
-nmake
+"%QMAKE%" -r CONFIG+=%1
+%NMAKE%
 if ERRORLEVEL 1 (
   echo;
   echo Build Error!
@@ -142,16 +149,27 @@ exit /B 0
 ::
 :CheckWebApp
 cd /D %APPDIR%
-"%1" -v
-"%1" -l
-"%1" --show-routes
+
+for %%I in (%1) do if exist %%~$path:I set TREEFROG=%%~$path:I
+if "%TREEFROG%" == "" (
+  echo %1 command not found!
+  exit /B 1
+)
+
+echo "%TREEFROG%" -v
+"%TREEFROG%" -v 2>&1
+echo "%TREEFROG%" -l
+"%TREEFROG%" -l 2>&1
+echo "%TREEFROG%" --show-routes
+"%TREEFROG%" --show-routes 2>&1
 if ERRORLEVEL 1 (
   echo App Error!
   exit /B 1
 )
 echo;
 
-"%1" --settings
+echo "%TREEFROG%" --settings
+"%TREEFROG%" --settings 2>&1
 if ERRORLEVEL 1 (
   echo App Error!
   type log\treefrog.log
@@ -185,6 +203,7 @@ if not "%RESCODE%"=="200" (
   exit /B 1
 )
 echo HTTP request success "%URL%"
+
 exit /B 0
 
 ::
@@ -192,7 +211,7 @@ exit /B 0
 ::
 :CleanUp
 cd /D %BASEDIR%
-rd /Q /S %APPNAME%
+rd /Q /S %APPNAME% >nul 2>nul
 exit /B 0
 
 :: which cmd

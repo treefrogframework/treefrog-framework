@@ -9,7 +9,6 @@ class TSqlDriverExtension;
 
 class T_CORE_EXPORT TSqlDatabase {
 public:
-#if QT_VERSION >= 0x050400
     enum DbmsType {
         UnknownDbms = QSqlDriver::UnknownDbms,
         MSSqlServer = QSqlDriver::MSSqlServer,
@@ -21,19 +20,6 @@ public:
         Interbase = QSqlDriver::Interbase,
         DB2 = QSqlDriver::DB2
     };
-#else
-    enum DbmsType {
-        UnknownDbms,
-        MSSqlServer,
-        MySqlServer,
-        PostgreSQL,
-        Oracle,
-        Sybase,
-        SQLite,
-        Interbase,
-        DB2
-    };
-#endif
 
     explicit TSqlDatabase(const QSqlDatabase &database = QSqlDatabase());
     TSqlDatabase(const TSqlDatabase &other);

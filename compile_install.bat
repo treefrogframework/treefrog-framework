@@ -47,5 +47,4 @@ exit /b
 :error
 echo.
 echo Compilation Error!!!
-echo.
-exit /b
+exit /b 1

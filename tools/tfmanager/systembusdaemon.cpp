@@ -45,15 +45,15 @@ bool SystemBusDaemon::open()
     QFile file(unixDomainServerDir() + TSystemBus::connectionName());
     if (file.exists()) {
         file.remove();
-        tSystemWarn("File removed for UNIX domain socket : %s", qUtf8Printable(file.fileName()));
+        tSystemWarn("File removed for UNIX domain socket : {}", qUtf8Printable(file.fileName()));
     }
 #endif
 
     bool ret = localServer->listen(TSystemBus::connectionName());
     if (ret) {
-        tSystemDebug("system bus open : %s", qUtf8Printable(localServer->fullServerName()));
+        tSystemDebug("system bus open : {}", qUtf8Printable(localServer->fullServerName()));
     } else {
-        tSystemError("system bus open error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("system bus open error  [{}:{}]", __FILE__, __LINE__);
     }
     return ret;
 }
@@ -70,7 +70,7 @@ void SystemBusDaemon::close()
         delete socket;
     }
 
-    tSystemDebug("close system bus daemon : %s", qUtf8Printable(localServer->fullServerName()));
+    tSystemDebug("close system bus daemon : {}", qUtf8Printable(localServer->fullServerName()));
 }
 
 
@@ -97,7 +97,7 @@ void SystemBusDaemon::readSocket()
     }
 
     QByteArray buf = socket->readAll();
-    tSystemDebug("SystemBusDaemon::read len : %ld", (int64_t)buf.size());
+    tSystemDebug("SystemBusDaemon::read len : {}", (qint64)buf.size());
     if (maxServers <= 1) {
         // do nothing
         return;
@@ -113,7 +113,7 @@ void SystemBusDaemon::readSocket()
 
         if ((uint)buf.length() < length + HEADER_LEN) {
             if (!socket->waitForReadyRead(100)) {
-                tSystemError("Manager frame too short  [%s:%d]", __FILE__, __LINE__);
+                tSystemError("Manager frame too short  [{}:{}]", __FILE__, __LINE__);
                 break;
             }
             buf += socket->readAll();
@@ -129,7 +129,7 @@ void SystemBusDaemon::readSocket()
                 for (;;) {
                     int len = tfserver->write(buf.data() + wrotelen, length - wrotelen);
                     if (len <= 0) {
-                        tSystemError("PIPE write error  len:%d [%s:%d]", len, __FILE__, __LINE__);
+                        tSystemError("PIPE write error  len:{} [{}:{}]", len, __FILE__, __LINE__);
                         break;
                     }
 
@@ -139,7 +139,7 @@ void SystemBusDaemon::readSocket()
                     }
 
                     if (!tfserver->waitForBytesWritten(1000)) {
-                        tSystemError("PIPE wait error  [%s:%d]", __FILE__, __LINE__);
+                        tSystemError("PIPE wait error  [{}:{}]", __FILE__, __LINE__);
                         break;
                     }
                 }
@@ -161,7 +161,7 @@ void SystemBusDaemon::handleDisconnect()
         socketSet.remove(socket);
         disconnect(socket, nullptr, nullptr, nullptr);
         socket->deleteLater();
-        tSystemDebug("disconnected local socket : %p", socket);
+        tSystemDebug("disconnected local socket : {:#x}", (quint64)socket);
     }
 }
 
@@ -190,7 +190,7 @@ void SystemBusDaemon::releaseResource(int64_t pid)
     QFile file(unixDomainServerDir() + TSystemBus::connectionName(pid));
     if (file.exists()) {
         file.remove();
-        tSystemWarn("File removed for UNIX domain socket : %s", qUtf8Printable(file.fileName()));
+        tSystemWarn("File removed for UNIX domain socket : {}", qUtf8Printable(file.fileName()));
     }
 #else
     Q_UNUSED(pid);

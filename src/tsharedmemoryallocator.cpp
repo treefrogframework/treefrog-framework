@@ -123,7 +123,7 @@ char *TSharedMemoryAllocator::sbrk(int64_t inc)
 
     char *prev_break = pb_header->current();
     pb_header->currentg += inc;
-    //tSystemDebug("sbrk: inc: %ld, current: %p", inc, pb_header->current());
+    //tSystemDebug("sbrk: inc: {}, current: {:#x}", inc, pb_header->current());
     return prev_break;
 }
 
@@ -139,7 +139,7 @@ void TSharedMemoryAllocator::setbrk(bool initial)
     }
 
     pb_header = (Tf::program_break_header_t *)_sharedMemory->data();
-    tSystemDebug("addr = %p", _sharedMemory->data());
+    tSystemDebug("addr = {:#x}", (quint64)_sharedMemory->data());
 
     // Checks checksum
     uint64_t ck = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
@@ -150,7 +150,7 @@ void TSharedMemoryAllocator::setbrk(bool initial)
         pb_header->endg = _sharedMemory->size();
         pb_header->checksum = (uint64_t)_sharedMemory->size() * (uint64_t)_sharedMemory->size();
     }
-    tSystemDebug("checksum = %lu", pb_header->checksum);
+    tSystemDebug("checksum = {}", (qint64)pb_header->checksum);
 
     _origin = pb_header->start() + sizeof(Tf::alloc_header_t);
 }
@@ -427,7 +427,7 @@ void TSharedMemoryAllocator::summary() const
     }
 
     tSystemDebug("-- memory block summary --");
-    tSystemDebug("table info: blocks = %d, free = %d, used = %lu", countBlocks(), countFreeBlocks(), pb_header->at.used);
+    tSystemDebug("table info: blocks = {}, free = {}, used = {}", countBlocks(), countFreeBlocks(), (quint64)pb_header->at.used);
 }
 
 // Debug function to print the entire link list
@@ -441,11 +441,11 @@ void TSharedMemoryAllocator::dump() const
     Tf::alloc_header_t *cur = pb_header->alloc_head();
 
     tSystemDebug("-- memory block information --");
-    tSystemDebug("table info: blocks = %d, free = %d, used = %lu, free-size = %lu, segment-size = %lu", countBlocks(), countFreeBlocks(), pb_header->at.used, sizeOfFreeBlocks(), dataSegmentSize());
-    tSystemDebug("block info: head = %p, tail = %p", pb_header->alloc_head(), pb_header->alloc_tail());
+    tSystemDebug("table info: blocks = {}, free = {}, used = {}, free-size = {}, segment-size = {}", countBlocks(), countFreeBlocks(), (quint64)pb_header->at.used, (quint64)sizeOfFreeBlocks(), (quint64)dataSegmentSize());
+    tSystemDebug("block info: head = {:#x}, tail = {:#x}", (quint64)pb_header->alloc_head(), (quint64)pb_header->alloc_tail());
     while (cur) {
-        tSystemDebug("addr = %p, size = %u, freed = %u, next = %p, prev = %p",
-            (void *)cur, cur->size, cur->freed, cur->next(), cur->prev());
+        tSystemDebug("addr = {:#x}, size = {}, freed = {}, next = {:#x}, prev = {:#x}",
+            (quint64)cur, cur->size, cur->freed, (quint64)cur->next(), (quint64)cur->prev());
         cur = cur->next();
     }
 }

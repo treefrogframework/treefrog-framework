@@ -48,7 +48,7 @@ bool TActionThread::waitForAllDone(int msec)
         Tf::msleep(5);
         qApp->processEvents();
     }
-    tSystemDebug("waitForAllDone : remaining:%d", cnt);
+    tSystemDebug("waitForAllDone : remaining:{}", cnt);
     return cnt == 0;
 }
 
@@ -82,7 +82,7 @@ TActionThread::~TActionThread()
 void TActionThread::setSocketDescriptor(qintptr socket)
 {
     if (TActionContext::socketDesc > 0) {
-        tSystemWarn("Socket still open : %lld   [%s:%d]", TActionContext::socketDesc, __FILE__, __LINE__);
+        tSystemWarn("Socket still open : {}   [{}:{}]", TActionContext::socketDesc, __FILE__, __LINE__);
         tf_close_socket(TActionContext::socketDesc);
     }
     TActionContext::socketDesc = socket;
@@ -112,7 +112,7 @@ void TActionThread::run()
     try {
         for (;;) {
             QList<THttpRequest> requests = readRequest(_httpSocket);
-            tSystemDebug("HTTP request count: %ld", (int64_t)requests.count());
+            tSystemDebug("HTTP request count: {}", (qint64)requests.count());
 
             if (requests.isEmpty()) {
                 break;
@@ -122,7 +122,7 @@ void TActionThread::run()
             QByteArray connectionHeader = requests[0].header().rawHeader(QByteArrayLiteral("Connection")).toLower();
             if (Q_UNLIKELY(connectionHeader.contains("upgrade"))) {
                 QByteArray upgradeHeader = requests[0].header().rawHeader(QByteArrayLiteral("Upgrade")).toLower();
-                tSystemDebug("Upgrade: %s", upgradeHeader.data());
+                tSystemDebug("Upgrade: {}", (const char*)upgradeHeader.data());
                 if (upgradeHeader == "websocket") {
                     // Switch to WebSocket
                     if (!handshakeForWebSocket(requests[0].header())) {
@@ -151,13 +151,13 @@ void TActionThread::run()
         }
 
     } catch (ClientErrorException &e) {
-        tWarn("Caught ClientErrorException: status code:%d", e.statusCode());
-        tSystemWarn("Caught ClientErrorException: status code:%d", e.statusCode());
+        Tf::warn("Caught ClientErrorException: status code:{}", e.statusCode());
+        tSystemWarn("Caught ClientErrorException: status code:{}", e.statusCode());
         THttpResponseHeader header;
         TActionContext::writeResponse(e.statusCode(), header);
     } catch (std::exception &e) {
-        tError("Caught Exception: %s", e.what());
-        tSystemError("Caught Exception: %s", e.what());
+        Tf::error("Caught Exception: {}", e.what());
+        tSystemError("Caught Exception: {}", e.what());
         THttpResponseHeader header;
         TActionContext::writeResponse(Tf::InternalServerError, header);
     }
@@ -205,7 +205,7 @@ QList<THttpRequest> TActionThread::readRequest(THttpSocket *socket)
 
         // Check idle timeout
         if (Q_UNLIKELY(keepAliveTimeout() > 0 && socket->idleTime() >= keepAliveTimeout())) {
-            tSystemWarn("Reading a socket timed out after %d seconds. Descriptor:%d", keepAliveTimeout(), (int)socket->socketDescriptor());
+            tSystemWarn("Reading a socket timed out after {} seconds. Descriptor:{}", keepAliveTimeout(), (int)socket->socketDescriptor());
             break;
         }
     }

@@ -63,7 +63,7 @@ void Tf::setupAppLoggers(TLogger *logger)
             TLogger *lgr = TLoggerFactory::create(lg);
             if (lgr) {
                 loggers << lgr;
-                tSystemDebug("Logger added: %s", qUtf8Printable(lgr->key()));
+                tSystemDebug("Logger added: {}", qUtf8Printable(lgr->key()));
             }
         }
     }
@@ -96,7 +96,16 @@ void Tf::releaseAppLoggers()
 }
 
 
-static void tMessage(int priority, const char *msg, va_list ap)
+void Tf::logging(int priority, const QByteArray &msg)
+{
+    if (stream) {
+        TLog log(priority, msg);
+        stream->writeLog(log);
+    }
+}
+
+
+static void tLogging(int priority, const char *msg, va_list ap)
 {
     if (stream) {
         TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
@@ -138,7 +147,7 @@ void TDebug::fatal(const char *fmt, ...) const
 {
     va_list ap;
     va_start(ap, fmt);
-    tMessage(Tf::FatalLevel, fmt, ap);
+    tLogging(Tf::FatalLevel, fmt, ap);
     va_end(ap);
     flushAppLoggers();
 
@@ -158,7 +167,7 @@ void TDebug::error(const char *fmt, ...) const
 {
     va_list ap;
     va_start(ap, fmt);
-    tMessage(Tf::ErrorLevel, fmt, ap);
+    tLogging(Tf::ErrorLevel, fmt, ap);
     va_end(ap);
     flushAppLoggers();
 }
@@ -170,7 +179,7 @@ void TDebug::warn(const char *fmt, ...) const
 {
     va_list ap;
     va_start(ap, fmt);
-    tMessage(Tf::WarnLevel, fmt, ap);
+    tLogging(Tf::WarnLevel, fmt, ap);
     va_end(ap);
     flushAppLoggers();
 }
@@ -182,7 +191,7 @@ void TDebug::info(const char *fmt, ...) const
 {
     va_list ap;
     va_start(ap, fmt);
-    tMessage(Tf::InfoLevel, fmt, ap);
+    tLogging(Tf::InfoLevel, fmt, ap);
     va_end(ap);
 }
 
@@ -193,7 +202,7 @@ void TDebug::debug(const char *fmt, ...) const
 {
     va_list ap;
     va_start(ap, fmt);
-    tMessage(Tf::DebugLevel, fmt, ap);
+    tLogging(Tf::DebugLevel, fmt, ap);
     va_end(ap);
 }
 
@@ -204,6 +213,6 @@ void TDebug::trace(const char *fmt, ...) const
 {
     va_list ap;
     va_start(ap, fmt);
-    tMessage(Tf::TraceLevel, fmt, ap);
+    tLogging(Tf::TraceLevel, fmt, ap);
     va_end(ap);
 }

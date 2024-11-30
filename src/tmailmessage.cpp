@@ -9,9 +9,6 @@
 #include <QDateTime>
 #include <QRegularExpression>
 #include <THttpUtility>
-#if QT_VERSION < 0x060000
-# include <QTextCodec>
-#endif
 using namespace Tf;
 
 constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";
@@ -24,11 +21,7 @@ constexpr auto DEFAULT_CONTENT_TYPE = "text/plain";
 TMailMessage::TMailMessage(const TMailMessage &other) :
     TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
     _mailBody(other._mailBody),
-#if QT_VERSION < 0x060000
-    _textCodec(other._textCodec),
-#else
     _encoding(other._encoding),
-#endif
     _recipientList(other._recipientList)
 {
 }
@@ -58,17 +51,6 @@ TMailMessage::TMailMessage(const QString &str, const QByteArray &encoding) :
 
 void TMailMessage::init(const QByteArray &encoding)
 {
-#if QT_VERSION < 0x060000
-    QTextCodec *codec = QTextCodec::codecForName(encoding);
-    _textCodec = (codec) ? codec : QTextCodec::codecForName("UTF-8");
-    // Sets default values
-    setCurrentDate();
-    QByteArray type = DEFAULT_CONTENT_TYPE;
-    type += "; charset=\"";
-    type += codec->name();
-    type += '\"';
-    setContentType(type);
-#else
     QStringEncoder encoder(encoding.data());
     if (!encoder.isValid()) {
         encoder = QStringEncoder(QStringConverter::Utf8);
@@ -81,7 +63,6 @@ void TMailMessage::init(const QByteArray &encoding)
     type += encoder.name();
     type += '\"';
     setContentType(type);
-#endif
 }
 
 
@@ -104,7 +85,7 @@ void TMailMessage::parse(const QString &str)
     int bdidx = idx + match.capturedLength();
 
     if (idx < 0) {
-        tError("Not found mail headers");
+        Tf::error("Not found mail headers");
         setBody(str);
     } else {
         QString header = str.left(idx);
@@ -122,11 +103,7 @@ void TMailMessage::parse(const QString &str)
                     j = header.length();
                 }
 
-#if QT_VERSION < 0x060000
-                ba += THttpUtility::toMimeEncoded(header.mid(i, j - i), _textCodec);
-#else
                 ba += THttpUtility::toMimeEncoded(header.mid(i, j - i), _encoding);
-#endif
                 i = j;
             }
         }
@@ -152,11 +129,7 @@ QString TMailMessage::subject() const
 
 void TMailMessage::setSubject(const QString &subject)
 {
-#if QT_VERSION < 0x060000
-    setRawHeader("Subject", THttpUtility::toMimeEncoded(subject, _textCodec));
-#else
     setRawHeader("Subject", THttpUtility::toMimeEncoded(subject, _encoding));
-#endif
 }
 
 
@@ -173,11 +146,7 @@ void TMailMessage::addAddress(const QByteArray &field, const QByteArray &address
             addr += uname;
         } else {
             // multibyte char
-#if QT_VERSION < 0x060000
-            addr += THttpUtility::toMimeEncoded(friendlyName, _textCodec);
-#else
             addr += THttpUtility::toMimeEncoded(friendlyName, _encoding);
-#endif
         }
         addr += ' ';
     }
@@ -279,21 +248,13 @@ QString TMailMessage::body() const
         ba.replace(CRLF, LF);
     }
 
-#if QT_VERSION < 0x060000
-    return _textCodec->toUnicode(ba);
-#else
     return QStringDecoder(_encoding).decode(ba);
-#endif
 }
 
 
 void TMailMessage::setBody(const QString &body)
 {
-#if QT_VERSION < 0x060000
-    QByteArray ba = _textCodec->fromUnicode(body);
-#else
     QByteArray ba = QStringEncoder(_encoding).encode(body);
-#endif
     _mailBody.resize(0);
     _mailBody.reserve(ba.length() + ba.count('\n'));
 
@@ -336,11 +297,7 @@ TMailMessage &TMailMessage::operator=(const TMailMessage &other)
 {
     TInternetMessageHeader::operator=(*static_cast<const TInternetMessageHeader *>(&other));
     _mailBody = other._mailBody;
-#if QT_VERSION < 0x060000
-    _textCodec = other._textCodec;  // codec static object
-#else
     _encoding = other._encoding;
-#endif
     _recipientList = other._recipientList;
     return *this;
 }

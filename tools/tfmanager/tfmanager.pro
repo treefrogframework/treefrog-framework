@@ -5,13 +5,10 @@ CONFIG  += console
 CONFIG  -= app_bundle
 QT      += network
 QT      -= gui
-lessThan(QT_MAJOR_VERSION, 6) {
-  CONFIG += c++14
-  windows:QMAKE_CXXFLAGS += /std:c++14
-} else {
-  CONFIG += c++17
-  windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++17 /permissive-
-}
+
+# C++ Standards Support
+CONFIG += c++20
+windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_DLL

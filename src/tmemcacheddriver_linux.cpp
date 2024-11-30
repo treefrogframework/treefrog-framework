@@ -34,7 +34,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
-    tSystemDebug("memcached open host:%s  port:%d", qUtf8Printable(_host), _port);
+    tSystemDebug("memcached open host:{}  port:{}", qUtf8Printable(_host), _port);
 
     _client = new TTcpSocket;
     _client->setSocketOption(IPPROTO_TCP, TCP_NODELAY, 1);
@@ -42,7 +42,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 
     bool ret = _client->waitForConnected(1000);
     if (ret) {
-        tSystemDebug("Memcached open successfully. sd:%d", _client->socketDescriptor());
+        tSystemDebug("Memcached open successfully. sd:{}", _client->socketDescriptor());
     } else {
         tSystemError("Memcached open failed");
         close();
@@ -62,13 +62,13 @@ void TMemcachedDriver::close()
 bool TMemcachedDriver::writeCommand(const QByteArray &command)
 {
     if (!isOpen()) {
-        tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open memcached session  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
     int64_t len = _client->sendData(command);
     if (len < 0) {
-        tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Socket send error  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
     return _client->waitForDataSent(5000);
@@ -80,7 +80,7 @@ QByteArray TMemcachedDriver::readReply(int msecs)
     QByteArray buffer;
 
     if (!isOpen()) {
-        tSystemError("Not open memcached session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open memcached session  [{}:{}]", __FILE__, __LINE__);
         return buffer;
     }
 
@@ -91,7 +91,7 @@ QByteArray TMemcachedDriver::readReply(int msecs)
 
     int64_t recvlen = _client->receivedSize();
     if (recvlen <= 0) {
-        tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Socket recv error  [{}:{}]", __FILE__, __LINE__);
         return buffer;
     }
 

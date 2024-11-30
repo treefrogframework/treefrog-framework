@@ -169,11 +169,7 @@ bool TSqlObject::create()
         if (i != autoidx) {
             ins += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver());
             ins += QLatin1Char(',');
-#if QT_VERSION < 0x060000
-            values += TSqlQuery::formatValue(val, metaProp.type(), database);
-#else
             values += TSqlQuery::formatValue(val, metaProp.metaType(), database);
-#endif
             values += QLatin1Char(',');
         }
     }
@@ -192,11 +188,7 @@ bool TSqlObject::create()
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
 
-#if QT_VERSION >= 0x050400
             if (!lastid.isValid() && database.driver()->dbmsType() == QSqlDriver::PostgreSQL) {
-#else
-            if (!lastid.isValid() && database.driverName().toUpper() == QLatin1String("QPSQL")) {
-#endif
                 // For PostgreSQL without OIDS
                 ret = query.exec(QStringLiteral("SELECT LASTVAL()"));
                 sqlError = query.lastError();
@@ -222,7 +214,7 @@ bool TSqlObject::update()
     if (isNew()) {
         sqlError = QSqlError(QLatin1String("No record to update"),
             QString(), QSqlError::UnknownError);
-        tWarn("Unable to update the '%s' object. Create it before!", metaObject()->className());
+        Tf::warn("Unable to update the '{}' object. Create it before!", metaObject()->className());
         return false;
     }
 
@@ -234,6 +226,7 @@ bool TSqlObject::update()
     // Updates the value of 'updated_at' or 'modified_at' property
     bool updflag = false;
     int revIndex = -1;
+    const QMetaType intMetaType(QMetaType::Int);
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
@@ -250,7 +243,7 @@ bool TSqlObject::update()
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
                 return false;
             }
 
@@ -258,12 +251,7 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-#if QT_VERSION < 0x060000
-            constexpr auto metaType = QVariant::Int;
-#else
-            static const QMetaType metaType(QMetaType::Int);
-#endif
-            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, metaType, database));
+            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, intMetaType, database));
             where.append(QLatin1String(" AND "));
         } else {
             // continue
@@ -282,15 +270,11 @@ bool TSqlObject::update()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qUtf8Printable(msg));
+        Tf::error("{}", qUtf8Printable(msg));
         return false;
     }
 
-#if QT_VERSION < 0x060000
-    auto pkType = metaProp.type();
-#else
     auto pkType = metaProp.metaType();
-#endif
     QVariant origpkval = value(pkName);
     where.append(QLatin1String(pkName));
     where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(origpkval, pkType, database));
@@ -305,11 +289,7 @@ bool TSqlObject::update()
         if (i != pkidx && recval.isValid() && recval != newval) {
             upd.append(TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver()));
             upd.append(QLatin1Char('='));
-#if QT_VERSION < 0x060000
-            upd.append(TSqlQuery::formatValue(newval, metaProp.type(), database));
-#else
             upd.append(TSqlQuery::formatValue(newval, metaProp.metaType(), database));
-#endif
             upd.append(QLatin1Char(','));
         }
     }
@@ -418,7 +398,7 @@ bool TSqlObject::remove()
     if (isNew()) {
         sqlError = QSqlError(QLatin1String("No record to remove"),
             QString(), QSqlError::UnknownError);
-        tWarn("Unable to remove the '%s' object. Create it before!", metaObject()->className());
+        Tf::warn("Unable to remove the '{}' object. Create it before!", metaObject()->className());
         return false;
     }
 
@@ -432,6 +412,7 @@ bool TSqlObject::remove()
 
     del.append(QLatin1String(" WHERE "));
     int revIndex = -1;
+    const QMetaType intMetaType(QMetaType::Int);
 
     for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
         const char *propName = metaObject()->property(i).name();
@@ -444,17 +425,12 @@ bool TSqlObject::remove()
             if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                tError("Unable to convert the 'revision' property to an int, %s", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
                 return false;
             }
 
             del.append(QLatin1String(propName));
-#if QT_VERSION < 0x060000
-            constexpr auto intid = QVariant::Int;
-#else
-            static const QMetaType intid(QMetaType::Int);
-#endif
-            del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(revision, intid, database));
+            del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(revision, intMetaType, database));
             del.append(QLatin1String(" AND "));
 
             revIndex = i;
@@ -467,15 +443,11 @@ bool TSqlObject::remove()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        tError("%s", qUtf8Printable(msg));
+        Tf::error("{}", qUtf8Printable(msg));
         return false;
     }
     del.append(QLatin1String(pkName));
-#if QT_VERSION < 0x060000
-    auto metaType = metaProp.type();
-#else
     auto metaType = metaProp.metaType();
-#endif
     del.append(QLatin1Char('=')).append(TSqlQuery::formatValue(value(pkName), metaType, database));
 
     TSqlQuery query(database);
@@ -489,7 +461,7 @@ bool TSqlObject::remove()
                 sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
                 throw SqlException(msg, __FILE__, __LINE__);
             }
-            tWarn("Row was deleted by another transaction, %s", qUtf8Printable(tableName()));
+            Tf::warn("Row was deleted by another transaction, {}", qUtf8Printable(tableName()));
         }
         clear();
     }
@@ -561,7 +533,7 @@ void TSqlObject::syncToSqlRecord()
         if (idx >= 0) {
             QSqlRecord::setValue(idx, QObject::property(propName));
         } else {
-            tWarn("invalid name: %s", propName);
+            Tf::warn("invalid name: {}", propName);
         }
     }
 }

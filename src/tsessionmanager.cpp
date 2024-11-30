@@ -37,7 +37,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
             session = store->find(id);
             TSessionStoreFactory::destroy(storeType(), store);
         } else {
-            tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
+            tSystemError("Session store not found: {}", qUtf8Printable(storeType()));
         }
     }
     return session;
@@ -47,7 +47,7 @@ TSession TSessionManager::findSession(const QByteArray &id)
 bool TSessionManager::store(TSession &session)
 {
     if (session.id().isEmpty()) {
-        tSystemError("Internal Error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Internal Error  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -57,7 +57,7 @@ bool TSessionManager::store(TSession &session)
         res = store->store(session);
         TSessionStoreFactory::destroy(storeType(), store);
     } else {
-        tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
+        tSystemError("Session store not found: {}", qUtf8Printable(storeType()));
     }
     return res;
 }
@@ -72,7 +72,7 @@ bool TSessionManager::remove(const QByteArray &id)
             TSessionStoreFactory::destroy(storeType(), store);
             return ret;
         } else {
-            tSystemError("Session store not found: %s", qUtf8Printable(storeType()));
+            tSystemError("Session store not found: {}", qUtf8Printable(storeType()));
         }
     }
     return false;
@@ -118,7 +118,7 @@ void TSessionManager::collectGarbage()
 
     if (prob > 0) {
         int r = Tf::random(0, prob - 1);
-        tSystemDebug("Session garbage collector : rand = %d", r);
+        tSystemDebug("Session garbage collector : rand = {}", r);
 
         if (r == 0) {
             tSystemDebug("Session garbage collector started");

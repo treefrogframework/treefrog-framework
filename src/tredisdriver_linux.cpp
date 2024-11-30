@@ -36,7 +36,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
-    tSystemDebug("Redis open host:%s  port:%d", qUtf8Printable(_host), _port);
+    tSystemDebug("Redis open host:{}  port:{}", qUtf8Printable(_host), _port);
 
     _client = new TTcpSocket;
     _client->setSocketOption(IPPROTO_TCP, TCP_NODELAY, 1);
@@ -66,13 +66,13 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
     bool ret = false;
 
     if (Q_UNLIKELY(!isOpen())) {
-        tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open Redis session  [{}:{}]", __FILE__, __LINE__);
         return ret;
     }
 
     int64_t len = _client->sendData(command);
     if (len < 0) {
-        tSystemError("Socket send error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Socket send error  [{}:{}]", __FILE__, __LINE__);
     } else {
         ret = _client->waitForDataSent(5000);
     }
@@ -83,7 +83,7 @@ bool TRedisDriver::writeCommand(const QByteArray &command)
 bool TRedisDriver::readReply()
 {
     if (!isOpen()) {
-        tSystemError("Not open Redis session  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Not open Redis session  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -94,7 +94,7 @@ bool TRedisDriver::readReply()
 
     int64_t recvlen = _client->receivedSize();
     if (recvlen <= 0) {
-        tSystemError("Socket recv error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Socket recv error  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 

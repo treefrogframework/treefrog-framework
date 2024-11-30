@@ -38,7 +38,7 @@ bool TSessionFileStore::store(TSession &session)
         auto reslock = tf_lockfile(file.handle(), true, true);  // blocking flock for processes
         int err = errno;
         if (reslock < 0) {
-            tSystemWarn("flock error  errno:%d", err);
+            tSystemWarn("flock error  errno:{}", err);
         }
 
         QByteArray buffer;
@@ -73,7 +73,7 @@ TSession TSessionFileStore::find(const QByteArray &id)
             auto reslock = tf_lockfile(file.handle(), false, true);  // blocking flock for processes
             int err = errno;
             if (reslock < 0) {
-                tSystemWarn("flock error  errno:%d", err);
+                tSystemWarn("flock error  errno:{}", err);
             }
 
             QDataStream ds(&file);

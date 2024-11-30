@@ -96,7 +96,7 @@ void THttpBuffer::parse()
             }
 
             lengthToRead = qMax(idx + 4 + (int64_t)header.contentLength() - httpBuffer.length(), 0LL);
-            tSystemDebug("lengthToRead: %d", (int)lengthToRead);
+            tSystemDebug("lengthToRead: {}", (int)lengthToRead);
         }
     } else {
         tSystemWarn("Unreachable code in normal communication");

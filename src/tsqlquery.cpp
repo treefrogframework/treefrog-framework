@@ -58,11 +58,11 @@ bool TSqlQuery::load(const QString &filename)
 
     QDir dir(queryDirPath());
     QFile file(dir.filePath(filename));
-    tSystemDebug("SQL_QUERY_ROOT: %s", qUtf8Printable(dir.dirName()));
-    tSystemDebug("filename: %s", qUtf8Printable(file.fileName()));
+    tSystemDebug("SQL_QUERY_ROOT: {}", qUtf8Printable(dir.dirName()));
+    tSystemDebug("filename: {}", qUtf8Printable(file.fileName()));
 
     if (!file.open(QIODevice::ReadOnly)) {
-        tSystemError("Unable to open file: %s", qUtf8Printable(file.fileName()));
+        tSystemError("Unable to open file: {}", qUtf8Printable(file.fileName()));
         return false;
     }
 
@@ -122,11 +122,7 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
   Returns a string representation of the value \a val for the database
   \a databaseId.
 */
-#if QT_VERSION < 0x060000
-QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, int databaseId)
-#else
 QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, int databaseId)
-#endif
 {
     return formatValue(val, type, Tf::currentSqlDatabase(databaseId).driver());
 }
@@ -135,24 +131,6 @@ QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, int d
   Returns a string representation of the value \a val for the database
   \a database.
 */
-#if QT_VERSION < 0x060000
-QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const QSqlDriver *driver)
-{
-    if (Q_UNLIKELY(type == QVariant::Invalid)) {
-        type = val.type();
-    }
-
-    QSqlField field(QStringLiteral("dummy"), type);
-    field.setValue(val);
-    return driver->formatValue(field);
-}
-
-QString TSqlQuery::formatValue(const QVariant &val, QVariant::Type type, const QSqlDatabase &database)
-{
-    return formatValue(val, type, database.driver());
-}
-
-#else
 QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, const QSqlDriver *driver)
 {
     QMetaType metaType = type;
@@ -180,7 +158,6 @@ QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, const
 {
     return formatValue(val, type, database.driver());
 }
-#endif
 
 /*!
   Returns a string representation of the value \a val for the database
@@ -188,11 +165,7 @@ QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, const
 */
 QString TSqlQuery::formatValue(const QVariant &val, const QSqlDriver *driver)
 {
-#if QT_VERSION < 0x060000
-    return formatValue(val, val.type(), driver);
-#else
     return formatValue(val, val.metaType(), driver);
-#endif
 }
 
 /*!
@@ -251,11 +224,22 @@ bool TSqlQuery::exec()
             ret = QSqlQuery::exec(statement);
             Tf::writeQueryLog(executedQuery(), ret, lastError(), time.elapsed());
         } else {
-            tError("Unable to execute prepared query.");
+            Tf::error("Unable to execute prepared query.");
         }
     } else {
         ret = QSqlQuery::exec();
-        Tf::writeQueryLog(executedQuery(), ret, lastError(), time.elapsed());
+        QString msg = executedQuery();
+        QVariantList values = boundValues();
+        if (!values.isEmpty()) {
+            msg += QLatin1String("  -- ");
+            for (auto &val : values) {
+                msg += QChar('`');
+                msg += val.toString();
+                msg += QLatin1String("`, ");
+            }
+            msg.chop(2);
+        }
+        Tf::writeQueryLog(msg, ret, lastError(), time.elapsed());
     }
 
     return ret;
@@ -270,7 +254,7 @@ TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
     const auto &db = TSqlDatabase::database(_connectionName);
 
     if (db.isPreparedStatementSupported()) {
-        tError("Not supported colon-name placeholder of prepared statement for the database");
+        Tf::error("Not supported colon-name placeholder of prepared statement for the database");
     } else {
         QSqlQuery::bindValue(placeholder, val);
     }
@@ -337,11 +321,7 @@ QVariantList TSqlQuery::boundValues() const
     if (db.isPreparedStatementSupported()) {
         return _boundValues;
     } else {
-#if QT_VERSION < 0x060000
-        return QSqlQuery::boundValues().values();
-#else
         return QSqlQuery::boundValues();
-#endif
     }
 }
 

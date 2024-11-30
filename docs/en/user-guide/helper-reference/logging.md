@@ -32,16 +32,30 @@ The application log is used for logging your Web application. There are several 
 Arguments that can be passed here are the same as the printf-format of format string and a variable number. For example, like this:
 
 ```c++
-tError("Invalid Parameter : value : %d", value);
+tError("Invalid Parameter, value : %d", value);
 ```
 
 Then, the following log will be output to the *log/app.log* file:
 
 ```
- 2011-04-01 21:06:04 ERROR [12345678] Invalid Parameter : value : -1
+ 2011-04-01 21:06:04 ERROR [12345678] Invalid Parameter, value : -1
 ```
 
 Line feed code is not required at the end of the format string.
+
+In TreeFrog version 2.10 and later, if the compiler supports stdc++20, you can use the following methods to describe std::format style formatting.
+
+* Tf::fatal()
+* Tf::error()
+* Tf::warn()
+* Tf::info()
+* Tf::debug()
+* Tf::trace()
+
+It can be written as follows:
+```c++
+Tf::error("Invalid Parameter, value : {}", value);
+```
 
 ## Changing Log Layout
 

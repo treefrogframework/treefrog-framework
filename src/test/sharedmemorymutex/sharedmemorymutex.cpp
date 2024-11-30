@@ -130,7 +130,7 @@ void test2(int d = 5000000)
 static int command()
 {
     Tf::setupAppLoggers(new TStdOutLogger);
-    Tf::setAppLogLayout("%d %5P %m%n");
+    Tf::setAppLogLayout("{} %5P %m%n");
     Tf::setAppLogDateTimeFormat("hh:mm:ss");
 
     int num = 1;

@@ -21,20 +21,20 @@ TSharedMemory::~TSharedMemory()
 bool TSharedMemory::create(size_t sz)
 {
     if (QSharedMemory::create(sz)) {
-        tSystemDebug("SharedMemory created.  name:%s size:%zu", qUtf8Printable(key()), sz);
+        tSystemDebug("SharedMemory created.  name:{} size:{}", qUtf8Printable(key()), sz);
         return true;
     }
 
     auto err = error();
     if (err == QSharedMemory::AlreadyExists && attach()) {
         if (size() >= sz) {
-            tSystemWarn("SharedMemory already exists, attached.  name:%s size:%zu", qUtf8Printable(key()), size());
+            tSystemWarn("SharedMemory already exists, attached.  name:{} size:{}", qUtf8Printable(key()), size());
             return true;
         }
         detach();
     }
 
-    tSystemError("SharedMemory create error [%d].  name:%s size:%zu [%s:%d]", (int)err, qUtf8Printable(key()), sz, __FILE__, __LINE__);
+    tSystemError("SharedMemory create error [{}].  name:{} size:{} [{}:{}]", (int)err, qUtf8Printable(key()), sz, __FILE__, __LINE__);
     return false;
 }
 
@@ -48,11 +48,11 @@ void TSharedMemory::unlink()
 bool TSharedMemory::attach()
 {
     if (!QSharedMemory::attach()) {
-        tSystemError("SharedMemory attach error  [%s:%d]", __FILE__, __LINE__);
+        tSystemError("SharedMemory attach error  [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
-    tSystemDebug("SharedMemory attached.  name:%s size:%zu", qUtf8Printable(key()), size());
+    tSystemDebug("SharedMemory attached.  name:{} size:{}", qUtf8Printable(key()), size());
     return true;
 }
 

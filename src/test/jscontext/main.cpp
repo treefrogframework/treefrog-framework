@@ -15,7 +15,6 @@ class JSContext : public QObject
 
 private slots:
     void initTestCase();
-#if QT_VERSION > 0x050a00
     void eval_data();
     void eval();
     void callAsConstructor_data();
@@ -39,7 +38,6 @@ private slots:
     void reactComponent_data();
     void reactComponent();
     void benchmark();
-#endif
 };
 
 
@@ -48,7 +46,6 @@ void JSContext::initTestCase()
     TJSLoader::setDefaultSearchPaths({"."});
 }
 
-#if QT_VERSION > 0x050a00
 
 void JSContext::eval_data()
 {
@@ -244,9 +241,9 @@ void JSContext::load_data()
     QTest::addColumn<QString>("variable");
     QTest::addColumn<QString>("result");
 
-    QTest::newRow("01") << "./js/main.js" << u8"sub('world')" << "Hello world";
-    QTest::newRow("02") << "./js/main.js" << u8"sub2('world')" << "Hello world";
-    QTest::newRow("03") << "./js/main.js" << u8"sub2('世界', 'ja')" << tr(u8"こんにちは 世界");
+    QTest::newRow("01") << "./js/main.js" << "sub('world')" << "Hello world";
+    QTest::newRow("02") << "./js/main.js" << "sub2('world')" << "Hello world";
+    QTest::newRow("03") << "./js/main.js" << "sub2('世界', 'ja')" << QString::fromUtf8("こんにちは 世界");
 }
 
 
@@ -273,14 +270,8 @@ void JSContext::react_data()
 
     QTest::newRow("01") << "JSXTransformer.transform('<HelloWorld />')['code']"
                         << "React.createElement(HelloWorld, null)";
-
-#if QT_VERSION < 0x050c00  // 5.12.0
-    QTest::newRow("02") << "ReactDOMServer.renderToString(React.createElement('div'))"
-                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"2058293082\"></div>";
-#else
     QTest::newRow("02") << "ReactDOMServer.renderToString(React.createElement('div'))"
                         << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1998851930\"></div>";
-#endif
 }
 
 
@@ -304,30 +295,6 @@ void JSContext::reactjsx_data()
     QTest::addColumn<QString>("func");
     QTest::addColumn<QString>("result");
 
-#if QT_VERSION < 0x050c00  // 5.12.0
-    QTest::newRow("01") << QString()
-                        << "ReactDOMServer.renderToString(<div/>)"
-                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"2058293082\"></div>";
-    QTest::newRow("02") << "./js/react_samlple.jsx"
-                        << "ReactDOMServer.renderToString(React.createElement(MyComponent, null))"
-                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
-    QTest::newRow("03") << "./js/react_samlple.jsx"
-                        << "ReactDOMServer.renderToString(<MyComponent/>)"
-                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
-    QTest::newRow("04") << QString()
-                        << "ReactDOMServer.renderToString(<ReactBootstrap.Button/>)"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
-    QTest::newRow("05") << QString("js/react_bootstrap_sample.jsx")
-                        << "ReactDOMServer.renderToString(<Button/>)"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
-    QTest::newRow("06") << QString("js/react_bootstrap_sample.jsx")
-                        << "ReactDOMServer.renderToString(SimpleButton)"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-2012470818\">Sample</button>";
-    QTest::newRow("07") << QString("js/react_bootstrap_sample.jsx")
-                        << "ReactDOMServer.renderToString(HelloButton)"
-                        << "<button class=\"btn btn-lg btn-primary\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1572807667\">Hello</button>";
-
-#else
     QTest::newRow("01") << QString()
                         << "ReactDOMServer.renderToString(<div/>)"
                         << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1998851930\"></div>";
@@ -349,7 +316,6 @@ void JSContext::reactjsx_data()
     QTest::newRow("07") << QString("js/react_bootstrap_sample.jsx")
                         << "ReactDOMServer.renderToString(HelloButton)"
                         << "<button type=\"button\" class=\"btn btn-lg btn-primary\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1455956979\">Hello</button>";
-#endif
 }
 
 
@@ -378,19 +344,10 @@ void JSContext::reactjsxCommonJs_data()
     QTest::addColumn<QString>("jsfile");
     QTest::addColumn<QString>("result");
 
-#if QT_VERSION < 0x050c00  // 5.12.0
-    QTest::newRow("01") << "./js/react_bootstrap_require.js"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
-    QTest::newRow("02") << "./js/react_bootstrap_require2.js"
-                        << "<div class=\"commentBox\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1960517848\">Hello, world! I am a CommentBox.</div>";
-
-#else
-
     QTest::newRow("01") << "./js/react_bootstrap_require.js"
                         << "<button type=\"button\" class=\"btn btn-default\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1170727044\"></button>";
     QTest::newRow("02") << "./js/react_bootstrap_require2.js"
                         << "<div class=\"commentBox\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1812930776\">Hello, world! I am a CommentBox.</div>";
-#endif
 }
 
 
@@ -413,18 +370,6 @@ void JSContext::reactComponent_data()
     QTest::addColumn<QString>("component");
     QTest::addColumn<QString>("result");
 
-#if QT_VERSION < 0x050c00  // 5.12.0
-    QTest::newRow("01") << "js/react_samlple.jsx" << "<MyComponent/>"
-                        << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1078334326\">Hello World</div>";
-    QTest::newRow("02") << "js/react_bootstrap_sample.jsx" << "<Button/>"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-1068949636\"></button>";
-    QTest::newRow("03") << "js/react_bootstrap_sample.jsx" << "SimpleButton"
-                        << "<button class=\"btn btn-default\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-2012470818\">Sample</button>";
-    QTest::newRow("04") << "js/react_bootstrap_sample.jsx" << "HelloButton"
-                        << "<button class=\"btn btn-lg btn-primary\" type=\"button\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1572807667\">Hello</button>";
-
-#else
-
     QTest::newRow("01") << "js/react_samlple.jsx" << "<MyComponent/>"
                         << "<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"999625590\">Hello World</div>";
     QTest::newRow("02") << "js/react_bootstrap_sample.jsx" << "<Button/>"
@@ -433,7 +378,6 @@ void JSContext::reactComponent_data()
                         << "<button type=\"button\" class=\"btn btn-default\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-2128928290\">Sample</button>";
     QTest::newRow("04") << "js/react_bootstrap_sample.jsx" << "HelloButton"
                         << "<button type=\"button\" class=\"btn btn-lg btn-primary\" data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"1455956979\">Hello</button>";
-#endif
 }
 
 
@@ -451,7 +395,6 @@ void JSContext::reactComponent()
     QCOMPARE(output, result);
 }
 
-#endif
 
 QString JSContext::jsxTransform(const QString &jsx)
 {

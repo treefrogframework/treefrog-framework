@@ -156,7 +156,7 @@ bool TSharedMemoryKvs::set(const QByteArray &key, const QByteArray &value, int s
         // Inserts data
         void *newbucket = driver()->malloc(data.size());
         if (!newbucket) {
-            tError("Not enough space/cannot allocate memory.  errno:%d", errno);
+            Tf::error("Not enough space/cannot allocate memory.  errno:{}", errno);
             break;
         }
 

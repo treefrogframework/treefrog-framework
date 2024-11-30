@@ -16,24 +16,11 @@
 #include <TCache>
 #include <TJobScheduler>
 #include <TWebApplication>
-#if QT_VERSION < 0x060000
-# include <QTextCodec>
-#endif
 #include <cstdlib>
 #include <thread>  // for hardware_concurrency()
 
 constexpr auto DEFAULT_INTERNET_MEDIA_TYPE = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
-
-namespace {
-#if QT_VERSION < 0x060000
-QTextCodec *searchCodec(const char *name)
-{
-    QTextCodec *c = QTextCodec::codecForName(name);
-    return (c) ? c : QTextCodec::codecForLocale();
-}
-#endif
-}
 
 /*!
   \class TWebApplication
@@ -102,10 +89,6 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         mediaTypes = new QSettings(configPath() + "initializers/internet_media_types.ini", QSettings::IniFormat, this);
     }
     // Gets codecs
-#if QT_VERSION < 0x060000
-    _codecInternal = searchCodec(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
-    _codecHttp = searchCodec(Tf::appSettings()->value(Tf::HttpOutputEncoding).toByteArray().trimmed().data());
-#else
     auto enc = QStringConverter::encodingForName(Tf::appSettings()->value(Tf::InternalEncoding).toByteArray().trimmed().data());
     if (enc) {
         _encodingInternal = enc.value();
@@ -115,14 +98,8 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
     if (enc) {
         _encodingHttp = enc.value();
     }
-#endif
 
     // Sets codecs for INI files
-#if QT_VERSION < 0x060000
-    loggerSetting.setIniCodec(_codecInternal);
-    validationSetting.setIniCodec(_codecInternal);
-    mediaTypes->setIniCodec(_codecInternal);
-#endif
     _loggerSetting = Tf::settingsToMap(loggerSetting);
     _validationSetting = Tf::settingsToMap(validationSetting);
     _mediaTypes = Tf::settingsToMap(*mediaTypes);
@@ -144,9 +121,6 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
 
     for (auto &f : files) {
         QSettings settings(configPath() + f, QSettings::IniFormat);
-#if QT_VERSION < 0x060000
-        settings.setIniCodec(_codecInternal);
-#endif
         _sqlSettings.append(Tf::settingsToMap(settings, _dbEnvironment));
     }
 
@@ -156,9 +130,6 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         QString mnginipath = configPath() + mongoini;
         if (QFile(mnginipath).exists()) {
             QSettings settings(mnginipath, QSettings::IniFormat);
-#if QT_VERSION < 0x060000
-            settings.setIniCodec(_codecInternal);
-#endif
             _kvsSettings[(int)Tf::KvsEngine::MongoDB] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
@@ -169,9 +140,6 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         QString redisinipath = configPath() + redisini;
         if (QFile(redisinipath).exists()) {
             QSettings settings(redisinipath, QSettings::IniFormat);
-#if QT_VERSION < 0x060000
-            settings.setIniCodec(_codecInternal);
-#endif
             _kvsSettings[(int)Tf::KvsEngine::Redis] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
@@ -182,9 +150,6 @@ TWebApplication::TWebApplication(int &argc, char **argv) :
         QString memcachedinipath = configPath() + memcachedini;
         if (QFile(memcachedinipath).exists()) {
             QSettings settings(memcachedinipath, QSettings::IniFormat);
-#if QT_VERSION < 0x060000
-            settings.setIniCodec(_codecInternal);
-#endif
             _kvsSettings[(int)Tf::KvsEngine::Memcached] = Tf::settingsToMap(settings, _dbEnvironment);
         }
     }
@@ -375,11 +340,7 @@ QByteArray TWebApplication::internetMediaType(const QString &ext, bool appendCha
 
     QString type = _mediaTypes.value(ext.toLower(), DEFAULT_INTERNET_MEDIA_TYPE).toString();
     if (appendCharset && type.startsWith("text", Qt::CaseInsensitive)) {
-#if QT_VERSION < 0x060000
-        type += "; charset=" + Tf::app()->codecForHttpOutput()->name();
-#else
         type += "; charset=" + QLatin1String(QStringConverter::nameForEncoding(Tf::app()->encodingForHttpOutput()));
-#endif
     }
     return type.toLatin1();
 }
@@ -412,12 +373,12 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
             return Epoll;
 #else
             tSystemWarn("Unsupported MPM: epoll  (Linux only)");
-            tWarn("Unsupported MPM: epoll  (Linux only)");
+            Tf::warn("Unsupported MPM: epoll  (Linux only)");
             return Thread;
 #endif
         }
-        tSystemWarn("Unsupported MPM: %s", qUtf8Printable(str));
-        tWarn("Unsupported MPM: %s", qUtf8Printable(str));
+        tSystemWarn("Unsupported MPM: {}", qUtf8Printable(str));
+        Tf::warn("Unsupported MPM: {}", qUtf8Printable(str));
         return Thread;
     }();
     return module;
@@ -435,7 +396,7 @@ int TWebApplication::maxNumberOfAppServers() const
 
         if (num <= 0) {
             num = qMax(std::thread::hardware_concurrency(), (uint)1);
-            tSystemWarn("Sets max number of AP servers to %d", num);
+            tSystemWarn("Sets max number of AP servers to {}", num);
         }
         return num;
     }());
@@ -523,7 +484,7 @@ void TWebApplication::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == _timer.timerId()) {
         if (signalNumber() >= 0) {
-            tSystemDebug("TWebApplication trapped signal  number:%d", signalNumber());
+            tSystemDebug("TWebApplication trapped signal  number:{}", signalNumber());
             //timer.stop();   /* Don't stop this timer */
             QCoreApplication::exit(signalNumber());
         }
@@ -570,7 +531,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
         const auto filist = dir.entryInfoList(filters);
 
         if (filist.isEmpty()) {
-            tSystemWarn("No such config, %s", qUtf8Printable(configName));
+            tSystemWarn("No such config, {}", qUtf8Printable(configName));
         } else {
             for (auto &fi : filist) {
                 auto suffix = fi.completeSuffix().toLower();
@@ -595,7 +556,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     }
 
                 } else {
-                    tSystemWarn("Invalid format config, %s", qUtf8Printable(fi.fileName()));
+                    tSystemWarn("Invalid format config, {}", qUtf8Printable(fi.fileName()));
                 }
             }
         }

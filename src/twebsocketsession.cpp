@@ -19,13 +19,7 @@
 
 TWebSocketSession &TWebSocketSession::unite(const TSession &session)
 {
-#if QT_VERSION >= 0x050f00  // 5.15.0
     QVariantMap::insert(session);
-#else
-    for (auto it = session.begin(); it != session.end(); ++it) {
-        insert(it.key(), it.value());
-    }
-#endif
     return *this;
 }
 

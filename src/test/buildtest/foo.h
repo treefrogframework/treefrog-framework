@@ -44,9 +44,7 @@ public:
     static Foo get(const QString &id, int lockRevision);
     static int count();
     static QList<Foo> getAll();
-#if QT_VERSION >= 0x050000
     static QJsonArray getAllJson();
-#endif
 
 private:
     QSharedDataPointer<FooObject> d;

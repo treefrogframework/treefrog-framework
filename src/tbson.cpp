@@ -128,17 +128,8 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             break;
 
         case BSON_TYPE_DATE_TIME: {
-#if QT_VERSION >= 0x040700
             QDateTime date;
             date.setMSecsSinceEpoch(bson_iter_date_time(&it));
-#else
-            int64_t val = bson_iter_date_time(&it);
-            int64_t days = val / 86400000;  // 24*60*60*1000
-            int msecs = val % 86400000;
-            QDate dt = QDate(1970, 1, 1).addDays(days);
-            QTime tm = QTime(0, 0, 0).addMSecs(msecs);
-            QDateTime date(dt, tm, Qt::UTC);
-#endif
             ret[key] = date;
             break;
         }
@@ -173,10 +164,10 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             break;
 
         default:
-            tError("fromBson() unknown type: %d", t);
+            Tf::error("fromBson() unknown type: {}", (int)t);
             break;
         }
-        //tSystemDebug("fromBson : t:%d key:%s = %s", t, qUtf8Printable(key), qUtf8Printable(ret[key].toString()));
+        //tSystemDebug("fromBson : t:{} key:{} = {}", t, qUtf8Printable(key), qUtf8Printable(ret[key].toString()));
     }
     return ret;
 }
@@ -186,12 +177,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
 {
     static const QLatin1String oidkey("_id");
     bool ok = true;
-
-#if QT_VERSION < 0x060000
-    int type = value.type();
-#else
     auto type = value.typeId();
-#endif
 
     // _id
     if (key == oidkey) {
@@ -238,17 +224,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
 
     case QMetaType::QDateTime: {
-#if QT_VERSION >= 0x040700
         BSON_APPEND_DATE_TIME(bson, qUtf8Printable(key), value.toDateTime().toMSecsSinceEpoch());
-#else
-        QDateTime utcDate = value.toDateTime().toUTC();
-        int64_t ms = utcDate.time().msec();
-        int64_t tm = utcDate.toTime_t() * 1000LL;
-        if (ms > 0) {
-            tm += ms;
-        }
-        BSON_APPEND_DATE_TIME(bson, qUtf8Printable(key), tm);
-#endif
         break;
     }
 
@@ -276,7 +252,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
 
     default:
-        tError("toBson() failed to convert  name:%s  type:%d", qUtf8Printable(key), type);
+        Tf::error("toBson() failed to convert  name:{}  type:{}", qUtf8Printable(key), type);
         ok = false;
         break;
     }

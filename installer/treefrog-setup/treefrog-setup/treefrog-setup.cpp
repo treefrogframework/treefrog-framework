@@ -1,4 +1,4 @@
-// treefrog-setup.cpp : メイン プロジェクト ファイルです。
+// treefrog-setup.cpp
 
 #include "stdafx.h"
 #include "MainForm.h"

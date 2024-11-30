@@ -7,11 +7,7 @@
 #include <TWebApplication>
 
 namespace {
-#if QT_VERSION < 0x060000
-QMutex epollMutex(QMutex::Recursive);
-#else
 QRecursiveMutex epollMutex;
-#endif
 }
 
 
@@ -41,7 +37,7 @@ bool TTcpSocket::setSocketOption(int level, int optname, int val)
 void TTcpSocket::connectToHost(const QString &hostName, uint16_t port)
 {
     if (state() != Tf::SocketState::Unconnected) {
-        tSystemWarn("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemWarn("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return;
     }
 
@@ -79,7 +75,7 @@ bool TTcpSocket::waitUntil(bool (TEpollSocket::*method)(), int msecs)
 bool TTcpSocket::waitForConnected(int msecs)
 {
     if (state() == Tf::SocketState::Unconnected) {
-        tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -94,7 +90,7 @@ bool TTcpSocket::waitForConnected(int msecs)
 bool TTcpSocket::waitForDataReceived(int msecs)
 {
     if (state() != Tf::SocketState::Connected) {
-        tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -105,7 +101,7 @@ bool TTcpSocket::waitForDataReceived(int msecs)
 bool TTcpSocket::waitForDataSent(int msecs)
 {
     if (state() != Tf::SocketState::Connected) {
-        tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return false;
     }
 
@@ -128,7 +124,7 @@ int64_t TTcpSocket::receivedSize() const
 int64_t TTcpSocket::receiveData(char *data, int64_t maxSize)
 {
     if (state() != Tf::SocketState::Connected) {
-        tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return -1;
     }
 
@@ -139,7 +135,7 @@ int64_t TTcpSocket::receiveData(char *data, int64_t maxSize)
 QByteArray TTcpSocket::receiveAll()
 {
     if (state() != Tf::SocketState::Connected) {
-        tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return QByteArray();
     }
 
@@ -157,7 +153,7 @@ int64_t TTcpSocket::sendData(const char *data, int64_t size)
 int64_t TTcpSocket::sendData(const QByteArray &data)
 {
     if (state() != Tf::SocketState::Connected) {
-        tSystemError("Invalid socket state [%s:%d]", __FILE__, __LINE__);
+        tSystemError("Invalid socket state [{}:{}]", __FILE__, __LINE__);
         return -1;
     }
 

@@ -66,11 +66,7 @@ void TWebApplication::ignoreConsoleSignal()
 }
 
 
-#if QT_VERSION < 0x060000
-bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, long *)
-#else
 bool TNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *message, qintptr *)
-#endif
 {
     if (eventType == "windows_generic_MSG" || eventType == "windows_dispatcher_MSG") {
         MSG *msg = static_cast<MSG *>(message);
@@ -134,9 +130,9 @@ bool TWebApplication::sendLocalCtrlMessage(const QByteArray &msg, int targetProc
         socket->waitForBytesWritten();
         socket->close();
         ret = true;
-        tSystemDebug("Sent local message to server [pid:%d]", targetProcess);
+        tSystemDebug("Sent local message to server [pid:{}]", targetProcess);
     } else {
-        tSystemWarn("Failed to connect to server [pid:%d]", targetProcess);
+        tSystemWarn("Failed to connect to server [pid:{}]", targetProcess);
     }
 
     delete socket;

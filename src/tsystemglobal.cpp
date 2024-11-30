@@ -32,17 +32,17 @@ QByteArray accessLogDateTimeFormat;
 QByteArray queryLogLayout;
 QByteArray queryLogDateTimeFormat;
 
+}
 
-void tSystemMessage(int priority, const char *msg, va_list ap)
+void Tf::tSystemMessage(int priority, const QByteArray &message)
 {
     if (!systemLogger) {
         return;
     }
 
-    TLog log(priority, QString::vasprintf(msg, ap).toLocal8Bit());
+    TLog log(priority, message);
     QByteArray buf = TLogger::logToByteArray(log, syslogLayout, syslogDateTimeFormat);
     systemLogger->write(buf.data(), buf.length());
-}
 }
 
 
@@ -131,70 +131,12 @@ void Tf::releaseQueryLogger()
 }
 
 
-void tSystemError(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tSystemMessage(Tf::ErrorLevel, msg, ap);
-    va_end(ap);
-}
-
-
-void tSystemWarn(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tSystemMessage(Tf::WarnLevel, msg, ap);
-    va_end(ap);
-}
-
-
-void tSystemInfo(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tSystemMessage(Tf::InfoLevel, msg, ap);
-    va_end(ap);
-}
-
-#ifndef TF_NO_DEBUG
-
-void tSystemDebug(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tSystemMessage(Tf::DebugLevel, msg, ap);
-    va_end(ap);
-}
-
-
-void tSystemTrace(const char *msg, ...)
-{
-    va_list ap;
-    va_start(ap, msg);
-    tSystemMessage(Tf::TraceLevel, msg, ap);
-    va_end(ap);
-}
-
-#else
-
-void tSystemDebug(const char *, ...)
-{
-}
-void tSystemTrace(const char *, ...) { }
-
-#endif
-
-
-void Tf::traceQueryLog(int duration, const char *msg, ...)
+void Tf::traceQuery(int duration, const QByteArray &msg)
 {
     if (sqllogstrm) {
-        va_list ap;
-        va_start(ap, msg);
-        TLog log(-1, QString::vasprintf(msg, ap).toLocal8Bit(), duration);
+        TLog log(-1, msg, duration);
         QByteArray buf = TLogger::logToByteArray(log, queryLogLayout, queryLogDateTimeFormat);
         sqllogstrm->writeLog(buf);
-        va_end(ap);
     }
 }
 
@@ -211,7 +153,7 @@ void Tf::writeQueryLog(const QString &query, bool success, const QSqlError &erro
             }
             q = QLatin1String("(Query failed) ") + err + query;
         }
-        Tf::traceQueryLog(duration, "%s", qUtf8Printable(q));
+        Tf::traceQueryLog(duration, "{}", qUtf8Printable(q));
     }
 }
 

@@ -27,11 +27,8 @@ constexpr auto SQLOBJECT_FOOTER_TEMPLATE = "};\n"
 
 static bool isNumericType(const QString &typeName)
 {
-#if QT_VERSION < 0x060000
-    int typeId = QMetaType::type(typeName.toLatin1());
-#else
     int typeId = QMetaType::fromName(typeName.toLatin1()).id();
-#endif
+
     switch (typeId) {
     case QMetaType::Int:
     case QMetaType::UInt:
@@ -55,11 +52,7 @@ static bool isNumericType(const QString &typeName)
 
 inline bool isBoolType(const QString &typeName)
 {
-#if QT_VERSION < 0x060000
-    return (QMetaType::type(typeName.toLatin1()) == QMetaType::Bool);
-#else
     return (QMetaType::fromName(typeName.toLatin1()).id() == QMetaType::Bool);
-#endif
 }
 
 

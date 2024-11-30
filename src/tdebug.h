@@ -11,6 +11,7 @@ namespace Tf {
 
 T_CORE_EXPORT void setupAppLoggers(TLogger *logger = nullptr);  // internal use
 T_CORE_EXPORT void releaseAppLoggers();  // internal use
+T_CORE_EXPORT void logging(int priority, const QByteArray &msg);
 
 }
 
@@ -112,13 +113,6 @@ public:
         ts << t;
         return *this;
     }
-#if QT_VERSION < 0x060000
-    inline TDebug &operator<<(const QStringRef &t)
-    {
-        ts << t.toString();
-        return *this;
-    }
-#endif
     inline TDebug &operator<<(const QLatin1String &t)
     {
         ts << t;

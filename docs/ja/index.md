@@ -40,12 +40,26 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2023/12/10  TreeFrog Framework バージョン2.8.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2024/11/30  TreeFrog Framework バージョン2.10.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - std::format スタイルのログ出力に対応, Tf::error(), Tf::warn(), Tf::info()など
+ - tsharedmemory初期化の不具合修正.
+ - このバージョン以降 Qt6 のみサポート (Qt5は非サポート).
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2024/6/15  TreeFrog Framework バージョン2.9.0 （安定版）リリース
+
+ - ステータスコードに関するアクセスログ出力の不具合修正
+ - TSqlObjectで値がQString()である場合にNULLを設定するように修正
+ - TAbstractModel::setProperties(const QJsonObject &properties) 関数を追加
+ - Mongoc driver を v1.26.2 に更新
+ - glog を v0.7.0 に更新
+
+### 2023/12/10  TreeFrog Framework バージョン2.8.0 （安定版）リリース
 
   - PostgreSQL と MySQL のプリペアドステートメントを対応
   - Emscripten でのコンパイルエラーを解消
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2023/3/26  TreeFrog Framework バージョン2.7.1 （安定版）リリース
 
@@ -60,35 +74,6 @@ Webアプリの開発において、開発効率と動作速度はトレード�
   - TSharedMemoryAllocatorのmallocアルゴリズムを更新
   - システムロガーを更新
   - データベース接続プーリングのパフォーマンス改善
-
-### 2023/1/21  TreeFrog Framework バージョン2.6.1 （安定版）リリース
-
- - アクセスログ出力の不具合修正
- - LZ4と共有リンクするオプションを追加（Linux または macOS）
-
-### 2023/1/2  TreeFrog Framework バージョン2.6.0 （安定版）リリース
-
- - キャッシュ用のインメモリKVSを実装
- - Glogと共有リンクするオプションを追加
- - コマンドライン向けマクロの不具合修正
- - LZ4をv1.9.4に更新
-
-### 2022/11/1  TreeFrog Framework バージョン2.5.0 （安定版）リリース
-
- - レスポンス送信後に処理を継続するためにflushResponse()関数を実装
- - glogバージョン0.6.0に更新
- - Redisクライアントのパフォーマンス改善
- - Memcachedクライアントの実装 [実験的]
- - Memcached用のキャッシュストア（TCacheMemcachedStoreクラス）の実装
-
-### 2022/8/13  TreeFrog Framework バージョン2.4.0 （安定版）リリース
-
- - キャッシュ用のメモリストアを実装
- - Mongo C ドライバをバージョン1.21.2に更新
-
-### 2022/5/28  TreeFrog Framework バージョン2.3.1 （安定版）リリース
-
- - Qt 6.3 でのコンパイルエラーを解消
 
  [<i class="fa fa-list" aria-hidden="true"></i> 全ての変更履歴](https://github.com/treefrogframework/treefrog-framework/blob/master/CHANGELOG.md)
 

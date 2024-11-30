@@ -65,7 +65,7 @@ TSession TSessionMongoStore::find(const QByteArray &id)
 
     TSessionMongoObject so = mapper.findOne(cri);
     if (so.isNull()) {
-        tSystemDebug("Session not found: %s", id.data());
+        tSystemDebug("Session not found: {}", id.data());
         return TSession();
     }
 

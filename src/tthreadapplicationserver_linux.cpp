@@ -27,7 +27,7 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
     if (maxThreads == 0) {
         maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
     }
-    tSystemDebug("MaxThreads: %d", maxThreads);
+    tSystemDebug("MaxThreads: {}", maxThreads);
 
     // Thread pooling
     for (int i = 0; i < maxThreads; i++) {
@@ -57,7 +57,7 @@ bool TThreadApplicationServer::start(bool debugMode)
     }
 
     if (listenSocket <= 0) {
-        tSystemError("Failed to set socket descriptor: %d", listenSocket);
+        tSystemError("Failed to set socket descriptor: {}", listenSocket);
         return false;
     }
 
@@ -107,7 +107,7 @@ void TThreadApplicationServer::run()
         if (ret > 0 && (pfd.revents & POLLIN)) {
             int socketDescriptor = tf_accept4(listenSocket, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK));
             if (socketDescriptor > 0) {
-                tSystemDebug("incomingConnection  sd:%d  thread count:%d  max:%d", socketDescriptor, TActionThread::threadCount(), maxThreads);
+                tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", socketDescriptor, TActionThread::threadCount(), maxThreads);
                 TActionThread *thread;
 
                 while (!threadPoolPtr()->pop(thread)) {
@@ -115,7 +115,7 @@ void TThreadApplicationServer::run()
                     Tf::msleep(1);
                 }
 
-                tSystemDebug("thread ptr: %ld", (uint64_t)thread);
+                tSystemDebug("thread ptr: {}", (quint64)thread);
                 thread->setSocketDescriptor(socketDescriptor);
                 thread->start();
             }

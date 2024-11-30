@@ -36,7 +36,7 @@ void TApplicationScheduler::start(int msec)
     if (Tf::app()->applicationServerId() == 0) {
         // Starts where applicaraion server ID is 0
         TScheduler::start(msec);
-        tSystemDebug("TApplicationScheduler::start msec:%d", msec);
+        tSystemDebug("TApplicationScheduler::start msec:{}", msec);
     }
 }
 
