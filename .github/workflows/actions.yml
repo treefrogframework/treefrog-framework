@@ -278,7 +278,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version:      6.8
+        version:      6.8.0
         host:         windows
         target:       desktop
         setup-python: false
@@ -328,7 +328,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version:      6.8
+        version:      6.8.0
         host:         windows
         target:       desktop
         setup-python: false
