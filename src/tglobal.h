@@ -228,6 +228,11 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
 #ifdef TF_HAVE_STD_FORMAT  // std::format
 
 // Logging for developer
+
+/*!
+  Outputs the fatal message to the log file, formatting \a args according to the format string \a fmt.
+  \see https://en.cppreference.com/w/cpp/utility/format/format
+*/
 template<typename... Args>
 void fatal(const std::format_string<Args...> &fmt, Args&&... args)
 {
@@ -235,6 +240,10 @@ void fatal(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::logging(Tf::FatalLevel, QByteArray::fromStdString(msg));
 }
 
+/*!
+  Outputs the error message to the log file, formatting \a args according to the format string \a fmt.
+  \see https://en.cppreference.com/w/cpp/utility/format/format
+*/
 template<typename... Args>
 void error(const std::format_string<Args...> &fmt, Args&&... args)
 {
@@ -242,6 +251,10 @@ void error(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::logging(Tf::ErrorLevel, QByteArray::fromStdString(msg));
 }
 
+/*!
+  Outputs the warning message to the log file, formatting \a args according to the format string \a fmt.
+  \see https://en.cppreference.com/w/cpp/utility/format/format
+*/
 template<typename... Args>
 void warn(const std::format_string<Args...> &fmt, Args&&... args)
 {
@@ -249,6 +262,10 @@ void warn(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::logging(Tf::WarnLevel, QByteArray::fromStdString(msg));
 }
 
+/*!
+  Outputs the information message to the log file, formatting \a args according to the format string \a fmt.
+  \see https://en.cppreference.com/w/cpp/utility/format/format
+*/
 template<typename... Args>
 void info(const std::format_string<Args...> &fmt, Args&&... args)
 {
@@ -256,6 +273,10 @@ void info(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::logging(Tf::InfoLevel, QByteArray::fromStdString(msg));
 }
 
+/*!
+  Outputs the debug message to the log file, formatting \a args according to the format string \a fmt.
+  \see https://en.cppreference.com/w/cpp/utility/format/format
+*/
 template<typename... Args>
 void debug(const std::format_string<Args...> &fmt, Args&&... args)
 {
@@ -263,6 +284,10 @@ void debug(const std::format_string<Args...> &fmt, Args&&... args)
     Tf::logging(Tf::DebugLevel, QByteArray::fromStdString(msg));
 }
 
+/*!
+  Outputs the trace message to the log file, formatting \a args according to the format string \a fmt.
+  \see https://en.cppreference.com/w/cpp/utility/format/format
+*/
 template<typename... Args>
 void trace(const std::format_string<Args...> &fmt, Args&&... args)
 {
