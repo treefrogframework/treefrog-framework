@@ -8,7 +8,7 @@ page_id: "010.010"
 ### Execution environment
 
 * Windows, Linux, UNIX-like OS or maxOS
-* Qt version 5.4 or later – [The Qt Company](https://www.qt.io/)
+* Qt version 6.2 or later – [The Qt Company](https://www.qt.io/)
 
 ### Development environment
 

@@ -8,7 +8,7 @@ page_id: "010.010"
 ### 执行环境
 
 * Windows 7/8, Linux, UNIX-like OS or macOS
-* Qt 5.4或者更新版本[The Qt Company](https://www.qt.io/)
+* Qt 6.2或者更新版本[The Qt Company](https://www.qt.io/)
 
 ### 开发环境
 
