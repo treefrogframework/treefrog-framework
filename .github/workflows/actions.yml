@@ -266,6 +266,94 @@ jobs:
       run: |
         ./releasetest
 
+  build-macos14:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: |
+        which pkg-config || brew install pkg-config
+        brew install qt6 jq mongo-c-driver gflags glog lz4
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
+    - name: build for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: brew install for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
+    - name: testall.sh
+      working-directory: src/test
+      run: |
+        ./testall.sh
+    - name: releasetest
+      working-directory: tools/test/releasetest
+      run: |
+        ./releasetest
+
+  build-macos13:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@main
+    - name: Homebrew
+      run: |
+        which pkg-config || brew install pkg-config
+        brew install qt6 jq mongo-c-driver gflags glog lz4
+    - name: configure for debug
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
+    - name: build for debug
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: configure
+      run: |
+        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
+    - name: build
+      run: |
+        make -j4 -C src
+        sudo make -C src install
+        make -j4 -C tools
+        sudo make -C tools install
+    - name: version
+      run: |
+        treefrog -v
+        tspawn --show-drivers
+    - name: brew install for test
+      run: |
+        brew install redis memcached
+        brew services start redis
+        brew services start memcached
+    - name: testall.sh
+      working-directory: src/test
+      run: |
+        ./testall.sh
+    - name: releasetest
+      working-directory: tools/test/releasetest
+      run: |
+        ./releasetest
+
   build-windows-qt68-msvc2022:
     runs-on: windows-latest
     steps:
