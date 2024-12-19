@@ -9,7 +9,7 @@ constexpr auto TF_SRC_REVISION = 2956;
 #include <version>
 
 
-#if (!defined(Q_OS_WIN) && (defined(__cpp_lib_format) || __has_include(<format>))) || (defined(_MSC_VER) && _MSC_VER >= 1930)  // std::format
+#if (!defined(Q_OS_WIN) && defined(__cpp_lib_format)) || (defined(_MSC_VER) && _MSC_VER >= 1930)  // std::format
 #define TF_HAVE_STD_FORMAT
 #endif
 
