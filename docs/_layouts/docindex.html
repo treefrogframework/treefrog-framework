@@ -32,6 +32,8 @@
                 {% include generateDynamicMenu.html root="/ja/user-guide/" %}
             {% elsif page.url contains '/ch/' %}   
                 {% include generateDynamicMenu.html root="/ch/user-guide/" %}
+            {% elsif page.url contains '/de/' %}   
+                {% include generateDynamicMenu.html root="/de/user-guide/" %}
             {% else %} 
                 {% include generateDynamicMenu.html root="/en/user-guide/" %}
             {% endif %}
