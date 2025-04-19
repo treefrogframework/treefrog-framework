@@ -170,12 +170,15 @@ void TestMailMessage::dateTime_data()
 #if QT_VERSION >= 0x060700
     QTest::newRow("1") << QDateTime(QDate(2011,3,28), QTime(12,11,04), QTimeZone::LocalTime) << "Mon, 28 Mar 2011 12:11:04 " + offsetStr;
     QTest::newRow("2") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), QTimeZone::LocalTime) << "Mon, 31 Mar 2014 01:00:00 " + offsetStr;
+    QTest::newRow("3") << QDateTime(QDate(2011,3,28), QTime(12,11,04), QTimeZone::UTC) << "Mon, 28 Mar 2011 12:11:04 +0000";
+    QTest::newRow("4") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), QTimeZone::UTC) << "Mon, 31 Mar 2014 01:00:00 +0000";
 #else
     QTest::newRow("1") << QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::LocalTime) << "Mon, 28 Mar 2011 12:11:04 " + offsetStr;
     QTest::newRow("2") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), Qt::LocalTime) << "Mon, 31 Mar 2014 01:00:00 " + offsetStr;
+    QTest::newRow("3") << QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::UTC) << "Mon, 28 Mar 2011 12:11:04 +0000";
+    QTest::newRow("4") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), Qt::UTC) << "Mon, 31 Mar 2014 01:00:00 +0000";
+
 #endif
-    QTest::newRow("3") << QDateTime(QDate(2011,3,28), QTime(12,11,04), QTimeZone::UTC) << "Mon, 28 Mar 2011 12:11:04 +0000";
-    QTest::newRow("4") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), QTimeZone::UTC) << "Mon, 31 Mar 2014 01:00:00 +0000";
 }
 
 void TestMailMessage::dateTime()
