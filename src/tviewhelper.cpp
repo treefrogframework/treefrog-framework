@@ -12,6 +12,7 @@
 #include <THttpUtility>
 #include <TViewHelper>
 #include <TWebApplication>
+#include <TSystemGlobal>
 
 
 /*!
@@ -539,14 +540,52 @@ QString TViewHelper::styleSheetTag(const QString &src, const THtmlAttribute &att
 QString TViewHelper::styleSheetTag(const QString &src, bool withTimestamp, const THtmlAttribute &attributes) const
 {
     THtmlAttribute attr = attributes;
-    if (!attr.contains("type")) {
-        attr.prepend("type", "text/css");
-    }
+
     if (!attr.contains("rel")) {
         attr.prepend("rel", "stylesheet");
     }
     attr.prepend("href", cssPath(src, withTimestamp));
     return selfClosingTag("link", attr);
+}
+
+
+static QJsonObject readManifest(const QString &path)
+{
+    QJsonObject json;
+    QFile manifest(path);
+
+    if (manifest.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QJsonParseError error;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(manifest.readAll(), &error);
+        manifest.close();
+
+        if (error.error == QJsonParseError::NoError) {
+            json = jsonDoc.object();
+        } else {
+            tSystemWarn("Manifest parse error [{}]", qUtf8Printable(path));
+        }
+    } else {
+        tSystemWarn("Manifest file not found [{}]", qUtf8Printable(path));
+    }
+    return json;
+}
+
+
+QString TViewHelper::viteStyleSheetTag(const QString &src, const THtmlAttribute &attributes) const
+{
+    constexpr auto MANIFEST_PATH = ".vite/manifest.json";
+    static QJsonObject manifestJson;
+    QString tag;
+
+    if (manifestJson.isEmpty()) {
+        manifestJson = readManifest(Tf::app()->publicPath() + MANIFEST_PATH);
+    }
+
+    auto array = manifestJson.value(src).toObject().value("css").toArray();
+    for (auto item : array) {
+        tag += styleSheetTag("/" + item.toString(), false, attributes);
+    }
+    return tag;
 }
 
 /*!
@@ -577,9 +616,22 @@ QString TViewHelper::scriptTag(const QString &src, bool withTimestamp, const THt
 
 QString TViewHelper::viteScriptTag(const QString &name, const THtmlAttribute &attributes) const
 {
-    // manifest.json をもとにパスを見つける必要あり。
-    QString src = name;
-    return scriptTag(src, true, attributes);
+    constexpr auto MANIFEST_PATH = ".vite/manifest.json";
+    static QJsonObject manifestJson;
+
+    if (manifestJson.isEmpty()) {
+        manifestJson = readManifest(Tf::app()->publicPath() + MANIFEST_PATH);
+    }
+
+    QString src = manifestJson.value(name).toObject().value("file").toString();
+
+    if (src.isEmpty()) {
+        tSystemWarn("'{}' not found in manifest [{}]", qUtf8Printable(name), MANIFEST_PATH);
+        src = name;
+    } else {
+        src = "/" + src;
+    }
+    return scriptTag(src, false, attributes);
 }
 
 /*!
@@ -692,6 +744,12 @@ QString TViewHelper::srcPath(const QString &src, const QString &dir, bool withTi
         }
     }
     return ret;
+}
+
+
+QString TViewHelper::databaseEnvironment() const
+{
+    return Tf::app()->databaseEnvironment();
 }
 
 
