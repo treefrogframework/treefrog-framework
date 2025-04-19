@@ -23,6 +23,10 @@ public:
     virtual const TSession &session() const;
     virtual QString getRenderingData(const QString &templateName, const QVariantMap &vars = QVariantMap());
     virtual QByteArray authenticityToken() const { return QByteArray(); }
+    virtual QVariantMap flashVariants() const { return QVariantMap(); }
+    virtual QVariant flashVariant(const QString &) const { return QVariant(); }
+    virtual QJsonObject flashVariantsJson() const { return QJsonObject(); }
+    virtual QJsonObject flashVariantJson(const QString &) const { return QJsonObject(); }
     virtual void setFlash(const QString &name, const QVariant &value);
     void exportVariant(const QString &name, const QVariant &value, bool overwrite = true);
     virtual bool isUserLoggedIn() const;

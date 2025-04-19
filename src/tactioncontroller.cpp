@@ -31,7 +31,8 @@
 #include <TWebApplication>
 #include <QStringEncoder>
 
-const QString FLASH_VARS_SESSION_KEY("_flashVariants");
+const QString QUEUED_FLASH_SESSION_KEY("_flashVariants");
+const QString FLASH_VARS_SESSION_KEY("_activeFlash");
 const QString LOGIN_USER_NAME_KEY("_loginUserName");
 const QByteArray DEFAULT_CONTENT_TYPE("text/html");
 
@@ -207,7 +208,11 @@ void TActionController::setCsrfProtectionInto(TSession &session)
 {
     if (TSessionManager::instance().storeType() == QLatin1String("cookie")) {
         QString key = TSessionManager::instance().csrfProtectionKey();
-        session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
+        QByteArray val = session.value(key).toByteArray();
+
+        if (val.isEmpty()) {
+            session.insert(key, TSessionManager::instance().generateId());  // it's just a random value
+        }
     }
 }
 
@@ -595,7 +600,7 @@ void TActionController::redirect(const QUrl &url, int statusCode)
     // Enable flash-variants
     QVariant var;
     var.setValue(_flashVars);
-    _sessionStore.insert(FLASH_VARS_SESSION_KEY, var);
+    _sessionStore.insert(QUEUED_FLASH_SESSION_KEY, var);
 }
 
 /*!
@@ -655,10 +660,37 @@ bool TActionController::sendData(const QByteArray &data, const QByteArray &conte
 */
 void TActionController::exportAllFlashVariants()
 {
-    QVariant var = _sessionStore.take(FLASH_VARS_SESSION_KEY);
+    _sessionStore.remove(FLASH_VARS_SESSION_KEY);
+
+    QVariant var = _sessionStore.take(QUEUED_FLASH_SESSION_KEY);
     if (!var.isNull()) {
         exportVariants(var.toMap());
+        _sessionStore.insert(FLASH_VARS_SESSION_KEY, var);
     }
+}
+
+
+QVariantMap TActionController::flashVariants() const
+{
+    return _sessionStore.value(FLASH_VARS_SESSION_KEY).toMap();
+}
+
+
+QVariant TActionController::flashVariant(const QString &key) const
+{
+    return _sessionStore.value(FLASH_VARS_SESSION_KEY).toMap().value(key);
+}
+
+
+QJsonObject TActionController::flashVariantsJson() const
+{
+    return QJsonObject::fromVariantMap(flashVariants());
+}
+
+
+QJsonObject TActionController::flashVariantJson(const QString &key) const
+{
+    return QJsonObject::fromVariantMap(flashVariant(key).toMap());
 }
 
 /*!

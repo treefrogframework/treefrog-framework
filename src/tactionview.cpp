@@ -72,6 +72,15 @@ QString TActionView::authenticityToken() const
 }
 
 /*!
+  Returns flash variants;
+*/
+QVariantMap TActionView::flashVariants() const
+{
+    static QVariantMap dummy;
+    return (actionController) ? actionController->flashVariants() : dummy;
+}
+
+/*!
   Outputs the string of the HTML attribute \a attr to a view
   template.
 */

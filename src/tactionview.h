@@ -23,6 +23,7 @@ public:
     QVariant variant(const QString &name) const;
     bool hasVariant(const QString &name) const;
     const QVariantMap &allVariants() const;
+    QVariantMap flashVariants() const;
     const TAbstractController *controller() const override;
     const THttpRequest &httpRequest() const;
     void reset();

@@ -574,6 +574,14 @@ QString TViewHelper::scriptTag(const QString &src, bool withTimestamp, const THt
     return tag("script", attr, QString());
 }
 
+
+QString TViewHelper::viteScriptTag(const QString &name, const THtmlAttribute &attributes) const
+{
+    // manifest.json をもとにパスを見つける必要あり。
+    QString src = name;
+    return scriptTag(src, true, attributes);
+}
+
 /*!
   Creates and returns a THtmlAttribute object with \a key =\a "value".
 */

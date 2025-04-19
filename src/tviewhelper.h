@@ -172,6 +172,8 @@ public:
 
     QString scriptTag(const QString &src, bool withTimestamp = true, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString viteScriptTag(const QString &name, const THtmlAttribute &attributes) const;
+
     QString tag(const QString &name, const THtmlAttribute &attributes);
 
     QString tag(const QString &name, const THtmlAttribute &attributes, bool selfClose);

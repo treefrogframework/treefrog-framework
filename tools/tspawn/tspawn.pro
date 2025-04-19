@@ -5,6 +5,8 @@ CONFIG  += console
 CONFIG  -= app_bundle
 QT      += sql
 QT      -= gui
+MOC_DIR = .obj/
+OBJECTS_DIR = .obj/
 
 # C++ Standards Support
 CONFIG += c++20
@@ -184,6 +186,10 @@ HEADERS += vueservicegenerator.h
 SOURCES += vueservicegenerator.cpp
 HEADERS += vueerbgenerator.h
 SOURCES += vueerbgenerator.cpp
+HEADERS += vitevuegenerator.h
+SOURCES += vitevuegenerator.cpp
+HEADERS += vitevueservicegenerator.h
+SOURCES += vitevueservicegenerator.cpp
 HEADERS += abstractobjgenerator.h
 SOURCES += abstractobjgenerator.cpp
 HEADERS += sqlobjgenerator.h
@@ -210,3 +216,4 @@ HEADERS += apiservicegenerator.h
 SOURCES += apiservicegenerator.cpp
 HEADERS += util.h
 SOURCES += util.cpp
+HEADERS += generator.h

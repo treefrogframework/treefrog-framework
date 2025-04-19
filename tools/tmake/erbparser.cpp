@@ -161,11 +161,11 @@ void ErbParser::parsePercentTag()
             QPair<QString, QString> p = parseEndPercentTag();
             if (!p.first.isEmpty()) {
                 if (p.second.isEmpty()) {
-                    srcCode += QLatin1String("responsebody += QVariant(");
+                    srcCode += QLatin1String("echo(");
                     srcCode += semicolonTrim(p.first);
-                    srcCode += QLatin1String(").toString();\n");
+                    srcCode += QLatin1String(");\n");
                 } else {
-                    srcCode += QLatin1String("{ QString ___s = QVariant(");
+                    srcCode += QLatin1String("{ QString ___s = QVariant("); // TODO 修正！！！
                     srcCode += semicolonTrim(p.first);
                     srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? QVariant(");
                     srcCode += semicolonTrim(p.second);
