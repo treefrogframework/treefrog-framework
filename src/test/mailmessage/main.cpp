@@ -154,8 +154,13 @@ void TestMailMessage::dateTime_data()
     QTest::addColumn<QString>("result");
 
     // Timezone
+#if QT_VERSION >= 0x060700
     uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), QTimeZone::UTC).toSecsSinceEpoch();
     uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), QTimeZone::LocalTime).toSecsSinceEpoch();
+#else
+    uint utc = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::UTC).toSecsSinceEpoch();
+    uint local = QDateTime(QDate(2000,1,1), QTime(0,0,0), Qt::LocalTime).toSecsSinceEpoch();
+#endif
     int offset = (utc - local) / 60;
     QString offsetStr = QString("%1%2%3")
         .arg(offset > 0 ? '+' : '-')
@@ -169,8 +174,8 @@ void TestMailMessage::dateTime_data()
     QTest::newRow("1") << QDateTime(QDate(2011,3,28), QTime(12,11,04), Qt::LocalTime) << "Mon, 28 Mar 2011 12:11:04 " + offsetStr;
     QTest::newRow("2") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), Qt::LocalTime) << "Mon, 31 Mar 2014 01:00:00 " + offsetStr;
 #endif
-    QTest::newRow("3") << QDateTime(QDate(2011,3,28), QTime(12,11,04), QTimeZone::UTC)       << "Mon, 28 Mar 2011 12:11:04 +0000";
-    QTest::newRow("4") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), QTimeZone::UTC)       << "Mon, 31 Mar 2014 01:00:00 +0000";
+    QTest::newRow("3") << QDateTime(QDate(2011,3,28), QTime(12,11,04), QTimeZone::UTC) << "Mon, 28 Mar 2011 12:11:04 +0000";
+    QTest::newRow("4") << QDateTime(QDate(2014,3,31), QTime( 1, 0, 0), QTimeZone::UTC) << "Mon, 31 Mar 2014 01:00:00 +0000";
 }
 
 void TestMailMessage::dateTime()
