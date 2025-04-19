@@ -373,7 +373,7 @@ jobs:
     - name: Install tools
       run: |
         choco install sqlite -y
-        choco install cmake -y
+        choco install cmake -y --version=3.31.7
     - name: Debug build
       shell: cmd
       run: |
@@ -425,7 +425,7 @@ jobs:
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
-        choco install cmake -y
+        choco install cmake -y --version=3.31.7
     - name: Debug build
       shell: cmd
       run: |
@@ -478,7 +478,7 @@ jobs:
         choco install visualstudio2019community -y
         choco install visualstudio2019-workload-nativedesktop -y
         choco install sqlite -y
-        choco install cmake -y
+        choco install cmake -y --version=3.31.7
     - name: Debug build
       shell: cmd
       run: |
