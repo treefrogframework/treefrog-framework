@@ -3,6 +3,10 @@
 #ifdef Q_OS_WIN
 #include <QSharedMemory>
 #endif
+#ifdef Q_OS_LINUX
+#include <pthread.h>
+#endif
+
 
 class T_CORE_EXPORT TSharedMemory
 #ifdef Q_OS_WIN
@@ -27,6 +31,15 @@ public:
     bool unlock();
 
 private:
+    struct header_t {
+#ifdef Q_OS_LINUX
+        pthread_rwlock_t rwlock;
+        uint lockcounter {0};
+#endif
+    };
+
+    void initRwlock(header_t *header) const;
+
 #ifndef Q_OS_WIN
     QString _name;
     size_t _size {0};

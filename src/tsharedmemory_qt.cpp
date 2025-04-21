@@ -103,3 +103,7 @@ bool TSharedMemory::unlock()
 {
     return QSharedMemory::unlock();
 }
+
+
+void TSharedMemory::initRwlock(header_t *) const
+{}
