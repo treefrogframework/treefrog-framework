@@ -89,6 +89,7 @@ error:
 
 void TSharedMemory::unlink()
 {
+    releaseRwlock((header_t *)_ptr);
     shm_unlink(qUtf8Printable(_name));
     tSystemDebug("SharedMemory unlinked.  name:{}", qUtf8Printable(_name));
 }
@@ -154,6 +155,7 @@ bool TSharedMemory::detach()
 
     _ptr = nullptr;
     _size = 0;
+    tSystemDebug("SharedMemory detached.  name:{}", qUtf8Printable(_name));
     return true;
 }
 

@@ -34,11 +34,13 @@ private:
     struct header_t {
 #ifdef Q_OS_LINUX
         pthread_rwlock_t rwlock;
-        uint lockcounter {0};
 #endif
+        uint lockcounter {0};
     };
 
-    void initRwlock(header_t *header) const;
+    bool initRwlock(header_t *header) const;
+    void releaseRwlock(header_t *header) const;
+
 
 #ifndef Q_OS_WIN
     QString _name;

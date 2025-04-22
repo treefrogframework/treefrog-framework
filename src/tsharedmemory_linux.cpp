@@ -22,6 +22,14 @@ void TSharedMemory::initRwlock(header_t *header) const
 }
 
 
+void TSharedMemory::releaseRwlock(header_t *header) const
+{
+    if (header) {
+        pthread_rwlock_destroy(&header->rwlock);
+    }
+}
+
+
 bool TSharedMemory::lockForRead()
 {
     struct timespec timeout;
@@ -65,6 +73,7 @@ bool TSharedMemory::lockForWrite()
         } else {
             if (res == ETIMEDOUT && header->lockcounter == cnt) {
                 // resets rwlock object
+                releaseRwlock(header);
                 initRwlock(header);
             }
         }

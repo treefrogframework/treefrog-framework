@@ -37,6 +37,7 @@ static QByteArray randomString(int length)
 
 void TestSharedMemory::initTestCase()
 {
+    sharedMomory.unlink();
     sharedMomory.create(100 * 1024 * 1024);
 }
 
@@ -104,6 +105,14 @@ void TestSharedMemory::test2()
     sharedMomory.unlock();
     res = sharedMomory.detach();
     Q_ASSERT(res);
+
+    res = sharedMomory.attach();
+    Q_ASSERT(res);
+    res = sharedMomory.lockForRead();
+    Q_ASSERT(res);
+    int cmp = strncmp((char *)sharedMomory.data(), string.data(), string.length());
+    Q_ASSERT(cmp == 0);
+    sharedMomory.unlock();
 }
 
 TF_TEST_MAIN(TestSharedMemory)

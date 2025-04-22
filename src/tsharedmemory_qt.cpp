@@ -105,5 +105,11 @@ bool TSharedMemory::unlock()
 }
 
 
-void TSharedMemory::initRwlock(header_t *) const
+bool TSharedMemory::initRwlock(header_t *) const
+{
+    return true;
+}
+
+
+void TSharedMemory::releaseRwlock(header_t *) const
 {}
