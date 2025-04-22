@@ -253,6 +253,7 @@ QString TActionController::loginUserNameKey()
 bool TActionController::verifyRequest(const THttpRequest &request) const
 {
     if (!csrfProtectionEnabled()) {
+        tSystemWarn("Skipped verifying authenticity token : {}", request.header().path().data());
         return true;
     }
 
@@ -268,7 +269,11 @@ bool TActionController::verifyRequest(const THttpRequest &request) const
     }
 
     tSystemDebug("postAuthToken: {}", (const char*)postAuthToken.data());
-    return Tf::strcmp(postAuthToken, authenticityToken());
+    bool res = Tf::strcmp(postAuthToken, authenticityToken());
+    if (res) {
+        tSystemDebug("Verified authenticity token : {}", request.header().path().data());
+    }
+    return res;
 }
 
 /*!
