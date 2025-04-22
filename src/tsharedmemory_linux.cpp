@@ -6,19 +6,26 @@
  */
 
 #include "tsharedmemory.h"
+#include <TSystemGlobal>
 #include <pthread.h>
+#include <errno.h>
 
 
-void TSharedMemory::initRwlock(header_t *header) const
+bool TSharedMemory::initRwlock(header_t *header) const
 {
+    int res = -1;
     pthread_rwlockattr_t attr;
 
-    int res = pthread_rwlockattr_init(&attr);
-    Q_ASSERT(!res);
-    res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);  // Linux only
-    Q_ASSERT(!res);
-    res = pthread_rwlock_init(&header->rwlock, &attr);
-    Q_ASSERT(!res);
+    if (header) {
+        res = pthread_rwlockattr_init(&attr);
+        Q_ASSERT(!res);
+        res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);  // Linux only
+        Q_ASSERT(!res);
+        if ((res = pthread_rwlock_init(&header->rwlock, &attr)) < 0) {
+            tSystemError("pthread_rwlock_init failed: {}", (const char*)strerror(errno));
+        }
+    }
+    return !res;
 }
 
 
