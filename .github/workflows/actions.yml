@@ -364,7 +364,7 @@ jobs:
         vs-version: '[17,18)'  # 17.xx
         msbuild-architecture: x64
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1
+      uses: jurplel/install-qt-action@v4.1.1
       with:
         version:      6.8.0
         host:         windows
@@ -414,7 +414,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1
+      uses: jurplel/install-qt-action@v4.1.1
       with:
         version:      6.8.0
         host:         windows
@@ -466,7 +466,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1
+      uses: jurplel/install-qt-action@v4.1.1
       with:
         version:      6.5.2
         host:         windows
