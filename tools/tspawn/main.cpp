@@ -702,14 +702,6 @@ int main(int argc, char *argv[])
             if (svrgen) {
                 svrgen->generate(D_MODELS);
             }
-
-            // if (templateSystem == TemplateSystem::Vue) {
-            //     VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-            // } else {
-            //     ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-            // }
             break;
         }
 
@@ -734,14 +726,6 @@ int main(int argc, char *argv[])
             if (svrgen) {
                 svrgen->generate(D_MODELS);
             }
-
-            // if (templateSystem == TemplateSystem::Vue) {
-            //     VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-            // } else {
-            //     ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-            // }
             break;
         }
 
@@ -774,14 +758,6 @@ int main(int argc, char *argv[])
                 return 2;
             }
 
-            // if (templateSystem == TemplateSystem::Vue) {
-            //     VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     success &= svrgen.generate(D_MODELS);
-            // } else {
-            //     ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     success &= svrgen.generate(D_MODELS);
-            // }
-
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
 
@@ -792,17 +768,6 @@ int main(int argc, char *argv[])
             } else {
                 return 2;
             }
-
-            // if (templateSystem == "otama") {
-            //     OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.autoValueIndex());
-            //     viewgen.generate(D_VIEWS);
-            // } else if (templateSystem == "erb") {
-            //     ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), modelgen.primaryKeyIndex(), modelgen.autoValueIndex());
-            //     viewgen.generate(D_VIEWS);
-            // } else {
-            //     qCritical("Invalid template system specified: %s", qUtf8Printable(templateSystem));
-            //     return 2;
-            // }
 
             if (success) {
                 printSuccessMessage(modelgen.model());
@@ -825,14 +790,6 @@ int main(int argc, char *argv[])
             if (svrgen) {
                 svrgen->generate(D_MODELS);
             }
-
-            // if (templateSystem == TemplateSystem::Vue) {
-            //     VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-            // } else {
-            //     ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-            // }
             break;
         }
 
@@ -903,7 +860,7 @@ int main(int argc, char *argv[])
             ControllerGenerator crtlgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
             success &= crtlgen.generate(D_CTRLS);
 
-            // Generates view files of the specified template system
+            // Generates service file of the specified template system
             std::unique_ptr<Generator> svrgen = createServiceGenerator(templateSystem, modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
             if (svrgen) {
                 svrgen->generate(D_MODELS);
@@ -920,33 +877,6 @@ int main(int argc, char *argv[])
                 qCritical("Invalid template system specified");
                 return 2;
             }
-
-            // // Generates view files of the specified template system
-            // if (templateSystem == TemplateSystem::Vue) {
-            //     VueServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-
-            //     VueErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-            //     viewgen.generate(D_VIEWS);
-
-            // } else if (templateSystem == TemplateSystem::Vite_Vue) {
-
-            // } else if (templateSystem == TemplateSystem::Otama) {
-            //     ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-
-            //     OtamaGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-            //     viewgen.generate(D_VIEWS);
-            // } else if (templateSystem == TemplateSystem::Erb) {
-            //     ServiceGenerator svrgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.lockRevisionIndex());
-            //     svrgen.generate(D_MODELS);
-
-            //     ErbGenerator viewgen(modelgen.model(), modelgen.fieldList(), pkidx, modelgen.autoValueIndex());
-            //     viewgen.generate(D_VIEWS);
-            // } else {
-            //     qCritical("Invalid template system specified");
-            //     return 2;
-            // }
 
             if (success) {
                 printSuccessMessage(modelgen.model());
