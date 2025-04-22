@@ -37,7 +37,11 @@ public:
     virtual QStringList exceptionActionsOfCsrfProtection() const { return QStringList(); }
     virtual bool transactionEnabled() const { return true; }
     QByteArray authenticityToken() const override;
-    QString flash(const QString &name) const;
+    QVariantMap flashVariants() const override;
+    QVariant flashVariant(const QString &key) const override;
+    QJsonObject flashVariantsJson() const override;
+    QJsonObject flashVariantJson(const QString &key) const override;
+    //QString flash(const QString &name) const;
     QHostAddress clientAddress() const;
     virtual bool isUserLoggedIn() const override;
     virtual QString identityKeyOfLoginUser() const;
@@ -199,10 +203,10 @@ inline void TActionController::setStatusCode(int code)
     _statCode = code;
 }
 
-inline QString TActionController::flash(const QString &name) const
-{
-    return _flashVars.value(name).toString();
-}
+// inline QString TActionController::flash(const QString &name) const
+// {
+//     return _flashVars.value(name).toString();
+// }
 
 inline QByteArray TActionController::contentType() const
 {

@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     ViewConverter conv(viewDir, outputDir, createProFile);
     QString templateSystem = devSetting.value("TemplateSystem").toString();
     if (templateSystem.isEmpty()) {
-        templateSystem = appSetting.value("TemplateSystem", "Erb").toString();
+        templateSystem = appSetting.value("TemplateSystem", "erb").toString();
     }
 
     res = conv.convertView(templateSystem);

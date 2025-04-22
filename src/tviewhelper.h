@@ -168,9 +168,13 @@ public:
 
     QString styleSheetTag(const QString &src, bool withTimestamp = true, const THtmlAttribute &attributes = THtmlAttribute()) const;
 
+    QString viteStyleSheetTag(const QString &src, const THtmlAttribute &attributes = THtmlAttribute()) const;
+
     QString scriptTag(const QString &src, const THtmlAttribute &attributes) const;
 
     QString scriptTag(const QString &src, bool withTimestamp = true, const THtmlAttribute &attributes = THtmlAttribute()) const;
+
+    QString viteScriptTag(const QString &name, const THtmlAttribute &attributes) const;
 
     QString tag(const QString &name, const THtmlAttribute &attributes);
 
@@ -196,6 +200,8 @@ public:
 
     THtmlAttribute a(const QString &key, const QString &value) const;
     THtmlAttribute a() const { return THtmlAttribute(); }
+
+    QString databaseEnvironment() const;
 
     void clear();
 

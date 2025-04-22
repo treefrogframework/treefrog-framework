@@ -1,14 +1,16 @@
 #pragma once
+#include "generator.h"
 #include <QDir>
 #include <QPair>
 #include <QStringList>
 #include <QVariant>
 
 
-class OtamaGenerator {
+class OtamaGenerator : public Generator {
 public:
     OtamaGenerator(const QString &view, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int autoValIdx);
-    bool generate(const QString &dstDir) const;
+    virtual ~OtamaGenerator() {}
+    bool generate(const QString &dstDir) const override;
 
 protected:
     QStringList generateViews(const QString &dstDir) const;

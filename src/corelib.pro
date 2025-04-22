@@ -412,6 +412,7 @@ linux-* {
   SOURCES += tthreadapplicationserver_linux.cpp
   SOURCES += tredisdriver_linux.cpp
   SOURCES += tmemcacheddriver_linux.cpp
+  SOURCES += tsharedmemory_linux.cpp
 }
 
 # For Mac
@@ -420,6 +421,7 @@ macx {
   SOURCES += tthreadapplicationserver_qt.cpp
   SOURCES += tredisdriver_qt.cpp
   SOURCES += tmemcacheddriver_qt.cpp
+  SOURCES += tsharedmemory_macx.cpp
 }
 
 # For UNIX
