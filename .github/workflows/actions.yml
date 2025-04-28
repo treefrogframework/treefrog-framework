@@ -14,7 +14,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake yarn
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -69,7 +69,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake yarn
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -124,7 +124,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake yarn
     - name: qmake version
       run: |
         sudo rm -f /usr/bin/qmake
@@ -179,7 +179,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq
+        brew install qt6 jq yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-debug
@@ -229,7 +229,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4
+        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
@@ -273,7 +273,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4
+        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
@@ -317,7 +317,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4
+        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
