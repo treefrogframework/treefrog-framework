@@ -126,7 +126,7 @@ constexpr auto INDEX_VUE_TEMPLATE =
     "      <tr v-for=\"item in items\">\n"
     "%td%"
     "        <td>\n"
-    "          <a :href=\"`/%varName%/show/${item.id}`\">Show</a> <a :href=\"`/%varName%/save/${item.id}`\">Edit</a> <a href=\"#\" @click.prevent=\"postRemove(`/%varName%/remove/${item.id}`)\">Remove</a>\n"
+    "          <a :href=\"`/%varName%/show/${item.%pkVarName%}`\">Show</a> <a :href=\"`/%varName%/save/${item.%pkVarName%}`\">Edit</a> <a href=\"#\" @click.prevent=\"postRemove(`/%varName%/remove/${item.%pkVarName%}`)\">Remove</a>\n"
     "        </td>\n"
     "      </tr>\n"
     "    </tbody>\n"
@@ -161,7 +161,7 @@ constexpr auto SHOW_VUE_TEMPLATE =
     "  <p style=\"color: red\">{{ error }}</p>\n"
     "%showitems%"
     "  <br>\n"
-    "  <a :href=\"`/%varName%/save/${item.id}`\">Edit</a> |\n"
+    "  <a :href=\"`/%varName%/save/${item.%pkVarName%}`\">Edit</a> |\n"
     "  <a href=\"/%varName%/index\">Back</a>\n"
     "</template>\n"
     "\n"
@@ -213,14 +213,14 @@ constexpr auto SAVE_VUE_TEMPLATE =
     "<template>\n"
     "  <h1>Editing %caption%</h1>\n"
     "  <p style=\"color: red\">{{ error }}</p>\n"
-    "  <form :action=\"`/%varName%/save/${item.id}`\" method=\"post\">\n"
+    "  <form :action=\"`/%varName%/save/${item.%pkVarName%}`\" method=\"post\">\n"
     "    <input type=\"hidden\" name=\"authenticity_token\" :value=\"token\" />\n"
     "%edititems%"
     "    <p>\n"
     "      <input type=\"submit\" value=\"Save\" />\n"
     "    </p>\n"
     "  </form>\n"
-    "  <a :href=\"`/%varName%/show/${item.id}`\">Show</a> |\n"
+    "  <a :href=\"`/%varName%/show/${item.%pkVarName%}`\">Show</a> |\n"
     "  <a href=\"/%varName%/index\">Back</a>\n"
     "</template>\n"
     "\n"
@@ -317,6 +317,7 @@ bool ViteVueGenerator::generate(const QString &dstDir) const
         {"varName", varName},
         {"th", th},
         {"td", td},
+        {"pkVarName", pkVarName},
         {"showitems", showitems},
         {"entryitems", entryitems},
         {"edititems", edititems},

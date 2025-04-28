@@ -20,9 +20,7 @@ row_count()
 # Cleanup
 cleanup()
 {
-  # Cleanup
-  cd $APPROOT
-  $TREEFROG -k abort >/dev/null 2>&1
+  $TREEFROG -k abort $APPROOT >/dev/null 2>&1
 
   cd $BASEDIR
   rm -rf $WORKDIR
@@ -33,11 +31,11 @@ testcase()
 {
   # Start Check
   cd $APPROOT
-  $TREEFROG -e dev -p $PORT -d || exit
+  $TREEFROG -p $PORT -d || exit
   sleep 1
   $TREEFROG -k stop || exit
   sleep 1
-  $TREEFROG -e dev -p $PORT -d || exit
+  $TREEFROG -p $PORT -d || exit
   sleep 1
 
   # GET method
@@ -84,72 +82,85 @@ testcase()
   $TREEFROG -k stop || exit
 }
 
+replace()
+{
+  [ ! -f "$2" ] && return
+  sed -e "$1" "$2" > "$2".$$
+  mv -f "$2".$$ "$2"
+}
+
+test_app()
+{
+  cd $BASEDIR
+  if [ -d "$APPNAME" ]; then
+    $TREEFROG -k abort $APPNAME
+    rm -rf $APPNAME
+  fi
+
+  # New application
+  $TSPAWN new $APPNAME $1
+  sqlite3 $DBFILE < create_blog_table.sql || exit
+
+  # Frontend
+  if [ "$2" = "with_vite+vue" ]; then
+    cd $APPROOT
+    yarn create vite frontend --template vue || exit
+    cp ../vite.config.js frontend/
+    cp ../main.js frontend/src/
+    cd frontend
+    yarn || exit
+  fi
+
+  cd $APPROOT
+  $TSPAWN --show-tables || exit
+  $TSPAWN s blog || exit
+  $TSPAWN s food || exit
+  $TSPAWN ms fuga || exit
+  $TSPAWN w foo || exit
+  $TSPAWN a book || exit
+  replace "s|\[product\]|\[prod\]|" config/database.ini
+  replace "s|\[dev\]|\[product\]|" config/database.ini
+
+  if [ "$2" = "with_vite+vue" ]; then
+    cd $APPROOT/frontend
+    yarn build --emptyOutDir || exit
+  fi
+
+  # QMake build check
+  cd $APPROOT
+  qmake -r || exit
+  make -j4
+  make || exit
+  $TREEFROG --show-routes || exit
+  $TREEFROG --settings || exit
+
+  # Test
+  testcase
+
+  cd $APPROOT
+  rm -f lib/*
+  make distclean
+
+  # CMake build check
+  cd $APPROOT
+  cmake --version
+  cmake -S . -B build
+  make -j4 -C build
+  make -C build || exit
+
+  cd $APPROOT
+  rm -f lib/*
+
+  cleanup
+}
+
+
 ## Main ##
 trap 'cleanup' 2 3 15 EXIT
 
-# Create app
-cd $BASEDIR
-if [ -d "$APPNAME" ]; then
-  $TREEFROG -k abort $APPNAME
-  rm -rf $APPNAME
-fi
-
-# SQL
-$TSPAWN new $APPNAME
-sqlite3 $DBFILE < create_blog_table.sql || exit
-
-# QMake Build
-cd $APPROOT
-$TSPAWN --show-tables || exit
-echo "n" | $TSPAWN s blog || exit
-echo "n" | $TSPAWN s food || exit
-echo "n" | $TSPAWN ms fuga || exit
-$TSPAWN w foo || exit
-$TSPAWN a book || exit
-qmake -r || exit
-make -j4
-make || exit
-$TREEFROG --show-routes || exit
-$TREEFROG --settings || exit
-
-# Test
-testcase
-cd $APPROOT
-rm -f lib/*
-make distclean
-
-# CMake Build
-cmake --version
-cmake -S . -B build
-make -j4 -C build
-make -C build || exit
-cd $APPROOT
-$TREEFROG --show-routes || exit
-$TREEFROG --settings || exit
-
-# SQL
-cd $BASEDIR
-sqlite3 $DBFILE < create_blog_table.sql || exit
-
-# Test
-testcase
-cd $APPROOT
-rm -f lib/*
-make distclean
-
-# Vue.js & QMake
-cd $APPROOT
-for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN s blog || exit
-for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN s food || exit
-for i in {0..5}; do sleep 1; echo "y"; done | $TSPAWN ms fuga || exit
-qmake -r || exit
-make -j4
-make || exit
-$TREEFROG --show-routes || exit
-$TREEFROG --settings || exit
-$TREEFROG -k abort
-rm -f lib/*
-make distclean
+test_app "--template erb"
+test_app "--template vue"
+test_app "--template vite+vue" with_vite+vue
 
 echo
 echo "Test completed."
