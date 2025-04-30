@@ -5,15 +5,15 @@ page_id: "070.0"
 
 ## View
 
-The role of view in a Web application is to generate an HTML document from a response. The developer creates each template for an HTML document to be embedded in a predetermined portion of the variable passed from the controller (model).
+The role of a view in a web application is to generate an HTML document and return it as a response. Developers create HTML templates in which variables passed from the controller are embedded in predefined locations. These templates can also include conditional branches and loops.
 
-There are two template systems so far adopted into the TreeFrog Framework. These are Otama and ERB. In both systems you can output the value dynamically using the template, and perform loops and conditional branching.
+TreeFrog allows the use of ERB as its template system. ERB is a system (or library) that lets you write program code directly within templates, similar to what is available in Ruby. While ERB is simple and easy to understand, it has the drawback of making it harder to preview or modify web designs.
 
-The ERB system, such as in Ruby, is used to embed the template code in the program (library). While there are benefits in that it is easy to understand as a mechanism, it is difficult to check or change the Web design.
+When code written with the template system is built, it is converted into C++ code, compiled, and turned into a single shared library (dynamic link library). Since it is C++, it runs with high performance.
 
-Otama is a template system that completely separates the presentation logic and the templates. The advantage is that checking or changing the Web Design is easy, and programmers and designers are better able to collaboration. The disadvantage is that a little more complex mechanism is required, and that there will be a slight learning cost.
+By delegating the frontend to a JavaScript framework, the backend implementation can be kept minimal. TreeFrog can generate a scaffold for Vite + Vue.
 
-Performance is the same in either. When the codes are built, the templates are compiled after it is converted to C++ code. One shared library (dynamic link library) is created, so both run faster. After that, it depends on user's description of the code.
+Although a template system called Otama, which separates templates from presentation logic, was implemented, it is now deprecated.
 
 * [To the chapter of ERB template system >>]({{ site.baseurl }}/en/user-guide/view/erb.html){:target="_blank"}
-* [To the chapter of Otama template system >>]({{ site.baseurl }}/en/user-guide/view/otama-template-system.html){:target="_blank"}
+* [To the chapter of Vite + Vue >>](/en/user-guide/view/vite+vue.html){:target="_blank"}
