@@ -7,7 +7,7 @@ rem
 
 set BASEDIR=%~dp0
 
-call "C:\Qt\6.7.3\msvc2022_64\bin\qtenv2.bat"
+call "C:\Qt\6.9.0\msvc2022_64\bin\qtenv2.bat"
 rem call "C:\Qt\6.5.3\msvc2019_64\bin\qtenv2.bat"
 
 set ARCH=amd64
