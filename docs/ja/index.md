@@ -40,13 +40,19 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2024/11/30  TreeFrog Framework バージョン2.10.0 （安定版）リリース <span style="color: red;">New!</span>
 
- - std::format スタイルのログ出力に対応, Tf::error(), Tf::warn(), Tf::info()など
- - tsharedmemory初期化の不具合修正.
- - このバージョン以降 Qt6 のみサポート (Qt5は非サポート).
+### 2025/5/5  TreeFrog Framework バージョン2.11.0 （安定版）リリース <span style="color: red;">New!</span>
+
+ - Vite + Vue のスキャフォールディングサポート（実験的）  [Vite+Vue](/ja/user-guide/view/vite+vue/)参照
+ - macOS の TSharedMemory クラスの不具合修正
 
  [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2024/11/30  TreeFrog Framework バージョン2.10.0 （安定版）リリース
+
+ - std::format スタイルのログ出力に対応, Tf::error(), Tf::warn(), Tf::info()など
+ - tsharedmemory初期化の不具合修正
+ - このバージョン以降 Qt6 のみサポート (Qt5は非サポート)
 
 ### 2024/6/15  TreeFrog Framework バージョン2.9.0 （安定版）リリース
 

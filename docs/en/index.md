@@ -37,14 +37,20 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+May 5, 2025
+### TreeFrog Framework version 2.11.0 (stable) release <span style="color: red;">New!</span>
+
+ - Vite + Vue scaffolding support (experimental), see [Vite+Vue](/en/user-guide/view/vite+vue/).
+ - Fix a bug of TSharedMemory on macos.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Nov. 30, 2024
-### TreeFrog Framework version 2.10.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.10.0 (stable) release
 
  - Supported for std::format style log output, Tf::error(), Tf::warn(), Tf::info(), etc.
  - Fix a bug of tsharedmemory initiation.
  - Only Qt6 supported after this version (Qt5 not supported).
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Jun. 16, 2024
 ### TreeFrog Framework version 2.9.0 (stable) release

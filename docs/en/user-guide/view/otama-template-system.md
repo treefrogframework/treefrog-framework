@@ -3,7 +3,7 @@ title: Otama Template System
 page_id: "070.020"
 ---
 
-## Otama Template System
+## Otama Template System (Deprecated)
 
 Otama is a template system that completely separates the presentation logic from the templates. It is a system made especially for the TreeFrog Framework.
 

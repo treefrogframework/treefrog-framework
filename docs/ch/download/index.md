@@ -3,7 +3,6 @@ title: Download
 page_id: "download.00"
 ---
 
-Sorry, under construction
+请参见英文页面
 
- [文件 >>](../user-guide/)
-
+ [文件 >>](/en/user-guide/)
