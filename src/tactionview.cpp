@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2019, AOYAMA Kazuharu
+/* Copyright (c) 2010-2025, AOYAMA Kazuharu
  * All rights reserved.
  *
  * This software may be used and distributed according to the terms of
@@ -72,68 +72,122 @@ QString TActionView::authenticityToken() const
 }
 
 /*!
+  Returns flash variants;
+*/
+QVariantMap TActionView::flashVariants() const
+{
+    static QVariantMap dummy;
+    return (actionController) ? actionController->flashVariants() : dummy;
+}
+
+/*!
+  \fn QString TActionView::echo(const THtmlAttribute &attr)
   Outputs the string of the HTML attribute \a attr to a view
   template.
 */
-QString TActionView::echo(const THtmlAttribute &attr)
-{
-    responsebody += attr.toString().trimmed();
-    return QString();
-}
 
 /*!
   \fn QString TActionView::echo(const QVariant &var)
   Outputs the variant variable \a var to a view template.
 */
-QString TActionView::echo(const QVariant &var)
-{
-    if (var.userType() == QMetaType::QUrl) {
-        responsebody += var.toUrl().toString(QUrl::FullyEncoded);
-    } else {
-        responsebody += var.toString();
-    }
-    return QString();
-}
 
 /*!
+  \fn QString TActionView::echo(const QVariantMap &map)
   Outputs the variantmap variable \a map to a view template.
 */
-QString TActionView::echo(const QVariantMap &map)
-{
-    responsebody += QJsonDocument::fromVariant(map).toJson(QJsonDocument::Compact);
-    return QString();
-}
 
 /*!
+  \fn QString TActionView::eh(const THtmlAttribute &attr)
   Outputs a escaped string of the HTML attribute \a attr to
   a view template.
 */
-QString TActionView::eh(const THtmlAttribute &attr)
-{
-    return echo(THttpUtility::htmlEscape(attr.toString().trimmed()));
-}
 
 /*!
   \fn QString TActionView::eh(const QVariant &var)
   Outputs a escaped string of the variant variable \a var
   to a view template.
 */
-QString TActionView::eh(const QVariant &var)
-{
-    if (var.userType() == QMetaType::QUrl) {
-        return echo(var.toUrl().toString(QUrl::FullyEncoded));
-    } else {
-        return echo(THttpUtility::htmlEscape(var.toString()));
-    }
-}
 
 /*!
+  \fn QString TActionView::eh(const QVariantMap &map)
   Outputs a escaped string of the variantmap variable \a map
   to a view template.
 */
-QString TActionView::eh(const QVariantMap &map)
+
+
+QString TActionView::fromValue(int n, int base)
 {
-    return echo(THttpUtility::htmlEscape(QJsonDocument::fromVariant(map).toJson(QJsonDocument::Compact)));
+    return QString::number(n, base);
+}
+
+
+QString TActionView::fromValue(long n, int base)
+{
+    return QString::number(n, base);
+}
+
+
+QString TActionView::fromValue(ulong n, int base)
+{
+    return QString::number(n, base);
+}
+
+
+QString TActionView::fromValue(qlonglong n, int base)
+{
+    return QString::number(n, base);
+}
+
+
+QString TActionView::fromValue(qulonglong n, int base)
+{
+    return QString::number(n, base);
+}
+
+
+QString TActionView::fromValue(double d, char format, int precision)
+{
+    return QString::number(d, format, precision);
+}
+
+
+QString TActionView::fromValue(const QJsonObject &object)
+{
+    return QJsonDocument(object).toJson(QJsonDocument::Compact);
+}
+
+
+QString TActionView::fromValue(const QJsonArray &array)
+{
+    return QJsonDocument(array).toJson(QJsonDocument::Compact);
+}
+
+
+QString TActionView::fromValue(const QJsonDocument &doc)
+{
+    return doc.toJson(QJsonDocument::Compact);
+}
+
+
+QString TActionView::fromValue(const THtmlAttribute &attr)
+{
+    return attr.toString().trimmed();
+}
+
+
+QString TActionView::fromValue(const QVariant &var)
+{
+    if (var.userType() == QMetaType::QUrl) {
+        return var.toUrl().toString(QUrl::FullyEncoded);
+    } else {
+        return var.toString();
+    }
+}
+
+
+QString TActionView::fromValue(const QVariantMap &map)
+{
+    return QJsonDocument::fromVariant(map).toJson(QJsonDocument::Compact);
 }
 
 /*!

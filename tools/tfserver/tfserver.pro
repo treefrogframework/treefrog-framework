@@ -5,6 +5,8 @@ CONFIG  += console
 CONFIG  -= app_bundle
 QT      += network sql xml qml
 QT      -= gui
+MOC_DIR = .obj/
+OBJECTS_DIR = .obj/
 
 # C++ Standards Support
 CONFIG += c++20

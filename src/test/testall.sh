@@ -8,11 +8,12 @@ cd $WORKDIR
 
 for e in `ls -d *`; do
   if [ -f "$e/Makefile" ]; then
-    make -C $e clean
+    make -k -C $e clean
   fi
 done
 
-[ -f Makefile ] && make distclean
+[ -f Makefile ] && make -k distclean
+rm -f Makefile
 
 qmake -r
 make -j8

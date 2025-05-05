@@ -4,6 +4,8 @@ VERSION  = 2.0.0
 CONFIG  += console
 CONFIG  -= app_bundle
 QT      -= gui
+MOC_DIR = .obj/
+OBJECTS_DIR = .obj/
 
 # C++ Standards Support
 CONFIG += c++20

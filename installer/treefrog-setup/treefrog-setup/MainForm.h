@@ -7,6 +7,7 @@
 
 //
 // リリースする際は50行目を編集！
+// app.rcのIDR_TREEFROG_QTxxx_MSIも修正！
 //
 
 
@@ -28,18 +29,17 @@ namespace treefrogsetup {
     /// <summary>
     /// MainForm class
     /// </summary>
-    public ref class MainForm : public System::Windows::Forms::Form
-    {
-    private: String^ msiName;
-    private: System::Windows::Forms::Button^  browseButton;
-    private: System::Windows::Forms::Button^  okButton;
-    private: System::Windows::Forms::Button^  cancelButton;
-    private: System::Windows::Forms::TextBox^  forderTextBox;
-    private: System::Windows::Forms::Label^  labeltop;
-    private: System::Windows::Forms::Label^  label;
-    private: System::Windows::Forms::Label^  label1;
-    private: System::Windows::Forms::PictureBox^  loadingImg;
-    private: System::ComponentModel::BackgroundWorker^  bgWorker;
+	public ref class MainForm : public System::Windows::Forms::Form {
+		private: String^ msiName;
+		private: System::Windows::Forms::Button^  browseButton;
+		private: System::Windows::Forms::Button^  okButton;
+		private: System::Windows::Forms::Button^  cancelButton;
+		private: System::Windows::Forms::TextBox^  forderTextBox;
+		private: System::Windows::Forms::Label^  labeltop;
+		private: System::Windows::Forms::Label^  label;
+		private: System::Windows::Forms::Label^  label1;
+		private: System::Windows::Forms::PictureBox^  loadingImg;
+		private: System::ComponentModel::BackgroundWorker^  bgWorker;
 
     private: 
         static initonly String^ TF_ENV_BAT = "C:\\TreeFrog\\" + VersionString() + "\\bin\\tfenv.bat";  // Base Directory
@@ -47,11 +47,11 @@ namespace treefrogsetup {
         //
         // バージョン
         //
-        static initonly String^ VERSION_STR6_NEW  = L"6.8";
-        static initonly String^ VERSION_STR6_PREV = L"6.7";
+        static initonly String^ VERSION_STR6_NEW  = L"6.9";
+        static initonly String^ VERSION_STR6_PREV = L"6.8";
 
-	    static initonly int RCID_NEW  = IDR_TREEFROG_QT608_MSI;
-	    static initonly int RCID_PREV = IDR_TREEFROG_QT607_MSI;
+        static initonly int RCID_NEW  = IDR_TREEFROG_QT609_MSI;
+        static initonly int RCID_PREV = IDR_TREEFROG_QT608_MSI;
 
     public:
         MainForm(void)
@@ -474,5 +474,5 @@ namespace treefrogsetup {
         {
             Application::Exit();
         }
-};
+	};
 }

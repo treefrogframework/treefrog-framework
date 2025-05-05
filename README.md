@@ -1,3 +1,5 @@
+![TreeFrog Framework](docs/assets/images/header2.png)
+
 # Small but Powerful and Efficient
 
 [![ActionsCI](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml/badge.svg)](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml)

@@ -1,16 +1,17 @@
 #pragma once
 #include "global.h"
+#include "generator.h"
 #include <QDir>
 #include <QPair>
 #include <QStringList>
 #include <QVariant>
 
 
-class ErbGenerator {
+class ErbGenerator : public Generator {
 public:
     ErbGenerator(const QString &view, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int autoValIdx);
     virtual ~ErbGenerator() {}
-    bool generate(const QString &dstDir) const;
+    bool generate(const QString &dstDir) const override;
 
 protected:
     virtual QString indexTemplate() const;

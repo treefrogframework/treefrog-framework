@@ -33,4 +33,3 @@ inline QString TTextView::toString()
 {
     return viewText;
 }
-

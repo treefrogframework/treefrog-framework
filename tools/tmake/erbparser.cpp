@@ -161,15 +161,17 @@ void ErbParser::parsePercentTag()
             QPair<QString, QString> p = parseEndPercentTag();
             if (!p.first.isEmpty()) {
                 if (p.second.isEmpty()) {
-                    srcCode += QLatin1String("responsebody += QVariant(");
+                    srcCode += QLatin1String("echo(");
                     srcCode += semicolonTrim(p.first);
-                    srcCode += QLatin1String(").toString();\n");
+                    srcCode += QLatin1String(");\n");
                 } else {
-                    srcCode += QLatin1String("{ QString ___s = QVariant(");
+                    srcCode += QLatin1String("{ QString ___s(fromValue(");
                     srcCode += semicolonTrim(p.first);
-                    srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? QVariant(");
+                    srcCode += QLatin1String(")); if (___s.isEmpty()) { echo(");
                     srcCode += semicolonTrim(p.second);
-                    srcCode += QLatin1String(").toString() : ___s; }\n");
+                    srcCode += QLatin1String("); } else { echo(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String("); }}\n");
                 }
             }
 
@@ -178,15 +180,17 @@ void ErbParser::parsePercentTag()
             QPair<QString, QString> p = parseEndPercentTag();
             if (!p.first.isEmpty()) {
                 if (p.second.isEmpty()) {
-                    srcCode += QLatin1String("responsebody += THttpUtility::htmlEscape(");
+                    srcCode += QLatin1String("eh(");
                     srcCode += semicolonTrim(p.first);
                     srcCode += QLatin1String(");\n");
                 } else {
-                    srcCode += QLatin1String("{ QString ___s = QVariant(");
+                    srcCode += QLatin1String("{ QString ___s(fromValue(");
                     srcCode += semicolonTrim(p.first);
-                    srcCode += QLatin1String(").toString(); responsebody += (___s.isEmpty()) ? THttpUtility::htmlEscape(");
+                    srcCode += QLatin1String(")); if (___s.isEmpty()) { eh(");
                     srcCode += semicolonTrim(p.second);
-                    srcCode += QLatin1String(") : THttpUtility::htmlEscape(___s); }\n");
+                    srcCode += QLatin1String("); } else { eh(");
+                    srcCode += semicolonTrim(p.first);
+                    srcCode += QLatin1String("); }}\n");
                 }
             }
         }

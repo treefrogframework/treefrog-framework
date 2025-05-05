@@ -155,10 +155,8 @@ void TActionContext::execute(THttpRequest &request)
                     tSystemDebug("Re-generate session ID: {}", (const char*)_currController->session().sessionId.data());
                 }
 
-                if (EnableCsrfProtectionModuleFlag && _currController->csrfProtectionEnabled()) {
-                    // Sets CSRF protection information
-                    TActionController::setCsrfProtectionInto(_currController->session());
-                }
+                // Sets CSRF protection information
+                TActionController::setCsrfProtectionInto(_currController->session());
             }
 
             // Database Transaction

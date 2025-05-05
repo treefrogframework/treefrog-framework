@@ -1,0 +1,12 @@
+# EditorConfig is awesome: http://EditorConfig.org
+root = true
+
+[*.{cpp,h}]
+charset = shift_jis
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+
+[*.wxs]
+end_of_line = crlf
+

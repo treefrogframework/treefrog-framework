@@ -60,7 +60,7 @@ if /i "%Platform%" == "x64" (
 
 cd /D %BASEDIR%
 rd /Q /S %APPNAME% >nul 2>nul
-tspawn new %APPNAME%
+tspawn new %APPNAME% --template erb
 if "%SQLITE%" == "" (
   echo;
   echo sqlite.exe command not found.
@@ -70,7 +70,7 @@ if "%SQLITE%" == "" (
 "%SQLITE%" %DBFILE% < create_blog_table.sql
 
 cd %APPDIR%
-echo n | tspawn s blog
+tspawn s blog
 tspawn w foo
 
 :: Test in debug mode

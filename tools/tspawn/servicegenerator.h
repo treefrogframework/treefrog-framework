@@ -1,15 +1,16 @@
 #pragma once
+#include "generator.h"
 #include <QDir>
 #include <QPair>
 #include <QString>
 #include <QVariant>
 
 
-class ServiceGenerator {
+class ServiceGenerator : public Generator {
 public:
     ServiceGenerator(const QString &service, const QList<QPair<QString, QMetaType::Type>> &fields, int pkIdx, int lockRevIdx);
     ~ServiceGenerator() { }
-    bool generate(const QString &dstDir) const;
+    bool generate(const QString &dstDir) const override;
 
 private:
     virtual QString headerFileTemplate() const;

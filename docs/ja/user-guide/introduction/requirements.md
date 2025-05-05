@@ -8,7 +8,7 @@ page_id: "010.010"
 ### 実行環境
 
 * Windows, Linux, macOS または UNIX系OS
-* Qt バージョン5.4以降  -  [The Qt Company](https://www.qt.io/)
+* Qt バージョン6.2以降  -  [The Qt Company](https://www.qt.io/)
 
 ### 開発環境
 

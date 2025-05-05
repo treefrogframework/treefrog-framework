@@ -154,16 +154,12 @@ SQLite の SQL ドライバはあらかじめ組み込まれているので、�
 
 ## テンプレートシステムの指定
 
-TreeFrog Framework では、テンプレートシステムとして ERB と Otama のどちらかを指定します。
-_development.ini_ ファイルにある TemplateSystem パラメータに設定します。
+TreeFrog Framework では、デフォルトのテンプレートシステムとして ERB が選択されます。
+_development.ini_ ファイルにある TemplateSystem パラメータに設定されます。
 
 ```
  TemplateSystem=ERB
-   または
- TemplateSystem=Otama
 ```
-
-デフォルトでは ERB が指定されます。
 
 ## 作ったテーブルからコードを自動生成
 
@@ -190,12 +186,8 @@ tspawn の オプションによって、コントローラだけあるいはモ
 
 ### Vue.js サポート
 
-バージョン 2 以降、[vue.js](https://vuejs.org/) を使用したビューを生成することを選択することが可能です。
-
-```
-  :
- Create sources for vue.js? [y/n] y    ← yを入力
-```
+[vue.js](https://vuejs.org/){:target="_blank"} を使用したビューを生成することが可能です。
+[Vite + Vue の章](/ja/user-guide/view/vite+vue.html){:target="_blank"} を参照してください。
 
 ### 参考：tspawn コマンドヘルプ
 
@@ -553,9 +545,9 @@ bool BlogService::remove(int id)
 
 ## ビューの仕組み
 
-TreeFrog では、今のところ２つのテンプレートシステムを採用しています。ERB と 独自システム（Otama と呼んでいます）です。Rails などで知られているとおり、ERB は HTML にコードを埋め込むものです。
+TreeFrog では、ERB テンプレートシステムを採用しています。Rails などで知られているとおり、コードを埋め込みます。
 
-ジェネレータで自動生成されるデフォルトのビューは ERB のファイルです。index.erb の中身を見てみましょう。<br>
+index.erb の中身を見てみましょう。<br>
 ご覧のように <% .. %> で囲まれた部分に C++コードを書きます。index アクションから render メソッドが呼び出されると、この index.erb の内容がレスポンスとして返されます。
 
 ```
@@ -593,80 +585,6 @@ TreeFrog では、今のところ２つのテンプレートシステムを採�
 </table>
 ```
 
-**もう１つのテンプレートシステムも見てみましょう**
-
-Otama はテンプレートとプレゼンテーションロジックを完全に分離したテンプレートシステムです。HTML テンプレートには完全な HTML を記述し、動的に書き換えたい部分の要素（開始タグ）に「マーク」をつけます。プレゼンテーションロジックファイルには、その「マーク」に関連づけてロジック（C++コード）を記述します。
-
-次の例は、テンプレートシステムに Otama を指定した時にジェネレータによって生成されるファイルです。ファイルを見ると分かりますが、HTML(バージョン 5)に準拠しているので、今時のブラウザで開けばデザインは全く崩れません。
-
-```
-<!DOCTYPE HTML>
-<html>
-<head>
-  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title data-tf="@head_title"></title>
-</head>
-<body>
-<h1>Listing Blog</h1>
-<a href="#" data-tf="@link_to_entry">New entry</a><br />
-<br />
-<table border="1" cellpadding="5" style="border: 1px #d0d0d0 solid; border-collapse: collapse;">
-  <tr>
-    <th>ID</th>
-    <th>Title</th>
-    <th>Body</th>
-    <th></th>
-  </tr>
-  <tr data-tf="@for">                  ← @for という「マーク」。以下同様。
-    <td data-tf="@id"></td>
-    <td data-tf="@title"></td>
-    <td data-tf="@body"></td>
-    <td>
-      <a data-tf="@linkToShow">Show</a>
-      <a data-tf="@linkToEdit">Edit</a>
-      <a data-tf="@linkToRemove">Remove</a>
-    </td>
-  </tr>
-</table>
-</html>
-```
-
-「マーク」をつけるために data-tf というカスタム属性を使っています。HTML5 でいうところの Custom Data Attribute のことです。その値の"@"で始まっている文字列が「マーク」です。
-
-次に、プレゼンテーションロジックに該当する index.otm を見てみましょう。<br>
-上記のテンプレートで宣言されたマークに、ロジックが関連づけられています。マークから空行までが１セットです。ロジックの部分はほぼ C++ コードです。<br>
-関連づけには演算子（~= とか :== など）も使われています。この演算子によって、振る舞いが変わります（詳細は各章で）。
-
-```c++
-#include "blog.h"    ← これは C++ コードそのまま。blog.h をインクルード
-@head_title ~= controller()->controllerName() + ": " + controller()->actionName()
-
-@for :
-tfetch(QList<Blog>, blogList);    /* コントローラから渡されたデータを使う宣言 */
-for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
-    const Blog &i = it.next();          /* i は Blog オブジェクトの参照 */
-    %%        /* ループ(for文)するときのお決まりで、その要素と子要素を繰り返す */
-}
-
-@id ~= i.id()   /* @id というマークのある要素のコンテントに i.id() の結果を入れる */
-
-@title ~= i.title()
-
-@body ~= i.body()
-
-@linkToShow :== linkTo("Show", urla("show", i.id()))  /* その要素と子要素を linkTo() の結果で置き換える */
-
-@linkToEdit :== linkTo("Edit", urla("edit", i.id()))
-
-@linkToRemove :== linkTo("Remove", urla("remove", i.id()), Tf::Post, "confirm('Are you sure?')")
-```
-
-簡単に Otama 演算子を説明します。<br>
-~ (チルダ)は、右辺の結果を、マークされた要素のコンテントに設定します。<br>
-= は、HTML エスケープして出力します。<br>
-従って、~= は右辺の結果を HTML エスケープし、要素のコンテントに設定します。HTML エスケープしたくなかったら、~== を使います。<br>
-また、: (コロン)は、マークされた要素および子要素をその右辺の結果で置き換えます。従って、:== は HTML エスケープせずに要素を置き換えます。
-
 ### サービスまたはコントローラからビューへのデータの引き渡し
 
 サービスで texport されたデータ（オブジェクト）をビューで使う場合は、tfetch メソッドで宣言する必要があります。引数には、変数の型と変数名を指定します。すると、指定された変数は texport される直前の状態と同じになるので、通常の変数と全く同じように使えます。上記のプレゼンテーションロジックの中で、実際そのように使われてます。<br>
@@ -682,9 +600,7 @@ for (QListIterator<Blog> it(blogList); it.hasNext(); ) {
   tfetch(int, foo);
 ```
 
-※ ２つ以上の変数に対しそれぞれ texport をコールすれば、ビューに引き渡すことができます
-
-Otama システムは、これらテンプレートファイルとプレゼンテーションファイルを元に C++ コードを生成します。内部的には、tmake がそれを処理しています。その後、コードはコンパイルされ、ビューとして１つの共有ライブラリになります。なので、動作は非常に高速です。
+※ ２つ以上の変数を引き渡したい場合はそれぞれ texport をコールすれば、ビューに引き渡すことができます
 
 #### HTML 用語解説
 

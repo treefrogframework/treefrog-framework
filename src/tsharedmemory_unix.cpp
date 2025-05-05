@@ -12,26 +12,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <pthread.h>
 #include <time.h>
-
-struct header_t {
-    pthread_rwlock_t rwlock;
-    uint lockcounter {0};
-};
-
-
-static void rwlock_init(pthread_rwlock_t *rwlock)
-{
-    pthread_rwlockattr_t attr;
-
-    int res = pthread_rwlockattr_init(&attr);
-    Q_ASSERT(!res);
-    res = pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-    Q_ASSERT(!res);
-    res = pthread_rwlock_init(rwlock, &attr);
-    Q_ASSERT(!res);
-}
 
 
 TSharedMemory::TSharedMemory(const QString &name) :
@@ -52,17 +33,12 @@ TSharedMemory::~TSharedMemory()
 
 bool TSharedMemory::create(size_t size)
 {
-    static const header_t INIT_HEADER = []() {
-        static header_t header;
-        rwlock_init(&header.rwlock);
-        return header;
-    }();
-
     if (_ptr || size == 0 || _name.isEmpty()) {
         return false;
     }
 
     struct stat st;
+    header_t *header = nullptr;
 
     // Creates shared memory
     _fd = shm_open(qUtf8Printable(_name), O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR);
@@ -90,7 +66,9 @@ bool TSharedMemory::create(size_t size)
         goto error;
     }
 
-    std::memcpy(_ptr, &INIT_HEADER, sizeof(INIT_HEADER));
+    header = new (_ptr) header_t{};
+    initRwlock(header);
+
     _size = size;
     tSystemDebug("SharedMemory created.  name:{} size:{}", qUtf8Printable(_name), (qulonglong)_size);
     return true;
@@ -111,6 +89,7 @@ error:
 
 void TSharedMemory::unlink()
 {
+    releaseRwlock((header_t *)_ptr);
     shm_unlink(qUtf8Printable(_name));
     tSystemDebug("SharedMemory unlinked.  name:{}", qUtf8Printable(_name));
 }
@@ -176,6 +155,7 @@ bool TSharedMemory::detach()
 
     _ptr = nullptr;
     _size = 0;
+    tSystemDebug("SharedMemory detached.  name:{}", qUtf8Printable(_name));
     return true;
 }
 
@@ -201,74 +181,4 @@ QString TSharedMemory::name() const
 size_t TSharedMemory::size() const
 {
     return _size;
-}
-
-
-bool TSharedMemory::lockForRead()
-{
-#ifdef Q_OS_LINUX
-    struct timespec timeout;
-    header_t *header = (header_t *)_ptr;
-
-    while (pthread_rwlock_tryrdlock(&header->rwlock) == EBUSY) {
-        uint cnt = header->lockcounter;
-        timespec_get(&timeout, TIME_UTC);
-        timeout.tv_sec += 1;  // 1sec
-
-        int res = pthread_rwlock_timedrdlock(&header->rwlock, &timeout);
-        if (!res) {
-            // success
-            break;
-        } else {
-            if (res == ETIMEDOUT && header->lockcounter == cnt) {
-                // resets rwlock object
-                rwlock_init(&header->rwlock);
-            }
-        }
-    }
-    header->lockcounter++;
-    return true;
-#else
-    header_t *header = (header_t *)_ptr;
-    return pthread_rwlock_rdlock(&header->rwlock) == 0;
-#endif
-}
-
-
-bool TSharedMemory::lockForWrite()
-{
-#ifdef Q_OS_LINUX
-    struct timespec timeout;
-    header_t *header = (header_t *)_ptr;
-
-    while (pthread_rwlock_trywrlock(&header->rwlock) == EBUSY) {
-        uint cnt = header->lockcounter;
-        timespec_get(&timeout, TIME_UTC);
-        timeout.tv_sec += 1;  // 1sec
-
-        int res = pthread_rwlock_timedwrlock(&header->rwlock, &timeout);
-        if (!res) {
-            // success
-            break;
-        } else {
-            if (res == ETIMEDOUT && header->lockcounter == cnt) {
-                // resets rwlock object
-                rwlock_init(&header->rwlock);
-            }
-        }
-    }
-    header->lockcounter++;
-    return true;
-#else
-    header_t *header = (header_t *)_ptr;
-    return pthread_rwlock_wrlock(&header->rwlock) == 0;
-#endif
-}
-
-
-bool TSharedMemory::unlock()
-{
-    header_t *header = (header_t *)_ptr;
-    pthread_rwlock_unlock(&header->rwlock);
-    return true;
 }
