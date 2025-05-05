@@ -43,7 +43,7 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ### 2025/5/5  TreeFrog Framework バージョン2.11.0 （安定版）リリース <span style="color: red;">New!</span>
 
- - Vite + Vue のスキャフォールディングサポート（実験的）  [Vite+Vue](/ja/user-guide/view/vite+vue/)参照
+ - Vite + Vue のスキャフォールディングサポート（実験的）  [Vite+Vue](/ja/user-guide/view/vite+vue.html)参照
  - macOS の TSharedMemory クラスの不具合修正
 
  [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)

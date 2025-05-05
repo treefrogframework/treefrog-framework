@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.11.0
+ - Vite + Vue scaffolding support (experimental).
+ - Fix a bug of TSharedMemory on macos.
+
 ## 2.10.0
  - Supported for std::format style log output, Tf::error(), Tf::warn(), Tf::info(), etc.
  - Fix a bug of tsharedmemory initiation.
