@@ -58,9 +58,9 @@ jobs:
         make -j4
         ./tmaketest.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-ubuntu-sharedlink:
     runs-on: ubuntu-24.04
@@ -113,9 +113,9 @@ jobs:
         make -j4
         ./tmaketest.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-ubuntu22:
     runs-on: ubuntu-22.04
@@ -168,9 +168,9 @@ jobs:
         make -j4
         ./tmaketest.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos:
     runs-on: macos-latest
@@ -218,9 +218,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos-sharedlink:
     runs-on: macos-latest
@@ -262,9 +262,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos14:
     runs-on: macos-14
@@ -306,9 +306,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos13:
     runs-on: macos-13
@@ -350,9 +350,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-windows-qt68-msvc2022:
     runs-on: windows-latest
@@ -405,9 +405,9 @@ jobs:
         nmake
         nmake install
     - name: Release test
-      working-directory: tools\test\releasetest
+      working-directory: tools\test
       run: |
-        .\releasetest.bat
+        testall.bat
 
   build-windows-qt68-msvc2019:
     runs-on: windows-latest
@@ -457,9 +457,9 @@ jobs:
         nmake
         nmake install
     - name: Release test
-      working-directory: tools\test\releasetest
+      working-directory: tools\test
       run: |
-        .\releasetest.bat
+        testall.bat
 
   build-windows-qt65-msvc2019:
     runs-on: windows-latest
@@ -510,6 +510,6 @@ jobs:
         nmake
         nmake install
     - name: Release test
-      working-directory: tools\test\releasetest
+      working-directory: tools\test
       run: |
-        .\releasetest.bat
+        testall.bat
