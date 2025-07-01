@@ -229,7 +229,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
@@ -273,7 +273,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
@@ -317,7 +317,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
