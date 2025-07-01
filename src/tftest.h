@@ -27,7 +27,6 @@
         public:                                                                                                        \
             Thread() : TActionThread(0), returnCode(0) { }                                                             \
             volatile int returnCode;                                                                                   \
-                                                                                                                       \
         protected:                                                                                                     \
             virtual void run()                                                                                         \
             {                                                                                                          \
@@ -56,7 +55,6 @@
         Thread thread;                                                                                                 \
         thread.start();                                                                                                \
         thread.wait();                                                                                                 \
-        _exit(thread.returnCode);                                                                                      \
         return thread.returnCode;                                                                                      \
     }
 

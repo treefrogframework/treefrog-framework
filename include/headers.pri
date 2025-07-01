@@ -199,6 +199,7 @@ HEADER_FILES += tjsinstance.h
 HEADER_FILES += treactcomponent.h
 HEADER_FILES += tmemcached.h
 HEADER_FILES += tmemcacheddriver.h
+HEADER_FILES += tsystemlogger.h
 HEADER_FILES += tstdoutsystemlogger.h
 HEADER_FILES += tstderrsystemlogger.h
 

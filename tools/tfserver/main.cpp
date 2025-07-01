@@ -333,6 +333,6 @@ finish:
     Tf::releaseSystemLogger();
 
 end:
-    _exit(ret);
+    //_exit(ret);
     return ret;
 }

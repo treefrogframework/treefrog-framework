@@ -133,14 +133,14 @@ static QList<QPair<QString, QMetaType::Type>> getFieldList(const QString &filePa
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("file open error: %s", qUtf8Printable(filePath));
-        _exit(1);
+        std::exit(1);
     }
 
     QString src = QString::fromUtf8(file.readAll().data());
     auto stmatch = rxstart.match(src, 0);
     if (!stmatch.hasMatch()) {
         qCritical("parse error");
-        _exit(1);
+        std::exit(1);
     }
 
     int pos = stmatch.capturedEnd();
@@ -169,7 +169,7 @@ bool MongoObjGenerator::updateMongoObject(const QString &path)
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("file open error: %s", qUtf8Printable(path));
-        _exit(1);
+        std::exit(1);
     }
 
     QString src = QString::fromUtf8(file.readAll().data());
