@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 CONFIG  += testcase
-SUBDIRS  = htmlescape httpheader hmac htmlparser
+SUBDIRS  = htmlescape httpheader htmlparser
 SUBDIRS += mailmessage multipartformdata  smtpmailer viewhelper paginator
 SUBDIRS += fieldnametovariablename rand urlrouter urlrouter2
 SUBDIRS += buildtest stack queue forlist
