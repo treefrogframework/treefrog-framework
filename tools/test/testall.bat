@@ -11,10 +11,21 @@ if exist Makefile (
   %MAKE% distclean
 )
 
-
 for /d %%d in (*) do (
   set TESTNAME=%%d
   echo ---------------------------------------------------------------------
+
+  cd %%d
+  if exist Makefile (
+    %MAKE% distclean
+  )
+  if exist %%d.pro (
+    qmake CONFIG+=debug
+    %MAKE%
+    if ERRORLEVEL 1 goto :build_error
+  )
+  cd ..
+
   if exist %%d\debug\%%d.exe (
     echo Testing %%d\debug\%%d.exe ...
 

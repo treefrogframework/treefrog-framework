@@ -350,6 +350,7 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
+      shell: cmd
       working-directory: tools/test
       run: |
         ./testall.sh
@@ -405,6 +406,7 @@ jobs:
         nmake
         nmake install
     - name: Release test
+      shell: cmd
       working-directory: tools\test
       run: |
         testall.bat
@@ -457,6 +459,7 @@ jobs:
         nmake
         nmake install
     - name: Release test
+      shell: cmd
       working-directory: tools\test
       run: |
         testall.bat
@@ -510,6 +513,7 @@ jobs:
         nmake
         nmake install
     - name: Release test
+      shell: cmd
       working-directory: tools\test
       run: |
         testall.bat
