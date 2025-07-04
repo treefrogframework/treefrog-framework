@@ -230,6 +230,7 @@ jobs:
       run: |
         which pkg-config || brew install pkg-config
         brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
@@ -274,6 +275,7 @@ jobs:
       run: |
         which pkg-config || brew install pkg-config
         brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
@@ -318,6 +320,7 @@ jobs:
       run: |
         which pkg-config || brew install pkg-config
         brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
