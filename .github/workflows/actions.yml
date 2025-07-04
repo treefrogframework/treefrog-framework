@@ -356,7 +356,6 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      shell: cmd
       working-directory: tools/test
       run: |
         ./testall.sh
