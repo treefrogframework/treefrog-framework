@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.11.1
+ - Fixed a compilation error bug in tftest.h.
+ - Updated test macros.
+
 ## 2.11.0
  - Vite + Vue scaffolding support (experimental).
  - Fix a bug of TSharedMemory on macos.
