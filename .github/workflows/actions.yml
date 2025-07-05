@@ -58,9 +58,9 @@ jobs:
         make -j4
         ./tmaketest.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-ubuntu-sharedlink:
     runs-on: ubuntu-24.04
@@ -113,9 +113,9 @@ jobs:
         make -j4
         ./tmaketest.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-ubuntu22:
     runs-on: ubuntu-22.04
@@ -168,9 +168,9 @@ jobs:
         make -j4
         ./tmaketest.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos:
     runs-on: macos-latest
@@ -218,9 +218,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos-sharedlink:
     runs-on: macos-latest
@@ -229,9 +229,10 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
     - name: configure for debug
       run: |
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
     - name: build for debug
       run: |
@@ -241,6 +242,7 @@ jobs:
         sudo make -C tools install
     - name: configure
       run: |
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
       run: |
@@ -262,9 +264,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos14:
     runs-on: macos-14
@@ -273,9 +275,10 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
     - name: configure for debug
       run: |
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
     - name: build for debug
       run: |
@@ -285,6 +288,7 @@ jobs:
         sudo make -C tools install
     - name: configure
       run: |
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
       run: |
@@ -306,9 +310,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-macos13:
     runs-on: macos-13
@@ -317,9 +321,10 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
     - name: configure for debug
       run: |
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
     - name: build for debug
       run: |
@@ -329,6 +334,7 @@ jobs:
         sudo make -C tools install
     - name: configure
       run: |
+        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
     - name: build
       run: |
@@ -350,9 +356,9 @@ jobs:
       run: |
         ./testall.sh
     - name: releasetest
-      working-directory: tools/test/releasetest
+      working-directory: tools/test
       run: |
-        ./releasetest
+        ./testall.sh
 
   build-windows-qt68-msvc2022:
     runs-on: windows-latest
@@ -405,9 +411,10 @@ jobs:
         nmake
         nmake install
     - name: Release test
-      working-directory: tools\test\releasetest
+      shell: cmd
+      working-directory: tools\test
       run: |
-        .\releasetest.bat
+        testall.bat
 
   build-windows-qt68-msvc2019:
     runs-on: windows-latest
@@ -457,9 +464,10 @@ jobs:
         nmake
         nmake install
     - name: Release test
-      working-directory: tools\test\releasetest
+      shell: cmd
+      working-directory: tools\test
       run: |
-        .\releasetest.bat
+        testall.bat
 
   build-windows-qt65-msvc2019:
     runs-on: windows-latest
@@ -510,6 +518,7 @@ jobs:
         nmake
         nmake install
     - name: Release test
-      working-directory: tools\test\releasetest
+      shell: cmd
+      working-directory: tools\test
       run: |
-        .\releasetest.bat
+        testall.bat

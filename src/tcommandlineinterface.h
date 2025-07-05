@@ -18,7 +18,6 @@
         public:                                                                                                     \
             Thread() : TActionThread(0), returnCode(0) { }                                                          \
             volatile int returnCode;                                                                                \
-                                                                                                                    \
         protected:                                                                                                  \
             virtual void run()                                                                                      \
             {                                                                                                       \

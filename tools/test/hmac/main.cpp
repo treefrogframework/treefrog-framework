@@ -1,4 +1,4 @@
-#include <QTest>
+#include <TfTest/TfTest>
 #include <QByteArray>
 #include <QMessageAuthenticationCode>
 #include <tsmtpmailer.h>

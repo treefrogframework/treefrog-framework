@@ -37,13 +37,19 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
-May 5, 2025
-### TreeFrog Framework version 2.11.0 (stable) release <span style="color: red;">New!</span>
+Jul. 5, 2025
+### TreeFrog Framework version 2.11.1 (stable) release <span style="color: red;">New!</span>
 
- - Vite + Vue scaffolding support (experimental), see [Vite+Vue](/en/user-guide/view/vite+vue/).
- - Fix a bug of TSharedMemory on macos.
+ - Fixed a compilation error bug in tftest.h.
+ - Updated test macros.
 
   [<i class="fas fa-download"></i> Download this version](/en/download/)
+
+May 5, 2025
+### TreeFrog Framework version 2.11.0 (stable) release
+
+ - Vite + Vue scaffolding support (experimental), see [Vite+Vue](/en/user-guide/view/vite+vue.html).
+ - Fix a bug of TSharedMemory on macos.
 
 Nov. 30, 2024
 ### TreeFrog Framework version 2.10.0 (stable) release

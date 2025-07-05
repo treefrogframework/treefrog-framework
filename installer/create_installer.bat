@@ -7,7 +7,7 @@
 :: 10行目、28行目、39行目を編集
 
 
-set VERSION=2.11.0
+set VERSION=2.11.1
 set QTBASE=C:\Qt
 set TFDIR=C:\TreeFrog\%VERSION%
 
@@ -25,7 +25,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\6.9.0\msvc2022_64\bin\qtenv2.bat"      6.9
+call :build_msi "%QTBASE%\6.9.1\msvc2022_64\bin\qtenv2.bat"      6.9
 
 :: Clear environment variables
 set VCToolsVersion=
