@@ -1,7 +1,7 @@
 FROM buildpack-deps:noble-curl
 LABEL maintainer="AOYAMA Kazuharu <a.kazuharu@gmail.com>"
 
-ENV TREEFROG_VERSION 2.11.0
+ENV TREEFROG_VERSION 2.11.1
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
