@@ -370,9 +370,9 @@ jobs:
         vs-version: '[17,18)'  # 17.xx
         msbuild-architecture: x64
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1.1
+      uses: jurplel/install-qt-action@v4
       with:
-        version:      6.8.0
+        version:      6.8
         host:         windows
         target:       desktop
         setup-python: false
@@ -421,9 +421,9 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1.1
+      uses: jurplel/install-qt-action@v4
       with:
-        version:      6.8.0
+        version:      6.8
         host:         windows
         target:       desktop
         setup-python: false
@@ -474,9 +474,9 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1.1
+      uses: jurplel/install-qt-action@v4
       with:
-        version:      6.5.2
+        version:      6.5
         host:         windows
         target:       desktop
         arch:         win64_msvc2019_64
