@@ -8,6 +8,10 @@
 <form action="{{ site.baseurl }}/ch/search.html" class="search-form-navi" method="get">
     <input type="text" class="search-box-navi" placeholder="" name="q">
     <input type="submit" class="search-button-navi" value="搜索">
+{% elsif page.url contains '/de/' %}
+<form action="{{ site.baseurl }}/de/search.html" class="search-form-navi" method="get">
+    <input type="text" class="search-box-navi" placeholder="" name="q">
+    <input type="submit" class="search-button-navi" value="Suche">
 {% else %}
 <form action="{{ site.baseurl }}/en/search.html" class="search-form-navi" method="get">
     <input type="text" class="search-box-navi" placeholder="" name="q">
@@ -22,24 +26,39 @@
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
     {% assign ja_url = url | replace: '/en/', '/ja/' %}
     {% assign ch_url = url | replace: '/en/', '/ch/' %}
+    {% assign ch_url = url | replace: '/en/', '/de/' %}
     <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
     <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+    <li><a href="{{ site.baseurl }}{{ de_url }}" class="language-link">Deutsch</a></li>
 {% elsif page.url contains '/ja/' %}
     <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">日本語 (Japanese)</a></li>
     {% assign en_url = url | replace: '/ja/', '/en/' %}
     {% assign ch_url = url | replace: '/ja/', '/ch/' %}
+    {% assign ch_url = url | replace: '/ja/', '/de/' %}
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
     <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+    <li><a href="{{ site.baseurl }}{{ de_url }}" class="language-link">Deutsch</a></li>
 {% elsif page.url contains '/ch/' %}
     <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
     {% assign en_url = url | replace: '/ch/', '/en/' %}
     {% assign ja_url = url | replace: '/ch/', '/ja/' %}
+    {% assign ch_url = url | replace: '/ch/', '/de/' %}
     <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
     <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}{{ de_url }}" class="language-link">Deutsch</a></li>
+{% elsif page.url contains '/de/' %}
+    <li><a href="{{ site.baseurl }}{{ page.url }}" class="language-link">Deutsch</a></li>
+    {% assign en_url = url | replace: '/de/', '/en/' %}
+    {% assign ja_url = url | replace: '/de/', '/ja/' %}
+    {% assign ja_url = url | replace: '/de/', '/ch/' %}
+    <li><a href="{{ site.baseurl }}{{ en_url }}" class="language-link">English</a></li>
+    <li><a href="{{ site.baseurl }}{{ ja_url }}" class="language-link">日本語 (Japanese)</a></li>
+    <li><a href="{{ site.baseurl }}{{ ch_url }}" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
 {% else %}  
     <li><a href="{{ site.baseurl }}/en/" class="language-link">English</a></li>
     <li><a href="{{ site.baseurl }}/ja/" class="language-link">日本語 (Japanese)</a></li>
     <li><a href="{{ site.baseurl }}/ch/" class="language-link">中文(简体) (Chinese-Simplified)</a></li>
+    <li><a href="{{ site.baseurl }}/de/" class="language-link">Deutsch</a></li>
 {% endif %}
 </ul>
 
@@ -51,6 +70,8 @@
     {% include generateDynamicMenu.html root="/ja/user-guide/" %}
 {% elsif page.url contains '/ch/' %}   
     {% include generateDynamicMenu.html root="/ch/user-guide/" %}
+{% elsif page.url contains '/de/' %}   
+    {% include generateDynamicMenu.html root="/de/user-guide/" %}
 {% else %} 
     {% include generateDynamicMenu.html root="/en/user-guide/" %}
 {% endif %}
