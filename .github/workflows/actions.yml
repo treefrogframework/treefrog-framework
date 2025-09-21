@@ -314,52 +314,6 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos13:
-    runs-on: macos-13
-    steps:
-    - uses: actions/checkout@main
-    - name: Homebrew
-      run: |
-        which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
-    - name: configure for debug
-      run: |
-        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
-        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
-    - name: build for debug
-      run: |
-        make -j4 -C src
-        sudo make -C src install
-        make -j4 -C tools
-        sudo make -C tools install
-    - name: configure
-      run: |
-        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
-        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
-    - name: build
-      run: |
-        make -j4 -C src
-        sudo make -C src install
-        make -j4 -C tools
-        sudo make -C tools install
-    - name: version
-      run: |
-        treefrog -v
-        tspawn --show-drivers
-    - name: brew install for test
-      run: |
-        brew install redis memcached
-        brew services start redis
-        brew services start memcached
-    - name: testall.sh
-      working-directory: src/test
-      run: |
-        ./testall.sh
-    - name: releasetest
-      working-directory: tools/test
-      run: |
-        ./testall.sh
-
   build-windows-qt68-msvc2022:
     runs-on: windows-latest
     steps:

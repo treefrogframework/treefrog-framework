@@ -12,16 +12,16 @@ class QSqlError;
 
 namespace std {
     template<>
-    struct std::formatter<QByteArray, char> : std::formatter<std::string, char> {
-        auto format(const QByteArray &ba, std::format_context &ctx) const {
-            return std::formatter<std::string, char>::format(ba.toStdString(), ctx);
+    struct formatter<QByteArray, char> : formatter<string, char> {
+        auto format(const QByteArray &ba, format_context &ctx) const {
+            return formatter<string, char>::format(ba.toStdString(), ctx);
         }
     };
 
     template<>
-    struct formatter<QString, char> : formatter<std::string, char> {
+    struct formatter<QString, char> : formatter<string, char> {
         auto format(const QString &str, format_context &ctx) const {
-            return std::formatter<std::string, char>::format(str.toStdString(), ctx);
+            return formatter<string, char>::format(str.toStdString(), ctx);
         }
     };
 }
