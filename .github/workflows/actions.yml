@@ -229,7 +229,7 @@ jobs:
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
+        brew install qt6 jq mongoc2 gflags glog lz4 yarn
     - name: configure for debug
       run: |
         export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
