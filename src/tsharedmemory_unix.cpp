@@ -70,11 +70,11 @@ bool TSharedMemory::create(size_t size)
     initRwlock(header);
 
     _size = size;
-    tSystemDebug("SharedMemory created.  name:{} size:{}", qUtf8Printable(_name), (qulonglong)_size);
+    tSystemDebug("SharedMemory created.  name:{} size:{}", _name, (qulonglong)_size);
     return true;
 
 error:
-    tSystemError("SharedMemory create error.  name:{} size:{} [{}:{}]", qUtf8Printable(_name), (qulonglong)size, __FILE__, __LINE__);
+    tSystemError("SharedMemory create error.  name:{} size:{} [{}:{}]", _name, (qulonglong)size, __FILE__, __LINE__);
 
     if (_fd > 0) {
         tf_close(_fd);
@@ -91,7 +91,7 @@ void TSharedMemory::unlink()
 {
     releaseRwlock((header_t *)_ptr);
     shm_unlink(qUtf8Printable(_name));
-    tSystemDebug("SharedMemory unlinked.  name:{}", qUtf8Printable(_name));
+    tSystemDebug("SharedMemory unlinked.  name:{}", _name);
 }
 
 
@@ -123,7 +123,7 @@ bool TSharedMemory::attach()
     }
 
     _size = st.st_size;
-    tSystemDebug("SharedMemory attached.  name:{} size:{}", qUtf8Printable(_name), (quint64)_size);
+    tSystemDebug("SharedMemory attached.  name:{} size:{}", _name, (quint64)_size);
     return true;
 
 error:
@@ -155,7 +155,7 @@ bool TSharedMemory::detach()
 
     _ptr = nullptr;
     _size = 0;
-    tSystemDebug("SharedMemory detached.  name:{}", qUtf8Printable(_name));
+    tSystemDebug("SharedMemory detached.  name:{}", _name);
     return true;
 }
 

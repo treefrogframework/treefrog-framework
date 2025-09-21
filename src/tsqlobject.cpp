@@ -243,7 +243,7 @@ bool TSqlObject::update()
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", objectName());
                 return false;
             }
 
@@ -270,7 +270,7 @@ bool TSqlObject::update()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        Tf::error("{}", qUtf8Printable(msg));
+        Tf::error("{}", msg);
         return false;
     }
 
@@ -425,7 +425,7 @@ bool TSqlObject::remove()
             if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", objectName());
                 return false;
             }
 
@@ -443,7 +443,7 @@ bool TSqlObject::remove()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        Tf::error("{}", qUtf8Printable(msg));
+        Tf::error("{}", msg);
         return false;
     }
     del.append(QLatin1String(pkName));
@@ -461,7 +461,7 @@ bool TSqlObject::remove()
                 sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
                 throw SqlException(msg, __FILE__, __LINE__);
             }
-            Tf::warn("Row was deleted by another transaction, {}", qUtf8Printable(tableName()));
+            Tf::warn("Row was deleted by another transaction, {}", tableName());
         }
         clear();
     }

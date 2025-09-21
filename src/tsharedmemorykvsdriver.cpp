@@ -75,10 +75,10 @@ bool TSharedMemoryKvsDriver::open(const QString &db, const QString &, const QStr
 
     _allocator = TSharedMemoryAllocator::attach(_name);
     if (_allocator) {
-        tSystemDebug("SharedMemory attach.  name:{}  size:{}", qUtf8Printable(_name), (quint64)_allocator->mapSize());
+        tSystemDebug("SharedMemory attach.  name:{}  size:{}", _name, (quint64)_allocator->mapSize());
         _size = _allocator->mapSize();
     } else {
-        tSystemError("SharedMemory attach error.  name:{}", qUtf8Printable(_name));
+        tSystemError("SharedMemory attach error.  name:{}", _name);
     }
     return true;
 }
@@ -144,7 +144,7 @@ void TSharedMemoryKvsDriver::initialize(const QString &db, const QString &option
     }
 
     if (size == 0) {
-        tSystemDebug("options: {}", qUtf8Printable(options));
+        tSystemDebug("options: {}", options);
         tSystemWarn("SharedMemory: Invalid memory size. Changed to 256MB.");
         size = 256 * 1024 * 1024;
     }

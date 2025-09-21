@@ -183,6 +183,30 @@ constexpr auto TF_SRC_REVISION = 3050;
 #include <algorithm>
 #ifdef TF_HAVE_STD_FORMAT  // std::format
 #include <format>
+
+namespace std {
+    template<>
+    struct formatter<QByteArray, char> : formatter<string, char> {
+        auto format(const QByteArray &ba, format_context &ctx) const {
+            return formatter<string, char>::format(ba.toStdString(), ctx);
+        }
+    };
+
+    template<>
+    struct formatter<QString, char> : formatter<string, char> {
+        auto format(const QString &str, format_context &ctx) const {
+            return formatter<string, char>::format(str.toStdString(), ctx);
+        }
+    };
+
+    template<class S1, class S2>
+    struct formatter<QStringBuilder<S1, S2>, char> : formatter<string, char> {
+        auto format(const QStringBuilder<S1, S2> &sb, format_context &ctx) const {
+            return formatter<string, char>::format(QString(sb).toStdString(), ctx);
+        }
+    };
+}
+
 #endif
 
 class TWebApplication;

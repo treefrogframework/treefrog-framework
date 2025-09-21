@@ -59,10 +59,10 @@ bool TApplicationServerBase::loadLibraries()
         for (auto &libname : libs) {
             auto lib = new QLibrary(libPath + libname);
             if (lib->load()) {
-                tSystemDebug("Library loaded: {}", qUtf8Printable(lib->fileName()));
+                tSystemDebug("Library loaded: {}", lib->fileName());
                 libsLoaded << lib;
             } else {
-                tSystemWarn("{}", qUtf8Printable(lib->errorString()));
+                tSystemWarn("{}", lib->errorString());
                 ret = false;
                 unloadLibraries();
                 break;
@@ -70,7 +70,7 @@ bool TApplicationServerBase::loadLibraries()
         }
 
         QStringList controllers = TActionController::availableControllers();
-        tSystemDebug("Available controllers: {}", qUtf8Printable(controllers.join(" ")));
+        tSystemDebug("Available controllers: {}", controllers.join(" "));
 
         if (ret) {
             loadedTimestamp = latestLibraryTimestamp();
@@ -86,7 +86,7 @@ void TApplicationServerBase::unloadLibraries()
 {
     for (auto lib : libsLoaded) {
         lib->unload();
-        tSystemDebug("Library unloaded: {}", qUtf8Printable(lib->fileName()));
+        tSystemDebug("Library unloaded: {}", lib->fileName());
     }
     libsLoaded.clear();
 }

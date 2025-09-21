@@ -8,26 +8,6 @@ class TSystemLogger;
 class TAccessLog;
 class QSqlError;
 
-#ifdef TF_HAVE_STD_FORMAT  // std::format
-
-namespace std {
-    template<>
-    struct formatter<QByteArray, char> : formatter<string, char> {
-        auto format(const QByteArray &ba, format_context &ctx) const {
-            return formatter<string, char>::format(ba.toStdString(), ctx);
-        }
-    };
-
-    template<>
-    struct formatter<QString, char> : formatter<string, char> {
-        auto format(const QString &str, format_context &ctx) const {
-            return formatter<string, char>::format(str.toStdString(), ctx);
-        }
-    };
-}
-
-#endif
-
 
 namespace Tf {
 T_CORE_EXPORT void setupSystemLogger(TSystemLogger *logger = nullptr);  // internal use

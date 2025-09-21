@@ -234,7 +234,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     }
                     _fileBuffer.resize(0);  // truncate
                     if (_readBuffer.length() > idx + 4) {
-                        tSystemDebug("fileBuffer name: {}", qUtf8Printable(_fileBuffer.fileName()));
+                        tSystemDebug("fileBuffer name: {}", _fileBuffer.fileName());
                         if (_fileBuffer.write(_readBuffer.data() + idx + 4, _readBuffer.length() - (idx + 4)) < 0) {
                             throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                         }

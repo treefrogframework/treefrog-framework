@@ -67,7 +67,7 @@ bool TMongoDriver::open(const QString &db, const QString &user, const QString &p
         _dbName = db;
         serverVersionNumber();  // Gets server version
     } else {
-        tSystemError("MongoDB client create error. Connection URI: {}", qUtf8Printable(uri));
+        tSystemError("MongoDB client create error. Connection URI: {}", uri);
     }
     return (bool)_mongoClient;
 }
@@ -386,7 +386,7 @@ QString TMongoDriver::serverVersion()
     bson_destroy(&rep);
 
     QString version = map.value("version").toString();
-    tSystemDebug("MongoDB server version: {}", qUtf8Printable(version));
+    tSystemDebug("MongoDB server version: {}", version);
     return version;
 }
 

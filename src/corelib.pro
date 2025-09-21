@@ -466,6 +466,8 @@ unix {
       # Shared link
       LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
       QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
+      LIBS += $$system("pkg-config --libs  openblas 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I  openblas 2>/dev/null")
     }
   }
 }

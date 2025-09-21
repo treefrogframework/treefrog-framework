@@ -197,7 +197,7 @@ void TActionContext::execute(THttpRequest &request)
                 QString canonicalPath = QUrl(QStringLiteral(".")).resolved(QUrl(path)).toString().mid(1);
                 QFile reqPath(Tf::app()->publicPath() + canonicalPath);
                 QFileInfo fi(reqPath);
-                tSystemDebug("canonicalPath : {}", qUtf8Printable(canonicalPath));
+                tSystemDebug("canonicalPath : {}", canonicalPath);
 
                 if (fi.isFile() && fi.isReadable()) {
                     // Check "If-Modified-Since" header for caching

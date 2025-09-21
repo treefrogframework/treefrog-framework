@@ -224,7 +224,7 @@ inline T TSqlORMapper<T>::findByPrimaryKey(const QVariant &pk)
 {
     int idx = T().primaryKeyIndex();
     if (idx < 0) {
-        tSystemDebug("Primary key not found, table name: {}", qUtf8Printable(T().tableName()));
+        tSystemDebug("Primary key not found, table name: {}", T().tableName());
         return T();
     }
 
@@ -383,7 +383,7 @@ inline void TSqlORMapper<T>::setSortOrder(const QString &column, Tf::SortOrder o
             sortColumns << qMakePair(column, order);
         } else {
             Tf::warn("Unable to set sort order : '{}' column not found in '{}' table",
-                qUtf8Printable(column), qUtf8Printable(obj.tableName()));
+                column, obj.tableName());
         }
     }
 }

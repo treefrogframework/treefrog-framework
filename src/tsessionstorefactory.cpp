@@ -67,9 +67,9 @@ static QMap<QString, TSessionStoreInterface *> *sessionStoreIfMap()
         for (auto &file : list) {
             QPluginLoader loader(dir.absoluteFilePath(file));
 
-            tSystemDebug("plugin library for session store: {}", qUtf8Printable(loader.fileName()));
+            tSystemDebug("plugin library for session store: {}", loader.fileName());
             if (!loader.load()) {
-                tSystemError("plugin load error: {}", qUtf8Printable(loader.errorString()));
+                tSystemError("plugin load error: {}", loader.errorString());
                 continue;
             }
 
@@ -78,7 +78,7 @@ static QMap<QString, TSessionStoreInterface *> *sessionStoreIfMap()
                 const QVariantList array = loader.metaData().value("MetaData").toObject().value("Keys").toArray().toVariantList();
                 for (auto &k : array) {
                     QString key = k.toString().toLower();
-                    tSystemInfo("Loaded session store plugin: {}", qUtf8Printable(key));
+                    tSystemInfo("Loaded session store plugin: {}", key);
                     ifMap->insert(key, iface);
                 }
             }

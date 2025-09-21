@@ -50,7 +50,7 @@ QJSValue TJSInstance::call(const QString &method, const QJSValueList &args)
 {
     if (isError()) {
         tSystemError("Uncaught exception at line {} : {}", property("lineNumber").toInt(),
-            qUtf8Printable(toString()));
+            toString());
         return QJSValue();
     }
 

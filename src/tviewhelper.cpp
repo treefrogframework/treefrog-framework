@@ -562,10 +562,10 @@ static QJsonObject readManifest(const QString &path)
         if (error.error == QJsonParseError::NoError) {
             json = jsonDoc.object();
         } else {
-            tSystemWarn("Manifest parse error [{}]", qUtf8Printable(path));
+            tSystemWarn("Manifest parse error [{}]", path);
         }
     } else {
-        tSystemWarn("Manifest file not found [{}]", qUtf8Printable(path));
+        tSystemWarn("Manifest file not found [{}]", path);
     }
     return json;
 }
@@ -626,7 +626,7 @@ QString TViewHelper::viteScriptTag(const QString &name, const THtmlAttribute &at
     QString src = manifestJson.value(name).toObject().value("file").toString();
 
     if (src.isEmpty()) {
-        tSystemWarn("'{}' not found in manifest [{}]", qUtf8Printable(name), MANIFEST_PATH);
+        tSystemWarn("'{}' not found in manifest [{}]", name, MANIFEST_PATH);
         src = name;
     } else {
         src = "/" + src;

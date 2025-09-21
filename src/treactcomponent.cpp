@@ -57,6 +57,6 @@ QString TReactComponent::renderToString(const QString &component)
     }
 
     QString func = QLatin1String("ReactDOMServer.renderToString(") + TJSLoader::compileJsx(component) + QLatin1String(");");
-    tSystemDebug("TReactComponent func: {}", qUtf8Printable(func));
+    tSystemDebug("TReactComponent func: {}", func);
     return context->evaluate(func).toString();
 }

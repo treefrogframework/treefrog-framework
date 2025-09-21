@@ -500,7 +500,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             QJsonParseError error;
             d->jsonData = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
-                tSystemWarn("Json data: {}\n error: {}\n at: {}", body.data(), qUtf8Printable(error.errorString()),
+                tSystemWarn("Json data: {}\n error: {}\n at: {}", body.data(), error.errorString(),
                     error.offset);
             }
         } else if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
@@ -508,7 +508,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
             d->multipartFormData = TMultipartFormData(body, boundary(), context);
             d->formItems = d->multipartFormData.postParameters;
         } else {
-            tSystemWarn("unsupported content-type: {}", qUtf8Printable(ctype));
+            tSystemWarn("unsupported content-type: {}", ctype);
         }
     } /* FALLTHRU */
 
