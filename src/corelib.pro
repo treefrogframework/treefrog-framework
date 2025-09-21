@@ -464,6 +464,8 @@ unix {
       LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc2.a ../3rdparty/mongo-driver/src/libbson/libbson2.a
     } else {
       # Shared link
+      LIBS += $$system("pkg-config --libs mongoc2 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I mongoc2 2>/dev/null")
       LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
       QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
     }
