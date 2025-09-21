@@ -507,7 +507,7 @@ QString TActionController::getRenderingData(const QString &templateName, const Q
 QByteArray TActionController::renderView(TActionView *view)
 {
     if (!view) {
-        tSystemError("view null pointer.  action:{}", qUtf8Printable(activeAction()));
+        tSystemError("view null pointer.  action:{}", activeAction());
         return QByteArray();
     }
     view->setController(this);
@@ -730,7 +730,7 @@ bool TActionController::userLogin(const TAbstractUser *user)
     }
 
     if (isUserLoggedIn()) {
-        tSystemWarn("userLogin: Duplicate login detected. Force logout [user:{}]", qUtf8Printable(identityKeyOfLoginUser()));
+        tSystemWarn("userLogin: Duplicate login detected. Force logout [user:{}]", identityKeyOfLoginUser());
     }
 
     session().insert(LOGIN_USER_NAME_KEY, user->identityKey());

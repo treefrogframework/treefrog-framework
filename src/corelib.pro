@@ -7,6 +7,7 @@ QT      += sql network xml qml
 # C++ Standards Support
 CONFIG += c++20
 windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
+macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 14.0
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL

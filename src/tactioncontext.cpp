@@ -242,14 +242,14 @@ void TActionContext::execute(THttpRequest &request)
         }
 
     } catch (ClientErrorException &e) {
-        Tf::warn("Caught {}: status code:{}", qUtf8Printable(e.className()), e.statusCode());
-        tSystemWarn("Caught {}: status code:{}", qUtf8Printable(e.className()), e.statusCode());
+        Tf::warn("Caught {}: status code:{}", e.className(), e.statusCode());
+        tSystemWarn("Caught {}: status code:{}", e.className(), e.statusCode());
         int responseBytes = writeResponse(e.statusCode(), responseHeader);
         accessLogger.setResponseBytes(responseBytes);
         accessLogger.setStatusCode(e.statusCode());
     } catch (TfException &e) {
-        Tf::error("Caught {}: {}  [{}:{}]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught {}: {}  [{}:{}]", qUtf8Printable(e.className()), qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught {}: {}  [{}:{}]", e.className(), e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught {}: {}  [{}:{}]", e.className(), e.message(), e.fileName(), e.lineNumber());
         closeSocket();
         accessLogger.setResponseBytes(0);
         accessLogger.setStatusCode(Tf::InternalServerError);

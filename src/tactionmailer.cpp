@@ -56,7 +56,7 @@ bool TActionMailer::deliver(const QString &templateName)
     TDispatcher<TActionView> viewDispatcher(viewClassName(CONTROLLER_NAME, templateName));
     TActionView *view = viewDispatcher.object();
     if (!view) {
-        tSystemError("no such template : {}", qUtf8Printable(templateName));
+        tSystemError("no such template : {}", templateName);
         return false;
     }
 
